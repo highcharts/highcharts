@@ -1025,8 +1025,11 @@ H.Series = H.seriesType('line', null,
 	/**
 	 * Insert the series in a collection with other series, either the chart
 	 * series or yAxis series, in the correct order according to the index
-	 * option.
-	 * @param  {Array} collection A collection of series.
+	 * option. Used internally when adding series.
+	 *
+	 * @private
+	 * @param   {Array.<Series>} collection
+	 *          A collection of series, like `chart.series` or `xAxis.series`.
 	 * @returns {Number} The index of the series in the collection.
 	 */
 	insert: function (collection) {
@@ -1129,7 +1132,9 @@ H.Series = H.seriesType('line', null,
 	 * arrays like xData and yData for quick lookup to find extremes and more.
 	 * For multidimensional series like bubble and map, this can be extended
 	 * with arrays like zData and valueData by adding to the
-	 * series.parallelArrays array.
+	 * `series.parallelArrays` array.
+	 *
+	 * @private
 	 */
 	updateParallelArrays: function (point, i) {
 		var series = point.series,
@@ -1203,8 +1208,12 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Set the series options by merging from the options tree
-	 * @param {Object} itemOptions
+	 * Set the series options by merging from the options tree. Called
+	 * internally on initiating and updating series. This function will not
+	 * redraw the series. For API usage, use {@link Series#update}.
+	 * 
+	 * @param  {Options.plotOptions.series} itemOptions
+	 *         The series options.
 	 */
 	setOptions: function (itemOptions) {
 		var chart = this.chart,
@@ -1559,9 +1568,14 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Process the data by cropping away unused data points if the series is
-	 * longer than the crop threshold. This saves computing time for large
-	 * series.
+	 * Internal function to process the data by cropping away unused data points
+	 * if the series is longer than the crop threshold. This saves computing
+	 * time for large series. In Highstock, this function is extended to
+	 * provide data grouping.
+	 *
+	 * @private
+	 * @param  {Boolean} force
+	 *         Force data grouping.
 	 */
 	processData: function (force) {
 		var series = this,
@@ -1910,11 +1924,9 @@ H.Series = H.seriesType('line', null,
 
 	/**
 	 * Translate data points from raw data values to chart specific positioning
-	 * data needed later in drawPoints, drawGraph and drawTracker.
-	 *
-	 * @function #translate
-	 * @memberOf Series
-	 * @returns {void}
+	 * data needed later in the `drawPoints` and `drawGraph` functions. This
+	 * function can be overridden in plugins and custom series type
+	 * implementations.
 	 */
 	translate: function () {
 		if (!this.processedXData) { // hidden series
@@ -2112,6 +2124,8 @@ H.Series = H.seriesType('line', null,
 	 * Set the clipping for the series. For animated series it is called twice,
 	 * first to initiate animating the clip then the second time without the
 	 * animation to set the final clip.
+	 *
+	 * @private
 	 */
 	setClip: function (animation) {
 		var chart = this.chart,
@@ -2342,7 +2356,19 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Get non-presentational attributes for the point.
+	 * Get non-presentational attributes for a point. Used internally for both
+	 * styled mode and classic. Can be overridden for different series types.
+	 *
+	 * @see    Series#pointAttribs
+	 *
+	 * @param  {Point} point
+	 *         The Point to inspect.
+	 * @param  {String} [state]
+	 *         The state, can be either `hover`, `select` or undefined.
+	 *
+	 * @return {SVGAttributes}
+	 *         A hash containing those attributes that are not settable from
+	 *         CSS.
 	 */
 	markerAttribs: function (point, state) {
 		var seriesMarkerOptions = this.options.marker,
@@ -2387,7 +2413,19 @@ H.Series = H.seriesType('line', null,
 
 	/*= if (build.classic) { =*/
 	/**
-	 * Get presentational attributes for marker-based series (line, spline, scatter, bubble, mappoint...)
+	 * Internal function to get presentational attributes for each point. Unlike
+	 * {@link Series#markerAttribs}, this function should return those
+	 * attributes that can also be set in CSS. In styled mode, `pointAttribs`
+	 * won't be called.
+	 *
+	 * @param  {Point} point
+	 *         The point instance to inspect.
+	 * @param  {String} [state]
+	 *         The point state, can be either `hover`, `select` or undefined for
+	 *         normal state.
+	 *
+	 * @return {SVGAttributes}
+	 *         The presentational attributes to be set on the point.
 	 */
 	pointAttribs: function (point, state) {
 		var seriesMarkerOptions = this.options.marker,
@@ -2821,7 +2859,10 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Initialize and perform group inversion on series.group and series.markerGroup
+	 * Initialize and perform group inversion on series.group and
+	 * series.markerGroup.
+	 *
+	 * @private
 	 */
 	invertGroups: function (inverted) {
 		var series = this,
@@ -2867,6 +2908,8 @@ H.Series = H.seriesType('line', null,
 	 * General abstraction for creating plot groups like series.group,
 	 * series.dataLabelsGroup and series.markerGroup. On subsequent calls, the
 	 * group will only be adjusted to the updated plot size.
+	 *
+	 * @private
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
 		var group = this[prop],
@@ -2924,7 +2967,9 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Render the graph and markers
+	 * Render the graph and markers. Called internally when first rendering and
+	 * later when redrawing the chart. This function can be extended in plugins,
+	 * but normally shouldn't be called directly.
 	 */
 	render: function () {
 		var series = this,
@@ -3030,7 +3075,10 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Redraw the series after an update in the axes.
+	 * Redraw the series. This function is called internally from `chart.redraw`
+	 * and normally shouldn't be called directly.
+	 *
+	 * @private
 	 */
 	redraw: function () {
 		var series = this,

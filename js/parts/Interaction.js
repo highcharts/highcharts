@@ -805,7 +805,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
 extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	/**
-	 * Series mouse over handler
+	 * Runs on mouse over the series graphical items.
 	 */
 	onMouseOver: function () {
 		var series = this,
@@ -829,7 +829,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Series mouse out handler
+	 * Runs on mouse out of the series graphical items.
 	 */
 	onMouseOut: function () {
 		// trigger the event only if listeners exist
@@ -862,7 +862,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Set the state of the graph
+	 * Set the state of the series. Called internally on mouse interaction and
+	 * select operations, but it can also be called directly to visually
+	 * highlight a series.
+	 *
+	 * @param  {String} [state]
+	 *         Can be either `hover`, `select` or undefined to set to normal
+	 *         state.
 	 */
 	setState: function (state) {
 		var series = this,
