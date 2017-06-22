@@ -47,7 +47,6 @@ extend(ColorAxis.prototype, {
 		 * padding of 0.05 will make a 100px axis 5px longer.
 		 * 
 		 * @type {Number}
-		 * @default {all} 0.05
 		 * @product highmaps
 		 */
 		minPadding: 0,
@@ -57,7 +56,6 @@ extend(ColorAxis.prototype, {
 		 * padding of 0.05 will make a 100px axis 5px longer.
 		 * 
 		 * @type {Number}
-		 * @default {all} 0.05
 		 * @product highmaps
 		 */
 		maxPadding: 0,
