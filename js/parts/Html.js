@@ -372,10 +372,12 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 							// whenever the SVG group position is changed.
 							extend(parentGroup, {
 								on: function () {
-									wrapper.on.apply(
-										{ element: parents[0].div },
-										arguments
-									);
+									if (parents[0].div) { // #6418
+										wrapper.on.apply(
+											{ element: parents[0].div },
+											arguments
+										);
+									}
 									return parentGroup;
 								},
 								translateXSetter: function (value, key) {
