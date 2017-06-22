@@ -1,7 +1,7 @@
+/* eslint-disable */
 /**
  * @module plugins/highcharts.jsdoc
- * @uathor Chris Vasseng
- *
+ * @author Chris Vasseng
  */
 
 "use strict";
@@ -279,6 +279,22 @@ function augmentOption(path, obj) {
     }
 }
 
+function resolveProductTypes(doclet, tagObj) {
+    var reg = /^\{([a-z\|]+)\}/g,
+        match = tagObj.value.match(reg),
+        products,
+        value = tagObj.value;
+
+    if (match) {
+        value = value.replace(reg, '');
+        products = match[0].replace('{', '').replace('}', '').split('|');
+    }
+
+
+    doclet[tagObj.originalTitle] = value;
+    doclet[tagObj.originalTitle + '_products'] = products;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 exports.defineTags = function (dictionary) {
@@ -334,6 +350,10 @@ exports.defineTags = function (dictionary) {
         onTagged: function (doclet, tagObj) {
             doclet.extends = tagObj.value;
         }
+    });
+
+    dictionary.defineTag('productdesc', {
+        onTagged: resolveProductTypes
     });
 };
 

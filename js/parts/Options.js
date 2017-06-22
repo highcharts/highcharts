@@ -661,12 +661,14 @@ H.defaultOptions = {
 
 		/**
 		 * Whether to invert the axes so that the x axis is vertical and y axis
-		 * is horizontal. When true, the x axis is [reversed](#xAxis.reversed)
-		 * by default. If a bar series is present in the chart, it will be
-		 * inverted automatically.
-		 * 
-		 * Inverting the chart doesn't have an effect if there are no cartesian
-		 * series in the chart, or if the chart is [polar](#chart.polar).
+		 * is horizontal. When `true`, the x axis is [reversed](#xAxis.reversed)
+		 * by default.
+		 *
+		 * @productdesc {highcharts}
+		 * If a bar series is present in the chart, it will be inverted
+		 * automatically. Inverting the chart doesn't have an effect if there
+		 * are no cartesian series in the chart, or if the chart is
+		 * [polar](#chart.polar).
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/chart/inverted/
