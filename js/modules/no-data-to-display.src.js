@@ -24,11 +24,61 @@ extend(defaultOptions.lang, {
 });
 
 // Add default display options for message
+/**
+ * Options for displaying a message like "No data to display". 
+ * This feature requires the file no-data-to-display.js to be loaded in the page. 
+ * The actual text to display is set in the lang.noData option.
+ * @type {Object}
+ * @optionparent noData
+ */
 defaultOptions.noData = {
+
+	/**
+	 * The position of the no-data label, relative to the plot area.
+	 * 
+	 * @type {Object}
+	 * @default { "x": 0, "y": 0, "align": "center", "verticalAlign": "middle" }
+	 * @since 3.0.8
+	 * @product highcharts highstock highmaps
+	 */
 	position: {
+
+		/**
+		 * Horizontal offset of the label, in pixels.
+		 * 
+		 * @type {Number}
+		 * @default 0
+		 * @product highcharts highstock
+		 */
 		x: 0,
+
+		/**
+		 * Vertical offset of the label, in pixels.
+		 * 
+		 * @type {Number}
+		 * @default 0
+		 * @product highcharts highstock
+		 */
 		y: 0,			
+
+		/**
+		 * Horizontal alignment of the label.
+		 * 
+		 * @validvalue ["left", "center", "right"]
+		 * @type {String}
+		 * @default center
+		 * @product highcharts highstock highmaps
+		 */
 		align: 'center',
+
+		/**
+		 * Vertical alignment of the label.
+		 * 
+		 * @validvalue ["top", "middle", "bottom"]
+		 * @type {String}
+		 * @default middle
+		 * @product highcharts highstock
+		 */
 		verticalAlign: 'middle'
 	}
 	// useHTML: false
@@ -36,26 +86,48 @@ defaultOptions.noData = {
 
 /*= if (build.classic) { =*/
 // Presentational
+/**
+ * CSS styles for the no-data label.
+ * @optionparent noData.style
+ */
 defaultOptions.noData.style = {
+
+	/**
+	 */
 	fontWeight: 'bold',
+
+	/**
+	 */
 	fontSize: '12px',
+
+	/**
+	 */
 	color: '${palette.neutralColor60}'
 };
 /*= } =*/
 
-/**
- * Define hasData functions for series. These return true if there are data points on this series within the plot area
- */	
-function hasDataPie() {
-	return !!this.points.length; /* != 0 */
-}
 
-each(['pie', 'gauge', 'waterfall', 'bubble', 'treemap'], function (type) {
+// Define hasData function for non-cartesian seris. Returns true if the series
+// has points at all.
+each([
+	'bubble',
+	'gauge',
+	'heatmap',
+	'pie',
+	'treemap',
+	'waterfall'
+], function (type) {
 	if (seriesTypes[type]) {
-		seriesTypes[type].prototype.hasData = hasDataPie;
+		seriesTypes[type].prototype.hasData = function () {
+			return !!this.points.length; /* != 0 */
+		};
 	}
 });
 
+/**
+ * Define hasData functions for series. These return true if there are data
+ * points on this series within the plot area.
+ */
 H.Series.prototype.hasData = function () {
 	return this.visible && this.dataMax !== undefined && this.dataMin !== undefined; // #3703
 };
@@ -121,7 +193,7 @@ chartPrototype.hasData = function () {
 		}	
 	}
 
-	return false;
+	return chart.loadingShown; // #4588
 };
 
 /**

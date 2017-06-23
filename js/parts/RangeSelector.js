@@ -32,21 +32,92 @@ var addEvent = H.addEvent,
 /* ****************************************************************************
  * Start Range Selector code												  *
  *****************************************************************************/
-extend(defaultOptions, {
+extend(defaultOptions, 
+/**
+ * @optionparent
+ */
+{
+
+	/**
+	 * The range selector is a tool for selecting ranges to display within
+	 * the chart. It provides buttons to select preconfigured ranges in
+	 * the chart, like 1 day, 1 week, 1 month etc. It also provides input
+	 * boxes where min and max dates can be manually input.
+	 * 
+	 * @product highstock
+	 */
 	rangeSelector: {
 		// allButtonsEnabled: false,
 		// enabled: true,
 		// buttons: {Object}
 		// buttonSpacing: 0,
+
+		/**
+		 * A collection of attributes for the buttons. The object takes SVG
+		 * attributes like `fill`, `stroke`, `stroke-width`, as well as `style`,
+		 * a collection of CSS properties for the text.
+		 * 
+		 * The object can also be extended with states, so you can set presentational
+		 * options for `hover`, `select` or `disabled` button states.
+		 * 
+		 * CSS styles for the text label.
+		 * 
+		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+		 * style/style-by-css), the buttons are styled by the `.highcharts-
+		 * range-selector-buttons .highcharts-button` rule with its different
+		 * states.
+		 * 
+		 * @type {Object}
+		 * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
+		 * @product highstock
+		 */
 		buttonTheme: {
+
+			/**
+			 */
 			'stroke-width': 0,
+
+			/**
+			 */
 			width: 28,
+
+			/**
+			 */
 			height: 18,
+
+			/**
+			 */
 			padding: 2,
+
+			/**
+			 */
 			zIndex: 7 // #484, #852
 		},
+
+		/**
+		 * The height of the range selector, used to reserve space for buttons
+		 * and input.
+		 * 
+		 * @type {Number}
+		 * @default 35
+		 * @since 2.1.9
+		 * @product highstock
+		 */
 		height: 35, // reserved space for buttons and input
+
+		/**
+		 * Positioning for the input boxes. Allowed properties are `align`,
+		 *  `verticalAlign`, `x` and `y`.
+		 * 
+		 * @type {Object}
+		 * @default { align: "right" }
+		 * @since 1.2.5
+		 * @product highstock
+		 */
 		inputPosition: {
+
+			/**
+			 */
 			align: 'right'
 		},
 		// inputDateFormat: '%b %e, %Y',
@@ -55,15 +126,77 @@ extend(defaultOptions, {
 		// selected: undefined,
 		/*= if (build.classic) { =*/
 		// inputStyle: {},
+
+		/**
+		 * CSS styles for the labels - the Zoom, From and To texts.
+		 * 
+		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+		 * style/style-by-css), the labels are styled by the `.highcharts-
+		 * range-label` class.
+		 * 
+		 * @type {CSSObject}
+		 * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
+		 * @product highstock
+		 */
 		labelStyle: {
+
+			/**
+			 */
 			color: '${palette.neutralColor60}'
 		}
 		/*= } =*/
 	}
 });
-defaultOptions.lang = merge(defaultOptions.lang, {
+
+defaultOptions.lang = merge(defaultOptions.lang, 
+/**
+ * @optionparent lang
+ */
+
+/**
+ * Language object. The language object is global and it can't be set
+ * on each chart initiation. Instead, use `Highcharts.setOptions` to
+ * set it before any chart is initiated.
+ * 
+ * <pre>Highcharts.setOptions({
+ * lang: {
+ * months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+ * 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+ * 
+ * weekdays: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi',
+ * 'Samedi']
+ * }
+ * });</pre>
+ * 
+ * @product highcharts highstock highmaps
+ */
+{
+
+	/**
+	 * The text for the label for the range selector buttons.
+	 * 
+	 * @type {String}
+	 * @default Zoom
+	 * @product highstock
+	 */
 	rangeSelectorZoom: 'Zoom',
+
+	/**
+	 * The text for the label for the "from" input box in the range selector.
+	 * 
+	 * @type {String}
+	 * @default From
+	 * @product highstock
+	 */
 	rangeSelectorFrom: 'From',
+
+	/**
+	 * The text for the label for the "to" input box in the range selector.
+	 * 
+	 * @type {String}
+	 * @default To
+	 * @product highstock
+	 */
 	rangeSelectorTo: 'To'
 });
 
@@ -769,15 +902,15 @@ RangeSelector.prototype = {
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
-		var minInput = this.minInput,
-			maxInput = this.maxInput,
-			key;
+		var rSelector = this,
+			minInput = rSelector.minInput,
+			maxInput = rSelector.maxInput;
 
-		this.unMouseDown();
-		this.unResize();
+		rSelector.unMouseDown();
+		rSelector.unResize();
 
 		// Destroy elements in collections
-		destroyObjectProperties(this.buttons);
+		destroyObjectProperties(rSelector.buttons);
 
 		// Clear input element events
 		if (minInput) {
@@ -788,18 +921,18 @@ RangeSelector.prototype = {
 		}
 
 		// Destroy HTML and SVG elements
-		for (key in this) {
-			if (this[key] && key !== 'chart') {
-				if (this[key].destroy) { // SVGElement
-					this[key].destroy();
-				} else if (this[key].nodeType) { // HTML element
+		H.objectEach(rSelector, function (val, key) {
+			if (val && key !== 'chart') {
+				if (val.destroy) { // SVGElement
+					val.destroy();
+				} else if (val.nodeType) { // HTML element
 					discardElement(this[key]);
 				}
 			}
-			if (this[key] !== RangeSelector.prototype[key]) {
-				this[key] = null;
+			if (val !== RangeSelector.prototype[key]) {
+				rSelector[key] = null;
 			}
-		}
+		}, this);
 	}
 };
 
@@ -850,8 +983,15 @@ Axis.prototype.minFromRange = function () {
 		range,
 		// Get the true range from a start date
 		getTrueRange = function (base, count) {
-			var date = new Date(base);
-			date['set' + timeName](date['get' + timeName]() + count);
+			var date = new Date(base),
+				basePeriod = date['get' + timeName]();
+
+			date['set' + timeName](basePeriod + count);
+
+			if (basePeriod === date['get' + timeName]()) {
+				date.setDate(0); // #6537
+			}
+
 			return date.getTime() - base;
 		};
 

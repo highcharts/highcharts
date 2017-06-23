@@ -1,0 +1,32 @@
+#container {
+    max-width: 800px;
+    height: 400px;
+    margin: 1em auto;
+}
+
+table {
+	font-family: 'Verdana';
+	font-size: 12pt;
+	color:#555555;              
+	border-collapse: collapse;
+	border: 3px solid #CCCCCC;
+	margin: 2px auto;	
+}
+
+tr {
+  	border-bottom: 2px solid #EEEEEE;
+}
+
+th {
+	border-left: 2px solid #EEEEEE;
+	border-right: 2px solid #EEEEEE;
+	padding: 12px 15px;
+	border-collapse: collapse;
+}
+
+td {
+  	border-left: 2px solid #EEEEEE;
+  	border-right: 2px solid #EEEEEE;
+  	padding: 12px 15px;
+  	border-collapse: collapse;
+}

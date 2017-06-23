@@ -75,18 +75,199 @@ if (H.seriesTypes.pie) {
 }
 
 
-// Default a11y options
+/**
+ * Accessibility options
+ * @type {Object}
+ * @optionparent
+ */
 H.setOptions({
+
+	/**
+	 * Options for configuring accessibility for the chart. Requires the
+	 * [accessibility module](//code.highcharts.com/modules/accessibility.
+	 * js) to be loaded. For a description of the module and information
+	 * on its features, see [Highcharts Accessibility](http://www.highcharts.
+	 * com/docs/chart-concepts/accessibility).
+	 * 
+	 * @since 5.0.0
+	 * @product highcharts highstock highmaps
+	 */
 	accessibility: {
+
+		/**
+		 * Enable accessibility features for the chart.
+		 * 
+		 * @type {Boolean}
+		 * @default true
+		 * @since 5.0.0
+		 * @product highcharts highstock highmaps
+		 */
 		enabled: true,
+
+		/**
+		 * When a series contains more points than this, we no longer expose
+		 * information about individual points to screen readers.
+		 * 
+		 * Set to `false` to disable.
+		 * 
+		 * @type {Number|Boolean}
+		 * @default 30
+		 * @since 5.0.0
+		 * @product highcharts highstock highmaps
+		 */
 		pointDescriptionThreshold: 30, // set to false to disable
+
+		/**
+		 * Options for keyboard navigation.
+		 * 
+		 * @type {Object}
+		 * @since 5.0.0
+		 * @product highcharts highstock highmaps
+		 */
 		keyboardNavigation: {
+
+			/**
+			 * Enable keyboard navigation for the chart.
+			 * 
+			 * @type {Boolean}
+			 * @default true
+			 * @since 5.0.0
+			 */
 			enabled: true
-		//	skipNullPoints: false
+			
+			/**
+			 * Skip null points when navigating through points with the
+			 * keyboard.
+			 * 
+			 * @type {Boolean}
+			 * @default false
+			 * @since 5.0.0
+			 * @apioption accessibility.keyboardNavigation.skipNullPoints
+			 */
 		}
-		// describeSingleSeries: false
+
+		/**
+		 * Whether or not to add series descriptions to charts with a single
+		 * series.
+		 * 
+		 * @type {Boolean}
+		 * @default false
+		 * @since 5.0.0
+		 * @product highcharts highstock highmaps
+		 * @apioption accessibility.describeSingleSeries
+		 */
+
+		/**
+		 * Function to run upon clicking the "View as Data Table" link in the
+		 * screen reader region.
+		 * 
+		 * By default Highcharts will insert and set focus to a data table
+		 * representation of the chart.
+		 * 
+		 * @type {Function}
+		 * @since 5.0.0
+		 * @apioption accessibility.onTableAnchorClick
+		 */
+		
+		/**
+		 * Date format to use for points on datetime axes when describing them
+		 * to screen reader users.
+		 * 
+		 * Defaults to the same format as in tooltip.
+		 * 
+		 * For an overview of the replacement codes, see [dateFormat](
+		 * #Highcharts.dateFormat).
+		 * 
+		 * @type {String}
+		 * @see [pointDateFormatter](#accessibility.pointDateFormatter)
+		 * @since 5.0.0
+		 * @apioption accessibility.pointDateFormat
+		 */
+		
+		/**
+		 * Formatter function to determine the date/time format used with points
+		 * on datetime axes when describing them to screen reader users. Receives
+		 * one argument, `point`, referring to the point to describe. Should
+		 * return a date format string compatible with [dateFormat](#Highcharts.
+		 * dateFormat).
+		 * 
+		 * @type {Function}
+		 * @see [pointDateFormat](#accessibility.pointDateFormat)
+		 * @since 5.0.0
+		 * @apioption accessibility.pointDateFormatter
+		 */
+		
+		/**
+		 * Formatter function to use instead of the default for point descriptions.
+		 * Receives one argument, `point`, referring to the point to describe.
+		 * Should return a String with the description of the point for a screen
+		 * reader user.
+		 * 
+		 * @type {Function}
+		 * @see [point.description](#series<line>.data.description)
+		 * @since 5.0.0
+		 * @apioption accessibility.pointDescriptionFormatter
+		 */
+		
+		/**
+		 * A formatter function to create the HTML contents of the hidden screen
+		 * reader information region. Receives one argument, `chart`, referring
+		 * to the chart object. Should return a String with the HTML content
+		 * of the region.
+		 * 
+		 * The link to view the chart as a data table will be added automatically
+		 * after the custom HTML content.
+		 * 
+		 * @type {Function}
+		 * @default undefined
+		 * @since 5.0.0
+		 * @apioption accessibility.screenReaderSectionFormatter
+		 */
+		
+		/**
+		 * Formatter function to use instead of the default for series descriptions.
+		 * Receives one argument, `series`, referring to the series to describe.
+		 * Should return a String with the description of the series for a
+		 * screen reader user.
+		 * 
+		 * @type {Function}
+		 * @see [series.description](#plotOptions.series.description)
+		 * @since 5.0.0
+		 * @apioption accessibility.seriesDescriptionFormatter
+		 */
 	}
 });
+
+/**
+ * A text description of the chart.
+ * 
+ * If the Accessibility module is loaded, this is included by default
+ * as a long description of the chart and its contents in the hidden
+ * screen reader information region.
+ * 
+ * @type {String}
+ * @see [typeDescription](#chart.typeDescription)
+ * @default undefined
+ * @since 5.0.0
+ * @apioption chart.description
+ */
+
+ /**
+ * A text description of the chart type.
+ * 
+ * If the Accessibility module is loaded, this will be included in the
+ * description of the chart in the screen reader information region.
+ * 
+ * 
+ * Highcharts will by default attempt to guess the chart type, but for
+ * more complex charts it is recommended to specify this property for
+ * clarity.
+ * 
+ * @type {String}
+ * @default undefined
+ * @since 5.0.0
+ * @apioption chart.typeDescription
+ */
 
 /**
  * HTML encode some characters vulnerable for XSS.
@@ -147,14 +328,21 @@ H.Series.prototype.setA11yDescription = function () {
 				if (point.graphic) {
 					point.graphic.element.setAttribute('role', 'img');
 					point.graphic.element.setAttribute('tabindex', '-1');
-					point.graphic.element.setAttribute('aria-label', a11yOptions.pointDescriptionFormatter && a11yOptions.pointDescriptionFormatter(point) ||
+					point.graphic.element.setAttribute('aria-label', 
+						point.series.options.pointDescriptionFormatter && 
+						point.series.options.pointDescriptionFormatter(point) ||
+						a11yOptions.pointDescriptionFormatter && 
+						a11yOptions.pointDescriptionFormatter(point) ||
 						point.buildPointInfoString());
 				}
 			});
 		}
 		// Make series element accessible
 		if (this.chart.series.length > 1 || a11yOptions.describeSingleSeries) {
-			seriesEl.setAttribute('role', 'region');
+			seriesEl.setAttribute(
+				'role', 
+				this.options.exposeElementToA11y ? 'img' : 'region'
+			);
 			seriesEl.setAttribute('tabindex', '-1');
 			seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) ||
 				this.buildSeriesInfoString());
@@ -352,14 +540,25 @@ H.Point.prototype.highlight = function () {
 };
 
 // Function to highlight next/previous point in chart
-// Returns highlighted point on success, false on failure (no adjacent point to highlight in chosen direction)
+// Returns highlighted point on success, false on failure (no adjacent point to
+// highlight in chosen direction)
 H.Chart.prototype.highlightAdjacentPoint = function (next) {
-	var series = this.series,
-		curPoint = this.highlightedPoint,
+	var chart = this,
+		series = chart.series,
+		curPoint = chart.highlightedPoint,
 		curPointIndex = curPoint && curPoint.index || 0,
 		curPoints = curPoint && curPoint.series.points,
+		lastSeries = chart.series && chart.series[chart.series.length - 1],
+		lastPoint = lastSeries && lastSeries.points && 
+					lastSeries.points[lastSeries.points.length - 1],
 		newSeries,
 		newPoint,
+		isSkipPoint = function (point) {
+			return point.isNull &&
+				chart.options.accessibility.keyboardNavigation.skipNullPoints ||
+				point.series.options.skipKeyboardNavigation ||
+				!point.series.visible;
+		},
 		// Handle connecting ends - where the points array has an extra last
 		// point that is a reference to the first one. We skip this.
 		forwardSkipAmount = curPoint && curPoint.series.connectEnds &&
@@ -370,44 +569,46 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		return false;
 	}
 
-	// Use first point if none already highlighted
 	if (!curPoint) {
-		return series[0].points[0].highlight();
-	}
-
-	// Find index of current point in series.points array. Necessary for dataGrouping (and maybe zoom?)
-	if (curPoints[curPointIndex] !== curPoint) {
-		for (var i = 0; i < curPoints.length; ++i) {
-			if (curPoints[i] === curPoint) {
-				curPointIndex = i;
-				break;
+		// No point is highlighted yet. Try first/last point depending on move
+		// direction
+		newPoint = next ? series[0].points[0] : lastPoint;
+	} else {
+		// We have a highlighted point.
+		// Find index of current point in series.points array. Necessary for
+		// dataGrouping (and maybe zoom?)
+		if (curPoints[curPointIndex] !== curPoint) {
+			for (var i = 0; i < curPoints.length; ++i) {
+				if (curPoints[i] === curPoint) {
+					curPointIndex = i;
+					break;
+				}
 			}
+		}
+
+		// Grab next/prev point & series
+		newSeries = series[curPoint.series.index + (next ? 1 : -1)];
+		newPoint = curPoints[curPointIndex + (next ? forwardSkipAmount : -1)] || 
+					// Done with this series, try next one
+					newSeries &&
+					newSeries.points[next ? 0 : newSeries.points.length - (
+						newSeries.connectEnds ? 2 : 1
+					)];
+
+		// If there is no adjacent point, we return false
+		if (newPoint === undefined) {
+			return false;
 		}
 	}
 
-	// Grab next/prev point & series
-	newSeries = series[curPoint.series.index + (next ? 1 : -1)];
-	newPoint = curPoints[curPointIndex + (next ? forwardSkipAmount : -1)] || 
-				// Done with this series, try next one
-				newSeries &&
-				newSeries.points[next ? 0 : newSeries.points.length - (
-					newSeries.connectEnds ? 2 : 1
-				)];
-
-	// If there is no adjacent point, we return false
-	if (newPoint === undefined) {
-		return false;
-	}
-
-	// Recursively skip null points
-	if (newPoint.isNull && this.options.accessibility.keyboardNavigation &&
-			this.options.accessibility.keyboardNavigation.skipNullPoints) {
-		this.highlightedPoint = newPoint;
-		return this.highlightAdjacentPoint(next);
+	// Recursively skip null points or points in series that should be skipped
+	if (isSkipPoint(newPoint)) {
+		chart.highlightedPoint = newPoint;
+		return chart.highlightAdjacentPoint(next);
 	}
 
 	// There is an adjacent point, highlight it
-	return newPoint.highlight();			
+	return newPoint.highlight();
 };
 
 // Show the export menu and focus the first item (if exists)
@@ -498,12 +699,14 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// The module's keyCode handlers determine when to move to another module.
 	// Validate holds a function to determine if there are prerequisites for this module to run that are not met.
 	// Init holds a function to run once before any keyCodes are interpreted.
+	// Terminate holds a function to run once before moving to next/prev module.
 	// transformTabs determines whether to transform tabs to left/right events or not. Defaults to true.
 	function KeyboardNavigationModule(options) {
 		this.keyCodeMap = options.keyCodeMap;
 		this.move = options.move;
 		this.validate = options.validate;
 		this.init = options.init;
+		this.terminate = options.terminate;
 		this.transformTabs = options.transformTabs !== false;
 	}
 	KeyboardNavigationModule.prototype = {
@@ -529,6 +732,9 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			// Move to next/prev valid module, or undefined if none, and init it.
 			// Returns true on success and false if there is no valid module to move to.
 			move: function (direction) {
+				if (this.terminate) {
+					this.terminate(direction);
+				}
 				chart.keyboardNavigationModuleIndex += direction;
 				var newModule = chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex];
 				if (newModule) {
@@ -604,13 +810,16 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				}
 			}]
 		], {
-			// If coming back to points from other module, highlight last point
-			init: function (direction) {
-				var lastSeries = chart.series && chart.series[chart.series.length - 1],
-					lastPoint = lastSeries && lastSeries.points && lastSeries.points[lastSeries.points.length - 1];
-				if (direction < 0 && lastPoint) {
-					lastPoint.highlight();
+			// Always start highlighting from scratch when entering this module
+			init: function () {
+				delete chart.highlightedPoint;
+			},
+			// If leaving points, don't show tooltip anymore
+			terminate: function () {
+				if (chart.tooltip) {
+					chart.tooltip.hide(0);
 				}
+				delete chart.highlightedPoint;
 			}
 		}),
 
@@ -619,9 +828,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			// Left/Up
 			[[37, 38], function () {
 				var i = chart.highlightedExportItem || 0,
-					reachedEnd = true,
-					series = chart.series,
-					newSeries;
+					reachedEnd = true;
 				// Try to highlight prev item in list. Highlighting e.g. separators will fail.
 				while (i--) {
 					if (chart.highlightExportItem(i)) {
@@ -631,14 +838,6 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				}
 				if (reachedEnd) {
 					chart.hideExportMenu();
-					// Wrap to last point
-					if (series && series.length) {
-						newSeries = series[series.length - 1];
-						if (newSeries.points.length) {
-							newSeries.points[newSeries.points.length - 1].highlight();
-						}
-					}
-					// Try to move to prev module (should be points, since we wrapped to last point)
 					return this.move(-1);
 				}
 			}],
@@ -817,8 +1016,14 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			}]
 		], {
 			// Only run this module if we have at least one legend - wait for it - item.
+			// Don't run if the legend is populated by a colorAxis.
+			// Don't run if legend navigation is disabled.
 			validate: function () {
-				return chart.legend && chart.legend.allItems && !chart.colorAxis;
+				return chart.legend && chart.legend.allItems &&
+					!(chart.colorAxis && chart.colorAxis.length) &&
+					(chart.options.legend &&
+					chart.options.legend.keyboardNavigation && 
+					chart.options.legend.keyboardNavigation.enabled) !== false;
 			},
 
 			// Make elements focusable and accessible
@@ -892,7 +1097,7 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 		(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
 		(axesDesc.yAxis ? ('<div>' + axesDesc.yAxis + '</div>') : '');
 
-	// Add shortcut to data table if export-csv is loaded
+	// Add shortcut to data table if export-data is loaded
 	if (chart.getCSV) {
 		tableShortcutAnchor.innerHTML = 'View as data table.';
 		tableShortcutAnchor.href = '#' + tableId;
@@ -942,7 +1147,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	titleElement.id = titleId;
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
-	chart.container.setAttribute('aria-details', hiddenSectionId);
+	//chart.container.setAttribute('aria-details', hiddenSectionId); // JAWS currently doesn't handle this too well
 	chart.renderTo.setAttribute('aria-label', 'Interactive chart. ' + chartTitle +
 		'. Use up and down arrows to navigate with most screen readers.');
 
@@ -984,31 +1189,38 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
 	// Enable keyboard navigation
-	if (a11yOptions.keyboardNavigation) {
+	if (a11yOptions.keyboardNavigation.enabled) {
 		chart.addKeyboardNavEvents();
 	}
 
-	/* Wrap table functionality from export-csv */
+	/* Wrap table functionality from export-data */
 
 	// Keep track of columns
 	merge(true, options.exporting, {
 		csv: {
-			columnHeaderFormatter: function (series, key, keyLength) {
+			columnHeaderFormatter: function (item, key, keyLength) {
+				if (!item) {
+					return 'Category';
+				}
+				if (item instanceof H.Axis) {
+					return (item.options.title && item.options.title.text) ||
+						(item.isDatetimeAxis ? 'DateTime' : 'Category');
+				}
 				var prevCol = topLevelColumns[topLevelColumns.length - 1];
 				if (keyLength > 1) {
 					// We need multiple levels of column headers
-					// Populate a list of column headers to add in addition to the ones added by export-csv
-					if ((prevCol && prevCol.text) !== series.name) {
+					// Populate a list of column headers to add in addition to the ones added by export-data
+					if ((prevCol && prevCol.text) !== item.name) {
 						topLevelColumns.push({
-							text: series.name,
+							text: item.name,
 							span: keyLength
 						});
 					}
 				}
 				if (oldColumnHeaderFormatter) {
-					return oldColumnHeaderFormatter.call(this, series, key, keyLength);
+					return oldColumnHeaderFormatter.call(this, item, key, keyLength);
 				}
-				return keyLength > 1 ? key : series.name;
+				return keyLength > 1 ? key : item.name;
 			}
 		}
 	});
@@ -1021,12 +1233,13 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
 	// Add accessibility attributes and top level columns
 	H.wrap(chart, 'viewData', function (proceed) {
-		if (!this.insertedTable) {
+		if (!this.dataTableDiv) {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
 			var table = doc.getElementById(tableId),
+				head = table.getElementsByTagName('thead')[0],
 				body = table.getElementsByTagName('tbody')[0],
-				firstRow = body.firstChild.children,
+				firstRow = head.firstChild.children,
 				columnHeaderRow = '<tr><td></td>',
 				cell,
 				newCell;
@@ -1055,7 +1268,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 				each(topLevelColumns, function (col) {
 					columnHeaderRow += '<th scope="col" colspan="' + col.span + '">' + col.text + '</th>';
 				});
-				body.insertAdjacentHTML('afterbegin', columnHeaderRow);
+				head.insertAdjacentHTML('afterbegin', columnHeaderRow);
 			}
 		}
 	});

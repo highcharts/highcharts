@@ -53,6 +53,7 @@ H.Color.prototype = {
 	// Collection of named colors. Can be extended from the outside by adding
 	// colors to Highcharts.Color.prototype.names.
 	names: {
+		none: 'rgba(255,255,255,0)',
 		white: '#ffffff',
 		black: '#000000'
 	},
@@ -194,6 +195,45 @@ H.Color.prototype = {
 	setOpacity: function (alpha) {
 		this.rgba[3] = alpha;
 		return this;
+	},
+
+	/*
+	 * Return an intermediate color between two colors.
+	 *
+	 * @param  {Highcharts.Color} to
+	 *         The color object to tween to.
+	 * @param  {Number} pos
+	 *         The intermediate position, where 0 is the from color (current
+	 *         color item), and 1 is the `to` color.
+	 *
+	 * @return {String}
+	 *         The intermediate color in rgba notation.
+	 */
+	tweenTo: function (to, pos) {
+		// Check for has alpha, because rgba colors perform worse due to lack of
+		// support in WebKit.
+		var from = this,
+			hasAlpha,
+			ret;
+
+		// Unsupported color, return to-color (#3920)
+		if (!to.rgba.length) {
+			ret = to.input || 'none';
+
+		// Interpolate
+		} else {
+			from = from.rgba;
+			to = to.rgba;
+			hasAlpha = (to[3] !== 1 || from[3] !== 1);
+			ret = (hasAlpha ? 'rgba(' : 'rgb(') +
+				Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' +
+				Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' +
+				Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) +
+				(hasAlpha ?
+					(',' + (to[3] + (from[3] - to[3]) * (1 - pos))) :
+					'') + ')';
+		}
+		return ret;
 	}
 };
 H.color = function (input) {

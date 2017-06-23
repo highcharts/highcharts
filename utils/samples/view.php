@@ -11,11 +11,6 @@ if (isset($_GET['styled'])) {
 }
 $styled = @$_SESSION['styled'];
 
-if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $_GET['path'])) {
-	header('Location: start.php');
-	exit;
-}
-
 
 $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);
@@ -32,7 +27,11 @@ $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$top
 if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 	$html = str_replace("/code.highcharts.$topDomain/mapdata", "/code.highcharts.com/mapdata", $html);
 } else {
-	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+	$time = time();
+	$html = str_replace('.js"', '.js?' . $time . '"', $html); // Force no-cache for debugging
+
+	// No go on github.highcharts.com
+	$html = str_replace("sonification.js?$time", 'sonification.js', $html);
 }
 
 // Highchart 5 preview
@@ -466,7 +465,6 @@ function getResources() {
 			setUp();
 			<?php @include("$path/demo.js"); ?>
 			</script>
-			<hr/>
 			<?php if (is_file("$path/test-notes.html")) { ?>
 			<section class="test-notes">
 				<header>Test notes</header>
@@ -474,6 +472,8 @@ function getResources() {
 					<?php include("$path/test-notes.html"); ?>
 				</div>
 			</section>
+			<?php } else { ?>
+			<hr/>
 			<?php } ?>
 			<ul>
 				<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>

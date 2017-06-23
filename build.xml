@@ -395,120 +395,10 @@
         </filelist>
     </target>
 
-    <scriptdef name="listfiles" language="javascript">
-        <![CDATA[
-        var dir = project.getProperty("samples.dir");
-        var fs = project.createDataType("fileset");
-        fs.setDir(new java.io.File(dir));
-        fs.setIncludes("**/demo.js");
-
-        // Get the files (array) of that fileset
-        var ds = fs.getDirectoryScanner(project);
-        var demoFiles = ds.getIncludedFiles();
-        // get the values via Java API
-        var basedir  = fs.getDir(project);
-        // Iterate over the demo files
-        for (i = 0; i < demoFiles.length; i++) {
-            var filename = demoFiles[i];
-            var file = new java.io.File(basedir, filename);
-
-            project.setProperty('demo.name', file.getParentFile().getName());
-            project.setProperty('demo.html.name', file.getParent() + '/demo.html');
-            project.setProperty('demo.js.name', file.getParent() + '/demo.js');
-            project.setProperty('demo.css.name', file.getParent() + '/demo.css');
-            project.executeTarget('create-sample');
-        }
-        ]]>
-    </scriptdef>
-
-    <target name="create-sample">
-        <antcall target="create-sample-param"/>
-    </target>
-
-    <target name="create-sample-param">
-        <!-- Load the two demo files into properties -->
-        <loadfile property="demo.js" srcFile="${demo.js.name}"/>
-        <loadfile property="demo.css" quiet="true" srcFile="${demo.css.name}"/>
-        <loadfile property="demo.html" srcFile="${demo.html.name}"/>
-
-        <!-- Copy the template file and replace the properties -->
-        <copy file="samples/template-example.htm" tofile="${samples.dist.dir}/examples/${demo.name}/index.htm">
-            <filterchain>
-                <replacetokens>
-                    <token key="demo.title" value="${demo.title}"/>
-                    <token key="demo.js" value="${demo.js}"/>
-                    <token key="demo.css" value="${demo.css}"/>
-                    <token key="demo.html" value="${demo.html}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-    </target>
-
-    <target name="create-samples">
-        <listfiles></listfiles>
-    </target>
-
     <!-- Builds the source and assembles a distribution package. -->
     <target name="dist" depends="set.properties" description="Builds the source and assembles distribution packages.">
-        <!-- 3. Create samples -->
-        <!-- Assemble the demo.html and demo.js files into example files for highcharts and highstock -->
-        <antcall target="create-samples">
-            <param name="demo.title" value="Highcharts"/>
-            <param name="samples.dir" value="samples/highcharts/demo"/>
-            <param name="samples.dist.dir" value="${dist.dir}/highcharts/"/>
-        </antcall>
-        <antcall target="create-samples">
-            <param name="demo.title" value="Highstock"/>
-            <param name="samples.dir" value="samples/stock/demo"/>
-            <param name="samples.dist.dir" value="${dist.dir}/highstock/"/>
-        </antcall>
-        <antcall target="create-samples">
-            <param name="demo.title" value="Highmaps"/>
-            <param name="samples.dir" value="samples/maps/demo"/>
-            <param name="samples.dist.dir" value="${dist.dir}/highmaps/"/>
-        </antcall>
-        <sleep seconds="1"/>
-        <!-- The demos are checked in with references to highcharts.com to be able to run them from jsfiddle -->
-        <!-- replace these references with local paths here -->
-        <replace dir="${dist.dir}">
-            <replacefilter>
-                <replacetoken><![CDATA[<script src="http://code.highcharts.com/stock/]]></replacetoken>
-                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
-            </replacefilter>
-            <replacefilter>
-                <replacetoken><![CDATA[<script src="http://code.highcharts.com/maps/]]></replacetoken>
-                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
-            </replacefilter>
-            <replacefilter>
-                <replacetoken><![CDATA[<script src="http://code.highcharts.com/]]></replacetoken>
-                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
-            </replacefilter>
-            <!-- replace back mapdata -->
-            <replacefilter>
-                <replacetoken><![CDATA[<script src="../../js/mapdata]]></replacetoken>
-                <replacevalue><![CDATA[<script src="http://code.highcharts.com/mapdata]]></replacevalue>
-            </replacefilter>
-            <include name="**/index.htm"/>
-        </replace>
-        
-        <!-- Copy index files -->
-        <copy file="samples/highcharts/demo/index.htm" todir="${dist.dir}/highcharts/"/>
-        <copy file="samples/stock/demo/index.htm" todir="${dist.dir}/highstock/"/>
-        <copy file="samples/maps/demo/index.htm" todir="${dist.dir}/highmaps/"/>
-        <!-- Copy graphic files -->
-        <copy todir="${dist.dir}/highcharts/graphics">
-            <fileset dir="samples/graphics"/>
-        </copy>
-        <copy todir="${dist.dir}/highstock/graphics">
-            <fileset dir="samples/graphics"/>
-        </copy>
-        <copy todir="${dist.dir}/highmaps/graphics">
-            <fileset dir="samples/graphics"/>
-        </copy>
-
         <!-- Make sure files in the zip have lf line endings -->
         <!-- even if being built on windows -->
-        <sleep seconds="5"/>
         <fixcrlf srcdir="${dist.dir}" includes="**/*.js, **/*.html, **/*.htm, **/*.php, **/*.tsv" eol="lf" encoding="UTF-8" />
 
         <!-- 5. Create zip files -->
@@ -595,7 +485,7 @@
         <echo message="placing zipped folder structure in ${gzip.dir}"/>
         <!-- make copy so we don't double-compress files -->
         <sync todir="${gzip.dir}" includeEmptyDirs="true" overwrite="true">
-            <fileset dir="${js.dir}" includes="**/*.js,**/*.css"/>
+            <fileset dir="${js.dir}" includes="**/*.js,**/*.css,**/*.map"/>
         </sync>
         <ac:for param="file">
             <path>

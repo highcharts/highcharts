@@ -107,7 +107,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=activity.j
                     positioner: function () {
                         return {
                             x: this.chart.chartWidth - this.label.width, // right aligned
-                            y: -1 // align to title
+                            y: 10 // align to title
                         };
                     },
                     borderWidth: 0,

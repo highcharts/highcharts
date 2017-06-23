@@ -305,3 +305,323 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
         'No unexpected events.'
     );
 });
+
+QUnit.test('Pointer.runPointActions. isDirectTouch: true && shared: true. #6517, #6586', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: merge(config.chart, {
+                type: 'column'
+            }),
+            plotOptions: config.plotOptions,
+            tooltip: {
+                shared: true
+            },
+            series: [{
+                data: [1, 2, 3]
+            }, {
+                data: [3, 2, 1]
+            }]
+        }),
+        pointer = chart.pointer,
+        controller = new TestController(chart),
+        // series1 = chart.series[0],
+        series2 = chart.series[1],
+        el = series2.points[0].graphic.element;
+    events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
+    // Move starting position of cursor to 50px below series[0].points[0].
+    controller.moveToElement(el, 10, -50);
+    assert.strictEqual(
+        events.shift(),
+        'mouseOver.1.-',
+        'mousemove to 50px above 1.0: mouseOver fired on series[1]'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'mouseOver.1.0',
+        'mousemove to 50px above 1.0: mouseOver fired on series[1].points[0]'
+    );
+    assert.strictEqual(
+        events.length,
+        0,
+        'mousemove to 50px above 1.0: no unexpected events'
+    );
+    assert.strictEqual(
+        pointer.isDirectTouch,
+        undefined,
+        'mousemove to 50px above 1.0: not a direct touch.'
+    );
+
+    // Move inside point 0.1
+    controller.moveToElement(el, 10, 10);
+    assert.strictEqual(
+        events.length,
+        0,
+        'mousemove to 10px inside 0.1: no unexpected events'
+    );
+    assert.strictEqual(
+        pointer.isDirectTouch,
+        true,
+        'mousemove to 50px above 0.1: not a direct touch.'
+    );
+
+    // TODO getKDPoints returns wrong hoverPoint with columns and shared tooltip
+    // Move to 50px above 0.1
+    // el = series1.points[1].graphic.element;
+    // console.log(el);
+    // chart.pointer.debug = true;
+    // controller.moveToElement(el, 0, -10);
+    // assert.strictEqual(
+    //     events.shift(),
+    //     'mouseOut.1.0',
+    //     'mousemove to 10px above 0.1: mouseOut fired on series[1].points[0]'
+    // );
+    // assert.strictEqual(
+    //     events.shift(),
+    //     'mouseOut.1.-',
+    //     'mousemove to 10px above 0.1: mouseOut fired on series[1]'
+    // );
+    // assert.strictEqual(
+    //     events.shift(),
+    //     'mouseOver.0.-',
+    //     'mousemove to 10px above 0.1: mouseOver fired on series[0]'
+    // );
+    // assert.strictEqual(
+    //     events.shift(),
+    //     'mouseOver.0.1',
+    //     'mousemove to 10px above 0.1: mouseOver fired on series[0].points[1].'
+    // );
+    // assert.strictEqual(
+    //     events.length,
+    //     0,
+    //     'mousemove to 10px above 0.1: no unexpected events'
+    // );
+    // assert.strictEqual(
+    //     pointer.isDirectTouch,
+    //     false,
+    //     'mousemove to 10px above 0.1: not a direct touch.'
+    // );
+});
+
+QUnit.test('Pointer.getHoverData', function (assert) {
+    // Create the chart
+    var options = {
+            chart: merge(config.chart, {
+                type: 'column'
+            }),
+            plotOptions: merge(config.plotOptions, {
+                series: {
+                    stacking: 'normal'
+                }
+            }),
+            tooltip: {
+                shared: true
+            },
+            series: [{
+                data: [1, 1, 1, 1, 1]
+            }, {
+                data: [5, 1, 1, 1, 1]
+            }, {
+                data: [1, 1, 1, 1, 1]
+            }]
+        },
+        data,
+        find = Highcharts.find,
+        chart = Highcharts.chart('container', options),
+        series = chart.series[2],
+        point = series.points[0],
+        scatterSeries,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis;
+
+    data = chart.pointer.getHoverData(
+        point, // existingHoverPoint
+        series, // existingHoverSeries
+        chart.series, // series
+        true, // isDirectTouch
+        true, // shared
+        {
+            chartX: xAxis.pos + point.clientX,
+            chartY: yAxis.pos + point.plotY
+        } // coordinates
+    );
+    assert.strictEqual(
+        data.hoverPoint === point,
+        true,
+        'isDirectTouch && shared: hoverPoint should equal existing hoverPoint'
+    );
+    assert.strictEqual(
+        data.hoverSeries === series,
+        true,
+        'isDirectTouch && shared: hoverSeries should equal existing hoverSeries'
+    );
+    assert.strictEqual(
+        data.hoverPoints.length,
+        chart.series.length,
+        'isDirectTouch && shared: one point hovered per series'
+    );
+    assert.strictEqual(
+        !!find(data.hoverPoints, function (p) {
+            return p.x !== data.hoverPoint.x;
+        }),
+        false,
+        'isDirectTouch && shared: All hoverPoints should have the same index as the hoverPoint'
+    );
+
+    // isDirectTouch and !shared tooltip
+    data = chart.pointer.getHoverData(
+        point, // existingHoverPoint
+        series, // existingHoverSeries
+        chart.series, // series
+        true, // isDirectTouch
+        false, // shared
+        {
+            chartX: xAxis.pos + point.clientX,
+            chartY: yAxis.pos + point.plotY
+        } // coordinates
+    );
+    assert.strictEqual(
+        data.hoverPoint === point,
+        true,
+        'isDirectTouch && !shared: hoverPoint should equal existing hoverPoint'
+    );
+    assert.strictEqual(
+        data.hoverSeries === series,
+        true,
+        'isDirectTouch && !shared: hoverSeries should equal existing hoverSeries'
+    );
+    assert.strictEqual(
+        data.hoverPoints.length,
+        1,
+        'isDirectTouch && !shared: there should be only 1 hoverPoint'
+    );
+
+    scatterSeries = chart.addSeries({
+        type: 'scatter',
+        data: [5, 2, 8, 1, 5]
+    });
+    series = chart.series[2];
+    point = series.points[2];
+    // !isDirectTouch and shared tooltip
+    data = chart.pointer.getHoverData(
+        false, // existingHoverPoint
+        false, // existingHoverSeries
+        chart.series, // series
+        false, // isDirectTouch
+        true, // shared
+        {
+            chartX: xAxis.pos + point.clientX + (point.pointWidth / 2) + 10,
+            chartY: yAxis.pos + point.plotY
+        } // coordinates
+    );
+    assert.strictEqual(
+        data.hoverPoint === point,
+        true,
+        '!isDirectTouch && shared: hoverPoint should be series[2].points[2]'
+    );
+    assert.strictEqual(
+        data.hoverSeries === series,
+        true,
+        '!isDirectTouch && shared: hoverSeries should be series[2]'
+    );
+    assert.strictEqual(
+        data.hoverPoints.length,
+        chart.series.length - 1,
+        '!isDirectTouch && shared: one point hovered per series, except from series with noSharedTooltip'
+    );
+    assert.strictEqual(
+        !!find(data.hoverPoints, function (p) {
+            return p.series === scatterSeries;
+        }),
+        false,
+        '!isDirectTouch && shared: series with noSharedTooltip should not be included.'
+    );
+    assert.strictEqual(
+        !!find(data.hoverPoints, function (p) {
+            return p.x !== data.hoverPoint.x;
+        }),
+        false,
+        '!isDirectTouch && shared: All hoverPoints should have the same index as the hoverPoint'
+    );
+
+
+    // Allow scatter series in shared tooltip
+    scatterSeries.remove();
+    Highcharts.seriesTypes.scatter.prototype.noSharedTooltip = false;
+    scatterSeries = chart.addSeries({
+        type: 'scatter',
+        data: [5, 2, 8, 1, 5]
+    });
+    // scatterSeries.noSharedTooltip = false;
+    data = chart.pointer.getHoverData(
+        point, // existingHoverPoint
+        series, // existingHoverSeries
+        chart.series, // series
+        true, // isDirectTouch
+        true, // shared
+        {
+            chartX: xAxis.pos + point.clientX,
+            chartY: yAxis.pos + point.plotY
+        } // coordinates
+    );
+    assert.strictEqual(
+        data.hoverPoint === point,
+        true,
+        'Allow scatter series in shared tooltip: hoverPoint should be series[2].points[2]'
+    );
+    assert.strictEqual(
+        data.hoverSeries === series,
+        true,
+        'Allow scatter series in shared tooltip: hoverSeries should be series[2]'
+    );
+    assert.strictEqual(
+        data.hoverPoints.length,
+        chart.series.length,
+        'Allow scatter series in shared tooltip: one point hovered per series'
+    );
+    assert.strictEqual(
+        !!find(data.hoverPoints, function (p) {
+            return p.series === scatterSeries;
+        }),
+        true,
+        'Allow scatter series in shared tooltip: one point from the scatter series'
+    );
+    assert.strictEqual(
+        !!find(data.hoverPoints, function (p) {
+            return p.x !== data.hoverPoint.x;
+        }),
+        false,
+        'Allow scatter series in shared tooltip: All hoverPoints should have the same index as the hoverPoint'
+    );
+
+    // Combination chart
+    series = chart.addSeries({
+        type: 'pie',
+        data: [5, 2, 8, 1, 5]
+    });
+    point = series.points[0];
+    data = chart.pointer.getHoverData(
+        point, // existingHoverPoint
+        series, // existingHoverSeries
+        chart.series, // series
+        true, // isDirectTouch
+        true, // shared
+        {
+            chartX: xAxis.pos + point.clientX,
+            chartY: yAxis.pos + point.plotY
+        } // coordinates
+    );
+    assert.strictEqual(
+        data.hoverPoint === point,
+        true,
+        'Combination chart: hoverPoint should be series[5].points[0]'
+    );
+    assert.strictEqual(
+        data.hoverSeries === series,
+        true,
+        'Combination chart: hoverSeries should be series[5]'
+    );
+    assert.strictEqual(
+        data.hoverPoints.length,
+        1,
+        'Combination chart: Only one point hovered when hovered series has noSharedTooltip'
+    );
+});

@@ -110,3 +110,171 @@ QUnit.test('textAlign', function (assert) {
         'vertical opposite Axis align:low has textAlign:right'
     );
 });
+
+/*
+ * Checks that the option *Axis.title.reserveSpace works as intended
+ */
+QUnit.test('title.reserveSpace', function (assert) {
+    var reserveSpaceTrue,
+        reserveSpaceFalse,
+        noTitle,
+        chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+
+            yAxis: [{
+                title: {
+                    text: 'Left Vertical Axis 1'
+                }
+            }, {
+                title: {
+                    text: 'Left Vertical Axis 2'
+                },
+                linkedTo: 0
+            }, {
+                title: {
+                    text: 'Right Vertical Axis 1'
+                },
+                linkedTo: 0,
+                opposite: true
+            }, {
+                title: {
+                    text: 'Right Vertical Axis 2'
+                },
+                linkedTo: 0,
+                opposite: true
+            }],
+
+            xAxis: [{
+                title: {
+                    text: 'Bottom Horizontal Axis 1'
+                }
+            }, {
+                title: {
+                    text: 'Bottom Horizontal Axis 2'
+                },
+                linkedTo: 0
+            }, {
+                title: {
+                    text: 'Top Horizontal Axis 1'
+                },
+                linkedTo: 0,
+                opposite: true
+            }, {
+                title: {
+                    text: 'Top Horizontal Axis 2'
+                },
+                linkedTo: 0,
+                opposite: true
+            }],
+
+            series: [{
+                data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            }]
+        }),
+        axes = chart.axes;
+
+    Highcharts.each(axes, function (axis) {
+        var axisName = axis.options.title.text,
+            dir = axis.horiz ? 'y' : 'x',
+            lessThan = axis.opposite && !axis.horiz || !axis.opposite && axis.horiz;
+
+        // Check that reserveSpace is true by default
+        assert.strictEqual(
+            axis.options.title.reserveSpace,
+            undefined,
+            axisName + ': title.reserveSpace is true by default'
+        );
+        reserveSpaceTrue = axis.labelGroup.getBBox()[dir];
+
+        // Set reserveSpace to false
+        axis.update(Highcharts.merge(axis.options, {
+            title: {
+                reserveSpace: false
+            }
+        }));
+        reserveSpaceFalse =  axis.labelGroup.getBBox()[dir];
+
+        // Set title to null
+        axis.update(Highcharts.merge(axis.options, {
+            title: null
+        }));
+
+        noTitle = axis.labelGroup.getBBox()[dir];
+
+        assert.ok(
+            lessThan ?
+                reserveSpaceTrue < reserveSpaceFalse :
+                reserveSpaceTrue > reserveSpaceFalse,
+            axisName + ': reserveSpaceTrue ' + dir + ' ' +
+                        (lessThan ? '<' : '>') +
+                        ' reserveSpaceFalse ' + dir
+        );
+        assert.equal(
+            reserveSpaceFalse,
+            noTitle,
+            axisName + ': reserveSpaceFalse === noTitle'
+        );
+    });
+});
+
+QUnit.test('Axis title multiline', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 300,
+            height: 300
+        },
+        yAxis: [{
+            title: {
+                text: 'A really long y axis title for this example. It is wrapped but shouldnt overlap axis labels'
+            },
+            lineWidth: 3
+        }, {
+            title: {
+                text: 'A really long y axis title for this example. It is wrapped but shouldnt overlap axis labels'
+            },
+            opposite: true,
+            lineWidth: 3,
+            linkedTo: 0
+        }],
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.ok(
+        chart.yAxis[0].axisTitle.element.getElementsByTagName('tspan').length > 1,
+        'Title is multiline'
+    );
+
+    assert.ok(
+        chart.yAxis[1].axisTitle.element.getElementsByTagName('tspan').length > 1,
+        'Title is multiline'
+    );
+
+    var crammedPlotWidth = chart.plotWidth;
+    assert.ok(
+        chart.plotWidth < 150,
+        'Plot area adapted'
+    );
+
+    chart.yAxis[0].update({
+        title: {
+            style: {
+                textOverflow: 'ellipsis'
+            }
+        }
+    });
+
+    assert.ok(
+        chart.yAxis[0].axisTitle.element.getElementsByTagName('tspan').length === 1,
+        'Title is single line'
+    );
+    assert.ok(
+        chart.plotWidth > crammedPlotWidth,
+        'Plot width increased'
+    );
+
+});
+

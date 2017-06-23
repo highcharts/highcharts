@@ -7,7 +7,8 @@ var colors = Highcharts.getOptions().colors,
         color: colors[0],
         drilldown: {
             name: 'MSIE versions',
-            categories: ['MSIE 6.0', 'MSIE 7.0', 'MSIE 8.0', 'MSIE 9.0', 'MSIE 10.0', 'MSIE 11.0'],
+            categories: ['MSIE 6.0', 'MSIE 7.0', 'MSIE 8.0', 'MSIE 9.0',
+                'MSIE 10.0', 'MSIE 11.0'],
             data: [1.06, 0.5, 17.2, 8.11, 5.33, 24.13],
             color: colors[0]
         }
@@ -16,7 +17,8 @@ var colors = Highcharts.getOptions().colors,
         color: colors[1],
         drilldown: {
             name: 'Firefox versions',
-            categories: ['Firefox v31', 'Firefox v32', 'Firefox v33', 'Firefox v35', 'Firefox v36', 'Firefox v37', 'Firefox v38'],
+            categories: ['Firefox v31', 'Firefox v32', 'Firefox v33',
+                'Firefox v35', 'Firefox v36', 'Firefox v37', 'Firefox v38'],
             data: [0.33, 0.15, 0.22, 1.27, 2.76, 2.32, 2.31, 1.02],
             color: colors[1]
         }
@@ -25,10 +27,13 @@ var colors = Highcharts.getOptions().colors,
         color: colors[2],
         drilldown: {
             name: 'Chrome versions',
-            categories: ['Chrome v30.0', 'Chrome v31.0', 'Chrome v32.0', 'Chrome v33.0', 'Chrome v34.0',
-                'Chrome v35.0', 'Chrome v36.0', 'Chrome v37.0', 'Chrome v38.0', 'Chrome v39.0', 'Chrome v40.0', 'Chrome v41.0', 'Chrome v42.0', 'Chrome v43.0'
-                ],
-            data: [0.14, 1.24, 0.55, 0.19, 0.14, 0.85, 2.53, 0.38, 0.6, 2.96, 5, 4.32, 3.68, 1.45],
+            categories: ['Chrome v30.0', 'Chrome v31.0', 'Chrome v32.0',
+                'Chrome v33.0', 'Chrome v34.0',
+                'Chrome v35.0', 'Chrome v36.0', 'Chrome v37.0', 'Chrome v38.0',
+                'Chrome v39.0', 'Chrome v40.0', 'Chrome v41.0', 'Chrome v42.0',
+                'Chrome v43.0'],
+            data: [0.14, 1.24, 0.55, 0.19, 0.14, 0.85, 2.53, 0.38, 0.6, 2.96,
+                5, 4.32, 3.68, 1.45],
             color: colors[2]
         }
     }, {
@@ -36,7 +41,8 @@ var colors = Highcharts.getOptions().colors,
         color: colors[3],
         drilldown: {
             name: 'Safari versions',
-            categories: ['Safari v5.0', 'Safari v5.1', 'Safari v6.1', 'Safari v6.2', 'Safari v7.0', 'Safari v7.1', 'Safari v8.0'],
+            categories: ['Safari v5.0', 'Safari v5.1', 'Safari v6.1',
+                'Safari v6.2', 'Safari v7.0', 'Safari v7.1', 'Safari v8.0'],
             data: [0.3, 0.42, 0.29, 0.17, 0.26, 0.77, 2.56],
             color: colors[3]
         }
@@ -134,8 +140,25 @@ Highcharts.chart('container', {
         dataLabels: {
             formatter: function () {
                 // display only if larger than 1
-                return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + this.y + '%' : null;
+                return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
+                    this.y + '%' : null;
             }
-        }
-    }]
+        },
+        id: 'versions'
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 400
+            },
+            chartOptions: {
+                series: [{
+                    id: 'versions',
+                    dataLabels: {
+                        enabled: false
+                    }
+                }]
+            }
+        }]
+    }
 });

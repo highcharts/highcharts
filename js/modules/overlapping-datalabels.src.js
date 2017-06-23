@@ -13,6 +13,7 @@ import '../parts/Chart.js';
  */
 var Chart = H.Chart,
 	each = H.each,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	addEvent = H.addEvent;
 
@@ -22,6 +23,16 @@ var Chart = H.Chart,
 Chart.prototype.callbacks.push(function (chart) {
 	function collectAndHide() {
 		var labels = [];
+
+		each(chart.yAxis, function (yAxis) {
+			if (!yAxis.options.stackLabels.allowOverlap) {
+				objectEach(yAxis.stacks, function (stack) {
+					objectEach(stack, function (stackItem) {
+						labels.push(stackItem.label);
+					});
+				});
+			}
+		});
 
 		each(chart.series || [], function (series) {
 			var dlOptions = series.options.dataLabels,
@@ -75,6 +86,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
 		parent1,
 		parent2,
 		padding,
+		bBox,
 		intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
 			return !(
 				x2 > x1 + w1 ||
@@ -84,12 +96,20 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
 			);
 		};
 
-	// Mark with initial opacity
 	for (i = 0; i < len; i++) {
 		label = labels[i];
 		if (label) {
+
+			// Mark with initial opacity
 			label.oldOpacity = label.opacity;
 			label.newOpacity = 1;
+
+			// Get width and height if pure text nodes (stack labels)
+			if (!label.width) {
+				bBox = label.getBBox();
+				label.width = bBox.width;
+				label.height = bBox.height;
+			}
 		}
 	}
 
@@ -117,7 +137,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
 				parent1 = label1.parentGroup;
 				parent2 = label2.parentGroup;
 				// Substract the padding if no background or border (#4333)
-				padding = 2 * (label1.box ? 0 : label1.padding);
+				padding = 2 * (label1.box ? 0 : (label1.padding || 0));
 				isIntersecting = intersectRect(
 					pos1.x + parent1.translateX,
 					pos1.y + parent1.translateY,

@@ -34,8 +34,6 @@ var addEvent = H.addEvent,
 
 /**
  * TrackerMixin for points and graphs.
- *
- * @mixin
  */
 TrackerMixin = H.TrackerMixin = {
 
@@ -48,9 +46,9 @@ TrackerMixin = H.TrackerMixin = {
 			pointer = chart.pointer,
 			onMouseOver = function (e) {
 				var point = pointer.getPointFromEvent(e);
-
 				// undefined on graph in scatterchart
 				if (point !== undefined) { 
+					pointer.isDirectTouch = true;
 					point.onMouseOver(e);
 				}
 			};
@@ -235,7 +233,7 @@ extend(Legend.prototype, {
 		})
 		.on('mouseout', function () {
 			/*= if (build.classic) { =*/
-			legendItem.css(item.visible ? legend.itemStyle : legend.itemHiddenStyle);
+			legendItem.css(merge(item.visible ? legend.itemStyle : legend.itemHiddenStyle));
 			/*= } =*/
 
 			// A CSS class to dim or hide other than the hovered series
@@ -304,7 +302,9 @@ defaultOptions.legend.itemStyle.cursor = 'pointer';
 
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 	/**
-	 * Display the zoom button
+	 * Display the zoom button.
+	 *
+	 * @private
 	 */
 	showResetZoom: function () {
 		var chart = this,
@@ -330,7 +330,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 	},
 
 	/**
-	 * Zoom out to 1:1
+	 * Zoom out to 1:1.
+	 *
+	 * @private
 	 */
 	zoomOut: function () {
 		var chart = this;
@@ -340,8 +342,10 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 	},
 
 	/**
-	 * Zoom into a given portion of the chart given by axis coordinates
+	 * Zoom into a given portion of the chart given by axis coordinates.
 	 * @param {Object} event
+	 *
+	 * @private
 	 */
 	zoom: function (event) {
 		var chart = this,
@@ -355,6 +359,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 			each(chart.axes, function (axis) {
 				hasZoomed = axis.zoom();
 			});
+			pointer.initiated = false; // #6804
+
 		} else { // else, zoom in on all axes
 			each(event.xAxis.concat(event.yAxis), function (axisData) {
 				var axis = axisData.axis,
@@ -388,9 +394,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 	},
 
 	/**
-	 * Pan the chart by dragging the mouse across the pane. This function is called
-	 * on mouse move, and the distance to pan is computed from chartX compared to
-	 * the first chartX position in the dragging operation.
+	 * Pan the chart by dragging the mouse across the pane. This function is
+	 * called on mouse move, and the distance to pan is computed from chartX
+	 * compared to the first chartX position in the dragging operation.
+	 *
+	 * @private
 	 */
 	pan: function (e, panning) {
 
@@ -420,18 +428,35 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				flipped = panMax < panMin,
 				newMin = flipped ? panMax : panMin,
 				newMax = flipped ? panMin : panMax,
-				paddedMin = axis.toValue(
-					axis.toPixels(extremes.min) - axis.minPixelPadding
+				paddedMin = Math.min(
+					extremes.dataMin, 
+					axis.toValue(
+						axis.toPixels(extremes.min) - axis.minPixelPadding
+					)
 				),
-				paddedMax = axis.toValue(
-					axis.toPixels(extremes.max) + axis.minPixelPadding
+				paddedMax = Math.max(
+					extremes.dataMax,
+					axis.toValue(
+						axis.toPixels(extremes.max) + axis.minPixelPadding
+					)
 				),
-				distMin = Math.min(extremes.dataMin, paddedMin) - newMin,
-				distMax = newMax - Math.max(extremes.dataMax, paddedMax);
+				spill;
 
-			// Negative distMin and distMax means that we're still inside the
-			// data range.
-			if (axis.series.length && distMin < 0 && distMax < 0) {
+			// If the new range spills over, either to the min or max, adjust
+			// the new range.
+			spill = paddedMin - newMin;
+			if (spill > 0) {
+				newMax += spill;
+				newMin = paddedMin;
+			}
+			spill = newMax - paddedMax;
+			if (spill > 0) {
+				newMax = paddedMax;
+				newMin -= spill;
+			}
+
+			// Set new extremes if they are actually new
+			if (axis.series.length && newMin !== extremes.min && newMax !== extremes.max) {
 				axis.setExtremes(
 					newMin,
 					newMax,
@@ -455,12 +480,28 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 /*
  * Extend the Point object with interaction
  */
-extend(Point.prototype, /** @lends Point.prototype */ {
+extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	/**
-	 * Toggle the selection status of a point
-	 * @param {Boolean} selected Whether to select or unselect the point.
-	 * @param {Boolean} accumulate Whether to add to the previous selection. By default,
-	 *		 this happens if the control key (Cmd on Mac) was pressed during clicking.
+	 * Toggle the selection status of a point.
+	 * @param  {Boolean} [selected]
+	 *         When `true`, the point is selected. When `false`, the point is
+	 *         unselected. When `null` or `undefined`, the selection state is
+	 *         toggled.
+	 * @param  {Boolean} [accumulate=false]
+	 *         When `true`, the selection is added to other selected points.
+	 *         When `false`, other selected points are deselected. Internally in
+	 *         Highcharts, when {@link http://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect|allowPointSelect}
+	 *         is `true`, selected points are accumulated on Control, Shift or
+	 *         Cmd clicking the point.
+	 *
+	 * @see    Highcharts.Chart#getSelectedPoints
+	 *
+	 * @sample highcharts/members/point-select/
+	 *         Select a point from a button
+	 * @sample highcharts/chart/events-selection-points/
+	 *         Select a range of points through a drag selection
+	 * @sample maps/series/data-id/
+	 *         Select a point in Highmaps
 	 */
 	select: function (selected, accumulate) {
 		var point = this,
@@ -471,6 +512,15 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 
 		// fire the event with the default handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
+			
+			/**
+			 * Whether the point is selected or not. 
+			 * @see Point#select
+			 * @see Chart#getSelectedPoints
+			 * @memberof Point
+			 * @name selected
+			 * @type {Boolean}
+			 */
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
 
@@ -491,7 +541,8 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 	},
 
 	/**
-	 * Runs on mouse over the point
+	 * Runs on mouse over the point. Called internally from mouse and touch
+	 * events.
 	 * 
 	 * @param {Object} e The event arguments
 	 */
@@ -500,12 +551,16 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 			series = point.series,
 			chart = series.chart,
 			pointer = chart.pointer;
-		point.firePointEvent('mouseOver');
+		e = e ?
+			pointer.normalize(e) :
+			// In cases where onMouseOver is called directly without an event
+			pointer.getChartCoordinatesFromPoint(point, chart.inverted);
 		pointer.runPointActions(e, point);
 	},
 
 	/**
-	 * Runs on mouse out from the point
+	 * Runs on mouse out from the point. Called internally from mouse and touch
+	 * events.
 	 */
 	onMouseOut: function () {
 		var point = this,
@@ -520,27 +575,30 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 	/**
 	 * Import events from the series' and point's options. Only do it on
 	 * demand, to save processing time on hovering.
+	 *
+	 * @private
 	 */
 	importEvents: function () {
 		if (!this.hasImportedEvents) {
 			var point = this,
 				options = merge(point.series.options.point, point.options),
-				events = options.events,
-				eventType;
+				events = options.events;
 
 			point.events = events;
 
-			for (eventType in events) {
-				addEvent(point, eventType, events[eventType]);
-			}
+			H.objectEach(events, function (event, eventType) {
+				addEvent(point, eventType, event);
+			});
 			this.hasImportedEvents = true;
 
 		}
 	},
 
 	/**
-	 * Set the point's state
-	 * @param {String} state
+	 * Set the point's state.
+	 * @param  {String} [state]
+	 *         The new state, can be one of `''` (an empty string), `hover` or
+	 *         `select`.
 	 */
 	setState: function (state, move) {
 		var point = this,
@@ -566,18 +624,30 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 		state = state || ''; // empty string
 
 		if (
-				// already has this state
-				(state === point.state && !move) ||
-				// selected points don't respond to hover
-				(point.selected && state !== 'select') ||
-				// series' state options is disabled
-				(stateOptions.enabled === false) ||
-				// general point marker's state options is disabled
-				(state && (stateDisabled || (normalDisabled && markerStateOptions.enabled === false))) ||
-				// individual point marker's state options is disabled
-				(state && pointMarker.states && pointMarker.states[state] && pointMarker.states[state].enabled === false) // #1610
+			// already has this state
+			(state === point.state && !move) ||
+			
+			// selected points don't respond to hover
+			(point.selected && state !== 'select') ||
+			
+			// series' state options is disabled
+			(stateOptions.enabled === false) ||
+			
+			// general point marker's state options is disabled
+			(state && (
+				stateDisabled || 
+				(normalDisabled && markerStateOptions.enabled === false)
+			)) ||
+			
+			// individual point marker's state options is disabled
+			(
+				state &&
+				pointMarker.states &&
+				pointMarker.states[state] &&
+				pointMarker.states[state].enabled === false
+			) // #1610
 
-			) {
+		) {
 			return;
 		}
 
@@ -604,7 +674,13 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 
 			/*= if (build.classic) { =*/
 			//attribs = merge(series.pointAttribs(point, state), attribs);
-			point.graphic.attr(series.pointAttribs(point, state));
+			point.graphic.animate(
+				series.pointAttribs(point, state),
+				pick(
+					chart.options.chart.animation,
+					stateOptions.animation
+				)
+			);
 			/*= } =*/
 
 			if (markerAttribs) {
@@ -673,8 +749,8 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					// #5818, #5903
-					.add(hasMarkers ? series.markerGroup : series.group);
+					// #5818, #5903, #6705
+					.add((point.graphic || stateMarkerGraphic).parentGroup);
 			}
 			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
@@ -702,9 +778,11 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 	},
 
 	/**
-	 * Get the circular path definition for the halo
-	 * @param  {Number} size The radius of the circular halo.
-	 * @returns {Array} The path definition
+	 * Get the path definition for the halo, which is usually a shadow-like
+	 * circle around the currently hovered point.
+	 * @param  {Number} size
+	 *         The radius of the circular halo.
+	 * @return {Array} The path definition
 	 */
 	haloPath: function (size) {
 		var series = this.series,
@@ -723,9 +801,9 @@ extend(Point.prototype, /** @lends Point.prototype */ {
  * Extend the Series object with interaction
  */
 
-extend(Series.prototype, /** @lends Series.prototype */ {
+extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	/**
-	 * Series mouse over handler
+	 * Runs on mouse over the series graphical items.
 	 */
 	onMouseOver: function () {
 		var series = this,
@@ -749,7 +827,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	},
 
 	/**
-	 * Series mouse out handler
+	 * Runs on mouse out of the series graphical items.
 	 */
 	onMouseOut: function () {
 		// trigger the event only if listeners exist
@@ -782,7 +860,13 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	},
 
 	/**
-	 * Set the state of the graph
+	 * Set the state of the series. Called internally on mouse interaction and
+	 * select operations, but it can also be called directly to visually
+	 * highlight a series.
+	 *
+	 * @param  {String} [state]
+	 *         Can be either `hover`, `select` or undefined to set to normal
+	 *         state.
 	 */
 	setState: function (state) {
 		var series = this,
@@ -851,10 +935,15 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	},
 
 	/**
-	 * Set the visibility of the graph
+	 * Show or hide the series.
 	 *
-	 * @param vis {Boolean} True to show the series, false to hide. If undefined,
-	 *				the visibility is toggled.
+	 * @param  {Boolean} [visible]
+	 *         True to show the series, false to hide. If undefined, the
+	 *         visibility is toggled.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart after the series is altered. If doing
+	 *         more operations on the chart, it is a good idea to set redraw to
+	 *         false and call {@link Chart#redraw|chart.redraw()} after.
 	 */
 	setVisible: function (vis, redraw) {
 		var series = this,
@@ -914,14 +1003,23 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	},
 
 	/**
-	 * Show the graph
+	 * Show the series if hidden.
+	 *
+	 * @sample highcharts/members/series-hide/
+	 *         Toggle visibility from a button
 	 */
 	show: function () {
 		this.setVisible(true);
 	},
 
 	/**
-	 * Hide the graph
+	 * Hide the series if visible. If the {@link
+	 * https://api.highcharts.com/highcharts/chart.ignoreHiddenSeries|
+	 * chart.ignoreHiddenSeries} option is true, the chart is redrawn without
+	 * this series.
+	 *
+	 * @sample highcharts/members/series-hide/
+	 *         Toggle visibility from a button
 	 */
 	hide: function () {
 		this.setVisible(false);
@@ -929,15 +1027,24 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
 
 	/**
-	 * Set the selected state of the graph
+	 * Select or unselect the series. This means its {@link
+	 * Highcharts.Series.selected|selected} property is set, the checkbox in the
+	 * legend is toggled and when selected, the series is returned by the
+	 * {@link Highcharts.Chart#getSelectedSeries} function.
 	 *
-	 * @param selected {Boolean} True to select the series, false to unselect. If
-	 *				undefined, the selection state is toggled.
+	 * @param  {Boolean} [selected]
+	 *         True to select the series, false to unselect. If	undefined, the
+	 *         selection state is toggled.
+	 *
+	 * @sample highcharts/members/series-select/
+	 *         Select a series from a button
 	 */
 	select: function (selected) {
 		var series = this;
-		// if called without an argument, toggle
-		series.selected = selected = (selected === undefined) ? !series.selected : selected;
+		
+		series.selected = selected = (selected === undefined) ?
+			!series.selected :
+			selected;
 
 		if (series.checkbox) {
 			series.checkbox.checked = selected;

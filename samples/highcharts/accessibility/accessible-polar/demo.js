@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+var chart = Highcharts.chart('container', {
     chart: {
         polar: true,
         description: 'Test chart displaying a polar chart concept.'
@@ -41,3 +41,9 @@ Highcharts.chart('container', {
         pointPlacement: 'on'
     }]
 });
+
+// Remove click events on container to avoid having "clickable" announced by AT
+// These events are needed for custom click events, drag to zoom, and navigator
+// support.
+chart.container.onmousedown = null;
+chart.container.onclick = null;

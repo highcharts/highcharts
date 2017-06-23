@@ -20,17 +20,114 @@ var correctFloat = H.correctFloat,
 /* ****************************************************************************
  * Start Waterfall series code                                                *
  *****************************************************************************/
-seriesType('waterfall', 'column', {
+
+
+seriesType('waterfall', 'column', 
+/**
+ * @extends {plotOptions.column}
+ * @optionparent plotOptions.waterfall
+ */
+
+/**
+ * The plotOptions is a wrapper object for config objects for each series
+ * type. The config objects for each series can also be overridden for
+ * each series item as given in the series array.
+ * 
+ * Configuration options for the series are given in three levels. Options
+ * for all series in a chart are given in the [plotOptions.series](#plotOptions.
+ * series) object. Then options for all series of a specific type are
+ * given in the plotOptions of that type, for example plotOptions.line.
+ * Next, options for one single series are given in [the series array](#series).
+ * 
+ * @product highcharts highstock highmaps
+ */
+{
+
+	/**
+	 */
 	dataLabels: {
+
+		/**
+		 */
 		inside: true
 	},
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The width of the line connecting waterfall columns.
+	 * 
+	 * @type {Number}
+	 * @default 1
+	 * @product highcharts
+	 */
 	lineWidth: 1,
+
+	/**
+	 * The color of the line that connects columns in a waterfall series.
+	 * 
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the stroke can be set with the `.highcharts-
+	 * graph` class.
+	 * 
+	 * @type {Color}
+	 * @default #333333
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	lineColor: '${palette.neutralColor80}',
+
+	/**
+	 * A name for the dash style to use for the line connecting the columns
+	 * of the waterfall series. Possible values:
+	 * 
+	 * *   Solid
+	 * *   ShortDash
+	 * *   ShortDot
+	 * *   ShortDashDot
+	 * *   ShortDashDotDot
+	 * *   Dot
+	 * *   Dash
+	 * *   LongDash
+	 * *   DashDot
+	 * *   LongDashDot
+	 * *   LongDashDotDot
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the stroke dash-array can be set with the `.
+	 * highcharts-graph` class.
+	 * 
+	 * @type {String}
+	 * @default Dot
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	dashStyle: 'dot',
+
+	/**
+	 * The color of the border of each waterfall column.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the border stroke can be set with the `.highcharts-
+	 * point` class.
+	 * 
+	 * @type {Color}
+	 * @default #333333
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	borderColor: '${palette.neutralColor80}',
+
+	/**
+	 */
 	states: {
+
+		/**
+		 */
 		hover: {
+
+			/**
+			 */
 			lineWidthPlus: 0 // #3126
 		}
 	}
@@ -97,17 +194,17 @@ seriesType('waterfall', 'column', {
 			}
 			// up points
 			y = Math.max(previousY, previousY + point.y) + range[0];
-			shapeArgs.y = yAxis.toPixels(y, true);
+			shapeArgs.y = yAxis.translate(y, 0, 1, 0, 1);
 
 			// sum points
 			if (point.isSum) {
-				shapeArgs.y = yAxis.toPixels(range[1], true);
-				shapeArgs.height = Math.min(yAxis.toPixels(range[0], true), yAxis.len) -
+				shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
+				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1, 0, 1), yAxis.len) -
 					shapeArgs.y; // #4256
 
 			} else if (point.isIntermediateSum) {
-				shapeArgs.y = yAxis.toPixels(range[1], true);
-				shapeArgs.height = Math.min(yAxis.toPixels(previousIntermediate, true), yAxis.len) -
+				shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
+				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1, 0, 1), yAxis.len) -
 					shapeArgs.y;
 				previousIntermediate = range[1];
 
@@ -115,8 +212,8 @@ seriesType('waterfall', 'column', {
 			// shape height (#3886)
 			} else {
 				shapeArgs.height = yValue > 0 ?
-					yAxis.toPixels(previousY, true) - shapeArgs.y :
-					yAxis.toPixels(previousY, true) - yAxis.toPixels(previousY - yValue, true);
+					yAxis.translate(previousY, 0, 1, 0, 1) - shapeArgs.y :
+					yAxis.translate(previousY, 0, 1, 0, 1) - yAxis.translate(previousY - yValue, 0, 1, 0, 1);
 
 				previousY += stack && stack[point.x] ? stack[point.x].total : yValue;
 			}
@@ -254,6 +351,7 @@ seriesType('waterfall', 'column', {
 			length = data.length,
 			lineWidth = this.graph.strokeWidth() + this.borderWidth,
 			normalizer = Math.round(lineWidth) % 2 / 2,
+			reversedYAxis = this.yAxis.reversed,
 			path = [],
 			prevArgs,
 			pointArgs,
@@ -273,7 +371,10 @@ seriesType('waterfall', 'column', {
 				prevArgs.y + data[i - 1].minPointLengthOffset + normalizer
 			];
 
-			if (data[i - 1].y < 0) {
+			if (
+				(data[i - 1].y < 0 && !reversedYAxis) ||
+				(data[i - 1].y > 0 && reversedYAxis)
+			) {
 				d[2] += prevArgs.height;
 				d[5] += prevArgs.height;
 			}

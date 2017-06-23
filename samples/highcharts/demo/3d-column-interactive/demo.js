@@ -36,7 +36,7 @@ function showValues() {
 
 // Activate the sliders
 $('#sliders input').on('input change', function () {
-    chart.options.chart.options3d[this.id] = this.value;
+    chart.options.chart.options3d[this.id] = parseFloat(this.value);
     showValues();
     chart.redraw(false);
 });

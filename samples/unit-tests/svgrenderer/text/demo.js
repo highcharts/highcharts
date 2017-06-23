@@ -83,11 +83,30 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
     style.width = '1px';
     text1.destroy();
     text1 = chart.renderer.text('01234567', 0, 100).css(style).add();
-    console.log(text1);
     assert.strictEqual(
         text1.element.childNodes[0].innerHTML,
         '',
         'Width was too small for ellipsis.'
+    );
+
+    /**
+     * Rotation. Width determines the length of a rotated text
+     */
+    text1.destroy();
+    text2.destroy();
+    style.width = '50px';
+    text1 = chart.renderer.text('01234567', 0, 100).attr({
+        rotation: 90
+    }).css(style).add();
+    assert.strictEqual(
+        text1.element.childNodes[0].innerHTML.slice(-1),
+        '\u2026',
+        'Ellipsis was added to text node which has rotation.'
+    );
+    assert.strictEqual(
+        text1.getBBox().height < width,
+        true,
+        'Height of text is lower than style.width'
     );
 });
 

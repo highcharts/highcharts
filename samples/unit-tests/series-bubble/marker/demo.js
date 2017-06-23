@@ -1,3 +1,5 @@
+/* global TestController */
+
 QUnit.test('Global marker is null (#6321)', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -34,5 +36,54 @@ QUnit.test('Global marker is null (#6321)', function (assert) {
         typeof chart.series[0].points[0].graphic,
         'object',
         'Has marker'
+    );
+});
+
+QUnit.test('Clicking marker (#6705)', function (assert) {
+
+    var clicked;
+
+    var chart = Highcharts.chart('container', {
+        series: [{
+            animation: false,
+            cursor: 'pointer',
+            type: 'bubble',
+            point: {
+                events: {
+                    click: function () {
+                        console.log('click');
+                        clicked = true;
+                    }
+                }
+            },
+            states: {
+                hover: {
+                    halo: {
+                        size: 10
+                    }
+                }
+            },
+            data: [
+                [1, 2, 3]
+            ]
+        }]
+    });
+
+    var controller = new TestController(chart);
+
+    controller.mouseover(
+        chart.plotLeft + chart.series[0].points[0].plotX,
+        chart.plotTop + chart.series[0].points[0].plotY
+    );
+
+    controller.click(
+        chart.plotLeft + chart.series[0].points[0].plotX,
+        chart.plotTop + chart.series[0].points[0].plotY
+    );
+
+    assert.strictEqual(
+        clicked,
+        true,
+        'Click event fired'
     );
 });
