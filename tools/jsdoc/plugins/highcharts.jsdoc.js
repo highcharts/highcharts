@@ -279,6 +279,10 @@ function augmentOption(path, obj) {
     }
 }
 
+/**
+ * Resolve properties where the product can be specified like {highcharts|highmaps}
+ * etc. Return an object with value and products.
+ */
 function resolveProductTypes(doclet, tagObj) {
     var reg = /^\{([a-z\|]+)\}/g,
         match = tagObj.value.match(reg),
@@ -291,8 +295,10 @@ function resolveProductTypes(doclet, tagObj) {
     }
 
 
-    doclet[tagObj.originalTitle] = value;
-    doclet[tagObj.originalTitle + '_products'] = products;
+    return doclet[tagObj.originalTitle] = {
+        value: value.trim(),
+        products: products
+    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -306,12 +312,21 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('sample', {
         onTagged: function (doclet, tagObj) {
-            var del = tagObj.text.indexOf(' '),
-                name = tagObj.text.substr(del).trim().replace(/\s\s+/g, ' ')
+
+            var valueObj = resolveProductTypes(doclet, tagObj);
+
+            var text = valueObj.value;
+
+            var del = text.indexOf(' '),
+                name = text.substr(del).trim().replace(/\s\s+/g, ' ')
             ;
 
-            doclet.samples = doclet.samples || {};
-            doclet.samples[name] = tagObj.text.substr(0, del).trim();
+            doclet.samples = doclet.samples || [];
+            doclet.samples.push({
+                name: name,
+                value: text.substr(0, del).trim(),
+                products: valueObj.products
+            });
         }
     });
 
