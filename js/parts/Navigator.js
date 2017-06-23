@@ -81,7 +81,7 @@ extend(defaultOptions,
 		 * 
 		 * @type {Number}
 		 * @sample {highstock} stock/navigator/height/ A higher navigator
-		 * @default {all} 40
+		 * @default 40
 		 * @product highstock
 		 */
 		height: 40,
@@ -91,7 +91,7 @@ extend(defaultOptions,
 		 * 
 		 * @type {Number}
 		 * @sample {highstock} stock/navigator/margin/ A margin of 2 draws the     navigator closer to the X axis labels
-		 * @default {all} 25
+		 * @default 25
 		 * @product highstock
 		 */
 		margin: 25,
@@ -102,7 +102,7 @@ extend(defaultOptions,
 		 * 
 		 * @type {Boolean}
 		 * @sample {highstock} stock/navigator/maskinside-false/ False, mask outside
-		 * @default {all} true
+		 * @default true
 		 * @since 2.0
 		 * @product highstock
 		 */
@@ -125,7 +125,7 @@ extend(defaultOptions,
 			 * The fill for the handle.
 			 * 
 			 * @type {Color}
-			 * @default {all} #f2f2f2
+			 * @default #f2f2f2
 			 * @product highstock
 			 */
 			backgroundColor: '${palette.neutralColor5}',
@@ -134,7 +134,7 @@ extend(defaultOptions,
 			 * The stroke for the handle border and the stripes inside.
 			 * 
 			 * @type {Color}
-			 * @default {all} #999999
+			 * @default #999999
 			 * @product highstock
 			 */
 			borderColor: '${palette.neutralColor40}'
@@ -150,7 +150,7 @@ extend(defaultOptions,
 		 * style/style-by-css), the mask is styled with the `.highcharts-navigator-
 		 * mask` and `.highcharts-navigator-mask-inside` classes.
 		 * @sample {highstock} stock/navigator/maskfill/ Blue, semi transparent mask
-		 * @default {all} rgba(102,133,194,0.3)
+		 * @default rgba(102,133,194,0.3)
 		 * @product highstock
 		 */
 		maskFill: color('${palette.highlightColor60}').setOpacity(0.3).get(),
@@ -161,7 +161,7 @@ extend(defaultOptions,
 		 * 
 		 * @type {Color}
 		 * @sample {highstock} stock/navigator/outline/ 2px blue outline
-		 * @default {all} #cccccc
+		 * @default #cccccc
 		 * @product highstock
 		 */
 		outlineColor: '${palette.neutralColor20}',
@@ -175,7 +175,7 @@ extend(defaultOptions,
 		 * style/style-by-css), the outline stroke width is set with the `.
 		 * highcharts-navigator-outline` class.
 		 * @sample {highstock} stock/navigator/outline/ 2px blue outline
-		 * @default {all} 2
+		 * @default 2
 		 * @product highstock
 		 */
 		outlineWidth: 1,

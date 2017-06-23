@@ -50,7 +50,7 @@ seriesType('pie', 'line',
 	 * 
 	 * @type {Array<String|Number>}
 	 * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
-	 * @default {all} [null, null]
+	 * @default [null, null]
 	 * @product highcharts
 	 */
 	center: [null, null],
@@ -81,7 +81,7 @@ seriesType('pie', 'line',
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/ Data labels on top of the pie
-		 * @default {all} 30
+		 * @default 30
 		 * @since 2.1
 		 * @product highcharts
 		 */
@@ -119,7 +119,7 @@ seriesType('pie', 'line',
 	 * 
 	 * @type {Boolean}
 	 * @sample {highcharts} highcharts/plotoptions/pie-ignorehiddenpoint/ True, the hiddden point is ignored
-	 * @default {all} true
+	 * @default true
 	 * @since 2.3.0
 	 * @product highcharts
 	 */
@@ -145,7 +145,7 @@ seriesType('pie', 'line',
 	 * 
 	 * @type {String|Number}
 	 * @sample {highcharts} highcharts/plotoptions/pie-size/ Smaller pie
-	 * @default {all}  
+	 * @default  
 	 * @product highcharts
 	 */
 	size: null,
@@ -166,7 +166,7 @@ seriesType('pie', 'line',
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/pie-slicedoffset-20/ 20px offset
-	 * @default {all} 10
+	 * @default 10
 	 * @product highcharts
 	 */
 	slicedOffset: 10,
@@ -181,7 +181,7 @@ seriesType('pie', 'line',
 	 * when moving the mouse between series.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} false
+	 * @default false
 	 * @product highcharts
 	 */
 	stickyTracking: false,
@@ -208,7 +208,7 @@ seriesType('pie', 'line',
 	 * 
 	 * @type {Color}
 	 * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/ Black border
-	 * @default {all} #ffffff
+	 * @default #ffffff
 	 * @product highcharts
 	 */
 	borderColor: '${palette.backgroundColor}',
@@ -227,7 +227,7 @@ seriesType('pie', 'line',
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/pie-borderwidth/ 3px border
-	 * @default {all} 1
+	 * @default 1
 	 * @product highcharts
 	 */
 	borderWidth: 1,
@@ -252,7 +252,7 @@ seriesType('pie', 'line',
 			 * 
 			 * @type {Number}
 			 * @sample {highcharts} highcharts/plotoptions/pie-states-hover-brightness/ Brightened by 0.5
-			 * @default {all} 0.1
+			 * @default 0.1
 			 * @product highcharts
 			 */
 			brightness: 0.1,

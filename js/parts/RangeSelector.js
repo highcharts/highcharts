@@ -99,7 +99,7 @@ extend(defaultOptions,
 		 * and input.
 		 * 
 		 * @type {Number}
-		 * @default {all} 35
+		 * @default 35
 		 * @since 2.1.9
 		 * @product highstock
 		 */
@@ -110,7 +110,7 @@ extend(defaultOptions,
 		 *  `verticalAlign`, `x` and `y`.
 		 * 
 		 * @type {Object}
-		 * @default {all} { align: "right" }
+		 * @default { align: "right" }
 		 * @since 1.2.5
 		 * @product highstock
 		 */
@@ -176,7 +176,7 @@ defaultOptions.lang = merge(defaultOptions.lang,
 	 * The text for the label for the range selector buttons.
 	 * 
 	 * @type {String}
-	 * @default {all} Zoom
+	 * @default Zoom
 	 * @product highstock
 	 */
 	rangeSelectorZoom: 'Zoom',
@@ -185,7 +185,7 @@ defaultOptions.lang = merge(defaultOptions.lang,
 	 * The text for the label for the "from" input box in the range selector.
 	 * 
 	 * @type {String}
-	 * @default {all} From
+	 * @default From
 	 * @product highstock
 	 */
 	rangeSelectorFrom: 'From',
@@ -194,7 +194,7 @@ defaultOptions.lang = merge(defaultOptions.lang,
 	 * The text for the label for the "to" input box in the range selector.
 	 * 
 	 * @type {String}
-	 * @default {all} To
+	 * @default To
 	 * @product highstock
 	 */
 	rangeSelectorTo: 'To'

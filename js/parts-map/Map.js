@@ -52,7 +52,7 @@ defaultOptions.mapNavigation = {
 		 * 
 		 * @validvalue ["plotBox", "spacingBox"]
 		 * @type {String}
-		 * @default {all} plotBox
+		 * @default plotBox
 		 * @product highmaps
 		 */
 		alignTo: 'plotBox',
@@ -62,7 +62,7 @@ defaultOptions.mapNavigation = {
 		 * 
 		 * @validvalue ["left", "center", "right"]
 		 * @type {String}
-		 * @default {all} left
+		 * @default left
 		 * @product highmaps
 		 */
 		align: 'left',
@@ -73,7 +73,7 @@ defaultOptions.mapNavigation = {
 		 * 
 		 * @validvalue ["top", "middle", "bottom"]
 		 * @type {String}
-		 * @default {all} bottom
+		 * @default bottom
 		 * @product highmaps
 		 */
 		verticalAlign: 'top',
@@ -82,7 +82,7 @@ defaultOptions.mapNavigation = {
 		 * The X offset of the buttons relative to its `align` setting.
 		 * 
 		 * @type {Number}
-		 * @default {all} 0
+		 * @default 0
 		 * @product highmaps
 		 */
 		x: 0,
@@ -91,7 +91,7 @@ defaultOptions.mapNavigation = {
 		 * The width of the map navigation buttons.
 		 * 
 		 * @type {Number}
-		 * @default {all} 18
+		 * @default 18
 		 * @product highmaps
 		 */
 		width: 18,
@@ -100,7 +100,7 @@ defaultOptions.mapNavigation = {
 		 * The pixel height of the map navigation buttons.
 		 * 
 		 * @type {Number}
-		 * @default {all} 18
+		 * @default 18
 		 * @product highmaps
 		 */
 		height: 18,
@@ -109,7 +109,7 @@ defaultOptions.mapNavigation = {
 		 * Padding for the navigation buttons.
 		 * 
 		 * @type {Number}
-		 * @default {all} 5
+		 * @default 5
 		 * @since 5.0.0
 		 * @product highmaps
 		 */
@@ -202,7 +202,7 @@ defaultOptions.mapNavigation = {
 			 * given by [lang.zoomIn](#lang.zoomIn).
 			 * 
 			 * @type {String}
-			 * @default {all} +
+			 * @default +
 			 * @product highmaps
 			 */
 			text: '+',
@@ -211,7 +211,7 @@ defaultOptions.mapNavigation = {
 			 * The position of the zoomIn button relative to the vertical alignment.
 			 * 
 			 * @type {Number}
-			 * @default {all} 0
+			 * @default 0
 			 * @product highmaps
 			 */
 			y: 0
@@ -248,7 +248,7 @@ defaultOptions.mapNavigation = {
 			 * given by [lang.zoomOut](#lang.zoomIn).
 			 * 
 			 * @type {String}
-			 * @default {all} -
+			 * @default -
 			 * @product highmaps
 			 */
 			text: '-',
@@ -257,7 +257,7 @@ defaultOptions.mapNavigation = {
 			 * The position of the zoomOut button relative to the vertical alignment.
 			 * 
 			 * @type {Number}
-			 * @default {all} 28
+			 * @default 28
 			 * @product highmaps
 			 */
 			y: 28
@@ -269,7 +269,7 @@ defaultOptions.mapNavigation = {
 	 *  while with 2, one mousewheel delta will zoom in 50%.
 	 * 
 	 * @type {Number}
-	 * @default {all} 1.1
+	 * @default 1.1
 	 * @since 4.2.4
 	 * @product highmaps
 	 */

@@ -139,7 +139,7 @@ extend(Pane.prototype, {
 		 * 
 		 * @type {Array<String|Number>}
 		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/ Two gauges with different center
-		 * @default {all} ["50%", "50%"]
+		 * @default ["50%", "50%"]
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
@@ -151,7 +151,7 @@ extend(Pane.prototype, {
 		 * 
 		 * @type {Number|String}
 		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/ Smaller size
-		 * @default {all} 85%
+		 * @default 85%
 		 * @product highcharts
 		 */
 		size: '85%',
@@ -183,7 +183,7 @@ extend(Pane.prototype, {
 		 * 
 		 * @validvalue ["solid", "arc"]
 		 * @type {String}
-		 * @default {all} solid
+		 * @default solid
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
@@ -194,7 +194,7 @@ extend(Pane.prototype, {
 		 * The pixel border width of the pane background.
 		 * 
 		 * @type {Number}
-		 * @default {all} 1
+		 * @default 1
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
@@ -204,7 +204,7 @@ extend(Pane.prototype, {
 		 * The pane background border color.
 		 * 
 		 * @type {Color}
-		 * @default {all} #cccccc
+		 * @default #cccccc
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
@@ -253,7 +253,7 @@ extend(Pane.prototype, {
 		 * (pixels) or a percentage string.
 		 * 
 		 * @type {Number|String}
-		 * @default {all} 0
+		 * @default 0
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
@@ -268,7 +268,7 @@ extend(Pane.prototype, {
 		 * numeric (pixels) or a percentage string.
 		 * 
 		 * @type {Number|String}
-		 * @default {all} 105%
+		 * @default 105%
 		 * @since 2.3.0
 		 * @product highcharts
 		 */

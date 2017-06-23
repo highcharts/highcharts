@@ -62,7 +62,7 @@ defaultOptions.drilldown = {
 	 * style/style-by-css), active label styles can be set with the `.highcharts-
 	 * drilldown-axis-label` class.
 	 * @sample {highcharts} highcharts/drilldown/labels/ Label styles
-	 * @default {all} { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
+	 * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
 	 * @since 3.0.8
 	 * @product highcharts highmaps
 	 */
@@ -95,7 +95,7 @@ defaultOptions.drilldown = {
 	 * style/style-by-css), active data label styles can be applied with
 	 * the `.highcharts-drilldown-data-label` class.
 	 * @sample {highcharts} highcharts/drilldown/labels/ Label styles
-	 * @default {all} { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
+	 * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
 	 * @since 3.0.8
 	 * @product highcharts highmaps
 	 */

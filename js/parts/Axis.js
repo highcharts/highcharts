@@ -151,7 +151,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/yaxis/endontick/ False
 		 * @sample {highstock} stock/demo/basic-line/ True by default
 		 * @sample {highstock} stock/xaxis/endontick/ False
-		 * @default {all} false
+		 * @default false
 		 * @since 1.2.0
 		 * @product highcharts highstock highmaps
 		 */
@@ -193,7 +193,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {CSSObject}
 			 * @sample {highcharts} highcharts/xaxis/labels-style/ Red X axis labels
-			 * @default {all} { "color": "#666666", "cursor": "default", "fontSize": "11px" }
+			 * @default { "color": "#666666", "cursor": "default", "fontSize": "11px" }
 			 * @product highcharts highstock highmaps
 			 */
 			style: {
@@ -218,7 +218,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {Number}
 			 * @sample {highcharts} highcharts/xaxis/labels-x/ Y axis labels placed on grid lines
-			 * @default {all} 0
+			 * @default 0
 			 * @product highcharts highstock highmaps
 			 */
 			x: 0
@@ -277,7 +277,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minorticklength/ 10px on Y axis
 		 * @sample {highstock} stock/xaxis/minorticks/ 10px on Y axis
-		 * @default {all} 2
+		 * @default 2
 		 * @product highcharts highstock highmaps
 		 */
 		minorTickLength: 2,
@@ -291,7 +291,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/yaxis/minortickposition-outside/ Outside by default
 		 * @sample {highcharts} highcharts/yaxis/minortickposition-inside/ Inside
 		 * @sample {highstock} stock/xaxis/minorticks/ Inside
-		 * @default {all} outside
+		 * @default outside
 		 * @product highcharts highstock highmaps
 		 */
 		minorTickPosition: 'outside', // inside or outside
@@ -321,7 +321,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/xaxis/startofweek-sunday/ Sunday
 		 * @sample {highstock} stock/xaxis/startofweek-1 Monday by default
 		 * @sample {highstock} stock/xaxis/startofweek-0 Sunday
-		 * @default {all} 1
+		 * @default 1
 		 * @product highcharts highstock
 		 */
 		startOfWeek: 1,
@@ -334,7 +334,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/xaxis/startontick-false/ False by default
 		 * @sample {highcharts} highcharts/xaxis/startontick-true/ True
 		 * @sample {highstock} stock/xaxis/endontick/ False for Y axis
-		 * @default {all} false
+		 * @default false
 		 * @since 1.2.0
 		 * @product highcharts highstock highmaps
 		 */
@@ -347,7 +347,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/xaxis/ticklength/ 20 px tick length on the X axis
 		 * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
-		 * @default {all} 10
+		 * @default 10
 		 * @product highcharts highstock highmaps
 		 */
 		tickLength: 10,
@@ -362,7 +362,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {String}
 		 * @sample {highcharts} highcharts/xaxis/tickmarkplacement-between/ "between" by default
 		 * @sample {highcharts} highcharts/xaxis/tickmarkplacement-on/ "on"
-		 * @default {all} null
+		 * @default null
 		 * @product highcharts
 		 */
 		tickmarkPlacement: 'between', // on or between
@@ -448,7 +448,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @type {CSSObject}
 			 * @sample {highcharts} highcharts/xaxis/title-style/ Red
 			 * @sample {highcharts} highcharts/css/axis/ Styled mode
-			 * @default {all} { "color": "#666666" }
+			 * @default { "color": "#666666" }
 			 * @product highcharts highstock highmaps
 			 */
 			style: {
@@ -477,7 +477,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/yaxis/type-log-minorgrid/ Logarithmic with minor grid lines
 		 * @sample {highcharts} highcharts/xaxis/type-log-both/ Logarithmic on two axes
 		 * @sample {highcharts} highcharts/yaxis/type-log-negative/ Logarithmic with extension to emulate negative values
-		 * @default {all} linear
+		 * @default linear
 		 * @product highcharts
 		 */
 		type: 'linear', // linear, logarithmic or datetime
@@ -496,7 +496,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
 		 * @sample {highstock} stock/xaxis/minorgridlinecolor/ Bright grey lines from Y axis
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
-		 * @default {all} #f2f2f2
+		 * @default #f2f2f2
 		 * @product highcharts highstock highmaps
 		 */
 		minorGridLineColor: '${palette.neutralColor5}',
@@ -514,7 +514,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
 		 * @sample {highstock} stock/xaxis/minorgridlinewidth/ 2px lines from Y axis
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
-		 * @default {all} 1
+		 * @default 1
 		 * @product highcharts highstock highmaps
 		 */
 		minorGridLineWidth: 1,
@@ -525,7 +525,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/minortickcolor/ Black tick marks on Y axis
 		 * @sample {highstock} stock/xaxis/minorticks/ Black tick marks on Y axis
-		 * @default {all} #999999
+		 * @default #999999
 		 * @product highcharts highstock highmaps
 		 */
 		minorTickColor: '${palette.neutralColor40}',
@@ -543,7 +543,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/css/axis/ Axes in styled mode
 		 * @sample {highstock} stock/xaxis/linecolor/ A red line on X axis
 		 * @sample {highstock} highcharts/css/axis/ Axes in styled mode
-		 * @default {all} #ccd6eb
+		 * @default #ccd6eb
 		 * @product highcharts highstock highmaps
 		 */
 		lineColor: '${palette.highlightColor20}',
@@ -580,7 +580,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
 		 * @sample {highstock} stock/xaxis/gridlinecolor/ Green lines
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
-		 * @default {all} #e6e6e6
+		 * @default #e6e6e6
 		 * @product highcharts highstock highmaps
 		 */
 		gridLineColor: '${palette.neutralColor10}',
@@ -599,7 +599,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
 		 * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
-		 * @default {all} #ccd6eb
+		 * @default #ccd6eb
 		 * @product highcharts highstock highmaps
 		 */
 		tickColor: '${palette.highlightColor20}'
@@ -624,7 +624,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/yaxis/endontick-log-false/ False
 		 * @sample {highstock} stock/demo/basic-line/ True by default
 		 * @sample {highstock} stock/xaxis/endontick/ False
-		 * @default {all} true
+		 * @default true
 		 * @since 1.2.0
 		 * @product highcharts highstock
 		 */
@@ -641,7 +641,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/xaxis/showlastlabel-true/ Set to true on X axis
 		 * @sample {highstock} stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
-		 * @default {all} false
+		 * @default false
 		 * @product highcharts highstock
 		 */
 		showLastLabel: true,
@@ -658,7 +658,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {Number}
 			 * @sample {highcharts} highcharts/xaxis/labels-x/ Y axis labels placed on grid lines
-			 * @default {all} 0
+			 * @default 0
 			 * @product highcharts highstock highmaps
 			 */
 			x: -8
@@ -673,7 +673,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/maxpadding-02/ Max padding of 0.2
 		 * @sample {highstock} stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
-		 * @default {all} 0.05
+		 * @default 0.05
 		 * @since 1.2.0
 		 * @product highcharts highstock
 		 */
@@ -688,7 +688,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minpadding/ Min padding of 0.2
 		 * @sample {highstock} stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
-		 * @default {all} 0.05
+		 * @default 0.05
 		 * @since 1.2.0
 		 * @product highcharts highstock
 		 */
@@ -702,7 +702,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/xaxis/startontick-false/ False by default
 		 * @sample {highcharts} highcharts/xaxis/startontick-true/ True
 		 * @sample {highstock} stock/xaxis/endontick/ False for Y axis
-		 * @default {all} true
+		 * @default true
 		 * @since 1.2.0
 		 * @product highcharts highstock
 		 */
@@ -720,7 +720,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {Number}
 			 * @sample {highcharts} highcharts/yaxis/title-offset/ Horizontal
-			 * @default {all} 270
+			 * @default 270
 			 * @product highcharts highstock highmaps
 			 */
 			rotation: 270,
@@ -733,7 +733,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {String}
 			 * @sample {highcharts} highcharts/xaxis/title-text/ Custom HTML
-			 * @default {all} Values
+			 * @default Values
 			 * @product highcharts
 			 */
 			text: 'Values'
@@ -804,7 +804,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {CSSObject}
 			 * @sample {highcharts} highcharts/yaxis/stacklabels-style/ Red stack total labels
-			 * @default {all} { "color": "#000000", "fontSize": "11px", "fontWeight": "bold", "textShadow": "1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast" }
+			 * @default { "color": "#000000", "fontSize": "11px", "fontWeight": "bold", "textShadow": "1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast" }
 			 * @since 2.1.5
 			 * @product highcharts
 			 */
@@ -837,7 +837,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/gridlinewidth/ 2px lines
 		 * @sample {highstock} stock/xaxis/gridlinewidth/ 2px lines
-		 * @default {all} 1
+		 * @default 1
 		 * @product highcharts highstock
 		 */
 		gridLineWidth: 1,		
@@ -848,7 +848,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/linecolor/ A 1px line on Y axis
 		 * @sample {highstock} stock/xaxis/linewidth/ A 2px line on X axis
-		 * @default {all} 0
+		 * @default 0
 		 * @product highcharts highstock
 		 */
 		lineWidth: 0

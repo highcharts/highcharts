@@ -98,7 +98,7 @@ H.setOptions({
 		 * Enable accessibility features for the chart.
 		 * 
 		 * @type {Boolean}
-		 * @default {all} true
+		 * @default true
 		 * @since 5.0.0
 		 * @product highcharts highstock highmaps
 		 */
@@ -111,7 +111,7 @@ H.setOptions({
 		 * Set to `false` to disable.
 		 * 
 		 * @type {Number|Boolean}
-		 * @default {all} 30
+		 * @default 30
 		 * @since 5.0.0
 		 * @product highcharts highstock highmaps
 		 */
@@ -130,7 +130,7 @@ H.setOptions({
 			 * Enable keyboard navigation for the chart.
 			 * 
 			 * @type {Boolean}
-			 * @default {all} true
+			 * @default true
 			 * @since 5.0.0
 			 */
 			enabled: true
@@ -140,7 +140,7 @@ H.setOptions({
 			 * keyboard.
 			 * 
 			 * @type {Boolean}
-			 * @default {all} false
+			 * @default false
 			 * @since 5.0.0
 			 * @apioption accessibility.keyboardNavigation.skipNullPoints
 			 */
@@ -151,7 +151,7 @@ H.setOptions({
 		 * series.
 		 * 
 		 * @type {Boolean}
-		 * @default {all} false
+		 * @default false
 		 * @since 5.0.0
 		 * @product highcharts highstock highmaps
 		 * @apioption accessibility.describeSingleSeries
@@ -219,7 +219,7 @@ H.setOptions({
 		 * after the custom HTML content.
 		 * 
 		 * @type {Function}
-		 * @default {all} undefined
+		 * @default undefined
 		 * @since 5.0.0
 		 * @apioption accessibility.screenReaderSectionFormatter
 		 */
@@ -247,7 +247,7 @@ H.setOptions({
  * 
  * @type {String}
  * @see [typeDescription](#chart.typeDescription)
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @apioption chart.description
  */
@@ -264,7 +264,7 @@ H.setOptions({
  * clarity.
  * 
  * @type {String}
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @apioption chart.typeDescription
  */

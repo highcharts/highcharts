@@ -121,7 +121,7 @@ seriesType('bubble', 'scatter',
 		 * @type {String}
 		 * @sample {highcharts} highcharts/plotoptions/bubble-symbol/ Bubble chart with various symbols
 		 * @sample {highcharts} highcharts/plotoptions/series-marker-symbol/ General chart with predefined, graphic and custom markers
-		 * @default {all} circle
+		 * @default circle
 		 * @since 5.0.11
 		 * @product highcharts
 		 */
@@ -136,7 +136,7 @@ seriesType('bubble', 'scatter',
 	 * 
 	 * @type {String}
 	 * @sample {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
-	 * @default {all} 8
+	 * @default 8
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -150,7 +150,7 @@ seriesType('bubble', 'scatter',
 	 * 
 	 * @type {String}
 	 * @sample {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
-	 * @default {all} 20%
+	 * @default 20%
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -168,7 +168,7 @@ seriesType('bubble', 'scatter',
 	 * option. If `softThreshold` is `true`, the Y axis starts at 0.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} false
+	 * @default false
 	 * @since 4.1.9
 	 * @product highcharts
 	 */
@@ -214,7 +214,7 @@ seriesType('bubble', 'scatter',
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/bubble-negative/ Negative bubbles
-	 * @default {all} 0
+	 * @default 0
 	 * @since 3.0
 	 * @product highcharts
 	 */

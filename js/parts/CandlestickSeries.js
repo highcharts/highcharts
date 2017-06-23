@@ -41,7 +41,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column,
 			 * to `2`.
 			 * 
 			 * @type {Number}
-			 * @default {all} 2
+			 * @default 2
 			 * @product highstock
 			 */
 			lineWidth: 2
@@ -67,7 +67,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column,
 	 * @type {Color}
 	 * @see [upLineColor](#plotOptions.candlestick.upLineColor)
 	 * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
-	 * @default {all} #000000
+	 * @default #000000
 	 * @product highstock
 	 */
 	lineColor: '${palette.neutralColor100}',
@@ -81,7 +81,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column,
 	 * highcharts-candlestick-series .highcahrts-point` rule.
 	 * 
 	 * @type {Number}
-	 * @default {all} 1
+	 * @default 1
 	 * @product highstock
 	 */
 	lineWidth: 1,
@@ -96,7 +96,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column,
 	 * @type {Color}
 	 * @sample {highstock} stock/plotoptions/candlestick-color/ Custom colors
 	 * @sample {highstock} highcharts/css/candlestick/ Colors in styled mode
-	 * @default {all} #ffffff
+	 * @default #ffffff
 	 * @product highstock
 	 */
 	upColor: '${palette.backgroundColor}',

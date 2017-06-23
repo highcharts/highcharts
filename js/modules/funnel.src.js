@@ -41,7 +41,7 @@ seriesType('funnel', 'pie',
 	 * of the plot area, so it fills the plot area height.
 	 * 
 	 * @type {Array<String|Number>}
-	 * @default {all} ["50%", "50%"]
+	 * @default ["50%", "50%"]
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -52,7 +52,7 @@ seriesType('funnel', 'pie',
 	 * or the pixel width if it is a number.
 	 * 
 	 * @type {Number|String}
-	 * @default {all} 90%
+	 * @default 90%
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -65,7 +65,7 @@ seriesType('funnel', 'pie',
 	 * 
 	 * @type {Number|String}
 	 * @sample {highcharts} highcharts/demo/funnel/ Funnel demo
-	 * @default {all} 30%
+	 * @default 30%
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -89,7 +89,7 @@ seriesType('funnel', 'pie',
 	 * area height.
 	 * 
 	 * @type {Number|String}
-	 * @default {all} 25%
+	 * @default 25%
 	 * @product highcharts
 	 */
 	neckHeight: '25%',
@@ -99,7 +99,7 @@ seriesType('funnel', 'pie',
 	 * no neck width and neck height is a pyramid.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} false
+	 * @default false
 	 * @since 3.0.10
 	 * @product highcharts
 	 */
@@ -401,7 +401,7 @@ seriesType('pyramid', 'funnel',
 	 * shares the layout engine, and is not reversed.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} true
+	 * @default true
 	 * @since 3.0.10
 	 * @product highcharts
 	 */

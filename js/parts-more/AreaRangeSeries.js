@@ -34,7 +34,7 @@ seriesType('arearange', 'area',
 	 * Pixel width of the arearange graph line.
 	 * 
 	 * @type {Number}
-	 * @default {all} 1
+	 * @default 1
 	 * @since 2.3.0
 	 * @product highcharts highstock
 	 */
@@ -63,7 +63,7 @@ seriesType('arearange', 'area',
 	 * tooltips and other mouse or touch events.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} true
+	 * @default true
 	 * @since 2.3.0
 	 * @product highcharts highstock
 	 */
@@ -97,7 +97,7 @@ seriesType('arearange', 'area',
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
 		 * @sample {highstock} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
-		 * @default {all} 0
+		 * @default 0
 		 * @since 2.3.0
 		 * @product highcharts highstock
 		 */
@@ -109,7 +109,7 @@ seriesType('arearange', 'area',
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
 		 * @sample {highstock} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
-		 * @default {all} 0
+		 * @default 0
 		 * @since 2.3.0
 		 * @product highcharts highstock
 		 */
@@ -121,7 +121,7 @@ seriesType('arearange', 'area',
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
 		 * @sample {highstock} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
-		 * @default {all} 16
+		 * @default 16
 		 * @since 2.3.0
 		 * @product highcharts highstock
 		 */
@@ -133,7 +133,7 @@ seriesType('arearange', 'area',
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
 		 * @sample {highstock} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
-		 * @default {all} -6
+		 * @default -6
 		 * @since 2.3.0
 		 * @product highcharts highstock
 		 */

@@ -60,7 +60,7 @@ seriesType('boxplot', 'column',
 	 * 
 	 * @type {Number|String}
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ True by default
-	 * @default {all} 50%
+	 * @default 50%
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -75,7 +75,7 @@ seriesType('boxplot', 'column',
 	 * style/style-by-css), the fill color can be set with the `.highcharts-
 	 * boxplot-box` class.
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
-	 * @default {all} #ffffff
+	 * @default #ffffff
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -90,7 +90,7 @@ seriesType('boxplot', 'column',
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
 	 * @sample {highcharts} highcharts/plotoptions/error-bar-styling/ Error bar styling
-	 * @default {all} 1
+	 * @default 1
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -107,7 +107,7 @@ seriesType('boxplot', 'column',
 	 * `.highcharts-boxplot-median` class ([view live demo](http://jsfiddle.
 	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
-	 * @default {all} 2
+	 * @default 2
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -143,7 +143,7 @@ seriesType('boxplot', 'column',
 	 * `.highcharts-boxplot-whisker` class ([view live demo](http://jsfiddle.
 	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
-	 * @default {all} 2
+	 * @default 2
 	 * @since 3.0
 	 * @product highcharts
 	 */

@@ -23,7 +23,7 @@ seriesType('mapline', 'map',
 	 * The width of the map line.
 	 * 
 	 * @type {Number}
-	 * @default {all} 1
+	 * @default 1
 	 * @product highmaps
 	 */
 	lineWidth: 1,
@@ -32,7 +32,7 @@ seriesType('mapline', 'map',
 	 * Fill color for the map line shapes
 	 * 
 	 * @type {Color}
-	 * @default {all} none
+	 * @default none
 	 * @product highmaps
 	 */
 	fillColor: 'none'

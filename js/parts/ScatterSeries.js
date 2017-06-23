@@ -26,7 +26,7 @@ seriesType('scatter', 'line',
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/ 0 by default
 	 * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/ 1px
-	 * @default {all} 0
+	 * @default 0
 	 * @product highcharts highstock
 	 */
 	lineWidth: 0,
@@ -53,7 +53,7 @@ seriesType('scatter', 'line',
 	 * and poin.x and point.y in the pointFormat.
 	 * 
 	 * @type {Object}
-	 * @default {all} {}
+	 * @default {}
 	 * @product highstock
 	 */
 	tooltip: {

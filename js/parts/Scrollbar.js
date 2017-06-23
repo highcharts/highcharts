@@ -59,7 +59,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 0
+	 * @default 0
 	 * @product highstock
 	 */
 	barBorderRadius: 0,
@@ -69,7 +69,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 0
+	 * @default 0
 	 * @product highstock
 	 */
 	buttonBorderRadius: 0,
@@ -93,7 +93,7 @@ var defaultScrollbarOptions =  {
 	 * The minimum width of the scrollbar.
 	 * 
 	 * @type {Number}
-	 * @default {all} 6
+	 * @default 6
 	 * @since 1.2.5
 	 * @product highstock
 	 */
@@ -115,7 +115,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #cccccc
+	 * @default #cccccc
 	 * @product highstock
 	 */
 	barBackgroundColor: '${palette.neutralColor20}',
@@ -125,7 +125,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 1
+	 * @default 1
 	 * @product highstock
 	 */
 	barBorderWidth: 1,
@@ -134,7 +134,7 @@ var defaultScrollbarOptions =  {
 	 * The color of the scrollbar's border.
 	 * 
 	 * @type {Color}
-	 * @default {all} #cccccc
+	 * @default #cccccc
 	 * @product highstock
 	 */
 	barBorderColor: '${palette.neutralColor20}',
@@ -144,7 +144,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #333333
+	 * @default #333333
 	 * @product highstock
 	 */
 	buttonArrowColor: '${palette.neutralColor80}',
@@ -154,7 +154,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #e6e6e6
+	 * @default #e6e6e6
 	 * @product highstock
 	 */
 	buttonBackgroundColor: '${palette.neutralColor10}',
@@ -164,7 +164,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #cccccc
+	 * @default #cccccc
 	 * @product highstock
 	 */
 	buttonBorderColor: '${palette.neutralColor20}',
@@ -174,7 +174,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 1
+	 * @default 1
 	 * @product highstock
 	 */
 	buttonBorderWidth: 1,
@@ -183,7 +183,7 @@ var defaultScrollbarOptions =  {
 	 * The color of the small rifles in the middle of the scrollbar.
 	 * 
 	 * @type {Color}
-	 * @default {all} #333333
+	 * @default #333333
 	 * @product highstock
 	 */
 	rifleColor: '${palette.neutralColor80}',
@@ -193,7 +193,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #f2f2f2
+	 * @default #f2f2f2
 	 * @product highstock
 	 */
 	trackBackgroundColor: '${palette.neutralColor5}',
@@ -203,7 +203,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #f2f2f2
+	 * @default #f2f2f2
 	 * @product highstock
 	 */
 	trackBorderColor: '${palette.neutralColor5}',
@@ -213,7 +213,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 1
+	 * @default 1
 	 * @product highstock
 	 */
 	trackBorderWidth: 1

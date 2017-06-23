@@ -63,7 +63,7 @@ seriesType('treemap', 'scatter',
 	 * legend.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} false
+	 * @default false
 	 * @product highcharts
 	 */
 	showInLegend: false,
@@ -84,7 +84,7 @@ seriesType('treemap', 'scatter',
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled/ Data labels enabled
-		 * @default {all} true
+		 * @default true
 		 * @since 4.1.0
 		 * @product highcharts
 		 */
@@ -95,7 +95,7 @@ seriesType('treemap', 'scatter',
 		 * animation has finished.
 		 * 
 		 * @type {Boolean}
-		 * @default {all} false
+		 * @default false
 		 * @since 4.1.0
 		 * @product highcharts
 		 */
@@ -108,7 +108,7 @@ seriesType('treemap', 'scatter',
 		 * negative values.
 		 * 
 		 * @type {String}
-		 * @default {all} middle
+		 * @default middle
 		 * @since 4.1.0
 		 * @product highcharts
 		 */
@@ -125,7 +125,7 @@ seriesType('treemap', 'scatter',
 		 * value point.
 		 * 
 		 * @type {Boolean}
-		 * @default {all} true
+		 * @default true
 		 * @since 4.1.0
 		 * @product highcharts
 		 */
@@ -149,7 +149,7 @@ seriesType('treemap', 'scatter',
 		 * 
 		 * @type {String}
 		 * @sample {highcharts} highcharts/tooltip/footerformat/ A HTML table in the tooltip
-		 * @default {all} ""
+		 * @default ""
 		 * @since 4.1.0
 		 * @product highcharts
 		 */
@@ -165,7 +165,7 @@ seriesType('treemap', 'scatter',
 		 * 
 		 * @type {String}
 		 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
-		 * @default {all} "&#60;b&#62;{point.name}&#60;/b&#62;: {point.value}&#60;/b&#62;&#60;br/&#62;"
+		 * @default "&#60;b&#62;{point.name}&#60;/b&#62;: {point.value}&#60;/b&#62;&#60;br/&#62;"
 		 * @since 4.1.0
 		 * @product highcharts
 		 */
@@ -177,7 +177,7 @@ seriesType('treemap', 'scatter',
 	 * If `false`, hidden points will leave open spaces.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} true
+	 * @default true
 	 * @since 5.0.8
 	 * @product highcharts
 	 */
@@ -196,7 +196,7 @@ seriesType('treemap', 'scatter',
 	 * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-stripes/ Stripes
 	 * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-squarified/ Squarified
 	 * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-strip/ Strip
-	 * @default {all} sliceAndDice
+	 * @default sliceAndDice
 	 * @since 4.1.0
 	 * @product highcharts
 	 */
@@ -208,7 +208,7 @@ seriesType('treemap', 'scatter',
 	 * 
 	 * @validvalue ["vertical", "horizontal"]
 	 * @type {String}
-	 * @default {all} vertical
+	 * @default vertical
 	 * @since 4.1.0
 	 * @product highcharts
 	 */
@@ -221,7 +221,7 @@ seriesType('treemap', 'scatter',
 	 * 
 	 * @type {Boolean}
 	 * @sample {highcharts} highcharts/plotoptions/treemap-alternatestartingdirection-true/ Enabled
-	 * @default {all} false
+	 * @default false
 	 * @since 4.1.0
 	 * @product highcharts
 	 */
@@ -235,7 +235,7 @@ seriesType('treemap', 'scatter',
 	 * 
 	 * @validvalue ["true", "false"]
 	 * @type {Boolean}
-	 * @default {all} true
+	 * @default true
 	 * @since 4.1.0
 	 * @product highcharts
 	 */
@@ -269,7 +269,7 @@ seriesType('treemap', 'scatter',
 	 * The color of the border surrounding each tree map item.
 	 * 
 	 * @type {Color}
-	 * @default {all} #e6e6e6
+	 * @default #e6e6e6
 	 * @product highcharts
 	 */
 	borderColor: '${palette.neutralColor10}',
@@ -283,7 +283,7 @@ seriesType('treemap', 'scatter',
 	 * visibility of the children is determined by the opacity.
 	 * 
 	 * @type {Number}
-	 * @default {all} 0.15
+	 * @default 0.15
 	 * @since 4.2.4
 	 * @product highcharts
 	 */
@@ -319,7 +319,7 @@ seriesType('treemap', 'scatter',
 			 * the visibility of the children is determined by the opacity.
 			 * 
 			 * @type {Number}
-			 * @default {all} 0.75
+			 * @default 0.75
 			 * @since 4.2.4
 			 * @product highcharts
 			 */

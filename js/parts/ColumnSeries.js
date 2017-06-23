@@ -40,7 +40,7 @@ seriesType('column', 'line',
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/column-borderradius/ Rounded columns
-	 * @default {all} 0
+	 * @default 0
 	 * @product highcharts highstock
 	 */
 	borderRadius: 0,
@@ -56,7 +56,7 @@ seriesType('column', 'line',
 	 * 
 	 * @type {Boolean}
 	 * @sample {highcharts} highcharts/plotoptions/column-crisp-false/ Crisp is false
-	 * @default {all} true
+	 * @default true
 	 * @since 5.0.10
 	 * @product highcharts
 	 */
@@ -68,7 +68,7 @@ seriesType('column', 'line',
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/column-grouppadding-default/ 0.2 by default
 	 * @sample {highcharts} highcharts/plotoptions/column-grouppadding-none/ No group padding - all     columns are evenly spaced
-	 * @default {all} 0.2
+	 * @default 0.2
 	 * @product highcharts highstock
 	 */
 	groupPadding: 0.2,
@@ -85,7 +85,7 @@ seriesType('column', 'line',
 	 * @sample {highcharts} highcharts/plotoptions/column-pointpadding-default/ 0.1 by default
 	 * @sample {highcharts} highcharts/plotoptions/column-pointpadding-025/ 0.25
 	 * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/ 0 for tightly packed columns
-	 * @default {all} 0.1
+	 * @default 0.1
 	 * @product highcharts highstock
 	 */
 	pointPadding: 0.1,
@@ -101,7 +101,7 @@ seriesType('column', 'line',
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/column-minpointlength/ Zero base value
 	 * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/ Positive and negative close to zero values
-	 * @default {all} 0
+	 * @default 0
 	 * @product highcharts highstock
 	 */
 	minPointLength: 0,
@@ -117,7 +117,7 @@ seriesType('column', 'line',
 	 * points is to increase performance on large series. .
 	 * 
 	 * @type {Number}
-	 * @default {all} 50
+	 * @default 50
 	 * @product highcharts highstock
 	 */
 	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
@@ -131,7 +131,7 @@ seriesType('column', 'line',
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/column-pointrange/ Set the point range to one day on a data set with one week between the points
-	 * @default {all} null
+	 * @default null
 	 * @since 2.3
 	 * @product highcharts highstock
 	 */
@@ -163,7 +163,7 @@ seriesType('column', 'line',
 			 * 
 			 * @type {Number}
 			 * @sample {highcharts} highcharts/plotoptions/column-states-hover-brightness/ Brighten by 0.5
-			 * @default {all} 0.1
+			 * @default 0.1
 			 * @product highcharts highstock
 			 */
 			brightness: 0.1,
@@ -251,7 +251,7 @@ seriesType('column', 'line',
 	 * extend from the padding Y axis minimum.
 	 * 
 	 * @type {Number}
-	 * @default {all} 0
+	 * @default 0
 	 * @since 2.0
 	 * @product highcharts
 	 */
@@ -267,7 +267,7 @@ seriesType('column', 'line',
 	 * 
 	 * @type {Color}
 	 * @sample {highcharts} highcharts/plotoptions/column-bordercolor/ Dark gray border
-	 * @default {all} #ffffff
+	 * @default #ffffff
 	 * @product highcharts highstock
 	 */
 	borderColor: '${palette.backgroundColor}'

@@ -92,7 +92,7 @@ merge(true, defaultOptions.navigation,
 	 * @sample {highcharts} highcharts/navigation/menustyle/ Light gray menu background
 	 * @sample {highstock} highcharts/navigation/menustyle/ Light gray menu background
 	 * @sample {highmaps} highcharts/navigation/menustyle/ Light gray menu background
-	 * @default {all} { "border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0" }
+	 * @default { "border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0" }
 	 * @since 2.0
 	 * @product highcharts highstock highmaps
 	 */
@@ -123,7 +123,7 @@ merge(true, defaultOptions.navigation,
 	 * @sample {highcharts} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
 	 * @sample {highstock} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
 	 * @sample {highmaps} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
-	 * @default {all} { "padding": "0.5em 1em", "color": "#333333", "background": "none" }
+	 * @default { "padding": "0.5em 1em", "color": "#333333", "background": "none" }
 	 * @since 2.0
 	 * @product highcharts highstock highmaps
 	 */
@@ -162,7 +162,7 @@ merge(true, defaultOptions.navigation,
 	 * @sample {highcharts} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @sample {highstock} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @sample {highmaps} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
-	 * @default {all} { "background": "#335cad", "color": "#ffffff" }
+	 * @default { "background": "#335cad", "color": "#ffffff" }
 	 * @since 2.0
 	 * @product highcharts highstock highmaps
 	 */
@@ -196,7 +196,7 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highcharts} highcharts/navigation/buttonoptions-symbolfill/ Blue symbol stroke for one of the buttons
 		 * @sample {highstock} highcharts/navigation/buttonoptions-symbolfill/ Blue symbol stroke for one of the buttons
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-symbolfill/ Blue symbol stroke for one of the buttons
-		 * @default {all} #666666
+		 * @default #666666
 		 * @since 2.0
 		 * @product highcharts highstock highmaps
 		 */
@@ -209,7 +209,7 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highcharts} highcharts/navigation/buttonoptions-symbolstroke/ Blue symbol stroke
 		 * @sample {highstock} highcharts/navigation/buttonoptions-symbolstroke/ Blue symbol stroke
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-symbolstroke/ Blue symbol stroke
-		 * @default {all} #666666
+		 * @default #666666
 		 * @since 2.0
 		 * @product highcharts highstock highmaps
 		 */
@@ -222,7 +222,7 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
 		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @default {all} 1
+		 * @default 1
 		 * @since 2.0
 		 * @product highcharts highstock highmaps
 		 */
@@ -278,7 +278,7 @@ defaultOptions.exporting = {
 	 * 
 	 * @validvalue ["image/png", "image/jpeg", "application/pdf", "image/svg+xml"]
 	 * @type {String}
-	 * @default {all} image/png
+	 * @default image/png
 	 * @since 2.0
 	 * @product highcharts highstock highmaps
 	 */
@@ -289,7 +289,7 @@ defaultOptions.exporting = {
 	 * format. By default this points to Highchart's free web service.
 	 * 
 	 * @type {String}
-	 * @default {all} https://export.highcharts.com
+	 * @default https://export.highcharts.com
 	 * @since 2.0
 	 * @product highcharts highstock highmaps
 	 */
@@ -304,7 +304,7 @@ defaultOptions.exporting = {
 	 * chart when printing the web page as a whole.
 	 * 
 	 * @type {Number}
-	 * @default {all} 780
+	 * @default 780
 	 * @since 4.2.5
 	 * @product highcharts highstock highmaps
 	 */
@@ -322,7 +322,7 @@ defaultOptions.exporting = {
 	 * @sample {highcharts} highcharts/exporting/scale/ Scale demonstrated
 	 * @sample {highstock} highcharts/exporting/scale/ Scale demonstrated
 	 * @sample {highmaps} maps/exporting/scale/ Scale demonstrated
-	 * @default {all} 2
+	 * @default 2
 	 * @since 3.0
 	 * @product highcharts highstock highmaps
 	 */
@@ -369,7 +369,7 @@ defaultOptions.exporting = {
 			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
 			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
 			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
-			 * @default {all} menu
+			 * @default menu
 			 * @since 2.0
 			 * @product highcharts highstock highmaps
 			 */

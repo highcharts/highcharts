@@ -161,7 +161,7 @@ var extendedOptions = 	{
 			 * Wether to render the chart using the 3D functionality.
 			 * 
 			 * @type {Boolean}
-			 * @default {all} false
+			 * @default false
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -171,7 +171,7 @@ var extendedOptions = 	{
 			 * One of the two rotation angles for the chart.
 			 * 
 			 * @type {Number}
-			 * @default {all} 0
+			 * @default 0
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -181,7 +181,7 @@ var extendedOptions = 	{
 			 * One of the two rotation angles for the chart.
 			 * 
 			 * @type {Number}
-			 * @default {all} 0
+			 * @default 0
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -191,7 +191,7 @@ var extendedOptions = 	{
 			 * The total depth of the chart.
 			 * 
 			 * @type {Number}
-			 * @default {all} 100
+			 * @default 100
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -202,7 +202,7 @@ var extendedOptions = 	{
 			 * area.
 			 * 
 			 * @type {Boolean}
-			 * @default {all} true
+			 * @default true
 			 * @since 4.2.4
 			 * @product highcharts
 			 */
@@ -214,7 +214,7 @@ var extendedOptions = 	{
 			 * in column and scatter charts. It is not used for 3D pie charts.
 			 * 
 			 * @type {Number}
-			 * @default {all} 100
+			 * @default 100
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -226,7 +226,7 @@ var extendedOptions = 	{
 			 * 
 			 * @validvalue [null, "auto"]
 			 * @type {String}
-			 * @default {all} null
+			 * @default null
 			 * @since 5.0.12
 			 * @product highcharts
 			 */

@@ -57,7 +57,7 @@ seriesType('gauge', 'line',
 		 * gauge.
 		 * 
 		 * @type {Number}
-		 * @default {all} 15
+		 * @default 15
 		 * @since 2.3.0
 		 * @product highcharts highmaps
 		 */
@@ -67,7 +67,7 @@ seriesType('gauge', 'line',
 		 * The border radius in pixels for the gauge's data label.
 		 * 
 		 * @type {Number}
-		 * @default {all} 3
+		 * @default 3
 		 * @since 2.3.0
 		 * @product highcharts highmaps
 		 */
@@ -81,7 +81,7 @@ seriesType('gauge', 'line',
 		 * The vertical alignment of the data label.
 		 * 
 		 * @type {String}
-		 * @default {all} top
+		 * @default top
 		 * @product highcharts highmaps
 		 */
 		verticalAlign: 'top',
@@ -91,7 +91,7 @@ seriesType('gauge', 'line',
 		 * the dial.
 		 * 
 		 * @type {Number}
-		 * @default {all} 2
+		 * @default 2
 		 * @since 2.1.5
 		 * @product highcharts highmaps
 		 */
@@ -103,7 +103,7 @@ seriesType('gauge', 'line',
 		 * The border width in pixels for the gauge data label.
 		 * 
 		 * @type {Number}
-		 * @default {all} 1
+		 * @default 1
 		 * @since 2.3.0
 		 * @product highcharts highmaps
 		 */
@@ -113,7 +113,7 @@ seriesType('gauge', 'line',
 		 * The border color for the data label.
 		 * 
 		 * @type {Color}
-		 * @default {all} #cccccc
+		 * @default #cccccc
 		 * @since 2.3.0
 		 * @product highcharts highmaps
 		 */

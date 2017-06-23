@@ -57,7 +57,7 @@ seriesType('waterfall', 'column',
 	 * The width of the line connecting waterfall columns.
 	 * 
 	 * @type {Number}
-	 * @default {all} 1
+	 * @default 1
 	 * @product highcharts
 	 */
 	lineWidth: 1,
@@ -71,7 +71,7 @@ seriesType('waterfall', 'column',
 	 * graph` class.
 	 * 
 	 * @type {Color}
-	 * @default {all} #333333
+	 * @default #333333
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -98,7 +98,7 @@ seriesType('waterfall', 'column',
 	 * highcharts-graph` class.
 	 * 
 	 * @type {String}
-	 * @default {all} Dot
+	 * @default Dot
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -112,7 +112,7 @@ seriesType('waterfall', 'column',
 	 * point` class.
 	 * 
 	 * @type {Color}
-	 * @default {all} #333333
+	 * @default #333333
 	 * @since 3.0
 	 * @product highcharts
 	 */

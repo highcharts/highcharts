@@ -9,7 +9,7 @@
  * The color of the panel.
  * 
  * @type {Color}
- * @default {all} transparent
+ * @default transparent
  * @since 4.0
  * @product highcharts
  * @todo Copy chart.options3d.frame.back.color docs to actual source code
@@ -20,7 +20,7 @@
  * Thickness of the panel.
  * 
  * @type {Number}
- * @default {all} 1
+ * @default 1
  * @since 4.0
  * @product highcharts
  * @todo Copy chart.options3d.frame.back.size docs to actual source code
@@ -36,7 +36,7 @@
  * @validvalue ["default", "auto", true, false]
  * @type {Boolean|String}
  * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
- * @default {all} default
+ * @default default
  * @since 5.0.12
  * @product highcharts
  * @todo Copy chart.options3d.frame.back.visible docs to actual source code
@@ -47,7 +47,7 @@
  * The color of the panel.
  * 
  * @type {Color}
- * @default {all} transparent
+ * @default transparent
  * @since 4.0
  * @product highcharts
  * @todo Copy chart.options3d.frame.bottom.color docs to actual source code
@@ -58,7 +58,7 @@
  * The thickness of the panel.
  * 
  * @type {Number}
- * @default {all} 1
+ * @default 1
  * @since 4.0
  * @product highcharts
  * @todo Copy chart.options3d.frame.bottom.size docs to actual source code
@@ -74,7 +74,7 @@
  * @validvalue ["default", "auto", true, false]
  * @type {Boolean|String}
  * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
- * @default {all} default
+ * @default default
  * @since 5.0.12
  * @product highcharts
  * @todo Copy chart.options3d.frame.bottom.visible docs to actual source code
@@ -97,7 +97,7 @@
  * The color of the panel.
  * 
  * @type {Color}
- * @default {all} transparent
+ * @default transparent
  * @since 4.0
  * @product highcharts
  * @todo Copy chart.options3d.frame.side.color docs to actual source code
@@ -108,7 +108,7 @@
  * The thickness of the panel.
  * 
  * @type {Number}
- * @default {all} 1
+ * @default 1
  * @since 4.0
  * @product highcharts
  * @todo Copy chart.options3d.frame.side.size docs to actual source code
@@ -119,7 +119,7 @@
  * The color of the panel.
  * 
  * @type {Color}
- * @default {all} transparent
+ * @default transparent
  * @product highcharts
  * @todo Copy chart.options3d.frame.top.color docs to actual source code
  * @apioption chart.options3d.frame.top.color
@@ -129,7 +129,7 @@
  * The pixel thickness of the panel.
  * 
  * @type {Number}
- * @default {all} 1
+ * @default 1
  * @product highcharts
  * @todo Copy chart.options3d.frame.top.size docs to actual source code
  * @apioption chart.options3d.frame.top.size
@@ -143,7 +143,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/ Relative to the chart
  * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/ Relative to the chart
- * @default {all} plot
+ * @default plot
  * @since 2.2
  * @apioption chart.resetZoomButton.relativeTo
  */
@@ -153,7 +153,7 @@
  * 
  * @validvalue ["top", "middle", "bottom"]
  * @type {String}
- * @default {all} top
+ * @default top
  * @apioption chart.resetZoomButton.position.verticalAlign
  */
 
@@ -253,7 +253,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/data/delimiters/ Comma as decimal point
- * @default {all} .
+ * @default .
  * @since 4.1.0
  * @product highcharts
  * @apioption data.decimalPoint
@@ -287,7 +287,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/data/start-end/ Don't get series names from the CSV
  * @sample {highstock} highcharts/data/start-end/ Don't get series names from the CSV
- * @default {all} true
+ * @default true
  * @since 4.1.0
  * @product highcharts highstock
  * @apioption data.firstRowAsNames
@@ -333,7 +333,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/data/delimiters/ Delimiters
- * @default {all} \n
+ * @default \n
  * @since 4.0
  * @product highcharts
  * @apioption data.lineDelimiter
@@ -392,7 +392,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/data/start-end/ Limited data
- * @default {all} 0
+ * @default 0
  * @since 4.0
  * @product highcharts
  * @apioption data.startColumn
@@ -403,7 +403,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/data/start-end/ Limited data
- * @default {all} 0
+ * @default 0
  * @since 4.0
  * @product highcharts
  * @apioption data.startRow
@@ -416,7 +416,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/data/switchrowsandcolumns/ Switch rows and columns
- * @default {all} false
+ * @default false
  * @since 4.0
  * @product highcharts
  * @apioption data.switchRowsAndColumns
@@ -453,7 +453,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/drilldown/allowpointdrilldown-false/ Don't allow point drilldown
- * @default {all} true
+ * @default true
  * @since 4.1.7
  * @product highcharts
  * @apioption drilldown.allowPointDrilldown
@@ -475,7 +475,7 @@
  * What box to align the button to. Can be either "plotBox" or "spacingBox".
  * 
  * @type {String}
- * @default {all} plotBox
+ * @default plotBox
  * @since 3.0.8
  * @product highcharts highmaps
  * @apioption drilldown.drillUpButton.relativeTo
@@ -512,7 +512,7 @@
  * open in a desktop client.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @since 4.1.8
  * @apioption exporting.allowHTML
  */
@@ -525,7 +525,7 @@
  * @type {Object}
  * @sample {highcharts} highcharts/exporting/chartoptions-data-labels/ Added data labels
  * @sample {highstock} highcharts/exporting/chartoptions-data-labels/ Added data labels
- * @default {all} null
+ * @default null
  * @apioption exporting.chartOptions
  */
 
@@ -536,7 +536,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/exporting/enabled-false/ Exporting module is loaded but disabled
  * @sample {highstock} highcharts/exporting/enabled-false/ Exporting module is loaded but disabled
- * @default {all} true
+ * @default true
  * @since 2.0
  * @apioption exporting.enabled
  */
@@ -549,7 +549,7 @@
  * 
  * @type {Function}
  * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @apioption exporting.error
  */
@@ -559,7 +559,7 @@
  * module is unable to export the chart on the client side.
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @since 4.1.8
  * @apioption exporting.fallbackToExportServer
  */
@@ -570,7 +570,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/exporting/filename/ Custom file name
  * @sample {highstock} highcharts/exporting/filename/ Custom file name
- * @default {all} chart
+ * @default chart
  * @since 2.0
  * @apioption exporting.filename
  */
@@ -595,7 +595,7 @@
  * js), required for client side export in certain browsers.
  * 
  * @type {String}
- * @default {all} https://code.highcharts.com/{version}/lib
+ * @default https://code.highcharts.com/{version}/lib
  * @since 5.0.0
  * @apioption exporting.libURL
  */
@@ -630,7 +630,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/exporting/width/ Export to 200px wide images
  * @sample {highstock} highcharts/exporting/width/ Export to 200px wide images
- * @default {all} undefined
+ * @default undefined
  * @since 2.0
  * @apioption exporting.width
  */
@@ -651,7 +651,7 @@
  * See [navigation.buttonOptions](#navigation.buttonOptions) => symbolFill.
  * 
  * @type {Color}
- * @default {all} #666666
+ * @default #666666
  * @since 2.0
  * @apioption exporting.buttons.contextButton.symbolFill
  */
@@ -660,7 +660,7 @@
  * The horizontal position of the button relative to the `align` option.
  * 
  * @type {Number}
- * @default {all} -10
+ * @default -10
  * @since 2.0
  * @apioption exporting.buttons.contextButton.x
  */
@@ -689,7 +689,7 @@
  * 
  * @type {String}
  * @deprecated
- * @default {all} http://code.highcharts.com/{version}/modules/canvas-tools.js
+ * @default http://code.highcharts.com/{version}/modules/canvas-tools.js
  * @product highcharts highmaps
  * @apioption global.canvasToolsURL
  */
@@ -721,7 +721,7 @@
  * @see [getTimezoneOffset](#global.getTimezoneOffset)
  * @sample {highcharts} highcharts/global/timezone/ Europe/Oslo
  * @sample {highstock} highcharts/global/timezone/ Europe/Oslo
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.7
  * @product highcharts highstock
  * @apioption global.timezone
@@ -737,7 +737,7 @@
  * @see [global.getTimezoneOffset](#global.getTimezoneOffset)
  * @sample {highcharts} highcharts/global/timezoneoffset/ Timezone offset
  * @sample {highstock} highcharts/global/timezoneoffset/ Timezone offset
- * @default {all} 0
+ * @default 0
  * @since 3.0.8
  * @product highcharts highstock
  * @apioption global.timezoneOffset
@@ -775,7 +775,7 @@
  * print and export menu items.
  * 
  * @type {String}
- * @default {all} Chart context menu
+ * @default Chart context menu
  * @since 3.0
  * @apioption lang.contextButtonTitle
  */
@@ -784,7 +784,7 @@
  * Exporting module only. The text for the JPEG download menu item.
  * 
  * @type {String}
- * @default {all} Download JPEG image
+ * @default Download JPEG image
  * @since 2.0
  * @apioption lang.downloadJPEG
  */
@@ -793,7 +793,7 @@
  * Exporting module only. The text for the PDF download menu item.
  * 
  * @type {String}
- * @default {all} Download PDF document
+ * @default Download PDF document
  * @since 2.0
  * @apioption lang.downloadPDF
  */
@@ -802,7 +802,7 @@
  * Exporting module only. The text for the PNG download menu item.
  * 
  * @type {String}
- * @default {all} Download PNG image
+ * @default Download PNG image
  * @since 2.0
  * @apioption lang.downloadPNG
  */
@@ -811,7 +811,7 @@
  * Exporting module only. The text for the SVG download menu item.
  * 
  * @type {String}
- * @default {all} Download SVG vector image
+ * @default Download SVG vector image
  * @since 2.0
  * @apioption lang.downloadSVG
  */
@@ -822,7 +822,7 @@
  * `{series.name}`.
  * 
  * @type {String}
- * @default {all} Back to {series.name}
+ * @default Back to {series.name}
  * @since 3.0.8
  * @product highcharts highmaps
  * @apioption lang.drillUpText
@@ -843,7 +843,7 @@
  * no-data module, see [noData](#noData).
  * 
  * @type {String}
- * @default {all} No data to display
+ * @default No data to display
  * @since 3.0.8
  * @product highcharts
  * @apioption lang.noData
@@ -858,7 +858,7 @@
  * @sample {highcharts} highcharts/lang/numericsymbolmagnitude/ 10000 magnitude for Japanese
  * @sample {highstock} highcharts/lang/numericsymbolmagnitude/ 10000 magnitude for Japanese
  * @sample {highmaps} highcharts/lang/numericsymbolmagnitude/ 10000 magnitude for Japanese
- * @default {all} 1000
+ * @default 1000
  * @since 5.0.3
  * @apioption lang.numericSymbolMagnitude
  */
@@ -867,7 +867,7 @@
  * Exporting module only. The text for the menu item to print the chart.
  * 
  * @type {String}
- * @default {all} Print chart
+ * @default Print chart
  * @since 3.0.1
  * @apioption lang.printChart
  */
@@ -907,7 +907,7 @@
  * @sample {highcharts} highcharts/legend/borderwidth/ 2px border width
  * @sample {highstock} stock/legend/align/ Various legend options
  * @sample {highmaps} maps/legend/border-background/ Border and background options
- * @default {all} 0
+ * @default 0
  * @apioption legend.borderWidth
  */
 
@@ -919,7 +919,7 @@
  * @sample {highcharts} highcharts/legend/floating-false/ False by default
  * @sample {highcharts} highcharts/legend/floating-true/ True
  * @sample {highmaps} maps/legend/alignment/ Floating legend
- * @default {all} false
+ * @default false
  * @since 2.1
  * @apioption legend.floating
  */
@@ -945,7 +945,7 @@
  * @sample {highcharts} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highstock} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highmaps} maps/legend/padding-itemmargin/ Padding and item margins demonstrated
- * @default {all} 0
+ * @default 0
  * @since 2.2.0
  * @apioption legend.itemMarginBottom
  */
@@ -957,7 +957,7 @@
  * @sample {highcharts} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highstock} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highmaps} maps/legend/padding-itemmargin/ Padding and item margins demonstrated
- * @default {all} 0
+ * @default 0
  * @since 2.2.0
  * @apioption legend.itemMarginTop
  */
@@ -969,7 +969,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/legend/itemwidth-default/ Null by default
  * @sample {highcharts} highcharts/legend/itemwidth-80/ 80 for aligned legend items
- * @default {all} null
+ * @default null
  * @since 2.0
  * @apioption legend.itemWidth
  */
@@ -980,7 +980,7 @@
  * relates to properties on the series, or the point in case of pies.
  * 
  * @type {String}
- * @default {all} {name}
+ * @default {name}
  * @since 1.3
  * @apioption legend.labelFormat
  */
@@ -992,7 +992,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/legend/lineheight/ Setting padding
- * @default {all} 16
+ * @default 16
  * @since 2.0
  * @product highcharts
  * @apioption legend.lineHeight
@@ -1006,7 +1006,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/legend/margin-default/ 12 pixels by default
  * @sample {highcharts} highcharts/legend/margin-30/ 30 pixels
- * @default {all} 12
+ * @default 12
  * @since 2.1
  * @apioption legend.margin
  */
@@ -1016,7 +1016,7 @@
  *  navigation will show.
  * 
  * @type {Number}
- * @default {all} undefined
+ * @default undefined
  * @since 2.3.0
  * @apioption legend.maxHeight
  */
@@ -1028,7 +1028,7 @@
  * @sample {highcharts} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highstock} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highmaps} maps/legend/padding-itemmargin/ Padding and item margins demonstrated
- * @default {all} 8
+ * @default 8
  * @since 2.2.0
  * @apioption legend.padding
  */
@@ -1041,7 +1041,7 @@
  * @see [yAxis.reversedStacks](#yAxis.reversedStacks), [series.legendIndex](#series.
  * legendIndex)
  * @sample {highcharts} highcharts/legend/reversed/ Stacked bar with reversed legend
- * @default {all} false
+ * @default false
  * @since 1.2.5
  * @apioption legend.reversed
  */
@@ -1052,7 +1052,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/legend/rtl/ Symbol to the right
- * @default {all} false
+ * @default false
  * @since 2.2
  * @product highcharts highmaps
  * @apioption legend.rtl
@@ -1111,7 +1111,7 @@
  * was disabled.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @apioption legend.useHTML
  */
 
@@ -1120,7 +1120,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/legend/width/ Aligned to the plot area
- * @default {all} null
+ * @default null
  * @since 2.0
  * @apioption legend.width
  */
@@ -1138,7 +1138,7 @@
  * @type {Boolean}
  * @see [accessibility.keyboardNavigation](#accessibility.keyboardNavigation.
  * enabled)
- * @default {all} true
+ * @default true
  * @since next
  * @product highcharts
  * @apioption legend.keyboardNavigation.enabled
@@ -1153,7 +1153,7 @@
  * @type {Boolean|Object}
  * @sample {highcharts} highcharts/legend/navigation/ Legend page navigation demonstrated
  * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
- * @default {all} true
+ * @default true
  * @since 2.2.4
  * @apioption legend.navigation.animation
  */
@@ -1165,7 +1165,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/legend/navigation/ Legend page navigation demonstrated
  * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
- * @default {all} 12
+ * @default 12
  * @since 2.2.4
  * @apioption legend.navigation.arrowSize
  */
@@ -1180,7 +1180,7 @@
  * exported charts only.
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @since 4.2.4
  * @apioption legend.navigation.enabled
  */
@@ -1202,7 +1202,7 @@
  * A text or HTML string for the title.
  * 
  * @type {String}
- * @default {all} null
+ * @default null
  * @since 3.0
  * @apioption legend.title.text
  */
@@ -1212,7 +1212,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/loading/hideduration/ Fade in and out over a second
- * @default {all} 100
+ * @default 100
  * @since 1.2.0
  * @apioption loading.hideDuration
  */
@@ -1237,7 +1237,7 @@
  * @sample {highcharts} highcharts/navigation/buttonoptions-align/ Center aligned
  * @sample {highstock} highcharts/navigation/buttonoptions-align/ Center aligned
  * @sample {highmaps} highcharts/navigation/buttonoptions-align/ Center aligned
- * @default {all} right
+ * @default right
  * @since 2.0
  * @apioption navigation.buttonOptions.align
  */
@@ -1249,7 +1249,7 @@
  * @sample {highcharts} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
  * @sample {highstock} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
  * @sample {highmaps} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
- * @default {all} true
+ * @default true
  * @since 2.0
  * @apioption navigation.buttonOptions.enabled
  */
@@ -1261,7 +1261,7 @@
  * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
- * @default {all} 20
+ * @default 20
  * @since 2.0
  * @apioption navigation.buttonOptions.height
  */
@@ -1273,7 +1273,7 @@
  * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
- * @default {all} 14
+ * @default 14
  * @since 2.0
  * @apioption navigation.buttonOptions.symbolSize
  */
@@ -1285,7 +1285,7 @@
  * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
- * @default {all} 12.5
+ * @default 12.5
  * @since 2.0
  * @apioption navigation.buttonOptions.symbolX
  */
@@ -1297,7 +1297,7 @@
  * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
- * @default {all} 10.5
+ * @default 10.5
  * @since 2.0
  * @apioption navigation.buttonOptions.symbolY
  */
@@ -1312,7 +1312,7 @@
  * @sample {highstock} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
  * @sample {highmaps} highcharts/exporting/buttons-text/ Full text button
  * @sample {highmaps} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
- * @default {all} null
+ * @default null
  * @since 3.0
  * @apioption navigation.buttonOptions.text
  */
@@ -1326,7 +1326,7 @@
  * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
  * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
  * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
- * @default {all} top
+ * @default top
  * @since 2.0
  * @apioption navigation.buttonOptions.verticalAlign
  */
@@ -1338,7 +1338,7 @@
  * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
- * @default {all} 24
+ * @default 24
  * @since 2.0
  * @apioption navigation.buttonOptions.width
  */
@@ -1351,7 +1351,7 @@
  * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
  * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
  * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
- * @default {all} 0
+ * @default 0
  * @since 2.0
  * @apioption navigation.buttonOptions.y
  */
@@ -1370,7 +1370,7 @@
  * SVG.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @since 4.1.10
  * @product highcharts highstock
  * @apioption noData.useHTML
@@ -1394,7 +1394,7 @@
  * @sample {highcharts} highcharts/css/pane/ Panes styled by CSS
  * @sample {highstock} highcharts/css/pane/ Panes styled by CSS
  * @sample {highmaps} highcharts/css/pane/ Panes styled by CSS
- * @default {all} highcharts-pane
+ * @default highcharts-pane
  * @since 5.0.0
  * @apioption pane.background.className
  */
@@ -1409,7 +1409,7 @@
  * area` class name.
  * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/ Null by default
  * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/ Gradient
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption plotOptions.area.fillColor
  */
@@ -1442,7 +1442,7 @@
  * style/style-by-css), the line stroke can be set with the `.highcharts-
  * graph` class name.
  * @sample {highcharts} highcharts/plotoptions/area-linecolor/ Dark gray line
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption plotOptions.area.lineColor
  */
@@ -1469,7 +1469,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/line-step/ Different step line options
  * @sample {highcharts} highcharts/plotoptions/area-step/ Stepped, stacked area
- * @default {all} false
+ * @default false
  * @since 1.2.5
  * @product highcharts
  * @apioption plotOptions.area.step
@@ -1482,7 +1482,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/area-trackbyarea/ Display the tooltip when the     area is hovered
  * @sample {highstock} highcharts/plotoptions/area-trackbyarea/ Display the tooltip when the     area is hovered
- * @default {all} false
+ * @default false
  * @since 1.1.6
  * @product highcharts highstock
  * @apioption plotOptions.area.trackByArea
@@ -1505,7 +1505,7 @@
  * @validvalue ["left", "center", "right"]
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/line-step/ Different step line options
- * @default {all} false
+ * @default false
  * @since 1.2.5
  * @product highcharts
  * @apioption plotOptions.arearange.step
@@ -1540,7 +1540,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/ Data labels inside the bar
- * @default {all} left
+ * @default left
  * @product highcharts
  * @apioption plotOptions.bar.dataLabels.align
  */
@@ -1550,7 +1550,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/ Data labels inside the bar
- * @default {all} 5
+ * @default 5
  * @product highcharts
  * @apioption plotOptions.bar.dataLabels.x
  */
@@ -1566,7 +1566,7 @@
  * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
  * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
  * @sample {highcharts} highcharts/plotoptions/error-bar-styling/ Error bar styling
- * @default {all} null
+ * @default null
  * @since 3.0
  * @product highcharts
  * @apioption plotOptions.boxplot.medianColor
@@ -1582,7 +1582,7 @@
  * boxplot-stem` class ([view live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
  * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
  * @sample {highcharts} highcharts/plotoptions/error-bar-styling/ Error bar styling
- * @default {all} null
+ * @default null
  * @since 3.0
  * @product highcharts
  * @apioption plotOptions.boxplot.stemColor
@@ -1596,7 +1596,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
  * @sample {highcharts} highcharts/plotoptions/error-bar-styling/ Error bar styling
- * @default {all} Solid
+ * @default Solid
  * @since 3.0
  * @product highcharts
  * @apioption plotOptions.boxplot.stemDashStyle
@@ -1614,7 +1614,7 @@
  * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
  * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
  * @sample {highcharts} highcharts/plotoptions/error-bar-styling/ Error bar styling
- * @default {all} null
+ * @default null
  * @since 3.0
  * @product highcharts
  * @apioption plotOptions.boxplot.stemWidth
@@ -1629,7 +1629,7 @@
  * style/style-by-css), the whisker stroke can be set with the `.highcharts-
  * boxplot-whisker` class ([view live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
  * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
- * @default {all} null
+ * @default null
  * @since 3.0
  * @product highcharts
  * @apioption plotOptions.boxplot.whiskerColor
@@ -1643,7 +1643,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/bubble-negative/ Negative bubbles
- * @default {all} true
+ * @default true
  * @since 3.0
  * @product highcharts
  * @apioption plotOptions.bubble.displayNegative
@@ -1655,7 +1655,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/bubble-negative/ Negative bubbles
- * @default {all} null
+ * @default null
  * @since 3.0
  * @product highcharts
  * @apioption plotOptions.bubble.negativeColor
@@ -1669,7 +1669,7 @@
  * @validvalue ["area", "width"]
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/bubble-sizeby/ Comparison of area and size
- * @default {all} area
+ * @default area
  * @since 3.0.7
  * @product highcharts
  * @apioption plotOptions.bubble.sizeBy
@@ -1684,7 +1684,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/bubble-sizebyabsolutevalue/ Size by absolute value, various thresholds
- * @default {all} false
+ * @default false
  * @since 4.1.9
  * @product highcharts
  * @apioption plotOptions.bubble.sizeByAbsoluteValue
@@ -1697,7 +1697,7 @@
  * @type {Number}
  * @see [zMax](#plotOptions.bubble.zMin)
  * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/ Z has a possible range of 0-100
- * @default {all} null
+ * @default null
  * @since 4.0.3
  * @product highcharts
  * @apioption plotOptions.bubble.zMax
@@ -1710,7 +1710,7 @@
  * @type {Number}
  * @see [zMax](#plotOptions.bubble.zMax)
  * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/ Z has a possible range of 0-100
- * @default {all} null
+ * @default null
  * @since 4.0.3
  * @product highcharts
  * @apioption plotOptions.bubble.zMin
@@ -1725,7 +1725,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/column-borderwidth/ 2px black border
- * @default {all} 1
+ * @default 1
  * @product highcharts highstock
  * @apioption plotOptions.column.borderWidth
  */
@@ -1739,7 +1739,7 @@
  * @see [series colors](#plotOptions.column.colors)
  * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/ False by default
  * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/ True
- * @default {all} false
+ * @default false
  * @since 2.0
  * @product highcharts highstock
  * @apioption plotOptions.column.colorByPoint
@@ -1761,7 +1761,7 @@
  * js`.
  * 
  * @type {Number}
- * @default {all} 25
+ * @default 25
  * @since 4.0
  * @product highcharts
  * @apioption plotOptions.column.depth
@@ -1780,7 +1780,7 @@
  * 3D columns only. The width of the colored edges.
  * 
  * @type {Number}
- * @default {all} 1
+ * @default 1
  * @product highcharts
  * @apioption plotOptions.column.edgeWidth
  */
@@ -1790,7 +1790,7 @@
  * `highcharts-3d.js`.
  * 
  * @type {Number}
- * @default {all} 1
+ * @default 1
  * @since 4.0
  * @product highcharts
  * @apioption plotOptions.column.groupZPadding
@@ -1804,7 +1804,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/column-grouping-false/ Grouping disabled
  * @sample {highstock} highcharts/plotoptions/column-grouping-false/ Grouping disabled
- * @default {all} true
+ * @default true
  * @since 2.3.0
  * @product highcharts highstock
  * @apioption plotOptions.column.grouping
@@ -1819,7 +1819,7 @@
  * @see [pointWidth](#plotOptions.column.pointWidth)
  * @sample {highcharts} highcharts/plotoptions/column-maxpointwidth-20/ Limited to 50
  * @sample {highstock} highcharts/plotoptions/column-maxpointwidth-20/ Limited to 50
- * @default {all} null
+ * @default null
  * @since 4.1.8
  * @product highcharts highstock
  * @apioption plotOptions.column.maxPointWidth
@@ -1832,7 +1832,7 @@
  * @type {Number}
  * @see [maxPointWidth](#plotOptions.column.maxPointWidth)
  * @sample {highcharts} highcharts/plotoptions/column-pointwidth-20/ 20px wide columns regardless of chart width    or the amount of data points
- * @default {all} null
+ * @default null
  * @since 1.2.5
  * @product highcharts highstock
  * @apioption plotOptions.column.pointWidth
@@ -1856,7 +1856,7 @@
  * A specific color for the hovered point.
  * 
  * @type {Color}
- * @default {all} undefined
+ * @default undefined
  * @product highcharts
  * @apioption plotOptions.column.states.hover.color
  */
@@ -1897,7 +1897,7 @@
  * @type {Number}
  * @see [wrap](#plotOptions.gauge.wrap)
  * @sample {highcharts} highcharts/plotoptions/gauge-overshoot/ Allow 5 degrees overshoot
- * @default {all} 0
+ * @default 0
  * @since 3.0.10
  * @product highcharts
  * @apioption plotOptions.gauge.overshoot
@@ -1910,7 +1910,7 @@
  * 
  * @type {Boolean}
  * @see [overshoot](#plotOptions.gauge.overshoot)
- * @default {all} true
+ * @default true
  * @since 3.0
  * @product highcharts
  * @apioption plotOptions.gauge.wrap
@@ -1921,7 +1921,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default {all} #000000
+ * @default #000000
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.dial.backgroundColor
@@ -1933,7 +1933,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default {all} 70%
+ * @default 70%
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.dial.baseLength
@@ -1945,7 +1945,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default {all} 3
+ * @default 3
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.dial.baseWidth
@@ -1957,7 +1957,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default {all} #cccccc
+ * @default #cccccc
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.dial.borderColor
@@ -1968,7 +1968,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default {all} 0
+ * @default 0
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.dial.borderWidth
@@ -1980,7 +1980,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default {all} 80%
+ * @default 80%
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.dial.radius
@@ -1992,7 +1992,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default {all} 10%
+ * @default 10%
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.dial.rearLength
@@ -2004,7 +2004,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default {all} 1
+ * @default 1
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.dial.topWidth
@@ -2015,7 +2015,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
- * @default {all} #000000
+ * @default #000000
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.pivot.backgroundColor
@@ -2028,7 +2028,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
- * @default {all} #cccccc
+ * @default #cccccc
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.pivot.borderColor
@@ -2039,7 +2039,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
- * @default {all} 0
+ * @default 0
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.pivot.borderWidth
@@ -2050,7 +2050,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
- * @default {all} 5
+ * @default 5
  * @since 2.3.0
  * @product highcharts
  * @apioption plotOptions.gauge.pivot.radius
@@ -2063,7 +2063,7 @@
  * is pulled from the [options.colors](#colors) array.
  * 
  * @type {Color}
- * @default {all} null
+ * @default null
  * @since 4.0
  * @product highcharts
  * @apioption plotOptions.heatmap.color
@@ -2076,7 +2076,7 @@
  * @type {Number}
  * @sample {highcharts} maps/demo/heatmap/ One day
  * @sample {highmaps} maps/demo/heatmap/ One day
- * @default {all} 1
+ * @default 1
  * @since 4.0
  * @product highcharts highmaps
  * @apioption plotOptions.heatmap.colsize
@@ -2088,7 +2088,7 @@
  * @type {Number}
  * @sample {highcharts} maps/demo/heatmap/ 1 by default
  * @sample {highmaps} maps/demo/heatmap/ 1 by default
- * @default {all} 1
+ * @default 1
  * @since 4.0
  * @product highcharts highmaps
  * @apioption plotOptions.heatmap.rowsize
@@ -2108,7 +2108,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/line-step/ Different step line options
  * @sample {highstock} stock/plotoptions/line-step/ Step line
- * @default {all} false
+ * @default false
  * @since 1.2.5
  * @product highcharts highstock
  * @apioption plotOptions.line.step
@@ -2129,7 +2129,7 @@
  * The thickness of a 3D pie. Requires `highcharts-3d.js`
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @since 4.0
  * @product highcharts
  * @apioption plotOptions.pie.depth
@@ -2141,7 +2141,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/demo/pie-semi-circle/ Semi-circle donut
- * @default {all} null
+ * @default null
  * @since 1.3.6
  * @product highcharts
  * @apioption plotOptions.pie.endAngle
@@ -2160,7 +2160,7 @@
  * @sample {highcharts} highcharts/plotoptions/pie-innersize-80px/ 80px inner size
  * @sample {highcharts} highcharts/plotoptions/pie-innersize-50percent/ 50% of the plot area
  * @sample {highcharts} highcharts/demo/3d-pie-donut/ 3D donut
- * @default {all} 0
+ * @default 0
  * @since 2.0
  * @product highcharts
  * @apioption plotOptions.pie.innerSize
@@ -2172,7 +2172,7 @@
  *  but only to this size.
  * 
  * @type {Number}
- * @default {all} 80
+ * @default 80
  * @since 3.0
  * @product highcharts
  * @apioption plotOptions.pie.minSize
@@ -2184,7 +2184,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/pie-startangle-90/ Start from right
- * @default {all} 0
+ * @default 0
  * @since 2.3.4
  * @product highcharts
  * @apioption plotOptions.pie.startAngle
@@ -2210,7 +2210,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorcolor/ Blue connectors
  * @sample {highcharts} highcharts/css/pie-point/ Styled connectors
- * @default {all} {point.color}
+ * @default {point.color}
  * @since 2.1
  * @product highcharts
  * @apioption plotOptions.pie.dataLabels.connectorColor
@@ -2221,7 +2221,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/ No padding
- * @default {all} 5
+ * @default 5
  * @since 2.1
  * @product highcharts
  * @apioption plotOptions.pie.dataLabels.connectorPadding
@@ -2238,7 +2238,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/ Disable the connector
  * @sample {highcharts} highcharts/css/pie-point/ Styled connectors
- * @default {all} 1
+ * @default 1
  * @since 2.1
  * @product highcharts
  * @apioption plotOptions.pie.dataLabels.connectorWidth
@@ -2334,7 +2334,7 @@
  * when moving the mouse between series.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @product highcharts highstock
  * @apioption plotOptions.scatter.stickyTracking
  */
@@ -2348,7 +2348,7 @@
  * The width of the line connecting the data points.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @apioption plotOptions.scatter.states.hover.lineWidth
  */
 
@@ -2471,7 +2471,7 @@
  * @sample {highstock} highcharts/plotoptions/series-dashstyle-all/ Possible values demonstrated
  * @sample {highmaps} highcharts/plotoptions/series-dashstyle-all/ Possible values demonstrated
  * @sample {highmaps} maps/plotoptions/series-dashstyle/ Dotted borders on a map
- * @default {all} Solid
+ * @default Solid
  * @since 2.1
  * @apioption plotOptions.series.dashStyle
  */
@@ -2483,7 +2483,7 @@
  * about the series.
  * 
  * @type {String}
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @apioption plotOptions.series.description
  */
@@ -2496,7 +2496,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-enablemousetracking-false/ No mouse tracking
  * @sample {highmaps} maps/plotoptions/series-enablemousetracking-false/ No mouse tracking
- * @default {all} true
+ * @default true
  * @apioption plotOptions.series.enableMouseTracking
  */
 
@@ -2513,7 +2513,7 @@
  * @sample {highcharts} highcharts/accessibility/art-grants/ Accessible data visualization
  * @sample {highstock} highcharts/accessibility/art-grants/ Accessible data visualization
  * @sample {highmaps} highcharts/accessibility/art-grants/ Accessible data visualization
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.12
  * @todo Copy plotOptions.series.exposeElementToA11y docs to actual source code
  * @apioption plotOptions.series.exposeElementToA11y
@@ -2526,7 +2526,7 @@
  * series only.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @since 4.1.6
  * @product highcharts highstock
  * @apioption plotOptions.series.getExtremesFromAll
@@ -2551,7 +2551,7 @@
  * 
  * @validvalue ["round", "square"]
  * @type {String}
- * @default {all} round
+ * @default round
  * @product highcharts highstock
  * @apioption plotOptions.series.linecap
  */
@@ -2586,7 +2586,7 @@
  * @sample {highstock} highcharts/plotoptions/arearange-negativecolor/ Arearange
  * @sample {highmaps} highcharts/plotoptions/series-negative-color/ Spline, area and column
  * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/ Arearange
- * @default {all} null
+ * @default null
  * @since 3.0
  * @apioption plotOptions.series.negativeColor
  */
@@ -2613,7 +2613,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/ Datetime X axis
  * @sample {highstock} stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
- * @default {all} 1
+ * @default 1
  * @product highcharts highstock
  * @apioption plotOptions.series.pointInterval
  */
@@ -2664,7 +2664,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-pointplacement-numeric/ Numeric placement for custom layout
  * @sample {highstock} highcharts/plotoptions/series-pointplacement-between/ Between in a column chart
  * @sample {highstock} highcharts/plotoptions/series-pointplacement-numeric/ Numeric placement for custom layout
- * @default {all} null
+ * @default null
  * @since 2.3.0
  * @product highcharts highstock
  * @apioption plotOptions.series.pointPlacement
@@ -2679,7 +2679,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-pointstart-linear/ Linear
  * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/ Datetime
  * @sample {highstock} stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
- * @default {all} 0
+ * @default 0
  * @product highcharts highstock
  * @apioption plotOptions.series.pointStart
  */
@@ -2691,7 +2691,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-selected/ One out of two series selected
- * @default {all} false
+ * @default false
  * @since 1.2.0
  * @apioption plotOptions.series.selected
  */
@@ -2703,7 +2703,7 @@
  * 
  * @type {Boolean|Object}
  * @sample {highcharts} highcharts/plotoptions/series-shadow/ Shadow enabled
- * @default {all} false
+ * @default false
  * @apioption plotOptions.series.shadow
  */
 
@@ -2714,7 +2714,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-showinlegend/ One series in the legend, one hidden
- * @default {all} true
+ * @default true
  * @apioption plotOptions.series.showInLegend
  */
 
@@ -2745,7 +2745,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-bar/ Bar
  * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-area/ Area
  * @sample {highstock} stock/plotoptions/stacking/ Area
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption plotOptions.series.stacking
  */
@@ -2773,7 +2773,7 @@
  * 
  * @type {Number}
  * @see [softThreshold](#plotOptions.series.softThreshold).
- * @default {all} 0
+ * @default 0
  * @since 3.0
  * @product highcharts highstock
  * @apioption plotOptions.series.threshold
@@ -2785,7 +2785,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-visible/ Two series, one hidden and one visible
  * @sample {highstock} stock/plotoptions/series-visibility/ Hidden series
- * @default {all} true
+ * @default true
  * @apioption plotOptions.series.visible
  */
 
@@ -2796,7 +2796,7 @@
  * @see [zones](#plotOption.series.zones)
  * @sample {highcharts} highcharts/series/color-zones-zoneaxis-x/ Zones on the X-Axis
  * @sample {highstock} highcharts/series/color-zones-zoneaxis-x/ Zones on the X-Axis
- * @default {all} y
+ * @default y
  * @since 4.1.0
  * @product highcharts highstock
  * @apioption plotOptions.series.zoneAxis
@@ -2811,7 +2811,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
  * @sample {highstock} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
  * @sample {highmaps} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
- * @default {all} false
+ * @default false
  * @since 4.1.0
  * @apioption plotOptions.series.dataLabels.allowOverlap
  */
@@ -2834,7 +2834,7 @@
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
  * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @default {all} undefined
+ * @default undefined
  * @since 2.2.1
  * @apioption plotOptions.series.dataLabels.borderColor
  */
@@ -2846,7 +2846,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
  * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
  * @sample {highmaps} maps/plotoptions/series-datalabels-box/ Data labels box options
- * @default {all} 0
+ * @default 0
  * @since 2.2.1
  * @apioption plotOptions.series.dataLabels.borderRadius
  */
@@ -2857,7 +2857,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
  * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @default {all} 0
+ * @default 0
  * @since 2.2.1
  * @apioption plotOptions.series.dataLabels.borderWidth
  */
@@ -2894,7 +2894,7 @@
  * series.dataLabels.overflow) option.
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @since 2.3.3
  * @apioption plotOptions.series.dataLabels.crop
  */
@@ -2904,7 +2904,7 @@
  * animation has finished.
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @since 4.0
  * @product highcharts highstock
  * @apioption plotOptions.series.dataLabels.defer
@@ -2916,7 +2916,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled/ Data labels enabled
  * @sample {highmaps} maps/demo/color-axis/ Data labels enabled
- * @default {all} false
+ * @default false
  * @apioption plotOptions.series.dataLabels.enabled
  */
 
@@ -2956,7 +2956,7 @@
  * 
  * @validvalue ["justify", "none"]
  * @type {String}
- * @default {all} justify
+ * @default justify
  * @since 3.0.6
  * @apioption plotOptions.series.dataLabels.overflow
  */
@@ -2968,7 +2968,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/ Vertical labels
- * @default {all} 0
+ * @default 0
  * @apioption plotOptions.series.dataLabels.rotation
  */
 
@@ -2980,7 +2980,7 @@
  * @type {Boolean|Object}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
  * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @default {all} false
+ * @default false
  * @since 2.2.1
  * @apioption plotOptions.series.dataLabels.shadow
  */
@@ -2993,7 +2993,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-shape/ A callout for annotations
  * @sample {highstock} highcharts/plotoptions/series-datalabels-shape/ A callout for annotations
  * @sample {highmaps} highcharts/plotoptions/series-datalabels-shape/ A callout for annotations (Highcharts demo)
- * @default {all} square
+ * @default square
  * @since 4.1.2
  * @apioption plotOptions.series.dataLabels.shape
  */
@@ -3015,7 +3015,7 @@
  * the series. Use a Z index of 2 to display it behind the series.
  * 
  * @type {Number}
- * @default {all} 6
+ * @default 6
  * @since 2.3.5
  * @apioption plotOptions.series.dataLabels.zIndex
  */
@@ -3144,7 +3144,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/ White fill
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption plotOptions.series.marker.fillColor
  */
@@ -3156,7 +3156,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-marker-width-height/ Fixed width and height
  * @sample {highstock} highcharts/plotoptions/series-marker-width-height/ Fixed width and height
- * @default {all} null
+ * @default null
  * @since 4.0.4
  * @product highcharts highstock
  * @apioption plotOptions.series.marker.height
@@ -3179,7 +3179,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/series-marker-symbol/ Predefined, graphic and custom markers
  * @sample {highstock} highcharts/plotoptions/series-marker-symbol/ Predefined, graphic and custom markers
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption plotOptions.series.marker.symbol
  */
@@ -3191,7 +3191,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-marker-width-height/ Fixed width and height
  * @sample {highstock} highcharts/plotoptions/series-marker-width-height/ Fixed width and height
- * @default {all} null
+ * @default null
  * @since 4.0.4
  * @product highcharts highstock
  * @apioption plotOptions.series.marker.width
@@ -3201,7 +3201,7 @@
  * The fill color of the marker in hover state.
  * 
  * @type {Color}
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption plotOptions.series.marker.states.hover.fillColor
  */
@@ -3212,7 +3212,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/ White fill color, black line color
- * @default {all} #ffffff
+ * @default #ffffff
  * @product highcharts highstock
  * @apioption plotOptions.series.marker.states.hover.lineColor
  */
@@ -3222,7 +3222,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linewidth/ 3px line width
- * @default {all} 0
+ * @default 0
  * @product highcharts highstock
  * @apioption plotOptions.series.marker.states.hover.lineWidth
  */
@@ -3243,7 +3243,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-enabled/ Disabled select state
- * @default {all} true
+ * @default true
  * @product highcharts highstock
  * @apioption plotOptions.series.marker.states.select.enabled
  */
@@ -3361,7 +3361,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled/ Line
  * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled-column/ Column
  * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled-pie/ Pie
- * @default {all} true
+ * @default true
  * @since 1.2
  * @apioption plotOptions.series.states.hover.enabled
  */
@@ -3371,7 +3371,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidth/ 5px line on hover
- * @default {all} 2
+ * @default 2
  * @product highcharts highstock
  * @apioption plotOptions.series.states.hover.lineWidth
  */
@@ -3472,7 +3472,7 @@
  * to the last value in the series.
  * 
  * @type {Number}
- * @default {all} undefined
+ * @default undefined
  * @since 4.1.0
  * @product highcharts highstock
  * @apioption plotOptions.series.zones.value
@@ -3484,7 +3484,7 @@
  * @validvalue ["square", "round"]
  * @type {String}
  * @sample {highcharts} highcharts/demo/gauge-activity/ Rounded gauge
- * @default {all} round
+ * @default round
  * @since 4.2.2
  * @product highcharts
  * @apioption plotOptions.solidgauge.linecap
@@ -3495,7 +3495,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/demo/gauge-activity/ Activity Gauge
- * @default {all} false
+ * @default false
  * @since 5.0.8
  * @product highcharts
  * @apioption plotOptions.solidgauge.rounded
@@ -3506,7 +3506,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/solidgauge-threshold/ Zero threshold with negative and positive values
- * @default {all} null
+ * @default null
  * @since 5.0.3
  * @product highcharts
  * @apioption plotOptions.solidgauge.threshold
@@ -3526,7 +3526,7 @@
  * @validvalue ["false", "true"]
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/ Enabled
- * @default {all} false
+ * @default false
  * @since 4.1.0
  * @product highcharts
  * @apioption plotOptions.treemap.allowDrillToNode
@@ -3543,7 +3543,7 @@
  * points is to increase performance on large series.
  * 
  * @type {Number}
- * @default {all} 300
+ * @default 300
  * @since 4.1.0
  * @product highcharts
  * @apioption plotOptions.treemap.cropThreshold
@@ -3630,7 +3630,7 @@
  * for possible values.
  * 
  * @type {Object}
- * @default {all} undefined
+ * @default undefined
  * @since 4.1.0
  * @product highcharts
  * @apioption plotOptions.treemap.levels.dataLabels
@@ -3782,7 +3782,7 @@
  * The responsive rule applies if the chart height is greater than this.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @since 5.0.0
  * @apioption responsive.rules.condition.minHeight
  */
@@ -3791,7 +3791,7 @@
  * The responsive rule applies if the chart width is greater than this.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @since 5.0.0
  * @apioption responsive.rules.condition.minWidth
  */
@@ -3833,7 +3833,7 @@
  * in the legend.
  * 
  * @type {Number}
- * @default {all} undefined
+ * @default undefined
  * @since 2.3.0
  * @apioption series.index
  */
@@ -3868,7 +3868,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/series/stack/ Stacked and grouped columns
- * @default {all} null
+ * @default null
  * @since 2.1
  * @product highcharts highstock
  * @apioption series.stack
@@ -3894,7 +3894,7 @@
  * 0 being the first.
  * 
  * @type {Number|String}
- * @default {all} 0
+ * @default 0
  * @product highcharts highstock
  * @apioption series.xAxis
  */
@@ -3907,7 +3907,7 @@
  * 
  * @type {Number|String}
  * @sample {highcharts} highcharts/series/yaxis/ Apply the column series to the secondary Y axis
- * @default {all} 0
+ * @default 0
  * @product highcharts highstock
  * @apioption series.yAxis
  */
@@ -3988,7 +3988,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/point/color/ Mark the highest point
- * @default {all} undefined
+ * @default undefined
  * @product highcharts highstock
  * @apioption series.line.data.color
  */
@@ -3999,7 +3999,7 @@
  * scale of the colorAxis.
  * 
  * @type {Number}
- * @default {all} undefined
+ * @default undefined
  * @since 4.1.0
  * @product highcharts
  * @apioption series.treemap.data.colorValue
@@ -4034,7 +4034,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/point/id/ Remove an id'd point
- * @default {all} null
+ * @default null
  * @since 1.2.0
  * @product highcharts highstock
  * @apioption series.line.data.id
@@ -4047,7 +4047,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
- * @default {all} false
+ * @default false
  * @product highcharts
  * @apioption series.waterfall.data.isIntermediateSum
  */
@@ -4058,7 +4058,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
- * @default {all} false
+ * @default false
  * @product highcharts
  * @apioption series.waterfall.data.isSum
  */
@@ -4095,7 +4095,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/point/parent/ Point parent
  * @sample {highcharts} highcharts/demo/treemap-with-levels/ Example where parent id is not matching
- * @default {all} undefined
+ * @default undefined
  * @since 4.1.0
  * @product highcharts
  * @apioption series.treemap.data.parent
@@ -4123,7 +4123,7 @@
  * The y value of the point.
  * 
  * @type {Number}
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption series.line.data.y
  */
@@ -5786,7 +5786,7 @@
  * about the point.
  * 
  * @type {String}
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @apioption series.line.data.description
  */
@@ -5804,7 +5804,7 @@
  * Whether the data point is selected initially.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @product highcharts highstock
  * @apioption series.line.data.selected
  */
@@ -6308,7 +6308,7 @@
  * @validvalue true, false
  * @type {Boolean}
  * @sample {highcharts} highcharts/demo/gauge-activity/ Activity Gauge
- * @default {all} false
+ * @default false
  * @since 5.0.11
  * @product highcharts
  * @apioption series.solidgauge.rounded
@@ -6767,7 +6767,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/subtitle/floating/ Floating title and subtitle
  * @sample {highstock} stock/chart/subtitle-footnote Footnote floating at bottom right of plot area
- * @default {all} false
+ * @default false
  * @since 2.1
  * @apioption subtitle.floating
  */
@@ -6785,7 +6785,7 @@
  * @sample {highstock} stock/chart/subtitle-style Custom color and weight
  * @sample {highstock} highcharts/css/titles/ Styled mode
  * @sample {highmaps} highcharts/css/titles/ Styled mode
- * @default {all} { "color": "#666666" }
+ * @default { "color": "#666666" }
  * @apioption subtitle.style
  */
 
@@ -6794,7 +6794,7 @@
  * and-string-formatting#html) to render the text.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @apioption subtitle.useHTML
  */
 
@@ -6806,7 +6806,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/subtitle/verticalalign/ Footnote at the bottom right of plot area
  * @sample {highstock} stock/chart/subtitle-footnote Footnote at the bottom right of plot area
- * @default {all}  
+ * @default  
  * @since 2.1
  * @apioption subtitle.verticalAlign
  */
@@ -6818,7 +6818,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/subtitle/align/ Footnote at right of plot area
  * @sample {highstock} stock/chart/subtitle-footnote Footnote at the bottom right of plot area
- * @default {all} 0
+ * @default 0
  * @since 2.0
  * @apioption subtitle.x
  */
@@ -6846,7 +6846,7 @@
  * @sample {highcharts} highcharts/chart/zoomtype-none/ False by default
  * @sample {highcharts} highcharts/title/floating/ True - title on top of the plot area
  * @sample {highstock} stock/chart/title-floating/ True - title on top of the plot area
- * @default {all} false
+ * @default false
  * @since 2.1
  * @apioption title.floating
  */
@@ -6876,7 +6876,7 @@
  * and-string-formatting#html) to render the text.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @apioption title.useHTML
  */
 
@@ -6900,7 +6900,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/title/align/ Aligned to the plot area (x = 70px     = margin left - spacing left)
  * @sample {highstock} stock/chart/title-align/ Aligned to the plot area (x = 50px     = margin left - spacing left)
- * @default {all} 0
+ * @default 0
  * @since 2.0
  * @apioption title.x
  */
@@ -6926,7 +6926,7 @@
  * @sample {highcharts} highcharts/tooltip/bordercolor-black/ Black border
  * @sample {highstock} stock/tooltip/general/ Styled tooltip
  * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
- * @default {all} null
+ * @default null
  * @apioption tooltip.borderColor
  */
 
@@ -6938,7 +6938,7 @@
  * @type {Mixed}
  * @deprecated
  * @sample {highcharts} highcharts/tooltip/crosshairs-x/ Enable a crosshair for the x value
- * @default {all} true
+ * @default true
  * @apioption tooltip.crosshairs
  */
 
@@ -7042,7 +7042,7 @@
  * mouse out from a point or chart.
  * 
  * @type {Number}
- * @default {all} 500
+ * @default 500
  * @since 3.0
  * @product highcharts highmaps
  * @apioption tooltip.hideDelay
@@ -7081,7 +7081,7 @@
  * Highcharts 3.x and less, the shape was `square`.
  * 
  * @type {String}
- * @default {all} callout
+ * @default callout
  * @since 4.0
  * @product highcharts highstock
  * @apioption tooltip.shape
@@ -7119,7 +7119,7 @@
  * @sample {highcharts} highcharts/tooltip/split/ Split tooltip
  * @sample {highstock} highcharts/tooltip/split/ Split tooltip
  * @sample {highmaps} highcharts/tooltip/split/ Split tooltip
- * @default {all} false
+ * @default false
  * @since 5.0.0
  * @apioption tooltip.split
  */
@@ -7136,7 +7136,7 @@
  * @sample {highstock} highcharts/tooltip/footerformat/ A table for value alignment
  * @sample {highstock} highcharts/tooltip/fullhtml/ Full HTML tooltip
  * @sample {highmaps} maps/tooltip/usehtml/ Pure HTML tooltip
- * @default {all} false
+ * @default false
  * @since 2.2
  * @apioption tooltip.useHTML
  */
@@ -7200,7 +7200,7 @@
  * @sample {highcharts} highcharts/yaxis/allowdecimals-false/ False
  * @sample {highstock} highcharts/yaxis/allowdecimals-true/ True by default
  * @sample {highstock} highcharts/yaxis/allowdecimals-false/ False
- * @default {all} true
+ * @default true
  * @since 2.0
  * @apioption xAxis.allowDecimals
  */
@@ -7212,7 +7212,7 @@
  * @type {Color}
  * @sample {highcharts} highcharts/yaxis/alternategridcolor/ Alternate grid color on the Y axis
  * @sample {highstock} stock/xaxis/alternategridcolor/ Alternate grid color on the Y axis
- * @default {all} null
+ * @default null
  * @apioption xAxis.alternateGridColor
  */
 
@@ -7268,7 +7268,7 @@
  * Description of the axis to screen reader users.
  * 
  * @type {String}
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @apioption xAxis.description
  */
@@ -7280,7 +7280,7 @@
  * @see [ceiling](#yAxis.ceiling)
  * @sample {highcharts} highcharts/yaxis/floor-ceiling/ Floor and ceiling
  * @sample {highstock} stock/demo/lazy-loading/ Prevent negative stock price on Y axis
- * @default {all} null
+ * @default null
  * @since 4.0
  * @product highcharts highstock
  * @apioption xAxis.floor
@@ -7295,7 +7295,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/ Long dashes
  * @sample {highstock} stock/xaxis/gridlinedashstyle/ Long dashes
- * @default {all} Solid
+ * @default Solid
  * @since 1.2
  * @apioption xAxis.gridLineDashStyle
  */
@@ -7313,7 +7313,7 @@
  * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
  * @sample {highstock} stock/xaxis/gridlinewidth/ 2px lines
  * @sample {highstock} highcharts/css/axis-grid/ Styled mode
- * @default {all} 0
+ * @default 0
  * @apioption xAxis.gridLineWidth
  */
 
@@ -7323,7 +7323,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/gridzindex/ A Z index of 4 renders the grid above the graph
  * @sample {highstock} highcharts/xaxis/gridzindex/ A Z index of 4 renders the grid above the graph
- * @default {all} 1
+ * @default 1
  * @product highcharts highstock
  * @apioption xAxis.gridZIndex
  */
@@ -7335,7 +7335,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/id/ Get the object
  * @sample {highstock} stock/xaxis/id/ Get the object
- * @default {all} null
+ * @default null
  * @since 1.2.0
  * @apioption xAxis.id
  */
@@ -7350,7 +7350,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/linkedto/ Different string formats of the same date
  * @sample {highcharts} highcharts/yaxis/linkedto/ Y values on both sides
- * @default {all} null
+ * @default null
  * @since 2.0.2
  * @product highcharts highstock
  * @apioption xAxis.linkedTo
@@ -7439,7 +7439,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/yaxis/minorgridlinedashstyle/ Long dashes on minor grid lines
  * @sample {highstock} stock/xaxis/minorgridlinedashstyle/ Long dashes on minor grid lines
- * @default {all} Solid
+ * @default Solid
  * @since 1.2
  * @apioption xAxis.minorGridLineDashStyle
  */
@@ -7479,7 +7479,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/minortickwidth/ 3px width
  * @sample {highstock} stock/xaxis/minorticks/ 1px width
- * @default {all} 0
+ * @default 0
  * @apioption xAxis.minorTickWidth
  */
 
@@ -7495,7 +7495,7 @@
  * @sample {highcharts} highcharts/yaxis/offset/ Y axis offset of 70
  * @sample {highcharts} highcharts/yaxis/offset-centered/ Axes positioned in the center of the plot
  * @sample {highstock} stock/xaxis/offset/ Y axis offset by 70 px
- * @default {all} 0
+ * @default 0
  * @apioption xAxis.offset
  */
 
@@ -7508,7 +7508,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/yaxis/opposite/ Secondary Y axis opposite
  * @sample {highstock} stock/xaxis/opposite/ Y axis on left side
- * @default {all} false
+ * @default false
  * @apioption xAxis.opposite
  */
 
@@ -7520,7 +7520,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/yaxis/reversed/ Reversed Y axis
  * @sample {highstock} stock/xaxis/reversed/ Reversed Y axis
- * @default {all} false
+ * @default false
  * @apioption xAxis.reversed
  */
 
@@ -7530,7 +7530,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/yaxis/showempty/ When clicking the legend to hide series, one axis preserves line and title, the other doesn't
  * @sample {highstock} highcharts/yaxis/showempty/ When clicking the legend to hide series, one axis preserves line and title, the other doesn't
- * @default {all} true
+ * @default true
  * @since 1.1
  * @apioption xAxis.showEmpty
  */
@@ -7541,7 +7541,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/xaxis/showfirstlabel-false/ Set to false on X axis
  * @sample {highstock} stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
- * @default {all} true
+ * @default true
  * @apioption xAxis.showFirstLabel
  */
 
@@ -7551,7 +7551,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/xaxis/showlastlabel-true/ Set to true on X axis
  * @sample {highstock} stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
- * @default {all} true
+ * @default true
  * @apioption xAxis.showLastLabel
  */
 
@@ -7621,7 +7621,7 @@
  * tickPositions), [tickPositioner](#xAxis.tickPositioner)
  * @sample {highcharts} highcharts/xaxis/tickinterval-5/ Tick interval of 5 on a linear axis
  * @sample {highstock} stock/xaxis/tickinterval/ Tick interval of 0.01 on Y axis
- * @default {all} null
+ * @default null
  * @apioption xAxis.tickInterval
  */
 
@@ -7681,7 +7681,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/xaxis/uniquenames-true/ True by default
  * @sample {highcharts} highcharts/xaxis/uniquenames-false/ False
- * @default {all} true
+ * @default true
  * @since 4.2.7
  * @product highcharts
  * @apioption xAxis.uniqueNames
@@ -7729,7 +7729,7 @@
  * be visible.
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @since 4.1.9
  * @product highcharts highstock
  * @apioption xAxis.visible
@@ -7757,7 +7757,7 @@
  * indicate the equivalent of an hour.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @since 4.1.0
  * @product highcharts highstock
  * @apioption xAxis.breaks.breakSize
@@ -7777,7 +7777,7 @@
  * the breaks do not repeat.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @since 4.1.0
  * @product highcharts highstock
  * @apioption xAxis.breaks.repeat
@@ -7805,7 +7805,7 @@
  * @sample {highcharts} highcharts/xaxis/crosshair-both/ Crosshair on both axes
  * @sample {highstock} stock/xaxis/crosshairs-xy/ Crosshair on both axes
  * @sample {highmaps} highcharts/xaxis/crosshair-both/ Crosshair on both axes
- * @default {all} false
+ * @default false
  * @since 4.1
  * @apioption xAxis.crosshair
  */
@@ -7827,7 +7827,7 @@
  * @sample {highcharts} highcharts/xaxis/crosshair-customized/ Customized crosshairs
  * @sample {highstock} highcharts/xaxis/crosshair-customized/ Customized crosshairs
  * @sample {highmaps} highcharts/xaxis/crosshair-customized/ Customized crosshairs
- * @default {all} #cccccc
+ * @default #cccccc
  * @since 4.1
  * @apioption xAxis.crosshair.color
  */
@@ -7841,7 +7841,7 @@
  * @sample {highcharts} highcharts/xaxis/crosshair-dotted/ Dotted crosshair
  * @sample {highstock} stock/xaxis/crosshair-dashed/ Dashed X axis crosshair
  * @sample {highmaps} highcharts/xaxis/crosshair-dotted/ Dotted crosshair
- * @default {all} Solid
+ * @default Solid
  * @since 4.1
  * @apioption xAxis.crosshair.dashStyle
  */
@@ -7854,7 +7854,7 @@
  * @sample {highcharts} highcharts/xaxis/crosshair-snap-false/ True by default
  * @sample {highstock} highcharts/xaxis/crosshair-snap-false/ True by default
  * @sample {highmaps} maps/demo/latlon-advanced/ Snap is false
- * @default {all} true
+ * @default true
  * @since 4.1
  * @apioption xAxis.crosshair.snap
  */
@@ -7867,7 +7867,7 @@
  * @sample {highcharts} highcharts/xaxis/crosshair-customized/ Customized crosshairs
  * @sample {highstock} highcharts/xaxis/crosshair-customized/ Customized crosshairs
  * @sample {highmaps} highcharts/xaxis/crosshair-customized/ Customized crosshairs
- * @default {all} 1
+ * @default 1
  * @since 4.1
  * @apioption xAxis.crosshair.width
  */
@@ -7877,7 +7877,7 @@
  * crosshair on top of the series or behind the grid lines.
  * 
  * @type {Number}
- * @default {all} 2
+ * @default 2
  * @since 4.1
  * @apioption xAxis.crosshair.zIndex
  */
@@ -7989,7 +7989,7 @@
  * @sample {highcharts} highcharts/xaxis/labels-autorotation-0-90/ Custom graded auto rotation
  * @sample {highstock} highcharts/xaxis/labels-autorotation-default/ Default auto rotation of 0 or -45
  * @sample {highstock} highcharts/xaxis/labels-autorotation-0-90/ Custom graded auto rotation
- * @default {all} [-45]
+ * @default [-45]
  * @since 4.1.0
  * @product highcharts highstock
  * @apioption xAxis.labels.autoRotation
@@ -8004,7 +8004,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/labels-autorotationlimit/ Lower limit
- * @default {all} 80
+ * @default 80
  * @since 4.1.5
  * @product highcharts
  * @apioption xAxis.labels.autoRotationLimit
@@ -8015,7 +8015,7 @@
  * of the plot area.
  * 
  * @type {Number}
- * @default {all} 15
+ * @default 15
  * @product highcharts
  * @apioption xAxis.labels.distance
  */
@@ -8027,7 +8027,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/yaxis/labels-format/ Add units to Y axis label
  * @sample {highstock} highcharts/yaxis/labels-format/ Add units to Y axis label
- * @default {all} {value}
+ * @default {value}
  * @since 3.0
  * @apioption xAxis.labels.format
  */
@@ -8071,7 +8071,7 @@
  * them.
  * 
  * @type {Number}
- * @default {all} 5
+ * @default 5
  * @product highcharts
  * @apioption xAxis.labels.padding
  */
@@ -8083,7 +8083,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/xaxis/labels-reservespace/ No reserved space, labels inside plot
- * @default {all} true
+ * @default true
  * @since 4.1.10
  * @product highcharts
  * @apioption xAxis.labels.reserveSpace
@@ -8094,7 +8094,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/labels-rotation/ X axis labels rotated 90°
- * @default {all} 0
+ * @default 0
  * @apioption xAxis.labels.rotation
  */
 
@@ -8105,7 +8105,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/labels-staggerlines/ Show labels over two lines
  * @sample {highstock} stock/xaxis/labels-staggerlines/ Show labels over two lines
- * @default {all} null
+ * @default null
  * @since 2.1
  * @apioption xAxis.labels.staggerLines
  */
@@ -8123,7 +8123,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/labels-step/ Showing only every other axis label on a categorized x axis
  * @sample {highcharts} highcharts/xaxis/labels-step-auto/ Auto steps on a category axis
- * @default {all} null
+ * @default null
  * @since 2.1
  * @apioption xAxis.labels.step
  */
@@ -8133,7 +8133,7 @@
  * and-string-formatting#html) to render the labels.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @apioption xAxis.labels.useHTML
  */
 
@@ -8144,7 +8144,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/labels-x/ Y axis labels placed on grid lines
- * @default {all} null
+ * @default null
  * @apioption xAxis.labels.y
  */
 
@@ -8152,7 +8152,7 @@
  * The Z index for the axis labels.
  * 
  * @type {Number}
- * @default {all} 7
+ * @default 7
  * @apioption xAxis.labels.zIndex
  */
 
@@ -8177,7 +8177,7 @@
  * set.
  * 
  * @type {Color}
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotBands.borderColor
  */
@@ -8187,7 +8187,7 @@
  * set.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @product highcharts highstock
  * @apioption xAxis.plotBands.borderWidth
  */
@@ -8207,7 +8207,7 @@
  * @type {Color}
  * @sample {highcharts} highcharts/xaxis/plotbands-color/ Color band
  * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotBands.color
  */
@@ -8231,7 +8231,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-color/ Datetime axis
  * @sample {highcharts} highcharts/xaxis/plotbands-from/ Categorized axis
  * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotBands.from
  */
@@ -8242,7 +8242,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotbands-id/ Remove plot band by id
  * @sample {highstock} highcharts/xaxis/plotbands-id/ Remove plot band by id
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotBands.id
  */
@@ -8254,7 +8254,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-color/ Datetime axis
  * @sample {highcharts} highcharts/xaxis/plotbands-from/ Categorized axis
  * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotBands.to
  */
@@ -8269,7 +8269,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-color/ Behind plot lines by default
  * @sample {highcharts} highcharts/xaxis/plotbands-zindex/ Above plot lines
  * @sample {highcharts} highcharts/xaxis/plotbands-zindex-above-series/ Above plot lines and series
- * @default {all} null
+ * @default null
  * @since 1.2
  * @product highcharts highstock
  * @apioption xAxis.plotBands.zIndex
@@ -8289,7 +8289,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-align/ Aligned to the right
  * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
- * @default {all} center
+ * @default center
  * @since 2.1
  * @product highcharts highstock
  * @apioption xAxis.plotBands.label.align
@@ -8300,7 +8300,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/ Vertical text
- * @default {all} 0
+ * @default 0
  * @since 2.1
  * @product highcharts highstock
  * @apioption xAxis.plotBands.label.rotation
@@ -8348,7 +8348,7 @@
  * and-string-formatting#html) to render the labels.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @since 3.0.3
  * @product highcharts highstock
  * @apioption xAxis.plotBands.label.useHTML
@@ -8361,7 +8361,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-verticalalign/ Vertically centered label
  * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
- * @default {all} top
+ * @default top
  * @since 2.1
  * @product highcharts highstock
  * @apioption xAxis.plotBands.label.verticalAlign
@@ -8418,7 +8418,7 @@
  * @type {Color}
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ A red line from X axis
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotLines.color
  */
@@ -8432,7 +8432,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotlines-dashstyle/ Dash and dot pattern
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
- * @default {all} Solid
+ * @default Solid
  * @since 1.2
  * @product highcharts highstock
  * @apioption xAxis.plotLines.dashStyle
@@ -8455,7 +8455,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotlines-id/ Remove plot line by id
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotLines.id
  */
@@ -8466,7 +8466,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ Between two categories on X axis
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotLines.value
  */
@@ -8477,7 +8477,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ 2px wide line from X axis
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
- * @default {all} null
+ * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotLines.width
  */
@@ -8489,7 +8489,7 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-zindex-behind/ Behind plot lines by default
  * @sample {highcharts} highcharts/xaxis/plotlines-zindex-above/ Above plot lines
  * @sample {highcharts} highcharts/xaxis/plotlines-zindex-above-all/ Above plot lines and series
- * @default {all} null
+ * @default null
  * @since 1.2
  * @product highcharts highstock
  * @apioption xAxis.plotLines.zIndex
@@ -8509,7 +8509,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotlines-label-align-right/ Aligned to the right
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
- * @default {all} left
+ * @default left
  * @since 2.1
  * @product highcharts highstock
  * @apioption xAxis.plotLines.label.align
@@ -8568,7 +8568,7 @@
  * and-string-formatting#html) to render the labels.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @since 3.0.3
  * @product highcharts highstock
  * @apioption xAxis.plotLines.label.useHTML
@@ -8616,7 +8616,7 @@
  * 
  * @type {String}
  * @deprecated
- * @default {all} middle
+ * @default middle
  * @product highcharts
  * @apioption xAxis.title.enabled
  */
@@ -8647,7 +8647,7 @@
  * Whether to reserve space for the title when laying out the axis.
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @since 5.0.11
  * @product highcharts highstock
  * @apioption xAxis.title.reserveSpace
@@ -8659,7 +8659,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/title-offset/ Horizontal
- * @default {all} 0
+ * @default 0
  * @apioption xAxis.title.rotation
  */
 
@@ -8670,7 +8670,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/title-text/ Custom HTML
  * @sample {highstock} stock/xaxis/title-text/ Titles for both axes
- * @default {all} null
+ * @default null
  * @apioption xAxis.title.text
  */
 
@@ -8678,7 +8678,7 @@
  * Horizontal pixel offset of the title position.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @since 4.1.6
  * @product highcharts highstock
  * @apioption xAxis.title.x
@@ -8699,7 +8699,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/angle/ Dual axis polar chart
- * @default {all} 0
+ * @default 0
  * @since 4.2.7
  * @product highcharts
  * @apioption yAxis.angle
@@ -8714,7 +8714,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/demo/polar-spider/ Polygon grid lines
  * @sample {highcharts} highcharts/yaxis/gridlineinterpolation/ Circle and polygon
- * @default {all} null
+ * @default null
  * @product highcharts
  * @apioption yAxis.gridLineInterpolation
  */
@@ -8725,7 +8725,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/ Min and max colors
- * @default {all} #003399
+ * @default #003399
  * @since 4.0
  * @product highcharts
  * @apioption yAxis.maxColor
@@ -8759,7 +8759,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/ Min and max color
- * @default {all} #e6ebf5
+ * @default #e6ebf5
  * @since 4.0
  * @product highcharts
  * @apioption yAxis.minColor
@@ -8773,7 +8773,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/yaxis/reversedstacks-false/ Non-reversed stacks
  * @sample {highstock} highcharts/yaxis/reversedstacks-false/ Non-reversed stacks
- * @default {all} true
+ * @default true
  * @since 3.0.10
  * @product highcharts highstock
  * @apioption yAxis.reversedStacks
@@ -8804,7 +8804,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/tickwidth/ 10 px width
  * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
- * @default {all} 0
+ * @default 0
  * @product highcharts highstock
  * @apioption yAxis.tickWidth
  */
@@ -8835,7 +8835,7 @@
  * from the perimeter of the plot area.
  * 
  * @type {Number}
- * @default {all} -25
+ * @default -25
  * @product highcharts
  * @apioption yAxis.labels.distance
  */
@@ -8870,7 +8870,7 @@
  * 
  * @type {Number|String}
  * @sample {highcharts} highcharts/xaxis/plotbands-gauge Gauge plot band
- * @default {all} null
+ * @default null
  * @since 2.3
  * @product highcharts
  * @apioption yAxis.plotBands.innerRadius
@@ -8883,7 +8883,7 @@
  * 
  * @type {Number|String}
  * @sample {highcharts} highcharts/xaxis/plotbands-gauge Gauge plot band
- * @default {all} 100%
+ * @default 100%
  * @since 2.3
  * @product highcharts
  * @apioption yAxis.plotBands.outerRadius
@@ -8898,7 +8898,7 @@
  * 
  * @type {Number|String}
  * @sample {highcharts} highcharts/xaxis/plotbands-gauge Gauge plot band
- * @default {all} 10
+ * @default 10
  * @since 2.3
  * @product highcharts
  * @apioption yAxis.plotBands.thickness
@@ -8934,7 +8934,7 @@
  * data label. Available variables are the same as for `formatter`.
  * 
  * @type {String}
- * @default {all} {total}
+ * @default {total}
  * @since 3.0.2
  * @product highcharts highstock
  * @apioption yAxis.stackLabels.format
@@ -8945,7 +8945,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/stacklabels-rotation/ Labels rotated 45°
- * @default {all} 0
+ * @default 0
  * @since 2.1.5
  * @product highcharts
  * @apioption yAxis.stackLabels.rotation
@@ -8972,7 +8972,7 @@
  * to render the labels.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @since 3.0
  * @product highcharts highstock
  * @apioption yAxis.stackLabels.useHTML
@@ -9024,7 +9024,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/title-margin/ Y axis title margin of 60
- * @default {all} 40
+ * @default 40
  * @apioption yAxis.title.margin
  */
 
@@ -9052,7 +9052,7 @@
  * 
  * @type {Boolean}
  * @sample {highstock} stock/demo/lazy-loading/ Set to false with async data loading
- * @default {all} true
+ * @default true
  * @product highstock
  * @apioption navigator.adaptToUpdatedData
  */
@@ -9067,7 +9067,7 @@
  * @type {Mixed}
  * @see [series.showInNavigator](#plotOptions.series.showInNavigator)
  * @deprecated
- * @default {all} 0
+ * @default 0
  * @product highstock
  * @apioption navigator.baseSeries
  */
@@ -9077,7 +9077,7 @@
  * 
  * @type {Boolean}
  * @sample {highstock} stock/navigator/enabled/ Disable the navigator
- * @default {all} true
+ * @default true
  * @product highstock
  * @apioption navigator.enabled
  */
@@ -9087,7 +9087,7 @@
  * opposite side.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @since 5.0.8
  * @product highstock
  * @apioption navigator.opposite
@@ -9120,7 +9120,7 @@
  * 
  * @type {Color}
  * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
- * @default {all} null
+ * @default null
  * @since 1.3.6
  * @product highstock
  * @apioption plotOptions.candlestick.upLineColor
@@ -9147,7 +9147,7 @@
  * .
  * 
  * @type {String|Function}
- * @default {all} ohlc
+ * @default ohlc
  * @product highstock
  * @apioption plotOptions.candlestick.dataGrouping.approximation
  */
@@ -9168,7 +9168,7 @@
  * 
  * @type {Number}
  * @sample {highstock} stock/plotoptions/series-datagrouping-grouppixelwidth/ Two series with the same data density but different groupPixelWidth
- * @default {all} 10
+ * @default 10
  * @product highstock
  * @apioption plotOptions.column.dataGrouping.groupPixelWidth
  */
@@ -9230,7 +9230,7 @@
  * .highcharts-point` rule.
  * 
  * @type {Color}
- * @default {all} #000000
+ * @default #000000
  * @product highstock
  * @apioption plotOptions.flags.lineColor
  */
@@ -9244,7 +9244,7 @@
  * @validvalue ["y", "open", "high", "low", "close"]
  * @type {String}
  * @sample {highstock} stock/plotoptions/flags-onkey/ Range series, flag on high
- * @default {all} y
+ * @default y
  * @since 4.2.2
  * @product highstock
  * @apioption plotOptions.flags.onKey
@@ -9256,7 +9256,7 @@
  * 
  * @type {String}
  * @sample {highstock} stock/plotoptions/flags/ Flags on series and on x axis
- * @default {all} undefined
+ * @default undefined
  * @product highstock
  * @apioption plotOptions.flags.onSeries
  */
@@ -9280,7 +9280,7 @@
  *  or individually for each point. Defaults to `"A"`.
  * 
  * @type {Text}
- * @default {all} "A"
+ * @default "A"
  * @product highstock
  * @apioption plotOptions.flags.title
  */
@@ -9299,7 +9299,7 @@
  * won't respect Z-index settings.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @since 1.3
  * @product highstock
  * @apioption plotOptions.flags.useHTML
@@ -9312,7 +9312,7 @@
  * 
  * @validvalue ["round", "butt", "square"]
  * @type {String}
- * @default {all} round
+ * @default round
  * @since 3.0.7
  * @product highstock
  * @apioption plotOptions.line.linecap
@@ -9356,7 +9356,7 @@
  * two pixels wide. Defaults to `5`.
  * 
  * @type {Number}
- * @default {all} 5
+ * @default 5
  * @product highstock
  * @apioption plotOptions.ohlc.dataGrouping.groupPixelWidth
  */
@@ -9379,7 +9379,7 @@
  * setCompare())
  * @sample {highstock} stock/plotoptions/series-compare-percent/ Percent
  * @sample {highstock} stock/plotoptions/series-compare-value/ Value
- * @default {all} undefined
+ * @default undefined
  * @since 1.0.1
  * @product highstock
  * @apioption plotOptions.series.compare
@@ -9392,7 +9392,7 @@
  * @validvalue [0, 100]
  * @type {Number}
  * @sample {highstock} / Compare base is 100
- * @default {all} 0
+ * @default 0
  * @since 5.0.6
  * @product highstock
  * @apioption plotOptions.series.compareBase
@@ -9410,7 +9410,7 @@
  * @type {Number}
  * @see [xAxis.breaks](#xAxis.breaks)
  * @sample {highstock} stock/plotoptions/series-gapsize/ Setting the gap size to 2 introduces gaps for weekends in daily datasets.
- * @default {all} 0
+ * @default 0
  * @product highstock
  * @apioption plotOptions.series.gapSize
  */
@@ -9419,7 +9419,7 @@
  * The sequential index of the series within the legend.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @product highstock
  * @apioption plotOptions.series.legendIndex
  */
@@ -9436,7 +9436,7 @@
  * 
  * @type {Object}
  * @see [navigator.series](#navigator.series)
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @product highstock
  * @apioption plotOptions.series.navigatorOptions
@@ -9447,7 +9447,7 @@
  * over [navigator.baseSeries](#navigator.baseSeries) if defined.
  * 
  * @type {Boolean}
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @product highstock
  * @apioption plotOptions.series.showInNavigator
@@ -9540,7 +9540,7 @@
  * Enable or disable data grouping.
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @product highstock
  * @apioption plotOptions.series.dataGrouping.enabled
  */
@@ -9551,7 +9551,7 @@
  * for values appearing at random times within each hour.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @product highstock
  * @apioption plotOptions.series.dataGrouping.forced
  */
@@ -9569,7 +9569,7 @@
  * have 10px by default.
  * 
  * @type {Number}
- * @default {all} 2
+ * @default 2
  * @product highstock
  * @apioption plotOptions.series.dataGrouping.groupPixelWidth
  */
@@ -9583,7 +9583,7 @@
  * values are preserved. Internally, this is used in the Navigator series.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @product highstock
  * @apioption plotOptions.series.dataGrouping.smoothed
  */
@@ -9633,7 +9633,7 @@
  * 
  * @type {Boolean}
  * @sample {highstock} stock/rangeselector/allbuttonsenabled-true/ All buttons enabled
- * @default {all} false
+ * @default false
  * @since 2.0.3
  * @product highstock
  * @apioption rangeSelector.allButtonsEnabled
@@ -9652,7 +9652,7 @@
  * The space in pixels between the buttons in the range selector.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @product highstock
  * @apioption rangeSelector.buttonSpacing
  */
@@ -9662,7 +9662,7 @@
  * 
  * @type {Boolean}
  * @sample {highstock} stock/rangeselector/enabled/ Disable the range selector
- * @default {all} true
+ * @default true
  * @product highstock
  * @apioption rangeSelector.enabled
  */
@@ -9672,7 +9672,7 @@
  * 
  * @type {Color}
  * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
- * @default {all} #cccccc
+ * @default #cccccc
  * @since 1.3.7
  * @product highstock
  * @apioption rangeSelector.inputBoxBorderColor
@@ -9683,7 +9683,7 @@
  * 
  * @type {Number}
  * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
- * @default {all} 17
+ * @default 17
  * @since 1.3.7
  * @product highstock
  * @apioption rangeSelector.inputBoxHeight
@@ -9705,7 +9705,7 @@
  * 
  * @type {Number}
  * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
- * @default {all} 90
+ * @default 90
  * @since 1.3.7
  * @product highstock
  * @apioption rangeSelector.inputBoxWidth
@@ -9717,7 +9717,7 @@
  * 
  * @type {String}
  * @sample {highstock} stock/rangeselector/input-format/ Milliseconds in the range selector
- * @default {all} %b %e %Y,
+ * @default %b %e %Y,
  * @product highstock
  * @apioption rangeSelector.inputDateFormat
  */
@@ -9739,7 +9739,7 @@
  * 
  * @type {String}
  * @sample {highstock} stock/rangeselector/input-format/ Milliseconds in the range selector
- * @default {all} %Y-%m-%d
+ * @default %Y-%m-%d
  * @product highstock
  * @apioption rangeSelector.inputEditDateFormat
  */
@@ -9772,7 +9772,7 @@
  * The index of the button to appear pre-selected.
  * 
  * @type {Number}
- * @default {all} undefined
+ * @default undefined
  * @product highstock
  * @apioption rangeSelector.selected
  */
@@ -9817,7 +9817,7 @@
  * is "month" and `count` is 3, the button spans three months.
  * 
  * @type {Number}
- * @default {all} 1
+ * @default 1
  * @product highstock
  * @apioption rangeSelector.buttons.count
  */
@@ -9855,7 +9855,7 @@
  * 
  * @type {Boolean}
  * @sample {highstock} stock/scrollbar/enabled/ Disable the scrollbar, only use navigator
- * @default {all} true
+ * @default true
  * @product highstock
  * @apioption scrollbar.enabled
  */
@@ -9865,7 +9865,7 @@
  * zoomed out to it full extent.
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @product highstock
  * @apioption scrollbar.showFull
  */
@@ -9875,7 +9875,7 @@
  * 
  * @type {Number}
  * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
- * @default {all} 0
+ * @default 0
  * @product highstock
  * @apioption scrollbar.trackBorderRadius
  */
@@ -10333,7 +10333,7 @@
  * @type {Boolean}
  * @sample {highstock} stock/xaxis/ordinal-true/ True by default
  * @sample {highstock} stock/xaxis/ordinal-false/ False
- * @default {all} true
+ * @default true
  * @since 1.1
  * @product highstock
  * @apioption xAxis.ordinal
@@ -10346,7 +10346,7 @@
  * 
  * @type {Number}
  * @sample {highstock} stock/xaxis/range/ Setting a zoomed range when the rangeSelector      is disabled
- * @default {all} undefined
+ * @default undefined
  * @product highstock
  * @apioption xAxis.range
  */
@@ -10400,7 +10400,7 @@
  * The border corner radius of the crosshair label.
  * 
  * @type {Number}
- * @default {all} 3
+ * @default 3
  * @since 2.1.10
  * @product highstock
  * @apioption xAxis.crosshair.label.borderRadius
@@ -10410,7 +10410,7 @@
  * The border width for the crosshair label.
  * 
  * @type {Number}
- * @default {all} 0
+ * @default 0
  * @since 2.1
  * @product highstock
  * @apioption xAxis.crosshair.label.borderWidth
@@ -10439,7 +10439,7 @@
  * Padding inside the crosshair label.
  * 
  * @type {Number}
- * @default {all} 8
+ * @default 8
  * @since 2.1
  * @product highstock
  * @apioption xAxis.crosshair.label.padding
@@ -10449,7 +10449,7 @@
  * The shape to use for the label box.
  * 
  * @type {String}
- * @default {all} callout
+ * @default callout
  * @since 2.1
  * @product highstock
  * @apioption xAxis.crosshair.label.shape
@@ -10459,7 +10459,7 @@
  * Text styles for the crosshair label.
  * 
  * @type {CSS}
- * @default {all} { "color": "white", "fontWeight": "normal", "fontSize": "11px", "textAlign": "center" }
+ * @default { "color": "white", "fontWeight": "normal", "fontSize": "11px", "textAlign": "center" }
  * @since 2.1
  * @product highstock
  * @apioption xAxis.crosshair.label.style
@@ -10472,7 +10472,7 @@
  * 
  * @type {Number}
  * @deprecated
- * @default {all} 5
+ * @default 5
  * @since 1.3.3
  * @product highstock highmaps
  * @apioption xAxis.labels.maxStaggerLines
@@ -10488,7 +10488,7 @@
  * @type {Number|String}
  * @see [yAxis.top](#yAxis.top)
  * @sample {highstock} stock/demo/candlestick-and-volume/ Percentage height panes
- * @default {all} null
+ * @default null
  * @product highstock
  * @apioption yAxis.height
  */
@@ -10501,7 +10501,7 @@
  * 
  * @type {Boolean}
  * @sample {highstock} stock/xaxis/opposite/ Y axis on left side
- * @default {all} true
+ * @default true
  * @product highstock
  * @apioption yAxis.opposite
  */
@@ -10542,7 +10542,7 @@
  * @type {Number|String}
  * @see [yAxis.height](#yAxis.height)
  * @sample {highstock} stock/demo/candlestick-and-volume/ Percentage height panes
- * @default {all} null
+ * @default null
  * @product highstock
  * @apioption yAxis.top
  */
@@ -10570,7 +10570,7 @@
  * 
  * @type {Boolean}
  * @sample {highstock} stock/yaxis/scrollbar/ Enabled on Y axis
- * @default {all} false
+ * @default false
  * @since 4.2.6
  * @product highstock
  * @apioption yAxis.scrollbar.enabled
@@ -10580,7 +10580,7 @@
  * Pixel margin between the scrollbar and the axis elements.
  * 
  * @type {Number}
- * @default {all} 10
+ * @default 10
  * @since 4.2.6
  * @product highstock
  * @apioption yAxis.scrollbar.margin
@@ -10592,7 +10592,7 @@
  * hidden until the user zooms in, like common in browsers.
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @since 4.2.6
  * @product highstock
  * @apioption yAxis.scrollbar.showFull
@@ -10603,7 +10603,7 @@
  *  Defaults to 20 on touch devices.
  * 
  * @type {Number}
- * @default {all} 14
+ * @default 14
  * @since 4.2.6
  * @product highstock
  * @apioption yAxis.scrollbar.size
@@ -10613,7 +10613,7 @@
  * Z index of the scrollbar elements.
  * 
  * @type {Number}
- * @default {all} 3
+ * @default 3
  * @since 4.2.6
  * @product highstock
  * @apioption yAxis.scrollbar.zIndex
@@ -10626,7 +10626,7 @@
  * 
  * @type {String|Object|Array<Object>}
  * @see [mapData](#series<map>.mapData)
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @product highmaps
  * @apioption chart.map
@@ -10637,7 +10637,7 @@
  *  these are extracted from the map data.
  * 
  * @type {Object}
- * @default {all} undefined
+ * @default undefined
  * @since 5.0.0
  * @product highmaps
  * @apioption chart.mapTransforms
@@ -10645,7 +10645,7 @@
 
 /**
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @product highmaps
  * @apioption colorAxis.allowDecimals
  */
@@ -10660,7 +10660,7 @@
  * @validvalue ["tween", "category"]
  * @type {String}
  * @sample {highmaps} maps/coloraxis/dataclasscolor/ Category colors
- * @default {all} tween
+ * @default tween
  * @product highmaps
  * @apioption colorAxis.dataClassColor
  */
@@ -10670,7 +10670,7 @@
  * 
  * @type {Color}
  * @sample {highmaps} maps/coloraxis/gridlines/ Grid lines demonstrated
- * @default {all} #e6e6e6
+ * @default #e6e6e6
  * @product highmaps
  * @apioption colorAxis.gridLineColor
  */
@@ -10735,7 +10735,7 @@
  * 
  * @validvalue ["linear", "logarithmic"]
  * @type {String}
- * @default {all} linear
+ * @default linear
  * @product highmaps
  * @apioption colorAxis.type
  */
@@ -10801,7 +10801,7 @@
  * 
  * @type {String}
  * @see [mapTextFull](#credits.mapTextFull), [text](#credits.text)
- * @default {all} \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>
+ * @default \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>
  * @since 4.2.2
  * @product highmaps
  * @apioption credits.mapText
@@ -10814,7 +10814,7 @@
  * 
  * @type {String}
  * @see [mapText](#credits.mapText), [text](#credits.text)
- * @default {all} {geojson.copyright}
+ * @default {geojson.copyright}
  * @since 4.2.2
  * @product highmaps
  * @apioption credits.mapTextFull
@@ -10825,7 +10825,7 @@
  * defaults to "+" and can be changed in the button options.
  * 
  * @type {String}
- * @default {all} Zoom in
+ * @default Zoom in
  * @product highmaps
  * @apioption lang.zoomIn
  */
@@ -10835,7 +10835,7 @@
  * defaults to "-" and can be changed in the button options.
  * 
  * @type {String}
- * @default {all} Zoom out
+ * @default Zoom out
  * @product highmaps
  * @apioption lang.zoomOut
  */
@@ -10863,7 +10863,7 @@
  * 
  * @type {Boolean}
  * @sample {highmaps} maps/mapnavigation/doubleclickzoomto/ Enable double click zoom to
- * @default {all} false
+ * @default false
  * @product highmaps
  * @apioption mapNavigation.enableDoubleClickZoomTo
  */
@@ -10901,7 +10901,7 @@
  * and mousewheel zoom.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @product highmaps
  * @apioption mapNavigation.enabled
  */
@@ -10920,7 +10920,7 @@
  * on null points.
  * 
  * @type {Boolean}
- * @default {all} false
+ * @default false
  * @since 4.2.7
  * @product highmaps
  * @apioption plotOptions.map.nullInteraction
@@ -10943,7 +10943,7 @@
  * bubble.negativeColor).
  * 
  * @type {Boolean}
- * @default {all} true
+ * @default true
  * @product highmaps
  * @apioption plotOptions.mapbubble.displayNegative
  */
@@ -10956,7 +10956,7 @@
  * 
  * @type {String}
  * @sample {highmaps} maps/demo/map-bubble/ Bubble size
- * @default {all} 20%
+ * @default 20%
  * @product highmaps
  * @apioption plotOptions.mapbubble.maxSize
  */
@@ -10969,7 +10969,7 @@
  * 
  * @type {String}
  * @sample {highmaps} maps/demo/map-bubble/ Bubble size
- * @default {all} 8
+ * @default 8
  * @product highmaps
  * @apioption plotOptions.mapbubble.minSize
  */
@@ -10980,7 +10980,7 @@
  * 
  * @type {Color}
  * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/ Negative color below a threshold
- * @default {all} null
+ * @default null
  * @product highmaps
  * @apioption plotOptions.mapbubble.negativeColor
  */
@@ -10992,7 +10992,7 @@
  * 
  * @validvalue ["area", "width"]
  * @type {String}
- * @default {all} area
+ * @default area
  * @product highmaps
  * @apioption plotOptions.mapbubble.sizeBy
  */
@@ -11006,7 +11006,7 @@
  * 
  * @type {Boolean}
  * @sample {highmaps} highcharts/plotoptions/bubble-sizebyabsolutevalue/ Size by absolute value, various thresholds
- * @default {all} false
+ * @default false
  * @since 1.1.9
  * @product highmaps
  * @apioption plotOptions.mapbubble.sizeByAbsoluteValue
@@ -11019,7 +11019,7 @@
  * @type {Number}
  * @see [zMax](#plotOptions.mapbubble.zMin)
  * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/ Z has a possible range of 0-100
- * @default {all} null
+ * @default null
  * @since 1.0.3
  * @product highmaps
  * @apioption plotOptions.mapbubble.zMax
@@ -11032,7 +11032,7 @@
  * @type {Number}
  * @see [zMax](#plotOptions.mapbubble.zMax)
  * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/ Z has a possible range of 0-100
- * @default {all} null
+ * @default null
  * @since 1.0.3
  * @product highmaps
  * @apioption plotOptions.mapbubble.zMin
@@ -11046,7 +11046,7 @@
  * 
  * @type {Number}
  * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/ Negative color below a threshold
- * @default {all} 0
+ * @default 0
  * @product highmaps
  * @apioption plotOptions.mapbubble.zThreshold
  */
@@ -11058,7 +11058,7 @@
  * 
  * @type {Boolean}
  * @sample {highmaps} maps/plotoptions/series-allareas-false/ All areas set to false
- * @default {all} true
+ * @default true
  * @product highmaps
  * @apioption plotOptions.series.allAreas
  */
@@ -11072,7 +11072,7 @@
  * 
  * @type {Color}
  * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
- * @default {all} #cccccc
+ * @default #cccccc
  * @product highmaps
  * @apioption plotOptions.series.borderColor
  */
@@ -11086,7 +11086,7 @@
  * 
  * @type {Number}
  * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
- * @default {all} 1
+ * @default 1
  * @product highmaps
  * @apioption plotOptions.series.borderWidth
  */
@@ -11097,7 +11097,7 @@
  * legend item.
  * 
  * @type {Boolean}
- * @default {all} undefined
+ * @default undefined
  * @product highmaps
  * @apioption plotOptions.series.colorAxis
  */
@@ -11155,7 +11155,7 @@
  * normal point color.
  * 
  * @type {Number}
- * @default {all} 0.2
+ * @default 0.2
  * @product highmaps
  * @apioption plotOptions.series.states.hover.brightness
  */
@@ -11185,7 +11185,7 @@
  * 
  * @type {Object|Boolean}
  * @sample {highmaps} maps/plotoptions/series-states-animation-false/ No animation of fill color
- * @default {all} true
+ * @default true
  * @product highmaps
  * @apioption plotOptions.series.states.normal.animation
  */
@@ -11205,7 +11205,7 @@
  * to denote the value, or pulled from the global `colors` array.
  * 
  * @type {Color}
- * @default {all} undefined
+ * @default undefined
  * @product highmaps
  * @apioption series.map.data.color
  */
@@ -11280,7 +11280,7 @@
  * there.
  * 
  * @type {Number}
- * @default {all} 0.5
+ * @default 0.5
  * @product highmaps
  * @apioption series.map.data.middleX
  */
@@ -11291,7 +11291,7 @@
  * there.
  * 
  * @type {Number}
- * @default {all} 0.5
+ * @default 0.5
  * @product highmaps
  * @apioption series.map.data.middleY
  */

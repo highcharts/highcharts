@@ -37,7 +37,7 @@ defaultOptions.noData = {
 	 * The position of the no-data label, relative to the plot area.
 	 * 
 	 * @type {Object}
-	 * @default {all} { "x": 0, "y": 0, "align": "center", "verticalAlign": "middle" }
+	 * @default { "x": 0, "y": 0, "align": "center", "verticalAlign": "middle" }
 	 * @since 3.0.8
 	 * @product highcharts highstock highmaps
 	 */
@@ -47,7 +47,7 @@ defaultOptions.noData = {
 		 * Horizontal offset of the label, in pixels.
 		 * 
 		 * @type {Number}
-		 * @default {all} 0
+		 * @default 0
 		 * @product highcharts highstock
 		 */
 		x: 0,
@@ -56,7 +56,7 @@ defaultOptions.noData = {
 		 * Vertical offset of the label, in pixels.
 		 * 
 		 * @type {Number}
-		 * @default {all} 0
+		 * @default 0
 		 * @product highcharts highstock
 		 */
 		y: 0,			
@@ -66,7 +66,7 @@ defaultOptions.noData = {
 		 * 
 		 * @validvalue ["left", "center", "right"]
 		 * @type {String}
-		 * @default {all} center
+		 * @default center
 		 * @product highcharts highstock highmaps
 		 */
 		align: 'center',
@@ -76,7 +76,7 @@ defaultOptions.noData = {
 		 * 
 		 * @validvalue ["top", "middle", "bottom"]
 		 * @type {String}
-		 * @default {all} middle
+		 * @default middle
 		 * @product highcharts highstock
 		 */
 		verticalAlign: 'middle'

@@ -68,7 +68,7 @@ seriesType('map', 'scatter',
 	 * 
 	 * @type {Color}
 	 * @sample {highmaps} maps/demo/all-areas-as-null/ Null color
-	 * @default {all} #f7f7f7
+	 * @default #f7f7f7
 	 * @product highmaps
 	 */
 	nullColor: '${palette.neutralColor3}',

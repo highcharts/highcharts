@@ -66,7 +66,7 @@ extend(ColorAxis.prototype, {
 		 * 
 		 * @type {Number}
 		 * @sample {highmaps} maps/coloraxis/gridlines/ Grid lines demonstrated
-		 * @default {all} 1
+		 * @default 1
 		 * @product highmaps
 		 */
 		gridLineWidth: 1,
@@ -76,7 +76,7 @@ extend(ColorAxis.prototype, {
 		 * sets the approximate pixel interval of the tick marks.
 		 * 
 		 * @type {Number}
-		 * @default {all} 72
+		 * @default 72
 		 * @product highmaps
 		 */
 		tickPixelInterval: 72,
@@ -86,7 +86,7 @@ extend(ColorAxis.prototype, {
 		 * the `maxPadding` option to control the axis start.
 		 * 
 		 * @type {Boolean}
-		 * @default {all} true
+		 * @default true
 		 * @product highmaps
 		 */
 		startOnTick: true,
@@ -97,7 +97,7 @@ extend(ColorAxis.prototype, {
 		 * end.
 		 * 
 		 * @type {Boolean}
-		 * @default {all} true
+		 * @default true
 		 * @product highmaps
 		 */
 		endOnTick: true,
@@ -140,7 +140,7 @@ extend(ColorAxis.prototype, {
 			 * The color of the marker.
 			 * 
 			 * @type {Color}
-			 * @default {all} #999999
+			 * @default #999999
 			 * @product highmaps
 			 */
 			color: '${palette.neutralColor40}'
@@ -167,7 +167,7 @@ extend(ColorAxis.prototype, {
 			 * 
 			 * @validvalue [null, "justify"]
 			 * @type {String}
-			 * @default {all} justify
+			 * @default justify
 			 * @product highmaps
 			 */
 			overflow: 'justify',
@@ -189,7 +189,7 @@ extend(ColorAxis.prototype, {
 		 * @type {Color}
 		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
 		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
-		 * @default {all} #e6ebf5
+		 * @default #e6ebf5
 		 * @product highmaps
 		 */
 		minColor: '${palette.highlightColor10}',
@@ -206,7 +206,7 @@ extend(ColorAxis.prototype, {
 		 * @type {Color}
 		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
 		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
-		 * @default {all} #003399
+		 * @default #003399
 		 * @product highmaps
 		 */
 		maxColor: '${palette.highlightColor100}',
@@ -220,7 +220,7 @@ extend(ColorAxis.prototype, {
 		 * 
 		 * @type {Boolean}
 		 * @see [heatmap.showInLegend](#series<heatmap>.showInLegend)
-		 * @default {all} true
+		 * @default true
 		 * @since 4.2.7
 		 * @product highmaps
 		 */
