@@ -133,8 +133,18 @@ H.setOptions({
 			 * @default true
 			 * @since 5.0.0
 			 */
-			enabled: true
-			
+			enabled: true,
+
+			/**
+			 * Enable tab navigation for points. Without this, only arrow keys
+			 * can be used to navigate between points.
+			 * 
+			 * @type {Boolean}
+			 * @default {all} true
+			 * @since next
+			 */
+			tabThroughPoints: true
+
 			/**
 			 * Skip null points when navigating through points with the
 			 * keyboard.
@@ -702,6 +712,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// Terminate holds a function to run once before moving to next/prev module.
 	// transformTabs determines whether to transform tabs to left/right events or not. Defaults to true.
 	function KeyboardNavigationModule(options) {
+		this.id = options.id;
 		this.keyCodeMap = options.keyCodeMap;
 		this.move = options.move;
 		this.validate = options.validate;
@@ -726,7 +737,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	};
 	// Maintain abstraction between KeyboardNavigationModule and Highcharts
 	// The chart object keeps track of a list of KeyboardNavigationModules that we move through
-	function navModuleFactory(keyMap, options) {
+	function navModuleFactory(id, keyMap, options) {
 		return new KeyboardNavigationModule(merge({
 			keyCodeMap: keyMap,
 			// Move to next/prev valid module, or undefined if none, and init it.
@@ -751,7 +762,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				chart.slipNextTab = true; // Allow next tab to slip, as we will have focus on chart now
 				return false;
 			}
-		}, options));
+		}, { id: id }, options));
 	}
 
 	// Route keydown events
@@ -784,7 +795,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// Each mode determines when to move to the next/prev mode.
 	chart.keyboardNavigationModules = [
 		// Points
-		navModuleFactory([
+		navModuleFactory('points', [
 			// Left/Right
 			[[37, 39], function (keyCode) {
 				if (!chart.highlightAdjacentPoint(keyCode === 39)) { // Try to highlight adjacent point
@@ -820,11 +831,13 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 					chart.tooltip.hide(0);
 				}
 				delete chart.highlightedPoint;
-			}
+			},
+
+			transformTabs: chart.options.accessibility.keyboardNavigation.tabThroughPoints
 		}),
 
 		// Exporting
-		navModuleFactory([
+		navModuleFactory('exporting', [
 			// Left/Up
 			[[37, 38], function () {
 				var i = chart.highlightedExportItem || 0,
@@ -882,7 +895,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}),
 
 		// Map zoom
-		navModuleFactory([
+		navModuleFactory('mapZoom', [
 			// Up/down/left/right
 			[[38, 40, 37, 39], function (keyCode) {
 				chart[keyCode === 38 || keyCode === 40 ? 'yAxis' : 'xAxis'][0].panStep(keyCode < 39 ? -1 : 1);
@@ -938,7 +951,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}),
 
 		// Highstock range selector (minus input boxes)
-		navModuleFactory([
+		navModuleFactory('rangeSelector', [
 			// Left/Right/Up/Down
 			[[37, 39, 38, 40], function (keyCode) {
 				var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
@@ -972,7 +985,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}),
 
 		// Highstock range selector, input boxes
-		navModuleFactory([
+		navModuleFactory('rangeSelectorInput', [
 			// Tab/Up/Down
 			[[9, 38, 40], function (keyCode, e) {
 				var direction = (keyCode === 9 && e.shiftKey || keyCode === 38) ? -1 : 1,
@@ -1001,7 +1014,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}),
 
 		// Legend navigation
-		navModuleFactory([
+		navModuleFactory('legend', [
 			// Left/Right/Up/Down
 			[[37, 39, 38, 40], function (keyCode) {
 				var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
