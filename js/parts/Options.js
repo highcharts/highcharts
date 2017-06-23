@@ -97,10 +97,8 @@ H.defaultOptions = {
 		 * to the `%b` format in `Highcharts.dateFormat()`.
 		 * 
 		 * @type {Array<String>}
-		 * @default {highcharts} Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec
-		 * @default {highstock} [ "Jan" , "Feb" , "Mar" , "Apr" , "May" , "Jun" , "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec"]
-		 * @default {highmaps} Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec
-		 * @product highcharts highstock highmaps
+		 * @default [ "Jan" , "Feb" , "Mar" , "Apr" , "May" , "Jun" ,
+		 *          "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec"]
 		 */
 		shortMonths: [
 			'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
@@ -111,7 +109,8 @@ H.defaultOptions = {
 		 * An array containing the weekday names.
 		 * 
 		 * @type {Array<String>}
-		 * @default ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+		 * @default ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+		 *          "Friday", "Saturday"]
 		 * @product highcharts highstock highmaps
 		 */
 		weekdays: [
@@ -1355,13 +1354,15 @@ H.defaultOptions = {
 	 * The legend is a box containing a symbol and name for each series
 	 * item or point item in the chart. Each series (or points in case
 	 * of pie charts) is represented by a symbol and its name in the legend.
-	 * 
-	 * 
-	 * It is also possible to override the symbol creator function and
+	 *  
+	 * It is possible to override the symbol creator function and
 	 * create [custom legend symbols](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-
 	 * custom-symbol/).
 	 * 
-	 * @product highcharts highstock highmaps
+	 * @productdesc {highmaps}
+	 * A Highmaps legend by default contains one legend item per series, but if
+	 * a `colorAxis` is defined, the axis will be displayed in the legend.
+	 * Either as a gradient, or as multiple legend items for `dataClasses`.
 	 */
 	legend: {
 
@@ -1414,14 +1415,18 @@ H.defaultOptions = {
 		layout: 'horizontal',
 
 		/**
-		 * Callback function to format each of the series' labels. The _this_
+		 * Callback function to format each of the series' labels. The `this`
 		 * keyword refers to the series object, or the point object in case
 		 * of pie charts. By default the series or point name is printed.
+		 *
+		 * @productdesc {highmaps}
+		 *              In Highmaps the context can also be a data class in case
+		 *              of a `colorAxis`.
 		 * 
 		 * @type {Function}
 		 * @sample {highcharts} highcharts/legend/labelformatter/ Add text
 		 * @sample {highmaps} maps/legend/labelformatter/ Data classes with label formatter
-		 * @product highcharts highstock highmaps
+		 * @context {Series|Point}
 		 */
 		labelFormatter: function () {
 			return this.name;
@@ -1591,14 +1596,17 @@ H.defaultOptions = {
 
 		/**
 		 * Whether to apply a drop shadow to the legend. A `backgroundColor`
-		 * also needs to be applied for this to take effect. Since 2.3 the
-		 * shadow can be an object configuration containing `color`, `offsetX`,
-		 *  `offsetY`, `opacity` and `width`.
+		 * also needs to be applied for this to take effect. The shadow can be
+		 * an object configuration containing `color`, `offsetX`, `offsetY`,
+		 * `opacity` and `width`.
 		 * 
 		 * @type {Boolean|Object}
-		 * @sample {highcharts} highcharts/legend/shadow/ White background and drop shadow
-		 * @sample {highstock} stock/legend/align/ Various legend options
-		 * @sample {highmaps} maps/legend/border-background/ Border and background options
+		 * @sample {highcharts} highcharts/legend/shadow/
+		 *         White background and drop shadow
+		 * @sample {highstock} stock/legend/align/
+		 *         Various legend options
+		 * @sample {highmaps} maps/legend/border-background/
+		 *         Border and background options
 		 * @default false
 		 * @product highcharts highstock highmaps
 		 */
@@ -1634,8 +1642,74 @@ H.defaultOptions = {
 		 * @product highcharts highstock highmaps
 		 */
 		squareSymbol: true,
-		// symbolRadius: 0,
-		// symbolWidth: 16,
+
+		/**
+		 * The pixel height of the symbol for series types that use a rectangle
+		 * in the legend. Defaults to the font size of legend items.
+		 *
+		 * @productdesc {highmaps}
+		 * In Highmaps, when the symbol is the gradient of a vertical color
+		 * axis, the height defaults to 200.
+		 * 
+		 * @type {Number}
+		 * @sample {highmaps} maps/legend/layout-vertical-sized/
+		 *         Sized vertical gradient
+		 * @sample {highmaps} maps/legend/padding-itemmargin/
+		 *         No distance between data classes
+		 * @since 3.0.8
+		 * @apioption legend.symbolHeight
+		 */
+
+		/**
+		 * The border radius of the symbol for series types that use a rectangle
+		 * in the legend. Defaults to half the `symbolHeight`.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/legend/symbolradius/ Round symbols
+		 * @sample {highstock} highcharts/legend/symbolradius/ Round symbols
+		 * @sample {highmaps} highcharts/legend/symbolradius/ Round symbols
+		 * @since 3.0.8
+		 * @apioption legend.symbolRadius
+		 */
+
+		/**
+		 * The pixel width of the legend item symbol. When the `squareSymbol`
+		 * option is set, this defaults to the `symbolHeight`, otherwise 16.
+		 * 
+		 * @productdesc {highmaps}
+		 * In Highmaps, when the symbol is the gradient of a horizontal color
+		 * axis, the width defaults to 200.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/legend/symbolwidth/
+		 *         Greater symbol width and padding
+		 * @sample {highmaps} maps/legend/padding-itemmargin/
+		 *         Padding and item margins demonstrated
+		 * @sample {highmaps} maps/legend/layout-vertical-sized/
+		 *         Sized vertical gradient
+		 * @apioption legend.symbolWidth
+		 */
+
+		/**
+		 * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
+		 * and-string-formatting#html) to render the legend item texts. Prior
+		 * to 4.1.7, when using HTML, [legend.navigation](#legend.navigation)
+		 * was disabled.
+		 * 
+		 * @type {Boolean}
+		 * @default false
+		 * @apioption legend.useHTML
+		 */
+
+		/**
+		 * The width of the legend box.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/legend/width/ Aligned to the plot area
+		 * @default null
+		 * @since 2.0
+		 * @apioption legend.width
+		 */
 
 		/**
 		 * The pixel padding between the legend item symbol and the legend
@@ -1743,8 +1817,26 @@ H.defaultOptions = {
 	 * @product highcharts highstock highmaps
 	 */
 	loading: {
-		// hideDuration: 100,
-		// showDuration: 0,
+
+		/**
+		 * The duration in milliseconds of the fade out effect.
+		 * 
+		 * @type {Number}
+		 * @sample highcharts/loading/hideduration/ Fade in and out over a second
+		 * @default 100
+		 * @since 1.2.0
+		 * @apioption loading.hideDuration
+		 */
+
+		/**
+		 * The duration in milliseconds of the fade in effect.
+		 * 
+		 * @type {Number}
+		 * @sample highcharts/loading/hideduration/ Fade in and out over a second
+		 * @default 100
+		 * @since 1.2.0
+		 * @apioption loading.showDuration
+		 */
 		/*= if (build.classic) { =*/
 
 		/**
@@ -1752,26 +1844,17 @@ H.defaultOptions = {
 		 * 
 		 * @type {CSSObject}
 		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the loading label is styled with the `.highcharts-
-		 * legend-loading-inner` class.
-		 * @sample {highcharts} highcharts/loading/labelstyle/ Vertically centered
+		 * style/style-by-css), the loading label is styled with the
+		 * `.highcharts-legend-loading-inner` class.
+		 * @sample {highcharts|highmaps} highcharts/loading/labelstyle/ Vertically centered
 		 * @sample {highstock} stock/loading/general/ Label styles
 		 * @default { "fontWeight": "bold", "position": "relative", "top": "45%" }
 		 * @since 1.2.0
 		 * @product highcharts highstock highmaps
 		 */
 		labelStyle: {
-
-			/**
-			 */
 			fontWeight: 'bold',
-
-			/**
-			 */
 			position: 'relative',
-
-			/**
-			 */
 			top: '45%'
 		},
 
@@ -1782,28 +1865,15 @@ H.defaultOptions = {
 		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
 		 * style/style-by-css), the loading label is styled with the `.highcharts-
 		 * legend-loading` class.
-		 * @sample {highcharts} highcharts/loading/style/ Gray plot area, white text
+		 * @sample {highcharts|highmaps} highcharts/loading/style/ Gray plot area, white text
 		 * @sample {highstock} stock/loading/general/ Gray plot area, white text
 		 * @default { "position": "absolute", "backgroundColor": "#ffffff", "opacity": 0.5, "textAlign": "center" }
 		 * @since 1.2.0
-		 * @product highcharts highstock highmaps
 		 */
 		style: {
-
-			/**
-			 */
 			position: 'absolute',
-
-			/**
-			 */
 			backgroundColor: '${palette.backgroundColor}',
-
-			/**
-			 */
 			opacity: 0.5,
-
-			/**
-			 */
 			textAlign: 'center'
 		}
 		/*= } =*/

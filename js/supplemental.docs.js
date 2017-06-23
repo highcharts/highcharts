@@ -1070,60 +1070,7 @@
  * @apioption legend.style
  */
 
-/**
- * The pixel height of the symbol for series types that use a rectangle
- * in the legend. Defaults to the font size of legend items.
- * 
- * @type {Number}
- * @sample {highmaps} maps/legend/layout-vertical-sized/ Sized vertical gradient
- * @sample {highmaps} maps/legend/padding-itemmargin/ No distance between data classes
- * @since 3.0.8
- * @apioption legend.symbolHeight
- */
 
-/**
- * The border radius of the symbol for series types that use a rectangle
- * in the legend. Defaults to half the `symbolHeight`.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/legend/symbolradius/ Round symbols
- * @sample {highstock} highcharts/legend/symbolradius/ Round symbols
- * @sample {highmaps} highcharts/legend/symbolradius/ Round symbols
- * @since 3.0.8
- * @apioption legend.symbolRadius
- */
-
-/**
- * The pixel width of the legend item symbol. When the `squareSymbol`
- * option is set, this defaults to the `symbolHeight`, otherwise 16.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/legend/symbolwidth/ Greater symbol width and padding
- * @sample {highmaps} maps/legend/padding-itemmargin/ Padding and item margins demonstrated
- * @sample {highmaps} maps/legend/layout-vertical-sized/ Sized vertical gradient
- * @apioption legend.symbolWidth
- */
-
-/**
- * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
- * and-string-formatting#html) to render the legend item texts. Prior
- * to 4.1.7, when using HTML, [legend.navigation](#legend.navigation)
- * was disabled.
- * 
- * @type {Boolean}
- * @default false
- * @apioption legend.useHTML
- */
-
-/**
- * The width of the legend box.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/legend/width/ Aligned to the plot area
- * @default null
- * @since 2.0
- * @apioption legend.width
- */
 
 /**
  * @since next
@@ -1207,27 +1154,6 @@
  * @apioption legend.title.text
  */
 
-/**
- * The duration in milliseconds of the fade out effect.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/loading/hideduration/ Fade in and out over a second
- * @default 100
- * @since 1.2.0
- * @apioption loading.hideDuration
- */
-
-/**
- * The duration in milliseconds of the fade in effect.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/loading/hideduration/ Fade in and out over a second
- * @default {highcharts} 100
- * @default {highstock} 0
- * @default {highmaps} 100
- * @since 1.2.0
- * @apioption loading.showDuration
- */
 
 /**
  * Alignment for the buttons.

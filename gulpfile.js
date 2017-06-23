@@ -859,7 +859,9 @@ const createAllExamples = () => new Promise((resolve) => {
  * @return {Promise} A Promise which resolves into undefined when done.
  */
 const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
-    const generate = require('highcharts-api-doc-gen/lib/index.js');
+    //const generate = require('highcharts-api-doc-gen/lib/index.js');
+    const generate = require('./../api-docs/lib/index.js');
+
     const fs = require('fs');
     const version = getBuildProperties().version;
     const message = {
