@@ -69,3 +69,4 @@ samples/highcharts/common-js/webpack/demo.js
 /tmp/missing.in.code.json
 
 /tmp/processed.api.json
+/package-lock.json

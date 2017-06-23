@@ -299,19 +299,6 @@ gulp.task('nightly', function () {
 /**
  * Automated generation for internal Class reference.
  * Run with --watch argument to watch for changes in the JS files.
- * @todo: Combine with API generator, see the following:
- *
- * Temporary workflow for the API is different for now:
- * - In the highcharts repo, run
- *   jsdoc js/modules js/parts js/parts-3d js/parts-more js/parts-map js/supplemental.docs.js -c jsdoc.json
- *   This produces tree.json, which is used as input for the documentation
- *   generator.
- * - In the api-docs repo, run
- *   node gen.docs.js ../../highcharts/tree.json ../docs/ true
- *   A server is automagically started on port 9700 to serve up the docs. The
- *   server listens to changes on files in include and templates, and rebuilds
- *   the docs if there are any. This only works if the ouput folder is a
- *   folder - docs/ - in the project root.
  */
 const generateClassReferences = ({ templateDir, destination, callback }) => {
     const jsdoc = require('gulp-jsdoc3');
@@ -881,18 +868,45 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         'successGenerate': 'Finished with my Special api.',
         'successCopy': 'Finished with copying current API to '
     };
+    const jsdoc = require('gulp-jsdoc3');
+
+    // jsdoc js/modules js/parts js/parts-3d js/parts-more js/parts-map js/supplemental.docs.js -c jsdoc.json
     return new Promise((resolve, reject) => {
-        if (fs.existsSync(treeFile)) {
-            const json = JSON.parse(fs.readFileSync(treeFile, 'utf8'));
-            if (!json.series) {
-                reject(message.noSeries);
-            }
-            generate(json, output, onlyBuildCurrent, function () {
-                resolve(message.successGenerate);
-            });
-        } else {
-            reject(message.noTree);
-        }
+
+        gulp.src([
+            './js/modules',
+            './js/parts',
+            './js/parts-3d',
+            './js/parts-more',
+            './js/parts-map',
+            './js/supplemental.docs.js'
+        ], { read: false })
+            .pipe(jsdoc({
+                plugins: [
+                    './tools/jsdoc/plugins/highcharts.jsdoc'
+                ]
+            }, function (err) {
+                if (!err) {
+                    console.log(
+                        colors.green('Created tree.json')
+                    );
+
+
+                    if (fs.existsSync(treeFile)) {
+                        const json = JSON.parse(fs.readFileSync(treeFile, 'utf8'));
+                        if (!json.series) {
+                            reject(message.noSeries);
+                        }
+                        generate(json, output, onlyBuildCurrent, function () {
+                            resolve(message.successGenerate);
+                        });
+                    } else {
+                        reject(message.noTree);
+                    }
+                } else {
+                    reject('Error building tree.json');
+                }
+            }));
     }).then((resolve) => {
         /**
          * Copy new current version files into a versioned folder
