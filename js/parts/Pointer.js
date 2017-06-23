@@ -971,7 +971,9 @@ Highcharts.Pointer.prototype = {
 		);
 		if (!H.chartCount) {
 			removeEvent(ownerDoc, 'mouseup', pointer.onDocumentMouseUp);
-			removeEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
+			if (H.hasTouch) {
+				removeEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
+			}
 		}
 
 		// memory and CPU leak

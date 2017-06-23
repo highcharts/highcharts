@@ -1677,8 +1677,13 @@ H.addEvent = function (el, type, fn) {
 			el.hcEventsIE = {};
 		}
 
+		// unique function string (#6746)
+		if (!fn.hcGetKey) {
+			fn.hcGetKey = H.uniqueKey();
+		}
+
 		// Link wrapped fn with original fn, so we can get this in removeEvent
-		el.hcEventsIE[fn.toString()] = wrappedFn;
+		el.hcEventsIE[fn.hcGetKey] = wrappedFn;
 
 		el.attachEvent('on' + type, wrappedFn);
 	}
@@ -1717,7 +1722,7 @@ H.removeEvent = function (el, type, fn) {
 		if (el.removeEventListener) {
 			el.removeEventListener(type, fn, false);
 		} else if (el.attachEvent) {
-			fn = el.hcEventsIE[fn.toString()];
+			fn = el.hcEventsIE[fn.hcGetKey];
 			el.detachEvent('on' + type, fn);
 		}
 	}
