@@ -28,11 +28,6 @@ H.defaultOptions = {
 	/**
 	 * An array containing the default colors for the chart's series. When
 	 * all colors are used, new colors are pulled from the start again.
-	 * Defaults to:
-	 * 
-	 * <pre>colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-	 * 
-	 * '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1']</pre>
 	 * 
 	 * Default colors can also be set on a series or series.type basis,
 	 * see [column.colors](#plotOptions.column.colors), [pie.colors](#plotOptions.
@@ -60,7 +55,8 @@ H.defaultOptions = {
 	 * 
 	 * @type {Array<Color>}
 	 * @sample {highcharts} highcharts/chart/colors/ Assign a global color theme
-	 * @default [ "#7cb5ec" , "#434348" , "#90ed7d" , "#f7a35c" , "#8085e9" , "#f15c80" , "#e4d354" , "#2b908f" , "#f45b5b" , "#91e8e1"]
+	 * @default [ "#7cb5ec" , "#434348" , "#90ed7d" , "#f7a35c" , "#8085e9" ,
+	 *          "#f15c80" , "#e4d354" , "#2b908f" , "#f45b5b" , "#91e8e1"]
 	 * @product highcharts highstock highmaps
 	 */
 	colors: '${palette.colors}'.split(' '),
@@ -86,7 +82,9 @@ H.defaultOptions = {
 		 * in `Highcharts.dateFormat()`.
 		 * 
 		 * @type {Array<String>}
-		 * @default [ "January" , "February" , "March" , "April" , "May" , "June" , "July" , "August" , "September" , "October" , "November" , "December"]
+		 * @default [ "January" , "February" , "March" , "April" , "May" ,
+		 *          "June" , "July" , "August" , "September" , "October" ,
+		 *          "November" , "December"]
 		 * @product highcharts highstock highmaps
 		 */
 		months: [
@@ -2213,12 +2211,15 @@ H.defaultOptions = {
 
 		/**
 		 * The text for the credits label.
+		 *
+		 * @productdesc {highmaps}
+		 * If a map is loaded as GeoJSON, the text defaults to `Highcharts @
+		 * {map-credits}`. Otherwise, it defaults to `Highcharts.com`.
 		 * 
 		 * @type {String}
 		 * @sample {highcharts} highcharts/credits/href/ Custom URL and text
 		 * @sample {highmaps} maps/credits/customized/ Custom URL and text
-		 * @default Highcharts.com
-		 * @product highcharts highstock highmaps
+		 * @default {highcharts|highstock} Highcharts.com
 		 */
 		text: 'Highcharts.com'
 	}
