@@ -727,45 +727,62 @@ H.defaultOptions = {
 			 * The position of the button.
 			 * 
 			 * @type {Object}
-			 * @sample {highcharts} highcharts/chart/resetzoombutton-position/ Above the plot area
-			 * @sample {highstock} highcharts/chart/resetzoombutton-position/ Above the plot area
-			 * @sample {highstock} highcharts/chart/resetzoombutton-position/ Above the plot area
-			 * @sample {highmaps} highcharts/chart/resetzoombutton-position/ Above the plot area
+			 * @sample {highcharts} highcharts/chart/resetzoombutton-position/
+			 *         Above the plot area
+			 * @sample {highstock} highcharts/chart/resetzoombutton-position/
+			 *         Above the plot area
+			 * @sample {highmaps} highcharts/chart/resetzoombutton-position/
+			 *         Above the plot area
 			 * @since 2.2
 			 * @product highcharts highstock highmaps
 			 */
 			position: {
 
 				/**
-				 * The heatmap series type. This series type is available both in
-				 * Highcharts and Highmaps.
+				 * The horizontal alignment of the button.
 				 * 
 				 * @type {String}
-				 * @default right
-				 * @product highcharts highstock highmaps
 				 */
 				align: 'right',
 
 				/**
-				 * The horizontal offset of the button
+				 * The horizontal offset of the button.
 				 * 
 				 * @type {Number}
-				 * @default -10
-				 * @product highcharts highstock highmaps
 				 */
 				x: -10,
-				//verticalAlign: 'top',
+
+				/**
+				 * The vertical alignment of the button.
+				 * 
+				 * @validvalue ["top", "middle", "bottom"]
+				 * @type {String}
+				 * @default top
+				 * @apioption chart.resetZoomButton.position.verticalAlign
+				 */
 
 				/**
 				 * The vertical offset of the button.
 				 * 
 				 * @type {Number}
-				 * @default 10
-				 * @product highcharts highstock highmaps
 				 */
 				y: 10
 			}
-			// relativeTo: 'plot'
+			
+			/**
+			 * What frame the button should be placed related to. Can be either
+			 * `plot` or `chart`
+			 * 
+			 * @validvalue ["plot", "chart"]
+			 * @type {String}
+			 * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/
+			 *         Relative to the chart
+			 * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
+			 *         Relative to the chart
+			 * @default plot
+			 * @since 2.2
+			 * @apioption chart.resetZoomButton.relativeTo
+			 */
 		},
 
 		/**
