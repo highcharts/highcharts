@@ -6608,7 +6608,7 @@
  */
 
 /**
- * Deprecated. Renamed to `minRange` as of Highcharts 2.2.
+ * Deprecated. Use `minRange` instead.
  * 
  * @type {Number}
  * @deprecated
@@ -6692,6 +6692,7 @@
  * If user settings dictate minor ticks to become too dense, they don't
  * make sense, and will be ignored to prevent performance problems.
  * 
+ * @productdesc {highcharts}
  * On axes using [categories](#xAxis.categories), minor ticks are not
  * supported.
  * 
@@ -6970,8 +6971,10 @@
 
 /**
  * An array defining breaks in the axis, the sections defined will be
- * left out and all the points shifted closer to each other. Requires
- * that the broken-axis.js module is loaded.
+ * left out and all the points shifted closer to each other.
+ * 
+ * @productdesc {highcharts}
+ * Requires that the broken-axis.js module is loaded.
  * 
  * @type {Array}
  * @sample {highcharts} highcharts/axisbreak/break-simple/ Simple break
@@ -7033,6 +7036,10 @@
  * style/style-by-css), the crosshairs are styled in the `.highcharts-
  * crosshair`, `.highcharts-crosshair-thin` or `.highcharts-xaxis-category`
  * classes.
+ *
+ * @productdesc {highstock}
+ * In Highstock, bu default, the crosshair is enabled on the X axis and
+ * disabled on the Y axis.
  * 
  * @type {Boolean|Object}
  * @sample {highcharts} highcharts/xaxis/crosshair-both/ Crosshair on both axes
@@ -7393,12 +7400,13 @@
  * An array of colored bands stretching across the plot area marking
  * an interval on the axis.
  * 
- * In a gauge, a plot band on the Y axis (value axis) will stretch along
- * the perimeter of the gauge.
- * 
  * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
  * style/style-by-css), the plot bands are styled by the `.highcharts-
  * plot-band` class in addition to the `className` option.
+ *
+ * @productdesc {highcharts}
+ * In a gauge, a plot band on the Y axis (value axis) will stretch along
+ * the perimeter of the gauge.
  * 
  * @type {Array<Object>}
  * @product highcharts highstock
@@ -7763,8 +7771,8 @@
  * CSS styles for the text label.
  * 
  * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
- * style/style-by-css), the labels are styled by the `.highcharts-plot-
- * band-label` class.
+ * style/style-by-css), the labels are styled by the
+ * `.highcharts-plot-line-label` class.
  * 
  * @type {Object}
  * @sample {highcharts} highcharts/xaxis/plotlines-label-style/ Blue and bold label
@@ -7808,7 +7816,7 @@
  */
 
 /**
- * Vertical alignment of the label relative to the plot band. Can be
+ * Vertical alignment of the label relative to the plot line. Can be
  * one of "top", "middle" or "bottom".
  * 
  * @validvalue ["top", "middle", "bottom"]
@@ -8201,7 +8209,7 @@
  */
 
 /**
- * Whether to [use HTML](http://docs.highcharts.com/#formatting$html)
+ * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
  * to render the labels.
  * 
  * @type {Boolean}

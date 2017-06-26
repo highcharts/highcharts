@@ -74,7 +74,18 @@ var Axis = function () {
 H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 	/**
-	 * Default options for the X axis - the Y axis has extended defaults.
+	 * The X axis or category axis. Normally this is the horizontal axis,
+	 * though if the chart is inverted this is the vertical axis. In case of
+	 * multiple axes, the xAxis node is an array of configuration objects.
+	 * 
+	 * See [../class-reference/Highcharts.Axis](the Axis object) for
+	 * programmatic access to the axis.
+	 *
+	 * @productdesc {highmaps}
+	 * In Highmaps, the axis is hidden, but it is used behind the scenes to
+	 * control features like zooming and panning. Zooming is in effect the same
+	 * as setting the extremes of one of the exes.
+	 * 
 	 * @optionparent xAxis
 	 */
 	defaultOptions: {
@@ -161,8 +172,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		/**
 		 * The axis labels show the number or category for each tick.
-		 * 
-		 * @product highcharts highstock highmaps
+		 *
+		 * @productdesc {highmaps}
+		 * X and Y axis labels are by default disabled in Highmaps, but the
+		 * functionality is inherited from Highcharts and used on `colorAxis`,
+		 * and can be enabled on X and Y axes too.
 		 */
 		labels: {
 
@@ -329,6 +343,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Whether to force the axis to start on a tick. Use this option with
 		 * the `minPadding` option to control the axis start.
+		 *
+		 * @productdesc {highstock}
+		 * In Highstock, `startOnTick` is always false when the navigator is
+		 * enabled, to prevent jumpy scrolling.
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/xaxis/startontick-false/ False by default
@@ -336,7 +354,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highstock} stock/xaxis/endontick/ False for Y axis
 		 * @default false
 		 * @since 1.2.0
-		 * @product highcharts highstock highmaps
 		 */
 		startOnTick: false,
 		//tickInterval: null,
@@ -405,8 +422,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		/**
 		 * The axis title, showing next to the axis line.
-		 * 
-		 * @product highcharts highstock highmaps
+		 *
+		 * @productdesc {highmaps}
+		 * In Highmaps, the axis is hidden by default, but adding an axis title
+		 * is still possible. X axis and Y axis titles will appear at the bottom
+		 * and left by default.
 		 */
 		title: {
 			//text: null,
@@ -538,6 +558,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * style/style-by-css), the line stroke is given in the `.highcharts-
 		 * axis-line` or `.highcharts-xaxis-line` class.
 		 * 
+		 * @productdesc {highmaps}
+		 * In Highmaps, the axis line is hidden by default.
+		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/linecolor/ A red line on Y axis
 		 * @sample {highcharts} highcharts/css/axis/ Axes in styled mode
@@ -570,10 +593,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Color of the grid lines extending the ticks across the plot area.
 		 * 
-		 * 
 		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
 		 * style/style-by-css), the stroke is given in the `.highcharts-grid-
 		 * line` class.
+		 *
+		 * @productdesc {highmaps}
+		 * In Highmaps, the grid lines are hidden by default.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/gridlinecolor/ Green lines
@@ -617,6 +642,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Whether to force the axis to end on a tick. Use this option with
 		 * the `maxPadding` option to control the axis end.
+		 *
+		 * @productdesc {highstock}
+		 * In Highstock, `endOnTick` is always false when the navigator is
+		 * enabled, to prevent jumpy scrolling.
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/chart/reflow-true/ True by default
@@ -668,7 +697,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * Padding of the max value relative to the length of the axis. A
 		 * padding of 0.05 will make a 100px axis 5px longer. This is useful
 		 * when you don't want the highest data value to appear on the edge
-		 * of the plot area.
+		 * of the plot area. When the axis' `max` option is set or a max extreme
+		 * is set using `axis.setExtremes()`, the maxPadding will be ignored.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/maxpadding-02/ Max padding of 0.2
@@ -683,7 +713,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * Padding of the min value relative to the length of the axis. A
 		 * padding of 0.05 will make a 100px axis 5px longer. This is useful
 		 * when you don't want the lowest data value to appear on the edge
-		 * of the plot area.
+		 * of the plot area. When the axis' `min` option is set or a max extreme
+		 * is set using `axis.setExtremes()`, the maxPadding will be ignored.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minpadding/ Min padding of 0.2
@@ -833,6 +864,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * The width of the grid lines extending the ticks across the plot
 		 * area.
+		 * 
+		 * @productdesc {highmaps}
+		 * In Highmaps, the grid lines are hidden by default.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/gridlinewidth/ 2px lines
