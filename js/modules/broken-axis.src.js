@@ -338,10 +338,53 @@ H.Series.prototype.gappedPath = function () {
 		xRange,
 		stack;
 
+	/**
+	 * Defines when to display a gap in the graph, together with the `gapUnit`
+	 * option.
+	 * 
+	 * When the `gapUnit` is `relative` (default), a gap size of 5 means
+	 * that if the distance between two points is greater than five times
+	 * that of the two closest points, the graph will be broken.
+	 *
+	 * When the `gapUnit` is `value`, the gap is based on absolute axis values,
+	 * which on a datetime axis is milliseconds.
+	 * 
+	 * In practice, this option is most often used to visualize gaps in
+	 * time series. In a stock chart, intraday data is available for daytime
+	 * hours, while gaps will appear in nights and weekends.
+	 * 
+	 * @type {Number}
+	 * @see [xAxis.breaks](#xAxis.breaks)
+	 * @sample {highstock} stock/plotoptions/series-gapsize/
+	 *         Setting the gap size to 2 introduces gaps for weekends in daily
+	 *         datasets.
+	 * @default 0
+	 * @product highstock
+	 * @apioption plotOptions.series.gapSize
+	 */
+	
+	/**
+	 * Together with `gapSize`, this option defines where to draw gaps in the 
+	 * graph.
+	 *
+	 * @see [gapSize](plotOptions.series.gapSize)
+	 * @default relative
+	 * @validvalues ["relative", "value"]
+	 * @since 5.0.13
+	 * @product highstock
+	 * @apioption plotOptions.series.gapUnit
+	 */
+
 	if (gapSize && i > 0) { // #5008
+
+		// Gap unit is relative
+		if (this.options.gapUnit !== 'value') { // docs
+			gapSize *= this.closestPointRange;
+		}
+
 		// extension for ordinal breaks
 		while (i--) {
-			if (points[i + 1].x - points[i].x > this.closestPointRange * gapSize) {
+			if (points[i + 1].x - points[i].x > gapSize) {
 				xRange = (points[i].x + points[i + 1].x) / 2;
 
 				points.splice( // insert after this one
