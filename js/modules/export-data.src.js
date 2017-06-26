@@ -248,7 +248,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
                 html += '<' + tag + ' class="number">' + val + '</' + tag + '>';
 
             } else {
-                html += '<' + tag + '>' + (val === undefined ? '' : val) + '</' + tag + '>';
+                html += '<' + tag + ' class="text">' + (val === undefined ? '' : val) + '</' + tag + '>';
             }
         }
 
@@ -332,7 +332,7 @@ Highcharts.Chart.prototype.downloadXLS = function () {
             '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>' +
             '<x:Name>Ark1</x:Name>' +
             '<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->' +
-            '<style>td{border:none;font-family: Calibri, sans-serif;} .number{mso-number-format:"0.00";}</style>' +
+            '<style>td{border:none;font-family: Calibri, sans-serif;} .number{mso-number-format:"0.00";} .text{ mso-number-format:"\@";}</style>' +
             '<meta name=ProgId content=Excel.Sheet>' +
             '<meta charset=UTF-8>' +
             '</head><body>' +
