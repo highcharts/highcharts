@@ -15,17 +15,11 @@ var defaultPlotOptions = H.defaultPlotOptions,
 	seriesTypes = H.seriesTypes;
 
 var colProto = seriesTypes.column.prototype;
-
-/**
- * The ColumnRangeSeries class
- */
-seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, 
-
 /**
  * @extends {plotOptions.arearange}
  * @optionparent plotOptions.columrange
  */
-{
+var columnRangeOptions = {
 
 	/**
 	 */
@@ -52,8 +46,16 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 			halo: false
 		}
 	}
-// Prototype members
-}), {
+};
+/**
+ * The ColumnRangeSeries class
+ */
+seriesType('columnrange', 'arearange', merge(
+	defaultPlotOptions.column,
+	defaultPlotOptions.arearange,
+	columnRangeOptions
+
+), {
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
 	 */

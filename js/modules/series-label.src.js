@@ -33,11 +33,7 @@ var labelDistance = 3,
 	SVGRenderer = H.SVGRenderer,
 	Chart = H.Chart;
 
-H.setOptions(
-/**
- * @optionparent
- */
-{
+H.setOptions({
 	plotOptions: {
 		series: {
 

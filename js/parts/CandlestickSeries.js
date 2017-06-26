@@ -13,18 +13,11 @@ var defaultPlotOptions = H.defaultPlotOptions,
 	seriesTypes = H.seriesTypes;
 
 /**
- * The candlestick series type.
- *
- * @constructor seriesTypes.candlestick
- * @augments seriesTypes.ohlc
- */
-seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, 
-/**
  * @extends {plotOptions.ohlc}
  * @products highstock
  * @optionparent plotOptions.candlestick
  */
-{
+var candlestickOptions = {
 
 	/**
 	 */
@@ -107,7 +100,18 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column,
 	// upLineColor: null
 	/*= } =*/
 
-}), /** @lends seriesTypes.candlestick */ {
+};
+
+/**
+ * The candlestick series type.
+ *
+ * @constructor seriesTypes.candlestick
+ * @augments seriesTypes.ohlc
+ */
+seriesType('candlestick', 'ohlc', merge(
+	defaultPlotOptions.column, 
+	candlestickOptions
+), /** @lends seriesTypes.candlestick */ {
 	/*= if (build.classic) { =*/
 	/**
 	 * Postprocess mapping between options and SVG attributes

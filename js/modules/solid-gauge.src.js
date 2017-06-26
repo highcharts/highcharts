@@ -150,20 +150,20 @@ colorAxisMethods = {
 		return color;
 	}
 };
-
-// The solidgauge series type
-H.seriesType('solidgauge', 'gauge', 
 /** 
  * @extends plotOptions.gauge
  * @optionparent plotOptions.solidgauge
  */
-{
-
+var solidGaugeOptions = {
 	/**
 	 */
 	colorByPoint: true
 
-}, {
+};
+
+
+// The solidgauge series type
+H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
 
 	/**
 	 * Extend the translate function to extend the Y axis with the necessary

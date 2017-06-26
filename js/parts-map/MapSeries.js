@@ -35,19 +35,12 @@ var colorPointMixin = H.colorPointMixin,
 var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 
 
-/**
- * The MapAreaPoint object
- */
-/**
- * Add the map series type
- */
-seriesType('map', 'scatter', 
+// Add the map series type
 /**
  * @extends {plotOptions.scatter}
  * @optionparent plotOptions.map
  */
-
-{
+seriesType('map', 'scatter', {
 
 	/**
 	 */

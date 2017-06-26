@@ -17,12 +17,11 @@ var merge = H.merge,
 // The mapbubble series type
 if (seriesTypes.bubble) {
 
-	seriesType('mapbubble', 'bubble', 
 	/**
 	 * @extends {plotOptions.bubble}
 	 * @optionparent plotOptions.mapbubble
 	 */
-	{
+	seriesType('mapbubble', 'bubble', {
 
 		/**
 		 */

@@ -29,13 +29,12 @@ var arrayMax = H.arrayMax,
  * Start Bubble series code											          *
  *****************************************************************************/
 
-seriesType('bubble', 'scatter', 
 
 /**
  * @extends plotOptions.scatter
  * @optionparent plotOptions.bubble
  */
-{
+seriesType('bubble', 'scatter', {
 
 	/**
 	 */

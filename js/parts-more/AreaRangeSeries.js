@@ -17,17 +17,15 @@ var each = H.each,
 	seriesTypes = H.seriesTypes,
 	seriesProto = Series.prototype,
 	pointProto = H.Point.prototype;
-/* 
- * The arearangeseries series type
- * 
- */
-seriesType('arearange', 'area', 
+
+// The arearangeseries series type
+
 
 /**
- * @extends area
+ * @extends plotOptions.area
  * @optionparent plotOptions.arearange
  */
-{
+seriesType('arearange', 'area', {
 	/*= if (build.classic) { =*/
 
 	/**

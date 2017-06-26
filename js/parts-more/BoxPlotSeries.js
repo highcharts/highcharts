@@ -19,12 +19,12 @@ var each = H.each,
  * @constructor seriesTypes.boxplot
  * @augments seriesTypes.column
  */
-seriesType('boxplot', 'column', 
+
 /**
  * @extends {plotOptions.column}
  * @optionparent plotOptions.boxplot
  */
-{
+seriesType('boxplot', 'column', {
 
 	/**
 	 */

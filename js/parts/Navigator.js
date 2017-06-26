@@ -60,17 +60,14 @@ units[5] = ['week', [1, 2, 3]]; // allow more weeks
 
 defaultSeriesType = seriesTypes.areaspline === undefined ? 'line' : 'areaspline';
 
-extend(defaultOptions, 
-	/** 	 
-	* @optionparent
-	*/
-	{
+extend(defaultOptions, {
 
 	/**
 	 * The navigator is a small series below the main series, displaying
 	 * a view of the entire data set. It provides tools to zoom in and
 	 * out on parts of the data as well as panning across the dataset.
-	 * 
+	 *
+	 * @optionparent navigator
 	 * @product highstock
 	 */
 	navigator: {

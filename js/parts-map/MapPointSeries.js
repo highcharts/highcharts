@@ -14,13 +14,11 @@ var merge = H.merge,
 	seriesType = H.seriesType;
 
 // The mappoint series type
-seriesType('mappoint', 'scatter', 
-
-	/**
-	 * @extends plotOptions.scatter
-	 * @optionparent plotOptions.mappoint
-	 */
-	{
+/**
+ * @extends plotOptions.scatter
+ * @optionparent plotOptions.mappoint
+ */
+seriesType('mappoint', 'scatter', {
 
 	/**
 	 */
