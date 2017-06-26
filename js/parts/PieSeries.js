@@ -33,12 +33,12 @@ var addEvent = H.addEvent,
  * @constructor seriesTypes.pie
  * @augments Series
  */
-seriesType('pie', 'line', 
-	/**
-	 * @extends {plotOptions.line}
-	 * @optionparent plotOptions.pie
-	 */
-{
+
+/**
+ * @extends {plotOptions.line}
+ * @optionparent plotOptions.pie
+ */
+seriesType('pie', 'line', {
 
 	/**
 	 * The center of the pie chart relative to the plot area. Can be percentages

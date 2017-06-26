@@ -87,14 +87,11 @@ var addEvent = H.addEvent,
  *
  */
 
-H.Series = H.seriesType('line', null, 
-
 /**
  * General options for all series types.
  * @optionparent plotOptions.series
- * @product highcharts highstock highmaps
  */
-{ // base series options
+H.Series = H.seriesType('line', null, { // base series options
 	/*= if (build.classic) { =*/
 	//cursor: 'default',
 	//dashStyle: null,

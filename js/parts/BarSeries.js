@@ -13,14 +13,12 @@ var seriesType = H.seriesType;
 /**
  * The Bar series class
  */
-seriesType('bar', 'column', null, 
-/**
- * @extends {plotOptions.column}
- * @optionparent plotOptions.bar
- */
-{
-
+seriesType('bar', 'column', null, {
 	/**
 	 */
 	inverted: true
 });
+/**
+ * @extends {plotOptions.column}
+ * @optionparent plotOptions.bar
+ */

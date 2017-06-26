@@ -13,12 +13,12 @@ var Series = H.Series,
 /**
  * The scatter series type
  */
-seriesType('scatter', 'line', 
+
 /**
  * @extends {plotOptions.line}
  * @optionparent plotOptions.scatter
  */
-{
+seriesType('scatter', 'line', {
 
 	/**
 	 * The width of the line connecting the data points.

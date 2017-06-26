@@ -18,13 +18,11 @@ var each = H.each,
  * Start error bar series code                                                *
  *****************************************************************************/
 
-
-seriesType('errorbar', 'boxplot', 
 /**  
  * @extends {plotOptions.boxplot}
  * @optionparent plotOptions.errorbar
  */
-{
+seriesType('errorbar', 'boxplot', {
 	/*= if (build.classic) { =*/
 
 	/**

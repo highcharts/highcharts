@@ -32,18 +32,15 @@ var addEvent = H.addEvent,
 /* ****************************************************************************
  * Start Range Selector code												  *
  *****************************************************************************/
-extend(defaultOptions, 
-/**
- * @optionparent
- */
-{
+extend(defaultOptions, {
 
 	/**
 	 * The range selector is a tool for selecting ranges to display within
 	 * the chart. It provides buttons to select preconfigured ranges in
 	 * the chart, like 1 day, 1 week, 1 month etc. It also provides input
 	 * boxes where min and max dates can be manually input.
-	 * 
+	 *
+	 * @optionparent rangeSelector
 	 * @product highstock
 	 */
 	rangeSelector: {
@@ -148,57 +145,57 @@ extend(defaultOptions,
 	}
 });
 
-defaultOptions.lang = merge(defaultOptions.lang, 
-/**
- * @optionparent lang
- */
-
-/**
- * Language object. The language object is global and it can't be set
- * on each chart initiation. Instead, use `Highcharts.setOptions` to
- * set it before any chart is initiated.
- * 
- * <pre>Highcharts.setOptions({
- * lang: {
- * months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
- * 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
- * 
- * weekdays: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi',
- * 'Samedi']
- * }
- * });</pre>
- * 
- * @product highcharts highstock highmaps
- */
-{
-
+defaultOptions.lang = merge(
+	defaultOptions.lang, 
 	/**
-	 * The text for the label for the range selector buttons.
+	 * Language object. The language object is global and it can't be set
+	 * on each chart initiation. Instead, use `Highcharts.setOptions` to
+	 * set it before any chart is initiated.
 	 * 
-	 * @type {String}
-	 * @default Zoom
+	 * <pre>Highcharts.setOptions({
+	 * lang: {
+	 * months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+	 * 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+	 * 
+	 * weekdays: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi',
+	 * 'Samedi']
+	 * }
+	 * });</pre>
+	 *
+	 * @optionparent lang
 	 * @product highstock
 	 */
-	rangeSelectorZoom: 'Zoom',
+	{
 
-	/**
-	 * The text for the label for the "from" input box in the range selector.
-	 * 
-	 * @type {String}
-	 * @default From
-	 * @product highstock
-	 */
-	rangeSelectorFrom: 'From',
+		/**
+		 * The text for the label for the range selector buttons.
+		 * 
+		 * @type {String}
+		 * @default Zoom
+		 * @product highstock
+		 */
+		rangeSelectorZoom: 'Zoom',
 
-	/**
-	 * The text for the label for the "to" input box in the range selector.
-	 * 
-	 * @type {String}
-	 * @default To
-	 * @product highstock
-	 */
-	rangeSelectorTo: 'To'
-});
+		/**
+		 * The text for the label for the "from" input box in the range
+		 * selector.
+		 * 
+		 * @type {String}
+		 * @default From
+		 * @product highstock
+		 */
+		rangeSelectorFrom: 'From',
+
+		/**
+		 * The text for the label for the "to" input box in the range selector.
+		 * 
+		 * @type {String}
+		 * @default To
+		 * @product highstock
+		 */
+		rangeSelectorTo: 'To'
+	}
+);
 
 /**
  * The range selector.

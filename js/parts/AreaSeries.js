@@ -23,12 +23,11 @@ var color = H.color,
  * @constructor seriesTypes.area
  * @extends {Series}
  */
-seriesType('area', 'line', 
-	/**
-	 * @extends {plotOptions.line}
-	 * @optionparent plotOptions.area
-	 */
-	{
+/**
+ * @extends {plotOptions.line}
+ * @optionparent plotOptions.area
+ */
+seriesType('area', 'line', {
 
 	/**
 	 * When this is true, the series will not cause the Y axis to cross

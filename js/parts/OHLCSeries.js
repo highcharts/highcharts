@@ -18,12 +18,11 @@ var each = H.each,
  * @constructor seriesTypes.ohlc
  * @augments seriesTypes.column
  */
-seriesType('ohlc', 'column', 
 /**
  * @extends {plotOptions.column}
  * @optionparent plotOptions.ohlc
  */
-	{
+seriesType('ohlc', 'column', {
 
 	/**
 	 * The pixel width of the line/border. Defaults to `1`.

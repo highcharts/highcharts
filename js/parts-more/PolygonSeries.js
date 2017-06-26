@@ -18,12 +18,12 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
 /**
  * The polygon series prototype
  */
-seriesType('polygon', 'scatter', 
+
 /**
  * @extends {plotOptions.scatter}
  * @optionsparent plotOptions.polygon
  */
-{
+seriesType('polygon', 'scatter', {
 	marker: {
 		enabled: false,
 		states: {

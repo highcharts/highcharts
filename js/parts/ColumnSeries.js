@@ -28,12 +28,12 @@ var animObject = H.animObject,
  * @constructor seriesTypes.column
  * @augments Series
  */
-seriesType('column', 'line', 
+
 /**
  * @extends {plotOptions.line}
  * @optionparent plotOptions.column
  */
-{
+seriesType('column', 'line', {
 
 	/**
 	 * The corner radius of the border surrounding each column or bar.
@@ -58,7 +58,7 @@ seriesType('column', 'line',
 	 * @sample {highcharts} highcharts/plotoptions/column-crisp-false/ Crisp is false
 	 * @default true
 	 * @since 5.0.10
-	 * @product highcharts
+	 * @product highcharts highstock
 	 */
 	crisp: true,
 

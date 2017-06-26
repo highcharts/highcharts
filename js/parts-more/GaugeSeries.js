@@ -20,13 +20,13 @@ var each = H.each,
 	seriesType = H.seriesType,
 	TrackerMixin = H.TrackerMixin;
 
-seriesType('gauge', 'line', 
+
 /** 
  * The GaugeSeries class
  * @extends {plotOptions.line}
  * @optionparent plotOptions.gauge
  */
-{
+seriesType('gauge', 'line', {
 
 	/**
 	 * Data labels for the gauge. For gauges, the data labels are enabled
