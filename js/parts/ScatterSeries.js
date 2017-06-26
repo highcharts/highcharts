@@ -50,11 +50,9 @@ seriesType('scatter', 'line', {
 	 * Overridable properties are `headerFormat`, `pointFormat`, `yDecimals`,
 	 * `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other series, in
 	 * a scatter plot the series.name by default shows in the headerFormat
-	 * and poin.x and point.y in the pointFormat.
+	 * and point.x and point.y in the pointFormat.
 	 * 
-	 * @type {Object}
-	 * @default {}
-	 * @product highstock
+	 * @product highcharts highstock
 	 */
 	tooltip: {
 		/*= if (build.classic) { =*/
