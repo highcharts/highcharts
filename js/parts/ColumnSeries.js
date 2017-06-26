@@ -32,6 +32,7 @@ var animObject = H.animObject,
 /**
  * @extends {plotOptions.line}
  * @optionparent plotOptions.column
+ * @excluding connectNulls,dashStyle,linecap,lineWidth,marker,connectEnds,step
  */
 seriesType('column', 'line', {
 
