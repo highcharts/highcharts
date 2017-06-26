@@ -1387,19 +1387,7 @@
  * @apioption plotOptions.area.negativeFillColor
  */
 
-/**
- * Whether to apply steps to the line. Possible values are `left`, `center`
- * and `right`. Prior to 2.3.5, only `left` was supported.
- * 
- * @validvalue ["left", "center", "right"]
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/line-step/ Different step line options
- * @sample {highcharts} highcharts/plotoptions/area-step/ Stepped, stacked area
- * @default false
- * @since 1.2.5
- * @product highcharts
- * @apioption plotOptions.area.step
- */
+
 
 /**
  * Whether the whole area or just the line should respond to mouseover
@@ -1424,18 +1412,6 @@
  * @apioption plotOptions.arearange.shadow
  */
 
-/**
- * Whether to apply steps to the line. Possible values are `left`, `center`
- * and `right`. Prior to 2.3.5, only `left` was supported.
- * 
- * @validvalue ["left", "center", "right"]
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/line-step/ Different step line options
- * @default false
- * @since 1.2.5
- * @product highcharts
- * @apioption plotOptions.arearange.step
- */
 
 /**
  * @extends plotOptions.area
@@ -2026,19 +2002,6 @@
  * @apioption plotOptions.line
  */
 
-/**
- * Whether to apply steps to the line. Possible values are `left`, `center`
- * and `right`. Prior to 2.3.5, only `left` was supported.
- * 
- * @validvalue ["left", "center", "right"]
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/line-step/ Different step line options
- * @sample {highstock} stock/plotoptions/line-step/ Step line
- * @default false
- * @since 1.2.5
- * @product highcharts highstock
- * @apioption plotOptions.line.step
- */
 
 /**
  * A series specific or series type specific color set to use instead
@@ -2278,673 +2241,29 @@
  * @apioption plotOptions.scatter.states.hover.lineWidth
  */
 
-/**
- * For some series, there is a limit that shuts down initial animation
- * by default when the total number of points in the chart is too high.
- * For example, for a column chart and its derivatives, animation doesn't
- * run if there is more than 250 points totally. To disable this cap,
- *  set `animationLimit` to `Infinity`.
- * 
- * @type {Number}
- * @apioption plotOptions.series.animationLimit
- */
 
-/**
- * A class name to apply to the series' graphical elements.
- * 
- * @type {String}
- * @since 5.0.0
- * @apioption plotOptions.series.className
- */
 
-/**
- * The main color or the series. In line type series it applies to the
- * line and the point markers unless otherwise specified. In bar type
- * series it applies to the bars unless a color is specified per point.
- * The default value is pulled from the `options.colors` array.
- * 
- * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
- * style/style-by-css), the color can be defined by the [colorIndex](#plotOptions.
- * series.colorIndex) option. Also, the series color can be set with
- * the `.highcharts-series`, `.highcharts-color-{n}`, `.highcharts-{type}-
- * series` or `.highcharts-series-{n}` class, or individual classes
- * given by the `className` option.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/plotoptions/series-color-general/ General plot option
- * @sample {highcharts} highcharts/plotoptions/series-color-specific/ One specific series
- * @sample {highcharts} highcharts/plotoptions/series-color-area/ Area color
- * @sample {highmaps} maps/demo/category-map/ Category map by multiple series
- * @apioption plotOptions.series.color
- */
 
-/**
- * [Styled mode](http://www.highcharts.com/docs/chart-design-and-style/style-
- * by-css) only. A specific color index to use for the series, so its
- * graphic representations are given the class name `highcharts-color-
- * {n}`.
- * 
- * @type {Number}
- * @since 5.0.0
- * @apioption plotOptions.series.colorIndex
- */
 
-/**
- * Polar charts only. Whether to connect the ends of a line series plot
- * across the extremes.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/line-connectends-false/ Do not connect
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.series.connectEnds
- */
 
-/**
- * Whether to connect a graph line across null points.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/ False by default
- * @sample {highcharts} highcharts/plotoptions/series-connectnulls-true/ True
- * @product highcharts highstock
- * @apioption plotOptions.series.connectNulls
- */
 
-/**
- * You can set the cursor to "pointer" if you have click events attached
- * to the series, to signal to the user that the points and lines can
- * be clicked.
- * 
- * @validvalue [null, "default", "none", "help", "pointer", "crosshair"]
- * @type {String}
- * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
- * style/style-by-css), the series cursor can be set with the same classes
- * as listed under [series.color](#plotOptions.series.color).
- * @sample {highcharts} highcharts/plotoptions/series-cursor-line/ On line graph
- * @sample {highcharts} highcharts/plotoptions/series-cursor-column/ On columns
- * @sample {highcharts} highcharts/plotoptions/series-cursor-scatter/ On scatter markers
- * @sample {highstock} stock/plotoptions/cursor/ Pointer on a line graph
- * @sample {highmaps} maps/plotoptions/series-allowpointselect/ Map area
- * @sample {highmaps} maps/plotoptions/mapbubble-allowpointselect/ Map bubble
- * @apioption plotOptions.series.cursor
- */
 
-/**
- * A name for the dash style to use for the graph. Applies only to series
- * type having a graph, like `line`, `spline`, `area` and `scatter`
- * in case it has a `lineWidth`. The value for the `dashStyle` include:
- * 
- * *   Solid
- * *   ShortDash
- * *   ShortDot
- * *   ShortDashDot
- * *   ShortDashDotDot
- * *   Dot
- * *   Dash
- * *   LongDash
- * *   DashDot
- * *   LongDashDot
- * *   LongDashDotDot
- * 
- * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot", "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot", "LongDashDot", "LongDashDotDot"]
- * @type {String}
- * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
- * style/style-by-css), the [stroke dash-array](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
- * dashstyle/) can be set with the same classes as listed under [series.
- * color](#plotOptions.series.color).
- * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/ Possible values demonstrated
- * @sample {highcharts} highcharts/plotoptions/series-dashstyle/ Chart suitable for printing in black and white
- * @sample {highstock} highcharts/plotoptions/series-dashstyle-all/ Possible values demonstrated
- * @sample {highmaps} highcharts/plotoptions/series-dashstyle-all/ Possible values demonstrated
- * @sample {highmaps} maps/plotoptions/series-dashstyle/ Dotted borders on a map
- * @default Solid
- * @since 2.1
- * @apioption plotOptions.series.dashStyle
- */
 
-/**
- * _Requires Accessibility module_
- * 
- * A description of the series to add to the screen reader information
- * about the series.
- * 
- * @type {String}
- * @default undefined
- * @since 5.0.0
- * @apioption plotOptions.series.description
- */
 
-/**
- * Enable or disable the mouse tracking for a specific series. This
- * includes point tooltips and click events on graphs and points. For
- * large datasets it improves performance.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/series-enablemousetracking-false/ No mouse tracking
- * @sample {highmaps} maps/plotoptions/series-enablemousetracking-false/ No mouse tracking
- * @default true
- * @apioption plotOptions.series.enableMouseTracking
- */
 
-/**
- * By default, series are exposed to screen readers as regions. By enabling
- * this option, the series element itself will be exposed in the same
- * way as the data points. This is useful if the series is not used
- * as a grouping entity in the chart, but you still want to attach a
- * description to the series.
- * 
- * Requires the Accessibility module.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/accessibility/art-grants/ Accessible data visualization
- * @sample {highstock} highcharts/accessibility/art-grants/ Accessible data visualization
- * @sample {highmaps} highcharts/accessibility/art-grants/ Accessible data visualization
- * @default undefined
- * @since 5.0.12
- * @todo Copy plotOptions.series.exposeElementToA11y docs to actual source code
- * @apioption plotOptions.series.exposeElementToA11y
- */
 
-/**
- * Whether to use the Y extremes of the total chart width or only the
- * zoomed area when zooming in on parts of the X axis. By default, the
- * Y axis adjusts to the min and max of the visible data. Cartesian
- * series only.
- * 
- * @type {Boolean}
- * @default false
- * @since 4.1.6
- * @product highcharts highstock
- * @apioption plotOptions.series.getExtremesFromAll
- */
 
-/**
- * An array specifying which option maps to which key in the data point
- * array. This makes it convenient to work with unstructured data arrays
- * from different sources.
- * 
- * @type {Array<String>}
- * @see [series.data](#series<line>.data)
- * @sample {highcharts} highcharts/series/data-keys/ An extended data array with keys
- * @sample {highstock} highcharts/series/data-keys/ An extended data array with keys
- * @since 4.1.6
- * @product highcharts highstock
- * @apioption plotOptions.series.keys
- */
 
-/**
- * The line cap used for line ends and line joins on the graph.
- * 
- * @validvalue ["round", "square"]
- * @type {String}
- * @default round
- * @product highcharts highstock
- * @apioption plotOptions.series.linecap
- */
 
-/**
- * The [id](#series.id) of another series to link to. Additionally,
- * the value can be ":previous" to link to the previous series. When
- * two series are linked, only the first one appears in the legend.
- * Toggling the visibility of this also toggles the linked series.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/demo/arearange-line/ Linked series
- * @sample {highstock} highcharts/demo/arearange-line/ Linked series
- * @since 3.0
- * @product highcharts highstock
- * @apioption plotOptions.series.linkedTo
- */
 
-/**
- * The color for the parts of the graph or points that are below the
- * [threshold](#plotOptions.series.threshold).
- * 
- * @type {Color}
- * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
- * style/style-by-css), a negative color is applied by setting this
- * option to `true` combined with the `.highcharts-negative` class name
- * ([view live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
- * negative-color/)).
- * @sample {highcharts} highcharts/plotoptions/series-negative-color/ Spline, area and column
- * @sample {highcharts} highcharts/plotoptions/arearange-negativecolor/ Arearange
- * @sample {highstock} highcharts/plotoptions/series-negative-color/ Spline, area and column
- * @sample {highstock} highcharts/plotoptions/arearange-negativecolor/ Arearange
- * @sample {highmaps} highcharts/plotoptions/series-negative-color/ Spline, area and column
- * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/ Arearange
- * @default null
- * @since 3.0
- * @apioption plotOptions.series.negativeColor
- */
 
-/**
- * Same as [accessibility.pointDescriptionFormatter](#accessibility.
- * pointDescriptionFormatter), but for an individual series. Overrides
- * the chart wide configuration.
- * 
- * @type {Function}
- * @since 5.0.12
- * @apioption plotOptions.series.pointDescriptionFormatter
- */
 
-/**
- * If no x values are given for the points in a series, pointInterval
- * defines the interval of the x values. For example, if a series contains
- * one value every decade starting from year 0, set pointInterval to
- * 10.
- * 
- * Since Highcharts 4.1, it can be combined with `pointIntervalUnit`
- * to draw irregular intervals.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/ Datetime X axis
- * @sample {highstock} stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
- * @default 1
- * @product highcharts highstock
- * @apioption plotOptions.series.pointInterval
- */
 
-/**
- * On datetime series, this allows for setting the [pointInterval](#plotOptions.
- * series.pointInterval) to irregular time units, `day`, `month` and
- * `year`. A day is usually the same as 24 hours, but pointIntervalUnit
- * also takes the DST crossover into consideration when dealing with
- * local time. Combine this option with `pointInterval` to draw weeks,
- *  quarters, 6 months, 10 years etc.
- * 
- * @validvalue [null, "day", "month", "year"]
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/series-pointintervalunit/ One point a month
- * @sample {highstock} highcharts/plotoptions/series-pointintervalunit/ One point a month
- * @since 4.1.0
- * @product highcharts highstock
- * @apioption plotOptions.series.pointIntervalUnit
- */
 
-/**
- * Possible values: `null`, `"on"`, `"between"`.
- * 
- * In a column chart, when pointPlacement is `"on"`, the point will
- * not create any padding of the X axis. In a polar column chart this
- * means that the first column points directly north. If the pointPlacement
- * is `"between"`, the columns will be laid out between ticks. This
- * is useful for example for visualising an amount between two points
- * in time or in a certain sector of a polar chart.
- * 
- * Since Highcharts 3.0.2, the point placement can also be numeric,
- * where 0 is on the axis value, -0.5 is between this value and the
- * previous, and 0.5 is between this value and the next. Unlike the
- * textual options, numeric point placement options won't affect axis
- * padding.
- * 
- * Note that pointPlacement needs a [pointRange](#plotOptions.series.
- * pointRange) to work. For column series this is computed, but for
- * line-type series it needs to be set.
- * 
- * Defaults to `null` in cartesian charts, `"between"` in polar charts.
- * 
- * @validvalue [null, "on", "between"]
- * @type {String|Number}
- * @see [xAxis.tickmarkPlacement](#xAxis.tickmarkPlacement)
- * @sample {highcharts} highcharts/plotoptions/series-pointplacement-between/ Between in a column chart
- * @sample {highcharts} highcharts/plotoptions/series-pointplacement-numeric/ Numeric placement for custom layout
- * @sample {highstock} highcharts/plotoptions/series-pointplacement-between/ Between in a column chart
- * @sample {highstock} highcharts/plotoptions/series-pointplacement-numeric/ Numeric placement for custom layout
- * @default null
- * @since 2.3.0
- * @product highcharts highstock
- * @apioption plotOptions.series.pointPlacement
- */
 
-/**
- * If no x values are given for the points in a series, pointStart defines
- * on what value to start. For example, if a series contains one yearly
- * value starting from 1945, set pointStart to 1945.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/series-pointstart-linear/ Linear
- * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/ Datetime
- * @sample {highstock} stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
- * @default 0
- * @product highcharts highstock
- * @apioption plotOptions.series.pointStart
- */
 
-/**
- * Whether to select the series initially. If `showCheckbox` is true,
- * the checkbox next to the series name will be checked for a selected
- * series.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/series-selected/ One out of two series selected
- * @default false
- * @since 1.2.0
- * @apioption plotOptions.series.selected
- */
 
-/**
- * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
- * can be an object configuration containing `color`, `offsetX`, `offsetY`,
- *  `opacity` and `width`.
- * 
- * @type {Boolean|Object}
- * @sample {highcharts} highcharts/plotoptions/series-shadow/ Shadow enabled
- * @default false
- * @apioption plotOptions.series.shadow
- */
 
-/**
- * Whether to display this particular series or series type in the legend.
- * The default value is `true` for standalone series, `false` for linked
- * series.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/series-showinlegend/ One series in the legend, one hidden
- * @default true
- * @apioption plotOptions.series.showInLegend
- */
-
-/**
- * If set to `True`, the accessibility module will skip past the points
- * in this series for keyboard navigation.
- * 
- * @type {Boolean}
- * @since 5.0.12
- * @apioption plotOptions.series.skipKeyboardNavigation
- */
-
-/**
- * Whether to stack the values of each series on top of each other.
- * Possible values are null to disable, "normal" to stack by value or
- * "percent". When stacking is enabled, data must be sorted in ascending
- * X order.
- * 
- * @validvalue [null, "normal", "percent"]
- * @type {String}
- * @see [yAxis.reversedStacks](#yAxis.reversedStacks)
- * @sample {highcharts} highcharts/plotoptions/series-stacking-line/ Line
- * @sample {highcharts} highcharts/plotoptions/series-stacking-column/ Column
- * @sample {highcharts} highcharts/plotoptions/series-stacking-bar/ Bar
- * @sample {highcharts} highcharts/plotoptions/series-stacking-area/ Area
- * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-line/ Line
- * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-column/ Column
- * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-bar/ Bar
- * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-area/ Area
- * @sample {highstock} stock/plotoptions/stacking/ Area
- * @default null
- * @product highcharts highstock
- * @apioption plotOptions.series.stacking
- */
-
-/**
- * Whether to apply steps to the line. Possible values are `left`, `center`
- * and `right`. Prior to 2.3.5, only `left` was supported.
- * 
- * @validvalue [null, "left", "center", "right"]
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/line-step/ Different step line options
- * @sample {highcharts} highcharts/plotoptions/area-step/ Stepped, stacked area
- * @sample {highstock} stock/plotoptions/line-step/ Step line
- * @default {highcharts} null
- * @default {highstock} false
- * @since 1.2.5
- * @product highcharts highstock
- * @apioption plotOptions.series.step
- */
-
-/**
- * The threshold, also called zero level or base level. For line type
- * series this is only used in conjunction with [negativeColor](#plotOptions.
- * series.negativeColor).
- * 
- * @type {Number}
- * @see [softThreshold](#plotOptions.series.softThreshold).
- * @default 0
- * @since 3.0
- * @product highcharts highstock
- * @apioption plotOptions.series.threshold
- */
-
-/**
- * Set the initial visibility of the series.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/series-visible/ Two series, one hidden and one visible
- * @sample {highstock} stock/plotoptions/series-visibility/ Hidden series
- * @default true
- * @apioption plotOptions.series.visible
- */
-
-/**
- * Defines the Axis on which the zones are applied.
- * 
- * @type {String}
- * @see [zones](#plotOption.series.zones)
- * @sample {highcharts} highcharts/series/color-zones-zoneaxis-x/ Zones on the X-Axis
- * @sample {highstock} highcharts/series/color-zones-zoneaxis-x/ Zones on the X-Axis
- * @default y
- * @since 4.1.0
- * @product highcharts highstock
- * @apioption plotOptions.series.zoneAxis
- */
-
-/**
- * Whether to allow data labels to overlap. To make the labels less
- * sensitive for overlapping, the [dataLabels.padding](#plotOptions.
- * series.dataLabels.padding) can be set to 0.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
- * @sample {highstock} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
- * @sample {highmaps} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
- * @default false
- * @since 4.1.0
- * @apioption plotOptions.series.dataLabels.allowOverlap
- */
-
-/**
- * The background color or gradient for the data label. Defaults to
- * `undefined`.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @sample {highmaps} maps/plotoptions/series-datalabels-box/ Data labels box options
- * @since 2.2.1
- * @product highcharts highmaps
- * @apioption plotOptions.series.dataLabels.backgroundColor
- */
-
-/**
- * The border color for the data label. Defaults to `undefined`.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @default undefined
- * @since 2.2.1
- * @apioption plotOptions.series.dataLabels.borderColor
- */
-
-/**
- * The border radius in pixels for the data label.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @sample {highmaps} maps/plotoptions/series-datalabels-box/ Data labels box options
- * @default 0
- * @since 2.2.1
- * @apioption plotOptions.series.dataLabels.borderRadius
- */
-
-/**
- * The border width in pixels for the data label.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @default 0
- * @since 2.2.1
- * @apioption plotOptions.series.dataLabels.borderWidth
- */
-
-/**
- * A class name for the data label. Particularly in [styled mode](http://www.
- * highcharts.com/docs/chart-design-and-style/style-by-css), this can
- * be used to give each series' or point's data label unique styling.
- * In addition to this option, a default color class name is added
- * so that we can give the labels a [contrast text shadow](http://jsfiddle.
- * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-
- * label-contrast/).
- * 
- * @type {String}
- * @sample {highcharts} highcharts/css/series-datalabels/ Styling by CSS
- * @sample {highstock} highcharts/css/series-datalabels/ Styling by CSS
- * @sample {highmaps} highcharts/css/series-datalabels/ Styling by CSS
- * @since 5.0.0
- * @apioption plotOptions.series.dataLabels.className
- */
-
-/**
- * The text color for the data labels. Defaults to `null`.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-color/ Red data labels
- * @sample {highmaps} maps/demo/color-axis/ White data labels
- * @apioption plotOptions.series.dataLabels.color
- */
-
-/**
- * Whether to hide data labels that are outside the plot area. By default,
- * the data label is moved inside the plot area according to the [overflow](#plotOptions.
- * series.dataLabels.overflow) option.
- * 
- * @type {Boolean}
- * @default true
- * @since 2.3.3
- * @apioption plotOptions.series.dataLabels.crop
- */
-
-/**
- * Whether to defer displaying the data labels until the initial series
- * animation has finished.
- * 
- * @type {Boolean}
- * @default true
- * @since 4.0
- * @product highcharts highstock
- * @apioption plotOptions.series.dataLabels.defer
- */
-
-/**
- * Enable or disable the data labels.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled/ Data labels enabled
- * @sample {highmaps} maps/demo/color-axis/ Data labels enabled
- * @default false
- * @apioption plotOptions.series.dataLabels.enabled
- */
-
-/**
- * A [format string](http://www.highcharts.com/docs/chart-concepts/labels-
- * and-string-formatting) for the data label. Available variables are
- * the same as for `formatter`.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/ Add a unit
- * @sample {highstock} highcharts/plotoptions/series-datalabels-format/ Add a unit
- * @sample {highmaps} maps/plotoptions/series-datalabels-format/ Formatted value in the data label
- * @default {highcharts} {y}
- * @default {highstock} {y}
- * @default {highmaps} {point.value}
- * @since 3.0
- * @apioption plotOptions.series.dataLabels.format
- */
-
-/**
- * For points with an extent, like columns, whether to align the data
- * label inside the box or to the actual value point. Defaults to `false`
- * in most cases, `true` in stacked columns.
- * 
- * @type {Boolean}
- * @since 3.0
- * @product highcharts highstock
- * @apioption plotOptions.series.dataLabels.inside
- */
-
-/**
- * How to handle data labels that flow outside the plot area. The default
- * is `justify`, which aligns them inside the plot area. For columns
- * and bars, this means it will be moved inside the bar. To display
- * data labels outside the plot area, set `crop` to `false` and `overflow`
- * to `"none"`.
- * 
- * @validvalue ["justify", "none"]
- * @type {String}
- * @default justify
- * @since 3.0.6
- * @apioption plotOptions.series.dataLabels.overflow
- */
-
-/**
- * Text rotation in degrees. Note that due to a more complex structure,
- * backgrounds, borders and padding will be lost on a rotated data
- * label.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/ Vertical labels
- * @default 0
- * @apioption plotOptions.series.dataLabels.rotation
- */
-
-/**
- * The shadow of the box. Works best with `borderWidth` or `backgroundColor`.
- * Since 2.3 the shadow can be an object configuration containing `color`,
- *  `offsetX`, `offsetY`, `opacity` and `width`.
- * 
- * @type {Boolean|Object}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @default false
- * @since 2.2.1
- * @apioption plotOptions.series.dataLabels.shadow
- */
-
-/**
- * The name of a symbol to use for the border around the label. Symbols
- * are predefined functions on the Renderer object.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/series-datalabels-shape/ A callout for annotations
- * @sample {highstock} highcharts/plotoptions/series-datalabels-shape/ A callout for annotations
- * @sample {highmaps} highcharts/plotoptions/series-datalabels-shape/ A callout for annotations (Highcharts demo)
- * @default square
- * @since 4.1.2
- * @apioption plotOptions.series.dataLabels.shape
- */
-
-/**
- * n/a for data labels
- * 
- * @apioption plotOptions.series.dataLabels.staggerLines
- */
-
-/**
- * n/a for data labels
- * 
- * @apioption plotOptions.series.dataLabels.step
- */
-
-/**
- * The Z index of the data labels. The default Z index puts it above
- * the series. Use a Z index of 2 to display it behind the series.
- * 
- * @type {Number}
- * @default 6
- * @since 2.3.5
- * @apioption plotOptions.series.dataLabels.zIndex
- */
 
 /**
  * Fires after the series has finished its initial animation, or in
@@ -3767,11 +3086,8 @@
 /**
  * The sequential index of the series in the legend.
  * 
- * <div class="demo">Try it: [Legend in opposite order](http://jsfiddle.
- * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/legendindex/)</div>
- * 
- * .
- * 
+ * @sample {highcharts|highstock} highcharts/series/legendindex/
+ *         Legend in opposite order
  * @type {Number}
  * @see [legend.reversed](#legend.reversed), [yAxis.reversedStacks](#yAxis.
  * reversedStacks)
@@ -3801,10 +3117,7 @@
  */
 
 /**
- * The type of series. Can be one of `area`, `areaspline`, `bar`, `column`,
- * `line`, `pie`, `scatter` or `spline`. From version 2.3, `arearange`,
- * `areasplinerange` and `columnrange` are supported with the highcharts-
- * more.js component.
+ * The type of series, for example `line` or `column`.
  * 
  * @validvalue [null, "line", "spline", "column", "area", "areaspline", "pie", "arearange", "areasplinerange", "boxplot", "bubble", "columnrange", "errorbar", "funnel", "gauge", "scatter", "waterfall"]
  * @type {String}
@@ -4001,14 +3314,9 @@
  * The name of the point as shown in the legend, tooltip, dataLabel
  * etc.
  * 
- * If the [xAxis.type](#xAxis.type) is set to `category`, and no [categories](#xAxis.
- * categories) option exists, the category will be pulled from the `point.
- * name` of the last series defined. For multiple series, best practice
- * however is to define `xAxis.categories`.
- * 
  * @type {String}
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Point names
- * @product highcharts highstock
+ * @see [xAxis.uniqueNames](#xAxis.uniqueNames)
  * @apioption series.line.data.name
  */
 
@@ -6900,12 +6208,12 @@
  */
 
 /**
- * Callback function to format the text of the tooltip. Return false
- * to disable tooltip for a specific point on series.
+ * Callback function to format the text of the tooltip from scratch. Return
+ * `false` to disable tooltip for a specific point on series.
  * 
- * A subset of HTML is supported. The HTML of the tooltip is parsed
- * and converted to SVG, therefore this isn't a complete HTML renderer.
- * The following tags are supported: `<b>`, `<strong>`, `<i>`, `<em>`,
+ * A subset of HTML is supported. Unless `useHTML` is true, the HTML of the
+ * tooltip is parsed and converted to SVG, therefore this isn't a complete HTML
+ * renderer. The following tags are supported: `<b>`, `<strong>`, `<i>`, `<em>`,
  * `<br/>`, `<span>`. Spans can be styled with a `style` attribute,
  * but only text-related CSS that is shared with SVG is handled.
  * 
@@ -6936,8 +6244,8 @@
  * 
  * <dt>this.series (not shared) / this.points[i].series (shared)</dt>
  * 
- * <dd>The series object. The series name is available through `this.
- * series.name`.</dd>
+ * <dd>The series object. The series name is available through
+ * `this.series.name`.</dd>
  * 
  * <dt>this.total (not shared) / this.points[i].total (shared)</dt>
  * 
@@ -7003,13 +6311,12 @@
  */
 
 /**
- * The name of a symbol to use for the border around the tooltip. In
- * Highcharts 3.x and less, the shape was `square`.
+ * The name of a symbol to use for the border around the tooltip.
  * 
  * @type {String}
  * @default callout
+ * @validvalues ["callout", "square"]
  * @since 4.0
- * @product highcharts highstock
  * @apioption tooltip.shape
  */
 
@@ -9324,14 +8631,6 @@
  * @apioption plotOptions.series.compareBase
  */
 
-/**
- * The sequential index of the series within the legend.
- * 
- * @type {Number}
- * @default 0
- * @product highstock
- * @apioption plotOptions.series.legendIndex
- */
 
 /**
  * Options for the corresponding navigator series if `showInNavigator`

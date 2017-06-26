@@ -121,7 +121,7 @@ seriesType('column', 'line', {
 	 * @default 50
 	 * @product highcharts highstock
 	 */
-	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
+	cropThreshold: 50,
 
 	/**
 	 * The X axis range that each point is valid for. This determines the
@@ -129,14 +129,19 @@ seriesType('column', 'line', {
 	 * by default (one category unit). On linear and datetime axes, the
 	 * range will be computed as the distance between the two closest data
 	 * points.
+	 *
+	 * The default `null` means it is computed automatically, but this option
+	 * can be used to override the automatic value.
 	 * 
 	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/column-pointrange/ Set the point range to one day on a data set with one week between the points
+	 * @sample {highcharts} highcharts/plotoptions/column-pointrange/
+	 *         Set the point range to one day on a data set with one week
+	 *         between the points
 	 * @default null
 	 * @since 2.3
 	 * @product highcharts highstock
 	 */
-	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
+	pointRange: null,
 
 	/**
 	 */

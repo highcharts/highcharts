@@ -1266,7 +1266,10 @@ H.defaultOptions = {
 	},
 
 	/**
-	 * The chart's subtitle
+	 * The chart's subtitle. This can be used both to display a subtitle below
+	 * the main title, and to display random text anywhere in the chart. The
+	 * subtitle can be updated after chart initialization through the 
+	 * `Chart.setTitle` method.
 	 * 
 	 * @sample {highmaps} maps/title/subtitle/ Subtitle options demonstrated
 	 * @product highcharts highstock highmaps
