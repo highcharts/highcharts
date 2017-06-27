@@ -72,11 +72,21 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
 
     chart.tooltip.refresh([p1, p2]);
     el = chart.tooltip.tt.text.element;
+
     value = window.getComputedStyle(el).getPropertyValue('color');
     assert.strictEqual(
         value,
         'rgb(51, 51, 51)',
         'tooltip default color.'
+    );
+
+    el = chart.tooltip.tt.element;
+    value = window.getComputedStyle(el);
+
+    assert.strictEqual(
+        document.getElementsByClassName('highcharts-label-box')[4].getAttribute('isShadow'),
+        'true',
+        'shadow is applied.'
     );
 
     chart.update({
