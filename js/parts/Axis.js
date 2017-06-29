@@ -2248,8 +2248,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		this.trimTicks(tickPositions, startOnTick, endOnTick);
 		if (!this.isLinked) {
 			
-			// Substract half a unit (#2619, #2846, #2515, #3390)
-			if (this.single) {
+			// Substract half a unit (#2619, #2846, #2515, #3390),
+			// but not in case of multiple ticks (#6897)
+			if (this.single && tickPositions.length < 2) {
 				this.min -= 0.5;
 				this.max += 0.5;
 			}
