@@ -291,8 +291,11 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		this.side.attr({
 			fill: color(fill).brighten(-0.1).get()
 		});
-
 		this.color = fill;
+
+		// for animation getter (#6776)
+		result.fill = fill;
+
 		return this;
 	};
 
@@ -304,7 +307,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
-	result.attr = function (args, val) {
+	result.attr = function (args, val, complete, continueAnimation) {
 
 		// Resolve setting attributes by string name
 		if (typeof args === 'string' && typeof val !== 'undefined') {
@@ -320,7 +323,10 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			this.top.attr({ d: paths[1] });
 			this.side.attr({ d: paths[2] });
 		} else {
-			return H.SVGElement.prototype.attr.call(this, args); // getter returns value
+			// getter returns value
+			return SVGElement.prototype.attr.call(
+				this, args, undefined, complete, continueAnimation
+			);
 		}
 
 		return this;

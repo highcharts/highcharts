@@ -3776,8 +3776,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		};
 		/*= } else { =*/
 		wrapper.strokeSetter = wrapper.fillSetter = wrapper.rSetter = function (value, key) {
-			if (key === 'fill' && value) {
-				needsBox = true;
+			if (key !== 'r') {
+				if (key === 'fill' && value) {
+					needsBox = true;
+				}
+				// for animation getter (#6776)
+				wrapper[key] = value;
 			}
 			boxAttr(key, value);
 		};
