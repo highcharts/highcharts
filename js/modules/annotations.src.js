@@ -38,9 +38,30 @@ var	merge = H.merge,
 **************************************************************************** */
 
 /**
- * An object with predefined markers options
+ * Options for configuring markers for annotations.
  *
+ * An example of the arrow marker:
+ * <pre>
+ * {
+ *   arrow: {
+ *     id: 'arrow',
+ *     refY: 5,
+ *     refX: 5,
+ *     markerWidth: 10,
+ *     markerHeight: 10,
+ *     children: [{
+ *       tagName: 'path',
+ *       attrs: {
+ *         d: 'M 0 0 L 10 5 L 0 10 Z',
+ *         strokeWidth: 0
+ *       }
+ *     }]
+ *   }
+ * }
+ * </pre>
  * @type {Object}
+ * @since 6.0.0
+ * @apioption defs.markers
  */
 var defaultMarkers = {
 	arrow: {
@@ -363,46 +384,406 @@ Annotation.prototype = {
 		 */
 		visible: true,
 
+		/**
+		 * Options for annotation's labels. Each label inherits options
+		 * from the labelOptions object. An option from the labelOptions can be
+		 * overwritten by config for a specific label.
+		 *
+		 * @type {Object}
+		 * @since 6.0.0
+		 **/
 		labelOptions: {
+
+			/**
+			 * The alignment of the annotation's label. If right,
+			 * the right side of the label should be touching the point. 
+			 *
+			 * @type {'left' | 'center' | 'right'}
+			 * @since 6.0.0
+			 **/
 			align: 'center',
+
+			/**
+			 * Whether to allow the annotation's labels to overlap.
+			 * To make the labels less sensitive for overlapping, 
+			 * the can be set to 0.
+			 *
+			 * @type {Boolean}
+			 * @since 6.0.0
+			 * @default false
+			 **/
 			allowOverlap: false,
+
+			/**
+			 * The background color or gradient for the annotation's label.
+			 *
+			 * @type {Color}
+			 * @since 6.0.0
+			 **/
 			backgroundColor: 'rgba(0, 0, 0, 0.75)',
+
+			/**
+			 * The border color for the annotation's label.
+			 *
+			 * @type {Color}
+			 * @since 6.0.0
+			 **/
 			borderColor: 'black',
+
+			/**
+			 * The border radius in pixels for the annotaiton's label.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 **/
 			borderRadius: 1,
+
+			/**
+			 * The border width in pixels for the annotation's label
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 **/
 			borderWidth: 1,
-			// className:
-			// color: undefined,
+
+			/**
+			 * Whether to hide the annotation's label that is outside the plot area.
+			 *
+			 * @type {Boolean}
+			 * @since 6.0.0
+			 * @default false
+			 **/ 
 			crop: false,
+
+			/**
+			 * A [format](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting) string for the data label.
+			 *
+			 * @type {String}
+			 * @see [plotOptions.series.dataLabels.format](plotOptions.series.dataLabels.format.html)
+			 * @since 6.0.0
+			 * @default undefined
+			 * @apioption annotations.labelOptions.format
+			 **/
+			// format: null,
+
+			/**
+			 * Alias for the format option.
+			 *
+			 * @type {String}
+			 * @see [format](annotations.labelOptions.format.html)
+			 * @since 6.0.0
+			 * @default undefined
+			 * @apioption annotations.labelOptions.text
+			 */
 			// text: null,
+
+			/**
+			 * Callback JavaScript function to format the annotation's label. Note that
+			 * if a `format` or `text` are defined, the format or text take precedence
+			 * and the formatter is ignored. `This` refers to a point object.
+			 * 
+			 * @type {Function}
+			 * @since 6.0.0
+			 * @default function () {
+			 * 	return defined(this.y) ? this.y : 'Annotation label';
+			 * }
+			 **/
 			formatter: function () {
 				return defined(this.y) ? this.y : 'Annotation label';
 			},
+
+			/**
+			 * How to handle the annotation's label that flow outside the plot area.
+			 * Justify option aligns the label inside the plot area.
+			 *
+			 * @type {'none' | 'justify'}
+			 * @since 6.0.0
+			 **/
 			overflow: 'none',
+
+			/**
+			 * When either the borderWidth or the backgroundColor is set,
+			 * this	is the padding within the box.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 **/
 			padding: 5,
+			
+			/**
+			 * The shadow of the box
+			 *
+			 * @type {Boolean|Object}
+			 * @since 6.0.0
+			 * @default false
+			 **/
 			shadow: false,
+
+			/**
+			 * The name of a symbol to use for the border around the label.
+			 * Symbols are predefined functions on the Renderer object.
+			 *
+			 * @type {String}
+			 * @since 6.0.0
+			 **/
 			shape: 'callout',
+
+			/**
+			 * Styles for the annotation's label.
+			 * 
+			 * @type {CSSObject}
+			 * @see [plotOptions.series.dataLabels.style](plotOptions.series.dataLabels.style.html)
+			 * @since 6.0.0
+			 **/
 			style: {
 				fontSize: '11px',
 				fontWeigth: 'bold',
 				color: 'contrast'
 			},
+
+			/**
+			 * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
+ 			 * and-string-formatting#html) to render the annotation's label.
+ 			 *
+ 			 * @type {Boolean}
+ 			 * @since 6.0.0
+ 			 * @default false
+			 **/
 			useHTML: false,
+
+			/**
+			 * The vertical alignment of the annotation's label.
+			 * 
+			 * @type {'top' | 'middle' | 'bottom'}
+			 * @since 6.0.0
+			 **/
 			verticalAlign: 'bottom',
+
+			/**
+			 * The x position offset of the label relative to the point.
+			 * Note that if a `distance` is defined, the distance takes
+			 * precedence over `x` and `y` options.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @default 0
+			 **/
 			x: 0,
+
+			/**
+			 * The y position offset of the label relative to the point.
+			 * Note that if a `distance` is defined, the distance takes
+			 * precedence over `x` and `y` options.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @default -16
+			 **/
 			y: -16
-			// distance: 16
-			// zIndex: 6
+
+			/**
+			 * The label's pixel distance from the point.
+			 *
+			 * @type {Number}
+			 * @default undefined
+			 * @apioption annotations.labelOptions.distance
+			 **/
+			//distance: 16
 		},
 
+		/**
+		 * An array of labels for the annotation. For options that apply to multiple
+		 * labels, they can be added to the [labelOptions](annotations.labelOptions.html).
+		 *
+		 * @type {Array<Object>}
+		 * @since 6.0.0
+		 * @extends annotations.labelOptions
+		 * @apioption annotations.labels
+		 */
+
+		/**
+		 * This option defines the point to which the label will be connected.
+		 * It can be either the point which exists in the series - it is referenced
+		 * by the point's id - or a new point with defined x, y properies
+		 * and optionally axes.
+		 *
+		 * @type {String|Object}
+		 * @since 6.0.0
+		 * @apioption annotations.labels.point
+		 */
+
+		/**
+		 * The x position of the point. Units can be either in axis 
+		 * or chart pixel coordinates.
+		 *
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @apioption annotations.labels.point.x
+		 */
+
+		/**
+		 * The y position of the point. Units can be either in axis
+		 * or chart pixel coordinates.
+		 *
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @apioption annotations.labels.point.y
+		 */
+
+		/**
+		 * This number defines which xAxis the point is connected to. It refers
+		 * to either the axis id or the index of the axis in the xAxis array.
+		 * If the option is not configured or the axis is not found the point's
+		 * x coordinate refers to the chart pixels.
+		 * 
+		 * @type {Number|String}
+		 * @since 6.0.0
+		 * @apioption annotations.labels.point.xAxis
+		 */
+
+		/**
+		 * This number defines which yAxis the point is connected to. It refers
+		 * to either the axis id or the index of the axis in the yAxis array.
+		 * If the option is not configured or the axis is not found the point's
+		 * y coordinate refers to the chart pixels.
+		 *
+		 * @type {Number|String}
+		 * @since 6.0.0
+		 * @apioption annotations.labels.point.yAxis
+		 */
+
+
+		/**
+		 * Options for annotation's shapes. Each shape inherits options
+		 * from the shapeOptions object. An option from the shapeOptions can be
+		 * overwritten by config for a specific shape.
+		 *
+		 * @type {Object}
+		 * @since 6.0.0
+		 **/
 		shapeOptions: {
+
+			/**
+			 * The color of the shape's stroke.
+			 *
+			 * @type {Color}
+			 * @since 6.0.0
+			 **/
 			stroke: 'rgba(0, 0, 0, 0.75)',
+			
+			/**
+			 * The pixel stroke width of the shape.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @default 1
+			 **/
 			strokeWidth: 1,
+
+			/**
+			 * The color of the shape's fill.
+			 *
+			 * @type {Color}
+			 * @since 6.0.0
+			 **/
 			fill: 'rgba(0, 0, 0, 0.75)',
+
+			/**
+			 * The type of the shape, e.g. circle or rectangle.
+			 *
+			 * @type {String}
+			 * @since 6.0.0
+			 * @default rect
+			 **/
 			// type: 'rect',
+
+			/**
+			 * The radius of the shape.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @default 0
+			 **/
 			r: 0
+
+			/**
+			 * The width of the shape.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @apioption annotations.shapeOptions.width
+			 **/
+
+			/**
+			 * The height of the shape.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @apioption annotations.shapeOptions.height
+			 **/
 		},
 
+		/**
+		 * The Z index of the annotation.
+		 *
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @default 6
+		 **/
 		zIndex: 6
+
+		/**
+		 * An array of shapes for the annotation. For options that apply to multiple
+		 * shapes, then can be added to the [shapeOptions](annotations.shapeOptions.html).
+		 *
+		 * @type {Array<Object>}
+		 * @since 6.0.0
+		 * @extends annotations.shapeOptions
+		 * @apioption annotations.shapes
+		 */
+
+		/**
+		 * This option defines the point to which the shape will be connected.
+		 * It can be either the point which exists in the series - it is referenced
+		 * by the point's id - or a new point with defined x, y properties
+		 * and optionally axes.
+		 *
+		 * @type {String|Object}
+		 * @since 6.0.0
+		 * @extends annotations.labels.point
+		 * @apioption annotations.shapes.point
+		 */
+
+		/**
+		 * An array of points for the shape. This option is available for shapes
+		 * which can use multiple points such as path. A point can be either 
+		 * a point object or a point's id.
+		 *
+		 * @type {Array}
+		 * @see [annotations.shapes.point](annotations.shapes.point.html)
+		 * @since 6.0.0
+		 * @apioption annotations.shapes.points
+		 */
+
+		/**
+		 * Id of the marker which will be drawn at the final vertex of the path.
+		 * Custom markers can be defined in defs property.
+		 *
+		 * @type {String}
+		 * @see [defs.markers](defs.markers.html)
+		 * @since 6.0.0
+		 * @apioption annotations.shapes.markerEnd
+		 **/
+
+		/**
+		 * Id of the marker which will be drawn at the first vertex of the path.
+		 * Custom markers can be defined in defs property.
+		 *
+		 * @type {String}
+		 * @see [defs.markers](defs.markers.html)
+		 * @since 6.0.0
+		 * @apioption annotations.shapes.markerStart
+		 **/
 	},
 
 	/**
