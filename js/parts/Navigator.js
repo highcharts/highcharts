@@ -1750,12 +1750,15 @@ Navigator.prototype = {
 			baseSeries = this,
 			navigatorSeries = this.navigatorSeries;
 
-		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
-		// axis minimum falls outside the new updated dataset, we must adjust.
-		navigator.stickToMin = isNumber(baseSeries.xAxis.min) && (baseSeries.xAxis.min <= baseSeries.xData[0]);
 		// If the scrollbar is scrolled all the way to the right, keep right as new data 
 		// comes in.
 		navigator.stickToMax = Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
+
+		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
+		// axis minimum falls outside the new updated dataset, we must adjust.
+		navigator.stickToMin = isNumber(baseSeries.xAxis.min) &&
+			(baseSeries.xAxis.min <= baseSeries.xData[0]) &&
+			(!this.chart.fixedRange || !navigator.stickToMax);
 
 		// Set the navigator series data to the new data of the base series
 		if (navigatorSeries && !navigator.hasNavigatorData) {
