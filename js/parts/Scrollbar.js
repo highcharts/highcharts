@@ -838,8 +838,16 @@ wrap(Axis.prototype, 'init', function (proceed) {
 */
 wrap(Axis.prototype, 'render', function (proceed) {
 	var axis = this,		
-		scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, axis.dataMin),
-		scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, axis.dataMax),
+		scrollMin = Math.min(
+			pick(axis.options.min, axis.min),
+			axis.min,
+			pick(axis.dataMin, axis.min) // #6930
+		),
+		scrollMax = Math.max(
+			pick(axis.options.max, axis.max),
+			axis.max,
+			pick(axis.dataMax, axis.max) // #6930
+		),
 		scrollbar = axis.scrollbar,
 		titleOffset = axis.titleOffset || 0,
 		offsetsIndex,
