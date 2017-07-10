@@ -230,7 +230,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 			return 'right';
 		}
 	}
-	return proceed.call(this, [].slice.call(arguments, 1));
+	return proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Clear axis from label panes (#6071)
@@ -242,7 +242,7 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 		delete chart._labelPanes[key];
 	}
 
-	return proceed.call(this, Array.prototype.slice.call(arguments, 1));
+	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts
