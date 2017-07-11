@@ -19,16 +19,16 @@ QUnit.test('Legend border should contain items with checkboxes (#4853)',
     });
 
     assert.strictEqual(
-      chart.legend.box.width,
-      351,
+      chart.legend.box.width > 340 && chart.legend.box.width < 360,
+      true,
       'Legend box contains checkboxes - 2 items'
     );
 
     chart.series[0].remove();
 
     assert.strictEqual(
-      chart.legend.box.width,
-      183,
+      chart.legend.box.width > 170 && chart.legend.box.width < 190,
+      true,
       'Legend box contains checkbox - 1 item'
     );
 
@@ -41,8 +41,8 @@ QUnit.test('Legend border should contain items with checkboxes (#4853)',
     });
 
     assert.strictEqual(
-      chart.legend.box.width,
-      83,
+      chart.legend.box.width > 70 && chart.legend.box.width < 90,
+      true,
       'Legend box without checkboxes is of proper size - 1 item'
     );
 
@@ -57,8 +57,8 @@ QUnit.test('Legend border should contain items with checkboxes (#4853)',
     });
 
     assert.strictEqual(
-      chart.legend.box.width,
-      380,
+      chart.legend.box.width > 370 && chart.legend.box.width < 390,
+      true,
       'Legend box without checkboxes is of proper size - 4 items'
     );
 
@@ -71,8 +71,8 @@ QUnit.test('Legend border should contain items with checkboxes (#4853)',
     });
 
     assert.strictEqual(
-      chart.legend.box.width,
-      520,
+      chart.legend.box.width > 510 && chart.legend.box.width < 530,
+      true,
       'Legend box contains checkboxes - 4 items'
     );
 });
