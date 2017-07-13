@@ -3409,9 +3409,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 9],
- * [1, 7],
- * [2, 6]
+ *     [0, 9],
+ *     [1, 7],
+ *     [2, 6]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -3420,16 +3420,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 9,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 9,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 6,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 6,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series<line>.data
