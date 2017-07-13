@@ -1,4 +1,3 @@
-
 (function (H) {
     var each = H.each;
     Highcharts.seriesType('sociogram', 'line', {
@@ -30,14 +29,51 @@
                                 'M', point.plotX, point.plotY,
                                 'L', connPoint.plotX, connPoint.plotY
                             ],
+                            zIndex: 10,
                             'stroke': series.color,
-                            'stroke-width': H.pick(series.options.lineWidth, 2)
+                            'stroke-width': H.pick(series.options.lineWidth, 2),
+                            'marker-end': "url(#arrow-end)"
+                            //'marker-start': "url(#arrow-start)"
                         });
                     }
 
                 });
             });
         }
+    });
+
+    H.wrap(H.Chart.prototype, 'getContainer', function (proceed) {
+        proceed.apply(this);
+
+        var chart = this,
+            renderer = chart.renderer,
+            defOptions = chart.options.defs || [],
+            i = defOptions.length,
+            def,
+            marker;
+
+        while (i--) {
+            def = defOptions[i];
+            marker = renderer.createElement('marker').attr({
+                id: def.id,
+                viewBox: "0 -5 10 20",
+                refX: 16,
+                refY: 6,
+                markerWidth: 6,
+                markerHeight: 6,
+                orient: 'auto',
+                fill: 'inherit'
+            }).add(renderer.defs);
+            renderer.createElement('path').attr({
+                d: def.path,
+                fill: 'black'
+            }).add(marker);
+        }
+    });
+
+    H.wrap(H.Series.prototype, 'drawGraph', function (proceed) {
+        proceed.apply(this);
+
     });
 }(Highcharts));
 
@@ -48,6 +84,16 @@ Highcharts.chart('container', {
         height: '100%',
         polar: true
     },
+
+    defs: [{
+        id: 'arrow-start',
+        path: 'M 0 0 L 10 5 L 0 10 z',
+        fill: 'gray'
+    }, {
+        id: 'arrow-end',
+        path: 'M 0 0 L 10 5 L 0 10 z', //M 0 0 L 10 5 L 0 10 z
+        fill: 'gray'
+    }],
 
     title: {
         text: 'Highcharts Sociogram Study'
