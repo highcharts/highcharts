@@ -570,9 +570,6 @@ seriesType('column', 'line', {
 			'stroke': stroke,
 			'stroke-width': strokeWidth
 		};
-		if (options.borderRadius) {
-			ret.r = options.borderRadius;
-		}
 
 		if (dashstyle) {
 			ret.dashstyle = dashstyle;
@@ -611,6 +608,13 @@ seriesType('column', 'line', {
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.add(point.group || series.group);
+				}
+
+				// Border radius is not stylable (#6900)
+				if (options.borderRadius) {
+					graphic.attr({
+						r: options.borderRadius
+					});
 				}
 
 				/*= if (build.classic) { =*/
