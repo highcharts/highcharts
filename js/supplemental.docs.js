@@ -2800,7 +2800,6 @@
  * true by default. However when allowDrillToNode is true, then it will
  * be false by default.
  * 
- * @validvalue false, true
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-false/ False
  * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowdrilltonode/ InteractByLeaf and allowDrillToNode is true
@@ -5539,7 +5538,6 @@
 /**
  * Wether to draw rounded edges on the gauge.
  * 
- * @validvalue true, false
  * @type {Boolean}
  * @sample {highcharts} highcharts/demo/gauge-activity/ Activity Gauge
  * @default false
@@ -8520,7 +8518,7 @@
  * The text to display on each flag. This can be defined on series level,
  *  or individually for each point. Defaults to `"A"`.
  * 
- * @type {Text}
+ * @type {String}
  * @default "A"
  * @product highstock
  * @apioption plotOptions.flags.title
@@ -9674,7 +9672,7 @@
 /**
  * Text styles for the crosshair label.
  * 
- * @type {CSS}
+ * @type {CSSObject}
  * @default { "color": "white", "fontWeight": "normal", "fontSize": "11px", "textAlign": "center" }
  * @since 2.1
  * @product highstock
