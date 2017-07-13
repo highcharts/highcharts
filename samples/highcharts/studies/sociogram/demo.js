@@ -107,7 +107,29 @@ Highcharts.chart('container', {
         labels: {
             enabled: false
         },
-        reversed: true
+        reversed: true,
+        plotBands: [{
+            from: 0,
+            to: Infinity,
+            color: 'rgba(0, 255, 96, 0.1)'
+        }, {
+            from: 1,
+            to: Infinity,
+            color: 'rgba(0, 255, 96, 0.1)'
+        }, {
+            from: 2,
+            to: Infinity,
+            color: 'rgba(0, 255, 96, 0.1)'
+        }, {
+            from: 3,
+            to: Infinity,
+            color: 'rgba(0, 255, 96, 0.1)'
+        }, {
+            from: 4,
+            to: Infinity,
+            color: 'rgba(0, 255, 96, 0.1)'
+        }],
+        gridLineColor: 'white'
     },
 
     series: [{
