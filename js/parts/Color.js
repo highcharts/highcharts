@@ -84,8 +84,8 @@ H.Color.prototype = {
 		// Solid colors
 		} else {
 
-			// Check if it's possible to do bitmasking instead of regex
-			if (input && input[0] === '#') {
+			// Bitmasking as input[0] is not working for legacy IE.
+			if (input && input.charAt() === '#') {
 
 				len = input.length;
 				input = parseInt(input.substr(1), 16);

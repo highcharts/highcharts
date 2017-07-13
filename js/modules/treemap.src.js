@@ -914,7 +914,8 @@ seriesType('treemap', 'scatter', {
 	alignDataLabel: function (point) {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 		if (point.dataLabel) {
-			point.dataLabel.attr({ zIndex: point.node.zIndex + 1 });
+			// point.node.zIndex could be undefined (#6956)
+			point.dataLabel.attr({ zIndex: (point.node.zIndex || 0) + 1 });
 		}
 	},
 
