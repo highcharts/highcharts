@@ -1,3 +1,46 @@
+function checkElement(key, elem, node, assert) {
+    assert.strictEqual(
+        elem.hasClass('touched'),
+        false,
+        key + ': Has class when empty'
+    );
+
+    elem.addClass('touched');
+
+    assert.strictEqual(
+        node.getAttribute('class'),
+        'touched',
+        key + ': Add class'
+    );
+
+    elem.addClass('touched-again');
+    assert.strictEqual(
+        node.getAttribute('class'),
+        'touched touched-again',
+        key + ': Add class twice'
+    );
+
+
+    assert.strictEqual(
+        elem.hasClass('touched'),
+        true,
+        key + ': Has class'
+    );
+
+    elem.removeClass('touched');
+
+    assert.strictEqual(
+        node.getAttribute('class').trim(),
+        'touched-again',
+        key + ': Removed class'
+    );
+    assert.strictEqual(
+        elem.hasClass('touched'),
+        false,
+        key + ': Has class'
+    );
+}
+
 QUnit.test('Add and remove classes', function (assert) {
 
     var ren = new Highcharts.Renderer(
@@ -6,51 +49,47 @@ QUnit.test('Add and remove classes', function (assert) {
         400
     );
 
-    var circ = ren.circle(100, 100, 50)
+    var elem = ren.circle(100, 100, 50)
         .attr({
             fill: 'red'
         })
         .add();
 
-    assert.strictEqual(
-        circ.hasClass('touched'),
-        false,
-        'Has class when empty'
+    checkElement('SVG circle', elem, elem.element, assert);
+
+});
+
+QUnit.test('Add and remove classes in HTML elements', function (assert) {
+
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        400
     );
 
-    circ.addClass('touched');
+    var g = ren.g().add();
 
-    assert.strictEqual(
-        circ.element.getAttribute('class'),
-        'touched',
-        'Add class'
+    var elem = ren.text('HTML', 100, 300, true)
+        .add(g);
+
+    checkElement('HTML text', elem, elem.element, assert);
+
+});
+QUnit.test('Add and remove classes in HTML elements', function (assert) {
+
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        400
     );
 
-    circ.addClass('touched-again');
-    assert.strictEqual(
-        circ.element.getAttribute('class'),
-        'touched touched-again',
-        'Add class twice'
-    );
+    var g = ren.g().add();
 
+    var elem = ren.text('HTML', 100, 300, true)
+        .add(g);
 
-    assert.strictEqual(
-        circ.hasClass('touched'),
-        true,
-        'Has class'
-    );
-
-    circ.removeClass('touched');
-
-    assert.strictEqual(
-        circ.element.getAttribute('class').trim(),
-        'touched-again',
-        'Removed class'
-    );
-    assert.strictEqual(
-        circ.hasClass('touched'),
-        false,
-        'Has class'
-    );
+    
+    // The class names should now be set on g.div
+    checkElement('HTML group', g, g.div, assert);
 
 });

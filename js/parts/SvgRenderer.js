@@ -621,7 +621,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 */
 	addClass: function (className, replace) {
 		var currentClassName = this.attr('class') || '';
-
+		console.log('@addClass', currentClassName)
 		if (currentClassName.indexOf(className) === -1) {
 			if (!replace) {
 				className = 
@@ -630,6 +630,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			}
 			this.attr('class', className);
 		}
+
 		return this;
 	},
 
@@ -653,12 +654,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * @return {SVGElement} Returns the SVG element for chainability.
 	 */
 	removeClass: function (className) {
-		attr(
-			this.element,
+		return this.attr(
 			'class',
-			(attr(this.element, 'class') || '').replace(className, '')
+			(this.attr('class') || '').replace(className, '')
 		);
-		return this;
 	},
 
 	/**
