@@ -1587,23 +1587,30 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		
 		} else if (!this.shadows) {
 			shadowWidth = pick(shadowOptions.width, 3);
-			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
+			shadowElementOpacity = (shadowOptions.opacity || 0.15) /
+				shadowWidth;
 			transform = this.parentInverted ?
 					'(-1,-1)' :
-					'(' + pick(shadowOptions.offsetX, 1) + ', ' + pick(shadowOptions.offsetY, 1) + ')';
+					'(' + pick(shadowOptions.offsetX, 1) + ', ' +
+						pick(shadowOptions.offsetY, 1) + ')';
 			for (i = 1; i <= shadowWidth; i++) {
 				shadow = element.cloneNode(0);
 				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
 				attr(shadow, {
 					'isShadow': 'true',
-					'stroke': shadowOptions.color || '${palette.neutralColor100}',
+					'stroke':
+						shadowOptions.color || '${palette.neutralColor100}',
 					'stroke-opacity': shadowElementOpacity * i,
 					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
 					'fill': 'none'
 				});
 				if (cutOff) {
-					attr(shadow, 'height', Math.max(attr(shadow, 'height') - strokeWidth, 0));
+					attr(
+						shadow,
+						'height',
+						Math.max(attr(shadow, 'height') - strokeWidth, 0)
+					);
 					shadow.cutHeight = strokeWidth;
 				}
 
@@ -1655,7 +1662,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * @private
 	 */
 	_defaultGetter: function (key) {
-		var ret = pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
+		var ret = pick(
+			this[key],
+			this.element ? this.element.getAttribute(key) : null,
+			0
+		);
 
 		if (/^[\-0-9\.]+$/.test(ret)) { // is numerical
 			ret = parseFloat(ret);
@@ -1672,7 +1683,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			value = 'M 0 0';
 		}
 		// Check for cache before resetting. Resetting causes disturbance in the
-		// DOM, causing flickering in some cases in Edge/IE (#6747#. Also
+		// DOM, causing flickering in some cases in Edge/IE (#6747). Also
 		// possible performance gain.
 		if (this[key] !== value) {
 			element.setAttribute(key, value);
@@ -1685,8 +1696,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		var i,
 			strokeWidth = this['stroke-width'];
 		
-		// If "inherit", like maps in IE, assume 1 (#4981). With HC5 and the new strokeWidth 
-		// function, we should be able to use that instead.
+		// If "inherit", like maps in IE, assume 1 (#4981). With HC5 and the new
+		// strokeWidth function, we should be able to use that instead.
 		if (strokeWidth === 'inherit') {
 			strokeWidth = 1;
 		}
