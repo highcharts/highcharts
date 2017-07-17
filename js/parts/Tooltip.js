@@ -617,7 +617,7 @@ H.Tooltip.prototype = {
 				});
 				/*= if (build.classic) { =*/
 				tt.css(options.style)
-				  .shadow(options.shadow);
+					.shadow(options.shadow);
 				/*= } =*/
 
 				// Get X position now, so we can move all to the other side in
