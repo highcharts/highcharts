@@ -641,7 +641,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 *         Whether the class name is found.
 	 */
 	hasClass: function (className) {
-		return attr(this.element, 'class').indexOf(className) !== -1;
+		return inArray(
+			className,
+			(this.attr('class') || '').split(' ')
+		) !== -1;
 	},
 
 	/**
