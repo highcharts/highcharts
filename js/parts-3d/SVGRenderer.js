@@ -565,10 +565,22 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		// relates to neighbour elements as well
 		each(['out', 'inn', 'side1', 'side2'], function (face) {
 			wrapper[face]
-				.addClass(className + ' highcharts-3d-side')
+				.attr({
+					'class': className + ' highcharts-3d-side'
+				})
 				.add(parent);
 		});
 	};
+
+	// Cascade to faces
+	each(['addClass', 'removeClass'], function (fn) {
+		wrapper[fn] = function () {
+			var args = arguments;
+			each(['top', 'out', 'inn', 'side1', 'side2'], function (face) {
+				wrapper[face][fn].apply(wrapper[face], args);
+			});
+		};
+	});
 
 	/**
 	 * Compute the transformed paths and set them to the composite shapes
