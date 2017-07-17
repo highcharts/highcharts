@@ -621,7 +621,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 */
 	addClass: function (className, replace) {
 		var currentClassName = this.attr('class') || '';
-		console.log('@addClass', currentClassName)
 		if (currentClassName.indexOf(className) === -1) {
 			if (!replace) {
 				className = 
