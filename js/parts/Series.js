@@ -2909,6 +2909,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	afterAnimate: function () {
 		this.setClip();
 		fireEvent(this, 'afterAnimate');
+		this.finishedAnimating = true;
 	},
 
 	/**

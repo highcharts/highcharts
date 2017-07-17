@@ -846,7 +846,13 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 				'dataLabelsGroup',
 				'navigatorSeries',
 				'baseSeries'
-			];
+			],
+
+			// Animation must be enabled when calling update before the initial
+			// animation has first run. This happens when calling update
+			// directly after chart initialization, or when applying responsive
+			// rules (#6912).
+			animation = series.finishedAnimating && { animation: false };
 
 		// Running Series.update to update the data only is an intuitive usage,
 		// so we want to make sure that when used like this, we run the
@@ -868,8 +874,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		});
 
 		// Do the merge, with some forced options
-		newOptions = merge(oldOptions, {
-			animation: false,
+		newOptions = merge(oldOptions, animation, {
 			index: series.index,
 			pointStart: series.xData[0] // when updating after addPoint
 		}, { data: series.options.data }, newOptions);
