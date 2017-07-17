@@ -23,6 +23,7 @@
  * - Area lines are not drawn
  * - Lines are not drawn on scatter charts
  * - Zones and negativeColor don't work
+ * - Dash styles are not rendered on lines.
  * - Columns are always one pixel wide. Don't set the threshold too low.
  * - Disable animations
  * - Marker shapes are not supported: markers will always be circles
