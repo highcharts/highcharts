@@ -313,6 +313,16 @@ extend(ColorAxis.prototype, {
 		});
 	},
 
+	/**
+	 * Override so that ticks are not added in data class axes (#6914)
+	 */
+	setTickPositions: function () {
+		if (!this.dataClasses) {
+			return Axis.prototype.setTickPositions.call(this);
+		}
+	},
+	
+
 	initStops: function () {
 		this.stops = this.options.stops || [
 			[0, this.options.minColor],
