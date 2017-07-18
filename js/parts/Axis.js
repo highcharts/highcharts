@@ -2593,26 +2593,35 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			options = this.options,
 			offsets = options.offsets || [0, 0, 0, 0], // top / right / bottom / left
 			horiz = this.horiz,
-			width = pick(options.width, chart.plotWidth - offsets[3] + offsets[1]),
-			height = pick(options.height, chart.plotHeight - offsets[0] + offsets[2]),
-			top = pick(options.top, chart.plotTop + offsets[0]),
-			left = pick(options.left, chart.plotLeft + offsets[3]),
-			percentRegex = /%$/;
 
-		// Check for percentage based input values. Rounding fixes problems with
-		// column overflow and plot line filtering (#4898, #4899)
-		if (percentRegex.test(height)) {
-			height = Math.round(parseFloat(height) / 100 * chart.plotHeight);
-		}
-		if (percentRegex.test(top)) {
-			top = Math.round(parseFloat(top) / 100 * chart.plotHeight + chart.plotTop);
-		}
+			// Check for percentage based input values. Rounding fixes problems
+			// with column overflow and plot line filtering (#4898, #4899)
+			width = this.width = Math.round(H.relativeLength(
+				pick(
+					options.width,
+					chart.plotWidth - offsets[3] + offsets[1]
+				),
+				chart.plotWidth
+			)),
+			height = this.height = Math.round(H.relativeLength(
+				pick(
+					options.height,
+					chart.plotHeight - offsets[0] + offsets[2]
+				),
+				chart.plotHeight
+			)),
+			top = this.top = Math.round(H.relativeLength(
+				pick(options.top, chart.plotTop + offsets[0]),
+				chart.plotHeight,
+				chart.plotTop
+			)),
+			left = this.left = Math.round(H.relativeLength(
+				pick(options.left, chart.plotLeft + offsets[3]),
+				chart.plotWidth,
+				chart.plotLeft
+			));
 
 		// Expose basic values to use in Series object and navigator
-		this.left = left;
-		this.top = top;
-		this.width = width;
-		this.height = height;
 		this.bottom = chart.chartHeight - height - top;
 		this.right = chart.chartWidth - width - left;
 

@@ -815,13 +815,19 @@ H.pad = function (number, length, padder) {
  *
  * @function #relativeLength
  * @memberOf Highcharts
- * @param {RelativeSize} value - A percentage string or a number.
- * @param {Number} base - The full length that represents 100%.
- * @returns {Number} The computed length.
+ * @param  {RelativeSize} value
+ *         A percentage string or a number.
+ * @param  {number} base
+ *         The full length that represents 100%.
+ * @param  {number} [offset=0]
+ *         A pixel offset to apply for percentage values. Used internally in 
+ *         axis positioning.
+ * @return {number}
+ *         The computed length.
  */
-H.relativeLength = function (value, base) {
+H.relativeLength = function (value, base, offset) {
 	return (/%$/).test(value) ?
-		base * parseFloat(value) / 100 :
+		(base * parseFloat(value) / 100) + (offset || 0) :
 		parseFloat(value);
 };
 
