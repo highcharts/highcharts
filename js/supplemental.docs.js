@@ -7896,6 +7896,16 @@
  */
 
 /**
+ * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
+ * and-string-formatting#html) to render the axis title.
+ * 
+ * @type {Boolean}
+ * @default false
+ * @product highcharts highstock
+ * @apioption xAxis.title.useHTML
+ */
+
+/**
  * Horizontal pixel offset of the title position.
  * 
  * @type {Number}
