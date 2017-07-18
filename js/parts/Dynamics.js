@@ -41,7 +41,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * Add a series to the chart after render time. Note that this method should
 	 * never be used when adding data synchronously at chart render time, as it
 	 * adds expense to the calculations and rendering. When adding data at the
-	 * same time as the chart is initiated, add the series as a configuration
+	 * same time as the chart is initialized, add the series as a configuration
 	 * option instead. With multiple axes, the `offset` is dynamically adjusted.
 	 *
 	 * @param  {SeriesOptions} options
@@ -85,7 +85,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * Add an axis to the chart after render time. Note that this method should
      * never be used when adding data synchronously at chart render time, as it
      * adds expense to the calculations and rendering. When adding data at the
-     * same time as the chart is initiated, add the axis as a configuration
+     * same time as the chart is initialized, add the axis as a configuration
      * option instead.
      * @param  {AxisOptions} options
      *         The axis options.
