@@ -25,7 +25,10 @@ Chart.prototype.callbacks.push(function (chart) {
 		var labels = [];
 
 		each(chart.yAxis, function (yAxis) {
-			if (!yAxis.options.stackLabels.allowOverlap) {
+			if (
+				yAxis.options.stackLabels &&
+				!yAxis.options.stackLabels.allowOverlap
+			) {
 				objectEach(yAxis.stacks, function (stack) {
 					objectEach(stack, function (stackItem) {
 						labels.push(stackItem.label);
