@@ -49,6 +49,7 @@ wrap(Renderer.prototype.symbols, 'arc', function (proceed, x, y, w, h, options) 
 		// Insert rounded edge on end, and remove line.
 		path.splice.apply(path, [11, 3].concat(roundEnd));
 	}
+	
 	return path;
 });
 

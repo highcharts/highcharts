@@ -1681,6 +1681,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		if (/(NaN| {2}|^$)/.test(value)) {
 			value = 'M 0 0';
 		}
+
 		// Check for cache before resetting. Resetting causes disturbance in the
 		// DOM, causing flickering in some cases in Edge/IE (#6747). Also
 		// possible performance gain.
@@ -3199,7 +3200,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
 				sinEnd = Math.sin(end),
-				longArc = options.end - start < Math.PI ? 0 : 1,
+				// Proximity takes care of rounding errors around PI (#6971)
+				longArc = options.end - start - Math.PI < proximity ? 0 : 1,
 				arc;
 
 			arc = [
