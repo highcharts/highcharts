@@ -313,8 +313,7 @@ H.defaultOptions = {
 		/**
 		 * Fires when a series is added to the chart after load time, using
 		 * the `addSeries` method. One parameter, `event`, is passed to the
-		 * function. This contains common event information based on jQuery
-		 * or MooTools depending on which library is used as the base for Highcharts.
+		 * function, containing common event information.
 		 * Through `event.options` you can access the series options that was
 		 * passed to the `addSeries` method. Returning false prevents the series
 		 * from being added.
@@ -329,9 +328,7 @@ H.defaultOptions = {
 
 		/**
 		 * Fires when clicking on the plot background. One parameter, `event`,
-		 * is passed to the function. This contains common event information
-		 * based on jQuery or MooTools depending on which library is used as
-		 * the base for Highcharts.
+		 * is passed to the function, containing common event information.
 		 * 
 		 * Information on the clicked spot can be found through `event.xAxis`
 		 * and `event.yAxis`, which are arrays containing the axes of each dimension
@@ -368,9 +365,7 @@ H.defaultOptions = {
 		/**
 		 * Fires when the chart is finished loading. Since v4.2.2, it also waits
 		 * for images to be loaded, for example from point markers. One parameter,
-		 * `event`, is passed to the function. This contains common event information
-		 * based on jQuery or MooTools depending on which library is used as
-		 * the base for Highcharts.
+		 * `event`, is passed to the function, containing common event information.
 		 * 
 		 * There is also a second parameter to the chart constructor where a
 		 * callback function can be passed to be executed on chart.load.
@@ -389,9 +384,7 @@ H.defaultOptions = {
 		/**
 		 * Fires when the chart is redrawn, either after a call to chart.redraw()
 		 * or after an axis, series or point is modified with the `redraw` option
-		 * set to true. One parameter, `event`, is passed to the function. This
-		 * contains common event information based on jQuery or MooTools depending
-		 * on which library is used as the base for Highcharts.
+		 * set to true. One parameter, `event`, is passed to the function, containing common event information.
 		 * 
 		 * @type {Function}
 		 * @context Chart
@@ -419,9 +412,7 @@ H.defaultOptions = {
 		/**
 		 * Fires when an area of the chart has been selected. Selection is enabled
 		 * by setting the chart's zoomType. One parameter, `event`, is passed
-		 * to the function. This contains common event information based on
-		 * jQuery or MooTools depending on which library is used as the base
-		 * for Highcharts. The default action for the selection event is to
+		 * to the function, containing common event information. The default action for the selection event is to
 		 * zoom the chart to the selected area. It can be prevented by calling
 		 * `event.preventDefault()`.
 		 * 

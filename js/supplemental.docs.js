@@ -2185,9 +2185,7 @@
 /**
  * Fires when the legend item belonging to the pie point (slice) is
  * clicked. The `this` keyword refers to the point itself. One parameter,
- * `event`, is passed to the function. This contains common event information
- * based on jQuery or MooTools depending on which library is used as
- * the base for Highcharts. The default action is to toggle the visibility
+ * `event`, is passed to the function, containing common event information. The default action is to toggle the visibility
  * of the point. This can be prevented by calling `event.preventDefault()`.
  * 
  * @type {Function}
@@ -2294,9 +2292,7 @@
 
 /**
  * Fires when the series is clicked. One parameter, `event`, is passed
- * to the function. This contains common event information based on
- * jQuery or MooTools depending on which library is used as the base
- * for Highcharts. Additionally, `event.point` holds a pointer to the
+ * to the function, containing common event information. Additionally, `event.point` holds a pointer to the
  * nearest point on the graph.
  * 
  * @type {Function}
@@ -2332,9 +2328,7 @@
 
 /**
  * Fires when the mouse leaves the graph. One parameter, `event`, is
- * passed to the function. This contains common event information based
- * on jQuery or MooTools depending on which library is used as the base
- * for Highcharts. If the [stickyTracking](#plotOptions.series) option
+ * passed to the function, containing common event information. If the [stickyTracking](#plotOptions.series) option
  * is true, `mouseOut` doesn't happen before the mouse enters another
  * graph or leaves the plot area.
  * 
@@ -2347,9 +2341,7 @@
 
 /**
  * Fires when the mouse enters the graph. One parameter, `event`, is
- * passed to the function. This contains common event information based
- * on jQuery or MooTools depending on which library is used as the base
- * for Highcharts.
+ * passed to the function, containing common event information.
  * 
  * @type {Function}
  * @context Series
@@ -2505,9 +2497,7 @@
 
 /**
  * Fires when a point is clicked. One parameter, `event`, is passed
- * to the function. This contains common event information based on
- * jQuery or MooTools depending on which library is used as the base
- * for Highcharts.
+ * to the function, containing common event information.
  * 
  * If the `series.allowPointSelect` option is true, the default action
  * for the point's click event is to toggle the point's select state.
@@ -2525,9 +2515,7 @@
 
 /**
  * Fires when the mouse leaves the area close to the point. One parameter,
- * `event`, is passed to the function. This contains common event information
- * based on jQuery or MooTools depending on which library is used as
- * the base for Highcharts.
+ * `event`, is passed to the function, containing common event information.
  * 
  * @type {Function}
  * @context Point
@@ -2537,9 +2525,7 @@
 
 /**
  * Fires when the mouse enters the area close to the point. One parameter,
- * `event`, is passed to the function. This contains common event information
- * based on jQuery or MooTools depending on which library is used as
- * the base for Highcharts.
+ * `event`, is passed to the function, containing common event information.
  * 
  * @type {Function}
  * @context Point
@@ -7144,9 +7130,7 @@
  * 
  * Fires when the minimum and maximum is set for the axis, either by
  * calling the `.setExtremes()` method or by selecting an area in the
- * chart. One parameter, `event`, is passed to the function. This contains
- * common event information based on jQuery or MooTools depending on
- * which library is used as the base for Highcharts.
+ * chart. One parameter, `event`, is passed to the function, containing common event information.
  * 
  * The new user set minimum and maximum values can be found by `event.
  * min` and `event.max`. These reflect the axis minimum and maximum
@@ -7183,9 +7167,7 @@
 /**
  * Fires when the minimum and maximum is set for the axis, either by
  * calling the `.setExtremes()` method or by selecting an area in the
- * chart. One parameter, `event`, is passed to the function. This contains
- * common event information based on jQuery or MooTools depending on
- * which library is used as the base for Highcharts.
+ * chart. One parameter, `event`, is passed to the function, containing common event information.
  * 
  * The new user set minimum and maximum values can be found by `event.
  * min` and `event.max`. These reflect the axis minimum and maximum
