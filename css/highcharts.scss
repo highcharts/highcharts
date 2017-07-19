@@ -527,11 +527,12 @@ input.highcharts-range-selector {
 .highcharts-ohlc-series .highcharts-point-hover {
     stroke-width: 3px;
 }
-.highcharts-flags-series .highcharts-point {
+.highcharts-flags-series .highcharts-point .highcharts-label-box {
     stroke: $neutral-color-40;
     fill: $background-color;
+    transition: fill 250ms;
 }
-.highcharts-flags-series .highcharts-point-hover {
+.highcharts-flags-series .highcharts-point-hover .highcharts-label-box {
     stroke: $neutral-color-100;
     fill: $highlight-color-20;
 }
