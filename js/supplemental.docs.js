@@ -9960,7 +9960,10 @@
 
 /**
  * The color of each data class. If not set, the color is pulled from
- * the global or chart-specific [colors](#colors) array.
+ * the global or chart-specific [colors](#colors) array. In 
+ * [styled mode](http://www.highcharts.com/docs/chart-design-and-
+ * style/style-by-css), this option is ignored. Instead, use colors defined in
+ * CSS.
  * 
  * @type {Color}
  * @sample {highmaps} maps/demo/data-class-two-ranges/ Explicit colors

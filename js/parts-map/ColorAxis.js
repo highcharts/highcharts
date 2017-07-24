@@ -289,26 +289,30 @@ extend(ColorAxis.prototype, {
 
 			dataClass = merge(dataClass);
 			dataClasses.push(dataClass);
-			if (!dataClass.color) {
-				if (options.dataClassColor === 'category') {
-					/*= if (build.classic) { =*/
-					colors = chart.options.colors;
-					colorCount = colors.length;
-					dataClass.color = colors[colorCounter];
-					/*= } =*/
-					dataClass.colorIndex = colorCounter;
 
-					// increase and loop back to zero
-					colorCounter++;
-					if (colorCounter === colorCount) {
-						colorCounter = 0;
-					}
-				} else {
-					dataClass.color = color(options.minColor).tweenTo(
-						color(options.maxColor),
-						len < 2 ? 0.5 : i / (len - 1) // #3219
-					);
+			/*= if (build.classic) { =*/
+			if (dataClass.color) {
+				return;
+			}
+			/*= } =*/
+			if (options.dataClassColor === 'category') {
+				/*= if (build.classic) { =*/
+				colors = chart.options.colors;
+				colorCount = colors.length;
+				dataClass.color = colors[colorCounter];
+				/*= } =*/
+				dataClass.colorIndex = colorCounter;
+
+				// increase and loop back to zero
+				colorCounter++;
+				if (colorCounter === colorCount) {
+					colorCounter = 0;
 				}
+			} else {
+				dataClass.color = color(options.minColor).tweenTo(
+					color(options.maxColor),
+					len < 2 ? 0.5 : i / (len - 1) // #3219
+				);
 			}
 		});
 	},
@@ -403,7 +407,9 @@ extend(ColorAxis.prototype, {
 					(from === undefined || value >= from) &&
 					(to === undefined || value <= to)
 				) {
+					/*= if (build.classic) { =*/
 					color = dataClass.color;
+					/*= } =*/
 					if (point) {
 						point.dataClass = i;
 						point.colorIndex = dataClass.colorIndex;
