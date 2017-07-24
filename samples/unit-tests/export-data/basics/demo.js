@@ -368,7 +368,7 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
 
     assert.equal(
         chart.getTable(),
-        '<table><thead><tr><th>Category</th><th>Drop 2</th><th>Full</th></tr></thead><tbody><tr><td class="number">0</td><td class="number">1</td><td class="number">1</td></tr><tr><td class="number">1</td><td class="number">1</td><td class="number">1</td></tr><tr><td class="number">2</td><td></td><td class="number">2</td></tr><tr><td class="number">3</td><td class="number">3</td><td class="number">3</td></tr><tr><td class="number">4</td><td class="number">4</td><td class="number">4</td></tr></tbody></table>',
+        "<table><thead><tr><th class=\"text\">Category</th><th class=\"text\">Drop 2</th><th class=\"text\">Full</th></tr></thead><tbody><tr><td class=\"number\">0</td><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><td class=\"number\">1</td><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><td class=\"number\">2</td><td class=\"text\"></td><td class=\"number\">2</td></tr><tr><td class=\"number\">3</td><td class=\"number\">3</td><td class=\"number\">3</td></tr><tr><td class=\"number\">4</td><td class=\"number\">4</td><td class=\"number\">4</td></tr></tbody></table>",
         'Empty data in table'
     );
 
