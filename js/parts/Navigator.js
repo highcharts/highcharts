@@ -758,7 +758,7 @@ Navigator.prototype = {
 	 */
 	update: function (options) {
 		// Remove references to old navigator series in base series
-		each(this.series, function (series) {
+		each(this.series || [], function (series) {
 			if (series.baseSeries) {
 				delete series.baseSeries.navigatorSeries;
 			}
