@@ -785,6 +785,6 @@ wrap(Legend.prototype, 'update', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.colorAxis[0]) {
-		this.chart.colorAxis[0].update({});
+		this.chart.colorAxis[0].update({}, arguments[2]);
 	}
 });
