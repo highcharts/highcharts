@@ -11,6 +11,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var each = H.each,
+	merge = H.merge,
 	Series = H.Series,
 	maxFontSize = 100;
 
@@ -130,9 +131,13 @@ var WordCloudSeries = {
 			maxDelta = (xAxis.len * xAxis.len) + (yAxis.len * yAxis.len),
 			data = series.points
 			.map(function (p) {
-				p.weight = 1 / maxY * p.y;
-				p.fontSize = Math.floor(maxFontSize * p.weight);
-				return p;
+				var weight = 1 / maxY * p.y;
+				return merge(p, {
+					fontFamily: 'Impact',
+					fontSize: Math.floor(maxFontSize * p.weight),
+					rotation: Math.floor(Math.random() * 2) * 90,
+					weight: weight
+				});
 			})
 			.sort(function (a, b) {
 				return b.y - a.y; // Sort descending
@@ -147,11 +152,12 @@ var WordCloudSeries = {
 				point.graphic = chart.renderer.text(point.name).css({
 					fontSize: point.fontSize,
 					fill: point.color,
-					fontFamily: 'Impact'
+					fontFamily: point.fontFamily
 				}).attr({
 					x: x,
 					y: y,
-					'text-anchor': 'middle'
+					'text-anchor': 'middle',
+					rotation: point.rotation
 				}).add(series.group);
 			}
 			/**
