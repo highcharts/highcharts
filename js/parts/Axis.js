@@ -3037,7 +3037,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		// Max width defaults to the length of the axis
 		/*= if (build.classic) { =*/
-		if (!axisTitleOptions.style.width) {
+		if (!axisTitleOptions.style.width && !axis.isRadial) {
 		/*= } =*/
 			axis.axisTitle.css({
 				width: axis.len
