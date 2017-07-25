@@ -58,7 +58,8 @@ $.each(names, function (i, name) {
 
         seriesOptions[i] = {
             name: name,
-            data: data
+            data: data,
+            showInNavigator: true
         };
 
         // As we're loading the data asynchronously, we don't know what order it will arrive. So
