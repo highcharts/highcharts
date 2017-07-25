@@ -52,6 +52,8 @@ if (!isset($_SESSION['branch'])) {
 if (!isset($_SESSION['after'])) {
 
 	$tags = $repo->list_tags();
+	usort($tags, 'version_compare');
+
 	$_SESSION['after'] = end($tags);
 
 	file_put_contents(sys_get_temp_dir() . '/log.txt', '');
