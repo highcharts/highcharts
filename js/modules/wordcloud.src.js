@@ -11,14 +11,95 @@
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var each = H.each,
-	Series = H.Series;
+	Series = H.Series,
+	maxFontSize = 100;
+
+
+/**
+ * isRectanglesIntersecting - Detects if there is a collision between two
+ *     rectangles.
+ *
+ * @param  {object} r1 First rectangle.
+ * @param  {object} r2 Second rectangle.
+ * @return {boolean} Returns true if the rectangles overlap.
+ */
+var isRectanglesIntersecting = function isRectanglesIntersecting(r1, r2) {
+	return !(
+		r2.left > r1.right ||
+		r2.right < r1.left ||
+		r2.top > r1.bottom ||
+		r2.bottom < r1.top
+	);
+};
+
+/**
+ * intersectsAnyWord - Detects if a word collides with any previously placed
+ *     words.
+ *
+ * @param  {Point} point Point which the word is connected to.
+ * @return {boolean} Returns true if there is collision.
+ */
+var intersectsAnyWord = function intersectsAnyWord(point, points) {
+	var intersects = false,
+		rect1 = point.graphic.element.getBoundingClientRect(),
+		rect2;
+	if (point.lastCollidedWith) {
+		rect2 = point.lastCollidedWith.graphic.element.getBoundingClientRect();
+		intersects = isRectanglesIntersecting(rect1, rect2);
+		// If they no longer intersects, remove the cache from the point.
+		if (!intersects) {
+			delete point.lastCollidedWith;
+		}
+	}
+	if (!intersects) {
+		intersects = !!H.find(points, function (p) {
+			var result;
+			rect2 = p.graphic.element.getBoundingClientRect();
+			result = isRectanglesIntersecting(rect1, rect2);
+			if (result) {
+				point.lastCollidedWith = p;
+			}
+			return result;
+		});
+	}
+	return intersects;
+};
+
+
+/**
+ * archimedeanSpiral - Gives a set of cordinates for an Archimedian Spiral.
+ *
+ * @param  {type} t
+ * @return {object} Resulting coordinates, x and y.
+ */
+var archimedeanSpiral = function archimedeanSpiral(t) {
+	t *= 0.1;
+	return {
+		x: t * Math.cos(t),
+		y: t * Math.sin(t)
+	};
+};
+
+/**
+ * getRandomPosition
+ *
+ * @param  {number} size
+ * @return {number}
+ */
+var getRandomPosition = function getRandomPosition(size) {
+	return Math.round((size * (Math.random() + 0.5)) / 2);
+};
 
 var WordCloudOptions = {
 	borderWidth: 0,
+	clip: false, // Something goes wrong with clip. // TODO fix this
+	colorByPoint: true,
+	showInLegend: false,
 	tooltip: {
 		followPointer: true
 	}
 };
+
 var WordCloudSeries = {
 	animate: Series.prototype.animate,
 	bindAxes: function () {
@@ -38,17 +119,59 @@ var WordCloudSeries = {
 	// series prototype
 	drawPoints: function () {
 		var series = this,
-			chart = series.chart;
-		each(this.points, function (point) {
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
+			chart = series.chart,
+			placed = [],
+			yValues = series.points.map(function (p) {
+				return p.y;
+			}),
+			maxY = Math.max.apply(null, yValues),
+			maxDelta = (xAxis.len * xAxis.len) + (yAxis.len * yAxis.len),
+			data = series.points
+			.map(function (p) {
+				p.weight = 1 / maxY * p.y;
+				p.fontSize = Math.floor(maxFontSize * p.weight);
+				return p;
+			})
+			.sort(function (a, b) {
+				return b.y - a.y; // Sort descending
+			});
+		each(data, function (point) {
+			var attempt = 0,
+				delta,
+				outOfRange = false,
+				x = getRandomPosition(xAxis.len) - (xAxis.len / 2),
+				y = getRandomPosition(yAxis.len) - (yAxis.len / 2);
 			if (!point.graphic) {
 				point.graphic = chart.renderer.text(point.name).css({
-					fontSize: point.y * 10
-				})
-				.add(series.group);
+					fontSize: point.fontSize,
+					fill: point.color,
+					fontFamily: 'Impact'
+				}).attr({
+					x: x,
+					y: y,
+					'text-anchor': 'middle'
+				}).add(series.group);
 			}
-			point.graphic.attr({
-				'text-anchor': 'middle'
-			});
+			/**
+			 * while word intersects any previously placed words:
+			 *     move word a little bit along a spiral path
+			 */
+			while (intersectsAnyWord(point, placed) && !outOfRange) {
+				delta = archimedeanSpiral(attempt);
+				point.graphic.attr({
+					x: x + delta.x,
+					y: y + delta.y
+				});
+				outOfRange = Math.min(Math.abs(delta.x), Math.abs(delta.y)) >= maxDelta;
+				attempt++;
+			}
+			if (outOfRange) {
+				point.graphic = point.graphic.destroy();
+			} else {
+				placed.push(point);
+			}
 		});
 	},
 	getPlotBox: function () {
