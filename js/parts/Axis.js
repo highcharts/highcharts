@@ -3299,15 +3299,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			offset = this.offset,
 			xOption = axisTitleOptions.x || 0,
 			yOption = axisTitleOptions.y || 0,
+			axisTitle = this.axisTitle,
 			fontMetrics = this.chart.renderer.fontMetrics(
 				axisTitleOptions.style && axisTitleOptions.style.fontSize,
-				this.axisTitle
+				axisTitle
 			),
-			titleOffset = this.titleOffset,
 			// The part of a multiline text that is below the baseline of the
 			// first line. Subtract 1 to preserve pixel-perfectness from the 
 			// old behaviour (v5.0.12), where only one line was allowed.
-			textHeightOvershoot = Math.max(titleOffset - fontMetrics.h - 1, 0),
+			textHeightOvershoot = Math.max(
+				axisTitle.getBBox(null, 0).height - fontMetrics.h - 1,
+				0
+			),
 
 			// the position in the length direction of the axis
 			alongAxis = {
