@@ -394,7 +394,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * @sample {highmaps} highcharts/accessibility/art-grants/ Accessible data visualization
 	 * @default undefined
 	 * @since 5.0.12
-	 * @todo Copy plotOptions.series.exposeElementToA11y docs to actual source code
 	 * @apioption plotOptions.series.exposeElementToA11y
 	 */
 

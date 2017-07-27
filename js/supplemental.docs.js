@@ -12,7 +12,6 @@
  * @default transparent
  * @since 4.0
  * @product highcharts
- * @todo Copy chart.options3d.frame.back.color docs to actual source code
  * @apioption chart.options3d.frame.back.color
  */
 
@@ -23,7 +22,6 @@
  * @default 1
  * @since 4.0
  * @product highcharts
- * @todo Copy chart.options3d.frame.back.size docs to actual source code
  * @apioption chart.options3d.frame.back.size
  */
 
@@ -39,7 +37,6 @@
  * @default default
  * @since 5.0.12
  * @product highcharts
- * @todo Copy chart.options3d.frame.back.visible docs to actual source code
  * @apioption chart.options3d.frame.back.visible
  */
 
@@ -50,7 +47,6 @@
  * @default transparent
  * @since 4.0
  * @product highcharts
- * @todo Copy chart.options3d.frame.bottom.color docs to actual source code
  * @apioption chart.options3d.frame.bottom.color
  */
 
@@ -61,7 +57,6 @@
  * @default 1
  * @since 4.0
  * @product highcharts
- * @todo Copy chart.options3d.frame.bottom.size docs to actual source code
  * @apioption chart.options3d.frame.bottom.size
  */
 
@@ -77,7 +72,6 @@
  * @default default
  * @since 5.0.12
  * @product highcharts
- * @todo Copy chart.options3d.frame.bottom.visible docs to actual source code
  * @apioption chart.options3d.frame.bottom.visible
  */
 
@@ -89,7 +83,6 @@
  * 
  * @since 4.0
  * @product highcharts
- * @todo Copy chart.options3d.frame.side docs to actual source code
  * @apioption chart.options3d.frame.side
  */
 
@@ -100,7 +93,6 @@
  * @default transparent
  * @since 4.0
  * @product highcharts
- * @todo Copy chart.options3d.frame.side.color docs to actual source code
  * @apioption chart.options3d.frame.side.color
  */
 
@@ -111,7 +103,6 @@
  * @default 1
  * @since 4.0
  * @product highcharts
- * @todo Copy chart.options3d.frame.side.size docs to actual source code
  * @apioption chart.options3d.frame.side.size
  */
 
@@ -121,7 +112,6 @@
  * @type {Color}
  * @default transparent
  * @product highcharts
- * @todo Copy chart.options3d.frame.top.color docs to actual source code
  * @apioption chart.options3d.frame.top.color
  */
 
@@ -131,7 +121,6 @@
  * @type {Number}
  * @default 1
  * @product highcharts
- * @todo Copy chart.options3d.frame.top.size docs to actual source code
  * @apioption chart.options3d.frame.top.size
  */
 
@@ -4051,7 +4040,6 @@
  * 
  * @type {Number}
  * @product highcharts
- * @todo Copy series.boxplot.data.q1 docs to actual source code
  * @apioption series.boxplot.data.q1
  */
 
@@ -4060,7 +4048,6 @@
  * 
  * @type {Number}
  * @product highcharts
- * @todo Copy series.boxplot.data.q3 docs to actual source code
  * @apioption series.boxplot.data.q3
  */
 

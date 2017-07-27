@@ -367,6 +367,7 @@ H.Series.prototype.gappedPath = function () {
 	 * Together with `gapSize`, this option defines where to draw gaps in the 
 	 * graph.
 	 *
+	 * @type {String}
 	 * @see [gapSize](plotOptions.series.gapSize)
 	 * @default relative
 	 * @validvalues ["relative", "value"]
@@ -378,7 +379,7 @@ H.Series.prototype.gappedPath = function () {
 	if (gapSize && i > 0) { // #5008
 
 		// Gap unit is relative
-		if (this.options.gapUnit !== 'value') { // docs
+		if (this.options.gapUnit !== 'value') {
 			gapSize *= this.closestPointRange;
 		}
 
