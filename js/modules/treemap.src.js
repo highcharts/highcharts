@@ -423,51 +423,13 @@ seriesType('treemap', 'scatter', {
 			children = [],
 			val,
 			point = series.points[tree.i];
-		// Parents of the root node is by default visible
-		recursive(series.nodeMap[series.rootNode], function (node) {
-			var next = false,
-				p = node.parent;
-			node.visible = true;
-			if (p || p === '') {
-				next = series.nodeMap[p];
-			}
-			return next;
-		});
-		// Children of the root node is by default visible
-		recursive(series.nodeMap[series.rootNode].children, function (children) {
-			var next = false;
-			each(children, function (child) {
-				child.visible = true;
-				if (child.children.length) {
-					next = (next || []).concat(child.children);
-				}
-			});
-			return next;
-		});
 
 		// First give the children some values
 		each(tree.children, function (child) {
 			child = series.setTreeValues(child);
 			children.push(child);
-
 			if (!child.ignore) {
 				childrenTotal += child.val;
-			} else {
-				// @todo Add predicate to avoid looping already ignored children
-				recursive(child.children, function (children) {
-					var next = false;
-					each(children, function (node) {
-						extend(node, {
-							ignore: true,
-							isLeaf: false,
-							visible: false
-						});
-						if (node.children.length) {
-							next = (next || []).concat(node.children);
-						}
-					});
-					return next;
-				});
 			}
 		});
 		// Sort the children
@@ -485,7 +447,7 @@ seriesType('treemap', 'scatter', {
 			// Ignore this node if point is not visible
 			ignore: !(pick(point && point.visible, true) && (val > 0)),
 			isLeaf: tree.visible && !childrenTotal,
-			levelDynamic: (options.levelIsConstant ? tree.level : (tree.level - series.nodeMap[series.rootNode].level)),
+			levelDynamic: tree.level - (options.levelIsConstant ?  series.nodeMap[series.rootNode].level : 0),
 			name: pick(point && point.name, ''),
 			sortIndex: pick(point && point.sortIndex, -val),
 			val: val
@@ -834,6 +796,27 @@ seriesType('treemap', 'scatter', {
 			rootId = series.rootNode;
 			rootNode = series.nodeMap[rootId];
 		}
+		// Parents of the root node is by default visible
+		recursive(series.nodeMap[series.rootNode], function (node) {
+			var next = false,
+				p = node.parent;
+			node.visible = true;
+			if (p || p === '') {
+				next = series.nodeMap[p];
+			}
+			return next;
+		});
+		// Children of the root node is by default visible
+		recursive(series.nodeMap[series.rootNode].children, function (children) {
+			var next = false;
+			each(children, function (child) {
+				child.visible = true;
+				if (child.children.length) {
+					next = (next || []).concat(child.children);
+				}
+			});
+			return next;
+		});
 		series.setTreeValues(tree);
 
 		// Calculate plotting values.
