@@ -516,6 +516,26 @@ const getBuildProperties = () => {
 };
 
 const createProductJS = () => {
+    const U = require('./assembler/utilities.js');
+    const path = './build/dist/products.js';
+    const buildProperties = getBuildProperties();
+    // @todo Add reasonable defaults
+    const date = buildProperties.date || '';
+    const version = buildProperties.version || '';
+    const content = `var products = {
+    "Highcharts": {
+    "date": "${date}",
+    "nr": "${version}"
+    },
+    "Highstock": {
+        "date": "${date}",
+        "nr": "${version}"
+    },
+    "Highmaps": {
+        "date": "${date}",
+        "nr": "${version}"
+    }
+}`;
     U.writeFile(path, content);
 };
 
