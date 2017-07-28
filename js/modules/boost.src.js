@@ -1969,10 +1969,7 @@ function createAndAttachRenderer(chart, series) {
 	var width = chart.chartWidth,
 		height = chart.chartHeight,
 		target = chart,
-		targetGroup = chart.seriesGroup || series.group,
-		swapXY = function (proceed, x, y, a, b, c, d) {
-			proceed.call(series, y, x, a, b, c, d);
-		};
+		targetGroup = chart.seriesGroup || series.group;
 
 	if (isChartSeriesBoosting(chart)) {
 		target = chart;
@@ -2003,12 +2000,6 @@ function createAndAttachRenderer(chart, series) {
 		);
 
 		target.image.clip(target.boostClipRect);
-
-		if (target.inverted || (target.chart && target.chart.inverted)) {
-			each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
-				wrap(false, fn, swapXY);
-			});
-		}
 
 		if (target instanceof H.Chart) {
 			target.markerGroup = target.renderer.g().add(targetGroup);
