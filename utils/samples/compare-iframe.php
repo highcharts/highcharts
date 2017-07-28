@@ -375,7 +375,7 @@ function getExportInnerHTML() {
 			}
 
 			function tryToRun(proceed) {
-				if (QUnit && proceed) { // Let QUnit catch the error
+				if (typeof QUnit !== 'undefined' && proceed) { // Let QUnit catch the error
 					return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 				}
 				try {
