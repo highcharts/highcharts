@@ -24,7 +24,7 @@ Chart.prototype.callbacks.push(function (chart) {
 	function collectAndHide() {
 		var labels = [];
 
-		each(chart.yAxis, function (yAxis) {
+		each(chart.yAxis || [], function (yAxis) {
 			if (
 				yAxis.options.stackLabels &&
 				!yAxis.options.stackLabels.allowOverlap
