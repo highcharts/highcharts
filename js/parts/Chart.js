@@ -890,6 +890,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				}
 				if (node.hcOrigDetached) {
 					doc.body.removeChild(node);
+					node.hcOrigDetached = false;
 				}
 				node = node.parentNode;
 			}
