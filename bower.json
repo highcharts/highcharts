@@ -1,6 +1,6 @@
 {
     "name": "highcharts",
-    "version": "5.0.13",
+    "version": "5.0.14",
     "description": "JavaScript charting framework",
     "main": "lib/highcharts.js",
     "authors": [
