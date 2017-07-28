@@ -103,14 +103,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * dateFormat). Defaults to:
 		 * 
 		 * <pre>{
-		 * millisecond: '%H:%M:%S.%L',
-		 * second: '%H:%M:%S',
-		 * minute: '%H:%M',
-		 * hour: '%H:%M',
-		 * day: '%e. %b',
-		 * week: '%e. %b',
-		 * month: '%b \'%y',
-		 * year: '%Y'
+		 *     millisecond: '%H:%M:%S.%L',
+		 *     second: '%H:%M:%S',
+		 *     minute: '%H:%M',
+		 *     hour: '%H:%M',
+		 *     day: '%e. %b',
+		 *     week: '%e. %b',
+		 *     month: '%b \'%y',
+		 *     year: '%Y'
 		 * }</pre>
 		 * 
 		 * @type {Object}
@@ -813,7 +813,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * given by `this.total`. Defaults to:
 			 * 
 			 * <pre>function() {
-			 * return this.total;
+			 *     return this.total;
 			 * }</pre>
 			 * 
 			 * @type {Function}

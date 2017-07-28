@@ -751,8 +751,8 @@
  * like this:
  * 
  * <pre>style: {
- * left: '100px',
- * top: '100px'
+ *     left: '100px',
+ *     top: '100px'
  * }</pre>
  * 
  * @type {CSSObject}
@@ -3171,13 +3171,13 @@
  * Example:
  * 
  * <pre>data: [{
- * name: 'Point 1',
- * color: '#00FF00',
- * y: 0
+ *     name: 'Point 1',
+ *     color: '#00FF00',
+ *     y: 0
  * }, {
- * name: 'Point 2',
- * color: '#FF00FF',
- * y: 5
+ *     name: 'Point 2',
+ *     color: '#FF00FF',
+ *     y: 5
  * }]</pre>
  * 
  * Note that line series and derived types like spline and area, require
@@ -3494,9 +3494,9 @@
  * and `pointInterval` given in the series options.
  * 
  * <pre>data: [
- * [0, 8, 3],
- * [1, 1, 1],
- * [2, 6, 8]
+ *     [0, 8, 3],
+ *     [1, 1, 1],
+ *     [2, 6, 8]
  * ]</pre>
  * 
  * 2.  An array of objects with named values. The objects are point
@@ -3505,18 +3505,18 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * low: 9,
- * high: 0,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     low: 9,
+ *     high: 0,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * low: 3,
- * high: 4,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     low: 3,
+ *     high: 4,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<line>.data
@@ -3628,9 +3628,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 10],
- * [1, 9],
- * [2, 3]
+ *     [0, 10],
+ *     [1, 9],
+ *     [2, 3]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -3639,16 +3639,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 4,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 4,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 4,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 4,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series<line>.data
@@ -3739,9 +3739,9 @@
  * and `pointInterval` given in the series options.
  * 
  * <pre>data: [
- * [0, 0, 5],
- * [1, 9, 1],
- * [2, 5, 2]
+ *     [0, 0, 5],
+ *     [1, 9, 1],
+ *     [2, 5, 2]
  * ]</pre>
  * 
  * 2.  An array of objects with named values. The objects are point
@@ -3750,18 +3750,18 @@
  * turboThreshold), this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * low: 5,
- * high: 0,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     low: 5,
+ *     high: 0,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * low: 4,
- * high: 1,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     low: 4,
+ *     high: 1,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<arearange>.data
@@ -3855,9 +3855,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 5],
- * [1, 10],
- * [2, 3]
+ *     [0, 5],
+ *     [1, 10],
+ *     [2, 3]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -3866,16 +3866,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 1,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 1,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 10,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 10,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series<column>.data
@@ -3965,9 +3965,9 @@
  * and `pointInterval` given in the series options.
  * 
  * <pre>data: [
- * [0, 3, 0, 10, 3, 5],
- * [1, 7, 8, 7, 2, 9],
- * [2, 6, 9, 5, 1, 3]
+ *     [0, 3, 0, 10, 3, 5],
+ *     [1, 7, 8, 7, 2, 9],
+ *     [2, 6, 9, 5, 1, 3]
  * ]</pre>
  * 
  * 2.  An array of objects with named values. The objects are point
@@ -3976,24 +3976,24 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * low: 4,
- * q1: 9,
- * median: 9,
- * q3: 1,
- * high: 10,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     low: 4,
+ *     q1: 9,
+ *     median: 9,
+ *     q3: 1,
+ *     high: 10,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * low: 5,
- * q1: 7,
- * median: 3,
- * q3: 6,
- * high: 2,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     low: 5,
+ *     q1: 7,
+ *     median: 3,
+ *     q3: 6,
+ *     high: 2,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<line>.data
@@ -4128,9 +4128,9 @@
  * `pointInterval` given in the series options.
  * 
  * <pre>data: [
- * [0, 1, 2],
- * [1, 5, 5],
- * [2, 0, 2]
+ *     [0, 1, 2],
+ *     [1, 5, 5],
+ *     [2, 0, 2]
  * ]</pre>
  * 
  * 2.  An array of objects with named values. The objects are point
@@ -4139,18 +4139,18 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 1,
- * z: 1,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 1,
+ *     z: 1,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 5,
- * z: 4,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 5,
+ *     z: 4,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<line>.data
@@ -4255,9 +4255,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 6],
- * [1, 2],
- * [2, 6]
+ *     [0, 6],
+ *     [1, 2],
+ *     [2, 6]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -4266,16 +4266,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 5,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 5,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 9,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 9,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series<line>.data
@@ -4367,9 +4367,9 @@
  * and `pointInterval` given in the series options.
  * 
  * <pre>data: [
- * [0, 4, 2],
- * [1, 2, 1],
- * [2, 9, 10]
+ *     [0, 4, 2],
+ *     [1, 2, 1],
+ *     [2, 9, 10]
  * ]</pre>
  * 
  * 2.  An array of objects with named values. The objects are point
@@ -4378,18 +4378,18 @@
  * turboThreshold), this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * low: 0,
- * high: 4,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     low: 0,
+ *     high: 4,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * low: 5,
- * high: 3,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     low: 5,
+ *     high: 3,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<arearange>.data
@@ -4481,9 +4481,9 @@
  * and `pointInterval` given in the series options.
  * 
  * <pre>data: [
- * [0, 10, 2],
- * [1, 1, 8],
- * [2, 4, 5]
+ *     [0, 10, 2],
+ *     [1, 1, 8],
+ *     [2, 4, 5]
  * ]</pre>
  * 
  * 2.  An array of objects with named values. The objects are point
@@ -4492,18 +4492,18 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * low: 0,
- * high: 0,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     low: 0,
+ *     high: 0,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * low: 5,
- * high: 5,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     low: 5,
+ *     high: 5,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<arearange>.data
@@ -4596,14 +4596,14 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * y: 3,
- * name: "Point2",
- * color: "#00FF00"
+ *     y: 3,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * y: 1,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     y: 1,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Number>}
  * @extends series<pie>.data
@@ -4696,13 +4696,13 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * y: 6,
- * name: "Point2",
- * color: "#00FF00"
+ *     y: 6,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * y: 8,
- * name: "Point1",
- * color: "#FF00FF"
+ *     y: 8,
+ *     name: "Point1",
+ *     color: "#FF00FF"
  * }]</pre>
  * 
  * The typical gauge only contains a single data value.
@@ -4796,9 +4796,9 @@
  * and `pointInterval` given in the series options.
  * 
  * <pre>data: [
- * [0, 9, 7],
- * [1, 10, 4],
- * [2, 6, 3]
+ *     [0, 9, 7],
+ *     [1, 10, 4],
+ *     [2, 6, 3]
  * ]</pre>
  * 
  * 2.  An array of objects with named values. The objects are point
@@ -4807,18 +4807,18 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 3,
- * value: 10,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 3,
+ *     value: 10,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 7,
- * value: 10,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 7,
+ *     value: 10,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<line>.data
@@ -4932,9 +4932,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 1],
- * [1, 2],
- * [2, 8]
+ *     [0, 1],
+ *     [1, 2],
+ *     [2, 8]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -4943,16 +4943,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 10,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 10,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 6,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 6,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array|Number>}
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
@@ -5094,14 +5094,14 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * y: 1,
- * name: "Point2",
- * color: "#00FF00"
+ *     y: 1,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * y: 7,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     y: 7,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Number>}
  * @extends series<line>.data
@@ -5196,9 +5196,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 10],
- * [1, 3],
- * [2, 1]
+ *     [0, 10],
+ *     [1, 3],
+ *     [2, 1]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -5207,16 +5207,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 1,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 1,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 8,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 8,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<line>.data
@@ -5308,14 +5308,14 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * y: 6,
- * name: "Point2",
- * color: "#00FF00"
+ *     y: 6,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * y: 7,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     y: 7,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Number>}
  * @extends series<pie>.data
@@ -5410,9 +5410,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 0],
- * [1, 8],
- * [2, 9]
+ *     [0, 0],
+ *     [1, 8],
+ *     [2, 9]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -5421,16 +5421,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 2,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 2,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 4,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 4,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series<line>.data
@@ -5534,13 +5534,13 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * y: 5,
- * name: "Point2",
- * color: "#00FF00"
+ *     y: 5,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * y: 7,
- * name: "Point1",
- * color: "#FF00FF"
+ *     y: 7,
+ *     name: "Point1",
+ *     color: "#FF00FF"
  * }]</pre>
  * 
  * The typical gauge only contains a single data value.
@@ -5659,9 +5659,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 9],
- * [1, 2],
- * [2, 8]
+ *     [0, 9],
+ *     [1, 2],
+ *     [2, 8]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -5670,16 +5670,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 9,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 9,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 0,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 0,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series<line>.data
@@ -5771,14 +5771,14 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * value: 7,
- * name: "Point2",
- * color: "#00FF00"
+ *     value: 7,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * value: 2,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     value: 2,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Number>}
  * @extends series<heatmap>.data
@@ -5883,9 +5883,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 7],
- * [1, 8],
- * [2, 3]
+ *     [0, 7],
+ *     [1, 8],
+ *     [2, 3]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -5894,16 +5894,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 8,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 8,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 8,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 8,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series<line>.data
@@ -6899,29 +6899,29 @@
  * allowed multiples. Defaults to:
  * 
  * <pre>units: [[
- * 'millisecond', // unit name
- * [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+ *     'millisecond', // unit name
+ *     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
  * ], [
- * 'second',
- * [1, 2, 5, 10, 15, 30]
+ *     'second',
+ *     [1, 2, 5, 10, 15, 30]
  * ], [
- * 'minute',
- * [1, 2, 5, 10, 15, 30]
+ *     'minute',
+ *     [1, 2, 5, 10, 15, 30]
  * ], [
- * 'hour',
- * [1, 2, 3, 4, 6, 8, 12]
+ *     'hour',
+ *     [1, 2, 3, 4, 6, 8, 12]
  * ], [
- * 'day',
- * [1]
+ *     'day',
+ *     [1]
  * ], [
- * 'week',
- * [1]
+ *     'week',
+ *     [1]
  * ], [
- * 'month',
- * [1, 3, 6]
+ *     'month',
+ *     [1, 3, 6]
  * ], [
- * 'year',
- * null
+ *     'year',
+ *     null
  * ]]</pre>
  * 
  * @type {Array}
@@ -7249,7 +7249,7 @@
  * Defaults to:
  * 
  * <pre>function() {
- * return this.value;
+ *     return this.value;
  * }</pre>
  * 
  * @type {Function}
@@ -8703,17 +8703,14 @@
  * The default formats are:
  * 
  * <pre>{
- * millisecond: ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L',
- * '-%H:%M:%S.%L'],
- * second: ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
- * 
- * minute: ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
- * hour: ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
- * day: ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
- * week: ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
- * 
- * month: ['%B %Y', '%B', '-%B %Y'],
- * year: ['%Y', '%Y', '-%Y']
+ *     millisecond: ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
+ *     second: ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
+ *     minute: ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+ *     hour: ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+ *     day: ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+ *     week: ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+ *     month: ['%B %Y', '%B', '-%B %Y'],
+ *     year: ['%Y', '%Y', '-%Y']
  * }</pre>
  * 
  * For each of these array definitions, the first item is the format
@@ -8788,29 +8785,29 @@
  * Defaults to:
  * 
  * <pre>units: [[
- * 'millisecond', // unit name
- * [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+ *     'millisecond', // unit name
+ *     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
  * ], [
- * 'second',
- * [1, 2, 5, 10, 15, 30]
+ *     'second',
+ *     [1, 2, 5, 10, 15, 30]
  * ], [
- * 'minute',
- * [1, 2, 5, 10, 15, 30]
+ *     'minute',
+ *     [1, 2, 5, 10, 15, 30]
  * ], [
- * 'hour',
- * [1, 2, 3, 4, 6, 8, 12]
+ *     'hour',
+ *     [1, 2, 3, 4, 6, 8, 12]
  * ], [
- * 'day',
- * [1]
+ *     'day',
+ *     [1]
  * ], [
- * 'week',
- * [1]
+ *     'week',
+ *     [1]
  * ], [
- * 'month',
- * [1, 3, 6]
+ *     'month',
+ *     [1, 3, 6]
  * ], [
- * 'year',
- * null
+ *     'year',
+ *     null
  * ]]</pre>
  * 
  * @type {Array}
@@ -8976,27 +8973,27 @@
  * Defaults to
  * 
  * <pre>buttons: [{
- * type: 'month',
- * count: 1,
- * text: '1m'
+ *     type: 'month',
+ *     count: 1,
+ *     text: '1m'
  * }, {
- * type: 'month',
- * count: 3,
- * text: '3m'
+ *     type: 'month',
+ *     count: 3,
+ *     text: '3m'
  * }, {
- * type: 'month',
- * count: 6,
- * text: '6m'
+ *     type: 'month',
+ *     count: 6,
+ *     text: '6m'
  * }, {
- * type: 'ytd',
- * text: 'YTD'
+ *     type: 'ytd',
+ *     text: 'YTD'
  * }, {
- * type: 'year',
- * count: 1,
- * text: '1y'
+ *     type: 'year',
+ *     count: 1,
+ *     text: '1y'
  * }, {
- * type: 'all',
- * text: 'All'
+ *     type: 'all',
+ *     text: 'All'
  * }]</pre>
  * 
  * @type {Array<Object>}
@@ -9127,9 +9124,9 @@
  * and `pointInterval` given in the series options.
  * 
  * <pre>data: [
- * [0, 7, 2, 0, 4],
- * [1, 1, 4, 2, 8],
- * [2, 3, 3, 9, 3]
+ *     [0, 7, 2, 0, 4],
+ *     [1, 1, 4, 2, 8],
+ *     [2, 3, 3, 9, 3]
  * ]</pre>
  * 
  * 2.  An array of objects with named values. The objects are point
@@ -9138,22 +9135,22 @@
  * turboThreshold), this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * open: 9,
- * high: 2,
- * low: 4,
- * close: 6,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     open: 9,
+ *     high: 2,
+ *     low: 4,
+ *     close: 6,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * open: 1,
- * high: 4,
- * low: 7,
- * close: 7,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     open: 1,
+ *     high: 4,
+ *     low: 7,
+ *     close: 7,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<ohlc>.data
@@ -9254,14 +9251,14 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * title: "A",
- * text: "First event"
+ *     x: 1,
+ *     title: "A",
+ *     text: "First event"
  * }, {
- * x: 1,
- * title: "B",
- * text: "Second event"
- *     }]</pre>
+ *     x: 1,
+ *     title: "B",
+ *     text: "Second event"
+ * }]</pre>
  * 
  * @type {Array<Object>}
  * @extends series<line>.data
@@ -9384,9 +9381,9 @@
  * and `pointInterval` given in the series options.
  * 
  * <pre>data: [
- * [0, 6, 5, 6, 7],
- * [1, 9, 4, 8, 2],
- * [2, 6, 3, 4, 10]
+ *     [0, 6, 5, 6, 7],
+ *     [1, 9, 4, 8, 2],
+ *     [2, 6, 3, 4, 10]
  * ]</pre>
  * 
  * 2.  An array of objects with named values. The objects are point
@@ -9395,22 +9392,22 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * open: 3,
- * high: 4,
- * low: 5,
- * close: 2,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     open: 3,
+ *     high: 4,
+ *     low: 5,
+ *     close: 2,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * open: 4,
- * high: 3,
- * low: 6,
- * close: 7,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     open: 4,
+ *     high: 3,
+ *     low: 6,
+ *     close: 7,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array>}
  * @extends series<arearange>.data
@@ -10606,8 +10603,12 @@
  * 2.  An array of arrays with 2 values. In this case, the values correspond
  * to `[hc-key, value]`. Example:
  * 
- * <pre>data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak',
- * 5]]</pre>
+ * <pre>data: [
+ *     ['us-ny', 0],
+ *     ['us-mi', 5],
+ *     ['us-tx', 3],
+ *     ['us-ak', 5]
+ * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
@@ -10615,14 +10616,14 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * value: 6,
- * name: "Point2",
- * color: "#00FF00"
+ *     value: 6,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * value: 6,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     value: 6,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object>}
  * @product highmaps
@@ -10709,14 +10710,14 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * z: 9,
- * name: "Point2",
- * color: "#00FF00"
+ *     z: 9,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * z: 10,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     z: 10,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Number>}
  * @extends series<mappoint>.data
@@ -10871,9 +10872,9 @@
  * of the point, and the `x` value is inferred.
  * 
  * <pre>data: [
- * [0, 1],
- * [1, 8],
- * [2, 7]
+ *     [0, 1],
+ *     [1, 8],
+ *     [2, 7]
  * ]</pre>
  * 
  * 3.  An array of objects with named values. The objects are point
@@ -10882,16 +10883,16 @@
  * this option is not available.
  * 
  * <pre>data: [{
- * x: 1,
- * y: 7,
- * name: "Point2",
- * color: "#00FF00"
+ *     x: 1,
+ *     y: 7,
+ *     name: "Point2",
+ *     color: "#00FF00"
  * }, {
- * x: 1,
- * y: 4,
- * name: "Point1",
- * color: "#FF00FF"
- *     }]</pre>
+ *     x: 1,
+ *     y: 4,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series<map>.data

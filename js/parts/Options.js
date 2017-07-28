@@ -43,14 +43,12 @@ H.defaultOptions = {
 	 * 
 	 * In Highcharts 3.x, the default colors were:
 	 * 
-	 * <pre>colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
-	 * 
-	 * '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a']</pre>
+	 * <pre>colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', 
+	 *     '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a']</pre> 
 	 * 
 	 * In Highcharts 2.x, the default colors were:
 	 * 
-	 * <pre>colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
-	 * 
+	 * <pre>colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE', 
 	 *    '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']</pre>
 	 * 
 	 * @type {Array<Color>}
@@ -188,9 +186,9 @@ H.defaultOptions = {
 	 * method.
 	 * 
 	 * <pre>Highcharts.setOptions({
-	 * global: {
-	 * useUTC: false
-	 * }
+	 *     global: {
+	 *         useUTC: false
+	 *     }
 	 * });</pre>
 	 * 
 	 * @product highcharts highstock highmaps
@@ -337,10 +335,10 @@ H.defaultOptions = {
 		 * is milliseconds since 1970-01-01 00:00:00.
 		 * 
 		 * <pre>click: function(e) {
-		 * console.log(
-		 * Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', e.xAxis[0].value),
-		 * e.yAxis[0].value
-		 * )
+		 *     console.log(
+		 *         Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', e.xAxis[0].value),
+		 *         e.yAxis[0].value
+		 *     )
 		 * }</pre>
 		 * 
 		 * @type {Function}
@@ -423,14 +421,13 @@ H.defaultOptions = {
 		 * since 1970-01-01 00:00:00.
 		 * 
 		 * <pre>selection: function(event) {
-		 * // log the min and max of the primary, datetime x-axis
-		 * console.log(
-		 * Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', event.xAxis[0].min),
-		 * 
-		 * Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', event.xAxis[0].max)
-		 * );
-		 * // log the min and max of the y axis
-		 * console.log(event.yAxis[0].min, event.yAxis[0].max);
+		 *     // log the min and max of the primary, datetime x-axis
+		 *     console.log(
+		 *         Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', event.xAxis[0].min),
+		 *         Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', event.xAxis[0].max)
+		 *     );
+		 *     // log the min and max of the y axis
+		 *     console.log(event.yAxis[0].min, event.yAxis[0].max);
 		 * }</pre>
 		 * 
 		 * @type {Function}
@@ -1940,14 +1937,14 @@ H.defaultOptions = {
 		 * Defaults to:
 		 * 
 		 * <pre>{
-		 * millisecond:"%A, %b %e, %H:%M:%S.%L",
-		 * second:"%A, %b %e, %H:%M:%S",
-		 * minute:"%A, %b %e, %H:%M",
-		 * hour:"%A, %b %e, %H:%M",
-		 * day:"%A, %b %e, %Y",
-		 * week:"Week from %A, %b %e, %Y",
-		 * month:"%B %Y",
-		 * year:"%Y"
+		 *     millisecond:"%A, %b %e, %H:%M:%S.%L",
+		 *     second:"%A, %b %e, %H:%M:%S",
+		 *     minute:"%A, %b %e, %H:%M",
+		 *     hour:"%A, %b %e, %H:%M",
+		 *     day:"%A, %b %e, %Y",
+		 *     week:"Week from %A, %b %e, %Y",
+		 *     month:"%B %Y",
+		 *     year:"%Y"
 		 * }</pre>
 		 * 
 		 * @type {Object}

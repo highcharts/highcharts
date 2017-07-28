@@ -153,13 +153,17 @@ defaultOptions.lang = merge(
 	 * set it before any chart is initialized.
 	 * 
 	 * <pre>Highcharts.setOptions({
-	 * lang: {
-	 * months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-	 * 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-	 * 
-	 * weekdays: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi',
-	 * 'Samedi']
-	 * }
+	 *     lang: {
+	 *         months: [
+	 *             'Janvier', 'Février', 'Mars', 'Avril',
+	 *             'Mai', 'Juin', 'Juillet', 'Août',
+	 *             'Septembre', 'Octobre', 'Novembre', 'Décembre'
+	 *         ],
+	 *         weekdays: [
+	 *             'Dimanche', 'Lundi', 'Mardi', 'Mercredi',
+	 *             'Jeudi', 'Vendredi', 'Samedi'
+	 *         ]
+	 *     }
 	 * });</pre>
 	 *
 	 * @optionparent lang

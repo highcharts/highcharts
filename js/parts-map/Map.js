@@ -120,22 +120,16 @@ defaultOptions.mapNavigation = {
 		 * Text styles for the map navigation buttons. Defaults to
 		 * 
 		 * <pre>{
-		 * fontSize: '15px',
-		 * fontWeight: 'bold',
-		 * textAlign: 'center'
+		 *     fontSize: '15px',
+		 *     fontWeight: 'bold',
+		 *     textAlign: 'center'
 		 * }</pre>
 		 * 
 		 * @type {CSSObject}
 		 * @product highmaps
 		 */
 		style: {
-
-			/**
-			 */
 			fontSize: '15px',
-
-			/**
-			 */
 			fontWeight: 'bold'
 		},
 
@@ -233,7 +227,7 @@ defaultOptions.mapNavigation = {
 			 * Click handler for the button. Defaults to:
 			 * 
 			 * <pre>function () {
-			 * this.mapZoom(2);
+			 *     this.mapZoom(2);
 			 * }</pre>
 			 * 
 			 * @type {Function}

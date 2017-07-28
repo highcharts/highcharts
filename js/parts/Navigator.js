@@ -189,16 +189,16 @@ extend(defaultOptions, {
 		 * Default series options for the navigator series are:
 		 * 
 		 * <pre>series: {
-		 * type: 'areaspline',
-		 * color: '#4572A7',
-		 * fillOpacity: 0.05,
-		 * dataGrouping: {
-		 * smoothed: true
-		 * },
-		 * lineWidth: 1,
-		 * marker: {
-		 * enabled: false
-		 * }
+		 *     type: 'areaspline',
+		 *     color: '#4572A7',
+		 *     fillOpacity: 0.05,
+		 *     dataGrouping: {
+		 *         smoothed: true
+		 *     },
+		 *     lineWidth: 1,
+		 *     marker: {
+		 *         enabled: false
+		 *     }
 		 * }</pre>
 		 * 
 		 * @type {Object}
@@ -313,18 +313,18 @@ extend(defaultOptions, {
 		 * for the navigator xAxis are:
 		 * 
 		 * <pre>xAxis: {
-		 * tickWidth: 0,
-		 * lineWidth: 0,
-		 * gridLineWidth: 1,
-		 * tickPixelInterval: 200,
-		 * labels: {
-		 * align: 'left',
-		 * style: {
-		 * color: '#888'
-		 * },
-		 * x: 3,
-		 * y: -4
-		 * }
+		 *     tickWidth: 0,
+		 *     lineWidth: 0,
+		 *     gridLineWidth: 1,
+		 *     tickPixelInterval: 200,
+		 *     labels: {
+		 *     	   align: 'left',
+		 *         style: {
+		 *             color: '#888'
+		 *         },
+		 *         x: 3,
+		 *         y: -4
+		 *     }
 		 * }</pre>
 		 * 
 		 * @type {Object}
@@ -397,18 +397,18 @@ extend(defaultOptions, {
 		 * for the navigator yAxis are:
 		 * 
 		 * <pre>yAxis: {
-		 * gridLineWidth: 0,
-		 * startOnTick: false,
-		 * endOnTick: false,
-		 * minPadding: 0.1,
-		 * maxPadding: 0.1,
-		 * labels: {
-		 * enabled: false
-		 * },
-		 * title: {
-		 * text: null
-		 * },
-		 * tickWidth: 0
+		 *     gridLineWidth: 0,
+		 *     startOnTick: false,
+		 *     endOnTick: false,
+		 *     minPadding: 0.1,
+		 *     maxPadding: 0.1,
+		 *     labels: {
+		 *         enabled: false
+		 *     },
+		 *     title: {
+		 *         text: null
+		 *     },
+		 *     tickWidth: 0
 		 * }</pre>
 		 * 
 		 * @type {Object}
