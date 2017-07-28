@@ -51,6 +51,7 @@ QUnit.test('Container originally detached (#5783)', function (assert) {
         'Chart width detected from CSS of detached container'
     );
 
+    // Check that adding chart again does not throw errors (#7014)
     chart = Highcharts.chart({
         chart: {
             renderTo: c
