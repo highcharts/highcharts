@@ -9,11 +9,11 @@
                 return obj.name === word;
             });
             if (obj) {
-                obj.y += 1;
+                obj.weight += 1;
             } else {
                 obj = {
                     name: word,
-                    y: 1
+                    weight: 1
                 };
                 arr.push(obj);
             }

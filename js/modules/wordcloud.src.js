@@ -108,6 +108,8 @@ var WordCloudOptions = {
 	borderWidth: 0,
 	clip: false, // Something goes wrong with clip. // TODO fix this
 	colorByPoint: true,
+	fontFamily: 'Impact',
+	placementStrategy: 'random',
 	showInLegend: false,
 	tooltip: {
 		followPointer: true
@@ -130,6 +132,9 @@ var WordCloudSeries = {
 		extend(this.yAxis.options, wordcloudAxis);
 		extend(this.xAxis.options, wordcloudAxis);
 	},
+	deriveFontSize: function (relativeWeight) {
+		return Math.floor(maxFontSize * relativeWeight);
+	},
 	// series prototype
 	drawPoints: function () {
 		var series = this,
@@ -137,43 +142,41 @@ var WordCloudSeries = {
 			yAxis = series.yAxis,
 			chart = series.chart,
 			placed = [],
+			placementStrategy = series.placementStrategy[series.options.placementStrategy],
 			scale,
-			yValues = series.points.map(function (p) {
-				return p.y;
-			}),
-			maxY = Math.max.apply(null, yValues),
+			weights = series.points
+				.map(function (p) {
+					return p.weight;
+				}),
+			maxWeight = Math.max.apply(null, weights),
 			maxDelta = (field.width * field.width) + (field.height * field.height),
 			data = series.points
-			.map(function (p) {
-				var weight = 1 / maxY * p.y;
-				return extend(p, {
-					fontFamily: 'Impact',
-					fontSize: Math.floor(maxFontSize * weight),
-					rotation: Math.floor(Math.random() * 2) * 90,
-					weight: weight
+				.sort(function (a, b) {
+					return b.weight - a.weight; // Sort descending
 				});
-			})
-			.sort(function (a, b) {
-				return b.y - a.y; // Sort descending
-			});
 		each(data, function (point) {
 			var attempt = 0,
 				delta,
 				outOfRange = false,
-				x = getRandomPosition(field.width) - (field.width / 2),
-				y = getRandomPosition(field.height) - (field.height / 2),
+				placement,
 				clientRect,
 				rect;
+			point.relativeWeight = 1 / maxWeight * point.weight;
+			placement = placementStrategy(point, {
+				data: data,
+				field: field,
+				placed: placed
+			});
 			if (!point.graphic) {
 				point.graphic = chart.renderer.text(point.name).css({
-					fontSize: point.fontSize,
+					fontSize: series.deriveFontSize(point.relativeWeight),
 					fill: point.color,
-					fontFamily: point.fontFamily
+					fontFamily: series.options.fontFamily
 				}).attr({
-					x: x,
-					y: y,
+					x: placement.x,
+					y: placement.y,
 					'text-anchor': 'middle',
-					rotation: point.rotation
+					rotation: placement.rotation
 				}).add(series.group);
 				// Cache the original DOMRect values for later calculations.
 				point.clientRect = clientRect = extend(
@@ -204,8 +207,8 @@ var WordCloudSeries = {
 				point.graphic = point.graphic.destroy();
 			} else {
 				point.graphic.attr({
-					x: x + (delta ? delta.x : 0),
-					y: y + (delta ? delta.y : 0)
+					x: placement.x + (delta ? delta.x : 0),
+					y: placement.y + (delta ? delta.y : 0)
 				});
 				placed.push(point);
 			}
@@ -218,6 +221,16 @@ var WordCloudSeries = {
 			scaleX: scale,
 			scaleY: scale
 		});
+	},
+	placementStrategy: {
+		random: function (point, options) {
+			var field = options.field;
+			return {
+				x: getRandomPosition(field.width) - (field.width / 2),
+				y: getRandomPosition(field.height) - (field.height / 2),
+				rotation: Math.floor(Math.random() * 2) * 90
+			};
+		}
 	},
 	getPlotBox: function () {
 		var series = this,
