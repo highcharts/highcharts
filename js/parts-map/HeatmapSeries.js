@@ -26,7 +26,7 @@ var colorPointMixin = H.colorPointMixin,
 
 /**
  * @extends {plotOptions.scatter}
- * @product highharts highmaps
+ * @product highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
 seriesType('heatmap', 'scatter', {

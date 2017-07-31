@@ -18,12 +18,15 @@ var each = H.each,
 	seriesProto = Series.prototype,
 	pointProto = H.Point.prototype;
 
-// The arearangeseries series type
-
-
 /**
+ * The area range series is a carteseian series with higher and lower values
+ * for each point along an X axis, where the area between the values is shaded.
+ * Requires `highcharts-more.js`.
+ * 
  * @extends plotOptions.area
  * @product highcharts highstock
+ * @sample {highcharts} highcharts/demo/arearange/ Area range chart
+ * @sample {highstock} stock/demo/arearange/ Area range chart
  * @optionparent plotOptions.arearange
  */
 seriesType('arearange', 'area', {
@@ -533,3 +536,86 @@ seriesType('arearange', 'area', {
 		return pointProto.destroy.apply(this, arguments);
 	}
 });
+
+
+/**
+ * A `arearange` series. If the [type](#series<arearange>.type) option
+ * is not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [pointOptions.series](#pointOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * arearange](#plotOptions.arearange).
+ * 
+ * @type {Array<Object>}
+ * @extends series,plotOptions.arearange
+ * @excluding dataParser,dataURL,stack
+ * @product highcharts highstock
+ * @apioption series.arearange
+ */
+
+/**
+ * An array of data points for the series. For the `arearange` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 3 or 2 values. In this case, the values
+ * correspond to `x,low,high`. If the first value is a string, it is
+ * applied as the name of the point, and the `x` value is inferred.
+ * The `x` value can also be omitted, in which case the inner arrays
+ * should be of length 2\. Then the `x` value is automatically calculated,
+ * either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options.
+ * 
+ * <pre>data: [
+ *     [0, 8, 3],
+ *     [1, 1, 1],
+ *     [2, 6, 8]
+ * ]</pre>
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series<arearange>.turboThreshold),
+ * this option is not available.
+ * 
+ * <pre>data: [{
+ *     x: 1,
+ *     low: 9,
+ *     high: 0,
+ *     name: "Point2",
+ *     color: "#00FF00"
+ * }, {
+ *     x: 1,
+ *     low: 3,
+ *     high: 4,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
+ * 
+ * @type {Array<Object|Array>}
+ * @extends series<line>.data
+ * @excluding marker,y
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts highstock
+ * @apioption series.arearange.data
+ */
+
+/**
+ * The high or maximum value for each data point.
+ * 
+ * @type {Number}
+ * @product highcharts highstock
+ * @apioption series.arearange.data.high
+ */
+
+/**
+ * The low or minimum value for each data point.
+ * 
+ * @type {Number}
+ * @product highcharts highstock
+ * @apioption series.arearange.data.low
+ */

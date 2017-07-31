@@ -409,3 +409,56 @@ seriesType('pyramid', 'funnel',
 	 */
 	reversed: true
 });
+
+
+/**
+ * A `funnel` series. If the [type](#series<funnel>.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [pointOptions.series](#pointOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * funnel](#plotOptions.funnel).
+ * 
+ * @type {Array<Object>}
+ * @extends series,plotOptions.funnel
+ * @excluding dataParser,dataURL,stack,xAxis,yAxis
+ * @product highcharts
+ * @apioption series.funnel
+ */
+
+/**
+ * An array of data points for the series. For the `funnel` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. Example:
+ * 
+ * <pre>data: [0, 5, 3, 5]</pre>
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series<funnel>.turboThreshold),
+ * this option is not available.
+ * 
+ * <pre>data: [{
+ *     y: 3,
+ *     name: "Point2",
+ *     color: "#00FF00"
+ * }, {
+ *     y: 1,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
+ * 
+ * @type {Array<Object|Number>}
+ * @extends series<pie>.data
+ * @excluding sliced
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.funnel.data
+ */
