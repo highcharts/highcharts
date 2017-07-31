@@ -11,9 +11,13 @@
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var each = H.each,
-	merge = H.merge,
+	extend = H.extend,
 	Series = H.Series,
-	maxFontSize = 100;
+	maxFontSize = 25,
+	field = {
+		width: 256,
+		height: 256
+	};
 
 
 /**
@@ -42,10 +46,10 @@ var isRectanglesIntersecting = function isRectanglesIntersecting(r1, r2) {
  */
 var intersectsAnyWord = function intersectsAnyWord(point, points) {
 	var intersects = false,
-		rect1 = point.graphic.element.getBoundingClientRect(),
+		rect1 = point.rect,
 		rect2;
 	if (point.lastCollidedWith) {
-		rect2 = point.lastCollidedWith.graphic.element.getBoundingClientRect();
+		rect2 = point.lastCollidedWith.rect;
 		intersects = isRectanglesIntersecting(rect1, rect2);
 		// If they no longer intersects, remove the cache from the point.
 		if (!intersects) {
@@ -55,7 +59,7 @@ var intersectsAnyWord = function intersectsAnyWord(point, points) {
 	if (!intersects) {
 		intersects = !!H.find(points, function (p) {
 			var result;
-			rect2 = p.graphic.element.getBoundingClientRect();
+			rect2 = p.rect;
 			result = isRectanglesIntersecting(rect1, rect2);
 			if (result) {
 				point.lastCollidedWith = p;
@@ -91,6 +95,15 @@ var getRandomPosition = function getRandomPosition(size) {
 	return Math.round((size * (Math.random() + 0.5)) / 2);
 };
 
+var getScale = function getScale(xAxis, yAxis, series) {
+	var bbox = series.group.element.getBoundingClientRect(),
+		height = bbox.bottom - bbox.top,
+		width = bbox.right - bbox.left,
+		scaleX = 1 / width * xAxis.len,
+		scaleY = 1 / height * yAxis.len;
+	return Math.min(scaleX, scaleY);
+};
+
 var WordCloudOptions = {
 	borderWidth: 0,
 	clip: false, // Something goes wrong with clip. // TODO fix this
@@ -114,8 +127,8 @@ var WordCloudSeries = {
 			tickPositions: []
 		};
 		Series.prototype.bindAxes.call(this);
-		H.extend(this.yAxis.options, wordcloudAxis);
-		H.extend(this.xAxis.options, wordcloudAxis);
+		extend(this.yAxis.options, wordcloudAxis);
+		extend(this.xAxis.options, wordcloudAxis);
 	},
 	// series prototype
 	drawPoints: function () {
@@ -124,17 +137,18 @@ var WordCloudSeries = {
 			yAxis = series.yAxis,
 			chart = series.chart,
 			placed = [],
+			scale,
 			yValues = series.points.map(function (p) {
 				return p.y;
 			}),
 			maxY = Math.max.apply(null, yValues),
-			maxDelta = (xAxis.len * xAxis.len) + (yAxis.len * yAxis.len),
+			maxDelta = (field.width * field.width) + (field.height * field.height),
 			data = series.points
 			.map(function (p) {
 				var weight = 1 / maxY * p.y;
-				return merge(p, {
+				return extend(p, {
 					fontFamily: 'Impact',
-					fontSize: Math.floor(maxFontSize * p.weight),
+					fontSize: Math.floor(maxFontSize * weight),
 					rotation: Math.floor(Math.random() * 2) * 90,
 					weight: weight
 				});
@@ -146,8 +160,10 @@ var WordCloudSeries = {
 			var attempt = 0,
 				delta,
 				outOfRange = false,
-				x = getRandomPosition(xAxis.len) - (xAxis.len / 2),
-				y = getRandomPosition(yAxis.len) - (yAxis.len / 2);
+				x = getRandomPosition(field.width) - (field.width / 2),
+				y = getRandomPosition(field.height) - (field.height / 2),
+				clientRect,
+				rect;
 			if (!point.graphic) {
 				point.graphic = chart.renderer.text(point.name).css({
 					fontSize: point.fontSize,
@@ -159,6 +175,12 @@ var WordCloudSeries = {
 					'text-anchor': 'middle',
 					rotation: point.rotation
 				}).add(series.group);
+				// Cache the original DOMRect values for later calculations.
+				point.clientRect = clientRect = extend(
+					{},
+					point.graphic.element.getBoundingClientRect()
+				);
+				point.rect = rect = extend({}, clientRect);
 			}
 			/**
 			 * while word intersects any previously placed words:
@@ -166,18 +188,35 @@ var WordCloudSeries = {
 			 */
 			while (intersectsAnyWord(point, placed) && !outOfRange) {
 				delta = archimedeanSpiral(attempt);
-				point.graphic.attr({
-					x: x + delta.x,
-					y: y + delta.y
-				});
+				// Update the DOMRect with new positions.
+				rect.left = clientRect.left + delta.x;
+				rect.right = rect.left + rect.width;
+				rect.top = clientRect.top + delta.y;
+				rect.bottom = rect.top + rect.height;
 				outOfRange = Math.min(Math.abs(delta.x), Math.abs(delta.y)) >= maxDelta;
 				attempt++;
 			}
+			/**
+			 * Check if point was placed, if so delete it,
+			 * otherwise place it on the correct positions.
+			 */
 			if (outOfRange) {
 				point.graphic = point.graphic.destroy();
 			} else {
+				point.graphic.attr({
+					x: x + (delta ? delta.x : 0),
+					y: y + (delta ? delta.y : 0)
+				});
 				placed.push(point);
 			}
+		});
+		/**
+		 * Scale the series group to fit within the plotArea.
+		 */
+		scale = getScale(xAxis, yAxis, series);
+		series.group.attr({
+			scaleX: scale,
+			scaleY: scale
 		});
 	},
 	getPlotBox: function () {
