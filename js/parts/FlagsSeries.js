@@ -31,6 +31,7 @@ var addEvent = H.addEvent,
  */
 /**
  * @extends {plotOptions.column}
+ * @product highstock
  * @optionparent plotOptions.flags
  */
 seriesType('flags', 'column', {

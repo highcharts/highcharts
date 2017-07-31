@@ -20,6 +20,7 @@ var each = H.each,
 
 /**  
  * @extends {plotOptions.boxplot}
+ * @product highcharts highstock
  * @optionparent plotOptions.errorbar
  */
 seriesType('errorbar', 'boxplot', {

@@ -153,6 +153,7 @@ colorAxisMethods = {
 };
 /** 
  * @extends plotOptions.gauge
+ * @product highcharts
  * @optionparent plotOptions.solidgauge
  */
 var solidGaugeOptions = {

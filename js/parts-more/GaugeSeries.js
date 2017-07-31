@@ -24,6 +24,7 @@ var each = H.each,
 /** 
  * The GaugeSeries class
  * @extends {plotOptions.line}
+ * @product highcharts
  * @optionparent plotOptions.gauge
  */
 seriesType('gauge', 'line', {

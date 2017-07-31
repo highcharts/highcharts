@@ -20,6 +20,7 @@ var each = H.each,
  */
 /**
  * @extends {plotOptions.column}
+ * @product highstock
  * @optionparent plotOptions.ohlc
  */
 seriesType('ohlc', 'column', {

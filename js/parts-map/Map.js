@@ -30,7 +30,7 @@ extend(defaultOptions.lang, {
 // Set the default map navigation options
 
 /** 
- * @products highmaps
+ * @product highmaps
  * @optionparent mapNavigation 
  */
 defaultOptions.mapNavigation = {

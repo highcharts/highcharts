@@ -14,6 +14,7 @@ var seriesType = H.seriesType,
 // 
 /**
  * @extends {plotOptions.map}
+ * @product highmaps
  * @optionparent plotOptions.mapline
  */
 seriesType('mapline', 'map', {

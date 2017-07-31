@@ -36,6 +36,7 @@ var addEvent = H.addEvent,
 
 /**
  * @extends {plotOptions.line}
+ * @product highcharts
  * @optionparent plotOptions.pie
  */
 seriesType('pie', 'line', {

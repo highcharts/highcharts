@@ -22,6 +22,7 @@ var correctFloat = H.correctFloat,
  *****************************************************************************/
 /**
  * @extends {plotOptions.column}
+ * @product highcharts
  * @optionparent plotOptions.waterfall
  */
 seriesType('waterfall', 'column', {

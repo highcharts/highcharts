@@ -31,8 +31,9 @@ var animObject = H.animObject,
 
 /**
  * @extends {plotOptions.line}
- * @optionparent plotOptions.column
+ * @product highcharts highstock
  * @excluding connectNulls,dashStyle,linecap,lineWidth,marker,connectEnds,step
+ * @optionparent plotOptions.column
  */
 seriesType('column', 'line', {
 

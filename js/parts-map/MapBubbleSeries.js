@@ -19,6 +19,7 @@ if (seriesTypes.bubble) {
 
 	/**
 	 * @extends {plotOptions.bubble}
+	 * @product highmaps
 	 * @optionparent plotOptions.mapbubble
 	 */
 	seriesType('mapbubble', 'bubble', {

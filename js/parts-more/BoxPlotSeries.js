@@ -22,6 +22,7 @@ var each = H.each,
 
 /**
  * @extends {plotOptions.column}
+ * @product highcharts
  * @optionparent plotOptions.boxplot
  */
 seriesType('boxplot', 'column', {

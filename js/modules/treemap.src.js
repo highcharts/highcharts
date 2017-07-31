@@ -50,9 +50,11 @@ var seriesType = H.seriesType,
 		}
 	};
 
-// The Treemap series type
 /**
+ * The Treemap series type
+ * 
  * @extends {plotOptions.scatter}
+ * @product highcharts
  * @optionparent plotOptions.treemap
  */
 seriesType('treemap', 'scatter', {

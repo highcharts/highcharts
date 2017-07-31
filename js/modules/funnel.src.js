@@ -28,6 +28,7 @@ seriesType('funnel', 'pie',
  *
  * @sample highcharts/demo/funnel/ Funnel demo
  * @extends {plotOptions.pie}
+ * @product highcharts
  * @optionparent plotOptions.funnel
  */
 {
@@ -383,7 +384,8 @@ seriesType('funnel', 'pie',
 seriesType('pyramid', 'funnel', 
 /** 
  * A pyramid series is a special type of funnel, without neck and reversed by default.
- * @extends funnel
+ * @extends plotOptions.funnel
+ * @product highcharts
  * @optionparent plotOptions.pyramid
  */
 {

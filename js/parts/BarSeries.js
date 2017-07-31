@@ -20,5 +20,6 @@ seriesType('bar', 'column', null, {
 });
 /**
  * @extends {plotOptions.column}
+ * @product highcharts
  * @optionparent plotOptions.bar
  */

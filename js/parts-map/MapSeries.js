@@ -38,6 +38,7 @@ var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 // Add the map series type
 /**
  * @extends {plotOptions.scatter}
+ * @product highmaps
  * @optionparent plotOptions.map
  */
 seriesType('map', 'scatter', {

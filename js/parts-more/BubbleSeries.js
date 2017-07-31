@@ -32,6 +32,7 @@ var arrayMax = H.arrayMax,
 
 /**
  * @extends plotOptions.scatter
+ * @product highcharts highstock
  * @optionparent plotOptions.bubble
  */
 seriesType('bubble', 'scatter', {

@@ -23,6 +23,7 @@ var each = H.each,
 
 /**
  * @extends plotOptions.area
+ * @product highcharts highstock
  * @optionparent plotOptions.arearange
  */
 seriesType('arearange', 'area', {

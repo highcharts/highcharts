@@ -2262,8 +2262,8 @@ H.defaultOptions = {
 		 * 
 		 * @type {CSSObject}
 		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), credits styles can be set with the `.highcharts-
-		 * credits` class.
+		 * style/style-by-css), credits styles can be set with the
+		 * `.highcharts-credits` class.
 		 * @default { "cursor": "pointer", "color": "#999999", "fontSize": "10px" }
 		 * @product highcharts highstock highmaps
 		 */

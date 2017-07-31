@@ -16,6 +16,7 @@ var Series = H.Series,
 
 /**
  * @extends {plotOptions.line}
+ * @product highcharts highstock
  * @optionparent plotOptions.scatter
  */
 seriesType('scatter', 'line', {

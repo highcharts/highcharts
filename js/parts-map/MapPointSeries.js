@@ -16,6 +16,7 @@ var merge = H.merge,
 // The mappoint series type
 /**
  * @extends plotOptions.scatter
+ * @product highmaps
  * @optionparent plotOptions.mappoint
  */
 seriesType('mappoint', 'scatter', {

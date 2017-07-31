@@ -25,6 +25,7 @@ var color = H.color,
  */
 /**
  * @extends {plotOptions.line}
+ * @product highcharts highstock
  * @optionparent plotOptions.area
  */
 seriesType('area', 'line', {

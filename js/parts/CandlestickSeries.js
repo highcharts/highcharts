@@ -14,7 +14,7 @@ var defaultPlotOptions = H.defaultPlotOptions,
 
 /**
  * @extends {plotOptions.ohlc}
- * @products highstock
+ * @product highstock
  * @optionparent plotOptions.candlestick
  */
 var candlestickOptions = {
