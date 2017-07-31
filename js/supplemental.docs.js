@@ -5,435 +5,17 @@
 
 
 
-/**
- * The color of the panel.
- * 
- * @type {Color}
- * @default transparent
- * @since 4.0
- * @product highcharts
- * @apioption chart.options3d.frame.back.color
- */
 
-/**
- * Thickness of the panel.
- * 
- * @type {Number}
- * @default 1
- * @since 4.0
- * @product highcharts
- * @apioption chart.options3d.frame.back.size
- */
 
-/**
- * Whether to display the frame. Possible values are `true`, `false`,
- * `"auto"` to display only the frames behind the data, and `"default"`
- * to display faces behind the data based on the axis layout, ignoring
- * the point of view.
- * 
- * @validvalue ["default", "auto", true, false]
- * @type {Boolean|String}
- * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
- * @default default
- * @since 5.0.12
- * @product highcharts
- * @apioption chart.options3d.frame.back.visible
- */
 
-/**
- * The color of the panel.
- * 
- * @type {Color}
- * @default transparent
- * @since 4.0
- * @product highcharts
- * @apioption chart.options3d.frame.bottom.color
- */
 
-/**
- * The thickness of the panel.
- * 
- * @type {Number}
- * @default 1
- * @since 4.0
- * @product highcharts
- * @apioption chart.options3d.frame.bottom.size
- */
 
-/**
- * Whether to display the frame. Possible values are `true`, `false`,
- * `"auto"` to display only the frames behind the data, and `"default"`
- * to display faces behind the data based on the axis layout, ignoring
- * the point of view.
- * 
- * @validvalue ["default", "auto", true, false]
- * @type {Boolean|String}
- * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
- * @default default
- * @since 5.0.12
- * @product highcharts
- * @apioption chart.options3d.frame.bottom.visible
- */
 
-/**
- * Note: As of v5.0.12, `frame.left` or `frame.right` should be used
- * instead.
- * 
- * The side for the frame around a 3D chart.
- * 
- * @since 4.0
- * @product highcharts
- * @apioption chart.options3d.frame.side
- */
 
-/**
- * The color of the panel.
- * 
- * @type {Color}
- * @default transparent
- * @since 4.0
- * @product highcharts
- * @apioption chart.options3d.frame.side.color
- */
 
-/**
- * The thickness of the panel.
- * 
- * @type {Number}
- * @default 1
- * @since 4.0
- * @product highcharts
- * @apioption chart.options3d.frame.side.size
- */
 
-/**
- * The color of the panel.
- * 
- * @type {Color}
- * @default transparent
- * @product highcharts
- * @apioption chart.options3d.frame.top.color
- */
 
-/**
- * The pixel thickness of the panel.
- * 
- * @type {Number}
- * @default 1
- * @product highcharts
- * @apioption chart.options3d.frame.top.size
- */
 
-/**
- * What frame the button should be placed related to. Can be either
- * "plot" or "chart".
- * 
- * @validvalue ["plot", "chart"]
- * @type {String}
- * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/ Relative to the chart
- * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/ Relative to the chart
- * @default plot
- * @since 2.2
- * @apioption chart.resetZoomButton.relativeTo
- */
-
-/**
- * The vertical alignment of the button.
- * 
- * @validvalue ["top", "middle", "bottom"]
- * @type {String}
- * @default top
- * @apioption chart.resetZoomButton.position.verticalAlign
- */
-
-/**
- * The Data module provides a simplified interface for adding data to
- * a chart from sources like CVS, HTML tables or grid views. See also
- * the [tutorial article on the Data module](http://www.highcharts.com/docs/working-
- * with-data/data-module).
- * 
- * It requires the `modules/data.js` file to be loaded.
- * 
- * Please note that the default way of adding data in Highcharts, without
- * the need of a module, is through the [series.data](#series.data)
- * option.
- * 
- * @sample {highcharts} highcharts/demo/column-parsed/ HTML table
- * @sample {highcharts} highcharts/data/csv/ CSV
- * @since 4.0
- * @product highcharts
- * @apioption data
- */
-
-/**
- * A two-dimensional array representing the input data on tabular form.
- * This input can be used when the data is already parsed, for example
- * from a grid view component. Each cell can be a string or number.
- * If not switchRowsAndColumns is set, the columns are interpreted as
- * series.
- * 
- * @type {Array<Array<Mixed>>}
- * @see [data.rows](#data.rows)
- * @sample {highcharts} highcharts/data/columns/ Columns
- * @since 4.0
- * @product highcharts
- * @apioption data.columns
- */
-
-/**
- * The callback that is evaluated when the data is finished loading,
- * optionally from an external source, and parsed. The first argument
- * passed is a finished chart options object, containing the series.
- * These options can be extended with additional options and passed
- * directly to the chart constructor.
- * 
- * @type {Function}
- * @see [data.parsed](#data.parsed)
- * @sample {highcharts} highcharts/data/complete/ Modify data on complete
- * @since 4.0
- * @product highcharts
- * @apioption data.complete
- */
-
-/**
- * A comma delimited string to be parsed. Related options are [startRow](#data.
- * startRow), [endRow](#data.endRow), [startColumn](#data.startColumn)
- * and [endColumn](#data.endColumn) to delimit what part of the table
- * is used. The [lineDelimiter](#data.lineDelimiter) and [itemDelimiter](#data.
- * itemDelimiter) options define the CSV delimiter formats.
- * 
- * The built-in CSV parser doesn't support all flavours of CSV, so in
- * some cases it may be necessary to use an external CSV parser. See
- * [this example](http://jsfiddle.net/highcharts/u59176h4/) of parsing
- * CSV through the MIT licensed [Papa Parse](http://papaparse.com/)
- * library.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/data/csv/ Data from CSV
- * @since 4.0
- * @product highcharts
- * @apioption data.csv
- */
-
-/**
- * Which of the predefined date formats in Date.prototype.dateFormats
- * to use to parse date values. Defaults to a best guess based on what
- * format gives valid and ordered dates.
- * 
- * Valid options include:
- * 
- * *   `YYYY-mm-dd`
- * *   `dd/mm/YYYY`
- * *   `mm/dd/YYYY`
- * *   `dd/mm/YY`
- * *   `mm/dd/YY`
- * 
- * @validvalue [undefined, "YYYY-mm-dd", "dd/mm/YYYY", "mm/dd/YYYY", "dd/mm/YYYY", "dd/mm/YY", "mm/dd/YY"]
- * @type {String}
- * @see [data.parseDate](#data.parseDate)
- * @sample {highcharts} highcharts/data/dateformat-auto/ Best guess date format
- * @since 4.0
- * @product highcharts
- * @apioption data.dateFormat
- */
-
-/**
- * The decimal point used for parsing numbers in the CSV.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/data/delimiters/ Comma as decimal point
- * @default .
- * @since 4.1.0
- * @product highcharts
- * @apioption data.decimalPoint
- */
-
-/**
- * In tabular input data, the last column (indexed by 0) to use. Defaults
- * to the last column containing data.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/data/start-end/ Limited data
- * @since 4.0
- * @product highcharts
- * @apioption data.endColumn
- */
-
-/**
- * In tabular input data, the last row (indexed by 0) to use. Defaults
- * to the last row containing data.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/data/start-end/ Limited data
- * @since 4.0.4
- * @product highcharts
- * @apioption data.endRow
- */
-
-/**
- * Whether to use the first row in the data set as series names.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/data/start-end/ Don't get series names from the CSV
- * @sample {highstock} highcharts/data/start-end/ Don't get series names from the CSV
- * @default true
- * @since 4.1.0
- * @product highcharts highstock
- * @apioption data.firstRowAsNames
- */
-
-/**
- * The key for a Google Spreadsheet to load. See [general information
- * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
- * 
- * @type {String}
- * @sample {highcharts} highcharts/data/google-spreadsheet/ Load a Google Spreadsheet
- * @since 4.0
- * @product highcharts
- * @apioption data.googleSpreadsheetKey
- */
-
-/**
- * The Google Spreadsheet worksheet to use in combination with [googleSpreadsheetKey](#data.
- * googleSpreadsheetKey). The available id's from your sheet can be
- * read from `https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic`
- * 
- * @type {String}
- * @sample {highcharts} highcharts/data/google-spreadsheet/ Load a Google Spreadsheet
- * @since 4.0
- * @product highcharts
- * @apioption data.googleSpreadsheetWorksheet
- */
-
-/**
- * Item or cell delimiter for parsing CSV. Defaults to the tab character
- * `\t` if a tab character is found in the CSV string, if not it defaults
- * to `,`.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/data/delimiters/ Delimiters
- * @since 4.0
- * @product highcharts
- * @apioption data.itemDelimiter
- */
-
-/**
- * Line delimiter for parsing CSV.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/data/delimiters/ Delimiters
- * @default \n
- * @since 4.0
- * @product highcharts
- * @apioption data.lineDelimiter
- */
-
-/**
- * A callback function to parse string representations of dates into
- * JavaScript timestamps. Should return an integer timestamp on success.
- * 
- * @type {Function}
- * @see [dateFormat](#data.dateFormat)
- * @since 4.0
- * @product highcharts
- * @apioption data.parseDate
- */
-
-/**
- * A callback function to access the parsed columns, the two-dimentional
- * input data array directly, before they are interpreted into series
- * data and categories. Return `false` to stop completion, or call `this.
- * complete()` to continue async.
- * 
- * @type {Function}
- * @see [data.complete](#data.complete)
- * @sample {highcharts} highcharts/data/parsed/ Modify data after parse
- * @since 4.0
- * @product highcharts
- * @apioption data.parsed
- */
-
-/**
- * The same as the columns input option, but defining rows intead of
- * columns.
- * 
- * @type {Array<Array<Mixed>>}
- * @see [data.columns](#data.columns)
- * @sample {highcharts} highcharts/data/rows/ Data in rows
- * @since 4.0
- * @product highcharts
- * @apioption data.rows
- */
-
-/**
- * An array containing object with Point property names along with what
- * column id the property should be taken from.
- * 
- * @type {Array<Object>}
- * @sample {highcharts} highcharts/data/seriesmapping-label/ Label from data set
- * @since 4.0.4
- * @product highcharts
- * @apioption data.seriesMapping
- */
-
-/**
- * In tabular input data, the first column (indexed by 0) to use.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/data/start-end/ Limited data
- * @default 0
- * @since 4.0
- * @product highcharts
- * @apioption data.startColumn
- */
-
-/**
- * In tabular input data, the first row (indexed by 0) to use.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/data/start-end/ Limited data
- * @default 0
- * @since 4.0
- * @product highcharts
- * @apioption data.startRow
- */
-
-/**
- * Switch rows and columns of the input data, so that `this.columns`
- * effectively becomes the rows of the data set, and the rows are interpreted
- * as series.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/data/switchrowsandcolumns/ Switch rows and columns
- * @default false
- * @since 4.0
- * @product highcharts
- * @apioption data.switchRowsAndColumns
- */
-
-/**
- * A HTML table or the id of such to be parsed as input data. Related
- * options are `startRow`, `endRow`, `startColumn` and `endColumn` to
- * delimit what part of the table is used.
- * 
- * @type {String|HTMLElement}
- * @sample {highcharts} highcharts/demo/column-parsed/ Parsed table
- * @since 4.0
- * @product highcharts
- * @apioption data.table
- */
-
-/**
- * [Styled mode](http://www.highcharts.com/docs/chart-design-and-style/style-
- * by-css) only. Configuration object for adding SVG definitions for
- * reusable elements. See [gradients, shadows and patterns](http://www.
- * highcharts.com/docs/chart-design-and-style/gradients-shadows-and-
- * patterns) for more information and code examples.
- * 
- * @type {Object}
- * @since 5.0.0
- * @apioption defs
- */
 
 /**
  * When this option is false, clicking a single point will drill down
@@ -3085,53 +2667,6 @@
  * @apioption series.gauge.data
  */
 
-/**
- * @extends plotOptions.gauge.states
- * @product highcharts
- * @apioption series.gauge.data.marker.states
- */
-
-/**
- * @extends plotOptions.gauge.dataLabels
- * @product highcharts
- * @apioption series.gauge.dataLabels
- */
-
-/**
- * @extends plotOptions.gauge.events
- * @product highcharts
- * @apioption series.gauge.events
- */
-
-/**
- * @extends plotOptions.gauge.marker
- * @product highcharts
- * @apioption series.gauge.marker
- */
-
-/**
- * @extends plotOptions.gauge.point
- * @product highcharts
- * @apioption series.gauge.point
- */
-
-/**
- * @extends plotOptions.gauge.states
- * @product highcharts
- * @apioption series.gauge.states
- */
-
-/**
- * @extends plotOptions.gauge.tooltip
- * @product highcharts
- * @apioption series.gauge.tooltip
- */
-
-/**
- * @extends plotOptions.gauge.zones
- * @product highcharts
- * @apioption series.gauge.zones
- */
 
 /**
  * A `heatmap` series. If the [type](#series<heatmap>.type) option is
@@ -3217,53 +2752,7 @@
  * @apioption series.heatmap.data.value
  */
 
-/**
- * @extends plotOptions.heatmap.states
- * @product highcharts highmaps
- * @apioption series.heatmap.data.marker.states
- */
 
-/**
- * @extends plotOptions.heatmap.dataLabels
- * @product highcharts highmaps
- * @apioption series.heatmap.dataLabels
- */
-
-/**
- * @extends plotOptions.heatmap.events
- * @product highcharts highmaps
- * @apioption series.heatmap.events
- */
-
-/**
- * @extends plotOptions.heatmap.marker
- * @product highcharts highmaps
- * @apioption series.heatmap.marker
- */
-
-/**
- * @extends plotOptions.heatmap.point
- * @product highcharts highmaps
- * @apioption series.heatmap.point
- */
-
-/**
- * @extends plotOptions.heatmap.states
- * @product highcharts highmaps
- * @apioption series.heatmap.states
- */
-
-/**
- * @extends plotOptions.heatmap.tooltip
- * @product highcharts highmaps
- * @apioption series.heatmap.tooltip
- */
-
-/**
- * @extends plotOptions.heatmap.zones
- * @product highcharts highmaps
- * @apioption series.heatmap.zones
- */
 
 /**
  * A `line` series. If the [type](#series<line>.type) option is not
@@ -3381,53 +2870,6 @@
  * @apioption series.line.data.selected
  */
 
-/**
- * @extends plotOptions.line.states
- * @product highcharts highstock
- * @apioption series.line.data.marker.states
- */
-
-/**
- * @extends plotOptions.line.dataLabels
- * @product highcharts highstock
- * @apioption series.line.dataLabels
- */
-
-/**
- * @extends plotOptions.line.events
- * @product highcharts highstock
- * @apioption series.line.events
- */
-
-/**
- * @extends plotOptions.line.marker
- * @product highcharts highstock
- * @apioption series.line.marker
- */
-
-/**
- * @extends plotOptions.line.point
- * @product highcharts highstock
- * @apioption series.line.point
- */
-
-/**
- * @extends plotOptions.line.states
- * @product highcharts highstock
- * @apioption series.line.states
- */
-
-/**
- * @extends plotOptions.line.tooltip
- * @product highcharts highstock
- * @apioption series.line.tooltip
- */
-
-/**
- * @extends plotOptions.line.zones
- * @product highcharts highstock
- * @apioption series.line.zones
- */
 
 /**
  * A `pie` series. If the [type](#series<pie>.type) option is not specified,
@@ -3481,53 +2923,7 @@
  * @apioption series.pie.data
  */
 
-/**
- * @extends plotOptions.pie.states
- * @product highcharts
- * @apioption series.pie.data.marker.states
- */
 
-/**
- * @extends plotOptions.pie.dataLabels
- * @product highcharts
- * @apioption series.pie.dataLabels
- */
-
-/**
- * @extends plotOptions.pie.events
- * @product highcharts
- * @apioption series.pie.events
- */
-
-/**
- * @extends plotOptions.pie.marker
- * @product highcharts
- * @apioption series.pie.marker
- */
-
-/**
- * @extends plotOptions.pie.point
- * @product highcharts
- * @apioption series.pie.point
- */
-
-/**
- * @extends plotOptions.pie.states
- * @product highcharts
- * @apioption series.pie.states
- */
-
-/**
- * @extends plotOptions.pie.tooltip
- * @product highcharts
- * @apioption series.pie.tooltip
- */
-
-/**
- * @extends plotOptions.pie.zones
- * @product highcharts
- * @apioption series.pie.zones
- */
 
 /**
  * A `polygon` series. If the [type](#series<polygon>.type) option is
@@ -3595,53 +2991,7 @@
  * @apioption series.polygon.data
  */
 
-/**
- * @extends plotOptions.polygon.states
- * @product highcharts highstock
- * @apioption series.polygon.data.marker.states
- */
 
-/**
- * @extends plotOptions.polygon.dataLabels
- * @product highcharts highstock
- * @apioption series.polygon.dataLabels
- */
-
-/**
- * @extends plotOptions.polygon.events
- * @product highcharts highstock
- * @apioption series.polygon.events
- */
-
-/**
- * @extends plotOptions.polygon.marker
- * @product highcharts highstock
- * @apioption series.polygon.marker
- */
-
-/**
- * @extends plotOptions.polygon.point
- * @product highcharts highstock
- * @apioption series.polygon.point
- */
-
-/**
- * @extends plotOptions.polygon.states
- * @product highcharts highstock
- * @apioption series.polygon.states
- */
-
-/**
- * @extends plotOptions.polygon.tooltip
- * @product highcharts highstock
- * @apioption series.polygon.tooltip
- */
-
-/**
- * @extends plotOptions.polygon.zones
- * @product highcharts highstock
- * @apioption series.polygon.zones
- */
 
 /**
  * A `pyramid` series. If the [type](#series<pyramid>.type) option is
@@ -3695,53 +3045,7 @@
  * @apioption series.pyramid.data
  */
 
-/**
- * @extends plotOptions.pyramid.states
- * @product highcharts
- * @apioption series.pyramid.data.marker.states
- */
 
-/**
- * @extends plotOptions.pyramid.dataLabels
- * @product highcharts
- * @apioption series.pyramid.dataLabels
- */
-
-/**
- * @extends plotOptions.pyramid.events
- * @product highcharts
- * @apioption series.pyramid.events
- */
-
-/**
- * @extends plotOptions.pyramid.marker
- * @product highcharts
- * @apioption series.pyramid.marker
- */
-
-/**
- * @extends plotOptions.pyramid.point
- * @product highcharts
- * @apioption series.pyramid.point
- */
-
-/**
- * @extends plotOptions.pyramid.states
- * @product highcharts
- * @apioption series.pyramid.states
- */
-
-/**
- * @extends plotOptions.pyramid.tooltip
- * @product highcharts
- * @apioption series.pyramid.tooltip
- */
-
-/**
- * @extends plotOptions.pyramid.zones
- * @product highcharts
- * @apioption series.pyramid.zones
- */
 
 /**
  * A `scatter` series. If the [type](#series<scatter>.type) option is
@@ -3809,53 +3113,7 @@
  * @apioption series.scatter.data
  */
 
-/**
- * @extends plotOptions.scatter.states
- * @product highcharts highstock
- * @apioption series.scatter.data.marker.states
- */
 
-/**
- * @extends plotOptions.scatter.dataLabels
- * @product highcharts highstock
- * @apioption series.scatter.dataLabels
- */
-
-/**
- * @extends plotOptions.scatter.events
- * @product highcharts highstock
- * @apioption series.scatter.events
- */
-
-/**
- * @extends plotOptions.scatter.marker
- * @product highcharts highstock
- * @apioption series.scatter.marker
- */
-
-/**
- * @extends plotOptions.scatter.point
- * @product highcharts highstock
- * @apioption series.scatter.point
- */
-
-/**
- * @extends plotOptions.scatter.states
- * @product highcharts highstock
- * @apioption series.scatter.states
- */
-
-/**
- * @extends plotOptions.scatter.tooltip
- * @product highcharts highstock
- * @apioption series.scatter.tooltip
- */
-
-/**
- * @extends plotOptions.scatter.zones
- * @product highcharts highstock
- * @apioption series.scatter.zones
- */
 
 /**
  * A `solidgauge` series. If the [type](#series<solidgauge>.type) option
@@ -3944,53 +3202,6 @@
  * @apioption series.solidgauge.data.radius
  */
 
-/**
- * @extends plotOptions.solidgauge.states
- * @product highcharts
- * @apioption series.solidgauge.data.marker.states
- */
-
-/**
- * @extends plotOptions.solidgauge.dataLabels
- * @product highcharts
- * @apioption series.solidgauge.dataLabels
- */
-
-/**
- * @extends plotOptions.solidgauge.events
- * @product highcharts
- * @apioption series.solidgauge.events
- */
-
-/**
- * @extends plotOptions.solidgauge.marker
- * @product highcharts
- * @apioption series.solidgauge.marker
- */
-
-/**
- * @extends plotOptions.solidgauge.point
- * @product highcharts
- * @apioption series.solidgauge.point
- */
-
-/**
- * @extends plotOptions.solidgauge.states
- * @product highcharts
- * @apioption series.solidgauge.states
- */
-
-/**
- * @extends plotOptions.solidgauge.tooltip
- * @product highcharts
- * @apioption series.solidgauge.tooltip
- */
-
-/**
- * @extends plotOptions.solidgauge.zones
- * @product highcharts
- * @apioption series.solidgauge.zones
- */
 
 /**
  * A `spline` series. If the [type](#series<spline>.type) option is
@@ -4058,53 +3269,7 @@
  * @apioption series.spline.data
  */
 
-/**
- * @extends plotOptions.spline.states
- * @product highcharts highstock
- * @apioption series.spline.data.marker.states
- */
 
-/**
- * @extends plotOptions.spline.dataLabels
- * @product highcharts highstock
- * @apioption series.spline.dataLabels
- */
-
-/**
- * @extends plotOptions.spline.events
- * @product highcharts highstock
- * @apioption series.spline.events
- */
-
-/**
- * @extends plotOptions.spline.marker
- * @product highcharts highstock
- * @apioption series.spline.marker
- */
-
-/**
- * @extends plotOptions.spline.point
- * @product highcharts highstock
- * @apioption series.spline.point
- */
-
-/**
- * @extends plotOptions.spline.states
- * @product highcharts highstock
- * @apioption series.spline.states
- */
-
-/**
- * @extends plotOptions.spline.tooltip
- * @product highcharts highstock
- * @apioption series.spline.tooltip
- */
-
-/**
- * @extends plotOptions.spline.zones
- * @product highcharts highstock
- * @apioption series.spline.zones
- */
 
 /**
  * A `treemap` series. If the [type](#series<treemap>.type) option is
@@ -4167,53 +3332,7 @@
  * @apioption series.treemap.data.value
  */
 
-/**
- * @extends plotOptions.treemap.states
- * @product highcharts
- * @apioption series.treemap.data.marker.states
- */
 
-/**
- * @extends plotOptions.treemap.dataLabels
- * @product highcharts
- * @apioption series.treemap.dataLabels
- */
-
-/**
- * @extends plotOptions.treemap.events
- * @product highcharts
- * @apioption series.treemap.events
- */
-
-/**
- * @extends plotOptions.treemap.marker
- * @product highcharts
- * @apioption series.treemap.marker
- */
-
-/**
- * @extends plotOptions.treemap.point
- * @product highcharts
- * @apioption series.treemap.point
- */
-
-/**
- * @extends plotOptions.treemap.states
- * @product highcharts
- * @apioption series.treemap.states
- */
-
-/**
- * @extends plotOptions.treemap.tooltip
- * @product highcharts
- * @apioption series.treemap.tooltip
- */
-
-/**
- * @extends plotOptions.treemap.zones
- * @product highcharts
- * @apioption series.treemap.zones
- */
 
 /**
  * A `waterfall` series. If the [type](#series<waterfall>.type) option
@@ -4283,53 +3402,7 @@
  * @apioption series.waterfall.data
  */
 
-/**
- * @extends plotOptions.waterfall.states
- * @product highcharts
- * @apioption series.waterfall.data.marker.states
- */
 
-/**
- * @extends plotOptions.waterfall.dataLabels
- * @product highcharts
- * @apioption series.waterfall.dataLabels
- */
-
-/**
- * @extends plotOptions.waterfall.events
- * @product highcharts
- * @apioption series.waterfall.events
- */
-
-/**
- * @extends plotOptions.waterfall.marker
- * @product highcharts
- * @apioption series.waterfall.marker
- */
-
-/**
- * @extends plotOptions.waterfall.point
- * @product highcharts
- * @apioption series.waterfall.point
- */
-
-/**
- * @extends plotOptions.waterfall.states
- * @product highcharts
- * @apioption series.waterfall.states
- */
-
-/**
- * @extends plotOptions.waterfall.tooltip
- * @product highcharts
- * @apioption series.waterfall.tooltip
- */
-
-/**
- * @extends plotOptions.waterfall.zones
- * @product highcharts
- * @apioption series.waterfall.zones
- */
 
 /**
  * When the subtitle is floating, the plot area will not move to make

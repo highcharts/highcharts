@@ -255,7 +255,42 @@ var extendedOptions = 	{
 				 * @since 4.0
 				 * @product highcharts
 				 */
-				bottom: {},
+				bottom: {
+					/**
+					 * The color of the panel.
+					 * 
+					 * @type {Color}
+					 * @default transparent
+					 * @since 4.0
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.bottom.color
+					 */
+
+					/**
+					 * The thickness of the panel.
+					 * 
+					 * @type {Number}
+					 * @default 1
+					 * @since 4.0
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.bottom.size
+					 */
+
+					/**
+					 * Whether to display the frame. Possible values are `true`, `false`,
+					 * `"auto"` to display only the frames behind the data, and `"default"`
+					 * to display faces behind the data based on the axis layout, ignoring
+					 * the point of view.
+					 * 
+					 * @validvalue ["default", "auto", true, false]
+					 * @type {Boolean|String}
+					 * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
+					 * @default default
+					 * @since 5.0.12
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.bottom.visible
+					 */
+				},
 
 				/**
 				 * The top of the frame around a 3D chart.
@@ -264,7 +299,25 @@ var extendedOptions = 	{
 				 * @since 5.0.12
 				 * @product highcharts
 				 */
-				top: {},
+				top: {
+					/**
+					 * The color of the panel.
+					 * 
+					 * @type {Color}
+					 * @default transparent
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.top.color
+					 */
+
+					/**
+					 * The pixel thickness of the panel.
+					 * 
+					 * @type {Number}
+					 * @default 1
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.top.size
+					 */
+				},
 
 				/**
 				 */
@@ -280,7 +333,44 @@ var extendedOptions = 	{
 				 * @since 4.0
 				 * @product highcharts
 				 */
-				back: {},
+				back: {
+
+					/**
+					 * The color of the panel.
+					 * 
+					 * @type {Color}
+					 * @default transparent
+					 * @since 4.0
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.back.color
+					 */
+
+					/**
+					 * Thickness of the panel.
+					 * 
+					 * @type {Number}
+					 * @default 1
+					 * @since 4.0
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.back.size
+					 */
+
+					/**
+					 * Whether to display the frame. Possible values are `true`, `false`,
+					 * `"auto"` to display only the frames behind the data, and `"default"`
+					 * to display faces behind the data based on the axis layout, ignoring
+					 * the point of view.
+					 * 
+					 * @validvalue ["default", "auto", true, false]
+					 * @type {Boolean|String}
+					 * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
+					 * @default default
+					 * @since 5.0.12
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.back.visible
+					 */
+
+				},
 
 				/**
 				 */
@@ -886,4 +976,35 @@ Chart.prototype.get3dFrame = function () {
 
 	return ret;
 };
+
+/**
+ * Note: As of v5.0.12, `frame.left` or `frame.right` should be used
+ * instead.
+ * 
+ * The side for the frame around a 3D chart.
+ * 
+ * @since 4.0
+ * @product highcharts
+ * @apioption chart.options3d.frame.side
+ */
+
+/**
+ * The color of the panel.
+ * 
+ * @type {Color}
+ * @default transparent
+ * @since 4.0
+ * @product highcharts
+ * @apioption chart.options3d.frame.side.color
+ */
+
+/**
+ * The thickness of the panel.
+ * 
+ * @type {Number}
+ * @default 1
+ * @since 4.0
+ * @product highcharts
+ * @apioption chart.options3d.frame.side.size
+ */
 

@@ -60,6 +60,19 @@ H.defaultOptions = {
 	colors: '${palette.colors}'.split(' '),
 	/*= } =*/
 
+	
+	/**
+	 * [Styled mode](http://www.highcharts.com/docs/chart-design-and-style/style-
+	 * by-css) only. Configuration object for adding SVG definitions for
+	 * reusable elements. See [gradients, shadows and patterns](http://www.
+	 * highcharts.com/docs/chart-design-and-style/gradients-shadows-and-
+	 * patterns) for more information and code examples.
+	 * 
+	 * @type {Object}
+	 * @since 5.0.0
+	 * @apioption defs
+	 */
+
 	/**
 	 */
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
