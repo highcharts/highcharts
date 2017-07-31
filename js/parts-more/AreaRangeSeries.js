@@ -514,6 +514,9 @@ seriesType('arearange', 'area', {
 		if (series.stateMarkerGraphic) {
 			series.upperStateMarkerGraphic = series.stateMarkerGraphic;
 			series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
+			// Lower marker is stored at stateMarkerGraphic
+			// to avoid reference duplication (#7021)
+			series.lowerStateMarkerGraphic = undefined;
 		}
 	},
 	haloPath: function () {
