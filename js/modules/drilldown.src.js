@@ -50,6 +50,21 @@ extend(defaultOptions.lang, {
  * @optionparent drilldown
  */
 defaultOptions.drilldown = {
+
+	/**
+	 * When this option is false, clicking a single point will drill down
+	 * all points in the same category, equivalent to clicking the X axis
+	 * label.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/drilldown/allowpointdrilldown-false/
+	 *         Don't allow point drilldown
+	 * @default true
+	 * @since 4.1.7
+	 * @product highcharts
+	 * @apioption drilldown.allowPointDrilldown
+	 */
+
 	/*= if (build.classic) { =*/
 
 	/**
@@ -67,21 +82,9 @@ defaultOptions.drilldown = {
 	 * @product highcharts highmaps
 	 */
 	activeAxisLabelStyle: {
-
-		/**
-		 */
 		cursor: 'pointer',
-
-		/**
-		 */
 		color: '${palette.highlightColor100}',
-
-		/**
-		 */
 		fontWeight: 'bold',
-
-		/**
-		 */
 		textDecoration: 'underline'			
 	},
 
@@ -100,21 +103,9 @@ defaultOptions.drilldown = {
 	 * @product highcharts highmaps
 	 */
 	activeDataLabelStyle: {
-
-		/**
-		 */
 		cursor: 'pointer',
-
-		/**
-		 */
 		color: '${palette.highlightColor100}',
-
-		/**
-		 */
 		fontWeight: 'bold',
-
-		/**
-		 */
 		textDecoration: 'underline'			
 	},
 	/*= } =*/
@@ -191,9 +182,50 @@ defaultOptions.drilldown = {
 			 */
 			y: 10
 		}
-		// relativeTo: 'plotBox'
-		// theme
+		/**
+		 * What box to align the button to. Can be either `plotBox` or
+		 * `spacingBox.
+		 * 
+		 * @type {String}
+		 * @default plotBox
+		 * @validvalues ["plotBox", "spacingBox"]
+		 * @since 3.0.8
+		 * @product highcharts highmaps
+		 * @apioption drilldown.drillUpButton.relativeTo
+		 */
+		
+		/**
+		 * A collection of attributes for the button. The object takes SVG attributes
+		 * like `fill`, `stroke`, `stroke-width` or `r`, the border radius.
+		 * The theme also supports `style`, a collection of CSS properties for
+		 * the text. Equivalent attributes for the hover state are given in
+		 * `theme.states.hover`.
+		 * 
+		 * @type {Object}
+		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+		 * style/style-by-css), drill-up button styles can be applied with the
+		 * `.highcharts-drillup-button` class.
+		 * @sample {highcharts} highcharts/drilldown/drillupbutton/
+		 *         Button theming
+		 * @sample {highmaps} highcharts/drilldown/drillupbutton/
+		 *         Button theming
+		 * @since 3.0.8
+		 * @product highcharts highmaps
+		 * @apioption drilldown.drillUpButton.theme
+		 */
 	}
+
+	/**
+	 * An array of series configurations for the drill down. Each series
+	 * configuration uses the same syntax as the [series](#series) option
+	 * set. These drilldown series are hidden by default. The drilldown
+	 * series is linked to the parent series' point by its `id`.
+	 * 
+	 * @type {Array<Object>}
+	 * @since 3.0.8
+	 * @product highcharts highmaps
+	 * @apioption drilldown.series
+	 */
 };	
 
 
