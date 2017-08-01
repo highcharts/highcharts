@@ -463,7 +463,7 @@ seriesType('waterfall', 'column', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * waterfall](#plotOptions.waterfall).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.waterfall
  * @excluding dataParser,dataURL
  * @product highcharts

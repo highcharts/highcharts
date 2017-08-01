@@ -489,7 +489,7 @@ seriesType('boxplot', 'column', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * boxplot](#plotOptions.boxplot).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.boxplot
  * @excluding dataParser,dataURL,stack
  * @product highcharts

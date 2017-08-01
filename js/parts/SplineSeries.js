@@ -161,7 +161,7 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * spline](#plotOptions.spline).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.spline
  * @excluding dataParser,dataURL
  * @product highcharts highstock

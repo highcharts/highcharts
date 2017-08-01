@@ -1063,7 +1063,7 @@ seriesType('map', 'scatter', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * map](#plotOptions.map).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.map
  * @excluding dataParser,dataURL
  * @product highmaps

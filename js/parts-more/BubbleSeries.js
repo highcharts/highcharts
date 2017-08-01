@@ -588,7 +588,7 @@ Axis.prototype.beforePadding = function () {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * bubble](#plotOptions.bubble).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.bubble
  * @excluding dataParser,dataURL,stack
  * @product highcharts

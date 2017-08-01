@@ -86,7 +86,7 @@ seriesType('polygon', 'scatter', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * polygon](#plotOptions.polygon).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.polygon
  * @excluding dataParser,dataURL,stack
  * @product highcharts highstock

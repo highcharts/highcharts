@@ -43,7 +43,7 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * areaspline](#plotOptions.areaspline).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.areaspline
  * @excluding dataParser,dataURL
  * @product highcharts highstock

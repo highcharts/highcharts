@@ -277,7 +277,7 @@ seriesType('candlestick', 'ohlc', merge(
  * To apply to all series of this specific type, apply it to [plotOptions.
  * candlestick](#plotOptions.candlestick).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.candlestick
  * @excluding dataParser,dataURL
  * @product highstock

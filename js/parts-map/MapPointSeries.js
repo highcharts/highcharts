@@ -83,7 +83,7 @@ seriesType('mappoint', 'scatter', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * mappoint](#plotOptions.mappoint).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.mappoint
  * @excluding dataParser,dataURL
  * @product highmaps

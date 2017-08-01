@@ -4538,7 +4538,7 @@ H.Series = H.seriesType('line', null, { // base series options
  * To apply to all series of this specific type, apply it to [plotOptions.
  * line](#plotOptions.line).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.line
  * @excluding dataParser,dataURL
  * @product highcharts highstock

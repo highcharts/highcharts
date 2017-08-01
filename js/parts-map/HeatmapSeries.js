@@ -271,7 +271,7 @@ seriesType('heatmap', 'scatter', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * heatmap](#plotOptions.heatmap).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.heatmap
  * @excluding dataParser,dataURL,stack
  * @product highcharts highmaps

@@ -95,7 +95,7 @@
   * Note: only available when including the boost module.
   *
   * @default  5000
-  * @apioption series.boostThreshold
+  * @apioption plotOptions.series.boostThreshold
   */
 
  /* global Float32Array */

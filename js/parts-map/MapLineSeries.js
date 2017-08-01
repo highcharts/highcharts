@@ -73,7 +73,7 @@ seriesType('mapline', 'map', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * mapline](#plotOptions.mapline).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.mapline
  * @excluding dataParser,dataURL
  * @product highmaps

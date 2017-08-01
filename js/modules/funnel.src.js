@@ -388,7 +388,7 @@ seriesType('funnel', 'pie',
  * To apply to all series of this specific type, apply it to [plotOptions.
  * funnel](#plotOptions.funnel).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.funnel
  * @excluding dataParser,dataURL,stack,xAxis,yAxis
  * @product highcharts
@@ -490,7 +490,7 @@ seriesType('pyramid', 'funnel',
  * To apply to all series of this specific type, apply it to [plotOptions.
  * pyramid](#plotOptions.pyramid).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.pyramid
  * @excluding dataParser,dataURL,stack,xAxis,yAxis
  * @product highcharts

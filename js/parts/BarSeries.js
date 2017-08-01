@@ -36,7 +36,7 @@ seriesType('bar', 'column', null, {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * bar](#plotOptions.bar).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.bar
  * @excluding dataParser,dataURL
  * @product highcharts

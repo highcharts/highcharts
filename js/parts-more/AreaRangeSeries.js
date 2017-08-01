@@ -558,7 +558,7 @@ seriesType('arearange', 'area', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * arearange](#plotOptions.arearange).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.arearange
  * @excluding dataParser,dataURL,stack
  * @product highcharts highstock

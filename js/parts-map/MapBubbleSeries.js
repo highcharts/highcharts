@@ -214,7 +214,7 @@ if (seriesTypes.bubble) {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * mapbubble](#plotOptions.mapbubble).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.mapbubble
  * @excluding dataParser,dataURL
  * @product highmaps

@@ -842,7 +842,7 @@ seriesType('pie', 'line', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * pie](#plotOptions.pie).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.pie
  * @excluding dataParser,dataURL,stack,xAxis,yAxis
  * @product highcharts

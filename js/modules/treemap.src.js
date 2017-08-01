@@ -1320,7 +1320,7 @@ seriesType('treemap', 'scatter', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * treemap](#plotOptions.treemap).
  * 
- * @type {Array<Object>}
+ * @type {Object}
  * @extends series,plotOptions.treemap
  * @excluding dataParser,dataURL,stack
  * @product highcharts
