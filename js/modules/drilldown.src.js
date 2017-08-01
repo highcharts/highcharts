@@ -143,6 +143,8 @@ defaultOptions.drilldown = {
 	animation: {
 
 		/**
+		 * Duration for the drilldown animation.
+		 * @default 500
 		 */
 		duration: 500
 	},
@@ -171,16 +173,32 @@ defaultOptions.drilldown = {
 		position: { 
 
 			/**
+			 * Horizontal alignment.
+			 * @type {String}
 			 */
 			align: 'right',
 
 			/**
+			 * The X offset of the button.
+			 * @type {Number}
 			 */
 			x: -10,
 
 			/**
+			 * The Y offset of the button.
+			 * @type {Number}
 			 */
 			y: 10
+
+			/**
+			 * Vertical alignment of the button.
+			 *
+			 * @type {String}
+			 * @default top
+			 * @validvalues ["top", "middle", "bottom"]
+			 * @product highcharts highmaps
+			 * @apioption drilldown.drillUpButton.position.verticalAlign
+			 */
 		}
 		/**
 		 * What box to align the button to. Can be either `plotBox` or

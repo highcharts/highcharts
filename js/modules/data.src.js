@@ -540,6 +540,7 @@ Highcharts.extend(Data.prototype, {
 	},
 
 	/**
+	 * Parse a Google spreadsheet.
 	 */
 	parseGoogleSpreadsheet: function () {
 		var self = this,

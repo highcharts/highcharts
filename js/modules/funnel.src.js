@@ -34,6 +34,7 @@ seriesType('funnel', 'pie',
 {
 
 	/**
+	 * Initial animation is by default disabled for the funnel chart.
 	 */
 	animation: false,
 

@@ -94,20 +94,10 @@ merge(true, defaultOptions.navigation,
 	 * @sample {highmaps} highcharts/navigation/menustyle/ Light gray menu background
 	 * @default { "border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0" }
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	menuStyle: {
-
-		/**
-		 */
 		border: '1px solid ${palette.neutralColor40}',
-
-		/**
-		 */
 		background: '${palette.backgroundColor}',
-
-		/**
-		 */
 		padding: '5px 0'
 	},
 
@@ -128,25 +118,14 @@ merge(true, defaultOptions.navigation,
 	 * @product highcharts highstock highmaps
 	 */
 	menuItemStyle: {
-
-		/**
-		 */
 		padding: '0.5em 1em',
-
-		/**
-		 */
 		background: 'none',
-
-		/**
-		 */
 		color: '${palette.neutralColor80}',
-
 		/**
+		 * Defaults to `14px` on touch devices and `11px` on desktop.
+		 * @type {String}
 		 */
 		fontSize: isTouchDevice ? '14px' : '11px',
-
-		/**
-		 */
 		transition: 'background 250ms, color 250ms'
 	},
 
@@ -167,13 +146,7 @@ merge(true, defaultOptions.navigation,
 	 * @product highcharts highstock highmaps
 	 */
 	menuItemHoverStyle: {
-
-		/**
-		 */
 		background: '${palette.highlightColor80}',
-
-		/**
-		 */
 		color: '${palette.backgroundColor}'
 	},
 
@@ -242,16 +215,18 @@ merge(true, defaultOptions.navigation,
 		 * @product highcharts highstock highmaps
 		 */
 		theme: {
-
 			/**
+			 * The default fill exists only to capture hover events.
+			 * @type {String}
 			 */
-			fill: '${palette.backgroundColor}', // capture hover
-
+			fill: '${palette.backgroundColor}',
 			/**
+			 * @type {String}
 			 */
 			stroke: 'none',
-
 			/**
+			 * @type {Number}
+			 * @default 5
 			 */
 			padding: 5
 		}
@@ -351,13 +326,16 @@ defaultOptions.exporting = {
 		contextButton: {
 
 			/**
+			 * The class name of the context button.
+			 * @type {String}
 			 */
 			className: 'highcharts-contextbutton',
 
 			/**
+			 * The class name of the menu appearing from the button.
+			 * @type {String}
 			 */
 			menuClassName: 'highcharts-contextmenu',
-			//x: -10,
 
 			/**
 			 * The symbol for the button. Points to a definition function in
@@ -376,27 +354,41 @@ defaultOptions.exporting = {
 			symbol: 'menu',
 
 			/**
+			 * The key to a [lang](#lang) option setting that is used for the
+			 * button`s title tooltip. When the key is `contextButtonTitle`, it
+			 * refers to [lang.contextButtonTitle](#lang.contextButtonTitle)
+			 * that defaults to "Chart context menu".
+			 * @type {String}
 			 */
 			_titleKey: 'contextButtonTitle',
 
 			/**
-			 * A collection of config options for the menu items. Each options
-			 * object consists of a `text` option which is a string to show in
-			 * the menu item, as well as an `onclick` parameter which is a callback
-			 * function to run on click.
+			 * A collection of strings pointing to config options for the menu
+			 * items. The config options are defined in the
+			 * `menuItemDefinitions` option.
 			 * 
 			 * By default, there is the "Print" menu item plus one menu item
-			 * for each of the available export types. Menu items can be customized
-			 * by defining a new array of items and assigning `null` to unwanted
-			 * positions (see override example below).
+			 * for each of the available export types. 
+			 *
+			 * Defaults to 
+			 * <pre>
+			 * [
+			 *	'printChart',
+			 *	'separator',
+			 *	'downloadPNG',
+			 *	'downloadJPEG',
+			 *	'downloadPDF',
+			 *	'downloadSVG'
+			 * ]
+			 * </pre>
 			 * 
-			 * @type {Array<Object>}
-			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
-			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-menuitems/ Override the menu items
-			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
-			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-menuitems/ Override the menu items
-			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
-			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-menuitems/ Override the menu items
+			 * @type {Array<String>|Array<Object>}
+	 		 * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
+	 		 *         Menu item definitions
+	 		 * @sample {highstock} highcharts/exporting/menuitemdefinitions/
+	 		 *         Menu item definitions
+	 		 * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
+	 		 *         Menu item definitions
 			 * @since 2.0
 			 * @product highcharts highstock highmaps
 			 */
@@ -410,9 +402,6 @@ defaultOptions.exporting = {
 			]
 		}
 	},
-	// docs. Created API item with since:next. Add information and link to sample
-	// from menuItems too.
-
 	/**
 	 * An object consisting of definitions for the menu items in the context
 	 * menu. Each key value pair has a `key` that is referenced in the
@@ -436,63 +425,48 @@ defaultOptions.exporting = {
 	 * </dl>
 	 * 
 	 * @type {Object}
-	 * @sample {highcharts} highcharts/exporting/menuitemdefinitions/ Menu item definitions
-	 * @sample {highstock} highcharts/exporting/menuitemdefinitions/ Menu item definitions
-	 * @sample {highmaps} highcharts/exporting/menuitemdefinitions/ Menu item definitions
-	 * @since next
-	 * @product highcharts highstock highmaps
+	 * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
+	 *         Menu item definitions
+	 * @sample {highstock} highcharts/exporting/menuitemdefinitions/
+	 *         Menu item definitions
+	 * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
+	 *         Menu item definitions
+	 * @since 5.0.13
 	 */
 	menuItemDefinitions: {
 
 		/**
+		 * @ignore
 		 */
 		printChart: {
-
-			/**
-			 */
 			textKey: 'printChart',
-
-			/**
-			 */
 			onclick: function () {
 				this.print();
 			}
 		},
 
 		/**
+		 * @ignore
 		 */
 		separator: {
-
-			/**
-			 */
 			separator: true
 		},
 
 		/**
+		 * @ignore
 		 */
 		downloadPNG: {
-
-			/**
-			 */
 			textKey: 'downloadPNG',
-
-			/**
-			 */
 			onclick: function () {
 				this.exportChart();
 			}
 		},
 
 		/**
+		 * @ignore
 		 */
 		downloadJPEG: {
-
-			/**
-			 */
 			textKey: 'downloadJPEG',
-
-			/**
-			 */
 			onclick: function () {
 				this.exportChart({
 					type: 'image/jpeg'
@@ -501,15 +475,10 @@ defaultOptions.exporting = {
 		},
 
 		/**
+		 * @ignore
 		 */
 		downloadPDF: {
-
-			/**
-			 */
 			textKey: 'downloadPDF',
-
-			/**
-			 */
 			onclick: function () {
 				this.exportChart({
 					type: 'application/pdf'
@@ -518,15 +487,10 @@ defaultOptions.exporting = {
 		},
 
 		/**
+		 * @ignore
 		 */
 		downloadSVG: {
-
-			/**
-			 */
 			textKey: 'downloadSVG',
-
-			/**
-			 */
 			onclick: function () {
 				this.exportChart({
 					type: 'image/svg+xml'
