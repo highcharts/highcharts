@@ -42,6 +42,38 @@ var arrayMax = H.arrayMax,
 	seriesProcessData = seriesProto.processData,
 	pointTooltipFormatter = Point.prototype.tooltipFormatter;
 
+
+/**
+ * Compare the values of the series against the first non-null, non-
+ * zero value in the visible range. The y axis will show percentage
+ * or absolute change depending on whether `compare` is set to `"percent"`
+ * or `"value"`. When this is applied to multiple series, it allows
+ * comparing the development of the series against each other.
+ * 
+ * @type {String}
+ * @see [compareBase](#plotOptions.series.compareBase), [Axis.setCompare()](#Axis.
+ * setCompare())
+ * @sample {highstock} stock/plotoptions/series-compare-percent/ Percent
+ * @sample {highstock} stock/plotoptions/series-compare-value/ Value
+ * @default undefined
+ * @since 1.0.1
+ * @product highstock
+ * @apioption plotOptions.series.compare
+ */
+
+/**
+ * When [compare](#plotOptions.series.compare) is `percent`, this option
+ * dictates whether to use 0 or 100 as the base of comparison.
+ * 
+ * @validvalue [0, 100]
+ * @type {Number}
+ * @sample {highstock} / Compare base is 100
+ * @default 0
+ * @since 5.0.6
+ * @product highstock
+ * @apioption plotOptions.series.compareBase
+ */
+
 /**
  * Factory function for creating new stock charts. Creates a new {@link Chart|
  * Chart} object with different default options than the basic Chart.

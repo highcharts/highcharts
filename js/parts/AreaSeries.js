@@ -36,6 +36,68 @@ var color = H.color,
 seriesType('area', 'line', {
 
 	/**
+	 * Fill color or gradient for the area. When `null`, the series' `color`
+	 * is used with the series' `fillOpacity`.
+	 * 
+	 * @type {Color}
+	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the fill color can be set with the `.highcharts-
+	 * area` class name.
+	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/ Null by default
+	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/ Gradient
+	 * @default null
+	 * @product highcharts highstock
+	 * @apioption plotOptions.area.fillColor
+	 */
+
+	/**
+	 * Fill opacity for the area. When you set an explicit `fillColor`,
+	 * the `fillOpacity` is not applied. Instead, you should define the
+	 * opacity in the `fillColor` with an rgba color definition. The `fillOpacity`
+	 * setting, also the default setting, overrides the alpha component
+	 * of the `color` setting.
+	 * 
+	 * @type {Number}
+	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the fill opacity can be set with the `.highcharts-
+	 * area` class name.
+	 * @sample {highcharts} highcharts/plotoptions/area-fillopacity/ Automatic fill color and fill opacity of 0.1
+	 * @default {highcharts} 0.75
+	 * @default {highstock} .75
+	 * @product highcharts highstock
+	 * @apioption plotOptions.area.fillOpacity
+	 */
+
+	/**
+	 * A separate color for the graph line. By default the line takes the
+	 * `color` of the series, but the lineColor setting allows setting a
+	 * separate color for the line without altering the `fillColor`.
+	 * 
+	 * @type {Color}
+	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the line stroke can be set with the `.highcharts-
+	 * graph` class name.
+	 * @sample {highcharts} highcharts/plotoptions/area-linecolor/ Dark gray line
+	 * @default null
+	 * @product highcharts highstock
+	 * @apioption plotOptions.area.lineColor
+	 */
+
+	/**
+	 * A separate color for the negative part of the area.
+	 * 
+	 * @type {Color}
+	 * @see [negativeColor](#plotOptions.area.negativeColor). In [styled mode](http://www.
+	 * highcharts.com/docs/chart-design-and-style/style-by-css), a negative
+	 * color is set with the `.highcharts-negative` class name ([view live
+	 * demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
+	 * negative-color/)).
+	 * @since 3.0
+	 * @product highcharts
+	 * @apioption plotOptions.area.negativeFillColor
+	 */
+	
+	/**
 	 * When this is true, the series will not cause the Y axis to cross
 	 * the zero plane (or [threshold](#plotOptions.series.threshold) option)
 	 * unless the data actually crosses the plane.
@@ -64,10 +126,21 @@ seriesType('area', 'line', {
 	 * @product highcharts highstock
 	 */
 	threshold: 0
-	// trackByArea: false,
-	// lineColor: null, // overrides color, but lets fillColor be unaltered
-	// fillOpacity: 0.75,
-	// fillColor: null
+	
+	/**
+	 * Whether the whole area or just the line should respond to mouseover
+	 * tooltips and other mouse or touch events.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/plotoptions/area-trackbyarea/ Display the tooltip when the     area is hovered
+	 * @sample {highstock} highcharts/plotoptions/area-trackbyarea/ Display the tooltip when the     area is hovered
+	 * @default false
+	 * @since 1.1.6
+	 * @product highcharts highstock
+	 * @apioption plotOptions.area.trackByArea
+	 */
+	
+
 }, /** @lends seriesTypes.area.prototype */ {
 	singleStacks: false,
 	/** 

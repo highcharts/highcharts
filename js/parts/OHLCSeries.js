@@ -19,11 +19,31 @@ var each = H.each,
  * @augments seriesTypes.column
  */
 /**
+ * An OHLC chart is a style of financial chart used to describe price
+ * movements over time. It displays open, high, low and close values per data
+ * point.
+ *
+ * @sample stock/demo/ohlc/ OHLC chart
  * @extends {plotOptions.column}
+ * @excluding borderColor,borderRadius,borderWidth
  * @product highstock
  * @optionparent plotOptions.ohlc
  */
 seriesType('ohlc', 'column', {
+
+	/**
+	 * The approximate pixel width of each group. If for example a series
+	 * with 30 points is displayed over a 600 pixel wide plot area, no grouping
+	 * is performed. If however the series contains so many points that
+	 * the spacing is less than the groupPixelWidth, Highcharts will try
+	 * to group it into appropriate groups so that each is more or less
+	 * two pixels wide. Defaults to `5`.
+	 * 
+	 * @type {Number}
+	 * @default 5
+	 * @product highstock
+	 * @apioption plotOptions.ohlc.dataGrouping.groupPixelWidth
+	 */
 
 	/**
 	 * The pixel width of the line/border. Defaults to `1`.
@@ -83,11 +103,21 @@ seriesType('ohlc', 'column', {
 		}
 	},
 
+	
+	/**
+	 * Line color for up points.
+	 * 
+	 * @type {Color}
+	 * @product highstock
+	 * @apioption plotOptions.ohlc.upColor
+	 */
+	
+	/*= } =*/
+
+
 	/**
 	 */
 	stickyTracking: true
-	//upColor: undefined
-	/*= } =*/
 
 }, /** @lends seriesTypes.ohlc */ {
 	directTouch: false,
@@ -251,6 +281,83 @@ seriesType('ohlc', 'column', {
 			(this.open < this.close ? ' highcharts-point-up' : ' highcharts-point-down');
 	}
 });
-/* ****************************************************************************
- * End OHLC series code													   *
- *****************************************************************************/
+
+/**
+ * A `ohlc` series. If the [type](#series<ohlc>.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [pointOptions.series](#pointOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * ohlc](#plotOptions.ohlc).
+ * 
+ * @type {Array<Object>}
+ * @extends series,plotOptions.ohlc
+ * @excluding dataParser,dataURL
+ * @product highstock
+ * @apioption series.ohlc
+ */
+
+/**
+ * An array of data points for the series. For the `ohlc` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 5 or 4 values. In this case, the values
+ * correspond to `x,open,high,low,close`. If the first value is a string,
+ * it is applied as the name of the point, and the `x` value is inferred.
+ * The `x` value can also be omitted, in which case the inner arrays
+ * should be of length 4\. Then the `x` value is automatically calculated,
+ * either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options.
+ * 
+ * <pre>data: [
+ *     [0, 6, 5, 6, 7],
+ *     [1, 9, 4, 8, 2],
+ *     [2, 6, 3, 4, 10]
+ * ]</pre>
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series<ohlc>.turboThreshold),
+ * this option is not available.
+ * 
+ * <pre>data: [{
+ *     x: 1,
+ *     open: 3,
+ *     high: 4,
+ *     low: 5,
+ *     close: 2,
+ *     name: "Point2",
+ *     color: "#00FF00"
+ * }, {
+ *     x: 1,
+ *     open: 4,
+ *     high: 3,
+ *     low: 6,
+ *     close: 7,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
+ * 
+ * @type {Array<Object|Array>}
+ * @extends series<arearange>.data
+ * @excluding y,marker
+ * @product highstock
+ * @apioption series.ohlc.data
+ */
+
+/**
+ * The closing value of each data point.
+ * 
+ * @type {Number}
+ * @product highstock
+ * @apioption series.ohlc.data.close
+ */
+
+/**
+ * The opening value of each data point.
+ * 
+ * @type {Number}
+ * @product highstock
+ * @apioption series.ohlc.data.open
+ */

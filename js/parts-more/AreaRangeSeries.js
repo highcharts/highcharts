@@ -142,6 +142,16 @@ seriesType('arearange', 'area', {
 		yHigh: 0
 	}
 
+	/**
+	 * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
+	 * can be an object configuration containing `color`, `offsetX`, `offsetY`,
+	 *  `opacity` and `width`.
+	 * 
+	 * @type {Boolean|Object}
+	 * @product highcharts
+	 * @apioption plotOptions.arearange.shadow
+	 */
+
 // Prototype members
 }, {
 	pointArrayMap: ['low', 'high'],

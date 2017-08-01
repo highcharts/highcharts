@@ -12,9 +12,36 @@ import './Chart.js';
 import './Series.js';
 import './Options.js';
 import './Scrollbar.js';
-/* ****************************************************************************
- * Start Navigator code														*
- *****************************************************************************/
+
+/**
+ * Options for the corresponding navigator series if `showInNavigator`
+ * is `true` for this series. Available options are the same as any
+ * series, documented at [plotOptions](#plotOptions.series) and [series](#series).
+ * 
+ * 
+ * These options are merged with options in [navigator.series](#navigator.
+ * series), and will take precedence if the same option is defined both
+ * places.
+ * 
+ * @type {Object}
+ * @see [navigator.series](#navigator.series)
+ * @default undefined
+ * @since 5.0.0
+ * @product highstock
+ * @apioption plotOptions.series.navigatorOptions
+ */
+
+/**
+ * Whether or not to show the series in the navigator. Takes precedence
+ * over [navigator.baseSeries](#navigator.baseSeries) if defined.
+ * 
+ * @type {Boolean}
+ * @default undefined
+ * @since 5.0.0
+ * @product highstock
+ * @apioption plotOptions.series.showInNavigator
+ */
+
 var addEvent = H.addEvent,
 	Axis = H.Axis,
 	Chart = H.Chart,
@@ -1980,6 +2007,3 @@ Chart.prototype.callbacks.push(function (chart) {
 	}
 });
 
-/* ****************************************************************************
- * End Navigator code														  *
- *****************************************************************************/
