@@ -1009,6 +1009,7 @@ gulp.task('jsdoc', (cb) => {
     const dir = optionsClassReference.templateDir;
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
+        './../api-docs/include/*.*',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
