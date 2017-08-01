@@ -3299,11 +3299,6 @@
  * @apioption yAxis.tickWidth
  */
 
-/**
- * @extends xAxis.events
- * @product highcharts highstock
- * @apioption yAxis.events
- */
 
 /**
  * What part of the string the given position is anchored to. Can be
@@ -4200,159 +4195,27 @@
  * @apioption chart.mapTransforms
  */
 
-/**
- * @type {Boolean}
- * @default true
- * @product highmaps
- * @apioption colorAxis.allowDecimals
- */
 
-/**
- * Determines how to set each data class' color if no individual color
- * is set. The default value, `tween`, computes intermediate colors
- * between `minColor` and `maxColor`. The other possible value, `category`,
- * pulls colors from the global or chart specific [colors](#colors)
- * array.
- * 
- * @validvalue ["tween", "category"]
- * @type {String}
- * @sample {highmaps} maps/coloraxis/dataclasscolor/ Category colors
- * @default tween
- * @product highmaps
- * @apioption colorAxis.dataClassColor
- */
 
-/**
- * Color of the grid lines extending from the axis across the gradient.
- * 
- * @type {Color}
- * @sample {highmaps} maps/coloraxis/gridlines/ Grid lines demonstrated
- * @default #e6e6e6
- * @product highmaps
- * @apioption colorAxis.gridLineColor
- */
 
-/**
- * The maximum value of the axis in terms of map point values. If `null`,
- * the max value is automatically calculated. If the `endOnTick` option
- * is true, the max value might be rounded up.
- * 
- * @type {Number}
- * @sample {highmaps} maps/coloraxis/gridlines/ Explicit min and max to reduce the effect of outliers
- * @product highmaps
- * @apioption colorAxis.max
- */
 
-/**
- * The minimum value of the axis in terms of map point values. If `null`,
- * the min value is automatically calculated. If the `startOnTick`
- * option is true, the min value might be rounded down.
- * 
- * @type {Number}
- * @sample {highmaps} maps/coloraxis/gridlines/ Explicit min and max to reduce the effect of outliers
- * @product highmaps
- * @apioption colorAxis.min
- */
 
-/**
- * Whether to reverse the axis so that the highest number is closest
- * to the origin. Defaults to `false` in a horizontal legend and `true`
- * in a vertical legend, where the smallest value starts on top.
- * 
- * @type {Boolean}
- * @product highmaps
- * @apioption colorAxis.reversed
- */
 
-/**
- * Color stops for the gradient of a scalar color axis. Use this in
- * cases where a linear gradient between a `minColor` and `maxColor`
- * is not sufficient. The stops is an array of tuples, where the first
- * item is a float between 0 and 1 assigning the relative position in
- * the gradient, and the second item is the color.
- * 
- * @type {Array<Array>}
- * @sample {highmaps} maps/demo/heatmap/ Heatmap with three color stops
- * @product highmaps
- * @apioption colorAxis.stops
- */
 
-/**
- * The interval of the tick marks in axis units. When `null`, the tick
- * interval is computed to approximately follow the `tickPixelInterval`.
- * 
- * @type {Number}
- * @product highmaps
- * @apioption colorAxis.tickInterval
- */
 
-/**
- * The type of interpolation to use for the color axis. Can be `linear`
- * or `logarithmic`.
- * 
- * @validvalue ["linear", "logarithmic"]
- * @type {String}
- * @default linear
- * @product highmaps
- * @apioption colorAxis.type
- */
 
-/**
- * An array of data classes or ranges for the choropleth map. If none
- * given, the color axis is scalar and values are distributed as a gradient
- * between the minimum and maximum colors.
- * 
- * @type {Array<Object>}
- * @sample {highmaps} maps/demo/data-class-ranges/ Multiple ranges
- * @sample {highmaps} maps/demo/data-class-two-ranges/ Two ranges
- * @product highmaps
- * @apioption colorAxis.dataClasses
- */
 
-/**
- * The color of each data class. If not set, the color is pulled from
- * the global or chart-specific [colors](#colors) array. In 
- * [styled mode](http://www.highcharts.com/docs/chart-design-and-
- * style/style-by-css), this option is ignored. Instead, use colors defined in
- * CSS.
- * 
- * @type {Color}
- * @sample {highmaps} maps/demo/data-class-two-ranges/ Explicit colors
- * @product highmaps
- * @apioption colorAxis.dataClasses.color
- */
 
-/**
- * The start of the value range that the data class represents, relating
- * to the point value.
- * 
- * @type {Number}
- * @product highmaps
- * @apioption colorAxis.dataClasses.from
- */
 
-/**
- * The name of the data class as it appears in the legend. If no name
- * is given, it is automatically created based on the `from` and `to`
- * values. For full programmatic control, [legend.labelFormatter](#legend.
- * labelFormatter) can be used. In the formatter, `this.from` and `this.
- * to` can be accessed.
- * 
- * @type {String}
- * @sample {highmaps} maps/coloraxis/dataclasses-name/ Named data classes
- * @sample {highmaps} maps/coloraxis/dataclasses-labelformatter/ Formatted data classes
- * @product highmaps
- * @apioption colorAxis.dataClasses.name
- */
 
-/**
- * The end of the value range that the data class represents, relating
- * to the point value.
- * 
- * @type {Number}
- * @product highmaps
- * @apioption colorAxis.dataClasses.to
- */
+
+
+
+
+
+
+
+
 
 /**
  * Credits for map source to be concatenated with conventional credit

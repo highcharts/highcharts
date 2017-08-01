@@ -32,11 +32,116 @@ ColorAxis = H.ColorAxis = function () {
 };
 extend(ColorAxis.prototype, Axis.prototype);
 extend(ColorAxis.prototype, {
-	/**	 
+	/**
+	 * A color axis for choropleth maps and heat maps. Visually, the color axis
+	 * will appear as a gradient or as separate items inside the legend,
+	 * depending on whether the axis is scalar or based on data classes.
+	 *
+	 * For supported color formats, see the 
+	 * [docs article about colors](http://www.highcharts.com/docs/chart-design-and-style/colors).
+	 *
+	 * A scalar color axis is represented by a gradient. The colors either range
+	 * between the [minColor](#colorAxis.minColor) and the [maxColor](#colorAxis.maxColor),
+	 * or for more fine grained control the colors can be
+	 * defined in [stops](#colorAxis.stops). Often times, the color axis needs
+	 * to be adjusted to get the right color spread for the data. In addition to
+	 * stops, consider using a logarithmic [axis type](#colorAxis.type), or
+	 * setting [min](#colorAxis.min) and [max](#colorAxis.max) to avoid the
+	 * colors being determined by outliers.
+	 *
+	 * When [dataClasses](#colorAxis.dataClasses) are used, the ranges are
+	 * subdivided into separate classes like categories based on their values.
+	 * This can be used for ranges between two values, but also for a true
+	 * category. However, when your data is categorized, it may be as convenient
+	 * to add each category to a separate series.
+	 *
+	 * See [the Axis object](#Axis) for programmatic access to the axis.
 	 * @extends {xAxis}
+	 * @excluding allowDecimals,alternateGridColor,breaks,categories,crosshair,dateTimeLabelFormats,linkedTo,maxZoom,minRange,minTickInterval,offset,opposite,plotBands,plotLines,showEmpty,title
+	 * @product highcharts highmaps
 	 * @optionparent colorAxis
 	 */
 	defaultColorAxisOptions: {
+
+		/**
+		 * Whether to allow decimals on the color axis.
+		 * @type {Boolean}
+		 * @default true
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.allowDecimals
+		 */
+		
+		/**
+		 * Determines how to set each data class' color if no individual color
+		 * is set. The default value, `tween`, computes intermediate colors
+		 * between `minColor` and `maxColor`. The other possible value, `category`,
+		 * pulls colors from the global or chart specific [colors](#colors)
+		 * array.
+		 * 
+		 * @validvalue ["tween", "category"]
+		 * @type {String}
+		 * @sample {highmaps} maps/coloraxis/dataclasscolor/ Category colors
+		 * @default tween
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.dataClassColor
+		 */
+		
+		/**
+		 * An array of data classes or ranges for the choropleth map. If none
+		 * given, the color axis is scalar and values are distributed as a gradient
+		 * between the minimum and maximum colors.
+		 * 
+		 * @type {Array<Object>}
+		 * @sample {highmaps} maps/demo/data-class-ranges/ Multiple ranges
+		 * @sample {highmaps} maps/demo/data-class-two-ranges/ Two ranges
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.dataClasses
+		 */
+		
+		/**
+		 * The color of each data class. If not set, the color is pulled from
+		 * the global or chart-specific [colors](#colors) array. In 
+		 * [styled mode](http://www.highcharts.com/docs/chart-design-and-
+		 * style/style-by-css), this option is ignored. Instead, use colors defined in
+		 * CSS.
+		 * 
+		 * @type {Color}
+		 * @sample {highmaps} maps/demo/data-class-two-ranges/ Explicit colors
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.dataClasses.color
+		 */
+
+		/**
+		 * The start of the value range that the data class represents, relating
+		 * to the point value.
+		 * 
+		 * @type {Number}
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.dataClasses.from
+		 */
+
+		/**
+		 * The name of the data class as it appears in the legend. If no name
+		 * is given, it is automatically created based on the `from` and `to`
+		 * values. For full programmatic control, [legend.labelFormatter](#legend.
+		 * labelFormatter) can be used. In the formatter, `this.from` and `this.
+		 * to` can be accessed.
+		 * 
+		 * @type {String}
+		 * @sample {highmaps} maps/coloraxis/dataclasses-name/ Named data classes
+		 * @sample {highmaps} maps/coloraxis/dataclasses-labelformatter/ Formatted data classes
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.dataClasses.name
+		 */
+
+		/**
+		 * The end of the value range that the data class represents, relating
+		 * to the point value.
+		 * 
+		 * @type {Number}
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.dataClasses.to
+		 */
 
 		/**
 		 */
@@ -47,18 +152,52 @@ extend(ColorAxis.prototype, {
 		 * padding of 0.05 will make a 100px axis 5px longer.
 		 * 
 		 * @type {Number}
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		minPadding: 0,
+
+		/**
+		 * The maximum value of the axis in terms of map point values. If `null`,
+		 * the max value is automatically calculated. If the `endOnTick` option
+		 * is true, the max value might be rounded up.
+		 * 
+		 * @type {Number}
+		 * @sample {highmaps} maps/coloraxis/gridlines/
+		 *         Explicit min and max to reduce the effect of outliers
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.max
+		 */
+		
+		/**
+		 * The minimum value of the axis in terms of map point values. If `null`,
+		 * the min value is automatically calculated. If the `startOnTick`
+		 * option is true, the min value might be rounded down.
+		 * 
+		 * @type {Number}
+		 * @sample {highmaps} maps/coloraxis/gridlines/
+		 *         Explicit min and max to reduce the effect of outliers
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.min
+		 */
 
 		/**
 		 * Padding of the max value relative to the length of the axis. A
 		 * padding of 0.05 will make a 100px axis 5px longer.
 		 * 
 		 * @type {Number}
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		maxPadding: 0,
+
+		/**
+		 * Color of the grid lines extending from the axis across the gradient.
+		 * 
+		 * @type {Color}
+		 * @sample {highmaps} maps/coloraxis/gridlines/ Grid lines demonstrated
+		 * @default #e6e6e6
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.gridLineColor
+		 */
 
 		/**
 		 * The width of the grid lines extending from the axis across the
@@ -67,17 +206,26 @@ extend(ColorAxis.prototype, {
 		 * @type {Number}
 		 * @sample {highmaps} maps/coloraxis/gridlines/ Grid lines demonstrated
 		 * @default 1
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		gridLineWidth: 1,
 
+		/**
+		 * The interval of the tick marks in axis units. When `null`, the tick
+		 * interval is computed to approximately follow the `tickPixelInterval`.
+		 * 
+		 * @type {Number}
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.tickInterval
+		 */
+		
 		/**
 		 * If [tickInterval](#colorAxis.tickInterval) is `null` this option
 		 * sets the approximate pixel interval of the tick marks.
 		 * 
 		 * @type {Number}
 		 * @default 72
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		tickPixelInterval: 72,
 
@@ -87,7 +235,7 @@ extend(ColorAxis.prototype, {
 		 * 
 		 * @type {Boolean}
 		 * @default true
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		startOnTick: true,
 
@@ -98,7 +246,7 @@ extend(ColorAxis.prototype, {
 		 * 
 		 * @type {Boolean}
 		 * @default true
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		endOnTick: true,
 
@@ -113,7 +261,7 @@ extend(ColorAxis.prototype, {
 		 * 
 		 * @type {Object}
 		 * @sample {highmaps} maps/coloraxis/marker/ Black marker
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		marker: {
 
@@ -122,7 +270,7 @@ extend(ColorAxis.prototype, {
 			 * to disable animation. Defaults to `{ duration: 50 }`.
 			 * 
 			 * @type {Object|Boolean}
-			 * @product highmaps
+			 * @product highcharts highmaps
 			 */
 			animation: {
 
@@ -141,7 +289,7 @@ extend(ColorAxis.prototype, {
 			 * 
 			 * @type {Color}
 			 * @default #999999
-			 * @product highmaps
+			 * @product highcharts highmaps
 			 */
 			color: '${palette.neutralColor40}'
 			/*= } =*/
@@ -155,7 +303,7 @@ extend(ColorAxis.prototype, {
 		 * 
 		 * @type {Object}
 		 * @extends xAxis.labels
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		labels: {
 
@@ -168,7 +316,7 @@ extend(ColorAxis.prototype, {
 			 * @validvalue [null, "justify"]
 			 * @type {String}
 			 * @default justify
-			 * @product highmaps
+			 * @product highcharts highmaps
 			 */
 			overflow: 'justify',
 
@@ -190,7 +338,7 @@ extend(ColorAxis.prototype, {
 		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
 		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
 		 * @default #e6ebf5
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		minColor: '${palette.highlightColor10}',
 
@@ -207,13 +355,47 @@ extend(ColorAxis.prototype, {
 		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
 		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
 		 * @default #003399
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		maxColor: '${palette.highlightColor100}',
 
 		/**
+		 * Color stops for the gradient of a scalar color axis. Use this in
+		 * cases where a linear gradient between a `minColor` and `maxColor`
+		 * is not sufficient. The stops is an array of tuples, where the first
+		 * item is a float between 0 and 1 assigning the relative position in
+		 * the gradient, and the second item is the color.
+		 * 
+		 * @type {Array<Array>}
+		 * @sample {highmaps} maps/demo/heatmap/ Heatmap with three color stops
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.stops
+		 */
+
+		/**
 		 */
 		tickLength: 5,
+
+		/**
+		 * The type of interpolation to use for the color axis. Can be `linear`
+		 * or `logarithmic`.
+		 * 
+		 * @validvalue ["linear", "logarithmic"]
+		 * @type {String}
+		 * @default linear
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.type
+		 */
+
+		/**
+		 * Whether to reverse the axis so that the highest number is closest
+		 * to the origin. Defaults to `false` in a horizontal legend and `true`
+		 * in a vertical legend, where the smallest value starts on top.
+		 * 
+		 * @type {Boolean}
+		 * @product highcharts highmaps
+		 * @apioption colorAxis.reversed
+		 */
 
 		/**
 		 * Whether to display the colorAxis in the legend.
@@ -222,7 +404,7 @@ extend(ColorAxis.prototype, {
 		 * @see [heatmap.showInLegend](#series<heatmap>.showInLegend)
 		 * @default true
 		 * @since 4.2.7
-		 * @product highmaps
+		 * @product highcharts highmaps
 		 */
 		showInLegend: true
 	},
