@@ -977,453 +977,68 @@
 
 
 
-/**
- * Allow the dial to overshoot the end of the perimeter axis by this
- * many degrees. Say if the gauge axis goes from 0 to 60, a value of
- * 100, or 1000, will show 5 degrees beyond the end of the axis.
- * 
- * @type {Number}
- * @see [wrap](#plotOptions.gauge.wrap)
- * @sample {highcharts} highcharts/plotoptions/gauge-overshoot/ Allow 5 degrees overshoot
- * @default 0
- * @since 3.0.10
- * @product highcharts
- * @apioption plotOptions.gauge.overshoot
- */
-
-/**
- * When this option is `true`, the dial will wrap around the axes. For
- * instance, in a full-range gauge going from 0 to 360, a value of 400
- * will point to 40\. When `wrap` is `false`, the dial stops at 360.
- * 
- * @type {Boolean}
- * @see [overshoot](#plotOptions.gauge.overshoot)
- * @default true
- * @since 3.0
- * @product highcharts
- * @apioption plotOptions.gauge.wrap
- */
-
-/**
- * The background or fill color of the gauge's dial.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default #000000
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.dial.backgroundColor
- */
-
-/**
- * The length of the dial's base part, relative to the total radius
- * or length of the dial.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default 70%
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.dial.baseLength
- */
-
-/**
- * The pixel width of the base of the gauge dial. The base is the part
- * closest to the pivot, defined by baseLength.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default 3
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.dial.baseWidth
- */
-
-/**
- * The border color or stroke of the gauge's dial. By default, the borderWidth
- * is 0, so this must be set in addition to a custom border color.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default #cccccc
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.dial.borderColor
- */
-
-/**
- * The width of the gauge dial border in pixels.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default 0
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.dial.borderWidth
- */
-
-/**
- * The radius or length of the dial, in percentages relative to the
- * radius of the gauge itself.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default 80%
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.dial.radius
- */
-
-/**
- * The length of the dial's rear end, the part that extends out on the
- * other side of the pivot. Relative to the dial's length.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default 10%
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.dial.rearLength
- */
-
-/**
- * The width of the top of the dial, closest to the perimeter. The pivot
- * narrows in from the base to the top.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
- * @default 1
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.dial.topWidth
- */
-
-/**
- * The background color or fill of the pivot.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
- * @default #000000
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.pivot.backgroundColor
- */
-
-/**
- * The border or stroke color of the pivot. In able to change this,
- * the borderWidth must also be set to something other than the default
- * 0.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
- * @default #cccccc
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.pivot.borderColor
- */
-
-/**
- * The border or stroke width of the pivot.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
- * @default 0
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.pivot.borderWidth
- */
-
-/**
- * The pixel radius of the pivot.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
- * @default 5
- * @since 2.3.0
- * @product highcharts
- * @apioption plotOptions.gauge.pivot.radius
- */
-
-/**
- * The main color of the series. In heat maps this color is rarely used,
- * as we mostly use the color to denote the value of each point. Unless
- * options are set in the [colorAxis](#colorAxis), the default value
- * is pulled from the [options.colors](#colors) array.
- * 
- * @type {Color}
- * @default null
- * @since 4.0
- * @product highcharts
- * @apioption plotOptions.heatmap.color
- */
-
-/**
- * The column size - how many X axis units each column in the heatmap
- * should span.
- * 
- * @type {Number}
- * @sample {highcharts} maps/demo/heatmap/ One day
- * @sample {highmaps} maps/demo/heatmap/ One day
- * @default 1
- * @since 4.0
- * @product highcharts highmaps
- * @apioption plotOptions.heatmap.colsize
- */
-
-/**
- * The row size - how many Y axis units each heatmap row should span.
- * 
- * @type {Number}
- * @sample {highcharts} maps/demo/heatmap/ 1 by default
- * @sample {highmaps} maps/demo/heatmap/ 1 by default
- * @default 1
- * @since 4.0
- * @product highcharts highmaps
- * @apioption plotOptions.heatmap.rowsize
- */
-
-/**
- * @extends plotOptions.series
- * @product highcharts highstock
- * @apioption plotOptions.line
- */
 
 
-/**
- * A series specific or series type specific color set to use instead
- * of the global [colors](#colors).
- * 
- * @type {Array<Color>}
- * @sample {highcharts} highcharts/demo/pie-monochrome/ Set default colors for all pies
- * @since 3.0
- * @product highcharts
- * @apioption plotOptions.pie.colors
- */
 
-/**
- * The thickness of a 3D pie. Requires `highcharts-3d.js`
- * 
- * @type {Number}
- * @default 0
- * @since 4.0
- * @product highcharts
- * @apioption plotOptions.pie.depth
- */
 
-/**
- * The end angle of the pie in degrees where 0 is top and 90 is right.
- *  Defaults to `startAngle` plus 360.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/demo/pie-semi-circle/ Semi-circle donut
- * @default null
- * @since 1.3.6
- * @product highcharts
- * @apioption plotOptions.pie.endAngle
- */
 
-/**
- * The size of the inner diameter for the pie. A size greater than 0
- * renders a donut chart. Can be a percentage or pixel value. Percentages
- * are relative to the pie size. Pixel values are given as integers.
- * 
- * 
- * Note: in Highcharts < 4.1.2, the percentage was relative to the plot
- * area, not the pie size.
- * 
- * @type {String|Number}
- * @sample {highcharts} highcharts/plotoptions/pie-innersize-80px/ 80px inner size
- * @sample {highcharts} highcharts/plotoptions/pie-innersize-50percent/ 50% of the plot area
- * @sample {highcharts} highcharts/demo/3d-pie-donut/ 3D donut
- * @default 0
- * @since 2.0
- * @product highcharts
- * @apioption plotOptions.pie.innerSize
- */
 
-/**
- * The minimum size for a pie in response to auto margins. The pie will
- * try to shrink to make room for data labels in side the plot area,
- *  but only to this size.
- * 
- * @type {Number}
- * @default 80
- * @since 3.0
- * @product highcharts
- * @apioption plotOptions.pie.minSize
- */
 
-/**
- * The start angle of the pie slices in degrees where 0 is top and 90
- * right.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/pie-startangle-90/ Start from right
- * @default 0
- * @since 2.3.4
- * @product highcharts
- * @apioption plotOptions.pie.startAngle
- */
 
-/**
- * N/A for pies.
- * 
- * @type {String}
- * @since 2.1
- * @product highcharts
- * @apioption plotOptions.pie.dataLabels.align
- */
 
-/**
- * The color of the line connecting the data label to the pie slice.
- * The default color is the same as the point's color.
- * 
- * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
- * style/style-by-css), the connector stroke is given in the `.highcharts-
- * data-label-connector` class.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorcolor/ Blue connectors
- * @sample {highcharts} highcharts/css/pie-point/ Styled connectors
- * @default {point.color}
- * @since 2.1
- * @product highcharts
- * @apioption plotOptions.pie.dataLabels.connectorColor
- */
 
-/**
- * The distance from the data label to the connector.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/ No padding
- * @default 5
- * @since 2.1
- * @product highcharts
- * @apioption plotOptions.pie.dataLabels.connectorPadding
- */
 
-/**
- * The width of the line connecting the data label to the pie slice.
- * 
- * 
- * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
- * style/style-by-css), the connector stroke width is given in the `.
- * highcharts-data-label-connector` class.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/ Disable the connector
- * @sample {highcharts} highcharts/css/pie-point/ Styled connectors
- * @default 1
- * @since 2.1
- * @product highcharts
- * @apioption plotOptions.pie.dataLabels.connectorWidth
- */
 
-/**
- * Whether to render the connector as a soft arc or a line with sharp
- * break.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/ Soft
- * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/ Non soft
- * @since 2.1.7
- * @product highcharts
- * @apioption plotOptions.pie.dataLabels.softConnector
- */
 
-/**
- * @extends plotOptions.series.events
- * @product highcharts
- * @apioption plotOptions.pie.events
- */
 
-/**
- * Fires when the checkbox next to the point name in the legend is clicked.
- * One parameter, event, is passed to the function. The state of the
- * checkbox is found by event.checked. The checked item is found by
- * event.item. Return false to prevent the default action which is to
- * toggle the select state of the series.
- * 
- * @type {Function}
- * @context Point
- * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/ Alert checkbox status
- * @since 1.2.0
- * @product highcharts
- * @apioption plotOptions.pie.events.checkboxClick
- */
 
-/**
- * Not applicable to pies, as the legend item is per point. See point.
- * events.
- * 
- * @type {Function}
- * @since 1.2.0
- * @product highcharts
- * @apioption plotOptions.pie.events.legendItemClick
- */
 
-/**
- * @extends plotOptions.series.point.events
- * @product highcharts
- * @apioption plotOptions.pie.point.events
- */
 
-/**
- * Fires when the legend item belonging to the pie point (slice) is
- * clicked. The `this` keyword refers to the point itself. One parameter,
- * `event`, is passed to the function, containing common event information. The default action is to toggle the visibility
- * of the point. This can be prevented by calling `event.preventDefault()`.
- * 
- * @type {Function}
- * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/ Confirm toggle visibility
- * @since 1.2.0
- * @product highcharts
- * @apioption plotOptions.pie.point.events.legendItemClick
- */
 
-/**
- * A polygon series can be used to draw any freeform shape in the cartesian
- * coordinate system. A fill is applied with the `color` option, and
- * stroke is applied through `lineWidth` and `lineColor` options. Requires
- * the `highcharts-more.js` file.
- * 
- * @type {Object}
- * @extends plotOptions.scatter
- * @excluding softThreshold,threshold
- * @sample {highcharts} highcharts/demo/polygon/ Polygon
- * @sample {highstock} highcharts/demo/polygon/ Polygon
- * @since 4.1.0
- * @product highcharts highstock
- * @apioption plotOptions.polygon
- */
 
-/**
- * Sticky tracking of mouse events. When true, the `mouseOut` event
- * on a series isn't triggered until the mouse moves over another series,
- * or out of the plot area. When false, the `mouseOut` event on a series
- * is triggered when the mouse leaves the area around the series' graph
- * or markers. This also implies the tooltip. When `stickyTracking`
- * is false and `tooltip.shared` is false, the tooltip will be hidden
- * when moving the mouse between series.
- * 
- * @type {Boolean}
- * @default false
- * @product highcharts highstock
- * @apioption plotOptions.scatter.stickyTracking
- */
 
-/**
- * @extends plotOptions.series.states.hover
- * @apioption plotOptions.scatter.states.hover
- */
 
-/**
- * The width of the line connecting the data points.
- * 
- * @type {Number}
- * @default 0
- * @apioption plotOptions.scatter.states.hover.lineWidth
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1895,208 +1510,19 @@
  * @apioption plotOptions.series.zones.value
  */
 
-/**
- * Whether the strokes of the solid gauge should be `round` or `square`.
- * 
- * @validvalue ["square", "round"]
- * @type {String}
- * @sample {highcharts} highcharts/demo/gauge-activity/ Rounded gauge
- * @default round
- * @since 4.2.2
- * @product highcharts
- * @apioption plotOptions.solidgauge.linecap
- */
 
-/**
- * Wether to draw rounded edges on the gauge.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/demo/gauge-activity/ Activity Gauge
- * @default false
- * @since 5.0.8
- * @product highcharts
- * @apioption plotOptions.solidgauge.rounded
- */
 
-/**
- * The threshold or base level for the gauge.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/solidgauge-threshold/ Zero threshold with negative and positive values
- * @default null
- * @since 5.0.3
- * @product highcharts
- * @apioption plotOptions.solidgauge.threshold
- */
 
-/**
- * @extends plotOptions.series
- * @excluding step
- * @product highcharts highstock
- * @apioption plotOptions.spline
- */
 
-/**
- * When enabled the user can click on a point which is a parent and
- * zoom in on its children.
- * 
- * @validvalue ["false", "true"]
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/ Enabled
- * @default false
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.allowDrillToNode
- */
 
-/**
- * When the series contains less points than the crop threshold, all
- * points are drawn, event if the points fall outside the visible plot
- * area at the current zoom. The advantage of drawing all points (including
- * markers and columns), is that animation is performed on updates.
- * On the other hand, when the series contains more points than the
- * crop threshold, the series data is cropped to only contain points
- * that fall within the plot area. The advantage of cropping away invisible
- * points is to increase performance on large series.
- * 
- * @type {Number}
- * @default 300
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.cropThreshold
- */
 
-/**
- * This option decides if the user can interact with the parent nodes
- * or just the leaf nodes. When this option is undefined, it will be
- * true by default. However when allowDrillToNode is true, then it will
- * be false by default.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-false/ False
- * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowdrilltonode/ InteractByLeaf and allowDrillToNode is true
- * @since 4.1.2
- * @product highcharts
- * @apioption plotOptions.treemap.interactByLeaf
- */
 
-/**
- * The sort index of the point inside the treemap level.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/treemap-sortindex/ Sort by years
- * @since 4.1.10
- * @product highcharts
- * @apioption plotOptions.treemap.sortIndex
- */
 
-/**
- * Set options on specific levels. Takes precedence over series options,
- *  but not point options.
- * 
- * @type {Array<Object>}
- * @sample {highcharts} highcharts/plotoptions/treemap-levels/ Styling dataLabels and borders
- * @sample {highcharts} highcharts/demo/treemap-with-levels/ Different layoutAlgorithm
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.levels
- */
 
-/**
- * Can set a `borderColor` on all points which lies on the same level.
- * 
- * @type {Color}
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.levels.borderColor
- */
 
-/**
- * Set the dash style of the border of all the point which lies on the
- * level. See <a href"#plotoptions.scatter.dashstyle"="">plotOptions.
- * scatter.dashStyle</a> for possible options.
- * 
- * @type {String}
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.levels.borderDashStyle
- */
 
-/**
- * Can set the borderWidth on all points which lies on the same level.
- * 
- * @type {Number}
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.levels.borderWidth
- */
 
-/**
- * Can set a color on all points which lies on the same level.
- * 
- * @type {Color}
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.levels.color
- */
 
-/**
- * Can set the options of dataLabels on each point which lies on the
- * level. [plotOptions.treemap.dataLabels](#plotOptions.treemap.dataLabels)
- * for possible values.
- * 
- * @type {Object}
- * @default undefined
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.levels.dataLabels
- */
-
-/**
- * Can set the layoutAlgorithm option on a specific level.
- * 
- * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
- * @type {String}
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.levels.layoutAlgorithm
- */
-
-/**
- * Can set the layoutStartingDirection option on a specific level.
- * 
- * @validvalue ["vertical", "horizontal"]
- * @type {String}
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.levels.layoutStartingDirection
- */
-
-/**
- * Decides which level takes effect from the options set in the levels
- * object.
- * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/treemap-levels/ Styling of both levels
- * @since 4.1.0
- * @product highcharts
- * @apioption plotOptions.treemap.levels.level
- */
-
-/**
- * The color used specifically for positive point columns. When not
- * specified, the general series color is used.
- * 
- * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
- * style/style-by-css), the waterfall colors can be set with the `.highcharts-
- * point-negative`, `.highcharts-sum` and `.highcharts-intermediate-
- * sum` classes.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
- * @product highcharts
- * @apioption plotOptions.waterfall.upColor
- */
 
 /**
  * Allows setting a set of rules to apply for different screen or chart
@@ -2392,970 +1818,90 @@
  * @apioption series.data
  */
 
-/**
- * Individual color for the point. By default the color is pulled from
- * the global `colors` array.
- * 
- * @type {Color}
- * @sample {highcharts} highcharts/point/color/ Mark the highest point
- * @default undefined
- * @product highcharts highstock
- * @apioption series.line.data.color
- */
-
-/**
- * Serves a purpose only if a colorAxis object is defined in the chart
- * options. This value will decide which color the point gets from the
- * scale of the colorAxis.
- * 
- * @type {Number}
- * @default undefined
- * @since 4.1.0
- * @product highcharts
- * @apioption series.treemap.data.colorValue
- */
-
-/**
- * Individual data label for each point. The options are the same as
- * the ones for [plotOptions.series.dataLabels](#plotOptions.series.
- * dataLabels)
- * 
- * @type {Object}
- * @sample {highcharts} highcharts/point/datalabels/ Show a label for the last value
- * @sample {highstock} highcharts/point/datalabels/ Show a label for the last value
- * @product highcharts highstock
- * @apioption series.line.data.dataLabels
- */
-
-/**
- * The `id` of a series in the [drilldown.series](#drilldown.series)
- * array to use for a drilldown for this point.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/drilldown/basic/ Basic drilldown
- * @since 3.0.8
- * @product highcharts
- * @apioption series.line.data.drilldown
- */
-
-/**
- * An id for the point. This can be used after render time to get a
- * pointer to the point object through `chart.get()`.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/point/id/ Remove an id'd point
- * @default null
- * @since 1.2.0
- * @product highcharts highstock
- * @apioption series.line.data.id
- */
-
-/**
- * When this property is true, the points acts as a summary column for
- * the values added or substracted since the last intermediate sum,
- * or since the start of the series. The `y` value is ignored.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
- * @default false
- * @product highcharts
- * @apioption series.waterfall.data.isIntermediateSum
- */
-
-/**
- * When this property is true, the point display the total sum across
- * the entire series. The `y` value is ignored.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
- * @default false
- * @product highcharts
- * @apioption series.waterfall.data.isSum
- */
-
-/**
- * The sequential index of the data point in the legend.
- * 
- * @type {Number}
- * @product highcharts
- * @apioption series.pie.data.legendIndex
- */
-
-/**
- * The name of the point as shown in the legend, tooltip, dataLabel
- * etc.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Point names
- * @see [xAxis.uniqueNames](#xAxis.uniqueNames)
- * @apioption series.line.data.name
- */
-
-/**
- * Only for treemap. Use this option to build a tree structure. The
- * value should be the id of the point which is the parent. If no points
- * has a matching id, or this option is undefined, then the parent will
- * be set to the root.
- * 
- * @type {String}
- * @sample {highcharts} highcharts/point/parent/ Point parent
- * @sample {highcharts} highcharts/demo/treemap-with-levels/ Example where parent id is not matching
- * @default undefined
- * @since 4.1.0
- * @product highcharts
- * @apioption series.treemap.data.parent
- */
-
-/**
- * Whether to display a slice offset from the center.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/point/sliced/ One sliced point
- * @product highcharts
- * @apioption series.pie.data.sliced
- */
-
-/**
- * The x value of the point. For datetime axes, the X value is the timestamp
- * in milliseconds since 1970.
- * 
- * @type {Number}
- * @product highcharts highstock
- * @apioption series.line.data.x
- */
-
-/**
- * The y value of the point.
- * 
- * @type {Number}
- * @default null
- * @product highcharts highstock
- * @apioption series.line.data.y
- */
-
-/**
- * Individual point events
- * 
- * @extends plotOptions.series.point.events
- * @product highcharts highstock
- * @apioption series.line.data.events
- */
-
-/**
- * @extends plotOptions.series.marker
- * @product highcharts highstock
- * @apioption series.line.data.marker
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * A `gauge` series. If the [type](#series<gauge>.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * gauge](#plotOptions.gauge).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.gauge
- * @excluding dataParser,dataURL,stack
- * @product highcharts
- * @apioption series.gauge
- */
-
-/**
- * An array of data points for the series. For the `gauge` series type,
- * points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<gauge>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     y: 6,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     y: 8,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * The typical gauge only contains a single data value.
- * 
- * @type {Array<Object|Number>}
- * @extends series<line>.data
- * @excluding drilldown,marker,x
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts
- * @apioption series.gauge.data
- */
-
-
-/**
- * A `heatmap` series. If the [type](#series<heatmap>.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * heatmap](#plotOptions.heatmap).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.heatmap
- * @excluding dataParser,dataURL,stack
- * @product highcharts highmaps
- * @apioption series.heatmap
- */
-
-/**
- * An array of data points for the series. For the `heatmap` series
- * type, points can be given in the following ways:
- * 
- * 1.  An array of arrays with 3 or 2 values. In this case, the values
- * correspond to `x,y,value`. If the first value is a string, it is
- * applied as the name of the point, and the `x` value is inferred.
- * The `x` value can also be omitted, in which case the inner arrays
- * should be of length 2\. Then the `x` value is automatically calculated,
- * either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
- * 
- * <pre>data: [
- *     [0, 9, 7],
- *     [1, 10, 4],
- *     [2, 6, 3]
- * ]</pre>
- * 
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<heatmap>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     x: 1,
- *     y: 3,
- *     value: 10,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     y: 7,
- *     value: 10,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * @type {Array<Object|Array>}
- * @extends series<line>.data
- * @excluding marker
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts highmaps
- * @apioption series.heatmap.data
- */
-
-/**
- * The color of the point. In heat maps the point color is rarely set
- * explicitly, as we use the color to denote the `value`. Options for
- * this are set in the [colorAxis](#colorAxis) configuration.
- * 
- * @type {Color}
- * @product highcharts highmaps
- * @apioption series.heatmap.data.color
- */
-
-/**
- * The value of the point, resulting in a color controled by options
- * as set in the [colorAxis](#colorAxis) configuration.
- * 
- * @type {Number}
- * @product highcharts highmaps
- * @apioption series.heatmap.data.value
- */
-
-
-
-/**
- * A `line` series. If the [type](#series<line>.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * line](#plotOptions.line).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.line
- * @excluding dataParser,dataURL
- * @product highcharts highstock
- * @apioption series.line
- */
-
-/**
- * An array of data points for the series. For the `line` series type,
- * points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. The `x` values will be automatically
- * calculated, either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options. If the axis has
- * categories, these will be used. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of arrays with 2 values. In this case, the values correspond
- * to `x,y`. If the first value is a string, it is applied as the name
- * of the point, and the `x` value is inferred.
- * 
- * <pre>data: [
- *     [0, 1],
- *     [1, 2],
- *     [2, 8]
- * ]</pre>
- * 
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<line>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     x: 1,
- *     y: 10,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     y: 6,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * @type {Array<Object|Array|Number>}
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @apioption series.line.data
- */
-
-/**
- * An additional, individual class name for the data point's graphic
- * representation.
- * 
- * @type {String}
- * @since 5.0.0
- * @product highcharts
- * @apioption series.line.data.className
- */
-
-/**
- * [Styled mode](http://www.highcharts.com/docs/chart-design-and-style/style-
- * by-css) only. A specific color index to use for the point, so its
- * graphic representations are given the class name `highcharts-color-
- * {n}`.
- * 
- * @type {Number}
- * @since 5.0.0
- * @product highcharts
- * @apioption series.line.data.colorIndex
- */
-
-/**
- * _Requires Accessibility module_
- * 
- * A description of the point to add to the screen reader information
- * about the point.
- * 
- * @type {String}
- * @default undefined
- * @since 5.0.0
- * @apioption series.line.data.description
- */
-
-/**
- * The rank for this point's data label in case of collision. If two
- * data labels are about to overlap, only the one with the highest `labelrank`
- * will be drawn.
- * 
- * @type {Number}
- * @apioption series.line.data.labelrank
- */
-
-/**
- * Whether the data point is selected initially.
- * 
- * @type {Boolean}
- * @default false
- * @product highcharts highstock
- * @apioption series.line.data.selected
- */
-
-
-/**
- * A `pie` series. If the [type](#series<pie>.type) option is not specified,
- * it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * pie](#plotOptions.pie).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.pie
- * @excluding dataParser,dataURL,stack,xAxis,yAxis
- * @product highcharts
- * @apioption series.pie
- */
-
-/**
- * An array of data points for the series. For the `pie` series type,
- * points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<pie>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     y: 1,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     y: 7,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * @type {Array<Object|Number>}
- * @extends series<line>.data
- * @excluding marker,x
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts
- * @apioption series.pie.data
- */
-
-
-
-/**
- * A `polygon` series. If the [type](#series<polygon>.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * polygon](#plotOptions.polygon).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.polygon
- * @excluding dataParser,dataURL,stack
- * @product highcharts highstock
- * @apioption series.polygon
- */
-
-/**
- * An array of data points for the series. For the `polygon` series
- * type, points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. The `x` values will be automatically
- * calculated, either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options. If the axis has
- * categories, these will be used. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of arrays with 2 values. In this case, the values correspond
- * to `x,y`. If the first value is a string, it is applied as the name
- * of the point, and the `x` value is inferred.
- * 
- * <pre>data: [
- *     [0, 10],
- *     [1, 3],
- *     [2, 1]
- * ]</pre>
- * 
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<polygon>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     x: 1,
- *     y: 1,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     y: 8,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * @type {Array<Object|Array>}
- * @extends series<line>.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts highstock
- * @apioption series.polygon.data
- */
-
-
-
-/**
- * A `pyramid` series. If the [type](#series<pyramid>.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * pyramid](#plotOptions.pyramid).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.pyramid
- * @excluding dataParser,dataURL,stack,xAxis,yAxis
- * @product highcharts
- * @apioption series.pyramid
- */
-
-/**
- * An array of data points for the series. For the `pyramid` series
- * type, points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<pyramid>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     y: 6,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     y: 7,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * @type {Array<Object|Number>}
- * @extends series<pie>.data
- * @excluding sliced
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts
- * @apioption series.pyramid.data
- */
-
-
-
-/**
- * A `scatter` series. If the [type](#series<scatter>.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * scatter](#plotOptions.scatter).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.scatter
- * @excluding dataParser,dataURL,stack
- * @product highcharts highstock
- * @apioption series.scatter
- */
-
-/**
- * An array of data points for the series. For the `scatter` series
- * type, points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. The `x` values will be automatically
- * calculated, either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options. If the axis has
- * categories, these will be used. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of arrays with 2 values. In this case, the values correspond
- * to `x,y`. If the first value is a string, it is applied as the name
- * of the point, and the `x` value is inferred.
- * 
- * <pre>data: [
- *     [0, 0],
- *     [1, 8],
- *     [2, 9]
- * ]</pre>
- * 
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<scatter>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     x: 1,
- *     y: 2,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     y: 4,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * @type {Array<Object|Array|Number>}
- * @extends series<line>.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts highstock
- * @apioption series.scatter.data
- */
-
-
-
-/**
- * A `solidgauge` series. If the [type](#series<solidgauge>.type) option
- * is not specified, it is inherited from [chart.type](#chart.type).
- * 
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * solidgauge](#plotOptions.solidgauge).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.solidgauge
- * @excluding dataParser,dataURL,stack
- * @product highcharts
- * @apioption series.solidgauge
- */
-
-/**
- * Wether to draw rounded edges on the gauge.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/demo/gauge-activity/ Activity Gauge
- * @default false
- * @since 5.0.11
- * @product highcharts
- * @apioption series.solidgauge.rounded
- */
-
-/**
- * An array of data points for the series. For the `solidgauge` series
- * type, points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<solidgauge>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     y: 5,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     y: 7,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * The typical gauge only contains a single data value.
- * 
- * @type {Array<Object|Number>}
- * @extends series<gauge>.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts
- * @apioption series.solidgauge.data
- */
-
-/**
- * The inner radius of an individual point in a solid gauge. Can be
- * given as a number (pixels) or percentage string.
- * 
- * @type {Number|String}
- * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/ Individual radius and innerRadius
- * @since 4.1.6
- * @product highcharts
- * @apioption series.solidgauge.data.innerRadius
- */
-
-/**
- * The outer radius of an individual point in a solid gauge. Can be
- * given as a number (pixels) or percentage string.
- * 
- * @type {Number|String}
- * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/ Individual radius and innerRadius
- * @since 4.1.6
- * @product highcharts
- * @apioption series.solidgauge.data.radius
- */
-
-
-/**
- * A `spline` series. If the [type](#series<spline>.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * spline](#plotOptions.spline).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.spline
- * @excluding dataParser,dataURL
- * @product highcharts highstock
- * @apioption series.spline
- */
-
-/**
- * An array of data points for the series. For the `spline` series type,
- * points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. The `x` values will be automatically
- * calculated, either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options. If the axis has
- * categories, these will be used. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of arrays with 2 values. In this case, the values correspond
- * to `x,y`. If the first value is a string, it is applied as the name
- * of the point, and the `x` value is inferred.
- * 
- * <pre>data: [
- *     [0, 9],
- *     [1, 2],
- *     [2, 8]
- * ]</pre>
- * 
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<spline>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     x: 1,
- *     y: 9,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     y: 0,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * @type {Array<Object|Array|Number>}
- * @extends series<line>.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts highstock
- * @apioption series.spline.data
- */
-
-
-
-/**
- * A `treemap` series. If the [type](#series<treemap>.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * treemap](#plotOptions.treemap).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.treemap
- * @excluding dataParser,dataURL,stack
- * @product highcharts
- * @apioption series.treemap
- */
-
-/**
- * An array of data points for the series. For the `treemap` series
- * type, points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `value` options. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<treemap>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     value: 7,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     value: 2,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * @type {Array<Object|Number>}
- * @extends series<heatmap>.data
- * @excluding x,y
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts
- * @apioption series.treemap.data
- */
-
-/**
- * The value of the point, resulting in a relative area of the point
- * in the treemap.
- * 
- * @type {Number}
- * @product highcharts
- * @apioption series.treemap.data.value
- */
-
-
-
-/**
- * A `waterfall` series. If the [type](#series<waterfall>.type) option
- * is not specified, it is inherited from [chart.type](#chart.type).
- * 
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * waterfall](#plotOptions.waterfall).
- * 
- * @type {Array<Object>}
- * @extends series,plotOptions.waterfall
- * @excluding dataParser,dataURL
- * @product highcharts
- * @apioption series.waterfall
- */
-
-/**
- * An array of data points for the series. For the `waterfall` series
- * type, points can be given in the following ways:
- * 
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. The `x` values will be automatically
- * calculated, either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options. If the axis has
- * categories, these will be used. Example:
- * 
- * <pre>data: [0, 5, 3, 5]</pre>
- * 
- * 2.  An array of arrays with 2 values. In this case, the values correspond
- * to `x,y`. If the first value is a string, it is applied as the name
- * of the point, and the `x` value is inferred.
- * 
- * <pre>data: [
- *     [0, 7],
- *     [1, 8],
- *     [2, 3]
- * ]</pre>
- * 
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<waterfall>.turboThreshold),
- * this option is not available.
- * 
- * <pre>data: [{
- *     x: 1,
- *     y: 8,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     y: 8,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
- * 
- * @type {Array<Object|Array|Number>}
- * @extends series<line>.data
- * @excluding marker
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts
- * @apioption series.waterfall.data
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5917,18 +4463,7 @@
  * @apioption plotOptions.flags.useHTML
  */
 
-/**
- * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
- * of a line graph. Round means that lines are rounded in the ends and
- * bends.
- * 
- * @validvalue ["round", "butt", "square"]
- * @type {String}
- * @default round
- * @since 3.0.7
- * @product highstock
- * @apioption plotOptions.line.linecap
- */
+
 
 /**
  * N/A
@@ -5971,12 +4506,6 @@
  * @default 5
  * @product highstock
  * @apioption plotOptions.ohlc.dataGrouping.groupPixelWidth
- */
-
-/**
- * @extends plotOptions.series.dataLabels
- * @product highstock
- * @apioption plotOptions.scatter.dataLabels
  */
 
 /**
@@ -6652,65 +5181,6 @@
  * @apioption series.flags.data.title
  */
 
-/**
- * @extends plotOptions.flags.states
- * @product highstock
- * @apioption series.flags.data.marker.states
- */
-
-/**
- * @extends plotOptions.flags.dataGrouping
- * @product highstock
- * @apioption series.flags.dataGrouping
- */
-
-/**
- * @extends plotOptions.flags.dataLabels
- * @product highstock
- * @apioption series.flags.dataLabels
- */
-
-/**
- * @extends plotOptions.flags.events
- * @product highstock
- * @apioption series.flags.events
- */
-
-/**
- * @extends plotOptions.flags.marker
- * @product highstock
- * @apioption series.flags.marker
- */
-
-/**
- * @extends plotOptions.flags.point
- * @product highstock
- * @apioption series.flags.point
- */
-
-/**
- * @extends plotOptions.flags.states
- * @product highstock
- * @apioption series.flags.states
- */
-
-/**
- * @extends plotOptions.flags.tooltip
- * @product highstock
- * @apioption series.flags.tooltip
- */
-
-/**
- * @extends plotOptions.flags.zones
- * @product highstock
- * @apioption series.flags.zones
- */
-
-/**
- * @extends plotOptions.line.dataGrouping
- * @product highstock
- * @apioption series.line.dataGrouping
- */
 
 /**
  * A `ohlc` series. If the [type](#series<ohlc>.type) option is not
@@ -6792,77 +5262,6 @@
  * @apioption series.ohlc.data.open
  */
 
-/**
- * @extends plotOptions.ohlc.states
- * @product highstock
- * @apioption series.ohlc.data.marker.states
- */
-
-/**
- * @extends plotOptions.ohlc.dataGrouping
- * @product highstock
- * @apioption series.ohlc.dataGrouping
- */
-
-/**
- * @extends plotOptions.ohlc.dataLabels
- * @product highstock
- * @apioption series.ohlc.dataLabels
- */
-
-/**
- * @extends plotOptions.ohlc.events
- * @product highstock
- * @apioption series.ohlc.events
- */
-
-/**
- * @extends plotOptions.ohlc.marker
- * @product highstock
- * @apioption series.ohlc.marker
- */
-
-/**
- * @extends plotOptions.ohlc.point
- * @product highstock
- * @apioption series.ohlc.point
- */
-
-/**
- * @extends plotOptions.ohlc.states
- * @product highstock
- * @apioption series.ohlc.states
- */
-
-/**
- * @extends plotOptions.ohlc.tooltip
- * @product highstock
- * @apioption series.ohlc.tooltip
- */
-
-/**
- * @extends plotOptions.ohlc.zones
- * @product highstock
- * @apioption series.ohlc.zones
- */
-
-/**
- * @extends plotOptions.polygon.dataGrouping
- * @product highstock
- * @apioption series.polygon.dataGrouping
- */
-
-/**
- * @extends plotOptions.scatter.dataGrouping
- * @product highstock
- * @apioption series.scatter.dataGrouping
- */
-
-/**
- * @extends plotOptions.spline.dataGrouping
- * @product highstock
- * @apioption series.spline.dataGrouping
- */
 
 /**
  * How many decimals to show for the `point.change` value when the `series.
@@ -7919,21 +6318,7 @@
  * @apioption series.map.data.events
  */
 
-/**
- * The x coordinate of the point.
- * 
- * @type {Number}
- * @product highmaps
- * @apioption series.heatmap.data.x
- */
 
-/**
- * The y coordinate of the point.
- * 
- * @type {Number}
- * @product highmaps
- * @apioption series.heatmap.data.y
- */
 
 /**
  * A `map` series. If the [type](#series<map>.type) option is not specified,

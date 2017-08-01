@@ -95,9 +95,18 @@ H.Series = H.seriesType('line', null, { // base series options
 	/*= if (build.classic) { =*/
 	//cursor: 'default',
 	//dashStyle: null,
-	//linecap: 'round',
-
-
+	
+	/**
+	 * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
+	 * of a line graph. Round means that lines are rounded in the ends and
+	 * bends.
+	 * 
+	 * @validvalue ["round", "butt", "square"]
+	 * @type {String}
+	 * @default round
+	 * @since 3.0.7
+	 * @apioption plotOptions.line.linecap
+	 */
 
 	/**
 	 * Pixel with of the graph line.
@@ -3932,3 +3941,206 @@ H.Series = H.seriesType('line', null, { // base series options
 	}
 
 }); // end Series prototype
+
+/**
+ * A line series displays information as a series of data points connected by
+ * straight line segments.
+ *
+ * @sample {highcharts} highcharts/demo/line-basic/ Line chart
+ * @sample {highstock} stock/demo/basic-line/ Line chart
+ * 
+ * @extends plotOptions.series
+ * @product highcharts highstock
+ * @apioption plotOptions.line
+ */
+
+/**
+ * A `line` series. If the [type](#series<line>.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [pointOptions.series](#pointOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * line](#plotOptions.line).
+ * 
+ * @type {Array<Object>}
+ * @extends series,plotOptions.line
+ * @excluding dataParser,dataURL
+ * @product highcharts highstock
+ * @apioption series.line
+ */
+
+/**
+ * An array of data points for the series. For the `line` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. The `x` values will be automatically
+ * calculated, either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options. If the axis has
+ * categories, these will be used. Example:
+ * 
+ * <pre>data: [0, 5, 3, 5]</pre>
+ * 
+ * 2.  An array of arrays with 2 values. In this case, the values correspond
+ * to `x,y`. If the first value is a string, it is applied as the name
+ * of the point, and the `x` value is inferred.
+ * 
+ * <pre>data: [
+ *     [0, 1],
+ *     [1, 2],
+ *     [2, 8]
+ * ]</pre>
+ * 
+ * 3.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series<line>.turboThreshold),
+ * this option is not available.
+ * 
+ * <pre>data: [{
+ *     x: 1,
+ *     y: 10,
+ *     name: "Point2",
+ *     color: "#00FF00"
+ * }, {
+ *     x: 1,
+ *     y: 6,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
+ * 
+ * @type {Array<Object|Array|Number>}
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @apioption series.line.data
+ */
+
+/**
+ * An additional, individual class name for the data point's graphic
+ * representation.
+ * 
+ * @type {String}
+ * @since 5.0.0
+ * @product highcharts
+ * @apioption series.line.data.className
+ */
+
+/**
+ * Individual color for the point. By default the color is pulled from
+ * the global `colors` array.
+ * 
+ * @type {Color}
+ * @sample {highcharts} highcharts/point/color/ Mark the highest point
+ * @default undefined
+ * @product highcharts highstock
+ * @apioption series.line.data.color
+ */
+
+/**
+ * [Styled mode](http://www.highcharts.com/docs/chart-design-and-style/style-
+ * by-css) only. A specific color index to use for the point, so its
+ * graphic representations are given the class name `highcharts-color-
+ * {n}`.
+ * 
+ * @type {Number}
+ * @since 5.0.0
+ * @product highcharts
+ * @apioption series.line.data.colorIndex
+ */
+
+/**
+ * Individual data label for each point. The options are the same as
+ * the ones for [plotOptions.series.dataLabels](#plotOptions.series.
+ * dataLabels)
+ * 
+ * @type {Object}
+ * @sample {highcharts} highcharts/point/datalabels/ Show a label for the last value
+ * @sample {highstock} highcharts/point/datalabels/ Show a label for the last value
+ * @product highcharts highstock
+ * @apioption series.line.data.dataLabels
+ */
+
+/**
+ * A description of the point to add to the screen reader information
+ * about the point. Requires the Accessibility module.
+ * 
+ * @type {String}
+ * @default undefined
+ * @since 5.0.0
+ * @apioption series.line.data.description
+ */
+
+/**
+ * An id for the point. This can be used after render time to get a
+ * pointer to the point object through `chart.get()`.
+ * 
+ * @type {String}
+ * @sample {highcharts} highcharts/point/id/ Remove an id'd point
+ * @default null
+ * @since 1.2.0
+ * @product highcharts highstock
+ * @apioption series.line.data.id
+ */
+
+/**
+ * The rank for this point's data label in case of collision. If two
+ * data labels are about to overlap, only the one with the highest `labelrank`
+ * will be drawn.
+ * 
+ * @type {Number}
+ * @apioption series.line.data.labelrank
+ */
+
+/**
+ * The name of the point as shown in the legend, tooltip, dataLabel
+ * etc.
+ * 
+ * @type {String}
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Point names
+ * @see [xAxis.uniqueNames](#xAxis.uniqueNames)
+ * @apioption series.line.data.name
+ */
+
+/**
+ * Whether the data point is selected initially.
+ * 
+ * @type {Boolean}
+ * @default false
+ * @product highcharts highstock
+ * @apioption series.line.data.selected
+ */
+
+/**
+ * The x value of the point. For datetime axes, the X value is the timestamp
+ * in milliseconds since 1970.
+ * 
+ * @type {Number}
+ * @product highcharts highstock
+ * @apioption series.line.data.x
+ */
+
+/**
+ * The y value of the point.
+ * 
+ * @type {Number}
+ * @default null
+ * @product highcharts highstock
+ * @apioption series.line.data.y
+ */
+
+/**
+ * Individual point events
+ * 
+ * @extends plotOptions.series.point.events
+ * @product highcharts highstock
+ * @apioption series.line.data.events
+ */
+
+/**
+ * @extends plotOptions.series.marker
+ * @product highcharts highstock
+ * @apioption series.line.data.marker
+ */

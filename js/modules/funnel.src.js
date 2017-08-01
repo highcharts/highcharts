@@ -378,38 +378,6 @@ seriesType('funnel', 'pie',
 
 });
 
-/** 
- * Pyramid series type.
- */
-seriesType('pyramid', 'funnel', 
-/** 
- * A pyramid series is a special type of funnel, without neck and reversed by default.
- * @extends plotOptions.funnel
- * @product highcharts
- * @optionparent plotOptions.pyramid
- */
-{
-
-	/**
-	 */
-	neckWidth: '0%',
-
-	/**
-	 */
-	neckHeight: '0%',
-
-	/**
-	 * The pyramid is reversed by default, as opposed to the funnel, which
-	 * shares the layout engine, and is not reversed.
-	 * 
-	 * @type {Boolean}
-	 * @default true
-	 * @since 3.0.10
-	 * @product highcharts
-	 */
-	reversed: true
-});
-
 
 /**
  * A `funnel` series. If the [type](#series<funnel>.type) option is
@@ -462,3 +430,106 @@ seriesType('pyramid', 'funnel',
  * @product highcharts
  * @apioption series.funnel.data
  */
+
+/** 
+ * Pyramid series type.
+ */
+seriesType('pyramid', 'funnel', 
+/** 
+ * A pyramid series is a special type of funnel, without neck and reversed by
+ * default.
+ *
+ * @sample highcharts/demo/pyramid/ Pyramid chart
+ * 
+ * @extends plotOptions.funnel
+ * @product highcharts
+ * @optionparent plotOptions.pyramid
+ */
+{
+
+	/**
+	 * The pyramid neck width is zero by default, as opposed to the funnel, 
+	 * which shares the same layout logic.
+	 *
+	 * @type String
+	 * @default 0%
+	 * @since 3.0.10
+	 * @product highcharts
+	 */
+	neckWidth: '0%',
+
+	/**
+	 * The pyramid neck width is zero by default, as opposed to the funnel, 
+	 * which shares the same layout logic.
+	 *
+	 * @type String
+	 * @default 0%
+	 * @since 3.0.10
+	 * @product highcharts
+	 */
+	neckHeight: '0%',
+
+	/**
+	 * The pyramid is reversed by default, as opposed to the funnel, which
+	 * shares the layout engine, and is not reversed.
+	 * 
+	 * @type {Boolean}
+	 * @default true
+	 * @since 3.0.10
+	 * @product highcharts
+	 */
+	reversed: true
+});
+
+/**
+ * A `pyramid` series. If the [type](#series<pyramid>.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [pointOptions.series](#pointOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * pyramid](#plotOptions.pyramid).
+ * 
+ * @type {Array<Object>}
+ * @extends series,plotOptions.pyramid
+ * @excluding dataParser,dataURL,stack,xAxis,yAxis
+ * @product highcharts
+ * @apioption series.pyramid
+ */
+
+/**
+ * An array of data points for the series. For the `pyramid` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. Example:
+ * 
+ * <pre>data: [0, 5, 3, 5]</pre>
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series<pyramid>.turboThreshold),
+ * this option is not available.
+ * 
+ * <pre>data: [{
+ *     y: 6,
+ *     name: "Point2",
+ *     color: "#00FF00"
+ * }, {
+ *     y: 7,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
+ * 
+ * @type {Array<Object|Number>}
+ * @extends series<pie>.data
+ * @excluding sliced
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.pyramid.data
+ */
+

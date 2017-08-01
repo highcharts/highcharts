@@ -295,6 +295,17 @@ defaultOptions.drilldown = {
  */
 
 /**
+ * The `id` of a series in the [drilldown.series](#drilldown.series)
+ * array to use for a drilldown for this point.
+ * 
+ * @type {String}
+ * @sample {highcharts} highcharts/drilldown/basic/ Basic drilldown
+ * @since 3.0.8
+ * @product highcharts
+ * @apioption series.line.data.drilldown
+ */
+
+/**
  * A general fadeIn method
  */
 H.SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {

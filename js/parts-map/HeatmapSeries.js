@@ -22,9 +22,15 @@ var colorPointMixin = H.colorPointMixin,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
 
-// The Heatmap series type
 
 /**
+ * A heatmap is a graphical representation of data where the individual values
+ * contained in a matrix are represented as colors.
+ *
+ * @sample highcharts/demo/heatmap/
+ *         Simple heatmap
+ * @sample highcharts/demo/heatmap-canvas/
+ *         Heavy heatmap
  * @extends {plotOptions.scatter}
  * @product highcharts highmaps
  * @optionparent plotOptions.heatmap
@@ -38,6 +44,33 @@ seriesType('heatmap', 'scatter', {
 	/**
 	 */
 	borderWidth: 0,
+
+	/**
+	 * The main color of the series. In heat maps this color is rarely used,
+	 * as we mostly use the color to denote the value of each point. Unless
+	 * options are set in the [colorAxis](#colorAxis), the default value
+	 * is pulled from the [options.colors](#colors) array.
+	 * 
+	 * @type {Color}
+	 * @default null
+	 * @since 4.0
+	 * @product highcharts
+	 * @apioption plotOptions.heatmap.color
+	 */
+
+	/**
+	 * The column size - how many X axis units each column in the heatmap
+	 * should span.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} maps/demo/heatmap/ One day
+	 * @sample {highmaps} maps/demo/heatmap/ One day
+	 * @default 1
+	 * @since 4.0
+	 * @product highcharts highmaps
+	 * @apioption plotOptions.heatmap.colsize
+	 */
+	
 	/*= if (build.classic) { =*/
 
 	/**
@@ -83,6 +116,18 @@ seriesType('heatmap', 'scatter', {
 	/**
 	 */
 	pointRange: null, // dynamically set to colsize by default
+
+	/**
+	 * The row size - how many Y axis units each heatmap row should span.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} maps/demo/heatmap/ 1 by default
+	 * @sample {highmaps} maps/demo/heatmap/ 1 by default
+	 * @default 1
+	 * @since 4.0
+	 * @product highcharts highmaps
+	 * @apioption plotOptions.heatmap.rowsize
+	 */
 
 	/**
 	 */
@@ -217,3 +262,102 @@ seriesType('heatmap', 'scatter', {
 	}
 
 }), colorPointMixin);
+/**
+ * A `heatmap` series. If the [type](#series<heatmap>.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [pointOptions.series](#pointOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * heatmap](#plotOptions.heatmap).
+ * 
+ * @type {Array<Object>}
+ * @extends series,plotOptions.heatmap
+ * @excluding dataParser,dataURL,stack
+ * @product highcharts highmaps
+ * @apioption series.heatmap
+ */
+
+/**
+ * An array of data points for the series. For the `heatmap` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 3 or 2 values. In this case, the values
+ * correspond to `x,y,value`. If the first value is a string, it is
+ * applied as the name of the point, and the `x` value is inferred.
+ * The `x` value can also be omitted, in which case the inner arrays
+ * should be of length 2\. Then the `x` value is automatically calculated,
+ * either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options.
+ * 
+ * <pre>data: [
+ *     [0, 9, 7],
+ *     [1, 10, 4],
+ *     [2, 6, 3]
+ * ]</pre>
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series<heatmap>.turboThreshold),
+ * this option is not available.
+ * 
+ * <pre>data: [{
+ *     x: 1,
+ *     y: 3,
+ *     value: 10,
+ *     name: "Point2",
+ *     color: "#00FF00"
+ * }, {
+ *     x: 1,
+ *     y: 7,
+ *     value: 10,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
+ * 
+ * @type {Array<Object|Array>}
+ * @extends series<line>.data
+ * @excluding marker
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts highmaps
+ * @apioption series.heatmap.data
+ */
+
+/**
+ * The color of the point. In heat maps the point color is rarely set
+ * explicitly, as we use the color to denote the `value`. Options for
+ * this are set in the [colorAxis](#colorAxis) configuration.
+ * 
+ * @type {Color}
+ * @product highcharts highmaps
+ * @apioption series.heatmap.data.color
+ */
+
+/**
+ * The value of the point, resulting in a color controled by options
+ * as set in the [colorAxis](#colorAxis) configuration.
+ * 
+ * @type {Number}
+ * @product highcharts highmaps
+ * @apioption series.heatmap.data.value
+ */
+
+/**
+ * The x coordinate of the point.
+ * 
+ * @type {Number}
+ * @product highmaps
+ * @apioption series.heatmap.data.x
+ */
+
+/**
+ * The y coordinate of the point.
+ * 
+ * @type {Number}
+ * @product highmaps
+ * @apioption series.heatmap.data.y
+ */
