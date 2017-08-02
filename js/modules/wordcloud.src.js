@@ -133,6 +133,7 @@ var WordCloudOptions = {
 	fontFamily: 'Impact',
 	placementStrategy: 'random',
 	showInLegend: false,
+	spiral: 'archimedian',
 	tooltip: {
 		followPointer: true
 	}
@@ -165,6 +166,7 @@ var WordCloudSeries = {
 			chart = series.chart,
 			placed = [],
 			placementStrategy = series.placementStrategy[series.options.placementStrategy],
+			spiral = series.spirals[series.options.spiral],
 			scale,
 			weights = series.points
 				.map(function (p) {
@@ -220,7 +222,7 @@ var WordCloudSeries = {
 					outsidePlayingField(point, field)
 				) && spiralIsSmallish
 			) {
-				delta = archimedeanSpiral(attempt);
+				delta = spiral(attempt);
 				// Update the DOMRect with new positions.
 				rect.left = clientRect.left + delta.x;
 				rect.right = rect.left + rect.width;
@@ -263,6 +265,9 @@ var WordCloudSeries = {
 				rotation: Math.floor(Math.random() * 2) * 90
 			};
 		}
+	},
+	spirals: {
+		'archimedian': archimedeanSpiral
 	},
 	getPlotBox: function () {
 		var series = this,
