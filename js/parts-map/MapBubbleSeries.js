@@ -29,9 +29,11 @@ if (seriesTypes.bubble) {
 	 */
 	seriesType('mapbubble', 'bubble', {
 
-		/**
-		 */
 		animationLimit: 500,
+
+		tooltip: {
+			pointFormat: '{point.name}: {point.z}'
+		}
 
 		/**
 		 * The main color of the series. This color affects both the fill and
@@ -120,15 +122,6 @@ if (seriesTypes.bubble) {
 		 * @product highmaps
 		 * @apioption plotOptions.mapbubble.sizeByAbsoluteValue
 		 */
-
-		/**
-		 */
-		tooltip: {
-
-			/**
-			 */
-			pointFormat: '{point.name}: {point.z}'
-		}
 
 		/**
 		 * The minimum for the Z value range. Defaults to the highest Z value

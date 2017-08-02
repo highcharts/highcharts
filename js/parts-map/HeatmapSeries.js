@@ -32,6 +32,7 @@ var colorPointMixin = H.colorPointMixin,
  * @sample highcharts/demo/heatmap-canvas/
  *         Heavy heatmap
  * @extends {plotOptions.scatter}
+ * @excluding marker,pointRange
  * @product highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
@@ -84,45 +85,39 @@ seriesType('heatmap', 'scatter', {
 	nullColor: '${palette.neutralColor3}',
 	/*= } =*/
 
-	/**
-	 */
 	dataLabels: {
 
-		/**
-		 */
 		formatter: function () { // #2945
 			return this.point.value;
 		},
-
-		/**
-		 */
 		inside: true,
-
-		/**
-		 */
 		verticalAlign: 'middle',
-
-		/**
-		 */
 		crop: false,
-
-		/**
-		 */
 		overflow: false,
-
-		/**
-		 */
 		padding: 0 // #3837
 	},
 
-	/**
-	 */
+	/** @ignore */
 	marker: null,
 
-	/**
-	 */
+	/**	@ignore */
 	pointRange: null, // dynamically set to colsize by default
 
+	tooltip: {
+		pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
+	},
+
+	states: {
+
+		normal: {
+			animation: true
+		},
+
+		hover: {
+			halo: false,  // #3406, halo is not required on heatmaps
+			brightness: 0.2
+		}
+	}
 	/**
 	 * The row size - how many Y axis units each heatmap row should span.
 	 * 
@@ -135,41 +130,6 @@ seriesType('heatmap', 'scatter', {
 	 * @apioption plotOptions.heatmap.rowsize
 	 */
 
-	/**
-	 */
-	tooltip: {
-
-		/**
-		 */
-		pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
-	},
-
-	/**
-	 */
-	states: {
-
-		/**
-		 */
-		normal: {
-
-			/**
-			 */
-			animation: true
-		},
-
-		/**
-		 */
-		hover: {
-
-			/**
-			 */
-			halo: false,  // #3406, halo is not required on heatmaps
-
-			/**
-			 */
-			brightness: 0.2
-		}
-	}
 }, merge(colorSeriesMixin, {
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,

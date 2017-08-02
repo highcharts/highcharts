@@ -24,40 +24,21 @@ var merge = H.merge,
  */
 seriesType('mappoint', 'scatter', {
 
-	/**
-	 */
 	dataLabels: {
-
-		/**
-		 */
 		enabled: true,
-
-		/**
-		 */
 		formatter: function () { // #2945
 			return this.point.name;
 		},
-
-		/**
-		 */
 		crop: false,
-
-		/**
-		 */
 		defer: false,
-
-		/**
-		 */
 		overflow: false,
-
-		/**
-		 */
 		style: {
-
-			/**
-			 */
 			color: '${palette.neutralColor100}'
 		}
+		/**
+		 * @default {point.name}
+		 * @apioption plotOptions.mappoint.dataLabels.format
+		 */
 	}
 
 // Prototype members

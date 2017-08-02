@@ -140,14 +140,12 @@ defaultOptions.mapNavigation = {
 		 * objects.
 		 * 
 		 * @type {Object}
-		 * @sample {highmaps} maps/mapnavigation/button-theme/ Themed navigation buttons
+		 * @sample {highmaps} maps/mapnavigation/button-theme/
+		 *         Themed navigation buttons
 		 * @product highmaps
 		 */
 		theme: {
 			'stroke-width': 1,
-
-			/**
-			 */
 			'text-align': 'center'
 		}
 		/*= } =*/

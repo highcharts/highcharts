@@ -33,12 +33,8 @@ var each = H.each,
  */
 seriesType('boxplot', 'column', {
 
-	/**
-	 */
 	threshold: null,
 
-	/**
-	 */
 	tooltip: {
 		/*= if (!build.classic) { =*/
 		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' +

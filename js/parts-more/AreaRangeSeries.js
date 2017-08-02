@@ -44,18 +44,15 @@ seriesType('arearange', 'area', {
 	/*= } =*/
 
 	/**
+	 * @default null
 	 */
 	threshold: null,
 
-	/**
-	 */
 	tooltip: {
 		/*= if (!build.classic) { =*/
 		pointFormat: '<span class="highcharts-color-{series.colorIndex}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
 		/*= } else { =*/
 
-		/**
-		 */
 		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // eslint-disable-line no-dupe-keys
 		/*= } =*/
 	},
@@ -85,12 +82,7 @@ seriesType('arearange', 'area', {
 	 */
 	dataLabels: {
 
-		/**
-		 */
 		align: null,
-
-		/**
-		 */
 		verticalAlign: null,
 
 		/**

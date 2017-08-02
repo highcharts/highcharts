@@ -41,6 +41,7 @@ var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
  *
  * @sample maps/demo/base/ Choropleth map
  * @extends {plotOptions.scatter}
+ * @excluding marker
  * @product highmaps
  * @optionparent plotOptions.map
  */
@@ -59,16 +60,13 @@ seriesType('map', 'scatter', {
 	 */
 	allAreas: true,
 
-
-	/**
-	 */
 	animation: false, // makes the complex shapes slow
 
 	/**
 	 * The color to apply to null points.
 	 * 
-	 * In styled mode, the null point fill is set in the `.highcharts-
-	 * null-point` class.
+	 * In styled mode, the null point fill is set in the
+	 * `.highcharts-null-point` class.
 	 * 
 	 * @type {Color}
 	 * @sample {highmaps} maps/demo/all-areas-as-null/ Null color
@@ -127,12 +125,9 @@ seriesType('map', 'scatter', {
 	 * @apioption plotOptions.series.colorAxis
 	 */
 	
-	/**
-	 */
+	/** @ignore */
 	marker: null,
 
-	/**
-	 */
 	stickyTracking: false,
 
 	/**
@@ -160,56 +155,25 @@ seriesType('map', 'scatter', {
 	 */
 	joinBy: 'hc-key',
 
-	/**
-	 */
 	dataLabels: {
-
-		/**
-		 */
 		formatter: function () { // #2945
 			return this.point.value;
 		},
-
-		/**
-		 */
 		inside: true, // for the color
-
-		/**
-		 */
 		verticalAlign: 'middle',
-
-		/**
-		 */
 		crop: false,
-
-		/**
-		 */
 		overflow: false,
-
-		/**
-		 */
 		padding: 0
 	},
 
-	/**
-	 */
+	/** @ignore */
 	turboThreshold: 0,
 
-	/**
-	 */
 	tooltip: {
-
-		/**
-		 */
 		followPointer: true,
-
-		/**
-		 */
 		pointFormat: '{point.name}: {point.value}<br/>'
 	},
 
-	/**
-	 */
 	states: {
 
 		/**
@@ -237,9 +201,9 @@ seriesType('map', 'scatter', {
 			animation: true
 		},
 
-		/**
-		 */
 		hover: {
+
+			halo: null,
 
 			/**
 			 * The border color of the point in this state.
@@ -266,7 +230,7 @@ seriesType('map', 'scatter', {
 			 * @product highmaps
 			 * @apioption plotOptions.series.states.hover.brightness
 			 */
-			brightness: 0.2,
+			brightness: 0.2
 
 			/**
 			 * The color of the shape in this state
@@ -277,17 +241,9 @@ seriesType('map', 'scatter', {
 			 * @apioption plotOptions.series.states.hover.color
 			 */
 
-			/**
-			 */
-			halo: null
 		},
 
-		/**
-		 */
 		select: {
-
-			/**
-			 */
 			color: '${palette.neutralColor20}'
 		}
 	}
