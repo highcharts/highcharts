@@ -225,7 +225,7 @@ g.highcharts-series,
     fill-opacity: 0.25;
     stroke-width: 0;
 }
-.highcharts-point-select {
+.highcharts-series:not(.highcharts-pie-series) .highcharts-point-select {
     fill: $neutral-color-20;
     stroke: $neutral-color-100;
 }
@@ -247,10 +247,6 @@ g.highcharts-series,
 .highcharts-pie-series .highcharts-point-hover {
     fill-opacity: 0.75;
     transition: fill-opacity 50ms;
-}
-.highcharts-pie-series .highcharts-point-select {
-    fill: inherit;
-    stroke: inherit;
 }
 .highcharts-funnel-series .highcharts-point {
     stroke-linejoin: round;
