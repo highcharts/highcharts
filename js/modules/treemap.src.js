@@ -497,7 +497,14 @@ seriesType('treemap', 'scatter', {
 	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value', 'colorValue'],
 	colorKey: 'colorValue', // Point color option key
-	translateColors: seriesTypes.heatmap && seriesTypes.heatmap.prototype.translateColors,
+	translateColors: (
+		seriesTypes.heatmap &&
+		seriesTypes.heatmap.prototype.translateColors
+	),
+	colorAttribs: (
+		seriesTypes.heatmap &&
+		seriesTypes.heatmap.prototype.colorAttribs
+	),
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	/**
 	 * Creates an object map from parent id to childrens index.
@@ -1125,6 +1132,17 @@ seriesType('treemap', 'scatter', {
 		});
 		// Call standard drawPoints
 		seriesTypes.column.prototype.drawPoints.call(this);
+
+		/*= if (!build.classic) { =*/
+		// In styled mode apply point.color. Use CSS, otherwise the fill
+		// used in the style sheet will take precedence over the fill
+		// attribute.
+		if (this.colorAttribs) { // Heatmap is loaded
+			each(this.points, function (point) {
+				point.graphic.css(this.colorAttribs(point));
+			}, this);
+		}
+		/*= } =*/
 
 		// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
 		if (series.options.allowDrillToNode) {
