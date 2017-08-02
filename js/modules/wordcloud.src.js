@@ -132,6 +132,23 @@ var getPlayingField = function getPlayingField(targetWidth, targetHeight) {
 	};
 };
 
+
+/**
+ * getRotation - Calculates a number of degrees to rotate, based upon a number
+ *     of orientations within a range from-to.
+ *
+ * @param  {type} orientations Number of orientations.
+ * @param  {type} from The smallest degree of rotation.
+ * @param  {type} to The largest degree of rotation.
+ * @return {type} Returns the resulting rotation for the word.
+ */
+var getRotation = function getRotation(orientations, from, to) {
+	var range = to - from,
+		intervals = range / (orientations - 1),
+		orientation = Math.floor(Math.random() * orientations);
+	return from + (orientation * intervals);
+};
+
 /**
  * outsidePlayingField - Detects if a word is placed outside the playing field.
  *
@@ -164,6 +181,11 @@ var WordCloudOptions = {
 	colorByPoint: true,
 	fontFamily: 'Impact',
 	placementStrategy: 'random',
+	rotation: {
+		from: -60,
+		orientations: 5,
+		to: 60
+	},
 	showInLegend: false,
 	spiral: 'archimedean',
 	tooltip: {
@@ -208,6 +230,7 @@ var WordCloudSeries = {
 			placed = [],
 			placementStrategy = series.placementStrategy[series.options.placementStrategy],
 			spiral = series.spirals[series.options.spiral],
+			rotation = series.options.rotation,
 			scale,
 			weights = series.points
 				.map(function (p) {
@@ -231,7 +254,8 @@ var WordCloudSeries = {
 			placement = placementStrategy(point, {
 				data: data,
 				field: field,
-				placed: placed
+				placed: placed,
+				rotation: rotation
 			});
 			if (!point.graphic) {
 				point.graphic = chart.renderer.text(point.name).css({
@@ -305,11 +329,12 @@ var WordCloudSeries = {
 	 */
 	placementStrategy: {
 		random: function randomPlacement(point, options) {
-			var field = options.field;
+			var field = options.field,
+				r = options.rotation;
 			return {
 				x: getRandomPosition(field.width) - (field.width / 2),
 				y: getRandomPosition(field.height) - (field.height / 2),
-				rotation: Math.floor(Math.random() * 2) * 90
+				rotation: getRotation(r.orientations, r.from, r.to)
 			};
 		}
 	},
