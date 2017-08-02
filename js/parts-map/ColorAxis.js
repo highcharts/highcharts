@@ -104,8 +104,7 @@ extend(ColorAxis.prototype, {
 		/**
 		 * The color of each data class. If not set, the color is pulled from
 		 * the global or chart-specific [colors](#colors) array. In 
-		 * [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), this option is ignored. Instead, use colors defined in
+		 * styled mode, this option is ignored. Instead, use colors defined in
 		 * CSS.
 		 * 
 		 * @type {Color}

@@ -67,8 +67,7 @@ seriesType('map', 'scatter', {
 	/**
 	 * The color to apply to null points.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the null point fill is set in the `.highcharts-
+	 * In styled mode, the null point fill is set in the `.highcharts-
 	 * null-point` class.
 	 * 
 	 * @type {Color}
@@ -92,8 +91,7 @@ seriesType('map', 'scatter', {
 	/**
 	 * The border color of the map areas.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the border stroke is given in the `.highcharts-
+	 * In styled mode, the border stroke is given in the `.highcharts-
 	 * point` class.
 	 * 
 	 * @type {Color}
@@ -107,8 +105,7 @@ seriesType('map', 'scatter', {
 	/**
 	 * The border width of each map area.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the border stroke width is given in the `.highcharts-
+	 * In styled mode, the border stroke width is given in the `.highcharts-
 	 * point` class.
 	 * 
 	 * @type {Number}

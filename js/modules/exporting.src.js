@@ -86,8 +86,7 @@ merge(true, defaultOptions.navigation,
 	 * icon is clicked. This menu is rendered in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the menu is styled with the `.highcharts-menu`
+	 * @see In styled mode, the menu is styled with the `.highcharts-menu`
 	 * class.
 	 * @sample {highcharts} highcharts/navigation/menustyle/ Light gray menu background
 	 * @sample {highstock} highcharts/navigation/menustyle/ Light gray menu background
@@ -107,8 +106,7 @@ merge(true, defaultOptions.navigation,
 	 * in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the menu items are styled with the `.highcharts-
+	 * @see In styled mode, the menu items are styled with the `.highcharts-
 	 * menu-item` class.
 	 * @sample {highcharts} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
 	 * @sample {highstock} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
@@ -135,8 +133,7 @@ merge(true, defaultOptions.navigation,
 	 *  The menu items are rendered in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the menu items are styled with the `.highcharts-
+	 * @see In styled mode, the menu items are styled with the `.highcharts-
 	 * menu-item` class.
 	 * @sample {highcharts} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @sample {highstock} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
@@ -154,8 +151,7 @@ merge(true, defaultOptions.navigation,
 	 * A collection of options for buttons appearing in the exporting module.
 	 * 
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the buttons are styled with the `.highcharts-
+	 * In styled mode, the buttons are styled with the `.highcharts-
 	 * contextbutton` and `.highcharts-button-symbol` class.
 	 * 
 	 * @product highcharts highstock highmaps
@@ -316,8 +312,7 @@ defaultOptions.exporting = {
 		/**
 		 * Options for the export button.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), export button styles can be applied with the
+		 * In styled mode, export button styles can be applied with the
 		 * `.highcharts-contextbutton` class.
 		 * 
 		 * @extends navigation.buttonOptions

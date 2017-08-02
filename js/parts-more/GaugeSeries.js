@@ -129,8 +129,7 @@ seriesType('gauge', 'line', {
 	/**
 	 * Options for the dial or arrow pointer of the gauge.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the dial is styled with the `.highcharts-gauge-
+	 * In styled mode, the dial is styled with the `.highcharts-gauge-
 	 * series .highcharts-dial` rule.
 	 * 
 	 * @type {Object}
@@ -262,8 +261,7 @@ seriesType('gauge', 'line', {
 	/**
 	 * Options for the pivot or the center point of the gauge.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the pivot is styled with the `.highcharts-gauge-
+	 * In styled mode, the pivot is styled with the `.highcharts-gauge-
 	 * series .highcharts-pivot` rule.
 	 * 
 	 * @type {Object}

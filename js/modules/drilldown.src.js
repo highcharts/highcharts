@@ -73,8 +73,7 @@ defaultOptions.drilldown = {
 	 * to interaction.
 	 * 
 	 * @type {CSSObject}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), active label styles can be set with the `.highcharts-
+	 * @see In styled mode, active label styles can be set with the `.highcharts-
 	 * drilldown-axis-label` class.
 	 * @sample {highcharts} highcharts/drilldown/labels/ Label styles
 	 * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
@@ -94,8 +93,7 @@ defaultOptions.drilldown = {
 	 * interaction.
 	 * 
 	 * @type {CSSObject}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), active data label styles can be applied with
+	 * @see In styled mode, active data label styles can be applied with
 	 * the `.highcharts-drilldown-data-label` class.
 	 * @sample {highcharts} highcharts/drilldown/labels/ Label styles
 	 * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
@@ -220,8 +218,7 @@ defaultOptions.drilldown = {
 		 * `theme.states.hover`.
 		 * 
 		 * @type {Object}
-		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), drill-up button styles can be applied with the
+		 * @see In styled mode, drill-up button styles can be applied with the
 		 * `.highcharts-drillup-button` class.
 		 * @sample {highcharts} highcharts/drilldown/drillupbutton/
 		 *         Button theming

@@ -82,8 +82,7 @@ var candlestickOptions = {
 	/**
 	 * The color of the line/border of the candlestick.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the line stroke can be set with the `.highcharts-
+	 * In styled mode, the line stroke can be set with the `.highcharts-
 	 * candlestick-series .highcahrts-point` rule.
 	 * 
 	 * @type {Color}
@@ -98,8 +97,7 @@ var candlestickOptions = {
 	 * The pixel width of the candlestick line/border. Defaults to `1`.
 	 * 
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the line stroke width can be set with the `.
+	 * In styled mode, the line stroke width can be set with the `.
 	 * highcharts-candlestick-series .highcahrts-point` rule.
 	 * 
 	 * @type {Number}
@@ -111,8 +109,7 @@ var candlestickOptions = {
 	/**
 	 * The fill color of the candlestick when values are rising.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the up color can be set with the `.highcharts-
+	 * In styled mode, the up color can be set with the `.highcharts-
 	 * candlestick-series .highcharts-point-up` rule.
 	 * 
 	 * @type {Color}

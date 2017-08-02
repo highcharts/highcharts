@@ -90,8 +90,7 @@ seriesType('pie', 'line', {
 		 * The color of the line connecting the data label to the pie slice.
 		 * The default color is the same as the point's color.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the connector stroke is given in the
+		 * In styled mode, the connector stroke is given in the
 		 * `.highcharts-data-label-connector` class.
 		 * 
 		 * @type {String}
@@ -118,8 +117,7 @@ seriesType('pie', 'line', {
 		 * The width of the line connecting the data label to the pie slice.
 		 * 
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the connector stroke width is given in the
+		 * In styled mode, the connector stroke width is given in the
 		 * `.highcharts-data-label-connector` class.
 		 * 
 		 * @type {Number}
@@ -324,8 +322,7 @@ seriesType('pie', 'line', {
 	 * together with a `borderWidth` to fill drawing gaps created by antialiazing
 	 * artefacts in borderless pies.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the border stroke is given in the `.highcharts-
+	 * In styled mode, the border stroke is given in the `.highcharts-
 	 * point` class.
 	 * 
 	 * @type {Color}
@@ -343,8 +340,7 @@ seriesType('pie', 'line', {
 	 * keep the border width at 0.5 or 1, but set the `borderColor` to
 	 * `null` instead.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the border stroke width is given in the `.highcharts-
+	 * In styled mode, the border stroke width is given in the `.highcharts-
 	 * point` class.
 	 * 
 	 * @type {Number}
@@ -368,8 +364,7 @@ seriesType('pie', 'line', {
 			 * How much to brighten the point on interaction. Requires the main
 			 * color to be defined in hex or rgb(a) format.
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the hover brightness is by default replaced
+			 * In styled mode, the hover brightness is by default replaced
 			 * by a fill-opacity given in the `.highcharts-point-hover` class.
 			 * 
 			 * @type {Number}

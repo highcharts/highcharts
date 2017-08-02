@@ -55,8 +55,7 @@ seriesType('column', 'line', {
 	/**
 	 * The width of the border surrounding each column or bar.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the stroke width can be set with the `.highcharts-
+	 * In styled mode, the stroke width can be set with the `.highcharts-
 	 * point` rule.
 	 * 
 	 * @type {Number}
@@ -263,8 +262,7 @@ seriesType('column', 'line', {
 			 * How much to brighten the point on interaction. Requires the main
 			 * color to be defined in hex or rgb(a) format.
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the hover brightening is by default replaced
+			 * In styled mode, the hover brightening is by default replaced
 			 * with a fill-opacity set in the `.highcharts-point:hover` rule.
 			 * 
 			 * @type {Number}
@@ -367,8 +365,7 @@ seriesType('column', 'line', {
 	/**
 	 * The color of the border surrounding each column or bar.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the border stroke can be set with the `.highcharts-
+	 * In styled mode, the border stroke can be set with the `.highcharts-
 	 * point` rule.
 	 * 
 	 * @type {Color}

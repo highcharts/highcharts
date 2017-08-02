@@ -78,8 +78,7 @@ seriesType('bubble', 'scatter', {
 	 * of the markers. Other series types, like column series, don't have
 	 * markers, but have visual options on the series level instead.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the markers can be styled with the `.highcharts-
+	 * In styled mode, the markers can be styled with the `.highcharts-
 	 * point`, `.highcharts-point-hover` and `.highcharts-point-select`
 	 * class names.
 	 * 

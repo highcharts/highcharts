@@ -79,8 +79,7 @@ seriesType('boxplot', 'column', {
 	 * The fill color of the box.
 	 * 
 	 * @type {Color}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the fill color can be set with the `.highcharts-
+	 * @see In styled mode, the fill color can be set with the `.highcharts-
 	 * boxplot-box` class.
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
 	 *         Box plot styling
@@ -112,8 +111,7 @@ seriesType('boxplot', 'column', {
 	 * applies.
 	 * 
 	 * @type {Color}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the median stroke width can be set with the
+	 * @see In styled mode, the median stroke width can be set with the
 	 * `.highcharts-boxplot-median` class ([view live demo](http://jsfiddle.
 	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
@@ -131,8 +129,7 @@ seriesType('boxplot', 'column', {
 	 * boxplot.lineWidth) is used.
 	 * 
 	 * @type {Number}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the median stroke width can be set with the
+	 * @see In styled mode, the median stroke width can be set with the
 	 * `.highcharts-boxplot-median` class ([view live demo](http://jsfiddle.
 	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
@@ -161,8 +158,7 @@ seriesType('boxplot', 'column', {
 	 * the whiskers. If `null`, the series color is used.
 	 * 
 	 * @type {Color}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the stem stroke can be set with the `.highcharts-
+	 * @see In styled mode, the stem stroke can be set with the `.highcharts-
 	 * boxplot-stem` class ([view live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
 	 * @sample {highcharts} highcharts/plotoptions/error-bar-styling/ Error bar styling
@@ -192,8 +188,7 @@ seriesType('boxplot', 'column', {
 	 * boxplot.lineWidth) option.
 	 * 
 	 * @type {Number}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the stem stroke width can be set with the `.
+	 * @see In styled mode, the stem stroke width can be set with the `.
 	 * highcharts-boxplot-stem` class ([view live demo](http://jsfiddle.
 	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
@@ -209,8 +204,7 @@ seriesType('boxplot', 'column', {
 	 * values. When `null`, the general series color is used.
 	 * 
 	 * @type {Color}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the whisker stroke can be set with the `.highcharts-
+	 * @see In styled mode, the whisker stroke can be set with the `.highcharts-
 	 * boxplot-whisker` class ([view live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
 	 * @default null
@@ -225,8 +219,7 @@ seriesType('boxplot', 'column', {
 	 * boxplot.lineWidth) applies.
 	 * 
 	 * @type {Number}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the whisker stroke width can be set with the
+	 * @see In styled mode, the whisker stroke width can be set with the
 	 * `.highcharts-boxplot-whisker` class ([view live demo](http://jsfiddle.
 	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling

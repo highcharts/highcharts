@@ -29,8 +29,7 @@ var addEvent = H.addEvent,
  * 
  * The scrollbar is a means of panning over the X axis of a chart.
  * 
- * In [styled mode](http://www.highcharts.com/docs/chart-design-
- * and-style/style-by-css), all the presentational options for the
+ * In styled mode, all the presentational options for the
  * scrollbar are replaced by the classes `.highcharts-scrollbar-
  * thumb`, `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-
  * button`, `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-

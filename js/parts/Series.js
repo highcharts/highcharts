@@ -112,8 +112,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * Pixel with of the graph line.
 	 * 
 	 * @type {Number}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the line stroke-width can be set with the
+	 * @see In styled mode, the line stroke-width can be set with the
 	 * `.highcharts-graph` class name.
 	 * @sample {highcharts} highcharts/plotoptions/series-linewidth-general/ On all series
 	 * @sample {highcharts} highcharts/plotoptions/series-linewidth-specific/ On one single series
@@ -245,8 +244,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * series it applies to the bars unless a color is specified per point.
 	 * The default value is pulled from the `options.colors` array.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the color can be defined by the [colorIndex](#plotOptions.
+	 * In styled mode, the color can be defined by the [colorIndex](#plotOptions.
 	 * series.colorIndex) option. Also, the series color can be set with
 	 * the `.highcharts-series`, `.highcharts-color-{n}`, `.highcharts-{type}-
 	 * series` or `.highcharts-series-{n}` class, or individual classes
@@ -270,8 +268,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 	
 	/**
-	 * [Styled mode](http://www.highcharts.com/docs/chart-design-and-style/style-
-	 * by-css) only. A specific color index to use for the series, so its
+	 * Styled mode only. A specific color index to use for the series, so its
 	 * graphic representations are given the class name `highcharts-color-
 	 * {n}`.
 	 * 
@@ -302,8 +299,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * 
 	 * @validvalue [null, "default", "none", "help", "pointer", "crosshair"]
 	 * @type {String}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the series cursor can be set with the same classes
+	 * @see In styled mode, the series cursor can be set with the same classes
 	 * as listed under [series.color](#plotOptions.series.color).
 	 * @sample {highcharts} highcharts/plotoptions/series-cursor-line/
 	 *         On line graph
@@ -341,8 +337,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
 	 *             "LongDashDot", "LongDashDotDot"]
 	 * @type {String}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the [stroke dash-array](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
+	 * @see In styled mode, the [stroke dash-array](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
 	 * dashstyle/) can be set with the same classes as listed under [series.
 	 * color](#plotOptions.series.color).
 	 * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
@@ -503,8 +498,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * [threshold](#plotOptions.series.threshold).
 	 * 
 	 * @type {Color}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), a negative color is applied by setting this
+	 * @see In styled mode, a negative color is applied by setting this
 	 * option to `true` combined with the `.highcharts-negative` class name
 	 * ([view live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
 	 * negative-color/)).
@@ -938,8 +932,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * of the markers. Other series types, like column series, don't have
 	 * markers, but have visual options on the series level instead.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the markers can be styled with the `.highcharts-
+	 * In styled mode, the markers can be styled with the `.highcharts-
 	 * point`, `.highcharts-point-hover` and `.highcharts-point-select`
 	 * class names.
 	 * 
@@ -1359,8 +1352,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * Options for the series data labels, appearing next to each data
 	 * point.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the data labels can be styled wtih the `.highcharts-
+	 * In styled mode, the data labels can be styled wtih the `.highcharts-
 	 * data-label-box` and `.highcharts-data-label` class names ([see example](http://jsfiddle.
 	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
 	 * datalabels)).
@@ -1424,8 +1416,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		 */
 		
 		/**
-		 * A class name for the data label. Particularly in [styled mode](http://www.
-		 * highcharts.com/docs/chart-design-and-style/style-by-css), this can
+		 * A class name for the data label. Particularly in styled mode, this can
 		 * be used to give each series' or point's data label unique styling.
 		 * In addition to this option, a default color class name is added
 		 * so that we can give the labels a [contrast text shadow](http://jsfiddle.
@@ -1911,8 +1902,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			 * color with an opacity of 0.25\. The halo can be disabled by setting
 			 * the `halo` option to `false`.
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the halo is styled with the `.highcharts-
+			 * In styled mode, the halo is styled with the `.highcharts-
 			 * halo` class, with colors inherited from `.highcharts-color-{n}`.
 			 * 
 			 * @type {Object}
@@ -2043,8 +2033,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * the X axis, Y axis or Z axis for bubbles, according to the `zoneAxis`
 	 * option.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the color zones are styled with the `.highcharts-
+	 * In styled mode, the color zones are styled with the `.highcharts-
 	 * zone-{n}` class, or custom classed from the `className` option ([view
 	 * live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-
 	 * zones/)).
@@ -2059,8 +2048,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 
 	/**
-	 * [Styled mode](http://www.highcharts.com/docs/chart-design-and-style/style-
-	 * by-css) only. A custom class name for the zone.
+	 * Styled mode only. A custom class name for the zone.
 	 * 
 	 * @type {String}
 	 * @sample {highcharts} highcharts/css/color-zones/ Zones styled by class name
@@ -4616,8 +4604,7 @@ H.Series = H.seriesType('line', null, { // base series options
  */
 
 /**
- * [Styled mode](http://www.highcharts.com/docs/chart-design-and-style/style-
- * by-css) only. A specific color index to use for the point, so its
+ * Styled mode only. A specific color index to use for the point, so its
  * graphic representations are given the class name `highcharts-color-
  * {n}`.
  * 

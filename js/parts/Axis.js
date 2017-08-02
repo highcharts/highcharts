@@ -201,8 +201,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * wrapping of category labels. Use `textOverflow: 'none'` to prevent
 			 * ellipsis (dots).
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the labels are styled with the `.highcharts-
+			 * In styled mode, the labels are styled with the `.highcharts-
 			 * axis-labels` class.
 			 * 
 			 * @type {CSSObject}
@@ -461,8 +460,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * setting a specific `width` or by setting `wordSpace: 'nowrap'`.
 			 * 
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the stroke width is given in the
+			 * In styled mode, the stroke width is given in the
 			 * `.highcharts-axis-title` class.
 			 * 
 			 * @type {CSSObject}
@@ -507,8 +505,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Color of the minor, secondary grid lines.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke width is given in the `.highcharts-
+		 * In styled mode, the stroke width is given in the `.highcharts-
 		 * minor-grid-line` class.
 		 * 
 		 * @type {Color}
@@ -525,8 +522,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Width of the minor, secondary grid lines.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke width is given in the `.highcharts-
+		 * In styled mode, the stroke width is given in the `.highcharts-
 		 * grid-line` class.
 		 * 
 		 * @type {Number}
@@ -554,8 +550,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * The color of the line marking the axis itself.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the line stroke is given in the `.highcharts-
+		 * In styled mode, the line stroke is given in the `.highcharts-
 		 * axis-line` or `.highcharts-xaxis-line` class.
 		 * 
 		 * @productdesc {highmaps}
@@ -574,8 +569,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * The width of the line marking the axis itself.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke width is given in the `.highcharts-
+		 * In styled mode, the stroke width is given in the `.highcharts-
 		 * axis-line` or `.highcharts-xaxis-line` class.
 		 * 
 		 * @type {Number}
@@ -593,8 +587,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Color of the grid lines extending the ticks across the plot area.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke is given in the `.highcharts-grid-
+		 * In styled mode, the stroke is given in the `.highcharts-grid-
 		 * line` class.
 		 *
 		 * @productdesc {highmaps}
@@ -615,8 +608,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Color for the main tick marks.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke is given in the `.highcharts-tick`
+		 * In styled mode, the stroke is given in the `.highcharts-tick`
 		 * class.
 		 * 
 		 * @type {Color}
@@ -829,8 +821,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			/**
 			 * CSS styles for the label.
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the styles are set in the `.highcharts-stack-
+			 * In styled mode, the styles are set in the `.highcharts-stack-
 			 * label` class.
 			 * 
 			 * @type {CSSObject}

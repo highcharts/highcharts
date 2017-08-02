@@ -59,8 +59,7 @@ extend(defaultOptions, {
 		 * 
 		 * CSS styles for the text label.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the buttons are styled by the `.highcharts-
+		 * In styled mode, the buttons are styled by the `.highcharts-
 		 * range-selector-buttons .highcharts-button` rule with its different
 		 * states.
 		 * 
@@ -127,8 +126,7 @@ extend(defaultOptions, {
 		/**
 		 * CSS styles for the labels - the Zoom, From and To texts.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the labels are styled by the `.highcharts-
+		 * In styled mode, the labels are styled by the `.highcharts-
 		 * range-label` class.
 		 * 
 		 * @type {CSSObject}

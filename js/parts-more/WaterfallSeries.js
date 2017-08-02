@@ -51,8 +51,7 @@ seriesType('waterfall', 'column', {
 	 * The color of the line that connects columns in a waterfall series.
 	 * 
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the stroke can be set with the `.highcharts-
+	 * In styled mode, the stroke can be set with the `.highcharts-
 	 * graph` class.
 	 * 
 	 * @type {Color}
@@ -78,8 +77,7 @@ seriesType('waterfall', 'column', {
 	 * *   LongDashDot
 	 * *   LongDashDotDot
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the stroke dash-array can be set with the `.
+	 * In styled mode, the stroke dash-array can be set with the `.
 	 * highcharts-graph` class.
 	 * 
 	 * @type {String}
@@ -92,8 +90,7 @@ seriesType('waterfall', 'column', {
 	/**
 	 * The color of the border of each waterfall column.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the border stroke can be set with the `.highcharts-
+	 * In styled mode, the border stroke can be set with the `.highcharts-
 	 * point` class.
 	 * 
 	 * @type {Color}
@@ -122,8 +119,7 @@ seriesType('waterfall', 'column', {
 	 * The color used specifically for positive point columns. When not
 	 * specified, the general series color is used.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the waterfall colors can be set with the
+	 * In styled mode, the waterfall colors can be set with the
 	 * `.highcharts-point-negative`, `.highcharts-sum` and
 	 * `.highcharts-intermediate-sum` classes.
 	 * 

@@ -171,8 +171,7 @@ seriesType('flags', 'column', {
 	/**
 	 * The color of the line/border of the flag.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the stroke is set in the `.highcharts-flag-series
+	 * In styled mode, the stroke is set in the `.highcharts-flag-series
 	 * .highcharts-point` rule.
 	 * 
 	 * @type {Color}
@@ -223,8 +222,7 @@ seriesType('flags', 'column', {
 	/**
 	 * The text styles of the flag.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the styles are set in the `.highcharts-flag-
+	 * In styled mode, the styles are set in the `.highcharts-flag-
 	 * series .highcharts-point` rule.
 	 * 
 	 * @type {CSSObject}

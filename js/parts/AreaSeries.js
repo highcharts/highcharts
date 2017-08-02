@@ -40,8 +40,7 @@ seriesType('area', 'line', {
 	 * is used with the series' `fillOpacity`.
 	 * 
 	 * @type {Color}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the fill color can be set with the `.highcharts-
+	 * @see In styled mode, the fill color can be set with the `.highcharts-
 	 * area` class name.
 	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/ Null by default
 	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/ Gradient
@@ -58,8 +57,7 @@ seriesType('area', 'line', {
 	 * of the `color` setting.
 	 * 
 	 * @type {Number}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the fill opacity can be set with the `.highcharts-
+	 * @see In styled mode, the fill opacity can be set with the `.highcharts-
 	 * area` class name.
 	 * @sample {highcharts} highcharts/plotoptions/area-fillopacity/ Automatic fill color and fill opacity of 0.1
 	 * @default {highcharts} 0.75
@@ -74,8 +72,7 @@ seriesType('area', 'line', {
 	 * separate color for the line without altering the `fillColor`.
 	 * 
 	 * @type {Color}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the line stroke can be set with the `.highcharts-
+	 * @see In styled mode, the line stroke can be set with the `.highcharts-
 	 * graph` class name.
 	 * @sample {highcharts} highcharts/plotoptions/area-linecolor/ Dark gray line
 	 * @default null
@@ -87,8 +84,7 @@ seriesType('area', 'line', {
 	 * A separate color for the negative part of the area.
 	 * 
 	 * @type {Color}
-	 * @see [negativeColor](#plotOptions.area.negativeColor). In [styled mode](http://www.
-	 * highcharts.com/docs/chart-design-and-style/style-by-css), a negative
+	 * @see [negativeColor](#plotOptions.area.negativeColor). In styled mode, a negative
 	 * color is set with the `.highcharts-negative` class name ([view live
 	 * demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
 	 * negative-color/)).

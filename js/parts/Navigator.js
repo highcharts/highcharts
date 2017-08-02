@@ -170,8 +170,7 @@ extend(defaultOptions, {
 		 * color is bluish with an opacity of 0.3 to see the series below.
 		 * 
 		 * @type {Color}
-		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the mask is styled with the `.highcharts-navigator-
+		 * @see In styled mode, the mask is styled with the `.highcharts-navigator-
 		 * mask` and `.highcharts-navigator-mask-inside` classes.
 		 * @sample {highstock} stock/navigator/maskfill/ Blue, semi transparent mask
 		 * @default rgba(102,133,194,0.3)
@@ -195,8 +194,7 @@ extend(defaultOptions, {
 		 * navigator.
 		 * 
 		 * @type {Number}
-		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the outline stroke width is set with the `.
+		 * @see In styled mode, the outline stroke width is set with the `.
 		 * highcharts-navigator-outline` class.
 		 * @sample {highstock} stock/navigator/outline/ 2px blue outline
 		 * @default 2
@@ -229,8 +227,7 @@ extend(defaultOptions, {
 		 * }</pre>
 		 * 
 		 * @type {Object}
-		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the navigator series is styled with the `.
+		 * @see In styled mode, the navigator series is styled with the `.
 		 * highcharts-navigator-series` class.
 		 * @sample {highstock} stock/navigator/series-data/ Using a separate data set for the navigator
 		 * @sample {highstock} stock/navigator/series/ A green navigator series
