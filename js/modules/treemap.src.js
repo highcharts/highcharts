@@ -1112,7 +1112,7 @@ seriesType('treemap', 'scatter', {
 			});
 
 		each(points, function (point) {
-			var groupKey = 'levelGroup-' + point.node.levelDynamic;
+			var groupKey = 'level-group-' + point.node.levelDynamic;
 			if (!series[groupKey]) {
 				series[groupKey] = series.chart.renderer.g(groupKey)
 					.attr({
