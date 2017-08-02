@@ -13,11 +13,7 @@ import '../parts/Series.js';
 var each = H.each,
 	extend = H.extend,
 	Series = H.Series,
-	maxFontSize = 25,
-	field = {
-		width: 256,
-		height: 256
-	};
+	maxFontSize = 25;
 
 
 /**
@@ -110,6 +106,24 @@ var getScale = function getScale(xAxis, yAxis, field, series) {
 	return Math.min(scaleX, scaleY);
 };
 
+
+/**
+ * getPlayingField - Calculates what is called the playing field.
+ *    The field is the area which all the words are allowed to be positioned
+ *    within. The area is proportioned to match the target aspect ratio.
+ *
+ * @param  {number} targetWidth Width of the target area.
+ * @param  {number} targetHeight Height of the target area.
+ * @return {object} The width and height of the playing field.
+ */
+var getPlayingField = function getPlayingField(targetWidth, targetHeight) {
+	var ratio = targetWidth / targetHeight;
+	return {
+		width: 256 * ratio,
+		height: 256
+	};
+};
+
 var outsidePlayingField = function outsidePlayingField(point, field) {
 	var rect = point.graphic.getBBox(),
 		playingField = {
@@ -173,6 +187,7 @@ var WordCloudSeries = {
 					return p.weight;
 				}),
 			maxWeight = Math.max.apply(null, weights),
+			field = getPlayingField(xAxis.len, yAxis.len),
 			maxDelta = (field.width * field.width) + (field.height * field.height),
 			data = series.points
 				.sort(function (a, b) {
