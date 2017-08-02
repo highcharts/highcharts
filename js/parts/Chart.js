@@ -845,8 +845,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			while (node && node.style) {
 
 				// When rendering to a detached node, it needs to be temporarily
-				// attached in order to read styling and bounding boxes (#5783).
-				if (!doc.body.contains(node)) {
+				// attached in order to read styling and bounding boxes (#5783,
+				// #7024).
+				if (!doc.body.contains(node) && !node.parentNode) {
 					node.hcOrigDetached = true;
 					doc.body.appendChild(node);
 				}

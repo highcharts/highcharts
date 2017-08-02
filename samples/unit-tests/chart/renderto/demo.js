@@ -68,3 +68,40 @@ QUnit.test('Container originally detached (#5783)', function (assert) {
         }]
     });
 });
+
+QUnit.test('Container parent originally detached (#7024)', function (assert) {
+
+    var parent = document.createElement('div');
+    var c = document.createElement('div');
+
+    parent.appendChild(c);
+
+    c.style.width = '210px';
+    c.style.height = '210px';
+
+    var chart = Highcharts.chart({
+        chart: {
+            renderTo: c
+        },
+        title: {
+            text: 'The height of the chart is set to 210px'
+        },
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+                148.5, 216.4, 194.1, 95.6, 54.4],
+            type: 'pie'
+        }]
+    });
+
+    document.getElementById('container').appendChild(parent);
+
+    assert.ok(
+        document.body.contains(chart.container),
+        'Chart is attached to DOM'
+    );
+    assert.strictEqual(
+        chart.chartWidth,
+        210,
+        'Chart width detected from CSS'
+    );
+});
