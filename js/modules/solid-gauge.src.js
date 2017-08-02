@@ -157,11 +157,13 @@ colorAxisMethods = {
  *
  * @sample highcharts/demo/gauge-solid/ Solid gauges
  * @extends plotOptions.gauge
+ * @excluding dial,pivot
  * @product highcharts
  * @optionparent plotOptions.solidgauge
  */
 var solidGaugeOptions = {
 	/**
+	 * Whether to give each point an individual color.
 	 */
 	colorByPoint: true
 	/**

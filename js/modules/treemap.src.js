@@ -128,6 +128,7 @@ seriesType('treemap', 'scatter', {
 	showInLegend: false,
 
 	/**
+	 * @ignore
 	 */
 	marker: false,
 
@@ -139,54 +140,31 @@ seriesType('treemap', 'scatter', {
 	dataLabels: {
 
 		/**
-		 * Enable or disable the data labels.
-		 * 
-		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled/ Data labels enabled
-		 * @default true
 		 * @since 4.1.0
-		 * @product highcharts
 		 */
 		enabled: true,
 
 		/**
-		 * Whether to defer displaying the data labels until the initial series
-		 * animation has finished.
-		 * 
-		 * @type {Boolean}
-		 * @default false
 		 * @since 4.1.0
-		 * @product highcharts
 		 */
 		defer: false,
 
 		/**
-		 * The vertical alignment of a data label. Can be one of top, middle
-		 * or bottom. The default value depends on the data, for instance
-		 * in a column chart, the label is above positive values and below
-		 * negative values.
-		 * 
-		 * @type {String}
-		 * @default middle
 		 * @since 4.1.0
-		 * @product highcharts
 		 */
 		verticalAlign: 'middle',
 
 		/**
+		 * Callback function to format the data labels. The  formatter for
+		 * treemaps by default returns the point name if present, or the point
+		 * id.
 		 */
 		formatter: function () { // #2945
 			return this.point.name || this.point.id;
 		},
 
 		/**
-		 * Whether to align the data label inside the box or to the actual
-		 * value point.
-		 * 
-		 * @type {Boolean}
-		 * @default true
 		 * @since 4.1.0
-		 * @product highcharts
 		 */
 		inside: true
 	},
@@ -301,24 +279,40 @@ seriesType('treemap', 'scatter', {
 	levelIsConstant: true,
 
 	/**
+	 * Options for the button appearing when drilling down in a treemap.
 	 */
 	drillUpButton: {
 
 		/**
+		 * The position of the button.
 		 */
 		position: { 
 
 			/**
+			 * Horizontal alignment of the button.
+			 * @validvalues ["left", "center", "right"]
 			 */
 			align: 'right',
 
 			/**
+			 * Horizontal offset of the button.
+			 * @default -10
+			 * @type {Number}
 			 */
 			x: -10,
 
 			/**
+			 * Vertical offset of the button.
 			 */
 			y: 10
+
+			/**
+			 * Vertical alignment of the button.
+			 *
+			 * @default top
+			 * @validvalues ["top", "middle", "bottom"]
+			 * @apioption plotOptions.treemap.drillUpButton.position.verticalAlign
+			 */
 		}
 	},
 	/*= if (build.classic) { =*/
@@ -334,6 +328,7 @@ seriesType('treemap', 'scatter', {
 	borderColor: '${palette.neutralColor10}',
 
 	/**
+	 * The width of the border surrounding each tree map item.
 	 */
 	borderWidth: 1,
 
@@ -366,10 +361,16 @@ seriesType('treemap', 'scatter', {
 		hover: {
 
 			/**
+			 * The border color for the hovered state.
 			 */
 			borderColor: '${palette.neutralColor40}',
 
 			/**
+			 * Brightness for the hovered point. Defaults to 0 if the heatmap
+			 * series is loaded, otherwise 0.1.
+			 *
+			 * @default null
+			 * @type {Number}
 			 */
 			brightness: seriesTypes.heatmap ? 0 : 0.1,
 
@@ -385,6 +386,7 @@ seriesType('treemap', 'scatter', {
 			opacity: 0.75,
 
 			/**
+			 * The shadow option for hovered state.
 			 */
 			shadow: false
 		}

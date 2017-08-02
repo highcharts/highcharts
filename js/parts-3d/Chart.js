@@ -242,10 +242,12 @@ var extendedOptions = 	{
 			frame: {
 
 				/**
+				 * Whether the frames are visible.
 				 */
 				visible: 'default',
 
 				/**
+				 * General pixel thickness for the frame faces.
 				 */
 				size: 1,
 
@@ -294,85 +296,36 @@ var extendedOptions = 	{
 
 				/**
 				 * The top of the frame around a 3D chart.
-				 * 
-				 * @type {Object}
-				 * @since 5.0.12
-				 * @product highcharts
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
-				top: {
-					/**
-					 * The color of the panel.
-					 * 
-					 * @type {Color}
-					 * @default transparent
-					 * @product highcharts
-					 * @apioption chart.options3d.frame.top.color
-					 */
-
-					/**
-					 * The pixel thickness of the panel.
-					 * 
-					 * @type {Number}
-					 * @default 1
-					 * @product highcharts
-					 * @apioption chart.options3d.frame.top.size
-					 */
-				},
+				top: {},
 
 				/**
+				 * The left side of the frame around a 3D chart.
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
 				left: {},
 
 				/**
+				 * The right of the frame around a 3D chart.
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
 				right: {},
 
 				/**
-				 * Defines the back panel of the frame around 3D charts.
-				 * 
-				 * @since 4.0
-				 * @product highcharts
+				 * The back side of the frame around a 3D chart.
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
-				back: {
-
-					/**
-					 * The color of the panel.
-					 * 
-					 * @type {Color}
-					 * @default transparent
-					 * @since 4.0
-					 * @product highcharts
-					 * @apioption chart.options3d.frame.back.color
-					 */
-
-					/**
-					 * Thickness of the panel.
-					 * 
-					 * @type {Number}
-					 * @default 1
-					 * @since 4.0
-					 * @product highcharts
-					 * @apioption chart.options3d.frame.back.size
-					 */
-
-					/**
-					 * Whether to display the frame. Possible values are `true`, `false`,
-					 * `"auto"` to display only the frames behind the data, and `"default"`
-					 * to display faces behind the data based on the axis layout, ignoring
-					 * the point of view.
-					 * 
-					 * @validvalue ["default", "auto", true, false]
-					 * @type {Boolean|String}
-					 * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
-					 * @default default
-					 * @since 5.0.12
-					 * @product highcharts
-					 * @apioption chart.options3d.frame.back.visible
-					 */
-
-				},
+				back: {},
 
 				/**
+				 * The front of the frame around a 3D chart.
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
 				front: {}
 			}

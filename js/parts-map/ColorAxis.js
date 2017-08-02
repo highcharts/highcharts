@@ -57,7 +57,10 @@ extend(ColorAxis.prototype, {
 	 *
 	 * See [the Axis object](#Axis) for programmatic access to the axis.
 	 * @extends {xAxis}
-	 * @excluding allowDecimals,alternateGridColor,breaks,categories,crosshair,dateTimeLabelFormats,linkedTo,maxZoom,minRange,minTickInterval,offset,opposite,plotBands,plotLines,showEmpty,title
+	 * @excluding allowDecimals,alternateGridColor,breaks,categories,crosshair,
+	 *            dateTimeLabelFormats,lineWidth,linkedTo,maxZoom,minRange,
+	 *            minTickInterval,offset,opposite,plotBands,plotLines,showEmpty,
+	 *            title
 	 * @product highcharts highmaps
 	 * @optionparent colorAxis
 	 */
@@ -143,8 +146,7 @@ extend(ColorAxis.prototype, {
 		 * @apioption colorAxis.dataClasses.to
 		 */
 
-		/**
-		 */
+		/** @ignore */
 		lineWidth: 0,
 
 		/**
@@ -250,8 +252,7 @@ extend(ColorAxis.prototype, {
 		 */
 		endOnTick: true,
 
-		/**
-		 */
+		/**	@ignore */
 		offset: 0,
 
 		/**
@@ -273,14 +274,10 @@ extend(ColorAxis.prototype, {
 			 * @product highcharts highmaps
 			 */
 			animation: {
-
-				/**
-				 */
 				duration: 50
 			},
 
-			/**
-			 */
+			/** @ignore */
 			width: 0.01,
 			/*= if (build.classic) { =*/
 
@@ -308,10 +305,10 @@ extend(ColorAxis.prototype, {
 		labels: {
 
 			/**
-			 * How to handle overflowing labels on horizontal axis. Can be undefined
-			 * or "justify". If "justify", labels will not render outside the
-			 * plot area. If there is room to move it, it will be aligned to
-			 * the edge, else it will be removed.
+			 * How to handle overflowing labels on horizontal color axis. Can be
+			 * undefined or "justify". If "justify", labels will not render
+			 * outside the legend area. If there is room to move it, it will be
+			 * aligned to the edge, else it will be removed.
 			 * 
 			 * @validvalue [null, "justify"]
 			 * @type {String}
@@ -320,8 +317,6 @@ extend(ColorAxis.prototype, {
 			 */
 			overflow: 'justify',
 
-			/**
-			 */
 			rotation: 0
 		},
 
@@ -373,6 +368,7 @@ extend(ColorAxis.prototype, {
 		 */
 
 		/**
+		 * The pixel length of the main tick marks on the color axis.
 		 */
 		tickLength: 5,
 

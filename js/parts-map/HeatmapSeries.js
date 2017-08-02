@@ -38,10 +38,12 @@ var colorPointMixin = H.colorPointMixin,
 seriesType('heatmap', 'scatter', {
 
 	/**
+	 * Animation is disabled by default on the heatmap series.
 	 */
 	animation: false,
 
 	/**
+	 * The border width for each heat map item.
 	 */
 	borderWidth: 0,
 
@@ -74,6 +76,10 @@ seriesType('heatmap', 'scatter', {
 	/*= if (build.classic) { =*/
 
 	/**
+	 * The color applied to null points. In styled mode, a general CSS class is
+	 * applied instead.
+	 *
+	 * @type {Color}
 	 */
 	nullColor: '${palette.neutralColor3}',
 	/*= } =*/

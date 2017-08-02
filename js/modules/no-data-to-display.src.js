@@ -91,17 +91,8 @@ defaultOptions.noData = {
  * @optionparent noData.style
  */
 defaultOptions.noData.style = {
-
-	/**
-	 */
 	fontWeight: 'bold',
-
-	/**
-	 */
 	fontSize: '12px',
-
-	/**
-	 */
 	color: '${palette.neutralColor60}'
 };
 /*= } =*/

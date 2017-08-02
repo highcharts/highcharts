@@ -139,7 +139,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
             parent = s.split('\n')[0].trim().split(' ');
 
-            console.log('doing optionparent:', currentSourceName, '->', parent.length > 1 ? parent[1] : 'root');
+            //console.log('doing optionparent:', currentSourceName, '->', parent.length > 1 ? parent[1] : 'root');
 
             if (parent && parent.length > 1) {
                 parent = parent[1].trim() || '';
@@ -351,6 +351,7 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('exclude', {
         onTagged: function (doclet, tagObj) {
+            console.log('@exdlude', tagObj.text)
             var items = tagObj.text.split(',');
 
             doclet.exclude = doclet.exclude || [];

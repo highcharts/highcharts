@@ -91,8 +91,8 @@ seriesType('pie', 'line', {
 		 * The default color is the same as the point's color.
 		 * 
 		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the connector stroke is given in the `.highcharts-
-		 * data-label-connector` class.
+		 * style/style-by-css), the connector stroke is given in the
+		 * `.highcharts-data-label-connector` class.
 		 * 
 		 * @type {String}
 		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorcolor/ Blue connectors
@@ -119,8 +119,8 @@ seriesType('pie', 'line', {
 		 * 
 		 * 
 		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the connector stroke width is given in the `.
-		 * highcharts-data-label-connector` class.
+		 * style/style-by-css), the connector stroke width is given in the
+		 * `.highcharts-data-label-connector` class.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/ Disable the connector

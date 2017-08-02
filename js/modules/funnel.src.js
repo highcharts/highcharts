@@ -28,6 +28,7 @@ seriesType('funnel', 'pie',
  *
  * @sample highcharts/demo/funnel/ Funnel demo
  * @extends {plotOptions.pie}
+ * @excluding size
  * @product highcharts
  * @optionparent plotOptions.funnel
  */
@@ -107,42 +108,29 @@ seriesType('funnel', 'pie',
 	 */
 	reversed: false,
 
-	/**
-	 */
+	/** @ignore */
 	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
 	/*= if (build.classic) { =*/
 	// Presentational
 
-	/**
-	 */
 	dataLabels: {
-		//position: 'right',
-
-		/**
-		 */
 		connectorWidth: 1
-		//connectorColor: null
 	},
 
 	/**
+	 * Options for the series states.
+	 *
+	 * @optionparent plotOptions.funnel.states
 	 */
 	states: {
 
 		/**
+		 * Options for a selected funnel item.
 		 */
 		select: {
-
-			/**
-			 */
 			color: '${palette.neutralColor20}',
-
-			/**
-			 */
 			borderColor: '${palette.neutralColor100}',
-
-			/**
-			 */
 			shadow: false
 		}
 	}
