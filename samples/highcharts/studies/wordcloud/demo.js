@@ -22,19 +22,16 @@
     console.time('render');
     H.chart('container', {
         chart: {
-            height: 1000,
-            margin: [0, 0, 0, 0],
-            plotBorderWidth: 1,
-            width: 1000
-        },
-        credits: {
-            enabled: false
+            width: 600,
+            plotBorderWidth: 1
         },
         series: [{
             type: 'wordcloud',
             data: data
         }],
-        title: null
+        title: {
+            text: 'Wordcloud of Lorem Ipsum'
+        }
     });
     console.timeEnd('render');
 }(Highcharts));

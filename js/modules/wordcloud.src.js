@@ -95,13 +95,35 @@ var getRandomPosition = function getRandomPosition(size) {
 	return Math.round((size * (Math.random() + 0.5)) / 2);
 };
 
-var getScale = function getScale(xAxis, yAxis, series) {
-	var bbox = series.group.element.getBoundingClientRect(),
-		height = bbox.bottom - bbox.top,
-		width = bbox.right - bbox.left,
+var getScale = function getScale(xAxis, yAxis, field, series) {
+	var box = series.group.getBBox(),
+		f = {
+			left: box.x,
+			right: box.x + box.width,
+			top: box.y,
+			bottom: box.y + box.height
+		},
+		height = Math.max(Math.abs(f.top), Math.abs(f.bottom)) * 2,
+		width = Math.max(Math.abs(f.left), Math.abs(f.right)) * 2,
 		scaleX = 1 / width * xAxis.len,
 		scaleY = 1 / height * yAxis.len;
 	return Math.min(scaleX, scaleY);
+};
+
+var outsidePlayingField = function outsidePlayingField(point, field) {
+	var rect = point.graphic.getBBox(),
+		playingField = {
+			left: -(field.width / 2),
+			right: field.width / 2,
+			top: -(field.height / 2),
+			bottom: field.height / 2
+		};
+	return !(
+		playingField.left < rect.x &&
+		playingField.right > (rect.x + rect.width) &&
+		playingField.top < rect.y &&
+		playingField.bottom > (rect.y + rect.height)
+	);
 };
 
 var WordCloudOptions = {
@@ -157,7 +179,7 @@ var WordCloudSeries = {
 		each(data, function (point) {
 			var attempt = 0,
 				delta,
-				outOfRange = false,
+				spiralIsSmallish = true,
 				placement,
 				clientRect,
 				rect;
@@ -186,37 +208,47 @@ var WordCloudSeries = {
 				point.rect = rect = extend({}, clientRect);
 			}
 			/**
-			 * while word intersects any previously placed words:
-			 *     move word a little bit along a spiral path
+			 * while w intersects any previously placed words:
+			 *    do {
+			 *      move w a little bit along a spiral path
+			 *    } while any part of w is outside the playing field and
+			 *        the spiral radius is still smallish
 			 */
-			while (intersectsAnyWord(point, placed) && !outOfRange) {
+			while (
+				(
+					intersectsAnyWord(point, placed) ||
+					outsidePlayingField(point, field)
+				) && spiralIsSmallish
+			) {
 				delta = archimedeanSpiral(attempt);
 				// Update the DOMRect with new positions.
 				rect.left = clientRect.left + delta.x;
 				rect.right = rect.left + rect.width;
 				rect.top = clientRect.top + delta.y;
 				rect.bottom = rect.top + rect.height;
-				outOfRange = Math.min(Math.abs(delta.x), Math.abs(delta.y)) >= maxDelta;
+				spiralIsSmallish = (
+					Math.min(Math.abs(delta.x), Math.abs(delta.y)) < maxDelta
+				);
 				attempt++;
 			}
 			/**
 			 * Check if point was placed, if so delete it,
 			 * otherwise place it on the correct positions.
 			 */
-			if (outOfRange) {
-				point.graphic = point.graphic.destroy();
-			} else {
+			if (spiralIsSmallish) {
 				point.graphic.attr({
 					x: placement.x + (delta ? delta.x : 0),
 					y: placement.y + (delta ? delta.y : 0)
 				});
 				placed.push(point);
+			} else {
+				point.graphic = point.graphic.destroy();
 			}
 		});
 		/**
 		 * Scale the series group to fit within the plotArea.
 		 */
-		scale = getScale(xAxis, yAxis, series);
+		scale = getScale(xAxis, yAxis, field, series);
 		series.group.attr({
 			scaleX: scale,
 			scaleY: scale
