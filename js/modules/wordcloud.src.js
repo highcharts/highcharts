@@ -12,9 +12,7 @@ import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var each = H.each,
 	extend = H.extend,
-	Series = H.Series,
-	maxFontSize = 25;
-
+	Series = H.Series;
 
 /**
  * isRectanglesIntersecting - Detects if there is a collision between two
@@ -38,6 +36,7 @@ var isRectanglesIntersecting = function isRectanglesIntersecting(r1, r2) {
  *     words.
  *
  * @param  {Point} point Point which the word is connected to.
+ * @param  {Array} points Previously placed points to check against.
  * @return {boolean} Returns true if there is collision.
  */
 var intersectsAnyWord = function intersectsAnyWord(point, points) {
@@ -66,11 +65,10 @@ var intersectsAnyWord = function intersectsAnyWord(point, points) {
 	return intersects;
 };
 
-
 /**
  * archimedeanSpiral - Gives a set of cordinates for an Archimedian Spiral.
  *
- * @param  {type} t
+ * @param  {type} t How far along the spiral we have traversed.
  * @return {object} Resulting coordinates, x and y.
  */
 var archimedeanSpiral = function archimedeanSpiral(t) {
@@ -91,7 +89,18 @@ var getRandomPosition = function getRandomPosition(size) {
 	return Math.round((size * (Math.random() + 0.5)) / 2);
 };
 
-var getScale = function getScale(xAxis, yAxis, field, series) {
+/**
+ * getScale - Calculates the proper scale to fit the cloud inside the plotting
+ *     area.
+ *
+ * @param  {number} targetWidth  Width of target area.
+ * @param  {number} targetHeight Height of target area.
+ * @param  {object} field The playing field.
+ * @param  {Series} series Series object.
+ * @return {number} Returns the value to scale the playing field up to the size
+ *     of the target area.
+ */
+var getScale = function getScale(targetWidth, targetHeight, field, series) {
 	var box = series.group.getBBox(),
 		f = {
 			left: box.x,
@@ -101,11 +110,10 @@ var getScale = function getScale(xAxis, yAxis, field, series) {
 		},
 		height = Math.max(Math.abs(f.top), Math.abs(f.bottom)) * 2,
 		width = Math.max(Math.abs(f.left), Math.abs(f.right)) * 2,
-		scaleX = 1 / width * xAxis.len,
-		scaleY = 1 / height * yAxis.len;
+		scaleX = 1 / width * targetWidth,
+		scaleY = 1 / height * targetHeight;
 	return Math.min(scaleX, scaleY);
 };
-
 
 /**
  * getPlayingField - Calculates what is called the playing field.
@@ -124,6 +132,13 @@ var getPlayingField = function getPlayingField(targetWidth, targetHeight) {
 	};
 };
 
+/**
+ * outsidePlayingField - Detects if a word is placed outside the playing field.
+ *
+ * @param  {Point} point Point which the word is connected to.
+ * @param  {object} field The width and height of the playing field.
+ * @return {boolean} Returns true if the word is placed outside the field.
+ */
 var outsidePlayingField = function outsidePlayingField(point, field) {
 	var rect = point.graphic.getBBox(),
 		playingField = {
@@ -140,6 +155,9 @@ var outsidePlayingField = function outsidePlayingField(point, field) {
 	);
 };
 
+/**
+ * Default options for the WordCloud series.
+ */
 var WordCloudOptions = {
 	borderWidth: 0,
 	clip: false, // Something goes wrong with clip. // TODO fix this
@@ -147,12 +165,15 @@ var WordCloudOptions = {
 	fontFamily: 'Impact',
 	placementStrategy: 'random',
 	showInLegend: false,
-	spiral: 'archimedian',
+	spiral: 'archimedean',
 	tooltip: {
 		followPointer: true
 	}
 };
 
+/**
+ * Properties of the WordCloud series.
+ */
 var WordCloudSeries = {
 	animate: Series.prototype.animate,
 	bindAxes: function () {
@@ -169,10 +190,16 @@ var WordCloudSeries = {
 		extend(this.yAxis.options, wordcloudAxis);
 		extend(this.xAxis.options, wordcloudAxis);
 	},
-	deriveFontSize: function (relativeWeight) {
+	/**
+	 * deriveFontSize - Calculates the fontSize of a word based on its weight.
+	 *
+	 * @param  {number} relativeWeight The weight of the word, on a scale 0-1.
+	 * @return {number} Returns the resulting fontSize of a word.
+	 */
+	deriveFontSize: function deriveFontSize(relativeWeight) {
+		var maxFontSize = 25;
 		return Math.floor(maxFontSize * relativeWeight);
 	},
-	// series prototype
 	drawPoints: function () {
 		var series = this,
 			xAxis = series.xAxis,
@@ -265,14 +292,19 @@ var WordCloudSeries = {
 		/**
 		 * Scale the series group to fit within the plotArea.
 		 */
-		scale = getScale(xAxis, yAxis, field, series);
+		scale = getScale(xAxis.len, yAxis.len, field, series);
 		series.group.attr({
 			scaleX: scale,
 			scaleY: scale
 		});
 	},
+	/**
+	 * Strategies used for deciding rotation and initial position of a word.
+	 * To implement a custom strategy, have a look at the function
+	 *     randomPlacement for example.
+	 */
 	placementStrategy: {
-		random: function (point, options) {
+		random: function randomPlacement(point, options) {
 			var field = options.field;
 			return {
 				x: getRandomPosition(field.width) - (field.width / 2),
@@ -281,8 +313,14 @@ var WordCloudSeries = {
 			};
 		}
 	},
+	/**
+	 * Spirals used for placing a word after the inital position experienced a
+	 *     collision with either another word or the borders.
+	 * To implement a custom spiral, look at the function archimedeanSpiral for
+	 *    example.
+	 */
 	spirals: {
-		'archimedian': archimedeanSpiral
+		'archimedean': archimedeanSpiral
 	},
 	getPlotBox: function () {
 		var series = this,
@@ -304,4 +342,7 @@ var WordCloudSeries = {
 	}
 };
 
+/**
+ * Assemble the WordCloud series type.
+ */
 H.seriesType('wordcloud', 'column', WordCloudOptions, WordCloudSeries);
