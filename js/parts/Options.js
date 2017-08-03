@@ -2078,12 +2078,11 @@ H.defaultOptions = {
 		 * value or datetime string depending on the type of axis. For datetime
 		 * axes, the `point.key` date format can be set using tooltip.xDateFormat.
 		 * 
-		 * 
-		 * Defaults to `<span style="font-size: 10px">{point.key}</span><br/>`
-		 * 
 		 * @type {String}
-		 * @sample {highcharts} highcharts/tooltip/footerformat/ A HTML table in the tooltip
-		 * @sample {highstock} highcharts/tooltip/footerformat/ A HTML table in the tooltip
+		 * @sample {highcharts} highcharts/tooltip/footerformat/
+		 *         A HTML table in the tooltip
+		 * @sample {highstock} highcharts/tooltip/footerformat/
+		 *         A HTML table in the tooltip
 		 * @sample {highmaps} maps/tooltip/format/ Format demo
 		 * @product highcharts highstock highmaps
 		 */

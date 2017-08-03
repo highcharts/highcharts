@@ -138,74 +138,17 @@ seriesType('treemap', 'scatter', {
 	 * @product highcharts
 	 */
 	dataLabels: {
-
-		/**
-		 * @since 4.1.0
-		 */
 		enabled: true,
-
-		/**
-		 * @since 4.1.0
-		 */
 		defer: false,
-
-		/**
-		 * @since 4.1.0
-		 */
 		verticalAlign: 'middle',
-
-		/**
-		 * Callback function to format the data labels. The  formatter for
-		 * treemaps by default returns the point name if present, or the point
-		 * id.
-		 */
 		formatter: function () { // #2945
 			return this.point.name || this.point.id;
 		},
-
-		/**
-		 * @since 4.1.0
-		 */
 		inside: true
 	},
 
-	/**
-	 * @extends plotOptions.heatmap.tooltip
-	 * @since 4.1.0
-	 * @product highcharts
-	 */
 	tooltip: {
-
-		/**
-		 * The HTML of the tooltip header line. Variables are enclosed by
-		 * curly brackets. Available variables are point.key, series.name,
-		 * series.color and other members from the point and series objects.
-		 * The point.key variable contains the category name, x value or
-		 * datetime string depending on the type of axis. For datetime axes,
-		 * the point.key date format can be set using tooltip.xDateFormat.
-		 * 
-		 * @type {String}
-		 * @sample {highcharts} highcharts/tooltip/footerformat/ A HTML table in the tooltip
-		 * @default ""
-		 * @since 4.1.0
-		 * @product highcharts
-		 */
 		headerFormat: '',
-
-		/**
-		 * The HTML of the point's line in the tooltip. Variables are enclosed
-		 * by curly brackets. Available variables are point.x, point.y, series.
-		 * name and series.color and other properties on the same form. Furthermore,
-		 * point.y can be extended by the tooltip.yPrefix and tooltip.ySuffix
-		 * variables. This can also be overridden for each series, which makes
-		 * it a good hook for displaying units.
-		 * 
-		 * @type {String}
-		 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
-		 * @default "&#60;b&#62;{point.name}&#60;/b&#62;: {point.value}&#60;/b&#62;&#60;br/&#62;"
-		 * @since 4.1.0
-		 * @product highcharts
-		 */
 		pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
 	},
 

@@ -33,28 +33,10 @@ var colProto = seriesTypes.column.prototype;
  */
 var columnRangeOptions = {
 
-	/**
-	 */
-	lineWidth: 1,
-
-	/**
-	 */
 	pointRange: null,
-
-	/**
-	 */
 	marker: null,
-
-	/**
-	 */
 	states: {
-
-		/**
-		 */
 		hover: {
-
-			/**
-			 */
 			halo: false
 		}
 	}

@@ -28,12 +28,7 @@ var correctFloat = H.correctFloat,
  */
 seriesType('waterfall', 'column', {
 
-	/**
-	 */
 	dataLabels: {
-
-		/**
-		 */
 		inside: true
 	},
 	/*= if (build.classic) { =*/
@@ -100,16 +95,8 @@ seriesType('waterfall', 'column', {
 	 */
 	borderColor: '${palette.neutralColor80}',
 
-	/**
-	 */
 	states: {
-
-		/**
-		 */
 		hover: {
-
-			/**
-			 */
 			lineWidthPlus: 0 // #3126
 		}
 	}

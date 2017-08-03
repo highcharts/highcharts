@@ -29,7 +29,7 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  * @sample {highstock} highcharts/demo/polygon/ Polygon
  * @since 4.1.0
  * @product highcharts highstock
- * @optionsparent plotOptions.polygon
+ * @optionparent plotOptions.polygon
  */
 seriesType('polygon', 'scatter', {
 	marker: {

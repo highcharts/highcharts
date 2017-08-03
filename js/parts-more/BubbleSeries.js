@@ -39,22 +39,11 @@ var arrayMax = H.arrayMax,
  */
 seriesType('bubble', 'scatter', {
 
-	/**
-	 */
 	dataLabels: {
-
-		/**
-		 */
 		formatter: function () { // #2945
 			return this.point.z;
 		},
-
-		/**
-		 */
 		inside: true,
-
-		/**
-		 */
 		verticalAlign: 'middle'
 	},
 	
@@ -65,7 +54,8 @@ seriesType('bubble', 'scatter', {
 	 * bubble.negativeColor).
 	 * 
 	 * @type {Boolean}
-	 * @sample {highcharts} highcharts/plotoptions/bubble-negative/ Negative bubbles
+	 * @sample {highcharts} highcharts/plotoptions/bubble-negative/
+	 *         Negative bubbles
 	 * @default true
 	 * @since 3.0
 	 * @product highcharts
@@ -84,37 +74,27 @@ seriesType('bubble', 'scatter', {
 	 * 
 	 * @type {Object}
 	 * @extends plotOptions.series.marker
-	 * @excluding radius
+	 * @excluding enabled,height,radius,width
 	 * @product highcharts
 	 */
 	marker: {
 		/*= if (build.classic) { =*/
-		// fillOpacity: 0.5,
-
-		/**
-		 */
 		lineColor: null, // inherit from series.color
-
-		/**
-		 */
 		lineWidth: 1,
-		/*= } =*/
-		// Avoid offset in Point.setState
-
 		/**
+		 * The fill opacity of the bubble markers.
+		 * @type {Number}
+		 * @default 0.5
+		 * @product highcharts
+		 */
+		/*= } =*/
+		/**
+		 * In bubble charts, the radius is overridden and determined based on 
+		 * the point's data value.
 		 */
 		radius: null,
-
-		/**
-		 */
 		states: {
-
-			/**
-			 */
 			hover: {
-
-				/**
-				 */
 				radiusPlus: 0
 			}
 		},
@@ -123,9 +103,9 @@ seriesType('bubble', 'scatter', {
 		 * A predefined shape or symbol for the marker. Possible values are
 		 * "circle", "square", "diamond", "triangle" and "triangle-down".
 		 * 
-		 * Additionally, the URL to a graphic can be given on the form `url(graphic.
-		 * png)`. Note that for the image to be applied to exported charts,
-		 * its URL needs to be accessible by the export server.
+		 * Additionally, the URL to a graphic can be given on the form
+		 * `url(graphic.png)`. Note that for the image to be applied to exported
+		 * charts, its URL needs to be accessible by the export server.
 		 * 
 		 * Custom callbacks for symbol path generation can also be added to
 		 * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
@@ -133,8 +113,10 @@ seriesType('bubble', 'scatter', {
 		 * 
 		 * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down"]
 		 * @type {String}
-		 * @sample {highcharts} highcharts/plotoptions/bubble-symbol/ Bubble chart with various symbols
-		 * @sample {highcharts} highcharts/plotoptions/series-marker-symbol/ General chart with predefined, graphic and custom markers
+		 * @sample {highcharts} highcharts/plotoptions/bubble-symbol/
+		 *         Bubble chart with various symbols
+		 * @sample {highcharts} highcharts/plotoptions/series-marker-symbol/
+		 *         General chart with predefined, graphic and custom markers
 		 * @default circle
 		 * @since 5.0.11
 		 * @product highcharts
@@ -175,7 +157,8 @@ seriesType('bubble', 'scatter', {
 	 * zThreshold) setting, this color is used.
 	 * 
 	 * @type {Color}
-	 * @sample {highcharts} highcharts/plotoptions/bubble-negative/ Negative bubbles
+	 * @sample {highcharts} highcharts/plotoptions/bubble-negative/
+	 *         Negative bubbles
 	 * @default null
 	 * @since 3.0
 	 * @product highcharts
@@ -229,36 +212,18 @@ seriesType('bubble', 'scatter', {
 	 */
 	softThreshold: false,
 
-	/**
-	 */
 	states: {
-
-		/**
-		 */
 		hover: {
-
-			/**
-			 */
 			halo: {
-
-				/**
-				 */
 				size: 5
 			}
 		}
 	},
 
-	/**
-	 */
 	tooltip: {
-
-		/**
-		 */
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
 
-	/**
-	 */
 	turboThreshold: 0,
 
 	/**
@@ -276,8 +241,6 @@ seriesType('bubble', 'scatter', {
 	 */
 	zThreshold: 0,
 
-	/**
-	 */
 	zoneAxis: 'z'
 
 	/**

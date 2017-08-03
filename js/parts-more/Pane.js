@@ -174,8 +174,6 @@ extend(Pane.prototype, {
 	 * @optionparent pane.background
 	 */
 	defaultBackgroundOptions: {
-		//className: 'highcharts-pane',
-
 		/**
 		 * Tha shape of the pane background. When `solid`, the background
 		 * is circular. When `arc`, the background extends only from the min
@@ -218,25 +216,7 @@ extend(Pane.prototype, {
 		 * @product highcharts
 		 */
 		backgroundColor: {
-
-																												/**
-																												 */
-
-																																			/**
-																																			 */
-
-			/**
-			 */
-
-																																										/**
-																																										 */
-
-																					/**
-																					 */
 			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-
-			/**
-			 */
 			stops: [
 				[0, '${palette.backgroundColor}'],
 				[1, '${palette.neutralColor10}']
@@ -244,8 +224,7 @@ extend(Pane.prototype, {
 		},
 		/*= } =*/
 
-		/**
-		 */
+		/** @ignore */
 		from: -Number.MAX_VALUE, // corrected to axis min
 
 		/**
@@ -259,8 +238,7 @@ extend(Pane.prototype, {
 		 */
 		innerRadius: 0,
 
-		/**
-		 */
+		/** @ignore */
 		to: Number.MAX_VALUE, // corrected to axis max
 
 		/**

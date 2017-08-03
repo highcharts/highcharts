@@ -40,8 +40,6 @@ seriesType('errorbar', 'boxplot', {
 	color: '${palette.neutralColor100}',
 	/*= } =*/
 
-	/**
-	 */
 	grouping: false,
 
 	/**
@@ -55,12 +53,7 @@ seriesType('errorbar', 'boxplot', {
 	 */
 	linkedTo: ':previous',
 
-	/**
-	 */
 	tooltip: {
-
-		/**
-		 */
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
 	},
 

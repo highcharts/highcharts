@@ -1807,11 +1807,12 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * @type {plotOptions.series.states}
 	 * @product highcharts highstock highmaps
 	 */
-	states: { // states for the entire series
+	states: {
 
 
 		/**
-		 * Options for the hovered series
+		 * Options for the hovered series. These settings override the normal
+		 * state options when a series is moused over or touched.
 		 * 
 		 * @product highcharts highstock highmaps
 		 */
@@ -1840,10 +1841,10 @@ H.Series = H.seriesType('line', null, { // base series options
 			 * @product highcharts
 			 */
 			animation: {
-
-
-
 				/**
+				 * The duration of the hover animation in milliseconds. By
+				 * default the hover state animates quickly in, and slowly back
+				 * to normal.
 				 */
 				duration: 50
 			},

@@ -53,8 +53,6 @@ seriesType('gauge', 'line', {
 		 */
 		enabled: true,
 
-		/**
-		 */
 		defer: false,
 
 		/**
@@ -78,8 +76,6 @@ seriesType('gauge', 'line', {
 		 */
 		borderRadius: 3,
 
-		/**
-		 */
 		crop: false,
 
 		/**
@@ -321,12 +317,7 @@ seriesType('gauge', 'line', {
 		/*= } =*/
 	},
 
-	/**
-	 */
 	tooltip: {
-
-		/**
-		 */
 		headerFormat: ''
 	},
 
