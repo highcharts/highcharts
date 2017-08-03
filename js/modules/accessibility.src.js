@@ -209,7 +209,7 @@ H.setOptions({
 		 * reader user.
 		 * 
 		 * @type {Function}
-		 * @see [point.description](#series<line>.data.description)
+		 * @see [point.description](#series.line.data.description)
 		 * @since 5.0.0
 		 * @apioption accessibility.pointDescriptionFormatter
 		 */

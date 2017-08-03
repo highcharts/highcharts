@@ -541,7 +541,7 @@ Axis.prototype.beforePadding = function () {
 
 
 /**
- * A `bubble` series. If the [type](#series<bubble>.type) option is
+ * A `bubble` series. If the [type](#series.bubble.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
@@ -578,7 +578,7 @@ Axis.prototype.beforePadding = function () {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<bubble>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.bubble.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -598,7 +598,7 @@ Axis.prototype.beforePadding = function () {
  *  ```
  * 
  * @type {Array<Object|Array>}
- * @extends series<line>.data
+ * @extends series.line.data
  * @excluding marker
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y

@@ -30,7 +30,7 @@ seriesType('areasplinerange', 'arearange', null, {
 });
 
 /**
- * A `areasplinerange` series. If the [type](#series<areasplinerange>.
+ * A `areasplinerange` series. If the [type](#series.areasplinerange.
  * type) option is not specified, it is inherited from [chart.type](#chart.
  * type).
  * 
@@ -68,7 +68,7 @@ seriesType('areasplinerange', 'arearange', null, {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<areasplinerange>.
+ * points exceeds the series' [turboThreshold](#series.areasplinerange.
  * turboThreshold), this option is not available.
  * 
  *  ```js
@@ -88,7 +88,7 @@ seriesType('areasplinerange', 'arearange', null, {
  *  ```
  * 
  * @type {Array<Object|Array>}
- * @extends series<arearange>.data
+ * @extends series.arearange.data
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y

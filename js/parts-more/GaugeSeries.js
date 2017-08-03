@@ -553,7 +553,7 @@ seriesType('gauge', 'line', {
 });
 
 /**
- * A `gauge` series. If the [type](#series<gauge>.type) option is not
+ * A `gauge` series. If the [type](#series.gauge.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
@@ -581,7 +581,7 @@ seriesType('gauge', 'line', {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<gauge>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.gauge.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -598,7 +598,7 @@ seriesType('gauge', 'line', {
  * The typical gauge only contains a single data value.
  * 
  * @type {Array<Object|Number>}
- * @extends series<line>.data
+ * @extends series.line.data
  * @excluding drilldown,marker,x
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y

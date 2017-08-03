@@ -479,7 +479,7 @@ seriesType('boxplot', 'column', {
 });
 
 /**
- * A `boxplot` series. If the [type](#series<boxplot>.type) option is
+ * A `boxplot` series. If the [type](#series.boxplot.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
@@ -516,7 +516,7 @@ seriesType('boxplot', 'column', {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<boxplot>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.boxplot.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -542,7 +542,7 @@ seriesType('boxplot', 'column', {
  *  ```
  * 
  * @type {Array<Object|Array>}
- * @extends series<line>.data
+ * @extends series.line.data
  * @excluding marker
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y

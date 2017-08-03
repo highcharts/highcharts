@@ -369,7 +369,7 @@ seriesType('funnel', 'pie',
 
 
 /**
- * A `funnel` series. If the [type](#series<funnel>.type) option is
+ * A `funnel` series. If the [type](#series.funnel.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
@@ -397,7 +397,7 @@ seriesType('funnel', 'pie',
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<funnel>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.funnel.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -413,7 +413,7 @@ seriesType('funnel', 'pie',
  *  ```
  * 
  * @type {Array<Object|Number>}
- * @extends series<pie>.data
+ * @extends series.pie.data
  * @excluding sliced
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
@@ -475,7 +475,7 @@ seriesType('pyramid', 'funnel',
 });
 
 /**
- * A `pyramid` series. If the [type](#series<pyramid>.type) option is
+ * A `pyramid` series. If the [type](#series.pyramid.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
@@ -503,7 +503,7 @@ seriesType('pyramid', 'funnel',
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<pyramid>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.pyramid.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -519,7 +519,7 @@ seriesType('pyramid', 'funnel',
  *  ```
  * 
  * @type {Array<Object|Number>}
- * @extends series<pie>.data
+ * @extends series.pie.data
  * @excluding sliced
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y

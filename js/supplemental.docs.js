@@ -4149,7 +4149,7 @@
  * as map data.
  * 
  * @type {String|Object|Array<Object>}
- * @see [mapData](#series<map>.mapData)
+ * @see [mapData](#series.map.mapData)
  * @default undefined
  * @since 5.0.0
  * @product highmaps

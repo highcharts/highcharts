@@ -341,7 +341,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
 });
 
 /**
- * A `solidgauge` series. If the [type](#series<solidgauge>.type) option
+ * A `solidgauge` series. If the [type](#series.solidgauge.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
  * 
  * 
@@ -370,7 +370,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<solidgauge>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.solidgauge.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -388,7 +388,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * The typical gauge only contains a single data value.
  * 
  * @type {Array<Object|Number>}
- * @extends series<gauge>.data
+ * @extends series.gauge.data
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y

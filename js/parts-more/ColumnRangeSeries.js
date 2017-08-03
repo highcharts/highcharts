@@ -165,7 +165,7 @@ seriesType('columnrange', 'arearange', merge(
 
 
 /**
- * A `columnrange` series. If the [type](#series<columnrange>.type)
+ * A `columnrange` series. If the [type](#series.columnrange.type)
  * option is not specified, it is inherited from [chart.type](#chart.
  * type).
  * 
@@ -203,7 +203,7 @@ seriesType('columnrange', 'arearange', merge(
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<columnrange>.
+ * points exceeds the series' [turboThreshold](#series.columnrange.
  * turboThreshold), this option is not available.
  * 
  *  ```js
@@ -223,7 +223,7 @@ seriesType('columnrange', 'arearange', merge(
  *  ```
  * 
  * @type {Array<Object|Array>}
- * @extends series<arearange>.data
+ * @extends series.arearange.data
  * @excluding marker
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y

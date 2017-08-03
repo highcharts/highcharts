@@ -271,7 +271,7 @@ seriesType('ohlc', 'column', {
 });
 
 /**
- * A `ohlc` series. If the [type](#series<ohlc>.type) option is not
+ * A `ohlc` series. If the [type](#series.ohlc.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
@@ -308,7 +308,7 @@ seriesType('ohlc', 'column', {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<ohlc>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.ohlc.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -332,7 +332,7 @@ seriesType('ohlc', 'column', {
  *  ```
  * 
  * @type {Array<Object|Array>}
- * @extends series<arearange>.data
+ * @extends series.arearange.data
  * @excluding y,marker
  * @product highstock
  * @apioption series.ohlc.data

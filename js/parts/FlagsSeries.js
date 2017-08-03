@@ -577,7 +577,7 @@ if (Renderer === VMLRenderer) {
 /*= } =*/
 
 /**
- * A `flags` series. If the [type](#series<flags>.type) option is not
+ * A `flags` series. If the [type](#series.flags.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
@@ -598,7 +598,7 @@ if (Renderer === VMLRenderer) {
  * 
  * 1.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<flags>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.flags.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -613,7 +613,7 @@ if (Renderer === VMLRenderer) {
  * }]</pre>
  * 
  * @type {Array<Object>}
- * @extends series<line>.data
+ * @extends series.line.data
  * @excluding y,dataLabels,marker,name
  * @product highstock
  * @apioption series.flags.data

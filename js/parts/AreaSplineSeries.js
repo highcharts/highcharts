@@ -34,7 +34,7 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 /**
- * A `areaspline` series. If the [type](#series<areaspline>.type) option
+ * A `areaspline` series. If the [type](#series.areaspline.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
  * 
  * 
@@ -79,7 +79,7 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  * 
  * 3.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<areaspline>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.areaspline.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -97,7 +97,7 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  *  ```
  * 
  * @type {Array<Object|Array|Number>}
- * @extends series<line>.data
+ * @extends series.line.data
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y

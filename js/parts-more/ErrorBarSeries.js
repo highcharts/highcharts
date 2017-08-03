@@ -99,7 +99,7 @@ seriesType('errorbar', 'boxplot', {
 });
 
 /**
- * A `errorbar` series. If the [type](#series<errorbar>.type) option
+ * A `errorbar` series. If the [type](#series.errorbar.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
  * 
  * 
@@ -137,7 +137,7 @@ seriesType('errorbar', 'boxplot', {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<errorbar>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.errorbar.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -157,7 +157,7 @@ seriesType('errorbar', 'boxplot', {
  *  ```
  * 
  * @type {Array<Object|Array>}
- * @extends series<arearange>.data
+ * @extends series.arearange.data
  * @excluding dataLabels,drilldown,marker
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y

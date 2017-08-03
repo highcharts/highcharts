@@ -396,7 +396,7 @@ extend(ColorAxis.prototype, {
 		 * Whether to display the colorAxis in the legend.
 		 * 
 		 * @type {Boolean}
-		 * @see [heatmap.showInLegend](#series<heatmap>.showInLegend)
+		 * @see [heatmap.showInLegend](#series.heatmap.showInLegend)
 		 * @default true
 		 * @since 4.2.7
 		 * @product highcharts highmaps

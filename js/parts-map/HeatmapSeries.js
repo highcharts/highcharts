@@ -229,7 +229,7 @@ seriesType('heatmap', 'scatter', {
 
 }), colorPointMixin);
 /**
- * A `heatmap` series. If the [type](#series<heatmap>.type) option is
+ * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
@@ -266,7 +266,7 @@ seriesType('heatmap', 'scatter', {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<heatmap>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.heatmap.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -286,7 +286,7 @@ seriesType('heatmap', 'scatter', {
  *  ```
  * 
  * @type {Array<Object|Array>}
- * @extends series<line>.data
+ * @extends series.line.data
  * @excluding marker
  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y

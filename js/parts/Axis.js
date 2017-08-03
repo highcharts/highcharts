@@ -436,7 +436,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`
 		 * or `category`. In a datetime axis, the numbers are given in milliseconds,
 		 * and tick marks are placed on appropriate values like full hours
-		 * or days. In a category axis, the [point names](#series<line>.data.
+		 * or days. In a category axis, the [point names](#series.line.data.
 		 * name) of the chart's series are used for categories, if not a [categories](#xAxis.
 		 * categories) array is defined.
 		 * 

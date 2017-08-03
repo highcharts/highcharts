@@ -436,7 +436,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * from different sources.
 	 * 
 	 * @type {Array<String>}
-	 * @see [series.data](#series<line>.data)
+	 * @see [series.data](#series.line.data)
 	 * @sample {highcharts} highcharts/series/data-keys/ An extended data array with keys
 	 * @sample {highstock} highcharts/series/data-keys/ An extended data array with keys
 	 * @since 4.1.6
@@ -2605,7 +2605,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 *
 	 * @param  {SeriesDataOptions} data
 	 *         Takes an array of data in the same format as described under
-	 *         `series<type>data` for the given series type.
+	 *         `series.typedata` for the given series type.
 	 * @param  {Boolean} [redraw=true]
 	 *         Whether to redraw the chart after the series is altered. If doing
 	 *         more operations on the chart, it is a good idea to set redraw to
@@ -4494,7 +4494,7 @@ H.Series = H.seriesType('line', null, { // base series options
  */
 
 /**
- * A `line` series. If the [type](#series<line>.type) option is not
+ * A `line` series. If the [type](#series.line.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
@@ -4537,7 +4537,7 @@ H.Series = H.seriesType('line', null, { // base series options
  * 
  * 3.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<line>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.line.turboThreshold),
  * this option is not available.
  * 
  *  ```js

@@ -198,7 +198,7 @@ if (seriesTypes.bubble) {
 
 
 /**
- * A `mapbubble` series. If the [type](#series<mapbubble>.type) option
+ * A `mapbubble` series. If the [type](#series.mapbubble.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
  * 
  * 
@@ -227,7 +227,7 @@ if (seriesTypes.bubble) {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<mapbubble>.turboThreshold),
+ * points exceeds the series' [turboThreshold](#series.mapbubble.turboThreshold),
  * this option is not available.
  * 
  *  ```js
@@ -243,7 +243,7 @@ if (seriesTypes.bubble) {
  *  ```
  * 
  * @type {Array<Object|Number>}
- * @extends series<mappoint>.data
+ * @extends series.mappoint.data
  * @excluding labelrank,middleX,middleY,path,value,x,y,lat,lon
  * @product highmaps
  * @apioption series.mapbubble.data

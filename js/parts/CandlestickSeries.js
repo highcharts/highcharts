@@ -261,7 +261,7 @@ seriesType('candlestick', 'ohlc', merge(
 });
 
 /**
- * A `candlestick` series. If the [type](#series<candlestick>.type)
+ * A `candlestick` series. If the [type](#series.candlestick.type)
  * option is not specified, it is inherited from [chart.type](#chart.
  * type).
  * 
@@ -299,7 +299,7 @@ seriesType('candlestick', 'ohlc', merge(
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series<candlestick>.
+ * points exceeds the series' [turboThreshold](#series.candlestick.
  * turboThreshold), this option is not available.
  * 
  *  ```js
@@ -323,7 +323,7 @@ seriesType('candlestick', 'ohlc', merge(
  *  ```
  * 
  * @type {Array<Object|Array>}
- * @extends series<ohlc>.data
+ * @extends series.ohlc.data
  * @excluding y
  * @product highstock
  * @apioption series.candlestick.data
