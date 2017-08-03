@@ -439,14 +439,41 @@ const cleanDist = () => {
     }).catch(console.log);
 };
 
-const copyToDist = () => {
+const copyFile = (source, target) => new Promise((resolve, reject) => {
     const fs = require('fs');
-    const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
-    const sourceFolder = './code/';
-    const libFolder = './vendor/';
-    const distFolder = './build/dist/';
-    const files = B.getFilesInFolder(sourceFolder, true, '');
+    const directory = U.folder(target);
+    U.createDirectory(directory);
+    let read = fs.createReadStream(source);
+    let write = fs.createWriteStream(target);
+    const onError = (err) => {
+        read.destroy();
+        write.end();
+        reject(err);
+    };
+    read.on('error', onError);
+    write.on('error', onError);
+    write.on('finish', resolve);
+    read.pipe(write);
+});
+
+const copyToDist = () => {
+    const getFilesInFolder = require('./assembler/build.js').getFilesInFolder;
+    const sourceFolder = 'code/';
+    const distFolder = 'build/dist/';
+    // Additional files to include in distribution.
+    const additionals = {
+        'gfx/vml-radial-gradient.png': 'gfx/vml-radial-gradient.png',
+        'code/css/highcharts.scss': 'css/highcharts.scss',
+        'code/lib/canvg.js': 'vendor/canvg.js',
+        'code/lib/canvg.src.js': 'vendor/canvg.src.js',
+        'code/lib/jspdf.js': 'vendor/jspdf.js',
+        'code/lib/jspdf.src.js': 'vendor/jspdf.src.js',
+        'code/lib/rgbcolor.js': 'vendor/rgbcolor.js',
+        'code/lib/rgbcolor.src.js': 'vendor/rgbcolor.src.js',
+        'code/lib/svg2pdf.js': 'vendor/svg2pdf.js',
+        'code/lib/svg2pdf.src.js': 'vendor/svg2pdf.src.js'
+    };
     // Files that should not be distributed with certain products
     const filter = {
         highcharts: ['highmaps.js', 'highstock.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
@@ -455,53 +482,40 @@ const copyToDist = () => {
     };
 
     // Copy source files to the distribution packages.
-    files.filter((path) => (
+    const codeFiles = getFilesInFolder(sourceFolder, true, '')
+        .filter((path) => (
             path.endsWith('.js') ||
             path.endsWith('.js.map') ||
-            path.endsWith('.css')
+            path.endsWith('.css') ||
+            path.endsWith('readme.txt')
         ))
-        .forEach((path) => {
-            const content = fs.readFileSync(sourceFolder + path);
+        .reduce((obj, path) => {
+            const source = sourceFolder + path;
             const filename = path.replace('.src.js', '.js').replace('js/', '');
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
                 if (filter[lib].indexOf(filename) === -1) {
-                    U.writeFile(distFolder + lib + '/code/' + path, content);
+                    const target = distFolder + lib + '/code/' + path;
+                    obj[target] = source;
                 }
             });
-        });
+            return obj;
+        }, {});
 
-    // Copy readme to distribution packages
-    ['readme.txt'].forEach((path) => {
-        const content = fs.readFileSync(sourceFolder + path);
+    const additionalFiles = Object.keys(additionals).reduce((obj, file) => {
         ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-            U.writeFile(distFolder + lib + '/code/' + path, content);
+            const source = additionals[file];
+            const target = `${distFolder}${lib}/${file}`;
+            obj[target] = source;
         });
-    });
+        return obj;
+    }, {});
 
-    // Copy lib files to the distribution packages. These files are used in the
-    // offline-export.
-    [
-        'canvg.js',
-        'canvg.src.js',
-        'jspdf.js',
-        'jspdf.src.js',
-        'rgbcolor.js',
-        'rgbcolor.src.js',
-        'svg2pdf.js',
-        'svg2pdf.src.js'
-    ].forEach((path) => {
-        const content = fs.readFileSync(libFolder + path);
-        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-            U.writeFile(distFolder + lib + '/code/lib/' + path, content);
-        });
+    const files = Object.assign({}, additionalFiles, codeFiles);
+    const promises = Object.keys(files).map((target) => {
+        const source = files[target];
+        return copyFile(source, target);
     });
-    // Copy radial gradient to dist.
-    ['vml-radial-gradient.png'].forEach((path) => {
-        const content = fs.readFileSync('./gfx/' + path);
-        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-            U.writeFile(distFolder + lib + '/gfx/' + path, content);
-        });
-    });
+    return Promise.all(promises);
 };
 
 const getBuildProperties = () => {
@@ -808,24 +822,6 @@ const createExamples = (title, samplesFolder, output) => {
     const index = getFile(samplesFolder + 'index.htm');
     writeFile(output + '../index.htm', index);
 };
-
-const copyFile = (source, target) => new Promise((resolve, reject) => {
-    const fs = require('fs');
-    const U = require('./assembler/utilities.js');
-    const directory = U.folder(target);
-    U.createDirectory(directory);
-    let read = fs.createReadStream(source);
-    let write = fs.createWriteStream(target);
-    const onError = (err) => {
-        read.destroy();
-        write.end();
-        reject(err);
-    };
-    read.on('error', onError);
-    write.on('error', onError);
-    write.on('finish', resolve);
-    read.pipe(write);
-});
 
 const copyFolder = (input, output) => {
     const getFilesInFolder = require('./assembler/build.js').getFilesInFolder;
