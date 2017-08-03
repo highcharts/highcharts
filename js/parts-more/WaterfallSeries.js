@@ -46,8 +46,7 @@ seriesType('waterfall', 'column', {
 	 * The color of the line that connects columns in a waterfall series.
 	 * 
 	 * 
-	 * In styled mode, the stroke can be set with the `.highcharts-
-	 * graph` class.
+	 * In styled mode, the stroke can be set with the `.highcharts-graph` class.
 	 * 
 	 * @type {Color}
 	 * @default #333333
@@ -85,8 +84,7 @@ seriesType('waterfall', 'column', {
 	/**
 	 * The color of the border of each waterfall column.
 	 * 
-	 * In styled mode, the border stroke can be set with the `.highcharts-
-	 * point` class.
+	 * In styled mode, the border stroke can be set with the `.highcharts-point` class.
 	 * 
 	 * @type {Color}
 	 * @default #333333

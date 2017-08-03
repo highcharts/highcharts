@@ -73,8 +73,7 @@ defaultOptions.drilldown = {
 	 * to interaction.
 	 * 
 	 * @type {CSSObject}
-	 * @see In styled mode, active label styles can be set with the `.highcharts-
-	 * drilldown-axis-label` class.
+	 * @see In styled mode, active label styles can be set with the `.highcharts-drilldown-axis-label` class.
 	 * @sample {highcharts} highcharts/drilldown/labels/ Label styles
 	 * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
 	 * @since 3.0.8

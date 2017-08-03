@@ -201,8 +201,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * wrapping of category labels. Use `textOverflow: 'none'` to prevent
 			 * ellipsis (dots).
 			 * 
-			 * In styled mode, the labels are styled with the `.highcharts-
-			 * axis-labels` class.
+			 * In styled mode, the labels are styled with the `.highcharts-axis-labels` class.
 			 * 
 			 * @type {CSSObject}
 			 * @sample {highcharts} highcharts/xaxis/labels-style/ Red X axis labels
@@ -505,8 +504,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Color of the minor, secondary grid lines.
 		 * 
-		 * In styled mode, the stroke width is given in the `.highcharts-
-		 * minor-grid-line` class.
+		 * In styled mode, the stroke width is given in the `.highcharts-minor-grid-line` class.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/minorgridlinecolor/ Bright grey lines from Y axis
@@ -522,8 +520,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Width of the minor, secondary grid lines.
 		 * 
-		 * In styled mode, the stroke width is given in the `.highcharts-
-		 * grid-line` class.
+		 * In styled mode, the stroke width is given in the `.highcharts-grid-line` class.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minorgridlinewidth/ 2px lines from Y axis
@@ -550,8 +547,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * The color of the line marking the axis itself.
 		 * 
-		 * In styled mode, the line stroke is given in the `.highcharts-
-		 * axis-line` or `.highcharts-xaxis-line` class.
+		 * In styled mode, the line stroke is given in the `.highcharts-axis-line` or `.highcharts-xaxis-line` class.
 		 * 
 		 * @productdesc {highmaps}
 		 * In Highmaps, the axis line is hidden by default.
@@ -569,8 +565,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * The width of the line marking the axis itself.
 		 * 
-		 * In styled mode, the stroke width is given in the `.highcharts-
-		 * axis-line` or `.highcharts-xaxis-line` class.
+		 * In styled mode, the stroke width is given in the `.highcharts-axis-line` or `.highcharts-xaxis-line` class.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/linecolor/ A 1px line on Y axis
@@ -587,8 +582,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Color of the grid lines extending the ticks across the plot area.
 		 * 
-		 * In styled mode, the stroke is given in the `.highcharts-grid-
-		 * line` class.
+		 * In styled mode, the stroke is given in the `.highcharts-grid-line` class.
 		 *
 		 * @productdesc {highmaps}
 		 * In Highmaps, the grid lines are hidden by default.
@@ -821,8 +815,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			/**
 			 * CSS styles for the label.
 			 * 
-			 * In styled mode, the styles are set in the `.highcharts-stack-
-			 * label` class.
+			 * In styled mode, the styles are set in the `.highcharts-stack-label` class.
 			 * 
 			 * @type {CSSObject}
 			 * @sample {highcharts} highcharts/yaxis/stacklabels-style/ Red stack total labels

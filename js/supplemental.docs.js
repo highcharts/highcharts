@@ -660,8 +660,7 @@
  * Text styles for the legend page navigation.
  * 
  * @type {CSSObject}
- * @see In styled mode, the navigation items are styled with the `.highcharts-
- * legend-navigation` class.
+ * @see In styled mode, the navigation items are styled with the `.highcharts-legend-navigation` class.
  * @sample {highcharts} highcharts/legend/navigation/ Legend page navigation demonstrated
  * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
  * @since 2.2.4
@@ -1249,8 +1248,7 @@
 /**
  * CSS styles for the title.
  * 
- * In styled mode, the subtitle style is given in the `.highcharts-
- * subtitle` class.
+ * In styled mode, the subtitle style is given in the `.highcharts-subtitle` class.
  * 
  * @type {CSSObject}
  * @sample {highcharts} highcharts/subtitle/style/ Custom color and weight
@@ -1328,8 +1326,7 @@
  * CSS styles for the title. Use this for font styling, but use `align`,
  * `x` and `y` for text alignment.
  * 
- * In styled mode, the title style is given in the `.highcharts-
- * title` class.
+ * In styled mode, the title style is given in the `.highcharts-title` class.
  * 
  * @type {CSSObject}
  * @sample {highcharts} highcharts/title/style/ Custom color and weight
@@ -1774,8 +1771,7 @@
  * The width of the grid lines extending the ticks across the plot area.
  * 
  * 
- * In styled mode, the stroke width is given in the `.highcharts-
- * grid-line` class.
+ * In styled mode, the stroke width is given in the `.highcharts-grid-line` class.
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/gridlinewidth/ 2px lines
@@ -2124,8 +2120,7 @@
 /**
  * The pixel width of the major tick marks.
  * 
- * In styled mode, the stroke width is given in the `.highcharts-
- * tick` class.
+ * In styled mode, the stroke width is given in the `.highcharts-tick` class.
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/tickwidth/ 10 px width
@@ -2267,8 +2262,7 @@
  * Configure a crosshair that follows either the mouse pointer or the
  * hovered point.
  * 
- * In styled mode, the crosshairs are styled in the `.highcharts-
- * crosshair`, `.highcharts-crosshair-thin` or `.highcharts-xaxis-category`
+ * In styled mode, the crosshairs are styled in the `.highcharts-crosshair`, `.highcharts-crosshair-thin` or `.highcharts-xaxis-category`
  * classes.
  *
  * @productdesc {highstock}
@@ -2630,8 +2624,7 @@
  * An array of colored bands stretching across the plot area marking
  * an interval on the axis.
  * 
- * In styled mode, the plot bands are styled by the `.highcharts-
- * plot-band` class in addition to the `className` option.
+ * In styled mode, the plot bands are styled by the `.highcharts-plot-band` class in addition to the `className` option.
  *
  * @productdesc {highcharts}
  * In a gauge, a plot band on the Y axis (value axis) will stretch along
@@ -2779,8 +2772,7 @@
 /**
  * CSS styles for the text label.
  * 
- * In styled mode, the labels are styled by the `.highcharts-plot-
- * band-label` class.
+ * In styled mode, the labels are styled by the `.highcharts-plot-band-label` class.
  * 
  * @type {Object}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-style/ Blue and bold label
@@ -2863,8 +2855,7 @@
  * An array of lines stretching across the plot area, marking a specific
  * value on one of the axes.
  * 
- * In styled mode, the plot lines are styled by the `.highcharts-
- * plot-line` class in addition to the `className` option.
+ * In styled mode, the plot lines are styled by the `.highcharts-plot-line` class in addition to the `className` option.
  * 
  * @type {Array<Object>}
  * @product highcharts highstock
@@ -3892,8 +3883,7 @@
 /**
  * A label on the axis next to the crosshair.
  * 
- * In styled mode, the label is styled with the `.highcharts-crosshair-
- * label` class.
+ * In styled mode, the label is styled with the `.highcharts-crosshair-label` class.
  * 
  * @type {Object}
  * @sample {highstock} stock/xaxis/crosshair-label/ Crosshair labels
@@ -4089,9 +4079,7 @@
  * the minimum an maximum of the axis values.
  * 
  * In styled mode, all the presentational options for the scrollbar
- * are replaced by the classes `.highcharts-scrollbar-thumb`, `.highcharts-
- * scrollbar-arrow`, `.highcharts-scrollbar-button`, `.highcharts-scrollbar-
- * rifles` and `.highcharts-scrollbar-track`.
+ * are replaced by the classes `.highcharts-scrollbar-thumb`, `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`, `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
  * 
  * @extends scrollbar
  * @excluding height

@@ -55,8 +55,7 @@ seriesType('column', 'line', {
 	/**
 	 * The width of the border surrounding each column or bar.
 	 * 
-	 * In styled mode, the stroke width can be set with the `.highcharts-
-	 * point` rule.
+	 * In styled mode, the stroke width can be set with the `.highcharts-point` rule.
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/column-borderwidth/ 2px black border
@@ -365,8 +364,7 @@ seriesType('column', 'line', {
 	/**
 	 * The color of the border surrounding each column or bar.
 	 * 
-	 * In styled mode, the border stroke can be set with the `.highcharts-
-	 * point` rule.
+	 * In styled mode, the border stroke can be set with the `.highcharts-point` rule.
 	 * 
 	 * @type {Color}
 	 * @sample {highcharts} highcharts/plotoptions/column-bordercolor/ Dark gray border

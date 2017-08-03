@@ -170,8 +170,7 @@ extend(defaultOptions, {
 		 * color is bluish with an opacity of 0.3 to see the series below.
 		 * 
 		 * @type {Color}
-		 * @see In styled mode, the mask is styled with the `.highcharts-navigator-
-		 * mask` and `.highcharts-navigator-mask-inside` classes.
+		 * @see In styled mode, the mask is styled with the `.highcharts-navigator-mask` and `.highcharts-navigator-mask-inside` classes.
 		 * @sample {highstock} stock/navigator/maskfill/ Blue, semi transparent mask
 		 * @default rgba(102,133,194,0.3)
 		 * @product highstock

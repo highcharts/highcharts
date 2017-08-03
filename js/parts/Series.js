@@ -932,8 +932,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * of the markers. Other series types, like column series, don't have
 	 * markers, but have visual options on the series level instead.
 	 * 
-	 * In styled mode, the markers can be styled with the `.highcharts-
-	 * point`, `.highcharts-point-hover` and `.highcharts-point-select`
+	 * In styled mode, the markers can be styled with the `.highcharts-point`, `.highcharts-point-hover` and `.highcharts-point-select`
 	 * class names.
 	 * 
 	 * @product highcharts highstock
@@ -1352,8 +1351,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * Options for the series data labels, appearing next to each data
 	 * point.
 	 * 
-	 * In styled mode, the data labels can be styled wtih the `.highcharts-
-	 * data-label-box` and `.highcharts-data-label` class names ([see example](http://jsfiddle.
+	 * In styled mode, the data labels can be styled wtih the `.highcharts-data-label-box` and `.highcharts-data-label` class names ([see example](http://jsfiddle.
 	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
 	 * datalabels)).
 	 */
@@ -1903,8 +1901,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			 * color with an opacity of 0.25\. The halo can be disabled by setting
 			 * the `halo` option to `false`.
 			 * 
-			 * In styled mode, the halo is styled with the `.highcharts-
-			 * halo` class, with colors inherited from `.highcharts-color-{n}`.
+			 * In styled mode, the halo is styled with the `.highcharts-halo` class, with colors inherited from `.highcharts-color-{n}`.
 			 * 
 			 * @type {Object}
 			 * @sample {highcharts} highcharts/plotoptions/halo/ Halo options

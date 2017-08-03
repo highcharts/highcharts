@@ -89,8 +89,7 @@ seriesType('map', 'scatter', {
 	/**
 	 * The border color of the map areas.
 	 * 
-	 * In styled mode, the border stroke is given in the `.highcharts-
-	 * point` class.
+	 * In styled mode, the border stroke is given in the `.highcharts-point` class.
 	 * 
 	 * @type {Color}
 	 * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
@@ -103,8 +102,7 @@ seriesType('map', 'scatter', {
 	/**
 	 * The border width of each map area.
 	 * 
-	 * In styled mode, the border stroke width is given in the `.highcharts-
-	 * point` class.
+	 * In styled mode, the border stroke width is given in the `.highcharts-point` class.
 	 * 
 	 * @type {Number}
 	 * @sample {highmaps} maps/plotoptions/series-border/ Borders demo

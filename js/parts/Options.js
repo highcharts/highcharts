@@ -857,8 +857,7 @@ H.defaultOptions = {
 		 * The background color or gradient for the outer chart area.
 		 * 
 		 * @type {Color}
-		 * @see In styled mode, the background is set with the `.highcharts-
-		 * background` class.
+		 * @see In styled mode, the background is set with the `.highcharts-background` class.
 		 * @sample {highcharts} highcharts/chart/backgroundcolor-color/ Color
 		 * @sample {highcharts} highcharts/chart/backgroundcolor-gradient/ Gradient
 		 * @sample {highstock} stock/chart/backgroundcolor-color/
@@ -878,8 +877,7 @@ H.defaultOptions = {
 		 * The background color or gradient for the plot area.
 		 * 
 		 * @type {Color}
-		 * @see In styled mode, the plot background is set with the `.highcharts-
-		 * plot-background` class.
+		 * @see In styled mode, the plot background is set with the `.highcharts-plot-background` class.
 		 * @sample {highcharts} highcharts/chart/plotbackgroundcolor-color/
 		 *         Color
 		 * @sample {highcharts} highcharts/chart/plotbackgroundcolor-gradient/
@@ -1131,8 +1129,7 @@ H.defaultOptions = {
 		 * is ignorant of the individual chart options and must be set globally.
 		 * 
 		 * @type {CSSObject}
-		 * @see In styled mode, general chart styles can be set with the `.highcharts-
-		 * root` class.
+		 * @see In styled mode, general chart styles can be set with the `.highcharts-root` class.
 		 * @sample {highcharts} highcharts/chart/style-serif-font/
 		 *         Using a serif type font
 		 * @sample {highcharts} highcharts/css/em/
@@ -1480,8 +1477,7 @@ H.defaultOptions = {
 			 * The color for the active up or down arrow in the legend page navigation.
 			 * 
 			 * @type {Color}
-			 * @see In styled mode, the active arrow be styled with the `.highcharts-
-			 * legend-nav-active` class.
+			 * @see In styled mode, the active arrow be styled with the `.highcharts-legend-nav-active` class.
 			 * @sample {highcharts} highcharts/legend/navigation/ Legend page navigation demonstrated
 			 * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
 			 * @default #003399
@@ -1495,8 +1491,7 @@ H.defaultOptions = {
 			 * navigation. .
 			 * 
 			 * @type {Color}
-			 * @see In styled mode, the inactive arrow be styled with the `.highcharts-
-			 * legend-nav-inactive` class.
+			 * @see In styled mode, the inactive arrow be styled with the `.highcharts-legend-nav-inactive` class.
 			 * @sample {highcharts} highcharts/legend/navigation/ Legend page navigation demonstrated
 			 * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
 			 * @default {highcharts} #cccccc
@@ -1786,8 +1781,7 @@ H.defaultOptions = {
 			 * Generic CSS styles for the legend title.
 			 * 
 			 * @type {CSSObject}
-			 * @see In styled mode, the legend title is styled with the `.highcharts-
-			 * legend-title` class.
+			 * @see In styled mode, the legend title is styled with the `.highcharts-legend-title` class.
 			 * @default {"fontWeight":"bold"}
 			 * @since 3.0
 			 * @product highcharts highstock highmaps
@@ -1859,8 +1853,7 @@ H.defaultOptions = {
 		 * CSS styles for the loading screen that covers the plot area.
 		 * 
 		 * @type {CSSObject}
-		 * @see In styled mode, the loading label is styled with the `.highcharts-
-		 * legend-loading` class.
+		 * @see In styled mode, the loading label is styled with the `.highcharts-legend-loading` class.
 		 * @sample {highcharts|highmaps} highcharts/loading/style/ Gray plot area, white text
 		 * @sample {highstock} stock/loading/general/ Gray plot area, white text
 		 * @default { "position": "absolute", "backgroundColor": "#ffffff", "opacity": 0.5, "textAlign": "center" }
@@ -2035,8 +2028,7 @@ H.defaultOptions = {
 		/**
 		 * The background color or gradient for the tooltip.
 		 * 
-		 * In styled mode, the stroke width is set in the `.highcharts-
-		 * tooltip-box` class.
+		 * In styled mode, the stroke width is set in the `.highcharts-tooltip-box` class.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/tooltip/backgroundcolor-solid/ Yellowish background
@@ -2054,8 +2046,7 @@ H.defaultOptions = {
 		/**
 		 * The pixel width of the tooltip border.
 		 * 
-		 * In styled mode, the stroke width is set in the `.highcharts-
-		 * tooltip-box` class.
+		 * In styled mode, the stroke width is set in the `.highcharts-tooltip-box` class.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/tooltip/bordercolor-default/ 2px by default

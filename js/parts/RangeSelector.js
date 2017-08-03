@@ -126,8 +126,7 @@ extend(defaultOptions, {
 		/**
 		 * CSS styles for the labels - the Zoom, From and To texts.
 		 * 
-		 * In styled mode, the labels are styled by the `.highcharts-
-		 * range-label` class.
+		 * In styled mode, the labels are styled by the `.highcharts-range-label` class.
 		 * 
 		 * @type {CSSObject}
 		 * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs

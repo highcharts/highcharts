@@ -40,8 +40,7 @@ seriesType('area', 'line', {
 	 * is used with the series' `fillOpacity`.
 	 * 
 	 * @type {Color}
-	 * @see In styled mode, the fill color can be set with the `.highcharts-
-	 * area` class name.
+	 * @see In styled mode, the fill color can be set with the `.highcharts-area` class name.
 	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/ Null by default
 	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/ Gradient
 	 * @default null
@@ -57,8 +56,7 @@ seriesType('area', 'line', {
 	 * of the `color` setting.
 	 * 
 	 * @type {Number}
-	 * @see In styled mode, the fill opacity can be set with the `.highcharts-
-	 * area` class name.
+	 * @see In styled mode, the fill opacity can be set with the `.highcharts-area` class name.
 	 * @sample {highcharts} highcharts/plotoptions/area-fillopacity/ Automatic fill color and fill opacity of 0.1
 	 * @default {highcharts} 0.75
 	 * @default {highstock} .75
@@ -72,8 +70,7 @@ seriesType('area', 'line', {
 	 * separate color for the line without altering the `fillColor`.
 	 * 
 	 * @type {Color}
-	 * @see In styled mode, the line stroke can be set with the `.highcharts-
-	 * graph` class name.
+	 * @see In styled mode, the line stroke can be set with the `.highcharts-graph` class name.
 	 * @sample {highcharts} highcharts/plotoptions/area-linecolor/ Dark gray line
 	 * @default null
 	 * @product highcharts highstock

@@ -106,8 +106,7 @@ merge(true, defaultOptions.navigation,
 	 * in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In styled mode, the menu items are styled with the `.highcharts-
-	 * menu-item` class.
+	 * @see In styled mode, the menu items are styled with the `.highcharts-menu-item` class.
 	 * @sample {highcharts} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
 	 * @sample {highstock} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
 	 * @sample {highmaps} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
@@ -133,8 +132,7 @@ merge(true, defaultOptions.navigation,
 	 *  The menu items are rendered in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In styled mode, the menu items are styled with the `.highcharts-
-	 * menu-item` class.
+	 * @see In styled mode, the menu items are styled with the `.highcharts-menu-item` class.
 	 * @sample {highcharts} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @sample {highstock} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @sample {highmaps} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
@@ -151,8 +149,7 @@ merge(true, defaultOptions.navigation,
 	 * A collection of options for buttons appearing in the exporting module.
 	 * 
 	 * 
-	 * In styled mode, the buttons are styled with the `.highcharts-
-	 * contextbutton` and `.highcharts-button-symbol` class.
+	 * In styled mode, the buttons are styled with the `.highcharts-contextbutton` and `.highcharts-button-symbol` class.
 	 * 
 	 * @product highcharts highstock highmaps
 	 */

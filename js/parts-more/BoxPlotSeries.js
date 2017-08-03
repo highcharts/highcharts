@@ -147,8 +147,7 @@ seriesType('boxplot', 'column', {
 	 * the whiskers. If `null`, the series color is used.
 	 * 
 	 * @type {Color}
-	 * @see In styled mode, the stem stroke can be set with the `.highcharts-
-	 * boxplot-stem` class.
+	 * @see In styled mode, the stem stroke can be set with the `.highcharts-boxplot-stem` class.
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
 	 *         Box plot styling
 	 * @sample {highcharts} highcharts/css/boxplot/
@@ -206,8 +205,7 @@ seriesType('boxplot', 'column', {
 	 * values. When `null`, the general series color is used.
 	 * 
 	 * @type {Color}
-	 * @see In styled mode, the whisker stroke can be set with the `.highcharts-
-	 * boxplot-whisker` class .
+	 * @see In styled mode, the whisker stroke can be set with the `.highcharts-boxplot-whisker` class .
 	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
 	 *         Box plot styling
 	 * @sample {highcharts} highcharts/css/boxplot/

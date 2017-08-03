@@ -322,8 +322,7 @@ seriesType('pie', 'line', {
 	 * together with a `borderWidth` to fill drawing gaps created by antialiazing
 	 * artefacts in borderless pies.
 	 * 
-	 * In styled mode, the border stroke is given in the `.highcharts-
-	 * point` class.
+	 * In styled mode, the border stroke is given in the `.highcharts-point` class.
 	 * 
 	 * @type {Color}
 	 * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/ Black border
@@ -340,8 +339,7 @@ seriesType('pie', 'line', {
 	 * keep the border width at 0.5 or 1, but set the `borderColor` to
 	 * `null` instead.
 	 * 
-	 * In styled mode, the border stroke width is given in the `.highcharts-
-	 * point` class.
+	 * In styled mode, the border stroke width is given in the `.highcharts-point` class.
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/pie-borderwidth/ 3px border
