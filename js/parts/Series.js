@@ -153,7 +153,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 *         Map bubble
 	 * @default false
 	 * @since 1.2.0
-	 * @product highcharts highstock highmaps
 	 */
 	allowPointSelect: false,
 
@@ -806,7 +805,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 
 	/**
-	 * @product highcharts highstock highmaps
 	 */
 	events: {
 
@@ -1560,7 +1558,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * 
 		 * @type {Function}
 		 * @sample {highmaps} maps/plotoptions/series-datalabels-format/ Formatted value
-		 * @product highcharts highstock highmaps
 		 */
 		formatter: function () {
 			return this.y === null ? '' : H.numberFormat(this.y, -1);
@@ -1674,7 +1671,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @validvalue ["top", "middle", "bottom"]
 		 * @type {String}
 		 * @since 2.3.3
-		 * @product highcharts highstock highmaps
 		 */
 		verticalAlign: 'bottom', // above singular point
 
@@ -1685,7 +1681,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/ Vertical and positioned
 		 * @default 0
-		 * @product highcharts highstock highmaps
 		 */
 		x: 0,
 
@@ -1696,7 +1691,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/ Vertical and positioned
 		 * @default -6
-		 * @product highcharts highstock highmaps
 		 */
 		y: 0,
 
@@ -1713,7 +1707,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @default {highstock} 5
 		 * @default {highmaps} 0
 		 * @since 2.2.1
-		 * @product highcharts highstock highmaps
 		 */
 		padding: 5
 
@@ -1803,7 +1796,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * A wrapper object for all the series options in specific states.
 	 * 
 	 * @type {plotOptions.series.states}
-	 * @product highcharts highstock highmaps
 	 */
 	states: {
 
@@ -1811,8 +1803,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		/**
 		 * Options for the hovered series. These settings override the normal
 		 * state options when a series is moused over or touched.
-		 * 
-		 * @product highcharts highstock highmaps
+		 *
 		 */
 		hover: {
 
@@ -1996,7 +1987,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * @default {highstock} true
 	 * @default {highmaps} false
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	stickyTracking: true,
 
@@ -2122,7 +2112,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * @sample {highmaps} highcharts/series/findnearestpointby/
 	 *         Different hover behaviors
 	 * @since 5.0.10
-	 * @product highcharts highstock highmaps
 	 */
 	findNearestPointBy: 'x'
 

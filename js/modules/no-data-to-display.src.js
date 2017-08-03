@@ -39,7 +39,6 @@ defaultOptions.noData = {
 	 * @type {Object}
 	 * @default { "x": 0, "y": 0, "align": "center", "verticalAlign": "middle" }
 	 * @since 3.0.8
-	 * @product highcharts highstock highmaps
 	 */
 	position: {
 
@@ -67,7 +66,6 @@ defaultOptions.noData = {
 		 * @validvalue ["left", "center", "right"]
 		 * @type {String}
 		 * @default center
-		 * @product highcharts highstock highmaps
 		 */
 		align: 'center',
 

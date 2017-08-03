@@ -90,7 +90,6 @@ H.setOptions({
 	 * com/docs/chart-concepts/accessibility).
 	 * 
 	 * @since 5.0.0
-	 * @product highcharts highstock highmaps
 	 */
 	accessibility: {
 
@@ -100,7 +99,6 @@ H.setOptions({
 		 * @type {Boolean}
 		 * @default true
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 */
 		enabled: true,
 
@@ -113,7 +111,6 @@ H.setOptions({
 		 * @type {Number|Boolean}
 		 * @default 30
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 */
 		pointDescriptionThreshold: 30, // set to false to disable
 
@@ -122,7 +119,6 @@ H.setOptions({
 		 * 
 		 * @type {Object}
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 */
 		keyboardNavigation: {
 
@@ -163,7 +159,6 @@ H.setOptions({
 		 * @type {Boolean}
 		 * @default false
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 * @apioption accessibility.describeSingleSeries
 		 */
 

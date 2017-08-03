@@ -141,8 +141,7 @@ var extendedOptions = 	{
 	/**
 	 * Options regarding the chart area and plot area as well as general
 	 * chart options.
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	chart: {
 

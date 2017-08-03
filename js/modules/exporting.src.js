@@ -112,7 +112,6 @@ merge(true, defaultOptions.navigation,
 	 * @sample {highmaps} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
 	 * @default { "padding": "0.5em 1em", "color": "#333333", "background": "none" }
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	menuItemStyle: {
 		padding: '0.5em 1em',
@@ -138,7 +137,6 @@ merge(true, defaultOptions.navigation,
 	 * @sample {highmaps} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @default { "background": "#335cad", "color": "#ffffff" }
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	menuItemHoverStyle: {
 		background: '${palette.highlightColor80}',
@@ -150,8 +148,7 @@ merge(true, defaultOptions.navigation,
 	 * 
 	 * 
 	 * In styled mode, the buttons are styled with the `.highcharts-contextbutton` and `.highcharts-button-symbol` class.
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	buttonOptions: {
 
@@ -164,7 +161,6 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-symbolfill/ Blue symbol stroke for one of the buttons
 		 * @default #666666
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		symbolFill: '${palette.neutralColor60}',
 
@@ -177,7 +173,6 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-symbolstroke/ Blue symbol stroke
 		 * @default #666666
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		symbolStroke: '${palette.neutralColor60}',
 
@@ -190,7 +185,6 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
 		 * @default 1
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		symbolStrokeWidth: 3,
 
@@ -205,7 +199,6 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highstock} highcharts/navigation/buttonoptions-theme/ Theming the buttons
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-theme/ Theming the buttons
 		 * @since 3.0
-		 * @product highcharts highstock highmaps
 		 */
 		theme: {
 			/**
@@ -248,7 +241,6 @@ defaultOptions.exporting = {
 	 * @type {String}
 	 * @default image/png
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	type: 'image/png',
 
@@ -259,7 +251,6 @@ defaultOptions.exporting = {
 	 * @type {String}
 	 * @default https://export.highcharts.com
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	url: 'https://export.highcharts.com/',
 	//width: undefined,
@@ -274,7 +265,6 @@ defaultOptions.exporting = {
 	 * @type {Number}
 	 * @default 780
 	 * @since 4.2.5
-	 * @product highcharts highstock highmaps
 	 */
 	printMaxWidth: 780,
 
@@ -292,7 +282,6 @@ defaultOptions.exporting = {
 	 * @sample {highmaps} maps/exporting/scale/ Scale demonstrated
 	 * @default 2
 	 * @since 3.0
-	 * @product highcharts highstock highmaps
 	 */
 	scale: 2,
 
@@ -301,8 +290,7 @@ defaultOptions.exporting = {
 	 * to the default buttons listed here, custom buttons can be added.
 	 * See [navigation.buttonOptions](#navigation.buttonOptions) for general
 	 * options.
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	buttons: {
 
@@ -313,7 +301,6 @@ defaultOptions.exporting = {
 		 * `.highcharts-contextbutton` class.
 		 * 
 		 * @extends navigation.buttonOptions
-		 * @product highcharts highstock highmaps
 		 */
 		contextButton: {
 
@@ -341,7 +328,6 @@ defaultOptions.exporting = {
 			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
 			 * @default menu
 			 * @since 2.0
-			 * @product highcharts highstock highmaps
 			 */
 			symbol: 'menu',
 
@@ -382,7 +368,6 @@ defaultOptions.exporting = {
 	 		 * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
 	 		 *         Menu item definitions
 			 * @since 2.0
-			 * @product highcharts highstock highmaps
 			 */
 			menuItems: [
 				'printChart',

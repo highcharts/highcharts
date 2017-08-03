@@ -82,7 +82,6 @@ H.defaultOptions = {
 		 * 
 		 * @type {String}
 		 * @default Loading...
-		 * @product highcharts highstock highmaps
 		 */
 		loading: 'Loading...',
 
@@ -94,7 +93,6 @@ H.defaultOptions = {
 		 * @default [ "January" , "February" , "March" , "April" , "May" ,
 		 *          "June" , "July" , "August" , "September" , "October" ,
 		 *          "November" , "December"]
-		 * @product highcharts highstock highmaps
 		 */
 		months: [
 			'January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -120,7 +118,6 @@ H.defaultOptions = {
 		 * @type {Array<String>}
 		 * @default ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
 		 *          "Friday", "Saturday"]
-		 * @product highcharts highstock highmaps
 		 */
 		weekdays: [
 			'Sunday', 'Monday', 'Tuesday', 'Wednesday',
@@ -135,7 +132,6 @@ H.defaultOptions = {
 		 * @type {String}
 		 * @default .
 		 * @since 1.2.2
-		 * @product highcharts highstock highmaps
 		 */
 		decimalPoint: '.',
 
@@ -150,7 +146,6 @@ H.defaultOptions = {
 		 * @sample {highstock} highcharts/lang/numericsymbols/ Replacing the symbols with text
 		 * @default [ "k" , "M" , "G" , "T" , "P" , "E"]
 		 * @since 2.3.0
-		 * @product highcharts highstock highmaps
 		 */
 		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
 
@@ -160,7 +155,6 @@ H.defaultOptions = {
 		 * @type {String}
 		 * @default Reset zoom
 		 * @since 1.2.4
-		 * @product highcharts highstock highmaps
 		 */
 		resetZoom: 'Reset zoom',
 
@@ -170,7 +164,6 @@ H.defaultOptions = {
 		 * @type {String}
 		 * @default Reset zoom level 1:1
 		 * @since 1.2.4
-		 * @product highcharts highstock highmaps
 		 */
 		resetZoomTitle: 'Reset zoom level 1:1',
 
@@ -186,7 +179,6 @@ H.defaultOptions = {
 		 * @type {String}
 		 * @default  
 		 * @since 1.2.2
-		 * @product highcharts highstock highmaps
 		 */
 		thousandsSep: ' '
 	},
@@ -201,8 +193,7 @@ H.defaultOptions = {
 	 *         useUTC: false
 	 *     }
 	 * });</pre>
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	global: {
 
@@ -218,7 +209,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/global/useutc-true/ True by default
 		 * @sample {highcharts} highcharts/global/useutc-false/ False
 		 * @default true
-		 * @product highcharts highstock highmaps
 		 */
 		useUTC: true,
 		//timezoneOffset: 0,
@@ -233,7 +223,6 @@ H.defaultOptions = {
 		 * @default {highstock} http://code.highcharts.com/highstock/{version}/gfx/vml-radial-gradient.png
 		 * @default {highmaps} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
 		 * @since 2.3.0
-		 * @product highcharts highstock highmaps
 		 */
 		VMLRadialGradientURL: 'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png'
 		/*= } =*/
@@ -597,7 +586,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/chart/border/ 10px radius
 		 * @sample {highmaps} maps/chart/border/ Border options
 		 * @default 0
-		 * @product highcharts highstock highmaps
 		 */
 		borderRadius: 0,
 		/*= if (!build.classic) { =*/
@@ -612,7 +600,6 @@ H.defaultOptions = {
 		 * @type {Number}
 		 * @default 10
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 */
 		colorCount: 10,
 		/*= } =*/
@@ -686,15 +673,13 @@ H.defaultOptions = {
 		 * @see [chart.margin](#chart.margin)
 		 * @default [10, 10, 15, 10]
 		 * @since 3.0.6
-		 * @product highcharts highstock highmaps
 		 */
 		spacing: [10, 10, 15, 10],
 
 		/**
 		 * The button that appears after a selection zoom, allowing the user
 		 * to reset zoom.
-		 * 
-		 * @product highcharts highstock highmaps
+		 *
 		 */
 		resetZoomButton: {
 
@@ -711,7 +696,6 @@ H.defaultOptions = {
 			 * @sample {highstock} highcharts/chart/resetzoombutton-theme/
 			 *         Theming the button
 			 * @since 2.2
-			 * @product highcharts highstock highmaps
 			 */
 			theme: {
 
@@ -732,7 +716,6 @@ H.defaultOptions = {
 			 * @sample {highmaps} highcharts/chart/resetzoombutton-position/
 			 *         Above the plot area
 			 * @since 2.2
-			 * @product highcharts highstock highmaps
 			 */
 			position: {
 
@@ -792,7 +775,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/chart/width/ 800px wide
 		 * @sample {highmaps} maps/chart/size/ Chart with explicit size
 		 * @default null
-		 * @product highcharts highstock highmaps
 		 */
 		width: null,
 
@@ -817,7 +799,6 @@ H.defaultOptions = {
 		 * @sample highcharts/chart/height-percent/
 		 *         Highcharts with percentage height
 		 * @default null
-		 * @product highcharts highstock highmaps
 		 */
 		height: null,
 		
@@ -833,7 +814,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/chart/border/ Brown border
 		 * @sample {highmaps} maps/chart/border/ Border options
 		 * @default #335cad
-		 * @product highcharts highstock highmaps
 		 */
 		borderColor: '${palette.highlightColor80}',
 		
@@ -873,7 +853,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/chart/backgroundcolor-gradient/
 		 *         Gradient
 		 * @default #FFFFFF
-		 * @product highcharts highstock highmaps
 		 */
 		backgroundColor: '${palette.backgroundColor}',
 		
@@ -926,7 +905,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/chart/plotborder/ Blue border
 		 * @sample {highmaps} maps/chart/plotborder/ Plot border options
 		 * @default #cccccc
-		 * @product highcharts highstock highmaps
 		 */
 		plotBorderColor: '${palette.neutralColor20}'
 		
@@ -1188,7 +1166,6 @@ H.defaultOptions = {
 	 * The chart's main title.
 	 * 
 	 * @sample {highmaps} maps/title/title/ Title options demonstrated
-	 * @product highcharts highstock highmaps
 	 */
 	title: {
 
@@ -1202,7 +1179,6 @@ H.defaultOptions = {
 		 * @default {highcharts} Chart title
 		 * @default {highstock} null
 		 * @default {highmaps} Chart title
-		 * @product highcharts highstock highmaps
 		 */
 		text: 'Chart title',
 
@@ -1216,7 +1192,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/chart/title-align/ Aligned to the plot area (x = 50px     = margin left - spacing left)
 		 * @default center
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		align: 'center',
 		// floating: false,
@@ -1231,7 +1206,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/chart/title-margin/ A chart title margin of 50
 		 * @default 15
 		 * @since 2.1
-		 * @product highcharts highstock highmaps
 		 */
 		margin: 15,
 		// x: 0,
@@ -1249,7 +1223,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} highcharts/title/widthadjust/ Wider menu, greater padding
 		 * @default -44
 		 * @since 4.2.5
-		 * @product highcharts highstock highmaps
 		 */
 		widthAdjust: -44
 
@@ -1262,7 +1235,6 @@ H.defaultOptions = {
 	 * `Chart.setTitle` method.
 	 * 
 	 * @sample {highmaps} maps/title/subtitle/ Subtitle options demonstrated
-	 * @product highcharts highstock highmaps
 	 */
 	subtitle: {
 
@@ -1274,7 +1246,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/subtitle/text-formatted/ Formatted and linked text.
 		 * @sample {highstock} stock/chart/subtitle-text Custom subtitle
 		 * @sample {highstock} stock/chart/subtitle-text-formatted Formatted and linked text.
-		 * @product highcharts highstock highmaps
 		 */
 		text: '',
 
@@ -1288,7 +1259,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/chart/subtitle-footnote Footnote at bottom right of plot area
 		 * @default center
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		align: 'center',
 		// floating: false
@@ -1308,7 +1278,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} highcharts/title/widthadjust/ Wider menu, greater padding
 		 * @default -44
 		 * @since 4.2.5
-		 * @product highcharts highstock highmaps
 		 */
 		widthAdjust: -44
 	},
@@ -1323,15 +1292,13 @@ H.defaultOptions = {
 	 * series) object. Then options for all series of a specific type are
 	 * given in the plotOptions of that type, for example plotOptions.line.
 	 * Next, options for one single series are given in [the series array](#series).
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	plotOptions: {},
 
 	/**
 	 * HTML labels that can be positioned anywhere in the chart area.
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	labels: {
 		//items: [],
@@ -1373,7 +1340,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/legend/enabled-false/ Legend disabled
 		 * @default {highstock} false
 		 * @default {highmaps} true
-		 * @product highcharts highstock highmaps
 		 */
 		enabled: true,
 
@@ -1392,7 +1358,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/legend/alignment/ Legend alignment
 		 * @default center
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		align: 'center',
 		//floating: false,
@@ -1408,7 +1373,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/legend/padding-itemmargin/ Vertical with data classes
 		 * @sample {highmaps} maps/legend/layout-vertical/ Vertical with color axis gradient
 		 * @default horizontal
-		 * @product highcharts highstock highmaps
 		 */
 		layout: 'horizontal',
 
@@ -1441,7 +1405,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/legend/align/ Various legend options
 		 * @sample {highmaps} maps/legend/border-background/ Border and background options
 		 * @default #999999
-		 * @product highcharts highstock highmaps
 		 */
 		borderColor: '${palette.neutralColor40}',
 
@@ -1453,7 +1416,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/legend/borderradius-round/ 5px rounded
 		 * @sample {highmaps} maps/legend/border-background/ Border and background options
 		 * @default 0
-		 * @product highcharts highstock highmaps
 		 */
 		borderRadius: 0,
 
@@ -1463,8 +1425,7 @@ H.defaultOptions = {
 		 * exported images. One way of working around that is to [increase
 		 * the chart height in export](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-
 		 * enabled-false/).
-		 * 
-		 * @product highcharts highstock highmaps
+		 *
 		 */
 		navigation: {
 			/*= if (build.classic) { =*/
@@ -1478,7 +1439,6 @@ H.defaultOptions = {
 			 * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
 			 * @default #003399
 			 * @since 2.2.4
-			 * @product highcharts highstock highmaps
 			 */
 			activeColor: '${palette.highlightColor100}',
 
@@ -1494,7 +1454,6 @@ H.defaultOptions = {
 			 * @default {highstock} #cccccc
 			 * @default {highmaps} ##cccccc
 			 * @since 2.2.4
-			 * @product highcharts highstock highmaps
 			 */
 			inactiveColor: '${palette.neutralColor20}'
 			/*= } =*/
@@ -1522,7 +1481,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/legend/itemstyle/ Bold black text
 		 * @sample {highmaps} maps/legend/itemstyle/ Item text styles
 		 * @default { "color": "#333333", "cursor": "pointer", "fontSize": "12px", "fontWeight": "bold", "textOverflow": "ellipsis" }
-		 * @product highcharts highstock highmaps
 		 */
 		itemStyle: {			
 
@@ -1554,7 +1512,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/legend/itemhoverstyle/ Red on hover
 		 * @sample {highmaps} maps/legend/itemstyle/ Item text styles
 		 * @default { "color": "#000000" }
-		 * @product highcharts highstock highmaps
 		 */
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
@@ -1575,7 +1532,6 @@ H.defaultOptions = {
 		 * the `.highcharts-legend-item-hidden` class.
 		 * @sample {highcharts} highcharts/legend/itemhiddenstyle/ Darker gray color
 		 * @default { "color": "#cccccc" }
-		 * @product highcharts highstock highmaps
 		 */
 		itemHiddenStyle: {
 
@@ -1598,7 +1554,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/legend/border-background/
 		 *         Border and background options
 		 * @default false
-		 * @product highcharts highstock highmaps
 		 */
 		shadow: false,
 		/*= } =*/
@@ -1629,7 +1584,6 @@ H.defaultOptions = {
 		 * @type {Boolean}
 		 * @default true
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 */
 		squareSymbol: true,
 
@@ -1708,7 +1662,6 @@ H.defaultOptions = {
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/legend/symbolpadding/ Greater symbol width and padding
 		 * @default 5
-		 * @product highcharts highstock highmaps
 		 */
 		symbolPadding: 5,
 
@@ -1728,7 +1681,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/legend/alignment/ Legend alignment
 		 * @default bottom
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		verticalAlign: 'bottom',
 		// width: undefined,
@@ -1742,7 +1694,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/legend/width/ Aligned to the plot area
 		 * @default 0
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		x: 0,
 
@@ -1757,7 +1708,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/legend/alignment/ Legend alignment
 		 * @default 0
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		y: 0,
 
@@ -1767,7 +1717,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/legend/title/ Legend title
 		 * @sample {highmaps} maps/legend/alignment/ Legend with title
 		 * @since 3.0
-		 * @product highcharts highstock highmaps
 		 */
 		title: {
 			//text: null,
@@ -1780,7 +1729,6 @@ H.defaultOptions = {
 			 * @see In styled mode, the legend title is styled with the `.highcharts-legend-title` class.
 			 * @default {"fontWeight":"bold"}
 			 * @since 3.0
-			 * @product highcharts highstock highmaps
 			 */
 			style: {
 
@@ -1801,8 +1749,7 @@ H.defaultOptions = {
 	 * is going on, for example while retrieving new data via an XHR connection.
 	 * The "Loading..." text itself is not part of this configuration
 	 * object, but part of the `lang` object.
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	loading: {
 
@@ -1837,7 +1784,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/loading/general/ Label styles
 		 * @default { "fontWeight": "bold", "position": "relative", "top": "45%" }
 		 * @since 1.2.0
-		 * @product highcharts highstock highmaps
 		 */
 		labelStyle: {
 			fontWeight: 'bold',
@@ -1868,8 +1814,7 @@ H.defaultOptions = {
 	/**
 	 * Options for the tooltip that appears when the user hovers over a
 	 * series or point.
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	tooltip: {
 
@@ -1880,7 +1825,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/tooltip/enabled/ Disabled
 		 * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/ Disable tooltip and show values on chart instead
 		 * @default true
-		 * @product highcharts highstock highmaps
 		 */
 		enabled: true,
 
@@ -1891,7 +1835,6 @@ H.defaultOptions = {
 		 * @type {Boolean}
 		 * @default true
 		 * @since 2.3.0
-		 * @product highcharts highstock highmaps
 		 */
 		animation: svg,
 		//crosshairs: null,
@@ -1904,7 +1847,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/tooltip/borderradius-0/ Square borders
 		 * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
 		 * @default 3
-		 * @product highcharts highstock highmaps
 		 */
 		borderRadius: 3,
 
@@ -1989,7 +1931,6 @@ H.defaultOptions = {
 		 * @type {Number}
 		 * @default 8
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 */
 		padding: 8,
 
@@ -2035,7 +1976,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
 		 * @sample {highmaps} highcharts/css/tooltip-border-background/ Tooltip in styled mode
 		 * @default rgba(247,247,247,0.85)
-		 * @product highcharts highstock highmaps
 		 */
 		backgroundColor: color('${palette.neutralColor3}').setOpacity(0.85).get(),
 
@@ -2053,7 +1993,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
 		 * @sample {highmaps} highcharts/css/tooltip-border-background/ Tooltip in styled mode
 		 * @default 1
-		 * @product highcharts highstock highmaps
 		 */
 		borderWidth: 1,
 
@@ -2071,7 +2010,6 @@ H.defaultOptions = {
 		 * @sample {highstock} highcharts/tooltip/footerformat/
 		 *         A HTML table in the tooltip
 		 * @sample {highmaps} maps/tooltip/format/ Format demo
-		 * @product highcharts highstock highmaps
 		 */
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 
@@ -2091,7 +2029,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/tooltip/format/ Format demo
 		 * @default <span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>
 		 * @since 2.2
-		 * @product highcharts highstock highmaps
 		 */
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 
@@ -2103,7 +2040,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/tooltip/shadow/ False
 		 * @sample {highmaps} maps/tooltip/positioner/ Fixed tooltip position, border and shadow disabled
 		 * @default true
-		 * @product highcharts highstock highmaps
 		 */
 		shadow: true,
 
@@ -2114,7 +2050,6 @@ H.defaultOptions = {
 		 * @type {CSSObject}
 		 * @sample {highcharts} highcharts/tooltip/style/ Greater padding, bold text
 		 * @default { "color": "#333333", "cursor": "default", "fontSize": "12px", "pointerEvents": "none", "whiteSpace": "nowrap" }
-		 * @product highcharts highstock highmaps
 		 */
 		style: {
 
@@ -2149,8 +2084,7 @@ H.defaultOptions = {
 	/**
 	 * Highchart by default puts a credits label in the lower right corner
 	 * of the chart. This can be changed using these options.
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	credits: {
 
@@ -2162,7 +2096,6 @@ H.defaultOptions = {
 		 * @sample {highstock} stock/credits/enabled/ Credits disabled
 		 * @sample {highmaps} maps/credits/enabled-false/ Credits disabled
 		 * @default true
-		 * @product highcharts highstock highmaps
 		 */
 		enabled: true,
 
@@ -2175,7 +2108,6 @@ H.defaultOptions = {
 		 * @default {highcharts} http://www.highcharts.com
 		 * @default {highstock} "http://www.highcharts.com"
 		 * @default {highmaps} http://www.highcharts.com
-		 * @product highcharts highstock highmaps
 		 */
 		href: 'http://www.highcharts.com',
 
@@ -2188,7 +2120,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/credits/customized/ Left aligned
 		 * @sample {highmaps} maps/credits/customized/ Left aligned
 		 * @since 2.1
-		 * @product highcharts highstock highmaps
 		 */
 		position: {
 
@@ -2198,7 +2129,6 @@ H.defaultOptions = {
 			 * @validvalue ["left", "center", "right"]
 			 * @type {String}
 			 * @default right
-			 * @product highcharts highstock highmaps
 			 */
 			align: 'right',
 
@@ -2207,7 +2137,6 @@ H.defaultOptions = {
 			 * 
 			 * @type {Number}
 			 * @default -10
-			 * @product highcharts highstock highmaps
 			 */
 			x: -10,
 
@@ -2217,7 +2146,6 @@ H.defaultOptions = {
 			 * @validvalue ["top", "middle", "bottom"]
 			 * @type {String}
 			 * @default bottom
-			 * @product highcharts highstock highmaps
 			 */
 			verticalAlign: 'bottom',
 
@@ -2226,7 +2154,6 @@ H.defaultOptions = {
 			 * 
 			 * @type {Number}
 			 * @default -5
-			 * @product highcharts highstock highmaps
 			 */
 			y: -5
 		},
@@ -2239,7 +2166,6 @@ H.defaultOptions = {
 		 * @see In styled mode, credits styles can be set with the
 		 * `.highcharts-credits` class.
 		 * @default { "cursor": "pointer", "color": "#999999", "fontSize": "10px" }
-		 * @product highcharts highstock highmaps
 		 */
 		style: {
 
