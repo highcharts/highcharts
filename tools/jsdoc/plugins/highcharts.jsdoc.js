@@ -39,6 +39,13 @@ function decorateOptions(parent, target, option, filename) {
         return;
     }
 
+    if (
+        option.leadingComments &&
+        option.leadingComments[0].value.indexOf('@ignore') !== -1
+    ) {
+        return;
+    }
+
     index = option.key.name;
 
     if (parent && parent.length > 0) {
