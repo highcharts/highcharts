@@ -866,7 +866,6 @@ const createAllExamples = () => new Promise((resolve) => {
     resolve();
 });
 
-
 /**
  * Creates the Highcharts API
  *
@@ -879,7 +878,7 @@ const createAllExamples = () => new Promise((resolve) => {
  * @return {Promise} A Promise which resolves into undefined when done.
  */
 const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
-    //const generate = require('highcharts-api-doc-gen/lib/index.js');
+    // const generate = require('highcharts-api-doc-gen/lib/index.js');
     const generate = require('./../api-docs/lib/index.js');
 
     const fs = require('fs');
@@ -1017,6 +1016,65 @@ gulp.task('jsdoc', (cb) => {
     if (argv.watch) {
         gulp.watch(watchFiles, ['jsdoc']);
         console.log('Watching file changes in JS files and templates');
+
+        // Start a server serving up the api reference
+        const http = require('http');
+        const url = require('url');
+        const fs = require('fs');
+        const docport = 9005;
+        const base = '127.0.0.1:' + docport;
+        const apiPath = __dirname + '/build/api/';
+        const mimes = {
+            png: 'image/png',
+            js: 'text/javascript',
+            json: 'text/json',
+            html: 'text/html',
+            css: 'text/css',
+            svg: 'image/svg+xml'
+        };
+
+        http.createServer((req, res) => {
+            let path = url.parse(req.url, true).pathname;
+            let file = false;
+            let filePath = path.substr(base + base.length + 1, path.lastIndexOf('/'));
+
+            const send404 = () => {
+                res.end('Ooops, the requested file is 404', 'utf-8');
+            };
+
+            if (filePath[filePath.length - 1] !== '/') {
+                filePath = filePath + '/';
+            }
+
+            if (filePath[0] === '/') {
+                filePath = filePath.substr(1);
+            }
+
+            if (req.method === 'GET') {
+                let ti = path.lastIndexOf('.');
+                if (ti < 0 || path.length === 0) {
+                    file = 'index.html';
+                    res.writeHead(200, { 'Content-Type': mimes.html });
+                } else {
+                    file = path.substr(path.lastIndexOf('/') + 1);
+                    res.writeHead(200, { 'Content-Type': mimes[path.substr(ti + 1)] });
+                }
+
+                // console.log('Getting', filePath + file);
+
+                return fs.readFile(apiPath + filePath + file, (err, data) => {
+                    if (err) {
+                        return send404();
+                    }
+                    return res.end(data);
+                });
+            }
+
+            return send404();
+        }).listen(docport);
+
+        console.log('Starting api docs server on port', docport);
+
     } else {
         console.log('Tip: use the --watch argument to watch JS file changes');
     }
