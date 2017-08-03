@@ -114,42 +114,20 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * }</pre>
 		 * 
 		 * @type {Object}
-		 * @sample {highcharts} highcharts/xaxis/datetimelabelformats/ Different day format on X axis
-		 * @sample {highstock} stock/xaxis/datetimelabelformats/ More information in x axis labels
+		 * @sample {highcharts} highcharts/xaxis/datetimelabelformats/
+		 *         Different day format on X axis
+		 * @sample {highstock} stock/xaxis/datetimelabelformats/
+		 *         More information in x axis labels
 		 * @product highcharts highstock
 		 */
 		dateTimeLabelFormats: {
-
-			/**
-			 */
 			millisecond: '%H:%M:%S.%L',
-
-			/**
-			 */
 			second: '%H:%M:%S',
-
-			/**
-			 */
 			minute: '%H:%M',
-
-			/**
-			 */
 			hour: '%H:%M',
-
-			/**
-			 */
 			day: '%e. %b',
-
-			/**
-			 */
 			week: '%e. %b',
-
-			/**
-			 */
 			month: '%b \'%y',
-
-			/**
-			 */
 			year: '%Y'
 		},
 
@@ -209,17 +187,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @product highcharts highstock highmaps
 			 */
 			style: {
-
-				/**
-				 */
 				color: '${palette.neutralColor60}',
-
-				/**
-				 */
 				cursor: 'default',
-
-				/**
-				 */
 				fontSize: '11px'
 			},
 			/*= } =*/
@@ -469,9 +438,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @product highcharts highstock highmaps
 			 */
 			style: {
-
-				/**
-				 */
 				color: '${palette.neutralColor60}'
 			}
 			/*= } =*/
@@ -645,8 +611,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 */
 		endOnTick: true,
 
-		/**
-		 */
 		tickPixelInterval: 72,
 
 		/**
@@ -824,21 +788,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @product highcharts
 			 */
 			style: {
-
-				/**
-				 */
 				fontSize: '11px',
-
-				/**
-				 */
 				fontWeight: 'bold',
-
-				/**
-				 */
 				color: '${palette.neutralColor100}',
-
-				/**
-				 */
 				textOutline: '1px contrast'
 			}
 			/*= } =*/

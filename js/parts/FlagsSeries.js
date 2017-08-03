@@ -66,10 +66,7 @@ seriesType('flags', 'column', {
 	 * @apioption plotOptions.flags.onSeries
 	 */
 
-	/**
-	 */
 	pointRange: 0, // #673
-	//radius: 2,
 
 	/**
 	 * The shape of the marker. Can be one of "flag", "circlepin", "squarepin",
@@ -118,14 +115,9 @@ seriesType('flags', 'column', {
 	 * @product highstock
 	 */
 	tooltip: {
-
-		/**
-		 */
 		pointFormat: '{point.text}<br/>'
 	},
 
-	/**
-	 */
 	threshold: null,
 
 	/**
@@ -165,6 +157,7 @@ seriesType('flags', 'column', {
 	/*= if (build.classic) { =*/
 
 	/**
+	 * The fill color for the flags.
 	 */
 	fillColor: '${palette.backgroundColor}',
 	
@@ -181,7 +174,7 @@ seriesType('flags', 'column', {
 	 */
 
 	/**
-	 * The pixel width of the candlestick line/border.
+	 * The pixel width of the flag's line/border.
 	 * 
 	 * @type {Number}
 	 * @default 1
@@ -189,8 +182,6 @@ seriesType('flags', 'column', {
 	 */
 	lineWidth: 1,
 
-	/**
-	 */
 	states: {
 
 		/**
@@ -230,13 +221,7 @@ seriesType('flags', 'column', {
 	 * @product highstock
 	 */
 	style: {
-
-		/**
-		 */
 		fontSize: '11px',
-
-		/**
-		 */
 		fontWeight: 'bold'
 	}
 	/*= } =*/

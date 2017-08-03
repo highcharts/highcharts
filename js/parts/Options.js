@@ -71,6 +71,7 @@ H.defaultOptions = {
 	 */
 
 	/**
+	 * @ignore
 	 */
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
@@ -705,14 +706,17 @@ H.defaultOptions = {
 			 * in `theme.states.hover`.
 			 * 
 			 * @type {Object}
-			 * @sample {highcharts} highcharts/chart/resetzoombutton-theme/ Theming the button
-			 * @sample {highstock} highcharts/chart/resetzoombutton-theme/ Theming the button
+			 * @sample {highcharts} highcharts/chart/resetzoombutton-theme/
+			 *         Theming the button
+			 * @sample {highstock} highcharts/chart/resetzoombutton-theme/
+			 *         Theming the button
 			 * @since 2.2
 			 * @product highcharts highstock highmaps
 			 */
 			theme: {
 
 				/**
+				 * The Z index for the reset zoom button.
 				 */
 				zIndex: 20
 			},
@@ -1337,17 +1341,9 @@ H.defaultOptions = {
 		 * 
 		 * @type {CSSObject}
 		 * @default { "color": "#333333" }
-		 * @product highcharts highstock highmaps
 		 */
 		style: {
-			//font: defaultFont,
-
-			/**
-			 */
 			position: 'absolute',
-
-			/**
-			 */
 			color: '${palette.neutralColor80}'
 		}
 	},

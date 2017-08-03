@@ -49,8 +49,6 @@ var candlestickOptions = {
 	 * @apioption plotOptions.candlestick.dataGrouping.approximation
 	 */
 
-	/**
-	 */
 	states: {
 
 		/**
@@ -71,11 +69,10 @@ var candlestickOptions = {
 	},
 
 	/**
+	 * @extends {plotOptions.ohlc.tooltip}
 	 */
 	tooltip: defaultPlotOptions.ohlc.tooltip,
 
-	/**
-	 */
 	threshold: null,
 	/*= if (build.classic) { =*/
 
@@ -87,7 +84,8 @@ var candlestickOptions = {
 	 * 
 	 * @type {Color}
 	 * @see [upLineColor](#plotOptions.candlestick.upLineColor)
-	 * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
+	 * @sample {highstock} stock/plotoptions/candlestick-linecolor/
+	 *         Candlestick line colors
 	 * @default #000000
 	 * @product highstock
 	 */
@@ -120,8 +118,6 @@ var candlestickOptions = {
 	 */
 	upColor: '${palette.backgroundColor}',
 
-	/**
-	 */
 	stickyTracking: true
 	
 	/**

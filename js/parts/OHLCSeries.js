@@ -55,8 +55,6 @@ seriesType('ohlc', 'column', {
 	 */
 	lineWidth: 1,
 
-	/**
-	 */
 	tooltip: {
 		/*= if (!build.classic) { =*/
 		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' +
@@ -66,8 +64,6 @@ seriesType('ohlc', 'column', {
 			'Close: {point.close}<br/>',
 		/*= } else { =*/
 
-		/**
-		 */
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
@@ -76,13 +72,9 @@ seriesType('ohlc', 'column', {
 		/*= } =*/
 	},
 
-	/**
-	 */
 	threshold: null,
 	/*= if (build.classic) { =*/
 
-	/**
-	 */
 	states: {
 
 		/**
@@ -92,8 +84,7 @@ seriesType('ohlc', 'column', {
 		hover: {
 
 			/**
-			 * The pixel width of the line representing the OHLC point. Defaults
-			 * to `3`.
+			 * The pixel width of the line representing the OHLC point.
 			 * 
 			 * @type {Number}
 			 * @default 3
@@ -114,9 +105,6 @@ seriesType('ohlc', 'column', {
 	
 	/*= } =*/
 
-
-	/**
-	 */
 	stickyTracking: true
 
 }, /** @lends seriesTypes.ohlc */ {

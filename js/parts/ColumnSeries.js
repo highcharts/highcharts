@@ -225,8 +225,6 @@ seriesType('column', 'line', {
 	 */
 	pointRange: null,
 
-	/**
-	 */
 	states: {
 
 		/**
@@ -271,46 +269,22 @@ seriesType('column', 'line', {
 			 */
 			brightness: 0.1,
 
-			/**
-			 */
 			shadow: false
 			/*= } =*/
 		},
 		/*= if (build.classic) { =*/
 
-		/**
-		 */
 		select: {
-
-			/**
-			 */
 			color: '${palette.neutralColor20}',
-
-			/**
-			 */
 			borderColor: '${palette.neutralColor100}',
-
-			/**
-			 */
 			shadow: false
 		}
 		/*= } =*/
 	},
 
-	/**
-	 */
 	dataLabels: {
-
-		/**
-		 */
 		align: null, // auto
-
-		/**
-		 */
 		verticalAlign: null, // auto
-
-		/**
-		 */
 		y: null
 	},
 
@@ -331,20 +305,12 @@ seriesType('column', 'line', {
 	 */
 	softThreshold: false,
 
-	/**
-	 */
+	/**	@ignore */
 	startFromThreshold: true, // false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
 
-	/**
-	 */
 	stickyTracking: false,
 
-	/**
-	 */
 	tooltip: {
-
-		/**
-		 */
 		distance: 6
 	},
 

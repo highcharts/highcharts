@@ -235,95 +235,79 @@ extend(defaultOptions, {
 		series: {
 
 			/**
+			 * The type of the navigator series. Defaults to `areaspline` if 
+			 * defined, otherwise `line`.
+			 *
+			 * @type {String}
 			 */
 			type: defaultSeriesType,
 			/*= if (build.classic) { =*/
 
 			/**
+			 * The color of the navigator series.
 			 */
 			color: '${palette.highlightColor80}',
 
 			/**
+			 * The fill opacity of the navigator series.
 			 */
 			fillOpacity: 0.05,
 
 			/**
+			 * The pixel line width of the navigator series.
 			 */
 			lineWidth: 1,
 			/*= } =*/
 
 			/**
+			 * @ignore
 			 */
 			compare: null,
 
 			/**
+			 * Data grouping options for the navigator series.
+			 * 
+			 * @extends {plotOptions.series.dataGrouping}
 			 */
 			dataGrouping: {
-
-				/**
-				 */
 				approximation: 'average',
-
-				/**
-				 */
 				enabled: true,
-
-				/**
-				 */
 				groupPixelWidth: 2,
-
-				/**
-				 */
 				smoothed: true,
-
-				/**
-				 */
 				units: units
 			},
 
 			/**
+			 * Data label options for the navigator series. Data labels are 
+			 * disabled by default on the navigator series.
+			 *
+			 * @extends {plotOptions.series.dataLabels}
 			 */
 			dataLabels: {
-
-				/**
-				 */
 				enabled: false,
-
-				/**
-				 */
 				zIndex: 2 // #1839
 			},
 
-			/**
-			 */
 			id: 'highcharts-navigator-series',
-
-			/**
-			 */
 			className: 'highcharts-navigator-series',
 
 			/**
+			 * Line color for the navigator series. Allows setting the color
+			 * while disallowing the default candlestick setting.
+			 *
+			 * @type {Color}
 			 */
-			lineColor: null, // Allow color setting while disallowing default candlestick setting (#4602)
+			lineColor: null, // #4602
 
-			/**
-			 */
 			marker: {
-
-				/**
-				 */
 				enabled: false
 			},
 
-			/**
-			 */
 			pointRange: 0,
-
 			/**
-			 */
-			shadow: false,
-
-			/**
+			 * The threshold option. Setting it to 0 will make the default
+			 * navigator area series draw its area from the 0 value and up.
+			 * @type {Number}
 			 */
 			threshold: null
 		},
@@ -331,8 +315,7 @@ extend(defaultOptions, {
 		//opposite: undefined,
 
 		/**
-		 * Options for the navigator X axis. Available options are the same
-		 * as any X axis, documented at [xAxis](#xAxis). Default series options
+		 * Options for the navigator X axis. Default series options
 		 * for the navigator xAxis are:
 		 * 
 		 * <pre>xAxis: {
@@ -351,72 +334,42 @@ extend(defaultOptions, {
 		 * }</pre>
 		 * 
 		 * @type {Object}
+		 * @extends {xAxis}
+		 * @excluding linkedTo,maxZoom,minRange,opposite,range,scrollbar,
+		 *          showEmpty
 		 * @product highstock
 		 */
 		xAxis: {
 
-			/**
-			 */
 			className: 'highcharts-navigator-xaxis',
-
-			/**
-			 */
 			tickLength: 0,
+			
 			/*= if (build.classic) { =*/
-
-			/**
-			 */
 			lineWidth: 0,
-
-			/**
-			 */
 			gridLineColor: '${palette.neutralColor10}',
-
-			/**
-			 */
 			gridLineWidth: 1,
 			/*= } =*/
 
-			/**
-			 */
 			tickPixelInterval: 200,
 
-			/**
-			 */
 			labels: {
-
-				/**
-				 */
 				align: 'left',
+				
 				/*= if (build.classic) { =*/
-
-				/**
-				 */
 				style: {
-
-					/**
-					 */
 					color: '${palette.neutralColor40}'
 				},
 				/*= } =*/
 
-				/**
-				 */
 				x: 3,
-
-				/**
-				 */
 				y: -4
 			},
 
-			/**
-			 */
 			crosshair: false
 		},
 
 		/**
-		 * Options for the navigator Y axis. Available options are the same
-		 * as any y axis, documented at [yAxis](#yAxis). Default series options
+		 * Options for the navigator Y axis. Default series options
 		 * for the navigator yAxis are:
 		 * 
 		 * <pre>yAxis: {
@@ -435,64 +388,31 @@ extend(defaultOptions, {
 		 * }</pre>
 		 * 
 		 * @type {Object}
+		 * @extends {yAxis}
+		 * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
+		 *          scrollbar,top,units
 		 * @product highstock
 		 */
 		yAxis: {
 
-			/**
-			 */
 			className: 'highcharts-navigator-yaxis',
+			
 			/*= if (build.classic) { =*/
-
-			/**
-			 */
 			gridLineWidth: 0,
 			/*= } =*/
 
-			/**
-			 */
 			startOnTick: false,
-
-			/**
-			 */
 			endOnTick: false,
-
-			/**
-			 */
 			minPadding: 0.1,
-
-			/**
-			 */
 			maxPadding: 0.1,
-
-			/**
-			 */
 			labels: {
-
-				/**
-				 */
 				enabled: false
 			},
-
-			/**
-			 */
 			crosshair: false,
-
-			/**
-			 */
 			title: {
-
-				/**
-				 */
 				text: null
 			},
-
-			/**
-			 */
 			tickLength: 0,
-
-			/**
-			 */
 			tickWidth: 0
 		}
 	}
