@@ -1482,22 +1482,10 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/legend/itemstyle/ Item text styles
 		 * @default { "color": "#333333", "cursor": "pointer", "fontSize": "12px", "fontWeight": "bold", "textOverflow": "ellipsis" }
 		 */
-		itemStyle: {			
-
-			/**
-			 */
+		itemStyle: {
 			color: '${palette.neutralColor80}',
-
-			/**
-			 */
 			fontSize: '12px',
-
-			/**
-			 */
 			fontWeight: 'bold',
-
-			/**
-			 */
 			textOverflow: 'ellipsis'
 		},
 
@@ -1514,10 +1502,6 @@ H.defaultOptions = {
 		 * @default { "color": "#000000" }
 		 */
 		itemHoverStyle: {
-			//cursor: 'pointer', removed as of #601
-
-			/**
-			 */
 			color: '${palette.neutralColor100}'
 		},
 
@@ -1534,9 +1518,6 @@ H.defaultOptions = {
 		 * @default { "color": "#cccccc" }
 		 */
 		itemHiddenStyle: {
-
-			/**
-			 */
 			color: '${palette.neutralColor20}'
 		},
 
@@ -1559,19 +1540,12 @@ H.defaultOptions = {
 		/*= } =*/
 
 		/**
+		 * Default styling for the checkbox next to a legend item when
+		 * `showCheckbox` is true.
 		 */
 		itemCheckboxStyle: {
-
-			/**
-			 */
 			position: 'absolute',
-
-			/**
-			 */
 			width: '13px', // for IE precision
-
-			/**
-			 */
 			height: '13px'
 		},
 		// itemWidth: undefined,
@@ -1731,9 +1705,6 @@ H.defaultOptions = {
 			 * @since 3.0
 			 */
 			style: {
-
-				/**
-				 */
 				fontWeight: 'bold'
 			}
 			/*= } =*/
@@ -1875,37 +1846,13 @@ H.defaultOptions = {
 		 * @product highcharts highstock
 		 */
 		dateTimeLabelFormats: {
-
-			/**
-			 */
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
-
-			/**
-			 */
 			second: '%A, %b %e, %H:%M:%S',
-
-			/**
-			 */
 			minute: '%A, %b %e, %H:%M',
-
-			/**
-			 */
 			hour: '%A, %b %e, %H:%M',
-
-			/**
-			 */
 			day: '%A, %b %e, %Y',
-
-			/**
-			 */
 			week: 'Week from %A, %b %e, %Y',
-
-			/**
-			 */
 			month: '%B %Y',
-
-			/**
-			 */
 			year: '%Y'
 		},
 
@@ -2052,25 +1999,10 @@ H.defaultOptions = {
 		 * @default { "color": "#333333", "cursor": "default", "fontSize": "12px", "pointerEvents": "none", "whiteSpace": "nowrap" }
 		 */
 		style: {
-
-			/**
-			 */
 			color: '${palette.neutralColor80}',
-
-			/**
-			 */
 			cursor: 'default',
-
-			/**
-			 */
 			fontSize: '12px',
-
-			/**
-			 */
 			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
-
-			/**
-			 */
 			whiteSpace: 'nowrap'
 		}
 		/*= } =*/
@@ -2084,7 +2016,6 @@ H.defaultOptions = {
 	/**
 	 * Highchart by default puts a credits label in the lower right corner
 	 * of the chart. This can be changed using these options.
-	 *
 	 */
 	credits: {
 
@@ -2168,17 +2099,8 @@ H.defaultOptions = {
 		 * @default { "cursor": "pointer", "color": "#999999", "fontSize": "10px" }
 		 */
 		style: {
-
-			/**
-			 */
 			cursor: 'pointer',
-
-			/**
-			 */
 			color: '${palette.neutralColor40}',
-
-			/**
-			 */
 			fontSize: '9px'
 		},
 		/*= } =*/

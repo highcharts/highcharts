@@ -41,6 +41,11 @@ var addEvent = H.addEvent,
  * @sample highcharts/demo/pie-basic/ Pie chart
  * 
  * @extends {plotOptions.line}
+ * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,
+ *          cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
+ *          lineWidth,marker,negativeColor,pointInterval,pointIntervalUnit,
+ *          pointPlacement,pointStart,softThreshold,stacking,step,threshold,
+ *          turboThreshold,zoneAxis,zones
  * @product highcharts
  * @optionparent plotOptions.pie
  */
@@ -61,12 +66,9 @@ seriesType('pie', 'line', {
 	 */
 	center: [null, null],
 
-	/**
-	 */
 	clip: false,
 
-	/**
-	 */
+	/** @ignore */
 	colorByPoint: true, // always true for pies
 
 	/**
@@ -151,8 +153,6 @@ seriesType('pie', 'line', {
 		 */
 		enabled: true,
 
-		/**
-		 */
 		formatter: function () { // #2945
 			return this.point.isNull ? undefined : this.point.name;
 		},
@@ -169,8 +169,6 @@ seriesType('pie', 'line', {
 		 * @apioption plotOptions.pie.dataLabels.softConnector
 		 */
 
-		/**
-		 */
 		x: 0
 		// y: 0
 	},
@@ -222,12 +220,9 @@ seriesType('pie', 'line', {
 	 * @apioption plotOptions.pie.innerSize
 	 */
 
-	/**
-	 */
 	legendType: 'point',
 
-	/**
-	 */
+	/**	 @ignore */
 	marker: null, // point options are specified in the base options
 
 	/**
@@ -300,18 +295,11 @@ seriesType('pie', 'line', {
 	 * is false and `tooltip.shared` is false, the tooltip will be hidden
 	 * when moving the mouse between series.
 	 * 
-	 * @type {Boolean}
-	 * @default false
 	 * @product highcharts
 	 */
 	stickyTracking: false,
 
-	/**
-	 */
 	tooltip: {
-
-		/**
-		 */
 		followPointer: true
 	},
 	/*= if (build.classic) { =*/
@@ -348,8 +336,6 @@ seriesType('pie', 'line', {
 	 */
 	borderWidth: 1,
 
-	/**
-	 */
 	states: {
 
 		/**
@@ -372,8 +358,6 @@ seriesType('pie', 'line', {
 			 */
 			brightness: 0.1,
 
-			/**
-			 */
 			shadow: false
 		}
 	}

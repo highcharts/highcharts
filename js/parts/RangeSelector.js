@@ -68,25 +68,10 @@ extend(defaultOptions, {
 		 * @product highstock
 		 */
 		buttonTheme: {
-
-			/**
-			 */
 			'stroke-width': 0,
-
-			/**
-			 */
 			width: 28,
-
-			/**
-			 */
 			height: 18,
-
-			/**
-			 */
 			padding: 2,
-
-			/**
-			 */
 			zIndex: 7 // #484, #852
 		},
 
@@ -111,9 +96,6 @@ extend(defaultOptions, {
 		 * @product highstock
 		 */
 		inputPosition: {
-
-			/**
-			 */
 			align: 'right'
 		},
 		// inputDateFormat: '%b %e, %Y',
@@ -133,9 +115,6 @@ extend(defaultOptions, {
 		 * @product highstock
 		 */
 		labelStyle: {
-
-			/**
-			 */
 			color: '${palette.neutralColor60}'
 		}
 		/*= } =*/

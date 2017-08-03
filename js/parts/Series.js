@@ -222,10 +222,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * @default {highmaps} false
 	 */
 	animation: {
-
-
-		/**
-		 */
 		duration: 1000
 	},
 
@@ -805,6 +801,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 
 	/**
+	 * General event handlers for the series items. These event hooks can also
+	 * be attached to the series at run time using the `Highcharts.addEvent`
+	 * function.
 	 */
 	events: {
 
@@ -1057,30 +1056,22 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
 		/**
+		 * States for a single point marker.
 		 * @product highcharts highstock
 		 */
-		states: { // states for a single point
-
-
-
+		states: {
 			/**
+			 * The hover state for a single point marker.
 			 * @product highcharts highstock
 			 */
 			hover: {
 
-
-
 				/**
+				 * Animation when hovering over the marker.
 				 */
 				animation: {
-
-
-					/**
-					 */
 					duration: 50
 				},
-
-
 
 				/**
 				 * Enable or disable the point marker.
@@ -1953,15 +1944,11 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @type {Object}
 		 * @extends plotOptions.series.states.hover
 		 * @excluding brightness
-		 * @sample {highmaps} maps/plotoptions/series-allowpointselect/ Allow point select demo
+		 * @sample {highmaps} maps/plotoptions/series-allowpointselect/
+		 *         Allow point select demo
 		 * @product highmaps
 		 */
 		select: {
-
-
-
-			/**
-			 */
 			marker: {}
 		}
 	},
