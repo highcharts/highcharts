@@ -346,7 +346,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * 
  * 
  * For options that apply to multiple series, it is recommended to add
- * them to the [pointOptions.series](#pointOptions.series) options structure.
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
  * To apply to all series of this specific type, apply it to [plotOptions.
  * solidgauge](#plotOptions.solidgauge).
  * 
