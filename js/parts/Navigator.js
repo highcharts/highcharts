@@ -94,8 +94,8 @@ extend(defaultOptions, {
 	 * a view of the entire data set. It provides tools to zoom in and
 	 * out on parts of the data as well as panning across the dataset.
 	 *
-	 * @optionparent navigator
 	 * @product highstock
+	 * @optionparent navigator
 	 */
 	navigator: {
 		//enabled: true,

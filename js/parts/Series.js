@@ -929,7 +929,8 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * of the markers. Other series types, like column series, don't have
 	 * markers, but have visual options on the series level instead.
 	 * 
-	 * In styled mode, the markers can be styled with the `.highcharts-point`, `.highcharts-point-hover` and `.highcharts-point-select`
+	 * In styled mode, the markers can be styled with the `.highcharts-point`,
+	 * `.highcharts-point-hover` and `.highcharts-point-select`
 	 * class names.
 	 * 
 	 * @product highcharts highstock
@@ -954,8 +955,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * or point's color is used.
 		 * 
 		 * @type {Color}
-		 * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/ Inherit from series color (null)
-		 * @default #ffffff
+		 * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
+		 *         Inherit from series color (null)
 		 * @product highcharts highstock
 		 */
 		lineColor: '${palette.backgroundColor}',
