@@ -256,30 +256,34 @@ seriesType('heatmap', 'scatter', {
  * either starting at 0 and incremented by 1, or from `pointStart`
  * and `pointInterval` given in the series options.
  * 
- * <pre>data: [
- *     [0, 9, 7],
- *     [1, 10, 4],
- *     [2, 6, 3]
- * ]</pre>
+ *  ```js
+ *     data: [
+ *         [0, 9, 7],
+ *         [1, 10, 4],
+ *         [2, 6, 3]
+ *     ]
+ *  ```
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series' [turboThreshold](#series<heatmap>.turboThreshold),
  * this option is not available.
  * 
- * <pre>data: [{
- *     x: 1,
- *     y: 3,
- *     value: 10,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     y: 7,
- *     value: 10,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         y: 3,
+ *         value: 10,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         y: 7,
+ *         value: 10,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
  * 
  * @type {Array<Object|Array>}
  * @extends series<line>.data

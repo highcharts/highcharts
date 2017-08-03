@@ -506,36 +506,40 @@ seriesType('boxplot', 'column', {
  * calculated, either starting at 0 and incremented by 1, or from `pointStart`
  * and `pointInterval` given in the series options.
  * 
- * <pre>data: [
- *     [0, 3, 0, 10, 3, 5],
- *     [1, 7, 8, 7, 2, 9],
- *     [2, 6, 9, 5, 1, 3]
- * ]</pre>
+ *  ```js
+ *     data: [
+ *         [0, 3, 0, 10, 3, 5],
+ *         [1, 7, 8, 7, 2, 9],
+ *         [2, 6, 9, 5, 1, 3]
+ *     ]
+ *  ```
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series' [turboThreshold](#series<boxplot>.turboThreshold),
  * this option is not available.
  * 
- * <pre>data: [{
- *     x: 1,
- *     low: 4,
- *     q1: 9,
- *     median: 9,
- *     q3: 1,
- *     high: 10,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     low: 5,
- *     q1: 7,
- *     median: 3,
- *     q3: 6,
- *     high: 2,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         low: 4,
+ *         q1: 9,
+ *         median: 9,
+ *         q3: 1,
+ *         high: 10,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         low: 5,
+ *         q1: 7,
+ *         median: 3,
+ *         q3: 6,
+ *         high: 2,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
  * 
  * @type {Array<Object|Array>}
  * @extends series<line>.data

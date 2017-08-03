@@ -568,30 +568,34 @@ Axis.prototype.beforePadding = function () {
  * either starting at 0 and incremented by 1, or from `pointStart` and
  * `pointInterval` given in the series options.
  * 
- * <pre>data: [
- *     [0, 1, 2],
- *     [1, 5, 5],
- *     [2, 0, 2]
- * ]</pre>
+ *  ```js
+ *     data: [
+ *         [0, 1, 2],
+ *         [1, 5, 5],
+ *         [2, 0, 2]
+ *     ]
+ *  ```
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series' [turboThreshold](#series<bubble>.turboThreshold),
  * this option is not available.
  * 
- * <pre>data: [{
- *     x: 1,
- *     y: 1,
- *     z: 1,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     y: 5,
- *     z: 4,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         y: 1,
+ *         z: 1,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         y: 5,
+ *         z: 4,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
  * 
  * @type {Array<Object|Array>}
  * @extends series<line>.data

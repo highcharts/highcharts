@@ -601,7 +601,8 @@ if (Renderer === VMLRenderer) {
  * points exceeds the series' [turboThreshold](#series<flags>.turboThreshold),
  * this option is not available.
  * 
- * <pre>data: [{
+ *  ```js
+ *     data: [{
  *     x: 1,
  *     title: "A",
  *     text: "First event"

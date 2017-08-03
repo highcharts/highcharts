@@ -298,34 +298,38 @@ seriesType('ohlc', 'column', {
  * either starting at 0 and incremented by 1, or from `pointStart`
  * and `pointInterval` given in the series options.
  * 
- * <pre>data: [
- *     [0, 6, 5, 6, 7],
- *     [1, 9, 4, 8, 2],
- *     [2, 6, 3, 4, 10]
- * ]</pre>
+ *  ```js
+ *     data: [
+ *         [0, 6, 5, 6, 7],
+ *         [1, 9, 4, 8, 2],
+ *         [2, 6, 3, 4, 10]
+ *     ]
+ *  ```
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series' [turboThreshold](#series<ohlc>.turboThreshold),
  * this option is not available.
  * 
- * <pre>data: [{
- *     x: 1,
- *     open: 3,
- *     high: 4,
- *     low: 5,
- *     close: 2,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     x: 1,
- *     open: 4,
- *     high: 3,
- *     low: 6,
- *     close: 7,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         open: 3,
+ *         high: 4,
+ *         low: 5,
+ *         close: 2,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         open: 4,
+ *         high: 3,
+ *         low: 6,
+ *         close: 7,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
  * 
  * @type {Array<Object|Array>}
  * @extends series<arearange>.data

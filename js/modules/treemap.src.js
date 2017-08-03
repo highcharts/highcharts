@@ -1297,22 +1297,26 @@ seriesType('treemap', 'scatter', {
  * 1.  An array of numerical values. In this case, the numerical values
  * will be interpreted as `value` options. Example:
  * 
- * <pre>data: [0, 5, 3, 5]</pre>
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series' [turboThreshold](#series<treemap>.turboThreshold),
  * this option is not available.
  * 
- * <pre>data: [{
- *     value: 7,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     value: 2,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
+ *  ```js
+ *     data: [{
+ *         value: 9,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         value: 6,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
  * 
  * @type {Array<Object|Number>}
  * @extends series<heatmap>.data

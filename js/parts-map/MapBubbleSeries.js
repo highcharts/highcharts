@@ -221,22 +221,26 @@ if (seriesTypes.bubble) {
  * 1.  An array of numerical values. In this case, the numerical values
  * will be interpreted as `z` options. Example:
  * 
- * <pre>data: [0, 5, 3, 5]</pre>
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series' [turboThreshold](#series<mapbubble>.turboThreshold),
  * this option is not available.
  * 
- * <pre>data: [{
- *     z: 9,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     z: 10,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
+ *  ```js
+ *     data: [{
+ *         z: 9,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         z: 10,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
  * 
  * @type {Array<Object|Number>}
  * @extends series<mappoint>.data
