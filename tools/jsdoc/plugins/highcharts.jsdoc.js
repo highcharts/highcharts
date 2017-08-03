@@ -6,16 +6,20 @@
 
 "use strict";
 
+var hcRoot = __dirname + '/../../..';
+
 var exec = require('child_process').execSync;
 var logger = require('jsdoc/util/logger');
 var Doclet = require('jsdoc/doclet.js').Doclet;
 var fs = require('fs');
+var proc = require(hcRoot + '/assembler/process.js');
 var options = {
     _meta: {
         commit: '',
         branch: ''
     }
 };
+
 
 function dumpOptions() {
     fs.writeFile(
@@ -386,7 +390,16 @@ exports.astNodeVisitor = {
 
 exports.handlers = {
     beforeParse: function (e) {
+        var palette = proc.getPalette(hcRoot + '/css/highcharts.scss');
+        
+        Object.keys(palette).forEach(function (key) {
+            var reg = new RegExp('\\$\\{palette\\.' + key + '\\}', 'g');
 
+            e.source = e.source.replace(
+                reg,
+                palette[key]
+            );
+        });
     },
 
     jsdocCommentFound: function (e) {
