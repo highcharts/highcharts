@@ -511,13 +511,20 @@ function GLShader(gl) {
 
 			'void main(void) {',
 				'vec4 col = fillColor;',
+				'vec4 tcol;',
 
 				'if (hasColor) {',
 					'col = vColor;',
 				'}',
 
 				'if (isCircle) {',
-					'gl_FragColor = col * texture2D(uSampler, gl_PointCoord.st);',
+					'tcol = texture2D(uSampler, gl_PointCoord.st);',
+					'col *= tcol;',
+					'if (tcol.r < 0.0) {',
+						'discard;',
+					'} else {',
+						'gl_FragColor = col;',
+					'}',
 				'} else {',
 					'gl_FragColor = col;',
 				'}',
@@ -1675,12 +1682,11 @@ function GLRenderer(postRenderCallback) {
 				),
 				fillColor = s.series.fillOpacity ?
 					new Color(s.series.color).setOpacity(
-								pick(options.fillOpacity, 0.85)
+								pick(options.fillOpacity, 1.0)
 							).get() :
 					s.series.color,
 				color;
 
-			vbuffer.bind();
 
 			if (options.colorByPoint) {
 				fillColor = s.series.chart.options.colors[si ];
@@ -1851,7 +1857,8 @@ function GLRenderer(postRenderCallback) {
 		// gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		gl.disable(gl.DEPTH_TEST);
-		gl.depthMask(gl.FALSE);
+		// gl.depthMask(gl.FALSE);
+		gl.depthFunc(gl.LESS);
 
 		shader = GLShader(gl); //eslint-disable-line new-cap
 		vbuffer = GLVertexBuffer(gl, shader); //eslint-disable-line new-cap
@@ -1865,14 +1872,23 @@ function GLRenderer(postRenderCallback) {
 		circleTexture.width = 512;
 		circleTexture.height = 512;
 
+		circleCtx.mozImageSmoothingEnabled = false;
+		circleCtx.webkitImageSmoothingEnabled = false;
+		circleCtx.msImageSmoothingEnabled = false;
+		circleCtx.imageSmoothingEnabled = false;
+
+		circleCtx.strokeStyle = 'rgba(255, 255, 255, 0)';
 		circleCtx.fillStyle = '#FFF';
+
 		circleCtx.beginPath();
 		circleCtx.arc(256, 256, 256, 0, 2 * Math.PI);
+		circleCtx.stroke();
 		circleCtx.fill();
 
 		try {
 
 			gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
+			// gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
 			gl.texImage2D(
 				gl.TEXTURE_2D,
@@ -1886,9 +1902,9 @@ function GLRenderer(postRenderCallback) {
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-			gl.generateMipmap(gl.TEXTURE_2D);
+			// gl.generateMipmap(gl.TEXTURE_2D);
 
 			gl.bindTexture(gl.TEXTURE_2D, null);
 
