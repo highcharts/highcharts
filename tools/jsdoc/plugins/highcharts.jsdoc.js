@@ -21,6 +21,16 @@ var options = {
 };
 
 
+function getLocation(option) {
+    return {
+        start:
+            (option.leadingComments && option.leadingComments[0].loc.start) ||
+            option.key.loc.start,
+        end:
+            (option.leadingComments && option.leadingComments[0].loc.end) ||
+            option.key.loc.end
+    };
+}
 function dumpOptions() {
     fs.writeFile(
         'tree.json',
@@ -62,11 +72,16 @@ function decorateOptions(parent, target, option, filename) {
         children: {}
     };
 
+    // Look for the start of the doclet first
+    var location = getLocation(option);
+    
+
     target[index].meta = {
         fullname: parent + index,
         name: index,
-        line: option.key.loc.start.line,
-        column: option.key.loc.start.column,
+        line: location.start.line,
+        lineEnd: location.end.line,
+        column: location.start.column,
         filename: filename//.replace('highcharts/', '')
     };
 
@@ -166,12 +181,14 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                     target[p].doclet = target[p].doclet || {};
                     target[p].children = target[p].children || {};
 
+                    var location = getLocation(node);
                     target[p].meta = {
                         filename: currentSourceName,
                         name: p,
                         fullname: fullPath,
-                        line: node.loc.start.line,
-                        column: node.loc.start.column
+                        line: location.start.line,
+                        lineEnd: location.end.line,
+                        column: location.start.column
                     };
 
                     target = target[p].children;
@@ -262,6 +279,13 @@ function augmentOption(path, obj) {
                 current[thing].children = current[thing].children || {};
                 current[thing].meta = current[thing].meta || {};
 
+                // Free floating doclets marked with @apioption
+                if (!current[thing].meta.filename) {
+                    current[thing].meta.filename = obj.meta.path + '/' + obj.meta.filename;
+                    current[thing].meta.line = obj.meta.lineno;
+                    current[thing].meta.lineEnd = obj.meta.lineno + obj.comment.split(/\n/g).length - 1;
+                }
+                
                 Object.keys(obj).forEach(function (property) {
                     if (property !== 'comment' && property !== 'meta') {
                         current[thing].doclet[property] = obj[property];
