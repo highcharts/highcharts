@@ -8,6 +8,8 @@
 
 var hcRoot = __dirname + '/../../..';
 
+var parseTag = require('jsdoc/tag/type').parse;
+
 var exec = require('child_process').execSync;
 var logger = require('jsdoc/util/logger');
 var Doclet = require('jsdoc/doclet.js').Doclet;
@@ -400,6 +402,46 @@ exports.defineTags = function (dictionary) {
             items.forEach(function (entry) {
                 doclet.exclude.push(entry.trim());
             });
+        }
+    });
+
+    dictionary.defineTag('excluding', {
+        onTagged: function (doclet, tagObj) {
+            var items = tagObj.text.split(',');
+
+            doclet.exclude = doclet.exclude || [];
+
+            items.forEach(function (entry) {
+                doclet.exclude.push(entry.trim());
+            });
+        }
+    });
+
+    dictionary.defineTag('default', {
+        onTagged: function (doclet, tagObj) {
+
+            if (!tagObj.value) {
+                return;
+            }
+
+            if (tagObj.value.indexOf('highcharts') < 0 &&
+                tagObj.value.indexOf('highmaps') < 0 &&
+                tagObj.value.indexOf('highstock') < 0) {
+
+                doclet.defaultvalue = tagObj.text;
+                return;
+            }
+
+            var valueObj = resolveProductTypes(doclet, tagObj);
+
+            doclet.defaultByProduct = doclet.defaultByProduct || {};
+
+            (valueObj.products || []).forEach(function (p) {
+                doclet.defaultByProduct[p] = valueObj.value;
+            });
+
+            //var parsed = parseTag(tagObj.value, true, true);
+            //doclet.defaultvalue = parsed;
         }
     });
 
