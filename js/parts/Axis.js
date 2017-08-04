@@ -2754,7 +2754,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		var chart = this.chart,
 			horiz = this.horiz,
 			labelOptions = this.options.labels,
-			slotCount = Math.max(this.tickPositions.length - (this.categories ? 0 : 1), 1),
+			slotCount = Math.max(
+				this.tickPositions.length - (this.categories ? 0 : 1),
+				1
+			),
 			marginLeft = chart.margin[3];
 
 		return (
@@ -2764,6 +2767,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			((this.staggerLines || 1) * this.len) / slotCount
 		) || (
 			!horiz && (
+				// #7028
+				(labelOptions.style && parseInt(labelOptions.style.width)) ||
 				(marginLeft && (marginLeft - chart.spacing[3])) ||
 				chart.chartWidth * 0.33
 			)
