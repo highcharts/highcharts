@@ -212,26 +212,33 @@ H.Color.prototype = {
 	tweenTo: function (to, pos) {
 		// Check for has alpha, because rgba colors perform worse due to lack of
 		// support in WebKit.
-		var from = this,
+		var fromRgba = this.rgba,
+			toRgba = to.rgba,
 			hasAlpha,
 			ret;
 
-		// Unsupported color, return to-color (#3920)
-		if (!to.rgba.length) {
+		// Unsupported color, return to-color (#3920, #7034)
+		if (!toRgba.length || !fromRgba || !fromRgba.length) {
 			ret = to.input || 'none';
 
 		// Interpolate
 		} else {
-			from = from.rgba;
-			to = to.rgba;
-			hasAlpha = (to[3] !== 1 || from[3] !== 1);
+			hasAlpha = (toRgba[3] !== 1 || fromRgba[3] !== 1);
 			ret = (hasAlpha ? 'rgba(' : 'rgb(') +
-				Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' +
-				Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' +
-				Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) +
-				(hasAlpha ?
-					(',' + (to[3] + (from[3] - to[3]) * (1 - pos))) :
-					'') + ')';
+				Math.round(toRgba[0] + (fromRgba[0] - toRgba[0]) * (1 - pos)) +
+				',' +
+				Math.round(toRgba[1] + (fromRgba[1] - toRgba[1]) * (1 - pos)) +
+				',' +
+				Math.round(toRgba[2] + (fromRgba[2] - toRgba[2]) * (1 - pos)) +
+				(
+					hasAlpha ?
+						(
+							',' +
+							(toRgba[3] + (fromRgba[3] - toRgba[3]) * (1 - pos))
+						) :
+						''
+				) +
+				')';
 		}
 		return ret;
 	}
