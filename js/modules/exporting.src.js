@@ -37,15 +37,61 @@ var defaultOptions = H.defaultOptions,
 	isFirefoxBrowser = /firefox/i.test(userAgent);
 
 // Add language
-/**
- * @apioption lang
- */
 extend(defaultOptions.lang, {
+	/**
+	 * Exporting module only. The text for the menu item to print the chart.
+	 * 
+	 * @type {String}
+	 * @default Print chart
+	 * @since 3.0.1
+	 * @apioption lang.printChart
+	 */
 	printChart: 'Print chart',
+	/**
+	 * Exporting module only. The text for the PNG download menu item.
+	 * 
+	 * @type {String}
+	 * @default Download PNG image
+	 * @since 2.0
+	 * @apioption lang.downloadPNG
+	 */
 	downloadPNG: 'Download PNG image',
+	/**
+	 * Exporting module only. The text for the JPEG download menu item.
+	 * 
+	 * @type {String}
+	 * @default Download JPEG image
+	 * @since 2.0
+	 * @apioption lang.downloadJPEG
+	 */
 	downloadJPEG: 'Download JPEG image',
+	/**
+	 * Exporting module only. The text for the PDF download menu item.
+	 * 
+	 * @type {String}
+	 * @default Download PDF document
+	 * @since 2.0
+	 * @apioption lang.downloadPDF
+	 */
 	downloadPDF: 'Download PDF document',
+	/**
+	 * Exporting module only. The text for the SVG download menu item.
+	 * 
+	 * @type {String}
+	 * @default Download SVG vector image
+	 * @since 2.0
+	 * @apioption lang.downloadSVG
+	 */
 	downloadSVG: 'Download SVG vector image',
+	/**
+	 * Exporting module menu. The tooltip title for the context menu holding
+	 * print and export menu items.
+	 * 
+	 * @type {String}
+	 * @default Chart context menu
+	 * @since 3.0
+	 * @apioption lang.contextButtonTitle
+	 */
 	contextButtonTitle: 'Chart context menu'
 });
 
@@ -229,17 +275,155 @@ merge(true, defaultOptions.navigation,
  * @optionparent exporting
  */
 defaultOptions.exporting = {
-	//enabled: true,
-	//filename: 'chart',
 
+	/**
+	 * Experimental setting to allow HTML inside the chart (added through
+	 * the `useHTML` options), directly in the exported image. This allows
+	 * you to preserve complicated HTML structures like tables or bi-directional
+	 * text in exported charts.
+	 * 
+	 * Disclaimer: The HTML is rendered in a `foreignObject` tag in the
+	 * generated SVG. The official export server is based on PhantomJS,
+	 * which supports this, but other SVG clients, like Batik, does not
+	 * support it. This also applies to downloaded SVG that you want to
+	 * open in a desktop client.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.1.8
+	 * @apioption exporting.allowHTML
+	 */
+	
+	/**
+	 * Additional chart options to be merged into an exported chart. For
+	 * example, a common use case is to add data labels to improve readability
+	 * of the exported chart, or to add a printer-friendly color scheme.
+	 * 
+	 * @type {Object}
+	 * @sample {highcharts} highcharts/exporting/chartoptions-data-labels/
+	 *         Added data labels
+	 * @sample {highstock} highcharts/exporting/chartoptions-data-labels/
+	 *         Added data labels
+	 * @default null
+	 * @apioption exporting.chartOptions
+	 */
+
+	/**
+	 * Whether to enable the exporting module. Disabling the module will
+	 * hide the context button, but API methods will still be available.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/exporting/enabled-false/
+	 *         Exporting module is loaded but disabled
+	 * @sample {highstock} highcharts/exporting/enabled-false/
+	 *         Exporting module is loaded but disabled
+	 * @default true
+	 * @since 2.0
+	 * @apioption exporting.enabled
+	 */
+	
+	/**
+	 * Function to call if the offline-exporting module fails to export
+	 * a chart on the client side, and [fallbackToExportServer](#exporting.
+	 * fallbackToExportServer) is disabled. If left undefined, an exception
+	 * is thrown instead.
+	 * 
+	 * @type {Function}
+	 * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
+	 * @default undefined
+	 * @since 5.0.0
+	 * @apioption exporting.error
+	 */
+	
+	/**
+	 * Whether or not to fall back to the export server if the offline-exporting
+	 * module is unable to export the chart on the client side.
+	 * 
+	 * @type {Boolean}
+	 * @default true
+	 * @since 4.1.8
+	 * @apioption exporting.fallbackToExportServer
+	 */
+	
+	/**
+	 * The filename, without extension, to use for the exported chart.
+	 * 
+	 * @type {String}
+	 * @sample {highcharts} highcharts/exporting/filename/ Custom file name
+	 * @sample {highstock} highcharts/exporting/filename/ Custom file name
+	 * @default chart
+	 * @since 2.0
+	 * @apioption exporting.filename
+	 */
+	
+	/**
+	 * An object containing additional attributes for the POST form that
+	 * sends the SVG to the export server. For example, a `target` can be
+	 * set to make sure the generated image is received in another frame,
+	 *  or a custom `enctype` or `encoding` can be set.
+	 * 
+	 * @type {Object}
+	 * @since 3.0.8
+	 * @apioption exporting.formAttributes
+	 */
+	
+	/**
+	 * Path where Highcharts will look for export module dependencies to
+	 * load on demand if they don't already exist on `window`. Should currently
+	 * point to location of [CanVG](https://github.com/canvg/canvg) library,
+	 * [RGBColor.js](https://github.com/canvg/canvg), [jsPDF](https://github.
+	 * com/yWorks/jsPDF) and [svg2pdf.js](https://github.com/yWorks/svg2pdf.
+	 * js), required for client side export in certain browsers.
+	 * 
+	 * @type {String}
+	 * @default https://code.highcharts.com/{version}/lib
+	 * @since 5.0.0
+	 * @apioption exporting.libURL
+	 */
+	
+	/**
+	 * Analogous to [sourceWidth](#exporting.sourceWidth).
+	 * 
+	 * @type {Number}
+	 * @since 3.0
+	 * @apioption exporting.sourceHeight
+	 */
+	
+	/**
+	 * The width of the original chart when exported, unless an explicit
+	 * [chart.width](#chart.width) is set. The width exported raster image
+	 * is then multiplied by [scale](#exporting.scale).
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/exporting/sourcewidth/ Source size demo
+	 * @sample {highstock} highcharts/exporting/sourcewidth/ Source size demo
+	 * @sample {highmaps} maps/exporting/sourcewidth/ Source size demo
+	 * @since 3.0
+	 * @apioption exporting.sourceWidth
+	 */
+	
+	/**
+	 * The pixel width of charts exported to PNG or JPG. As of Highcharts
+	 * 3.0, the default pixel width is a function of the [chart.width](#chart.
+	 * width) or [exporting.sourceWidth](#exporting.sourceWidth) and the
+	 * [exporting.scale](#exporting.scale).
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/exporting/width/
+	 *         Export to 200px wide images
+	 * @sample {highstock} highcharts/exporting/width/
+	 *         Export to 200px wide images
+	 * @default undefined
+	 * @since 2.0
+	 * @apioption exporting.width
+	 */
+	
 	/**
 	 * Default MIME type for exporting if `chart.exportChart()` is called
 	 * without specifying a `type` option. Possible values are `image/png`,
 	 *  `image/jpeg`, `application/pdf` and `image/svg+xml`.
 	 * 
 	 * @validvalue ["image/png", "image/jpeg", "application/pdf", "image/svg+xml"]
-	 * @type {String}
-	 * @default image/png
 	 * @since 2.0
 	 */
 	type: 'image/png',
@@ -253,8 +437,6 @@ defaultOptions.exporting = {
 	 * @since 2.0
 	 */
 	url: 'https://export.highcharts.com/',
-	//width: undefined,
-
 	/**
 	 * When printing the chart from the menu item in the burger menu, if
 	 * the on-screen chart exceeds this width, it is resized. After printing
@@ -274,13 +456,11 @@ defaultOptions.exporting = {
 	 * may look good on a website, it will look bad in print. The default
 	 * scale of 2 makes this chart export to a 1200px PNG or JPG.
 	 * 
-	 * @type {Number}
 	 * @see [chart.width](#chart.width), [exporting.sourceWidth](#exporting.
 	 * sourceWidth)
 	 * @sample {highcharts} highcharts/exporting/scale/ Scale demonstrated
 	 * @sample {highstock} highcharts/exporting/scale/ Scale demonstrated
 	 * @sample {highmaps} maps/exporting/scale/ Scale demonstrated
-	 * @default 2
 	 * @since 3.0
 	 */
 	scale: 2,
@@ -303,6 +483,37 @@ defaultOptions.exporting = {
 		 * @extends navigation.buttonOptions
 		 */
 		contextButton: {
+
+			/**
+			 * A click handler callback to use on the button directly instead of
+			 * the popup menu.
+			 * 
+			 * @type {Function}
+			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
+			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
+			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
+			 * @since 2.0
+			 * @apioption exporting.buttons.contextButton.onclick
+			 */
+			
+			/**
+			 * See [navigation.buttonOptions.symbolFill](#navigation.buttonOptions.symbolFill).
+			 * 
+			 * @type {Color}
+			 * @default #666666
+			 * @since 2.0
+			 * @apioption exporting.buttons.contextButton.symbolFill
+			 */
+			
+			/**
+			 * The horizontal position of the button relative to the `align`
+			 * option.
+			 * 
+			 * @type {Number}
+			 * @default -10
+			 * @since 2.0
+			 * @apioption exporting.buttons.contextButton.x
+			 */
 
 			/**
 			 * The class name of the context button.

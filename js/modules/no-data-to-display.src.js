@@ -20,6 +20,16 @@ var seriesTypes = H.seriesTypes,
 
 // Add language option
 extend(defaultOptions.lang, {
+	/**
+	 * The text to display when the chart contains no data. Requires the
+	 * no-data module, see [noData](#noData).
+	 * 
+	 * @type {String}
+	 * @default No data to display
+	 * @since 3.0.8
+	 * @product highcharts
+	 * @apioption lang.noData
+	 */
 	noData: 'No data to display'
 });
 

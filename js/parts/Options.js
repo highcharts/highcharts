@@ -123,7 +123,27 @@ H.defaultOptions = {
 			'Sunday', 'Monday', 'Tuesday', 'Wednesday',
 			'Thursday', 'Friday', 'Saturday'
 		],
-		// invalidDate: '',
+
+		/**
+		 * Short week days, starting Sunday. If not specified, Highcharts uses
+		 * the first three letters of the `lang.weekdays` option.
+		 * 
+		 * @type {Array<String>}
+		 * @sample highcharts/lang/shortweekdays/
+		 *         Finnish two-letter abbreviations
+		 * @since 4.2.4
+		 * @apioption lang.shortWeekdays
+		 */
+		
+		/**
+		 * What to show in a date field for invalid dates. Defaults to an empty
+		 * string.
+		 * 
+		 * @type {String}
+		 * @since 4.1.8
+		 * @product highcharts highstock
+		 * @apioption lang.invalidDate
+		 */
 
 		/**
 		 * The default decimal point used in the `Highcharts.numberFormat`
@@ -142,12 +162,27 @@ H.defaultOptions = {
 		 * to `null` disables shortening altogether.
 		 * 
 		 * @type {Array<String>}
-		 * @sample {highcharts} highcharts/lang/numericsymbols/ Replacing the symbols with text
-		 * @sample {highstock} highcharts/lang/numericsymbols/ Replacing the symbols with text
+		 * @sample {highcharts} highcharts/lang/numericsymbols/
+		 *         Replacing the symbols with text
+		 * @sample {highstock} highcharts/lang/numericsymbols/
+		 *         Replacing the symbols with text
 		 * @default [ "k" , "M" , "G" , "T" , "P" , "E"]
 		 * @since 2.3.0
 		 */
-		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
+		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'],
+
+		/**
+		 * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
+		 * Use 10000 for Japanese, Korean and various Chinese locales, which
+		 * use symbols for 10^4, 10^8 and 10^12.
+		 * 
+		 * @type {Number}
+		 * @sample highcharts/lang/numericsymbolmagnitude/
+		 *         10000 magnitude for Japanese
+		 * @default 1000
+		 * @since 5.0.3
+		 * @apioption lang.numericSymbolMagnitude
+		 */
 
 		/**
 		 * The text for the label appearing when a chart is zoomed.
@@ -211,7 +246,7 @@ H.defaultOptions = {
 		 * @default true
 		 */
 		useUTC: true,
-		//timezoneOffset: 0,
+
 		/*= if (build.classic) { =*/
 
 		/**
@@ -226,6 +261,89 @@ H.defaultOptions = {
 		 */
 		VMLRadialGradientURL: 'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png'
 		/*= } =*/
+
+		/**
+		 * A custom `Date` class for advanced date handling. For example,
+		 * [JDate](https://githubcom/tahajahangir/jdate) can be hooked in to
+		 * handle Jalali dates.
+		 * 
+		 * @type {Object}
+		 * @since 4.0.4
+		 * @product highcharts highstock
+		 * @apioption global.Date
+		 */
+
+		/**
+		 * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
+		 * Use the [libURL](#exporting.libURL) option to configure exporting._
+		 * 
+		 * The URL to the additional file to lazy load for Android 2.x devices.
+		 * These devices don't support SVG, so we download a helper file that
+		 * contains [canvg](http://code.google.com/p/canvg/), its dependency
+		 * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
+		 * our site, you can install canvas-tools.js on your own server and
+		 * change this option accordingly.
+		 * 
+		 * @type {String}
+		 * @deprecated
+		 * @default http://code.highcharts.com/{version}/modules/canvas-tools.js
+		 * @product highcharts highmaps
+		 * @apioption global.canvasToolsURL
+		 */
+
+		/**
+		 * A callback to return the time zone offset for a given datetime. It
+		 * takes the timestamp in terms of milliseconds since January 1 1970,
+		 * and returns the timezone offset in minutes. This provides a hook
+		 * for drawing time based charts in specific time zones using their
+		 * local DST crossover dates, with the help of external libraries.
+		 * 
+		 * @type {Function}
+		 * @see [global.timezoneOffset](#global.timezoneOffset)
+		 * @sample {highcharts} highcharts/global/gettimezoneoffset/
+		 *         Use moment.js to draw Oslo time regardless of browser locale
+		 * @sample {highstock} highcharts/global/gettimezoneoffset/
+		 *         Use moment.js to draw Oslo time regardless of browser locale
+		 * @since 4.1.0
+		 * @product highcharts highstock
+		 * @apioption global.getTimezoneOffset
+		 */
+
+		/**
+		 * Requires [moment.js](http://momentjs.com/). If the timezone option
+		 * is specified, it creates a default
+		 * [getTimezoneOffset](#global.getTimezoneOffset) function that looks
+		 * up the specified timezone in moment.js. If moment.js is not included,
+		 * this throws a Highcharts error in the console, but does not crash the
+		 * chart.
+		 * 
+		 * @type {String}
+		 * @see [getTimezoneOffset](#global.getTimezoneOffset)
+		 * @sample {highcharts} highcharts/global/timezone/ Europe/Oslo
+		 * @sample {highstock} highcharts/global/timezone/ Europe/Oslo
+		 * @default undefined
+		 * @since 5.0.7
+		 * @product highcharts highstock
+		 * @apioption global.timezone
+		 */
+
+		/**
+		 * The timezone offset in minutes. Positive values are west, negative
+		 * values are east of UTC, as in the ECMAScript [getTimezoneOffset](https://developer.
+		 * mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
+		 * method. Use this to display UTC based data in a predefined time zone.
+		 * 
+		 * @type {Number}
+		 * @see [global.getTimezoneOffset](#global.getTimezoneOffset)
+		 * @sample {highcharts} highcharts/global/timezoneoffset/
+		 *         Timezone offset
+		 * @sample {highstock} highcharts/global/timezoneoffset/
+		 *         Timezone offset
+		 * @default 0
+		 * @since 3.0.8
+		 * @product highcharts highstock
+		 * @apioption global.timezoneOffset
+		 */
 	},
 	chart: {
 
@@ -1301,7 +1419,33 @@ H.defaultOptions = {
 	 *
 	 */
 	labels: {
-		//items: [],
+
+		/**
+		 * A HTML label that can be positioned anywhere in the chart area.
+		 * 
+		 * @type {Array<Object>}
+		 * @apioption labels.items
+		 */
+		
+		/**
+		 * Inner HTML or text for the label.
+		 * 
+		 * @type {String}
+		 * @apioption labels.items.html
+		 */
+		
+		/**
+		 * CSS styles for each label. To position the label, use left and top
+		 * like this:
+		 * 
+		 * <pre>style: {
+		 *     left: '100px',
+		 *     top: '100px'
+		 * }</pre>
+		 * 
+		 * @type {CSSObject}
+		 * @apioption labels.items.style
+		 */
 
 		/**
 		 * Shared CSS styles for all labels.

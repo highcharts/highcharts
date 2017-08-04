@@ -35,6 +35,17 @@ var noop = H.noop,
 
 // Add language
 extend(defaultOptions.lang, {
+	/**
+	 * The text for the button that appears when drilling down, linking
+	 * back to the parent series. The parent series' name is inserted for
+	 * `{series.name}`.
+	 * 
+	 * @type {String}
+	 * @default Back to {series.name}
+	 * @since 3.0.8
+	 * @product highcharts highmaps
+	 * @apioption lang.drillUpText
+	 */
 	drillUpText: '◁ Back to {series.name}'
 });
 
