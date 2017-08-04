@@ -97,22 +97,153 @@ extend(defaultOptions.lang, {
 
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
-
-/**
- * @apioption navigation
- */
 defaultOptions.navigation = {
 	buttonOptions: {
 		theme: {},
+		
+		/**
+		 * Whether to enable buttons.
+		 * 
+		 * @type {Boolean}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
+		 * @sample {highstock} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
+		 * @default true
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.enabled
+		 */
+		
+		/**
+		 * The pixel size of the symbol on the button.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 14
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.symbolSize
+		 */
 		symbolSize: 14,
+
+		/**
+		 * The x position of the center of the symbol inside the button.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 12.5
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.symbolX
+		 */
 		symbolX: 12.5,
+
+		/**
+		 * The y position of the center of the symbol inside the button.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 10.5
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.symbolY
+		 */
 		symbolY: 10.5,
+
+		/**
+		 * Alignment for the buttons.
+		 * 
+		 * @validvalue ["left", "center", "right"]
+		 * @type {String}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-align/ Center aligned
+		 * @sample {highstock} highcharts/navigation/buttonoptions-align/ Center aligned
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-align/ Center aligned
+		 * @default right
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.align
+		 */
 		align: 'right',
+		
+		/**
+		 * The pixel spacing between buttons.
+		 * 
+		 * @type {Number}
+		 * @default 3
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.buttonSpacing
+		 */
 		buttonSpacing: 3,
+
+		/**
+		 * Pixel height of the buttons.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 22
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.height
+		 */
 		height: 22,
-		// text: null,
+		
+		/**
+		 * A text string to add to the individual button.
+		 * 
+		 * @type {String}
+		 * @sample {highcharts} highcharts/exporting/buttons-text/ Full text button
+		 * @sample {highcharts} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
+		 * @sample {highstock} highcharts/exporting/buttons-text/ Full text button
+		 * @sample {highstock} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
+		 * @sample {highmaps} highcharts/exporting/buttons-text/ Full text button
+		 * @sample {highmaps} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
+		 * @default null
+		 * @since 3.0
+		 * @apioption navigation.buttonOptions.text
+		 */
+
+		/**
+		 * The vertical alignment of the buttons. Can be one of "top", "middle"
+		 * or "bottom".
+		 * 
+		 * @validvalue ["top", "middle", "bottom"]
+		 * @type {String}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @default top
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.verticalAlign
+		 */
 		verticalAlign: 'top',
+		
+		/**
+		 * The pixel width of the button.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 24
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.width
+		 */
 		width: 24
+
+		/**
+		 * The vertical offset of the button's position relative to its
+		 * `verticalAlign`.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @default 0
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.y
+		 */
 	}
 };
 

@@ -275,6 +275,24 @@ H.setOptions({
  */
 
 /**
+ * Keyboard navigation for the legend. Requires the Accessibility module.
+ * @since 5.0.14
+ * @apioption legend.keyboardNavigation
+ */
+
+/**
+ * Enable/disable keyboard navigation for the legend. Requires the Accessibility
+ * module.
+ * 
+ * @type {Boolean}
+ * @see [accessibility.keyboardNavigation](#accessibility.keyboardNavigation.
+ * enabled)
+ * @default true
+ * @since 5.0.13
+ * @apioption legend.keyboardNavigation.enabled
+ */
+
+/**
  * HTML encode some characters vulnerable for XSS.
  * @param  {string} html The input string
  * @return {string} The excaped string

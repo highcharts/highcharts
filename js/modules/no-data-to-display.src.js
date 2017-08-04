@@ -44,6 +44,15 @@ extend(defaultOptions.lang, {
 defaultOptions.noData = {
 
 	/**
+	 * An object of additional SVG attributes for the no-data label.
+	 * 
+	 * @type {Object}
+	 * @since 3.0.8
+	 * @product highcharts highstock
+	 * @apioption noData.attr
+	 */
+
+	/**
 	 * The position of the no-data label, relative to the plot area.
 	 * 
 	 * @type {Object}
@@ -89,7 +98,17 @@ defaultOptions.noData = {
 		 */
 		verticalAlign: 'middle'
 	}
-	// useHTML: false
+	
+	/**
+	 * Whether to insert the label as HTML, or as pseudo-HTML rendered with
+	 * SVG.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.1.10
+	 * @product highcharts highstock
+	 * @apioption noData.useHTML
+	 */
 };
 
 /*= if (build.classic) { =*/

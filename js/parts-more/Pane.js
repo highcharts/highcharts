@@ -126,19 +126,20 @@ extend(Pane.prototype, {
 	},
 
 	/**
-	 * The default options object
+	 * The pane serves as a container for axes and backgrounds for circular 
+	 * gauges and polar charts.
+	 * @since 2.3.0
 	 * @optionparent pane
 	 */
 	defaultOptions: {
-		// background: {conditional},
-
 		/**
 		 * The center of a polar chart or angular gauge, given as an array
 		 * of [x, y] positions. Positions can be given as integers that transform
 		 * to pixels, or as percentages of the plot area size.
 		 * 
 		 * @type {Array<String|Number>}
-		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/ Two gauges with different center
+		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/
+		 *         Two gauges with different center
 		 * @default ["50%", "50%"]
 		 * @since 2.3.0
 		 * @product highcharts
@@ -161,19 +162,46 @@ extend(Pane.prototype, {
 		 * where 0 is north. Defaults to 0.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/ VU-meter with custom start and end angle
+		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/
+		 *         VU-meter with custom start and end angle
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
 		startAngle: 0
-		//endAngle: startAngle + 360
+		
+		/**
+		 * The end angle of the polar X axis or gauge value axis, given in degrees
+		 * where 0 is north. Defaults to [startAngle](#pane.startAngle) + 360.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/
+		 *         VU-meter with custom start and end angle
+		 * @since 2.3.0
+		 * @product highcharts
+		 * @apioption pane.endAngle
+		 */
 	},
 
 	/**
-	 * The default background options
+	 * An array of background items for the pane.
+	 * @type Array.<Object>
+	 * @sample {highcharts} highcharts/demo/gauge-speedometer/
+	 *         Speedometer gauge with multiple backgrounds
 	 * @optionparent pane.background
 	 */
 	defaultBackgroundOptions: {
+		/**
+		 * The class name for this background.
+		 * 
+		 * @type {String}
+		 * @sample {highcharts} highcharts/css/pane/ Panes styled by CSS
+		 * @sample {highstock} highcharts/css/pane/ Panes styled by CSS
+		 * @sample {highmaps} highcharts/css/pane/ Panes styled by CSS
+		 * @default highcharts-pane
+		 * @since 5.0.0
+		 * @apioption pane.background.className
+		 */
+		
 		/**
 		 * Tha shape of the pane background. When `solid`, the background
 		 * is circular. When `arc`, the background extends only from the min
