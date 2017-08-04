@@ -74,7 +74,7 @@ function decorateOptions(parent, target, option, filename) {
 
     // Look for the start of the doclet first
     var location = getLocation(option);
-    
+
 
     target[index].meta = {
         fullname: parent + index,
@@ -103,8 +103,14 @@ function decorateOptions(parent, target, option, filename) {
     } else if (option.value && option.value.type === 'Literal') {
        target[index].meta.default = option.value.value;
        //target[option.key.name].meta.type = option.value.type;
-    } else {
-       // return;
+    } else if (option.value && option.value.type === 'UnaryExpression') {
+        if (option.value.argument && option.value.argument.type === 'Literal') {
+            target[index].meta.default = option.value.operator + option.value.argument.value;
+
+            if (!isNaN(target[index].meta.default) && isFinite(target[index].meta.default)) {
+                target[index].meta.default = parseInt(target[index].meta.default, 10);
+            }
+        }
     }
 
     // Add options decorations directly to the node
@@ -285,7 +291,7 @@ function augmentOption(path, obj) {
                     current[thing].meta.line = obj.meta.lineno;
                     current[thing].meta.lineEnd = obj.meta.lineno + obj.comment.split(/\n/g).length - 1;
                 }
-                
+
                 Object.keys(obj).forEach(function (property) {
                     if (property !== 'comment' && property !== 'meta') {
                         current[thing].doclet[property] = obj[property];
@@ -415,7 +421,7 @@ exports.astNodeVisitor = {
 exports.handlers = {
     beforeParse: function (e) {
         var palette = proc.getPalette(hcRoot + '/css/highcharts.scss');
-        
+
         Object.keys(palette).forEach(function (key) {
             var reg = new RegExp('\\$\\{palette\\.' + key + '\\}', 'g');
 
