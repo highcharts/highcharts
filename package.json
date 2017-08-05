@@ -49,6 +49,7 @@
   },
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
+    "aws-sdk": "^2.94.0",
     "babel-runtime": "^6.20.0"
   }
 }

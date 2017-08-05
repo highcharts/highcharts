@@ -775,7 +775,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * Defines the Axis on which the zones are applied.
 	 * 
 	 * @type {String}
-	 * @see [zones](#plotOption.series.zones)
+	 * @see [zones](#plotOptions.series.zones)
 	 * @sample {highcharts} highcharts/series/color-zones-zoneaxis-x/ Zones on the X-Axis
 	 * @sample {highstock} highcharts/series/color-zones-zoneaxis-x/ Zones on the X-Axis
 	 * @default y
@@ -2015,7 +2015,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * zones/)).
 	 * 
 	 * @type {Array}
-	 * @see [zoneAxis](#plotOption.series.zoneAxis)
+	 * @see [zoneAxis](#plotOptions.series.zoneAxis)
 	 * @sample {highcharts} highcharts/series/color-zones-simple/ Color zones
 	 * @sample {highstock} highcharts/series/color-zones-simple/ Color zones
 	 * @since 4.1.0
@@ -2038,7 +2038,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * Defines the color of the series.
 	 * 
 	 * @type {Color}
-	 * @see [series color](#plotOption.series.color)
+	 * @see [series color](#plotOptions.series.color)
 	 * @since 4.1.0
 	 * @product highcharts highstock
 	 * @apioption plotOptions.series.zones.color
@@ -2048,7 +2048,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * A name for the dash style to use for the graph.
 	 * 
 	 * @type {String}
-	 * @see [series.dashStyle](#plotOption.series.dashStyle)
+	 * @see [series.dashStyle](#plotOptions.series.dashStyle)
 	 * @sample {highcharts} highcharts/series/color-zones-dashstyle-dot/
 	 *         Dashed line indicates prognosis
 	 * @sample {highstock} highcharts/series/color-zones-dashstyle-dot/
@@ -2062,7 +2062,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * Defines the fill color for the series (in area type series)
 	 * 
 	 * @type {Color}
-	 * @see [fillColor](#plotOption.area.fillColor)
+	 * @see [fillColor](#plotOptions.area.fillColor)
 	 * @since 4.1.0
 	 * @product highcharts highstock
 	 * @apioption plotOptions.series.zones.fillColor

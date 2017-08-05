@@ -965,7 +965,13 @@ const uploadAPIDocs = () => {
     const promises = files.map((fileName) => {
         const content = U.getFile(sourceFolder + fileName);
         const fileType = fileName.split('.').pop();
-        return storage.push(cdn, fileName, content, mimeType[fileType]);
+        return storage.push(cdn, fileName, content, mimeType[fileType])
+            .then(() => {
+                console.log(('Uploaded ' + fileName).green);
+            })
+            .catch((e) => {
+                console.log(('Error uploading ' + e.message).red);
+            });
     });
     return Promise.all(promises);
 };

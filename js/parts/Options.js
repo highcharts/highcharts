@@ -1294,9 +1294,8 @@ H.defaultOptions = {
 		 * @type {String}
 		 * @sample {highcharts} highcharts/title/text/ Custom title
 		 * @sample {highstock} stock/chart/title-text/ Custom title
-		 * @default {highcharts} Chart title
+		 * @default {highcharts|highmaps} Chart title
 		 * @default {highstock} null
-		 * @default {highmaps} Chart title
 		 */
 		text: 'Chart title',
 
