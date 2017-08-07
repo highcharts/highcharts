@@ -526,17 +526,39 @@ Chart.prototype.drawSeriesLabels = function () {
 				});
 
 				// Move it if needed
-				if (Math.round(best.x) !== Math.round(label.x) ||
-						Math.round(best.y) !== Math.round(label.y)) {
-					series.labelBySeries
-						.attr({
+				var dist = Math.sqrt(
+					Math.pow(Math.abs(best.x - label.x), 2),
+					Math.pow(Math.abs(best.y - label.y), 2)
+				);
+
+				if (dist) {
+
+					// Move fast and fade in - pure animation movement is 
+					// distractive...
+					var attr = {
 							opacity: 0,
 							x: best.x - paneLeft,
-							y: best.y - paneTop,
-							anchorX: best.connectorPoint && best.connectorPoint.plotX,
-							anchorY: best.connectorPoint && best.connectorPoint.plotY
-						})
-						.animate({ opacity: 1 });
+							y: best.y - paneTop
+						},
+						anim = {
+							opacity: 1
+						};
+					// ... unless we're just moving a short distance
+					if (dist <= 10) {
+						anim = {
+							x: attr.x,
+							y: attr.y
+						};
+						attr = {};
+					}
+					series.labelBySeries
+						.attr(extend(attr, {
+							anchorX: best.connectorPoint &&
+								best.connectorPoint.plotX,
+							anchorY: best.connectorPoint &&
+								best.connectorPoint.plotY
+						}))
+						.animate(anim);
 
 					// Record closest point to stick to for sync redraw
 					series.options.kdNow = true;
