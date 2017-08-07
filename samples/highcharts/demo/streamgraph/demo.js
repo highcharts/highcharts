@@ -26,8 +26,7 @@ Highcharts.chart('container', {
         series: {
             label: {
                 styles: {
-                    color: 'white',
-                    textOutline: '1px black'
+                    color: 'rgba(255,255,255,0.75)'
                 }
             },
             pointStart: 1987
