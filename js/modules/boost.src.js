@@ -1680,13 +1680,16 @@ function GLRenderer(postRenderCallback) {
 								10
 							) || 10)
 				),
-				fillColor = s.series.fillOpacity ?
-					new Color(s.series.color).setOpacity(
-								pick(options.fillOpacity, 1.0)
-							).get() :
+				fillColor =
+					(s.series.pointAttribs && s.series.pointAttribs().fill) ||
 					s.series.color,
 				color;
 
+			if (s.series.fillOpacity) {
+				fillColor = new Color(fillColor).setOpacity(
+					pick(options.fillOpacity, 1.0)
+				).get();
+			}
 
 			if (options.colorByPoint) {
 				fillColor = s.series.chart.options.colors[si ];
