@@ -349,7 +349,7 @@ const generateClassReferences = ({ templateDir, destination, callback }) => {
         }
     };
     const message = {
-        success: colors.green(`Wrote JSDoc to ${destination}index.html`)
+        success: colors.green('Created class-reference')
     };
     return new Promise((resolve, reject) => {
         gulp.src(sourceFiles, { read: false })
@@ -1079,7 +1079,10 @@ gulp.task('jsdoc', (cb) => {
                 return send404();
             }).listen(docport);
 
-            console.log('Starting api docs server on port', docport);
+            console.log(
+                'Starting API docs server',
+                ('http://localhost:' + docport).blue.underline.bgWhite
+            );
             apiServerRunning = true;
         }
 

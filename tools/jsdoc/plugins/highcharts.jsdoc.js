@@ -42,7 +42,7 @@ function dumpOptions() {
             '  '
         ),
         function () {
-            console.log('Wrote tree!');
+            //console.log('Wrote tree!');
         }
     );
 }
