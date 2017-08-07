@@ -40,6 +40,7 @@ When creating a new official series type, there are some requirements that shoul
 	* `point.remove`
 	* `series.remove`
 * Chart or window resizing. Series should resize with animation on `chart.setSize()` (n/a on window resize).
+* Null points. 
 * Styled mode. Everything that is stylable should be put inside conditional code. Add appropriate class names to all elements. Set up demo in the `/css` demo folder.
 * Boost module. If it makes sense for the series type, implement boosting. Otherwise, make sure it is ignored.
 * API docs. Test run the new series with `gulp jsdoc --watch` and make sure the output is correct. Remember to exclude members from the parent.
