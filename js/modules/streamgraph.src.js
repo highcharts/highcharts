@@ -7,10 +7,8 @@
  */
 
 /*
-@todo
- * - Check series labels module for labels directly on the graph
- * - It shares most of the code with percent stacks, consider adding it to the
- *   core directly.
+ * @todo
+ * - Nice real data set, like Olympic winners by year and country.
  */
 
 'use strict';
