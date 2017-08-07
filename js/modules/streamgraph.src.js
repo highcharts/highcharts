@@ -18,9 +18,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 
-var each = H.each,
-	Series = H.Series;
-
 H.seriesType('streamgraph', 'areaspline', {
 	fillOpacity: 1,
 	lineWidth: 0,
@@ -32,57 +29,18 @@ H.seriesType('streamgraph', 'areaspline', {
 }, {
 	negStacks: false,
 
-	setStackedPoints: function () {
-		Series.prototype.setStackedPoints.call(this);
-		if (this.options.stacking === 'stream') {
-			this.yAxis.useStream = true;
-		}
-	},
-
 	/**
-	 * A modified version of percent stacks.
+	 * Modifier function for stream stacks. It simply moves the point up or down
+	 * in order to center the full stack vertically.
 	 */
-	setStreamStacks: function () {
-		var processedXData = this.processedXData,
-			i = processedXData.length,
-			stackIndicator,
-			stacks = this.yAxis.stacks,
-			x,
-			stack,
-			pointExtremes,
-			key = this.stackKey;
-
-		while (i--) {
-			x = processedXData[i];
-			stackIndicator = this.getStackIndicator(
-				stackIndicator,
-				x,
-				this.index,
-				key
-			);
-			stack = stacks[key] && stacks[key][x];
-			pointExtremes = stack && stack.points[stackIndicator.key];
-			if (pointExtremes) {
-				// Y bottom value
-				pointExtremes[0] -= stack.total / 2;
-				// Y value
-				pointExtremes[1] -= stack.total / 2;
-				this.stackedYData[i] = this.index === 0 ?
-					pointExtremes[1] :
-					pointExtremes[0];
-			}
-		}
-	}
-});
-
-H.wrap(H.Axis.prototype, 'buildStacks', function (proceed) {
-	proceed.call(this);
-
-	// Set stream stacks similar to percent stacks.
-	if (this.useStream) {
-		each(this.series, function (series) {
-			series.setStreamStacks();
-		});
+	streamStacker: function (pointExtremes, stack, i) {
+		// Y bottom value
+		pointExtremes[0] -= stack.total / 2;
+		// Y value
+		pointExtremes[1] -= stack.total / 2;
+		this.stackedYData[i] = this.index === 0 ?
+			pointExtremes[1] :
+			pointExtremes[0];
 	}
 });
 
