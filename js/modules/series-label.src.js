@@ -8,7 +8,6 @@
  *
  * TODO:
  * - add column support (box collision detection, boxesToAvoid logic)
- * - other series types, area etc.
  * - avoid data labels, when data labels above, show series label below.
  * - add more options (connector, format, formatter)
  * 
@@ -136,6 +135,7 @@ Series.prototype.getPointsOnGraph = function () {
 		deltaX,
 		deltaY,
 		delta,
+		chartY,
 		len,
 		n,
 		j,
@@ -144,11 +144,14 @@ Series.prototype.getPointsOnGraph = function () {
 		node = graph.element,
 		inverted = this.chart.inverted,
 		paneLeft = inverted ? this.yAxis.pos : this.xAxis.pos,
-		paneTop = inverted ? this.xAxis.pos : this.yAxis.pos;
+		paneTop = inverted ? this.xAxis.pos : this.yAxis.pos,
+		hasArea = !!this.area;
 
-	// For splines, get the point at length (possible caveat: peaks are not correctly detected)
-	if (this.getPointSpline && node.getPointAtLength) {
-		// If it is animating towards a path definition, use that briefly, and reset
+	// For splines, get the point at length (possible caveat: peaks are not
+	// correctly detected)
+	if (this.getPointSpline && node.getPointAtLength && !hasArea) {
+		// If it is animating towards a path definition, use that briefly, and
+		// reset
 		if (graph.toD) {
 			d = graph.attr('d');
 			graph.attr({ d: graph.toD });
@@ -182,7 +185,12 @@ Series.prototype.getPointsOnGraph = function () {
 
 			// Absolute coordinates so we can compare different panes
 			point.chartX = paneLeft + point.plotX;
-			point.chartY = paneTop + point.plotY;
+			chartY = point.plotY;
+			if (hasArea) {
+				// Vertically centered inside area
+				chartY = (chartY + point.yBottom) / 2;
+			}
+			point.chartY = paneTop + chartY;
 
 			// Add interpolated points
 			if (i > 0) {
@@ -195,10 +203,14 @@ Series.prototype.getPointsOnGraph = function () {
 
 					for (j = 1; j < n; j += 1) {
 						interpolated.push({
-							chartX: last.chartX + (point.chartX - last.chartX) * (j / n),
-							chartY: last.chartY + (point.chartY - last.chartY) * (j / n),
-							plotX: last.plotX + (point.plotX - last.plotX) * (j / n),
-							plotY: last.plotY + (point.plotY - last.plotY) * (j / n)
+							chartX: last.chartX +
+								(point.chartX - last.chartX) * (j / n),
+							chartY: last.chartY +
+								(point.chartY - last.chartY) * (j / n),
+							plotX: last.plotX +
+								(point.plotX - last.plotX) * (j / n),
+							plotY: last.plotY +
+								(point.plotY - last.plotY) * (j / n)
 						});
 					}
 				}
@@ -222,7 +234,7 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 		dist,
 		connectorPoint,
 		connectorEnabled = this.options.label.connectorAllowed,
-
+		isArea = !!this.area,
 		chart = this.chart,
 		series,
 		points,
@@ -259,15 +271,17 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 		}
 	}
 
-	// For each position, check if the lines around the label intersect with any of the 
-	// graphs
+	// For each position, check if the lines around the label intersect with any
+	// of the graphs.
 	for (i = 0; i < chart.series.length; i += 1) {
 		series = chart.series[i];
 		points = series.interpolatedPoints;
 		if (series.visible && points) {
 			for (j = 1; j < points.length; j += 1) {
-				// If any of the box sides intersect with the line, return
-				if (boxIntersectLine(
+				// If any of the box sides intersect with the line, return. On
+				// area series, allow the label to intersect with the area's own
+				// center line.
+				if ((!isArea || this !== series) && boxIntersectLine(
 						x,
 						y,
 						bBox.width,
@@ -280,7 +294,8 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 					return false;
 				}
 
-				// But if it is too far away (a padded box doesn't intersect), also return
+				// But if it is too far away (a padded box doesn't intersect),
+				// also return
 				if (this === series && !withinRange && checkDistance) {
 					withinRange = boxIntersectLine(
 						x - leastDistance,
@@ -331,7 +346,10 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 	return !checkDistance || withinRange ? {
 		x: x,
 		y: y,
-		weight: getWeight(distToOthersSquared, connectorPoint ? distToPointSquared : 0),
+		weight: getWeight(
+			distToOthersSquared,
+			connectorPoint ? distToPointSquared : 0
+		),
 		connectorPoint: connectorPoint
 	} : false;
 
@@ -380,6 +398,7 @@ Chart.prototype.drawSeriesLabels = function () {
 
 		if (series.visible && points) {
 			if (!label) {
+
 				series.labelBySeries = label = chart.renderer
 					.label(series.name, 0, -9999, 'connector')
 					.css(extend({
@@ -389,7 +408,8 @@ Chart.prototype.drawSeriesLabels = function () {
 						padding: 0,
 						opacity: 0,
 						stroke: series.color,
-						'stroke-width': 1
+						'stroke-width': 1,
+						zIndex: 3
 					})
 					.add(series.group)
 					.animate({ opacity: 1 }, { duration: 200 });
@@ -401,67 +421,85 @@ Chart.prototype.drawSeriesLabels = function () {
 			// Ideal positions are centered above or below a point on right side
 			// of chart
 			for (i = points.length - 1; i > 0; i -= 1) {
+				if (series.area) {
 
-				// Right - up
-				x = points[i].chartX + labelDistance;
-				y = points[i].chartY - bBox.height - labelDistance;
-				if (insidePane(x, y, bBox)) {
-					best = series.checkClearPoint(
-						x,
-						y,
-						bBox
-					);
-				}
-				if (best) {
-					results.push(best);
-				}
+					// Centered
+					x = points[i].chartX - bBox.width / 2;
+					y = points[i].chartY - bBox.height / 2;
+					if (insidePane(x, y, bBox)) {
+						best = series.checkClearPoint(
+							x,
+							y,
+							bBox
+						);
+					}
+					if (best) {
+						results.push(best);
+					}
+					
 
-				// Right - down
-				x = points[i].chartX + labelDistance;
-				y = points[i].chartY + labelDistance;
-				if (insidePane(x, y, bBox)) {
-					best = series.checkClearPoint(
-						x,
-						y,
-						bBox
-					);
-				}
-				if (best) {
-					results.push(best);
-				}
+				} else {
 
-				// Left - down
-				x = points[i].chartX - bBox.width - labelDistance;
-				y = points[i].chartY + labelDistance;
-				if (insidePane(x, y, bBox)) {
-					best = series.checkClearPoint(
-						x,
-						y,
-						bBox
-					);
-				}
-				if (best) {
-					results.push(best);
-				}
+					// Right - up
+					x = points[i].chartX + labelDistance;
+					y = points[i].chartY - bBox.height - labelDistance;
+					if (insidePane(x, y, bBox)) {
+						best = series.checkClearPoint(
+							x,
+							y,
+							bBox
+						);
+					}
+					if (best) {
+						results.push(best);
+					}
 
-				// Left - up
-				x = points[i].chartX - bBox.width - labelDistance;
-				y = points[i].chartY - bBox.height - labelDistance;
-				if (insidePane(x, y, bBox)) {
-					best = series.checkClearPoint(
-						x,
-						y,
-						bBox
-					);
-				}
-				if (best) {
-					results.push(best);
-				}
+					// Right - down
+					x = points[i].chartX + labelDistance;
+					y = points[i].chartY + labelDistance;
+					if (insidePane(x, y, bBox)) {
+						best = series.checkClearPoint(
+							x,
+							y,
+							bBox
+						);
+					}
+					if (best) {
+						results.push(best);
+					}
 
+					// Left - down
+					x = points[i].chartX - bBox.width - labelDistance;
+					y = points[i].chartY + labelDistance;
+					if (insidePane(x, y, bBox)) {
+						best = series.checkClearPoint(
+							x,
+							y,
+							bBox
+						);
+					}
+					if (best) {
+						results.push(best);
+					}
+
+					// Left - up
+					x = points[i].chartX - bBox.width - labelDistance;
+					y = points[i].chartY - bBox.height - labelDistance;
+					if (insidePane(x, y, bBox)) {
+						best = series.checkClearPoint(
+							x,
+							y,
+							bBox
+						);
+					}
+					if (best) {
+						results.push(best);
+					}
+				}
 			}
 
 			// Brute force, try all positions on the chart in a 16x16 grid
-			if (!results.length) {
+			if (!results.length && !series.area) {
 				for (x = paneLeft + paneWidth - bBox.width; x >= paneLeft; x -= 16) {
 					for (y = paneTop; y < paneTop + paneHeight - bBox.height; y += 16) {
 						clearPoint = series.checkClearPoint(x, y, bBox, true);
