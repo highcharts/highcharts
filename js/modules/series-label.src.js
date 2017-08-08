@@ -319,15 +319,17 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 				}
 
 				// Find the squared distance from the center of the label. On
-				// area series, also find the greatest distance to its own
-				// graph.
-				if (this !== series || onArea) {
+				// area series, avoid its own graph.
+				if (
+					(connectorEnabled || withinRange) &&
+					(this !== series || onArea)
+				) {
 					distToOthersSquared = Math.min(
 						distToOthersSquared,
 						(
 							Math.pow(x + bBox.width / 2 - points[j].chartX, 2) +
 							Math.pow(y + bBox.height / 2 - points[j].chartY, 2)
-						),
+						)/*,
 						(
 							Math.pow(x - points[j].chartX, 2) +
 							Math.pow(y - points[j].chartY, 2)
@@ -343,7 +345,7 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 						(
 							Math.pow(x - points[j].chartX, 2) +
 							Math.pow(y + bBox.height - points[j].chartY, 2)
-						)
+						)*/
 					);
 				}
 			}
@@ -412,6 +414,9 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
  * account when placing the labels.
  */
 Chart.prototype.drawSeriesLabels = function () {
+	
+	// console.time('drawSeriesLabels');
+
 	var chart = this,
 		labelSeries = this.labelSeries;
 
@@ -632,6 +637,7 @@ Chart.prototype.drawSeriesLabels = function () {
 			}
 		}
 	});
+	// console.timeEnd('drawSeriesLabels');
 };
 
 /**
