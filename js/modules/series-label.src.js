@@ -28,6 +28,7 @@ var labelDistance = 3,
 	each = H.each,
 	extend = H.extend,
 	isNumber = H.isNumber,
+	pick = H.pick,
 	Series = H.Series,
 	SVGRenderer = H.SVGRenderer,
 	Chart = H.Chart;
@@ -41,9 +42,11 @@ H.setOptions({
 				// draw a connector line to the graph
 				connectorAllowed: true,
 				connectorNeighbourDistance: 24, // If the label is closer than this to a neighbour graph, draw a connector
+				onArea: null,
 				styles: {
 					fontWeight: 'bold'
 				}
+
 				// boxesToAvoid: []
 			}
 		}
@@ -145,11 +148,11 @@ Series.prototype.getPointsOnGraph = function () {
 		inverted = this.chart.inverted,
 		paneLeft = inverted ? this.yAxis.pos : this.xAxis.pos,
 		paneTop = inverted ? this.xAxis.pos : this.yAxis.pos,
-		hasArea = !!this.area;
+		onArea = pick(this.options.label.onArea, !!this.area);
 
 	// For splines, get the point at length (possible caveat: peaks are not
 	// correctly detected)
-	if (this.getPointSpline && node.getPointAtLength && !hasArea) {
+	if (this.getPointSpline && node.getPointAtLength && !onArea) {
 		// If it is animating towards a path definition, use that briefly, and
 		// reset
 		if (graph.toD) {
@@ -186,7 +189,7 @@ Series.prototype.getPointsOnGraph = function () {
 			// Absolute coordinates so we can compare different panes
 			point.chartX = paneLeft + point.plotX;
 			chartY = point.plotY;
-			if (hasArea) {
+			if (onArea) {
 				// Vertically centered inside area
 				chartY = (chartY + point.yBottom) / 2;
 			}
@@ -234,7 +237,7 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 		dist,
 		connectorPoint,
 		connectorEnabled = this.options.label.connectorAllowed,
-		isArea = !!this.area,
+		onArea = pick(this.options.label.onArea, !!this.area),
 		chart = this.chart,
 		series,
 		points,
@@ -281,7 +284,7 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 				// If any of the box sides intersect with the line, return. On
 				// area series, allow the label to intersect with the area's own
 				// center line.
-				if ((!isArea || this !== series) && boxIntersectLine(
+				if ((!onArea || this !== series) && boxIntersectLine(
 						x,
 						y,
 						bBox.width,
@@ -389,6 +392,7 @@ Chart.prototype.drawSeriesLabels = function () {
 			paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
 			paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
 			points = series.interpolatedPoints,
+			onArea = pick(series.options.label.onArea, !!series.area),
 			label = series.labelBySeries;
 
 		function insidePane(x, y, bBox) {
@@ -421,7 +425,7 @@ Chart.prototype.drawSeriesLabels = function () {
 			// Ideal positions are centered above or below a point on right side
 			// of chart
 			for (i = points.length - 1; i > 0; i -= 1) {
-				if (series.area) {
+				if (onArea) {
 
 					// Centered
 					x = points[i].chartX - bBox.width / 2;
@@ -499,7 +503,7 @@ Chart.prototype.drawSeriesLabels = function () {
 			}
 
 			// Brute force, try all positions on the chart in a 16x16 grid
-			if (!results.length && !series.area) {
+			if (!results.length && !onArea) {
 				for (x = paneLeft + paneWidth - bBox.width; x >= paneLeft; x -= 16) {
 					for (y = paneTop; y < paneTop + paneHeight - bBox.height; y += 16) {
 						clearPoint = series.checkClearPoint(x, y, bBox, true);

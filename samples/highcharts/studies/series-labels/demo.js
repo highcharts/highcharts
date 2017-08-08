@@ -551,6 +551,9 @@ Highcharts.chart('container', {
         type: 'areaspline',
         name: '2015',
         color: '#FFFFFF',
+        label: {
+            onArea: false
+        },
         lineWidth: 3,
         marker: {
             enabled: true
