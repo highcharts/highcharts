@@ -325,6 +325,11 @@ Highcharts.chart('container', {
         "data": [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
         ]
-    }]
+    }],
+
+    exporting: {
+        sourceWidth: 800,
+        sourceHeight: 600
+    }
 
 });
