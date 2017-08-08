@@ -450,7 +450,6 @@ Chart.prototype.drawSeriesLabels = function () {
 
 		if (series.visible && points) {
 			if (!label) {
-
 				series.labelBySeries = label = chart.renderer
 					.label(series.name, 0, -9999, 'connector')
 					.css(extend({
@@ -458,7 +457,7 @@ Chart.prototype.drawSeriesLabels = function () {
 					}, series.options.label.styles))
 					.attr({
 						padding: 0,
-						opacity: 0,
+						opacity: chart.renderer.forExport ? 1 : 0,
 						stroke: series.color,
 						'stroke-width': 1,
 						zIndex: 3
@@ -589,7 +588,7 @@ Chart.prototype.drawSeriesLabels = function () {
 					// Move fast and fade in - pure animation movement is 
 					// distractive...
 					var attr = {
-							opacity: 0,
+							opacity: chart.renderer.forExport ? 1 : 0,
 							x: best.x - paneLeft,
 							y: best.y - paneTop
 						},
@@ -684,9 +683,9 @@ function drawLabels(proceed) {
 		}
 	});
 
-	chart.seriesLabelTimer = setTimeout(function () {
+	chart.seriesLabelTimer = H.syncTimeout(function () {
 		chart.drawSeriesLabels();
-	}, delay);
+	}, chart.renderer.forExport ? 0 : delay);
 
 }
 wrap(Chart.prototype, 'render', drawLabels);
