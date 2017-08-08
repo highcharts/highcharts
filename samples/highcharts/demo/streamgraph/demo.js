@@ -95,10 +95,34 @@ Highcharts.chart('container', {
         enabled: false
     },
 
+    annotations: [{
+        labels: [{
+            point: {
+                x: 5.5,
+                xAxis: 0,
+                y: 30,
+                yAxis: 0
+            },
+            text: 'Cancelled<br>during<br>World War II'
+        }, {
+            point: {
+                x: 18,
+                xAxis: 0,
+                y: 90,
+                yAxis: 0
+            },
+            text: 'Soviet Union fell,<br>Germany united'
+        }],
+        labelOptions: {
+            backgroundColor: 'rgba(255,255,255,0.5)',
+            borderColor: 'silver'
+        }
+    }],
+
     plotOptions: {
         series: {
             label: {
-                styles: {
+                style: {
                     color: 'rgba(255,255,255,0.75)'
                 }
             }

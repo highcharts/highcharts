@@ -5,12 +5,6 @@
  *
  * License: www.highcharts.com/license
  */
-
-/*
- * @todo
- * - Nice real data set, like Olympic winners by year and country.
- */
-
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
