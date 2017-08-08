@@ -1039,6 +1039,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			scaleY = wrapper.scaleY,
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
+			matrix = wrapper.matrix,
 			element = wrapper.element,
 			transform;
 
@@ -1054,6 +1055,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		// #1846).
 		transform = ['translate(' + translateX + ',' + translateY + ')'];
 
+		// apply matrix
+		if (defined(matrix)) {
+			transform.push(
+				'matrix(' + matrix.join(",") + ')'
+			);
+		}
+		
 		// apply rotation
 		if (inverted) {
 			transform.push('rotate(90) scale(-1,1)');
@@ -1830,7 +1838,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
 SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter =
-		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
+		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = 
+		SVGElement.prototype.matrixSetter = function (value, key) {
 			this[key] = value;
 			this.doTransform = true;
 		};
