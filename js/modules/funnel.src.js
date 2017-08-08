@@ -28,11 +28,14 @@ seriesType('funnel', 'pie',
  *
  * @sample highcharts/demo/funnel/ Funnel demo
  * @extends {plotOptions.pie}
+ * @excluding size
+ * @product highcharts
  * @optionparent plotOptions.funnel
  */
 {
 
 	/**
+	 * Initial animation is by default disabled for the funnel chart.
 	 */
 	animation: false,
 
@@ -41,7 +44,7 @@ seriesType('funnel', 'pie',
 	 * of the plot area, so it fills the plot area height.
 	 * 
 	 * @type {Array<String|Number>}
-	 * @default {all} ["50%", "50%"]
+	 * @default ["50%", "50%"]
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -52,7 +55,7 @@ seriesType('funnel', 'pie',
 	 * or the pixel width if it is a number.
 	 * 
 	 * @type {Number|String}
-	 * @default {all} 90%
+	 * @default 90%
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -65,7 +68,7 @@ seriesType('funnel', 'pie',
 	 * 
 	 * @type {Number|String}
 	 * @sample {highcharts} highcharts/demo/funnel/ Funnel demo
-	 * @default {all} 30%
+	 * @default 30%
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -89,7 +92,7 @@ seriesType('funnel', 'pie',
 	 * area height.
 	 * 
 	 * @type {Number|String}
-	 * @default {all} 25%
+	 * @default 25%
 	 * @product highcharts
 	 */
 	neckHeight: '25%',
@@ -99,48 +102,35 @@ seriesType('funnel', 'pie',
 	 * no neck width and neck height is a pyramid.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} false
+	 * @default false
 	 * @since 3.0.10
 	 * @product highcharts
 	 */
 	reversed: false,
 
-	/**
-	 */
+	/** @ignore */
 	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
 	/*= if (build.classic) { =*/
 	// Presentational
 
-	/**
-	 */
 	dataLabels: {
-		//position: 'right',
-
-		/**
-		 */
 		connectorWidth: 1
-		//connectorColor: null
 	},
 
 	/**
+	 * Options for the series states.
+	 *
+	 * @optionparent plotOptions.funnel.states
 	 */
 	states: {
 
 		/**
+		 * Options for a selected funnel item.
 		 */
 		select: {
-
-			/**
-			 */
 			color: '${palette.neutralColor20}',
-
-			/**
-			 */
 			borderColor: '${palette.neutralColor100}',
-
-			/**
-			 */
 			shadow: false
 		}
 	}
@@ -377,22 +367,98 @@ seriesType('funnel', 'pie',
 
 });
 
+
+/**
+ * A `funnel` series. If the [type](#series.funnel.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * funnel](#plotOptions.funnel).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.funnel
+ * @excluding dataParser,dataURL,stack,xAxis,yAxis
+ * @product highcharts
+ * @apioption series.funnel
+ */
+
+/**
+ * An array of data points for the series. For the `funnel` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. Example:
+ * 
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.funnel.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         y: 3,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         y: 1,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Number>}
+ * @extends series.pie.data
+ * @excluding sliced
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.funnel.data
+ */
+
 /** 
  * Pyramid series type.
  */
 seriesType('pyramid', 'funnel', 
 /** 
- * A pyramid series is a special type of funnel, without neck and reversed by default.
- * @extends funnel
+ * A pyramid series is a special type of funnel, without neck and reversed by
+ * default.
+ *
+ * @sample highcharts/demo/pyramid/ Pyramid chart
+ * 
+ * @extends plotOptions.funnel
+ * @product highcharts
  * @optionparent plotOptions.pyramid
  */
 {
 
 	/**
+	 * The pyramid neck width is zero by default, as opposed to the funnel, 
+	 * which shares the same layout logic.
+	 *
+	 * @type String
+	 * @default 0%
+	 * @since 3.0.10
+	 * @product highcharts
 	 */
 	neckWidth: '0%',
 
 	/**
+	 * The pyramid neck width is zero by default, as opposed to the funnel, 
+	 * which shares the same layout logic.
+	 *
+	 * @type String
+	 * @default 0%
+	 * @since 3.0.10
+	 * @product highcharts
 	 */
 	neckHeight: '0%',
 
@@ -401,9 +467,66 @@ seriesType('pyramid', 'funnel',
 	 * shares the layout engine, and is not reversed.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} true
+	 * @default true
 	 * @since 3.0.10
 	 * @product highcharts
 	 */
 	reversed: true
 });
+
+/**
+ * A `pyramid` series. If the [type](#series.pyramid.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * pyramid](#plotOptions.pyramid).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.pyramid
+ * @excluding dataParser,dataURL,stack,xAxis,yAxis
+ * @product highcharts
+ * @apioption series.pyramid
+ */
+
+/**
+ * An array of data points for the series. For the `pyramid` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. Example:
+ * 
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.pyramid.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         y: 9,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         y: 6,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Number>}
+ * @extends series.pie.data
+ * @excluding sliced
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.pyramid.data
+ */
+

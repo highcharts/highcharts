@@ -632,39 +632,44 @@ if (seriesTypes.pie) {
 
 
 				// Detect overflowing data labels
-				dataLabelWidth = dataLabel.getBBox().width;
+				if (pick(options.crop, true)) {
+					dataLabelWidth = dataLabel.getBBox().width;
 
-				sideOverflow = null;
-				// Overflow left
-				if (x - dataLabelWidth < connectorPadding) {
-					sideOverflow = Math.round(
-						dataLabelWidth - x + connectorPadding
-					);
-					overflow[3] = Math.max(sideOverflow, overflow[3]);
+					sideOverflow = null;
+					// Overflow left
+					if (x - dataLabelWidth < connectorPadding) {
+						sideOverflow = Math.round(
+							dataLabelWidth - x + connectorPadding
+						);
+						overflow[3] = Math.max(sideOverflow, overflow[3]);
 
-				// Overflow right
-				} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
-					sideOverflow = Math.round(
-						x + dataLabelWidth - plotWidth + connectorPadding
-					);
-					overflow[1] = Math.max(sideOverflow, overflow[1]);
+					// Overflow right
+					} else if (
+						x + dataLabelWidth >
+						plotWidth - connectorPadding
+					) {
+						sideOverflow = Math.round(
+							x + dataLabelWidth - plotWidth + connectorPadding
+						);
+						overflow[1] = Math.max(sideOverflow, overflow[1]);
+					}
+
+					// Overflow top
+					if (y - labelHeight / 2 < 0) {
+						overflow[0] = Math.max(
+							Math.round(-y + labelHeight / 2),
+							overflow[0]
+						);
+
+					// Overflow left
+					} else if (y + labelHeight / 2 > plotHeight) {
+						overflow[2] = Math.max(
+							Math.round(y + labelHeight / 2 - plotHeight),
+							overflow[2]
+						);
+					}
+					dataLabel.sideOverflow = sideOverflow;
 				}
-
-				// Overflow top
-				if (y - labelHeight / 2 < 0) {
-					overflow[0] = Math.max(
-						Math.round(-y + labelHeight / 2),
-						overflow[0]
-					);
-
-				// Overflow left
-				} else if (y + labelHeight / 2 > plotHeight) {
-					overflow[2] = Math.max(
-						Math.round(y + labelHeight / 2 - plotHeight),
-						overflow[2]
-					);
-				}
-				dataLabel.sideOverflow = sideOverflow;
 			} // for each point
 		}); // for each half
 

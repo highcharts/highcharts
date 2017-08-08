@@ -25,6 +25,19 @@ QUnit.test('Interpolate colors', function (assert) {
         'blue',
         'Named colors'
     );
+
+    assert.equal(
+        Color('red').tweenTo(Color('#FFFFFF'), 0.5),
+        '#FFFFFF',
+        'Named color to hex'
+    );
+
+    assert.equal(
+        Color('#FFFFFF').tweenTo(Color('red'), 0.5),
+        'red',
+        'Hex to named color'
+    );
+
     assert.equal(
         JSON.stringify(Color({
             radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },

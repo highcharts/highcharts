@@ -20,6 +20,16 @@ var seriesTypes = H.seriesTypes,
 
 // Add language option
 extend(defaultOptions.lang, {
+	/**
+	 * The text to display when the chart contains no data. Requires the
+	 * no-data module, see [noData](#noData).
+	 * 
+	 * @type {String}
+	 * @default No data to display
+	 * @since 3.0.8
+	 * @product highcharts
+	 * @apioption lang.noData
+	 */
 	noData: 'No data to display'
 });
 
@@ -34,12 +44,20 @@ extend(defaultOptions.lang, {
 defaultOptions.noData = {
 
 	/**
+	 * An object of additional SVG attributes for the no-data label.
+	 * 
+	 * @type {Object}
+	 * @since 3.0.8
+	 * @product highcharts highstock
+	 * @apioption noData.attr
+	 */
+
+	/**
 	 * The position of the no-data label, relative to the plot area.
 	 * 
 	 * @type {Object}
-	 * @default {all} { "x": 0, "y": 0, "align": "center", "verticalAlign": "middle" }
+	 * @default { "x": 0, "y": 0, "align": "center", "verticalAlign": "middle" }
 	 * @since 3.0.8
-	 * @product highcharts highstock highmaps
 	 */
 	position: {
 
@@ -47,7 +65,7 @@ defaultOptions.noData = {
 		 * Horizontal offset of the label, in pixels.
 		 * 
 		 * @type {Number}
-		 * @default {all} 0
+		 * @default 0
 		 * @product highcharts highstock
 		 */
 		x: 0,
@@ -56,7 +74,7 @@ defaultOptions.noData = {
 		 * Vertical offset of the label, in pixels.
 		 * 
 		 * @type {Number}
-		 * @default {all} 0
+		 * @default 0
 		 * @product highcharts highstock
 		 */
 		y: 0,			
@@ -66,8 +84,7 @@ defaultOptions.noData = {
 		 * 
 		 * @validvalue ["left", "center", "right"]
 		 * @type {String}
-		 * @default {all} center
-		 * @product highcharts highstock highmaps
+		 * @default center
 		 */
 		align: 'center',
 
@@ -76,12 +93,22 @@ defaultOptions.noData = {
 		 * 
 		 * @validvalue ["top", "middle", "bottom"]
 		 * @type {String}
-		 * @default {all} middle
+		 * @default middle
 		 * @product highcharts highstock
 		 */
 		verticalAlign: 'middle'
 	}
-	// useHTML: false
+	
+	/**
+	 * Whether to insert the label as HTML, or as pseudo-HTML rendered with
+	 * SVG.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.1.10
+	 * @product highcharts highstock
+	 * @apioption noData.useHTML
+	 */
 };
 
 /*= if (build.classic) { =*/
@@ -91,17 +118,8 @@ defaultOptions.noData = {
  * @optionparent noData.style
  */
 defaultOptions.noData.style = {
-
-	/**
-	 */
 	fontWeight: 'bold',
-
-	/**
-	 */
 	fontSize: '12px',
-
-	/**
-	 */
 	color: '${palette.neutralColor60}'
 };
 /*= } =*/

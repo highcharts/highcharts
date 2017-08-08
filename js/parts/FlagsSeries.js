@@ -24,22 +24,49 @@ var addEvent = H.addEvent,
 	stableSort = H.stableSort;
 
 /**
- * The flags series type.
- *
+ * The Flags series.
  * @constructor seriesTypes.flags
  * @augments seriesTypes.column
  */
-seriesType('flags', 'column', 
 /**
+ * Flags are used to mark events in stock charts. They can be added on the
+ * timeline, or attached to a specific series.
+ *
+ * @sample stock/demo/flags-general/ Flags on a line series
  * @extends {plotOptions.column}
+ * @excluding animation,borderColor,borderRadius,borderWidth,colorByPoint,dataGrouping,pointPadding,pointWidth,turboThreshold
+ * @product highstock
  * @optionparent plotOptions.flags
  */
-{
+seriesType('flags', 'column', {
 
 	/**
+	 * In case the flag is placed on a series, on what point key to place
+	 * it. Line and columns have one key, `y`. In range or OHLC-type series,
+	 * however, the flag can optionally be placed on the `open`, `high`,
+	 *  `low` or `close` key.
+	 * 
+	 * @validvalue ["y", "open", "high", "low", "close"]
+	 * @type {String}
+	 * @sample {highstock} stock/plotoptions/flags-onkey/ Range series, flag on high
+	 * @default y
+	 * @since 4.2.2
+	 * @product highstock
+	 * @apioption plotOptions.flags.onKey
 	 */
+
+	/**
+	 * The id of the series that the flags should be drawn on. If no id
+	 * is given, the flags are drawn on the x axis.
+	 * 
+	 * @type {String}
+	 * @sample {highstock} stock/plotoptions/flags/ Flags on series and on x axis
+	 * @default undefined
+	 * @product highstock
+	 * @apioption plotOptions.flags.onSeries
+	 */
+
 	pointRange: 0, // #673
-	//radius: 2,
 
 	/**
 	 * The shape of the marker. Can be one of "flag", "circlepin", "squarepin",
@@ -49,7 +76,7 @@ seriesType('flags', 'column',
 	 * @validvalue ["flag", "circlepin", "squarepin"]
 	 * @type {String}
 	 * @sample {highstock} stock/plotoptions/flags/ Different shapes
-	 * @default {all} flag
+	 * @default flag
 	 * @product highstock
 	 */
 	shape: 'flag',
@@ -60,7 +87,7 @@ seriesType('flags', 'column',
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/plotoptions/flags-stackdistance/ A greater stack distance
-	 * @default {all} 12
+	 * @default 12
 	 * @product highstock
 	 */
 	stackDistance: 12,
@@ -70,7 +97,7 @@ seriesType('flags', 'column',
 	 * 
 	 * @validvalue ["left", "center", "right"]
 	 * @type {String}
-	 * @default {all} center
+	 * @default center
 	 * @since 5.0.0
 	 * @product highstock
 	 */
@@ -88,15 +115,20 @@ seriesType('flags', 'column',
 	 * @product highstock
 	 */
 	tooltip: {
-
-		/**
-		 */
 		pointFormat: '{point.text}<br/>'
 	},
 
-	/**
-	 */
 	threshold: null,
+
+	/**
+	 * The text to display on each flag. This can be defined on series level,
+	 *  or individually for each point. Defaults to `"A"`.
+	 * 
+	 * @type {String}
+	 * @default "A"
+	 * @product highstock
+	 * @apioption plotOptions.flags.title
+	 */
 
 	/**
 	 * The y position of the top left corner of the flag relative to either
@@ -104,28 +136,52 @@ seriesType('flags', 'column',
 	 * `-30`.
 	 * 
 	 * @type {Number}
-	 * @default {all} -30
+	 * @default -30
 	 * @product highstock
 	 */
 	y: -30,
+
+	/**
+	 * Whether to use HTML to render the flag texts. Using HTML allows for
+	 * advanced formatting, images and reliable bi-directional text rendering.
+	 * Note that exported images won't respect the HTML, and that HTML
+	 * won't respect Z-index settings.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 1.3
+	 * @product highstock
+	 * @apioption plotOptions.flags.useHTML
+	 */
+
 	/*= if (build.classic) { =*/
 
 	/**
+	 * The fill color for the flags.
 	 */
 	fillColor: '${palette.backgroundColor}',
-	// lineColor: color,
+	
+	/**
+	 * The color of the line/border of the flag.
+	 * 
+	 * In styled mode, the stroke is set in the `.highcharts-flag-series
+	 * .highcharts-point` rule.
+	 * 
+	 * @type {Color}
+	 * @default #000000
+	 * @product highstock
+	 * @apioption plotOptions.flags.lineColor
+	 */
 
 	/**
-	 * The pixel width of the candlestick line/border. Defaults to `1`.
+	 * The pixel width of the flag's line/border.
 	 * 
 	 * @type {Number}
-	 * @default {all} 1
+	 * @default 1
 	 * @product highstock
 	 */
 	lineWidth: 1,
 
-	/**
-	 */
 	states: {
 
 		/**
@@ -135,19 +191,19 @@ seriesType('flags', 'column',
 		hover: {
 
 			/**
-			 * The color of the line/border of the flag Defaults to `"black"`.
+			 * The color of the line/border of the flag.
 			 * 
 			 * @type {String}
-			 * @default {all} "black"
+			 * @default "black"
 			 * @product highstock
 			 */
 			lineColor: '${palette.neutralColor100}',
 
 			/**
-			 * The fill or background color of the flag Defaults to `"#FCFFC5"`.
+			 * The fill or background color of the flag.
 			 * 
 			 * @type {String}
-			 * @default {all} "#FCFFC5"
+			 * @default "#FCFFC5"
 			 * @product highstock
 			 */
 			fillColor: '${palette.highlightColor20}'
@@ -157,22 +213,15 @@ seriesType('flags', 'column',
 	/**
 	 * The text styles of the flag.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the styles are set in the `.highcharts-flag-
+	 * In styled mode, the styles are set in the `.highcharts-flag-
 	 * series .highcharts-point` rule.
 	 * 
 	 * @type {CSSObject}
-	 * @default {all} { "fontSize": "11px", "fontWeight": "bold" }
+	 * @default { "fontSize": "11px", "fontWeight": "bold" }
 	 * @product highstock
 	 */
 	style: {
-
-		/**
-		 */
 		fontSize: '11px',
-
-		/**
-		 */
 		fontWeight: 'bold'
 	}
 	/*= } =*/
@@ -526,6 +575,72 @@ if (Renderer === VMLRenderer) {
 	});
 }
 /*= } =*/
-/* ****************************************************************************
- * End Flags series code													  *
- *****************************************************************************/
+
+/**
+ * A `flags` series. If the [type](#series.flags.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * flags](#plotOptions.flags).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.flags
+ * @excluding dataParser,dataURL
+ * @product highstock
+ * @apioption series.flags
+ */
+
+/**
+ * An array of data points for the series. For the `flags` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.flags.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *     x: 1,
+ *     title: "A",
+ *     text: "First event"
+ * }, {
+ *     x: 1,
+ *     title: "B",
+ *     text: "Second event"
+ * }]</pre>
+ * 
+ * @type {Array<Object>}
+ * @extends series.line.data
+ * @excluding y,dataLabels,marker,name
+ * @product highstock
+ * @apioption series.flags.data
+ */
+
+/**
+ * The fill color of an individual flag. By default it inherits from
+ * the series color.
+ * 
+ * @type {Color}
+ * @product highstock
+ * @apioption series.flags.data.fillColor
+ */
+
+/**
+ * The longer text to be shown in the flag's tooltip.
+ * 
+ * @type {String}
+ * @product highstock
+ * @apioption series.flags.data.text
+ */
+
+/**
+ * The short text to be shown on the flag.
+ * 
+ * @type {String}
+ * @product highstock
+ * @apioption series.flags.data.title
+ */
+

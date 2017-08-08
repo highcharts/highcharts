@@ -86,7 +86,8 @@ Highcharts.data({
                 name: 'Population density',
                 states: {
                     hover: {
-                        color: '#a4edba'
+                        borderColor: '#303030',
+                        borderWidth: 2
                     }
                 },
                 tooltip: {

@@ -23,13 +23,73 @@ var color = H.color,
  * @constructor seriesTypes.area
  * @extends {Series}
  */
-seriesType('area', 'line', 
-	/**
-	 * @extends {plotOptions.line}
-	 * @optionparent plotOptions.area
-	 */
-	{
+/**
+ * The area series type.
+ * @extends {plotOptions.line}
+ * @product highcharts highstock
+ * @sample {highcharts} highcharts/demo/area-basic/
+ *         Area chart
+ * @sample {highstock} stock/demo/area/
+ *         Area chart
+ * @optionparent plotOptions.area
+ */
+seriesType('area', 'line', {
 
+	/**
+	 * Fill color or gradient for the area. When `null`, the series' `color`
+	 * is used with the series' `fillOpacity`.
+	 * 
+	 * @type {Color}
+	 * @see In styled mode, the fill color can be set with the `.highcharts-area` class name.
+	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/ Null by default
+	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/ Gradient
+	 * @default null
+	 * @product highcharts highstock
+	 * @apioption plotOptions.area.fillColor
+	 */
+
+	/**
+	 * Fill opacity for the area. When you set an explicit `fillColor`,
+	 * the `fillOpacity` is not applied. Instead, you should define the
+	 * opacity in the `fillColor` with an rgba color definition. The `fillOpacity`
+	 * setting, also the default setting, overrides the alpha component
+	 * of the `color` setting.
+	 * 
+	 * @type {Number}
+	 * @see In styled mode, the fill opacity can be set with the `.highcharts-area` class name.
+	 * @sample {highcharts} highcharts/plotoptions/area-fillopacity/ Automatic fill color and fill opacity of 0.1
+	 * @default {highcharts} 0.75
+	 * @default {highstock} .75
+	 * @product highcharts highstock
+	 * @apioption plotOptions.area.fillOpacity
+	 */
+
+	/**
+	 * A separate color for the graph line. By default the line takes the
+	 * `color` of the series, but the lineColor setting allows setting a
+	 * separate color for the line without altering the `fillColor`.
+	 * 
+	 * @type {Color}
+	 * @see In styled mode, the line stroke can be set with the `.highcharts-graph` class name.
+	 * @sample {highcharts} highcharts/plotoptions/area-linecolor/ Dark gray line
+	 * @default null
+	 * @product highcharts highstock
+	 * @apioption plotOptions.area.lineColor
+	 */
+
+	/**
+	 * A separate color for the negative part of the area.
+	 * 
+	 * @type {Color}
+	 * @see [negativeColor](#plotOptions.area.negativeColor). In styled mode, a negative
+	 * color is set with the `.highcharts-negative` class name ([view live
+	 * demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
+	 * negative-color/)).
+	 * @since 3.0
+	 * @product highcharts
+	 * @apioption plotOptions.area.negativeFillColor
+	 */
+	
 	/**
 	 * When this is true, the series will not cause the Y axis to cross
 	 * the zero plane (or [threshold](#plotOptions.series.threshold) option)
@@ -40,7 +100,7 @@ seriesType('area', 'line',
 	 * option. If `softThreshold` is `true`, the Y axis starts at 0.
 	 * 
 	 * @type {Boolean}
-	 * @default {all} false
+	 * @default false
 	 * @since 4.1.9
 	 * @product highcharts highstock
 	 */
@@ -54,15 +114,26 @@ seriesType('area', 'line',
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/area-threshold/ A threshold of 100
-	 * @default {all} 0
+	 * @default 0
 	 * @since 2.0
 	 * @product highcharts highstock
 	 */
 	threshold: 0
-	// trackByArea: false,
-	// lineColor: null, // overrides color, but lets fillColor be unaltered
-	// fillOpacity: 0.75,
-	// fillColor: null
+	
+	/**
+	 * Whether the whole area or just the line should respond to mouseover
+	 * tooltips and other mouse or touch events.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/plotoptions/area-trackbyarea/ Display the tooltip when the     area is hovered
+	 * @sample {highstock} highcharts/plotoptions/area-trackbyarea/ Display the tooltip when the     area is hovered
+	 * @default false
+	 * @since 1.1.6
+	 * @product highcharts highstock
+	 * @apioption plotOptions.area.trackByArea
+	 */
+	
+
 }, /** @lends seriesTypes.area.prototype */ {
 	singleStacks: false,
 	/** 
@@ -363,3 +434,75 @@ seriesType('area', 'line',
 
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
+
+/**
+ * A `area` series. If the [type](#series.area.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * area](#plotOptions.area).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.area
+ * @excluding dataParser,dataURL
+ * @product highcharts highstock
+ * @apioption series.area
+ */
+
+/**
+ * An array of data points for the series. For the `area` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. The `x` values will be automatically
+ * calculated, either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options. If the axis has
+ * categories, these will be used. Example:
+ * 
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ * 
+ * 2.  An array of arrays with 2 values. In this case, the values correspond
+ * to `x,y`. If the first value is a string, it is applied as the name
+ * of the point, and the `x` value is inferred.
+ * 
+ *  ```js
+ *     data: [
+ *         [0, 9],
+ *         [1, 7],
+ *         [2, 6]
+ *     ]
+ *  ```
+ * 
+ * 3.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         y: 9,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         y: 6,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array|Number>}
+ * @extends series.line.data
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts highstock
+ * @apioption series.area.data
+ */

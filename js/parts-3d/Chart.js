@@ -141,8 +141,7 @@ var extendedOptions = 	{
 	/**
 	 * Options regarding the chart area and plot area as well as general
 	 * chart options.
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	chart: {
 
@@ -161,7 +160,7 @@ var extendedOptions = 	{
 			 * Wether to render the chart using the 3D functionality.
 			 * 
 			 * @type {Boolean}
-			 * @default {all} false
+			 * @default false
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -171,7 +170,7 @@ var extendedOptions = 	{
 			 * One of the two rotation angles for the chart.
 			 * 
 			 * @type {Number}
-			 * @default {all} 0
+			 * @default 0
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -181,7 +180,7 @@ var extendedOptions = 	{
 			 * One of the two rotation angles for the chart.
 			 * 
 			 * @type {Number}
-			 * @default {all} 0
+			 * @default 0
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -191,7 +190,7 @@ var extendedOptions = 	{
 			 * The total depth of the chart.
 			 * 
 			 * @type {Number}
-			 * @default {all} 100
+			 * @default 100
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -202,7 +201,7 @@ var extendedOptions = 	{
 			 * area.
 			 * 
 			 * @type {Boolean}
-			 * @default {all} true
+			 * @default true
 			 * @since 4.2.4
 			 * @product highcharts
 			 */
@@ -214,7 +213,7 @@ var extendedOptions = 	{
 			 * in column and scatter charts. It is not used for 3D pie charts.
 			 * 
 			 * @type {Number}
-			 * @default {all} 100
+			 * @default 100
 			 * @since 4.0
 			 * @product highcharts
 			 */
@@ -226,7 +225,7 @@ var extendedOptions = 	{
 			 * 
 			 * @validvalue [null, "auto"]
 			 * @type {String}
-			 * @default {all} null
+			 * @default null
 			 * @since 5.0.12
 			 * @product highcharts
 			 */
@@ -242,10 +241,12 @@ var extendedOptions = 	{
 			frame: {
 
 				/**
+				 * Whether the frames are visible.
 				 */
 				visible: 'default',
 
 				/**
+				 * General pixel thickness for the frame faces.
 				 */
 				size: 1,
 
@@ -255,34 +256,75 @@ var extendedOptions = 	{
 				 * @since 4.0
 				 * @product highcharts
 				 */
-				bottom: {},
+				bottom: {
+					/**
+					 * The color of the panel.
+					 * 
+					 * @type {Color}
+					 * @default transparent
+					 * @since 4.0
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.bottom.color
+					 */
+
+					/**
+					 * The thickness of the panel.
+					 * 
+					 * @type {Number}
+					 * @default 1
+					 * @since 4.0
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.bottom.size
+					 */
+
+					/**
+					 * Whether to display the frame. Possible values are `true`, `false`,
+					 * `"auto"` to display only the frames behind the data, and `"default"`
+					 * to display faces behind the data based on the axis layout, ignoring
+					 * the point of view.
+					 * 
+					 * @validvalue ["default", "auto", true, false]
+					 * @type {Boolean|String}
+					 * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
+					 * @default default
+					 * @since 5.0.12
+					 * @product highcharts
+					 * @apioption chart.options3d.frame.bottom.visible
+					 */
+				},
 
 				/**
 				 * The top of the frame around a 3D chart.
-				 * 
-				 * @type {Object}
-				 * @since 5.0.12
-				 * @product highcharts
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
 				top: {},
 
 				/**
+				 * The left side of the frame around a 3D chart.
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
 				left: {},
 
 				/**
+				 * The right of the frame around a 3D chart.
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
 				right: {},
 
 				/**
-				 * Defines the back panel of the frame around 3D charts.
-				 * 
-				 * @since 4.0
-				 * @product highcharts
+				 * The back side of the frame around a 3D chart.
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
 				back: {},
 
 				/**
+				 * The front of the frame around a 3D chart.
+				 *
+				 * @extends {chart.options3d.frame.bottom}
 				 */
 				front: {}
 			}
@@ -886,4 +928,35 @@ Chart.prototype.get3dFrame = function () {
 
 	return ret;
 };
+
+/**
+ * Note: As of v5.0.12, `frame.left` or `frame.right` should be used
+ * instead.
+ * 
+ * The side for the frame around a 3D chart.
+ * 
+ * @since 4.0
+ * @product highcharts
+ * @apioption chart.options3d.frame.side
+ */
+
+/**
+ * The color of the panel.
+ * 
+ * @type {Color}
+ * @default transparent
+ * @since 4.0
+ * @product highcharts
+ * @apioption chart.options3d.frame.side.color
+ */
+
+/**
+ * The thickness of the panel.
+ * 
+ * @type {Number}
+ * @default 1
+ * @since 4.0
+ * @product highcharts
+ * @apioption chart.options3d.frame.side.size
+ */
 

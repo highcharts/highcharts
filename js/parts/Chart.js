@@ -843,7 +843,18 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			tempStyle;
 		if (!revert) {
 			while (node && node.style) {
-				if (getStyle(node, 'display', false) === 'none') {
+
+				// When rendering to a detached node, it needs to be temporarily
+				// attached in order to read styling and bounding boxes (#5783,
+				// #7024).
+				if (!doc.body.contains(node) && !node.parentNode) {
+					node.hcOrigDetached = true;
+					doc.body.appendChild(node);
+				}
+				if (
+					getStyle(node, 'display', false) === 'none' ||
+					node.hcOricDetached
+				) {
 					node.hcOrigStyle = {
 						display: node.style.display,
 						height: node.style.height,
@@ -867,12 +878,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 					}
 				}
 				node = node.parentNode;
+
+				if (node === doc.body) {
+					break;
+				}
 			}
 		} else {
 			while (node && node.style) {
 				if (node.hcOrigStyle) {
 					H.css(node, node.hcOrigStyle);
 					delete node.hcOrigStyle;
+				}
+				if (node.hcOrigDetached) {
+					doc.body.removeChild(node);
+					node.hcOrigDetached = false;
 				}
 				node = node.parentNode;
 			}
@@ -993,6 +1012,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Initialize the renderer
 		Ren = H[optionsChart.renderer] || Renderer;
+		/**
+		 * The renderer instance of the chart. Each chart instance has only one
+		 * associated renderer.
+		 * @type {SVGRenderer}
+		 * @name renderer
+		 * @memberOf Chart
+		 */
 		chart.renderer = new Ren(
 			container,
 			chartWidth,
@@ -1106,7 +1132,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
-			hasUserWidth = defined(optionsChart.width),
+			hasUserSize = (
+				defined(optionsChart.width) &&
+				defined(optionsChart.height)
+			),
 			width = optionsChart.width || getStyle(renderTo, 'width'),
 			height = optionsChart.height || getStyle(renderTo, 'height'),
 			target = e ? e.target : win;
@@ -1114,7 +1143,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// Width and height checks for display:none. Target is doc in IE8 and
 		// Opera, win in Firefox, Chrome and IE9.
 		if (
-			!hasUserWidth &&
+			!hasUserSize &&
 			!chart.isPrinting &&
 			width &&
 			height &&
@@ -1964,6 +1993,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// depends on inverted and on margins being set
 		if (Pointer) {
+
+			/**
+			 * The Pointer that keeps track of mouse and touch interaction.
+			 *
+			 * @memberof Chart
+			 * @name pointer
+			 * @type Pointer
+			 */
 			chart.pointer = new Pointer(chart, options);
 		}
 

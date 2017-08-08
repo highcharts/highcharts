@@ -4,11 +4,12 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import H from './Globals.js';
+import Highcharts from './Globals.js';
 import './Utilities.js';
 import './Tooltip.js';
 import './Color.js';
-var addEvent = H.addEvent,
+var H = Highcharts,
+	addEvent = H.addEvent,
 	attr = H.attr,
 	charts = H.charts,
 	color = H.color,
@@ -27,21 +28,26 @@ var addEvent = H.addEvent,
 	win = H.win;
 
 /**
- * The mouse tracker object. All methods starting with "on" are primary DOM
- * event handlers. Subsequent methods should be named differently from what they
- * are doing.
+ * The mouse and touch tracker object. Each {@link Chart} item has one
+ * assosiated Pointer item that can be accessed from the  {@link Chart.pointer}
+ * property.
  *
- * @constructor Highcharts.Pointer
- * @param {Object} chart The Chart instance
- * @param {Object} options The root options object
+ * @class
+ * @param  {Chart} chart
+ *         The Chart instance.
+ * @param  {Options} options
+ *         The root options object. The pointer uses options from the chart and
+ *         tooltip structures.
  */
-H.Pointer = function (chart, options) {
+Highcharts.Pointer = function (chart, options) {
 	this.init(chart, options);
 };
 
-H.Pointer.prototype = {
+Highcharts.Pointer.prototype = {
 	/**
-	 * Initialize Pointer
+	 * Initialize the Pointer.
+	 *
+	 * @private
 	 */
 	init: function (chart, options) {
 
@@ -66,6 +72,8 @@ H.Pointer.prototype = {
 	/**
 	 * Resolve the zoomType option, this is reset on all touch start and mouse
 	 * down events.
+	 *
+	 * @private
 	 */
 	zoomOption: function (e) {
 		var chart = this.chart,
@@ -100,13 +108,15 @@ H.Pointer.prototype = {
 	 * 
 	 */
 	/**
-	 * Add crossbrowser support for chartX and chartY.
+	 * Takes a browser event object and extends it with custom Highcharts
+	 * properties `chartX` and `chartY` in order to work on the internal 
+	 * coordinate system.
 	 * 
 	 * @param  {Object} e
 	 *         The event object in standard browsers.
 	 *
 	 * @return {PointerEvent}
-	 *         A browser event with extended properties `chartX` and `chartY`
+	 *         A browser event with extended properties `chartX` and `chartY`.
 	 */
 	normalize: function (e, chartPosition) {
 		var chartX,
@@ -146,7 +156,9 @@ H.Pointer.prototype = {
 	/**
 	 * Get the click position in terms of axis values.
 	 *
-	 * @param {Object} e A pointer event
+	 * @param  {PointerEvent} e
+	 *         A pointer event, extended with `chartX` and `chartY`
+	 *         properties.
 	 */
 	getCoordinates: function (e) {
 		var coordinates = {
@@ -163,8 +175,8 @@ H.Pointer.prototype = {
 		return coordinates;
 	},
 	/**
-	 * Finds the closest point to a set of coordinates,
-	 * using the K-D Tree algorithm
+	 * Finds the closest point to a set of coordinates, using the k-d-tree
+	 * algorithm.
 	 *
 	 * @param  {Array.<Series>} series
 	 *         All the series to search in.
@@ -340,8 +352,10 @@ H.Pointer.prototype = {
 		};
 	},
 	/**
-	 * With line type charts with a single tracker, get the point closest to the mouse.
-	 * Run Point.onMouseOver and display tooltip for the point or points.
+	 * With line type charts with a single tracker, get the point closest to the
+	 * mouse. Run Point.onMouseOver and display tooltip for the point or points.
+	 *
+	 * @private
 	 */
 	runPointActions: function (e, p) {
 		var pointer = this,
@@ -430,17 +444,17 @@ H.Pointer.prototype = {
 
 		// Issues related to crosshair #4927, #5269 #5066, #5658
 		each(chart.axes, function drawAxisCrosshair(axis) {
-			var snap = pick(axis.crosshair.snap, true);
-			
-			if (!snap) {
-				axis.drawCrosshair(e);
-			
+			var snap = pick(axis.crosshair.snap, true),
+				point = !snap ?
+					undefined :
+					H.find(points, function (p) {
+						return p.series[axis.coll] === axis;
+					});
+
 			// Axis has snapping crosshairs, and one of the hover points belongs
-			// to axis
-			} else if (H.find(points, function (p) {
-				return p.series[axis.coll] === axis;
-			})) {
-				axis.drawCrosshair(e, hoverPoint);
+			// to axis. Always call drawCrosshair when it is not snap.
+			if (point || !snap) {
+				axis.drawCrosshair(e, point);
 			// Axis has snapping crosshairs, but no hover point belongs to axis
 			} else {
 				axis.hideCrosshair();
@@ -454,7 +468,7 @@ H.Pointer.prototype = {
 	 *
 	 * @param allowMove {Boolean}
 	 *        Instead of destroying the tooltip altogether, allow moving it if
-	 *        possible
+	 *        possible.
 	 */
 	reset: function (allowMove, delay) {
 		var pointer = this,
@@ -523,7 +537,9 @@ H.Pointer.prototype = {
 	},
 
 	/**
-	 * Scale series groups to a certain scale and translation
+	 * Scale series groups to a certain scale and translation.
+	 *
+	 * @private
 	 */
 	scaleGroups: function (attribs, clip) {
 
@@ -550,7 +566,9 @@ H.Pointer.prototype = {
 	},
 
 	/**
-	 * Start a drag operation
+	 * Start a drag operation.
+	 *
+	 * @private
 	 */
 	dragStart: function (e) {
 		var chart = this.chart;
@@ -563,7 +581,10 @@ H.Pointer.prototype = {
 	},
 
 	/**
-	 * Perform a drag operation in response to a mousemove event while the mouse is down
+	 * Perform a drag operation in response to a mousemove event while the mouse
+	 * is down.
+	 *
+	 * @private
 	 */
 	drag: function (e) {
 
@@ -660,6 +681,8 @@ H.Pointer.prototype = {
 
 	/**
 	 * On mouse up or touch end across the entire document, drop the selection.
+	 *
+	 * @private
 	 */
 	drop: function (e) {
 		var pointer = this,
@@ -745,8 +768,11 @@ H.Pointer.prototype = {
 	},
 
 	/**
-	 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
-	 * Issue #149 workaround. The mouseleave event does not always fire.
+	 * Special handler for mouse move that will hide the tooltip when the mouse
+	 * leaves the plotarea. Issue #149 workaround. The mouseleave event does not
+	 * always fire.
+	 *
+	 * @private
 	 */
 	onDocumentMouseMove: function (e) {
 		var chart = this.chart,
@@ -763,6 +789,8 @@ H.Pointer.prototype = {
 
 	/**
 	 * When mouse leaves the container, hide the tooltip.
+	 *
+	 * @private
 	 */
 	onContainerMouseLeave: function (e) {
 		var chart = charts[H.hoverChartIndex];
@@ -799,6 +827,15 @@ H.Pointer.prototype = {
 	 * Utility to detect whether an element has, or has a parent with, a specific
 	 * class name. Used on detection of tracker objects and on deciding whether
 	 * hovering the tooltip should cause the active series to mouse out.
+	 *
+	 * @param  {SVGDOMElement|HTMLDOMElement} element
+	 *         The element to investigate.
+	 * @param  {String} className
+	 *         The class name to look for.
+	 *
+	 * @return {Boolean}
+	 *         True if either the element or one of its parents has the given
+	 *         class name.
 	 */
 	inClass: function (element, className) {
 		var elemClassName;
@@ -872,6 +909,8 @@ H.Pointer.prototype = {
 	 * Set the JS DOM events on the container and document. This method should contain
 	 * a one-to-one assignment between methods and their handlers. Any advanced logic should
 	 * be moved to the handler reflecting the event's name.
+	 *
+	 * @private
 	 */
 	setDOMEvents: function () {
 
@@ -932,7 +971,9 @@ H.Pointer.prototype = {
 		);
 		if (!H.chartCount) {
 			removeEvent(ownerDoc, 'mouseup', pointer.onDocumentMouseUp);
-			removeEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
+			if (H.hasTouch) {
+				removeEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
+			}
 		}
 
 		// memory and CPU leak

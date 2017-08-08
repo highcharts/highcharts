@@ -42,6 +42,38 @@ var arrayMax = H.arrayMax,
 	seriesProcessData = seriesProto.processData,
 	pointTooltipFormatter = Point.prototype.tooltipFormatter;
 
+
+/**
+ * Compare the values of the series against the first non-null, non-
+ * zero value in the visible range. The y axis will show percentage
+ * or absolute change depending on whether `compare` is set to `"percent"`
+ * or `"value"`. When this is applied to multiple series, it allows
+ * comparing the development of the series against each other.
+ * 
+ * @type {String}
+ * @see [compareBase](#plotOptions.series.compareBase), [Axis.setCompare()](#Axis.
+ * setCompare())
+ * @sample {highstock} stock/plotoptions/series-compare-percent/ Percent
+ * @sample {highstock} stock/plotoptions/series-compare-value/ Value
+ * @default undefined
+ * @since 1.0.1
+ * @product highstock
+ * @apioption plotOptions.series.compare
+ */
+
+/**
+ * When [compare](#plotOptions.series.compare) is `percent`, this option
+ * dictates whether to use 0 or 100 as the base of comparison.
+ * 
+ * @validvalue [0, 100]
+ * @type {Number}
+ * @sample {highstock} / Compare base is 100
+ * @default 0
+ * @since 5.0.6
+ * @product highstock
+ * @apioption plotOptions.series.compareBase
+ */
+
 /**
  * Factory function for creating new stock charts. Creates a new {@link Chart|
  * Chart} object with different default options than the basic Chart.
@@ -57,7 +89,7 @@ var arrayMax = H.arrayMax,
  * @param  {Function} callback
  *         A function to execute when the chart object is finished loading and
  *         rendering. In most cases the chart is built in one thread, but in
- *         Internet Explorer version 8 or less the chart is sometimes initiated
+ *         Internet Explorer version 8 or less the chart is sometimes initialized
  *         before the document is ready, and in these cases the chart object
  *         will not be finished synchronously. As a consequence, code that
  *         relies on the newly built Chart object should always run in the
@@ -230,7 +262,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 			return 'right';
 		}
 	}
-	return proceed.call(this, [].slice.call(arguments, 1));
+	return proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Clear axis from label panes (#6071)
@@ -242,7 +274,7 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 		delete chart._labelPanes[key];
 	}
 
-	return proceed.call(this, Array.prototype.slice.call(arguments, 1));
+	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts

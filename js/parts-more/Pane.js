@@ -126,20 +126,21 @@ extend(Pane.prototype, {
 	},
 
 	/**
-	 * The default options object
+	 * The pane serves as a container for axes and backgrounds for circular 
+	 * gauges and polar charts.
+	 * @since 2.3.0
 	 * @optionparent pane
 	 */
 	defaultOptions: {
-		// background: {conditional},
-
 		/**
 		 * The center of a polar chart or angular gauge, given as an array
 		 * of [x, y] positions. Positions can be given as integers that transform
 		 * to pixels, or as percentages of the plot area size.
 		 * 
 		 * @type {Array<String|Number>}
-		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/ Two gauges with different center
-		 * @default {all} ["50%", "50%"]
+		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/
+		 *         Two gauges with different center
+		 * @default ["50%", "50%"]
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
@@ -151,7 +152,7 @@ extend(Pane.prototype, {
 		 * 
 		 * @type {Number|String}
 		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/ Smaller size
-		 * @default {all} 85%
+		 * @default 85%
 		 * @product highcharts
 		 */
 		size: '85%',
@@ -161,21 +162,46 @@ extend(Pane.prototype, {
 		 * where 0 is north. Defaults to 0.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/ VU-meter with custom start and end angle
+		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/
+		 *         VU-meter with custom start and end angle
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
 		startAngle: 0
-		//endAngle: startAngle + 360
+		
+		/**
+		 * The end angle of the polar X axis or gauge value axis, given in degrees
+		 * where 0 is north. Defaults to [startAngle](#pane.startAngle) + 360.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/
+		 *         VU-meter with custom start and end angle
+		 * @since 2.3.0
+		 * @product highcharts
+		 * @apioption pane.endAngle
+		 */
 	},
 
 	/**
-	 * The default background options
+	 * An array of background items for the pane.
+	 * @type Array.<Object>
+	 * @sample {highcharts} highcharts/demo/gauge-speedometer/
+	 *         Speedometer gauge with multiple backgrounds
 	 * @optionparent pane.background
 	 */
 	defaultBackgroundOptions: {
-		//className: 'highcharts-pane',
-
+		/**
+		 * The class name for this background.
+		 * 
+		 * @type {String}
+		 * @sample {highcharts} highcharts/css/pane/ Panes styled by CSS
+		 * @sample {highstock} highcharts/css/pane/ Panes styled by CSS
+		 * @sample {highmaps} highcharts/css/pane/ Panes styled by CSS
+		 * @default highcharts-pane
+		 * @since 5.0.0
+		 * @apioption pane.background.className
+		 */
+		
 		/**
 		 * Tha shape of the pane background. When `solid`, the background
 		 * is circular. When `arc`, the background extends only from the min
@@ -183,7 +209,7 @@ extend(Pane.prototype, {
 		 * 
 		 * @validvalue ["solid", "arc"]
 		 * @type {String}
-		 * @default {all} solid
+		 * @default solid
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
@@ -194,7 +220,7 @@ extend(Pane.prototype, {
 		 * The pixel border width of the pane background.
 		 * 
 		 * @type {Number}
-		 * @default {all} 1
+		 * @default 1
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
@@ -204,7 +230,7 @@ extend(Pane.prototype, {
 		 * The pane background border color.
 		 * 
 		 * @type {Color}
-		 * @default {all} #cccccc
+		 * @default #cccccc
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
@@ -218,25 +244,7 @@ extend(Pane.prototype, {
 		 * @product highcharts
 		 */
 		backgroundColor: {
-
-																												/**
-																												 */
-
-																																			/**
-																																			 */
-
-			/**
-			 */
-
-																																										/**
-																																										 */
-
-																					/**
-																					 */
 			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-
-			/**
-			 */
 			stops: [
 				[0, '${palette.backgroundColor}'],
 				[1, '${palette.neutralColor10}']
@@ -244,8 +252,7 @@ extend(Pane.prototype, {
 		},
 		/*= } =*/
 
-		/**
-		 */
+		/** @ignore */
 		from: -Number.MAX_VALUE, // corrected to axis min
 
 		/**
@@ -253,14 +260,13 @@ extend(Pane.prototype, {
 		 * (pixels) or a percentage string.
 		 * 
 		 * @type {Number|String}
-		 * @default {all} 0
+		 * @default 0
 		 * @since 2.3.0
 		 * @product highcharts
 		 */
 		innerRadius: 0,
 
-		/**
-		 */
+		/** @ignore */
 		to: Number.MAX_VALUE, // corrected to axis max
 
 		/**
@@ -268,7 +274,7 @@ extend(Pane.prototype, {
 		 * numeric (pixels) or a percentage string.
 		 * 
 		 * @type {Number|String}
-		 * @default {all} 105%
+		 * @default 105%
 		 * @since 2.3.0
 		 * @product highcharts
 		 */

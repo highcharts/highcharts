@@ -13,6 +13,7 @@ QUnit.test('seriesTypes.map.pointClass.setState', function (assert) {
                         graphic[key] = value;
                     });
                 },
+                animate: noop,
                 addClass: noop,
                 removeClass: noop
             },
@@ -25,7 +26,14 @@ QUnit.test('seriesTypes.map.pointClass.setState', function (assert) {
                     }
                 },
                 pointAttribs: pointAttribs,
-                zones: []
+                zones: [],
+                chart: {
+                    options: {
+                        chart: {
+                            animation: false
+                        }
+                    }
+                }
             },
             options: {}
         };

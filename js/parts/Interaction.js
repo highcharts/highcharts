@@ -34,8 +34,6 @@ var addEvent = H.addEvent,
 
 /**
  * TrackerMixin for points and graphs.
- *
- * @mixin
  */
 TrackerMixin = H.TrackerMixin = {
 
@@ -517,8 +515,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			
 			/**
 			 * Whether the point is selected or not. 
-			 * @see Highcharts.Point#select
-			 * @memberof Highcharts.Point
+			 * @see Point#select
+			 * @see Chart#getSelectedPoints
+			 * @memberof Point
 			 * @name selected
 			 * @type {Boolean}
 			 */
@@ -542,7 +541,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	},
 
 	/**
-	 * Runs on mouse over the point
+	 * Runs on mouse over the point. Called internally from mouse and touch
+	 * events.
 	 * 
 	 * @param {Object} e The event arguments
 	 */
@@ -559,7 +559,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	},
 
 	/**
-	 * Runs on mouse out from the point
+	 * Runs on mouse out from the point. Called internally from mouse and touch
+	 * events.
 	 */
 	onMouseOut: function () {
 		var point = this,
@@ -574,6 +575,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	/**
 	 * Import events from the series' and point's options. Only do it on
 	 * demand, to save processing time on hovering.
+	 *
+	 * @private
 	 */
 	importEvents: function () {
 		if (!this.hasImportedEvents) {
@@ -592,8 +595,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	},
 
 	/**
-	 * Set the point's state
-	 * @param {String} state
+	 * Set the point's state.
+	 * @param  {String} [state]
+	 *         The new state, can be one of `''` (an empty string), `hover` or
+	 *         `select`.
 	 */
 	setState: function (state, move) {
 		var point = this,
@@ -773,9 +778,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	},
 
 	/**
-	 * Get the circular path definition for the halo
-	 * @param  {Number} size The radius of the circular halo.
-	 * @returns {Array} The path definition
+	 * Get the path definition for the halo, which is usually a shadow-like
+	 * circle around the currently hovered point.
+	 * @param  {Number} size
+	 *         The radius of the circular halo.
+	 * @return {Array} The path definition
 	 */
 	haloPath: function (size) {
 		var series = this.series,
@@ -796,7 +803,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
 extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	/**
-	 * Series mouse over handler
+	 * Runs on mouse over the series graphical items.
 	 */
 	onMouseOver: function () {
 		var series = this,
@@ -820,7 +827,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Series mouse out handler
+	 * Runs on mouse out of the series graphical items.
 	 */
 	onMouseOut: function () {
 		// trigger the event only if listeners exist
@@ -853,7 +860,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Set the state of the graph
+	 * Set the state of the series. Called internally on mouse interaction and
+	 * select operations, but it can also be called directly to visually
+	 * highlight a series.
+	 *
+	 * @param  {String} [state]
+	 *         Can be either `hover`, `select` or undefined to set to normal
+	 *         state.
 	 */
 	setState: function (state) {
 		var series = this,

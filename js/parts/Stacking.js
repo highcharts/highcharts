@@ -189,7 +189,6 @@ Chart.prototype.getStacks = function () {
  */
 Axis.prototype.buildStacks = function () {
 	var axisSeries = this.series,
-		series,
 		reversedStacks = pick(this.options.reversedStacks, true),
 		len = axisSeries.length,
 		i;
@@ -200,10 +199,6 @@ Axis.prototype.buildStacks = function () {
 			axisSeries[reversedStacks ? i : len - i - 1].setStackedPoints();
 		}
 
-		i = len;
-		while (i--) {
-			series = axisSeries[reversedStacks ? i : len - i - 1];
-		}
 		// Loop up again to compute percent stack
 		if (this.usePercentage) {
 			for (i = 0; i < len; i++) {

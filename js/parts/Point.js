@@ -32,12 +32,14 @@ Highcharts.Point = Point = function () {};
 Highcharts.Point.prototype = {
 
 	/**
-	 * Initialize the point. Called internally based on the series.data option.
-	 * @param {Object} series The series object containing this point.
-	 * @param {Object} options The data in either number, array or object
-	 *        format.
-	 * @param {Number} x Optionally, the X value of the.
-	 * @returns {Object} The Point instance.
+	 * Initialize the point. Called internally based on the `series.data`
+	 * option.
+	 * @param  {Series} series
+	 *         The series object containing this point.
+	 * @param  {Number|Array|Object} options
+	 *         The data in either number, array or object format.
+	 * @param  {Number} x Optionally, the X value of the point.
+	 * @return {Point} The Point instance.
 	 */
 	init: function (series, options, x) {
 
@@ -90,6 +92,7 @@ Highcharts.Point.prototype = {
 	 * Apply the options containing the x and y data and possible some extra
 	 * properties. Called on point init or from point.update.
 	 *
+	 * @private
 	 * @param {Object} options The point options as defined in series.data.
 	 * @param {Number} x Optionally, the X value.
 	 * @returns {Object} The Point instance.
@@ -141,7 +144,15 @@ Highcharts.Point.prototype = {
 	},
 
 	/**
-	 * Transform number or array configs into objects
+	 * Transform number or array configs into objects. Used internally to unify
+	 * the different configuration formats for points. For example, a simple
+	 * number `10` in a line series will be transformed to `{ y: 10 }`, and an
+	 * array config like `[1, 10]` in a scatter series will be transformed to
+	 * `{ x: 1, y: 10 }`.
+	 *
+	 * @param  {Number|Array|Object} options
+	 *         The input options
+	 * @return {Object} Transformed options.
 	 */
 	optionsToObject: function (options) {
 		var ret = {},
@@ -192,8 +203,10 @@ Highcharts.Point.prototype = {
 	},
 
 	/**
-	 * Get the CSS class names for individual points
-	 * @returns {String} The class name
+	 * Get the CSS class names for individual points. Used internally where the
+	 * returned value is set on every point.
+	 * 
+	 * @returns {String} The class names.
 	 */
 	getClassName: function () {
 		return 'highcharts-point' + 
@@ -208,7 +221,10 @@ Highcharts.Point.prototype = {
 	},
 
 	/**
-	 * Return the zone that the point belongs to
+	 * In a series with `zones`, return the zone that the point belongs to.
+	 *
+	 * @return {Object}
+	 *         The zone item.
 	 */
 	getZone: function () {
 		var series = this.series,
@@ -230,7 +246,10 @@ Highcharts.Point.prototype = {
 	},
 
 	/**
-	 * Destroy a point to clear memory. Its reference still stays in series.data.
+	 * Destroy a point to clear memory. Its reference still stays in
+	 * `series.data`.
+	 *
+	 * @private
 	 */
 	destroy: function () {
 		var point = this,
@@ -271,7 +290,9 @@ Highcharts.Point.prototype = {
 	},
 
 	/**
-	 * Destroy SVG elements associated with the point
+	 * Destroy SVG elements associated with the point.
+	 *
+	 * @private
 	 */
 	destroyElements: function () {
 		var point = this,
@@ -287,7 +308,11 @@ Highcharts.Point.prototype = {
 	},
 
 	/**
-	 * Return the configuration hash needed for the data label and tooltip formatters
+	 * Return the configuration hash needed for the data label and tooltip
+	 * formatters.
+	 *
+	 * @returns {Object}
+	 *          Abstract object used in formatters and formats.
 	 */
 	getLabelConfig: function () {
 		return {
@@ -304,9 +329,12 @@ Highcharts.Point.prototype = {
 	},
 
 	/**
-	 * Extendable method for formatting each point's tooltip line
+	 * Extendable method for formatting each point's tooltip line.
 	 *
-	 * @return {String} A string to be concatenated in to the common tooltip text
+	 * @param  {String} pointFormat
+	 *         The point format.
+	 * @return {String}
+	 *         A string to be concatenated in to the common tooltip text.
 	 */
 	tooltipFormatter: function (pointFormat) {
 
@@ -334,6 +362,8 @@ Highcharts.Point.prototype = {
 
 	/**
 	 * Fire an event on the Point object.
+	 *
+	 * @private
 	 * @param {String} eventType
 	 * @param {Object} eventArgs Additional event arguments
 	 * @param {Function} defaultFunction Default event handler

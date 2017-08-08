@@ -25,3 +25,22 @@ If the fix is critical for your project, we recommend that you apply the fix to 
 * The next (optional) step is to compile the source code in order to reduce file size. Copy the result from the patched file.
 * Go to the [Closure Compiler web app](http://closure-compiler.appspot.com/home).
 * Paste the patched file contents to the left and click "Compile".
+
+
+# Core developers' checklist for new series types
+
+When creating a new official series type, there are some requirements that should be checked and preferable set up in unit tests:
+
+* If it makes sense for the given chart type, check that it works with `chart.inverted` and `xAxis/yAxis.reversed`.
+* Data labels.
+* Dynamic features, test the full lifesycle. Make sure animation runs if possible.
+	* `chart.addSeries`
+	* `series.addPoint`
+	* `point.update`
+	* `point.remove`
+	* `series.remove`
+* Chart or window resizing. Series should resize with animation on `chart.setSize()` (n/a on window resize).
+* Null points. 
+* Styled mode. Everything that is stylable should be put inside conditional code. Add appropriate class names to all elements. Set up demo in the `/css` demo folder.
+* Boost module. If it makes sense for the series type, implement boosting. Otherwise, make sure it is ignored.
+* API docs. Test run the new series with `gulp jsdoc --watch` and make sure the output is correct. Remember to exclude members from the parent.

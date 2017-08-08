@@ -74,7 +74,18 @@ var Axis = function () {
 H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 	/**
-	 * Default options for the X axis - the Y axis has extended defaults.
+	 * The X axis or category axis. Normally this is the horizontal axis,
+	 * though if the chart is inverted this is the vertical axis. In case of
+	 * multiple axes, the xAxis node is an array of configuration objects.
+	 * 
+	 * See [../class-reference/Highcharts.Axis](the Axis object) for
+	 * programmatic access to the axis.
+	 *
+	 * @productdesc {highmaps}
+	 * In Highmaps, the axis is hidden, but it is used behind the scenes to
+	 * control features like zooming and panning. Zooming is in effect the same
+	 * as setting the extremes of one of the exes.
+	 * 
 	 * @optionparent xAxis
 	 */
 	defaultOptions: {
@@ -92,53 +103,31 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * dateFormat). Defaults to:
 		 * 
 		 * <pre>{
-		 * millisecond: '%H:%M:%S.%L',
-		 * second: '%H:%M:%S',
-		 * minute: '%H:%M',
-		 * hour: '%H:%M',
-		 * day: '%e. %b',
-		 * week: '%e. %b',
-		 * month: '%b \'%y',
-		 * year: '%Y'
+		 *     millisecond: '%H:%M:%S.%L',
+		 *     second: '%H:%M:%S',
+		 *     minute: '%H:%M',
+		 *     hour: '%H:%M',
+		 *     day: '%e. %b',
+		 *     week: '%e. %b',
+		 *     month: '%b \'%y',
+		 *     year: '%Y'
 		 * }</pre>
 		 * 
 		 * @type {Object}
-		 * @sample {highcharts} highcharts/xaxis/datetimelabelformats/ Different day format on X axis
-		 * @sample {highstock} stock/xaxis/datetimelabelformats/ More information in x axis labels
+		 * @sample {highcharts} highcharts/xaxis/datetimelabelformats/
+		 *         Different day format on X axis
+		 * @sample {highstock} stock/xaxis/datetimelabelformats/
+		 *         More information in x axis labels
 		 * @product highcharts highstock
 		 */
 		dateTimeLabelFormats: {
-
-			/**
-			 */
 			millisecond: '%H:%M:%S.%L',
-
-			/**
-			 */
 			second: '%H:%M:%S',
-
-			/**
-			 */
 			minute: '%H:%M',
-
-			/**
-			 */
 			hour: '%H:%M',
-
-			/**
-			 */
 			day: '%e. %b',
-
-			/**
-			 */
 			week: '%e. %b',
-
-			/**
-			 */
 			month: '%b \'%y',
-
-			/**
-			 */
 			year: '%Y'
 		},
 
@@ -151,9 +140,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/yaxis/endontick/ False
 		 * @sample {highstock} stock/demo/basic-line/ True by default
 		 * @sample {highstock} stock/xaxis/endontick/ False
-		 * @default {all} false
+		 * @default false
 		 * @since 1.2.0
-		 * @product highcharts highstock highmaps
 		 */
 		endOnTick: false,
 		// reversed: false,
@@ -161,8 +149,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		/**
 		 * The axis labels show the number or category for each tick.
-		 * 
-		 * @product highcharts highstock highmaps
+		 *
+		 * @productdesc {highmaps}
+		 * X and Y axis labels are by default disabled in Highmaps, but the
+		 * functionality is inherited from Highcharts and used on `colorAxis`,
+		 * and can be enabled on X and Y axes too.
 		 */
 		labels: {
 
@@ -174,7 +165,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @sample {highstock} stock/xaxis/labels-enabled/ X axis labels disabled
 			 * @default {highstock} true
 			 * @default {highmaps} false
-			 * @product highcharts highstock highmaps
 			 */
 			enabled: true,
 			// rotation: 0,
@@ -187,27 +177,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * wrapping of category labels. Use `textOverflow: 'none'` to prevent
 			 * ellipsis (dots).
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the labels are styled with the `.highcharts-
-			 * axis-labels` class.
+			 * In styled mode, the labels are styled with the `.highcharts-axis-labels` class.
 			 * 
 			 * @type {CSSObject}
 			 * @sample {highcharts} highcharts/xaxis/labels-style/ Red X axis labels
-			 * @default {all} { "color": "#666666", "cursor": "default", "fontSize": "11px" }
-			 * @product highcharts highstock highmaps
+			 * @default { "color": "#666666", "cursor": "default", "fontSize": "11px" }
 			 */
 			style: {
-
-				/**
-				 */
 				color: '${palette.neutralColor60}',
-
-				/**
-				 */
 				cursor: 'default',
-
-				/**
-				 */
 				fontSize: '11px'
 			},
 			/*= } =*/
@@ -218,8 +196,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {Number}
 			 * @sample {highcharts} highcharts/xaxis/labels-x/ Y axis labels placed on grid lines
-			 * @default {all} 0
-			 * @product highcharts highstock highmaps
+			 * @default 0
 			 */
 			x: 0
 			//y: undefined
@@ -246,7 +223,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @default {highstock} 0
 		 * @default {highmaps} 0
 		 * @since 1.2.0
-		 * @product highcharts highstock highmaps
 		 */
 		minPadding: 0.01,
 
@@ -265,7 +241,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @default {highstock} 0
 		 * @default {highmaps} 0
 		 * @since 1.2.0
-		 * @product highcharts highstock highmaps
 		 */
 		maxPadding: 0.01,
 		//minRange: null,
@@ -277,8 +252,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minorticklength/ 10px on Y axis
 		 * @sample {highstock} stock/xaxis/minorticks/ 10px on Y axis
-		 * @default {all} 2
-		 * @product highcharts highstock highmaps
+		 * @default 2
 		 */
 		minorTickLength: 2,
 
@@ -291,8 +265,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/yaxis/minortickposition-outside/ Outside by default
 		 * @sample {highcharts} highcharts/yaxis/minortickposition-inside/ Inside
 		 * @sample {highstock} stock/xaxis/minorticks/ Inside
-		 * @default {all} outside
-		 * @product highcharts highstock highmaps
+		 * @default outside
 		 */
 		minorTickPosition: 'outside', // inside or outside
 		//opposite: false,
@@ -321,7 +294,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/xaxis/startofweek-sunday/ Sunday
 		 * @sample {highstock} stock/xaxis/startofweek-1 Monday by default
 		 * @sample {highstock} stock/xaxis/startofweek-0 Sunday
-		 * @default {all} 1
+		 * @default 1
 		 * @product highcharts highstock
 		 */
 		startOfWeek: 1,
@@ -329,14 +302,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Whether to force the axis to start on a tick. Use this option with
 		 * the `minPadding` option to control the axis start.
+		 *
+		 * @productdesc {highstock}
+		 * In Highstock, `startOnTick` is always false when the navigator is
+		 * enabled, to prevent jumpy scrolling.
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/xaxis/startontick-false/ False by default
 		 * @sample {highcharts} highcharts/xaxis/startontick-true/ True
 		 * @sample {highstock} stock/xaxis/endontick/ False for Y axis
-		 * @default {all} false
+		 * @default false
 		 * @since 1.2.0
-		 * @product highcharts highstock highmaps
 		 */
 		startOnTick: false,
 		//tickInterval: null,
@@ -347,8 +323,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/xaxis/ticklength/ 20 px tick length on the X axis
 		 * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
-		 * @default {all} 10
-		 * @product highcharts highstock highmaps
+		 * @default 10
 		 */
 		tickLength: 10,
 
@@ -362,7 +337,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {String}
 		 * @sample {highcharts} highcharts/xaxis/tickmarkplacement-between/ "between" by default
 		 * @sample {highcharts} highcharts/xaxis/tickmarkplacement-on/ "on"
-		 * @default {all} null
+		 * @default null
 		 * @product highcharts
 		 */
 		tickmarkPlacement: 'between', // on or between
@@ -383,7 +358,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 *  [tickPositions](#xAxis.tickPositions)-
 		 * @sample {highcharts} highcharts/xaxis/tickpixelinterval-50/ 50 px on X axis
 		 * @sample {highstock} stock/xaxis/tickpixelinterval/ 200 px on X axis
-		 * @product highcharts highstock highmaps
 		 */
 		tickPixelInterval: 100,
 
@@ -399,14 +373,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @default {highcharts} outside
 		 * @default {highstock} "outside"
 		 * @default {highmaps} outside
-		 * @product highcharts highstock highmaps
 		 */
 		tickPosition: 'outside',
 
 		/**
 		 * The axis title, showing next to the axis line.
-		 * 
-		 * @product highcharts highstock highmaps
+		 *
+		 * @productdesc {highmaps}
+		 * In Highmaps, the axis is hidden by default, but adding an axis title
+		 * is still possible. X axis and Y axis titles will appear at the bottom
+		 * and left by default.
 		 */
 		title: {
 			//text: null,
@@ -425,7 +401,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @default {highcharts} middle
 			 * @default {highstock} "middle"
 			 * @default {highmaps} middle
-			 * @product highcharts highstock highmaps
 			 */
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
@@ -435,24 +410,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			/*= if (build.classic) { =*/
 
 			/**
-			 * CSS styles for the title. When titles are rotated they are rendered
-			 * using vector graphic techniques and not all styles are applicable.
+			 * CSS styles for the title. If the title text is longer than the
+			 * axis length, it will wrap to multiple lines by default. This can
+			 * be customized by setting `textOverflow: 'ellipsis'`, by 
+			 * setting a specific `width` or by setting `wordSpace: 'nowrap'`.
 			 * 
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the stroke width is given in the `.highcharts-
-			 * axis-title` class.
+			 * In styled mode, the stroke width is given in the
+			 * `.highcharts-axis-title` class.
 			 * 
 			 * @type {CSSObject}
 			 * @sample {highcharts} highcharts/xaxis/title-style/ Red
 			 * @sample {highcharts} highcharts/css/axis/ Styled mode
-			 * @default {all} { "color": "#666666" }
-			 * @product highcharts highstock highmaps
+			 * @default { "color": "#666666" }
 			 */
 			style: {
-
-				/**
-				 */
 				color: '${palette.neutralColor60}'
 			}
 			/*= } =*/
@@ -464,7 +436,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`
 		 * or `category`. In a datetime axis, the numbers are given in milliseconds,
 		 * and tick marks are placed on appropriate values like full hours
-		 * or days. In a category axis, the [point names](#series<line>.data.
+		 * or days. In a category axis, the [point names](#series.line.data.
 		 * name) of the chart's series are used for categories, if not a [categories](#xAxis.
 		 * categories) array is defined.
 		 * 
@@ -475,7 +447,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/yaxis/type-log-minorgrid/ Logarithmic with minor grid lines
 		 * @sample {highcharts} highcharts/xaxis/type-log-both/ Logarithmic on two axes
 		 * @sample {highcharts} highcharts/yaxis/type-log-negative/ Logarithmic with extension to emulate negative values
-		 * @default {all} linear
+		 * @default linear
 		 * @product highcharts
 		 */
 		type: 'linear', // linear, logarithmic or datetime
@@ -485,17 +457,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Color of the minor, secondary grid lines.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke width is given in the `.highcharts-
-		 * minor-grid-line` class.
+		 * In styled mode, the stroke width is given in the `.highcharts-minor-grid-line` class.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/minorgridlinecolor/ Bright grey lines from Y axis
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
 		 * @sample {highstock} stock/xaxis/minorgridlinecolor/ Bright grey lines from Y axis
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
-		 * @default {all} #f2f2f2
-		 * @product highcharts highstock highmaps
+		 * @default #f2f2f2
 		 */
 		minorGridLineColor: '${palette.neutralColor5}',
 		// minorGridLineDashStyle: null,
@@ -503,17 +472,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Width of the minor, secondary grid lines.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke width is given in the `.highcharts-
-		 * grid-line` class.
+		 * In styled mode, the stroke width is given in the `.highcharts-grid-line` class.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minorgridlinewidth/ 2px lines from Y axis
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
 		 * @sample {highstock} stock/xaxis/minorgridlinewidth/ 2px lines from Y axis
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
-		 * @default {all} 1
-		 * @product highcharts highstock highmaps
+		 * @default 1
 		 */
 		minorGridLineWidth: 1,
 
@@ -523,8 +489,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/minortickcolor/ Black tick marks on Y axis
 		 * @sample {highstock} stock/xaxis/minorticks/ Black tick marks on Y axis
-		 * @default {all} #999999
-		 * @product highcharts highstock highmaps
+		 * @default #999999
 		 */
 		minorTickColor: '${palette.neutralColor40}',
 		//minorTickWidth: 0,
@@ -532,26 +497,24 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * The color of the line marking the axis itself.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the line stroke is given in the `.highcharts-
-		 * axis-line` or `.highcharts-xaxis-line` class.
+		 * In styled mode, the line stroke is given in the `.highcharts-axis-line` or `.highcharts-xaxis-line` class.
+		 * 
+		 * @productdesc {highmaps}
+		 * In Highmaps, the axis line is hidden by default.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/linecolor/ A red line on Y axis
 		 * @sample {highcharts} highcharts/css/axis/ Axes in styled mode
 		 * @sample {highstock} stock/xaxis/linecolor/ A red line on X axis
 		 * @sample {highstock} highcharts/css/axis/ Axes in styled mode
-		 * @default {all} #ccd6eb
-		 * @product highcharts highstock highmaps
+		 * @default #ccd6eb
 		 */
 		lineColor: '${palette.highlightColor20}',
 
 		/**
 		 * The width of the line marking the axis itself.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke width is given in the `.highcharts-
-		 * axis-line` or `.highcharts-xaxis-line` class.
+		 * In styled mode, the stroke width is given in the `.highcharts-axis-line` or `.highcharts-xaxis-line` class.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/linecolor/ A 1px line on Y axis
@@ -561,25 +524,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @default {highcharts} 1
 		 * @default {highstock} 1
 		 * @default {highmaps} 0
-		 * @product highcharts highstock highmaps
 		 */
 		lineWidth: 1,
 
 		/**
 		 * Color of the grid lines extending the ticks across the plot area.
 		 * 
-		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke is given in the `.highcharts-grid-
-		 * line` class.
+		 * In styled mode, the stroke is given in the `.highcharts-grid-line` class.
+		 *
+		 * @productdesc {highmaps}
+		 * In Highmaps, the grid lines are hidden by default.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/gridlinecolor/ Green lines
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
 		 * @sample {highstock} stock/xaxis/gridlinecolor/ Green lines
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
-		 * @default {all} #e6e6e6
-		 * @product highcharts highstock highmaps
+		 * @default #e6e6e6
 		 */
 		gridLineColor: '${palette.neutralColor10}',
 		// gridLineDashStyle: 'solid',
@@ -588,8 +549,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Color for the main tick marks.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the stroke is given in the `.highcharts-tick`
+		 * In styled mode, the stroke is given in the `.highcharts-tick`
 		 * class.
 		 * 
 		 * @type {Color}
@@ -597,8 +557,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
 		 * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
-		 * @default {all} #ccd6eb
-		 * @product highcharts highstock highmaps
+		 * @default #ccd6eb
 		 */
 		tickColor: '${palette.highlightColor20}'
 		// tickWidth: 1
@@ -615,6 +574,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		/**
 		 * Whether to force the axis to end on a tick. Use this option with
 		 * the `maxPadding` option to control the axis end.
+		 *
+		 * @productdesc {highstock}
+		 * In Highstock, `endOnTick` is always false when the navigator is
+		 * enabled, to prevent jumpy scrolling.
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/chart/reflow-true/ True by default
@@ -622,14 +585,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/yaxis/endontick-log-false/ False
 		 * @sample {highstock} stock/demo/basic-line/ True by default
 		 * @sample {highstock} stock/xaxis/endontick/ False
-		 * @default {all} true
+		 * @default true
 		 * @since 1.2.0
 		 * @product highcharts highstock
 		 */
 		endOnTick: true,
 
-		/**
-		 */
 		tickPixelInterval: 72,
 
 		/**
@@ -639,14 +600,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/xaxis/showlastlabel-true/ Set to true on X axis
 		 * @sample {highstock} stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
-		 * @default {all} false
+		 * @default false
 		 * @product highcharts highstock
 		 */
 		showLastLabel: true,
 
 		/**
 		 * @extends xAxis.labels
-		 * @product highcharts highstock highmaps
 		 */
 		labels: {
 
@@ -656,8 +616,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {Number}
 			 * @sample {highcharts} highcharts/xaxis/labels-x/ Y axis labels placed on grid lines
-			 * @default {all} 0
-			 * @product highcharts highstock highmaps
+			 * @default 0
 			 */
 			x: -8
 		},
@@ -666,12 +625,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * Padding of the max value relative to the length of the axis. A
 		 * padding of 0.05 will make a 100px axis 5px longer. This is useful
 		 * when you don't want the highest data value to appear on the edge
-		 * of the plot area.
+		 * of the plot area. When the axis' `max` option is set or a max extreme
+		 * is set using `axis.setExtremes()`, the maxPadding will be ignored.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/maxpadding-02/ Max padding of 0.2
 		 * @sample {highstock} stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
-		 * @default {all} 0.05
+		 * @default 0.05
 		 * @since 1.2.0
 		 * @product highcharts highstock
 		 */
@@ -681,12 +641,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * Padding of the min value relative to the length of the axis. A
 		 * padding of 0.05 will make a 100px axis 5px longer. This is useful
 		 * when you don't want the lowest data value to appear on the edge
-		 * of the plot area.
+		 * of the plot area. When the axis' `min` option is set or a max extreme
+		 * is set using `axis.setExtremes()`, the maxPadding will be ignored.
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minpadding/ Min padding of 0.2
 		 * @sample {highstock} stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
-		 * @default {all} 0.05
+		 * @default 0.05
 		 * @since 1.2.0
 		 * @product highcharts highstock
 		 */
@@ -700,7 +661,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/xaxis/startontick-false/ False by default
 		 * @sample {highcharts} highcharts/xaxis/startontick-true/ True
 		 * @sample {highstock} stock/xaxis/endontick/ False for Y axis
-		 * @default {all} true
+		 * @default true
 		 * @since 1.2.0
 		 * @product highcharts highstock
 		 */
@@ -708,7 +669,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		/**
 		 * @extends xAxis.title
-		 * @product highcharts highstock highmaps
 		 */
 		title: {
 
@@ -718,8 +678,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {Number}
 			 * @sample {highcharts} highcharts/yaxis/title-offset/ Horizontal
-			 * @default {all} 270
-			 * @product highcharts highstock highmaps
+			 * @default 270
 			 */
 			rotation: 270,
 
@@ -731,7 +690,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {String}
 			 * @sample {highcharts} highcharts/xaxis/title-text/ Custom HTML
-			 * @default {all} Values
+			 * @default Values
 			 * @product highcharts
 			 */
 			text: 'Values'
@@ -747,6 +706,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @product highcharts
 		 */
 		stackLabels: {
+
+			/**
+			 * Allow the stack labels to overlap.
+			 * 
+			 * @type {Boolean}
+			 * @sample {highcharts} highcharts/yaxis/stacklabels-allowoverlap-false/
+			 *         Default false
+			 * @since 5.0.13
+			 * @product highcharts
+			 */
+			allowOverlap: false,
 
 			/**
 			 * Enable or disable the stack total labels.
@@ -769,7 +739,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * given by `this.total`. Defaults to:
 			 * 
 			 * <pre>function() {
-			 * return this.total;
+			 *     return this.total;
 			 * }</pre>
 			 * 
 			 * @type {Function}
@@ -785,32 +755,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			/**
 			 * CSS styles for the label.
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the styles are set in the `.highcharts-stack-
-			 * label` class.
+			 * In styled mode, the styles are set in the `.highcharts-stack-label` class.
 			 * 
 			 * @type {CSSObject}
 			 * @sample {highcharts} highcharts/yaxis/stacklabels-style/ Red stack total labels
-			 * @default {all} { "color": "#000000", "fontSize": "11px", "fontWeight": "bold", "textShadow": "1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast" }
+			 * @default { "color": "#000000", "fontSize": "11px", "fontWeight": "bold", "textShadow": "1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast" }
 			 * @since 2.1.5
 			 * @product highcharts
 			 */
 			style: {
-
-				/**
-				 */
 				fontSize: '11px',
-
-				/**
-				 */
 				fontWeight: 'bold',
-
-				/**
-				 */
 				color: '${palette.neutralColor100}',
-
-				/**
-				 */
 				textOutline: '1px contrast'
 			}
 			/*= } =*/
@@ -821,10 +777,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * The width of the grid lines extending the ticks across the plot
 		 * area.
 		 * 
+		 * @productdesc {highmaps}
+		 * In Highmaps, the grid lines are hidden by default.
+		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/gridlinewidth/ 2px lines
 		 * @sample {highstock} stock/xaxis/gridlinewidth/ 2px lines
-		 * @default {all} 1
+		 * @default 1
 		 * @product highcharts highstock
 		 */
 		gridLineWidth: 1,		
@@ -835,7 +794,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/linecolor/ A 1px line on Y axis
 		 * @sample {highstock} stock/xaxis/linewidth/ A 2px line on X axis
-		 * @default {all} 0
+		 * @default 0
 		 * @product highcharts highstock
 		 */
 		lineWidth: 0
@@ -2201,8 +2160,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		this.trimTicks(tickPositions, startOnTick, endOnTick);
 		if (!this.isLinked) {
 			
-			// Substract half a unit (#2619, #2846, #2515, #3390)
-			if (this.single) {
+			// Substract half a unit (#2619, #2846, #2515, #3390),
+			// but not in case of multiple ticks (#6897)
+			if (this.single && tickPositions.length < 2) {
 				this.min -= 0.5;
 				this.max += 0.5;
 			}
@@ -2545,26 +2505,35 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			options = this.options,
 			offsets = options.offsets || [0, 0, 0, 0], // top / right / bottom / left
 			horiz = this.horiz,
-			width = pick(options.width, chart.plotWidth - offsets[3] + offsets[1]),
-			height = pick(options.height, chart.plotHeight - offsets[0] + offsets[2]),
-			top = pick(options.top, chart.plotTop + offsets[0]),
-			left = pick(options.left, chart.plotLeft + offsets[3]),
-			percentRegex = /%$/;
 
-		// Check for percentage based input values. Rounding fixes problems with
-		// column overflow and plot line filtering (#4898, #4899)
-		if (percentRegex.test(height)) {
-			height = Math.round(parseFloat(height) / 100 * chart.plotHeight);
-		}
-		if (percentRegex.test(top)) {
-			top = Math.round(parseFloat(top) / 100 * chart.plotHeight + chart.plotTop);
-		}
+			// Check for percentage based input values. Rounding fixes problems
+			// with column overflow and plot line filtering (#4898, #4899)
+			width = this.width = Math.round(H.relativeLength(
+				pick(
+					options.width,
+					chart.plotWidth - offsets[3] + offsets[1]
+				),
+				chart.plotWidth
+			)),
+			height = this.height = Math.round(H.relativeLength(
+				pick(
+					options.height,
+					chart.plotHeight - offsets[0] + offsets[2]
+				),
+				chart.plotHeight
+			)),
+			top = this.top = Math.round(H.relativeLength(
+				pick(options.top, chart.plotTop + offsets[0]),
+				chart.plotHeight,
+				chart.plotTop
+			)),
+			left = this.left = Math.round(H.relativeLength(
+				pick(options.left, chart.plotLeft + offsets[3]),
+				chart.plotWidth,
+				chart.plotLeft
+			));
 
 		// Expose basic values to use in Series object and navigator
-		this.left = left;
-		this.top = top;
-		this.width = width;
-		this.height = height;
 		this.bottom = chart.chartHeight - height - top;
 		this.right = chart.chartWidth - width - left;
 
@@ -2785,7 +2754,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		var chart = this.chart,
 			horiz = this.horiz,
 			labelOptions = this.options.labels,
-			slotCount = Math.max(this.tickPositions.length - (this.categories ? 0 : 1), 1),
+			slotCount = Math.max(
+				this.tickPositions.length - (this.categories ? 0 : 1),
+				1
+			),
 			marginLeft = chart.margin[3];
 
 		return (
@@ -2795,6 +2767,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			((this.staggerLines || 1) * this.len) / slotCount
 		) || (
 			!horiz && (
+				// #7028
+				(labelOptions.style && parseInt(labelOptions.style.width)) ||
 				(marginLeft && (marginLeft - chart.spacing[3])) ||
 				chart.chartWidth * 0.33
 			)
@@ -2977,6 +2951,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			.add(axis.axisGroup);
 			axis.axisTitle.isNew = true;
 		}
+
+		// Max width defaults to the length of the axis
+		/*= if (build.classic) { =*/
+		if (!axisTitleOptions.style.width && !axis.isRadial) {
+		/*= } =*/
+			axis.axisTitle.css({
+				width: axis.len
+			});
+		/*= if (build.classic) { =*/
+		}
+		/*= } =*/
+			
 		
 		// hide or show the title depending on whether showEmpty is set
 		axis.axisTitle[display ? 'show' : 'hide'](true);
@@ -3230,10 +3216,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			offset = this.offset,
 			xOption = axisTitleOptions.x || 0,
 			yOption = axisTitleOptions.y || 0,
-			fontSize = this.chart.renderer.fontMetrics(
+			axisTitle = this.axisTitle,
+			fontMetrics = this.chart.renderer.fontMetrics(
 				axisTitleOptions.style && axisTitleOptions.style.fontSize,
-				this.axisTitle
-			).f,
+				axisTitle
+			),
+			// The part of a multiline text that is below the baseline of the
+			// first line. Subtract 1 to preserve pixel-perfectness from the 
+			// old behaviour (v5.0.12), where only one line was allowed.
+			textHeightOvershoot = Math.max(
+				axisTitle.getBBox(null, 0).height - fontMetrics.h - 1,
+				0
+			),
 
 			// the position in the length direction of the axis
 			alongAxis = {
@@ -3247,7 +3241,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				(horiz ? 1 : -1) * // horizontal axis reverses the margin
 				(opposite ? -1 : 1) * // so does opposite axes
 				this.axisTitleMargin +
-				(this.side === 2 ? fontSize : 0);
+				[
+					-textHeightOvershoot, // top
+					textHeightOvershoot, // right
+					fontMetrics.f, // bottom
+					-textHeightOvershoot // left
+				][this.side];
+
 
 		return {
 			x: horiz ?

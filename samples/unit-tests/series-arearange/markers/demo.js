@@ -32,6 +32,7 @@ QUnit.test('Markers for arearange.', function (assert) {
     });
 });
 
+
 QUnit.test('Shared tooltip marker.', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -64,11 +65,17 @@ QUnit.test('Shared tooltip marker.', function (assert) {
         'Top shared marker exists'
     );
     assert.ok(
-        chart.series[0].lowerStateMarkerGraphic,
-        'Bottom shared marker exists'
+        chart.series[0].stateMarkerGraphic,
+        'Bottom shared marker exists (stored at stateMarkerGraphic due to #7021)'
     );
     assert.ok(
-        chart.series[0].upperStateMarkerGraphic.d !== chart.series[0].lowerStateMarkerGraphic.d,
+        chart.series[0].upperStateMarkerGraphic.d !== chart.series[0].stateMarkerGraphic.d,
         'Shared markers are not rendered in the same position'
+    );
+
+    chart.destroy()
+    assert.ok(
+        true,
+        'Destroyed without any errors (#7021)'
     );
 });

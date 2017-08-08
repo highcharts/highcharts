@@ -17,38 +17,18 @@ var correctFloat = H.correctFloat,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
 
-/* ****************************************************************************
- * Start Waterfall series code                                                *
- *****************************************************************************/
-
-
-seriesType('waterfall', 'column', 
 /**
+ * A waterfall chart displays sequentially introduced positive or negative
+ * values in cumulative columns.
+ *
+ * @sample highcharts/demo/waterfall/ Waterfall chart
  * @extends {plotOptions.column}
+ * @product highcharts
  * @optionparent plotOptions.waterfall
  */
+seriesType('waterfall', 'column', {
 
-/**
- * The plotOptions is a wrapper object for config objects for each series
- * type. The config objects for each series can also be overridden for
- * each series item as given in the series array.
- * 
- * Configuration options for the series are given in three levels. Options
- * for all series in a chart are given in the [plotOptions.series](#plotOptions.
- * series) object. Then options for all series of a specific type are
- * given in the plotOptions of that type, for example plotOptions.line.
- * Next, options for one single series are given in [the series array](#series).
- * 
- * @product highcharts highstock highmaps
- */
-{
-
-	/**
-	 */
 	dataLabels: {
-
-		/**
-		 */
 		inside: true
 	},
 	/*= if (build.classic) { =*/
@@ -57,7 +37,7 @@ seriesType('waterfall', 'column',
 	 * The width of the line connecting waterfall columns.
 	 * 
 	 * @type {Number}
-	 * @default {all} 1
+	 * @default 1
 	 * @product highcharts
 	 */
 	lineWidth: 1,
@@ -66,12 +46,10 @@ seriesType('waterfall', 'column',
 	 * The color of the line that connects columns in a waterfall series.
 	 * 
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the stroke can be set with the `.highcharts-
-	 * graph` class.
+	 * In styled mode, the stroke can be set with the `.highcharts-graph` class.
 	 * 
 	 * @type {Color}
-	 * @default {all} #333333
+	 * @default #333333
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -93,12 +71,11 @@ seriesType('waterfall', 'column',
 	 * *   LongDashDot
 	 * *   LongDashDotDot
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the stroke dash-array can be set with the `.
+	 * In styled mode, the stroke dash-array can be set with the `.
 	 * highcharts-graph` class.
 	 * 
 	 * @type {String}
-	 * @default {all} Dot
+	 * @default Dot
 	 * @since 3.0
 	 * @product highcharts
 	 */
@@ -107,31 +84,35 @@ seriesType('waterfall', 'column',
 	/**
 	 * The color of the border of each waterfall column.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the border stroke can be set with the `.highcharts-
-	 * point` class.
+	 * In styled mode, the border stroke can be set with the `.highcharts-point` class.
 	 * 
 	 * @type {Color}
-	 * @default {all} #333333
+	 * @default #333333
 	 * @since 3.0
 	 * @product highcharts
 	 */
 	borderColor: '${palette.neutralColor80}',
 
-	/**
-	 */
 	states: {
-
-		/**
-		 */
 		hover: {
-
-			/**
-			 */
 			lineWidthPlus: 0 // #3126
 		}
 	}
 	/*= } =*/
+
+	/**
+	 * The color used specifically for positive point columns. When not
+	 * specified, the general series color is used.
+	 * 
+	 * In styled mode, the waterfall colors can be set with the
+	 * `.highcharts-point-negative`, `.highcharts-sum` and
+	 * `.highcharts-intermediate-sum` classes.
+	 * 
+	 * @type {Color}
+	 * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
+	 * @product highcharts
+	 * @apioption plotOptions.waterfall.upColor
+	 */
 
 // Prototype members
 }, {
@@ -453,6 +434,100 @@ seriesType('waterfall', 'column',
 	
 });
 
-/* ****************************************************************************
- * End Waterfall series code                                                  *
- *****************************************************************************/
+/**
+ * A `waterfall` series. If the [type](#series.waterfall.type) option
+ * is not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * waterfall](#plotOptions.waterfall).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.waterfall
+ * @excluding dataParser,dataURL
+ * @product highcharts
+ * @apioption series.waterfall
+ */
+
+/**
+ * An array of data points for the series. For the `waterfall` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. The `x` values will be automatically
+ * calculated, either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options. If the axis has
+ * categories, these will be used. Example:
+ * 
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ * 
+ * 2.  An array of arrays with 2 values. In this case, the values correspond
+ * to `x,y`. If the first value is a string, it is applied as the name
+ * of the point, and the `x` value is inferred.
+ * 
+ *  ```js
+ *     data: [
+ *         [0, 7],
+ *         [1, 8],
+ *         [2, 3]
+ *     ]
+ *  ```
+ * 
+ * 3.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.waterfall.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         y: 8,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         y: 8,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array|Number>}
+ * @extends series.line.data
+ * @excluding marker
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.waterfall.data
+ */
+
+
+/**
+ * When this property is true, the points acts as a summary column for
+ * the values added or substracted since the last intermediate sum,
+ * or since the start of the series. The `y` value is ignored.
+ * 
+ * @type {Boolean}
+ * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
+ * @default false
+ * @product highcharts
+ * @apioption series.waterfall.data.isIntermediateSum
+ */
+
+/**
+ * When this property is true, the point display the total sum across
+ * the entire series. The `y` value is ignored.
+ * 
+ * @type {Boolean}
+ * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
+ * @default false
+ * @product highcharts
+ * @apioption series.waterfall.data.isSum
+ */

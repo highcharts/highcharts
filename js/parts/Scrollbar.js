@@ -27,14 +27,12 @@ var addEvent = H.addEvent,
 
 /**
  * 
- * The scrollbar is a means of panning over the X axis of a chart.
+ * The scrollbar is a means of panning over the X axis of a stock chart.
  * 
- * In [styled mode](http://www.highcharts.com/docs/chart-design-
- * and-style/style-by-css), all the presentational options for the
- * scrollbar are replaced by the classes `.highcharts-scrollbar-
- * thumb`, `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-
- * button`, `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-
- * track`.
+ * In styled mode, all the presentational options for the
+ * scrollbar are replaced by the classes `.highcharts-scrollbar-thumb`,
+ * `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`,
+ * `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
  * 
  * @product highstock
  * @optionparent scrollbar
@@ -59,7 +57,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 0
+	 * @default 0
 	 * @product highstock
 	 */
 	barBorderRadius: 0,
@@ -69,7 +67,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 0
+	 * @default 0
 	 * @product highstock
 	 */
 	buttonBorderRadius: 0,
@@ -86,6 +84,8 @@ var defaultScrollbarOptions =  {
 	liveRedraw: svg && !isTouchDevice,
 
 	/**
+	 * The margin between the scrollbar and its axis when the scrollbar is
+	 * applied directly to an axis.
 	 */
 	margin: 10,
 
@@ -93,7 +93,7 @@ var defaultScrollbarOptions =  {
 	 * The minimum width of the scrollbar.
 	 * 
 	 * @type {Number}
-	 * @default {all} 6
+	 * @default 6
 	 * @since 1.2.5
 	 * @product highstock
 	 */
@@ -101,11 +101,10 @@ var defaultScrollbarOptions =  {
 	//showFull: true,
 	//size: null,
 
-	/**
-	 */
 	step: 0.2,
 
 	/**
+	 * The z index of the scrollbar group.
 	 */
 	zIndex: 3,
 	/*= if (build.classic) { =*/
@@ -115,7 +114,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #cccccc
+	 * @default #cccccc
 	 * @product highstock
 	 */
 	barBackgroundColor: '${palette.neutralColor20}',
@@ -125,7 +124,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 1
+	 * @default 1
 	 * @product highstock
 	 */
 	barBorderWidth: 1,
@@ -134,7 +133,7 @@ var defaultScrollbarOptions =  {
 	 * The color of the scrollbar's border.
 	 * 
 	 * @type {Color}
-	 * @default {all} #cccccc
+	 * @default #cccccc
 	 * @product highstock
 	 */
 	barBorderColor: '${palette.neutralColor20}',
@@ -144,7 +143,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #333333
+	 * @default #333333
 	 * @product highstock
 	 */
 	buttonArrowColor: '${palette.neutralColor80}',
@@ -154,7 +153,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #e6e6e6
+	 * @default #e6e6e6
 	 * @product highstock
 	 */
 	buttonBackgroundColor: '${palette.neutralColor10}',
@@ -164,7 +163,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #cccccc
+	 * @default #cccccc
 	 * @product highstock
 	 */
 	buttonBorderColor: '${palette.neutralColor20}',
@@ -174,7 +173,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 1
+	 * @default 1
 	 * @product highstock
 	 */
 	buttonBorderWidth: 1,
@@ -183,7 +182,7 @@ var defaultScrollbarOptions =  {
 	 * The color of the small rifles in the middle of the scrollbar.
 	 * 
 	 * @type {Color}
-	 * @default {all} #333333
+	 * @default #333333
 	 * @product highstock
 	 */
 	rifleColor: '${palette.neutralColor80}',
@@ -193,7 +192,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #f2f2f2
+	 * @default #f2f2f2
 	 * @product highstock
 	 */
 	trackBackgroundColor: '${palette.neutralColor5}',
@@ -203,7 +202,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} #f2f2f2
+	 * @default #f2f2f2
 	 * @product highstock
 	 */
 	trackBorderColor: '${palette.neutralColor5}',
@@ -213,7 +212,7 @@ var defaultScrollbarOptions =  {
 	 * 
 	 * @type {Number}
 	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
-	 * @default {all} 1
+	 * @default 1
 	 * @product highstock
 	 */
 	trackBorderWidth: 1
@@ -838,8 +837,16 @@ wrap(Axis.prototype, 'init', function (proceed) {
 */
 wrap(Axis.prototype, 'render', function (proceed) {
 	var axis = this,		
-		scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, axis.dataMin),
-		scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, axis.dataMax),
+		scrollMin = Math.min(
+			pick(axis.options.min, axis.min),
+			axis.min,
+			pick(axis.dataMin, axis.min) // #6930
+		),
+		scrollMax = Math.max(
+			pick(axis.options.max, axis.max),
+			axis.max,
+			pick(axis.dataMax, axis.max) // #6930
+		),
 		scrollbar = axis.scrollbar,
 		titleOffset = axis.titleOffset || 0,
 		offsetsIndex,

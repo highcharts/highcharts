@@ -30,7 +30,7 @@ QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
     );
 });
 
-QUnit.test('Correct float (#6085', function (assert) {
+QUnit.test('Correct float (#6085)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             height: 400
@@ -59,6 +59,46 @@ QUnit.test('Correct float (#6085', function (assert) {
     assert.ok(
         chart.yAxis[1].tickPositions.toString().length < 28,
         'No long floating points here'
+    );
+
+});
+
+QUnit.test('Width set from label style (#7028)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            renderTo: 'container',
+            type: 'bar',
+            marginLeft: 120
+        },
+        xAxis: {
+            categories: [
+                'Fernsehen, Radio', 'Zeitungen, Zeitschriften',
+                'Internet', 'Infobroschüren und -stände der Parteien',
+                'Besuch von Partei-veranstaltungen'
+            ],
+            labels: {
+                style: {
+                    width: '40px',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis'
+                }
+            }
+        },
+        yAxis: {
+            visible: false
+        },
+        legend: {
+            enabled: false
+        },
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0]
+        }]
+
+    });
+
+    assert.ok(
+        chart.xAxis[0].ticks[3].label.getBBox().width <= 30, //40 - padding
+        'Label width set correctly'
     );
 
 });

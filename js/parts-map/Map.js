@@ -30,7 +30,7 @@ extend(defaultOptions.lang, {
 // Set the default map navigation options
 
 /** 
- * @products highmaps
+ * @product highmaps
  * @optionparent mapNavigation 
  */
 defaultOptions.mapNavigation = {
@@ -52,7 +52,7 @@ defaultOptions.mapNavigation = {
 		 * 
 		 * @validvalue ["plotBox", "spacingBox"]
 		 * @type {String}
-		 * @default {all} plotBox
+		 * @default plotBox
 		 * @product highmaps
 		 */
 		alignTo: 'plotBox',
@@ -62,7 +62,7 @@ defaultOptions.mapNavigation = {
 		 * 
 		 * @validvalue ["left", "center", "right"]
 		 * @type {String}
-		 * @default {all} left
+		 * @default left
 		 * @product highmaps
 		 */
 		align: 'left',
@@ -73,7 +73,7 @@ defaultOptions.mapNavigation = {
 		 * 
 		 * @validvalue ["top", "middle", "bottom"]
 		 * @type {String}
-		 * @default {all} bottom
+		 * @default bottom
 		 * @product highmaps
 		 */
 		verticalAlign: 'top',
@@ -82,7 +82,7 @@ defaultOptions.mapNavigation = {
 		 * The X offset of the buttons relative to its `align` setting.
 		 * 
 		 * @type {Number}
-		 * @default {all} 0
+		 * @default 0
 		 * @product highmaps
 		 */
 		x: 0,
@@ -91,7 +91,7 @@ defaultOptions.mapNavigation = {
 		 * The width of the map navigation buttons.
 		 * 
 		 * @type {Number}
-		 * @default {all} 18
+		 * @default 18
 		 * @product highmaps
 		 */
 		width: 18,
@@ -100,7 +100,7 @@ defaultOptions.mapNavigation = {
 		 * The pixel height of the map navigation buttons.
 		 * 
 		 * @type {Number}
-		 * @default {all} 18
+		 * @default 18
 		 * @product highmaps
 		 */
 		height: 18,
@@ -109,7 +109,7 @@ defaultOptions.mapNavigation = {
 		 * Padding for the navigation buttons.
 		 * 
 		 * @type {Number}
-		 * @default {all} 5
+		 * @default 5
 		 * @since 5.0.0
 		 * @product highmaps
 		 */
@@ -120,22 +120,16 @@ defaultOptions.mapNavigation = {
 		 * Text styles for the map navigation buttons. Defaults to
 		 * 
 		 * <pre>{
-		 * fontSize: '15px',
-		 * fontWeight: 'bold',
-		 * textAlign: 'center'
+		 *     fontSize: '15px',
+		 *     fontWeight: 'bold',
+		 *     textAlign: 'center'
 		 * }</pre>
 		 * 
 		 * @type {CSSObject}
 		 * @product highmaps
 		 */
 		style: {
-
-			/**
-			 */
 			fontSize: '15px',
-
-			/**
-			 */
 			fontWeight: 'bold'
 		},
 
@@ -146,14 +140,12 @@ defaultOptions.mapNavigation = {
 		 * objects.
 		 * 
 		 * @type {Object}
-		 * @sample {highmaps} maps/mapnavigation/button-theme/ Themed navigation buttons
+		 * @sample {highmaps} maps/mapnavigation/button-theme/
+		 *         Themed navigation buttons
 		 * @product highmaps
 		 */
 		theme: {
 			'stroke-width': 1,
-
-			/**
-			 */
 			'text-align': 'center'
 		}
 		/*= } =*/
@@ -202,7 +194,7 @@ defaultOptions.mapNavigation = {
 			 * given by [lang.zoomIn](#lang.zoomIn).
 			 * 
 			 * @type {String}
-			 * @default {all} +
+			 * @default +
 			 * @product highmaps
 			 */
 			text: '+',
@@ -211,7 +203,7 @@ defaultOptions.mapNavigation = {
 			 * The position of the zoomIn button relative to the vertical alignment.
 			 * 
 			 * @type {Number}
-			 * @default {all} 0
+			 * @default 0
 			 * @product highmaps
 			 */
 			y: 0
@@ -233,7 +225,7 @@ defaultOptions.mapNavigation = {
 			 * Click handler for the button. Defaults to:
 			 * 
 			 * <pre>function () {
-			 * this.mapZoom(2);
+			 *     this.mapZoom(2);
 			 * }</pre>
 			 * 
 			 * @type {Function}
@@ -248,7 +240,7 @@ defaultOptions.mapNavigation = {
 			 * given by [lang.zoomOut](#lang.zoomIn).
 			 * 
 			 * @type {String}
-			 * @default {all} -
+			 * @default -
 			 * @product highmaps
 			 */
 			text: '-',
@@ -257,7 +249,7 @@ defaultOptions.mapNavigation = {
 			 * The position of the zoomOut button relative to the vertical alignment.
 			 * 
 			 * @type {Number}
-			 * @default {all} 28
+			 * @default 28
 			 * @product highmaps
 			 */
 			y: 28
@@ -269,7 +261,7 @@ defaultOptions.mapNavigation = {
 	 *  while with 2, one mousewheel delta will zoom in 50%.
 	 * 
 	 * @type {Number}
-	 * @default {all} 1.1
+	 * @default 1.1
 	 * @since 4.2.4
 	 * @product highmaps
 	 */
@@ -374,7 +366,7 @@ if (Renderer === VMLRenderer) {
  * @param  {Function} callback
  *         A function to execute when the chart object is finished loading and
  *         rendering. In most cases the chart is built in one thread, but in
- *         Internet Explorer version 8 or less the chart is sometimes initiated
+ *         Internet Explorer version 8 or less the chart is sometimes initialized
  *         before the document is ready, and in these cases the chart object
  *         will not be finished synchronously. As a consequence, code that
  *         relies on the newly built Chart object should always run in the
