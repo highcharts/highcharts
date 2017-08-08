@@ -46,7 +46,7 @@ H.setOptions({
 				// connector
 				connectorNeighbourDistance: 24,
 				onArea: null,
-				styles: {
+				style: {
 					fontWeight: 'bold'
 				}
 
@@ -454,7 +454,7 @@ Chart.prototype.drawSeriesLabels = function () {
 					.label(series.name, 0, -9999, 'connector')
 					.css(extend({
 						color: series.color
-					}, series.options.label.styles))
+					}, series.options.label.style))
 					.attr({
 						padding: 0,
 						opacity: chart.renderer.forExport ? 1 : 0,
