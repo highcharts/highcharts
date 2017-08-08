@@ -4,7 +4,8 @@
  * License: www.highcharts.com/license
  */
 /**
- * EXPERIMENTAL Highcharts module to place labels next to a series in a natural position.
+ * EXPERIMENTAL Highcharts module to place labels next to a series in a natural
+ * position.
  *
  * TODO:
  * - add column support (box collision detection, boxesToAvoid logic)
@@ -38,10 +39,12 @@ H.setOptions({
 		series: {
 			label: {
 				enabled: true,
-				// Allow labels to be placed distant to the graph if necessary, and
-				// draw a connector line to the graph
+				// Allow labels to be placed distant to the graph if necessary,
+				// and draw a connector line to the graph
 				connectorAllowed: true,
-				connectorNeighbourDistance: 24, // If the label is closer than this to a neighbour graph, draw a connector
+				// If the label is closer than this to a neighbour graph, draw a
+				// connector
+				connectorNeighbourDistance: 24,
 				onArea: null,
 				styles: {
 					fontWeight: 'bold'
@@ -75,8 +78,8 @@ function intersectLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 function boxIntersectLine(x, y, w, h, x1, y1, x2, y2) {
 	return (
 		intersectLine(x, y, x + w, y,		 x1, y1, x2, y2) || // top of label
-		intersectLine(x + w, y, x + w, y + h, x1, y1, x2, y2) || // right of label
-		intersectLine(x, y + h, x + w, y + h, x1, y1, x2, y2) || // bottom of label
+		intersectLine(x + w, y, x + w, y + h, x1, y1, x2, y2) || // right
+		intersectLine(x, y + h, x + w, y + h, x1, y1, x2, y2) || // bottom
 		intersectLine(x, y, x, y + h,		 x1, y1, x2, y2)	// left of label
 	);
 }
@@ -138,7 +141,6 @@ Series.prototype.getPointsOnGraph = function () {
 		deltaX,
 		deltaY,
 		delta,
-		chartY,
 		len,
 		n,
 		j,
@@ -189,12 +191,14 @@ Series.prototype.getPointsOnGraph = function () {
 
 			// Absolute coordinates so we can compare different panes
 			point.chartX = paneLeft + point.plotX;
-			chartY = point.plotY;
+			point.chartY = paneTop + point.plotY;
 			if (onArea) {
 				// Vertically centered inside area
-				chartY = (chartY + pick(point.yBottom, translatedThreshold)) / 2;
+				point.chartCenterY = paneTop + (
+					point.plotY +
+					pick(point.yBottom, translatedThreshold)
+				) /	2;
 			}
-			point.chartY = paneTop + chartY;
 
 			// Add interpolated points
 			if (i > 0) {
@@ -211,6 +215,9 @@ Series.prototype.getPointsOnGraph = function () {
 								(point.chartX - last.chartX) * (j / n),
 							chartY: last.chartY +
 								(point.chartY - last.chartY) * (j / n),
+							chartCenterY: last.chartCenterY +
+								(point.chartCenterY - last.chartCenterY) *
+								(j / n),
 							plotX: last.plotX +
 								(point.plotX - last.plotX) * (j / n),
 							plotY: last.plotY +
@@ -255,9 +262,9 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 	}
 
 	/**
-	 * Get the weight in order to determine the ideal position. Larger distance to
-	 * other series gives more weight. Smaller distance to the actual point (connector points only)
-	 * gives more weight.
+	 * Get the weight in order to determine the ideal position. Larger distance
+	 * to other series gives more weight. Smaller distance to the actual point
+	 * (connector points only) gives more weight.
 	 */
 	function getWeight(distToOthersSquared, distToPointSquared) {
 		return distToOthersSquared - distToPointSquared;
@@ -282,10 +289,8 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 		points = series.interpolatedPoints;
 		if (series.visible && points) {
 			for (j = 1; j < points.length; j += 1) {
-				// If any of the box sides intersect with the line, return. On
-				// area series, allow the label to intersect with the area's own
-				// center line.
-				if ((!onArea || this !== series) && boxIntersectLine(
+				// If any of the box sides intersect with the line, return.
+				if (boxIntersectLine(
 						x,
 						y,
 						bBox.width,
@@ -313,29 +318,71 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 					);
 				}
 
-				// Find the squared distance from the center of the label
-				if (this !== series) {
+				// Find the squared distance from the center of the label. On
+				// area series, also find the greatest distance to its own
+				// graph.
+				if (this !== series || onArea) {
 					distToOthersSquared = Math.min(
 						distToOthersSquared,
-						Math.pow(x + bBox.width / 2 - points[j].chartX, 2) + Math.pow(y + bBox.height / 2 - points[j].chartY, 2),
-						Math.pow(x - points[j].chartX, 2) + Math.pow(y - points[j].chartY, 2),
-						Math.pow(x + bBox.width - points[j].chartX, 2) + Math.pow(y - points[j].chartY, 2),
-						Math.pow(x + bBox.width - points[j].chartX, 2) + Math.pow(y + bBox.height - points[j].chartY, 2),
-						Math.pow(x - points[j].chartX, 2) + Math.pow(y + bBox.height - points[j].chartY, 2)
+						(
+							Math.pow(x + bBox.width / 2 - points[j].chartX, 2) +
+							Math.pow(y + bBox.height / 2 - points[j].chartY, 2)
+						),
+						(
+							Math.pow(x - points[j].chartX, 2) +
+							Math.pow(y - points[j].chartY, 2)
+						),
+						(
+							Math.pow(x + bBox.width - points[j].chartX, 2) +
+							Math.pow(y - points[j].chartY, 2)
+						),
+						(
+							Math.pow(x + bBox.width - points[j].chartX, 2) +
+							Math.pow(y + bBox.height - points[j].chartY, 2)
+						),
+						(
+							Math.pow(x - points[j].chartX, 2) +
+							Math.pow(y + bBox.height - points[j].chartY, 2)
+						)
 					);
 				}
 			}
 
 			// Do we need a connector? 
-			if (connectorEnabled && this === series && ((checkDistance && !withinRange) || 
-					distToOthersSquared < Math.pow(this.options.label.connectorNeighbourDistance, 2))) {
+			if (
+				!onArea &&
+				connectorEnabled &&
+				this === series &&
+				(
+					(checkDistance && !withinRange) || 
+					distToOthersSquared < Math.pow(
+						this.options.label.connectorNeighbourDistance,
+						2
+					)
+				)
+			) {
 				for (j = 1; j < points.length; j += 1) {
 					dist = Math.min(
-						Math.pow(x + bBox.width / 2 - points[j].chartX, 2) + Math.pow(y + bBox.height / 2 - points[j].chartY, 2),
-						Math.pow(x - points[j].chartX, 2) + Math.pow(y - points[j].chartY, 2),
-						Math.pow(x + bBox.width - points[j].chartX, 2) + Math.pow(y - points[j].chartY, 2),
-						Math.pow(x + bBox.width - points[j].chartX, 2) + Math.pow(y + bBox.height - points[j].chartY, 2),
-						Math.pow(x - points[j].chartX, 2) + Math.pow(y + bBox.height - points[j].chartY, 2)
+						(
+							Math.pow(x + bBox.width / 2 - points[j].chartX, 2) +
+							Math.pow(y + bBox.height / 2 - points[j].chartY, 2)
+						),
+						(
+							Math.pow(x - points[j].chartX, 2) +
+							Math.pow(y - points[j].chartY, 2)
+						),
+						(
+							Math.pow(x + bBox.width - points[j].chartX, 2) +
+							Math.pow(y - points[j].chartY, 2)
+						),
+						(
+							Math.pow(x + bBox.width - points[j].chartX, 2) +
+							Math.pow(y + bBox.height - points[j].chartY, 2)
+						),
+						(
+							Math.pow(x - points[j].chartX, 2) +
+							Math.pow(y + bBox.height - points[j].chartY, 2)
+						)
 					);
 					if (dist < distToPointSquared) {
 						distToPointSquared = dist;
@@ -427,21 +474,11 @@ Chart.prototype.drawSeriesLabels = function () {
 			// of chart
 			for (i = points.length - 1; i > 0; i -= 1) {
 
-				/* Show the control points
-				chart.renderer.circle(points[i].chartX, points[i].chartY, 3)
-					.attr({
-						'stroke': 'red',
-						'stroke-width': 2,
-						'zIndex': 10
-					})
-					.add();
-				// */
-
 				if (onArea) {
 
 					// Centered
 					x = points[i].chartX - bBox.width / 2;
-					y = points[i].chartY - bBox.height / 2;
+					y = points[i].chartCenterY - bBox.height / 2;
 					if (insidePane(x, y, bBox)) {
 						best = series.checkClearPoint(
 							x,
