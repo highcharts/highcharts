@@ -3,7 +3,8 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'streamgraph',
-        marginBottom: 30
+        marginBottom: 30,
+        zoomType: 'x'
     },
 
     // Make sure connected countries have similar colors
