@@ -148,7 +148,8 @@ Series.prototype.getPointsOnGraph = function () {
 		inverted = this.chart.inverted,
 		paneLeft = inverted ? this.yAxis.pos : this.xAxis.pos,
 		paneTop = inverted ? this.xAxis.pos : this.yAxis.pos,
-		onArea = pick(this.options.label.onArea, !!this.area);
+		onArea = pick(this.options.label.onArea, !!this.area),
+		translatedThreshold = this.yAxis.getThreshold(this.options.threshold);
 
 	// For splines, get the point at length (possible caveat: peaks are not
 	// correctly detected)
@@ -191,7 +192,7 @@ Series.prototype.getPointsOnGraph = function () {
 			chartY = point.plotY;
 			if (onArea) {
 				// Vertically centered inside area
-				chartY = (chartY + point.yBottom) / 2;
+				chartY = (chartY + pick(point.yBottom, translatedThreshold)) / 2;
 			}
 			point.chartY = paneTop + chartY;
 
@@ -425,6 +426,17 @@ Chart.prototype.drawSeriesLabels = function () {
 			// Ideal positions are centered above or below a point on right side
 			// of chart
 			for (i = points.length - 1; i > 0; i -= 1) {
+
+				/* Show the control points
+				chart.renderer.circle(points[i].chartX, points[i].chartY, 3)
+					.attr({
+						'stroke': 'red',
+						'stroke-width': 2,
+						'zIndex': 10
+					})
+					.add();
+				// */
+
 				if (onArea) {
 
 					// Centered
