@@ -30,6 +30,7 @@ RewriteRule (.*?)funnel.js $1funnel.src.js
 RewriteRule (.*?)gantt.js $1gantt.src.js
 RewriteRule (.*?)grid-axis.js $1grid-axis.src.js
 RewriteRule (.*?)heatmap.js $1heatmap.src.js
+RewriteRule (.*?)item-series.js $1item-series.src.js
 RewriteRule (.*?)map.js $1map.src.js
 RewriteRule (.*?)no-data-to-display.js $1no-data-to-display.src.js
 RewriteRule (.*?)offline-exporting.js $1offline-exporting.src.js
