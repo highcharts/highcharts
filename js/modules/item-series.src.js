@@ -8,7 +8,6 @@
 
 /**
  * @todo
- * - Stacking
  * - Check update, remove etc.
  * - Custom icons like persons, carts etc. Either as images, font icons or
  *   Highcharts symbols.
@@ -19,6 +18,7 @@ import '../parts/Utilities.js';
 import '../parts/Series.js';
 var seriesType = H.seriesType,
 	each = H.each,
+	pick = H.pick,
 	stop = H.stop;
 
 seriesType('item', 'column', {
@@ -29,7 +29,7 @@ seriesType('item', 'column', {
 			renderer = series.chart.renderer;
 
 		each(this.points, function (point) {
-			var i,
+			var y,
 				attr,
 				graphics,
 				pointAttr;
@@ -49,23 +49,23 @@ seriesType('item', 'column', {
 					point.graphic = renderer.g().add(series.group);
 				}
 
-				for (i = 1; i <= point.y; i++) {
+				for (y = pick(point.stackY, point.y); y > 0; y--) {
 					attr = {
-						x: point.plotX,
-						y: series.yAxis.toPixels(i, true),
+						x: point.barX + point.pointWidth / 2,
+						y: series.yAxis.toPixels(y, true),
 						r: Math.min(
-							-series.pointXOffset,
+							point.pointWidth / 2,
 							(
 								(series.yAxis.transA / 2) *
 								(1 - series.options.itemPadding)
 							)
 						)
 					};
-					if (graphics[i]) {
-						stop(graphics[i]);
-						graphics[i].attr(attr);
+					if (graphics[y]) {
+						stop(graphics[y]);
+						graphics[y].attr(attr);
 					} else {
-						graphics[i] = renderer.circle(attr)
+						graphics[y] = renderer.circle(attr)
 							.attr(pointAttr)
 							.add(point.graphic);
 					}

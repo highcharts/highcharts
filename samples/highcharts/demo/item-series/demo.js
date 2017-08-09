@@ -13,10 +13,6 @@ Highcharts.chart('container', {
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
-    legend: {
-        enabled: false
-    },
-
     yAxis: {
         gridLineWidth: 0,
         labels: {
@@ -27,10 +23,20 @@ Highcharts.chart('container', {
         }
     },
 
+    plotOptions: {
+        series: {
+            stacking: 'normal'
+        }
+    },
+
     series: [{
         name: 'Items bought',
         data: [5, 3, 4],
-        borderWidth: 0
+        color: 'green'
+    }, {
+        name: 'Items sold',
+        data: [0, 2, 1],
+        color: 'red'
     }]
 
 });
