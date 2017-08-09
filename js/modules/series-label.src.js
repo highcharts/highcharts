@@ -289,33 +289,41 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 		points = series.interpolatedPoints;
 		if (series.visible && points) {
 			for (j = 1; j < points.length; j += 1) {
-				// If any of the box sides intersect with the line, return.
-				if (boxIntersectLine(
-						x,
-						y,
-						bBox.width,
-						bBox.height,
-						points[j - 1].chartX,
-						points[j - 1].chartY,
-						points[j].chartX,
-						points[j].chartY
-					)) {
-					return false;
-				}
+				
+				if (
+					// To avoid processing, only check intersection if the X
+					// values are close to the box.
+					points[j].chartX >= x - leastDistance &&
+					points[j - 1].chartX <= x + bBox.width + leastDistance
+				) {
+					// If any of the box sides intersect with the line, return.
+					if (boxIntersectLine(
+							x,
+							y,
+							bBox.width,
+							bBox.height,
+							points[j - 1].chartX,
+							points[j - 1].chartY,
+							points[j].chartX,
+							points[j].chartY
+						)) {
+						return false;
+					}
 
-				// But if it is too far away (a padded box doesn't intersect),
-				// also return
-				if (this === series && !withinRange && checkDistance) {
-					withinRange = boxIntersectLine(
-						x - leastDistance,
-						y - leastDistance,
-						bBox.width + 2 * leastDistance,
-						bBox.height + 2 * leastDistance,
-						points[j - 1].chartX,
-						points[j - 1].chartY,
-						points[j].chartX,
-						points[j].chartY
-					);
+					// But if it is too far away (a padded box doesn't
+					// intersect), also return.
+					if (this === series && !withinRange && checkDistance) {
+						withinRange = boxIntersectLine(
+							x - leastDistance,
+							y - leastDistance,
+							bBox.width + 2 * leastDistance,
+							bBox.height + 2 * leastDistance,
+							points[j - 1].chartX,
+							points[j - 1].chartY,
+							points[j].chartX,
+							points[j].chartY
+						);
+					}
 				}
 
 				// Find the squared distance from the center of the label. On
