@@ -529,7 +529,10 @@ seriesType('column', 'line', {
 		each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
 				safeDistance = 999 + Math.abs(yBottom),
-				plotY = Math.min(Math.max(-safeDistance, point.plotY), yAxis.len + safeDistance), // Don't draw too far outside plot area (#1303, #2241, #4264)
+				plotY = Math.min(
+					Math.max(-safeDistance, point.plotY),
+					yAxis.len + safeDistance
+				), // Don't draw too far outside plot area (#1303, #2241, #4264)
 				barX = point.plotX + pointXOffset,
 				barW = seriesBarW,
 				barY = Math.min(plotY, yBottom),
@@ -537,14 +540,23 @@ seriesType('column', 'line', {
 				barH = Math.max(plotY, yBottom) - barY;
 
 			// Handle options.minPointLength
-			if (Math.abs(barH) < minPointLength) {
-				if (minPointLength) {
-					barH = minPointLength;
-					up = (!yAxis.reversed && !point.negative) || (yAxis.reversed && point.negative);
-					barY = Math.abs(barY - translatedThreshold) > minPointLength ? // stacked
-							yBottom - minPointLength : // keep position
-							translatedThreshold - (up ? minPointLength : 0); // #1485, #4051
+			if (minPointLength && Math.abs(barH) < minPointLength) {
+				barH = minPointLength;
+				up = (!yAxis.reversed && !point.negative) ||
+					(yAxis.reversed && point.negative);
+
+				// Reverse zeros if there's no positive value in the series
+				// in visible range (#7046)
+				if (point.y === 0 && series.dataMax <= 0) {
+					up = !up;
 				}
+
+				// If stacked...
+				barY = Math.abs(barY - translatedThreshold) > minPointLength ?
+						// ...keep position
+						yBottom - minPointLength :
+						// #1485, #4051
+						translatedThreshold - (up ? minPointLength : 0);
 			}
 
 			// Cache for access in polar
