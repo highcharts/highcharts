@@ -122,6 +122,8 @@ Highcharts.chart('container', {
     plotOptions: {
         series: {
             label: {
+                minFontSize: 5,
+                maxFontSize: 15,
                 style: {
                     color: 'rgba(255,255,255,0.75)'
                 }

@@ -45,6 +45,8 @@ H.setOptions({
 				// If the label is closer than this to a neighbour graph, draw a
 				// connector
 				connectorNeighbourDistance: 24,
+				minFontSize: null,
+				maxFontSize: null,
 				onArea: null,
 				style: {
 					fontWeight: 'bold'
@@ -234,6 +236,18 @@ Series.prototype.getPointsOnGraph = function () {
 		}
 	}
 	return interpolated;
+};
+
+/**
+ * Overridable function to return series-specific font sizes for the labels. By
+ * default it returns bigger font sizes for series with the greater sum of y
+ * values.
+ */
+Series.prototype.labelFontSize = function (minFontSize, maxFontSize) {
+	return minFontSize + (
+		(this.sum / this.chart.labelSeriesMaxSum) * 
+		(maxFontSize - minFontSize)
+	) + 'px';
 };
 
 /**
@@ -447,14 +461,17 @@ Chart.prototype.drawSeriesLabels = function () {
 			clearPoint,
 			i,
 			best,
+			labelOptions = series.options.label,
 			inverted = chart.inverted,
 			paneLeft = inverted ? series.yAxis.pos : series.xAxis.pos,
 			paneTop = inverted ? series.xAxis.pos : series.yAxis.pos,
 			paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
 			paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
 			points = series.interpolatedPoints,
-			onArea = pick(series.options.label.onArea, !!series.area),
-			label = series.labelBySeries;
+			onArea = pick(labelOptions.onArea, !!series.area),
+			label = series.labelBySeries,
+			minFontSize = labelOptions.minFontSize,
+			maxFontSize = labelOptions.maxFontSize;
 
 		function insidePane(x, y, bBox) {
 			return x > paneLeft && x <= paneLeft + paneWidth - bBox.width && 
@@ -467,7 +484,16 @@ Chart.prototype.drawSeriesLabels = function () {
 					.label(series.name, 0, -9999, 'connector')
 					.css(extend({
 						color: series.color
-					}, series.options.label.style))
+					}, series.options.label.style));
+
+				// Adapt label sizes to the sum of the data
+				if (minFontSize && maxFontSize) {
+					label.css({
+						fontSize: series.labelFontSize(minFontSize, maxFontSize)
+					});
+				}
+
+				label
 					.attr({
 						padding: 0,
 						opacity: chart.renderer.forExport ? 1 : 0,
@@ -663,6 +689,7 @@ function drawLabels(proceed) {
 	proceed.apply(chart, [].slice.call(arguments, 1));
 
 	chart.labelSeries = [];
+	chart.labelSeriesMaxSum = 0;
 
 	clearTimeout(chart.seriesLabelTimer);
 
@@ -674,6 +701,16 @@ function drawLabels(proceed) {
 
 		if (options.enabled && series.visible && (series.graph || series.area)) {
 			chart.labelSeries.push(series);
+
+			if (options.minFontSize && options.maxFontSize) {
+				series.sum = series.yData.reduce(function (pv, cv) {
+					return (pv || 0) + (cv || 0);
+				}, 0);
+				chart.labelSeriesMaxSum = Math.max(
+					chart.labelSeriesMaxSum,
+					series.sum
+				);
+			}
 
 			// The labels are processing heavy, wait until the animation is done
 			if (initial) {
