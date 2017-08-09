@@ -663,9 +663,10 @@ H.Series = H.seriesType('line', null, { // base series options
 
 	/**
 	 * Whether to stack the values of each series on top of each other.
-	 * Possible values are null to disable, "normal" to stack by value or
-	 * "percent". When stacking is enabled, data must be sorted in ascending
-	 * X order.
+	 * Possible values are `null` to disable, `"normal"` to stack by value or
+	 * `"percent"`. When stacking is enabled, data must be sorted in ascending
+	 * X order. A special stacking option is with the streamgraph series type,
+	 * where the stacking option is set to `"stream"`.
 	 * 
 	 * @validvalue [null, "normal", "percent"]
 	 * @type {String}
