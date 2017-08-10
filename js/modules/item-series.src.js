@@ -18,8 +18,7 @@ import '../parts/Utilities.js';
 import '../parts/Series.js';
 var seriesType = H.seriesType,
 	each = H.each,
-	pick = H.pick,
-	stop = H.stop;
+	pick = H.pick;
 
 seriesType('item', 'column', {
 	itemPadding: 0.2
@@ -29,10 +28,12 @@ seriesType('item', 'column', {
 			renderer = series.chart.renderer;
 
 		each(this.points, function (point) {
-			var y,
+			var yPos,
 				attr,
 				graphics,
-				pointAttr;
+				itemY,
+				pointAttr,
+				yTop;
 
 			point.graphics = graphics = point.graphics || {};
 			pointAttr = point.pointAttr ?
@@ -49,10 +50,12 @@ seriesType('item', 'column', {
 					point.graphic = renderer.g().add(series.group);
 				}
 
-				for (y = pick(point.stackY, point.y); y > 0; y--) {
+				itemY = point.y;
+				yTop = pick(point.stackY, point.y);
+				for (yPos = yTop; yPos > yTop - point.y; yPos--) {
 					attr = {
 						x: point.barX + point.pointWidth / 2,
-						y: series.yAxis.toPixels(y, true),
+						y: series.yAxis.toPixels(yPos, true),
 						r: Math.min(
 							point.pointWidth / 2,
 							(
@@ -61,16 +64,25 @@ seriesType('item', 'column', {
 							)
 						)
 					};
-					if (graphics[y]) {
-						stop(graphics[y]);
-						graphics[y].attr(attr);
+					if (graphics[itemY]) {
+						graphics[itemY].animate(attr);
 					} else {
-						graphics[y] = renderer.circle(attr)
+						graphics[itemY] = renderer.circle(attr)
 							.attr(pointAttr)
 							.add(point.graphic);
 					}
+					graphics[itemY].isActive = true;
+					itemY--;
 				}
 			}
+			H.objectEach(graphics, function (graphic, key) {
+				if (!graphic.isActive) {
+					graphic.destroy();
+					delete graphic[key];
+				} else {
+					graphic.isActive = false;
+				}
+			});
 		});
 
 	}
