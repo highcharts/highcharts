@@ -1,4 +1,12 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'Highcharts Annotations'
+    },
+
+    subtitle: {
+        text: 'Custom markers'
+    },
+
     chart: {
        type: 'scatter'
     },
