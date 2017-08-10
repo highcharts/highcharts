@@ -8,7 +8,7 @@ Highcharts.chart('container', {
     },
 
     chart: {
-       type: 'scatter'
+        type: 'scatter'
     },
 
     series: [{
@@ -27,8 +27,8 @@ Highcharts.chart('container', {
                 children: [{
                     tagName: 'path',
                     attrs: {
-                        d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z',
-                        // fill: 'black' 
+                        d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
+                        // fill: 'black'
                         // if the child does not have define fill/stroke attributes it inherits fill or stroke from the referencer element
                     }
                 }],
@@ -36,7 +36,7 @@ Highcharts.chart('container', {
                 markerHeight: 40,
                 refX: 20,
                 refY: 5
-            }, 
+            },
             marker1: {
                 children: [{
                     tagName: 'circle',
@@ -73,7 +73,7 @@ Highcharts.chart('container', {
 
     annotations: [{
         shapes: [{
-            points: [{x: 100, y: 100}, {x: 200, y: 100}, '1'],
+            points: [{ x: 100, y: 100 }, { x: 200, y: 100 }, '1'],
             type: 'path',
             fill: 'none',
             stroke: 'red',

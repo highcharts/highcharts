@@ -46,7 +46,7 @@ Highcharts.chart('container', {
             borderRadius: 5,
             backgroundColor: 'rgba(252, 255, 197, 0.7)',
             borderWidth: 1,
-            borderColor: '#AAA',
+            borderColor: '#AAA'
         }
     }]
 });

@@ -32,7 +32,7 @@ Highcharts.chart('container', {
             point: '2'
         }, {
             x: 50,
-            point: '3',
+            point: '3'
         }, {
             distance: 20,
             point: '4'

@@ -1,7 +1,6 @@
 var labelsNumber = 40;
 
 Highcharts.chart('container', {
-    
     title: {
         text: 'Highcharts Annotations'
     },

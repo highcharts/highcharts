@@ -35,7 +35,7 @@ Highcharts.chart('container', {
         }],
         labelOptions: {
             formatter: function () {
-                return (this.series.dataMax - this.y).toFixed(2)
+                return (this.series.dataMax - this.y).toFixed(2);
             }
         }
     }]
