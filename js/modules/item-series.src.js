@@ -16,16 +16,25 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
-var seriesType = H.seriesType,
-	each = H.each,
-	pick = H.pick;
+var each = H.each,
+	extend = H.extend,
+	pick = H.pick,
+	seriesType = H.seriesType;
 
 seriesType('item', 'column', {
-	itemPadding: 0.2
+	itemPadding: 0.2,
+	marker: {
+		symbol: 'circle',
+		states: {
+			hover: {},
+			select: {}
+		}
+	}
 }, {
 	drawPoints: function () {
 		var series = this,
-			renderer = series.chart.renderer;
+			renderer = series.chart.renderer,
+			seriesMarkerOptions = this.options.marker;
 
 		each(this.points, function (point) {
 			var yPos,
@@ -33,6 +42,12 @@ seriesType('item', 'column', {
 				graphics,
 				itemY,
 				pointAttr,
+				pointMarkerOptions = point.marker || {},
+				symbol = (
+					pointMarkerOptions.symbol ||
+					seriesMarkerOptions.symbol
+				),
+				size,
 				yTop;
 
 			point.graphics = graphics = point.graphics || {};
@@ -47,28 +62,32 @@ seriesType('item', 'column', {
 			if (point.y !== null) {
 
 				if (!point.graphic) {
-					point.graphic = renderer.g().add(series.group);
+					point.graphic = renderer.g('point').add(series.group);
 				}
 
 				itemY = point.y;
 				yTop = pick(point.stackY, point.y);
+				size = Math.min(
+					point.pointWidth,
+					(
+						series.yAxis.transA *
+						(1 - series.options.itemPadding)
+					)
+				);
 				for (yPos = yTop; yPos > yTop - point.y; yPos--) {
+
 					attr = {
-						x: point.barX + point.pointWidth / 2,
-						y: series.yAxis.toPixels(yPos, true),
-						r: Math.min(
-							point.pointWidth / 2,
-							(
-								(series.yAxis.transA / 2) *
-								(1 - series.options.itemPadding)
-							)
-						)
+						x: point.barX + point.pointWidth / 2 - size / 2,
+						y: series.yAxis.toPixels(yPos, true) - size / 2,
+						width: size,
+						height: size
 					};
+					
 					if (graphics[itemY]) {
 						graphics[itemY].animate(attr);
 					} else {
-						graphics[itemY] = renderer.circle(attr)
-							.attr(pointAttr)
+						graphics[itemY] = renderer.symbol(symbol)
+							.attr(extend(attr, pointAttr))
 							.add(point.graphic);
 					}
 					graphics[itemY].isActive = true;
