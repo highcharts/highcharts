@@ -1236,6 +1236,10 @@ seriesType('treemap', 'scatter', {
 		Series.prototype.bindAxes.call(this);
 		H.extend(this.yAxis.options, treeAxis);
 		H.extend(this.xAxis.options, treeAxis);
+	},
+	utils: {
+		recursive: recursive,
+		reduce: reduce
 	}
 
 // Point class
