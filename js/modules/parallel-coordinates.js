@@ -11,6 +11,9 @@ import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 
+/**
+ * Extensions for parallel coordinates plot.
+ */
 var SeriesProto = H.Series.prototype,
 	AxisProto = H.Axis.prototype;
 
@@ -25,10 +28,12 @@ var pick = H.pick,
 	arrayMax = H.arrayMax;
 
 var defaultXAxisOptions = {
-	opposite: true,
-	type: 'category',
+	/*= if (build.classic) { =*/
 	lineWidth: 0,
-	tickLength: 0
+	tickLength: 0,
+	/*= } =*/
+	opposite: true,
+	type: 'category'
 };
 
 H.setOptions({
@@ -37,6 +42,10 @@ H.setOptions({
 		parallelCoordinates: undefined,
 		// docs
 		parallelAxes: {
+			/*= if (build.classic) { =*/
+			lineWidth: 1,
+			gridlinesWidth: 0,
+			/*= } =*/
 			title: {
 				text: '',
 				reserveSpace: false
@@ -47,14 +56,14 @@ H.setOptions({
 				align: 'center',
 				reserveSpace: false
 			},
-			lineWidth: 1,
-			gridlinesWidth: 0,
 			offset: 0
 		}
 	}
 });
 
-// Initialize parallelCoordinates
+/**
+ * Initialize parallelCoordinates
+ */
 wrap(H.Chart.prototype, 'init', function (proceed, options) {
 	var yAxisLength = splat(options.yAxis || {}).length,
 		newYAxes = [];
@@ -84,11 +93,14 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
-// Define how many parellel axes we have according to the longest  dataset
-// This is quite heavy - loop over all series and check series.data.length
-// Consider:
-// - make this an option, so user needs to set this to get better performance
-// - check only first series for number of points and assume the rest is the same
+
+/**
+ * Define how many parellel axes we have according to the longest  dataset
+ * This is quite heavy - loop over all series and check series.data.length
+ * Consider:
+ * - make this an option, so user needs to set this to get better performance
+ * - check only first series for number of points and assume the rest is the same
+ */
 H.Chart.prototype.setParallelInfo = function (options) {
 	var chart = this,
 		seriesOptions = options.series;
@@ -107,10 +119,15 @@ H.Chart.prototype.setParallelInfo = function (options) {
 	});
 };
 
-// No update, keep it's position
+
+/**
+ * On update, keep parallelPosition.
+ */
 AxisProto.keepProps.push('parallelPosition');
 
-// Update default options with predefined for a parallel coords
+/**
+ * Update default options with predefined for a parallel coords.
+ */
 wrap(AxisProto, 'init', function (proceed, chart, options) {
 	var axisPosition = chart.inverted ? ['top', 'height'] : ['left', 'width'];
 
@@ -131,10 +148,13 @@ wrap(AxisProto, 'init', function (proceed, chart, options) {
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
-// Each axis should gather extremes from points on a particular position in series.data
-// Not like default one, gather extremes from all series bind to this axis
-// Consider: 
-// - using series.points instead of series.yData
+
+/**
+ * Each axis should gather extremes from points on a particular position in series.data
+ * Not like the default one, which gathers extremes from all series bind to this axis
+ * Consider:
+ * - using series.points instead of series.yData
+ */
 wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
 	if (this.chart.hasParallelCoordinates && !this.isXAxis) {
 		var index = this.parallelPosition,
@@ -151,13 +171,20 @@ wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
 	}
 });
 
-// Set predefined left+width or top+height (inverted) for axes
+
+/**
+ * Set predefined left+width or top+height (inverted) for yAxes.
+ */
 AxisProto.setParallelPosition = function (axisPosition, options) {
 	options[axisPosition[0]] = 100 * (this.parallelPosition + 0.5) / (this.chart.parallelInfo.counter + 1) + '%';
 	this[axisPosition[1]] = options[axisPosition[1]] = 0;
 };
 
-// Bind each series to each axis, as each axis needs a reference to all series to calculate extremes
+
+/**
+ * Bind each series to each yAxis.
+ * yAxis needs a reference to all series to calculate extremes.
+ */
 wrap(SeriesProto, 'bindAxes', function (proceed) {
 	if (this.chart.hasParallelCoordinates) {
 		var series = this;
@@ -172,7 +199,10 @@ wrap(SeriesProto, 'bindAxes', function (proceed) {
 	}
 });
 
-// Translate each point to a corresponding axis
+
+/**
+ * Translate each point using corresponding yAxis.
+ */
 wrap(SeriesProto, 'translate', function (proceed) {
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
@@ -215,7 +245,9 @@ wrap(SeriesProto, 'translate', function (proceed) {
 	}
 });
 
-// On destroy, we need to remove series from each axis.series
+/**
+ * On destroy, we need to remove series from each axis.series
+ */
 wrap(SeriesProto, 'destroy', function (proceed) {
 	if (this.chart.hasParallelCoordinates) {
 		var series = this;
