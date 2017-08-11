@@ -13,6 +13,7 @@ import '../parts/Series.js';
 import './treemap.src.js';
 var each = H.each,
 	grep = H.grep,
+	isNumber = H.isNumber,
 	merge = H.merge,
 	pick = H.pick,
 	Series = H.Series,
@@ -56,10 +57,7 @@ var setShapeArgs = function setShapeArgs(parent, parentValues) {
 	childrenValues = layoutAlgorithm(parentValues, children);
 	each(children, function (child, index) {
 		var values = childrenValues[index];
-		child.pointValues = {
-			shapeArgs: values,
-			shapeType: 'arc'
-		};
+		child.shapeArgs = values;
 		child.values = merge(values, {
 			val: child.childrenTotal
 		});
@@ -81,27 +79,23 @@ var sunburstOptions = {
  * Properties of the Sunburst series.
  */
 var sunburstSeries = {
-	drawPoint: function drawPoint(point) {
-		var series = this,
-			group = series.group,
-			renderer = series.chart.renderer,
-			shape = point.shapeArgs,
-			attr = series.pointAttribs(point, point.selected && 'select');
-		point.graphic = renderer[point.shapeType](shape)
-		.attr(attr)
-		.add(group);
-	},
 	drawPoints: function drawPoints() {
 		var series = this,
-			points = series.points;
+			group = series.group,
+			points = series.points,
+			renderer = series.chart.renderer;
 		each(points, function (point) {
 			var node = point.node;
-			point.shapeArgs = node.shapeArgs;
-			point.shapeType = node.shapeType;
-			series.drawPoint(point);
+			point.draw({
+				attr: series.pointAttribs(point, point.selected && 'select'),
+				group: group,
+				renderer: renderer,
+				shapeType: 'arc',
+				shapeArgs: node.shapeArgs
+			});
 		});
 	},
-	pointAttribs: Series.prototype.pointAttribs,
+	pointAttribs: seriesTypes.column.prototype.pointAttribs,
 	translate: function translate() {
 		var series = this,
 			chart = series.chart,
@@ -143,6 +137,40 @@ var sunburstSeries = {
 };
 
 /**
+ * Properties of the Sunburst series.
+ */
+var sunburstPoint = {
+	draw: function draw(options) {
+		var point = this,
+			graphic = point.graphic,
+			group = options.group,
+			renderer = options.renderer,
+			shape = options.shapeArgs,
+			type = options.shapeType,
+			attr = options.attr;
+		if (point.shouldDraw()) {
+			if (!graphic) {
+				point.graphic = graphic = renderer[type](shape).add(group);
+			}
+			graphic.attr(attr).animate(shape);
+		} else {
+			point.graphic = point.destroy();
+		}
+	},
+	shouldDraw: function shouldDraw() {
+		var point = this,
+			value = point.value;
+		return isNumber(value) && (value > 0);
+	}
+};
+
+/**
  * Assemble the Sunburst series type.
  */
-seriesType('sunburst', 'treemap', sunburstOptions, sunburstSeries);
+seriesType(
+	'sunburst',
+	'treemap',
+	sunburstOptions,
+	sunburstSeries,
+	sunburstPoint
+);
