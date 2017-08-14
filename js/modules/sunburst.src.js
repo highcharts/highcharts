@@ -127,7 +127,10 @@ var sunburstSeries = {
 			rootId = series.rootNode;
 			rootNode = series.nodeMap[rootId];
 		}
+		// TODO Try to combine setTreeValues & setColorRecursive to avoid
+		//  unnecessary looping.
 		series.setTreeValues(tree);
+		series.setColorRecursive(series.tree);
 		values = series.nodeMap[''].values = {
 			start: 0,
 			end: 2 * Math.PI,
