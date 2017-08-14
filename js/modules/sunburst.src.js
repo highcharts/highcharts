@@ -28,8 +28,8 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children) {
 		total = parent.val,
 		x = parent.x,
 		y = parent.y,
-		radius = 20,
-		innerRadius = parent.innerR + parent.r;
+		innerRadius = parent.innerR + parent.r,
+		outerRadius = innerRadius + parent.radius;
 
 	return reduce(children, function (arr, child) {
 		var percentage = (1 / total) * child.val,
@@ -38,7 +38,8 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children) {
 				x: x,
 				y: y,
 				innerR: innerRadius,
-				r: radius,
+				r: outerRadius,
+				radius: parent.radius,
 				start: startAngle,
 				end: startAngle + radians
 			};
@@ -99,6 +100,9 @@ var sunburstSeries = {
 	translate: function translate() {
 		var series = this,
 			chart = series.chart,
+			plotWidth = chart.plotWidth,
+			plotHeight = chart.plotHeight,
+			radius,
 			rootId = series.rootNode = pick(series.rootNode, series.options.rootId, ''),
 			tree,
 			values,
@@ -113,6 +117,7 @@ var sunburstSeries = {
 		}, {});
 		// @todo Only if series.isDirtyData is true
 		tree = series.tree = series.getTree();
+		radius = (Math.min(plotWidth, plotHeight) / tree.height) / 2;
 		rootNode = series.nodeMap[rootId];
 		if (
 			rootId !== '' &&
@@ -127,10 +132,11 @@ var sunburstSeries = {
 			start: 0,
 			end: 2 * Math.PI,
 			innerR: 0,
-			r: 10,
+			r: 0,
+			radius: radius,
 			val: tree.val,
-			x: chart.plotWidth / 2,
-			y: chart.plotHeight / 2
+			x: plotWidth / 2,
+			y: plotHeight / 2
 		};
 		setShapeArgs(tree, values);
 	}
