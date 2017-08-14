@@ -198,7 +198,7 @@
             return {
                 fill: point.isNode ?
                     point.color :
-                    H.color(point.color).setOpacity(opacity).get()
+                    H.color(point.fromNode.color).setOpacity(opacity).get()
             };
         },
 
