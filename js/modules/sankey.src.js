@@ -159,7 +159,7 @@ H.seriesType('sankey', 'column', {
 				}
 				height += column[i].sum() * factor;
 			}
-			return (chart.plotHeight - height) / 2;
+			return (chart.plotSizeY - height) / 2;
 		};
 
 		return column;
@@ -273,19 +273,20 @@ H.seriesType('sankey', 'column', {
 		this.nodeColumns = this.createNodeColumns();
 
 		var chart = this.chart,
+			inverted = chart.inverted,
 			options = this.options,
 			left = 0,
 			nodeWidth = options.nodeWidth,
 			nodeColumns = this.nodeColumns,
-			colDistance = (chart.plotWidth - nodeWidth) /
+			colDistance = (chart.plotSizeX - nodeWidth) /
 				(nodeColumns.length - 1),
-			curvy = colDistance / 3,
+			curvy = (inverted ? -colDistance : colDistance) / 3,
 			factor = Infinity;
 
 		// Find out how much space is needed. Base it on the translation
 		// factor of the most spaceous column.
 		each(this.nodeColumns, function (column) {
-			var height = chart.plotHeight -
+			var height = chart.plotSizeY -
 				(column.length - 1) * options.nodePadding;
 
 			factor = Math.min(factor, height / column.sum());
@@ -294,17 +295,31 @@ H.seriesType('sankey', 'column', {
 		each(this.nodeColumns, function (column) {
 			each(column, function (node) {
 				var height = node.sum() * factor,
-					fromNodeTop = column.top(factor) +
-						column.offset(node, factor);
+					fromNodeTop = (
+						column.top(factor) +
+						column.offset(node, factor)
+					),
+					nodeLeft = inverted ?
+						chart.plotSizeX - left :
+						left;
 
 				// Draw the node
 				node.shapeType = 'rect';
-				node.shapeArgs = {
-					x: left,
-					y: fromNodeTop,
-					width: nodeWidth,
-					height: height
-				};
+				if (!inverted) {
+					node.shapeArgs = {
+						x: nodeLeft,
+						y: fromNodeTop,
+						width: nodeWidth,
+						height: height
+					};
+				} else {
+					node.shapeArgs = {
+						x: nodeLeft - nodeWidth,
+						y: chart.plotSizeY - fromNodeTop - height,
+						width: nodeWidth,
+						height: height
+					};
+				}
 				// Pass test in drawPoints
 				node.y = node.plotY = 1;
 
@@ -316,31 +331,43 @@ H.seriesType('sankey', 'column', {
 						fromY = fromNodeTop + fromLinkTop,
 						toNode = point.toNode,
 						toColTop = nodeColumns[toNode.column].top(factor),
-						toY = toColTop + toNode.offset(point, 'linksTo') *
-							factor + nodeColumns[toNode.column].offset(
+						toY = (
+							toColTop + 
+							(toNode.offset(point, 'linksTo') * factor) +
+							nodeColumns[toNode.column].offset(
 								toNode,
 								factor
-							),
+							)
+						),
+						nodeW = nodeWidth,
 						right = toNode.column * colDistance;
+
+					if (inverted) {
+						fromY = chart.plotSizeY - fromY;
+						toY = chart.plotSizeY - toY;
+						right = chart.plotSizeX - right;
+						nodeW = -nodeW;
+						linkHeight = -linkHeight;
+					}
 
 					point.shapeType = 'path';
 					point.shapeArgs = {
 						d: [
-							'M', left + nodeWidth, fromY,
-							'C', left + nodeWidth + curvy, fromY,
+							'M', nodeLeft + nodeW, fromY,
+							'C', nodeLeft + nodeW + curvy, fromY,
 							right - curvy, toY,
 							right, toY,
 							'L', right, toY + linkHeight,
 							'C', right - curvy, toY + linkHeight,
-							left + nodeWidth + curvy, fromY + linkHeight,
-							left + nodeWidth, fromY + linkHeight,
+							nodeLeft + nodeW + curvy, fromY + linkHeight,
+							nodeLeft + nodeW, fromY + linkHeight,
 							'z'
 						]
 					};
 
 					// Place data labels in the middle
 					point.dlBox = {
-						x: left + (right - left + nodeWidth) / 2,
+						x: nodeLeft + (right - nodeLeft + nodeW) / 2,
 						y: fromY + (toY - fromY) / 2,
 						height: linkHeight,
 						width: 0
