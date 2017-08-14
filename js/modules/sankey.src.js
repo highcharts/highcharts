@@ -13,7 +13,6 @@ import '../parts/Options.js';
 
 /**
  * @todo
- * - Dynamics (Point.update, setData, addPoint etc).
  * - From and to can be null when links enter or exit the diagram.
  * - Separate data label and tooltip point formatters for nodes vs links? A
  *   possible pattern would be to add a point.type, and automate the
@@ -266,6 +265,9 @@ H.seriesType('sankey', 'column', {
 	 * Run pre-translation by generating the nodeColumns.
 	 */
 	translate: function () {
+		if (!this.processedXData) {
+			this.processData();
+		}
 		this.generatePoints();
 
 		this.nodeColumns = this.createNodeColumns();
