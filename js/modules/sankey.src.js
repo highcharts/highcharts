@@ -82,7 +82,7 @@ H.seriesType('sankey', 'column', {
 			options;
 
 		if (!node) {
-			options = findById(this.options.nodes, id);
+			options = this.options.nodes && findById(this.options.nodes, id);
 			node = (new H.Point()).init(
 				this,
 				extend({ isNode: true, id: id }, options)
