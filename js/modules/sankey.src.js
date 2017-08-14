@@ -13,10 +13,6 @@ import '../parts/Options.js';
 
 /**
  * @todo
- * - Handle options for nodes. This can be added as special point items that
- *   have a flag, isNode, or type: 'node'. It would allow setting specific
- *   color, className etc. Then these options must be linked by id and used
- *   when generating the node items.
  * - Dynamics (Point.update, setData, addPoint etc).
  * - From and to can be null when links enter or exit the diagram.
  * - Separate data label and tooltip point formatters for nodes vs links? A
@@ -27,7 +23,8 @@ import '../parts/Options.js';
  */
 
 var defined = H.defined,
-	each = H.each;
+	each = H.each,
+	extend = H.extend;
 
 
 H.seriesType('sankey', 'column', {
@@ -46,6 +43,7 @@ H.seriesType('sankey', 'column', {
 	linkOpacity: 0.5,
 	nodeWidth: 20,
 	nodePadding: 10,
+	// nodes
 	showInLegend: false,
 	states: {
 		hover: {
@@ -73,12 +71,22 @@ H.seriesType('sankey', 'column', {
 	 * links.
 	 */
 	createNode: function (id) {
-		var node = H.find(this.nodes, function (node) {
-			return node.id === id;
-		});
+
+		function findById(nodes, id) {
+			return H.find(nodes, function (node) {
+				return node.id === id;
+			});
+		}
+
+		var node = findById(this.nodes, id),
+			options;
 
 		if (!node) {
-			node = (new H.Point()).init(this, { isNode: true, id: id });
+			options = findById(this.options.nodes, id);
+			node = (new H.Point()).init(
+				this,
+				extend({ isNode: true, id: id }, options)
+			);
 			node.linksTo = [];
 			node.linksFrom = [];
 			/**
