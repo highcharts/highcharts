@@ -593,6 +593,7 @@ if (seriesTypes.pie) {
 				if (positions && defined(positions[positionsIndex])) {
 					if (positions[positionsIndex].pos === undefined) {
 						visibility = 'hidden';
+						y = 0;
 					} else {
 						labelHeight = positions[positionsIndex].size;
 						y = point.top + positions[positionsIndex].pos;
