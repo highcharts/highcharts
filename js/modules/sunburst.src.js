@@ -28,7 +28,7 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children) {
 		total = parent.val,
 		x = parent.x,
 		y = parent.y,
-		innerRadius = parent.innerR + parent.r,
+		innerRadius = parent.r,
 		outerRadius = innerRadius + parent.radius;
 
 	return reduce(children, function (arr, child) {
@@ -49,6 +49,23 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children) {
 	}, []);
 };
 
+/**
+ * getEndPoint - Find a set of coordinates given a start coordinates, an angle,
+ *     and a distance.
+ *
+ * @param  {number} x Start coordinate x
+ * @param  {number} y Start coordinate y
+ * @param  {number} angle Angle in radians
+ * @param  {number} distance Distance from start to end coordinates
+ * @return {object} Returns the end coordinates, x and y.
+ */
+var getEndPoint = function getEndPoint(x, y, angle, distance) {
+	return {
+		x: x + (Math.cos(angle) * distance),
+		y: y + (Math.sin(angle) * distance)
+	};
+};
+
 var setShapeArgs = function setShapeArgs(parent, parentValues) {
 	var childrenValues = [],
 		// Collect all children which should be included
@@ -57,11 +74,18 @@ var setShapeArgs = function setShapeArgs(parent, parentValues) {
 		});
 	childrenValues = layoutAlgorithm(parentValues, children);
 	each(children, function (child, index) {
-		var values = childrenValues[index];
+		var values = childrenValues[index],
+			angle = values.start + ((values.end - values.start) / 2),
+			radius = values.innerR + ((values.r - values.innerR) / 2),
+			center = getEndPoint(values.x, values.y, angle, radius);
 		child.shapeArgs = values;
 		child.values = merge(values, {
 			val: child.childrenTotal
 		});
+		child.tooltipPos = [
+			center.x,
+			center.y
+		];
 		// If node has children, then call method recursively
 		if (child.children.length) {
 			setShapeArgs(child, child.values);
@@ -87,6 +111,7 @@ var sunburstSeries = {
 			renderer = series.chart.renderer;
 		each(points, function (point) {
 			var node = point.node;
+			point.tooltipPos = node.tooltipPos;
 			point.draw({
 				attr: series.pointAttribs(point, point.selected && 'select'),
 				group: group,
