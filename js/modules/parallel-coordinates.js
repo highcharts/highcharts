@@ -38,9 +38,27 @@ var defaultXAxisOptions = {
 
 H.setOptions({
 	chart: {
-		// docs
-		parallelCoordinates: undefined,
-		// docs
+		/**
+		 * Flag to render charts as a parallel coordinates plot.
+		 * In a parallel coordinates plot (||-coords) by default all required yAxes are generated and legend is disabled.
+		 * This feature requires `modules/parallel-coordinates.js`, found in the download package or online at
+		 * [code.highcharts.com/modules/parallel-coordinates.js](http://code.highcharts.com/modules/parallel-coordinates.js).
+		 *
+		 * @type {Boolean}
+		 * @default false
+		 * @since 6.0.0
+		 * @product highcharts
+		 */
+		parallelCoordinates: false,
+		/**
+		 * Common options for all yAxes rendered in a parallel coordinates plot. This feature requires
+		 * `modules/parallel-coordinates.js`, found in the download package or online at
+		 * [code.highcharts.com/modules/parallel-coordinates.js](http://code.highcharts.com/modules/parallel-coordinates.js).
+		 *
+		 * @optionparent yAxis
+		 * @since 6.0.0
+		 * @product highcharts
+		 */
 		parallelAxes: {
 			/*= if (build.classic) { =*/
 			lineWidth: 1,
@@ -74,7 +92,8 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 
 		this.setParallelInfo(options);
 
-		for (; yAxisLength < this.parallelInfo.counter; yAxisLength++) {
+		// Push empty yAxes in case user did not define them:
+		for (; yAxisLength <= this.parallelInfo.counter; yAxisLength++) {
 			newYAxes.push({});
 		}
 
@@ -83,11 +102,11 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 				legend: {
 					enabled: false // docs
 				}
-			}, {
-				yAxis: newYAxes // docs
 			},
 			options
 		);
+
+		options.yAxis = (options.yAxis || []).concat(newYAxes) // docs
 	}
 
 	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -129,9 +148,13 @@ AxisProto.keepProps.push('parallelPosition');
  * Update default options with predefined for a parallel coords.
  */
 wrap(AxisProto, 'init', function (proceed, chart, options) {
-	var axisPosition = chart.inverted ? ['top', 'height'] : ['left', 'width'];
+	var axisPosition = ['left', 'width', 'height', 'top'];
 
 	this.chart = chart;
+
+	if (chart.inverted) {
+		axisPosition = axisPosition.reverse();
+	}
 
 	if (chart.hasParallelCoordinates) {
 		if (options.isX) {
@@ -173,11 +196,15 @@ wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
 
 
 /**
- * Set predefined left+width or top+height (inverted) for yAxes.
+ * Set predefined left+width and top+height (inverted) for yAxes.
  */
 AxisProto.setParallelPosition = function (axisPosition, options) {
 	options[axisPosition[0]] = 100 * (this.parallelPosition + 0.5) / (this.chart.parallelInfo.counter + 1) + '%';
 	this[axisPosition[1]] = options[axisPosition[1]] = 0;
+
+	// In case of chart.update(inverted), remove old options:
+	this[axisPosition[2]] = options[axisPosition[2]] = null;
+	this[axisPosition[3]] = options[axisPosition[3]] = null;
 };
 
 
