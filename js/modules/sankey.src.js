@@ -23,7 +23,9 @@ import '../parts/Options.js';
 
 var defined = H.defined,
 	each = H.each,
-	extend = H.extend;
+	extend = H.extend,
+	pick = H.pick,
+	Point = H.Point;
 
 
 H.seriesType('sankey', 'column', {
@@ -39,7 +41,9 @@ H.seriesType('sankey', 'column', {
 		},
 		inside: true
 	},
+	/*= if (build.classic) { =*/
 	linkOpacity: 0.5,
+	/*= } =*/
 	nodeWidth: 20,
 	nodePadding: 10,
 	// nodes
@@ -51,8 +55,14 @@ H.seriesType('sankey', 'column', {
 	},
 	tooltip: {
 		followPointer: true,
+
+		/*= if (build.classic) { =*/
 		headerFormat:
 			'<span style="font-size: 0.85em">{series.name}</span><br/>',
+		/*= } else { =*/
+		headerFormat: // eslint-disable-line no-dupe-keys
+			'<span class="highcharts-header">{series.name}</span><br/>',
+		/*= } =*/
 		pointFormatter: function () {
 			if (this.isNode) {
 				return this.id + ': ' + this.sum();
@@ -82,9 +92,14 @@ H.seriesType('sankey', 'column', {
 
 		if (!node) {
 			options = this.options.nodes && findById(this.options.nodes, id);
-			node = (new H.Point()).init(
+			node = (new Point()).init(
 				this,
-				extend({ isNode: true, id: id }, options)
+				extend({
+					className: 'highcharts-node',
+					isNode: true,
+					id: id,
+					y: 1 // Pass isNull test
+				}, options)
 			);
 			node.linksTo = [];
 			node.linksFrom = [];
@@ -202,6 +217,7 @@ H.seriesType('sankey', 'column', {
 		return columns;
 	},
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Return the presentational attributes.
 	 */
@@ -216,9 +232,10 @@ H.seriesType('sankey', 'column', {
 		return {
 			fill: point.isNode ?
 				point.color :
-				H.color(point.fromNode.color).setOpacity(opacity).get()
+				H.color(point.color).setOpacity(opacity).get()
 		};
 	},
+	/*= } =*/
 
 	/**
 	 * Extend generatePoints by adding the nodes, which are Point objects
@@ -241,7 +258,7 @@ H.seriesType('sankey', 'column', {
 			node.linksTo.length = 0;
 		});
 
-		// Create the node list
+		// Create the node list and set up links
 		each(this.points, function (point) {
 			if (defined(point.from)) {
 				if (!nodeLookup[point.from]) {
@@ -249,6 +266,18 @@ H.seriesType('sankey', 'column', {
 				}
 				nodeLookup[point.from].linksFrom.push(point);
 				point.fromNode = nodeLookup[point.from];
+
+				// Point color defaults to the fromNode's color
+				/*= if (build.classic) { =*/
+				point.color =
+					point.options.color || nodeLookup[point.from].color;
+				/*= } else { =*/
+				point.colorIndex = pick(
+					point.options.colorIndex,
+					nodeLookup[point.from].colorIndex
+				);
+				/*= } =*/	
+				
 			}
 			if (defined(point.to)) {
 				if (!nodeLookup[point.to]) {
@@ -320,8 +349,9 @@ H.seriesType('sankey', 'column', {
 						height: height
 					};
 				}
+				
 				// Pass test in drawPoints
-				node.y = node.plotY = 1;
+				node.plotY = 1;
 
 				// Draw the links from this node
 				each(node.linksFrom, function (point) {
@@ -395,4 +425,11 @@ H.seriesType('sankey', 'column', {
 		this.points = points;
 	},
 	animate: H.Series.prototype.animate
+}, {
+	getClassName: function () {
+		return 'highcharts-link ' + Point.prototype.getClassName.call(this);
+	},
+	isValid: function () {
+		return this.isNode || typeof this.weight === 'number';
+	}
 });

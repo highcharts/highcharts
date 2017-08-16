@@ -364,7 +364,7 @@ g.highcharts-series,
     stroke-width: 1px;
 }
 
-/* Highcharts More */
+/* Highcharts More and modules */
 .highcharts-boxplot-box {
     fill: $background-color;
 }
@@ -392,6 +392,17 @@ g.highcharts-series,
 .highcharts-waterfall-series .highcharts-graph {
     stroke: $neutral-color-80;
     stroke-dasharray: 1, 3;
+}
+.highcharts-sankey-series .highcharts-point {
+    stroke-width: 0;
+}
+.highcharts-sankey-series .highcharts-link {
+    transition: fill 250ms, fill-opacity 250ms;
+    fill-opacity: 0.5;
+}
+.highcharts-sankey-series .highcharts-point-hover.highcharts-link {
+    transition: fill 50ms, fill-opacity 50ms;
+    fill-opacity: 1;
 }
 
 /* Highstock */
