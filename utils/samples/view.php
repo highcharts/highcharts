@@ -388,6 +388,20 @@ function getResources() {
 			});
 
 			<?php } ?>
+
+			if (/\/css\//.test(path)) {
+				Highcharts.Chart.prototype.callbacks.push(function (chart) {
+					var svg = Highcharts.charts[0].container.innerHTML;
+					var match = svg.match(/ (style|fill|stroke|stroke-width|fill-opacity)="/);
+					if (match) {
+						console.warn(
+							'Found presentational attribute',
+							match[1],
+							svg.substr(match.index - 80, 250)
+						);
+					}
+				});
+			}
 		}
 		
 		</script>
