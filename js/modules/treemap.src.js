@@ -503,18 +503,21 @@ seriesType('treemap', 'scatter', {
 		var series = this,
 			children = [],
 			point = series.points[i],
+			height = 0,
 			node,
 			child;
 
 		// Actions
 		each((list[id] || []), function (i) {
 			child = series.buildNode(series.points[i].id, i, (level + 1), list, id);
+			height = Math.max(child.height + 1, height);
 			children.push(child);
 		});
 		node = {
 			id: id,
 			i: i,
 			children: children,
+			height: height,
 			level: level,
 			parent: parent,
 			visible: false // @todo move this to better location
@@ -1236,6 +1239,10 @@ seriesType('treemap', 'scatter', {
 		Series.prototype.bindAxes.call(this);
 		H.extend(this.yAxis.options, treeAxis);
 		H.extend(this.xAxis.options, treeAxis);
+	},
+	utils: {
+		recursive: recursive,
+		reduce: reduce
 	}
 
 // Point class
