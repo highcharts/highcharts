@@ -16,7 +16,7 @@ RewriteRule (.*?)highcharts-more.js $1highcharts-more.src.js
 RewriteRule (.*?)highcharts-3d.js $1highcharts-3d.src.js
 RewriteRule (.*?)highmaps.js $1highmaps.src.js
 RewriteRule (.*?)highmaps.unstyled.src.js $1highmaps.unstyled.src.js
-# RewriteRule (.*?)highstock.js $1highstock.src.js
+RewriteRule (.*?)highstock.js $1highstock.src.js
 
 RewriteRule (.*?)accessibility.js $1accessibility.src.js
 RewriteRule (.*?)annotations.js $1annotations.src.js
@@ -38,6 +38,7 @@ RewriteRule (.*?)overlapping-datalabels.js $1overlapping-datalabels.src.js
 RewriteRule (.*?)sankey.js $1sankey.src.js
 RewriteRule (.*?)series-label.js $1series-label.src.js
 RewriteRule (.*?)solid-gauge.js $1solid-gauge.src.js
+RewriteRule (.*?)wordcloud.js $1wordcloud.src.js
 RewriteRule (.*?)static-scale.js $1static-scale.src.js
 RewriteRule (.*?)stock.js $1stock.src.js
 RewriteRule (.*?)streamgraph.js $1streamgraph.src.js
