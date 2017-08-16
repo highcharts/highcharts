@@ -29,6 +29,7 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 } else {
 	$time = time();
 	$html = str_replace('.js"', '.js?' . $time . '"', $html); // Force no-cache for debugging
+	$html = str_replace('.css"', '.css?' . $time . '"', $html); // Force no-cache for debugging
 
 	// No go on github.highcharts.com
 	$html = str_replace("sonification.js?$time", 'sonification.js', $html);
