@@ -300,7 +300,7 @@ gulp.task('nightly', function () {
  * Automated generation for internal Class reference.
  * Run with --watch argument to watch for changes in the JS files.
  */
-const generateClassReferences = ({ templateDir, destination }) => {
+const generateClassReferences = (templateDir, destination) => {
     const jsdoc = require('gulp-jsdoc3');
     const sourceFiles = [
         'README.md',
@@ -934,7 +934,7 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
  *  only latest version or all of them.
  * @return {Promise} A Promise which resolves into undefined when done.
  */
-const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
+const generateAPIDocs = (treeFile, output, onlyBuildCurrent) => {
     const version = getBuildProperties().version;
     const message = {
         'successJSDoc': colors.green('Created tree.json')
