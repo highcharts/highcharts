@@ -110,7 +110,7 @@ Highcharts.Chart.prototype.getDataRows = function () {
                 }
                 rows[key].x = point.x;
                 rows[key].xValues[xAxisIndex] = point.x;
-                
+
                 // Pies, funnels, geo maps etc. use point name in X row
                 if (!series.xAxis || series.exportKey === 'name') {
                     rows[key].name = point.name;
@@ -258,7 +258,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
         if (!i) {
             html += '</thead><tbody>';
         }
-        
+
     });
     html += '</tbody></table>';
 
@@ -296,7 +296,7 @@ Highcharts.Chart.prototype.fileDownload = function (href, extension, content, MI
         a = doc.createElement('a');
         a.href = href;
         a.download = name + '.' + extension;
-        this.container.append(a); // #111
+        this.container.appendChild(a); // #111
         a.click();
         a.remove();
 
@@ -338,7 +338,7 @@ Highcharts.Chart.prototype.downloadXLS = function () {
             '</head><body>' +
             this.getTable(true) +
             '</body></html>',
-        base64 = function (s) { 
+        base64 = function (s) {
             return win.btoa(unescape(encodeURIComponent(s))); // #50
         };
     this.fileDownload(
@@ -387,8 +387,8 @@ if (exportingOptions) {
         },
         viewData: {
             textKey: 'viewData',
-            onclick: function () { 
-                this.viewData(); 
+            onclick: function () {
+                this.viewData();
             }
         }
     });
@@ -411,4 +411,3 @@ if (seriesTypes.mapbubble) {
 if (seriesTypes.treemap) {
     seriesTypes.treemap.prototype.exportKey = 'name';
 }
-
