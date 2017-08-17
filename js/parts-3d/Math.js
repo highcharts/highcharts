@@ -91,7 +91,8 @@ H.perspective = function (points, chart, insidePlotArea) {
 		return {
 			x: (inverted ? coordinate.y : coordinate.x),
 			y: (inverted ? coordinate.x : coordinate.y),
-			z: coordinate.z 
+			z: coordinate.z,
+			perspectiveScale: scale * perspectiveScale
 		};
 	});
 };

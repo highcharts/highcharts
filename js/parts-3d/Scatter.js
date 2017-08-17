@@ -61,6 +61,7 @@ wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 		rawPoint.plotX = projectedPoint.x;
 		rawPoint.plotY = projectedPoint.y;
 		rawPoint.plotZ = projectedPoint.z;
+		rawPoint.perspectiveScale = projectedPoint.perspectiveScale;
 	
 	}
 
@@ -94,16 +95,36 @@ wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
 });
 
 /**
- * Updating zIndex for every point - based on the distance from point to camera
+ * Updating zIndex and scale of every point - based on the distance from point to camera.
  */
 wrap(seriesTypes.scatter.prototype, 'pointAttribs', function (proceed, point) {
 	var pointOptions = proceed.apply(this, [].slice.call(arguments, 1));
 	if (this.chart.is3d() && point) {
+		var scale = point.perspectiveScale;
+		pointOptions.scaleX = scale;
+		pointOptions.scaleY = scale;
+		pointOptions.translateX = (1-scale) * point.plotX;
+		pointOptions.translateY = (1-scale) * point.plotY;
+
 		pointOptions.zIndex = H.pointCameraDistance(point, this.chart);
 	}
 	return pointOptions;
 });
 
+/**
+ * Updating scale of halo - based on the distance from point to camera
+ */
+wrap(seriesTypes.scatter.prototype, 'haloAttribs', function (proceed, point) {
+	var haloOptions = proceed.apply(this, [].slice.call(arguments, 1));
+	if (this.chart.is3d() && point) {
+		var scale = point.perspectiveScale;
+		haloOptions.scaleX = scale;
+		haloOptions.scaleY = scale;
+		haloOptions.translateX = (1-scale) * point.plotX;
+		haloOptions.translateY = (1-scale) * point.plotY;
+	}
+	return haloOptions;
+});
 
 wrap(Point.prototype, 'applyOptions', function (proceed) {
 	var point = proceed.apply(this, [].slice.call(arguments, 1));
