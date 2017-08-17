@@ -40,6 +40,8 @@ When creating a new official series type, there are some requirements that shoul
 	* `point.remove`
 	* `series.remove`
 * Chart or window resizing. Series should resize with animation on `chart.setSize()` (n/a on window resize).
+* Initial animation. If any, what kind of animation makes sense for the series?
+* Crisp shapes. Beware of rectangles and straight lines. Set up crisping logic like for existing series, and keep styled mode in mind.
 * Null points. 
 * Styled mode. Everything that is stylable should be put inside conditional code. Add appropriate class names to all elements. Set up demo in the `/css` demo folder.
 * Boost module. If it makes sense for the series type, implement boosting. Otherwise, make sure it is ignored.
