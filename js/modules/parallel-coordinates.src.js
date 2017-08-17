@@ -83,7 +83,8 @@ H.setOptions({
  * Initialize parallelCoordinates
  */
 wrap(H.Chart.prototype, 'init', function (proceed, options) {
-	var yAxisLength = splat(options.yAxis || {}).length,
+	var defaultyAxis = splat(options.yAxis || {}),
+		yAxisLength = defaultyAxis.length,
 		newYAxes = [];
 
 	this.hasParallelCoordinates = options.chart && options.chart.parallelCoordinates;
@@ -98,7 +99,7 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 		}
 
 		options = merge(
-			defaultXAxisOptions, {
+			{
 				legend: {
 					enabled: false // docs
 				}
@@ -106,10 +107,14 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 			options
 		);
 
-		options.yAxis = (options.yAxis || []).concat(newYAxes) // docs
+		options.yAxis = defaultyAxis.concat(newYAxes); // docs
+		options.xAxis = merge(
+			splat(options.xAxis || {}),
+			[defaultXAxisOptions]
+		);
 	}
 
-	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+	return proceed.call(this, options);
 });
 
 
@@ -168,7 +173,7 @@ wrap(AxisProto, 'init', function (proceed, chart, options) {
 			this.setParallelPosition(axisPosition, options);
 		}
 	}
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+	proceed.call(this, chart, options);
 });
 
 
