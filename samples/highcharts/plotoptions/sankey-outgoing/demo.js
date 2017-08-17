@@ -5,7 +5,7 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Process loss'
+        text: 'The energy efficiency of an electric motor'
     },
 
     series: [{
@@ -26,6 +26,12 @@ Highcharts.chart('container', {
             weight: 17,
             outgoing: true
         }],
+        dataLabels: {
+            padding: 20,
+            style: {
+                fontSize: '1.5em'
+            }
+        },
         nodes: [{
             id: 'total',
             name: 'Total energy required'
