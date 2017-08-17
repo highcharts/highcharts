@@ -11,16 +11,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 
-/**
- * @todo
- * - From and to can be null when links enter or exit the diagram.
- * - Separate data label and tooltip point formatters for nodes vs links? A
- *   possible pattern would be to add a point.type, and automate the
- *   implementation of formatters through the type, for example nodeFormat
- *   or tooltip.linkFormat. This could be reused for other series types,
- *   even generic like point.format = 'null' => tooltip.nullFormat.
- */
-
 var defined = H.defined,
 	each = H.each,
 	extend = H.extend,
@@ -30,12 +20,13 @@ var defined = H.defined,
 
 H.seriesType('sankey', 'column', {
 	colorByPoint: true,
+	curveFactor: 0.33,
 	dataLabels: {
 		enabled: true,
 		backgroundColor: 'none', // enable padding
 		crop: false,
 		formatter: function () {
-			return this.point.isNode && this.point.id;
+			return this.point.isNode && (this.point.name || this.point.id);
 			// Include data labels for the links like this:
 			// return this.point.isNode ? this.point.id : this.point.weight;
 		},
@@ -65,7 +56,7 @@ H.seriesType('sankey', 'column', {
 		/*= } =*/
 		pointFormatter: function () {
 			if (this.isNode) {
-				return this.id + ': ' + this.sum();
+				return (this.name || this.id) + ': ' + this.sum();
 			}
 			return this.from + ' \u2192 ' + this.to +
 				': <b>' + this.weight + '</b>';
@@ -128,6 +119,20 @@ H.seriesType('sankey', 'column', {
 					}
 					offset += node[coll][i].weight;
 				}
+			};
+
+			/** 
+			 * Return true if the node has a shape, otherwise all links are
+			 * outgoing.
+			 */
+			node.hasShape = function () {
+				var outgoing = 0;
+				each(node.linksTo, function (link) {
+					if (link.outgoing) {
+						outgoing++;
+					}
+				});
+				return !node.linksTo.length || outgoing !== node.linksTo.length;
 			};
 
 			this.nodes.push(node);
@@ -309,7 +314,10 @@ H.seriesType('sankey', 'column', {
 			nodeColumns = this.nodeColumns,
 			colDistance = (chart.plotSizeX - nodeWidth) /
 				(nodeColumns.length - 1),
-			curvy = (inverted ? -colDistance : colDistance) / 3,
+			curvy = (
+				(inverted ? -colDistance : colDistance) *
+				options.curveFactor
+			),
 			factor = Infinity;
 
 		// Find out how much space is needed. Base it on the translation
@@ -332,6 +340,7 @@ H.seriesType('sankey', 'column', {
 						chart.plotSizeX - left :
 						left;
 
+				
 				// Draw the node
 				node.shapeType = 'rect';
 				if (!inverted) {
@@ -349,6 +358,7 @@ H.seriesType('sankey', 'column', {
 						height: height
 					};
 				}
+				node.shapeArgs.display = node.hasShape() ? '' : 'none';
 				
 				// Pass test in drawPoints
 				node.plotY = 1;
@@ -370,7 +380,8 @@ H.seriesType('sankey', 'column', {
 							)
 						),
 						nodeW = nodeWidth,
-						right = toNode.column * colDistance;
+						right = toNode.column * colDistance,
+						outgoing = point.outgoing;
 
 					if (inverted) {
 						fromY = chart.plotSizeY - fromY;
@@ -387,7 +398,12 @@ H.seriesType('sankey', 'column', {
 							'C', nodeLeft + nodeW + curvy, fromY,
 							right - curvy, toY,
 							right, toY,
-							'L', right, toY + linkHeight,
+							'L',
+							right + (outgoing ? nodeW : 0),
+							toY + linkHeight / 2,
+							'L',
+							right,
+							toY + linkHeight,
 							'C', right - curvy, toY + linkHeight,
 							nodeLeft + nodeW + curvy, fromY + linkHeight,
 							nodeLeft + nodeW, fromY + linkHeight,
