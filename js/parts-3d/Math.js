@@ -38,14 +38,6 @@ function rotate3D(x, y, z, angles) {
 	};
 }
 
-function perspective3D(coordinate, origin, distance) {
-	var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ? distance / (coordinate.z + origin.z + distance) : 1;
-	return {
-		x: coordinate.x * projection,
-		y: coordinate.y * projection
-	};
-}
-
 /**
  * Transforms a given array of points according to the angles in chart.options.
  * Parameters:
@@ -87,12 +79,14 @@ H.perspective = function (points, chart, insidePlotArea) {
 				(point.z || 0) - origin.z,
 				angles
 			),
-			coordinate = perspective3D(rotated, origin, origin.vd); // Apply perspective
+			perspectiveScale = ((origin.vd > 0) && (origin.vd < Number.POSITIVE_INFINITY)) 
+				? origin.vd / (rotated.z + origin.z + origin.vd) : 1,
+			coordinate = {
+				x: rotated.x * scale * perspectiveScale + origin.x,
+				y: rotated.y * scale * perspectiveScale + origin.y,
+				z: rotated.z * scale + origin.z
+			};
 
-		// Apply translation
-		coordinate.x = coordinate.x * scale + origin.x;
-		coordinate.y = coordinate.y * scale + origin.y;
-		coordinate.z = rotated.z * scale + origin.z;
 
 		return {
 			x: (inverted ? coordinate.y : coordinate.x),
