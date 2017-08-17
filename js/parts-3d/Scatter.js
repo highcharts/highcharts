@@ -106,7 +106,7 @@ wrap(seriesTypes.scatter.prototype, 'pointAttribs', function (proceed, point) {
 		pointOptions.translateX = (1-scale) * point.plotX;
 		pointOptions.translateY = (1-scale) * point.plotY;
 
-		pointOptions.zIndex = H.pointCameraDistance(point, this.chart);
+		pointOptions.zIndex = -point.plotZ;
 	}
 	return pointOptions;
 });
@@ -122,6 +122,8 @@ wrap(seriesTypes.scatter.prototype, 'haloAttribs', function (proceed, point) {
 		haloOptions.scaleY = scale;
 		haloOptions.translateX = (1-scale) * point.plotX;
 		haloOptions.translateY = (1-scale) * point.plotY;
+
+		haloOptions.zIndex = Number.NEGATIVE_INFINITY;
 	}
 	return haloOptions;
 });
