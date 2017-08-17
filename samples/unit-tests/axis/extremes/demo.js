@@ -152,3 +152,26 @@ QUnit.test('Zoom next to edge on category axis (#6731)', function (assert) {
         'Axis actually zoomed'
     );
 });
+
+QUnit.test('Zooming between points (#7061)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+        xAxis: {
+            minRange: 0.5
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+    });
+    chart.xAxis[0].setExtremes(2.3, 2.7);
+
+    assert.strictEqual(
+        typeof chart.yAxis[0].min,
+        'number',
+        'Y axis has data'
+    );
+});
