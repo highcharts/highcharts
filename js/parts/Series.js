@@ -1585,8 +1585,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		},
 
 		/**
-		 * The background color or gradient for the data label. Defaults to
-		 * `undefined`.
+		 * The background color or gradient for the data label.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
