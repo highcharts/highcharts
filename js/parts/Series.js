@@ -3361,9 +3361,12 @@ H.Series = H.seriesType('line', null, { // base series options
 			// When animation is set, prepare the initial positions
 			if (animation) {
 				clipBox.width = 0;
+				if (inverted) {
+					clipBox.x = chart.plotSizeX;
+				}
 
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
-					-99, // include the width of the first marker
+					inverted ? chart.plotSizeX + 99 : -99, // include the width of the first marker
 					inverted ? -chart.plotLeft : -chart.plotTop,
 					99,
 					inverted ? chart.chartWidth : chart.chartHeight
@@ -3433,12 +3436,14 @@ H.Series = H.seriesType('line', null, { // base series options
 			clipRect = chart[sharedClipKey];
 			if (clipRect) {
 				clipRect.animate({
-					width: chart.plotSizeX
+					width: chart.plotSizeX,
+					x: 0
 				}, animation);
 			}
 			if (chart[sharedClipKey + 'm']) {
 				chart[sharedClipKey + 'm'].animate({
-					width: chart.plotSizeX + 99
+					width: chart.plotSizeX + 99,
+					x: 0
 				}, animation);
 			}
 
