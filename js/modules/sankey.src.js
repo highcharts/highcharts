@@ -25,11 +25,8 @@ H.seriesType('sankey', 'column', {
 		enabled: true,
 		backgroundColor: 'none', // enable padding
 		crop: false,
-		formatter: function () {
-			return this.point.isNode && (this.point.name || this.point.id);
-			// Include data labels for the links like this:
-			// return this.point.isNode ? this.point.id : this.point.weight;
-		},
+		nodeFormat: '{point.name}',
+		format: '',
 		inside: true
 	},
 	/*= if (build.classic) { =*/
@@ -54,13 +51,8 @@ H.seriesType('sankey', 'column', {
 		headerFormat: // eslint-disable-line no-dupe-keys
 			'<span class="highcharts-header">{series.name}</span><br/>',
 		/*= } =*/
-		pointFormatter: function () {
-			if (this.isNode) {
-				return (this.name || this.id) + ': ' + this.sum();
-			}
-			return this.from + ' \u2192 ' + this.to +
-				': <b>' + this.weight + '</b>';
-		}
+		pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b>',
+		nodeFormat: '{point.name}: <b>{point.sum}</b>'
 	}
 
 }, {
@@ -94,10 +86,13 @@ H.seriesType('sankey', 'column', {
 			);
 			node.linksTo = [];
 			node.linksFrom = [];
+			node.formatPrefix = 'node';
+			node.name = node.name || node.id; // for use in formats
+
 			/**
 			 * Return the largest sum of either the incoming or outgoing links.
 			 */
-			node.sum = function () {
+			node.getSum = function () {
 				var sumTo = 0,
 					sumFrom = 0;
 				each(node.linksTo, function (link) {
@@ -151,7 +146,7 @@ H.seriesType('sankey', 'column', {
 		column.sum = function () {
 			var sum = 0;
 			each(this, function (node) {
-				sum += node.sum();
+				sum += node.getSum();
 			});
 			return sum;
 		};
@@ -164,7 +159,7 @@ H.seriesType('sankey', 'column', {
 				if (column[i] === node) {
 					return offset;
 				}
-				offset += column[i].sum() * factor + nodePadding;
+				offset += column[i].getSum() * factor + nodePadding;
 			}
 		};
 
@@ -177,7 +172,7 @@ H.seriesType('sankey', 'column', {
 				if (i > 0) {
 					height += nodePadding;
 				}
-				height += column[i].sum() * factor;
+				height += column[i].getSum() * factor;
 			}
 			return (chart.plotSizeY - height) / 2;
 		};
@@ -292,6 +287,8 @@ H.seriesType('sankey', 'column', {
 				point.toNode = nodeLookup[point.to];
 			}
 
+			point.name = point.name || point.id; // for use in formats
+
 		}, this);
 	},
 
@@ -331,7 +328,8 @@ H.seriesType('sankey', 'column', {
 
 		each(this.nodeColumns, function (column) {
 			each(column, function (node) {
-				var height = node.sum() * factor,
+				var sum = node.getSum(),
+					height = sum * factor,
 					fromNodeTop = (
 						column.top(factor) +
 						column.offset(node, factor)
@@ -340,6 +338,7 @@ H.seriesType('sankey', 'column', {
 						chart.plotSizeX - left :
 						left;
 
+				node.sum = sum;
 				
 				// Draw the node
 				node.shapeType = 'rect';

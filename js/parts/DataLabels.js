@@ -174,7 +174,9 @@ Series.prototype.drawDataLabels = function () {
 				rotation,
 				connector = point.connector,
 				isNew = !dataLabel,
-				style;
+				style,
+				formatString;
+
 			// Determine if each data label is enabled
 			// @note dataLabelAttribs (like pointAttribs) would eradicate
 			// the need for dlOptions, and simplify the section below.
@@ -185,8 +187,12 @@ Series.prototype.drawDataLabels = function () {
 				// affecting others
 				options = merge(generalOptions, pointOptions);
 				labelConfig = point.getLabelConfig();
-				str = options.format ?
-					format(options.format, labelConfig) :
+				formatString = (
+					options[point.formatPrefix + 'Format'] ||
+					options.format
+				);
+				str = defined(formatString) ?
+					format(formatString, labelConfig) :
 					options.formatter.call(labelConfig, options);
 				style = options.style;
 				rotation = options.rotation;

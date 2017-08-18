@@ -27,11 +27,7 @@ Highcharts.chart('container', {
             outgoing: true
         }],
         dataLabels: {
-            formatter: function () {
-                return this.point.isNode && (
-                    (this.point.name || this.point.id) + ': ' + this.point.sum() + '%'
-                );
-            },
+            nodeFormat: '{point.name}: {point.sum}%',
             padding: 20,
             style: {
                 fontSize: '1.5em'
