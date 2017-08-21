@@ -11,7 +11,7 @@ import 'GridAxis.js';
 import '../modules/static-scale.src.js';
 import 'TreeGrid.js';
 import 'Pathfinder.js';
-import 'XRangeSeries.js';
+import '../modules/xrange.src.js';
 
 var dateFormat = H.dateFormat,
 	isObject = H.isObject,
