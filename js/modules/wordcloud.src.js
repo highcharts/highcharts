@@ -175,7 +175,7 @@ var outsidePlayingField = function outsidePlayingField(point, field) {
 /**
  * Default options for the WordCloud series.
  */
-var WordCloudOptions = {
+var wordCloudOptions = {
 	borderWidth: 0,
 	clip: false, // Something goes wrong with clip. // TODO fix this
 	colorByPoint: true,
@@ -196,7 +196,7 @@ var WordCloudOptions = {
 /**
  * Properties of the WordCloud series.
  */
-var WordCloudSeries = {
+var wordCloudSeries = {
 	animate: Series.prototype.animate,
 	bindAxes: function () {
 		var wordcloudAxis = {
@@ -370,4 +370,4 @@ var WordCloudSeries = {
 /**
  * Assemble the WordCloud series type.
  */
-H.seriesType('wordcloud', 'column', WordCloudOptions, WordCloudSeries);
+H.seriesType('wordcloud', 'column', wordCloudOptions, wordCloudSeries);
