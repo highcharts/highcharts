@@ -1615,7 +1615,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
 				if (group) {
 					group.element.appendChild(shadow);
-				} else {
+				} else if (element.parentNode) {
 					element.parentNode.insertBefore(shadow, element);
 				}
 
