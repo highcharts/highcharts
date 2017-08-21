@@ -253,7 +253,7 @@ wrap(SeriesProto, 'translate', function (proceed) {
 			point = points[i];
 			if (defined(point.y)) {
 				point.plotX = point.clientX = chart.inverted ?
-					chart.yAxis[i].top - chart.plotTop :
+					chart.plotHeight - chart.yAxis[i].top + chart.plotTop :
 					chart.yAxis[i].left - chart.plotLeft;
 
 				point.plotY = chart.yAxis[i].toPixels(point.y, true);
