@@ -42,6 +42,7 @@ seriesType('xrange', 'column', {
 		}
 	},
 	tooltip: {
+		headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
 	},
 	borderRadius: 3
@@ -73,7 +74,7 @@ seriesType('xrange', 'column', {
 
 		swapAxes();
 
-		this.yAxis.closestPointRange = 1;
+		//this.yAxis.closestPointRange = 1;
 		metrics = columnType.prototype.getColumnMetrics.call(this);
 
 		swapAxes();
@@ -376,7 +377,8 @@ seriesType('xrange', 'column', {
 		cfg.x2 = point.x2;
 		cfg.yCategory = point.yCategory = yCats && yCats[point.y];
 		return cfg;
-	}
+	},
+	tooltipDateKeys: ['x', 'x2']
 });
 
 /**
@@ -389,7 +391,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 		modMax;
 	proceed.call(axis);
 	if (axis.isXAxis) {
-		dataMax = pick(axis.dataMax, Number.MIN_VALUE);
+		dataMax = pick(axis.dataMax, -Number.MAX_VALUE);
 		each(axisSeries, function (series) {
 			if (series.x2Data) {
 				each(series.x2Data, function (val) {

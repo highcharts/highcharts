@@ -6,8 +6,7 @@ Highcharts.chart('container', {
         text: 'Highcharts X-range'
     },
     xAxis: {
-        type: 'datetime',
-        min: Date.UTC(2014, 11, 3)
+        type: 'datetime'
     },
     yAxis: {
         title: '',
