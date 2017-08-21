@@ -1787,6 +1787,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			otherZIndex,
 			element = this.element,
 			inserted,
+			undefinedOtherZIndex,
+			svgParent = parentNode === renderer.box,
 			run = this.added,
 			i;
 
@@ -1810,26 +1812,35 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			}
 
 			childNodes = parentNode.childNodes;
-			for (i = 0; i < childNodes.length && !inserted; i++) {
+			for (i = childNodes.length - 1; i >= 0 && !inserted; i--) {
 				otherElement = childNodes[i];
 				otherZIndex = otherElement.zIndex;
-				if (otherElement !== element && (
-						// Insert before the first element with a higher zIndex
-						pInt(otherZIndex) > value ||
-						// If no zIndex given, insert before the first element with a zIndex
-						(!defined(value) && defined(otherZIndex)) ||
+				undefinedOtherZIndex = !defined(otherZIndex);
+
+				if (otherElement !== element) {
+					if (
 						// Negative zIndex versus no zIndex:
 						// On all levels except the highest. If the parent is <svg>,
 						// then we don't want to put items before <desc> or <defs>
-						(value < 0 && !defined(otherZIndex) && parentNode !== renderer.box)
-
-					)) {
-					parentNode.insertBefore(element, otherElement);
-					inserted = true;
+						(value < 0 && undefinedOtherZIndex && !svgParent && !i)
+					) {
+						parentNode.insertBefore(element, childNodes[i]);
+						inserted = true;
+					} else if (
+						// Insert after the first element with a lower zIndex
+						pInt(otherZIndex) <= value ||
+						// If negative zIndex, add this before first undefined zIndex element
+						(undefinedOtherZIndex && (!defined(value) || value >= 0))
+					) {
+						parentNode.insertBefore(element, childNodes[i + 1]);
+						inserted = true;
+					}
 				}
 			}
+
 			if (!inserted) {
-				parentNode.appendChild(element);
+				parentNode.insertBefore(element, childNodes[svgParent ? 3 : 0]);
+				inserted = true;
 			}
 		}
 		return inserted;
