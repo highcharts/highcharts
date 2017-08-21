@@ -1615,7 +1615,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
 				if (group) {
 					group.element.appendChild(shadow);
-				} else {
+				} else if (element.parentNode) {
 					element.parentNode.insertBefore(shadow, element);
 				}
 
@@ -2360,7 +2360,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 						}
 						if (hrefRegex.test(span) && !forExport) { // Not for export - #1529
 							attr(tspan, 'onclick', 'location.href=\"' + span.match(hrefRegex)[1] + '\"');
+							attr(tspan, 'class', 'highcharts-anchor');
+							/*= if (build.classic) { =*/
 							css(tspan, { cursor: 'pointer' });
+							/*= } =*/
 						}
 
 						span = unescapeAngleBrackets(span.replace(/<(.|\n)*?>/g, '') || ' ');

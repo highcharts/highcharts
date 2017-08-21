@@ -22,14 +22,14 @@ QUnit.test('Pie Point dataLabel distance (#1174)', function (assert) {
                 dataLabels: {
                     distance: -30
                 }
-            }],
+            }]
         }, {
             dataLabels: {
                 distance: -30
             },
             data: [{
-                y: 3,
-            }],
+                y: 3
+            }]
         }]
     });
     var dataLabel1 = chart.series[0].data[0].dataLabel,
@@ -47,4 +47,27 @@ QUnit.test('Pie Point dataLabel distance (#1174)', function (assert) {
         'y value of dataLabels'
     );
 
+});
+
+QUnit.test('Small pie and labels (#6992)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            type: 'pie',
+            size: 10,
+            data: [1, 2, 3, 4, 5, 6, 7]
+        }],
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    rotation: -45
+                }
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.container.innerHTML.indexOf('NaN'),
+        -1,
+        'All numbers valid'
+    );
 });

@@ -51,6 +51,9 @@ $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
 .highcharts-emphasized {
     font-style: italic;
 }
+.highcharts-anchor {
+    cursor: pointer;
+}
 .highcharts-background {
     fill: $background-color;
 }

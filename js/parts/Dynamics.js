@@ -670,7 +670,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 				i--;
 			}
 		}
-
+		
 		series.updateParallelArrays(point, 'splice', i, 0, 0); // insert undefined item
 		series.updateParallelArrays(point, i); // update it
 
