@@ -109,8 +109,8 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 
 		options.yAxis = defaultyAxis.concat(newYAxes); // docs
 		options.xAxis = merge(
-			defaultXAxisOptions, // docs
-			splat(options.xAxis || {})[0]
+			splat(options.xAxis || {}),
+			[defaultXAxisOptions]
 		);
 	}
 
@@ -187,10 +187,9 @@ wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
 	if (this.chart.hasParallelCoordinates && !this.isXAxis) {
 		var index = this.parallelPosition,
 			currentPoints = [];
-		each(this.series, function (series) {
+		each(this.series, function (series, i) {
 			if (defined(series.yData[index])) {
-				// We need to use push() beacause of null points
-				currentPoints.push(series.yData[index]);
+				currentPoints[i] = series.yData[index];
 			}
 		});
 		this.dataMin = arrayMin(currentPoints);

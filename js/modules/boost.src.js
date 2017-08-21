@@ -1417,18 +1417,8 @@ function GLRenderer(postRenderCallback) {
 			// Skip translations - temporary floating point fix
 			if (!settings.useGPUTranslations) {
 				inst.skipTranslation = true;
-
-				if (chart.hasParallelCoordinates) {
-					if (chart.inverted) {
-						x = chart.yAxis[i].top - chart.plotTop;
-					} else {
-						x = chart.yAxis[i].left - chart.plotLeft;
-					}
-					y = chart.yAxis[i].toPixels(y, true);
-				} else {
-					x = xAxis.toPixels(x, true);
-					y = yAxis.toPixels(y, true);
-				}
+				x = xAxis.toPixels(x, true);
+				y = yAxis.toPixels(y, true);
 			}
 
 			if (drawAsBar) {
@@ -2475,13 +2465,8 @@ if (!hasWebGLSupport()) {
 						pointTaken[index] = true;
 
 						if (chart.inverted) {
-							if (chart.hasParallelCoordinates) {
-								clientX = chart.yAxis[i].len - chart.yAxis[i].top - chart.plotHeight + chart.plotTop;
-								plotY = chart.yAxis[i].len - plotY;
-							} else {
-								clientX = xAxis.len - clientX;
-								plotY = yAxis.len - plotY;
-							}
+							clientX = xAxis.len - clientX;
+							plotY = yAxis.len - plotY;
 						}
 
 						points.push({
@@ -2576,15 +2561,12 @@ if (!hasWebGLSupport()) {
 					if (!requireSorting) {
 						isYInside = y >= yMin && y <= yMax;
 					}
+
 					if (!isNull && x >= xMin && x <= xMax && isYInside) {
 
 						// We use ceil to allow the KD tree to work with sub
 						// pixels, which can be used in boost to space pixels
-						clientX = chart.hasParallelCoordinates ?
-							chart.inverted ?
-								chart.yAxis[i].top - chart.plotTop :
-								chart.yAxis[i].left - chart.plotLeft :
-							Math.ceil(xAxis.toPixels(x, true));
+						clientX = Math.ceil(xAxis.toPixels(x, true));
 
 						if (sampling) {
 							if (minI === undefined || clientX === lastClientX) {
@@ -2616,11 +2598,7 @@ if (!hasWebGLSupport()) {
 								lastClientX = clientX;
 							}
 						} else {
-							if (chart.hasParallelCoordinates) {
-								plotY = chart.yAxis[i].toPixels(y, true);
-							} else {
-								plotY = Math.ceil(yAxis.toPixels(y, true));
-							}
+							plotY = Math.ceil(yAxis.toPixels(y, true));
 							addKDPoint(clientX, plotY, i);
 						}
 					}
