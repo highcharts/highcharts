@@ -9,26 +9,23 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-var defaultPlotOptions = H.getOptions().plotOptions,
-	defined = H.defined,
+var defined = H.defined,
 	color = H.Color,
 	columnType = H.seriesTypes.column,
 	each = H.each,
-	extendClass = H.extendClass,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
 	merge = H.merge,
 	pick = H.pick,
+	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
 	stop = H.stop,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	Point = H.Point,
-	Series = H.Series,
-	pointFormat = '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>',
-	xrange = 'xrange';
+	Series = H.Series;
 
-defaultPlotOptions.xrange = merge(defaultPlotOptions.column, {
+seriesType('xrange', 'column', {
 	dataLabels: {
 		verticalAlign: 'middle',
 		inside: true,
@@ -45,25 +42,12 @@ defaultPlotOptions.xrange = merge(defaultPlotOptions.column, {
 		}
 	},
 	tooltip: {
-		pointFormat: pointFormat
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
 	},
 	borderRadius: 3
-});
-// TODO: Use new seriesType utility function to do this instead of extendClass
-seriesTypes.xrange = extendClass(columnType, {
-	pointClass: extendClass(Point, {
-		// Add x2 and yCategory to the available properties for tooltip formats
-		getLabelConfig: function () {
-			var point = this,
-				cfg = Point.prototype.getLabelConfig.call(point),
-				yCats = point.series.yAxis.categories;
 
-			cfg.x2 = point.x2;
-			cfg.yCategory = point.yCategory = yCats && yCats[point.y];
-			return cfg;
-		}
-	}),
-	type: xrange,
+}, {
+	type: 'xrange',
 	forceDL: true,
 	parallelArrays: ['x', 'x2', 'y'],
 	requireSorting: false,
@@ -380,6 +364,19 @@ seriesTypes.xrange = extendClass(columnType, {
 		
 		return retVal;
 	}
+
+// Point class properties
+}, {
+	// Add x2 and yCategory to the available properties for tooltip formats
+	getLabelConfig: function () {
+		var point = this,
+			cfg = Point.prototype.getLabelConfig.call(point),
+			yCats = point.series.yAxis.categories;
+
+		cfg.x2 = point.x2;
+		cfg.yCategory = point.yCategory = yCats && yCats[point.y];
+		return cfg;
+	}
 });
 
 /**
@@ -394,8 +391,8 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	if (axis.isXAxis) {
 		dataMax = pick(axis.dataMax, Number.MIN_VALUE);
 		each(axisSeries, function (series) {
-			if (series.type === xrange) {
-				each(series.x2Data || [], function (val) {
+			if (series.x2Data) {
+				each(series.x2Data, function (val) {
 					if (val > dataMax) {
 						dataMax = val;
 						modMax = true;
