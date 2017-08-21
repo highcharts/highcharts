@@ -407,7 +407,8 @@ Annotation.prototype = {
 			 * The alignment of the annotation's label. If right,
 			 * the right side of the label should be touching the point. 
 			 *
-			 * @type {'left' | 'center' | 'right'}
+			 * @type {String}
+			 * @validvalues ["left", "center", "right"]
 			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
 			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
 			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position
@@ -497,7 +498,6 @@ Annotation.prototype = {
 			 * @default undefined
 			 * @apioption annotations.labelOptions.format
 			 **/
-			// format: null,
 
 			/**
 			 * Alias for the format option.
@@ -511,7 +511,6 @@ Annotation.prototype = {
 			 * @default undefined
 			 * @apioption annotations.labelOptions.text
 			 */
-			// text: null,
 
 			/**
 			 * Callback JavaScript function to format the annotation's label. Note that
@@ -607,7 +606,8 @@ Annotation.prototype = {
 			/**
 			 * The vertical alignment of the annotation's label.
 			 * 
-			 * @type {'top' | 'middle' | 'bottom'}
+			 * @type {String}
+			 * @validvalues ["top", "middle", "bottom"]
 			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
 			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
 			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position
