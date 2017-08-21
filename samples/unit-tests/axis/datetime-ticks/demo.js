@@ -35,8 +35,8 @@ QUnit.test('getTimezoneOffset is negative, crossing midnight (#5935)', function 
 
     assert.strictEqual(
         chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[2]].label.element.textContent,
-        '01:00',
-        'Tick positions correct'
+        '02:00',
+        'Tick positions correct, and tick gap lands on the duplicated label (#6797)'
     );
 });
 

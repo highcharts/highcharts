@@ -1,5 +1,3 @@
-
-
 QUnit.test('Custom point.group option (#5681)', function (assert) {
 
     assert.expect(0);
@@ -159,7 +157,7 @@ QUnit.test(
 
 QUnit.test('Select and unselect', function (assert) {
 
-    var chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.chart('container', {
             xAxis:[{
                 min: 0,
                 max: 10
@@ -193,25 +191,5 @@ QUnit.test('Select and unselect', function (assert) {
         series.points[0].selected,
         false,
         'Unselected point out of range (#6445)'
-    );
-
-// for grouped points
-    // show all
-    axis.setExtremes(0, 200);
-    // select 1st visible point
-    series.points[0].select();
-    assert.strictEqual(
-        series.points[0].selected,
-        true,
-        'Selection for grouped points works'
-    );
-
-    // select 2nd visible point
-    series.points[1].select();
-
-    assert.strictEqual(
-        series.points[0].selected,
-        false,
-        'Unselected grouped point when selecting another (#6445)'
     );
 });

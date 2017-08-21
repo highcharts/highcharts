@@ -134,7 +134,7 @@ Series.prototype.drawDataLabels = function () {
 		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup,
-		defer = pick(options.defer, true),
+		defer = pick(options.defer, !!seriesOptions.animation),
 		renderer = series.chart.renderer;
 
 	if (options.enabled || series._hasPointLabels) {
@@ -174,7 +174,9 @@ Series.prototype.drawDataLabels = function () {
 				rotation,
 				connector = point.connector,
 				isNew = !dataLabel,
-				style;
+				style,
+				formatString;
+
 			// Determine if each data label is enabled
 			// @note dataLabelAttribs (like pointAttribs) would eradicate
 			// the need for dlOptions, and simplify the section below.
@@ -185,8 +187,12 @@ Series.prototype.drawDataLabels = function () {
 				// affecting others
 				options = merge(generalOptions, pointOptions);
 				labelConfig = point.getLabelConfig();
-				str = options.format ?
-					format(options.format, labelConfig) :
+				formatString = (
+					options[point.formatPrefix + 'Format'] ||
+					options.format
+				);
+				str = defined(formatString) ?
+					format(formatString, labelConfig) :
 					options.formatter.call(labelConfig, options);
 				style = options.style;
 				rotation = options.rotation;
@@ -196,8 +202,8 @@ Series.prototype.drawDataLabels = function () {
 				// Get automated contrast color
 				if (style.color === 'contrast') {
 					point.contrastColor = renderer.getContrast(point.color || series.color);
-					style.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
-						point.contrastColor : '${palette.neutralColor100}';
+					style.color = options.inside || pick(point.labelDistance, options.distance) < 0 ||
+						!!seriesOptions.stacking ? point.contrastColor : '${palette.neutralColor100}';
 				}
 				if (seriesOptions.cursor) {
 					style.cursor = seriesOptions.cursor;
@@ -313,8 +319,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 		// The alignment box is a singular point
 		alignTo = extend({
-			x: inverted ? chart.plotWidth - plotY : plotX,
-			y: Math.round(inverted ? chart.plotHeight - plotX : plotY),
+			x: inverted ? this.yAxis.len - plotY : plotX,
+			y: Math.round(inverted ? this.xAxis.len - plotX : plotY),
 			width: 0,
 			height: 0
 		}, alignTo);
@@ -377,8 +383,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
 		if (options.shape && !rotation) {
 			dataLabel[isNew ? 'attr' : 'animate']({
-				anchorX: point.plotX,
-				anchorY: point.plotY
+				anchorX: inverted ? chart.plotWidth - point.plotY : point.plotX,
+				anchorY: inverted ? chart.plotHeight - point.plotX : point.plotY
 			});
 		}
 	}
@@ -470,11 +476,9 @@ if (seriesTypes.pie) {
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
 			connector,
-			distanceOption = options.distance,
 			seriesCenter = series.center,
 			radius = seriesCenter[2] / 2,
 			centerY = seriesCenter[1],
-			outside = distanceOption > 0,
 			dataLabel,
 			dataLabelWidth,
 			labelPos,
@@ -531,9 +535,10 @@ if (seriesTypes.pie) {
 			var top,
 				bottom,
 				length = points.length,
-				positions,
+				positions = [],
 				naturalY,
 				sideOverflow,
+				positionsIndex, // Point index in positions array.
 				size;
 
 			if (!length) {
@@ -542,51 +547,80 @@ if (seriesTypes.pie) {
 
 			// Sort by angle
 			series.sortByAngle(points, i - 0.5);
-
-			// Only do anti-collision when we are outside the pie and have connectors (#856)
-			if (distanceOption > 0) {
-				top = Math.max(0, centerY - radius - distanceOption);
-				bottom = Math.min(centerY + radius + distanceOption, chart.plotHeight);
-				positions = map(points, function (point) {
-					if (point.dataLabel) {
+			// Only do anti-collision when we have dataLabels outside the pie 
+			// and have connectors. (#856)
+			if (series.maxLabelDistance > 0) {
+				top = Math.max(
+					0,
+					centerY - radius - series.maxLabelDistance
+				);
+				bottom = Math.min(
+					centerY + radius + series.maxLabelDistance,
+					chart.plotHeight
+				);
+				each(points, function (point) {
+					// check if specific points' label is outside the pie
+					if (point.labelDistance > 0 && point.dataLabel) {
+						// point.top depends on point.labelDistance value
+						// Used for calculation of y value in getX method 
+						point.top = Math.max(
+							0,
+							centerY - radius - point.labelDistance
+						);
+						point.bottom = Math.min(
+							centerY + radius + point.labelDistance,
+							chart.plotHeight
+						);
 						size = point.dataLabel.getBBox().height || 21;
-						return {
-							target: point.labelPos[1] - top + size / 2,
+
+						// point.positionsIndex is needed for getting index of 
+						// parameter related to specific point inside positions 
+						// array - not every point is in positions array.
+						point.positionsIndex = positions.push({
+							target: point.labelPos[1] - point.top + size / 2,
 							size: size,
 							rank: point.y
-						};
+						}) - 1;
 					}
 				});
 				H.distribute(positions, bottom + size - top);
 			}
 
-			// now the used slots are sorted, fill them up sequentially
+			// Now the used slots are sorted, fill them up sequentially
 			for (j = 0; j < length; j++) {
 
 				point = points[j];
+				positionsIndex = point.positionsIndex;
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
 				visibility = point.visible === false ? 'hidden' : 'inherit';
 				naturalY = labelPos[1];
 
-				if (positions) {
-					if (positions[j].pos === undefined) {
+				if (positions && defined(positions[positionsIndex])) {
+					if (positions[positionsIndex].pos === undefined) {
 						visibility = 'hidden';
+						y = 0;
 					} else {
-						labelHeight = positions[j].size;
-						y = top + positions[j].pos;
+						labelHeight = positions[positionsIndex].size;
+						y = point.top + positions[positionsIndex].pos;
 					}
 
 				} else {
 					y = naturalY;
 				}
 
-				// get the x - use the natural x position for labels near the top and bottom, to prevent the top
-				// and botton slice connectors from touching each other on either side
+				// It is needed to delete point.positionIndex for 
+				// dynamically added points etc.
+				
+				delete point.positionIndex;
+
+				// get the x - use the natural x position for labels near the 
+				// top and bottom, to prevent the top and botton slice connectors 
+				// from touching each other on either side
 				if (options.justify) {
-					x = seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption);
+					x = seriesCenter[0] + (i ? -1 : 1) * (radius + point.labelDistance);
 				} else {
-					x = series.getX(y < top + 2 || y > bottom - 2 ? naturalY : y, i);
+					x = series.getX(y < point.top + 2 || y > point.bottom - 2 ? naturalY : y, i, point);
 				}
 
 
@@ -605,7 +639,7 @@ if (seriesTypes.pie) {
 
 
 				// Detect overflowing data labels
-				if (series.options.size === null) {
+				if (pick(options.crop, true)) {
 					dataLabelWidth = dataLabel.getBBox().width;
 
 					sideOverflow = null;
@@ -617,7 +651,10 @@ if (seriesTypes.pie) {
 						overflow[3] = Math.max(sideOverflow, overflow[3]);
 
 					// Overflow right
-					} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
+					} else if (
+						x + dataLabelWidth >
+						plotWidth - connectorPadding
+					) {
 						sideOverflow = Math.round(
 							x + dataLabelWidth - plotWidth + connectorPadding
 						);
@@ -651,14 +688,19 @@ if (seriesTypes.pie) {
 			this.placeDataLabels();
 
 			// Draw the connectors
-			if (outside && connectorWidth) {
+			if (connectorWidth) {
 				each(this.points, function (point) {
 					var isNew;
 
 					connector = point.connector;
 					dataLabel = point.dataLabel;
 
-					if (dataLabel && dataLabel._pos && point.visible) {
+					if (
+						dataLabel &&
+						dataLabel._pos &&
+						point.visible &&
+						point.labelDistance > 0
+					) {
 						visibility = dataLabel._attr.visibility;
 
 						isNew = !connector;
@@ -762,47 +804,62 @@ if (seriesTypes.pie) {
 			centerOption = options.center,
 			minSize = options.minSize || 80,
 			newSize = minSize,
-			ret;
+			// If a size is set, return true and don't try to shrink the pie
+			// to fit the labels.
+			ret = options.size !== null;
 
-		// Handle horizontal size and center
-		if (centerOption[0] !== null) { // Fixed center
-			newSize = Math.max(center[2] - Math.max(overflow[1], overflow[3]), minSize);
+		if (!ret) {
+			// Handle horizontal size and center
+			if (centerOption[0] !== null) { // Fixed center
+				newSize = Math.max(center[2] -
+					Math.max(overflow[1], overflow[3]), minSize);
 
-		} else { // Auto center
-			newSize = Math.max(
-				center[2] - overflow[1] - overflow[3], // horizontal overflow
-				minSize
-			);
-			center[0] += (overflow[3] - overflow[1]) / 2; // horizontal center
-		}
-
-		// Handle vertical size and center
-		if (centerOption[1] !== null) { // Fixed center
-			newSize = Math.max(Math.min(newSize, center[2] - Math.max(overflow[0], overflow[2])), minSize);
-
-		} else { // Auto center
-			newSize = Math.max(
-				Math.min(
-					newSize,
-					center[2] - overflow[0] - overflow[2] // vertical overflow
-				),
-				minSize
-			);
-			center[1] += (overflow[0] - overflow[2]) / 2; // vertical center
-		}
-
-		// If the size must be decreased, we need to run translate and drawDataLabels again
-		if (newSize < center[2]) {
-			center[2] = newSize;
-			center[3] = Math.min(relativeLength(options.innerSize || 0, newSize), newSize); // #3632
-			this.translate(center);
-			
-			if (this.drawDataLabels) {
-				this.drawDataLabels();
+			} else { // Auto center
+				newSize = Math.max(
+					// horizontal overflow
+					center[2] - overflow[1] - overflow[3],
+					minSize
+				);
+				// horizontal center
+				center[0] += (overflow[3] - overflow[1]) / 2;
 			}
-		// Else, return true to indicate that the pie and its labels is within the plot area
-		} else {
-			ret = true;
+
+			// Handle vertical size and center
+			if (centerOption[1] !== null) { // Fixed center
+				newSize = Math.max(Math.min(newSize, center[2] -
+					Math.max(overflow[0], overflow[2])), minSize);
+
+			} else { // Auto center
+				newSize = Math.max(
+					Math.min(
+						newSize,
+						// vertical overflow
+						center[2] - overflow[0] - overflow[2]
+					),
+					minSize
+				);
+				// vertical center
+				center[1] += (overflow[0] - overflow[2]) / 2;
+			}
+
+			// If the size must be decreased, we need to run translate and
+			// drawDataLabels again
+			if (newSize < center[2]) {
+				center[2] = newSize;
+				center[3] = Math.min( // #3632
+					relativeLength(options.innerSize || 0, newSize),
+					newSize
+				);
+				this.translate(center);
+				
+				if (this.drawDataLabels) {
+					this.drawDataLabels();
+				}
+			// Else, return true to indicate that the pie and its labels is
+			// within the plot area
+			} else {
+				ret = true;
+			}
 		}
 		return ret;
 	};

@@ -269,6 +269,12 @@ QUnit.test('NumberFormat', function (assert) {
     assertEquals(assert, 'Rounding', "2.0", numberFormat(1.96, 1));
     assertEquals(assert, 'Rounding', "1.00", numberFormat(0.995, 2));
     assertEquals(assert, 'Rounding', "-1.00", numberFormat(-0.995, 2));
+
+    assertEquals(assert, 'Exponential', "3.00e+22", numberFormat(30000000000000000000000));
+    assertEquals(assert, 'Exponential', "3.20e+22", numberFormat(32000000000000000000000));
+    assertEquals(assert, 'Exponential', "3,20e+22", numberFormat(32000000000000000000000, 2, ','));
+    assertEquals(assert, 'Exponential', "3e+22", numberFormat(30000000000000000000000, 0));
+    assertEquals(assert, 'Exponential', "1.5e+36", numberFormat(1.5e+36, -1));
 });
 
 
@@ -363,6 +369,131 @@ QUnit.test('DateFormat', function (assert) {
     );
 });
 
+
+QUnit.test('isDOMElement', function (assert) {
+    var isDOMElement = Highcharts.isDOMElement,
+        // Mock an ES6 class
+        classes = {
+            constructor: function TestClass() {}
+        };
+
+    assert.strictEqual(
+      isDOMElement("a"),
+      false,
+      'String is not a HTML Element'
+    );
+    assert.strictEqual(
+      isDOMElement(1),
+      false,
+      'Number is not a HTML Element'
+    );
+    assert.strictEqual(
+      isDOMElement(true),
+      false,
+      'Boolean is not a HTML Element'
+    );
+    assert.strictEqual(
+      isDOMElement(null),
+      false,
+      'null is not a HTML Element'
+    );
+    assert.strictEqual(
+      isDOMElement(undefined),
+      false,
+      'undefined is not a HTML Element'
+    );
+    assert.strictEqual(
+      isDOMElement([1]),
+      false,
+      'Array is not a HTML Element'
+    );
+    assert.strictEqual(
+      isDOMElement({ a: 1 }),
+      false,
+      'Object is not a HTML Element'
+    );
+    assert.strictEqual(
+      isDOMElement(classes),
+      false,
+      'Object classes is not a HTML Element'
+    );
+    assert.strictEqual(
+      isDOMElement(document.createElement('div')),
+      true,
+      'HTMLElement is a HTML Element'
+    );
+    assert.strictEqual(
+      isDOMElement(function Test() {}),
+      false,
+      'Function is not a HTML Element'
+    );
+});
+
+QUnit.test('isClass', function (assert) {
+    var isClass = Highcharts.isClass,
+        // Mock an ES6 class
+        classes = {
+            constructor: function TestClass() {}
+        };
+
+    assert.strictEqual(
+      isClass("a"),
+      false,
+      'String is not a class'
+    );
+    assert.strictEqual(
+      isClass(1),
+      false,
+      'Number is not a class'
+    );
+    assert.strictEqual(
+      isClass(true),
+      false,
+      'Boolean is not a class'
+    );
+    assert.strictEqual(
+      isClass(null),
+      false,
+      'null is not a class'
+    );
+    assert.strictEqual(
+      isClass(undefined),
+      false,
+      'undefined is not a class'
+    );
+    assert.strictEqual(
+      isClass([1]),
+      false,
+      'Array is not a class'
+    );
+    assert.strictEqual(
+      isClass({ a: 1 }),
+      false,
+      'Object is not a class'
+    );
+    assert.strictEqual(
+      isClass(classes),
+      true,
+      'Object classes is a class'
+    );
+    // Some legacy browsers do not have named functions
+    classes.constructor = function () {};
+    assert.strictEqual(
+      isClass(classes),
+      false,
+      'Object with unnamed constructor is not a class'
+    );
+    assert.strictEqual(
+      isClass(document.createElement('div')),
+      false,
+      'HTMLElement is not a class'
+    );
+    assert.strictEqual(
+      isClass(function Test() {}),
+      false,
+      'Function is not a class'
+    );
+});
 
 QUnit.test('isNumber', function (assert) {
     var isNumber = Highcharts.isNumber;

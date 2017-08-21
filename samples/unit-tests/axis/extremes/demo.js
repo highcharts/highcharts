@@ -88,3 +88,90 @@ QUnit.test('Zoom out of container', function (assert) {
     Highcharts.Axis.prototype.zoom.call(fakeAxis, 4, 15);
     Highcharts.Axis.prototype.zoom.call(fakeAxis, 14, 15);
 });
+
+QUnit.test('Zoom next to edge on category axis (#6731)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            data: [{
+                name: 'Jan',
+                y: 24.2
+            }, {
+                name: 'Feb',
+                y: 24.6
+            }, {
+                name: 'Mar',
+                y: 26.7
+            }, {
+                name: 'Apr',
+                y: 28.6
+            }, {
+                name: 'May',
+                y: 30.1
+            }, {
+                name: 'Jun',
+                y: 29.0
+            }, {
+                name: 'Jul',
+                y: 27.5
+            }, {
+                name: 'Aug',
+                y: 27.2
+            }, {
+                name: 'Sep',
+                y: 27.4
+            }, {
+                name: 'Oct',
+                y: 28.2
+            }, {
+                name: 'Nov',
+                y: 27.4
+            }, {
+                name: 'Dec',
+                y: 25.6
+            }]
+        }]
+    });
+
+    chart.xAxis[0].zoom(0, 1);
+    chart.redraw();
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Axis not zoomed passed 0'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        5,
+        'Axis actually zoomed'
+    );
+});
+
+QUnit.test('Zooming between points (#7061)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+        xAxis: {
+            minRange: 0.5
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+    });
+    chart.xAxis[0].setExtremes(2.3, 2.7);
+
+    assert.strictEqual(
+        typeof chart.yAxis[0].min,
+        'number',
+        'Y axis has data'
+    );
+});

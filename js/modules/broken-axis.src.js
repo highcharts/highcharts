@@ -324,5 +324,97 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
 	});
 };
 
+
+/**
+ * Extend getGraphPath by identifying gaps in the data so that we can draw a gap
+ * in the line or area. This was moved from ordinal axis module to broken axis
+ * module as of #5045.
+ */
+H.Series.prototype.gappedPath = function () {
+	var gapSize = this.options.gapSize,
+		points = this.points.slice(),
+		i = points.length - 1,
+		yAxis = this.yAxis,
+		xRange,
+		stack;
+
+	/**
+	 * Defines when to display a gap in the graph, together with the `gapUnit`
+	 * option.
+	 * 
+	 * When the `gapUnit` is `relative` (default), a gap size of 5 means
+	 * that if the distance between two points is greater than five times
+	 * that of the two closest points, the graph will be broken.
+	 *
+	 * When the `gapUnit` is `value`, the gap is based on absolute axis values,
+	 * which on a datetime axis is milliseconds.
+	 * 
+	 * In practice, this option is most often used to visualize gaps in
+	 * time series. In a stock chart, intraday data is available for daytime
+	 * hours, while gaps will appear in nights and weekends.
+	 * 
+	 * @type {Number}
+	 * @see [xAxis.breaks](#xAxis.breaks)
+	 * @sample {highstock} stock/plotoptions/series-gapsize/
+	 *         Setting the gap size to 2 introduces gaps for weekends in daily
+	 *         datasets.
+	 * @default 0
+	 * @product highstock
+	 * @apioption plotOptions.series.gapSize
+	 */
+	
+	/**
+	 * Together with `gapSize`, this option defines where to draw gaps in the 
+	 * graph.
+	 *
+	 * @type {String}
+	 * @see [gapSize](plotOptions.series.gapSize)
+	 * @default relative
+	 * @validvalues ["relative", "value"]
+	 * @since 5.0.13
+	 * @product highstock
+	 * @apioption plotOptions.series.gapUnit
+	 */
+
+	if (gapSize && i > 0) { // #5008
+
+		// Gap unit is relative
+		if (this.options.gapUnit !== 'value') {
+			gapSize *= this.closestPointRange;
+		}
+
+		// extension for ordinal breaks
+		while (i--) {
+			if (points[i + 1].x - points[i].x > gapSize) {
+				xRange = (points[i].x + points[i + 1].x) / 2;
+
+				points.splice( // insert after this one
+					i + 1,
+					0,
+					{
+						isNull: true,
+						x: xRange
+					}
+				);
+
+				// For stacked chart generate empty stack items, #6546
+				if (this.options.stacking) {
+					stack = yAxis.stacks[this.stackKey][xRange] = new H.StackItem(
+						yAxis,
+						yAxis.options.stackLabels,
+						false,
+						xRange,
+						this.stack
+					);
+					stack.total = 0;
+				}
+			}
+		}
+	}
+
+	// Call base method
+	return this.getGraphPath(points);
+};
+
 wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
 wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);

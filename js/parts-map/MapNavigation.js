@@ -32,7 +32,6 @@ function stopEvent(e) {
  * The MapNavigation handles buttons for navigation in addition to mousewheel
  * and doubleclick handlers for chart zooming.
  * @param {Chart} chart The Chart instance.
- * @class
  */
 function MapNavigation(chart) {
 	this.init(chart);
@@ -181,12 +180,15 @@ MapNavigation.prototype.updateEvents = function (options) {
 };
 
 // Add events to the Chart object itself
-extend(Chart.prototype, {
+extend(Chart.prototype, /** @lends Chart.prototype */ {
 
 	/**
-	 * Fit an inner box to an outer. If the inner box overflows left or right, align it to the sides of the
-	 * outer. If it overflows both sides, fit it within the outer. This is a pattern that occurs more places
-	 * in Highcharts, perhaps it should be elevated to a common utility function.
+	 * Fit an inner box to an outer. If the inner box overflows left or right,
+	 * align it to the sides of the outer. If it overflows both sides, fit it
+	 * within the outer. This is a pattern that occurs more places in
+	 * Highcharts, perhaps it should be elevated to a common utility function.
+	 *
+	 * @private
 	 */
 	fitToBox: function (inner, outer) {
 		each([['x', 'width'], ['y', 'height']], function (dim) {
@@ -214,7 +216,24 @@ extend(Chart.prototype, {
 	},
 
 	/**
-	 * Zoom the map in or out by a certain amount. Less than 1 zooms in, greater than 1 zooms out.
+	 * Highmaps only. Zoom in or out of the map. See also {@link Point#zoomTo}.
+	 * See {@link Chart#fromLatLonToPoint} for how to get the `centerX` and
+	 * `centerY` parameters for a geographic location.
+	 *
+	 * @param  {Number} [howMuch]
+	 *         How much to zoom the map. Values less than 1 zooms in. 0.5 zooms
+	 *         in to half the current view. 2 zooms to twice the current view.
+	 *         If omitted, the zoom is reset.
+	 * @param  {Number} [centerX]
+	 *         The X axis position to center around if available space.
+	 * @param  {Number} [centerY]
+	 *         The Y axis position to center around if available space.
+	 * @param  {Number} [mouseX]
+	 *         Fix the zoom to this position if possible. This is used for
+	 *         example in mousewheel events, where the area under the mouse
+	 *         should be fixed as we zoom in.
+	 * @param  {Number} [mouseY]
+	 *         Fix the zoom to this position if possible.
 	 */
 	mapZoom: function (howMuch, centerXArg, centerYArg, mouseX, mouseY) {
 		/*if (this.isMapZooming) {

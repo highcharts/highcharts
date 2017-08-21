@@ -1,64 +1,36 @@
 QUnit.test('getTitlePosition', function (assert) {
-    var getTitlePosition = Highcharts.Axis.prototype.getTitlePosition,
-        fontMetrics = Highcharts.Renderer.prototype.fontMetrics,
-        xAxis = {
-            axisTitleMargin: 30,
-            chart: {
-                renderer: {
-                    fontMetrics: fontMetrics
+    assert.expect(0);
+    Highcharts.chart('container', {
+        yAxis: {
+            title: {
+                text: 'yAxisTitle',
+                style: {
+                    color: 'red',
+                    fontSize: 'x-large'
                 }
-            },
-            height: 265,
-            horiz: true,
-            left: 93,
-            len: 729,
-            offset: 0,
-            opposite: undefined,
-            options: {
-                title: {
-                    align: 'middle',
-                    style: {
-                        fontSize: 'x-large'
-                    }
-                }
-            },
-            side: 2,
-            top: 53,
-            width: 729
+            }
         },
-        yAxis = {
-            axisTitleMargin: 45.859375,
-            chart: {
-                renderer: {
-                    fontMetrics: fontMetrics
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            title: {
+                text: 'xAxisTitle',
+                style: {
+                    color: 'red',
+                    fontSize: 'x-large'
                 }
-            },
-            height: 265,
-            horiz: false,
-            left: 93,
-            len: 265,
-            offset: -0,
-            opposite: undefined,
-            options: {
-                title: {
-                    align: 'middle',
-                    style: {
-                        fontSize: 'x-large'
-                    }
-                }
-            },
-            side: 3,
-            top: 53,
-            width: 729
-        };
-    assert.deepEqual(
-        getTitlePosition.call(xAxis),
-        {  "x": 457.5, "y": 360 },
-        'xAxis returns expected position'
-    );
-    assert.deepEqual(
-        getTitlePosition.call(yAxis),
-        {  "x": 47.140625, "y": 185.5 },
-        'yAxis returns expected position'
-    );
+            }
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        credits: {
+            enabled: false
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+    });
 });

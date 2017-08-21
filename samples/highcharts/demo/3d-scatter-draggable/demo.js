@@ -1,5 +1,3 @@
-
-
 // Give the points a 3D feel by adding a radial gradient
 Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function (color) {
     return {
@@ -78,8 +76,8 @@ var chart = new Highcharts.Chart({
 $(chart.container).on('mousedown.hc touchstart.hc', function (eStart) {
     eStart = chart.pointer.normalize(eStart);
 
-    var posX = eStart.pageX,
-        posY = eStart.pageY,
+    var posX = eStart.chartX,
+        posY = eStart.chartY,
         alpha = chart.options.chart.options3d.alpha,
         beta = chart.options.chart.options3d.beta,
         newAlpha,
@@ -87,13 +85,14 @@ $(chart.container).on('mousedown.hc touchstart.hc', function (eStart) {
         sensitivity = 5; // lower is more sensitive
 
     $(document).on({
-        'mousemove.hc touchdrag.hc': function (e) {
+        'mousemove.hc touchmove.hc': function (e) {
             // Run beta
-            newBeta = beta + (posX - e.pageX) / sensitivity;
+            e = chart.pointer.normalize(e);
+            newBeta = beta + (posX - e.chartX) / sensitivity;
             chart.options.chart.options3d.beta = newBeta;
 
             // Run alpha
-            newAlpha = alpha + (e.pageY - posY) / sensitivity;
+            newAlpha = alpha + (e.chartY - posY) / sensitivity;
             chart.options.chart.options3d.alpha = newAlpha;
 
             chart.redraw(false);

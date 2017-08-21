@@ -26,7 +26,7 @@ var Axis = H.Axis,
  *
  * @class
  */
-function StackItem(axis, options, isNegative, x, stackOption) {
+H.StackItem = function (axis, options, isNegative, x, stackOption) {
 
 	var inverted = axis.chart.inverted;
 
@@ -68,9 +68,9 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 	this.textAlign = options.textAlign ||
 		(inverted ? (isNegative ? 'right' : 'left') : 'center');
-}
+};
 
-StackItem.prototype = {
+H.StackItem.prototype = {
 	destroy: function () {
 		destroyObjectProperties(this, this.axis);
 	},
@@ -111,13 +111,9 @@ StackItem.prototype = {
 		var stackItem = this,
 			axis = stackItem.axis,
 			chart = axis.chart,
-			inverted = chart.inverted,
-			reversed = axis.reversed,
-			neg = (this.isNegative && !reversed) ||
-				(!this.isNegative && reversed), // #4056
 			// stack value translated mapped to chart coordinates
 			y = axis.translate(
-				axis.usePercentage ? 100 : this.total,
+				axis.usePercentage ? 100 : stackItem.total,
 				0,
 				0,
 				0,
@@ -125,31 +121,42 @@ StackItem.prototype = {
 			),
 			yZero = axis.translate(0), // stack origin
 			h = Math.abs(y - yZero), // stack height
-			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
-			plotHeight = chart.plotHeight,
-			stackBox = { // this is the box for the complete stack
-				x: inverted ? (neg ? y : y - h) : x,
-				y: inverted ?
-					plotHeight - x - xWidth : (neg ? (plotHeight - y - h) :
-					plotHeight - y),
-				width: inverted ? h : xWidth,
-				height: inverted ? xWidth : h
-			},
-			label = this.label,
+			x = chart.xAxis[0].translate(stackItem.x) + xOffset,	// stack x position
+			stackBox = stackItem.getStackBox(chart, stackItem, x, y, xWidth, h),
+			label = stackItem.label,
 			alignAttr;
 
 		if (label) {
 			// Align the label to the box
-			label.align(this.alignOptions, null, stackBox);
+			label.align(stackItem.alignOptions, null, stackBox);
 
 			// Set visibility (#678)
 			alignAttr = label.alignAttr;
 			label[
-				this.options.crop === false || chart.isInsidePlot(
+				stackItem.options.crop === false || chart.isInsidePlot(
 					alignAttr.x,
 					alignAttr.y
 				) ? 'show' : 'hide'](true);
 		}
+	},
+	getStackBox: function (chart, stackItem, x, y, xWidth, h) {
+		var reversed = stackItem.axis.reversed,
+			inverted = chart.inverted,
+			plotHeight = chart.plotHeight,
+			neg = (stackItem.isNegative && !reversed) ||
+				(!stackItem.isNegative && reversed); // #4056
+
+		return { // this is the box for the complete stack
+			x: inverted ? (neg ? y : y - h) : x,
+			y: inverted ?
+					plotHeight - x - xWidth :
+					(neg ?
+						(plotHeight - y - h) :
+						plotHeight - y
+					),
+			width: inverted ? h : xWidth,
+			height: inverted ? xWidth : h
+		};
 	}
 };
 
@@ -182,7 +189,6 @@ Chart.prototype.getStacks = function () {
  */
 Axis.prototype.buildStacks = function () {
 	var axisSeries = this.series,
-		series,
 		reversedStacks = pick(this.options.reversedStacks, true),
 		len = axisSeries.length,
 		i;
@@ -193,18 +199,9 @@ Axis.prototype.buildStacks = function () {
 			axisSeries[reversedStacks ? i : len - i - 1].setStackedPoints();
 		}
 
-		i = len;
-		while (i--) {
-			series = axisSeries[reversedStacks ? i : len - i - 1];
-			if (series.setStackCliffs) {
-				series.setStackCliffs();
-			}
-		}
-		// Loop up again to compute percent stack
-		if (this.usePercentage) {
-			for (i = 0; i < len; i++) {
-				axisSeries[i].setPercentStacks();
-			}
+		// Loop up again to compute percent and stream stack
+		for (i = 0; i < len; i++) {
+			axisSeries[i].modifyStacks();
 		}
 	}
 };
@@ -348,7 +345,7 @@ Series.prototype.setStackedPoints = function () {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
 			} else {
-				stacks[key][x] = new StackItem(
+				stacks[key][x] = new H.StackItem(
 					yAxis,
 					yAxis.options.stackLabels,
 					isNegative,
@@ -420,40 +417,49 @@ Series.prototype.setStackedPoints = function () {
 /**
  * Iterate over all stacks and compute the absolute values to percent
  */
-Series.prototype.setPercentStacks = function () {
+Series.prototype.modifyStacks = function () {
 	var series = this,
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,
 		processedXData = series.processedXData,
-		stackIndicator;
+		stackIndicator,
+		stacking = series.options.stacking;
 
-	each([stackKey, '-' + stackKey], function (key) {
-		var i = processedXData.length,
-			x,
-			stack,
-			pointExtremes,
-			totalFactor;
-
-		while (i--) {
-			x = processedXData[i];
-			stackIndicator = series.getStackIndicator(
-				stackIndicator,
+	if (series[stacking + 'Stacker']) { // Modifier function exists
+		each([stackKey, '-' + stackKey], function (key) {
+			var i = processedXData.length,
 				x,
-				series.index,
-				key
-			);
-			stack = stacks[key] && stacks[key][x];
-			pointExtremes = stack && stack.points[stackIndicator.key];
-			if (pointExtremes) {
-				totalFactor = stack.total ? 100 / stack.total : 0;
-				// Y bottom value
-				pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor);
-				// Y value
-				pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor);
-				series.stackedYData[i] = pointExtremes[1];
+				stack,
+				pointExtremes;
+
+			while (i--) {
+				x = processedXData[i];
+				stackIndicator = series.getStackIndicator(
+					stackIndicator,
+					x,
+					series.index,
+					key
+				);
+				stack = stacks[key] && stacks[key][x];
+				pointExtremes = stack && stack.points[stackIndicator.key];
+				if (pointExtremes) {
+					series[stacking + 'Stacker'](pointExtremes, stack, i);
+				}
 			}
-		}
-	});
+		});
+	}
+};
+
+/**
+ * Modifier function for percent stacks. Blows up the stack to 100%.
+ */
+Series.prototype.percentStacker = function (pointExtremes, stack, i) {
+	var totalFactor = stack.total ? 100 / stack.total : 0;
+	// Y bottom value
+	pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor);
+	// Y value
+	pointExtremes[1] = correctFloat(pointExtremes[1] * totalFactor);
+	this.stackedYData[i] = pointExtremes[1];
 };
 
 /**

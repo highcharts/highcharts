@@ -21,10 +21,13 @@ if (VMLRenderer) {
 
 	H.setOptions({ animate: false });
 
+	VMLRenderer.prototype.face3d = SVGRenderer.prototype.face3d;
+	VMLRenderer.prototype.polyhedron = SVGRenderer.prototype.polyhedron;
 	VMLRenderer.prototype.cuboid = SVGRenderer.prototype.cuboid;
 	VMLRenderer.prototype.cuboidPath = SVGRenderer.prototype.cuboidPath;
 
 	VMLRenderer.prototype.toLinePath = SVGRenderer.prototype.toLinePath;
+	VMLRenderer.prototype.toLineSegments = SVGRenderer.prototype.toLineSegments;
 
 	VMLRenderer.prototype.createElement3D = SVGRenderer.prototype.createElement3D;
 

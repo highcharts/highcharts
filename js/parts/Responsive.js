@@ -15,6 +15,108 @@ var Chart = H.Chart,
 	pick = H.pick,
 	splat = H.splat;
 
+
+/**
+ * Allows setting a set of rules to apply for different screen or chart
+ * sizes. Each rule specifies additional chart options.
+ * 
+ * @sample {highstock} stock/demo/responsive/ Stock chart
+ * @sample highcharts/responsive/axis/ Axis
+ * @sample highcharts/responsive/legend/ Legend
+ * @sample highcharts/responsive/classname/ Class name
+ * @since 5.0.0
+ * @apioption responsive
+ */
+
+/**
+ * A set of rules for responsive settings. The rules are executed from
+ * the top down.
+ * 
+ * @type {Array<Object>}
+ * @sample {highcharts} highcharts/responsive/axis/ Axis changes
+ * @sample {highstock} highcharts/responsive/axis/ Axis changes
+ * @sample {highmaps} highcharts/responsive/axis/ Axis changes
+ * @since 5.0.0
+ * @apioption responsive.rules
+ */
+
+/**
+ * A full set of chart options to apply as overrides to the general
+ * chart options. The chart options are applied when the given rule
+ * is active.
+ * 
+ * A special case is configuration objects that take arrays, for example
+ * [xAxis](#xAxis), [yAxis](#yAxis) or [series](#series). For these
+ * collections, an `id` option is used to map the new option set to
+ * an existing object. If an existing object of the same id is not found,
+ * the item of the same indexupdated. So for example, setting `chartOptions`
+ * with two series items without an `id`, will cause the existing chart's
+ * two series to be updated with respective options.
+ * 
+ * @type {Object}
+ * @sample {highstock} stock/demo/responsive/ Stock chart
+ * @sample highcharts/responsive/axis/ Axis
+ * @sample highcharts/responsive/legend/ Legend
+ * @sample highcharts/responsive/classname/ Class name
+ * @since 5.0.0
+ * @apioption responsive.rules.chartOptions
+ */
+
+/**
+ * Under which conditions the rule applies.
+ * 
+ * @type {Object}
+ * @since 5.0.0
+ * @apioption responsive.rules.condition
+ */
+
+/**
+ * A callback function to gain complete control on when the responsive
+ * rule applies. Return `true` if it applies. This opens for checking
+ * against other metrics than the chart size, or example the document
+ * size or other elements.
+ * 
+ * @type {Function}
+ * @context Chart
+ * @since 5.0.0
+ * @apioption responsive.rules.condition.callback
+ */
+
+/**
+ * The responsive rule applies if the chart height is less than this.
+ * 
+ * @type {Number}
+ * @since 5.0.0
+ * @apioption responsive.rules.condition.maxHeight
+ */
+
+/**
+ * The responsive rule applies if the chart width is less than this.
+ * 
+ * @type {Number}
+ * @sample highcharts/responsive/axis/ Max width is 500
+ * @since 5.0.0
+ * @apioption responsive.rules.condition.maxWidth
+ */
+
+/**
+ * The responsive rule applies if the chart height is greater than this.
+ * 
+ * @type {Number}
+ * @default 0
+ * @since 5.0.0
+ * @apioption responsive.rules.condition.minHeight
+ */
+
+/**
+ * The responsive rule applies if the chart width is greater than this.
+ * 
+ * @type {Number}
+ * @default 0
+ * @since 5.0.0
+ * @apioption responsive.rules.condition.minWidth
+ */
+
 /**
  * Update the chart based on the current chart/document size and options for
  * responsiveness.

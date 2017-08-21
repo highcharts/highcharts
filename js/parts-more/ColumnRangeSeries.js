@@ -15,16 +15,54 @@ var defaultPlotOptions = H.defaultPlotOptions,
 	seriesTypes = H.seriesTypes;
 
 var colProto = seriesTypes.column.prototype;
+/**
+ * The column range is a cartesian series type with higher and lower
+ * Y values along an X axis. Requires `highcharts-more.js`. To display
+ * horizontal bars, set [chart.inverted](#chart.inverted) to `true`.
+ * 
+ * @type {Object}
+ * @extends plotOptions.column
+ * @excluding negativeColor,stacking,softThreshold,threshold
+ * @sample {highcharts} highcharts/demo/columnrange/
+ *         Inverted column range
+ * @sample {highstock} highcharts/demo/columnrange/
+ *         Inverted column range
+ * @since 2.3.0
+ * @product highcharts highstock
+ * @optionparent plotOptions.columnrange
+ */
+var columnRangeOptions = {
 
+	pointRange: null,
+	marker: null,
+	states: {
+		hover: {
+			halo: false
+		}
+	}
+		
+	/**
+	 * Extended data labels for range series types. Range series data labels
+	 * have no `x` and `y` options. Instead, they have `xLow`, `xHigh`,
+	 * `yLow` and `yHigh` options to allow the higher and lower data label
+	 * sets individually.
+	 * 
+	 * @type {Object}
+	 * @extends plotOptions.arearange.dataLabels
+	 * @since 2.3.0
+	 * @product highcharts highstock
+	 * @apioption plotOptions.columnrange.dataLabels
+	 */
+};
 /**
  * The ColumnRangeSeries class
  */
-seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
-	lineWidth: 1,
-	pointRange: null
+seriesType('columnrange', 'arearange', merge(
+	defaultPlotOptions.column,
+	defaultPlotOptions.arearange,
+	columnRangeOptions
 
-// Prototype members
-}), {
+), {
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
 	 */
@@ -36,7 +74,17 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 			start,
 			chart = series.chart,
 			isRadial = series.xAxis.isRadial,
+			safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999,
 			plotHigh;
+
+		// Don't draw too far outside plot area (#6835)
+		function safeBounds(pixelPos) {
+			return Math.min(Math.max(
+				-safeDistance,
+				pixelPos
+			), safeDistance);
+		}
+
 
 		colProto.translate.apply(series);
 
@@ -48,8 +96,10 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 				height,
 				y;
 
-			point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
-			point.plotLow = point.plotY;
+			point.plotHigh = plotHigh = safeBounds(
+				yAxis.translate(point.high, 0, 1, 0, 1)
+			);
+			point.plotLow = safeBounds(point.plotY);
 
 			// adjust shape
 			y = plotHigh;
@@ -75,6 +125,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 					d: series.polarArc(y + height, y, start, start + point.pointWidth)
 				};
 			} else {
+
 				shapeArgs.height = height;
 				shapeArgs.y = y;
 
@@ -96,6 +147,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 	directTouch: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	drawGraph: noop,
+	getSymbol: noop,
 	crispCol: colProto.crispCol,
 	drawPoints: colProto.drawPoints,
 	drawTracker: colProto.drawTracker,
@@ -107,4 +159,78 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 		return colProto.polarArc.apply(this, arguments);
 	},
 	pointAttribs: colProto.pointAttribs
+}, {
+	setState: colProto.pointClass.prototype.setState
 });
+
+
+/**
+ * A `columnrange` series. If the [type](#series.columnrange.type)
+ * option is not specified, it is inherited from [chart.type](#chart.
+ * type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * columnrange](#plotOptions.columnrange).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.columnrange
+ * @excluding dataParser,dataURL,stack
+ * @product highcharts highstock
+ * @apioption series.columnrange
+ */
+
+/**
+ * An array of data points for the series. For the `columnrange` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 3 or 2 values. In this case, the values
+ * correspond to `x,low,high`. If the first value is a string, it is
+ * applied as the name of the point, and the `x` value is inferred.
+ * The `x` value can also be omitted, in which case the inner arrays
+ * should be of length 2\. Then the `x` value is automatically calculated,
+ * either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options.
+ * 
+ *  ```js
+ *     data: [
+ *         [0, 4, 2],
+ *         [1, 2, 1],
+ *         [2, 9, 10]
+ *     ]
+ *  ```
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.columnrange.
+ * turboThreshold), this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         low: 0,
+ *         high: 4,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         low: 5,
+ *         high: 3,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array>}
+ * @extends series.arearange.data
+ * @excluding marker
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts highstock
+ * @apioption series.columnrange.data
+ */
+

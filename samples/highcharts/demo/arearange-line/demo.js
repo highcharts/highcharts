@@ -110,6 +110,9 @@ Highcharts.chart('container', {
         linkedTo: ':previous',
         color: Highcharts.getOptions().colors[0],
         fillOpacity: 0.3,
-        zIndex: 0
+        zIndex: 0,
+        marker: {
+            enabled: false
+        }
     }]
 });

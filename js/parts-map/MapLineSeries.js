@@ -10,10 +10,35 @@ import '../parts/Options.js';
 var seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
 
-// The mapline series type
+/**
+ * A mapline series is a special case of the map series where the value colors
+ * are applied to the strokes rather than the fills. It can also be used for
+ * freeform drawing, like dividers, in the map.
+ *
+ * @sample maps/demo/mapline-mappoint/ Mapline and map-point chart
+ * @extends {plotOptions.map}
+ * @product highmaps
+ * @optionparent plotOptions.mapline
+ */
 seriesType('mapline', 'map', {
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The width of the map line.
+	 * 
+	 * @type {Number}
+	 * @default 1
+	 * @product highmaps
+	 */
 	lineWidth: 1,
+
+	/**
+	 * Fill color for the map line shapes
+	 * 
+	 * @type {Color}
+	 * @default none
+	 * @product highmaps
+	 */
 	fillColor: 'none'
 	/*= } =*/
 }, {
@@ -38,3 +63,64 @@ seriesType('mapline', 'map', {
 	/*= } =*/
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
+
+/**
+ * A `mapline` series. If the [type](#series.mapline.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * mapline](#plotOptions.mapline).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.mapline
+ * @excluding dataParser,dataURL
+ * @product highmaps
+ * @apioption series.mapline
+ */
+
+/**
+ * An array of data points for the series. For the `mapline` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `value` options. Example:
+ * 
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ * 
+ * 2.  An array of arrays with 2 values. In this case, the values correspond
+ * to `[hc-key, value]`. Example:
+ * 
+ *  ```js
+ *     data: [
+ *         ['us-ny', 0],
+ *         ['us-mi', 5],
+ *         ['us-tx', 3],
+ *         ['us-ak', 5]
+ *     ]
+ *  ```
+ * 
+ * 3.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.map.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         value: 6,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         value: 6,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object>}
+ * @product highmaps
+ * @apioption series.mapline.data
+ */

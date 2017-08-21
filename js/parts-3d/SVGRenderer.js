@@ -35,19 +35,6 @@ var animObject = H.animObject,
 
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
-
-//Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
-function shapeArea(vertexes) {
-	var area = 0,
-		i,
-		j;
-	for (i = 0; i < vertexes.length; i++) {
-		j = (i + 1) % vertexes.length;
-		area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
-	}
-	return area / 2;
-}
-
 /** Method to construct a curved path
   * Can 'wrap' around more then 180 degrees
   */
@@ -136,6 +123,139 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 	return result;
 };
 
+SVGRenderer.prototype.toLineSegments = function (points) {
+	var result = [];
+
+	var m = true;
+	each(points, function (point) {
+		result.push(m ? 'M' : 'L', point.x, point.y);
+		m = !m;
+	});
+
+	return result;
+};
+
+/**
+ * A 3-D Face is defined by it's 3D vertexes, and is only
+ * visible if it's vertexes are counter-clockwise (Back-face culling).
+ * It is used as a polyhedron Element
+ */
+SVGRenderer.prototype.face3d = function (args) {
+	var renderer = this,
+		ret = this.createElement('path');
+	ret.vertexes = [];
+	ret.insidePlotArea = false;
+	ret.enabled = true;
+
+	wrap(ret, 'attr', function (proceed, hash) {
+		if (typeof hash === 'object' &&
+				(defined(hash.enabled) || defined(hash.vertexes) || defined(hash.insidePlotArea))) {
+			this.enabled = pick(hash.enabled, this.enabled);
+			this.vertexes = pick(hash.vertexes, this.vertexes);
+			this.insidePlotArea = pick(hash.insidePlotArea, this.insidePlotArea);
+			delete hash.enabled;
+			delete hash.vertexes;
+			delete hash.insidePlotArea;
+
+			var chart = charts[renderer.chartIndex],
+				vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea),
+				path = renderer.toLinePath(vertexes2d, true),
+				area = H.shapeArea(vertexes2d),
+				visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+
+			hash.d = path;
+			hash.visibility = visibility;
+		}
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	});
+
+	wrap(ret, 'animate', function (proceed, params) {
+		if (typeof params === 'object' &&
+				(defined(params.enabled) || defined(params.vertexes) || defined(params.insidePlotArea))) {
+			this.enabled = pick(params.enabled, this.enabled);
+			this.vertexes = pick(params.vertexes, this.vertexes);
+			this.insidePlotArea = pick(params.insidePlotArea, this.insidePlotArea);
+			delete params.enabled;
+			delete params.vertexes;
+			delete params.insidePlotArea;
+
+			var chart = charts[renderer.chartIndex],
+				vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea),
+				path = renderer.toLinePath(vertexes2d, true),
+				area = H.shapeArea(vertexes2d),
+				visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+
+			params.d = path;
+			this.attr('visibility', visibility);
+		}
+
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	});
+
+	return ret.attr(args);
+};
+
+/**
+ * A Polyhedron is a handy way of defining a group of 3-D faces.
+ * It's only attribute is `faces`, an array of attributes of each one of it's Face3D instances.
+ */
+SVGRenderer.prototype.polyhedron = function (args) {
+	var renderer = this,
+		result = this.g(),
+		destroy = result.destroy;
+
+	/*= if (build.classic) { =*/
+	result.attr({
+		'stroke-linejoin': 'round'
+	});
+	/*= } =*/
+
+	result.faces = [];
+
+
+	// destroy all children
+	result.destroy = function () {
+		for (var i = 0; i < result.faces.length; i++) {
+			result.faces[i].destroy();
+		}
+		return destroy.call(this);
+	};
+
+	wrap(result, 'attr', function (proceed, hash, val, complete, continueAnimation) {
+		if (typeof hash === 'object' && defined(hash.faces)) {
+			while (result.faces.length > hash.faces.length) {
+				result.faces.pop().destroy();
+			}
+			while (result.faces.length < hash.faces.length) {
+				result.faces.push(renderer.face3d().add(result));
+			}
+			for (var i = 0; i < hash.faces.length; i++) {
+				result.faces[i].attr(hash.faces[i], null, complete, continueAnimation);
+			}
+			delete hash.faces;
+		}
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	});
+
+	wrap(result, 'animate', function (proceed, params, duration, complete) {
+		if (params && params.faces) {
+			while (result.faces.length > params.faces.length) {
+				result.faces.pop().destroy();
+			}
+			while (result.faces.length < params.faces.length) {
+				result.faces.push(renderer.face3d().add(result));
+			}
+			for (var i = 0; i < params.faces.length; i++) {
+				result.faces[i].animate(params.faces[i], duration, complete);
+			}
+			delete params.faces;
+		}
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	});
+
+	return result.attr(args);
+};
+
 ////// CUBOIDS //////
 SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
@@ -171,8 +291,11 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		this.side.attr({
 			fill: color(fill).brighten(-0.1).get()
 		});
-
 		this.color = fill;
+
+		// for animation getter (#6776)
+		result.fill = fill;
+
 		return this;
 	};
 
@@ -184,7 +307,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
-	result.attr = function (args, val) {
+	result.attr = function (args, val, complete, continueAnimation) {
 
 		// Resolve setting attributes by string name
 		if (typeof args === 'string' && typeof val !== 'undefined') {
@@ -200,7 +323,10 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			this.top.attr({ d: paths[1] });
 			this.side.attr({ d: paths[2] });
 		} else {
-			return H.SVGElement.prototype.attr.call(this, args); // getter returns value
+			// getter returns value
+			return SVGElement.prototype.attr.call(
+				this, args, undefined, complete, continueAnimation
+			);
 		}
 
 		return this;
@@ -329,9 +455,9 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		];
 		path1 = map(path1, mapPath);
 		path2 = map(path2, mapPath);
-		if (shapeArea(path1) < 0) {
+		if (H.shapeArea(path1) < 0) {
 			ret = [path1, 0];
-		} else if (shapeArea(path2) < 0) {
+		} else if (H.shapeArea(path2) < 0) {
 			ret = [path2, 1];
 		}
 		return ret;
@@ -445,10 +571,22 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		// relates to neighbour elements as well
 		each(['out', 'inn', 'side1', 'side2'], function (face) {
 			wrapper[face]
-				.addClass(className + ' highcharts-3d-side')
+				.attr({
+					'class': className + ' highcharts-3d-side'
+				})
 				.add(parent);
 		});
 	};
+
+	// Cascade to faces
+	each(['addClass', 'removeClass'], function (fn) {
+		wrapper[fn] = function () {
+			var args = arguments;
+			each(['top', 'out', 'inn', 'side1', 'side2'], function (face) {
+				wrapper[face][fn].apply(wrapper[face], args);
+			});
+		};
+	});
 
 	/**
 	 * Compute the transformed paths and set them to the composite shapes

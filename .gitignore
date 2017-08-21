@@ -1,5 +1,7 @@
 /.metadata/
 /.settings/
+/api-docs
+/out
 /js/highcharts-3d.src.js
 /js/highcharts-more.src.js
 /js/highcharts.js
@@ -12,7 +14,6 @@
 /js/modules/exporting.js
 /build
 /code
-/internal-docs
 /tools/jsdoc/ink-docstrap
 /.project
 /git-ignore-me.properties
@@ -32,6 +33,8 @@
 /utils/issue-by-commit/log.txt
 /utils/samples/temp/
 /utils/samples/nightly/
+
+tree.json
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github
@@ -60,3 +63,10 @@ nbproject/
 samples/highcharts/common-js/browserify/demo.js
 samples/highcharts/common-js/webpack/demo.js
 /samples/cloud/charts
+
+/tmp/report.html
+
+/tmp/missing.in.code.json
+
+/tmp/processed.api.json
+/package-lock.json

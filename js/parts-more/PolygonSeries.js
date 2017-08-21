@@ -15,8 +15,21 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
 	Series = H.Series,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
+
 /**
- * The polygon series prototype
+ * A polygon series can be used to draw any freeform shape in the cartesian
+ * coordinate system. A fill is applied with the `color` option, and
+ * stroke is applied through `lineWidth` and `lineColor` options. Requires
+ * the `highcharts-more.js` file.
+ * 
+ * @type {Object}
+ * @extends plotOptions.scatter
+ * @excluding softThreshold,threshold
+ * @sample {highcharts} highcharts/demo/polygon/ Polygon
+ * @sample {highstock} highcharts/demo/polygon/ Polygon
+ * @since 4.1.0
+ * @product highcharts highstock
+ * @optionparent plotOptions.polygon
  */
 seriesType('polygon', 'scatter', {
 	marker: {
@@ -61,3 +74,77 @@ seriesType('polygon', 'scatter', {
 	drawTracker: Series.prototype.drawTracker,
 	setStackedPoints: noop // No stacking points on polygons (#5310)
 });
+
+
+
+/**
+ * A `polygon` series. If the [type](#series.polygon.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * polygon](#plotOptions.polygon).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.polygon
+ * @excluding dataParser,dataURL,stack
+ * @product highcharts highstock
+ * @apioption series.polygon
+ */
+
+/**
+ * An array of data points for the series. For the `polygon` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. The `x` values will be automatically
+ * calculated, either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options. If the axis has
+ * categories, these will be used. Example:
+ * 
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ * 
+ * 2.  An array of arrays with 2 values. In this case, the values correspond
+ * to `x,y`. If the first value is a string, it is applied as the name
+ * of the point, and the `x` value is inferred.
+ * 
+ *  ```js
+ *     data: [
+ *         [0, 10],
+ *         [1, 3],
+ *         [2, 1]
+ *     ]
+ *  ```
+ * 
+ * 3.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.polygon.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         y: 1,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         y: 8,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array>}
+ * @extends series.line.data
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts highstock
+ * @apioption series.polygon.data
+ */

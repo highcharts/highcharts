@@ -34,3 +34,32 @@ QUnit.test('Spacing and legend overflow (#6497)', function (assert) {
         'Legend is within spacing'
     );
 });
+
+QUnit.test('Hidden legend bogus SVG (#6769', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        credits: {
+            enabled: false
+        },
+        title: {
+            text: ''
+        },
+        yAxis: {
+            visible: false
+        },
+        xAxis: {
+            visible: false
+        },
+        series: [{
+            data: [1],
+            visible: false
+        }]
+    });
+
+    assert.strictEqual(
+        chart.container.innerHTML.indexOf('stroke-width="#'),
+        -1,
+        'No bogus stroke-width found'
+    );
+
+});

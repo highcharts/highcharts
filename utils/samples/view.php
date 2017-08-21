@@ -27,7 +27,12 @@ $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$top
 if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 	$html = str_replace("/code.highcharts.$topDomain/mapdata", "/code.highcharts.com/mapdata", $html);
 } else {
-	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+	$time = time();
+	$html = str_replace('.js"', '.js?' . $time . '"', $html); // Force no-cache for debugging
+	$html = str_replace('.css"', '.css?' . $time . '"', $html); // Force no-cache for debugging
+
+	// No go on github.highcharts.com
+	$html = str_replace("sonification.js?$time", 'sonification.js', $html);
 }
 
 // Highchart 5 preview
@@ -384,6 +389,20 @@ function getResources() {
 			});
 
 			<?php } ?>
+
+			if (/\/css\//.test(path)) {
+				Highcharts.Chart.prototype.callbacks.push(function (chart) {
+					var svg = Highcharts.charts[0].container.innerHTML;
+					var match = svg.match(/ (style|fill|stroke|stroke-width|fill-opacity)="/);
+					if (match) {
+						console.warn(
+							'Found presentational attribute',
+							match[1],
+							svg.substr(match.index - 80, 250)
+						);
+					}
+				});
+			}
 		}
 		
 		</script>

@@ -16,9 +16,48 @@ var each = H.each,
 	svg = H.svg,
 	wrap = H.wrap;
 
-/***
-	EXTENSION FOR 3D COLUMNS
-***/
+
+
+/**
+ * Depth of the columns in a 3D column chart. Requires `highcharts-3d.
+ * js`.
+ * 
+ * @type {Number}
+ * @default 25
+ * @since 4.0
+ * @product highcharts
+ * @apioption plotOptions.column.depth
+ */
+
+/**
+ * 3D columns only. The color of the edges. Similar to `borderColor`,
+ *  except it defaults to the same color as the column.
+ * 
+ * @type {Color}
+ * @product highcharts
+ * @apioption plotOptions.column.edgeColor
+ */
+
+/**
+ * 3D columns only. The width of the colored edges.
+ * 
+ * @type {Number}
+ * @default 1
+ * @product highcharts
+ * @apioption plotOptions.column.edgeWidth
+ */
+
+/**
+ * The spacing between columns on the Z Axis in a 3D chart. Requires
+ * `highcharts-3d.js`.
+ * 
+ * @type {Number}
+ * @default 1
+ * @since 4.0
+ * @product highcharts
+ * @apioption plotOptions.column.groupZPadding
+ */
+
 wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -30,21 +69,61 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	var series = this,
 		chart = series.chart,
 		seriesOptions = series.options,
-		depth = seriesOptions.depth || 25;
+		depth = seriesOptions.depth || 25,
+		stack = seriesOptions.stacking ?
+			(seriesOptions.stack || 0) :
+			series.index, // #4743
+		z = stack * (depth + (seriesOptions.groupZPadding || 1)),
+		borderCrisp = series.borderWidth % 2 ? 0.5 : 0;
 
-	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i;
-	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
+	if (chart.inverted && !series.yAxis.reversed) {
+		borderCrisp *= -1;
+	}
 
 	if (seriesOptions.grouping !== false) {
 		z = 0;
 	}
 
 	z += (seriesOptions.groupZPadding || 1);
-
 	each(series.data, function (point) {
 		if (point.y !== null) {
 			var shapeArgs = point.shapeArgs,
-				tooltipPos = point.tooltipPos;
+				tooltipPos = point.tooltipPos,
+				// Array for final shapeArgs calculation.
+				// We are checking two dimensions (x and y).
+				dimensions = [['x', 'width'], ['y', 'height']],
+				borderlessBase; // Crisped rects can have +/- 0.5 pixels offset.
+
+			// #3131 We need to check if column is inside plotArea.
+			each(dimensions, function (d) {
+				borderlessBase = shapeArgs[d[0]] - borderCrisp;
+				if (borderlessBase < 0) {
+					// If borderLessBase is smaller than 0, it is needed to set
+					// its value to 0 or 0.5 depending on borderWidth
+					// borderWidth may be even or odd.
+					shapeArgs[d[1]] += shapeArgs[d[0]] + borderCrisp;
+					shapeArgs[d[0]] = -borderCrisp;
+					borderlessBase = 0;
+				}
+				if (
+						borderlessBase + shapeArgs[d[1]] > series[d[0] + 'Axis'].len &&
+						shapeArgs[d[1]] !== 0 // Do not change height/width of column if 0.
+						// #6708
+					) {
+					shapeArgs[d[1]] = series[d[0] + 'Axis'].len - shapeArgs[d[0]];
+				}
+				if (
+						(shapeArgs[d[1]] !== 0) && // Do not remove columns with zero height/width.
+						(
+							shapeArgs[d[0]] >= series[d[0] + 'Axis'].len ||
+							shapeArgs[d[0]] + shapeArgs[d[1]] <= borderCrisp
+						)
+					) {
+					for (var key in shapeArgs) { // Set args to 0 if column is outside the chart.
+						shapeArgs[key] = 0;
+					}
+				}
+			});
 
 			point.shapeType = 'cuboid';
 			shapeArgs.z = z;
@@ -216,6 +295,25 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
+});
+
+// Added stackLabels position calculation for 3D charts.
+wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) { // #3946
+	var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
+
+	// Only do this for 3D chart.
+	if (chart.is3d()) {
+		var pos = ({
+			x: stackBox.x,
+			y: stackBox.y,
+			z: 0
+		});
+		pos = H.perspective([pos], chart, true)[0];
+		stackBox.x = pos.x;
+		stackBox.y = pos.y;
+	}
+
+	return stackBox;
 });
 
 /***

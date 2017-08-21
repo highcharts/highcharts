@@ -14,7 +14,6 @@ var addEvent = H.addEvent,
 	defaultOptions = H.defaultOptions,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
-	doc = H.doc,
 	each = H.each,
 	fireEvent = H.fireEvent,
 	hasTouch = H.hasTouch,
@@ -26,30 +25,196 @@ var addEvent = H.addEvent,
 	wrap = H.wrap,
 	swapXY;
 
+/**
+ * 
+ * The scrollbar is a means of panning over the X axis of a stock chart.
+ * 
+ * In styled mode, all the presentational options for the
+ * scrollbar are replaced by the classes `.highcharts-scrollbar-thumb`,
+ * `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`,
+ * `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
+ * 
+ * @product highstock
+ * @optionparent scrollbar
+ */
 var defaultScrollbarOptions =  {
 	//enabled: true
+
+	/**
+	 * The height of the scrollbar. The height also applies to the width
+	 * of the scroll arrows so that they are always squares. Defaults to
+	 * 20 for touch devices and 14 for mouse devices.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/height/ A 30px scrollbar
+	 * @product highstock
+	 */
 	height: isTouchDevice ? 20 : 14,
 	// trackBorderRadius: 0
+
+	/**
+	 * The border rounding radius of the bar.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default 0
+	 * @product highstock
+	 */
 	barBorderRadius: 0,
+
+	/**
+	 * The corner radius of the scrollbar buttons.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default 0
+	 * @product highstock
+	 */
 	buttonBorderRadius: 0,
+
+	/**
+	 * Whether to redraw the main chart as the scrollbar or the navigator
+	 * zoomed window is moved. Defaults to `true` for modern browsers and
+	 * `false` for legacy IE browsers as well as mobile devices.
+	 * 
+	 * @type {Boolean}
+	 * @since 1.3
+	 * @product highstock
+	 */
 	liveRedraw: svg && !isTouchDevice,
+
+	/**
+	 * The margin between the scrollbar and its axis when the scrollbar is
+	 * applied directly to an axis.
+	 */
 	margin: 10,
+
+	/**
+	 * The minimum width of the scrollbar.
+	 * 
+	 * @type {Number}
+	 * @default 6
+	 * @since 1.2.5
+	 * @product highstock
+	 */
 	minWidth: 6,
 	//showFull: true,
 	//size: null,
+
 	step: 0.2,
+
+	/**
+	 * The z index of the scrollbar group.
+	 */
 	zIndex: 3,
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The background color of the scrollbar itself.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default #cccccc
+	 * @product highstock
+	 */
 	barBackgroundColor: '${palette.neutralColor20}',
+
+	/**
+	 * The width of the bar's border.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default 1
+	 * @product highstock
+	 */
 	barBorderWidth: 1,
+
+	/**
+	 * The color of the scrollbar's border.
+	 * 
+	 * @type {Color}
+	 * @default #cccccc
+	 * @product highstock
+	 */
 	barBorderColor: '${palette.neutralColor20}',
+
+	/**
+	 * The color of the small arrow inside the scrollbar buttons.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default #333333
+	 * @product highstock
+	 */
 	buttonArrowColor: '${palette.neutralColor80}',
+
+	/**
+	 * The color of scrollbar buttons.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default #e6e6e6
+	 * @product highstock
+	 */
 	buttonBackgroundColor: '${palette.neutralColor10}',
+
+	/**
+	 * The color of the border of the scrollbar buttons.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default #cccccc
+	 * @product highstock
+	 */
 	buttonBorderColor: '${palette.neutralColor20}',
+
+	/**
+	 * The border width of the scrollbar buttons.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default 1
+	 * @product highstock
+	 */
 	buttonBorderWidth: 1,
+
+	/**
+	 * The color of the small rifles in the middle of the scrollbar.
+	 * 
+	 * @type {Color}
+	 * @default #333333
+	 * @product highstock
+	 */
 	rifleColor: '${palette.neutralColor80}',
+
+	/**
+	 * The color of the track background.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default #f2f2f2
+	 * @product highstock
+	 */
 	trackBackgroundColor: '${palette.neutralColor5}',
+
+	/**
+	 * The color of the border of the scrollbar track.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default #f2f2f2
+	 * @product highstock
+	 */
 	trackBorderColor: '${palette.neutralColor5}',
+
+	/**
+	 * The width of the border of the scrollbar track.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default 1
+	 * @product highstock
+	 */
 	trackBorderWidth: 1
 	/*= } =*/
 };
@@ -576,16 +741,16 @@ Scrollbar.prototype = {
 			[buttons[buttonsOrder[1]].element, 'click', this.buttonToMaxClick],
 			[track, 'click', this.trackClick],
 			[bar, 'mousedown', mouseDownHandler],
-			[doc, 'mousemove', mouseMoveHandler],
-			[doc, 'mouseup', mouseUpHandler]
+			[bar.ownerDocument, 'mousemove', mouseMoveHandler],
+			[bar.ownerDocument, 'mouseup', mouseUpHandler]
 		];
 
 		// Touch events
 		if (hasTouch) {
 			_events.push(
 				[bar, 'touchstart', mouseDownHandler],
-				[doc, 'touchmove', mouseMoveHandler],
-				[doc, 'touchend', mouseUpHandler]
+				[bar.ownerDocument, 'touchmove', mouseMoveHandler],
+				[bar.ownerDocument, 'touchend', mouseUpHandler]
 			);
 		}
 
@@ -603,7 +768,7 @@ Scrollbar.prototype = {
 		each(this._events, function (args) {
 			removeEvent.apply(null, args);
 		});
-		this._events = undefined;
+		this._events.length = 0;
 	},
 
 	/**
@@ -672,9 +837,18 @@ wrap(Axis.prototype, 'init', function (proceed) {
 */
 wrap(Axis.prototype, 'render', function (proceed) {
 	var axis = this,		
-		scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, axis.dataMin),
-		scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, axis.dataMax),
+		scrollMin = Math.min(
+			pick(axis.options.min, axis.min),
+			axis.min,
+			pick(axis.dataMin, axis.min) // #6930
+		),
+		scrollMax = Math.max(
+			pick(axis.options.max, axis.max),
+			axis.max,
+			pick(axis.dataMax, axis.max) // #6930
+		),
 		scrollbar = axis.scrollbar,
+		titleOffset = axis.titleOffset || 0,
 		offsetsIndex,
 		from,
 		to;
@@ -687,7 +861,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			scrollbar.position(
 				axis.left, 
 				axis.top + axis.height + 2 + axis.chart.scrollbarsOffsets[1] +
-					(axis.opposite ? 0 : axis.axisTitleMargin + axis.offset),
+					(axis.opposite ?
+						0 :
+						titleOffset + axis.axisTitleMargin + axis.offset
+					),
 				axis.width,
 				axis.height
 			);
@@ -695,7 +872,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		} else {
 			scrollbar.position(
 				axis.left + axis.width + 2 + axis.chart.scrollbarsOffsets[0] +
-					(axis.opposite ? axis.axisTitleMargin + axis.offset : 0),
+					(axis.opposite ? 
+						titleOffset + axis.axisTitleMargin + axis.offset :
+						0
+					),
 				axis.top, 
 				axis.width, 
 				axis.height

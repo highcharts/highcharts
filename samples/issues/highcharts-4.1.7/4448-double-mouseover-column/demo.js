@@ -26,7 +26,7 @@ $(function () {
 
         assert.strictEqual(
             iter,
-            0,
+            1,
             "Zero extra mouseOver calls for the first point."
         );
 

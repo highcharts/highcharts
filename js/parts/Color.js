@@ -53,6 +53,7 @@ H.Color.prototype = {
 	// Collection of named colors. Can be extended from the outside by adding
 	// colors to Highcharts.Color.prototype.names.
 	names: {
+		none: 'rgba(255,255,255,0)',
 		white: '#ffffff',
 		black: '#000000'
 	},
@@ -83,8 +84,8 @@ H.Color.prototype = {
 		// Solid colors
 		} else {
 
-			// Check if it's possible to do bitmasking instead of regex
-			if (input && input[0] === '#') {
+			// Bitmasking as input[0] is not working for legacy IE.
+			if (input && input.charAt() === '#') {
 
 				len = input.length;
 				input = parseInt(input.substr(1), 16);
@@ -194,6 +195,52 @@ H.Color.prototype = {
 	setOpacity: function (alpha) {
 		this.rgba[3] = alpha;
 		return this;
+	},
+
+	/*
+	 * Return an intermediate color between two colors.
+	 *
+	 * @param  {Highcharts.Color} to
+	 *         The color object to tween to.
+	 * @param  {Number} pos
+	 *         The intermediate position, where 0 is the from color (current
+	 *         color item), and 1 is the `to` color.
+	 *
+	 * @return {String}
+	 *         The intermediate color in rgba notation.
+	 */
+	tweenTo: function (to, pos) {
+		// Check for has alpha, because rgba colors perform worse due to lack of
+		// support in WebKit.
+		var fromRgba = this.rgba,
+			toRgba = to.rgba,
+			hasAlpha,
+			ret;
+
+		// Unsupported color, return to-color (#3920, #7034)
+		if (!toRgba.length || !fromRgba || !fromRgba.length) {
+			ret = to.input || 'none';
+
+		// Interpolate
+		} else {
+			hasAlpha = (toRgba[3] !== 1 || fromRgba[3] !== 1);
+			ret = (hasAlpha ? 'rgba(' : 'rgb(') +
+				Math.round(toRgba[0] + (fromRgba[0] - toRgba[0]) * (1 - pos)) +
+				',' +
+				Math.round(toRgba[1] + (fromRgba[1] - toRgba[1]) * (1 - pos)) +
+				',' +
+				Math.round(toRgba[2] + (fromRgba[2] - toRgba[2]) * (1 - pos)) +
+				(
+					hasAlpha ?
+						(
+							',' +
+							(toRgba[3] + (fromRgba[3] - toRgba[3]) * (1 - pos))
+						) :
+						''
+				) +
+				')';
+		}
+		return ret;
 	}
 };
 H.color = function (input) {

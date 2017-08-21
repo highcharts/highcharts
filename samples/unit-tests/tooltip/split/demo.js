@@ -72,11 +72,21 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
 
     chart.tooltip.refresh([p1, p2]);
     el = chart.tooltip.tt.text.element;
+
     value = window.getComputedStyle(el).getPropertyValue('color');
     assert.strictEqual(
         value,
         'rgb(51, 51, 51)',
         'tooltip default color.'
+    );
+
+    el = chart.tooltip.tt.element;
+    value = window.getComputedStyle(el);
+
+    assert.strictEqual(
+        document.getElementsByClassName('highcharts-label-box')[4].getAttribute('isShadow'),
+        'true',
+        'shadow is applied.'
     );
 
     chart.update({
@@ -86,12 +96,49 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
             }
         }
     });
-    chart.tooltip.refresh([p1, p2]);
+
+    chart.tooltip.refresh([
+        chart.series[0].points[0],
+        chart.series[1].points[0]
+    ]);
+
     el = chart.tooltip.tt.text.element;
     value = window.getComputedStyle(el).getPropertyValue('color');
     assert.strictEqual(
         value,
         'rgb(255, 0, 0)',
         'tooltip color from style.'
+    );
+});
+
+QUnit.test('Split tooltip returning false. #6115', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [3, 2, 1]
+
+        }],
+        tooltip: {
+            split: true,
+            formatter: function () {
+                var tooltips = this.points.map(function (point) {
+                    return point.y;
+                });
+                tooltips.unshift(false);
+                return tooltips;
+            }
+        }
+    });
+
+    chart.tooltip.refresh([
+        chart.series[0].points[0],
+        chart.series[1].points[0]
+    ]);
+
+    assert.strictEqual(
+        chart.tooltip.label.element.children.length,
+        2,
+        'Two tooltips'
     );
 });

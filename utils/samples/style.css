@@ -116,7 +116,7 @@ body.single-col #frame-row {
 }
 body.unit iframe {
 	width: 100%;
-	height: 600px;
+	height: 100vh;
 	border: none;
 }
 body.manual iframe {

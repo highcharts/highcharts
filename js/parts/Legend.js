@@ -4,10 +4,10 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import H from './Globals.js';
+import Highcharts from './Globals.js';
 import './Utilities.js';
-var Legend,
-		
+var H = Highcharts,
+
 	addEvent = H.addEvent,
 	css = H.css,
 	discardElement = H.discardElement,
@@ -21,18 +21,24 @@ var Legend,
 	stableSort = H.stableSort,
 	win = H.win,
 	wrap = H.wrap;
+
 /**
- * The overview of the chart's series.
+ * The overview of the chart's series. The legend object is instanciated
+ * internally in the chart constructor, and available from `chart.legend`. Each
+ * chart has only one legend.
+ * 
  * @class
  */
-Legend = H.Legend = function (chart, options) {
+Highcharts.Legend = function (chart, options) {
 	this.init(chart, options);
 };
 
-Legend.prototype = {
+Highcharts.Legend.prototype = {
 
 	/**
-	 * Initialize the legend
+	 * Initialize the legend.
+	 *
+	 * @private
 	 */
 	init: function (chart, options) {
 
@@ -73,10 +79,15 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Update the legend with new options. Equivalent to running chart.update
+	 * Update the legend with new options. Equivalent to running `chart.update`
 	 * with a legend configuration option.
-	 * @param {Object} options Legend options
-	 * @param {Boolean} redraw Whether to redraw the chart, defaults to true.
+	 * @param  {LegendOptions} options
+	 *         Legend options.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart.
+	 *
+	 * @sample highcharts/legend/legend-update/
+	 *         Legend update
 	 */
 	update: function (options, redraw) {
 		var chart = this.chart;
@@ -90,9 +101,13 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Set the colors for the legend item
-	 * @param {Object} item A Series or Point instance
-	 * @param {Object} visible Dimmed or colored
+	 * Set the colors for the legend item.
+	 *
+	 * @private
+	 * @param  {Series|Point} item
+	 *         A Series or Point instance
+	 * @param  {Boolean} visible
+	 *         Dimmed or colored
 	 */
 	colorizeItem: function (item, visible) {
 		item.legendGroup[visible ? 'removeClass' : 'addClass'](
@@ -125,12 +140,9 @@ Legend.prototype = {
 
 			// Apply marker options
 			if (markerOptions && legendSymbol.isMarker) { // #585
-				//symbolAttr.stroke = symbolColor;
 				symbolAttr = item.pointAttribs();
 				if (!visible) {
-					H.objectEach(symbolAttr, function (val, key) {
-						symbolAttr[key] = hiddenColor;
-					});
+					symbolAttr.stroke = symbolAttr.fill = hiddenColor; // #6769
 				}
 			}
 
@@ -140,8 +152,11 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Position the legend item
-	 * @param {Object} item A Series or Point instance
+	 * Position the legend item.
+	 *
+	 * @private
+	 * @param {Series|Point} item
+	 *        The item to position
 	 */
 	positionItem: function (item) {
 		var legend = this,
@@ -170,8 +185,10 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Destroy a single legend item
-	 * @param {Object} item The series or point
+	 * Destroy a single legend item, used internally on removing series items.
+	 * 
+	 * @param {Series|Point} item
+	 *        The item to remove
 	 */
 	destroyItem: function (item) {
 		var checkbox = item.checkbox;
@@ -192,7 +209,8 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Destroys the legend.
+	 * Destroy the legend. Used internally. To reflow objects, `chart.redraw`
+	 * must be called after destruction.
 	 */
 	destroy: function () {
 		function destroyItems(key) {
@@ -221,7 +239,9 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Position the checkboxes after the width is determined
+	 * Position the checkboxes after the width is determined.
+	 *
+	 * @private
 	 */
 	positionCheckboxes: function (scrollOffset) {
 		var alignAttr = this.group && this.group.alignAttr,
@@ -251,7 +271,9 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Render the legend title on top of the legend
+	 * Render the legend title on top of the legend.
+	 *
+	 * @private
 	 */
 	renderTitle: function () {
 		var options = this.options,
@@ -269,7 +291,7 @@ Legend.prototype = {
 						null,
 						null,
 						null,
-						null,
+						options.useHTML,
 						null,
 						'legend-title'
 					)
@@ -288,7 +310,10 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Set the legend item text
+	 * Set the legend item text.
+	 *
+	 * @param  {Series|Point} item
+	 *         The item for which to update the text in the legend.
 	 */
 	setText: function (item) {
 		var options = this.options;
@@ -300,8 +325,12 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Render a single specific legend item
-	 * @param {Object} item A series or point
+	 * Render a single specific legend item. Called internally from the `render`
+	 * function.
+	 *
+	 * @private
+	 * @param {Series|Point} item
+	 *        The item to render.
 	 */
 	renderItem: function (item) {
 		var legend = this,
@@ -333,6 +362,9 @@ Legend.prototype = {
 			showCheckbox = legend.createCheckboxForItem &&
 				seriesOptions &&
 				seriesOptions.showCheckbox,
+			// full width minus text width
+			itemExtraWidth = symbolWidth + symbolPadding + itemDistance +
+				(showCheckbox ? 20 : 0),
 			useHTML = options.useHTML,
 			fontSize = 12,
 			itemClassName = item.options.className;
@@ -399,6 +431,21 @@ Legend.prototype = {
 		// Colorize the items
 		legend.colorizeItem(item, item.visible);
 
+		// Take care of max width and text overflow (#6659)
+		/*= if (build.classic) { =*/
+		if (!itemStyle.width) {
+		/*= } =*/
+			li.css({
+				width: (
+					options.itemWidth ||
+					options.width ||
+					chart.spacingBox.width
+				) -	itemExtraWidth
+			});
+		/*= if (build.classic) { =*/
+		}
+		/*= } =*/
+
 		// Always update the text
 		legend.setText(item);
 
@@ -408,8 +455,7 @@ Legend.prototype = {
 		itemWidth = item.checkboxOffset =
 			options.itemWidth ||
 			item.legendItemWidth ||
-			symbolWidth + symbolPadding + bBox.width + itemDistance +
-				(showCheckbox ? 20 : 0);
+			bBox.width + itemExtraWidth;
 		legend.itemHeight = itemHeight = Math.round(
 			item.legendItemHeight || bBox.height || legend.symbolHeight
 		);
@@ -459,15 +505,23 @@ Legend.prototype = {
 
 		// the width of the widest item
 		legend.offsetWidth = widthOption || Math.max(
-			(horizontal ? legend.itemX - padding - itemDistance : itemWidth) +
-				padding,
+			(
+				horizontal ? legend.itemX - padding - (item.checkbox ?
+					// decrease by itemDistance only when no checkbox #4853
+					0 :
+					itemDistance
+				) : itemWidth
+			) + padding,
 			legend.offsetWidth
 		);
 	},
 
 	/**
-	 * Get all items, which is one item per series for normal series and one
-	 * item per point for pie series.
+	 * Get all items, which is one item per series for most series and one
+	 * item per point for pie series and its derivatives.
+	 *
+	 * @return {Array.<Series|Point>}
+	 *         The current items in the legend.
 	 */
 	getAllItems: function () {
 		var allItems = [];
@@ -500,6 +554,8 @@ Legend.prototype = {
 	 * Adjust the chart margins by reserving space for the legend on only one
 	 * side of the chart. If the position is set to a corner, top or bottom is
 	 * reserved for horizontal legends and left or right for vertical ones.
+	 *
+	 * @private
 	 */
 	adjustMargins: function (margin, spacing) {
 		var chart = this.chart,
@@ -541,8 +597,9 @@ Legend.prototype = {
 
 	/**
 	 * Render the legend. This method can be called both before and after
-	 * chart.render. If called after, it will only rearrange items instead
-	 * of creating new ones.
+	 * `chart.render`. If called after, it will only rearrange items instead
+	 * of creating new ones. Called internally on initial render and after
+	 * redraws.
 	 */
 	render: function () {
 		var legend = this,
@@ -686,6 +743,8 @@ Legend.prototype = {
 	/**
 	 * Set up the overflow handling by adding navigation with up and down arrows
 	 * below the legend.
+	 *
+	 * @private
 	 */
 	handleOverflow: function (legendHeight) {
 		var legend = this,
@@ -708,7 +767,7 @@ Legend.prototype = {
 			lastY,
 			allItems = this.allItems,
 			clipToHeight = function (height) {
-				if (height) {
+				if (typeof height === 'number') {
 					clipRect.attr({
 						height: height
 					});
@@ -839,9 +898,11 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Scroll the legend by a number of pages
-	 * @param {Object} scrollBy
-	 * @param {Object} animation
+	 * Scroll the legend by a number of pages.
+	 * @param  {Number} scrollBy
+	 *         The number of pages to scroll.
+	 * @param  {AnimationOptions} animation
+	 *         Whether and how to apply animation.
 	 */
 	scroll: function (scrollBy, animation) {
 		var pages = this.pages,
@@ -1034,7 +1095,7 @@ H.LegendSymbolMixin = {
 // to nested group elements, as the legend item texts are within 4 group
 // elements.
 if (/Trident\/7\.0/.test(win.navigator.userAgent) || isFirefox) {
-	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+	wrap(Highcharts.Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			// If chart destroyed in sync, this is undefined (#2030)
 			runPositionItem = function () {

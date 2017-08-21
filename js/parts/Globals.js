@@ -4,14 +4,12 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-/* global window */
-var win = window,
-	doc = win.document;
-
-var SVG_NS = 'http://www.w3.org/2000/svg',
+/* global win */
+var doc = win.document,
+	SVG_NS = 'http://www.w3.org/2000/svg',
 	userAgent = (win.navigator && win.navigator.userAgent) || '',
 	svg = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
-	isMS = /(edge|msie|trident)/i.test(userAgent) && !window.opera,
+	isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,
 	vml = !svg,
 	isFirefox = /Firefox/.test(userAgent),
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38
@@ -34,10 +32,17 @@ var Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
 	svg: svg,
 	vml: vml,
 	win: win,
-	charts: [],
 	marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	noop: function () {
 		return undefined;
-	}
+	},
+	/**
+	 * An array containing the current chart objects in the page. A chart's
+	 * position in the array is preserved throughout the page's lifetime. When
+	 * a chart is destroyed, the array item becomes `undefined`.
+	 * @type {Array.<Highcharts.Chart>}
+	 * @memberOf Highcharts
+	 */
+	charts: []
 };
 export default Highcharts;

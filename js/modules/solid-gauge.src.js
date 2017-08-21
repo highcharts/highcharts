@@ -49,6 +49,7 @@ wrap(Renderer.prototype.symbols, 'arc', function (proceed, x, y, w, h, options) 
 		// Insert rounded edge on end, and remove line.
 		path.splice.apply(path, [11, 3].concat(roundEnd));
 	}
+	
 	return path;
 });
 
@@ -58,8 +59,7 @@ colorAxisMethods = {
 
 
 	initDataClasses: function (userOptions) {
-		var axis = this,
-			chart = this.chart,
+		var chart = this.chart,
 			dataClasses,
 			colorCounter = 0,
 			options = this.options;
@@ -79,7 +79,10 @@ colorAxisMethods = {
 						colorCounter = 0;
 					}
 				} else {
-					dataClass.color = axis.tweenColors(H.color(options.minColor), H.color(options.maxColor), i / (userOptions.dataClasses.length - 1));
+					dataClass.color = H.color(options.minColor).tweenTo(
+						H.color(options.maxColor),
+						i / (userOptions.dataClasses.length - 1)
+					);
 				}
 			}
 		});
@@ -140,66 +143,69 @@ colorAxisMethods = {
 			// The position within the gradient
 			pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
 			
-			color = this.tweenColors(
-				from.color, 
+			color = from.color.tweenTo( 
 				to.color,
 				pos
 			);
 		}
 		return color;
-	},
-	/*
-	 * Return an intermediate color between two colors, according to pos where 0
-	 * is the from color and 1 is the to color.
-	 */
-	tweenColors: function (from, to, pos) {
-		// Check for has alpha, because rgba colors perform worse due to lack of
-		// support in WebKit.
-		var hasAlpha,
-			ret;
-
-		// Unsupported color, return to-color (#3920)
-		if (!to.rgba.length || !from.rgba.length) {
-			ret = to.input || 'none';
-
-		// Interpolate
-		} else {
-			from = from.rgba;
-			to = to.rgba;
-			hasAlpha = (to[3] !== 1 || from[3] !== 1);
-			ret = (hasAlpha ? 'rgba(' : 'rgb(') + 
-				Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
-				Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
-				Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
-				(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
-		}
-		return ret;
 	}
 };
-
-/**
- * Handle animation of the color attributes directly
+/** 
+ * A solid gauge is a circular gauge where the value is indicated by a filled
+ * arc, and the color of the arc may variate with the value.
+ *
+ * @sample highcharts/demo/gauge-solid/ Solid gauges
+ * @extends plotOptions.gauge
+ * @excluding dial,pivot
+ * @product highcharts
+ * @optionparent plotOptions.solidgauge
  */
-each(['fill', 'stroke'], function (prop) {
-	H.Fx.prototype[prop + 'Setter'] = function () {
-		this.elem.attr(
-			prop,
-			colorAxisMethods.tweenColors(
-				H.color(this.start),
-				H.color(this.end),
-				this.pos
-			),
-			null,
-			true
-		);
-	};
-});
+var solidGaugeOptions = {
+	/**
+	 * Whether to give each point an individual color.
+	 */
+	colorByPoint: true
+	/**
+	 * Whether the strokes of the solid gauge should be `round` or `square`.
+	 * 
+	 * @validvalue ["square", "round"]
+	 * @type {String}
+	 * @sample {highcharts} highcharts/demo/gauge-activity/ Rounded gauge
+	 * @default round
+	 * @since 4.2.2
+	 * @product highcharts
+	 * @apioption plotOptions.solidgauge.linecap
+	 */
+
+	/**
+	 * Wether to draw rounded edges on the gauge.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/demo/gauge-activity/ Activity Gauge
+	 * @default false
+	 * @since 5.0.8
+	 * @product highcharts
+	 * @apioption plotOptions.solidgauge.rounded
+	 */
+
+	/**
+	 * The threshold or base level for the gauge.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/solidgauge-threshold/
+	 *         Zero threshold with negative and positive values
+	 * @default null
+	 * @since 5.0.3
+	 * @product highcharts
+	 * @apioption plotOptions.solidgauge.threshold
+	 */
+
+};
+
 
 // The solidgauge series type
-H.seriesType('solidgauge', 'gauge', {
-	colorByPoint: true
-
-}, {
+H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
 
 	/**
 	 * Extend the translate function to extend the Y axis with the necessary
@@ -299,7 +305,7 @@ H.seriesType('solidgauge', 'gauge', {
 				}
 			} else {
 				point.graphic = renderer.arc(shapeArgs)
-					.addClass('highcharts-point')
+					.addClass(point.getClassName(), true)
 					.attr({
 						fill: toColor,
 						'sweep-flag': 0
@@ -333,3 +339,83 @@ H.seriesType('solidgauge', 'gauge', {
 		}
 	}
 });
+
+/**
+ * A `solidgauge` series. If the [type](#series.solidgauge.type) option
+ * is not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * solidgauge](#plotOptions.solidgauge).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.solidgauge
+ * @excluding dataParser,dataURL,stack
+ * @product highcharts
+ * @apioption series.solidgauge
+ */
+
+/**
+ * An array of data points for the series. For the `solidgauge` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. Example:
+ * 
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.solidgauge.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         y: 5,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         y: 7,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * The typical gauge only contains a single data value.
+ * 
+ * @type {Array<Object|Number>}
+ * @extends series.gauge.data
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.solidgauge.data
+ */
+
+/**
+ * The inner radius of an individual point in a solid gauge. Can be
+ * given as a number (pixels) or percentage string.
+ * 
+ * @type {Number|String}
+ * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/ Individual radius and innerRadius
+ * @since 4.1.6
+ * @product highcharts
+ * @apioption series.solidgauge.data.innerRadius
+ */
+
+/**
+ * The outer radius of an individual point in a solid gauge. Can be
+ * given as a number (pixels) or percentage string.
+ * 
+ * @type {Number|String}
+ * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/ Individual radius and innerRadius
+ * @since 4.1.6
+ * @product highcharts
+ * @apioption series.solidgauge.data.radius
+ */
