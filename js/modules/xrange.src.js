@@ -19,7 +19,6 @@ var defined = H.defined,
 	pick = H.pick,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
-	stop = H.stop,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	Point = H.Point,
@@ -165,11 +164,9 @@ seriesType('xrange', 'column', {
 
 	translate: function () {
 		columnType.prototype.translate.apply(this, arguments);
-		var series = this;
-
-		each(series.points, function (point) {
-			series.translatePoint(point);
-		});
+		each(this.points, function (point) {
+			this.translatePoint(point);
+		}, this);
 	},
 
 	/**
@@ -272,7 +269,6 @@ seriesType('xrange', 'column', {
 
 		if (isNumber(plotY) && point.y !== null) {
 			if (graphic) { // update
-				stop(graphic);
 				point.graphicOriginal[verb](
 					merge(shapeArgs)
 				);

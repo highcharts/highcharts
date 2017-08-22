@@ -7,4 +7,4 @@
 'use strict';
 // import H from '../parts/Globals.js';
 import 'grid-axis.js';
-import 'xrange-series.js';
+import '../modules/xrange.src.js';
