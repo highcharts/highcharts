@@ -1,4 +1,4 @@
-$.getJSON('https://www.highcharts.com/samples/data/marathon.json', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=marathon.json&callback=?', function (data) {
 	Highcharts.chart('container', {
 		chart: {
 			type: 'spline',
