@@ -750,7 +750,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
 		group = this.group,
 		// For 3d column series all columns are added to one group 
 		// so we should not delete the whole group. #5297
-		removeGroup = group !== this.chart.seriesGroup,
+		removeGroup = group !== this.chart.columnGroup,
 		series = this;
 
 	// Cancel mouse events on the series group (#2787)
