@@ -104,7 +104,18 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 					enabled: false // docs
 				}
 			},
-			options
+			options,
+			// Disable boost:
+			{
+				boost: {
+					seriesThreshold: Number.MAX_SAFE_INTEGER
+				},
+				plotOptions: {
+					series: {
+						boostThreshold: Number.MAX_SAFE_INTEGER
+					}
+				}
+			}
 		);
 
 		options.yAxis = defaultyAxis.concat(newYAxes); // docs
