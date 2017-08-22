@@ -33,12 +33,23 @@ var addEvent = H.addEvent,
  * @constructor seriesTypes.pie
  * @augments Series
  */
-seriesType('pie', 'line', 
-	/**
-	 * @extends {plotOptions.line}
-	 * @optionparent plotOptions.pie
-	 */
-{
+
+/**
+ * A pie chart is a circular graphic which is divided into slices to illustrate
+ * numerical proportion.
+ *
+ * @sample highcharts/demo/pie-basic/ Pie chart
+ * 
+ * @extends {plotOptions.line}
+ * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,
+ *          cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
+ *          lineWidth,marker,negativeColor,pointInterval,pointIntervalUnit,
+ *          pointPlacement,pointStart,softThreshold,stacking,step,threshold,
+ *          turboThreshold,zoneAxis,zones
+ * @product highcharts
+ * @optionparent plotOptions.pie
+ */
+seriesType('pie', 'line', {
 
 	/**
 	 * The center of the pie chart relative to the plot area. Can be percentages
@@ -55,13 +66,21 @@ seriesType('pie', 'line',
 	 */
 	center: [null, null],
 
-	/**
-	 */
 	clip: false,
 
-	/**
-	 */
+	/** @ignore */
 	colorByPoint: true, // always true for pies
+
+	/**
+	 * A series specific or series type specific color set to use instead
+	 * of the global [colors](#colors).
+	 * 
+	 * @type {Array<Color>}
+	 * @sample {highcharts} highcharts/demo/pie-monochrome/ Set default colors for all pies
+	 * @since 3.0
+	 * @product highcharts
+	 * @apioption plotOptions.pie.colors
+	 */
 
 	/**
 	 * @extends plotOptions.series.dataLabels
@@ -69,10 +88,48 @@ seriesType('pie', 'line',
 	 * @product highcharts
 	 */
 	dataLabels: {
-		// align: null,
-		// connectorWidth: 1,
-		// connectorColor: point.color,
-		// connectorPadding: 5,
+		/**
+		 * The color of the line connecting the data label to the pie slice.
+		 * The default color is the same as the point's color.
+		 * 
+		 * In styled mode, the connector stroke is given in the
+		 * `.highcharts-data-label-connector` class.
+		 * 
+		 * @type {String}
+		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorcolor/ Blue connectors
+		 * @sample {highcharts} highcharts/css/pie-point/ Styled connectors
+		 * @default {point.color}
+		 * @since 2.1
+		 * @product highcharts
+		 * @apioption plotOptions.pie.dataLabels.connectorColor
+		 */
+		
+		/**
+		 * The distance from the data label to the connector.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/ No padding
+		 * @default 5
+		 * @since 2.1
+		 * @product highcharts
+		 * @apioption plotOptions.pie.dataLabels.connectorPadding
+		 */
+
+		/**
+		 * The width of the line connecting the data label to the pie slice.
+		 * 
+		 * 
+		 * In styled mode, the connector stroke width is given in the
+		 * `.highcharts-data-label-connector` class.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/ Disable the connector
+		 * @sample {highcharts} highcharts/css/pie-point/ Styled connectors
+		 * @default 1
+		 * @since 2.1
+		 * @product highcharts
+		 * @apioption plotOptions.pie.dataLabels.connectorWidth
+		 */
 
 		/**
 		 * The distance of the data label from the pie's edge. Negative numbers
@@ -96,18 +153,37 @@ seriesType('pie', 'line',
 		 */
 		enabled: true,
 
-		/**
-		 */
 		formatter: function () { // #2945
 			return this.point.isNull ? undefined : this.point.name;
 		},
-		// softConnector: true,
-
+		
 		/**
+		 * Whether to render the connector as a soft arc or a line with sharp
+		 * break.
+		 * 
+		 * @type {Boolean}
+		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/ Soft
+		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/ Non soft
+		 * @since 2.1.7
+		 * @product highcharts
+		 * @apioption plotOptions.pie.dataLabels.softConnector
 		 */
+
 		x: 0
 		// y: 0
 	},
+
+	/**
+	 * The end angle of the pie in degrees where 0 is top and 90 is right.
+	 * Defaults to `startAngle` plus 360.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/demo/pie-semi-circle/ Semi-circle donut
+	 * @default null
+	 * @since 1.3.6
+	 * @product highcharts
+	 * @apioption plotOptions.pie.endAngle
+	 */
 
 	/**
 	 * Equivalent to [chart.ignoreHiddenSeries](#chart.ignoreHiddenSeries),
@@ -124,15 +200,42 @@ seriesType('pie', 'line',
 	 * @product highcharts
 	 */
 	ignoreHiddenPoint: true,
-	//innerSize: 0,
-
+	
 	/**
+	 * The size of the inner diameter for the pie. A size greater than 0
+	 * renders a donut chart. Can be a percentage or pixel value. Percentages
+	 * are relative to the pie size. Pixel values are given as integers.
+	 * 
+	 * 
+	 * Note: in Highcharts < 4.1.2, the percentage was relative to the plot
+	 * area, not the pie size.
+	 * 
+	 * @type {String|Number}
+	 * @sample {highcharts} highcharts/plotoptions/pie-innersize-80px/ 80px inner size
+	 * @sample {highcharts} highcharts/plotoptions/pie-innersize-50percent/ 50% of the plot area
+	 * @sample {highcharts} highcharts/demo/3d-pie-donut/ 3D donut
+	 * @default 0
+	 * @since 2.0
+	 * @product highcharts
+	 * @apioption plotOptions.pie.innerSize
 	 */
+
 	legendType: 'point',
 
-	/**
-	 */
+	/**	 @ignore */
 	marker: null, // point options are specified in the base options
+
+	/**
+	 * The minimum size for a pie in response to auto margins. The pie will
+	 * try to shrink to make room for data labels in side the plot area,
+	 *  but only to this size.
+	 * 
+	 * @type {Number}
+	 * @default 80
+	 * @since 3.0
+	 * @product highcharts
+	 * @apioption plotOptions.pie.minSize
+	 */
 
 	/**
 	 * The diameter of the pie relative to the plot area. Can be a percentage
@@ -172,6 +275,18 @@ seriesType('pie', 'line',
 	slicedOffset: 10,
 
 	/**
+	 * The start angle of the pie slices in degrees where 0 is top and 90
+	 * right.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/pie-startangle-90/ Start from right
+	 * @default 0
+	 * @since 2.3.4
+	 * @product highcharts
+	 * @apioption plotOptions.pie.startAngle
+	 */
+
+	/**
 	 * Sticky tracking of mouse events. When true, the `mouseOut` event
 	 * on a series isn't triggered until the mouse moves over another series,
 	 * or out of the plot area. When false, the `mouseOut` event on a
@@ -180,18 +295,11 @@ seriesType('pie', 'line',
 	 * is false and `tooltip.shared` is false, the tooltip will be hidden
 	 * when moving the mouse between series.
 	 * 
-	 * @type {Boolean}
-	 * @default false
 	 * @product highcharts
 	 */
 	stickyTracking: false,
 
-	/**
-	 */
 	tooltip: {
-
-		/**
-		 */
 		followPointer: true
 	},
 	/*= if (build.classic) { =*/
@@ -202,9 +310,7 @@ seriesType('pie', 'line',
 	 * together with a `borderWidth` to fill drawing gaps created by antialiazing
 	 * artefacts in borderless pies.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the border stroke is given in the `.highcharts-
-	 * point` class.
+	 * In styled mode, the border stroke is given in the `.highcharts-point` class.
 	 * 
 	 * @type {Color}
 	 * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/ Black border
@@ -221,9 +327,7 @@ seriesType('pie', 'line',
 	 * keep the border width at 0.5 or 1, but set the `borderColor` to
 	 * `null` instead.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the border stroke width is given in the `.highcharts-
-	 * point` class.
+	 * In styled mode, the border stroke width is given in the `.highcharts-point` class.
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/pie-borderwidth/ 3px border
@@ -232,8 +336,6 @@ seriesType('pie', 'line',
 	 */
 	borderWidth: 1,
 
-	/**
-	 */
 	states: {
 
 		/**
@@ -246,8 +348,7 @@ seriesType('pie', 'line',
 			 * How much to brighten the point on interaction. Requires the main
 			 * color to be defined in hex or rgb(a) format.
 			 * 
-			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the hover brightness is by default replaced
+			 * In styled mode, the hover brightness is by default replaced
 			 * by a fill-opacity given in the `.highcharts-point-hover` class.
 			 * 
 			 * @type {Number}
@@ -257,8 +358,6 @@ seriesType('pie', 'line',
 			 */
 			brightness: 0.1,
 
-			/**
-			 */
 			shadow: false
 		}
 	}
@@ -710,3 +809,116 @@ seriesType('pie', 'line',
 			);
 	}
 });
+
+/**
+ * A `pie` series. If the [type](#series.pie.type) option is not specified,
+ * it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * pie](#plotOptions.pie).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.pie
+ * @excluding dataParser,dataURL,stack,xAxis,yAxis
+ * @product highcharts
+ * @apioption series.pie
+ */
+
+/**
+ * An array of data points for the series. For the `pie` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. Example:
+ * 
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.pie.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *     y: 1,
+ *     name: "Point2",
+ *     color: "#00FF00"
+ * }, {
+ *     y: 7,
+ *     name: "Point1",
+ *     color: "#FF00FF"
+ * }]</pre>
+ * 
+ * @type {Array<Object|Number>}
+ * @extends series.line.data
+ * @excluding marker,x
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.pie.data
+ */
+
+/**
+ * The sequential index of the data point in the legend.
+ * 
+ * @type {Number}
+ * @product highcharts
+ * @apioption series.pie.data.legendIndex
+ */
+
+/**
+ * Whether to display a slice offset from the center.
+ * 
+ * @type {Boolean}
+ * @sample {highcharts} highcharts/point/sliced/ One sliced point
+ * @product highcharts
+ * @apioption series.pie.data.sliced
+ */
+
+/**
+ * Fires when the checkbox next to the point name in the legend is clicked.
+ * One parameter, event, is passed to the function. The state of the
+ * checkbox is found by event.checked. The checked item is found by
+ * event.item. Return false to prevent the default action which is to
+ * toggle the select state of the series.
+ * 
+ * @type {Function}
+ * @context Point
+ * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/
+ *         Alert checkbox status
+ * @since 1.2.0
+ * @product highcharts
+ * @apioption plotOptions.pie.events.checkboxClick
+ */
+
+/**
+ * Not applicable to pies, as the legend item is per point. See point.
+ * events.
+ * 
+ * @type {Function}
+ * @since 1.2.0
+ * @product highcharts
+ * @apioption plotOptions.pie.events.legendItemClick
+ */
+
+/**
+ * Fires when the legend item belonging to the pie point (slice) is
+ * clicked. The `this` keyword refers to the point itself. One parameter,
+ * `event`, is passed to the function, containing common event information. The
+ * default action is to toggle the visibility of the point. This can be
+ * prevented by calling `event.preventDefault()`.
+ * 
+ * @type {Function}
+ * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
+ *         Confirm toggle visibility
+ * @since 1.2.0
+ * @product highcharts
+ * @apioption plotOptions.pie.point.events.legendItemClick
+ */

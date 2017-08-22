@@ -616,7 +616,8 @@ H.Tooltip.prototype = {
 					text: str
 				});
 				/*= if (build.classic) { =*/
-				tt.css(options.style);
+				tt.css(options.style)
+					.shadow(options.shadow);
 				/*= } =*/
 
 				// Get X position now, so we can move all to the other side in
@@ -817,14 +818,20 @@ H.Tooltip.prototype = {
 	},
 
 	/**
-	 * Build the body (lines) of the tooltip by iterating over the items and returning one entry for each item,
-	 * abstracting this functionality allows to easily overwrite and extend it.
+	 * Build the body (lines) of the tooltip by iterating over the items and
+	 * returning one entry for each item, abstracting this functionality allows
+	 * to easily overwrite and extend it.
 	 */
 	bodyFormatter: function (items) {
 		return map(items, function (item) {
 			var tooltipOptions = item.series.tooltipOptions;
-			return (tooltipOptions.pointFormatter || item.point.tooltipFormatter)
-				.call(item.point, tooltipOptions.pointFormat);
+			return (
+				tooltipOptions.pointFormatter ||
+				item.point.tooltipFormatter
+			).call(
+				item.point,
+				tooltipOptions[(item.point.formatPrefix || 'point') + 'Format']
+			);
 		});
 	}
 

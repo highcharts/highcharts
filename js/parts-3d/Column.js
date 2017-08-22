@@ -16,9 +16,48 @@ var each = H.each,
 	svg = H.svg,
 	wrap = H.wrap;
 
-/***
-	EXTENSION FOR 3D COLUMNS
-***/
+
+
+/**
+ * Depth of the columns in a 3D column chart. Requires `highcharts-3d.
+ * js`.
+ * 
+ * @type {Number}
+ * @default 25
+ * @since 4.0
+ * @product highcharts
+ * @apioption plotOptions.column.depth
+ */
+
+/**
+ * 3D columns only. The color of the edges. Similar to `borderColor`,
+ *  except it defaults to the same color as the column.
+ * 
+ * @type {Color}
+ * @product highcharts
+ * @apioption plotOptions.column.edgeColor
+ */
+
+/**
+ * 3D columns only. The width of the colored edges.
+ * 
+ * @type {Number}
+ * @default 1
+ * @product highcharts
+ * @apioption plotOptions.column.edgeWidth
+ */
+
+/**
+ * The spacing between columns on the Z Axis in a 3D chart. Requires
+ * `highcharts-3d.js`.
+ * 
+ * @type {Number}
+ * @default 1
+ * @since 4.0
+ * @product highcharts
+ * @apioption plotOptions.column.groupZPadding
+ */
+
 wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 

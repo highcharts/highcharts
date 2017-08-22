@@ -291,8 +291,11 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		this.side.attr({
 			fill: color(fill).brighten(-0.1).get()
 		});
-
 		this.color = fill;
+
+		// for animation getter (#6776)
+		result.fill = fill;
+
 		return this;
 	};
 
@@ -304,7 +307,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
-	result.attr = function (args, val) {
+	result.attr = function (args, val, complete, continueAnimation) {
 
 		// Resolve setting attributes by string name
 		if (typeof args === 'string' && typeof val !== 'undefined') {
@@ -320,7 +323,10 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			this.top.attr({ d: paths[1] });
 			this.side.attr({ d: paths[2] });
 		} else {
-			return H.SVGElement.prototype.attr.call(this, args); // getter returns value
+			// getter returns value
+			return SVGElement.prototype.attr.call(
+				this, args, undefined, complete, continueAnimation
+			);
 		}
 
 		return this;
@@ -565,10 +571,22 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		// relates to neighbour elements as well
 		each(['out', 'inn', 'side1', 'side2'], function (face) {
 			wrapper[face]
-				.addClass(className + ' highcharts-3d-side')
+				.attr({
+					'class': className + ' highcharts-3d-side'
+				})
 				.add(parent);
 		});
 	};
+
+	// Cascade to faces
+	each(['addClass', 'removeClass'], function (fn) {
+		wrapper[fn] = function () {
+			var args = arguments;
+			each(['top', 'out', 'inn', 'side1', 'side2'], function (face) {
+				wrapper[face][fn].apply(wrapper[face], args);
+			});
+		};
+	});
 
 	/**
 	 * Compute the transformed paths and set them to the composite shapes

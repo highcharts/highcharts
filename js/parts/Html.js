@@ -371,6 +371,10 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 							// Set listeners to update the HTML div's position
 							// whenever the SVG group position is changed.
 							extend(parentGroup, {
+								classSetter: function (value) {
+									this.element.setAttribute('class', value);
+									htmlGroup.className = value;
+								},
 								on: function () {
 									if (parents[0].div) { // #6418
 										wrapper.on.apply(

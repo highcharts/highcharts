@@ -17,6 +17,16 @@ var deg2rad = H.deg2rad,
 	EXTENSION FOR 3D PIES
 ***/
 
+/**
+ * The thickness of a 3D pie. Requires `highcharts-3d.js`
+ * 
+ * @type {Number}
+ * @default 0
+ * @since 4.0
+ * @product highcharts
+ * @apioption plotOptions.pie.depth
+ */
+
 wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 

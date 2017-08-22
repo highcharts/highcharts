@@ -6,10 +6,15 @@
 
 "use strict";
 
+var hcRoot = __dirname + '/../../..';
+
+var parseTag = require('jsdoc/tag/type').parse;
+
 var exec = require('child_process').execSync;
 var logger = require('jsdoc/util/logger');
 var Doclet = require('jsdoc/doclet.js').Doclet;
 var fs = require('fs');
+var proc = require(hcRoot + '/assembler/process.js');
 var options = {
     _meta: {
         commit: '',
@@ -17,6 +22,17 @@ var options = {
     }
 };
 
+
+function getLocation(option) {
+    return {
+        start:
+            (option.leadingComments && option.leadingComments[0].loc.start) ||
+            option.key.loc.start,
+        end:
+            (option.leadingComments && option.leadingComments[0].loc.end) ||
+            option.key.loc.end
+    };
+}
 function dumpOptions() {
     fs.writeFile(
         'tree.json',
@@ -26,7 +42,7 @@ function dumpOptions() {
             '  '
         ),
         function () {
-            console.log('Wrote tree!');
+            //console.log('Wrote tree!');
         }
     );
 }
@@ -36,6 +52,13 @@ function decorateOptions(parent, target, option, filename) {
 
     if (!option) {
         console.log('WARN: decorateOptions called with no valid AST node');
+        return;
+    }
+
+    if (
+        option.leadingComments &&
+        option.leadingComments[0].value.indexOf('@ignore') !== -1
+    ) {
         return;
     }
 
@@ -51,11 +74,16 @@ function decorateOptions(parent, target, option, filename) {
         children: {}
     };
 
+    // Look for the start of the doclet first
+    var location = getLocation(option);
+
+
     target[index].meta = {
         fullname: parent + index,
         name: index,
-        line: option.key.loc.start.line,
-        column: option.key.loc.start.column,
+        line: location.start.line,
+        lineEnd: location.end.line,
+        column: location.start.column,
         filename: filename//.replace('highcharts/', '')
     };
 
@@ -77,8 +105,14 @@ function decorateOptions(parent, target, option, filename) {
     } else if (option.value && option.value.type === 'Literal') {
        target[index].meta.default = option.value.value;
        //target[option.key.name].meta.type = option.value.type;
-    } else {
-       // return;
+    } else if (option.value && option.value.type === 'UnaryExpression') {
+        if (option.value.argument && option.value.argument.type === 'Literal') {
+            target[index].meta.default = option.value.operator + option.value.argument.value;
+
+            if (!isNaN(target[index].meta.default) && isFinite(target[index].meta.default)) {
+                target[index].meta.default = parseInt(target[index].meta.default, 10);
+            }
+        }
     }
 
     // Add options decorations directly to the node
@@ -139,7 +173,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
             parent = s.split('\n')[0].trim().split(' ');
 
-            console.log('doing optionparent:', currentSourceName, '->', parent.length > 1 ? parent[1] : 'root');
+            //console.log('doing optionparent:', currentSourceName, '->', parent.length > 1 ? parent[1] : 'root');
 
             if (parent && parent.length > 1) {
                 parent = parent[1].trim() || '';
@@ -155,12 +189,14 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                     target[p].doclet = target[p].doclet || {};
                     target[p].children = target[p].children || {};
 
+                    var location = getLocation(node);
                     target[p].meta = {
                         filename: currentSourceName,
                         name: p,
                         fullname: fullPath,
-                        line: node.loc.start.line,
-                        column: node.loc.start.column
+                        line: location.start.line,
+                        lineEnd: location.end.line,
+                        column: location.start.column
                     };
 
                     target = target[p].children;
@@ -250,6 +286,13 @@ function augmentOption(path, obj) {
                 current[thing].doclet = current[thing].doclet || {};
                 current[thing].children = current[thing].children || {};
                 current[thing].meta = current[thing].meta || {};
+
+                // Free floating doclets marked with @apioption
+                if (!current[thing].meta.filename) {
+                    current[thing].meta.filename = obj.meta.path + '/' + obj.meta.filename;
+                    current[thing].meta.line = obj.meta.lineno;
+                    current[thing].meta.lineEnd = obj.meta.lineno + obj.comment.split(/\n/g).length - 1;
+                }
 
                 Object.keys(obj).forEach(function (property) {
                     if (property !== 'comment' && property !== 'meta') {
@@ -351,6 +394,7 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('exclude', {
         onTagged: function (doclet, tagObj) {
+            console.log('@exdlude', tagObj.text)
             var items = tagObj.text.split(',');
 
             doclet.exclude = doclet.exclude || [];
@@ -358,6 +402,46 @@ exports.defineTags = function (dictionary) {
             items.forEach(function (entry) {
                 doclet.exclude.push(entry.trim());
             });
+        }
+    });
+
+    dictionary.defineTag('excluding', {
+        onTagged: function (doclet, tagObj) {
+            var items = tagObj.text.split(',');
+
+            doclet.exclude = doclet.exclude || [];
+
+            items.forEach(function (entry) {
+                doclet.exclude.push(entry.trim());
+            });
+        }
+    });
+
+    dictionary.defineTag('default', {
+        onTagged: function (doclet, tagObj) {
+
+            if (!tagObj.value) {
+                return;
+            }
+
+            if (tagObj.value.indexOf('highcharts') < 0 &&
+                tagObj.value.indexOf('highmaps') < 0 &&
+                tagObj.value.indexOf('highstock') < 0) {
+
+                doclet.defaultvalue = tagObj.text;
+                return;
+            }
+
+            var valueObj = resolveProductTypes(doclet, tagObj);
+
+            doclet.defaultByProduct = doclet.defaultByProduct || {};
+
+            (valueObj.products || []).forEach(function (p) {
+                doclet.defaultByProduct[p] = valueObj.value;
+            });
+
+            //var parsed = parseTag(tagObj.value, true, true);
+            //doclet.defaultvalue = parsed;
         }
     });
 
@@ -378,7 +462,16 @@ exports.astNodeVisitor = {
 
 exports.handlers = {
     beforeParse: function (e) {
+        var palette = proc.getPalette(hcRoot + '/css/highcharts.scss');
 
+        Object.keys(palette).forEach(function (key) {
+            var reg = new RegExp('\\$\\{palette\\.' + key + '\\}', 'g');
+
+            e.source = e.source.replace(
+                reg,
+                palette[key]
+            );
+        });
     },
 
     jsdocCommentFound: function (e) {

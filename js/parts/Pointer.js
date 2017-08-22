@@ -444,17 +444,17 @@ Highcharts.Pointer.prototype = {
 
 		// Issues related to crosshair #4927, #5269 #5066, #5658
 		each(chart.axes, function drawAxisCrosshair(axis) {
-			var snap = pick(axis.crosshair.snap, true);
-			
-			if (!snap) {
-				axis.drawCrosshair(e);
-			
+			var snap = pick(axis.crosshair.snap, true),
+				point = !snap ?
+					undefined :
+					H.find(points, function (p) {
+						return p.series[axis.coll] === axis;
+					});
+
 			// Axis has snapping crosshairs, and one of the hover points belongs
-			// to axis
-			} else if (H.find(points, function (p) {
-				return p.series[axis.coll] === axis;
-			})) {
-				axis.drawCrosshair(e, hoverPoint);
+			// to axis. Always call drawCrosshair when it is not snap.
+			if (point || !snap) {
+				axis.drawCrosshair(e, point);
 			// Axis has snapping crosshairs, but no hover point belongs to axis
 			} else {
 				axis.hideCrosshair();
@@ -971,7 +971,9 @@ Highcharts.Pointer.prototype = {
 		);
 		if (!H.chartCount) {
 			removeEvent(ownerDoc, 'mouseup', pointer.onDocumentMouseUp);
-			removeEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
+			if (H.hasTouch) {
+				removeEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
+			}
 		}
 
 		// memory and CPU leak

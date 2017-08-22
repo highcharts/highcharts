@@ -12,9 +12,36 @@ import './Chart.js';
 import './Series.js';
 import './Options.js';
 import './Scrollbar.js';
-/* ****************************************************************************
- * Start Navigator code														*
- *****************************************************************************/
+
+/**
+ * Options for the corresponding navigator series if `showInNavigator`
+ * is `true` for this series. Available options are the same as any
+ * series, documented at [plotOptions](#plotOptions.series) and [series](#series).
+ * 
+ * 
+ * These options are merged with options in [navigator.series](#navigator.
+ * series), and will take precedence if the same option is defined both
+ * places.
+ * 
+ * @type {Object}
+ * @see [navigator.series](#navigator.series)
+ * @default undefined
+ * @since 5.0.0
+ * @product highstock
+ * @apioption plotOptions.series.navigatorOptions
+ */
+
+/**
+ * Whether or not to show the series in the navigator. Takes precedence
+ * over [navigator.baseSeries](#navigator.baseSeries) if defined.
+ * 
+ * @type {Boolean}
+ * @default undefined
+ * @since 5.0.0
+ * @product highstock
+ * @apioption plotOptions.series.showInNavigator
+ */
+
 var addEvent = H.addEvent,
 	Axis = H.Axis,
 	Chart = H.Chart,
@@ -60,18 +87,15 @@ units[5] = ['week', [1, 2, 3]]; // allow more weeks
 
 defaultSeriesType = seriesTypes.areaspline === undefined ? 'line' : 'areaspline';
 
-extend(defaultOptions, 
-	/** 	 
-	* @optionparent
-	*/
-	{
+extend(defaultOptions, {
 
 	/**
 	 * The navigator is a small series below the main series, displaying
 	 * a view of the entire data set. It provides tools to zoom in and
 	 * out on parts of the data as well as panning across the dataset.
-	 * 
+	 *
 	 * @product highstock
+	 * @optionparent navigator
 	 */
 	navigator: {
 		//enabled: true,
@@ -146,9 +170,7 @@ extend(defaultOptions,
 		 * color is bluish with an opacity of 0.3 to see the series below.
 		 * 
 		 * @type {Color}
-		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the mask is styled with the `.highcharts-navigator-
-		 * mask` and `.highcharts-navigator-mask-inside` classes.
+		 * @see In styled mode, the mask is styled with the `.highcharts-navigator-mask` and `.highcharts-navigator-mask-inside` classes.
 		 * @sample {highstock} stock/navigator/maskfill/ Blue, semi transparent mask
 		 * @default rgba(102,133,194,0.3)
 		 * @product highstock
@@ -171,8 +193,7 @@ extend(defaultOptions,
 		 * navigator.
 		 * 
 		 * @type {Number}
-		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the outline stroke width is set with the `.
+		 * @see In styled mode, the outline stroke width is set with the `.
 		 * highcharts-navigator-outline` class.
 		 * @sample {highstock} stock/navigator/outline/ 2px blue outline
 		 * @default 2
@@ -192,21 +213,20 @@ extend(defaultOptions,
 		 * Default series options for the navigator series are:
 		 * 
 		 * <pre>series: {
-		 * type: 'areaspline',
-		 * color: '#4572A7',
-		 * fillOpacity: 0.05,
-		 * dataGrouping: {
-		 * smoothed: true
-		 * },
-		 * lineWidth: 1,
-		 * marker: {
-		 * enabled: false
-		 * }
+		 *     type: 'areaspline',
+		 *     color: '#4572A7',
+		 *     fillOpacity: 0.05,
+		 *     dataGrouping: {
+		 *         smoothed: true
+		 *     },
+		 *     lineWidth: 1,
+		 *     marker: {
+		 *         enabled: false
+		 *     }
 		 * }</pre>
 		 * 
 		 * @type {Object}
-		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), the navigator series is styled with the `.
+		 * @see In styled mode, the navigator series is styled with the `.
 		 * highcharts-navigator-series` class.
 		 * @sample {highstock} stock/navigator/series-data/ Using a separate data set for the navigator
 		 * @sample {highstock} stock/navigator/series/ A green navigator series
@@ -215,95 +235,79 @@ extend(defaultOptions,
 		series: {
 
 			/**
+			 * The type of the navigator series. Defaults to `areaspline` if 
+			 * defined, otherwise `line`.
+			 *
+			 * @type {String}
 			 */
 			type: defaultSeriesType,
 			/*= if (build.classic) { =*/
 
 			/**
+			 * The color of the navigator series.
 			 */
 			color: '${palette.highlightColor80}',
 
 			/**
+			 * The fill opacity of the navigator series.
 			 */
 			fillOpacity: 0.05,
 
 			/**
+			 * The pixel line width of the navigator series.
 			 */
 			lineWidth: 1,
 			/*= } =*/
 
 			/**
+			 * @ignore
 			 */
 			compare: null,
 
 			/**
+			 * Data grouping options for the navigator series.
+			 * 
+			 * @extends {plotOptions.series.dataGrouping}
 			 */
 			dataGrouping: {
-
-				/**
-				 */
 				approximation: 'average',
-
-				/**
-				 */
 				enabled: true,
-
-				/**
-				 */
 				groupPixelWidth: 2,
-
-				/**
-				 */
 				smoothed: true,
-
-				/**
-				 */
 				units: units
 			},
 
 			/**
+			 * Data label options for the navigator series. Data labels are 
+			 * disabled by default on the navigator series.
+			 *
+			 * @extends {plotOptions.series.dataLabels}
 			 */
 			dataLabels: {
-
-				/**
-				 */
 				enabled: false,
-
-				/**
-				 */
 				zIndex: 2 // #1839
 			},
 
-			/**
-			 */
 			id: 'highcharts-navigator-series',
-
-			/**
-			 */
 			className: 'highcharts-navigator-series',
 
 			/**
+			 * Line color for the navigator series. Allows setting the color
+			 * while disallowing the default candlestick setting.
+			 *
+			 * @type {Color}
 			 */
-			lineColor: null, // Allow color setting while disallowing default candlestick setting (#4602)
+			lineColor: null, // #4602
 
-			/**
-			 */
 			marker: {
-
-				/**
-				 */
 				enabled: false
 			},
 
-			/**
-			 */
 			pointRange: 0,
-
 			/**
-			 */
-			shadow: false,
-
-			/**
+			 * The threshold option. Setting it to 0 will make the default
+			 * navigator area series draw its area from the 0 value and up.
+			 * @type {Number}
 			 */
 			threshold: null
 		},
@@ -311,168 +315,104 @@ extend(defaultOptions,
 		//opposite: undefined,
 
 		/**
-		 * Options for the navigator X axis. Available options are the same
-		 * as any X axis, documented at [xAxis](#xAxis). Default series options
+		 * Options for the navigator X axis. Default series options
 		 * for the navigator xAxis are:
 		 * 
 		 * <pre>xAxis: {
-		 * tickWidth: 0,
-		 * lineWidth: 0,
-		 * gridLineWidth: 1,
-		 * tickPixelInterval: 200,
-		 * labels: {
-		 * align: 'left',
-		 * style: {
-		 * color: '#888'
-		 * },
-		 * x: 3,
-		 * y: -4
-		 * }
+		 *     tickWidth: 0,
+		 *     lineWidth: 0,
+		 *     gridLineWidth: 1,
+		 *     tickPixelInterval: 200,
+		 *     labels: {
+		 *     	   align: 'left',
+		 *         style: {
+		 *             color: '#888'
+		 *         },
+		 *         x: 3,
+		 *         y: -4
+		 *     }
 		 * }</pre>
 		 * 
 		 * @type {Object}
+		 * @extends {xAxis}
+		 * @excluding linkedTo,maxZoom,minRange,opposite,range,scrollbar,
+		 *          showEmpty
 		 * @product highstock
 		 */
 		xAxis: {
 
-			/**
-			 */
 			className: 'highcharts-navigator-xaxis',
-
-			/**
-			 */
 			tickLength: 0,
+			
 			/*= if (build.classic) { =*/
-
-			/**
-			 */
 			lineWidth: 0,
-
-			/**
-			 */
 			gridLineColor: '${palette.neutralColor10}',
-
-			/**
-			 */
 			gridLineWidth: 1,
 			/*= } =*/
 
-			/**
-			 */
 			tickPixelInterval: 200,
 
-			/**
-			 */
 			labels: {
-
-				/**
-				 */
 				align: 'left',
+				
 				/*= if (build.classic) { =*/
-
-				/**
-				 */
 				style: {
-
-					/**
-					 */
 					color: '${palette.neutralColor40}'
 				},
 				/*= } =*/
 
-				/**
-				 */
 				x: 3,
-
-				/**
-				 */
 				y: -4
 			},
 
-			/**
-			 */
 			crosshair: false
 		},
 
 		/**
-		 * Options for the navigator Y axis. Available options are the same
-		 * as any y axis, documented at [yAxis](#yAxis). Default series options
+		 * Options for the navigator Y axis. Default series options
 		 * for the navigator yAxis are:
 		 * 
 		 * <pre>yAxis: {
-		 * gridLineWidth: 0,
-		 * startOnTick: false,
-		 * endOnTick: false,
-		 * minPadding: 0.1,
-		 * maxPadding: 0.1,
-		 * labels: {
-		 * enabled: false
-		 * },
-		 * title: {
-		 * text: null
-		 * },
-		 * tickWidth: 0
+		 *     gridLineWidth: 0,
+		 *     startOnTick: false,
+		 *     endOnTick: false,
+		 *     minPadding: 0.1,
+		 *     maxPadding: 0.1,
+		 *     labels: {
+		 *         enabled: false
+		 *     },
+		 *     title: {
+		 *         text: null
+		 *     },
+		 *     tickWidth: 0
 		 * }</pre>
 		 * 
 		 * @type {Object}
+		 * @extends {yAxis}
+		 * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
+		 *          scrollbar,top,units
 		 * @product highstock
 		 */
 		yAxis: {
 
-			/**
-			 */
 			className: 'highcharts-navigator-yaxis',
+			
 			/*= if (build.classic) { =*/
-
-			/**
-			 */
 			gridLineWidth: 0,
 			/*= } =*/
 
-			/**
-			 */
 			startOnTick: false,
-
-			/**
-			 */
 			endOnTick: false,
-
-			/**
-			 */
 			minPadding: 0.1,
-
-			/**
-			 */
 			maxPadding: 0.1,
-
-			/**
-			 */
 			labels: {
-
-				/**
-				 */
 				enabled: false
 			},
-
-			/**
-			 */
 			crosshair: false,
-
-			/**
-			 */
 			title: {
-
-				/**
-				 */
 				text: null
 			},
-
-			/**
-			 */
 			tickLength: 0,
-
-			/**
-			 */
 			tickWidth: 0
 		}
 	}
@@ -761,7 +701,7 @@ Navigator.prototype = {
 	 */
 	update: function (options) {
 		// Remove references to old navigator series in base series
-		each(this.series, function (series) {
+		each(this.series || [], function (series) {
 			if (series.baseSeries) {
 				delete series.baseSeries.navigatorSeries;
 			}
@@ -1753,12 +1693,15 @@ Navigator.prototype = {
 			baseSeries = this,
 			navigatorSeries = this.navigatorSeries;
 
-		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
-		// axis minimum falls outside the new updated dataset, we must adjust.
-		navigator.stickToMin = isNumber(baseSeries.xAxis.min) && (baseSeries.xAxis.min <= baseSeries.xData[0]);
 		// If the scrollbar is scrolled all the way to the right, keep right as new data 
 		// comes in.
 		navigator.stickToMax = Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
+
+		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
+		// axis minimum falls outside the new updated dataset, we must adjust.
+		navigator.stickToMin = isNumber(baseSeries.xAxis.min) &&
+			(baseSeries.xAxis.min <= baseSeries.xData[0]) &&
+			(!this.chart.fixedRange || !navigator.stickToMax);
 
 		// Set the navigator series data to the new data of the base series
 		if (navigatorSeries && !navigator.hasNavigatorData) {
@@ -1980,6 +1923,3 @@ Chart.prototype.callbacks.push(function (chart) {
 	}
 });
 
-/* ****************************************************************************
- * End Navigator code														  *
- *****************************************************************************/

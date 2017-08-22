@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "5.0.12",
+  "version": "5.0.14",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -30,7 +30,7 @@
     "closurecompiler": "^1.6.1",
     "colors": "~1.1.2",
     "eslint": "3.12.2",
-    "fs-extra": "^2.0.0",
+    "fs-extra": "^2.1.2",
     "google-closure-compiler-js": "^20160916.0.0",
     "grunt": "^0.4.5",
     "grunt-jslint": "^1.1.12",
@@ -38,8 +38,8 @@
     "gulp-jsdoc3": "^1.0.1",
     "gzip-size": "^3.0.0",
     "highcharts-api-doc-gen": "github:highcharts/api-docs",
-    "js-beautify": "^1.6.12",
-    "node-sass": "^4.5.2",
+    "js-beautify": "^1.6.14",
+    "node-sass": "^4.5.3",
     "request": "^2.81.0",
     "requirejs": "^2.3.3",
     "vinyl-ftp": "^0.4.5",
@@ -49,6 +49,7 @@
   },
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
+    "aws-sdk": "^2.94.0",
     "babel-runtime": "^6.20.0"
   }
 }

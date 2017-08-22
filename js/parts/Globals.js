@@ -4,14 +4,12 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-/* global window */
-var win = window,
-	doc = win.document;
-
-var SVG_NS = 'http://www.w3.org/2000/svg',
+/* global win */
+var doc = win.document,
+	SVG_NS = 'http://www.w3.org/2000/svg',
 	userAgent = (win.navigator && win.navigator.userAgent) || '',
 	svg = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
-	isMS = /(edge|msie|trident)/i.test(userAgent) && !window.opera,
+	isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,
 	vml = !svg,
 	isFirefox = /Firefox/.test(userAgent),
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38

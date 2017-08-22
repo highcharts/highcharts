@@ -110,3 +110,59 @@ QUnit.test('Show only one snapping crosshair at the same time. #6420', function 
         'Hover Series 2: crosshair on xAxis of Series 2 is visible'
     );
 });
+
+QUnit.test('Use correct hover point for axis. #6860', function (assert) {
+    var AxisPrototype = Highcharts.Axis.prototype,
+        drawCrosshair = AxisPrototype.drawCrosshair,
+        events = [],
+        override = function (e, p) {
+            var txt = [
+                this.isXAxis ? 'xAxis' : 'yAxis',
+                'side: ' + this.side,
+                'point: ' + (p ? p.series.name + '.' + p.index : 'undefined')
+            ].join();
+            events.push(txt);
+            drawCrosshair.call(this, e, p);
+        },
+        options = {
+            yAxis: [{
+                crosshair: true
+            }, {
+                opposite: true,
+                crosshair: true
+            }],
+            tooltip: {
+                shared: true
+            },
+            series: [{
+                name: 'A',
+                data: [1, 2, 3],
+                yAxis: 0
+            }, {
+                name: 'B',
+                data: [1, 2, 3].reverse(),
+                yAxis: 1
+            }]
+        },
+        chart,
+        series;
+    AxisPrototype.drawCrosshair = override;
+    chart = Highcharts.chart('container', options);
+    series = chart.series[0];
+    series.points[0].onMouseOver();
+    assert.strictEqual(
+        events.shift(),
+        'xAxis,side: 2,point: A.0',
+        'xAxis is assigned point A.0'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'yAxis,side: 3,point: A.0',
+        'yAxis left side is assigned point A.0'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'yAxis,side: 1,point: B.0',
+        'yAxis on right side is assigned point B.0'
+    );
+});

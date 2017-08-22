@@ -23,6 +23,14 @@ var win = H.win,
 	fireEvent = H.fireEvent,
 	dateFormat = H.dateFormat,
 	merge = H.merge,
+	hiddenStyle = { // CSS style to hide element from visual users while still exposing it to screen readers
+		position: 'absolute',
+		left: '-9999px',
+		top: 'auto',
+		width: '1px',
+		height: '1px',
+		overflow: 'hidden'
+	},
 	// Human readable description of series and each point in singular and plural
 	typeToSeriesMap = {
 		'default': ['series', 'data point', 'data points'],
@@ -90,7 +98,6 @@ H.setOptions({
 	 * com/docs/chart-concepts/accessibility).
 	 * 
 	 * @since 5.0.0
-	 * @product highcharts highstock highmaps
 	 */
 	accessibility: {
 
@@ -100,7 +107,6 @@ H.setOptions({
 		 * @type {Boolean}
 		 * @default true
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 */
 		enabled: true,
 
@@ -113,7 +119,6 @@ H.setOptions({
 		 * @type {Number|Boolean}
 		 * @default 30
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 */
 		pointDescriptionThreshold: 30, // set to false to disable
 
@@ -122,7 +127,6 @@ H.setOptions({
 		 * 
 		 * @type {Object}
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 */
 		keyboardNavigation: {
 
@@ -134,7 +138,7 @@ H.setOptions({
 			 * @since 5.0.0
 			 */
 			enabled: true
-			
+
 			/**
 			 * Skip null points when navigating through points with the
 			 * keyboard.
@@ -153,7 +157,6 @@ H.setOptions({
 		 * @type {Boolean}
 		 * @default false
 		 * @since 5.0.0
-		 * @product highcharts highstock highmaps
 		 * @apioption accessibility.describeSingleSeries
 		 */
 
@@ -204,7 +207,7 @@ H.setOptions({
 		 * reader user.
 		 * 
 		 * @type {Function}
-		 * @see [point.description](#series<line>.data.description)
+		 * @see [point.description](#series.line.data.description)
 		 * @since 5.0.0
 		 * @apioption accessibility.pointDescriptionFormatter
 		 */
@@ -267,6 +270,24 @@ H.setOptions({
  * @default undefined
  * @since 5.0.0
  * @apioption chart.typeDescription
+ */
+
+/**
+ * Keyboard navigation for the legend. Requires the Accessibility module.
+ * @since 5.0.14
+ * @apioption legend.keyboardNavigation
+ */
+
+/**
+ * Enable/disable keyboard navigation for the legend. Requires the Accessibility
+ * module.
+ * 
+ * @type {Boolean}
+ * @see [accessibility.keyboardNavigation](#accessibility.keyboardNavigation.
+ * enabled)
+ * @default true
+ * @since 5.0.13
+ * @apioption legend.keyboardNavigation.enabled
  */
 
 /**
@@ -700,33 +721,37 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// Validate holds a function to determine if there are prerequisites for this module to run that are not met.
 	// Init holds a function to run once before any keyCodes are interpreted.
 	// Terminate holds a function to run once before moving to next/prev module.
-	// transformTabs determines whether to transform tabs to left/right events or not. Defaults to true.
 	function KeyboardNavigationModule(options) {
+		this.id = options.id;
 		this.keyCodeMap = options.keyCodeMap;
 		this.move = options.move;
 		this.validate = options.validate;
 		this.init = options.init;
 		this.terminate = options.terminate;
-		this.transformTabs = options.transformTabs !== false;
 	}
 	KeyboardNavigationModule.prototype = {
 		// Find handler function(s) for key code in the keyCodeMap and run it.
 		run: function (e) {
 			var navModule = this,
 				keyCode = e.which || e.keyCode,
+				found = false,
 				handled = false;
-			keyCode = this.transformTabs && keyCode === 9 ? (e.shiftKey ? 37 : 39) : keyCode; // Transform tabs
 			each(this.keyCodeMap, function (codeSet) {
 				if (codeSet[0].indexOf(keyCode) > -1) {
+					found = true;
 					handled = codeSet[1].call(navModule, keyCode, e) === false ? false : true; // If explicitly returning false, we haven't handled it
 				}
 			});
+			// Default tab handler, move to next/prev module
+			if (!found && keyCode === 9) {
+				handled = this.move(e.shiftKey ? -1 : 1);
+			}
 			return handled;
 		}
 	};
 	// Maintain abstraction between KeyboardNavigationModule and Highcharts
 	// The chart object keeps track of a list of KeyboardNavigationModules that we move through
-	function navModuleFactory(keyMap, options) {
+	function navModuleFactory(id, keyMap, options) {
 		return new KeyboardNavigationModule(merge({
 			keyCodeMap: keyMap,
 			// Move to next/prev valid module, or undefined if none, and init it.
@@ -748,33 +773,29 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				}
 				// No module
 				chart.keyboardNavigationModuleIndex = 0; // Reset counter
-				chart.slipNextTab = true; // Allow next tab to slip, as we will have focus on chart now
+		
+				// Set focus to chart or exit anchor depending on direction
+				if (direction > 0) {
+					chart.tabExitAnchor.focus();
+				} else {
+					chart.renderTo.focus();
+				}
+
 				return false;
 			}
-		}, options));
+		}, { id: id }, options));
 	}
 
 	// Route keydown events
 	function keydownHandler(ev) {
 		var e = ev || win.event,
-			keyCode = e.which || e.keyCode,
 			curNavModule = chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex];
-
-		// Handle tabbing
-		if (keyCode === 9) {
-			// If we reached end of chart, we need to let this tab slip through to allow users to tab further
-			if (chart.slipNextTab) {
-				chart.slipNextTab = false;
-				return;
-			}
-		}
-		// If key was not tab, don't slip the next tab
-		chart.slipNextTab = false;
 
 		// If there is a navigation module for the current index, run it. Otherwise, we are outside of the chart in some direction.
 		if (curNavModule) {
 			if (curNavModule.run(e)) {
-				e.preventDefault(); // If successfully handled, stop the event here.
+				// Successfully handled this key event, stop default handling
+				e.preventDefault();
 			}
 		}
 	}
@@ -784,7 +805,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// Each mode determines when to move to the next/prev mode.
 	chart.keyboardNavigationModules = [
 		// Points
-		navModuleFactory([
+		navModuleFactory('points', [
 			// Left/Right
 			[[37, 39], function (keyCode) {
 				if (!chart.highlightAdjacentPoint(keyCode === 39)) { // Try to highlight adjacent point
@@ -813,6 +834,10 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			// Always start highlighting from scratch when entering this module
 			init: function () {
 				delete chart.highlightedPoint;
+				if (chart.series[0] && chart.series[0].points && 
+					chart.series[0].points[0]) {
+					chart.series[0].points[0].highlight();
+				}
 			},
 			// If leaving points, don't show tooltip anymore
 			terminate: function () {
@@ -824,7 +849,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}),
 
 		// Exporting
-		navModuleFactory([
+		navModuleFactory('exporting', [
 			// Left/Up
 			[[37, 38], function () {
 				var i = chart.highlightedExportItem || 0,
@@ -878,11 +903,15 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 						}
 					}
 				}
+			},
+			// Hide the menu
+			terminate: function () {
+				chart.hideExportMenu();
 			}
 		}),
 
 		// Map zoom
-		navModuleFactory([
+		navModuleFactory('mapZoom', [
 			// Up/down/left/right
 			[[38, 40, 37, 39], function (keyCode) {
 				chart[keyCode === 38 || keyCode === 40 ? 'yAxis' : 'xAxis'][0].panStep(keyCode < 39 ? -1 : 1);
@@ -914,9 +943,6 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				return chart.mapZoom && chart.mapNavButtons && chart.mapNavButtons.length === 2;
 			},
 
-			// Handle tabs separately
-			transformTabs: false,
-
 			// Make zoom buttons do their magic
 			init: function (direction) {
 				var zoomIn = chart.mapNavButtons[0],
@@ -929,7 +955,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 					button.element.setAttribute('aria-label', 'Zoom ' + (i ? 'out' : '') + 'chart');
 				});
 
-				if (initialButton.element.focus) {						
+				if (initialButton.element.focus) {
 					initialButton.element.focus();
 				}
 				initialButton.setState(2);
@@ -938,7 +964,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}),
 
 		// Highstock range selector (minus input boxes)
-		navModuleFactory([
+		navModuleFactory('rangeSelector', [
 			// Left/Right/Up/Down
 			[[37, 39, 38, 40], function (keyCode) {
 				var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
@@ -972,7 +998,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}),
 
 		// Highstock range selector, input boxes
-		navModuleFactory([
+		navModuleFactory('rangeSelectorInput', [
 			// Tab/Up/Down
 			[[9, 38, 40], function (keyCode, e) {
 				var direction = (keyCode === 9 && e.shiftKey || keyCode === 38) ? -1 : 1,
@@ -990,9 +1016,6 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				return inputVisible && chart.options.rangeSelector.inputEnabled !== false && chart.rangeSelector.minInput && chart.rangeSelector.maxInput;
 			},
 
-			// Handle tabs different from left/right (because we don't want to catch left/right in a text area)
-			transformTabs: false,
-
 			// Highlight first/last input box
 			init: function (direction) {
 				chart.highlightedInputRangeIx = direction > 0 ? 0 : 1;
@@ -1001,7 +1024,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}),
 
 		// Legend navigation
-		navModuleFactory([
+		navModuleFactory('legend', [
 			// Left/Right/Up/Down
 			[[37, 39, 38, 40], function (keyCode) {
 				var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
@@ -1050,6 +1073,16 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		chart.container.setAttribute('tabindex', '0');
 	}
 
+	// Add tab exit anchor
+	// We use this to move focus out of chart whenever we want, by setting focus
+	// to this and not preventing the default tab action.
+	if (!chart.tabExitAnchor) {
+		chart.tabExitAnchor = doc.createElement('div');
+		chart.tabExitAnchor.setAttribute('tabindex', '-1'); // Not reachable by user
+		merge(true, chart.tabExitAnchor.style, hiddenStyle);
+		chart.renderTo.appendChild(chart.tabExitAnchor);
+	}
+
 	// Handle keyboard events
 	addEvent(chart.renderTo, 'keydown', keydownHandler);
 	addEvent(chart, 'destroy', function () {
@@ -1068,14 +1101,6 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 		tableShortcut = doc.createElement('h4'),
 		tableShortcutAnchor = doc.createElement('a'),
 		chartHeading = doc.createElement('h4'),
-		hiddenStyle = { // CSS style to hide element from visual users while still exposing it to screen readers
-			position: 'absolute',
-			left: '-9999px',
-			top: 'auto',
-			width: '1px',
-			height: '1px',
-			overflow: 'hidden'
-		},
 		chartTypes = chart.types || [],
 		// Build axis info - but not for pies and maps. Consider not adding for certain other types as well (funnel, pyramid?)
 		axesDesc = (chartTypes.length === 1 && chartTypes[0] === 'pie' || chartTypes[0] === 'map') && {} || chart.getAxesDescription(),

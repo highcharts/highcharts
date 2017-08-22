@@ -22,6 +22,12 @@ Highcharts.chart('container', {
         }
     }],
 
+    plotOptions: {
+        column: {
+            borderRadius: 5
+        }
+    },
+
     series: [{
         data: [1, 3, 2, 4]
     }, {

@@ -37,36 +37,213 @@ var defaultOptions = H.defaultOptions,
 	isFirefoxBrowser = /firefox/i.test(userAgent);
 
 // Add language
-/**
- * @apioption lang
- */
 extend(defaultOptions.lang, {
+	/**
+	 * Exporting module only. The text for the menu item to print the chart.
+	 * 
+	 * @type {String}
+	 * @default Print chart
+	 * @since 3.0.1
+	 * @apioption lang.printChart
+	 */
 	printChart: 'Print chart',
+	/**
+	 * Exporting module only. The text for the PNG download menu item.
+	 * 
+	 * @type {String}
+	 * @default Download PNG image
+	 * @since 2.0
+	 * @apioption lang.downloadPNG
+	 */
 	downloadPNG: 'Download PNG image',
+	/**
+	 * Exporting module only. The text for the JPEG download menu item.
+	 * 
+	 * @type {String}
+	 * @default Download JPEG image
+	 * @since 2.0
+	 * @apioption lang.downloadJPEG
+	 */
 	downloadJPEG: 'Download JPEG image',
+	/**
+	 * Exporting module only. The text for the PDF download menu item.
+	 * 
+	 * @type {String}
+	 * @default Download PDF document
+	 * @since 2.0
+	 * @apioption lang.downloadPDF
+	 */
 	downloadPDF: 'Download PDF document',
+	/**
+	 * Exporting module only. The text for the SVG download menu item.
+	 * 
+	 * @type {String}
+	 * @default Download SVG vector image
+	 * @since 2.0
+	 * @apioption lang.downloadSVG
+	 */
 	downloadSVG: 'Download SVG vector image',
+	/**
+	 * Exporting module menu. The tooltip title for the context menu holding
+	 * print and export menu items.
+	 * 
+	 * @type {String}
+	 * @default Chart context menu
+	 * @since 3.0
+	 * @apioption lang.contextButtonTitle
+	 */
 	contextButtonTitle: 'Chart context menu'
 });
 
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
-
-/**
- * @apioption navigation
- */
 defaultOptions.navigation = {
 	buttonOptions: {
 		theme: {},
+		
+		/**
+		 * Whether to enable buttons.
+		 * 
+		 * @type {Boolean}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
+		 * @sample {highstock} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
+		 * @default true
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.enabled
+		 */
+		
+		/**
+		 * The pixel size of the symbol on the button.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 14
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.symbolSize
+		 */
 		symbolSize: 14,
+
+		/**
+		 * The x position of the center of the symbol inside the button.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 12.5
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.symbolX
+		 */
 		symbolX: 12.5,
+
+		/**
+		 * The y position of the center of the symbol inside the button.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 10.5
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.symbolY
+		 */
 		symbolY: 10.5,
+
+		/**
+		 * Alignment for the buttons.
+		 * 
+		 * @validvalue ["left", "center", "right"]
+		 * @type {String}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-align/ Center aligned
+		 * @sample {highstock} highcharts/navigation/buttonoptions-align/ Center aligned
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-align/ Center aligned
+		 * @default right
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.align
+		 */
 		align: 'right',
+		
+		/**
+		 * The pixel spacing between buttons.
+		 * 
+		 * @type {Number}
+		 * @default 3
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.buttonSpacing
+		 */
 		buttonSpacing: 3,
+
+		/**
+		 * Pixel height of the buttons.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 22
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.height
+		 */
 		height: 22,
-		// text: null,
+		
+		/**
+		 * A text string to add to the individual button.
+		 * 
+		 * @type {String}
+		 * @sample {highcharts} highcharts/exporting/buttons-text/ Full text button
+		 * @sample {highcharts} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
+		 * @sample {highstock} highcharts/exporting/buttons-text/ Full text button
+		 * @sample {highstock} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
+		 * @sample {highmaps} highcharts/exporting/buttons-text/ Full text button
+		 * @sample {highmaps} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
+		 * @default null
+		 * @since 3.0
+		 * @apioption navigation.buttonOptions.text
+		 */
+
+		/**
+		 * The vertical alignment of the buttons. Can be one of "top", "middle"
+		 * or "bottom".
+		 * 
+		 * @validvalue ["top", "middle", "bottom"]
+		 * @type {String}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @default top
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.verticalAlign
+		 */
 		verticalAlign: 'top',
+		
+		/**
+		 * The pixel width of the button.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @default 24
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.width
+		 */
 		width: 24
+
+		/**
+		 * The vertical offset of the button's position relative to its
+		 * `verticalAlign`.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @default 0
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.y
+		 */
 	}
 };
 
@@ -86,28 +263,17 @@ merge(true, defaultOptions.navigation,
 	 * icon is clicked. This menu is rendered in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the menu is styled with the `.highcharts-menu`
+	 * @see In styled mode, the menu is styled with the `.highcharts-menu`
 	 * class.
 	 * @sample {highcharts} highcharts/navigation/menustyle/ Light gray menu background
 	 * @sample {highstock} highcharts/navigation/menustyle/ Light gray menu background
 	 * @sample {highmaps} highcharts/navigation/menustyle/ Light gray menu background
 	 * @default { "border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0" }
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	menuStyle: {
-
-		/**
-		 */
 		border: '1px solid ${palette.neutralColor40}',
-
-		/**
-		 */
 		background: '${palette.backgroundColor}',
-
-		/**
-		 */
 		padding: '5px 0'
 	},
 
@@ -117,36 +283,22 @@ merge(true, defaultOptions.navigation,
 	 * in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the menu items are styled with the `.highcharts-
-	 * menu-item` class.
+	 * @see In styled mode, the menu items are styled with the `.highcharts-menu-item` class.
 	 * @sample {highcharts} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
 	 * @sample {highstock} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
 	 * @sample {highmaps} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
 	 * @default { "padding": "0.5em 1em", "color": "#333333", "background": "none" }
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	menuItemStyle: {
-
-		/**
-		 */
 		padding: '0.5em 1em',
-
-		/**
-		 */
 		background: 'none',
-
-		/**
-		 */
 		color: '${palette.neutralColor80}',
-
 		/**
+		 * Defaults to `14px` on touch devices and `11px` on desktop.
+		 * @type {String}
 		 */
 		fontSize: isTouchDevice ? '14px' : '11px',
-
-		/**
-		 */
 		transition: 'background 250ms, color 250ms'
 	},
 
@@ -156,24 +308,15 @@ merge(true, defaultOptions.navigation,
 	 *  The menu items are rendered in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the menu items are styled with the `.highcharts-
-	 * menu-item` class.
+	 * @see In styled mode, the menu items are styled with the `.highcharts-menu-item` class.
 	 * @sample {highcharts} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @sample {highstock} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @sample {highmaps} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @default { "background": "#335cad", "color": "#ffffff" }
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	menuItemHoverStyle: {
-
-		/**
-		 */
 		background: '${palette.highlightColor80}',
-
-		/**
-		 */
 		color: '${palette.backgroundColor}'
 	},
 
@@ -181,11 +324,8 @@ merge(true, defaultOptions.navigation,
 	 * A collection of options for buttons appearing in the exporting module.
 	 * 
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the buttons are styled with the `.highcharts-
-	 * contextbutton` and `.highcharts-button-symbol` class.
-	 * 
-	 * @product highcharts highstock highmaps
+	 * In styled mode, the buttons are styled with the `.highcharts-contextbutton` and `.highcharts-button-symbol` class.
+	 *
 	 */
 	buttonOptions: {
 
@@ -198,7 +338,6 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-symbolfill/ Blue symbol stroke for one of the buttons
 		 * @default #666666
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		symbolFill: '${palette.neutralColor60}',
 
@@ -211,7 +350,6 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-symbolstroke/ Blue symbol stroke
 		 * @default #666666
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		symbolStroke: '${palette.neutralColor60}',
 
@@ -224,7 +362,6 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
 		 * @default 1
 		 * @since 2.0
-		 * @product highcharts highstock highmaps
 		 */
 		symbolStrokeWidth: 3,
 
@@ -239,19 +376,20 @@ merge(true, defaultOptions.navigation,
 		 * @sample {highstock} highcharts/navigation/buttonoptions-theme/ Theming the buttons
 		 * @sample {highmaps} highcharts/navigation/buttonoptions-theme/ Theming the buttons
 		 * @since 3.0
-		 * @product highcharts highstock highmaps
 		 */
 		theme: {
-
 			/**
+			 * The default fill exists only to capture hover events.
+			 * @type {String}
 			 */
-			fill: '${palette.backgroundColor}', // capture hover
-
+			fill: '${palette.backgroundColor}',
 			/**
+			 * @type {String}
 			 */
 			stroke: 'none',
-
 			/**
+			 * @type {Number}
+			 * @default 5
 			 */
 			padding: 5
 		}
@@ -268,19 +406,156 @@ merge(true, defaultOptions.navigation,
  * @optionparent exporting
  */
 defaultOptions.exporting = {
-	//enabled: true,
-	//filename: 'chart',
 
+	/**
+	 * Experimental setting to allow HTML inside the chart (added through
+	 * the `useHTML` options), directly in the exported image. This allows
+	 * you to preserve complicated HTML structures like tables or bi-directional
+	 * text in exported charts.
+	 * 
+	 * Disclaimer: The HTML is rendered in a `foreignObject` tag in the
+	 * generated SVG. The official export server is based on PhantomJS,
+	 * which supports this, but other SVG clients, like Batik, does not
+	 * support it. This also applies to downloaded SVG that you want to
+	 * open in a desktop client.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.1.8
+	 * @apioption exporting.allowHTML
+	 */
+	
+	/**
+	 * Additional chart options to be merged into an exported chart. For
+	 * example, a common use case is to add data labels to improve readability
+	 * of the exported chart, or to add a printer-friendly color scheme.
+	 * 
+	 * @type {Object}
+	 * @sample {highcharts} highcharts/exporting/chartoptions-data-labels/
+	 *         Added data labels
+	 * @sample {highstock} highcharts/exporting/chartoptions-data-labels/
+	 *         Added data labels
+	 * @default null
+	 * @apioption exporting.chartOptions
+	 */
+
+	/**
+	 * Whether to enable the exporting module. Disabling the module will
+	 * hide the context button, but API methods will still be available.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/exporting/enabled-false/
+	 *         Exporting module is loaded but disabled
+	 * @sample {highstock} highcharts/exporting/enabled-false/
+	 *         Exporting module is loaded but disabled
+	 * @default true
+	 * @since 2.0
+	 * @apioption exporting.enabled
+	 */
+	
+	/**
+	 * Function to call if the offline-exporting module fails to export
+	 * a chart on the client side, and [fallbackToExportServer](#exporting.
+	 * fallbackToExportServer) is disabled. If left undefined, an exception
+	 * is thrown instead.
+	 * 
+	 * @type {Function}
+	 * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
+	 * @default undefined
+	 * @since 5.0.0
+	 * @apioption exporting.error
+	 */
+	
+	/**
+	 * Whether or not to fall back to the export server if the offline-exporting
+	 * module is unable to export the chart on the client side.
+	 * 
+	 * @type {Boolean}
+	 * @default true
+	 * @since 4.1.8
+	 * @apioption exporting.fallbackToExportServer
+	 */
+	
+	/**
+	 * The filename, without extension, to use for the exported chart.
+	 * 
+	 * @type {String}
+	 * @sample {highcharts} highcharts/exporting/filename/ Custom file name
+	 * @sample {highstock} highcharts/exporting/filename/ Custom file name
+	 * @default chart
+	 * @since 2.0
+	 * @apioption exporting.filename
+	 */
+	
+	/**
+	 * An object containing additional attributes for the POST form that
+	 * sends the SVG to the export server. For example, a `target` can be
+	 * set to make sure the generated image is received in another frame,
+	 *  or a custom `enctype` or `encoding` can be set.
+	 * 
+	 * @type {Object}
+	 * @since 3.0.8
+	 * @apioption exporting.formAttributes
+	 */
+	
+	/**
+	 * Path where Highcharts will look for export module dependencies to
+	 * load on demand if they don't already exist on `window`. Should currently
+	 * point to location of [CanVG](https://github.com/canvg/canvg) library,
+	 * [RGBColor.js](https://github.com/canvg/canvg), [jsPDF](https://github.
+	 * com/yWorks/jsPDF) and [svg2pdf.js](https://github.com/yWorks/svg2pdf.
+	 * js), required for client side export in certain browsers.
+	 * 
+	 * @type {String}
+	 * @default https://code.highcharts.com/{version}/lib
+	 * @since 5.0.0
+	 * @apioption exporting.libURL
+	 */
+	
+	/**
+	 * Analogous to [sourceWidth](#exporting.sourceWidth).
+	 * 
+	 * @type {Number}
+	 * @since 3.0
+	 * @apioption exporting.sourceHeight
+	 */
+	
+	/**
+	 * The width of the original chart when exported, unless an explicit
+	 * [chart.width](#chart.width) is set. The width exported raster image
+	 * is then multiplied by [scale](#exporting.scale).
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/exporting/sourcewidth/ Source size demo
+	 * @sample {highstock} highcharts/exporting/sourcewidth/ Source size demo
+	 * @sample {highmaps} maps/exporting/sourcewidth/ Source size demo
+	 * @since 3.0
+	 * @apioption exporting.sourceWidth
+	 */
+	
+	/**
+	 * The pixel width of charts exported to PNG or JPG. As of Highcharts
+	 * 3.0, the default pixel width is a function of the [chart.width](#chart.
+	 * width) or [exporting.sourceWidth](#exporting.sourceWidth) and the
+	 * [exporting.scale](#exporting.scale).
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/exporting/width/
+	 *         Export to 200px wide images
+	 * @sample {highstock} highcharts/exporting/width/
+	 *         Export to 200px wide images
+	 * @default undefined
+	 * @since 2.0
+	 * @apioption exporting.width
+	 */
+	
 	/**
 	 * Default MIME type for exporting if `chart.exportChart()` is called
 	 * without specifying a `type` option. Possible values are `image/png`,
 	 *  `image/jpeg`, `application/pdf` and `image/svg+xml`.
 	 * 
 	 * @validvalue ["image/png", "image/jpeg", "application/pdf", "image/svg+xml"]
-	 * @type {String}
-	 * @default image/png
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	type: 'image/png',
 
@@ -291,11 +566,8 @@ defaultOptions.exporting = {
 	 * @type {String}
 	 * @default https://export.highcharts.com
 	 * @since 2.0
-	 * @product highcharts highstock highmaps
 	 */
 	url: 'https://export.highcharts.com/',
-	//width: undefined,
-
 	/**
 	 * When printing the chart from the menu item in the burger menu, if
 	 * the on-screen chart exceeds this width, it is resized. After printing
@@ -306,7 +578,6 @@ defaultOptions.exporting = {
 	 * @type {Number}
 	 * @default 780
 	 * @since 4.2.5
-	 * @product highcharts highstock highmaps
 	 */
 	printMaxWidth: 780,
 
@@ -316,15 +587,12 @@ defaultOptions.exporting = {
 	 * may look good on a website, it will look bad in print. The default
 	 * scale of 2 makes this chart export to a 1200px PNG or JPG.
 	 * 
-	 * @type {Number}
 	 * @see [chart.width](#chart.width), [exporting.sourceWidth](#exporting.
 	 * sourceWidth)
 	 * @sample {highcharts} highcharts/exporting/scale/ Scale demonstrated
 	 * @sample {highstock} highcharts/exporting/scale/ Scale demonstrated
 	 * @sample {highmaps} maps/exporting/scale/ Scale demonstrated
-	 * @default 2
 	 * @since 3.0
-	 * @product highcharts highstock highmaps
 	 */
 	scale: 2,
 
@@ -333,31 +601,62 @@ defaultOptions.exporting = {
 	 * to the default buttons listed here, custom buttons can be added.
 	 * See [navigation.buttonOptions](#navigation.buttonOptions) for general
 	 * options.
-	 * 
-	 * @product highcharts highstock highmaps
+	 *
 	 */
 	buttons: {
 
 		/**
 		 * Options for the export button.
 		 * 
-		 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-		 * style/style-by-css), export button styles can be applied with the
+		 * In styled mode, export button styles can be applied with the
 		 * `.highcharts-contextbutton` class.
 		 * 
 		 * @extends navigation.buttonOptions
-		 * @product highcharts highstock highmaps
 		 */
 		contextButton: {
 
 			/**
+			 * A click handler callback to use on the button directly instead of
+			 * the popup menu.
+			 * 
+			 * @type {Function}
+			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
+			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
+			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
+			 * @since 2.0
+			 * @apioption exporting.buttons.contextButton.onclick
+			 */
+			
+			/**
+			 * See [navigation.buttonOptions.symbolFill](#navigation.buttonOptions.symbolFill).
+			 * 
+			 * @type {Color}
+			 * @default #666666
+			 * @since 2.0
+			 * @apioption exporting.buttons.contextButton.symbolFill
+			 */
+			
+			/**
+			 * The horizontal position of the button relative to the `align`
+			 * option.
+			 * 
+			 * @type {Number}
+			 * @default -10
+			 * @since 2.0
+			 * @apioption exporting.buttons.contextButton.x
+			 */
+
+			/**
+			 * The class name of the context button.
+			 * @type {String}
 			 */
 			className: 'highcharts-contextbutton',
 
 			/**
+			 * The class name of the menu appearing from the button.
+			 * @type {String}
 			 */
 			menuClassName: 'highcharts-contextmenu',
-			//x: -10,
 
 			/**
 			 * The symbol for the button. Points to a definition function in
@@ -371,34 +670,46 @@ defaultOptions.exporting = {
 			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
 			 * @default menu
 			 * @since 2.0
-			 * @product highcharts highstock highmaps
 			 */
 			symbol: 'menu',
 
 			/**
+			 * The key to a [lang](#lang) option setting that is used for the
+			 * button`s title tooltip. When the key is `contextButtonTitle`, it
+			 * refers to [lang.contextButtonTitle](#lang.contextButtonTitle)
+			 * that defaults to "Chart context menu".
+			 * @type {String}
 			 */
 			_titleKey: 'contextButtonTitle',
 
 			/**
-			 * A collection of config options for the menu items. Each options
-			 * object consists of a `text` option which is a string to show in
-			 * the menu item, as well as an `onclick` parameter which is a callback
-			 * function to run on click.
+			 * A collection of strings pointing to config options for the menu
+			 * items. The config options are defined in the
+			 * `menuItemDefinitions` option.
 			 * 
 			 * By default, there is the "Print" menu item plus one menu item
-			 * for each of the available export types. Menu items can be customized
-			 * by defining a new array of items and assigning `null` to unwanted
-			 * positions (see override example below).
+			 * for each of the available export types. 
+			 *
+			 * Defaults to 
+			 * <pre>
+			 * [
+			 *	'printChart',
+			 *	'separator',
+			 *	'downloadPNG',
+			 *	'downloadJPEG',
+			 *	'downloadPDF',
+			 *	'downloadSVG'
+			 * ]
+			 * </pre>
 			 * 
-			 * @type {Array<Object>}
-			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
-			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-menuitems/ Override the menu items
-			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
-			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-menuitems/ Override the menu items
-			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
-			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-menuitems/ Override the menu items
+			 * @type {Array<String>|Array<Object>}
+	 		 * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
+	 		 *         Menu item definitions
+	 		 * @sample {highstock} highcharts/exporting/menuitemdefinitions/
+	 		 *         Menu item definitions
+	 		 * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
+	 		 *         Menu item definitions
 			 * @since 2.0
-			 * @product highcharts highstock highmaps
 			 */
 			menuItems: [
 				'printChart',
@@ -410,9 +721,6 @@ defaultOptions.exporting = {
 			]
 		}
 	},
-	// docs. Created API item with since:next. Add information and link to sample
-	// from menuItems too.
-
 	/**
 	 * An object consisting of definitions for the menu items in the context
 	 * menu. Each key value pair has a `key` that is referenced in the
@@ -436,63 +744,48 @@ defaultOptions.exporting = {
 	 * </dl>
 	 * 
 	 * @type {Object}
-	 * @sample {highcharts} highcharts/exporting/menuitemdefinitions/ Menu item definitions
-	 * @sample {highstock} highcharts/exporting/menuitemdefinitions/ Menu item definitions
-	 * @sample {highmaps} highcharts/exporting/menuitemdefinitions/ Menu item definitions
-	 * @since next
-	 * @product highcharts highstock highmaps
+	 * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
+	 *         Menu item definitions
+	 * @sample {highstock} highcharts/exporting/menuitemdefinitions/
+	 *         Menu item definitions
+	 * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
+	 *         Menu item definitions
+	 * @since 5.0.13
 	 */
 	menuItemDefinitions: {
 
 		/**
+		 * @ignore
 		 */
 		printChart: {
-
-			/**
-			 */
 			textKey: 'printChart',
-
-			/**
-			 */
 			onclick: function () {
 				this.print();
 			}
 		},
 
 		/**
+		 * @ignore
 		 */
 		separator: {
-
-			/**
-			 */
 			separator: true
 		},
 
 		/**
+		 * @ignore
 		 */
 		downloadPNG: {
-
-			/**
-			 */
 			textKey: 'downloadPNG',
-
-			/**
-			 */
 			onclick: function () {
 				this.exportChart();
 			}
 		},
 
 		/**
+		 * @ignore
 		 */
 		downloadJPEG: {
-
-			/**
-			 */
 			textKey: 'downloadJPEG',
-
-			/**
-			 */
 			onclick: function () {
 				this.exportChart({
 					type: 'image/jpeg'
@@ -501,15 +794,10 @@ defaultOptions.exporting = {
 		},
 
 		/**
+		 * @ignore
 		 */
 		downloadPDF: {
-
-			/**
-			 */
 			textKey: 'downloadPDF',
-
-			/**
-			 */
 			onclick: function () {
 				this.exportChart({
 					type: 'application/pdf'
@@ -518,15 +806,10 @@ defaultOptions.exporting = {
 		},
 
 		/**
+		 * @ignore
 		 */
 		downloadSVG: {
-
-			/**
-			 */
 			textKey: 'downloadSVG',
-
-			/**
-			 */
 			onclick: function () {
 				this.exportChart({
 					type: 'image/svg+xml'

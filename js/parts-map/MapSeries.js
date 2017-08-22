@@ -12,8 +12,7 @@ import '../parts/Legend.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
-var color = H.color,
-	colorPointMixin = H.colorPointMixin,
+var colorPointMixin = H.colorPointMixin,
 	colorSeriesMixin = H.colorSeriesMixin,
 	doc = H.doc,
 	each = H.each,
@@ -37,34 +36,37 @@ var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 
 
 /**
- * The MapAreaPoint object
- */
-/**
- * Add the map series type
- */
-seriesType('map', 'scatter', 
-/**
+ * The map series is used for basic choropleth maps, where each map area has a
+ * color based on its value.
+ *
+ * @sample maps/demo/base/ Choropleth map
  * @extends {plotOptions.scatter}
+ * @excluding marker
+ * @product highmaps
  * @optionparent plotOptions.map
  */
-
-{
+seriesType('map', 'scatter', {
 
 	/**
+	 * Whether all areas of the map defined in `mapData` should be rendered.
+	 * If `true`, areas which don't correspond to a data point, are rendered
+	 * as `null` points. If `false`, those areas are skipped.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highmaps} maps/plotoptions/series-allareas-false/ All areas set to false
+	 * @default true
+	 * @product highmaps
+	 * @apioption plotOptions.series.allAreas
 	 */
 	allAreas: true,
 
-
-	/**
-	 */
 	animation: false, // makes the complex shapes slow
 
 	/**
 	 * The color to apply to null points.
 	 * 
-	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the null point fill is set in the `.highcharts-
-	 * null-point` class.
+	 * In styled mode, the null point fill is set in the
+	 * `.highcharts-null-point` class.
 	 * 
 	 * @type {Color}
 	 * @sample {highmaps} maps/demo/all-areas-as-null/ Null color
@@ -74,108 +76,183 @@ seriesType('map', 'scatter',
 	nullColor: '${palette.neutralColor3}',
 
 	/**
+	 * Whether to allow pointer interaction like tooltips and mouse events
+	 * on null points.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.2.7
+	 * @product highmaps
+	 * @apioption plotOptions.map.nullInteraction
+	 */
+
+	/**
+	 * The border color of the map areas.
+	 * 
+	 * In styled mode, the border stroke is given in the `.highcharts-point` class.
+	 * 
+	 * @type {Color}
+	 * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
+	 * @default #cccccc
+	 * @product highmaps
+	 * @apioption plotOptions.series.borderColor
 	 */
 	borderColor: '${palette.neutralColor20}',
 
 	/**
+	 * The border width of each map area.
+	 * 
+	 * In styled mode, the border stroke width is given in the `.highcharts-point` class.
+	 * 
+	 * @type {Number}
+	 * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
+	 * @default 1
+	 * @product highmaps
+	 * @apioption plotOptions.series.borderWidth
 	 */
 	borderWidth: 1,
 
 	/**
+	 * Set this option to `false` to prevent a series from connecting to
+	 * the global color axis. This will cause the series to have its own
+	 * legend item.
+	 * 
+	 * @type {Boolean}
+	 * @default undefined
+	 * @product highmaps
+	 * @apioption plotOptions.series.colorAxis
 	 */
+	
+	/** @ignore */
 	marker: null,
 
-	/**
-	 */
 	stickyTracking: false,
 
 	/**
+	 * What property to join the `mapData` to the value data. For example,
+	 * if joinBy is "code", the mapData items with a specific code is merged
+	 * into the data with the same code. For maps loaded from GeoJSON, the
+	 * keys may be held in each point's `properties` object.
+	 * 
+	 * The joinBy option can also be an array of two values, where the first
+	 * points to a key in the `mapData`, and the second points to another
+	 * key in the `data`.
+	 * 
+	 * When joinBy is `null`, the map items are joined by their position
+	 * in the array, which performs much better in maps with many data points.
+	 * This is the recommended option if you are printing more than a thousand
+	 * data points and have a backend that can preprocess the data into
+	 * a parallel array of the mapData.
+	 * 
+	 * @type {String|Array<String>}
+	 * @sample {highmaps} maps/plotoptions/series-border/ Joined by "code"
+	 * @sample {highmaps} maps/demo/geojson/ GeoJSON joined by an array
+	 * @sample {highmaps} maps/series/joinby-null/ Simple data joined by null
+	 * @product highmaps
+	 * @apioption plotOptions.series.joinBy
 	 */
 	joinBy: 'hc-key',
 
-	/**
-	 */
 	dataLabels: {
-
-		/**
-		 */
 		formatter: function () { // #2945
 			return this.point.value;
 		},
-
-		/**
-		 */
 		inside: true, // for the color
-
-		/**
-		 */
 		verticalAlign: 'middle',
-
-		/**
-		 */
 		crop: false,
-
-		/**
-		 */
 		overflow: false,
-
-		/**
-		 */
 		padding: 0
 	},
 
-	/**
-	 */
+	/** @ignore */
 	turboThreshold: 0,
 
-	/**
-	 */
 	tooltip: {
-
-		/**
-		 */
 		followPointer: true,
-
-		/**
-		 */
 		pointFormat: '{point.name}: {point.value}<br/>'
 	},
 
-	/**
-	 */
 	states: {
 
 		/**
+		 * Overrides for the normal state.
+		 * 
+		 * @type {Object}
+		 * @product highmaps
+		 * @apioption plotOptions.series.states.normal
 		 */
 		normal: {
 
 			/**
+			 * Animation options for the fill color when returning from hover state
+			 * to normal state. The animation adds some latency in order to reduce
+			 * the effect of flickering when hovering in and out of for example
+			 * an uneven coastline.
+			 * 
+			 * @type {Object|Boolean}
+			 * @sample {highmaps} maps/plotoptions/series-states-animation-false/
+			 *         No animation of fill color
+			 * @default true
+			 * @product highmaps
+			 * @apioption plotOptions.series.states.normal.animation
 			 */
 			animation: true
 		},
 
-		/**
-		 */
 		hover: {
 
-			/**
-			 */
-			brightness: 0.2,
+			halo: null,
 
 			/**
+			 * The border color of the point in this state.
+			 * 
+			 * @type {Color}
+			 * @product highmaps
+			 * @apioption plotOptions.series.states.hover.borderColor
 			 */
-			halo: null
+			
+			/**
+			 * The border width of the point in this state
+			 * 
+			 * @type {Number}
+			 * @product highmaps
+			 * @apioption plotOptions.series.states.hover.borderWidth
+			 */
+
+			/**
+			 * The relative brightness of the point when hovered, relative to the
+			 * normal point color.
+			 * 
+			 * @type {Number}
+			 * @default 0.2
+			 * @product highmaps
+			 * @apioption plotOptions.series.states.hover.brightness
+			 */
+			brightness: 0.2
+
+			/**
+			 * The color of the shape in this state
+			 * 
+			 * @type {Color}
+			 * @sample {highmaps} maps/plotoptions/series-states-hover/ Hover options
+			 * @product highmaps
+			 * @apioption plotOptions.series.states.hover.color
+			 */
+
 		},
 
-		/**
-		 */
 		select: {
-
-			/**
-			 */
 			color: '${palette.neutralColor20}'
 		}
 	}
+
+	/**
+	 * Define the z index of the series.
+	 * 
+	 * @type {Number}
+	 * @product highmaps
+	 * @apioption plotOptions.series.zIndex
+	 */
 
 // Prototype members
 }, merge(colorSeriesMixin, {
@@ -917,3 +994,190 @@ seriesType('map', 'scatter',
 		series.chart.redraw();
 	}
 }, colorPointMixin));
+
+/**
+ * An array of objects containing a `path` definition and optionally
+ * a code or property to join in the data as per the `joinBy` option.
+ * 
+ * @type {Array<Object>}
+ * @sample {highmaps} maps/demo/category-map/ Map data and joinBy
+ * @product highmaps
+ * @apioption series.mapData
+ */
+
+/**
+ * A `map` series. If the [type](#series.map.type) option is not specified,
+ * it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * map](#plotOptions.map).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.map
+ * @excluding dataParser,dataURL
+ * @product highmaps
+ * @apioption series.map
+ */
+
+/**
+ * An array of data points for the series. For the `map` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `value` options. Example:
+ * 
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ * 
+ * 2.  An array of arrays with 2 values. In this case, the values correspond
+ * to `[hc-key, value]`. Example:
+ * 
+ *  ```js
+ *     data: [
+ *         ['us-ny', 0],
+ *         ['us-mi', 5],
+ *         ['us-tx', 3],
+ *         ['us-ak', 5]
+ *     ]
+ *  ```
+ * 
+ * 3.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.map.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         value: 6,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         value: 6,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object>}
+ * @product highmaps
+ * @apioption series.map.data
+ */
+
+/**
+ * Individual color for the point. By default the color is either used
+ * to denote the value, or pulled from the global `colors` array.
+ * 
+ * @type {Color}
+ * @default undefined
+ * @product highmaps
+ * @apioption series.map.data.color
+ */
+
+/**
+ * Individual data label for each point. The options are the same as
+ * the ones for [plotOptions.series.dataLabels](#plotOptions.series.
+ * dataLabels)
+ * 
+ * @type {Object}
+ * @sample {highmaps} maps/series/data-datalabels/ Disable data labels for individual areas
+ * @product highmaps
+ * @apioption series.map.data.dataLabels
+ */
+
+/**
+ * The `id` of a series in the [drilldown.series](#drilldown.series)
+ * array to use for a drilldown for this point.
+ * 
+ * @type {String}
+ * @sample {highmaps} maps/demo/map-drilldown/ Basic drilldown
+ * @product highmaps
+ * @apioption series.map.data.drilldown
+ */
+
+/**
+ * An id for the point. This can be used after render time to get a
+ * pointer to the point object through `chart.get()`.
+ * 
+ * @type {String}
+ * @sample {highmaps} maps/series/data-id/ Highlight a point by id
+ * @product highmaps
+ * @apioption series.map.data.id
+ */
+
+/**
+ * When data labels are laid out on a map, Highmaps runs a simplified
+ * algorithm to detect collision. When two labels collide, the one with
+ * the lowest rank is hidden. By default the rank is computed from the
+ * area.
+ * 
+ * @type {Number}
+ * @product highmaps
+ * @apioption series.map.data.labelrank
+ */
+
+ /**
+ * The relative mid point of an area, used to place the data label.
+ * Ranges from 0 to 1\. When `mapData` is used, middleX can be defined
+ * there.
+ * 
+ * @type {Number}
+ * @default 0.5
+ * @product highmaps
+ * @apioption series.map.data.middleX
+ */
+
+/**
+ * The relative mid point of an area, used to place the data label.
+ * Ranges from 0 to 1\. When `mapData` is used, middleY can be defined
+ * there.
+ * 
+ * @type {Number}
+ * @default 0.5
+ * @product highmaps
+ * @apioption series.map.data.middleY
+ */
+
+/**
+ * The name of the point as shown in the legend, tooltip, dataLabel
+ * etc.
+ * 
+ * @type {String}
+ * @sample {highmaps} maps/series/data-datalabels/ Point names
+ * @product highmaps
+ * @apioption series.map.data.name
+ */
+
+/**
+ * For map and mapline series types, the SVG path for the shape. For
+ * compatibily with old IE, not all SVG path definitions are supported,
+ * but M, L and C operators are safe.
+ * 
+ * To achieve a better separation between the structure and the data,
+ * it is recommended to use `mapData` to define that paths instead
+ * of defining them on the data points themselves.
+ * 
+ * @type {String}
+ * @sample {highmaps} maps/series/data-path/ Paths defined in data
+ * @product highmaps
+ * @apioption series.map.data.path
+ */
+
+/**
+ * The numeric value of the data point.
+ * 
+ * @type {Number}
+ * @product highmaps
+ * @apioption series.map.data.value
+ */
+
+
+/**
+ * Individual point events
+ * 
+ * @extends plotOptions.series.point.events
+ * @product highmaps
+ * @apioption series.map.data.events
+ */
