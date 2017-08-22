@@ -128,6 +128,29 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 	return proceed.call(this, options);
 });
 
+/**
+ * Initialize parallelCoordinates
+ */
+wrap(H.Chart.prototype, 'update', function (proceed, options) {
+	if (options.chart) {
+		if (defined(options.chart.parallelCoordinates)) {
+			this.hasParallelCoordinates = options.chart.parallelCoordinates;
+		}
+
+		if (this.hasParallelCoordinates && options.chart.parallelAxes) {
+			this.options.chart.parallelAxes = merge(
+				this.options.chart.parallelAxes,
+				options.chart.parallelAxes
+			);
+			each(this.yAxis, function (axis) {
+				axis.update({}, false);
+			});
+		}
+	}
+
+	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
+
 
 /**
  * Define how many parellel axes we have according to the longest  dataset
@@ -163,28 +186,39 @@ AxisProto.keepProps.push('parallelPosition');
 /**
  * Update default options with predefined for a parallel coords.
  */
-wrap(AxisProto, 'init', function (proceed, chart, options) {
-	var axisPosition = ['left', 'width', 'height', 'top'];
+wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
+	var axis = this,
+		chart = axis.chart,
+		axisPosition = ['left', 'width', 'height', 'top'];
 
-	this.chart = chart;
-
-	if (chart.inverted) {
-		axisPosition = axisPosition.reverse();
-	}
+	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
 	if (chart.hasParallelCoordinates) {
-		if (options.isX) {
-			options = merge(defaultXAxisOptions, options);
+		if (chart.inverted) {
+			axisPosition = axisPosition.reverse();
+		}
+
+		console.log(axis.chart.options.chart.parallelAxes.tickAmount);
+
+		if (axis.isXAxis) {
+			axis.options = merge(
+				axis.options,
+				defaultXAxisOptions,
+				userOptions
+			);
 		} else {
-			options = merge(chart.options.chart.parallelAxes, options);
-			this.parallelPosition = pick(
-				this.parallelPosition,
+			axis.options = merge(
+				axis.options,
+				axis.chart.options.chart.parallelAxes,
+				userOptions
+			);
+			axis.parallelPosition = pick(
+				axis.parallelPosition,
 				chart.yAxis.length
 			);
-			this.setParallelPosition(axisPosition, options);
+			axis.setParallelPosition(axisPosition, axis.options);
 		}
 	}
-	proceed.call(this, chart, options);
 });
 
 
@@ -267,7 +301,7 @@ wrap(SeriesProto, 'translate', function (proceed) {
 					chart.plotHeight - chart.yAxis[i].top + chart.plotTop :
 					chart.yAxis[i].left - chart.plotLeft;
 
-				point.plotY = chart.yAxis[i].toPixels(point.y, true);
+				point.plotY = chart.yAxis[i].translate(point.y, false, true, null, true);
 
 				if (lastPlotX !== undefined) {
 					closestPointRangePx = Math.min(
