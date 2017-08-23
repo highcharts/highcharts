@@ -82,7 +82,6 @@ var defaultParallelOptions = {
 	 *            plotBands,plotLines,angle,gridLineInterpolation,maxColor,
 	 *            maxZoom,minColor,scrollbar,stackLabels,stops
 	 * @product highcharts
-	 * @optionparent parallelAxes
 	 * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/ Set the same tickAmount for all yAxes
 	 * @since 6.0.0
 	 */
