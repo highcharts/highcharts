@@ -36,47 +36,76 @@ var defaultXAxisOptions = {
 	type: 'category'
 };
 
-H.setOptions({
-	chart: {
-		/**
-		 * Flag to render charts as a parallel coordinates plot.
-		 * In a parallel coordinates plot (||-coords) by default all required yAxes are generated and legend is disabled.
-		 * This feature requires `modules/parallel-coordinates.js`, found in the download package or online at
-		 * [code.highcharts.com/modules/parallel-coordinates.js](http://code.highcharts.com/modules/parallel-coordinates.js).
-		 *
-		 * @type {Boolean}
-		 * @default false
-		 * @since 6.0.0
-		 * @product highcharts
-		 */
-		parallelCoordinates: false,
-		/**
-		 * Common options for all yAxes rendered in a parallel coordinates plot. This feature requires
-		 * `modules/parallel-coordinates.js`, found in the download package or online at
-		 * [code.highcharts.com/modules/parallel-coordinates.js](http://code.highcharts.com/modules/parallel-coordinates.js).
-		 *
-		 * @optionparent yAxis
-		 * @since 6.0.0
-		 * @product highcharts
-		 */
-		parallelAxes: {
-			/*= if (build.classic) { =*/
-			lineWidth: 1,
-			gridlinesWidth: 0,
-			/*= } =*/
-			title: {
-				text: '',
-				reserveSpace: false
-			},
-			labels: {
-				x: 0,
-				y: 0,
-				align: 'center',
-				reserveSpace: false
-			},
-			offset: 0
-		}
+/**
+ * @optionparent chart
+ */
+var defaultParallelOptions = {
+	/**
+	 * Flag to render charts as a parallel coordinates plot.
+	 * In a parallel coordinates plot (||-coords) by default all required yAxes are generated and legend is disabled.
+	 * This feature requires `modules/parallel-coordinates.js`, found in the download package or online at
+	 * [code.highcharts.com/modules/parallel-coordinates.js](http://code.highcharts.com/modules/parallel-coordinates.js).
+	 *
+	 * @type {Boolean}
+	 * @default false
+	 * @sample {highcharts} /highcharts/demo/parallel-coordinates/ Parallel coordinates demo
+	 * @since 6.0.0
+	 * @product highcharts
+	 */
+	parallelCoordinates: false,
+	/**
+	 * Common options for all yAxes rendered in a parallel coordinates plot. This feature requires
+	 * `modules/parallel-coordinates.js`, found in the download package or online at
+	 * [code.highcharts.com/modules/parallel-coordinates.js](http://code.highcharts.com/modules/parallel-coordinates.js).
+	 *
+	 * The default options are:
+	 * <pre>
+	 * parallelAxes: {
+	 *	lineWidth: 1,       // classic mode only
+	 *	gridlinesWidth: 0,  // classic mode only
+	 *	title: {
+	 *		text: '',
+	 *		reserveSpace: false
+	 *	},
+	 *	labels: {
+	 *		x: 0,
+	 *		y: 0,
+	 *		align: 'center',
+	 *		reserveSpace: false
+	 *	},
+	 *	offset: 0
+	 * }</pre>
+	 *
+	 * @extends {yAxis}
+	 * @excluding breaks,id,gridLineColor,gridLineDashStyle,gridLineWidth,
+	 *            minorGridLineColor,minorGridLineDashStyle,minorGridLineWidth,
+	 *            plotBands,plotLines,angle,gridLineInterpolation,maxColor,
+	 *            maxZoom,minColor,scrollbar,stackLabels,stops
+	 * @product highcharts
+	 * @optionparent parallelAxes
+	 * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/ Set the same tickAmount for all yAxes
+	 * @since 6.0.0
+	 */
+	parallelAxes: {
+		/*= if (build.classic) { =*/
+		lineWidth: 1,
+		/*= } =*/
+		title: {
+			text: '',
+			reserveSpace: false
+		},
+		labels: {
+			x: 0,
+			y: 0,
+			align: 'center',
+			reserveSpace: false
+		},
+		offset: 0
 	}
+};
+
+H.setOptions({
+	chart: defaultParallelOptions
 });
 
 /**
@@ -101,7 +130,7 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 		options = merge(
 			{
 				legend: {
-					enabled: false // docs
+					enabled: false
 				}
 			},
 			options,
@@ -118,7 +147,7 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 			}
 		);
 
-		options.yAxis = defaultyAxis.concat(newYAxes); // docs
+		options.yAxis = defaultyAxis.concat(newYAxes);
 		options.xAxis = merge(
 			defaultXAxisOptions, // docs
 			splat(options.xAxis || {})[0]
@@ -197,8 +226,6 @@ wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
 		if (chart.inverted) {
 			axisPosition = axisPosition.reverse();
 		}
-
-		console.log(axis.chart.options.chart.parallelAxes.tickAmount);
 
 		if (axis.isXAxis) {
 			axis.options = merge(
