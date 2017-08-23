@@ -26,6 +26,12 @@ H.seriesType('pareto', 'line',
  * @sample {highcharts} highcharts/demo/pareto/
  *         Pareto diagram
  * @since 6.0.0
+ * @excluding allAreas,boostThreshold,borderColor,borderRadius,
+ *         borderWidth,crisp,depth,edgeColor,edgeWidth,
+ *         findNearestPointBy,gapSize,gapUnit,grouping,groupPadding,groupZPadding,maxPointWidth,
+ *         keys,negativeColor,pointInterval,pointIntervalUnit,pointPadding,
+ *         pointPlacement,pointRange,pointStart,pointWidth,shadow,step,softThreshold,
+ *         stacking,threshold,zoneAxis,zones
  * @optionparent plotOptions.pareto
  */
 {
