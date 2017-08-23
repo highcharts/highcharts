@@ -2222,6 +2222,26 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	},
 
 	/**
+	 * A collection of characters mapped to HTML entities. When `useHTML` on an
+	 * element is true, these entities will be rendered correctly by HTML. In 
+	 * the SVG pseudo-HTML, they need to be unescaped back to simple characters,
+	 * so for example `&lt;` will render as `<`.
+	 *
+	 * @example
+	 * // Add support for unescaping quotes
+	 * Highcharts.SVGRenderer.prototype.escapes['"'] = '&quot;';
+	 * 
+	 * @type {Object}
+	 */
+	escapes: {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		"'": '&#39;', // eslint-disable-line quotes
+		'"': '&quot'
+	},
+
+	/**
 	 * Parse a simple HTML string into SVG tspans. Called internally when text
 	 *   is set on an SVGElement. The function supports a subset of HTML tags,
 	 *   CSS text features like `width`, `text-overflow`, `white-space`, and
@@ -2269,8 +2289,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 						tspan.getAttribute('style') ? tspan : textNode
 					).h;
 			},
-			unescapeAngleBrackets = function (inputStr) {
-				return inputStr.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+			unescapeEntities = function (inputStr) {
+				objectEach(renderer.escapes, function (value, key) {
+					inputStr = inputStr.replace(
+						new RegExp(value, 'g'),
+						key
+					);
+				});
+				return inputStr;
 			};
 
 		// The buildText code is quite heavy, so if we're not changing something
@@ -2297,7 +2323,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook
 		// used in text outline hack.
 		if (!hasMarkup && !textOutline && !ellipsis && !width && textStr.indexOf(' ') === -1) {
-			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
+			textNode.appendChild(doc.createTextNode(unescapeEntities(textStr)));
 
 		// Complex strings, add more logic
 		} else {
@@ -2366,7 +2392,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 							/*= } =*/
 						}
 
-						span = unescapeAngleBrackets(span.replace(/<(.|\n)*?>/g, '') || ' ');
+						span = unescapeEntities(span.replace(/<(.|\n)*?>/g, '') || ' ');
 
 						// Nested tags aren't supported, and cause crash in Safari (#1596)
 						if (span !== ' ') {
