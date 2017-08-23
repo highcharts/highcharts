@@ -2,16 +2,37 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=marathon.j
 	Highcharts.chart('container', {
 		chart: {
 			type: 'spline',
-			parallelCoordinates: true
+			parallelCoordinates: true,
+			parallelAxes: {
+				lineWidth: 2
+			}
 		},
 		title: {
-			text: 'Marathon trainings'
+			text: 'Marathon set'
 		},
 		plotOptions: {
 			series: {
+				animation: false,
 				lineWidth: 1,
 				marker: {
-					enabled: false
+					enabled: false,
+					states: {
+						hover: {
+							enabled: false
+						}
+					}
+				},
+				states: {
+					hover: {
+						halo: {
+							size: 0
+						}
+					}
+				},
+				events: {
+					mouseOver: function () {
+						this.group.toFront();
+					}
 				}
 			}
 		},
@@ -33,15 +54,16 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=marathon.j
 		}, {
 			type: 'datetime'
 		}, {
-			categories: ['< 5miles', '> 5miles']
+			categories: ['> 5miles', '< 5miles']
 		}, {
-			categories: ['After', 'Before']
+			categories: ['Before', 'After']
 		}],
 		colors: ['rgba(11, 200, 200, 0.1)'],
-		series: data.map(function (set) {
+		series: data.map(function(set, i) {
 			return {
+				name: 'Runner' + i,
 				data: set
-			}
+			};
 		})
 	});
 });
