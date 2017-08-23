@@ -15,6 +15,7 @@ var each = H.each,
 	addEvent = H.addEvent,
 	correctFloat = H.correctFloat;
 
+H.seriesType('pareto', 'line', 
 /**
  * A pareto diagram is a type of chart that contains both bars and a line graph, 
  * where individual values are represented in descending order by bars, 
@@ -25,10 +26,9 @@ var each = H.each,
  * @sample {highcharts} highcharts/demo/pareto/
  *         Pareto diagram
  * @since 6.0.0
- * @optionparent plotOptions.line
+ * @optionparent plotOptions.pareto
  */
-
-H.seriesType('pareto', 'line', {
+{
 	/**
 	 * Higher zIndex than column series to draw line above shapes.
 	 */
