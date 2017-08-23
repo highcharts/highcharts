@@ -216,6 +216,16 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
 			height = svgElement.height.baseVal.value + 2 * margin,
 			pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
 
+		// Workaround for #7090, hidden elements were drawn anyway. It comes 
+		// down to https://github.com/yWorks/svg2pdf.js/issues/28. Check this 
+		// later.
+		each(
+			svgElement.querySelectorAll('*[visibility="hidden"]'),
+			function (node) {
+				node.parentNode.removeChild(node);
+			}
+		);
+
 		win.svg2pdf(svgElement, pdf, { removeInvalid: true });
 		return pdf.output('datauristring');
 	}
