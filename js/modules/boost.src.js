@@ -2482,10 +2482,6 @@ if (!hasWebGLSupport()) {
 			renderer = createAndAttachRenderer(chart, series);
 
 			if (!this.visible) {
-				if (!isChartSeriesBoosting(chart) && renderer) {
-					renderer.clear();
-					this.image.attr({ href: '' });
-				}
 				return;
 			}
 
@@ -2680,12 +2676,13 @@ if (!hasWebGLSupport()) {
 
 	wrap(Series.prototype, 'setVisible', function (proceed, vis) {
 		proceed.call(this, vis, false);
-		if (this.visible === false && this.ogl && this.canvas && this.image) {
-			this.ogl.clear();
+		if (this.visible === false && this.canvas && this.image) {
+			if (this.ogl) {
+				this.ogl.clear();
+			}
 			this.image.attr({ href: '' });
-		} else {
-			this.chart.redraw();
 		}
+		this.chart.redraw();
 	});
 
 	/**
