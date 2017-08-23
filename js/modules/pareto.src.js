@@ -15,13 +15,31 @@ var each = H.each,
 	addEvent = H.addEvent,
 	correctFloat = H.correctFloat;
 
-	/**
-	 * Pareto Series:
-	 **/
+/**
+ * A pareto diagram is a type of chart that contains both bars and a line graph, 
+ * where individual values are represented in descending order by bars, 
+ * and the cumulative total is represented by the line.
+ * 
+ * @extends {plotOptions.line}
+ * @product highcharts
+ * @sample {highcharts} highcharts/demo/pareto/
+ *         Pareto diagram
+ * @since 6.0.0
+ * @optionparent plotOptions.line
+ */
 
 H.seriesType('pareto', 'line', {
-	zIndex: 3	//	draw line above column
+	/**
+	 * Higher zIndex than column series to draw line above shapes.
+	 */
+	zIndex: 3
 }, {
+	/**
+	 * Init series
+	 * 
+	 * @param  {Object} chart
+	 * @return {Object} Returns pareto series
+	 */
 	init: function (chart) {
 		var pareto = this;
 
@@ -50,13 +68,17 @@ H.seriesType('pareto', 'line', {
 			recalculateValues
 		);
 
+		// calculate values
 		recalculateValues();
 
 		return pareto;
 	},
 	/**
 	 * calculate sum and return percent points
-	 **/
+	 * 
+	 * @param  {Object} series
+	 * @return {Array} Returns array of points [x,y]
+	 */
 	getValues: function (series) {
 		var yValues = series.yData,
 			xValues = series.xData,
@@ -65,8 +87,14 @@ H.seriesType('pareto', 'line', {
 		return this.sumPointsPercents(yValues, xValues, sum, false);
 	},
 	/**
-	 * calculate y sum and each point
-	 **/
+	 * calculate y sum and each percent point
+	 *
+	 * @param  {Array} yValues y values
+	 * @param  {Array} xValues x values
+	 * @param  {Number} sum of all y values 
+	 * @param  {Boolean} isSum declares if calculate sum of all points
+	 * @return {Array} Returns sum of points or array of points [x,y]
+	 */
 	sumPointsPercents: function (yValues, xValues, sum, isSum) {
 		var sumY = 0,
 			sumPercent = 0,
@@ -87,6 +115,9 @@ H.seriesType('pareto', 'line', {
 
 		return isSum ? sumY : percentPoints;
 	},
+	/**
+	 * Unbind events and destroy series
+	 */
 	destroy: function () {
 		this.dataEventsToUnbind();
 		Series.prototype.destroy.call(this);
