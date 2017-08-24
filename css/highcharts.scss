@@ -637,3 +637,8 @@ input.highcharts-range-selector {
     font-size: 12px;
     fill: $neutral-color-60;
 }
+
+/* Bullet type series */
+.highcharts-bullet-target {
+    stroke-width: 0;
+}
