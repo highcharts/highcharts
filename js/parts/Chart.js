@@ -1076,9 +1076,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			chart[chart.extraMargin.type] =
 				(chart[chart.extraMargin.type] || 0) + chart.extraMargin.value;
 		}
-		if (chart.extraTopMargin) {
-			chart.plotTop += chart.extraTopMargin;
+		
+		// adjust for rangeSelector 
+		if (chart.rangeSelector) {
+
+			var rangeSelectorHeight = chart.rangeSelector.getHeight();
+
+			if (chart.extraTopMargin) {
+				chart.plotTop += rangeSelectorHeight;
+			}
+
+			if (chart.extraBottomMargin) {
+				chart.marginBottom += rangeSelectorHeight;
+			}
 		}
+		
 		if (!skipAxes) {
 			this.getAxisMargins();
 		}

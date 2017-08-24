@@ -1862,6 +1862,7 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 			navigator.left = this.plotLeft + scrollbarHeight;
 			navigator.top = navigator.navigatorOptions.top ||
 				this.chartHeight - navigator.height - scrollbarHeight - this.spacing[2] -
+					(this.rangeSelector && this.extraBottomMargin ? this.rangeSelector.getHeight() : 0) - 
 					(legendOptions && legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ?
 						legend.legendHeight + pick(legendOptions.margin, 10) : 0);
 		}
