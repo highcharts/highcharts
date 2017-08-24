@@ -104,7 +104,7 @@ seriesType('xrange', 'column', {
 			minPointLength = series.options.minPointLength || 0,
 			plotX = point.plotX,
 			posX = pick(point.x2, point.x + (point.len || 0)),
-			plotX2 = xAxis.toPixels(posX, true),
+			plotX2 = xAxis.translate(posX, 0, 0, 0, 1),
 			width = plotX2 - plotX,
 			widthDifference,
 			shapeArgs,
@@ -122,14 +122,10 @@ seriesType('xrange', 'column', {
 		plotX = Math.max(plotX, -10);
 		plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
 
-		if (plotX2 < plotX) { // #6107
-			plotX2 = plotX;
-		}
-
 		point.shapeArgs = {
-			x: plotX,
+			x: Math.min(plotX, plotX2),
 			y: point.plotY + metrics.offset,
-			width: plotX2 - plotX,
+			width: Math.abs(plotX2 - plotX),
 			height: metrics.width
 		};
 		point.tooltipPos[0] += width / 2;
