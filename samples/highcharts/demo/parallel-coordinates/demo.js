@@ -13,7 +13,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=marathon.j
 		plotOptions: {
 			series: {
 				animation: false,
-				lineWidth: 1,
 				marker: {
 					enabled: false,
 					states: {
@@ -36,13 +35,18 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=marathon.j
 				}
 			}
 		},
+		tooltip: {
+			pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.formattedValue}</b><br/>'
+		},
 		xAxis: {
 			categories: ['Training date', 'Miles for training run',  'Training time', 'Shoe brand', 'Running pace per mile',  'Short or long', 'After 2004']
 		},
 		yAxis: [{
-			type: 'datetime'
+			type: 'datetime',
+			tooltipValueFormat: '{value:%Y-%m-%d}'
 		}, {
-			min: 0
+			min: 0,
+			tooltipValueFormat: '{value} mile(s)'
 		}, {
 			type: 'datetime',
 			min: 0,
@@ -54,14 +58,14 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=marathon.j
 		}, {
 			type: 'datetime'
 		}, {
-			categories: ['> 5miles', '< 5miles']
+			categories: ['&gt; 5miles', '&lt; 5miles']
 		}, {
 			categories: ['Before', 'After']
 		}],
 		colors: ['rgba(11, 200, 200, 0.1)'],
 		series: data.map(function(set, i) {
 			return {
-				name: 'Runner' + i,
+				name: 'Runner ' + i,
 				data: set
 			};
 		})
