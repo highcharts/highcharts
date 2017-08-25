@@ -2674,15 +2674,14 @@ if (!hasWebGLSupport()) {
 		sampling: true
 	});
 
-	wrap(Series.prototype, 'setVisible', function (proceed, vis) {
-		proceed.call(this, vis, false);
+	wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
+		proceed.call(this, vis, redraw);
 		if (this.visible === false && this.canvas && this.image) {
 			if (this.ogl) {
 				this.ogl.clear();
 			}
 			this.image.attr({ href: '' });
 		}
-		this.chart.redraw();
 	});
 
 	/**
