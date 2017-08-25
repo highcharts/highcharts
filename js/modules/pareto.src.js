@@ -15,7 +15,16 @@ var each = H.each,
 	addEvent = H.addEvent,
 	correctFloat = H.correctFloat;
 
+
 H.seriesType('pareto', 'line', 
+
+/**
+ * The pareto series type.
+ *
+ * @constructor seriesTypes.pareto
+ * @augments seriesTypes.line
+ */
+
 /**
  * A pareto diagram is a type of chart that contains both bars and a line graph, 
  * where individual values are represented in descending order by bars, 
@@ -27,12 +36,13 @@ H.seriesType('pareto', 'line',
  *         Pareto diagram
  * @since 6.0.0
  * @excluding allAreas,boostThreshold,borderColor,borderRadius,
- *         borderWidth,crisp,depth,edgeColor,edgeWidth,
+ *         borderWidth,crisp,colorAxis,depth,data,edgeColor,edgeWidth,
  *         findNearestPointBy,gapSize,gapUnit,grouping,groupPadding,groupZPadding,maxPointWidth,
  *         keys,negativeColor,pointInterval,pointIntervalUnit,pointPadding,
  *         pointPlacement,pointRange,pointStart,pointWidth,shadow,step,softThreshold,
  *         stacking,threshold,zoneAxis,zones
  * @optionparent plotOptions.pareto
+ * @apioption series.pareto
  */
 {
 	/**
@@ -129,3 +139,32 @@ H.seriesType('pareto', 'line',
 		Series.prototype.destroy.call(this);
 	}
 });
+
+/**
+ * A `pareto` series. If the [type](#series.pareto.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * pareto](#plotOptions.pareto).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.pareto
+ * @excluding data,dataParser,dataURL
+ * @product highcharts
+ * @apioption series.pareto
+ */
+
+
+/**
+ * An array of data points for the series. For the `pareto` series type,
+ * points are calculated dynamically.
+ * 
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.column.data
+ * @product highcharts
+ * @apioption series.pareto.data
+ */
