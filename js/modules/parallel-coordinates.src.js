@@ -15,6 +15,7 @@ import '../parts/Series.js';
  * Extensions for parallel coordinates plot.
  */
 var SeriesProto = H.Series.prototype,
+	ChartProto = H.Chart.prototype,
 	AxisProto = H.Axis.prototype;
 
 var pick = H.pick,
@@ -23,6 +24,7 @@ var pick = H.pick,
 	merge = H.merge,
 	erase = H.erase,
 	splat = H.splat,
+	extend = H.extend,
 	defined = H.defined,
 	arrayMin = H.arrayMin,
 	arrayMax = H.arrayMax;
@@ -110,11 +112,17 @@ H.setOptions({
 /**
  * Initialize parallelCoordinates
  */
-wrap(H.Chart.prototype, 'init', function (proceed, options) {
+wrap(ChartProto, 'init', function (proceed, options) {
 	var defaultyAxis = splat(options.yAxis || {}),
 		yAxisLength = defaultyAxis.length,
 		newYAxes = [];
-
+	/**
+	 * Flag used in parallel coordinates plot to check if chart has ||-coords.
+	 *
+	 * @name hasParallelCoordinates
+	 * @memberOf Chart
+	 * @type {Boolean}
+	 */
 	this.hasParallelCoordinates = options.chart && options.chart.parallelCoordinates;
 
 	if (this.hasParallelCoordinates) {
@@ -159,7 +167,7 @@ wrap(H.Chart.prototype, 'init', function (proceed, options) {
 /**
  * Initialize parallelCoordinates
  */
-wrap(H.Chart.prototype, 'update', function (proceed, options) {
+wrap(ChartProto, 'update', function (proceed, options) {
 	if (options.chart) {
 		if (defined(options.chart.parallelCoordinates)) {
 			this.hasParallelCoordinates = options.chart.parallelCoordinates;
@@ -179,31 +187,34 @@ wrap(H.Chart.prototype, 'update', function (proceed, options) {
 	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
+extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
+	/**
+	 * Define how many parellel axes we have according to the longest  dataset
+	 * This is quite heavy - loop over all series and check series.data.length
+	 * Consider:
+	 * - make this an option, so user needs to set this to get better performance
+	 * - check only first series for number of points and assume the rest is the same
+	 *
+	 * @param {Object} options User options
+	 */
+	setParallelInfo: function (options) {
+		var chart = this,
+			seriesOptions = options.series;
 
-/**
- * Define how many parellel axes we have according to the longest  dataset
- * This is quite heavy - loop over all series and check series.data.length
- * Consider:
- * - make this an option, so user needs to set this to get better performance
- * - check only first series for number of points and assume the rest is the same
- */
-H.Chart.prototype.setParallelInfo = function (options) {
-	var chart = this,
-		seriesOptions = options.series;
+		chart.parallelInfo = {
+			counter: 0
+		};
 
-	chart.parallelInfo = {
-		counter: 0
-	};
-
-	each(seriesOptions, function (series) {
-		if (series.data) {
-			chart.parallelInfo.counter = Math.max(
-				chart.parallelInfo.counter,
-				series.data.length - 1
-			);
-		}
-	});
-};
+		each(seriesOptions, function (series) {
+			if (series.data) {
+				chart.parallelInfo.counter = Math.max(
+					chart.parallelInfo.counter,
+					series.data.length - 1
+				);
+			}
+		});
+	}
+});
 
 
 /**
@@ -272,17 +283,22 @@ wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
 });
 
 
-/**
- * Set predefined left+width and top+height (inverted) for yAxes.
- */
-AxisProto.setParallelPosition = function (axisPosition, options) {
-	options[axisPosition[0]] = 100 * (this.parallelPosition + 0.5) / (this.chart.parallelInfo.counter + 1) + '%';
-	this[axisPosition[1]] = options[axisPosition[1]] = 0;
+extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
+	/**
+	 * Set predefined left+width and top+height (inverted) for yAxes. This method modifies options param.
+	 *
+	 * @param {Array} axisPosition ['left', 'width', 'height', 'top'] or ['top', 'height', 'width', 'left'] for an inverted chart.
+	 * @param {Object} options {@link Highcharts.Axis#options}.
+	 */
+	setParallelPosition: function (axisPosition, options) {
+		options[axisPosition[0]] = 100 * (this.parallelPosition + 0.5) / (this.chart.parallelInfo.counter + 1) + '%';
+		this[axisPosition[1]] = options[axisPosition[1]] = 0;
 
-	// In case of chart.update(inverted), remove old options:
-	this[axisPosition[2]] = options[axisPosition[2]] = null;
-	this[axisPosition[3]] = options[axisPosition[3]] = null;
-};
+		// In case of chart.update(inverted), remove old options:
+		this[axisPosition[2]] = options[axisPosition[2]] = null;
+		this[axisPosition[3]] = options[axisPosition[3]] = null;
+	}
+});
 
 
 /**
@@ -363,4 +379,67 @@ wrap(SeriesProto, 'destroy', function (proceed) {
 		});
 	}
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
+
+function addFormattedValue(proceed) {
+	var chart = this.series.chart,
+		config = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+		formattedValue,
+		yAxisOptions,
+		labelFormat,
+		yAxis;
+
+	if (chart.hasParallelCoordinates && !defined(config.formattedValue)) {
+		yAxis = chart.yAxis[this.x];
+		yAxisOptions = yAxis.options;
+
+		labelFormat = pick(
+			/**
+			 * Parallel coordinates only. Format that will be used for point.y and
+			 * available in [tooltip.pointFormat](#tooltip.pointFormat) as: `{point.formattedValue}`.
+			 * If not set, `{point.formattedValue}` will use other options, in this order:
+			 *
+			 * 1. [yAxis.labels.format](#yAxis.labels.format) will be used if set
+			 * 2. if yAxis is a catagory, then category name will be displayed
+			 * 3. if yAxis is a datetime, then value will use the same format as yAxis labels
+			 * 4. if yAxis is linear/logarithmic type, then simple value will be used
+			 *
+			 * @default undefined
+			 * @memberOf yAxis
+			 * @sample {highcharts} /highcharts/parallel-coordinates/tooltipvalueformat/ Different tooltipValueFormats's
+			 * @apioption yAxis.tooltipValueFormat
+			 * @product highcharts
+			 * @since 6.0.0
+			 * @type {String}
+			 */
+			yAxisOptions.tooltipValueFormat,
+			yAxisOptions.labels.format
+		);
+		if (labelFormat) {
+			formattedValue = H.format(
+				labelFormat,
+				extend(
+					this,
+					{ value: this.y }
+				)
+			);
+		} else if (yAxis.isDatetimeAxis) {
+			formattedValue = H.dateFormat(
+				yAxisOptions.dateTimeLabelFormats[yAxis.tickPositions.info.unitName],
+				this.y
+			);
+		} else if (yAxisOptions.categories) {
+			formattedValue = yAxisOptions.categories[this.y];
+		} else {
+			formattedValue = this.y;
+		}
+
+		config.formattedValue = config.point.formattedValue = formattedValue;
+	}
+
+	return config;
+}
+
+each(['line', 'spline'], function (seriesName) {
+	wrap(H.seriesTypes[seriesName].prototype.pointClass.prototype, 'getLabelConfig', addFormattedValue);
 });

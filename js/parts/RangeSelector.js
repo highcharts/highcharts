@@ -824,7 +824,6 @@ RangeSelector.prototype = {
 			buttonPositionY = buttonPosition.y,
 			inputPositionY = inputPosition.y,
 			exportingX = 0,
-			alignTranslateX,
 			alignTranslateY,
 			legendHeight,
 			minPosition,
@@ -1025,7 +1024,7 @@ RangeSelector.prototype = {
 			groupHeight = groupHeight + legendHeight - 20;
 		} 
 
-		groupOffsetY = Math[verticalAlign === 'middle' ? 'max' : 'min'](inputPositionY, buttonPositionY)
+		groupOffsetY = Math[verticalAlign === 'middle' ? 'max' : 'min'](inputPositionY, buttonPositionY);
 	
 		if (inputGroup && (inputPositionY < buttonPositionY) && verticalAlign === 'bottom') {
 			groupOffsetY += inputGroup.getBBox().height;
@@ -1071,15 +1070,14 @@ RangeSelector.prototype = {
 	 * Extracts height of range selector 
 	 * @return {Number} Returns rangeSelector height
 	 */
-	getHeight: function() {
+	getHeight: function () {
 		var rangeSelector = this,
 			inputPosition = rangeSelector.options.inputPosition,
 			buttonPosition = rangeSelector.options.buttonPosition,
 			buttonPositionY = buttonPosition.y,
 			inputPositionY = inputPosition.y,
 			rangeSelectorHeight = 0,
-			minPosition,
-			inputPositionY;
+			minPosition;
 
 		rangeSelectorHeight = (rangeSelector.group.getBBox(true).height) + 10;
 		minPosition = Math.min(inputPositionY, buttonPositionY);
@@ -1099,7 +1097,7 @@ RangeSelector.prototype = {
 	 * @param {object} chart
 	 * @return {Boolean} Returns collision status
 	 */
-	titleCollision: function(chart) {
+	titleCollision: function (chart) {
 		var status = false;
 
 		if (
@@ -1126,7 +1124,7 @@ RangeSelector.prototype = {
 
 		merge(true, chart.options.rangeSelector, options);
 		this.destroy();
-        this.init(chart);
+		this.init(chart);
 		chart.rangeSelector.render();
 	},
 
@@ -1306,7 +1304,7 @@ wrap(Chart.prototype, 'update', function (proceed, options, callback) {
 		rangeSelector.render();
 
 		verticalAlign = (options.rangeSelector && options.rangeSelector.verticalAlign) || 
- 						(rangeSelector.options && rangeSelector.options.verticalAlign);
+						(rangeSelector.options && rangeSelector.options.verticalAlign);
 
 		if (verticalAlign === 'bottom') {
 			this.extraBottomMargin = true;
@@ -1315,7 +1313,7 @@ wrap(Chart.prototype, 'update', function (proceed, options, callback) {
 		}
 	}
 
-	proceed.call(this, Highcharts.merge(options, {
+	proceed.call(this, H.merge(options, {
 		chart: {
 			marginBottom: chart.margin.bottom,
 			spacingBottom: chart.spacing.bottom
@@ -1367,5 +1365,5 @@ Chart.prototype.callbacks.push(function (chart) {
 H.RangeSelector = RangeSelector;
 
 /* ****************************************************************************
- * End Range Selector code													*
+ * End Range Selector code													 *
  *****************************************************************************/

@@ -25,6 +25,11 @@ var defined = H.defined,
 	Series = H.Series;
 
 seriesType('xrange', 'column', {
+	/**
+	 * In an X-range series, this option makes all points of the same Y-axis
+	 * category the same color.
+	 */
+	colorByPoint: true,
 	dataLabels: {
 		verticalAlign: 'middle',
 		inside: true,
@@ -105,13 +110,14 @@ seriesType('xrange', 'column', {
 			plotX = point.plotX,
 			posX = pick(point.x2, point.x + (point.len || 0)),
 			plotX2 = xAxis.translate(posX, 0, 0, 0, 1),
-			width = plotX2 - plotX,
+			length = plotX2 - plotX,
 			widthDifference,
 			shapeArgs,
-			partialFill;
+			partialFill,
+			inverted = this.chart.inverted;
 
 		if (minPointLength) {
-			widthDifference = minPointLength - width;
+			widthDifference = minPointLength - length;
 			if (widthDifference < 0) {
 				widthDifference = 0;
 			}
@@ -128,8 +134,10 @@ seriesType('xrange', 'column', {
 			width: Math.abs(plotX2 - plotX),
 			height: metrics.width
 		};
-		point.tooltipPos[0] += width / 2;
-		point.tooltipPos[1] -= metrics.width / 2;
+		
+		// Tooltip position
+		point.tooltipPos[0] += inverted ? 0 : length / 2;
+		point.tooltipPos[1] -= inverted ? length / 2 : metrics.width / 2;
 
 		// Add a partShapeArgs to the point, based on the shapeArgs property
 		partialFill = point.partialFill;
@@ -360,6 +368,34 @@ seriesType('xrange', 'column', {
 
 // Point class properties
 }, {
+
+	/**
+	 * Extend init so that `colorByPoint` for x-range means that one color is 
+	 * applied per Y axis category.
+	 */
+	init: function () {
+
+		Point.prototype.init.apply(this, arguments);
+
+		var colors,
+			series = this.series,
+			colorCount = series.chart.options.chart.colorCount;
+
+		if (series.options.colorByPoint) {
+			/*= if (build.classic) { =*/
+			colors = series.options.colors || series.chart.options.colors;
+			colorCount = colors.length;
+
+			if (!this.options.color && colors[this.y % colorCount]) {
+				this.color = colors[this.y % colorCount];
+			}
+			/*= } =*/
+		}
+		this.colorIndex = this.y % colorCount;
+			
+		return this;
+	},
+
 	// Add x2 and yCategory to the available properties for tooltip formats
 	getLabelConfig: function () {
 		var point = this,
