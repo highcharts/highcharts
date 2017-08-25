@@ -25,6 +25,11 @@ var defined = H.defined,
 	Series = H.Series;
 
 seriesType('xrange', 'column', {
+	/**
+	 * In an X-range series, this option makes all points of the same Y-axis
+	 * category the same color.
+	 */
+	colorByPoint: true,
 	dataLabels: {
 		verticalAlign: 'middle',
 		inside: true,
@@ -363,6 +368,34 @@ seriesType('xrange', 'column', {
 
 // Point class properties
 }, {
+
+	/**
+	 * Extend init so that `colorByPoint` for x-range means that one color is 
+	 * applied per Y axis category.
+	 */
+	init: function () {
+
+		Point.prototype.init.apply(this, arguments);
+
+		var colors,
+			series = this.series,
+			colorCount = series.chart.options.chart.colorCount;
+
+		if (series.options.colorByPoint) {
+			/*= if (build.classic) { =*/
+			colors = series.options.colors || series.chart.options.colors;
+			colorCount = colors.length;
+
+			if (!this.options.color && colors[this.y % colorCount]) {
+				this.color = colors[this.y % colorCount];
+			}
+			/*= } =*/
+		}
+		this.colorIndex = this.y % colorCount;
+			
+		return this;
+	},
+
 	// Add x2 and yCategory to the available properties for tooltip formats
 	getLabelConfig: function () {
 		var point = this,
