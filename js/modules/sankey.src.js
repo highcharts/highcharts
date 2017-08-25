@@ -505,3 +505,116 @@ seriesType('sankey', 'column', {
 		return this.isNode || typeof this.weight === 'number';
 	}
 });
+
+
+/**
+ * A `sankey` series. If the [type](#series.sankey.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * sankey](#plotOptions.sankey).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.sankey
+ * @excluding dataParser,dataURL
+ * @product highcharts
+ * @apioption series.sankey
+ */
+
+
+/**
+ * A collection of options for the individual nodes. The nodes in a sankey 
+ * diagram are auto-generated instances of `Highcharts.Point`, but options can
+ * be applied here and linked by the `id`.
+ *
+ * @sample highcharts/css/sankey/ Sankey diagram with node options
+ * @type {Array.<Object>}
+ * @product highcharts
+ * @apioption series.sankey.nodes
+ */
+
+/**
+ * The id of the auto-generated node, refering to the `from` or `to` setting of
+ * the link.
+ *
+ * @type {String}
+ * @product highcharts
+ * @apioption series.sankey.nodes.id
+ */
+
+/**
+ * The color of the auto generated node.
+ *
+ * @type {Color}
+ * @product highcharts
+ * @apioption series.sankey.nodes.color
+ */
+
+/**
+ * The color index of the auto generated node, especially for use in styled
+ * mode.
+ *
+ * @type {Number}
+ * @product highcharts
+ * @apioption series.sankey.nodes.colorIndex
+ */
+
+/**
+ * An array of data points for the series. For the `sankey` series type,
+ * points can be given in the following way:
+ * 
+ * An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         from: 'Category1',
+ *         to: 'Category2',
+ *         weight: 2
+ *     }, {
+ *         from: 'Category1',
+ *         to: 'Category3',
+ *         weight: 5
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array|Number>}
+ * @extends series.line.data
+ * @excluding drilldown,marker,x,y
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.sankey.data
+ */
+
+
+/**
+ * The node that the link runs from.
+ * 
+ * @type {String}
+ * @product highcharts
+ * @apioption series.sankey.data.from
+ */
+
+/**
+ * The node that the link runs to.
+ * 
+ * @type {String}
+ * @product highcharts
+ * @apioption series.sankey.data.to
+ */
+
+/**
+ * The weight of the link.
+ * 
+ * @type {Number}
+ * @product highcharts
+ * @apioption series.sankey.data.weight
+ */
