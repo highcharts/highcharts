@@ -105,13 +105,14 @@ seriesType('xrange', 'column', {
 			plotX = point.plotX,
 			posX = pick(point.x2, point.x + (point.len || 0)),
 			plotX2 = xAxis.translate(posX, 0, 0, 0, 1),
-			width = plotX2 - plotX,
+			length = plotX2 - plotX,
 			widthDifference,
 			shapeArgs,
-			partialFill;
+			partialFill,
+			inverted = this.chart.inverted;
 
 		if (minPointLength) {
-			widthDifference = minPointLength - width;
+			widthDifference = minPointLength - length;
 			if (widthDifference < 0) {
 				widthDifference = 0;
 			}
@@ -128,8 +129,10 @@ seriesType('xrange', 'column', {
 			width: Math.abs(plotX2 - plotX),
 			height: metrics.width
 		};
-		point.tooltipPos[0] += width / 2;
-		point.tooltipPos[1] -= metrics.width / 2;
+		
+		// Tooltip position
+		point.tooltipPos[0] += inverted ? 0 : length / 2;
+		point.tooltipPos[1] -= inverted ? length / 2 : metrics.width / 2;
 
 		// Add a partShapeArgs to the point, based on the shapeArgs property
 		partialFill = point.partialFill;
