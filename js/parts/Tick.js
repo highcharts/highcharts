@@ -133,6 +133,7 @@ H.Tick.prototype = {
 			modifiedSlotWidth = slotWidth,
 			xCorrection = factor,
 			goRight = 1,
+			prev,
 			leftPos,
 			rightPos,
 			textWidth,
@@ -141,11 +142,22 @@ H.Tick.prototype = {
 		// Check if the label overshoots the chart spacing box. If it does, move it.
 		// If it now overshoots the slotWidth, add ellipsis.
 		if (!rotation) {
+
+			prev = axis.ticks[axis.tickPositions[this.index - 1]];
+			if (prev) {
+				leftBound =
+					prev.label.xy.x + prev.label.getBBox().width * factor;
+			}
+
 			leftPos = pxPos - factor * labelWidth;
 			rightPos = pxPos + (1 - factor) * labelWidth;
 
+
 			if (leftPos < leftBound) {
-				modifiedSlotWidth = xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
+				modifiedSlotWidth = Math.min(
+					xy.x + slotWidth * (1 - factor) - leftBound,
+					rightBound - leftBound
+				);
 			} else if (rightPos > rightBound) {
 				modifiedSlotWidth = rightBound - xy.x + modifiedSlotWidth * factor;
 				goRight = -1;
@@ -445,6 +457,7 @@ H.Tick.prototype = {
 			// Handle label overflow and show or hide accordingly
 			} else if (horiz && !axis.isRadial && !labelOptions.step &&
 					!labelOptions.rotation && !old && opacity !== 0) {
+				tick.index = index;
 				tick.handleOverflow(xy);
 			}
 
