@@ -1080,7 +1080,9 @@ H.format = function (str, ctx) {
 
 			// Assign deeper paths
 			for (i = 0; i < len; i++) {
-				val = val[path[i]];
+				if (val) {
+					val = val[path[i]];
+				}
 			}
 
 			// Format the replacement
