@@ -2124,6 +2124,21 @@
  */
 
 /**
+ * Fires when clicking on the rangeSelector button. One parameter, event, 
+ * is passed to the function, containing common event information.
+ * <pre>
+ * click: function(e) {
+ *   console.log(this);
+ * }
+ * </pre>
+ * @type {Function}
+ * @default undefined
+ * @product highstock
+ * @apioption rangeSelector.buttons.events.click
+ * @sample {highstock} stock/rangeselector/button-click/ Click event on the button
+ */
+
+/**
  * A custom data grouping object for each button.
  * 
  * @type {Object}

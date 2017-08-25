@@ -864,7 +864,9 @@ RangeSelector.prototype = {
 							var buttonEvents = rangeOptions.events && rangeOptions.events.click,
 								callDefaultEvent;
 
-							callDefaultEvent = buttonEvents.call(rangeOptions);
+							if (buttonEvents) {
+								callDefaultEvent = buttonEvents.call(rangeOptions);
+							}
 							
 							if (callDefaultEvent !== false) {
 								rangeSelector.clickButton(i);
