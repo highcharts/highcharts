@@ -1365,5 +1365,5 @@ Chart.prototype.callbacks.push(function (chart) {
 H.RangeSelector = RangeSelector;
 
 /* ****************************************************************************
- * End Range Selector code													*
+ * End Range Selector code													 *
  *****************************************************************************/
