@@ -13,10 +13,9 @@ var each = H.each,
 	error = H.error,
 	Series = H.Series,
 	addEvent = H.addEvent,
-	correctFloat = H.correctFloat;
+	correctFloat = H.correctFloat,
+	seriesType = H.seriesType;
 
-
-H.seriesType('pareto', 'line', 
 
 /**
  * The pareto series type.
@@ -42,9 +41,8 @@ H.seriesType('pareto', 'line',
  *         pointPlacement,pointRange,pointStart,pointWidth,shadow,step,softThreshold,
  *         stacking,threshold,zoneAxis,zones
  * @optionparent plotOptions.pareto
- * @apioption series.pareto
  */
-{
+seriesType('pareto', 'line', {
 	/**
 	 * Higher zIndex than column series to draw line above shapes.
 	 */
