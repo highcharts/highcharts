@@ -638,6 +638,13 @@ input.highcharts-range-selector {
     fill: $neutral-color-60;
 }
 
+/* Drag-panes module */
+.highcharts-axis-resizer {
+    cursor: ns-resize;
+    stroke: black;
+    stroke-width: 2px;
+}
+
 /* Bullet type series */
 .highcharts-bullet-target {
     stroke-width: 0;
