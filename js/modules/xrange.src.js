@@ -472,7 +472,7 @@ seriesType('xrange', 'column', {
 /**
  * Max x2 should be considered in xAxis extremes
  */
-wrap(Axis.prototype, '_getSeriesExtremes', function (proceed) {
+wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var axis = this,
 		axisSeries = axis.series,
 		dataMax,
