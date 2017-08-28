@@ -6,6 +6,14 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @todo
+ * - Data labels, figure out how to use format instead of formatter. Make
+ *   partialFill available in the labelConfig.
+ * - JSDoc
+ * - New series checklist
+ */
+
 'use strict';
 import H from '../parts/Globals.js';
 
@@ -189,7 +197,7 @@ seriesType('xrange', 'column', {
 	 * @param  {Object} alignTo
 	 * @param  {Boolean} isNew   Wheter the label is new or already existed
 	 * @return {void}
-	 */
+	 * /
 	alignDataLabel: function (point, dataLabel, options, alignTo, isNew) {
 		var chart = this.chart,
 			align = options.align,
@@ -249,7 +257,7 @@ seriesType('xrange', 'column', {
 			dataLabel[isNew ? 'attr' : 'animate'](attr);
 		}
 	},
-
+	*/
 	/**
 	 * Draws a single point in the series. Needed for partial fill.
 	 *
