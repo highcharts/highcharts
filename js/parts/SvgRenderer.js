@@ -1832,14 +1832,20 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 						// If negative zIndex, add this before first undefined zIndex element
 						(undefinedOtherZIndex && (!defined(value) || value >= 0))
 					) {
-						parentNode.insertBefore(element, childNodes[i + 1]);
+						parentNode.insertBefore(
+							element,
+							childNodes[i + 1] || null // null for oldIE export
+						);
 						inserted = true;
 					}
 				}
 			}
 
 			if (!inserted) {
-				parentNode.insertBefore(element, childNodes[svgParent ? 3 : 0]);
+				parentNode.insertBefore(
+					element,
+					childNodes[svgParent ? 3 : 0] || null // null for oldIE
+				);
 				inserted = true;
 			}
 		}
