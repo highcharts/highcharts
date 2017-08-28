@@ -52,4 +52,47 @@ QUnit.test('X-Range', function (assert) {
         2,
         'Axis added'
     );
+
+    var series = chart.series[0];
+    series.addPoint({
+        x: Date.UTC(2014, 11, 23),
+        x2: Date.UTC(2014, 11, 30),
+        y: 3
+    });
+    chart.yAxis[0].setCategories([
+        'Prototyping',
+        'Development',
+        'Testing',
+        'Resting'
+    ]);
+
+    assert.strictEqual(
+        series.points.length,
+        6,
+        'Now six points'
+    );
+
+    series.points[5].update({
+        partialFill: 0.5
+    });
+
+    assert.strictEqual(
+        series.points[5].partialFill,
+        0.5,
+        'Partial fill set'
+    );
+
+    series.points[0].remove();
+    assert.strictEqual(
+        series.points.length,
+        5,
+        'Now five points'
+    );
+
+    series.remove();
+    assert.strictEqual(
+        chart.series.length,
+        0,
+        'No series left'
+    );
 });
