@@ -19,8 +19,7 @@ var each = H.each,
 	Series = H.Series,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
-	treemapPrototype = seriesTypes.treemap.prototype,
-	reduce = treemapPrototype.utils.reduce;
+	reduce = H.reduce;
 
 var layoutAlgorithm = function layoutAlgorithm(parent, children) {
 	var startAngle = parent.start,
@@ -31,7 +30,7 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children) {
 		innerRadius = parent.r,
 		outerRadius = innerRadius + parent.radius;
 
-	return reduce(children, function (arr, child) {
+	return reduce(children || [], function (arr, child) {
 		var percentage = (1 / total) * child.val,
 			radians = percentage * range,
 			values = {
@@ -136,10 +135,11 @@ var sunburstSeries = {
 		// Call prototype function
 		Series.prototype.translate.call(series);
 		// Create a object map from level to options
-		series.levelMap = reduce(series.options.levels, function (arr, item) {
-			arr[item.level] = item;
-			return arr;
-		}, {});
+		series.levelMap = reduce(series.options.levels || [],
+			function (arr, item) {
+				arr[item.level] = item;
+				return arr;
+			}, {});
 		// @todo Only if series.isDirtyData is true
 		tree = series.tree = series.getTree();
 		radius = (Math.min(plotWidth, plotHeight) / tree.height) / 2;

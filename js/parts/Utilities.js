@@ -1567,6 +1567,22 @@ H.map = function (arr, fn) {
 };
 
 /**
+ * Reduce an array to a single value.
+ *
+ * @function #reduce
+ * @memberOf Highcharts
+ * @param {Array} arr - The array to reduce.
+ * @param {Function} fn - The callback function. Return the reduced value. 
+ *  Receives 4 arguments: Accumulated/reduced value, current value, current 
+ *  array index, and the array.
+ * @param {Mixed} initialValue - The initial value of the accumulator.
+ * @returns {Mixed} - The reduced value.
+ */
+H.reduce = function (arr, func, initialValue) {
+	return [].reduce.call(arr, func, initialValue);
+};
+
+/**
  * Get the element's offset position, corrected for `overflow: auto`.
  *
  * @function #offset
@@ -2128,6 +2144,18 @@ if (!Array.prototype.find) {
 				return arr[i];
 			}
 		}
+	};
+}
+
+if (!Array.prototype.reduce) {
+	H.reduce = function (arr, func, initialValue) {
+		var context = this,
+			accumulator = initialValue || {},
+			len = arr.length;
+		for (var i = 0; i < len; ++i) {
+			accumulator = func.call(context, accumulator, arr[i], i, arr);
+		}
+		return accumulator;
 	};
 }
 

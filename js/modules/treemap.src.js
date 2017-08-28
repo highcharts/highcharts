@@ -31,14 +31,7 @@ var seriesType = H.seriesType,
 			func.call(context, val, key, list);
 		});
 	},
-	reduce = function (arr, func, previous, context) {
-		context = context || this;
-		arr = arr || []; // @note should each be able to handle empty values automatically?
-		each(arr, function (current, i) {
-			previous = func.call(context, previous, current, i, arr);
-		});
-		return previous;
-	},
+	reduce = H.reduce,
 	// @todo find correct name for this function. 
 	// @todo Similar to reduce, this function is likely redundant
 	recursive = function (item, func, context) {
@@ -459,7 +452,7 @@ seriesType('treemap', 'scatter', {
 	 * @return {Object} Map from parent id to children index in data.
 	 */
 	getListOfParents: function (data, ids) {
-		var listOfParents = reduce(data, function (prev, curr, i) {
+		var listOfParents = reduce(data || [], function (prev, curr, i) {
 			var parent = pick(curr.parent, '');
 			if (prev[parent] === undefined) {
 				prev[parent] = [];
@@ -894,10 +887,11 @@ seriesType('treemap', 'scatter', {
 		// Call prototype function
 		Series.prototype.translate.call(series);
 		// Create a object map from level to options
-		series.levelMap = reduce(series.options.levels, function (arr, item) {
-			arr[item.level] = item;
-			return arr;
-		}, {});
+		series.levelMap = reduce(series.options.levels || [], 
+			function (arr, item) {
+				arr[item.level] = item;
+				return arr;
+			}, {});
 		tree = series.tree = series.getTree(); // @todo Only if series.isDirtyData is true
 		rootNode = series.nodeMap[rootId];
 		if (
