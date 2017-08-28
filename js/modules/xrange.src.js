@@ -50,6 +50,7 @@ seriesType('xrange', 'column', {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
 	},
 	borderRadius: 3
+	// partialFill
 
 }, {
 	type: 'xrange',
@@ -114,7 +115,9 @@ seriesType('xrange', 'column', {
 			widthDifference,
 			shapeArgs,
 			partialFill,
-			inverted = this.chart.inverted;
+			inverted = this.chart.inverted,
+			borderWidth = pick(series.options.borderWidth, 1),
+			crisper = borderWidth % 2 / 2;
 
 		if (minPointLength) {
 			widthDifference = minPointLength - length;
@@ -129,10 +132,11 @@ seriesType('xrange', 'column', {
 		plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
 
 		point.shapeArgs = {
-			x: Math.min(plotX, plotX2),
-			y: point.plotY + metrics.offset,
-			width: Math.abs(plotX2 - plotX),
-			height: metrics.width
+			x: Math.floor(Math.min(plotX, plotX2)) + crisper,
+			y: Math.floor(point.plotY + metrics.offset) + crisper,
+			width: Math.round(Math.abs(plotX2 - plotX)),
+			height: Math.round(metrics.width),
+			r: series.options.borderRadius
 		};
 		
 		// Tooltip position
@@ -155,12 +159,13 @@ seriesType('xrange', 'column', {
 				x: shapeArgs.x,
 				y: shapeArgs.y,
 				width: shapeArgs.width,
-				height: shapeArgs.height
+				height: shapeArgs.height,
+				r: series.options.borderRadius
 			};
 			point.clipRectArgs = {
 				x: shapeArgs.x,
 				y: shapeArgs.y,
-				width: shapeArgs.width * partialFill,
+				width: Math.round(shapeArgs.width * partialFill),
 				height: shapeArgs.height
 			};
 		}
@@ -324,8 +329,11 @@ seriesType('xrange', 'column', {
 					pfOptions = merge(pfOptions, seriesOpts.partialFill);
 				}
 
-				fill = pfOptions.fill ||
-						color(series.color).brighten(-0.3).get('rgb');
+				fill = (
+					pfOptions.fill ||
+					color(point.color || series.color).brighten(-0.3).get()
+				);
+				
 				point.graphicOverlay
 					.attr(series.pointAttribs(point, state))
 					.attr({
@@ -356,15 +364,15 @@ seriesType('xrange', 'column', {
 	/**
 	 * Override to remove stroke from points.
 	 * For partial fill.
-	 */
+	 * /
 	pointAttribs: function () {
 		var series = this,
 			retVal = columnType.prototype.pointAttribs.apply(series, arguments);
 		
-		retVal['stroke-width'] = 0;
-		
+		//retVal['stroke-width'] = 0;
 		return retVal;
 	}
+	*/
 
 // Point class properties
 }, {
