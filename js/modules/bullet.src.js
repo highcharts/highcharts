@@ -72,9 +72,9 @@ seriesType('bullet', 'column',
 
 		/**
 		 * The border color of the rectangle representing the target. When
-		 * not set, color of point's border color is used.
+		 * not set, the  point's border color is used.
 		 *
-		 * In styled mode, use class 'highcharts-bullet-target' instead.
+		 * In styled mode, use class `highcharts-bullet-target` instead.
 		 * 
 		 * @type {Color}
 		 * @since 6.0.0
@@ -90,7 +90,7 @@ seriesType('bullet', 'column',
 		 * [`negativeColor`](#plotOptions.bullet.negativeColor) are set)
 		 * or the same color as the point has is used.
 		 *
-		 * In styled mode, use class 'highcharts-bullet-target' instead.
+		 * In styled mode, use class `highcharts-bullet-target` instead.
 		 * 
 		 * @type {Color}
 		 * @since 6.0.0
