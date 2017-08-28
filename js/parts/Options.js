@@ -8,7 +8,6 @@ import H from './Globals.js';
 import './Color.js';
 import './Utilities.js';
 var color = H.color,
-	each = H.each,
 	getTZOffset = H.getTZOffset,
 	isTouchDevice = H.isTouchDevice,
 	merge = H.merge,
@@ -2992,7 +2991,10 @@ function setTimeMethods() {
 		Date,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
-		SET = useUTC ? 'setUTC' : 'set';
+		SET = useUTC ? 'setUTC' : 'set',
+		setters = ['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'],
+		getters = setters.concat(['Milliseconds', 'Seconds']),
+		n;
 
 	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
 	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
@@ -3014,12 +3016,15 @@ function setTimeMethods() {
 		}
 		return d;
 	};
-	each(['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'], function (s) {
-		Date['hcGet' + s] = GET + s;
-	});
-	each(['Milliseconds', 'Seconds', 'Minutes', 'Hours', 'Date', 'Month', 'FullYear'], function (s) {
-		Date['hcSet' + s] = SET + s;
-	});
+	
+	// Dynamically set setters and getters. Use for loop, H.each is not yet 
+	// overridden in oldIE.
+	for (n = 0; n < setters.length; n++) {
+		Date['hcGet' + setters[n]] = GET + setters[n];
+	}
+	for (n = 0; n < getters.length; n++) {
+		Date['hcSet' + getters[n]] = SET + getters[n];
+	}
 }
 
 /**
