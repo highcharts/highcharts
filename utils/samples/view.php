@@ -35,8 +35,6 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 	$html = str_replace("sonification.js?$time", 'sonification.js', $html);
 }
 
-// Highchart 5 preview
-$html = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $html);
 
 
 // Get CSS and use dev server
@@ -45,13 +43,19 @@ ob_start();
 $css = ob_get_clean();
 $css = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $css);
 
-// Highchart 5 preview
-$css = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $css);
+// Styled mode
 if ($styled) {
 	$html = str_replace("code.highcharts.$topDomain/js/", "code.highcharts.$topDomain/", $html); // some to classic
 	$html = str_replace("code.highcharts.$topDomain/", "code.highcharts.$topDomain/js/", $html); // all to styled
 	$css = "@import 'http://code.highcharts.$topDomain/css/highcharts.css';";
 }
+
+// Old IE
+$html .= "
+<!--[if lt IE 9]>
+<script src='http://code.highcharts.$topDomain/modules/oldie.js'></script>
+<![endif]-->
+";
 
 
 // Handle themes

@@ -4,10 +4,9 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import H from './Globals.js';
-import './Utilities.js';
-import './SvgRenderer.js';
-/*= if (build.classic) { =*/
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/SvgRenderer.js';
 var VMLRenderer,
 	VMLRendererExtension,
 	VMLElement,
@@ -34,18 +33,6 @@ var VMLRenderer,
 	SVGRenderer = H.SVGRenderer,
 	win = H.win;
 
-/* ****************************************************************************
- *                                                                            *
- * START OF INTERNET EXPLORER <= 8 SPECIFIC CODE                              *
- *                                                                            *
- * For applications and websites that don't need IE support, like platform    *
- * targeted mobile apps and web apps, this code can be removed.               *
- *                                                                            *
- *****************************************************************************/
-
-/**
- * @constructor
- */
 if (!svg) {
 
 	/**
@@ -1128,9 +1115,3 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 };
 
 
-/* ****************************************************************************
- *                                                                            *
- * END OF INTERNET EXPLORER <= 8 SPECIFIC CODE                                *
- *                                                                            *
- *****************************************************************************/
-/*= } =*/

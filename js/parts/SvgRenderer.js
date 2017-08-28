@@ -96,7 +96,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * 
 	 */
 	init: function (renderer, nodeName) {
-		
+
 		/** 
 		 * The primary DOM node. Each `SVGElement` instance wraps a main DOM
 		 * node, but may also represent more nodes.
@@ -1922,6 +1922,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			boxWrapper,
 			element,
 			desc;
+
+		// SVG not supported, forgot to load oldie.js?
+		if (!svg && !forExport) {
+			H.error(27, true);
+		}
 
 		boxWrapper = renderer.createElement('svg')
 			.attr({

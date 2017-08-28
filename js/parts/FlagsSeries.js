@@ -8,7 +8,6 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
 import './SvgRenderer.js';
-import './VmlRenderer.js';
 var addEvent = H.addEvent,
 	each = H.each,
 	merge = H.merge,

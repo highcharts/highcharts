@@ -143,6 +143,7 @@
 			<p>This happens in Highstock when a point is grouped by data grouping, so there is no reference to the raw points.</p>
 		</description>
 	</error>
+
 	<error id="25">
 		<title>Can't find Moment.js library</title>
 		<description>
@@ -158,6 +159,24 @@
 			</p>
 			<p>
 				Make sure you include <code>boost-canvas.js</code>, and that it's included before <code>boost.js</code>.
+			</p>
+		</description>
+	</error>
+
+	<error id="27">
+		<title>This browser does not support SVG.</title>
+		<description>
+			<p>This happens in old IE when the <code>oldie.js</code> module is
+			not loaded.</p>
+			<p>If you need to target IE versions 6, 7 and 8, add the module after loading <code>highcharts.js</code>. In
+			a website context, it is a good idea to load it in a conditional comment to avoid traffic overhead in modern
+			browsers:
+<pre>
+<!--[if lt IE 9]>
+	<script src='https://code.highcharts.com/modules/oldie.js'></script>
+<![endif]-->
+</pre>
+				
 			</p>
 		</description>
 	</error>

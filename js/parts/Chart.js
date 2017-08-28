@@ -43,8 +43,7 @@ var addEvent = H.addEvent,
 	splat = H.splat,
 	svg = H.svg,
 	syncTimeout = H.syncTimeout,
-	win = H.win,
-	Renderer = H.Renderer;
+	win = H.win;
 /**
  * The Chart class. The recommended constructor is {@link Highcharts#chart}.
  * @class Highcharts.Chart
@@ -1011,7 +1010,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		chart._cursor = container.style.cursor;
 
 		// Initialize the renderer
-		Ren = H[optionsChart.renderer] || Renderer;
+		Ren = H[optionsChart.renderer] || H.Renderer;
+		
 		/**
 		 * The renderer instance of the chart. Each chart instance has only one
 		 * associated renderer.
