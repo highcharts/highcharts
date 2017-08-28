@@ -66,7 +66,6 @@ var addEvent = H.addEvent,
 	Series = H.Series,
 	seriesTypes = H.seriesTypes,
 	wrap = H.wrap,
-	swapXY = H.swapXY,
 
 	units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType,
@@ -144,6 +143,63 @@ extend(defaultOptions, {
 		 * @product highstock
 		 */
 		handles: {
+			/**
+			 * Width for handles.
+			 *
+			 * @type {umber}
+			 * @default 7
+			 * @product highstock
+			 * @sample {highstock} stock/navigator/styled-handles/ Styled handles
+			 * @since 6.0.0
+			 */
+			width: 7,
+
+			/**
+			 * Height for handles.
+			 *
+			 * @type {Number}
+			 * @default 15
+			 * @product highstock
+			 * @sample {highstock} stock/navigator/styled-handles/ Styled handles
+			 * @since 6.0.0
+			 */
+			height: 15,
+
+			/**
+			 * The width for the handle border and the stripes inside.
+			 *
+			 * @type {Number}
+			 * @default 7
+			 * @product highstock
+			 * @sample {highstock} stock/navigator/styled-handles/ Styled handles
+			 * @since 6.0.0
+			 */
+			lineWidth: 1,
+
+			/**
+			 * Array to define shapes of handles. 0-index for left, 1-index for right.
+			 *
+			 * Additionally, the URL to a graphic can be given on this form: "url(graphic.png)". Note that for the image to be applied to exported charts, its URL needs to be accessible by the export server.
+			 *
+			 * Custom callbacks for symbol path generation can also be added to Highcharts.SVGRenderer.prototype.symbols. The callback is then used by its method name, as shown in the demo.
+			 *
+			 * @type {Array}
+			 * @default ['navigator-handle', 'navigator-handle']
+			 * @product highstock
+			 * @sample {highstock} stock/navigator/styled-handles/ Styled handles
+			 * @since 6.0.0
+			 */
+			symbols: ['navigator-handle', 'navigator-handle'],
+
+			/**
+			 * Allows to enable/disable handles.
+			 *
+			 * @type {Boolean}
+			 * @default true
+			 * @product highstock
+			 * @since 6.0.0
+			 */
+			enabled: true,
 
 			/**
 			 * The fill for the handle.
@@ -419,6 +475,38 @@ extend(defaultOptions, {
 });
 
 /**
+ * Draw one of the handles on the side of the zoomed range in the navigator
+ * @param {Boolean} inverted flag for chart.inverted
+ * @returns {Array} Path to be used in a handle
+ */
+H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options) {
+	var halfWidth = options.width / 2,
+		markerPosition = Math.round(halfWidth / 3) + 0.5,
+		height = options.height;
+
+	return [
+		'M',
+		-halfWidth - 1, 0.5,
+		'L',
+		halfWidth, 0.5,
+		'L',
+		halfWidth, height + 0.5,
+		'L',
+		-halfWidth - 1, height + 0.5,
+		'L',
+		-halfWidth - 1, 0.5,
+		'M',
+		-markerPosition, 4,
+		'L',
+		-markerPosition, height - 3,
+		'M',
+		markerPosition - 1, 4,
+		'L',
+		markerPosition - 1, height - 3
+	];
+};
+
+/**
  * The Navigator class
  * @param {Object} chart - Chart object
  * @class
@@ -436,45 +524,19 @@ Navigator.prototype = {
 	 * @param {String} verb use 'animate' or 'attr'
 	 */
 	drawHandle: function (x, index, inverted, verb) {
-		var navigator = this;
+		var navigator = this,
+			height = navigator.navigatorOptions.handles.height;
 
 		// Place it
 		navigator.handles[index][verb](inverted ? {
-			translateX: Math.round(navigator.left + navigator.height / 2 - 8),
-			translateY: Math.round(navigator.top + parseInt(x, 10) + 0.5)
+			translateX: Math.round(navigator.left + navigator.height / 2),
+			translateY: Math.round(navigator.top + parseInt(x, 10) + 0.5 - height)
 		} : {
 			translateX: Math.round(navigator.left + parseInt(x, 10)),
-			translateY: Math.round(navigator.top + navigator.height / 2 - 8)
+			translateY: Math.round(navigator.top + navigator.height / 2 - height / 2)
 		});
 	},
 
-	/**
-	 * Draw one of the handles on the side of the zoomed range in the navigator
-	 * @param {Boolean} inverted flag for chart.inverted
-	 * @returns {Array} Path to be used in a handle
-	 */
-	getHandlePath: function (inverted) {
-		return swapXY([
-			'M',
-			-4.5, 0.5,
-			'L',
-			3.5, 0.5,
-			'L',
-			3.5, 15.5,
-			'L',
-			-4.5, 15.5,
-			'L',
-			-4.5, 0.5,
-			'M',
-			-1.5, 4,
-			'L',
-			-1.5, 12,
-			'M',
-			0.5, 4,
-			'L',
-			0.5, 12
-		], inverted);
-	},
 	/**
 	 * Render outline around the zoomed range
 	 * @param {Number} zoomedMin in pixels position where zoomed range starts
@@ -671,28 +733,37 @@ Navigator.prototype = {
 			.add(navigatorGroup);
 
 		// Create the handlers:
-		each([0, 1], function (index) {
-			navigator.handles[index] = renderer
-				.path(navigator.getHandlePath(inverted))
+		if (navigatorOptions.handles.enabled) {
+			each([0, 1], function (index) {
+				navigatorOptions.handles.inverted = chart.inverted;
+				navigator.handles[index] = renderer.symbol(
+					navigatorOptions.handles.symbols[index],
+					-navigatorOptions.handles.width / 2 - 1,
+					0,
+					navigatorOptions.handles.width,
+					navigatorOptions.handles.height,
+					navigatorOptions.handles
+				);
 				// zIndex = 6 for right handle, 7 for left.
 				// Can't be 10, because of the tooltip in inverted chart #2908
-				.attr({ zIndex: 7 - index })
-				.addClass(
-					'highcharts-navigator-handle highcharts-navigator-handle-' +
-					['left', 'right'][index]
-				).add(navigatorGroup);
+				navigator.handles[index].attr({ zIndex: 7 - index })
+					.addClass(
+						'highcharts-navigator-handle highcharts-navigator-handle-' +
+						['left', 'right'][index]
+					).add(navigatorGroup);
 
-			/*= if (build.classic) { =*/
-			var handlesOptions = navigatorOptions.handles;
-			navigator.handles[index]
-				.attr({
-					fill: handlesOptions.backgroundColor,
-					stroke: handlesOptions.borderColor,
-					'stroke-width': 1
-				})
-				.css(mouseCursor);
-			/*= } =*/
-		});
+				/*= if (build.classic) { =*/
+				var handlesOptions = navigatorOptions.handles;
+				navigator.handles[index]
+					.attr({
+						fill: handlesOptions.backgroundColor,
+						stroke: handlesOptions.borderColor,
+						'stroke-width': handlesOptions.lineWidth
+					})
+					.css(mouseCursor);
+				/*= } =*/
+			});
+		}
 	},
 
 	/**
@@ -822,8 +893,11 @@ Navigator.prototype = {
 
 			navigator.drawMasks(zoomedMin, zoomedMax, inverted, verb);
 			navigator.drawOutline(zoomedMin, zoomedMax, inverted, verb);
-			navigator.drawHandle(zoomedMin, 0, inverted, verb);
-			navigator.drawHandle(zoomedMax, 1, inverted, verb);
+
+			if (navigator.navigatorOptions.handles.enabled) {
+				navigator.drawHandle(zoomedMin, 0, inverted, verb);
+				navigator.drawHandle(zoomedMax, 1, inverted, verb);
+			}
 		}
 
 		if (navigator.scrollbar) {
