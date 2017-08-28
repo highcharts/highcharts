@@ -20,8 +20,7 @@ Highcharts.chart('container', {
         // pointPadding: 0,
         // groupPadding: 0,
         borderColor: 'gray',
-        borderRadius: 5,
-        pointWidth: 10,
+        pointWidth: 20,
         data: [{
             x: Date.UTC(2014, 10, 21),
             x2: Date.UTC(2014, 11, 2),

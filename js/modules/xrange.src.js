@@ -8,8 +8,6 @@
 
 /**
  * @todo
- * - Data labels, figure out how to use format instead of formatter. Make
- *   partialFill available in the labelConfig.
  * - JSDoc
  * - New series checklist
  */
@@ -32,6 +30,23 @@ var defined = H.defined,
 	Point = H.Point,
 	Series = H.Series;
 
+/**
+ * The X-range series displays ranges on the X axis, typically time intervals
+ * with a start and end date.
+ * 
+ * @extends {plotOptions.column}
+ * @excluding boostThreshold,crisp,cropThreshold,edgeColor,edgeWidth,
+ *         findNearestPointBy,getExtremesFromAll,negativeColor,pointInterval,
+ *         pointIntervalUnit,pointPlacement,pointRange,pointStart,softThreshold,
+ *         stacking,threshold
+ * @product highcharts
+ * @sample {highcharts} highcharts/demo/x-range/
+ *         X-range
+ * @sample {highcharts} highcharts/chart/inverted-xrange/
+ *         Inverted X-range
+ * @since 6.0.0
+ * @optionparent plotOptions.xrange
+ */
 seriesType('xrange', 'column', {
 	/**
 	 * In an X-range series, this option makes all points of the same Y-axis
@@ -41,6 +56,10 @@ seriesType('xrange', 'column', {
 	dataLabels: {
 		verticalAlign: 'middle',
 		inside: true,
+		/**
+		 * The default formatter for X-range data labels displays the percentage
+		 * of the partial fill amount.
+		 */
 		formatter: function () {
 			var point = this.point,
 				amount = point.partialFill;
@@ -58,7 +77,25 @@ seriesType('xrange', 'column', {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
 	},
 	borderRadius: 3
-	// partialFill
+	/**
+	 * A partial fill for each point, typically used to visualize how much of
+	 * a task is performed. The partial fill object can be set either on series
+	 * or point level. 
+	 *
+	 * @sample {highcharts} highcharts/demo/x-range
+	 *         X-range with partial fill
+	 * @type  {Object}
+	 * @product highcharts
+	 * @apioption plotOptions.xrange.partialFill
+	 */
+	/**
+	 * The fill color to be used for partial fills. Defaults to a darker shade
+	 * of the point color.
+	 *
+	 * @type {Color}
+	 * @product highcharts
+	 * @apioption plotOptions.xrange.partialFill.fill
+	 */
 
 }, {
 	type: 'xrange',
@@ -367,7 +404,7 @@ seriesType('xrange', 'column', {
 		each(series.points, function (point) {
 			series.drawPoint(point, verb);
 		});
-	},
+	}
 	
 	/**
 	 * Override to remove stroke from points.
@@ -451,3 +488,84 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 		}
 	}
 });
+
+
+/**
+ * An `xrange` series. If the [type](#series.xrange.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * xrange](#plotOptions.xrange).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.xrange
+ * @product highcharts highstock
+ * @apioption series.xrange
+ */
+
+/**
+ * An array of data points for the series. For the `xrange` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of objects with named values. The objects are point
+ * configuration objects as seen below.
+ * 
+ *  ```js
+ *     data: [{
+ *         x1: Date.UTC(2017, 0, 1),
+ *         x2: Date.UTC(2017, 0, 3),
+ *         name: "Test",
+ *         y: 0,
+ *         color: "#00FF00"
+ *     }, {
+ *         x1: Date.UTC(2017, 0, 4),
+ *         x2: Date.UTC(2017, 0, 5),
+ *         name: "Deploy",
+ *         y: 1,
+ *         color: "#FF0000"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array|Number>}
+ * @extends series.line.data
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts highstock
+ * @apioption series.xrange.data
+ */
+
+
+/**
+ * A partial fill for each point, typically used to visualize how much of
+ * a task is performed. The partial fill object can be set either on series
+ * or point level. 
+ *
+ * @sample {highcharts} highcharts/demo/x-range
+ *         X-range with partial fill
+ * @type  {Number|Object}
+ * @product highcharts
+ * @apioption plotOptions.xrange.data.partialFill
+ */
+
+/**
+ * The amount of the X-range point to be filled. Values can be 0-1 and are 
+ * converted to percentages in the default data label formatter.
+ *
+ * @type {Number}
+ * @product highcharts
+ * @apioption plotOptions.xrange.data.partialFill.amount
+ */
+
+/**
+ * The fill color to be used for partial fills. Defaults to a darker shade
+ * of the point color.
+ *
+ * @type {Color}
+ * @product highcharts
+ * @apioption plotOptions.xrange.data.partialFill.fill
+ */
