@@ -1079,16 +1079,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		
 		// adjust for rangeSelector 
 		if (chart.rangeSelector) {
-
-			var rangeSelectorHeight = chart.rangeSelector.getHeight();
-
-			if (chart.extraTopMargin) {
-				chart.plotTop += rangeSelectorHeight;
-			}
-
-			if (chart.extraBottomMargin) {
-				chart.marginBottom += rangeSelectorHeight;
-			}
+			chart.adjustPlotArea();
 		}
 		
 		if (!skipAxes) {
@@ -1121,6 +1112,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		chart.setChartSize();
 
+	},
+
+	adjustPlotArea: function () {
+		var chart = this,
+			rangeSelectorHeight = chart.rangeSelector.getHeight();
+			
+		if (chart.extraTopMargin) {
+			chart.plotTop += rangeSelectorHeight;
+		}
+
+		if (chart.extraBottomMargin) {
+			chart.marginBottom += rangeSelectorHeight;
+		}
 	},
 
 	/**
