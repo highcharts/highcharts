@@ -392,7 +392,7 @@ extend(defaultOptions, {
 		 * @type {Object}
 		 * @extends {xAxis}
 		 * @excluding linkedTo,maxZoom,minRange,opposite,range,scrollbar,
-		 *          showEmpty
+		 *          showEmpty,maxRange
 		 * @product highstock
 		 */
 		xAxis: {
@@ -446,7 +446,7 @@ extend(defaultOptions, {
 		 * @type {Object}
 		 * @extends {yAxis}
 		 * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
-		 *          scrollbar,top,units
+		 *          scrollbar,top,units,maxRange
 		 * @product highstock
 		 */
 		yAxis: {
@@ -809,7 +809,9 @@ Navigator.prototype = {
 			verb,
 			newMin,
 			newMax,
-			minRange = chart.xAxis[0].minRange;
+			currentRange,
+			minRange = chart.xAxis[0].minRange,
+			maxRange = chart.xAxis[0].options.maxRange;
 
 		// Don't redraw while moving the handles (#4703).
 		if (this.hasDragged && !defined(pxMin)) {
@@ -857,13 +859,28 @@ Navigator.prototype = {
 		// Are we below the minRange? (#2618, #6191)
 		newMin = xAxis.toValue(pxMin, true);
 		newMax = xAxis.toValue(pxMax, true);
-		if (Math.abs(newMax - newMin) < minRange) {
+		currentRange = Math.abs(H.correctFloat(newMax - newMin));
+		if (currentRange < minRange) {
 			if (this.grabbedLeft) {
 				pxMin = xAxis.toPixels(newMax - minRange, true);
 			} else if (this.grabbedRight) {
 				pxMax = xAxis.toPixels(newMin + minRange, true);
-			} else {
-				return;
+			}
+		} else if (defined(maxRange) && currentRange > maxRange) {
+			/**
+			 * Maximum range which can be set using navigator's handles. Opposite of [xAxis.minRange](#xAxis.minRange).
+			 *
+			 * @type {Number}
+			 * @default undefined
+			 * @product highstock
+			 * @apioption xAxis.maxRange
+			 * @sample {highstock} stock/navigator/maxrange/ Defined max and min range
+			 * @since 6.0.0
+			 */
+			if (this.grabbedLeft) {
+				pxMin = xAxis.toPixels(newMax - maxRange, true);
+			} else if (this.grabbedRight) {
+				pxMax = xAxis.toPixels(newMin + maxRange, true);
 			}
 		}
 
