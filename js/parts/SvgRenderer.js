@@ -3429,7 +3429,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = !svg && renderer.forExport,
 			wrapper,
 			attribs = {};
 
@@ -3447,13 +3446,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		wrapper = renderer.createElement('text')
 			.attr(attribs);
-
-		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)
-		if (fakeSVG) {
-			wrapper.css({
-				position: 'absolute'
-			});
-		}
 
 		if (!useHTML) {
 			wrapper.xSetter = function (value, key, element) {

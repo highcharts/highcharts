@@ -1513,7 +1513,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		if (exportSVGElements) {
 			each(exportSVGElements, function (elem, i) {
 
-				// Destroy and null the svg/vml elements
+				// Destroy and null the svg elements
 				if (elem) { // #1822
 					elem.onclick = elem.ontouchstart = null;
 					cacheName = 'cache-' + elem.menuClassName;

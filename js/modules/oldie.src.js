@@ -42,9 +42,12 @@ var VMLRenderer,
  *
  * @type {String}
  * @apioption global.VMLRadialGradientURL
- * @default {highcharts} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
- * @default {highstock} http://code.highcharts.com/highstock/{version}/gfx/vml-radial-gradient.png
- * @default {highmaps} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
+ * @default {highcharts}
+ *          http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
+ * @default {highstock}
+ *          http://code.highcharts.com/highstock/{version}/gfx/vml-radial-gradient.png
+ * @default {highmaps}
+ *          http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
  * @since 2.3.0
  */
 H.getOptions().global.VMLRadialGradientURL =
@@ -87,7 +90,7 @@ if (doc && !doc.defaultView) {
 }
 
 if (!Array.prototype.forEach) {
-	H.forEachPolyfill = function (fn, ctx) { // legacy
+	H.forEachPolyfill = function (fn, ctx) {
 		var i = 0, 
 			len = this.length;
 		for (; i < len; i++) {
@@ -159,6 +162,19 @@ if (!Array.prototype.reduce) {
 }
 
 if (!svg) {
+
+	// Prevent wrapping from creating false offsetWidths in export in legacy IE.
+	// This applies only to charts for export, where IE runs the SVGRenderer
+	// instead of the VMLRenderer
+	// (#1079, #1063)
+	H.wrap(H.SVGRenderer.prototype, 'text', function (proceed) {
+		return proceed.apply(
+			this,
+			Array.prototype.slice.call(arguments, 1)
+		).css({
+			position: 'absolute'
+		});
+	});
 
 	/**
 	 * The VML element wrapper.

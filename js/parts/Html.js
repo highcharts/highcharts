@@ -61,12 +61,6 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 		var wrapper = this,
 			element = wrapper.element;
 
-		// faking getBBox in exported SVG in legacy IE (is this a duplicate of
-		// the fix for #1079?)
-		if (element.nodeName === 'text') {
-			element.style.position = 'absolute';
-		}
-
 		return {
 			x: element.offsetLeft,
 			y: element.offsetTop,
