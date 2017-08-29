@@ -1690,11 +1690,13 @@ H.objectEach = function (obj, fn, ctx) {
  */
 H.addEvent = function (el, type, fn) {
 	
-	var events = el.hcEvents = el.hcEvents || {};
+	var events = el.hcEvents = el.hcEvents || {},
+		addEventListener = el.addEventListener || H.addEventListenerPolyfill;
 
 	// Handle DOM events
-	(el.addEventListener || H.addEventListenerPolyfill)
-		.call(el, type, fn, false);
+	if (addEventListener) {
+		addEventListener.call(el, type, fn, false);
+	}
 
 	if (!events[type]) {
 		events[type] = [];
@@ -1727,8 +1729,12 @@ H.removeEvent = function (el, type, fn) {
 		index;
 
 	function removeOneEvent(type, fn) {
-		(el.removeEventListener || H.removeEventListenerPolyfill)
-			.call(el, type, fn, false);
+		var removeEventListener =
+			el.removeEventListener || H.removeEventListenerPolyfill;
+		
+		if (removeEventListener) {
+			removeEventListener.call(el, type, fn, false);
+		}
 	}
 
 	function removeAllEvents() {
