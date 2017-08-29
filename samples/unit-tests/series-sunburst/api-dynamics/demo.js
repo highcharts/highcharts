@@ -17,6 +17,24 @@ QUnit.test('Chart.addSeries.', function (assert) {
     );
 });
 
+QUnit.test('Chart.setSize.', function (assert) {
+    var H = Highcharts,
+        chart = H.chart('container', {
+            series: [{
+                type: 'sunburst',
+                data: [1, 2, 3]
+            }]
+        });
+    chart.setSize(200, 200);
+    // TODO find something to tests against.
+    // This only tests wether setSize is executed without errors
+    assert.strictEqual(
+        'todo',
+        'todo',
+        'todo'
+    );
+});
+
 QUnit.test('Point.remove.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
