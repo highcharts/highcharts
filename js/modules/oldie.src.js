@@ -36,6 +36,21 @@ var VMLRenderer,
 	win = H.win;
 
 
+/**
+ * Path to the pattern image required by VML browsers in order to
+ * draw radial gradients.
+ *
+ * @type {String}
+ * @apioption global.VMLRadialGradientURL
+ * @default {highcharts} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
+ * @default {highstock} http://code.highcharts.com/highstock/{version}/gfx/vml-radial-gradient.png
+ * @default {highmaps} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
+ * @since 2.3.0
+ */
+H.getOptions().global.VMLRadialGradientURL =
+	'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
+
+
 // Utilites
 if (doc && !doc.defaultView) {
 	H.getStyle = function (el, prop) {

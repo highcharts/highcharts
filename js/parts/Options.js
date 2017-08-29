@@ -244,22 +244,7 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/global/useutc-false/ False
 		 * @default true
 		 */
-		useUTC: true,
-
-		/*= if (build.classic) { =*/
-
-		/**
-		 * Path to the pattern image required by VML browsers in order to
-		 * draw radial gradients.
-		 * 
-		 * @type {String}
-		 * @default {highcharts} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
-		 * @default {highstock} http://code.highcharts.com/highstock/{version}/gfx/vml-radial-gradient.png
-		 * @default {highmaps} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
-		 * @since 2.3.0
-		 */
-		VMLRadialGradientURL: 'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png'
-		/*= } =*/
+		useUTC: true
 
 		/**
 		 * A custom `Date` class for advanced date handling. For example,
