@@ -72,11 +72,11 @@ if (doc && !doc.defaultView) {
 }
 
 if (!Array.prototype.forEach) {
-	H.each = function (arr, fn, ctx) { // legacy
+	H.forEachPolyfill = function (fn, ctx) { // legacy
 		var i = 0, 
-			len = arr.length;
+			len = this.length;
 		for (; i < len; i++) {
-			if (fn.call(ctx, arr[i], i, arr) === false) {
+			if (fn.call(ctx, this[i], i, this) === false) {
 				return i;
 			}
 		}
@@ -84,7 +84,7 @@ if (!Array.prototype.forEach) {
 }
 
 if (!Array.prototype.indexOf) {
-	H.inArray = function (item, arr) {
+	H.indexOfPolyfill = function (arr) {
 		var len, 
 			i = 0;
 
@@ -92,7 +92,7 @@ if (!Array.prototype.indexOf) {
 			len = arr.length;
 			
 			for (; i < len; i++) {
-				if (arr[i] === item) {
+				if (arr[i] === this) {
 					return i;
 				}
 			}
@@ -103,14 +103,14 @@ if (!Array.prototype.indexOf) {
 }
 
 if (!Array.prototype.filter) {
-	H.grep = function (elements, fn) {
+	H.filterPolyfill = function (fn) {
 		var ret = [],
 			i = 0,
-			length = elements.length;
+			length = this.length;
 
 		for (; i < length; i++) {
-			if (fn(elements[i], i)) {
-				ret.push(elements[i]);
+			if (fn(this[i], i)) {
+				ret.push(this[i]);
 			}
 		}
 
@@ -119,25 +119,25 @@ if (!Array.prototype.filter) {
 }
 
 if (!Array.prototype.find) {
-	H.find = function (arr, fn) {
+	H.findPolyfill = function (fn) {
 		var i,
-			length = arr.length;
+			length = this.length;
 
 		for (i = 0; i < length; i++) {
-			if (fn(arr[i], i)) {
-				return arr[i];
+			if (fn(this[i], i)) {
+				return this[i];
 			}
 		}
 	};
 }
 
 if (!Array.prototype.reduce) {
-	H.reduce = function (arr, func, initialValue) {
+	H.reducePolyfill = function (func, initialValue) {
 		var context = this,
 			accumulator = initialValue || {},
-			len = arr.length;
+			len = this.length;
 		for (var i = 0; i < len; ++i) {
-			accumulator = func.call(context, accumulator, arr[i], i, arr);
+			accumulator = func.call(context, accumulator, this[i], i, this);
 		}
 		return accumulator;
 	};

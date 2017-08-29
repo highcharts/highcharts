@@ -26,7 +26,6 @@ var addEvent = H.addEvent,
 	extend = H.extend,
 	find = H.find,
 	fireEvent = H.fireEvent,
-	getStyle = H.getStyle,
 	grep = H.grep,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
@@ -793,10 +792,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Get inner width and height
 		if (!defined(widthOption)) {
-			chart.containerWidth = getStyle(renderTo, 'width');
+			chart.containerWidth = H.getStyle(renderTo, 'width');
 		}
 		if (!defined(heightOption)) {
-			chart.containerHeight = getStyle(renderTo, 'height');
+			chart.containerHeight = H.getStyle(renderTo, 'height');
 		}
 		
 		/**
@@ -851,7 +850,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 					doc.body.appendChild(node);
 				}
 				if (
-					getStyle(node, 'display', false) === 'none' ||
+					H.getStyle(node, 'display', false) === 'none' ||
 					node.hcOricDetached
 				) {
 					node.hcOrigStyle = {
@@ -1148,8 +1147,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				defined(optionsChart.width) &&
 				defined(optionsChart.height)
 			),
-			width = optionsChart.width || getStyle(renderTo, 'width'),
-			height = optionsChart.height || getStyle(renderTo, 'height'),
+			width = optionsChart.width || H.getStyle(renderTo, 'width'),
+			height = optionsChart.height || H.getStyle(renderTo, 'height'),
 			target = e ? e.target : win;
 
 		// Width and height checks for display:none. Target is doc in IE8 and
