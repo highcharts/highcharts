@@ -13,6 +13,7 @@ var VMLRenderer,
 	VMLRendererExtension,
 	VMLElement,
 
+	Chart = H.Chart,
 	createElement = H.createElement,
 	css = H.css,
 	defined = H.defined,
@@ -175,6 +176,61 @@ if (!svg) {
 			position: 'absolute'
 		});
 	});
+
+	/**
+	 * Old IE override for pointer normalize, adds chartX and chartY to event
+	 * arguments.
+	 */
+	H.Pointer.prototype.normalize = function (e, chartPosition) {
+
+		e = e || win.event;
+		if (!e.target) {
+			e.target = e.srcElement;
+		}
+
+		// Get mouse position
+		if (!chartPosition) {
+			this.chartPosition = chartPosition = H.offset(this.chart.container);
+		}
+
+		return H.extend(e, {
+			// #2005, #2129: the second case is for IE10 quirks mode within
+			// framesets
+			chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),
+			chartY: Math.round(e.y)
+		});
+	};
+
+	/**
+	 * Further sanitize the mock-SVG that is generated when exporting charts in
+	 * oldIE.
+	 */
+	Chart.prototype.ieSanitizeSVG = function (svg) {
+		svg = svg
+			.replace(/<IMG /g, '<image ')
+			.replace(/<(\/?)TITLE>/g, '<$1title>')
+			.replace(/height=([^" ]+)/g, 'height="$1"')
+			.replace(/width=([^" ]+)/g, 'width="$1"')
+			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
+			.replace(/ id=([^" >]+)/g, ' id="$1"') // #4003
+			.replace(/class=([^" >]+)/g, 'class="$1"')
+			.replace(/ transform /g, ' ')
+			.replace(/:(path|rect)/g, '$1')
+			.replace(/style="([^"]+)"/g, function (s) {
+				return s.toLowerCase();
+			});
+
+		return svg;
+	};
+
+	// IE compatibility hack for generating SVG content that it doesn't really
+	// understand. Used by the exporting module.
+	if (!doc.createElementNS) {
+		doc.createElementNS = function (ns, tagName) {
+			return doc.createElement(tagName);
+		};
+	}
+		
 
 	/**
 	 * The VML element wrapper.
