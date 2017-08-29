@@ -288,7 +288,10 @@ Highcharts.Chart.prototype.fileDownload = function (href, extension, content, MI
     // MS specific. Check this first because of bug with Edge (#76)
     if (win.Blob && win.navigator.msSaveOrOpenBlob) {
         // Falls to msSaveOrOpenBlob if download attribute is not supported
-        blobObject = new win.Blob([content]);
+        blobObject = new win.Blob(
+            ['\uFEFF' + content], // #7084
+            { type: 'text/csv' }
+        );
         win.navigator.msSaveOrOpenBlob(blobObject, name + '.' + extension);
 
     // Download attribute supported
