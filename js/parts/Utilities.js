@@ -1489,6 +1489,11 @@ H.getStyle = function (el, prop, toInt) {
 			H.getStyle(el, 'padding-bottom');
 	}
 
+	if (!win.getComputedStyle) {
+		// SVG not supported, forgot to load oldie.js?
+		H.error(27, true);
+	}
+
 	// Otherwise, get the computed style
 	style = win.getComputedStyle(el, undefined);
 	if (style) {
@@ -1510,7 +1515,7 @@ H.getStyle = function (el, prop, toInt) {
  * @returns {Number} - The index within the array, or -1 if not found.
  */
 H.inArray = function (item, arr) {
-	return arr.indexOf ? arr.indexOf(item) : [].indexOf.call(arr, item);
+	return (H.indexOfPolyfill || Array.prototype.indexOf).call(arr, item);
 };
 
 /**
@@ -1525,7 +1530,7 @@ H.inArray = function (item, arr) {
  * @returns {Array} - A new, filtered array.
  */
 H.grep = function (arr, callback) {
-	return [].filter.call(arr, callback);
+	return (H.filterPolyfill || Array.prototype.filter).call(arr, callback);
 };
 
 /**
@@ -1541,7 +1546,7 @@ H.grep = function (arr, callback) {
  * @returns {Mixed} - The value of the element.
  */
 H.find = function (arr, callback) {
-	return [].find.call(arr, callback);
+	return (H.findPolyfill || Array.prototype.find).call(arr, callback);
 };
 
 /**
@@ -1579,7 +1584,11 @@ H.map = function (arr, fn) {
  * @returns {Mixed} - The reduced value.
  */
 H.reduce = function (arr, func, initialValue) {
-	return [].reduce.call(arr, func, initialValue);
+	return (H.reducePolyfill || Array.prototype.reduce).call(
+		arr,
+		func,
+		initialValue
+	);
 };
 
 /**
@@ -1644,7 +1653,7 @@ H.stop = function (el, prop) {
  * @param {Object} [ctx] The context.
  */
 H.each = function (arr, fn, ctx) { // modern browsers
-	return Array.prototype.forEach.call(arr, fn, ctx);
+	return (H.forEachPolyfill || Array.prototype.forEach).call(arr, fn, ctx);
 };
 
 /**

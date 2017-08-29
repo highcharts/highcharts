@@ -1929,11 +1929,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			element,
 			desc;
 
-		// SVG not supported, forgot to load oldie.js?
-		if (!svg && !forExport) {
-			H.error(27, true);
-		}
-
 		boxWrapper = renderer.createElement('svg')
 			.attr({
 				'version': '1.1',
