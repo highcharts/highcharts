@@ -338,6 +338,7 @@ var wordCloudSeries = {
 			};
 		}
 	},
+	pointArrayMap: ['weight'],
 	/**
 	 * Spirals used for placing a word after the inital position experienced a
 	 *     collision with either another word or the borders.
