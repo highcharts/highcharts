@@ -1886,7 +1886,8 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
  * Allows direct access to the Highcharts rendering layer in order to draw
  * primitive shapes like circles, rectangles, paths or text directly on a chart,
  * or independent from any chart. The SVGRenderer represents a wrapper object
- * for SVGin modern browsers and through the VMLRenderer, for VML in IE < 8.
+ * for SVG in modern browsers. Through the VMLRenderer, part of the `oldie.js`
+ * module, it also brings vector graphics to IE <= 8.
  *
  * An existing chart's renderer can be accessed through {@link Chart.renderer}.
  * The renderer can also be used completely decoupled from a chart.
@@ -3097,8 +3098,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				// Initialize image to be 0 size so export will still function if there's no cached sizes.
 				obj.attr({ width: 0, height: 0 });
 
-				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
-				// the created element must be assigned to a variable in order to load (#292).
+				// Create a dummy JavaScript image to get the width and height. 
 				createElement('img', {
 					onload: function () {
 

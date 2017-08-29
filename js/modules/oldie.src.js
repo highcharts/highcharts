@@ -34,7 +34,8 @@ var VMLRenderer,
 	svg = H.svg,
 	SVGElement = H.SVGElement,
 	SVGRenderer = H.SVGRenderer,
-	win = H.win;
+	win = H.win,
+	wrap = H.wrap;
 
 
 /**
@@ -168,7 +169,7 @@ if (!svg) {
 	// This applies only to charts for export, where IE runs the SVGRenderer
 	// instead of the VMLRenderer
 	// (#1079, #1063)
-	H.wrap(H.SVGRenderer.prototype, 'text', function (proceed) {
+	wrap(H.SVGRenderer.prototype, 'text', function (proceed) {
 		return proceed.apply(
 			this,
 			Array.prototype.slice.call(arguments, 1)
@@ -230,6 +231,42 @@ if (!svg) {
 			return doc.createElement(tagName);
 		};
 	}
+
+	/**
+	 * Old IE polyfill for addEventListener, called from inside the addEvent
+	 * function.
+	 */
+	H.addEventListenerPolyfill = function (type, fn) {
+		var el = this;
+		function wrappedFn(e) {
+			e.target = e.srcElement || win; // #2820
+			fn.call(el, e);
+		}
+		
+		if (el.attachEvent) {
+			if (!el.hcEventsIE) {
+				el.hcEventsIE = {};
+			}
+
+			// unique function string (#6746)
+			if (!fn.hcKey) {
+				fn.hcKey = H.uniqueKey();
+			}
+
+			// Link wrapped fn with original fn, so we can get this in
+			// removeEvent
+			el.hcEventsIE[fn.hcKey] = wrappedFn;
+
+			el.attachEvent('on' + type, wrappedFn);
+		}
+
+	};
+	H.removeEventListenerPolyfill = function (type, fn) {
+		if (this.detachEvent) {
+			fn = this.hcEventsIE[fn.hcKey];
+			this.detachEvent('on' + type, fn);
+		}
+	};
 		
 
 	/**

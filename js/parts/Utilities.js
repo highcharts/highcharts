@@ -1692,32 +1692,9 @@ H.addEvent = function (el, type, fn) {
 	
 	var events = el.hcEvents = el.hcEvents || {};
 
-	function wrappedFn(e) {
-		e.target = e.srcElement || win; // #2820
-		fn.call(el, e);
-	}
-
-	// Handle DOM events in modern browsers
-	if (el.addEventListener) {
-		el.addEventListener(type, fn, false);
-
-	// Handle old IE implementation
-	} else if (el.attachEvent) {
-
-		if (!el.hcEventsIE) {
-			el.hcEventsIE = {};
-		}
-
-		// unique function string (#6746)
-		if (!fn.hcGetKey) {
-			fn.hcGetKey = H.uniqueKey();
-		}
-
-		// Link wrapped fn with original fn, so we can get this in removeEvent
-		el.hcEventsIE[fn.hcGetKey] = wrappedFn;
-
-		el.attachEvent('on' + type, wrappedFn);
-	}
+	// Handle DOM events
+	(el.addEventListener || H.addEventListenerPolyfill)
+		.call(el, type, fn, false);
 
 	if (!events[type]) {
 		events[type] = [];
@@ -1750,12 +1727,8 @@ H.removeEvent = function (el, type, fn) {
 		index;
 
 	function removeOneEvent(type, fn) {
-		if (el.removeEventListener) {
-			el.removeEventListener(type, fn, false);
-		} else if (el.attachEvent) {
-			fn = el.hcEventsIE[fn.hcGetKey];
-			el.detachEvent('on' + type, fn);
-		}
+		(el.removeEventListener || H.removeEventListenerPolyfill)
+			.call(el, type, fn, false);
 	}
 
 	function removeAllEvents() {
