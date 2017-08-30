@@ -595,18 +595,15 @@ if (seriesTypes.pie) {
 				dataLabel = point.dataLabel;
 				visibility = point.visible === false ? 'hidden' : 'inherit';
 				naturalY = labelPos[1];
+				y = naturalY;
 
 				if (positions && defined(positions[positionsIndex])) {
 					if (positions[positionsIndex].pos === undefined) {
 						visibility = 'hidden';
-						y = 0;
 					} else {
 						labelHeight = positions[positionsIndex].size;
 						y = point.top + positions[positionsIndex].pos;
 					}
-
-				} else {
-					y = naturalY;
 				}
 
 				// It is needed to delete point.positionIndex for 

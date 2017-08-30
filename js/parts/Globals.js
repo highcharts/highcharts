@@ -10,7 +10,6 @@ var doc = win.document,
 	userAgent = (win.navigator && win.navigator.userAgent) || '',
 	svg = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,
-	vml = !svg,
 	isFirefox = /Firefox/.test(userAgent),
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38
 
@@ -30,7 +29,6 @@ var Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
 	seriesTypes: {},
 	symbolSizes: {},
 	svg: svg,
-	vml: vml,
 	win: win,
 	marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	noop: function () {

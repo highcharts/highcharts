@@ -322,18 +322,12 @@ seriesType('xrange', 'column', {
 			cutOff = seriesOpts.stacking && !seriesOpts.borderRadius;
 
 		if (isNumber(plotY) && point.y !== null) {
+
+			// Original graphic
 			if (graphic) { // update
 				point.graphicOriginal[verb](
 					merge(shapeArgs)
 				);
-				if (partShapeArgs) {
-					point.graphicOverlay[verb](
-						merge(partShapeArgs)
-					);
-					point.clipRect.animate(
-						merge(clipRectArgs)
-					);
-				}
 
 			} else {
 				point.graphic = graphic = renderer.g('point')
@@ -344,7 +338,19 @@ seriesType('xrange', 'column', {
 					.addClass(point.getClassName())
 					.addClass('highcharts-partfill-original')
 					.add(graphic);
-				if (clipRectArgs && partShapeArgs) {
+			}
+
+			// Partial fill graphic
+			if (partShapeArgs) {
+				if (point.graphicOverlay) {
+					point.graphicOverlay[verb](
+						merge(partShapeArgs)
+					);
+					point.clipRect.animate(
+						merge(clipRectArgs)
+					);
+
+				} else {
 
 					point.clipRect = renderer.clipRect(
 						clipRectArgs.x,
@@ -359,6 +365,7 @@ seriesType('xrange', 'column', {
 						.clip(point.clipRect);
 				}
 			}
+			
 
 			/*= if (build.classic) { =*/
 			// Presentational

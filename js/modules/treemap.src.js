@@ -142,7 +142,7 @@ seriesType('treemap', 'scatter', {
 
 	tooltip: {
 		headerFormat: '',
-		pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
+		pointFormat: '<b>{point.name}</b>: {point.value}<br/>'
 	},
 
 	/**

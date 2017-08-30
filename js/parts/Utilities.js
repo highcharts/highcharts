@@ -1080,7 +1080,9 @@ H.format = function (str, ctx) {
 
 			// Assign deeper paths
 			for (i = 0; i < len; i++) {
-				val = val[path[i]];
+				if (val) {
+					val = val[path[i]];
+				}
 			}
 
 			// Format the replacement
@@ -1489,6 +1491,11 @@ H.getStyle = function (el, prop, toInt) {
 			H.getStyle(el, 'padding-bottom');
 	}
 
+	if (!win.getComputedStyle) {
+		// SVG not supported, forgot to load oldie.js?
+		H.error(27, true);
+	}
+
 	// Otherwise, get the computed style
 	style = win.getComputedStyle(el, undefined);
 	if (style) {
@@ -1510,7 +1517,7 @@ H.getStyle = function (el, prop, toInt) {
  * @returns {Number} - The index within the array, or -1 if not found.
  */
 H.inArray = function (item, arr) {
-	return arr.indexOf ? arr.indexOf(item) : [].indexOf.call(arr, item);
+	return (H.indexOfPolyfill || Array.prototype.indexOf).call(arr, item);
 };
 
 /**
@@ -1525,7 +1532,7 @@ H.inArray = function (item, arr) {
  * @returns {Array} - A new, filtered array.
  */
 H.grep = function (arr, callback) {
-	return [].filter.call(arr, callback);
+	return (H.filterPolyfill || Array.prototype.filter).call(arr, callback);
 };
 
 /**
@@ -1541,7 +1548,7 @@ H.grep = function (arr, callback) {
  * @returns {Mixed} - The value of the element.
  */
 H.find = function (arr, callback) {
-	return [].find.call(arr, callback);
+	return (H.findPolyfill || Array.prototype.find).call(arr, callback);
 };
 
 /**
@@ -1579,7 +1586,11 @@ H.map = function (arr, fn) {
  * @returns {Mixed} - The reduced value.
  */
 H.reduce = function (arr, func, initialValue) {
-	return [].reduce.call(arr, func, initialValue);
+	return (H.reducePolyfill || Array.prototype.reduce).call(
+		arr,
+		func,
+		initialValue
+	);
 };
 
 /**
@@ -1644,7 +1655,7 @@ H.stop = function (el, prop) {
  * @param {Object} [ctx] The context.
  */
 H.each = function (arr, fn, ctx) { // modern browsers
-	return Array.prototype.forEach.call(arr, fn, ctx);
+	return (H.forEachPolyfill || Array.prototype.forEach).call(arr, fn, ctx);
 };
 
 /**
@@ -1681,33 +1692,12 @@ H.objectEach = function (obj, fn, ctx) {
  */
 H.addEvent = function (el, type, fn) {
 	
-	var events = el.hcEvents = el.hcEvents || {};
+	var events = el.hcEvents = el.hcEvents || {},
+		addEventListener = el.addEventListener || H.addEventListenerPolyfill;
 
-	function wrappedFn(e) {
-		e.target = e.srcElement || win; // #2820
-		fn.call(el, e);
-	}
-
-	// Handle DOM events in modern browsers
-	if (el.addEventListener) {
-		el.addEventListener(type, fn, false);
-
-	// Handle old IE implementation
-	} else if (el.attachEvent) {
-
-		if (!el.hcEventsIE) {
-			el.hcEventsIE = {};
-		}
-
-		// unique function string (#6746)
-		if (!fn.hcGetKey) {
-			fn.hcGetKey = H.uniqueKey();
-		}
-
-		// Link wrapped fn with original fn, so we can get this in removeEvent
-		el.hcEventsIE[fn.hcGetKey] = wrappedFn;
-
-		el.attachEvent('on' + type, wrappedFn);
+	// Handle DOM events
+	if (addEventListener) {
+		addEventListener.call(el, type, fn, false);
 	}
 
 	if (!events[type]) {
@@ -1741,11 +1731,11 @@ H.removeEvent = function (el, type, fn) {
 		index;
 
 	function removeOneEvent(type, fn) {
-		if (el.removeEventListener) {
-			el.removeEventListener(type, fn, false);
-		} else if (el.attachEvent) {
-			fn = el.hcEventsIE[fn.hcGetKey];
-			el.detachEvent('on' + type, fn);
+		var removeEventListener =
+			el.removeEventListener || H.removeEventListenerPolyfill;
+		
+		if (removeEventListener) {
+			removeEventListener.call(el, type, fn, false);
 		}
 	}
 
@@ -2047,116 +2037,3 @@ if (win.jQuery) {
 		}
 	};
 }
-
-
-/**
- * Compatibility section to add support for legacy IE. This can be removed if
- * old IE support is not needed.
- */
-if (doc && !doc.defaultView) {
-	H.getStyle = function (el, prop) {
-		var val,
-			alias = { width: 'clientWidth', height: 'clientHeight' }[prop];
-			
-		if (el.style[prop]) {
-			return H.pInt(el.style[prop]);
-		}
-		if (prop === 'opacity') {
-			prop = 'filter';
-		}
-
-		// Getting the rendered width and height
-		if (alias) {
-			el.style.zoom = 1;
-			return Math.max(el[alias] - 2 * H.getStyle(el, 'padding'), 0);
-		}
-		
-		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
-			return b.toUpperCase();
-		})];
-		if (prop === 'filter') {
-			val = val.replace(
-				/alpha\(opacity=([0-9]+)\)/, 
-				function (a, b) { 
-					return b / 100; 
-				}
-			);
-		}
-		
-		return val === '' ? 1 : H.pInt(val);
-	};
-}
-
-if (!Array.prototype.forEach) {
-	H.each = function (arr, fn, ctx) { // legacy
-		var i = 0, 
-			len = arr.length;
-		for (; i < len; i++) {
-			if (fn.call(ctx, arr[i], i, arr) === false) {
-				return i;
-			}
-		}
-	};
-}
-
-if (!Array.prototype.indexOf) {
-	H.inArray = function (item, arr) {
-		var len, 
-			i = 0;
-
-		if (arr) {
-			len = arr.length;
-			
-			for (; i < len; i++) {
-				if (arr[i] === item) {
-					return i;
-				}
-			}
-		}
-
-		return -1;
-	};
-}
-
-if (!Array.prototype.filter) {
-	H.grep = function (elements, fn) {
-		var ret = [],
-			i = 0,
-			length = elements.length;
-
-		for (; i < length; i++) {
-			if (fn(elements[i], i)) {
-				ret.push(elements[i]);
-			}
-		}
-
-		return ret;
-	};
-}
-
-if (!Array.prototype.find) {
-	H.find = function (arr, fn) {
-		var i,
-			length = arr.length;
-
-		for (i = 0; i < length; i++) {
-			if (fn(arr[i], i)) {
-				return arr[i];
-			}
-		}
-	};
-}
-
-if (!Array.prototype.reduce) {
-	H.reduce = function (arr, func, initialValue) {
-		var context = this,
-			accumulator = initialValue || {},
-			len = arr.length;
-		for (var i = 0; i < len; ++i) {
-			accumulator = func.call(context, accumulator, arr[i], i, arr);
-		}
-		return accumulator;
-	};
-}
-
-//--- End compatibility section ---

@@ -12,7 +12,6 @@ import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
-import './VmlRenderer.js';
 var arrayMax = H.arrayMax,
 	arrayMin = H.arrayMin,
 	Axis = H.Axis,

@@ -131,3 +131,19 @@ QUnit.test('BBox for mulitiple lines', function (assert) {
         "Frist line shouldn't have dy (#6144) - visually the red text fits in the green box."
     );
 });
+
+QUnit.test('HTML entities', function (assert) {
+    var ren = new Highcharts.SVGRenderer(
+        document.getElementById('container'),
+        500,
+        500
+    );
+
+    var text = ren.text('Hello &amp; &lt;tag&gt;', 10, 30).add();
+
+    assert.strictEqual(
+        text.element.textContent,
+        'Hello & <tag>',
+        'HTML entities decoded correctly'
+    );
+});

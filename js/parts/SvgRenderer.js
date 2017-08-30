@@ -96,7 +96,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * 
 	 */
 	init: function (renderer, nodeName) {
-		
+
 		/** 
 		 * The primary DOM node. Each `SVGElement` instance wraps a main DOM
 		 * node, but may also represent more nodes.
@@ -1832,14 +1832,20 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 						// If negative zIndex, add this before first undefined zIndex element
 						(undefinedOtherZIndex && (!defined(value) || value >= 0))
 					) {
-						parentNode.insertBefore(element, childNodes[i + 1]);
+						parentNode.insertBefore(
+							element,
+							childNodes[i + 1] || null // null for oldIE export
+						);
 						inserted = true;
 					}
 				}
 			}
 
 			if (!inserted) {
-				parentNode.insertBefore(element, childNodes[svgParent ? 3 : 0]);
+				parentNode.insertBefore(
+					element,
+					childNodes[svgParent ? 3 : 0] || null // null for oldIE
+				);
 				inserted = true;
 			}
 		}
@@ -1880,7 +1886,8 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
  * Allows direct access to the Highcharts rendering layer in order to draw
  * primitive shapes like circles, rectangles, paths or text directly on a chart,
  * or independent from any chart. The SVGRenderer represents a wrapper object
- * for SVGin modern browsers and through the VMLRenderer, for VML in IE < 8.
+ * for SVG in modern browsers. Through the VMLRenderer, part of the `oldie.js`
+ * module, it also brings vector graphics to IE <= 8.
  *
  * An existing chart's renderer can be accessed through {@link Chart.renderer}.
  * The renderer can also be used completely decoupled from a chart.
@@ -2233,6 +2240,26 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	},
 
 	/**
+	 * A collection of characters mapped to HTML entities. When `useHTML` on an
+	 * element is true, these entities will be rendered correctly by HTML. In 
+	 * the SVG pseudo-HTML, they need to be unescaped back to simple characters,
+	 * so for example `&lt;` will render as `<`.
+	 *
+	 * @example
+	 * // Add support for unescaping quotes
+	 * Highcharts.SVGRenderer.prototype.escapes['"'] = '&quot;';
+	 * 
+	 * @type {Object}
+	 */
+	escapes: {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		"'": '&#39;', // eslint-disable-line quotes
+		'"': '&quot'
+	},
+
+	/**
 	 * Parse a simple HTML string into SVG tspans. Called internally when text
 	 *   is set on an SVGElement. The function supports a subset of HTML tags,
 	 *   CSS text features like `width`, `text-overflow`, `white-space`, and
@@ -2280,8 +2307,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 						tspan.getAttribute('style') ? tspan : textNode
 					).h;
 			},
-			unescapeAngleBrackets = function (inputStr) {
-				return inputStr.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+			unescapeEntities = function (inputStr) {
+				objectEach(renderer.escapes, function (value, key) {
+					inputStr = inputStr.replace(
+						new RegExp(value, 'g'),
+						key
+					);
+				});
+				return inputStr;
 			};
 
 		// The buildText code is quite heavy, so if we're not changing something
@@ -2308,7 +2341,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook
 		// used in text outline hack.
 		if (!hasMarkup && !textOutline && !ellipsis && !width && textStr.indexOf(' ') === -1) {
-			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
+			textNode.appendChild(doc.createTextNode(unescapeEntities(textStr)));
 
 		// Complex strings, add more logic
 		} else {
@@ -2377,7 +2410,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 							/*= } =*/
 						}
 
-						span = unescapeAngleBrackets(span.replace(/<(.|\n)*?>/g, '') || ' ');
+						span = unescapeEntities(span.replace(/<(.|\n)*?>/g, '') || ' ');
 
 						// Nested tags aren't supported, and cause crash in Safari (#1596)
 						if (span !== ' ') {
@@ -3091,8 +3124,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				// Initialize image to be 0 size so export will still function if there's no cached sizes.
 				obj.attr({ width: 0, height: 0 });
 
-				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
-				// the created element must be assigned to a variable in order to load (#292).
+				// Create a dummy JavaScript image to get the width and height. 
 				createElement('img', {
 					onload: function () {
 
@@ -3423,7 +3455,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = !svg && renderer.forExport,
 			wrapper,
 			attribs = {};
 
@@ -3441,13 +3472,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		wrapper = renderer.createElement('text')
 			.attr(attribs);
-
-		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)
-		if (fakeSVG) {
-			wrapper.css({
-				position: 'absolute'
-			});
-		}
 
 		if (!useHTML) {
 			wrapper.xSetter = function (value, key, element) {
