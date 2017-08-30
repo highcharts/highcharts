@@ -13,12 +13,6 @@ var each = H.each,
 	seriesType = H.seriesType;
 
 
-/*
- Wind barb series
- @todo
- - Use it in meteogram
- */
-
 seriesType('windbarb', 'column', {
 	arrowLength: 20,
 	lineWidth: 2,
@@ -33,8 +27,8 @@ seriesType('windbarb', 'column', {
 	},
 	yOffset: -20
 }, {
-	pointArrayMap: ['value', 'rotation'],
-	parallelArrays: ['x', 'value', 'rotation'],
+	pointArrayMap: ['value', 'direction'],
+	parallelArrays: ['x', 'value', 'direction'],
 	beaufortName: ['Calm', 'Light air', 'Light breeze',
 		'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
 		'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
@@ -86,7 +80,12 @@ seriesType('windbarb', 'column', {
 		];
 
 		if (level === 0) {
-			path = [];
+			path = this.chart.renderer.symbols.circle(
+				-10 * u,
+				-10 * u,
+				20 * u,
+				20 * u
+			);
 		}
 
 		if (level === 2) {
@@ -123,14 +122,16 @@ seriesType('windbarb', 'column', {
 		onSeriesMixin.translate.call(this);
 
 		each(this.points, function (point) {
+			var level = 0;
 			// Find the beaufort level (zero based)
-			for (var level = 0; level < beaufortFloor.length; level++) {
+			for (; level < beaufortFloor.length; level++) {
 				if (beaufortFloor[level] > point.value) {
-					point.beaufortLevel = level;
-					point.beaufort = beaufortName[level];	
 					break;
 				}
 			}
+			point.beaufortLevel = level - 1;
+			point.beaufort = beaufortName[level - 1];
+				
 		});
 
 	},
@@ -151,7 +152,7 @@ seriesType('windbarb', 'column', {
 					d: this.windArrow(point),
 					translateX: plotX,
 					translateY: plotY + this.options.yOffset,
-					rotation: point.rotation
+					rotation: point.direction
 				})
 				.attr(this.pointAttribs(point));
 
