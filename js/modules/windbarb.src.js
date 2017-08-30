@@ -17,7 +17,6 @@ var each = H.each,
  Wind barb series
  @todo
  - Hover effects (line width, hover color etc from pointAttribs)
- - Initial animation
  - Use it in meteogram
  */
 
@@ -153,5 +152,22 @@ seriesType('windbarb', 'column', {
 					this.options.arrowLength / 2
 			]; // #6327
 		}, this);
+	}, 
+
+	/**
+	 * Fade in the arrows on initiating series.
+	 */
+	animate: function (init) {
+		if (init) {
+			this.markerGroup.attr({
+				opacity: 0.01
+			});
+		} else {
+			this.markerGroup.animate({
+				opacity: 1
+			}, H.animObject(this.options.animation));
+
+			this.animate = null;
+		}
 	}
 });
