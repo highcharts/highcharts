@@ -9,7 +9,7 @@
 
 'use strict';
 import H from '../parts/Globals.js';
-import './DerivedSeriesMixin.js';
+import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var each = H.each,
 	objectEach = H.objectEach,
@@ -18,8 +18,7 @@ var each = H.each,
 	isNumber = H.isNumber,
 	arrayMax = H.arrayMax,
 	arrayMin = H.arrayMin,
-	merge = H.merge,
-	DerivedSeriesMixin = H.DerivedSeriesMixin;
+	merge = H.merge;
 
 /* ***************************************************************************
  *
@@ -146,7 +145,7 @@ seriesType('histogram', 'column', {
    * @product highcharts
    * @apioption series.histogram.data
    **/
-}, merge(DerivedSeriesMixin, {
+}, merge(derivedSeriesMixin, {
 	setDerivedData() {
 		var data = this.derivedData(
       this.baseSeries.yData,

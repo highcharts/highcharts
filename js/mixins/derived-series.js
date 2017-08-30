@@ -21,7 +21,7 @@ var each = H.each,
  * 
  * @mixin
  **/
-H.DerivedSeriesMixin = {
+var DerivedSeriesMixin = {
   /**
    * Initialise series
    *
@@ -134,3 +134,4 @@ wrap(H.Chart.prototype, 'linkSeries', function (p) {
 	fireEvent(this, 'seriesLinked');
 });
 
+export default DerivedSeriesMixin;

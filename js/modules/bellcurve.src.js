@@ -10,14 +10,13 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-import './DerivedSeriesMixin.js';
+import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var seriesType = H.seriesType,
 	correctFloat = H.correctFloat,
 	isNumber = H.isNumber,
 	merge = H.merge,
-	reduce = H.reduce,
-	DerivedSeriesMixin = H.DerivedSeriesMixin;
+	reduce = H.reduce;
 
 
 /* ***************************************************************************
@@ -132,7 +131,7 @@ seriesType('bellcurve', 'areaspline', {
    * @product highcharts
    * @apioption series.bellcurve.data
    **/
-}, merge(DerivedSeriesMixin, {
+}, merge(derivedSeriesMixin, {
 	setMean() {
 		this.mean = correctFloat(mean(this.baseSeries.yData));
 	},
