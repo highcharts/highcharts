@@ -845,13 +845,15 @@ RangeSelector.prototype = {
 			
 			rangeSelector.buttonGroup = buttonGroup = renderer.g('range-selector-buttons').add(group);
 
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), 15)
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(plotLeft + buttonPosition.x, plotLeft), 15)
 				.css(options.labelStyle)
 				.add(buttonGroup);
 
-			// button start position
-			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
+console.log('0', plotLeft, chart.plotLeft, chart.axisOffset, chart);
 
+			// button start position
+			buttonLeft = pick(plotLeft + buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
+console.log('1', plotLeft, chart.plotLeft, chart.axisOffset, chart);
 			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 
 				buttons[i] = renderer.button(
@@ -908,6 +910,9 @@ RangeSelector.prototype = {
 				rangeSelector.drawInput('max');
 			}
 		}
+
+		plotLeft = chart.plotLeft - chart.spacing[3];
+
 		rangeSelector.updateButtonStates();
 
 		// detect collisiton with exporting
@@ -925,17 +930,20 @@ RangeSelector.prototype = {
 			exportingX = -40; 
 		}
 
+//console.log('121999dddd1234s', exportingX, plotLeft, chart.spacing[3]);
 		// align button group
 		buttonGroup.align(extend({
 			y: pos.buttonTop,
 			width: buttonGroup.getBBox().width,
-			x: exportingX
+			x: plotLeft + exportingX
 		}, buttonPosition), true, chart.spacingBox);
+		
+//console.log('99291999dddd1234s MR', chart, chart.spacingBox, exportingX, plotLeft, buttonGroup.alignAttr.translateX, chart.spacing[3]);
 
 		// Set / update the group position
 		buttonGroup.attr({
 			translateY: pos.buttonTop,
-			translateX: buttonGroup.alignAttr.translateX + exportingX
+			translateX: ((plotLeft < 0) || (H.isNumber(chart.margin[3])) ? 0 : plotLeft) + exportingX
 		});
 
 		// skip animation
@@ -979,12 +987,13 @@ RangeSelector.prototype = {
 			});
 
 			// detect collision
-			inputGroupX = inputGroup.translateX + inputGroup.alignOptions.x - exportingX;
+			inputGroupX = inputGroup.translateX + inputGroup.alignOptions.x - exportingX + inputGroup.getBBox().x; // getBBox for detecing left margin
 			inputGroupWidth = inputGroup.alignOptions.width;
 
-			buttonGroupX = buttonGroup.translateX;
+			buttonGroupX = buttonGroup.translateX + buttonGroup.getBBox().x;
 			buttonGroupWidth = buttonGroup.getBBox().width + 10;
 
+//console.log('button', buttonGroup, buttonGroup.getBBox(), buttonGroupX, buttonGroupWidth, inputGroupX, inputGroup.getBBox()); // getBBox for detecing left margin
 
 			if (
 					(inputPosition.align === buttonPosition.align) || 
@@ -1037,11 +1046,15 @@ RangeSelector.prototype = {
 		minPosition = (inputPositionY < 0 && buttonPositionY < 0) ? 0 : groupOffsetY;
 		translateY = Math.floor(alignTranslateY - groupHeight - minPosition);
 		
+console.log('spacingtop', chart.plotTop, chart.spacing, chart, chart.options.chart.spacing, chart.userOptions.chart.spacing);
 
-		if (floating && verticalAlign === 'top') {
-			translateY = 0;
+		if (verticalAlign === 'top') {
+			if (floating) {
+				translateY = 0;
+			} else if (chart.spacing[0] !== chart.options.chart.spacing[0]) { // detect if spacing is customised
+				translateY -= (chart.spacing[0] - chart.options.chart.spacing[0]);
+			}
 		} else if (verticalAlign === 'middle') {
-
 			if (inputPositionY === buttonPositionY) {
 				if (inputPositionY < 0) {
 					translateY = alignTranslateY + minPosition;
@@ -1056,7 +1069,7 @@ RangeSelector.prototype = {
 				}
 			}
 		}
-		
+
 		rangeSelector.group.translate(0, Math.floor(translateY)); // floor to avoid crisp edges
 
 		// translate HTML inputs
@@ -1293,7 +1306,6 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 });
 
 wrap(Chart.prototype, 'update', function (proceed, options, callback) {
-
 	var chart = this,
 		rangeSelector = chart.rangeSelector,
 		verticalAlign;
