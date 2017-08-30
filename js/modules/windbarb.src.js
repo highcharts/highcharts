@@ -16,7 +16,6 @@ var each = H.each,
 /*
  Wind barb series
  @todo
- - Hover effects (line width, hover color etc from pointAttribs)
  - Use it in meteogram
  */
 
@@ -24,6 +23,11 @@ seriesType('windbarb', 'column', {
 	arrowLength: 20,
 	lineWidth: 2,
 	onSeries: null,
+	states: {
+		hover: {
+			lineWidthPlus: 0
+		}
+	},
 	tooltip: {
 		pointFormat: '<b>{series.name}</b>: {point.value} ({point.beaufort})<br/>'
 	},
@@ -42,10 +46,21 @@ seriesType('windbarb', 'column', {
 	/**
 	 * Get presentational attributes.
 	 */
-	pointAttribs: function () {
+	pointAttribs: function (point, state) {
+		var options = this.options,
+			stroke = this.color,
+			strokeWidth = this.options.lineWidth;
+
+		if (state) {
+			stroke = options.states[state].color || stroke;
+			strokeWidth =
+				(options.states[state].lineWidth || strokeWidth) + 
+				(options.states[state].lineWidthPlus || 0);
+		}
+
 		return {
-			'stroke': this.color,
-			'stroke-width': this.options.lineWidth
+			'stroke': stroke,
+			'stroke-width': strokeWidth
 		};
 	},
 	markerAttribs: function () {
