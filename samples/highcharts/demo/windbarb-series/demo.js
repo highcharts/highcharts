@@ -6,7 +6,7 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'Highcharts Wind Barbs Study'
+        text: 'Highcharts Wind Barbs'
     },
 
     xAxis: {

@@ -17,13 +17,14 @@ var each = H.each,
  @todo
  - Hover effects (line width, hover color etc from pointAttribs)
  - Option whether to position on Y value
- - Y offset option
- - Size option
  - Tooltip
  */
 
 seriesType('windbarb', 'line', {
+	yOffset: -20,
+	arrowLength: 20
 
+	// lineWidth
 }, {
 	pointArrayMap: ['y', 'z'],
 	parallelArrays: ['x', 'y', 'z'],
@@ -54,16 +55,17 @@ seriesType('windbarb', 'line', {
 	windArrow: function (y) {
 		var level,
 			path,
-			beaufortFloor = this.beaufortFloor;
+			beaufortFloor = this.beaufortFloor,
+			u = this.options.arrowLength / 20;
 
 		// The stem and the arrow head
 		path = [
-			'M', 0, 7, // base of arrow
-			'L', -1.5, 7,
-			0, 10,
-			1.5, 7,
-			0, 7,
-			0, -10 // top
+			'M', 0, 7 * u, // base of arrow
+			'L', -1.5 * u, 7 * u,
+			0, 10 * u,
+			1.5 * u, 7 * u,
+			0, 7 * u,
+			0, -10 * u// top
 		];
 
 		// Find the beaufort level (zero based)
@@ -78,27 +80,27 @@ seriesType('windbarb', 'line', {
 		}
 
 		if (level === 2) {
-			path.push('M', 0, -8, 'L', 4, -8); // short line
+			path.push('M', 0, -8 * u, 'L', 4 * u, -8 * u); // short line
 		} else if (level >= 3) {
-			path.push(0, -10, 7, -10); // long line
+			path.push(0, -10 * u, 7 * u, -10 * u); // long line
 		}
 
 		if (level === 4) {
-			path.push('M', 0, -7, 'L', 4, -7);
+			path.push('M', 0, -7 * u, 'L', 4 * u, -7 * u);
 		} else if (level >= 5) {
-			path.push('M', 0, -7, 'L', 7, -7);
+			path.push('M', 0, -7 * u, 'L', 7 * u, -7 * u);
 		}
 
 		if (level === 5) {
-			path.push('M', 0, -4, 'L', 4, -4);
+			path.push('M', 0, -4 * u, 'L', 4 * u, -4 * u);
 		} else if (level >= 6) {
-			path.push('M', 0, -4, 'L', 7, -4);
+			path.push('M', 0, -4 * u, 'L', 7 * u, -4 * u);
 		}
 
 		if (level === 7) {
-			path.push('M', 0, -1, 'L', 4, -1);
+			path.push('M', 0, -1 * u, 'L', 4 * u, -1 * u);
 		} else if (level >= 8) {
-			path.push('M', 0, -1, 'L', 7, -1);
+			path.push('M', 0, -1 * u, 'L', 7 * u, -1 * u);
 		}
 
 		return path;
@@ -115,7 +117,7 @@ seriesType('windbarb', 'line', {
 				.attr({
 					d: this.windArrow(point.y),
 					translateX: point.plotX,
-					translateY: point.plotY - 20,
+					translateY: point.plotY + this.options.yOffset,
 					rotation: point.z
 				})
 				.attr(this.pointAttribs(point));
