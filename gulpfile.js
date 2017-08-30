@@ -300,7 +300,7 @@ gulp.task('nightly', function () {
  * Automated generation for internal Class reference.
  * Run with --watch argument to watch for changes in the JS files.
  */
-const generateClassReferences = ({ templateDir, destination, callback }) => {
+const generateClassReferences = ({ templateDir, destination }) => {
     const jsdoc = require('gulp-jsdoc3');
     const sourceFiles = [
         'README.md',
@@ -354,7 +354,6 @@ const generateClassReferences = ({ templateDir, destination, callback }) => {
     return new Promise((resolve, reject) => {
         gulp.src(sourceFiles, { read: false })
             .pipe(jsdoc(optionsJSDoc, function (err) {
-                callback(err); // eslint-disable-line
                 if (err) {
                     reject(err);
                 } else {
@@ -863,6 +862,67 @@ const createAllExamples = () => new Promise((resolve) => {
 });
 
 /**
+ * Copy new current version files into a versioned folder
+ */
+const copyAPIFiles = (dist, version) => {
+    const B = require('./assembler/build.js');
+    const notVersionedFolder = (file) => !(
+        (file.split('/').length > 1) && // is folder
+        !isNaN(file.charAt(0)) // is numbered
+    );
+    const message = {
+        'start': 'Started process of copying API files from to a versioned folder.',
+        'successCopy': 'Finished with copying current API to '
+    };
+    console.log(message.start);
+    const paths = ['highcharts', 'highstock', 'highmaps'].reduce((obj, lib) => {
+        const files = B.getFilesInFolder(`${dist}/${lib}/`, true, '');
+        files
+            .filter(notVersionedFolder)
+            .forEach((filename) => {
+                const from = `${dist}/${lib}/${filename}`;
+                const to = `${dist}/${lib}/${version}/${filename}`;
+                obj[from] = to;
+            });
+        return obj;
+    }, {});
+    const promises = Object.keys(paths).map((from) => {
+        const to = paths[from];
+        return copyFile(from, to);
+    });
+    return Promise.all(promises).then(() => {
+        console.log(message.successCopy);
+    });
+};
+
+const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
+    const fs = require('fs');
+    // const generate = require('highcharts-api-doc-gen/lib/index.js');
+    const generate = require('./../api-docs/lib/index.js');
+    const message = {
+        'start': 'Started generating API documentation.',
+        'noSeries': 'Missing series in tree.json. Run merge script.',
+        'noTree': 'Missing tree.json. This task is dependent upon the jsdoc task.',
+        'success': 'Finished with my Special api.'
+    };
+    console.log(message.start);
+    if (fs.existsSync(input)) {
+        const json = JSON.parse(fs.readFileSync(input, 'utf8'));
+        if (!json.series) {
+            console.log(message.noSeries);
+            reject(new Error(message.noSeries));
+        }
+        generate(json, output, onlyBuildCurrent, () => {
+            console.log(message.success);
+            resolve(message.success);
+        });
+    } else {
+        console.log(message.noTree);
+        reject(message.noTree);
+    }
+});
+
+/**
  * Creates the Highcharts API
  *
  * @param {object} options The options for generating the API
@@ -874,77 +934,35 @@ const createAllExamples = () => new Promise((resolve) => {
  * @return {Promise} A Promise which resolves into undefined when done.
  */
 const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
-    // const generate = require('highcharts-api-doc-gen/lib/index.js');
-    const generate = require('./../api-docs/lib/index.js');
-
-    const fs = require('fs');
     const version = getBuildProperties().version;
     const message = {
-        'noSeries': 'Missing series in tree.json. Run merge script.',
-        'noTree': 'Missing tree.json. This task is dependent upon the jsdoc task.',
-        'successGenerate': 'Finished with my Special api.',
-        'successCopy': 'Finished with copying current API to '
+        'successJSDoc': colors.green('Created tree.json')
+    };
+    const sourceFiles = [
+        './js/modules',
+        './js/parts',
+        './js/parts-3d',
+        './js/parts-more',
+        './js/parts-map',
+        './js/supplemental.docs.js'
+    ];
+    const configJSDoc = {
+        plugins: ['./tools/jsdoc/plugins/highcharts.jsdoc']
     };
     const jsdoc = require('gulp-jsdoc3');
-
-    // jsdoc js/modules js/parts js/parts-3d js/parts-more js/parts-map js/supplemental.docs.js -c jsdoc.json
     return new Promise((resolve, reject) => {
-
-        gulp.src([
-            './js/modules',
-            './js/parts',
-            './js/parts-3d',
-            './js/parts-more',
-            './js/parts-map',
-            './js/supplemental.docs.js'
-        ], { read: false })
-            .pipe(jsdoc({
-                plugins: [
-                    './tools/jsdoc/plugins/highcharts.jsdoc'
-                ]
-            }, function (err) {
-                if (!err) {
-                    console.log(
-                        colors.green('Created tree.json')
-                    );
-
-
-                    if (fs.existsSync(treeFile)) {
-                        const json = JSON.parse(fs.readFileSync(treeFile, 'utf8'));
-                        if (!json.series) {
-                            reject(message.noSeries);
-                        }
-                        generate(json, output, onlyBuildCurrent, function () {
-                            resolve(message.successGenerate);
-                        });
-                    } else {
-                        reject(message.noTree);
-                    }
-                } else {
-                    reject('Error building tree.json');
-                }
-            }));
-    }).then((resolve) => {
-        /**
-         * Copy new current version files into a versioned folder
-         */
-        const B = require('./assembler/build.js');
-        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-            const files = B.getFilesInFolder(`${output}/${lib}/`, true, '');
-            files.filter((file) => {
-                // Filter away versioned folders
-                return !(
-                    (file.split('/').length > 1) && // is folder
-                    !isNaN(file.charAt(0)) // is numbered
-                );
-            }).forEach((file) => {
-                copyFile(`${output}/${lib}/${file}`, `${output}/${lib}/${version}/${file}`);
-            });
-        });
-        resolve(message.successCopy);
+        gulp.src(sourceFiles, { read: false })
+        .pipe(jsdoc(configJSDoc, (err) => {
+            if (!err) {
+                console.log(message.successJSDoc);
+                resolve(message.successJSDoc);
+            } else {
+                reject(err);
+            }
+        }));
     })
-    .then(console.log)
-    .catch(console.log);
+    .then(() => generateAPI(treeFile, output, onlyBuildCurrent))
+    .then(() => copyAPIFiles(output, version));
 };
 
 const uploadAPIDocs = () => {
@@ -999,11 +1017,10 @@ let apiServerRunning = false;
 /**
  * Create Highcharts API and class refrences from JSDOC
  */
-gulp.task('jsdoc', (cb) => {
+gulp.task('jsdoc', () => {
     const optionsClassReference = {
         templateDir: './../highcharts-docstrap',
-        destination: './build/api/class-reference/',
-        callback: cb
+        destination: './build/api/class-reference/'
     };
     const optionsAPI = {
         treeFile: './tree.json',
