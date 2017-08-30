@@ -132,15 +132,15 @@ seriesType('bellcurve', 'areaspline', {
    * @apioption series.bellcurve.data
    **/
 }, merge(derivedSeriesMixin, {
-	setMean() {
+	setMean: function () {
 		this.mean = correctFloat(mean(this.baseSeries.yData));
 	},
 
-	setStandardDeviation() {
+	setStandardDeviation: function () {
 		this.standardDeviation = correctFloat(standardDeviation(this.baseSeries.yData, this.mean));
 	},
 
-	setDerivedData() {
+	setDerivedData: function () {
 		if (this.baseSeries.yData.length > 1) {
 			this.setMean();
 			this.setStandardDeviation();
@@ -148,7 +148,7 @@ seriesType('bellcurve', 'areaspline', {
 		}
 	},
 
-	derivedData(mean, standardDeviation) {
+	derivedData: function (mean, standardDeviation) {
 		var intervals = this.options.intervals,
 			pointsInInterval = this.options.pointsInInterval,
 			x = mean - intervals * standardDeviation,

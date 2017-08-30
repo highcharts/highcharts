@@ -146,7 +146,7 @@ seriesType('histogram', 'column', {
    * @apioption series.histogram.data
    **/
 }, merge(derivedSeriesMixin, {
-	setDerivedData() {
+	setDerivedData: function () {
 		var data = this.derivedData(
       this.baseSeries.yData,
       this.binsNumber(),
@@ -156,7 +156,7 @@ seriesType('histogram', 'column', {
 		this.setData(data, false);
 	},
 
-	derivedData(baseData, binsNumber, binWidth) {
+	derivedData: function (baseData, binsNumber, binWidth) {
 		var max = arrayMax(baseData),
 			min = arrayMin(baseData),
 			frequencies = {},
@@ -187,7 +187,7 @@ seriesType('histogram', 'column', {
 		return data;
 	},
 
-	binsNumber() {
+	binsNumber: function () {
 		var binsNumberOption = this.options.binsNumber;
 		var binsNumber = binsNumberFormulas[binsNumberOption] || typeof binsNumberOption === 'function';
 
