@@ -94,6 +94,7 @@ extend(defaultOptions, {
 		 * @default undefined
 		 * @since 2.1.9
 		 * @product highstock
+		 * @deprecated true
 		 */
 		height: undefined, // reserved space for buttons and input
 
@@ -828,6 +829,7 @@ RangeSelector.prototype = {
 			legendHeight,
 			minPosition,
 			translateY,
+			translateX,
 			groupOffsetY;
 
 		if (options.enabled === false) {
@@ -845,12 +847,12 @@ RangeSelector.prototype = {
 			
 			rangeSelector.buttonGroup = buttonGroup = renderer.g('range-selector-buttons').add(group);
 
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), 15)
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(plotLeft + buttonPosition.x, plotLeft), 15)
 				.css(options.labelStyle)
 				.add(buttonGroup);
 
 			// button start position
-			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
+			buttonLeft = pick(plotLeft + buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
 
 			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 
@@ -908,6 +910,9 @@ RangeSelector.prototype = {
 				rangeSelector.drawInput('max');
 			}
 		}
+
+		plotLeft = chart.plotLeft - chart.spacing[3];
+
 		rangeSelector.updateButtonStates();
 
 		// detect collisiton with exporting
@@ -931,11 +936,20 @@ RangeSelector.prototype = {
 			width: buttonGroup.getBBox().width,
 			x: exportingX
 		}, buttonPosition), true, chart.spacingBox);
+		
+		translateX = buttonGroup.alignAttr.translateX + exportingX;
+		
+		// detect left offset (axis title) or margin
+		if (buttonPosition.align === 'left') {
+			translateX += ((plotLeft < 0) || (H.isNumber(chart.margin[3])) ? 0 : plotLeft) - chart.spacing[3];
+		} else if (buttonPosition.align === 'right') {
+			translateX -= chart.spacing[1] + (H.isNumber(chart.margin[3]) ? plotLeft : 0);
+		} 
 
 		// Set / update the group position
 		buttonGroup.attr({
 			translateY: pos.buttonTop,
-			translateX: buttonGroup.alignAttr.translateX + exportingX
+			translateX: translateX
 		});
 
 		// skip animation
@@ -969,22 +983,29 @@ RangeSelector.prototype = {
 			// Update the alignment to the updated spacing box
 			inputGroup.align(extend({
 				y: pos.inputTop,
-				width: inputGroup.offset
+				width: buttonGroup.getBBox().width
 			}, inputPosition), true, chart.spacingBox);
+
+			translateX = inputGroup.alignAttr.translateX + exportingX;
+			
+			if (inputPosition.align === 'left') {
+				translateX += plotLeft;
+			} else if (inputPosition.align === 'right') {
+				translateX -= chart.spacing[1];
+			} 
 
 			// add y from user options
 			inputGroup.attr({
 				translateY: pos.inputTop + 10,
-				translateX: inputGroup.alignAttr.translateX + exportingX
+				translateX: translateX
 			});
 
 			// detect collision
-			inputGroupX = inputGroup.translateX + inputGroup.alignOptions.x - exportingX;
+			inputGroupX = inputGroup.translateX + inputGroup.alignOptions.x - exportingX + inputGroup.getBBox().x; // getBBox for detecing left margin
 			inputGroupWidth = inputGroup.alignOptions.width;
 
-			buttonGroupX = buttonGroup.translateX;
+			buttonGroupX = buttonGroup.translateX + buttonGroup.getBBox().x;
 			buttonGroupWidth = buttonGroup.getBBox().width + 10;
-
 
 			if (
 					(inputPosition.align === buttonPosition.align) || 
@@ -1037,11 +1058,13 @@ RangeSelector.prototype = {
 		minPosition = (inputPositionY < 0 && buttonPositionY < 0) ? 0 : groupOffsetY;
 		translateY = Math.floor(alignTranslateY - groupHeight - minPosition);
 		
-
-		if (floating && verticalAlign === 'top') {
-			translateY = 0;
+		if (verticalAlign === 'top') {
+			if (floating) {
+				translateY = 0;
+			} else if (chart.spacing[0] !== chart.options.chart.spacing[0]) { // detect if spacing is customised
+				translateY -= (chart.spacing[0] - chart.options.chart.spacing[0]);
+			}
 		} else if (verticalAlign === 'middle') {
-
 			if (inputPositionY === buttonPositionY) {
 				if (inputPositionY < 0) {
 					translateY = alignTranslateY + minPosition;
@@ -1056,7 +1079,7 @@ RangeSelector.prototype = {
 				}
 			}
 		}
-		
+
 		rangeSelector.group.translate(0, Math.floor(translateY)); // floor to avoid crisp edges
 
 		// translate HTML inputs
@@ -1322,6 +1345,26 @@ wrap(Chart.prototype, 'update', function (proceed, options, callback) {
 		}
 	}), callback);
 
+});
+
+wrap(Chart.prototype, 'redraw', function (proceed, options, callback) {
+	var chart = this,
+		rangeSelector = chart.rangeSelector,
+		verticalAlign;
+
+	if (rangeSelector && !rangeSelector.options.floating) {
+
+		rangeSelector.render();
+		verticalAlign = rangeSelector.options.verticalAlign;
+
+		if (verticalAlign === 'bottom') {
+			this.extraBottomMargin = true;
+		} else if (verticalAlign !== 'middle') {
+			this.extraTopMargin = true;
+		}
+	}
+
+	proceed.call(this, options, callback);
 });
 
 Chart.prototype.callbacks.push(function (chart) {
