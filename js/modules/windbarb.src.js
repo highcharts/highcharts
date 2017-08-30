@@ -17,14 +17,17 @@ var each = H.each,
  Wind barb series
  @todo
  - Hover effects (line width, hover color etc from pointAttribs)
- - Tooltip
  - Initial animation
+ - Use it in meteogram
  */
 
 seriesType('windbarb', 'column', {
 	arrowLength: 20,
 	lineWidth: 2,
 	onSeries: null,
+	tooltip: {
+		pointFormat: '<b>{series.name}</b>: {point.value} ({point.beaufort})<br/>'
+	},
 	yOffset: -20
 }, {
 	pointArrayMap: ['value', 'rotation'],
@@ -35,6 +38,7 @@ seriesType('windbarb', 'column', {
 		'Violent storm', 'Hurricane'],
 	beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
 		24.5, 28.5, 32.7],
+	trackerGroups: ['markerGroup'],
 
 	/**
 	 * Get presentational attributes.
@@ -52,10 +56,9 @@ seriesType('windbarb', 'column', {
 	 * Create a single wind arrow. It is later rotated around the zero
 	 * centerpoint.
 	 */
-	windArrow: function (value) {
-		var level,
+	windArrow: function (point) {
+		var level = point.beaufortLevel,
 			path,
-			beaufortFloor = this.beaufortFloor,
 			u = this.options.arrowLength / 20;
 
 		// The stem and the arrow head
@@ -67,13 +70,6 @@ seriesType('windbarb', 'column', {
 			0, 7 * u,
 			0, -10 * u// top
 		];
-
-		// Find the beaufort level (zero based)
-		for (level = 0; level < beaufortFloor.length; level++) {
-			if (beaufortFloor[level] > value) {
-				break;
-			}
-		}
 
 		if (level === 0) {
 			path = [];
@@ -106,23 +102,56 @@ seriesType('windbarb', 'column', {
 		return path;
 	},
 
-	translate: onSeriesMixin.translate,
+	translate: function () {
+		var beaufortFloor = this.beaufortFloor,
+			beaufortName = this.beaufortName;
+
+		onSeriesMixin.translate.call(this);
+
+		each(this.points, function (point) {
+			// Find the beaufort level (zero based)
+			for (var level = 0; level < beaufortFloor.length; level++) {
+				if (beaufortFloor[level] > point.value) {
+					point.beaufortLevel = level;
+					point.beaufort = beaufortName[level];	
+					break;
+				}
+			}
+		});
+
+	},
 
 	drawPoints: function () {
+		var chart = this.chart,
+			yAxis = this.yAxis;
 		each(this.points, function (point) {
+			var plotX = point.plotX,
+				plotY = point.plotY;
 			if (!point.graphic) {
 				point.graphic = this.chart.renderer
 					.path()
-					.add(this.group);
+					.add(this.markerGroup);
 			}
 			point.graphic
 				.attr({
-					d: this.windArrow(point.value),
-					translateX: point.plotX,
-					translateY: point.plotY + this.options.yOffset,
+					d: this.windArrow(point),
+					translateX: plotX,
+					translateY: plotY + this.options.yOffset,
 					rotation: point.rotation
 				})
 				.attr(this.pointAttribs(point));
+
+			// Set the tooltip anchor position
+			point.tooltipPos = chart.inverted ? 
+			[
+				yAxis.len + yAxis.pos - chart.plotLeft - plotY,
+				this.xAxis.len - plotX
+			] :
+			[
+				plotX,
+				plotY + yAxis.pos - chart.plotTop + this.options.yOffset -
+					this.options.arrowLength / 2
+			]; // #6327
 		}, this);
 	}
 });
