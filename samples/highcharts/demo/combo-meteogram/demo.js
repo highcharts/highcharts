@@ -625,7 +625,7 @@ Meteogram.prototype.parseYrData = function () {
             meteogram.winds.push({
                 x: (from + to) / 2,
                 value: parseFloat(time.windSpeed['@attributes'].mps),
-                rotation: parseFloat(time.windDirection['@attributes'].deg)
+                direction: parseFloat(time.windDirection['@attributes'].deg)
             });
         }
 

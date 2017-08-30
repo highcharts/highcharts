@@ -27,8 +27,8 @@ seriesType('windbarb', 'column', {
 	},
 	yOffset: -20
 }, {
-	pointArrayMap: ['value', 'rotation'],
-	parallelArrays: ['x', 'value', 'rotation'],
+	pointArrayMap: ['value', 'direction'],
+	parallelArrays: ['x', 'value', 'direction'],
 	beaufortName: ['Calm', 'Light air', 'Light breeze',
 		'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
 		'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
@@ -152,7 +152,7 @@ seriesType('windbarb', 'column', {
 					d: this.windArrow(point),
 					translateX: plotX,
 					translateY: plotY + this.options.yOffset,
-					rotation: point.rotation
+					rotation: point.direction
 				})
 				.attr(this.pointAttribs(point));
 
