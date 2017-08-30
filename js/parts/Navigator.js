@@ -1478,10 +1478,11 @@ Navigator.prototype = {
 
 		// Go through each base series and merge the options to create new series
 		if (baseSeries && baseSeries.length) {
-			each(baseSeries, function (base, i) {
+			each(baseSeries, function (base) {
 				var linkedNavSeries = base.navigatorSeries,
 					userNavOptions = !isArray(chartNavigatorSeriesOptions) ?
-						chartNavigatorSeriesOptions : {};
+							chartNavigatorSeriesOptions :
+							defaultOptions.navigator.series;
 
 				// Don't update if the series exists in nav and we have disabled
 				// adaptToUpdatedData.
@@ -1492,7 +1493,7 @@ Navigator.prototype = {
 					return;
 				}
 
-				navSeriesMixin.name = 'Navigator ' + (i + 1);
+				navSeriesMixin.name = 'Navigator ' + baseSeries.length;
 
 				baseOptions = base.options || {};
 				baseNavigatorOptions = baseOptions.navigatorOptions || {};
@@ -1531,7 +1532,9 @@ Navigator.prototype = {
 			// Allow navigator.series to be an array
 			chartNavigatorSeriesOptions = H.splat(chartNavigatorSeriesOptions);
 			each(chartNavigatorSeriesOptions, function (userSeriesOptions, i) {
+				navSeriesMixin.name = 'Navigator ' + (navigatorSeries.length + 1);
 				mergedNavSeriesOptions = merge(
+					defaultOptions.navigator.series, 
 					{
 						// Since we don't have a base series to pull color from,
 						// try to fake it by using color from series with same
@@ -1545,8 +1548,8 @@ Navigator.prototype = {
 							chart.options.colors[i] ||
 							chart.options.colors[0]
 					},
-					userSeriesOptions,
-					navSeriesMixin
+					navSeriesMixin,
+					userSeriesOptions
 				);
 				mergedNavSeriesOptions.data = userSeriesOptions.data;
 				if (mergedNavSeriesOptions.data) {
