@@ -108,7 +108,7 @@
 					return ((c - l) - (h - c)) / (h - l);
 				}
 
-				return isValid ? getMoneyFlowMultiplier(high, low, close) * volume : (nullIndex = i, null);
+				return isValid ? getMoneyFlowMultiplier(high, low, close) * volume : ((nullIndex = i), null);
 			}
 
 
