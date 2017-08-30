@@ -17,6 +17,7 @@ var each = H.each,
  Wind barb series
  @todo
  - Use it in meteogram
+ - Calm (circle)
  */
 
 seriesType('windbarb', 'column', {
