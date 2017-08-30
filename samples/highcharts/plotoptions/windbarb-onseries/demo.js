@@ -8,8 +8,7 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        type: 'datetime',
-        offset: 40
+        type: 'datetime'
     },
 
     plotOptions: {
@@ -21,6 +20,7 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'area',
+        id: 'wind-speed',
         keys: ['y', 'rotation'], // rotation is not used here
         data: [
             [9.8, 177.9],
@@ -65,6 +65,7 @@ Highcharts.chart('container', {
         }
     }, {
         type: 'windbarb',
+        onSeries: 'wind-speed',
         data: [
             [9.8, 177.9],
             [10.1, 177.2],

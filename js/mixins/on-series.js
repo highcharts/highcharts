@@ -44,7 +44,10 @@ var onSeriesMixin = {
 		if (onSeries && onSeries.visible && i) {
 			xOffset = (onSeries.pointXOffset || 0) + (onSeries.barW || 0) / 2;
 			currentDataGrouping = onSeries.currentDataGrouping;
-			lastX = onData[i - 1].x + (currentDataGrouping ? currentDataGrouping.totalRange : 0); // #2374
+			lastX = (
+				onData[i - 1].x +
+				(currentDataGrouping ? currentDataGrouping.totalRange : 0)
+			); // #2374
 
 			// sort the data points
 			stableSort(points, function (a, b) {
@@ -65,8 +68,13 @@ var onSeriesMixin = {
 							rightPoint = onData[i + 1];
 							if (rightPoint && rightPoint[onKey] !== undefined) {
 								point.plotY +=
-									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1
-									(rightPoint[onKey] - leftPoint[onKey]); // the y distance
+									// the distance ratio, between 0 and 1
+									(
+										(point.x - leftPoint.x) /
+										(rightPoint.x - leftPoint.x)
+									) * 
+									// the y distance
+									(rightPoint[onKey] - leftPoint[onKey]);
 							}
 						}
 					}

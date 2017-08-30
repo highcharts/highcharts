@@ -7,27 +7,28 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
+import onSeriesMixin from '../mixins/on-series.js';
 
 var each = H.each,
 	seriesType = H.seriesType;
 
 
 /*
- Wind barb study
+ Wind barb series
  @todo
  - Hover effects (line width, hover color etc from pointAttribs)
- - Option whether to position on Y value
  - Tooltip
+ - Initial animation
  */
 
-seriesType('windbarb', 'line', {
-	yOffset: -20,
-	arrowLength: 20
-
-	// lineWidth
+seriesType('windbarb', 'column', {
+	arrowLength: 20,
+	lineWidth: 2,
+	onSeries: null,
+	yOffset: -20
 }, {
-	pointArrayMap: ['y', 'z'],
-	parallelArrays: ['x', 'y', 'z'],
+	pointArrayMap: ['value', 'rotation'],
+	parallelArrays: ['x', 'value', 'rotation'],
 	beaufortName: ['Calm', 'Light air', 'Light breeze',
 		'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
 		'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
@@ -36,13 +37,12 @@ seriesType('windbarb', 'line', {
 		24.5, 28.5, 32.7],
 
 	/**
-	 * Get presentational attributes for marker-based series (line, spline,
-	 * scatter, bubble, mappoint...)
+	 * Get presentational attributes.
 	 */
 	pointAttribs: function () {
 		return {
 			'stroke': this.color,
-			'stroke-width': this.options.lineWidth || 2
+			'stroke-width': this.options.lineWidth
 		};
 	},
 	markerAttribs: function () {
@@ -52,7 +52,7 @@ seriesType('windbarb', 'line', {
 	 * Create a single wind arrow. It is later rotated around the zero
 	 * centerpoint.
 	 */
-	windArrow: function (y) {
+	windArrow: function (value) {
 		var level,
 			path,
 			beaufortFloor = this.beaufortFloor,
@@ -70,7 +70,7 @@ seriesType('windbarb', 'line', {
 
 		// Find the beaufort level (zero based)
 		for (level = 0; level < beaufortFloor.length; level++) {
-			if (beaufortFloor[level] > y) {
+			if (beaufortFloor[level] > value) {
 				break;
 			}
 		}
@@ -106,6 +106,8 @@ seriesType('windbarb', 'line', {
 		return path;
 	},
 
+	translate: onSeriesMixin.translate,
+
 	drawPoints: function () {
 		each(this.points, function (point) {
 			if (!point.graphic) {
@@ -115,10 +117,10 @@ seriesType('windbarb', 'line', {
 			}
 			point.graphic
 				.attr({
-					d: this.windArrow(point.y),
+					d: this.windArrow(point.value),
 					translateX: point.plotX,
 					translateY: point.plotY + this.options.yOffset,
-					rotation: point.z
+					rotation: point.rotation
 				})
 				.attr(this.pointAttribs(point));
 		}, this);
