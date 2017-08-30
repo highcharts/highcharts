@@ -148,8 +148,9 @@ H.Tick.prototype = {
 		// it. If it now overshoots the slotWidth, add ellipsis.
 		if (!rotation) {
 
+			// Check overlap against previous (#5163)
 			prev = axis.ticks[axis.tickPositions[this.index - 1]];
-			if (prev) {
+			if (prev && prev.label && prev.label.xy) {
 				leftBound =
 					prev.label.xy.x + prev.label.getBBox().width * factor;
 			}
