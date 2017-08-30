@@ -211,7 +211,7 @@ gulp.task('default', ['styles', 'scripts'], () => {
     // If styling changes, then build new css and js files.
     gulp.watch(['./css/*.scss'], ['styles', 'scripts']);
     // If js parts files changes, then build new js files.
-    gulp.watch(['./js/!(adapters|builds)/*.js'], ['scripts']);
+    gulp.watch(['./js/!(adapters|builds)/*.js', './js/modules/indicators/*.js'], ['scripts']);
 });
 
 gulp.task('ftp', function () {
@@ -892,6 +892,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
 
         gulp.src([
             './js/modules',
+            './js/modules/indicators',
             './js/parts',
             './js/parts-3d',
             './js/parts-more',
@@ -1013,6 +1014,7 @@ gulp.task('jsdoc', (cb) => {
     const dir = optionsClassReference.templateDir;
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
+        './js/modules/indicators/*.js',
         './../api-docs/include/*.*',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
