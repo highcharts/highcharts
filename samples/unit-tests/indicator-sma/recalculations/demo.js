@@ -19,7 +19,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period,
+        chart.series[1].points.length + chart.series[1].options.params.period - 1,
         'Initial number of SMA points is correct'
     );
 
@@ -27,21 +27,21 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period,
+        chart.series[1].points.length + chart.series[1].options.params.period - 1,
         'After addPoint number of SMA points is correct'
     );
 
-    chart.series[0].setData([11,12,13,14,15,16,17], false);
+    chart.series[0].setData([11, 12, 13, 14, 15, 16, 17], false);
     chart.series[1].update({
         color: 'red',
         params: {
-            period: 3
+            period: 5
         }
     });
 
     assert.deepEqual(
         chart.series[1].yData,
-        [13, 14, 15, 16],
+        [13, 14, 15],
         'Correctl values'
     );
 
@@ -55,7 +55,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         chart.series[1].yData,
-        [13, 14, 15],
+        [13, 14],
         'Correct values after point.remove()'
     );
 });

@@ -153,7 +153,7 @@ seriesType('sma', 'line',
 				xVal = series.xData,
 				yVal = series.yData,
 				yValLen = yVal.length,
-				range = 1,
+				range = 0,
 				sum = 0,
 				SMA = [],
 				xData = [],
@@ -162,7 +162,7 @@ seriesType('sma', 'line',
 				i,
 				SMAPoint;
 
-			if (xVal.length <= period) {
+			if (xVal.length < period) {
 				return false;
 			}
   
@@ -172,25 +172,21 @@ seriesType('sma', 'line',
 			}
 
 			// Accumulate first N-points
-			while (range <= period) {
+			while (range < period - 1) {
 				sum += index < 0 ? yVal[range] : yVal[range][index];
 				range++;
 			}
 
 			// Calculate value one-by-one for each period in visible data
-			for (i = period; i < yValLen; i++) {
+			for (i = range; i < yValLen; i++) {
+				sum += index < 0 ? yVal[i] : yVal[i][index];
+
 				SMAPoint = [xVal[i], sum / period];
 				SMA.push(SMAPoint);
 				xData.push(SMAPoint[0]);
 				yData.push(SMAPoint[1]);
 
-				if (index < 0) {
-					sum += yVal[i];
-					sum -= yVal[i - period];
-				} else {
-					sum += yVal[i][index];
-					sum -= yVal[i - period][index];
-				}
+				sum -= index < 0 ? yVal[i - range] : yVal[i - range][index];
 			}
 
 			return {
