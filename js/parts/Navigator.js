@@ -1397,9 +1397,12 @@ Navigator.prototype = {
 	 * Set the base series and update the navigator series from this. With a bit 
 	 * of modification we should be able to make this an API method to be called 
 	 * from the outside
-	 * @param {Object} baseSeriesOptions - additional series options for a navigator
+	 * @param  {Object} baseSeriesOptions
+	 *         Additional series options for a navigator
+	 * @param  {Boolean} [redraw]
+	 *         Whether to redraw after update.
 	 */
-	setBaseSeries: function (baseSeriesOptions) {
+	setBaseSeries: function (baseSeriesOptions, redraw) {
 		var chart = this.chart,
 			baseSeries = this.baseSeries = [];
 
@@ -1424,7 +1427,7 @@ Navigator.prototype = {
 			
 		// When run after render, this.xAxis already exists
 		if (this.xAxis && !this.xAxis.fake) {
-			this.updateNavigatorSeries();
+			this.updateNavigatorSeries(redraw);
 		}
 	},
 
@@ -1432,7 +1435,7 @@ Navigator.prototype = {
 	 * Update series in the navigator from baseSeries, adding new if does not
 	 * exist.
 	 */
-	updateNavigatorSeries: function () {
+	updateNavigatorSeries: function (redraw) {
 		var navigator = this,
 			chart = navigator.chart,
 			baseSeries = navigator.baseSeries,
@@ -1478,7 +1481,7 @@ Navigator.prototype = {
 
 		// Go through each base series and merge the options to create new series
 		if (baseSeries && baseSeries.length) {
-			each(baseSeries, function (base) {
+			each(baseSeries, function eachBaseSeries(base) {
 				var linkedNavSeries = base.navigatorSeries,
 					userNavOptions = !isArray(chartNavigatorSeriesOptions) ?
 							chartNavigatorSeriesOptions :
@@ -1511,7 +1514,7 @@ Navigator.prototype = {
 
 				// Update or add the series
 				if (linkedNavSeries) {
-					linkedNavSeries.update(mergedNavSeriesOptions);
+					linkedNavSeries.update(mergedNavSeriesOptions, redraw);
 				} else {
 					base.navigatorSeries = chart.initSeries(mergedNavSeriesOptions);
 					base.navigatorSeries.baseSeries = base; // Store ref
@@ -1896,7 +1899,7 @@ wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, an
 wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation) {
 	var series = proceed.call(this, options, false, animation);
 	if (this.navigator) {
-		this.navigator.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
+		this.navigator.setBaseSeries(null, false); // Recompute which series should be shown in navigator, and add them
 	}
 	if (pick(redraw, true)) {
 		this.redraw();
@@ -1908,7 +1911,7 @@ wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation
 wrap(Series.prototype, 'update', function (proceed, newOptions, redraw) {
 	proceed.call(this, newOptions, false);
 	if (this.chart.navigator && !this.options.isInternal) {
-		this.chart.navigator.setBaseSeries();
+		this.chart.navigator.setBaseSeries(null, false);
 	}
 	if (pick(redraw, true)) {
 		this.chart.redraw();
