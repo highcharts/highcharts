@@ -99,7 +99,11 @@ seriesType('sma', 'line',
 				var processedData = indicator.getValues(
 					indicator.linkedParent,
 					indicator.options.params
-				);
+				) || {
+					values: [],
+					xData: [],
+					yData: []
+				};
 
 				indicator.xData = processedData.xData;
 				indicator.yData = processedData.yData;
