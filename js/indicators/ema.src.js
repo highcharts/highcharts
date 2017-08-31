@@ -1,40 +1,94 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-	var isArray = H.isArray;
+var isArray = H.isArray,
+	seriesType = H.seriesType;
 
-	// Utils:
-	function accumulateAverage(points, xVal, yVal, i, index) {
-		var xValue = xVal[i],
-			yValue = index < 0 ? yVal[i] : yVal[i][index];
-			
-		points.push([xValue, yValue]);
-	}
+// Utils:
+function accumulateAverage(points, xVal, yVal, i, index) {
+	var xValue = xVal[i],
+		yValue = index < 0 ? yVal[i] : yVal[i][index];
+		
+	points.push([xValue, yValue]);
+}
 
-	function populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index) {
-		var x = xVal[i - 1],
-			yValuePrev = index < 0 ? yVal[i - 2] : yVal[i - 2][index],
-			yValue = index < 0 ? yVal[i - 1] : yVal[i - 1][index],
-			prevPoint, y;
+function populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index) {
+	var x = xVal[i - 1],
+		yValuePrev = index < 0 ? yVal[i - 2] : yVal[i - 2][index],
+		yValue = index < 0 ? yVal[i - 1] : yVal[i - 1][index],
+		prevPoint, y;
 
-		prevPoint = calEMA === 0 ? yValuePrev : calEMA;
-		y = ((yValue * EMApercent) + (prevPoint * (1 - EMApercent)));
+	prevPoint = calEMA === 0 ? yValuePrev : calEMA;
+	y = ((yValue * EMApercent) + (prevPoint * (1 - EMApercent)));
 
-		return [x, y];
-	}
-
-	H.seriesType('ema', 'sma', {
+	return [x, y];
+}
+/**
+ * The EMA series type.
+ *
+ * @constructor seriesTypes.ema
+ * @augments seriesTypes.line
+ */
+seriesType('ema', 'sma', 
+	/**
+	 * Exponential moving average indicator (EMA). This series requires `linkedTo` option to be set.
+	 * 
+	 * @extends {plotOptions.line}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/ema Exponential moving average indicator
+	 * @since 6.0.0
+	 * @excluding
+	 * 			allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
+	 * 			showInNavigator,navigatorOptions,pointInterval,pointIntervalUnit,
+	 *			pointPlacement,pointRange,pointStart
+	 * @optionparent plotOptions.ema
+	 */
+	{
+		/**
+		 * The series name.
+		 * 
+		 * @type {String}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		name: 'EMA (14)',
+		tooltip: {
+			/**
+			 * Number of decimals in indicator series.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			valueDecimals: 4
+		},
+		/**
+		 * The main series ID that indicator will be based on. Required for this indicator.
+		 * 
+		 * @type {String}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
+		linkedTo: undefined,
 		params: {
-			period: 14,
-			index: 0
+			/**
+			 * The point index which indicator calculations will base.
+			 * For example using OHLC data, index=2 means SMA will be calculated using Low values.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			index: 0,
+			/**
+			 * The base period for indicator calculations.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			period: 14
 		}
 	}, {
 		getValues: function (series, params) {
@@ -97,4 +151,31 @@
 			};
 		}
 	});
-}));
+
+/**
+ * A `EMA` series. If the [type](#series.ema.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * ema](#plotOptions.ema).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.ema
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.ema
+ */
+
+/**
+ * An array of data points for the series. For the `EMA` series type,
+ * points are calculated dynamically.
+ * 
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.line.data
+ * @product highstock
+ * @apioption series.ema.data
+ */
