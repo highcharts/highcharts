@@ -80,13 +80,13 @@ seriesType('wma', 'sma',
 				index = -1,
 				i, points, WMAPoint;
 			
-			if (xVal.length <= period) {
+			if (xVal.length < period) {
 				return false;
 			}
 			
 			// Switch index for OHLC / Candlestick
 			if (isArray(yVal[0])) {
-				index = params.index ? params.index : 3;
+				index = params.index;
 				yValue = yVal[0][index];
 			}
 			// Starting point
