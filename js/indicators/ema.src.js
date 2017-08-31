@@ -114,8 +114,8 @@ seriesType('ema', 'sma',
  * 
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * ema](#plotOptions.ema).
+ * To apply to all series of this specific type, apply it to 
+ * [plotOptions.ema](#plotOptions.ema).
  * 
  * @type {Object}
  * @since 6.0.0
