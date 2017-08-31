@@ -119,15 +119,7 @@ Highcharts.Pointer.prototype = {
 	 *         A browser event with extended properties `chartX` and `chartY`.
 	 */
 	normalize: function (e, chartPosition) {
-		var chartX,
-			chartY,
-			ePos;
-
-		// IE normalizing
-		e = e || win.event;
-		if (!e.target) {
-			e.target = e.srcElement;
-		}
+		var ePos;
 
 		// iOS (#2757)
 		ePos = e.touches ?  (e.touches.length ? e.touches.item(0) : e.changedTouches[0]) : e;
@@ -137,19 +129,9 @@ Highcharts.Pointer.prototype = {
 			this.chartPosition = chartPosition = offset(this.chart.container);
 		}
 
-		// chartX and chartY
-		if (ePos.pageX === undefined) { // IE < 9. #886.
-			chartX = Math.max(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
-				// for IE10 quirks mode within framesets
-			chartY = e.y;
-		} else {
-			chartX = ePos.pageX - chartPosition.left;
-			chartY = ePos.pageY - chartPosition.top;
-		}
-
 		return extend(e, {
-			chartX: Math.round(chartX),
-			chartY: Math.round(chartY)
+			chartX: Math.round(ePos.pageX - chartPosition.left),
+			chartY: Math.round(ePos.pageY - chartPosition.top)
 		});
 	},
 

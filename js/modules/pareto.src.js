@@ -8,13 +8,12 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
+import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var each = H.each,
-	error = H.error,
-	Series = H.Series,
-	addEvent = H.addEvent,
 	correctFloat = H.correctFloat,
-	seriesType = H.seriesType;
+	seriesType = H.seriesType,
+	merge = H.merge;
 
 
 /**
@@ -48,58 +47,21 @@ seriesType('pareto', 'line', {
 	 * Higher zIndex than column series to draw line above shapes.
 	 */
 	zIndex: 3
-}, {
-	/**
-	 * Init series
-	 * 
-	 * @param  {Object} chart
-	 * @return {Object} Returns pareto series
-	 */
-	init: function (chart) {
-		var pareto = this;
-
-		Series.prototype.init.apply(pareto, arguments);
-
-		// Make sure we find series which is a base for an pareto
-		chart.linkSeries();
-
-		function recalculateValues() {
-			var values = pareto.getValues(pareto.linkedParent);
-			pareto.setData(values, false);
-		}
-
-		if (!pareto.linkedParent) {
-			return error(
-				'Series ' +
-				pareto.options.linkedTo +
-				' not found! Check `linkedTo`.'
-			);
-		}
-
-		// event which should be unbinded in destroy()
-		pareto.dataEventsToUnbind = addEvent(
-			pareto.linkedParent,
-			'updatedData',
-			recalculateValues
-		);
-
-		// calculate values
-		recalculateValues();
-
-		return pareto;
-	},
+}, merge(derivedSeriesMixin, {
 	/**
 	 * calculate sum and return percent points
 	 * 
 	 * @param  {Object} series
 	 * @return {Array} Returns array of points [x,y]
 	 */
-	getValues: function (series) {
-		var yValues = series.yData,
-			xValues = series.xData,
-			sum = this.sumPointsPercents(yValues, xValues, null, true);
+	setDerivedData: function () {
+		if (this.baseSeries.yData.length > 1) {
+			var xValues = this.baseSeries.xData, 
+				yValues = this.baseSeries.yData,
+				sum = this.sumPointsPercents(yValues, xValues, null, true);
 
-		return this.sumPointsPercents(yValues, xValues, sum, false);
+			this.setData(this.sumPointsPercents(yValues, xValues, sum, false), false);
+		}
 	},
 	/**
 	 * calculate y sum and each percent point
@@ -129,15 +91,8 @@ seriesType('pareto', 'line', {
 		});
 
 		return isSum ? sumY : percentPoints;
-	},
-	/**
-	 * Unbind events and destroy series
-	 */
-	destroy: function () {
-		this.dataEventsToUnbind();
-		Series.prototype.destroy.call(this);
 	}
-});
+}));
 
 /**
  * A `pareto` series. If the [type](#series.pareto.type) option is not

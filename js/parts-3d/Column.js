@@ -196,8 +196,11 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 
 wrap(seriesTypes.column.prototype, 'plotGroup', function (proceed, prop, name, visibility, zIndex, parent) {
 	if (this.chart.is3d() && parent && !this[prop]) {
-		this[prop] = parent;
-		parent.attr(this.getPlotBox());
+		if (!this.chart.columnGroup) {
+			this.chart.columnGroup = this.chart.renderer.g('columnGroup').add(parent);
+		}
+		this[prop] = this.chart.columnGroup;
+		this.chart.columnGroup.attr(this.getPlotBox());
 		this[prop].survive = true;
 	}
 	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
