@@ -591,8 +591,8 @@ seriesType('pie', 'line', {
 
 		// draw the slices
 		each(series.points, function (point) {
+			graphic = point.graphic;
 			if (!point.isNull) {
-				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 
 
@@ -643,6 +643,8 @@ seriesType('pie', 'line', {
 
 				graphic.addClass(point.getClassName());
 						
+			} else if (graphic) {
+				point.graphic = graphic.destroy();
 			}
 		});
 
