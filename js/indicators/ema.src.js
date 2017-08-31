@@ -28,13 +28,13 @@ function populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index) {
  * The EMA series type.
  *
  * @constructor seriesTypes.ema
- * @augments seriesTypes.line
+ * @augments seriesTypes.sma
  */
 seriesType('ema', 'sma', 
 	/**
 	 * Exponential moving average indicator (EMA). This series requires `linkedTo` option to be set.
 	 * 
-	 * @extends {plotOptions.line}
+	 * @extends {plotOptions.sma}
 	 * @product highstock
 	 * @sample {highstock} stock/indicators/ema Exponential moving average indicator
 	 * @since 6.0.0
@@ -45,49 +45,9 @@ seriesType('ema', 'sma',
 	 * @optionparent plotOptions.ema
 	 */
 	{
-		/**
-		 * The series name.
-		 * 
-		 * @type {String}
-		 * @since 6.0.0
-		 * @product highstock
-		 */
 		name: 'EMA (14)',
-		tooltip: {
-			/**
-			 * Number of decimals in indicator series.
-			 * 
-			 * @type {Number}
-			 * @since 6.0.0
-			 * @product highstock
-			 */
-			valueDecimals: 4
-		},
-		/**
-		 * The main series ID that indicator will be based on. Required for this indicator.
-		 * 
-		 * @type {String}
-		 * @since 6.0.0
-		 * @product highstock
-		 */
-		linkedTo: undefined,
 		params: {
-			/**
-			 * The point index which indicator calculations will base.
-			 * For example using OHLC data, index=2 means SMA will be calculated using Low values.
-			 * 
-			 * @type {Number}
-			 * @since 6.0.0
-			 * @product highstock
-			 */
 			index: 0,
-			/**
-			 * The base period for indicator calculations.
-			 * 
-			 * @type {Number}
-			 * @since 6.0.0
-			 * @product highstock
-			 */
 			period: 14
 		}
 	}, {
@@ -175,7 +135,7 @@ seriesType('ema', 'sma',
  * 
  * @type {Array<Object|Array>}
  * @since 6.0.0
- * @extends series.line.data
+ * @extends series.sma.data
  * @product highstock
  * @apioption series.ema.data
  */
