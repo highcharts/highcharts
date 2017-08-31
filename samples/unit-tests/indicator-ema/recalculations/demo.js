@@ -12,7 +12,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                 13, 14, 15, 13, 14, 15
             ]
         }, {
-            type: 'wma',
+            type: 'ema',
             linkedTo: 'main'
         }]
     });
@@ -20,7 +20,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[0].points.length,
         chart.series[1].points.length + chart.series[1].options.params.period - 1,
-        'Initial number of WMA points is correct'
+        'Initial number of EMA points is correct'
     );
 
     chart.series[0].addPoint(13);
@@ -28,7 +28,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[0].points.length,
         chart.series[1].points.length + chart.series[1].options.params.period - 1,
-        'After addPoint number of WMA points is correct'
+        'After addPoint number of EMA points is correct'
     );
 
     chart.series[0].setData([11,12,13,14,15,16,17], false);
