@@ -891,6 +891,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
     return new Promise((resolve, reject) => {
 
         gulp.src([
+            './js/indicators',
             './js/modules',
             './js/parts',
             './js/parts-3d',
