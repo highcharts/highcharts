@@ -274,3 +274,32 @@ H.approximations = {
 		// else, return is undefined
 	}
 };
+
+/**
+ * A `SMA` series. If the [type](#series.sma.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * sma](#plotOptions.sma).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.sma
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.sma
+ */
+
+
+/**
+ * An array of data points for the series. For the `SMA` series type,
+ * points are calculated dynamically.
+ * 
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.line.data
+ * @product highstock
+ * @apioption series.sma.data
+ */
