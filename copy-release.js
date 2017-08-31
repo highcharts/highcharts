@@ -77,7 +77,7 @@
                     throw err;
                 }
                 json = JSON.parse(json);
-                json.version = 'v' + version;
+                json.version = version;
                 json = JSON.stringify(json, null, '  ');
                 fs.writeFile('../' + releaseRepo(product) + '/' + file + '.json', json, proceed);
             });
