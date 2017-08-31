@@ -252,6 +252,7 @@ extend(defaultOptions, {
 
 			/**
 			 * The color of the navigator series.
+			 * @type {Color}
 			 */
 			color: '${palette.highlightColor80}',
 
