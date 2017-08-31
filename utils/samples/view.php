@@ -51,11 +51,13 @@ if ($styled) {
 }
 
 // Old IE
+/*
 $html .= "
 <!--[if lt IE 9]>
 <script src='http://code.highcharts.$topDomain/modules/oldie.js'></script>
 <![endif]-->
 ";
+// */
 
 
 // Handle themes

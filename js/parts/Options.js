@@ -8,7 +8,6 @@ import H from './Globals.js';
 import './Color.js';
 import './Utilities.js';
 var color = H.color,
-	each = H.each,
 	getTZOffset = H.getTZOffset,
 	isTouchDevice = H.isTouchDevice,
 	merge = H.merge,
@@ -245,22 +244,7 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/global/useutc-false/ False
 		 * @default true
 		 */
-		useUTC: true,
-
-		/*= if (build.classic) { =*/
-
-		/**
-		 * Path to the pattern image required by VML browsers in order to
-		 * draw radial gradients.
-		 * 
-		 * @type {String}
-		 * @default {highcharts} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
-		 * @default {highstock} http://code.highcharts.com/highstock/{version}/gfx/vml-radial-gradient.png
-		 * @default {highmaps} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
-		 * @since 2.3.0
-		 */
-		VMLRadialGradientURL: 'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png'
-		/*= } =*/
+		useUTC: true
 
 		/**
 		 * A custom `Date` class for advanced date handling. For example,
@@ -2992,7 +2976,10 @@ function setTimeMethods() {
 		Date,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
-		SET = useUTC ? 'setUTC' : 'set';
+		SET = useUTC ? 'setUTC' : 'set',
+		setters = ['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'],
+		getters = setters.concat(['Milliseconds', 'Seconds']),
+		n;
 
 	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
 	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
@@ -3014,12 +3001,15 @@ function setTimeMethods() {
 		}
 		return d;
 	};
-	each(['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'], function (s) {
-		Date['hcGet' + s] = GET + s;
-	});
-	each(['Milliseconds', 'Seconds', 'Minutes', 'Hours', 'Date', 'Month', 'FullYear'], function (s) {
-		Date['hcSet' + s] = SET + s;
-	});
+	
+	// Dynamically set setters and getters. Use for loop, H.each is not yet 
+	// overridden in oldIE.
+	for (n = 0; n < setters.length; n++) {
+		Date['hcGet' + setters[n]] = GET + setters[n];
+	}
+	for (n = 0; n < getters.length; n++) {
+		Date['hcSet' + getters[n]] = SET + getters[n];
+	}
 }
 
 /**

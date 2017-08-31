@@ -337,6 +337,12 @@ QUnit.test('Format', function (assert) {
         "Key: January, value: 3.14, date: 2012-01-01.",
         format("Key: {point.key}, value: {point.value:.2f}, date: {point.date:%Y-%m-%d}.", { point: point })
     );
+
+    assert.strictEqual(
+        Highcharts.format('{point.y}', {}),
+        '',
+        'Do not choke on undefined objects (node-export-server#31)'
+    );
 });
 
 

@@ -2736,7 +2736,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// Forgetting to cast strings to numbers is a common caveat when
 			// handling CSV or JSON
-			if (isString(yData[0])) {
+			if (yData && isString(yData[0])) {
 				H.error(14, true);
 			}
 

@@ -1,6 +1,8 @@
 /**
  * (c) 2010-2017 Torstein Honsi
  *
+ * Support for old IE browsers (6, 7 and 8) in Highcharts v6+. 
+ *
  * License: www.highcharts.com/license
  */
 'use strict';
@@ -11,6 +13,7 @@ var VMLRenderer,
 	VMLRendererExtension,
 	VMLElement,
 
+	Chart = H.Chart,
 	createElement = H.createElement,
 	css = H.css,
 	defined = H.defined,
@@ -31,9 +34,240 @@ var VMLRenderer,
 	svg = H.svg,
 	SVGElement = H.SVGElement,
 	SVGRenderer = H.SVGRenderer,
-	win = H.win;
+	win = H.win,
+	wrap = H.wrap;
+
+
+/**
+ * Path to the pattern image required by VML browsers in order to
+ * draw radial gradients.
+ *
+ * @type {String}
+ * @apioption global.VMLRadialGradientURL
+ * @default {highcharts}
+ *          http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
+ * @default {highstock}
+ *          http://code.highcharts.com/highstock/{version}/gfx/vml-radial-gradient.png
+ * @default {highmaps}
+ *          http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
+ * @since 2.3.0
+ */
+H.getOptions().global.VMLRadialGradientURL =
+	'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
+
+
+// Utilites
+if (doc && !doc.defaultView) {
+	H.getStyle = function (el, prop) {
+		var val,
+			alias = { width: 'clientWidth', height: 'clientHeight' }[prop];
+			
+		if (el.style[prop]) {
+			return H.pInt(el.style[prop]);
+		}
+		if (prop === 'opacity') {
+			prop = 'filter';
+		}
+
+		// Getting the rendered width and height
+		if (alias) {
+			el.style.zoom = 1;
+			return Math.max(el[alias] - 2 * H.getStyle(el, 'padding'), 0);
+		}
+		
+		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
+			return b.toUpperCase();
+		})];
+		if (prop === 'filter') {
+			val = val.replace(
+				/alpha\(opacity=([0-9]+)\)/, 
+				function (a, b) { 
+					return b / 100; 
+				}
+			);
+		}
+		
+		return val === '' ? 1 : H.pInt(val);
+	};
+}
+
+if (!Array.prototype.forEach) {
+	H.forEachPolyfill = function (fn, ctx) {
+		var i = 0, 
+			len = this.length;
+		for (; i < len; i++) {
+			if (fn.call(ctx, this[i], i, this) === false) {
+				return i;
+			}
+		}
+	};
+}
+
+if (!Array.prototype.indexOf) {
+	H.indexOfPolyfill = function (arr) {
+		var len, 
+			i = 0;
+
+		if (arr) {
+			len = arr.length;
+			
+			for (; i < len; i++) {
+				if (arr[i] === this) {
+					return i;
+				}
+			}
+		}
+
+		return -1;
+	};
+}
+
+if (!Array.prototype.filter) {
+	H.filterPolyfill = function (fn) {
+		var ret = [],
+			i = 0,
+			length = this.length;
+
+		for (; i < length; i++) {
+			if (fn(this[i], i)) {
+				ret.push(this[i]);
+			}
+		}
+
+		return ret;
+	};
+}
+
+if (!Array.prototype.find) {
+	H.findPolyfill = function (fn) {
+		var i,
+			length = this.length;
+
+		for (i = 0; i < length; i++) {
+			if (fn(this[i], i)) {
+				return this[i];
+			}
+		}
+	};
+}
+
+if (!Array.prototype.reduce) {
+	H.reducePolyfill = function (func, initialValue) {
+		var context = this,
+			accumulator = initialValue || {},
+			len = this.length;
+		for (var i = 0; i < len; ++i) {
+			accumulator = func.call(context, accumulator, this[i], i, this);
+		}
+		return accumulator;
+	};
+}
 
 if (!svg) {
+
+	// Prevent wrapping from creating false offsetWidths in export in legacy IE.
+	// This applies only to charts for export, where IE runs the SVGRenderer
+	// instead of the VMLRenderer
+	// (#1079, #1063)
+	wrap(H.SVGRenderer.prototype, 'text', function (proceed) {
+		return proceed.apply(
+			this,
+			Array.prototype.slice.call(arguments, 1)
+		).css({
+			position: 'absolute'
+		});
+	});
+
+	/**
+	 * Old IE override for pointer normalize, adds chartX and chartY to event
+	 * arguments.
+	 */
+	H.Pointer.prototype.normalize = function (e, chartPosition) {
+
+		e = e || win.event;
+		if (!e.target) {
+			e.target = e.srcElement;
+		}
+
+		// Get mouse position
+		if (!chartPosition) {
+			this.chartPosition = chartPosition = H.offset(this.chart.container);
+		}
+
+		return H.extend(e, {
+			// #2005, #2129: the second case is for IE10 quirks mode within
+			// framesets
+			chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),
+			chartY: Math.round(e.y)
+		});
+	};
+
+	/**
+	 * Further sanitize the mock-SVG that is generated when exporting charts in
+	 * oldIE.
+	 */
+	Chart.prototype.ieSanitizeSVG = function (svg) {
+		svg = svg
+			.replace(/<IMG /g, '<image ')
+			.replace(/<(\/?)TITLE>/g, '<$1title>')
+			.replace(/height=([^" ]+)/g, 'height="$1"')
+			.replace(/width=([^" ]+)/g, 'width="$1"')
+			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
+			.replace(/ id=([^" >]+)/g, ' id="$1"') // #4003
+			.replace(/class=([^" >]+)/g, 'class="$1"')
+			.replace(/ transform /g, ' ')
+			.replace(/:(path|rect)/g, '$1')
+			.replace(/style="([^"]+)"/g, function (s) {
+				return s.toLowerCase();
+			});
+
+		return svg;
+	};
+
+	// IE compatibility hack for generating SVG content that it doesn't really
+	// understand. Used by the exporting module.
+	if (!doc.createElementNS) {
+		doc.createElementNS = function (ns, tagName) {
+			return doc.createElement(tagName);
+		};
+	}
+
+	/**
+	 * Old IE polyfill for addEventListener, called from inside the addEvent
+	 * function.
+	 */
+	H.addEventListenerPolyfill = function (type, fn) {
+		var el = this;
+		function wrappedFn(e) {
+			e.target = e.srcElement || win; // #2820
+			fn.call(el, e);
+		}
+		
+		if (el.attachEvent) {
+			if (!el.hcEventsIE) {
+				el.hcEventsIE = {};
+			}
+
+			// unique function string (#6746)
+			if (!fn.hcKey) {
+				fn.hcKey = H.uniqueKey();
+			}
+
+			// Link wrapped fn with original fn, so we can get this in
+			// removeEvent
+			el.hcEventsIE[fn.hcKey] = wrappedFn;
+
+			el.attachEvent('on' + type, wrappedFn);
+		}
+
+	};
+	H.removeEventListenerPolyfill = function (type, fn) {
+		if (this.detachEvent) {
+			fn = this.hcEventsIE[fn.hcKey];
+			this.detachEvent('on' + type, fn);
+		}
+	};
+		
 
 	/**
 	 * The VML element wrapper.
