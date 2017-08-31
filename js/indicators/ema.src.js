@@ -38,10 +38,6 @@ seriesType('ema', 'sma',
 	 * @product highstock
 	 * @sample {highstock} stock/indicators/ema Exponential moving average indicator
 	 * @since 6.0.0
-	 * @excluding
-	 * 			allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-	 * 			showInNavigator,navigatorOptions,pointInterval,pointIntervalUnit,
-	 *			pointPlacement,pointRange,pointStart
 	 * @optionparent plotOptions.ema
 	 */
 	{
@@ -130,9 +126,6 @@ seriesType('ema', 'sma',
  */
 
 /**
- * An array of data points for the series. For the `EMA` series type,
- * points are calculated dynamically.
- * 
  * @type {Array<Object|Array>}
  * @since 6.0.0
  * @extends series.sma.data
