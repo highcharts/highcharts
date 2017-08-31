@@ -1,6 +1,6 @@
 'use strict';
-import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
 var each = H.each,
 	error = H.error,

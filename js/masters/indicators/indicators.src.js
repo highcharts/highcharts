@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../../modules/indicators/indicators.src.js';
+import '../../indicators/indicators.src.js';
