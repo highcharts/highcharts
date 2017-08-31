@@ -4149,8 +4149,13 @@ H.Series = H.seriesType('line', null, { // base series options
 				'highcharts-' + name +
 				' highcharts-series-' + this.index +
 				' highcharts-' + this.type + '-series ' +
-				'highcharts-color-' + this.colorIndex + ' ' +
-				(this.options.className || '')
+				(
+					defined(this.colorIndex) ?
+						'highcharts-color-' + this.colorIndex + ' ' :
+						''
+				) +
+				(this.options.className || '') +
+				group.hasClass('highcharts-tracker') ? ' highcharts-tracker' : ''
 			),
 			true
 		);
