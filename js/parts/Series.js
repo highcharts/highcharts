@@ -1561,13 +1561,17 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * Styles for the label. The default `color` setting is `"contrast"`,
 		 * which is a pseudo color that Highcharts picks up and applies the
 		 * maximum contrast to the underlying point item, for example the
-		 * bar in a bar chart. The `textOutline` is a pseudo property that
+		 * bar in a bar chart.
+		 * 
+		 * The `textOutline` is a pseudo property that
 		 * applies an outline of the given width with the given color, which
 		 * by default is the maximum contrast to the text. So a bright text
 		 * color will result in a black text outline for maximum readability
 		 * on a mixed background. In some cases, especially with grayscale
 		 * text, the text outline doesn't work well, in which cases it can
-		 * be disabled by setting it to `"none"`.
+		 * be disabled by setting it to `"none"`. When `useHTML` is true, the
+		 * `textOutline` will not be picked up. In this, case, the same effect
+		 * can be acheived through the `text-shadow` CSS property.
 		 * 
 		 * @type {CSSObject}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-style/
