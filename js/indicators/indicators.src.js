@@ -7,7 +7,6 @@ var each = H.each,
 	Series = H.Series,
 	isArray = H.isArray,
 	addEvent = H.addEvent,
-	isNumber = H.isNumber,
 	seriesType = H.seriesType;
 
 /**
@@ -207,73 +206,6 @@ seriesType('sma', 'line',
 			Series.prototype.destroy.call(this);
 		}
 	});
-
-H.approximations = {
-	sum: function (arr) {
-		var len = arr.length,
-			ret;
-
-		// 1. it consists of nulls exclusively
-		if (!len && arr.hasNulls) {
-			ret = null;
-			// 2. it has a length and real values
-		} else if (len) {
-			ret = 0;
-			while (len--) {
-				ret += arr[len];
-			}
-		}
-		// 3. it has zero length, so just return undefined
-		// => doNothing()
-
-		return ret;
-	},
-	average: function (arr) {
-		var len = arr.length,
-			ret = H.approximations.sum(arr);
-
-		// If we have a number, return it divided by the length. If not, return
-		// null or undefined based on what the sum method finds.
-		if (isNumber(ret) && len) {
-			ret = ret / len;
-		}
-
-		return ret;
-	},
-	open: function (arr) {
-		return arr.length ? arr[0] : (arr.hasNulls ? null : undefined);
-	},
-	high: function (arr) {
-		return arr.length ? Array.max(arr) : (arr.hasNulls ? null : undefined);
-	},
-	low: function (arr) {
-		return arr.length ? Array.min(arr) : (arr.hasNulls ? null : undefined);
-	},
-	close: function (arr) {
-		return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : undefined);
-	},
-	// ohlc and range are special cases where a multidimensional array is input and an array is output
-	ohlc: function (open, high, low, close) {
-		open = H.approximations.open(open);
-		high = H.approximations.high(high);
-		low = H.approximations.low(low);
-		close = H.approximations.close(close);
-
-		if (isNumber(open) || isNumber(high) || isNumber(low) || isNumber(close)) {
-			return [open, high, low, close];
-		}
-		// else, return is undefined
-	},
-	range: function (low, high) {
-		low = H.approximations.low(low);
-		high = H.approximations.high(high);
-
-		if (isNumber(low) || isNumber(high)) {
-			return [low, high];
-		}
-		// else, return is undefined
-	}
-};
 
 /**
  * A `SMA` series. If the [type](#series.sma.type) option is not

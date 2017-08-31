@@ -308,7 +308,7 @@ var seriesProto = Series.prototype,
 	 * only of numbers. In case null values belong to the group, the property
 	 * .hasNulls will be set to true on the array.
 	 */
-	approximations = {
+	approximations = H.approximations = {
 		sum: function (arr) {
 			var len = arr.length,
 				ret;
@@ -387,7 +387,6 @@ var seriesProto = Series.prototype,
 			// else, return is undefined
 		}
 	};
-
 
 /**
  * Takes parallel arrays of x and y data and groups the data into intervals 
