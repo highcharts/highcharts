@@ -29,8 +29,10 @@ var pick = H.pick,
 
 seriesType('variablepie', 'pie',
 	/**
-	 * A variable pie series is a two dimensional series type, where each point renders an Y and Z value. 
-	 * Each point is drawn as a pie slice where the size (arc) of the slice relates to the Y value and the radius of pie slice relates to the Z value.
+	 * A variable pie series is a two dimensional series type,
+	 * where each point renders an Y and Z value. 
+	 * Each point is drawn as a pie slice where the size (arc) of the slice
+	 * relates to the Y value and the radius of pie slice relates to the Z value.
 	 * Requires highcharts-more.js.
 	 * 
 	 * @extends {plotOptions.pie}
@@ -60,7 +62,8 @@ seriesType('variablepie', 'pie',
 		maxPointSize: '100%',
 		/**
 		 * The minimum possible z value for point's radius calculation. 
-		 * If point's Z value is smaller than zMin, slice will be drawn according to zMin value.
+		 * If point's Z value is smaller than zMin,
+		 * slice will be drawn according to zMin value.
 		 *
 		 * @type {Number}
 		 * @since 6.0.0
@@ -69,8 +72,9 @@ seriesType('variablepie', 'pie',
 		 */
 		zMin: undefined,
 		/**
-		 * The maximum possible z value for point's radius calculation. 
-		 * If point's Z value is bigger than zMax, slice will be drawn according to zMax value.
+		 * The maximum possible z value for point's radius calculation.
+		 * If point's Z value is bigger than zMax,
+		 * slice will be drawn according to zMax value.
 		 *
 		 * @type {Number}
 		 * @since 6.0.0
@@ -79,8 +83,10 @@ seriesType('variablepie', 'pie',
 		 */
 		zMax: undefined,
 		/**
-		 * Whether the pie slice's value should be represented by the area or the radius of the slice. 
-		 * The default, area, corresponds best to the human perception of the size of each pie slice.
+		 * Whether the pie slice's value should be represented by the area 
+		 * or the radius of the slice. 
+		 * The default, area, corresponds best to the human perception
+		 * of the size of each pie slice.
 		 *
 		 * @type {String}
 		 * @since 6.0.0
@@ -91,7 +97,8 @@ seriesType('variablepie', 'pie',
 
 		/**
 		 * A configuration object for the tooltip rendering of each single series.
-		 * Properties are inherited from tooltip, but only the following properties can be defined on a series level.
+		 * Properties are inherited from tooltip, 
+		 * but only the following properties can be defined on a series level.
 		 *
 		 * @type {String}
 		 * @default '<span style="color:{point.color}">\u25CF</span><b>
@@ -100,7 +107,8 @@ seriesType('variablepie', 'pie',
 		 * @apioption plotOptions.variablepie.tooltip.pointFormat
 		 */
 		tooltip: {
-			pointFormat: '<span style="color:{point.color}">\u25CF</span><b>{series.name}</b><br/>' + 
+			pointFormat: '<span style="color:{point.color}">\u25CF</span> ' + 
+			'<b>{series.name}</b><br/>' + 
 			'Value: {point.y}<br/>Size: {point.z}<br/>'
 		}
 	}, {
@@ -108,7 +116,8 @@ seriesType('variablepie', 'pie',
 		parallelArrays: ['x', 'y', 'z'],
 
 		/*
-		 * It is needed to null series.center on chart redraw. Probably good idea will be to add this option in directly in pie series.
+		 * It is needed to null series.center on chart redraw. 
+		 * Probably good idea will be to add this option in directly in pie series.
 		 */
 		redraw: function () {
 			this.center = null;
@@ -116,7 +125,9 @@ seriesType('variablepie', 'pie',
 		},
 
 		/*
-		 * For arrayMin and arrayMax calculations array shouldn't have null/undefined/string values. In this case it is needed to check if points Z value is a Number.
+		 * For arrayMin and arrayMax calculations array shouldn't have 
+		 * null/undefined/string values. 
+		 * In this case it is needed to check if points Z value is a Number.
 		 */
 		zValEval: function (zVal) {
 			if (typeof zVal === 'number' && !isNaN(zVal)) {
@@ -126,17 +137,20 @@ seriesType('variablepie', 'pie',
 		},
 
 		/*
-		 * Before standard translate method for pie chart it is needed to calculate min/max radius of each pie slice based on its Z value.
+		 * Before standard translate method for pie chart it is needed to
+		 * calculate min/max radius of each pie slice based on its Z value.
 		 */
 		calculateExtremes: function () {
 			var series = this,
 				chart = series.chart,
+				plotWidth = chart.plotWidth,
+				plotHeight = chart.plotHeight,
 				seriesOptions = series.options,
 				slicingRoom = 2 * (seriesOptions.slicedOffset || 0),
 				zMin,
 				zMax,
 				zData = series.zData,
-				smallestSize = Math.min(chart.plotWidth, chart.plotHeight) - slicingRoom,
+				smallestSize = Math.min(plotWidth, plotHeight) - slicingRoom,
 				extremes = {}, // Min and max size of pie slice.
 				positions = series.center || series.getCenter(); // In pie charts size of a pie is changed to make space for dataLabels, then series.center is changing.
 
@@ -150,11 +164,20 @@ seriesType('variablepie', 'pie',
 			});
 
 			series.minPxSize = positions[3] + extremes.minPointSize;
-			series.maxPxSize = Math.max(Math.min(positions[2], extremes.maxPointSize), positions[3] + extremes.minPointSize);
+			series.maxPxSize = Math.max(
+				Math.min(positions[2], extremes.maxPointSize), 
+				positions[3] + extremes.minPointSize
+			);
 
 			if (zData.length) {
-				zMin = pick(seriesOptions.zMin, arrayMin(grep(zData, series.zValEval)));
-				zMax = pick(seriesOptions.zMax, arrayMax(grep(zData, series.zValEval)));
+				zMin = pick(
+					seriesOptions.zMin,
+					arrayMin(grep(zData, series.zValEval))
+				);
+				zMax = pick(
+					seriesOptions.zMax,
+					arrayMax(grep(zData, series.zValEval))
+				);
 				this.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
 			}
 		},
@@ -222,8 +245,10 @@ seriesType('variablepie', 'pie',
 				end,
 				angle,
 				startAngle = options.startAngle || 0,
-				startAngleRad = series.startAngleRad = Math.PI / 180 * (startAngle - 90),
-				endAngleRad = series.endAngleRad = Math.PI / 180 * ((pick(options.endAngle, startAngle + 360)) - 90),
+				startAngleRad = Math.PI / 180 * (startAngle - 90),
+				endAngleRad = Math.PI / 180 * (pick(
+					options.endAngle, 
+					startAngle + 360) - 90),
 				circ = endAngleRad - startAngleRad, //2 * Math.PI,
 				points = series.points,
 				radiusX, // the x component of the radius vector for a given point
@@ -233,9 +258,12 @@ seriesType('variablepie', 'pie',
 				i,
 				len = points.length,
 				point,
-				pointRadii;
+				pointRadii,
+				pointRadiusX,
+				pointRadiusY;
 
-
+			series.startAngleRad =  startAngleRad;
+			series.endAngleRad = endAngleRad;
 			// Use calculateExtremes to get series.radii array.
 			series.calculateExtremes();
 
@@ -250,10 +278,17 @@ seriesType('variablepie', 'pie',
 			// logic in data labels.
 			// Added point for using specific points' label distance.
 			series.getX = function (y, left, point) {
-				angle = Math.asin(Math.min((y - positions[1]) / (positions[2] / 2 + point.labelDistance), 1));
+				angle = Math.asin(
+					Math.min(
+						(y - positions[1]) /
+						(positions[2] / 2 + point.labelDistance), 
+						1
+					)
+				);
 				return positions[0] +
 					(left ? -1 : 1) *
-					(Math.cos(angle) * (positions[2] / 2 + point.labelDistance));
+					(Math.cos(angle) * (positions[2] / 2 +
+					point.labelDistance));
 			};
 
 			// Calculate the geometry for each point
@@ -264,12 +299,16 @@ seriesType('variablepie', 'pie',
 
 				// Used for distance calculation for specific point.
 				point.labelDistance = pick(
-					point.options.dataLabels && point.options.dataLabels.distance,
+					point.options.dataLabels &&
+					point.options.dataLabels.distance,
 					labelDistance
 				);
 
 				// Saved for later dataLabels distance calculation.
-				series.maxLabelDistance = Math.max(series.maxLabelDistance || 0, point.labelDistance);
+				series.maxLabelDistance = Math.max(
+					series.maxLabelDistance || 0,
+					point.labelDistance
+				);
 
 				// set start and end angle
 				start = startAngleRad + (cumulative * circ);
@@ -306,25 +345,36 @@ seriesType('variablepie', 'pie',
 				// set the anchor point for tooltips
 				radiusX = Math.cos(angle) * positions[2] / 2;
 				radiusY = Math.sin(angle) * positions[2] / 2;
+				pointRadiusX = Math.cos(angle) * pointRadii;
+				pointRadiusY = Math.sin(angle) * pointRadii;
 				point.tooltipPos = [
 					positions[0] + radiusX * 0.7,
 					positions[1] + radiusY * 0.7
 				];
 
-				point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ? 1 : 0;
+				point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ? 
+					1 :
+					0;
 				point.angle = angle;
 
 				// Set the anchor point for data labels. Use point.labelDistance 
 				// instead of labelDistance // #1174
 				// finalConnectorOffset - not override connectorOffset value.
-				finalConnectorOffset = Math.min(connectorOffset, point.labelDistance / 5); // #1678
+				finalConnectorOffset = Math.min(
+					connectorOffset,
+					point.labelDistance / 5
+				); // #1678
 				point.labelPos = [
-					positions[0] + radiusX + Math.cos(angle) * point.labelDistance, // first break of connector
-					positions[1] + radiusY + Math.sin(angle) * point.labelDistance, // a/a
-					positions[0] + Math.cos(angle) * pointRadii + Math.cos(angle) * finalConnectorOffset, // second break, right outside pie
-					positions[1] + Math.sin(angle) * pointRadii + Math.sin(angle) * finalConnectorOffset, // a/a
-					positions[0] + Math.cos(angle) * pointRadii, // landing point for connector
-					positions[1] + Math.sin(angle) * pointRadii, // a/a
+					positions[0] + radiusX +
+					Math.cos(angle) * point.labelDistance, // first break of connector
+					positions[1] + radiusY +
+					Math.sin(angle) * point.labelDistance, // a/a
+					positions[0] + pointRadiusX +
+					Math.cos(angle) * finalConnectorOffset, // second break, right outside pie
+					positions[1] + pointRadiusY +
+					Math.sin(angle) * finalConnectorOffset, // a/a
+					positions[0] + pointRadiusX, // landing point for connector
+					positions[1] + pointRadiusY, // a/a
 					point.labelDistance < 0 ? // alignment
 					'center' :
 					point.half ? 'right' : 'left', // alignment
