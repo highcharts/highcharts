@@ -59,7 +59,7 @@ seriesType('sma', 'line',
 		params: {
 			/**
 			 * The point index which indicator calculations will base.
-			 * For example using OHLC data, index=2 means SMA will be calculated using Low values.
+			 * For example using OHLC data, index=2 means the indicator will be calculated using Low values.
 			 * 
 			 * @type {Number}
 			 * @since 6.0.0
@@ -99,7 +99,11 @@ seriesType('sma', 'line',
 				var processedData = indicator.getValues(
 					indicator.linkedParent,
 					indicator.options.params
-				);
+				) || {
+					values: [],
+					xData: [],
+					yData: []
+				};
 
 				indicator.xData = processedData.xData;
 				indicator.yData = processedData.yData;
