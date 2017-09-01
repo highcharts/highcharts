@@ -649,3 +649,13 @@ input.highcharts-range-selector {
 .highcharts-bullet-target {
     stroke-width: 0;
 }
+
+/* Lineargauge type series */
+.highcharts-lineargauge-target-symbol {
+	stroke-width: 1px;
+	stroke: $neutral-color-80;
+}
+.highcharts-lineargauge-target-line {
+	stroke-width: 1px;
+    stroke: $neutral-color-80;
+}

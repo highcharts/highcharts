@@ -1,0 +1,12 @@
+#container1, #container2, #container3 {
+	min-width: 300px;
+	max-width: 800px;
+    height: 120px;
+    margin: 0 auto;
+}
+#container4 {
+	min-width: 300px;
+	max-width: 800px;
+    height: 300px;
+    margin: 0 auto;
+}
