@@ -12,8 +12,25 @@ import H from '../parts/Globals.js';
 var each = H.each,
 	seriesType = H.seriesType;
 
-
+/**
+ * A vector plot is a type of cartesian chart where each point has an X and Y
+ * position, a length and a direction. Vectors are drawn as arrows.
+ * 
+ * @extends {plotOptions.scatter}
+ * @excluding boostThreshold,marker,connectEnds,connectNulls,cropThreshold,
+ *            dashStyle,gapSize,gapUnit,dataGrouping,linecap,shadow,stacking,
+ *            step
+ * @product highcharts highstock
+ * @sample {highcharts|highstock} highcharts/demo/vector-plot/
+ *         Vector pot
+ * @since 6.0.0
+ * @optionparent plotOptions.vector
+ */
 seriesType('vector', 'scatter', {
+
+	/**
+	 * The line width for each vector arrow.
+	 */
 	lineWidth: 2,
 
 	/** @ignore */
@@ -26,16 +43,24 @@ seriesType('vector', 'scatter', {
 	 *
 	 * @sample  highcharts/plotoptions/vector-rotationorigin-start/
 	 *          Rotate from start
+	 * @validvalues ["left", "center", "right"]
 	 */
 	rotationOrigin: 'center',
 	states: {
 		hover: {
+			/**
+			 * Additonal line width for the vector errors when they are hovered.
+			 */
 			lineWidthPlus: 1
 		}
 	},
 	tooltip: {
 		pointFormat: '<b>[{point.x}, {point.y}]</b><br/>Length: <b>{point.length}</b><br/>Direction: <b>{point.direction}\u00B0</b><br/>'
 	},
+	/**
+	 * Maximum length of the arrows in the vector plot. The individual arrow
+	 * length is computed between 0 and this value.
+	 */
 	vectorLength: 20
 	
 }, {
@@ -168,3 +193,67 @@ seriesType('vector', 'scatter', {
 		}
 	}
 });
+
+
+/**
+ * A `vector` series. If the [type](#series.vector.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * vector](#plotOptions.vector).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.vector
+ * @excluding dataParser,dataURL
+ * @product highcharts highstock
+ * @apioption series.vector
+ */
+
+/**
+ * An array of data points for the series. For the `vector` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 4 values. In this case, the values correspond
+ * to `x,y,length,direction`. If the first value is a string, it is applied as
+ * the name of the point, and the `x` value is inferred.
+ * 
+ *  ```js
+ *     data: [
+ *         [0, 0, 10, 90],
+ *         [0, 1, 5, 180],
+ *         [1, 1, 2, 270]
+ *     ]
+ *  ```
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         x: 0,
+ *         y: 0,
+ *         name: "Point2",
+ *         length: 10,
+ *         direction: 90
+ *     }, {
+ *         x: 1,
+ *         y: 1,
+ *         name: "Point1",
+ *         direction: 270
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array|Number>}
+ * @extends series.line.data
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts highstock
+ * @apioption series.vector.data
+ */
