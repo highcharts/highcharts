@@ -1,75 +1,135 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
+'use strict';
+
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+
+var each = H.each,
+	merge = H.merge,
+	isArray = H.isArray,
+	SMA = H.seriesTypes.sma;
+
+// Utils:
+function getStandardDeviation(arr, mean) {
+	var variance = 0,
+		arrLen = arr.length,
+		std = 0,
+		i = 0;
+
+	for (; i < arrLen; i++) {
+		variance += (arr[i][3] - mean) * (arr[i][3] - mean);
 	}
-}(function (H) {
-	'use strict';
-	var UNDEFINED,
-		each = H.each,
-		merge = H.merge,
-		isArray = H.isArray,
-		SMA = H.seriesTypes.sma;
+	variance = variance / (arrLen - 1);
 
-	// Utils:
-	function getStandardDeviation(arr, mean) {
-		var variance = 0,
-			arrLen = arr.length,
-			std = 0,
-			i = 0;
+	std = Math.sqrt(variance);
+	return std;
+}
 
-		for (; i < arrLen; i++) {
-			variance += (arr[i][3] - mean) * (arr[i][3] - mean);
-		}
-		variance = variance / (arrLen - 1);
-
-		std = Math.sqrt(variance);
-		return std;
-	}
-
-	H.seriesType('bb', 'sma', {
+H.seriesType('bb', 'sma',
+	/**
+	 * Bollinger bands (BB). This series requires `linkedTo`
+	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 *
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/bollinger-bands
+	 *                     Bollinger bands
+	 * @since 6.0.0
+	 * @optionparent plotOptions.bb
+	 */
+	{
 		name: 'BB (20, 2)',
 		params: {
 			period: 20,
-			standardDeviation: 2
+			/**
+			 * Standard deviation for top and bottom bands.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			standardDeviation: 2,
+			index: 3
 		},
-		// Q: topLine.styles vs topLineStyles
-		// Q: series.topLine vs series.params.topLine
+		/**
+		 * Bottom line options.
+		 *
+		 * @since 6.0.0
+		 * @product highstock
+		 */
+		bottomLine: {
+			/**
+			 * Styles for a bottom line.
+			 *
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			styles: {
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 * If not set, it's inherited from [plotOptions.bb.color](#plotOptions.bb.color).
+				 *
+				 * @type {String}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
+			}
+		},
+		/**
+		 * Bottom line options.
+		 *
+		 * @extends {plotOptions.bb.bottomLine}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		topLine: {
 			styles: {
-				lineWidth: 1
+				lineWidth: 1,
+				lineColor: undefined
 			}
-		},
-		bottomLine: {
-			styles: {
-				lineWidth: 1
-			}
-		},
-		marker: {
-			enabled: false
 		},
 		tooltip: {
-			pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+			/**
+			 * The HTML of the point's line in the tooltip. Variables are enclosed
+			 * by curly brackets. Available variables are point.x, point.y, series.
+			 * name and series.color and other properties on the same form. Furthermore,
+			 * point.y can be extended by the `tooltip.valuePrefix` and `tooltip.
+			 * valueSuffix` variables. This can also be overridden for each series,
+			 * which makes it a good hook for displaying units.
+			 *
+			 * In styled mode, the dot is colored by a class name rather
+			 * than the point color.
+			 *
+			 * @type {String}
+			 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
+			 * @sample {highmaps} maps/tooltip/format/ Format demo
+			 * @default
+			 *	<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>
+			 *		Top: {point.top}<br/>
+			 *		Middle: {point.middle}<br/>
+			 *		Bottom: {point.bottom}<br/>
+			 */
+			pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+				'<b> {series.name}</b><br/>' +
 				'Top: {point.top}<br/>' +
 				'Middle: {point.middle}<br/>' +
 				'Bottom: {point.bottom}<br/>'
 		},
+		marker: {
+			enabled: false
+		},
 		dataGrouping: {
-			approximation: function (top, middle, bot) {
-				var ret = [
-					H.approximations.average(top),
-					H.approximations.average(middle),
-					H.approximations.average(bot)
-				];
-				if (ret[0] !== UNDEFINED && ret[1] !== UNDEFINED && ret[2] !== UNDEFINED) {
-					return ret;
-				}
-				return UNDEFINED;
-			}
+			approximation: 'averages'
 		}
-	}, {
+	}, /** @lends Highcharts.Series.prototype */ {
 		pointArrayMap: ['top', 'middle', 'bottom'],
 		pointValKey: 'middle',
 		init: function () {
@@ -170,13 +230,13 @@
 				i;
 
 			// BB requires close value
-			if (xVal.length <= period || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (xVal.length < period || !isArray(yVal[0]) || yVal[0].length !== 4) {
 				return false;
 			}
 
-			for (i = period + 1; i <= yValLen; i++) {
-				slicedX = xVal.slice(i - period - 1, i);
-				slicedY = yVal.slice(i - period - 1, i);
+			for (i = period; i <= yValLen; i++) {
+				slicedX = xVal.slice(i - period, i);
+				slicedY = yVal.slice(i - period, i);
 
 				point = SMA.prototype.getValues.call(this, {
 					xData: slicedX,
@@ -188,6 +248,7 @@
 				stdDev = getStandardDeviation(slicedY, ML);
 				TL = ML + standardDeviation * stdDev;
 				BL = ML - standardDeviation * stdDev;
+
 				BB.push([date, TL, ML, BL]);
 				xData.push(date);
 				yData.push([TL, ML, BL]);
@@ -199,5 +260,5 @@
 				yData: yData
 			};
 		}
-	});
-}));
+	}
+);
