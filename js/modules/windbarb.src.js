@@ -106,10 +106,26 @@ seriesType('windbarb', 'column', {
 	 * centerpoint.
 	 */
 	windArrow: function (point) {
-		var level = point.beaufortLevel,
+		var knots = point.value * 1.943844,
+			level = point.beaufortLevel,
 			path,
-			u = this.options.vectorLength / 20;
+			barbs,
+			u = this.options.vectorLength / 20,
+			pos = -10;
 
+		if (point.isNull) {
+			return [];
+		}
+
+		if (level === 0) {
+			return this.chart.renderer.symbols.circle(
+				-10 * u,
+				-10 * u,
+				20 * u,
+				20 * u
+			);
+		}
+		
 		// The stem and the arrow head
 		path = [
 			'M', 0, 7 * u, // base of arrow
@@ -120,39 +136,62 @@ seriesType('windbarb', 'column', {
 			0, -10 * u// top
 		];
 
-		if (level === 0) {
-			path = this.chart.renderer.symbols.circle(
-				-10 * u,
-				-10 * u,
-				20 * u,
-				20 * u
-			);
+		// For each full 50 knots, add a pennant
+		barbs = (knots - knots % 50) / 50; // pennants
+		if (barbs > 0) {
+			while (barbs--) {
+				path.push(
+					pos === -10 ? 'L' : 'M',
+					0,
+					pos * u,
+					'L',
+					5 * u,
+					pos * u + 2,
+					'L',
+					0,
+					pos * u + 4
+
+				);
+
+				// Substract from the rest and move position for next
+				knots -= 50;
+				pos += 7;
+			}
 		}
 
-		if (level === 2) {
-			path.push('M', 0, -8 * u, 'L', 4 * u, -8 * u); // short line
-		} else if (level >= 3) {
-			path.push(0, -10 * u, 7 * u, -10 * u); // long line
+		// For each full 10 knots, add a full barb
+		barbs = (knots - knots % 10) / 10;
+		if (barbs > 0) {
+			while (barbs--) {
+				path.push(
+					pos === -10 ? 'L' : 'M',
+					0,
+					pos * u,
+					'L',
+					7 * u,
+					pos * u
+				);
+				knots -= 10;
+				pos += 3;
+			}
 		}
 
-		if (level === 4) {
-			path.push('M', 0, -7 * u, 'L', 4 * u, -7 * u);
-		} else if (level >= 5) {
-			path.push('M', 0, -7 * u, 'L', 7 * u, -7 * u);
+		// For each full 5 knots, add a half barb
+		barbs = (knots - knots % 5) / 5; // half barbs
+		if (barbs > 0) {
+			while (barbs--) {
+				path.push(
+					pos === -10 ? 'L' : 'M',
+					0,
+					pos * u,
+					'L',
+					4 * u,
+					pos * u
+				);
+				knots -= 5;
+				pos += 3;
+			}
 		}
-
-		if (level === 5) {
-			path.push('M', 0, -4 * u, 'L', 4 * u, -4 * u);
-		} else if (level >= 6) {
-			path.push('M', 0, -4 * u, 'L', 7 * u, -4 * u);
-		}
-
-		if (level === 7) {
-			path.push('M', 0, -1 * u, 'L', 4 * u, -1 * u);
-		} else if (level >= 8) {
-			path.push('M', 0, -1 * u, 'L', 7 * u, -1 * u);
-		}
-
 		return path;
 	},
 
@@ -226,6 +265,10 @@ seriesType('windbarb', 'column', {
 
 			this.animate = null;
 		}
+	}
+}, {
+	isValid: function () {
+		return H.isNumber(this.value) && this.value >= 0;
 	}
 });
 
