@@ -6,12 +6,6 @@
  * License: www.highcharts.com/license
  */
 
-/*
-@todo
-- Anchor for the arrows. Start, end or center.
-- Legend icon
- */
-
 'use strict';
 import H from '../parts/Globals.js';
 
@@ -20,9 +14,20 @@ var each = H.each,
 
 
 seriesType('vector', 'scatter', {
-	vectorLength: 20,
 	lineWidth: 2,
+
+	/** @ignore */
 	marker: null,
+	/**
+	 * What part of the vector it should be rotated around. Can be one of
+	 * `start`, `center` and `end`. When `start`, the vectors will start from
+	 * the given [x, y] position, and when `end` the vectors will end in the
+	 * [x, y] position.
+	 *
+	 * @sample  highcharts/plotoptions/vector-rotationorigin-start/
+	 *          Rotate from start
+	 */
+	rotationOrigin: 'center',
 	states: {
 		hover: {
 			lineWidthPlus: 1
@@ -30,7 +35,8 @@ seriesType('vector', 'scatter', {
 	},
 	tooltip: {
 		pointFormat: '<b>[{point.x}, {point.y}]</b><br/>Length: <b>{point.length}</b><br/>Direction: <b>{point.direction}\u00B0</b><br/>'
-	}
+	},
+	vectorLength: 20
 	
 }, {
 	pointArrayMap: ['y', 'length', 'direction'],
@@ -66,16 +72,22 @@ seriesType('vector', 'scatter', {
 	arrow: function (point) {
 		var path,
 			fraction = point.length / this.lengthMax,
+			o = {
+				start: 10,
+				center: 0,
+				end: -10
+			}[this.options.rotationOrigin] || 0,
 			u = fraction * this.options.vectorLength / 20;
 
-		// The stem and the arrow head
+		// The stem and the arrow head. Draw the arrow first with rotation 0,
+		// which is the arrow pointing down (vector from north to south).
 		path = [
-			'M', 0, 7 * u, // base of arrow
-			'L', -1.5 * u, 7 * u,
-			0, 10 * u,
-			1.5 * u, 7 * u,
-			0, 7 * u,
-			0, -10 * u// top
+			'M', 0, 7 * u + o, // base of arrow
+			'L', -1.5 * u, 7 * u + o,
+			0, 10 * u + o,
+			1.5 * u, 7 * u + o,
+			0, 7 * u + o,
+			0, -10 * u + o// top
 		];
 
 		return path;
