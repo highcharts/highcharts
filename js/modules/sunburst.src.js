@@ -167,6 +167,52 @@ var sunburstSeries = {
 			y: plotHeight / 2
 		};
 		setShapeArgs(tree, values);
+	},
+
+	/**
+	 * Animate the slices in. Similar to the animation of polar charts.
+	 */
+	animate: function (init) {
+		var chart = this.chart,
+			center = [
+				chart.plotWidth / 2,
+				chart.plotHeight / 2
+			],
+			plotLeft = chart.plotLeft,
+			plotTop = chart.plotTop,
+			attribs, 
+			group = this.group;
+
+		// Initialize the animation
+		if (init) {
+
+			// Scale down the group and place it in the center
+			attribs = {
+				translateX: center[0] + plotLeft,
+				translateY: center[1] + plotTop,
+				scaleX: 0.001, // #1499
+				scaleY: 0.001,
+				rotation: 10,
+				opacity: 0.01
+			};
+
+			group.attr(attribs);
+
+		// Run the animation
+		} else {
+			attribs = {
+				translateX: plotLeft,
+				translateY: plotTop,
+				scaleX: 1,
+				scaleY: 1,
+				rotation: 0,
+				opacity: 1
+			};
+			group.animate(attribs, this.options.animation);
+
+			// Delete this function to allow it only once
+			this.animate = null;
+		}
 	}
 };
 
