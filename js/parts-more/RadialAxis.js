@@ -157,6 +157,12 @@ radialAxisMixin = {
 					innerR: 0
 				}
 			);
+
+			// Bounds used to position the plotLine label next to the line
+			// (#7117)
+			path.xBounds = [this.left + center[0]];
+			path.yBounds = [this.top + center[1] - r];
+			
 		} else {
 			end = this.postTranslate(this.angleRad, r);
 			path = ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];

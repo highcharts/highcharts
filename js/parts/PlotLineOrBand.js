@@ -173,8 +173,8 @@ H.PlotLineOrBand.prototype = {
 			label = plotLine.label,
 			renderer = plotLine.axis.chart.renderer,
 			attribs,
-			xs,
-			ys,
+			xBounds,
+			yBounds,
 			x,
 			y;
 
@@ -204,16 +204,19 @@ H.PlotLineOrBand.prototype = {
 
 		// get the bounding box and align the label
 		// #3000 changed to better handle choice between plotband or plotline
-		xs = [path[1], path[4], (isBand ? path[6] : path[1])];
-		ys = [path[2], path[5], (isBand ? path[7] : path[2])];
-		x = arrayMin(xs);
-		y = arrayMin(ys);
+		xBounds = path.xBounds ||
+			[path[1], path[4], (isBand ? path[6] : path[1])];
+		yBounds = path.yBounds ||
+			[path[2], path[5], (isBand ? path[7] : path[2])];
+		
+		x = arrayMin(xBounds);
+		y = arrayMin(yBounds);
 
 		label.align(optionsLabel, false, {
 			x: x,
 			y: y,
-			width: arrayMax(xs) - x,
-			height: arrayMax(ys) - y
+			width: arrayMax(xBounds) - x,
+			height: arrayMax(yBounds) - y
 		});
 		label.show();
 	},
