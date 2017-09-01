@@ -5,15 +5,15 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         series: [{
             id: 'main',
             data: [
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15
+                22.27,22.19,22.08,22.17,22.18,22.13,22.23,
+                22.43,22.24,22.29,22.15,22.39
             ]
         }, {
             type: 'ema',
-            linkedTo: 'main'
+            linkedTo: 'main',
+            params: {
+                period: 10
+            }
         }]
     });
 
@@ -23,7 +23,13 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Initial number of EMA points is correct'
     );
 
-    chart.series[0].addPoint(13);
+    assert.deepEqual(
+        chart.series[1].yData,
+        [22.220999999999997, 22.208090909090906, 22.241165289256195],
+        'Correct values'
+    );
+
+    chart.series[0].addPoint(22.38);
 
     assert.strictEqual(
         chart.series[0].points.length,
@@ -31,7 +37,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'After addPoint number of EMA points is correct'
     );
 
-    chart.series[0].setData([11,12,13,14,15,16,17], false);
+    chart.series[0].setData([23.36,24.05,23.75,23.83,23.95,23.63,23.82], false);
     chart.series[1].update({
         color: 'red',
         params: {
@@ -41,7 +47,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         chart.series[1].yData,
-        [12.5, 13.25, 14.125, 15.0625, 16.03125],
+        [23.72, 23.775, 23.862499999999997, 23.746249999999996, 23.783125],
         'Correct values'
     );
 
@@ -51,11 +57,11 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Line color changed'
     );
 
-    chart.series[0].points[6].remove();
+    chart.series[0].points[2].remove();
 
     assert.deepEqual(
         chart.series[1].yData,
-        [12.5, 13.25, 14.125, 15.0625],
+        [23.746666666666666, 23.848333333333333, 23.739166666666666, 23.779583333333335],
         'Correct values after point.remove()'
     );
 });

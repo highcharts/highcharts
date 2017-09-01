@@ -13,14 +13,12 @@ function accumulateAverage(points, xVal, yVal, i, index) {
 	points.push([xValue, yValue]);
 }
 
-function populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index) {
+function populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index, SMA) {
 	var x = xVal[i - 1],
-		yValuePrev = index < 0 ? yVal[i - 2] : yVal[i - 2][index],
 		yValue = index < 0 ? yVal[i - 1] : yVal[i - 1][index],
-		prevPoint, y;
+		y;
 
-	prevPoint = calEMA === 0 ? yValuePrev : calEMA;
-	y = ((yValue * EMApercent) + (prevPoint * (1 - EMApercent)));
+	y = calEMA === 0 ? SMA : ((yValue * EMApercent) + (calEMA * (1 - EMApercent)));
 
 	return [x, y];
 }
@@ -54,39 +52,40 @@ seriesType('ema', 'sma',
 				yValLen = yVal ? yVal.length : 0,
 				EMApercent = (2 / (period + 1)),
 				calEMA = 0,
-				range = 1,
-				xValue = xVal[0],
-				yValue = yVal[0],
+				range = 0,
+				sum = 0,
 				EMA = [],
 				xData = [],
 				yData = [],
 				index = -1,
-				i, points,
+				points = [],
+				SMA = 0,
+				i,
 				EMAPoint;
 
 			// Check period, if bigger than points length, skip
-			if (xVal.length <= period) {
+			if (xVal.length < period) {
 				return false;
 			}
 
 			// Switch index for OHLC / Candlestick / Arearange
 			if (isArray(yVal[0])) {
 				index = params.index ? params.index : 0;
-				yValue = yVal[0][index];
 			}
 
-			// Starting point
-			points = [[xValue, yValue]];
-
 			// Accumulate first N-points
-			while (range !== period) {
+			while (range < period) {
 				accumulateAverage(points, xVal, yVal, range, index);
+				sum += index < 0 ? yVal[range] : yVal[range][index];
 				range++;
 			}
 
+			// first point 
+			SMA = sum / period;
+
 			// Calculate value one-by-one for each period in visible data
 			for (i = range; i < yValLen; i++) {
-				EMAPoint = populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index);
+				EMAPoint = populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index, SMA);
 				EMA.push(EMAPoint);
 				xData.push(EMAPoint[0]);
 				yData.push(EMAPoint[1]);
