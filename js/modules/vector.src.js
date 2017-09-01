@@ -21,12 +21,12 @@ var each = H.each,
 
 
 seriesType('vector', 'scatter', {
-	arrowLength: 20,
+	vectorLength: 20,
 	lineWidth: 2,
 	marker: null,
 	states: {
 		hover: {
-			lineWidthPlus: 0
+			lineWidthPlus: 1
 		}
 	}
 	
@@ -64,7 +64,7 @@ seriesType('vector', 'scatter', {
 	arrow: function (point) {
 		var path,
 			fraction = point.length / this.lengthMax,
-			u = fraction * this.options.arrowLength / 20;
+			u = fraction * this.options.vectorLength / 20;
 
 		// The stem and the arrow head
 		path = [
@@ -108,6 +108,34 @@ seriesType('vector', 'scatter', {
 	},
 
 	drawGraph: H.noop,
+
+	/*
+	drawLegendSymbol: function (legend, item) {
+		var options = legend.options,
+			symbolHeight = legend.symbolHeight,
+			square = options.squareSymbol,
+			symbolWidth = square ? symbolHeight : legend.symbolWidth,
+			path = this.arrow.call({
+				lengthMax: 1,
+				options: {
+					vectorLength: symbolWidth
+				}
+			}, {
+				length: 1
+			});
+
+		item.legendLine = this.chart.renderer.path(path)
+		.addClass('highcharts-point')
+		.attr({
+			zIndex: 3,
+			translateY: symbolWidth / 2,
+			rotation: 270,
+			'stroke-width': 1,
+			'stroke': 'black'
+		}).add(item.legendGroup);
+
+	},
+	*/
 
 	/**
 	 * Fade in the arrows on initiating series.

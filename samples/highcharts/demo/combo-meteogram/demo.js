@@ -535,7 +535,7 @@ Meteogram.prototype.getChartOptions = function () {
             type: 'windbarb',
             color: Highcharts.getOptions().colors[1],
             data: this.winds,
-            arrowLength: 18,
+            vectorLength: 18,
             yOffset: -15,
             tooltip: {
                 valueSuffix: ' m/s'

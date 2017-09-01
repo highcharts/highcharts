@@ -14,7 +14,6 @@ var each = H.each,
 
 
 seriesType('windbarb', 'column', {
-	arrowLength: 20,
 	lineWidth: 2,
 	onSeries: null,
 	states: {
@@ -25,6 +24,7 @@ seriesType('windbarb', 'column', {
 	tooltip: {
 		pointFormat: '<b>{series.name}</b>: {point.value} ({point.beaufort})<br/>'
 	},
+	vectorLength: 20,
 	yOffset: -20
 }, {
 	pointArrayMap: ['value', 'direction'],
@@ -67,7 +67,7 @@ seriesType('windbarb', 'column', {
 	windArrow: function (point) {
 		var level = point.beaufortLevel,
 			path,
-			u = this.options.arrowLength / 20;
+			u = this.options.vectorLength / 20;
 
 		// The stem and the arrow head
 		path = [
@@ -165,7 +165,7 @@ seriesType('windbarb', 'column', {
 			[
 				plotX,
 				plotY + yAxis.pos - chart.plotTop + this.options.yOffset -
-					this.options.arrowLength / 2
+					this.options.vectorLength / 2
 			]; // #6327
 		}, this);
 	}, 
