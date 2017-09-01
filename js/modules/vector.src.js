@@ -8,7 +8,6 @@
 
 /*
 @todo
-- Tooltip format
 - Anchor for the arrows. Start, end or center.
 - Legend icon
  */
@@ -28,6 +27,9 @@ seriesType('vector', 'scatter', {
 		hover: {
 			lineWidthPlus: 1
 		}
+	},
+	tooltip: {
+		pointFormat: '<b>[{point.x}, {point.y}]</b><br/>Length: <b>{point.length}</b><br/>Direction: <b>{point.direction}\u00B0</b><br/>'
 	}
 	
 }, {

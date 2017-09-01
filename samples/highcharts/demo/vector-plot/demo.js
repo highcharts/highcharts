@@ -15,6 +15,7 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'vector',
+        name: 'Sample vector field',
         color: Highcharts.getOptions().colors[1],
         data: [
             [5, 5, 190, 18],
