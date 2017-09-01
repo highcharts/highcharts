@@ -12,9 +12,35 @@ import onSeriesMixin from '../mixins/on-series.js';
 var each = H.each,
 	seriesType = H.seriesType;
 
-
+/**
+ * Wind barbs are a convenient way to represent wind speed and direction in one
+ * graphical form. Wind direction is given by the stem direction, and wind speed
+ * by the number and shape of barbs.  
+ * 
+ * @extends {plotOptions.column}
+ * @excluding boostThreshold,marker,connectEnds,connectNulls,cropThreshold,
+ *            dashStyle,gapSize,gapUnit,dataGrouping,linecap,shadow,stacking,
+ *            step
+ * @product highcharts highstock
+ * @sample {highcharts|highstock} highcharts/demo/windbarb-series/
+ *         Wind barb series
+ * @since 6.0.0
+ * @optionparent plotOptions.windbarb
+ */
 seriesType('windbarb', 'column', {
+	/**
+	 * The line width of the wind barb symbols.
+	 */
 	lineWidth: 2,
+	/**
+	 * The id of another series in the chart that the wind barbs are projected
+	 * on. When `null`, the wind symbols are drawn on the X axis, but offset
+	 * up or down by the `yOffset` setting.
+	 * 
+	 * @sample {highcharts|highstock} highcharts/plotoptions/windbarb-onseries
+	 *         Projected on area series
+	 * @type {String|null}
+	 */
 	onSeries: null,
 	states: {
 		hover: {
@@ -22,9 +48,24 @@ seriesType('windbarb', 'column', {
 		}
 	},
 	tooltip: {
+		/**
+		 * The default point format for the wind barb tooltip. Note the 
+		 * `point.beaufort` property that refers to the Beaufort wind scale. The
+		 * names can be internationalized by modifying
+		 * `Highcharts.seriesTypes.windbarb.prototype.beaufortNames`.
+		 */
 		pointFormat: '<b>{series.name}</b>: {point.value} ({point.beaufort})<br/>'
 	},
+	/**
+	 * Pixel length of the stems.
+	 */
 	vectorLength: 20,
+	/**
+	 * Vertical offset from the cartesian position, in pixels. The default value
+	 * makes sure the symbols don't overlap the X axis when `onSeries` is
+	 * `null`, and that they don't overlap the linked series when `onSeries` is
+	 * given.
+	 */
 	yOffset: -20
 }, {
 	pointArrayMap: ['value', 'direction'],
@@ -187,3 +228,65 @@ seriesType('windbarb', 'column', {
 		}
 	}
 });
+
+
+
+/**
+ * A `windbarb` series. If the [type](#series.windbarb.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * windbarb](#plotOptions.windbarb).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.windbarb
+ * @excluding dataParser,dataURL
+ * @product highcharts highstock
+ * @apioption series.windbarb
+ */
+
+/**
+ * An array of data points for the series. For the `windbarb` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 3 values. In this case, the values correspond
+ * to `x,value,direction`. If the first value is a string, it is applied as
+ * the name of the point, and the `x` value is inferred.
+ * 
+ *  ```js
+ *     data: [
+ *         [Date.UTC(2017, 0, 1, 0), 3.3, 90],
+ *         [Date.UTC(2017, 0, 1, 1), 12.1, 180],
+ *         [Date.UTC(2017, 0, 1, 2), 11.1, 270]
+ *     ]
+ *  ```
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         x: Date.UTC(2017, 0, 1, 0),
+ *         value: 12.1,
+ *         direction: 90
+ *     }, {
+ *         x: Date.UTC(2017, 0, 1, 1),
+ *         value: 11.1,
+ *         direction: 270
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array|Number>}
+ * @extends series.line.data
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts highstock
+ * @apioption series.windbarb.data
+ */
