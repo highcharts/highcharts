@@ -204,8 +204,18 @@ H.PlotLineOrBand.prototype = {
 
 		// get the bounding box and align the label
 		// #3000 changed to better handle choice between plotband or plotline
-		xs = [path[1], path[4], (isBand ? path[6] : path[1])];
-		ys = [path[2], path[5], (isBand ? path[7] : path[2])];
+		if (isBand) {
+			xs = [path[1], path[4], path[6]];
+			ys = [path[2], path[5], path[7]];
+		} else {
+			// some lines can be drown through more than one axis. To include all of them use cycle. 
+			xs = [];
+			ys = [];
+			for (var n = 0; n < path.length; n += 3) {
+				xs.push(path[n + 1]);
+				ys.push(path[n + 2]);
+			}
+		}
 		x = arrayMin(xs);
 		y = arrayMin(ys);
 
