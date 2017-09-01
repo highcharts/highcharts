@@ -257,3 +257,20 @@ seriesType('vector', 'scatter', {
  * @product highcharts highstock
  * @apioption series.vector.data
  */
+
+/**
+ * The length of the vector. The rendered length will relate to the
+ * `vectorLength` setting.
+ * 
+ * @type {Number}
+ * @product highcharts highstock
+ * @apioption series.vector.data.length
+ */
+
+/**
+ * The vector direction in degrees, where 0 is north (pointing towards south).
+ * 
+ * @type {Number}
+ * @product highcharts highstock
+ * @apioption series.vector.data.direction
+ */

@@ -290,3 +290,19 @@ seriesType('windbarb', 'column', {
  * @product highcharts highstock
  * @apioption series.windbarb.data
  */
+
+/**
+ * The wind speed in meters per second.
+ * 
+ * @type {Number}
+ * @product highcharts highstock
+ * @apioption series.windbarb.data.value
+ */
+
+/**
+ * The wind direction in degrees, where 0 is north (pointing towards south).
+ * 
+ * @type {Number}
+ * @product highcharts highstock
+ * @apioption series.windbarb.data.direction
+ */
