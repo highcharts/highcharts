@@ -856,14 +856,22 @@ Highcharts.Pointer.prototype = {
 	onTrackerMouseOut: function (e) {
 		var series = this.chart.hoverSeries,
 			relatedTarget = e.relatedTarget || e.toElement;
+		
 		this.isDirectTouch = false;
-		if (series && relatedTarget && !series.stickyTracking && 
-				!this.inClass(relatedTarget, 'highcharts-tooltip') &&
-					(
-						!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465
-						!this.inClass(relatedTarget, 'highcharts-tracker') // #5553
-					)
-				) {
+
+		if (
+			series &&
+			relatedTarget &&
+			!series.stickyTracking && 
+			!this.inClass(relatedTarget, 'highcharts-tooltip') &&
+			(
+				!this.inClass(
+					relatedTarget,
+					'highcharts-series-' + series.index
+				) || // #2499, #4465
+				!this.inClass(relatedTarget, 'highcharts-tracker') // #5553
+			)
+		) {
 			series.onMouseOut();
 		}
 	},
