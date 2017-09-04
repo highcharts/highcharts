@@ -35,7 +35,7 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[0].points.length,
         chart.series[1].points.length + chart.series[1].options.params.period - 1,
-        'Initial number of SMA points is correct'
+        'Initial number of Bollinger Bands points is correct'
     );
 
     chart.series[0].addPoint([5, 45, 46, 43, 44]);
@@ -43,7 +43,7 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[0].points.length,
         chart.series[1].points.length + chart.series[1].options.params.period - 1,
-        'After addPoint number of SMA points is correct'
+        'After addPoint number of Bollinger Bands points is correct'
     );
 
     chart.series[0].setData([

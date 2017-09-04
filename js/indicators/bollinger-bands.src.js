@@ -84,7 +84,7 @@ H.seriesType('bb', 'sma',
 			}
 		},
 		/**
-		 * Bottom line options.
+		 * Top line options.
 		 *
 		 * @extends {plotOptions.bb.bottomLine}
 		 * @since 6.0.0

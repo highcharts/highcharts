@@ -1,58 +1,121 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
-	var UNDEFINED,
-		each = H.each,
-		merge = H.merge,
-		isArray = H.isArray,
-		SMA = H.seriesTypes.sma;
+'use strict';
 
-	H.seriesType('priceEnvelopes', 'sma', {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+
+var each = H.each,
+	merge = H.merge,
+	isArray = H.isArray,
+	SMA = H.seriesTypes.sma;
+
+H.seriesType('priceenvelopes', 'sma',
+		/**
+		 * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations. This series requires `linkedTo`
+		 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+		 *
+		 * @extends {plotOptions.sma}
+		 * @product highstock
+		 * @sample {highstock} stock/indicators/price-envelopes
+		 *                     Price envelopes
+		 * @since 6.0.0
+		 * @optionparent plotOptions.priceenvelopes
+		 */
+	{
 		name: 'Price envelopes (20, 0.1, 0.1)',
 		marker: {
 			enabled: false
 		},
 		tooltip: {
-			pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+			/**
+			 * The HTML of the point's line in the tooltip. Variables are enclosed
+			 * by curly brackets. Available variables are point.x, point.y, series.
+			 * name and series.color and other properties on the same form. Furthermore,
+			 * point.y can be extended by the `tooltip.valuePrefix` and `tooltip.
+			 * valueSuffix` variables. This can also be overridden for each series,
+			 * which makes it a good hook for displaying units.
+			 *
+			 * In styled mode, the dot is colored by a class name rather
+			 * than the point color.
+			 *
+			 * @type {String}
+			 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
+			 * @sample {highmaps} maps/tooltip/format/ Format demo
+			 * @default
+			 *	<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>
+			 *		Top: {point.top}<br/>
+			 *		Middle: {point.middle}<br/>
+			 *		Bottom: {point.bottom}<br/>
+			 */
+			pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+				'<b> {series.name}</b><br/>' +
 				'Top: {point.top}<br/>' +
 				'Middle: {point.middle}<br/>' +
 				'Bottom: {point.bottom}<br/>'
 		},
 		params: {
 			period: 20,
+			/**
+			 * Percentage above the moving average that should be displayed.
+			 * 0.1 means 110%. Relative to the calculated value.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			topBand: 0.1,
+			/**
+			 * Percentage below the moving average that should be displayed.
+			 * 0.1 means 90%. Relative to the calculated value.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			bottomBand: 0.1
 		},
+		/**
+		 * Bottom line options.
+		 *
+		 * @since 6.0.0
+		 * @product highstock
+		 */
+		bottomLine: {
+			styles: {
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 * If not set, it's inherited from [plotOptions.priceenvelopes.color](#plotOptions.priceenvelopes.color).
+				 *
+				 * @type {String}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
+			}
+		},
+		/**
+		 * Top line options.
+		 *
+		 * @extends {plotOptions.priceenvelopes.bottomLine}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		topLine: {
 			styles: {
 				lineWidth: 1
 			}
 		},
-		bottomLine: {
-			styles: {
-				lineWidth: 1
-			}
-		},
 		dataGrouping: {
-			approximation: function (top, middle, bot) {
-				var ret = [
-					H.approximations.average(top),
-					H.approximations.average(middle),
-					H.approximations.average(bot)
-				];
-				if (ret[0] !== UNDEFINED && ret[1] !== UNDEFINED && ret[2] !== UNDEFINED) {
-					return ret;
-				}
-				return UNDEFINED;
-			}
+			approximation: 'averages'
 		}
-	}, {
+	}, /** @lends Highcharts.Series.prototype */ {
 		pointArrayMap: ['top', 'middle', 'bottom'],
 		parallelArrays: ['x', 'y', 'top', 'bottom'],
 		pointValKey: 'middle',
@@ -154,13 +217,13 @@
 				i;
 
 			// Price envelopes requires close value
-			if (xVal.length <= period || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (xVal.length < period || !isArray(yVal[0]) || yVal[0].length !== 4) {
 				return false;
 			}
 
-			for (i = period + 1; i <= yValLen; i++) {
-				slicedX = xVal.slice(i - period - 1, i);
-				slicedY = yVal.slice(i - period - 1, i);
+			for (i = period; i <= yValLen; i++) {
+				slicedX = xVal.slice(i - period, i);
+				slicedY = yVal.slice(i - period, i);
 
 				point = SMA.prototype.getValues.call(this, {
 					xData: slicedX,
@@ -182,5 +245,6 @@
 				yData: yData
 			};
 		}
-	});
-}));
+	}
+);
+
