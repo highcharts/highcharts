@@ -1239,7 +1239,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			while (i-- && ret === undefined) {
 				multi = Math.pow(numSymMagnitude, i + 1);
 				if (
+					// Only accept a numeric symbol when the distance is more 
+					// than a full unit. So for example if the symbol is k, we
+					// don't accept numbers like 0.5k.
 					numericSymbolDetector >= multi &&
+					// Accept one decimal before the symbol. Accepts 0.5k but
+					// not 0.25k. How does this work with the previous?
 					(value * 10) % multi === 0 &&
 					numericSymbols[i] !== null &&
 					value !== 0
