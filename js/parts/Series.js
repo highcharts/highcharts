@@ -4155,7 +4155,7 @@ H.Series = H.seriesType('line', null, { // base series options
 						''
 				) +
 				(this.options.className || '') +
-				group.hasClass('highcharts-tracker') ? ' highcharts-tracker' : ''
+				(group.hasClass('highcharts-tracker') ? ' highcharts-tracker' : '')
 			),
 			true
 		);
