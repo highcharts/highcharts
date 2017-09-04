@@ -153,6 +153,7 @@ seriesType('heatmap', 'scatter', {
 			options = series.options,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
+			pointPadding = options.pointPadding || 0,
 			between = function (x, a, b) {
 				return Math.min(Math.max(a, x), b);
 			};
@@ -191,10 +192,10 @@ seriesType('heatmap', 'scatter', {
 
 			point.shapeType = 'rect';
 			point.shapeArgs = {
-				x: Math.min(x1, x2),
-				y: Math.min(y1, y2),
-				width: Math.abs(x2 - x1),
-				height: Math.abs(y2 - y1)
+				x: Math.min(x1, x2) + pointPadding,
+				y: Math.min(y1, y2) + pointPadding,
+				width: Math.abs(x2 - x1) - pointPadding * 2,
+				height: Math.abs(y2 - y1) - pointPadding * 2
 			};
 		});
 
