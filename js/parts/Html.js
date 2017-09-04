@@ -202,16 +202,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey =
-				isMS ?
-					'-ms-transform' :
-					isWebKit ?
-						'-webkit-transform' :
-						isFirefox ?
-							'MozTransform' :
-							win.opera ?
-								'-o-transform' :
-								'';
+			cssTransformKey = this.renderer.getTransformKey();
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform =
 			'rotate(' + rotation + 'deg)';
@@ -232,6 +223,19 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
 // Extend SvgRenderer for useHTML option.
 extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
+
+	getTransformKey: function () {
+		return isMS && !/Edge/.test(win.navigator.userAgent) ?
+			'-ms-transform' :
+			isWebKit ?
+				'-webkit-transform' :
+				isFirefox ?
+					'MozTransform' :
+					win.opera ?
+						'-o-transform' :
+						'';
+	},
+
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the
 	 * SVG renderer through the useHTML option.
@@ -343,6 +347,20 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 							var htmlGroupStyle,
 								cls = attr(parentGroup.element, 'class');
 
+							// Common translate setter for X and Y on the HTML
+							// group. Using CSS transform instead of left and
+							// right prevents flickering in IE and Edge when 
+							// moving tooltip (#6957).
+							function translateSetter(value, key) {
+								parentGroup[key] = value;
+								htmlGroupStyle[renderer.getTransformKey()] =
+									'translate(' +
+										parentGroup.x + 'px,' +
+										parentGroup.y + 'px)';
+								
+								parentGroup.doTransform = true;
+							}
+
 							if (cls) {
 								cls = { className: cls };
 							} // else null
@@ -384,16 +402,8 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 									}
 									return parentGroup;
 								},
-								translateXSetter: function (value, key) {
-									htmlGroupStyle.left = value + 'px';
-									parentGroup[key] = value;
-									parentGroup.doTransform = true;
-								},
-								translateYSetter: function (value, key) {
-									htmlGroupStyle.top = value + 'px';
-									parentGroup[key] = value;
-									parentGroup.doTransform = true;
-								}
+								translateXSetter: translateSetter,
+								translateYSetter: translateSetter
 							});
 							addSetters(parentGroup, htmlGroupStyle);
 						});
