@@ -773,7 +773,8 @@ Annotation.prototype = {
 			 * @sample {highstock} highcharts/annotations/shape/ Basic shape annotation
 			 * @sample {highmaps} highcharts/annotations/shape/ Basic shape annotation
 			 * @since 6.0.0
-			 * @default rect
+			 * @default 'rect'
+       * @apioption annotations.shapeOptions.type
 			 **/
 			// type: 'rect',
 
