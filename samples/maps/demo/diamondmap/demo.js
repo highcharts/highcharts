@@ -2,12 +2,17 @@ Highcharts.chart('container', {
     chart: {
         type: 'diamondmap',
         marginTop: 40,
-        marginBottom: 80,
-        plotBorderWidth: 1
+        marginBottom: 80
     },
 
     title: {
         text: 'Diamondmap demo'
+    },
+
+    exporting: {
+        sourceHeight: 600,
+        sourceWidth: 800,
+        scale: 1
     },
 
     xAxis: {
@@ -15,8 +20,9 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
-    //    categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        gridLineWidth: 0
+        categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        gridLineWidth: 0,
+        title: false
     },
 
     colorAxis: {
@@ -31,16 +37,21 @@ Highcharts.chart('container', {
         margin: 0,
         verticalAlign: 'top',
         y: 25,
-        symbolHeight: 280
+        symbolHeight: 475
     },
 
-    /* tooltip: {
-    formatter: function() {
-    return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> sold <br><b>' +
-    this.point.value + '</b> items on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>';
-    }
+    tooltip: {
+        formatter: function () {
+            var point = this.point,
+                series = this.series;
+            return '<b>' + series.xAxis.categories[point.x] +
+                    '</b> sold <br><b>' +
+                    point.value +
+                    '</b> items on <br><b>' +
+                    series.yAxis.categories[point.y] + '</b>';
+        }
     },
-    */
+
     series: [{
         name: 'Sales per employee',
         borderWidth: 1,

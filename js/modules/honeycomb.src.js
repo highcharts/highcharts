@@ -72,7 +72,8 @@ seriesType('honeycomb', 'heatmap', {
 				}
 			}
 		}
-	}
+	},
+	pointPadding: 2
 
 // Prototype functions
 }, {
@@ -215,6 +216,9 @@ seriesType('honeycomb', 'heatmap', {
 // Point class
 }, {
 	haloPath: function (size) {
+		if (!size) {
+			return [];
+		}
 		var hexagon = this.tileEdges;
 		return [
 			'M', hexagon.x2 - size, hexagon.y1 + size,
@@ -347,6 +351,9 @@ seriesType('diamondmap', 'honeycomb', {
 // Point class
 }, {
 	haloPath: function (size) {
+		if (!size) {
+			return [];
+		}
 		var diamond = this.tileEdges;
 		return [
 			'M', diamond.x2, diamond.y1 + size,
