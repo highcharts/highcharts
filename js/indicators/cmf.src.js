@@ -1,17 +1,36 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
-	
-	H.seriesType('cmf', 'sma', {
+/**
+ * (c) 2010-2017 Highsoft AS
+ * Author: Sebastian Domas
+ *
+ * Chaikin Money Flow indicator for Highstock
+ *
+ * License: www.highcharts.com/license
+ */
+
+'use strict';
+import H from '../parts/Globals.js';
+
+H.seriesType('cmf', 'sma', 
+  /**
+   * Chaikin Money Flow (cmf) indicator
+   *
+   * @type {Object}
+   * @extends {plotOptions.sma}
+   * @product highstock
+   * @sample {highstock} stock/indicators/cmf/
+   *                     Chaikin Money Flow indicator
+   * @since 6.0.0
+   * @excluding animationLimit
+   * @optionparent plotOptions.cmf
+   */
+	{
 		name: 'Chaikin Money Flow (14)',
 		params: {
 			period: 14,
+
+      /**
+       * The id of another series to use its data as volume data for the indiator calculation.
+       */
 			volumeSeriesID: 'Volume'
 		}
 	}, {
@@ -147,4 +166,3 @@
 			};
 		}
 	});
-}));
