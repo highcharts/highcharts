@@ -1,29 +1,39 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
-	var isArray = H.isArray;
-	
-	// Utils:
-	function populateAverage(points, xVal, yVal, i, period) {
-		var mmY = yVal[i - 1][3] - yVal[i - period][3],
-			mmX = xVal[i - 1];
-			
-		points.shift(); // remove point until range < period
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-		return [mmX, mmY];
-	}
+var isArray = H.isArray,
+	seriesType = H.seriesType;
 
-	H.seriesType('momentum', 'sma', {
+function populateAverage(points, xVal, yVal, i, period) {
+	var mmY = yVal[i - 1][3] - yVal[i - period - 1][3],
+		mmX = xVal[i - 1];
+					
+	points.shift(); // remove point until range < period
+
+	return [mmX, mmY];
+}
+
+/**
+ * The Momentum series type.
+ *
+ * @constructor seriesTypes.momentum
+ * @augments seriesTypes.sma
+ */
+seriesType('momentum', 'sma', 
+	/**
+	 * Momentum. This series requires `linkedTo` option to be set.
+	 * 
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/momentum Exponential moving average indicator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.momentum
+	 */
+	{
 		name: 'Momentum (14)',
 		params: {
-			period: 14,
-			decimals: 4
+			period: 14
 		}
 	}, {
 		getValues: function (series, params) {
@@ -33,7 +43,6 @@
 				yValLen = yVal ? yVal.length : 0,
 				xValue = xVal[0],
 				yValue = yVal[0],
-				range = 1,
 				MM = [],
 				xData = [],
 				yData = [],
@@ -57,13 +66,9 @@
 				[xValue, yValue]
 			];
 
-			// Accumulate first N-points
-			while (range !== period) {
-				range++;
-			}
 
 			// Calculate value one-by-one for each perdio in visible data
-			for (i = range; i < yValLen; i++) {
+			for (i = (period + 1); i < yValLen; i++) {
 				MMPoint = populateAverage(points, xVal, yVal, i, period, index);
 				MM.push(MMPoint);
 				xData.push(MMPoint[0]);
@@ -82,4 +87,28 @@
 			};
 		}
 	});
-}));
+
+/**
+ * A `Momentum` series. If the [type](#series.momentum.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to 
+ * [plotOptions.momentum](#plotOptions.momentum).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.momentum
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.momentum
+ */
+
+/**
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.sma.data
+ * @product highstock
+ * @apioption series.momentum.data
+ */
