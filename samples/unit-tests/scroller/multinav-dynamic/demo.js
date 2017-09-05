@@ -216,3 +216,45 @@ QUnit.test('Hide navigator series when hiding base', function (assert) {
     assert.strictEqual(chart.navigator.series[0].visible, true, 'Navigator series shown again');
 });
 
+
+QUnit.test(
+    'Resize chart with responsive rules requiring Series.update (#7109)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            chart: {
+                width: 500
+            },
+            series: [{
+                name: 'USD to EUR',
+                data: [1, 3, 2, 4, 3, 5]
+            }],
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 600
+                    },
+                    chartOptions: {
+                        chart: {
+                            type: 'area'
+                        }
+                    }
+                }]
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].type,
+            'area',
+            'Initial chart type from responsive rule'
+        );
+
+        chart.setSize(700);
+        assert.strictEqual(
+            chart.series[0].type,
+            'line',
+            'New chart type, responsive rule no longer applies'
+        );
+
+    }
+);
+

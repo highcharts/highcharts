@@ -840,10 +840,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
 			proto = seriesTypes[oldType].prototype,
 			n,
-			preserve = [
+			preserveGroups = [
 				'group',
 				'markerGroup',
-				'dataLabelsGroup',
+				'dataLabelsGroup'
+			],
+			preserve = [
 				'navigatorSeries',
 				'baseSeries'
 			],
@@ -863,12 +865,17 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		}
 
 		// If we're changing type or zIndex, create new groups (#3380, #3404)
-		if ((newType && newType !== oldType) || newOptions.zIndex !== undefined) {
-			preserve.length = 0;
+		// Also create new groups for navigator series.
+		if (
+			(newType && newType !== oldType) ||
+			newOptions.zIndex !== undefined ||
+			series.options.isInternal
+		) {
+			preserveGroups.length = 0;
 		}
 
-		// Make sure groups are not destroyed (#3094)
-		each(preserve, function (prop) {
+		// Make sure preserved properties are not destroyed (#3094)
+		each(preserve.concat(preserveGroups), function (prop) {
 			preserve[prop] = series[prop];
 			delete series[prop];
 		});

@@ -1,23 +1,50 @@
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+    // Create the chart
+    Highcharts.stockChart('container', {
 
-Highcharts.stockChart('container', {
-
-    yAxis: {
-        lineWidth: 2,
-        offset: 70,
-        labels: {
-            align: 'right',
-            x: -3,
-            y: 6
+        chart: {
+            spacingRight: 0
         },
-        showLastLabel: true
-    },
 
-    rangeSelector: {
-        selected: 1
-    },
+        rangeSelector: {
+            selected: 1
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+        navigator: {
+            enabled: false
+        },
+
+        scrollbar: {
+            enabled: false
+        },
+
+        title: {
+            text: 'AAPL Stock Price'
+        },
+
+        yAxis: [{
+            opposite: false,
+            offset: 20,
+            tickWidth: 1,
+            tickLength: 5,
+            lineWidth: 1
+        }, {
+            offset: 20,
+            tickWidth: 1,
+            tickLength: 5,
+            lineWidth: 1,
+            labels: {
+                align: 'left'
+            },
+            linkedTo: 0
+        }],
+
+        series: [{
+            name: 'AAPL',
+            data: data,
+            tooltip: {
+                valueDecimals: 2
+            }
+        }]
+    });
 });
