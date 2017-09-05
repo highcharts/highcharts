@@ -1,35 +1,46 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
-	
-	var isArray = H.isArray;
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-	// Utils:
-	function sumArray(array) {
-		return array.reduce(function (prev, cur) {
-			return prev + cur;
-		});
-	}
+var isArray = H.isArray,
+	seriesType = H.seriesType;
 
-	function meanDeviation(arr, sma) {
-		var len = arr.length,
-			sum = 0,
-			i;
+// Utils:
+function sumArray(array) {
+	return H.reduce(array, function (prev, cur) {
+		return prev + cur;
+	});
+}
 
-		for (i = 0; i < len; i++) {
-			sum += Math.abs(sma - (arr[i]));
-		}
+function meanDeviation(arr, sma) {
+	var len = arr.length,
+		sum = 0,
+		i;
 
-		return sum;
+	for (i = 0; i < len; i++) {
+		sum += Math.abs(sma - (arr[i]));
 	}
 
-	H.seriesType('cci', 'sma', {
+	return sum;
+}
+
+/**
+ * The CCI series type.
+ *
+ * @constructor seriesTypes.cci
+ * @augments seriesTypes.sma
+ */
+seriesType('cci', 'sma', 
+	/**
+	 * Commodity Channel Index (CCI). This series requires `linkedTo` option to be set.
+	 * 
+	 * @extends {plotOptions.cci}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/cci Exponential moving average indicator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.cci
+	 */
+	{
 		name: 'CCI (14)',
 		params: {
 			period: 14
@@ -54,21 +65,24 @@
 			}
 			
 			// accumulate first N-points
-			while (range < period + 1) {
+			while (range < period) {
 				p = yVal[range - 1];
 				TP.push((p[1] + p[2] + p[3]) / 3);
 				range++;
 			}
-			
-			for (i = range - 1; i <= yValLen; i++) {
+
+			for (i = period; i <= yValLen; i++) {
+
 				p = yVal[i - 1];
 				TPtemp = (p[1] + p[2] + p[3]) / 3;
 				len = TP.push(TPtemp);
 				periodTP = TP.slice(len - period);
-				smaTP = sumArray(periodTP) / period;
 
+				smaTP = sumArray(periodTP) / period;
 				meanDev = meanDeviation(periodTP, smaTP) / period;
+
 				CCIPoint = ((TPtemp - smaTP) / (0.015 * meanDev));
+
 				CCI.push([xVal[i - 1], CCIPoint]);
 				xData.push(xVal[i - 1]);
 				yData.push(CCIPoint);
@@ -81,4 +95,28 @@
 			};
 		}
 	});
-}));
+
+/**
+ * A `CCI` series. If the [type](#series.cci.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to 
+ * [plotOptions.cci](#plotOptions.cci).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.cci
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.cci
+ */
+
+/**
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.sma.data
+ * @product highstock
+ * @apioption series.cci.data
+ */
