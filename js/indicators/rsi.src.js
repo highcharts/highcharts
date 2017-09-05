@@ -1,31 +1,41 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
-	
-	function toFixed(a, n) {
-		return parseFloat(a.toFixed(n));
-	}
-	
-	var isArray = H.isArray;
-	
-	// Utils:
-	function sumArray(array) {
-		// reduce VS loop => reduce
-		return array.reduce(function (prev, cur) {
-			return prev + cur;
-		});
-	}
+'use strict';
 
-	H.seriesType('rsi', 'sma', {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+
+var isArray = H.isArray;
+
+// Utils:
+function toFixed(a, n) {
+	return parseFloat(a.toFixed(n));
+}
+
+H.seriesType('rsi', 'sma',
+		/**
+		 * Relative strength index (RSI) technical indicator. This series requires `linkedTo`
+		 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+		 *
+		 * @extends {plotOptions.sma}
+		 * @product highstock
+		 * @sample {highstock} stock/indicators/rsi
+		 *                     RSI
+		 * @since 6.0.0
+		 * @optionparent plotOptions.rsi
+		 */
+	{
 		name: 'RSI (14)',
+		/**
+		 * @excluding index
+		 */
 		params: {
 			period: 14,
+			/**
+			 * Number of maximum decimals that are used in RSI calculations.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			decimals: 4
 		}
 	}, {
@@ -35,50 +45,75 @@
 				yVal = series.yData,
 				yValLen = yVal ? yVal.length : 0,
 				decimals = params.decimals,
+				// RSI starts calculations from the second point
+				// Cause we need to calculate change between two points
 				range = 1,
 				RSI = [],
 				xData = [],
 				yData = [],
 				index = 3,
-				gain = [],
-				loss = [],
-				RSIPoint, change, RS, avgGain, avgLoss, i;
+				gain = 0,
+				loss = 0,
+				RSIPoint, change, avgGain, avgLoss, i;
 
 			// RSI requires close value
-			if ((xVal.length <= period) || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (
+				(xVal.length < period) || !isArray(yVal[0]) ||
+				yVal[0].length !== 4
+			) {
 				return false;
 			}
 
-			// Accumulate first N-points
-			while (range < period + 1) {
-				change = toFixed(yVal[range][index] - yVal[range - 1][index], decimals);
-				gain.push(change > 0 ? change : 0);
-				loss.push(change < 0 ? Math.abs(change) : 0);
+			// Calculate changes for first N points
+			while (range < period) {
+				change = toFixed(
+					yVal[range][index] - yVal[range - 1][index],
+					decimals
+				);
+
+				if (change > 0) {
+					gain += change;
+				} else {
+					loss += Math.abs(change);
+				}
+
 				range++;
 			}
 
-			for (i = range - 1; i < yValLen; i++) {
-				if (i > range - 1) {
-					// Remove first point from array
-					gain.shift();
-					loss.shift();
-					// Calculate new change
-					change = toFixed(yVal[i][index] - yVal[i - 1][index], decimals);
-					// Add to array
-					gain.push(change > 0 ? change : 0);
-					loss.push(change < 0 ? Math.abs(change) : 0);
-				}
+			// Average for first n-1 points:
+			avgGain = toFixed(gain / (period - 1), decimals);
+			avgLoss = toFixed(loss / (period - 1), decimals);
 
-				// calculate averages, RS, RSI values:
-				avgGain = toFixed(sumArray(gain) / period, decimals);
-				avgLoss = toFixed(sumArray(loss) / period, decimals);
+			for (i = range; i < yValLen; i++) {
+				change = toFixed(yVal[i][index] - yVal[i - 1][index], decimals);
 
-				if (avgLoss === 0) {
-					RS = 100;
+				if (change > 0) {
+					gain = change;
+					loss = 0;
 				} else {
-					RS = toFixed(avgGain / avgLoss, decimals);
+					gain = 0;
+					loss = Math.abs(change);
 				}
-				RSIPoint = toFixed(100 - (100 / (1 + RS)), decimals);
+
+				// Calculate smoothed averages, RS, RSI values:
+				avgGain = toFixed(
+					(avgGain * (period - 1) + gain) / period,
+					decimals
+				);
+				avgLoss = toFixed(
+					(avgLoss * (period - 1) + loss) / period,
+					decimals
+				);
+				// If average-loss is equal zero, then by definition RSI is set to 100:
+				if (avgLoss === 0) {
+					RSIPoint = 100;
+				// If average-gain is equal zero, then by definition RSI is set to 0:
+				} else if (avgGain === 0) {
+					RSIPoint = 0;
+				} else {
+					RSIPoint = toFixed(100 - (100 / (1 + (avgGain / avgLoss))), decimals);
+				}
+
 				RSI.push([xVal[i], RSIPoint]);
 				xData.push(xVal[i]);
 				yData.push(RSIPoint);
@@ -90,5 +125,33 @@
 				yData: yData
 			};
 		}
-	});
-}));
+	}
+);
+
+/**
+ * A `RSI` series. If the [type](#series.rsi.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * rsi](#plotOptions.rsi).
+ *
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.rsi
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.rsi
+ */
+
+/**
+ * An array of data points for the series. For the `rsi` series type,
+ * points are calculated dynamically.
+ *
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.line.data
+ * @product highstock
+ * @apioption series.rsi.data
+ */
