@@ -12,7 +12,7 @@ import H from '../parts/Globals.js';
 
 H.seriesType('cmf', 'sma', 
   /**
-   * Chaikin Money Flow (cmf) indicator
+   * Chaikin Money Flow indicator (cmf).
    *
    * @type {Object}
    * @extends {plotOptions.sma}
@@ -31,7 +31,7 @@ H.seriesType('cmf', 'sma',
       /**
        * The id of another series to use its data as volume data for the indiator calculation.
        */
-			volumeSeriesID: 'Volume'
+			volumeSeriesID: 'volume'
 		}
 	}, {
 		/**
@@ -166,3 +166,31 @@ H.seriesType('cmf', 'sma',
 			};
 		}
 	});
+
+/**
+ * A `CMF` series. If the [type](#series.cmf.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * cmf](#plotOptions.cmf).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.cmf
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.cmf
+ */
+
+/**
+ * An array of data points for the series. For the `CMF` series type,
+ * points are calculated dynamically.
+ * 
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.line.data
+ * @product highstock
+ * @apioption series.cmf.data
+ */

@@ -71,7 +71,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
             data: ohlc
         }, {
             type: 'column',
-            id: 'Volume',
+            id: 'volume',
             name: 'Volume',
             data: volume,
             yAxis: 1
