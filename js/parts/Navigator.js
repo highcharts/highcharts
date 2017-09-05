@@ -153,7 +153,8 @@ extend(defaultOptions, {
 			 * @type {umber}
 			 * @default 7
 			 * @product highstock
-			 * @sample {highstock} stock/navigator/styled-handles/ Styled handles
+			 * @sample {highstock} stock/navigator/styled-handles/
+			 *         Styled handles
 			 * @since 6.0.0
 			 */
 			width: 7,
@@ -164,7 +165,8 @@ extend(defaultOptions, {
 			 * @type {Number}
 			 * @default 15
 			 * @product highstock
-			 * @sample {highstock} stock/navigator/styled-handles/ Styled handles
+			 * @sample {highstock} stock/navigator/styled-handles/
+			 *         Styled handles
 			 * @since 6.0.0
 			 */
 			height: 15,
@@ -175,22 +177,30 @@ extend(defaultOptions, {
 			 * @type {Number}
 			 * @default 7
 			 * @product highstock
-			 * @sample {highstock} stock/navigator/styled-handles/ Styled handles
+			 * @sample {highstock} stock/navigator/styled-handles/
+			 *         Styled handles
 			 * @since 6.0.0
 			 */
 			lineWidth: 1,
 
 			/**
-			 * Array to define shapes of handles. 0-index for left, 1-index for right.
+			 * Array to define shapes of handles. 0-index for left, 1-index for
+			 * right.
 			 *
-			 * Additionally, the URL to a graphic can be given on this form: "url(graphic.png)". Note that for the image to be applied to exported charts, its URL needs to be accessible by the export server.
+			 * Additionally, the URL to a graphic can be given on this form: 
+			 * `url(graphic.png)`. Note that for the image to be applied to
+			 * exported charts, its URL needs to be accessible by the export
+			 * server.
 			 *
-			 * Custom callbacks for symbol path generation can also be added to Highcharts.SVGRenderer.prototype.symbols. The callback is then used by its method name, as shown in the demo.
+			 * Custom callbacks for symbol path generation can also be added to
+			 * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
+			 * used by its method name, as shown in the demo.
 			 *
 			 * @type {Array}
 			 * @default ['navigator-handle', 'navigator-handle']
 			 * @product highstock
-			 * @sample {highstock} stock/navigator/styled-handles/ Styled handles
+			 * @sample {highstock} stock/navigator/styled-handles/
+			 * Styled handles
 			 * @since 6.0.0
 			 */
 			symbols: ['navigator-handle', 'navigator-handle'],
@@ -487,7 +497,13 @@ extend(defaultOptions, {
  * @param {Boolean} inverted flag for chart.inverted
  * @returns {Array} Path to be used in a handle
  */
-H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options) {
+H.Renderer.prototype.symbols['navigator-handle'] = function (
+	x,
+	y,
+	w,
+	h,
+	options
+) {
 	var halfWidth = options.width / 2,
 		markerPosition = Math.round(halfWidth / 3) + 0.5,
 		height = options.height;
@@ -538,10 +554,14 @@ Navigator.prototype = {
 		// Place it
 		navigator.handles[index][verb](inverted ? {
 			translateX: Math.round(navigator.left + navigator.height / 2),
-			translateY: Math.round(navigator.top + parseInt(x, 10) + 0.5 - height)
+			translateY: Math.round(
+				navigator.top + parseInt(x, 10) + 0.5 - height
+			)
 		} : {
 			translateX: Math.round(navigator.left + parseInt(x, 10)),
-			translateY: Math.round(navigator.top + navigator.height / 2 - height / 2)
+			translateY: Math.round(
+				navigator.top + navigator.height / 2 - height / 2
+			)
 		});
 	},
 
@@ -756,7 +776,8 @@ Navigator.prototype = {
 				// Can't be 10, because of the tooltip in inverted chart #2908
 				navigator.handles[index].attr({ zIndex: 7 - index })
 					.addClass(
-						'highcharts-navigator-handle highcharts-navigator-handle-' +
+						'highcharts-navigator-handle ' +
+						'highcharts-navigator-handle-' +
 						['left', 'right'][index]
 					).add(navigatorGroup);
 
@@ -878,13 +899,15 @@ Navigator.prototype = {
 			}
 		} else if (defined(maxRange) && currentRange > maxRange) {
 			/**
-			 * Maximum range which can be set using navigator's handles. Opposite of [xAxis.minRange](#xAxis.minRange).
+			 * Maximum range which can be set using navigator's handles.
+			 * Opposite of [xAxis.minRange](#xAxis.minRange).
 			 *
 			 * @type {Number}
 			 * @default undefined
 			 * @product highstock
 			 * @apioption xAxis.maxRange
-			 * @sample {highstock} stock/navigator/maxrange/ Defined max and min range
+			 * @sample {highstock} stock/navigator/maxrange/
+			 * Defined max and min range
 			 * @since 6.0.0
 			 */
 			if (this.grabbedLeft) {
