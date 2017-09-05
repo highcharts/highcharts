@@ -1,66 +1,122 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
+'use strict';
 
-	var UNDEFINED,
-		each = H.each,
-		merge = H.merge,
-		isArray = H.isArray,
-		defined = H.defined,
-		SMA = H.seriesTypes.sma;
-		
-	// Utils:
-	function minInArray(arr, index) {
-		return arr.reduce(function (min, target) {
-			return Math.min(min, target[index]);
-		}, Infinity);
-	}
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-	function maxInArray(arr, index) {
-		return arr.reduce(function (min, target) {
-			return Math.max(min, target[index]);
-		}, 0);
-	}
+var each = H.each,
+	merge = H.merge,
+	isArray = H.isArray,
+	defined = H.defined,
+	SMA = H.seriesTypes.sma;
 
-	H.seriesType('stochastic', 'sma', {
+// Utils:
+function minInArray(arr, index) {
+	return H.reduce(arr, function (min, target) {
+		return Math.min(min, target[index]);
+	}, Infinity);
+}
+
+function maxInArray(arr, index) {
+	return H.reduce(arr, function (min, target) {
+		return Math.max(min, target[index]);
+	}, 0);
+}
+
+H.seriesType('stochastic', 'sma',
+	/**
+	 * Stochastic oscillator. This series requires `linkedTo`
+	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 *
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/stochastic-oscillator
+	 *                     Stochastic oscillator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.stochastic
+	 */
+	{
 		name: 'Stochastic (14, 3)',
+		/**
+		 * @excluding index,period
+		 */
 		params: {
-			period: [14, 3] // 14 for %K, 3 for %D
+			/**
+			 * Periods for Stochastic oscillator: [%K, %D].
+			 *
+			 * @default [14, 3]
+			 * @type {Array}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			periods: [14, 3]
 		},
 		marker: {
 			enabled: false
 		},
 		tooltip: {
-			pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+			/**
+			 * The HTML of the point's line in the tooltip. Variables are enclosed
+			 * by curly brackets. Available variables are point.x, point.y, series.
+			 * name and series.color and other properties on the same form. Furthermore,
+			 * point.y can be extended by the `tooltip.valuePrefix` and `tooltip.
+			 * valueSuffix` variables. This can also be overridden for each series,
+			 * which makes it a good hook for displaying units.
+			 *
+			 * In styled mode, the dot is colored by a class name rather
+			 * than the point color.
+			 *
+			 * @type {String}
+			 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
+			 * @sample {highmaps} maps/tooltip/format/ Format demo
+			 * @default
+			 *	<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>
+			 *		%K: {point.y}<br/>
+			 *		%D: {point.smoothed}<br/>
+			 */
+			pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+				'<b> {series.name}</b><br/>' +
 				'%K: {point.y}<br/>' +
-				'%D: {point.bottom}<br/>'
+				'%D: {point.smoothed}<br/>'
 		},
+		/**
+		 * Smoothed line options.
+		 *
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		smoothedLine: {
+			/**
+			 * Styles for a smoothed line.
+			 *
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			styles: {
-				lineWidth: 1
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 * If not set, it's inherited from [plotOptions.stochastic.color](#plotOptions.stochastic.color).
+				 *
+				 * @type {String}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
 			}
 		},
 		dataGrouping: {
-			approximation: function (top, bot) {
-				var ret = [
-					H.approximations.average(top),
-					H.approximations.average(bot)
-				];
-				if (ret[0] !== UNDEFINED && ret[1] !== UNDEFINED) {
-					return ret;
-				}
-				return UNDEFINED;
-			}
+			approximation: 'averages'
 		}
-	}, {
-		pointArrayMap: ['y', 'bottom'],
-		parallelArrays: ['x', 'y', 'bottom'],
+	}, /** @lends Highcharts.Series.prototype */ {
+		pointArrayMap: ['y', 'smoothed'],
+		parallelArrays: ['x', 'y', 'smoothed'],
 		pointValKey: 'y',
 		init: function () {
 			SMA.prototype.init.apply(this, arguments);
@@ -75,7 +131,7 @@
 			}, this.options);
 		},
 		toYData: function (point) {
-			return [point.y, point.bottom];
+			return [point.y, point.smoothed];
 		},
 		translate: function () {
 			var indicator = this;
@@ -83,8 +139,8 @@
 			SMA.prototype.translate.apply(indicator);
 
 			each(indicator.points, function (point) {
-				if (point.bottom !== null) {
-					point.plotBottom = indicator.yAxis.toPixels(point.bottom, true);
+				if (point.smoothed !== null) {
+					point.plotSmoothed = indicator.yAxis.toPixels(point.smoothed, true);
 				}
 			});
 		},
@@ -102,13 +158,13 @@
 				smoothing = [],
 				point;
 
-			// Generate points for top and bottom lines:
+			// Generate points for %K and %D lines:
 			while (pointsLength--) {
 				point = mainLinePoints[pointsLength];
 				smoothing.push({
 					plotX: point.plotX,
-					plotY: point.plotBottom,
-					isNull: !defined(point.plotBottom)
+					plotY: point.plotSmoothed,
+					isNull: !defined(point.plotSmoothed)
 				});
 			}
 
@@ -126,13 +182,12 @@
 			SMA.prototype.drawGraph.call(indicator);
 		},
 		getValues: function (series, params) {
-			var periodK = params.period[0],
-				periodD = params.period[1],
+			var periodK = params.periods[0],
+				periodD = params.periods[1],
 				xVal = series.xData,
 				yVal = series.yData,
 				yValLen = yVal ? yVal.length : 0,
 				SO = [], // 0- date, 1-%K, 2-%D
-				date,
 				xData = [],
 				yData = [],
 				slicedY,
@@ -146,13 +201,14 @@
 
 
 			// Stochastic requires close value
-			if (xVal.length <= periodK || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (xVal.length < periodK || !isArray(yVal[0]) || yVal[0].length !== 4) {
 				return false;
 			}
 
-			for (i = periodK; i < yValLen; i++) {
-				slicedY = yVal.slice(i - periodK, i + 1); // i+1 - previous preiods + today
-				date = xVal[i];
+			// For a N-period, we start from N-1 point, to calculate Nth point
+			// That is why we later need to comprehend slice() elements list with (+1)
+			for (i = periodK - 1; i < yValLen; i++) {
+				slicedY = yVal.slice(i - periodK + 1, i + 1);
 					
 				// Calculate %K
 				LL = minInArray(slicedY, low); // Lowest low in %K periods
@@ -161,18 +217,18 @@
 				K = CL / HL * 100;
 				
 				// Calculate smoothed %D, which is SMA of %K
-				if (i > periodK + periodD) {
+				if (i >= periodK + periodD) {
 					points = SMA.prototype.getValues.call(this, {
-						xData: xData.slice(i - periodD - periodK - 1, i - periodD),
-						yData: yData.slice(i - periodD - periodK - 1, i - periodD)
+						xData: xData.slice(i - periodD - periodK, i - periodD),
+						yData: yData.slice(i - periodD - periodK, i - periodD)
 					}, {
 						period: periodD
 					});
 					D = points.yData[0];
 				}
 				
-				SO.push([date, K, D]);
-				xData.push(date);
+				SO.push([xVal[i], K, D]);
+				xData.push(xVal[i]);
 				yData.push([K, D]);
 			}
 
@@ -182,5 +238,34 @@
 				yData: yData
 			};
 		}
-	});
-}));
+	}
+);
+
+/**
+ * A Stochastic indicator. If the [type](#series.stochastic.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * stochastic](#plotOptions.stochastic).
+ *
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.stochastic
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.stochastic
+ */
+
+/**
+ * An array of data points for the series. For the `stochastic` series type,
+ * points are calculated dynamically.
+ *
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.line.data
+ * @product highstock
+ * @apioption series.stochastic.data
+ */
+
