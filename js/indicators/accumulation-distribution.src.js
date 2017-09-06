@@ -1,29 +1,41 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-	// Utils:
-	function populateAverage(xVal, yVal, yValVolume, i) {
-		var high = yVal[i][1],
-			low = yVal[i][2],
-			close = yVal[i][3],
-			volume = yValVolume[i],
-			adY = close === high && close === low || high === low ? 0 : ((2 * close - low - high) / (high - low)) * volume,
-			adX = xVal[i];
-			
-		return [adX, adY];
-	}
+var seriesType = H.seriesType;
+
+// Utils:
+function populateAverage(xVal, yVal, yValVolume, i) {
+	var high = yVal[i][1],
+		low = yVal[i][2],
+		close = yVal[i][3],
+		volume = yValVolume[i],
+		adY = close === high && close === low || high === low ? 0 : ((2 * close - low - high) / (high - low)) * volume,
+		adX = xVal[i];
+		
+	return [adX, adY];
+}
 	
-	H.seriesType('ad', 'sma', {
+/**
+ * The AD series type.
+ *
+ * @constructor seriesTypes.ad
+ * @augments seriesTypes.sma
+ */
+seriesType('ad', 'sma',
+	/**
+	 * Accumulation Distribution (AD). This series requires `linkedTo` option to be set.
+	 * 
+	 * @extends {plotOptions.ad}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/ad Exponential moving average indicator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.ad
+	 */
+	{
 		name: 'Accumulation/Distribution',
 		params: {
-			volumeSeriesID: 'Volume'
+			volumeSeriesID: 'volume'
 		}
 	}, {
 		getValues: function (series, params) {
@@ -77,4 +89,28 @@
 			};
 		}
 	});
-}));
+
+/**
+ * A `AD` series. If the [type](#series.ad.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to 
+ * [plotOptions.ad](#plotOptions.ad).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.ad
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.ad
+ */
+
+/**
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.sma.data
+ * @product highstock
+ * @apioption series.ad.data
+ */
