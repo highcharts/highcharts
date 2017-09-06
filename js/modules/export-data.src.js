@@ -13,7 +13,7 @@
 // - Update demos (esp accessibility) to use new URL
 // - Before official release, set up systematic tests for all series types
 
-/* eslint indent:0 */
+/* eslint indent:0, max-len: ["warn", 80, 4] */
 'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -50,15 +50,17 @@ Highcharts.Chart.prototype.getDataRows = function () {
         xTitle,
         // Options
         dateFormat = options.dateFormat || '%Y-%m-%d %H:%M:%S',
-        columnHeaderFormatter = options.columnHeaderFormatter || function (item, key, keyLength) {
-            if (item instanceof Highcharts.Axis) {
-                return (item.options.title && item.options.title.text) ||
-                    (item.isDatetimeAxis ? 'DateTime' : 'Category');
-            }
-            return item ?
-                item.name + (keyLength > 1 ? ' (' + key + ')' : '') :
-                'Category';
-        },
+        columnHeaderFormatter =
+            options.columnHeaderFormatter ||
+            function (item, key, keyLength) {
+                if (item instanceof Highcharts.Axis) {
+                    return (item.options.title && item.options.title.text) ||
+                        (item.isDatetimeAxis ? 'DateTime' : 'Category');
+                }
+                return item ?
+                    item.name + (keyLength > 1 ? ' (' + key + ')' : '') :
+                    'Category';
+            },
         xAxisIndices = [];
 
     // Loop the series and index values
@@ -74,10 +76,16 @@ Highcharts.Chart.prototype.getDataRows = function () {
 
         // Map the categories for value axes
         each(pointArrayMap, function (prop) {
-            categoryMap[prop] = (series[prop + 'Axis'] && series[prop + 'Axis'].categories) || [];
+            categoryMap[prop] = (
+                series[prop + 'Axis'] &&
+                series[prop + 'Axis'].categories
+            ) || [];
         });
 
-        if (series.options.includeInCSVExport !== false && series.visible !== false) { // #55
+        if (
+            series.options.includeInCSVExport !== false &&
+            series.visible !== false // #55
+        ) {
 
             // Build a lookup for X axis index and the position of the first
             // series that belongs to that X axis. Includes -1 for non-axis
@@ -91,7 +99,11 @@ Highcharts.Chart.prototype.getDataRows = function () {
             // Add the column headers, usually the same as series names
             j = 0;
             while (j < valueCount) {
-                names.push(columnHeaderFormatter(series, pointArrayMap[j], pointArrayMap.length));
+                names.push(columnHeaderFormatter(
+                    series,
+                    pointArrayMap[j],
+                    pointArrayMap.length
+                ));
                 j++;
             }
 
@@ -198,8 +210,10 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
     var csv = '',
         rows = this.getDataRows(),
         options = (this.options.exporting || {}).csv || {},
-        itemDelimiter = options.itemDelimiter || ',', // use ';' for direct to Excel
-        lineDelimiter = options.lineDelimiter || '\n'; // '\n' isn't working with the js csv data extraction
+        // use ';' for direct to Excel
+        itemDelimiter = options.itemDelimiter || ',',
+        // '\n' isn't working with the js csv data extraction
+        lineDelimiter = options.lineDelimiter || '\n';
 
     // Transform the rows to CSV
     each(rows, function (row, i) {
@@ -255,7 +269,8 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
                 html += '<' + tag + ' class="number">' + val + '</' + tag + '>';
 
             } else {
-                html += '<' + tag + ' class="text">' + (val === undefined ? '' : val) + '</' + tag + '>';
+                html += '<' + tag + ' class="text">' + 
+                    (val === undefined ? '' : val) + '</' + tag + '>';
             }
         }
 
@@ -275,14 +290,22 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 /**
  * Use download attribute if supported, else  run a simple PHP script that
  * returns a file. The source code for the PHP script can be viewed at
- * https://raw.github.com/highcharts/highcharts/master/studies/csv-export/csv.php
+ * https://raw.github.com/highcharts/highcharts/master/studies/csv-export/
+ * csv.php
  */
-Highcharts.Chart.prototype.fileDownload = function (href, extension, content, MIME) {
+Highcharts.Chart.prototype.fileDownload = function (
+    href,
+    extension,
+    content,
+    MIME
+) {
     var a,
         blobObject,
         name,
         options = (this.options.exporting || {}).csv || {},
-        url = options.url || 'http://www.highcharts.com/studies/csv-export/download.php';
+        url =
+            options.url ||
+            'http://www.highcharts.com/studies/csv-export/download.php';
 
     if (this.options.exporting.filename) {
         name = this.options.exporting.filename;
@@ -338,11 +361,18 @@ Highcharts.Chart.prototype.downloadCSV = function () {
  */
 Highcharts.Chart.prototype.downloadXLS = function () {
     var uri = 'data:application/vnd.ms-excel;base64,',
-        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
-            '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>' +
+        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+            'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+            'xmlns="http://www.w3.org/TR/REC-html40">' +
+            '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook>' +
+            '<x:ExcelWorksheets><x:ExcelWorksheet>' +
             '<x:Name>Ark1</x:Name>' +
-            '<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->' +
-            '<style>td{border:none;font-family: Calibri, sans-serif;} .number{mso-number-format:"0.00";} .text{ mso-number-format:"\@";}</style>' +
+            '<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>' +
+            '</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>' +
+            '</xml><![endif]-->' +
+            '<style>td{border:none;font-family: Calibri, sans-serif;} ' +
+            '.number{mso-number-format:"0.00";} ' +
+            '.text{ mso-number-format:"\@";}</style>' +
             '<meta name=ProgId content=Excel.Sheet>' +
             '<meta charset=UTF-8>' +
             '</head><body>' +
