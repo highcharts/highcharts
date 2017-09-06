@@ -96,7 +96,7 @@ Highcharts.Chart.prototype.getDataRows = function () {
             }
 
             each(series.points, function (point, pIdx) {
-                var key = requireSorting ? point.x : point.x + '|' + pIdx,
+                var key = point.x + '|' + (requireSorting ? point.x :  pIdx),
                     prop,
                     val;
 
