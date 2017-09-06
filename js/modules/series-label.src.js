@@ -235,6 +235,14 @@ Series.prototype.getPointsOnGraph = function () {
 			}
 		}
 	}
+
+	// Get the bounding box so we can do a quick check first if the bounding
+	// boxes overlap.
+	/*interpolated.bBox = node.getBBox();
+	interpolated.bBox.x += paneLeft;
+	interpolated.bBox.y += paneTop;
+	*/
+
 	return interpolated;
 };
 
@@ -265,6 +273,8 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 		points,
 		leastDistance = 16,
 		withinRange,
+		xDist,
+		yDist,
 		i,
 		j;
 
@@ -346,28 +356,11 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 					(connectorEnabled || withinRange) &&
 					(this !== series || onArea)
 				) {
+					xDist = x + bBox.width / 2 - points[j].chartX;
+					yDist = y + bBox.height / 2 - points[j].chartY;
 					distToOthersSquared = Math.min(
 						distToOthersSquared,
-						(
-							Math.pow(x + bBox.width / 2 - points[j].chartX, 2) +
-							Math.pow(y + bBox.height / 2 - points[j].chartY, 2)
-						)/*,
-						(
-							Math.pow(x - points[j].chartX, 2) +
-							Math.pow(y - points[j].chartY, 2)
-						),
-						(
-							Math.pow(x + bBox.width - points[j].chartX, 2) +
-							Math.pow(y - points[j].chartY, 2)
-						),
-						(
-							Math.pow(x + bBox.width - points[j].chartX, 2) +
-							Math.pow(y + bBox.height - points[j].chartY, 2)
-						),
-						(
-							Math.pow(x - points[j].chartX, 2) +
-							Math.pow(y + bBox.height - points[j].chartY, 2)
-						)*/
+						xDist * xDist + yDist * yDist
 					);
 				}
 			}
