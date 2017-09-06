@@ -2,10 +2,9 @@
  * Highcharts variwide study
  *
  * To do:
- * - X ax is categories should be placed under columns. Move translation
- *   computations up to processData, then use these to move axis labels as well as columns.
- * - Tooltip positions
- * - Inherited Z value for stacks? Otherwise it must be set for each series.
+ * - When X axis is not categorized, the scale should reflect how the z values
+ *   increase, like a horizontal stack. But then the actual X values aren't
+ *   reflected the the axis.. Should we introduce a Z axis too?
  */
 
 (function (H) {
@@ -42,7 +41,7 @@
          * @param  {Number} x The X pixel position in undistorted axis pixels
          * @return {Number}   Distorted X position
          */
-        postTranslate: function (i, x, debug) {
+        postTranslate: function (i, x) {
 
             var len = this.xAxis.len,
                 totalZ = this.totalZ,
@@ -65,6 +64,8 @@
          * Extend translation by distoring X position based on Z.
          */
         translate: function () {
+            var inverted = this.chart.inverted;
+
             seriesTypes.column.prototype.translate.call(this);
 
             // Distort the points to reflect z dimension
@@ -77,18 +78,26 @@
 
                 point.shapeArgs.x = left;
                 point.shapeArgs.width = right - left;
+
+                if (!inverted) {
+                    point.tooltipPos[0] = this.postTranslate(
+                        i,
+                        point.tooltipPos[0]
+                    );
+                }
             }, this);
         }
     });
 
     H.wrap(H.Tick.prototype, 'getPosition', function (proceed, horiz, pos) {
-        var xy = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        var axis = this.axis,
+            xy = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-        if (horiz && this.axis.variwide) {
+        if (horiz && axis.categories && axis.variwide) {
             this.xOrig = xy.x;
             xy.x =
-                this.axis.pos +
-                this.axis.series[0].postTranslate(pos, xy.x - this.axis.pos);
+                axis.pos +
+                axis.series[0].postTranslate(pos, xy.x - axis.pos);
         }
         return xy;
     });
@@ -114,7 +123,7 @@
         xy = proceed.apply(this, args);
 
         // Post-translate
-        if (horiz && this.axis.variwide) {
+        if (horiz && this.axis.variwide && this.axis.categories) {
             xy.x = this.axis.pos +
                 this.axis.series[0].postTranslate(index, xy.x - this.axis.pos);
         }
