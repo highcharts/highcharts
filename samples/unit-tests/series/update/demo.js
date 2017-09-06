@@ -1,6 +1,6 @@
 
 QUnit.test(
-    'Navigator series\' should keep it\'s position in series array, ' +
+    'Navigator series\' should keep its position in series array, ' +
     'even after series.update()',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
@@ -89,6 +89,30 @@ QUnit.test(
 
     }
 );
+
+QUnit.test('Updating and mouse interaction', function (assert) {
+
+    assert.expect(0);
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'column'
+        },
+        series: [{
+            data: [[0, 10], [1, 19], [2, 8], [3, 24], [4, 67]],
+            events: {
+                mouseOver: function () {
+                    this.update({ dataLabels: { enabled: true } });
+                },
+                mouseOut: function () {
+                    this.update({ dataLabels: { enabled: false } });
+                }
+            }
+        }]
+    });
+
+    chart.series[0].points[0].onMouseOver();
+});
 
 QUnit.test(
     'Udating color index, class name should change',
