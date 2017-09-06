@@ -67,7 +67,7 @@ Highcharts.Chart.prototype.getDataRows = function () {
         var keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
             valueCount = pointArrayMap.length,
-            requireSorting = series.requireSorting,
+            xTaken = !series.requireSorting && {},
             categoryMap = {},
             xAxisIndex = Highcharts.inArray(series.xAxis, xAxes),
             j;
@@ -96,9 +96,16 @@ Highcharts.Chart.prototype.getDataRows = function () {
             }
 
             each(series.points, function (point, pIdx) {
-                var key = point.x + '|' + (requireSorting ? point.x :  pIdx),
+                var key = point.x,
                     prop,
                     val;
+
+                if (xTaken) {
+                    if (xTaken[key]) {
+                        key += '|' + pIdx;
+                    }
+                    xTaken[key] = true;
+                }
 
                 j = 0;
 

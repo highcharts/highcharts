@@ -451,6 +451,13 @@ QUnit.test('Combined column and scatter', function (assert) {
             renderTo: 'container'
         },
 
+        plotOptions: {
+            series: {
+                pointStart: 0,
+                pointInterval: 10
+            }
+        },
+
         series: [{
             data: [1, 2, 3, 4],
             type: 'column'
@@ -464,7 +471,7 @@ QUnit.test('Combined column and scatter', function (assert) {
 
     assert.equal(
         chart.getCSV(),
-        '"Category","Series 1","Total"\n0,1,2\n1,2,4\n2,3,6\n3,4,8',
+        '"Category","Series 1","Total"\n0,1,2\n10,2,4\n20,3,6\n30,4,8',
         'Combination chart'
     );
 });
