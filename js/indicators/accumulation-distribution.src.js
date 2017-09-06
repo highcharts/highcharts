@@ -35,6 +35,14 @@ seriesType('ad', 'sma',
 	{
 		name: 'Accumulation/Distribution',
 		params: {
+			/**
+			 * The id of volume series which is mandatory.
+			 * For example using OHLC data, volumeSeriesID='volume' means the indicator will be calculated using OHLC and volume values.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			volumeSeriesID: 'volume'
 		}
 	}, {
