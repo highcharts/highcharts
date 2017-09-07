@@ -1,37 +1,69 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
-	var each = H.each,
-		defined = H.defined,
-		isArray = H.isArray,
-		SMA = H.seriesTypes.sma;
+'use strict';
 
-	H.seriesType('pivotPoints', 'sma', {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+
+var each = H.each,
+	defined = H.defined,
+	isArray = H.isArray,
+	SMA = H.seriesTypes.sma;
+
+function destroyExtraLabels(point, functionName) {
+	var props = point.series.pointArrayMap,
+		prop,
+		i = props.length;
+
+	SMA.prototype.pointClass.prototype[functionName].call(point);
+
+	while (i--) {
+		prop = 'dataLabel' + props[i];
+		// S4 dataLabel could be removed by parent method:
+		if (point[prop] && point[prop].element) {
+			point[prop].destroy();
+		}
+		point[prop] = null;
+	}
+}
+
+H.seriesType('pivotpoints', 'sma',
+	/**
+	 * Pivot points indicator. This series requires `linkedTo`
+	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 *
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/pivotpoints
+	 *                     Pivot points
+	 * @since 6.0.0
+	 * @optionparent plotOptions.pivotpoints
+	 */
+	{
 		name: 'Pivot Points (28)',
+		/**
+		 * @excluding index
+		 */
 		params: {
 			period: 28,
-			type: 'standard' // docs: standard || fibonacci || camarilla
+			/**
+			 * Algorithm used to calculate ressistance and support lines based on pivot points.
+			 * Implemented algorithms: `'standard'`, `'fibonacci'` and `'camarilla'`
+			 * 
+			 * @type {String}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			algorithm: 'standard'
 		},
 		marker: {
 			enabled: false
 		},
-		tooltip: {
-			enabled: false
-		},
+		enableMouseTracking: false,
 		dataLabels: {
 			enabled: true,
-			formatter: function () {
-				return this.y === null ? '' : H.numberFormat(this.y, 2);
-			}
+			format: '{point.pivotLine}'
 		},
 		dataGrouping: {
-			enabled: false
+			approximation: 'averages'
 		}
 	}, {
 		pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
@@ -57,7 +89,7 @@
 
 			// Pivot points are rendered as horizontal lines
 			// And last point start not from the next one (as it's the last one)
-			// But from the last point in data series
+			// But from the approximated last position in a given range
 			indicator.plotEndPoint = indicator.xAxis.toPixels(
 				indicator.endPoint,
 				true
@@ -121,25 +153,27 @@
 				pointsLength = indicator.points.length;
 
 				// For every Ressitance/Support group we need to render labels
-				each(pointMapping, function (position, k) {
+				// Add one more item, which will just store dataLabels from previous iteration
+				each(pointMapping.concat([false]), function (position, k) {
 					i = pointsLength;
 					while (i--) {
 						point = indicator.points[i];
-						point.y = point[position];
-						point.plotY = point['plot' + position];
-						currentLabel = point['dataLabel' + position];
 
-						// Store previous label if exists:
-						if (k) {
+						if (!position) {
+							// Store S4 dataLabel too:
 							point['dataLabel' + pointMapping[k - 1]] = point.dataLabel;
-						}
-
-						// If current label exists, update it's position
-						// And perhaps it's value
-						if (currentLabel) {
-							point.dataLabel = currentLabel;
 						} else {
-							point.dataLabel = null;
+							point.y = point[position];
+							point.pivotLine = position;
+							point.plotY = point['plot' + position];
+							currentLabel = point['dataLabel' + position];
+
+							// Store previous label
+							if (k) {
+								point['dataLabel' + pointMapping[k - 1]] = point.dataLabel;
+							}
+
+							point.dataLabel = currentLabel = currentLabel && currentLabel.element ? currentLabel : null;
 						}
 					}
 					SMA.prototype.drawDataLabels.apply(indicator, arguments);
@@ -151,10 +185,12 @@
 				xVal = series.xData,
 				yVal = series.yData,
 				yValLen = yVal ? yVal.length : 0,
-				placement = this[params.type + 'Placement'],
+				placement = this[params.algorithm + 'Placement'],
 				PP = [], // 0- from, 1- to, 2- R1, 3- R2, 4- pivot, 5- S1, 6- S2 etc.
+				endTimestamp,
 				xData = [],
 				yData = [],
+				slicedXLen,
 				slicedX,
 				slicedY,
 				lastPP,
@@ -164,7 +200,7 @@
 
 			// Pivot Points requires high, low and close values
 			if (
-				xVal.length <= period ||
+				xVal.length < period ||
 				!isArray(yVal[0]) ||
 				yVal[0].length !== 4
 			) {
@@ -175,19 +211,27 @@
 				slicedX = xVal.slice(i - period - 1, i);
 				slicedY = yVal.slice(i - period - 1, i);
 
+				slicedXLen = slicedX.length;
+
+				endTimestamp = slicedX[slicedXLen - 1];
+
 				pivot = this.getPivotAndHLC(slicedY);
 				avg = placement(pivot);
 
 				lastPP = PP.push(
-					[slicedX[0]]
+					[endTimestamp]
 					.concat(avg)
 				);
 
-				xData.push(slicedX[0]);
+				xData.push(endTimestamp);
 				yData.push(PP[lastPP - 1].slice(1));
 			}
 
-			this.endPoint = slicedX[slicedX.length - 1];
+			// We don't know exact position in ordinal axis
+			// So we use simple logic:
+			// Get first point in last range, calculate visible average range and multiply by period
+			this.endPoint = slicedX[0] +
+				((endTimestamp - slicedX[0]) / slicedXLen) * period;
 
 			return {
 				values: PP,
@@ -209,17 +253,18 @@
 			return [pivot, high, low, close];
 		},
 		standardPlacement: function (values) {
-			var avg = [
-				null,
-				null,
-				values[0] + values[1] - values[2],
-				values[0] * 2 - values[2],
-				values[0],
-				values[0] * 2 - values[1],
-				values[0] - values[1] + values[2],
-				null,
-				null
-			];
+			var diff = values[1] - values[2],
+				avg = [
+					null,
+					null,
+					values[0] + diff,
+					values[0] * 2 - values[2],
+					values[0],
+					values[0] * 2 - values[1],
+					values[0] - diff,
+					null,
+					null
+				];
 
 			return avg;
 		},
@@ -257,20 +302,41 @@
 		}
 	}, {
 		// Destroy labels:
+		// This method is called when cropping data:
 		destroyElements: function () {
-			var point = this,
-				props = point.series.pointArrayMap,
-				prop,
-				i = props.length;
-
-			SMA.prototype.Point.prototype.destroyElements.call(this);
-
-			while (i--) {
-				prop = 'dataLabel' + props[i];
-				if (point[prop]) {
-					point[prop] = point[prop].destroy();
-				}
-			}
+			destroyExtraLabels(this, 'destroyElements');
+		},
+		// This method is called when removing points, e.g. series.update()
+		destroy: function () {
+			destroyExtraLabels(this, 'destroyElements');
 		}
-	});
-}));
+	}
+);
+
+/**
+ * A pivot points indicator. If the [type](#series.pivotpoints.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * pivotpoints](#plotOptions.pivotpoints).
+ *
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.pivotpoints
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.pivotpoints
+ */
+
+/**
+ * An array of data points for the series. For the `pivotpoints` series type,
+ * points are calculated dynamically.
+ *
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.line.data
+ * @product highstock
+ * @apioption series.pivotpoints.data
+ */

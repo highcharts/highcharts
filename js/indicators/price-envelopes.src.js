@@ -9,17 +9,17 @@ var each = H.each,
 	SMA = H.seriesTypes.sma;
 
 H.seriesType('priceenvelopes', 'sma',
-		/**
-		 * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations. This series requires `linkedTo`
-		 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
-		 *
-		 * @extends {plotOptions.sma}
-		 * @product highstock
-		 * @sample {highstock} stock/indicators/price-envelopes
-		 *                     Price envelopes
-		 * @since 6.0.0
-		 * @optionparent plotOptions.priceenvelopes
-		 */
+	/**
+	 * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations. This series requires `linkedTo`
+	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 *
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/price-envelopes
+	 *                     Price envelopes
+	 * @since 6.0.0
+	 * @optionparent plotOptions.priceenvelopes
+	 */
 	{
 		name: 'Price envelopes (20, 0.1, 0.1)',
 		marker: {
