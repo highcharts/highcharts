@@ -1,19 +1,75 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
-	var UNDEFINED;
+/**
+ * (c) 2010-2017 Kacper Madej
+ *
+ * License: www.highcharts.com/license
+ */
 
-	H.seriesType('zigzag', 'sma', {
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+
+var seriesType = H.seriesType,
+	UNDEFINED;
+
+/**
+ * The Zig Zag series type.
+ *
+ * @constructor seriesTypes.zigzag
+ * @augments seriesTypes.sma
+ */
+seriesType('zigzag', 'sma',
+	/**
+	 * Zig Zag indicator.
+	 *
+	 * This series requires `linkedTo` option to be set.
+	 * 
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/zigzag
+	 *                     Zig Zag indicator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.zigzag
+	 */
+	{
 		name: 'Zig Zag (1%)',
+		/**
+		 * @excluding index,period
+		 */
 		params: {
+			/**
+			 * The point index which indicator calculations will base - low
+			 * value.
+			 *
+			 * For example using OHLC data, index=2 means the indicator will be
+			 * calculated using Low values.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			lowIndex: 2,
+			/**
+			 * The point index which indicator calculations will base - high
+			 * value.
+			 *
+			 * For example using OHLC data, index=1 means the indicator will be
+			 * calculated using High values.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			highIndex: 1,
+			/**
+			 * The threshold for the value change.
+			 *
+			 * For example deviation=1 means the indicator will ignore all price
+			 * movements less than 1%.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			deviation: 1
 		}
 	}, {
@@ -41,7 +97,16 @@
 				yIndex = false;
 			
 			// Exit if not enught points or no low or high values
-			if (xVal.length <= 1 || (yValLen && (yVal[0][lowIndex] === UNDEFINED || yVal[0][highIndex] === UNDEFINED))) {
+			if (
+				xVal.length <= 1 ||
+				(
+					yValLen &&
+					(
+						yVal[0][lowIndex] === UNDEFINED ||
+						yVal[0][highIndex] === UNDEFINED
+					)
+				)
+			) {
 				return false;
 			}
 
@@ -49,18 +114,29 @@
 			firstZigzagLow = yVal[0][lowIndex];
 			firstZigzagHigh = yVal[0][highIndex];
 
-			// Search for a second zigzag point candidate, this will also set first zigzag point
+			// Search for a second zigzag point candidate,
+			// this will also set first zigzag point
 			for (i = 1; i < yValLen; i++) {
-				if (yVal[i][lowIndex] <= firstZigzagHigh * deviations.high) { // requried change to go down
+				// requried change to go down
+				if (yVal[i][lowIndex] <= firstZigzagHigh * deviations.high) {
 					Zigzag.push([xVal[0], firstZigzagHigh]);
-					ZigzagPoint = [xVal[i], yVal[i][lowIndex]]; // second zigzag point candidate
-					directionUp = true; // next line will be going up
+					// second zigzag point candidate
+					ZigzagPoint = [xVal[i], yVal[i][lowIndex]];
+					// next line will be going up
+					directionUp = true;
 					exitLoop = true;
-				} else if (yVal[i][highIndex] >= firstZigzagLow * deviations.low) { // requried change to go up
+
+					// requried change to go up
+				} else if (
+					yVal[i][highIndex] >= firstZigzagLow * deviations.low
+				) {
 					Zigzag.push([xVal[0], firstZigzagLow]);
-					ZigzagPoint = [xVal[i], yVal[i][highIndex]]; // second zigzag point candidate
-					directionUp = false; // next line will be going down
+					// second zigzag point candidate
+					ZigzagPoint = [xVal[i], yVal[i][highIndex]];
+					// next line will be going down
+					directionUp = false;
 					exitLoop = true;
+
 				}
 				if (exitLoop) {
 					xData.push(Zigzag[0][0]);
@@ -73,17 +149,28 @@
 			// Search for next zigzags
 			for (i = j; i < yValLen; i++) {
 				if (directionUp) { // next line up
-					if (yVal[i][lowIndex] <= ZigzagPoint[1]) { // lower when going down -> change zigzag candidate
+
+					// lower when going down -> change zigzag candidate
+					if (yVal[i][lowIndex] <= ZigzagPoint[1]) {
 						ZigzagPoint = [xVal[i], yVal[i][lowIndex]];
 					}
-					if (yVal[i][highIndex] >= ZigzagPoint[1] * deviations.low) { // requried change to go down -> new zigzagpoint and direction change
+
+					// requried change to go down -> new zigzagpoint and
+					// direction change
+					if (yVal[i][highIndex] >= ZigzagPoint[1] * deviations.low) {
 						yIndex = highIndex;
 					}
+
 				} else { // next line down
-					if (yVal[i][highIndex] >= ZigzagPoint[1]) { // higher when going up -> change zigzag candidate
+
+					// higher when going up -> change zigzag candidate
+					if (yVal[i][highIndex] >= ZigzagPoint[1]) {
 						ZigzagPoint = [xVal[i], yVal[i][highIndex]];
 					}
-					if (yVal[i][lowIndex] <= ZigzagPoint[1] * deviations.high) { // requried change to go down -> new zigzagpoint and direction change
+
+					// requried change to go down -> new zigzagpoint and
+					// direction change
+					if (yVal[i][lowIndex] <= ZigzagPoint[1] * deviations.high) {
 						yIndex = lowIndex;
 					}
 				}
@@ -100,12 +187,17 @@
 
 			zigZagLen = Zigzag.length;
 			
-			if (zigZagLen !== 0 && Zigzag[zigZagLen - 1][0] < xVal[yValLen - 1]) { // no zigzag for last point
-				Zigzag.push(ZigzagPoint); // set last point from zigzag candidate
+			// no zigzag for last point
+			if (
+				zigZagLen !== 0 &&
+				Zigzag[zigZagLen - 1][0] < xVal[yValLen - 1]
+			) {
+				// set last point from zigzag candidate
+				Zigzag.push(ZigzagPoint);
 				xData.push(ZigzagPoint[0]);
 				yData.push(ZigzagPoint[1]);
 			}
-			
+			console.log(Zigzag.length, series.yData.length);
 			return {
 				values: Zigzag,
 				xData: xData,
@@ -113,4 +205,26 @@
 			};
 		}
 	});
-}));
+
+/**
+ * A `Zig Zag` series. If the [type](#series.zigzag.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to
+ * [plotOptions.zigzag](#plotOptions.zigzag).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.zigzag
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.zigzag
+ */
+
+/**
+ * @extends series.sma.data
+ * @product highstock
+ * @apioption series.zigzag.data
+ */
