@@ -1,41 +1,52 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-	var UNDEFINED,
-		each = H.each,
-		noop = H.noop,
-		merge = H.merge,
-		isArray = H.isArray,
-		defined = H.defined,
-		SMA = H.seriesTypes.sma;
+var UNDEFINED,
+	isArray = H.isArray,
+	seriesType = H.seriesType,
+	each = H.each,
+	noop = H.noop,
+	merge = H.merge,
+	defined = H.defined,
+	SMA = H.seriesTypes.sma;
 
-	// Utils:
-	function average(arr) {
-		var sum = 0,
-			arrLength = arr.length,
-			i = arrLength;
+// Utils:
+function average(arr) {
+	var sum = 0,
+		arrLength = arr.length,
+		i = arrLength;
 
-		while (i--) {
-			sum = sum + arr[i];
-		}
-
-		return (sum / arrLength);
+	while (i--) {
+		sum = sum + arr[i];
 	}
 
-	H.seriesType('macd', 'sma', {
+	return (sum / arrLength);
+}
+
+/**
+ * The MACD series type.
+ *
+ * @constructor seriesTypes.macd
+ * @augments seriesTypes.sma
+ */
+seriesType('macd', 'sma', 
+	/**
+	 * Moving Average Convergence Divergence (MACD). This series requires `linkedTo` option to be set.
+	 * 
+	 * @extends {plotOptions.macd}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/macd Exponential moving average indicator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.macd
+	 */
+	{
 		name: 'MACD (26, 12, 9)',
 		params: {
-			shortPeriod: 12,
-			longPeriod: 26,
-			signalPeriod: 9,
-			period: 26
+			shortPeriod: 5,
+			longPeriod: 13,
+			signalPeriod: 6,
+			period: 13
 		},
 		signalLine: {
 			styles: {
@@ -56,24 +67,7 @@
 				'Signal: {point.signal}<br/>' +
 				'Histogram: {point.y}<br/>'
 		},
-		dataGrouping: {
-			approximation: function (top, bot, mid) {
-				var ret = [
-						H.approximations.average(top),
-						H.approximations.average(bot),
-						H.approximations.average(mid)
-					],
-					val;
-
-				if (ret[0] !== UNDEFINED && ret[1] !== UNDEFINED && ret[2] !== UNDEFINED) {
-					val = ret;
-				} else {
-					val = UNDEFINED;
-				}
-
-				return val;
-			}
-		}
+		dataGrouping: 'averages'
 	}, {
 		// "y" value is treated as Histogram data
 		pointArrayMap: ['y', 'signal', 'MACD'],
@@ -283,4 +277,28 @@
 			return emaPoints;
 		}
 	});
-}));
+
+/**
+ * A `MACD` series. If the [type](#series.macd.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to 
+ * [plotOptions.macd](#plotOptions.macd).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.macd
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.macd
+ */
+
+/**
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.sma.data
+ * @product highstock
+ * @apioption series.macd.data
+ */
