@@ -1,72 +1,101 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-	var UNDEFINED,
-		each = H.each,
-		merge = H.merge,
-		color = H.color,
-		isArray = H.isArray,
-		defined = H.defined,
-		SMA = H.seriesTypes.sma;
+var UNDEFINED,
+	seriesType = H.seriesType,
+	each = H.each,
+	merge = H.merge,
+	color = H.color,
+	isArray = H.isArray,
+	defined = H.defined,
+	SMA = H.seriesTypes.sma;
 
-	// Utils:
-	function maxHigh(arr) {
-		return arr.reduce(function (max, res) {
-			return Math.max(max, res[1]);
-		}, -Infinity);
-	}
+// Utils:
+function maxHigh(arr) {
+	return arr.reduce(function (max, res) {
+		return Math.max(max, res[1]);
+	}, -Infinity);
+}
 
-	function minLow(arr) {
-		return arr.reduce(function (min, res) {
-			return Math.min(min, res[2]);
-		}, Infinity);
-	}
+function minLow(arr) {
+	return arr.reduce(function (min, res) {
+		return Math.min(min, res[2]);
+	}, Infinity);
+}
 
-	function highlowLevel(arr) {
-		return {
-			high: maxHigh(arr),
-			low: minLow(arr)
-		};
-	}
+function highlowLevel(arr) {
+	return {
+		high: maxHigh(arr),
+		low: minLow(arr)
+	};
+}
 
-	function getClosestPointRange(axis) {
-		var closestDataRange,
-			loopLength,
-			distance,
-			xData,
-			i;
+function getClosestPointRange(axis) {
+	var closestDataRange,
+		loopLength,
+		distance,
+		xData,
+		i;
 
-		each(axis.series, function (series) {
+	each(axis.series, function (series) {
 
-			if (series.xData) {
-				xData = series.xData;
-				loopLength = series.xIncrement ? 1 : xData.length - 1;
-				
-				for (i = loopLength; i > 0; i--) {
-					distance = xData[i] - xData[i - 1];
-					if (closestDataRange === UNDEFINED || distance < closestDataRange) {
-						closestDataRange = distance;
-					}
+		if (series.xData) {
+			xData = series.xData;
+			loopLength = series.xIncrement ? 1 : xData.length - 1;
+			
+			for (i = loopLength; i > 0; i--) {
+				distance = xData[i] - xData[i - 1];
+				if (closestDataRange === UNDEFINED || distance < closestDataRange) {
+					closestDataRange = distance;
 				}
 			}
-		});
+		}
+	});
 
-		return closestDataRange;
-	}
+	return closestDataRange;
+}
 
-	H.seriesType('ikh', 'sma', {
+/**
+ * The IKH series type.
+ *
+ * @constructor seriesTypes.ikh
+ * @augments seriesTypes.line
+ */
+seriesType('ikh', 'sma', 
+	/**
+	 * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be set.
+	 * 
+	 * @extends {plotOptions.line}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/ichimoku-kinko-hyo Simple moving average indicator
+	 * @since 6.0.0
+	 * @excluding
+	 * 			allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
+	 * 			showInNavigator,navigatorOptions,pointInterval,pointIntervalUnit,
+	 *			pointPlacement,pointRange,pointStart
+	 * @optionparent plotOptions.ikh
+	 */
+	{
 		name: 'IKH (52, 26, 9)',
 		params: {
 			period: 26,
+			/**
+			 * The base period for Tenkan calculations.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			periodTenkan: 9,
-			perionSenkouSpanB: 52
+			/**
+			 * The base period for Senkou Span B calculations
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			periodSenkouSpanB: 52
 		},
 		marker: {
 			enabled: false
@@ -79,45 +108,162 @@
 				'SENKOU SPAN A: {point.senkouSpanA:.3f}<br/>' +
 				'SENKOU SPAN B: {point.senkouSpanB:.3f}<br/>'
 		},
+		/**
+		 * The styles for Tenkan line
+		 * 
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		tenkanLine: {
 			styles: {
-				lineWidth: 1
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
 			}
 		},
+		/**
+		 * The styles for Kijun line
+		 * 
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		kijunLine: {
 			styles: {
-				lineWidth: 1
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
 			}
 		},
+		/**
+		 * The styles for Chikou line
+		 * 
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		chikouLine: {
 			styles: {
-				lineWidth: 1
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
 			}
 		},
+		/**
+		 * The styles for Senkou Span A line
+		 * 
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		senkouSpanA: {
 			styles: {
-				lineWidth: 1
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
 			}
 		},
+		/**
+		 * The styles for Senkou Span B line
+		 * 
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		senkouSpanB: {
 			styles: {
-				lineWidth: 1
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
+			}
+		},
+		/**
+		 * The styles for fill between Senkou Span A and B
+		 * 
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
+		senkouSpan: {
+			styles: {
+				/**
+				 * Color of the area between Senkou Span A and B.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				fill: 'rgba(255, 0, 0, 0.5)'
 			}
 		},
 		dataGrouping: {
-			approximation: function (ts, ks, cs, ssa, ssb) {
-				var ret = [
-					H.approximations.average(ts),
-					H.approximations.average(ks),
-					H.approximations.average(cs),
-					H.approximations.average(ssa),
-					H.approximations.average(ssb)
-				];
-				if (ret[0] !== UNDEFINED && ret[1] !== UNDEFINED && ret[2] !== UNDEFINED && ret[3] !== UNDEFINED && ret[4] !== UNDEFINED) {
-					return ret;
-				}
-				return UNDEFINED;
-			}
+			approximation: 'averages'
 		}
 	}, {
 		pointArrayMap: ['tenkanSen', 'kijunSen', 'chikouSpan', 'senkouSpanA', 'senkouSpanB'],
@@ -310,9 +456,10 @@
 			return path;
 		},
 		getValues: function (series, params) {
+
 			var period = params.period,
 				periodTenkan = params.periodTenkan,
-				perionSenkouSpanB = params.perionSenkouSpanB,
+				periodSenkouSpanB = params.periodSenkouSpanB,
 				xVal = series.xData,
 				yVal = series.yData,
 				xAxis = series.xAxis,
@@ -371,9 +518,9 @@
 					SSA = (TS + KS) / 2;
 				}
 
-				if (i >= perionSenkouSpanB) {
+				if (i >= periodSenkouSpanB) {
 
-					slicedSSBY = yVal.slice(i - perionSenkouSpanB, i);
+					slicedSSBY = yVal.slice(i - periodSenkouSpanB, i);
 
 					pointSSB = highlowLevel(slicedSSBY);
 
@@ -426,4 +573,31 @@
 			};
 		}
 	});
-}));
+/**
+ * A `IKH` series. If the [type](#series.ikh.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * sma](#plotOptions.ikh).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.sma
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.ikh
+ */
+
+
+/**
+ * An array of data points for the series. For the `IKH` series type,
+ * points are calculated dynamically.
+ * 
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.line.data
+ * @product highstock
+ * @apioption series.sma.data
+ */
