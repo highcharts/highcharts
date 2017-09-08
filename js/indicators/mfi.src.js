@@ -1,37 +1,86 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
+/**
+ * @license  @product.name@ JS v@product.version@ (@product.date@)
+ *
+ * Money Flow Index indicator for Highstock
+ *
+ * (c) 2010-2017 Grzegorz Blachliński
+ *
+ * License: www.highcharts.com/license
+ */
 
-	var isArray = H.isArray;
-	
-	// Utils
-	function sumArray(array) {
-		// reduce VS loop => reduce
-		return array.reduce(function (prev, cur) {
-			return prev + cur;
-		});
-	}
+'use strict';
 
-	function calculateTypicalPrice(point) {
-		return (point[1] + point[2] + point[3]) / 3;
-	}
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-	function calculateRawMoneyFlow(typicalPrice, volume) {
-		return typicalPrice * volume;
-	}
+var isArray = H.isArray;
 
-	H.seriesType('mfi', 'sma', {
+	// Utils:
+function sumArray(array) {
+
+	return array.reduce(function (prev, cur) {
+		return prev + cur;
+	});
+}
+
+function toFixed(a, n) {
+	return parseFloat(a.toFixed(n));
+}
+
+function calculateTypicalPrice(point) {
+	return (point[1] + point[2] + point[3]) / 3;
+}
+
+function calculateRawMoneyFlow(typicalPrice, volume) {
+	return typicalPrice * volume;
+}
+/**
+ * The MFI series type.
+ *
+ * @constructor seriesTypes.mfi
+ * @augments seriesTypes.sma
+ */
+H.seriesType('mfi', 'sma', 
+
+	/**
+	 * Money Flow Index. This series requires `linkedTo`
+	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 *
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/mfi 
+	 *                     Money Flow Index Indicator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.mfi
+	 */
+
+	{
+
 		name: 'Money Flow Index (14)',
+		/**
+		 * @excluding index
+		 */
 		params: {
 			period: 14,
-			approximation: 'average',
-			volumeSeriesID: 'Volume'
+			/**
+			 * The id of volume series which is mandatory.
+			 * For example using OHLC data, volumeSeriesID='volume' means 
+			 * the indicator will be calculated using OHLC and volume values.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			volumeSeriesID: 'volume',
+			/**
+			 * Number of maximum decimals that are used in MFI calculations.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			decimals: 4
+
 		}
 	}, {
 		getValues: function (series, params) {
@@ -39,6 +88,9 @@
 				xVal = series.xData,
 				yVal = series.yData,
 				yValLen = yVal ? yVal.length : 0,
+				decimals = params.decimals,
+				// MFI starts calculations from the second point
+				// Cause we need to calculate change between two points
 				range = 1,
 				volumeSeries = series.chart.get(params.volumeSeriesID),
 				yValVolume = volumeSeries && volumeSeries.yData,
@@ -65,48 +117,47 @@
 				);
 			}
 
-			// atr requires high low and close values
+			// MFI requires high low and close values
 			if ((xVal.length <= period) || !isArray(yVal[0]) || yVal[0].length !== 4 || !yValVolume) {
 				return false;
 			}
-			// calculate first typical price
+			// Calculate first typical price
 			newTypicalPrice = calculateTypicalPrice(yVal[range]);
-			// accumulate first N-points
+			// Accumulate first N-points
 			while (range < period + 1) {
-				// calculate if up or down
+				// Calculate if up or down
 				oldTypicalPrice = newTypicalPrice;
 				newTypicalPrice = calculateTypicalPrice(yVal[range]);
-				isUp = newTypicalPrice > oldTypicalPrice ? true : false;
-				// calculate raw money flow
+				isUp = newTypicalPrice >= oldTypicalPrice ? true : false;
+				// Calculate raw money flow
 				rawMoneyFlow = calculateRawMoneyFlow(newTypicalPrice, yValVolume[range]);
-				// add to array
+				// Add to array
 				positiveMoneyFlow.push(isUp ? rawMoneyFlow : 0);
 				negativeMoneyFlow.push(isUp ? 0 : rawMoneyFlow);
 				range++;
 			}
-
 			for (i = range - 1; i < yValLen; i++) {
 				if (i > range - 1) {
-					// remove first point from array
+					// Remove first point from array
 					positiveMoneyFlow.shift();
 					negativeMoneyFlow.shift();
-					// calculate if up or down
+					// Calculate if up or down
 					oldTypicalPrice = newTypicalPrice;
 					newTypicalPrice = calculateTypicalPrice(yVal[i]);
 					isUp = newTypicalPrice > oldTypicalPrice ? true : false;
-					// calculate raw money flow
+					// Calculate raw money flow
 					rawMoneyFlow = calculateRawMoneyFlow(newTypicalPrice, yValVolume[i]);
-					// add to array
+					// Add to array
 					positiveMoneyFlow.push(isUp ? rawMoneyFlow : 0);
 					negativeMoneyFlow.push(isUp ? 0 : rawMoneyFlow);
 				}
 
-				// calculate sum of negative and positive money flow:
+				// Calculate sum of negative and positive money flow:
 				negativeMoneyFlowSum = sumArray(negativeMoneyFlow);
 				positiveMoneyFlowSum = sumArray(positiveMoneyFlow);
 
 				moneyFlowRatio = positiveMoneyFlowSum / negativeMoneyFlowSum;
-				MFIPoint = 100 - (100 / (1 + moneyFlowRatio));
+				MFIPoint = toFixed(100 - (100 / (1 + moneyFlowRatio)), decimals);
 				MFI.push([xVal[i], MFIPoint]);
 				xData.push(xVal[i]);
 				yData.push(MFIPoint);
@@ -118,5 +169,33 @@
 				yData: yData
 			};
 		}
-	});
-}));
+	}
+);
+
+/**
+ * A `MFI` series. If the [type](#series.mfi.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * mfi](#plotOptions.mfi).
+ *
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.mfi
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.mfi
+ */
+
+/**
+ * An array of data points for the series. For the `mfi` series type,
+ * points are calculated dynamically.
+ *
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.line.data
+ * @product highstock
+ * @apioption series.mfi.data
+ */
