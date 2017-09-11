@@ -300,7 +300,7 @@ gulp.task('nightly', function () {
  * Automated generation for internal Class reference.
  * Run with --watch argument to watch for changes in the JS files.
  */
-const generateClassReferences = ({ templateDir, destination, callback }) => {
+const generateClassReferences = (templateDir, destination, callback) => {
     const jsdoc = require('gulp-jsdoc3');
     const sourceFiles = [
         'README.md',
@@ -873,7 +873,7 @@ const createAllExamples = () => new Promise((resolve) => {
  *  only latest version or all of them.
  * @return {Promise} A Promise which resolves into undefined when done.
  */
-const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
+const generateAPIDocs = (treeFile, output, onlyBuildCurrent) => {
     // const generate = require('highcharts-api-doc-gen/lib/index.js');
     const generate = require('./../api-docs/lib/index.js');
 
