@@ -2392,7 +2392,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 							/*= } =*/
 						}
 
-						span = unescapeEntities(span.replace(/<(.|\n)*?>/g, '') || ' ');
+						// Strip away unsupported HTML tags (#7126)
+						span = unescapeEntities(
+							span.replace(/<[a-zA-Z](.|\n)*?>/g, '') || ' '
+						);
 
 						// Nested tags aren't supported, and cause crash in Safari (#1596)
 						if (span !== ' ') {

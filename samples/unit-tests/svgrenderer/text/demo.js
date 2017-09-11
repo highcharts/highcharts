@@ -146,4 +146,11 @@ QUnit.test('HTML entities', function (assert) {
         'Hello & <tag>',
         'HTML entities decoded correctly'
     );
+
+    text = ren.text('a < b and c > d', 10, 60).add();
+    assert.strictEqual(
+        text.element.textContent,
+        'a < b and c > d',
+        'Tags don\'t start with spaces (#7126)'
+    );
 });
