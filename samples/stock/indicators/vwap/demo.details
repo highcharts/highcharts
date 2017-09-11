@@ -1,0 +1,6 @@
+---
+ name: Highstock Demo
+ authors:
+   - Paweł Dalek
+ js_wrap: b
+...

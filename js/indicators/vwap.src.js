@@ -1,35 +1,69 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
+/**
+ * (c) 2010-2017 Paweł Dalek
+ *
+ * Volume Weighted Average Price (VWAP) indicator for Highstock
+ *
+ * License: www.highcharts.com/license
+ */
 
-	var isArray = H.isArray;
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-	H.seriesType('vwap', 'sma', {
-		name: 'VWAP (15)',
+var isArray = H.isArray,
+	seriesType = H.seriesType;
+
+/**
+ * The Volume Weighted Average Price (VWAP) series type.
+ *
+ * @constructor seriesTypes.vwap
+ * @augments seriesTypes.sma
+ */
+seriesType('vwap', 'sma', 
+	/**
+	 * Volume Weighted Average Price indicator.
+	 *
+	 * This series requires `linkedTo` option to be set.
+	 * 
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/vwap
+	 *                     Volume Weighted Average Price indicator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.vwap
+	 */
+	{
+		name: 'VWAP (30)',
+		/**
+		 * @excluding index
+		 */
 		params: {
-			period: 15,
-			volumeSeriesID: 'Volume'
+			period: 30,
+			/**
+			 * The id of volume series which is mandatory.
+			 * For example using OHLC data, volumeSeriesID='volume' means the indicator will be calculated using OHLC and volume values.
+			 * 
+			 * @type {String}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			volumeSeriesID: 'volume'
 		}
 	}, {
 		/**
-		* Returns the final values of the indicator ready to be presented on a chart
-		* @returns {Object} Object containing computed VWAP
-		**/
+		 * Returns the final values of the indicator ready to be presented on a chart
+		 * @returns {Object} Object containing computed VWAP
+		 **/
 		getValues: function (series, params) {
-			var xValues = series.xData,
-				yValues = series.yData,
+			var indicator = this,
 				chart = series.chart,
+				xValues = series.xData,
+				yValues = series.yData,
 				period = params.period,
 				isOHLC = true,
 				volumeSeries;
 
-			//	Checks if Volume series exists and if period is a lower value than a number of points in main series
+			// Checks if volume series exists
 			if (!(volumeSeries = chart.get(params.volumeSeriesID))) {
 				return H.error(
 					'Series ' +
@@ -38,68 +72,64 @@
 					true
 				);
 			}
-
-			if (period > xValues.length) {
-				return false;
-			}
-
-			//	Checks if series data fits the OHLC format
+			
+			// Checks if series data fits the OHLC format
 			if (!(isArray(yValues[0]))) {
 				isOHLC = false;
 			}
 
-			return this.calculateVWAPValues(isOHLC, xValues, yValues, volumeSeries, period);
+			return indicator.calculateVWAPValues(isOHLC, xValues, yValues, volumeSeries, period);
 		},
 		/**
-		* Main algorithm used to calculate Volume Weighted Average Price (VWAP) values
- 		* @param {Boolean} isOHLC 		- Says if data has a format of an OHLC
- 		* @param {Array} xValues 		- Array of timestamps
- 		* @param {Array} yValues 		- Array of yValues, can be an array of a four arrays (OHLC) or array of values (line)
- 		* @param {Array} volumeSeries 	- Volume series
- 		* @param {Number} period 		- Number of points to be calculated
- 		* @returns {Object} Object containing computed VWAP
- 		**/
+		 * Main algorithm used to calculate Volume Weighted Average Price (VWAP) values
+		 * @param {Boolean} isOHLC says if data has OHLC format
+		 * @param {Array} xValues array of timestamps
+		 * @param {Array} yValues array of yValues, can be an array of a four arrays (OHLC) or array of values (line)
+		 * @param {Array} volumeSeries volume series
+		 * @param {Number} period number of points to be calculated
+		 * @returns {Object} Object contains computed VWAP
+		 **/
 		calculateVWAPValues: function (isOHLC, xValues, yValues, volumeSeries, period) {
-			var yValuesVolume,
-				typicalPrice,
-				cumulativePrice = [],
-				cPrice = 0,
+			var volumeValues = volumeSeries.yData,
+				volumeLength = volumeSeries.xData.length,
+				pointsLength = xValues.length,
+				cumulativePrice = [],				
 				cumulativeVolume = [],
-				cVolume = 0,
-				VWAP = [],
-				i = 0,
-				j = 0,
 				xData = [],
-				yData = [];
+				yData = [],
+				VWAP = [],
+				commonLength,
+				typicalPrice,
+				cPrice,
+				cVolume,
+				i,
+				j;
 
-			yValuesVolume = volumeSeries.yData;
+			if (pointsLength <= volumeLength) {
+				commonLength = pointsLength;
+			} else {
+				commonLength = volumeLength;
+			}
 
-			while (i < xValues.length) {
+			for (i = 0, j = 0; i < commonLength; i++) {
 				// Depending on whether series is OHLC or line type, price is average of the high, low and close or a simple value
 				typicalPrice = isOHLC ? ((yValues[i][1] + yValues[i][2] + yValues[i][3]) / 3) : yValues[i];
-				VWAP.push([xValues[i], typicalPrice]);
+				typicalPrice *= volumeValues[i];
+
+				cPrice = j ? (cumulativePrice[i - 1] + typicalPrice) : typicalPrice;
+				cVolume = j ? (cumulativeVolume[i - 1] + volumeValues[i]) : volumeValues[i];
+
+				cumulativePrice.push(cPrice);
+				cumulativeVolume.push(cVolume);
+
+				VWAP.push([xValues[i], (cPrice / cVolume)]);
 				xData.push(VWAP[i][0]);
 				yData.push(VWAP[i][1]);
 
-				cumulativePrice.push(yValuesVolume[i] * typicalPrice);
-				cumulativeVolume.push(yValuesVolume[i]);
-				
-				i++;
-				j = 1;
+				j++;
 
-				for (; (j < period && i < xValues.length); j++, i++) {
-					// Depending on whether series is OHLC or line type, price is average of the high, low and close or a simple value
-					typicalPrice = isOHLC ? ((yValues[i][1] + yValues[i][2] + yValues[i][3]) / 3) : yValues[i];
-					typicalPrice *= yValuesVolume[i];
-					cPrice = cumulativePrice[i - 1] + typicalPrice;
-					cVolume = cumulativeVolume[i - 1] + yValuesVolume[i];
-
-					cumulativePrice.push(cPrice);
-					cumulativeVolume.push(cVolume);
-
-					VWAP.push([xValues[i], (cPrice / cVolume)]);
-					xData.push(VWAP[i][0]);
-					yData.push(VWAP[i][1]);
+				if (j === period) {
+					j = 0;
 				}
 			}
 
@@ -110,4 +140,26 @@
 			};
 		}
 	});
-}));
+
+/**
+ * A `Volume Weighted Average Price (VWAP)` series. If the [type](#series.vwap.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to 
+ * [plotOptions.vwap](#plotOptions.vwap).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.vwap
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.vwap
+ */
+
+/**
+ * @extends series.sma.data
+ * @product highstock
+ * @apioption series.vwap.data
+ */

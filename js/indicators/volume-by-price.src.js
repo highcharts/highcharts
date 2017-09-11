@@ -1,51 +1,170 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
+/**
+ * (c) 2010-2017 Paweł Dalek
+ *
+ * Volume By Price (VBP) indicator for Highstock
+ *
+ * License: www.highcharts.com/license
+ */
 
-	// Utils
-	function arrayExtremesOHLC(data) {
-		var dataLength = data.length,
-			min = data[0][3],
-			max = min,
-			i = 1,
-			currentPoint;
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 
-		for (; i < dataLength; i++) {
-			currentPoint = data[i][3];
-			if (currentPoint < min) {
-				min = currentPoint;
-			}
+// Utils
+function arrayExtremesOHLC(data) {
+	var dataLength = data.length,
+		min = data[0][3],
+		max = min,
+		i = 1,
+		currentPoint;
 
-			if (currentPoint > max) {
-				max = currentPoint;
-			}
+	for (; i < dataLength; i++) {
+		currentPoint = data[i][3];
+		if (currentPoint < min) {
+			min = currentPoint;
 		}
 
-		return {
-			min: min,
-			max: max
-		};
+		if (currentPoint > max) {
+			max = currentPoint;
+		}
 	}
 
-	var abs = Math.abs,
-		each = H.each,
-		noop = H.noop,
-		addEvent = H.addEvent,
-		correctFloat = H.correctFloat,
-		columnPrototype = H.seriesTypes.column.prototype;
+	return {
+		min: min,
+		max: max
+	};
+}
 
-	H.seriesType('vbp', 'sma', {
+var abs = Math.abs,
+	each = H.each,
+	noop = H.noop,
+	addEvent = H.addEvent,
+	correctFloat = H.correctFloat,
+	seriesType = H.seriesType,
+	columnPrototype = H.seriesTypes.column.prototype;
+
+/**
+ * The Volume By Price (VBP) series type.
+ *
+ * @constructor seriesTypes.vbp
+ * @augments seriesTypes.vbp
+ */
+seriesType('vbp', 'sma', 
+	/**
+	 * Volume By Price indicator.
+	 *
+	 * This series requires `linkedTo` option to be set.
+	 * 
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/vbp
+	 *                     Volume By Price indicator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.vbp
+	 */
+	{
 		name: 'Volume by Price',
+		/**
+		 * @excluding index,period
+		 */
 		params: {
+			/**
+			 * The number of price zones.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			ranges: 12,
-			volumeSeriesID: 'Volume'
+			/**
+			 * The id of volume series which is mandatory.
+			 * For example using OHLC data, volumeSeriesID='volume' means the indicator will be calculated using OHLC and volume values.
+			 * 
+			 * @type {String}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			volumeSeriesID: 'volume'
 		},
+		/**
+		 * The styles for lines which determine price zones.
+		 * 
+		 * @type {Object}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
+		zoneLines: {
+			/**
+			 * Enable/disable zone lines.
+			 * 
+			 * @type {Boolean}
+			 * @since 6.0.0
+			 * @default true
+			 * @product highstock
+			 */
+			enabled: true,
+			styles: {
+				/**
+				 * Color of zone lines.
+				 *
+				 * @type {Color}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				color: '#0A9AC9',
+				/**
+				 * The dash style of zone lines.
+				 *
+				 * @type {String}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				dashStyle: 'LongDash',
+				/**
+				 * Pixel width of zone lines.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1
+			}
+		},
+		/**
+		 * The styles for bars when volume is divided into positive/negative.
+		 * 
+		 * @type {Object}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
+		volumeDivision: {
+			/**
+			 * Option to control if volume is divided.
+			 * 
+			 * @type {Boolean}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			enabled: true,
+			styles: {
+				/**
+				 * Color of positive volume bars.
+				 *
+				 * @type {Color}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				positiveColor: 'rgba(144, 237, 125, 0.8)',
+				/**
+				 * Color of negative volume bars.
+				 *
+				 * @type {Color}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				negativeColor: 'rgba(244, 91, 91, 0.8)'
+			}
+		},		
 		// To enable series animation; must be animationLimit > pointCount
 		animationLimit: 1000,
 		enableMouseTracking: false,
@@ -63,21 +182,6 @@
 			padding: 0,
 			style: {
 				fontSize: '7px'
-			}
-		},
-		zoneLines: {
-			enabled: true,
-			styles: {
-				color: '#0A9AC9',
-				dashStyle: 'LongDash',
-				lineWidth: 1
-			}
-		},
-		volumeDivision: {
-			enabled: true,
-			styles: {
-				positiveColor: 'rgba(144, 237, 125, 0.8)',
-				negativeColor: 'rgba(244, 91, 91, 0.8)'
 			}
 		}
 	}, {
@@ -333,6 +437,7 @@
 				yData: yData
 			};
 		},
+		// Specifing where each zone should start ans end
 		specifyZones: function (isOHLC, xValues, yValues, ranges, volumeSeries) {
 			var indicator = this,
 				rangeExtremes = isOHLC ? arrayExtremesOHLC(yValues) : false,
@@ -376,6 +481,7 @@
 
 			return indicator.volumePerZone(isOHLC, priceZones, volumeSeries, xValues, yValues);
 		},
+		// Calculating sum of volume values for a specific zone
 		volumePerZone: function (isOHLC, priceZones, volumeSeries, xValues, yValues) {
 			var indicator = this,
 				volumeXData = volumeSeries.processedXData,
@@ -440,6 +546,7 @@
 
 			return priceZones;
 		},
+		// Function responsoble for drawing additional lines indicating zones
 		drawZones: function (chart, yAxis, zonesValues, zonesStyles) {
 			var indicator = this,
 				renderer = chart.renderer,
@@ -487,4 +594,26 @@
 			return H.Point.prototype.destroy.apply(this, arguments);
 		}
 	});
-}));
+
+/**
+ * A `Volume By Price (VBP)` series. If the [type](#series.vbp.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to 
+ * [plotOptions.vbp](#plotOptions.vbp).
+ * 
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.vbp
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.vbp
+ */
+
+/**
+ * @extends series.sma.data
+ * @product highstock
+ * @apioption series.vbp.data
+ */
