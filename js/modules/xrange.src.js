@@ -440,20 +440,21 @@ seriesType('xrange', 'column', {
 			series = this.series,
 			colorCount = series.chart.options.chart.colorCount;
 
+		if (!this.y) {
+			this.y = 0;
+		}
+
+		/*= if (build.classic) { =*/
 		if (series.options.colorByPoint) {
-			/*= if (build.classic) { =*/
 			colors = series.options.colors || series.chart.options.colors;
 			colorCount = colors.length;
 
 			if (!this.options.color && colors[this.y % colorCount]) {
 				this.color = colors[this.y % colorCount];
 			}
-			/*= } =*/
 		}
+		/*= } =*/
 		this.colorIndex = this.y % colorCount;
-		if (!this.y) {
-			this.y = 0;
-		}
 		
 		return this;
 	},
