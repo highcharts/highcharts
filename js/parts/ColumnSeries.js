@@ -357,7 +357,7 @@ seriesType('column', 'line', {
 	 * 
 	 * @type {Color}
 	 * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
-	 * Dark gray border
+	 *         Dark gray border
 	 * @default #ffffff
 	 * @product highcharts highstock
 	 */
