@@ -1143,12 +1143,16 @@ function GLRenderer(postRenderCallback) {
 			maxVal, //eslint-disable-line no-unused-vars
 			points = series.points || false,
 			lastX = false,
+			lastY = false,
 			minVal,
 			color,
 			scolor,
 			sdata = isStacked ? series.data : (xData || rawData),
 			closestLeft = { x: Number.MIN_VALUE, y: 0 },
-			closestRight = { x: Number.MIN_VALUE, y: 0 }
+			closestRight = { x: Number.MIN_VALUE, y: 0 },
+
+			cullXThreshold = 1,
+			cullYThreshold = 1
 			;
 
 		if (options.boostData && options.boostData.length > 0) {
@@ -1325,6 +1329,8 @@ function GLRenderer(postRenderCallback) {
 				return false;
 			}
 
+
+
 			// Uncomment this to enable color by point.
 			// This currently left disabled as the charts look really ugly
 			// when enabled and there's a lot of points.
@@ -1483,6 +1489,17 @@ function GLRenderer(postRenderCallback) {
 				}
 			}
 
+			// If the last _drawn_ point is closer to this point than the
+			// threshold, skip it. Shaves off 20-100ms in processing.
+
+			if (!settings.useGPUTranslations &&
+				!settings.usePreallocated &&
+				(lastX && x - lastX < cullXThreshold) &&
+				(lastY && Math.abs(y - lastY) < cullYThreshold)
+			) {
+				return;
+			}
+
 			vertice(
 				x,
 				y,
@@ -1502,6 +1519,7 @@ function GLRenderer(postRenderCallback) {
 			// }
 
 			lastX = x;
+			lastY = y;
 
 			//return true;
 		});
