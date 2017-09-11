@@ -87,6 +87,26 @@
   */
 
  /**
+  * Enable or disable boost on a chart
+  *
+  * @default true
+  * @apioption boost.enabled
+  */
+
+ /**
+  * Enable or disable GPU translations
+  *
+  * This option may cause rendering issues with certain datasets.
+  * Namely, if your dataset has large numbers with small increments (such as
+  * timestamps), it won't work correctly.
+  *
+  * This is due to floating point precission.
+  *
+  * @default false
+  * @apioption boost.useGPUTranslations
+  */
+
+ /**
   * Set the point threshold for when a series should enter boost mode.
   *
   * Setting it to e.g. 2000 will cause the series to enter boost mode
@@ -2229,8 +2249,7 @@ each([
 	'scatter',
 	'heatmap',
 	'bubble',
-	'treemap',
-	'heatmap'
+	'treemap'
 ],
 	function (type) {
 		if (plotOptions[type]) {
@@ -2256,10 +2275,18 @@ each([
 ], function (method) {
 	function branch(proceed) {
 		var letItPass = this.options.stacking &&
-						(method === 'translate' || method === 'generatePoints');
+						(method === 'translate' || method === 'generatePoints'),
+			enabled = true;
+
+		if (this.chart && this.chart.options && this.chart.options.boost) {
+			enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
+				true :
+				this.chart.options.boost.enabled;
+		}
 
 		if (!isSeriesBoosting(this) ||
 			letItPass ||
+			!enabled ||
 			this.type === 'heatmap' ||
 			this.type === 'treemap'
 		) {
