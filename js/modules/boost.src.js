@@ -2356,12 +2356,21 @@ function hasWebGLSupport() {
 
 /* Used for treemap|heatmap.drawPoints */
 function pointDrawHandler(proceed) {
-	if (!isSeriesBoosting(this)) {
+	var enabled = true,
+		renderer;
+
+	if (this.chart.options && this.chart.options.boost) {
+		enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
+			true :
+			this.chart.options.boost.enabled;
+	}
+
+	if (!enabled || !isSeriesBoosting(this)) {
 		return proceed.call(this);
 	}
 
 	//Make sure we have a valid OGL context
-	var renderer = createAndAttachRenderer(this.chart, this);
+	renderer = createAndAttachRenderer(this.chart, this);
 
 	if (renderer) {
 		allocateIfNotSeriesBoosting(renderer, this);
