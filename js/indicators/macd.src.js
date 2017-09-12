@@ -30,19 +30,84 @@ seriesType('macd', 'sma',
 	{
 		name: 'MACD (26, 12, 9)',
 		params: {
+			/**
+			 * The short period for indicator calculations.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			shortPeriod: 12,
+			/**
+			 * The long period for indicator calculations.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			longPeriod: 26,
+			/**
+			 * The base period for signal calculations.
+			 * 
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			signalPeriod: 9,
 			period: 26
 		},
+		/**
+		 * The styles for signal line
+		 * 
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		signalLine: {
 			styles: {
-				lineWidth: 1
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
 			}
 		},
+		/**
+		 * The styles for macd line
+		 * 
+		 * @type {Number}
+		 * @since 6.0.0
+		 * @product highstock
+		 */
 		macdLine: {
 			styles: {
-				lineWidth: 1
+				/**
+				 * Pixel width of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineWidth: 1,
+				/**
+				 * Color of the line.
+				 *
+				 * @type {Number}
+				 * @since 6.0.0
+				 * @product highstock
+				 */
+				lineColor: undefined
 			}
 		},
 		threshold: 0,
