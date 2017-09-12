@@ -34,15 +34,14 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
             name: 'AAPL Stock Price',
             data: data
         }, {
-            type: 'atr',
-            linkedTo: 'aapl',
-            yAxis: 1
-        }, {
-            type: 'atr',
-            linkedTo: 'aapl',
             yAxis: 1,
+            type: 'macd',
+            linkedTo: 'aapl',
             params: {
-                period: 50
+                shortPeriod: 12,
+                longPeriod: 26,
+                signalPeriod: 9,
+                period: 26 
             }
         }]
     });

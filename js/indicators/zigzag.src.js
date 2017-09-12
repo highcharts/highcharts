@@ -197,7 +197,6 @@ seriesType('zigzag', 'sma',
 				xData.push(ZigzagPoint[0]);
 				yData.push(ZigzagPoint[1]);
 			}
-			console.log(Zigzag.length, series.yData.length);
 			return {
 				values: Zigzag,
 				xData: xData,

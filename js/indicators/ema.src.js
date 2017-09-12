@@ -62,7 +62,7 @@ seriesType('ema', 'sma',
 				SMA = 0,
 				i,
 				EMAPoint;
-
+//console.log('getVALES', params);
 			// Check period, if bigger than points length, skip
 			if (xVal.length < period) {
 				return false;
