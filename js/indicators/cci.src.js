@@ -9,7 +9,7 @@ var isArray = H.isArray,
 function sumArray(array) {
 	return H.reduce(array, function (prev, cur) {
 		return prev + cur;
-	});
+	}, 0);
 }
 
 function meanDeviation(arr, sma) {
