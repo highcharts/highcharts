@@ -93,7 +93,8 @@ Highcharts.data({
                 },
                 tooltip: {
                     valueSuffix: '/km²'
-                }
+                },
+                shadow: false
             }]
         });
     },

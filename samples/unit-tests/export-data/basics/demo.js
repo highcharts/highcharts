@@ -442,3 +442,36 @@ QUnit.test('Stock chart', function (assert) {
         'Stock chart'
     );
 });
+
+
+QUnit.test('Combined column and scatter', function (assert) {
+    var chart = new Highcharts.Chart({
+
+        chart: {
+            renderTo: 'container'
+        },
+
+        plotOptions: {
+            series: {
+                pointStart: 0,
+                pointInterval: 10
+            }
+        },
+
+        series: [{
+            data: [1, 2, 3, 4],
+            type: 'column'
+        }, {
+            data: [2, 4, 6, 8],
+            name: 'Total',
+            type: 'scatter'
+        }]
+
+    });
+
+    assert.equal(
+        chart.getCSV(),
+        '"Category","Series 1","Total"\n0,1,2\n10,2,4\n20,3,6\n30,4,8',
+        'Combination chart'
+    );
+});

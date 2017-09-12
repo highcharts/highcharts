@@ -1014,6 +1014,23 @@ const startServer = () => {
     http.createServer((req, res) => {
         let path = url.parse(req.url, true).pathname;
         let file = false;
+        let redirect = false;
+
+        if (path === '/highcharts' || path === '/' || path === '') {
+            redirect = '/highcharts/';
+        } else if (path === '/highstock') {
+            redirect = '/highstock/';
+        } else if (path === '/highmaps') {
+            redirect = '/highmaps/';
+        }
+        if (redirect) {
+            res.writeHead(302, {
+                'Location': redirect
+            });
+            res.end();
+        }
+
+
         let filePath = path.substr(base + base.length + 1, path.lastIndexOf('/'));
 
         const send404 = () => {
@@ -1038,7 +1055,10 @@ const startServer = () => {
                 res.writeHead(200, { 'Content-Type': mimes[path.substr(ti + 1)] });
             }
 
-            // console.log('Getting', filePath + file);
+            let ext = file.substr(file.lastIndexOf('.') + 1);
+            if (['js', 'json', 'css', 'svg', 'png', 'jpg', 'html', 'ico'].indexOf(ext) === -1) {
+                file += '.html';
+            }
 
             return fs.readFile(apiPath + filePath + file, (err, data) => {
                 if (err) {
