@@ -1,51 +1,121 @@
-/* global Highcharts module:true */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
+/**
+ * @license  @product.name@ JS v@product.version@ (@product.date@)
+ *
+ * Parabolic SAR indicator for Highstock
+ *
+ * (c) 2010-2017 Grzegorz Blachliński
+ *
+ * License: www.highcharts.com/license
+ */
 
+'use strict';
 
-	// Utils:
-	function setInitialPsar(PSAR, accelerationFactor, previousPSARHigh, beforePreviousPSARHigh, previousPSARLow, beforePreviousPSARLow, extremePoint, isTrendFalling) {
-		var multipliedVal = accelerationFactor * (PSAR - extremePoint);
-		return isTrendFalling ?
-			(Math.max(PSAR - multipliedVal, previousPSARHigh, beforePreviousPSARHigh)) :
-			(Math.min(PSAR - multipliedVal, previousPSARLow, beforePreviousPSARLow));
-	}
-	function calculatePSAR(initialPSAR, isTrendFalling, point, extremePoint) {
-		var psar;
-		if (isTrendFalling) {
-			psar = point[1] < initialPSAR ? initialPSAR : extremePoint;
-		} else {
-			psar = point[2] > initialPSAR ? initialPSAR : extremePoint;
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+
+// Utils:
+
+function toFixed(a, n) {
+	return parseFloat(a.toFixed(n));
+}
+
+function calculateDirection(previousDirection, low, high, PSAR) {
+	if (
+		(previousDirection === 1 && low > PSAR) ||
+		(previousDirection === -1 && high > PSAR)
+	) {
+		return 1;
+	} 
+	return -1;
+}
+
+/* 
+ * Method for calculating acceleration factor
+ * dir - direction
+ * pDir - previous Direction
+ * eP - extreme point
+ * pEP - previous extreme point
+ * inc - increment for acceleration factor
+ * maxAcc - maximum acceleration factor
+ * initAcc - initial acceleration factor
+ */
+function getAccelerationFactor(dir, pDir, eP, pEP, pAcc, inc, maxAcc, initAcc) {
+	if (dir === pDir) {
+		if (dir === 1 && (eP > pEP)) {
+			return (pAcc === maxAcc) ? maxAcc : toFixed(pAcc + inc, 2);
+		} else if (dir === -1 && (eP < pEP)) {
+			return (pAcc === maxAcc) ? maxAcc : toFixed(pAcc + inc, 2);
 		}
-		return psar;
+		return pAcc;
 	}
-	function checkTrend(PSAR, point) {
-		var isTrendFalling = PSAR > point[3] ? true : false;
-		return isTrendFalling;
-	}
-	function getExtremePoint(isTrendFalling, EP, point) {
-		EP = isTrendFalling ? Math.min(EP, point[2]) : Math.max(EP, point[1]);
-		return EP;
-	}
-	function getAccelerationFactor(isTrendFalling, oldIsTrendFalling, initialAccelerationFactor, maxAccelerationFactor, accelerationFactor, increment, extremePoint, oldExtremePoint) {
-		var newAccelerationFactor;
-		if (isTrendFalling === oldIsTrendFalling) {
-			newAccelerationFactor = (extremePoint !== oldExtremePoint) ?
-				Math.min(accelerationFactor + increment, maxAccelerationFactor) :
-				accelerationFactor;
-		} else {
-			newAccelerationFactor = initialAccelerationFactor;
-		}
-		return newAccelerationFactor;
-	}
+	return initAcc;
+}
 
-	H.seriesType('psar', 'sma', {
+function getExtremePoint(high, low, previousDirection, previousExtremePoint) {
+	if (previousDirection === 1) {
+		return (high > previousExtremePoint) ? high : previousExtremePoint;
+	}
+	return (low < previousExtremePoint) ? low : previousExtremePoint;
+}
+
+function getEPMinusPSAR(EP, PSAR) {
+	return EP - PSAR;
+}
+
+function getAccelerationFactorMultiply(accelerationFactor, EPMinusSAR) {
+	return accelerationFactor * EPMinusSAR;
+}
+
+/* 
+ * Method for calculating PSAR
+ * pdir - previous direction
+ * sDir - second previous Direction
+ * PSAR - previous PSAR
+ * pACCMultiply - previous acceleration factor multiply
+ * sLow - second previous low
+ * pLow - previous low
+ * sHigh - second previous high
+ * pHigh - previous high
+ * pEP - previous extreme point
+ */
+function getPSAR(pdir, sDir, PSAR, pACCMulti, sLow, pLow, pHigh, sHigh, pEP) {
+	if (pdir === sDir) {
+		if (pdir === 1) {
+			return (PSAR + pACCMulti < Math.min(sLow, pLow)) ? 
+				PSAR + pACCMulti :
+				Math.min(sLow, pLow);
+		}
+		return (PSAR + pACCMulti > Math.max(sHigh, pHigh)) ?
+			PSAR + pACCMulti :
+			Math.max(sHigh, pHigh);
+	}
+	return pEP;
+}
+
+
+
+/**
+ * The Parabolic SAR series type.
+ *
+ * @constructor seriesTypes.psar
+ * @augments seriesTypes.sma
+ */
+H.seriesType('psar', 'sma', 
+
+	/**
+	 * Parabolic SAR. This series requires `linkedTo`
+	 * option to be set and should be loaded
+	 * after `stock/indicators/indicators.js` file.
+	 *
+	 * @extends {plotOptions.sma}
+	 * @product highstock
+	 * @sample {highstock} stock/indicators/psar
+	 *                     Parabolic SAR Indicator
+	 * @since 6.0.0
+	 * @optionparent plotOptions.psar
+	 */
+
+	{
 		name: 'PSAR',
 		lineWidth: 0,
 		marker: {
@@ -56,48 +126,156 @@
 				lineWidthPlus: 0
 			}
 		},
+		/**
+		 * @excluding index
+		 * @excluding period
+		 */
 		params: {
+			/**
+			 * The initial value for acceleration factor.
+			 * Acceleration factor is starting with this value
+			 * and increases by specified increment each time
+			 * the extreme point makes a new high.
+			 * AF can reach a maximum of maxAccelerationFactor,
+			 * no matter how long the uptrend extends.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @excluding period
+			 * @product highstock
+			 */
 			initialAccelerationFactor: 0.02,
+			/**
+			 * The Maximum value for acceleration factor.
+			 * AF can reach a maximum of maxAccelerationFactor,
+			 * no matter how long the uptrend extends.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
 			maxAccelerationFactor: 0.2,
-			increment: 0.02
+			/**
+			 * Acceleration factor increases by increment each time
+			 * the extreme point makes a new high.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			increment: 0.02,
+			/**
+			 * Index from which PSAR is starting calculation
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			index: 2,
+			/**
+			 * Number of maximum decimals that are used in PSAR calculations.
+			 *
+			 * @type {Number}
+			 * @since 6.0.0
+			 * @product highstock
+			 */
+			decimals: 4
 		}
 	}, {
 		getValues: function (series, params) {
 			var xVal = series.xData,
 				yVal = series.yData,
-				extremePoint, // Extreme point is the lowest low for falling and highest high for rising psar - and we are starting with falling
-				oldExtremePoint,
+				extremePoint = yVal[0][1], // Extreme point is the lowest low for falling and highest high for rising psar - and we are starting with falling
 				accelerationFactor = params.initialAccelerationFactor,
 				maxAccelerationFactor = params.maxAccelerationFactor,
 				increment = params.increment,
 				initialAccelerationFactor = params.initialAccelerationFactor, // Set initial acc factor (for every new trend!)
-				PSAR,
-				initialPSAR,
-				index = 0,
-				isTrendFalling = true, // Set initial psar trend to falling (it will corect itself quickly!)
+				PSAR = yVal[0][2],
+				decimals = params.decimals,
+				index = params.index,
 				PSARArr = [],
 				xData = [],
 				yData = [],
-				point, oldIsTrendFalling;
+				previousDirection = 1,
+				direction, EPMinusPSAR, accelerationFactorMultiply,
+				newDirection,
+				prevLow,
+				prevPrevLow,
+				prevHigh,
+				prevPrevHigh,
+				newExtremePoint,
+				high, low, ind;
 
-			extremePoint = isTrendFalling ? yVal[index][2] : yVal[index][1];
-			PSAR = isTrendFalling ? yVal[index][1] : yVal[index][2];
+			for (ind = 0; ind < index; ind++) {
+				extremePoint = Math.max(yVal[ind][1], extremePoint);
+				PSAR = Math.min(yVal[ind][2], toFixed(PSAR, decimals));
+			}
+
+			direction = (yVal[ind][1] > PSAR) ? 1 : -1;
+			EPMinusPSAR = getEPMinusPSAR(extremePoint, PSAR);
+			accelerationFactor = params.initialAccelerationFactor;
+			accelerationFactorMultiply = getAccelerationFactorMultiply(accelerationFactor, EPMinusPSAR);
+
 			PSARArr.push([xVal[index], PSAR]);
 			xData.push(xVal[index]);
-			yData.push(PSAR);
+			yData.push(toFixed(PSAR, decimals));
 
-			for (var ind = index + 1; ind < yVal.length - 1; ind++) {
-				point = yVal[ind];
-				initialPSAR = setInitialPsar(PSAR, accelerationFactor, yVal[ind - 1][1], yVal[(ind - 2 >= 0 ? ind - 2 : 0)][1], yVal[ind - 1][2], yVal[(ind - 2 >= 0 ? ind - 2 : 0)][2], extremePoint, isTrendFalling); // initial psar calculations
-				PSAR = calculatePSAR(initialPSAR, isTrendFalling, point, extremePoint);
-				oldIsTrendFalling = isTrendFalling;
-				isTrendFalling = checkTrend(PSAR, point);
-				oldExtremePoint = extremePoint;
-				extremePoint = getExtremePoint(isTrendFalling, oldExtremePoint, point);
-				accelerationFactor = getAccelerationFactor(isTrendFalling, oldIsTrendFalling, initialAccelerationFactor, maxAccelerationFactor, accelerationFactor, increment, extremePoint, oldExtremePoint);
-				PSARArr.push([xVal[ind], PSAR]);
+			for (ind = index + 1; ind < yVal.length; ind++) {
+
+				prevLow = yVal[ind - 1][2];
+				prevPrevLow = yVal[ind - 2][2];
+				prevHigh = yVal[ind - 1][1];
+				prevPrevHigh = yVal[ind - 2][1];
+				high = yVal[ind][1];
+				low = yVal[ind][2];
+
+				PSAR = getPSAR(
+					direction,
+					previousDirection,
+					PSAR,
+					accelerationFactorMultiply,
+					prevPrevLow,
+					prevLow,
+					prevHigh,
+					prevPrevHigh,
+					extremePoint
+				);
+				newExtremePoint = getExtremePoint(
+					high,
+					low,
+					direction,
+					extremePoint
+				);
+				newDirection = calculateDirection(
+					previousDirection,
+					low,
+					high,
+					PSAR
+				);
+				accelerationFactor = getAccelerationFactor(
+					newDirection,
+					direction,
+					newExtremePoint,
+					extremePoint,
+					accelerationFactor,
+					increment,
+					maxAccelerationFactor,
+					initialAccelerationFactor
+				);
+
+				EPMinusPSAR = getEPMinusPSAR(newExtremePoint, PSAR);
+				accelerationFactorMultiply = getAccelerationFactorMultiply(
+					accelerationFactor,
+					EPMinusPSAR
+				);
+
+				PSARArr.push([xVal[ind], toFixed(PSAR, decimals)]);
 				xData.push(xVal[ind]);
-				yData.push(PSAR);
+				yData.push(toFixed(PSAR, decimals));
+
+				previousDirection = direction;
+				direction = newDirection;
+				extremePoint = newExtremePoint;
 			}
 			return {
 				values: PSARArr,
@@ -105,5 +283,33 @@
 				yData: yData
 			};
 		}
-	});
-}));
+	}
+);
+
+/**
+ * A `PSAR` series. If the [type](#series.psar.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * psar](#plotOptions.psar).
+ *
+ * @type {Object}
+ * @since 6.0.0
+ * @extends series,plotOptions.psar
+ * @excluding data,dataParser,dataURL
+ * @product highstock
+ * @apioption series.psar
+ */
+
+/**
+ * An array of data points for the series. For the `psar` series type,
+ * points are calculated dynamically.
+ *
+ * @type {Array<Object|Array>}
+ * @since 6.0.0
+ * @extends series.line.data
+ * @product highstock
+ * @apioption series.psar.data
+ */
