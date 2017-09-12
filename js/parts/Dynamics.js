@@ -900,7 +900,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		});
 
 		series.init(chart, newOptions);
-		series.oldType = oldType;
+		series.oldType = newType || oldType;
 		chart.linkSeries(); // Links are lost in series.remove (#3028)
 		if (pick(redraw, true)) {
 			chart.redraw(false);
