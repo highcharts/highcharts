@@ -71,6 +71,7 @@ Highcharts.Chart.prototype.getDataRows = function () {
 			valueCount = pointArrayMap.length,
 			xTaken = !series.requireSorting && {},
 			categoryMap = {},
+			datetimeValueAxisMap = {},
 			xAxisIndex = Highcharts.inArray(series.xAxis, xAxes),
 			j;
 
@@ -80,6 +81,10 @@ Highcharts.Chart.prototype.getDataRows = function () {
 				series[prop + 'Axis'] &&
 				series[prop + 'Axis'].categories
 			) || [];
+			datetimeValueAxisMap[prop] = (
+				series[prop + 'Axis'] &&
+				series[prop + 'Axis'].isDatetimeAxis
+			);
 		});
 
 		if (
@@ -138,8 +143,13 @@ Highcharts.Chart.prototype.getDataRows = function () {
 				while (j < valueCount) {
 					prop = pointArrayMap[j]; // y, z etc
 					val = point[prop];
-					// Pick a Y axis category if present
-					rows[key][i + j] = pick(categoryMap[prop][val], val);
+					rows[key][i + j] = pick(
+						categoryMap[prop][val], // Y axis category if present
+						datetimeValueAxisMap[prop] ?
+							Highcharts.dateFormat(dateFormat, val) :
+							null,
+						val
+					);
 					j++;
 				}
 

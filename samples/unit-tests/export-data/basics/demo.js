@@ -326,6 +326,39 @@ QUnit.test("Categories on Y axis", function (assert) {
     );
 });
 
+QUnit.test('Datetime Y axis', function (assert) {
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container'
+        },
+        yAxis: {
+            type: 'datetime'
+        },
+        series: [{
+            data: [
+                Date.UTC(2017, 0, 1),
+                Date.UTC(2018, 0, 1)
+            ]
+        }]
+    });
+    var rows = chart.getDataRows();
+    assert.equal(
+        rows.length,
+        3,
+        "All points are added"
+    );
+    assert.equal(
+        rows[1].join(','),
+        '0,2017-01-01 00:00:00',
+        "First row"
+    );
+    assert.equal(
+        rows[2].join(','),
+        '1,2018-01-01 00:00:00',
+        "Second row"
+    );
+});
+
 
 QUnit.test("X axis title as column header", function (assert) {
     var chart = new Highcharts.Chart({
