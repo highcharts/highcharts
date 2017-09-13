@@ -26,7 +26,6 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        keys: ['name', 'y', 'z'],
         name: 'Labor Costs',
         data: [
             ['Norway', 50.2, 335504],

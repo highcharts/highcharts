@@ -66,15 +66,17 @@ seriesType('variwide', 'column', {
 	/**
 	 * Translate an x value inside a given category index into the distorted
 	 * axis translation.
-	 * @param  {Number} i The category index
+	 * @param  {Number} index The category index
 	 * @param  {Number} x The X pixel position in undistorted axis pixels
 	 * @return {Number}   Distorted X position
 	 */
-	postTranslate: function (i, x) {
+	postTranslate: function (index, x) {
 
-		var len = this.xAxis.len,
-			totalZ = this.totalZ,
+		var axis = this.xAxis,
 			relZ = this.relZ,
+			i = index,
+			len = axis.len,
+			totalZ = this.totalZ,
 			linearSlotLeft = i / relZ.length * len,
 			linearSlotRight = (i + 1) / relZ.length * len,
 			slotLeft = (pick(relZ[i], totalZ) / totalZ) * len,
@@ -99,34 +101,41 @@ seriesType('variwide', 'column', {
 
 		// Distort the points to reflect z dimension
 		each(this.points, function (point, i) {
-			var left = this.postTranslate(i, point.shapeArgs.x),
+			var left = this.postTranslate(
+					i,
+					point.shapeArgs.x,
+					inverted
+				),
 				right = this.postTranslate(
 					i,
-					point.shapeArgs.x + point.shapeArgs.width
+					point.shapeArgs.x + point.shapeArgs.width,
+					inverted
 				);
 
 			point.shapeArgs.x = left;
 			point.shapeArgs.width = right - left;
 
-			if (!inverted) {
-				point.tooltipPos[0] = this.postTranslate(
-					i,
-					point.tooltipPos[0]
-				);
-			}
+			point.tooltipPos[inverted ? 1 : 0] = this.postTranslate(
+				i,
+				point.tooltipPos[inverted ? 1 : 0]
+			);
 		}, this);
 	}
 });
 
+H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
+	xy[xOrY] = this.axis.pos +
+		this.axis.series[0].postTranslate(index, xy[xOrY] - this.axis.pos);
+};
+
 H.wrap(H.Tick.prototype, 'getPosition', function (proceed, horiz, pos) {
 	var axis = this.axis,
-		xy = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		xy = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+		xOrY = horiz ? 'x' : 'y';
 
-	if (horiz && axis.categories && axis.variwide) {
-		this.xOrig = xy.x;
-		xy.x =
-			axis.pos +
-			axis.series[0].postTranslate(pos, xy.x - axis.pos);
+	if (axis.categories && axis.variwide) {
+		this[xOrY + 'Orig'] = xy[xOrY];
+		this.postTranslate(xy, xOrY, pos);
 	}
 	return xy;
 });
@@ -142,19 +151,19 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
 	index
 ) {
 	var args = Array.prototype.slice.call(arguments, 1),
-		xy;
+		xy,
+		xOrY = horiz ? 'x' : 'y';
 
 	// Replace the x with the original x
-	if (this.axis.variwide && typeof this.xOrig === 'number') {
-		args[0] = this.xOrig;
+	if (this.axis.variwide && typeof this[xOrY + 'Orig'] === 'number') {
+		args[horiz ? 0 : 1] = this[xOrY + 'Orig'];
 	}
 
 	xy = proceed.apply(this, args);
 
 	// Post-translate
-	if (horiz && this.axis.variwide && this.axis.categories) {
-		xy.x = this.axis.pos +
-			this.axis.series[0].postTranslate(index, xy.x - this.axis.pos);
+	if (this.axis.variwide && this.axis.categories) {
+		this.postTranslate(xy, xOrY, index);
 	}
 	return xy;
 });
