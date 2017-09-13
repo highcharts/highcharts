@@ -930,6 +930,31 @@ Chart.prototype.get3dFrame = function () {
 };
 
 /**
+ * Animation setter for matrix property.
+ */
+H.Fx.prototype.matrixSetter = function () {
+	var interpolated;
+	if (this.pos < 1 && 
+			(Array.isArray(this.start) || Array.isArray(this.end))) {
+		var start = this.start || [ 1, 0, 0, 1, 0, 0];
+		var end   = this.end   || [ 1, 0, 0, 1, 0, 0];
+		interpolated = [];
+		for (var i = 0; i < 6; i++) {
+			interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);
+		}
+	} else {
+		interpolated = this.end;
+	}
+	
+	this.elem.attr(
+		this.prop,
+		interpolated,
+		null,
+		true
+	);
+};
+
+/**
  * Note: As of v5.0.12, `frame.left` or `frame.right` should be used
  * instead.
  * 

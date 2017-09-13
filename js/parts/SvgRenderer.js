@@ -1059,7 +1059,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		// apply matrix
 		if (defined(matrix)) {
 			transform.push(
-				'matrix(' + matrix.join(",") + ')'
+				'matrix(' + matrix.join(',') + ')'
 			);
 		}
 		

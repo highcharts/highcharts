@@ -417,29 +417,6 @@ H.Fx.prototype.strokeSetter = function () {
 	);
 };
 
-H.Fx.prototype.matrixSetter = function () {
-	var interpolated;
-	if (this.pos < 1 && 
-			(Array.isArray(this.start) || Array.isArray(this.end))) {
-		var start = this.start || [ 1, 0, 0, 1, 0, 0];
-		var end   = this.end   || [ 1, 0, 0, 1, 0, 0];
-		interpolated = [];
-		for (var i=0; i<6; i++) {
-			interpolated.push( this.pos * end[i] + (1 - this.pos) * start[i] );
-		}
-	} else {
-		interpolated = this.end;
-	}
-	
-	this.elem.attr(
-		this.prop,
-		interpolated,
-		null,
-		true
-	);
-};
-
-
 /**
  * Utility function to extend an object with the members of another.
  *
