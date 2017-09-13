@@ -107,7 +107,12 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 
 // Do not draw axislines in 3D
 wrap(Axis.prototype, 'getLinePath', function (proceed) {
-	return this.chart.is3d() ? [] : proceed.apply(this, [].slice.call(arguments, 1));
+	// Do not do this if the chart is not 3D
+	if (!this.chart.is3d() || this.coll === 'colorAxis') {
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	}
+
+	return [];
 });
 
 wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
@@ -235,7 +240,7 @@ H.wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
 
 wrap(Axis.prototype, 'drawCrosshair', function (proceed) {
 	var args = arguments;
-	if (this.chart.is3d()) {
+	if (this.chart.is3d() && this.coll !== 'colorAxis') {
 		if (args[2]) {
 			args[2] = {
 				plotX: args[2].plotXold || args[2].plotX,
