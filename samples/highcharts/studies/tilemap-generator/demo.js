@@ -503,12 +503,15 @@
     // area. This is done by overflowing the stacked tiles and expanding the
     // grid.
     //
+    // reverseOverflows can be set to true to reverse the order of overflow
+    //  insertions
+    //
     // Algorithm:
     //  For tiles with multiple areas, we insert the center area in the tile.
     //  Subsequent areas are inserted by computing a deviationValue for each of
     //  the possible insertion points, and selecting the insertion with the
     //  smallest deviationValue.
-    function crushTileGrid(grid, tilesize) {
+    function crushTileGrid(grid, tilesize, reverseOverflows) {
         var crushed = [],
             overflows = [],
             centerArea;
@@ -548,7 +551,11 @@
             }
         }
 
-        return insertOverflows(crushed, overflows, tilesize);
+        return insertOverflows(
+            crushed,
+            reverseOverflows ? overflows.reverse() : overflows,
+            tilesize
+        );
     }
 
 
@@ -592,8 +599,9 @@
     }
 
 
-    // Get the extremes and center point of a GeoJSON feature
-    function getFeatureMetrics(feature) {
+    // Get the extremes and center point of a GeoJSON feature.
+    // labelCenter specifies whether to use the data label as center if possible
+    function getFeatureMetrics(feature, labelCenter) {
         var type = feature.geometry.type,
             coords = feature.geometry.coordinates,
             flattened = [],
@@ -650,7 +658,7 @@
         extremes.height = Math.abs(extremes.yMax - extremes.yMin);
 
         // Get label point and use it as center
-        if (feature.properties['hc-middle-x']) {
+        if (feature.properties['hc-middle-x'] && labelCenter) {
             center.push(
                 extremes.xMin + (extremes.xMax - extremes.xMin) *
                 feature.properties['hc-middle-x']
@@ -658,7 +666,7 @@
         } else {
             center.push((extremes.xMax + extremes.xMin) / 2);
         }
-        if (feature.properties['hc-middle-y']) {
+        if (feature.properties['hc-middle-y'] && labelCenter) {
             center.push(
                 extremes.yMin + (extremes.yMax - extremes.yMin) *
                 (1 - feature.properties['hc-middle-y']) // y is reversed
@@ -676,15 +684,25 @@
 
     // Create tilemap data structure from GeoJSON map
     // A resolution factor parameter can be passed in for each dimension to
-    // increase or decrease the tilesize resolution of the conversion.
+    //  increase or decrease the tilesize resolution of the conversion.
+    // The reverseAlg parameter reverses the order in which overflowing tiles
+    //  are inserted. This might lead to better results with some maps.
+    // useLabelCenter is on by default, and determines whether to use the center
+    //  of the data label position as area centers, or the center of the
+    //  bounding box.
+    // The excludeList parameter allows for exclusion of a set of areas by their
+    //  ids.
     H.geojsonToTilemapData = function (
-        geojson, xResolutionFactor, yResolutionFactor
+        geojson, xResolutionFactor, yResolutionFactor, reverseAlg,
+        useLabelCenter, excludeList
     ) {
         var areas = sortAreasByCenter(
             // Reduce geojson to objects with center, bounding box, and metadata
             // sorted by center X position.
                 filter(map(geojson.features, function (area) {
-                    var metrics = getFeatureMetrics(area);
+                    var metrics = getFeatureMetrics(
+                        area, H.pick(useLabelCenter, true)
+                    );
                     return metrics && extend({
                         center: {
                             x: metrics.center[0],
@@ -694,8 +712,17 @@
                         id: area.id
                     }, area.properties) || null;
                 }), function (area) {
-                    // Remove areas that don't have metrics (line geom etc.)
-                    return area !== null;
+                    // Remove areas that don't have metrics (line geom etc.),
+                    // as well as excluded areas.
+                    var excluded = false,
+                        i = excludeList.length;
+                    while (i--) {
+                        if (area.id === excludeList[i]) {
+                            excluded = true;
+                            break;
+                        }
+                    }
+                    return area !== null && !excluded;
                 })
             ),
             // Find average tile size to use for creating a grid
@@ -712,7 +739,8 @@
                 explodeToGrid(areas, tilesize.height),
                 tilesize.width
             ),
-            tilesize
+            tilesize,
+            reverseAlg
         );
 
         // We have to flatten the grid into a one dimensional array with x/y
@@ -741,36 +769,457 @@
 // -----------------------------------------------------------------------------
 
 
-// Initiate the chart
-Highcharts.chart('container', {
-    chart: {
-        type: 'heatmap',
-        margin: [70, 70, 90, 70]
-    },
+/* UI below, partially based on all-maps demo */
 
-    title: {
-        text: 'Honeycomb map demo'
-    },
 
-    xAxis: {
-        visible: false
-    },
+var baseMapPath = "https://code.highcharts.com/mapdata/",
+    showDataLabels = true,
+    mapCount = 0,
+    searchText,
+    mapOptions = '',
+    mapChart,
+    tileChart,
+    currentMapKey,
+    currentData,
+    dataAltered,
+    selectedPoint;
 
-    yAxis: {
-        visible: false
-    },
 
-    series: [{
-        dataLabels: {
-            enabled: true,
-            formatter: function () {
-                return this.point.name;
+// Create/update tile chart. Called on changes to alg params or map load.
+function generateTileChart() {
+    var chartType = $('#chartType').val(),
+        xRes = $('#xRes').val(),
+        yRes = $('#yRes').val(),
+        invert = $("#invert").prop('checked'),
+        reverseAlg = $("#reverse").prop('checked'),
+        labelCenter = $("#labelCenter").prop('checked'),
+        excludeList = $('#exclude').val(),
+        data,
+        options,
+        maxY,
+        mapLen = Highcharts.maps[currentMapKey].features.length,
+        outputData = function () {
+            $('#outputData').val(JSON.stringify(
+                Highcharts.map(currentData, function (point) {
+                    var filterProps = ['center', 'extremes', 'hc-middle-y',
+                        'hc-middle-x', 'selected', 'color'];
+                    Highcharts.each(filterProps, function (prop) {
+                        delete point[prop];
+                    });
+                    return point;
+                }), null,
+                $("#prettyprint").prop('checked') ? 2 : null
+            ));
+        },
+        swapPoints = function (a, b) {
+            var bX = b.x,
+                bY = b.y,
+                aChanged = false,
+                bChanged = false;
+
+            // First change it in output data
+            Highcharts.each(currentData, function (point) {
+                if (!aChanged && point.x === a.x && point.y === a.y) {
+                    point.x = b.x;
+                    point.y = b.y;
+                    aChanged = true;
+                } else if (!bChanged && point.x === b.x && point.y === b.y) {
+                    point.x = a.x;
+                    point.y = a.y;
+                    bChanged = true;
+                }
+            });
+
+            outputData();
+
+            // Now change it in actual points
+            a.select(false);
+            a.update({
+                color: Highcharts.getOptions().colors[0]
+            });
+            if (b.update) { // b is a point
+                b.update({
+                    x: a.x,
+                    y: a.y
+                });
+            } else {
+                // Should b be a point?
+                for (var i = 0, pLen = a.series.points.length; i < pLen; ++i) {
+                    if (a.series.points[i].x === b.x &&
+                        a.series.points[i].y === b.y) {
+                        a.series.points[i].update({
+                            x: a.x,
+                            y: a.y
+                        });
+                    }
+                }
+            }
+            a.update({
+                x: bX,
+                y: bY
+            });
+            if (a !== b) {
+                dataAltered = true;
+            }
+        };
+
+    if (excludeList) {
+        excludeList = excludeList.split(",").map(function (item) {
+            return item.trim();
+        });
+    }
+
+    // Warn for data loss
+    if (dataAltered && !window.confirm(
+        'This will discard data changes. Proceed?'
+    )) {
+        return;
+    }
+
+    // Warn for huge maps
+    if (mapLen > 300 && !window.confirm("This map contains " + mapLen +
+        " areas. Converting this much data could take a while. Continue?")) {
+        return;
+    }
+
+    data = Highcharts.geojsonToTilemapData(
+        Highcharts.maps[currentMapKey],
+        xRes, yRes, reverseAlg, labelCenter, excludeList
+    );
+
+    if (invert) {
+        // Find max Y, since Y axis must be reversed
+        maxY = Highcharts.reduce(data, function (a, b) {
+            return Math.max(a && a.y || 0, b && b.y || 0);
+        });
+        Highcharts.each(data, function (point) {
+            var temp = point.x;
+            point.x = maxY - point.y;
+            point.y = temp;
+        });
+    }
+
+    options = {
+        chart: {
+            type: chartType,
+            inverted: invert,
+            events: {
+                click: function (e) {
+                    var x = Math.round(e.xAxis[0].value),
+                        y = Math.round(e.yAxis[0].value);
+
+                    if (selectedPoint) {
+                        swapPoints(selectedPoint, { x: x, y: y });
+                        selectedPoint = null;
+                    }
+                }
             }
         },
-        tooltip: {
-            pointFormat: '{point.name}'
+        credits: {
+            position: {
+                align: 'center'
+            }
         },
-        pointPadding: 2,
-        data: Highcharts.geojsonToTilemapData(Highcharts.maps['countries/us/us-all-all'])
-    }]
+        title: {
+            text: 'Click tiles to swap places'
+        },
+        xAxis: {
+            visible: false
+        },
+        yAxis: {
+            visible: false
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: '{point.id}: {point.name}'
+        },
+        series: [{
+            data: data,
+            pointPadding: 2,
+            allowPointSelect: true,
+            dataLabels: {
+                enabled: showDataLabels,
+                format: '{point.name}'
+            },
+            cursor: 'pointer',
+            point: {
+                events: {
+                    click: function () {
+                        var point = this;
+                        if (selectedPoint) {
+                            swapPoints(selectedPoint, point);
+                            selectedPoint = null;
+                        } else {
+                            point.select(true);
+                            point.update({
+                                color: '#601010'
+                            });
+                            selectedPoint = point;
+                        }
+                    }
+                }
+            }
+        }]
+    };
+
+    // Don't use chart.update since we're altering axis extremes outside of
+    // options and there doesn't seem to be a simple way to reset them in
+    // update.
+    if (tileChart) {
+        tileChart.destroy();
+        tileChart = null;
+    }
+
+    tileChart = Highcharts.chart('tileContainer', options);
+
+    dataAltered = false;
+    selectedPoint = null;
+    currentData = data;
+    outputData();
+}
+
+
+// Populate dropdown menu and turn into jQuery UI widgets
+$.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
+    if (mapGroup !== "version") {
+        mapOptions += '<option class="option-header">' + mapGroup + '</option>';
+        $.each(maps, function (desc, path) {
+            mapOptions += '<option value="' + path + '">' + desc + '</option>';
+            mapCount += 1;
+        });
+    }
 });
+searchText = 'Search ' + mapCount + ' maps';
+mapOptions = '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
+$("#mapDropdown").append(mapOptions).combobox();
+
+
+// Change map when item selected in dropdown
+$("#mapDropdown").change(function () {
+    var $selectedItem = $("option:selected", this),
+        mapDesc = $selectedItem.text(),
+        mapKey = this.value.slice(0, -3),
+        javascriptPath = baseMapPath + this.value,
+        isHeader = $selectedItem.hasClass('option-header');
+
+    // Dim or highlight search box
+    if (mapDesc === searchText || isHeader) {
+        $('.custom-combobox-input').removeClass('valid');
+        location.hash = '';
+    } else {
+        $('.custom-combobox-input').addClass('valid');
+        location.hash = mapKey;
+    }
+
+    if (isHeader) {
+        return false;
+    }
+
+    // Show loading
+    if (Highcharts.charts[0]) {
+        Highcharts.charts[0].showLoading('<i class="fa fa-spinner fa-spin fa-2x"></i>');
+    }
+
+    // When the map is loaded or ready from cache...
+    function mapReady() {
+        var mapGeoJSON = Highcharts.maps[mapKey],
+            data = [];
+
+        currentMapKey = mapKey;
+
+        // Generate bogus data for the map
+        $.each(mapGeoJSON.features, function (index, feature) {
+            data.push({
+                key: feature.properties['hc-key'],
+                value: index
+            });
+        });
+
+        // Instantiate chart
+        mapChart = Highcharts.mapChart('mapContainer', {
+            title: {
+                text: null
+            },
+
+            exporting: {
+                buttons: {
+                    contextButton: {
+                        x: -35
+                    }
+                }
+            },
+
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    align: 'right',
+                    verticalAlign: 'top'
+                }
+            },
+
+            credits: {
+                position: {
+                    align: 'center'
+                }
+            },
+
+            colorAxis: {
+                min: 0,
+                stops: [
+                    [0, '#EFEFFF'],
+                    [0.5, Highcharts.getOptions().colors[0]],
+                    [1, Highcharts.Color(Highcharts.getOptions().colors[0]).brighten(-0.5).get()]
+                ]
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                data: data,
+                mapData: mapGeoJSON,
+                joinBy: ['hc-key', 'key'],
+                name: 'Random data',
+                states: {
+                    hover: {
+                        color: Highcharts.getOptions().colors[2]
+                    }
+                },
+                dataLabels: {
+                    enabled: showDataLabels,
+                    formatter: function () {
+                        return mapKey === 'custom/world' || mapKey === 'countries/us/us-all' ?
+                                (this.point.properties && this.point.properties['hc-a2']) :
+                                this.point.name;
+                    }
+                }
+            }, {
+                type: 'mapline',
+                name: "Separators",
+                data: Highcharts.geojson(mapGeoJSON, 'mapline'),
+                nullColor: 'gray',
+                showInLegend: false,
+                enableMouseTracking: false
+            }]
+        });
+
+        generateTileChart(mapKey);
+    }
+
+    // Check whether the map is already loaded, else load it and
+    // then show it async
+    if (Highcharts.maps[mapKey]) {
+        mapReady();
+    } else {
+        $.getScript(javascriptPath, mapReady);
+    }
+});
+
+
+// Toggle pretty print
+$("#prettyprint").change(function () {
+    $('#outputData').val(JSON.stringify(
+        currentData, null, $("#prettyprint").prop('checked') ? 2 : null)
+    );
+});
+
+
+// Add excluded areas
+$('#exclude').change(generateTileChart);
+
+
+// Select view mode
+$('#chartType').change(function () {
+    tileChart.update({
+        chart: {
+            type: $('#chartType').val()
+        }
+    });
+});
+
+
+// Toggle algorithm reverse
+$('#reverse').change(generateTileChart);
+
+
+// Toggle data label as center
+$('#labelCenter').change(generateTileChart);
+
+
+// Toggle chart invert
+$('#invert').change(generateTileChart);
+
+
+// Zoom out tile chart
+$('#zoomOut').click(function () {
+    var xe = tileChart.xAxis[0].getExtremes(),
+        ye = tileChart.yAxis[0].getExtremes();
+    tileChart.xAxis[0].setExtremes(xe.min - 1, xe.max + 1);
+    tileChart.yAxis[0].setExtremes(ye.min - 1, ye.max + 1);
+    dataAltered = true;
+});
+
+
+// xResolution change
+$('#xRes').change(generateTileChart);
+$('#xRes').on('input', function () {
+    var val = $('#xRes').val();
+    $('#xResLabel').text(val === '1' ? 'X resolution factor' :
+        'X resolution factor (' + val + ')');
+});
+
+
+// yResolution change
+$('#yRes').change(generateTileChart);
+$('#yRes').on('input', function () {
+    var val = $('#yRes').val();
+    $('#yResLabel').text(val === '1' ? 'Y resolution factor' :
+        'Y resolution factor (' + val + ')');
+});
+
+
+// Toggle enlarge charts
+$('#enlarge').change(function () {
+    if ($("#enlarge").prop('checked')) {
+        $('.verticalLine').hide();
+        $('#mapContainer').addClass('container-expanded');
+        $('#tileContainer').addClass('container-expanded');
+        tileChart.reflow();
+        mapChart.reflow();
+    } else {
+        $('.verticalLine').show();
+        $('#tileContainer').removeClass('container-expanded');
+        $('#mapContainer').removeClass('container-expanded');
+        tileChart.reflow();
+        mapChart.reflow();
+    }
+});
+
+
+// Toggle data labels
+$("#dataLabels").change(function () {
+    showDataLabels = $("#dataLabels").prop('checked');
+    mapChart.series[0].update({
+        dataLabels: {
+            enabled: showDataLabels
+        }
+    });
+    tileChart.series[0].update({
+        dataLabels: {
+            enabled: showDataLabels
+        }
+    });
+});
+
+
+// Trigger change event to load map on startup
+if (location.hash) {
+    $('#mapDropdown').val(location.hash.substr(1) + '.js');
+} else { // for IE9
+    $($('#mapDropdown option')[0]).attr('selected', 'selected');
+}
+$('#mapDropdown').change();
+
