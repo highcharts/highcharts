@@ -51,3 +51,36 @@ QUnit.test('variwide', function (assert) {
         'removePoint'
     );
 });
+
+QUnit.test('variwide null points', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'variwide'
+        },
+
+        xAxis: {
+            type: 'category'
+        },
+
+        series: [{
+            data: [
+                [1, 1],
+                [2, null],
+                [null, 3],
+                [null, null],
+                [3, 3]
+            ]
+        }]
+
+    });
+
+    assert.strictEqual(
+        chart.series[0].points.map(function (p) {
+            return p.isNull ? 'null' : 'valid';
+        }).join(','),
+        'valid,null,null,null,valid',
+        'Nulls detected'
+    );
+
+});

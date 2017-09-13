@@ -110,7 +110,6 @@ seriesType('variwide', 'column', {
 
 		// Distort the points to reflect z dimension
 		each(this.points, function (point, i) {
-			
 			var left = this.postTranslate(
 					i,
 					point.shapeArgs.x
@@ -133,6 +132,12 @@ seriesType('variwide', 'column', {
 				point.tooltipPos[inverted ? 1 : 0]
 			);
 		}, this);
+	}
+
+// Point functions
+}, {
+	isValid: function () {
+		return H.isNumber(this.y, true) && H.isNumber(this.z, true);
 	}
 });
 
