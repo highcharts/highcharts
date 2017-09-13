@@ -22,12 +22,13 @@ var addEvent = H.addEvent,
 	seriesTypes = H.seriesTypes,
 	stableSort = H.stableSort;
 
-
+/* eslint max-len: ["warn", 80, 4] */
 /**
- * Generatl distribution algorithm for distributing labels of differing size along a
- * confined length in two dimensions. The algorithm takes an array of objects containing
- * a size, a target and a rank. It will place the labels as close as possible to their 
- * targets, skipping the lowest ranked labels if necessary.
+ * Generatl distribution algorithm for distributing labels of differing size
+ * along a confined length in two dimensions. The algorithm takes an array of
+ * objects containing a size, a target and a rank. It will place the labels as
+ * close as possible to their targets, skipping the lowest ranked labels if
+ * necessary.
  */
 H.distribute = function (boxes, len) {
 	
@@ -43,7 +44,8 @@ H.distribute = function (boxes, len) {
 		return a.target - b.target;
 	}
 	
-	// If the total size exceeds the len, remove those boxes with the lowest rank
+	// If the total size exceeds the len, remove those boxes with the lowest
+	// rank
 	i = boxes.length;
 	while (i--) {
 		total += boxes[i].size;
@@ -82,17 +84,25 @@ H.distribute = function (boxes, len) {
 		while (i--) {
 			box = boxes[i];
 			// Composite box, average of targets
-			target = (Math.min.apply(0, box.targets) + Math.max.apply(0, box.targets)) / 2;
-			box.pos = Math.min(Math.max(0, target - box.size / 2), len - box.size);
+			target = (Math.min.apply(0, box.targets) +
+				Math.max.apply(0, box.targets)) / 2;
+			box.pos = Math.min(
+				Math.max(0, target - box.size / 2),
+				len - box.size
+			);
 		}
 
 		// Detect overlap and join boxes
 		i = boxes.length;
 		overlapping = false;
 		while (i--) {
-			if (i > 0 && boxes[i - 1].pos + boxes[i - 1].size > boxes[i].pos) { // Overlap
-				boxes[i - 1].size += boxes[i].size; // Add this size to the previous box
-				boxes[i - 1].targets = boxes[i - 1].targets.concat(boxes[i].targets);
+			// Overlap
+			if (i > 0 && boxes[i - 1].pos + boxes[i - 1].size > boxes[i].pos) {
+				// Add this size to the previous box
+				boxes[i - 1].size += boxes[i].size;
+				boxes[i - 1].targets = boxes[i - 1]
+					.targets
+					.concat(boxes[i].targets);
 				
 				// Overlapping right, push left
 				if (boxes[i - 1].pos + boxes[i - 1].size > len) {
@@ -104,7 +114,8 @@ H.distribute = function (boxes, len) {
 		}
 	}
 
-	// Now the composite boxes are placed, we need to put the original boxes within them
+	// Now the composite boxes are placed, we need to put the original boxes
+	// within them
 	i = 0;
 	each(boxes, function (box) {
 		var posInCompositeBox = 0;
@@ -159,7 +170,9 @@ Series.prototype.drawDataLabels = function () {
 					if (series.visible) { // #2597, #3023, #3024
 						dataLabelsGroup.show(true);
 					}
-					dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
+					dataLabelsGroup[
+						seriesOptions.animation ? 'animate' : 'attr'
+					]({ opacity: 1 }, { duration: 200 });
 				});
 			}
 		}
@@ -178,15 +191,16 @@ Series.prototype.drawDataLabels = function () {
 			// Determine if each data label is enabled
 			// @note dataLabelAttribs (like pointAttribs) would eradicate
 			// the need for dlOptions, and simplify the section below.
-			pointOptions = point.dlOptions || (point.options && point.options.dataLabels); // dlOptions is used in treemaps
+			pointOptions = point.dlOptions || // dlOptions is used in treemaps
+				(point.options && point.options.dataLabels);
 			enabled = pick(
 				pointOptions && pointOptions.enabled,
 				generalOptions.enabled
 			) && !point.isNull; // #2282, #4641, #7112
 
 			if (enabled) {
-				// Create individual options structure that can be extended without
-				// affecting others
+				// Create individual options structure that can be extended
+				// without affecting others
 				options = merge(generalOptions, pointOptions);
 				labelConfig = point.getLabelConfig();
 				str = options.format ?
@@ -196,12 +210,21 @@ Series.prototype.drawDataLabels = function () {
 				rotation = options.rotation;
 				/*= if (build.classic) { =*/
 				// Determine the color
-				style.color = pick(options.color, style.color, series.color, '${palette.neutralColor100}');
+				style.color = pick(
+					options.color,
+					style.color,
+					series.color,
+					'${palette.neutralColor100}'
+				);
 				// Get automated contrast color
 				if (style.color === 'contrast') {
-					point.contrastColor = renderer.getContrast(point.color || series.color);
-					style.color = options.inside || pick(point.labelDistance, options.distance) < 0 ||
-						!!seriesOptions.stacking ? point.contrastColor : '${palette.neutralColor100}';
+					point.contrastColor =
+						renderer.getContrast(point.color || series.color);
+					style.color = options.inside ||
+						pick(point.labelDistance, options.distance) < 0 ||
+						!!seriesOptions.stacking ?
+							point.contrastColor :
+							'${palette.neutralColor100}';
 				}
 				if (seriesOptions.cursor) {
 					style.cursor = seriesOptions.cursor;
@@ -239,7 +262,9 @@ Series.prototype.drawDataLabels = function () {
 			} else if (enabled && defined(str)) {
 				// create new label
 				if (!dataLabel) {
-					dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
+					dataLabel = point.dataLabel = renderer[
+						rotation ? 'text' : 'label' // labels don't rotate
+					](
 						str,
 						0,
 						-9999,
@@ -260,14 +285,16 @@ Series.prototype.drawDataLabels = function () {
 				}
 				dataLabel.attr(attr);
 				/*= if (build.classic) { =*/
-				// Styles must be applied before add in order to read text bounding box
+				// Styles must be applied before add in order to read text
+				// bounding box
 				dataLabel.css(style).shadow(options.shadow);
 				/*= } =*/
 
 				if (!dataLabel.added) {
 					dataLabel.add(dataLabelsGroup);
 				}
-				// Now the data label is created and placed at 0,0, so we need to align it
+				// Now the data label is created and placed at 0,0, so we need
+				// to align it
 				series.alignDataLabel(point, dataLabel, options, null, isNew);
 			}
 		});
@@ -277,7 +304,13 @@ Series.prototype.drawDataLabels = function () {
 /**
  * Align each individual data label
  */
-Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
+Series.prototype.alignDataLabel = function (
+	point,
+	dataLabel,
+	options,
+	alignTo,
+	isNew
+) {
 	var chart = this.chart,
 		inverted = chart.inverted,
 		plotX = pick(point.plotX, -9999),
@@ -290,7 +323,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		negRotation,
 		align = options.align,
 		rotCorr, // rotation correction
-		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
+		// Math.round for rounding errors (#2683), alignTo to allow column
+		// labels (#2700)
 		visible = 
 			this.visible &&
 			(
@@ -299,7 +333,9 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 				(
 					alignTo && chart.isInsidePlot(
 						plotX,
-						inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1,
+						inverted ?
+							alignTo.x + 1 :
+							alignTo.y + alignTo.height - 1,
 						inverted
 					)
 				)
@@ -329,13 +365,19 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 			height: bBox.height
 		});
 
-		// Allow a hook for changing alignment in the last moment, then do the alignment
+		// Allow a hook for changing alignment in the last moment, then do the
+		// alignment
 		if (rotation) {
 			justify = false; // Not supported for rotated text
 			rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
 			alignAttr = {
 				x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
-				y: alignTo.y + options.y + { top: 0, middle: 0.5, bottom: 1 }[options.verticalAlign] * alignTo.height
+				y: (
+					alignTo.y +
+					options.y +
+					{ top: 0, middle: 0.5, bottom: 1 }[options.verticalAlign] *
+						alignTo.height
+				)
 			};
 			dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
 				.attr({ // #3003
@@ -375,10 +417,19 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 			
 		// Now check that the data label is within the plot area
 		} else if (pick(options.crop, true)) {
-			visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
+			visible = 
+				chart.isInsidePlot(
+					alignAttr.x,
+					alignAttr.y
+				) &&
+				chart.isInsidePlot(
+					alignAttr.x + bBox.width,
+					alignAttr.y + bBox.height
+				);
 		}
 
-		// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
+		// When we're using a shape, make it possible with a connector or an
+		// arrow pointing to thie point
 		if (options.shape && !rotation) {
 			dataLabel[isNew ? 'attr' : 'animate']({
 				anchorX: inverted ? chart.plotWidth - point.plotY : point.plotX,
@@ -396,10 +447,17 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 };
 
 /**
- * If data labels fall partly outside the plot area, align them back in, in a way that
- * doesn't hide the point.
+ * If data labels fall partly outside the plot area, align them back in, in a
+ * way that doesn't hide the point.
  */
-Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
+Series.prototype.justifyDataLabel = function (
+	dataLabel,
+	options,
+	alignAttr,
+	bBox,
+	alignTo,
+	isNew
+) {
 	var chart = this.chart,
 		align = options.align,
 		verticalAlign = options.verticalAlign,
@@ -481,7 +539,8 @@ if (seriesTypes.pie) {
 			dataLabelWidth,
 			labelPos,
 			labelHeight,
-			halves = [// divide the points into right and left halves for anti collision
+			// divide the points into right and left halves for anti collision
+			halves = [
 				[], // right
 				[]  // left
 			],
@@ -610,12 +669,19 @@ if (seriesTypes.pie) {
 				delete point.positionIndex;
 
 				// get the x - use the natural x position for labels near the 
-				// top and bottom, to prevent the top and botton slice connectors 
-				// from touching each other on either side
+				// top and bottom, to prevent the top and botton slice
+				// connectors from touching each other on either side
 				if (options.justify) {
-					x = seriesCenter[0] + (i ? -1 : 1) * (radius + point.labelDistance);
+					x = seriesCenter[0] +
+						(i ? -1 : 1) * (radius + point.labelDistance);
 				} else {
-					x = series.getX(y < point.top + 2 || y > point.bottom - 2 ? naturalY : y, i, point);
+					x = series.getX(
+						y < point.top + 2 || y > point.bottom - 2 ?
+							naturalY :
+							y,
+						i,
+						point
+					);
 				}
 
 
@@ -625,9 +691,17 @@ if (seriesTypes.pie) {
 					align: labelPos[6]
 				};
 				dataLabel._pos = {
-					x: x + options.x +
-						({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
-					y: y + options.y - 10 // 10 is for the baseline (label vs text)
+					x: (
+						x +
+						options.x +
+						({
+							left: connectorPadding,
+							right: -connectorPadding
+						}[labelPos[6]] || 0)
+					),
+
+					// 10 is for the baseline (label vs text)
+					y: y + options.y - 10
 				};
 				labelPos.x = x;
 				labelPos.y = y;
@@ -675,9 +749,12 @@ if (seriesTypes.pie) {
 			} // for each point
 		}); // for each half
 
-		// Do not apply the final placement and draw the connectors until we have verified
-		// that labels are not spilling over.
-		if (arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
+		// Do not apply the final placement and draw the connectors until we
+		// have verified that labels are not spilling over.
+		if (
+			arrayMax(overflow) === 0 ||
+			this.verifyDataLabelOverflow(overflow)
+		) {
 
 			// Place the labels in the final position
 			this.placeDataLabels();
@@ -702,13 +779,18 @@ if (seriesTypes.pie) {
 
 						if (isNew) {
 							point.connector = connector = chart.renderer.path()
-								.addClass('highcharts-data-label-connector highcharts-color-' + point.colorIndex)
+								.addClass('highcharts-data-label-connector ' +
+									' highcharts-color-' + point.colorIndex)
 								.add(series.dataLabelsGroup);
 
 							/*= if (build.classic) { =*/
 							connector.attr({
 								'stroke-width': connectorWidth,
-								'stroke': options.connectorColor || point.color || '${palette.neutralColor60}'
+								'stroke': (
+									options.connectorColor ||
+									point.color ||
+									'${palette.neutralColor60}'
+								)
 							});
 							/*= } =*/
 						}
@@ -726,15 +808,16 @@ if (seriesTypes.pie) {
 	};
 
 	/**
-	 * Extendable method for getting the path of the connector between the data label
-	 * and the pie slice.
+	 * Extendable method for getting the path of the connector between the data
+	 * label and the pie slice.
 	 */
 	seriesTypes.pie.prototype.connectorPath = function (labelPos) {
 		var x = labelPos.x,
 			y = labelPos.y;
 		return pick(this.options.dataLabels.softConnector, true) ? [
 			'M',
-			x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
+			// end of the string at the label
+			x + (labelPos[6] === 'left' ? 5 : -5), y,
 			'C',
 			x, y, // first break, next to the label
 			2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
@@ -743,7 +826,8 @@ if (seriesTypes.pie) {
 			labelPos[4], labelPos[5] // base
 		] : [
 			'M',
-			x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
+			// end of the string at the label
+			x + (labelPos[6] === 'left' ? 5 : -5), y, 
 			'L',
 			labelPos[2], labelPos[3], // second break
 			'L',
@@ -752,8 +836,8 @@ if (seriesTypes.pie) {
 	};
 
 	/**
-	 * Perform the final placement of the data labels after we have verified that they
-	 * fall within the plot area.
+	 * Perform the final placement of the data labels after we have verified
+	 * that they fall within the plot area.
 	 */
 	seriesTypes.pie.prototype.placeDataLabels = function () {
 		each(this.points, function (point) {
@@ -788,9 +872,9 @@ if (seriesTypes.pie) {
 	seriesTypes.pie.prototype.alignDataLabel =  noop;
 
 	/**
-	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
-	 * label positioning to keep them inside the plot area. Returns true when data labels are ready
-	 * to draw.
+	 * Verify whether the data labels are allowed to draw, or we should run more
+	 * translation and data label positioning to keep them inside the plot area.
+	 * Returns true when data labels are ready to draw.
 	 */
 	seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
 
@@ -863,14 +947,26 @@ if (seriesTypes.pie) {
 if (seriesTypes.column) {
 
 	/**
-	 * Override the basic data label alignment by adjusting for the position of the column
+	 * Override the basic data label alignment by adjusting for the position of
+	 * the column
 	 */
-	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
+	seriesTypes.column.prototype.alignDataLabel = function (
+		point,
+		dataLabel,
+		options,
+		alignTo,
+		isNew
+	) {
 		var inverted = this.chart.inverted,
 			series = point.series,
-			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
-			below = pick(point.below, point.plotY > pick(this.translatedThreshold, series.yAxis.len)), // point.below is used in range series
-			inside = pick(options.inside, !!this.options.stacking), // draw it inside the box?
+			// data label box for alignment
+			dlBox = point.dlBox || point.shapeArgs,
+			below = pick(
+				point.below, // range series
+				point.plotY > pick(this.translatedThreshold, series.yAxis.len)
+			),
+			// draw it inside the box?
+			inside = pick(options.inside, !!this.options.stacking),
 			overshoot;
 
 		// Align to the column itself, or the top of it
@@ -908,8 +1004,8 @@ if (seriesTypes.column) {
 		}
 
 
-		// When alignment is undefined (typically columns and bars), display the individual
-		// point below or above the point depending on the threshold
+		// When alignment is undefined (typically columns and bars), display the
+		// individual point below or above the point depending on the threshold
 		options.align = pick(
 			options.align,
 			!inverted || inside ? 'center' : below ? 'right' : 'left'
@@ -920,7 +1016,14 @@ if (seriesTypes.column) {
 		);
 
 		// Call the parent method
-		Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+		Series.prototype.alignDataLabel.call(
+			this,
+			point,
+			dataLabel,
+			options,
+			alignTo,
+			isNew
+		);
 
 		// If label was justified and we have contrast, set it:
 		if (point.isLabelJustified && point.contrastColor) {
