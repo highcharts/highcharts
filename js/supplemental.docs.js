@@ -4,6 +4,8 @@
 *  the appropriate location in the source.                                     *
 *******************************************************************************/
 
+/* eslint max-len: 0 */
+
 /**
  * Whether to allow decimals in this axis' ticks. When counting integers,
  * like persons or hits on a web page, decimals should be avoided in

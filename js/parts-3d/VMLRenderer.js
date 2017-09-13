@@ -29,7 +29,8 @@ if (VMLRenderer) {
 	VMLRenderer.prototype.toLinePath = SVGRenderer.prototype.toLinePath;
 	VMLRenderer.prototype.toLineSegments = SVGRenderer.prototype.toLineSegments;
 
-	VMLRenderer.prototype.createElement3D = SVGRenderer.prototype.createElement3D;
+	VMLRenderer.prototype.createElement3D =
+		SVGRenderer.prototype.createElement3D;
 
 	VMLRenderer.prototype.arc3d = function (shapeArgs) {
 		var result = SVGRenderer.prototype.arc3d.call(this, shapeArgs);
