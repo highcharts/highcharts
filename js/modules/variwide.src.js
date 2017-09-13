@@ -95,22 +95,35 @@ seriesType('variwide', 'column', {
 	 * Extend translation by distoring X position based on Z.
 	 */
 	translate: function () {
-		var inverted = this.chart.inverted;
+
+		// Temporarily disable crisping when computing original shapeArgs
+		var crispOption = this.options.crisp;
+		this.options.crisp = false;
 
 		seriesTypes.column.prototype.translate.call(this);
 
+		// Reset option
+		this.options.crisp = crispOption;
+
+		var inverted = this.chart.inverted,
+			crisp = this.borderWidth % 2 / 2;
+
 		// Distort the points to reflect z dimension
 		each(this.points, function (point, i) {
+			
 			var left = this.postTranslate(
 					i,
-					point.shapeArgs.x,
-					inverted
+					point.shapeArgs.x
 				),
 				right = this.postTranslate(
 					i,
-					point.shapeArgs.x + point.shapeArgs.width,
-					inverted
+					point.shapeArgs.x + point.shapeArgs.width
 				);
+
+			if (this.options.crisp) {
+				left = Math.round(left) - crisp;
+				right = Math.round(right) - crisp;
+			}
 
 			point.shapeArgs.x = left;
 			point.shapeArgs.width = right - left;
