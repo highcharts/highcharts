@@ -935,7 +935,7 @@ Chart.prototype.get3dFrame = function () {
 H.Fx.prototype.matrixSetter = function () {
 	var interpolated;
 	if (this.pos < 1 && 
-			(Array.isArray(this.start) || Array.isArray(this.end))) {
+			(H.isArray(this.start) || H.isArray(this.end))) {
 		var start = this.start || [ 1, 0, 0, 1, 0, 0];
 		var end   = this.end   || [ 1, 0, 0, 1, 0, 0];
 		interpolated = [];
