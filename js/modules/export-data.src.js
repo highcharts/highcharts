@@ -100,10 +100,12 @@ Highcharts.setOptions({
 });
 
 // Add and event listener to handle the showTable option
-Highcharts.addEvent(Highcharts.Chart.prototype, 'render', function () {
-	if (this.options.exporting.showTable) {
-		this.viewData();
-	}
+Highcharts.Chart.prototype.callbacks.push(function (chart) {
+	Highcharts.addEvent(chart, 'render', function () {
+		if (chart.options.exporting.showTable) {
+			chart.viewData();
+		}
+	});
 });
 
 /**
@@ -125,17 +127,24 @@ Highcharts.Chart.prototype.getDataRows = function () {
 		x,
 		xTitle,
 		// Options
-		columnHeaderFormatter =
-			csvOptions.columnHeaderFormatter ||
-			function (item, key, keyLength) {
-				if (item instanceof Highcharts.Axis) {
-					return (item.options.title && item.options.title.text) ||
-						(item.isDatetimeAxis ? 'DateTime' : 'Category');
+		columnHeaderFormatter = function (item, key, keyLength) {
+
+			if (csvOptions.columnHeaderFormatter) {
+				var s = csvOptions.columnHeaderFormatter(item, key, keyLength);
+				if (s !== false) {
+					return s;
 				}
-				return item ?
-					item.name + (keyLength > 1 ? ' (' + key + ')' : '') :
-					'Category';
-			},
+			}
+
+			
+			if (item instanceof Highcharts.Axis) {
+				return (item.options.title && item.options.title.text) ||
+					(item.isDatetimeAxis ? 'DateTime' : 'Category');
+			}
+			return item ?
+				item.name + (keyLength > 1 ? ' (' + key + ')' : '') :
+				'Category';
+		},
 		xAxisIndices = [];
 
 	// Loop the series and index values
