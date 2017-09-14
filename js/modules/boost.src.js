@@ -87,6 +87,26 @@
   */
 
  /**
+  * Enable or disable boost on a chart
+  *
+  * @default true
+  * @apioption boost.enabled
+  */
+
+ /**
+  * Enable or disable GPU translations
+  *
+  * This option may cause rendering issues with certain datasets.
+  * Namely, if your dataset has large numbers with small increments (such as
+  * timestamps), it won't work correctly.
+  *
+  * This is due to floating point precission.
+  *
+  * @default false
+  * @apioption boost.useGPUTranslations
+  */
+
+ /**
   * Set the point threshold for when a series should enter boost mode.
   *
   * Setting it to e.g. 2000 will cause the series to enter boost mode
@@ -126,6 +146,7 @@ var win = H.win,
 	wrap = H.wrap,
 	plotOptions = H.getOptions().plotOptions,
 	CHUNK_SIZE = 50000,
+	mainCanvas = doc.createElement('canvas'),
 	index;
 
 // Register color names since GL can't render those directly.
@@ -620,8 +641,11 @@ function GLShader(gl) {
 	 * Destroy the shader
 	 */
 	function destroy() {
-		if (gl && shaderProgram) {
-			gl.deleteProgram(shaderProgram);
+		if (gl) {
+			if (shaderProgram) {
+				gl.deleteProgram(shaderProgram);
+				shaderProgram = false;
+			}
 		}
 	}
 
@@ -807,6 +831,7 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
 	function destroy() {
 		if (buffer) {
 			gl.deleteBuffer(buffer);
+			buffer = false;
 		}
 	}
 
@@ -1120,12 +1145,16 @@ function GLRenderer(postRenderCallback) {
 			maxVal, // eslint-disable-line no-unused-vars
 			points = series.points || false,
 			lastX = false,
+			lastY = false,
 			minVal,
 			color,
 			scolor,
 			sdata = isStacked ? series.data : (xData || rawData),
 			closestLeft = { x: Number.MIN_VALUE, y: 0 },
-			closestRight = { x: Number.MIN_VALUE, y: 0 }
+			closestRight = { x: Number.MIN_VALUE, y: 0 },
+
+			cullXThreshold = 1,
+			cullYThreshold = 1
 			;
 
 		if (options.boostData && options.boostData.length > 0) {
@@ -1302,6 +1331,8 @@ function GLRenderer(postRenderCallback) {
 				return false;
 			}
 
+
+
 			// Uncomment this to enable color by point.
 			// This currently left disabled as the charts look really ugly
 			// when enabled and there's a lot of points.
@@ -1460,6 +1491,17 @@ function GLRenderer(postRenderCallback) {
 				}
 			}
 
+			// If the last _drawn_ point is closer to this point than the
+			// threshold, skip it. Shaves off 20-100ms in processing.
+
+			if (!settings.useGPUTranslations &&
+				!settings.usePreallocated &&
+				(lastX && x - lastX < cullXThreshold) &&
+				(lastY && Math.abs(y - lastY) < cullYThreshold)
+			) {
+				return;
+			}
+
 			vertice(
 				x,
 				y,
@@ -1479,6 +1521,9 @@ function GLRenderer(postRenderCallback) {
 			// }
 
 			lastX = x;
+			lastY = y;
+
+			// return true;
 		});
 
 		function pushSupplementPoint(point) {
@@ -1996,7 +2041,7 @@ function createAndAttachRenderer(chart, series) {
 	}
 
 	if (!target.image) {
-		target.canvas = doc.createElement('canvas');
+		target.canvas = mainCanvas;
 
 		target.image = chart.renderer.image(
 			'',
@@ -2040,18 +2085,22 @@ function createAndAttachRenderer(chart, series) {
 		height: chart.chartHeight
 	});
 
+	target.image.attr({ href: '' });
+
 	if (!target.ogl) {
-
-
 		target.ogl = GLRenderer(function () { // eslint-disable-line new-cap
 			target.image.attr({
 				href: target.canvas.toDataURL('image/png')
 			});
+<<<<<<< HEAD
 
 			// Destroy gl context when we're done with it
 			target.ogl.destroy();
 			target.ogl = false;
 		}); // eslint-disable-line new-cap
+=======
+		}); //eslint-disable-line new-cap
+>>>>>>> origin/solbrest
 
 		target.ogl.init(target.canvas);
 		// target.ogl.clear();
@@ -2224,8 +2273,7 @@ each([
 	'scatter',
 	'heatmap',
 	'bubble',
-	'treemap',
-	'heatmap'
+	'treemap'
 ],
 	function (type) {
 		if (plotOptions[type]) {
@@ -2251,10 +2299,18 @@ each([
 ], function (method) {
 	function branch(proceed) {
 		var letItPass = this.options.stacking &&
-						(method === 'translate' || method === 'generatePoints');
+						(method === 'translate' || method === 'generatePoints'),
+			enabled = true;
+
+		if (this.chart && this.chart.options && this.chart.options.boost) {
+			enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
+				true :
+				this.chart.options.boost.enabled;
+		}
 
 		if (!isSeriesBoosting(this) ||
 			letItPass ||
+			!enabled ||
 			this.type === 'heatmap' ||
 			this.type === 'treemap'
 		) {
@@ -2324,12 +2380,26 @@ function hasWebGLSupport() {
 
 /* Used for treemap|heatmap.drawPoints */
 function pointDrawHandler(proceed) {
-	if (!isSeriesBoosting(this)) {
+	var enabled = true,
+		renderer;
+
+	if (this.chart.options && this.chart.options.boost) {
+		enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
+			true :
+			this.chart.options.boost.enabled;
+	}
+
+	if (!enabled || !isSeriesBoosting(this)) {
 		return proceed.call(this);
 	}
 
+<<<<<<< HEAD
 	// Make sure we have a valid OGL context
 	var renderer = createAndAttachRenderer(this.chart, this);
+=======
+	//Make sure we have a valid OGL context
+	renderer = createAndAttachRenderer(this.chart, this);
+>>>>>>> origin/solbrest
 
 	if (renderer) {
 		allocateIfNotSeriesBoosting(renderer, this);
