@@ -146,6 +146,7 @@ var win = H.win,
 	wrap = H.wrap,
 	plotOptions = H.getOptions().plotOptions,
 	CHUNK_SIZE = 50000,
+	mainCanvas = doc.createElement('canvas'),
 	index;
 
 // Register color names since GL can't render those directly.
@@ -641,8 +642,11 @@ function GLShader(gl) {
 	 * Destroy the shader
 	 */
 	function destroy() {
-		if (gl && shaderProgram) {
-			gl.deleteProgram(shaderProgram);
+		if (gl) {
+			if (shaderProgram) {
+				gl.deleteProgram(shaderProgram);
+				shaderProgram = false;
+			}
 		}
 	}
 
@@ -830,6 +834,7 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 	function destroy() {
 		if (buffer) {
 			gl.deleteBuffer(buffer);
+			buffer = false;
 		}
 	}
 
@@ -1815,6 +1820,7 @@ function GLRenderer(postRenderCallback) {
 
 		if (postRenderCallback) {
 			postRenderCallback();
+			postRenderCallback = false;
 		}
 	}
 
@@ -2039,7 +2045,7 @@ function createAndAttachRenderer(chart, series) {
 	}
 
 	if (!target.image) {
-		target.canvas = doc.createElement('canvas');
+		target.canvas = mainCanvas;
 
 		target.image = chart.renderer.image(
 			'',
@@ -2085,15 +2091,10 @@ function createAndAttachRenderer(chart, series) {
 
 	if (!target.ogl) {
 
-
 		target.ogl = GLRenderer(function () { // eslint-disable-line new-cap
 			target.image.attr({
 				href: target.canvas.toDataURL('image/png')
 			});
-
-			// Destroy gl context when we're done with it
-			target.ogl.destroy();
-			target.ogl = false;
 		}); //eslint-disable-line new-cap
 
 		target.ogl.init(target.canvas);
