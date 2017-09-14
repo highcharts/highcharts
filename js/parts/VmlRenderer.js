@@ -229,17 +229,6 @@ if (!svg) {
 				}
 			}
 
-
-			// Loop up again to handle path shortcuts (#2132)
-			/*while (i++ < path.length) {
-				if (path[i] === 'H') { // horizontal line to
-					path[i] = 'L';
-					path.splice(i + 2, 0, path[i - 1]);
-				} else if (path[i] === 'V') { // vertical line to
-					path[i] = 'L';
-					path.splice(i + 1, 0, path[i - 2]);
-				}
-			}*/
 			return path.join(' ') || 'x';
 		},
 
@@ -1090,7 +1079,6 @@ if (!svg) {
 					y + h / 2,     // start y
 					x + w, // end x
 					y + h / 2,     // end y
-					//'x', // finish path
 					'e' // close
 				];
 			},

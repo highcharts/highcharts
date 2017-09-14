@@ -34,9 +34,6 @@ H.Tooltip.prototype = {
 		this.chart = chart;
 		this.options = options;
 
-		// Keep track of the current series
-		//this.currentSeries = undefined;
-
 		// List of crosshairs
 		this.crosshairs = [];
 

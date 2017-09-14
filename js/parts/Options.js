@@ -950,11 +950,6 @@ H.defaultOptions = {
 		 * @apioption chart.borderWidth
 		 */
 
-		//style: {
-		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
-		//	fontSize: '12px'
-		//},
-
 		/**
 		 * The background color or gradient for the outer chart area.
 		 * 

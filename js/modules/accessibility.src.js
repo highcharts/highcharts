@@ -1172,7 +1172,6 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	titleElement.id = titleId;
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
-	//chart.container.setAttribute('aria-details', hiddenSectionId); // JAWS currently doesn't handle this too well
 	chart.renderTo.setAttribute('aria-label', 'Interactive chart. ' + chartTitle +
 		'. Use up and down arrows to navigate with most screen readers.');
 

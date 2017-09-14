@@ -232,7 +232,6 @@ Series.prototype.drawDataLabels = function () {
 				/*= } =*/
 				
 				attr = {
-					//align: align,
 					/*= if (build.classic) { =*/
 					fill: options.backgroundColor,
 					stroke: options.borderColor,

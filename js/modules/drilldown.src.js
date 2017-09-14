@@ -978,14 +978,16 @@ wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
 				point.doDrilldown(undefined, undefined, e);
 			}
 		});
-		/*wrap(point, 'importEvents', function (proceed) { // wrapping importEvents makes point.click event work
+		/*
+		wrap(point, 'importEvents', function (proceed) { // wrapping importEvents makes point.click event work
 			if (!this.hasImportedEvents) {
 				proceed.call(this);
 				H.addEvent(this, 'click', function () {
 					this.doDrilldown();
 				});
 			}
-		});*/
+		});
+		*/
 
 	}
 

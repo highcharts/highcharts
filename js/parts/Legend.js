@@ -476,12 +476,14 @@ Highcharts.Legend.prototype = {
 		}
 
 		// If the item exceeds the height, start a new column
-		/*if (!horizontal && legend.itemY + options.y +
+		/*
+		if (!horizontal && legend.itemY + options.y +
 				itemHeight > chart.chartHeight - spacingTop - spacingBottom) {
 			legend.itemY = legend.initialItemY;
 			legend.itemX += legend.maxItemWidth;
 			legend.maxItemWidth = 0;
-		}*/
+		}
+		*/
 
 		// Set the edge positions
 		legend.maxItemWidth = Math.max(legend.maxItemWidth, itemWidth);
@@ -714,19 +716,6 @@ Highcharts.Legend.prototype = {
 		each(allItems, function (item) {
 			legend.positionItem(item);
 		});
-
-		// 1.x compatibility: positioning based on style
-		/*var props = ['left', 'right', 'top', 'bottom'],
-			prop,
-			i = 4;
-		while (i--) {
-			prop = props[i];
-			if (options.style[prop] && options.style[prop] !== 'auto') {
-				options[i < 2 ? 'align' : 'verticalAlign'] = prop;
-				options[i < 2 ? 'x' : 'y'] = 
-					pInt(options.style[prop]) * (i % 2 ? -1 : 1);
-			}
-		}*/
 
 		if (display) {
 			legendGroup.align(merge(options, {

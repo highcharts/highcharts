@@ -270,7 +270,6 @@ Highcharts.Chart.prototype.getDataRows = function () {
 
 		// Add header row
 		xTitle = columnHeaderFormatter(xAxis);
-		//dataRows = [[xTitle].concat(names)];
 		dataRows[0].splice(column, 0, xTitle);
 
 		// Add the category column

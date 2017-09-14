@@ -178,7 +178,7 @@ seriesType('candlestick', 'ohlc', merge(
 	 * Draw the data points
 	 */
 	drawPoints: function () {
-		var series = this,  //state = series.state,
+		var series = this,
 			points = series.points,
 			chart = series.chart;
 

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
 *  This file contains things that are referrenced in the old API dump, which   *
 *  can't be found in the source code. All items here should be moved over to   *
 *  the appropriate location in the source.                                     *

@@ -203,15 +203,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @default 0
 			 */
 			x: 0
-			//y: undefined
-			/*formatter: function () {
-				return this.value;
-			},*/
 		},
-		//linkedTo: null,
-		//max: undefined,
-		//min: undefined,
-
+		
 		/**
 		 * Padding of the min value relative to the length of the axis. A
 		 * padding of 0.05 will make a 100px axis 5px longer. This is useful
@@ -253,9 +246,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @since 1.2.0
 		 */
 		maxPadding: 0.01,
-		//minRange: null,
-		//minorTickInterval: null,
-
+		
 		/**
 		 * The pixel length of the minor tick marks.
 		 * 
@@ -280,23 +271,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @default outside
 		 */
 		minorTickPosition: 'outside', // inside or outside
-		//opposite: false,
-		//offset: 0,
-		//plotBands: [{
-		//	events: {},
-		//	zIndex: 1,
-		//	labels: { align, x, verticalAlign, y, style, rotation, textAlign }
-		//}],
-		//plotLines: [{
-		//	events: {}
-		//  dashStyle: {}
-		//	zIndex:
-		//	labels: { align, x, verticalAlign, y, style, rotation, textAlign }
-		//}],
-		//reversed: false,
-		// showFirstLabel: true,
-		// showLastLabel: true,
-
+		
 		/**
 		 * For datetime axes, this decides where to put the tick between weeks.
 		 *  0 = Sunday, 1 = Monday.
@@ -334,8 +309,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @since 1.2.0
 		 */
 		startOnTick: false,
-		//tickInterval: null,
-
+		
 		/**
 		 * The pixel length of the main tick marks.
 		 * 
@@ -414,8 +388,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * and left by default.
 		 */
 		title: {
-			//text: null,
-
+			
 			/**
 			 * Alignment of the title relative to the axis values. Possible
 			 * values are "low", "middle" or "high".
@@ -437,10 +410,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @default {highmaps} middle
 			 */
 			align: 'middle', // low, middle or high
-			//margin: 0 for horizontal, 10 for vertical axes,
-			// reserveSpace: true,
-			//rotation: 0,
-			//side: 'outside',
+			
 			/*= if (build.classic) { =*/
 
 			/**
@@ -462,8 +432,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				color: '${palette.neutralColor60}'
 			}
 			/*= } =*/
-			//x: 0,
-			//y: 0
 		},
 
 		/**
@@ -491,7 +459,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @product highcharts
 		 */
 		type: 'linear', // linear, logarithmic or datetime
-		//visible: true
+		
 		/*= if (build.classic) { =*/
 
 		/**
@@ -544,8 +512,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @default #999999
 		 */
 		minorTickColor: '${palette.neutralColor40}',
-		//minorTickWidth: 0,
-
+		
 		/**
 		 * The color of the line marking the axis itself.
 		 * 
@@ -793,13 +760,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @product highcharts
 			 */
 			enabled: false,
-			//align: dynamic,
-			//y: dynamic,
-			//x: dynamic,
-			//verticalAlign: dynamic,
-			//textAlign: dynamic,
-			//rotation: 0,
-
+			
 			/**
 			 * Callback JavaScript function to format the label. The value is
 			 * given by `this.total`. Defaults to:
@@ -1008,7 +969,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Flag, stagger lines or not
 		axis.userOptions = userOptions;
 
-		//axis.axisTitleMargin = undefined,// = options.title.margin,
 		axis.minPixelPadding = 0;
 
 
@@ -1029,12 +989,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		axis.categories = options.categories || axis.hasNames;
 		axis.names = axis.names || []; // Preserve on update (#3830)
 
-		// Elements
-		//axis.axisGroup = undefined;
-		//axis.gridGroup = undefined;
-		//axis.axisTitle = undefined;
-		//axis.axisLine = undefined;
-
 		// Placeholder for plotlines and plotbands groups
 		axis.plotLinesAndBandsGroups = {};
 
@@ -1045,9 +999,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		// Flag, if axis is linked to another axis
 		axis.isLinked = defined(options.linkedTo);
-		// Linked axis.
-		//axis.linkedParent = undefined;
-
+		
 		// Major ticks
 		axis.ticks = {};
 		axis.labelEdge = [];
@@ -1061,21 +1013,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		axis.alternateBands = {};
 
 		// Axis metrics
-		//axis.left = undefined;
-		//axis.top = undefined;
-		//axis.width = undefined;
-		//axis.height = undefined;
-		//axis.bottom = undefined;
-		//axis.right = undefined;
-		//axis.transA = undefined;
-		//axis.transB = undefined;
-		//axis.oldTransA = undefined;
 		axis.len = 0;
-		//axis.oldMin = undefined;
-		//axis.oldMax = undefined;
-		//axis.oldUserMin = undefined;
-		//axis.oldUserMax = undefined;
-		//axis.oldAxisLength = undefined;
 		axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
 		axis.range = options.range;
 		axis.offset = options.offset || 0;
@@ -1086,10 +1024,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		axis.oldStacks = {};
 		axis.stacksTouched = 0;
 
-		// Min and max in the data
-		//axis.dataMin = undefined,
-		//axis.dataMax = undefined,
-
+		
 		/**
 		 * The maximum value of the axis. In a logarithmic axis, this is the
 		 * logarithm of the real value, and the real value can be obtained from
@@ -1111,9 +1046,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 */
 		axis.min = null;
 
-		// User set min and max
-		//axis.userMin = undefined,
-		//axis.userMax = undefined,
 
 		/**
 		 * The processed crosshair options.
@@ -2550,7 +2482,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		// set the new axisLength
 		axis.setAxisSize();
-		//axisLength = horiz ? axisWidth : axisHeight;
 		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
@@ -3566,7 +3497,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		// Reset
 		axis.labelEdge.length = 0;
-		//axis.justifyToPlot = overflow === 'justify';
 		axis.overlap = false;
 
 		// Mark all elements inActive before we go over and mark the active ones

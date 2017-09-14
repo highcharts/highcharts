@@ -145,13 +145,6 @@ TrackerMixin = H.TrackerMixin = {
 			}
 		}
 
-		// handle single points
-		/*for (i = 0; i < singlePoints.length; i++) {
-			singlePoint = singlePoints[i];
-			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
-			L, singlePoint.plotX + snap, singlePoint.plotY);
-		}*/
-
 		// draw the tracker
 		if (tracker) {
 			tracker.attr({ d: trackerPath });
@@ -665,15 +658,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 				point.graphic.addClass('highcharts-point-' + state);
 			}
 
-			/*attribs = radius ? { // new symbol attributes (#507, #612)
-				x: plotX - radius,
-				y: plotY - radius,
-				width: 2 * radius,
-				height: 2 * radius
-			} : {};*/
-
 			/*= if (build.classic) { =*/
-			//attribs = merge(series.pointAttribs(point, state), attribs);
 			point.graphic.animate(
 				series.pointAttribs(point, state),
 				pick(

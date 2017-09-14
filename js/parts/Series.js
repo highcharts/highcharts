@@ -93,9 +93,6 @@ var addEvent = H.addEvent,
  */
 H.Series = H.seriesType('line', null, { // base series options
 	/*= if (build.classic) { =*/
-	//cursor: 'default',
-	//dashStyle: null,
-	
 	/**
 	 * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
 	 * of a line graph. Round means that lines are rounded in the ends and
@@ -120,7 +117,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * @product highcharts highstock
 	 */
 	lineWidth: 2,
-	//shadow: false,
 	/*= } =*/
 
 	/**
@@ -1764,12 +1760,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * @product highstock
 	 */
 	pointRange: 0,
-	//pointStart: 0,
-	//pointInterval: 1,
-	//showInLegend: null, // auto = false for linked series
-
-
-
+	
 	/**
 	 * When this is true, the series will not cause the Y axis to cross
 	 * the zero plane (or [threshold](#plotOptions.series.threshold) option)
@@ -3949,7 +3940,6 @@ H.Series = H.seriesType('line', null, { // base series options
 			// Helpers for animation
 			if (graph) {
 				graph.startX = graphPath.xMap;
-				//graph.shiftUnit = options.step ? 2 : 1;
 				graph.isArea = graphPath.isArea; // For arearange animation
 			}
 		});
@@ -4034,7 +4024,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				}
 
 				/*= if (build.classic) { =*/
-				/// VML SUPPPORT
+				// VML SUPPPORT
 				if (inverted && renderer.isVML) {
 					if (axis.isXAxis) {
 						clipAttr = {
@@ -4052,7 +4042,7 @@ H.Series = H.seriesType('line', null, { // base series options
 						};
 					}
 				}
-				/// END OF VML SUPPORT
+				// END OF VML SUPPORT
 				/*= } =*/
 
 				if (clips[i]) {

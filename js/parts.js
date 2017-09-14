@@ -1,5 +1,5 @@
 'use strict';
-/*eslint-disable no-unused-vars*/
+/* eslint-disable no-unused-vars */
 var HighchartsConfig = {
 	'version': [{
 		'highcharts': '4.0.1-modified'
@@ -659,4 +659,4 @@ var HighchartsConfig = {
 		}
 	}
 };
-/*eslint-enable no-unused-vars*/
+/* eslint-enable no-unused-vars */

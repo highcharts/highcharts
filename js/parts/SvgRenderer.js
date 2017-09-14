@@ -2324,7 +2324,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		}
 		wrapper.textCache = textCache;
 
-		/// remove old text
+		// Remove old text
 		while (i--) {
 			textNode.removeChild(childNodes[i]);
 		}
@@ -2443,9 +2443,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 								);
 							}
 
-							/*if (width) {
+							/* 
+							if (width) {
 								renderer.breakText(wrapper, width);
-							}*/
+							}
+							*/
 
 							// Check width and apply soft breaks or ellipsis
 							if (width) {
@@ -3659,7 +3661,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				attribs = {};
 
 			bBox = (width === undefined || height === undefined || textAlign) && defined(text.textStr) &&
-				text.getBBox(); //#3295 && 3514 box failure when string equals 0
+				text.getBBox(); // #3295 && 3514 box failure when string equals 0
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 

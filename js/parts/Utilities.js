@@ -913,7 +913,7 @@ H.dateFormat = function (format, timestamp, capitalize) {
 		replacements = H.extend(
 			{
 
-				//-- Day
+				// Day
 				// Short weekday, like 'Mon'
 				'a': shortWeekdays ?
 					shortWeekdays[day] :
@@ -927,9 +927,9 @@ H.dateFormat = function (format, timestamp, capitalize) {
 				'w': day,
 
 				// Week (none implemented)
-				//'W': weekNumber(),
+				// 'W': weekNumber(),
 
-				//-- Month
+				// Month
 				// Short month, like 'Jan'
 				'b': lang.shortMonths[month],
 				// Long month, like 'January'
@@ -937,13 +937,13 @@ H.dateFormat = function (format, timestamp, capitalize) {
 				// Two digit month number, 01 through 12
 				'm': pad(month + 1),
 
-				//-- Year
+				// Year
 				// Two digits year, like 09 for 2009
 				'y': fullYear.toString().substr(2, 2),
 				// Four digits year, like 2009
 				'Y': fullYear,
 
-				//-- Time
+				// Time
 				// Two digits hours in 24h format, 00 through 23
 				'H': pad(hours),
 				// Hours in 24h format, 0 through 23
@@ -1808,8 +1808,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 	if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
 		e = doc.createEvent('Events');
 		e.initEvent(type, true, true);
-		//e.target = el;
-
+		
 		H.extend(e, eventArguments);
 
 		if (el.dispatchEvent) {
@@ -2132,4 +2131,4 @@ if (!Array.prototype.find) {
 	};
 }
 
-//--- End compatibility section ---
+// --- End compatibility section ---

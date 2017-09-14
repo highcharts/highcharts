@@ -290,7 +290,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		x2,
 		y2,
 		result = [],
-		axes = [], //#3416 need a default array
+		axes = [], // #3416 need a default array
 		axes2,
 		uniqueAxes,
 		transVal;
@@ -343,7 +343,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	// Remove duplicates in the axes array. If there are no axes in the axes array,
 	// we are adding an axis without data, so we need to populate this with grid
 	// lines (#2796).
-	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; //#3742
+	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
 	each(axes, function (axis2) {
 		if (
 			inArray(axis2, uniqueAxes) === -1 &&
@@ -400,7 +400,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	}
 	return result.length > 0 ?
 		renderer.crispPolyLine(result, lineWidth || 1) :
-		null; //#3557 getPlotLinePath in regular Highcharts also returns null
+		null; // #3557 getPlotLinePath in regular Highcharts also returns null
 });
 
 // Override getPlotBandPath to allow for multipane charts

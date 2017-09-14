@@ -287,7 +287,7 @@ seriesType('boxplot', 'column', {
 	 * Draw the data points
 	 */
 	drawPoints: function () {
-		var series = this,  //state = series.state,
+		var series = this,
 			points = series.points,
 			options = series.options,
 			chart = series.chart,

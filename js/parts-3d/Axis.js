@@ -1,6 +1,8 @@
 /**
  * (c) 2010-2017 Torstein Honsi
  *
+ * Extenstion for 3d axes
+ *
  * License: www.highcharts.com/license
  */
 'use strict';
@@ -23,10 +25,6 @@ var ZAxis,
 	splat = H.splat,
 	Tick = H.Tick,
 	wrap = H.wrap;
-/***
-	EXTENSION TO THE AXIS
-***/
-
 
 /**
  * Options to render axis in 3 dimensions. 
@@ -311,7 +309,7 @@ function fix3dPosition(axis, pos, isTitle) {
 			vecX = frame.axes.x.bottom.xDir;
 			reverseFlap = !frame.bottom.frontFacing;
 		}
-	} else {  //Y Axis
+	} else {  // Y Axis
 		if (axis.opposite) {
 			if (frame.axes.y.right === null) {
 				return {};
@@ -395,7 +393,7 @@ function fix3dPosition(axis, pos, isTitle) {
 	var projected = perspective([pos], axis.chart)[0];
 
 	if (skew) {
-		//Check if the label text would be mirrored
+		// Check if the label text would be mirrored
 		var isMirrored = shapeArea(perspective([
 			pos, 
 			{ x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
@@ -430,10 +428,9 @@ function fix3dPosition(axis, pos, isTitle) {
 	return projected;
 }
 
-/***
-	EXTENSION TO THE TICKS
-***/
-
+/*
+Tick extensions
+ */
 wrap(Tick.prototype, 'getMarkPath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -477,9 +474,9 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-/***
-    Z-AXIS
-***/
+/*
+Z-AXIS
+*/
 
 Axis.prototype.swapZ = function (p, insidePlotArea) {
 	if (this.isZAxis) {

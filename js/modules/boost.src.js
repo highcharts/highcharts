@@ -285,7 +285,7 @@ function patientMax() {
 
 	each(args, function (t) {
 		if (typeof t !== 'undefined' && typeof t.length !== 'undefined') {
-			//r = r < t.length ? t.length : r;
+			// r = r < t.length ? t.length : r;
 			if (t.length > 0) {
 				r = t.length;
 				return true;
@@ -347,7 +347,6 @@ function isSeriesBoosting(series) {
 			) >= (series.options.boostThreshold || Number.MAX_VALUE);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // START OF WEBGL ABSTRACTIONS
 
 /*
@@ -494,7 +493,7 @@ function GLShader(gl) {
 			'}'
 			/* eslint-enable */
 		].join('\n'),
-		//Fragment shader source
+		// Fragment shader source
 		fragShade = [
 			/* eslint-disable */
 			'precision highp float;',
@@ -532,26 +531,26 @@ function GLShader(gl) {
 			/* eslint-enable */
 		].join('\n'),
 		uLocations = {},
-		//The shader program
+		// The shader program
 		shaderProgram,
-		//Uniform handle to the perspective matrix
+		// Uniform handle to the perspective matrix
 		pUniform,
-		//Uniform for point size
+		// Uniform for point size
 		psUniform,
-		//Uniform for fill color
+		// Uniform for fill color
 		fillColorUniform,
-		//Uniform for isBubble
+		// Uniform for isBubble
 		isBubbleUniform,
-		//Uniform for bubble abs sizing
+		// Uniform for bubble abs sizing
 		bubbleSizeAbsUniform,
 		bubbleSizeAreaUniform,
-		//Skip translation uniform
+		// Skip translation uniform
 		skipTranslationUniform,
-		//Set to 1 if circle
+		// Set to 1 if circle
 		isCircleUniform,
-		//Uniform for invertion
+		// Uniform for invertion
 		isInverted,
-		//Texture uniform
+		// Texture uniform
 		uSamplerUniform;
 
 	/* String to shader program
@@ -568,7 +567,7 @@ function GLShader(gl) {
 		gl.compileShader(shader);
 
 		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-			//console.error('shader error:', gl.getShaderInfoLog(shader));
+			// console.error('shader error:', gl.getShaderInfoLog(shader));
 			return false;
 		}
 		return shader;
@@ -585,7 +584,7 @@ function GLShader(gl) {
 
 		if (!v || !f) {
 			shaderProgram = false;
-			//console.error('error creating shader program');
+			// console.error('error creating shader program');
 			return false;
 		}
 
@@ -662,8 +661,6 @@ function GLShader(gl) {
 	function setInverted(flag) {
 		gl.uniform1i(isInverted, flag);
 	}
-
-	////////////////////////////////////////////////////////////////////////////
 
 	/*
 	 * Enable/disable circle drawing
@@ -797,7 +794,7 @@ function GLShader(gl) {
  * @param gl {WebGLContext} - the context in which to create the buffer
  * @param shader {GLShader} - the shader to use
  */
-function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
+function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
 	var buffer = false,
 		vertAttribute = false,
 		components = dataComponents || 2,
@@ -824,7 +821,7 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 		data = dataIn || [];
 
 		if ((!data || data.length === 0) && !preAllocated) {
-			//console.error('trying to render empty vbuffer');
+			// console.error('trying to render empty vbuffer');
 			buffer = false;
 			return false;
 		}
@@ -859,10 +856,10 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 		}
 
 		// gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
-		//gl.enableVertexAttribArray(vertAttribute);
-		//gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+		// gl.enableVertexAttribArray(vertAttribute);
+		// gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
-		//gl.enableVertexAttribArray(vertAttribute);
+		// gl.enableVertexAttribArray(vertAttribute);
 	}
 
 	/*
@@ -918,12 +915,12 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 		size *= 4;
 		iterator = -1;
 
-		//if (!preAllocated || (preAllocated && preAllocated.length !== size)) {
+		// if (!preAllocated || (preAllocated && preAllocated.length !== size)) {
 		preAllocated = new Float32Array(size);
-		//}
+		// }
 	}
 
-	////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 	return {
 		destroy: destroy,
 		bind: bind,
@@ -979,7 +976,7 @@ function GLRenderer(postRenderCallback) {
 			'scatter': true,
 			'bubble': true
 		},
-		//Render settings
+		// Render settings
 		settings = {
 			pointSize: 1,
 			lineWidth: 3,
@@ -992,7 +989,7 @@ function GLRenderer(postRenderCallback) {
 			timeSetup: false
 		};
 
-	////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	function setOptions(options) {
 		merge(true, settings, options);
@@ -1120,7 +1117,7 @@ function GLRenderer(postRenderCallback) {
 			// caxis,
 			// connectNulls = options.connectNulls,
 			// For some reason eslint doesn't pick up that this is actually used
-			maxVal, //eslint-disable-line no-unused-vars
+			maxVal, // eslint-disable-line no-unused-vars
 			points = series.points || false,
 			lastX = false,
 			minVal,
@@ -1147,7 +1144,7 @@ function GLRenderer(postRenderCallback) {
 			}
 		}
 
-		//Push a vertice to the data buffer
+		// Push a vertice to the data buffer
 		function vertice(x, y, checkTreshold, pointSize, color) {
 			pushColor(color);
 			if (settings.usePreallocated) {
@@ -1230,7 +1227,7 @@ function GLRenderer(postRenderCallback) {
 					// better color interpolation.
 
 					// If there's stroking, we do an additional rect
-					//if (pointAttr.stroke !== 'none' && swidth && swidth > 0) {
+					// if (pointAttr.stroke !== 'none' && swidth && swidth > 0) {
 					if (series.type === 'treemap') {
 						swidth = swidth || 1;
 						scolor = H.color(pointAttr.stroke).rgba;
@@ -1292,7 +1289,7 @@ function GLRenderer(postRenderCallback) {
 				px = false,
 				nx = false,
 				// This is in fact used.
-				low, //eslint-disable-line no-unused-vars
+				low, // eslint-disable-line no-unused-vars
 				chartDestroyed = typeof chart.index === 'undefined',
 				nextInside = false,
 				prevInside = false,
@@ -1482,8 +1479,6 @@ function GLRenderer(postRenderCallback) {
 			// }
 
 			lastX = x;
-
-			//return true;
 		});
 
 		function pushSupplementPoint(point) {
@@ -1525,7 +1520,7 @@ function GLRenderer(postRenderCallback) {
 		}
 
 		if (settings.timeSeriesProcessing) {
-			console.time('building ' + s.type + ' series'); //eslint-disable-line no-console
+			console.time('building ' + s.type + ' series'); // eslint-disable-line no-console
 		}
 
 		series.push({
@@ -1557,7 +1552,7 @@ function GLRenderer(postRenderCallback) {
 		pushSeriesData(s, series[series.length - 1]);
 
 		if (settings.timeSeriesProcessing) {
-			console.timeEnd('building ' + s.type + ' series'); //eslint-disable-line no-console
+			console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
 		}
 	}
 
@@ -1626,7 +1621,7 @@ function GLRenderer(postRenderCallback) {
 
 		if (chart) {
 			if (!chart.chartHeight || !chart.chartWidth) {
-				//chart.setChartSize();
+				// chart.setChartSize();
 			}
 
 			width = chart.chartWidth || 800;
@@ -1640,7 +1635,7 @@ function GLRenderer(postRenderCallback) {
 		}
 
 		if (settings.timeRendering) {
-			console.time('gl rendering'); //eslint-disable-line no-console
+			console.time('gl rendering'); // eslint-disable-line no-console
 		}
 
 		shader.bind();
@@ -1701,7 +1696,7 @@ function GLRenderer(postRenderCallback) {
 				color[3] = 1.0;
 			}
 
-			//Blending
+			// Blending
 			if (options.boostBlending === 'add') {
 				gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 				gl.blendEquation(gl.FUNC_ADD);
@@ -1714,8 +1709,8 @@ function GLRenderer(postRenderCallback) {
 				gl.blendEquation(gl.FUNC_MIN);
 
 			} else {
-				//gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
-				//gl.blendEquation(gl.FUNC_ADD);
+				// gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
+				// gl.blendEquation(gl.FUNC_ADD);
 				gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 			}
 
@@ -1724,7 +1719,7 @@ function GLRenderer(postRenderCallback) {
 			// If there are entries in the colorData buffer, build and bind it.
 			if (s.colorData.length > 0) {
 				shader.setUniform('hasColor', 1.0);
-				cbuffer = GLVertexBuffer(gl, shader); //eslint-disable-line new-cap
+				cbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
 				cbuffer.build(s.colorData, 'aColor', 4);
 				cbuffer.bind();
 			}
@@ -1770,7 +1765,7 @@ function GLRenderer(postRenderCallback) {
 		vbuffer.destroy();
 
 		if (settings.timeRendering) {
-			console.timeEnd('gl rendering'); //eslint-disable-line no-console
+			console.timeEnd('gl rendering'); // eslint-disable-line no-console
 		}
 
 		flush();
@@ -1838,7 +1833,7 @@ function GLRenderer(postRenderCallback) {
 		}
 
 		if (settings.timeSetup) {
-			console.time('gl setup'); //eslint-disable-line no-console
+			console.time('gl setup'); // eslint-disable-line no-console
 		}
 
 		for (; i < contexts.length; i++) {
@@ -1863,8 +1858,8 @@ function GLRenderer(postRenderCallback) {
 		// gl.depthMask(gl.FALSE);
 		gl.depthFunc(gl.LESS);
 
-		shader = GLShader(gl); //eslint-disable-line new-cap
-		vbuffer = GLVertexBuffer(gl, shader); //eslint-disable-line new-cap
+		shader = GLShader(gl); // eslint-disable-line new-cap
+		vbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
 
 		textureIsReady = false;
 
@@ -1917,7 +1912,7 @@ function GLRenderer(postRenderCallback) {
 		isInited = true;
 
 		if (settings.timeSetup) {
-			console.timeEnd('gl setup'); //eslint-disable-line no-console
+			console.timeEnd('gl setup'); // eslint-disable-line no-console
 		}
 
 		return true;
@@ -1951,7 +1946,7 @@ function GLRenderer(postRenderCallback) {
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 	exports = {
 		allocateBufferForSingleSeries: allocateBufferForSingleSeries,
 		pushSeries: pushSeries,
@@ -1977,7 +1972,7 @@ function GLRenderer(postRenderCallback) {
 }
 
 // END OF WEBGL ABSTRACTIONS
-////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 
 /*
  * Create a canvas + context and attach it to the target
@@ -1997,7 +1992,7 @@ function createAndAttachRenderer(chart, series) {
 	}
 
 	if (target.ogl) {
-		//target.ogl.destroy();
+		// target.ogl.destroy();
 	}
 
 	if (!target.image) {
@@ -2056,7 +2051,7 @@ function createAndAttachRenderer(chart, series) {
 			// Destroy gl context when we're done with it
 			target.ogl.destroy();
 			target.ogl = false;
-		}); //eslint-disable-line new-cap
+		}); // eslint-disable-line new-cap
 
 		target.ogl.init(target.canvas);
 		// target.ogl.clear();
@@ -2125,7 +2120,7 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 			if (noTimeout) {
 				eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout);
 			} else if (win.requestAnimationFrame) {
-				//If available, do requestAnimationFrame - shaves off a few ms
+				// If available, do requestAnimationFrame - shaves off a few ms
 				win.requestAnimationFrame(function () {
 					eachAsync(arr, fn, finalFunc, chunkSize, i);
 				});
@@ -2141,7 +2136,7 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 // Following is the parts of the boost that's common between OGL/Legacy
 
 /**
@@ -2333,7 +2328,7 @@ function pointDrawHandler(proceed) {
 		return proceed.call(this);
 	}
 
-	//Make sure we have a valid OGL context
+	// Make sure we have a valid OGL context
 	var renderer = createAndAttachRenderer(this.chart, this);
 
 	if (renderer) {
@@ -2344,7 +2339,7 @@ function pointDrawHandler(proceed) {
 	renderIfNotSeriesBoosting(renderer, this);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 // We're wrapped in a closure, so just return if there's no webgl support
 
 if (!hasWebGLSupport()) {
@@ -2356,7 +2351,7 @@ if (!hasWebGLSupport()) {
 	}
 } else {
 
-	////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 	// GL-SPECIFIC WRAPPINGS FOLLOWS
 
 	/** If the series is a heatmap or treemap, or if the series is not boosting
@@ -2424,8 +2419,6 @@ if (!hasWebGLSupport()) {
 				chart = series.chart,
 				xAxis = this.xAxis,
 				yAxis = this.yAxis,
-				//ctx,
-				//c = 0,
 				xData = options.xData || series.processedXData,
 				yData = options.yData || series.processedYData,
 
@@ -2455,7 +2448,7 @@ if (!hasWebGLSupport()) {
 				maxI,
 
 				addKDPoint = function (clientX, plotY, i) {
-					//Shaves off about 60ms compared to repeated concatination
+					// Shaves off about 60ms compared to repeated concatination
 					index = clientX + ',' + plotY;
 
 					// The k-d tree requires series points.
@@ -2501,7 +2494,7 @@ if (!hasWebGLSupport()) {
 					chart.seriesGroup
 				);
 			} else {
-				//Use a single group for the markers
+				// Use a single group for the markers
 				this.markerGroup = chart.markerGroup;
 			}
 
@@ -2515,7 +2508,7 @@ if (!hasWebGLSupport()) {
 				renderer.pushSeries(series);
 				// Perform the actual renderer if we're on series level
 				renderIfNotSeriesBoosting(renderer, this, chart);
-				//console.log(series, chart);
+				// console.log(series, chart);
 			}
 
 			/* This builds the KD-tree */
@@ -2714,7 +2707,7 @@ if (!hasWebGLSupport()) {
 				chart.ogl.allocateBuffer(chart);
 			}
 
-			//see #6518 + #6739
+			// see #6518 + #6739
 			if (chart.markerGroup && chart.xAxis && chart.xAxis.length > 0 && chart.yAxis && chart.yAxis.length > 0) {
 				chart.markerGroup.translate(
 					chart.xAxis[0].pos,
