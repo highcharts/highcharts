@@ -348,10 +348,10 @@ function shouldForceChartSeriesBoosting(chart) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 function isChartSeriesBoosting(chart) {
-	return shouldForceChartSeriesBoosting(chart) || chart.series.length >= pick(
+	return chart.series.length >= pick(
 		chart.options.boost && chart.options.boost.seriesThreshold,
 		50
-	);
+	) || shouldForceChartSeriesBoosting(chart);
 }
 
 /*
