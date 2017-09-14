@@ -821,7 +821,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			H.relativeLength(
 				heightOption,
 				chart.chartWidth
-			) || chart.containerHeight || 400
+			) ||
+			(chart.containerHeight > 1 ? chart.containerHeight : 400)
 		);
 	},
 

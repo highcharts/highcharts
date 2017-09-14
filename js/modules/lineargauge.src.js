@@ -33,7 +33,8 @@ seriesType('lineargauge', 'column',
 	 * @product highcharts
 	 * @sample {highcharts} highcharts/demo/lineargauge/ Linearguage graph
 	 * @since 6.0.0
-	 * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
+	 * @excluding animationLimit,boostThreshold,edgeColor,edgeWidth,
+	 *            findNearestPointBy,getExtremesFromAll
 	 * @optionparent plotOptions.lineargauge
 	 */
 	{

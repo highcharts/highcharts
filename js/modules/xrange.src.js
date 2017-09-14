@@ -35,10 +35,10 @@ var defined = H.defined,
  * with a start and end date.
  * 
  * @extends {plotOptions.column}
- * @excluding boostThreshold,crisp,cropThreshold,edgeColor,edgeWidth,
- *         findNearestPointBy,getExtremesFromAll,negativeColor,pointInterval,
- *         pointIntervalUnit,pointPlacement,pointRange,pointStart,softThreshold,
- *         stacking,threshold
+ * @excluding boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
+ *         findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
+ *         negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
+ *         pointRange,pointStart,softThreshold,stacking,threshold
  * @product highcharts
  * @sample {highcharts} highcharts/demo/x-range/
  *         X-range
@@ -308,7 +308,6 @@ seriesType('xrange', 'column', {
 	 */
 	drawPoint: function (point, verb) {
 		var series = this,
-			plotY = point.plotY,
 			seriesOpts = series.options,
 			renderer = series.chart.renderer,
 			graphic = point.graphic,
@@ -321,7 +320,7 @@ seriesType('xrange', 'column', {
 			state = point.selected && 'select',
 			cutOff = seriesOpts.stacking && !seriesOpts.borderRadius;
 
-		if (isNumber(plotY) && point.y !== null) {
+		if (!point.isNull) {
 
 			// Original graphic
 			if (graphic) { // update
@@ -441,18 +440,22 @@ seriesType('xrange', 'column', {
 			series = this.series,
 			colorCount = series.chart.options.chart.colorCount;
 
+		if (!this.y) {
+			this.y = 0;
+		}
+
+		/*= if (build.classic) { =*/
 		if (series.options.colorByPoint) {
-			/*= if (build.classic) { =*/
 			colors = series.options.colors || series.chart.options.colors;
 			colorCount = colors.length;
 
 			if (!this.options.color && colors[this.y % colorCount]) {
 				this.color = colors[this.y % colorCount];
 			}
-			/*= } =*/
 		}
+		/*= } =*/
 		this.colorIndex = this.y % colorCount;
-			
+		
 		return this;
 	},
 
@@ -466,7 +469,12 @@ seriesType('xrange', 'column', {
 		cfg.yCategory = point.yCategory = yCats && yCats[point.y];
 		return cfg;
 	},
-	tooltipDateKeys: ['x', 'x2']
+	tooltipDateKeys: ['x', 'x2'],
+
+	isValid: function () {
+		return typeof this.x === 'number' &&
+			typeof this.x2 === 'number';
+	}
 });
 
 /**
@@ -521,13 +529,13 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  * 
  *  ```js
  *     data: [{
- *         x1: Date.UTC(2017, 0, 1),
+ *         x: Date.UTC(2017, 0, 1),
  *         x2: Date.UTC(2017, 0, 3),
  *         name: "Test",
  *         y: 0,
  *         color: "#00FF00"
  *     }, {
- *         x1: Date.UTC(2017, 0, 4),
+ *         x: Date.UTC(2017, 0, 4),
  *         x2: Date.UTC(2017, 0, 5),
  *         name: "Deploy",
  *         y: 1,
@@ -546,6 +554,16 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  * @apioption series.xrange.data
  */
 
+
+/**
+ * The ending X value of the range point.
+ *
+ * @sample {highcharts} highcharts/demo/x-range
+ *         X-range
+ * @type  {Number}
+ * @product highcharts
+ * @apioption plotOptions.xrange.data.x2
+ */
 
 /**
  * A partial fill for each point, typically used to visualize how much of

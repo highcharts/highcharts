@@ -397,6 +397,12 @@ Highcharts.Pointer.prototype = {
 			if (chart.hoverPoint) {
 				chart.hoverPoint.firePointEvent('mouseOut');
 			}
+
+			// Hover point may have been destroyed in the event handlers (#7127)
+			if (!hoverPoint.series) {
+				return;
+			}
+
 			hoverPoint.firePointEvent('mouseOver');
 			chart.hoverPoints = points;
 			chart.hoverPoint = hoverPoint;
