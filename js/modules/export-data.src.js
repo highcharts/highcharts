@@ -1,16 +1,13 @@
 /**
- * Expoerimental data export module for Highcharts
+ * Experimental data export module for Highcharts
  *
  * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-// docs
-// - After experimental release:
-// - Move info in repo readme to docs/API.
+// @todo
 // - Deprecate repo and plugins page
-// - Update demos (esp accessibility) to use new URL
 // - Before official release, set up systematic tests for all series types
 
 /* eslint max-len: ["warn", 80, 4] */
@@ -27,18 +24,104 @@ var each = Highcharts.each,
 	downloadAttrSupported = doc.createElement('a').download !== undefined;
 
 Highcharts.setOptions({
+	/**
+	 * @optionparent exporting
+	 */
+	exporting: {
+		/**
+		 * Options for exporting data to CSV or ExCel, or displaying the data
+		 * in a HTML table or a JavaScript structure. Requires the
+		 * `export-data.js` module. This module adds data export options to the
+		 * export menu and provides functions like `Chart.getCSV`,
+		 * `Chart.getTable`, `Chart.getDataRows` and `Chart.viewData`.
+		 *
+		 * @sample  highcharts/export-data/categorized/ Categorized data
+		 * @sample  highcharts/export-data/stock-timeaxis/ Highstock time axis
+		 * 
+		 * @since 6.0.0
+		 */
+		csv: {
+			/**
+			 * Formatter callback for the column headers. Parameters are:
+			 * - `item` - The series or axis object)
+			 * - `key` -  The point key, for example y or z
+			 * - `keyLength` - The amount of value keys for this item, for
+			 *   example a range series has the keys `low` and `high` so the
+			 *   key length is 2.
+			 * 
+			 * By default it returns the series name, followed by the key if
+			 * there is more than one key. For the axis it returns the axis
+			 * title or "Category" or "DateTime" by default.
+			 *
+			 * Return `false` to use Highcharts' proposed header.
+			 * 
+			 * @type {Function|null}
+			 */
+			columnHeaderFormatter: null,
+			/**
+			 * Which date format to use for exported dates on a datetime X axis.
+			 * See `Highcharts.dateFormat`.
+			 */
+			dateFormat: '%Y-%m-%d %H:%M:%S',
+			/**
+			 * The item delimiter in the exported data. Use `;` for direct
+			 * exporting to Excel.
+			 */
+			itemDelimiter: ',',
+			/**
+			 * The line delimiter in the exported data, defaults to a newline.
+			 */
+			lineDelimiter: '\n'
+		},
+		/**
+		 * Export-data module required. Show a HTML table below the chart with 
+		 * the chart's current data.
+		 *
+		 * @sample highcharts/export-data/showtable/ Show the table
+		 * @since 6.0.0
+		 */
+		showTable: false
+	},
+	/**
+	 * @optionparent lang
+	 */
 	lang: {
+		/**
+		 * Export-data module only. The text for the menu item.
+		 * @since 6.0.0
+		 */
 		downloadCSV: 'Download CSV',
+		/**
+		 * Export-data module only. The text for the menu item.
+		 * @since 6.0.0
+		 */
 		downloadXLS: 'Download XLS',
+		/**
+		 * Export-data module only. The text for the menu item.
+		 * @since 6.0.0
+		 */
 		viewData: 'View data table'
 	}
 });
 
+// Add an event listener to handle the showTable option
+Highcharts.Chart.prototype.callbacks.push(function (chart) {
+	Highcharts.addEvent(chart, 'render', function () {
+		if (chart.options.exporting.showTable) {
+			chart.viewData();
+		}
+	});
+});
+
 /**
- * Get the data rows as a two dimensional array
+ * Export-data module required. Returns a two-dimensional array containing the
+ * current chart data.
+ *
+ * @returns {Array.<Array>}
+ *          The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function () {
-	var options = (this.options.exporting || {}).csv || {},
+	var csvOptions = this.options.exporting.csv,
 		xAxis,
 		xAxes = this.xAxis,
 		rows = {},
@@ -49,18 +132,24 @@ Highcharts.Chart.prototype.getDataRows = function () {
 		x,
 		xTitle,
 		// Options
-		dateFormat = options.dateFormat || '%Y-%m-%d %H:%M:%S',
-		columnHeaderFormatter =
-			options.columnHeaderFormatter ||
-			function (item, key, keyLength) {
-				if (item instanceof Highcharts.Axis) {
-					return (item.options.title && item.options.title.text) ||
-						(item.isDatetimeAxis ? 'DateTime' : 'Category');
+		columnHeaderFormatter = function (item, key, keyLength) {
+
+			if (csvOptions.columnHeaderFormatter) {
+				var s = csvOptions.columnHeaderFormatter(item, key, keyLength);
+				if (s !== false) {
+					return s;
 				}
-				return item ?
-					item.name + (keyLength > 1 ? ' (' + key + ')' : '') :
-					'Category';
-			},
+			}
+
+			
+			if (item instanceof Highcharts.Axis) {
+				return (item.options.title && item.options.title.text) ||
+					(item.isDatetimeAxis ? 'DateTime' : 'Category');
+			}
+			return item ?
+				item.name + (keyLength > 1 ? ' (' + key + ')' : '') :
+				'Category';
+		},
 		xAxisIndices = [];
 
 	// Loop the series and index values
@@ -71,6 +160,7 @@ Highcharts.Chart.prototype.getDataRows = function () {
 			valueCount = pointArrayMap.length,
 			xTaken = !series.requireSorting && {},
 			categoryMap = {},
+			datetimeValueAxisMap = {},
 			xAxisIndex = Highcharts.inArray(series.xAxis, xAxes),
 			j;
 
@@ -80,6 +170,10 @@ Highcharts.Chart.prototype.getDataRows = function () {
 				series[prop + 'Axis'] &&
 				series[prop + 'Axis'].categories
 			) || [];
+			datetimeValueAxisMap[prop] = (
+				series[prop + 'Axis'] &&
+				series[prop + 'Axis'].isDatetimeAxis
+			);
 		});
 
 		if (
@@ -138,8 +232,13 @@ Highcharts.Chart.prototype.getDataRows = function () {
 				while (j < valueCount) {
 					prop = pointArrayMap[j]; // y, z etc
 					val = point[prop];
-					// Pick a Y axis category if present
-					rows[key][i + j] = pick(categoryMap[prop][val], val);
+					rows[key][i + j] = pick(
+						categoryMap[prop][val], // Y axis category if present
+						datetimeValueAxisMap[prop] ?
+							Highcharts.dateFormat(csvOptions.dateFormat, val) :
+							null,
+						val
+					);
 					j++;
 				}
 
@@ -171,7 +270,6 @@ Highcharts.Chart.prototype.getDataRows = function () {
 
 		// Add header row
 		xTitle = columnHeaderFormatter(xAxis);
-		//dataRows = [[xTitle].concat(names)];
 		dataRows[0].splice(column, 0, xTitle);
 
 		// Add the category column
@@ -182,7 +280,10 @@ Highcharts.Chart.prototype.getDataRows = function () {
 					if (row.x instanceof Date) {
 						row.x = row.x.getTime();
 					}
-					category = Highcharts.dateFormat(dateFormat, row.x);
+					category = Highcharts.dateFormat(
+						csvOptions.dateFormat,
+						row.x
+					);
 				} else if (xAxis.categories) {
 					category = pick(
 						xAxis.names[row.x],
@@ -204,16 +305,24 @@ Highcharts.Chart.prototype.getDataRows = function () {
 };
 
 /**
- * Get a CSV string
+ * Export-data module required. Returns the current chart data as a CSV string.
+ *
+ * @param  {Boolean} useLocalDecimalPoint
+ *         Whether to use the local decimal point as detected from the browser.
+ *         This makes it easier to export data to Excel in the same locale as
+ *         the user is.
+ *
+ * @returns {String}
+ *          CSV representation of the data
  */
 Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
 	var csv = '',
 		rows = this.getDataRows(),
-		options = (this.options.exporting || {}).csv || {},
+		csvOptions = this.options.exporting.csv,
 		// use ';' for direct to Excel
-		itemDelimiter = options.itemDelimiter || ',',
+		itemDelimiter = csvOptions.itemDelimiter,
 		// '\n' isn't working with the js csv data extraction
-		lineDelimiter = options.lineDelimiter || '\n';
+		lineDelimiter = csvOptions.lineDelimiter;
 
 	// Transform the rows to CSV
 	each(rows, function (row, i) {
@@ -244,7 +353,13 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
 };
 
 /**
- * Build a HTML table with the data
+ * Export-data module required. Build a HTML table with the chart's current
+ * data.
+ *
+ * @sample  highcharts/export-data/viewdata/ 
+ *          View the data from the export menu
+ * @returns {String}
+ *          HTML representation of the data.
  */
 Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 	var html = '<table><thead>',
@@ -288,24 +403,14 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 };
 
 /**
- * Use download attribute if supported, else  run a simple PHP script that
- * returns a file. The source code for the PHP script can be viewed at
- * https://raw.github.com/highcharts/highcharts/master/studies/csv-export/
- * csv.php
+ * File download using download attribute if supported.
+ *
+ * @private
  */
-Highcharts.Chart.prototype.fileDownload = function (
-	href,
-	extension,
-	content,
-	MIME
-) {
+Highcharts.Chart.prototype.fileDownload = function (href, extension, content) {
 	var a,
 		blobObject,
-		name,
-		options = (this.options.exporting || {}).csv || {},
-		url =
-			options.url ||
-			'http://www.highcharts.com/studies/csv-export/download.php';
+		name;
 
 	if (this.options.exporting.filename) {
 		name = this.options.exporting.filename;
@@ -334,17 +439,14 @@ Highcharts.Chart.prototype.fileDownload = function (
 		a.remove();
 
 	} else {
-		// Fall back to server side handling
-		Highcharts.post(url, {
-			data: content,
-			type: MIME,
-			extension: extension
-		});
+		Highcharts.error('The browser doesn\'t support downloading files');
 	}
 };
 
 /**
  * Call this on click of 'Download CSV' button
+ *
+ * @private
  */
 Highcharts.Chart.prototype.downloadCSV = function () {
 	var csv = this.getCSV(true);
@@ -358,6 +460,8 @@ Highcharts.Chart.prototype.downloadCSV = function () {
 
 /**
  * Call this on click of 'Download XLS' button
+ *
+ * @private
  */
 Highcharts.Chart.prototype.downloadXLS = function () {
 	var uri = 'data:application/vnd.ms-excel;base64,',
@@ -390,7 +494,7 @@ Highcharts.Chart.prototype.downloadXLS = function () {
 };
 
 /**
- * View the data in a table below the chart
+ * Export-data module required. View the data in a table below the chart.
  */
 Highcharts.Chart.prototype.viewData = function () {
 	if (!this.dataTableDiv) {

@@ -1,6 +1,8 @@
 /**
  * (c) 2010-2017 Torstein Honsi
  *
+ * 3D pie series
+ * 
  * License: www.highcharts.com/license
  */
 'use strict';
@@ -13,9 +15,6 @@ var deg2rad = H.deg2rad,
 	svg = H.svg,
 	wrap = H.wrap;
 
-/*** 
-	EXTENSION FOR 3D PIES
-***/
 
 /**
  * The thickness of a 3D pie. Requires `highcharts-3d.js`
@@ -114,7 +113,7 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 		each(series.data, function (point) {
 			var shapeArgs = point.shapeArgs,
 				r = shapeArgs.r,
-				a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
+				a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad, // #3240 issue with datalabels for 0 and null values
 				b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
 				a2 = (shapeArgs.start + shapeArgs.end) / 2,
 				labelPos = point.labelPos,

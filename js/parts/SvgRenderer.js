@@ -1040,6 +1040,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			scaleY = wrapper.scaleY,
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
+			matrix = wrapper.matrix,
 			element = wrapper.element,
 			transform;
 
@@ -1055,6 +1056,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		// #1846).
 		transform = ['translate(' + translateX + ',' + translateY + ')'];
 
+		// apply matrix
+		if (defined(matrix)) {
+			transform.push(
+				'matrix(' + matrix.join(',') + ')'
+			);
+		}
+		
 		// apply rotation
 		if (inverted) {
 			transform.push('rotate(90) scale(-1,1)');
@@ -1860,7 +1868,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
 SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter =
-		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
+		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = 
+		SVGElement.prototype.matrixSetter = function (value, key) {
 			this[key] = value;
 			this.doTransform = true;
 		};
@@ -2333,7 +2342,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		}
 		wrapper.textCache = textCache;
 
-		/// remove old text
+		// Remove old text
 		while (i--) {
 			textNode.removeChild(childNodes[i]);
 		}
@@ -2452,9 +2461,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 								);
 							}
 
-							/*if (width) {
+							/* 
+							if (width) {
 								renderer.breakText(wrapper, width);
-							}*/
+							}
+							*/
 
 							// Check width and apply soft breaks or ellipsis
 							if (width) {
@@ -3659,7 +3670,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				attribs = {};
 
 			bBox = (width === undefined || height === undefined || textAlign) && defined(text.textStr) &&
-				text.getBBox(); //#3295 && 3514 box failure when string equals 0
+				text.getBBox(); // #3295 && 3514 box failure when string equals 0
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 

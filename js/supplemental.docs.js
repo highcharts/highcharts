@@ -1,8 +1,10 @@
-/*******************************************************************************
+/*
 *  This file contains things that are referrenced in the old API dump, which   *
 *  can't be found in the source code. All items here should be moved over to   *
 *  the appropriate location in the source.                                     *
 *******************************************************************************/
+
+/* eslint max-len: 0 */
 
 /**
  * Whether to allow decimals in this axis' ticks. When counting integers,

@@ -85,7 +85,7 @@ H.Color.prototype = {
 		} else {
 
 			// Bitmasking as input[0] is not working for legacy IE.
-			if (input && input.charAt() === '#') {
+			if (input && input.charAt && input.charAt() === '#') {
 
 				len = input.length;
 				input = parseInt(input.substr(1), 16);

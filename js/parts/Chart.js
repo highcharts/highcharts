@@ -160,7 +160,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		this.margin = [];
 		this.spacing = [];
 
-		//this.runChartClick = chartEvents && !!chartEvents.click;
 		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
 
 		this.callback = callback;
@@ -219,33 +218,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 
 		this.hasCartesianSeries = optionsChart.showAxes;
-		//this.axisOffset = undefined;
-		//this.inverted = undefined;
-		//this.loadingShown = undefined;
-		//this.container = undefined;
-		//this.chartWidth = undefined;
-		//this.chartHeight = undefined;
-		//this.marginRight = undefined;
-		//this.marginBottom = undefined;
-		//this.containerWidth = undefined;
-		//this.containerHeight = undefined;
-		//this.oldChartWidth = undefined;
-		//this.oldChartHeight = undefined;
-
-		//this.renderTo = undefined;
-
-		//this.spacingBox = undefined
-
-		//this.legend = undefined;
-
-		// Elements
-		//this.chartBackground = undefined;
-		//this.plotBackground = undefined;
-		//this.plotBGImage = undefined;
-		//this.plotBorder = undefined;
-		//this.loadingDiv = undefined;
-		//this.loadingSpan = undefined;
-
+		
 		var chart = this;
 
 		// Add the chart to the global lookup
@@ -1580,7 +1553,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			y: plotTop,
 			width: plotWidth,
 			height: plotHeight
-		}, -plotBorder.strokeWidth())); //#3282 plotBorder should be negative;
+		}, -plotBorder.strokeWidth())); // #3282 plotBorder should be negative;
 
 		// reset
 		chart.isDirtyBox = false;

@@ -8,7 +8,7 @@
  * This file requires data.js.
  */
 
-/*global document, jQuery, $ */
+/* global document, jQuery, $ */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -141,9 +141,6 @@ H.extend(H.Data.prototype, {
 						path[i] = point[1];
 					}
 
-					// Add it
-					//path[i - 1] = Math.round(path[i - 1] * 100) / 100; // x
-					//path[i] = Math.round(path[i] * 100) / 100; // y
 				}	
 				
 				
@@ -186,7 +183,6 @@ H.extend(H.Data.prototype, {
 		});
 
 		return arr;
-		//return path.join(',')
 	},
 
 	/**
@@ -200,20 +196,14 @@ H.extend(H.Data.prototype, {
 
 		fakeSeries = {
 			xAxis: {
-				//min: arr.minX,
-				//len: scale,
 				translate: H.Axis.prototype.translate,
 				options: {},
 				minPixelPadding: 0
-				//transA: transA
 			}, 
 			yAxis: {
-				//min: (arr.minY + scale) / transA,
-				//len: scale,
 				translate: H.Axis.prototype.translate,
 				options: {},
 				minPixelPadding: 0
-				//transA: transA
 			}
 		};
 		

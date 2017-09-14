@@ -500,7 +500,6 @@ H.Tick.prototype = {
 				label.attr('y', -9999); // #1338
 				tick.isNewLabel = true;
 			}
-			tick.isNew = false;
 		}
 	},
 
@@ -534,6 +533,8 @@ H.Tick.prototype = {
 
 		// the label is created on init - now move it into place
 		this.renderLabel(xy, old, opacity, index);
+
+		tick.isNew = false;
 	},
 
 	/**

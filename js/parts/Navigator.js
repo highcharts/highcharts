@@ -101,8 +101,6 @@ extend(defaultOptions, {
 	 * @optionparent navigator
 	 */
 	navigator: {
-		//enabled: true,
-
 		/**
 		 * The height of the navigator.
 		 * 
@@ -385,9 +383,7 @@ extend(defaultOptions, {
 			 */
 			threshold: null
 		},
-		//top: undefined,
-		//opposite: undefined,
-
+		
 		/**
 		 * Options for the navigator X axis. Default series options
 		 * for the navigator xAxis are:
