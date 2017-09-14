@@ -2092,15 +2092,7 @@ function createAndAttachRenderer(chart, series) {
 			target.image.attr({
 				href: target.canvas.toDataURL('image/png')
 			});
-<<<<<<< HEAD
-
-			// Destroy gl context when we're done with it
-			target.ogl.destroy();
-			target.ogl = false;
-		}); // eslint-disable-line new-cap
-=======
 		}); //eslint-disable-line new-cap
->>>>>>> origin/solbrest
 
 		target.ogl.init(target.canvas);
 		// target.ogl.clear();
