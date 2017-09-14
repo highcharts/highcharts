@@ -42,7 +42,7 @@ When creating a new official series type, there are some requirements that shoul
 * Chart or window resizing. Series should resize with animation on `chart.setSize()` (n/a on window resize).
 * Initial animation. If any, what kind of animation makes sense for the series?
 * Crisp shapes. Beware of rectangles and straight lines. Set up crisping logic like for existing series, and keep styled mode in mind.
-* Null points. 
+* Null points. Use the [isValid](https://github.com/highcharts/highcharts/blob/v5.0.14/js/parts/PieSeries.js#L607-L612) function to do the check.
 * Styled mode. Everything that is stylable should be put inside conditional code. Add appropriate class names to all elements. Set up demo in the `/css` demo folder.
 * Boost module. If it makes sense for the series type, implement boosting. Otherwise, make sure it is ignored.
 * API docs. Test run the new series with `gulp jsdoc --watch` and make sure the output is correct. Remember to exclude members from the parent.

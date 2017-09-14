@@ -283,10 +283,10 @@ seriesType('waterfall', 'column', {
 	 */
 	toYData: function (pt) {
 		if (pt.isSum) {
-			return (pt.x === 0 ? null : 'sum'); //#3245 Error when first element is Sum or Intermediate Sum
+			return (pt.x === 0 ? null : 'sum'); // #3245 Error when first element is Sum or Intermediate Sum
 		}
 		if (pt.isIntermediateSum) {
-			return (pt.x === 0 ? null : 'intermediateSum'); //#3245
+			return (pt.x === 0 ? null : 'intermediateSum'); // #3245
 		}
 		return pt.y;
 	},

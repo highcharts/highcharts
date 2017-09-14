@@ -36,7 +36,7 @@
             "named": "never"
         }], /*JSLint style*/
         "quotes": [2, "single"],
-        "spaced-comment": 0, // ["warn", "always", { "markers": ["="] }],
+        "spaced-comment": ["warn", "always", { "markers": ["="] }],
         "require-jsdoc": 0,
         "strict": 0,
         "valid-jsdoc": 0,

@@ -404,7 +404,7 @@ Highcharts.extend(Data.prototype, {
 			// Add missing columns
 			for (i = 0; i < numberOfValueColumnsNeeded; i++) {
 				if (!builder.hasReader(pointArrayMap[i])) {
-					//builder.addNextColumnReader(pointArrayMap[i]);
+					// builder.addNextColumnReader(pointArrayMap[i]);
 					// Create and add a column reader for the next free column index
 					builder.addColumnReader(undefined, pointArrayMap[i]);
 				}

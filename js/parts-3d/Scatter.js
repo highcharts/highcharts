@@ -12,12 +12,12 @@ var perspective = H.perspective,
 	seriesTypes = H.seriesTypes,
 	wrap = H.wrap;
 
-/*** 
+/*
 	EXTENSION FOR 3D SCATTER CHART
-***/
+*/
 
 wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
-//function translate3d(proceed) {
+
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (!this.chart.is3d()) {

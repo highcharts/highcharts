@@ -23,7 +23,6 @@ var seriesType = H.seriesType,
 
 seriesType('plotband', 'column', {
 	lineWidth: 0,
-	//onXAxis: false,
 	threshold: null
 }, {
 	/*= if (build.classic) { =*/

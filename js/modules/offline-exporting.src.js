@@ -10,7 +10,7 @@
 import Highcharts from '../parts/Globals.js';
 import '../parts/Chart.js';
 import '../parts/Options.js';
-/*global MSBlobBuilder */
+/* global MSBlobBuilder */
 
 var merge = Highcharts.merge,
 	win = Highcharts.win,

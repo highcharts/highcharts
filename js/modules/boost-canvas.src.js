@@ -273,7 +273,7 @@ H.initCanvasBoost = function () {
 				target.image.clip(target.boostClipRect);
 
 			} else if (!(target instanceof H.Chart)) {
-				//ctx.clearRect(0, 0, width, height);
+				// ctx.clearRect(0, 0, width, height);
 			}
 
 			if (target.canvas.width !== width) {

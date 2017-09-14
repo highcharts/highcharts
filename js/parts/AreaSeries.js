@@ -262,7 +262,6 @@ seriesType('area', 'line', {
 			stacking = options.stacking,
 			yAxis = this.yAxis,
 			topPath,
-			//topPoints = [],
 			bottomPath,
 			bottomPoints = [],
 			graphPoints = [],

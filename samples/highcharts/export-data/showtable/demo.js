@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
 
     title: {
@@ -6,7 +5,17 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
+        text: 'A demo of displaying a data table in Highcharts'
+    },
+
+    credits: {
         text: 'Source: thesolarfoundation.com'
+    },
+
+    chart: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        spacingBottom: 30
     },
 
     yAxis: {
@@ -43,19 +52,8 @@ Highcharts.chart('container', {
         data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
     }],
 
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                legend: {
-                    layout: 'horizontal',
-                    align: 'center',
-                    verticalAlign: 'bottom'
-                }
-            }
-        }]
+    exporting: {
+        showTable: true
     }
 
 });

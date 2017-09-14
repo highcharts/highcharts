@@ -1,0 +1,28 @@
+.chart-outer {
+    max-width: 800px;
+    margin: 2em auto;
+}
+#container {    
+    height: 300px;
+    margin-top: 2em;
+    min-width: 380px;
+}
+.highcharts-data-table table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    background: white;
+    min-width: 100%;
+    margin-top: 10px;
+}
+.highcharts-data-table td, .highcharts-data-table th {
+    font-family: sans-serif;
+    font-size: 10pt;
+    border: 1px solid silver;
+    padding: 0.5em;
+}
+.highcharts-data-table tr:nth-child(even), .highcharts-data-table thead tr {
+    background: #f8f8f8;
+}
+.highcharts-data-table tr:hover {
+    background: #eff;
+}

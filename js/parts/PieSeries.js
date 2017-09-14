@@ -461,7 +461,7 @@ seriesType('pie', 'line', {
 			startAngle = options.startAngle || 0,
 			startAngleRad = series.startAngleRad = Math.PI / 180 * (startAngle - 90),
 			endAngleRad = series.endAngleRad = Math.PI / 180 * ((pick(options.endAngle, startAngle + 360)) - 90),
-			circ = endAngleRad - startAngleRad, //2 * Math.PI,
+			circ = endAngleRad - startAngleRad, // 2 * Math.PI,
 			points = series.points,
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
@@ -575,9 +575,7 @@ seriesType('pie', 'line', {
 			chart = series.chart,
 			renderer = chart.renderer,
 			groupTranslation,
-			//center,
 			graphic,
-			//group,
 			pointAttr,
 			shapeArgs;
 

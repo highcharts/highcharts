@@ -69,7 +69,7 @@ seriesProto.getConnectors = function (segment, index, calculateNeighbours, conne
 		leftContY,
 		rightContX,
 		rightContY,
-		dLControlPoint, //distance left control point
+		dLControlPoint, // distance left control point
 		dRControlPoint,
 		leftContAngle,
 		rightContAngle,
@@ -342,7 +342,6 @@ function polarAnimate(proceed, init) {
 
 				group.attr(attribs);
 				if (markerGroup) {
-					//markerGroup.attrSetters = group.attrSetters;
 					markerGroup.attr(attribs);
 				}
 
