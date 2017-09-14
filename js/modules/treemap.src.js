@@ -1013,20 +1013,33 @@ seriesType('treemap', 'scatter', {
 	 * Get presentational attributes
 	 */
 	pointAttribs: function (point, state) {
-		var level = this.levelMap[point.node.levelDynamic] || {},
+		var level = point && this.levelMap[point.node.levelDynamic] || {},
 			options = this.options,
 			attr,
 			stateOptions = (state && options.states[state]) || {},
-			className = point.getClassName(),
+			className = (point && point.getClassName()) || '',
 			opacity;
 
 		// Set attributes by precedence. Point trumps level trumps series. Stroke width uses pick
 		// because it can be 0.
 		attr = {
-			'stroke': point.borderColor || level.borderColor || stateOptions.borderColor || options.borderColor,
-			'stroke-width': pick(point.borderWidth, level.borderWidth, stateOptions.borderWidth, options.borderWidth),
-			'dashstyle': point.borderDashStyle || level.borderDashStyle || stateOptions.borderDashStyle || options.borderDashStyle,
-			'fill': point.color || this.color
+			'stroke':
+				(point && point.borderColor) ||
+				level.borderColor ||
+				stateOptions.borderColor ||
+				options.borderColor,
+			'stroke-width': pick(
+				point && point.borderWidth,
+				level.borderWidth,
+				stateOptions.borderWidth,
+				options.borderWidth
+			),
+			'dashstyle': 
+				(point && point.borderDashStyle) ||
+				level.borderDashStyle ||
+				stateOptions.borderDashStyle ||
+				options.borderDashStyle,
+			'fill': (point && point.color) || this.color
 		};
 
 		// Hide levels above the current view
