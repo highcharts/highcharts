@@ -2385,13 +2385,8 @@ function pointDrawHandler(proceed) {
 		return proceed.call(this);
 	}
 
-<<<<<<< HEAD
 	// Make sure we have a valid OGL context
-	var renderer = createAndAttachRenderer(this.chart, this);
-=======
-	//Make sure we have a valid OGL context
 	renderer = createAndAttachRenderer(this.chart, this);
->>>>>>> origin/solbrest
 
 	if (renderer) {
 		allocateIfNotSeriesBoosting(renderer, this);
