@@ -67,7 +67,15 @@ Highcharts.setOptions({
 			 * The line delimiter in the exported data, defaults to a newline.
 			 */
 			lineDelimiter: '\n'
-		}
+		},
+		/**
+		 * Export-data module required. Show a HTML table below the chart with 
+		 * the chart's current data.
+		 *
+		 * @sample highcharts/export-data/showtable/ Show the table
+		 * @since 6.0.0
+		 */
+		showTable: false
 	},
 	/**
 	 * @optionparent lang
@@ -88,6 +96,13 @@ Highcharts.setOptions({
 		 * @since 6.0.0
 		 */
 		viewData: 'View data table'
+	}
+});
+
+// Add and event listener to handle the showTable option
+Highcharts.addEvent(Highcharts.Chart.prototype, 'render', function () {
+	if (this.options.exporting.showTable) {
+		this.viewData();
 	}
 });
 
