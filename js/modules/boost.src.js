@@ -1820,7 +1820,6 @@ function GLRenderer(postRenderCallback) {
 
 		if (postRenderCallback) {
 			postRenderCallback();
-			postRenderCallback = false;
 		}
 	}
 
@@ -2089,8 +2088,9 @@ function createAndAttachRenderer(chart, series) {
 		height: chart.chartHeight
 	});
 
-	if (!target.ogl) {
+	target.image.attr({ href: '' });
 
+	if (!target.ogl) {
 		target.ogl = GLRenderer(function () { // eslint-disable-line new-cap
 			target.image.attr({
 				href: target.canvas.toDataURL('image/png')
