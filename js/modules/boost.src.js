@@ -118,6 +118,14 @@
   * @apioption plotOptions.series.boostThreshold
   */
 
+/**
+ * If set to true, the whole chart will be boosted if one of the series
+ * crosses its threshold, and all the series can be boosted
+ *
+ * @default true
+ * @apioption boost.allowForce
+ */
+
  /* global Float32Array */
 
 'use strict';
@@ -147,7 +155,24 @@ var win = H.win,
 	plotOptions = H.getOptions().plotOptions,
 	CHUNK_SIZE = 50000,
 	mainCanvas = doc.createElement('canvas'),
-	index;
+	index,
+	boostable = [
+		'area',
+		'arearange',
+		'column',
+		'bar',
+		'line',
+		'scatter',
+		'heatmap',
+		'bubble',
+		'treemap'
+	],
+	boostableMap = {}
+;
+
+each(boostable, function (item) {
+	boostableMap[item] = 1;
+});
 
 // Register color names since GL can't render those directly.
 Color.prototype.names = {
@@ -319,27 +344,53 @@ function patientMax() {
 
 /*
  * Returns true if we should force chart series boosting
+ * The result of this is cached in chart.boostForceChartBoost.
+ * It's re-fetched on redraw.
+ *
+ * We do this because there's a lot of overhead involved when dealing
+ * with a lot of series.
+ *
  */
 function shouldForceChartSeriesBoosting(chart) {
 	// If there are more than five series currently boosting,
 	// we should boost the whole chart to avoid running out of webgl contexts.
 	var sboostCount = 0,
+		canBoostCount = 0,
+		allowBoostForce = true,
 		series;
+
+	if (typeof chart.boostForceChartBoost !== 'undefined') {
+		return chart.boostForceChartBoost;
+	}
+
+	allowBoostForce = chart.options.boost ?
+		(typeof chart.options.boost.allowForce !== 'undefined' ?
+		chart.options.boost.allowForce : allowBoostForce) :
+		allowBoostForce;
 
 	if (chart.series.length > 1) {
 		for (var i = 0; i < chart.series.length; i++) {
+
 			series = chart.series[i];
+
+			if (boostableMap[series.type]) {
+				++canBoostCount;
+			}
+
 			if (patientMax(
 				series.processedXData,
 				series.options.data,
 				series.points
 			) >= (series.options.boostThreshold || Number.MAX_VALUE)) {
-				sboostCount++;
+				++sboostCount;
 			}
 		}
 	}
 
-	return sboostCount > 5;
+	chart.boostForceChartBoost = (allowBoostForce && canBoostCount === chart.series.length && sboostCount > 0) ||
+			sboostCount > 5;
+
+	return chart.boostForceChartBoost;
 }
 
 /*
@@ -348,10 +399,13 @@ function shouldForceChartSeriesBoosting(chart) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 function isChartSeriesBoosting(chart) {
-	return chart.series.length >= pick(
-		chart.options.boost && chart.options.boost.seriesThreshold,
-		50
-	) || shouldForceChartSeriesBoosting(chart);
+	var threshold = 50;
+
+	threshold = chart.options.boost && typeof chart.options.boost.seriesTreshold !== 'undefined' ?
+		chart.options.boost.seriesThreshold : threshold;
+
+	return threshold <= chart.series.length ||
+		shouldForceChartSeriesBoosting(chart);
 }
 
 /*
@@ -1704,6 +1758,7 @@ function GLRenderer(postRenderCallback) {
 
 		shader.setInverted(chart.inverted); // chart.options.chart ? chart.options.chart.inverted : false);
 
+
 		// Render the series
 		each(series, function (s, si) {
 			var options = s.series.options,
@@ -1727,20 +1782,25 @@ function GLRenderer(postRenderCallback) {
 					s.series.color,
 				color;
 
-			if (s.series.fillOpacity) {
+			if (s.series.fillOpacity && options.fillOpacity) {
 				fillColor = new Color(fillColor).setOpacity(
 					pick(options.fillOpacity, 1.0)
 				).get();
 			}
 
 			if (options.colorByPoint) {
-				fillColor = s.series.chart.options.colors[si ];
+				fillColor = s.series.chart.options.colors[si];
 			}
 
 			color = H.color(fillColor).rgba;
 
 			if (!settings.useAlpha) {
 				color[3] = 1.0;
+			}
+
+			// This is very much temporary
+			if (s.drawMode === 'lines') {
+				color[3] /= 10;
 			}
 
 			// Blending
@@ -1884,7 +1944,9 @@ function GLRenderer(postRenderCallback) {
 		}
 
 		for (; i < contexts.length; i++) {
-			gl = canvas.getContext(contexts[i]);
+			gl = canvas.getContext(contexts[i], {
+			//	premultipliedAlpha: false
+			});
 			if (gl) {
 				break;
 			}
@@ -2030,16 +2092,13 @@ function createAndAttachRenderer(chart, series) {
 	var width = chart.chartWidth,
 		height = chart.chartHeight,
 		target = chart,
-		targetGroup = chart.seriesGroup || series.group;
+		targetGroup = chart.seriesGroup || series.group,
+		alpha = 1;
 
 	if (isChartSeriesBoosting(chart)) {
 		target = chart;
 	} else {
 		target = series;
-	}
-
-	if (target.ogl) {
-		// target.ogl.destroy();
 	}
 
 	if (!target.image) {
@@ -2077,7 +2136,7 @@ function createAndAttachRenderer(chart, series) {
 		y: 0,
 		width: width,
 		height: height,
-		style: 'pointer-events: none'
+		style: 'pointer-events: none; mix-blend-mode: normal; opacity:' + alpha
 	});
 
 	target.boostClipRect.attr({
@@ -2259,21 +2318,13 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 });
 
 // Set default options
-each([
-	'area',
-	'arearange',
-	'column',
-	'bar',
-	'line',
-	'scatter',
-	'heatmap',
-	'bubble',
-	'treemap'
-],
+each(boostable,
 	function (type) {
 		if (plotOptions[type]) {
 			plotOptions[type].boostThreshold = 5000;
 			plotOptions[type].boostData = [];
+
+			seriesTypes[type].prototype.fillOpacity = true;
 		}
 	}
 );
@@ -2726,6 +2777,7 @@ if (!hasWebGLSupport()) {
 		sampling: true
 	});
 
+
 	extend(seriesTypes.column.prototype, {
 		fill: true,
 		sampling: true
@@ -2755,6 +2807,8 @@ if (!hasWebGLSupport()) {
 
 		/* Clear chart-level canvas */
 		function preRender() {
+			// Reset force state
+			chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
 
 			if (!isChartSeriesBoosting(chart) && chart.didBoost) {
 				chart.didBoost = false;
