@@ -12,7 +12,19 @@ var Point = H.Point,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
 
-
+/**
+ * A 3D scatter plot uses x, y and z coordinates to display values for three
+ * variables for a set of data.
+ *
+ * @sample {highcharts} highcharts/3d/scatter/
+ *         Simple 3D scatter
+ * @sample {highcharts} highcharts/demo/3d-scatter-draggable
+ *         Draggable 3d scatter
+ * 
+ * @extends {plotOptions.scatter}
+ * @product highcharts
+ * @optionparent plotOptions.scatter3d
+ */
 seriesType('scatter3d', 'scatter', {
 	tooltip: {
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
@@ -50,3 +62,75 @@ seriesType('scatter3d', 'scatter', {
 	}
 
 });
+
+
+/**
+ * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * scatter3d](#plotOptions.scatter3d).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.scatter3d
+ * @product highcharts
+ * @apioption series.scatter3d
+ */
+
+/**
+ * An array of data points for the series. For the `scatter3d` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 3 values. In this case, the values correspond
+ * to `x,y,z`. If the first value is a string, it is applied as the name
+ * of the point, and the `x` value is inferred.
+ * 
+ *  ```js
+ *     data: [
+ *         [0, 0, 1],
+ *         [1, 8, 7],
+ *         [2, 9, 2]
+ *     ]
+ *  ```
+ * 
+ * 3.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.scatter3d.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         y: 2,
+ *         z: 24,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         y: 4,
+ *         z: 12,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array>}
+ * @extends series.scatter.data
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.scatter3d.data
+ */
+
+/**
+ * The z value for each data point.
+ * 
+ * @type {Number}
+ * @product highcharts
+ * @apioption series.scatter3d.data.z
+ */
