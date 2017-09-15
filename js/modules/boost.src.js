@@ -995,6 +995,7 @@ function GLRenderer(postRenderCallback) {
 		// Things to draw as "rectangles" (i.e lines)
 		asBar = {
 			'column': true,
+			'bar': true,
 			'area': true
 		},
 		asCircle = {
@@ -1585,6 +1586,7 @@ function GLRenderer(postRenderCallback) {
 				'arearange': 'lines',
 				'areaspline': 'line_strip',
 				'column': 'lines',
+				'bar': 'lines',
 				'line': 'line_strip',
 				'scatter': 'points',
 				'heatmap': 'triangles',
@@ -1700,7 +1702,7 @@ function GLRenderer(postRenderCallback) {
 			shader.setTexture(circleTextureHandle);
 		}
 
-		shader.setInverted(chart.options.chart ? chart.options.chart.inverted : false);
+		shader.setInverted(chart.inverted); // chart.options.chart ? chart.options.chart.inverted : false);
 
 		// Render the series
 		each(series, function (s, si) {
@@ -2261,6 +2263,7 @@ each([
 	'area',
 	'arearange',
 	'column',
+	'bar',
 	'line',
 	'scatter',
 	'heatmap',
@@ -2327,6 +2330,10 @@ each([
 	if (method === 'translate') {
 		if (seriesTypes.column) {
 			wrap(seriesTypes.column.prototype, method, branch);
+		}
+
+		if (seriesTypes.bar) {
+			wrap(seriesTypes.bar.prototype, method, branch);
 		}
 
 		if (seriesTypes.arearange) {
