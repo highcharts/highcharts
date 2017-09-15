@@ -113,6 +113,19 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
 	});
 });
 
+// Set up key-to-axis bindings. This is used when the Y axis is datetime or 
+// categorized. For example in an arearange series, the low and high values
+// sholud be formatted according to the Y axis type, and in order to link them
+// we need this map.
+Highcharts.Chart.prototype.setUpKeyToAxis = function () {
+	if (seriesTypes.arearange) {
+		seriesTypes.arearange.prototype.keyToAxis = {
+			low: 'y',
+			high: 'y'
+		};
+	}
+};
+
 /**
  * Export-data module required. Returns a two-dimensional array containing the
  * current chart data.
@@ -154,6 +167,9 @@ Highcharts.Chart.prototype.getDataRows = function () {
 
 	// Loop the series and index values
 	i = 0;
+
+	this.setUpKeyToAxis();
+
 	each(this.series, function (series) {
 		var keys = series.options.keys,
 			pointArrayMap = keys || series.pointArrayMap || ['y'],
@@ -166,13 +182,19 @@ Highcharts.Chart.prototype.getDataRows = function () {
 
 		// Map the categories for value axes
 		each(pointArrayMap, function (prop) {
+
+			var axisName = (
+				(series.keyToAxis && series.keyToAxis[prop]) ||
+				prop
+			) + 'Axis';
+
 			categoryMap[prop] = (
-				series[prop + 'Axis'] &&
-				series[prop + 'Axis'].categories
+				series[axisName] &&
+				series[axisName].categories
 			) || [];
 			datetimeValueAxisMap[prop] = (
-				series[prop + 'Axis'] &&
-				series[prop + 'Axis'].isDatetimeAxis
+				series[axisName] &&
+				series[axisName].isDatetimeAxis
 			);
 		});
 
