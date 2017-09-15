@@ -6,6 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: ["warn", 80, 4] */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -23,7 +24,9 @@ var win = H.win,
 	fireEvent = H.fireEvent,
 	dateFormat = H.dateFormat,
 	merge = H.merge,
-	hiddenStyle = { // CSS style to hide element from visual users while still exposing it to screen readers
+	// CSS style to hide element from visual users while still exposing it to
+	// screen readers
+	hiddenStyle = {
 		position: 'absolute',
 		left: '-9999px',
 		top: 'auto',
@@ -31,7 +34,8 @@ var win = H.win,
 		height: '1px',
 		overflow: 'hidden'
 	},
-	// Human readable description of series and each point in singular and plural
+	// Human readable description of series and each point in singular and
+	// plural
 	typeToSeriesMap = {
 		'default': ['series', 'data point', 'data points'],
 		'line': ['line', 'data point', 'data points'],
@@ -44,7 +48,11 @@ var win = H.win,
 		'scatter': ['scatter series', 'data point', 'data points'],
 		'boxplot': ['boxplot series', 'box', 'boxes'],
 		'arearange': ['arearange series', 'data point', 'data points'],
-		'areasplinerange': ['areasplinerange series', 'data point', 'data points'],
+		'areasplinerange': [
+			'areasplinerange series',
+			'data point',
+			'data points'
+		],
 		'bubble': ['bubble series', 'bubble', 'bubbles'],
 		'columnrange': ['columnrange series', 'column', 'columns'],
 		'errorbar': ['errorbar series', 'errorbar', 'errorbars'],
@@ -58,16 +66,26 @@ var win = H.win,
 	},
 	// Descriptions for exotic chart types
 	typeDescriptionMap = {
-		boxplot: ' Box plot charts are typically used to display groups of statistical data. ' +
-				'Each data point in the chart can have up to 5 values: minimum, lower quartile, median, upper quartile and maximum. ',
-		arearange: ' Arearange charts are line charts displaying a range between a lower and higher value for each point. ',
-		areasplinerange: ' These charts are line charts displaying a range between a lower and higher value for each point. ',
-		bubble: ' Bubble charts are scatter charts where each data point also has a size value. ',
-		columnrange: ' Columnrange charts are column charts displaying a range between a lower and higher value for each point. ',
-		errorbar: ' Errorbar series are used to display the variability of the data. ',
-		funnel: ' Funnel charts are used to display reduction of data in stages. ',
-		pyramid: ' Pyramid charts consist of a single pyramid with item heights corresponding to each point value. ',
-		waterfall: ' A waterfall chart is a column chart where each column contributes towards a total end value. '
+		boxplot: ' Box plot charts are typically used to display groups of ' +
+			'statistical data. Each data point in the chart can have up to 5 ' +
+			'values: minimum, lower quartile, median, upper quartile and ' +
+			'maximum. ',
+		arearange: ' Arearange charts are line charts displaying a range ' +
+			'between a lower and higher value for each point. ',
+		areasplinerange: ' These charts are line charts displaying a range ' +
+			'between a lower and higher value for each point. ',
+		bubble: ' Bubble charts are scatter charts where each data point ' +
+			'also has a size value. ',
+		columnrange: ' Columnrange charts are column charts displaying a ' +
+			'range between a lower and higher value for each point. ',
+		errorbar: ' Errorbar series are used to display the variability of ' +
+			'the data. ',
+		funnel: ' Funnel charts are used to display reduction of data in ' +
+			'stages. ',
+		pyramid: ' Pyramid charts consist of a single pyramid with item ' +
+			'heights corresponding to each point value. ',
+		waterfall: ' A waterfall chart is a column chart where each column ' +
+			'contributes towards a total end value. '
 	};
 
 // If a point has one of the special keys defined, we expose all keys to the
@@ -188,11 +206,11 @@ H.setOptions({
 		 */
 		
 		/**
-		 * Formatter function to determine the date/time format used with points
-		 * on datetime axes when describing them to screen reader users. Receives
-		 * one argument, `point`, referring to the point to describe. Should
-		 * return a date format string compatible with [dateFormat](#Highcharts.
-		 * dateFormat).
+		 * Formatter function to determine the date/time format used with
+		 * points on datetime axes when describing them to screen reader users.
+		 * Receives one argument, `point`, referring to the point to describe.
+		 * Should return a date format string compatible with
+		 * [dateFormat](#Highcharts.dateFormat).
 		 * 
 		 * @type {Function}
 		 * @see [pointDateFormat](#accessibility.pointDateFormat)
@@ -201,7 +219,8 @@ H.setOptions({
 		 */
 		
 		/**
-		 * Formatter function to use instead of the default for point descriptions.
+		 * Formatter function to use instead of the default for point
+		 * descriptions.
 		 * Receives one argument, `point`, referring to the point to describe.
 		 * Should return a String with the description of the point for a screen
 		 * reader user.
@@ -218,8 +237,8 @@ H.setOptions({
 		 * to the chart object. Should return a String with the HTML content
 		 * of the region.
 		 * 
-		 * The link to view the chart as a data table will be added automatically
-		 * after the custom HTML content.
+		 * The link to view the chart as a data table will be added
+		 * automatically after the custom HTML content.
 		 * 
 		 * @type {Function}
 		 * @default undefined
@@ -228,10 +247,10 @@ H.setOptions({
 		 */
 		
 		/**
-		 * Formatter function to use instead of the default for series descriptions.
-		 * Receives one argument, `series`, referring to the series to describe.
-		 * Should return a String with the description of the series for a
-		 * screen reader user.
+		 * Formatter function to use instead of the default for series
+		 * descriptions. Receives one argument, `series`, referring to the
+		 * series to describe. Should return a String with the description of
+		 * the series for a screen reader user.
 		 * 
 		 * @type {Function}
 		 * @see [series.description](#plotOptions.series.description)
@@ -334,17 +353,35 @@ H.wrap(H.Series.prototype, 'render', function (proceed) {
 // Put accessible info on series and points of a series
 H.Series.prototype.setA11yDescription = function () {
 	var a11yOptions = this.chart.options.accessibility,
-		firstPointEl = this.points && this.points.length && this.points[0].graphic && this.points[0].graphic.element,
-		seriesEl = firstPointEl && firstPointEl.parentNode || this.graph && this.graph.element || this.group && this.group.element; // Could be tracker series depending on series type
+		firstPointEl = (
+			this.points &&
+			this.points.length &&
+			this.points[0].graphic &&
+			this.points[0].graphic.element
+		),
+		seriesEl = (
+			firstPointEl &&
+			firstPointEl.parentNode || this.graph &&
+			this.graph.element || this.group &&
+			this.group.element
+		); // Could be tracker series depending on series type
 
 	if (seriesEl) {
-		// For some series types the order of elements do not match the order of points in series
-		// In that case we have to reverse them in order for AT to read them out in an understandable order
+		// For some series types the order of elements do not match the order of
+		// points in series. In that case we have to reverse them in order for
+		// AT to read them out in an understandable order
 		if (seriesEl.lastChild === firstPointEl) {
 			reverseChildNodes(seriesEl);
 		}
-		// Make individual point elements accessible if possible. Note: If markers are disabled there might not be any elements there to make accessible.
-		if (this.points && (this.points.length < a11yOptions.pointDescriptionThreshold || a11yOptions.pointDescriptionThreshold === false)) {
+		// Make individual point elements accessible if possible. Note: If
+		// markers are disabled there might not be any elements there to make
+		// accessible.
+		if (
+			this.points && (
+				this.points.length < a11yOptions.pointDescriptionThreshold ||
+				a11yOptions.pointDescriptionThreshold === false
+			)
+		) {
 			each(this.points, function (point) {
 				if (point.graphic) {
 					point.graphic.element.setAttribute('role', 'img');
@@ -365,23 +402,46 @@ H.Series.prototype.setA11yDescription = function () {
 				this.options.exposeElementToA11y ? 'img' : 'region'
 			);
 			seriesEl.setAttribute('tabindex', '-1');
-			seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) ||
-				this.buildSeriesInfoString());
+			seriesEl.setAttribute(
+				'aria-label',
+				a11yOptions.seriesDescriptionFormatter &&
+				a11yOptions.seriesDescriptionFormatter(this) ||
+				this.buildSeriesInfoString()
+			);
 		}
 	}
 };
 
 // Return string with information about series
 H.Series.prototype.buildSeriesInfoString = function () {
-	var typeInfo = typeToSeriesMap[this.type] || typeToSeriesMap['default'], // eslint-disable-line dot-notation
+	var typeInfo = (
+			typeToSeriesMap[this.type] ||
+			typeToSeriesMap['default'] // eslint-disable-line dot-notation
+		),
 		description = this.description || this.options.description;
 	return (this.name ? this.name + ', ' : '') +
-		(this.chart.types.length === 1 ? typeInfo[0] : 'series') + ' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
-		(this.chart.types.length === 1 ? ' with ' : '. ' + typeInfo[0] + ' with ') +
-		(this.points.length + ' ' + (this.points.length === 1 ? typeInfo[1] : typeInfo[2])) +
+		(this.chart.types.length === 1 ? typeInfo[0] : 'series') +
+		' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
+		(
+			this.chart.types.length === 1 ?
+				' with ' :
+				'. ' + typeInfo[0] + ' with '
+		) +
+		(
+			this.points.length + ' ' +
+			(this.points.length === 1 ? typeInfo[1] : typeInfo[2])
+		) +
 		(description ? '. ' + description : '') +
-		(this.chart.yAxis.length > 1 && this.yAxis ? '. Y axis, ' + this.yAxis.getDescription() : '') +
-		(this.chart.xAxis.length > 1 && this.xAxis ? '. X axis, ' + this.xAxis.getDescription() : '');
+		(
+			this.chart.yAxis.length > 1 && this.yAxis ?
+				'. Y axis, ' + this.yAxis.getDescription() :
+				''
+		) +
+		(
+			this.chart.xAxis.length > 1 && this.xAxis ?
+				'. X axis, ' + this.xAxis.getDescription() :
+				''
+		);
 };
 
 // Return string with information about point
@@ -391,38 +451,66 @@ H.Point.prototype.buildPointInfoString = function () {
 		a11yOptions = series.chart.options.accessibility,
 		infoString = '',
 		dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
-		timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat ||
-			H.Tooltip.prototype.getXDateFormat(point, series.chart.options.tooltip, series.xAxis), point.x),
+		timeDesc =
+			dateTimePoint &&
+			dateFormat(
+				a11yOptions.pointDateFormatter &&
+				a11yOptions.pointDateFormatter(point) ||
+				a11yOptions.pointDateFormat ||
+				H.Tooltip.prototype.getXDateFormat(
+					point,
+					series.chart.options.tooltip,
+					series.xAxis
+				),
+				point.x
+			),
 		hasSpecialKey = H.find(series.specialKeys, function (key) {
 			return point[key] !== undefined;
 		});
 
-	// If the point has one of the less common properties defined, display all that are defined
+	// If the point has one of the less common properties defined, display all
+	// that are defined
 	if (hasSpecialKey) {
 		if (dateTimePoint) {
 			infoString = timeDesc;
 		}
 		each(series.commonKeys.concat(series.specialKeys), function (key) {
 			if (point[key] !== undefined && !(dateTimePoint && key === 'x')) {
-				infoString += (infoString ? '. ' : '') + key + ', ' + point[key];
+				infoString += (infoString ? '. ' : '') +
+					key + ', ' +
+					point[key];
 			}
 		});
 	} else {
 		// Pick and choose properties for a succint label
-		infoString = (this.name || timeDesc || this.category || this.id || 'x, ' + this.x) + ', ' +
+		infoString = 
+			(
+				this.name ||
+				timeDesc ||
+				this.category ||
+				this.id ||
+				'x, ' + this.x
+			) + ', ' +
 			(this.value !== undefined ? this.value : this.y);
 	}
 
-	return (this.index + 1) + '. ' + infoString + '.' + (this.description ? ' ' + this.description : '');
+	return (this.index + 1) + '. ' + infoString + '.' +
+		(this.description ? ' ' + this.description : '');
 };
 
 // Get descriptive label for axis
 H.Axis.prototype.getDescription = function () {
-	return this.userOptions && this.userOptions.description || this.axisTitle && this.axisTitle.textStr ||
-			this.options.id || this.categories && 'categories' || 'values';
+	return (
+		this.userOptions && this.userOptions.description ||
+		this.axisTitle && this.axisTitle.textStr ||
+		this.options.id ||
+		this.categories && 'categories' ||
+		'values'
+	);
 };
 
-// Pan along axis in a direction (1 or -1), optionally with a defined granularity (number of steps it takes to walk across current view)
+// Pan along axis in a direction (1 or -1), optionally with a defined
+// granularity (number of steps it takes to walk across current view)
 H.Axis.prototype.panStep = function (direction, granularity) {
 	var gran = granularity || 3,
 		extremes = this.getExtremes(),
@@ -456,9 +544,13 @@ H.wrap(H.Series.prototype, 'init', function (proceed) {
 			var removedSeries = this,
 				hasType = false;
 			
-			// Check if any of the other series have the same type as this one. Otherwise remove it from the list.
+			// Check if any of the other series have the same type as this one.
+			// Otherwise remove it from the list.
 			each(chart.series, function (s) {
-				if (s !== removedSeries && chart.types.indexOf(removedSeries.type) < 0) {
+				if (
+					s !== removedSeries &&
+					chart.types.indexOf(removedSeries.type) < 0
+				) {
 					hasType = true;
 				}
 			});
@@ -469,7 +561,8 @@ H.wrap(H.Series.prototype, 'init', function (proceed) {
 	}
 });
 
-// Return simplified description of chart type. Some types will not be familiar to most screen reader users, but we try.
+// Return simplified description of chart type. Some types will not be familiar
+// to most screen reader users, but we try.
 H.Chart.prototype.getTypeDescription = function () {
 	var firstType = this.types && this.types[0],
 		mapTitle = this.series[0] && this.series[0].mapTitle;
@@ -493,7 +586,8 @@ H.Chart.prototype.getAxesDescription = function () {
 		i;
 
 	if (numXAxes) {
-		desc.xAxis = 'The chart has ' + numXAxes + (numXAxes > 1 ? ' X axes' : ' X axis') + ' displaying ';
+		desc.xAxis = 'The chart has ' + numXAxes +
+			(numXAxes > 1 ? ' X axes' : ' X axis') + ' displaying ';
 		if (numXAxes < 2) {
 			desc.xAxis += this.xAxis[0].getDescription() + '.';
 		} else {
@@ -505,7 +599,8 @@ H.Chart.prototype.getAxesDescription = function () {
 	}
 
 	if (numYAxes) {
-		desc.yAxis = 'The chart has ' + numYAxes + (numYAxes > 1 ? ' Y axes' : ' Y axis') + ' displaying ';
+		desc.yAxis = 'The chart has ' + numYAxes +
+		(numYAxes > 1 ? ' Y axes' : ' Y axis') + ' displaying ';
 		if (numYAxes < 2) {
 			desc.yAxis += this.yAxis[0].getDescription() + '.';
 		} else {
@@ -538,7 +633,8 @@ H.Chart.prototype.addAccessibleContextMenuAttribs =	function () {
 	}
 };
 
-// Highlight a point (show tooltip and display hover state). Returns the highlighted point.
+// Highlight a point (show tooltip and display hover state). Returns the
+// highlighted point.
 H.Point.prototype.highlight = function () {
 	var chart = this.series.chart;
 	if (this.graphic && this.graphic.element.focus) {
@@ -609,7 +705,7 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 
 		// Grab next/prev point & series
 		newSeries = series[curPoint.series.index + (next ? 1 : -1)];
-		newPoint = curPoints[curPointIndex + (next ? forwardSkipAmount : -1)] || 
+		newPoint = curPoints[curPointIndex + (next ? forwardSkipAmount : -1)] ||
 					// Done with this series, try next one
 					newSeries &&
 					newSeries.points[next ? 0 : newSeries.points.length - (
@@ -643,9 +739,15 @@ H.Chart.prototype.showExportMenu = function () {
 // Highlight export menu item by index
 H.Chart.prototype.highlightExportItem = function (ix) {
 	var listItem = this.exportDivElements && this.exportDivElements[ix],
-		curHighlighted = this.exportDivElements && this.exportDivElements[this.highlightedExportItem];
+		curHighlighted = 
+			this.exportDivElements &&
+			this.exportDivElements[this.highlightedExportItem];
 		
-	if (listItem && listItem.tagName === 'DIV' && !(listItem.children && listItem.children.length)) {			
+	if (
+		listItem &&
+		listItem.tagName === 'DIV' &&
+		!(listItem.children && listItem.children.length)
+	) {
 		if (listItem.focus) {
 			listItem.focus();
 		}
@@ -665,7 +767,9 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
 	var buttons = this.rangeSelector.buttons;
 	// Deselect old
 	if (buttons[this.highlightedRangeSelectorItemIx]) {
-		buttons[this.highlightedRangeSelectorItemIx].setState(this.oldRangeSelectorItemState || 0);
+		buttons[this.highlightedRangeSelectorItemIx].setState(
+			this.oldRangeSelectorItemState || 0
+		);
 	}
 	// Select new
 	this.highlightedRangeSelectorItemIx = ix;
@@ -684,7 +788,10 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
 H.Chart.prototype.highlightLegendItem = function (ix) {
 	var items = this.legend.allItems;
 	if (items[this.highlightedLegendItemIx]) {
-		fireEvent(items[this.highlightedLegendItemIx].legendGroup.element, 'mouseout');
+		fireEvent(
+			items[this.highlightedLegendItemIx].legendGroup.element,
+			'mouseout'
+		);
 	}
 	this.highlightedLegendItemIx = ix;
 	if (items[ix]) {
@@ -704,7 +811,10 @@ H.Chart.prototype.hideExportMenu = function () {
 		each(exportList, function (el) {
 			fireEvent(el, 'mouseleave');
 		});
-		if (exportList[this.highlightedExportItem] && exportList[this.highlightedExportItem].onmouseout) {
+		if (
+			exportList[this.highlightedExportItem] &&
+			exportList[this.highlightedExportItem].onmouseout
+		) {
 			exportList[this.highlightedExportItem].onmouseout();
 		}	
 		this.highlightedExportItem = 0;
@@ -716,11 +826,13 @@ H.Chart.prototype.hideExportMenu = function () {
 H.Chart.prototype.addKeyboardNavEvents = function () {
 	var chart = this;
 
-	// Abstraction layer for keyboard navigation. Keep a map of keyCodes to handler functions, and a next/prev move handler for tab order.
-	// The module's keyCode handlers determine when to move to another module.
-	// Validate holds a function to determine if there are prerequisites for this module to run that are not met.
-	// Init holds a function to run once before any keyCodes are interpreted.
-	// Terminate holds a function to run once before moving to next/prev module.
+	// Abstraction layer for keyboard navigation. Keep a map of keyCodes to
+	// handler functions, and a next/prev move handler for tab order. The
+	// module's keyCode handlers determine when to move to another module.
+	// Validate holds a function to determine if there are prerequisites for
+	// this module to run that are not met. Init holds a function to run once
+	// before any keyCodes are interpreted. Terminate holds a function to run
+	// once before moving to next/prev module.
 	function KeyboardNavigationModule(options) {
 		this.id = options.id;
 		this.keyCodeMap = options.keyCodeMap;
@@ -739,7 +851,10 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			each(this.keyCodeMap, function (codeSet) {
 				if (codeSet[0].indexOf(keyCode) > -1) {
 					found = true;
-					handled = codeSet[1].call(navModule, keyCode, e) === false ? false : true; // If explicitly returning false, we haven't handled it
+					handled = codeSet[1].call(navModule, keyCode, e) === false ?
+						// If explicitly returning false, we haven't handled it
+						false :
+						true; 
 				}
 			});
 			// Default tab handler, move to next/prev module
@@ -749,19 +864,23 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			return handled;
 		}
 	};
-	// Maintain abstraction between KeyboardNavigationModule and Highcharts
-	// The chart object keeps track of a list of KeyboardNavigationModules that we move through
+	// Maintain abstraction between KeyboardNavigationModule and Highcharts.
+	// The chart object keeps track of a list of KeyboardNavigationModules that
+	// we move through.
 	function navModuleFactory(id, keyMap, options) {
 		return new KeyboardNavigationModule(merge({
 			keyCodeMap: keyMap,
-			// Move to next/prev valid module, or undefined if none, and init it.
-			// Returns true on success and false if there is no valid module to move to.
+			// Move to next/prev valid module, or undefined if none, and init
+			// it. Returns true on success and false if there is no valid module
+			// to move to.
 			move: function (direction) {
 				if (this.terminate) {
 					this.terminate(direction);
 				}
 				chart.keyboardNavigationModuleIndex += direction;
-				var newModule = chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex];
+				var newModule = chart.keyboardNavigationModules[
+					chart.keyboardNavigationModuleIndex
+				];
 				if (newModule) {
 					if (newModule.validate && !newModule.validate()) {
 						return this.move(direction); // Invalid module
@@ -789,9 +908,12 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// Route keydown events
 	function keydownHandler(ev) {
 		var e = ev || win.event,
-			curNavModule = chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex];
+			curNavModule = chart.keyboardNavigationModules[
+				chart.keyboardNavigationModuleIndex
+			];
 
-		// If there is a navigation module for the current index, run it. Otherwise, we are outside of the chart in some direction.
+		// If there is a navigation module for the current index, run it.
+		// Otherwise, we are outside of the chart in some direction.
 		if (curNavModule) {
 			if (curNavModule.run(e)) {
 				// Successfully handled this key event, stop default handling
@@ -800,27 +922,37 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}
 	}
 
-	// List of the different keyboard handling modes we use depending on where we are in the chart.
-	// Each mode has a set of handling functions mapped to key codes.
-	// Each mode determines when to move to the next/prev mode.
+	// List of the different keyboard handling modes we use depending on where
+	// we are in the chart. Each mode has a set of handling functions mapped to
+	// key codes. Each mode determines when to move to the next/prev mode.
 	chart.keyboardNavigationModules = [
 		// Points
 		navModuleFactory('points', [
 			// Left/Right
 			[[37, 39], function (keyCode) {
-				if (!chart.highlightAdjacentPoint(keyCode === 39)) { // Try to highlight adjacent point
-					return this.move(keyCode === 39 ? 1 : -1); // Failed. Move to next/prev module
+				// Try to highlight adjacent point
+				if (!chart.highlightAdjacentPoint(keyCode === 39)) {
+					// Failed. Move to next/prev module
+					return this.move(keyCode === 39 ? 1 : -1);
 				}
 			}],
 			// Up/Down
 			[[38, 40], function (keyCode) {
 				var newSeries;
 				if (chart.highlightedPoint) {
-					newSeries = chart.series[chart.highlightedPoint.series.index + (keyCode === 38 ? -1 : 1)]; // Find prev/next series
-					if (newSeries && newSeries.points[0]) { // If series exists and has data, go for it
+					// Find prev/next series
+					newSeries = chart.series[
+						chart.highlightedPoint.series.index +
+						(keyCode === 38 ? -1 : 1)
+					]; 
+
+					// If series exists and has data, go for it
+					if (newSeries && newSeries.points[0]) {
 						newSeries.points[0].highlight();
 					} else {
-						return this.move(keyCode === 40 ? 1 : -1); // Otherwise, attempt to move to next/prev module
+
+						// Otherwise, attempt to move to next/prev module
+						return this.move(keyCode === 40 ? 1 : -1); 
 					}
 				}
 			}],
@@ -854,7 +986,8 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			[[37, 38], function () {
 				var i = chart.highlightedExportItem || 0,
 					reachedEnd = true;
-				// Try to highlight prev item in list. Highlighting e.g. separators will fail.
+				// Try to highlight prev item in list. Highlighting e.g.
+				// separators will fail.
 				while (i--) {
 					if (chart.highlightExportItem(i)) {
 						reachedEnd = false;
@@ -870,8 +1003,13 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			[[39, 40], function () {
 				var highlightedExportItem = chart.highlightedExportItem || 0,
 					reachedEnd = true;
-				// Try to highlight next item in list. Highlighting e.g. separators will fail.
-				for (var i = highlightedExportItem + 1; i < chart.exportDivElements.length; ++i) {
+				// Try to highlight next item in list. Highlighting e.g.
+				// separators will fail.
+				for (
+					var i = highlightedExportItem + 1;
+					i < chart.exportDivElements.length;
+					++i
+				) {
 					if (chart.highlightExportItem(i)) {
 						reachedEnd = false;
 						break;
@@ -884,18 +1022,28 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			}],
 			// Enter/Spacebar
 			[[13, 32], function () {
-				fakeClickEvent(chart.exportDivElements[chart.highlightedExportItem]);
+				fakeClickEvent(
+					chart.exportDivElements[chart.highlightedExportItem]
+				);
 			}]
 		], {
-			// Only run exporting navigation if exporting support exists and is enabled on chart
+			// Only run exporting navigation if exporting support exists and is
+			// enabled on chart
 			validate: function () {
-				return chart.exportChart && !(chart.options.exporting && chart.options.exporting.enabled === false);
+				return (
+					chart.exportChart &&
+					!(
+						chart.options.exporting &&
+						chart.options.exporting.enabled === false
+					)
+				);
 			},
 			// Show export menu
 			init: function (direction) {
 				chart.highlightedPoint = null;
 				chart.showExportMenu();
-				// If coming back to export menu from other module, try to highlight last item in menu
+				// If coming back to export menu from other module, try to
+				// highlight last item in menu
 				if (direction < 0 && chart.exportDivElements) {
 					for (var i = chart.exportDivElements.length; i > -1; --i) {
 						if (chart.highlightExportItem(i)) {
@@ -914,16 +1062,22 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		navModuleFactory('mapZoom', [
 			// Up/down/left/right
 			[[38, 40, 37, 39], function (keyCode) {
-				chart[keyCode === 38 || keyCode === 40 ? 'yAxis' : 'xAxis'][0].panStep(keyCode < 39 ? -1 : 1);
+				chart[keyCode === 38 || keyCode === 40 ? 'yAxis' : 'xAxis'][0]
+					.panStep(keyCode < 39 ? -1 : 1);
 			}],
 
 			// Tabs
 			[[9], function (keyCode, e) {
 				var button;
-				chart.mapNavButtons[chart.focusedMapNavButtonIx].setState(0); // Deselect old
-				if (e.shiftKey && !chart.focusedMapNavButtonIx || !e.shiftKey && chart.focusedMapNavButtonIx) { // trying to go somewhere we can't?
+				// Deselect old
+				chart.mapNavButtons[chart.focusedMapNavButtonIx].setState(0);
+				if (
+					e.shiftKey && !chart.focusedMapNavButtonIx ||
+					!e.shiftKey && chart.focusedMapNavButtonIx
+				) { // trying to go somewhere we can't?
 					chart.mapZoom(); // Reset zoom
-					return this.move(e.shiftKey ? -1 : 1); // Nowhere to go, go to prev/next module
+					// Nowhere to go, go to prev/next module
+					return this.move(e.shiftKey ? -1 : 1); 
 				}
 				chart.focusedMapNavButtonIx += e.shiftKey ? -1 : 1;
 				button = chart.mapNavButtons[chart.focusedMapNavButtonIx];
@@ -935,12 +1089,18 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 
 			// Enter/Spacebar
 			[[13, 32], function () {
-				fakeClickEvent(chart.mapNavButtons[chart.focusedMapNavButtonIx].element);
+				fakeClickEvent(
+					chart.mapNavButtons[chart.focusedMapNavButtonIx].element
+				);
 			}]
 		], {
 			// Only run this module if we have map zoom on the chart
 			validate: function () {
-				return chart.mapZoom && chart.mapNavButtons && chart.mapNavButtons.length === 2;
+				return (
+					chart.mapZoom &&
+					chart.mapNavButtons &&
+					chart.mapNavButtons.length === 2
+				);
 			},
 
 			// Make zoom buttons do their magic
@@ -952,7 +1112,10 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				each(chart.mapNavButtons, function (button, i) {
 					button.element.setAttribute('tabindex', -1);
 					button.element.setAttribute('role', 'button');
-					button.element.setAttribute('aria-label', 'Zoom ' + (i ? 'out' : '') + 'chart');
+					button.element.setAttribute(
+						'aria-label',
+						'Zoom ' + (i ? 'out' : '') + 'chart'
+					);
 				});
 
 				if (initialButton.element.focus) {
@@ -969,20 +1132,33 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			[[37, 39, 38, 40], function (keyCode) {
 				var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
 				// Try to highlight next/prev button
-				if (!chart.highlightRangeSelectorButton(chart.highlightedRangeSelectorItemIx + direction)) {
+				if (
+					!chart.highlightRangeSelectorButton(
+						chart.highlightedRangeSelectorItemIx + direction
+					)
+				) {
 					return this.move(direction);
 				}
 			}],
 			// Enter/Spacebar
 			[[13, 32], function () {
-				if (chart.oldRangeSelectorItemState !== 3) { // Don't allow click if button used to be disabled
-					fakeClickEvent(chart.rangeSelector.buttons[chart.highlightedRangeSelectorItemIx].element);
+				// Don't allow click if button used to be disabled
+				if (chart.oldRangeSelectorItemState !== 3) {
+					fakeClickEvent(
+						chart.rangeSelector.buttons[
+							chart.highlightedRangeSelectorItemIx
+						].element
+					);
 				}
 			}]
 		], {
 			// Only run this module if we have range selector
 			validate: function () {
-				return chart.rangeSelector && chart.rangeSelector.buttons && chart.rangeSelector.buttons.length;
+				return (
+					chart.rangeSelector &&
+					chart.rangeSelector.buttons &&
+					chart.rangeSelector.buttons.length
+				);
 			},
 
 			// Make elements focusable and accessible
@@ -990,10 +1166,15 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				each(chart.rangeSelector.buttons, function (button) {
 					button.element.setAttribute('tabindex', '-1');
 					button.element.setAttribute('role', 'button');
-					button.element.setAttribute('aria-label', 'Select range ' + (button.text && button.text.textStr));
+					button.element.setAttribute(
+						'aria-label',
+						'Select range ' + (button.text && button.text.textStr)
+					);
 				});
 				// Focus first/last button
-				chart.highlightRangeSelectorButton(direction > 0 ? 0 : chart.rangeSelector.buttons.length - 1);
+				chart.highlightRangeSelectorButton(
+					direction > 0 ? 0 : chart.rangeSelector.buttons.length - 1
+				);
 			}
 		}),
 
@@ -1001,25 +1182,41 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		navModuleFactory('rangeSelectorInput', [
 			// Tab/Up/Down
 			[[9, 38, 40], function (keyCode, e) {
-				var direction = (keyCode === 9 && e.shiftKey || keyCode === 38) ? -1 : 1,
-					newIx = chart.highlightedInputRangeIx = chart.highlightedInputRangeIx + direction;
+				var direction =
+					(keyCode === 9 && e.shiftKey || keyCode === 38) ? -1 : 1,
+					
+					newIx = chart.highlightedInputRangeIx =
+						chart.highlightedInputRangeIx + direction;
+				
 				// Try to highlight next/prev item in list.
 				if (newIx > 1 || newIx < 0) { // Out of range
 					return this.move(direction);
 				}
-				chart.rangeSelector[newIx ? 'maxInput' : 'minInput'].focus(); // Input boxes are HTML, and should have focus support in all browsers
+				chart.rangeSelector[newIx ? 'maxInput' : 'minInput'].focus();
 			}]
 		], {
 			// Only run if we have range selector with input boxes
 			validate: function () {
-				var inputVisible = chart.rangeSelector && chart.rangeSelector.inputGroup && chart.rangeSelector.inputGroup.element.getAttribute('visibility') !== 'hidden';
-				return inputVisible && chart.options.rangeSelector.inputEnabled !== false && chart.rangeSelector.minInput && chart.rangeSelector.maxInput;
+				var inputVisible = (
+					chart.rangeSelector &&
+					chart.rangeSelector.inputGroup &&
+					chart.rangeSelector.inputGroup.element
+						.getAttribute('visibility') !== 'hidden'
+				);
+				return (
+					inputVisible &&
+					chart.options.rangeSelector.inputEnabled !== false &&
+					chart.rangeSelector.minInput &&
+					chart.rangeSelector.maxInput
+				);
 			},
 
 			// Highlight first/last input box
 			init: function (direction) {
 				chart.highlightedInputRangeIx = direction > 0 ? 0 : 1;
-				chart.rangeSelector[chart.highlightedInputRangeIx ? 'maxInput' : 'minInput'].focus();
+				chart.rangeSelector[
+					chart.highlightedInputRangeIx ? 'maxInput' : 'minInput'
+				].focus();
 			}
 		}),
 
@@ -1029,17 +1226,25 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			[[37, 39, 38, 40], function (keyCode) {
 				var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
 				// Try to highlight next/prev legend item
-				if (!chart.highlightLegendItem(chart.highlightedLegendItemIx + direction)) {
+				if (
+					!chart.highlightLegendItem(
+						chart.highlightedLegendItemIx + direction
+					)
+				) {
 					return this.move(direction);
 				}
 			}],
 			// Enter/Spacebar
 			[[13, 32], function () {
-				fakeClickEvent(chart.legend.allItems[chart.highlightedLegendItemIx].legendItem.element.parentNode);
+				fakeClickEvent(
+					chart.legend.allItems[
+						chart.highlightedLegendItemIx
+					].legendItem.element.parentNode
+				);
 			}]
 		], {
-			// Only run this module if we have at least one legend - wait for it - item.
-			// Don't run if the legend is populated by a colorAxis.
+			// Only run this module if we have at least one legend - wait for
+			// it - item. Don't run if the legend is populated by a colorAxis.
 			// Don't run if legend navigation is disabled.
 			validate: function () {
 				return chart.legend && chart.legend.allItems &&
@@ -1054,15 +1259,22 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				each(chart.legend.allItems, function (item) {
 					item.legendGroup.element.setAttribute('tabindex', '-1');
 					item.legendGroup.element.setAttribute('role', 'button');
-					item.legendGroup.element.setAttribute('aria-label', 'Toggle visibility of series ' + item.name);
+					item.legendGroup.element.setAttribute(
+						'aria-label',
+						'Toggle visibility of series ' + item.name
+					);
 				});
 				// Focus first/last item
-				chart.highlightLegendItem(direction > 0 ? 0 : chart.legend.allItems.length - 1);
+				chart.highlightLegendItem(
+					direction > 0 ? 0 : chart.legend.allItems.length - 1
+				);
 			}
 		})
 	];
 
-	// Init nav module index. We start at the first module, and as the user navigates through the chart the index will increase to use different handler modules.
+	// Init nav module index. We start at the first module, and as the user
+	// navigates through the chart the index will increase to use different
+	// handler modules.
 	chart.keyboardNavigationModuleIndex = 0;
 
 	// Make chart reachable by tab
@@ -1078,7 +1290,8 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// to this and not preventing the default tab action.
 	if (!chart.tabExitAnchor) {
 		chart.tabExitAnchor = doc.createElement('div');
-		chart.tabExitAnchor.setAttribute('tabindex', '-1'); // Not reachable by user
+		// Not reachable by user
+		chart.tabExitAnchor.setAttribute('tabindex', '-1');
 		merge(true, chart.tabExitAnchor.style, hiddenStyle);
 		chart.renderTo.appendChild(chart.tabExitAnchor);
 	}
@@ -1091,7 +1304,8 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 };
 
 // Add screen reader region to chart.
-// tableId is the HTML id of the table to focus when clicking the table anchor in the screen reader region.
+// tableId is the HTML id of the table to focus when clicking the table anchor
+// in the screen reader region.
 H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 	var	chart = this,
 		series = chart.series,
@@ -1102,23 +1316,52 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 		tableShortcutAnchor = doc.createElement('a'),
 		chartHeading = doc.createElement('h4'),
 		chartTypes = chart.types || [],
-		// Build axis info - but not for pies and maps. Consider not adding for certain other types as well (funnel, pyramid?)
-		axesDesc = (chartTypes.length === 1 && chartTypes[0] === 'pie' || chartTypes[0] === 'map') && {} || chart.getAxesDescription(),
-		chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap['default']; // eslint-disable-line dot-notation
+		// Build axis info - but not for pies and maps. Consider not adding for
+		// certain other types as well (funnel, pyramid?)
+		axesDesc = (
+			chartTypes.length === 1 && chartTypes[0] === 'pie' ||
+			chartTypes[0] === 'map'
+		) && {} || chart.getAxesDescription(),
+		chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] ||
+			typeToSeriesMap['default']; // eslint-disable-line dot-notation
 
 	hiddenSection.setAttribute('id', id);
 	hiddenSection.setAttribute('role', 'region');
-	hiddenSection.setAttribute('aria-label', 'Chart screen reader information.');
+	hiddenSection.setAttribute(
+		'aria-label',
+		'Chart screen reader information.'
+	);
 
-	hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) ||
+	hiddenSection.innerHTML = 
+		a11yOptions.screenReaderSectionFormatter &&
+		a11yOptions.screenReaderSectionFormatter(chart) ||
 		'<div>Use regions/landmarks to skip ahead to chart' +
 		(series.length > 1 ? ' and navigate between data series' : '') +
-		'.</div><h3>' + (options.title.text ? htmlencode(options.title.text) : 'Chart') +
-		(options.subtitle && options.subtitle.text ? '. ' + htmlencode(options.subtitle.text) : '') +
-		'</h3><h4>Long description.</h4><div>' + (options.chart.description || 'No description available.') +
-		'</div><h4>Structure.</h4><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
-		(series.length === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
-			(series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</div>' : '') +
+		'.</div><h3>' +
+		(options.title.text ? htmlencode(options.title.text) : 'Chart') +
+		(
+			options.subtitle &&	options.subtitle.text ?
+				'. ' + htmlencode(options.subtitle.text) :
+				''
+		) +
+		'</h3><h4>Long description.</h4><div>' +
+		(options.chart.description || 'No description available.') +
+		'</div><h4>Structure.</h4><div>Chart type: ' +
+		(options.chart.typeDescription || chart.getTypeDescription()) +
+		'</div>' +
+		(
+			series.length === 1 ?
+				(
+					'<div>' + chartTypeInfo[0] + ' with ' +
+					series[0].points.length + ' ' +
+					(
+						series[0].points.length === 1 ?
+							chartTypeInfo[1] :
+							chartTypeInfo[2]
+					) +
+					'.</div>'
+				) : ''
+		) +
 		(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
 		(axesDesc.yAxis ? ('<div>' + axesDesc.yAxis + '</div>') : '');
 
@@ -1126,11 +1369,13 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 	if (chart.getCSV) {
 		tableShortcutAnchor.innerHTML = 'View as data table.';
 		tableShortcutAnchor.href = '#' + tableId;
-		tableShortcutAnchor.setAttribute('tabindex', '-1'); // Make this unreachable by user tabbing
-		tableShortcutAnchor.onclick = a11yOptions.onTableAnchorClick || function () {
-			chart.viewData();
-			doc.getElementById(tableId).focus();
-		};
+		// Make this unreachable by user tabbing
+		tableShortcutAnchor.setAttribute('tabindex', '-1');
+		tableShortcutAnchor.onclick =
+			a11yOptions.onTableAnchorClick || function () {
+				chart.viewData();
+				doc.getElementById(tableId).focus();
+			};
 		tableShortcut.appendChild(tableShortcutAnchor);
 		hiddenSection.appendChild(tableShortcut);
 	}
@@ -1156,15 +1401,25 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		return;
 	}
 
-	var	titleElement = doc.createElementNS('http://www.w3.org/2000/svg', 'title'),
-		exportGroupElement = doc.createElementNS('http://www.w3.org/2000/svg', 'g'),
+	var	titleElement = doc.createElementNS(
+			'http://www.w3.org/2000/svg',
+			'title'
+		),
+		exportGroupElement = doc.createElementNS(
+			'http://www.w3.org/2000/svg',
+			'g'
+		),
 		descElement = chart.container.getElementsByTagName('desc')[0],
 		textElements = chart.container.getElementsByTagName('text'),
 		titleId = 'highcharts-title-' + chart.index,
 		tableId = 'highcharts-data-table-' + chart.index,
 		hiddenSectionId = 'highcharts-information-region-' + chart.index,
 		chartTitle = options.title.text || 'Chart',
-		oldColumnHeaderFormatter = options.exporting && options.exporting.csv && options.exporting.csv.columnHeaderFormatter,
+		oldColumnHeaderFormatter = (
+			options.exporting &&
+			options.exporting.csv &&
+			options.exporting.csv.columnHeaderFormatter
+		),
 		topLevelColumns = [];
 
 	// Add SVG title/desc tags
@@ -1172,34 +1427,51 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	titleElement.id = titleId;
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
-	chart.renderTo.setAttribute('aria-label', 'Interactive chart. ' + chartTitle +
-		'. Use up and down arrows to navigate with most screen readers.');
+	chart.renderTo.setAttribute(
+		'aria-label',
+		'Interactive chart. ' + chartTitle +
+			'. Use up and down arrows to navigate with most screen readers.'
+	);
 
 	// Set screen reader properties on export menu
-	if (chart.exportSVGElements && chart.exportSVGElements[0] && chart.exportSVGElements[0].element) {
+	if (
+		chart.exportSVGElements &&
+		chart.exportSVGElements[0] &&
+		chart.exportSVGElements[0].element
+	) {
 		var oldExportCallback = chart.exportSVGElements[0].element.onclick,
 			parent = chart.exportSVGElements[0].element.parentNode;
 		chart.exportSVGElements[0].element.onclick = function () {
-			oldExportCallback.apply(this, Array.prototype.slice.call(arguments));
+			oldExportCallback.apply(
+				this,
+				Array.prototype.slice.call(arguments)
+			);
 			chart.addAccessibleContextMenuAttribs();
 			chart.highlightExportItem(0);
 		};
 		chart.exportSVGElements[0].element.setAttribute('role', 'button');
-		chart.exportSVGElements[0].element.setAttribute('aria-label', 'View export menu');
+		chart.exportSVGElements[0].element.setAttribute(
+			'aria-label',
+			'View export menu'
+		);
 		exportGroupElement.appendChild(chart.exportSVGElements[0].element);
 		exportGroupElement.setAttribute('role', 'region');
 		exportGroupElement.setAttribute('aria-label', 'Chart export menu');
 		parent.appendChild(exportGroupElement);
 	}
 
-	// Set screen reader properties on input boxes for range selector. We need to do this regardless of whether or not these are visible, as they are 
+	// Set screen reader properties on input boxes for range selector. We need
+	// to do this regardless of whether or not these are visible, as they are 
 	// by default part of the page's tabindex unless we set them to -1.
 	if (chart.rangeSelector) {
 		each(['minInput', 'maxInput'], function (key, i) {
 			if (chart.rangeSelector[key]) {
 				chart.rangeSelector[key].setAttribute('tabindex', '-1');
 				chart.rangeSelector[key].setAttribute('role', 'textbox');
-				chart.rangeSelector[key].setAttribute('aria-label', 'Select ' + (i ? 'end' : 'start') + ' date.');
+				chart.rangeSelector[key].setAttribute(
+					'aria-label',
+					'Select ' + (i ? 'end' : 'start') + ' date.'
+				);
 			}
 		});
 	}
@@ -1233,7 +1505,8 @@ H.Chart.prototype.callbacks.push(function (chart) {
 				var prevCol = topLevelColumns[topLevelColumns.length - 1];
 				if (keyLength > 1) {
 					// We need multiple levels of column headers
-					// Populate a list of column headers to add in addition to the ones added by export-data
+					// Populate a list of column headers to add in addition to
+					// the ones added by export-data
 					if ((prevCol && prevCol.text) !== item.name) {
 						topLevelColumns.push({
 							text: item.name,
@@ -1242,7 +1515,12 @@ H.Chart.prototype.callbacks.push(function (chart) {
 					}
 				}
 				if (oldColumnHeaderFormatter) {
-					return oldColumnHeaderFormatter.call(this, item, key, keyLength);
+					return oldColumnHeaderFormatter.call(
+						this,
+						item,
+						key,
+						keyLength
+					);
 				}
 				return keyLength > 1 ? key : item.name;
 			}
@@ -1252,7 +1530,11 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	// Add ID and title/caption to table HTML
 	H.wrap(chart, 'getTable', function (proceed) {
 		return proceed.apply(this, Array.prototype.slice.call(arguments, 1))
-			.replace('<table>', '<table id="' + tableId + '" summary="Table representation of chart"><caption>' + chartTitle + '</caption>');
+			.replace(
+				'<table>',
+				'<table id="' + tableId + '" summary="Table representation ' +
+					'of chart"><caption>' + chartTitle + '</caption>'
+			);
 	});
 
 	// Add accessibility attributes and top level columns
@@ -1290,7 +1572,8 @@ H.Chart.prototype.callbacks.push(function (chart) {
 			// Add top level columns
 			if (topLevelColumns.length) {
 				each(topLevelColumns, function (col) {
-					columnHeaderRow += '<th scope="col" colspan="' + col.span + '">' + col.text + '</th>';
+					columnHeaderRow += '<th scope="col" colspan="' + col.span +
+						'">' + col.text + '</th>';
 				});
 				head.insertAdjacentHTML('afterbegin', columnHeaderRow);
 			}
