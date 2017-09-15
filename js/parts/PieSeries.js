@@ -220,6 +220,7 @@ seriesType('pie', 'line', {
 	 * @apioption plotOptions.pie.innerSize
 	 */
 
+	/** @ignore */
 	legendType: 'point',
 
 	/**	 @ignore */
