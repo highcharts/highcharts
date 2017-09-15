@@ -1,7 +1,7 @@
 
 Highcharts.chart('container', {
     chart: {
-        type: 'scatter',
+        type: 'scatter3d',
         options3d: {
             enabled: true,
             alpha: 20,

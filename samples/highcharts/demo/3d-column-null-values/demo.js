@@ -21,7 +21,13 @@ Highcharts.chart('container', {
         }
     },
     xAxis: {
-        categories: Highcharts.getOptions().lang.shortMonths
+        categories: Highcharts.getOptions().lang.shortMonths,
+        labels: {
+            skew3d: true,
+            style: {
+                fontSize: '16px'
+            }
+        }
     },
     yAxis: {
         title: {

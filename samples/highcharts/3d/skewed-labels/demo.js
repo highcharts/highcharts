@@ -4,7 +4,7 @@ var chart = new Highcharts.Chart({
     chart: {
         renderTo: 'container',
         margin: 100,
-        type: 'scatter',
+        type: 'scatter3d',
         options3d: {
             enabled: true,
             alpha: 10,
