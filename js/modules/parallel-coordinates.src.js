@@ -5,6 +5,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: ["warn", 80, 4] */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Axis.js';
@@ -43,22 +44,20 @@ var defaultXAxisOptions = {
  */
 var defaultParallelOptions = {
 	/**
-	 * Flag to render charts as a parallel coordinates plot.
-	 * In a parallel coordinates plot (||-coords) by default all required yAxes are generated and legend is disabled.
-	 * This feature requires `modules/parallel-coordinates.js`, found in the download package or online at
-	 * [code.highcharts.com/modules/parallel-coordinates.js](http://code.highcharts.com/modules/parallel-coordinates.js).
+	 * Flag to render charts as a parallel coordinates plot. In a parallel
+	 * coordinates plot (||-coords) by default all required yAxes are generated
+	 * and the legend is disabled. This feature requires
+	 * `modules/parallel-coordinates.js`.
 	 *
-	 * @type {Boolean}
-	 * @default false
-	 * @sample {highcharts} /highcharts/demo/parallel-coordinates/ Parallel coordinates demo
+	 * @sample {highcharts} /highcharts/demo/parallel-coordinates/
+	 *         Parallel coordinates demo
 	 * @since 6.0.0
 	 * @product highcharts
 	 */
 	parallelCoordinates: false,
 	/**
-	 * Common options for all yAxes rendered in a parallel coordinates plot. This feature requires
-	 * `modules/parallel-coordinates.js`, found in the download package or online at
-	 * [code.highcharts.com/modules/parallel-coordinates.js](http://code.highcharts.com/modules/parallel-coordinates.js).
+	 * Common options for all yAxes rendered in a parallel coordinates plot.
+	 * This feature requires `modules/parallel-coordinates.js`.
 	 *
 	 * The default options are:
 	 * <pre>
@@ -79,12 +78,14 @@ var defaultParallelOptions = {
 	 * }</pre>
 	 *
 	 * @extends {yAxis}
-	 * @excluding breaks,id,gridLineColor,gridLineDashStyle,gridLineWidth,
-	 *            minorGridLineColor,minorGridLineDashStyle,minorGridLineWidth,
-	 *            plotBands,plotLines,angle,gridLineInterpolation,maxColor,
-	 *            maxZoom,minColor,scrollbar,stackLabels,stops
+	 * @excluding alternateGridColor,breaks,id,gridLineColor,gridLineDashStyle,
+	 *            gridLineWidth,minorGridLineColor,minorGridLineDashStyle,
+	 *            minorGridLineWidth,plotBands,plotLines,angle,
+	 *            gridLineInterpolation,maxColor,maxZoom,minColor,scrollbar,
+	 *            stackLabels,stops
 	 * @product highcharts
-	 * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/ Set the same tickAmount for all yAxes
+	 * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/
+	 *         Set the same tickAmount for all yAxes
 	 * @since 6.0.0
 	 */
 	parallelAxes: {
@@ -97,7 +98,7 @@ var defaultParallelOptions = {
 		},
 		labels: {
 			x: 0,
-			y: 0,
+			y: 4,
 			align: 'center',
 			reserveSpace: false
 		},
@@ -123,7 +124,8 @@ wrap(ChartProto, 'init', function (proceed, options) {
 	 * @memberOf Chart
 	 * @type {Boolean}
 	 */
-	this.hasParallelCoordinates = options.chart && options.chart.parallelCoordinates;
+	this.hasParallelCoordinates = options.chart &&
+		options.chart.parallelCoordinates;
 
 	if (this.hasParallelCoordinates) {
 
@@ -192,8 +194,10 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 	 * Define how many parellel axes we have according to the longest  dataset
 	 * This is quite heavy - loop over all series and check series.data.length
 	 * Consider:
-	 * - make this an option, so user needs to set this to get better performance
-	 * - check only first series for number of points and assume the rest is the same
+	 * - make this an option, so user needs to set this to get better
+	 * 	 performance
+	 * - check only first series for number of points and assume the rest is the
+	 * 	 same
 	 *
 	 * @param {Object} options User options
 	 */
@@ -260,8 +264,9 @@ wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
 
 
 /**
- * Each axis should gather extremes from points on a particular position in series.data
- * Not like the default one, which gathers extremes from all series bind to this axis
+ * Each axis should gather extremes from points on a particular position in
+ * series.data. Not like the default one, which gathers extremes from all series
+ * bind to this axis.
  * Consider:
  * - using series.points instead of series.yData
  */
@@ -285,13 +290,17 @@ wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
 
 extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
 	/**
-	 * Set predefined left+width and top+height (inverted) for yAxes. This method modifies options param.
+	 * Set predefined left+width and top+height (inverted) for yAxes. This
+	 * method modifies options param.
 	 *
-	 * @param {Array} axisPosition ['left', 'width', 'height', 'top'] or ['top', 'height', 'width', 'left'] for an inverted chart.
-	 * @param {Object} options {@link Highcharts.Axis#options}.
+	 * @param  {Array} axisPosition
+	 *         ['left', 'width', 'height', 'top'] or
+	 *         ['top', 'height', 'width', 'left'] for an inverted chart.
+	 * @param  {Object} options {@link Highcharts.Axis#options}.
 	 */
 	setParallelPosition: function (axisPosition, options) {
-		options[axisPosition[0]] = 100 * (this.parallelPosition + 0.5) / (this.chart.parallelInfo.counter + 1) + '%';
+		options[axisPosition[0]] = 100 * (this.parallelPosition + 0.5) /
+			(this.chart.parallelInfo.counter + 1) + '%';
 		this[axisPosition[1]] = options[axisPosition[1]] = 0;
 
 		// In case of chart.update(inverted), remove old options:
@@ -343,7 +352,8 @@ wrap(SeriesProto, 'translate', function (proceed) {
 					chart.plotHeight - chart.yAxis[i].top + chart.plotTop :
 					chart.yAxis[i].left - chart.plotLeft;
 
-				point.plotY = chart.yAxis[i].translate(point.y, false, true, null, true);
+				point.plotY = chart.yAxis[i]
+					.translate(point.y, false, true, null, true);
 
 				if (lastPlotX !== undefined) {
 					closestPointRangePx = Math.min(
@@ -395,18 +405,24 @@ function addFormattedValue(proceed) {
 
 		labelFormat = pick(
 			/**
-			 * Parallel coordinates only. Format that will be used for point.y and
-			 * available in [tooltip.pointFormat](#tooltip.pointFormat) as: `{point.formattedValue}`.
-			 * If not set, `{point.formattedValue}` will use other options, in this order:
+			 * Parallel coordinates only. Format that will be used for point.y
+			 * and available in [tooltip.pointFormat](#tooltip.pointFormat) as
+			 * `{point.formattedValue}`. If not set, `{point.formattedValue}`
+			 * will use other options, in this order:
 			 *
-			 * 1. [yAxis.labels.format](#yAxis.labels.format) will be used if set
-			 * 2. if yAxis is a catagory, then category name will be displayed
-			 * 3. if yAxis is a datetime, then value will use the same format as yAxis labels
-			 * 4. if yAxis is linear/logarithmic type, then simple value will be used
+			 * 1. [yAxis.labels.format](#yAxis.labels.format) will be used if
+			 *    set
+			 * 2. if yAxis is a category, then category name will be displayed
+			 * 3. if yAxis is a datetime, then value will use the same format as
+			 *    yAxis labels
+			 * 4. if yAxis is linear/logarithmic type, then simple value will be
+			 *    used
 			 *
 			 * @default undefined
 			 * @memberOf yAxis
-			 * @sample {highcharts} /highcharts/parallel-coordinates/tooltipvalueformat/ Different tooltipValueFormats's
+			 * @sample {highcharts}
+			 *         /highcharts/parallel-coordinates/tooltipvalueformat/
+			 *         Different tooltipValueFormats's
 			 * @apioption yAxis.tooltipValueFormat
 			 * @product highcharts
 			 * @since 6.0.0
@@ -425,7 +441,9 @@ function addFormattedValue(proceed) {
 			);
 		} else if (yAxis.isDatetimeAxis) {
 			formattedValue = H.dateFormat(
-				yAxisOptions.dateTimeLabelFormats[yAxis.tickPositions.info.unitName],
+				yAxisOptions.dateTimeLabelFormats[
+					yAxis.tickPositions.info.unitName
+				],
 				this.y
 			);
 		} else if (yAxisOptions.categories) {
@@ -441,5 +459,9 @@ function addFormattedValue(proceed) {
 }
 
 each(['line', 'spline'], function (seriesName) {
-	wrap(H.seriesTypes[seriesName].prototype.pointClass.prototype, 'getLabelConfig', addFormattedValue);
+	wrap(
+		H.seriesTypes[seriesName].prototype.pointClass.prototype,
+		'getLabelConfig',
+		addFormattedValue
+	);
 });
