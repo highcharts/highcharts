@@ -152,13 +152,21 @@ seriesType('columnrange', 'arearange', merge(
 	drawPoints: colProto.drawPoints,
 	drawTracker: colProto.drawTracker,
 	getColumnMetrics: colProto.getColumnMetrics,
+	pointAttribs: colProto.pointAttribs,
+
+	// Overrides from modules that may be loaded after this module
 	animate: function () {
 		return colProto.animate.apply(this, arguments);
 	},
 	polarArc: function () {
 		return colProto.polarArc.apply(this, arguments);
 	},
-	pointAttribs: colProto.pointAttribs
+	translate3dPoints: function () {
+		return colProto.translate3dPoints.apply(this, arguments);	
+	},
+	translate3dShapes: function () {
+		return colProto.translate3dShapes.apply(this, arguments);	
+	}
 }, {
 	setState: colProto.pointClass.prototype.setState
 });

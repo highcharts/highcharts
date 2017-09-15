@@ -62,9 +62,13 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {
-		return;
+	if (this.chart.is3d()) {
+		this.translate3dShapes();
 	}
+});
+
+seriesTypes.column.prototype.translate3dPoints = function () {};
+seriesTypes.column.prototype.translate3dShapes = function () {
 
 	var series = this,
 		chart = series.chart,
@@ -137,7 +141,7 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	});
 	// store for later use #4067
 	series.z = z;
-});
+};
 
 wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 	if (!this.chart.is3d()) {

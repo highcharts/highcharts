@@ -24,6 +24,18 @@ Chart.prototype.is3d = function () {
 Chart.prototype.propsRequireDirtyBox.push('chart.options3d');
 Chart.prototype.propsRequireUpdateSeries.push('chart.options3d');
 
+// Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to the
+// real 'scatter3d' series type. 
+wrap(Chart.prototype, 'initSeries', function (proceed, options) {
+	var type = options.type ||
+		this.options.chart.type ||
+		this.options.chart.defaultSeriesType;
+	if (this.is3d() && type === 'scatter') {
+		options.type = 'scatter3d';
+	}
+	return proceed.call(this, options);
+});
+
 /**
  * Calculate scale of the 3D view. That is required to
  * fit chart's 3D projection into the actual plotting area. Reported as #4933.
