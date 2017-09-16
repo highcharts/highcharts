@@ -491,6 +491,9 @@ H.Tick.prototype = {
 				show = false;
 			}
 
+			//Fix label position in 3D charts.
+			xy = this.fixLabelPosition(xy);
+
 			// Set the new position, and show or hide
 			if (show && isNumber(xy.y)) {
 				xy.opacity = opacity;
@@ -501,6 +504,14 @@ H.Tick.prototype = {
 				tick.isNewLabel = true;
 			}
 		}
+	},
+
+	/**
+	 * This is a hook for applying 3D projection on the label position.
+	 * On 2D charts, it is a no-op.
+	 */
+	fixLabelPosition: function (xy) {
+		return xy;
 	},
 
 	/**

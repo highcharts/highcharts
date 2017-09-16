@@ -442,7 +442,7 @@ wrap(Tick.prototype, 'getMarkPath', function (proceed) {
 	return this.axis.chart.renderer.toLineSegments(pArr);
 });
 
-wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
+wrap(Tick.prototype, 'fixLabelPosition', function (proceed) {
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
 	return fix3dPosition(this.axis, pos);
 });
