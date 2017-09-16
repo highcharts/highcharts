@@ -121,7 +121,7 @@ H.StackItem.prototype = {
 			),
 			yZero = axis.translate(0), // stack origin
 			h = Math.abs(y - yZero), // stack height
-			x = chart.xAxis[0].translate(stackItem.x) + xOffset,	// stack x position
+			x = chart.xAxis[0].translate(stackItem.x) + xOffset, // x position
 			stackBox = stackItem.getStackBox(chart, stackItem, x, y, xWidth, h),
 			label = stackItem.label,
 			alignAttr;

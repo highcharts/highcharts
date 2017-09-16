@@ -31,10 +31,14 @@ var pick = H.pick,
  */
 seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 	/**
-	 * Get the spline segment from a given point's previous neighbour to the given point
+	 * Get the spline segment from a given point's previous neighbour to the
+	 * given point
 	 */
 	getPointSpline: function (points, point, i) {
-		var smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc
+		var 
+			// 1 means control points midway between points, 2 means 1/3 from
+			// the point, 3 is 1/4 etc
+			smoothing = 1.5,
 			denom = smoothing + 1,
 			plotX = point.plotX,
 			plotY = point.plotY,
@@ -66,7 +70,8 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 			rightContX = (smoothing * plotX + nextX) / denom;
 			rightContY = (smoothing * plotY + nextY) / denom;
 
-			// Have the two control points make a straight line through main point
+			// Have the two control points make a straight line through main
+			// point
 			if (rightContX !== leftContX) { // #5016, division by zero
 				correction = ((rightContY - leftContY) * (rightContX - plotX)) /
 					(rightContX - leftContX) + plotY - rightContY;
@@ -79,7 +84,8 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 			// neighbouring points' y values
 			if (leftContY > lastY && leftContY > plotY) {
 				leftContY = Math.max(lastY, plotY);
-				rightContY = 2 * plotY - leftContY; // mirror of left control point
+				// mirror of left control point
+				rightContY = 2 * plotY - leftContY;
 			} else if (leftContY < lastY && leftContY < plotY) {
 				leftContY = Math.min(lastY, plotY);
 				rightContY = 2 * plotY - leftContY;
@@ -102,7 +108,11 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 		// Visualize control points for debugging
 		/*
 		if (leftContX) {
-			this.chart.renderer.circle(leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop, 2)
+			this.chart.renderer.circle(
+					leftContX + this.chart.plotLeft,
+					leftContY + this.chart.plotTop,
+					2
+				)
 				.attr({
 					stroke: 'red',
 					'stroke-width': 2,
@@ -110,7 +120,8 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 					zIndex: 9
 				})
 				.add();
-			this.chart.renderer.path(['M', leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop,
+			this.chart.renderer.path(['M', leftContX + this.chart.plotLeft,
+				leftContY + this.chart.plotTop,
 				'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
 				.attr({
 					stroke: 'red',
@@ -120,7 +131,11 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 				.add();
 		}
 		if (rightContX) {
-			this.chart.renderer.circle(rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop, 2)
+			this.chart.renderer.circle(
+					rightContX + this.chart.plotLeft,
+					rightContY + this.chart.plotTop,
+					2
+				)
 				.attr({
 					stroke: 'green',
 					'stroke-width': 2,
@@ -128,7 +143,8 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 					zIndex: 9
 				})
 				.add();
-			this.chart.renderer.path(['M', rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop,
+			this.chart.renderer.path(['M', rightContX + this.chart.plotLeft,
+				rightContY + this.chart.plotTop,
 				'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
 				.attr({
 					stroke: 'green',
@@ -147,7 +163,8 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 			plotX,
 			plotY
 		];
-		lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later
+		// reset for updating series later
+		lastPoint.rightContX = lastPoint.rightContY = null;
 		return ret;
 	}
 });
@@ -215,11 +232,16 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
  * @product highcharts highstock
  * @apioption series.spline.data
  */

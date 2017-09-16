@@ -53,7 +53,8 @@ H.PlotLineOrBand.prototype = {
 			zIndex = pick(options.zIndex, 0),
 			events = options.events,
 			attribs = {
-				'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') + (options.className || '')
+				'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') +
+					(options.className || '')
 			},
 			groupAttribs = {},
 			renderer = axis.chart.renderer,
@@ -96,8 +97,9 @@ H.PlotLineOrBand.prototype = {
 
 		group = axis.plotLinesAndBandsGroups[groupName];
 		if (!group) {
-			axis.plotLinesAndBandsGroups[groupName] = group = renderer.g('plot-' + groupName)
-				.attr(groupAttribs).add();
+			axis.plotLinesAndBandsGroups[groupName] = group =
+				renderer.g('plot-' + groupName)
+					.attr(groupAttribs).add();
 		}
 
 		// Create the path
@@ -144,8 +146,15 @@ H.PlotLineOrBand.prototype = {
 		}
 
 		// the plot band/line label
-		if (optionsLabel && defined(optionsLabel.text) && path && path.length && 
-				axis.width > 0 && axis.height > 0 && !path.flat) {
+		if (
+			optionsLabel &&
+			defined(optionsLabel.text) &&
+			path &&
+			path.length && 
+			axis.width > 0 &&
+			axis.height > 0 &&
+			!path.flat
+		) {
 			// apply defaults
 			optionsLabel = merge({
 				align: horiz && isBand && 'center',
@@ -183,7 +192,8 @@ H.PlotLineOrBand.prototype = {
 			attribs = {
 				align: optionsLabel.textAlign || optionsLabel.align,
 				rotation: optionsLabel.rotation,
-				'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') + '-label ' + (optionsLabel.className || '')
+				'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
+					'-label ' + (optionsLabel.className || '')
 			};
 			
 			attribs.zIndex = zIndex;
