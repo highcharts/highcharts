@@ -27,8 +27,10 @@ seriesType('scatter', 'line', {
 	 * The width of the line connecting the data points.
 	 * 
 	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/ 0 by default
-	 * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/ 1px
+	 * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
+	 *         0 by default
+	 * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
+	 *         1px
 	 * @default 0
 	 * @product highcharts highstock
 	 */
@@ -71,7 +73,7 @@ seriesType('scatter', 'line', {
 			'<span style="font-size: 0.85em"> {series.name}</span><br/>',
 		/*= } else { =*/
 
-		headerFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <span class="highcharts-header"> {series.name}</span><br/>',
+		headerFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <span class="highcharts-header"> {series.name}</span><br/>', // eslint-disable-line max-len
 		/*= } =*/
 
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
@@ -154,11 +156,16 @@ seriesType('scatter', 'line', {
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
  * @product highcharts highstock
  * @apioption series.scatter.data
  */

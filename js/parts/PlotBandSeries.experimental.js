@@ -8,8 +8,8 @@
  *****************************************************************************/
 /**
  * This is an experiment of implementing plotBands and plotLines as a series.
- * It could solve problems with export, updating etc., add tooltip and mouse events,
- * and provide a more compact and consistent implementation.
+ * It could solve problems with export, updating etc., add tooltip and mouse
+ * events, and provide a more compact and consistent implementation.
  * Demo: http://jsfiddle.net/highcharts/5Rbf6/
  */
 'use strict';
@@ -26,7 +26,8 @@ seriesType('plotband', 'column', {
 	threshold: null
 }, {
 	/*= if (build.classic) { =*/
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+	// mapping between SVG attributes and the corresponding options
+	pointAttrToOptions: { 
 		fill: 'color',
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth'

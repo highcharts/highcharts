@@ -225,16 +225,39 @@ H.Tick.prototype = {
 
 		return {
 			x: horiz ?
-				axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
-				axis.left + axis.offset +
-					(axis.opposite ?
-						((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - axis.left :
-						0
-					),
+				(
+					axis.translate(pos + tickmarkOffset, null, null, old) +
+					axis.transB
+				) :
+				(
+					axis.left +
+					axis.offset +
+					(
+						axis.opposite ?
+							(
+								(
+									(old && chart.oldChartWidth) ||
+									chart.chartWidth
+								) -
+								axis.right -
+								axis.left
+							) :
+							0
+					)
+				),
 
 			y: horiz ?
-				cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
-				cHeight - axis.translate(pos + tickmarkOffset, null, null, old) - axis.transB
+				(
+					cHeight -
+					axis.bottom +
+					axis.offset -
+					(axis.opposite ? axis.height : 0)
+				) :
+				(
+					cHeight -
+					axis.translate(pos + tickmarkOffset, null, null, old) -
+					axis.transB
+				)
 		};
 
 	},
@@ -242,7 +265,16 @@ H.Tick.prototype = {
 	/**
 	 * Get the x, y position of the tick label
 	 */
-	getLabelPosition: function (x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
+	getLabelPosition: function (
+		x,
+		y,
+		label,
+		horiz,
+		labelOptions,
+		tickmarkOffset,
+		index,
+		step
+	) {
 		var axis = this.axis,
 			transA = axis.transA,
 			reversed = axis.reversed,
@@ -258,7 +290,8 @@ H.Tick.prototype = {
 				yOffset = rotCorr.y + 8;
 			} else {
 				// #3140, #3140
-				yOffset = Math.cos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
+				yOffset = Math.cos(label.rotation * deg2rad) *
+					(rotCorr.y - label.getBBox(false, 0).height / 2);
 			}
 		}
 

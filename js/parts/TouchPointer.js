@@ -20,17 +20,41 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 	/**
 	 * Run translation operations
 	 */
-	pinchTranslate: function (pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+	pinchTranslate: function (
+		pinchDown,
+		touches, 
+		transform,
+		selectionMarker,
+		clip,
+		lastValidTouch
+	) {
 		if (this.zoomHor) {
-			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+			this.pinchTranslateDirection(
+				true,
+				pinchDown,
+				touches,
+				transform,
+				selectionMarker,
+				clip,
+				lastValidTouch
+			);
 		}
 		if (this.zoomVert) {
-			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+			this.pinchTranslateDirection(
+				false,
+				pinchDown,
+				touches,
+				transform,
+				selectionMarker,
+				clip,
+				lastValidTouch
+			);
 		}
 	},
 
 	/**
-	 * Run translation operations for each direction (horizontal and vertical) independently
+	 * Run translation operations for each direction (horizontal and vertical)
+	 * independently
 	 */
 	pinchTranslateDirection: function (horiz, pinchDown, touches, transform,
 			selectionMarker, clip, lastValidTouch, forcedScale) {
@@ -57,17 +81,22 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 			setScale = function () {
 				// Don't zoom if fingers are too close on this axis
 				if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) {
-					scale = forcedScale || Math.abs(touch0Now - touch1Now) / Math.abs(touch0Start - touch1Start); 
+					scale = forcedScale || 
+						Math.abs(touch0Now - touch1Now) /
+						Math.abs(touch0Start - touch1Start); 
 				}
 
 				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
-				selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] / scale;
+				selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] /
+					scale;
 			};
 
 		// Set the scale, first pass
 		setScale();
 
-		selectionXY = clipXY; // the clip position (x or y) is altered if out of bounds, the selection position is not
+		// The clip position (x or y) is altered if out of bounds, the selection
+		// position is not
+		selectionXY = clipXY;
 
 		// Out of bounds
 		if (selectionXY < bounds.min) {
@@ -78,17 +107,20 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 			outOfBounds = true;
 		}
 
-		// Is the chart dragged off its bounds, determined by dataMin and dataMax?
+		// Is the chart dragged off its bounds, determined by dataMin and
+		// dataMax?
 		if (outOfBounds) {
 
-			// Modify the touchNow position in order to create an elastic drag movement. This indicates
-			// to the user that the chart is responsive but can't be dragged further.
+			// Modify the touchNow position in order to create an elastic drag
+			// movement. This indicates to the user that the chart is responsive
+			// but can't be dragged further.
 			touch0Now -= 0.8 * (touch0Now - lastValidTouch[xy][0]);
 			if (!singleTouch) {
 				touch1Now -= 0.8 * (touch1Now - lastValidTouch[xy][1]);
 			}
 
-			// Set the scale, second pass to adapt to the modified touchNow positions
+			// Set the scale, second pass to adapt to the modified touchNow
+			// positions
 			setScale();
 
 		} else {
@@ -106,7 +138,8 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 		selectionMarker[wh] = selectionWH;
 		selectionMarker[xy] = selectionXY;
 		transform[scaleKey] = scale;
-		transform['translate' + XY] = (transformScale * plotLeftTop) + (touch0Now - (transformScale * touch0Start));
+		transform['translate' + XY] = (transformScale * plotLeftTop) +
+			(touch0Now - (transformScale * touch0Start));
 	},
 
 	/**
@@ -123,17 +156,20 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
-			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, 'highcharts-tracker') && 
+			fireClickEvent = touchesLength === 1 &&
+				((self.inClass(e.target, 'highcharts-tracker') && 
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
-		// Don't initiate panning until the user has pinched. This prevents us from
-		// blocking page scrolling as users scroll down a long page (#4210).
+		// Don't initiate panning until the user has pinched. This prevents us
+		// from blocking page scrolling as users scroll down a long page
+		// (#4210).
 		if (touchesLength > 1) {
 			self.initiated = true;
 		}
 
-		// On touch devices, only proceed to trigger click if a handler is defined
+		// On touch devices, only proceed to trigger click if a handler is
+		// defined
 		if (hasZoom && self.initiated && !fireClickEvent) {
 			e.preventDefault();
 		}
@@ -148,22 +184,31 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 			each(touches, function (e, i) {
 				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
 			});
-			lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] && pinchDown[1].chartX];
-			lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] && pinchDown[1].chartY];
+			lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] &&
+				pinchDown[1].chartX];
+			lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] &&
+				pinchDown[1].chartY];
 
 			// Identify the data bounds in pixels
 			each(chart.axes, function (axis) {
 				if (axis.zoomEnabled) {
 					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
 						minPixelPadding = axis.minPixelPadding,
-						min = axis.toPixels(pick(axis.options.min, axis.dataMin)),
-						max = axis.toPixels(pick(axis.options.max, axis.dataMax)),
+						min = axis.toPixels(
+							pick(axis.options.min, axis.dataMin)
+						),
+						max = axis.toPixels(
+							pick(axis.options.max, axis.dataMax)
+						),
 						absMin = Math.min(min, max),
 						absMax = Math.max(min, max);
 
 					// Store the bounds for use in the touchmove handler
 					bounds.min = Math.min(axis.pos, absMin - minPixelPadding);
-					bounds.max = Math.max(axis.pos + axis.len, absMax + minPixelPadding);
+					bounds.max = Math.max(
+						axis.pos + axis.len,
+						absMax + minPixelPadding
+					);
 				}
 			});
 			self.res = true; // reset on next move
@@ -173,7 +218,8 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 			this.runPointActions(self.normalize(e));
 
 		// Event type is touchmove, handle panning and pinching
-		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
+		} else if (pinchDown.length) { // can be 0 when releasing, if touchend
+				// fires first
 
 
 			// Set the marker
@@ -184,11 +230,19 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 				}, chart.plotBox);
 			}
 
-			self.pinchTranslate(pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+			self.pinchTranslate(
+				pinchDown,
+				touches,
+				transform,
+				selectionMarker,
+				clip,
+				lastValidTouch
+			);
 
 			self.hasPinched = hasZoom;
 
-			// Scale and translate the groups to provide visual feedback during pinching
+			// Scale and translate the groups to provide visual feedback during
+			// pinching
 			self.scaleGroups(transform, clip);
 
 			if (self.res) {
@@ -227,11 +281,12 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 					this.runPointActions(e);
 				}
 
-				// Android fires touchmove events after the touchstart even if the
-				// finger hasn't moved, or moved only a pixel or two. In iOS however,
-				// the touchmove doesn't fire unless the finger moves more than ~4px.
-				// So we emulate this behaviour in Android by checking how much it
-				// moved, and cancelling on small distances. #3450.
+				// Android fires touchmove events after the touchstart even if
+				// the finger hasn't moved, or moved only a pixel or two. In iOS
+				// however, the touchmove doesn't fire unless the finger moves
+				// more than ~4px. So we emulate this behaviour in Android by
+				// checking how much it moved, and cancelling on small
+				// distances. #3450.
 				if (e.type === 'touchmove') {
 					pinchDown = this.pinchDown;
 					hasMoved = pinchDown[0] ? Math.sqrt( // #5266
