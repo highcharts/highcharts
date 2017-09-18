@@ -401,7 +401,7 @@ function shouldForceChartSeriesBoosting(chart) {
 function isChartSeriesBoosting(chart) {
 	var threshold = 50;
 
-	threshold = chart.options.boost && typeof chart.options.boost.seriesTreshold !== 'undefined' ?
+	threshold = chart.options.boost && typeof chart.options.boost.seriesThreshold !== 'undefined' ?
 		chart.options.boost.seriesThreshold : threshold;
 
 	return threshold <= chart.series.length ||
@@ -1573,6 +1573,20 @@ function GLRenderer(postRenderCallback) {
 				(lastY && Math.abs(y - lastY) < cullYThreshold)
 			) {
 				return;
+			}
+
+			// Do step line if enabled.
+			// Draws an additional point at the old Y at the new X.
+			// See #6976.
+
+			if (options.step) {
+				vertice(
+					x,
+					lastY,
+					0,
+					2,
+					pcolor
+				);
 			}
 
 			vertice(
