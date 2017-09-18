@@ -154,8 +154,9 @@ seriesType('bellcurve', 'areaspline', {
 	},
 
 	derivedData: function (mean, standardDeviation) {
-		var intervals = this.options.intervals,
-			pointsInInterval = this.options.pointsInInterval,
+		var options = this.options,
+			intervals = options.intervals || this.intervals,
+			pointsInInterval = options.pointsInInterval || this.pointsInInterval,
 			x = mean - intervals * standardDeviation,
 			stop = intervals * pointsInInterval * 2 + 1,
 			increment = standardDeviation / pointsInInterval,
