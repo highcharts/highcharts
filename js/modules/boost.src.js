@@ -448,6 +448,8 @@ function GLShader(gl) {
 
 			'uniform bool skipTranslation;',
 
+			'uniform float plotHeight;',
+
 			'uniform float xAxisTrans;',
 			'uniform float xAxisMin;',
 			'uniform float xAxisMinPad;',
@@ -543,6 +545,9 @@ function GLShader(gl) {
 					'v = value;// + yAxisPos;',
 				'} else {',
 					'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord);// + yAxisPos;',
+					'if (v > plotHeight) {',
+						'v = plotHeight;',
+					'}',
 				'}',
 				'if (checkTreshold > 0.0 && hasThreshold) {',
 					'v = min(v, translatedThreshold);',
@@ -625,6 +630,7 @@ function GLShader(gl) {
 		isCircleUniform,
 		// Uniform for invertion
 		isInverted,
+		plotHeightUniform,
 		// Texture uniform
 		uSamplerUniform;
 
@@ -687,7 +693,7 @@ function GLShader(gl) {
 		skipTranslationUniform = uloc('skipTranslation');
 		isCircleUniform = uloc('isCircle');
 		isInverted = uloc('isInverted');
-
+		plotHeightUniform = uloc('plotHeight');
 		return true;
 	}
 
@@ -745,6 +751,10 @@ function GLShader(gl) {
 	 */
 	function setDrawAsCircle(flag) {
 		gl.uniform1i(isCircleUniform, flag ? 1 : 0);
+	}
+
+	function setPlotHeight(n) {
+		gl.uniform1f(plotHeightUniform, n);
 	}
 
 	/*
@@ -848,6 +858,7 @@ function GLShader(gl) {
 		fillColorUniform: function () {
 			return fillColorUniform;
 		},
+		setPlotHeight: setPlotHeight,
 		setBubbleUniforms: setBubbleUniforms,
 		bind: bind,
 		program: getProgram,
@@ -1185,6 +1196,7 @@ function GLRenderer(postRenderCallback) {
 			zData = series.zData || options.zData || series.processedZData,
 			yAxis = series.yAxis,
 			xAxis = series.xAxis,
+			plotHeight = series.chart.plotHeight,
 			useRaw = !xData || xData.length === 0,
 			// threshold = options.threshold,
 			// yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -1502,6 +1514,12 @@ function GLRenderer(postRenderCallback) {
 				inst.skipTranslation = true;
 				x = xAxis.toPixels(x, true);
 				y = yAxis.toPixels(y, true);
+
+				// Make sure we're not drawing outside of the chart area.
+				// See #6594.
+				if (y > plotHeight) {
+					y = plotHeight;
+				}
 			}
 
 			if (drawAsBar) {
@@ -1743,6 +1761,7 @@ function GLRenderer(postRenderCallback) {
 
 		gl.viewport(0, 0, width, height);
 		shader.setPMatrix(orthoMatrix(width, height));
+		shader.setPlotHeight(chart.plotHeight);
 
 		if (settings.lineWidth > 1 && !H.isMS) {
 			gl.lineWidth(settings.lineWidth);
