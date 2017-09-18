@@ -2140,6 +2140,26 @@
  * @sample {highstock} stock/rangeselector/button-click/ Click event on the button
  */
 
+ /**
+ * Additional range (in milliseconds) added to the end of the calculated time span.
+ *
+ * @type {Number}
+ * @default 0
+ * @sample {highstock} stock/rangeselector/min-max-offsets/ Button offsets
+ * @product highstock
+ * @apioption rangeSelector.buttons.offsetMax
+ */
+
+ /**
+ * Additional range (in milliseconds) added to the start of the calculated time span.
+ *
+ * @type {Number}
+ * @default 0
+ * @sample {highstock} stock/rangeselector/min-max-offsets/ Button offsets
+ * @product highstock
+ * @apioption rangeSelector.buttons.offsetMin
+ */
+
 /**
  * A custom data grouping object for each button.
  * 

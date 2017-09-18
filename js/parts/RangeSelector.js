@@ -330,6 +330,10 @@ RangeSelector.prototype = {
 			newMin = dataMin;
 			newMax = dataMax;
 		}
+
+		newMin += rangeOptions._offsetMin;
+		newMax += rangeOptions._offsetMax;
+
 		rangeSelector.setSelected(i);
 
 		// Update the chart
@@ -473,6 +477,7 @@ RangeSelector.prototype = {
 				state = 0,
 				disable,
 				select,
+				offsetRange = rangeOptions._offsetMax - rangeOptions._offsetMin,
 				isSelected = i === selected,
 				// Disable buttons where the range exceeds what is allowed in the current view
 				isTooGreatRange = range > dataMax - dataMin,
@@ -486,12 +491,12 @@ RangeSelector.prototype = {
 			// Months and years have a variable range so we check the extremes
 			if (
 				(type === 'month' || type === 'year') &&
-				(actualRange >= { month: 28, year: 365 }[type] * day * count) &&
-				(actualRange <= { month: 31, year: 366 }[type] * day * count)
+				(actualRange >= { month: 28, year: 365 }[type] * day * count + offsetRange) &&
+				(actualRange <= { month: 31, year: 366 }[type] * day * count + offsetRange)
 			) {
 				isSameRange = true;
 			} else if (type === 'ytd') {
-				isSameRange = (ytdMax - ytdMin) === actualRange;
+				isSameRange = (ytdMax - ytdMin + offsetRange) === actualRange;
 				isYTDButNotSelected = !isSelected;
 			} else if (type === 'all') {
 				isSameRange = baseAxis.max - baseAxis.min >= dataMax - dataMin;
@@ -552,6 +557,10 @@ RangeSelector.prototype = {
 		} else if (type === 'month' || type === 'year') {
 			rangeOptions._range = { month: 30, year: 365 }[type] * 24 * 36e5 * count;
 		}
+
+		rangeOptions._offsetMin = pick(rangeOptions.offsetMin, 0);
+		rangeOptions._offsetMax = pick(rangeOptions.offsetMax, 0);
+		rangeOptions._range += rangeOptions._offsetMax - rangeOptions._offsetMin;
 	},
 
 	/**
