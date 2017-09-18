@@ -4,11 +4,10 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import H from './Globals.js';
-import './Utilities.js';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 var pick = H.pick,
 	relativeLength = H.relativeLength;
-
 H.CenteredSeriesMixin = {
 	/**
 	 * Get the center of the pie based on the size and center options relative to the

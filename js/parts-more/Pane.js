@@ -5,7 +5,7 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/CenteredSeriesMixin.js';
+import '../mixins/centered-series.js';
 import '../parts/Utilities.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	each = H.each,

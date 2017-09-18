@@ -7,7 +7,7 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './ColumnSeries.js';
-import './CenteredSeriesMixin.js';
+import '../mixins/centered-series.js';
 import './Legend.js';
 import './Options.js';
 import './Point.js';
