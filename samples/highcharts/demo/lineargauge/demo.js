@@ -47,7 +47,7 @@ Highcharts.setOptions({
                 baseLength: '0%',
                 indent: '20%',
                 lineWidth: 1,
-                lineZIndex: 1,
+                lineZIndex: 1
             },
             dataLabels: {
                 enabled: true

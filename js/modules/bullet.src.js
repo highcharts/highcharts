@@ -8,32 +8,27 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    pick = H.pick,
-    isNumber = H.isNumber,
-    addEvent = H.addEvent,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
-    relativeLength = H.relativeLength,
-    columnProto = H.seriesTypes.column.prototype,
-    lineargaugeProto = H.seriesTypes.lineargauge.prototype;
+var seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes,
+	columnProto = seriesTypes.column.prototype,
+	lineargaugeProto = seriesTypes.lineargauge.prototype;
 
-Highcharts.SVGRenderer.prototype.symbols.rectangle = function (x, y, w, h, inverted) {
-    return inverted ? [
-        'M', -w / 2, y, 
-        'L', -w / 2, h / 2,
-        w / 2, h / 2,
-        w / 2, -h / 2,
-        -w / 2, -h / 2,
-        'Z'
-    ] : [
-        'M', x, w / 2, 
-        'L', -h / 2, w / 2,
-        -h / 2, -w / 2,
-        h / 2, -w / 2,
-        h / 2, w / 2,
-        'Z'
-    ];
+H.SVGRenderer.prototype.symbols.rectangle = function (x, y, w, h, inverted) {
+	return inverted ? [
+		'M', -w / 2, y, 
+		'L', -w / 2, h / 2,
+		w / 2, h / 2,
+		w / 2, -h / 2,
+		-w / 2, -h / 2,
+		'Z'
+	] : [
+		'M', x, w / 2, 
+		'L', -h / 2, w / 2,
+		-h / 2, -w / 2,
+		h / 2, -w / 2,
+		h / 2, w / 2,
+		'Z'
+	];
 };
 
 /**
@@ -54,23 +49,23 @@ seriesType('bullet', 'lineargauge',
 	 * @sample {highcharts} highcharts/demo/bullet/ Bullet graph
 	 * @since 6.0.0
 	 * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase,
-	 			  onPoint,showColumn,showLine
+				  onPoint,showColumn,showLine
 	 * @optionparent plotOptions.bullet
 	 */
 	{
 		/**
-         * All options related with look and positiong of targets.
-         * 
-         * @type {Object}
-         * @since 6.0.0
-         * @excluding baseLength,indent,lineColor,lineWidth,lineZIndex
-         * @product highcharts
-         */
+		 * All options related with look and positiong of targets.
+		 * 
+		 * @type {Object}
+		 * @since 6.0.0
+		 * @excluding baseLength,indent,lineColor,lineWidth,lineZIndex
+		 * @product highcharts
+		 */
 		targetOptions: {
-            width: 3,
-            length: '140%',
-            borderWidth: 0
-        },
+			width: 3,
+			length: '140%',
+			borderWidth: 0
+		},
 		tooltip: {
 			/**
 			 * The HTML of the point's line in the tooltip. Variables are
@@ -111,35 +106,35 @@ seriesType('bullet', 'lineargauge',
 		}
 	}, {
 		pointArrayMap: ['y', 'target'],
-        parallelArrays: ['x', 'y', 'target'],
+		parallelArrays: ['x', 'y', 'target'],
 
-        /**
-         * Includes target values to extend extremes from y values.
-         */
-        getExtremes: function(yData) {
-            var series = this,
-                targetData = series.targetData,
-                yMax,
-                yMin;
+		/**
+		 * Includes target values to extend extremes from y values.
+		 */
+		getExtremes: function (yData) {
+			var series = this,
+				targetData = series.targetData,
+				yMax,
+				yMin;
 
-            columnProto.getExtremes.call(this, yData);
+			columnProto.getExtremes.call(this, yData);
 
-            if (targetData && targetData.length) {
-                yMax = series.dataMax;
-                yMin = series.dataMin;
-                columnProto.getExtremes.call(this, targetData);
-                series.dataMax = Math.max(series.dataMax, yMax);
-                series.dataMin = Math.min(series.dataMin, yMin);
-            }
-        }
+			if (targetData && targetData.length) {
+				yMax = series.dataMax;
+				yMin = series.dataMin;
+				columnProto.getExtremes.call(this, targetData);
+				series.dataMax = Math.max(series.dataMax, yMax);
+				series.dataMin = Math.min(series.dataMin, yMin);
+			}
+		}
 	}, {
-	    /**
-	     * Bullet shape
-	     */
-	    shape: 'rectangle',
-	    destroy: function() {
-	        lineargaugeProto.pointClass.prototype.destroy.apply(this, arguments);
-	    }
+		/**
+		 * Bullet shape
+		 */
+		shape: 'rectangle',
+		destroy: function () {
+			lineargaugeProto.pointClass.prototype.destroy.apply(this, arguments);
+		}
 	});
 
 /**
