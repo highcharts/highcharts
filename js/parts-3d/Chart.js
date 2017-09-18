@@ -706,12 +706,19 @@ Chart.prototype.get3dFrame = function () {
 		yp = chart.plotTop + chart.plotHeight,
 		zm = 0,
 		zp = options3d.depth,
-		bottomOrientation = H.shapeArea3d([{ x: xm, y: yp, z: zp }, { x: xp, y: yp, z: zp }, { x: xp, y: yp, z: zm }, { x: xm, y: yp, z: zm }], chart),
-		topOrientation    = H.shapeArea3d([{ x: xm, y: ym, z: zm }, { x: xp, y: ym, z: zm }, { x: xp, y: ym, z: zp }, { x: xm, y: ym, z: zp }], chart),
-		leftOrientation   = H.shapeArea3d([{ x: xm, y: ym, z: zm }, { x: xm, y: ym, z: zp }, { x: xm, y: yp, z: zp }, { x: xm, y: yp, z: zm }], chart),
-		rightOrientation  = H.shapeArea3d([{ x: xp, y: ym, z: zp }, { x: xp, y: ym, z: zm }, { x: xp, y: yp, z: zm }, { x: xp, y: yp, z: zp }], chart),
-		frontOrientation  = H.shapeArea3d([{ x: xm, y: yp, z: zm }, { x: xp, y: yp, z: zm }, { x: xp, y: ym, z: zm }, { x: xm, y: ym, z: zm }], chart),
-		backOrientation   = H.shapeArea3d([{ x: xm, y: ym, z: zp }, { x: xp, y: ym, z: zp }, { x: xp, y: yp, z: zp }, { x: xm, y: yp, z: zp }], chart),
+		faceOrientation = function(vertexes) {
+			var area = H.shapeArea3d(vertexes, chart);
+			// Give it 0.5 squared-pixel as a margin for rounding errors.
+			if (area > 0.5) return 1;
+			if (area < -0.5) return -1;
+			return 0;
+		},
+		bottomOrientation = faceOrientation([{ x: xm, y: yp, z: zp }, { x: xp, y: yp, z: zp }, { x: xp, y: yp, z: zm }, { x: xm, y: yp, z: zm }]),
+		topOrientation    = faceOrientation([{ x: xm, y: ym, z: zm }, { x: xp, y: ym, z: zm }, { x: xp, y: ym, z: zp }, { x: xm, y: ym, z: zp }]),
+		leftOrientation   = faceOrientation([{ x: xm, y: ym, z: zm }, { x: xm, y: ym, z: zp }, { x: xm, y: yp, z: zp }, { x: xm, y: yp, z: zm }]),
+		rightOrientation  = faceOrientation([{ x: xp, y: ym, z: zp }, { x: xp, y: ym, z: zm }, { x: xp, y: yp, z: zm }, { x: xp, y: yp, z: zp }]),
+		frontOrientation  = faceOrientation([{ x: xm, y: yp, z: zm }, { x: xp, y: yp, z: zm }, { x: xp, y: ym, z: zm }, { x: xm, y: ym, z: zm }]),
+		backOrientation   = faceOrientation([{ x: xm, y: ym, z: zp }, { x: xp, y: ym, z: zp }, { x: xp, y: yp, z: zp }, { x: xm, y: yp, z: zp }]),
 		defaultShowBottom = false,
 		defaultShowTop = false,
 		defaultShowLeft = false,
@@ -759,7 +766,7 @@ Chart.prototype.get3dFrame = function () {
 		if (options.visible === true || options.visible === false) {
 			isVisible = options.visible;
 		} else if (options.visible === 'auto') {
-			isVisible = faceOrientation >= 0;
+			isVisible = faceOrientation > 0;
 		}
 
 		return {
