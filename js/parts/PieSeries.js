@@ -459,9 +459,9 @@ seriesType('pie', 'line', {
 			start,
 			end,
 			angle,
-			startAngle = options.startAngle || 0,
-			startAngleRad = series.startAngleRad = Math.PI / 180 * (startAngle - 90),
-			endAngleRad = series.endAngleRad = Math.PI / 180 * ((pick(options.endAngle, startAngle + 360)) - 90),
+			radians = getStartAndEndRadians(options.startAngle, options.endAngle),
+			startAngleRad = series.startAngleRad = radians.start,
+			endAngleRad = series.endAngleRad = radians.end,
 			circ = endAngleRad - startAngleRad, // 2 * Math.PI,
 			points = series.points,
 			radiusX, // the x component of the radius vector for a given point

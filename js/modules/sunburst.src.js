@@ -9,9 +9,12 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
+import '../mixins/centered-series.js';
 import '../parts/Series.js';
 import './treemap.src.js';
-var each = H.each,
+var CenteredSeriesMixin = H.CenteredSeriesMixin,
+	each = H.each,
+	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
 	grep = H.grep,
 	isNumber = H.isNumber,
 	merge = H.merge,
@@ -135,8 +138,10 @@ var sunburstSeries = {
 			chart = series.chart,
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
+			options = series.options,
+			radians = getStartAndEndRadians(options.startAngle, options.endAngle),
 			radius,
-			rootId = series.rootNode = pick(series.rootNode, series.options.rootId, ''),
+			rootId = series.rootNode = pick(series.rootNode, options.rootId, ''),
 			tree,
 			values,
 			rootNode;
@@ -166,8 +171,8 @@ var sunburstSeries = {
 		series.setTreeValues(tree);
 		series.setColorRecursive(series.tree);
 		values = series.nodeMap[''].values = {
-			start: 0,
-			end: 2 * Math.PI,
+			start: radians.start,
+			end: radians.end,
 			innerR: 0,
 			r: 0,
 			radius: radius,

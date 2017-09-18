@@ -6,7 +6,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-var pick = H.pick,
+var deg2rad = H.deg2rad,
+	isNumber = H.isNumber,
+	pick = H.pick,
 	relativeLength = H.relativeLength;
 H.CenteredSeriesMixin = {
 	/**
@@ -44,5 +46,32 @@ H.CenteredSeriesMixin = {
 			positions[3] = positions[2];
 		}
 		return positions;
+	},
+	/**
+	 * getStartAndEndRadians - Calculates start and end angles in radians.
+	 * Used in series types such as pie and sunburst.
+	 *
+	 * @param  {Number} start Start angle in degrees.
+	 * @param  {Number} end Start angle in degrees.
+	 * @return {object} Returns an object containing start and end angles as
+	 * radians.
+	 */
+	getStartAndEndRadians: function getStartAndEndRadians(start, end) {
+		var startAngle = isNumber(start) ? start : 0, // must be a number
+			endAngle = (
+				(
+					isNumber(end) && // must be a number
+					end > startAngle && // must be larger than the start angle
+					// difference must be less than 360 degrees
+					(end - startAngle) < 360
+				) ?
+				end :
+				startAngle + 360
+			),
+			correction = -90;
+		return {
+			start: deg2rad * (startAngle + correction),
+			end: deg2rad * (endAngle + correction)
+		};
 	}
 };
