@@ -9,12 +9,33 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var each = H.each,
-	pick = H.pick,
-	seriesType = H.seriesType,
-	isNumber = H.isNumber,
-	addEvent = H.addEvent,
-	relativeLength = H.relativeLength,
-	columnProto = H.seriesTypes.column.prototype;
+    pick = H.pick,            
+    isNumber = H.isNumber,
+    addEvent = H.addEvent,
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes,
+    relativeLength = H.relativeLength,
+    columnProto = H.seriesTypes.column.prototype;
+
+Highcharts.SVGRenderer.prototype.symbols.target = function (x, y, w, h, bh, i, inverted) {
+    return inverted ? [
+        'M', x, y, 
+        'L', -w / 2, -h + bh, 
+        -w / 2, -h, 
+        x, -h + i, 
+        w / 2, -h, 
+        w / 2, -h + bh, 
+        'Z'
+    ] : [
+        'M', x, y, 
+        'L', -h + bh, w / 2, 
+        -h, w / 2, 
+        -h + i, y, 
+        -h, -w / 2, 
+        -h + bh, -w / 2, 
+        'Z'
+    ];
+};
 
 /**
  * The lineargauge series type.
@@ -23,507 +44,541 @@ var each = H.each,
  * @augments seriesTypes.column
  */
 seriesType('lineargauge', 'column',
-	/**
-	 * A lineargauge graph is used for visualizing data on linear scale
-	 * within the specific range. It uses special pointers (targets).
-	 * Mentioned range can be defined by setting
-	 * [plotBands](#yAxis.plotBands) on [yAxis](#yAxis).
-	 * 
-	 * @extends {plotOptions.column}
-	 * @product highcharts
-	 * @sample {highcharts} highcharts/demo/lineargauge/ Linearguage graph
-	 * @since 6.0.0
-	 * @excluding animationLimit,boostThreshold,edgeColor,edgeWidth,
-	 *            findNearestPointBy,getExtremesFromAll
-	 * @optionparent plotOptions.lineargauge
-	 */
-	{
-		/**
-		 * Whether to display or hide additional columns along with targets.
-		 * 
-		 * @type {Boolean}
-		 * @since 6.0.0
-		 * @default false
-		 * @product highcharts
-		 */
-		showColumn: false,
+    /**
+     * A lineargauge graph is used for visualizing data on linear scale
+     * within the specific range. It uses special pointers (targets).
+     * Mentioned range can be defined by setting
+     * [plotBands](#yAxis.plotBands) on [yAxis](#yAxis).
+     * 
+     * @extends {plotOptions.column}
+     * @product highcharts
+     * @sample {highcharts} highcharts/demo/lineargauge/ Linearguage graph
+     * @since 6.0.0
+     * @excluding animationLimit,boostThreshold,edgeColor,edgeWidth,
+     *            findNearestPointBy,getExtremesFromAll
+     * @optionparent plotOptions.lineargauge
+     */
+    {
+        /**
+         * Display target on a point or alongside the `yAxis`.
+         * 
+         * @type {Boolean}
+         * @since 6.0.0
+         * @default true
+         * @product highcharts
+         */
+        onPoint: true,
 
-		/**
-		 * The length of the base part of the target (similar to [dial.baseLength](#plotOptions.gauge.dial.baseLength)).
-		 * Can be pixel value or percentage value based on [targetTotalLength](#plotOptions.lineargauge.targetTotalLength).
-		 * 
-		 * @type {Number|String}
-		 * @since 6.0.0
-		 * @default '50%'
-		 * @product highcharts
-		 */
-		targetBaseLength: '50%',
+        /**
+         * Whether to display or hide additional columns along with targets.
+         * 
+         * @type {Boolean}
+         * @since 6.0.0
+         * @default false
+         * @product highcharts
+         */
+        showColumn: false,
 
-		/*= if (build.classic) { =*/
-		/**
-		 * The border color of the symbol representing the target. When
-		 * not set, point's border color is used.
-		 *
-		 * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-symbol` class.
-		 * 
-		 * @type {Color}
-		 * @since 6.0.0
-		 * @product highcharts
-		 * @apioption plotOptions.lineargauge.targetBorderColor
-		 */
+        /**
+         * Show additional line coming out of the target.
+         * 
+         * @type {Boolean}
+         * @since 6.0.0
+         * @default false
+         * @product highcharts
+         */
+        showLine: false,
 
-		/**
-		 * The border width of the symbol representing the target. When
-		 * not set, point's border width is used.
-		 *
-		 * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-symbol` class.
-		 * 
-		 * @type {Number}
-		 * @since 6.0.0
-		 * @product highcharts
-		 * @apioption plotOptions.lineargauge.targetBorderWidth
-		 */
+        /**
+         * All options related with look and positiong of targets.
+         * 
+         * @type {Object}
+         * @since 6.0.0
+         * @product highcharts
+         */
+        targetOptions: {
+            /**
+             * The length of the base part of the target (similar to [dial.baseLength](#plotOptions.gauge.dial.baseLength)).
+             * Can be pixel value or percentage value based on [length](#plotOptions.lineargauge.targetOptions.length).
+             * 
+             * @type {Number|String}
+             * @since 6.0.0
+             * @default '50%'
+             * @product highcharts
+             */
+            baseLength: '50%',
 
-		/**
-		 * The color of the symbol representing the target. When
-		 * not set, point's color is used.
-		 *
-		 * In styled mode, target color can be set with the `.highcharts-lineargauge-target-symbol` class.
-		 * 
-		 * @type {Color}
-		 * @since 6.0.0
-		 * @product highcharts
-		 * @apioption plotOptions.lineargauge.targetColor
-		 */
-		/*= } =*/
+            /*= if (build.classic) { =*/
+            /**
+             * The border color of the symbol representing the target. When
+             * not set, point's border color is used.
+             *
+             * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-symbol` class.
+             * 
+             * @type {Color}
+             * @since 6.0.0
+             * @product highcharts
+             * @apioption plotOptions.lineargauge.targetOptions.borderColor
+             */
 
-		/**
-		 * The indentation on the upper part of the target symbol.
-		 *
-		 * Can be pixel value or percentage value based on [targetTotalLength](#plotOptions.lineargauge.targetTotalLength).
-		 * 
-		 * @type {Number|String}
-		 * @since 6.0.0
-		 * @default '20%'
-		 * @product highcharts
-		 */
-		targetIndent: '20%',
+            /**
+             * The border width of the symbol representing the target. When
+             * not set, point's border width is used.
+             *
+             * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-symbol` class.
+             * 
+             * @type {Number}
+             * @since 6.0.0
+             * @product highcharts
+             * @apioption plotOptions.lineargauge.targetOptions.borderWidth
+             */
 
-		/**
-		 * Show additional line coming out of the target.
-		 * 
-		 * @type {Boolean}
-		 * @since 6.0.0
-		 * @default false
-		 * @product highcharts
-		 */
-		targetLine: false,
+            /**
+             * The color of the symbol representing the target. When
+             * not set, point's color is used.
+             *
+             * In styled mode, target color can be set with the `.highcharts-lineargauge-target-symbol` class.
+             * 
+             * @type {Color}
+             * @since 6.0.0
+             * @product highcharts
+             * @apioption plotOptions.lineargauge.targetOptions.color
+             */
+            /*= } =*/
 
-		/*= if (build.classic) { =*/
-		/**
-		 * The color of the additional target line. When
-		 * not set, point's border color is used.
-		 *
-		 * In styled mode, target color can be set with the `.highcharts-lineargauge-target-line` class.
-		 * 
-		 * @type {Color}
-		 * @since 6.0.0
-		 * @product highcharts
-		 * @apioption plotOptions.lineargauge.targetLineColor
-		 */
+            /**
+             * The indentation on the upper part of the target symbol.
+             *
+             * Can be pixel value or percentage value based on [length](#plotOptions.lineargauge.targetOptions.length).
+             * 
+             * @type {Number|String}
+             * @since 6.0.0
+             * @default '20%'
+             * @product highcharts
+             */
+            indent: '20%',
 
-		/**
-		 * The width of the additional target line. When
-		 * not set, point's border width is used.
-		 *
-		 * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-line` class.
-		 * 
-		 * @type {Number}
-		 * @since 6.0.0
-		 * @product highcharts
-		 * @apioption plotOptions.lineargauge.targetLineWidth
-		 */
-		/*= } =*/
+            /*= if (build.classic) { =*/
+            /**
+             * The color of the additional target line. When
+             * not set, point's border color is used.
+             *
+             * In styled mode, target color can be set with the `.highcharts-lineargauge-target-line` class.
+             * 
+             * @type {Color}
+             * @since 6.0.0
+             * @product highcharts
+             * @apioption plotOptions.lineargauge.targetOptions.lineColor
+             */
 
-		/**
-		 * The zIndex of the target line.
-		 * 
-		 * @type {Number}
-		 * @since 6.0.0
-		 * @default 1
-		 * @product highcharts
-		 */
-		targetLineZIndex: 1,
+            /**
+             * The width of the additional target line. When
+             * not set, point's border width is used.
+             *
+             * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-line` class.
+             * 
+             * @type {Number}
+             * @since 6.0.0
+             * @product highcharts
+             * @apioption plotOptions.lineargauge.targetOptions.lineWidth
+             */
+            /*= } =*/
 
-		/**
-		 * Display target on a point or alongside the `yAxis`.
-		 * 
-		 * @type {Boolean}
-		 * @since 6.0.0
-		 * @default true
-		 * @product highcharts
-		 */
-		targetOnPoint: true,
+            /**
+             * The zIndex of the target line.
+             * 
+             * @type {Number}
+             * @since 6.0.0
+             * @default 1
+             * @product highcharts
+             */
+            lineZIndex: 1,
 
-		/**
-		 * The total length of the target.
-		 * Can be pixel value or percentage value based on column point's width.
-		 * 
-		 * @type {Number|String}
-		 * @since 6.0.0
-		 * @default '50%'
-		 * @product highcharts
-		 */
-		targetTotalLength: '50%',
+            /**
+             * The total length of the target.
+             * Can be pixel value or percentage value based on column point's width.
+             * 
+             * @type {Number|String}
+             * @since 6.0.0
+             * @default '50%'
+             * @product highcharts
+             */
+            length: '50%',
 
-		/**
-		 * The width of the target.
-		 * Can be pixel value or percentage value based on column point's width.
-		 * 
-		 * @type {Number|String}
-		 * @since 6.0.0
-		 * @default '50%'
-		 * @product highcharts
-		 */
-		targetWidth: '50%'
-	}, {
-		/**
-		*/
-		inverted: true,
-		/**
-		 * The target symbol and line is created for each point and added to it. Iverting
-		 * chart and reversing axes are taken into account in calculating their position on chart.
-		 * This method is based on column series drawPoints function.
-		 */
-		drawPoints: function () {
-			var series = this,
-				points = series.points,
-				xAxis = series.xAxis,
-				yAxis = series.yAxis,
-				chart = series.chart,
-				renderer = chart.renderer,
-				seriesOptions = series.options,
-				tooltip = chart.tooltip,
-				inverted = chart.inverted,
-				animationLimit = seriesOptions.animationLimit || 250;
+            /**
+             * The width of the target.
+             * Can be pixel value or percentage value based on column point's width.
+             * 
+             * @type {Number|String}
+             * @since 6.0.0
+             * @default '50%'
+             * @product highcharts
+             */
+            width: '50%',
 
-			columnProto.drawPoints.apply(series);
+            /**
+             * The zIndex of the target symbol.
+             * 
+             * @type {Number}
+             * @since 6.0.0
+             * @default 3
+             * @product highcharts
+             */
+            zIndex: 3
+        }
+    }, {
+        /**
+         * Function responsible for creating or updating target symbol and target line.
+         */
+        createUpdateGraphic: function(graphic, path, xPosition, yPosition, beginningAtrr, endAttr) {
+            var series = this,
+                chart = series.chart,
+                seriesOptions = series.options,
+                updateGraphic = chart.pointCount < (seriesOptions.animationLimit || 250) ? 'animate' : 'attr';
 
-			each(points, function (point) {
-				var seriesAnimation = seriesOptions.animation,
-					defaultAnimation = { duration: 1000 },
-					targetSymGraphic = point.targetSymGraphic,
-					targetLinGraphic = point.targetLinGraphic,                          
-					pointOptions = point.options,
-					pointCount = chart.pointCount,
-					plotLeft = chart.plotLeft,
-					plotTop = chart.plotTop,
-					xAxisLength = xAxis.len,
-					yAxisLength = yAxis.len,
-					yAxisReversed = yAxis.reversed,                         
-					dataLabel = point.dataLabel,
-					valueX = point.x,
-					valueY = point.y,
-					targetEvents = [],
-					dataLabelBox,
-					minPointLength,
-					halfPointWidth,
-					pBarX,
-					pPlotY,
-					targetOnPoint,
-					showColumn,
-					targetLine,                         
-					baseLength,
-					length,
-					width,
-					indent,
-					symbolPath,
-					linePath,
-					borderWidth,
-					lineWidth,
-					lineZIndex,
-					shapeArgs,
-					shapeArgsWidth,
-					targetTranslateAtrr,
-					offsetOnPoint,
-					xAttr,
-					yAttr,
-					xPosition,
-					yPosition,
-					pixelX,
-					pixelY;
+            if (graphic) {
+                graphic[updateGraphic]({
+                    d: path,
+                    translateX: xPosition,
+                    translateY: yPosition
+                });
+            } else {
+                graphic = chart.renderer.path(path)
+                    .attr(beginningAtrr)
+                    .add();
 
-				minPointLength = seriesOptions.minPointLength;
-				halfPointWidth = point.pointWidth / 2;
-				pBarX = point.barX;
-				pPlotY = point.plotY;
+                graphic[updateGraphic](endAttr, pick(seriesOptions.animation, { duration: 1000 }));
+            }
 
-				if (inverted) {
-					pixelX = xAxisLength - pBarX - halfPointWidth + plotTop;
-					pixelY = yAxisLength - pPlotY;
+            return graphic;
+        },
+        /**
+         * The target symbol and line is created for each point and added to it. Inverting
+         * chart and reversing axes are taken into account in calculating their position on chart.
+         * This method is based on column series drawPoints function.
+         */
+        drawPoints: function() {
+            var series = this,
+                points = series.points,
+                xAxis = series.xAxis,
+                yAxis = series.yAxis,
+                xAxisLength = xAxis.len,
+                yAxisLength = yAxis.len,
+                yAxisReversed = yAxis.reversed,
+                chart = series.chart,                        
+                plotTop = chart.plotTop,
+                plotLeft = chart.plotLeft,
+                tooltip = chart.tooltip,
+                renderer = chart.renderer,
+                inverted = chart.inverted,                        
+                seriesOptions = series.options,
+                minPointLength = seriesOptions.minPointLength,
+                seriesTargetOptions = seriesOptions.targetOptions,
+                shape = seriesTypes[series.type].prototype.pointClass.prototype.shape;
 
-					// Considering minPointLength when chart is inverted
-					if (!yAxisReversed && minPointLength) {
-						if (pixelY < minPointLength) {
-							pixelY = minPointLength;
-						}
-					} else {
-						if (pPlotY < minPointLength) {
-							pixelY = yAxisLength - minPointLength;
-						}
-					}
-					pixelY += plotLeft;
-				} else {
-					pixelX = pBarX + halfPointWidth + plotLeft;
-					pixelY = pPlotY;
+            columnProto.drawPoints.apply(series);
 
-					// Considering minPointLength when chart is not inverted
-					if (!yAxisReversed && minPointLength) {
-						if (pixelY > minPointLength) {
-							pixelY = yAxisLength - minPointLength;
-						}
-					} else {
-						if (pPlotY < minPointLength) {
-							pixelY = minPointLength;
-						}
-					}
-					pixelY += plotTop;
-				}
+            each(points, function(point) {
+                var targetSymGraphic = point.targetSymGraphic,
+                    targetLinGraphic = point.targetLinGraphic,
+                    pointOptions = point.options,
+                    pointTargetOptions = pointOptions.targetOptions || {},
+                    dataLabel = point.dataLabel,
+                    valueX = point.x,
+                    valueY = point.y,
+                    target = point.target,
+                    targetEvents = [],
+                    halfPointWidth,
+                    dataLabelBox,
+                    columnStart,
+                    pPlotY,
+                    barX,
+                    onPoint,
+                    showColumn,
+                    showLine,
+                    baseLength,
+                    length,
+                    width,
+                    indent,
+                    symbolPath,
+                    linePath,
+                    borderWidth,
+                    lineWidth,
+                    lineZIndex,
+                    zIndex,
+                    shapeArgs,
+                    shapeArgsWidth,
+                    beginningAtrr,
+                    offsetOnPoint,
+                    xAttr,
+                    yAttr,
+                    xPosition,
+                    yPosition,
+                    pixelX,
+                    pixelY;
 
-				if (isNumber(valueY) && valueY !== null) {
-					shapeArgs = point.shapeArgs;
-					shapeArgsWidth = shapeArgs.width;
+                if (isNumber(valueY) && valueY !== null) {                            
+                    halfPointWidth = point.pointWidth / 2;
+                    pPlotY = point.plotY;
+                    barX = point.barX;
+                    
+                    pixelX = inverted ? xAxisLength - barX - halfPointWidth + plotTop : barX + halfPointWidth + plotLeft;
+                    pixelY = target ? yAxis.toPixels(target, false) : yAxis.toPixels(valueY, false);
 
-					// Total length of a target
-					length = relativeLength(pick(pointOptions.targetTotalLength, seriesOptions.targetTotalLength), shapeArgsWidth);
+                    if (inverted) {
+                        // Considering minPointLength when chart is inverted
+                        if(minPointLength) {
+                            if (!yAxisReversed) {
+                                if (pixelY < (minPointLength + plotLeft)) {
+                                    pixelY = minPointLength + plotLeft;
+                                }
+                            } else {
+                                if (pPlotY < minPointLength) {
+                                    pixelY = yAxisLength - minPointLength + plotLeft;
+                                }
+                            }
+                        }
+                    } else {
+                        // Considering minPointLength when chart is not inverted
+                        if(minPointLength) {
+                            if (!yAxisReversed) {
+                                if ((yAxisLength - pixelY) < (minPointLength - plotTop)) {
+                                    pixelY = yAxisLength - minPointLength + plotTop
+                                }
+                            } else {
+                                if (pPlotY < minPointLength) {
+                                    pixelY = minPointLength + plotTop
+                                }
+                            }
+                        }
+                    }
 
-					// Total width of a target
-					width = relativeLength(pick(pointOptions.targetWidth, seriesOptions.targetWidth), shapeArgsWidth);
+                    shapeArgs = point.shapeArgs;
+                    shapeArgsWidth = shapeArgs.width;
 
-					// Base length of a target
-					baseLength = relativeLength(pick(pointOptions.targetBaseLength, seriesOptions.targetBaseLength), length);
+                    // The option which controls whether target should display on series or on axis
+                    onPoint = pick(pointOptions.onPoint, seriesOptions.onPoint);
 
-					// Vertical indent of a target
-					indent = relativeLength(pick(pointOptions.targetIndent, seriesOptions.targetIndent), length);
+                    // Show/hide additional column
+                    showColumn = pick(pointOptions.showColumn, seriesOptions.showColumn);
 
-					// Border width of a target
-					borderWidth = pick(pointOptions.targetBorderWidth, seriesOptions.targetBorderWidth);
+                    // The option which controls whether target should have an additional line
+                    showLine = pick(pointOptions.showLine, seriesOptions.showLine);
 
-					// The option which controls whether target should display on series or on axis
-					targetOnPoint = pick(pointOptions.targetOnPoint, seriesOptions.targetOnPoint);
+                    // Total length of a target
+                    length = relativeLength(pick(pointTargetOptions.length, seriesTargetOptions.length), shapeArgsWidth);
 
-					// The option which controls whether target should have an additional line
-					targetLine = pick(pointOptions.targetLine, seriesOptions.targetLine);
+                    // Total width of a target
+                    width = relativeLength(pick(pointTargetOptions.width, seriesTargetOptions.width), shapeArgsWidth);
 
-					// Show/hide additional column
-					showColumn = pick(pointOptions.showColumn, seriesOptions.showColumn);
+                    // Border width of a target
+                    borderWidth = pick(pointTargetOptions.borderWidth, seriesTargetOptions.borderWidth);
 
-					// Width of a target line
-					lineWidth = pick(pointOptions.targetLineWidth, seriesOptions.targetLineWidth, seriesOptions.borderWidth, point.borderWidth, 1);
+                    // The zIndex of a target symbol
+                    zIndex = pick(pointTargetOptions.zIndex, seriesTargetOptions.zIndex);
 
-					// The zIndex of a target line
-					lineZIndex = pick(pointOptions.targetLineZIndex, seriesOptions.targetLineZIndex);
+                    // Width of a target line
+                    lineWidth = pick(pointTargetOptions.lineWidth, seriesTargetOptions.lineWidth, seriesOptions.borderWidth, point.borderWidth, 1);
 
-					symbolPath = inverted ? 
-					['M', 0, 0, 'L', -width / 2, -length + baseLength, -width / 2, -length, 0, -length + indent, width / 2, -length, width / 2, -length + baseLength, 'Z'] :
-					['M', 0, 0, 'L', -length + baseLength, width / 2, -length, width / 2, -length + indent, 0, -length, -width / 2, -length + baseLength, -width / 2, 'Z'];
+                    // The zIndex of a target line
+                    lineZIndex = pick(pointTargetOptions.lineZIndex, seriesTargetOptions.lineZIndex);
 
-					symbolPath = renderer.crispLine(symbolPath, borderWidth);
+                    // Shape for lineargauge series
+                    if (shape === 'target') {
+                        // Base length of a target
+                        baseLength = relativeLength(pick(pointTargetOptions.baseLength, seriesTargetOptions.baseLength), length);
 
-					xPosition = inverted ? pixelY : (targetOnPoint ? pixelX : xAxis.left);
-					yPosition = inverted ? (targetOnPoint ? pixelX : xAxis.top) : pixelY;
+                        // Vertical indent of a target
+                        indent = relativeLength(pick(pointTargetOptions.indent, seriesTargetOptions.indent), length);
 
-					xAttr = {
-						translateX: xPosition
-					};
+                        symbolPath = renderer.symbols[shape](0, 0, width, length, baseLength, indent, inverted);
+                        symbolPath = renderer.crispLine(symbolPath, borderWidth || 1);
+                    } 
+                    // Shape for bullet series
+                    else if (shape === 'rectangle') {                                
+                        onPoint = true;
+                        showLine = false;
+                        showColumn = true;
 
-					yAttr = {
-						translateY: yPosition
-					};
+                        symbolPath = renderer.symbols[shape](0, 0, width, length, inverted);
+                    }
 
-					targetTranslateAtrr = {
-						translateX: inverted ? (yAxisReversed ? plotLeft + chart.plotWidth : plotLeft) : xPosition,
-						translateY: inverted ? yPosition : (yAxisReversed ? plotTop : plotTop + chart.plotHeight)
-					};
+                    xPosition = inverted ? pixelY : (onPoint ? pixelX : xAxis.left);
+                    yPosition = inverted ? (onPoint ? pixelX : xAxis.top) : pixelY;
+                    columnStart = yAxis.toPixels(series.options.threshold, false);
 
-					// Creating/updating target symbol
-					if (targetSymGraphic) {
-						targetSymGraphic[pointCount < animationLimit ? 'animate' : 'attr']({
-							d: symbolPath,
-							translateX: xPosition,
-							translateY: yPosition
-						});
-					} else {
-						targetTranslateAtrr.zIndex = 5;
+                    xAttr = {
+                        translateX: xPosition
+                    };
 
-						point.targetSymGraphic = targetSymGraphic = renderer.path(symbolPath)
-						.attr(targetTranslateAtrr)
-						.add();
+                    yAttr = {
+                        translateY: yPosition
+                    };
+                    
+                    // The beginning coordinates
+                    beginningAtrr = {
+                        translateX: inverted ? columnStart : xPosition,
+                        translateY: inverted ? yPosition : columnStart
+                    };
 
-						targetSymGraphic[pointCount < animationLimit ? 'animate' : 'attr'](inverted ? xAttr : yAttr, pick(seriesAnimation, defaultAnimation));
-					}
+                    beginningAtrr.zIndex = zIndex;
 
-					// Creating/updating target line
-					if (targetLine) {
-						offsetOnPoint = xAxisLength - (targetOnPoint ? pixelX - (inverted ? plotTop : plotLeft) : 0);
+                    // Creating/updating target symbol
+                    point.targetSymGraphic = targetSymGraphic = series.createUpdateGraphic(targetSymGraphic, symbolPath, xPosition, yPosition, beginningAtrr, (inverted ? xAttr : yAttr));
 
-						linePath = inverted ? ['M', 0, 0, 'L', 0, offsetOnPoint] : ['M', 0, 0, 'L', offsetOnPoint, 0];
-						linePath = renderer.crispLine(linePath, lineWidth);
+                    if (showLine) {
+                        offsetOnPoint = xAxisLength - (onPoint ? pixelX - (inverted ? plotTop : plotLeft) : 0);
 
-						if (targetLinGraphic) {
-							targetLinGraphic[pointCount < animationLimit ? 'animate' : 'attr']({
-								d: linePath,
-								translateX: xPosition,
-								translateY: yPosition
-							});
-						} else {
-							targetTranslateAtrr.zIndex = lineZIndex;
+                        linePath = inverted ? ['M', 0, 0, 'L', 0, offsetOnPoint] : ['M', 0, 0, 'L', offsetOnPoint, 0];
+                        //linePath = renderer.crispLine(linePath, lineWidth || 1);
 
-							point.targetLinGraphic = targetLinGraphic = renderer.path(linePath)
-							.attr(targetTranslateAtrr)
-							.add();
+                        beginningAtrr.zIndex = lineZIndex;
 
-							targetLinGraphic[pointCount < animationLimit ? 'animate' : 'attr'](inverted ? xAttr : yAttr, pick(seriesAnimation, defaultAnimation));
-						}
-					}
+                        // Creating/updating target line
+                        point.targetLinGraphic = targetLinGraphic = series.createUpdateGraphic(targetLinGraphic, linePath, xPosition, yPosition, beginningAtrr, (inverted ? xAttr : yAttr));
+                    }
 
-					if (!showColumn) {
-						point.graphic.hide();
+                    if (!showColumn) {
+                        point.graphic.hide();
 
-						if (!targetOnPoint && dataLabel) {
-							dataLabelBox = dataLabel.getBBox();
+                        if (!onPoint && dataLabel) {
+                            dataLabelBox = dataLabel.getBBox();
 
-							dataLabel.attr(inverted ? {
-								x: yAxis.toPixels(valueY, true) - dataLabelBox.width / 2,
-								y: 0
-							} : {
-								x: 0,
-								y: yAxis.toPixels(valueY, true) - dataLabelBox.height / 2
-							});
-						}
-					}
+                            dataLabel.attr(inverted ? {
+                                x: yAxis.toPixels(valueY, true) - dataLabelBox.width / 2,
+                                y: 0
+                            } : {
+                                x: 0,
+                                y: yAxis.toPixels(valueY, true) - dataLabelBox.height / 2
+                            });
+                        }
+                    }
 
-					/*= if (build.classic) { =*/
-					// Setting style to target symbol
-					targetSymGraphic.attr({
-						fill: pick(
-							pointOptions.targetColor,
-							seriesOptions.targetColor,
-							pointOptions.color,
-							(series.zones.length && (point.getZone.call({
-								series: series,
-								x: valueX,
-								y: valueY,
-								options: {}
-							}).color || series.color)) || undefined,
-							point.color,
-							series.color
-							),
-						stroke: pick(
-							pointOptions.targetBorderColor,
-							seriesOptions.targetBorderColor,
-							point.borderColor,
-							seriesOptions.borderColor
-							),
-						'stroke-width': pick(
-							pointOptions.targetBorderWidth,
-							seriesOptions.targetBorderWidth,
-							point.borderWidth,
-							seriesOptions.borderWidth
-							)
-					});
+                    // Adding event to target symbol for handling tooltip
+                    if (tooltip) {
+                        targetEvents.push(addEvent(targetSymGraphic.element, 'mouseover', function() {
+                            point.setState('hover');
 
-					// Setting style to target line, if exists
-					if (targetLine) {
-						targetLinGraphic.attr({
-							stroke: pick(
-								pointOptions.targetLineColor,
-								seriesOptions.targetLineColor,
-								point.borderColor,
-								seriesOptions.borderColor
-								),
-							'stroke-width': lineWidth
-						});
-					}
-					/*= } =*/
+                            if (!onPoint) {
+                                tooltip.refresh({                                            
+                                    plotX: inverted ? xAxisLength : 0,
+                                    plotY: point.shapeArgs.y,
+                                    series: point.series,
+                                    x: valueX,
+                                    y: valueY,
+                                    category: point.category,
+                                    color: point.color,
+                                    colorIndex: point.colorIndex,
+                                    name: point.name,
+                                    percentage: point.percentage,
+                                    total: point.total,
+                                    stackTotal: point.stackTotal,
+                                    getLabelConfig: point.getLabelConfig,
+                                    tooltipFormatter: point.tooltipFormatter
+                                });
+                            } else {
+                                tooltip.refresh(point);
+                            }
+                        }));
 
-					// Adding event to target symbol for handling tooltip
-					if (tooltip) {
-						targetEvents.push(addEvent(targetSymGraphic.element, 'mouseover', function () {
-							point.setState('hover');
+                        targetEvents.push(addEvent(targetSymGraphic.element, 'mouseout', function() {
+                            point.setState('normal');
+                            tooltip.hide();
+                        }));
 
-							if (!targetOnPoint) {
-								tooltip.refresh({
-									plotY: !inverted ? yPosition - plotTop : yAxisLength - xPosition + plotLeft,
-									plotX: !inverted ? xPosition - plotLeft : xAxisLength - yPosition + plotTop,
-									series: point.series,
-									x: valueX,
-									y: valueY,
-									category: point.category,
-									color: point.color,
-									colorIndex: point.colorIndex,
-									name: point.name,
-									percentage: point.percentage,
-									total: point.total,
-									stackTotal: point.stackTotal,
-									getLabelConfig: point.getLabelConfig,
-									tooltipFormatter: point.tooltipFormatter
-								});
-							} else {
-								tooltip.refresh(point);
-							}
-						}));
+                        series.targetEvents = targetEvents;
+                    }
 
-						targetEvents.push(addEvent(targetSymGraphic.element, 'mouseout', function () {
-							point.setState('normal');
-							tooltip.hide();
-						}));
+                    /*= if (build.classic) { =*/
+                    // Setting style to target symbol
+                    targetSymGraphic.attr({
+                        fill: pick(
+                            pointTargetOptions.color,
+                            seriesTargetOptions.color,
+                            pointOptions.color,
+                            (series.zones.length && (point.getZone.call({
+                                series: series,
+                                x: valueX,
+                                y: valueY,
+                                options: {}
+                            }).color || series.color)) || undefined,
+                            point.color,
+                            series.color
+                        ),
+                        stroke: pick(
+                            pointTargetOptions.borderColor,
+                            seriesTargetOptions.borderColor,
+                            point.borderColor,
+                            seriesOptions.borderColor
+                        ),
+                        'stroke-width': pick(
+                            pointTargetOptions.borderWidth,
+                            seriesTargetOptions.borderWidth,
+                            point.borderWidth,
+                            seriesOptions.borderWidth
+                        )
+                    });
 
-						series.targetEvents = targetEvents;
-					}
+                    // Setting style to target line, if exists
+                    if (showLine) {
+                        targetLinGraphic.attr({
+                            stroke: pick(
+                                pointTargetOptions.lineColor,
+                                seriesTargetOptions.lineColor,
+                                point.borderColor,
+                                seriesOptions.borderColor
+                            ),
+                            'stroke-width': lineWidth
+                        });
+                    }
+                    /*= } =*/
 
-					// Add styles
-					if (targetSymGraphic) {
-						targetSymGraphic.addClass(point.getClassName() + ' highcharts-lineargauge-target-symbol', true);
-					}
+                    // Add styles
+                    if (targetSymGraphic) {
+                        targetSymGraphic.addClass(point.getClassName() + ' highcharts-' + series.type + '-target', true);
+                    }
 
-					if (targetLinGraphic) {
-						targetLinGraphic.addClass(point.getClassName() + ' highcharts-lineargauge-target-line', true);
-					}
-				} else if (targetSymGraphic) {
-					point.targetSymGraphic = targetSymGraphic.destroy();
+                    if (targetLinGraphic) {
+                        targetLinGraphic.addClass(point.getClassName() + ' highcharts-lineargauge-target-line', true);
+                    }
+                } else if (targetSymGraphic) {
+                    point.targetSymGraphic = targetSymGraphic.destroy();
 
-					if (targetLinGraphic) {
-						point.targetLinGraphic = targetLinGraphic.destroy();
-					}
-				}
-			});
-		}
-	}, {
-		/**
-		 * Destroys target symbol and line graphics.
-		 */
-		destroy: function () {
-			var point = this,
-				targetSymGraphic = point.targetSymGraphic,
-				targetLinGraphic = point.targetLinGraphic;
+                    if (targetLinGraphic) {
+                        point.targetLinGraphic = targetLinGraphic.destroy();
+                    }
+                }
+            });
+        }
+    }, {
+        /**
+         * Lineargauge shape
+         */
+        shape: 'target',
+        /**
+         * Destroys target symbol and line graphics.
+         */
+        destroy: function() {
+            var point = this,
+                targetSymGraphic = point.targetSymGraphic,
+                targetLinGraphic = point.targetLinGraphic;
 
-			if (targetSymGraphic) {
-				targetSymGraphic = targetSymGraphic.destroy();
-			}
+            if (targetSymGraphic) {
+                targetSymGraphic = targetSymGraphic.destroy();
+            }
 
-			if (targetLinGraphic) {
-				targetLinGraphic = targetLinGraphic.destroy();
-			}
+            if (targetLinGraphic) {
+                targetLinGraphic = targetLinGraphic.destroy();
+            }
 
-			// Deleting target events
-			each(point.series.targetEvents, function (targetEvent) {
-				targetEvent();
-			});
+            // Deleting target events
+            each(point.series.targetEvents, function(targetEvent) {
+                targetEvent();
+            });
 
-			columnProto.pointClass.prototype.destroy.apply(point, arguments);
-		}
-	});
+            columnProto.pointClass.prototype.destroy.apply(point, arguments);
+        }
+    });
 
 /**
  * A `lineargauge` series. If the [type](#series.lineargauge.type) option is not
@@ -542,7 +597,16 @@ seriesType('lineargauge', 'column',
  * @apioption series.lineargauge
  */
 
- /**
+/**
+ * Display individual target on a point or alongside the `yAxis`.
+ * 
+ * @type {Boolean}
+ * @since 6.0.0
+ * @product highcharts
+ * @apioption series.lineargauge.data.onPoint
+ */
+
+/**
  * Whether to display or hide individual additional column along with the target.
  * 
  * @type {Boolean}
@@ -552,16 +616,25 @@ seriesType('lineargauge', 'column',
  */
 
 /**
+ * Show individual additional line coming out of the target.
+ * 
+ * @type {Boolean}
+ * @since 6.0.0
+ * @product highcharts
+ * @apioption series.lineargauge.data.showLine
+ */
+
+/**
  * Individual length of the base part of the target (similar to [dial.baseLength](#plotOptions.gauge.dial.baseLength)).
- * Can be pixel value or percentage value based on [targetTotalLength](#plotOptions.lineargauge.targetTotalLength).
+ * Can be pixel value or percentage value based on [length](#plotOptions.lineargauge.targetOptions.length).
  * 
  * @type {Number|String}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetBaseLength
+ * @apioption series.lineargauge.data.targetOptions.baseLength
  */
 
- /*= if (build.classic) { =*/
+/*= if (build.classic) { =*/
 /**
  * Individual border color of the symbol representing the target. When
  * not set, point's border color is used.
@@ -571,7 +644,7 @@ seriesType('lineargauge', 'column',
  * @type {Color}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetBorderColor
+ * @apioption series.lineargauge.data.targetOptions.borderColor
  */
 
 /**
@@ -583,7 +656,7 @@ seriesType('lineargauge', 'column',
  * @type {Number}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetBorderWidth
+ * @apioption series.lineargauge.data.targetOptions.borderWidth
  */
 
 /**
@@ -595,31 +668,22 @@ seriesType('lineargauge', 'column',
  * @type {Color}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetColor
+ * @apioption series.lineargauge.data.targetOptions.color
  */
- /*= } =*/
+/*= } =*/
 
 /**
  * Individual indentation on the upper part of the target symbol.
  *
- * Can be pixel value or percentage value based on [targetTotalLength](#plotOptions.lineargauge.targetTotalLength).
+ * Can be pixel value or percentage value based on [length](#plotOptions.lineargauge.targetOptions.length).
  * 
  * @type {Number|String}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetIndent
+ * @apioption series.lineargauge.data.targetOptions.indent
  */
 
-/**
- * Show individual additional line coming out of the target.
- * 
- * @type {Boolean}
- * @since 6.0.0
- * @product highcharts
- * @apioption series.lineargauge.data.targetLine
- */
-
- /*= if (build.classic) { =*/
+/*= if (build.classic) { =*/
 /**
  * Individual color of the additional target line. When
  * not set, point's border color is used.
@@ -629,7 +693,7 @@ seriesType('lineargauge', 'column',
  * @type {Color}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetLineColor
+ * @apioption series.lineargauge.data.targetOptions.lineColor
  */
 
 /**
@@ -641,9 +705,9 @@ seriesType('lineargauge', 'column',
  * @type {Number}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetLineWidth
+ * @apioption series.lineargauge.data.targetOptions.lineWidth
  */
- /*= } =*/
+/*= } =*/
 
 /**
  * The zIndex of individual target line.
@@ -651,16 +715,7 @@ seriesType('lineargauge', 'column',
  * @type {Number}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetLineZIndex
- */
-
-/**
- * Display individual target on a point or alongside the `yAxis`.
- * 
- * @type {Boolean}
- * @since 6.0.0
- * @product highcharts
- * @apioption series.lineargauge.data.targetOnPoint
+ * @apioption series.lineargauge.data.targetOptions.lineZIndex
  */
 
 /**
@@ -670,7 +725,7 @@ seriesType('lineargauge', 'column',
  * @type {Number|String}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetTotalLength
+ * @apioption series.lineargauge.data.targetOptions.length
  */
 
 /**
@@ -680,5 +735,14 @@ seriesType('lineargauge', 'column',
  * @type {Number|String}
  * @since 6.0.0
  * @product highcharts
- * @apioption series.lineargauge.data.targetWidth
+ * @apioption series.lineargauge.data.targetOptions.width
  */
+
+ /**
+  * The zIndex of the target symbol.
+  * 
+  * @type {Number}
+  * @since 6.0.0
+  * @product highcharts
+  * @apioption series.lineargauge.data.targetOptions.zIndex
+  */
