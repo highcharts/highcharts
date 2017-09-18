@@ -16,8 +16,7 @@ var seriesType = H.seriesType,
 	correctFloat = H.correctFloat,
 	isNumber = H.isNumber,
 	merge = H.merge,
-	reduce = H.reduce,
-	each = H.each;
+	reduce = H.reduce;
 
 
 /* ***************************************************************************
@@ -77,9 +76,21 @@ function normalDensity(x, mean, standardDeviation) {
  * @since 6.0.0
  * @extends plotOptions.areaspline
  * @optionparent plotOptions.bellcurve
- * @excluding connectNulls, stacking, 
+ * @excluding connectNulls, stacking
  **/
 seriesType('bellcurve', 'areaspline', {
+   /**
+    * This option allows to define the length of the bell curve. A unit of the
+    * length of the bell curve is standard deviation. 
+    */
+	intervals: 3,
+
+   /**
+    * Defines how many points should be plotted within 1 interval. See 
+    * `plotOptions.bellcurve.intervals`.
+    */
+	pointsInInterval: 3,
+
 	marker: {
 		enabled: false
 	}
@@ -121,18 +132,6 @@ seriesType('bellcurve', 'areaspline', {
     * @apioption series.bellcurve.data
     **/
 }, merge(derivedSeriesMixin, {
-   /**
-    * This option allows to define the length of the bell curve. A unit of the
-    * length of the bell curve is standard deviation. 
-    */
-	intervals: 3,
-
-   /**
-    * Defines how many points should be plotted within 1 interval. See 
-    * `plotOptions.bellcurve.intervals`.
-    */
-	pointsInInterval: 3,
-
 	setMean: function () {
 		this.mean = correctFloat(mean(this.baseSeries.yData));
 	},
@@ -154,32 +153,18 @@ seriesType('bellcurve', 'areaspline', {
 	},
 
 	derivedData: function (mean, standardDeviation) {
-		var options = this.options,
-			intervals = options.intervals || this.intervals,
-			pointsInInterval = options.pointsInInterval || this.pointsInInterval,
+		var intervals = this.options.intervals,
+			pointsInInterval = this.options.pointsInInterval,
 			x = mean - intervals * standardDeviation,
 			stop = intervals * pointsInInterval * 2 + 1,
 			increment = standardDeviation / pointsInInterval,
 			data = [],
-			isUnique = {},
 			i;
 
 		for (i = 0; i < stop; i++) {
 			data.push([x, normalDensity(x, mean, standardDeviation)]);
 			x += increment;
-			isUnique[x] = true;
 		}
-
-		each(this.baseSeries.yData, function (x) {
-			if (!isUnique[x]) {
-				data.push([x, normalDensity(x, mean, standardDeviation)]);
-				isUnique[x] = true;
-			}
-		});
-
-		data.sort(function (a, b) {
-			return a[0] - b[0];
-		});
 
 		return data;
 	}

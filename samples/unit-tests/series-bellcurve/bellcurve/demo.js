@@ -13,12 +13,6 @@ QUnit.test('Curve bell', function (assert) {
         }]
     });
 
-    function uniqueArray(array) {
-        return Highcharts.grep(array, function (value, i, array) {
-            return array.indexOf(value) === i;
-        });
-    }
-
     var bellcurve = chart.series[0];
     var baseSeries = chart.series[1];
 
@@ -28,15 +22,15 @@ QUnit.test('Curve bell', function (assert) {
     assert.strictEqual(bellcurve.mean, 50.7, 'Mean is set correctly');
     assert.strictEqual(Number(bellcurve.standardDeviation.toFixed(2)), 16.52, 'Standard deviation is set correctly');
 
-    assert.strictEqual(bellcurve.points.length, 2 * 4 * 5 + 1 + uniqueArray(baseSeries.options.data).length, 'Number of points is correct according to intervals and pointsInInterval options');
+    assert.strictEqual(bellcurve.points.length, 41, 'Number of points is correct according to intervals and pointsInInterval options');
 
     bellcurve.update({
         pointsInInterval: 3
     });
 
     assert.deepEqual(
-      bellcurve.points.length,
-        2 * 4 * 3 + 1 + uniqueArray(baseSeries.options.data).length,
+        bellcurve.points.length,
+        25,
         'After updating bellcurve\'s pointsInInterval number of points is correct'
     );
 
