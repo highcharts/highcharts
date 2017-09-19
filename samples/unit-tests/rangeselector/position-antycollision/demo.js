@@ -204,4 +204,60 @@ QUnit.test('x and y parameters', function (assert) {
 });
 
 
+QUnit.test('button width', function (assert) {
+
+		chart = Highcharts.stockChart('container', {
+
+			chart: {
+				width: 800
+			},
+			
+			legend: {
+				enabled: true
+			}, 
+
+			rangeSelector: {
+		      buttonTheme: {
+		        width: 200
+		      },
+		      buttons: [{
+		        type: 'ytd',
+		        count: 1,
+		        text: 'YTD - 31 of Dec',
+		        offsetMin: -24 * 3600 * 1000
+		      }, {
+		        type: 'ytd',
+		        count: 1,
+		        text: 'YTD - 1st of Jan',
+		        offsetMax: 0 // default
+		      }, {
+		        type: 'all',
+		        text: 'All'
+		      }]
+		    },
+
+			series: series
+		});
+
+		inputGroup = chart.rangeSelector.inputGroup;
+		buttonGroup = chart.rangeSelector.buttonGroup;
+		inputPosition = chart.options.rangeSelector.inputPosition || {};
+		buttonPosition = chart.options.rangeSelector.buttonPosition || {};
+
+		inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
+		inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
+
+		buttonGroupX = buttonGroup.translateX;
+		buttonGroupWidth = buttonGroup.getBBox().width + 10;
+
+		assert.strictEqual(
+			((inputPosition.align === buttonPosition.align) || 
+			((buttonGroupX + buttonGroupWidth > inputGroupX) && 
+			(inputGroupX + inputGroupWidth > buttonGroupX))) && 
+			(inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
+			true,
+			'rangeSelector'
+		);
+});
+
 

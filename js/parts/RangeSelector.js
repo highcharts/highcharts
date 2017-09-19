@@ -992,7 +992,7 @@ RangeSelector.prototype = {
 			// Update the alignment to the updated spacing box
 			inputGroup.align(extend({
 				y: pos.inputTop,
-				width: buttonGroup.getBBox().width
+				width: inputGroup.getBBox().width
 			}, inputPosition), true, chart.spacingBox);
 
 			translateX = inputGroup.alignAttr.translateX + exportingX;
@@ -1002,15 +1002,17 @@ RangeSelector.prototype = {
 			} else if (inputPosition.align === 'right') {
 				translateX -= chart.spacing[1];
 			} 
-
+			
 			// add y from user options
 			inputGroup.attr({
 				translateY: pos.inputTop + 10,
-				translateX: translateX
+				translateX: translateX + (inputPosition.align === 'right' ? 7 : 0) // fix wrong getBBox() value on right align 
 			});
 
 			// detect collision
-			inputGroupX = inputGroup.translateX + inputGroup.alignOptions.x - exportingX + inputGroup.getBBox().x; // getBBox for detecing left margin
+			inputGroupX = inputGroup.translateX + inputGroup.alignOptions.x 
+							- exportingX + inputGroup.getBBox().x; // getBBox for detecing left margin
+
 			inputGroupWidth = inputGroup.alignOptions.width;
 
 			buttonGroupX = buttonGroup.translateX + buttonGroup.getBBox().x;

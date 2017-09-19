@@ -2133,6 +2133,9 @@
  *   console.log(this);
  * }
  * </pre>
+ *
+ * Return false to stop default button's click action.
+ *
  * @type {Function}
  * @default undefined
  * @product highstock
