@@ -61,6 +61,21 @@ var arrayMax = H.arrayMax,
  */
 
 /**
+ * Defines if comparisson should start from the first point within the visible
+ * range or should start from the first point <b>before</b> the range.
+ * In other words, this flag determines if first point within the visible range
+ * will have 0% (base) or should have been already calculated according to the
+ * previous point.
+ *
+ * @type {Boolean}
+ * @sample {highstock} stock/plotoptions/series-comparestart/ Calculate compare within visible range
+ * @default undefined
+ * @since 6.0.0
+ * @product highstock
+ * @apioption plotOptions.series.compareStart
+ */
+
+/**
  * When [compare](#plotOptions.series.compare) is `percent`, this option
  * dictates whether to use 0 or 100 as the base of comparison.
  * 
@@ -680,6 +695,7 @@ seriesProto.processData = function () {
 		keyIndex = -1,
 		processedXData,
 		processedYData,
+		compareStart = series.options.compareStart === true ? 0 : 1,
 		length,
 		compareValue;
 
@@ -704,11 +720,15 @@ seriesProto.processData = function () {
 		}
 
 		// find the first value for comparison
-		for (i = 0; i < length - 1; i++) {
+		for (i = 0; i < length - compareStart; i++) {
 			compareValue = processedYData[i] && keyIndex > -1 ? 
 				processedYData[i][keyIndex] :
 				processedYData[i];
-			if (isNumber(compareValue) && processedXData[i + 1] >= series.xAxis.min && compareValue !== 0) {
+			if (
+				isNumber(compareValue) &&
+				processedXData[i + compareStart] >= series.xAxis.min &&
+				compareValue !== 0
+			) {
 				series.compareValue = compareValue;
 				break;
 			}

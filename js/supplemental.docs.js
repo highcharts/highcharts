@@ -2147,6 +2147,7 @@
  * @default 0
  * @sample {highstock} stock/rangeselector/min-max-offsets/ Button offsets
  * @product highstock
+ * @since 6.0.0
  * @apioption rangeSelector.buttons.offsetMax
  */
 
@@ -2157,6 +2158,7 @@
  * @default 0
  * @sample {highstock} stock/rangeselector/min-max-offsets/ Button offsets
  * @product highstock
+ * @since 6.0.0
  * @apioption rangeSelector.buttons.offsetMin
  */
 
