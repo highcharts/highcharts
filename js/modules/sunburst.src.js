@@ -10,19 +10,23 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../mixins/centered-series.js';
+import mixinTreeSeries from '../mixins/tree-series.js';
 import '../parts/Series.js';
 import './treemap.src.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	each = H.each,
+	extend = H.extend,
 	getCenter = CenteredSeriesMixin.getCenter,
 	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
 	grep = H.grep,
 	isNumber = H.isNumber,
+	isString = H.isString,
 	merge = H.merge,
 	pick = H.pick,
 	Series = H.Series,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
+	setTreeValues = mixinTreeSeries.setTreeValues,
 	reduce = H.reduce;
 
 var layoutAlgorithm = function layoutAlgorithm(parent, children) {
@@ -73,7 +77,7 @@ var setShapeArgs = function setShapeArgs(parent, parentValues) {
 	var childrenValues = [],
 		// Collect all children which should be included
 		children = grep(parent.children, function (n) {
-			return !n.ignore;
+			return n.visible;
 		});
 	childrenValues = layoutAlgorithm(parentValues, children);
 	each(children, function (child, index) {
@@ -105,6 +109,17 @@ var setShapeArgs = function setShapeArgs(parent, parentValues) {
 	});
 };
 
+var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
+	var drillId = point.id,
+		node;
+	// When it is the root node, the drillId should be set to parent.
+	if (idRoot === point.id) {
+		node = mapIdToNode[idRoot];
+		drillId = node.parent;
+	}
+	return drillId;
+};
+
 /**
  * Default options for the Sunburst series.
  */
@@ -119,17 +134,37 @@ var sunburstSeries = {
 	drawPoints: function drawPoints() {
 		var series = this,
 			group = series.group,
+			idRoot = series.rootNode,
+			nodeMap = series.nodeMap,
 			points = series.points,
 			renderer = series.chart.renderer;
 		each(points, function (point) {
-			var node = point.node;
-			point.tooltipPos = node.tooltipPos;
+			var node = point.node,
+				nodeParent = nodeMap[node.parent],
+				animationFrom = nodeParent && nodeParent.shapeArgs && nodeParent.shapeArgs.end,
+				shape = node.shapeArgs || {},
+				attrStyle = series.pointAttribs(point, point.selected && 'select'),
+				attrAnimation = point.graphic ? {} : {
+					end: shape.end,
+					innerR: shape.innerR,
+					r: shape.r,
+					start: shape.end,
+					x: shape.x,
+					y: shape.y
+				};
+			extend(point, {
+				tooltipPos: node.tooltipPos,
+				drillId: getDrillId(point, idRoot, nodeMap),
+				name: point.name || point.id || point.index,
+				value: node.val,
+				visible: node.visible
+			});
 			point.draw({
-				attr: series.pointAttribs(point, point.selected && 'select'),
+				attr: extend(attrAnimation, attrStyle),
 				group: group,
 				renderer: renderer,
 				shapeType: 'arc',
-				shapeArgs: node.shapeArgs
+				shapeArgs: shape
 			});
 		});
 	},
@@ -137,15 +172,18 @@ var sunburstSeries = {
 	translate: function translate() {
 		var series = this,
 			options = series.options,
-			positions = getCenter.call(series),
-			radians = getStartAndEndRadians(options.startAngle, options.endAngle),
+			positions = series.center = getCenter.call(series),
+			radians = series.startAndEndRadians = getStartAndEndRadians(options.startAngle, options.endAngle),
 			innerRadius = positions[3] / 2,
 			outerRadius = positions[2] / 2,
+			idRoot = series.rootNode = pick(series.rootNode, options.rootId, ''),
+			idTop,
+			mapIdToNode,
+			nodeRoot,
+			nodeTop,
 			radiusPerLevel,
-			rootId = series.rootNode = pick(series.rootNode, options.rootId, ''),
 			tree,
-			values,
-			rootNode;
+			values;
 
 		// Call prototype function
 		Series.prototype.translate.call(series);
@@ -157,30 +195,30 @@ var sunburstSeries = {
 			}, {});
 		// @todo Only if series.isDirtyData is true
 		tree = series.tree = series.getTree();
-		rootNode = series.nodeMap[rootId];
-		if (
-			rootId !== '' &&
-			(!rootNode || !rootNode.children.length)
-		) {
-			series.drillToNode('', false);
-			rootId = series.rootNode;
-			rootNode = series.nodeMap[rootId];
-		}
+		mapIdToNode = series.nodeMap;
+		nodeRoot = mapIdToNode[idRoot];
+		idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
+		nodeTop = mapIdToNode[idTop];
 		// TODO Try to combine setTreeValues & setColorRecursive to avoid
 		//  unnecessary looping.
-		series.setTreeValues(tree);
+		setTreeValues(tree, {
+			idRoot: idRoot,
+			levelIsConstant: series.levelIsConstant,
+			mapIdToNode: mapIdToNode,
+			points: series.points
+		});
 		series.setColorRecursive(series.tree);
-		radiusPerLevel = (outerRadius - innerRadius) / tree.height;
-		values = series.nodeMap[''].values = {
-			start: radians.start,
+		radiusPerLevel = (outerRadius - innerRadius) / nodeTop.height;
+		values = mapIdToNode[''].shapeArgs = {
 			end: radians.end,
 			r: innerRadius,
 			radius: radiusPerLevel,
-			val: tree.val,
+			start: radians.start,
+			val: nodeTop.val,
 			x: positions[0],
 			y: positions[1]
 		};
-		setShapeArgs(tree, values);
+		setShapeArgs(nodeTop, values);
 	},
 
 	/**
@@ -247,14 +285,14 @@ var sunburstPoint = {
 				point.graphic = graphic = renderer[type](shape).add(group);
 			}
 			graphic.attr(attr).animate(shape);
-		} else {
-			point.graphic = point.destroy();
+		} else if (graphic) {
+			point.graphic = graphic.destroy();
 		}
 	},
 	shouldDraw: function shouldDraw() {
 		var point = this,
 			value = point.value;
-		return isNumber(value) && (value > 0);
+		return point.visible && isNumber(value) && (value > 0);
 	}
 };
 
