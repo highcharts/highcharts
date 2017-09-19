@@ -14,6 +14,7 @@ import '../parts/Series.js';
 import './treemap.src.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	each = H.each,
+	getCenter = CenteredSeriesMixin.getCenter,
 	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
 	grep = H.grep,
 	isNumber = H.isNumber,
@@ -108,7 +109,7 @@ var setShapeArgs = function setShapeArgs(parent, parentValues) {
  * Default options for the Sunburst series.
  */
 var sunburstOptions = {
-
+	center: [null, null]
 };
 
 /**
@@ -135,12 +136,12 @@ var sunburstSeries = {
 	pointAttribs: seriesTypes.column.prototype.pointAttribs,
 	translate: function translate() {
 		var series = this,
-			chart = series.chart,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
 			options = series.options,
+			positions = getCenter.call(series),
 			radians = getStartAndEndRadians(options.startAngle, options.endAngle),
-			radius,
+			innerRadius = positions[3] / 2,
+			outerRadius = positions[2] / 2,
+			radiusPerLevel,
 			rootId = series.rootNode = pick(series.rootNode, options.rootId, ''),
 			tree,
 			values,
@@ -156,7 +157,6 @@ var sunburstSeries = {
 			}, {});
 		// @todo Only if series.isDirtyData is true
 		tree = series.tree = series.getTree();
-		radius = (Math.min(plotWidth, plotHeight) / tree.height) / 2;
 		rootNode = series.nodeMap[rootId];
 		if (
 			rootId !== '' &&
@@ -170,15 +170,15 @@ var sunburstSeries = {
 		//  unnecessary looping.
 		series.setTreeValues(tree);
 		series.setColorRecursive(series.tree);
+		radiusPerLevel = (outerRadius - innerRadius) / tree.height;
 		values = series.nodeMap[''].values = {
 			start: radians.start,
 			end: radians.end,
-			innerR: 0,
-			r: 0,
-			radius: radius,
+			r: innerRadius,
+			radius: radiusPerLevel,
 			val: tree.val,
-			x: plotWidth / 2,
-			y: plotHeight / 2
+			x: positions[0],
+			y: positions[1]
 		};
 		setShapeArgs(tree, values);
 	},
