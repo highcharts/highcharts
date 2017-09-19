@@ -140,8 +140,6 @@ var sunburstSeries = {
 			renderer = series.chart.renderer;
 		each(points, function (point) {
 			var node = point.node,
-				nodeParent = nodeMap[node.parent],
-				animationFrom = nodeParent && nodeParent.shapeArgs && nodeParent.shapeArgs.end,
 				shape = node.shapeArgs || {},
 				attrStyle = series.pointAttribs(point, point.selected && 'select'),
 				attrAnimation = point.graphic ? {} : {
