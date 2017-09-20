@@ -173,20 +173,76 @@ var outsidePlayingField = function outsidePlayingField(point, field) {
 };
 
 /**
- * Default options for the WordCloud series.
+ * Wordcloud.
+ *
+ * @extends {plotOptions.column}
+ * @excluding allAreas, clip, colorAxis, compare, compareBase, crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor, findNearestPointBy, getExtremesFromAll, grouping, groupPadding, groupZPadding, joinBy, maxPointWidth, minPointLength, navigatorOptions, negativeColor, pointInterval, pointIntervalUnit, pointPadding, pointPlacement, pointRange, pointStart, pointWidth, pointStart, pointWidth, shadow, showCheckbox, showInNavigator, softThreshold, stacking, threshold, zoneAxis, zones
+ * @product highcharts
+ * @optionparent plotOptions.wordcloud
  */
 var wordCloudOptions = {
 	borderWidth: 0,
 	clip: false, // Something goes wrong with clip. // TODO fix this
+	/**
+	 * When using automatic point colors pulled from the `options.colors`
+	 * collection, this option determines whether the chart should receive
+	 * one color per series or one color per point.
+	 *
+	 * @type {Boolean}
+	 * @see [series colors](#plotOptions.column.colors)
+	 * @default true
+	 * @since 6.0.0
+	 * @product highcharts
+	 * @apioption plotOptions.wordcloud.colorByPoint
+	 */
 	colorByPoint: true,
 	fontFamily: 'Impact',
+	/**
+	 * This option decides which algorithm is used for placement, and rotation
+	 * of a word. The choice of algorith is therefore a crucial part of the
+	 * resulting layout of the wordcloud.
+	 *
+	 * @since 6.0.0
+	 * @apioption plotOptions.wordcloud.placementStrategy
+	 */
 	placementStrategy: 'random',
+	/**
+	 * Rotation options for the words in the wordcloud.
+	 *
+	 * @since 6.0.0
+	 * @optionparent plotOptions.wordcloud.rotation
+	 */
 	rotation: {
+		/**
+		 * The smallest degree of rotation for a word.
+		 *
+		 * @since 6.0.0
+		 * @apioption plotOptions.wordcloud.from
+		 */
 		from: -60,
+		/**
+		 * The number of possible orientations for a word, within the range of
+		 * rotation.from and rotation.to.
+		 *
+		 * @since 6.0.0
+		 * @apioption plotOptions.wordcloud.orientation
+		 */
 		orientations: 5,
+		/**
+		 * The largest degree of rotation for a word.
+		 *
+		 * @since 6.0.0
+		 * @apioption plotOptions.wordcloud.to
+		 */
 		to: 60
 	},
 	showInLegend: false,
+	/**
+	 * Spiral used for placing a word after the inital position experienced a
+	 * collision with either another word or the borders.
+	 *
+	 * @since 6.0.0
+	 */
 	spiral: 'archimedean',
 	tooltip: {
 		followPointer: true
@@ -369,6 +425,46 @@ var wordCloudSeries = {
 };
 
 /**
- * Assemble the WordCloud series type.
+ * A `wordcloud` series. If the [type](#series.wordcloud.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * wordcloud](#plotOptions.wordcloud).
+ *
+ * @type {Object}
+ * @extends plotOptions.wordcloud
+ * @product highcharts
+ * @apioption series.wordcloud
  */
+
+/**
+* @type {Array<Object|Number>}
+* @extends series.wordcloud.data
+* @excluding x,y
+* @product highcharts
+* @apioption series.wordcloud.data
+*/
+
+/**
+* The name decides the text for a word.
+*
+* @type {Number|undefined}
+* @default undefined
+* @since 6.0.0
+* @product highcharts
+* @apioption series.sunburst.data.name
+*/
+
+/**
+* The weighting of a word. The weight decides the relative size of a word
+* compared to the rest of the collection.
+*
+* @type {Number|undefined}
+* @default undefined
+* @since 6.0.0
+* @product highcharts
+* @apioption series.sunburst.data.weight
+*/
 H.seriesType('wordcloud', 'column', wordCloudOptions, wordCloudSeries);
