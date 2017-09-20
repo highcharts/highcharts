@@ -196,8 +196,8 @@ H.setOptions({
 		 * 
 		 * Defaults to the same format as in tooltip.
 		 * 
-		 * For an overview of the replacement codes, see [dateFormat](
-		 * #Highcharts.dateFormat).
+		 * For an overview of the replacement codes, see
+		 * [dateFormat](#Highcharts.dateFormat).
 		 * 
 		 * @type {String}
 		 * @see [pointDateFormatter](#accessibility.pointDateFormatter)
