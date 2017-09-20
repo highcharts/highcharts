@@ -1535,6 +1535,22 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
+	 * Resolve the new minorTicks/minorTickInterval options into the legacy
+	 * loosely typed minorTickInterval option.
+	 */
+	getMinorTickInterval: function () {
+		var options = this.options;
+
+		if (options.minorTicks === true) {
+			return pick(options.minorTickInterval, 'auto');
+		}
+		if (options.minorTicks === false) {
+			return null;
+		}
+		return options.minorTickInterval;
+	},
+
+	/**
 	 * Internal function to return the minor tick positions. For logarithmic
 	 * axes, the same logic as for major ticks is reused.
 	 *
@@ -1576,7 +1592,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 			} else if (
 				axis.isDatetimeAxis &&
-				options.minorTickInterval === 'auto'
+				this.getMinorTickInterval() === 'auto'
 			) { // #1314
 				minorTickPositions = minorTickPositions.concat(
 					axis.getTimeTicks(
@@ -2195,6 +2211,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		var options = this.options,
 			tickPositions,
 			tickPositionsOption = options.tickPositions,
+			minorTickIntervalOption = this.getMinorTickInterval(),
 			tickPositioner = options.tickPositioner,
 			startOnTick = options.startOnTick,
 			endOnTick = options.endOnTick;
@@ -2209,10 +2226,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		// get minorTickInterval
 		this.minorTickInterval =
-			options.minorTickInterval === 'auto' &&
+			minorTickIntervalOption === 'auto' &&
 			this.tickInterval ?
 				this.tickInterval / 5 :
-				options.minorTickInterval;
+				minorTickIntervalOption;
 
 		// When there is only one point, or all points have the same value on
 		// this axis, then min and max are equal and tickPositions.length is 0

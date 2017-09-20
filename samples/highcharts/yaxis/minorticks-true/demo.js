@@ -1,11 +1,16 @@
 
 Highcharts.chart('container', {
+
+    chart: {
+        title: 'Minor ticks enabled'
+    },
+
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     yAxis: {
-        minorTickInterval: 'auto',
+        minorTicks: true,
         minorTickLength: 0
     },
 

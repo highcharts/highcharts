@@ -4,7 +4,7 @@ QUnit.test('Legacy - null', function (assert) {
 
     chart = Highcharts.chart('container', {
         yAxis: {
-            minorTickInterval: null // default
+            //minorTickInterval: null // default
         },
         series: [{
             "data": [1, 2, 3, 4]
@@ -82,6 +82,26 @@ QUnit.test('Legacy - auto, log', function (assert) {
     );
 });
 
+QUnit.test('Legacy - auto, deep log', function (assert) {
+
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        yAxis: {
+            minorTickInterval: 'auto',
+            type: 'logarithmic'
+        },
+        series: [{
+            "data": [1.001, 1.002, 1.003, 1.004]
+        }]
+    });
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].minorTicks).length,
+        13,
+        'Auto'
+    );
+});
+
 QUnit.test('Legacy - number, log', function (assert) {
 
     var chart;
@@ -89,6 +109,155 @@ QUnit.test('Legacy - number, log', function (assert) {
     chart = Highcharts.chart('container', {
         yAxis: {
             minorTickInterval: 0.5,
+            type: 'logarithmic'
+        },
+        series: [{
+            "data": [1, 2, 3, 4]
+        }]
+    });
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].minorTicks).length,
+        2,
+        'Number'
+    );
+});
+
+// /////////////////////////////////////////////////////////////////////////////
+QUnit.test('Typed - null', function (assert) {
+
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        yAxis: {
+            //minorTickInterval: null // default
+        },
+        series: [{
+            "data": [1, 2, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].tickPositions.toString(),
+        '0,2,4,6',
+        'Null'
+    );
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].minorTicks).length,
+        0,
+        'Null'
+    );
+});
+
+QUnit.test('Typed - minorTicks false', function (assert) {
+
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        yAxis: {
+            minorTickInterval: 0.5,
+            minorTicks: false
+        },
+        series: [{
+            "data": [1, 2, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].minorTicks).length,
+        0,
+        'False'
+    );
+});
+
+QUnit.test('Typed - auto, linear', function (assert) {
+
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        yAxis: {
+            minorTicks: true
+        },
+        series: [{
+            "data": [1, 2, 3, 4]
+        }]
+    });
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].minorTicks).length,
+        15,
+        'Auto'
+    );
+});
+
+QUnit.test('Typed - number, linear', function (assert) {
+
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        yAxis: {
+            minorTickInterval: 0.5,
+            minorTicks: true
+        },
+        series: [{
+            "data": [1, 2, 3, 4]
+        }]
+    });
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].minorTicks).length,
+        13,
+        'Number'
+    );
+});
+
+
+QUnit.test('Typed - auto, log', function (assert) {
+
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        yAxis: {
+            minorTicks: true,
+            type: 'logarithmic'
+        },
+        series: [{
+            "data": [1, 2, 3, 4]
+        }]
+    });
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].minorTicks).length,
+        11,
+        'Auto'
+    );
+});
+
+
+QUnit.test('Typed - auto, deep log', function (assert) {
+
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        yAxis: {
+            minorTicks: true,
+            type: 'logarithmic'
+        },
+        series: [{
+            "data": [1.001, 1.002, 1.003, 1.004]
+        }]
+    });
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].minorTicks).length,
+        13,
+        'Auto'
+    );
+});
+
+QUnit.test('Typed - number, log', function (assert) {
+
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        yAxis: {
+            minorTickInterval: 0.5,
+            minorTicks: true,
             type: 'logarithmic'
         },
         series: [{

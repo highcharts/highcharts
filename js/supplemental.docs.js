@@ -259,33 +259,51 @@
  */
 
 /**
- * Tick interval in scale units for the minor ticks. On a linear axis,
+ * Specific tick interval in axis units for the minor ticks. On a linear axis,
  * if `"auto"`, the minor tick interval is calculated as a fifth of
  * the tickInterval. If `null`, minor ticks are not shown.
  * 
  * On logarithmic axes, the unit is the power of the value. For example,
  * setting the minorTickInterval to 1 puts one tick on each of 0.1,
  * 1, 10, 100 etc. Setting the minorTickInterval to 0.1 produces 9
- * ticks between 1 and 10, 10 and 100 etc. A minorTickInterval of "auto"
- * on a log axis results in a best guess, attempting to enter approximately
- * 5 minor ticks between each major tick.
+ * ticks between 1 and 10, 10 and 100 etc.
  * 
  * If user settings dictate minor ticks to become too dense, they don't
  * make sense, and will be ignored to prevent performance problems.
  * 
- * @productdesc {highcharts}
- * On axes using [categories](#xAxis.categories), minor ticks are not
- * supported.
- * 
- * @type {String|Number}
+ * @type {Number}
  * @sample {highcharts} highcharts/yaxis/minortickinterval-null/ Null by default
- * @sample {highcharts} highcharts/yaxis/minortickinterval-auto/ "auto" on linear Y axis
  * @sample {highcharts} highcharts/yaxis/minortickinterval-5/ 5 units
  * @sample {highcharts} highcharts/yaxis/minortickinterval-log-auto/ "auto"
  * @sample {highcharts} highcharts/yaxis/minortickinterval-log/ 0.1
  * @sample {highstock} stock/demo/basic-line/ Null by default
  * @sample {highstock} stock/xaxis/minortickinterval-auto/ "auto"
  * @apioption xAxis.minorTickInterval
+ */
+
+/**
+ * Enable or disable minor ticks. Unless
+ * [minorTickInterval](#xAxis.minorTickInterval) is set, the tick interval is
+ * calculated as a fifth of the `tickInterval`. 
+ *
+ * On a logarithmic axis, minor ticks are laid out based on a best guess,
+ * attempting to enter approximately 5 minor ticks between each major tick.
+ *
+ * Prior to v6.0.0, ticks were unabled in auto layout by setting
+ * `minorTickInterval` to `"auto"`.
+ * 
+ * @productdesc {highcharts}
+ * On axes using [categories](#xAxis.categories), minor ticks are not
+ * supported.
+ *
+ * @type {Boolean}
+ * @default false
+ * @since 6.0.0
+ *
+ * @sample {highcharts} highcharts/yaxis/minorticks-true/
+ *         Enabled on linear Y axis
+ * 
+ * @apioption xAxis.minorTicks
  */
 
 /**
