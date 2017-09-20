@@ -271,16 +271,17 @@ seriesType('variablepie', 'pie',
 			// anticollision logic in data labels. Added point for using
 			// specific points' label distance.
 			series.getX = function (y, left, point) {
+				var radii = point.series.radii[point.index];
 				angle = Math.asin(
 					Math.min(
 						(y - positions[1]) /
-						(positions[2] / 2 + point.labelDistance), 
+						(radii + point.labelDistance),
 						1
 					)
 				);
 				return positions[0] +
 					(left ? -1 : 1) *
-					(Math.cos(angle) * (positions[2] / 2 +
+					(Math.cos(angle) * (radii +
 					point.labelDistance));
 			};
 
@@ -357,11 +358,12 @@ seriesType('variablepie', 'pie',
 					connectorOffset,
 					point.labelDistance / 5
 				); // #1678
+
 				point.labelPos = [
-					positions[0] + radiusX +
+					positions[0] + pointRadiusX +
 					// first break of connector
 					Math.cos(angle) * point.labelDistance, 
-					positions[1] + radiusY +
+					positions[1] + pointRadiusY +
 					Math.sin(angle) * point.labelDistance, // a/a
 					positions[0] + pointRadiusX +
 					// second break, right outside pie
@@ -379,7 +381,6 @@ seriesType('variablepie', 'pie',
 		}
 	}
 );
-
 
 /**
  * A `variablepie` series. If the [type](#series.variablepie.type) option is not

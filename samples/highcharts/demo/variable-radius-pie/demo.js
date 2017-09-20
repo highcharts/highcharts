@@ -3,38 +3,44 @@ Highcharts.chart('container', {
         type: 'variablepie'
     },
     title: {
-        text: 'Variable - Radius Pie'
+        text: 'Countries compared by population density and total area.'
+    },
+    tooltip:{
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b>{series.name}</b><br/>Area (square km): {point.y}<br/>Population density (people per square km): {point.z}<br/>'
     },
     series: [{
         minPointSize: 10,
         innerSize: '20%',
+        zMin: 0,
+        name: 'countries',
         data: [{
-            y: 3,
-            z: 5
+            name: 'Spain',
+            y: 505370,
+            z: 92.9
         }, {
-            y: 2,
-            z: 10
+            name: 'France',
+            y: 551500,
+            z: 118.7
         }, {
-            y: 2,
-            z: 20
+            name: 'Poland',
+            y: 312685,
+            z: 124.6
         }, {
-            y: 4,
-            z: 4
+            name: 'Czech Republic',
+            y: 78867,
+            z: 137.5
         }, {
-            y: 3,
-            z: 3
+            name: 'Italy',
+            y: 301340,
+            z: 201.8
         }, {
-            y: 2,
-            z: 2
+            name: 'Switzerland',
+            y: 41277,
+            z: 214.5
         }, {
-            y: 5,
-            z: 5
-        }, {
-            y: 3,
-            z: 3
-        }, {
-            y: 4,
-            z: 4
+            name: 'Germany',
+            y: 357022,
+            z: 235.6
         }]
     }]
 });
