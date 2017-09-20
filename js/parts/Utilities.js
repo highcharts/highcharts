@@ -159,29 +159,31 @@ H.Fx.prototype = {
 			},
 			i;
 
-		this.startTime = +new Date();
-		this.start = from;
-		this.end = to;
-		this.unit = unit;
-		this.now = this.start;
-		this.pos = 0;
+		if (from !== to) { // #7166
+			this.startTime = +new Date();
+			this.start = from;
+			this.end = to;
+			this.unit = unit;
+			this.now = this.start;
+			this.pos = 0;
 
-		timer.elem = this.elem;
-		timer.prop = this.prop;
+			timer.elem = this.elem;
+			timer.prop = this.prop;
 
-		if (timer() && timers.push(timer) === 1) {
-			timer.timerId = setInterval(function () {
-				
-				for (i = 0; i < timers.length; i++) {
-					if (!timers[i]()) {
-						timers.splice(i--, 1);
+			if (timer() && timers.push(timer) === 1) {
+				timer.timerId = setInterval(function () {
+					
+					for (i = 0; i < timers.length; i++) {
+						if (!timers[i]()) {
+							timers.splice(i--, 1);
+						}
 					}
-				}
 
-				if (!timers.length) {
-					clearInterval(timer.timerId);
-				}
-			}, 13);
+					if (!timers.length) {
+						clearInterval(timer.timerId);
+					}
+				}, 13);
+			}
 		}
 	},
 	
