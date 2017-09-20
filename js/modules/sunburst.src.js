@@ -149,7 +149,9 @@ var sunburstSeries = {
 		each(points, function (point) {
 			var node = point.node,
 				shape = node.shapeArgs || {},
-				rotation = (shape.end - (shape.end - shape.start) / 2) * rad2deg,
+				rotationRad = (shape.end - (shape.end - shape.start) / 2),
+				// Data labels should not rotate beyond 180 degrees.
+				rotation = (rotationRad * rad2deg) % 180,
 				attrStyle = series.pointAttribs(point, point.selected && 'select'),
 				attrAnimation = point.graphic ? {} : {
 					end: shape.end,
