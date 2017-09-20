@@ -83,6 +83,7 @@ var defaultParallelOptions = {
 	 *            minorGridLineWidth,plotBands,plotLines,angle,
 	 *            gridLineInterpolation,maxColor,maxZoom,minColor,scrollbar,
 	 *            stackLabels,stops
+	 *
 	 * @product highcharts
 	 * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/
 	 *         Set the same tickAmount for all yAxes
@@ -92,6 +93,14 @@ var defaultParallelOptions = {
 		/*= if (build.classic) { =*/
 		lineWidth: 1,
 		/*= } =*/
+		/**
+		 * Titles for yAxes are taken from [xAxis.categories](#xAxis.categories).
+		 * All options for `xAxis.labels` applies to parallel coordinates titles.
+		 * For example, to style categories, use [xAxis.labels.style](#xAxis.labels.style).
+		 *
+		 * @excluding align,enabled,margin,offset,position3d,reserveSpace,
+		 *            rotation,skew3d,style,text,useHTML,x,y
+		 */
 		title: {
 			text: '',
 			reserveSpace: false
