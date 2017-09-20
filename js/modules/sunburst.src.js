@@ -122,16 +122,58 @@ var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
 };
 
 /**
- * Default options for the Sunburst series.
+ * A Sunburst displays hierarchical data, where a level in the hierarchy is represented by a circle.
+ * The center represents the root node of the tree.
+ * The visualization bear a resemblance to both treemap and pie charts.
+ *
+ * @extends {plotOptions.pie}
+ * @excluding allAreas, center, clip, colorAxis, compare, compareBase, dataGrouping, depth, endAngle, gapSize, gapUnit, ignoreHiddenPoint, innerSize, joinBy, legendType, linecap, minSize, navigatorOptions, pointRange, slicedOffset
+ * @product highcharts
+ * @optionparent plotOptions.sunburst
  */
 var sunburstOptions = {
-	center: [null, null],
+	/**
+	 * The center of the sunburst chart relative to the plot area. Can be
+	 * percentages or pixel values.
+	 *
+	 * @type {Array<String|Number>}
+	 * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
+	 * @default ['50%', '50%']
+	 * @product highcharts
+	 */
+	center: ['50%', '50%'],
+	/**
+	 * @extends plotOptions.series.dataLabels
+	 * @excluding align,allowOverlap,staggerLines,step
+	 * @product highcharts
+	 */
 	dataLabels: {
+		/**
+		 * Whether to defer displaying the data labels until the initial series
+		 * animation has finished.
+		 *
+		 * @type {Boolean}
+		 * @default true
+		 * @since 4.0
+		 * @product highcharts
+		 * @apioption plotOptions.sunburst.dataLabels.defer
+		 */
 		defer: true,
 		style: {
 			textOverflow: 'ellipsis'
 		}
-	}
+	},
+	/**
+	 * Which point to use as a root in the visualization.
+	 *
+	 * @type {String|undefined}
+	 * @default undefined
+	 * @since 6.0.0
+	 * @product highcharts
+	 * @apioption plotOptions.sunburst.rootId
+	 */
+	rootId: undefined
+	// TODO support colorAxis
 };
 
 /**
@@ -320,7 +362,50 @@ var sunburstPoint = {
 };
 
 /**
- * Assemble the Sunburst series type.
+ * A `sunburst` series. If the [type](#series.sunburst.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * sunburst](#plotOptions.sunburst).
+ * 
+ * @type {Object}
+ * @extends plotOptions.sunburst
+ * @excluding dataParser,dataURL,stack
+ * @product highcharts
+ * @apioption series.sunburst
+ */
+
+/** 
+ * @type {Array<Object|Number>}
+ * @extends series.treemap.data
+ * @excluding x,y
+ * @product highcharts
+ * @apioption series.sunburst.data
+ */
+
+/**
+* The value of the point, resulting in a relative area of the point
+* in the sunburst.
+* 
+* @type {Number}
+* @default undefined
+* @since 6.0.0
+* @product highcharts
+* @apioption series.sunburst.data.value
+*/
+
+/**
+ * Use this option to build a tree structure. The value should be the id of the
+ * point which is the parent. If no points has a matching id, or this option is
+ * undefined, then the parent will be set to the root.
+ * 
+ * @type {String|undefined}
+ * @default undefined
+ * @since 6.0.0
+ * @product highcharts
+ * @apioption series.treemap.data.parent
  */
 seriesType(
 	'sunburst',
