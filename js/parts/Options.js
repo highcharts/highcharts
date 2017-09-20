@@ -2709,7 +2709,7 @@ H.defaultOptions = {
 		 * 
 		 * @type {String}
 		 * @default callout
-		 * @validvalues ["callout", "square"]
+		 * @validvalue ["callout", "square"]
 		 * @since 4.0
 		 * @apioption tooltip.shape
 		 */

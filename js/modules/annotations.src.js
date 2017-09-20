@@ -408,7 +408,7 @@ Annotation.prototype = {
 			 * the right side of the label should be touching the point. 
 			 *
 			 * @type {String}
-			 * @validvalues ["left", "center", "right"]
+			 * @validvalue ["left", "center", "right"]
 			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
 			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
 			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position
@@ -608,7 +608,7 @@ Annotation.prototype = {
 			 * The vertical alignment of the annotation's label.
 			 * 
 			 * @type {String}
-			 * @validvalues ["top", "middle", "bottom"]
+			 * @validvalue ["top", "middle", "bottom"]
 			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
 			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
 			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position

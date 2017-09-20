@@ -203,7 +203,7 @@ defaultOptions.drilldown = {
 			 *
 			 * @type {String}
 			 * @default top
-			 * @validvalues ["top", "middle", "bottom"]
+			 * @validvalue ["top", "middle", "bottom"]
 			 * @product highcharts highmaps
 			 * @apioption drilldown.drillUpButton.position.verticalAlign
 			 */
@@ -214,7 +214,7 @@ defaultOptions.drilldown = {
 		 * 
 		 * @type {String}
 		 * @default plotBox
-		 * @validvalues ["plotBox", "spacingBox"]
+		 * @validvalue ["plotBox", "spacingBox"]
 		 * @since 3.0.8
 		 * @product highcharts highmaps
 		 * @apioption drilldown.drillUpButton.relativeTo

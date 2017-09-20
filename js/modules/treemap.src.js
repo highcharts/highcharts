@@ -226,7 +226,7 @@ seriesType('treemap', 'scatter', {
 
 			/**
 			 * Horizontal alignment of the button.
-			 * @validvalues ["left", "center", "right"]
+			 * @validvalue ["left", "center", "right"]
 			 */
 			align: 'right',
 
@@ -246,7 +246,7 @@ seriesType('treemap', 'scatter', {
 			 * Vertical alignment of the button.
 			 *
 			 * @default top
-			 * @validvalues ["top", "middle", "bottom"]
+			 * @validvalue ["top", "middle", "bottom"]
 			 * @apioption plotOptions.treemap.drillUpButton.position.verticalAlign
 			 */
 		}

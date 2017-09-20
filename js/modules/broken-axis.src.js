@@ -370,7 +370,7 @@ H.Series.prototype.gappedPath = function () {
 	 * @type {String}
 	 * @see [gapSize](plotOptions.series.gapSize)
 	 * @default relative
-	 * @validvalues ["relative", "value"]
+	 * @validvalue ["relative", "value"]
 	 * @since 5.0.13
 	 * @product highstock
 	 * @apioption plotOptions.series.gapUnit
