@@ -49,7 +49,8 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=marathon.j
                 'Running pace per mile',
                 'Short or long',
                 'After 2004'
-            ]
+            ],
+            offset: 10
         },
         yAxis: [{
             type: 'datetime',
