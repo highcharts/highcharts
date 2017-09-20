@@ -383,7 +383,7 @@ $(function() {
 					})
 					.appendTo($li);
 
-				$('<span class="date">' + date + '</span>')
+				$('<span class="date">' + (date || '&nbsp;') + '</span>')
 					.css({
 						marginLeft: 20 + 10 * indentLevel
 					})
