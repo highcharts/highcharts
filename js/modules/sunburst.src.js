@@ -22,7 +22,9 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	isNumber = H.isNumber,
 	isString = H.isString,
 	merge = H.merge,
+	noop = H.noop,
 	pick = H.pick,
+	rad2deg = 180 / Math.PI,
 	Series = H.Series,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
@@ -94,14 +96,13 @@ var setShapeArgs = function setShapeArgs(parent, parentValues) {
 				) :
 				child.childrenTotal
 			);
-		child.shapeArgs = values;
+		child.shapeArgs = merge(values, {
+			plotX: center.x,
+			plotY: center.y
+		});
 		child.values = merge(values, {
 			val: val
 		});
-		child.tooltipPos = [
-			center.x,
-			center.y
-		];
 		// If node has children, then call method recursively
 		if (child.children.length) {
 			setShapeArgs(child, child.values);
@@ -124,13 +125,20 @@ var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
  * Default options for the Sunburst series.
  */
 var sunburstOptions = {
-	center: [null, null]
+	center: [null, null],
+	dataLabels: {
+		defer: true,
+		style: {
+			textOverflow: 'ellipsis'
+		}
+	}
 };
 
 /**
  * Properties of the Sunburst series.
  */
 var sunburstSeries = {
+	drawDataLabels: noop, // drawDataLabels is called in drawPoints
 	drawPoints: function drawPoints() {
 		var series = this,
 			group = series.group,
@@ -141,6 +149,7 @@ var sunburstSeries = {
 		each(points, function (point) {
 			var node = point.node,
 				shape = node.shapeArgs || {},
+				rotation = (shape.end - (shape.end - shape.start) / 2) * rad2deg,
 				attrStyle = series.pointAttribs(point, point.selected && 'select'),
 				attrAnimation = point.graphic ? {} : {
 					end: shape.end,
@@ -151,12 +160,23 @@ var sunburstSeries = {
 					y: shape.y
 				};
 			extend(point, {
-				tooltipPos: node.tooltipPos,
+				tooltipPos: [shape.plotX, shape.plotY],
 				drillId: getDrillId(point, idRoot, nodeMap),
 				name: point.name || point.id || point.index,
+				plotX: shape.plotX, // used for data label position
+				plotY: shape.plotY, // used for data label position
 				value: node.val,
-				visible: node.visible
+				visible: node.visible,
+				isNull: !node.visible // used for dataLabels
 			});
+
+			// Set width and rotation for data labels.
+			point.dlOptions = merge({
+				rotation: rotation,
+				style: {
+					width: shape.radius
+				}
+			}, point.options.dataLabels);
 			point.draw({
 				attr: extend(attrAnimation, attrStyle),
 				group: group,
@@ -165,6 +185,9 @@ var sunburstSeries = {
 				shapeArgs: shape
 			});
 		});
+		// Draw data labels after points
+		// TODO draw labels one by one to avoid addtional looping
+		Series.prototype.drawDataLabels.call(series);
 	},
 	pointAttribs: seriesTypes.column.prototype.pointAttribs,
 	translate: function translate() {
