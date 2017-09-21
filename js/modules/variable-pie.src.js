@@ -46,6 +46,13 @@ seriesType('variablepie', 'pie',
 		 * The minimum size of the points' radius related to chart's `plotArea`.
 		 * If a number is set, it applies in pixels.
 		 *
+		 * @sample {highcharts}
+		 *         /highcharts/variable-radius-pie/min-max-point-size/
+		 *         Example of minPointSize and maxPointSize
+		 * @sample {highcharts}
+		 *         /highcharts/variable-radius-pie/min-point-size-100/
+		 *         minPointSize set to 100
+		 * @apioption variablePie.minPointSize
 		 * @type {String|Number}
 		 * @since 6.0.0
 		 * @product highcharts
@@ -55,6 +62,9 @@ seriesType('variablepie', 'pie',
 		 * The maximum size of the points' radius related to chart's `plotArea`.
 		 * If a number is set, it applies in pixels.
 		 *
+		 * @sample {highcharts}
+		 *         /highcharts/variable-radius-pie/min-max-point-size/
+		 *         Example of minPointSize and maxPointSize
 		 * @type {String|Number}
 		 * @since 6.0.0
 		 * @product highcharts
@@ -65,6 +75,12 @@ seriesType('variablepie', 'pie',
 		 * If the point's Z value is smaller than zMin, the slice will be drawn
 		 * according to the zMin value.
 		 *
+		 * @sample {highcharts}
+		 *         /highcharts/variable-radius-pie/zmin-5/
+		 *         zMin set to 5, smaller z values are treated as 5
+		 * @sample {highcharts}
+		 *         /highcharts/variable-radius-pie/zmin-zmax/
+		 *         Series limited by both zMin and zMax
 		 * @type {Number}
 		 * @since 6.0.0
 		 * @product highcharts
@@ -73,8 +89,11 @@ seriesType('variablepie', 'pie',
 		/**
 		 * The maximum possible z value for the point's radius calculation. If
 		 * the point's Z value is bigger than zMax, the slice will be drawn
-		 * according to the zMax value.
+		 * according to the zMax value
 		 *
+		 * @sample {highcharts}
+		 *         /highcharts/variable-radius-pie/zmin-zmax/
+		 *         Series limited by both zMin and zMax
 		 * @type {Number}
 		 * @since 6.0.0
 		 * @product highcharts
@@ -86,6 +105,9 @@ seriesType('variablepie', 'pie',
 		 * default, `area`, corresponds best to the human perception of the size
 		 * of each pie slice.
 		 *
+		 * @sample {highcharts}
+		 *         /highcharts/variable-radius-pie/sizeby/
+		 *         Difference between area and radius sizeBy
 		 * @type {String}
 		 * @validvalue ["area", "radius"]
 		 * @since 6.0.0
