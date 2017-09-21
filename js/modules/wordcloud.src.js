@@ -12,6 +12,7 @@ import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var each = H.each,
 	extend = H.extend,
+	isNumber = H.isNumber,
 	Series = H.Series;
 
 /**
@@ -100,16 +101,9 @@ var getRandomPosition = function getRandomPosition(size) {
  * @return {number} Returns the value to scale the playing field up to the size
  *     of the target area.
  */
-var getScale = function getScale(targetWidth, targetHeight, field, series) {
-	var box = series.group.getBBox(),
-		f = {
-			left: box.x,
-			right: box.x + box.width,
-			top: box.y,
-			bottom: box.y + box.height
-		},
-		height = Math.max(Math.abs(f.top), Math.abs(f.bottom)) * 2,
-		width = Math.max(Math.abs(f.left), Math.abs(f.right)) * 2,
+var getScale = function getScale(targetWidth, targetHeight, field) {
+	var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
+		width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
 		scaleX = 1 / width * targetWidth,
 		scaleY = 1 / height * targetHeight;
 	return Math.min(scaleX, scaleY);
@@ -170,6 +164,32 @@ var outsidePlayingField = function outsidePlayingField(point, field) {
 		playingField.top < rect.y &&
 		playingField.bottom > (rect.y + rect.height)
 	);
+};
+
+/**
+ * updateFieldBoundaries - If a rectangle is outside a give field, then the
+ * boundaries of the field is adjusted accordingly. Modifies the field object
+ * which is passed as the first parameter.
+ *
+ * @param  {object} field The bounding box of a playing field.
+ * @param  {object} placement The bounding box for a placed point.
+ * @return {object} Returns a modified field object.
+ */
+var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
+	// TODO improve type checking.
+	if (!isNumber(field.left) || field.left > rectangle.left) {
+		field.left = rectangle.left;
+	}
+	if (!isNumber(field.right) || field.right < rectangle.right) {
+		field.right = rectangle.right;
+	}
+	if (!isNumber(field.top) || field.top > rectangle.top) {
+		field.top = rectangle.top;
+	}
+	if (!isNumber(field.bottom) || field.bottom < rectangle.bottom) {
+		field.bottom = rectangle.bottom;
+	}
+	return field;
 };
 
 /**
@@ -360,9 +380,18 @@ var wordCloudSeries = {
 			 * otherwise place it on the correct positions.
 			 */
 			if (spiralIsSmallish) {
+				placement.x += (delta ? delta.x : 0);
+				placement.y += (delta ? delta.y : 0);
+				extend(placement, {
+					left: placement.x  - (rect.width / 2),
+					right: placement.x + (rect.width / 2),
+					top: placement.y - (rect.height / 2),
+					bottom: placement.y + (rect.height / 2)
+				});
+				field = updateFieldBoundaries(field, placement);
 				point.graphic.attr({
-					x: placement.x + (delta ? delta.x : 0),
-					y: placement.y + (delta ? delta.y : 0)
+					x: placement.x,
+					y: placement.y
 				});
 				placed.push(point);
 			} else {
@@ -372,7 +401,7 @@ var wordCloudSeries = {
 		/**
 		 * Scale the series group to fit within the plotArea.
 		 */
-		scale = getScale(xAxis.len, yAxis.len, field, series);
+		scale = getScale(xAxis.len, yAxis.len, field);
 		series.group.attr({
 			scaleX: scale,
 			scaleY: scale
