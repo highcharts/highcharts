@@ -150,8 +150,8 @@ var getRotation = function getRotation(orientations, from, to) {
  * @param  {object} field The width and height of the playing field.
  * @return {boolean} Returns true if the word is placed outside the field.
  */
-var outsidePlayingField = function outsidePlayingField(point, field) {
-	var rect = point.graphic.getBBox(),
+var outsidePlayingField = function outsidePlayingField(wrapper, field) {
+	var rect = wrapper.getBBox(),
 		playingField = {
 			left: -(field.width / 2),
 			right: field.width / 2,
@@ -303,10 +303,14 @@ var wordCloudSeries = {
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
 			chart = series.chart,
+			group = series.group,
+			options = series.options,
+			renderer = chart.renderer,
+			testElement = renderer.text().add(group),
 			placed = [],
-			placementStrategy = series.placementStrategy[series.options.placementStrategy],
-			spiral = series.spirals[series.options.spiral],
-			rotation = series.options.rotation,
+			placementStrategy = series.placementStrategy[options.placementStrategy],
+			spiral = series.spirals[options.spiral],
+			rotation = options.rotation,
 			scale,
 			weights = series.points
 				.map(function (p) {
@@ -333,24 +337,25 @@ var wordCloudSeries = {
 				placed: placed,
 				rotation: rotation
 			});
-			if (!point.graphic) {
-				point.graphic = chart.renderer.text(point.name).css({
-					fontSize: series.deriveFontSize(point.relativeWeight),
-					fill: point.color,
-					fontFamily: series.options.fontFamily
-				}).attr({
-					x: placement.x,
-					y: placement.y,
-					'text-anchor': 'middle',
-					rotation: placement.rotation
-				}).add(series.group);
-				// Cache the original DOMRect values for later calculations.
-				point.clientRect = clientRect = extend(
-					{},
-					point.graphic.element.getBoundingClientRect()
-				);
-				point.rect = rect = extend({}, clientRect);
-			}
+			var attr = {
+				x: placement.x,
+				y: placement.y,
+				text: point.name,
+				'text-anchor': 'middle',
+				rotation: placement.rotation
+			};
+			var css = {
+				fontSize: series.deriveFontSize(point.relativeWeight),
+				fill: point.color,
+				fontFamily: series.options.fontFamily
+			};
+			testElement.css(css).attr(attr);
+			// Cache the original DOMRect values for later calculations.
+			point.clientRect = clientRect = extend(
+				{},
+				testElement.element.getBoundingClientRect()
+			);
+			point.rect = rect = extend({}, clientRect);
 			/**
 			 * while w intersects any previously placed words:
 			 *    do {
@@ -361,7 +366,7 @@ var wordCloudSeries = {
 			while (
 				(
 					intersectsAnyWord(point, placed) ||
-					outsidePlayingField(point, field)
+					outsidePlayingField(testElement, field)
 				) && spiralIsSmallish
 			) {
 				delta = spiral(attempt);
@@ -380,24 +385,33 @@ var wordCloudSeries = {
 			 * otherwise place it on the correct positions.
 			 */
 			if (spiralIsSmallish) {
-				placement.x += (delta ? delta.x : 0);
-				placement.y += (delta ? delta.y : 0);
+				attr.x += (delta ? delta.x : 0);
+				attr.y += (delta ? delta.y : 0);
 				extend(placement, {
-					left: placement.x  - (rect.width / 2),
-					right: placement.x + (rect.width / 2),
-					top: placement.y - (rect.height / 2),
-					bottom: placement.y + (rect.height / 2)
+					left: attr.x  - (rect.width / 2),
+					right: attr.x + (rect.width / 2),
+					top: attr.y - (rect.height / 2),
+					bottom: attr.y + (rect.height / 2)
 				});
 				field = updateFieldBoundaries(field, placement);
-				point.graphic.attr({
-					x: placement.x,
-					y: placement.y
-				});
 				placed.push(point);
+				point.isNull = false;
 			} else {
-				point.graphic = point.graphic.destroy();
+				point.isNull = true;
 			}
+			point.draw({
+				attr: attr,
+				css: css,
+				group: group,
+				renderer: renderer,
+				shapeArgs: undefined,
+				shapeType: 'text'
+			});
 		});
+
+		// Destroy the element after use.
+		testElement = testElement.destroy();
+
 		/**
 		 * Scale the series group to fit within the plotArea.
 		 */
@@ -454,6 +468,34 @@ var wordCloudSeries = {
 };
 
 /**
+ * Properties of the Sunburst series.
+ */
+var wordCloudPoint = {
+	draw: function draw(options) {
+		var point = this,
+			graphic = point.graphic,
+			group = options.group,
+			renderer = options.renderer,
+			shape = options.shapeArgs,
+			type = options.shapeType,
+			css = options.css,
+			attr = options.attr;
+		if (point.shouldDraw()) {
+			if (!graphic) {
+				point.graphic = graphic = renderer[type](shape).add(group);
+			}
+			graphic.css(css).attr(attr).animate(shape);
+		} else if (graphic) {
+			point.graphic = graphic.destroy();
+		}
+	},
+	shouldDraw: function shouldDraw() {
+		var point = this;
+		return !point.isNull;
+	}
+};
+
+/**
  * A `wordcloud` series. If the [type](#series.wordcloud.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
@@ -496,4 +538,4 @@ var wordCloudSeries = {
 * @product highcharts
 * @apioption series.sunburst.data.weight
 */
-H.seriesType('wordcloud', 'column', wordCloudOptions, wordCloudSeries);
+H.seriesType('wordcloud', 'column', wordCloudOptions, wordCloudSeries, wordCloudPoint);
