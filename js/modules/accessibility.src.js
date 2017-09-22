@@ -100,6 +100,13 @@ if (H.seriesTypes.pie) {
 	H.seriesTypes.pie.prototype.specialKeys = [];
 }
 
+// Set for which series types it makes sense to move to the closest point with
+// up/down arrows, and which series types should just move to next series.
+H.Series.prototype.keyboardMoveVertical = true;
+each(['column', 'pie'], function (type) {
+	H.seriesTypes[type].prototype.keyboardMoveVertical = false;
+});
+
 
 /**
  * Accessibility options
@@ -340,6 +347,43 @@ function fakeClickEvent(element) {
 		fakeEvent.initEvent('click', true, false);
 		element.onclick(fakeEvent);
 	}
+}
+
+// Determine if a point should be skipped
+function isSkipPoint(point) {
+	return point.isNull &&
+		point.series.chart.options.accessibility
+			.keyboardNavigation.skipNullPoints ||
+		point.series.options.skipKeyboardNavigation ||
+		!point.series.visible;
+}
+
+// Get the point in a series that is closest to a reference point
+// Optionally supply weight factors for x and y directions
+function getClosestPoint(point, series, xWeight, yWeight) {
+	var minDistance = Infinity,
+		dPoint,
+		minIx,
+		distance,
+		i = series.points.length;
+	if (point.plotX === undefined || point.plotY === undefined) {
+		return;
+	}
+	while (i--) {
+		dPoint = series.points[i];
+		if (dPoint.plotX === undefined || dPoint.plotY === undefined) {
+			return;
+		}
+		distance = (point.plotX - dPoint.plotX) *
+				(point.plotX - dPoint.plotX) * (xWeight || 1) +
+				(point.plotY - dPoint.plotY) *
+				(point.plotY - dPoint.plotY) * (yWeight || 1);
+		if (distance < minDistance) {
+			minDistance = distance;
+			minIx = i;
+		}
+	}
+	return series.points[minIx || 0];
 }
 
 // Whenever drawing series, put info on DOM elements
@@ -670,12 +714,6 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 					lastSeries.points[lastSeries.points.length - 1],
 		newSeries,
 		newPoint,
-		isSkipPoint = function (point) {
-			return point.isNull &&
-				chart.options.accessibility.keyboardNavigation.skipNullPoints ||
-				point.series.options.skipKeyboardNavigation ||
-				!point.series.visible;
-		},
 		// Handle connecting ends - where the points array has an extra last
 		// point that is a reference to the first one. We skip this.
 		forwardSkipAmount = curPoint && curPoint.series.connectEnds &&
@@ -726,6 +764,123 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 
 	// There is an adjacent point, highlight it
 	return newPoint.highlight();
+};
+
+// Highlight first valid point in a series. Returns the point if successfully
+// highlighted, otherwise false. If there is a highlighted point in the series,
+// use that as starting point.
+H.Series.prototype.highlightFirstValidPoint = function () {
+	var curPoint = this.chart.highlightedPoint,
+		start = curPoint.series === this ? curPoint.index : 0,
+		points = this.points;
+
+	for (var i = start, len = points.length; i < len; ++i) {
+		if (!isSkipPoint(points[i])) {
+			return points[i].highlight();
+		}
+	}
+	for (var j = start; j >= 0; --j) {
+		if (!isSkipPoint(points[j])) {
+			return points[j].highlight();
+		}
+	}
+	return false;
+};
+
+// Highlight next/previous series in chart. Returns false if no adjacent series
+// in the direction, otherwise returns new highlighted point.
+H.Chart.prototype.highlightAdjacentSeries = function (down) {
+	var chart = this,
+		newSeries,
+		newPoint,
+		adjacentNewPoint,
+		curPoint = chart.highlightedPoint,
+		lastSeries = chart.series && chart.series[chart.series.length - 1],
+		lastPoint = lastSeries && lastSeries.points &&
+					lastSeries.points[lastSeries.points.length - 1];
+
+	// If no point is highlighted, highlight the first/last point
+	if (!chart.highlightedPoint) {
+		newSeries = down ? (chart.series && chart.series[0]) : lastSeries;
+		newPoint = down ?
+			(newSeries && newSeries.points && newSeries.points[0]) : lastPoint;
+		return newPoint ? newPoint.highlight() : false;
+	}
+
+	newSeries = chart.series[curPoint.series.index + (down ? -1 : 1)];
+
+	if (!newSeries) {
+		return false;
+	}
+
+	// We have a new series in this direction, find the right point
+	// Weigh xDistance as counting much higher than Y distance
+	newPoint = getClosestPoint(curPoint, newSeries, 4);
+
+	if (!newPoint) {
+		return false;
+	}
+
+	// New series and point exists, but we might want to skip it
+	if (!newSeries.visible) {
+		// Skip the series
+		newPoint.highlight();
+		adjacentNewPoint = chart.highlightAdjacentSeries(down); // Try recurse
+		if (!adjacentNewPoint) {
+			// Recurse failed
+			curPoint.highlight();
+			return false;
+		}
+		// Recurse succeeded
+		return adjacentNewPoint;
+	}
+
+	// Highlight the new point or any first valid point back or forwards from it
+	newPoint.highlight();
+	return newPoint.series.highlightFirstValidPoint();
+};
+
+// Highlight the closest point vertically
+H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
+	var curPoint = this.highlightedPoint,
+		minDistance = Infinity,
+		bestPoint;
+
+	if (curPoint.plotX === undefined || curPoint.plotY === undefined) {
+		return false;
+	}
+	each(this.series, function (series) {
+		each(series.points, function (point) {
+			if (point.plotY === undefined || point.plotX === undefined || 
+				point === curPoint) {
+				return;
+			}
+			var yDistance = point.plotY - curPoint.plotY,
+				width = Math.abs(point.plotX - curPoint.plotX),
+				distance = Math.abs(yDistance) * Math.abs(yDistance) + 
+					width * width * 4; // Weigh horizontal distance highly
+
+			// Reverse distance number if axis is reversed
+			if (series.yAxis.reversed) {
+				yDistance *= -1;
+			}
+
+			if (
+				yDistance < 0 && down || yDistance > 0 && !down || // Wrong dir
+				distance < 5 || // Points in same spot => infinite loop
+				isSkipPoint(point)
+			) {
+				return;
+			}
+
+			if (distance < minDistance) {
+				minDistance = distance;
+				bestPoint = point;
+			}
+		});
+	});
+
+	return bestPoint ? bestPoint.highlight() : false;
 };
 
 // Show the export menu and focus the first item (if exists)
@@ -926,35 +1081,26 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// we are in the chart. Each mode has a set of handling functions mapped to
 	// key codes. Each mode determines when to move to the next/prev mode.
 	chart.keyboardNavigationModules = [
+		// Entry point catching the first tab, allowing users to tab into points
+		// more intuitively.
+		navModuleFactory('entry', []),
+
 		// Points
+		// Prevents default and ignores failure regardless
 		navModuleFactory('points', [
 			// Left/Right
 			[[37, 39], function (keyCode) {
-				// Try to highlight adjacent point
-				if (!chart.highlightAdjacentPoint(keyCode === 39)) {
-					// Failed. Move to next/prev module
-					return this.move(keyCode === 39 ? 1 : -1);
-				}
+				chart.highlightAdjacentPoint(keyCode === 39);
+				return true;
 			}],
 			// Up/Down
 			[[38, 40], function (keyCode) {
-				var newSeries;
-				if (chart.highlightedPoint) {
-					// Find prev/next series
-					newSeries = chart.series[
-						chart.highlightedPoint.series.index +
-						(keyCode === 38 ? -1 : 1)
-					]; 
-
-					// If series exists and has data, go for it
-					if (newSeries && newSeries.points[0]) {
-						newSeries.points[0].highlight();
-					} else {
-
-						// Otherwise, attempt to move to next/prev module
-						return this.move(keyCode === 40 ? 1 : -1); 
-					}
-				}
+				var highlightMethod = chart.highlightedPoint &&
+						chart.highlightedPoint.series.keyboardMoveVertical ?
+						'highlightAdjacentPointVertical' :
+						'highlightAdjacentSeries';
+				chart[highlightMethod](keyCode !== 38);
+				return true;
 			}],
 			// Enter/Spacebar
 			[[13, 32], function () {
@@ -966,9 +1112,14 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			// Always start highlighting from scratch when entering this module
 			init: function () {
 				delete chart.highlightedPoint;
-				if (chart.series[0] && chart.series[0].points && 
-					chart.series[0].points[0]) {
-					chart.series[0].points[0].highlight();
+				// Find first valid point to highlight
+				for (var i = 0; i < chart.series.length; ++i) {
+					for (var j = 0, len = chart.series[i].points && 
+							chart.series[i].points.length; j < len; ++j) {
+						if (!isSkipPoint(chart.series[i].points[j])) {
+							return chart.series[i].points[j].highlight();
+						}
+					}
 				}
 			},
 			// If leaving points, don't show tooltip anymore
