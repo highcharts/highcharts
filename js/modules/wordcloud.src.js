@@ -13,6 +13,7 @@ import '../parts/Series.js';
 var each = H.each,
 	extend = H.extend,
 	isNumber = H.isNumber,
+	isObject = H.isObject,
 	Series = H.Series;
 
 /**
@@ -164,6 +165,60 @@ var outsidePlayingField = function outsidePlayingField(wrapper, field) {
 		playingField.top < rect.y &&
 		playingField.bottom > (rect.y + rect.height)
 	);
+};
+
+/**
+ * intersectionTesting - Check if a point intersects with previously placed
+ * words, or if it goes outside the field boundaries. If a collision, then try
+ * to adjusts the position.
+ *
+ * @param  {object} point Point to test for intersections.
+ * @param  {object} options Options object. 
+ * @return {boolean|object} Returns an object with how much to correct the
+ * positions. Returns false if the word should not be placed at all.
+ */
+var intersectionTesting = function intersectionTesting(point, options) {
+	var placed = options.placed,
+		element = options.element,
+		field = options.field,
+		clientRect = options.clientRect,
+		spiral = options.spiral,
+		maxDelta = options.maxDelta,
+		spiralIsSmallish = true,
+		attempt = 0,
+		delta = {
+			x: 0,
+			y: 0
+		},
+		rect = point.rect = extend({}, clientRect);
+	/**
+	 * while w intersects any previously placed words:
+	 *    do {
+	 *      move w a little bit along a spiral path
+	 *    } while any part of w is outside the playing field and
+	 *        the spiral radius is still smallish
+	 */
+	while (
+		(
+			intersectsAnyWord(point, placed) ||
+			outsidePlayingField(element, field)
+		) && spiralIsSmallish
+	) {
+		delta = spiral(attempt);
+		// Update the DOMRect with new positions.
+		rect.left = clientRect.left + delta.x;
+		rect.right = rect.left + rect.width;
+		rect.top = clientRect.top + delta.y;
+		rect.bottom = rect.top + rect.height;
+		spiralIsSmallish = (
+			Math.min(Math.abs(delta.x), Math.abs(delta.y)) < maxDelta
+		);
+		attempt++;
+	}
+	if (!spiralIsSmallish) {
+		delta = false;
+	}
+	return delta;
 };
 
 /**
@@ -324,74 +379,53 @@ var wordCloudSeries = {
 					return b.weight - a.weight; // Sort descending
 				});
 		each(data, function (point) {
-			var attempt = 0,
+			var relativeWeight = 1 / maxWeight * point.weight,
+				css = {
+					fontSize: series.deriveFontSize(relativeWeight),
+					fill: point.color,
+					fontFamily: options.fontFamily
+				},
+				placement = placementStrategy(point, {
+					data: data,
+					field: field,
+					placed: placed,
+					rotation: rotation
+				}),
+				attr = {
+					x: placement.x,
+					y: placement.y,
+					text: point.name,
+					'text-anchor': 'middle',
+					rotation: placement.rotation
+				},
 				delta,
-				spiralIsSmallish = true,
-				placement,
-				clientRect,
-				rect;
-			point.relativeWeight = 1 / maxWeight * point.weight;
-			placement = placementStrategy(point, {
-				data: data,
-				field: field,
-				placed: placed,
-				rotation: rotation
-			});
-			var attr = {
-				x: placement.x,
-				y: placement.y,
-				text: point.name,
-				'text-anchor': 'middle',
-				rotation: placement.rotation
-			};
-			var css = {
-				fontSize: series.deriveFontSize(point.relativeWeight),
-				fill: point.color,
-				fontFamily: series.options.fontFamily
-			};
+				clientRect;
 			testElement.css(css).attr(attr);
 			// Cache the original DOMRect values for later calculations.
 			point.clientRect = clientRect = extend(
 				{},
 				testElement.element.getBoundingClientRect()
 			);
-			point.rect = rect = extend({}, clientRect);
-			/**
-			 * while w intersects any previously placed words:
-			 *    do {
-			 *      move w a little bit along a spiral path
-			 *    } while any part of w is outside the playing field and
-			 *        the spiral radius is still smallish
-			 */
-			while (
-				(
-					intersectsAnyWord(point, placed) ||
-					outsidePlayingField(testElement, field)
-				) && spiralIsSmallish
-			) {
-				delta = spiral(attempt);
-				// Update the DOMRect with new positions.
-				rect.left = clientRect.left + delta.x;
-				rect.right = rect.left + rect.width;
-				rect.top = clientRect.top + delta.y;
-				rect.bottom = rect.top + rect.height;
-				spiralIsSmallish = (
-					Math.min(Math.abs(delta.x), Math.abs(delta.y)) < maxDelta
-				);
-				attempt++;
-			}
+			delta = intersectionTesting(point, {
+				clientRect: clientRect,
+				element: testElement,
+				field: field,
+				maxDelta: maxDelta,
+				placed: placed,
+				spiral: spiral
+			});
 			/**
 			 * Check if point was placed, if so delete it,
 			 * otherwise place it on the correct positions.
 			 */
-			if (spiralIsSmallish) {
-				attr.x += (delta ? delta.x : 0);
-				attr.y += (delta ? delta.y : 0);
+			if (isObject(delta)) {
+				attr.x += delta.x;
+				attr.y += delta.y;
 				extend(placement, {
-					left: attr.x  - (rect.width / 2),
-					right: attr.x + (rect.width / 2),
-					top: attr.y - (rect.height / 2),
-					bottom: attr.y + (rect.height / 2)
+					left: attr.x  - (clientRect.width / 2),
+					right: attr.x + (clientRect.width / 2),
+					top: attr.y - (clientRect.height / 2),
+					bottom: attr.y + (clientRect.height / 2)
 				});
 				field = updateFieldBoundaries(field, placement);
 				placed.push(point);
