@@ -260,6 +260,9 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
  * @optionparent plotOptions.wordcloud
  */
 var wordCloudOptions = {
+	animation: {
+		duration: 500
+	},
 	borderWidth: 0,
 	clip: false, // Something goes wrong with clip. // TODO fix this
 	/**
@@ -298,7 +301,7 @@ var wordCloudOptions = {
 		 * @since 6.0.0
 		 * @apioption plotOptions.wordcloud.from
 		 */
-		from: -60,
+		from: 0,
 		/**
 		 * The number of possible orientations for a word, within the range of
 		 * rotation.from and rotation.to.
@@ -306,14 +309,14 @@ var wordCloudOptions = {
 		 * @since 6.0.0
 		 * @apioption plotOptions.wordcloud.orientation
 		 */
-		orientations: 5,
+		orientations: 2,
 		/**
 		 * The largest degree of rotation for a word.
 		 *
 		 * @since 6.0.0
 		 * @apioption plotOptions.wordcloud.to
 		 */
-		to: 60
+		to: 90
 	},
 	showInLegend: false,
 	/**
@@ -359,11 +362,13 @@ var wordCloudSeries = {
 	},
 	drawPoints: function () {
 		var series = this,
+			hasRendered = series.hasRendered,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
 			chart = series.chart,
 			group = series.group,
 			options = series.options,
+			animation = options.animation,
 			renderer = chart.renderer,
 			testElement = renderer.text().add(group),
 			placed = [],
@@ -402,6 +407,7 @@ var wordCloudSeries = {
 					'text-anchor': 'middle',
 					rotation: placement.rotation
 				},
+				animate,
 				delta,
 				clientRect;
 			testElement.css(css).attr(attr);
@@ -437,7 +443,27 @@ var wordCloudSeries = {
 			} else {
 				point.isNull = true;
 			}
+
+			if (animation) {
+				// Animate to new positions
+				animate = {
+					x: attr.x,
+					y: attr.y
+				};
+				// Animate from center of chart
+				if (!hasRendered) {
+					attr.x = 0;
+					attr.y = 0;
+				// or animate from previous position
+				} else {
+					delete attr.x;
+					delete attr.y;
+				}
+			}
+
 			point.draw({
+				animation: animate,
+				animationOptions: animation,
 				attr: attr,
 				css: css,
 				group: group,
@@ -512,6 +538,8 @@ var wordCloudPoint = {
 	draw: function draw(options) {
 		var point = this,
 			graphic = point.graphic,
+			animation = options.animation,
+			animationOptions = options.animationOptions,
 			group = options.group,
 			renderer = options.renderer,
 			shape = options.shapeArgs,
@@ -522,7 +550,7 @@ var wordCloudPoint = {
 			if (!graphic) {
 				point.graphic = graphic = renderer[type](shape).add(group);
 			}
-			graphic.css(css).attr(attr).animate(shape);
+			graphic.css(css).attr(attr).animate(animation, animationOptions);
 		} else if (graphic) {
 			point.graphic = graphic.destroy();
 		}
