@@ -214,6 +214,10 @@ var intersectionTesting = function intersectionTesting(point, options) {
 			Math.min(Math.abs(delta.x), Math.abs(delta.y)) < maxDelta
 		);
 		attempt++;
+		// Emergency brake. TODO make spiralling logic more foolproof.
+		if (attempt > 1000) {
+			spiralIsSmallish = false;
+		}
 	}
 	if (!spiralIsSmallish) {
 		delta = false;
