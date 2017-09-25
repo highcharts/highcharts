@@ -9,6 +9,7 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
+import drawPoint from '../mixins/draw-point.js';
 import '../parts/Series.js';
 var each = H.each,
 	extend = H.extend,
@@ -535,26 +536,7 @@ var wordCloudSeries = {
  * Properties of the Sunburst series.
  */
 var wordCloudPoint = {
-	draw: function draw(options) {
-		var point = this,
-			graphic = point.graphic,
-			animation = options.animation,
-			animationOptions = options.animationOptions,
-			group = options.group,
-			renderer = options.renderer,
-			shape = options.shapeArgs,
-			type = options.shapeType,
-			css = options.css,
-			attr = options.attr;
-		if (point.shouldDraw()) {
-			if (!graphic) {
-				point.graphic = graphic = renderer[type](shape).add(group);
-			}
-			graphic.css(css).attr(attr).animate(animation, animationOptions);
-		} else if (graphic) {
-			point.graphic = graphic.destroy();
-		}
-	},
+	draw: drawPoint,
 	shouldDraw: function shouldDraw() {
 		var point = this;
 		return !point.isNull;

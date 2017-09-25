@@ -10,6 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../mixins/centered-series.js';
+import drawPoint from '../mixins/draw-point.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import '../parts/Series.js';
 import './treemap.src.js';
@@ -19,7 +20,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	getCenter = CenteredSeriesMixin.getCenter,
 	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
 	grep = H.grep,
-	isNumber = H.isNumber,
 	isString = H.isString,
 	merge = H.merge,
 	noop = H.noop,
@@ -174,9 +174,16 @@ var sunburstSeries = {
 	drawPoints: function drawPoints() {
 		var series = this,
 			group = series.group,
+			hasRendered = series.hasRendered,
 			idRoot = series.rootNode,
+			idPreviousRoot = series.idPreviousRoot,
 			nodeMap = series.nodeMap,
+			nodePreviousRoot = nodeMap[idPreviousRoot],
 			points = series.points,
+			radians = series.startAndEndRadians,
+			options = series.options,
+			animation = options.animation,
+			innerR = series.center[3] / 2,
 			renderer = series.chart.renderer;
 		each(points, function (point) {
 			var node = point.node,
@@ -192,7 +199,37 @@ var sunburstSeries = {
 					start: shape.end,
 					x: shape.x,
 					y: shape.y
+				},
+				visible = node.visible && node.shapeArgs,
+				animate,
+				attr = extend(attrAnimation, attrStyle);
+			if (animation) {
+				animate = {
+					end: shape.end,
+					start: shape.start,
+					innerR: shape.innerR,
+					r: shape.r
 				};
+				if (!hasRendered) {
+					attr.end = attr.start = radians.start;
+				} else if (point.graphic) {
+					delete attr.end;
+					delete attr.start;
+				} else if (nodePreviousRoot) {
+					if (idRoot === point.id) {
+						attr.start = radians.start;
+						attr.end = radians.end;
+					} else if (nodePreviousRoot.shapeArgs) {
+						if (nodePreviousRoot.shapeArgs.end <= shape.start) {
+							attr.end = attr.start = radians.end;
+						} else {
+							attr.end = attr.start = radians.start;
+						}
+					}
+					// Animate from center and outwards.
+					attr.innerR = attr.r = innerR;
+				}
+			}
 			extend(point, {
 				tooltipPos: [shape.plotX, shape.plotY],
 				drillId: getDrillId(point, idRoot, nodeMap),
@@ -200,8 +237,7 @@ var sunburstSeries = {
 				plotX: shape.plotX, // used for data label position
 				plotY: shape.plotY, // used for data label position
 				value: node.val,
-				visible: node.visible,
-				isNull: !node.visible // used for dataLabels
+				isNull: !visible // used for dataLabels & point.draw
 			});
 
 			// Set width and rotation for data labels.
@@ -212,7 +248,9 @@ var sunburstSeries = {
 				}
 			}, point.options.dataLabels);
 			point.draw({
-				attr: extend(attrAnimation, attrStyle),
+				animation: animate,
+				animationOptions: animation,
+				attr: attr,
 				group: group,
 				renderer: renderer,
 				shapeType: 'arc',
@@ -327,27 +365,10 @@ var sunburstSeries = {
  * Properties of the Sunburst series.
  */
 var sunburstPoint = {
-	draw: function draw(options) {
-		var point = this,
-			graphic = point.graphic,
-			group = options.group,
-			renderer = options.renderer,
-			shape = options.shapeArgs,
-			type = options.shapeType,
-			attr = options.attr;
-		if (point.shouldDraw()) {
-			if (!graphic) {
-				point.graphic = graphic = renderer[type](shape).add(group);
-			}
-			graphic.attr(attr).animate(shape);
-		} else if (graphic) {
-			point.graphic = graphic.destroy();
-		}
-	},
+	draw: drawPoint,
 	shouldDraw: function shouldDraw() {
-		var point = this,
-			value = point.value;
-		return point.visible && isNumber(value) && (value > 0);
+		var point = this;
+		return !point.isNull;
 	}
 };
 

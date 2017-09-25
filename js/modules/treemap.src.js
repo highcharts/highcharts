@@ -1232,6 +1232,7 @@ seriesType('treemap', 'scatter', {
 		var series = this,
 			nodeMap = series.nodeMap,
 			node = nodeMap[id];
+		series.idPreviousRoot = series.rootNode;
 		series.rootNode = id;
 		if (id === '') {
 			series.drillUpButton = series.drillUpButton.destroy();
