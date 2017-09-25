@@ -1057,6 +1057,18 @@ Highcharts.extend(Data.prototype, {
 				options.afterComplete(chartOptions);
 			}
 		}
+	},
+
+	update: function (options, redraw) {
+		var chart = this.chart;
+		if (options) {
+			// Set the complete handler
+			options.afterComplete = function (dataOptions) {
+				chart.update(dataOptions, redraw);
+			};
+			// Apply it
+			Highcharts.data(options);
+		}
 	}
 });
 
@@ -1072,7 +1084,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, userOptio
 	var chart = this;
 
 	if (userOptions && userOptions.data) {
-		Highcharts.data(Highcharts.extend(userOptions.data, {
+		chart.data = new Data(Highcharts.extend(userOptions.data, {
 
 			afterComplete: function (dataOptions) {
 				var i, series;
@@ -1096,6 +1108,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, userOptio
 				proceed.call(chart, userOptions, callback);
 			}
 		}), userOptions);
+		chart.data.chart = chart;
 	} else {
 		proceed.call(chart, userOptions, callback);
 	}
