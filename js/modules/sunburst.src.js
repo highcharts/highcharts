@@ -148,16 +148,6 @@ var sunburstOptions = {
 	 * @product highcharts
 	 */
 	dataLabels: {
-		/**
-		 * Whether to defer displaying the data labels until the initial series
-		 * animation has finished.
-		 *
-		 * @type {Boolean}
-		 * @default true
-		 * @since 4.0
-		 * @product highcharts
-		 * @apioption plotOptions.sunburst.dataLabels.defer
-		 */
 		defer: true,
 		style: {
 			textOverflow: 'ellipsis'

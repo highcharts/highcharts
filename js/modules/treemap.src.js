@@ -383,6 +383,42 @@ seriesType('treemap', 'scatter', {
 	 */
 
 	/**
+	 * A configuration object to define how the color of a child varies from the
+	 * parent's color. The variation is distributed among the children of node.
+	 * For example when setting brightness, the brightness change will range
+	 * from the parent's original brightness on the first child, to the amount
+	 * set in the `to` setting on the last node. This allows a gradient-like
+	 * color scheme that sets children out from each other while highlighting
+	 * the grouping on treemaps and sectors on sunburst charts.
+	 * 
+	 * @type {Object}
+	 * @sample highcharts/demo/sunburst/ Sunburst with color variation
+	 * @since 6.0.0
+	 * @product highcharts
+	 * @apioption plotOptions.treemap.levels.colorVariation
+	 */
+	
+	/**
+	 * The key of a color variation. Currently supports `brightness` only.
+	 *  
+	 * @type {String}
+	 * @validvalue ["brightness"]
+	 * @since 6.0.0
+	 * @product highcharts
+	 * @apioption plotOptions.treemap.levels.colorVariation.key
+	 */
+	
+	/**
+	 * The ending value of a color variation. The last sibling will receive this
+	 * value.
+	 *  
+	 * @type {Number}
+	 * @since 6.0.0
+	 * @product highcharts
+	 * @apioption plotOptions.treemap.levels.colorVariation.to
+	 */
+
+	/**
 	 * Can set the options of dataLabels on each point which lies on the
 	 * level. [plotOptions.treemap.dataLabels](#plotOptions.treemap.dataLabels)
 	 * for possible values.
@@ -646,20 +682,43 @@ seriesType('treemap', 'scatter', {
 			}
 		});
 	},
-	setColorRecursive: function (node, color, colorIndex) {
+
+	/**
+	 * Set the node's color recursively, from the parent down.
+	 */
+	setColorRecursive: function (node, parentColor, colorIndex, index, siblings) {
+
 		var series = this,
 			point,
-			level;
+			level,
+			color;
+
+
+		function variation(color) {
+			var colorVariation = level && level.colorVariation;
+			if (colorVariation) {
+				if (colorVariation.key === 'brightness') {
+					return H.color(color).brighten(
+						colorVariation.to * (index / siblings)
+					).get();
+				}
+			}
+
+			return color;
+		}
+
 		if (node) {
 			point = series.points[node.i];
 			level = series.levelMap[node.levelDynamic];
+
 			// Select either point color, level color or inherited color.
 			color = pick(
 				point && point.options.color,
 				level && level.color,
-				color,
+				parentColor && variation(parentColor),
 				series.color
 			);
+
 			colorIndex = pick(
 				point && point.options.colorIndex,
 				level && level.colorIndex,
@@ -674,8 +733,14 @@ seriesType('treemap', 'scatter', {
 			
 			// Do it all again with the children	
 			if (node.children.length) {
-				each(node.children, function (child) {
-					series.setColorRecursive(child, color, colorIndex);
+				each(node.children, function (child, i) {
+					series.setColorRecursive(
+						child,
+						color,
+						colorIndex,
+						i,
+						node.children.length
+					);
 				});
 			}
 		}
