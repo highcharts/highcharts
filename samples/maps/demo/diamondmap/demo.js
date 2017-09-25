@@ -1,115 +1,97 @@
-Highcharts.chart('container', {
+var chart = Highcharts.chart('container', {
     chart: {
         type: 'diamondmap',
-        marginTop: 40,
-        marginBottom: 80
+        marginTop: 0
     },
 
     title: {
-        text: 'Diamondmap demo'
+        text: 'Idea map'
     },
 
-    exporting: {
-        sourceHeight: 600,
-        sourceWidth: 800,
-        scale: 1
+    subtitle: {
+        text: 'Hover over tiles for details'
     },
+
+    colors: [
+        '#fed',
+        '#ffddc0',
+        '#ecb',
+        '#dba',
+        '#c99',
+        '#b88',
+        '#aa7577',
+        '#9f6a66'
+    ],
 
     xAxis: {
-        categories: ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon', 'Anna', 'Tim', 'Laura']
+        visible: false
     },
 
     yAxis: {
-        categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        gridLineWidth: 0,
-        title: false
-    },
-
-    colorAxis: {
-        min: 0,
-        minColor: '#FFFFFF',
-        maxColor: Highcharts.getOptions().colors[0]
+        visible: false
     },
 
     legend: {
-        align: 'right',
-        layout: 'vertical',
-        margin: 0,
-        verticalAlign: 'top',
-        y: 25,
-        symbolHeight: 475
+        enabled: false
     },
 
     tooltip: {
-        formatter: function () {
-            var point = this.point,
-                series = this.series;
-            return '<b>' + series.xAxis.categories[point.x] +
-                    '</b> sold <br><b>' +
-                    point.value +
-                    '</b> items on <br><b>' +
-                    series.yAxis.categories[point.y] + '</b>';
+        headerFormat: '',
+        backgroundColor: 'rgba(247,247,247,0.95)',
+        pointFormat: '<span style="color: {point.color}">●</span>' +
+            '<span style="font-size: 13px; font-weight: bold"> {point.name}' +
+            '</span><br>{point.desc}',
+        style: {
+            width: 170
+        },
+        padding: 10,
+        hideDelay: 1000000
+    },
+
+    plotOptions: {
+        series: {
+            keys: ['x', 'y', 'name', 'desc'],
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}',
+                color: '#000000',
+                style: {
+                    textOutline: false
+                }
+            }
         }
     },
 
     series: [{
-        name: 'Sales per employee',
-        borderWidth: 1,
+        name: 'Main idea',
+        pointPadding: 6,
         data: [
-            [0, 0, 10],
-            [0, 1, 19],
-            [0, 2, 8],
-            [0, 3, 24],
-            [0, 4, 67],
-            [1, 0, 92],
-            [1, 1, 58],
-            [1, 2, 78],
-            [1, 3, 117],
-            [1, 4, 48],
-            [2, 0, 35],
-            [2, 1, 15],
-            [2, 2, 123],
-            [2, 3, 64],
-            [2, 4, 52],
-            [3, 0, 72],
-            [3, 1, 132],
-            [3, 2, 114],
-            [3, 3, 19],
-            [3, 4, 16],
-            [4, 0, 38],
-            [4, 1, 5],
-            [4, 2, 8],
-            [4, 3, 117],
-            [4, 4, 115],
-            [5, 0, 88],
-            [5, 1, 32],
-            [5, 2, 12],
-            [5, 3, 6],
-            [5, 4, 120],
-            [6, 0, 13],
-            [6, 1, 44],
-            [6, 2, 88],
-            [6, 3, 98],
-            [6, 4, 96],
-            [7, 0, 31],
-            [7, 1, 1],
-            [7, 2, 82],
-            [7, 3, 32],
-            [7, 4, 30],
-            [8, 0, 85],
-            [8, 1, 97],
-            [8, 2, 123],
-            [8, 3, 64],
-            [8, 4, 84],
-            [9, 0, 47],
-            [9, 1, 114],
-            [9, 2, 31],
-            [9, 3, 48],
-            [9, 4, 91]
+            [5, 3, 'Main idea',
+                'The main idea tile outlines the overall theme of the idea map.']
         ],
-        dataLabels: {
-            enabled: true,
-            color: '#000000'
-        }
+        color: '#7eb'
+    }, {
+        name: 'Steps',
+        colorByPoint: true, // Pick new color for each point from colors array
+        data: [
+            [3, 3, 'Step 1',
+                'First step towards the main idea. Describe the starting point of the situation.'],
+            [4, 3, 'Step 2',
+                'Describe where to move next in a short term time perspective.'],
+            [5, 4, 'Step 3',
+                'This can be a larger milestone, after the initial steps have been taken.'],
+            [6, 3, 'Step 4',
+                'Evaluate progress and readjust the course of the project.'],
+            [7, 3, 'Step 5',
+                'At this point, major progress should have been made, and we should be well on our way to implementing the main idea.'],
+            [6, 2, 'Step 6',
+                'Second evaluation and readjustment step. Implement final changes.'],
+            [5, 2, 'Step 7',
+                'Testing and final verification step.'],
+            [4, 2, 'Step 8',
+                'Iterate after final testing and finalize implementation of the idea.']
+        ]
     }]
 });
+
+chart.tooltip.refresh(chart.series[0].points[0]); // Show tooltip of the first point on load
