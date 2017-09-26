@@ -91,9 +91,7 @@ seriesType('bullet', 'lineargauge',
 			 * @apioption plotOptions.bullet.tooltip.pointFormat
 			 */
 			/*= if (build.classic) { =*/
-			pointFormat: '<span style="color:{series.color}">\u25CF</span>' +
-				' {series.name}: <b>{point.y}</b>.' +
-				' Target: <b>{point.target}</b><br/>',
+			pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b>. Target: <b>{point.target}</b><br/>', // eslint-disable-line max-len
 			/*= } else { =*/
 
 			pointFormat: '' + // eslint-disable-line no-dupe-keys

@@ -1,3 +1,4 @@
+// Common options options for all the gauges
 Highcharts.setOptions({
     chart: {
         inverted: true,
