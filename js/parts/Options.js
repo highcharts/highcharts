@@ -1189,7 +1189,7 @@ H.defaultOptions = {
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/chart/spacingtop-100/
-		 * A top spacing of 100
+		 *         A top spacing of 100
 		 * @sample {highcharts} highcharts/chart/spacingtop-10/
 		 *         Floating chart title makes the plot area align to the default
 		 *         spacingTop of 10.

@@ -227,7 +227,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
  * @return {Object}
  *         An object ready for the `mapData` option.
  *
- * @sample samples/maps/demo/geojson/
+ * @sample maps/demo/geojson/
  *         Simple areas
  * @sample maps/demo/geojson-multiple-types/
  *         Multiple types

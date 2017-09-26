@@ -24,7 +24,7 @@ var defined = H.defined,
  * 
  * @extends {plotOptions.column}
  * @product highcharts
- * @sample {highcharts} highcharts/demo/sankey/
+ * @sample {highcharts} highcharts/demo/sankey-diagram/
  *         Sankey diagram
  * @since 6.0.0
  * @excluding animationLimit,boostThreshold,borderColor,borderRadius,

@@ -1391,7 +1391,7 @@ H.timeUnits = {
  *        given in the lang options, or a space character.
  * @returns {String} The formatted number.
  *
- * @sample members/highcharts-numberformat/ Custom number format
+ * @sample highcharts/members/highcharts-numberformat/ Custom number format
  */
 H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	number = +number || 0;

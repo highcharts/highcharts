@@ -374,9 +374,8 @@ Annotation.prototype = {
 	 * pixel coordinates.
 	 *
 	 * @type {Array<Object>}
-	 * @sample {highcharts} highcharts/annotations/basic/ Basic annotations
-	 * @sample {highstock} highcharts/annotations/basic/ Basic annotations
-	 * @sample {highmaps} highcharts/annotations/basic/ Basic annotations
+	 * @sample highcharts/annotations/basic/
+	 *         Basic annotations
 	 * @since 6.0.0
 	 * @optionparent annotations
 	**/
@@ -386,9 +385,8 @@ Annotation.prototype = {
 		 * Whether the annotation is visible.
 		 * 
 		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/annotations/visibile/ Set annotation visibility
-		 * @sample {highstock} highcharts/annotations/visibile/ Set annotation visibility
-		 * @sample {highmaps} highcharts/annotations/visibile/ Set annotation visibility
+		 * @sample highcharts/annotations/visible/
+		 *         Set annotation visibility
 		 * @since 6.0.0
 		 */
 		visible: true,
@@ -409,9 +407,8 @@ Annotation.prototype = {
 			 *
 			 * @type {String}
 			 * @validvalue ["left", "center", "right"]
-			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position
+			 * @sample highcharts/annotations/label-position/
+			 *         Set labels position
 			 * @since 6.0.0
 			 **/
 			align: 'center',
@@ -422,9 +419,8 @@ Annotation.prototype = {
 			 * the can be set to 0.
 			 *
 			 * @type {Boolean}
-			 * @sample {highcharts} highcharts/annotations/tooltip-like/ Hide overlapping labels
-			 * @sample {highstock} highcharts/annotations/tooltip-like/ Hide overlapping labels
-			 * @sample {highmaps} highcharts/annotations/tooltip-like/ Hide overlapping labels
+			 * @sample highcharts/annotations/tooltip-like/
+			 *         Hide overlapping labels
 			 * @since 6.0.0
 			 * @default false
 			 **/
@@ -434,9 +430,8 @@ Annotation.prototype = {
 			 * The background color or gradient for the annotation's label.
 			 *
 			 * @type {Color}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
 			 * @since 6.0.0
 			 **/
 			backgroundColor: 'rgba(0, 0, 0, 0.75)',
@@ -445,9 +440,8 @@ Annotation.prototype = {
 			 * The border color for the annotation's label.
 			 *
 			 * @type {Color}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
 			 * @since 6.0.0
 			 **/
 			borderColor: 'black',
@@ -456,9 +450,8 @@ Annotation.prototype = {
 			 * The border radius in pixels for the annotaiton's label.
 			 *
 			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
 			 * @since 6.0.0
 			 **/
 			borderRadius: 1,
@@ -467,9 +460,8 @@ Annotation.prototype = {
 			 * The border width in pixels for the annotation's label
 			 *
 			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
 			 * @since 6.0.0
 			 **/
 			borderWidth: 1,
@@ -478,9 +470,8 @@ Annotation.prototype = {
 			 * Whether to hide the annotation's label that is outside the plot area.
 			 *
 			 * @type {Boolean}
-			 * @sample {highcharts} highcharts/annotations/label-crop-overflow/ Crop or justify labels
-			 * @sample {highstock} highcharts/annotations/label-crop-overflow/ Crop or justify labels
-			 * @sample {highmaps} highcharts/annotations/label-crop-overflow/ Crop or justify labels
+			 * @sample highcharts/annotations/label-crop-overflow/
+			 *         Crop or justify labels
 			 * @since 6.0.0
 			 * @default false
 			 **/ 
@@ -491,9 +482,8 @@ Annotation.prototype = {
 			 *
 			 * @type {String}
 			 * @see [plotOptions.series.dataLabels.format](plotOptions.series.dataLabels.format.html)
-			 * @sample {highcharts} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highstock} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highmaps} highcharts/annotations/label-text/ Set labels text
+			 * @sample highcharts/annotations/label-text/
+			 *         Set labels text
 			 * @since 6.0.0
 			 * @default undefined
 			 * @apioption annotations.labelOptions.format
@@ -504,9 +494,8 @@ Annotation.prototype = {
 			 *
 			 * @type {String}
 			 * @see [format](annotations.labelOptions.format.html)
-			 * @sample {highcharts} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highstock} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highmaps} highcharts/annotations/label-text/ Set labels text
+			 * @sample highcharts/annotations/label-text/
+			 *         Set labels text
 			 * @since 6.0.0
 			 * @default undefined
 			 * @apioption annotations.labelOptions.text
@@ -654,7 +643,6 @@ Annotation.prototype = {
 			 * @default undefined
 			 * @apioption annotations.labelOptions.distance
 			 **/
-			//distance: 16
 		},
 
 		/**

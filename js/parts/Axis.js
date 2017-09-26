@@ -2739,7 +2739,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	 * @returns {Extremes}
 	 * An object containing extremes information.
 	 * 
-	 * @sample  members/axis-getextremes/
+	 * @sample  highcharts/members/axis-getextremes/
 	 *          Report extremes by click on a button
 	 * @sample  maps/members/axis-getextremes/
 	 *          Get extremes in Highmaps

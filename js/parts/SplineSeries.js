@@ -15,7 +15,7 @@ var pick = H.pick,
  * A spline series is a special type of line series, where the segments between
  * the data points are smoothed.
  *
- * @sample {highcharts} demo/spline-irregular-time/ Spline chart
+ * @sample {highcharts} highcharts/demo/spline-irregular-time/ Spline chart
  * @sample {highstock} stock/demo/spline/ Spline chart
  * 
  * @extends plotOptions.series
