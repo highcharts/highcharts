@@ -1,5 +1,5 @@
 /**
- * Honeycomb module
+ * Tilemaps module
  *
  * (c) 2010-2017 Highsoft AS
  * Author: Øystein Moseng
