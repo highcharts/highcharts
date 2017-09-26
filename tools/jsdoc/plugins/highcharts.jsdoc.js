@@ -369,7 +369,7 @@ exports.defineTags = function (dictionary) {
             doclet.samples = doclet.samples || [];
 
             if (!fs.existsSync(folder)) {
-                console.error('@sample does not exist:' + value);
+                console.error('@sample does not exist: ' + value);
             }
             doclet.samples.push({
                 name: name,
