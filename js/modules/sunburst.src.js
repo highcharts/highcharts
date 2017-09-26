@@ -356,6 +356,7 @@ var sunburstSeries = {
 			nodeTop,
 			radiusPerLevel,
 			tree,
+			height,
 			values;
 		series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 		// Call prototype function
@@ -383,7 +384,8 @@ var sunburstSeries = {
 			points: series.points,
 			series: series
 		});
-		radiusPerLevel = (outerRadius - innerRadius) / nodeTop.height;
+		height = (idRoot === idTop) ? nodeRoot.height : nodeRoot.height + 1;
+		radiusPerLevel = (outerRadius - innerRadius) / height;
 		values = mapIdToNode[''].shapeArgs = {
 			end: radians.end,
 			r: innerRadius,
