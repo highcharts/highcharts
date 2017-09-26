@@ -1923,6 +1923,19 @@
  * @apioption navigator.opposite
  */
 
+/**
+ * Additional range on the right side of the xAxis. Works similar to
+ * xAxis.maxPadding, but value is set in milliseconds. Can be set for both,
+ * main xAxis and navigator's xAxis.
+ * 
+ * @type {Number}
+ * @default 0
+ * @sample {highstock} samples/stock/xaxis/overscroll/ One minute overscroll with live data
+ * @since 6.0.0
+ * @product highstock
+ * @apioption xAxis.overscroll
+ */
+
 
 
 

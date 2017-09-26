@@ -159,6 +159,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			{ // defaults
 				minPadding: 0,
 				maxPadding: 0,
+				overscroll: 0,
 				ordinal: true,
 				title: {
 					text: null
