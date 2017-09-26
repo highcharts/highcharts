@@ -3,13 +3,23 @@ Highcharts.chart('container', {
         type: 'variablepie'
     },
     title: {
-        text: 'Example of sizeBy option'
+        text: 'Example of the sizeBy option'
+    },
+    subtitle: {
+        text: 'Left pie - sizeBy = "radius". Right pie - sizeBy = "area"'
+    },
+    plotOptions: {
+        variablepie: {
+            dataLabels: {
+                enabled: false
+            }
+        }
     },
     series: [{
-        size: '50%',
+        size: '70%',
         innerSize: '20%',
         center: ['25%', '50%'],
-        name: 'size by radius',
+        name: 'Size by radius',
         sizeBy: 'radius',
         data: [{
             y: 505370,
@@ -33,12 +43,12 @@ Highcharts.chart('container', {
             y: 357022,
             z: 22
         }]
-    },{
-        size: '50%',
+    }, {
+        size: '70%',
         innerSize: '20%',
         center: ['75%', '50%'],
         sizeBy: 'area',
-        name: 'size by area',
+        name: 'Size by area',
         data: [{
             y: 505370,
             z: 1

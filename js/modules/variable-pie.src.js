@@ -36,7 +36,7 @@ seriesType('variablepie', 'pie',
 	 * 
 	 * @extends {plotOptions.pie}
 	 * @product highcharts
-	 * @sample {highcharts} highcharts/demo/variablepie/
+	 * @sample {highcharts} highcharts/demo/variable-radius-pie/
 	 *         Variable-radius pie chart
 	 * @since 6.0.0
 	 * @optionparent plotOptions.variablepie
@@ -47,10 +47,10 @@ seriesType('variablepie', 'pie',
 		 * If a number is set, it applies in pixels.
 		 *
 		 * @sample {highcharts}
-		 *         /highcharts/variable-radius-pie/min-max-point-size/
+		 *         highcharts/variable-radius-pie/min-max-point-size/
 		 *         Example of minPointSize and maxPointSize
 		 * @sample {highcharts}
-		 *         /highcharts/variable-radius-pie/min-point-size-100/
+		 *         highcharts/variable-radius-pie/min-point-size-100/
 		 *         minPointSize set to 100
 		 * @apioption variablePie.minPointSize
 		 * @type {String|Number}
@@ -63,7 +63,7 @@ seriesType('variablepie', 'pie',
 		 * If a number is set, it applies in pixels.
 		 *
 		 * @sample {highcharts}
-		 *         /highcharts/variable-radius-pie/min-max-point-size/
+		 *         highcharts/variable-radius-pie/min-max-point-size/
 		 *         Example of minPointSize and maxPointSize
 		 * @type {String|Number}
 		 * @since 6.0.0
@@ -76,10 +76,10 @@ seriesType('variablepie', 'pie',
 		 * according to the zMin value.
 		 *
 		 * @sample {highcharts}
-		 *         /highcharts/variable-radius-pie/zmin-5/
+		 *         highcharts/variable-radius-pie/zmin-5/
 		 *         zMin set to 5, smaller z values are treated as 5
 		 * @sample {highcharts}
-		 *         /highcharts/variable-radius-pie/zmin-zmax/
+		 *         highcharts/variable-radius-pie/zmin-zmax/
 		 *         Series limited by both zMin and zMax
 		 * @type {Number}
 		 * @since 6.0.0
@@ -92,7 +92,7 @@ seriesType('variablepie', 'pie',
 		 * according to the zMax value
 		 *
 		 * @sample {highcharts}
-		 *         /highcharts/variable-radius-pie/zmin-zmax/
+		 *         highcharts/variable-radius-pie/zmin-zmax/
 		 *         Series limited by both zMin and zMax
 		 * @type {Number}
 		 * @since 6.0.0
@@ -106,7 +106,7 @@ seriesType('variablepie', 'pie',
 		 * of each pie slice.
 		 *
 		 * @sample {highcharts}
-		 *         /highcharts/variable-radius-pie/sizeby/
+		 *         highcharts/variable-radius-pie/sizeby/
 		 *         Difference between area and radius sizeBy
 		 * @type {String}
 		 * @validvalue ["area", "radius"]
@@ -116,7 +116,7 @@ seriesType('variablepie', 'pie',
 		sizeBy: 'area',
 
 		tooltip: {
-			pointFormat: '<span style="color:{point.color}">\u25CF</span> <b>{series.name}</b><br/>Value: {point.y}<br/>Size: {point.z}<br/>' // eslint-disable-line max-len
+			pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>Value: {point.y}<br/>Size: {point.z}<br/>' // eslint-disable-line max-len
 		}
 	}, {
 		pointArrayMap: ['y', 'z'],
@@ -456,7 +456,7 @@ seriesType('variablepie', 'pie',
  *  ```
  * 
  * @type {Array<Object|Number>}
- * @extends series.line.data
+ * @extends series.pie.data
  * @excluding marker,x
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
@@ -472,60 +472,3 @@ seriesType('variablepie', 'pie',
  * @apioption series.variablepie.data
  */
 
-/**
- * The sequential index of the data point in the legend.
- * 
- * @type {Number}
- * @product highcharts
- * @apioption series.variablepie.data.legendIndex
- */
-
-/**
- * Whether to display a slice offset from the center.
- * 
- * @type {Boolean}
- * @sample {highcharts} highcharts/point/sliced/ One sliced point
- * @product highcharts
- * @apioption series.variablepie.data.sliced
- */
-
-/**
- * Fires when the checkbox next to the point name in the legend is clicked.
- * One parameter, event, is passed to the function. The state of the
- * checkbox is found by event.checked. The checked item is found by
- * event.item. Return false to prevent the default action which is to
- * toggle the select state of the series.
- * 
- * @type {Function}
- * @context Point
- * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/
- *         Alert checkbox status
- * @since 1.2.0
- * @product highcharts
- * @apioption plotOptions.variablepie.events.checkboxClick
- */
-
-/**
- * Not applicable to variable-pies, as the legend item is per point. See point.
- * events.
- * 
- * @type {Function}
- * @since 1.2.0
- * @product highcharts
- * @apioption plotOptions.variablepie.events.legendItemClick
- */
-
-/**
- * Fires when the legend item belonging to the variablepie point (slice) is
- * clicked. The `this` keyword refers to the point itself. One parameter,
- * `event`, is passed to the function, containing common event information. The
- * default action is to toggle the visibility of the point. This can be
- * prevented by calling `event.preventDefault()`.
- * 
- * @type {Function}
- * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
- *         Confirm toggle visibility
- * @since 1.2.0
- * @product highcharts
- * @apioption plotOptions.variablepie.point.events.legendItemClick
- */

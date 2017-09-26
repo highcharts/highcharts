@@ -5,8 +5,11 @@ Highcharts.chart('container', {
     title: {
         text: 'Countries compared by population density and total area.'
     },
-    tooltip:{
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b>{series.name}</b><br/>Area (square km): {point.y}<br/>Population density (people per square km): {point.z}<br/>'
+    tooltip: {
+        headerFormat: '',
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}</b><br/>' +
+            'Area (square km): <b>{point.y}</b><br/>' +
+            'Population density (people per square km): <b>{point.z}</b><br/>'
     },
     series: [{
         minPointSize: 10,
