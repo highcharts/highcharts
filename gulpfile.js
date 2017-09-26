@@ -73,7 +73,7 @@ const getFileOptions = (base) => {
     // Modules should not be standalone, and they should exclude all parts files.
     const fileOptions = B.getFilesInFolder(base, true, '')
         .reduce((obj, file) => {
-            if (file.indexOf('modules') > -1 || file.indexOf('themes') > -1) {
+            if (file.indexOf('modules') > -1 || file.indexOf('themes') > -1 || file.indexOf('indicators') > -1) {
                 obj[file] = {
                     exclude: new RegExp(folders.parts),
                     umd: false
@@ -940,6 +940,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         'successJSDoc': colors.green('Created tree.json')
     };
     const sourceFiles = [
+        './js/indicators',
         './js/modules',
         './js/parts',
         './js/parts-3d',
@@ -962,7 +963,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
             }
         }));
     })
-    .then(() => generateAPI(treeFile, output, onlyBuildCurrent))
+    .then(() => generateAPI(treeFile, output, onlyBuildCurrent));
     // .then(() => copyAPIFiles(output, version));
 };
 

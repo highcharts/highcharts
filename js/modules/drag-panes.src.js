@@ -121,7 +121,7 @@ var hasTouch = H.hasTouch,
 			/**
 			 * Cursor style for the control line.
 			 *
-			 * In styled mode use class 'highcharts-axis-resizer' instead.
+			 * In styled mode use class `highcharts-axis-resizer` instead.
 			 *
 			 * This feature requires the module Drag Panes.
 			 *
@@ -135,7 +135,7 @@ var hasTouch = H.hasTouch,
 			/**
 			 * Color of the control line.
 			 *
-			 * In styled mode use class 'highcharts-axis-resizer' instead.
+			 * In styled mode use class `highcharts-axis-resizer` instead.
 			 *
 			 * This feature requires the module Drag Panes.
 			 *
@@ -149,7 +149,7 @@ var hasTouch = H.hasTouch,
 			/**
 			 * Dash style of the control line.
 			 *
-			 * In styled mode use class 'highcharts-axis-resizer' instead.
+			 * In styled mode use class `highcharts-axis-resizer` instead.
 			 *
 			 * This feature requires the module Drag Panes.
 			 *
@@ -165,7 +165,7 @@ var hasTouch = H.hasTouch,
 			/**
 			 * Width of the control line.
 			 *
-			 * In styled mode use class 'highcharts-axis-resizer' instead.
+			 * In styled mode use class `highcharts-axis-resizer` instead.
 			 *
 			 * This feature requires the module Drag Panes.
 			 *
