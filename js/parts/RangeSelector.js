@@ -88,7 +88,8 @@ extend(defaultOptions, {
 		},
 
 		/**
-		 * Deprecated. The height of the range selector. Currently is calculated dynamically.
+		 * Deprecated. The height of the range selector. Currently it is
+		 * calculated dynamically.
 		 * 
 		 * @type {Number}
 		 * @default undefined
@@ -111,8 +112,9 @@ extend(defaultOptions, {
 			/**
 			 * The alignment of the input box. Allowed properties are `left`,
 			 * `center`, `right`.
- 			 * @apioption rangeSelector.inputPosition.align
- 			 * @sample {highstock} stock/rangeselector/input-button-position/ alignment
+ 			 * @validvalue ["left", "center", "right"]
+ 			 * @sample {highstock} stock/rangeselector/input-button-position/ 
+ 			 *         Alignment
  			 * @since 6.0.0
 			 */
 			align: 'right',
@@ -121,11 +123,8 @@ extend(defaultOptions, {
 		},
 
 		/**
-		 * Positioning for the buttons. Allowed properties are `align`,
-		 *  `x` and `y`.
+		 * Positioning for the button row.
 		 * 
-		 * @type {Object}
-		 * @default { align: "left" }
 		 * @since 1.2.4
 		 * @product highstock
 		 */
@@ -133,12 +132,20 @@ extend(defaultOptions, {
 			/**
 			 * The alignment of the input box. Allowed properties are `left`,
 			 * `center`, `right`.
- 			 * @apioption rangeSelector.inputPosition.align
- 			 * @sample {highstock} stock/rangeselector/input-button-position/ alignment
+ 			 *
+ 			 * @validvalue ["left", "center", "right"]
+ 			 * @sample {highstock} stock/rangeselector/input-button-position/ 
+ 			 *         Alignment
  			 * @since 6.0.0
 			 */
 			align: 'left',
+			/**
+			 * X offset of the button row.
+			 */
 			x: 0,
+			/**
+			 * Y offset of the button row.
+			 */
 			y: 0
 		},
 		// inputDateFormat: '%b %e, %Y',

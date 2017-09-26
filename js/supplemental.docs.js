@@ -1975,15 +1975,6 @@
  */
 
 /**
- * A fixed pixel position for the buttons. Supports two properties,
- * `x` and `y`.``
- * 
- * @type {Object}
- * @product highstock
- * @apioption rangeSelector.buttonPosition
- */
-
-/**
  * The space in pixels between the buttons in the range selector.
  * 
  * @type {Number}
