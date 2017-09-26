@@ -808,7 +808,7 @@ Highcharts.extend(Data.prototype, {
 
 				if (!(options.dateFormats || self.dateFormats)[calculatedFormat]) {
 					// This should emit an event instead
-					console.error('Could not deduce date format'); // eslint-disable-line no-console
+					Highcharts.error('Could not deduce date format');
 					return format;
 				}
 
