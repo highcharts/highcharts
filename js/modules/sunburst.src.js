@@ -76,6 +76,73 @@ var getEndPoint = function getEndPoint(x, y, angle, distance) {
 	};
 };
 
+var getAnimation = function getAnimation(shape, params) {
+	var to = {
+			end: shape.end,
+			start: shape.start,
+			innerR: shape.innerR,
+			r: shape.r
+		},
+		from = {},
+		point = params.point,
+		radians = params.radians,
+		innerR = params.innerR,
+		idRoot = params.idRoot,
+		idPreviousRoot = params.idPreviousRoot,
+		shapeExisting = params.shapeExisting,
+		shapeRoot = params.shapeRoot,
+		shapePreviousRoot = params.shapePreviousRoot,
+		visible = params.visible;
+	if (visible) {
+		// Animate points in
+		if (!point.graphic && shapePreviousRoot) {
+			if (idRoot === point.id) {
+				from = {
+					start: radians.start,
+					end: radians.end
+				};
+			} else {
+				from = (shapePreviousRoot.end <= shape.start) ? {
+					start: radians.end,
+					end: radians.end
+				} : {
+					start: radians.start,
+					end: radians.start
+				};
+			}
+			// Animate from center and outwards.
+			from.innerR = from.r = innerR;
+		}
+	} else {
+		// Animate points out
+		if (point.graphic) {
+			if (idPreviousRoot === point.id) {
+				to = {
+					innerR: innerR,
+					r: innerR
+				};
+			} else if (shapeRoot) {
+				to = (shapeRoot.end <= shapeExisting.start) ?
+				{
+					innerR: innerR,
+					r: innerR,
+					start: radians.end,
+					end: radians.end
+				} : {
+					innerR: innerR,
+					r: innerR,
+					start: radians.start,
+					end: radians.start
+				};
+			}
+		}
+	}
+	return {
+		from: from,
+		to: to
+	};
+};
+
 var setShapeArgs = function setShapeArgs(parent, parentValues) {
 	var childrenValues = [],
 		// Collect all children which should be included
@@ -201,12 +268,14 @@ var sunburstSeries = {
 	drawDataLabels: noop, // drawDataLabels is called in drawPoints
 	drawPoints: function drawPoints() {
 		var series = this,
+			shapeRoot = series.shapeRoot,
 			group = series.group,
 			hasRendered = series.hasRendered,
 			idRoot = series.rootNode,
 			idPreviousRoot = series.idPreviousRoot,
 			nodeMap = series.nodeMap,
 			nodePreviousRoot = nodeMap[idPreviousRoot],
+			shapePreviousRoot = nodePreviousRoot && nodePreviousRoot.shapeArgs,
 			points = series.points,
 			radians = series.startAndEndRadians,
 			options = series.options,
@@ -215,50 +284,35 @@ var sunburstSeries = {
 			renderer = series.chart.renderer;
 		each(points, function (point) {
 			var node = point.node,
+				shapeExisting = point.shapeExisting || {},
 				shape = node.shapeArgs || {},
 				rotationRad = (shape.end - (shape.end - shape.start) / 2),
 				// Data labels should not rotate beyond 180 degrees.
 				rotation = (rotationRad * rad2deg) % 180,
 				attrStyle = series.pointAttribs(point, point.selected && 'select'),
-				attrAnimation = point.graphic ? {} : {
-					end: shape.end,
-					innerR: shape.innerR,
-					r: shape.r,
-					start: shape.end,
-					x: shape.x,
-					y: shape.y
-				},
-				visible = node.visible && node.shapeArgs,
-				animate,
-				attr = extend(attrAnimation, attrStyle);
-			if (animation) {
-				animate = {
-					end: shape.end,
-					start: shape.start,
-					innerR: shape.innerR,
-					r: shape.r
+				animationInfo,
+				visible = !!(node.visible && node.shapeArgs);
+			if (hasRendered && animation) {
+				animationInfo = getAnimation(shape, {
+					point: point,
+					radians: radians,
+					innerR: innerR,
+					idRoot: idRoot,
+					idPreviousRoot: idPreviousRoot,
+					shapeExisting: shapeExisting,
+					shapeRoot: shapeRoot,
+					shapePreviousRoot: shapePreviousRoot,
+					visible: visible
+				});
+			} else {
+				// When animation is disabled, attr is called from animation.
+				animationInfo = {
+					to: shape,
+					from: {}
 				};
-				if (!hasRendered) {
-					attr.end = attr.start = radians.start;
-				} else if (point.graphic) {
-					delete attr.end;
-					delete attr.start;
-				} else if (nodePreviousRoot) {
-					if (idRoot === point.id) {
-						attr.start = radians.start;
-						attr.end = radians.end;
-					} else if (nodePreviousRoot.shapeArgs) {
-						if (nodePreviousRoot.shapeArgs.end <= shape.start) {
-							attr.end = attr.start = radians.end;
-						} else {
-							attr.end = attr.start = radians.start;
-						}
-					}
-					// Animate from center and outwards.
-					attr.innerR = attr.r = innerR;
-				}
 			}
 			extend(point, {
+				shapeExisting: shape, // Store for use in animation
 				tooltipPos: [shape.plotX, shape.plotY],
 				drillId: getDrillId(point, idRoot, nodeMap),
 				name: point.name || point.id || point.index,
@@ -267,7 +321,6 @@ var sunburstSeries = {
 				value: node.val,
 				isNull: !visible // used for dataLabels & point.draw
 			});
-
 			// Set width and rotation for data labels.
 			point.dlOptions = merge({
 				rotation: rotation,
@@ -276,9 +329,8 @@ var sunburstSeries = {
 				}
 			}, point.options.dataLabels);
 			point.draw({
-				animation: animate,
-				animationOptions: animation,
-				attr: attr,
+				animate: animationInfo.to,
+				attr: extend(animationInfo.from, attrStyle),
 				group: group,
 				renderer: renderer,
 				shapeType: 'arc',
@@ -298,14 +350,14 @@ var sunburstSeries = {
 			innerRadius = positions[3] / 2,
 			outerRadius = positions[2] / 2,
 			idRoot = series.rootNode = pick(series.rootNode, options.rootId, ''),
+			mapIdToNode = series.nodeMap,
 			idTop,
-			mapIdToNode,
-			nodeRoot,
+			nodeRoot = mapIdToNode && mapIdToNode[idRoot],
 			nodeTop,
 			radiusPerLevel,
 			tree,
 			values;
-
+		series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 		// Call prototype function
 		Series.prototype.translate.call(series);
 		// Create a object map from level to options
