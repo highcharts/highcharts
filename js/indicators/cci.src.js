@@ -34,7 +34,7 @@ seriesType('cci', 'sma',
 	/**
 	 * Commodity Channel Index (CCI). This series requires `linkedTo` option to be set.
 	 * 
-	 * @extends {plotOptions.cci}
+	 * @extends {plotOptions.sma}
 	 * @product highstock
 	 * @sample {highstock} stock/indicators/cci Exponential moving average indicator
 	 * @since 6.0.0

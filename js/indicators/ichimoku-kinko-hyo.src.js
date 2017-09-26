@@ -66,7 +66,7 @@ seriesType('ikh', 'sma',
 	/**
 	 * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be set.
 	 * 
-	 * @extends {plotOptions.line}
+	 * @extends {plotOptions.sma}
 	 * @product highstock
 	 * @sample {highstock} stock/indicators/ichimoku-kinko-hyo Simple moving average indicator
 	 * @since 6.0.0

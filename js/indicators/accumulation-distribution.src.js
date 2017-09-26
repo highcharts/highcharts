@@ -26,7 +26,7 @@ seriesType('ad', 'sma',
 	/**
 	 * Accumulation Distribution (AD). This series requires `linkedTo` option to be set.
 	 * 
-	 * @extends {plotOptions.ad}
+	 * @extends {plotOptions.sma}
 	 * @product highstock
 	 * @sample {highstock} stock/indicators/ad Exponential moving average indicator
 	 * @since 6.0.0
