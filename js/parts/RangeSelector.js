@@ -55,9 +55,9 @@ extend(defaultOptions, {
 		 *
 		 * @since 6.0.0
 		 *
-		 * @sample {highstock} stock/rangeselector/verticalAlignMiddle/ Middle
+		 * @sample {highstock} stock/rangeselector/vertical-align-middle/ Middle
 		 *
-		 * @sample {highstock} stock/rangeselector/verticalAlignBottom/ Bottom
+		 * @sample {highstock} stock/rangeselector/vertical-align-bottom/ Bottom
 		 */
 		verticalAlign: 'top',
 

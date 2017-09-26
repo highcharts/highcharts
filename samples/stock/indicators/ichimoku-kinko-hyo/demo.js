@@ -5,15 +5,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
     var ohlc = [],
         volume = [],
         dataLength = data.length,
-        // set the allowed units for data grouping
-        groupingUnits = [[
-            'week',                         // unit name
-            [1]                             // allowed multiples
-        ], [
-            'month',
-            [1, 2, 3, 4, 6]
-        ]],
-
         i = 0;
 
     for (i; i < dataLength; i += 1) {
@@ -56,7 +47,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
             id: 'aapl',
             name: 'AAPL Stock Price',
             data: ohlc
-        },{
+        }, {
             type: 'ikh',
             linkedTo: 'aapl',
             tenkanLine: {

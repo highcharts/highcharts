@@ -1,10 +1,10 @@
 Highcharts.stockChart('container', {
 
     rangeSelector: {
-        verticalAlign: 'middle'
+        verticalAlign: 'top'
     },
-    
+
     series: [{
-        data: [10,30,20,40,30,11]
+        data: [10, 30, 20, 40, 30, 11]
     }]
 });
