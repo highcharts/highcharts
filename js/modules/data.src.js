@@ -480,8 +480,8 @@ Highcharts.extend(Data.prototype, {
 			columns = this.columns || [],
 			startRow = options.startRow || 0,
 			endRow = options.endRow || Number.MAX_VALUE,
-			// startColumn = options.startColumn || 0,
-			// endColumn = options.endColumn || Number.MAX_VALUE,
+			startColumn = options.startColumn || 0,
+			endColumn = options.endColumn || Number.MAX_VALUE,
 			itemDelimiter,
 			lines,
 			rowIt = 0,
@@ -558,6 +558,11 @@ Highcharts.extend(Data.prototype, {
 			}
 
 			function push() {
+				if (startColumn > column || column > endColumn) {
+					// Skip this column
+					return;
+				}
+
 				if (!isNaN(parseFloat(token)) && isFinite(token)) {
 					token = parseFloat(token);
 					pushType('number');
