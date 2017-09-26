@@ -325,7 +325,7 @@ var sunburstSeries = {
 		setTreeValues(tree, {
 			before: cbSetTreeValuesBefore,
 			idRoot: idRoot,
-			levelIsConstant: series.levelIsConstant,
+			levelIsConstant: options.levelIsConstant,
 			levelMap: series.levelMap,
 			mapIdToNode: mapIdToNode,
 			points: series.points,
