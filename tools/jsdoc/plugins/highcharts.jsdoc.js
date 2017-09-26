@@ -361,13 +361,19 @@ exports.defineTags = function (dictionary) {
             var text = valueObj.value;
 
             var del = text.indexOf(' '),
-                name = text.substr(del).trim().replace(/\s\s+/g, ' ')
+                name = text.substr(del).trim().replace(/\s\s+/g, ' '),
+                value = text.substr(0, del).trim(),
+                folder = hcRoot + /samples/ + value
             ;
 
             doclet.samples = doclet.samples || [];
+
+            if (!fs.existsSync(folder)) {
+                console.error('@sample does not exist:' + value);
+            }
             doclet.samples.push({
                 name: name,
-                value: text.substr(0, del).trim(),
+                value: value,
                 products: valueObj.products
             });
         }
