@@ -15,7 +15,11 @@ var setTreeValues = function setTreeValues(tree, options) {
 		idRoot = options.idRoot,
 		mapIdToNode = options.mapIdToNode,
 		nodeRoot = mapIdToNode[idRoot],
-		levelIsConstant = options.levelIsConstant,
+		levelIsConstant = (
+			isBoolean(options.levelIsConstant) ?
+			options.levelIsConstant :
+			true
+		),
 		points = options.points,
 		point = points[tree.i],
 		optionsPoint = point && point.options || {},
@@ -23,7 +27,7 @@ var setTreeValues = function setTreeValues(tree, options) {
 		children = [],
 		value;
 	extend(tree, {
-		levelDynamic: tree.level - (levelIsConstant ?  nodeRoot.level : 0),
+		levelDynamic: tree.level - (levelIsConstant ? 0 : nodeRoot.level),
 		name: pick(point && point.name, ''),
 		visible: (
 			idRoot === tree.id ||
