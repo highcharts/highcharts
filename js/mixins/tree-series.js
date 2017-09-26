@@ -68,6 +68,7 @@ var getColor = function getColor(node, options) {
 		colors = options.colors,
 		siblings = options.siblings,
 		points = series.points,
+		getColorByPoint,
 		point,
 		level,
 		colorByPoint,
@@ -89,7 +90,15 @@ var getColor = function getColor(node, options) {
 	if (node) {
 		point = points[node.i];
 		level = levelMap[node.levelDynamic] || {};
-		if (level.colorByPoint || series.colorByPoint) {
+		getColorByPoint = (
+			point &&
+			(
+				isBoolean(level.colorByPoint) ?
+				level.colorByPoint :
+				!!series.options.colorByPoint
+			)
+		);
+		if (getColorByPoint) {
 			colorByPoint = colors[(point.index % colors.length)];
 		}
 		// Select either point color, level color or inherited color.
