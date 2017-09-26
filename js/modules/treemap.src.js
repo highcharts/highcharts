@@ -6,6 +6,7 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
+import mixinTreeSeries from '../mixins/tree-series.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -18,6 +19,7 @@ var seriesType = H.seriesType,
 	extend = H.extend,
 	noop = H.noop,
 	each = H.each,
+	getColor = mixinTreeSeries.getColor,
 	grep = H.grep,
 	isNumber = H.isNumber,
 	isString = H.isString,
@@ -687,62 +689,39 @@ seriesType('treemap', 'scatter', {
 	 * Set the node's color recursively, from the parent down.
 	 */
 	setColorRecursive: function (node, parentColor, colorIndex, index, siblings) {
-
 		var series = this,
-			point,
-			level,
-			color;
-
-
-		function variation(color) {
-			var colorVariation = level && level.colorVariation;
-			if (colorVariation) {
-				if (colorVariation.key === 'brightness') {
-					return H.color(color).brighten(
-						colorVariation.to * (index / siblings)
-					).get();
-				}
-			}
-
-			return color;
-		}
+			chart = series && series.chart,
+			colors = chart && chart.options && chart.options.colors,
+			colorInfo,
+			point;
 
 		if (node) {
+			colorInfo = getColor(node, {
+				colors: colors,
+				index: index,
+				levelMap: series.levelMap,
+				parentColor: parentColor,
+				parentColorIndex: colorIndex,
+				series: series,
+				siblings: siblings
+			});
+
 			point = series.points[node.i];
-			level = series.levelMap[node.levelDynamic];
-
-			// Select either point color, level color or inherited color.
-			color = pick(
-				point && point.options.color,
-				level && level.color,
-				parentColor && variation(parentColor),
-				series.color
-			);
-
-			colorIndex = pick(
-				point && point.options.colorIndex,
-				level && level.colorIndex,
-				colorIndex,
-				series.colorIndex
-			);
-			
 			if (point) {
-				point.color = color;
-				point.colorIndex = colorIndex;
+				point.color = colorInfo.color;
+				point.colorIndex = colorInfo.colorIndex;
 			}
-			
-			// Do it all again with the children	
-			if (node.children.length) {
-				each(node.children, function (child, i) {
-					series.setColorRecursive(
-						child,
-						color,
-						colorIndex,
-						i,
-						node.children.length
-					);
-				});
-			}
+
+			// Do it all again with the children
+			each(node.children || [], function (child, i) {
+				series.setColorRecursive(
+					child,
+					colorInfo.color,
+					colorInfo.colorIndex,
+					i,
+					node.children.length
+				);
+			});
 		}
 	},
 	algorithmGroup: function (h, w, d, p) {

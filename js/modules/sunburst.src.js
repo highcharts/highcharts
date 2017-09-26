@@ -15,9 +15,11 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 import '../parts/Series.js';
 import './treemap.src.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
+	Series = H.Series,
 	each = H.each,
 	extend = H.extend,
 	getCenter = CenteredSeriesMixin.getCenter,
+	getColor = mixinTreeSeries.getColor,
 	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
 	grep = H.grep,
 	isString = H.isString,
@@ -25,7 +27,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	noop = H.noop,
 	pick = H.pick,
 	rad2deg = 180 / Math.PI,
-	Series = H.Series,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
 	setTreeValues = mixinTreeSeries.setTreeValues,
@@ -119,6 +120,33 @@ var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
 		drillId = node.parent;
 	}
 	return drillId;
+};
+
+var cbSetTreeValuesBefore = function before(node, options) {
+	var mapIdToNode = options.mapIdToNode,
+		nodeParent = mapIdToNode[node.parent],
+		series = options.series,
+		chart = series.chart,
+		points = series.points,
+		point = points[node.i],
+		colorInfo = getColor(node, {
+			colors: chart && chart.options && chart.options.colors,
+			colorIndex: series.colorIndex,
+			colorByPoint: series.colorByPoint,
+			index: options.index,
+			levelMap: options.levelMap,
+			parentColor: nodeParent && nodeParent.color,
+			parentColorIndex: nodeParent && nodeParent.colorIndex,
+			series: options.series,
+			siblings: options.siblings
+		});
+	node.color = colorInfo.color;
+	node.colorIndex = colorInfo.colorIndex;
+	if (point) {
+		point.color = node.color;
+		point.colorIndex = node.colorIndex;
+	}
+	return node;
 };
 
 /**
@@ -295,12 +323,14 @@ var sunburstSeries = {
 		// TODO Try to combine setTreeValues & setColorRecursive to avoid
 		//  unnecessary looping.
 		setTreeValues(tree, {
+			before: cbSetTreeValuesBefore,
 			idRoot: idRoot,
 			levelIsConstant: series.levelIsConstant,
+			levelMap: series.levelMap,
 			mapIdToNode: mapIdToNode,
-			points: series.points
+			points: series.points,
+			series: series
 		});
-		series.setColorRecursive(series.tree);
 		radiusPerLevel = (outerRadius - innerRadius) / nodeTop.height;
 		values = mapIdToNode[''].shapeArgs = {
 			end: radians.end,
