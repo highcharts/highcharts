@@ -179,12 +179,17 @@ var setShapeArgs = function setShapeArgs(parent, parentValues) {
 };
 
 var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
-	var drillId = point.id,
-		node;
-	// When it is the root node, the drillId should be set to parent.
-	if (idRoot === point.id) {
-		node = mapIdToNode[idRoot];
-		drillId = node.parent;
+	var drillId,
+		node = point.node,
+		nodeRoot;
+	if (!node.isLeaf) {
+		// When it is the root node, the drillId should be set to parent.
+		if (idRoot === point.id) {
+			nodeRoot = mapIdToNode[idRoot];
+			drillId = nodeRoot.parent;
+		} else {
+			drillId = point.id;
+		}
 	}
 	return drillId;
 };
