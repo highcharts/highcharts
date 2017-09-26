@@ -29,7 +29,7 @@ H.seriesType('stochastic', 'sma',
 	 *
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/stochastic-oscillator
+	 * @sample {highstock} stock/indicators/stochastic
 	 *                     Stochastic oscillator
 	 * @since 6.0.0
 	 * @optionparent plotOptions.stochastic

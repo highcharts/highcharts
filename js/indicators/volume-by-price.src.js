@@ -57,7 +57,7 @@ seriesType('vbp', 'sma',
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/vbp
+	 * @sample {highstock} stock/indicators/volume-by-price
 	 *                     Volume By Price indicator
 	 * @since 6.0.0
 	 * @optionparent plotOptions.vbp

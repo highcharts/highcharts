@@ -28,7 +28,7 @@ seriesType('ad', 'sma',
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/ad Exponential moving average indicator
+	 * @sample {highstock} stock/indicators/accumulation-distribution Exponential moving average indicator
 	 * @since 6.0.0
 	 * @optionparent plotOptions.ad
 	 */

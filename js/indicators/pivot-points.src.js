@@ -32,7 +32,7 @@ H.seriesType('pivotpoints', 'sma',
 	 *
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/pivotpoints
+	 * @sample {highstock} stock/indicators/pivot-points
 	 *                     Pivot points
 	 * @since 6.0.0
 	 * @optionparent plotOptions.pivotpoints
