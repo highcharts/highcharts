@@ -136,6 +136,9 @@ if (!Array.prototype.some) {
 /**
  * The decimal point used for parsing numbers in the CSV.
  *
+ * If both this and data.delimiter is set to false, the parser will
+ * attempt to deduce the decimal point automatically.
+ *
  * @type {String}
  * @sample {highcharts} highcharts/data/delimiters/ Comma as decimal point
  * @default .
@@ -205,6 +208,9 @@ if (!Array.prototype.some) {
  * Item or cell delimiter for parsing CSV. Defaults to the tab character
  * `\t` if a tab character is found in the CSV string, if not it defaults
  * to `,`.
+ *
+ * If this is set to false or undefined, the parser will attempt to deduce
+ * the delimiter automatically.
  *
  * @type {String}
  * @sample {highcharts} highcharts/data/delimiters/ Delimiters
