@@ -57,7 +57,8 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
             offset: 0,
             lineWidth: 2
         }, {
-            visible: false
+            visible: false,
+            height: '60%'
         }],
 
         tooltip: {
