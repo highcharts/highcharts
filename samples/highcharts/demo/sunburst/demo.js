@@ -1,33 +1,27 @@
 var data = [{
     'id': '0.0',
     'parent': '',
-    'name': 'The World',
-    'color': 'transparent'
+    'name': 'The World'
 }, {
     'id': '1.3',
     'parent': '0.0',
-    'name': 'Asia',
-    'color': '#009246'
+    'name': 'Asia'
 }, {
     'id': '1.1',
     'parent': '0.0',
-    'name': 'Africa',
-    'color': '#FD6500'
+    'name': 'Africa'
 }, {
     'id': '1.2',
     'parent': '0.0',
-    'name': 'America',
-    'color': '#F6C100'
+    'name': 'America'
 }, {
     'id': '1.4',
     'parent': '0.0',
-    'name': 'Europe',
-    'color': '#FB0000'
+    'name': 'Europe'
 }, {
     'id': '1.5',
     'parent': '0.0',
-    'name': 'Oceanic',
-    'color': '#882AEC'
+    'name': 'Oceanic'
 },
 
 /* Africa */
@@ -1381,6 +1375,9 @@ var data = [{
     'value': 1300
 }];
 
+// Splice in transparent for the center circle
+Highcharts.getOptions().colors.splice(0, 0, 'transparent');
+
 
 Highcharts.chart('container', {
 
@@ -1401,7 +1398,15 @@ Highcharts.chart('container', {
             enabled: false
         },
         allowDrillToNode: true,
+        cursor: 'pointer',
         levels: [{
+            level: 2,
+            dataLabels: {
+                enabled: true
+            },
+            colorByPoint: true
+        },
+        {
             level: 3,
             colorVariation: {
                 key: 'brightness',

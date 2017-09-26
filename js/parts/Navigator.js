@@ -141,7 +141,6 @@ extend(defaultOptions, {
 		 * 
 		 * @type {Object}
 		 * @sample {highstock} stock/navigator/handles/ Colored handles
-		 * @sample {highstock} stock/navigator/handles/ Colored handles
 		 * @product highstock
 		 */
 		handles: {
@@ -198,7 +197,7 @@ extend(defaultOptions, {
 			 * @default ['navigator-handle', 'navigator-handle']
 			 * @product highstock
 			 * @sample {highstock} stock/navigator/styled-handles/
-			 * Styled handles
+			 *         Styled handles
 			 * @since 6.0.0
 			 */
 			symbols: ['navigator-handle', 'navigator-handle'],
@@ -895,16 +894,16 @@ Navigator.prototype = {
 			}
 		} else if (defined(maxRange) && currentRange > maxRange) {
 			/**
-			 * Maximum range which can be set using navigator's handles.
+			 * Maximum range which can be set using the navigator's handles.
 			 * Opposite of [xAxis.minRange](#xAxis.minRange).
 			 *
 			 * @type {Number}
 			 * @default undefined
 			 * @product highstock
-			 * @apioption xAxis.maxRange
 			 * @sample {highstock} stock/navigator/maxrange/
-			 * Defined max and min range
+			 *         Defined max and min range
 			 * @since 6.0.0
+			 * @apioption xAxis.maxRange
 			 */
 			if (this.grabbedLeft) {
 				pxMin = xAxis.toPixels(newMax - maxRange, true);

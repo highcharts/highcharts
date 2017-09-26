@@ -52,7 +52,6 @@ seriesType('variablepie', 'pie',
 		 * @sample {highcharts}
 		 *         highcharts/variable-radius-pie/min-point-size-100/
 		 *         minPointSize set to 100
-		 * @apioption variablePie.minPointSize
 		 * @type {String|Number}
 		 * @since 6.0.0
 		 * @product highcharts
