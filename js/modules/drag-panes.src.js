@@ -35,6 +35,7 @@ var hasTouch = H.hasTouch,
 		 * This feature requires the module Drag Panes.
 		 *
 		 * @type {Number|String}
+		 * @sample {highstock} stock/yaxis/resize-min-max-length minLength and maxLength
 		 * @default 0
 		 * @product highstock
 		 * @apioption yAxis.minLength
@@ -48,6 +49,7 @@ var hasTouch = H.hasTouch,
 		 * This feature requires the module Drag Panes.
 		 *
 		 * @type {String|Number}
+		 * @sample {highstock} stock/yaxis/resize-min-max-length minLength and maxLength
 		 * @default 100%
 		 * @product highstock
 		 * @apioption yAxis.maxLength
@@ -85,6 +87,8 @@ var hasTouch = H.hasTouch,
 				 *
 				 * @type {Array.<String|Number>}
 				 * @default []
+				 * @sample {highstock} stock/yaxis/multiple-resizers Three panes with resizers
+				 * @sample {highstock} stock/yaxis/resize-multiple-axes One resizer controlling multiple axes
 				 * @product highstock
 				 * @apioption yAxis.resize.controlledAxis.next
 				 */
@@ -98,6 +102,8 @@ var hasTouch = H.hasTouch,
 				 *
 				 * @type {Array.<String|Number>}
 				 * @default []
+				 * @sample {highstock} stock/yaxis/multiple-resizers Three panes with resizers
+				 * @sample {highstock} stock/yaxis/resize-multiple-axes One resizer controlling multiple axes
 				 * @product highstock
 				 * @apioption yAxis.resize.controlledAxis.prev
 				 */
@@ -110,6 +116,7 @@ var hasTouch = H.hasTouch,
 			 * This feature requires the module Drag Panes.
 			 *
 			 * @type {Boolean}
+			 * @sample {highstock} stock/demo/candlestick-and-volume Enabled resizer
 			 * @default false
 			 * @product highstock
 			 * @apioption yAxis.resize.enabled
@@ -141,6 +148,7 @@ var hasTouch = H.hasTouch,
 			 *
 			 * @type {Color}
 			 * @default black
+			 * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
 			 * @product highstock
 			 * @apioption yAxis.resize.lineColor
 			 */
@@ -155,6 +163,7 @@ var hasTouch = H.hasTouch,
 			 *
 			 * @type {String}
 			 * @default Solid
+			 * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
 			 * @see For supported options check
 			 * [dashStyle](#plotOptions.series.dashStyle)
 			 * @product highstock
@@ -171,6 +180,7 @@ var hasTouch = H.hasTouch,
 			 *
 			 * @type {Number}
 			 * @default 2
+			 * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
 			 * @product highstock
 			 * @apioption yAxis.resize.lineWidth
 			 */
@@ -185,6 +195,7 @@ var hasTouch = H.hasTouch,
 			 *
 			 * @type {Number}
 			 * @default 0
+			 * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
 			 * @product highstock
 			 * @apioption yAxis.resize.x
 			 */
@@ -197,6 +208,7 @@ var hasTouch = H.hasTouch,
 			 *
 			 * @type {Number}
 			 * @default 0
+			 * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
 			 * @product highstock
 			 * @apioption yAxis.resize.y
 			 */

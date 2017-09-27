@@ -57,7 +57,12 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
                 enabled: true,
                 controlledAxis: {
                     next: [1]
-                }
+                },
+                lineWidth: 3,
+                lineDashStyle: 'longDash',
+                lineColor: '#ccd6eb',
+                x: 0,
+                y: 5
             }
         }, {
             labels: {
