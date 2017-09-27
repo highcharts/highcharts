@@ -331,7 +331,7 @@ seriesType('diamondmap', 'honeycomb', {
 			point.tileEdges = {
 				x1: x1, x2: x2, x3: x3, y1: y1, y2: y2, y3: y3
 			};
-			
+
 			// Set this point's shape parameters
 			point.shapeType = 'path';
 			point.shapeArgs = {
@@ -363,4 +363,113 @@ seriesType('diamondmap', 'honeycomb', {
 			'Z'
 		];
 	}
+});
+
+
+/**
+ * A circlemap series is a type of heatmap where the tiles are circle shaped.
+ * 
+ * @extends {plotOptions.diamondmap}
+ * @since 6.0.0
+ * @optionparent plotOptions.circlemap
+ */
+seriesType('circlemap', 'diamondmap', {
+	pointPadding: 1
+}, {
+	translate: function () {
+		var series = this,
+			options = series.options,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
+			pointPadding = options.pointPadding || 0,
+			yRadius = (options.rowsize || 1) / 2,
+			colsize = (options.colsize || 1),
+			colsizePx,
+			yRadiusPx,
+			xRadiusPx,
+			radius;
+
+		series.generatePoints();
+
+		each(series.points, function (point) {
+			var x = between(
+					Math.round(
+						xAxis.len -
+						xAxis.translate(point.x, 0, 1, 0, 0)
+					), -xAxis.len, 2 * xAxis.len
+				),
+				y = between(
+					Math.round(yAxis.translate(point.y, 0, 1, 0, 0)),
+					-yAxis.len,
+					2 * yAxis.len
+				);
+
+			// Find radius if not found already.
+			// Use the smallest one (x vs y) to avoid overlap.
+			// Note that the radius will be recomputed for each series.
+			// Ideal (max) x radius is dependent on y radius:
+			/*
+							* (circle 2)
+				
+									* (circle 3)
+									|	yRadiusPx
+				(circle 1)	*-------|
+							 colsizePx
+
+				The distance between circle 1 and 3 (and circle 2 and 3) is 2r,
+				which is the hypotenuse of the triangle created by colsizePx and
+				yRadiusPx. If the distance between circle 2 and circle 1 is less
+				than 2r, we use half of that distance instead (yRadiusPx).
+			*/
+			if (!radius) {
+				colsizePx = Math.abs(
+						between(
+							Math.floor(
+								xAxis.len -
+								xAxis.translate(point.x + colsize, 0, 1, 0, 0)
+							), -xAxis.len, 2 * xAxis.len
+						) - x
+					);
+				yRadiusPx = Math.abs(
+						between(
+							Math.floor(
+								yAxis.translate(point.y + yRadius, 0, 1, 0, 0)
+							), -yAxis.len, 2 * yAxis.len
+						) - y
+					);
+				xRadiusPx = Math.floor(
+					Math.sqrt(
+						(colsizePx * colsizePx + yRadiusPx * yRadiusPx)
+					) / 2
+				);
+				radius = Math.min(xRadiusPx, yRadiusPx);
+			}
+
+			// Shift y-values for every second grid column.
+			// Note that we always use the optimal y axis radius for this.
+			// Also note: We have to reverse the shift for reversed y-axes.
+			if (point.x % 2) {
+				y += yRadiusPx * (yAxis.reversed ? -1 : 1);
+			}
+
+			// Set plotX and plotY for use in K-D-Tree and more
+			point.plotX = point.clientX = x;
+			point.plotY = y;
+
+			// Set this point's shape parameters
+			point.shapeType = 'circle';
+			point.shapeArgs = {
+				x: x,
+				y: y,
+				// Use the smallest radius. Ideally this would be an oval.
+				r: radius - pointPadding
+			};
+		});
+
+		series.translateColors();
+	}
+
+// Point class
+}, {
+	haloPath: null
 });
