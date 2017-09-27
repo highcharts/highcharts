@@ -34,6 +34,10 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
             text: 'AAPL Historical'
         },
 
+        legend: {
+            enabled: true
+        },
+
         yAxis: [{
             labels: {
                 align: 'right',

@@ -80,14 +80,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
                 period: 0,
                 volumeSeriesID: 'volume'
             }
-        }, {
-            type: 'ad',
-            linkedTo: 'aapl',
-            yAxis: 2,
-            params: {
-                period: 50,
-                volumeSeriesID: 'volume'
-            }
         }]
     });
 });

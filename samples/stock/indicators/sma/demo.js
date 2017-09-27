@@ -28,10 +28,12 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
             data: data
         }, {
             type: 'sma',
-            linkedTo: 'aapl'
+            linkedTo: 'aapl',
+            name: 'SMA (14)'
         }, {
             type: 'sma',
             linkedTo: 'aapl',
+            name: 'SMA (50)',
             params: {
                 period: 50
             }

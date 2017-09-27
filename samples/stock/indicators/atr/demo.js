@@ -36,11 +36,13 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
         }, {
             type: 'atr',
             linkedTo: 'aapl',
+            name: 'ATR (14)',
             yAxis: 1
         }, {
             type: 'atr',
             linkedTo: 'aapl',
             yAxis: 1,
+            name: 'ATR (50)',
             params: {
                 period: 50
             }
