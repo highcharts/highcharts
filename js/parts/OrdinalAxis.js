@@ -580,11 +580,15 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 			max = axis.dataMax;
 
 		if (H.defined(distance)) {
-			// Max+pointRange because we need to scroll to the last
-			while (max < axis.dataMax + extraRange) {
-				max += distance;
+			// Max + pointRange because we need to scroll to the last
+
+			positions.push(max);
+
+			while (max <= axis.dataMax + extraRange) {
+				max += distance; 
 				positions.push(max);
 			}
+
 		}
 
 		return positions;

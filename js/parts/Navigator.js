@@ -409,6 +409,18 @@ extend(defaultOptions, {
 		 * @product highstock
 		 */
 		xAxis: {
+			/**
+			 * Additional range on the right side of the xAxis. Works similar to
+			 * xAxis.maxPadding, but value is set in milliseconds. Can be set for both,
+			 * main xAxis and navigator's xAxis.
+			 * 
+			 * @type {Number}
+			 * @default 0
+			 * @since 6.0.0
+			 * @product highstock
+			 * @apioption xAxis.overscroll
+			 */
+			overscroll: 0,
 
 			className: 'highcharts-navigator-xaxis',
 			tickLength: 0,
@@ -1826,6 +1838,7 @@ Navigator.prototype = {
 			range = baseMax - baseMin,
 			stickToMin = navigator.stickToMin,
 			stickToMax = navigator.stickToMax,
+			overscroll = baseXAxis.options.overscroll,
 			newMax,
 			newMin,
 			navigatorSeries = navigator.series && navigator.series[0],
@@ -1849,7 +1862,8 @@ Navigator.prototype = {
 			// If the zoomed range is already at the max, move it to the right
 			// as new data comes in
 			if (stickToMax) {
-				newMax = baseDataMax;
+				newMax = baseDataMax + overscroll;
+
 				// if stickToMin is true, the new min value is set above
 				if (!stickToMin) {
 					newMin = Math.max(
