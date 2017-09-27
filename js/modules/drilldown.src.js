@@ -481,7 +481,7 @@ Chart.prototype.applyDrilldown = function () {
 			}
 		});
 	}
-	
+	this.pointer.reset();
 	this.redraw();
 	this.showDrillUpButton();
 };
