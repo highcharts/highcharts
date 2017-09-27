@@ -747,11 +747,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			halo.point = point; // #6055
 
 			/*= if (build.classic) { =*/
-			halo.attr(extend({
-				'fill': point.color || series.color,
-				'fill-opacity': haloOptions.opacity,
-				'zIndex': -1 // #4929, IE8 added halo above everything
-			}, haloOptions.attributes));
+			halo.attr(extend(
+				extend({
+					'fill': point.color || series.color,
+					'fill-opacity': haloOptions.opacity,
+					'zIndex': -1 // #4929, IE8 added halo above everything
+				}, haloOptions.attributes),
+				series.haloAttribs(point, state)));
 			/*= } =*/
 
 		} else if (halo && halo.point && halo.point.haloPath) {

@@ -3677,6 +3677,14 @@ H.Series = H.seriesType('line', null, { // base series options
 
 	},
 
+	/**
+	 * Get presentational attributes for the halo shown around a point.
+	 * Can be overridden for different series types.
+	 */
+	haloAttribs: function (point, state) {
+		return {};
+	},
+
 	/*= if (build.classic) { =*/
 	/**
 	 * Internal function to get presentational attributes for each point. Unlike
