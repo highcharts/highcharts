@@ -157,8 +157,24 @@ H.Fx.prototype = {
 			timer = function (gotoEnd) {
 				return timer.stopped ? false : self.step(gotoEnd);
 			},
-			i;
+			requestAnimationFrame =
+				win.requestAnimationFrame ||
+				function (step) {
+					setTimeout(step, 13);
+				},
+			step = function () {
+				var i;
+				for (i = 0; i < timers.length; i++) {
+					if (!timers[i]()) {
+						timers.splice(i--, 1);
+					}
+				}
 
+				if (timers.length) {
+					requestAnimationFrame(step);
+				}
+			};
+		
 		this.startTime = +new Date();
 		this.start = from;
 		this.end = to;
@@ -170,18 +186,7 @@ H.Fx.prototype = {
 		timer.prop = this.prop;
 
 		if (timer() && timers.push(timer) === 1) {
-			timer.timerId = setInterval(function () {
-				
-				for (i = 0; i < timers.length; i++) {
-					if (!timers[i]()) {
-						timers.splice(i--, 1);
-					}
-				}
-
-				if (!timers.length) {
-					clearInterval(timer.timerId);
-				}
-			}, 13);
+			requestAnimationFrame(step);
 		}
 	},
 	
