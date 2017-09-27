@@ -427,9 +427,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * @typedef {Object} SVGAttributes An object of key-value pairs for SVG
 	 *   attributes. Attributes in Highcharts elements for the most parts
 	 *   correspond to SVG, but some are specific to Highcharts, like `zIndex`,
-	 *   `rotation`, `translateX`, `translateY`, `scaleX` and `scaleY`. SVG
-	 *   attributes containing a hyphen are _not_ camel-cased, they should be
-	 *   quoted to preserve the hyphen.
+	 *   `rotation`, `rotationOriginX`, `rotationOriginY`, `translateX`,
+	 *   `translateY`, `scaleX` and `scaleY`. SVG attributes containing a hyphen
+	 *   are _not_ camel-cased, they should be quoted to preserve the hyphen.
+	 *   
 	 * @example
 	 * {
 	 *     'stroke': '#ff0000', // basic
@@ -1068,8 +1069,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
 			transform.push(
-				'rotate(' + rotation + ' ' + (element.getAttribute('x') || 0) +
-				' ' + (element.getAttribute('y') || 0) + ')'
+				'rotate(' + rotation + ' ' +
+				pick(this.rotationOriginX, element.getAttribute('x'), 0) +
+				' ' +
+				pick(this.rotationOriginY, element.getAttribute('y') || 0) + ')'
 			);
 		}
 
@@ -1886,6 +1889,8 @@ SVGElement.prototype.translateXSetter =
 SVGElement.prototype.translateYSetter =
 SVGElement.prototype.rotationSetter =
 SVGElement.prototype.verticalAlignSetter =
+SVGElement.prototype.rotationOriginXSetter =
+SVGElement.prototype.rotationOriginYSetter = 
 SVGElement.prototype.scaleXSetter =
 SVGElement.prototype.scaleYSetter = 
 SVGElement.prototype.matrixSetter = function (value, key) {
