@@ -163,12 +163,12 @@ var MockPoint = H.MockPoint = function (chart, options) {
 		getPlotBox: seriesPrototype.getPlotBox
 	};
 
-	//this.plotX
-	//this.plotY
+	// this.plotX
+	// this.plotY
 
 	/* Those might not exist if a specific axis was not found/defined */
-	//this.x? 
-	//this.y?
+	// this.x? 
+	// this.y?
 
 	this.init(chart, options);
 };
@@ -365,7 +365,8 @@ Annotation.prototype = {
 		height: 'height',
 		borderRadius: 'r',
 		r: 'r',
-		padding: 'padding'
+		padding: 'padding',
+		dashStyle: 'dashstyle'
 	},
 
 	/**
@@ -929,16 +930,23 @@ Annotation.prototype = {
 	 * @return {undefined}
 	**/
 	render: function () {
-		this.group = this.chart.renderer.g('annotation')
+		var renderer = this.chart.renderer;
+
+		var group = this.group = renderer.g('annotation')
 			.attr({
 				zIndex: this.options.zIndex,
-
-				// hideOverlappingLabels requires translation
-				translateX: 0,
-				translateY: 0,
 				visibility: this.options.visible ? 'visible' : 'hidden'
 			})
 			.add();
+
+		this.shapesGroup = renderer.g('annotation-shapes').add(group);
+		this.labelsGroup = renderer.g('annotation-labels').attr({
+      // hideOverlappingLabels requires translation
+			translateX: 0,
+			translateY: 0
+		}).add(group);
+
+		this.shapesGroup.clip(this.chart.plotBoxClip);
 	},
 
 	/**
@@ -1150,7 +1158,7 @@ Annotation.prototype = {
 	 * @return {undefined}
 	 */
 	destroyItem: function (item) {
-		//erase from shapes or labels array
+		// erase from shapes or labels array
 		erase(this[item.itemType + 's'], item);
 		item.destroy();
 	},
@@ -1247,10 +1255,12 @@ Annotation.prototype = {
 
 	redrawPath: function (pathItem, isNew) {
 		var points = pathItem.points,
+			strokeWidth = pathItem['stroke-width'],
 			d = ['M'],
 			pointIndex = 0,
 			dIndex = 0,
 			len = points && points.length,
+			crispSegmentIndex,
 			anchor,
 			point,
 			showPath;
@@ -1263,11 +1273,24 @@ Annotation.prototype = {
 				d[++dIndex] = anchor.x;
 				d[++dIndex] = anchor.y;
 
+        // crisping line, it might be replaced with Renderer.prototype.crispLine
+        // but it requires creating many temporary arrays
+				crispSegmentIndex = dIndex % 5;
+				if (crispSegmentIndex === 0) {
+					if (d[crispSegmentIndex + 1] === d[crispSegmentIndex + 4]) {
+						d[crispSegmentIndex + 1] = d[crispSegmentIndex + 4] = Math.round(d[crispSegmentIndex + 1]) - (strokeWidth % 2 / 2);
+					}
+
+					if (d[crispSegmentIndex + 2] === d[crispSegmentIndex + 5]) {
+						d[crispSegmentIndex + 2] = d[crispSegmentIndex + 5] = Math.round(d[crispSegmentIndex + 2]) + (strokeWidth % 2 / 2);
+					}
+				}
+
 				if (pointIndex < len - 1) {
 					d[++dIndex] = 'L';
 				}
 
-				showPath = point.series.visible && point.isInside !== false;
+				showPath = point.series.visible;
 
 			} while (++pointIndex < len && showPath);
 		}
@@ -1288,7 +1311,7 @@ Annotation.prototype = {
 	},
 
 	renderItem: function (item) {
-		item.add(this.group);
+		item.add(item.itemType === 'label' ? this.labelsGroup : this.shapesGroup);
 
 		this.setItemMarkers(item);
 	},
@@ -1642,6 +1665,15 @@ H.extend(chartPrototype, {
 	},
 
 	redrawAnnotations: function () {
+		var clip = this.plotBoxClip,
+			plotBox = this.plotBox;
+
+		if (clip) {
+			clip.attr(plotBox);
+		} else {
+			this.plotBoxClip = this.renderer.clipRect(plotBox);
+		}
+
 		each(this.annotations, function (annotation) {
 			annotation.redraw();
 		});
@@ -1658,6 +1690,13 @@ chartPrototype.callbacks.push(function (chart) {
 
 	chart.redrawAnnotations();
 	addEvent(chart, 'redraw', chart.redrawAnnotations);
+	addEvent(chart, 'destroy', function () {
+		var plotBoxClip = chart.plotBoxClip;
+
+		if (plotBoxClip && plotBoxClip.destroy) {
+			plotBoxClip.destroy();
+		}
+	});
 });
 
 
