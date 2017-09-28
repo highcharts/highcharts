@@ -13,6 +13,7 @@ import '../parts-map/HeatmapSeries.js';
 var seriesType = H.seriesType,
 	each = H.each,
 	reduce = H.reduce,
+	pick = H.pick,
 	between = function (x, a, b) {
 		return Math.min(Math.max(a, x), b);
 	};
@@ -116,9 +117,7 @@ seriesType('honeycomb', 'heatmap', {
 			options = series.options,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
-			pointPadding = options.pointPadding || 0,
-			xPointPadding = xAxis.reversed ? -pointPadding : pointPadding,
-			yPointPadding = yAxis.reversed ? -pointPadding : pointPadding,
+			seriesPointPadding = options.pointPadding || 0,
 			xPad = (options.colsize || 1) / 3,
 			yPad = (options.rowsize || 1) / 2,
 			yShift;
@@ -164,7 +163,15 @@ seriesType('honeycomb', 'heatmap', {
 					Math.floor(yAxis.translate(point.y + yPad, 0, 1, 0, 1)),
 					-yAxis.len,
 					2 * yAxis.len
-				);
+				),
+				pointPadding = pick(point.pointPadding, seriesPointPadding),
+				// We calculate the point padding of the midpoints to preserve 
+				// the angles of the shape.
+				midPointPadding = pointPadding *
+					Math.abs(x2 - x1) / Math.abs(y3 - y2),
+				xMidPadding = xAxis.reversed ? -midPointPadding : midPointPadding,
+				xPointPadding = xAxis.reversed ? -pointPadding : pointPadding,
+				yPointPadding = yAxis.reversed ? -pointPadding : pointPadding;
 
 			// Shift y-values for every second grid column
 			if (point.x % 2) {
@@ -181,10 +188,10 @@ seriesType('honeycomb', 'heatmap', {
 			point.plotY = y2;
 
 			// Apply point padding to translated coordinates
-			x1 += xPointPadding;
+			x1 += xMidPadding + xPointPadding;
 			x2 += xPointPadding;
 			x3 -= xPointPadding;
-			x4 -= xPointPadding;
+			x4 -= xMidPadding + xPointPadding;
 			y1 -= yPointPadding;
 			y3 += yPointPadding;
 
@@ -264,9 +271,7 @@ seriesType('diamondmap', 'honeycomb', {
 			options = series.options,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
-			pointPadding = options.pointPadding || 0,
-			xPointPadding = xAxis.reversed ? -pointPadding : pointPadding,
-			yPointPadding = yAxis.reversed ? -pointPadding : pointPadding,
+			seriesPointPadding = options.pointPadding || 0,
 			xPad = (options.colsize || 1),
 			yPad = (options.rowsize || 1) / 2,
 			yShift;
@@ -294,7 +299,7 @@ seriesType('diamondmap', 'honeycomb', {
 				),
 				y1 = between(
 					Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 0)),
-					-yAxis.len, 
+					-yAxis.len,
 					2 * yAxis.len
 				),
 				y2 = between(
@@ -306,7 +311,14 @@ seriesType('diamondmap', 'honeycomb', {
 					Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 0)),
 					-yAxis.len,
 					2 * yAxis.len
-				);
+				),
+				pointPadding = pick(point.pointPadding, seriesPointPadding),
+				// We calculate the point padding of the midpoints to preserve 
+				// the angles of the shape.
+				midPointPadding = pointPadding *
+					Math.abs(x2 - x1) /	Math.abs(y3 - y2),
+				xPointPadding = xAxis.reversed ? -midPointPadding : midPointPadding,
+				yPointPadding = yAxis.reversed ? -pointPadding : pointPadding;
 
 			// Shift y-values for every second grid column
 			// We have to reverse the shift for reversed y-axes
@@ -374,20 +386,29 @@ seriesType('diamondmap', 'honeycomb', {
  * @optionparent plotOptions.circlemap
  */
 seriesType('circlemap', 'diamondmap', {
-	pointPadding: 1
+	// Default options
+	states: {
+		hover: {
+			halo: {	
+				size: 2,
+				opacity: 0.4
+			}
+		}
+	}
 }, {
 	translate: function () {
 		var series = this,
 			options = series.options,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
-			pointPadding = options.pointPadding || 0,
+			seriesPointPadding = options.pointPadding || 0,
 			yRadius = (options.rowsize || 1) / 2,
 			colsize = (options.colsize || 1),
 			colsizePx,
 			yRadiusPx,
 			xRadiusPx,
-			radius;
+			radius,
+			forceNextRadiusCompute = false;
 
 		series.generatePoints();
 
@@ -402,7 +423,16 @@ seriesType('circlemap', 'diamondmap', {
 					Math.round(yAxis.translate(point.y, 0, 1, 0, 0)),
 					-yAxis.len,
 					2 * yAxis.len
-				);
+				),
+				pointPadding = seriesPointPadding,
+				hasPerPointPadding = false;
+
+			// If there is point padding defined on a single point, add it
+			if (point.pointPadding !== undefined) {
+				pointPadding = point.pointPadding;
+				hasPerPointPadding = true;
+				forceNextRadiusCompute = true;
+			}
 
 			// Find radius if not found already.
 			// Use the smallest one (x vs y) to avoid overlap.
@@ -421,7 +451,7 @@ seriesType('circlemap', 'diamondmap', {
 				yRadiusPx. If the distance between circle 2 and circle 1 is less
 				than 2r, we use half of that distance instead (yRadiusPx).
 			*/
-			if (!radius) {
+			if (!radius || forceNextRadiusCompute) {
 				colsizePx = Math.abs(
 						between(
 							Math.floor(
@@ -442,7 +472,15 @@ seriesType('circlemap', 'diamondmap', {
 						(colsizePx * colsizePx + yRadiusPx * yRadiusPx)
 					) / 2
 				);
-				radius = Math.min(xRadiusPx, yRadiusPx);
+				radius = Math.min(xRadiusPx, yRadiusPx) - pointPadding;
+
+				// If we have per point padding we need to always compute the 
+				// radius for this point and the next. If we used to have
+				// per point padding but don't anymore, don't force compute next
+				// radius.
+				if (forceNextRadiusCompute && !hasPerPointPadding) {
+					forceNextRadiusCompute = false;
+				}
 			}
 
 			// Shift y-values for every second grid column.
@@ -456,13 +494,15 @@ seriesType('circlemap', 'diamondmap', {
 			point.plotX = point.clientX = x;
 			point.plotY = y;
 
+			// Save radius for halo
+			point.radius = radius;
+
 			// Set this point's shape parameters
 			point.shapeType = 'circle';
 			point.shapeArgs = {
 				x: x,
 				y: y,
-				// Use the smallest radius. Ideally this would be an oval.
-				r: radius - pointPadding
+				r: radius
 			};
 		});
 
@@ -471,5 +511,10 @@ seriesType('circlemap', 'diamondmap', {
 
 // Point class
 }, {
-	haloPath: null
+	haloPath: function (size) {
+		return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
+			.call(this,
+				size + (size && this.radius)
+			);
+	}
 });
