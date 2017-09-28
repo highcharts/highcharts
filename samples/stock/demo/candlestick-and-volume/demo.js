@@ -54,10 +54,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
             height: '60%',
             lineWidth: 2,
             resize: {
-                enabled: true,
-                controlledAxis: {
-                    next: [1]
-                }
+                enabled: true
             }
         }, {
             labels: {

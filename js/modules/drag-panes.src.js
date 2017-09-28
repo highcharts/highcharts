@@ -16,7 +16,6 @@ var hasTouch = H.hasTouch,
 	merge = H.merge,
 	wrap = H.wrap,
 	each = H.each,
-	pick = H.pick,
 	isNumber = H.isNumber,
 	addEvent = H.addEvent,
 	relativeLength = H.relativeLength,
@@ -36,11 +35,11 @@ var hasTouch = H.hasTouch,
 		 *
 		 * @type {Number|String}
 		 * @sample {highstock} stock/yaxis/resize-min-max-length minLength and maxLength
-		 * @default 0
+		 * @default 10%
 		 * @product highstock
 		 * @apioption yAxis.minLength
 		 */
-		minLength: 0,
+		minLength: '10%',
 
 		/**
 		 * Maximal size of a resizable axis. Could be set as a percent
@@ -81,7 +80,8 @@ var hasTouch = H.hasTouch,
 
 				/**
 				 * Array of axes that should move out of the way of resizing
-				 * being done for the current axis.
+				 * being done for the current axis. If not set, the next axis
+				 * will be used.
 				 *
 				 * This feature requires the module Drag Panes.
 				 *
@@ -401,6 +401,12 @@ H.AxisResizer.prototype = {
 		var resizer = this,
 			chart = resizer.axis.chart,
 			axes = resizer.options.controlledAxis,
+			nextAxes = axes.next.length === 0 ?
+				[chart.yAxis.indexOf(resizer.axis) + 1] : axes.next,
+			// Main axis is included in the prev array by default
+			prevAxes = [resizer.axis].concat(axes.prev),
+			axesConfigs = [], // prev and next configs
+			stopDrag = false,
 			plotTop = chart.plotTop,
 			plotHeight = chart.plotHeight,
 			plotBottom = plotTop + plotHeight,
@@ -419,11 +425,8 @@ H.AxisResizer.prototype = {
 			return;
 		}
 
-		each([
-			// Main axis is included in the prev array by default
-			[resizer.axis].concat(axes.prev),
-			axes.next
-		], function (axesGroup, isNext) {
+		// First gather info how axes should behave
+		each([prevAxes, nextAxes], function (axesGroup, isNext) {
 			each(axesGroup, function (axisInfo, i) {
 				// Axes given as array index, axis object or axis id
 				var axis = isNumber(axisInfo) ?
@@ -450,13 +453,17 @@ H.AxisResizer.prototype = {
 
 				top = axis.top;
 
-				minLength = relativeLength(
-					axisOptions.minLength || 0,
-					plotHeight
+				minLength = Math.round(
+					relativeLength(
+						axisOptions.minLength,
+						plotHeight
+					)
 				);
-				maxLength = relativeLength(
-					pick(axisOptions.maxLength, '100%'),
-					plotHeight
+				maxLength = Math.round(
+					relativeLength(
+						axisOptions.maxLength,
+						plotHeight
+					)
 				);
 
 				if (isNext) {
@@ -484,21 +491,50 @@ H.AxisResizer.prototype = {
 						}
 					}
 
-					optionsToUpdate.top = Math.round(top);
+					// If next axis meets min length, stop dragging:
+					if (height === minLength) {
+						stopDrag = true;
+					}
+
+					axesConfigs.push({
+						axis: axis,
+						options: {
+							top: Math.round(top),
+							height: height
+						}
+					});
 				} else {
 					// Normalize height to option limits
-					height = normalize(chartY - top, minLength, maxLength);						
+					height = normalize(chartY - top, minLength, maxLength);
+
+					// If prev axis meets max length, stop dragging:
+					if (height === maxLength) {
+						stopDrag = true;
+					}
 
 					// Check axis size limits
 					chartY = top + height;
+					axesConfigs.push({
+						axis: axis,
+						options: {
+							height: height
+						}
+					});
 				}
 
 				optionsToUpdate.height = height;
-				axis.update(optionsToUpdate, false);
 			});
 		});
 
-		chart.redraw(false);
+		// If we hit the min/maxLength with dragging, don't do anything:
+		if (!stopDrag) {
+			// Now update axes:
+			each(axesConfigs, function (config) {
+				config.axis.update(config.options, false);
+			});
+
+			chart.redraw(false);
+		}
 	},
 
 	/**

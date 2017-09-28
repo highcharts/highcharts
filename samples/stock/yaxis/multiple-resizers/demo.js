@@ -24,19 +24,13 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
         yAxis: [{
             height: '50%',
             resize: {
-                enabled: true,
-                controlledAxis: {
-                    next: [1]
-                }
+                enabled: true
             }
         }, {
             top: '50%',
             height: '25%',
             resize: {
-                enabled: true,
-                controlledAxis: {
-                    next: [2]
-                }
+                enabled: true
             }
         }, {
             top: '75%',
