@@ -253,9 +253,10 @@ seriesType('macd', 'sma',
 			shortEMA = shortEMA.values;
 			longEMA = longEMA.values;
 
+
 			// Subtract each Y value from the EMA's and create the new dataset (MACD)
-			for (i = 1; i < shortEMA.length; i++) {
-				if (longEMA[i] && longEMA[i][1]) {
+			for (i = 1; i <= shortEMA.length; i++) {
+				if (longEMA[i - 1] && longEMA[i - 1][1]) {
 					MACD.push([
 						shortEMA[i + params.shortPeriod + 1][0], 
 						0,
@@ -303,6 +304,7 @@ seriesType('macd', 'sma',
 					j++;
 				}
 			}
+
 			return {
 				values: MACD,
 				xData: xMACD,
