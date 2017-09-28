@@ -330,6 +330,7 @@ var sunburstSeries = {
 			innerR = positions[3] / 2,
 			renderer = series.chart.renderer,
 			animateLabels,
+			addedHack = false,
 			hackDataLabelAnimation = !!(
 				animation &&
 				hasRendered &&
@@ -346,13 +347,14 @@ var sunburstSeries = {
 				}
 			};
 		}
-		each(points, function (point, i) {
+		each(points, function (point) {
 			var node = point.node,
 				level = levelMap[node.levelDynamic],
 				shapeExisting = point.shapeExisting || {},
 				shape = node.shapeArgs || {},
 				attrStyle = series.pointAttribs(point, point.selected && 'select'),
 				animationInfo,
+				onComplete,
 				visible = !!(node.visible && node.shapeArgs);
 			if (hasRendered && animation) {
 				animationInfo = getAnimation(shape, {
@@ -388,10 +390,14 @@ var sunburstSeries = {
 				optionsPoint: point.options,
 				shapeArgs: shape
 			});
+			if (!addedHack && visible) {
+				addedHack = true;
+				onComplete = animateLabels;
+			}
 			point.draw({
 				animate: animationInfo.to,
 				attr: extend(animationInfo.from, attrStyle),
-				onComplete: (i === 0) ? animateLabels : undefined,
+				onComplete: onComplete,
 				group: group,
 				renderer: renderer,
 				shapeType: 'arc',
@@ -400,7 +406,7 @@ var sunburstSeries = {
 		});
 		// Draw data labels after points
 		// TODO draw labels one by one to avoid addtional looping
-		if (hackDataLabelAnimation) {
+		if (hackDataLabelAnimation && addedHack) {
 			series.hasRendered = false;
 			series.options.dataLabels.defer = true;
 			Series.prototype.drawDataLabels.call(series);
