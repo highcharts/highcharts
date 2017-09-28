@@ -14,13 +14,414 @@ var seriesType = H.seriesType,
 	each = H.each,
 	reduce = H.reduce,
 	pick = H.pick,
+	// Utility func to get the middle number of 3
 	between = function (x, a, b) {
 		return Math.min(Math.max(a, x), b);
+	},
+	// Utility func to get padding definition from tile size division
+	tilePaddingFromTileSize = function (series, xDiv, yDiv) {
+		var options = series.options;
+		return {
+			xPad: (options.colsize || 1) / -xDiv,
+			yPad: (options.rowsize || 1) / -yDiv
+		};
 	};
 
-// Add pixel padding for series. Uses getSeriesPixelPadding on each series and
-// adds the largest padding required. If no series has this function defined,
-// we add nothing.
+// Map of shape types
+H.tileShapeTypes = {
+
+	/** Hexagon shape type **/
+	hexagon: {
+		alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
+		getSeriesPadding: function (series) {
+			return tilePaddingFromTileSize(series, 3, 2);
+		},
+		haloPath: function (size) {
+			if (!size) {
+				return [];
+			}
+			var hexagon = this.tileEdges;
+			return [
+				'M', hexagon.x2 - size, hexagon.y1 + size,
+				'L', hexagon.x3 + size, hexagon.y1 + size,
+				hexagon.x4 + size * 1.5, hexagon.y2,
+				hexagon.x3 + size, hexagon.y3 - size,
+				hexagon.x2 - size, hexagon.y3 - size,
+				hexagon.x1 - size * 1.5, hexagon.y2,
+				'Z'
+			];
+		},
+		translate: function () {
+			var series = this,
+				options = series.options,
+				xAxis = series.xAxis,
+				yAxis = series.yAxis,
+				seriesPointPadding = options.pointPadding || 0,
+				xPad = (options.colsize || 1) / 3,
+				yPad = (options.rowsize || 1) / 2,
+				yShift;
+
+			series.generatePoints();
+
+			each(series.points, function (point) {
+				var x1 = between(
+						Math.floor(
+							xAxis.len -
+							xAxis.translate(point.x - xPad * 2, 0, 1, 0, 1)
+						), -xAxis.len, 2 * xAxis.len
+					),
+					x2 = between(
+						Math.floor(
+							xAxis.len -
+							xAxis.translate(point.x - xPad, 0, 1, 0, 1)
+						), -xAxis.len, 2 * xAxis.len
+					),
+					x3 = between(
+						Math.floor(
+							xAxis.len -
+							xAxis.translate(point.x + xPad, 0, 1, 0, 1)
+						), -xAxis.len, 2 * xAxis.len
+					),
+					x4 = between(
+						Math.floor(
+							xAxis.len -
+							xAxis.translate(point.x + xPad * 2, 0, 1, 0, 1)
+						), -xAxis.len, 2 * xAxis.len
+					),
+					y1 = between(
+						Math.floor(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
+						-yAxis.len,
+						2 * yAxis.len
+					),
+					y2 = between(
+						Math.floor(yAxis.translate(point.y, 0, 1, 0, 1)),
+						-yAxis.len,
+						2 * yAxis.len
+					),
+					y3 = between(
+						Math.floor(yAxis.translate(point.y + yPad, 0, 1, 0, 1)),
+						-yAxis.len,
+						2 * yAxis.len
+					),
+					pointPadding = pick(point.pointPadding, seriesPointPadding),
+					// We calculate the point padding of the midpoints to 
+					// preserve the angles of the shape.
+					midPointPadding = pointPadding *
+						Math.abs(x2 - x1) / Math.abs(y3 - y2),
+					xMidPadding = xAxis.reversed ?
+						-midPointPadding : midPointPadding,
+					xPointPadding = xAxis.reversed ?
+						-pointPadding : pointPadding,
+					yPointPadding = yAxis.reversed ?
+						-pointPadding : pointPadding;
+
+				// Shift y-values for every second grid column
+				if (point.x % 2) {
+					yShift = yShift || Math.round(Math.abs(y3 - y1) / 2) *
+						// We have to reverse the shift for reversed y-axes
+						(yAxis.reversed ? -1 : 1);
+					y1 += yShift;
+					y2 += yShift;
+					y3 += yShift;
+				}
+
+				// Set plotX and plotY for use in K-D-Tree and more
+				point.plotX = point.clientX = (x2 + x3) / 2;
+				point.plotY = y2;
+
+				// Apply point padding to translated coordinates
+				x1 += xMidPadding + xPointPadding;
+				x2 += xPointPadding;
+				x3 -= xPointPadding;
+				x4 -= xMidPadding + xPointPadding;
+				y1 -= yPointPadding;
+				y3 += yPointPadding;
+
+				// Store points for halo creation
+				point.tileEdges = {
+					x1: x1, x2: x2, x3: x3,	x4: x4, y1: y1, y2: y2, y3: y3
+				};
+
+				// Finally set the shape for this point
+				point.shapeType = 'path';
+				point.shapeArgs = {
+					d: [
+						'M', x2, y1,
+						'L', x3, y1,
+						x4, y2,
+						x3, y3,
+						x2, y3,
+						x1, y2,
+						'Z'
+					]
+				};
+			});
+
+			series.translateColors();
+		}
+	},
+
+
+	/** Diamond shape type **/
+	diamond: {
+		alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
+		getSeriesPadding: function (series) {
+			return tilePaddingFromTileSize(series, 2, 2);
+		},
+		haloPath: function (size) {
+			if (!size) {
+				return [];
+			}
+			var diamond = this.tileEdges;
+			return [
+				'M', diamond.x2, diamond.y1 + size,
+				'L', diamond.x3 + size, diamond.y2,
+				diamond.x2, diamond.y3 - size,
+				diamond.x1 - size, diamond.y2,
+				'Z'
+			];
+		},
+		translate: function () {
+			var series = this,
+				options = series.options,
+				xAxis = series.xAxis,
+				yAxis = series.yAxis,
+				seriesPointPadding = options.pointPadding || 0,
+				xPad = (options.colsize || 1),
+				yPad = (options.rowsize || 1) / 2,
+				yShift;
+
+			series.generatePoints();
+
+			each(series.points, function (point) {
+				var x1 = between(
+						Math.round(
+							xAxis.len -
+							xAxis.translate(point.x - xPad, 0, 1, 0, 0)
+						), -xAxis.len, 2 * xAxis.len
+					),
+					x2 = between(
+						Math.round(
+							xAxis.len -
+							xAxis.translate(point.x, 0, 1, 0, 0)
+						), -xAxis.len, 2 * xAxis.len
+					),
+					x3 = between(
+						Math.round(
+							xAxis.len -
+							xAxis.translate(point.x + xPad, 0, 1, 0, 0)
+						), -xAxis.len, 2 * xAxis.len
+					),
+					y1 = between(
+						Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 0)),
+						-yAxis.len,
+						2 * yAxis.len
+					),
+					y2 = between(
+						Math.round(yAxis.translate(point.y, 0, 1, 0, 0)),
+						-yAxis.len,
+						2 * yAxis.len
+					),
+					y3 = between(
+						Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 0)),
+						-yAxis.len,
+						2 * yAxis.len
+					),
+					pointPadding = pick(point.pointPadding, seriesPointPadding),
+					// We calculate the point padding of the midpoints to 
+					// preserve the angles of the shape.
+					midPointPadding = pointPadding *
+						Math.abs(x2 - x1) /	Math.abs(y3 - y2),
+					xPointPadding = xAxis.reversed ?
+						-midPointPadding : midPointPadding,
+					yPointPadding = yAxis.reversed ?
+						-pointPadding : pointPadding;
+
+				// Shift y-values for every second grid column
+				// We have to reverse the shift for reversed y-axes
+				if (point.x % 2) {
+					yShift = Math.abs(y3 - y1) / 2 * (yAxis.reversed ? -1 : 1);
+					y1 += yShift;
+					y2 += yShift;
+					y3 += yShift;
+				}
+
+				// Set plotX and plotY for use in K-D-Tree and more
+				point.plotX = point.clientX = x2;
+				point.plotY = y2;
+
+				// Apply point padding to translated coordinates
+				x1 += xPointPadding;
+				x3 -= xPointPadding;
+				y1 -= yPointPadding;
+				y3 += yPointPadding;
+
+				// Store points for halo creation
+				point.tileEdges = {
+					x1: x1, x2: x2, x3: x3, y1: y1, y2: y2, y3: y3
+				};
+
+				// Set this point's shape parameters
+				point.shapeType = 'path';
+				point.shapeArgs = {
+					d: [
+						'M', x2, y1,
+						'L', x3, y2,
+						x2, y3,
+						x1, y2,
+						'Z'
+					]
+				};
+			});
+
+			series.translateColors();
+		}
+	},
+
+
+	/** Circle shape type **/
+	circle: {
+		alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
+		getSeriesPadding: function (series) {
+			return tilePaddingFromTileSize(series, 2, 2);
+		},
+		haloPath: function (size) {
+			return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
+				.call(this,
+					size + (size && this.radius)
+				);
+		},
+		translate: function () {
+			var series = this,
+				options = series.options,
+				xAxis = series.xAxis,
+				yAxis = series.yAxis,
+				seriesPointPadding = options.pointPadding || 0,
+				yRadius = (options.rowsize || 1) / 2,
+				colsize = (options.colsize || 1),
+				colsizePx,
+				yRadiusPx,
+				xRadiusPx,
+				radius,
+				forceNextRadiusCompute = false;
+
+			series.generatePoints();
+
+			each(series.points, function (point) {
+				var x = between(
+						Math.round(
+							xAxis.len -
+							xAxis.translate(point.x, 0, 1, 0, 0)
+						), -xAxis.len, 2 * xAxis.len
+					),
+					y = between(
+						Math.round(yAxis.translate(point.y, 0, 1, 0, 0)),
+						-yAxis.len,
+						2 * yAxis.len
+					),
+					pointPadding = seriesPointPadding,
+					hasPerPointPadding = false;
+
+				// If there is point padding defined on a single point, add it
+				if (point.pointPadding !== undefined) {
+					pointPadding = point.pointPadding;
+					hasPerPointPadding = true;
+					forceNextRadiusCompute = true;
+				}
+
+				// Find radius if not found already.
+				// Use the smallest one (x vs y) to avoid overlap.
+				// Note that the radius will be recomputed for each series.
+				// Ideal (max) x radius is dependent on y radius:
+				/*
+								* (circle 2)
+					
+										* (circle 3)
+										|	yRadiusPx
+					(circle 1)	*-------|
+								 colsizePx
+
+					The distance between circle 1 and 3 (and circle 2 and 3) is 
+					2r, which is the hypotenuse of the triangle created by
+					colsizePx and yRadiusPx. If the distance between circle 2
+					and circle 1 is less than 2r, we use half of that distance
+					instead (yRadiusPx).
+				*/
+				if (!radius || forceNextRadiusCompute) {
+					colsizePx = Math.abs(
+						between(
+							Math.floor(
+								xAxis.len -
+								xAxis.translate(point.x + colsize, 0, 1, 0, 0)
+							), -xAxis.len, 2 * xAxis.len
+						) - x
+					);
+					yRadiusPx = Math.abs(
+						between(
+							Math.floor(
+								yAxis.translate(point.y + yRadius, 0, 1, 0, 0)
+							), -yAxis.len, 2 * yAxis.len
+						) - y
+					);
+					xRadiusPx = Math.floor(
+						Math.sqrt(
+							(colsizePx * colsizePx + yRadiusPx * yRadiusPx)
+						) / 2
+					);
+					radius = Math.min(xRadiusPx, yRadiusPx) - pointPadding;
+
+					// If we have per point padding we need to always compute 
+					// the radius for this point and the next. If we used to
+					// have per point padding but don't anymore, don't force
+					// compute next radius.
+					if (forceNextRadiusCompute && !hasPerPointPadding) {
+						forceNextRadiusCompute = false;
+					}
+				}
+
+				// Shift y-values for every second grid column.
+				// Note that we always use the optimal y axis radius for this.
+				// Also note: We have to reverse the shift for reversed y-axes.
+				if (point.x % 2) {
+					y += yRadiusPx * (yAxis.reversed ? -1 : 1);
+				}
+
+				// Set plotX and plotY for use in K-D-Tree and more
+				point.plotX = point.clientX = x;
+				point.plotY = y;
+
+				// Save radius for halo
+				point.radius = radius;
+
+				// Set this point's shape parameters
+				point.shapeType = 'circle';
+				point.shapeArgs = {
+					x: x,
+					y: y,
+					r: radius
+				};
+			});
+
+			series.translateColors();
+		}
+	},
+
+
+	/** Square shape type **/
+	square: {
+		alignDataLabel: H.seriesTypes.heatmap.prototype.alignDataLabel,
+		translate: H.seriesTypes.heatmap.prototype.translate,
+		getSeriesPadding: function () {
+			return;
+		},
+		haloPath: H.seriesTypes.heatmap.prototype.pointClass.prototype.haloPath
+	}
+};
+
+
+// Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
+// series and adds the largest padding required. If no series has this function 
+// defined, we add nothing.
 H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
 
 	// We need to run the original func first, so that we know the translation
@@ -54,19 +455,19 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
 
 
 /**
- * A honeycomb series is a type of heatmap where the tiles are hexagonal.
+ * A tilemap series is a type of heatmap where the tile shapes are configurable.
  * 
  * @extends {plotOptions.heatmap}
  * @since 6.0.0
- * @optionparent plotOptions.honeycomb
+ * @optionparent plotOptions.tilemap
  */
-seriesType('honeycomb', 'heatmap', {
+seriesType('tilemap', 'heatmap', {
 // Default options
 	states: {
 		hover: {
 			halo: { 
 				enabled: true,
-				size: 2,
+				size: 3,
 				opacity: 0.5,
 				attributes: {
 					zIndex: 3
@@ -74,447 +475,87 @@ seriesType('honeycomb', 'heatmap', {
 			}
 		}
 	},
-	pointPadding: 2
+	pointPadding: 2,
+	tileShape: 'hexagon'
 
 // Prototype functions
 }, {
-	getSeriesPixelPadding: function (axis, xpad, ypad) {
+
+	// Set tile shape object on series
+	setOptions: function () {
+		// Call original function
+		var ret = H.seriesTypes.heatmap.prototype.setOptions.apply(this,
+			Array.prototype.slice.call(arguments)
+		);
+
+		this.tileShape = H.tileShapeTypes[ret.tileShape];
+		return ret;
+	},
+
+	// Use the shape's defined data label alignment function
+	alignDataLabel: function () {
+		return this.tileShape.alignDataLabel.apply(this,
+			Array.prototype.slice.call(arguments)
+		);
+	},
+
+	// Get metrics for padding of axis for this series
+	getSeriesPixelPadding: function (axis) {
 		var isX = axis.isXAxis,
-			options = this.options,
-			xPad = xpad || (options.colsize || 1) / -3,
-			yPad = ypad || (options.rowsize || 1) / -2,
-			coord1 = Math.round(
-				axis.translate(
-					isX ? 
-						xPad * 2 :
-						yPad,
-					0, 1, 0, 1
-				)
-			),
-			coord2 = Math.round(
-				axis.translate(
-					isX ? xPad : 0,
-					0, 1, 0, 1
-				)
-			);
+			padding = this.tileShape.getSeriesPadding(this),
+			coord1,
+			coord2;
+
+		// If the shape type does not require padding, return no-op padding
+		if (!padding) {
+			return {
+				padding: 0,
+				axisLengthFactor: 1
+			};
+		}
+
+		// Use translate to compute how far outside the points we 
+		// draw, and use this difference as padding.
+		coord1 = Math.round(
+			axis.translate(
+				isX ? 
+					padding.xPad * 2 :
+					padding.yPad,
+				0, 1, 0, 1
+			)
+		);
+		coord2 = Math.round(
+			axis.translate(
+				isX ? padding.xPad : 0,
+				0, 1, 0, 1
+			)
+		);
+
 		return {
-			// Use translate to compute how far outside the points we draw, and
-			// use this difference as padding.
 			padding: Math.abs(coord1 - coord2) || 0,
 
 			// Offset the yAxis length to compensate for shift.
-			// Setting the length factor to 2 would add the same margin to max
-			// as min. Now we only add a slight bit of the min margin to max, as 
-			// we don't actually draw outside the max bounds. For the xAxis we
+			// Setting the length factor to 2 would add the same margin to max 
+			// as min. Now we only add a slight bit of the min margin to max, as
+			// we don't actually draw outside the max bounds. For the xAxis we 
 			// draw outside on both sides so we add the same margin to min and
 			// max.
 			axisLengthFactor: isX ? 2 : 1.1
 		};
 	},
 
+	// Use translate from tileShape
 	translate: function () {
-		var series = this,
-			options = series.options,
-			xAxis = series.xAxis,
-			yAxis = series.yAxis,
-			seriesPointPadding = options.pointPadding || 0,
-			xPad = (options.colsize || 1) / 3,
-			yPad = (options.rowsize || 1) / 2,
-			yShift;
-
-		series.generatePoints();
-
-		each(series.points, function (point) {
-			var x1 = between(
-					Math.floor(
-						xAxis.len -
-						xAxis.translate(point.x - xPad * 2, 0, 1, 0, 1)
-					), -xAxis.len, 2 * xAxis.len
-				),
-				x2 = between(
-					Math.floor(
-						xAxis.len -
-						xAxis.translate(point.x - xPad, 0, 1, 0, 1)
-					), -xAxis.len, 2 * xAxis.len
-				),
-				x3 = between(
-					Math.floor(
-						xAxis.len -
-						xAxis.translate(point.x + xPad, 0, 1, 0, 1)
-					), -xAxis.len, 2 * xAxis.len
-				),
-				x4 = between(
-					Math.floor(
-						xAxis.len -
-						xAxis.translate(point.x + xPad * 2, 0, 1, 0, 1)
-					), -xAxis.len, 2 * xAxis.len
-				),
-				y1 = between(
-					Math.floor(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
-					-yAxis.len,
-					2 * yAxis.len
-				),
-				y2 = between(
-					Math.floor(yAxis.translate(point.y, 0, 1, 0, 1)),
-					-yAxis.len,
-					2 * yAxis.len
-				),
-				y3 = between(
-					Math.floor(yAxis.translate(point.y + yPad, 0, 1, 0, 1)),
-					-yAxis.len,
-					2 * yAxis.len
-				),
-				pointPadding = pick(point.pointPadding, seriesPointPadding),
-				// We calculate the point padding of the midpoints to preserve 
-				// the angles of the shape.
-				midPointPadding = pointPadding *
-					Math.abs(x2 - x1) / Math.abs(y3 - y2),
-				xMidPadding = xAxis.reversed ? -midPointPadding : midPointPadding,
-				xPointPadding = xAxis.reversed ? -pointPadding : pointPadding,
-				yPointPadding = yAxis.reversed ? -pointPadding : pointPadding;
-
-			// Shift y-values for every second grid column
-			if (point.x % 2) {
-				yShift = yShift || Math.round(Math.abs(y3 - y1) / 2) *
-					// We have to reverse the shift for reversed y-axes
-					(yAxis.reversed ? -1 : 1);
-				y1 += yShift;
-				y2 += yShift;
-				y3 += yShift;
-			}
-
-			// Set plotX and plotY for use in K-D-Tree and more
-			point.plotX = point.clientX = (x2 + x3) / 2;
-			point.plotY = y2;
-
-			// Apply point padding to translated coordinates
-			x1 += xMidPadding + xPointPadding;
-			x2 += xPointPadding;
-			x3 -= xPointPadding;
-			x4 -= xMidPadding + xPointPadding;
-			y1 -= yPointPadding;
-			y3 += yPointPadding;
-
-			// Store points for halo creation
-			point.tileEdges = {
-				x1: x1, x2: x2, x3: x3,	x4: x4, y1: y1, y2: y2, y3: y3
-			};
-
-			// Finally set the shape for this point
-			point.shapeType = 'path';
-			point.shapeArgs = {
-				d: [
-					'M', x2, y1,
-					'L', x3, y1,
-					x4, y2,
-					x3, y3,
-					x2, y3,
-					x1, y2,
-					'Z'
-				]
-			};
-		});
-
-		series.translateColors();
-	},
-
-	alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel
-
-// Point class
-}, {
-	haloPath: function (size) {
-		if (!size) {
-			return [];
-		}
-		var hexagon = this.tileEdges;
-		return [
-			'M', hexagon.x2 - size, hexagon.y1 + size,
-			'L', hexagon.x3 + size, hexagon.y1 + size,
-			hexagon.x4 + size * 1.5, hexagon.y2,
-			hexagon.x3 + size, hexagon.y3 - size,
-			hexagon.x2 - size, hexagon.y3 - size,
-			hexagon.x1 - size * 1.5, hexagon.y2,
-			'Z'
-		];
-	}
-});
-
-
-/**
- * A diamondmap series is a type of heatmap where the tiles are diamond shaped.
- * 
- * @extends {plotOptions.honeycomb}
- * @since 6.0.0
- * @optionparent plotOptions.diamondmap
- */
-seriesType('diamondmap', 'honeycomb', { 
-	// Default options
-	states: {
-		hover: {
-			halo: {	
-				size: 4,
-				opacity: 0.5
-			}
-		}
-	}
-}, {
-	getSeriesPixelPadding: function (axis) {
-		var options = this.options;
-		// Reuse logic from honeycomb series with different padding settings
-		return H.seriesTypes.honeycomb.prototype.getSeriesPixelPadding.call(
-			this, axis, (options.colsize || 1) / -2, (options.rowsize || 1) / -2
+		return this.tileShape.translate.apply(this,
+			Array.prototype.slice.call(arguments)
 		);
-	},
-
-	translate: function () {
-		var series = this,
-			options = series.options,
-			xAxis = series.xAxis,
-			yAxis = series.yAxis,
-			seriesPointPadding = options.pointPadding || 0,
-			xPad = (options.colsize || 1),
-			yPad = (options.rowsize || 1) / 2,
-			yShift;
-
-		series.generatePoints();
-
-		each(series.points, function (point) {
-			var x1 = between(
-					Math.round(
-						xAxis.len -
-						xAxis.translate(point.x - xPad, 0, 1, 0, 0)
-					), -xAxis.len, 2 * xAxis.len
-				),
-				x2 = between(
-					Math.round(
-						xAxis.len -
-						xAxis.translate(point.x, 0, 1, 0, 0)
-					), -xAxis.len, 2 * xAxis.len
-				),
-				x3 = between(
-					Math.round(
-						xAxis.len -
-						xAxis.translate(point.x + xPad, 0, 1, 0, 0)
-					), -xAxis.len, 2 * xAxis.len
-				),
-				y1 = between(
-					Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 0)),
-					-yAxis.len,
-					2 * yAxis.len
-				),
-				y2 = between(
-					Math.round(yAxis.translate(point.y, 0, 1, 0, 0)),
-					-yAxis.len,
-					2 * yAxis.len
-				),
-				y3 = between(
-					Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 0)),
-					-yAxis.len,
-					2 * yAxis.len
-				),
-				pointPadding = pick(point.pointPadding, seriesPointPadding),
-				// We calculate the point padding of the midpoints to preserve 
-				// the angles of the shape.
-				midPointPadding = pointPadding *
-					Math.abs(x2 - x1) /	Math.abs(y3 - y2),
-				xPointPadding = xAxis.reversed ? -midPointPadding : midPointPadding,
-				yPointPadding = yAxis.reversed ? -pointPadding : pointPadding;
-
-			// Shift y-values for every second grid column
-			// We have to reverse the shift for reversed y-axes
-			if (point.x % 2) {
-				yShift = Math.abs(y3 - y1) / 2 * (yAxis.reversed ? -1 : 1);
-				y1 += yShift;
-				y2 += yShift;
-				y3 += yShift;
-			}
-
-			// Set plotX and plotY for use in K-D-Tree and more
-			point.plotX = point.clientX = x2;
-			point.plotY = y2;
-
-			// Apply point padding to translated coordinates
-			x1 += xPointPadding;
-			x3 -= xPointPadding;
-			y1 -= yPointPadding;
-			y3 += yPointPadding;
-
-			// Store points for halo creation
-			point.tileEdges = {
-				x1: x1, x2: x2, x3: x3, y1: y1, y2: y2, y3: y3
-			};
-
-			// Set this point's shape parameters
-			point.shapeType = 'path';
-			point.shapeArgs = {
-				d: [
-					'M', x2, y1,
-					'L', x3, y2,
-					x2, y3,
-					x1, y2,
-					'Z'
-				]
-			};
-		});
-
-		series.translateColors();
 	}
 
-// Point class
-}, {
-	haloPath: function (size) {
-		if (!size) {
-			return [];
-		}
-		var diamond = this.tileEdges;
-		return [
-			'M', diamond.x2, diamond.y1 + size,
-			'L', diamond.x3 + size, diamond.y2,
-			diamond.x2, diamond.y3 - size,
-			diamond.x1 - size, diamond.y2,
-			'Z'
-		];
+}, H.extend({
+	haloPath: function () {
+		return this.series.tileShape.haloPath.apply(this,
+			Array.prototype.slice.call(arguments)
+		);
 	}
-});
+}, H.colorPointMixin));
 
-
-/**
- * A circlemap series is a type of heatmap where the tiles are circle shaped.
- * 
- * @extends {plotOptions.diamondmap}
- * @since 6.0.0
- * @optionparent plotOptions.circlemap
- */
-seriesType('circlemap', 'diamondmap', {
-	// Default options
-	states: {
-		hover: {
-			halo: {	
-				size: 2,
-				opacity: 0.4
-			}
-		}
-	}
-}, {
-	translate: function () {
-		var series = this,
-			options = series.options,
-			xAxis = series.xAxis,
-			yAxis = series.yAxis,
-			seriesPointPadding = options.pointPadding || 0,
-			yRadius = (options.rowsize || 1) / 2,
-			colsize = (options.colsize || 1),
-			colsizePx,
-			yRadiusPx,
-			xRadiusPx,
-			radius,
-			forceNextRadiusCompute = false;
-
-		series.generatePoints();
-
-		each(series.points, function (point) {
-			var x = between(
-					Math.round(
-						xAxis.len -
-						xAxis.translate(point.x, 0, 1, 0, 0)
-					), -xAxis.len, 2 * xAxis.len
-				),
-				y = between(
-					Math.round(yAxis.translate(point.y, 0, 1, 0, 0)),
-					-yAxis.len,
-					2 * yAxis.len
-				),
-				pointPadding = seriesPointPadding,
-				hasPerPointPadding = false;
-
-			// If there is point padding defined on a single point, add it
-			if (point.pointPadding !== undefined) {
-				pointPadding = point.pointPadding;
-				hasPerPointPadding = true;
-				forceNextRadiusCompute = true;
-			}
-
-			// Find radius if not found already.
-			// Use the smallest one (x vs y) to avoid overlap.
-			// Note that the radius will be recomputed for each series.
-			// Ideal (max) x radius is dependent on y radius:
-			/*
-							* (circle 2)
-				
-									* (circle 3)
-									|	yRadiusPx
-				(circle 1)	*-------|
-							 colsizePx
-
-				The distance between circle 1 and 3 (and circle 2 and 3) is 2r,
-				which is the hypotenuse of the triangle created by colsizePx and
-				yRadiusPx. If the distance between circle 2 and circle 1 is less
-				than 2r, we use half of that distance instead (yRadiusPx).
-			*/
-			if (!radius || forceNextRadiusCompute) {
-				colsizePx = Math.abs(
-						between(
-							Math.floor(
-								xAxis.len -
-								xAxis.translate(point.x + colsize, 0, 1, 0, 0)
-							), -xAxis.len, 2 * xAxis.len
-						) - x
-					);
-				yRadiusPx = Math.abs(
-						between(
-							Math.floor(
-								yAxis.translate(point.y + yRadius, 0, 1, 0, 0)
-							), -yAxis.len, 2 * yAxis.len
-						) - y
-					);
-				xRadiusPx = Math.floor(
-					Math.sqrt(
-						(colsizePx * colsizePx + yRadiusPx * yRadiusPx)
-					) / 2
-				);
-				radius = Math.min(xRadiusPx, yRadiusPx) - pointPadding;
-
-				// If we have per point padding we need to always compute the 
-				// radius for this point and the next. If we used to have
-				// per point padding but don't anymore, don't force compute next
-				// radius.
-				if (forceNextRadiusCompute && !hasPerPointPadding) {
-					forceNextRadiusCompute = false;
-				}
-			}
-
-			// Shift y-values for every second grid column.
-			// Note that we always use the optimal y axis radius for this.
-			// Also note: We have to reverse the shift for reversed y-axes.
-			if (point.x % 2) {
-				y += yRadiusPx * (yAxis.reversed ? -1 : 1);
-			}
-
-			// Set plotX and plotY for use in K-D-Tree and more
-			point.plotX = point.clientX = x;
-			point.plotY = y;
-
-			// Save radius for halo
-			point.radius = radius;
-
-			// Set this point's shape parameters
-			point.shapeType = 'circle';
-			point.shapeArgs = {
-				x: x,
-				y: y,
-				r: radius
-			};
-		});
-
-		series.translateColors();
-	}
-
-// Point class
-}, {
-	haloPath: function (size) {
-		return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
-			.call(this,
-				size + (size && this.radius)
-			);
-	}
-});

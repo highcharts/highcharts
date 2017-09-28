@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'circlemap'
+        type: 'tilemap'
     },
 
     title: {

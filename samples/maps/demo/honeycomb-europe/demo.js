@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'honeycomb',
+        type: 'tilemap',
         inverted: true
     },
 

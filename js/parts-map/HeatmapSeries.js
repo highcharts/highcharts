@@ -114,7 +114,7 @@ seriesType('heatmap', 'scatter', {
 		},
 
 		hover: {
-			halo: false,  // #3406, halo is not required on heatmaps
+			halo: false,  // #3406, halo is disabled on heatmaps by default
 			brightness: 0.2
 		}
 	}
@@ -153,7 +153,7 @@ seriesType('heatmap', 'scatter', {
 			options = series.options,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
-			pointPadding = options.pointPadding || 0,
+			seriesPointPadding = options.pointPadding || 0,
 			between = function (x, a, b) {
 				return Math.min(Math.max(a, x), b);
 			};
@@ -184,7 +184,8 @@ seriesType('heatmap', 'scatter', {
 				y2 = between(
 					Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)),
 					-yAxis.len, 2 * yAxis.len
-				);
+				),
+				pointPadding = pick(point.pointPadding, seriesPointPadding);
 
 			// Set plotX and plotY for use in K-D-Tree and more
 			point.plotX = point.clientX = (x1 + x2) / 2;
@@ -228,7 +229,21 @@ seriesType('heatmap', 'scatter', {
 		Series.prototype.getExtremes.call(this);
 	}
 
-}), colorPointMixin);
+}), H.extend({
+	haloPath: function (size) {
+		if (!size) {
+			return [];
+		}
+		var rect = this.shapeArgs;
+		return [
+			'M', rect.x - size, rect.y - size,
+			'L', rect.x - size, rect.y + rect.height + size,
+			rect.x + rect.width + size, rect.y + rect.height + size,
+			rect.x + rect.width + size, rect.y - size,
+			'Z'
+		];
+	}
+}, colorPointMixin));
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

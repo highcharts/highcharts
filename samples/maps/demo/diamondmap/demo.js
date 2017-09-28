@@ -1,6 +1,6 @@
 var chart = Highcharts.chart('container', {
     chart: {
-        type: 'diamondmap',
+        type: 'tilemap',
         marginTop: 0
     },
 
@@ -51,6 +51,7 @@ var chart = Highcharts.chart('container', {
     plotOptions: {
         series: {
             keys: ['x', 'y', 'name', 'desc'],
+            tileShape: 'diamond',
             dataLabels: {
                 enabled: true,
                 format: '{point.name}',
@@ -64,7 +65,7 @@ var chart = Highcharts.chart('container', {
 
     series: [{
         name: 'Main idea',
-        pointPadding: 6,
+        pointPadding: 10,
         data: [
             [5, 3, 'Main idea',
                 'The main idea tile outlines the overall theme of the idea map.']

@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'honeycomb'
+        type: 'tilemap'
     },
 
     title: {
@@ -8,7 +8,7 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Zero point padding'
+        text: 'Point padding on series and points'
     },
 
     xAxis: {
@@ -41,6 +41,11 @@ Highcharts.chart('container', {
                 color: '#000000',
                 format: '{point.name}'
             },
+            states: {
+                hover: {
+                    halo: false
+                }
+            },
             borderWidth: 1,
             borderColor: '#a08383',
             keys: ['x', 'y', 'name', 'value']
@@ -50,12 +55,24 @@ Highcharts.chart('container', {
     series: [{
         data: [
             [0, 1, 'A', 1],
-            [1, 3, 'B', 2],
+            {
+                x: 1,
+                y: 3,
+                name: 'B',
+                value: 2,
+                pointPadding: 10
+            },
             [2, 2, 'C', 3],
             [3, 0, 'D', 4],
             [4, 2, 'E', 5],
             [0, 2, 'F', 6],
-            [1, 4, 'G', 7],
+            {
+                x: 1,
+                y: 4,
+                name: 'G',
+                value: 7,
+                pointPadding: 10
+            },
             [4, 4, 'H', 8],
             [3, 2, 'I', 9]
         ]
