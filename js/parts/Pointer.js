@@ -316,9 +316,9 @@ Highcharts.Pointer.prototype = {
 				// Get all points with the same x value as the hoverPoint
 				each(searchSeries, function (s) {
 					var point = find(s.points, function (p) {
-						return p.x === hoverPoint.x;
+						return p.x === hoverPoint.x && !p.isNull;
 					});
-					if (isObject(point) && !point.isNull) {
+					if (isObject(point)) {
 						hoverPoints.push(point);
 					}
 				});
