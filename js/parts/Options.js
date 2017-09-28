@@ -2729,8 +2729,7 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/tooltip/shared-true/ True
 		 * @sample {highcharts} highcharts/tooltip/shared-x-crosshair/ True with x axis crosshair
 		 * @sample {highcharts} highcharts/tooltip/shared-true-mixed-types/ True with mixed series types
-		 * @default {highcharts} false
-		 * @default {highstock} true
+		 * @default false
 		 * @since 2.1
 		 * @product highcharts highstock
 		 * @apioption tooltip.shared
@@ -2741,12 +2740,19 @@ H.defaultOptions = {
 		 * to the axis. This is recommended over [shared](#tooltip.shared) tooltips
 		 * for charts with multiple line series, generally making them easier
 		 * to read.
+		 *
+		 * @productdesc {highstock} In Highstock, tooltips are split by default
+		 * since v6.0.0. Stock charts typically contain multi-dimension points
+		 * and multiple panes, making split tooltips the preferred layout over
+		 * the previous `shared` tooltip.
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/tooltip/split/ Split tooltip
 		 * @sample {highstock} highcharts/tooltip/split/ Split tooltip
 		 * @sample {highmaps} highcharts/tooltip/split/ Split tooltip
-		 * @default false
+		 * @default {highcharts} false
+		 * @default {highstock} true
+		 * @product highcharts highstock
 		 * @since 5.0.0
 		 * @apioption tooltip.split
 		 */

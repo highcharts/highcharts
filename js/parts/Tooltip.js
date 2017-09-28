@@ -608,6 +608,10 @@ H.Tooltip.prototype = {
 			headerHeight = 0,
 			tooltipLabel = this.getLabel();
 
+		// Graceful degradation for legacy formatters
+		if (H.isString(labels)) { 
+			labels = [false, labels];
+		}
 		// Create the individual labels for header and points, ignore footer
 		each(labels.slice(0, points.length + 1), function (str, i) {
 			if (str !== false) {
