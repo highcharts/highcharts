@@ -98,11 +98,16 @@ var getDlOptions = function getDlOptions(params) {
 		rotation = (rotationRad * rad2deg) % 180,
 		// Set width and rotation for data labels.
 		options = {
-			rotation: rotation,
 			style: {
 				width: shape.radius
 			}
 		};
+	// NOTE: alignDataLabel positions the data label differntly when rotation is
+	// 0. Avoiding this by setting rotation to a small number.
+	if (rotation === 0) {
+		rotation =  0.001;
+	}
+	options.rotation = rotation;
 	return merge(options, optionsLevel, optionsPoint);
 };
 
