@@ -282,7 +282,10 @@ var wordCloudOptions = {
 	 * @see [series colors](#plotOptions.column.colors)
 	 */
 	colorByPoint: true,
-	fontFamily: 'Impact',
+	/**
+	 * The font family to use for the word cloud.
+	 */
+	fontFamily: 'Impact, sans-serif',
 	/**
 	 * This option decides which algorithm is used for placement, and rotation
 	 * of a word. The choice of algorith is therefore a crucial part of the
