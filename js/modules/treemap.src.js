@@ -311,7 +311,10 @@ seriesType('treemap', 'scatter', {
 			 * @type {Number}
 			 */
 			brightness: seriesTypes.heatmap ? 0 : 0.1,
-
+			/**
+			* @extends plotOptions.heatmap.states.hover.halo
+			*/
+			halo: false,
 			/**
 			 * The opacity of a point in treemap. When a point has children,
 			 * the visibility of the children is determined by the opacity.
