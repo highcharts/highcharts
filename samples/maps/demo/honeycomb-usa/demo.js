@@ -24,18 +24,22 @@ Highcharts.chart('container', {
         dataClasses: [{
             from: 0,
             to: 1000000,
-            color: '#F9EDB3'
+            color: '#F9EDB3',
+            name: '< 1,000,000'
         }, {
             from: 1000000,
             to: 5000000,
-            color: '#FFC428'
+            color: '#FFC428',
+            name: '1,000,000 - 5,000,000'
         }, {
             from: 5000000,
             to: 20000000,
-            color: '#FF7987'
+            color: '#FF7987',
+            name: '5,000,000 - 20,000,000'
         }, {
             from: 20000000,
-            color: '#FF2371'
+            color: '#FF2371',
+            name: '> 20,000,000'
         }]
     },
 

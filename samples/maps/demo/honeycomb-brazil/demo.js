@@ -22,18 +22,22 @@ Highcharts.chart('container', {
     colorAxis: {
         dataClasses: [{
             to: 10000000,
-            color: '#AFEEEE'
+            color: '#AFEEEE',
+            name: '< 10 million'
         }, {
             from: 10000000,
             to: 100000000,
-            color: '#00BFFF'
+            color: '#00BFFF',
+            name: '10 to 100 million'
         }, {
             from: 100000000,
             to: 1000000000,
-            color: '#1E90FF'
+            color: '#1E90FF',
+            name: '100 million to 1 billion'
         }, {
             from: 1000000000,
-            color: '#0000FF'
+            color: '#0000FF',
+            name: '> 1 billion'
         }]
     },
 
