@@ -49,7 +49,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Trimmed Highcharts drawing ' + n + ' points'
+        text: 'Highcharts drawing ' + n + ' points'
     },
 
     xAxis: {
@@ -57,7 +57,7 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Using the experimental Highcharts Boost module'
+        text: 'Using the Boost module'
     },
 
     tooltip: {

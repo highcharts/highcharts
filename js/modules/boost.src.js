@@ -78,11 +78,36 @@
  * WebGL rendering it saves time by skipping processing and inspection of the
  * data wherever possible.
  *
- * In addition to the global `boost` option, each series has a `boostThreshold`
- * that defines when the boost should kick in.
+ * In addition to the global `boost` option, each series has a 
+ * [boostThreshold](#plotOptions.series.boostThreshold) that defines when the
+ * boost should kick in.
  *
  * Requires the `modules/boost.js` module.
- * 
+ *
+ * @sample {highstock} highcharts/boost/line-series-heavy-stock
+ *         Stock chart
+ * @sample {highstock} highcharts/boost/line-series-heavy-dynamic
+ *         Dynamic stock chart
+ * @sample highcharts/boost/line
+ *         Line chart
+ * @sample highcharts/boost/line-series-heavy
+ *         Line chart with hundreds of series
+ * @sample highcharts/boost/scatter
+ *         Scatter chart
+ * @sample highcharts/boost/area
+ *         Area chart
+ * @sample highcharts/boost/arearange
+ *         Arearange chart
+ * @sample highcharts/boost/column
+ *         Column chart
+ * @sample highcharts/boost/bubble
+ *         Bubble chart
+ * @sample highcharts/boost/heatmap
+ *         Heat map
+ * @sample highcharts/boost/treemap
+ *         Tree map
+ *         
+ * @product highcharts highstock
  * @type {Object}
  * @apioption boost
  */
@@ -95,8 +120,6 @@
  * every series in it will be rendered to a common canvas. This offers
  * a significant speed improvment in charts with a very high
  * amount of series.
- *
- * Note: only available when including the boost module.
  *
  * @default  null
  * @apioption boost.seriesThreshold
@@ -129,6 +152,8 @@
  *
  * Setting it to e.g. 2000 will cause the series to enter boost mode
  * when there are 2000 or more points in the series.
+ *
+ * Requires `modules/boost.js`.
  *
  * @type {Number}
  * @default 5000
