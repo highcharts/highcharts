@@ -25,7 +25,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
             height: '50%',
             title: {
                 text: 'AAPL'
-            },
+            }
         }, {
             opposite: false,
             height: '50%',
