@@ -22,7 +22,7 @@ QUnit.test('Test Price envelopes calculations on data updates.', function (asser
         }),
         map = Highcharts.map;
 
-    function arrToPrecision (arr) {
+    function arrToPrecision(arr) {
         return map(arr, function (point) {
             return map(point, Math.round);
         });
@@ -97,7 +97,7 @@ QUnit.test('Test Price envelopes calculations on data updates.', function (asser
         arrToPrecision(chart.series[1].yData),
         arrToPrecision([
             [13000 * 1.2, 13000, 13000 * 0.7],
-            [14000 * 1.2, 14000, 14000 * 0.7],
+            [14000 * 1.2, 14000, 14000 * 0.7]
         ]),
         'Correct values after point.remove()'
     );

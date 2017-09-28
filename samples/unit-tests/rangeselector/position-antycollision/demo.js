@@ -1,263 +1,259 @@
-var align = ['left','center','right'],
-	series = [{
-		data: (function () {
-			var arr = [];
-			for (var i = 0; i < 2000; i++) {
-				arr.push(i);
-			}
-			return arr;
-		}()),
-		pointInterval: 24 * 36e5
-	}],
-	chart,
-	inputGroup,
-	buttonGroup,
-	inputPosition,
-	buttonPosition,
-	inputGroupX, 
-	inputGroupWidth, 
-	buttonGroupX, 
-	buttonGroupWidth,
-	results = [],
-	testNumber = 0,
-	i, j, k, l;
+var align = ['left', 'center', 'right'],
+    series = [{
+        data: (function () {
+            var arr = [];
+            for (var i = 0; i < 2000; i++) {
+                arr.push(i);
+            }
+            return arr;
+        }()),
+        pointInterval: 24 * 36e5
+    }],
+    chart,
+    inputGroup,
+    buttonGroup,
+    inputPosition,
+    buttonPosition,
+    inputGroupX,
+    inputGroupWidth,
+    buttonGroupX,
+    buttonGroupWidth,
+    i;
 
 
 QUnit.test('Inputs and buttons aligning.', function (assert) {
 
-	for (i = 0; i < align.length; i++) {
-		chart = Highcharts.stockChart('container', {
+    for (i = 0; i < align.length; i++) {
+        chart = Highcharts.stockChart('container', {
 
-			chart: {
-				width: 400
-			},
-			
-			rangeSelector: {
-				buttonPosition: {
-					align: align[i]
-				},
-				inputPosition: {
-					align: align[align.length - i - 1]
-				}
-			},
+            chart: {
+                width: 400
+            },
 
-			series: series
-		});
+            rangeSelector: {
+                buttonPosition: {
+                    align: align[i]
+                },
+                inputPosition: {
+                    align: align[align.length - i - 1]
+                }
+            },
 
-		inputGroup = chart.rangeSelector.inputGroup;
-		buttonGroup = chart.rangeSelector.buttonGroup;
-		inputPosition = chart.options.rangeSelector.inputPosition || {};
-		buttonPosition = chart.options.rangeSelector.buttonPosition || {};
+            series: series
+        });
 
-		inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
-		inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
+        inputGroup = chart.rangeSelector.inputGroup;
+        buttonGroup = chart.rangeSelector.buttonGroup;
+        inputPosition = chart.options.rangeSelector.inputPosition || {};
+        buttonPosition = chart.options.rangeSelector.buttonPosition || {};
 
-		buttonGroupX = buttonGroup.translateX;
-		buttonGroupWidth = buttonGroup.getBBox().width + 10;
+        inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
+        inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
 
-		assert.strictEqual( // detect collision
-			((inputPosition.align === buttonPosition.align) || 
-			((buttonGroupX + buttonGroupWidth > inputGroupX) && 
-			(inputGroupX + inputGroupWidth > buttonGroupX))) && 
-			(inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
-			true,
-			'rangeSelector'
-		);
-	}
+        buttonGroupX = buttonGroup.translateX;
+        buttonGroupWidth = buttonGroup.getBBox().width + 10;
+
+        assert.strictEqual( // detect collision
+            ((inputPosition.align === buttonPosition.align) ||
+            ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
+            (inputGroupX + inputGroupWidth > buttonGroupX))) &&
+            (inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
+            true,
+            'rangeSelector'
+        );
+    }
 });
 
 QUnit.test('Aligning after updates.', function (assert) {
 
-		chart = Highcharts.stockChart('container', {
+    chart = Highcharts.stockChart('container', {
 
-			chart: {
-				width: 800
-			},
-			
-			rangeSelector: {
-				buttonPosition: {
-					align: 'left'
-				},
-				inputPosition: {
-					align: 'right'
-				}
-			},
+        chart: {
+            width: 800
+        },
 
-			series: series
-		});
+        rangeSelector: {
+            buttonPosition: {
+                align: 'left'
+            },
+            inputPosition: {
+                align: 'right'
+            }
+        },
 
-		chart.setSize(400);
+        series: series
+    });
 
-		inputGroup = chart.rangeSelector.inputGroup;
-		buttonGroup = chart.rangeSelector.buttonGroup;
-		inputPosition = chart.options.rangeSelector.inputPosition || {};
-		buttonPosition = chart.options.rangeSelector.buttonPosition || {};
+    chart.setSize(400);
 
-		inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
-		inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
+    inputGroup = chart.rangeSelector.inputGroup;
+    buttonGroup = chart.rangeSelector.buttonGroup;
+    inputPosition = chart.options.rangeSelector.inputPosition || {};
+    buttonPosition = chart.options.rangeSelector.buttonPosition || {};
 
-		buttonGroupX = buttonGroup.translateX;
-		buttonGroupWidth = buttonGroup.getBBox().width + 10;
+    inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
+    inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
 
-		assert.strictEqual( // detect collision
-			((inputPosition.align === buttonPosition.align) || 
-			((buttonGroupX + buttonGroupWidth > inputGroupX) && 
-			(inputGroupX + inputGroupWidth > buttonGroupX))) && 
-			(inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
-			true,
-			'rangeSelector'
-		);
+    buttonGroupX = buttonGroup.translateX;
+    buttonGroupWidth = buttonGroup.getBBox().width + 10;
 
-		chart.update({
-			rangeSelector: {
-				buttonPosition: {
-					align: 'right',
-					y: 20
-				},
-				inputPosition: {
-					align: 'left'
-				}
-			},
+    assert.strictEqual( // detect collision
+        ((inputPosition.align === buttonPosition.align) ||
+        ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
+        (inputGroupX + inputGroupWidth > buttonGroupX))) &&
+        (inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
+        true,
+        'rangeSelector'
+    );
 
-		});
+    chart.update({
+        rangeSelector: {
+            buttonPosition: {
+                align: 'right',
+                y: 20
+            },
+            inputPosition: {
+                align: 'left'
+            }
+        }
 
-		inputGroup = chart.rangeSelector.inputGroup;
-		buttonGroup = chart.rangeSelector.buttonGroup;
-		inputPosition = chart.options.rangeSelector.inputPosition || {};
-		buttonPosition = chart.options.rangeSelector.buttonPosition || {};
+    });
 
-		inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
-		inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
+    inputGroup = chart.rangeSelector.inputGroup;
+    buttonGroup = chart.rangeSelector.buttonGroup;
+    inputPosition = chart.options.rangeSelector.inputPosition || {};
+    buttonPosition = chart.options.rangeSelector.buttonPosition || {};
 
-		buttonGroupX = buttonGroup.translateX;
-		buttonGroupWidth = buttonGroup.getBBox().width + 10;
+    inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
+    inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
 
-		assert.strictEqual( // detect collision
-			((inputPosition.align === buttonPosition.align) || 
-			((buttonGroupX + buttonGroupWidth > inputGroupX) && 
-			(inputGroupX + inputGroupWidth > buttonGroupX))) && 
-			(inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
-			true,
-			'rangeSelector'
-		);
+    buttonGroupX = buttonGroup.translateX;
+    buttonGroupWidth = buttonGroup.getBBox().width + 10;
+
+    assert.strictEqual( // detect collision
+        ((inputPosition.align === buttonPosition.align) ||
+        ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
+        (inputGroupX + inputGroupWidth > buttonGroupX))) &&
+        (inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
+        true,
+        'rangeSelector'
+    );
 });
 
 QUnit.test('Collision with bottom legend', function (assert) {
 
-		chart = Highcharts.stockChart('container', {
+    chart = Highcharts.stockChart('container', {
 
-			chart: {
-				width: 400
-			},
-			
-			legend: {
-				enabled: true
-			}, 
+        chart: {
+            width: 400
+        },
 
-			rangeSelector: {
-				verticalAlign: 'bottom'
-			},
+        legend: {
+            enabled: true
+        },
 
-			series: series
-		});
+        rangeSelector: {
+            verticalAlign: 'bottom'
+        },
 
-		assert.strictEqual(
-			chart.legend.group.translateY > chart.rangeSelector.group.translateY,
-			true,
-			'rangeSelector'
-		);
+        series: series
+    });
+
+    assert.strictEqual(
+        chart.legend.group.translateY > chart.rangeSelector.group.translateY,
+        true,
+        'rangeSelector'
+    );
 });
 
 
 QUnit.test('x and y parameters', function (assert) {
 
-		chart = Highcharts.stockChart('container', {
+    chart = Highcharts.stockChart('container', {
 
-			chart: {
-				width: 800
-			},
-			
-			legend: {
-				enabled: true
-			}, 
+        chart: {
+            width: 800
+        },
 
-			rangeSelector: {
-				verticalAlign: 'top',
-				inputPosition: {
-					align: 'right',
-					y: 150
-				},
-				buttonPosition: {
-					align: 'left',
-					y: 0
-				},
-			},
+        legend: {
+            enabled: true
+        },
 
-			series: series
-		});
+        rangeSelector: {
+            verticalAlign: 'top',
+            inputPosition: {
+                align: 'right',
+                y: 150
+            },
+            buttonPosition: {
+                align: 'left',
+                y: 0
+            }
+        },
 
-		assert.strictEqual(
-			chart.rangeSelector.inputGroup.translateY > chart.options.rangeSelector.inputPosition.y,
-			true,
-			'rangeSelector'
-		);
+        series: series
+    });
+
+    assert.strictEqual(
+        chart.rangeSelector.inputGroup.translateY > chart.options.rangeSelector.inputPosition.y,
+        true,
+        'rangeSelector'
+    );
 });
 
 
 QUnit.test('button width', function (assert) {
 
-		chart = Highcharts.stockChart('container', {
+    chart = Highcharts.stockChart('container', {
 
-			chart: {
-				width: 800
-			},
-			
-			legend: {
-				enabled: true
-			}, 
+        chart: {
+            width: 800
+        },
 
-			rangeSelector: {
-		      buttonTheme: {
-		        width: 200
-		      },
-		      buttons: [{
-		        type: 'ytd',
-		        count: 1,
-		        text: 'YTD - 31 of Dec',
-		        offsetMin: -24 * 3600 * 1000
-		      }, {
-		        type: 'ytd',
-		        count: 1,
-		        text: 'YTD - 1st of Jan',
-		        offsetMax: 0 // default
-		      }, {
-		        type: 'all',
-		        text: 'All'
-		      }]
-		    },
+        legend: {
+            enabled: true
+        },
 
-			series: series
-		});
+        rangeSelector: {
+            buttonTheme: {
+                width: 200
+            },
+            buttons: [{
+                type: 'ytd',
+                count: 1,
+                text: 'YTD - 31 of Dec',
+                offsetMin: -24 * 3600 * 1000
+            }, {
+                type: 'ytd',
+                count: 1,
+                text: 'YTD - 1st of Jan',
+                offsetMax: 0 // default
+            }, {
+                type: 'all',
+                text: 'All'
+            }]
+        },
 
-		inputGroup = chart.rangeSelector.inputGroup;
-		buttonGroup = chart.rangeSelector.buttonGroup;
-		inputPosition = chart.options.rangeSelector.inputPosition || {};
-		buttonPosition = chart.options.rangeSelector.buttonPosition || {};
+        series: series
+    });
 
-		inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
-		inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
+    inputGroup = chart.rangeSelector.inputGroup;
+    buttonGroup = chart.rangeSelector.buttonGroup;
+    inputPosition = chart.options.rangeSelector.inputPosition || {};
+    buttonPosition = chart.options.rangeSelector.buttonPosition || {};
 
-		buttonGroupX = buttonGroup.translateX;
-		buttonGroupWidth = buttonGroup.getBBox().width + 10;
+    inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
+    inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
 
-		assert.strictEqual(
-			((inputPosition.align === buttonPosition.align) || 
-			((buttonGroupX + buttonGroupWidth > inputGroupX) && 
-			(inputGroupX + inputGroupWidth > buttonGroupX))) && 
-			(inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
-			true,
-			'rangeSelector'
-		);
+    buttonGroupX = buttonGroup.translateX;
+    buttonGroupWidth = buttonGroup.getBBox().width + 10;
+
+    assert.strictEqual(
+        ((inputPosition.align === buttonPosition.align) ||
+        ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
+        (inputGroupX + inputGroupWidth > buttonGroupX))) &&
+        (inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
+        true,
+        'rangeSelector'
+    );
 });
-
-

@@ -411,8 +411,8 @@ extend(defaultOptions, {
 		xAxis: {
 			/**
 			 * Additional range on the right side of the xAxis. Works similar to
-			 * xAxis.maxPadding, but value is set in milliseconds. Can be set for both,
-			 * main xAxis and navigator's xAxis.
+			 * xAxis.maxPadding, but value is set in milliseconds. 
+			 * Can be set for both, main xAxis and navigator's xAxis.
 			 * 
 			 * @type {Number}
 			 * @default 0
@@ -2076,9 +2076,9 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 			navigator.left = this.plotLeft + scrollbarHeight;
 			navigator.top = navigator.navigatorOptions.top ||
 				this.chartHeight - navigator.height - scrollbarHeight - this.spacing[2] -
-					(this.rangeSelector && this.extraBottomMargin ? this.rangeSelector.getHeight() : 0) - 
-					(legendOptions && legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ?
-						legend.legendHeight + pick(legendOptions.margin, 10) : 0);
+				(this.rangeSelector && this.extraBottomMargin ? this.rangeSelector.getHeight() : 0) - 
+				(legendOptions && legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && 
+				!legendOptions.floating ? legend.legendHeight + pick(legendOptions.margin, 10) : 0);
 		}
 
 		if (xAxis && yAxis) { // false if navigator is disabled (#904)

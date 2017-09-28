@@ -225,7 +225,7 @@ seriesType('macd', 'sma',
 			// Restore options:
 			indicator.points = mainLinePoints;
 			indicator.options = mainLineOptions;
-			//indicator.graph = null;
+			// indicator.graph = null;
 		},
 		getValues: function (series, params) {
 			var j = 0,

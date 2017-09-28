@@ -6,13 +6,13 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             id: 'main',
             type: 'ohlc',
             data: [
-                [51,53,51,52],
-                [51,53,51,51],
-                [51,53,51,51.5],
-                [51,53,51,48.5],
-                [51,53,51,53],
-                [51,53,51,53.5],
-                [51,53,51,53.5]
+                [51, 53, 51, 52],
+                [51, 53, 51, 51],
+                [51, 53, 51, 51.5],
+                [51, 53, 51, 48.5],
+                [51, 53, 51, 53],
+                [51, 53, 51, 53.5],
+                [51, 53, 51, 53.5]
             ]
         }, {
             type: 'momentum',
@@ -35,7 +35,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Correct values'
     );
 
-    chart.series[0].addPoint([51,53,51,55]);
+    chart.series[0].addPoint([51, 53, 51, 55]);
 
     assert.strictEqual(
         chart.series[0].points.length,
@@ -44,13 +44,13 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     chart.series[0].setData([
-        [51,53,51,54],
-        [51,53,51,53],
-        [51,53,51,52.5],
-        [51,53,51,50.5],
-        [51,53,51,54],
+        [51, 53, 51, 54],
+        [51, 53, 51, 53],
+        [51, 53, 51, 52.5],
+        [51, 53, 51, 50.5],
+        [51, 53, 51, 54]
     ], false);
-    
+
     chart.series[1].update({
         color: 'red',
         params: {

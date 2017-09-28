@@ -2,24 +2,24 @@
 QUnit.test('Test PSAR calculations on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
-            series: [{
-                id: 'main',
-                type: 'candlestick',
-                data: [
-                    [0, 5, 6, 3, 4],
-                    [1, 5, 6, 3, 4],
-                    [2, 5, 6, 3, 4],
-                    [3, 5, 6, 3, 4]
-                ]
-            }, {
-                type: 'psar',
-                linkedTo: 'main',
-                params: {
-                    index: 2,
-                    decimals: 6
-                }
-            }]
-        });
+        series: [{
+            id: 'main',
+            type: 'candlestick',
+            data: [
+                [0, 5, 6, 3, 4],
+                [1, 5, 6, 3, 4],
+                [2, 5, 6, 3, 4],
+                [3, 5, 6, 3, 4]
+            ]
+        }, {
+            type: 'psar',
+            linkedTo: 'main',
+            params: {
+                index: 2,
+                decimals: 6
+            }
+        }]
+    });
 
     assert.strictEqual(
         chart.series[0].points.length,
@@ -75,7 +75,7 @@ QUnit.test('Test PSAR calculations on data updates.', function (assert) {
         [Date.UTC(1983, 10, 02), 9.4000, 9.5400, 9.0600, 9.1000],
         [Date.UTC(1983, 10, 03), 8.9700, 9.4500, 8.9700, 9.4300],
         [Date.UTC(1983, 10, 04), 9.3700, 9.6500, 9.2700, 9.5200],
-        [Date.UTC(1983, 10, 07), 9.7800, 9.9600,9.7600, 9.8100],
+        [Date.UTC(1983, 10, 07), 9.7800, 9.9600, 9.7600, 9.8100],
         [Date.UTC(1983, 10, 08), 9.9600, 10.0200, 9.8700, 9.9100],
         [Date.UTC(1983, 10, 09), 9.6500, 9.8200, 9.6200, 9.7600],
         [Date.UTC(1983, 10, 10), 9.6600, 10.0800, 9.6600, 9.9600],

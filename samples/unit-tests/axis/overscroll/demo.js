@@ -79,7 +79,7 @@ Highcharts.each([true, false], function (ordinal) {
 
         options.rangeSelector.selected = null;
         options.series[0].data = [
-            [0, 5], [10, 5], [20, 5], [400, 5], [401, 5], [402, 5], [404, 5],
+            [0, 5], [10, 5], [20, 5], [400, 5], [401, 5], [402, 5], [404, 5]
         ];
 
         xAxis = Highcharts.stockChart('container', options).xAxis[0];
@@ -92,7 +92,7 @@ Highcharts.each([true, false], function (ordinal) {
     });
 
     // Highstock modifies "series" property, so use separate object each time:
-    function getOptions () {
+    function getOptions() {
         return {
             rangeSelector: {
                 buttons: [{
@@ -118,7 +118,7 @@ Highcharts.each([true, false], function (ordinal) {
                     135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 54.4, 54.4, 154.4
                 ]
             }]
-        }
+        };
     }
 });
 

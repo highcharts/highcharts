@@ -2,31 +2,31 @@
 QUnit.test('Test RSI calculations on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
-            yAxis: [{
-                height: '48%'
-            }, {
-                height: '48%',
-                top: '52%'
-            }],
-            series: [{
-                id: 'main',
-                type: 'candlestick',
-                data: [
-                    [0, 5, 6, 3, 4],
-                    [1, 5, 6, 3, 4],
-                    [2, 5, 6, 3, 4],
-                    [3, 5, 6, 3, 4]
-                ]
-            }, {
-                type: 'rsi',
-                yAxis: 1,
-                linkedTo: 'main',
-                params: {
-                    period: 3,
-                    decimals: 2
-                }
-            }]
-        });
+        yAxis: [{
+            height: '48%'
+        }, {
+            height: '48%',
+            top: '52%'
+        }],
+        series: [{
+            id: 'main',
+            type: 'candlestick',
+            data: [
+                [0, 5, 6, 3, 4],
+                [1, 5, 6, 3, 4],
+                [2, 5, 6, 3, 4],
+                [3, 5, 6, 3, 4]
+            ]
+        }, {
+            type: 'rsi',
+            yAxis: 1,
+            linkedTo: 'main',
+            params: {
+                period: 3,
+                decimals: 2
+            }
+        }]
+    });
 
     // RSI needs 15 points to calculate period=14 etc.
     assert.strictEqual(

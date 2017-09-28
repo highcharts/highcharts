@@ -1,45 +1,44 @@
-
 QUnit.test('Test MFI calculations on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
-            yAxis: [{
-                height: '33%'
-            }, {
-                height: '33%',
-                top: '33%'
-            },{
-                height: '33%',
-                top: '66%'
-            }],
-            series: [{
-                id: 'main',
-                type: 'candlestick',
-                data: [
-                    [0, 5, 6, 3, 4],
-                    [1, 5, 6, 3, 4],
-                    [2, 5, 6, 3, 4],
-                    [3, 5, 6, 3, 4]
-                ]
-            }, {
-                id: 'volume',
-                type: 'column',
-                yAxis:1,
-                data: [
-                    [0, 100000],
-                    [1, 200000],
-                    [2, 300000],
-                    [3, 400000],
-                ]
-            },{
-                type: 'mfi',
-                yAxis: 2,
-                linkedTo: 'main',
-                params: {
-                    period: 3,
-                    decimals: 6
-                }
-            }]
-        });
+        yAxis: [{
+            height: '33%'
+        }, {
+            height: '33%',
+            top: '33%'
+        }, {
+            height: '33%',
+            top: '66%'
+        }],
+        series: [{
+            id: 'main',
+            type: 'candlestick',
+            data: [
+                [0, 5, 6, 3, 4],
+                [1, 5, 6, 3, 4],
+                [2, 5, 6, 3, 4],
+                [3, 5, 6, 3, 4]
+            ]
+        }, {
+            id: 'volume',
+            type: 'column',
+            yAxis: 1,
+            data: [
+                [0, 100000],
+                [1, 200000],
+                [2, 300000],
+                [3, 400000]
+            ]
+        }, {
+            type: 'mfi',
+            yAxis: 2,
+            linkedTo: 'main',
+            params: {
+                period: 3,
+                decimals: 6
+            }
+        }]
+    });
 
     // RSI needs 15 points to calculate period=14 etc.
     assert.strictEqual(
@@ -125,7 +124,7 @@ QUnit.test('Test MFI calculations on data updates.', function (assert) {
     chart.series[2].update({
         color: 'red',
         params: {
-            period: 14,
+            period: 14
         }
     });
 

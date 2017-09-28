@@ -23,7 +23,7 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
         }),
         map = Highcharts.map;
 
-    function arrToPrecision (arr) {
+    function arrToPrecision(arr) {
         var precision = 1e4;
 
         return map(arr, function (point) {

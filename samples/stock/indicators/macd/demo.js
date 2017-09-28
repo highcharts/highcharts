@@ -22,8 +22,8 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
         },
 
         yAxis: [{
-            height: '50%',
-        },{
+            height: '50%'
+        }, {
             top: '60%',
             height: '40%'
         }],
@@ -41,7 +41,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
                 shortPeriod: 12,
                 longPeriod: 26,
                 signalPeriod: 9,
-                period: 26 
+                period: 26
             }
         }]
     });

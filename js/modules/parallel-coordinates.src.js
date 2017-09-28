@@ -94,9 +94,11 @@ var defaultParallelOptions = {
 		lineWidth: 1,
 		/*= } =*/
 		/**
-		 * Titles for yAxes are taken from [xAxis.categories](#xAxis.categories).
-		 * All options for `xAxis.labels` applies to parallel coordinates titles.
-		 * For example, to style categories, use [xAxis.labels.style](#xAxis.labels.style).
+		 * Titles for yAxes are taken from 
+		 * [xAxis.categories](#xAxis.categories). All options for 
+		 * `xAxis.labels` applies to parallel coordinates titles.
+		 * For example, to style categories, use 
+		 * [xAxis.labels.style](#xAxis.labels.style).
 		 *
 		 * @excluding align,enabled,margin,offset,position3d,reserveSpace,
 		 *            rotation,skew3d,style,text,useHTML,x,y

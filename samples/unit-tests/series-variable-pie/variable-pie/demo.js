@@ -22,10 +22,10 @@ QUnit.test('variable-pie', function (assert) {
         7,
         'Series successfully added'
     );
-    
+
     chart.series[0].addPoint({
-       y: 20,
-       z: 50
+        y: 20,
+        z: 50
     });
 
     assert.deepEqual(
@@ -33,7 +33,7 @@ QUnit.test('variable-pie', function (assert) {
         8,
         'addPoint'
     );
-    
+
     chart.series[0].removePoint(0);
     assert.deepEqual(
         chart.series[0].points.length,

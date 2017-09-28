@@ -2,32 +2,32 @@
 QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
-            yAxis: [{
-                height: '48%'
-            }, {
-                height: '48%',
-                top: '52%'
-            }],
-            series: [{
-                id: 'main',
-                type: 'candlestick',
-                data: [
-                    [0, 5, 6, 3, 4],
-                    [1, 5, 6, 3, 4],
-                    [2, 5, 6, 3, 4],
-                    [3, 5, 6, 3, 4]
-                ]
-            }, {
-                type: 'stochastic',
-                yAxis: 1,
-                linkedTo: 'main',
-                params: {
-                    periods: [3, 3]
-                }
-            }]
-        });
+        yAxis: [{
+            height: '48%'
+        }, {
+            height: '48%',
+            top: '52%'
+        }],
+        series: [{
+            id: 'main',
+            type: 'candlestick',
+            data: [
+                [0, 5, 6, 3, 4],
+                [1, 5, 6, 3, 4],
+                [2, 5, 6, 3, 4],
+                [3, 5, 6, 3, 4]
+            ]
+        }, {
+            type: 'stochastic',
+            yAxis: 1,
+            linkedTo: 'main',
+            params: {
+                periods: [3, 3]
+            }
+        }]
+    });
 
-    function toFastStochasticWithRound (arr) {
+    function toFastStochasticWithRound(arr) {
         return Highcharts.map(arr, function (point) {
             return parseFloat(point[0].toFixed(5));
         });
@@ -77,7 +77,7 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
         [26, 128, 128.09340, 126.99900, 127.59600],
         [27, 128, 128.65060, 126.89950, 127.59600],
         [28, 129, 129.13810, 127.48650, 128.69040],
-        [29, 128, 128.64060, 127.39700, 128.27250],
+        [29, 128, 128.64060, 127.39700, 128.27250]
     ], false);
 
     chart.series[1].update({

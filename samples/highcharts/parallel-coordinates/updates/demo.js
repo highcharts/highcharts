@@ -53,7 +53,8 @@ $(function () {
             title: {
                 text: 'New'
             }
-        })
+        });
+        
         assert.strictEqual(
             chart.yAxis[3].axisTitle !== undefined,
             true,

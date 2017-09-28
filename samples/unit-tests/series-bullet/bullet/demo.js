@@ -21,10 +21,10 @@ QUnit.test('Bullet', function (assert) {
         7,
         'Series successfully added'
     );
-    
+
     chart.series[0].addPoint({
-       y: 20,
-       target: 10
+        y: 20,
+        target: 10
     });
 
     assert.deepEqual(
@@ -32,7 +32,7 @@ QUnit.test('Bullet', function (assert) {
         8,
         'addPoint'
     );
-    
+
     chart.series[0].removePoint(0);
     assert.deepEqual(
         chart.series[0].points.length,

@@ -24,14 +24,14 @@ QUnit.test('Mock Point translations from x/y in the options to plotX/plotY', fun
 
         point,
         options;
-    
+
     /* Point 1 */
     options = {
         xAxis: 0,
         yAxis: 0,
         x: 5,
         y: 5
-    },
+    };
     point = new MockPoint(chart, options);
     point.translate();
 

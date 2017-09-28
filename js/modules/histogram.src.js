@@ -94,7 +94,7 @@ seriesType('histogram', 'column', {
    * @type {Number}
    * @apioption plotOptions.histogram.binWidth
    **/
-  //binWidth: undefined
+    // binWidth: undefined
 	pointPadding: 0,
 	groupPadding: 0,
 	grouping: false,

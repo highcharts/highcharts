@@ -159,7 +159,7 @@
 
 
 
-Highcharts.chart('container', {
+var chart = Highcharts.chart('container', {
     subtitle: {
         text: '<ul><li>T - add a label</li><li>&#9711; - add circle</li><li>&#9634; - add square</li><li>V - toggle visibility</li></ul>',
         useHTML: true

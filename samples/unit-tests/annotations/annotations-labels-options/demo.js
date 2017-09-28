@@ -15,11 +15,11 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
 
         chart = Highcharts.chart('container', {
             series: [{
-                data: [{y: 29.9, id: 'max'}]
+                data: [{ y: 29.9, id: 'max' }]
             }],
 
             annotations: [{
-                labels: [Highcharts.merge(expected, {point: 'max'})]
+                labels: [Highcharts.merge(expected, { point: 'max' })]
             }]
         }),
 

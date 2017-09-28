@@ -29,7 +29,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
         }, {
             type: 'psar',
             linkedTo: 'aapl',
-            params:{
+            params: {
                 index: 4
             }
         }]

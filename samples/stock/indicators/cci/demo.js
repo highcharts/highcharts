@@ -20,9 +20,9 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
                 showInLegend: true
             }
         },
-        yAxis:[{
+        yAxis: [{
             height: '50%'
-        },{
+        }, {
             top: '60%',
             height: '40%'
         }],
