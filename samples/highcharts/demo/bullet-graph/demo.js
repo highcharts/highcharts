@@ -18,7 +18,9 @@ Highcharts.setOptions({
             pointPadding: 0.25,
             borderWidth: 0,
             color: '#000',
-            trackerWidth: '200%'
+            targetOptions: {
+                width: '200%'
+            }
         }
     },
     credits: {
