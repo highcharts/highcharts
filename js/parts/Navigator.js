@@ -134,8 +134,7 @@ extend(defaultOptions, {
 		 * @product highstock
 		 */
 		maskInside: true,
-		/*= if (build.classic) { =*/
-
+		
 		/**
 		 * Options for the handles for dragging the zoomed area. 
 		 * 
@@ -169,18 +168,6 @@ extend(defaultOptions, {
 			height: 15,
 
 			/**
-			 * The width for the handle border and the stripes inside.
-			 *
-			 * @type {Number}
-			 * @default 7
-			 * @product highstock
-			 * @sample {highstock} stock/navigator/styled-handles/
-			 *         Styled handles
-			 * @since 6.0.0
-			 */
-			lineWidth: 1,
-
-			/**
 			 * Array to define shapes of handles. 0-index for left, 1-index for
 			 * right.
 			 *
@@ -212,6 +199,19 @@ extend(defaultOptions, {
 			 */
 			enabled: true,
 
+			/*= if (build.classic) { =*/
+			/**
+			 * The width for the handle border and the stripes inside.
+			 *
+			 * @type {Number}
+			 * @default 7
+			 * @product highstock
+			 * @sample {highstock} stock/navigator/styled-handles/
+			 *         Styled handles
+			 * @since 6.0.0
+			 */
+			lineWidth: 1,
+
 			/**
 			 * The fill for the handle.
 			 * 
@@ -227,7 +227,11 @@ extend(defaultOptions, {
 			 * @product highstock
 			 */
 			borderColor: '${palette.neutralColor40}'
+
+			/*= } =*/
 		},
+
+		/*= if (build.classic) { =*/
 
 		/**
 		 * The color of the mask covering the areas of the navigator series
@@ -567,7 +571,7 @@ Navigator.prototype = {
 		} : {
 			translateX: Math.round(navigator.left + parseInt(x, 10)),
 			translateY: Math.round(
-				navigator.top + navigator.height / 2 - height / 2
+				navigator.top + navigator.height / 2 - height / 2 - 1
 			)
 		});
 	},
