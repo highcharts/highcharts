@@ -787,7 +787,7 @@ var baseMapPath = "https://code.highcharts.com/mapdata/",
 
 // Create/update tile chart. Called on changes to alg params or map load.
 function generateTileChart() {
-    var chartType = $('#chartType').val(),
+    var shapeType = $('#shapeType').val(),
         xRes = $('#xRes').val(),
         yRes = $('#yRes').val(),
         invert = $("#invert").prop('checked'),
@@ -901,7 +901,7 @@ function generateTileChart() {
 
     options = {
         chart: {
-            type: chartType,
+            type: 'tilemap',
             inverted: invert,
             events: {
                 click: function (e) {
@@ -937,7 +937,7 @@ function generateTileChart() {
         },
         series: [{
             data: data,
-            pointPadding: 2,
+            tileShape: shapeType,
             allowPointSelect: true,
             dataLabels: {
                 enabled: showDataLabels,
@@ -1132,11 +1132,9 @@ $('#exclude').change(generateTileChart);
 
 
 // Select view mode
-$('#chartType').change(function () {
-    tileChart.update({
-        chart: {
-            type: $('#chartType').val()
-        }
+$('#shapeType').change(function () {
+    tileChart.series[0].update({
+        tileShape: $('#shapeType').val()
     });
 });
 
