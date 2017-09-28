@@ -1,3 +1,7 @@
+var isFn = function (x) {
+	return typeof x === 'function';
+};
+
 /**
  * draw - Handles the drawing of a point.
  * TODO: add type checking.
@@ -9,21 +13,25 @@ var draw = function draw(params) {
 	var point = this,
 		graphic = point.graphic,
 		animate = params.animate,
+		attr = params.attr,
+		onComplete = params.onComplete,
+		css = params.css,
 		group = params.group,
 		renderer = params.renderer,
 		shape = params.shapeArgs,
-		type = params.shapeType,
-		css = params.css,
-		attr = params.attr;
+		type = params.shapeType;
 
 	if (point.shouldDraw()) {
 		if (!graphic) {
 			point.graphic = graphic = renderer[type](shape).add(group);
 		}
-		graphic.css(css).attr(attr).animate(animate);
+		graphic.css(css).attr(attr).animate(animate, undefined, onComplete);
 	} else if (graphic) {
-		graphic.animate(animate, null, function () {
+		graphic.animate(animate, undefined, function () {
 			point.graphic = graphic = graphic.destroy();
+			if (isFn(onComplete)) {
+				onComplete();
+			}
 		});
 	}
 };

@@ -22,6 +22,10 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	getColor = mixinTreeSeries.getColor,
 	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
 	grep = H.grep,
+	isBoolean = function (x) {
+		return typeof x === 'boolean';
+	},
+	isObject = H.isObject,
 	isString = H.isString,
 	merge = H.merge,
 	noop = H.noop,
@@ -74,6 +78,32 @@ var getEndPoint = function getEndPoint(x, y, angle, distance) {
 		x: x + (Math.cos(angle) * distance),
 		y: y + (Math.sin(angle) * distance)
 	};
+};
+
+var getDlOptions = function getDlOptions(params) {
+	// Set options to new object to avoid problems with scope
+	var shape = isObject(params.shapeArgs) ? params.shapeArgs : {},
+		optionsPoint = (
+			isObject(params.optionsPoint) ?
+			params.optionsPoint.dataLabels :
+			{}
+		),
+		optionsLevel = (
+			isObject(params.level) ?
+			params.level.dataLabels :
+			{}
+		),
+		rotationRad = (shape.end - (shape.end - shape.start) / 2),
+		// Data labels should not rotate beyond 180 degrees.
+		rotation = (rotationRad * rad2deg) % 180,
+		// Set width and rotation for data labels.
+		options = {
+			rotation: rotation,
+			style: {
+				width: shape.radius
+			}
+		};
+	return merge(options, optionsLevel, optionsPoint);
 };
 
 var getAnimation = function getAnimation(shape, params) {
@@ -273,6 +303,7 @@ var sunburstSeries = {
 	drawDataLabels: noop, // drawDataLabels is called in drawPoints
 	drawPoints: function drawPoints() {
 		var series = this,
+			levelMap = series.levelMap,
 			shapeRoot = series.shapeRoot,
 			group = series.group,
 			hasRendered = series.hasRendered,
@@ -283,17 +314,38 @@ var sunburstSeries = {
 			shapePreviousRoot = nodePreviousRoot && nodePreviousRoot.shapeArgs,
 			points = series.points,
 			radians = series.startAndEndRadians,
-			options = series.options,
-			animation = options.animation,
-			innerR = series.center[3] / 2,
-			renderer = series.chart.renderer;
-		each(points, function (point) {
+			chart = series.chart,
+			optionsChart = chart && chart.options && chart.options.chart || {},
+			animation = (
+				isBoolean(optionsChart.animation) ?
+				optionsChart.animation :
+				true
+			),
+			positions = series.center,
+			innerR = positions[3] / 2,
+			renderer = series.chart.renderer,
+			animateLabels,
+			hackDataLabelAnimation = !!(
+				animation &&
+				hasRendered &&
+				idRoot !== idPreviousRoot &&
+				series.dataLabelsGroup
+			);
+
+		if (hackDataLabelAnimation) {
+			series.dataLabelsGroup.attr({ opacity: 0 });
+			animateLabels = function () {
+				var s = series;
+				if (s.dataLabelsGroup) {
+					s.dataLabelsGroup.animate({ opacity: 1, visibility: 'visible' });
+				}
+			};
+		}
+		each(points, function (point, i) {
 			var node = point.node,
+				level = levelMap[node.levelDynamic],
 				shapeExisting = point.shapeExisting || {},
 				shape = node.shapeArgs || {},
-				rotationRad = (shape.end - (shape.end - shape.start) / 2),
-				// Data labels should not rotate beyond 180 degrees.
-				rotation = (rotationRad * rad2deg) % 180,
 				attrStyle = series.pointAttribs(point, point.selected && 'select'),
 				animationInfo,
 				visible = !!(node.visible && node.shapeArgs);
@@ -326,16 +378,15 @@ var sunburstSeries = {
 				value: node.val,
 				isNull: !visible // used for dataLabels & point.draw
 			});
-			// Set width and rotation for data labels.
-			point.dlOptions = merge({
-				rotation: rotation,
-				style: {
-					width: shape.radius
-				}
-			}, point.options.dataLabels);
+			point.dlOptions = getDlOptions({
+				level: level,
+				optionsPoint: point.options,
+				shapeArgs: shape
+			});
 			point.draw({
 				animate: animationInfo.to,
 				attr: extend(animationInfo.from, attrStyle),
+				onComplete: (i === 0) ? animateLabels : undefined,
 				group: group,
 				renderer: renderer,
 				shapeType: 'arc',
@@ -344,7 +395,14 @@ var sunburstSeries = {
 		});
 		// Draw data labels after points
 		// TODO draw labels one by one to avoid addtional looping
-		Series.prototype.drawDataLabels.call(series);
+		if (hackDataLabelAnimation) {
+			series.hasRendered = false;
+			series.options.dataLabels.defer = true;
+			Series.prototype.drawDataLabels.call(series);
+			series.hasRendered = true;
+		} else {
+			Series.prototype.drawDataLabels.call(series);
+		}
 	},
 	pointAttribs: seriesTypes.column.prototype.pointAttribs,
 	translate: function translate() {
