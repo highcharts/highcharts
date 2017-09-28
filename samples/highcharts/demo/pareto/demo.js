@@ -27,13 +27,15 @@ Highcharts.chart('container', {
         }
     }],
     series: [{
-        name: 'complaints',
-        type: 'column',
-        id: 'pareto',
-        data: [755, 222, 151, 86, 72, 51, 36, 10]
-    }, {
         type: 'pareto',
-        linkedTo: 'pareto',
-        yAxis: 1
+        name: 'Pareto',
+        yAxis: 1,
+        zIndex: 10,
+        baseSeries: 1
+    }, {
+        name: 'Complaints',
+        type: 'column',
+        zIndex: 2,
+        data: [755, 222, 151, 86, 72, 51, 36, 10]
     }]
 });
