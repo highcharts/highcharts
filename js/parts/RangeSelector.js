@@ -89,33 +89,29 @@ extend(defaultOptions, {
 		
 		/**
 		 * When the rangeselector is floating, the plot area does not reserve 
-		 * space for it.
+		 * space for it. This opens for positioning anywhere on the chart.
 		 * 
-		 * @type {Boolean}
-		 * @default false
-		 * @sample {highstock} stock/rangeselector/floating/ Floating
+		 * @sample {highstock} stock/rangeselector/floating/
+		 *         Placing the range selector between the plot area and the
+		 *         navigator
 		 * @since 6.0.0
 		 * @product highstock
 		 */
 		floating: false,
 		
 		/**
-		 * The x offset of the rangeselector relative to its horizontal alignment 
-		 * align within chart.spacingLeft and chart.spacingRight.
+		 * The x offset of the range selector relative to its horizontal
+		 * alignment within `chart.spacingLeft` and `chart.spacingRight`.
 		 * 
-		 * @type {Number}
-		 * @default 0
 		 * @since 6.0.0
 		 * @product highstock
 		 */
 		x: 0,
 
 		/**
-		 * The y offset of the rangeselector relative to its horizontal alignment 
-		 * align within chart.spacingLeft and chart.spacingRight.
+		 * The y offset of the range selector relative to its horizontal
+		 * alignment within `chart.spacingLeft` and `chart.spacingRight`.
 		 * 
-		 * @type {Number}
-		 * @default 0
 		 * @since 6.0.0
 		 * @product highstock
 		 */
