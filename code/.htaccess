@@ -1,4 +1,4 @@
-# For testing purposes, redirect .js to higcharts.js.php
+# For testing purposes, redirect .js to .src.js
 RewriteEngine On
 
 # Stock directory
@@ -12,7 +12,7 @@ RewriteRule ^master/(.*?) /$1
 
 # Rewrite all file ending with .js to end with .src.js
 RewriteCond %{REQUEST_URI} !^.*\.src\.js
-RewriteRule (.*?).js $1.src.js
+RewriteRule (.*?)\.js $1.src.js
 
 # Map data
 # ErrorDocument 404 /error.js
