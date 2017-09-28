@@ -1043,7 +1043,7 @@ RangeSelector.prototype = {
 			// add y from user options
 			inputGroup.attr({
 				translateY: pos.inputTop + 10,
-				translateX: translateX + (inputPosition.align === 'right' ? 7 : 0) // fix wrong getBBox() value on right align 
+				translateX: translateX + (inputPosition.align === 'right' ? 8 : 0) // fix wrong getBBox() value on right align 
 			});
 
 			// detect collision
