@@ -196,7 +196,7 @@ var win = H.win,
 	pick = H.pick,
 	wrap = H.wrap,
 	plotOptions = H.getOptions().plotOptions,
-	CHUNK_SIZE = 50000,
+	CHUNK_SIZE = 30000,
 	mainCanvas = doc.createElement('canvas'),
 	index,
 	boostable = [
@@ -210,8 +210,7 @@ var win = H.win,
 		'bubble',
 		'treemap'
 	],
-	boostableMap = {}
-;
+	boostableMap = {};
 
 each(boostable, function (item) {
 	boostableMap[item] = 1;
@@ -932,6 +931,7 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
 		components = dataComponents || 2,
 		preAllocated = false,
 		iterator = 0,
+		// farray = false,
 		data;
 
 	// type = type || 'float';
@@ -940,7 +940,12 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
 		if (buffer) {
 			gl.deleteBuffer(buffer);
 			buffer = false;
+			vertAttribute = false;
 		}
+
+		iterator = 0;
+		components = dataComponents || 2;
+		data = [];
 	}
 
 	/*
@@ -950,12 +955,13 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
  	 * @param dataComponents {Integer} - the number of components per. indice
 	 */
 	function build(dataIn, attrib, dataComponents) {
+		var farray;
 
 		data = dataIn || [];
 
 		if ((!data || data.length === 0) && !preAllocated) {
 			// console.error('trying to render empty vbuffer');
-			buffer = false;
+			destroy();
 			return false;
 		}
 
@@ -965,17 +971,24 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
 			gl.deleteBuffer(buffer);
 		}
 
+		if (!preAllocated) {
+			farray = new Float32Array(data);
+		}
+
 		buffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.bufferData(
 			gl.ARRAY_BUFFER,
-			preAllocated || new Float32Array(data),
+			preAllocated || farray,
 			gl.STATIC_DRAW
 		);
 
 		// gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
 		vertAttribute = gl.getAttribLocation(shader.program(), attrib);
 		gl.enableVertexAttribArray(vertAttribute);
+
+		// Trigger cleanup
+		farray = false;
 
 		return true;
 	}
@@ -1120,7 +1133,13 @@ function GLRenderer(postRenderCallback) {
 			useGPUTranslations: false,
 			timeRendering: false,
 			timeSeriesProcessing: false,
-			timeSetup: false
+			timeSetup: true,
+			timeBufferCopy: true,
+			timeKDTree: true,
+			debug: {
+				timeSeriesProcessing: true,
+				showSkipSummary: true
+			}
 		};
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -1263,9 +1282,28 @@ function GLRenderer(postRenderCallback) {
 			closestLeft = { x: Number.MIN_VALUE, y: 0 },
 			closestRight = { x: Number.MIN_VALUE, y: 0 },
 
+			skipped = 0,
+
 			cullXThreshold = 1,
-			cullYThreshold = 1
-			;
+			cullYThreshold = 1,
+
+			// The following are used in the builder while loop
+			x,
+			y,
+			d,
+			z,
+			i = -1,
+			px = false,
+			nx = false,
+			// This is in fact used.
+			low, // eslint-disable-line no-unused-vars
+			chartDestroyed = typeof chart.index === 'undefined',
+			nextInside = false,
+			prevInside = false,
+			pcolor = false,
+			drawAsBar = asBar[series.type],
+			isXInside = false,
+			isYInside = true;
 
 		if (options.boostData && options.boostData.length > 0) {
 			return;
@@ -1421,27 +1459,17 @@ function GLRenderer(postRenderCallback) {
 		// 	}
 		// });
 
-		each(sdata, function (d, i) {
-			var x,
-				y,
-				z,
-				px = false,
-				nx = false,
-				// This is in fact used.
-				low, // eslint-disable-line no-unused-vars
-				chartDestroyed = typeof chart.index === 'undefined',
-				nextInside = false,
-				prevInside = false,
-				pcolor = false,
-				drawAsBar = asBar[series.type],
-				isXInside = false,
-				isYInside = true;
+		while (i < sdata.length) {
+			d = sdata[++i];
+
+			// px = x = y = z = nx = low = false;
+			// chartDestroyed = typeof chart.index === 'undefined';
+			// nextInside = prevInside = pcolor = isXInside = isYInside = false;
+			// drawAsBar = asBar[series.type];
 
 			if (chartDestroyed) {
-				return false;
+				break;
 			}
-
-
 
 			// Uncomment this to enable color by point.
 			// This currently left disabled as the charts look really ugly
@@ -1541,7 +1569,7 @@ function GLRenderer(postRenderCallback) {
 			}
 
 			if (y !== 0 && (!y || !isYInside)) {
-				return;
+				continue;
 			}
 
 			if (x >= xMin && x <= xMax) {
@@ -1549,7 +1577,7 @@ function GLRenderer(postRenderCallback) {
 			}
 
 			if (!isXInside && !nextInside && !prevInside) {
-				return;
+				continue;
 			}
 
 			// Skip translations - temporary floating point fix
@@ -1615,7 +1643,11 @@ function GLRenderer(postRenderCallback) {
 				(lastX && x - lastX < cullXThreshold) &&
 				(lastY && Math.abs(y - lastY) < cullYThreshold)
 			) {
-				return;
+				if (settings.debug.showSkipSummary) {
+					++skipped;
+				}
+
+				continue;
 			}
 
 			// Do step line if enabled.
@@ -1652,9 +1684,11 @@ function GLRenderer(postRenderCallback) {
 
 			lastX = x;
 			lastY = y;
+		}
 
-			// return true;
-		});
+		if (settings.debug.showSkipSummary) {
+			console.log('skipped points:', skipped); // eslint-disable-line no-console
+		}
 
 		function pushSupplementPoint(point) {
 			if (!settings.useGPUTranslations) {
@@ -1694,7 +1728,7 @@ function GLRenderer(postRenderCallback) {
 			}
 		}
 
-		if (settings.timeSeriesProcessing) {
+		if (settings.debug.timeSeriesProcessing) {
 			console.time('building ' + s.type + ' series'); // eslint-disable-line no-console
 		}
 
@@ -1727,7 +1761,7 @@ function GLRenderer(postRenderCallback) {
 		// Add the series data to our buffer(s)
 		pushSeriesData(s, series[series.length - 1]);
 
-		if (settings.timeSeriesProcessing) {
+		if (settings.debug.timeSeriesProcessing) {
 			console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
 		}
 	}
@@ -1741,6 +1775,10 @@ function GLRenderer(postRenderCallback) {
 		series = [];
 		exports.data = data = [];
 		markerData = [];
+
+		if (vbuffer) {
+			vbuffer.destroy();
+		}
 	}
 
 	/*
@@ -1814,7 +1852,11 @@ function GLRenderer(postRenderCallback) {
 			console.time('gl rendering'); // eslint-disable-line no-console
 		}
 
+		gl.canvas.width = width;
+		gl.canvas.height = height;
+
 		shader.bind();
+
 
 		gl.viewport(0, 0, width, height);
 		shader.setPMatrix(orthoMatrix(width, height));
@@ -1945,17 +1987,15 @@ function GLRenderer(postRenderCallback) {
 			}
 		});
 
-		vbuffer.destroy();
-
 		if (settings.timeRendering) {
 			console.timeEnd('gl rendering'); // eslint-disable-line no-console
 		}
 
-		flush();
-
 		if (postRenderCallback) {
 			postRenderCallback();
 		}
+
+		flush();
 	}
 
 	/*
@@ -2120,6 +2160,7 @@ function GLRenderer(postRenderCallback) {
 	}
 
 	function destroy() {
+		flush();
 		vbuffer.destroy();
 		shader.destroy();
 		if (gl) {
@@ -2169,7 +2210,11 @@ function createAndAttachRenderer(chart, series) {
 		height = chart.chartHeight,
 		target = chart,
 		targetGroup = chart.seriesGroup || series.group,
-		alpha = 1;
+		alpha = 1,
+		foSupported = doc.implementation.hasFeature(
+			'www.http://w3.org/TR/SVG11/feature#Extensibility',
+			'1.1'
+		);
 
 	if (isChartSeriesBoosting(chart)) {
 		target = chart;
@@ -2177,16 +2222,76 @@ function createAndAttachRenderer(chart, series) {
 		target = series;
 	}
 
-	if (!target.image) {
+	// Support for foreignObject is flimsy as best.
+	// IE does not support it, and Chrome has a bug which messes up
+	// the canvas draw order.
+	// As such, we force the Image fallback for now, but leaving the
+	// actual Canvas path in-place in case this changes in the future.
+	foSupported = false;
+
+	if (!target.renderTarget) {
 		target.canvas = mainCanvas;
 
-		target.image = chart.renderer.image(
-			'',
-			0,
-			0,
-			width,
-			height
-		).add(targetGroup);
+		// Fall back to image tag if foreignObject isn't supported,
+		// or if we're exporting.
+		if (chart.renderer.forExport || !foSupported) {
+			target.renderTarget = chart.renderer.image(
+				'',
+				0,
+				0,
+				width,
+				height
+			).add(targetGroup);
+
+			target.boostClear = function () {
+				target.renderTarget.attr({ href: '' });
+			};
+
+			target.boostCopy = function () {
+				target.boostResizeTarget();
+				target.renderTarget.attr({
+					href: target.canvas.toDataURL('image/png')
+				});
+			};
+
+		} else {
+			target.renderTargetFo = chart.renderer.createElement('foreignObject')
+				.add(targetGroup);
+
+			target.renderTarget = doc.createElement('canvas');
+			target.renderTargetCtx = target.renderTarget.getContext('2d');
+
+			target.renderTargetFo.element.appendChild(target.renderTarget);
+
+			target.boostClear = function () {
+				target.renderTarget.width = target.canvas.width;
+				target.renderTarget.height = target.canvas.height;
+			};
+
+			target.boostCopy = function () {
+				target.renderTarget.width = target.canvas.width;
+				target.renderTarget.height = target.canvas.height;
+
+				target.renderTargetCtx.drawImage(target.canvas, 0, 0);
+			};
+		}
+
+		target.boostResizeTarget = function () {
+			width = chart.chartWidth;
+			height = chart.chartHeight;
+
+			(target.renderTargetFo || target.renderTarget).attr({
+				x: 0,
+				y: 0,
+				width: width,
+				height: height,
+				style: 'pointer-events: none; mix-blend-mode: normal; opacity:' + alpha
+			});
+
+			if (target instanceof H.Chart) {
+				target.markerGroup.translate(series.xAxis.pos, series.yAxis.pos);
+			}
+		};
 
 		target.boostClipRect = chart.renderer.clipRect(
 			chart.plotLeft,
@@ -2195,7 +2300,7 @@ function createAndAttachRenderer(chart, series) {
 			chart.chartHeight
 		);
 
-		target.image.clip(target.boostClipRect);
+		(target.renderTargetFo || target.renderTarget).clip(target.boostClipRect);
 
 		if (target instanceof H.Chart) {
 			target.markerGroup = target.renderer.g().add(targetGroup);
@@ -2207,14 +2312,6 @@ function createAndAttachRenderer(chart, series) {
 	target.canvas.width = width;
 	target.canvas.height = height;
 
-	target.image.attr({
-		x: 0,
-		y: 0,
-		width: width,
-		height: height,
-		style: 'pointer-events: none; mix-blend-mode: normal; opacity:' + alpha
-	});
-
 	target.boostClipRect.attr({
 		x: chart.plotLeft,
 		y: chart.plotTop,
@@ -2222,14 +2319,22 @@ function createAndAttachRenderer(chart, series) {
 		height: chart.chartHeight
 	});
 
-	target.image.attr({ href: '' });
+	target.boostResizeTarget();
+	target.boostClear();
 
 	if (!target.ogl) {
 		target.ogl = GLRenderer(function () { // eslint-disable-line new-cap
-			target.image.attr({
-				href: target.canvas.toDataURL('image/png')
-			});
-		}); //eslint-disable-line new-cap
+			if (target.ogl.settings.timeBufferCopy) {
+				console.time('buffer copy'); // eslint-disable-line no-console
+			}
+
+			target.boostCopy();
+
+			if (target.ogl.settings.timeBufferCopy) {
+				console.timeEnd('buffer copy'); // eslint-disable-line no-console
+			}
+
+		}); // eslint-disable-line new-cap
 
 		target.ogl.init(target.canvas);
 		// target.ogl.clear();
@@ -2253,7 +2358,7 @@ function createAndAttachRenderer(chart, series) {
  */
 function renderIfNotSeriesBoosting(renderer, series, chart) {
 	if (renderer &&
-		series.image &&
+		series.renderTarget &&
 		series.canvas &&
 		!isChartSeriesBoosting(chart || series.chart)
 	) {
@@ -2263,7 +2368,7 @@ function renderIfNotSeriesBoosting(renderer, series, chart) {
 
 function allocateIfNotSeriesBoosting(renderer, series) {
 	if (renderer &&
-		series.image &&
+		series.renderTarget &&
 		series.canvas &&
 		!isChartSeriesBoosting(series.chart)
 	) {
@@ -2292,6 +2397,7 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 		proceed = fn(arr[i], i);
 		++i;
 	}
+
 	if (proceed) {
 		if (i < arr.length) {
 
@@ -2438,8 +2544,8 @@ each([
 		) {
 
 			// Clear image
-			if (method === 'render' && this.image && !isChartSeriesBoosting(this.chart)) {
-				this.image.attr({ href: '' });
+			if (method === 'render' && this.boostClear) {
+				this.boostClear();
 				this.animate = null; // We're zooming in, don't run animation
 			}
 
@@ -2610,9 +2716,8 @@ if (!hasWebGLSupport()) {
 				chart = series.chart,
 				xAxis = this.xAxis,
 				yAxis = this.yAxis,
-				xData = options.xData || series.processedXData,
+				xData = this.xData || options.xData || series.processedXData,
 				yData = options.yData || series.processedYData,
-
 				rawData = options.data,
 				xExtremes = xAxis.getExtremes(),
 				xMin = xExtremes.min,
@@ -2637,6 +2742,7 @@ if (!hasWebGLSupport()) {
 				maxVal,
 				minI,
 				maxI,
+				boostOptions,
 
 				addKDPoint = function (clientX, plotY, i) {
 					// Shaves off about 60ms compared to repeated concatination
@@ -2654,6 +2760,7 @@ if (!hasWebGLSupport()) {
 						}
 
 						points.push({
+							x: xData[cropStart + i],
 							clientX: clientX,
 							plotX: clientX,
 							plotY: plotY,
@@ -2665,12 +2772,15 @@ if (!hasWebGLSupport()) {
 			// Get or create the renderer
 			renderer = createAndAttachRenderer(chart, series);
 
+			boostOptions = renderer.settings;
+
 			if (!this.visible) {
 				return;
 			}
 
 			// If we are zooming out from SVG mode, destroy the graphics
 			if (this.points || this.graph) {
+				this.animate = null;
 				this.destroyGraphics();
 			}
 
@@ -2798,15 +2908,24 @@ if (!hasWebGLSupport()) {
 				// Go back to prototype, ready to build
 				delete series.buildKDTree;
 				series.buildKDTree();
+
+				if (boostOptions.timeKDTree) {
+					console.timeEnd('kd tree building'); // eslint-disable-line no-console
+				}
 			}
 
-			// Loop over the points to build the k-d tree
-			eachAsync(
-				isStacked ? series.data : (xData || rawData),
-				processPoint,
-				doneProcessing,
-				chart.renderer.forExport ? Number.MAX_VALUE : undefined
-			);
+			// Loop over the points to build the k-d tree - skip this if exporting
+			if (!chart.renderer.forExport) {
+				if (boostOptions.timeKDTree) {
+					console.time('kd tree building'); // eslint-disable-line no-console
+				}
+
+				eachAsync(
+					isStacked ? series.data : (xData || rawData),
+					processPoint,
+					doneProcessing
+				);
+			}
 		}
 	});
 
@@ -2861,11 +2980,11 @@ if (!hasWebGLSupport()) {
 
 	wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
 		proceed.call(this, vis, redraw);
-		if (this.visible === false && this.canvas && this.image) {
+		if (this.visible === false && this.canvas && this.renderTarget) {
 			if (this.ogl) {
 				this.ogl.clear();
 			}
-			this.image.attr({ href: '' });
+			this.boostClear();
 		}
 	});
 
@@ -2889,8 +3008,8 @@ if (!hasWebGLSupport()) {
 			if (!isChartSeriesBoosting(chart) && chart.didBoost) {
 				chart.didBoost = false;
 				// Clear the canvas
-				if (chart.image) {
-					chart.image.attr({ href: '' });
+				if (chart.boostClear) {
+					chart.boostClear();
 				}
 			}
 
