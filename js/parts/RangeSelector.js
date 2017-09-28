@@ -1427,6 +1427,22 @@ wrap(Chart.prototype, 'redraw', function (proceed, options, callback) {
 	proceed.call(this, options, callback);
 });
 
+Chart.prototype.adjustPlotArea = function () {
+	var rangeSelectorHeight;
+
+	if (this.rangeSelector) {
+		rangeSelectorHeight = this.rangeSelector.getHeight();
+			
+		if (this.extraTopMargin) {
+			this.plotTop += rangeSelectorHeight;
+		}
+
+		if (this.extraBottomMargin) {
+			this.marginBottom += rangeSelectorHeight;
+		}
+	}
+};
+
 Chart.prototype.callbacks.push(function (chart) {
 	var extremes,
 		rangeSelector = chart.rangeSelector,
