@@ -265,6 +265,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
  *            pointStart, pointWidth, shadow, showCheckbox, showInNavigator,
  *            softThreshold, stacking, threshold, zoneAxis, zones
  * @product highcharts
+ * @since  6.0.0
  * @optionparent plotOptions.wordcloud
  */
 var wordCloudOptions = {
@@ -278,12 +279,7 @@ var wordCloudOptions = {
 	 * collection, this option determines whether the chart should receive
 	 * one color per series or one color per point.
 	 *
-	 * @type {Boolean}
 	 * @see [series colors](#plotOptions.column.colors)
-	 * @default true
-	 * @since 6.0.0
-	 * @product highcharts
-	 * @apioption plotOptions.wordcloud.colorByPoint
 	 */
 	colorByPoint: true,
 	fontFamily: 'Impact',
@@ -291,38 +287,23 @@ var wordCloudOptions = {
 	 * This option decides which algorithm is used for placement, and rotation
 	 * of a word. The choice of algorith is therefore a crucial part of the
 	 * resulting layout of the wordcloud.
-	 *
-	 * @since 6.0.0
-	 * @apioption plotOptions.wordcloud.placementStrategy
 	 */
 	placementStrategy: 'random',
 	/**
 	 * Rotation options for the words in the wordcloud.
-	 *
-	 * @since 6.0.0
-	 * @optionparent plotOptions.wordcloud.rotation
 	 */
 	rotation: {
 		/**
 		 * The smallest degree of rotation for a word.
-		 *
-		 * @since 6.0.0
-		 * @apioption plotOptions.wordcloud.from
 		 */
 		from: 0,
 		/**
 		 * The number of possible orientations for a word, within the range of
-		 * rotation.from and rotation.to.
-		 *
-		 * @since 6.0.0
-		 * @apioption plotOptions.wordcloud.orientation
+		 * `rotation.from` and `rotation.to`.
 		 */
 		orientations: 2,
 		/**
 		 * The largest degree of rotation for a word.
-		 *
-		 * @since 6.0.0
-		 * @apioption plotOptions.wordcloud.to
 		 */
 		to: 90
 	},
@@ -330,8 +311,6 @@ var wordCloudOptions = {
 	/**
 	 * Spiral used for placing a word after the inital position experienced a
 	 * collision with either another word or the borders.
-	 *
-	 * @since 6.0.0
 	 */
 	spiral: 'archimedean',
 	tooltip: {
@@ -565,17 +544,45 @@ var wordCloudPoint = {
  */
 
 /**
-* @type {Array<Object|Number>}
-* @extends series.wordcloud.data
-* @excluding x,y
-* @product highcharts
-* @apioption series.wordcloud.data
-*/
+ * An array of data points for the series. For the `wordcloud` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 2 values. In this case, the values
+ * correspond to `name,weight`. 
+ * 
+ *  ```js
+ *     data: [
+ *         ['Lorem', 4],
+ *         ['Ipsum', 1]
+ *     ]
+ *  ```
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.arearange.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         name: "Lorem",
+ *         weight: 4
+ *     }, {
+ *         name: "Ipsum",
+ *         weight: 1
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array>}
+ * @extends series.line.data
+ * @excluding drilldown,marker,x,y
+ * @product highcharts
+ * @apioption series.wordcloud.data
+ */
 
 /**
 * The name decides the text for a word.
 *
-* @type {Number|undefined}
+* @type {String}
 * @default undefined
 * @since 6.0.0
 * @product highcharts
@@ -586,7 +593,7 @@ var wordCloudPoint = {
 * The weighting of a word. The weight decides the relative size of a word
 * compared to the rest of the collection.
 *
-* @type {Number|undefined}
+* @type {Number}
 * @default undefined
 * @since 6.0.0
 * @product highcharts
