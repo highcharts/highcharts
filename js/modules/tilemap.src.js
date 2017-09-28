@@ -467,7 +467,7 @@ seriesType('tilemap', 'heatmap', {
 		hover: {
 			halo: { 
 				enabled: true,
-				size: 3,
+				size: 2,
 				opacity: 0.5,
 				attributes: {
 					zIndex: 3
