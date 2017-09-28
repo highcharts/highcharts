@@ -75,7 +75,8 @@ function normalDensity(x, mean, standardDeviation) {
  * @sample {highcharts} highcharts/demo/bellcurve/ Bell curve
  * @since 6.0.0
  * @extends plotOptions.areaspline
- * @excluding connectNulls,stacking,pointInterval,pointIntervalUnit
+ * @excluding boostThreshold,connectNulls,stacking,pointInterval,
+ *            pointIntervalUnit
  * @optionparent plotOptions.bellcurve
  **/
 seriesType('bellcurve', 'areaspline', {

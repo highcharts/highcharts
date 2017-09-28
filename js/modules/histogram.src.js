@@ -72,7 +72,7 @@ function fitToBinLeftClosed(binWidth) {
  * @since 6.0.0
  * @extends plotOptions.line
  * @apioption plotOptions.histogram
- * @excluding pointInterval, pointIntervalUnit, stacking
+ * @excluding boostThreshold, pointInterval, pointIntervalUnit, stacking
  **/
 seriesType('histogram', 'column', {
   /**

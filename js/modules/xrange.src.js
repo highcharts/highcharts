@@ -124,7 +124,6 @@ seriesType('xrange', 'column', {
 
 		swapAxes();
 
-		//this.yAxis.closestPointRange = 1;
 		metrics = columnType.prototype.getColumnMetrics.call(this);
 
 		swapAxes();
@@ -572,7 +571,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  *
  * @sample {highcharts} highcharts/demo/x-range
  *         X-range with partial fill
- * @type  {Number|Object}
+ * @type  {Object|Number}
  * @product highcharts
  * @apioption plotOptions.xrange.data.partialFill
  */

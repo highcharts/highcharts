@@ -256,7 +256,14 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
  * Wordcloud.
  *
  * @extends {plotOptions.column}
- * @excluding allAreas, clip, colorAxis, compare, compareBase, crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor, findNearestPointBy, getExtremesFromAll, grouping, groupPadding, groupZPadding, joinBy, maxPointWidth, minPointLength, navigatorOptions, negativeColor, pointInterval, pointIntervalUnit, pointPadding, pointPlacement, pointRange, pointStart, pointWidth, pointStart, pointWidth, shadow, showCheckbox, showInNavigator, softThreshold, stacking, threshold, zoneAxis, zones
+ * @excluding allAreas, boostThreshold, clip, colorAxis, compare, compareBase,
+ *            crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor,
+ *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
+ *            groupZPadding, joinBy, maxPointWidth, minPointLength,
+ *            navigatorOptions, negativeColor, pointInterval, pointIntervalUnit,
+ *            pointPadding, pointPlacement, pointRange, pointStart, pointWidth,
+ *            pointStart, pointWidth, shadow, showCheckbox, showInNavigator,
+ *            softThreshold, stacking, threshold, zoneAxis, zones
  * @product highcharts
  * @optionparent plotOptions.wordcloud
  */
