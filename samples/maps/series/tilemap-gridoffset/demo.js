@@ -35,12 +35,14 @@ Highcharts.chart('container', {
                 color: '#000000',
                 format: '{point.x}, {point.y}'
             },
-            borderWidth: 1
+            borderWidth: 1,
+            borderColor: '#777'
         }
     },
 
     series: [{
         keys: ['x', 'y'],
+        color: '#fdfdfd',
         data: [
             [0, 0],
             [1, 0],
