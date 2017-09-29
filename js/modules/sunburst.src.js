@@ -286,7 +286,10 @@ var cbSetTreeValuesBefore = function before(node, options) {
  * The visualization bear a resemblance to both treemap and pie charts.
  *
  * @extends {plotOptions.pie}
- * @excluding allAreas, center, clip, colorAxis, compare, compareBase, dataGrouping, depth, endAngle, gapSize, gapUnit, ignoreHiddenPoint, innerSize, joinBy, legendType, linecap, minSize, navigatorOptions, pointRange, slicedOffset
+ * @excluding allAreas, center, clip, colorAxis, compare, compareBase,
+ *            dataGrouping, depth, endAngle, gapSize, gapUnit,
+ *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
+ *            minSize, navigatorOptions, pointRange, slicedOffset
  * @product highcharts
  * @optionparent plotOptions.sunburst
  */
@@ -297,14 +300,12 @@ var sunburstOptions = {
 	 *
 	 * @type {Array<String|Number>}
 	 * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
-	 * @default ['50%', '50%']
 	 * @product highcharts
 	 */
 	center: ['50%', '50%'],
 	/**
 	 * @extends plotOptions.series.dataLabels
 	 * @excluding align,allowOverlap,staggerLines,step
-	 * @product highcharts
 	 */
 	dataLabels: {
 		defer: true,
@@ -326,9 +327,6 @@ var sunburstOptions = {
 	 *
 	 * @type {String|undefined}
 	 * @default undefined
-	 * @since 6.0.0
-	 * @product highcharts
-	 * @apioption plotOptions.sunburst.rootId
 	 */
 	rootId: undefined
 	// TODO support colorAxis

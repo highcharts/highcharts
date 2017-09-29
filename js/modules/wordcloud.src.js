@@ -253,7 +253,8 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
 };
 
 /**
- * Wordcloud.
+ * A word cloud is a visualization of a set of words, where the size and
+ * placement of a word is determined by how it is weighted.
  *
  * @extends {plotOptions.column}
  * @excluding allAreas, boostThreshold, clip, colorAxis, compare, compareBase,
