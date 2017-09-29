@@ -19,12 +19,12 @@ import './Scrollbar.js';
  * is `true` for this series. Available options are the same as any
  * series, documented at [plotOptions](#plotOptions.series) and
  * [series](#series).
- * 
- * 
+ *
+ *
  * These options are merged with options in [navigator.series](#navigator.
  * series), and will take precedence if the same option is defined both
  * places.
- * 
+ *
  * @type {Object}
  * @see [navigator.series](#navigator.series)
  * @default undefined
@@ -36,7 +36,7 @@ import './Scrollbar.js';
 /**
  * Whether or not to show the series in the navigator. Takes precedence
  * over [navigator.baseSeries](#navigator.baseSeries) if defined.
- * 
+ *
  * @type {Boolean}
  * @default undefined
  * @since 5.0.0
@@ -103,7 +103,7 @@ extend(defaultOptions, {
 	navigator: {
 		/**
 		 * The height of the navigator.
-		 * 
+		 *
 		 * @type {Number}
 		 * @sample {highstock} stock/navigator/height/ A higher navigator
 		 * @default 40
@@ -113,7 +113,7 @@ extend(defaultOptions, {
 
 		/**
 		 * The distance from the nearest element, the X axis or X axis labels.
-		 * 
+		 *
 		 * @type {Number}
 		 * @sample {highstock} stock/navigator/margin/
 		 *         A margin of 2 draws the navigator closer to the X axis labels
@@ -125,7 +125,7 @@ extend(defaultOptions, {
 		/**
 		 * Whether the mask should be inside the range marking the zoomed
 		 * range, or outside. In Highstock 1.x it was always `false`.
-		 * 
+		 *
 		 * @type {Boolean}
 		 * @sample {highstock} stock/navigator/maskinside-false/
 		 *         False, mask outside
@@ -134,10 +134,10 @@ extend(defaultOptions, {
 		 * @product highstock
 		 */
 		maskInside: true,
-		
+
 		/**
-		 * Options for the handles for dragging the zoomed area. 
-		 * 
+		 * Options for the handles for dragging the zoomed area.
+		 *
 		 * @type {Object}
 		 * @sample {highstock} stock/navigator/handles/ Colored handles
 		 * @product highstock
@@ -171,7 +171,7 @@ extend(defaultOptions, {
 			 * Array to define shapes of handles. 0-index for left, 1-index for
 			 * right.
 			 *
-			 * Additionally, the URL to a graphic can be given on this form: 
+			 * Additionally, the URL to a graphic can be given on this form:
 			 * `url(graphic.png)`. Note that for the image to be applied to
 			 * exported charts, its URL needs to be accessible by the export
 			 * server.
@@ -214,7 +214,7 @@ extend(defaultOptions, {
 
 			/**
 			 * The fill for the handle.
-			 * 
+			 *
 			 * @type {Color}
 			 * @product highstock
 			 */
@@ -222,7 +222,7 @@ extend(defaultOptions, {
 
 			/**
 			 * The stroke for the handle border and the stripes inside.
-			 * 
+			 *
 			 * @type {Color}
 			 * @product highstock
 			 */
@@ -237,7 +237,7 @@ extend(defaultOptions, {
 		 * The color of the mask covering the areas of the navigator series
 		 * that are currently not visible in the main series. The default
 		 * color is bluish with an opacity of 0.3 to see the series below.
-		 * 
+		 *
 		 * @type {Color}
 		 * @see     In styled mode, the mask is styled with the
 		 *          `.highcharts-navigator-mask` and
@@ -252,7 +252,7 @@ extend(defaultOptions, {
 		/**
 		 * The color of the line marking the currently zoomed area in the
 		 * navigator.
-		 * 
+		 *
 		 * @type {Color}
 		 * @sample {highstock} stock/navigator/outline/ 2px blue outline
 		 * @default #cccccc
@@ -263,7 +263,7 @@ extend(defaultOptions, {
 		/**
 		 * The width of the line marking the currently zoomed area in the
 		 * navigator.
-		 * 
+		 *
 		 * @type {Number}
 		 * @see In styled mode, the outline stroke width is set with the `.
 		 * highcharts-navigator-outline` class.
@@ -278,15 +278,14 @@ extend(defaultOptions, {
 		 * Options for the navigator series. Available options are the same
 		 * as any series, documented at [plotOptions](#plotOptions.series)
 		 * and [series](#series).
-		 * 
+		 *
 		 * Unless data is explicitly defined on navigator.series, the data
 		 * is borrowed from the first series in the chart.
-		 * 
+		 *
 		 * Default series options for the navigator series are:
-		 * 
+		 *
 		 * <pre>series: {
 		 *     type: 'areaspline',
-		 *     color: '#4572A7',
 		 *     fillOpacity: 0.05,
 		 *     dataGrouping: {
 		 *         smoothed: true
@@ -296,7 +295,7 @@ extend(defaultOptions, {
 		 *         enabled: false
 		 *     }
 		 * }</pre>
-		 * 
+		 *
 		 * @type {Object}
 		 * @see In styled mode, the navigator series is styled with the `.
 		 * highcharts-navigator-series` class.
@@ -309,7 +308,7 @@ extend(defaultOptions, {
 		series: {
 
 			/**
-			 * The type of the navigator series. Defaults to `areaspline` if 
+			 * The type of the navigator series. Defaults to `areaspline` if
 			 * defined, otherwise `line`.
 			 *
 			 * @type {String}
@@ -317,13 +316,6 @@ extend(defaultOptions, {
 			type: defaultSeriesType,
 			/*= if (build.classic) { =*/
 
-			/**
-			 * The color of the navigator series. Follows the base series color
-			 * by default.
-			 * @type {Color}
-			 * @product highstock
-			 * @apioption plotOptions.series.navigator.color
-			 */
 
 			/**
 			 * The fill opacity of the navigator series.
@@ -343,7 +335,7 @@ extend(defaultOptions, {
 
 			/**
 			 * Data grouping options for the navigator series.
-			 * 
+			 *
 			 * @extends {plotOptions.series.dataGrouping}
 			 */
 			dataGrouping: {
@@ -355,7 +347,7 @@ extend(defaultOptions, {
 			},
 
 			/**
-			 * Data label options for the navigator series. Data labels are 
+			 * Data label options for the navigator series. Data labels are
 			 * disabled by default on the navigator series.
 			 *
 			 * @extends {plotOptions.series.dataLabels}
@@ -388,11 +380,11 @@ extend(defaultOptions, {
 			 */
 			threshold: null
 		},
-		
+
 		/**
 		 * Options for the navigator X axis. Default series options
 		 * for the navigator xAxis are:
-		 * 
+		 *
 		 * <pre>xAxis: {
 		 *     tickWidth: 0,
 		 *     lineWidth: 0,
@@ -407,7 +399,7 @@ extend(defaultOptions, {
 		 *         y: -4
 		 *     }
 		 * }</pre>
-		 * 
+		 *
 		 * @type {Object}
 		 * @extends {xAxis}
 		 * @excluding linkedTo,maxZoom,minRange,opposite,range,scrollbar,
@@ -417,9 +409,9 @@ extend(defaultOptions, {
 		xAxis: {
 			/**
 			 * Additional range on the right side of the xAxis. Works similar to
-			 * xAxis.maxPadding, but value is set in milliseconds. 
+			 * xAxis.maxPadding, but value is set in milliseconds.
 			 * Can be set for both, main xAxis and navigator's xAxis.
-			 * 
+			 *
 			 * @type {Number}
 			 * @default 0
 			 * @since 6.0.0
@@ -430,7 +422,7 @@ extend(defaultOptions, {
 
 			className: 'highcharts-navigator-xaxis',
 			tickLength: 0,
-			
+
 			/*= if (build.classic) { =*/
 			lineWidth: 0,
 			gridLineColor: '${palette.neutralColor10}',
@@ -441,7 +433,7 @@ extend(defaultOptions, {
 
 			labels: {
 				align: 'left',
-				
+
 				/*= if (build.classic) { =*/
 				style: {
 					color: '${palette.neutralColor40}'
@@ -458,7 +450,7 @@ extend(defaultOptions, {
 		/**
 		 * Options for the navigator Y axis. Default series options
 		 * for the navigator yAxis are:
-		 * 
+		 *
 		 * <pre>yAxis: {
 		 *     gridLineWidth: 0,
 		 *     startOnTick: false,
@@ -473,7 +465,7 @@ extend(defaultOptions, {
 		 *     },
 		 *     tickWidth: 0
 		 * }</pre>
-		 * 
+		 *
 		 * @type {Object}
 		 * @extends {yAxis}
 		 * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
@@ -483,7 +475,7 @@ extend(defaultOptions, {
 		yAxis: {
 
 			className: 'highcharts-navigator-yaxis',
-			
+
 			/*= if (build.classic) { =*/
 			gridLineWidth: 0,
 			/*= } =*/
@@ -686,7 +678,7 @@ Navigator.prototype = {
 			x,
 			y;
 
-		// Determine rectangle position & size 
+		// Determine rectangle position & size
 		// According to (non)inverted position:
 		if (inverted) {
 			x = [left, left, left];
@@ -751,7 +743,7 @@ Navigator.prototype = {
 		// Create masks, each mask will get events and fill:
 		each([!maskInside, maskInside, !maskInside], function (hasMask, index) {
 			navigator.shades[index] = renderer.rect()
-				.addClass('highcharts-navigator-mask' + 
+				.addClass('highcharts-navigator-mask' +
 					(index === 1 ? '-inside' : '-outside'))
 				/*= if (build.classic) { =*/
 				.attr({
@@ -1080,7 +1072,7 @@ Navigator.prototype = {
 
 	/**
 	 * Mousedown on a shaded mask, either:
-	 * - will be stored for future drag&drop 
+	 * - will be stored for future drag&drop
 	 * - will directly shift to a new range
 	 *
 	 * @param {Object} e Mouse event
@@ -1495,7 +1487,7 @@ Navigator.prototype = {
 		if (chart.options.scrollbar.enabled) {
 			chart.scrollbar = navigator.scrollbar = new Scrollbar(
 				chart.renderer,
-				merge(chart.options.scrollbar, { 
+				merge(chart.options.scrollbar, {
 					margin: navigator.navigatorEnabled ? 0 : 10,
 					vertical: chart.inverted
 				}),
@@ -1602,7 +1594,7 @@ Navigator.prototype = {
 				baseSeries.push(series);
 			}
 		});
-			
+
 		// When run after render, this.xAxis already exists
 		if (this.xAxis && !this.xAxis.fake) {
 			this.updateNavigatorSeries(redraw);
@@ -1687,19 +1679,19 @@ Navigator.prototype = {
 				baseOptions = base.options || {};
 				baseNavigatorOptions = baseOptions.navigatorOptions || {};
 				mergedNavSeriesOptions = merge(
-					baseOptions, 
-					navSeriesMixin, 
+					baseOptions,
+					navSeriesMixin,
 					userNavOptions,
 					baseNavigatorOptions
 				);
 
 				// Merge data separately. Do a slice to avoid mutating the
 				// navigator options from base series (#4923).
-				var navigatorSeriesData = 
+				var navigatorSeriesData =
 					baseNavigatorOptions.data || userNavOptions.data;
 				navigator.hasNavigatorData =
 					navigator.hasNavigatorData || !!navigatorSeriesData;
-				mergedNavSeriesOptions.data = 
+				mergedNavSeriesOptions.data =
 					navigatorSeriesData ||
 					baseOptions.data && baseOptions.data.slice(0);
 
@@ -1716,8 +1708,8 @@ Navigator.prototype = {
 			});
 		}
 
-		// If user has defined data (and no base series) or explicitly defined 
-		// navigator.series as an array, we create these series on top of any 
+		// If user has defined data (and no base series) or explicitly defined
+		// navigator.series as an array, we create these series on top of any
 		// base series.
 		if (
 			chartNavigatorSeriesOptions.data &&
@@ -1731,11 +1723,11 @@ Navigator.prototype = {
 				navSeriesMixin.name =
 					'Navigator ' + (navigatorSeries.length + 1);
 				mergedNavSeriesOptions = merge(
-					defaultOptions.navigator.series, 
+					defaultOptions.navigator.series,
 					{
 						// Since we don't have a base series to pull color from,
 						// try to fake it by using color from series with same
-						// index. Otherwise pull from the colors array. We need 
+						// index. Otherwise pull from the colors array. We need
 						// an explicit color as otherwise updates will increment
 						// color counter and we'll get a new color for each
 						// update of the nav series.
@@ -1771,7 +1763,7 @@ Navigator.prototype = {
 
 		// Bind modified extremes event to first base's xAxis only.
 		// In event of > 1 base-xAxes, the navigator will ignore those.
-		// Adding this multiple times to the same axis is no problem, as 
+		// Adding this multiple times to the same axis is no problem, as
 		// duplicates should be discarded by the browser.
 		if (baseSeries[0] && baseSeries[0].xAxis) {
 			addEvent(
@@ -1794,7 +1786,7 @@ Navigator.prototype = {
 				}
 			});
 
-			// Respond to updated data in the base series, unless explicitily 
+			// Respond to updated data in the base series, unless explicitily
 			// not adapting to data changes.
 			if (this.navigatorOptions.adaptToUpdatedData !== false) {
 				if (base.xAxis) {
@@ -1864,7 +1856,7 @@ Navigator.prototype = {
 				baseXAxis.eventArgs.trigger === 'rangeSelectorButton';
 
 		if (!unmutable) {
-		
+
 			// If the zoomed range is already at the min, move it to the right
 			// as new data comes in
 			if (stickToMin) {
@@ -2082,7 +2074,7 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 		// Compute the top position
 		if (this.inverted) {
 			navigator.left = navigator.opposite ?
-				this.chartWidth - scrollbarHeight - navigator.height : 
+				this.chartWidth - scrollbarHeight - navigator.height :
 				this.spacing[3] + scrollbarHeight;
 			navigator.top = this.plotTop + scrollbarHeight;
 		} else {
@@ -2096,12 +2088,12 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 					this.rangeSelector && this.extraBottomMargin ?
 						this.rangeSelector.getHeight() :
 						0
-				) - 
+				) -
 				(
 					(
 						legendOptions &&
 						legendOptions.verticalAlign === 'bottom' &&
-						legendOptions.enabled && 
+						legendOptions.enabled &&
 						!legendOptions.floating
 					) ?
 						legend.legendHeight + pick(legendOptions.margin, 10) :
