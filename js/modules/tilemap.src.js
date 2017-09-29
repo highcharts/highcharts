@@ -463,11 +463,11 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
  * @product highcharts highmaps
  * @sample highcharts/demo/honeycomb-usa/
  *         Honeycomb tilemap, USA
- * @sample maps/demo/honeycomb-brazil/
+ * @sample maps/plotoptions/honeycomb-brazil/
  *         Honeycomb tilemap, Brazil
- * @sample maps/demo/honeycomb-china/
+ * @sample maps/plotoptions/honeycomb-china/
  *         Honeycomb tilemap, China
- * @sample maps/demo/honeycomb-europe/
+ * @sample maps/plotoptions/honeycomb-europe/
  *         Honeycomb tilemap, Europe
  * @sample maps/demo/circlemap-africa/
  *         Circlemap tilemap, Africa
@@ -510,7 +510,7 @@ seriesType('tilemap', 'heatmap', {
 
 	/**
 	 * The column size - how many X axis units each column in the tilemap
-	 * should span. Works as in [Heatmaps](#plotOptions.heatmap).
+	 * should span. Works as in [Heatmaps](#plotOptions.heatmap.colsize).
 	 *
 	 * @type {Number}
 	 * @sample {highcharts} maps/demo/heatmap/ One day
