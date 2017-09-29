@@ -1206,10 +1206,10 @@ function GLRenderer(postRenderCallback) {
 			debug: {
 				timeRendering: false,
 				timeSeriesProcessing: false,
-				timeSetup: true,
-				timeBufferCopy: true,
-				timeKDTree: true,
-				showSkipSummary: true
+				timeSetup: false,
+				timeBufferCopy: false,
+				timeKDTree: false,
+				showSkipSummary: false
 			}
 		};
 
