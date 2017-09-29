@@ -42,6 +42,8 @@ var defined = H.defined,
  * @product highcharts
  * @sample {highcharts} highcharts/demo/x-range/
  *         X-range
+ * @sample {highcharts} highcharts/css/x-range/
+ *         Styled mode X-range
  * @sample {highcharts} highcharts/chart/inverted-xrange/
  *         Inverted X-range
  * @since 6.0.0
