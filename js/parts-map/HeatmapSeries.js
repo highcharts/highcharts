@@ -49,6 +49,15 @@ seriesType('heatmap', 'scatter', {
 	borderWidth: 0,
 
 	/**
+	 * Padding between the points in the heatmap.
+	 * 
+	 * @type {Number}
+	 * @default 0
+	 * @since 6.0
+	 * @apioption plotOptions.heatmap.pointPadding
+	 */
+
+	/**
 	 * The main color of the series. In heat maps this color is rarely used,
 	 * as we mostly use the color to denote the value of each point. Unless
 	 * options are set in the [colorAxis](#colorAxis), the default value
@@ -347,3 +356,12 @@ seriesType('heatmap', 'scatter', {
  * @product highmaps
  * @apioption series.heatmap.data.y
  */
+
+/**
+ * Point padding for a single point.
+ *
+ * @type {Number}
+ * @sample maps/plotoptions/tilemap-pointpadding Point padding on tiles
+ * @apioption series.heatmap.data.pointPadding
+ */
+

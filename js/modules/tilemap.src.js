@@ -460,7 +460,21 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
  * A tilemap series is a type of heatmap where the tile shapes are configurable.
  * 
  * @extends {plotOptions.heatmap}
+ * @product highcharts highmaps
+ * @sample highcharts/demo/honeycomb-usa/
+ *         Honeycomb tilemap, USA
+ * @sample maps/demo/honeycomb-brazil/
+ *         Honeycomb tilemap, Brazil
+ * @sample maps/demo/honeycomb-china/
+ *         Honeycomb tilemap, China
+ * @sample maps/demo/honeycomb-europe/
+ *         Honeycomb tilemap, Europe
+ * @sample maps/demo/circlemap-africa/
+ *         Circlemap tilemap, Africa
+ * @sample maps/demo/diamondmap
+ *		   Diamondmap tilemap
  * @since 6.0.0
+ * @excluding joinBy, shadow, allAreas, mapData
  * @optionparent plotOptions.tilemap
  */
 seriesType('tilemap', 'heatmap', {
@@ -477,8 +491,46 @@ seriesType('tilemap', 'heatmap', {
 			}
 		}
 	},
+
+    /**
+	 * The padding between points in the tilemap.
+	 *
+	 * @sample maps/plotoptions/tilemap-pointpadding Point padding on tiles
+	 */
 	pointPadding: 2,
+
+	/**
+	 * The shape of the tiles in the tilemap. Possible values are `hexagon`,
+	 * `circle`, `diamond`, and `square`.
+	 *
+	 * @sample maps/demo/circlemap-africa Circular tile shapes
+	 * @sample maps/demo/diamondmap Diamond tile shapes
+	 */
 	tileShape: 'hexagon'
+
+	/**
+	 * The column size - how many X axis units each column in the tilemap
+	 * should span. Works as in [Heatmaps](#plotOptions.heatmap).
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} maps/demo/heatmap/ One day
+	 * @sample {highmaps} maps/demo/heatmap/ One day
+	 * @default 1
+	 * @product highcharts highmaps
+	 * @apioption plotOptions.tilemap.colsize
+	 */
+
+	/**
+ 	 * The row size - how many Y axis units each tilemap row should span.
+	 * Analogous to [colsize](#plotOptions.tilemap.colsize).
+ 	 * 
+ 	 * @type {Number}
+ 	 * @sample {highcharts} maps/demo/heatmap/ 1 by default
+ 	 * @sample {highmaps} maps/demo/heatmap/ 1 by default
+ 	 * @default 1
+ 	 * @product highcharts highmaps
+ 	 * @apioption plotOptions.tilemap.rowsize
+ 	 */
 
 // Prototype functions
 }, {
@@ -561,3 +613,109 @@ seriesType('tilemap', 'heatmap', {
 	}
 }, H.colorPointMixin));
 
+/**
+ * A `tilemap` series. If the [type](#series.tilemap.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * tilemap](#plotOptions.tilemap).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.tilemap
+ * @product highcharts highmaps
+ * @apioption series.tilemap
+ */
+
+ /**
+  * An array of data points for the series. For the `tilemap` series
+  * type, points can be given in the following ways:
+  * 
+  * 1.  An array of arrays with 3 or 2 values. In this case, the values
+  * correspond to `x,y,value`. If the first value is a string, it is
+  * applied as the name of the point, and the `x` value is inferred.
+  * The `x` value can also be omitted, in which case the inner arrays
+  * should be of length 2\. Then the `x` value is automatically calculated,
+  * either starting at 0 and incremented by 1, or from `pointStart`
+  * and `pointInterval` given in the series options.
+  * 
+  *  ```js
+  *     data: [
+  *         [0, 9, 7],
+  *         [1, 10, 4],
+  *         [2, 6, 3]
+  *     ]
+  *  ```
+  * 
+  * 2.  An array of objects with named values. The objects are point
+  * configuration objects as seen below. If the total number of data
+  * points exceeds the series' [turboThreshold](#series.tilemap.turboThreshold),
+  * this option is not available.
+  * 
+  *  ```js
+  *     data: [{
+  *         x: 1,
+  *         y: 3,
+  *         value: 10,
+  *         name: "Point2",
+  *         color: "#00FF00"
+  *     }, {
+  *         x: 1,
+  *         y: 7,
+  *         value: 10,
+  *         name: "Point1",
+  *         color: "#FF00FF"
+  *     }]
+  *  ```
+  *
+  * Note that for some [tileShapes](#plotOptions.tilemap.tileShape) the grid
+  * coordinates are offset.
+  *
+  * @type {Array<Object|Array>}
+  * @extends series.heatmap.data
+  * @excluding marker
+  * @sample maps/series/tilemap-gridoffset Offset grid coordinates
+  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+  * @product highcharts highmaps
+  * @apioption series.tilemap.data
+  */
+
+  /**
+   * The color of the point. In tilemaps the point color is rarely set
+   * explicitly, as we use the color to denote the `value`. Options for
+   * this are set in the [colorAxis](#colorAxis) configuration.
+   * 
+   * @type {Color}
+   * @product highcharts highmaps
+   * @apioption plotOptions.tilemap.data.color
+   */
+
+  /**
+   * The x coordinate of the point.
+   *
+   * Note that for some [tileShapes](#plotOptions.tilemap.tileShape) the grid
+   * coordinates are offset.
+   *
+   * @type {Number}
+   * @product highcharts highmaps
+   * @sample maps/series/tilemap-gridoffset Offset grid coordinates
+   * @apioption plotOptions.tilemap.data.x
+   */
+
+  /**
+   * The y coordinate of the point.
+   *
+   * Note that for some [tileShapes](#plotOptions.tilemap.tileShape) the grid
+   * coordinates are offset.
+   * 
+   * @type {Number}
+   * @default undefined
+   * @product highcharts highmaps
+   * @sample maps/series/tilemap-gridoffset Offset grid coordinates
+   * @apioption plotOptions.tilemap.data.y
+   */
