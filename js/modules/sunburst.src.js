@@ -189,7 +189,15 @@ var setShapeArgs = function setShapeArgs(parent, parentValues) {
 		var values = childrenValues[index],
 			angle = values.start + ((values.end - values.start) / 2),
 			radius = values.innerR + ((values.r - values.innerR) / 2),
-			center = getEndPoint(values.x, values.y, angle, radius),
+			isCircle = (
+				values.innerR === 0 &&
+				(values.end - values.start) > 6.28
+			),
+			center = (
+				isCircle ?
+				{ x: values.x, y: values.y } :
+				getEndPoint(values.x, values.y, angle, radius)
+			),
 			val = (
 				child.val ?
 				(
