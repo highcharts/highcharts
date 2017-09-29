@@ -25,6 +25,7 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	isBoolean = function (x) {
 		return typeof x === 'boolean';
 	},
+	isNumber = H.isNumber,
 	isObject = H.isObject,
 	isString = H.isString,
 	merge = H.merge,
@@ -83,6 +84,11 @@ var getEndPoint = function getEndPoint(x, y, angle, distance) {
 var getDlOptions = function getDlOptions(params) {
 	// Set options to new object to avoid problems with scope
 	var shape = isObject(params.shapeArgs) ? params.shapeArgs : {},
+		optionsSeries = (
+			isObject(params.optionsSeries) ?
+			params.optionsSeries.dataLabels :
+			{}
+		),
 		optionsPoint = (
 			isObject(params.optionsPoint) ?
 			params.optionsPoint.dataLabels :
@@ -93,22 +99,32 @@ var getDlOptions = function getDlOptions(params) {
 			params.level.dataLabels :
 			{}
 		),
-		rotationRad = (shape.end - (shape.end - shape.start) / 2),
-		// Data labels should not rotate beyond 180 degrees.
-		rotation = (rotationRad * rad2deg) % 180,
-		// Set width and rotation for data labels.
-		options = {
+		options = merge({
+			rotationMode: 'perpendicular',
 			style: {
 				width: shape.radius
 			}
-		};
+		}, optionsSeries, optionsLevel, optionsPoint),
+		rotationRad,
+		rotation;
+	if (!isNumber(options.rotation)) {
+		rotationRad = (shape.end - (shape.end - shape.start) / 2);
+		rotation = (rotationRad * rad2deg) % 180;
+		if (options.rotationMode === 'parallel') {
+			rotation -= 90;
+		}
+		// Data labels should not rotate beyond 90 degrees, for readability.
+		if (rotation > 90) {
+			rotation -= 180;
+		}
+		options.rotation = rotation;
+	}
 	// NOTE: alignDataLabel positions the data label differntly when rotation is
 	// 0. Avoiding this by setting rotation to a small number.
-	if (rotation === 0) {
-		rotation =  0.001;
+	if (options.rotation === 0) {
+		options.rotation =  0.001;
 	}
-	options.rotation = rotation;
-	return merge(options, optionsLevel, optionsPoint);
+	return options;
 };
 
 var getAnimation = function getAnimation(shape, params) {
@@ -294,7 +310,16 @@ var sunburstOptions = {
 		defer: true,
 		style: {
 			textOverflow: 'ellipsis'
-		}
+		},
+		/**
+		 * Decides how the data label will be rotated according to the perimeter
+		 * of the sunburst. It can either be parallel or perpendicular to the
+		 * perimeter.
+		 * `series.rotation` takes precedence over rotationMode.
+		 * @since 6.0.0
+		 * @validvalue ["perpendicular", "parallel"]
+		 */
+		rotationMode: 'perpendicular'
 	},
 	/**
 	 * Which point to use as a root in the visualization.
@@ -387,7 +412,7 @@ var sunburstSeries = {
 				shapeExisting: shape, // Store for use in animation
 				tooltipPos: [shape.plotX, shape.plotY],
 				drillId: getDrillId(point, idRoot, nodeMap),
-				name: point.name || point.id || point.index,
+				name: '' + (point.name || point.id || point.index),
 				plotX: shape.plotX, // used for data label position
 				plotY: shape.plotY, // used for data label position
 				value: node.val,
@@ -396,6 +421,7 @@ var sunburstSeries = {
 			point.dlOptions = getDlOptions({
 				level: level,
 				optionsPoint: point.options,
+				optionsSeries: series.options,
 				shapeArgs: shape
 			});
 			if (!addedHack && visible) {
