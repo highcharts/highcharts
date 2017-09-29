@@ -284,7 +284,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 				horiz && toPath[4] === path[4] ? toPath[4] + plus : toPath[4], 
 				!horiz && toPath[5] === path[5] ? toPath[5] + plus : toPath[5],
 				horiz && toPath[1] === path[1] ? toPath[1] + plus : toPath[1],
-				!horiz && toPath[2] === path[2] ? toPath[2] + plus : toPath[2]
+				!horiz && toPath[2] === path[2] ? toPath[2] + plus : toPath[2],
+				'z'
 			);
 		} else { // outside the axis area
 			path = null;

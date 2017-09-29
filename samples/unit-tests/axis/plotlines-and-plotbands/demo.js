@@ -77,3 +77,29 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
         'Inside range, label shown'
     );
 });
+
+QUnit.test('#5909 - missing border on top.', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis:{
+            plotBands: [{ // mark the weekend
+                color: '#FCFFC5',
+                from: 3,
+                to: 5,
+                zIndex: 10,
+                borderWidth: 3,
+                borderColor:"black",
+            }]
+        },
+        series: [{
+            data: [2900.9, 701.5, 10006.4, 12009.2, 1404.0, 1076.0, 135.6, 148.5, 21006.4]
+        }]
+    });
+
+    var line = chart.xAxis[0].plotLinesAndBands[0].svgElem.d.split(' ');
+
+    assert.strictEqual(
+        line[line.length - 1],
+        'z',
+        'Border is rendered around the shape'
+    );
+});
