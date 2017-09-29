@@ -595,11 +595,18 @@ Highcharts.extend(Data.prototype, {
 				return;
 			}
 
+			if (columnStr.trim()[0] === '#') {
+				return;
+			}
+
 			for (; i < columnStr.length; i++) {
 				read(i);
 
 				// Quoted string
-				if (c === '"') {
+				if (c === '#') {
+					// The rest of the row is a comment
+					return;
+				} else if (c === '"') {
 					read(++i);
 
 					while (i < columnStr.length) {
