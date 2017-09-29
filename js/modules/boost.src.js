@@ -174,6 +174,9 @@
  * This outputs the time spent building the k-d tree used for
  * markers etc.
  *
+ * Note that the k-d tree is built async, and runs post-rendering.
+ * Following, it does not affect the performance of the rendering itself.
+ *
  * @type {Boolean}
  * @default false
  * @apioption boost.debug.timeKDTree
