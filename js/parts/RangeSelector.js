@@ -1048,7 +1048,7 @@ RangeSelector.prototype = {
 
 			// detect collision
 			inputGroupX = inputGroup.translateX + inputGroup.alignOptions.x - 
-							exportingX + inputGroup.getBBox().x; // getBBox for detecing left margin
+							exportingX + inputGroup.getBBox().x - 2; // getBBox for detecing left margin, 2px padding to not overlap input and label
 
 			inputGroupWidth = inputGroup.alignOptions.width;
 
