@@ -318,10 +318,12 @@ extend(defaultOptions, {
 			/*= if (build.classic) { =*/
 
 			/**
-			 * The color of the navigator series.
+			 * The color of the navigator series. Follows the base series color
+			 * by default.
 			 * @type {Color}
+			 * @product highstock
+			 * @apioption plotOptions.series.navigator.color
 			 */
-			color: '${palette.highlightColor80}',
 
 			/**
 			 * The fill opacity of the navigator series.
@@ -1660,9 +1662,16 @@ Navigator.prototype = {
 		if (baseSeries && baseSeries.length) {
 			each(baseSeries, function eachBaseSeries(base) {
 				var linkedNavSeries = base.navigatorSeries,
-					userNavOptions = !isArray(chartNavigatorSeriesOptions) ?
+					userNavOptions = extend(
+						// Grab color from base as default
+						{
+							// TODO: HC6, remove palette default, use base.color
+							color: '${palette.highlightColor80}' // base.color
+						},
+						!isArray(chartNavigatorSeriesOptions) ?
 							chartNavigatorSeriesOptions :
-							defaultOptions.navigator.series;
+							defaultOptions.navigator.series
+					);
 
 				// Don't update if the series exists in nav and we have disabled
 				// adaptToUpdatedData.
