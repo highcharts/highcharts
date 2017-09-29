@@ -70,88 +70,84 @@ function fitToBinLeftClosed(binWidth) {
  * @product highcharts
  * @sample {highcharts} highcharts/demo/histogram/ Histogram
  * @since 6.0.0
- * @extends plotOptions.line
- * @apioption plotOptions.histogram
+ * @extends plotOptions.column
  * @excluding boostThreshold, pointInterval, pointIntervalUnit, stacking
+ * @optionparent plotOptions.histogram
  **/
 seriesType('histogram', 'column', {
-  /**
-   * A preferable number of bins. It is a suggestion, so a histogram may have a 
-   * different number of bins. By default it is set to the square of the base series' data length.
-   * Available options are: 'square-root', 'sturges', 'rice'. You can also define 
-   * a function which takes a baseSeries as a parameter and should return a positive integer.
-   *
-   * @type {Number|String|Function}
-   * @default 'square-root'
-   * @apioption plotOptions.histogram.binsNumber
-   **/
+    /**
+ 	 * A preferable number of bins. It is a suggestion, so a histogram may have
+ 	 * a different number of bins. By default it is set to the square of the
+ 	 * base series' data length. Available options are: `square-root`,
+ 	 * `sturges`, `rice`. You can also define a function which takes a
+ 	 * `baseSeries` as a parameter and should return a positive integer.
+	 *
+	 * @type {String|Number|Function}
+	 * @validvalue ["square-root", "sturges", "rice"]
+	 */
 	binsNumber: 'square-root',
 
-  /**
-   * Width of the each bin. By default the bin's width is calculated as `(max - min) / number of bins`.
-   * This option takes precedence over [binsNumber](plotOptions.histogram.binsNumber.html).
-   *
-   * @type {Number}
-   * @apioption plotOptions.histogram.binWidth
-   **/
-    // binWidth: undefined
+    /**
+	 * Width of each bin. By default the bin's width is calculated as `(max - min) / number of bins`.
+	 * This option takes precedence over [binsNumber](#plotOptions.histogram.binsNumber).
+	 *
+	 * @type {Number}
+	 */
+	binWidth: undefined,
 	pointPadding: 0,
 	groupPadding: 0,
 	grouping: false,
 	pointPlacement: 'between',
 	tooltip: {
 		headerFormat: '',
-		pointFormatter: function () {
-			var header = '<span style="font-size:10px">' + this.x + ' - ' + correctFloat((this.x + this.series.binWidth)) + '</span><br/>';
-			var body = '<span style="color:' + this.color + '">\u25CF</span> ' + this.series.name + ': <b>' + this.y + '</b><br/>';
-
-			return header + body;
-		}
+		pointFormat: '<span style="font-size:10px">{point.x} - {point.x2}</span><br/>' +
+			'<span style="color:{point.color}">\u25CF</span> {series.name} <b>{point.y}</b><br/>'
 	}
 
-  /**
-   * A `histogram` series. If the [type](#series.histogram.type) option is not
-   * specified, it is inherited from [chart.type](#chart.type).
-   * 
-   * For options that apply to multiple series, it is recommended to add
-   * them to the [plotOptions.series](#plotOptions.series) options structure.
-   * To apply to all series of this specific type, apply it to [plotOptions.
-   * histogram](#plotOptions.histogram).
-   * 
-   * @type {Object}
-   * @since 6.0.0
-   * @extends series,plotOptions.histogram
-   * @excluding dataParser,dataURL,data
-   * @product highcharts
-   * @apioption series.histogram
-   **/
-  
-  /**
-   * An integer identifying the index to use for the base series, or a string
-   * representing the id of the series.
-   *
-   * @type {Number|String}
-   * @default undefined
-   * @apioption series.histogram.baseSeries
-   **/
+    /**
+ 	 * A `histogram` series. If the [type](#series.histogram.type) option is not
+	 * specified, it is inherited from [chart.type](#chart.type).
+	 * 
+	 * For options that apply to multiple series, it is recommended to add
+	 * them to the [plotOptions.series](#plotOptions.series) options structure.
+	 * To apply to all series of this specific type, apply it to [plotOptions.
+	 * histogram](#plotOptions.histogram).
+	 * 
+	 * @type {Object}
+	 * @since 6.0.0
+	 * @extends series,plotOptions.histogram
+	 * @excluding dataParser,dataURL,data
+	 * @product highcharts
+	 * @apioption series.histogram
+	 */
+   
+    /**
+	 * An integer identifying the index to use for the base series, or a string
+	 * representing the id of the series.
+	 *
+	 * @type {Number|String}
+	 * @default undefined
+	 * @apioption series.histogram.baseSeries
+	 */
 
-  /**
-   * An array of data points for the series. For the `histogram` series type,
-   * points are calculated dynamically.
-   * 
-   * @type {Array<Object|Array>}
-   * @since 6.0.0
-   * @extends series.histogram.data
-   * @product highcharts
-   * @apioption series.histogram.data
-   **/
+    /**
+	 * An array of data points for the series. For the `histogram` series type,
+	 * points are calculated dynamically. See
+	 * [histogram.baseSeries](#series.histogram.baseSeries).
+	 * 
+	 * @type {Array<Object|Array>}
+	 * @since 6.0.0
+	 * @extends series.histogram.data
+	 * @product highcharts
+	 * @apioption series.histogram.data
+	 */
 }, merge(derivedSeriesMixin, {
 	setDerivedData: function () {
 		var data = this.derivedData(
-      this.baseSeries.yData,
-      this.binsNumber(),
-      this.options.binWidth
-    );
+			this.baseSeries.yData,
+			this.binsNumber(),
+			this.options.binWidth
+		);
 
 		this.setData(data, false);
 	},
@@ -177,11 +173,15 @@ seriesType('histogram', 'column', {
 		});
 
 		objectEach(frequencies, function (frequency, x) {
-			data.push([Number(x), frequency]);
+			data.push({
+				x: Number(x),
+				y: frequency,
+				x2: correctFloat(Number(x) + binWidth)
+			});
 		});
 
 		data.sort(function (a, b) {
-			return a[0] - b[0];
+			return a.x - b.x;
 		});
 
 		return data;
@@ -192,8 +192,8 @@ seriesType('histogram', 'column', {
 		var binsNumber = binsNumberFormulas[binsNumberOption] || typeof binsNumberOption === 'function';
 
 		return Math.ceil(
-      (binsNumber && binsNumber(this.baseSeries)) ||
-      (isNumber(binsNumberOption) ? binsNumberOption : binsNumberFormulas['square-root'](this.baseSeries))
-    );
+			(binsNumber && binsNumber(this.baseSeries)) ||
+			(isNumber(binsNumberOption) ? binsNumberOption : binsNumberFormulas['square-root'](this.baseSeries))
+		);
 	}
 }));
