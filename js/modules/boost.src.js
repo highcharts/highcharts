@@ -530,13 +530,13 @@ function isChartSeriesBoosting(chart) {
  * @param series {Highchart.Series} - the series to check
  * @returns {boolean} - true if the series is in boost mode
  */
-function isSeriesBoosting(series) {
+function isSeriesBoosting(series, overrideThreshold) {
 	return  isChartSeriesBoosting(series.chart) ||
 			patientMax(
 				series.processedXData,
 				series.options.data,
 				series.points
-			) >= (series.options.boostThreshold || Number.MAX_VALUE);
+			) >= (overrideThreshold || series.options.boostThreshold || Number.MAX_VALUE);
 }
 
 // START OF WEBGL ABSTRACTIONS
@@ -2624,6 +2624,18 @@ each([
 				if (this.boostClear) {
 					this.boostClear();
 					this.animate = null; // We're zooming in, don't run animation
+				}
+			}
+
+			if (!this.options.stacking && method === 'translate') {
+				// We call generate points and check if we're now boosting
+				// so that we don't have to call series.translate
+				// when zooming out from SVG mode (which is very, very expensive)
+
+				this.generatePoints();
+
+				if (isSeriesBoosting(this)) {
+					return;
 				}
 			}
 
