@@ -497,6 +497,7 @@ function shouldForceChartSeriesBoosting(chart) {
 			if (patientMax(
 				series.processedXData,
 				series.options.data,
+				// series.xData,
 				series.points
 			) >= (series.options.boostThreshold || Number.MAX_VALUE)) {
 				++sboostCount;
@@ -1991,7 +1992,7 @@ function GLRenderer(postRenderCallback) {
 			}
 
 			// This is very much temporary
-			if (s.drawMode === 'lines') {
+			if (s.drawMode === 'lines' && settings.useAlpha && color[3] < 1) {
 				color[3] /= 10;
 			}
 
@@ -2879,6 +2880,7 @@ if (!hasWebGLSupport()) {
 
 			// If we are zooming out from SVG mode, destroy the graphics
 			if (this.points || this.graph) {
+
 				this.animate = null;
 				this.destroyGraphics();
 			}
@@ -3102,15 +3104,17 @@ if (!hasWebGLSupport()) {
 		/* Clear chart-level canvas */
 		function preRender() {
 			// Reset force state
+			chart.boostForceChartBoost = undefined;
 			chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
 			chart.isBoosting = false;
 
 			if (!isChartSeriesBoosting(chart) && chart.didBoost) {
 				chart.didBoost = false;
-				// Clear the canvas
-				if (chart.boostClear) {
-					chart.boostClear();
-				}
+			}
+
+			// Clear the canvas
+			if (chart.boostClear) {
+				chart.boostClear();
 			}
 
 			if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
@@ -3131,5 +3135,10 @@ if (!hasWebGLSupport()) {
 
 		addEvent(chart, 'predraw', preRender);
 		addEvent(chart, 'render', canvasToSVG);
+
+		// addEvent(chart, 'zoom', function () {
+		// 	chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
+		// });
+
 	});
 } // if hasCanvasSupport
