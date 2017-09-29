@@ -283,9 +283,10 @@ var cbSetTreeValuesBefore = function before(node, options) {
 /**
  * A Sunburst displays hierarchical data, where a level in the hierarchy is represented by a circle.
  * The center represents the root node of the tree.
- * The visualization bear a resemblance to both treemap and pie charts.
+ * The visualization bears a resemblance to both treemap and pie charts.
  *
  * @extends {plotOptions.pie}
+ * @sample highcharts/demo/sunburst Sunburst chart
  * @excluding allAreas, center, clip, colorAxis, compare, compareBase,
  *            dataGrouping, depth, endAngle, gapSize, gapUnit,
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
@@ -316,7 +317,7 @@ var sunburstOptions = {
 		 * Decides how the data label will be rotated according to the perimeter
 		 * of the sunburst. It can either be parallel or perpendicular to the
 		 * perimeter.
-		 * `series.rotation` takes precedence over rotationMode.
+		 * `series.rotation` takes precedence over `rotationMode`.
 		 * @since 6.0.0
 		 * @validvalue ["perpendicular", "parallel"]
 		 */

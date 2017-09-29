@@ -818,7 +818,7 @@ var data = [{
     'id': '3.135',
     'parent': '2.12',
     'name': 'Brunei',
-    'value': 428697,
+    'value': 428697
     // 'color': ''
 },
 
@@ -1394,9 +1394,6 @@ Highcharts.chart('container', {
     series: [{
         type: "sunburst",
         data: data,
-        dataLabels: {
-            enabled: false
-        },
         allowDrillToNode: true,
         cursor: 'pointer',
         levels: [{
@@ -1417,6 +1414,9 @@ Highcharts.chart('container', {
             colorVariation: {
                 key: 'brightness',
                 to: 0.5
+            },
+            dataLabels: {
+                enabled: false
             }
         }]
 
