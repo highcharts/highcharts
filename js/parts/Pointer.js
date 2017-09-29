@@ -24,8 +24,7 @@ var H = Highcharts,
 	pick = H.pick,
 	removeEvent = H.removeEvent,
 	splat = H.splat,
-	Tooltip = H.Tooltip,
-	win = H.win;
+	Tooltip = H.Tooltip;
 
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one

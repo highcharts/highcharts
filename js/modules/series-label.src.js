@@ -238,7 +238,8 @@ Series.prototype.getPointsOnGraph = function () {
 
 	// Get the bounding box so we can do a quick check first if the bounding
 	// boxes overlap.
-	/*interpolated.bBox = node.getBBox();
+	/*
+	interpolated.bBox = node.getBBox();
 	interpolated.bBox.x += paneLeft;
 	interpolated.bBox.y += paneTop;
 	*/

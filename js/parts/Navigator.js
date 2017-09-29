@@ -2079,10 +2079,25 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 		} else {
 			navigator.left = this.plotLeft + scrollbarHeight;
 			navigator.top = navigator.navigatorOptions.top ||
-				this.chartHeight - navigator.height - scrollbarHeight - this.spacing[2] -
-				(this.rangeSelector && this.extraBottomMargin ? this.rangeSelector.getHeight() : 0) - 
-				(legendOptions && legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && 
-				!legendOptions.floating ? legend.legendHeight + pick(legendOptions.margin, 10) : 0);
+				this.chartHeight -
+				navigator.height -
+				scrollbarHeight -
+				this.spacing[2] -
+				(
+					this.rangeSelector && this.extraBottomMargin ?
+						this.rangeSelector.getHeight() :
+						0
+				) - 
+				(
+					(
+						legendOptions &&
+						legendOptions.verticalAlign === 'bottom' &&
+						legendOptions.enabled && 
+						!legendOptions.floating
+					) ?
+						legend.legendHeight + pick(legendOptions.margin, 10) :
+						0
+				);
 		}
 
 		if (xAxis && yAxis) { // false if navigator is disabled (#904)
