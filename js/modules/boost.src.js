@@ -1533,7 +1533,7 @@ function GLRenderer(postRenderCallback) {
 		// 	}
 		// });
 
-		while (i < sdata.length) {
+		while (i < sdata.length - 1) {
 			d = sdata[++i];
 
 			// px = x = y = z = nx = low = false;
