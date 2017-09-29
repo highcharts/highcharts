@@ -29,8 +29,8 @@ function getData(n) {
     }
     return arr;
 }
-var data1 = getData(50000),
-    data2 = getData(50000);
+var data1 = getData(25000),
+    data2 = getData(25000);
 
 console.time('area');
 Highcharts.chart('container', {
