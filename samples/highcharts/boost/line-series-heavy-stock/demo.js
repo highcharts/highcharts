@@ -105,7 +105,7 @@ Highcharts.stockChart('container', {
 
     tooltip: {
         valueDecimals: 2,
-        shared: false
+        split: false
     },
 
     series: series
