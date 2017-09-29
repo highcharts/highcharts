@@ -78,7 +78,7 @@
  * WebGL rendering it saves time by skipping processing and inspection of the
  * data wherever possible.
  *
- * In addition to the global `boost` option, each series has a 
+ * In addition to the global `boost` option, each series has a
  * [boostThreshold](#plotOptions.series.boostThreshold) that defines when the
  * boost should kick in.
  *
@@ -106,7 +106,7 @@
  *         Heat map
  * @sample highcharts/boost/treemap
  *         Tree map
- *         
+ *
  * @product highcharts highstock
  * @type {Object}
  * @apioption boost
@@ -2716,7 +2716,7 @@ if (!hasWebGLSupport()) {
 				chart = series.chart,
 				xAxis = this.xAxis,
 				yAxis = this.yAxis,
-				xData = this.xData || options.xData || series.processedXData,
+				xData = options.xData || series.processedXData,
 				yData = options.yData || series.processedYData,
 				rawData = options.data,
 				xExtremes = xAxis.getExtremes(),
