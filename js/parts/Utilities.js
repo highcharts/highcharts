@@ -174,19 +174,21 @@ H.Fx.prototype = {
 					requestAnimationFrame(step);
 				}
 			};
-		
-		this.startTime = +new Date();
-		this.start = from;
-		this.end = to;
-		this.unit = unit;
-		this.now = this.start;
-		this.pos = 0;
 
-		timer.elem = this.elem;
-		timer.prop = this.prop;
+		if (from !== to) { // #7166
+			this.startTime = +new Date();
+			this.start = from;
+			this.end = to;
+			this.unit = unit;
+			this.now = this.start;
+			this.pos = 0;
 
-		if (timer() && timers.push(timer) === 1) {
-			requestAnimationFrame(step);
+			timer.elem = this.elem;
+			timer.prop = this.prop;
+
+			if (timer() && timers.push(timer) === 1) {
+				requestAnimationFrame(step);
+			}
 		}
 	},
 	

@@ -19,9 +19,6 @@ var H = Highcharts,
 	extend = H.extend,
 	find = H.find,
 	fireEvent = H.fireEvent,
-	isFn = function (x) {
-		return typeof x === 'function';
-	},
 	isObject = H.isObject,
 	offset = H.offset,
 	pick = H.pick,
@@ -353,7 +350,9 @@ Highcharts.Pointer.prototype = {
 		var pointer = this,
 			chart = pointer.chart,
 			series = chart.series,
-			tooltip = chart.tooltip,
+			tooltip = chart.tooltip && chart.tooltip.options.enabled ? 
+				chart.tooltip :
+				undefined,
 			shared = tooltip ? tooltip.shared : false,
 			hoverPoint = p || chart.hoverPoint,
 			hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
@@ -375,6 +374,7 @@ Highcharts.Pointer.prototype = {
 			followPointer,
 			anchor,
 			points;
+
 		// Update variables from hoverData.
 		hoverPoint = hoverData.hoverPoint;
 		points = hoverData.hoverPoints;

@@ -1364,9 +1364,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			if (doPostTranslate) { // log and ordinal axes
 				val = axis.val2lin(val);
 			}
-			returnValue = sign * (val - localMin) * localA + cvsOffset +
-				(sign * minPixelPadding) +
-				(isNumber(pointPlacement) ? localA * pointPlacement : 0);
+			returnValue = isNumber(localMin) ?
+				(
+					sign * (val - localMin) * localA +
+					cvsOffset +
+					(sign * minPixelPadding) +
+					(isNumber(pointPlacement) ? localA * pointPlacement : 0)
+				) : 
+				undefined;
 		}
 
 		return returnValue;
@@ -1464,7 +1469,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		y1 = y2 = Math.round(cHeight - translatedValue - transB);
 		if (!isNumber(translatedValue)) { // no min or max
 			skip = true;
-
+			force = false; // #7175, don't force it when path is invalid
 		} else if (axis.horiz) {
 			y1 = axisTop;
 			y2 = cHeight - axis.bottom;
