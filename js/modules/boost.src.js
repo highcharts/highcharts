@@ -2544,9 +2544,13 @@ each([
 		) {
 
 			// Clear image
-			if (method === 'render' && this.boostClear) {
-				this.boostClear();
-				this.animate = null; // We're zooming in, don't run animation
+			if (method === 'render') {
+				this.stickyTracking = (this.options || {}).stickyTracking;
+
+				if (this.boostClear) {
+					this.boostClear();
+					this.animate = null; // We're zooming in, don't run animation
+				}
 			}
 
 			proceed.call(this);
@@ -2779,6 +2783,9 @@ if (!hasWebGLSupport()) {
 			chart.isBoosting = true;
 
 			boostOptions = renderer.settings;
+
+			// Force sticky tracking
+			this.stickyTracking = true;
 
 			if (!this.visible) {
 				return;
@@ -3034,7 +3041,6 @@ if (!hasWebGLSupport()) {
 					chart.yAxis[0].pos
 				);
 			}
-
 		}
 
 		addEvent(chart, 'predraw', preRender);
