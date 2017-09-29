@@ -368,7 +368,9 @@ H.tileShapeTypes = {
 							(colsizePx * colsizePx + yRadiusPx * yRadiusPx)
 						) / 2
 					);
-					radius = Math.min(xRadiusPx, yRadiusPx) - pointPadding;
+					radius = Math.min(
+						colsizePx, xRadiusPx, yRadiusPx
+					) - pointPadding;
 
 					// If we have per point padding we need to always compute 
 					// the radius for this point and the next. If we used to
