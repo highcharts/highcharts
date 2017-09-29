@@ -62,12 +62,6 @@
  *  	//Use pre-allocated buffers, much faster,
  *  	//but may cause rendering issues with some data sets
  *  	usePreallocated: boolean - default: false
- *  	//Output rendering time in console
- *  	timeRendering: boolean - default: false
- *  	//Output processing time in console
- *  	timeSeriesProcessing: boolean - default: false
- *  	//Output setup time in console
- *  	timeSetup: boolean - default: false
  *  }
  */
 
@@ -131,6 +125,84 @@
  * @type {Boolean}
  * @default true
  * @apioption boost.enabled
+ */
+
+/**
+ * Debugging options for boost.
+ * Useful for benchmarking, and general timing.
+ *
+ * @type {Object}
+ * @apioption boost.debug
+ */
+
+/**
+ * Time the series rendering.
+ *
+ * This outputs the time spent on actual rendering in the console when
+ * set to true.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeRendering
+ */
+
+/**
+ * Time the series processing.
+ *
+ * This outputs the time spent on transforming the series data to
+ * vertex buffers when set to true.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeSeriesProcessing
+ */
+
+/**
+ * Time the the WebGL setup.
+ *
+ * This outputs the time spent on setting up the WebGL context,
+ * creating shaders, and textures.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeSetup
+ */
+
+/**
+ * Time the building of the k-d tree.
+ *
+ * This outputs the time spent building the k-d tree used for
+ * markers etc.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeKDTree
+ */
+
+/**
+ * Show the number of points skipped through culling.
+ *
+ * When set to true, the number of points skipped in series processing
+ * is outputted. Points are skipped if they are closer than 1 pixel from
+ * each other.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.showSkipSummary
+ */
+
+/**
+ * Time the WebGL to SVG buffer copy
+ *
+ * After rendering, the result is copied to an image which is injected
+ * into the SVG.
+ *
+ * If this property is set to true, the time it takes for the buffer copy
+ * to complete is outputted.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeBufferCopy
  */
 
 /**
@@ -1131,13 +1203,12 @@ function GLRenderer(postRenderCallback) {
 			useAlpha: true,
 			usePreallocated: false,
 			useGPUTranslations: false,
-			timeRendering: false,
-			timeSeriesProcessing: false,
-			timeSetup: true,
-			timeBufferCopy: true,
-			timeKDTree: true,
 			debug: {
-				timeSeriesProcessing: true,
+				timeRendering: false,
+				timeSeriesProcessing: false,
+				timeSetup: true,
+				timeBufferCopy: true,
+				timeKDTree: true,
 				showSkipSummary: true
 			}
 		};
@@ -1848,7 +1919,7 @@ function GLRenderer(postRenderCallback) {
 			return false;
 		}
 
-		if (settings.timeRendering) {
+		if (settings.debug.timeRendering) {
 			console.time('gl rendering'); // eslint-disable-line no-console
 		}
 
@@ -1987,7 +2058,7 @@ function GLRenderer(postRenderCallback) {
 			}
 		});
 
-		if (settings.timeRendering) {
+		if (settings.debug.timeRendering) {
 			console.timeEnd('gl rendering'); // eslint-disable-line no-console
 		}
 
@@ -2055,7 +2126,7 @@ function GLRenderer(postRenderCallback) {
 			return false;
 		}
 
-		if (settings.timeSetup) {
+		if (settings.debug.timeSetup) {
 			console.time('gl setup'); // eslint-disable-line no-console
 		}
 
@@ -2136,7 +2207,7 @@ function GLRenderer(postRenderCallback) {
 
 		isInited = true;
 
-		if (settings.timeSetup) {
+		if (settings.debug.timeSetup) {
 			console.timeEnd('gl setup'); // eslint-disable-line no-console
 		}
 
@@ -2324,13 +2395,13 @@ function createAndAttachRenderer(chart, series) {
 
 	if (!target.ogl) {
 		target.ogl = GLRenderer(function () { // eslint-disable-line new-cap
-			if (target.ogl.settings.timeBufferCopy) {
+			if (target.ogl.settings.debug.timeBufferCopy) {
 				console.time('buffer copy'); // eslint-disable-line no-console
 			}
 
 			target.boostCopy();
 
-			if (target.ogl.settings.timeBufferCopy) {
+			if (target.ogl.settings.debug.timeBufferCopy) {
 				console.timeEnd('buffer copy'); // eslint-disable-line no-console
 			}
 
@@ -2922,14 +2993,14 @@ if (!hasWebGLSupport()) {
 				delete series.buildKDTree;
 				series.buildKDTree();
 
-				if (boostOptions.timeKDTree) {
+				if (boostOptions.debug.timeKDTree) {
 					console.timeEnd('kd tree building'); // eslint-disable-line no-console
 				}
 			}
 
 			// Loop over the points to build the k-d tree - skip this if exporting
 			if (!chart.renderer.forExport) {
-				if (boostOptions.timeKDTree) {
+				if (boostOptions.debug.timeKDTree) {
 					console.time('kd tree building'); // eslint-disable-line no-console
 				}
 
