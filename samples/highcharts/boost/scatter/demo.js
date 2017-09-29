@@ -51,10 +51,11 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'scatter',
-        color: 'rgba(152,0,67,0.1)',
+        color: 'rgb(152, 0, 67)',
+        fillOpacity: 0.1,
         data: data,
         marker: {
-            radius: 0.1
+            radius: 1
         },
         tooltip: {
             followPointer: false,
