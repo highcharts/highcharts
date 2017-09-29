@@ -2625,6 +2625,8 @@ function pointDrawHandler(proceed) {
 		return proceed.call(this);
 	}
 
+	this.chart.isBoosting = true;
+
 	// Make sure we have a valid OGL context
 	renderer = createAndAttachRenderer(this.chart, this);
 
@@ -2773,6 +2775,8 @@ if (!hasWebGLSupport()) {
 
 			// Get or create the renderer
 			renderer = createAndAttachRenderer(chart, series);
+
+			chart.isBoosting = true;
 
 			boostOptions = renderer.settings;
 
@@ -3006,6 +3010,7 @@ if (!hasWebGLSupport()) {
 		function preRender() {
 			// Reset force state
 			chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
+			chart.isBoosting = false;
 
 			if (!isChartSeriesBoosting(chart) && chart.didBoost) {
 				chart.didBoost = false;
