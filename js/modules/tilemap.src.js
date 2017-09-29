@@ -104,7 +104,7 @@ H.tileShapeTypes = {
 						2 * yAxis.len
 					),
 					pointPadding = pick(point.pointPadding, seriesPointPadding),
-					// We calculate the point padding of the midpoints to 
+					// We calculate the point padding of the midpoints to
 					// preserve the angles of the shape.
 					midPointPadding = pointPadding *
 						Math.abs(x2 - x1) / Math.abs(y3 - y2),
@@ -228,7 +228,7 @@ H.tileShapeTypes = {
 						2 * yAxis.len
 					),
 					pointPadding = pick(point.pointPadding, seriesPointPadding),
-					// We calculate the point padding of the midpoints to 
+					// We calculate the point padding of the midpoints to
 					// preserve the angles of the shape.
 					midPointPadding = pointPadding *
 						Math.abs(x2 - x1) /	Math.abs(y3 - y2),
@@ -335,13 +335,13 @@ H.tileShapeTypes = {
 				// Ideal (max) x radius is dependent on y radius:
 				/*
 								* (circle 2)
-					
+
 										* (circle 3)
 										|	yRadiusPx
 					(circle 1)	*-------|
 								 colsizePx
 
-					The distance between circle 1 and 3 (and circle 2 and 3) is 
+					The distance between circle 1 and 3 (and circle 2 and 3) is
 					2r, which is the hypotenuse of the triangle created by
 					colsizePx and yRadiusPx. If the distance between circle 2
 					and circle 1 is less than 2r, we use half of that distance
@@ -372,7 +372,7 @@ H.tileShapeTypes = {
 						colsizePx, xRadiusPx, yRadiusPx
 					) - pointPadding;
 
-					// If we have per point padding we need to always compute 
+					// If we have per point padding we need to always compute
 					// the radius for this point and the next. If we used to
 					// have per point padding but don't anymore, don't force
 					// compute next radius.
@@ -422,7 +422,7 @@ H.tileShapeTypes = {
 
 
 // Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
-// series and adds the largest padding required. If no series has this function 
+// series and adds the largest padding required. If no series has this function
 // defined, we add nothing.
 H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
 
@@ -458,7 +458,7 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
 
 /**
  * A tilemap series is a type of heatmap where the tile shapes are configurable.
- * 
+ *
  * @extends {plotOptions.heatmap}
  * @product highcharts highmaps
  * @sample highcharts/demo/honeycomb-usa/
@@ -481,7 +481,7 @@ seriesType('tilemap', 'heatmap', {
 // Default options
 	states: {
 		hover: {
-			halo: { 
+			halo: {
 				enabled: true,
 				size: 2,
 				opacity: 0.5,
@@ -511,7 +511,7 @@ seriesType('tilemap', 'heatmap', {
 	/**
 	 * The column size - how many X axis units each column in the tilemap
 	 * should span. Works as in [Heatmaps](#plotOptions.heatmap).
-	 * 
+	 *
 	 * @type {Number}
 	 * @sample {highcharts} maps/demo/heatmap/ One day
 	 * @sample {highmaps} maps/demo/heatmap/ One day
@@ -523,7 +523,7 @@ seriesType('tilemap', 'heatmap', {
 	/**
  	 * The row size - how many Y axis units each tilemap row should span.
 	 * Analogous to [colsize](#plotOptions.tilemap.colsize).
- 	 * 
+ 	 *
  	 * @type {Number}
  	 * @sample {highcharts} maps/demo/heatmap/ 1 by default
  	 * @sample {highmaps} maps/demo/heatmap/ 1 by default
@@ -568,11 +568,11 @@ seriesType('tilemap', 'heatmap', {
 			};
 		}
 
-		// Use translate to compute how far outside the points we 
+		// Use translate to compute how far outside the points we
 		// draw, and use this difference as padding.
 		coord1 = Math.round(
 			axis.translate(
-				isX ? 
+				isX ?
 					padding.xPad * 2 :
 					padding.yPad,
 				0, 1, 0, 1
@@ -589,9 +589,9 @@ seriesType('tilemap', 'heatmap', {
 			padding: Math.abs(coord1 - coord2) || 0,
 
 			// Offset the yAxis length to compensate for shift.
-			// Setting the length factor to 2 would add the same margin to max 
+			// Setting the length factor to 2 would add the same margin to max
 			// as min. Now we only add a slight bit of the min margin to max, as
-			// we don't actually draw outside the max bounds. For the xAxis we 
+			// we don't actually draw outside the max bounds. For the xAxis we
 			// draw outside on both sides so we add the same margin to min and
 			// max.
 			axisLengthFactor: isX ? 2 : 1.1
@@ -616,14 +616,15 @@ seriesType('tilemap', 'heatmap', {
 /**
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
- * 
+ *
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.
  * To apply to all series of this specific type, apply it to [plotOptions.
  * tilemap](#plotOptions.tilemap).
- * 
+ *
  * @type {Object}
  * @extends series,plotOptions.tilemap
+ * @excluding joinBy, shadow, allAreas, mapData
  * @product highcharts highmaps
  * @apioption series.tilemap
  */
@@ -631,7 +632,7 @@ seriesType('tilemap', 'heatmap', {
  /**
   * An array of data points for the series. For the `tilemap` series
   * type, points can be given in the following ways:
-  * 
+  *
   * 1.  An array of arrays with 3 or 2 values. In this case, the values
   * correspond to `x,y,value`. If the first value is a string, it is
   * applied as the name of the point, and the `x` value is inferred.
@@ -639,7 +640,7 @@ seriesType('tilemap', 'heatmap', {
   * should be of length 2\. Then the `x` value is automatically calculated,
   * either starting at 0 and incremented by 1, or from `pointStart`
   * and `pointInterval` given in the series options.
-  * 
+  *
   *  ```js
   *     data: [
   *         [0, 9, 7],
@@ -647,12 +648,12 @@ seriesType('tilemap', 'heatmap', {
   *         [2, 6, 3]
   *     ]
   *  ```
-  * 
+  *
   * 2.  An array of objects with named values. The objects are point
   * configuration objects as seen below. If the total number of data
   * points exceeds the series' [turboThreshold](#series.tilemap.turboThreshold),
   * this option is not available.
-  * 
+  *
   *  ```js
   *     data: [{
   *         x: 1,
@@ -689,7 +690,7 @@ seriesType('tilemap', 'heatmap', {
    * The color of the point. In tilemaps the point color is rarely set
    * explicitly, as we use the color to denote the `value`. Options for
    * this are set in the [colorAxis](#colorAxis) configuration.
-   * 
+   *
    * @type {Color}
    * @product highcharts highmaps
    * @apioption plotOptions.tilemap.data.color
@@ -712,7 +713,7 @@ seriesType('tilemap', 'heatmap', {
    *
    * Note that for some [tileShapes](#plotOptions.tilemap.tileShape) the grid
    * coordinates are offset.
-   * 
+   *
    * @type {Number}
    * @default undefined
    * @product highcharts highmaps
