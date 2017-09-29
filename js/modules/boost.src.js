@@ -2744,6 +2744,8 @@ if (!hasWebGLSupport()) {
 				maxI,
 				boostOptions,
 
+				xDataFull = this.xData || this.options.xData || this.processedXData || false,
+
 				addKDPoint = function (clientX, plotY, i) {
 					// Shaves off about 60ms compared to repeated concatination
 					index = clientX + ',' + plotY;
@@ -2760,7 +2762,7 @@ if (!hasWebGLSupport()) {
 						}
 
 						points.push({
-							x: xData[cropStart + i],
+							x: xDataFull ? xDataFull[cropStart + i] : false,
 							clientX: clientX,
 							plotX: clientX,
 							plotY: plotY,
