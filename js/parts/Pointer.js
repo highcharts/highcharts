@@ -19,6 +19,9 @@ var H = Highcharts,
 	extend = H.extend,
 	find = H.find,
 	fireEvent = H.fireEvent,
+	isFn = function (x) {
+		return typeof x === 'function';
+	},
 	isObject = H.isObject,
 	offset = H.offset,
 	pick = H.pick,
@@ -273,11 +276,13 @@ Highcharts.Pointer.prototype = {
 		series,
 		isDirectTouch,
 		shared,
-		coordinates
+		coordinates,
+		params
 	) {
 		var hoverPoint,
 			hoverPoints = [],
 			hoverSeries = existingHoverSeries,
+			isBoosting = params.isBoosting,
 			useExisting = !!(isDirectTouch && existingHoverPoint),
 			notSticky = hoverSeries && !hoverSeries.stickyTracking,
 			filter = function (s) {
@@ -318,6 +323,13 @@ Highcharts.Pointer.prototype = {
 						return p.x === hoverPoint.x && !p.isNull;
 					});
 					if (isObject(point)) {
+						/*
+						* Boost returns a minimal point. Convert it to a usable
+						* point for tooltip and states.
+						*/
+						if (isBoosting) {
+							point = s.getPoint(point);
+						}
 						hoverPoints.push(point);
 					}
 				});
@@ -325,7 +337,6 @@ Highcharts.Pointer.prototype = {
 				hoverPoints.push(hoverPoint);
 			}
 		}
-
 		return {
 			hoverPoint: hoverPoint,
 			hoverSeries: hoverSeries,
@@ -357,7 +368,8 @@ Highcharts.Pointer.prototype = {
 				series,
 				isDirectTouch,
 				shared,
-				e
+				e,
+				{ isBoosting: chart.isBoosting }
 			),
 			useSharedTooltip,
 			followPointer,
