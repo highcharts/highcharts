@@ -1134,7 +1134,7 @@ RangeSelector.prototype = {
 			translateY += options.y;
 		} 
 
-		rangeSelector.group.translate(0 + options.x, translateY); // floor to avoid crisp edges
+		rangeSelector.group.translate(0 + options.x, translateY - 3); // floor to avoid crisp edges, 3px to keep back compatibility
 
 		// translate HTML inputs
 		if (inputEnabled !== false) {
@@ -1160,7 +1160,7 @@ RangeSelector.prototype = {
 			rangeSelectorHeight = 0,
 			minPosition;
 
-		rangeSelectorHeight = (rangeSelector.group.getBBox(true).height) + 10 + yPosition;
+		rangeSelectorHeight = (rangeSelector.group.getBBox(true).height) + 13 + yPosition; // 13px to keep back compatibility
 		minPosition = Math.min(inputPositionY, buttonPositionY);
 
 		if (
