@@ -52,6 +52,8 @@ H.setOptions({
 			 *
 			 * @sample highcharts/series-label/line-chart
 			 *         Line chart
+			 * @sample highcharts/demo/streamgraph
+			 *         Stream graph
 			 * @sample highcharts/series-label/stock-chart
 			 *         Stock chart
 			 * @since 6.0.0
