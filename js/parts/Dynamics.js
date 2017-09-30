@@ -868,14 +868,17 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		// Also create new groups for navigator series.
 		if (
 			(newType && newType !== oldType) ||
-			newOptions.zIndex !== undefined ||
-			series.options.isInternal
+			newOptions.zIndex !== undefined
 		) {
 			preserveGroups.length = 0;
 		}
+		if (series.options.isInternal) {
+			preserve.length = 0;
+		}
 
 		// Make sure preserved properties are not destroyed (#3094)
-		each(preserve.concat(preserveGroups), function (prop) {
+		preserve = preserveGroups.concat(preserve);
+		each(preserve, function (prop) {
 			preserve[prop] = series[prop];
 			delete series[prop];
 		});
