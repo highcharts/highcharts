@@ -148,6 +148,10 @@ $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
     fill: $neutral-color-3;
     fill-opacity: 0.85;
 }
+.highcharts-tooltip-box .highcharts-label-box {
+    fill: $neutral-color-3;
+    fill-opacity: 0.85;
+}
 
 .highcharts-selection-marker {
     fill: $highlight-color-80;
