@@ -1396,12 +1396,18 @@ Highcharts.chart('container', {
         data: data,
         allowDrillToNode: true,
         cursor: 'pointer',
+        levelIsConstant: false,
         levels: [{
-            level: 2,
+            level: 1,
             dataLabels: {
-                enabled: true
-            },
-            colorByPoint: true
+                rotation: 0
+            }
+        }, {
+            level: 2,
+            colorByPoint: true,
+            dataLabels: {
+                rotationMode: 'parallel'
+            }
         },
         {
             level: 3,
