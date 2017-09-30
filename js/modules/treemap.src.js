@@ -1319,8 +1319,13 @@ seriesType('treemap', 'scatter', {
 		}
 		return className;
 	},
+
+	/**
+	 * A tree point is valid if it has han id too, assume it may be a parent
+	 * item.
+	 */
 	isValid: function () {
-		return isNumber(this.value);
+		return this.id || isNumber(this.value);
 	},
 	setState: function (state) {
 		H.Point.prototype.setState.call(this, state);
