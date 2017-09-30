@@ -867,12 +867,16 @@ H.Tooltip.prototype = {
 
 		// Insert the footer date format if any
 		if (isDateTime && xDateFormat) {
-			each(labelConfig.point.tooltipDateKeys || ['key'], function (key) {
-				formatString = formatString.replace(
-					'{point.' + key + '}',
-					'{point.' + key + ':' + xDateFormat + '}'
-				);
-			});
+			each(
+				(labelConfig.point && labelConfig.point.tooltipDateKeys) ||
+					['key'],
+				function (key) {
+					formatString = formatString.replace(
+						'{point.' + key + '}',
+						'{point.' + key + ':' + xDateFormat + '}'
+					);
+				}
+			);
 		}
 
 		return format(formatString, {
