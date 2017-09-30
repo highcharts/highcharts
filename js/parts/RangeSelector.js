@@ -1373,7 +1373,7 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 
 });
 
-wrap(Chart.prototype, 'update', function (proceed, options, callback) {
+wrap(Chart.prototype, 'update', function (proceed, options, redraw, oneToOne) {
 
 	var chart = this,
 		rangeSelector = chart.rangeSelector,
@@ -1403,7 +1403,7 @@ wrap(Chart.prototype, 'update', function (proceed, options, callback) {
 			marginBottom: chart.margin.bottom,
 			spacingBottom: chart.spacing.bottom
 		}
-	}), callback);
+	}), redraw, oneToOne);
 
 });
 
