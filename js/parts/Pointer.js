@@ -279,7 +279,7 @@ Highcharts.Pointer.prototype = {
 		var hoverPoint,
 			hoverPoints = [],
 			hoverSeries = existingHoverSeries,
-			isBoosting = params.isBoosting,
+			isBoosting = params && params.isBoosting,
 			useExisting = !!(isDirectTouch && existingHoverPoint),
 			notSticky = hoverSeries && !hoverSeries.stickyTracking,
 			filter = function (s) {
