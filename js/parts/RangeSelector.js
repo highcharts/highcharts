@@ -1160,14 +1160,17 @@ RangeSelector.prototype = {
 			rangeSelectorHeight = 0,
 			minPosition;
 
-		rangeSelectorHeight = (rangeSelector.group.getBBox(true).height) + 13 + yPosition; // 13px to keep back compatibility
-		minPosition = Math.min(inputPositionY, buttonPositionY);
+		if (rangeSelector.group) {
 
-		if (
-			(inputPositionY < 0 && buttonPositionY < 0) || 
-			(inputPositionY > 0 && buttonPositionY > 0)
-		) {
-			rangeSelectorHeight += Math.abs(minPosition);
+			rangeSelectorHeight = (rangeSelector.group.getBBox(true).height) + 13 + yPosition; // 13px to keep back compatibility
+			minPosition = Math.min(inputPositionY, buttonPositionY);
+
+			if (
+				(inputPositionY < 0 && buttonPositionY < 0) || 
+				(inputPositionY > 0 && buttonPositionY > 0)
+			) {
+				rangeSelectorHeight += Math.abs(minPosition);
+			}
 		}
 
 		return rangeSelectorHeight;
