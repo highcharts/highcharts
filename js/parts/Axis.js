@@ -3811,6 +3811,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				graphic.attr({
 					'stroke': options.color || (categorized ? color('${palette.highlightColor20}').setOpacity(0.25).get() : '${palette.neutralColor20}'),
 					'stroke-width': pick(options.width, 1)
+				}).css({
+					'pointer-events': 'none'
 				});
 				if (options.dashStyle) {
 					graphic.attr({
