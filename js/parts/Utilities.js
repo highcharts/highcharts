@@ -1506,7 +1506,7 @@ H.getStyle = function (el, prop, toInt) {
 	style = win.getComputedStyle(el, undefined);
 	if (style) {
 		style = style.getPropertyValue(prop);
-		if (H.pick(toInt, true)) {
+		if (H.pick(toInt, prop !== 'opacity')) {
 			style = H.pInt(style);
 		}
 	}
