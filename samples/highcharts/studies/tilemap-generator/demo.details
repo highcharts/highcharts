@@ -3,4 +3,5 @@
  authors:
    - Øystein Moseng
  js_wrap: b
+ skipTest: true
 ...
