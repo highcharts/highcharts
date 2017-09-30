@@ -43,7 +43,7 @@ seriesType('vector', 'scatter', {
 	 *
 	 * @sample  highcharts/plotoptions/vector-rotationorigin-start/
 	 *          Rotate from start
-	 * @validvalue ["left", "center", "right"]
+	 * @validvalue ["start", "center", "end"]
 	 */
 	rotationOrigin: 'center',
 	states: {

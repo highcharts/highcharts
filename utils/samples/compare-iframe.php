@@ -368,10 +368,12 @@ function getExportInnerHTML() {
 			}
 
 			function error(e) {
-				e = 'ERROR (' + which + ' frame): ' + (e.message || e);
-				console.error(e);
-				parent.window.error = e;
-				parent.window.onDifferent('Error');
+				if (which === 'right') {
+					e = 'ERROR (' + which + ' frame): ' + (e.message || e);
+					console.error(e);
+					parent.window.error = e;
+					parent.window.onDifferent('Error');
+				}
 			}
 
 			function tryToRun(proceed) {
@@ -457,6 +459,7 @@ function getExportInnerHTML() {
 							hoverPoint = series[0] && series[0].points[x],
 							pointOrPoints;
 						if (hoverPoint) {
+							/*
 							if  (chart.tooltip.options.shared) {
 								pointOrPoints = [];
 								Highcharts.each(series, function (s) {
@@ -470,9 +473,10 @@ function getExportInnerHTML() {
 							} else {
 								pointOrPoints = hoverPoint;
 							}
+							*/
 							hoverPoint.onMouseOver();
 							// Note: As of 5.0.8 onMouseOver takes care of refresh.
-							chart.tooltip.refresh(pointOrPoints);
+							//chart.tooltip.refresh(pointOrPoints);
 						}
 					});
 					<?php endif ?>

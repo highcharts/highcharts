@@ -134,7 +134,8 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *          The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function () {
-	var csvOptions = this.options.exporting.csv,
+	var csvOptions = (this.options.exporting && this.options.exporting.csv) ||
+			{},
 		xAxis,
 		xAxes = this.xAxis,
 		rows = {},

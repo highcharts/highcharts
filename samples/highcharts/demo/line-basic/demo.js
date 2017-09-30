@@ -22,6 +22,9 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
+            label: {
+                connectorAllowed: false
+            },
             pointStart: 2010
         }
     },
