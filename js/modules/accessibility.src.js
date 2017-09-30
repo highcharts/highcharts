@@ -104,7 +104,9 @@ if (H.seriesTypes.pie) {
 // up/down arrows, and which series types should just move to next series.
 H.Series.prototype.keyboardMoveVertical = true;
 each(['column', 'pie'], function (type) {
-	H.seriesTypes[type].prototype.keyboardMoveVertical = false;
+	if (H.seriesTypes[type]) {
+		H.seriesTypes[type].prototype.keyboardMoveVertical = false;
+	}
 });
 
 
