@@ -524,14 +524,13 @@ Annotation.prototype = {
 			 * How to handle the annotation's label that flow outside the plot area.
 			 * Justify option aligns the label inside the plot area.
 			 *
-			 * @type {String}
 			 * @validvalue ["none", "justify"]
 			 * @sample {highcharts} highcharts/annotations/label-crop-overflow/ Crop or justify labels
 			 * @sample {highstock} highcharts/annotations/label-crop-overflow/ Crop or justify labels
 			 * @sample {highmaps} highcharts/annotations/label-crop-overflow/ Crop or justify labels
 			 * @since 6.0.0
 			 **/
-			overflow: 'none',
+			overflow: 'justify',
 
 			/**
 			 * When either the borderWidth or the backgroundColor is set,
