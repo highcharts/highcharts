@@ -1997,16 +1997,16 @@ Highcharts.chart('container', {
             point: {
                 xAxis: 0,
                 yAxis: 0,
-                x: 97,
-                y: 826
+                x: 96.2,
+                y: 783
             },
             text: '6.1 km climb<br>4.6% on avg.'
         }, {
             point: {
                 xAxis: 0,
                 yAxis: 0,
-                x: 135.1,
-                y: 566
+                x: 134.5,
+                y: 540
             },
             text: '7.6 km climb<br>5.2% on avg.'
         }, {

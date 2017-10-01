@@ -799,10 +799,22 @@ Annotation.prototype = {
 	 *
 	 * @return {undefined}
 	**/
-
 	init: function () {
+		var anno = this;
 		each(this.options.labels || [], this.initLabel, this);
 		each(this.options.shapes || [], this.initShape, this);
+
+		// Push the callback that reports to the overlapping-labels module which
+		// labels it should account for.
+		this.chart.labelCollectors.push(function () {
+			var labels = [];
+			each(anno.labels, function (label) {
+				if (!label.options.allowOverlap) {
+					labels.push(label);
+				}
+			});
+			return labels;
+		});
 	},
 
 	/**
@@ -821,8 +833,6 @@ Annotation.prototype = {
 
 		this.redrawItems(this.shapes);
 		this.redrawItems(this.labels);
-
-		this.collectAndHideLabels();
 	},
 
 	/**
@@ -887,34 +897,6 @@ Annotation.prototype = {
 		options.visible = visible;
 	},
 
-
-	/**
-	 * Collecting labels and hide them if they overlap
-	 *
-	 * @function #collectAndHideLabels
-	 * @memberOf Highcharts.Annotation#
-	 *
-	 * @return {undefined}
-	**/
-	collectAndHideLabels: function () {
-		var labels = [];
-
-		each(this.labels, function (label) {
-			if (!label.options.allowOverlap) {
-				labels.push(label);
-			}
-		});
-
-		if (labels.length) {
-			this.hideOverlappingLabels(labels);
-		}
-	},
-
-	/**
-	 * @function #hideOverlappingLabels
-	 * @memberOf Highcharts.Annotation#
-	 */
-	hideOverlappingLabels: chartPrototype.hideOverlappingLabels,
 
 	/**
 	 * Destroying an annotation
@@ -1583,7 +1565,7 @@ H.extend(chartPrototype, {
 		}
 	},
 
-	redrawAnnotations: function () {
+	drawAnnotations: function () {
 		var clip = this.plotBoxClip,
 			plotBox = this.plotBox;
 
@@ -1607,8 +1589,8 @@ chartPrototype.callbacks.push(function (chart) {
 		chart.addAnnotation(annotationOptions, false);
 	});
 
-	chart.redrawAnnotations();
-	addEvent(chart, 'redraw', chart.redrawAnnotations);
+	chart.drawAnnotations();
+	addEvent(chart, 'redraw', chart.drawAnnotations);
 	addEvent(chart, 'destroy', function () {
 		var plotBoxClip = chart.plotBoxClip;
 
