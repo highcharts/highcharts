@@ -37,6 +37,6 @@ QUnit.test('Show loading', function (assert) {
             'Label is hidden'
         );
         done();
-    }, 13);
+    }, 50);
 
 });
