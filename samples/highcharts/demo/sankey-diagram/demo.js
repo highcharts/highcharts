@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'Highcharts Sankey study'
+        text: 'Highcharts Sankey Diagram'
     },
 
     series: [{
