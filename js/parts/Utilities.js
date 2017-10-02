@@ -175,7 +175,9 @@ H.Fx.prototype = {
 				}
 			};
 
-		if (from !== to) { // #7166
+		if (from === to) {
+			delete this.options.curAnim[this.prop];
+		} else { // #7166
 			this.startTime = +new Date();
 			this.start = from;
 			this.end = to;
