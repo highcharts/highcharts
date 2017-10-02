@@ -257,6 +257,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
  * placement of a word is determined by how it is weighted.
  *
  * @extends {plotOptions.column}
+ * @sample highcharts/demo/wordcloud Word Cloud chart
  * @excluding allAreas, boostThreshold, clip, colorAxis, compare, compareBase,
  *            crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor,
  *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
