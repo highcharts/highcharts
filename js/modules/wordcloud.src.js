@@ -291,6 +291,8 @@ var wordCloudOptions = {
 	 * It is possible for users to add their own custom placement strategies
 	 * for use in word cloud. Read more about it in our
 	 * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
+	 *
+	 * @validvalue: ["random"]
 	 */
 	placementStrategy: 'random',
 	/**
@@ -318,6 +320,8 @@ var wordCloudOptions = {
 	 * It is possible for users to add their own custom spiralling algorithms
 	 * for use in word cloud. Read more about it in our
 	 * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
+	 *
+	 * @validvalue: ["archimedean"]
 	 */
 	spiral: 'archimedean',
 	/**
