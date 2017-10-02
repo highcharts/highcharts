@@ -24,8 +24,12 @@ var defined = H.defined,
  * 
  * @extends {plotOptions.column}
  * @product highcharts
- * @sample {highcharts} highcharts/demo/sankey-diagram/
+ * @sample highcharts/demo/sankey-diagram/
  *         Sankey diagram
+ * @sample highcharts/plotoptions/sankey-inverted/
+ *         Inverted sankey diagram
+ * @sample highcharts/plotoptions/sankey-outgoing
+ *         Sankey diagram with outgoing links
  * @since 6.0.0
  * @excluding animationLimit,boostThreshold,borderColor,borderRadius,
  *         borderWidth,crisp,cropThreshold,depth,edgeColor,edgeWidth,
@@ -609,6 +613,17 @@ seriesType('sankey', 'column', {
  * @type {String}
  * @product highcharts
  * @apioption series.sankey.data.to
+ */
+
+/**
+ * Whether the link goes out of the system.
+ * 
+ * @type {Boolean}
+ * @default false
+ * @sample highcharts/plotoptions/sankey-outgoing
+ *         Sankey chart with outgoing links
+ * @product highcharts
+ * @apioption series.sankey.data.outgoing
  */
 
 /**
