@@ -297,6 +297,7 @@ var wordCloudOptions = {
 	placementStrategy: 'random',
 	/**
 	 * Rotation options for the words in the wordcloud.
+	 * @sample highcharts/demo/wordcloud-rotation
 	 */
 	rotation: {
 		/**
