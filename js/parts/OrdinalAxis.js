@@ -766,7 +766,9 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 
 	// revert to the linear chart.pan version
 	if (runBase) {
-		xAxis.max = xAxis.dataMax + overscroll;
+		if (overscroll) {
+			xAxis.max = xAxis.dataMax + overscroll;
+		}
 		// call the original function
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
