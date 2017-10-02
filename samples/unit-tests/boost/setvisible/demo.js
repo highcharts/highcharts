@@ -1,6 +1,10 @@
 QUnit.test('Boosted series show/hide', function (assert) {
 
     var chart = Highcharts.chart('container', {
+        boost: {
+            // Do not allow the chart to force chart-wide boosting
+            allowForce: false
+        },
         plotOptions: {
             series: {
                 boostThreshold: 1
@@ -17,7 +21,7 @@ QUnit.test('Boosted series show/hide', function (assert) {
     var s = chart.series[0];
 
     assert.strictEqual(
-        s.image.attr('href'),
+        s.renderTarget.attr('href'),
         '',
         'Empty image for the initially hidden series'
     );
@@ -25,14 +29,14 @@ QUnit.test('Boosted series show/hide', function (assert) {
     s.show();
 
     assert.strictEqual(
-        s.image.attr('href').indexOf('data:image/png;base64,'),
+        s.renderTarget.attr('href').indexOf('data:image/png;base64,'),
         0,
         'Painted image for the visible series'
     );
 
     s.hide();
     assert.strictEqual(
-        s.image.attr('href'),
+        s.renderTarget.attr('href'),
         '',
         'Empty image for the dynamically hidden series'
     );
