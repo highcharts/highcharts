@@ -82,13 +82,19 @@ function normalDensity(x, mean, standardDeviation) {
 seriesType('bellcurve', 'areaspline', {
    /**
     * This option allows to define the length of the bell curve. A unit of the
-    * length of the bell curve is standard deviation. 
+    * length of the bell curve is standard deviation.
+    *
+    * @sample highcharts/plotoptions/bellcurve-intervals-pointsininterval
+    *         Intervals and points in interval
     */
 	intervals: 3,
 
    /**
     * Defines how many points should be plotted within 1 interval. See 
     * `plotOptions.bellcurve.intervals`.
+    *
+    * @sample highcharts/plotoptions/bellcurve-intervals-pointsininterval
+    *         Intervals and points in interval
     */
 	pointsInInterval: 3,
 
