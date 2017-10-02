@@ -13,6 +13,7 @@ import '../parts/Chart.js';
  */
 var Chart = H.Chart,
 	each = H.each,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	addEvent = H.addEvent;
 
@@ -31,6 +32,19 @@ Chart.prototype.callbacks.push(function (chart) {
 		// Consider external label collectors
 		each(chart.labelCollectors, function (collector) {
 			labels = labels.concat(collector());
+		});
+
+		each(chart.yAxis || [], function (yAxis) {
+			if (
+				yAxis.options.stackLabels &&
+				!yAxis.options.stackLabels.allowOverlap
+			) {
+				objectEach(yAxis.stacks, function (stack) {
+					objectEach(stack, function (stackItem) {
+						labels.push(stackItem.label);
+					});
+				});
+			}
 		});
 
 		each(chart.series || [], function (series) {
