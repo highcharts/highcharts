@@ -23,7 +23,7 @@ function getStockConfig() {
 
 
 
-QUnit.test('Navigator update', function (assert) {
+/*QUnit.test('Navigator update', function (assert) {
     var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], getStockConfig()),
         originalPlotHeight = document.querySelector('.highcharts-plot-background').getBBox().height;
 
@@ -104,7 +104,7 @@ QUnit.test('Scrollbar update', function (assert) {
         null,
         'Scrollbar is gone'
     );
-});
+});*/
 
 QUnit.test('Range selector update', function (assert) {
 

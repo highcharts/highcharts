@@ -1018,7 +1018,7 @@ RangeSelector.prototype = {
 					inputPosition.align === 'right' && 
 					(
 						(pos.inputTop - inputGroup.getBBox().height - 12) < 
-						((navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0])
+						((navButtonOptions.y || 0) + navButtonOptions.height + chart.spacing[0])
 					)
 				) {
 				exportingX = -40; 
@@ -1036,24 +1036,24 @@ RangeSelector.prototype = {
 			
 			if (inputPosition.align === 'left') {
 				translateX += plotLeft;
-			} else if (inputPosition.align === 'right') {
-				translateX -= chart.spacing[1];
+			} else if (inputPosition.align === 'right') { 
+				translateX = translateX - chart.axisOffset[1]; // yAxis offset
 			} 
-			
+
 			// add y from user options
 			inputGroup.attr({
 				translateY: pos.inputTop + 10,
-				translateX: translateX + (inputPosition.align === 'right' ? 8 : 0) // fix wrong getBBox() value on right align 
+				translateX: translateX - (inputPosition.align === 'right' ? 2 : 0) // fix wrong getBBox() value on right align 
 			});
 
 			// detect collision
 			inputGroupX = inputGroup.translateX + inputGroup.alignOptions.x - 
-							exportingX + inputGroup.getBBox().x - 2; // getBBox for detecing left margin, 2px padding to not overlap input and label
+							exportingX + inputGroup.getBBox().x; // getBBox for detecing left margin, 2px padding to not overlap input and label
 
 			inputGroupWidth = inputGroup.alignOptions.width;
 
 			buttonGroupX = buttonGroup.translateX + buttonGroup.getBBox().x;
-			buttonGroupWidth = buttonGroup.getBBox().width + 10;
+			buttonGroupWidth = buttonGroup.getBBox().width + 20; // 20 is minimal spacing between elements
 
 			if (
 					(inputPosition.align === buttonPosition.align) || 
@@ -1155,22 +1155,20 @@ RangeSelector.prototype = {
 			inputPosition = options.inputPosition,
 			buttonPosition = options.buttonPosition,
 			yPosition = options.y,
+			rangeSelectorGroup = rangeSelector.group,
 			buttonPositionY = buttonPosition.y,
 			inputPositionY = inputPosition.y,
 			rangeSelectorHeight = 0,
 			minPosition;
 
-		if (rangeSelector.group) {
+		rangeSelectorHeight = rangeSelectorGroup ? (rangeSelectorGroup.getBBox(true).height) + 13 + yPosition : 0; // 13px to keep back compatibility
+		minPosition = Math.min(inputPositionY, buttonPositionY);
 
-			rangeSelectorHeight = (rangeSelector.group.getBBox(true).height) + 13 + yPosition; // 13px to keep back compatibility
-			minPosition = Math.min(inputPositionY, buttonPositionY);
-
-			if (
-				(inputPositionY < 0 && buttonPositionY < 0) || 
-				(inputPositionY > 0 && buttonPositionY > 0)
-			) {
-				rangeSelectorHeight += Math.abs(minPosition);
-			}
+		if (
+			(inputPositionY < 0 && buttonPositionY < 0) || 
+			(inputPositionY > 0 && buttonPositionY > 0)
+		) {
+			rangeSelectorHeight += Math.abs(minPosition);
 		}
 
 		return rangeSelectorHeight;
@@ -1376,7 +1374,7 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 
 });
 
-wrap(Chart.prototype, 'update', function (proceed, options, redraw, oneToOne) {
+wrap(Chart.prototype, 'update', function (proceed, options, callback) {
 
 	var chart = this,
 		rangeSelector = chart.rangeSelector,
@@ -1406,7 +1404,7 @@ wrap(Chart.prototype, 'update', function (proceed, options, redraw, oneToOne) {
 			marginBottom: chart.margin.bottom,
 			spacingBottom: chart.spacing.bottom
 		}
-	}), redraw, oneToOne);
+	}), callback);
 
 });
 
@@ -1431,10 +1429,12 @@ wrap(Chart.prototype, 'redraw', function (proceed, options, callback) {
 });
 
 Chart.prototype.adjustPlotArea = function () {
-	var rangeSelectorHeight;
+	var chart = this,
+		rangeSelectorHeight;
 
 	if (this.rangeSelector) {
-		rangeSelectorHeight = this.rangeSelector.getHeight();
+
+		rangeSelectorHeight = rangeSelector.getHeight();
 			
 		if (this.extraTopMargin) {
 			this.plotTop += rangeSelectorHeight;
