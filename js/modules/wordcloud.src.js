@@ -405,10 +405,10 @@ var wordCloudSeries = {
 					rotation: rotation
 				}),
 				attr = {
+					align: 'center',
 					x: placement.x,
 					y: placement.y,
 					text: point.name,
-					'text-anchor': 'middle',
 					rotation: placement.rotation
 				},
 				animate,
