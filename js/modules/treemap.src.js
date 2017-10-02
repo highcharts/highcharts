@@ -62,7 +62,6 @@ seriesType('treemap', 'scatter', {
 	 * When enabled the user can click on a point which is a parent and
 	 * zoom in on its children.
 	 * 
-	 * @validvalue ["false", "true"]
 	 * @type {Boolean}
 	 * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/ Enabled
 	 * @default false

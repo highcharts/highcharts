@@ -329,8 +329,26 @@ var sunburstOptions = {
 	 * @type {String|undefined}
 	 * @default undefined
 	 */
-	rootId: undefined
-	// TODO support colorAxis
+	rootId: undefined,
+
+	/**
+	 * Used together with the levels and `allowDrillToNode` options. When
+	 * set to false the first level visible when drilling is considered
+	 * to be level one. Otherwise the level will be the same as the tree
+	 * structure.
+	 */
+	levelIsConstant: true
+
+	/**
+	 * When enabled the user can click on a point which is a parent and
+	 * zoom in on its children.
+	 *
+	 * @sample highcharts/demo/sunburst
+	 *         Allow drill to node
+	 * @type {Boolean}
+	 * @default false
+	 * @apioption plotOptions.sunburst.allowDrillToNode
+	 */	
 };
 
 /**
