@@ -284,10 +284,6 @@ var wordCloudOptions = {
 	 */
 	colorByPoint: true,
 	/**
-	 * The font family to use for the word cloud.
-	 */
-	fontFamily: 'Impact, sans-serif',
-	/**
 	 * This option decides which algorithm is used for placement, and rotation
 	 * of a word. The choice of algorith is therefore a crucial part of the
 	 * resulting layout of the wordcloud.
@@ -323,6 +319,18 @@ var wordCloudOptions = {
 	 * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
 	 */
 	spiral: 'archimedean',
+	/**
+	 * CSS styles for the words.
+	 *
+	 * @type {CSSObject}
+	 * @default {"fontFamily":"Impact, sans-serif"}
+	 */
+	style: {
+		/**
+		 * The font family to use for the word cloud.
+		 */
+		fontFamily: 'Impact, sans-serif'
+	},
 	tooltip: {
 		followPointer: true
 	}
@@ -386,11 +394,10 @@ var wordCloudSeries = {
 				});
 		each(data, function (point) {
 			var relativeWeight = 1 / maxWeight * point.weight,
-				css = {
+				css = extend({
 					fontSize: series.deriveFontSize(relativeWeight),
-					fill: point.color,
-					fontFamily: options.fontFamily
-				},
+					fill: point.color
+				}, options.style),
 				placement = placementStrategy(point, {
 					data: data,
 					field: field,
