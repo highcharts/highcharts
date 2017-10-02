@@ -494,9 +494,31 @@ const copyToDist = () => {
     };
     // Files that should not be distributed with certain products
     const filter = {
-        highcharts: ['highmaps.js', 'highstock.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
-        highstock: ['highcharts.js', 'highmaps.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
-        highmaps: ['highstock.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map-parser.js', 'modules/series-label.js', 'modules/solid-gauge.js']
+        highcharts: [
+            'highmaps.js',
+            'highstock.js',
+            'indicators/',
+            'modules/canvasrenderer.experimental.js',
+            'modules/map.js',
+            'modules/map-parser.js'
+        ].map(str => new RegExp(str)),
+        highstock: [
+            'highcharts.js',
+            'highmaps.js',
+            'modules/broken-axis.js',
+            'modules/canvasrenderer.experimental.js',
+            'modules/map.js',
+            'modules/map-parser.js'
+        ].map(str => new RegExp(str)),
+        highmaps: [
+            'highstock.js',
+            'indicators/',
+            'modules/broken-axis.js',
+            'modules/canvasrenderer.experimental.js',
+            'modules/map-parser.js',
+            'modules/series-label.js',
+            'modules/solid-gauge.js'
+        ].map(str => new RegExp(str))
     };
 
     // Copy source files to the distribution packages.
@@ -511,7 +533,11 @@ const copyToDist = () => {
             const source = sourceFolder + path;
             const filename = path.replace('.src.js', '.js').replace('js/', '');
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-                if (filter[lib].indexOf(filename) === -1) {
+                const filters = filter[lib];
+                const include = !filters.find((regex) => {
+                    return regex.test(filename);
+                });
+                if (include) {
                     const target = distFolder + lib + '/code/' + path;
                     obj[target] = source;
                 }
