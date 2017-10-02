@@ -1,5 +1,6 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
+ * Annotations module
  *
  * (c) 2009-2017 Torstein Honsi
  *

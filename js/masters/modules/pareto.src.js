@@ -1,7 +1,7 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
  *
- * Item series type for Highcharts
+ * Pareto series type for Highcharts
  *
  * (c) 2010-2017 Sebastian Bochan
  *
