@@ -38,6 +38,9 @@ seriesType('bullet', 'column',
 	{
 		/**
 		 * All options related with look and positiong of targets.
+		 *
+		 * @sample {highcharts} highcharts/plotoptions/bullet-targetoptions/
+		 *                      Target options
 		 * 
 		 * @type {Object}
 		 * @since 6.0.0
