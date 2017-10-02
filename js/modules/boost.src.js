@@ -1202,7 +1202,7 @@ function GLRenderer(postRenderCallback) {
 		// Render settings
 		settings = {
 			pointSize: 1,
-			lineWidth: 3,
+			lineWidth: 1,
 			fillColor: '#AA00AA',
 			useAlpha: true,
 			usePreallocated: false,

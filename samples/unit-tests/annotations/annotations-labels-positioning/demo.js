@@ -70,8 +70,7 @@ QUnit.test('Positioning labels according to real points', function (assert) {
     assert.strictEqual(Math.round(label3.x), x3, 'x position - distance');
     assert.strictEqual(Math.round(label3.y), y3, 'y position - distance');
 
-    var p4 = chart.series[0].data[3],
-        label4 = chart.annotations[0].labels[3],
+    var label4 = chart.annotations[0].labels[3],
         x4 = 0,
         y4 = 0;
 
@@ -152,14 +151,13 @@ QUnit.test('Positioning labels according to real points - inverted chart', funct
     var p3 = chart.series[0].data[2],
         label3 = chart.annotations[0].labels[2],
         x3 = Math.round(yAxis.toPixels(p3.y) + 20),
-        y3 = Math.round(xAxis.toPixels(p3.x) - label3.height / 2);
+        y3 = Math.round(Math.round(xAxis.toPixels(p3.x)) - label3.height / 2);
 
     assert.strictEqual(Math.round(label3.x), x3, 'x position - distance');
     assert.strictEqual(Math.round(label3.y), y3, 'y position - distance');
 
 
-    var p4 = chart.series[0].data[3],
-        label4 = chart.annotations[0].labels[3],
+    var label4 = chart.annotations[0].labels[3],
         x4 = 20,
         y4 = 20;
 
@@ -186,12 +184,6 @@ QUnit.test('Positioning labels according to mock points', function (assert) {
         p3 = {
             x: 85,
             y: 100
-        },
-
-        p4 = {
-            x: 250,
-            y: 1,
-            yAxis: 0
         },
 
         chart = Highcharts.chart('container', {
@@ -291,12 +283,6 @@ QUnit.test('Positioning labels according to mock points - inverted chart', funct
         p3 = {
             x: 85,
             y: 100
-        },
-
-        p4 = {
-            x: 250,
-            y: 1,
-            yAxis: 0
         },
 
         chart = Highcharts.chart('container', {

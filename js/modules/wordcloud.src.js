@@ -257,6 +257,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
  * placement of a word is determined by how it is weighted.
  *
  * @extends {plotOptions.column}
+ * @sample highcharts/demo/wordcloud Word Cloud chart
  * @excluding allAreas, boostThreshold, clip, colorAxis, compare, compareBase,
  *            crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor,
  *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
@@ -284,13 +285,14 @@ var wordCloudOptions = {
 	 */
 	colorByPoint: true,
 	/**
-	 * The font family to use for the word cloud.
-	 */
-	fontFamily: 'Impact, sans-serif',
-	/**
 	 * This option decides which algorithm is used for placement, and rotation
 	 * of a word. The choice of algorith is therefore a crucial part of the
 	 * resulting layout of the wordcloud.
+	 * It is possible for users to add their own custom placement strategies
+	 * for use in word cloud. Read more about it in our
+	 * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
+	 *
+	 * @validvalue: ["random"]
 	 */
 	placementStrategy: 'random',
 	/**
@@ -315,8 +317,25 @@ var wordCloudOptions = {
 	/**
 	 * Spiral used for placing a word after the inital position experienced a
 	 * collision with either another word or the borders.
+	 * It is possible for users to add their own custom spiralling algorithms
+	 * for use in word cloud. Read more about it in our
+	 * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
+	 *
+	 * @validvalue: ["archimedean"]
 	 */
 	spiral: 'archimedean',
+	/**
+	 * CSS styles for the words.
+	 *
+	 * @type {CSSObject}
+	 * @default {"fontFamily":"Impact, sans-serif"}
+	 */
+	style: {
+		/**
+		 * The font family to use for the word cloud.
+		 */
+		fontFamily: 'Impact, sans-serif'
+	},
 	tooltip: {
 		followPointer: true
 	}
@@ -380,11 +399,10 @@ var wordCloudSeries = {
 				});
 		each(data, function (point) {
 			var relativeWeight = 1 / maxWeight * point.weight,
-				css = {
+				css = extend({
 					fontSize: series.deriveFontSize(relativeWeight),
-					fill: point.color,
-					fontFamily: options.fontFamily
-				},
+					fill: point.color
+				}, options.style),
 				placement = placementStrategy(point, {
 					data: data,
 					field: field,
@@ -392,10 +410,10 @@ var wordCloudSeries = {
 					rotation: rotation
 				}),
 				attr = {
+					align: 'center',
 					x: placement.x,
 					y: placement.y,
 					text: point.name,
-					'text-anchor': 'middle',
 					rotation: placement.rotation
 				},
 				animate,
