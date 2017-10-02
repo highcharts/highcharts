@@ -377,6 +377,8 @@ Annotation.prototype = {
 	 * @type {Array<Object>}
 	 * @sample highcharts/annotations/basic/
 	 *         Basic annotations
+	 * @sample {highstock} stock/annotations/fibonacci-retracements
+	 *         Custom annotation, Fibonacci retracement
 	 * @since 6.0.0
 	 * @optionparent annotations
 	**/
