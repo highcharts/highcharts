@@ -1396,13 +1396,26 @@ Highcharts.chart('container', {
         data: data,
         allowDrillToNode: true,
         cursor: 'pointer',
-        levelIsConstant: false,
-        levels: [{
-            level: 1,
-            dataLabels: {
-                rotation: 0
+        dataLabels: {
+            /**
+             * A custom formatter that returns the name only if the inner arc
+             * is longer than a certain pixel size, so the shape has place for
+             * the label.
+             */
+            formatter: function () {
+                var shape = this.point.node.shapeArgs;
+
+                var innerArcFraction = (shape.end - shape.start) / (2 * Math.PI);
+                var perimeter = 2 * Math.PI * shape.innerR;
+
+                var innerArcPixels = innerArcFraction * perimeter;
+
+                if (innerArcPixels > 16) {
+                    return this.point.name;
+                }
             }
-        }, {
+        },
+        levels: [{
             level: 2,
             colorByPoint: true,
             dataLabels: {
@@ -1420,9 +1433,6 @@ Highcharts.chart('container', {
             colorVariation: {
                 key: 'brightness',
                 to: 0.5
-            },
-            dataLabels: {
-                enabled: false
             }
         }]
 
