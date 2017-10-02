@@ -21,6 +21,7 @@ var win = Highcharts.win,
 	inArray = Highcharts.inArray,
 	isNumber = Highcharts.isNumber,
 	splat = Highcharts.splat,
+	fireEvent = Highcharts.fireEvent,
 	some,
 	SeriesBuilder;
 
@@ -483,7 +484,7 @@ Highcharts.extend(Data.prototype, {
 		var self = this,
 			options = this.options || inOptions,
 			csv = options.csv,
-			columns = this.columns || [],
+			columns,
 			startRow = options.startRow || 0,
 			endRow = options.endRow || Number.MAX_VALUE,
 			startColumn = options.startColumn || 0,
@@ -500,6 +501,8 @@ Highcharts.extend(Data.prototype, {
 				';': 0,
 				'\t': 0
 			};
+
+			columns = this.columns = this.columns || [];
 
 		/*
 			This implementation is quite verbose. It will be shortened once
@@ -642,7 +645,6 @@ Highcharts.extend(Data.prototype, {
 			if (column < columns.length) {
 				// There might be an issue.
 				// This set is either
-				// console.log('warning, there are missing columns in the set');
 
 				// Fill in
 				if (!noAdd) {
@@ -668,7 +670,6 @@ Highcharts.extend(Data.prototype, {
 
 					if (typeof potDelimiters[c] !== 'undefined') {
 						// Check what we have in token now
-						// console.log('checking token', token);
 
 						if (
 							// We can't make a deduction when token is a number,
@@ -679,7 +680,6 @@ Highcharts.extend(Data.prototype, {
 								!isNaN(Date.parse(token))
 							)
 						) {
-							// console.log('token checked out', token);
 							potDelimiters[c]++;
 							return true;
 						}
@@ -755,7 +755,7 @@ Highcharts.extend(Data.prototype, {
 			}
 
 			for (; i < limit; i++) {
-				if (typeof data[i] !== 'undefined') {
+				if (typeof data[i] !== 'undefined' && data[i] && data[i].length) {
 					thing = data[i]
 							.trim()
 							.replace(/\//g, ' ')
@@ -768,7 +768,6 @@ Highcharts.extend(Data.prototype, {
 						''
 					];
 
-					// console.log(thing);
 
 					for (j = 0; j < thing.length; j++) {
 						if (j < guessedFormat.length) {
@@ -793,7 +792,7 @@ Highcharts.extend(Data.prototype, {
 										guessedFormat[j] = 'YYYY';
 									}
 									// madeDeduction = true;
-								} else if (thing[j] > 12) {
+								} else if (thing[j] > 12 && thing[j] <= 31) {
 									guessedFormat[j] = 'dd';
 									madeDeduction = true;
 								} else if (!guessedFormat[j].length) {
@@ -820,17 +819,16 @@ Highcharts.extend(Data.prototype, {
 
 				calculatedFormat = guessedFormat.join('/');
 
-				// console.log(calculatedFormat, stable, max);
 
 				// If the caculated format is not valid, we need to present an error.
 
 				if (!(options.dateFormats || self.dateFormats)[calculatedFormat]) {
 					// This should emit an event instead
+					fireEvent('invalidDateFormat');
 					Highcharts.error('Could not deduce date format');
 					return format;
 				}
 
-				// console.log('calculated format', calculatedFormat, thing);
 				return calculatedFormat;
 			}
 
@@ -853,11 +851,11 @@ Highcharts.extend(Data.prototype, {
 				.replace(/\r/g, '\n') // Mac
 				.split(options.lineDelimiter || '\n');
 
-			if (startRow < 0) {
+			if (!startRow || startRow < 0) {
 				startRow = 0;
 			}
 
-			if (endRow > lines.length) {
+			if (!endRow || endRow > lines.length) {
 				endRow = lines.length;
 			}
 
@@ -867,8 +865,6 @@ Highcharts.extend(Data.prototype, {
 				itemDelimiter = null;
 				itemDelimiter = guessDelimiter(lines);
 			}
-
-			// console.log('parsing', startRow, endRow);
 
 			for (rowIt = startRow; rowIt < endRow; rowIt++) {
 				parseRow(lines[rowIt], rowIt);
@@ -881,11 +877,14 @@ Highcharts.extend(Data.prototype, {
 
 			deduceAxisTypes();
 
-			if (dataTypes[0][1] === 'date' && !options.dateFormat) {
+			if ((!options.columnTypes || options.columnTypes.length === 0) &&
+				dataTypes.length &&
+				dataTypes[0].length &&
+				dataTypes[0][1] === 'date' &&
+				!options.dateFormat) {
 				options.dateFormat = deduceDateFormat(columns[0]);
 			}
 
-			// console.log(columns);
 
 			// each(lines, function (line, rowNo) {
 			//	var trimmed = self.trim(line),
@@ -907,6 +906,7 @@ Highcharts.extend(Data.prototype, {
 			//		activeRowNo += 1;
 			//	}
 			// });
+			//
 
 			this.dataFound();
 		}
@@ -1101,7 +1101,7 @@ Highcharts.extend(Data.prototype, {
 
 			// Disable number or date parsing by setting the X axis type to category
 			if (forceCategory || (row === 0 && firstRowAsNames)) {
-				column[row] = trimVal;
+				column[row] = '' + trimVal;
 
 			} else if (+trimInsideVal === floatVal) { // is numeric
 
@@ -1181,8 +1181,13 @@ Highcharts.extend(Data.prototype, {
 			regex: /^([0-9]{4})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
 			parser: function (match) {
 				return Date.UTC(+match[1], match[2] - 1, +match[3]);
-			},
-			alternative: 'YYYY/mm/dd'
+			}
+		},
+		'YYYY/mm/dd': {
+			regex: /^([0-9]{4})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
+			parser: function (match) {
+				return Date.UTC(+match[1], match[2] - 1, +match[3]);
+			}
 		},
 		'dd/mm/YYYY': {
 			regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
@@ -1253,6 +1258,7 @@ Highcharts.extend(Data.prototype, {
 			} else {
 				format = this.dateFormats[dateFormat];
 
+
 				if (!format) {
 					// The selected format is invalid
 					format = this.dateFormats['YYYY-mm-dd'];
@@ -1262,6 +1268,7 @@ Highcharts.extend(Data.prototype, {
 				if (match) {
 					ret = format.parser(match);
 				}
+
 			}
 			// Fall back to Date.parse
 			if (!match) {
@@ -1485,6 +1492,7 @@ Highcharts.extend(Data.prototype, {
 				options.afterComplete(chartOptions);
 			}
 		}
+
 	},
 
 	update: function (options, redraw) {
