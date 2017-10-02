@@ -291,6 +291,9 @@ var wordCloudOptions = {
 	 * This option decides which algorithm is used for placement, and rotation
 	 * of a word. The choice of algorith is therefore a crucial part of the
 	 * resulting layout of the wordcloud.
+	 * It is possible for users to add their own custom placement strategies
+	 * for use in word cloud. Read more about it in our
+	 * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
 	 */
 	placementStrategy: 'random',
 	/**
@@ -315,6 +318,9 @@ var wordCloudOptions = {
 	/**
 	 * Spiral used for placing a word after the inital position experienced a
 	 * collision with either another word or the borders.
+	 * It is possible for users to add their own custom spiralling algorithms
+	 * for use in word cloud. Read more about it in our
+	 * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
 	 */
 	spiral: 'archimedean',
 	tooltip: {
