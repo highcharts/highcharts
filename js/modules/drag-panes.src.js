@@ -359,7 +359,7 @@ H.AxisResizer.prototype = {
 			chart = resizer.axis.chart,
 			axes = resizer.options.controlledAxis,
 			nextAxes = axes.next.length === 0 ?
-				[chart.yAxis.indexOf(resizer.axis) + 1] : axes.next,
+				[H.inArray(resizer.axis, chart.yAxis) + 1] : axes.next,
 			// Main axis is included in the prev array by default
 			prevAxes = [resizer.axis].concat(axes.prev),
 			axesConfigs = [], // prev and next configs
