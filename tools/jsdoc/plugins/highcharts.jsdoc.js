@@ -147,13 +147,19 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         comment,
         properties,
         fullPath,
-        s
+        s,
+		shouldIgnore = false
     ;
 
     if (node.highcharts && node.highcharts.isOption) {
-        if (e.comment) {
+
+		shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
+
+		if (shouldIgnore) {
+			return;
+		} else if (e.comment) {
             e.comment = e.comment.replace('*/', '\n* @optionparent ' + node.highcharts.fullname + '\n*/');
-        } else {
+		} else {
             e.comment = '/** @optionparent ' + node.highcharts.fullname + ' */';
         }
         //if (node.highcharts.name === 'colors') {
@@ -182,6 +188,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 target = options;
 
                 s.forEach(function (p, i) {
+
                     fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
 
                     target[p] = target[p] || {};
@@ -256,28 +263,6 @@ function augmentOption(path, obj) {
 
     try {
 
-        // if (p.length === 1) {
-        //     current[p[0]] = current[p[0]] || {};
-        //     current[p[0]].doclet = {};
-        //     current[p[0]].meta = {};
-        //     current[p[0]].children = {};
-
-        //     Object.keys(obj).forEach(function (property) {
-        //         if (property !== 'comment' && property !== 'meta') {
-        //             current[p[0]].doclet[property] = obj[property];
-        //         }
-        //     });
-        //     return;
-        // }
-
-        // if (p.length === 1) {
-        //     if (current.children) {
-        //         current = current.children;
-        //     } else {
-        //         current = current.children = {};
-        //     }
-        // }
-
         p.forEach(function (thing, i) {
             if (i === p.length - 1) {
                 // Merge in stuff
@@ -299,17 +284,6 @@ function augmentOption(path, obj) {
                         current[thing].doclet[property] = obj[property];
                     }
                 });
-
-                //==current[thing].meta = current[thing].meta || {};
-
-                // if (obj && obj.meta) {
-                //     if (!current[thing].meta.filename === '??') {
-                //         current[thing].meta.filename = obj.meta.filename.substr(
-                //             obj.meta.filename.indexOf('highcharts/')
-                //         );
-                //     }
-                // }
-
                 return;
             }
 
@@ -320,6 +294,31 @@ function augmentOption(path, obj) {
     } catch (e) {
         console.log('ERROR deducing path', path);
     }
+}
+
+function removeOption(path) {
+	var current = options,
+		p = (path || '').split('.')
+	;
+
+	console.log('removing', path);
+
+	if (!obj) {
+		return;
+	}
+
+	p.some(function (thing, i) {
+		if (i === p.length - 1) {
+			delete curent[thing];
+			return true;
+		}
+
+		if (!current[thing]) {
+			return true;
+		}
+
+		current = current[thing].children;
+	});
 }
 
 /**
@@ -349,6 +348,8 @@ function resolveProductTypes(doclet, tagObj) {
 exports.defineTags = function (dictionary) {
     dictionary.defineTag('apioption', {
         onTagged: function (doclet, tagObj) {
+			if (doclet.ignored) return removeOption(tagObj.value);
+
             augmentOption(tagObj.value, doclet);
         }
     });
@@ -387,6 +388,8 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('optionparent', {
         onTagged: function (doclet, tagObj) {
+			if (doclet.ignored) return removeOption(tagObj.value);
+
             //doclet.fullname = tagObj.value;
             augmentOption(tagObj.value, doclet);
         }
@@ -422,6 +425,12 @@ exports.defineTags = function (dictionary) {
             });
         }
     });
+
+	dictionary.defineTag('ignore-option', {
+		onTagged: function (doclet, tagObj) {
+			doclet.ignored = true;
+		}
+	});
 
     dictionary.defineTag('default', {
         onTagged: function (doclet, tagObj) {
