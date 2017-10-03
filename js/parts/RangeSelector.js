@@ -1029,7 +1029,7 @@ RangeSelector.prototype = {
 			// Update the alignment to the updated spacing box
 			inputGroup.align(extend({
 				y: pos.inputTop,
-				width: inputGroup.getBBox().width,
+				width: inputGroup.getBBox().width
 			}, inputPosition), true, chart.spacingBox);
 
 			translateX = inputGroup.alignAttr.translateX + exportingX;
@@ -1039,12 +1039,9 @@ RangeSelector.prototype = {
 			} else if (
 					inputPosition.align === 'right'
 				) { 
-				//console.log('offest', chart.axisOffset[1]);
-				translateX = translateX - chart.axisOffset[1]//chart.axisOffset[1] // yAxis offset
+				translateX = translateX - chart.axisOffset[1]; // yAxis offset
 			} 
 
-			//console.log(chart.axisOffset, chart, 'mr',chart.marginRight, chart.spacing[1], chart.options.chart.spacing, chart.marginRight, translateX, chart.spacingBox);
-			
 			// add y from user options
 			inputGroup.attr({
 				translateY: pos.inputTop + 10,
@@ -1059,8 +1056,6 @@ RangeSelector.prototype = {
 
 			buttonGroupX = buttonGroup.translateX + buttonGroup.getBBox().x;
 			buttonGroupWidth = buttonGroup.getBBox().width + 20; // 20 is minimal spacing between elements
-
-			//console.log(buttonGroupX, buttonGroupWidth, inputGroup.getBBox().x, inputGroupX, exportingX);
 
 			if (
 					(inputPosition.align === buttonPosition.align) || 
@@ -1141,8 +1136,6 @@ RangeSelector.prototype = {
 			translateY += options.y;
 		} 
 
-		console.log('GETTTTT', groupHeight, rangeSelector.group.getBBox().height);
-
 		rangeSelector.group.translate(0 + options.x, translateY - 3); // floor to avoid crisp edges, 3px to keep back compatibility
 
 		// translate HTML inputs
@@ -1169,9 +1162,6 @@ RangeSelector.prototype = {
 			inputPositionY = inputPosition.y,
 			rangeSelectorHeight = 0,
 			minPosition;
-
-		//this.render();
-		//console.log('getHieght', rangeSelector.group.getBBox());
 
 		rangeSelectorHeight = rangeSelectorGroup ? (rangeSelectorGroup.getBBox(true).height) + 13 + yPosition : 0; // 13px to keep back compatibility
 		minPosition = Math.min(inputPositionY, buttonPositionY);
@@ -1373,8 +1363,6 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 		rangeSelector.render();
 		verticalAlign = rangeSelector.options.verticalAlign;
 
-		console.log('RENDER', rangeSelector.group.getBBox(true), rangeSelector.getHeight());
-
 		if (!rangeSelector.options.floating) {
 			if (verticalAlign === 'bottom') {
 				this.extraBottomMargin = true;
@@ -1445,15 +1433,13 @@ wrap(Chart.prototype, 'redraw', function (proceed, options, callback) {
 Chart.prototype.adjustPlotArea = function () {
 	var chart = this,
 		rangeSelector = chart.rangeSelector,
-		rangeSelectorHeight,
-		verticalAlign;
+		rangeSelectorHeight;
 
 	if (this.rangeSelector) {
 
 		rangeSelectorHeight = rangeSelector.getHeight();
 			
 		if (this.extraTopMargin) {
-			console.log('plotTOPPP',rangeSelectorHeight);
 			this.plotTop += rangeSelectorHeight;
 		}
 
