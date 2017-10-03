@@ -15,6 +15,9 @@ QUnit.test('Series.drawDataLabels', function (assert) {
                 d.aligned = true;
             },
             chart: {
+                options: {
+                    drilldown: {}
+                },
                 renderer: {
                     getContrast: H.Renderer.prototype.getContrast,
                     label: function () {
