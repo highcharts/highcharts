@@ -338,7 +338,75 @@ var sunburstOptions = {
 	 * structure.
 	 */
 	levelIsConstant: true
-
+	/**
+	 * Set options on specific levels. Takes precedence over series options,
+	 * but not point options.
+	 *
+	 * @type {Array<Object>}
+	 * @sample highcharts/demo/sunburst Sunburst chart
+	 * @apioption plotOptions.sunburst.levels
+	 */
+	/**
+	 * Can set a `borderColor` on all points which lies on the same level.
+	 *
+	 * @type {String}
+	 * @apioption plotOptions.sunburst.levels.borderColor
+	 */
+	/**
+	 * Can set a `borderWidth` on all points which lies on the same level.
+	 *
+	 * @type {String}
+	 * @apioption plotOptions.sunburst.levels.borderWidth
+	 */
+	/**
+	 * Can set a `borderDashStyle` on all points which lies on the same level.
+	 *
+	 * @type {String}
+	 * @apioption plotOptions.sunburst.levels.borderDashStyle
+	 */
+	/**
+	 * Can set a `color` on all points which lies on the same level.
+	 *
+	 * @type {String}
+	 * @apioption plotOptions.sunburst.levels.color
+	 */
+	/**
+	 * Can set a `colorVariation` on all points which lies on the same level.
+	 *
+	 * @type {Object}
+	 * @apioption plotOptions.sunburst.levels.colorVariation
+	 */
+	/**
+	 * The key of a color variation. Currently supports `brightness` only.
+	 *
+	 * @type {String}
+	 * @apioption plotOptions.sunburst.levels.colorVariation.key
+	 */
+	/**
+	 * The ending value of a color variation. The last sibling will receive this
+	 * value.
+	 *
+	 * @type {String}
+	 * @apioption plotOptions.sunburst.levels.colorVariation.to
+	 */
+	/**
+	 * Can set a `dataLabels` on all points which lies on the same level.
+	 *
+	 * @type {Object}
+	 * @apioption plotOptions.sunburst.levels.dataLabels
+	 */
+	/**
+	 * Can set a `rotation` on all points which lies on the same level.
+	 *
+	 * @type {Number}
+	 * @apioption plotOptions.sunburst.levels.rotation
+	 */
+	/**
+	 * Can set a `rotationMode` on all points which lies on the same level.
+	 *
+	 * @type {String}
+	 * @apioption plotOptions.sunburst.levels.rotationMode
+	 */
 	/**
 	 * When enabled the user can click on a point which is a parent and
 	 * zoom in on its children.

@@ -451,7 +451,39 @@ exports.defineTags = function (dictionary) {
         }
     });
 
-    dictionary.defineTag('extends', {
+	function handleValue(doclet, tagObj) {
+		doclet.values = tagObj.value;
+		return;
+
+		var t;
+		doclet.values = doclet.values || [];
+
+		// A lot of these options are defined as json.
+		try {
+			t = JSON.parse(tagObj.value);
+			if (Array.isArray(t)) {
+				doclet.values = doclet.values.concat(t);
+			} else {
+				doclet.values.push(t);
+			}
+		} catch (e) {
+			doclet.values.push(tabObj.value);
+		}
+	}
+
+	dictionary.defineTag('validvalue', {
+		onTagged: function (doclet, tag) {
+			handleValue(doclet, tag);
+		}
+	});
+
+	dictionary.defineTag('values', {
+		onTagged: function (doclet, tag) {
+			handleValue(doclet, tag);
+		}
+	});
+
+	dictionary.defineTag('extends', {
         onTagged: function (doclet, tagObj) {
             doclet.extends = tagObj.value;
         }

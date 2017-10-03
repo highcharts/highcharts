@@ -367,8 +367,9 @@ const generateClassReferences = ({ templateDir, destination }) => {
 
 const compile = (files, sourceFolder) => {
     const createSourceMap = true;
+
     console.log(colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.'));
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         files.forEach(path => {
             const closureCompiler = require('google-closure-compiler-js');
             // const fs = require('fs');
@@ -376,6 +377,15 @@ const compile = (files, sourceFolder) => {
             const sourcePath = sourceFolder + path;
             const outputPath = sourcePath.replace('.src.js', '.js');
             const src = U.getFile(sourcePath);
+            const getErrorMessage = (e) => {
+                return [
+                    'Compile error in file: ' + path,
+                    '- Type: ' + e.type,
+                    '- Line: ' + e.lineNo,
+                    '- Char : ' + e.charNo,
+                    '- Description: ' + e.description
+                ].join('\n');
+            };
             const out = closureCompiler.compile({
                 compilationLevel: 'SIMPLE_OPTIMIZATIONS',
                 jsCode: [{
@@ -385,12 +395,20 @@ const compile = (files, sourceFolder) => {
                 languageOut: 'ES5',
                 createSourceMap: createSourceMap
             });
-            U.writeFile(outputPath, out.compiledCode);
-            if (createSourceMap) {
-                U.writeFile(outputPath + '.map', out.sourceMap);
+            const errors = out.errors;
+            if (errors.length) {
+                const msg = errors.map((e) => {
+                    return getErrorMessage(e);
+                }).join('\n');
+                reject(msg);
+            } else {
+                U.writeFile(outputPath, out.compiledCode);
+                if (createSourceMap) {
+                    U.writeFile(outputPath + '.map', out.sourceMap);
+                }
+                // @todo add filesize information
+                console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
             }
-            // @todo add filesize information
-            console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
         });
         resolve('Compile is complete');
     });
@@ -476,9 +494,31 @@ const copyToDist = () => {
     };
     // Files that should not be distributed with certain products
     const filter = {
-        highcharts: ['highmaps.js', 'highstock.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
-        highstock: ['highcharts.js', 'highmaps.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
-        highmaps: ['highstock.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map-parser.js', 'modules/series-label.js', 'modules/solid-gauge.js']
+        highcharts: [
+            'highmaps.js',
+            'highstock.js',
+            'indicators/',
+            'modules/canvasrenderer.experimental.js',
+            'modules/map.js',
+            'modules/map-parser.js'
+        ].map(str => new RegExp(str)),
+        highstock: [
+            'highcharts.js',
+            'highmaps.js',
+            'modules/broken-axis.js',
+            'modules/canvasrenderer.experimental.js',
+            'modules/map.js',
+            'modules/map-parser.js'
+        ].map(str => new RegExp(str)),
+        highmaps: [
+            'highstock.js',
+            'indicators/',
+            'modules/broken-axis.js',
+            'modules/canvasrenderer.experimental.js',
+            'modules/map-parser.js',
+            'modules/series-label.js',
+            'modules/solid-gauge.js'
+        ].map(str => new RegExp(str))
     };
 
     // Copy source files to the distribution packages.
@@ -493,7 +533,11 @@ const copyToDist = () => {
             const source = sourceFolder + path;
             const filename = path.replace('.src.js', '.js').replace('js/', '');
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-                if (filter[lib].indexOf(filename) === -1) {
+                const filters = filter[lib];
+                const include = !filters.find((regex) => {
+                    return regex.test(filename);
+                });
+                if (include) {
                     const target = distFolder + lib + '/code/' + path;
                     obj[target] = source;
                 }
@@ -729,30 +773,6 @@ const filesize = () => {
     })
     .catch(console.log);
 };
-
-/**
- * Download a version of the API for Highstock, Highstock or Highmaps.
- * Executes a grunt task through command line.
- * @param  {string} product Which api to download. Must be lowercase.
- * @param  {string} version Which version to download.
- * @return {Promise} Returns a promise which resolves when download is completed.
- */
-const downloadAPI = (product, version) => commandLine('grunt download-api:' + product + ':' + version);
-
-/**
- * Download all the API's of Highcharts, Highstock and Highmaps.
- * @return {Promise} Returns a promise which resolves when all downloads are completed.
- */
-const downloadAllAPI = () => new Promise((resolve, reject) => {
-    // @todo Pass in version, instead of hardcoding it.
-    const version = getProductVersion();
-    const promises = ['highcharts', 'highstock', 'highmaps'].map((product) => downloadAPI(product, version));
-    Promise.all(promises).then(() => {
-        resolve('Finished downloading api\'s for Highcharts, Highstock and Highmaps');
-    }).catch((err) => {
-        reject(err);
-    });
-});
 
 /**
  * Run remaining dist tasks in build.xml.
@@ -1094,7 +1114,6 @@ gulp.task('lint', lint);
 gulp.task('lint-samples', lintSamples);
 gulp.task('compile', compileScripts);
 gulp.task('compile-lib', compileLib);
-gulp.task('download-api', downloadAllAPI);
 gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
 gulp.task('examples', createAllExamples);
 
@@ -1149,7 +1168,6 @@ gulp.task('dist', () => {
         .then(gulpify('compile', compileScripts))
         .then(gulpify('cleanDist', cleanDist))
         .then(gulpify('copyToDist', copyToDist))
-        .then(gulpify('downloadAllAPI', downloadAllAPI))
         .then(gulpify('createProductJS', createProductJS))
         .then(gulpify('createExamples', createAllExamples))
         .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))

@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     chart: {
         type: 'tilemap',
+        height: '115%',
         inverted: true
     },
 

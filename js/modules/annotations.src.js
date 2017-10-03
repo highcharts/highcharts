@@ -887,7 +887,7 @@ Annotation.prototype = {
 	 * If the param is omitted, the annotation's visibility is toggled
 	 * @return {undefined}
 	 **/
-	setVisible(visibility) {
+	setVisible: function (visibility) {
 		var options = this.options,
 			visible = pick(visibility, !options.visible);
 

@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'tilemap'
+        type: 'tilemap',
+        height: '120%'
     },
 
     title: {

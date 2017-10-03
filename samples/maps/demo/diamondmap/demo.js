@@ -1,7 +1,8 @@
 var chart = Highcharts.chart('container', {
     chart: {
         type: 'tilemap',
-        marginTop: 0
+        marginTop: 15,
+        height: '65%'
     },
 
     title: {

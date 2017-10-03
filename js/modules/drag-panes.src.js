@@ -217,7 +217,8 @@ H.AxisResizer.prototype = {
 				),
 				chart.plotTop + chart.plotHeight
 			),
-			attr = {};
+			attr = {},
+			lineWidth;
 
 		/*= if (build.classic) { =*/
 		attr = {
@@ -242,16 +243,17 @@ H.AxisResizer.prototype = {
 		/*= } =*/
 		resizer.controlLine.add(axis.axisGroup);
 
+		/*= if (build.classic) { =*/
+		lineWidth = options.lineWidth;
+		/*= } else { =*/
+		lineWidth = resizer.controlLine.strokeWidth();
+		/*= } =*/
 		attr.d = chart.renderer.crispLine(
 			[
 				'M', axis.left + x, pos,
 				'L', axis.left + axis.width + x, pos
 			],
-			/*= if (build.classic) { =*/
-			options.lineWidth,
-			/*= } else { =*/
-			resizer.controlLine.strokeWidth()
-			/*= } =*/
+			lineWidth
 		);
 
 		resizer.controlLine.attr(attr);
