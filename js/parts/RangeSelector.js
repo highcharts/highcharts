@@ -1026,25 +1026,11 @@ RangeSelector.prototype = {
 
 			// Update the alignment to the updated spacing box
 			inputGroup.align(extend({
-				y: pos.inputTop,
-				width: inputGroup.getBBox().width
-			}, inputPosition), true, chart.spacingBox);
-
-			translateX = inputGroup.alignAttr.translateX + exportingX;
-			
-			if (inputPosition.align === 'left') {
-				translateX += plotLeft;
-			} else if (
-					inputPosition.align === 'right'
-				) { 
-				translateX = translateX - chart.axisOffset[1]; // yAxis offset
-			} 
-
-			// add y from user options
-			inputGroup.attr({
-				translateY: pos.inputTop + 10,
-				translateX: translateX - (inputPosition.align === 'right' ? 2 : 0) // fix wrong getBBox() value on right align 
-			});
+				y: inputPosition.y,
+				width: inputGroup.getBBox().width,
+				align: inputPosition.align,
+				x: inputPosition.x + translateX - 2 // fix wrong getBBox() value on right align 
+			}), true, chart.spacingBox);
 
 			// detect collision
 			inputGroupX = inputGroup.alignAttr.translateX + inputGroup.alignOptions.x - 
@@ -1125,13 +1111,10 @@ RangeSelector.prototype = {
 			}
 		}
 
-		translateY = Math.floor(translateY);
-
-		if (floating) {
-			translateY += options.y;
-		} 
-
-		rangeSelector.group.translate(0 + options.x, translateY - 3); // floor to avoid crisp edges, 3px to keep back compatibility
+		rangeSelector.group.translate(
+			options.x,
+			options.y + Math.floor(translateY)
+		); 
 
 		// translate HTML inputs
 		if (inputEnabled !== false) {
