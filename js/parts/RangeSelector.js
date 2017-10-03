@@ -1376,7 +1376,7 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 
 });
 
-wrap(Chart.prototype, 'update', function (proceed, options, callback) {
+wrap(Chart.prototype, 'update', function (proceed, options, redraw, oneToOne) {
 
 	var chart = this,
 		rangeSelector = chart.rangeSelector,
@@ -1403,10 +1403,10 @@ wrap(Chart.prototype, 'update', function (proceed, options, callback) {
 
 	proceed.call(this, H.merge(true, options, {
 		chart: {
-			marginBottom: pick(options.chart.marginBottom, chart.margin.bottom),
-			spacingBottom: pick(options.chart.spacingBottom, chart.spacing.bottom)
+			marginBottom: pick(options.chart && options.chart.marginBottom, chart.margin.bottom),
+			spacingBottom: pick(options.chart && options.chart.spacingBottom, chart.spacing.bottom)
 		}
-	}), callback);
+	}), redraw, oneToOne);
 
 });
 
