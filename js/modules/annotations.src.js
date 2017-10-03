@@ -60,9 +60,8 @@ var	merge = H.merge,
  * }
  * </pre>
  * @type {Object}
- * @sample {highcharts} highcharts/annotations/custom-markers/ Define a custom marker for annotations
- * @sample {highstock} highcharts/annotations/custom-markers/ Define a custom marker for annotations
- * @sample {highmaps} highcharts/annotations/custom-markers/ Define a custom marker for annotations
+ * @sample highcharts/annotations/custom-markers/
+ *         Define a custom marker for annotations
  * @since 6.0.0
  * @apioption defs.markers
  */

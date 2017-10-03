@@ -162,6 +162,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
 
+		// An array of functions that returns labels that should be considered
+		// for anti-collision
+		this.labelCollectors = [];
+
 		this.callback = callback;
 		this.isResizing = 0;
 

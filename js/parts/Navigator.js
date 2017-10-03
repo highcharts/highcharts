@@ -1696,7 +1696,7 @@ Navigator.prototype = {
 					baseOptions.data && baseOptions.data.slice(0);
 
 				// Update or add the series
-				if (linkedNavSeries) {
+				if (linkedNavSeries && linkedNavSeries.options) {
 					linkedNavSeries.update(mergedNavSeriesOptions, redraw);
 				} else {
 					base.navigatorSeries = chart.initSeries(

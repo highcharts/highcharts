@@ -13,13 +13,9 @@ import '../parts/Chart.js';
  */
 var Chart = H.Chart,
 	each = H.each,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	addEvent = H.addEvent;
-
-/**
- * An array of functions that returns labels that should be considered.
- */
-Chart.prototype.labelCollectors = [];
 
 // Collect potensial overlapping data labels. Stack labels probably don't need
 // to be considered because they are usually accompanied by data labels that lie
@@ -29,8 +25,21 @@ Chart.prototype.callbacks.push(function (chart) {
 		var labels = [];
 
 		// Consider external label collectors
-		each(chart.labelCollectors, function (collector) {
+		each(chart.labelCollectors || [], function (collector) {
 			labels = labels.concat(collector());
+		});
+
+		each(chart.yAxis || [], function (yAxis) {
+			if (
+				yAxis.options.stackLabels &&
+				!yAxis.options.stackLabels.allowOverlap
+			) {
+				objectEach(yAxis.stacks, function (stack) {
+					objectEach(stack, function (stackItem) {
+						labels.push(stackItem.label);
+					});
+				});
+			}
 		});
 
 		each(chart.series || [], function (series) {

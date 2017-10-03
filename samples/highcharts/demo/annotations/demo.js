@@ -2054,12 +2054,13 @@ Highcharts.chart('container', {
 
     series: [{
         data: elevationData,
-        color: Highcharts.getOptions().colors[1],
+        lineColor: Highcharts.getOptions().colors[1],
+        color: Highcharts.getOptions().colors[2],
+        fillOpacity: 0.5,
         name: 'Elevation',
         marker: {
             enabled: false
         },
-        fillOpacity: 0.25,
         threshold: null
     }]
 

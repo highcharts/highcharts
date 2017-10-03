@@ -1,6 +1,6 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
- * Boost module
+ * Drag-panes module
  *
  * (c) 2010-2017 Highsoft AS
  * Author: Kacper Madej
