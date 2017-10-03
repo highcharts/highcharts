@@ -1401,10 +1401,10 @@ wrap(Chart.prototype, 'update', function (proceed, options, callback) {
 		}
 	}
 
-	proceed.call(this, H.merge(options, {
+	proceed.call(this, H.merge(true, options, {
 		chart: {
-			marginBottom: chart.margin.bottom,
-			spacingBottom: chart.spacing.bottom
+			marginBottom: pick(options.chart.marginBottom, chart.margin.bottom),
+			spacingBottom: pick(options.chart.spacingBottom, chart.spacing.bottom)
 		}
 	}), callback);
 
