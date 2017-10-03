@@ -775,30 +775,6 @@ const filesize = () => {
 };
 
 /**
- * Download a version of the API for Highstock, Highstock or Highmaps.
- * Executes a grunt task through command line.
- * @param  {string} product Which api to download. Must be lowercase.
- * @param  {string} version Which version to download.
- * @return {Promise} Returns a promise which resolves when download is completed.
- */
-const downloadAPI = (product, version) => commandLine('grunt download-api:' + product + ':' + version);
-
-/**
- * Download all the API's of Highcharts, Highstock and Highmaps.
- * @return {Promise} Returns a promise which resolves when all downloads are completed.
- */
-const downloadAllAPI = () => new Promise((resolve, reject) => {
-    // @todo Pass in version, instead of hardcoding it.
-    const version = getProductVersion();
-    const promises = ['highcharts', 'highstock', 'highmaps'].map((product) => downloadAPI(product, version));
-    Promise.all(promises).then(() => {
-        resolve('Finished downloading api\'s for Highcharts, Highstock and Highmaps');
-    }).catch((err) => {
-        reject(err);
-    });
-});
-
-/**
  * Run remaining dist tasks in build.xml.
  * @return {Promise} Returns a promise which resolves when scripts is finished.
  */
@@ -1138,7 +1114,6 @@ gulp.task('lint', lint);
 gulp.task('lint-samples', lintSamples);
 gulp.task('compile', compileScripts);
 gulp.task('compile-lib', compileLib);
-gulp.task('download-api', downloadAllAPI);
 gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
 gulp.task('examples', createAllExamples);
 
@@ -1193,7 +1168,6 @@ gulp.task('dist', () => {
         .then(gulpify('compile', compileScripts))
         .then(gulpify('cleanDist', cleanDist))
         .then(gulpify('copyToDist', copyToDist))
-        .then(gulpify('downloadAllAPI', downloadAllAPI))
         .then(gulpify('createProductJS', createProductJS))
         .then(gulpify('createExamples', createAllExamples))
         .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))
