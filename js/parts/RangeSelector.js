@@ -476,12 +476,14 @@ RangeSelector.prototype = {
 
 		addEvent(chart, 'load', function () {
 			// If a data grouping is applied to the current button, release it when extremes change
-			addEvent(chart.xAxis[0], 'setExtremes', function (e) {
-				if (this.max - this.min !== chart.fixedRange && e.trigger !== 'rangeSelectorButton' &&
-						e.trigger !== 'updatedData' && rangeSelector.forcedDataGrouping) {
-					this.setDataGrouping(false, false);
-				}
-			});
+			if (chart.xAxis && chart.xAxis[0]) {
+				addEvent(chart.xAxis[0], 'setExtremes', function (e) {
+					if (this.max - this.min !== chart.fixedRange && e.trigger !== 'rangeSelectorButton' &&
+							e.trigger !== 'updatedData' && rangeSelector.forcedDataGrouping) {
+						this.setDataGrouping(false, false);
+					}
+				});
+			}
 		});
 	},
 

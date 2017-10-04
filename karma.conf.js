@@ -80,14 +80,18 @@ function getFiles() { // eslint-disable-line no-unused-vars
         i++;
     });
     console.log(('Found ' + dependencies.length + ' dependencies').green);
+    /*
+    console.log(dependencies.map(src => {
+        src = src.replace(/^code/, 'https://code.highcharts.com');
+        return `<script src="${src}"></script>`;
+    }).join('\n'));
+    */
     console.log(dependencies);
     return dependencies;
 }
 
 
 module.exports = function (config) {
-
-    // const files = getFiles();
 
     let files = [
         // External
@@ -110,6 +114,8 @@ module.exports = function (config) {
         'code/indicators/indicators.src.js',
         'code/indicators/*.src.js'
     ];
+
+    // files = getFiles();
 
     config.set({
         // frameworks: ['mocha', 'chai'],

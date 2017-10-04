@@ -1735,7 +1735,7 @@ H.addEvent = function (el, type, fn) {
 H.removeEvent = function (el, type, fn) {
 	
 	var events,
-		hcEvents = el && el.hcEvents,
+		hcEvents = el.hcEvents,
 		index;
 
 	function removeOneEvent(type, fn) {

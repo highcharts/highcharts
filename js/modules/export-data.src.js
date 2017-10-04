@@ -107,7 +107,11 @@ Highcharts.setOptions({
 // Add an event listener to handle the showTable option
 Highcharts.Chart.prototype.callbacks.push(function (chart) {
 	Highcharts.addEvent(chart, 'render', function () {
-		if (chart.options.exporting.showTable) {
+		if (
+			chart.options &&
+			chart.options.exporting &&
+			chart.options.exporting.showTable
+		) {
 			chart.viewData();
 		}
 	});
