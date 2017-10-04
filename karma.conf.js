@@ -19,6 +19,7 @@ module.exports = function (config) {
             'code/modules/map.src.js',
             'code/modules/annotations.src.js',
             // 'code/modules/boost.src.js',
+            'code/modules/data.src.js',
             'code/modules/drilldown.src.js',
             'code/modules/exporting.src.js',
             'code/modules/exporting-data.src.js',
@@ -37,6 +38,7 @@ module.exports = function (config) {
             // 'samples/unit-tests/chart/*/demo.js',
             'samples/unit-tests/color/*/demo.js',
             'samples/unit-tests/coloraxis/*/demo.js',
+            'samples/unit-tests/data/*/demo.js',
             'samples/unit-tests/datalabels/*/demo.js',
             'samples/unit-tests/drilldown/*/demo.js',
             // 'samples/unit-tests/export-data/*/demo.js' // => move data into tests
