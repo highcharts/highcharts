@@ -1657,8 +1657,7 @@ Navigator.prototype = {
 					userNavOptions = extend(
 						// Grab color from base as default
 						{
-							// TODO: HC6, remove palette default, use base.color
-							color: '${palette.highlightColor80}' // base.color
+							color: base.color
 						},
 						!isArray(chartNavigatorSeriesOptions) ?
 							chartNavigatorSeriesOptions :
