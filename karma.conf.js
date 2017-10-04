@@ -7,6 +7,9 @@ module.exports = function (config) {
 
             // Frameworks
             'vendor/jquery-1.9.1.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data-2012-2022.min.js',
+            'utils/samples/test-controller.js',
 
             // Highcharts
             'code/highcharts.src.js',
@@ -19,6 +22,7 @@ module.exports = function (config) {
             'code/modules/drilldown.src.js',
             'code/modules/exporting.src.js',
             'code/modules/exporting-data.src.js',
+            'code/indicators/indicators.src.js',
             'code/indicators/*.src.js',
 
             // Setup the DOM, container etc
@@ -34,7 +38,25 @@ module.exports = function (config) {
             'samples/unit-tests/color/*/demo.js',
             'samples/unit-tests/coloraxis/*/demo.js',
             'samples/unit-tests/datalabels/*/demo.js',
-            'samples/unit-tests/drilldown/*/demo.js'
+            'samples/unit-tests/drilldown/*/demo.js',
+            // 'samples/unit-tests/export-data/*/demo.js' // => move data into tests
+            // 'samples/unit-tests/exporting/*/demo.js'
+            'samples/unit-tests/global/*/demo.js',
+            'samples/unit-tests/highcharts/*/demo.js',
+            'samples/unit-tests/indicator-*/*/demo.js',
+            'samples/unit-tests/interaction/*/demo.js',
+            // 'samples/unit-tests/legend/*/demo.js',
+            // 'samples/unit-tests/maps/*/demo.js'
+            'samples/unit-tests/pane/*/demo.js',
+            'samples/unit-tests/plotbandslines/*/demo.js',
+            'samples/unit-tests/point/*/demo.js',
+            'samples/unit-tests/pointer/*/demo.js',
+            // 'samples/unit-tests/rangeselector/*/demo.js'
+            'samples/unit-tests/responsive/*/demo.js',
+            'samples/unit-tests/scrollbar/*/demo.js',
+            'samples/unit-tests/scroller/*/demo.js'
+            // 'samples/unit-tests/series/*/demo.js'
+
 
         ],
         /*
