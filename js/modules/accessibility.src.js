@@ -1452,7 +1452,9 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// Handle keyboard events
 	addEvent(chart.renderTo, 'keydown', keydownHandler);
 	addEvent(chart, 'destroy', function () {
-		removeEvent(chart.renderTo, 'keydown', keydownHandler);
+		if (chart.renderTo) {
+			removeEvent(chart.renderTo, 'keydown', keydownHandler);
+		}
 	});
 };
 
