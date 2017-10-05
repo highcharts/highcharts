@@ -397,7 +397,17 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('product', {
         onTagged: function (doclet, tagObj) {
-            doclet.products = tagObj.value.split(' ');
+			var adds = tagObj.value.split(' ');
+			doclet.products = doclet.products || [];
+
+			// Need to make sure we don't add dupes
+			adds.forEach(function (add) {
+				if (doclet.products.filter(function (e) {
+					return e === add;
+				}).length === 0) {
+					doclet.products.push(add);
+				}
+			});
         }
     });
 
