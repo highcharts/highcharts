@@ -975,9 +975,7 @@ RangeSelector.prototype = {
 		}
 
 		if (buttonPosition.align === 'left') {
-		
 			translateX = buttonPosition.x - chart.spacing[3];
-		
 		} else if (buttonPosition.align === 'right') {
 			translateX = buttonPosition.x + exportingX - chart.spacing[1];
 		} 
@@ -1025,12 +1023,12 @@ RangeSelector.prototype = {
 			}
 
 			// Update the alignment to the updated spacing box
-			inputGroup.align(extend({
+			inputGroup.align({
 				y: inputPosition.y,
 				width: inputGroup.getBBox().width,
 				align: inputPosition.align,
 				x: inputPosition.x + translateX - 2 // fix wrong getBBox() value on right align 
-			}), true, chart.spacingBox);
+			}, true, chart.spacingBox);
 
 			// detect collision
 			inputGroupX = inputGroup.alignAttr.translateX + inputGroup.alignOptions.x - 
