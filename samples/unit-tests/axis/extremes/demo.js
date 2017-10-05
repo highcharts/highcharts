@@ -72,6 +72,11 @@ QUnit.test('getSeriesExtremes', function (assert) {
 
 QUnit.test('Zoom out of container', function (assert) {
     var fakeAxis = {
+        chart: {
+            options: {
+                chart: {}
+            }
+        },
         dataMin: 0,
         dataMax: 10,
         options: {},

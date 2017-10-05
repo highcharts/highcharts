@@ -2,6 +2,47 @@
 /* eslint no-console: 0 */
 
 /**
+ * Take an URL and translate to a local file path.
+ * @param  {String} path The global URL
+ * @returns {String} The local path
+ */
+function fileNameToLocal(path) {
+
+    path = path
+
+        // Don't use product folders
+        .replace(
+            '/code.highcharts.com/stock/',
+            '/code.highcharts.com/'
+        )
+        .replace(
+            '/code.highcharts.com/maps/',
+            '/code.highcharts.com/'
+        )
+
+        // Load Highstock and Highmaps as modules
+        .replace(
+            '/code.highcharts.com/highmaps.js',
+            '/code.highcharts.com/modules/map.js'
+        )
+        .replace(
+            '/code.highcharts.com/highstock.js',
+            '/code.highcharts.com/modules/stock.js'
+        )
+
+        // Use local files
+        .replace(
+            /https:\/\/code.highcharts.com\/(.*?)\.js$/,
+            'code/$1.src.js'
+        )
+        .replace(
+            /^code\/mapdata\/(.*?)\.src.js$/,
+            'https://code.highcharts.com/mapdata/$1.js'
+        );
+    return path;
+}
+
+/**
  * Get the resources from demo.html files
  * @returns {Array.<String>} The file names
  */
@@ -38,37 +79,7 @@ function getFiles() { // eslint-disable-line no-unused-vars
                     }
                 });
 
-                filename = filename
-
-                    // Don't use product folders
-                    .replace(
-                        '/code.highcharts.com/stock/',
-                        '/code.highcharts.com/'
-                    )
-                    .replace(
-                        '/code.highcharts.com/maps/',
-                        '/code.highcharts.com/'
-                    )
-
-                    // Load Highstock and Highmaps as modules
-                    .replace(
-                        '/code.highcharts.com/highmaps.js',
-                        '/code.highcharts.com/modules/map.js'
-                    )
-                    .replace(
-                        '/code.highcharts.com/highstock.js',
-                        '/code.highcharts.com/modules/stock.js'
-                    )
-
-                    // Use local files
-                    .replace(
-                        /https:\/\/code.highcharts.com\/(.*?)\.js$/,
-                        'code/$1.src.js'
-                    )
-                    .replace(
-                        /^code\/mapdata\/(.*?)\.src.js$/,
-                        'https://code.highcharts.com/mapdata/$1.js'
-                    );
+                filename = fileNameToLocal(filename);
 
                 if (dependencies.indexOf(filename) === -1 && !excluded) {
                     dependencies.push(filename);
@@ -79,20 +90,23 @@ function getFiles() { // eslint-disable-line no-unused-vars
 
         i++;
     });
-    console.log(('Found ' + dependencies.length + ' dependencies').green);
+    // console.log(('Found ' + dependencies.length + ' dependencies').green);
     /*
     console.log(dependencies.map(src => {
-        src = src.replace(/^code/, 'https://code.highcharts.com');
+        src = src
+            .replace(/^code/, 'http://code.highcharts.local')
+            .replace(/\.src\.js$/, '.js');
         return `<script src="${src}"></script>`;
     }).join('\n'));
-    */
-    console.log(dependencies);
+    // */
+    // console.log(dependencies);
     return dependencies;
 }
 
 
 module.exports = function (config) {
 
+    /*
     let files = [
         // External
         'vendor/jquery-1.9.1.js',
@@ -114,8 +128,9 @@ module.exports = function (config) {
         'code/indicators/indicators.src.js',
         'code/indicators/*.src.js'
     ];
+    */
 
-    // files = getFiles();
+    let files = getFiles();
 
     config.set({
         // frameworks: ['mocha', 'chai'],
@@ -128,32 +143,32 @@ module.exports = function (config) {
 
             // Tests
             'samples/unit-tests/3d/*/demo.js',
-            // 'samples/unit-tests/accessibility/*/demo.js',
+            'samples/unit-tests/accessibility/*/demo.js',
             'samples/unit-tests/annotations/*/demo.js',
             // 'samples/unit-tests/axis/*/demo.js',
             // 'samples/unit-tests/boost/*/demo.js',
             // 'samples/unit-tests/chart/*/demo.js',
             'samples/unit-tests/color/*/demo.js',
-            'samples/unit-tests/coloraxis/*/demo.js',
+            // 'samples/unit-tests/coloraxis/*/demo.js',
             'samples/unit-tests/data/*/demo.js',
             'samples/unit-tests/datalabels/*/demo.js',
             'samples/unit-tests/drilldown/*/demo.js',
             // 'samples/unit-tests/export-data/*/demo.js' // => move data into tests
             // 'samples/unit-tests/exporting/*/demo.js'
             'samples/unit-tests/global/*/demo.js',
-            'samples/unit-tests/highcharts/*/demo.js',
-            'samples/unit-tests/indicator-*/*/demo.js',
-            'samples/unit-tests/interaction/*/demo.js',
+            // 'samples/unit-tests/highcharts/*/demo.js',
+            // 'samples/unit-tests/indicator-*/*/demo.js',
+            // 'samples/unit-tests/interaction/*/demo.js',
             // 'samples/unit-tests/legend/*/demo.js',
-            // 'samples/unit-tests/maps/*/demo.js'
-            'samples/unit-tests/pane/*/demo.js',
-            'samples/unit-tests/plotbandslines/*/demo.js',
-            'samples/unit-tests/point/*/demo.js',
-            'samples/unit-tests/pointer/*/demo.js',
+            'samples/unit-tests/maps/*/demo.js',
+            // 'samples/unit-tests/pane/*/demo.js',
+            'samples/unit-tests/plotbandslines/*/demo.js'
+            // 'samples/unit-tests/point/*/demo.js',
+            // 'samples/unit-tests/pointer/*/demo.js',
             // 'samples/unit-tests/rangeselector/*/demo.js'
-            'samples/unit-tests/responsive/*/demo.js',
-            'samples/unit-tests/scrollbar/*/demo.js',
-            'samples/unit-tests/scroller/*/demo.js'
+            // 'samples/unit-tests/responsive/*/demo.js',
+            // 'samples/unit-tests/scrollbar/*/demo.js',
+            // 'samples/unit-tests/scroller/*/demo.js'
             // 'samples/unit-tests/series/*/demo.js'
 
 

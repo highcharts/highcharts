@@ -108,12 +108,19 @@ function getJS() {
 }
 
 function getHTML($which) {
-	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting, $isUnitTest, $githubServer;
+	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting,
+		$isUnitTest, $githubServer;
 	$bogus = md5('bogus');
+
+	// When emulating karma, load all Highcharts files
+	$emulateKarma = false;
 
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	if (is_file("$path/demo.html")) {
+
+	if ($emulateKarma && $isUnitTest) {
+		include (__DIR__ . '/../../karma.qunit.html');
+	} elseif (is_file("$path/demo.html")) {
 		include("$path/demo.html");
 
 	} elseif ($which === 'right') {

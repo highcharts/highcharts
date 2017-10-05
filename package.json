@@ -31,7 +31,6 @@
   "devDependencies": {
     "babel-plugin-transform-es2015-arrow-functions": "^6.8.0",
     "browserify": "^12.0.2",
-    "chai": "^4.1.2",
     "closurecompiler": "^1.6.1",
     "colors": "~1.1.2",
     "eslint": "3.12.2",
@@ -49,7 +48,6 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-qunit": "^1.2.1",
     "lint-staged": "^4.2.3",
-    "mocha": "^4.0.0",
     "node-sass": "^4.5.3",
     "qunitjs": "^2.4.0",
     "request": "^2.81.0",
