@@ -1,74 +1,18 @@
-<p>Highcharts 6.0.0 (2017-10-04)</p>
-<ul>
-    <li>Added <a href="https://www.highcharts.com/docs/advanced-chart-features/annotations-module">Annotations module</a> for annotating a chart with labels or shapes.</li>
-    <li>Added the Boost module for WebGL rendering of millions of points.</li>
-    <li>Added the <a href="https://api.highcharts.com/highcharts/plotOptions.line.label">Series labels</a> module for organic positioning of labels next to the data.</li>
-    <li>Decoupled old IE code into a separate module.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/bell-curve-series">bell curve</a>.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/bullet-chart">bullet chart</a>.</li>
-    <li>Added new series type, histogram.</li>
-    <li>Added new chart layout, <a href="https://www.highcharts.com/docs/chart-and-series-types/parallel-coordinates-chart">parallel coordinates</a> chart.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/pareto-chart">pareto chart</a>.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/sankey-diagram">sankey chart</a>.</li>
-    <li>Added new series type, 3D scatter chart.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/stream-graph">stream graph</a>.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/sunburst-series">sunburst</a>.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/variable-radius-pie-chart">variable pie</a>.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/variwide-chart">variwide</a>.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/vector-plot">vector plot</a>.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/wind-barbs-series">wind barbs</a>.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series">word cloud</a>.</li>
-    <li>Added new series type, <a href="https://www.highcharts.com/docs/chart-and-series-types/x-range-series">X range</a>.</li>
-    <li>Improved CSV parser of the data module.</li>
-
-</ul>
+<p>Highcharts 6.0.1 (2017-10-05)</p>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="heading-6-0-0-bug-fixes" class="panel-heading">
+        <div id="heading-6-0-1-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#6-0-0-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#6-0-1-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="6-0-0-bug-fixes" class="panel-collapse collapse">
+        <div id="6-0-1-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5909">#5909</a>, plotband border on top  was missing.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6005">#6005</a>, selected pie slice had wrong color in styled mode.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6261">#6261</a>, a regression causing charts to draw at small heights if container size was small.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6268">#6268</a>, <code>Chart.update()</code> did not update parameters of the data module.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6302">#6302</a>, chart was not rendered when <code>xAxis.max</code> and <code>rangeselector.selected</code> were defined</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6648">#6648</a>, the <code>redraw</code> parameter in <code>Series.setVisible</code> was not respected when Boost module was loaded.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6679">#6679</a>, a regression causing drilldown not to fire the second time in certain cases.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6957">#6957</a>, when <code>tooltip.useHTML</code> was true on a map and other series types, the shape would flicker and tooltip hide in IE and Edge.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6992">#6992</a>, error in data label positioning with really small pies.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7012">#7012</a>, series group was wrongly translated when 3d columns were added to graph.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7021">#7021</a>, cleared duplicated marker reference.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7024">#7024</a>, regression causing charts not to show when preliminary rendering within a child of a detached node.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7025">#7025</a>, treemap with color axis didn't work in styled mode.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7030">#7030</a>, added <code>highcharts.scss</code> to distribution.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7031">#7031</a>, could not set up Highcharts with a custom window object.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7034">#7034</a>, color tweening from a named (unrecognized) color to a hex color failed.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7046">#7046</a>, a zero value point using <code>minPointLength</code> was always shown as a positive value point.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7061">#7061</a>, line was missing after zooming between points.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7080">#7080</a>, JS error on adding rotated data labels with shadow applied.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7084">#7084</a>, high or non-ASCII characters in CSV file were not exported correctly in IE.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7088">#7088</a>, series didn't hide dynamically in Boost mode.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7090">#7090</a>, offline generated PDF showed hidden series.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7112">#7112</a>, pie chart data labels were visible for negative values.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7113">#7113</a>, updating a pie chart to all negative values didn't clear the slices.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7115">#7115</a>, version format not validated by yarn.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7117">#7117</a>, plot line label had wrong position in polar charts with circular grid lines.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7126">#7126</a>, less than sign followed by a space was interpreted as markup.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7127">#7127</a>, exception in Pointer when updating a series from its own mouseOver event handler.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7128">#7128</a>, data export with combined scatter and column series inserted too many rows.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7160">#7160</a>, treemap should not display halo on hover.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7175">#7175</a>, NaN in text position of plot band label after toggling series visibility.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7180">#7180</a>, disabling tooltip caused event flooding.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7188">#7188</a>, null points creates issues for shared tooltip, when there is more than one point with same x value.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7193">#7193</a>, fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7159">#7159</a>, hoverPoints in boost mode was not usable for Tooltip.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7028">#7028</a>, axis label width style wasn't respected if there was enough space to render wider labels.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7223">#7223</a>, regression in v6 causing stock charts and certain features to crash in IE.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7228">#7228</a>, regression in v6 causing columns with only negative values not to render.</li>
                 </ul>
             </div>
         </div>
