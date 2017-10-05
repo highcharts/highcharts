@@ -787,6 +787,8 @@ seriesType('column', 'line', {
 			options = series.options,
 			inverted = this.chart.inverted,
 			attr = {},
+			translateProp = inverted ? 'translateX' : 'translateY',
+			translateStart,
 			translatedThreshold;
 
 		if (svg) { // VML is too slow anyway
@@ -804,18 +806,19 @@ seriesType('column', 'line', {
 				series.group.attr(attr);
 
 			} else { // run the animation
-
-				attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
+				translateStart = series.group.attr(translateProp);
 				series.group.animate(
-					attr,
+					{ scaleY: 1 },
 					extend(animObject(series.options.animation
 				), {
 					// Do the scale synchronously to ensure smooth updating
-					// (#5030)
+					// (#5030, #7228)
 					step: function (val, fx) {
-						series.group.attr({
-							scaleY: Math.max(0.001, fx.pos) // #5250
-						});
+
+						attr[translateProp] =
+							translateStart +
+							fx.pos * (yAxis.pos - translateStart);
+						series.group.attr(attr);
 					}
 				}));
 
