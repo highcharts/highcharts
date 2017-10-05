@@ -19,7 +19,8 @@ console.time('scatter');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'xy'
+        zoomType: 'xy',
+        height: '100%'
     },
 
     boost: {
@@ -38,11 +39,14 @@ Highcharts.chart('container', {
         min: 0,
         max: 100,
         minPadding: 0,
-        maxPadding: 0
+        maxPadding: 0,
+        title: {
+            text: null
+        }
     },
 
     title: {
-        text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+        text: 'Scatter chart with 1 million points'
     },
 
     legend: {
