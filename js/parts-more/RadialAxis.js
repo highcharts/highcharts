@@ -424,8 +424,8 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		options,
 		chartOptions = chart.options,
 		paneIndex = userOptions.pane || 0,
-		pane = this.pane = chart.pane[paneIndex],
-		paneOptions = pane.options;
+		pane = this.pane = chart.pane && chart.pane[paneIndex],
+		paneOptions = pane && pane.options;
 
 	// Before prototype.init
 	if (angular) {
@@ -452,14 +452,14 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 	}
 
 	// A pointer back to this axis to borrow geometry
-	if (isCircular) {
+	if (pane && isCircular) {
 		pane.axis = this;
 	}
 
 	// Run prototype.init
 	proceed.call(this, chart, userOptions);
 
-	if (!isHidden && (angular || polar)) {
+	if (!isHidden && pane && (angular || polar)) {
 		options = this.options;
 
 		// Start and end angle options are
