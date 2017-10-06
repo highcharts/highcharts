@@ -149,7 +149,7 @@ module.exports = function (config) {
             'samples/unit-tests/boost/*/demo.js',
             'samples/unit-tests/chart/*/demo.js',
             'samples/unit-tests/color/*/demo.js',
-            // 'samples/unit-tests/coloraxis/*/demo.js',
+            'samples/unit-tests/coloraxis/*/demo.js',
             'samples/unit-tests/data/*/demo.js',
             'samples/unit-tests/datalabels/*/demo.js',
             'samples/unit-tests/drilldown/*/demo.js',
