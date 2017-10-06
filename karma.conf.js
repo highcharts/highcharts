@@ -145,8 +145,8 @@ module.exports = function (config) {
             'samples/unit-tests/3d/*/demo.js',
             'samples/unit-tests/accessibility/*/demo.js',
             'samples/unit-tests/annotations/*/demo.js',
-            // 'samples/unit-tests/axis/*/demo.js',
-            // 'samples/unit-tests/boost/*/demo.js',
+            'samples/unit-tests/axis/*/demo.js',
+            'samples/unit-tests/boost/*/demo.js',
             // 'samples/unit-tests/chart/*/demo.js',
             'samples/unit-tests/color/*/demo.js',
             // 'samples/unit-tests/coloraxis/*/demo.js',
@@ -173,6 +173,12 @@ module.exports = function (config) {
 
 
         ]),
+        exclude: [
+            // Difference between Highcharts and Highstock
+            'samples/unit-tests/axis/plotlines-and-plotbands/demo.js',
+            // renderTarget not available
+            'samples/unit-tests/boost/setvisible/demo.js'
+        ],
         /*
         formatError: function (e) {
             console.log(arguments);

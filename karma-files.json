@@ -1,4 +1,9 @@
 [
+	"https://code.jquery.com/jquery-3.1.1.min.js",
+	"https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js",
+	"https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data-2012-2022.min.js",
+	"https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js",
+
 	"code/highcharts.src.js",
 	"code/highcharts-more.src.js",
 	"code/highcharts-3d.src.js",
@@ -10,6 +15,7 @@
 	"code/modules/export-data.src.js",
 	"code/modules/accessibility.src.js",
 	"code/modules/annotations.src.js",
+	"code/modules/boost.src.js",
 	"code/modules/data.src.js",
 	"code/modules/static-scale.src.js",
 	"code/modules/broken-axis.src.js",
@@ -56,11 +62,6 @@
 	"https://code.highcharts.com/mapdata/countries/ad/ad-all.js",
 	"https://code.highcharts.com/mapdata/custom/europe.js",
 
-	"https://www.highcharts.com/samples/data/usdeur.js",
-
-	"https://code.jquery.com/jquery-3.1.1.min.js",
-	"https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js",
-	"https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data-2012-2022.min.js",
-	"https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js"
+	"https://www.highcharts.com/samples/data/usdeur.js"
 	
 ]
