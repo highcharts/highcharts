@@ -2,18 +2,35 @@
 
 
 QUnit.test('Container initially hidden (#6693)', function (assert) {
-    var chart = Highcharts.chart('container', {
+
+    var outerOuter = document.createElement('div');
+    outerOuter.style.visibility = 'hidden';
+    outerOuter.style.display = 'none';
+    document.body.appendChild(outerOuter);
+
+    var outer = document.createElement('div');
+    outer.style.visibility = 'hidden';
+    outerOuter.appendChild(outer);
+
+    var container = document.createElement('div');
+    container.style.display = 'none';
+    container.style.width = '300px';
+    container.style.height = '300px';
+    outer.appendChild(container);
+
+
+    var chart = Highcharts.chart(container, {
         series: [{
             type: 'column',
             data: [1, 3, 2, 4]
         }]
     });
 
-    document.getElementById('container').style.display = 'block';
-    document.getElementById('outer').style.display = 'block';
-    document.getElementById('outer').style.visibility = 'visible';
-    document.getElementById('outer-outer').style.display = 'block';
-    document.getElementById('outer-outer').style.visibility = 'visible';
+    container.style.display = 'block';
+    outer.style.display = 'block';
+    outer.style.visibility = 'visible';
+    outerOuter.style.display = 'block';
+    outerOuter.style.visibility = 'visible';
 
     assert.strictEqual(
         chart.chartHeight,

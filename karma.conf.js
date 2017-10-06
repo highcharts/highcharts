@@ -147,7 +147,7 @@ module.exports = function (config) {
             'samples/unit-tests/annotations/*/demo.js',
             'samples/unit-tests/axis/*/demo.js',
             'samples/unit-tests/boost/*/demo.js',
-            // 'samples/unit-tests/chart/*/demo.js',
+            'samples/unit-tests/chart/*/demo.js',
             'samples/unit-tests/color/*/demo.js',
             // 'samples/unit-tests/coloraxis/*/demo.js',
             'samples/unit-tests/data/*/demo.js',
@@ -179,7 +179,12 @@ module.exports = function (config) {
             // renderTarget not available
             'samples/unit-tests/boost/setvisible/demo.js',
             // Unknown problem with assert.async(), investigate more
-            'samples/unit-tests/chart/events-load/demo.js'
+            'samples/unit-tests/chart/events-load/demo.js',
+            // Passes in Chrome, fails in Headless
+            'samples/unit-tests/chart/setsize/demo.js',
+            // Reports wrong contrast color, but only when /chart tests are
+            // present
+            'samples/unit-tests/datalabels/contrast/demo.js'
         ],
         /*
         formatError: function (e) {
