@@ -181,10 +181,7 @@ module.exports = function (config) {
             // Unknown problem with assert.async(), investigate more
             'samples/unit-tests/chart/events-load/demo.js',
             // Passes in Chrome, fails in Headless
-            'samples/unit-tests/chart/setsize/demo.js',
-            // Reports wrong contrast color, but only when /chart tests are
-            // present
-            'samples/unit-tests/datalabels/contrast/demo.js'
+            'samples/unit-tests/chart/setsize/demo.js'
         ],
         /*
         formatError: function (e) {
