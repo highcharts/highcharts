@@ -447,7 +447,11 @@ function patientMax() {
 		r = -Number.MAX_VALUE;
 
 	each(args, function (t) {
-		if (typeof t !== 'undefined' && typeof t.length !== 'undefined') {
+		if (
+			typeof t !== 'undefined' &&
+			t !== null &&
+			typeof t.length !== 'undefined'
+		) {
 			// r = r < t.length ? t.length : r;
 			if (t.length > 0) {
 				r = t.length;
