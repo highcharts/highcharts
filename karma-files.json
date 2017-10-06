@@ -23,7 +23,6 @@
 	"code/modules/treemap.src.js",
 	"code/modules/drilldown.src.js",
 	"code/modules/histogram-bellcurve.src.js",
-	"code/modules/lineargauge.src.js",
 	"code/modules/bullet.src.js",
 	"code/modules/funnel.src.js",
 	"code/modules/pareto.src.js",

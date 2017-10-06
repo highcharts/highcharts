@@ -154,16 +154,16 @@ module.exports = function (config) {
             'samples/unit-tests/datalabels/*/demo.js',
             'samples/unit-tests/drilldown/*/demo.js',
             // 'samples/unit-tests/export-data/*/demo.js' // => move data into tests
-            // 'samples/unit-tests/exporting/*/demo.js'
+            'samples/unit-tests/exporting/*/demo.js',
             'samples/unit-tests/global/*/demo.js',
-            // 'samples/unit-tests/highcharts/*/demo.js',
-            // 'samples/unit-tests/indicator-*/*/demo.js',
-            // 'samples/unit-tests/interaction/*/demo.js',
+            'samples/unit-tests/highcharts/*/demo.js',
+            // 'samples/unit-tests/indicator-*/*/demo.js', // => One fail
+            'samples/unit-tests/interaction/*/demo.js',
             // 'samples/unit-tests/legend/*/demo.js',
             'samples/unit-tests/maps/*/demo.js',
-            // 'samples/unit-tests/pane/*/demo.js',
-            'samples/unit-tests/plotbandslines/*/demo.js'
-            // 'samples/unit-tests/point/*/demo.js',
+            'samples/unit-tests/pane/*/demo.js',
+            'samples/unit-tests/plotbandslines/*/demo.js',
+            'samples/unit-tests/point/*/demo.js'
             // 'samples/unit-tests/pointer/*/demo.js',
             // 'samples/unit-tests/rangeselector/*/demo.js'
             // 'samples/unit-tests/responsive/*/demo.js',
