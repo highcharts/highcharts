@@ -1,30 +1,28 @@
 /* eslint func-style:0 */
 
 
-var config = {
-    chart: {
-        type: 'column',
-        animation: false,
-        height: 300
-    },
-
-    plotOptions: {
-        series: {
-            animation: false
-        }
-    },
-
-    series: [{
-        data: [1, 3, 2, 4],
-        name: 'First'
-    }, {
-        data: [5, 3, 4, 1],
-        name: 'Last'
-    }]
-};
-
 QUnit.test('Option chart plot border and background update', function (assert) {
-    var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            animation: false,
+            height: 300
+        },
+
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        },
+
+        series: [{
+            data: [1, 3, 2, 4],
+            name: 'First'
+        }, {
+            data: [5, 3, 4, 1],
+            name: 'Last'
+        }]
+    });
 
     chart.update({
         chart: {
@@ -58,12 +56,32 @@ QUnit.test('Option chart plot border and background update', function (assert) {
 
 QUnit.test('Option chart.ignoreHiddenSeries update', function (assert) {
 
-    var cfg = Highcharts.merge(config);
+    var cfg = {
+        chart: {
+            type: 'column',
+            animation: false,
+            height: 300
+        },
+
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        },
+
+        series: [{
+            data: [1, 3, 2, 4],
+            name: 'First'
+        }, {
+            data: [5, 3, 4, 1],
+            name: 'Last'
+        }]
+    };
 
     cfg.series[0].data[0] = 100; // Add a spike to test ignoreHiddenSeries
     cfg.series[0].visible = false;
 
-    var chart = Highcharts.chart($('<div>').appendTo('#container')[0], cfg);
+    var chart = Highcharts.chart('container', cfg);
 
     assert.strictEqual(
         typeof chart.yAxis[0].max,
@@ -91,11 +109,31 @@ QUnit.test('Option chart.ignoreHiddenSeries update', function (assert) {
 });
 
 QUnit.test('Option chart.spacing update', function (assert) {
-    var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge({
+    var chart = Highcharts.chart('container', Highcharts.merge({
         chart: {
             plotBackgroundColor: 'silver'
         }
-    }, config));
+    }, {
+        chart: {
+            type: 'column',
+            animation: false,
+            height: 300
+        },
+
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        },
+
+        series: [{
+            data: [1, 3, 2, 4],
+            name: 'First'
+        }, {
+            data: [5, 3, 4, 1],
+            name: 'Last'
+        }]
+    }));
 
     // Test for integer
     chart.update({

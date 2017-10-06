@@ -177,7 +177,9 @@ module.exports = function (config) {
             // Difference between Highcharts and Highstock
             'samples/unit-tests/axis/plotlines-and-plotbands/demo.js',
             // renderTarget not available
-            'samples/unit-tests/boost/setvisible/demo.js'
+            'samples/unit-tests/boost/setvisible/demo.js',
+            // Unknown problem with assert.async(), investigate more
+            'samples/unit-tests/chart/events-load/demo.js'
         ],
         /*
         formatError: function (e) {

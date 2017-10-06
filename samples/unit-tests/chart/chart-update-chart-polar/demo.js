@@ -1,30 +1,28 @@
 /* eslint func-style:0 */
 
 
-var config = {
-    chart: {
-        type: 'column',
-        animation: false,
-        height: 300
-    },
-
-    plotOptions: {
-        series: {
-            animation: false
-        }
-    },
-
-    series: [{
-        data: [1, 3, 2, 4],
-        name: 'First'
-    }, {
-        data: [5, 3, 4, 1],
-        name: 'Last'
-    }]
-};
-
 QUnit.test('Option chart.polar update', function (assert) {
-    var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            animation: false,
+            height: 300
+        },
+
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        },
+
+        series: [{
+            data: [1, 3, 2, 4],
+            name: 'First'
+        }, {
+            data: [5, 3, 4, 1],
+            name: 'Last'
+        }]
+    });
 
     assert.ok(
         !chart.polar,
