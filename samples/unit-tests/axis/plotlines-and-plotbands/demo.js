@@ -1,5 +1,8 @@
 QUnit.test('#6433 - axis.update leaves empty plotbands\' groups', function (assert) {
     var chart = new Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
         xAxis: {
             plotBands: [{
                 from: 0.5,
@@ -25,7 +28,8 @@ QUnit.test('#6433 - axis.update leaves empty plotbands\' groups', function (asse
 QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            animation: false
+            animation: false,
+            width: 600
         },
         xAxis: {
             min: Date.UTC(2016, 0, 13),
@@ -80,14 +84,17 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
 
 QUnit.test('#5909 - missing border on top.', function (assert) {
     var chart = Highcharts.chart('container', {
-        xAxis:{
+        chart: {
+            width: 600
+        },
+        xAxis: {
             plotBands: [{ // mark the weekend
                 color: '#FCFFC5',
                 from: 3,
                 to: 5,
                 zIndex: 10,
                 borderWidth: 3,
-                borderColor:"black",
+                borderColor: "black"
             }]
         },
         series: [{

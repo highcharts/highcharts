@@ -38,6 +38,13 @@ QUnit.test('getTimezoneOffset is negative, crossing midnight (#5935)', function 
         '02:00',
         'Tick positions correct, and tick gap lands on the duplicated label (#6797)'
     );
+
+    // Reset
+    Highcharts.setOptions({
+        global: {
+            getTimezoneOffset: null
+        }
+    });
 });
 
 
@@ -89,6 +96,13 @@ QUnit.test('getTimezoneOffset with small interval (#4951)', function (assert) {
         4,
         '4 higher ranks found'
     );
+
+    // Reset
+    Highcharts.setOptions({
+        global: {
+            getTimezoneOffset: null
+        }
+    });
 });
 
 
@@ -154,6 +168,13 @@ QUnit.test('getTimezoneOffset with bigger interval (#4951)', function (assert) {
             '00:00',
             'Tick is on timezone midnight'
         );
+    });
+
+    // Reset
+    Highcharts.setOptions({
+        global: {
+            getTimezoneOffset: null
+        }
     });
 
 });
@@ -222,5 +243,12 @@ QUnit.test(
             2,
             '2 higher ranks found'
         );
+
+        // Reset
+        Highcharts.setOptions({
+            global: {
+                timezoneOffset: 0
+            }
+        });
     }
 );

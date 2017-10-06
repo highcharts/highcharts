@@ -3,6 +3,10 @@ QUnit.test('Legacy - null', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             //minorTickInterval: null // default
         },
@@ -28,6 +32,10 @@ QUnit.test('Legacy - auto, linear', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTickInterval: 'auto'
         },
@@ -47,6 +55,10 @@ QUnit.test('Legacy - number, linear', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTickInterval: 0.5
         },
@@ -67,6 +79,10 @@ QUnit.test('Legacy - auto, log', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTickInterval: 'auto',
             type: 'logarithmic'
@@ -87,6 +103,10 @@ QUnit.test('Legacy - auto, deep log', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTickInterval: 'auto',
             type: 'logarithmic'
@@ -107,6 +127,10 @@ QUnit.test('Legacy - number, log', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTickInterval: 0.5,
             type: 'logarithmic'
@@ -128,6 +152,10 @@ QUnit.test('Typed - null', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             //minorTickInterval: null // default
         },
@@ -153,6 +181,10 @@ QUnit.test('Typed - minorTicks false', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTickInterval: 0.5,
             minorTicks: false
@@ -174,6 +206,10 @@ QUnit.test('Typed - auto, linear', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTicks: true
         },
@@ -193,6 +229,10 @@ QUnit.test('Typed - number, linear', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTickInterval: 0.5,
             minorTicks: true
@@ -214,6 +254,10 @@ QUnit.test('Typed - auto, log', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTicks: true,
             type: 'logarithmic'
@@ -235,6 +279,10 @@ QUnit.test('Typed - auto, deep log', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTicks: true,
             type: 'logarithmic'
@@ -255,6 +303,10 @@ QUnit.test('Typed - number, log', function (assert) {
     var chart;
 
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         yAxis: {
             minorTickInterval: 0.5,
             minorTicks: true,

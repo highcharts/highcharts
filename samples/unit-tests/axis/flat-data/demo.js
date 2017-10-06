@@ -6,6 +6,10 @@
 QUnit.test('Line series', function (assert) {
 
     var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         series: [{
             data: [1.333333333, 1.333333333]
         }]
@@ -39,6 +43,10 @@ QUnit.test('Line series', function (assert) {
 QUnit.test('Column series, inferred threshold', function (assert) {
 
     var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
         series: [{
             data: [1.333333333, 1.333333333],
             type: 'column'
