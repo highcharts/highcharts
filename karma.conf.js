@@ -99,7 +99,6 @@ function getFiles() { // eslint-disable-line no-unused-vars
         return `<script src="${src}"></script>`;
     }).join('\n'));
     // */
-    // console.log(dependencies);
     return dependencies;
 }
 
@@ -130,7 +129,8 @@ module.exports = function (config) {
     ];
     */
 
-    let files = getFiles();
+    // let files = getFiles();
+    let files = require('./karma-files.json');
 
     config.set({
         // frameworks: ['mocha', 'chai'],
