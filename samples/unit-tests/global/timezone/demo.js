@@ -67,6 +67,14 @@ QUnit.test('timezone', function (assert) {
         '01:00',
         'From October 27, UTC midnight is 01:00 AM in Oslo'
     );
+
+    // Tear down
+    Highcharts.setOptions({
+        global: {
+            timezone: null,
+            getTimezoneOffset: null
+        }
+    });
 });
 
 /**
@@ -136,6 +144,14 @@ QUnit.test('getTimezoneOffset', function (assert) {
         '01:00',
         'From October 27, UTC midnight is 01:00 AM in Oslo'
     );
+
+    // Reset
+    Highcharts.setOptions({
+        global: {
+            getTimezoneOffset: null
+        }
+    });
+
 });
 
 QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
@@ -196,13 +212,18 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
         'Ticks before DST crossover'
     );
 
+    Highcharts.setOptions({
+        global: {
+            useUTC: true,
+            timezone: null
+        }
+    });
+
 });
 
 QUnit.test('Negative timezoneOffset', function (assert) {
     Highcharts.setOptions({
         global: {
-            getTimezoneOffset: null,
-            timezone: null,
             timezoneOffset: -3 * 60
         }
     });
@@ -235,4 +256,12 @@ QUnit.test('Negative timezoneOffset', function (assert) {
         ['14:00:00', '14:00:30'],
         'Two ticks'
     );
+
+    // Reset
+    Highcharts.setOptions({
+        global: {
+            timezoneOffset: null
+        }
+    });
+
 });

@@ -164,8 +164,8 @@ module.exports = function (config) {
             'samples/unit-tests/pane/*/demo.js',
             'samples/unit-tests/plotbandslines/*/demo.js',
             'samples/unit-tests/point/*/demo.js',
-            'samples/unit-tests/pointer/*/demo.js'
-            // 'samples/unit-tests/rangeselector/*/demo.js'
+            'samples/unit-tests/pointer/*/demo.js',
+            'samples/unit-tests/rangeselector/*/demo.js'
             // 'samples/unit-tests/responsive/*/demo.js',
             // 'samples/unit-tests/scrollbar/*/demo.js',
             // 'samples/unit-tests/scroller/*/demo.js'
