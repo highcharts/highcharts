@@ -169,10 +169,10 @@ module.exports = function (config) {
             'samples/unit-tests/responsive/*/demo.js',
             'samples/unit-tests/scrollbar/*/demo.js',
             'samples/unit-tests/scroller/*/demo.js',
-            'samples/unit-tests/series/*/demo.js'
-
-
+            'samples/unit-tests/series-*/*/demo.js'
         ]),
+
+        // These ones fail
         exclude: [
             // Difference between Highcharts and Highstock
             'samples/unit-tests/axis/plotlines-and-plotbands/demo.js',
@@ -190,7 +190,16 @@ module.exports = function (config) {
             'samples/unit-tests/legend/legend-height/demo.js',
             // Seems to fail because the container is fixed in the top in the
             // original test runner, not so with karma.
-            'samples/unit-tests/series/findnearestpointby/demo.js'
+            'samples/unit-tests/series/findnearestpointby/demo.js',
+            // The configuration currently loads classic mode only. Styled mode
+            // needs to be a separate instance.
+            'samples/unit-tests/series-pie/styled-mode/demo.js',
+            // There's a deeper problem with Boost that it changes certain
+            // properties on the series prototype whether they are boosting or
+            // not. This needs rewriting. Props like directTouch, allowDB etc
+            // should be set dynamically when boost kicks in, and reset when it
+            // is not boosted.
+            'samples/unit-tests/series-bubble/members/demo.js'
 
         ],
         /*

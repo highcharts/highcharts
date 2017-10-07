@@ -1,9 +1,11 @@
 QUnit.test('Undefined value (#6589)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'pie'
+            type: 'pie',
+            width: 600
         },
         series: [{
+            animation: false,
             data: [{
                 name: 'Microsoft Internet Explorer',
                 y: 56.33
@@ -46,7 +48,8 @@ QUnit.test('Undefined value (#6589)', function (assert) {
 QUnit.test('Update to negative (#7113)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'pie'
+            type: 'pie',
+            width: 600
         },
 
         series: [{
