@@ -159,7 +159,7 @@ module.exports = function (config) {
             'samples/unit-tests/highcharts/*/demo.js',
             'samples/unit-tests/indicator-*/*/demo.js',
             'samples/unit-tests/interaction/*/demo.js',
-            // 'samples/unit-tests/legend/*/demo.js',
+            'samples/unit-tests/legend/*/demo.js',
             'samples/unit-tests/maps/*/demo.js',
             'samples/unit-tests/pane/*/demo.js',
             'samples/unit-tests/plotbandslines/*/demo.js',
@@ -184,7 +184,10 @@ module.exports = function (config) {
             'samples/unit-tests/chart/setsize/demo.js',
             // Fails due to boost module. If we remove boost from the included
             // files, it passes.
-            'samples/unit-tests/indicator-volume-by-price/recalculations/demo.js'
+            'samples/unit-tests/indicator-volume-by-price/recalculations/demo.js',
+            // Fails when data labels tests are included, in the collectAndHide
+            // function.
+            'samples/unit-tests/legend/legend-height/demo.js'
 
         ],
         /*
