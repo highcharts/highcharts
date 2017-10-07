@@ -1,6 +1,11 @@
 
 QUnit.test('findNearestPointBy test', function (assert) {
     var chart = Highcharts.chart('container', {
+
+        chart: {
+            width: 600
+        },
+
         title: {
             text: 'The top series snaps hover along X axis'
         },

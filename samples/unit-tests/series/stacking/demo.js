@@ -14,7 +14,18 @@ QUnit.test('#6546 - stacking with gapSize', function (assert) {
             },
             series: [{
                 name: 'USD to EUR',
-                data: usdeur
+                data: [
+                    [0, 1],
+                    [1, 1],
+                    [2, 1],
+                    [3, 1],
+                    [4, 1],
+                    [7, 1],
+                    [8, 1],
+                    [9, 1],
+                    [10, 1],
+                    [11, 1]
+                ]
             }]
         }),
         path = chart.series[0].graphPath;

@@ -165,11 +165,11 @@ module.exports = function (config) {
             'samples/unit-tests/plotbandslines/*/demo.js',
             'samples/unit-tests/point/*/demo.js',
             'samples/unit-tests/pointer/*/demo.js',
-            'samples/unit-tests/rangeselector/*/demo.js'
-            // 'samples/unit-tests/responsive/*/demo.js',
-            // 'samples/unit-tests/scrollbar/*/demo.js',
-            // 'samples/unit-tests/scroller/*/demo.js'
-            // 'samples/unit-tests/series/*/demo.js'
+            'samples/unit-tests/rangeselector/*/demo.js',
+            'samples/unit-tests/responsive/*/demo.js',
+            'samples/unit-tests/scrollbar/*/demo.js',
+            'samples/unit-tests/scroller/*/demo.js',
+            'samples/unit-tests/series/*/demo.js'
 
 
         ]),
@@ -187,7 +187,10 @@ module.exports = function (config) {
             'samples/unit-tests/indicator-volume-by-price/recalculations/demo.js',
             // Fails when data labels tests are included, in the collectAndHide
             // function.
-            'samples/unit-tests/legend/legend-height/demo.js'
+            'samples/unit-tests/legend/legend-height/demo.js',
+            // Seems to fail because the container is fixed in the top in the
+            // original test runner, not so with karma.
+            'samples/unit-tests/series/findnearestpointby/demo.js'
 
         ],
         /*
