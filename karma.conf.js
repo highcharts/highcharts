@@ -148,36 +148,7 @@ module.exports = function (config) {
             'karma.setup.js',
 
             // Tests
-            'samples/unit-tests/3d/*/demo.js',
-            'samples/unit-tests/accessibility/*/demo.js',
-            'samples/unit-tests/annotations/*/demo.js',
-            'samples/unit-tests/axis/*/demo.js',
-            'samples/unit-tests/boost/*/demo.js',
-            'samples/unit-tests/chart/*/demo.js',
-            'samples/unit-tests/color/*/demo.js',
-            'samples/unit-tests/coloraxis/*/demo.js',
-            'samples/unit-tests/data/*/demo.js',
-            'samples/unit-tests/datalabels/*/demo.js',
-            'samples/unit-tests/drilldown/*/demo.js',
-            'samples/unit-tests/export-data/*/demo.js',
-            'samples/unit-tests/exporting/*/demo.js',
-            'samples/unit-tests/global/*/demo.js',
-            'samples/unit-tests/highcharts/*/demo.js',
-            'samples/unit-tests/indicator-*/*/demo.js',
-            'samples/unit-tests/interaction/*/demo.js',
-            'samples/unit-tests/legend/*/demo.js',
-            'samples/unit-tests/maps/*/demo.js',
-            'samples/unit-tests/pane/*/demo.js',
-            'samples/unit-tests/plotbandslines/*/demo.js',
-            'samples/unit-tests/point/*/demo.js',
-            'samples/unit-tests/pointer/*/demo.js',
-            'samples/unit-tests/rangeselector/*/demo.js',
-            'samples/unit-tests/responsive/*/demo.js',
-            'samples/unit-tests/scrollbar/*/demo.js',
-            'samples/unit-tests/scroller/*/demo.js',
-            'samples/unit-tests/series/*/demo.js',
-            'samples/unit-tests/series-*/*/demo.js',
-            'samples/unit-tests/svgrenderer/*/demo.js'
+            'samples/unit-tests/*/*/demo.js'
         ]),
 
         // These ones fail
@@ -211,7 +182,11 @@ module.exports = function (config) {
             // Fails when the /series group is added, but
             // succeeds when alone. Check if some global animation is set in any
             // of the series tests.
-            'samples/unit-tests/svgrenderer/animate/demo.js'
+            'samples/unit-tests/svgrenderer/animate/demo.js',
+            // Themes alter the whole default options structure. Set up a
+            // separate test suite? Or perhaps somehow decouple the options so
+            // they are not mutated for later tests?
+            'samples/unit-tests/themes/*/demo.js'
         ],
         /*
         formatError: function (e) {
