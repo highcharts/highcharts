@@ -157,7 +157,7 @@ module.exports = function (config) {
             'samples/unit-tests/exporting/*/demo.js',
             'samples/unit-tests/global/*/demo.js',
             'samples/unit-tests/highcharts/*/demo.js',
-            // 'samples/unit-tests/indicator-*/*/demo.js', // => One fail
+            'samples/unit-tests/indicator-*/*/demo.js',
             'samples/unit-tests/interaction/*/demo.js',
             // 'samples/unit-tests/legend/*/demo.js',
             'samples/unit-tests/maps/*/demo.js',
@@ -181,7 +181,11 @@ module.exports = function (config) {
             // Unknown problem with assert.async(), investigate more
             'samples/unit-tests/chart/events-load/demo.js',
             // Passes in Chrome, fails in Headless
-            'samples/unit-tests/chart/setsize/demo.js'
+            'samples/unit-tests/chart/setsize/demo.js',
+            // Fails due to boost module. If we remove boost from the included
+            // files, it passes.
+            'samples/unit-tests/indicator-volume-by-price/recalculations/demo.js'
+
         ],
         /*
         formatError: function (e) {
