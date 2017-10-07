@@ -2624,7 +2624,10 @@ each([
 
 			// Clear image
 			if (method === 'render') {
-				this.stickyTracking = (this.options || {}).stickyTracking;
+				if ('stickyTrackingReset' in this) {
+					this.stickyTracking = this.stickyTrackingReset;
+					delete this.stickyTrackingReset;
+				}
 
 				if (this.boostClear) {
 					this.boostClear();
@@ -2878,6 +2881,7 @@ if (!hasWebGLSupport()) {
 			boostOptions = renderer.settings;
 
 			// Force sticky tracking
+			this.stickyTrackingReset = this.stickyTracking;
 			this.stickyTracking = true;
 
 			if (!this.visible) {

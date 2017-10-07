@@ -2,7 +2,8 @@ QUnit.test('getUnionExtremes', function (assert) {
     var chart = Highcharts.stockChart('container', {
 
         chart: {
-            animation: false
+            animation: false,
+            width: 600
         },
 
         rangeSelector: {

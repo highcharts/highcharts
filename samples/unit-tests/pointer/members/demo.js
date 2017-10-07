@@ -1,50 +1,51 @@
 /* global TestController */
-var events = [],
-    isNumber = Highcharts.isNumber,
-    merge = Highcharts.merge,
-    pushEvent = function (type, series, point) {
-        var sI = series && isNumber(series.index) ? series.index : '-',
-            pI = point && isNumber(point.index) ? point.index : '-',
-            str = [type, sI, pI].join('.');
-        events.push(str);
-    },
-    config = {
-        chart: {
-            animation: false,
-            width: 1000
+QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', function (assert) {
+
+    var events = [],
+        isNumber = Highcharts.isNumber,
+        pushEvent = function (type, series, point) {
+            var sI = series && isNumber(series.index) ? series.index : '-',
+                pI = point && isNumber(point.index) ? point.index : '-',
+                str = [type, sI, pI].join('.');
+            events.push(str);
         },
-        plotOptions: {
-            series: {
+        config = {
+            chart: {
                 animation: false,
-                kdNow: true, // Force kd tree to run synchronously.
-                events: {
-                    mouseOver: function () {
-                        var series = this;
-                        pushEvent('mouseOver', series);
-                    },
-                    mouseOut: function () {
-                        var series = this;
-                        pushEvent('mouseOut', series);
-                    }
-                },
-                point: {
+                width: 1000
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    kdNow: true, // Force kd tree to run synchronously.
                     events: {
                         mouseOver: function () {
-                            var point = this,
-                                series = point.series;
-                            pushEvent('mouseOver', series, point);
+                            var series = this;
+                            pushEvent('mouseOver', series);
                         },
                         mouseOut: function () {
-                            var point = this,
-                                series = point.series;
-                            pushEvent('mouseOut', series, point);
+                            var series = this;
+                            pushEvent('mouseOut', series);
+                        }
+                    },
+                    point: {
+                        events: {
+                            mouseOver: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOver', series, point);
+                            },
+                            mouseOut: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOut', series, point);
+                            }
                         }
                     }
                 }
             }
-        }
-    };
-QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', function (assert) {
+        };
+
     var chart = Highcharts.chart('container', {
             chart: config.chart,
             plotOptions: config.plotOptions,
@@ -151,6 +152,51 @@ QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', fun
 });
 
 QUnit.test('Pointer.runPointActions. stickyTracking: false. #5914', function (assert) {
+    var events = [],
+        isNumber = Highcharts.isNumber,
+        merge = Highcharts.merge,
+        pushEvent = function (type, series, point) {
+            var sI = series && isNumber(series.index) ? series.index : '-',
+                pI = point && isNumber(point.index) ? point.index : '-',
+                str = [type, sI, pI].join('.');
+            events.push(str);
+        },
+        config = {
+            chart: {
+                animation: false,
+                width: 1000
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    kdNow: true, // Force kd tree to run synchronously.
+                    events: {
+                        mouseOver: function () {
+                            var series = this;
+                            pushEvent('mouseOver', series);
+                        },
+                        mouseOut: function () {
+                            var series = this;
+                            pushEvent('mouseOut', series);
+                        }
+                    },
+                    point: {
+                        events: {
+                            mouseOver: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOver', series, point);
+                            },
+                            mouseOut: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOut', series, point);
+                            }
+                        }
+                    }
+                }
+            }
+        };
     var options = {
             chart: config.chart,
             plotOptions: merge(config.plotOptions, {
@@ -199,6 +245,51 @@ QUnit.test('Pointer.runPointActions. stickyTracking: false. #5914', function (as
 });
 
 QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476', function (assert) {
+    var events = [],
+        isNumber = Highcharts.isNumber,
+        merge = Highcharts.merge,
+        pushEvent = function (type, series, point) {
+            var sI = series && isNumber(series.index) ? series.index : '-',
+                pI = point && isNumber(point.index) ? point.index : '-',
+                str = [type, sI, pI].join('.');
+            events.push(str);
+        },
+        config = {
+            chart: {
+                animation: false,
+                width: 1000
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    kdNow: true, // Force kd tree to run synchronously.
+                    events: {
+                        mouseOver: function () {
+                            var series = this;
+                            pushEvent('mouseOver', series);
+                        },
+                        mouseOut: function () {
+                            var series = this;
+                            pushEvent('mouseOut', series);
+                        }
+                    },
+                    point: {
+                        events: {
+                            mouseOver: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOver', series, point);
+                            },
+                            mouseOut: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOut', series, point);
+                            }
+                        }
+                    }
+                }
+            }
+        };
     var options = {
             chart: config.chart,
             plotOptions: merge(config.plotOptions, {
@@ -307,6 +398,51 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
 });
 
 QUnit.test('Pointer.runPointActions. isDirectTouch: true && shared: true. #6517, #6586', function (assert) {
+    var events = [],
+        isNumber = Highcharts.isNumber,
+        merge = Highcharts.merge,
+        pushEvent = function (type, series, point) {
+            var sI = series && isNumber(series.index) ? series.index : '-',
+                pI = point && isNumber(point.index) ? point.index : '-',
+                str = [type, sI, pI].join('.');
+            events.push(str);
+        },
+        config = {
+            chart: {
+                animation: false,
+                width: 1000
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    kdNow: true, // Force kd tree to run synchronously.
+                    events: {
+                        mouseOver: function () {
+                            var series = this;
+                            pushEvent('mouseOver', series);
+                        },
+                        mouseOut: function () {
+                            var series = this;
+                            pushEvent('mouseOut', series);
+                        }
+                    },
+                    point: {
+                        events: {
+                            mouseOver: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOver', series, point);
+                            },
+                            mouseOut: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOut', series, point);
+                            }
+                        }
+                    }
+                }
+            }
+        };
     var chart = Highcharts.chart('container', {
             chart: merge(config.chart, {
                 type: 'column'
@@ -402,6 +538,51 @@ QUnit.test('Pointer.runPointActions. isDirectTouch: true && shared: true. #6517,
 });
 
 QUnit.test('Pointer.getHoverData', function (assert) {
+    var events = [],
+        isNumber = Highcharts.isNumber,
+        merge = Highcharts.merge,
+        pushEvent = function (type, series, point) {
+            var sI = series && isNumber(series.index) ? series.index : '-',
+                pI = point && isNumber(point.index) ? point.index : '-',
+                str = [type, sI, pI].join('.');
+            events.push(str);
+        },
+        config = {
+            chart: {
+                animation: false,
+                width: 1000
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    kdNow: true, // Force kd tree to run synchronously.
+                    events: {
+                        mouseOver: function () {
+                            var series = this;
+                            pushEvent('mouseOver', series);
+                        },
+                        mouseOut: function () {
+                            var series = this;
+                            pushEvent('mouseOut', series);
+                        }
+                    },
+                    point: {
+                        events: {
+                            mouseOver: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOver', series, point);
+                            },
+                            mouseOut: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOut', series, point);
+                            }
+                        }
+                    }
+                }
+            }
+        };
     // Create the chart
     var options = {
             chart: merge(config.chart, {
