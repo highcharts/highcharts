@@ -34,3 +34,12 @@ QUnit.assert.close = function (number, expected, error, message) {
         message: message
     });
 };
+
+QUnit.module('Highcharts', {
+    beforeEach: function () {
+
+        // Reset container size that some tests may have modified
+        document.getElementById('container').style.width = 'auto';
+        document.getElementById('container').style.width = 'auto';
+    }
+});

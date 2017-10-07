@@ -13,9 +13,24 @@ QUnit.test("Categorized", function (assert) {
         }]
 
     });
+
+    var csv = '"Category","Series 1"\n' +
+        '"Jan",29.9\n' +
+        '"Feb",71.5\n' +
+        '"Mar",106.4\n' +
+        '"Apr",129.2\n' +
+        '"May",144\n' +
+        '"Jun",176\n' +
+        '"Jul",135.6\n' +
+        '"Aug",148.5\n' +
+        '"Sep",216.4\n' +
+        '"Oct",194.1\n' +
+        '"Nov",95.6\n' +
+        '"Dec",54.4';
+
     assert.equal(
         $('#container').highcharts().getCSV(),
-        document.getElementById('test1').innerHTML,
+        csv,
         "Basic categorized content"
     );
 
@@ -26,7 +41,7 @@ QUnit.test("Categorized", function (assert) {
 
     assert.equal(
         $('#container').highcharts().getCSV(),
-        document.getElementById('test1').innerHTML,
+        csv,
         "Added invisible series"
     );
     $('#container').highcharts().destroy();
@@ -51,9 +66,15 @@ QUnit.test("Named points", function (assert) {
             ]
         }]
     });
+
+    var csv = '"Category","Series 1"\n' +
+        '"Apples",1\n' +
+        '"Pears",2\n' +
+        '"Oranges",3';
+
     assert.equal(
         $('#container').highcharts().getCSV(),
-        document.getElementById('pie').innerHTML,
+        csv,
         "Named points"
     );
 
@@ -77,9 +98,24 @@ QUnit.test("Datetime", function (assert) {
             pointInterval: 24 * 36e5
         }]
     });
+
+    var csv = '"DateTime","Series 1"\n' +
+        '"2014-01-01 00:00:00",29.9\n' +
+        '"2014-01-02 00:00:00",71.5\n' +
+        '"2014-01-03 00:00:00",106.4\n' +
+        '"2014-01-04 00:00:00",129.2\n' +
+        '"2014-01-05 00:00:00",144\n' +
+        '"2014-01-06 00:00:00",176\n' +
+        '"2014-01-07 00:00:00",135.6\n' +
+        '"2014-01-08 00:00:00",148.5\n' +
+        '"2014-01-09 00:00:00",216.4\n' +
+        '"2014-01-10 00:00:00",194.1\n' +
+        '"2014-01-11 00:00:00",95.6\n' +
+        '"2014-01-12 00:00:00",54.4';
+
     assert.equal(
         $('#container').highcharts().getCSV(),
-        document.getElementById('test2').innerHTML,
+        csv,
         "Basic datetime content"
     );
     $('#container').highcharts().destroy();
@@ -113,9 +149,15 @@ QUnit.test("Datetime multiseries", function (assert) {
             data: [4, 5, 6, 7]
         }]
     });
+
+    var csv = '"DateTime","Series 1","Series 2","Series 3","Series 4"\n' +
+        '"2014-01-01 00:00:00",1,2,3,4\n' +
+        '"2014-01-02 00:00:00",2,3,4,5\n' +
+        '"2014-01-03 00:00:00",3,4,5,6\n' +
+        '"2014-01-04 00:00:00",4,5,6,7';
     assert.equal(
         $('#container').highcharts().getCSV(),
-        document.getElementById('datetime-multi').innerHTML,
+        csv,
         "Datetime with two series"
     );
     $('#container').highcharts().destroy();
@@ -132,9 +174,23 @@ QUnit.test("Numeric", function (assert) {
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
     });
+
+    var csv = '"Category","Series 1"\n' +
+        '0,29.9\n' +
+        '1,71.5\n' +
+        '2,106.4\n' +
+        '3,129.2\n' +
+        '4,144\n' +
+        '5,176\n' +
+        '6,135.6\n' +
+        '7,148.5\n' +
+        '8,216.4\n' +
+        '9,194.1\n' +
+        '10,95.6\n' +
+        '11,54.4';
     assert.equal(
         $('#container').highcharts().getCSV(),
-        document.getElementById('test3').innerHTML,
+        csv,
         "Basic numeric content"
     );
     $('#container').highcharts().destroy();
@@ -152,9 +208,15 @@ QUnit.test("Pie chart", function (assert) {
             type: 'pie'
         }]
     });
+
+    var csv = '"Category","Series 1"\n' +
+        '"Apples",1\n' +
+        '"Pears",2\n' +
+        '"Oranges",3';
+
     assert.equal(
         $('#container').highcharts().getCSV(),
-        document.getElementById('pie').innerHTML,
+        csv,
         "Pie chart"
     );
     $('#container').highcharts().destroy();
@@ -175,7 +237,15 @@ QUnit.test("Bubble chart", function (assert) {
                 [2, 1, 3],
                 [2.5, 2, 4]
             ]
-        }]
+        }],
+        exporting: {
+            csv: {
+                // Don't use accessibility's extended formatter
+                columnHeaderFormatter: function () {
+                    return false; // Use built-in formatter
+                }
+            }
+        }
     });
     var rows = chart.getDataRows();
     assert.equal(
@@ -434,7 +504,11 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
     });
 
     assert.equal(
-        chart.getTable(),
+        chart.getTable()
+            // Remove the extra attributes and caption tag that the
+            // accessibility module added.
+            .replace(/<table[^>]+>/g, '<table>')
+            .replace('<caption>Chart title</caption>', ''),
         "<table><thead><tr><th class=\"text\">Category</th><th class=\"text\">Drop 2</th><th class=\"text\">Full</th></tr></thead><tbody><tr><td class=\"number\">0</td><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><td class=\"number\">1</td><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><td class=\"number\">2</td><td class=\"text\"></td><td class=\"number\">2</td></tr><tr><td class=\"number\">3</td><td class=\"number\">3</td><td class=\"number\">3</td></tr><tr><td class=\"number\">4</td><td class=\"number\">4</td><td class=\"number\">4</td></tr></tbody></table>",
         'Empty data in table'
     );

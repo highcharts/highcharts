@@ -153,7 +153,7 @@ module.exports = function (config) {
             'samples/unit-tests/data/*/demo.js',
             'samples/unit-tests/datalabels/*/demo.js',
             'samples/unit-tests/drilldown/*/demo.js',
-            // 'samples/unit-tests/export-data/*/demo.js' // => move data into tests
+            'samples/unit-tests/export-data/*/demo.js',
             'samples/unit-tests/exporting/*/demo.js',
             'samples/unit-tests/global/*/demo.js',
             'samples/unit-tests/highcharts/*/demo.js',
