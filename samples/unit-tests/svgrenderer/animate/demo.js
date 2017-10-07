@@ -1,6 +1,10 @@
 QUnit.test('Animation x-y', function (assert) {
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container1'),
+        div,
         600,
         400
     );
@@ -36,13 +40,18 @@ QUnit.test('Animation x-y', function (assert) {
             10,
             'Y interrupted by second destination'
         );
+        document.body.removeChild(div);
         done();
     }, 2500);
 });
 
 QUnit.test('Path animation', function (assert) {
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container2'),
+        div,
         600,
         400
     );
@@ -75,14 +84,18 @@ QUnit.test('Path animation', function (assert) {
             'M 300 30 L 300 400',
             'First animation aborted by shorter second animation'
         );
+        document.body.removeChild(div);
         done();
     }, 1500);
 
 });
 
 QUnit.test('Symbol animation', function (assert) {
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container3'),
+        div,
         600,
         400
     );
@@ -129,14 +142,18 @@ QUnit.test('Symbol animation', function (assert) {
             100,
             'Final height'
         );
+        document.body.removeChild(div);
         done();
     }, 2500);
 
 });
 
 QUnit.test('Animation x-y, stopped by .attr()', function (assert) {
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container4'),
+        div,
         600,
         400
     );
@@ -172,13 +189,18 @@ QUnit.test('Animation x-y, stopped by .attr()', function (assert) {
             10,
             'Y interrupted by attr'
         );
+
+        document.body.removeChild(div);
         done();
     }, 1500);
 });
 
 QUnit.test('Animation x-y, stopped by .stop()', function (assert) {
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container5'),
+        div,
         600,
         400
     );
@@ -212,13 +234,18 @@ QUnit.test('Animation x-y, stopped by .stop()', function (assert) {
             300,
             'Y stopped'
         );
+
+        document.body.removeChild(div);
         done();
     }, 1500);
 });
 
 QUnit.test('Fill and stroke animation', function (assert) {
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container6'),
+        div,
         600,
         400
     );
@@ -276,6 +303,8 @@ QUnit.test('Fill and stroke animation', function (assert) {
         console.log('stroke', circ.attr('stroke'));
 
         Highcharts.stop(circ);
+
+        document.body.removeChild(div);
         done();
     }, 500);
 });
@@ -283,7 +312,12 @@ QUnit.test('Fill and stroke animation', function (assert) {
 QUnit.test('Fill and stroke animation for series points (#6776)', function (assert) {
     assert.expect(8);
 
-    var chart = Highcharts.chart('container7', {
+    var div = document.createElement('div');
+    div.style.width = '600px';
+    document.body.appendChild(div);
+
+
+    var chart = Highcharts.chart(div, {
             chart: {
                 animation: true
             },
@@ -304,11 +338,10 @@ QUnit.test('Fill and stroke animation for series points (#6776)', function (asse
             }]
         }),
         done = assert.async(),
-        controller = TestController(chart),
         point = chart.series[0].points[0].graphic;
 
     // hover over the point
-    controller.trigger('mouseover', 250, 250);
+    chart.series[0].points[0].setState('hover');
 
     setTimeout(function () {
         assert.notEqual(
@@ -333,7 +366,7 @@ QUnit.test('Fill and stroke animation for series points (#6776)', function (asse
         );
 
         setTimeout(function () {
-            controller.trigger('mouseover', 450, 250);
+            chart.series[0].points[0].setState('');
 
             setTimeout(function () {
                 assert.notEqual(
@@ -366,7 +399,12 @@ QUnit.test('Fill and stroke animation for series points (#6776)', function (asse
 QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function (assert) {
     assert.expect(4);
 
-    var chart = Highcharts.chart('container8', {
+    var div = document.createElement('div');
+    div.style.width = '600px';
+    document.body.appendChild(div);
+
+
+    var chart = Highcharts.chart(div, {
             chart: {
                 animation: true,
                 options3d: {
@@ -390,11 +428,10 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
             }]
         }),
         done = assert.async(),
-        controller = TestController(chart),
         point = chart.series[0].points[0].graphic;
 
     // hover over the point
-    controller.trigger('mouseover', 250, 250);
+    chart.series[0].points[0].setState('hover');
 
     setTimeout(function () {
         assert.notEqual(
@@ -409,7 +446,8 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
         );
 
         setTimeout(function () {
-            controller.trigger('mouseover', 450, 250);
+            //controller.trigger('mouseover', 450, 250);
+            chart.series[0].points[0].setState('');
 
             setTimeout(function () {
                 assert.notEqual(

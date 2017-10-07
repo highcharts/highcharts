@@ -136,6 +136,12 @@ module.exports = function (config) {
         // frameworks: ['mocha', 'chai'],
         frameworks: ['qunit'],
         files: files.concat([
+            {
+                pattern: 'utils/samples/*.png', // testimage.png
+                watched: false,
+                included: false,
+                served: true
+            },
 
             // Set up
             'utils/samples/test-controller.js',
@@ -169,7 +175,9 @@ module.exports = function (config) {
             'samples/unit-tests/responsive/*/demo.js',
             'samples/unit-tests/scrollbar/*/demo.js',
             'samples/unit-tests/scroller/*/demo.js',
-            'samples/unit-tests/series-*/*/demo.js'
+            'samples/unit-tests/series/*/demo.js',
+            'samples/unit-tests/series-*/*/demo.js',
+            'samples/unit-tests/svgrenderer/*/demo.js'
         ]),
 
         // These ones fail
@@ -199,8 +207,11 @@ module.exports = function (config) {
             // not. This needs rewriting. Props like directTouch, allowDB etc
             // should be set dynamically when boost kicks in, and reset when it
             // is not boosted.
-            'samples/unit-tests/series-bubble/members/demo.js'
-
+            'samples/unit-tests/series-bubble/members/demo.js',
+            // Fails when the /series group is added, but
+            // succeeds when alone. Check if some global animation is set in any
+            // of the series tests.
+            'samples/unit-tests/svgrenderer/animate/demo.js'
         ],
         /*
         formatError: function (e) {
@@ -210,7 +221,7 @@ module.exports = function (config) {
         reporters: ['progress'],
         port: 9876,  // karma web server port
         colors: true,
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_WARN,
         browsers: ['ChromeHeadless'],
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
