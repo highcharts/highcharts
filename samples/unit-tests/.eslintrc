@@ -1,0 +1,2 @@
+rules:
+    no-implicit-globals: "error" # Because karma runs all tests in a batch
