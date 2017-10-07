@@ -44,7 +44,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Initial number of CCI points is correct'
     );
 
-    console.log(chart.series[1].yData);
+    // console.log(chart.series[1].yData);
 
     assert.deepEqual(
         chart.series[1].yData,
