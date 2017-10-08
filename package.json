@@ -25,7 +25,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "karma start karma.conf.js",
+    "test": "karma start test/karma-conf.js",
     "precommit": "lint-staged && npm test"
   },
   "devDependencies": {

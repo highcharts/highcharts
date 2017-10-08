@@ -122,7 +122,7 @@ function getHTML($which) {
 
 	if ($emulateKarma && $isUnitTest) {
 		$files = json_decode(
-			file_get_contents(__DIR__ . '/../../karma-files.json')
+			file_get_contents(__DIR__ . '/../../test/karma-files.json')
 		);
 		$scripttags = '';
 

@@ -1,5 +1,5 @@
 /* eslint-env node, es6 */
-/* eslint no-console:0, valid-jsdoc:0 */
+/* eslint no-console:0, no-path-concat:0, valid-jsdoc:0 */
 /* eslint-disable func-style */
 
 'use strict';
@@ -274,14 +274,21 @@ gulp.task('ftp-watch', function () {
 });
 
 /**
- * Run the test suite. The task spawns a child process running PhantomJS.
+ * Run the test suite.
  */
 gulp.task('test', function () {
+    /*
     const spawn = require('child_process').spawn;
     spawn('phantomjs', ['phantomtest.js'].concat(process.argv.slice(3)), {
         cwd: 'utils/samples',
         stdio: 'inherit'
     });
+    */
+    var Server = require('karma').Server;
+    new Server({
+        configFile: __dirname + '/test/karma-conf.js',
+        singleRun: true
+    }).start();
 });
 
 /**
@@ -787,6 +794,7 @@ const antDist = () => commandLine('ant dist');
  * @return {undefined}
  * TODO Promisify to use in dist task.
  */
+/*
 const gzipFile = (file, output) => {
     const zlib = require('zlib');
     const fs = require('fs');
@@ -795,6 +803,7 @@ const gzipFile = (file, output) => {
     const out = fs.createWriteStream(output);
     inp.pipe(gzip).pipe(out);
 };
+*/
 
 const getDirectories = (path) => {
     const fs = require('fs');
@@ -885,6 +894,7 @@ const createAllExamples = () => new Promise((resolve) => {
 /**
  * Copy new current version files into a versioned folder
  */
+/*
 const copyAPIFiles = (dist, version) => {
     const B = require('./assembler/build.js');
     const notVersionedFolder = (file) => !(
@@ -915,6 +925,7 @@ const copyAPIFiles = (dist, version) => {
         console.log(message.successCopy);
     });
 };
+*/
 
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
     const fs = require('fs');
@@ -955,7 +966,7 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
  * @return {Promise} A Promise which resolves into undefined when done.
  */
 const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
-    const version = getBuildProperties().version;
+    // const version = getBuildProperties().version;
     const message = {
         'successJSDoc': colors.green('Created tree.json')
     };
@@ -1038,7 +1049,7 @@ const startServer = () => {
         let file = false;
         let redirect = false;
 
-        if (path === '/highcharts' || path === '/' || path === '') {
+        if (path === '/highcharts' || path === '/' || path === '') {
             redirect = '/highcharts/';
         } else if (path === '/highstock') {
             redirect = '/highstock/';

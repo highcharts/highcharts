@@ -133,7 +133,7 @@ module.exports = function (config) {
     let files = require('./karma-files.json');
 
     config.set({
-        // frameworks: ['mocha', 'chai'],
+        basePath: '../', // Root relative to this file
         frameworks: ['qunit'],
         files: files.concat([
             {
@@ -145,7 +145,7 @@ module.exports = function (config) {
 
             // Set up
             'utils/samples/test-controller.js',
-            'karma.setup.js',
+            'test/karma-setup.js',
 
             // Tests
             'samples/unit-tests/*/*/demo.js'
