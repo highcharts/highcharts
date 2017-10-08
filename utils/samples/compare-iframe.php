@@ -4,7 +4,7 @@ session_start();
 require_once('../settings.php');
 
 // When emulating karma, load all Highcharts files
-$emulateKarma = true;
+$emulateKarma = false;
 
 
 // Server variables

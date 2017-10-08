@@ -41,6 +41,10 @@ QUnit.test('csv-datetime-axis', function (assert) {
 
 QUnit.test('csv-current-year', function (assert) {
 
+    // Don't log the error 'Could not deduce date format'
+    var error = Highcharts.error;
+    Highcharts.error = function () {};
+
     var csv = 'Date,Value\nJan 16,1\nFeb 16,2\nMar 16,3';
 
     var chart = Highcharts.chart('container', {
@@ -83,6 +87,9 @@ QUnit.test('csv-current-year', function (assert) {
         979603200000,
         'Date for point one is correct'
     );
+
+    // Reset
+    Highcharts.error = error;
 });
 
 QUnit.test('csv-deduce-delimiter', function (assert) {
