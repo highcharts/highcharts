@@ -67,7 +67,7 @@ QUnit.test('Positioning labels according to real points', function (assert) {
         x3 = Math.round(xAxis.toPixels(p3.x) - Math.round(label3.width / 2)),
         y3 = Math.round(yAxis.toPixels(p3.y) - label3.height - 20);
 
-    assert.strictEqual(Math.round(label3.x), x3, 'x position - distance');
+    assert.close(Math.round(label3.x), x3, 2, 'x position - distance');
     assert.strictEqual(Math.round(label3.y), y3, 'y position - distance');
 
     var label4 = chart.annotations[0].labels[3],

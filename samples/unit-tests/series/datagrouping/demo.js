@@ -129,9 +129,8 @@ QUnit.test('Hidden series shouldn\'t have `undefined`-points in a series.points 
         }]
     });
     chart.series[1].hide();
-    assert.strictEqual(
-        chart.series[1].points,
-        null,
+    assert.ok(
+        chart.series[1].points === null,
         'Points array is nullified for a hidden series.'
     );
 });

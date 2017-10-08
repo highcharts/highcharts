@@ -11,7 +11,7 @@ QUnit.test('#6574 - subtitle shouldn\'t be rendered outside the container', func
         box = chart.subtitle.getBBox(true);
 
     assert.strictEqual(
-        box.y + box.height <= chart.chartHeight,
+        box.y + box.height <= chart.chartHeight + 2, // + 2 is for Chrome/Win
         true,
         'Subtitle rendered within the plotting area.'
     );

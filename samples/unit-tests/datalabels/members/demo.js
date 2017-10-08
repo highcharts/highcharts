@@ -43,7 +43,7 @@ QUnit.test('Series.drawDataLabels', function (assert) {
                     }
                 }
             },
-            options: defaultOptions.plotOptions.line,
+            options: H.merge(defaultOptions.plotOptions.line),
             plotGroup: function () {
                 return {
                     attr: noop

@@ -155,7 +155,8 @@ module.exports = function (config) {
         exclude: [
             // Difference between Highcharts and Highstock
             'samples/unit-tests/axis/plotlines-and-plotbands/demo.js',
-            // renderTarget not available
+            // renderTarget not available. WebGL is not available in Headless
+            // Chrome for Mac.
             'samples/unit-tests/boost/setvisible/demo.js',
             // Unknown problem with assert.async(), investigate more
             'samples/unit-tests/chart/events-load/demo.js',
