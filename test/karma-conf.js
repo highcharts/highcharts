@@ -157,6 +157,7 @@ module.exports = function (config) {
             'samples/unit-tests/axis/plotlines-and-plotbands/demo.js',
             // renderTarget not available. WebGL is not available in Headless
             // Chrome for Mac.
+            'samples/unit-tests/boost/enter-exit/demo.js',
             'samples/unit-tests/boost/setvisible/demo.js',
             // Unknown problem with assert.async(), investigate more
             'samples/unit-tests/chart/events-load/demo.js',

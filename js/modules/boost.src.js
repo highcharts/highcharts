@@ -535,6 +535,7 @@ function isChartSeriesBoosting(chart) {
  * @param series {Highchart.Series} - the series to check
  * @returns {boolean} - true if the series is in boost mode
  */
+/*
 function isSeriesBoosting(series, overrideThreshold) {
 	return  isChartSeriesBoosting(series.chart) ||
 			patientMax(
@@ -543,6 +544,7 @@ function isSeriesBoosting(series, overrideThreshold) {
 				series.points
 			) >= (overrideThreshold || series.options.boostThreshold || Number.MAX_VALUE);
 }
+*/
 
 // START OF WEBGL ABSTRACTIONS
 
@@ -1232,7 +1234,7 @@ function GLRenderer(postRenderCallback) {
 			xData,
 			s;
 
-		if (isSeriesBoosting(series)) {
+		if (series.isSeriesBoosting) {
 			isStacked = !!series.options.stacking;
 			xData = series.xData || series.options.xData || series.processedXData;
 			s = (isStacked ? series.data : (xData || series.options.data)).length;
@@ -1260,7 +1262,7 @@ function GLRenderer(postRenderCallback) {
 		}
 
 		each(chart.series, function (series) {
-			if (isSeriesBoosting(series)) {
+			if (series.isSeriesBoosting) {
 				s += seriesPointCount(series);
 			}
 		});
@@ -1275,7 +1277,7 @@ function GLRenderer(postRenderCallback) {
 			return;
 		}
 
-		if (isSeriesBoosting(series)) {
+		if (series.isSeriesBoosting) {
 			s = seriesPointCount(series);
 		}
 
@@ -2573,7 +2575,7 @@ wrap(Series.prototype, 'destroy', function (proceed) {
  * to hasExtremes to the methods directly.
  */
 wrap(Series.prototype, 'getExtremes', function (proceed) {
-	if (!isSeriesBoosting(this) || (!this.hasExtremes || !this.hasExtremes())) {
+	if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
 		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
@@ -2615,7 +2617,7 @@ each([
 				this.chart.options.boost.enabled;
 		}
 
-		if (!isSeriesBoosting(this) ||
+		if (!this.isSeriesBoosting ||
 			letItPass ||
 			!enabled ||
 			this.type === 'heatmap' ||
@@ -2644,7 +2646,7 @@ each([
 
 				this.generatePoints();
 
-				if (isSeriesBoosting(this)) {
+				if (this.isSeriesBoosting) {
 					return;
 				}
 			}
@@ -2721,7 +2723,7 @@ function pointDrawHandler(proceed) {
 			this.chart.options.boost.enabled;
 	}
 
-	if (!enabled || !isSeriesBoosting(this)) {
+	if (!enabled || !this.isSeriesBoosting) {
 		return proceed.call(this);
 	}
 
@@ -2758,8 +2760,21 @@ if (!hasWebGLSupport()) {
 	 *  extremes.
 	 */
 	wrap(Series.prototype, 'processData', function (proceed) {
+
+		// Used twice in this function, first on this.options.data, the second
+		// time it runs the check again after processedXData is built.
+		// @todo Check what happens with data grouping
+		function getSeriesBoosting(series) {
+			return isChartSeriesBoosting(series.chart) || (
+				(series.processedXData || series.options.data).length >=
+				(series.options.boostThreshold || Number.MAX_VALUE)
+			);
+		}
+
+		this.processedXData = null;
+
 		// If this is a heatmap, do default behaviour
-		if (!isSeriesBoosting(this) ||
+		if (!getSeriesBoosting(this) ||
 			this.type === 'heatmap' ||
 			this.type === 'treemap') {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -2768,6 +2783,9 @@ if (!hasWebGLSupport()) {
 		if (!this.hasExtremes || !this.hasExtremes(true)) {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		}
+
+		// Set the isBoosting flag
+		this.isSeriesBoosting = getSeriesBoosting(this);
 	});
 
 	H.extend(Series.prototype, {
@@ -3067,7 +3085,7 @@ if (!hasWebGLSupport()) {
 			seriesTypes.bubble.prototype,
 			'markerAttribs',
 			function (proceed) {
-				if (isSeriesBoosting(this)) {
+				if (this.isSeriesBoosting) {
 					return false;
 				}
 				return proceed.apply(this, [].slice.call(arguments, 1));
