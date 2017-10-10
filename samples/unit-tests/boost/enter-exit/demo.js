@@ -5,13 +5,49 @@
             !s.renderTarget || s.renderTarget.attr('href') === '',
             'No painted image'
         );
+
+        assert.strictEqual(
+            s.directTouch,
+            true,
+            'Non-boosted directTouch'
+        );
+
+        assert.strictEqual(
+            s.stickyTracking,
+            undefined,
+            'Non-boosted stickyTracking'
+        );
+
+        assert.strictEqual(
+            s.allowDG,
+            undefined,
+            'Allow data grouping'
+        );
     }
 
     function assertBoosted(assert, s) {
         assert.strictEqual(
             s.renderTarget.attr('href').indexOf('data:image/png;base64,'),
             0,
-            'Painted image for the visible series'
+            'Painted image for the series'
+        );
+
+        assert.strictEqual(
+            s.directTouch,
+            false,
+            'Boosted directTouch'
+        );
+
+        assert.strictEqual(
+            s.stickyTracking,
+            true,
+            'Boosted stickyTracking'
+        );
+
+        assert.strictEqual(
+            s.allowDG,
+            false,
+            'No data grouping'
         );
     }
 

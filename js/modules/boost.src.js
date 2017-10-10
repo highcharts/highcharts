@@ -2626,11 +2626,6 @@ each([
 
 			// Clear image
 			if (method === 'render') {
-				if ('stickyTrackingReset' in this) {
-					this.stickyTracking = this.stickyTrackingReset;
-					delete this.stickyTrackingReset;
-				}
-
 				if (this.boostClear) {
 					this.boostClear();
 					this.animate = null; // We're zooming in, don't run animation
@@ -2786,12 +2781,35 @@ if (!hasWebGLSupport()) {
 
 		// Set the isBoosting flag
 		this.isSeriesBoosting = getSeriesBoosting(this);
+
+		// Enter or exit boost mode
+		if (this.isSeriesBoosting) {
+			this.enterBoost();
+		} else {
+			this.exitBoost();
+		}
 	});
 
 	H.extend(Series.prototype, {
-		pointRange: 0,
-		directTouch: false,
-		allowDG: false, // No data grouping, let boost handle large data
+		/**
+		 * Enter boost mode and apply boost-specific properties.
+		 */
+		enterBoost: function () {
+			this.allowDG = false;
+			this.directTouch = false;
+			this.stickyTracking = true;
+		},
+
+		/**
+		 * Exit from boost mode and restore non-boost properties.
+		 */
+		exitBoost: function () {
+			// Delete instance properties and go back to prototype
+			delete this.allowDG;
+			delete this.directTouch;
+			delete this.stickyTracking;
+		},
+		
 		hasExtremes: function (checkX) {
 			var options = this.options,
 				data = options.data,
@@ -2897,10 +2915,6 @@ if (!hasWebGLSupport()) {
 			chart.isBoosting = true;
 
 			boostOptions = renderer.settings;
-
-			// Force sticky tracking
-			this.stickyTrackingReset = this.stickyTracking;
-			this.stickyTracking = true;
 
 			if (!this.visible) {
 				return;
@@ -3028,12 +3042,7 @@ if (!hasWebGLSupport()) {
 
 			function doneProcessing() {
 				fireEvent(series, 'renderedCanvas');
-				// Pass tests in Pointer.
-				// Replace this with a single property, and replace when zooming
-				// in below boostThreshold.
-				series.directTouch = false;
-				series.options.stickyTracking = true;
-
+				
 				// Go back to prototype, ready to build
 				delete series.buildKDTree;
 				series.buildKDTree();
@@ -3069,7 +3078,7 @@ if (!hasWebGLSupport()) {
 		function (t) {
 			if (seriesTypes[t]) {
 				wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
-				seriesTypes[t].prototype.directTouch = false; // Use k-d-tree
+				// seriesTypes[t].prototype.directTouch = false; // Use k-d-tree
 			}
 		}
 	);
@@ -3078,7 +3087,7 @@ if (!hasWebGLSupport()) {
 		// By default, the bubble series does not use the KD-tree, so force it
 		// to.
 		delete seriesTypes.bubble.prototype.buildKDTree;
-		seriesTypes.bubble.prototype.directTouch = false;
+		// seriesTypes.bubble.prototype.directTouch = false;
 
 		// Needed for markers to work correctly
 		wrap(
