@@ -2632,20 +2632,6 @@ each([
 				}
 			}
 
-			if (!this.options.stacking && method === 'translate' &&
-				this.type !== 'treemap' &&
-				this.type !== 'heatmap') {
-				// We call generate points and check if we're now boosting
-				// so that we don't have to call series.translate
-				// when zooming out from SVG mode (which is very, very expensive)
-
-				this.generatePoints();
-
-				if (this.isSeriesBoosting) {
-					return;
-				}
-			}
-
 			proceed.call(this);
 
 		// If a canvas version of the method exists, like renderCanvas(), run
@@ -2809,7 +2795,7 @@ if (!hasWebGLSupport()) {
 			delete this.directTouch;
 			delete this.stickyTracking;
 		},
-		
+
 		hasExtremes: function (checkX) {
 			var options = this.options,
 				data = options.data,

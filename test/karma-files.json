@@ -15,6 +15,7 @@
 	"code/modules/export-data.src.js",
 	"code/modules/accessibility.src.js",
 	"code/modules/annotations.src.js",
+	"code/modules/boost.src.js",
 	"code/modules/data.src.js",
 	"code/modules/static-scale.src.js",
 	"code/modules/broken-axis.src.js",

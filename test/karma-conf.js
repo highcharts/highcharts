@@ -163,9 +163,6 @@ module.exports = function (config) {
             'samples/unit-tests/chart/events-load/demo.js',
             // Passes in Chrome, fails in Headless
             'samples/unit-tests/chart/setsize/demo.js',
-            // Fails due to boost module. If we remove boost from the included
-            // files, it passes.
-            'samples/unit-tests/indicator-volume-by-price/recalculations/demo.js',
             // Fails when data labels tests are included, in the collectAndHide
             // function.
             'samples/unit-tests/legend/legend-height/demo.js',
