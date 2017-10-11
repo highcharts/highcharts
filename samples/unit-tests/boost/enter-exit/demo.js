@@ -14,7 +14,7 @@
 
         assert.strictEqual(
             s.stickyTracking,
-            undefined,
+            false,
             'Non-boosted stickyTracking'
         );
 

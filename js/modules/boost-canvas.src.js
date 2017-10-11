@@ -2,50 +2,15 @@
  * License: www.highcharts.com/license
  * Author: Torstein Honsi, Christer Vasseng
  * 
- * This is an experimental Highcharts module that draws long data series on a canvas
- * in order to increase performance of the initial load time and tooltip responsiveness.
+ * This is a  Highcharts module that draws long data series on a canvas
+ * in order to increase performance of the initial load time and tooltip
+ * responsiveness.
  *
- * Compatible with HTML5 canvas compatible browsers (not IE < 9).
+ * This module serves as a fallback for the Boost module in IE9 and IE10. Newer
+ * browsers support WebGL which is faster. 
  *
- *
- * 
- * Development plan
- * - Column range.
- * - Heatmap. Modify the heatmap-canvas demo so that it uses this module.
- * - Treemap.
- * - Check how it works with Highstock and data grouping. Currently it only works when navigator.adaptToUpdatedData
- *   is false. It is also recommended to set scrollbar.liveRedraw to false.
- * - Check inverted charts.
- * - Check reversed axes.
- * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
-	 that with initial series animation).
- * - Cache full-size image so we don't have to redraw on hide/show and zoom up. But k-d-tree still
- *   needs to be built.
- * - Test IE9 and IE10.
- * - Stacking is not perhaps not correct since it doesn't use the translation given in 
- *   the translate method. If this gets to complicated, a possible way out would be to 
- *   have a simplified renderCanvas method that simply draws the areaPath on a canvas.
- *
- * If this module is taken in as part of the core
- * - All the loading logic should be merged with core. Update styles in the core.
- * - Most of the method wraps should probably be added directly in parent methods.
- *
- * Notes for boost mode
- * - Area lines are not drawn
- * - Point markers are not drawn on line-type series
- * - Lines are not drawn on scatter charts
- * - Zones and negativeColor don't work
- * - Initial point colors aren't rendered
- * - Columns are always one pixel wide. Don't set the threshold too low.
- *
- * Optimizing tips for users
- * - For scatter plots, use a marker.radius of 1 or less. It results in a rectangle being drawn, which is 
- *   considerably faster than a circle.
- * - Set extremes (min, max) explicitly on the axes in order for Highcharts to avoid computing extremes.
- * - Set enableMouseTracking to false on the series to improve total rendering time.
- * - The default threshold is set based on one series. If you have multiple, dense series, the combined
- *   number of points drawn gets higher, and you may want to set the threshold lower in order to 
- *   use optimizations.
+ * It is recommended to include this module in conditional comments targeting
+ * IE9 and IE10.
  */
 
 'use strict';
@@ -72,43 +37,7 @@ var win = H.win,
 	CHUNK_SIZE = 50000,
 	destroyLoadingDiv;
 
-function eachAsync(arr, fn, finalFunc, chunkSize, i) {
-	i = i || 0;
-	chunkSize = chunkSize || CHUNK_SIZE;
-	
-	var threshold = i + chunkSize,
-		proceed = true;
-
-	while (proceed && i < threshold && i < arr.length) {
-		proceed = fn(arr[i], i);
-		i = i + 1;
-	}
-	if (proceed) {
-		if (i < arr.length) {
-			setTimeout(function () {
-				eachAsync(arr, fn, finalFunc, chunkSize, i);
-			});
-		} else if (finalFunc) {
-			finalFunc();
-		}
-	}
-}
-
-/*
- * Returns true if the chart is in series boost mode
- * @param chart {Highchart.Chart} - the chart to check
- * @returns {Boolean} - true if the chart is in series boost mode
- */
-function isChartSeriesBoosting(chart) {	
-	var threshold = (chart.options.boost ? chart.options.boost.seriesThreshold : 0) || 
-					chart.options.chart.seriesBoostThreshold ||
-					10;
-
-	return chart.series.length >= threshold;
-}
-
 H.initCanvasBoost = function () {
-
 	if (H.seriesTypes.heatmap) {
 		H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
 			var ctx = this.getContext();
@@ -147,81 +76,8 @@ H.initCanvasBoost = function () {
 	}
 
 
-	/**
-	 * Override a bunch of methods the same way. If the number of points is below the threshold,
-	 * run the original method. If not, check for a canvas version or do nothing.
-	 */
-	// each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
-	// 	function branch(proceed) {
-	// 		var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
-	// 		if (((this.processedXData || this.options.data).length < (this.options.boostThreshold || Number.MAX_VALUE) ||
-	// 				letItPass) || !isChartSeriesBoosting(this.chart)) {
-
-	// 			// Clear image
-	// 			if (method === 'render' && this.image) {
-	// 				this.image.attr({ href: '' });
-	// 				this.animate = null; // We're zooming in, don't run animation
-	// 			}
-
-	// 			proceed.call(this);
-
-	// 		// If a canvas version of the method exists, like renderCanvas(), run
-	// 		} else if (this[method + 'Canvas']) {
-
-	// 			this[method + 'Canvas']();
-	// 		}
-	// 	}
-	// 	wrap(Series.prototype, method, branch);
-
-	// 	// A special case for some types - its translate method is already wrapped
-	// 	if (method === 'translate') {
-	// 		each(['arearange', 'bubble', 'column'], function (type) {
-	// 			if (seriesTypes[type]) {
-	// 				wrap(seriesTypes[type].prototype, method, branch);
-	// 			}
-	// 		});
-	// 	}
-	// });
-
 	H.extend(Series.prototype, {
-		directTouch: false,
-		pointRange: 0,
-		allowDG: false, // No data grouping, let boost handle large data 
-		hasExtremes: function (checkX) {
-			var options = this.options,
-				data = options.data,
-				xAxis = this.xAxis && this.xAxis.options,
-				yAxis = this.yAxis && this.yAxis.options;
-			return data.length > (options.boostThreshold || Number.MAX_VALUE) && isNumber(yAxis.min) && isNumber(yAxis.max) &&
-				(!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
-		},
-
-		/**
-		 * If implemented in the core, parts of this can probably be shared with other similar
-		 * methods in Highcharts.
-		 */
-		destroyGraphics: function () {
-			var series = this,
-				points = this.points,
-				point,
-				i;
-
-			if (points) {
-				for (i = 0; i < points.length; i = i + 1) {
-					point = points[i];
-					if (point && point.graphic) {
-						point.graphic = point.graphic.destroy();
-					}
-				}
-			}
-
-			each(['graph', 'area', 'tracker'], function (prop) {
-				if (series[prop]) {
-					series[prop] = series[prop].destroy();
-				}
-			});
-		},
-
+		
 		/**
 		 * Create a hidden canvas to draw the graph on. The contents is later copied over 
 		 * to an SVG image element.
@@ -237,7 +93,7 @@ H.initCanvasBoost = function () {
 					proceed.call(this, y, x, a, b, c, d);
 				};
 
-			if (isChartSeriesBoosting(chart)) {
+			if (chart.isChartSeriesBoosting()) {
 				target = chart;
 				targetGroup = chart.seriesGroup;
 			}
@@ -306,7 +162,7 @@ H.initCanvasBoost = function () {
 		 * Draw the canvas image inside an SVG image
 		 */
 		canvasToSVG: function () {
-			if (!isChartSeriesBoosting(this.chart)) {
+			if (!this.chart.isChartSeriesBoosting()) {
 				this.image.attr({ href: this.canvas.toDataURL('image/png') });
 			} else if (this.image) {
 				this.image.attr({ href: '' });
@@ -504,7 +360,7 @@ H.initCanvasBoost = function () {
 			}
 
 			// Loop over the points
-			eachAsync(sdata, function (d, i) {
+			H.eachAsync(sdata, function (d, i) {
 				var x,
 					y,
 					clientX,
@@ -677,12 +533,6 @@ H.initCanvasBoost = function () {
 		}
 	});
 	
-	wrap(Series.prototype, 'processData', function (proceed) {
-		if (!this.hasExtremes || !this.hasExtremes(true) || this.type === 'heatmap') {
-			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-		}
-	});
-
 	seriesTypes.scatter.prototype.cvsMarkerCircle = function (ctx, clientX, plotY, r) {
 		ctx.moveTo(clientX, plotY);
 		ctx.arc(clientX, plotY, r, 0, 2 * Math.PI, false);
