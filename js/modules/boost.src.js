@@ -2670,7 +2670,8 @@ each([
  */
 wrap(Series.prototype, 'processData', function (proceed) {
 
-	var series = this;
+	var series = this,
+		dataToMeasure = this.options.data;
 
 	// Used twice in this function, first on this.options.data, the second
 	// time it runs the check again after processedXData is built.
@@ -2686,13 +2687,14 @@ wrap(Series.prototype, 'processData', function (proceed) {
 	// the data to read the data extremes. If this is a heatmap, do default
 	// behaviour. 
 	if (
-		!getSeriesBoosting(this.options.data) || // First pass with options.data
+		!getSeriesBoosting(dataToMeasure) || // First pass with options.data
 		this.type === 'heatmap' ||
 		this.type === 'treemap' ||
 		!this.hasExtremes ||
 		!this.hasExtremes(true)
 	) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		dataToMeasure = this.processedXData;
 	}
 
 	/*
@@ -2703,7 +2705,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
 
 	// Set the isBoosting flag, second pass with processedXData to see if we
 	// have zoomed.
-	this.isSeriesBoosting = getSeriesBoosting(this.processedXData);
+	this.isSeriesBoosting = getSeriesBoosting(dataToMeasure);
 
 	// Enter or exit boost mode
 	if (this.isSeriesBoosting) {
