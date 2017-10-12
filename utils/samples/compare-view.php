@@ -49,7 +49,7 @@
 		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/rgbcolor.js"></script>
 		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/canvg.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
-
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<script type="text/javascript">		
 			var diff,

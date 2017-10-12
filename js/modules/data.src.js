@@ -502,7 +502,7 @@ Highcharts.extend(Data.prototype, {
 				'\t': 0
 			};
 
-			columns = this.columns = this.columns || [];
+		columns = this.columns = this.columns || [];
 
 		/*
 			This implementation is quite verbose. It will be shortened once

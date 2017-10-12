@@ -140,18 +140,6 @@ if (!Array.prototype.filter) {
 	};
 }
 
-if (!Array.prototype.find) {
-	H.findPolyfill = function (fn) {
-		var i,
-			length = this.length;
-
-		for (i = 0; i < length; i++) {
-			if (fn(this[i], i)) {
-				return this[i];
-			}
-		}
-	};
-}
 
 if (!Array.prototype.reduce) {
 	H.reducePolyfill = function (func, initialValue) {

@@ -1058,7 +1058,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		if (chart.adjustPlotArea) {
 			chart.adjustPlotArea();
 		}
-		
+
 		if (!skipAxes) {
 			this.getAxisMargins();
 		}

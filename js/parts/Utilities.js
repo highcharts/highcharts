@@ -1555,9 +1555,21 @@ H.grep = function (arr, callback) {
  *        condition.
  * @returns {Mixed} - The value of the element.
  */
-H.find = function (arr, callback) {
-	return (H.findPolyfill || Array.prototype.find).call(arr, callback);
-};
+H.find = Array.prototype.find ?
+	function (arr, callback) {
+		return arr.find(callback);
+	} :
+	// Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
+	function (arr, fn) {
+		var i,
+			length = arr.length;
+
+		for (i = 0; i < length; i++) {
+			if (fn(arr[i], i)) {
+				return arr[i];
+			}
+		}
+	};
 
 /**
  * Map an array by a callback.
