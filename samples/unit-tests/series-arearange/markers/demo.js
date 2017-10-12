@@ -3,7 +3,8 @@ QUnit.test('Markers for arearange.', function (assert) {
     var chart = Highcharts.chart('container', {
 
         chart: {
-            type: 'arearange'
+            type: 'arearange',
+            width: 600
         },
 
         tooltip: {
@@ -20,7 +21,7 @@ QUnit.test('Markers for arearange.', function (assert) {
         }]
     });
 
-    Highcharts.each(chart.series[0].points, function(point) {
+    Highcharts.each(chart.series[0].points, function (point) {
         assert.ok(
             point.lowerGraphic !== undefined,
             'Bottom marker for point: x=' + (point.x) + ' exists.'
@@ -38,7 +39,8 @@ QUnit.test('Shared tooltip marker.', function (assert) {
     var chart = Highcharts.chart('container', {
 
         chart: {
-            type: 'arearange'
+            type: 'arearange',
+            width: 600
         },
 
         tooltip: {
@@ -52,7 +54,7 @@ QUnit.test('Shared tooltip marker.', function (assert) {
                     ranges.push([Math.random(), 10 + Math.random()]);
                 }
                 return ranges;
-            })()
+            }())
         }]
     });
 
@@ -73,7 +75,7 @@ QUnit.test('Shared tooltip marker.', function (assert) {
         'Shared markers are not rendered in the same position'
     );
 
-    chart.destroy()
+    chart.destroy();
     assert.ok(
         true,
         'Destroyed without any errors (#7021)'

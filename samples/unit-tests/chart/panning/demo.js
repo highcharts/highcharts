@@ -72,9 +72,10 @@ QUnit.test('Zoom and pan key', function (assert) {
         true,
         'Has panned'
     );
-    assert.strictEqual(
+    assert.close(
         chart.xAxis[0].max - chart.xAxis[0].min,
         firstZoom.max - firstZoom.min,
+        0.00001, // Roundoff error in Firefox
         'Has preserved range'
     );
 

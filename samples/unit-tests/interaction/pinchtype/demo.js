@@ -157,7 +157,8 @@
         var chart = Highcharts.chart('container', {
             chart: {
                 pinchType: 'x',
-                animation: false
+                animation: false,
+                width: 600
             },
             tooltip: {
                 followTouchMove: true
@@ -221,7 +222,8 @@
         var chart = Highcharts.chart('container', {
             chart: {
                 pinchType: 'x',
-                animation: false
+                animation: false,
+                width: 600
             },
             tooltip: {
                 followTouchMove: false
@@ -264,7 +266,8 @@
             chart: {
                 pinchType: 'x',
                 zoomType: '',
-                animation: false
+                animation: false,
+                width: 600
             },
             series: [{
                 animation: false,
@@ -312,7 +315,8 @@
             chart: {
                 pinchType: '',
                 zoomType: 'x',
-                animation: false
+                animation: false,
+                width: 600
             },
             series: [{
                 animation: false,
@@ -358,7 +362,8 @@
         var chart = Highcharts.chart('container', {
             chart: {
                 zoomType: 'x',
-                animation: false
+                animation: false,
+                width: 600
             },
             series: [{
                 animation: false,
