@@ -103,14 +103,14 @@ H.initCanvasBoost = function () {
 			if (!target.canvas) {
 				target.canvas = doc.createElement('canvas');
 				
-				target.image = chart.renderer.image(
+				target.renderTarget = chart.renderer.image(
 					'', 
 					0, 
 					0, 
 					width, 
 					height
 				).add(targetGroup);
-				
+
 				target.ctx = ctx = target.canvas.getContext('2d');
 				
 				if (chart.inverted) {
@@ -126,7 +126,7 @@ H.initCanvasBoost = function () {
 					chart.chartHeight
 				);
 
-				target.image.clip(target.boostClipRect);
+				target.renderTarget.clip(target.boostClipRect);
 
 			} else if (!(target instanceof H.Chart)) {
 				// ctx.clearRect(0, 0, width, height);
@@ -140,7 +140,7 @@ H.initCanvasBoost = function () {
 				target.canvas.height = height;				
 			}
 
-			target.image.attr({
+			target.renderTarget.attr({
 				x: 0,
 				y: 0,
 				width: width,
@@ -158,14 +158,23 @@ H.initCanvasBoost = function () {
 			return ctx;
 		},
 
+		/**
+		 * Clear the target image
+		 */
+		boostClear: function () {
+			if (this.renderTarget) {
+				this.renderTarget.attr({ href: '' });
+			}
+		},
+
 		/** 
 		 * Draw the canvas image inside an SVG image
 		 */
 		canvasToSVG: function () {
 			if (!this.chart.isChartSeriesBoosting()) {
-				this.image.attr({ href: this.canvas.toDataURL('image/png') });
-			} else if (this.image) {
-				this.image.attr({ href: '' });
+				this.renderTarget.attr({ href: this.canvas.toDataURL('image/png') });
+			} else {
+				this.boostClear();
 			}
 		},
 
@@ -329,13 +338,17 @@ H.initCanvasBoost = function () {
 			);
 
 			series.markerGroup = series.group;
-			// addEvent(series, 'destroy', function () {
-			// 	series.markerGroup = null;
-			// });
+			addEvent(series, 'destroy', function () { // Prevent destroy twice
+				series.markerGroup = null;
+			});
 
 			points = this.points = [];
 			ctx = this.getContext();
 			series.buildKDTree = noop; // Do not start building while drawing 
+
+			if (!this.visible) {
+				return;
+			}
 
 			// Display a loading indicator
 			if (rawData.length > 99999) {
@@ -513,11 +526,6 @@ H.initCanvasBoost = function () {
 					}, 250);
 				}
 
-				// Pass tests in Pointer. 
-				// Replace this with a single property, and replace when zooming in
-				// below boostThreshold.
-				series.directTouch = false;
-				series.options.stickyTracking = true;
 
 				delete series.buildKDTree; // Go back to prototype, ready to build
 				series.buildKDTree();
@@ -527,11 +535,13 @@ H.initCanvasBoost = function () {
 		}
 	});
 
+	/*
 	wrap(Series.prototype, 'setData', function (proceed) {
 		if (!this.hasExtremes || !this.hasExtremes(true) || this.type === 'heatmap') {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		}
 	});
+	*/
 	
 	seriesTypes.scatter.prototype.cvsMarkerCircle = function (ctx, clientX, plotY, r) {
 		ctx.moveTo(clientX, plotY);
@@ -576,16 +586,16 @@ H.initCanvasBoost = function () {
 
 	H.Chart.prototype.callbacks.push(function (chart) {
 		function canvasToSVG() {			
-			if (chart.image && chart.canvas) {
-				chart.image.attr({ 
+			if (chart.renderTarget && chart.canvas) {
+				chart.renderTarget.attr({ 
 					href: chart.canvas.toDataURL('image/png') 
 				});			
 			}
 		}
 
 		function clear() {
-			if (chart.image) {
-				chart.image.attr({ href: '' });
+			if (chart.renderTarget) {
+				chart.renderTarget.attr({ href: '' });
 			}
 
 			if (chart.canvas) {

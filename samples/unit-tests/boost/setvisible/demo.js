@@ -21,8 +21,8 @@ QUnit.test('Boosted series show/hide', function (assert) {
     var s = chart.series[0];
 
     assert.strictEqual(
-        s.renderTarget.attr('href'),
-        '',
+        s.renderTarget.attr('href').length,
+        0,
         'Empty image for the initially hidden series'
     );
 
@@ -36,8 +36,8 @@ QUnit.test('Boosted series show/hide', function (assert) {
 
     s.hide();
     assert.strictEqual(
-        s.renderTarget.attr('href'),
-        '',
+        s.renderTarget.attr('href').length,
+        0,
         'Empty image for the dynamically hidden series'
     );
 

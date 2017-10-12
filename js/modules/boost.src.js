@@ -2630,14 +2630,6 @@ each([
 			this.type === 'treemap'
 		) {
 
-			// Clear image
-			if (method === 'render') {
-				if (this.boostClear) {
-					this.boostClear();
-					this.animate = null; // We're zooming in, don't run animation
-				}
-			}
-
 			proceed.call(this);
 
 		// If a canvas version of the method exists, like renderCanvas(), run
@@ -2721,6 +2713,16 @@ wrap(Series.prototype, 'processData', function (proceed) {
 	}
 });
 
+wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
+	proceed.call(this, vis, redraw);
+	if (this.visible === false && this.canvas && this.renderTarget) {
+		if (this.ogl) {
+			this.ogl.clear();
+		}
+		this.boostClear();
+	}
+});
+
 /**
  * Enter boost mode and apply boost-specific properties.
  */
@@ -2741,6 +2743,10 @@ Series.prototype.enterBoost = function () {
 	this.allowDG = false;
 	this.directTouch = false;
 	this.stickyTracking = true;
+
+	// Once we've been in boost mode, we don't want animation when returning to
+	// vanilla mode.
+	this.animate = null;
 };
 
 /**
@@ -2757,6 +2763,12 @@ Series.prototype.exitBoost = function () {
 			delete this[setting.prop];
 		}
 	}, this);
+
+	// Clear previous run
+	if (this.boostClear) {
+		this.boostClear();
+	}
+			
 };
 
 Series.prototype.hasExtremes = function (checkX) {
@@ -3139,16 +3151,6 @@ if (!hasWebGLSupport()) {
 	extend(seriesTypes.column.prototype, {
 		fill: true,
 		sampling: true
-	});
-
-	wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
-		proceed.call(this, vis, redraw);
-		if (this.visible === false && this.canvas && this.renderTarget) {
-			if (this.ogl) {
-				this.ogl.clear();
-			}
-			this.boostClear();
-		}
 	});
 
 	/**
