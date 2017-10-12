@@ -36,7 +36,9 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'area',
-        zoomType: 'x'
+        zoomType: 'x',
+        panning: true,
+        panKey: 'shift'
     },
 
     boost: {
