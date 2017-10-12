@@ -168,12 +168,6 @@ module.exports = function (config) {
             // The configuration currently loads classic mode only. Styled mode
             // needs to be a separate instance.
             'samples/unit-tests/series-pie/styled-mode/demo.js',
-            // There's a deeper problem with Boost that it changes certain
-            // properties on the series prototype whether they are boosting or
-            // not. This needs rewriting. Props like directTouch, allowDB etc
-            // should be set dynamically when boost kicks in, and reset when it
-            // is not boosted.
-            'samples/unit-tests/series-bubble/members/demo.js',
             // Fails when the /series group is added, but
             // succeeds when alone. Check if some global animation is set in any
             // of the series tests.

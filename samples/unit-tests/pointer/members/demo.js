@@ -773,6 +773,9 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         'Allow scatter series in shared tooltip: All hoverPoints should have the same index as the hoverPoint'
     );
 
+    // Reset, avoid breaking tests downstream
+    Highcharts.seriesTypes.scatter.prototype.noSharedTooltip = true;
+
     // Combination chart
     series = chart.addSeries({
         type: 'pie',
