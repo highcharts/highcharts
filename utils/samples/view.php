@@ -11,6 +11,9 @@ if (isset($_GET['styled'])) {
 }
 $styled = @$_SESSION['styled'];
 
+// Emulate legacy canvas boost
+$boostCanvas = false;
+
 
 $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);
@@ -21,6 +24,18 @@ $topDomain = $httpHost[sizeof($httpHost) - 1];
 ob_start();
 @include("$path/demo.html");
 $html = ob_get_clean();
+
+if ($boostCanvas) {
+	$html = str_replace(
+		'<script src="https://code.highcharts.com/modules/boost.js"></script>',
+
+		'<script>delete window.WebGLRenderingContext</script>' .
+		'<script src="https://code.highcharts.com/modules/boost-canvas.js"></script>' .
+		'<script src="https://code.highcharts.com/modules/boost.js"></script>',
+		$html
+	);
+}
+
 $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $html);
 
 
