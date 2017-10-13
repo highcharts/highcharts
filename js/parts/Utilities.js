@@ -154,6 +154,7 @@ H.Fx.prototype = {
 	 */
 	run: function (from, to, unit) {
 		var self = this,
+			options = self.options,
 			timer = function (gotoEnd) {
 				return timer.stopped ? false : self.step(gotoEnd);
 			},
@@ -176,7 +177,10 @@ H.Fx.prototype = {
 			};
 
 		if (from === to) {
-			delete this.options.curAnim[this.prop];
+			delete options.curAnim[this.prop];
+			if (options.complete && H.keys(options.curAnim).length === 0) {
+				options.complete();
+			}
 		} else { // #7166
 			this.startTime = +new Date();
 			this.start = from;
@@ -212,7 +216,7 @@ H.Fx.prototype = {
 			complete = options.complete,
 			duration = options.duration,
 			curAnim = options.curAnim;
-		
+
 		if (elem.attr && !elem.element) { // #2616, element is destroyed
 			ret = false;
 
@@ -1591,6 +1595,18 @@ H.map = function (arr, fn) {
 	}
 
 	return results;
+};
+
+/**
+ * Returns an array of a given object's own properties.
+ *
+ * @function #keys
+ * @memberOf highcharts
+ * @param {Object} obj - The object of which the properties are to be returned.
+ * @returns {Array} - An array of strings that represents all the properties.
+ */
+H.keys = function (obj) {
+	return (H.keysPolyfill || Object.keys).call(undefined, obj);
 };
 
 /**

@@ -335,6 +335,22 @@
 /**
  * Whether to display the axis on the opposite side of the normal. The
  * normal is on the left side for vertical axes and bottom for horizontal,
+ * so the opposite sides will be right and top respectively.
+ *
+ * @productdesc {highstock} In Highstock 1.x, the Y axis was placed
+ * 							on the left side by default.
+ *
+ * @type {Boolean}
+ * @sample {highstock} stock/xaxis/opposite/ Y axis on left side
+ * @default {highstock} true
+ * @default {highcharts} false
+ * @product highstock highcharts
+ * @apioption yAxis.opposite
+ */
+
+/**
+ * Whether to display the axis on the opposite side of the normal. The
+ * normal is on the left side for vertical axes and bottom for horizontal,
  * so the opposite sides will be right and top respectively. This is
  * typically used with dual or multiple axes.
  *
@@ -2429,19 +2445,6 @@
  * @default null
  * @product highstock
  * @apioption yAxis.height
- */
-
-/**
- * Whether to display the axis on the opposite side of the normal. The
- * normal is on the left side for vertical axes and bottom for horizontal,
- * so the opposite sides will be right and top respectively. In Highstock
- * 1.x, the Y axis was placed on the left side by default.
- *
- * @type {Boolean}
- * @sample {highstock} stock/xaxis/opposite/ Y axis on left side
- * @default true
- * @product highstock
- * @apioption yAxis.opposite
  */
 
 /**

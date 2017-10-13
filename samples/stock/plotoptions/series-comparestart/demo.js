@@ -20,12 +20,12 @@ function createChart() {
             buttons: [{
                 type: 'ytd',
                 count: 1,
-                text: 'YTD',
-                offsetMin: - 2 * 24 * 3600 * 1000
+                text: 'YTD'
             }, {
                 type: 'all',
                 text: 'All'
-            }]
+            }],
+            selected: 0
         },
 
         yAxis: {
@@ -43,7 +43,7 @@ function createChart() {
         plotOptions: {
             series: {
                 compare: 'percent',
-                compareBaseX: true
+                compareStart: true
             }
         },
 

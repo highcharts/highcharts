@@ -67,7 +67,7 @@ H.seriesType('mfi', 'sma',
 			 * For example using OHLC data, volumeSeriesID='volume' means 
 			 * the indicator will be calculated using OHLC and volume values.
 			 * 
-			 * @type {Number}
+			 * @type {String}
 			 * @since 6.0.0
 			 * @product highstock
 			 */

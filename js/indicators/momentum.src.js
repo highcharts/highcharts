@@ -26,7 +26,7 @@ seriesType('momentum', 'sma',
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/momentum Exponential moving average indicator
+	 * @sample {highstock} stock/indicators/momentum Momentum indicator
 	 * @since 6.0.0
 	 * @optionparent plotOptions.momentum
 	 */

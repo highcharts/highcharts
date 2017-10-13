@@ -342,18 +342,19 @@ seriesType('heatmap', 'scatter', {
  */
 
 /**
- * The x coordinate of the point.
+ * The x value of the point. For datetime axes,
+ * the X value is the timestamp in milliseconds since 1970.
  * 
  * @type {Number}
- * @product highmaps
+ * @product highcharts highmaps
  * @apioption series.heatmap.data.x
  */
 
 /**
- * The y coordinate of the point.
+ * The y value of the point.
  * 
  * @type {Number}
- * @product highmaps
+ * @product highcharts highmaps
  * @apioption series.heatmap.data.y
  */
 

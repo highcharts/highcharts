@@ -107,7 +107,6 @@ seriesType('map', 'scatter', {
 	 * @type {Number}
 	 * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
 	 * @default 1
-	 * @product highmaps
 	 * @apioption plotOptions.series.borderWidth
 	 */
 	borderWidth: 1,

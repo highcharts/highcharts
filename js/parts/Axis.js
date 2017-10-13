@@ -722,8 +722,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {String}
 			 * @sample {highcharts} highcharts/xaxis/title-text/ Custom HTML
-			 * @default Values
-			 * @product highcharts
+			 * @default {highcharts} Values
+			 * @default {highstock} null
+			 * @product highcharts highstock
 			 */
 			text: 'Values'
 		},

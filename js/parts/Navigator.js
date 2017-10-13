@@ -146,7 +146,7 @@ extend(defaultOptions, {
 			/**
 			 * Width for handles.
 			 *
-			 * @type {umber}
+			 * @type {Number}
 			 * @default 7
 			 * @product highstock
 			 * @sample {highstock} stock/navigator/styled-handles/

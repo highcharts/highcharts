@@ -336,7 +336,8 @@ H.Tooltip.prototype = {
 		var chart = this.chart,
 			distance = this.distance,
 			ret = {},
-			h = point.h || 0, // #4117
+			// Don't use h if chart isn't inverted (#7242)
+			h = (chart.inverted && point.h) || 0, // #4117
 			swapped,
 			first = ['y', chart.chartHeight, boxHeight,
 				point.plotY + chart.plotTop, chart.plotTop,

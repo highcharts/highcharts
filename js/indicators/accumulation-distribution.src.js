@@ -28,7 +28,8 @@ seriesType('ad', 'sma',
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/accumulation-distribution Exponential moving average indicator
+	 * @sample {highstock} stock/indicators/accumulation-distribution
+	 * 					   Accumulation/Distribution indicator
 	 * @since 6.0.0
 	 * @optionparent plotOptions.ad
 	 */
@@ -37,9 +38,10 @@ seriesType('ad', 'sma',
 		params: {
 			/**
 			 * The id of volume series which is mandatory.
-			 * For example using OHLC data, volumeSeriesID='volume' means the indicator will be calculated using OHLC and volume values.
+			 * For example using OHLC data, volumeSeriesID='volume' means
+			 * the indicator will be calculated using OHLC and volume values.
 			 * 
-			 * @type {Number}
+			 * @type {String}
 			 * @since 6.0.0
 			 * @product highstock
 			 */

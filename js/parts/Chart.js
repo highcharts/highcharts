@@ -667,7 +667,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				chart[name] = title = title.destroy(); // remove old
 			}
 
-			if (chartTitleOptions && chartTitleOptions.text && !title) {
+			if (chartTitleOptions && !title) {
 				chart[name] = chart.renderer.text(
 					chartTitleOptions.text,
 					0,

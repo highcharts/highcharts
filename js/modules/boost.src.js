@@ -3120,7 +3120,6 @@ if (!hasWebGLSupport()) {
 		function (t) {
 			if (seriesTypes[t]) {
 				wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
-				// seriesTypes[t].prototype.directTouch = false; // Use k-d-tree
 			}
 		}
 	);

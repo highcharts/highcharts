@@ -64,12 +64,12 @@ var arrayMax = H.arrayMax,
  * Defines if comparisson should start from the first point within the visible
  * range or should start from the first point <b>before</b> the range.
  * In other words, this flag determines if first point within the visible range
- * will have 0% (base) or should have been already calculated according to the
- * previous point.
+ * will have 0% (`compareStart=true`) or should have been already calculated
+ * according to the previous point (`compareStart=false`).
  *
  * @type {Boolean}
  * @sample {highstock} stock/plotoptions/series-comparestart/ Calculate compare within visible range
- * @default undefined
+ * @default false
  * @since 6.0.0
  * @product highstock
  * @apioption plotOptions.series.compareStart

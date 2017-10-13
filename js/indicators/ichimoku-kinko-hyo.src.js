@@ -68,7 +68,8 @@ seriesType('ikh', 'sma',
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/ichimoku-kinko-hyo Simple moving average indicator
+	 * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
+	 * 					   Ichimoku Kinko Hyo indicator
 	 * @since 6.0.0
 	 * @excluding
 	 * 			allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,

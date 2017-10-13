@@ -36,7 +36,7 @@ seriesType('cci', 'sma',
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/cci Exponential moving average indicator
+	 * @sample {highstock} stock/indicators/cci CCI indicator
 	 * @since 6.0.0
 	 * @optionparent plotOptions.cci
 	 */

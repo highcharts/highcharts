@@ -128,13 +128,7 @@ var getDlOptions = function getDlOptions(params) {
 };
 
 var getAnimation = function getAnimation(shape, params) {
-	var to = {
-			end: shape.end,
-			start: shape.start,
-			innerR: shape.innerR,
-			r: shape.r
-		},
-		from = {},
+	var center = params.center,
 		point = params.point,
 		radians = params.radians,
 		innerR = params.innerR,
@@ -143,7 +137,16 @@ var getAnimation = function getAnimation(shape, params) {
 		shapeExisting = params.shapeExisting,
 		shapeRoot = params.shapeRoot,
 		shapePreviousRoot = params.shapePreviousRoot,
-		visible = params.visible;
+		visible = params.visible,
+		from = {},
+		to = {
+			end: shape.end,
+			start: shape.start,
+			innerR: shape.innerR,
+			r: shape.r,
+			x: center.x,
+			y: center.y
+		};
 	if (visible) {
 		// Animate points in
 		if (!point.graphic && shapePreviousRoot) {
@@ -445,9 +448,14 @@ var sunburstSeries = {
 				true
 			),
 			positions = series.center,
+			center = {
+				x: positions[0],
+				y: positions[1]
+			},
 			innerR = positions[3] / 2,
 			renderer = series.chart.renderer,
 			animateLabels,
+			animateLabelsCalled = false,
 			addedHack = false,
 			hackDataLabelAnimation = !!(
 				animation &&
@@ -460,6 +468,7 @@ var sunburstSeries = {
 			series.dataLabelsGroup.attr({ opacity: 0 });
 			animateLabels = function () {
 				var s = series;
+				animateLabelsCalled = true;
 				if (s.dataLabelsGroup) {
 					s.dataLabelsGroup.animate({ opacity: 1, visibility: 'visible' });
 				}
@@ -476,6 +485,7 @@ var sunburstSeries = {
 				visible = !!(node.visible && node.shapeArgs);
 			if (hasRendered && animation) {
 				animationInfo = getAnimation(shape, {
+					center: center,
 					point: point,
 					radians: radians,
 					innerR: innerR,
@@ -530,6 +540,11 @@ var sunburstSeries = {
 			series.options.dataLabels.defer = true;
 			Series.prototype.drawDataLabels.call(series);
 			series.hasRendered = true;
+			// If animateLabels is called before labels were hidden, then call
+			// it again.
+			if (animateLabelsCalled) {
+				animateLabels();
+			}
 		} else {
 			Series.prototype.drawDataLabels.call(series);
 		}

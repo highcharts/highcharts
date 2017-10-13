@@ -23,7 +23,7 @@ seriesType('macd', 'sma',
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/macd Exponential moving average indicator
+	 * @sample {highstock} stock/indicators/macd MACD indicator
 	 * @since 6.0.0
 	 * @optionparent plotOptions.macd
 	 */

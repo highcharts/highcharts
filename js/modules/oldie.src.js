@@ -140,6 +140,20 @@ if (!Array.prototype.filter) {
 	};
 }
 
+if (!Object.prototype.keys) {
+	H.keysPolyfill = function (obj) {
+		var result = [],
+			hasOwnProperty = Object.prototype.hasOwnProperty,
+			prop;
+		for (prop in obj) {
+			if (hasOwnProperty.call(obj, prop)) {
+				result.push(prop);
+			}
+		}
+		return result;
+	};
+}
+
 
 if (!Array.prototype.reduce) {
 	H.reducePolyfill = function (func, initialValue) {

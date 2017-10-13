@@ -18,7 +18,7 @@ H.seriesType('rsi', 'sma',
 		 * @extends {plotOptions.sma}
 		 * @product highstock
 		 * @sample {highstock} stock/indicators/rsi
-		 *                     RSI
+		 *                     RSI indicator
 		 * @since 6.0.0
 		 * @optionparent plotOptions.rsi
 		 */

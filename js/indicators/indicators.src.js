@@ -26,7 +26,7 @@ seriesType('sma', 'line',
 	 * @excluding
 	 * 			allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
 	 * 			showInNavigator,navigatorOptions,pointInterval,pointIntervalUnit,
-	 *			pointPlacement,pointRange,pointStart
+	 *			pointPlacement,pointRange,pointStart,joinBy
 	 * @optionparent plotOptions.sma
 	 */
 	{

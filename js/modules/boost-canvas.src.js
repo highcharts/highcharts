@@ -1,10 +1,6 @@
 /**
  * License: www.highcharts.com/license
  * Author: Torstein Honsi, Christer Vasseng
- * 
- * This is a  Highcharts module that draws long data series on a canvas
- * in order to increase performance of the initial load time and tooltip
- * responsiveness.
  *
  * This module serves as a fallback for the Boost module in IE9 and IE10. Newer
  * browsers support WebGL which is faster. 
@@ -56,7 +52,7 @@ H.initCanvasBoost = function () {
 						pointAttr = point.series.pointAttribs(point);
 						/*= } else { =*/
 						pointAttr = point.series.colorAttribs(point);
-						/*= } =*/					
+						/*= } =*/
 
 						ctx.fillStyle = pointAttr.fill;
 						ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
@@ -77,16 +73,16 @@ H.initCanvasBoost = function () {
 
 
 	H.extend(Series.prototype, {
-		
+
 		/**
-		 * Create a hidden canvas to draw the graph on. The contents is later copied over 
+		 * Create a hidden canvas to draw the graph on. The contents is later copied over
 		 * to an SVG image element.
 		 */
 		getContext: function () {
 			var chart = this.chart,
 				width = chart.chartWidth,
 				height = chart.chartHeight,
-				targetGroup = this.group,
+				targetGroup = chart.seriesGroup || this.group,
 				target = this,
 				ctx,
 				swapXY = function (proceed, x, y, a, b, c, d) {
@@ -112,12 +108,22 @@ H.initCanvasBoost = function () {
 				).add(targetGroup);
 
 				target.ctx = ctx = target.canvas.getContext('2d');
-				
+
 				if (chart.inverted) {
 					each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
 						wrap(ctx, fn, swapXY);
 					});
 				}
+
+				target.boostClear = function () {
+					ctx.clearRect(0, 0, target.canvas.width, target.canvas.height);
+
+					if (target.renderTarget) {
+						target.renderTarget.attr({
+							href: ''
+						});
+					}
+				};
 
 				target.boostClipRect = chart.renderer.clipRect(
 					chart.plotLeft,
@@ -133,11 +139,11 @@ H.initCanvasBoost = function () {
 			}
 
 			if (target.canvas.width !== width) {
-				target.canvas.width = width;				
+				target.canvas.width = width;
 			}
 
 			if (target.canvas.height !== height) {
-				target.canvas.height = height;				
+				target.canvas.height = height;
 			}
 
 			target.renderTarget.attr({
@@ -145,26 +151,18 @@ H.initCanvasBoost = function () {
 				y: 0,
 				width: width,
 				height: height,
-				style: 'pointer-events: none'
+				style: 'pointer-events: none',
+				href: ''
 			});
 
 			target.boostClipRect.attr({
-				x: 0,
-				y: 0,
+				x: chart.plotLeft,
+				y: chart.plotTop,
 				width: chart.plotWidth,
 				height: chart.chartHeight
 			});
 
 			return ctx;
-		},
-
-		/**
-		 * Clear the target image
-		 */
-		boostClear: function () {
-			if (this.renderTarget) {
-				this.renderTarget.attr({ href: '' });
-			}
 		},
 
 		/** 
@@ -240,7 +238,7 @@ H.initCanvasBoost = function () {
 				fillColor = series.fillOpacity ?
 						new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
 						series.color,
-				
+
 				stroke = function () {
 					if (doFill) {
 						ctx.fillStyle = fillColor;
@@ -264,7 +262,7 @@ H.initCanvasBoost = function () {
 					if (chart.scroller && series.options.className === 'highcharts-navigator-series') {
 						plotY += chart.scroller.top;
 						if (yBottom) {
-							yBottom += chart.scroller.top;							
+							yBottom += chart.scroller.top;
 						}
 					} else {
 						plotY += chart.plotTop;
@@ -304,7 +302,7 @@ H.initCanvasBoost = function () {
 					// Avoid more string concatination than required
 					kdIndex = clientX + ',' + plotY;
 
-					// The k-d tree requires series points. Reduce the amount of points, since the time to build the 
+					// The k-d tree requires series points. Reduce the amount of points, since the time to build the
 					// tree increases exponentially.
 					if (enableMouseTracking && !pointTaken[kdIndex]) {
 						pointTaken[kdIndex] = true;
@@ -344,7 +342,8 @@ H.initCanvasBoost = function () {
 
 			points = this.points = [];
 			ctx = this.getContext();
-			series.buildKDTree = noop; // Do not start building while drawing 
+			series.buildKDTree = noop; // Do not start building while drawing
+			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 			if (!this.visible) {
 				return;
@@ -440,9 +439,9 @@ H.initCanvasBoost = function () {
 						isYInside = y >= yMin && y <= yMax;
 					}
 
-					if (!isNull && 
+					if (!isNull &&
 						(
-							(x >= xMin && x <= xMax && isYInside) || 
+							(x >= xMin && x <= xMax && isYInside) ||
 							(isNextInside || isPrevInside)
 						)) {
 
@@ -526,7 +525,6 @@ H.initCanvasBoost = function () {
 					}, 250);
 				}
 
-
 				delete series.buildKDTree; // Go back to prototype, ready to build
 				series.buildKDTree();
 
@@ -542,7 +540,6 @@ H.initCanvasBoost = function () {
 		}
 	});
 	*/
-	
 	seriesTypes.scatter.prototype.cvsMarkerCircle = function (ctx, clientX, plotY, r) {
 		ctx.moveTo(clientX, plotY);
 		ctx.arc(clientX, plotY, r, 0, 2 * Math.PI, false);
@@ -589,7 +586,7 @@ H.initCanvasBoost = function () {
 			if (chart.renderTarget && chart.canvas) {
 				chart.renderTarget.attr({ 
 					href: chart.canvas.toDataURL('image/png') 
-				});			
+				});
 			}
 		}
 
@@ -600,15 +597,15 @@ H.initCanvasBoost = function () {
 
 			if (chart.canvas) {
 				chart.canvas.getContext('2d').clearRect(
-					0, 
-					0, 
+					0,
+					0,
 					chart.canvas.width,
 					chart.canvas.height
 				);
 			}
 		}
 
-		addEvent(chart, 'predraw', clear);	
+		addEvent(chart, 'predraw', clear);
 		addEvent(chart, 'render', canvasToSVG);
 	});
 };

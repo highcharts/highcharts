@@ -46,7 +46,7 @@ seriesType('atr', 'sma',
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
-	 * @sample {highstock} stock/indicators/atr Exponential moving average indicator
+	 * @sample {highstock} stock/indicators/atr ATR indicator
 	 * @since 6.0.0
 	 * @optionparent plotOptions.atr
 	 */

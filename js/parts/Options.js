@@ -1978,7 +1978,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/legend/rtl/ Symbol to the right
 		 * @default false
 		 * @since 2.2
-		 * @product highcharts highmaps
 		 * @apioption legend.rtl
 		 */
 
@@ -2399,7 +2398,6 @@ H.defaultOptions = {
 		 * @sample {highmaps} maps/tooltip/format/ Format demo
 		 * @default false
 		 * @since 2.2
-		 * @product highcharts highmaps
 		 */
 		footerFormat: '',
 		
@@ -2672,7 +2670,6 @@ H.defaultOptions = {
 		 * @type {Number}
 		 * @default 500
 		 * @since 3.0
-		 * @product highcharts highmaps
 		 * @apioption tooltip.hideDelay
 		 */
 

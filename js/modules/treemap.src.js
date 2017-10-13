@@ -21,6 +21,9 @@ var seriesType = H.seriesType,
 	each = H.each,
 	getColor = mixinTreeSeries.getColor,
 	grep = H.grep,
+	isBoolean = function (x) {
+		return typeof x === 'boolean';
+	},
 	isNumber = H.isNumber,
 	isString = H.isString,
 	pick = H.pick,
@@ -207,7 +210,6 @@ seriesType('treemap', 'scatter', {
 	 * to be level one. Otherwise the level will be the same as the tree
 	 * structure.
 	 * 
-	 * @validvalue [true, false]
 	 * @type {Boolean}
 	 * @default true
 	 * @since 4.1.0
@@ -564,6 +566,14 @@ seriesType('treemap', 'scatter', {
 	setTreeValues: function (tree) {
 		var series = this,
 			options = series.options,
+			idRoot = series.rootNode,
+			mapIdToNode = series.nodeMap,
+			nodeRoot = mapIdToNode[idRoot],
+			levelIsConstant = (
+				isBoolean(options.levelIsConstant) ?
+				options.levelIsConstant :
+				true
+			),
 			childrenTotal = 0,
 			children = [],
 			val,
@@ -592,7 +602,7 @@ seriesType('treemap', 'scatter', {
 			// Ignore this node if point is not visible
 			ignore: !(pick(point && point.visible, true) && (val > 0)),
 			isLeaf: tree.visible && !childrenTotal,
-			levelDynamic: tree.level - (options.levelIsConstant ?  series.nodeMap[series.rootNode].level : 0),
+			levelDynamic: tree.level - (levelIsConstant ? 0 : nodeRoot.level),
 			name: pick(point && point.name, ''),
 			sortIndex: pick(point && point.sortIndex, -val),
 			val: val
