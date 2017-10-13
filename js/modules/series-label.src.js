@@ -545,7 +545,7 @@ Chart.prototype.drawSeriesLabels = function () {
 				y >= paneTop && y <= paneTop + paneHeight - bBox.height;
 		}
 
-		if (series.visible && points) {
+		if (series.visible && !series.isSeriesBoosting && points) {
 			if (!label) {
 				series.labelBySeries = label = chart.renderer
 					.label(series.name, 0, -9999, 'connector')
@@ -767,8 +767,13 @@ function drawLabels(proceed) {
 		var options = series.options.label,
 			label = series.labelBySeries,
 			closest = label && label.closest;
-
-		if (options.enabled && series.visible && (series.graph || series.area)) {
+	
+		if (
+			options.enabled &&
+			series.visible &&
+			(series.graph || series.area) &&
+			!series.isSeriesBoosting
+		) {
 			chart.labelSeries.push(series);
 
 			if (options.minFontSize && options.maxFontSize) {
