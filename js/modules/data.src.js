@@ -549,6 +549,7 @@ Highcharts.extend(Data.prototype, {
 				cl = '',
 				cn = '',
 				token = '',
+				actualColumn = 0,
 				column = 0;
 
 			function read(j) {
@@ -567,8 +568,9 @@ Highcharts.extend(Data.prototype, {
 			}
 
 			function push() {
-				if (startColumn > column || column > endColumn) {
-					// Skip this column
+				if (startColumn > actualColumn || actualColumn > endColumn) {
+					// Skip this column, but increment the column count (#7272)
+					++actualColumn;
 					return;
 				}
 
@@ -592,6 +594,7 @@ Highcharts.extend(Data.prototype, {
 
 				token = '';
 				++column;
+				++actualColumn;
 			}
 
 			if (!columnStr.trim().length) {
