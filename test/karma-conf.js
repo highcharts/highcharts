@@ -162,16 +162,9 @@ module.exports = function (config) {
             // Fails when data labels tests are included, in the collectAndHide
             // function.
             'samples/unit-tests/legend/legend-height/demo.js',
-            // Seems to fail because the container is fixed in the top in the
-            // original test runner, not so with karma.
-            'samples/unit-tests/series/findnearestpointby/demo.js',
             // The configuration currently loads classic mode only. Styled mode
             // needs to be a separate instance.
             'samples/unit-tests/series-pie/styled-mode/demo.js',
-            // Fails when the /series group is added, but
-            // succeeds when alone. Check if some global animation is set in any
-            // of the series tests.
-            'samples/unit-tests/svgrenderer/animate/demo.js',
             // Themes alter the whole default options structure. Set up a
             // separate test suite? Or perhaps somehow decouple the options so
             // they are not mutated for later tests?

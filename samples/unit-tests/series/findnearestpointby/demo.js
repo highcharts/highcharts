@@ -12,7 +12,7 @@ QUnit.test('findNearestPointBy test', function (assert) {
 
         plotOptions: {
             line: {
-                kdNow: false,
+                kdNow: true,
                 marker: {
                     enabled: true
                 }

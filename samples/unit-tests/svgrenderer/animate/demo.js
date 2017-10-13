@@ -300,7 +300,6 @@ QUnit.test('Fill and stroke animation', function (assert) {
             rgbRegex.test(circ.attr('stroke')),
             'Stroke is color'
         );
-        console.log('stroke', circ.attr('stroke'));
 
         Highcharts.stop(circ);
 
