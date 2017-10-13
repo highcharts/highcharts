@@ -676,7 +676,7 @@ Highcharts.extend(Data.prototype, {
 							// since the decimal delimiter may interfere.
 							(isNaN(parseFloat(token)) || !isFinite(token)) &&
 							(
-								// Highcharts.isString(token) ||
+								Highcharts.isString(token) ||
 								!isNaN(Date.parse(token))
 							)
 						) {
