@@ -645,3 +645,26 @@ QUnit.test('csv-quoted-data-escaped', function (assert) {
     );
 });
 
+QUnit.test('startRow, endRow', function (assert) {
+    var data =
+        'Pad,Pad,Pad,Pad\n' +
+        'Pad,Apples,Pears,Pad\n' +
+        'Pad,1,2,Pad\n' +
+        'Pad,5,6,Pad\n' +
+        'Pad,Pad,Pad,Pad';
+
+    Highcharts.data({
+        csv: data,
+        startRow: 1,
+        endRow: 3,
+        parsed: function () {
+            assert.strictEqual(
+                this.columns[0].length,
+                3,
+                'Three rows included'
+            );
+        }
+    });
+
+});
+

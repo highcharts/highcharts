@@ -855,8 +855,8 @@ Highcharts.extend(Data.prototype, {
 				startRow = 0;
 			}
 
-			if (!endRow || endRow > lines.length) {
-				endRow = lines.length;
+			if (!endRow || endRow >= lines.length) {
+				endRow = lines.length - 1;
 			}
 
 			if (options.itemDelimiter) {
@@ -866,7 +866,7 @@ Highcharts.extend(Data.prototype, {
 				itemDelimiter = guessDelimiter(lines);
 			}
 
-			for (rowIt = startRow; rowIt < endRow; rowIt++) {
+			for (rowIt = startRow; rowIt <= endRow; rowIt++) {
 				parseRow(lines[rowIt], rowIt);
 			}
 
