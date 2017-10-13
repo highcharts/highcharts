@@ -113,6 +113,9 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
 
 QUnit.test('Split tooltip returning false. #6115', function (assert) {
     var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
         series: [{
             data: [1, 2, 3]
         }, {
@@ -137,7 +140,7 @@ QUnit.test('Split tooltip returning false. #6115', function (assert) {
     ]);
 
     assert.strictEqual(
-        chart.tooltip.label.element.children.length,
+        chart.tooltip.label.element.childNodes.length,
         2,
         'Two tooltips'
     );
