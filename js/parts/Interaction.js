@@ -984,7 +984,9 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 			chart.redraw();
 		}
 
-		fireEvent(series, showOrHide);
+		fireEvent(series, showOrHide, {
+			redraw: redraw
+		});
 	},
 
 	/**
