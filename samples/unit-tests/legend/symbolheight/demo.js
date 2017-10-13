@@ -37,7 +37,7 @@ QUnit.test(
             }, {
                 data: [2, 4, 3, 5],
                 marker: {
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png?legend-symbol)'
                 }
             }]
 

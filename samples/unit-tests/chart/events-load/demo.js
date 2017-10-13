@@ -43,7 +43,7 @@ QUnit.test('Load event with images is async', function (assert) {
 
     var flagLoad = false,
         flagCallback = false,
-        done = assert.async(),
+        done = assert.async(2),
         chart = Highcharts.chart('container', {
 
             chart: {
@@ -56,9 +56,7 @@ QUnit.test('Load event with images is async', function (assert) {
                         );
                         flagLoad = true;
 
-                        if (flagLoad && flagCallback) {
-                            done();
-                        }
+                        done();
                     }
                 }
             },
@@ -80,9 +78,7 @@ QUnit.test('Load event with images is async', function (assert) {
 
             flagCallback = true;
 
-            if (flagLoad && flagCallback) {
-                done();
-            }
+            done();
         });
 
     assert.strictEqual(
@@ -96,16 +92,12 @@ QUnit.test('Load event with images is async', function (assert) {
         'Chart callback is not synchronous'
     );
 
-    // Fail safe
-    setTimeout(done, 2000);
 
 });
 
 QUnit.test('Image in a module', function (assert) {
 
-    var flagLoad = false,
-        flagCallback = false,
-        done = assert.async();
+    var done = assert.async(2);
 
     Highcharts.chart('container', {
 
@@ -117,11 +109,7 @@ QUnit.test('Image in a module', function (assert) {
                         1,
                         'events.load: Image added after callbacks'
                     );
-                    flagLoad = true;
-
-                    if (flagLoad && flagCallback) {
-                        done();
-                    }
+                    done();
                 }
             }
         },
@@ -145,44 +133,23 @@ QUnit.test('Image in a module', function (assert) {
             'callback: Image not yet added'
         );
 
-        flagCallback = true;
-
-        if (flagLoad && flagCallback) {
-            done();
-        }
+        done();
     });
-
-    // Fail safe
-    setTimeout(done, 2000);
 
 });
 
 QUnit.test('Image size is cached (#5053, second case)', function (assert) {
 
-    var count = 0,
-        done = assert.async();
+    var done = assert.async(4);
 
-    function finito() {
-        assert.strictEqual(
-            count,
-            4,
-            'All callbacks called'
-        );
-        done();
-    }
+    assert.expect(0);
 
     function buildChart() {
         Highcharts.chart('container', {
 
             chart: {
                 events: {
-                    load: function () {
-                        count++;
-
-                        if (count === 4) {
-                            finito();
-                        }
-                    }
+                    load: done
                 }
             },
             series: [{
@@ -192,13 +159,7 @@ QUnit.test('Image size is cached (#5053, second case)', function (assert) {
                 }
             }]
 
-        }, function () {
-            count++;
-
-            if (count === 4) {
-                finito();
-            }
-        });
+        }, done);
     }
 
     // The first time, image sizes are found on image load
@@ -209,8 +170,6 @@ QUnit.test('Image size is cached (#5053, second case)', function (assert) {
         buildChart();
     }, 200);
 
-    // Fail safe
-    setTimeout(done, 2000);
 
 });
 
