@@ -60,9 +60,12 @@ Auto-visual tests are less performant than unit tests, and unit tests should be 
 a hand next to the name. We are gradually replacing these with automatic tests. For each manual test, there should be a file, 
 `test-notes.html` that instructs the tester on what to look for.
 
-3. **Unit tests**. These samples are designed to run both in our sample viewer and in jsFiddle. They load QUnit. Unit tests are recognized
+3. **Unit tests**. These samples are designed to run both in our sample viewer and in karma. They load QUnit. Unit tests are recognized
 by a jigsaw puzzle piece next to the name. QUnit is loaded in the `demo.details` files and the required HTML must be present in `demo.html`.
 The recommended way to add a new test is to copy and modify an existing one. 
+
+The tests that are added to `/samples/unit-tests` are also part of the pre-commit tests 
+that run via karma. Run `npm test` on the root to pre-check.
 
 ### Useful tips for setting up tests
 **Mouse events** are emulated using the [TestController](https://github.com/highcharts/highcharts/blob/master/utils/samples/test-controller.js)
