@@ -347,10 +347,29 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 							// moving tooltip (#6957).
 							function translateSetter(value, key) {
 								parentGroup[key] = value;
-								htmlGroupStyle[renderer.getTransformKey()] =
-									'translate(' +
-										parentGroup.x + 'px,' +
-										parentGroup.y + 'px)';
+
+								var left = (
+										parentGroup.x ||
+										parentGroup.translateX
+									) + 'px',
+									top = (
+										parentGroup.y ||
+										parentGroup.translateY
+									) + 'px';
+
+								// In IE and Edge, use translate because items
+								// would flicker below a HTML tooltip (#6957)
+								if (isMS) {
+									htmlGroupStyle[renderer.getTransformKey()] =
+										'translate(' + left + ',' + top + ')';
+
+								// Otherwise, use left and top. Using translate
+								// doesn't work well with offline export (#7254)
+								} else {
+									htmlGroupStyle.left = left;
+									htmlGroupStyle.top = top;
+								}
+
 								
 								parentGroup.doTransform = true;
 							}
