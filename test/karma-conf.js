@@ -157,8 +157,6 @@ module.exports = function (config) {
             'samples/unit-tests/axis/plotlines-and-plotbands/demo.js',
             // Unknown problem with assert.async(), investigate more
             'samples/unit-tests/chart/events-load/demo.js',
-            // Passes in Chrome, fails in Headless
-            'samples/unit-tests/chart/setsize/demo.js',
             // The configuration currently loads classic mode only. Styled mode
             // needs to be a separate instance.
             'samples/unit-tests/series-pie/styled-mode/demo.js',

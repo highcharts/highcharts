@@ -185,7 +185,8 @@ QUnit.test('Titles with useHTML: true adjust chart after resize (#3481)', functi
     var chart = Highcharts.chart('container', {
             chart: {
                 width: 800,
-                height: 400
+                height: 400,
+                animation: false
             },
             title: {
                 useHTML: true,
