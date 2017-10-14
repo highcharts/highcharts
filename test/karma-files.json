@@ -1,8 +1,8 @@
 [
-	"https://code.jquery.com/jquery-3.1.1.min.js",
-	"https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js",
-	"https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data-2012-2022.min.js",
-	"https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js",
+	"vendor/jquery-3.1.1.js",
+	"vendor/moment-2.18.1.js",
+	"vendor/moment-timezone-0.5.13-with-data-2012-2022.js",
+	"vendor/proj4-2.3.6.js",
 
 	"code/highcharts.src.js",
 	"code/highcharts-more.src.js",
@@ -57,11 +57,11 @@
 	"code/indicators/wma.src.js",
 	"code/indicators/zigzag.src.js",
 	
-	"https://code.highcharts.com/mapdata/countries/gb/gb-all.js",
-	"https://code.highcharts.com/mapdata/countries/bn/bn-all.js",
-	"https://code.highcharts.com/mapdata/countries/ad/ad-all.js",
-	"https://code.highcharts.com/mapdata/custom/europe.js",
+	"samples/data/mapdata-1.1.2-gb-all.js",
+	"samples/data/mapdata-1.1.2-bn-all.js",
+	"samples/data/mapdata-1.1.2-ad-all.js",
+	"samples/data/mapdata-1.1.2-europe.js",
 
-	"https://www.highcharts.com/samples/data/usdeur.js"
+	"samples/data/usdeur.js"
 	
 ]

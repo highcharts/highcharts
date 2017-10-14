@@ -67,7 +67,7 @@ QUnit.test('Symbol tests', function (assert) {
 
     // With explicit size
     var symbol2 = ren
-        .symbol(url, 200, 100, null, null, {
+        .symbol(url.replace(')', '?' + Date.now() + ')'), 200, 100, null, null, {
             width: 20,
             height: 20
         })
