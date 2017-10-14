@@ -153,8 +153,11 @@ module.exports = function (config) {
 
         // These ones fail
         exclude: [
-            // Difference between Highcharts and Highstock
-            'samples/unit-tests/axis/plotlines-and-plotbands/demo.js',
+            // Fails from time to time with DISCONNECTED error.
+            'samples/unit-tests/chart/events-load/demo.js',
+            // Fails from time to time because it uses timeouts to check if
+            // animation runs. Rewrite to use step if possible.
+            'samples/unit-tests/svgrenderer/animate/demo.js',
             // The configuration currently loads classic mode only. Styled mode
             // needs to be a separate instance.
             'samples/unit-tests/series-pie/styled-mode/demo.js',

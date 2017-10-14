@@ -264,9 +264,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 	getPlotBandPath: function (from, to) {
 		var toPath = this.getPlotLinePath(to, null, null, true),
 			path   = this.getPlotLinePath(from, null, null, true),
+			result = [],
+			i,
 			// #4964 check if chart is inverted or plotband is on yAxis 
 			horiz  = this.horiz,
 			plus = 1,
+			flat,
 			outside =
 				(from < this.min && to < this.min) ||
 				(from > this.max && to > this.max);
@@ -275,23 +278,43 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 			
 			// Flat paths don't need labels (#3836)
 			if (outside) {
-				path.flat = path.toString() === toPath.toString();
+				flat = path.toString() === toPath.toString();
 				plus = 0;
 			}
 
-			// Add 1 pixel, when coordinates are the same
-			path.push(
-				horiz && toPath[4] === path[4] ? toPath[4] + plus : toPath[4], 
-				!horiz && toPath[5] === path[5] ? toPath[5] + plus : toPath[5],
-				horiz && toPath[1] === path[1] ? toPath[1] + plus : toPath[1],
-				!horiz && toPath[2] === path[2] ? toPath[2] + plus : toPath[2],
-				'z'
-			);
+			// Go over each subpath - for panes in Highstock
+			for (i = 0; i < path.length; i += 6) {
+
+				// Add 1 pixel when coordinates are the same
+				if (horiz && toPath[i + 1] === path[i + 1]) {
+					toPath[i + 1] += plus;
+					toPath[i + 4] += plus;
+				} else if (!horiz && toPath[i + 2] === path[i + 2]) {
+					toPath[i + 2] += plus;
+					toPath[i + 5] += plus;
+				}
+
+				result.push(
+					'M',
+					path[i + 1],
+					path[i + 2],
+					'L',
+					path[i + 4],
+					path[i + 5],
+					toPath[i + 4],
+					toPath[i + 5],
+					toPath[i + 1],
+					toPath[i + 2],
+					'z'
+				);
+				result.flat = flat;
+			}
+
 		} else { // outside the axis area
 			path = null;
 		}
 
-		return path;
+		return result;
 	},
 
 	/**

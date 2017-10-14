@@ -418,37 +418,6 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		null; // #3557 getPlotLinePath in regular Highcharts also returns null
 });
 
-// Override getPlotBandPath to allow for multipane charts
-Axis.prototype.getPlotBandPath = function (from, to) {
-	var toPath = this.getPlotLinePath(to, null, null, true),
-		path = this.getPlotLinePath(from, null, null, true),
-		result = [],
-		i;
-
-	if (path && toPath) {
-		if (path.toString() === toPath.toString()) {
-			// #6166
-			result = path;
-			result.flat = true;
-		} else {
-			// Go over each subpath
-			for (i = 0; i < path.length; i += 6) {
-				result.push(
-					'M', path[i + 1], path[i + 2],
-					'L', path[i + 4], path[i + 5],
-					toPath[i + 4], toPath[i + 5],
-					toPath[i + 1], toPath[i + 2],
-					'z'
-				);
-			}
-		}
-	} else { // outside the axis area
-		result = null;
-	}
-
-	return result;
-};
-
 // Function to crisp a line with multiple segments
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
 	// points format: ['M', 0, 0, 'L', 100, 0]		
