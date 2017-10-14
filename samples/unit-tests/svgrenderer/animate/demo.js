@@ -389,9 +389,9 @@ QUnit.test('Fill and stroke animation for series points (#6776)', function (asse
                     'Stroke unlike end'
                 );
                 done();
-            }, 100);
+            }, 250);
         }, 500);
-    }, 100);
+    }, 250);
 });
 
 
@@ -460,7 +460,7 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
                     'Fill unlike start'
                 );
                 done();
-            }, 100);
+            }, 250);
         }, 500);
-    }, 100);
+    }, 250);
 });

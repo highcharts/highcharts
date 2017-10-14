@@ -153,9 +153,6 @@ module.exports = function (config) {
 
         // These ones fail
         exclude: [
-            // Fails from time to time because it uses timeouts to check if
-            // animation runs. Rewrite to use step if possible.
-            'samples/unit-tests/svgrenderer/animate/demo.js',
             // The configuration currently loads classic mode only. Styled mode
             // needs to be a separate instance.
             'samples/unit-tests/series-pie/styled-mode/demo.js',
