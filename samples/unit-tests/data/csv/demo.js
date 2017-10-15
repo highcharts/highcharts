@@ -83,9 +83,11 @@ if (!isNaN(Date.parse('Jan 16'))) { // Only Chrome parses "Jan 16" as of 2017
             'X axis is date/time'
         );
 
-        assert.strictEqual(
-            options.series[0].data[0][0],
-            979603200000,
+        assert.ok(
+            // Chrome Date.parse assumes year 2001
+            options.series[0].data[0][0] === 979603200000 ||
+            // Safari Date.parse assumes year 2000
+            options.series[0].data[0][0] === 947980800000,
             'Date for point one is correct'
         );
 
