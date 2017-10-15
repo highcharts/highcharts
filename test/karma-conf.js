@@ -105,29 +105,10 @@ function getFiles() { // eslint-disable-line no-unused-vars
 
 module.exports = function (config) {
 
-    /*
-    let files = [
-        // External
-        'vendor/jquery-1.9.1.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data-2012-2022.min.js',
-
-        // Highcharts
-        'code/highcharts.src.js',
-        'code/highcharts-more.src.js',
-        'code/highcharts-3d.src.js',
-        'code/modules/stock.src.js',
-        'code/modules/map.src.js',
-        'code/modules/annotations.src.js',
-        // 'code/modules/boost.src.js',
-        'code/modules/data.src.js',
-        'code/modules/drilldown.src.js',
-        'code/modules/exporting.src.js',
-        'code/modules/exporting-data.src.js',
-        'code/indicators/indicators.src.js',
-        'code/indicators/*.src.js'
-    ];
-    */
+    const argv = require('yargs').argv;
+    const browsers = argv.browsers ?
+        argv.browsers.split(',') :
+        ['ChromeHeadless'];
 
     // let files = getFiles();
     let files = require('./karma-files.json');
@@ -170,7 +151,7 @@ module.exports = function (config) {
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_WARN,
-        browsers: ['ChromeHeadless'],
+        browsers: browsers,
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity
