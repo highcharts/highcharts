@@ -276,7 +276,7 @@ gulp.task('ftp-watch', function () {
 /**
  * Run the test suite.
  */
-gulp.task('test', function () {
+gulp.task('test', done => {
     /*
     const spawn = require('child_process').spawn;
     spawn('phantomjs', ['phantomtest.js'].concat(process.argv.slice(3)), {
@@ -288,7 +288,7 @@ gulp.task('test', function () {
     new Server({
         configFile: __dirname + '/test/karma-conf.js',
         singleRun: true
-    }).start();
+    }, done).start();
 });
 
 /**
