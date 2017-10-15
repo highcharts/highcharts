@@ -25,8 +25,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "karma start test/karma-conf.js",
-    "precommit": "lint-staged && npm test"
+    "precommit": "lint-staged && gulp test"
   },
   "devDependencies": {
     "babel-plugin-transform-es2015-arrow-functions": "^6.8.0",
