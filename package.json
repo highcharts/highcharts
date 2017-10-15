@@ -25,7 +25,6 @@
     "lib"
   ],
   "scripts": {
-    "test": "karma start test/karma-conf.js",
     "precommit": "lint-staged && gulp test"
   },
   "devDependencies": {
