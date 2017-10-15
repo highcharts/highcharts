@@ -105,10 +105,32 @@ function getFiles() { // eslint-disable-line no-unused-vars
 
 module.exports = function (config) {
 
+    console.log(
+`_______________________________________________________________________________
+
+HIGHCHARTS TEST RUNNER
+
+Available arguments for 'gulp test':
+
+--browsers
+    Comma separated list of browsers to test. Available browsers are
+    'ChromeHeadless,Chrome,Firefox,Safari,Edge,IE'. Defaults to ChromeHeadless.
+
+--tests
+    Comma separated list of tests to run. Defaults to '*.*' that runs all tests
+    in the 'samples/unit-tests' directory.
+    Example: 'gulp test --tests chart/*' runs all tests in the chart directory.
+________________________________________________________________________________
+
+`.green);
+
     const argv = require('yargs').argv;
     const browsers = argv.browsers ?
         argv.browsers.split(',') :
         ['ChromeHeadless'];
+
+    const tests = (argv.tests ? argv.tests.split(',') : ['*/*'])
+        .map(path => `samples/unit-tests/${path}/demo.js`);
 
     // let files = getFiles();
     let files = require('./karma-files.json');
@@ -126,11 +148,8 @@ module.exports = function (config) {
 
             // Set up
             'utils/samples/test-controller.js',
-            'test/karma-setup.js',
-
-            // Tests
-            'samples/unit-tests/*/*/demo.js'
-        ]),
+            'test/karma-setup.js'
+        ], tests),
 
         // These ones fail
         exclude: [
