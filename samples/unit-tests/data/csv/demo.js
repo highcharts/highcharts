@@ -39,58 +39,60 @@ QUnit.test('csv-datetime-axis', function (assert) {
     );
 });
 
-QUnit.test('csv-current-year', function (assert) {
+if (!isNaN(Date.parse('Jan 16'))) { // Only Chrome parses "Jan 16" as of 2017
+    QUnit.test('csv-current-year', function (assert) {
 
-    // Don't log the error 'Could not deduce date format'
-    var error = Highcharts.error;
-    Highcharts.error = function () {};
+        // Don't log the error 'Could not deduce date format'
+        var error = Highcharts.error;
+        Highcharts.error = function () {};
 
-    var csv = 'Date,Value\nJan 16,1\nFeb 16,2\nMar 16,3';
+        var csv = 'Date,Value\nJan 16,1\nFeb 16,2\nMar 16,3';
 
-    var chart = Highcharts.chart('container', {
+        var chart = Highcharts.chart('container', {
 
-            title: {
-                text: 'Deduce that the year is the current year'
-            },
+                title: {
+                    text: 'Deduce that the year is the current year'
+                },
 
-            subtitle: {
-                text: 'Data input from CSV'
-            },
+                subtitle: {
+                    text: 'Data input from CSV'
+                },
 
-            data: {
-                csv: csv
-            },
+                data: {
+                    csv: csv
+                },
 
-            plotOptions: {
-                series: {
-                    marker: {
-                        enabled: false
+                plotOptions: {
+                    series: {
+                        marker: {
+                            enabled: false
+                        }
                     }
-                }
-            },
+                },
 
-            series: [{
-                lineWidth: 1
-            }]
-        }),
-        options = chart.options
-        ;
+                series: [{
+                    lineWidth: 1
+                }]
+            }),
+            options = chart.options
+            ;
 
-    assert.strictEqual(
-        (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
-        'datetime',
-        'X axis is date/time'
-    );
+        assert.strictEqual(
+            (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
+            'datetime',
+            'X axis is date/time'
+        );
 
-    assert.strictEqual(
-        options.series[0].data[0][0],
-        979603200000,
-        'Date for point one is correct'
-    );
+        assert.strictEqual(
+            options.series[0].data[0][0],
+            979603200000,
+            'Date for point one is correct'
+        );
 
-    // Reset
-    Highcharts.error = error;
-});
+        // Reset
+        Highcharts.error = error;
+    });
+}
 
 QUnit.test('csv-deduce-delimiter', function (assert) {
 
@@ -273,6 +275,10 @@ QUnit.test('csv-deduce-format-ddmmyyyy', function (assert) {
 
 QUnit.test('csv-deduce-format-iso', function (assert) {
 
+    // Don't log the error 'Could not deduce date format'
+    var error = Highcharts.error;
+    Highcharts.error = function () {};
+
     var data = 'Date,Value\n2016-01-29,1\n2016-01-30,2\n2016-01-31,3\n2016-02-01,3\n2016-02-02,3';
 
     var chart = Highcharts.chart('container', {
@@ -317,6 +323,9 @@ QUnit.test('csv-deduce-format-iso', function (assert) {
         1454025600000,
         'Format is DD/MM/YYYY'
     );
+
+    // Reset
+    Highcharts.error = error;
 
 });
 
@@ -371,6 +380,9 @@ QUnit.test('csv-deduce-format-mmddyyyy', function (assert) {
 });
 
 QUnit.test('csv-deduce-format-us', function (assert) {
+    // Don't log the error 'Could not deduce date format'
+    var error = Highcharts.error;
+    Highcharts.error = function () {};
 
     var data = 'Date,Value\n2016/1/29,1\n2016/1/30,2\n2016/1/31,3\n2016/2/1,3\n2016/2/1,3';
     var chart = Highcharts.chart('container', {
@@ -416,6 +428,9 @@ QUnit.test('csv-deduce-format-us', function (assert) {
         1454025600000,
         'Date for point one is correct'
     );
+
+    // Reset
+    Highcharts.error = error;
 
 });
 

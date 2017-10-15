@@ -1178,13 +1178,7 @@ Highcharts.extend(Data.prototype, {
 	 */
 	dateFormats: {
 		'YYYY-mm-dd': {
-			regex: /^([0-9]{4})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
-			parser: function (match) {
-				return Date.UTC(+match[1], match[2] - 1, +match[3]);
-			}
-		},
-		'YYYY/mm/dd': {
-			regex: /^([0-9]{4})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
+			regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
 			parser: function (match) {
 				return Date.UTC(+match[1], match[2] - 1, +match[3]);
 			}
