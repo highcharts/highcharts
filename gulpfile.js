@@ -284,11 +284,20 @@ gulp.task('test', done => {
         stdio: 'inherit'
     });
     */
-    var Server = require('karma').Server;
+    const Server = require('karma').Server;
+    const gutils = require('gulp-util');
     new Server({
         configFile: __dirname + '/test/karma-conf.js',
         singleRun: true
-    }, done).start();
+    }, err => {
+        if (err === 0) {
+            done();
+        } else {
+            done(new gutils.PluginError('karma', {
+                message: 'Tests failed'
+            }));
+        }
+    }).start();
 });
 
 /**
