@@ -59,7 +59,7 @@ QUnit.test('Test Pivot points calculations on data updates.', function (assert) 
     );
 
     assert.strictEqual(
-        chart.series[1].dataLabelsGroup.element.children.length,
+        chart.series[1].dataLabelsGroup.element.childNodes.length,
         0,
         'All dataLabels properly removed'
     );

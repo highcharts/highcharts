@@ -25,7 +25,7 @@ QUnit.test('#6487: Column\'s data label with contrast after justification.', fun
 
     assert.strictEqual(
         Highcharts.Color(
-            point.dataLabel.element.children[0].style.color
+            point.dataLabel.element.childNodes[0].style.color
         ).get(),
         Highcharts.Color(
             chart.renderer.getContrast(point.color)
