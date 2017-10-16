@@ -122,14 +122,18 @@ ________________________________________________________________________________
 `.green);
 
     const argv = require('yargs').argv;
-    const browsers = argv.browsers ?
-        argv.browsers.split(',') :
-        ['ChromeHeadless'];
+    const browserStack = Boolean(argv.browserstack);
+
+    // Browsers
+    let browsers = argv.browsers && argv.browsers.split(',');
+    if (!browsers) {
+        browsers = browserStack ?
+            ['BS.Firefox.Mac', 'BS.Edge', 'BS.IE'] :
+            ['ChromeHeadless'];
+    }
 
     const tests = (argv.tests ? argv.tests.split(',') : ['*/*'])
         .map(path => `samples/unit-tests/${path}/demo.js`);
-
-    const browserStack = Boolean(argv.browserstack);
 
     // let files = getFiles();
     let files = require('./karma-files.json');
@@ -203,21 +207,21 @@ ________________________________________________________________________________
             accessKey: properties['browserstack.accesskey']
         };
         options.customLaunchers = {
-            bs_firefox_mac: {
+            'BS.Firefox.Mac': {
                 base: 'BrowserStack',
                 browser: 'firefox',
                 browser_version: '56.0',
                 os: 'OS X',
                 os_version: 'Sierra'
             },
-            bs_edge_win: {
+            'BS.Edge': {
                 base: 'BrowserStack',
                 browser: 'edge',
                 browser_version: '15.0',
                 os: 'Windows',
                 os_version: '10'
             },
-            bs_ie_win: {
+            'BS.IE': {
                 base: 'BrowserStack',
                 browser: 'ie',
                 browser_version: '11.0',
@@ -225,7 +229,6 @@ ________________________________________________________________________________
                 os_version: '10'
             }
         };
-        options.browsers = ['bs_firefox_mac', 'bs_edge_win', 'bs_ie_win'];
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.browserDisconnectTimeout = 10000; // default 2000
