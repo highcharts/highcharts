@@ -178,6 +178,9 @@ ________________________________________________________________________________
 
     if (browserStack) {
 
+        console.log('Please wait while tests are uploaded and VMs prepared. ' +
+            'This may take some time...');
+
         // Get BrowserStack credentials from properties file
         let fs = require('fs');
         let lines = fs.readFileSync(
@@ -213,9 +216,16 @@ ________________________________________________________________________________
                 browser_version: '15.0',
                 os: 'Windows',
                 os_version: '10'
+            },
+            bs_ie_win: {
+                base: 'BrowserStack',
+                browser: 'ie',
+                browser_version: '11.0',
+                os: 'Windows',
+                os_version: '10'
             }
         };
-        options.browsers = ['bs_firefox_mac', 'bs_edge_win'];
+        options.browsers = ['bs_firefox_mac', 'bs_edge_win', 'bs_ie_win'];
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.browserDisconnectTimeout = 10000; // default 2000
