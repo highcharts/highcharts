@@ -3,7 +3,8 @@ QUnit.test(
     function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
-                width: 600
+                width: 600,
+                animation: false
             },
             legend: {
                 borderWidth: 1,
@@ -23,7 +24,7 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.width > 340 && chart.legend.box.width < 360,
+            chart.legend.box.getBBox().width > 340 && chart.legend.box.getBBox().width < 360,
             true,
             'Legend box contains checkboxes - 2 items'
         );
@@ -31,7 +32,7 @@ QUnit.test(
         chart.series[0].remove();
 
         assert.strictEqual(
-            chart.legend.box.width > 170 && chart.legend.box.width < 190,
+            chart.legend.box.getBBox().width > 170 && chart.legend.box.getBBox().width < 190,
             true,
             'Legend box contains checkbox - 1 item'
         );
@@ -45,7 +46,7 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.width > 70 && chart.legend.box.width < 90,
+            chart.legend.box.getBBox().width > 70 && chart.legend.box.getBBox().width < 90,
             true,
             'Legend box without checkboxes is of proper size - 1 item'
         );
@@ -61,7 +62,7 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.width > 370 && chart.legend.box.width < 390,
+            chart.legend.box.getBBox().width > 370 && chart.legend.box.getBBox().width < 395,
             true,
             'Legend box without checkboxes is of proper size - 4 items'
         );
@@ -75,7 +76,7 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.width > 510 && chart.legend.box.width < 530,
+            chart.legend.box.getBBox().width > 510 && chart.legend.box.getBBox().width < 535,
             true,
             'Legend box contains checkboxes - 4 items'
         );

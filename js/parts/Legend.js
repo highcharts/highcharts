@@ -688,7 +688,7 @@ Highcharts.Legend.prototype = {
 
 		if (legendWidth > 0 && legendHeight > 0) {
 			box[box.isNew ? 'attr' : 'animate'](
-				box.crisp({
+				box.crisp.call({}, { // #7260
 					x: 0,
 					y: 0,
 					width: legendWidth,
