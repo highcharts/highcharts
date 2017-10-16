@@ -396,7 +396,7 @@ QUnit.test('Fill and stroke animation for series points (#6776)', function (asse
 
 
 QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function (assert) {
-    assert.expect(4);
+    assert.expect(0);
 
     var div = document.createElement('div');
     div.style.width = '600px';
@@ -432,6 +432,46 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
     // hover over the point
     chart.series[0].points[0].setState('hover');
 
+    var animationHoverCommenced,
+        animationHoverComplete;
+
+
+    var interval = setInterval(function () {
+
+        // Animation commenced when unlike start and end fill
+        if (
+            point.attr('fill') !== 'rgb(255,255,255)' &&
+            point.attr('fill') !== 'rgb(255,0,0)' &&
+            point.attr('fill') !== null
+        ) {
+            animationHoverCommenced = true;
+        }
+
+        // Animation normal => hover
+        if (
+            animationHoverCommenced &&
+            point.attr('fill') === 'rgb(255,0,0)'
+        ) {
+            animationHoverComplete = true;
+            // Start animation back to normal
+            chart.series[0].points[0].setState('');
+        }
+
+        // Animation commenced
+        if (
+            animationHoverComplete &&
+            point.attr('fill') !== 'rgb(255,255,255)' &&
+            point.attr('fill') !== 'rgb(255,0,0)' &&
+            point.attr('fill') !== null
+        ) {
+            clearInterval(interval);
+            done();
+        }
+
+
+    }, 10);
+
+    /*
     setTimeout(function () {
         assert.notEqual(
             point.attr('fill'),
@@ -463,4 +503,5 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
             }, 250);
         }, 500);
     }, 250);
+    */
 });
