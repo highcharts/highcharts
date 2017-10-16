@@ -1,11 +1,11 @@
 /* eslint-env node, es6 */
-/* eslint no-console: 0 */
+/* eslint no-console: 0, camelcase: 0 */
 
 /**
  * Take an URL and translate to a local file path.
  * @param  {String} path The global URL
  * @returns {String} The local path
- */
+ * /
 function fileNameToLocal(path) {
 
     path = path
@@ -41,17 +41,17 @@ function fileNameToLocal(path) {
         );
     return path;
 }
-
+*/
 /**
  * Get the resources from demo.html files
  * @returns {Array.<String>} The file names
- */
+ * /
 function getFiles() { // eslint-disable-line no-unused-vars
     const fs = require('fs');
     const glob = require('glob-fs')({ gitignore: true });
     require('colors');
 
-    const files = glob.readdirSync('samples/unit-tests/**/**/demo.html');
+    const files = glob.readdirSync('samples/unit-tests/** / * * /demo.html');
     const exclude = [
         /^https:\/\/code\.highcharts\.com\/js/,
         /^https:\/\/code\.highcharts\.com\/maps\/js/,
@@ -91,17 +91,10 @@ function getFiles() { // eslint-disable-line no-unused-vars
         i++;
     });
     // console.log(('Found ' + dependencies.length + ' dependencies').green);
-    /*
-    console.log(dependencies.map(src => {
-        src = src
-            .replace(/^code/, 'http://code.highcharts.local')
-            .replace(/\.src\.js$/, '.js');
-        return `<script src="${src}"></script>`;
-    }).join('\n'));
-    // */
+
     return dependencies;
 }
-
+*/
 
 module.exports = function (config) {
 
@@ -115,6 +108,10 @@ Available arguments for 'gulp test':
 --browsers
     Comma separated list of browsers to test. Available browsers are
     'ChromeHeadless,Chrome,Firefox,Safari,Edge,IE'. Defaults to ChromeHeadless.
+
+--browsersstack
+    If given, runs the test against selected browsers on BrowserStack. Requires
+    the username and accesskey to be set in git-ignore-me.properties.
 
 --tests
     Comma separated list of tests to run. Defaults to '*.*' that runs all tests
@@ -132,10 +129,12 @@ ________________________________________________________________________________
     const tests = (argv.tests ? argv.tests.split(',') : ['*/*'])
         .map(path => `samples/unit-tests/${path}/demo.js`);
 
+    const browserStack = Boolean(argv.browserstack);
+
     // let files = getFiles();
     let files = require('./karma-files.json');
 
-    config.set({
+    let options = {
         basePath: '../', // Root relative to this file
         frameworks: ['qunit'],
         files: files.concat([
@@ -174,5 +173,56 @@ ________________________________________________________________________________
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity
-    });
+    };
+
+
+    if (browserStack) {
+
+        // Get BrowserStack credentials from properties file
+        let fs = require('fs');
+        let lines = fs.readFileSync(
+            './git-ignore-me.properties', 'utf8'
+        );
+        let properties = {};
+        lines.split('\n').forEach(function (line) {
+            line = line.split('=');
+            if (line[0]) {
+                properties[line[0]] = line[1];
+            }
+        });
+
+        if (!properties['browserstack.username']) {
+            throw `BrowserStack credentials not given. Add username and
+                accesskey to the git-ignore-me.properties file`;
+        }
+        options.browserStack = {
+            username: properties['browserstack.username'],
+            accessKey: properties['browserstack.accesskey']
+        };
+        options.customLaunchers = {
+            bs_firefox_mac: {
+                base: 'BrowserStack',
+                browser: 'firefox',
+                browser_version: '56.0',
+                os: 'OS X',
+                os_version: 'Sierra'
+            },
+            bs_edge_win: {
+                base: 'BrowserStack',
+                browser: 'edge',
+                browser_version: '15.0',
+                os: 'Windows',
+                os_version: '10'
+            }
+        };
+        options.browsers = ['bs_firefox_mac', 'bs_edge_win'];
+
+        // to avoid DISCONNECTED messages when connecting to BrowserStack
+        options.browserDisconnectTimeout = 10000; // default 2000
+        options.browserDisconnectTolerance = 1; // default 0
+        options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
+        options.captureTimeout = 4 * 60 * 1000; // default 60000
+    }
+
+    config.set(options);
 };
