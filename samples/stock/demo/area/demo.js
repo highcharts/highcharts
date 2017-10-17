@@ -4,12 +4,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.jso
     // Create the chart
     Highcharts.stockChart('container', {
 
-        tooltip: {
-            useHTML: true,
-            pointFormat: '<img src="testimage.png" style="height: 30px" />'
-        },
-
-
         rangeSelector: {
             selected: 1
         },
