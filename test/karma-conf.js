@@ -96,6 +96,34 @@ function getFiles() { // eslint-disable-line no-unused-vars
 }
 */
 
+/**
+ * Get browserstack credentials from the properties file.
+ * @returns {Object} The properties
+ */
+function getProperties() {
+    let fs = require('fs');
+    let properties = {};
+    try {
+        let lines = fs.readFileSync(
+            './git-ignore-me.properties', 'utf8'
+        );
+        lines.split('\n').forEach(function (line) {
+            line = line.split('=');
+            if (line[0]) {
+                properties[line[0]] = line[1];
+            }
+        });
+
+        if (!properties['browserstack.username']) {
+            throw 'No username';
+        }
+    } catch (e) {
+        throw 'BrowserStack credentials not given. Add username and ' +
+            'accesskey to the git-ignore-me.properties file';
+    }
+    return properties;
+}
+
 module.exports = function (config) {
 
     console.log(
@@ -107,11 +135,12 @@ Available arguments for 'gulp test':
 
 --browsers
     Comma separated list of browsers to test. Available browsers are
-    'ChromeHeadless,Chrome,Firefox,Safari,Edge,IE'. Defaults to ChromeHeadless.
+    'ChromeHeadless, Chrome, Firefox, Safari, Edge, IE' depending on what is
+    installed on the local system. Defaults to ChromeHeadless.
 
---browsersstack
-    If given, runs the test against selected browsers on BrowserStack. Requires
-    the username and accesskey to be set in git-ignore-me.properties.
+    In addition, virtual browsers from Browserstack are supported. They are
+    prefixed by the operating system. Available Browserstack browsers are
+    'Mac.Safari, Win.Edge, Win.IE'.
 
 --tests
     Comma separated list of tests to run. Defaults to '*.*' that runs all tests
@@ -127,15 +156,11 @@ ________________________________________________________________________________
     ];
 
     const argv = require('yargs').argv;
-    const browserStack = Boolean(argv.browserstack);
 
     // Browsers
-    let browsers = argv.browsers && argv.browsers.split(',');
-    if (!browsers) {
-        browsers = browserStack ?
-            ['BS.Firefox.Mac', 'BS.Edge', 'BS.IE'] :
-            ['ChromeHeadless'];
-    }
+    const browsers = argv.browsers ?
+        argv.browsers.split(',') :
+        ['ChromeHeadless'];
 
     const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
         .map(path => `samples/unit-tests/${path}/demo.js`);
@@ -185,48 +210,35 @@ ________________________________________________________________________________
     };
 
 
-    if (browserStack) {
+    if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
 
-        console.log('Please wait while tests are uploaded and VMs prepared. ' +
-            'This may take some time...');
+        console.log((
+            'BrowserStack initialized. Please wait while tests are ' +
+            'uploaded and VMs prepared...'
+        ).yellow);
 
-        // Get BrowserStack credentials from properties file
-        let fs = require('fs');
-        let lines = fs.readFileSync(
-            './git-ignore-me.properties', 'utf8'
-        );
-        let properties = {};
-        lines.split('\n').forEach(function (line) {
-            line = line.split('=');
-            if (line[0]) {
-                properties[line[0]] = line[1];
-            }
-        });
+        let properties = getProperties();
 
-        if (!properties['browserstack.username']) {
-            throw `BrowserStack credentials not given. Add username and
-                accesskey to the git-ignore-me.properties file`;
-        }
         options.browserStack = {
             username: properties['browserstack.username'],
             accessKey: properties['browserstack.accesskey']
         };
         options.customLaunchers = {
-            'BS.Firefox.Mac': {
+            'Mac.Safari': {
                 base: 'BrowserStack',
-                browser: 'firefox',
-                browser_version: '56.0',
+                browser: 'safari',
+                browser_version: '10.1',
                 os: 'OS X',
                 os_version: 'Sierra'
             },
-            'BS.Edge': {
+            'Win.Edge': {
                 base: 'BrowserStack',
                 browser: 'edge',
                 browser_version: '15.0',
                 os: 'Windows',
                 os_version: '10'
             },
-            'BS.IE': {
+            'Win.IE': {
                 base: 'BrowserStack',
                 browser: 'ie',
                 browser_version: '11.0',
