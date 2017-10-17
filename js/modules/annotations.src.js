@@ -547,7 +547,7 @@ Annotation.prototype = {
 			 **/
 			style: {
 				fontSize: '11px',
-				fontWeigth: 'bold',
+				fontWeight: 'normal',
 				color: 'contrast'
 			},
 
