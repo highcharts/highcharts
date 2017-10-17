@@ -18,7 +18,7 @@ import H from './Globals.js';
  * @namespace Highcharts
  */
 
-var timers = [];
+var timers = H.timers = [];
 
 var charts = H.charts,
 	doc = H.doc,

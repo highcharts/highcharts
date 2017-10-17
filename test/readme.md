@@ -1,10 +1,16 @@
 # Test runner
 
-Use `npm test` to run the tests using karma and QUnit. All tests in the `samples/unit-tests`
+Use `gulp test` to run the tests using karma and QUnit. All tests in the `samples/unit-tests`
 directory will run. For debugging, it may be convenient to use the
 [visual test tools](https://github.com/highcharts/highcharts/tree/master/utils).
 
 Tests will run on _pre-commit_ and will block committing in case of failure.
+
+#### Features
+- *Testing animation*. Animation is by default disabled by `Highcharts.setOptions`.
+  For testing animation, `lolex` is available. It emulates animation in sync.
+  Use the utility functions `lolexInstall` before the test and `lolexRunAndUninstall`
+  after (find samples in the test suite).
 
 #### Troubleshooting
 - All the Highcharts files, including modules and indicators, are loaded in the

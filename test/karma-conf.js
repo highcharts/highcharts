@@ -121,6 +121,11 @@ ________________________________________________________________________________
 
 `.green);
 
+    // The tests to run by default
+    const defaultTests = [
+        '*/*'
+    ];
+
     const argv = require('yargs').argv;
     const browserStack = Boolean(argv.browserstack);
 
@@ -132,7 +137,7 @@ ________________________________________________________________________________
             ['ChromeHeadless'];
     }
 
-    const tests = (argv.tests ? argv.tests.split(',') : ['*/*'])
+    const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
         .map(path => `samples/unit-tests/${path}/demo.js`);
 
     // let files = getFiles();

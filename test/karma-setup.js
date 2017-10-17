@@ -1,4 +1,4 @@
-/* global document, QUnit */
+/* global document, Highcharts, QUnit */
 var div;
 if (!document.getElementById('container')) {
     div = document.createElement('div');
@@ -10,6 +10,25 @@ if (!document.getElementById('output')) {
     div.setAttribute('id', 'output');
     document.body.appendChild(div);
 }
+
+// Disable animation over all.
+Highcharts.setOptions({
+    chart: {
+        animation: false
+    },
+    plotOptions: {
+        series: {
+            animation: false,
+            kdNow: true,
+            dataLabels: {
+                defer: false
+            }
+        }
+    },
+    tooltip: {
+        animation: false
+    }
+});
 
 /*
  * Compare numbers taking in account an error.
