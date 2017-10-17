@@ -662,7 +662,8 @@ QUnit.test('csv-quoted-data-escaped', function (assert) {
     );
 });
 
-QUnit.test('startRow, endRow', function (assert) {
+
+QUnit.test('startRow, endRow, startColumn, endColumn', function (assert) {
     var data =
         'Pad,Pad,Pad,Pad\n' +
         'Pad,Apples,Pears,Pad\n' +
@@ -674,7 +675,20 @@ QUnit.test('startRow, endRow', function (assert) {
         csv: data,
         startRow: 1,
         endRow: 3,
+        startColumn: 1,
+        endColumn: 2,
         parsed: function () {
+
+            assert.strictEqual(
+                this.columns.length,
+                2,
+                'Two columns included'
+            );
+            assert.strictEqual(
+                this.columns[0].join(','),
+                'Apples,1,5',
+                'First column ok'
+            );
             assert.strictEqual(
                 this.columns[0].length,
                 3,
@@ -684,4 +698,3 @@ QUnit.test('startRow, endRow', function (assert) {
     });
 
 });
-
