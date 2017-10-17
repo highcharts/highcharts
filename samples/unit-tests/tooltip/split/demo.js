@@ -168,3 +168,37 @@ QUnit.test('Split tooltip with useHTML (#7238)', function (assert) {
         'The label is a span'
     );
 });
+
+QUnit.test(
+    'Split tooltip on flags, having noSharedTooltip flag',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+
+            tooltip: {
+                split: true
+            },
+
+            series: [{
+                data: [1, 3, 2, 4],
+                id: 'dataseries'
+            }, {
+                type: 'flags',
+                data: [{
+                    x: 2,
+                    title: 'A',
+                    text: 'Flag tooltip'
+                }],
+                onSeries: 'dataseries'
+            }]
+        });
+
+
+        chart.series[1].points[0].onMouseOver();
+
+        assert.strictEqual(
+            chart.series[1].tt.text.element.tagName,
+            'text',
+            'We have a flag tooltip'
+        );
+    }
+);
