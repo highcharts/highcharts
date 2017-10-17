@@ -537,6 +537,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 				if (options && options.dataLabels && point.dataLabel) { // #2468
 					point.dataLabel = point.dataLabel.destroy();
 				}
+				if (point.connector) {
+					point.connector = point.connector.destroy(); // #7243
+				}
 			}
 
 			// record changes in the parallel arrays

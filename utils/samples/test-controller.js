@@ -1,5 +1,5 @@
 /* eslint valid-jsdoc: 0 */
-/* global Highcharts, document, window */
+/* global Highcharts, document, window, lolex */
 /**
  * The test controller makes it easy to emulate mouse stuff.
  *
@@ -337,3 +337,38 @@ window.TestController = function (chart) {
     controller.setPositionToElement(chart.container);
     return controller;
 };
+
+
+/**
+ * Convience wrapper for installing lolex and bypassing requestAnimationFrame.
+ * @return {Object} The clock object
+ */
+function lolexInstall() { // eslint-disable-line no-unused-vars
+    var ret;
+    if (typeof lolex !== 'undefined') {
+        window.backupRequestAnimationFrame = window.requestAnimationFrame;
+        window.requestAnimationFrame = null;
+        // Abort running animations, otherwise they will take over
+        Highcharts.timers.length = 0;
+        ret = lolex.install();
+    }
+    return ret;
+}
+
+/**
+ * Convenience wrapper form running timeouts and uninstalling lolex.
+ * @param  {Object} clock The clock object
+ * @return {void}
+ */
+function lolexRunAndUninstall(clock) { // eslint-disable-line no-unused-vars
+
+    if (typeof lolex !== 'undefined') {
+
+        clock.runAll();
+        clock.uninstall();
+
+        // Reset native requestAnimationFrame
+        window.requestAnimationFrame = window.backupRequestAnimationFrame;
+        delete window.backupRequestAnimationFrame;
+    }
+}

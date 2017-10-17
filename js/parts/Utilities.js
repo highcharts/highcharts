@@ -18,7 +18,7 @@ import H from './Globals.js';
  * @namespace Highcharts
  */
 
-var timers = [];
+var timers = H.timers = [];
 
 var charts = H.charts,
 	doc = H.doc,
@@ -1640,7 +1640,9 @@ H.reduce = function (arr, func, initialValue) {
  */
 H.offset = function (el) {
 	var docElem = doc.documentElement,
-		box = el.getBoundingClientRect();
+		box = el.parentElement ? // IE11 throws Unspecified error in test suite
+			el.getBoundingClientRect() :
+			{ top: 0, left: 0 };
 
 	return {
 		top: box.top  + (win.pageYOffset || docElem.scrollTop) -

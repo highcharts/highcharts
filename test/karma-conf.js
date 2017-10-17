@@ -1,11 +1,11 @@
 /* eslint-env node, es6 */
-/* eslint no-console: 0 */
+/* eslint no-console: 0, camelcase: 0 */
 
 /**
  * Take an URL and translate to a local file path.
  * @param  {String} path The global URL
  * @returns {String} The local path
- */
+ * /
 function fileNameToLocal(path) {
 
     path = path
@@ -41,17 +41,17 @@ function fileNameToLocal(path) {
         );
     return path;
 }
-
+*/
 /**
  * Get the resources from demo.html files
  * @returns {Array.<String>} The file names
- */
+ * /
 function getFiles() { // eslint-disable-line no-unused-vars
     const fs = require('fs');
     const glob = require('glob-fs')({ gitignore: true });
     require('colors');
 
-    const files = glob.readdirSync('samples/unit-tests/**/**/demo.html');
+    const files = glob.readdirSync('samples/unit-tests/** / * * /demo.html');
     const exclude = [
         /^https:\/\/code\.highcharts\.com\/js/,
         /^https:\/\/code\.highcharts\.com\/maps\/js/,
@@ -91,17 +91,38 @@ function getFiles() { // eslint-disable-line no-unused-vars
         i++;
     });
     // console.log(('Found ' + dependencies.length + ' dependencies').green);
-    /*
-    console.log(dependencies.map(src => {
-        src = src
-            .replace(/^code/, 'http://code.highcharts.local')
-            .replace(/\.src\.js$/, '.js');
-        return `<script src="${src}"></script>`;
-    }).join('\n'));
-    // */
+
     return dependencies;
 }
+*/
 
+/**
+ * Get browserstack credentials from the properties file.
+ * @returns {Object} The properties
+ */
+function getProperties() {
+    let fs = require('fs');
+    let properties = {};
+    try {
+        let lines = fs.readFileSync(
+            './git-ignore-me.properties', 'utf8'
+        );
+        lines.split('\n').forEach(function (line) {
+            line = line.split('=');
+            if (line[0]) {
+                properties[line[0]] = line[1];
+            }
+        });
+
+        if (!properties['browserstack.username']) {
+            throw 'No username';
+        }
+    } catch (e) {
+        throw 'BrowserStack credentials not given. Add username and ' +
+            'accesskey to the git-ignore-me.properties file';
+    }
+    return properties;
+}
 
 module.exports = function (config) {
 
@@ -114,7 +135,12 @@ Available arguments for 'gulp test':
 
 --browsers
     Comma separated list of browsers to test. Available browsers are
-    'ChromeHeadless,Chrome,Firefox,Safari,Edge,IE'. Defaults to ChromeHeadless.
+    'ChromeHeadless, Chrome, Firefox, Safari, Edge, IE' depending on what is
+    installed on the local system. Defaults to ChromeHeadless.
+
+    In addition, virtual browsers from Browserstack are supported. They are
+    prefixed by the operating system. Available Browserstack browsers are
+    'Mac.Safari, Win.Edge, Win.IE'.
 
 --tests
     Comma separated list of tests to run. Defaults to '*.*' that runs all tests
@@ -124,18 +150,25 @@ ________________________________________________________________________________
 
 `.green);
 
+    // The tests to run by default
+    const defaultTests = [
+        '*/*'
+    ];
+
     const argv = require('yargs').argv;
+
+    // Browsers
     const browsers = argv.browsers ?
         argv.browsers.split(',') :
         ['ChromeHeadless'];
 
-    const tests = (argv.tests ? argv.tests.split(',') : ['*/*'])
+    const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
         .map(path => `samples/unit-tests/${path}/demo.js`);
 
     // let files = getFiles();
     let files = require('./karma-files.json');
 
-    config.set({
+    let options = {
         basePath: '../', // Root relative to this file
         frameworks: ['qunit'],
         files: files.concat([
@@ -174,5 +207,52 @@ ________________________________________________________________________________
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity
-    });
+    };
+
+
+    if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
+
+        console.log((
+            'BrowserStack initialized. Please wait while tests are ' +
+            'uploaded and VMs prepared...'
+        ).yellow);
+
+        let properties = getProperties();
+
+        options.browserStack = {
+            username: properties['browserstack.username'],
+            accessKey: properties['browserstack.accesskey']
+        };
+        options.customLaunchers = {
+            'Mac.Safari': {
+                base: 'BrowserStack',
+                browser: 'safari',
+                browser_version: '10.1',
+                os: 'OS X',
+                os_version: 'Sierra'
+            },
+            'Win.Edge': {
+                base: 'BrowserStack',
+                browser: 'edge',
+                browser_version: '15.0',
+                os: 'Windows',
+                os_version: '10'
+            },
+            'Win.IE': {
+                base: 'BrowserStack',
+                browser: 'ie',
+                browser_version: '11.0',
+                os: 'Windows',
+                os_version: '10'
+            }
+        };
+
+        // to avoid DISCONNECTED messages when connecting to BrowserStack
+        options.browserDisconnectTimeout = 10000; // default 2000
+        options.browserDisconnectTolerance = 1; // default 0
+        options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
+        options.captureTimeout = 4 * 60 * 1000; // default 60000
+    }
+
+    config.set(options);
 };

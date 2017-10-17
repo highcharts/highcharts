@@ -439,7 +439,8 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
 			xMax: xAxis && xAxis.userMax,
 			yMin: yAxis && yAxis.userMin,
 			yMax: yAxis && yAxis.userMax
-		}
+		},
+		resetZoomButton: this.resetZoomButton
 	}, colorProp);
 
 	// Push it to the lookup array
@@ -481,6 +482,14 @@ Chart.prototype.applyDrilldown = function () {
 			}
 		});
 	}
+
+	// We have a reset zoom button. Hide it and detatch it from the chart. It
+	// is preserved to the layer config above.
+	if (this.resetZoomButton) {
+		this.resetZoomButton.hide();
+		delete this.resetZoomButton;
+	}
+
 	this.pointer.reset();
 	this.redraw();
 	this.showDrillUpButton();
@@ -612,6 +621,13 @@ Chart.prototype.drillUp = function () {
 				newSeries.xAxis.setExtremes(oldExtremes.xMin, oldExtremes.xMax, false);
 				newSeries.yAxis.setExtremes(oldExtremes.yMin, oldExtremes.yMax, false);
 			}
+
+			// We have a resetZoomButton tucked away for this level. Attatch
+			// it to the chart and show it.
+			if (level.resetZoomButton) {
+				chart.resetZoomButton = level.resetZoomButton;
+				chart.resetZoomButton.show();
+			}
 		}
 	}
 
@@ -631,6 +647,13 @@ Chart.prototype.drillUp = function () {
 
 	this.ddDupes.length = []; // #3315
 };
+
+// Don't show the reset button if we already are displaying the drillUp button.
+wrap(Chart.prototype, 'showResetZoom', function (proceed) {
+	if (!this.drillUpButton) {
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+	}
+});
 
 
 /**

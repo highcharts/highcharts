@@ -1,7 +1,3 @@
-function isArray(obj) {
-    return Object.prototype.toString.call(obj) === '[object Array]';
-}
-
 QUnit.test(
     'Preserve point config initial number type in options.data',
     function (assert) {
@@ -72,7 +68,7 @@ QUnit.test(
 
         assert.strictEqual(
             chart.series[0].options.data.map(function (pointCfg) {
-                return isArray(pointCfg);
+                return Highcharts.isArray(pointCfg);
             }).join(','),
             'true,true,true',
             'Points are arrays'
@@ -82,7 +78,7 @@ QUnit.test(
 
         assert.strictEqual(
             chart.series[0].options.data.map(function (pointCfg) {
-                return isArray(pointCfg);
+                return Highcharts.isArray(pointCfg);
             }).join(','),
             'true,true,true',
             'Points are arrays'
@@ -184,6 +180,42 @@ QUnit.test(
             point.graphic !== prevGraphic,
             true,
             'Point.graphic updated'
+        );
+    }
+);
+
+QUnit.test(
+    'Pie series point update',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'pie'
+            },
+
+            series: [{
+                data: [{
+                    name: 'Americas',
+                    y: 100,
+                    color: 'yellow'
+                }, {
+                    name: 'Europe',
+                    y: 200,
+                    color: 'green'
+                }]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].points[0].connector.attr('stroke'),
+            'yellow',
+            'Initial connector color'
+        );
+
+        chart.series[0].points[0].update({ color: 'red' });
+        assert.strictEqual(
+            chart.series[0].points[0].connector.attr('stroke'),
+            'red',
+            'Connector color updated'
         );
     }
 );
