@@ -635,7 +635,15 @@ H.Tooltip.prototype = {
 
 				// Store the tooltip referance on the series
 				if (!tt) {
-					owner.tt = tt = ren.label(null, null, null, 'callout')
+					owner.tt = tt = ren.label(
+							null,
+							null,
+							null,
+							'callout',
+							null,
+							null,
+							options.useHTML
+						)
 						.addClass('highcharts-tooltip-box ' + colorClass)
 						.attr({
 							'padding': options.padding,
