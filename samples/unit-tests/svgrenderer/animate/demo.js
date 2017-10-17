@@ -1,5 +1,3 @@
-/* global lolexInstall, lolexRunAndUninstall */
-
 QUnit.test('Animation x-y', function (assert) {
 
     // Hijack animation

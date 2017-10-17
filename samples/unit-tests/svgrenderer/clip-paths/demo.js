@@ -1,5 +1,9 @@
 QUnit.test('Verify that references to unused clip paths are removed after animation',
     function (assert) {
+
+        // Hijack animation
+        var clock = lolexInstall();
+
         var done = assert.async(2),
             // Get list of unique clip path references
             getClipPathSet = function (chart) {
@@ -47,5 +51,9 @@ QUnit.test('Verify that references to unused clip paths are removed after animat
                 'There are only references to one clipPath after animation'
             );
             done();
-        }, 10);
+        }, 20);
+
+
+        // Reset animation
+        lolexRunAndUninstall(clock);
     });
