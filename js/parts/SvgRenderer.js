@@ -1507,12 +1507,18 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			// Look for existing references to this clipPath and remove them
 			// before destroying the element (#6196).
 			each(
-				ownerSVGElement.querySelectorAll('[clip-path]'),
+				// The upper case version is for Edge
+				ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
 				function (el) {
 					// Include the closing paranthesis in the test to rule out
 					// id's from 10 and above (#6550)
-					if (el.getAttribute('clip-path')
-							.indexOf(wrapper.clipPath.element.id + ')') > -1) {
+					if (el
+						.getAttribute('clip-path')
+						.match(RegExp(
+							// Edge puts quotes inside the url, others not
+							'[\("]#' + wrapper.clipPath.element.id + '[\)"]'
+						))
+					) {
 						el.removeAttribute('clip-path');
 					}
 				}
