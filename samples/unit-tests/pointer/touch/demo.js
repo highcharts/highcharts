@@ -61,15 +61,19 @@ QUnit.test('TouchPointer events', function (assert) {
         events,
         pushEvent = function (type) {
             events.push(type);
-        };
+        },
+        methods = [
+            'onContainerTouchStart',
+            'onContainerTouchMove',
+            'onDocumentTouchEnd',
+            'pinch',
+            'touch'
+        ],
+        backups = {};
+
     // Listen to internal functions
-    [
-        'onContainerTouchStart',
-        'onContainerTouchMove',
-        'onDocumentTouchEnd',
-        'pinch',
-        'touch'
-    ].forEach(function (fn) {
+    methods.forEach(function (fn) {
+        backups[fn] = Highcharts.Pointer.prototype[fn];
         Highcharts.wrap(Highcharts.Pointer.prototype, fn, function (proceed) {
             pushEvent(fn);
             proceed.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -95,29 +99,9 @@ QUnit.test('TouchPointer events', function (assert) {
         window.MSPointerEvent
     ) {
         assert.strictEqual(
-            events.shift(),
-            'onContainerTouchStart',
-            'Tap on point 0.0: onContainerTouchStart'
-        );
-        assert.strictEqual(
-            events.shift(),
-            'touch',
-            'Tap on point 0.0: touch'
-        );
-        assert.strictEqual(
-            events.shift(),
-            'pinch',
-            'Tap on point 0.0: pinch'
-        );
-        assert.strictEqual(
-            events.shift(),
-            'onDocumentTouchEnd',
-            'Tap on point 0.0: onDocumentTouchEnd'
-        );
-        assert.strictEqual(
-            events.length,
-            0,
-            'Tap on point 0.0: no unexpected events'
+            events.join(','),
+            'onContainerTouchStart,touch,pinch,onDocumentTouchEnd',
+            'Tap on point 0.0: Correct order of events'
         );
     } else {
         assert.strictEqual(
@@ -126,4 +110,9 @@ QUnit.test('TouchPointer events', function (assert) {
             'This browser does not support touch.'
         );
     }
+
+    // Restore original functions
+    methods.forEach(function (fn) {
+        Highcharts.Pointer.prototype[fn] = backups[fn];
+    });
 });

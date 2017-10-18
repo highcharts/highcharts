@@ -1,5 +1,41 @@
 // Test both, ordinal and non-ordinal axes:
 Highcharts.each([true, false], function (ordinal) {
+
+
+    // Highstock modifies "series" property, so use separate object each time:
+    function getOptions() {
+        return {
+            chart: {
+                width: 600
+            },
+            rangeSelector: {
+                buttons: [{
+                    type: 'millisecond',
+                    count: 10,
+                    text: '1s'
+                }],
+                selected: 0
+            },
+            xAxis: {
+                overscroll: 5,
+                ordinal: ordinal
+            },
+            navigator: {
+                xAxis: {
+                    overscroll: 5
+                }
+            },
+            series: [{
+                data: [
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 48.5, 16.4,
+                    194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                    135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 54.4, 54.4, 154.4
+                ]
+            }]
+        };
+    }
+
+
     QUnit.test('Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons', function (assert) {
         var options = getOptions(),
             xAxis;
@@ -90,35 +126,5 @@ Highcharts.each([true, false], function (ordinal) {
             'Correct range with ALL'
         );
     });
-
-    // Highstock modifies "series" property, so use separate object each time:
-    function getOptions() {
-        return {
-            rangeSelector: {
-                buttons: [{
-                    type: 'millisecond',
-                    count: 10,
-                    text: '1s'
-                }],
-                selected: 0
-            },
-            xAxis: {
-                overscroll: 5,
-                ordinal: ordinal
-            },
-            navigator: {
-                xAxis: {
-                    overscroll: 5
-                }
-            },
-            series: [{
-                data: [
-                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 48.5, 16.4,
-                    194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-                    135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 54.4, 54.4, 154.4
-                ]
-            }]
-        };
-    }
 });
 
