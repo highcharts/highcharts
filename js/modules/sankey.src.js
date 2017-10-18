@@ -1,5 +1,5 @@
 /**
- * Solid angular gauge module
+ * Sankey diagram module
  *
  * (c) 2010-2017 Torstein Honsi
  *
