@@ -1118,6 +1118,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 				/**
 				 * Animation when hovering over the marker.
+				 * @type {Boolean|Object}
 				 */
 				animation: {
 					duration: 50

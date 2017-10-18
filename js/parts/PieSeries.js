@@ -162,7 +162,7 @@ seriesType('pie', 'line', {
 		 * Whether to render the connector as a soft arc or a line with sharp
 		 * break.
 		 * 
-		 * @type {Boolean}
+		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/ Soft
 		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/ Non soft
 		 * @since 2.1.7

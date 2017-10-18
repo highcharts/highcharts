@@ -474,7 +474,7 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
  * @sample maps/demo/diamondmap
  *		   Diamondmap tilemap
  * @since 6.0.0
- * @excluding joinBy, shadow, allAreas, mapData
+ * @excluding joinBy, shadow, allAreas, mapData, data
  * @optionparent plotOptions.tilemap
  */
 seriesType('tilemap', 'heatmap', {

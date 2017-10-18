@@ -38,7 +38,7 @@ var defined = H.defined,
  * @excluding boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
  *         findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
  *         negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
- *         pointRange,pointStart,softThreshold,stacking,threshold
+ *         pointRange,pointStart,softThreshold,stacking,threshold,data
  * @product highcharts
  * @sample {highcharts} highcharts/demo/x-range/
  *         X-range

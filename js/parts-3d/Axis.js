@@ -27,7 +27,6 @@ var ZAxis,
 	wrap = H.wrap;
 
 /**
- * Options to render axis in 3 dimensions. 
  * @optionparent xAxis
  */
 var extendedOptions = {
