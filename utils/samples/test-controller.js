@@ -39,6 +39,45 @@ window.TestController = function (chart) {
     }
 
     /**
+     * Get the element from a point on the page.
+     * @param  {Number} pageX
+     *         X relative to the page
+     * @param  {Number} pageY
+     *         Y relateive to the page
+     * @return {DOMElement}
+     *         An HTML or SVG DOM element
+     */
+    function elementFromPoint(pageX, pageY) {
+        var element,
+            clipPaths = {
+                elements: [],
+                values: []
+            };
+
+        // Edge and IE are unable to get elementFromPoint when the group has a
+        // clip path. It reports the first underlying element with no clip path.
+        if (/(Trident|Edge)/.test(window.navigator.userAgent)) {
+            [].slice.call(document.querySelectorAll('[clip-path],[CLIP-PATH]'))
+                .forEach(
+                    function (elemCP) {
+                        clipPaths.elements.push(elemCP);
+                        clipPaths.values.push(elemCP.getAttribute('clip-path'));
+                        elemCP.removeAttribute('clip-path');
+                    }
+                );
+        }
+
+        element = document.elementFromPoint(pageX, pageY);
+
+        // Reset clip paths for Edge and IE
+        clipPaths.elements.forEach(function (elemCP, i) {
+            elemCP.setAttribute('clip-path', clipPaths.values[i]);
+        });
+
+        return element;
+    }
+
+    /**
      * Trigger an event. The target element will be found based on the
      * coordinates. This function is called behind the shorthand functions like
      * .click() and .mousemove().
@@ -63,7 +102,7 @@ window.TestController = function (chart) {
         }
 
         // Find an element related to the coordinates and fire event.
-        element = el || document.elementFromPoint(pageX, pageY);
+        element = el || elementFromPoint(pageX, pageY);
         if (element) {
             element.dispatchEvent(evt);
         }
@@ -199,7 +238,7 @@ window.TestController = function (chart) {
         setPosition: function (x, y) {
             this.positionX = x;
             this.positionY = y;
-            this.relatedTarget = document.elementFromPoint(x, y);
+            this.relatedTarget = elementFromPoint(x, y);
         },
         /**
          * setPosition - Move the cursor position to a new position,
@@ -248,7 +287,7 @@ window.TestController = function (chart) {
             points.forEach(function (p) {
                 var x1 = p[0],
                     y1 = p[1],
-                    target = document.elementFromPoint(x1, y1);
+                    target = elementFromPoint(x1, y1);
                 triggerEvent('mousemove', x1, y1);
                 if (target !== relatedTarget) {
                     // First trigger a mouseout on the old target.
@@ -282,7 +321,7 @@ window.TestController = function (chart) {
             this.moveTo(x1, y1);
         },
         tap: function (x, y) {
-            var target = document.elementFromPoint(x, y),
+            var target = elementFromPoint(x, y),
                 extra = {
                     relatedTarget: target,
                     touches: createTouchList([{
