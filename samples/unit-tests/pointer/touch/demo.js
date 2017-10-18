@@ -80,6 +80,10 @@ QUnit.test('TouchPointer events', function (assert) {
         });
     });
     chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 200
+        },
         series: [{
             data: [1]
         }]

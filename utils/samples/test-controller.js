@@ -336,17 +336,17 @@ window.TestController = function (chart) {
                         pageY: y
                     }])
                 };
+
             triggerEvent('touchstart', x, y, extra, target);
             if (Pointer) {
                 triggerEvent('pointerdown', x, y, extra, target);
-            }
-            if (MSPointer) {
+            } else if (MSPointer) {
                 triggerEvent('MSPointerDown', x, y, extra, target);
             }
+
             if (Pointer) {
                 triggerEvent('pointerup', x, y, extra, target);
-            }
-            if (MSPointer) {
+            } else if (MSPointer) {
                 triggerEvent('MSPointerUp', x, y, extra, target);
             }
             triggerEvent('touchend', x, y, extra, target);
