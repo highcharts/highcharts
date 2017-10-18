@@ -477,11 +477,14 @@
           false,
           'Object is not a class'
         );
-        assert.strictEqual(
-          isClass(classes),
-          true,
-          'Object classes is a class'
-        );
+
+        if ((function myFunc() {}).name === 'myFunc') { // IE11 doesn't support function name
+            assert.strictEqual(
+              isClass(classes),
+              true,
+              'Object classes is a class'
+            );
+        }
         // Some legacy browsers do not have named functions
         classes.constructor = function () {};
         assert.strictEqual(

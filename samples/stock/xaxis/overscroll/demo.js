@@ -77,3 +77,11 @@ Highcharts.stockChart('container', {
     }]
 });
 
+// Reset
+Highcharts.setOptions({
+    global: {
+        useUTC: true
+    }
+});
+
+

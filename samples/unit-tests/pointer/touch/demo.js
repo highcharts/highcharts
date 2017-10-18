@@ -58,7 +58,6 @@ QUnit.test('Single touch drag should not zoom (#5790)', function (assert) {
 QUnit.test('TouchPointer events', function (assert) {
     var chart,
         controller,
-        el,
         events,
         pushEvent = function (type) {
             events.push(type);
@@ -83,10 +82,13 @@ QUnit.test('TouchPointer events', function (assert) {
     });
     Highcharts.hoverChartIndex = chart.index;
     controller = new TestController(chart);
-    el = chart.series[0].points[0].graphic.element;
     events = [];
 
-    controller.tapOnElement(el);
+    controller.tapOnElement(
+        chart.container,
+        chart.plotLeft + chart.series[0].points[0].plotX,
+        chart.plotTop + chart.series[0].points[0].plotY
+    );
     if (
         window.document.documentElement.ontouchstart !== undefined ||
         window.PointerEvent ||

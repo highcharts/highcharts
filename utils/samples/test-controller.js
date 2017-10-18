@@ -1,5 +1,5 @@
 /* eslint valid-jsdoc: 0 */
-/* global Highcharts, document, window, lolex */
+/* global Highcharts, console, document, window, lolex, SVGElement */
 /**
  * The test controller makes it easy to emulate mouse stuff.
  *
@@ -35,6 +35,13 @@ window.TestController = function (chart) {
      * @returns {object} Element offset
      */
     function getOffset(el) {
+        if (el instanceof SVGElement) {
+            console.warn( // eslint-disable-line no-console
+                'Careful with getting offset of SVG nodes. ' +
+                'IE11 doesn\'t support it. When calling tapOnElement or ' +
+                'moveToElement, use the chart.container instead.'
+            );
+        }
         return Highcharts.offset(el);
     }
 

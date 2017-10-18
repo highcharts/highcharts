@@ -261,7 +261,7 @@ function getExportInnerHTML() {
 		<script src="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.js"></script>
 		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.css" />
    		<?php endif; ?>
-   		<script src="test-controller.js?1"></script>
+   		<script src="test-controller.js?<?php echo uniqid(); ?>"></script>
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">

@@ -55,12 +55,20 @@ QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', fun
                 data: [3, 2, 1]
             }]
         }),
-        controller = new TestController(chart),
-        el = chart.series[0].points[0].graphic.element;
+        controller = new TestController(chart);
+
     events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
     // Move starting position of cursor to 50px below series[0].points[0].
-    controller.setPositionToElement(el, 0, 50);
-    controller.moveToElement(el);
+    controller.setPositionToElement(
+        chart.container,
+        chart.plotLeft + chart.series[0].points[0].plotX,
+        chart.plotTop + chart.series[0].points[0].plotY + 50
+    );
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + chart.series[0].points[0].plotX,
+        chart.plotTop + chart.series[0].points[0].plotY
+    );
     assert.strictEqual(
         events.shift(),
         'mouseOver.0.-',
@@ -80,9 +88,16 @@ QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', fun
     // New point, and new series.
     // NOTICE Qunit has added new content to the page,
     // so we have to move the cursor again.
-    controller.setPositionToElement(el);
-    el = chart.series[1].points[0].graphic.element;
-    controller.moveToElement(el, 0, 30);
+    controller.setPositionToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[0].plotX,
+        chart.plotTop + chart.series[1].points[0].plotY
+    );
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[0].plotX,
+        chart.plotTop + chart.series[1].points[0].plotY + 30
+    );
     assert.strictEqual(
         events.shift(),
         'mouseOut.0.0',
@@ -112,10 +127,16 @@ QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', fun
     // New point, same series
     // NOTICE Qunit has added new content to the page,
     // so we have to move the cursor again.
-    el = chart.series[1].points[0].graphic.element;
-    controller.setPositionToElement(el);
-    el = chart.series[1].points[2].graphic.element;
-    controller.moveToElement(el);
+    controller.setPositionToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[0].plotX,
+        chart.plotTop + chart.series[1].points[0].plotY
+    );
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[2].plotX,
+        chart.plotTop + chart.series[1].points[2].plotY
+    );
     assert.strictEqual(
         events.shift(),
         'mouseOut.1.0',
@@ -142,8 +163,16 @@ QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', fun
         'mousemove to 1.2: no unexpected events'
     );
     // Same point, same series.
-    controller.setPositionToElement(el);
-    controller.moveToElement(el, 0, 30);
+    controller.setPositionToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[2].plotX,
+        chart.plotTop + chart.series[1].points[2].plotY
+    );
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[2].plotX,
+        chart.plotTop + chart.series[1].points[2].plotY + 30
+    );
     assert.strictEqual(
         events.length,
         0,
@@ -212,21 +241,43 @@ QUnit.test('Pointer.runPointActions. stickyTracking: false. #5914', function (as
         },
         chart = Highcharts.chart('container', options),
         snap = chart.options.tooltip.snap,
-        controller = new TestController(chart),
-        el = chart.series[1].points[0].graphic.element;
+        controller = new TestController(chart);
+
     events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
-    controller.setPositionToElement(el, 0, snap + 25);
-    controller.moveToElement(el, 0, snap + 15);
+    controller.setPositionToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[0].plotX,
+        chart.plotTop + chart.series[1].points[0].plotY + snap + 25
+    );
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[0].plotX,
+        chart.plotTop + chart.series[1].points[0].plotY + snap + 15
+    );
     assert.strictEqual(
         events.length,
         0,
         'stickyTracking: false. moveTo 15px below 1.0: no unexpected events'
     );
 
-    controller.setPositionToElement(el, 0, snap + 15);
-    controller.moveToElement(el, 0, snap - 5);
+    controller.setPositionToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[0].plotX,
+        chart.plotTop + chart.series[1].points[0].plotY + snap + 15
+    );
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + chart.series[1].points[0].plotX,
+        chart.plotTop + chart.series[1].points[0].plotY + snap - 5
+    );
+
     // With Edge the Series.onMouseOver executed after all mousemoves are complete.
-    controller.triggerOnElement(el, 'mousemove', 0, snap - 5);
+    controller.triggerOnElement(
+        chart.container,
+        'mousemove',
+        chart.plotLeft + chart.series[1].points[0].plotX,
+        chart.plotTop + chart.series[1].points[0].plotY + snap - 5
+    );
     assert.strictEqual(
         events.shift(),
         'mouseOver.1.-',
@@ -309,11 +360,19 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
         chart = Highcharts.chart('container', options),
         series = chart.series[0],
         point = series.points[0],
-        el = point.graphic.element,
         controller = new TestController(chart);
+
     events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
-    controller.setPositionToElement(el, 0, -50);
-    controller.moveToElement(el);
+    controller.setPositionToElement(
+        chart.container,
+        chart.plotLeft + point.plotX,
+        chart.plotTop + point.plotY - 50
+    );
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + point.plotX,
+        chart.plotTop + point.plotY
+    );
     assert.strictEqual(
         events.shift(),
         'mouseOver.0.-',
@@ -341,8 +400,11 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
     );
 
     point = series.points[1];
-    el = point.graphic.element;
-    controller.moveToElement(el, 0, 40);
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + point.plotX,
+        chart.plotTop + point.plotY - 40
+    );
     assert.strictEqual(
         events.shift(),
         'mouseOut.0.0',
@@ -369,7 +431,11 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
         'No unexpected events.'
     );
 
-    controller.moveToElement(el);
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + point.plotX,
+        chart.plotTop + point.plotY
+    );
     assert.strictEqual(
         events.shift(),
         'mouseOver.0.-',
@@ -460,11 +526,15 @@ QUnit.test('Pointer.runPointActions. isDirectTouch: true && shared: true. #6517,
         pointer = chart.pointer,
         controller = new TestController(chart),
         // series1 = chart.series[0],
-        series2 = chart.series[1],
-        el = series2.points[0].graphic.element;
+        series2 = chart.series[1];
+
     events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
     // Move starting position of cursor to 50px below series[0].points[0].
-    controller.moveToElement(el, 10, -50);
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + series2.points[0].plotX + 10,
+        chart.plotTop + series2.points[0].plotY - 50
+    );
     assert.strictEqual(
         events.shift(),
         'mouseOver.1.-',
@@ -487,7 +557,11 @@ QUnit.test('Pointer.runPointActions. isDirectTouch: true && shared: true. #6517,
     );
 
     // Move inside point 0.1
-    controller.moveToElement(el, 10, 10);
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + series2.points[0].plotX + 10,
+        chart.plotTop + series2.points[0].plotY + 10
+    );
     assert.strictEqual(
         events.length,
         0,
