@@ -228,7 +228,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 			slope,
 			hasBreaks = axis.isXAxis && !!axis.options.breaks,
 			isOrdinal = axis.options.ordinal,
-			overscrollPointsRange = Number.MAX_SAFE_INTEGER,
+			overscrollPointsRange = Number.MAX_VALUE,
 			ignoreHiddenSeries = axis.chart.options.chart.ignoreHiddenSeries,
 			isNavigatorAxis = axis.options.className === 'highcharts-navigator-xaxis',
 			i;
@@ -374,6 +374,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = undefined;
 			}
 		}
+				
 		axis.isOrdinal = isOrdinal && useOrdinal; // #3818, #4196, #4926
 		axis.groupIntervalFactor = null; // reset for next run
 	},
