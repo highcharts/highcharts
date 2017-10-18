@@ -83,6 +83,14 @@ Highcharts.Point.prototype = {
 		} else {
 			colorIndex = series.colorIndex;
 		}
+
+		/**
+		 * The point's current color index, used in styled mode instead of 
+		 * `color`. The color index is inserted in class names used for styling.
+		 * @name colorIndex
+		 * @memberof Highcharts.Point
+		 * @type {Number}
+		 */
 		point.colorIndex = pick(point.colorIndex, colorIndex);
 
 		series.chart.pointCount++;
@@ -410,6 +418,32 @@ Highcharts.Point.prototype = {
  * @memberOf Highcharts.Point
  * @type {String|Number}
  */
+
+/**
+ * The name of the point. The name can be given as the first position of the 
+ * point configuration array, or as a `name` property in the configuration:
+ *
+ * @example
+ * // Array config
+ * data: [
+ *     ['John', 1],
+ *     ['Jane', 2]
+ * ]
+ *
+ * // Object config
+ * data: [{
+ * 	   name: 'John',
+ * 	   y: 1
+ * }, {
+ *     name: 'Jane',
+ *     y: 2
+ * }]
+ *
+ * @name name
+ * @memberOf Highcharts.Point
+ * @type {String}
+ */
+
 
 /**
  * The percentage for points in a stacked series or pies.
