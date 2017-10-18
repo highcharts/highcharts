@@ -164,12 +164,9 @@ H.Fx.prototype = {
 					setTimeout(step, 13);
 				},
 			step = function () {
-				var i;
-				for (i = 0; i < timers.length; i++) {
-					if (!timers[i]()) {
-						timers.splice(i--, 1);
-					}
-				}
+				timers = H.grep(timers, function (timer) {
+					return timer();
+				});
 
 				if (timers.length) {
 					requestAnimationFrame(step);
