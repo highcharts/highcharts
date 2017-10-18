@@ -4651,6 +4651,9 @@ H.Series = H.seriesType('line', null, { // base series options
 /**
  * Individual color for the point. By default the color is pulled from
  * the global `colors` array.
+ *
+ * In styled mode, the `color` option doesn't take effect. Instead, use 
+ * `colorIndex`.
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/point/color/ Mark the highest point
@@ -4661,8 +4664,8 @@ H.Series = H.seriesType('line', null, { // base series options
 
 /**
  * Styled mode only. A specific color index to use for the point, so its
- * graphic representations are given the class name `highcharts-color-
- * {n}`.
+ * graphic representations are given the class name
+ * `highcharts-color-{n}`.
  * 
  * @type {Number}
  * @since 5.0.0
