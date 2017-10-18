@@ -352,13 +352,13 @@ var sunburstOptions = {
 	/**
 	 * Can set a `borderColor` on all points which lies on the same level.
 	 *
-	 * @type {String}
+	 * @type {Color}
 	 * @apioption plotOptions.sunburst.levels.borderColor
 	 */
 	/**
 	 * Can set a `borderWidth` on all points which lies on the same level.
 	 *
-	 * @type {String}
+	 * @type {Number}
 	 * @apioption plotOptions.sunburst.levels.borderWidth
 	 */
 	/**
@@ -370,7 +370,7 @@ var sunburstOptions = {
 	/**
 	 * Can set a `color` on all points which lies on the same level.
 	 *
-	 * @type {String}
+	 * @type {Color}
 	 * @apioption plotOptions.sunburst.levels.color
 	 */
 	/**
@@ -389,7 +389,7 @@ var sunburstOptions = {
 	 * The ending value of a color variation. The last sibling will receive this
 	 * value.
 	 *
-	 * @type {String}
+	 * @type {Number}
 	 * @apioption plotOptions.sunburst.levels.colorVariation.to
 	 */
 	/**
