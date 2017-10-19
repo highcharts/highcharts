@@ -903,7 +903,9 @@ H.Tooltip.prototype = {
 		return map(items, function (item) {
 			var tooltipOptions = item.series.tooltipOptions;
 			return (
-				tooltipOptions.pointFormatter ||
+				tooltipOptions[
+					(item.point.formatPrefix || 'point') + 'Formatter'
+				] ||
 				item.point.tooltipFormatter
 			).call(
 				item.point,

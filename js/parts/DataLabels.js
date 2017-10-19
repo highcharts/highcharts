@@ -209,9 +209,14 @@ Series.prototype.drawDataLabels = function () {
 					options[point.formatPrefix + 'Format'] ||
 					options.format
 				);
+
 				str = defined(formatString) ?
 					format(formatString, labelConfig) :
-					options.formatter.call(labelConfig, options);
+					(
+						options[point.formatPrefix + 'Formatter'] ||
+						options.formatter
+					).call(labelConfig, options);
+				
 				style = options.style;
 				rotation = options.rotation;
 				/*= if (build.classic) { =*/

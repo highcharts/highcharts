@@ -94,3 +94,108 @@ QUnit.test('Sankey', function (assert) {
     );
 
 });
+
+QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        series: [{
+            keys: ['from', 'to', 'weight'],
+            data: [
+                ['A', '1', 9],
+                ['B', '1', 3],
+                ['A', '2', 5],
+                ['B', '2', 5]
+            ],
+            type: 'sankey'
+        }]
+    });
+
+    var series = chart.series[0];
+
+    // Defaults
+    assert.strictEqual(
+        series.nodes[0].dataLabel.text.textStr,
+        'A',
+        'Default nodeFormatter'
+    );
+    assert.strictEqual(
+        series.points[0].dataLabel.text.textStr,
+        '',
+        'Default point formatter'
+    );
+    series.nodes[0].onMouseOver();
+    assert.notEqual(
+        chart.tooltip.label.text.textStr.indexOf('A:'),
+        -1,
+        'Tooltip ok'
+    );
+
+    series.update({
+        dataLabels: {
+            nodeFormatter: function () {
+                return 'Foo';
+            },
+            formatter: function () {
+                return 'Bar';
+            }
+        },
+        tooltip: {
+            nodeFormatter: function () {
+                return 'Foo';
+            }
+        }
+    });
+
+    // Formatters
+    assert.strictEqual(
+        series.nodes[0].dataLabel.text.textStr,
+        'Foo',
+        'Explicit nodeFormatter'
+    );
+    assert.strictEqual(
+        series.points[0].dataLabel.text.textStr,
+        'Bar',
+        'Explicit point formatter'
+    );
+    series.nodes[0].onMouseOver();
+    assert.notEqual(
+        chart.tooltip.label.text.textStr.indexOf('Foo'),
+        -1,
+        'Tooltip ok'
+    );
+
+
+
+    series.update({
+        dataLabels: {
+            nodeFormat: 'Nodez',
+            format: 'Linkz'
+        },
+        tooltip: {
+            nodeFormat: 'Nodez',
+            nodeFormatter: null
+        }
+    });
+
+    // Formats take precedence
+    assert.strictEqual(
+        series.nodes[0].dataLabel.text.textStr,
+        'Nodez',
+        'Explicit nodeFormat'
+    );
+    assert.strictEqual(
+        series.points[0].dataLabel.text.textStr,
+        'Linkz',
+        'Explicit point format'
+    );
+    series.nodes[0].onMouseOver();
+    assert.notEqual(
+        chart.tooltip.label.text.textStr.indexOf('Nodez'),
+        -1,
+        'Tooltip ok'
+    );
+
+});
+
