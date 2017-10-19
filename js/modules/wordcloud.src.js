@@ -13,6 +13,7 @@ import drawPoint from '../mixins/draw-point.js';
 import '../parts/Series.js';
 var each = H.each,
 	extend = H.extend,
+	isArray = H.isArray,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
 	Series = H.Series;
@@ -494,6 +495,15 @@ var wordCloudSeries = {
 			scaleX: scale,
 			scaleY: scale
 		});
+	},
+	hasData: function () {
+		var series = this;
+		return (
+			isObject(series) &&
+			series.visible === true &&
+			isArray(series.points) &&
+			series.points.length > 0
+		);
 	},
 	/**
 	 * Strategies used for deciding rotation and initial position of a word.
