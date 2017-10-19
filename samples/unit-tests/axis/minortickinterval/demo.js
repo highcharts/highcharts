@@ -81,7 +81,9 @@ QUnit.test('Legacy - auto, log', function (assert) {
     chart = Highcharts.chart('container', {
         chart: {
             width: 600,
-            height: 250
+            height: 250,
+            marginTop: 40,
+            marginBottom: 60
         },
         yAxis: {
             minorTickInterval: 'auto',
@@ -256,7 +258,9 @@ QUnit.test('Typed - auto, log', function (assert) {
     chart = Highcharts.chart('container', {
         chart: {
             width: 600,
-            height: 250
+            height: 250,
+            marginTop: 40,
+            marginBottom: 60
         },
         yAxis: {
             minorTicks: true,

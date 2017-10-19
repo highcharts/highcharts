@@ -41,14 +41,14 @@ QUnit.test('3D columns stackLabels render', function (assert) {
     assert.close(
         dataLabel.x,
         stackLabel.x,
-        3,
+        7, // Win.Firefox draws them 6 pixels apart
         'StackLabel x position is the same as datalabel x position'
     );
 
     assert.close(
         dataLabel.y,
         stackLabel.y,
-        3,
+        7,
         'StackLabel y position is the same as datalabel y position'
     );
 });
