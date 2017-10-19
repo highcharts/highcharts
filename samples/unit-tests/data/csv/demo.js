@@ -698,3 +698,31 @@ QUnit.test('startRow, endRow, startColumn, endColumn', function (assert) {
     });
 
 });
+
+QUnit.test('Comments in CSV', function (assert) {
+    var data = [
+        '# -------',
+        '# Comment',
+        '# ----',
+        'Apples,Pears',
+        '1,2# Inline comment',
+        '3,4',
+        '5,6'
+    ].join('\n');
+
+    Highcharts.data({
+        csv: data,
+        parsed: function () {
+            assert.strictEqual(
+                this.columns[0].join(','),
+                'Apples,1,3,5',
+                'First column ok'
+            );
+            assert.strictEqual(
+                this.columns[1].join(','),
+                'Pears,2,4,6',
+                'Second column ok'
+            );
+        }
+    });
+});
