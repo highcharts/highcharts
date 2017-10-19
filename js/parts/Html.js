@@ -348,28 +348,28 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 							function translateSetter(value, key) {
 								parentGroup[key] = value;
 
-								var left = (
-										parentGroup.x ||
-										parentGroup.translateX
-									) + 'px',
-									top = (
-										parentGroup.y ||
-										parentGroup.translateY
-									) + 'px';
-
 								// In IE and Edge, use translate because items
 								// would flicker below a HTML tooltip (#6957)
 								if (isMS) {
 									htmlGroupStyle[renderer.getTransformKey()] =
-										'translate(' + left + ',' + top + ')';
+										'translate(' + (
+											parentGroup.x ||
+											parentGroup.translateX
+										) + 'px,' + (
+											parentGroup.y ||
+											parentGroup.translateY
+										) + 'px)';
 
 								// Otherwise, use left and top. Using translate
-								// doesn't work well with offline export (#7254)
+								// doesn't work well with offline export (#7254,
+								// #7280)
 								} else {
-									htmlGroupStyle.left = left;
-									htmlGroupStyle.top = top;
+									if (key === 'translateX') {
+										htmlGroupStyle.left = value + 'px';
+									} else {
+										htmlGroupStyle.top = value + 'px';
+									}
 								}
-
 								
 								parentGroup.doTransform = true;
 							}
