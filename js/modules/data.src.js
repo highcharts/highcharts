@@ -615,6 +615,7 @@ Highcharts.extend(Data.prototype, {
 				// Quoted string
 				if (c === '#') {
 					// The rest of the row is a comment
+					push();
 					return;
 				} else if (c === '"') {
 					read(++i);
@@ -895,8 +896,14 @@ Highcharts.extend(Data.prototype, {
 				itemDelimiter = guessDelimiter(lines);
 			}
 
+			var offset = 0;
+
 			for (rowIt = startRow; rowIt <= endRow; rowIt++) {
-				parseRow(lines[rowIt], rowIt - startRow);
+				if (lines[rowIt][0] === '#') {
+					offset++;
+				} else {
+					parseRow(lines[rowIt], rowIt - startRow - offset);
+				}
 			}
 
 			// //Make sure that there's header columns for everything
