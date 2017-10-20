@@ -1052,6 +1052,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		
 				// Set focus to chart or exit anchor depending on direction
 				if (direction > 0) {
+					chart.exiting = true;
 					chart.tabExitAnchor.focus();
 				} else {
 					chart.renderTo.focus();
@@ -1401,6 +1402,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			// Don't run if legend navigation is disabled.
 			validate: function () {
 				return chart.legend && chart.legend.allItems &&
+					chart.legend.display &&
 					!(chart.colorAxis && chart.colorAxis.length) &&
 					(chart.options.legend &&
 					chart.options.legend.keyboardNavigation && 
@@ -1440,18 +1442,46 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 
 	// Add tab exit anchor
 	// We use this to move focus out of chart whenever we want, by setting focus
-	// to this and not preventing the default tab action.
+	// to this div and not preventing the default tab action.
+	// We also use this when users come back into the chart by tabbing back, in
+	// order to navigate from the end of the chart.
+	function exitAnchorOnFocus(ev) {		
+		var e = ev || win.event,
+			curModule;
+		if (!chart.exiting) {
+			chart.renderTo.focus();
+			e.preventDefault();
+			// Move to last valid keyboard nav module
+			chart.keyboardNavigationModuleIndex =
+				chart.keyboardNavigationModules.length - 1;
+			curModule = chart.keyboardNavigationModules[
+				chart.keyboardNavigationModuleIndex
+			];
+			// Check that we get a valid module
+			if (curModule.validate && !curModule.validate()) {
+				curModule.move(-1); // Move inits next valid module in direction
+			} else {
+				// We have a valid module, init it
+				curModule.init(-1);
+			}
+		} else {
+			chart.exiting = false;
+		}
+	}
 	if (!chart.tabExitAnchor) {
 		chart.tabExitAnchor = doc.createElement('div');
-		// Not reachable by user
-		chart.tabExitAnchor.setAttribute('tabindex', '-1');
+		chart.tabExitAnchor.setAttribute('tabindex', '0');
 		merge(true, chart.tabExitAnchor.style, hiddenStyle);
 		chart.renderTo.appendChild(chart.tabExitAnchor);
+		addEvent(chart.tabExitAnchor, 'focus', exitAnchorOnFocus);
 	}
 
 	// Handle keyboard events
 	addEvent(chart.renderTo, 'keydown', keydownHandler);
 	addEvent(chart, 'destroy', function () {
+		if (chart.tabExitAnchor) {
+			removeEvent(chart.tabExitAnchor, 'focus', exitAnchorOnFocus);
+		}
 		if (chart.renderTo) {
 			removeEvent(chart.renderTo, 'keydown', keydownHandler);
 		}
