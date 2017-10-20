@@ -24,10 +24,14 @@ QUnit.test('Option chart plot border and background update', function (assert) {
         }]
     });
 
+    var testimage = (location.host === 'localhost:9876') ?
+        'base/utils/samples/testimage.png' : // karma
+        'testimage.png'; // utils
+
     chart.update({
         chart: {
             plotBackgroundColor: '#effecc',
-            plotBackgroundImage: '404.png',
+            plotBackgroundImage: testimage,
             plotBorderColor: '#abbaca',
             plotBorderWidth: 10
         }
@@ -49,7 +53,7 @@ QUnit.test('Option chart plot border and background update', function (assert) {
     );
     assert.strictEqual(
         chart.plotBGImage.element.getAttribute('href'),
-        '404.png',
+        testimage,
         'Image attempted loaded'
     );
 });
