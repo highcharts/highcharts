@@ -20,7 +20,6 @@ var win = H.win,
 	each = H.each,
 	erase = H.erase,
 	addEvent = H.addEvent,
-	removeEvent = H.removeEvent,
 	fireEvent = H.fireEvent,
 	dateFormat = H.dateFormat,
 	merge = H.merge,
@@ -1063,23 +1062,6 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 		}, { id: id }, options));
 	}
 
-	// Route keydown events
-	function keydownHandler(ev) {
-		var e = ev || win.event,
-			curNavModule = chart.keyboardNavigationModules[
-				chart.keyboardNavigationModuleIndex
-			];
-
-		// If there is a navigation module for the current index, run it.
-		// Otherwise, we are outside of the chart in some direction.
-		if (curNavModule) {
-			if (curNavModule.run(e)) {
-				// Successfully handled this key event, stop default handling
-				e.preventDefault();
-			}
-		}
-	}
-
 	// List of the different keyboard handling modes we use depending on where
 	// we are in the chart. Each mode has a set of handling functions mapped to
 	// key codes. Each mode determines when to move to the next/prev mode.
@@ -1445,45 +1427,63 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// to this div and not preventing the default tab action.
 	// We also use this when users come back into the chart by tabbing back, in
 	// order to navigate from the end of the chart.
-	function exitAnchorOnFocus(ev) {		
-		var e = ev || win.event,
-			curModule;
-		if (!chart.exiting) {
-			chart.renderTo.focus();
-			e.preventDefault();
-			// Move to last valid keyboard nav module
-			chart.keyboardNavigationModuleIndex =
-				chart.keyboardNavigationModules.length - 1;
-			curModule = chart.keyboardNavigationModules[
-				chart.keyboardNavigationModuleIndex
-			];
-			// Check that we get a valid module
-			if (curModule.validate && !curModule.validate()) {
-				curModule.move(-1); // Move inits next valid module in direction
-			} else {
-				// We have a valid module, init it
-				curModule.init(-1);
-			}
-		} else {
-			chart.exiting = false;
-		}
-	}
 	if (!chart.tabExitAnchor) {
 		chart.tabExitAnchor = doc.createElement('div');
 		chart.tabExitAnchor.setAttribute('tabindex', '0');
 		merge(true, chart.tabExitAnchor.style, hiddenStyle);
 		chart.renderTo.appendChild(chart.tabExitAnchor);
-		addEvent(chart.tabExitAnchor, 'focus', exitAnchorOnFocus);
+		chart.unbindExitAnchorFocus = addEvent(
+			chart.tabExitAnchor,
+			'focus', 
+			function (ev) {		
+				var e = ev || win.event,
+					curModule;
+				if (!chart.exiting) {
+					chart.renderTo.focus();
+					e.preventDefault();
+					// Move to last valid keyboard nav module
+					chart.keyboardNavigationModuleIndex =
+						chart.keyboardNavigationModules.length - 1;
+					curModule = chart.keyboardNavigationModules[
+						chart.keyboardNavigationModuleIndex
+					];
+					// Check that we get a valid module
+					if (curModule.validate && !curModule.validate()) {
+						// Move inits next valid module in direction
+						curModule.move(-1);
+					} else {
+						// We have a valid module, init it
+						curModule.init(-1);
+					}
+				} else {
+					chart.exiting = false;
+				}
+			}
+		);
 	}
 
-	// Handle keyboard events
-	addEvent(chart.renderTo, 'keydown', keydownHandler);
+	// Handle keyboard events by routing them to active keyboard nav module
+	chart.unbindKeydownHandler = addEvent(chart.renderTo, 'keydown',
+		function (ev) {
+			var e = ev || win.event,
+				curNavModule = chart.keyboardNavigationModules[
+					chart.keyboardNavigationModuleIndex
+				];
+			// If there is a navigation module for the current index, run it.
+			// Otherwise, we are outside of the chart in some direction.
+			if (curNavModule) {
+				if (curNavModule.run(e)) {
+					// Successfully handled this key event, stop default
+					e.preventDefault();
+				}
+			}
+		});
 	addEvent(chart, 'destroy', function () {
-		if (chart.tabExitAnchor) {
-			removeEvent(chart.tabExitAnchor, 'focus', exitAnchorOnFocus);
+		if (chart.unbindExitAnchorFocus && chart.tabExitAnchor) {
+			chart.unbindExitAnchorFocus();
 		}
-		if (chart.renderTo) {
-			removeEvent(chart.renderTo, 'keydown', keydownHandler);
+		if (chart.unbindKeydownHandler && chart.renderTo) {
+			chart.unbindKeydownHandler();
 		}
 	});
 };
