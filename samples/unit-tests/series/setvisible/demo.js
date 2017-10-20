@@ -2,12 +2,12 @@
 QUnit.test(
     'Redraw parameter on stock chart (#7256)',
     function (assert) {
-        var redrawTriggered = false;
+        var redrawTriggered = 0;
         var chart = Highcharts.stockChart('container', {
             chart: {
                 events: {
                     redraw: function () {
-                        redrawTriggered = true;
+                        redrawTriggered++;
                     }
                 }
             },
@@ -23,18 +23,25 @@ QUnit.test(
 
         assert.strictEqual(
             redrawTriggered,
-            false,
+            0,
             'Redraw not triggered'
         );
 
 
         // Toggle on and off with redraw
         chart.series[0].setVisible(false);
+
+        assert.strictEqual(
+            redrawTriggered,
+            1,
+            'Redraw triggered'
+        );
+
         chart.series[0].setVisible(true);
 
         assert.strictEqual(
             redrawTriggered,
-            true,
+            2,
             'Redraw triggered'
         );
 
