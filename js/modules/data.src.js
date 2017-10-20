@@ -666,7 +666,7 @@ Highcharts.extend(Data.prototype, {
 					cn,
 					cl,
 					token = ''
-				;
+					;
 
 
 				// We should be able to detect dateformats within 13 rows

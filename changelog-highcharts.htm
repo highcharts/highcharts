@@ -1,18 +1,29 @@
-<p>Highcharts 6.0.1 (2017-10-05)</p>
+<p>Highcharts 6.0.2 (2017-10-20)</p>
+<ul>
+    <li>Added <code>nodeFormatter</code> property to data labels and tooltips in the sankey diagram. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/7284">#7284</a>.</li>
+    <li>Added center algorithm, square and rectangular spirals to Wordcloud. See <a href="https://github.com/highslide-software/highcharts.com/issues/7241">#7241</a>.</li>
+</ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="heading-6-0-1-bug-fixes" class="panel-heading">
+        <div id="heading-6-0-2-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#6-0-1-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#6-0-2-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="6-0-1-bug-fixes" class="panel-collapse collapse">
+        <div id="6-0-2-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7223">#7223</a>, regression in v6 causing stock charts and certain features to crash in IE.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7228">#7228</a>, regression in v6 causing columns with only negative values not to render.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7272">#7272</a>, regression with <code>columnStart</code> in data module.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6103">#6103</a>, reset zoom button not playing well with drill up button.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7224">#7224</a>, legend item text not positioned properly when useHTML is enabled. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/7254">#7254</a>.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7238">#7238</a>, useHTML didn't have an effect with split tooltip.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7243">#7243</a>, updating pie series point color didn't update connector color.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7260">#7260</a>, a regression causing the legend box not being resized when dynamically adding and removing series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7264">#7264</a>, wordcloud did not support the no-data-to-display module.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7265">#7265</a>, a regression with causing <code>data.endRow</code> to be offset by one.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7280">#7280</a>, a regression causing mispositioned HTML data labels on pie charts.</li>
                 </ul>
             </div>
         </div>
