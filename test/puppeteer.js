@@ -10,9 +10,8 @@ From root:
 node test/puppeteer
 
 @todo
-- Optimze parameters for pixelmatch. Possibly faster to get the raw image data
-  from the pages instead of the PNG encoded stream.
-- Optimize by reducing the resolution in the images.
+- Optimze parameters for pixelmatch. Avoid writing the candidate image to disk
+  before diffing - pass the buffer in directly.
 - Link to https://utils.highcharts.com for failing sets, for visual debugging.
 - Possibly combine with a test framework and use return codes for CI.
 - Exclude array for problem samples.
@@ -63,7 +62,7 @@ function buildContent() {
     </head>
     <body>
     <div id="container" style="width: 600px; height: 400px"></div>
-    <canvas id="canvas" width="600" height="400"></canvas>
+    <canvas id="canvas" width="210" height="140"></canvas>
 
     </body>
     </html>`;
@@ -123,7 +122,7 @@ function getPNG(container) {
             img.onload = function () {
                 loaded = true;
 
-                ctx.drawImage(img, 0, 0, 600, 400);
+                ctx.drawImage(img, 0, 0, 210, 140);
                 DOMURL.revokeObjectURL(url);
                 const pngImg = canvas.toDataURL('image/png');
                 resolve(pngImg);
