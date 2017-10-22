@@ -16,6 +16,8 @@ node test/puppeteer
 - Link to https://utils.highcharts.com for failing sets, for visual debugging.
 - Possibly combine with a test framework and use return codes for CI.
 - Exclude array for problem samples.
+- Override Math.random
+- Fall back to Page.screenshot when PNG capture fails?
 */
 
 
@@ -143,10 +145,9 @@ function getPNG(container) {
  * Diff two PNG images using pixelmatch
  * @param  {String} path1 First image
  * @param  {String} path2 Second image
- * @param  {String} path  Path for logging
  * @returns {Promise} The promise
  */
-async function diff(path1, path2, path) {
+async function diff(path1, path2) {
     return new Promise((resolve) => {
 
         let filesRead = 0,
@@ -167,12 +168,7 @@ async function diff(path1, path2, path) {
                 { threshold: 0 }
             );
 
-            if (numDiffPixels === 0) {
-                console.log('✓'.green + ' ' + pad(path, 70).gray + numDiffPixels);
-            } else {
-                console.log('x'.red + ' ' + pad(path, 70).red + numDiffPixels);
-            }
-            resolve();
+            resolve(numDiffPixels);
         }
 
         img1 = fs.createReadStream(path1)
@@ -209,6 +205,7 @@ async function run() {
 
         let path = files[i].replace('samples/', '').replace('/demo.js', '');
         let js = fs.readFileSync(files[i], 'utf8');
+        let eachTime = Date.now();
 
         // Run the scripts on the page
         await page.evaluate(beforeEach);
@@ -237,7 +234,16 @@ async function run() {
                 fs.writeFileSync(candidatePath, buf);
 
 
-                await diff(referencePath, candidatePath, path);
+                let numDiffPixels = await diff(referencePath, candidatePath);
+                let numDiffPixelsPadded = pad(numDiffPixels, 5, true) + ' diff ';
+
+                eachTime = ' ' + (pad(Date.now() - eachTime, 5, true) + 'ms').gray;
+
+                if (numDiffPixels === 0) {
+                    console.log('✓'.green + ' ' + pad(path, 60).gray + ' ' + numDiffPixelsPadded + eachTime);
+                } else {
+                    console.log('x'.red + ' ' + pad(path, 60).red + ' ' + numDiffPixelsPadded + eachTime);
+                }
             }
         } else {
             console.log('x'.red + ' ' + path.gray);
