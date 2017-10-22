@@ -1,6 +1,5 @@
 
 Highcharts.chart('container', {
-
     title: {
         text: 'Credits disabled'
     },

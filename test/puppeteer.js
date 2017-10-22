@@ -10,13 +10,19 @@ From root:
 node test/puppeteer
 
 @todo
-- Compare to reference images. Possibly faster to get the raw image data from
-  the pages instead of the PNG encoded stream.
+- Optimze parameters for pixelmatch. Possibly faster to get the raw image data
+  from the pages instead of the PNG encoded stream.
+- Optimize by reducing the resolution in the images.
+- Link to https://utils.highcharts.com for failing sets, for visual debugging.
 - Possibly combine with a test framework and use return codes for CI.
+- Exclude array for problem samples.
 */
 
 
 const fs = require('fs');
+const argv = require('yargs').argv;
+const pixelmatch = require('pixelmatch');
+const PNG = require('pngjs').PNG;
 require('colors');
 
 const puppeteer = require('puppeteer');
@@ -61,6 +67,30 @@ function buildContent() {
     </html>`;
 
     return html;
+}
+
+/**
+ * Pad a string to a given length
+ * @param {String}  s
+ *                  The string to pad
+ * @param {Number}  length
+ *                  The length we want
+ * @param {Boolean} left
+ *                  Whether to pad on the left side (or right)
+ * @returns {String} Padded string
+ */
+function pad(s, length, left) {
+    var padding;
+
+    s = s.toString();
+
+    if (s.length > length) {
+        s = s.substring(0, length);
+    }
+
+    padding = new Array((length || 2) + 1 - s.length).join(' ');
+
+    return left ? padding + s : s + padding;
 }
 
 /**
@@ -110,6 +140,50 @@ function getPNG(container) {
 }
 
 /**
+ * Diff two PNG images using pixelmatch
+ * @param  {String} path1 First image
+ * @param  {String} path2 Second image
+ * @param  {String} path  Path for logging
+ * @returns {Promise} The promise
+ */
+async function diff(path1, path2, path) {
+    return new Promise((resolve) => {
+
+        let filesRead = 0,
+            img1,
+            img2;
+
+        function doneReading() { // eslint-disable-line require-jsdoc
+            if (++filesRead < 2) {
+                return;
+            }
+
+            let numDiffPixels = pixelmatch(
+                img1.data,
+                img2.data,
+                null,
+                img1.width,
+                img1.height,
+                { threshold: 0 }
+            );
+
+            if (numDiffPixels === 0) {
+                console.log('✓'.green + ' ' + pad(path, 70).gray + numDiffPixels);
+            } else {
+                console.log('x'.red + ' ' + pad(path, 70).red + numDiffPixels);
+            }
+            resolve();
+        }
+
+        img1 = fs.createReadStream(path1)
+            .pipe(new PNG()).on('parsed', doneReading);
+        img2 = fs.createReadStream(path2)
+            .pipe(new PNG()).on('parsed', doneReading);
+
+    });
+}
+
+/**
  * The main async runner
  * @returns {void}
  */
@@ -143,18 +217,33 @@ async function run() {
 
         // Strip off the data: url prefix to get just the base64-encoded bytes
         if (png) {
-            var data = png.replace(/^data:image\/\w+;base64,/, '');
-            var buf = new Buffer(data, 'base64');
-            fs.writeFileSync(
-                'test/screenshots/' + path.replace(/\//g, '-') + '.png',
-                buf
-            );
+
+            let referencePath =
+                'test/reference/' + path.replace(/\//g, '-') + '.png';
+
+            // Set reference image
+            if (argv.reference) {
+                let data = png.replace(/^data:image\/\w+;base64,/, '');
+                let buf = new Buffer(data, 'base64');
+                fs.writeFileSync(referencePath, buf);
+
+                console.log(`Saved reference for ${path}`.gray);
+
+            // Compare new image to reference
+            } else {
+                let candidatePath = 'test/screenshots/' + path.replace(/\//g, '-') + '.png';
+                let data = png.replace(/^data:image\/\w+;base64,/, '');
+                let buf = new Buffer(data, 'base64');
+                fs.writeFileSync(candidatePath, buf);
+
+
+                await diff(referencePath, candidatePath, path);
+            }
         } else {
             console.log('x'.red + ' ' + path.gray);
         }
 
         count++;
-        console.log('✓'.green + ' ' + path.gray);
     }
 
     await browser.close();
