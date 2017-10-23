@@ -23,19 +23,24 @@ const fs = require('fs');
 const argv = require('yargs').argv;
 const pixelmatch = require('pixelmatch');
 const PNG = require('pngjs').PNG;
-require('colors');
 const puppeteer = require('puppeteer');
 const glob = require('glob-fs')({ gitignore: true });
+require('colors');
+
 
 const config = {
     files: ['samples/highcharts/plotoptions/**/demo.js'],
 
     // Excluding those having async $.getJSON or data timers.
     exclude: [
-        'samples/highcharts/plotoptions/arearange-datalabels/demo.js',
-        'samples/highcharts/plotoptions/arearange-negativecolor/demo.js'
+    //    'samples/highcharts/plotoptions/arearange-datalabels/demo.js',
+     //   'samples/highcharts/plotoptions/arearange-negativecolor/demo.js'
     ]
 };
+
+// Internal reference
+const hasJSONSources = {};
+
 
 
 // Build the files array
@@ -120,6 +125,13 @@ function beforeAll() {
         ) {
             chart.series[0].points[0].onMouseOver();
         }
+    };
+
+    window.JSONSources = {};
+
+    // Override getJSON
+    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
+        callback(window.JSONSources[url]);
     };
 
 }
@@ -228,6 +240,38 @@ function getPNG(container) {
 }
 
 /**
+ * Look for $.getJSON calls in the demos and add hook to local sample data.
+ * @param   {String} js
+ *          The contents of demo.js
+ * @returns {String}
+ *          JavaScript extended with the sample data.
+ */
+function resolveJSON(js) {
+    const match = js.match(/\$\.getJSON\('([^']+)/);
+    if (match) {
+        let src = match[1];
+        if (!hasJSONSources[src]) {
+            let innerMatch = src.match(/filename=([^&']+)/);
+            if (innerMatch) {
+                let json = fs.readFileSync(
+                    'samples/data/' + innerMatch[1],
+                    'utf8'
+                );
+                if (json) {
+                    hasJSONSources[src] = true;
+                    let ret = `
+                    window.JSONSources['${src}'] = ${json};
+                    ${js}
+                    `;
+                    return ret;
+                }
+            }
+        }
+    }
+    return js;
+}
+
+/**
  * Diff two PNG images using pixelmatch
  * @param  {String} path1 First image
  * @param  {String} path2 Second image
@@ -296,6 +340,10 @@ async function run() {
         let js = fs.readFileSync(files[i], 'utf8');
         let eachTime = Date.now();
 
+        if (js.indexOf('getJSON') !== -1) {
+            js = resolveJSON(js);
+        }
+
         // Run the scripts on the page
         await page.evaluate(beforeEach);
         await page.evaluate(js);
@@ -323,7 +371,6 @@ async function run() {
                 let data = png.replace(/^data:image\/\w+;base64,/, '');
                 let buf = new Buffer(data, 'base64');
                 fs.writeFileSync(candidatePath, buf);
-
 
                 let numDiffPixels = await diff(referencePath, candidatePath);
                 let numDiffPixelsPadded =
