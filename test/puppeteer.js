@@ -33,9 +33,7 @@ const config = {
     // Excluding those having async $.getJSON or data timers.
     exclude: [
         'samples/highcharts/plotoptions/arearange-datalabels/demo.js',
-        'samples/highcharts/plotoptions/arearange-negativecolor/demo.js',
-        'samples/highcharts/plotoptions/gauge-overshoot/demo.js',
-        'samples/highcharts/plotoptions/solidgauge-threshold/demo.js'
+        'samples/highcharts/plotoptions/arearange-negativecolor/demo.js'
     ]
 };
 
@@ -44,7 +42,7 @@ const config = {
 let files = [];
 config.files.forEach(fileGlob => {
     glob.readdirSync(fileGlob).forEach(file => {
-        if (config.exclude.indexOf(file) === -1) {
+        if (!config.exclude || config.exclude.indexOf(file) === -1) {
             files.push(file);
         }
     });
