@@ -1,5 +1,5 @@
 /* eslint-env browser, node, es6 */
-/* eslint no-console: 0, no-underscore-dangle: 0 */
+/* eslint max-len: ['warn', 80], no-console: 0, no-underscore-dangle: 0 */
 /* global Highcharts */
 
 /*
@@ -18,16 +18,37 @@ node test/puppeteer
 - Fall back to Page.screenshot when PNG capture fails?
 */
 
-
+// Requirements
 const fs = require('fs');
 const argv = require('yargs').argv;
 const pixelmatch = require('pixelmatch');
 const PNG = require('pngjs').PNG;
 require('colors');
-
 const puppeteer = require('puppeteer');
 const glob = require('glob-fs')({ gitignore: true });
-const files = glob.readdirSync('samples/highcharts/plotoptions/**/demo.js');
+
+const config = {
+    files: ['samples/highcharts/plotoptions/**/demo.js'],
+
+    // Excluding those having async $.getJSON or data timers.
+    exclude: [
+        'samples/highcharts/plotoptions/arearange-datalabels/demo.js',
+        'samples/highcharts/plotoptions/arearange-negativecolor/demo.js',
+        'samples/highcharts/plotoptions/gauge-overshoot/demo.js',
+        'samples/highcharts/plotoptions/solidgauge-threshold/demo.js'
+    ]
+};
+
+
+// Build the files array
+let files = [];
+config.files.forEach(fileGlob => {
+    glob.readdirSync(fileGlob).forEach(file => {
+        if (config.exclude.indexOf(file) === -1) {
+            files.push(file);
+        }
+    });
+});
 
 const startTime = Date.now();
 let count = 0;
@@ -82,6 +103,27 @@ function beforeAll() {
         return ret;
     };
 
+    // Disable animation all over
+    Highcharts.SVGElement.prototype.animate =
+        Highcharts.SVGElement.prototype.attr;
+
+    Highcharts.prepareShot = function (container) {
+        let chart = Highcharts.charts[
+            container.getAttribute('data-highcharts-chart')
+                .replace('data-highcharts-', '')
+        ];
+        if (
+            chart &&
+            chart.series &&
+            chart.series[0] &&
+            chart.series[0].points &&
+            chart.series[0].points[0] &&
+            typeof chart.series[0].points[0].onMouseOver === 'function'
+        ) {
+            chart.series[0].points[0].onMouseOver();
+        }
+    };
+
 }
 
 /**
@@ -91,17 +133,10 @@ function beforeAll() {
 function beforeEach() {
     Highcharts.setOptions({
         colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-            '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
-        chart: {
-            animation: false
-        },
-        plotOptions: {
-            series: {
-                animation: false
-            }
-        }
+            '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1']
     });
 }
+
 /**
  * Create the page HTML.
  * @returns {String} The HTML
@@ -161,6 +196,9 @@ function getPNG(container) {
 
         }, 1000);
         try {
+
+            Highcharts.prepareShot(container);
+
             const data = container.querySelector('svg').outerHTML;
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
@@ -245,6 +283,7 @@ async function run() {
           buildContent()
     );
     let scripts = require('./karma-files.json');
+    // scripts.push('utils/samples/test-controller.js');
     for (let i = 0; i < scripts.length; i++) {
         await page.addScriptTag({ path: scripts[i] });
     }
@@ -255,12 +294,14 @@ async function run() {
     for (let i = 0; i < files.length; i++) {
 
         let path = files[i].replace('samples/', '').replace('/demo.js', '');
+        // console.log('Starting', path)
         let js = fs.readFileSync(files[i], 'utf8');
         let eachTime = Date.now();
 
         // Run the scripts on the page
         await page.evaluate(beforeEach);
         await page.evaluate(js);
+
         const png = await page.evaluate(getPNG, container);
 
         // Strip off the data: url prefix to get just the base64-encoded bytes
@@ -279,21 +320,28 @@ async function run() {
 
             // Compare new image to reference
             } else {
-                let candidatePath = 'test/screenshots/' + path.replace(/\//g, '-') + '.png';
+                let candidatePath =
+                    'test/screenshots/' + path.replace(/\//g, '-') + '.png';
                 let data = png.replace(/^data:image\/\w+;base64,/, '');
                 let buf = new Buffer(data, 'base64');
                 fs.writeFileSync(candidatePath, buf);
 
 
                 let numDiffPixels = await diff(referencePath, candidatePath);
-                let numDiffPixelsPadded = pad(numDiffPixels, 5, true) + ' diff ';
+                let numDiffPixelsPadded =
+                    pad(numDiffPixels, 5, true) + ' diff ';
 
-                eachTime = ' ' + (pad(Date.now() - eachTime, 5, true) + 'ms').gray;
+                eachTime =
+                    ' ' + (pad(Date.now() - eachTime, 5, true) + 'ms').gray;
 
                 if (numDiffPixels === 0) {
-                    console.log('✓'.green + ' ' + pad(path, 60).gray + ' ' + numDiffPixelsPadded + eachTime);
+                    console.log('✓'.green + ' ' + pad(path, 60).gray + ' ' +
+                        numDiffPixelsPadded + eachTime);
                 } else {
-                    console.log('x'.red + ' ' + pad(path, 60).red + ' ' + numDiffPixelsPadded + eachTime);
+                    console.log('x'.red + ' ' + pad(path, 60).red + ' ' +
+                        numDiffPixelsPadded + eachTime + '\n' +
+                        '  Debug: http://utils.highcharts.local/samples/' +
+                        '#test/' + path);
                 }
             }
         } else {
@@ -305,7 +353,8 @@ async function run() {
 
     await browser.close();
 
-    console.log('Did ' + count + ' charts in ' + ((Date.now() - startTime) / 1000) + 's');
+    console.log('Did ' + count + ' charts in ' +
+        ((Date.now() - startTime) / 1000) + 's');
 }
 
 run();
