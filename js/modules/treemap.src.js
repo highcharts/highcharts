@@ -115,6 +115,28 @@ seriesType('treemap', 'scatter', {
 	 */
 
 	/**
+	 * When using automatic point colors pulled from the `options.colors`
+	 * collection, this option determines whether the chart should receive
+	 * one color per series or one color per point.
+	 *
+	 * @type {Boolean}
+	 * @see [series colors](#plotOptions.treemap.colors)
+	 * @default false
+	 * @since 2.0
+	 * @apioption plotOptions.treemap.colorByPoint
+	 */
+
+	/**
+	 * A series specific or series type specific color set to apply instead
+	 * of the global [colors](#colors) when [colorByPoint](#plotOptions.
+	 * treemap.colorByPoint) is true.
+	 *
+	 * @type {Array<Color>}
+	 * @since 3.0
+	 * @apioption plotOptions.treemap.colors
+	 */
+
+	/**
 	 * Whether to display this series type or specific series item in the
 	 * legend.
 	 * 
