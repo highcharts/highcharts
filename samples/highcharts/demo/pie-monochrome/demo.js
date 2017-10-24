@@ -1,7 +1,7 @@
 
 
-// Make monochrome colors and set them as default for all pies
-Highcharts.getOptions().plotOptions.pie.colors = (function () {
+// Make monochrome colors
+var pieColors = (function () {
     var colors = [],
         base = Highcharts.getOptions().colors[0],
         i;
@@ -32,6 +32,7 @@ Highcharts.chart('container', {
         pie: {
             allowPointSelect: true,
             cursor: 'pointer',
+            colors: pieColors,
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b>: {point.percentage:.1f} %',

@@ -29,12 +29,40 @@ require('colors');
 
 
 const config = {
-    files: ['samples/highcharts/plotoptions/**/demo.js'],
+    files: [
+        'samples/highcharts/demo/**/demo.js',
+        'samples/stock/demo/**/demo.js'
+    ],
 
     // Excluding those having async $.getJSON or data timers.
     exclude: [
-    //    'samples/highcharts/plotoptions/arearange-datalabels/demo.js',
-     //   'samples/highcharts/plotoptions/arearange-negativecolor/demo.js'
+        // Error #13, renders to other divs than #container.
+        'samples/highcharts/demo/bullet-graph/demo.js',
+        // HTML content not present in page. No problem, got this covered by
+        // unit tests.
+        'samples/highcharts/demo/column-parsed/demo.js',
+        // Network loading?
+        'samples/highcharts/demo/combo-meteogram/demo.js',
+        // Error #13
+        'samples/highcharts/demo/gauge-solid/demo.js',
+        'samples/highcharts/demo/heatmap-canvas/demo.js',
+        // CSV data, try similar approach as getJSON
+        'samples/highcharts/demo/line-ajax/demo.js',
+        // Data island
+        'samples/highcharts/demo/polar-wind-rose/demo.js',
+        // Img load error
+        'samples/highcharts/demo/annotations/demo.js',
+        'samples/highcharts/demo/combo-timeline/demo.js',
+        // Clock
+        'samples/highcharts/demo/dynamic-update/demo.js',
+        'samples/highcharts/demo/gauge-clock/demo.js',
+
+        'samples/highcharts/demo/gauge-vu-meter/demo.js',
+
+        // Stock
+        'samples/stock/demo/dynamic-update/demo.js',
+        'samples/stock/demo/data-grouping/demo.js',
+        'samples/stock/demo/lazy-loading/demo.js'
     ]
 };
 
@@ -143,7 +171,10 @@ function beforeAll() {
 function beforeEach() {
     Highcharts.setOptions({
         colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-            '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1']
+            '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
+        global: {
+            useUTC: true
+        }
     });
 }
 
@@ -336,7 +367,6 @@ async function run() {
     for (let i = 0; i < files.length; i++) {
 
         let path = files[i].replace('samples/', '').replace('/demo.js', '');
-        // console.log('Starting', path)
         let js = fs.readFileSync(files[i], 'utf8');
         let eachTime = Date.now();
 
@@ -383,10 +413,15 @@ async function run() {
                     console.log('✓'.green + ' ' + pad(path, 60).gray + ' ' +
                         numDiffPixelsPadded + eachTime);
                 } else {
-                    console.log('x'.red + ' ' + pad(path, 60).red + ' ' +
+                    console.log(
+                        'x'.red + ' ' + pad(path, 60).red + ' ' +
                         numDiffPixelsPadded + eachTime + '\n' +
-                        '  Debug: http://utils.highcharts.local/samples/' +
-                        '#test/' + path);
+                        '  Debug:\n' +
+                        '  - ' + referencePath + '\n' +
+                        '  - ' + candidatePath + '\n' +
+                        '  - http://utils.highcharts.local/samples/#test/' +
+                        path
+                    );
                 }
             }
         } else {

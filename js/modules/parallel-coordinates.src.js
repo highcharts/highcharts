@@ -282,7 +282,7 @@ wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
  * - using series.points instead of series.yData
  */
 wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
-	if (this.chart.hasParallelCoordinates && !this.isXAxis) {
+	if (this.chart && this.chart.hasParallelCoordinates && !this.isXAxis) {
 		var index = this.parallelPosition,
 			currentPoints = [];
 		each(this.series, function (series) {
