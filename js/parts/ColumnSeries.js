@@ -291,17 +291,15 @@ seriesType('column', 'line', {
 			 * @default 0.1
 			 * @product highcharts highstock
 			 */
-			brightness: 0.1,
+			brightness: 0.1
 
-			shadow: false
 			/*= } =*/
 		},
 		/*= if (build.classic) { =*/
 
 		select: {
 			color: '${palette.neutralColor20}',
-			borderColor: '${palette.neutralColor100}',
-			shadow: false
+			borderColor: '${palette.neutralColor100}'
 		}
 		/*= } =*/
 	},
