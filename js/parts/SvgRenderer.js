@@ -1241,7 +1241,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			SVGElement.prototype.getStyle.call(element, 'font-size');
 		/*= } =*/
 
-		if (textStr !== undefined) {
+		// Avoid undefined and null (#7316)
+		if (defined(textStr)) {
 
 			cacheKey = textStr.toString();
 			
