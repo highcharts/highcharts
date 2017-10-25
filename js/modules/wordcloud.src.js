@@ -478,7 +478,7 @@ var wordCloudSeries = {
 		each(data, function (point) {
 			var relativeWeight = 1 / maxWeight * point.weight,
 				css = extend({
-					fontSize: series.deriveFontSize(relativeWeight),
+					fontSize: series.deriveFontSize(relativeWeight) + 'px',
 					fill: point.color
 				}, options.style),
 				placement = placementStrategy(point, {
