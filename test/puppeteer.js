@@ -31,7 +31,8 @@ require('colors');
 const config = {
     files: [
         'samples/highcharts/demo/**/demo.js',
-        'samples/stock/demo/**/demo.js'
+        'samples/stock/demo/**/demo.js',
+        'samples/maps/demo/**/demo.js'
     ],
 
     // Excluding those having async $.getJSON or data timers.
@@ -58,11 +59,25 @@ const config = {
         'samples/highcharts/demo/gauge-clock/demo.js',
 
         'samples/highcharts/demo/gauge-vu-meter/demo.js',
+        // Too heavy
+        'samples/highcharts/demo/parallel-coordinates/demo.js',
 
         // Stock
         'samples/stock/demo/dynamic-update/demo.js',
         'samples/stock/demo/data-grouping/demo.js',
-        'samples/stock/demo/lazy-loading/demo.js'
+        'samples/stock/demo/lazy-loading/demo.js',
+
+        // Maps
+        'samples/maps/demo/all-maps/demo.js',
+        'samples/maps/demo/heatmap/demo.js', // data island
+        'samples/maps/demo/latlon-advanced/demo.js', // us map
+        'samples/maps/demo/map-drilldown/demo.js', // Ajax
+        'samples/maps/demo/map-pies/demo.js', // advanced data
+        'samples/maps/demo/rich-info/demo.js', // advanced data
+        'samples/maps/demo/us-counties/demo.js', // advanced data
+        'samples/maps/demo/us-data-labels/demo.js', // map required
+        'samples/maps/demo/data-class-ranges/demo.js', // Google Spreadsheets
+        'samples/maps/demo/data-class-two-ranges/demo.js' // Google Spreadsheets
     ]
 };
 
@@ -83,6 +98,7 @@ config.files.forEach(fileGlob => {
 
 const startTime = Date.now();
 let count = 0;
+let passes = 0;
 
 
 /**
@@ -263,7 +279,7 @@ function getPNG(container) {
             };
             img.src = url;
         } catch (e) {
-            console.log('@catch', e);
+            console.log('@catch ' + e.message);
             resolve(false);
         }
     });
@@ -370,6 +386,8 @@ async function run() {
         let js = fs.readFileSync(files[i], 'utf8');
         let eachTime = Date.now();
 
+        // console.log(`Starting ${path}`);
+
         if (js.indexOf('getJSON') !== -1) {
             js = resolveJSON(js);
         }
@@ -412,6 +430,8 @@ async function run() {
                 if (numDiffPixels === 0) {
                     console.log('✓'.green + ' ' + pad(path, 60).gray + ' ' +
                         numDiffPixelsPadded + eachTime);
+
+                    passes++;
                 } else {
                     console.log(
                         'x'.red + ' ' + pad(path, 60).red + ' ' +
@@ -433,7 +453,7 @@ async function run() {
 
     await browser.close();
 
-    console.log('Did ' + count + ' charts in ' +
+    console.log('Passed ' + passes + ' of ' + count + ' charts in ' +
         ((Date.now() - startTime) / 1000) + 's');
 }
 
