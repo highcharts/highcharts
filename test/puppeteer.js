@@ -78,6 +78,30 @@ const config = {
         'samples/maps/demo/us-data-labels/demo.js', // map required
         'samples/maps/demo/data-class-ranges/demo.js', // Google Spreadsheets
         'samples/maps/demo/data-class-two-ranges/demo.js' // Google Spreadsheets
+
+        /*
+        ,
+        'samples/stock/demo/area/demo.js',
+        'samples/stock/demo/arearange/demo.js',
+        'samples/stock/demo/areaspline/demo.js',
+        'samples/stock/demo/areasplinerange/demo.js',
+        'samples/stock/demo/basic-line/demo.js',
+        'samples/stock/demo/candlestick/demo.js',
+        'samples/stock/demo/candlestick-and-volume/demo.js',
+        'samples/stock/demo/column/demo.js',
+        'samples/stock/demo/columnrange/demo.js',
+        'samples/stock/demo/flags-general/demo.js',
+        'samples/stock/demo/flags-placement/demo.js',
+        'samples/stock/demo/flags-shapes/demo.js',
+        'samples/stock/demo/intraday-area/demo.js',
+        'samples/stock/demo/intraday-breaks/demo.js',
+        'samples/stock/demo/intraday-candlestick/demo.js',
+        'samples/stock/demo/line-markers/demo.js',
+        'samples/stock/demo/macd-pivot-points/demo.js',
+        'samples/stock/demo/markers-only/demo.js',
+        'samples/stock/demo/navigation-disabled/demo.js',
+        'samples/stock/demo/ohlc/demo.js'
+        */
     ]
 };
 
@@ -90,7 +114,10 @@ const hasJSONSources = {};
 let files = [];
 config.files.forEach(fileGlob => {
     glob.readdirSync(fileGlob).forEach(file => {
-        if (!config.exclude || config.exclude.indexOf(file) === -1) {
+        if (
+            (!config.exclude || config.exclude.indexOf(file) === -1) &&
+            files.indexOf(file) === -1
+        ) {
             files.push(file);
         }
     });
