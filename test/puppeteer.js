@@ -217,6 +217,21 @@ function beforeEach() {
             '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
         global: {
             useUTC: true
+        },
+        chart: {
+            animation: false
+        },
+        plotOptions: {
+            series: {
+                animation: false,
+                kdNow: true,
+                dataLabels: {
+                    defer: false
+                }
+            }
+        },
+        tooltip: {
+            animation: false
         }
     });
 }
