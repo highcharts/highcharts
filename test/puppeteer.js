@@ -232,7 +232,7 @@ function buildContent() {
     </head>
     <body>
     <div id="container" style="width: 600px; height: 400px"></div>
-    <canvas id="canvas" width="210" height="140"></canvas>
+    <canvas id="canvas" width="300" height="200"></canvas>
 
     </body>
     </html>`;
@@ -295,7 +295,7 @@ function getPNG(container) {
             img.onload = function () {
                 loaded = true;
 
-                ctx.drawImage(img, 0, 0, 210, 140);
+                ctx.drawImage(img, 0, 0, 300, 200);
                 DOMURL.revokeObjectURL(url);
                 const pngImg = canvas.toDataURL('image/png');
                 resolve(pngImg);
@@ -384,6 +384,51 @@ async function diff(path1, path2) {
 }
 
 /**
+ * Create an animated gif of the reference and the candidata image, in order to
+ * see the differences.
+ * @param  {String} path1 The path to the reference image
+ * @param  {String} path2 The path to the candidate image
+ * @returns {void}
+ */
+function createAnimatedGif(path1, path2) {
+
+    let filesRead = 0,
+        img1,
+        img2;
+
+    function doneReading() { // eslint-disable-line require-jsdoc
+        if (++filesRead < 2) {
+            return;
+        }
+
+        var GIFEncoder = require('gifencoder');
+
+        var encoder = new GIFEncoder(300, 200);
+        encoder.start();
+        encoder.setRepeat(0);   // 0 for repeat, -1 for no-repeat
+        encoder.setDelay(500);  // frame delay in ms
+        encoder.setQuality(10); // image quality. 10 is default.
+
+        encoder.addFrame(img1.data);
+        encoder.addFrame(img2.data);
+        encoder.finish();
+
+        var buf = encoder.out.getData();
+        fs.writeFile(path2.replace('.png', '.gif'), buf, function (err) {
+            if (err) {
+                throw err;
+            }
+        });
+    }
+
+    img1 = fs.createReadStream(path1)
+        .pipe(new PNG()).on('parsed', doneReading);
+    img2 = fs.createReadStream(path2)
+        .pipe(new PNG()).on('parsed', doneReading);
+
+}
+
+/**
  * The main async runner
  * @returns {void}
  */
@@ -460,12 +505,12 @@ async function run() {
 
                     passes++;
                 } else {
+                    createAnimatedGif(referencePath, candidatePath);
                     console.log(
                         'x'.red + ' ' + pad(path, 60).red + ' ' +
                         numDiffPixelsPadded + eachTime + '\n' +
                         '  Debug:\n' +
-                        '  - ' + referencePath + '\n' +
-                        '  - ' + candidatePath + '\n' +
+                        '  - ' + candidatePath.replace('.png', '.gif') + '\n' +
                         '  - http://utils.highcharts.local/samples/#test/' +
                         path
                     );

@@ -34,6 +34,7 @@
     "colors": "~1.1.2",
     "eslint": "3.12.2",
     "fs-extra": "^2.1.2",
+    "gifencoder": "^1.1.0",
     "google-closure-compiler-js": "^20160916.0.0",
     "grunt": "^0.4.5",
     "grunt-jslint": "^1.1.12",
