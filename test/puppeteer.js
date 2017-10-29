@@ -24,7 +24,7 @@ const argv = require('yargs').argv;
 const pixelmatch = require('pixelmatch');
 const PNG = require('pngjs').PNG;
 const puppeteer = require('puppeteer');
-const glob = require('glob-fs')({ gitignore: true });
+const glob = require('glob');
 require('colors');
 
 
@@ -113,11 +113,8 @@ const hasJSONSources = {};
 // Build the files array
 let files = [];
 config.files.forEach(fileGlob => {
-    glob.readdirSync(fileGlob).forEach(file => {
-        if (
-            (!config.exclude || config.exclude.indexOf(file) === -1) &&
-            files.indexOf(file) === -1
-        ) {
+    glob.sync(fileGlob).forEach(file => {
+        if (!config.exclude || config.exclude.indexOf(file) === -1) {
             files.push(file);
         }
     });
@@ -472,6 +469,8 @@ async function run() {
         let path = files[i].replace('samples/', '').replace('/demo.js', '');
         let js = fs.readFileSync(files[i], 'utf8');
         let eachTime = Date.now();
+        let png;
+        let pageErrorMsg = '';
 
         // console.log(`Starting ${path}`);
 
@@ -479,11 +478,27 @@ async function run() {
             js = resolveJSON(js);
         }
 
+        js = `
+        new Promise((resolve) => {
+            try {
+                ${js};
+                resolve(true);
+            } catch (e) {
+                //console.log('[error]\\n${path}\\n' + e.message);
+                resolve(e.message);
+            }
+        });
+        `;
+
         // Run the scripts on the page
         await page.evaluate(beforeEach);
-        await page.evaluate(js);
+        let result = await page.evaluate(js);
 
-        const png = await page.evaluate(getPNG, container);
+        if (result === true) {
+            png = await page.evaluate(getPNG, container);
+        } else {
+            pageErrorMsg = result;
+        }
 
         // Strip off the data: url prefix to get just the base64-encoded bytes
         if (png) {
@@ -532,7 +547,7 @@ async function run() {
                 }
             }
         } else {
-            console.log('x'.red + ' ' + path.gray);
+            console.log('x'.red + ' ' + path.gray + '\n  ' + pageErrorMsg);
         }
 
         count++;
