@@ -25,6 +25,7 @@ const pixelmatch = require('pixelmatch');
 const PNG = require('pngjs').PNG;
 const puppeteer = require('puppeteer');
 const glob = require('glob');
+const yaml = require('js-yaml');
 require('colors');
 
 
@@ -164,13 +165,12 @@ function beforeAll() {
         0.4064991301856935, 0.829071992309764, 0.6997416105587035,
         0.2686419754754752, 0.36025605257600546, 0.6014082923065871,
         0.9787689209915698, 0.016065671807155013];
-    let randomCursor = 0;
+    Math.randomCursor = 0;
     Math.random = function () {
-        var ret = randomValues[randomCursor];
-        randomCursor++;
-        if (randomCursor >= randomValues.length) {
-            randomCursor = 0;
-        }
+        var ret = randomValues[
+            Math.randomCursor % randomValues.length
+        ];
+        Math.randomCursor++;
         return ret;
     };
 
@@ -209,6 +209,8 @@ function beforeAll() {
  * @returns {void}
  */
 function beforeEach() {
+    Math.randomCursor = 0;
+
     Highcharts.setOptions({
         colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
             '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
@@ -471,6 +473,18 @@ async function run() {
         let eachTime = Date.now();
         let png;
         let pageErrorMsg = '';
+
+        // Skip it?
+        let details = fs.readFileSync(`samples/${path}/demo.details`, 'utf8');
+        details = details && yaml.load(details);
+        if (details && details.skipTest) {
+            console.log(`  skipTest: ${path}`.gray);
+            continue;
+        }
+        if (details && details.requiresManualTesting) {
+            console.log(`  requiresManualTesting: ${path}`.gray);
+            continue;
+        }
 
         // console.log(`Starting ${path}`);
 
