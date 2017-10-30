@@ -402,19 +402,31 @@ function lolexInstall() { // eslint-disable-line no-unused-vars
 }
 
 /**
- * Convenience wrapper form running timeouts and uninstalling lolex.
+ * Convenience wrapper for uninstalling lolex.
+ * @param  {Object} clock The clock object
+ * @return {void}
+ */
+function lolexUninstall(clock) { // eslint-disable-line no-unused-vars
+
+    if (typeof lolex !== 'undefined') {
+
+        clock.uninstall();
+
+        // Reset native requestAnimationFrame
+        window.requestAnimationFrame = window.backupRequestAnimationFrame;
+        delete window.backupRequestAnimationFrame;
+    }
+}
+
+/**
+ * Convenience wrapper for running timeouts and uninstalling lolex.
  * @param  {Object} clock The clock object
  * @return {void}
  */
 function lolexRunAndUninstall(clock) { // eslint-disable-line no-unused-vars
 
     if (typeof lolex !== 'undefined') {
-
         clock.runAll();
-        clock.uninstall();
-
-        // Reset native requestAnimationFrame
-        window.requestAnimationFrame = window.backupRequestAnimationFrame;
-        delete window.backupRequestAnimationFrame;
+        lolexUninstall(clock);
     }
 }
