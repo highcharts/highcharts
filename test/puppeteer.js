@@ -475,16 +475,21 @@ async function run() {
         let pageErrorMsg = '';
 
         // Skip it?
-        let details = fs.readFileSync(`samples/${path}/demo.details`, 'utf8');
-        details = details && yaml.load(details);
-        if (details && details.skipTest) {
-            console.log(`  skipTest: ${path}`.gray);
-            continue;
-        }
-        if (details && details.requiresManualTesting) {
-            console.log(`  requiresManualTesting: ${path}`.gray);
-            continue;
-        }
+        try {
+            let details = fs.readFileSync(
+                `samples/${path}/demo.details`,
+                'utf8'
+            );
+            details = details && yaml.load(details);
+            if (details && details.skipTest) {
+                console.log(`  skipTest: ${path}`.gray);
+                continue;
+            }
+            if (details && details.requiresManualTesting) {
+                console.log(`  requiresManualTesting: ${path}`.gray);
+                continue;
+            }
+        } catch (e) {}
 
         // console.log(`Starting ${path}`);
 
@@ -526,7 +531,7 @@ async function run() {
                 let buf = new Buffer(data, 'base64');
                 fs.writeFileSync(referencePath, buf);
 
-                console.log(`Saved reference for ${path}`.gray);
+                console.log(`- Saved reference for ${path}`.gray);
 
             // Compare new image to reference
             } else {
