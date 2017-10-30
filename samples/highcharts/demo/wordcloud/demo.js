@@ -19,7 +19,8 @@ var lines = text.split(/[,\. ]+/g),
 Highcharts.chart('container', {
     series: [{
         type: 'wordcloud',
-        data: data
+        data: data,
+        name: 'Occurrences'
     }],
     title: {
         text: 'Wordcloud of Lorem Ipsum'

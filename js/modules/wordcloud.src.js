@@ -415,7 +415,8 @@ var wordCloudOptions = {
 		fontFamily: 'Impact, sans-serif'
 	},
 	tooltip: {
-		followPointer: true
+		followPointer: true,
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.weight}</b><br/>'
 	}
 };
 
