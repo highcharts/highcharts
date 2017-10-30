@@ -14,6 +14,7 @@
 	
 	"code/modules/exporting.src.js",
 	"code/modules/export-data.src.js",
+	"code/modules/parallel-coordinates.src.js",
 	"code/modules/accessibility.src.js",
 	"code/modules/annotations.src.js",
 	"code/modules/boost-canvas.src.js",
@@ -35,6 +36,7 @@
 	"code/modules/variwide.src.js",
 	"code/modules/wordcloud.src.js",
 	"code/modules/xrange.src.js",
+	"code/modules/no-data-to-display.src.js",
 
 	"code/indicators/indicators.src.js",
 	"code/indicators/accumulation-distribution.src.js",

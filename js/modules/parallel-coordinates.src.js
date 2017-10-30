@@ -124,7 +124,7 @@ H.setOptions({
 /**
  * Initialize parallelCoordinates
  */
-wrap(ChartProto, 'init', function (proceed, options) {
+wrap(ChartProto, 'init', function (proceed, options, callback) {
 	var defaultyAxis = splat(options.yAxis || {}),
 		yAxisLength = defaultyAxis.length,
 		newYAxes = [];
@@ -174,7 +174,7 @@ wrap(ChartProto, 'init', function (proceed, options) {
 		);
 	}
 
-	return proceed.call(this, options);
+	return proceed.call(this, options, callback);
 });
 
 /**
@@ -282,7 +282,7 @@ wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
  * - using series.points instead of series.yData
  */
 wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
-	if (this.chart.hasParallelCoordinates && !this.isXAxis) {
+	if (this.chart && this.chart.hasParallelCoordinates && !this.isXAxis) {
 		var index = this.parallelPosition,
 			currentPoints = [];
 		each(this.series, function (series) {
@@ -403,14 +403,18 @@ wrap(SeriesProto, 'destroy', function (proceed) {
 });
 
 function addFormattedValue(proceed) {
-	var chart = this.series.chart,
+	var chart = this.series && this.series.chart,
 		config = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
 		formattedValue,
 		yAxisOptions,
 		labelFormat,
 		yAxis;
 
-	if (chart.hasParallelCoordinates && !defined(config.formattedValue)) {
+	if (
+		chart &&
+		chart.hasParallelCoordinates &&
+		!defined(config.formattedValue)
+	) {
 		yAxis = chart.yAxis[this.x];
 		yAxisOptions = yAxis.options;
 
