@@ -3980,7 +3980,9 @@ H.Series = H.seriesType('line', null, { // base series options
 				attribs;
 
 			if (graph) {
-				graph.endX = graphPath.xMap;
+				graph.endX = series.preventGraphAnimation ?
+					null :
+					graphPath.xMap;
 				graph.animate({ d: graphPath });
 
 			} else if (graphPath.length) { // #1487

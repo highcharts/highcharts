@@ -1,7 +1,6 @@
 
-var chart;
 QUnit.test('Adding and removing series, reflect in navigator', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 showInNavigator: true
@@ -28,7 +27,7 @@ QUnit.test('Adding and removing series, reflect in navigator', function (assert)
 
 
 QUnit.test('Adding and removing series, no change to navigator data', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             adaptToUpdatedData: false
         },
@@ -63,7 +62,7 @@ QUnit.test('Adding and removing series, no change to navigator data', function (
 
 
 QUnit.test('Adding and removing points', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 showInNavigator: true
@@ -90,7 +89,7 @@ QUnit.test('Adding and removing points', function (assert) {
 
 
 QUnit.test('Update options', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         series: [{
             data: [1, 2, 3, 4]
         }, {
@@ -125,7 +124,7 @@ QUnit.test('Update options', function (assert) {
 
 
 QUnit.test('Update navigator series', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             series: {
                 data: [2, 3, 2, 3, 2, 3, 2, 3],
@@ -150,11 +149,15 @@ QUnit.test('Update navigator series', function (assert) {
         color: '#0f0'
     });
     assert.strictEqual(chart.navigator.series[0].color, '#0f0', 'Navigator series is green');
+    chart.series[0].update({
+        color: '#0f0'
+    });
+    assert.strictEqual(chart.series[0].color, '#0f0', 'Series is green');
 });
 
 
 QUnit.test('Update navigator series, not data', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             adaptToUpdatedData: false,
             series: {
@@ -189,7 +192,7 @@ QUnit.test('Update navigator series, not data', function (assert) {
 
 
 QUnit.test('Hide navigator series when hiding base', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 showInNavigator: true

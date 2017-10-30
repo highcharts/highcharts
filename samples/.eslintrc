@@ -9,6 +9,7 @@ globals:
     hs: true                    # Highslide
     jQuery: true
     lolexInstall: true
+    lolexUninstall: true
     lolexRunAndUninstall: true
     moment: true                # moment.js, used in gettimezoneoffset demo
     MSFT: true

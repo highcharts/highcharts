@@ -307,7 +307,7 @@ seriesType('arearange', 'area', {
 		}
 
 		this.graphPath = linePath;
-		this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
+		this.areaPath = lowerPath.concat(higherAreaPath);
 
 		// Prepare for sideways animation
 		linePath.isArea = true;

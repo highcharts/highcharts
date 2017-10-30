@@ -875,9 +875,6 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		) {
 			preserveGroups.length = 0;
 		}
-		if (series.options.isInternal) {
-			preserve.length = 0;
-		}
 
 		// Make sure preserved properties are not destroyed (#3094)
 		preserve = preserveGroups.concat(preserve);

@@ -415,7 +415,8 @@ var wordCloudOptions = {
 		fontFamily: 'Impact, sans-serif'
 	},
 	tooltip: {
-		followPointer: true
+		followPointer: true,
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.weight}</b><br/>'
 	}
 };
 
@@ -477,7 +478,7 @@ var wordCloudSeries = {
 		each(data, function (point) {
 			var relativeWeight = 1 / maxWeight * point.weight,
 				css = extend({
-					fontSize: series.deriveFontSize(relativeWeight),
+					fontSize: series.deriveFontSize(relativeWeight) + 'px',
 					fill: point.color
 				}, options.style),
 				placement = placementStrategy(point, {

@@ -98,7 +98,7 @@ H.Fx.prototype = {
 				startVal = parseFloat(start[i]);
 				ret[i] =
 					isNaN(startVal) ? // a letter instruction like M or L
-							start[i] :
+							end[i] :
 							now * (parseFloat(end[i] - startVal)) + startVal;
 
 			}

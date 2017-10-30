@@ -529,7 +529,9 @@ seriesProto.processData = function () {
 			pick(dataGroupingOptions.enabled, chart.options.isStock),
 		visible = series.visible || !chart.options.chart.ignoreHiddenSeries,
 		hasGroupedData,
-		skip;
+		skip,
+		lastDataGrouping = this.currentDataGrouping,
+		currentDataGrouping;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
@@ -585,7 +587,7 @@ seriesProto.processData = function () {
 			}
 
 			// record what data grouping values were used
-			series.currentDataGrouping = groupPositions.info;
+			currentDataGrouping = groupPositions.info;
 			series.closestPointRange = groupPositions.info.totalRange;
 			series.groupMap = groupedData[2];
 
@@ -602,9 +604,14 @@ seriesProto.processData = function () {
 			series.processedXData = groupedXData;
 			series.processedYData = groupedYData;
 		} else {
-			series.currentDataGrouping = series.groupMap = null;
+			series.groupMap = null;
 		}
 		series.hasGroupedData = hasGroupedData;
+		series.currentDataGrouping = currentDataGrouping;
+
+		series.preventGraphAnimation = 
+			(lastDataGrouping && lastDataGrouping.totalRange) !==
+			(currentDataGrouping && currentDataGrouping.totalRange);
 	}
 };
 
