@@ -409,7 +409,7 @@ seriesType('area', 'line', {
 
 			// Create or update the area
 			if (area) { // update
-				area.endX = series.allowGraphAnimation ? areaPath.xMap : null;
+				area.endX = series.preventGraphAnimation ? null : areaPath.xMap;
 				area.animate({ d: areaPath });
 
 			} else { // create

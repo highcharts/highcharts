@@ -609,8 +609,8 @@ seriesProto.processData = function () {
 		series.hasGroupedData = hasGroupedData;
 		series.currentDataGrouping = currentDataGrouping;
 
-		series.allowGraphAnimation = 
-			(lastDataGrouping && lastDataGrouping.totalRange) ===
+		series.preventGraphAnimation = 
+			(lastDataGrouping && lastDataGrouping.totalRange) !==
 			(currentDataGrouping && currentDataGrouping.totalRange);
 	}
 };
