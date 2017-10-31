@@ -12,6 +12,20 @@ Tests will run on _pre-commit_ and will block committing in case of failure.
   Use the utility functions `lolexInstall` before the test and `lolexRunAndUninstall`
   after (find samples in the test suite).
 
+#### Optimize for speed
+We want fast running tests. The time it takes to run the test suite is largely
+limited by the time it takes to create chart instances. Therefore, we want to
+limit the number of charts in the test suite.
+
+- When it feels correct, try reusing an existing chart instance to do your test.
+  For example, when writing a test for a regression related to `setExtremes`, we 
+  would see in the axis tests if there is a chart where we can run the problem
+  code and add an assertion. Of course we shouldn't overdo this - try to find the
+  right balance between well organized code and speed.
+- Don't create a chart unless you have to. For example, tests for text wrapping
+  only needs an `SVGRenderer` instance, colors can test directly against the
+  `Color` object, data parsing directly against the `Data` object.
+
 #### Troubleshooting
 - All the Highcharts files, including modules and indicators, are loaded in the
   test runner. A badly written module can cause errors downstream. If you
