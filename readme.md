@@ -26,10 +26,12 @@ npm install highcharts
 
 ```js
 // Load Highcharts
-var Highcharts = require('highcharts');
+const highcharts = require('highcharts/highcharts.src');
+
+const Highcharts = typeof highcharts === 'function' ? highcharts(jsdomRoot()) : highcharts;
 
 // Alternatively, this is how to load Highstock. Highmaps is similar.
-// var Highcharts = require('highcharts/highstock');
+// const Highcharts = require('highcharts/highstock.src');
 
 // This is how a module is loaded. Pass in Highcharts as a parameter.
 require('highcharts/modules/exporting')(Highcharts);
@@ -44,9 +46,12 @@ Example of using Highcharts in `ES2015`:
 
 ```js
 // load Highcharts
-import Highcharts from 'highcharts';
+
+import highcharts from 'highcharts/highcharts.src';
 // load the exporting module
 import Exporting from 'highcharts/modules/exporting';
+
+const Highcharts = typeof highcharts === 'function' ? highcharts(jsdomRoot()) : highcharts;
 
 // initialize exporting module
 Exporting(Highcharts);
