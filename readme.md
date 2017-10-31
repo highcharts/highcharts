@@ -40,3 +40,22 @@ Highcharts.chart('container', {
 });
 ```
 
+Example of using Highcharts in `ES2015`:
+
+```js
+// load Highcharts
+import Highcharts from 'highcharts';
+// load the exporting module
+import Exporting from 'highcharts/modules/exporting';
+
+// initialize exporting module
+Exporting(Highcharts);
+
+// Generate the chart
+const chart = new Highcharts.Chart({
+  chart: {
+    renderTo: 'container'
+  },
+  // ... more options - see http://api.highcharts.com/highcharts
+});
+```

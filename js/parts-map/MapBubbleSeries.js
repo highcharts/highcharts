@@ -192,6 +192,9 @@ if (seriesTypes.bubble) {
 			}
 			return point;
 		},
+		isValid: function () {
+			return typeof this.z === 'number';
+		},
 		ttBelow: false
 	});
 }
