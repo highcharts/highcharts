@@ -50,8 +50,11 @@ const config = {
         'samples/highcharts/demo/heatmap-canvas/demo.js',
         // CSV data, try similar approach as getJSON
         'samples/highcharts/demo/line-ajax/demo.js',
+
         // Data island
         'samples/highcharts/demo/polar-wind-rose/demo.js',
+        'samples/highcharts/boost/heatmap/demo.js',
+
         // Img load error
         'samples/highcharts/demo/annotations/demo.js',
         'samples/highcharts/demo/combo-timeline/demo.js',
@@ -78,31 +81,14 @@ const config = {
         'samples/maps/demo/us-counties/demo.js', // advanced data
         'samples/maps/demo/us-data-labels/demo.js', // map required
         'samples/maps/demo/data-class-ranges/demo.js', // Google Spreadsheets
-        'samples/maps/demo/data-class-two-ranges/demo.js' // Google Spreadsheets
+        'samples/maps/demo/data-class-two-ranges/demo.js', // Google Spr
 
-        /*
-        ,
-        'samples/stock/demo/area/demo.js',
-        'samples/stock/demo/arearange/demo.js',
-        'samples/stock/demo/areaspline/demo.js',
-        'samples/stock/demo/areasplinerange/demo.js',
-        'samples/stock/demo/basic-line/demo.js',
-        'samples/stock/demo/candlestick/demo.js',
-        'samples/stock/demo/candlestick-and-volume/demo.js',
-        'samples/stock/demo/column/demo.js',
-        'samples/stock/demo/columnrange/demo.js',
-        'samples/stock/demo/flags-general/demo.js',
-        'samples/stock/demo/flags-placement/demo.js',
-        'samples/stock/demo/flags-shapes/demo.js',
-        'samples/stock/demo/intraday-area/demo.js',
-        'samples/stock/demo/intraday-breaks/demo.js',
-        'samples/stock/demo/intraday-candlestick/demo.js',
-        'samples/stock/demo/line-markers/demo.js',
-        'samples/stock/demo/macd-pivot-points/demo.js',
-        'samples/stock/demo/markers-only/demo.js',
-        'samples/stock/demo/navigation-disabled/demo.js',
-        'samples/stock/demo/ohlc/demo.js'
-        */
+        // Unknown error
+        'samples/highcharts/boost/scatter-smaller/demo.js',
+
+        // CommonJS
+        'samples/highcharts/common-js/browserify/demo.js',
+        'samples/highcharts/common-js/webpack/demo.js'
     ]
 };
 
@@ -473,6 +459,8 @@ async function run() {
         let eachTime = Date.now();
         let png;
         let pageErrorMsg = '';
+        let referencePath =
+            'test/reference/' + path.replace(/\//g, '-') + '.png';
 
         // Skip it?
         try {
@@ -482,14 +470,18 @@ async function run() {
             );
             details = details && yaml.load(details);
             if (details && details.skipTest) {
-                console.log(`  skipTest: ${path}`.gray);
+                console.log(`- skipTest: ${path}`.gray);
                 continue;
             }
             if (details && details.requiresManualTesting) {
-                console.log(`  requiresManualTesting: ${path}`.gray);
+                console.log(`- requiresManualTesting: ${path}`.gray);
                 continue;
             }
-        } catch (e) {}
+        } catch (e) {} // eslint-disable-line no-empty
+
+        if (!argv.reference && !fs.existsSync(referencePath)) {
+            continue;
+        }
 
         // console.log(`Starting ${path}`);
 
@@ -521,9 +513,6 @@ async function run() {
 
         // Strip off the data: url prefix to get just the base64-encoded bytes
         if (png) {
-
-            let referencePath =
-                'test/reference/' + path.replace(/\//g, '-') + '.png';
 
             // Set reference image
             if (argv.reference) {
