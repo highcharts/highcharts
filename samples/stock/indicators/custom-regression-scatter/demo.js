@@ -643,10 +643,12 @@ Highcharts.chart('container', {
         type: 'linearregression',
         linkedTo: 'female',
         name: 'Female - linear regression',
+        color: 'rgba(223, 83, 83, .75)',
         showInLegend: true
     }, {
         type: 'linearregression',
         name: 'Male - linear regression',
+        color: 'rgba(119, 152, 191, .75)',
         linkedTo: 'male',
         showInLegend: true
     }]
