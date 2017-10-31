@@ -70,6 +70,7 @@
 	"samples/data/mapdata-1.1.2-ad-all.js",
 	"samples/data/mapdata-1.1.2-europe.js",
 
-	"samples/data/usdeur.js"
+	"samples/data/usdeur.js",
+	"samples/data/ohlc.js"
 	
 ]

@@ -82,7 +82,12 @@ const config = {
 
         // CommonJS
         'samples/highcharts/common-js/browserify/demo.js',
-        'samples/highcharts/common-js/webpack/demo.js'
+        'samples/highcharts/common-js/webpack/demo.js',
+
+        // Various
+        'samples/highcharts/css/exporting/demo.js', // advanced demo
+        'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
+        'samples/highcharts/css/pattern/demo.js' // styled mode, setOptions
     ]
 };
 
