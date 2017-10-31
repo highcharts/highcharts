@@ -36,35 +36,29 @@ const config = {
         'samples/maps/demo/**/demo.js'
     ],
 
-    // Excluding those having async $.getJSON or data timers.
+    // Excluding samples for various reasons
     exclude: [
-        // Error #13, renders to other divs than #container.
+        // Error #13, renders to other divs than #container. Sets global
+        // options.
         'samples/highcharts/demo/bullet-graph/demo.js',
-        // HTML content not present in page. No problem, got this covered by
-        // unit tests.
-        'samples/highcharts/demo/column-parsed/demo.js',
         // Network loading?
         'samples/highcharts/demo/combo-meteogram/demo.js',
-        // Error #13
-        'samples/highcharts/demo/gauge-solid/demo.js',
-        'samples/highcharts/demo/heatmap-canvas/demo.js',
+
         // CSV data, try similar approach as getJSON
         'samples/highcharts/demo/line-ajax/demo.js',
-
-        // Data island
-        'samples/highcharts/demo/polar-wind-rose/demo.js',
-        'samples/highcharts/boost/heatmap/demo.js',
 
         // Img load error
         'samples/highcharts/demo/annotations/demo.js',
         'samples/highcharts/demo/combo-timeline/demo.js',
+
         // Clock
         'samples/highcharts/demo/dynamic-update/demo.js',
         'samples/highcharts/demo/gauge-clock/demo.js',
-
         'samples/highcharts/demo/gauge-vu-meter/demo.js',
+
         // Too heavy
         'samples/highcharts/demo/parallel-coordinates/demo.js',
+        'samples/highcharts/demo/sparkline/demo.js',
 
         // Stock
         'samples/stock/demo/dynamic-update/demo.js',
@@ -164,11 +158,7 @@ function beforeAll() {
     Highcharts.SVGElement.prototype.animate =
         Highcharts.SVGElement.prototype.attr;
 
-    Highcharts.prepareShot = function (container) {
-        let chart = Highcharts.charts[
-            container.getAttribute('data-highcharts-chart')
-                .replace('data-highcharts-', '')
-        ];
+    Highcharts.prepareShot = function (chart) {
         if (
             chart &&
             chart.series &&
@@ -222,6 +212,20 @@ function beforeEach() {
 }
 
 /**
+ * Runs after each sample is evaluated.
+ * @returns {void}
+ */
+function afterEach() {
+
+    Highcharts.charts.forEach(chart => {
+        if (chart && chart.destroy) {
+            chart.destroy();
+        }
+    });
+    Highcharts.charts.length = 0;
+}
+
+/**
  * Create the page HTML.
  * @returns {String} The HTML
  */
@@ -231,7 +235,7 @@ function buildContent() {
 
     </head>
     <body>
-    <div id="container" style="width: 600px; height: 400px"></div>
+    <div id="demo-html"></div>
     <canvas id="canvas" width="300" height="200"></canvas>
 
     </body>
@@ -269,44 +273,50 @@ function pad(s, length, left) {
  * @param   {Object} container Div element
  * @returns {Promise} The PNG stream
  */
-function getPNG(container) {
+function getPNG() {
     return new Promise((resolve) => {
 
         let loaded = false;
-        setTimeout(() => {
-            if (!loaded) {
+        let chart = Highcharts.charts[0];
+        if (chart) {
+            let container = chart && chart.container;
+            setTimeout(() => {
+                if (!loaded) {
+                    resolve(false);
+                }
+
+            }, 1000);
+            try {
+
+                Highcharts.prepareShot(chart);
+
+                const data = container.querySelector('svg').outerHTML;
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+
+                const DOMURL = window.URL || window.webkitURL || window;
+
+                const img = new Image();
+                const svg = new Blob([data], { type: 'image/svg+xml' });
+                const url = DOMURL.createObjectURL(svg);
+                img.onload = function () {
+                    loaded = true;
+
+                    ctx.drawImage(img, 0, 0, 300, 200);
+                    DOMURL.revokeObjectURL(url);
+                    const pngImg = canvas.toDataURL('image/png');
+                    resolve(pngImg);
+                };
+                img.onerror = function () {
+                    console.log('@img.onerror');
+                    resolve(false);
+                };
+                img.src = url;
+            } catch (e) {
+                console.log('@catch ' + e.message);
                 resolve(false);
             }
-
-        }, 1000);
-        try {
-
-            Highcharts.prepareShot(container);
-
-            const data = container.querySelector('svg').outerHTML;
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-
-            const DOMURL = window.URL || window.webkitURL || window;
-
-            const img = new Image();
-            const svg = new Blob([data], { type: 'image/svg+xml' });
-            const url = DOMURL.createObjectURL(svg);
-            img.onload = function () {
-                loaded = true;
-
-                ctx.drawImage(img, 0, 0, 300, 200);
-                DOMURL.revokeObjectURL(url);
-                const pngImg = canvas.toDataURL('image/png');
-                resolve(pngImg);
-            };
-            img.onerror = function () {
-                console.log('@img.onerror');
-                resolve(false);
-            };
-            img.src = url;
-        } catch (e) {
-            console.log('@catch ' + e.message);
+        } else {
             resolve(false);
         }
     });
@@ -429,17 +439,30 @@ function createAnimatedGif(path1, path2) {
 }
 
 /**
+ * Get the contents of demo.html and strip out JavaScript tags.
+ * @param   {String} path The sample path
+ * @returns {String}      The stripped HTML
+ */
+function getHTML(path) {
+    let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
+
+    html = html.replace(
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+        ''
+    );
+
+    return html + '\n';
+}
+
+/**
  * The main async runner
  * @returns {void}
  */
 async function run() {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    page.on('console', msg => console.log(
-        'PAGE LOG:'.gray,
-        msg.args[0]._remoteObject.value,
-        (msg.args[1] && msg.args[1]._remoteObject.value) || ''
-    ));
+    let pageLog = [];
+    page.on('console', msg => pageLog.push(msg));
     await page.setContent(
           buildContent()
     );
@@ -461,6 +484,7 @@ async function run() {
         let pageErrorMsg = '';
         let referencePath =
             'test/reference/' + path.replace(/\//g, '-') + '.png';
+        let setOptionsWarning = '';
 
         // Skip it?
         try {
@@ -488,6 +512,9 @@ async function run() {
         if (js.indexOf('getJSON') !== -1) {
             js = resolveJSON(js);
         }
+        if (js.indexOf('Highcharts.setOptions') !== -1) {
+            setOptionsWarning = true;
+        }
 
         js = `
         new Promise((resolve) => {
@@ -502,6 +529,9 @@ async function run() {
         `;
 
         // Run the scripts on the page
+        await page.evaluate(function (html) {
+            document.getElementById('demo-html').innerHTML = html;
+        }, getHTML(path));
         await page.evaluate(beforeEach);
         let result = await page.evaluate(js);
 
@@ -510,6 +540,7 @@ async function run() {
         } else {
             pageErrorMsg = result;
         }
+        await page.evaluate(afterEach);
 
         // Strip off the data: url prefix to get just the base64-encoded bytes
         if (png) {
@@ -556,6 +587,22 @@ async function run() {
             }
         } else {
             console.log('x'.red + ' ' + path.gray + '\n  ' + pageErrorMsg);
+        }
+
+        // Deferred page log
+        while (pageLog.length) {
+            let msg = pageLog.shift();
+            console.log(
+                '  PAGE LOG:'.gray,
+                msg.args[0]._remoteObject.value,
+                (msg.args[1] && msg.args[1]._remoteObject.value) || ''
+            );
+        }
+        if (setOptionsWarning) {
+            console.log(
+                '  Warning:'.yellow,
+                ' Highcharts.setOptions may affect downstream samples'
+            );
         }
 
         count++;
