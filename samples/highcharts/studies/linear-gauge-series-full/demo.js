@@ -10,7 +10,7 @@
 var H = Highcharts;
 
 var each = H.each,
-    pick = H.pick,            
+    pick = H.pick,
     isNumber = H.isNumber,
     addEvent = H.addEvent,
     seriesType = H.seriesType,
@@ -20,20 +20,20 @@ var each = H.each,
 
 H.SVGRenderer.prototype.symbols.target = function (x, y, w, h, bh, i, inverted) {
     return inverted ? [
-        'M', x, y, 
-        'L', -w / 2, -h + bh, 
-        -w / 2, -h, 
-        x, -h + i, 
-        w / 2, -h, 
-        w / 2, -h + bh, 
+        'M', x, y,
+        'L', -w / 2, -h + bh,
+        -w / 2, -h,
+        x, -h + i,
+        w / 2, -h,
+        w / 2, -h + bh,
         'Z'
     ] : [
-        'M', x, y, 
-        'L', -h + bh, w / 2, 
-        -h, w / 2, 
-        -h + i, y, 
-        -h, -w / 2, 
-        -h + bh, -w / 2, 
+        'M', x, y,
+        'L', -h + bh, w / 2,
+        -h, w / 2,
+        -h + i, y,
+        -h, -w / 2,
+        -h + bh, -w / 2,
         'Z'
     ];
 };
@@ -50,7 +50,7 @@ seriesType('lineargauge', 'column',
      * within the specific range. It uses special pointers (targets).
      * Mentioned range can be defined by setting
      * [plotBands](#yAxis.plotBands) on [yAxis](#yAxis).
-     * 
+     *
      * @extends {plotOptions.column}
      * @product highcharts
      * @sample {highcharts} highcharts/demo/lineargauge/ Linearguage graph
@@ -62,7 +62,7 @@ seriesType('lineargauge', 'column',
     {
         /**
          * Display target on a point or alongside the `yAxis`.
-         * 
+         *
          * @type {Boolean}
          * @since 6.0.0
          * @default true
@@ -72,7 +72,7 @@ seriesType('lineargauge', 'column',
 
         /**
          * Whether to display or hide additional columns along with targets.
-         * 
+         *
          * @type {Boolean}
          * @since 6.0.0
          * @default false
@@ -82,7 +82,7 @@ seriesType('lineargauge', 'column',
 
         /**
          * Show additional line coming out of the target.
-         * 
+         *
          * @type {Boolean}
          * @since 6.0.0
          * @default false
@@ -92,7 +92,7 @@ seriesType('lineargauge', 'column',
 
         /**
          * All options related with look and positiong of targets.
-         * 
+         *
          * @type {Object}
          * @since 6.0.0
          * @product highcharts
@@ -101,7 +101,7 @@ seriesType('lineargauge', 'column',
             /**
              * The length of the base part of the target (similar to [dial.baseLength](#plotOptions.gauge.dial.baseLength)).
              * Can be pixel value or percentage value based on [length](#plotOptions.lineargauge.targetOptions.length).
-             * 
+             *
              * @type {Number|String}
              * @since 6.0.0
              * @default '50%'
@@ -115,7 +115,7 @@ seriesType('lineargauge', 'column',
              * not set, point's border color is used.
              *
              * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-symbol` class.
-             * 
+             *
              * @type {Color}
              * @since 6.0.0
              * @product highcharts
@@ -127,7 +127,7 @@ seriesType('lineargauge', 'column',
              * not set, point's border width is used.
              *
              * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-symbol` class.
-             * 
+             *
              * @type {Number}
              * @since 6.0.0
              * @product highcharts
@@ -139,7 +139,7 @@ seriesType('lineargauge', 'column',
              * not set, point's color is used.
              *
              * In styled mode, target color can be set with the `.highcharts-lineargauge-target-symbol` class.
-             * 
+             *
              * @type {Color}
              * @since 6.0.0
              * @product highcharts
@@ -151,7 +151,7 @@ seriesType('lineargauge', 'column',
              * The indentation on the upper part of the target symbol.
              *
              * Can be pixel value or percentage value based on [length](#plotOptions.lineargauge.targetOptions.length).
-             * 
+             *
              * @type {Number|String}
              * @since 6.0.0
              * @default '20%'
@@ -165,7 +165,7 @@ seriesType('lineargauge', 'column',
              * not set, point's border color is used.
              *
              * In styled mode, target color can be set with the `.highcharts-lineargauge-target-line` class.
-             * 
+             *
              * @type {Color}
              * @since 6.0.0
              * @product highcharts
@@ -177,7 +177,7 @@ seriesType('lineargauge', 'column',
              * not set, point's border width is used.
              *
              * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-line` class.
-             * 
+             *
              * @type {Number}
              * @since 6.0.0
              * @product highcharts
@@ -187,7 +187,7 @@ seriesType('lineargauge', 'column',
 
             /**
              * The zIndex of the target line.
-             * 
+             *
              * @type {Number}
              * @since 6.0.0
              * @default 1
@@ -198,7 +198,7 @@ seriesType('lineargauge', 'column',
             /**
              * The total length of the target.
              * Can be pixel value or percentage value based on column point's width.
-             * 
+             *
              * @type {Number|String}
              * @since 6.0.0
              * @default '50%'
@@ -209,7 +209,7 @@ seriesType('lineargauge', 'column',
             /**
              * The width of the target.
              * Can be pixel value or percentage value based on column point's width.
-             * 
+             *
              * @type {Number|String}
              * @since 6.0.0
              * @default '50%'
@@ -219,7 +219,7 @@ seriesType('lineargauge', 'column',
 
             /**
              * The zIndex of the target symbol.
-             * 
+             *
              * @type {Number}
              * @since 6.0.0
              * @default 3
@@ -266,12 +266,12 @@ seriesType('lineargauge', 'column',
                 xAxisLength = xAxis.len,
                 yAxisLength = yAxis.len,
                 yAxisReversed = yAxis.reversed,
-                chart = series.chart,                        
+                chart = series.chart,
                 plotTop = chart.plotTop,
                 plotLeft = chart.plotLeft,
                 tooltip = chart.tooltip,
                 renderer = chart.renderer,
-                inverted = chart.inverted,                        
+                inverted = chart.inverted,
                 seriesOptions = series.options,
                 minPointLength = seriesOptions.minPointLength,
                 seriesTargetOptions = seriesOptions.targetOptions,
@@ -318,11 +318,11 @@ seriesType('lineargauge', 'column',
                     pixelX,
                     pixelY;
 
-                if (isNumber(valueY) && valueY !== null) {                            
+                if (isNumber(valueY) && valueY !== null) {
                     halfPointWidth = point.pointWidth / 2;
                     pPlotY = point.plotY;
                     barX = point.barX;
-                    
+
                     pixelX = inverted ? xAxisLength - barX - halfPointWidth + plotTop : barX + halfPointWidth + plotLeft;
                     pixelY = target ? yAxis.toPixels(target, false) : yAxis.toPixels(valueY, false);
 
@@ -402,8 +402,13 @@ seriesType('lineargauge', 'column',
                         symbolPath = renderer.symbols[shape](0, 0, width, length, inverted);
                     }
 
-                    xPosition = inverted ? pixelY : (onPoint ? pixelX : xAxis.left);
-                    yPosition = inverted ? (onPoint ? pixelX : xAxis.top) : pixelY;
+                    if (inverted) {
+                        xPosition = pixelY;
+                        yPosition = onPoint ? pixelX : xAxis.top;
+                    } else {
+                        xPosition = onPoint ? pixelX : xAxis.left;
+                        yPosition = pixelY;
+                    }
                     columnStart = yAxis.toPixels(series.options.threshold, false);
 
                     xAttr = {
@@ -413,7 +418,7 @@ seriesType('lineargauge', 'column',
                     yAttr = {
                         translateY: yPosition
                     };
-                    
+
                     // The beginning coordinates
                     beginningAtrr = {
                         translateX: inverted ? columnStart : xPosition,
@@ -459,7 +464,7 @@ seriesType('lineargauge', 'column',
                             point.setState('hover');
 
                             if (!onPoint) {
-                                tooltip.refresh({                                            
+                                tooltip.refresh({
                                     plotX: inverted ? xAxisLength : 0,
                                     plotY: point.shapeArgs.y,
                                     series: point.series,
@@ -582,12 +587,12 @@ seriesType('lineargauge', 'column',
 /**
  * A `lineargauge` series. If the [type](#series.lineargauge.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
+ *
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.
  * To apply to all series of this specific type, apply it to [plotOptions.
  * lineargauge](#plotOptions.lineargauge).
- * 
+ *
  * @type {Object}
  * @since 6.0.0
  * @extends series,plotOptions.lineargauge
@@ -598,7 +603,7 @@ seriesType('lineargauge', 'column',
 
 /**
  * Display individual target on a point or alongside the `yAxis`.
- * 
+ *
  * @type {Boolean}
  * @since 6.0.0
  * @product highcharts
@@ -607,7 +612,7 @@ seriesType('lineargauge', 'column',
 
 /**
  * Whether to display or hide individual additional column along with the target.
- * 
+ *
  * @type {Boolean}
  * @since 6.0.0
  * @product highcharts
@@ -616,7 +621,7 @@ seriesType('lineargauge', 'column',
 
 /**
  * Show individual additional line coming out of the target.
- * 
+ *
  * @type {Boolean}
  * @since 6.0.0
  * @product highcharts
@@ -626,7 +631,7 @@ seriesType('lineargauge', 'column',
 /**
  * Individual length of the base part of the target (similar to [dial.baseLength](#plotOptions.gauge.dial.baseLength)).
  * Can be pixel value or percentage value based on [length](#plotOptions.lineargauge.targetOptions.length).
- * 
+ *
  * @type {Number|String}
  * @since 6.0.0
  * @product highcharts
@@ -639,7 +644,7 @@ seriesType('lineargauge', 'column',
  * not set, point's border color is used.
  *
  * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-symbol` class.
- * 
+ *
  * @type {Color}
  * @since 6.0.0
  * @product highcharts
@@ -651,7 +656,7 @@ seriesType('lineargauge', 'column',
  * not set, point's border width is used.
  *
  * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-symbol` class.
- * 
+ *
  * @type {Number}
  * @since 6.0.0
  * @product highcharts
@@ -663,7 +668,7 @@ seriesType('lineargauge', 'column',
  * not set, point's color is used.
  *
  * In styled mode, target color can be set with the `.highcharts-lineargauge-target-symbol` class.
- * 
+ *
  * @type {Color}
  * @since 6.0.0
  * @product highcharts
@@ -675,7 +680,7 @@ seriesType('lineargauge', 'column',
  * Individual indentation on the upper part of the target symbol.
  *
  * Can be pixel value or percentage value based on [length](#plotOptions.lineargauge.targetOptions.length).
- * 
+ *
  * @type {Number|String}
  * @since 6.0.0
  * @product highcharts
@@ -688,7 +693,7 @@ seriesType('lineargauge', 'column',
  * not set, point's border color is used.
  *
  * In styled mode, target color can be set with the `.highcharts-lineargauge-target-line` class.
- * 
+ *
  * @type {Color}
  * @since 6.0.0
  * @product highcharts
@@ -700,7 +705,7 @@ seriesType('lineargauge', 'column',
  * not set, point's border width is used.
  *
  * In styled mode, target border color can be set with the `.highcharts-lineargauge-target-line` class.
- * 
+ *
  * @type {Number}
  * @since 6.0.0
  * @product highcharts
@@ -710,7 +715,7 @@ seriesType('lineargauge', 'column',
 
 /**
  * The zIndex of individual target line.
- * 
+ *
  * @type {Number}
  * @since 6.0.0
  * @product highcharts
@@ -720,7 +725,7 @@ seriesType('lineargauge', 'column',
 /**
  * Individual total length of the target.
  * Can be pixel value or percentage value based on column point's width.
- * 
+ *
  * @type {Number|String}
  * @since 6.0.0
  * @product highcharts
@@ -730,7 +735,7 @@ seriesType('lineargauge', 'column',
 /**
  * Individual width of the target.
  * Can be pixel value or percentage value based on column point's width.
- * 
+ *
  * @type {Number|String}
  * @since 6.0.0
  * @product highcharts
@@ -739,7 +744,7 @@ seriesType('lineargauge', 'column',
 
  /**
   * The zIndex of the target symbol.
-  * 
+  *
   * @type {Number}
   * @since 6.0.0
   * @product highcharts
@@ -749,7 +754,7 @@ seriesType('lineargauge', 'column',
 ////////////////////////////////////////////////////////////////////////////////
 
 // Common options options for all the gauges
-Highcharts.setOptions({
+var commonOptions = {
     chart: {
         inverted: true,
         type: 'lineargauge',
@@ -805,9 +810,9 @@ Highcharts.setOptions({
             }
         }
     }
-});
+};
 
-Highcharts.chart('container1', {
+Highcharts.chart('container1', Highcharts.merge(commonOptions, {
     title: {
         text: 'Target on axis, with line enabled, column disabled'
     },
@@ -832,9 +837,9 @@ Highcharts.chart('container1', {
         showLine: true,
         data: [85]
     }]
-});
+}));
 
-Highcharts.chart('container2', {
+Highcharts.chart('container2', Highcharts.merge(commonOptions, {
     title: {
         text: 'Target on point, with line disabled, column disabled'
     },
@@ -859,9 +864,9 @@ Highcharts.chart('container2', {
         showLine: false,
         data: [36]
     }]
-});
+}));
 
-Highcharts.chart('container3', {
+Highcharts.chart('container3', Highcharts.merge(commonOptions, {
     title: {
         text: 'Target on point, with line disabled, column enabled'
     },
@@ -886,4 +891,4 @@ Highcharts.chart('container3', {
         showLine: false,
         data: [73]
     }]
-});
+}));
