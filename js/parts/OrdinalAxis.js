@@ -666,7 +666,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 			if (!this.options.breaks) {
 				ret = tickInterval / (ordinalSlope / this.closestPointRange);
 			} else {
-				ret = this.closestPointRange;
+				ret = this.closestPointRange || tickInterval; // #7275
 			}
 		} else {
 			ret = tickInterval;
