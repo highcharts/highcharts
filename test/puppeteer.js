@@ -29,12 +29,19 @@ const yaml = require('js-yaml');
 require('colors');
 
 
+// The tests to run by default
+const defaultTests = [
+    'highcharts/demo/*',
+    'stock/demo/*',
+    'maps/demo/*'
+];
+
+const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
+    .map(path => `samples/${path}/demo.js`);
+
 const config = {
-    files: [
-        'samples/highcharts/demo/**/demo.js',
-        'samples/stock/demo/**/demo.js',
-        'samples/maps/demo/**/demo.js'
-    ],
+    logSuccess: true,
+    files: tests,
 
     // Excluding samples for various reasons
     exclude: [
@@ -176,28 +183,10 @@ function beforeAll() {
         }
     };
 
-    window.JSONSources = {};
 
-    // Override getJSON
-    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
-        callback(window.JSONSources[url]);
-    };
-
-}
-
-/**
- * Runs before each sample is evaluated.
- * @returns {void}
- */
-function beforeEach() {
-    Math.randomCursor = 0;
-
+    // Disable animation and save the starting default options to be applied
+    // before each
     Highcharts.setOptions({
-        colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-            '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
-        global: {
-            useUTC: true
-        },
         chart: {
             animation: false
         },
@@ -214,13 +203,34 @@ function beforeEach() {
             animation: false
         }
     });
+    Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
+
+
+    // Override getJSON
+    window.JSONSources = {};
+    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
+        callback(window.JSONSources[url]);
+    };
+
+}
+
+/**
+ * Runs before each sample is evaluated.
+ * @returns {void}
+ */
+function beforeEach() {
+    Math.randomCursor = 0;
+
 }
 
 /**
  * Runs after each sample is evaluated.
+ * @param   {Boolean} resetOptions
+ *          Whether to reset to default options after this test. Only necessary
+ *          when the sample runs `Highcharts.setOptions`.
  * @returns {void}
  */
-function afterEach() {
+function afterEach(resetOptions) {
 
     Highcharts.charts.forEach(chart => {
         if (chart && chart.destroy) {
@@ -228,6 +238,10 @@ function afterEach() {
         }
     });
     Highcharts.charts.length = 0;
+
+    if (resetOptions) {
+        Highcharts.setOptions(JSON.parse(Highcharts.defaultOptionsRaw));
+    }
 }
 
 /**
@@ -489,7 +503,7 @@ async function run() {
         let pageErrorMsg = '';
         let referencePath =
             'test/reference/' + path.replace(/\//g, '-') + '.png';
-        let setOptionsWarning = '';
+        let resetOptions;
 
         // Skip it?
         try {
@@ -499,11 +513,15 @@ async function run() {
             );
             details = details && yaml.load(details);
             if (details && details.skipTest) {
-                console.log(`- skipTest: ${path}`.gray);
+                if (config.logSuccess) {
+                    console.log(`- skipTest: ${path}`.gray);
+                }
                 continue;
             }
             if (details && details.requiresManualTesting) {
-                console.log(`- requiresManualTesting: ${path}`.gray);
+                if (config.logSuccess) {
+                    console.log(`- requiresManualTesting: ${path}`.gray);
+                }
                 continue;
             }
         } catch (e) {} // eslint-disable-line no-empty
@@ -518,13 +536,15 @@ async function run() {
             js = resolveJSON(js);
         }
         if (js.indexOf('Highcharts.setOptions') !== -1) {
-            setOptionsWarning = true;
+            resetOptions = true;
         }
 
         js = `
         new Promise((resolve) => {
             try {
-                ${js};
+                (function () {
+                    ${js};
+                }());
                 resolve(true);
             } catch (e) {
                 //console.log('[error]\\n${path}\\n' + e.message);
@@ -545,7 +565,7 @@ async function run() {
         } else {
             pageErrorMsg = result;
         }
-        await page.evaluate(afterEach);
+        await page.evaluate(afterEach, resetOptions);
 
         // Strip off the data: url prefix to get just the base64-encoded bytes
         if (png) {
@@ -556,7 +576,9 @@ async function run() {
                 let buf = new Buffer(data, 'base64');
                 fs.writeFileSync(referencePath, buf);
 
-                console.log(`- Saved reference for ${path}`.gray);
+                if (config.logSuccess) {
+                    console.log(`- Saved reference for ${path}`.gray);
+                }
 
             // Compare new image to reference
             } else {
@@ -574,8 +596,10 @@ async function run() {
                     ' ' + (pad(Date.now() - eachTime, 5, true) + 'ms').gray;
 
                 if (numDiffPixels === 0) {
-                    console.log('✓'.green + ' ' + pad(path, 60).gray + ' ' +
-                        numDiffPixelsPadded + eachTime);
+                    if (config.logSuccess) {
+                        console.log('✓'.green + ' ' + pad(path, 60).gray + ' ' +
+                            numDiffPixelsPadded + eachTime);
+                    }
 
                     passes++;
                 } else {
@@ -601,12 +625,6 @@ async function run() {
                 '  PAGE LOG:'.gray,
                 msg.args[0]._remoteObject.value,
                 (msg.args[1] && msg.args[1]._remoteObject.value) || ''
-            );
-        }
-        if (setOptionsWarning) {
-            console.log(
-                '  Warning:'.yellow,
-                ' Highcharts.setOptions may affect downstream samples'
             );
         }
 
