@@ -169,7 +169,8 @@ function nodeVisitor(node, e, parser, currentSourceName) {
     }
 
     if (node.leadingComments && node.leadingComments.length > 0) {
-        comment = node.leadingComments[0].raw;
+
+        comment = node.leadingComments[0].raw || node.leadingComments[0].value;
 
         s = comment.indexOf('@optionparent');
 
