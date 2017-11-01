@@ -861,7 +861,7 @@ seriesType('column', 'line', {
  *
  * @type {Object}
  * @extends series,plotOptions.column
- * @excluding dataParser,dataURL
+ * @excluding dataParser,dataURL,marker
  * @product highcharts highstock
  * @apioption series.column
  */
