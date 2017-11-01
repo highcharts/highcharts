@@ -237,6 +237,72 @@ QUnit.test(
     }
 );
 
+QUnit.test(
+    'Revert axis properties',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+
+            chart: {
+                width: 600
+            },
+
+            xAxis: {
+                categories: ['January', 'February']
+            },
+
+            series: [{
+                name: 'Sales',
+                data: [434, 523]
+            }],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        xAxis: {
+                            labels: {
+                                format: 'sample'
+                            }
+                        },
+                        yAxis: {
+                            labels: {
+                                align: 'left',
+                                x: 0,
+                                y: -2
+                            }
+                        }
+                    }
+                }]
+            }
+        });
+
+        assert.strictEqual(
+            chart.xAxis[0].ticks[0].label.textStr,
+            'January',
+            'Initial label'
+        );
+
+        chart.setSize(400);
+
+        assert.strictEqual(
+            chart.xAxis[0].ticks[0].label.textStr,
+            'sample',
+            'Responsive label'
+        );
+
+        chart.setSize(600);
+
+        assert.strictEqual(
+            chart.xAxis[0].ticks[0].label.textStr,
+            'January',
+            'Initial label'
+        );
+
+    }
+);
+
 
 QUnit.test('Multiple rules order (#6291)', function (assert) {
     var chart = Highcharts.chart('container', {
