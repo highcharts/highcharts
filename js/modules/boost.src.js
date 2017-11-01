@@ -2386,7 +2386,7 @@ function createAndAttachRenderer(chart, series) {
 			chart.plotLeft,
 			chart.plotTop,
 			chart.plotWidth,
-			chart.chartHeight
+			chart.plotHeight
 		);
 
 		(target.renderTargetFo || target.renderTarget).clip(target.boostClipRect);
@@ -2405,7 +2405,7 @@ function createAndAttachRenderer(chart, series) {
 		x: chart.plotLeft,
 		y: chart.plotTop,
 		width: chart.plotWidth,
-		height: chart.chartHeight
+		height: chart.plotHeight
 	});
 
 	target.boostResizeTarget();
