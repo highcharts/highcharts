@@ -2868,6 +2868,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			xExtremes,
 			val2lin = xAxis && xAxis.val2lin,
 			isLog = xAxis && xAxis.isLog,
+			throwOnUnsorted = series.requireSorting,
 			min,
 			max;
 
@@ -2944,8 +2945,9 @@ H.Series = H.seriesType('line', null, { // base series options
 			// Unsorted data is not supported by the line tooltip, as well as
 			// data grouping and navigation in Stock charts (#725) and width
 			// calculation of columns (#1900)
-			} else if (distance < 0 && series.requireSorting) {
+			} else if (distance < 0 && throwOnUnsorted) {
 				H.error(15);
+				throwOnUnsorted = false; // Only once
 			}
 		}
 
