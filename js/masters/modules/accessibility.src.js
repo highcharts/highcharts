@@ -8,4 +8,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/accessibility.src.js';
+import '../../modules/ScreenReader.src.js';
+import '../../modules/KeyboardNavigation.src.js';
