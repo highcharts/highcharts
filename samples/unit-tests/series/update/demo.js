@@ -155,19 +155,24 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Series.update with only data should redirect to setData',
+    'Series.update and setData',
     function (assert) {
         var chart = Highcharts.chart('container', {
 
-            xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            chart: {
+                type: 'area'
+            },
+
+            plotOptions: {
+                area: {
+                    stacking: true
+                }
             },
 
             series: [{
-                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-                    216.4, 194.1, 95.6, 54.4],
-                type: 'column'
+                data: [1, 2, 3, 4, null, null]
+            }, {
+                data: [1, 2, 3, 4, null, null]
             }]
 
         });
@@ -175,8 +180,7 @@ QUnit.test(
         chart.series[0].points[0].kilroyWasHere = true;
 
         chart.series[0].update({
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-                216.4, 194.1, 95.6, 54.4].slice(0).reverse()
+            data: [4, 3, 2, 1, null, null]
         });
 
         assert.strictEqual(
@@ -184,6 +188,17 @@ QUnit.test(
             true,
             'Original point item is preserved'
         );
+
+        chart.series[0].setData([1, 2, 3, 4, 5, null], false);
+        chart.series[1].setData([1, 2, 3, 4, 5, null], false);
+        chart.redraw();
+
+        assert.strictEqual(
+            chart.series[0].graph.element.getAttribute('d').lastIndexOf('M'),
+            0,
+            'Graph is continuous (#7326)'
+        );
+
     }
 );
 
