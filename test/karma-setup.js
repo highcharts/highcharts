@@ -1,4 +1,5 @@
-/* global document, Highcharts, QUnit */
+/* eslint-env browser */
+/* global Highcharts, Promise, QUnit */
 var div;
 if (!document.getElementById('container')) {
     div = document.createElement('div');
@@ -10,6 +11,11 @@ if (!document.getElementById('output')) {
     div.setAttribute('id', 'output');
     document.body.appendChild(div);
 }
+
+var canvas = document.createElement('canvas');
+canvas.setAttribute('width', 300);
+canvas.setAttribute('height', 200);
+var ctx = canvas.getContext('2d');
 
 // Disable animation over all.
 Highcharts.setOptions({
@@ -62,3 +68,64 @@ QUnit.module('Highcharts', {
         document.getElementById('container').style.width = 'auto';
     }
 });
+
+Highcharts.prepareShot = function (chart) {
+    if (
+        chart &&
+        chart.series &&
+        chart.series[0] &&
+        chart.series[0].points &&
+        chart.series[0].points[0] &&
+        typeof chart.series[0].points[0].onMouseOver === 'function'
+    ) {
+        chart.series[0].points[0].onMouseOver();
+    }
+};
+
+/**
+ * Get a PNG image or image data from the chart SVG.
+ * @param   {Object} chart The chart instance
+ * @param   {String} type  What to return, 'png' or 'data'
+ * @returns {String}       The image data
+ */
+function getImage(chart, type) { // eslint-disable-line no-unused-vars
+    return new Promise((resolve, reject) => {
+
+        if (chart) {
+            let container = chart && chart.container;
+            try {
+
+                Highcharts.prepareShot(chart);
+
+                const data = container.querySelector('svg').outerHTML;
+                const DOMURL = window.URL || window.webkitURL || window;
+
+                const img = new Image();
+                const svg = new Blob([data], { type: 'image/svg+xml' });
+                const url = DOMURL.createObjectURL(svg);
+                img.onload = function () {
+
+                    ctx.drawImage(img, 0, 0, 300, 200);
+
+                    if (type === 'png') {
+                        DOMURL.revokeObjectURL(url);
+                        const pngImg = canvas.toDataURL('image/png');
+                        resolve(pngImg);
+                    } else {
+                        const imageData = ctx.getImageData(0, 0, 300, 200).data;
+                        resolve(imageData);
+                    }
+                };
+                img.onerror = function () {
+                    reject('Error loading SVG on canvas.');
+                };
+                img.src = url;
+            } catch (e) {
+                reject(e.message);
+            }
+        } else {
+            reject('No chart given');
+        }
+    });
+
+}

@@ -1,12 +1,12 @@
 /* eslint-env node, es6 */
 /* eslint no-console: 0, camelcase: 0 */
+const fs = require('fs');
 
 /**
  * Get browserstack credentials from the properties file.
  * @returns {Object} The properties
  */
 function getProperties() {
-    let fs = require('fs');
     let properties = {};
     try {
         let lines = fs.readFileSync(
@@ -111,7 +111,7 @@ ________________________________________________________________________________
 
     // The tests to run by default
     const defaultTests = [
-        '*/*'
+        'unit-tests/*/*'
     ];
 
     const argv = require('yargs').argv;
@@ -125,7 +125,7 @@ ________________________________________________________________________________
     }
 
     const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
-        .map(path => `samples/unit-tests/${path}/demo.js`);
+        .map(path => `samples/${path}/demo.js`);
 
     // let files = getFiles();
     let files = require('./karma-files.json');
@@ -156,11 +156,6 @@ ________________________________________________________________________________
             // they are not mutated for later tests?
             'samples/unit-tests/themes/*/demo.js'
         ],
-        /*
-        formatError: function (e) {
-            console.log(arguments);
-        },
-        */
         reporters: ['progress'],
         port: 9876,  // karma web server port
         colors: true,
@@ -168,7 +163,96 @@ ________________________________________________________________________________
         browsers: browsers,
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
-        concurrency: Infinity
+        concurrency: Infinity,
+
+        /**
+         * When running --reference, we provoke an error, capture it here and
+         * save the PNG file. @todo: Explore using reporters instead to avoid
+         * the error.
+         * @param   {String} msg The message
+         * @returns {void}
+         */
+        formatError: function (msg) {
+
+            let pathMatch = /reference:([a-z0-9\-\/]+)/g.exec(msg);
+            if (pathMatch) {
+                let path = pathMatch[1];
+                let match = /"data:image\/png;base64,([^"]+)"/.exec(msg);
+                if (match) {
+                    let buf = new Buffer(match[1], 'base64');
+                    fs.writeFileSync(`./samples/${path}/reference.png`, buf);
+                    console.log(`Saved reference for ${path}`.green);
+                }
+            }
+        },
+        preprocessors: {
+            // Preprocess the visual tests
+            '**/highcharts/*/*/demo.js': ['generic']
+        },
+        genericPreprocessor: {
+            rules: [{
+                process: function (content, file, done) {
+                    const path = file.path.replace(
+                        /^.*?samples\/(highcharts|stock|maps)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
+                        '$1/$2'
+                    );
+
+                    let assertion = `
+                        getImage(chart)
+                            .then(imageData => {
+                                assert.strictEqual(
+                                    imageData.length,
+                                    300 * 200 * 4,
+                                    'Pixel count (${path})'
+                                );
+                                done();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                done();
+                            });
+                    `;
+
+                    // Set reference image
+                    if (argv.reference) {
+                        assertion = `
+                            getImage(chart, 'png')
+                                .then(pngImg => {
+                                    assert.strictEqual(
+                                        pngImg, // captured by formatError
+                                        false,
+                                        'reference:${path}'
+                                    );
+                                    done();
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    done();
+                                });
+                        `;
+                    }
+
+
+                    content = `
+                    QUnit.test('${path}', function (assert) {
+
+                        var done = assert.async();
+
+                        ${content}
+
+                        var chart = Highcharts.charts[
+                            Highcharts.charts.length - 1
+                        ];
+
+                        ${assertion}
+                        
+                    });
+                    `;
+                    file.path = file.originalPath + '.preprocessed';
+                    done(content);
+                }
+            }]
+        }
     };
 
 
