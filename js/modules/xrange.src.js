@@ -78,7 +78,8 @@ seriesType('xrange', 'column', {
 		headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
 	},
-	borderRadius: 3
+	borderRadius: 3,
+	pointRange: 0
 	/**
 	 * A partial fill for each point, typically used to visualize how much of
 	 * a task is performed. The partial fill object can be set either on series
@@ -101,7 +102,6 @@ seriesType('xrange', 'column', {
 
 }, {
 	type: 'xrange',
-	forceDL: true,
 	parallelArrays: ['x', 'x2', 'y'],
 	requireSorting: false,
 	animate: seriesTypes.line.prototype.animate,
@@ -163,7 +163,10 @@ seriesType('xrange', 'column', {
 			partialFill,
 			inverted = this.chart.inverted,
 			borderWidth = pick(series.options.borderWidth, 1),
-			crisper = borderWidth % 2 / 2;
+			crisper = borderWidth % 2 / 2,
+			dlLeft,
+			dlRight,
+			dlWidth;
 
 		if (minPointLength) {
 			widthDifference = minPointLength - length;
@@ -184,6 +187,23 @@ seriesType('xrange', 'column', {
 			height: Math.round(metrics.width),
 			r: series.options.borderRadius
 		};
+
+		// Align data labels inside the shape and inside the plot area
+		dlLeft = point.shapeArgs.x;
+		dlRight = dlLeft + point.shapeArgs.width;
+		if (dlLeft < 0 || dlRight > xAxis.len) {
+			dlLeft = Math.min(xAxis.len, Math.max(0, dlLeft));
+			dlRight = Math.max(0, Math.min(dlRight, xAxis.len));
+			dlWidth = dlRight - dlLeft;
+			point.dlBox = merge(point.shapeArgs, {
+				x: dlLeft,
+				width: dlRight - dlLeft,
+				centerX: dlWidth ? dlWidth / 2 : null
+			});
+
+		} else {
+			point.dlBox = null;
+		}
 		
 		// Tooltip position
 		point.tooltipPos[0] += inverted ? 0 : length / 2;
@@ -224,78 +244,6 @@ seriesType('xrange', 'column', {
 		}, this);
 	},
 
-	/**
-	 * Aligns an individual dataLabel.
-	 *
-	 * TODO: Do we need this for inside datalabels? Seems to work.
-	 *
-	 * @param  {Object} point     the point belonging to the dataLabel
-	 * @param  {Object} dataLabel the dataLabel configuration object
-	 * @param  {Object} options   dataLabel options for the series
-	 * @param  {Object} alignTo
-	 * @param  {Boolean} isNew   Wheter the label is new or already existed
-	 * @return {void}
-	 * /
-	alignDataLabel: function (point, dataLabel, options, alignTo, isNew) {
-		var chart = this.chart,
-			align = options.align,
-			inverted = chart.inverted,
-			plotX = pick(point.plotX, -9999),
-			plotY = pick(point.plotY, -9999),
-			verticalAlign = options.verticalAlign,
-			inside = options.inside,
-			pointBox = point.shapeArgs,
-			labelBox = dataLabel.getBBox(),
-			labelTextBox = dataLabel.text.getBBox(),
-			attr = {},
-			visible =
-				this.visible &&
-				(
-					labelTextBox.width <= pointBox.width &&
-					labelTextBox.height <= pointBox.height
-				) &&
-				(
-					this.forceDL ||
-					chart.isInsidePlot(plotX, Math.round(plotY), inverted)
-				);
-
-		if (visible) {
-			if (align === 'right') {
-				if (inside) {
-					attr.x = pointBox.x + pointBox.width - labelBox.width;
-				} else {
-					attr.x = pointBox.x - labelBox.width;
-				}
-			} else if (align === 'left') {
-				if (inside) {
-					attr.x = pointBox.x;
-				} else {
-					attr.x = pointBox.x + pointBox.width + labelBox.x;
-				}
-			} else { // Center
-				attr.x = pointBox.x + pointBox.width / 2 - labelBox.width / 2;
-			}
-
-			if (verticalAlign === 'bottom') {
-				if (inside) {
-					attr.y = pointBox.y + pointBox.height - labelBox.height;
-				} else {
-					attr.y = pointBox.y - labelBox.height;
-				}
-			} else if (verticalAlign === 'top') {
-				if (inside) {
-					attr.y = pointBox.y;
-				} else {
-					attr.y = pointBox.y + pointBox.height;
-				}
-			} else { // Middle
-				attr.y = pointBox.y + pointBox.height / 2 - labelBox.height / 2;
-			}
-
-			dataLabel[isNew ? 'attr' : 'animate'](attr);
-		}
-	},
-	*/
 	/**
 	 * Draws a single point in the series. Needed for partial fill.
 	 *
