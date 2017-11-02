@@ -411,12 +411,14 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 			}
 
 			// if that failed, find the intermediate position between the two nearest values
-			i = ordinalLength - 1;
-			while (i--) {
-				if (val > ordinalPositions[i] || i === 0) { // interpolate
-					distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
-					ordinalIndex = i + distance;
-					break;
+			if (i === -1) {
+				i = ordinalLength - 1;
+				while (i--) {
+					if (val > ordinalPositions[i] || i === 0) { // interpolate
+						distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
+						ordinalIndex = i + distance;
+						break;
+					}
 				}
 			}
 			ret = toIndex ?
