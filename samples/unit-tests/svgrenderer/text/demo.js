@@ -28,20 +28,18 @@ QUnit.test('getBBox with useHTML (#5899)', function (assert) {
     );
 
     var text = ren.text(
-            '<div style="width: 500px">Styled div</div>',
-            20,
-            20,
-            true
-        )
-        .add();
-
+        '<div style="width: 500px">Styled div</div>',
+        20,
+        20,
+        true
+    )
+    .add();
 
     assert.strictEqual(
         text.getBBox().width,
         500,
         'Initial bounding box'
     );
-
 
     text.attr({
         text: '<div style="width: 400px">Styled div</div>'
@@ -51,6 +49,16 @@ QUnit.test('getBBox with useHTML (#5899)', function (assert) {
         text.getBBox().width,
         400,
         'Updated bounding box'
+    );
+
+    text.attr({
+        text: null
+    });
+
+    assert.strictEqual(
+        text.getBBox().width,
+        0,
+        'Null text works fine (#7316)'
     );
 });
 

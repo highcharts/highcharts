@@ -114,3 +114,49 @@ QUnit.test('Axis breaks with categories', function (assert) {
 
 
 });
+
+QUnit.test('Axis breaks with scatter series', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        "xAxis": {
+            "breaks": [{
+                "to": 1272240000000,
+                "from": 1272067200000
+            }]
+        },
+        "series": [{
+            "type": "scatter",
+            "data": [
+                [
+                    1271980800000,
+                    0
+                ],
+                [
+                    1272240000000,
+                    2
+                ],
+                [
+                    1272326400000,
+                    1
+                ],
+                [
+                    1272412800000,
+                    5
+                ],
+                [
+                    1272499200000,
+                    4
+                ]
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        4,
+        'X axis has ticks (#7275)'
+    );
+
+});

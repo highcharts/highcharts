@@ -774,7 +774,7 @@ RangeSelector.prototype = {
 			textAlign: 'center',
 			fontSize: chartStyle.fontSize,
 			fontFamily: chartStyle.fontFamily,
-			left: '-9em' // #4798
+			top: '-9999em' // #4798
 		}, options.inputStyle));
 		/*= } =*/
 

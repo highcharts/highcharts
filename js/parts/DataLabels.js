@@ -323,7 +323,7 @@ Series.prototype.alignDataLabel = function (
 ) {
 	var chart = this.chart,
 		inverted = chart.inverted,
-		plotX = pick(point.plotX, -9999),
+		plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999),
 		plotY = pick(point.plotY, -9999),
 		bBox = dataLabel.getBBox(),
 		fontSize,

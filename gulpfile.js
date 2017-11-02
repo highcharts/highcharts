@@ -277,13 +277,38 @@ gulp.task('ftp-watch', function () {
  * Run the test suite.
  */
 gulp.task('test', done => {
-    /*
-    const spawn = require('child_process').spawn;
-    spawn('phantomjs', ['phantomtest.js'].concat(process.argv.slice(3)), {
-        cwd: 'utils/samples',
-        stdio: 'inherit'
-    });
-    */
+
+    if (argv.help) {
+        console.log(
+`
+HIGHCHARTS TEST RUNNER
+
+Available arguments for 'gulp test':
+
+--browsers
+    Comma separated list of browsers to test. Available browsers are
+    'ChromeHeadless, Chrome, Firefox, Safari, Edge, IE' depending on what is
+    installed on the local system. Defaults to ChromeHeadless.
+
+    In addition, virtual browsers from Browserstack are supported. They are
+    prefixed by the operating system. Available BrowserStack browsers are
+    'Mac.Chrome, Mac.Firefox, Mac.Safari, Win.Chrome, Win.Edge, Win.Firefox,
+    Win.IE'.
+
+    A shorthand option, '--browsers all', runs all BroserStack machines.
+
+--tests
+    Comma separated list of tests to run. Defaults to '*.*' that runs all tests
+    in the 'samples/unit-tests' directory.
+    Example: 'gulp test --tests chart/*' runs all tests in the chart directory.
+
+`
+        );
+        return;
+    }
+
+    console.log('Run ' + 'gulp test --help'.cyan + ' for available options');
+
     const Server = require('karma').Server;
     const gutils = require('gulp-util');
     new Server({
