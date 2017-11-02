@@ -2017,8 +2017,11 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 			ret = false;
 
 		// For xy zooming, record the state of the zoom before zoom selection,
-		// then when the reset button is pressed, revert to this state
-		} else if (zoomType === 'xy') {
+		// then when the reset button is pressed, revert to this state. This
+		// should apply only if the chart is initialized with a range (#6612),
+		// otherwise zoom all the way out.
+		} else if (zoomType === 'xy' && this.options.range) {
+
 			previousZoom = this.previousZoom;
 			if (defined(newMin)) {
 				this.previousZoom = [this.min, this.max];
