@@ -1,6 +1,7 @@
 /* eslint-env node, es6 */
 /* eslint no-console: 0, camelcase: 0 */
 const fs = require('fs');
+const PNG = require('pngjs').PNG;
 
 /**
  * Get browserstack credentials from the properties file.
@@ -139,26 +140,6 @@ module.exports = function (config) {
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity,
 
-        /**
-         * When running --reference, we provoke an error, capture it here and
-         * save the PNG file. @todo: Explore using reporters instead to avoid
-         * the error.
-         * @param   {String} msg The message
-         * @returns {void}
-         */
-        formatError: function (msg) {
-
-            let pathMatch = /reference:([a-z0-9\-\/]+)/g.exec(msg);
-            if (pathMatch) {
-                let path = pathMatch[1];
-                let match = /"data:image\/png;base64,([^"]+)"/.exec(msg);
-                if (match) {
-                    let buf = new Buffer(match[1], 'base64');
-                    fs.writeFileSync(`./samples/${path}/reference.png`, buf);
-                    console.log(`Saved reference for ${path}`.green);
-                }
-            }
-        },
         preprocessors: {
             // Preprocess the visual tests
             '**/highcharts/*/*/demo.js': ['generic']
@@ -170,22 +151,7 @@ module.exports = function (config) {
                         /^.*?samples\/(highcharts|stock|maps)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
                         '$1/$2'
                     );
-
-                    let assertion = `
-                        getImage(chart)
-                            .then(imageData => {
-                                assert.strictEqual(
-                                    imageData.length,
-                                    300 * 200 * 4,
-                                    'Pixel count (${path})'
-                                );
-                                done();
-                            })
-                            .catch(err => {
-                                console.error(err);
-                                done();
-                            });
-                    `;
+                    let assertion;
 
                     // Set reference image
                     if (argv.reference) {
@@ -204,6 +170,49 @@ module.exports = function (config) {
                                     done();
                                 });
                         `;
+
+                    } else {
+
+                        /*
+                        PNG.decode(
+                            `./samples/${path}/reference.png`,
+                            function (pixels) {
+                                console.log('pixels', typeof pixels);
+                            }
+                        );
+                        */
+                        try {
+                            let png = PNG.sync.read(
+                                fs.readFileSync(`./samples/${path}/reference.png`)
+                            );
+                            let referenceData = Array.prototype.slice.call(
+                                png.data,
+                                0
+                            ).join(',');
+
+                            assertion = `
+                                var referenceData = [${referenceData}];
+                                getImage(chart)
+                                    .then(imageData => {
+                                        //console.log('candidate', imageData)
+                                        assert.strictEqual(
+                                            compare(imageData, referenceData),
+                                            0,
+                                            'Diff ( debug: http://utils.highcharts.local/samples/#test/${path} )'
+                                        );
+                                        done();
+                                    })
+                                    .catch(err => {
+                                        console.error(err);
+                                        done();
+                                    });
+                            `;
+                        } catch (e) {
+                            assertion = `
+                                assert.ok(false, 'Reference image loaded')
+                                done();
+                            `;
+                        }
                     }
 
 
@@ -228,6 +237,30 @@ module.exports = function (config) {
             }]
         }
     };
+
+    if (argv.reference) {
+        /**
+         * When running --reference, we provoke an error, capture it here and
+         * save the PNG file. @todo: Explore using reporters instead to avoid
+         * the error.
+         * @param   {String} msg The message
+         * @returns {void}
+         */
+        options.formatError = function (msg) {
+
+            let pathMatch = /reference:([a-z0-9\-\/]+)/g.exec(msg);
+            if (pathMatch) {
+                let path = pathMatch[1];
+                let match = /"data:image\/png;base64,([^"]+)"/.exec(msg);
+                if (match) {
+                    let buf = new Buffer(match[1], 'base64');
+                    fs.writeFileSync(`./samples/${path}/reference.png`, buf);
+                    console.log(`Saved reference for ${path}`.green);
+                }
+            }
+        };
+    }
+
 
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
