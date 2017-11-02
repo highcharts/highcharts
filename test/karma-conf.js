@@ -83,38 +83,12 @@ const browserStackBrowsers = {
 
 module.exports = function (config) {
 
-    console.log(
-(`_______________________________________________________________________________
-
-HIGHCHARTS TEST RUNNER
-
-Available arguments for 'gulp test':
-
---browsers
-    Comma separated list of browsers to test. Available browsers are
-    'ChromeHeadless, Chrome, Firefox, Safari, Edge, IE' depending on what is
-    installed on the local system. Defaults to ChromeHeadless.
-
-    In addition, virtual browsers from Browserstack are supported. They are
-    prefixed by the operating system. Available BrowserStack browsers are
-    '` + Object.keys(browserStackBrowsers).join(', ') + `'.
-
-    A shorthand option, '--browsers all', runs all BroserStack machines.
-
---tests
-    Comma separated list of tests to run. Defaults to '*.*' that runs all tests
-    in the 'samples/unit-tests' directory.
-    Example: 'gulp test --tests chart/*' runs all tests in the chart directory.
-________________________________________________________________________________
-
-`).green);
+    const argv = require('yargs').argv;
 
     // The tests to run by default
     const defaultTests = [
         '*/*'
     ];
-
-    const argv = require('yargs').argv;
 
     // Browsers
     let browsers = argv.browsers ?
