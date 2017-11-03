@@ -271,6 +271,18 @@ module.exports = function (config) {
 
                     js = resolveJSON(js);
 
+                    // Don't do intervals (typically for gauge samples, add
+                    // point etc)
+                    js = js.replace('setInterval', 'Highcharts.noop');
+
+                    // Reset global options
+                    let resetOptions = js.indexOf('Highcharts.setOptions') === -1 ?
+                        '' :
+                        `Highcharts.setOptions(
+                            JSON.parse(Highcharts.defaultOptionsRaw)
+                        );`;
+
+
                     let assertion;
 
                     // Set reference image
@@ -342,6 +354,8 @@ module.exports = function (config) {
 
                     QUnit.test('${path}', function (assert) {
 
+                        // console.log('Starting ${path}');
+
                         // Apply demo.html
                         document.getElementById('demo-html').innerHTML =
                             \`${html}\`;
@@ -354,6 +368,8 @@ module.exports = function (config) {
                         ];
 
                         ${assertion}
+
+                        ${resetOptions}
                         
                     });
                     `;

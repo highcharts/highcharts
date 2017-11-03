@@ -89,8 +89,6 @@ QUnit.module('Highcharts', {
         });
         Highcharts.charts.length = 0;
 
-        // Todo: This can be done conditionally inside the highjacked test
-        Highcharts.setOptions(JSON.parse(Highcharts.defaultOptionsRaw));
     }
 });
 
