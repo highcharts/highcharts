@@ -233,6 +233,9 @@ module.exports = function (config) {
             // Img load error
             'samples/highcharts/demo/combo-timeline/demo.js', // <em>'s in aria-label
             'samples/highcharts/studies/combo-timeline-updated/demo.js', // <em>'s in aria-label
+            'samples/highcharts/legend/padding-itemmargin/demo.js', // <br/> in aria-label
+            'samples/highcharts/parallel-coordinates/tooltipvalueformat/demo.js', // <br/> in aria-label
+
 
             // Clock
             'samples/highcharts/demo/dynamic-update/demo.js',
@@ -259,6 +262,7 @@ module.exports = function (config) {
             'samples/highcharts/common-js/webpack/demo.js',
 
             // Various
+            'samples/highcharts/data/google-spreadsheet/demo.js', // advanced demo
             'samples/highcharts/css/exporting/demo.js', // advanced demo
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js' // styled mode, setOptions

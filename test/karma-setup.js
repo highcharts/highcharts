@@ -116,19 +116,28 @@ Highcharts.prepareShot = function (chart) {
  */
 function getImage(chart, type) { // eslint-disable-line no-unused-vars
     return new Promise((resolve, reject) => {
+        let svg;
 
         if (chart) {
-            let container = chart && chart.container;
+            let container = chart.container;
+            Highcharts.prepareShot(chart);
+            svg = container.querySelector('svg').outerHTML;
+
+        // Renderer samples
+        } else {
+            if (document.getElementsByTagName('svg').length) {
+                svg = document.getElementsByTagName('svg')[0].outerHTML;
+            }
+        }
+
+        if (svg) {
             try {
 
-                Highcharts.prepareShot(chart);
-
-                const data = container.querySelector('svg').outerHTML;
                 const DOMURL = window.URL || window.webkitURL || window;
 
                 const img = new Image();
-                const svg = new Blob([data], { type: 'image/svg+xml' });
-                const url = DOMURL.createObjectURL(svg);
+                const blob = new Blob([svg], { type: 'image/svg+xml' });
+                const url = DOMURL.createObjectURL(blob);
                 img.onload = function () {
 
                     ctx.drawImage(img, 0, 0, 300, 200);
