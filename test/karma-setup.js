@@ -143,7 +143,10 @@ function getImage(chart, type) { // eslint-disable-line no-unused-vars
                     }
                 };
                 img.onerror = function () {
-                    reject('Error loading SVG on canvas.');
+                    reject(
+                        'Error loading SVG on canvas'
+                        // + '\n' + data
+                    );
                 };
                 img.src = url;
             } catch (e) {

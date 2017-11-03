@@ -234,18 +234,9 @@ module.exports = function (config) {
             'samples/highcharts/demo/parallel-coordinates/demo.js',
             'samples/highcharts/demo/sparkline/demo.js',
 
-            // Stock
-            'samples/stock/demo/dynamic-update/demo.js',
-            'samples/stock/demo/data-grouping/demo.js',
-            'samples/stock/demo/lazy-loading/demo.js',
-
             // Maps
-            'samples/maps/demo/all-maps/demo.js',
-            'samples/maps/demo/heatmap/demo.js', // data island
             'samples/maps/demo/latlon-advanced/demo.js', // us map
-            'samples/maps/demo/map-drilldown/demo.js', // Ajax
             'samples/maps/demo/map-pies/demo.js', // advanced data
-            'samples/maps/demo/rich-info/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
             'samples/maps/demo/us-data-labels/demo.js', // map required
             'samples/maps/demo/data-class-ranges/demo.js', // Google Spreadsheets
@@ -263,7 +254,7 @@ module.exports = function (config) {
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js' // styled mode, setOptions
         ],
-        reporters: ['imagecapture', 'progress'],
+        reporters: argv.reference ? ['imagecapture', 'progress'] : ['progress'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_WARN,
@@ -279,7 +270,9 @@ module.exports = function (config) {
 
         preprocessors: {
             // Preprocess the visual tests
-            '**/highcharts/*/*/demo.js': ['generic']
+            '**/highcharts/*/*/demo.js': ['generic'],
+            '**/maps/*/*/demo.js': ['generic'],
+            '**/stock/*/*/demo.js': ['generic']
         },
 
         /*
