@@ -30,6 +30,22 @@ function getProperties() {
     return properties;
 }
 
+/**
+ * Get the contents of demo.html and strip out JavaScript tags.
+ * @param   {String} path The sample path
+ * @returns {String}      The stripped HTML
+ */
+function getHTML(path) {
+    let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
+
+    html = html.replace(
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+        ''
+    );
+
+    return html + '\n';
+}
+
 const browserStackBrowsers = {
     'Mac.Chrome': {
         base: 'BrowserStack',
@@ -216,6 +232,7 @@ module.exports = function (config) {
                         /^.*?samples\/(highcharts|stock|maps)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
                         '$1/$2'
                     );
+                    const html = getHTML(path);
                     let assertion;
 
                     // Set reference image
@@ -284,7 +301,11 @@ module.exports = function (config) {
 
 
                     content = `
+
                     QUnit.test('${path}', function (assert) {
+
+                        document.getElementById('demo-html').innerHTML =
+                            \`${html}\`;
 
                         var done = assert.async();
                         ${content}

@@ -16,6 +16,9 @@ if (!document.getElementById('output')) {
     div.setAttribute('id', 'output');
     document.body.appendChild(div);
 }
+var demoHTML = document.createElement('div');
+demoHTML.setAttribute('id', 'demo-html');
+document.body.appendChild(demoHTML);
 
 var canvas = document.createElement('canvas');
 canvas.setAttribute('width', 300);
