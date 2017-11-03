@@ -2,6 +2,7 @@
 /* eslint no-console: 0, camelcase: 0 */
 const fs = require('fs');
 const PNG = require('pngjs').PNG;
+const yaml = require('js-yaml');
 
 // Internal reference
 const hasJSONSources = {};
@@ -79,6 +80,32 @@ function resolveJSON(js) {
         }
     }
     return js;
+}
+
+/**
+ * Decide whether to skip the test based on flags in demo.details.
+ * @param   {String} path The sample path
+ * @returns {Boolean}     False if we should skip the test
+ */
+function handleDetails(path) {
+    // Skip it?
+    if (fs.existsSync(`samples/${path}/demo.details`)) {
+        let details = fs.readFileSync(
+            `samples/${path}/demo.details`,
+            'utf8'
+        );
+        details = details && yaml.load(details);
+        if (details && details.skipTest) {
+            // console.log(`- skipTest: ${path}`.gray);
+            return false;
+        }
+        if (details && details.requiresManualTesting) {
+            // console.log(`- requiresManualTesting: ${path}`.gray);
+            return false;
+        }
+        return true;
+    }
+    return true;
 }
 
 const browserStackBrowsers = {
@@ -267,6 +294,14 @@ module.exports = function (config) {
                         /^.*?samples\/(highcharts|stock|maps)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
                         '$1/$2'
                     );
+
+                    // Skipped from demo.details
+                    if (handleDetails(path) === false) {
+                        file.path = file.originalPath + '.preprocessed';
+                        done(`QUnit.skip('${path}');`);
+                        return;
+                    }
+
                     const html = getHTML(path);
 
                     js = resolveJSON(js);
