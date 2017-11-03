@@ -64,17 +64,26 @@ function resolveJSON(js) {
         if (!hasJSONSources[src]) {
             let innerMatch = src.match(/filename=([^&']+)/);
             if (innerMatch) {
-                let json = fs.readFileSync(
+                let data = fs.readFileSync(
                     'samples/data/' + innerMatch[1],
                     'utf8'
                 );
-                if (json) {
+
+                if (data) {
                     hasJSONSources[src] = true;
-                    let ret = `
-                    window.JSONSources['${src}'] = ${json};
-                    ${js}
-                    `;
-                    return ret;
+
+                    if (/json$/.test(innerMatch[1])) {
+                        return `
+                        window.JSONSources['${src}'] = ${data};
+                        ${js}
+                        `;
+                    }
+                    if (/csv$/.test(innerMatch[1])) {
+                        return `
+                        window.JSONSources['${src}'] = \`${data}\`;
+                        ${js}
+                        `;
+                    }
                 }
             }
         }
@@ -218,12 +227,12 @@ module.exports = function (config) {
             // Network loading?
             'samples/highcharts/demo/combo-meteogram/demo.js',
 
-            // CSV data, try similar approach as getJSON
+            // CSV data, parser fails - why??
             'samples/highcharts/demo/line-ajax/demo.js',
 
             // Img load error
-            'samples/highcharts/demo/annotations/demo.js',
-            'samples/highcharts/demo/combo-timeline/demo.js',
+            'samples/highcharts/demo/combo-timeline/demo.js', // <em>'s in aria-label
+            'samples/highcharts/studies/combo-timeline-updated/demo.js', // <em>'s in aria-label
 
             // Clock
             'samples/highcharts/demo/dynamic-update/demo.js',
@@ -334,7 +343,7 @@ module.exports = function (config) {
                                 .catch(err => {
                                     assert.ok(
                                         false,
-                                        'Reference failed for ${path}: ' + err
+                                        '${path}: ' + err
                                     );
                                     done();
                                 });

@@ -2038,7 +2038,7 @@ Highcharts.chart('container', {
             text: null
         },
         labels: {
-            format: '{value} m'
+            format: '{value} m'
         }
     },
 
