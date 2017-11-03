@@ -131,7 +131,7 @@ module.exports = function (config) {
             // they are not mutated for later tests?
             'samples/unit-tests/themes/*/demo.js'
         ],
-        reporters: ['progress'],
+        reporters: ['imagecapture', 'progress'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_WARN,
@@ -139,6 +139,11 @@ module.exports = function (config) {
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity,
+        plugins: [
+            'karma-*',
+            require('./karma-imagecapture-reporter.js')
+        ],
+
 
         preprocessors: {
             // Preprocess the visual tests
@@ -164,29 +169,30 @@ module.exports = function (config) {
                         assertion = `
                             getImage(chart, 'png')
                                 .then(pngImg => {
-                                    assert.strictEqual(
-                                        pngImg, // captured by formatError
-                                        false,
-                                        'reference:${path}'
+
+                                    // Log it to be captured by the
+                                    // image-capture reporter
+                                    __karma__.log(
+                                        'imagecapture',
+                                        ['./samples/${path}/reference.png ' + pngImg]
+                                    );
+                                    assert.ok(
+                                        true,
+                                        'Reference created for ${path}'
                                     );
                                     done();
                                 })
                                 .catch(err => {
-                                    console.error(err);
+                                    assert.ok(
+                                        false,
+                                        'Reference failed for ${path}: ' + err
+                                    );
                                     done();
                                 });
                         `;
 
                     } else {
 
-                        /*
-                        PNG.decode(
-                            `./samples/${path}/reference.png`,
-                            function (pixels) {
-                                console.log('pixels', typeof pixels);
-                            }
-                        );
-                        */
                         try {
 
                             // Read the reference file into an imageData array
@@ -243,30 +249,6 @@ module.exports = function (config) {
             }]
         }
     };
-
-    if (argv.reference) {
-        /**
-         * When running --reference, we provoke an error, capture it here and
-         * save the PNG file. @todo: Explore using reporters instead to avoid
-         * the error.
-         * @param   {String} msg The message
-         * @returns {void}
-         */
-        options.formatError = function (msg) {
-
-            let pathMatch = /reference:([a-z0-9\-\/]+)/g.exec(msg);
-            if (pathMatch) {
-                let path = pathMatch[1];
-                let match = /"data:image\/png;base64,([^"]+)"/.exec(msg);
-                if (match) {
-                    let buf = new Buffer(match[1], 'base64');
-                    fs.writeFileSync(`./samples/${path}/reference.png`, buf);
-                    console.log(`Saved reference for ${path}`.green);
-                }
-            }
-        };
-    }
-
 
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
