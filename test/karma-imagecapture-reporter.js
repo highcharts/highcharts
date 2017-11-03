@@ -40,6 +40,7 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
         }
     };
 
+    /*
     this.onSpecComplete = function (browser, result) {
 
         if (!result.success && !result.skipped && this.captured.length) {
@@ -50,6 +51,7 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
 
         this.captured = [];
     };
+    */
 
     // HACK: Override log notification for the other reporters
     var self = this;

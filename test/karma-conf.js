@@ -129,7 +129,61 @@ module.exports = function (config) {
             // Themes alter the whole default options structure. Set up a
             // separate test suite? Or perhaps somehow decouple the options so
             // they are not mutated for later tests?
-            'samples/unit-tests/themes/*/demo.js'
+            'samples/unit-tests/themes/*/demo.js',
+
+
+            // --- VISUAL TESTS ---
+
+            // Error #13, renders to other divs than #container. Sets global
+            // options.
+            'samples/highcharts/demo/bullet-graph/demo.js',
+            // Network loading?
+            'samples/highcharts/demo/combo-meteogram/demo.js',
+
+            // CSV data, try similar approach as getJSON
+            'samples/highcharts/demo/line-ajax/demo.js',
+
+            // Img load error
+            'samples/highcharts/demo/annotations/demo.js',
+            'samples/highcharts/demo/combo-timeline/demo.js',
+
+            // Clock
+            'samples/highcharts/demo/dynamic-update/demo.js',
+            'samples/highcharts/demo/gauge-clock/demo.js',
+            'samples/highcharts/demo/gauge-vu-meter/demo.js',
+
+            // Too heavy
+            'samples/highcharts/demo/parallel-coordinates/demo.js',
+            'samples/highcharts/demo/sparkline/demo.js',
+
+            // Stock
+            'samples/stock/demo/dynamic-update/demo.js',
+            'samples/stock/demo/data-grouping/demo.js',
+            'samples/stock/demo/lazy-loading/demo.js',
+
+            // Maps
+            'samples/maps/demo/all-maps/demo.js',
+            'samples/maps/demo/heatmap/demo.js', // data island
+            'samples/maps/demo/latlon-advanced/demo.js', // us map
+            'samples/maps/demo/map-drilldown/demo.js', // Ajax
+            'samples/maps/demo/map-pies/demo.js', // advanced data
+            'samples/maps/demo/rich-info/demo.js', // advanced data
+            'samples/maps/demo/us-counties/demo.js', // advanced data
+            'samples/maps/demo/us-data-labels/demo.js', // map required
+            'samples/maps/demo/data-class-ranges/demo.js', // Google Spreadsheets
+            'samples/maps/demo/data-class-two-ranges/demo.js', // Google Spr
+
+            // Unknown error
+            'samples/highcharts/boost/scatter-smaller/demo.js',
+
+            // CommonJS
+            'samples/highcharts/common-js/browserify/demo.js',
+            'samples/highcharts/common-js/webpack/demo.js',
+
+            // Various
+            'samples/highcharts/css/exporting/demo.js', // advanced demo
+            'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
+            'samples/highcharts/css/pattern/demo.js' // styled mode, setOptions
         ],
         reporters: ['imagecapture', 'progress'],
         port: 9876,  // karma web server port

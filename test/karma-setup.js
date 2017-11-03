@@ -41,6 +41,8 @@ Highcharts.setOptions({
     }
 });
 
+Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
+
 /*
  * Compare numbers taking in account an error.
  * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
@@ -71,6 +73,21 @@ QUnit.module('Highcharts', {
         // Reset container size that some tests may have modified
         document.getElementById('container').style.width = 'auto';
         document.getElementById('container').style.width = 'auto';
+
+        // Reset randomizer
+        Math.randomCursor = 0;
+    },
+
+    afterEach: function () {
+        Highcharts.charts.forEach(chart => {
+            if (chart && chart.destroy && chart.renderer) {
+                chart.destroy();
+            }
+        });
+        Highcharts.charts.length = 0;
+
+        // Todo: This can be done conditionally inside the highjacked test
+        Highcharts.setOptions(JSON.parse(Highcharts.defaultOptionsRaw));
     }
 });
 
