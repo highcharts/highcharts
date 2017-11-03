@@ -1792,6 +1792,55 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @since 2.3.5
 		 * @apioption plotOptions.series.dataLabels.zIndex
 		 */
+		
+		/**
+		 * A declarative filter for which data labels to display. The
+		 * declarative filter is designed for use when callback functions are
+		 * not available, like when the chart options require a pure JSON
+		 * structure or for use with graphical editors. For programmatic
+		 * control, use the `formatter` instead, and return `false` to disable
+		 * a single data label.
+		 *
+		 * @example
+		 * filter: {
+         *     property: 'percentage',
+         *     operator: '>',
+         *     value: 4
+         * }
+		 *
+		 * @sample highcharts/demo/pie-monochrome
+		 *         Data labels filtered by percentage
+		 *
+		 * @type {Object}
+		 * @since 6.0.3
+		 * @apioption plotOptions.series.dataLabels.filter
+		 */
+		
+		/**
+		 * The point property to filter by. Point options are passed directly to
+		 * properties, additionally there are `y` value, `percentage` and others
+		 * listed under [Point](https://api.highcharts.com/class-reference/Highcharts.Point)
+		 * members.
+		 *
+		 * @type {String}
+		 * @apioption plotOptions.series.dataLabels.filter.property
+		 */
+		
+		/**
+		 * The operator to compare by. Can be one of `>`, `<`, `>=`, `<=`, `==`,
+		 * and `===`.
+		 *
+		 * @type {String}
+		 * @validvalue [">", "<", ">=", "<=", "==", "===""]
+		 * @apioption plotOptions.series.dataLabels.filter.operator
+		 */
+		
+		/**
+		 * The value to compare against.
+		 *
+		 * @type {Mixed}
+		 * @apioption plotOptions.series.dataLabels.filter.value
+		 */
 	},
 	// draw points outside the plot area when the number of points is less than
 	// this

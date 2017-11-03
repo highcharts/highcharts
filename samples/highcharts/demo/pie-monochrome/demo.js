@@ -34,9 +34,12 @@ Highcharts.chart('container', {
             cursor: 'pointer',
             dataLabels: {
                 enabled: true,
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                style: {
-                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                format: '<b>{point.name}</b><br>{point.percentage:.1f} %',
+                distance: -50,
+                filter: {
+                    property: 'percentage',
+                    operator: '>',
+                    value: 4
                 }
             }
         }
@@ -44,12 +47,12 @@ Highcharts.chart('container', {
     series: [{
         name: 'Brands',
         data: [
-            { name: 'Microsoft Internet Explorer', y: 56.33 },
+            { name: 'IE', y: 56.33 },
             { name: 'Chrome', y: 24.03 },
             { name: 'Firefox', y: 10.38 },
             { name: 'Safari', y: 4.77 },
             { name: 'Opera', y: 0.91 },
-            { name: 'Proprietary or Undetectable', y: 0.2 }
+            { name: 'Other', y: 0.2 }
         ]
     }]
 });
