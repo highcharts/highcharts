@@ -152,7 +152,7 @@ function getImage(chart, type) { // eslint-disable-line no-unused-vars
                 reject(e.message);
             }
         } else {
-            reject('No chart given');
+            reject('No chart passed to getImage');
         }
     });
 
@@ -229,3 +229,9 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
         return ret;
     };
 }());
+
+// Override getJSON
+window.JSONSources = {};
+$.getJSON = function (url, callback) { // eslint-disable-line no-undef
+    callback(window.JSONSources[url]);
+};

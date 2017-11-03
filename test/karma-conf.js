@@ -3,6 +3,9 @@
 const fs = require('fs');
 const PNG = require('pngjs').PNG;
 
+// Internal reference
+const hasJSONSources = {};
+
 /**
  * Get browserstack credentials from the properties file.
  * @returns {Object} The properties
@@ -44,6 +47,38 @@ function getHTML(path) {
     );
 
     return html + '\n';
+}
+
+/**
+ * Look for $.getJSON calls in the demos and add hook to local sample data.
+ * @param   {String} js
+ *          The contents of demo.js
+ * @returns {String}
+ *          JavaScript extended with the sample data.
+ */
+function resolveJSON(js) {
+    const match = js.match(/\$\.getJSON\('([^']+)/);
+    if (match) {
+        let src = match[1];
+        if (!hasJSONSources[src]) {
+            let innerMatch = src.match(/filename=([^&']+)/);
+            if (innerMatch) {
+                let json = fs.readFileSync(
+                    'samples/data/' + innerMatch[1],
+                    'utf8'
+                );
+                if (json) {
+                    hasJSONSources[src] = true;
+                    let ret = `
+                    window.JSONSources['${src}'] = ${json};
+                    ${js}
+                    `;
+                    return ret;
+                }
+            }
+        }
+    }
+    return js;
 }
 
 const browserStackBrowsers = {
@@ -227,12 +262,15 @@ module.exports = function (config) {
          */
         genericPreprocessor: {
             rules: [{
-                process: function (content, file, done) {
+                process: function (js, file, done) {
                     const path = file.path.replace(
                         /^.*?samples\/(highcharts|stock|maps)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
                         '$1/$2'
                     );
                     const html = getHTML(path);
+
+                    js = resolveJSON(js);
+
                     let assertion;
 
                     // Set reference image
@@ -300,15 +338,16 @@ module.exports = function (config) {
                     }
 
 
-                    content = `
+                    js = `
 
                     QUnit.test('${path}', function (assert) {
 
+                        // Apply demo.html
                         document.getElementById('demo-html').innerHTML =
                             \`${html}\`;
 
                         var done = assert.async();
-                        ${content}
+                        ${js}
 
                         var chart = Highcharts.charts[
                             Highcharts.charts.length - 1
@@ -319,7 +358,7 @@ module.exports = function (config) {
                     });
                     `;
                     file.path = file.originalPath + '.preprocessed';
-                    done(content);
+                    done(js);
                 }
             }]
         }
