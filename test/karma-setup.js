@@ -1,5 +1,10 @@
 /* eslint-env browser */
 /* global Highcharts, Promise, QUnit */
+
+/**
+ * This file runs in the browser as setup for the karma tests.
+ */
+
 var div;
 if (!document.getElementById('container')) {
     div = document.createElement('div');
@@ -69,6 +74,9 @@ QUnit.module('Highcharts', {
     }
 });
 
+/*
+ * Display the tooltip so it gets part of the comparison
+ */
 Highcharts.prepareShot = function (chart) {
     if (
         chart &&

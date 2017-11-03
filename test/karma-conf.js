@@ -144,6 +144,12 @@ module.exports = function (config) {
             // Preprocess the visual tests
             '**/highcharts/*/*/demo.js': ['generic']
         },
+
+        /*
+         The preprocessor intervenes with the visual tests and transform them
+         to unit tests by comparing a bitmap of the genearated SVG to the
+         reference image and asserting the difference.
+         */
         genericPreprocessor: {
             rules: [{
                 process: function (content, file, done) {
@@ -182,6 +188,8 @@ module.exports = function (config) {
                         );
                         */
                         try {
+
+                            // Read the reference file into an imageData array
                             let png = PNG.sync.read(
                                 fs.readFileSync(`./samples/${path}/reference.png`)
                             );
@@ -194,7 +202,6 @@ module.exports = function (config) {
                                 var referenceData = [${referenceData}];
                                 getImage(chart)
                                     .then(imageData => {
-                                        //console.log('candidate', imageData)
                                         assert.strictEqual(
                                             compare(imageData, referenceData),
                                             0,
@@ -220,7 +227,6 @@ module.exports = function (config) {
                     QUnit.test('${path}', function (assert) {
 
                         var done = assert.async();
-
                         ${content}
 
                         var chart = Highcharts.charts[
