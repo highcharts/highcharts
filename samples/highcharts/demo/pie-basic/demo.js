@@ -29,7 +29,7 @@ Highcharts.chart('container', {
         name: 'Brands',
         colorByPoint: true,
         data: [{
-            name: 'Microsoft Internet Explorer',
+            name: 'IE',
             y: 56.33
         }, {
             name: 'Chrome',
@@ -46,7 +46,7 @@ Highcharts.chart('container', {
             name: 'Opera',
             y: 0.91
         }, {
-            name: 'Proprietary or Undetectable',
+            name: 'Other',
             y: 0.2
         }]
     }]
