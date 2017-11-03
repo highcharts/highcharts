@@ -271,7 +271,7 @@
  * If user settings dictate minor ticks to become too dense, they don't
  * make sense, and will be ignored to prevent performance problems.
  *
- * @type {Number}
+ * @type {Number|String}
  * @sample {highcharts} highcharts/yaxis/minortickinterval-null/ Null by default
  * @sample {highcharts} highcharts/yaxis/minortickinterval-5/ 5 units
  * @sample {highcharts} highcharts/yaxis/minortickinterval-log-auto/ "auto"
@@ -1580,28 +1580,6 @@
  * @since 4.0
  * @product highcharts
  * @apioption yAxis.maxColor
- */
-
-/**
- * The minimum value of the axis. If `null` the min value is automatically
- * calculated.
- *
- * If the `startOnTick` option is true (default), the `min` value might
- * be rounded down.
- *
- * The automatically calculated minimum value is also affected by [floor](#yAxis.
- * floor), [softMin](#yAxis.softMin), [minPadding](#yAxis.minPadding),
- * [minRange](#yAxis.minRange) as well as [series.threshold](#plotOptions.
- * series.threshold) and [series.softThreshold](#plotOptions.series.
- * softThreshold).
- *
- * @type {Number}
- * @sample {highcharts} highcharts/yaxis/min-startontick-false/ -50 with startOnTick to false
- * @sample {highcharts} highcharts/yaxis/min-startontick-true/ -50 with startOnTick true by default
- * @sample {highstock} highcharts/yaxis/min-startontick-false/ -50 with startOnTick to false
- * @sample {highstock} highcharts/yaxis/min-startontick-true/ -50 with startOnTick true by default
- * @product highcharts highstock
- * @apioption yAxis.min
  */
 
 /**
