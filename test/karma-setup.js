@@ -45,6 +45,8 @@ Highcharts.setOptions({
 });
 
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
+Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
+
 
 /*
  * Compare numbers taking in account an error.
@@ -82,6 +84,8 @@ QUnit.module('Highcharts', {
     },
 
     afterEach: function () {
+
+        // Destroy all charts
         Highcharts.charts.forEach(chart => {
             if (chart && chart.destroy && chart.renderer) {
                 chart.destroy();
@@ -152,9 +156,9 @@ function getImage(chart, type) { // eslint-disable-line no-unused-vars
                     }
                 };
                 img.onerror = function () {
+                    // console.log(svg)
                     reject(
                         'Error loading SVG on canvas'
-                        // + '\n' + data
                     );
                 };
                 img.src = url;

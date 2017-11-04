@@ -230,13 +230,6 @@ module.exports = function (config) {
             // CSV data, parser fails - why??
             'samples/highcharts/demo/line-ajax/demo.js',
 
-            // Img load error
-            'samples/highcharts/demo/combo-timeline/demo.js', // <em>'s in aria-label
-            'samples/highcharts/studies/combo-timeline-updated/demo.js', // <em>'s in aria-label
-            'samples/highcharts/legend/padding-itemmargin/demo.js', // <br/> in aria-label
-            'samples/highcharts/parallel-coordinates/tooltipvalueformat/demo.js', // <br/> in aria-label
-
-
             // Clock
             'samples/highcharts/demo/dynamic-update/demo.js',
             'samples/highcharts/demo/gauge-clock/demo.js',
@@ -317,11 +310,22 @@ module.exports = function (config) {
                     js = js.replace('setInterval', 'Highcharts.noop');
 
                     // Reset global options
-                    let resetOptions = js.indexOf('Highcharts.setOptions') === -1 ?
+                    let reset = js.indexOf('Highcharts.setOptions') === -1 ?
                         '' :
-                        `Highcharts.setOptions(
+                        `
+                        Highcharts.setOptions(
                             JSON.parse(Highcharts.defaultOptionsRaw)
-                        );`;
+                        );
+                        `;
+
+                    // Reset modified callbacks
+                    if (js.indexOf('Chart.prototype.callbacks') !== -1) {
+                        reset += `
+                        Highcharts.Chart.prototype.callbacks =
+                            Highcharts.callbacksRaw.slice(0);
+                        `;
+                    }
+
 
 
                     let assertion;
@@ -410,8 +414,7 @@ module.exports = function (config) {
 
                         ${assertion}
 
-                        ${resetOptions}
-                        
+                        ${reset}
                     });
                     `;
                     file.path = file.originalPath + '.preprocessed';
