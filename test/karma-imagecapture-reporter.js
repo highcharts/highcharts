@@ -11,7 +11,6 @@
  */
 
 const fs = require('fs');
-const pd = require('pretty-data').pd;
 
 function ImageCaptureReporter( // eslint-disable-line require-jsdoc
     config,
@@ -21,6 +20,31 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
     baseReporterDecorator(this);
 
     this.captured = [];
+
+    /**
+     * Basic pretty-print SVG, each tag on a new line.
+     * @param   {String} svg The SVG
+     * @returns {String}     Pretty SVG
+     */
+    function prettyXML(svg) {
+        let idx = svg.indexOf('>');
+        let lineNo = 0;
+        while (idx !== -1 && lineNo < 500) {
+
+            // Make sure to not introduce white-space in text and tspans
+            if (
+                svg.substr(idx + 1, 1) === '<' &&
+                svg.substr(idx - 5, 5) !== 'tspan' &&
+                svg.substr(idx - 5, 5) !== 'text'
+            ) {
+                svg = svg.substr(0, idx + 1) + '\n' + svg.substr(idx + 1);
+                lineNo++;
+            }
+
+            idx = svg.indexOf('>', idx + 1);
+        }
+        return svg;
+    }
 
     var origBrowserLog = this.onBrowserLog;
     this.onBrowserLog = function (browser, log, type) {
@@ -33,10 +57,10 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
                 log = log.replace(/^'/, '').replace(/'$/, '');
                 let split = log.indexOf(' '); // Split on first space
                 path = log.substr(0, split);
-                data = log.substr(split);
+                data = log.substr(split + 1);
 
                 if (/\.svg$/.test(path)) {
-                    fs.writeFileSync(path, pd.xml(data));
+                    fs.writeFileSync(path, prettyXML(data));
 
                 } else if (/\.png$/.test(path)) {
                     data = data.replace(/^data:image\/\w+;base64,/, '');
