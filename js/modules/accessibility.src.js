@@ -332,6 +332,16 @@ function htmlencode(html) {
 		.replace(/\//g, '&#x2F;');
 }
 
+/**
+ * Strip HTML tags away from a string. Used for aria-label attributes, painting
+ * on a canvas will fail if the text contains tags.
+ * @param  {String} s The input string
+ * @return {String}   The filtered string
+ */
+function stripTags(s) {
+	return typeof s === 'string' ? s.replace(/<\/?[^>]+(>|$)/g, '') : s;
+}
+
 // Utility function. Reverses child nodes of a DOM element
 function reverseChildNodes(node) {
 	var i = node.childNodes.length;
@@ -431,12 +441,13 @@ H.Series.prototype.setA11yDescription = function () {
 				if (point.graphic) {
 					point.graphic.element.setAttribute('role', 'img');
 					point.graphic.element.setAttribute('tabindex', '-1');
-					point.graphic.element.setAttribute('aria-label', 
+					point.graphic.element.setAttribute('aria-label', stripTags(
 						point.series.options.pointDescriptionFormatter && 
 						point.series.options.pointDescriptionFormatter(point) ||
 						a11yOptions.pointDescriptionFormatter && 
 						a11yOptions.pointDescriptionFormatter(point) ||
-						point.buildPointInfoString());
+						point.buildPointInfoString()
+					));
 				}
 			});
 		}
@@ -449,9 +460,11 @@ H.Series.prototype.setA11yDescription = function () {
 			seriesEl.setAttribute('tabindex', '-1');
 			seriesEl.setAttribute(
 				'aria-label',
-				a11yOptions.seriesDescriptionFormatter &&
-				a11yOptions.seriesDescriptionFormatter(this) ||
-				this.buildSeriesInfoString()
+				stripTags(
+					a11yOptions.seriesDescriptionFormatter &&
+					a11yOptions.seriesDescriptionFormatter(this) ||
+					this.buildSeriesInfoString()
+				)
 			);
 		}
 	}
@@ -1398,7 +1411,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 					item.legendGroup.element.setAttribute('role', 'button');
 					item.legendGroup.element.setAttribute(
 						'aria-label',
-						'Toggle visibility of series ' + item.name
+						stripTags('Toggle visibility of series ' + item.name)
 					);
 				});
 				// Focus first/last item
@@ -1614,8 +1627,10 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	chart.renderTo.setAttribute('role', 'region');
 	chart.renderTo.setAttribute(
 		'aria-label',
-		'Interactive chart. ' + chartTitle +
+		stripTags(
+			'Interactive chart. ' + chartTitle +
 			'. Use up and down arrows to navigate with most screen readers.'
+		)
 	);
 
 	// Set screen reader properties on export menu
