@@ -11,6 +11,7 @@
  */
 
 const fs = require('fs');
+const pd = require('pretty-data').pd;
 
 function ImageCaptureReporter( // eslint-disable-line require-jsdoc
     config,
@@ -28,12 +29,20 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
                 this.captured.push(
                     log
                 );
-                let path, png;
-                [path, png] = log.replace(/^'/, '').replace(/1$/, '')
-                    .split(' ');
-                let data = png.replace(/^data:image\/\w+;base64,/, '');
-                let buf = new Buffer(data, 'base64');
-                fs.writeFileSync(path, buf);
+                let path, data;
+                log = log.replace(/^'/, '').replace(/'$/, '');
+                let split = log.indexOf(' '); // Split on first space
+                path = log.substr(0, split);
+                data = log.substr(split);
+
+                if (/\.svg$/.test(path)) {
+                    fs.writeFileSync(path, pd.xml(data));
+
+                } else if (/\.png$/.test(path)) {
+                    data = data.replace(/^data:image\/\w+;base64,/, '');
+                    let buf = new Buffer(data, 'base64');
+                    fs.writeFileSync(path, buf);
+                }
             }
         } else {
             origBrowserLog.call(this, browser, log, type);

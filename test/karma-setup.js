@@ -113,63 +113,24 @@ Highcharts.prepareShot = function (chart) {
 };
 
 /**
- * Get a PNG image or image data from the chart SVG.
- * @param   {Object} chart The chart instance
- * @param   {String} type  What to return, 'png' or 'data'
- * @returns {String}       The image data
+ * Get the SVG of a chart, or the first SVG in the page
+ * @param   {Object} chart The chart
+ * @returns {String}       The SVG
  */
-function getImage(chart, type) { // eslint-disable-line no-unused-vars
-    return new Promise((resolve, reject) => {
-        let svg;
+function getSVG(chart) {
+    let svg;
+    if (chart) {
+        let container = chart.container;
+        Highcharts.prepareShot(chart);
+        svg = container.querySelector('svg').outerHTML;
 
-        if (chart) {
-            let container = chart.container;
-            Highcharts.prepareShot(chart);
-            svg = container.querySelector('svg').outerHTML;
-
-        // Renderer samples
-        } else {
-            if (document.getElementsByTagName('svg').length) {
-                svg = document.getElementsByTagName('svg')[0].outerHTML;
-            }
+    // Renderer samples
+    } else {
+        if (document.getElementsByTagName('svg').length) {
+            svg = document.getElementsByTagName('svg')[0].outerHTML;
         }
-
-        if (svg) {
-            try {
-
-                const DOMURL = window.URL || window.webkitURL || window;
-
-                const img = new Image();
-                const blob = new Blob([svg], { type: 'image/svg+xml' });
-                const url = DOMURL.createObjectURL(blob);
-                img.onload = function () {
-
-                    ctx.drawImage(img, 0, 0, 300, 200);
-
-                    if (type === 'png') {
-                        DOMURL.revokeObjectURL(url);
-                        const pngImg = canvas.toDataURL('image/png');
-                        resolve(pngImg);
-                    } else {
-                        const imageData = ctx.getImageData(0, 0, 300, 200).data;
-                        resolve(imageData);
-                    }
-                };
-                img.onerror = function () {
-                    // console.log(svg)
-                    reject(
-                        'Error loading SVG on canvas'
-                    );
-                };
-                img.src = url;
-            } catch (e) {
-                reject(e.message);
-            }
-        } else {
-            reject('No chart passed to getImage');
-        }
-    });
-
+    }
+    return svg;
 }
 
 /**
@@ -196,6 +157,77 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
         diff = 0;
     }
     return diff;
+}
+
+/**
+ * Get a PNG image or image data from the chart SVG.
+ * @param   {Object} chart The chart instance
+ * @param   {String} path  The sample path
+ * @returns {String}       The image data
+ */
+function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
+
+    return new Promise((resolve, reject) => {
+
+        function svgToPixels(svg, callback) { // eslint-disable-line require-jsdoc
+            try {
+                const DOMURL = window.URL || window.webkitURL || window;
+
+                const img = new Image();
+                const blob = new Blob([svg], { type: 'image/svg+xml' });
+                const url = DOMURL.createObjectURL(blob);
+                img.onload = function () {
+
+                    ctx.drawImage(img, 0, 0, 300, 200);
+                    callback(ctx.getImageData(0, 0, 300, 200).data);
+                };
+                img.onerror = function () {
+                    // console.log(svg)
+                    reject(
+                        'Error loading SVG on canvas'
+                    );
+                };
+                img.src = url;
+            } catch (e) {
+                reject(e.message);
+            }
+        }
+
+        let referenceData;
+        let candidateSVG = getSVG(chart);
+        let candidateData;
+
+        // Handle candidate
+        if (candidateSVG) {
+            svgToPixels(candidateSVG, function (data) {
+                candidateData = data;
+                if (referenceData && candidateData) {
+                    resolve(compare(referenceData, candidateData));
+                }
+            });
+        } else {
+            reject('No candidate SVG found');
+        }
+
+        // Handle reference, load SVG from file
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', `base/samples/${path}/reference.svg`, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                let svg = xhr.responseText;
+
+                svgToPixels(svg, function (data) {
+                    referenceData = data;
+                    if (referenceData && candidateData) {
+                        resolve(compare(referenceData, candidateData));
+                    }
+                });
+            }
+        };
+        xhr.send();
+
+    });
+
 }
 
 // De-randomize Math.random in tests

@@ -1,7 +1,6 @@
 /* eslint-env node, es6 */
 /* eslint no-console: 0, camelcase: 0 */
 const fs = require('fs');
-const PNG = require('pngjs').PNG;
 const yaml = require('js-yaml');
 
 // Internal reference
@@ -202,6 +201,12 @@ module.exports = function (config) {
                 included: false,
                 served: true
             },
+            {
+                pattern: '**/*.svg', // reference images
+                watched: false,
+                included: false,
+                served: true
+            },
 
             // Set up
             'utils/samples/test-controller.js',
@@ -333,28 +338,26 @@ module.exports = function (config) {
                     // Set reference image
                     if (argv.reference) {
                         assertion = `
-                            getImage(chart, 'png')
-                                .then(pngImg => {
+                            let svg = getSVG(chart);
 
-                                    // Log it to be captured by the
-                                    // image-capture reporter
-                                    __karma__.log(
-                                        'imagecapture',
-                                        ['./samples/${path}/reference.png ' + pngImg]
-                                    );
-                                    assert.ok(
-                                        true,
-                                        'Reference created for ${path}'
-                                    );
-                                    done();
-                                })
-                                .catch(err => {
-                                    assert.ok(
-                                        false,
-                                        '${path}: ' + err
-                                    );
-                                    done();
-                                });
+                            if (svg) {
+                                // Log it to be captured by the
+                                // image-capture reporter
+                                __karma__.log(
+                                    'imagecapture',
+                                    ['./samples/${path}/reference.svg ' + svg]
+                                );
+                                assert.ok(
+                                    true,
+                                    'Reference created for ${path}'
+                                );
+                            } else {
+                                assert.ok(
+                                    false,
+                                    '${path}: ' + err
+                                );                
+                            }
+                            done();
                         `;
 
                     } else {
@@ -362,6 +365,7 @@ module.exports = function (config) {
                         try {
 
                             // Read the reference file into an imageData array
+                            /*
                             let png = PNG.sync.read(
                                 fs.readFileSync(`./samples/${path}/reference.png`)
                             );
@@ -369,13 +373,12 @@ module.exports = function (config) {
                                 png.data,
                                 0
                             ).join(',');
-
+                            */
                             assertion = `
-                                var referenceData = [${referenceData}];
-                                getImage(chart)
-                                    .then(imageData => {
+                                compareToReference(chart, '${path}')
+                                    .then(actual => {
                                         assert.strictEqual(
-                                            compare(imageData, referenceData),
+                                            actual,
                                             0,
                                             'Diff ( debug: http://utils.highcharts.local/samples/#test/${path} )'
                                         );
