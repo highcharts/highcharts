@@ -16,4 +16,5 @@ rules:
     operator-linebreak: [2, "after"]
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     strict: 0
+    valid-jsdoc: ["error", { prefer: { "returns": "return"}}]
     quotes: [2, "single"]

@@ -1,5 +1,5 @@
 /* eslint-env browser */
-/* global Highcharts, Promise, QUnit */
+/* global __karma__, Highcharts, Promise, QUnit */
 
 /**
  * This file runs in the browser as setup for the karma tests.
@@ -113,9 +113,23 @@ Highcharts.prepareShot = function (chart) {
 };
 
 /**
+ * Send a file name to karma through the log, to be picked up by the
+ * image-capture reporter.
+ * @param  {String} filename The file name
+ * @param  {String} data     The data payload
+ * @return {void}
+ */
+function sendToKarma(filename, data) { // eslint-disable-line no-unused-vars
+    __karma__.log(
+        'imagecapture',
+        [filename + ' ' + data]
+    );
+}
+
+/**
  * Get the SVG of a chart, or the first SVG in the page
- * @param   {Object} chart The chart
- * @returns {String}       The SVG
+ * @param  {Object} chart The chart
+ * @return {String}       The SVG
  */
 function getSVG(chart) {
     let svg;
@@ -135,9 +149,9 @@ function getSVG(chart) {
 
 /**
  * Compares the image data of two canvases
- * @param   {Array} data1 Pixel data for image1.
- * @param   {Array} data2 Pixel data for image2.
- * @returns {Number}      The difference, where 0 is identical.
+ * @param  {Array} data1 Pixel data for image1.
+ * @param  {Array} data2 Pixel data for image2.
+ * @return {Number}      The difference, where 0 is identical.
  */
 function compare(data1, data2) { // eslint-disable-line no-unused-vars
     var i = data1.length,
@@ -161,13 +175,17 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 
 /**
  * Get a PNG image or image data from the chart SVG.
- * @param   {Object} chart The chart instance
- * @param   {String} path  The sample path
- * @returns {String}       The image data
+ * @param  {Object} chart The chart instance
+ * @param  {String} path  The sample path
+ * @return {String}       The image data
  */
 function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
     return new Promise((resolve, reject) => {
+
+        let referenceData;
+        let candidateSVG = getSVG(chart);
+        let candidateData;
 
         function svgToPixels(svg, callback) { // eslint-disable-line require-jsdoc
             try {
@@ -193,17 +211,27 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             }
         }
 
-        let referenceData;
-        let candidateSVG = getSVG(chart);
-        let candidateData;
+        function doComparison() { // eslint-disable-line require-jsdoc
+            if (referenceData && candidateData) {
+                let diff = compare(referenceData, candidateData);
+
+                /* enable the imagecapture reporter for this to work
+                if (diff !== 0) {
+                    sendToKarma(
+                        `./samples/${path}/candidate.svg`,
+                        candidateSVG
+                    );
+                }
+                */
+                resolve(diff);
+            }
+        }
 
         // Handle candidate
         if (candidateSVG) {
             svgToPixels(candidateSVG, function (data) {
                 candidateData = data;
-                if (referenceData && candidateData) {
-                    resolve(compare(referenceData, candidateData));
-                }
+                doComparison();
             });
         } else {
             reject('No candidate SVG found');
@@ -218,9 +246,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
                 svgToPixels(svg, function (data) {
                     referenceData = data;
-                    if (referenceData && candidateData) {
-                        resolve(compare(referenceData, candidateData));
-                    }
+                    doComparison();
                 });
             }
         };

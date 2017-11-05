@@ -8,7 +8,7 @@ const hasJSONSources = {};
 
 /**
  * Get browserstack credentials from the properties file.
- * @returns {Object} The properties
+ * @return {Object} The properties
  */
 function getProperties() {
     let properties = {};
@@ -35,8 +35,8 @@ function getProperties() {
 
 /**
  * Get the contents of demo.html and strip out JavaScript tags.
- * @param   {String} path The sample path
- * @returns {String}      The stripped HTML
+ * @param  {String} path The sample path
+ * @return {String}      The stripped HTML
  */
 function getHTML(path) {
     let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
@@ -51,10 +51,10 @@ function getHTML(path) {
 
 /**
  * Look for $.getJSON calls in the demos and add hook to local sample data.
- * @param   {String} js
- *          The contents of demo.js
- * @returns {String}
- *          JavaScript extended with the sample data.
+ * @param  {String} js
+ *         The contents of demo.js
+ * @return {String}
+ *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
     const match = js.match(/\$\.getJSON\('([^']+)/);
@@ -92,8 +92,8 @@ function resolveJSON(js) {
 
 /**
  * Decide whether to skip the test based on flags in demo.details.
- * @param   {String} path The sample path
- * @returns {Boolean}     False if we should skip the test
+ * @param  {String} path The sample path
+ * @return {Boolean}     False if we should skip the test
  */
 function handleDetails(path) {
     // Skip it?
@@ -339,11 +339,9 @@ module.exports = function (config) {
                             let svg = getSVG(chart);
 
                             if (svg) {
-                                // Log it to be captured by the
-                                // image-capture reporter
-                                __karma__.log(
-                                    'imagecapture',
-                                    ['./samples/${path}/reference.svg ' + svg]
+                                sendToKarma(
+                                    './samples/${path}/reference.svg',
+                                    svg
                                 );
                                 assert.ok(
                                     true,
@@ -358,6 +356,7 @@ module.exports = function (config) {
                             done();
                         `;
 
+                    // Reference file doens't exist
                     } else if (!fs.existsSync(
                         `./samples/${path}/reference.svg`
                     )) {
@@ -370,20 +369,10 @@ module.exports = function (config) {
                         done(`QUnit.skip('${path}');`);
                         return;
 
+                    // Reference file exists, run the comparison
                     } else {
 
                         try {
-
-                            // Check the reference file
-                            /*
-                            let png = PNG.sync.read(
-                                fs.readFileSync(`./samples/${path}/reference.png`)
-                            );
-                            let referenceData = Array.prototype.slice.call(
-                                png.data,
-                                0
-                            ).join(',');
-                            */
                             assertion = `
                                 compareToReference(chart, '${path}')
                                     .then(actual => {

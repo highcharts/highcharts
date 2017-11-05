@@ -23,8 +23,8 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
 
     /**
      * Basic pretty-print SVG, each tag on a new line.
-     * @param   {String} svg The SVG
-     * @returns {String}     Pretty SVG
+     * @param  {String} svg The SVG
+     * @return {String}     Pretty SVG
      */
     function prettyXML(svg) {
         let idx = svg.indexOf('>');
