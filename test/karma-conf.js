@@ -358,11 +358,23 @@ module.exports = function (config) {
                             done();
                         `;
 
+                    } else if (!fs.existsSync(
+                        `./samples/${path}/reference.svg`
+                    )) {
+                        console.log(
+                        'Reference file doesn\'t exist: '.yellow +
+                        ` ./samples/${path}/reference.svg`
+
+                        );
+                        file.path = file.originalPath + '.preprocessed';
+                        done(`QUnit.skip('${path}');`);
+                        return;
+
                     } else {
 
                         try {
 
-                            // Read the reference file into an imageData array
+                            // Check the reference file
                             /*
                             let png = PNG.sync.read(
                                 fs.readFileSync(`./samples/${path}/reference.png`)
