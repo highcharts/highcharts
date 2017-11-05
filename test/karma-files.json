@@ -65,10 +65,13 @@
 	"code/indicators/wma.src.js",
 	"code/indicators/zigzag.src.js",
 	
-	"samples/data/mapdata-1.1.2-gb-all.js",
-	"samples/data/mapdata-1.1.2-bn-all.js",
-	"samples/data/mapdata-1.1.2-ad-all.js",
-	"samples/data/mapdata-1.1.2-europe.js",
+	"samples/data/maps/gb-all.js",
+	"samples/data/maps/bn-all.js",
+	"samples/data/maps/ad-all.js",
+	"samples/data/maps/europe.js",
+	"samples/data/maps/us-all.js",
+	"samples/data/maps/us-small.js",
+	"samples/data/maps/world.js",
 
 	"samples/data/usdeur.js",
 	"samples/data/ohlc.js"

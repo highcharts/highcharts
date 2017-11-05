@@ -245,10 +245,8 @@ module.exports = function (config) {
             'samples/highcharts/demo/sparkline/demo.js',
 
             // Maps
-            'samples/maps/demo/latlon-advanced/demo.js', // us map
             'samples/maps/demo/map-pies/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
-            'samples/maps/demo/us-data-labels/demo.js', // map required
             'samples/maps/demo/data-class-ranges/demo.js', // Google Spreadsheets
             'samples/maps/demo/data-class-two-ranges/demo.js', // Google Spr
 

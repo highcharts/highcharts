@@ -230,14 +230,15 @@ Highcharts.Pointer.prototype = {
 	getChartCoordinatesFromPoint: function (point, inverted) {
 		var series = point.series,
 			xAxis = series.xAxis,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			plotX = pick(point.clientX, point.plotX);
 
 		if (xAxis && yAxis) {
 			return inverted ? {
-				chartX: xAxis.len + xAxis.pos - point.clientX,
+				chartX: xAxis.len + xAxis.pos - plotX,
 				chartY: yAxis.len + yAxis.pos - point.plotY
 			} : {
-				chartX: point.clientX + xAxis.pos,
+				chartX: plotX + xAxis.pos,
 				chartY: point.plotY + yAxis.pos
 			};
 		}
