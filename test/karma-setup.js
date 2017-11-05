@@ -151,25 +151,23 @@ function getSVG(chart) {
  * Compares the image data of two canvases
  * @param  {Array} data1 Pixel data for image1.
  * @param  {Array} data2 Pixel data for image2.
- * @return {Number}      The difference, where 0 is identical.
+ * @return {Number}      The amount of different pixels, where 0 is idenitcal
  */
 function compare(data1, data2) { // eslint-disable-line no-unused-vars
     var i = data1.length,
         diff = 0,
-        // Tune the diff so that identical = 0 and max difference is 100. The
-        // max diff can be tested by comparing a rectangle of fill
-        // rgba(0, 0, 0, 0) against a rectange of fill rgba(255, 255, 255, 1).
-        dividend = 255 * i / 100;
+        pixels = [],
+        pixel;
 
     // loops over all reds, greens, blues and alphas
     while (i--) {
-        diff += Math.abs(data1[i] - data2[i]);
+        pixel = i % 4;
+        if (Math.abs(data1[i] - data2[i]) !== 0 && !pixels[pixel]) {
+            pixels[pixel] = true;
+            diff++;
+        }
     }
-    diff /= dividend;
 
-    if (diff > 0 && diff < 0.005) {
-        diff = 0;
-    }
     return diff;
 }
 
