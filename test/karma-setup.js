@@ -1,5 +1,5 @@
 /* eslint-env browser */
-/* global __karma__, Highcharts, Promise, QUnit */
+/* global Highcharts, Promise, QUnit */
 
 /**
  * This file runs in the browser as setup for the karma tests.
@@ -111,20 +111,6 @@ Highcharts.prepareShot = function (chart) {
         chart.series[0].points[0].onMouseOver();
     }
 };
-
-/**
- * Send a file name to karma through the log, to be picked up by the
- * image-capture reporter.
- * @param  {String} filename The file name
- * @param  {String} data     The data payload
- * @return {void}
- */
-function sendToKarma(filename, data) { // eslint-disable-line no-unused-vars
-    __karma__.log(
-        'imagecapture',
-        [filename + ' ' + data]
-    );
-}
 
 /**
  * Get the SVG of a chart, or the first SVG in the page

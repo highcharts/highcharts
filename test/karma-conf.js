@@ -263,7 +263,7 @@ module.exports = function (config) {
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js' // styled mode, setOptions
         ],
-        reporters: argv.reference ? ['imagecapture', 'progress'] : ['progress'],
+        reporters: ['imagecapture', 'progress'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_WARN,
@@ -339,10 +339,10 @@ module.exports = function (config) {
                             let svg = getSVG(chart);
 
                             if (svg) {
-                                sendToKarma(
-                                    './samples/${path}/reference.svg',
-                                    svg
-                                );
+                                __karma__.info({
+                                    filename: './samples/${path}/reference.svg',
+                                    data: svg
+                                });
                                 assert.ok(
                                     true,
                                     'Reference created for ${path}'

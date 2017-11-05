@@ -1,25 +1,18 @@
 /* eslint-env node,es6 */
 
 /**
- * This reporter captures logs from the browser tests containing image data
- * and writes the image to a PNG on the file system. The payload is passed from
- * the test using __karma__.log.
- *
- * @example
- * // pngImg is a base64 encoded PNG
- * __karma__.log('imagecapture', ['path/to/file.png ' + pngImg])
+ * This reporter captures info from the browser tests containing image data
+ * and writes the image to images on the file system. The payload is passed from
+ * the test using __karma__.info.
  */
 
 const fs = require('fs');
 
 function ImageCaptureReporter( // eslint-disable-line require-jsdoc
-    config,
     baseReporterDecorator,
     emitter
 ) {
     baseReporterDecorator(this);
-
-    this.captured = [];
 
     /**
      * Basic pretty-print SVG, each tag on a new line.
@@ -46,59 +39,23 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
         return svg;
     }
 
-    var origBrowserLog = this.onBrowserLog;
-    this.onBrowserLog = function (browser, log, type) {
-        if (type === 'imagecapture') {
-            if (this.captured) {
-                this.captured.push(
-                    log
-                );
-                let path, data;
-                log = log.replace(/^'/, '').replace(/'$/, '');
-                let split = log.indexOf(' '); // Split on first space
-                path = log.substr(0, split);
-                data = log.substr(split + 1);
+    emitter.on('browser_info', (browser, info) => {
 
-                if (/\.svg$/.test(path)) {
-                    fs.writeFileSync(path, prettyXML(data));
+        let data = info.data;
+        let filename = info.filename;
+        if (/\.svg$/.test(filename)) {
+            fs.writeFileSync(filename, prettyXML(data));
 
-                } else if (/\.png$/.test(path)) {
-                    data = data.replace(/^data:image\/\w+;base64,/, '');
-                    let buf = new Buffer(data, 'base64');
-                    fs.writeFileSync(path, buf);
-                }
-            }
-        } else {
-            origBrowserLog.call(this, browser, log, type);
+        } else if (/\.png$/.test(filename)) {
+            data = data.replace(/^data:image\/\w+;base64,/, '');
+            let buf = new Buffer(data, 'base64');
+            fs.writeFileSync(filename, buf);
         }
-    };
+    });
 
-    /*
-    this.onSpecComplete = function (browser, result) {
-
-        if (!result.success && !result.skipped && this.captured.length) {
-            result.log.push(
-                '\nCaptured logs:\n  ' + this.captured.join('\n')
-            );
-        }
-
-        this.captured = [];
-    };
-    */
-
-    // HACK: Override log notification for the other reporters
-    var self = this;
-    var origBind = emitter.bind;
-    emitter.bind = function (obj) {
-        if (obj !== self) {
-            obj.onBrowserLog = self.onBrowserLog;
-        }
-        return origBind.call(this, obj);
-    };
 }
 
 ImageCaptureReporter.$inject = [
-    'config',
     'baseReporterDecorator',
     'emitter'
 ];
