@@ -1,5 +1,5 @@
 /* eslint-env browser */
-/* global Highcharts, Promise, QUnit */
+/* global __karma__, Highcharts, Promise, QUnit */
 
 /**
  * This file runs in the browser as setup for the karma tests.
@@ -199,14 +199,16 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             if (referenceData && candidateData) {
                 let diff = compare(referenceData, candidateData);
 
-                /* enable the imagecapture reporter for this to work
                 if (diff !== 0) {
-                    sendToKarma(
-                        `./samples/${path}/candidate.svg`,
-                        candidateSVG
-                    );
+                    __karma__.info({
+                        filename: `./samples/${path}/diff.gif`,
+                        frames: [
+                            referenceData,
+                            candidateData
+                        ]
+                    });
                 }
-                */
+
                 resolve(diff);
             }
         }

@@ -9,10 +9,8 @@
 const fs = require('fs');
 
 function ImageCaptureReporter( // eslint-disable-line require-jsdoc
-    baseReporterDecorator,
     emitter
 ) {
-    baseReporterDecorator(this);
 
     /**
      * Basic pretty-print SVG, each tag on a new line.
@@ -39,6 +37,39 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
         return svg;
     }
 
+    /**
+     * Create an animated gif of the reference and the candidata image, in order to
+     * see the differences.
+     * @param  {String} filename
+     *         The file name
+     * @param  {Array}  frames
+     *         The image data of the GIF frames
+     * @return {void}
+     */
+    function createAnimatedGif(filename, frames) {
+
+        var GIFEncoder = require('gifencoder');
+
+        var encoder = new GIFEncoder(300, 200);
+        encoder.start();
+        encoder.setRepeat(0);   // 0 for repeat, -1 for no-repeat
+        encoder.setDelay(500);  // frame delay in ms
+        encoder.setQuality(10); // image quality. 10 is default.
+
+        frames.forEach(frame => {
+            encoder.addFrame(frame);
+        });
+        encoder.finish();
+
+        var buf = encoder.out.getData();
+        fs.writeFile(filename, buf, function (err) {
+            if (err) {
+                throw err;
+            }
+        });
+
+    }
+
     emitter.on('browser_info', (browser, info) => {
 
         let data = info.data;
@@ -50,13 +81,15 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
             data = data.replace(/^data:image\/\w+;base64,/, '');
             let buf = new Buffer(data, 'base64');
             fs.writeFileSync(filename, buf);
+
+        } else if (/\.gif$/.test(filename)) {
+            createAnimatedGif(filename, info.frames);
         }
     });
 
 }
 
 ImageCaptureReporter.$inject = [
-    'baseReporterDecorator',
     'emitter'
 ];
 

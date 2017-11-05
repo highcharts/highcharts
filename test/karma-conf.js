@@ -379,7 +379,9 @@ module.exports = function (config) {
                                         assert.strictEqual(
                                             actual,
                                             0,
-                                            'Different pixels ( debug: http://utils.highcharts.local/samples/#test/${path} )'
+                                            'Different pixels\\n' +
+                                            '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                            '- samples/${path}/diff.gif'
                                         );
                                         done();
                                     })
