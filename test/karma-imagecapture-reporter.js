@@ -18,22 +18,14 @@ function ImageCaptureReporter( // eslint-disable-line require-jsdoc
      * @return {String}     Pretty SVG
      */
     function prettyXML(svg) {
-        let idx = svg.indexOf('>');
-        let lineNo = 0;
-        while (idx !== -1 && lineNo < 500) {
+        svg = svg
+            .replace(/>/g, '>\n')
 
-            // Make sure to not introduce white-space in text and tspans
-            if (
-                svg.substr(idx + 1, 1) === '<' &&
-                svg.substr(idx - 5, 5) !== 'tspan' &&
-                svg.substr(idx - 5, 5) !== 'text'
-            ) {
-                svg = svg.substr(0, idx + 1) + '\n' + svg.substr(idx + 1);
-                lineNo++;
-            }
+            // Don't introduce newlines inside tspans, it will make the text
+            // render differently
+            .replace(/<tspan([^>]*)>\n/g, '<tspan$1>')
+            .replace(/<\/tspan>\n/g, '</tspan>');
 
-            idx = svg.indexOf('>', idx + 1);
-        }
         return svg;
     }
 
