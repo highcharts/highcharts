@@ -27,6 +27,37 @@ QUnit.test('Ticks for a single point.', function (assert) {
         -0.3,
         'single tick and increased extremes for a single point'
     );
+
+    // Must be on init - redraw was fixing the issue
+    chart = Highcharts.chart('container', {
+        series: [{
+            type: 'bar',
+            data: [10]
+        }],
+        chart: {
+            height: 30,
+            inverted: true,
+            spacing: [6, 10, 6, 10]
+        },
+        legend: {
+            enabled: false
+        },
+        title: {
+            text: ''
+        },
+        yAxis: [{
+            visible: false
+        }],
+        xAxis: [{
+            visible: false
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        1,
+        'no doulbed tick for a small plot height (#7339)'
+    );
 });
 
 QUnit.test(

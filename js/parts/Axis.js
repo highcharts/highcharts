@@ -2299,6 +2299,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			// Too dense ticks, keep only the first and last (#4477)
 			if (tickPositions.length > this.len) {
 				tickPositions = [tickPositions[0], tickPositions.pop()];
+				// Reduce doubled value (#7339)
+				if (tickPositions[0] === tickPositions[1]) {
+					tickPositions.length = 1;
+				}
 			}
 
 			this.tickPositions = tickPositions;
