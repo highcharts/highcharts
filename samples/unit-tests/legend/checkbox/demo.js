@@ -82,3 +82,45 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Position checkboxes in navigator after series.update',
+    function (assert) {
+        var chart = new Highcharts.chart('container', {
+
+            chart: {
+                type: 'pie',
+                width: 500
+            },
+
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                y: 30
+            },
+
+            series: [{
+                data: Highcharts.map(new Array(50), Math.random),
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true,
+                showCheckbox: false
+            }]
+
+        });
+
+        chart.legend.scroll(2, false);
+
+        chart.series[0].update({
+            showCheckbox: true
+        });
+
+        var points = chart.series[0].points;
+        assert.ok(
+            parseInt(points[0].checkbox.style.top, 10) < -100,
+            'Check box has scrolled with content'
+        );
+    }
+);

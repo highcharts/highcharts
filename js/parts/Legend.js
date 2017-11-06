@@ -243,7 +243,7 @@ Highcharts.Legend.prototype = {
 	 *
 	 * @private
 	 */
-	positionCheckboxes: function (scrollOffset) {
+	positionCheckboxes: function () {
 		var alignAttr = this.group && this.group.alignAttr,
 			translateY,
 			clipHeight = this.clipHeight || this.legendHeight,
@@ -257,7 +257,7 @@ Highcharts.Legend.prototype = {
 
 				if (checkbox) {
 					top = translateY + titleHeight + checkbox.y +
-						(scrollOffset || 0) + 3;
+						(this.scrollOffset || 0) + 3;
 					css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset +
 							checkbox.x - 20) + 'px',
@@ -266,7 +266,7 @@ Highcharts.Legend.prototype = {
 							clipHeight - 6 ? '' : 'none'
 					});
 				}
-			});
+			}, this);
 		}
 	},
 
@@ -900,8 +900,7 @@ Highcharts.Legend.prototype = {
 			clipHeight = this.clipHeight,
 			navOptions = this.options.navigation,
 			pager = this.pager,
-			padding = this.padding,
-			scrollOffset;
+			padding = this.padding;
 
 		// When resizing while looking at the last page
 		if (currentPage > pageCount) {
@@ -955,14 +954,14 @@ Highcharts.Legend.prototype = {
 				});
 			/*= } =*/
 			
-			scrollOffset = -pages[currentPage - 1] + this.initialItemY;
+			this.scrollOffset = -pages[currentPage - 1] + this.initialItemY;
 
 			this.scrollGroup.animate({
-				translateY: scrollOffset
+				translateY: this.scrollOffset
 			});
 
 			this.currentPage = currentPage;
-			this.positionCheckboxes(scrollOffset);
+			this.positionCheckboxes();
 		}
 
 	}
