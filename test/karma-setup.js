@@ -147,7 +147,7 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 
     // loops over all reds, greens, blues and alphas
     while (i--) {
-        pixel = i % 4;
+        pixel = Math.floor(i / 4);
         if (Math.abs(data1[i] - data2[i]) !== 0 && !pixels[pixel]) {
             pixels[pixel] = true;
             diff++;
@@ -179,7 +179,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 const blob = new Blob([svg], { type: 'image/svg+xml' });
                 const url = DOMURL.createObjectURL(blob);
                 img.onload = function () {
-
+                    ctx.clearRect(0, 0, 300, 200);
                     ctx.drawImage(img, 0, 0, 300, 200);
                     callback(ctx.getImageData(0, 0, 300, 200).data);
                 };
@@ -206,6 +206,10 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                             referenceData,
                             candidateData
                         ]
+                    });
+                    __karma__.info({
+                        filename: `./samples/${path}/candidate.svg`,
+                        data: candidateSVG
                     });
                 }
 
