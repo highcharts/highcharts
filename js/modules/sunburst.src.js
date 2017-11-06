@@ -197,49 +197,6 @@ var getAnimation = function getAnimation(shape, params) {
 	};
 };
 
-var setShapeArgs = function setShapeArgs(parent, parentValues) {
-	var childrenValues = [],
-		// Collect all children which should be included
-		children = grep(parent.children, function (n) {
-			return n.visible;
-		});
-	childrenValues = layoutAlgorithm(parentValues, children);
-	each(children, function (child, index) {
-		var values = childrenValues[index],
-			angle = values.start + ((values.end - values.start) / 2),
-			radius = values.innerR + ((values.r - values.innerR) / 2),
-			isCircle = (
-				values.innerR === 0 &&
-				(values.end - values.start) > 6.28
-			),
-			center = (
-				isCircle ?
-				{ x: values.x, y: values.y } :
-				getEndPoint(values.x, values.y, angle, radius)
-			),
-			val = (
-				child.val ?
-				(
-					child.childrenTotal > child.val ?
-					child.childrenTotal :
-					child.val
-				) :
-				child.childrenTotal
-			);
-		child.shapeArgs = merge(values, {
-			plotX: center.x,
-			plotY: center.y
-		});
-		child.values = merge(values, {
-			val: val
-		});
-		// If node has children, then call method recursively
-		if (child.children.length) {
-			setShapeArgs(child, child.values);
-		}
-	});
-};
-
 var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
 	var drillId,
 		node = point.node,
@@ -550,6 +507,63 @@ var sunburstSeries = {
 		}
 	},
 	pointAttribs: seriesTypes.column.prototype.pointAttribs,
+
+	/*
+	 * Set the shape arguments on the nodes. Recursive from root down.
+	 */
+	setShapeArgs: function (parent, parentValues) {
+		var childrenValues = [],
+			// Collect all children which should be included
+			children = grep(parent.children, function (n) {
+				return n.visible;
+			});
+		childrenValues = layoutAlgorithm(parentValues, children);
+		each(children, function (child, index) {
+			var values = childrenValues[index],
+				angle = values.start + ((values.end - values.start) / 2),
+				radius = values.innerR + ((values.r - values.innerR) / 2),
+				isCircle = (
+					values.innerR === 0 &&
+					(values.end - values.start) > 6.28
+				),
+				center = (
+					isCircle ?
+					{ x: values.x, y: values.y } :
+					getEndPoint(values.x, values.y, angle, radius)
+				),
+				val = (
+					child.val ?
+					(
+						child.childrenTotal > child.val ?
+						child.childrenTotal :
+						child.val
+					) :
+					child.childrenTotal
+				),
+				innerArcFraction = (values.end - values.start) / (2 * Math.PI),
+				perimeter = 2 * Math.PI * values.innerR;
+
+			// The inner arc length is a convenience for data label filters.
+			if (this.points[child.i]) {
+				this.points[child.i].innerArcLength =
+					innerArcFraction * perimeter;
+			}
+
+			child.shapeArgs = merge(values, {
+				plotX: center.x,
+				plotY: center.y
+			});
+			child.values = merge(values, {
+				val: val
+			});
+			// If node has children, then call method recursively
+			if (child.children.length) {
+				this.setShapeArgs(child, child.values);
+			}
+		}, this);
+	},
+
+
 	translate: function translate() {
 		var series = this,
 			options = series.options,
@@ -603,7 +617,7 @@ var sunburstSeries = {
 			x: positions[0],
 			y: positions[1]
 		};
-		setShapeArgs(nodeTop, values);
+		this.setShapeArgs(nodeTop, values);
 	},
 
 	/**
