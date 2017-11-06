@@ -313,7 +313,10 @@ module.exports = function (config) {
                     js = js.replace('setInterval', 'Highcharts.noop');
 
                     // Reset global options
-                    let reset = js.indexOf('Highcharts.setOptions') === -1 ?
+                    let reset = (
+                            js.indexOf('Highcharts.setOptions') === -1 &&
+                            js.indexOf('Highcharts.getOptions') === -1
+                        ) ?
                         '' :
                         `
                         Highcharts.setOptions(
