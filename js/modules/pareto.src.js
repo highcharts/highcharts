@@ -111,6 +111,14 @@ seriesType('pareto', 'line', {
  * @apioption series.pareto
  */
 
+/**
+ * An integer identifying the index to use for the base series, or a string
+ * representing the id of the series.
+ *
+ * @type {Number|String}
+ * @default undefined
+ * @apioption series.pareto.baseSeries
+ */
 
 /**
  * An array of data points for the series. For the `pareto` series type,
