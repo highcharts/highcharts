@@ -71,6 +71,10 @@ QUnit.test('TouchPointer events', function (assert) {
         ],
         backups = {};
 
+    if (Highcharts.unbindDocumentTouchEnd) {
+        Highcharts.unbindDocumentTouchEnd = Highcharts.unbindDocumentTouchEnd();
+    }
+
     // Listen to internal functions
     methods.forEach(function (fn) {
         backups[fn] = Highcharts.Pointer.prototype[fn];
