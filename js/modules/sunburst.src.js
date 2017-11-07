@@ -436,7 +436,6 @@ var sunburstSeries = {
 				level = levelMap[node.levelDynamic],
 				shapeExisting = point.shapeExisting || {},
 				shape = node.shapeArgs || {},
-				attrStyle = series.pointAttribs(point, point.selected && 'select'),
 				animationInfo,
 				onComplete,
 				visible = !!(node.visible && node.shapeArgs);
@@ -482,7 +481,13 @@ var sunburstSeries = {
 			}
 			point.draw({
 				animate: animationInfo.to,
-				attr: extend(animationInfo.from, attrStyle),
+				attr: extend(
+					animationInfo.from,
+					series.pointAttribs && series.pointAttribs(
+						point,
+						point.selected && 'select'
+					)
+				),
 				onComplete: onComplete,
 				group: group,
 				renderer: renderer,
@@ -506,7 +511,9 @@ var sunburstSeries = {
 			Series.prototype.drawDataLabels.call(series);
 		}
 	},
+	/*= if (build.classic) { =*/
 	pointAttribs: seriesTypes.column.prototype.pointAttribs,
+	/*= } =*/
 
 	/*
 	 * Set the shape arguments on the nodes. Recursive from root down.
