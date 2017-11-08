@@ -441,7 +441,7 @@ Highcharts.Chart.prototype.fileDownload = function (href, extension, content) {
 
 	if (this.options.exporting.filename) {
 		name = this.options.exporting.filename;
-	} else if (this.title) {
+	} else if (this.title && this.title.textStr) {
 		name = this.title.textStr.replace(/ /g, '-').toLowerCase();
 	} else {
 		name = 'chart';
