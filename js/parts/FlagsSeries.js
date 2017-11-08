@@ -455,15 +455,17 @@ symbols.flag = function (x, y, w, h, options) {
 	var anchorX = (options && options.anchorX) || x,
 		anchorY = (options &&  options.anchorY) || y;
 
-	return [
-		'M', anchorX, anchorY,
-		'L', x, y + h,
-		x, y,
-		x + w, y,
-		x + w, y + h,
-		x, y + h,
-		'Z'
-	];
+	return symbols.circle(anchorX - 1, anchorY - 1, 2, 2).concat(
+		[
+			'M', anchorX, anchorY,
+			'L', x, y + h,
+			x, y,
+			x + w, y,
+			x + w, y + h,
+			x, y + h,
+			'Z'
+		]
+	);
 };
 
 // create the circlepin and squarepin icons with anchor
@@ -489,11 +491,14 @@ each(['circle', 'square'], function (shape) {
 			labelTopOrBottomY = (y > anchorY) ? y : y + h;
 			path.push(
 				'M',
-				shape === 'circle' ? path[4] : path[1] + path[4] / 2,
+				shape === 'circle' ? path[1] - path[4] : path[1] + path[4] / 2,
 				labelTopOrBottomY,
 				'L',
 				anchorX,
 				anchorY
+			);
+			path = path.concat(
+				symbols.circle(anchorX - 1, anchorY - 1, 2, 2)
 			);
 		}
 
