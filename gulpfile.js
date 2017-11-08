@@ -147,7 +147,7 @@ const scripts = () => {
 const buildESModules = () => {
     const {
         buildModules
-    } = require('highcharts-assembler/src/build.js');
+    } = require('../highcharts-assembler/src/build.js');
     buildModules({
         base: './js/',
         output: './code/',
@@ -423,10 +423,13 @@ const compile = (files, sourceFolder) => {
         files.forEach(path => {
             const closureCompiler = require('google-closure-compiler-js');
             // const fs = require('fs');
-            const U = require('./assembler/utilities.js');
+            const {
+                getFile,
+                writeFile
+            } = require('highcharts-assembler/src/utilities.js');
             const sourcePath = sourceFolder + path;
             const outputPath = sourcePath.replace('.src.js', '.js');
-            const src = U.getFile(sourcePath);
+            const src = getFile(sourcePath);
             const getErrorMessage = (e) => {
                 return [
                     'Compile error in file: ' + path,
@@ -452,9 +455,9 @@ const compile = (files, sourceFolder) => {
                 }).join('\n');
                 reject(msg);
             } else {
-                U.writeFile(outputPath, out.compiledCode);
+                writeFile(outputPath, out.compiledCode);
                 if (createSourceMap) {
-                    U.writeFile(outputPath + '.map', out.sourceMap);
+                    writeFile(outputPath + '.map', out.sourceMap);
                 }
                 // @todo add filesize information
                 console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
@@ -468,9 +471,11 @@ const compile = (files, sourceFolder) => {
  * Compile the JS files in the /code folder
  */
 const compileScripts = () => {
-    const B = require('./assembler/build.js');
+    const {
+        getFilesInFolder
+    } = require('highcharts-assembler/src/build.js');
     const sourceFolder = './code/';
-    const files = B.getFilesInFolder(sourceFolder, true, '').filter(path => path.endsWith('.src.js'));
+    const files = getFilesInFolder(sourceFolder, true, '').filter(path => path.endsWith('.src.js'));
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
@@ -488,30 +493,41 @@ const compileLib = () => {
 };
 
 const cleanCode = () => {
-    const B = require('./assembler/build.js');
-    const U = require('./assembler/utilities.js');
+    const {
+        getFilesInFolder
+    } = require('highcharts-assembler/src/build.js');
+    const {
+        removeFile
+    } = require('highcharts-assembler/src/utilities.js');
     const codeFolder = './code/';
-    const files = B.getFilesInFolder(codeFolder, true, '');
+    const files = getFilesInFolder(codeFolder, true, '');
     const keep = ['.gitignore', '.htaccess', 'css/readme.md', 'js/modules/readme.md', 'js/readme.md', 'modules/readme.md', 'readme.txt'];
     const promises = files
         .filter(file => keep.indexOf(file) === -1)
-        .map(file => U.removeFile(codeFolder + file));
+        .map(file => removeFile(codeFolder + file));
     return Promise.all(promises)
         .then(() => console.log('Successfully removed code directory.'));
 };
 
 const cleanDist = () => {
-    const U = require('./assembler/utilities.js');
-    return U.removeDirectory('./build/dist').then(() => {
+    const {
+        removeDirectory
+    } = require('highcharts-assembler/src/utilities.js');
+    return removeDirectory('./build/dist').then(() => {
         console.log('Successfully removed dist directory.');
     }).catch(console.log);
 };
 
 const copyFile = (source, target) => new Promise((resolve, reject) => {
     const fs = require('fs');
-    const U = require('./assembler/utilities.js');
-    const directory = U.folder(target);
-    U.createDirectory(directory);
+    const {
+        dirname
+    } = require('path');
+    const {
+        createDirectory
+    } = require('highcharts-assembler/utilities.js');
+    const directory = dirname(target);
+    createDirectory(directory);
     let read = fs.createReadStream(source);
     let write = fs.createWriteStream(target);
     const onError = (err) => {
@@ -526,7 +542,9 @@ const copyFile = (source, target) => new Promise((resolve, reject) => {
 });
 
 const copyToDist = () => {
-    const getFilesInFolder = require('./assembler/build.js').getFilesInFolder;
+    const {
+        getFilesInFolder
+    } = require('highcharts-assembler/src/build.js');
     const sourceFolder = 'code/';
     const distFolder = 'build/dist/';
     // Additional files to include in distribution.
@@ -613,18 +631,24 @@ const copyToDist = () => {
 };
 
 const getBuildProperties = () => {
-    const U = require('./assembler/utilities.js');
-    const D = require('./assembler/dependencies.js');
-    const buildProperties = U.getFile('./build.properties');
+    const {
+        getFile
+    } = require('highcharts-assembler/utilities.js');
+    const {
+        regexGetCapture
+    } = require('highcharts-assembler/dependencies.js');
+    const buildProperties = getFile('./build.properties');
     // @todo Get rid of build.properties and perhaps use package.json in stead.
     return {
-        date: D.regexGetCapture(/highcharts\.product\.date=(.+)/, buildProperties),
-        version: D.regexGetCapture(/highcharts\.product\.version=(.+)/, buildProperties)
+        date: regexGetCapture(/highcharts\.product\.date=(.+)/, buildProperties),
+        version: regexGetCapture(/highcharts\.product\.version=(.+)/, buildProperties)
     };
 };
 
 const createProductJS = () => {
-    const U = require('./assembler/utilities.js');
+    const {
+        writeFile
+    } = require('highcharts-assembler/src/utilities.js');
     const path = './build/dist/products.js';
     const buildProperties = getBuildProperties();
     // @todo Add reasonable defaults
@@ -644,7 +668,7 @@ const createProductJS = () => {
         "nr": "${version}"
     }
 }`;
-    U.writeFile(path, content);
+    writeFile(path, content);
 };
 
 /**
@@ -787,7 +811,9 @@ const filesize = () => {
         .then(() => compile(files, sourceFolder))
         .then(() => {
             return files.reduce((o, n) => {
-                const getFile = require('./assembler/utilities.js').getFile;
+                const {
+                    getFile
+                } = require('highcharts-assembler/src/utilities.js');
                 const filename = n.replace('.src.js', '.js');
                 const compiled = getFile(sourceFolder + filename);
                 const content = getFile(sourceFolder + n);
