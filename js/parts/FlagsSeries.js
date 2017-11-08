@@ -280,10 +280,11 @@ seriesType('flags', 'column', {
 			point,
 			graphic,
 			stackIndex,
-			anchorX,
 			anchorY,
 			outsideRight,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			boxesMap = {},
+			boxes = [];
 
 		i = points.length;
 		while (i--) {
@@ -297,7 +298,7 @@ seriesType('flags', 'column', {
 			if (plotY !== undefined) {
 				plotY = point.plotY + optionsY - (stackIndex !== undefined && stackIndex * options.stackDistance);
 			}
-			anchorX = stackIndex ? undefined : point.plotX; // skip connectors for higher level stacked points
+			point.anchorX = stackIndex ? undefined : point.plotX; // skip connectors for higher level stacked points
 			anchorY = stackIndex ? undefined : point.plotY;
 
 			graphic = point.graphic;
@@ -346,11 +347,23 @@ seriesType('flags', 'column', {
 				// Plant the flag
 				graphic.attr({
 					text: point.options.title || options.title || 'A',
-					x: plotX,
 					y: plotY,
-					anchorX: anchorX,
 					anchorY: anchorY
 				});
+
+				// Rig for the distribute function
+				if (!boxesMap[point.plotX]) {
+					boxesMap[point.plotX] = {
+						size: graphic.width,
+						target: plotX + graphic.width / 2,
+						anchorX: plotX
+					};
+				} else {
+					boxesMap[point.plotX].size = Math.max(
+						boxesMap[point.plotX].size,
+						graphic.width
+					);
+				}
 
 				// Set the tooltip anchor position
 				point.tooltipPos = chart.inverted ? 
@@ -362,6 +375,24 @@ seriesType('flags', 'column', {
 			}
 
 		}
+		
+		H.objectEach(boxesMap, function (box) {
+			box.plotX = box.anchorX;
+			boxes.push(box);
+		});
+
+		H.distribute(boxes, this.xAxis.len);
+
+		each(points, function (point) {
+			var box = point.graphic && boxesMap[point.plotX];
+			if (box) {
+				point.graphic.attr({
+					x: box.pos,
+					anchorX: point.anchorX
+				});
+
+			}
+		});
 
 		// Might be a mix of SVG and HTML and we need events for both (#6303)
 		if (options.useHTML) {
@@ -456,7 +487,14 @@ each(['circle', 'square'], function (shape) {
 			// if the label is below the anchor, draw the connecting line from the top edge of the label
 			// otherwise start drawing from the bottom edge
 			labelTopOrBottomY = (y > anchorY) ? y : y + h;
-			path.push('M', anchorX, labelTopOrBottomY, 'L', anchorX, anchorY);
+			path.push(
+				'M',
+				shape === 'circle' ? path[4] : path[1] + path[4] / 2,
+				labelTopOrBottomY,
+				'L',
+				anchorX,
+				anchorY
+			);
 		}
 
 		return path;
