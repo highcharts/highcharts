@@ -187,7 +187,14 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				y: -2
 			},
 			opposite: opposite,
+
+			/**
+			 * @default {highcharts} true
+			 * @default {highstock} false
+			 * @apioption yAxis.showLastLabel
+			 */
 			showLastLabel: false,
+
 			title: {
 				text: null
 			}
