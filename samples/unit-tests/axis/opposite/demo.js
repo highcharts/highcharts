@@ -1,17 +1,12 @@
 QUnit.test('yAxis should be on the left side when opposite is false (#3802)', function (assert) {
 
-    Highcharts.setOptions({
-        yAxis: {
-            opposite: false,
-            lineColor: 'red',
-            lineWidth: 2
-        }
-    });
-
     var chart = $('#container').highcharts('StockChart', {
         series: [{
             data: [1, 20, 5, 1, 11]
-        }]
+        }],
+        yAxis: {
+            opposite: false
+        }
     }).highcharts();
 
     assert.strictEqual(
