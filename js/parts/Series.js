@@ -3591,7 +3591,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		var series = this,
 			points = series.points,
 			chart = series.chart,
-			plotY,
 			i,
 			point,
 			symbol,
@@ -3616,7 +3615,6 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			for (i = 0; i < points.length; i++) {
 				point = points[i];
-				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				hasPointMarker = !!point.marker;
@@ -3624,7 +3622,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				isInside = point.isInside;
 
 				// only draw the point if y is defined
-				if (enabled && isNumber(plotY) && point.y !== null) {
+				if (enabled && !point.isNull) {
 
 					// Shortcuts
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
