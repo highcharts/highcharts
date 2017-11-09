@@ -253,3 +253,41 @@ QUnit.test(
 
     }
 );
+
+QUnit.test('X data with null and negative values (#7369)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        series: [{
+            data: [{
+                x: null,
+                y: 95
+            }, {
+                x: 100,
+                y: 102.9
+            }, {
+                x: -80.8,
+                y: 91.5
+            }]
+        }]
+
+    });
+
+    assert.ok(
+        Highcharts.isNumber(chart.xAxis[0].min),
+        'Valid X axis min'
+    );
+    assert.ok(
+        Highcharts.isNumber(chart.xAxis[0].max),
+        'Valid X axis max'
+    );
+    assert.ok(
+        Highcharts.isNumber(chart.yAxis[0].min),
+        'Valid Y axis min'
+    );
+    assert.ok(
+        Highcharts.isNumber(chart.yAxis[0].max),
+        'Valid Y axis max'
+    );
+});

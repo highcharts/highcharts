@@ -1245,26 +1245,25 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 						// do this after we have already found seriesDataMin
 						// because in most cases all data is valid. #5234.
 						seriesDataMin = arrayMin(xData);
+						seriesDataMax = arrayMax(xData);
+						
 						if (
 							!isNumber(seriesDataMin) &&
 							!(seriesDataMin instanceof Date) // #5010
 						) {
-							xData = grep(xData, function (x) {
-								return isNumber(x);
-							});
+							xData = grep(xData, isNumber);
 							// Do it again with valid data
 							seriesDataMin = arrayMin(xData);
 						}
 
 						axis.dataMin = Math.min(
-							pick(axis.dataMin, xData[0]),
+							pick(axis.dataMin, xData[0], seriesDataMin),
 							seriesDataMin
 						);
 						axis.dataMax = Math.max(
-							pick(axis.dataMax, xData[0]),
-							arrayMax(xData)
+							pick(axis.dataMax, xData[0], seriesDataMax),
+							seriesDataMax
 						);
-						
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle
