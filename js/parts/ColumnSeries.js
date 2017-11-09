@@ -594,7 +594,11 @@ seriesType('column', 'line', {
 
 				// Reverse zeros if there's no positive value in the series
 				// in visible range (#7046)
-				if (point.y === 0 && series.dataMax <= 0) {
+				if (
+					point.y === threshold &&
+					series.dataMax <= threshold &&
+					yAxis.min < threshold // and if there's room for it (#7311)
+				) {
 					up = !up;
 				}
 
