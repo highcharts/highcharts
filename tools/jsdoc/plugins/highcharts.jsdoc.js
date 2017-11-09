@@ -14,14 +14,13 @@ var exec = require('child_process').execSync;
 var logger = require('jsdoc/util/logger');
 var Doclet = require('jsdoc/doclet.js').Doclet;
 var fs = require('fs');
-var proc = require(hcRoot + '/assembler/process.js');
+var getPalette = require('highcharts-assembler/src/process.js').getPalette;
 var options = {
     _meta: {
         commit: '',
         branch: ''
     }
 };
-
 
 function getLocation(option) {
     return {
@@ -520,7 +519,7 @@ exports.astNodeVisitor = {
 
 exports.handlers = {
     beforeParse: function (e) {
-        var palette = proc.getPalette(hcRoot + '/css/highcharts.scss');
+        var palette = getPalette(hcRoot + '/css/highcharts.scss');
 
         Object.keys(palette).forEach(function (key) {
             var reg = new RegExp('\\$\\{palette\\.' + key + '\\}', 'g');
