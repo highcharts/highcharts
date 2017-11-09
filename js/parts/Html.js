@@ -17,6 +17,7 @@ var attr = H.attr,
 	isFirefox = H.isFirefox,
 	isMS = H.isMS,
 	isWebKit = H.isWebKit,
+	pick = H.pick,
 	pInt = H.pInt,
 	SVGElement = H.SVGElement,
 	SVGRenderer = H.SVGRenderer,
@@ -264,7 +265,8 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 			if (value !== element.innerHTML) {
 				delete this.bBox;
 			}
-			element.innerHTML = this.textStr = value;
+			this.textStr = value;
+			element.innerHTML = pick(value, '');
 			wrapper.htmlUpdateTransform();
 		};
 
