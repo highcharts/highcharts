@@ -13,13 +13,15 @@ var glob = typeof win === 'undefined' ? window : win,
 	userAgent = (glob.navigator && glob.navigator.userAgent) || '',
 	svg = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera,
-	isFirefox = /Firefox/.test(userAgent);
+	isFirefox = /Firefox/.test(userAgent),
+	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38;
 
 var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
 	product: '@product.name@',
 	version: '@product.version@',
 	deg2rad: Math.PI * 2 / 360,
 	doc: doc,
+	hasBidiBug: hasBidiBug,
 	hasTouch: doc && doc.documentElement.ontouchstart !== undefined,
 	isMS: isMS,
 	isWebKit: /AppleWebKit/.test(userAgent),
