@@ -243,20 +243,18 @@ H.Axis.prototype.panStep = function (direction, granularity) {
 // highlighted point.
 H.Point.prototype.highlight = function () {
 	var chart = this.series.chart;
-	if (this.graphic && this.graphic.element.focus) {
-		this.graphic.element.focus();
-	}
 	if (!this.isNull) {
-		this.onMouseOver(); // Show the hover marker
-		// Show the tooltip
-		if (chart.tooltip) {
-			chart.tooltip.refresh(chart.tooltip.shared ? [this] : this);
-		}
+		this.onMouseOver(); // Show the hover marker and tooltip
 	} else {
 		if (chart.tooltip) {
 			chart.tooltip.hide(0);
 		}
 		// Don't call blur on the element, as it messes up the chart div's focus
+	}
+	// We focus after calling onMouseOver because the state change can change
+	// z-index and mess up the element.
+	if (this.graphic && this.graphic.element.focus) {
+		this.graphic.element.focus();
 	}
 	chart.highlightedPoint = this;
 	return this;
