@@ -3,7 +3,8 @@
 /* global Highcharts */
 
 /*
-Experimental script for visual test.
+Experimental script for visual test. This script is as of 2017-11-10 replaced
+with functionality in karma and is not in use.
 
 @example
 From root:
@@ -120,7 +121,7 @@ let passes = 0;
 
 /**
  * Function to run in the page context before running the tests.
- * @returns {void}
+ * @return {void}
  */
 function beforeAll() {
     const randomValues = [0.14102989272214472, 0.0351817375048995,
@@ -216,7 +217,7 @@ function beforeAll() {
 
 /**
  * Runs before each sample is evaluated.
- * @returns {void}
+ * @return {void}
  */
 function beforeEach() {
     Math.randomCursor = 0;
@@ -225,10 +226,10 @@ function beforeEach() {
 
 /**
  * Runs after each sample is evaluated.
- * @param   {Boolean} resetOptions
- *          Whether to reset to default options after this test. Only necessary
- *          when the sample runs `Highcharts.setOptions`.
- * @returns {void}
+ * @param  {Boolean} resetOptions
+ *         Whether to reset to default options after this test. Only necessary
+ *         when the sample runs `Highcharts.setOptions`.
+ * @return {void}
  */
 function afterEach(resetOptions) {
 
@@ -246,7 +247,7 @@ function afterEach(resetOptions) {
 
 /**
  * Create the page HTML.
- * @returns {String} The HTML
+ * @return {String} The HTML
  */
 function buildContent() {
     let html = `<html>
@@ -271,7 +272,7 @@ function buildContent() {
  *                  The length we want
  * @param {Boolean} left
  *                  Whether to pad on the left side (or right)
- * @returns {String} Padded string
+ * @return {String} Padded string
  */
 function pad(s, length, left) {
     var padding;
@@ -289,8 +290,8 @@ function pad(s, length, left) {
 
 /**
  * Get the PNG from a container div containing SVG.
- * @param   {Object} container Div element
- * @returns {Promise} The PNG stream
+ * @param  {Object} container Div element
+ * @return {Promise} The PNG stream
  */
 function getPNG() {
     return new Promise((resolve) => {
@@ -344,10 +345,10 @@ function getPNG() {
 
 /**
  * Look for $.getJSON calls in the demos and add hook to local sample data.
- * @param   {String} js
- *          The contents of demo.js
- * @returns {String}
- *          JavaScript extended with the sample data.
+ * @param  {String} js
+ *         The contents of demo.js
+ * @return {String}
+ *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
     const match = js.match(/\$\.getJSON\('([^']+)/);
@@ -378,7 +379,7 @@ function resolveJSON(js) {
  * Diff two PNG images using pixelmatch
  * @param  {String} path1 First image
  * @param  {String} path2 Second image
- * @returns {Promise} The promise
+ * @return {Promise} The promise
  */
 async function diff(path1, path2) {
     return new Promise((resolve) => {
@@ -417,7 +418,7 @@ async function diff(path1, path2) {
  * see the differences.
  * @param  {String} path1 The path to the reference image
  * @param  {String} path2 The path to the candidate image
- * @returns {void}
+ * @return {void}
  */
 function createAnimatedGif(path1, path2) {
 
@@ -459,8 +460,8 @@ function createAnimatedGif(path1, path2) {
 
 /**
  * Get the contents of demo.html and strip out JavaScript tags.
- * @param   {String} path The sample path
- * @returns {String}      The stripped HTML
+ * @param  {String} path The sample path
+ * @return {String}      The stripped HTML
  */
 function getHTML(path) {
     let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
@@ -475,7 +476,7 @@ function getHTML(path) {
 
 /**
  * The main async runner
- * @returns {void}
+ * @return {void}
  */
 async function run() {
     const browser = await puppeteer.launch();
