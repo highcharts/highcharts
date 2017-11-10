@@ -19,7 +19,8 @@ QUnit.test('dataGrouping for area range', function (assert) {
                     [2, 4, 5],
                     [3, 6, 7],
                     [4, 8, 9],
-                    [5, 10, 11]
+                    [5, 10, 11],
+                    [50, 10, 11]
                 ],
                 dataGrouping: {
                     approximation: 'averages'
@@ -31,7 +32,8 @@ QUnit.test('dataGrouping for area range', function (assert) {
                     [2, 4],
                     [3, 6],
                     [4, 8],
-                    [5, 10]
+                    [5, 10],
+                    [50, 10]
                 ]
             }, {
                 data: [
@@ -40,7 +42,8 @@ QUnit.test('dataGrouping for area range', function (assert) {
                     [2, 5],
                     [3, 7],
                     [4, 9],
-                    [5, 11]
+                    [5, 11],
+                    [50, 11]
                 ]
             }]
         }),
@@ -50,5 +53,10 @@ QUnit.test('dataGrouping for area range', function (assert) {
         rangePoint.plotLow === chart.series[1].points[1].plotY &&
             rangePoint.plotHigh === chart.series[2].points[1].plotY,
         'approximations.averages() used successfully (#5479)'
+    );
+
+    assert.ok(
+        chart.series[0].points.length === chart.series[1].points.length,
+        'approximations.averages() returns undefined if needed (#7377)'
     );
 });

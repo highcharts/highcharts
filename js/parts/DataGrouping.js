@@ -349,7 +349,9 @@ var seriesProto = Series.prototype,
 				ret.push(approximations.average(arr));
 			});
 
-			return ret;
+			// Return undefined when first elem. is undefined and let
+			// sum method handle null (#7377)
+			return ret[0] === undefined ? undefined : ret;
 		},
 		open: function (arr) {
 			return arr.length ? arr[0] : (arr.hasNulls ? null : undefined);
