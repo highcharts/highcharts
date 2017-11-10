@@ -826,6 +826,7 @@ Navigator.prototype = {
 	 * @param {Number} pxMax Pixel value maximum
 	 */
 	render: function (min, max, pxMin, pxMax) {
+
 		var navigator = this,
 			chart = navigator.chart,
 			navigatorWidth,
@@ -858,7 +859,7 @@ Navigator.prototype = {
 			// it. For example hidden series, but visible navigator (#6022).
 			if (rendered) {
 				pxMin = 0;
-				pxMax = xAxis.width;
+				pxMax = pick(xAxis.width, scrollbarXAxis.width);
 			} else {
 				return;
 			}
