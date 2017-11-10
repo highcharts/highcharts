@@ -14,9 +14,11 @@ const argv = require('yargs').argv;
  */
 const getProductVersion = () => {
     const fs = require('fs');
-    const D = require('./assembler/dependencies.js');
+    const {
+        regexGetCapture
+    } = require('highcharts-assembler/src/dependencies.js');
     const properties = fs.readFileSync('./build.properties', 'utf8');
-    return D.regexGetCapture(/product\.version=(.+)/, properties);
+    return regexGetCapture(/product\.version=(.+)/, properties);
 };
 
 /**
@@ -26,7 +28,9 @@ const getProductVersion = () => {
  * @return {Object} Object containing all fileOptions
  */
 const getFileOptions = (base) => {
-    const B = require('./assembler/build.js');
+    const {
+        getFilesInFolder
+    } = require('highcharts-assembler/src/build.js');
     const DS = '[\\\\\\\/]';
     const NOTDS = '[^\\\\\\\/]';
     const SINGLEDS = DS + NOTDS; // Regex: Single directory seperator
@@ -71,7 +75,7 @@ const getFileOptions = (base) => {
     };
 
     // Modules should not be standalone, and they should exclude all parts files.
-    const fileOptions = B.getFilesInFolder(base, true, '')
+    const fileOptions = getFilesInFolder(base, true, '')
         .reduce((obj, file) => {
             if (file.indexOf('modules') > -1 || file.indexOf('themes') > -1 || file.indexOf('indicators') > -1) {
                 obj[file] = {
@@ -116,7 +120,7 @@ const getFileOptions = (base) => {
  * @return undefined
  */
 const scripts = () => {
-    const build = require('./assembler/build').build;
+    const build = require('highcharts-assembler');
     // const argv = require('yargs').argv; Already declared in the upper scope
     const files = (argv.file) ? argv.file.split(',') : null;
     const type = (argv.type) ? argv.type : 'both';
@@ -140,18 +144,22 @@ const scripts = () => {
  * Creates a set of ES6-modules which is distributable.
  * @return {undefined}
  */
-const buildModules = () => {
-    const B = require('./assembler/build');
-    B.buildModules({
+const buildESModules = () => {
+    const {
+        buildModules
+    } = require('highcharts-assembler/src/build.js');
+    buildModules({
         base: './js/',
-        output: './code/modules/',
+        output: './code/',
         type: 'both'
     });
 };
 
 const styles = () => {
     const sass = require('node-sass');
-    const U = require('./assembler/utilities.js');
+    const {
+        writeFile
+    } = require('highcharts-assembler/src/utilities.js');
     const fileName = 'highcharts';
     return new Promise((resolve, reject) => {
         sass.render({
@@ -162,7 +170,7 @@ const styles = () => {
                 console.error(err);
                 reject(err);
             } else {
-                U.writeFile('./code/css/' + fileName + '.css', result.css);
+                writeFile('./code/css/' + fileName + '.css', result.css);
                 resolve();
             }
         });
@@ -853,9 +861,10 @@ const assembleSample = (template, content) => {
 };
 
 const createExamples = (title, samplesFolder, output) => {
-    const U = require('./assembler/utilities.js');
-    const getFile = U.getFile;
-    const writeFile = U.writeFile;
+    const {
+        getFile,
+        writeFile
+    } = require('highcharts-assembler/src/utilities.js');
     const template = getFile('samples/template-example.htm');
     const samples = getDirectories(samplesFolder);
     const convertURLToLocal = str => {
@@ -887,7 +896,9 @@ const createExamples = (title, samplesFolder, output) => {
 };
 
 const copyFolder = (input, output) => {
-    const getFilesInFolder = require('./assembler/build.js').getFilesInFolder;
+    const {
+        getFilesInFolder
+    } = require('highcharts-assembler/src/build.js');
     const files = getFilesInFolder(input);
     const promises = files.map(file => copyFile(input + file, output + file));
     return Promise.all(promises)
@@ -1033,8 +1044,12 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
 };
 
 const uploadAPIDocs = () => {
-    const B = require('./assembler/build.js');
-    const U = require('./assembler/utilities.js');
+    const {
+        getFilesInFolder
+    } = require('highcharts-assembler/src/build.js');
+    const {
+        getFile
+    } = require('highcharts-assembler/src/utilities.js');
     const storage = require('./tools/jsdoc/storage/cdn.storage');
     const sourceFolder = './build/api/';
     const mimeType = {
@@ -1043,12 +1058,12 @@ const uploadAPIDocs = () => {
         'js': 'text/javascript',
         'json': 'application/json'
     };
-    const files = B.getFilesInFolder(sourceFolder, true, '');
+    const files = getFilesInFolder(sourceFolder, true, '');
     const cdn = storage.strategy.s3({
         Bucket: 'api-docs-bucket.highcharts.com'
     });
     const promises = files.map((fileName) => {
-        const content = U.getFile(sourceFolder + fileName);
+        const content = getFile(sourceFolder + fileName);
         const fileType = fileName.split('.').pop();
         return storage.push(cdn, fileName, content, mimeType[fileType])
             .then(() => {
@@ -1154,7 +1169,7 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
-gulp.task('build-modules', buildModules);
+gulp.task('build-modules', buildESModules);
 gulp.task('lint', lint);
 gulp.task('lint-samples', lintSamples);
 gulp.task('compile', compileScripts);

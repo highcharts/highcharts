@@ -1397,22 +1397,11 @@ Highcharts.chart('container', {
         allowDrillToNode: true,
         cursor: 'pointer',
         dataLabels: {
-            /**
-             * A custom formatter that returns the name only if the inner arc
-             * is longer than a certain pixel size, so the shape has place for
-             * the label.
-             */
-            formatter: function () {
-                var shape = this.point.node.shapeArgs;
-
-                var innerArcFraction = (shape.end - shape.start) / (2 * Math.PI);
-                var perimeter = 2 * Math.PI * shape.innerR;
-
-                var innerArcPixels = innerArcFraction * perimeter;
-
-                if (innerArcPixels > 16) {
-                    return this.point.name;
-                }
+            format: '{point.name}',
+            filter: {
+                property: 'innerArcLength',
+                operator: '>',
+                value: 16
             }
         },
         levels: [{

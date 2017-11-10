@@ -34,6 +34,9 @@ var draw = function draw(params) {
 			}
 		});
 	}
+	if (graphic) {
+		graphic.addClass(point.getClassName(), true);
+	}
 };
 
 export default draw;

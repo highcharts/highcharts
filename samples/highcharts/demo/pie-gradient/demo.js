@@ -48,7 +48,7 @@ Highcharts.chart('container', {
     series: [{
         name: 'Brands',
         data: [
-            { name: 'Microsoft Internet Explorer', y: 56.33 },
+            { name: 'IE', y: 56.33 },
             {
                 name: 'Chrome',
                 y: 24.03,
@@ -56,8 +56,9 @@ Highcharts.chart('container', {
                 selected: true
             },
             { name: 'Firefox', y: 10.38 },
-            { name: 'Safari', y: 4.77 }, { name: 'Opera', y: 0.91 },
-            { name: 'Proprietary or Undetectable', y: 0.2 }
+            { name: 'Safari', y: 4.77 },
+            { name: 'Opera', y: 0.91 },
+            { name: 'Other', y: 0.2 }
         ]
     }]
 });

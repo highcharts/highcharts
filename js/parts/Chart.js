@@ -1708,7 +1708,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Record preliminary dimensions for later comparison
 		tempWidth = chart.plotWidth;
-		tempHeight = chart.plotHeight = chart.plotHeight - 21; // 21 is the most common correction for X axis labels
+		// 21 is the most common correction for X axis labels
+		// use Math.max to prevent negative plotHeight
+		tempHeight = chart.plotHeight = Math.max(chart.plotHeight - 21, 0);
 
 		// Get margins by pre-rendering axes
 		each(axes, function (axis) {

@@ -125,12 +125,7 @@ H.initCanvasBoost = function () {
 					}
 				};
 
-				target.boostClipRect = chart.renderer.clipRect(
-					chart.plotLeft,
-					chart.plotTop,
-					chart.plotWidth,
-					chart.chartHeight
-				);
+				target.boostClipRect = chart.renderer.clipRect();
 
 				target.renderTarget.clip(target.boostClipRect);
 
@@ -155,12 +150,7 @@ H.initCanvasBoost = function () {
 				href: ''
 			});
 
-			target.boostClipRect.attr({
-				x: chart.plotLeft,
-				y: chart.plotTop,
-				width: chart.plotWidth,
-				height: chart.chartHeight
-			});
+			target.boostClipRect.attr(chart.getBoostClipRect(target));
 
 			return ctx;
 		},

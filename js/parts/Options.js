@@ -1340,11 +1340,9 @@ H.defaultOptions = {
 		 * 
 		 * @type {CSSObject}
 		 * @sample {highcharts} highcharts/title/style/ Custom color and weight
-		 * @sample {highcharts} highcharts/css/titles/ Styled mode
 		 * @sample {highstock} stock/chart/title-style/ Custom color and weight
-		 * @sample {highstock} highcharts/css/titles/ Styled mode
-		 * @sample {highmaps} highcharts/css/titles/ Styled mode
-		 * @default {highcharts,highmaps} { "color": "#333333", "fontSize": "18px" }
+		 * @sample highcharts/css/titles/ Styled mode
+		 * @default {highcharts|highmaps} { "color": "#333333", "fontSize": "18px" }
 		 * @default {highstock} { "color": "#333333", "fontSize": "16px" }
 		 * @apioption title.style
 		 */

@@ -539,6 +539,32 @@ Chart.prototype.isChartSeriesBoosting = function () {
 };
 
 /*
+ * Get the clip rectangle for a target, either a series or the chart. For the
+ * chart, we need to consider the maximum extent of its Y axes, in case of 
+ * Highstock panes and navigator.
+ */
+Chart.prototype.getBoostClipRect = function (target) {
+	var clipBox = {
+		x: this.plotLeft,
+		y: this.plotTop,
+		width: this.plotWidth,
+		height: this.plotHeight
+	};
+
+	if (target === this) {
+		each(this.yAxis, function (yAxis) {
+			clipBox.y = Math.min(yAxis.pos, clipBox.y);
+			clipBox.height = Math.max(
+				yAxis.pos - this.plotTop + yAxis.len,
+				clipBox.height
+			);
+		}, this);
+	}
+
+	return clipBox;
+};
+
+/*
  * Returns true if the series is in boost mode
  * @param series {Highchart.Series} - the series to check
  * @returns {boolean} - true if the series is in boost mode
@@ -2382,12 +2408,7 @@ function createAndAttachRenderer(chart, series) {
 			}
 		};
 
-		target.boostClipRect = chart.renderer.clipRect(
-			chart.plotLeft,
-			chart.plotTop,
-			chart.plotWidth,
-			chart.chartHeight
-		);
+		target.boostClipRect = chart.renderer.clipRect();
 
 		(target.renderTargetFo || target.renderTarget).clip(target.boostClipRect);
 
@@ -2401,12 +2422,7 @@ function createAndAttachRenderer(chart, series) {
 	target.canvas.width = width;
 	target.canvas.height = height;
 
-	target.boostClipRect.attr({
-		x: chart.plotLeft,
-		y: chart.plotTop,
-		width: chart.plotWidth,
-		height: chart.chartHeight
-	});
+	target.boostClipRect.attr(chart.getBoostClipRect(target));
 
 	target.boostResizeTarget();
 	target.boostClear();
