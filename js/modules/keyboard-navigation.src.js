@@ -319,7 +319,7 @@ function getClosestPoint(point, series, xWeight, yWeight) {
 	while (i--) {
 		dPoint = series.points[i];
 		if (dPoint.plotX === undefined || dPoint.plotY === undefined) {
-			return;
+			continue;
 		}
 		distance = (point.plotX - dPoint.plotX) *
 				(point.plotX - dPoint.plotX) * (xWeight || 1) +
@@ -330,7 +330,7 @@ function getClosestPoint(point, series, xWeight, yWeight) {
 			minIx = i;
 		}
 	}
-	return series.points[minIx || 0];
+	return minIx !== undefined && series.points[minIx];
 }
 
 
