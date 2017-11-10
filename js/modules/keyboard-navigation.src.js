@@ -739,11 +739,14 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 		navModuleFactory('entry', []),
 
 		// Points
-		// Prevents default and ignores failure regardless
 		navModuleFactory('points', [
 			// Left/Right
 			[[37, 39], function (keyCode) {
-				chart.highlightAdjacentPoint(keyCode === 39);
+				var right = keyCode === 39;
+				if (!chart.highlightAdjacentPoint(right)) {
+					// Failed to highlight next, wrap to last/first
+					return this.init(right ? 1 : -1);
+				}
 				return true;
 			}],
 			// Up/Down
@@ -773,14 +776,32 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 			}]
 		], {
 			// Always start highlighting from scratch when entering this module
-			init: function () {
-				delete chart.highlightedPoint;
-				// Find first valid point to highlight
-				for (var i = 0; i < chart.series.length; ++i) {
-					for (var j = 0, len = chart.series[i].points && 
-							chart.series[i].points.length; j < len; ++j) {
-						if (!isSkipPoint(chart.series[i].points[j])) {
-							return chart.series[i].points[j].highlight();
+			init: function (dir) {
+				var numSeries = chart.series.length,
+					i = dir > 0 ? 0 : numSeries,
+					res;
+				if (dir > 0) {
+					delete chart.highlightedPoint;
+					// Find first valid point to highlight
+					while (i < numSeries) {
+						res = chart.series[i].highlightFirstValidPoint();
+						if (res) {
+							return res;
+						}
+						++i;
+					}
+				} else {
+					// Find last valid point to highlight
+					while (i--) {
+						chart.highlightedPoint = chart.series[i].points[
+							chart.series[i].points.length - 1
+						];
+						// Highlight first valid point in the series will also 
+						// look backwards. It always starts from currently
+						// highlighted point.
+						res = chart.series[i].highlightFirstValidPoint();
+						if (res) {
+							return res;
 						}
 					}
 				}
