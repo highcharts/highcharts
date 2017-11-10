@@ -480,17 +480,19 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 // use that as starting point.
 H.Series.prototype.highlightFirstValidPoint = function () {
 	var curPoint = this.chart.highlightedPoint,
-		start = curPoint.series === this ? curPoint.index : 0,
+		start = (curPoint && curPoint.series) === this ? curPoint.index : 0,
 		points = this.points;
 
-	for (var i = start, len = points.length; i < len; ++i) {
-		if (!isSkipPoint(points[i])) {
-			return points[i].highlight();
+	if (points) {
+		for (var i = start, len = points.length; i < len; ++i) {
+			if (!isSkipPoint(points[i])) {
+				return points[i].highlight();
+			}
 		}
-	}
-	for (var j = start; j >= 0; --j) {
-		if (!isSkipPoint(points[j])) {
-			return points[j].highlight();
+		for (var j = start; j >= 0; --j) {
+			if (!isSkipPoint(points[j])) {
+				return points[j].highlight();
+			}
 		}
 	}
 	return false;
