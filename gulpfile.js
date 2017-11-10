@@ -305,6 +305,9 @@ Available arguments for 'gulp test':
 
     A shorthand option, '--browsers all', runs all BroserStack machines.
 
+--debug
+    Print some debugging info.
+
 --tests
     Comma separated list of tests to run. Defaults to '*.*' that runs all tests
     in the 'samples/' directory.

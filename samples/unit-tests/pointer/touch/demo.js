@@ -71,6 +71,7 @@ QUnit.test('TouchPointer events', function (assert) {
         ],
         backups = {};
 
+    // Allow the wrapped event handler to be registered
     if (Highcharts.unbindDocumentTouchEnd) {
         Highcharts.unbindDocumentTouchEnd = Highcharts.unbindDocumentTouchEnd();
     }
@@ -123,4 +124,9 @@ QUnit.test('TouchPointer events', function (assert) {
     methods.forEach(function (fn) {
         Highcharts.Pointer.prototype[fn] = backups[fn];
     });
+
+    // Allow the original event handler to be re-registered
+    if (Highcharts.unbindDocumentTouchEnd) {
+        Highcharts.unbindDocumentTouchEnd = Highcharts.unbindDocumentTouchEnd();
+    }
 });

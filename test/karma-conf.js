@@ -278,6 +278,7 @@ module.exports = function (config) {
 
 
         preprocessors: {
+            '**/unit-tests/*/*/demo.js': ['generic'],
             // Preprocess the visual tests
             '**/highcharts/*/*/demo.js': ['generic'],
             '**/maps/*/*/demo.js': ['generic'],
@@ -293,9 +294,29 @@ module.exports = function (config) {
             rules: [{
                 process: function (js, file, done) {
                     const path = file.path.replace(
-                        /^.*?samples\/(highcharts|stock|maps)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
+                        /^.*?samples\/(highcharts|stock|maps|unit-tests)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
                         '$1/$2'
                     );
+
+                    if (path.indexOf('unit-tests') !== -1) {
+                        if (argv.debug) {
+                            if (js.indexOf('Highcharts.setOptions') !== -1) {
+                                console.log(
+                                    `Warning: ${path} contains Highcharts.setOptions`.yellow
+                                );
+                            }
+                            if (
+                                js.indexOf('Highcharts.wrap') !== -1 ||
+                                js.indexOf('H.wrap') !== -1
+                            ) {
+                                console.log(
+                                    `Warning: ${path} contains Highcharts.wrap`.yellow
+                                );
+                            }
+                        }
+                        done(js);
+                        return;
+                    }
 
                     // Skipped from demo.details
                     if (handleDetails(path) === false) {
