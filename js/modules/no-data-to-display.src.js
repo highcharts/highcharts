@@ -215,21 +215,12 @@ chartPrototype.hasData = function () {
 };
 
 /**
- * Show no-data message if there is no data in sight. Otherwise, hide it.
+ * Add event listener to handle automatic show or hide no-data message
  */
-function handleNoData() {
-	var chart = this;
-	if (chart.hasData()) {
-		chart.hideNoData();
+H.addEvent(chartPrototype, 'render', function handleNoData() {
+	if (this.hasData()) {
+		this.hideNoData();
 	} else {
-		chart.showNoData();
+		this.showNoData();
 	}
-}
-
-/**
- * Add event listener to handle automatic display of no-data message
- */
-chartPrototype.callbacks.push(function (chart) {
-	H.addEvent(chart, 'load', handleNoData);
-	H.addEvent(chart, 'redraw', handleNoData);
 });

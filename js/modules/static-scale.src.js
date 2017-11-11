@@ -42,8 +42,4 @@ Chart.prototype.adjustHeight = function () {
 	});
 	this.initiatedScale = true;
 };
-Chart.prototype.callbacks.push(function (chart) {
-	H.addEvent(this, 'render', function () {
-		chart.adjustHeight();
-	});
-});
+H.addEvent(Chart.prototype, 'render', Chart.prototype.adjustHeight);
