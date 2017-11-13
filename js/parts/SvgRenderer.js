@@ -1992,6 +1992,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		element = boxWrapper.element;
 		container.appendChild(element);
 
+		// Always use ltr on the container, otherwise text-anchor will be
+		// flipped and text appear outside labels, buttons, tooltip etc (#3482)
+		attr(container, 'dir', 'ltr');
+
 		// For browsers other than IE, add the namespace attribute (#1978)
 		if (container.innerHTML.indexOf('xmlns') === -1) {
 			attr(element, 'xmlns', this.SVG_NS);

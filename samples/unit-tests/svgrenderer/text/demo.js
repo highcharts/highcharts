@@ -164,3 +164,28 @@ QUnit.test('HTML entities', function (assert) {
         'Tags don\'t start with spaces (#7126)'
     );
 });
+
+QUnit.test('Dir rtl (#3482)', function (assert) {
+    document.getElementById('container').setAttribute('dir', 'rtl');
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    var label = ren.label('Hello', 100, 100)
+        .attr({
+            stroke: 'blue',
+            'stroke-width': 1,
+            padding: 0
+        })
+        .add();
+
+    assert.strictEqual(
+        label.text.element.getBBox().x,
+        0,
+        'Label sits nicely inside box'
+    );
+
+    document.getElementById('container').removeAttribute('dir');
+});
