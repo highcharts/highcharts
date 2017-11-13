@@ -86,7 +86,7 @@ QUnit.module('Highcharts', {
     afterEach: function () {
 
         // Destroy all charts
-        Highcharts.charts.forEach(chart => {
+        Highcharts.charts.forEach(function (chart) {
             if (chart && chart.destroy && chart.renderer) {
                 chart.destroy();
             }
@@ -118,9 +118,9 @@ Highcharts.prepareShot = function (chart) {
  * @return {String}       The SVG
  */
 function getSVG(chart) {
-    let svg;
+    var svg;
     if (chart) {
-        let container = chart.container;
+        var container = chart.container;
         Highcharts.prepareShot(chart);
         svg = container.querySelector('svg').outerHTML;
 
@@ -165,7 +165,7 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
  */
 function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
 
         let referenceData;
         let candidateSVG = getSVG(chart);
@@ -201,14 +201,14 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
                 if (diff !== 0) {
                     __karma__.info({
-                        filename: `./samples/${path}/diff.gif`,
+                        filename: './samples/' + path + '/diff.gif',
                         frames: [
                             referenceData,
                             candidateData
                         ]
                     });
                     __karma__.info({
-                        filename: `./samples/${path}/candidate.svg`,
+                        filename: './samples/' + path + '/candidate.svg',
                         data: candidateSVG
                     });
                 }
@@ -229,7 +229,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
         // Handle reference, load SVG from file
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', `base/samples/${path}/reference.svg`, true);
+        xhr.open('GET', 'base/samples/' + path + '/reference.svg', true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 let svg = xhr.responseText;
@@ -248,7 +248,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
 // De-randomize Math.random in tests
 (function () {
-    const randomValues = [0.14102989272214472, 0.0351817375048995,
+    var randomValues = [0.14102989272214472, 0.0351817375048995,
         0.10094573209062219, 0.35990892769768834, 0.7690574480220675,
         0.16634021210484207, 0.3944594960194081, 0.7656398438848555,
         0.27706647920422256, 0.5681763959582895, 0.513730650767684,
