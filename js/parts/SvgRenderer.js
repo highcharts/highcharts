@@ -512,7 +512,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		// setter
 		} else {
 
-			objectEach(hash, function (val, key) {
+			objectEach(hash, function eachAttribute(val, key) {
 				skipAttr = false;
 				
 				// Unless .attr is from the animator update, stop current

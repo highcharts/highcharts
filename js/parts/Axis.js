@@ -4035,7 +4035,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	hasData: function () {
 		return (
 			this.hasVisibleSeries ||
-			(defined(this.min) && defined(this.max) && !!this.tickPositions)
+			(
+				defined(this.min) &&
+				defined(this.max) &&
+				this.tickPositions &&
+				this.tickPositions.length > 0
+			)
 		);
 	},
 	
