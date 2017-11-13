@@ -14,13 +14,55 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
 import '../parts/Tooltip.js';
+import '../parts/SVGRenderer.js';
 
 var win = H.win,
 	doc = win.document,
 	each = H.each,
 	addEvent = H.addEvent,
 	fireEvent = H.fireEvent,
-	merge = H.merge;
+	merge = H.merge,
+	pick = H.pick;
+
+// Add focus border functionality to SVGElements.
+// Draws a new rect on top of element around its bounding box.
+H.extend(H.SVGElement.prototype, {
+	addFocusBorder: function (margin, style) {
+		// Allow updating by just adding new border
+		if (this.focusBorder) {
+			this.removeFocusBorder();
+		}
+		// Add the border rect
+		var bb = this.getBBox(),
+			pad = pick(margin, 3);
+		this.focusBorder = this.renderer.rect(
+			bb.x - pad,
+			bb.y - pad,
+			bb.width + 2 * pad,
+			bb.height + 2 * pad,
+			style && style.borderRadius
+		)
+		.addClass('highcharts-focus-border')
+		/*= if (build.classic) { =*/
+		.attr({
+			stroke: style && style.stroke,
+			'stroke-width': style && style.strokeWidth
+		})
+		/*= } =*/
+		.attr({
+			zIndex: 99
+		})
+        .add(this.parentGroup);
+	},
+
+	removeFocusBorder: function () {
+		if (this.focusBorder) {
+			this.focusBorder.destroy();
+			delete this.focusBorder;
+		}
+	}
+});
+
 
 // Set for which series types it makes sense to move to the closest point with
 // up/down arrows, and which series types should just move to next series.
@@ -60,7 +102,40 @@ H.setOptions({
 			 * @default true
 			 * @since 5.0.0
 			 */
-			enabled: true
+			enabled: true,
+
+			/**
+			 * Options for the focus border drawn around elements while
+			 * navigating through them.
+			 *
+			 * @since 6.0.3
+			 */
+			focusBorder: {
+				/**
+				 * Enable/disable focus border for chart.
+				 */
+				enabled: true,
+
+				/**
+				 * Style options for the focus border drawn around elements 
+				 * while navigating through them. Note that some browsers in 
+				 * addition draw their own borders for focused elements. These
+				 * automatic borders can not be styled by Highcharts.
+				 * 
+				 * In styled mode, the border is given the 
+				 * `.highcharts-focus-border` class.
+				 */
+				style: {
+					color: '${palette.neutralColor100}',
+					lineWidth: 1,
+					borderRadius: 2
+				},
+
+				/**
+				 * Focus border margin around the elements.
+				 */
+				margin: 2
+			}
 
 			/**
 			 * Skip null points when navigating through points with the
@@ -137,16 +212,24 @@ KeyboardNavigationModule.prototype = {
 	// it. Returns true on success and false if there is no valid module
 	// to move to.
 	move: function (direction) {
+		var chart = this.chart;
 		if (this.terminate) {
 			this.terminate(direction);
 		}
-		this.chart.keyboardNavigationModuleIndex += direction;
-		var newModule = this.chart.keyboardNavigationModules[
-			this.chart.keyboardNavigationModuleIndex
+		chart.keyboardNavigationModuleIndex += direction;
+		var newModule = chart.keyboardNavigationModules[
+			chart.keyboardNavigationModuleIndex
 		];
+		
+		// Remove existing focus border if any
+		if (chart.focusElement) {
+			chart.focusElement.removeFocusBorder();
+		}
+
+		// Verify new module
 		if (newModule) {
 			if (newModule.validate && !newModule.validate()) {
-				return this.move(direction); // Invalid module
+				return this.move(direction); // Invalid module, recurse
 			}
 			if (newModule.init) {
 				newModule.init(direction); // Valid module, init it
@@ -154,7 +237,7 @@ KeyboardNavigationModule.prototype = {
 			}
 		}
 		// No module
-		this.chart.keyboardNavigationModuleIndex = 0; // Reset counter
+		chart.keyboardNavigationModuleIndex = 0; // Reset counter
 
 		// Set focus to chart or exit anchor depending on direction
 		if (direction > 0) {
@@ -239,6 +322,38 @@ H.Axis.prototype.panStep = function (direction, granularity) {
 };
 
 
+// Set chart's focus to an SVGElement. Calls focus() on it, and draws the focus
+// border. If the focusElement argument is supplied, it draws the border around 
+// svgElement and sets the focus to focusElement.
+H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
+	var focusBorderOptions = this.options.accessibility
+				.keyboardNavigation.focusBorder;
+	if (focusBorderOptions.enabled && svgElement !== this.focusElement) {
+		// Remove old focus border
+		if (this.focusElement) {
+			this.focusElement.removeFocusBorder();
+		}
+		// Set browser focus if possible
+		if (
+			focusElement &&
+			focusElement.element && 
+			focusElement.element.focus
+		) {
+			focusElement.element.focus();
+		} else if (svgElement.element.focus) {
+			svgElement.element.focus();
+		}
+		// Draw focus border (since some browsers don't do it automatically)
+		svgElement.addFocusBorder(focusBorderOptions.margin, {
+			stroke: focusBorderOptions.style.color,
+			strokeWidth: focusBorderOptions.style.lineWidth,
+			borderRadius: focusBorderOptions.style.borderRadius
+		});
+		this.focusElement = svgElement;
+	}
+};
+
+
 // Highlight a point (show tooltip and display hover state). Returns the
 // highlighted point.
 H.Point.prototype.highlight = function () {
@@ -251,11 +366,13 @@ H.Point.prototype.highlight = function () {
 		}
 		// Don't call blur on the element, as it messes up the chart div's focus
 	}
-	// We focus after calling onMouseOver because the state change can change
-	// z-index and mess up the element.
-	if (this.graphic && this.graphic.element.focus) {
-		this.graphic.element.focus();
+
+	// We focus only after calling onMouseOver because the state change can 
+	// change z-index and mess up the element.
+	if (this.graphic) {
+		chart.setFocusToElement(this.graphic);
 	}
+
 	chart.highlightedPoint = this;
 	return this;
 };
@@ -515,9 +632,7 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
 	// Select new
 	this.highlightedRangeSelectorItemIx = ix;
 	if (buttons[ix]) {
-		if (buttons[ix].element.focus) {
-			buttons[ix].element.focus();
-		}
+		this.setFocusToElement(buttons[ix].box, buttons[ix]);
 		this.oldRangeSelectorItemState = buttons[ix].state;
 		buttons[ix].setState(2);
 		return true;
@@ -528,18 +643,17 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
 
 // Highlight legend item by index
 H.Chart.prototype.highlightLegendItem = function (ix) {
-	var items = this.legend.allItems;
-	if (items[this.highlightedLegendItemIx]) {
-		fireEvent(
-			items[this.highlightedLegendItemIx].legendGroup.element,
-			'mouseout'
-		);
-	}
-	this.highlightedLegendItemIx = ix;
+	var items = this.legend.allItems,
+		oldIx = this.highlightedLegendItemIx;
 	if (items[ix]) {
-		if (items[ix].legendGroup.element.focus) {
-			items[ix].legendGroup.element.focus();
+		if (items[oldIx]) {
+			fireEvent(
+				items[oldIx].legendGroup.element,
+				'mouseout'
+			);
 		}
+		this.highlightedLegendItemIx = ix;
+		this.setFocusToElement(items[ix].legendItem, items[ix].legendGroup);
 		fireEvent(items[ix].legendGroup.element, 'mouseover');
 		return true;
 	}
@@ -712,9 +826,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 				}
 				chart.focusedMapNavButtonIx += e.shiftKey ? -1 : 1;
 				button = chart.mapNavButtons[chart.focusedMapNavButtonIx];
-				if (button.element.focus) {
-					button.element.focus();
-				}
+				chart.setFocusToElement(button.box, button);
 				button.setState(2);
 			}],
 
@@ -749,9 +861,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					);
 				});
 
-				if (initialButton.element.focus) {
-					initialButton.element.focus();
-				}
+				chart.setFocusToElement(initialButton.box, initialButton);
 				initialButton.setState(2);
 				chart.focusedMapNavButtonIx = direction > 0 ? 0 : 1;
 			}
