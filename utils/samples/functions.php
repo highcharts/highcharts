@@ -29,8 +29,14 @@ function getBranch() {
         
 }
 
-function compareJSON() {
-    return 'temp/compare.' . getBranch() . '.json';
+function compareJSON($browserKey = null) {
+
+    if (!isset($browserKey)) {
+        $browser = getBrowser();
+        $browserKey = isset($browser['parent']) ? $browser['parent'] : 'Unknown';
+    }
+    
+    return 'temp/compare.' . getBranch() . '.' . strtolower($browserKey) . '.json';
 }
 
 /**

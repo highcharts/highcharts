@@ -1,21 +1,24 @@
 <?php 
 require_once('functions.php');
 
-$compare = json_decode(file_get_contents(compareJSON()));
 
-$browsers = array();
+$browsers = array('Safari', 'Chrome', 'Firefox', 'Edge', 'MSIE');
 $comments = array();
-foreach ($compare as $path => $sample) {
-	$range = array();
-	foreach ($sample as $key => $diff) {
-		if ($key !== 'comment') {
-			if (!in_array($key, $browsers)) {
-				$browsers[] = $key;
+$compare = array();
+foreach($browsers as $browserKey) {
+	if (file_exists(compareJSON($browserKey))) {
+		$results = json_decode(file_get_contents(compareJSON($browserKey)));
+
+		foreach ($results as $path => $sample) {
+			// echo "$browserKey, $path, $sample->diff<br>";
+			$range = array();
+			$range[] = $sample->diff;
+			@$compare[$path]->$browserKey = $sample->diff;
+			if (isset($sample->comment)) {
+				@$compare[$path]->comment = $sample->comment;
 			}
-			$range[] = $diff;
 		}
 	}
-	//$sample->range = round(abs(max($range) - min($range)), 2);
 }
 
 
@@ -30,6 +33,7 @@ foreach ($compare as $path => $sample) {
 		<script src="http://code.highcharts.com/highcharts.src.js"></script>
 
 		<script>
+		/* eslint-disable */
 		/**
 	     * Create a constructor for sparklines that takes some sensible defaults and merges in the individual
 	     * chart options. This function is also available from the jQuery plugin as $(element).highcharts('SparkLine').
@@ -129,6 +133,7 @@ foreach ($compare as $path => $sample) {
 	    };
 	    </script>
 		<script>
+			/* eslint-disable */
 			function updateDiff() {
 				var $inputs = $('#compare-browsers').find('input'),
 					checked = [];

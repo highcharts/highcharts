@@ -361,9 +361,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 						// Handle browser keys for inspecting results from other browsers
 						if (@$compare->$path) {
 							foreach($compare->$path as $key => $value) {
-								if (strpos($key, $browserKey) !== false) {
-									$diff = $compare->$path->$key;
-								}
+								$diff = $compare->$path->diff;
 							}
 						}
 						if ($diff !== '') {

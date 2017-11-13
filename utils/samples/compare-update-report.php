@@ -13,8 +13,6 @@ if ($rightcommit) {
 }
 
 $compare = file_exists($reportFile) ? json_decode(file_get_contents($reportFile)) : new stdClass;
-$browser = getBrowser();
-$key = isset($browser['parent']) ? $browser['parent'] : 'Unknown';
 
 
 /*
@@ -24,7 +22,7 @@ if (isset($compare->$path->$key) && isset($difference)) {
 } else
 */
 if (isset($diff)) {
-	@$compare->$path->$key = $diff;
+	@$compare->$path->diff = $diff;
 }
 if (!is_dir('temp')) {
 	mkdir('temp');
