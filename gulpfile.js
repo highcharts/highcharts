@@ -1351,10 +1351,11 @@ gulp.task('scripts-new', () => {
             const pathFile = event.path;
             const pathRelative = relative(pathJSParts, pathFile);
             console.log([
-                `${event.type}: ${relative('.', pathFile)}`,
-                'Rebuilding files: ',
+                '',
+                `${event.type}:`.cyan + ` ${relative('.', pathFile)}`,
+                'Rebuilding files: '.cyan,
                 types
-                    .map((type) => `- ${join(pathESModules, type === 'css' ? 'js' : '', 'es-modules', pathRelative)}`)
+                    .map((type) => `- ${join(pathESModules, type === 'css' ? 'js' : '', 'es-modules', pathRelative)}`.gray)
                     .join('\n')
             ].join('\n'));
             return buildModules({
@@ -1379,10 +1380,10 @@ gulp.task('scripts-new', () => {
                       return arr;
                   }, []);
                 console.log([
-                    `${event.type}: ${relative('.', pathFile)}`,
-                    'Rebuilding files: ',
+                    `${event.type}:`.cyan + ` ${relative('.', pathFile)}`,
+                    'Rebuilding files: '.cyan,
                     filesModified
-                      .map(str => `- ${join('code', type === 'css' ? 'js' : '', str)}`)
+                      .map(str => `- ${join('code', type === 'css' ? 'js' : '', str)}`.gray)
                       .join('\n')
                 ].join('\n'));
                 buildDistFromModules({
