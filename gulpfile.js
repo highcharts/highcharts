@@ -777,7 +777,8 @@ const commandLine = (command) => {
 
 const filesize = () => {
     const sourceFolder = './code/';
-    // @todo Correct type names to classic and styled
+    // @todo Correct type names to classic and styled and rename the param to
+    // 'mode'
     const types = argv.type ? [argv.type] : ['classic', 'css'];
     const filenames = argv.file ? argv.file.split(',') : ['highcharts.src.js'];
     const files = filenames.reduce((arr, name) => {
