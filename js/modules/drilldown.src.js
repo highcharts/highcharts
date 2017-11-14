@@ -704,9 +704,9 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
 					}
 
 					if (dataLabel && !dataLabel.hidden) { // #6127
-						dataLabel[verb](inherit);
+						dataLabel.fadeIn(); // #7384
 						if (point.connector) {
-							point.connector[verb](inherit);
+							point.connector.fadeIn();
 						}
 					}
 				});
