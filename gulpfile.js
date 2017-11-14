@@ -75,7 +75,8 @@ const getFileOptions = (base) => {
     };
 
     // Modules should not be standalone, and they should exclude all parts files.
-    const fileOptions = getFilesInFolder(base, true, '')
+    const files = getFilesInFolder(base, true, '');
+    const fileOptions = files
         .reduce((obj, file) => {
             if (file.indexOf('modules') > -1 || file.indexOf('themes') > -1 || file.indexOf('indicators') > -1) {
                 obj[file] = {
@@ -1263,6 +1264,140 @@ gulp.task('dist', () => {
         .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))
         .then(gulpify('ant-dist', antDist));
 });
+
+gulp.task('scripts-new', () => {
+    const {
+      join,
+      relative,
+      resolve
+    } = require('path');
+    const {
+      getOrderedDependencies
+    } = require('highcharts-assembler/src/dependencies.js');
+    const {
+      buildDistFromModules,
+      buildModules,
+      getFilesInFolder
+    } = require('highcharts-assembler/src/build.js');
+    const isUndefined = (x) => typeof x === 'undefined';
+    const isString = (x) => typeof x === 'string';
+    const version = getProductVersion();
+    const pathMasters = './js/masters/';
+    const fileOptions = getFileOptions(pathMasters);
+    const mapTypeToSource = {
+        'classic': './code/es-modules',
+        'css': './code/js/es-modules'
+    };
+    const files = (
+      (argv.file) ?
+      argv.file.split(',') :
+      getFilesInFolder(pathMasters, true)
+    );
+    const dependencyList = {
+        'classic': {},
+        'css': {}
+    };
+    const types = isString(argv.type) ? argv.type.split(',') : ['classic', 'css'];
+    const debug = argv.d || false;
+    const watch = argv.watch || false;
+    // Build all module files
+    const pathJSParts = './js/';
+    const pathESModules = './code/';
+    buildModules({
+        base: pathJSParts,
+        output: pathESModules,
+        type: types
+    });
+    types.forEach((type) => {
+        const pathSource = mapTypeToSource[type];
+        const pathESMasters = join(pathSource, 'masters');
+        buildDistFromModules({
+            base: pathESMasters,
+            debug: debug,
+            fileOptions: fileOptions,
+            files: files,
+            output: './code/',
+            type: [type],
+            version: version
+        });
+    });
+    if (watch === true) {
+        types.forEach((type) => {
+            const pathSource = mapTypeToSource[type];
+            files.forEach((filename) => {
+                const options = fileOptions[filename];
+                const exclude = (
+                  !isUndefined(options) && !isUndefined(options.exclude) ?
+                  options.exclude :
+                  false
+                );
+                const pathFile = join(pathSource, 'masters', filename).split('\\').join('/');
+                const list = getOrderedDependencies(pathFile)
+                    .filter((pathModule) => {
+                        let result = true;
+                        if (exclude) {
+                            result = !exclude.test(pathModule);
+                        }
+                        return result;
+                    })
+                    .map((str) => {
+                        return resolve(str);
+                    });
+                dependencyList[type][pathFile] = list;
+            });
+        });
+        gulp.watch('./js/**/*.js', (event) => {
+            const pathFile = event.path;
+            const pathRelative = relative(pathJSParts, pathFile);
+            console.log([
+                `${event.type}: ${relative('.', pathFile)}`,
+                'Rebuilding files: ',
+                types
+                    .map((type) => `- ${join(pathESModules, type === 'css' ? 'js' : '', 'es-modules', pathRelative)}`)
+                    .join('\n')
+            ].join('\n'));
+            return buildModules({
+                base: pathJSParts,
+                files: [pathRelative],
+                output: pathESModules,
+                type: types
+            });
+        });
+        types.forEach((type) => {
+            const pathSource = mapTypeToSource[type];
+            const typeList = dependencyList[type];
+            const pathESMasters = join(pathSource, 'masters');
+            gulp.watch(join(pathSource, '**/*.js'), (event) => {
+                const pathFile = event.path;
+                const filesModified = Object.keys(typeList)
+                  .reduce((arr, pathMaster) => {
+                      const list = dependencyList[type][pathMaster];
+                      if (list.includes(pathFile)) {
+                          arr.push(relative(pathESMasters, pathMaster));
+                      }
+                      return arr;
+                  }, []);
+                console.log([
+                    `${event.type}: ${relative('.', pathFile)}`,
+                    'Rebuilding files: ',
+                    filesModified
+                      .map(str => `- ${join('code', type === 'css' ? 'js' : '', str)}`)
+                      .join('\n')
+                ].join('\n'));
+                buildDistFromModules({
+                    base: pathESMasters,
+                    debug: debug,
+                    fileOptions: fileOptions,
+                    files: filesModified,
+                    output: './code/',
+                    type: [type],
+                    version: version
+                });
+            });
+        });
+    }
+});
+
 gulp.task('browserify', function () {
     const fs = require('fs');
     const browserify = require('browserify');

@@ -42,7 +42,7 @@
     "gulp-jsdoc3": "^1.0.1",
     "gzip-size": "^3.0.0",
     "highcharts-api-doc-gen": "github:highcharts/api-docs",
-    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.0.0",
+    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.0.8",
     "husky": "^0.14.3",
     "js-yaml": "^3.10.0",
     "karma": "^1.7.1",
