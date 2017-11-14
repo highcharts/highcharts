@@ -1,21 +1,27 @@
-<p>Highstock 6.0.2 (2017-10-20)</p>
-<ul>    <li>Most changes listed under Highcharts 6.0.2 above also apply to Highstock 6.0.2.</li>
+<p>Highstock 6.0.3 (2017-11-14)</p>
+<ul>    <li>Most changes listed under Highcharts 6.0.3 above also apply to Highstock 6.0.3.</li>
 
 </ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="hs-heading-6-0-2-bug-fixes" class="panel-heading">
+        <div id="hs-heading-6-0-3-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#hs-6-0-2-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#hs-6-0-3-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="hs-6-0-2-bug-fixes" class="panel-collapse collapse">
+        <div id="hs-6-0-3-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7246">#7246</a>, tooltips not working on flags with the default <code>split</code> option.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7256">#7256</a>, redraw event was triggered when calling <code>Series.setVisible</code> with the redraw argument set to false.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3482">#3482</a>, using direction <code>rtl</code> caused various labels to be mispositioned.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4674">#4674</a>, overlapping flags when next to each other.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4798">#4798</a>, white pixel visible next to the chart on init.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6612">#6612</a>, the "Reset Zoom" button always returned to previous zoom.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6984">#6984</a>, strange animation when zooming between data grouping levels.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7256">#7256</a>, redundant redraws when toggling a series with linked navigators.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7275">#7275</a>, X axis labels were gone in a scatter chart with X axis breaks.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7378">#7378</a>, removing base series with only scrollbar enabled caused errors.</li>
                 </ul>
             </div>
         </div>
