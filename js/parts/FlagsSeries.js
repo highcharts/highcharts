@@ -338,6 +338,7 @@ seriesType('flags', 'column', {
 					/*= if (build.classic) { =*/
 					graphic.shadow(options.shadow);
 					/*= } =*/
+					graphic.isNew = true;
 				}
 
 				if (plotX > 0) { // #3119
@@ -346,7 +347,8 @@ seriesType('flags', 'column', {
 
 				// Plant the flag
 				graphic.attr({
-					text: point.options.title || options.title || 'A',
+					text: point.options.title || options.title || 'A'
+				})[graphic.isNew ? 'attr' : 'animate']({
 					y: plotY,
 					anchorY: anchorY
 				});
@@ -354,8 +356,9 @@ seriesType('flags', 'column', {
 				// Rig for the distribute function
 				if (!boxesMap[point.plotX]) {
 					boxesMap[point.plotX] = {
+						align: 0,
 						size: graphic.width,
-						target: plotX + graphic.width / 2,
+						target: plotX,
 						anchorX: plotX
 					};
 				} else {
@@ -386,11 +389,11 @@ seriesType('flags', 'column', {
 		each(points, function (point) {
 			var box = point.graphic && boxesMap[point.plotX];
 			if (box) {
-				point.graphic.attr({
+				point.graphic[point.graphic.isNew ? 'attr' : 'animate']({
 					x: box.pos,
 					anchorX: point.anchorX
 				});
-
+				point.graphic.isNew = false;
 			}
 		});
 

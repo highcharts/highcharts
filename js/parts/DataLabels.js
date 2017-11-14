@@ -24,7 +24,7 @@ var addEvent = H.addEvent,
 
 /* eslint max-len: ["warn", 80, 4] */
 /**
- * Generatl distribution algorithm for distributing labels of differing size
+ * General distribution algorithm for distributing labels of differing size
  * along a confined length in two dimensions. The algorithm takes an array of
  * objects containing a size, a target and a rank. It will place the labels as
  * close as possible to their targets, skipping the lowest ranked labels if
@@ -74,7 +74,8 @@ H.distribute = function (boxes, len) {
 	boxes = map(boxes, function (box) {
 		return {
 			size: box.size,
-			targets: [box.target]
+			targets: [box.target],
+			align: pick(box.align, 0.5)
 		};
 	});
 	
@@ -84,10 +85,12 @@ H.distribute = function (boxes, len) {
 		while (i--) {
 			box = boxes[i];
 			// Composite box, average of targets
-			target = (Math.min.apply(0, box.targets) +
-				Math.max.apply(0, box.targets)) / 2;
+			target = (
+				Math.min.apply(0, box.targets) +
+				Math.max.apply(0, box.targets)
+			) / 2;
 			box.pos = Math.min(
-				Math.max(0, target - box.size / 2),
+				Math.max(0, target - box.size * box.align),
 				len - box.size
 			);
 		}
@@ -103,6 +106,7 @@ H.distribute = function (boxes, len) {
 				boxes[i - 1].targets = boxes[i - 1]
 					.targets
 					.concat(boxes[i].targets);
+				boxes[i - 1].align = 0.5;
 				
 				// Overlapping right, push left
 				if (boxes[i - 1].pos + boxes[i - 1].size > len) {
