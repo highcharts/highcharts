@@ -108,6 +108,8 @@ H.setOptions({
 			 * Options for the focus border drawn around elements while
 			 * navigating through them.
 			 *
+			 * @sample highcharts/accessibility/custom-focus
+			  *			Custom focus ring
 			 * @since 6.0.3
 			 */
 			focusBorder: {
@@ -115,6 +117,13 @@ H.setOptions({
 				 * Enable/disable focus border for chart.
 				 */
 				enabled: true,
+
+				/**
+				 * Hide default browser focus ring.
+				 *
+				 * @since 6.0.4
+				 */
+				hideBrowserFocusRing: true,
 
 				/**
 				 * Style options for the focus border drawn around elements 
@@ -127,8 +136,8 @@ H.setOptions({
 				 */
 				style: {
 					color: '${palette.neutralColor100}',
-					lineWidth: 1,
-					borderRadius: 2
+					lineWidth: 2,
+					borderRadius: 3
 				},
 
 				/**
@@ -327,21 +336,23 @@ H.Axis.prototype.panStep = function (direction, granularity) {
 // svgElement and sets the focus to focusElement.
 H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
 	var focusBorderOptions = this.options.accessibility
-				.keyboardNavigation.focusBorder;
+				.keyboardNavigation.focusBorder,
+		browserFocusElement = focusElement || svgElement;
+	// Set browser focus if possible
+	if (
+		browserFocusElement.element && 
+		browserFocusElement.element.focus
+	) {
+		browserFocusElement.element.focus();
+		// Hide default focus ring
+		if (focusBorderOptions.hideBrowserFocusRing) {
+			browserFocusElement.css({ outline: 'none' });
+		}
+	}
 	if (focusBorderOptions.enabled && svgElement !== this.focusElement) {
 		// Remove old focus border
 		if (this.focusElement) {
 			this.focusElement.removeFocusBorder();
-		}
-		// Set browser focus if possible
-		if (
-			focusElement &&
-			focusElement.element && 
-			focusElement.element.focus
-		) {
-			focusElement.element.focus();
-		} else if (svgElement.element.focus) {
-			svgElement.element.focus();
 		}
 		// Draw focus border (since some browsers don't do it automatically)
 		svgElement.addFocusBorder(focusBorderOptions.margin, {
