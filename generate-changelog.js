@@ -15,7 +15,8 @@
     'use strict';
 
     var fs = require('fs'),
-        cmd = require('child_process');
+        cmd = require('child_process'),
+        tree = require('./tree.json');
 
     var params;
 
@@ -119,7 +120,7 @@
     /**
      * Build the output
      */
-    function buildHTML(name, version, date, log, products) {
+    function buildHTML(name, version, date, log, products, optionKeys) {
         var s,
             filename = 'changelog-' + name.toLowerCase() + '.htm';
 
@@ -144,6 +145,36 @@
         }
 
         log.forEach((li, i) => {
+
+            optionKeys.forEach(key => {
+                let replacement = ` <a href="https://api.highcharts.com/${name.toLowerCase()}/${key}">${key}</a> `;
+                li = li
+                    .replace(
+                        ` \`${key}\` `,
+                        replacement
+                    )
+                    .replace(
+                        ` ${key} `,
+                        replacement
+                    );
+
+                // We often refer to series options without the plotOptions
+                // parent, so make sure it is auto linked too.
+                if (key.indexOf('plotOptions.') === 0) {
+                    let shortKey = key.replace('plotOptions.', '');
+                    if (shortKey.indexOf('.') !== -1) {
+                        li = li
+                            .replace(
+                                ` \`${shortKey}\` `,
+                                replacement
+                            )
+                            .replace(
+                                ` ${shortKey} `,
+                                replacement
+                            );
+                    }
+                }
+            });
 
             li = li
 
@@ -206,6 +237,30 @@
         });
     }
 
+    /*
+     * Return a list of options so that we can auto-link option references in
+     * the changelog.
+     */
+    function getOptionKeys(treeroot) {
+        let keys = [];
+        function recurse(subtree, path) {
+            Object.keys(subtree).forEach(key => {
+                if (path + key !== '') {
+                    // Push only the second level, we don't want auto linking of
+                    // general words like chart, series, legend, tooltip etc.
+                    if (path.indexOf('.') !== -1) {
+                        keys.push(path + key);
+                    }
+                    if (subtree[key].children) {
+                        recurse(subtree[key].children, `${path}${key}.`);
+                    }
+                }
+            });
+        }
+        recurse(treeroot, '');
+        return keys;
+    }
+
     params = getParams();
 
 
@@ -215,6 +270,8 @@
         // Split the log into an array
         log = log.split('<br>\n');
         log.pop();
+
+        const optionKeys = getOptionKeys(tree);
 
         // Load the current products and versions, and create one log each
         fs.readFile('build/dist/products.js', 'utf8', function (err, products) {
@@ -231,7 +288,7 @@
 
             for (name in products) {
                 if (products.hasOwnProperty(name)) {
-                    buildHTML(name, products[name].nr, products[name].date, log, products);
+                    buildHTML(name, products[name].nr, products[name].date, log, products, optionKeys);
                 }
             }
         });
