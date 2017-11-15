@@ -137,24 +137,6 @@
 
     });
     */
-    /*
-    QUnit.test('IsNumber', function (assert) {
-        // test with undefined
-        assertEquals(assert, "IsNumber undefined", false, isNumber(undefined));
-
-        // test with null
-        assertEquals(assert, "IsNumber null", false, isNumber(null));
-
-        // test with number
-        assertEquals(assert, "IsNumber number", true, isNumber(15));
-
-        // test with string
-        assertEquals(assert, "IsNumber string", false, isNumber("this is a string"));
-
-        // test with object
-        assertEquals(assert, "IsNumber object", false, isNumber({}));
-    });
-    */
     QUnit.test('Splat', function (assert) {
 
         // test with undefined
@@ -572,6 +554,16 @@
             isNumber(-1.123),
             true,
             'negative number with decimals (-1.123) returns true'
+        );
+        assert.strictEqual(
+            isNumber(Infinity),
+            false,
+            'Infinity is not a finite number'
+        );
+        assert.strictEqual(
+            isNumber(-Infinity),
+            false,
+            '-Infinity is not a finite number'
         );
     });
 

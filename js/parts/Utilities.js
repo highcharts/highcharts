@@ -587,15 +587,18 @@ H.isClass = function (obj) {
 };
 
 /**
- * Utility function to check if an item is of type number.
+ * Utility function to check if an item is a number and it is finite (not NaN,
+ * Infinity or -Infinity).
  *
  * @function #isNumber
  * @memberOf Highcharts
- * @param {Object} n - The item to check.
- * @returns {Boolean} - True if the item is a number and is not NaN.
+ * @param  {Object} n
+ *         The item to check.
+ * @return {Boolean}
+ *         True if the item is a finite number
  */
 H.isNumber = function (n) {
-	return typeof n === 'number' && !isNaN(n);
+	return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
 };
 
 /**
