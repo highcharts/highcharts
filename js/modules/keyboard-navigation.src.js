@@ -119,11 +119,11 @@ H.setOptions({
 				enabled: true,
 
 				/**
-				 * Hide default browser focus ring.
+				 * Hide the browser's default focus indicator.
 				 *
 				 * @since 6.0.4
 				 */
-				hideBrowserFocusRing: true,
+				hideBrowserFocusOutline: true,
 
 				/**
 				 * Style options for the focus border drawn around elements 
@@ -345,7 +345,7 @@ H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
 	) {
 		browserFocusElement.element.focus();
 		// Hide default focus ring
-		if (focusBorderOptions.hideBrowserFocusRing) {
+		if (focusBorderOptions.hideBrowserFocusOutline) {
 			browserFocusElement.css({ outline: 'none' });
 		}
 	}
