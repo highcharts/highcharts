@@ -6,6 +6,18 @@
 const colors = require('colors');
 const gulp = require('gulp');
 const argv = require('yargs').argv;
+const fs = require('fs');
+const {
+    getFilesInFolder
+} = require('highcharts-assembler/src/build.js');
+
+const {
+    createDirectory,
+    getFile,
+    removeDirectory,
+    writeFile
+} = require('highcharts-assembler/src/utilities.js');
+
 
 /**
  * Get the product version from build.properties.
@@ -13,7 +25,6 @@ const argv = require('yargs').argv;
  * @return {string|null} Returns version number or null if not found.
  */
 const getProductVersion = () => {
-    const fs = require('fs');
     const {
         regexGetCapture
     } = require('highcharts-assembler/src/dependencies.js');
@@ -28,9 +39,6 @@ const getProductVersion = () => {
  * @return {Object} Object containing all fileOptions
  */
 const getFileOptions = (base) => {
-    const {
-        getFilesInFolder
-    } = require('highcharts-assembler/src/build.js');
     const DS = '[\\\\\\\/]';
     const NOTDS = '[^\\\\\\\/]';
     const SINGLEDS = DS + NOTDS; // Regex: Single directory seperator
@@ -158,9 +166,6 @@ const buildESModules = () => {
 
 const styles = () => {
     const sass = require('node-sass');
-    const {
-        writeFile
-    } = require('highcharts-assembler/src/utilities.js');
     const fileName = 'highcharts';
     return new Promise((resolve, reject) => {
         sass.render({
@@ -225,7 +230,6 @@ gulp.task('default', ['styles', 'scripts'], () => {
 
 gulp.task('ftp', function () {
     const ftp = require('vinyl-ftp');
-    const fs = require('fs');
     const paths = {
         buildsDir: './js/builds',
         distributions: [
@@ -427,10 +431,6 @@ const compile = (files, sourceFolder) => {
         files.forEach(path => {
             const closureCompiler = require('google-closure-compiler-js');
             // const fs = require('fs');
-            const {
-                getFile,
-                writeFile
-            } = require('highcharts-assembler/src/utilities.js');
             const sourcePath = sourceFolder + path;
             const outputPath = sourcePath.replace('.src.js', '.js');
             const src = getFile(sourcePath);
@@ -475,9 +475,6 @@ const compile = (files, sourceFolder) => {
  * Compile the JS files in the /code folder
  */
 const compileScripts = () => {
-    const {
-        getFilesInFolder
-    } = require('highcharts-assembler/src/build.js');
     const sourceFolder = './code/';
     const files = getFilesInFolder(sourceFolder, true, '').filter(path => path.endsWith('.src.js'));
     return compile(files, sourceFolder)
@@ -498,9 +495,6 @@ const compileLib = () => {
 
 const cleanCode = () => {
     const {
-        getFilesInFolder
-    } = require('highcharts-assembler/src/build.js');
-    const {
         removeFile
     } = require('highcharts-assembler/src/utilities.js');
     const codeFolder = './code/';
@@ -514,22 +508,23 @@ const cleanCode = () => {
 };
 
 const cleanDist = () => {
-    const {
-        removeDirectory
-    } = require('highcharts-assembler/src/utilities.js');
     return removeDirectory('./build/dist').then(() => {
         console.log('Successfully removed dist directory.');
     }).catch(console.log);
 };
 
+const cleanApi = () => {
+    return removeDirectory('./build/api')
+        .then(() => {
+            console.log('Successfully removed api directory.');
+        })
+        .catch(console.log);
+};
+
 const copyFile = (source, target) => new Promise((resolve, reject) => {
-    const fs = require('fs');
     const {
         dirname
     } = require('path');
-    const {
-        createDirectory
-    } = require('highcharts-assembler/src/utilities.js');
     const directory = dirname(target);
     createDirectory(directory);
     let read = fs.createReadStream(source);
@@ -546,9 +541,6 @@ const copyFile = (source, target) => new Promise((resolve, reject) => {
 });
 
 const copyToDist = () => {
-    const {
-        getFilesInFolder
-    } = require('highcharts-assembler/src/build.js');
     const sourceFolder = 'code/';
     const distFolder = 'build/dist/';
     // Additional files to include in distribution.
@@ -636,9 +628,6 @@ const copyToDist = () => {
 
 const getBuildProperties = () => {
     const {
-        getFile
-    } = require('highcharts-assembler/src/utilities.js');
-    const {
         regexGetCapture
     } = require('highcharts-assembler/src/dependencies.js');
     const buildProperties = getFile('./build.properties');
@@ -650,9 +639,6 @@ const getBuildProperties = () => {
 };
 
 const createProductJS = () => {
-    const {
-        writeFile
-    } = require('highcharts-assembler/src/utilities.js');
     const path = './build/dist/products.js';
     const buildProperties = getBuildProperties();
     // @todo Add reasonable defaults
@@ -816,9 +802,6 @@ const filesize = () => {
         .then(() => compile(files, sourceFolder))
         .then(() => {
             return files.reduce((o, n) => {
-                const {
-                    getFile
-                } = require('highcharts-assembler/src/utilities.js');
                 const filename = n.replace('.src.js', '.js');
                 const compiled = getFile(sourceFolder + filename);
                 const content = getFile(sourceFolder + n);
@@ -871,7 +854,6 @@ const antDist = () => commandLine('ant dist');
 /*
 const gzipFile = (file, output) => {
     const zlib = require('zlib');
-    const fs = require('fs');
     const gzip = zlib.createGzip();
     const inp = fs.createReadStream(file);
     const out = fs.createWriteStream(output);
@@ -880,7 +862,6 @@ const gzipFile = (file, output) => {
 */
 
 const getDirectories = (path) => {
-    const fs = require('fs');
     return fs.readdirSync(path).filter(file => fs.lstatSync(path + file).isDirectory());
 };
 
@@ -893,10 +874,6 @@ const assembleSample = (template, content) => {
 };
 
 const createExamples = (title, samplesFolder, output) => {
-    const {
-        getFile,
-        writeFile
-    } = require('highcharts-assembler/src/utilities.js');
     const template = getFile('samples/template-example.htm');
     const samples = getDirectories(samplesFolder);
     const convertURLToLocal = str => {
@@ -912,9 +889,9 @@ const createExamples = (title, samplesFolder, output) => {
         return str;
     };
     samples.forEach((name) => {
-        const folder = samplesFolder + name + '/';
+        const pathFolder = samplesFolder + name + '/';
         const contents = ['html', 'css', 'js'].reduce((obj, key) => {
-            let content = getFile(folder + 'demo.' + key);
+            let content = getFile(pathFolder + 'demo.' + key);
             obj[key] = content ? content : '';
             return obj;
         }, {});
@@ -928,9 +905,6 @@ const createExamples = (title, samplesFolder, output) => {
 };
 
 const copyFolder = (input, output) => {
-    const {
-        getFilesInFolder
-    } = require('highcharts-assembler/src/build.js');
     const files = getFilesInFolder(input);
     const promises = files.map(file => copyFile(input + file, output + file));
     return Promise.all(promises)
@@ -1005,7 +979,6 @@ const copyAPIFiles = (dist, version) => {
 */
 
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    const fs = require('fs');
     // const generate = require('highcharts-api-doc-gen/lib/index.js');
     const generate = require('./../api-docs/lib/index.js');
     const message = {
@@ -1043,7 +1016,6 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
  * @return {Promise} A Promise which resolves into undefined when done.
  */
 const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
-    // const version = getBuildProperties().version;
     const message = {
         'successJSDoc': colors.green('Created tree.json')
     };
@@ -1072,47 +1044,212 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         }));
     })
     .then(() => generateAPI(treeFile, output, onlyBuildCurrent));
-    // .then(() => copyAPIFiles(output, version));
 };
 
-const uploadAPIDocs = () => {
-    const {
-        getFilesInFolder
-    } = require('highcharts-assembler/src/build.js');
-    const {
-        getFile
-    } = require('highcharts-assembler/src/utilities.js');
+const logUpdate = require('log-update');
+const ProgressBar = function (user) {
+    const getBar = (options) => {
+        const length = options.length;
+        const percentage = options.count / options.total;
+        const chars = Math.floor(percentage * length);
+        return options.complete.repeat(chars) + options.incomplete.repeat(length - chars);
+    };
+    const getMsg = (options) => {
+        return options.message
+            .replace(':bar', getBar(options))
+            .replace(':count', options.count)
+            .replace(':total', options.total);
+    };
+    const options = Object.assign({
+        count: 0,
+        complete: '=',
+        incomplete: '-',
+        length: 30,
+        message: '[:bar] - :count of :total',
+        total: 100
+    }, user);
+    this.render = () => {
+        logUpdate(getMsg(options));
+    };
+    this.complete = function () {
+        this.tick = () => {};
+        logUpdate.done();
+    };
+    this.tick = function () {
+        options.count++;
+        this.render();
+        if (options.count === options.total) {
+            this.complete();
+        }
+    };
+    this.render();
+    return this;
+};
+
+const asyncForeach = (arr, fn) => {
+    const length = arr.length;
+    const generator = (j) => {
+        let promise;
+        if (j < length) {
+            promise = fn(arr[j], j, arr).then(() => {
+                // console.log('then ' + j)
+                return generator(j + 1);
+            });
+        }
+        return promise;
+    };
+    return generator(0);
+};
+
+const asyncBatchForeach = (batchSize, arr, fn) => {
+    const length = arr.length;
+    const generator = (from, to) => {
+        let result;
+        if (from < length) {
+            const batch = arr.slice(from, to);
+            const promises = batch.map((el, i) => {
+                return fn(el, from + i, arr);
+            });
+            result = Promise.all(promises).then(() => {
+                return generator(to, to + batchSize);
+            });
+        }
+        return result;
+    };
+    return generator(0, batchSize);
+};
+
+gulp.task('testing', () => {
+    let messages = [];
+    const min = 500;
+    const max = 2000;
+    for (let i = 0; i < 1000; i++) {
+        messages.push({
+            m: i,
+            time: Math.random() * (max - min) + min
+        });
+    }
+    const bar = new ProgressBar({
+        total: messages.length
+    });
+    const func = (time) => {
+        return new Promise((resolve) => {
+            let interval = setInterval(() => {
+                clearInterval(interval);
+                resolve();
+            }, time);
+        });
+    };
+    return asyncBatchForeach(100, messages, (entry) => {
+        return func(entry.time).then(() => {
+            bar.tick();
+        });
+    });
+});
+
+const isFunction = x => typeof x === 'function';
+const isArray = x => Array.isArray(x);
+const isString = x => typeof x === 'string';
+
+const uploadFiles = (params) => {
     const storage = require('./tools/jsdoc/storage/cdn.storage');
-    const sourceFolder = './build/api/';
     const mimeType = {
         'css': 'text/css',
         'html': 'text/html',
         'js': 'text/javascript',
         'json': 'application/json'
     };
+    const {
+        batchSize,
+        bucket,
+        callback,
+        files
+    } = params;
+    let result;
+    if (isString(bucket) && isArray(files)) {
+        const cdn = storage.strategy.s3({
+            Bucket: bucket
+        });
+        const uploadFile = (file) => {
+            const { from, to } = file;
+            let filePromise;
+            if (isString(from) && isString(to)) {
+                const content = getFile(from);
+                const fileType = from.split('.').pop();
+                filePromise = storage.push(cdn, to, content, mimeType[fileType])
+                    .then(() => isFunction(callback) && callback());
+            } else {
+                filePromise = Promise.reject(
+                    new Error([
+                        'Invalid file information!',
+                        'from: ' + from,
+                        'to: ' + to
+                    ].join('\n'))
+                );
+            }
+            return filePromise;
+        };
+        const onError = (err) => {
+            console.log([
+                'Found error',
+                err.stack,
+                ''
+            ].join('\n'));
+        };
+        // const promises = files.map(uploadFile);
+        // result = Promise.all(promises).catch(onError);
+        result = asyncBatchForeach(batchSize, files, uploadFile)
+          .catch((err) => onError(err));
+    } else {
+        result = Promise.reject();
+    }
+    return result;
+};
+
+const uploadAPIDocs = () => {
+    const sourceFolder = './build/api/';
+    const bucket = 'api-docs-bucket.highcharts.com';
+    const batchSize = 30000;
     const files = getFilesInFolder(sourceFolder, true, '');
-    const cdn = storage.strategy.s3({
-        Bucket: 'api-docs-bucket.highcharts.com'
+    const tags = isString(argv.tags) ? argv.tags.split(',') : ['current'];
+    const getUploadConfig = (tag) => {
+        const bar = new ProgressBar({
+            total: files.length,
+            message: `[:bar] - Uploading ${tag}. Completed :count of :total.'`
+        });
+        const doTick = () => {
+            bar.tick();
+        };
+        const params = {
+            batchSize: batchSize,
+            bucket: bucket,
+            callback: doTick
+        };
+        const getMapOfFromTo = (fileName) => {
+            let to = fileName;
+            if (tag !== 'current') {
+                let parts = fileName.split('/');
+                parts.splice(1, 0, tag);
+                to = parts.join('/');
+            }
+            return {
+                from: sourceFolder + fileName,
+                to: to
+            };
+        };
+        params.files = files.map(getMapOfFromTo);
+        return params;
+    };
+    console.log(`Started upload of ${files.length} files to API under tags [${tags.join(', ')}].`);
+    return asyncForeach(tags, (tag) => {
+        return Promise.resolve(getUploadConfig(tag)).then(uploadFiles);
     });
-    const promises = files.map((fileName) => {
-        const content = getFile(sourceFolder + fileName);
-        const fileType = fileName.split('.').pop();
-        return storage.push(cdn, fileName, content, mimeType[fileType])
-            .then(() => {
-                console.log(('Uploaded ' + fileName).green);
-            })
-            .catch((e) => {
-                console.log(('Error uploading ' + e.message).red);
-            });
-    });
-    return Promise.all(promises);
 };
 
 const startServer = () => {
     // Start a server serving up the api reference
     const http = require('http');
     const url = require('url');
-    const fs = require('fs');
     const docport = 9005;
     const base = '127.0.0.1:' + docport;
     const apiPath = __dirname + '/build/api/';
@@ -1191,35 +1328,18 @@ const startServer = () => {
     );
 };
 
-gulp.task('start-api-server', startServer);
-gulp.task('upload-api', uploadAPIDocs);
-gulp.task('generate-api', generateAPIDocs);
-gulp.task('create-productjs', createProductJS);
-gulp.task('clean-dist', cleanDist);
-gulp.task('clean-code', cleanCode);
-gulp.task('copy-to-dist', copyToDist);
-gulp.task('filesize', filesize);
-gulp.task('styles', styles);
-gulp.task('scripts', scripts);
-gulp.task('build-modules', buildESModules);
-gulp.task('lint', lint);
-gulp.task('lint-samples', lintSamples);
-gulp.task('compile', compileScripts);
-gulp.task('compile-lib', compileLib);
-gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
-gulp.task('examples', createAllExamples);
-
 let apiServerRunning = false;
 
 /**
  * Create Highcharts API and class refrences from JSDOC
  */
-gulp.task('jsdoc', () => {
+const jsdoc = () => {
     const optionsClassReference = {
         templateDir: './../highcharts-docstrap',
         destination: './build/api/class-reference/'
     };
     const optionsAPI = {
+        version: getBuildProperties().version,
         treeFile: './tree.json',
         output: './build/api',
         onlyBuildCurrent: true
@@ -1247,7 +1367,28 @@ gulp.task('jsdoc', () => {
 
     return generateClassReferences(optionsClassReference)
         .then(() => generateAPIDocs(optionsAPI));
-});
+};
+
+gulp.task('start-api-server', startServer);
+gulp.task('upload-api', uploadAPIDocs);
+gulp.task('generate-api', generateAPIDocs);
+gulp.task('create-productjs', createProductJS);
+gulp.task('clean-api', cleanApi);
+gulp.task('clean-dist', cleanDist);
+gulp.task('clean-code', cleanCode);
+gulp.task('copy-to-dist', copyToDist);
+gulp.task('filesize', filesize);
+gulp.task('jsdoc', jsdoc);
+gulp.task('styles', styles);
+gulp.task('scripts', scripts);
+gulp.task('build-modules', buildESModules);
+gulp.task('lint', lint);
+gulp.task('lint-samples', lintSamples);
+gulp.task('compile', compileScripts);
+gulp.task('compile-lib', compileLib);
+gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
+gulp.task('examples', createAllExamples);
+
 /**
  * Create distribution files
  */
@@ -1277,11 +1418,9 @@ gulp.task('scripts-new', () => {
     } = require('highcharts-assembler/src/dependencies.js');
     const {
       buildDistFromModules,
-      buildModules,
-      getFilesInFolder
+      buildModules
     } = require('highcharts-assembler/src/build.js');
     const isUndefined = (x) => typeof x === 'undefined';
-    const isString = (x) => typeof x === 'string';
     const version = getProductVersion();
     const pathMasters = './js/masters/';
     const fileOptions = getFileOptions(pathMasters);
@@ -1401,7 +1540,6 @@ gulp.task('scripts-new', () => {
 });
 
 gulp.task('browserify', function () {
-    const fs = require('fs');
     const browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')
         .bundle(function (err, buf) {
