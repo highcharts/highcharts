@@ -116,3 +116,38 @@ QUnit.test('Individual options and Point.update', function (assert) {
         'whiskerWidth'
     );
 });
+
+QUnit.test(
+    'All-null data point should not affect Y axis scale (#7380)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'boxplot'
+            },
+            series: [{
+                name: 'Observations',
+                data: [
+                    [], // comment this out to get a plot to show up
+                    {
+                        x: 1,
+                        low: 714,
+                        q1: 762,
+                        median: 817,
+                        q3: 870,
+                        high: 918
+                    }
+                ]
+            }],
+            yAxis: {
+                endOnTick: false,
+                maxPadding: 0
+            }
+        });
+
+        assert.strictEqual(
+            chart.yAxis[0].max,
+            918,
+            'Y axis max should consider the one valid point'
+        );
+    }
+);

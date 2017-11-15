@@ -3233,7 +3233,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				j = y.length;
 				if (j) { // array, like ohlc or range data
 					while (j--) {
-						if (y[j] !== null) {
+						if (typeof y[j] === 'number') { // #7380
 							activeYData[activeCounter++] = y[j];
 						}
 					}
