@@ -94,7 +94,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		
 
 		// Handle local timezone offset
-		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
+		if (Date.hcHasTimeZone) {
 
 			// Detect whether we need to take the DST crossover into
 			// consideration. If we're crossing over DST, the day length may be

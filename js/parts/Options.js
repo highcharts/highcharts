@@ -2980,6 +2980,7 @@ function setTimeMethods() {
 	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
 	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
 	Date.hcGetTimezoneOffset = getTimezoneOffsetOption();
+	Date.hcHasTimeZone = !!(Date.hcTimezoneOffset || Date.hcGetTimezoneOffset);
 	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
