@@ -128,11 +128,16 @@ H.Tick.prototype = {
 			leftBound = pick(axis.labelLeft, Math.min(axis.pos, spacing[3])),
 			rightBound = pick(
 				axis.labelRight,
-				Math.max(axis.pos + axis.len, chartWidth - spacing[1])
+				Math.max(
+					!axis.isRadial ? axis.pos + axis.len : 0,
+					chartWidth - spacing[1]
+				)
 			),
 			label = this.label,
 			rotation = this.rotation,
-			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
+			factor = { left: 0, center: 0.5, right: 1 }[
+				axis.labelAlign || label.attr('align')
+			],
 			labelWidth = label.getBBox().width,
 			slotWidth = axis.getSlotWidth(),
 			modifiedSlotWidth = slotWidth,
@@ -499,8 +504,13 @@ H.Tick.prototype = {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (horiz && !axis.isRadial && !labelOptions.step &&
-					!labelOptions.rotation && !old && opacity !== 0) {
+			} else if (
+				horiz &&
+				!labelOptions.step &&
+				!labelOptions.rotation &&
+				!old &&
+				opacity !== 0
+			) {
 				tick.handleOverflow(xy);
 			}
 

@@ -1691,6 +1691,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 */
 	_defaultGetter: function (key) {
 		var ret = pick(
+			this[key + 'Value'], // align getter
 			this[key],
 			this.element ? this.element.getAttribute(key) : null,
 			0
@@ -1755,6 +1756,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	/*= } =*/
 	alignSetter: function (value) {
 		var convert = { left: 'start', center: 'middle', right: 'end' };
+		this.alignValue = value;
 		this.element.setAttribute('text-anchor', convert[value]);
 	},
 	opacitySetter: function (value, key, element) {		

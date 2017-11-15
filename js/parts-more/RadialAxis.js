@@ -77,7 +77,10 @@ radialAxisMixin = {
 			align: null, // auto
 			distance: 15,
 			x: 0,
-			y: null // auto
+			y: null, // auto
+			style: {
+				textOverflow: 'none' // wrap lines by default (#7248)
+			}
 		},
 		maxPadding: 0,
 		minPadding: 0,
