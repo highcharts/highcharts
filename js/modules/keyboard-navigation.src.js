@@ -14,7 +14,7 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
 import '../parts/Tooltip.js';
-import '../parts/SVGRenderer.js';
+import '../parts/SvgRenderer.js';
 
 var win = H.win,
 	doc = win.document,
