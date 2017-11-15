@@ -37,32 +37,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	setTreeValues = mixinTreeSeries.setTreeValues,
 	reduce = H.reduce;
 
-var layoutAlgorithm = function layoutAlgorithm(parent, children) {
-	var startAngle = parent.start,
-		range = parent.end - startAngle,
-		total = parent.val,
-		x = parent.x,
-		y = parent.y,
-		innerRadius = parent.r,
-		outerRadius = innerRadius + parent.radius;
-
-	return reduce(children || [], function (arr, child) {
-		var percentage = (1 / total) * child.val,
-			radians = percentage * range,
-			values = {
-				x: x,
-				y: y,
-				innerR: innerRadius,
-				r: outerRadius,
-				radius: parent.radius,
-				start: startAngle,
-				end: startAngle + radians
-			};
-		arr.push(values);
-		startAngle = values.end;
-		return arr;
-	}, []);
-};
 
 /**
  * getEndPoint - Find a set of coordinates given a start coordinates, an angle,
@@ -516,6 +490,36 @@ var sunburstSeries = {
 	/*= } =*/
 
 	/*
+	 * The layout algorithm for the levels
+	 */
+	layoutAlgorithm: function (parent, children) {
+		var startAngle = parent.start,
+			range = parent.end - startAngle,
+			total = parent.val,
+			x = parent.x,
+			y = parent.y,
+			innerRadius = parent.r,
+			outerRadius = innerRadius + parent.radius;
+
+		return reduce(children || [], function (arr, child) {
+			var percentage = (1 / total) * child.val,
+				radians = percentage * range,
+				values = {
+					x: x,
+					y: y,
+					innerR: innerRadius,
+					r: outerRadius,
+					radius: parent.radius,
+					start: startAngle,
+					end: startAngle + radians
+				};
+			arr.push(values);
+			startAngle = values.end;
+			return arr;
+		}, []);
+	},
+
+	/*
 	 * Set the shape arguments on the nodes. Recursive from root down.
 	 */
 	setShapeArgs: function (parent, parentValues) {
@@ -524,7 +528,7 @@ var sunburstSeries = {
 			children = grep(parent.children, function (n) {
 				return n.visible;
 			});
-		childrenValues = layoutAlgorithm(parentValues, children);
+		childrenValues = this.layoutAlgorithm(parentValues, children);
 		each(children, function (child, index) {
 			var values = childrenValues[index],
 				angle = values.start + ((values.end - values.start) / 2),
