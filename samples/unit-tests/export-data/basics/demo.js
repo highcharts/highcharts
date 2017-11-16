@@ -201,7 +201,7 @@ QUnit.test("Pie chart", function (assert) {
     $('#container').highcharts({
         series: [{
             data: [
-                ['Apples', 1],
+                ['', 1], // #7404, missing name
                 ['Pears', 2],
                 ['Oranges', 3]
             ],
@@ -210,7 +210,7 @@ QUnit.test("Pie chart", function (assert) {
     });
 
     var csv = '"Category","Series 1"\n' +
-        '"Apples",1\n' +
+        '"",1\n' +
         '"Pears",2\n' +
         '"Oranges",3';
 

@@ -16,7 +16,8 @@ import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
 
-var each = Highcharts.each,
+var defined = Highcharts.defined,
+	each = Highcharts.each,
 	pick = Highcharts.pick,
 	win = Highcharts.win,
 	doc = win.document,
@@ -300,7 +301,7 @@ Highcharts.Chart.prototype.getDataRows = function () {
 		// Add the category column
 		each(rowArr, function (row) { // eslint-disable-line no-loop-func
 			var category = row.name;
-			if (!category) {
+			if (!defined(category)) {
 				if (xAxis.isDatetimeAxis) {
 					if (row.x instanceof Date) {
 						row.x = row.x.getTime();
