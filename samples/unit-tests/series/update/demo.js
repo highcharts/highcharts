@@ -40,6 +40,99 @@ QUnit.test(
     }
 );
 
+QUnit.test('Updating zIndex (#3380)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        title: {
+            text: null
+        },
+
+        plotOptions: {
+            series: {
+                lineWidth: 5
+            }
+        },
+
+        series: [{
+            type: 'column',
+            data: [1, 2],
+            color: 'blue',
+            zIndex: 3
+        }, {
+            data: [2, 1],
+            color: 'yellow',
+            zIndex: 2
+        }]
+    });
+
+    assert.ok(
+        chart.seriesGroup.element.childNodes[0] === chart.series[1].group.element,
+        'Yellow should be below initially'
+    );
+    assert.ok(
+        chart.seriesGroup.element.childNodes[2] === chart.series[0].group.element,
+        'Blue should be on top initially'
+    );
+
+    chart.series[0].update({
+        zIndex: 1
+    });
+
+    assert.ok(
+        chart.seriesGroup.element.childNodes[0] === chart.series[0].group.element,
+        'Yellow should be on top after update'
+    );
+    assert.ok(
+        chart.seriesGroup.element.childNodes[2] === chart.series[1].group.element,
+        'Blue should be below after update'
+    );
+});
+
+
+
+QUnit.test('Update without altering zIndex (#7397)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        title: {
+            text: null
+        },
+
+        plotOptions: {
+            series: {
+                lineWidth: 5
+            }
+        },
+
+        series: [{
+            type: 'column',
+            data: [1, 2],
+            color: 'blue'
+        }, {
+            data: [2, 1],
+            color: 'yellow'
+        }]
+    });
+
+    assert.ok(
+        chart.seriesGroup.element.childNodes[0] === chart.series[0].group.element,
+        'Yellow should be on top initially'
+    );
+    assert.ok(
+        chart.seriesGroup.element.childNodes[2] === chart.series[1].group.element,
+        'Blue should be below initially'
+    );
+
+    chart.series[0].update({
+        type: 'spline'
+    });
+
+    assert.ok(
+        chart.seriesGroup.element.childNodes[0] === chart.series[0].group.element,
+        'Yellow should be on top after update'
+    );
+    assert.ok(
+        chart.seriesGroup.element.childNodes[2] === chart.series[1].group.element,
+        'Blue should be below after update'
+    );
+});
 
 QUnit.test(
     'Updating types, new type lost after second update (#2322)',
