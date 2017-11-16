@@ -53,4 +53,20 @@ QUnit.test('showInLegend. #5544', function (assert) {
         'colorAxis',
         'colorAxis.showInLegend: true'
     );
+
+    chart = Highcharts.mapChart('container', {
+        chart: {
+            map: 'countries/au/au-all'
+        },
+        legend: {
+            enabled: false
+        },
+        colorAxis: {
+        },
+        series: [{
+            data: [['au-wa', 1], ['au-nt', 0]]
+        }]
+    });
+    items = chart.container.querySelectorAll('svg > .highcharts-grid-line');
+    assert.notOk(items && items.length, 'No stray ticks when legend disabled.');
 });

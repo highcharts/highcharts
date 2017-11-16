@@ -433,7 +433,8 @@ if (!H.ColorAxis) {
 			}, userOptions, {
 				opposite: !horiz,
 				showEmpty: false,
-				title: null
+				title: null,
+				visible: chart.options.legend.enabled
 			});
 
 			Axis.prototype.init.call(this, chart, options);
