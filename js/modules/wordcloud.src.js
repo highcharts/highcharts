@@ -406,13 +406,11 @@ var wordCloudOptions = {
 	 * CSS styles for the words.
 	 *
 	 * @type {CSSObject}
-	 * @default {"fontFamily":"Impact, sans-serif"}
+	 * @default {"fontFamily":"sans-serif", "fontWeight": "900"}
 	 */
 	style: {
-		/**
-		 * The font family to use for the word cloud.
-		 */
-		fontFamily: 'Impact, sans-serif'
+		fontFamily: 'sans-serif',
+		fontWeight: '900'
 	},
 	tooltip: {
 		followPointer: true,
