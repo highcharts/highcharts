@@ -15,7 +15,8 @@ import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
 
-var noop = H.noop,
+var animObject = H.animObject,
+	noop = H.noop,
 	color = H.color,
 	defaultOptions = H.defaultOptions,
 	each = H.each,
@@ -689,7 +690,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
 
 
 		// Do dummy animation on first point to get to complete
-		setTimeout(function () {
+		H.syncTimeout(function () {
 			if (newSeries.points) { // May be destroyed in the meantime, #3389
 				each(newSeries.points, function (point, i) {  
 					// Fade in other points			  
@@ -723,7 +724,7 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
 	var series = this,
 		drilldownLevels = this.chart.drilldownLevels,
 		animateFrom,
-		animationOptions = this.chart.options.drilldown.animation,
+		animationOptions = animObject(this.chart.options.drilldown.animation),
 		xAxis = this.xAxis;
 
 	if (!init) {
@@ -769,7 +770,7 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
  * and animate them into the origin point in the upper series.
  */
 ColumnSeries.prototype.animateDrillupFrom = function (level) {
-	var animationOptions = this.chart.options.drilldown.animation,
+	var animationOptions = animObject(this.chart.options.drilldown.animation),
 		group = this.group,
 		// For 3d column series all columns are added to one group 
 		// so we should not delete the whole group. #5297
@@ -805,7 +806,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
 			animateTo.fill = level.color;
 			/*= } =*/
 
-			if (animationOptions) {
+			if (animationOptions.duration) {
 				graphic.animate(
 					animateTo,
 					H.merge(animationOptions, { complete: complete })
