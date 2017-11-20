@@ -12,7 +12,6 @@ const {
 } = require('highcharts-assembler/src/build.js');
 
 const {
-    createDirectory,
     getFile,
     removeDirectory,
     writeFile
@@ -525,6 +524,9 @@ const copyFile = (source, target) => new Promise((resolve, reject) => {
     const {
         dirname
     } = require('path');
+    const {
+        createDirectory
+    } = require('highcharts-assembler/src/utilities.js');
     const directory = dirname(target);
     createDirectory(directory);
     let read = fs.createReadStream(source);
