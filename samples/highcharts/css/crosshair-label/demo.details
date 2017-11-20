@@ -2,6 +2,6 @@
  name: Highcharts Demo
  authors:
    - Torstein Hønsi
- compareTooltips: true
+ skipTest: true
  js_wrap: b
 ...

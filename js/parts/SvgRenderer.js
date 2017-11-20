@@ -86,7 +86,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		'textDecoration', 'textOverflow', 'textOutline'],
 
 	/**
-	 * Initialize the SVG renderer. This function only exists to make the
+	 * Initialize the SVG element. This function only exists to make the
 	 * initiation process overridable. It should not be called directly.
 	 *
 	 * @param  {SVGRenderer} renderer
