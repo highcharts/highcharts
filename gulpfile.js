@@ -1413,8 +1413,9 @@ gulp.task('scripts-new', () => {
     const {
         join,
         relative,
-        resolve
-    } = require('path').posix;
+        resolve,
+        sep
+    } = require('path');
     const {
       getOrderedDependencies
     } = require('highcharts-assembler/src/dependencies.js');
@@ -1501,7 +1502,7 @@ gulp.task('scripts-new', () => {
             ].join('\n'));
             return buildModules({
                 base: pathJSParts,
-                files: [pathRelative],
+                files: [pathRelative.split(sep).join('/')],
                 output: pathESModules,
                 type: types
             });
@@ -1516,7 +1517,7 @@ gulp.task('scripts-new', () => {
                   .reduce((arr, pathMaster) => {
                       const list = dependencyList[type][pathMaster];
                       if (list.includes(pathFile)) {
-                          arr.push(relative(pathESMasters, pathMaster));
+                          arr.push(relative(pathESMasters, pathMaster).split(sep).join('/'));
                       }
                       return arr;
                   }, []);
