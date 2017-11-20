@@ -1,5 +1,7 @@
-/* eslint-env node */
+/* eslint-env node, es6 */
 /* eslint valid-jsdoc: 0, no-console: 0 */
+/* eslint func-style: ["error", "declaration", { "allowArrowFunctions": true }] */
+
 /**
  * This node script copies contents over from dist packages to shim repos and
  * optionally commits and pushes releases.
@@ -8,18 +10,14 @@
 (function () {
     'use strict';
     var fs = require('fs-extra');
+    // TODO avoid dependency on highcharts-assembler
+    const {
+        getFilesInFolder
+    } = require('highcharts-assembler/src/build.js');
 
     // Set this to true after changes have been reviewed
-    //var push = process.argv[2] === '--push';
-    var push = true;
-
-    function releaseRepo(product) {
-        return {
-            highcharts: 'highcharts-dist',
-            highmaps: 'highmaps-release',
-            highstock: 'highstock-release'
-        }[product];
-    }
+    const push = process.argv[2] === '--push';
+    const releaseRepo = 'highcharts-dist';
 
     /**
      * Commit, tag and push
@@ -35,7 +33,7 @@
             };
         */
         var commands = [
-            'cd ~/github/' + releaseRepo(product),
+            'cd ~/github/' + releaseRepo,
             'git add --all',
             'git commit -m "v' + version + '"',
             'git tag -a "v' + version + '" -m "Tagged ' + product + ' version ' + version + '"',
@@ -52,7 +50,7 @@
     /**
      * Add the current version to the Bower file
      */
-    function updateJSONFiles(product, version, name) {
+    function updateJSONFiles(product, version, name, cb) {
 
         var i = 0;
 
@@ -60,26 +58,25 @@
          * Continue after writing files
          */
         function proceed(err) {
+            const noop = () => {};
             i = i + 1;
             if (err) {
                 throw err;
             }
-            if (push && i === 2) {
-                runGit(product, version);
-            }
+            return (i === 2) ? cb() : noop();
         }
 
         console.log('Updating bower.json and package.json for ' + name + '...');
 
         ['bower', 'package'].forEach(function (file) {
-            fs.readFile('../' + releaseRepo(product) + '/' + file + '.json', function (err, json) {
+            fs.readFile('../' + releaseRepo + '/' + file + '.json', function (err, json) {
                 if (err) {
                     throw err;
                 }
                 json = JSON.parse(json);
                 json.version = version;
                 json = JSON.stringify(json, null, '  ');
-                fs.writeFile('../' + releaseRepo(product) + '/' + file + '.json', json, proceed);
+                fs.writeFile('../' + releaseRepo + '/' + file + '.json', json, proceed);
             });
         });
     }
@@ -87,87 +84,59 @@
     /**
      * Copy the JavaScript files over
      */
-    function copyFiles(product, name) {
-        var extras = [];
-
-        console.log('Copying ' + name + ' files...');
-
-        // Copy the files over to shim repo
-        fs.readdir('build/dist/' + product + '/code/', function (err, files) {
-            if (err) {
-                throw err;
-            }
-
-            files.forEach(function (src) {
-                if ((src.indexOf('.') !== 0) && (src.indexOf('readme') === -1)){
-                    fs.copy(
-                        'build/dist/' + product + '/code/' + src,
-                        '../' + releaseRepo(product) + '/' + src,
-                        function (copyerr) {
-                            if (copyerr) {
-                                throw copyerr;
-                            }
-                        }
-                    );
+    function copyFiles() {
+        const fnFilter = (src) => (
+            (src.indexOf('.') !== 0) &&
+            (src.indexOf('readme') === -1)
+        );
+        const existing = [];
+        const mapFromTo = {};
+        const pathTo = '../' + releaseRepo + '/';
+        ['highcharts', 'highstock', 'highmaps']
+        .map((prod) => 'build/dist/' + prod + '/code/')
+        .forEach((pathDir) => {
+            const files = getFilesInFolder(pathDir, true);
+            files.forEach((filename) => {
+                if (fnFilter(filename) && !existing.includes(filename)) {
+                    existing.push(filename);
+                    mapFromTo[pathDir + filename] = pathTo + filename;
                 }
             });
         });
 
-        // Copy Highstock and Highmaps into the Highcharts release repo for use
-        // with npm and bower.
-        if (product === 'highstock') {
-            extras = ['highstock.src.js', 'highstock.js'];
-        } else if (product === 'highmaps') {
-            extras = ['highmaps.src.js', 'highmaps.js', 'modules/map.src.js', 'modules/map.js'];
-        }
-
-        extras.forEach(function (src) {
-            ['', 'js/'].forEach(function (folder) {
-                var path = folder + src;
-                fs.copy(
-                    'build/dist/' + product + '/code/' + path,
-                    '../' + releaseRepo('highcharts') + '/' + path,
-                    function (err) {
-                        if (err) {
-                            throw err;
-                        }
+        // Copy all the files to release repository
+        Object.keys(mapFromTo).forEach((from) => {
+            const to = mapFromTo[from];
+            fs.copy(
+                from,
+                to,
+                function (copyerr) {
+                    if (copyerr) {
+                        throw copyerr;
                     }
-                );
-            });
+                }
+            );
         });
-    }
-
-    /**
-     * Run the procedure for each of Highcharts, Highstock and Highmaps
-     */
-    function runProduct(name, version) {
-
-        var product = name.toLowerCase();
-
-        copyFiles(product, name);
-
-        updateJSONFiles(product, version, name);
     }
 
     // Load the current products and versions
     fs.readFile('build/dist/products.js', 'utf8', function (err, products) {
-        var name;
-
         if (err) {
             throw err;
         }
-
         if (products) {
             products = products.replace('var products = ', '');
             products = JSON.parse(products);
         }
-
-        for (name in products) {
-            if (products.hasOwnProperty(name)) {
-                runProduct(name, products[name].nr);
+        const name = 'Highcharts';
+        const version = products[name].nr;
+        const product = name.toLowerCase();
+        copyFiles(product, name);
+        updateJSONFiles(product, version, name, () => {
+            if (push) {
+                runGit(product, version);
             }
-        }
-
+        });
         if (!push) {
             console.log('Please verify the changes in the release repos. Then run again ' +
                 'with --push as an argument.');
