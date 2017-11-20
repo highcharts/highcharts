@@ -231,6 +231,7 @@
      * Test number formatting
      */
     QUnit.test('NumberFormat', function (assert) {
+        var i;
 
         assertEquals(assert, 'Integer with decimals', "1.00", numberFormat(1, 2));
         assertEquals(assert, 'Integer with decimal point', "1,0", numberFormat(1, 1, ','));
@@ -261,9 +262,28 @@
         assertEquals(
             assert,
             'Decimals limit with exponential (#7042)',
-            "0.00",
+            '0.00',
             numberFormat(1.5e-9, 2)
         );
+
+        // small numbers with set decimals (#7405)
+        for (i = 7; i < 11; i++) {
+            assertEquals(
+                assert,
+                'Decimals = ' + i + ' - precision to ' + i + 'th digit after .',
+                ['0.0000000', '0.00000000', '2e-9', '1.9e-9'][i - 7],
+                numberFormat(1.9e-9, i)
+            );
+        }
+
+        for (i = 6; i < 10; i++) {
+            assertEquals(
+                assert,
+                'Decimals = ' + i + ' - precision to ' + i + 'th digit after .',
+                ['0.000001', '6e-7', '6.3e-7', '6.26e-7'][i - 6],
+                numberFormat(6.26e-7, i)
+            );
+        }
     });
 
 
