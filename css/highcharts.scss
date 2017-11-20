@@ -222,7 +222,7 @@ g.highcharts-series,
     fill: none;
     stroke-width: 0;
 }
-.highcharts-data-label text {
+.highcharts-data-label text, text.highcharts-data-label {
     fill: $neutral-color-80;
 }
 .highcharts-data-label-connector {
@@ -628,7 +628,9 @@ input.highcharts-range-selector {
 .highcharts-drilldown-point {
     cursor: pointer;
 }
-.highcharts-drilldown-data-label text, .highcharts-drilldown-axis-label {
+.highcharts-drilldown-data-label text,
+text.highcharts-drilldown-data-label,
+.highcharts-drilldown-axis-label {
     cursor: pointer;
     fill: $highlight-color-100;
     font-weight: bold;

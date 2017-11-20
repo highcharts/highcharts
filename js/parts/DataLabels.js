@@ -307,21 +307,25 @@ Series.prototype.drawDataLabels = function () {
 			} else if (enabled && defined(str)) {
 				// create new label
 				if (!dataLabel) {
-					dataLabel = point.dataLabel = renderer[
-						rotation ? 'text' : 'label' // labels don't rotate
-					](
-						str,
-						0,
-						-9999,
-						options.shape,
-						null,
-						null,
-						options.useHTML,
-						null, 
-						'data-label'
-					);
+					dataLabel = point.dataLabel = rotation ?
+
+						renderer.text(str, 0, -9999) // labels don't rotate
+							.addClass('highcharts-data-label') :
+
+						renderer.label(
+							str,
+							0,
+							-9999,
+							options.shape,
+							null,
+							null,
+							options.useHTML,
+							null, 
+							'data-label'
+						);
+					
 					dataLabel.addClass(
-						'highcharts-data-label-color-' + point.colorIndex +
+						' highcharts-data-label-color-' + point.colorIndex +
 						' ' + (options.className || '') +
 						(options.useHTML ? 'highcharts-tracker' : '') // #3398
 					);
