@@ -1260,6 +1260,7 @@ seriesType('treemap', 'scatter', {
 				states && states.hover,
 				states && states.select
 			)
+			.addClass('highcharts-drillup-button')
 			.attr({
 				align: buttonOptions.position.align,
 				zIndex: 7
@@ -1267,6 +1268,7 @@ seriesType('treemap', 'scatter', {
 			.add()
 			.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
 		} else {
+			this.drillUpButton.placed = false;
 			this.drillUpButton.attr({
 				text: backText
 			})
