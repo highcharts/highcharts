@@ -1,0 +1,8 @@
+---
+ name: Highstock Demo
+ authors:
+   - Paweł Fus
+   - Sebastian Bochan
+   - Sebastian Domas
+ js_wrap: b
+...

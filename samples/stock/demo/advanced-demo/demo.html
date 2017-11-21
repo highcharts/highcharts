@@ -1,0 +1,238 @@
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+
+<script src="https://code.highcharts.com/modules/annotations.src.js"></script>
+<script src="https://code.highcharts.com/modules/drag-panes.src.js"></script>
+
+<script src="https://code.highcharts.com/indicators/indicators.src.js"></script>
+
+<script src="https://code.highcharts.com/indicators/accumulation-distribution.src.js"></script>
+<script src="https://code.highcharts.com/indicators/atr.src.js"></script>
+<script src="https://code.highcharts.com/indicators/bollinger-bands.src.js"></script>
+<script src="https://code.highcharts.com/indicators/cci.src.js"></script>
+<script src="https://code.highcharts.com/indicators/cmf.src.js"></script>
+<script src="https://code.highcharts.com/indicators/ema.src.js"></script>
+<script src="https://code.highcharts.com/indicators/ichimoku-kinko-hyo.src.js"></script>
+<script src="https://code.highcharts.com/indicators/macd.src.js"></script>
+<script src="https://code.highcharts.com/indicators/mfi.src.js"></script>
+<script src="https://code.highcharts.com/indicators/momentum.src.js"></script>
+<script src="https://code.highcharts.com/indicators/pivot-points.src.js"></script>
+<script src="https://code.highcharts.com/indicators/price-envelopes.src.js"></script>
+<script src="https://code.highcharts.com/indicators/roc.src.js"></script>
+<script src="https://code.highcharts.com/indicators/rsi.src.js"></script>
+<script src="https://code.highcharts.com/indicators/stochastic.src.js"></script>
+<script src="https://code.highcharts.com/indicators/volume-by-price.src.js"></script>
+<script src="https://code.highcharts.com/indicators/wma.src.js"></script>
+<script src="https://code.highcharts.com/indicators/vwap.src.js"></script>
+<script src="https://code.highcharts.com/indicators/zigzag.src.js"></script>
+
+<script src="scenarios/analyze_1.js"></script>
+<script src="scenarios/analyze_2.js"></script>
+
+	<div id="demo">
+    <div id="menu-side">
+      <button id="annotation-line"></button>
+      <button id="annotation-rect"></button>
+      <button id="annotation-circle"></button>
+      <button id="annotation-arrow"></button>
+      <button id="annotation-tunnel"></button>
+      <button id="annotation-text"></button>
+      <button id="annotation-fibonacci"></button>
+      <button id="annotation-flag"></button>
+      <button id="annotation-feature"></button>
+      <div id="submenu">
+		  <div class="left">
+		    <div class="empty">
+		    </div>
+		    <div class="main">
+		    </div>
+		  </div>
+		  <div>
+		    <div class="inner">
+		      <ul>
+		        <li id="flag-circlepin"></li>
+            <li id="flag-diamondpin"></li>
+		        <li id="flag-squarepin"></li>
+		        <li id="flag-flag"></li>
+		      </ul>
+		    </div>
+		  </div>
+		</div>
+    </div>
+	
+	<div id="menu-nav">
+		<div id="analyze-container">
+			<div class="button-group">
+				<button id="analyze-dropdown" class="menu-btn select-dropdown">
+					Demos
+				</button>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="#" class="small" data-value="0" tabIndex="-1">
+							<span> Demo #1 </span>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-value="1" tabIndex="-1">
+							<span> Demo #2 </span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div id="indicators-container">
+			<div class="button-group">
+				<button id="indicators-dropdown" class="menu-btn select-dropdown">
+					Indicators
+				</button>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="#" class="small" data-axis="true" data-value="atr" tabIndex="-1">
+							<span> ATR </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-value="bb" tabIndex="-1">
+							<span> Bollinger bands </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-axis="true" data-value="cci" tabIndex="-1">
+							<span> CCI </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-value="ema" tabIndex="-1">
+							<span> EMA </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-value="ikh" tabIndex="-1">
+							<span> Ichimoku Kinko Hyo </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-axis="true" data-value="macd" tabIndex="-1">
+							<span> MACD </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-value="pivotpoints" tabIndex="-1">
+							<span> Pivot Points </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-value="priceenvelopes" tabIndex="-1">
+							<span> Price Envelopes </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-axis="true" data-value="roc" tabIndex="-1">
+							<span> ROC </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-axis="true" data-value="rsi" tabIndex="-1">
+							<span> RSI </span><input type="checkbox" selected="true"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-value="sma" tabIndex="-1">
+							<span> SMA </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-axis="true" data-value="stochastic" tabIndex="-1">
+							<span> Stochastic </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-value="wma" tabIndex="-1">
+							<span> WMA </span><input type="checkbox"/>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="small" data-value="zigzag" tabIndex="-1">
+							<span> Zig Zag </span><input type="checkbox"/>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="highcharts-manage-chart">
+		<button id="highcharts-save"> Save chart </button>
+		<button id="highcharts-reset"> Clear chart </button>
+	</div>
+
+	<div id="container"></div>
+	
+	<div id="highcharts-edit-annotation">
+			<div class="cancel"></div>
+			<div class="highchart-edit-annotation-row without-title">  
+					<span>Edit</span>
+					<label for="highcharts-change-fill visible" class="label-colorPicker">Set fill color </label>
+					<div type="text" id="highcharts-change-fill" class="menu-btn colorPicker"></div>
+			</div>
+			<div class="highchart-edit-annotation-row without-title">  
+					<label for="highcharts-change-border visible label-colorPicker" class="label-colorPicker">Set border color </label>
+					<div type="text" id="highcharts-change-border" class="menu-btn colorPicker"></div>
+			</div>
+			<div class="highchart-edit-annotation-row with-title">  
+					<span class="highcharts-title-edit-box">Edit text</span>
+					<input type="text" id="highcharts-change-title" class="menu-btn"/>
+			</div>
+			<div class="highchart-edit-annotation-row">  
+					<a id="highcharts-remove-annotation">Remove</a>
+					<button id="highcharts-change-annotation" class="menu-btn">OK</button>
+			</div>
+	</div>
+
+  <div id='annotation-text-form'>
+    <form id="add-text-annotation">
+      <fieldset>
+        <legend>Text</legend>
+        <input type='text' id='text' style='width: 130px' />
+      </fieldset>
+
+      <fieldset>
+        <legend>Background color</legend>
+        <div>
+          <input type='radio' value='rgba(0, 0, 0, 0.75)' name='background-color' checked>
+          <label>black</label>
+        </div>
+        <div>
+          <input type='radio' value='rgba(255, 0, 0, 0.75)' name='background-color'>
+          <label>red</label>
+        </div>
+        <div>
+          <input type='radio' value='rgba(0, 0, 255, 0.75)' name='background-color'>
+          <label>blue</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Shape</legend>
+        <div>
+          <input type='radio' name='shape' value='callout' checked>
+          <label>Callout</label>
+        </div>
+        <div>
+          <input type='radio' name='shape' value='connector'>
+          <label>Connector</label>
+        </div>
+        <div>
+          <input type='radio' name='shape' value='circle'>
+          <label>Circle</label>
+        </div>
+      </fieldset>
+
+      <input type='hidden' id='x' />
+      <input type='hidden' id='y' />
+      <input type='submit' style='position:absolute; top:-1000px;' />
+    </form>
+  </div> 
+  </div>
