@@ -1116,6 +1116,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @default   false
 		 * @apioption xAxis.opposite
 		 */
+
+		/**
+		 * Refers to the index in the [panes](#panes) array. Used for circular
+		 * gauges and polar charts. When the option is not set then first pane
+		 * will be used.
+		 *
+		 * @type      {Number}
+		 * @sample    highcharts\demo\gauge-vu-meter
+		 *            Two gauges with different center
+		 * @product   highcharts
+		 * @apioption xAxis.pane
+		 */
 		
 		/**
 		 * Whether to reverse the axis so that the highest number is closest
