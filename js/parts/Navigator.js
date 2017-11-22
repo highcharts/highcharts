@@ -1916,6 +1916,7 @@ Navigator.prototype = {
 
 		// Set the navigator series data to the new data of the base series
 		if (navigatorSeries && !navigator.hasNavigatorData) {
+			navigatorSeries.options = navigatorSeries.options || {};
 			navigatorSeries.options.pointStart = baseSeries.xData[0];
 			navigatorSeries.setData(
 				baseSeries.options.data,
