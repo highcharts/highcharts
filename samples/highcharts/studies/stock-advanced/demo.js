@@ -939,6 +939,10 @@ $(function () {
         return isNavigatorAxis(axes[len]) ? axes[len - 1] : axes[len];
     }
 
+    function getHeight() {
+        return $(window).height() - $('#demo').offset().top;
+    }
+
     var indicatorsList = ['rsi', 'sma'],
         indicatorContainer = $('#indicators-container'),
         indicatorsButton = $('#indicators-dropdown'),
@@ -948,7 +952,7 @@ $(function () {
             chart: {
                 type: 'candlestick',
                 panning: false,
-                height: $(window).height(),
+                height: getHeight(),
                 spacingLeft: 50,
                 alignTicks: false,
                 events: {
@@ -1494,5 +1498,10 @@ $(function () {
     // Initial select:
     $.each(indicatorsList, function (i, ind) {
         indicatorContainer.find('a[data-value="' + ind + '"] input').prop('checked', true);
+    });
+
+    // Adapt height on resize
+    $(window).on('resize', function () {
+        $('#container').highcharts().setSize(undefined, getHeight(), false);
     });
 });
