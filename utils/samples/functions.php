@@ -145,6 +145,33 @@ function getBrowser() {
     );
 } 
 
+/*
+ * When a reference to a graphics file exists in the demo, copy it over to the
+ * local cache so we can see it while working on utils.highcharts.local.
+ */
+function getGraphics(&$s) {
+
+    global $topDomain;
+
+    $gfxRoot = 'https://www.highcharts.com/samples/graphics';
+
+    $src = dirname(__FILE__) . '/../../samples/graphics';
+    $dest = dirname(__FILE__) . '/cache';
+
+    if (strpos($s, $gfxRoot) !== false) {
+        $files = glob("$src/*.*");
+        foreach($files as $file){
+            $file_to_go = str_replace($src, $dest, $file);
+            copy($file, $file_to_go);
+        }
+    }
+
+    $s = str_replace(
+        $gfxRoot,
+        "http://utils.highcharts.$topDomain/samples/cache",
+        $s
+    );
+}
 
 
 function getFramework($framework) {

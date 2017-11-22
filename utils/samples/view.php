@@ -65,6 +65,11 @@ if ($styled) {
 	$css = "@import 'http://code.highcharts.$topDomain/css/highcharts.css';";
 }
 
+ob_start();
+@include("$path/demo.js");
+$js = ob_get_clean();
+
+
 // Old IE
 /*
 $html .= "
@@ -73,6 +78,10 @@ $html .= "
 <![endif]-->
 ";
 // */
+
+getGraphics($html);
+getGraphics($js);
+getGraphics($css);
 
 
 // Handle themes
@@ -500,7 +509,7 @@ function getResources() {
 			</div>
 			<script>
 			setUp();
-			<?php @include("$path/demo.js"); ?>
+			<?php echo $js; ?>
 			</script>
 			<?php if (is_file("$path/test-notes.html")) { ?>
 			<section class="test-notes">
