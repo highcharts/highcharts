@@ -55,6 +55,36 @@ var getEndPoint = function getEndPoint(x, y, angle, distance) {
 	};
 };
 
+var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
+	var startAngle = parent.start,
+		range = parent.end - startAngle,
+		total = parent.val,
+		x = parent.x,
+		y = parent.y,
+		innerRadius = parent.r,
+		outerRadius = innerRadius + parent.radius,
+		slicedOffset = isNumber(options.slicedOffset) ? options.slicedOffset : 0;
+
+	return reduce(children || [], function (arr, child) {
+		var percentage = (1 / total) * child.val,
+			radians = percentage * range,
+			radiansCenter = startAngle + (radians / 2),
+			offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
+			values = {
+				x: child.sliced && child.id !== options.idRoot ? offsetPosition.x : x,
+				y: child.sliced && child.id !== options.idRoot ? offsetPosition.y : y,
+				innerR: innerRadius,
+				r: outerRadius,
+				radius: parent.radius,
+				start: startAngle,
+				end: startAngle + radians
+			};
+		arr.push(values);
+		startAngle = values.end;
+		return arr;
+	}, []);
+};
+
 var getDlOptions = function getDlOptions(params) {
 	// Set options to new object to avoid problems with scope
 	var shape = isObject(params.shapeArgs) ? params.shapeArgs : {},
@@ -102,8 +132,7 @@ var getDlOptions = function getDlOptions(params) {
 };
 
 var getAnimation = function getAnimation(shape, params) {
-	var center = params.center,
-		point = params.point,
+	var point = params.point,
 		radians = params.radians,
 		innerR = params.innerR,
 		idRoot = params.idRoot,
@@ -118,8 +147,8 @@ var getAnimation = function getAnimation(shape, params) {
 			start: shape.start,
 			innerR: shape.innerR,
 			r: shape.r,
-			x: center.x,
-			y: center.y
+			x: shape.x,
+			y: shape.y
 		};
 	if (visible) {
 		// Animate points in
@@ -210,6 +239,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
 	if (point) {
 		point.color = node.color;
 		point.colorIndex = node.colorIndex;
+		node.sliced = point.sliced;
 	}
 	return node;
 };
@@ -224,7 +254,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
  * @excluding allAreas, center, clip, colorAxis, compare, compareBase,
  *            dataGrouping, depth, endAngle, gapSize, gapUnit,
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
- *            minSize, navigatorOptions, pointRange, slicedOffset
+ *            minSize, navigatorOptions, pointRange
  * @product highcharts
  * @optionparent plotOptions.sunburst
  */
@@ -271,7 +301,8 @@ var sunburstOptions = {
 	 * to be level one. Otherwise the level will be the same as the tree
 	 * structure.
 	 */
-	levelIsConstant: true
+	levelIsConstant: true,
+	slicedOffset: 10
 	/**
 	 * Set options on specific levels. Takes precedence over series options,
 	 * but not point options.
@@ -350,7 +381,7 @@ var sunburstOptions = {
 	 * @type {Boolean}
 	 * @default false
 	 * @apioption plotOptions.sunburst.allowDrillToNode
-	 */	
+	 */
 };
 
 /**
@@ -492,43 +523,17 @@ var sunburstSeries = {
 	/*
 	 * The layout algorithm for the levels
 	 */
-	layoutAlgorithm: function (parent, children) {
-		var startAngle = parent.start,
-			range = parent.end - startAngle,
-			total = parent.val,
-			x = parent.x,
-			y = parent.y,
-			innerRadius = parent.r,
-			outerRadius = innerRadius + parent.radius;
-
-		return reduce(children || [], function (arr, child) {
-			var percentage = (1 / total) * child.val,
-				radians = percentage * range,
-				values = {
-					x: x,
-					y: y,
-					innerR: innerRadius,
-					r: outerRadius,
-					radius: parent.radius,
-					start: startAngle,
-					end: startAngle + radians
-				};
-			arr.push(values);
-			startAngle = values.end;
-			return arr;
-		}, []);
-	},
-
+	layoutAlgorithm: layoutAlgorithm,
 	/*
 	 * Set the shape arguments on the nodes. Recursive from root down.
 	 */
-	setShapeArgs: function (parent, parentValues) {
+	setShapeArgs: function (parent, parentValues, options) {
 		var childrenValues = [],
 			// Collect all children which should be included
 			children = grep(parent.children, function (n) {
 				return n.visible;
 			});
-		childrenValues = this.layoutAlgorithm(parentValues, children);
+		childrenValues = this.layoutAlgorithm(parentValues, children, options);
 		each(children, function (child, index) {
 			var values = childrenValues[index],
 				angle = values.start + ((values.end - values.start) / 2),
@@ -569,7 +574,7 @@ var sunburstSeries = {
 			});
 			// If node has children, then call method recursively
 			if (child.children.length) {
-				this.setShapeArgs(child, child.values);
+				this.setShapeArgs(child, child.values, options);
 			}
 		}, this);
 	},
@@ -628,7 +633,10 @@ var sunburstSeries = {
 			x: positions[0],
 			y: positions[1]
 		};
-		this.setShapeArgs(nodeTop, values);
+		this.setShapeArgs(nodeTop, values, {
+			idRoot: idRoot,
+			slicedOffset: options.slicedOffset
+		});
 	},
 
 	/**
@@ -642,7 +650,7 @@ var sunburstSeries = {
 			],
 			plotLeft = chart.plotLeft,
 			plotTop = chart.plotTop,
-			attribs, 
+			attribs,
 			group = this.group;
 
 		// Initialize the animation
@@ -692,12 +700,12 @@ var sunburstPoint = {
 /**
  * A `sunburst` series. If the [type](#series.sunburst.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
- * 
+ *
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.
  * To apply to all series of this specific type, apply it to [plotOptions.
  * sunburst](#plotOptions.sunburst).
- * 
+ *
  * @type {Object}
  * @extends plotOptions.sunburst
  * @excluding dataParser,dataURL,stack
@@ -705,7 +713,7 @@ var sunburstPoint = {
  * @apioption series.sunburst
  */
 
-/** 
+/**
  * @type {Array<Object|Number>}
  * @extends series.treemap.data
  * @excluding x,y
@@ -716,7 +724,7 @@ var sunburstPoint = {
 /**
 * The value of the point, resulting in a relative area of the point
 * in the sunburst.
-* 
+*
 * @type {Number}
 * @default undefined
 * @since 6.0.0
@@ -728,13 +736,23 @@ var sunburstPoint = {
  * Use this option to build a tree structure. The value should be the id of the
  * point which is the parent. If no points has a matching id, or this option is
  * undefined, then the parent will be set to the root.
- * 
+ *
  * @type {String|undefined}
  * @default undefined
  * @since 6.0.0
  * @product highcharts
  * @apioption series.treemap.data.parent
  */
+
+ /**
+  * Whether to display a slice offset from the center.
+  *
+  * @type {Boolean}
+  * @default false
+  * @since 6.0.4
+  * @product highcharts
+  * @apioption series.sunburst.data.sliced
+  */
 seriesType(
 	'sunburst',
 	'treemap',
