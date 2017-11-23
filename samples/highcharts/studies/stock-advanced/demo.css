@@ -221,7 +221,7 @@
 #demo #tooltip .tooltip-close,
 #demo #hello-msg-box .tooltip-close,
 #demo .cancel {
-    background: url('../images/cancel-ico.png') no-repeat 0% 0%;
+    background: url('https://www.highcharts.com/samples/graphics/cancel-ico.png') no-repeat 0% 0%;
     float: right;
     cursor: pointer;
     width: 10px;
@@ -372,7 +372,7 @@
     -webkit-appearance: button;
     -webkit-border-radius: 0px;
     -webkit-user-select: none;
-    background: url('../images/arrow-down.png') no-repeat 62% -5px #fff;
+    background: url('https://www.highcharts.com/samples/graphics/arrow-down.png') no-repeat 62% -5px #fff;
     border: 1px solid #ccc;
     color: #555;
     overflow: hidden;
@@ -459,6 +459,7 @@
     margin-bottom: 10px;
     height: 30px;
     width: 30px;
+    padding: 0px;
 }
 
 #demo button.active,
@@ -472,50 +473,50 @@
 }
 
 #demo button#annotation-line {
-    -webkit-mask-image: url(../images/icons/line.svg);
-    mask-image: url(../images/icons/line.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/line.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/line.svg);
 }
 
 #demo button#annotation-rect {
-    -webkit-mask-image: url(../images/icons/rect.svg);
-    mask-image: url(../images/icons/rect.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/rect.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/rect.svg);
 }
 
 #demo button#annotation-circle {
-    -webkit-mask-image: url(../images/icons/circle.svg);
-    mask-image: url(../images/icons/circle.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/circle.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/circle.svg);
 }
 
 #demo button#annotation-arrow {
-    -webkit-mask-image: url(../images/icons/arrow.svg);
-    mask-image: url(../images/icons/arrow.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/arrow.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/arrow.svg);
 }
 
 #demo button#annotation-tunnel {
-    -webkit-mask-image: url(../images/icons/tunnel.svg);
-    mask-image: url(../images/icons/tunnel.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/tunnel.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/tunnel.svg);
 }
 
 #demo button#annotation-text {
-    -webkit-mask-image: url(../images/icons/text.svg);
-    mask-image: url(../images/icons/text.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/text.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/text.svg);
 }
 
 #demo button#annotation-fibonacci {
-    -webkit-mask-image: url(../images/icons/fibonacci.svg);
-    mask-image: url(../images/icons/fibonacci.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/fibonacci.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/fibonacci.svg);
 }
 
 #demo button#annotation-flag {
     border: 1px solid red;
     position: relative;
-    -webkit-mask-image: url(../images/icons/flag.svg);
-    mask-image: url(../images/icons/flag.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/flag.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/flag.svg);
 }
 
 #demo button#annotation-feature {
-    -webkit-mask-image: url(../images/icons/feature.svg);
-    mask-image: url(../images/icons/feature.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/feature.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/feature.svg);
 }
 
 #demo #highcharts-manage-chart {
@@ -535,13 +536,13 @@
 }
 
 #demo #highcharts-save {
-    -webkit-mask-image: url(../images/icons/save.svg);
-    mask-image: url(../images/icons/save.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/save.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/save.svg);
 }
 
 #demo #highcharts-reset {
-    -webkit-mask-image: url(../images/icons/reset.svg);
-    mask-image: url(../images/icons/reset.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/reset.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/reset.svg);
 }
 
 #demo .dropdown-menu,
@@ -629,7 +630,7 @@
     height: 23px;
 }
 
-.#demo inner {
+#demo .inner {
     background: #fff;
     width: 32px;
     padding: 0px 10px;
@@ -661,21 +662,21 @@
 }
 
 #demo #submenu li#flag-flag {
-    -webkit-mask-image: url(../images/icons/flag-flag.svg);
-    mask-image: url(../images/icons/flag-flag.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/flag-flag.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/flag-flag.svg);
 }
 
 #demo #submenu li#flag-circlepin {
-    -webkit-mask-image: url(../images/icons/flag-circlepin.svg);
-    mask-image: url(../images/icons/flag-circlepin.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/flag-circlepin.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/flag-circlepin.svg);
 }
 
 #demo #submenu li#flag-squarepin {
-    -webkit-mask-image: url(../images/icons/flag-squarepin.svg);
-    mask-image: url(../images/icons/flag-squarepin.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/flag-squarepin.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/flag-squarepin.svg);
 }
 
 #demo #submenu li#flag-diamondpin {
-    -webkit-mask-image: url(../images/icons/flag-diamondpin.svg);
-    mask-image: url(../images/icons/flag-diamondpin.svg);
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/flag-diamondpin.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/flag-diamondpin.svg);
 }
