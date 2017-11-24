@@ -22,7 +22,8 @@ var win = H.win,
 	addEvent = H.addEvent,
 	fireEvent = H.fireEvent,
 	merge = H.merge,
-	pick = H.pick;
+	pick = H.pick,
+	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(win.navigator.userAgent);
 
 // Add focus border functionality to SVGElements.
 // Draws a new rect on top of element around its bounding box.
@@ -597,7 +598,10 @@ H.Chart.prototype.hideExportMenu = function () {
 			exportList[this.highlightedExportItem].onmouseout();
 		}	
 		this.highlightedExportItem = 0;
-		this.renderTo.focus();
+		if (!isMSBrowser) {
+			// Only focus if not on Edge/IE to work around #7422 a bit
+			this.renderTo.focus();
+		}
 	}
 };
 
@@ -614,7 +618,8 @@ H.Chart.prototype.highlightExportItem = function (ix) {
 		listItem.tagName === 'DIV' &&
 		!(listItem.children && listItem.children.length)
 	) {
-		if (listItem.focus) {
+		if (listItem.focus && !isMSBrowser) {
+			// Only focus if not on Edge/IE to work around #7422 a bit
 			listItem.focus();
 		}
 		if (curHighlighted && curHighlighted.onmouseout) {
