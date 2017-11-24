@@ -136,7 +136,7 @@ H.setOptions({
 				 * `.highcharts-focus-border` class.
 				 */
 				style: {
-					color: '${palette.neutralColor100}',
+					color: '${palette.highlightColor80}',
 					lineWidth: 2,
 					borderRadius: 3
 				},
