@@ -3370,11 +3370,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		if (currentTickAmount < tickAmount) {
 			while (tickPositions.length < tickAmount) {
-				tickPositions.push(correctFloat(
-					tickPositions[tickPositions.length - 1] + tickInterval
-				));
+				// Extend evenly for both sides (#3965)
+				if (tickPositions.length % 2) {
+					// to the end
+					tickPositions.push(correctFloat(
+						tickPositions[tickPositions.length - 1] + tickInterval
+					));
+				} else {
+					// to the start
+					tickPositions.unshift(correctFloat(
+						tickPositions[0] - tickInterval
+					));
+				}
 			}
 			this.transA *= (currentTickAmount - 1) / (tickAmount - 1);
+			this.min = tickPositions[0];
 			this.max = tickPositions[tickPositions.length - 1];
 
 		// We have too many ticks, run second pass to try to reduce ticks

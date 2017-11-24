@@ -28,6 +28,16 @@ QUnit.test('Ticks for a single point.', function (assert) {
         'single tick and increased extremes for a single point'
     );
 
+    chart.yAxis[0].update({
+        tickAmount: 10
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].min < 0 && chart.yAxis[0].max > 1,
+        true,
+        'ticks added via tickAmount increase both min and max (#3965)'
+    );
+
     // Must be on init - redraw was fixing the issue
     chart = Highcharts.chart('container', {
         series: [{
