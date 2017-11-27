@@ -27,7 +27,7 @@
 }
 
 #demo #analyze-dropdown {
-    width: 90px;
+    width: auto;
     height: auto;
     margin-bottom: 0px;
 }
@@ -54,7 +54,7 @@
 }
 
 #demo #indicators-dropdown {
-    width: 100px;
+    width: auto;
     height: auto;
     margin-bottom: 0px;
 }
