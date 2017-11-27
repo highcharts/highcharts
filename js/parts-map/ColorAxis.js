@@ -710,7 +710,11 @@ if (!H.ColorAxis) {
 		/**
 		 * Fool the legend
 		 */
-		setState: noop,
+		setState: function (state) {
+			each(this.series, function (series) {
+				series.setState(state);
+			});
+		},
 		visible: true,
 		setVisible: noop,
 		getSeriesExtremes: function () {

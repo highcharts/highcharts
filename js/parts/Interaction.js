@@ -211,7 +211,8 @@ extend(Legend.prototype, {
 	setItemEvents: function (item, legendItem, useHTML) {
 		var legend = this,
 			boxWrapper = legend.chart.renderer.boxWrapper,
-			activeClass = 'highcharts-legend-' + (item.series ? 'point' : 'series') + '-active';
+			activeClass = 'highcharts-legend-' +
+				(item instanceof Point ? 'point' : 'series') + '-active';
 
 		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
