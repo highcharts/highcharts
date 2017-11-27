@@ -465,6 +465,10 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  * 
  * @type {Object}
  * @extends series,plotOptions.xrange
+ * @excluding boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
+ *         findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
+ *         negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
+ *         pointRange,pointStart,softThreshold,stacking,threshold,data
  * @product highcharts highstock
  * @apioption series.xrange
  */
