@@ -1,0 +1,13 @@
+#container {
+    max-width: 800px;
+    min-width: 600px;
+    height: 400px;
+}
+#container-outer {
+	width: 100%;
+	overflow-x: scroll;
+    margin: 1em auto;
+	-webkit-overflow-scrolling: touch;
+	z-index: 1;
+    position: relative;
+}
