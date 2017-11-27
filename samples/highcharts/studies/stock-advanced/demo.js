@@ -1,5 +1,642 @@
 // Predefined analyzes, like default dataset+indicators+annotations
-window.analyzes = [];
+window.analyzes = [{
+    indicators: [{
+        linkedTo: "main",
+        type: "ema",
+        id: "s-ema"
+    }, {
+        linkedTo: "main",
+        type: "sma",
+        id: "s-sma"
+    }, {
+        linkedTo: "main",
+        type: "wma",
+        id: "s-wma"
+    }],
+    flags: [],
+    annotations: [{
+        visible: true,
+        labelOptions: {
+            align: "center",
+            allowOverlap: false,
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            borderColor: "black",
+            borderRadius: 1,
+            borderWidth: 1,
+            crop: false,
+            overflow: "none",
+            padding: 5,
+            shadow: false,
+            shape: "callout",
+            style: {
+                fontSize: "11px",
+                fontWeigth: "bold",
+                color: "contrast"
+            },
+            useHTML: false,
+            verticalAlign: "bottom",
+            x: 0,
+            y: -16
+        },
+        shapeOptions: {
+            stroke: "rgba(0, 0, 0, 0.75)",
+            strokeWidth: 1,
+            fill: "rgba(0, 0, 0, 0.75)",
+            r: 0
+        },
+        zIndex: 6,
+        events: {},
+        id: "annotation-text-5",
+        labels: [{
+            text: "September 2017:<br>iPhone X annoucment",
+            point: {
+                x: 1505174400000,
+                y: 162,
+                xAxis: 0,
+                yAxis: 0
+            },
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            shape: "callout",
+            borderWidth: 0,
+            x: 0,
+            y: -16
+        }]
+    }, {
+        visible: true,
+        labelOptions: {
+            align: "center",
+            allowOverlap: false,
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            borderColor: "black",
+            borderRadius: 1,
+            borderWidth: 1,
+            crop: false,
+            overflow: "none",
+            padding: 5,
+            shadow: false,
+            shape: "callout",
+            style: {
+                fontSize: "11px",
+                fontWeigth: "bold",
+                color: "contrast"
+            },
+            useHTML: false,
+            verticalAlign: "bottom",
+            x: 0,
+            y: -16
+        },
+        shapeOptions: {
+            stroke: "rgba(0, 0, 0, 0.75)",
+            strokeWidth: 1,
+            fill: "rgba(0, 0, 0, 0.75)",
+            r: 0
+        },
+        zIndex: 6,
+        events: {},
+        id: "annotation-text-6",
+        labels: [{
+            text: "Analysis AAPL<br> Includes indicators: <br> EMA (14), SMA (13) and WMA (9)<br> Good example how moving averages are different and how relate to a data change.",
+            point: {
+                x: 1499817600000,
+                y: 170,
+                xAxis: 0,
+                yAxis: 0
+            },
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            shape: "callout",
+            borderWidth: 0,
+            x: 0,
+            y: -16
+        }]
+    }],
+    yAxis: [{
+        height: '100%'
+    }]
+}, {
+    indicators: [{
+        linkedTo: "main",
+        type: "rsi",
+        id: "s-rsi",
+        yAxis: 1
+    }, {
+        linkedTo: "main",
+        id: "s-macd",
+        type: "macd",
+        yAxis: 2,
+        color: "#eee",
+        signalLine: {
+            styles: {
+                lineColor: "blue"
+            }
+        },
+        macdLine: {
+            styles: {
+                lineColor: "red"
+            }
+        }
+    }, {
+        linkedTo: "main",
+        color: "red",
+        type: "ema",
+        id: "s-ema"
+    }],
+    flags: [{
+        type: "flags",
+        onSeries: "s-macd",
+        shape: "squarepin",
+        data: [{
+            x: 1507593600000,
+            title: "<span style=\"position: relative; top: 5px; left: -15px;\">A</span>"
+        }],
+        yAxis: 2,
+        style: {
+            fontSize: "13px",
+            fontWeight: "bold",
+            dy: 4
+        },
+        textAlign: "center",
+        width: 25,
+        height: 25,
+        useHTML: false,
+        y: -50,
+        enableMouseTracking: false
+    }, {
+        type: "flags",
+        onSeries: "s-macd",
+        shape: "squarepin",
+        data: [{
+            x: 1509494400000,
+            title: "<span style=\"position: relative; top: 5px; left: -15px;\">B</span>"
+        }, {
+            x: 1509580800000,
+            title: "<span style=\"position: relative; top: 5px; left: -15px;\">C</span>"
+        }],
+        yAxis: 2,
+        style: {
+            fontSize: "13px",
+            fontWeight: "bold",
+            dy: 4
+        },
+        textAlign: "center",
+        width: 25,
+        height: 25,
+        useHTML: false,
+        y: -50,
+        enableMouseTracking: false
+    }, {
+        type: "flags",
+        onSeries: "s-rsi",
+        shape: "flag",
+        data: [{
+            x: 1502409600000,
+            title: "<span style=\"position: relative; top: 5px; left: 0;\">D</span>"
+        }],
+        yAxis: 1,
+        style: {
+            fontSize: "13px",
+            fontWeight: "bold",
+            dy: 4
+        },
+        textAlign: "center",
+        width: 25,
+        height: 25,
+        useHTML: false,
+        y: -50,
+        enableMouseTracking: false
+    }],
+    yAxis: [{
+        height: "50%",
+        resize: {
+            enabled: true,
+            controlledAxis: {
+                next: ["rsi"]
+            }
+        }
+    }, {
+        top: "50%",
+        height: "25%",
+        id: "rsi",
+        resize: {
+            enabled: true,
+            controlledAxis: {
+                next: ["macd"]
+            }
+        }
+    }, {
+        top: "75%",
+        height: "25%",
+        id: "macd"
+    }],
+    annotations: [{
+        visible: true,
+        labelOptions: {
+            align: "center",
+            allowOverlap: false,
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            borderColor: "black",
+            borderRadius: 1,
+            borderWidth: 1,
+            crop: false,
+            overflow: "justify",
+            padding: 5,
+            shadow: false,
+            shape: "callout",
+            style: {
+                fontSize: "11px",
+                fontWeight: "normal",
+                color: "contrast"
+            },
+            useHTML: false,
+            verticalAlign: "bottom",
+            x: 0,
+            y: -16
+        },
+        shapeOptions: {
+            stroke: "rgba(0, 0, 0, 0.75)",
+            strokeWidth: 1,
+            fill: "rgba(0, 0, 0, 0.75)",
+            r: 0
+        },
+        zIndex: 2,
+        shapes: [{
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 176.24,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 176.24,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 168.33164,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1499299200000,
+                y: 168.33164,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            strokeWidth: 0,
+            fill: "rgba(169, 255, 101, 0.4)"
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 168.33164,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 168.33164,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 163.43918,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1499299200000,
+                y: 163.43918,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            strokeWidth: 0,
+            fill: "rgba(162, 241, 130, 0.4)"
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 163.43918,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 163.43918,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 159.485,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1499299200000,
+                y: 159.485,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            strokeWidth: 0,
+            fill: "rgba(156, 229, 161, 0.4)"
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 159.485,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 159.485,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 155.53082,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1499299200000,
+                y: 155.53082,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            strokeWidth: 0,
+            fill: "rgba(150, 216, 192, 0.4)"
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 155.53082,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 155.53082,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 149.90114,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1499299200000,
+                y: 149.90114,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            strokeWidth: 0,
+            fill: "rgba(139, 191, 216, 0.4)"
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 149.90114,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 149.90114,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 142.73,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1499299200000,
+                y: 142.73,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            strokeWidth: 0,
+            fill: "rgba(130, 170, 255, 0.4)"
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 176.24,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 176.24,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            stroke: "black",
+            strokeWidth: 1
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 168.33164,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 168.33164,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            stroke: "black",
+            strokeWidth: 1
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 163.43918,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 163.43918,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            stroke: "black",
+            strokeWidth: 1
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 159.485,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 159.485,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            stroke: "black",
+            strokeWidth: 1
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 155.53082,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 155.53082,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            stroke: "black",
+            strokeWidth: 1
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 149.90114,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 149.90114,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            stroke: "black",
+            strokeWidth: 1
+        }, {
+            type: "path",
+            points: [{
+                x: 1499299200000,
+                y: 142.73,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 1510099200000,
+                y: 142.73,
+                xAxis: 0,
+                yAxis: 0
+            }],
+            stroke: "black",
+            strokeWidth: 1
+        }],
+        labels: [{
+            style: {
+                color: "grey"
+            },
+            align: "right",
+            verticalAlign: "middle",
+            backgroundColor: "none",
+            borderWidth: 0,
+            shape: "rect",
+            point: {
+                x: 1499299200000,
+                y: 176.24,
+                xAxis: 0,
+                yAxis: 0
+            },
+            text: "0.000",
+            y: 0
+        }, {
+            style: {
+                color: "grey"
+            },
+            align: "right",
+            verticalAlign: "middle",
+            backgroundColor: "none",
+            borderWidth: 0,
+            shape: "rect",
+            point: {
+                x: 1499299200000,
+                y: 168.33164,
+                xAxis: 0,
+                yAxis: 0
+            },
+            text: "0.236",
+            y: 0
+        }, {
+            style: {
+                color: "grey"
+            },
+            align: "right",
+            verticalAlign: "middle",
+            backgroundColor: "none",
+            borderWidth: 0,
+            shape: "rect",
+            point: {
+                x: 1499299200000,
+                y: 163.43918,
+                xAxis: 0,
+                yAxis: 0
+            },
+            text: "0.382",
+            y: 0
+        }, {
+            style: {
+                color: "grey"
+            },
+            align: "right",
+            verticalAlign: "middle",
+            backgroundColor: "none",
+            borderWidth: 0,
+            shape: "rect",
+            point: {
+                x: 1499299200000,
+                y: 159.485,
+                xAxis: 0,
+                yAxis: 0
+            },
+            text: "0.500",
+            y: 0
+        }, {
+            style: {
+                color: "grey"
+            },
+            align: "right",
+            verticalAlign: "middle",
+            backgroundColor: "none",
+            borderWidth: 0,
+            shape: "rect",
+            point: {
+                x: 1499299200000,
+                y: 155.53082,
+                xAxis: 0,
+                yAxis: 0
+            },
+            text: "0.618",
+            y: 0
+        }, {
+            style: {
+                color: "grey"
+            },
+            align: "right",
+            verticalAlign: "middle",
+            backgroundColor: "none",
+            borderWidth: 0,
+            shape: "rect",
+            point: {
+                x: 1499299200000,
+                y: 149.90114,
+                xAxis: 0,
+                yAxis: 0
+            },
+            text: "0.786",
+            y: 0
+        }, {
+            style: {
+                color: "grey"
+            },
+            align: "right",
+            verticalAlign: "middle",
+            backgroundColor: "none",
+            borderWidth: 0,
+            shape: "rect",
+            point: {
+                x: 1499299200000,
+                y: 142.73,
+                xAxis: 0,
+                yAxis: 0
+            },
+            text: "1.000",
+            y: 0
+        }],
+        clip: 0
+    }]
+}];
 
 /***
  * SIDE MENU
@@ -27,10 +664,10 @@ window.analyzes = [];
         chart.annotating = annotating === chart.annotating ? null : annotating;
     }
 
-    function sideMenu(chart) {
+    function sideMenu() {
         resetOtherClass();
         mainMenu.off('click');
-        chart.annotating = null;
+        $("#container").highcharts().annotating = null;
 
         mainMenu.on('click', 'button', function () {
             var button = $(this);
@@ -50,12 +687,12 @@ window.analyzes = [];
 
             } else {
                 flagMenu.hide();
-                onButtonClick(button, chart);
+                onButtonClick(button, $("#container").highcharts());
             }
         });
 
         mainMenu.on('click', 'li', function () {
-            onButtonClick($(this), chart);
+            onButtonClick($(this), $("#container").highcharts());
         });
     }
 
@@ -606,102 +1243,6 @@ function whichAxis(e, chart) {
 }(Highcharts));
 
 /***
- * TUNNEL
- */
-(function (H) {
-    var inArray = H.inArray;
-    var points = [];
-    var yAxisIndex = -1;
-
-    function point(x, y) {
-        var point = {
-            x: x,
-            y: y,
-            xAxis: 0,
-            yAxis: yAxisIndex
-        };
-
-        return point;
-    }
-
-    function tunnel(points, chart) {
-        var yAxis = chart.yAxis[yAxisIndex];
-        var width = yAxis.toValue(30, true) - yAxis.toValue(0, true);
-
-        var leftBottom = point(points[0].x, points[0].y - width, points[0].series.yAxis, points[0].series.chart);
-        var rightBottom = point(points[1].x, points[1].y - width, points[1].series.yAxis, points[1].series.chart);
-        var rightMiddle = point(rightBottom.x, rightBottom.y + width, rightBottom.yAxis);
-        var rightTop = point(rightBottom.x, rightBottom.y + width * 2, rightBottom.yAxis);
-        var leftTop = point(leftBottom.x, leftBottom.y + width * 2, leftBottom.yAxis);
-        var leftMiddle = point(leftBottom.x, leftBottom.y + width, leftBottom.yAxis);
-
-        chart.addAnnotation({
-            clip: yAxisIndex,
-            shapes: [
-                {
-                    type: 'path',
-                    points: [ leftBottom, rightBottom, rightMiddle, leftMiddle ],
-                    strokeWidth: 0,
-                    fill: 'rgba(169, 255, 101, 0.4)'
-                },
-                {
-                    type: 'path',
-                    points: [ leftMiddle, rightMiddle, rightTop, leftTop ],
-                    strokeWidth: 0,
-                    fill: 'rgba(208, 122, 50, 0.2)'
-                },
-                {
-                    type: 'path',
-                    points: [ leftBottom, rightBottom ],
-                    stroke: 'grey'
-                },
-                {
-                    type: 'path',
-                    points: [ leftMiddle, rightMiddle ],
-                    stroke: 'grey'
-                },
-                {
-                    type: 'path',
-                    points: [ leftTop, rightTop ],
-                    stroke: 'grey'
-                }
-            ]
-        });
-
-        points = [];
-    }
-
-    function onPointClick(p) {
-        if (!points[0]) {
-            points.push(p);
-            yAxisIndex = inArray(p.series.yAxis, p.series.chart.yAxis);
-            return;
-        }
-
-        if (yAxisIndex !== -1 && yAxisIndex === inArray(p.series.yAxis, p.series.chart.yAxis)) {
-            points.push(p);
-        }
-
-        if (points.length === 2) {
-            tunnel(points, p.series.chart);
-            points = [];
-            yAxisIndex = -1;
-        }
-    }
-
-
-    function reset() {
-        yAxisIndex = -1;
-        points = [];
-    }
-
-    H.Annotation.tunnel = {
-        onPointClick: onPointClick,
-        reset: reset
-    };
-}(Highcharts));
-
-/***
  * FIBONACCI
  */
 (function (H) {
@@ -948,7 +1489,6 @@ $(function () {
         indicatorsButton = $('#indicators-dropdown'),
         analyzeButton = $('#analyze-dropdown'),
         advOptions = {
-            addEvents: true,
             chart: {
                 type: 'candlestick',
                 panning: false,
@@ -1109,13 +1649,9 @@ $(function () {
         defaultData = window.localStorage.getItem('data');
 
 
-    function attachEvents(chart) {
+    function attachEvents() {
 
-        window.sideMenu(chart);
-
-        if (!chart.options.addEvents) {
-            return;
-        }
+        window.sideMenu();
 
         function manageIndicators(value, adder, useAxis) {
             var index = -1,
@@ -1298,16 +1834,12 @@ $(function () {
         $('#analyze-container .dropdown-menu a').on('click', function (event) {
 
             var $target = $(event.currentTarget),
-                dataset = window.analyzes[$target.attr('data-value')];
+                dataset = window.analyzes[$target.attr('data-value')],
+                chart = $("#container").highcharts();
 
             advOptions.annotations = dataset.annotations;
             advOptions.yAxis = dataset.yAxis;
-            advOptions.series = [advOptions.series[0]].concat(dataset.indicators, dataset.flags || []);
-
-            advOptions.series[0].data = dataset.data;
-
-            advOptions.showTooltip = false;
-            advOptions.addEvents = false;
+            advOptions.series = [chart.series[0].userOptions].concat(dataset.indicators, dataset.flags || []);
 
             // Clear old ones:
             indicatorContainer.find('input').prop('checked', false);
@@ -1392,8 +1924,6 @@ $(function () {
                             }
                         )
                     ];
-                    advOptions.showTooltip = false;
-                    advOptions.addEvents = false;
                     advOptions.indicators = [];
                     advOptions.annotations = [];
                     chart.hideLoading();
