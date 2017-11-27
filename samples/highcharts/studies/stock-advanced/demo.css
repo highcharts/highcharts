@@ -8,264 +8,8 @@
     margin: 0px;
 }
 
-#demo .right {
-    float: right;
-}
-
-#demo #chart-details {
-    width: 400px;
-    height: 250px;
-    top: 175px;
-    left: 100px;
-    position: absolute;
-    z-index: 500;
-    -webkit-box-shadow: 0px 0px 4px 0px #7d7d7d;
-    box-shadow: 0px 0px 4px 0px #7d7d7d;
-    -moz-box-shadow: 0px 0px 4px 0px #7d7d7d;
-}
-
-#demo #chart-details .highcharts-title {
-    left: 0px !important;
-    cursor: move;
-}
-
 #demo #highcharts-save {
     margin-right: 7px;
-}
-
-#demo #highcharts-edit-annotation {
-    position: absolute;
-    z-index: 50;
-    float: left;
-    display: none;
-    width: 150px;
-    /*height: 100px;*/
-    padding-bottom: 10px;
-    background-color: white;
-    -webkit-box-shadow: 0px 0px 4px 0px #7d7d7d;
-    box-shadow: 0px 0px 4px 0px #7d7d7d;
-    -moz-box-shadow: 0px 0px 4px 0px #7d7d7d;
-}
-
-#demo #highcharts-change-annotation {
-    float: right;
-}
-
-#demo #highcharts-remove-annotation {
-    float: left;
-    margin-left: 10px;
-    margin-top: 15px;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-#demo .highcharts-annotation {
-    cursor: move;
-}
-
-#demo .highchart-edit-annotation-row {
-    float: left;
-    width: 100%;
-}
-
-#demo .highchart-edit-annotation-row.with-title .highcharts-title-edit-box,
-#demo .highchart-edit-annotation-row.without-title span {
-    background-color: #f2f2f2;
-    width: 100%;
-    float: left;
-    font-size: 14px;
-    text-align: center;
-    padding: 5px 0px;
-}
-
-#demo .highchart-edit-annotation-row.without-title label {
-    float: left;
-    margin-left: 10px;
-    margin-top: 10px;
-    width: 130px;
-}
-
-#demo .highchart-edit-annotation-row input.menu-btn {
-    border-right: 1px solid #cccccc;
-    float: left;
-    margin-left: 10px;
-    width: 72%;
-    margin-top: 10px;
-    cursor: text;
-}
-
-#demo .highchart-edit-annotation-row .menu-btn {
-    border: 1px solid #cccccc;
-    float: left;
-    margin-top: 8px;
-}
-
-#demo .highchart-edit-annotation-row .label-colorPicker {
-    width: 95px !important;
-}
-
-#demo .highchart-edit-annotation-row input.menu-btn:hover {
-    border: 1px solid #6688aa;
-}
-
-#demo #highcharts-change-fill {
-    background-color: #e7f0f9
-}
-
-#demo #highcharts-change-border {
-    background-color: #6688aa;
-}
-
-#demo input.menu-btn:hover {
-    background-color: #fff;
-}
-
-#demo .highchart-edit-annotation-row button {
-    margin-top: 10px;
-    margin-right: 10px;
-    float: right;
-    border-color: #6688aa;
-    background-color: #e7f0f9;
-}
-
-#demo .highchart-edit-annotation-row button:hover {
-    background-color: #6688aa;
-    border-color: #325b83;
-}
-
-
-/*** HELLO MESSAGE: ***/
-
-#demo #hello-msg {
-    display: block;
-}
-
-
-/*** TOOLTIP CSS: ***/
-
-#demo #tooltip,
-#demo #hello-msg-box {
-    position: absolute;
-    display: none;
-    width: 200px;
-    /*height: 150px;*/
-    background-color: #333333;
-    color: #dcdcdc;
-    z-index: 1000;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
-    border: 1px solid rgba(0, 0, 0, .2);
-    font-size: 12px;
-}
-
-#demo #hello-msg-box {
-    display: block;
-    width: 310px;
-    top: 45%;
-    left: 50%;
-    margin-left: -155px;
-}
-
-#demo #tooltip .diamond {
-    position: absolute;
-    height: 15px;
-    width: 15px;
-    background-color: #333333;
-    transform: rotate(45deg);
-    -o-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    -moz-transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
-}
-
-#demo #tooltip .tooltip-content,
-#demo #hello-msg-box .tooltip-content {
-    padding: 5px;
-}
-
-#demo #tooltip .tooltip-title,
-#demo #hello-msg-box .tooltip-title {
-    padding: 5px;
-    font-size: 16px;
-    color: #00b4ff;
-}
-
-#demo #tooltip .tooltip-subcontent,
-#demo #hello-msg-box .tooltip-subcontent {
-    padding: 5px;
-}
-
-#demo #tooltip .tooltip-paginator,
-#demo #hello-msg-box .tooltip-paginator {
-    width: 100%;
-    text-align: center;
-    padding: 5px 0px;
-    background-color: #454545;
-    float: left;
-}
-
-#demo #tooltip .tooltip-paginator .info {
-    float: left;
-    margin-left: 10px;
-    line-height: 2em;
-}
-
-#demo #hello-msg-box .tooltip-paginator {
-    width: 100%;
-}
-
-#demo #tooltip .tooltip-prev,
-#demo #tooltip .tooltip-next {
-    cursor: pointer;
-}
-
-#demo #tooltip .tooltip-close,
-#demo #hello-msg-box .tooltip-close,
-#demo .cancel {
-    background: url('https://www.highcharts.com/samples/graphics/cancel-ico.png') no-repeat 0% 0%;
-    float: right;
-    cursor: pointer;
-    width: 10px;
-    height: 10px;
-    margin-right: 10px;
-    margin-top: 10px;
-}
-
-#demo .cancel {
-    position: absolute;
-    right: 0;
-    top: -2px;
-}
-
-#demo .tooltip-mask {
-    background-color: rgba(0, 0, 0, 0.25);
-    opacity: 1;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    width: 100%;
-    z-index: 999;
-    display: none;
-}
-
-#demo #tooltip-mask-top {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-#demo #tooltip-mask-center {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    width: 100%;
-    z-index: 999;
-    display: none;
-    /*box-shadow: 0 5px 15px rgba(0,0,0,.5);*/
-    box-shadow: inset 0px 7px 12px -6px rgba(0, 0, 0, .5);
-    box-shadow: inset 0px 6px 12px -4px rgba(0, 0, 0, .7);
-    /*border: 1px solid rgba(0,0,0,.2);*/
 }
 
 #demo #indicators-container ul {
@@ -315,14 +59,6 @@
     margin-bottom: 0px;
 }
 
-#demo .blue-btn {
-    color: #fff;
-    cursor: pointer;
-    background-color: #00a1e4;
-    border: none;
-    padding: 5px 10px;
-}
-
 #demo .menu-btn {
     color: #000;
     cursor: pointer;
@@ -336,10 +72,6 @@
 #demo .menu-btn:hover {
     background-color: #99bbdd;
     border-color: #6688aa;
-}
-
-#demo .blue-btn:hover {
-    background-color: #008fca;
 }
 
 #demo .right {
@@ -368,27 +100,6 @@
     text-shadow: 1px 0 rgba(0, 0, 0, 0.4);
 }
 
-#demo select {
-    -webkit-appearance: button;
-    -webkit-border-radius: 0px;
-    -webkit-user-select: none;
-    background: url('https://www.highcharts.com/samples/graphics/arrow-down.png') no-repeat 62% -5px #fff;
-    border: 1px solid #ccc;
-    color: #555;
-    overflow: hidden;
-    padding: 4px 20px 4px 10px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 140px;
-    float: left;
-}
-
-#demo select:hover {
-    background-position: 62% -36px;
-    background-color: #99bbdd;
-    border-color: #6688aa;
-}
-
 #demo #menu-nav {
     position: absolute;
     z-index: 50;
@@ -413,31 +124,6 @@
 #demo input.menu-btn:hover {
     color: #000;
 }
-
-
-/* COLOR PICKER CUSTOM */
-
-#demo .colorpicker {
-    z-index: 100 !important;
-    width: 216px !important;
-    -webkit-box-shadow: 0px 0px 4px 0px #7d7d7d;
-    box-shadow: 0px 0px 4px 0px #7d7d7d;
-    -moz-box-shadow: 0px 0px 4px 0px #7d7d7d;
-}
-
-#demo .colorPicker {
-    width: 10px;
-    height: 10px;
-}
-
-#demo .colorpicker_field,
-#demo .colorpicker_hex,
-#demo .colorpicker_submit,
-#demo .colorpicker_new_color,
-#demo .colorpicker_current_color {
-    display: none !important;
-}
-
 
 /* ==== BUTTONS ==== */
 

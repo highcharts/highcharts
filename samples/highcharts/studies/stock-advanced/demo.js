@@ -1370,34 +1370,36 @@ $(function () {
             }));
         });
         $("#highcharts-reset").click(function () {
-            $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
+            if (confirm('Are you sure you want to clear the chart?')) {
+                $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
 
-                var chart = $("#container").highcharts();
+                    var chart = $("#container").highcharts();
 
-                window.localStorage.removeItem('data');
-                indicatorContainer.find('input').prop('checked', false);
-                indicatorsList = []; // clear array too
-                chart.showLoading();
-                advOptions.series[0].data = data;
-                advOptions.series = [advOptions.series[0]];
-                advOptions.yAxis = [
-                    Highcharts.extend(
-                        advOptions.yAxis[0],
-                        {
-                            height: '100%',
-                            resize: {
-                                enabled: false
+                    window.localStorage.removeItem('data');
+                    indicatorContainer.find('input').prop('checked', false);
+                    indicatorsList = []; // clear array too
+                    chart.showLoading();
+                    advOptions.series[0].data = data;
+                    advOptions.series = [advOptions.series[0]];
+                    advOptions.yAxis = [
+                        Highcharts.extend(
+                            advOptions.yAxis[0],
+                            {
+                                height: '100%',
+                                resize: {
+                                    enabled: false
+                                }
                             }
-                        }
-                    )
-                ];
-                advOptions.showTooltip = false;
-                advOptions.addEvents = false;
-                advOptions.indicators = [];
-                advOptions.annotations = [];
-                chart.hideLoading();
-                $('#container').highcharts('StockChart', $.extend(true, {}, advOptions));
-            });
+                        )
+                    ];
+                    advOptions.showTooltip = false;
+                    advOptions.addEvents = false;
+                    advOptions.indicators = [];
+                    advOptions.annotations = [];
+                    chart.hideLoading();
+                    $('#container').highcharts('StockChart', $.extend(true, {}, advOptions));
+                });
+            }
         });
     }
 
