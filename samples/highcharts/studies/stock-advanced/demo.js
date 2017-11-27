@@ -185,7 +185,7 @@ function whichAxis(e, chart) {
 (function (H) {
     var defined = H.defined;
 
-    H.wrap(H.Chart.prototype, 'redrawAnnotations', function (p) {
+    H.wrap(H.Chart.prototype, 'drawAnnotations', function (p) {
         var clips = this.annotationsClips || (this.annotationsClips = []);
 
         H.each(this.yAxis, function (yAxis, i) {
