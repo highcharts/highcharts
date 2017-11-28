@@ -132,10 +132,9 @@ H.setOptions({
 		 * Set to `false` to disable.
 		 * 
 		 * @type {Number|Boolean}
-		 * @default 30
 		 * @since 5.0.0
 		 */
-		pointDescriptionThreshold: 30 // set to false to disable
+		pointDescriptionThreshold: false // set to false to disable
 
 		/**
 		 * Whether or not to add series descriptions to charts with a single

@@ -144,17 +144,16 @@ H.setOptions({
 				 * Focus border margin around the elements.
 				 */
 				margin: 2
-			}
+			},
 
 			/**
 			 * Skip null points when navigating through points with the
 			 * keyboard.
 			 * 
 			 * @type {Boolean}
-			 * @default false
 			 * @since 5.0.0
-			 * @apioption accessibility.keyboardNavigation.skipNullPoints
 			 */
+			skipNullPoints: true
 		}
 	}
 });
@@ -274,11 +273,14 @@ function fakeClickEvent(element) {
 
 // Determine if a point should be skipped
 function isSkipPoint(point) {
-	return point.isNull &&
-		point.series.chart.options.accessibility
-			.keyboardNavigation.skipNullPoints ||
+	var a11yOptions = point.series.chart.options.accessibility;
+	return point.isNull && a11yOptions.keyboardNavigation.skipNullPoints ||
 		point.series.options.skipKeyboardNavigation ||
-		!point.series.visible;
+		!point.series.visible ||
+		// Skip all points in a series where pointDescriptionThreshold is
+		// reached
+		(a11yOptions.pointDescriptionThreshold &&
+		a11yOptions.pointDescriptionThreshold <= point.series.points.length);
 }
 
 
@@ -402,11 +404,7 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		lastPoint = lastSeries && lastSeries.points && 
 					lastSeries.points[lastSeries.points.length - 1],
 		newSeries,
-		newPoint,
-		// Handle connecting ends - where the points array has an extra last
-		// point that is a reference to the first one. We skip this.
-		forwardSkipAmount = curPoint && curPoint.series.connectEnds &&
-							curPointIndex > curPoints.length - 3 ? 2 : 1;
+		newPoint;
 
 	// If no points, return false
 	if (!series[0] || !series[0].points) {
@@ -432,7 +430,7 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 
 		// Grab next/prev point & series
 		newSeries = series[curPoint.series.index + (next ? 1 : -1)];
-		newPoint = curPoints[curPointIndex + (next ? forwardSkipAmount : -1)] ||
+		newPoint = curPoints[curPointIndex + (next ? 1 : -1)] ||
 					// Done with this series, try next one
 					newSeries &&
 					newSeries.points[next ? 0 : newSeries.points.length - (
