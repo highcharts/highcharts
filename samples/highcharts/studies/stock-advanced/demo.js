@@ -639,23 +639,72 @@ window.analyzes = [{
 }];
 
 /***
+ * JSONP
+ */
+
+function $jsonp(src, options) {
+    var callbackName = options.callbackName || 'callback',
+        onSuccess = options.onSuccess || function () {},
+        timeout = options.timeout || 10; // sec
+
+    var timeoutTrigger = window.setTimeout(function () {
+        window[callbackName] = function () {};
+    }, timeout * 1000);
+
+    window[callbackName] = function (data) {
+        window.clearTimeout(timeoutTrigger);
+        onSuccess(data);
+    };
+
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.async = true;
+    script.src = src;
+
+    document.getElementsByTagName('head')[0].appendChild(script);
+}
+
+/***
+ * Get chart by ID
+ */
+
+(function (H) {
+    H.getChartById = function (id) {
+        return H.charts[document.getElementById(id).getAttribute('data-highcharts-chart')];
+    };
+}(Highcharts));
+
+/***
  * SIDE MENU
  */
 (function (H) {
-    var mainMenu = $('#menu-side');
-    var flagMenu = $('#submenu');
+    var mainMenu = document.getElementById('menu-side'),
+        flagMenu = document.getElementById('submenu'),
+        i;
 
     function resetOtherClass(button) {
-        mainMenu.children().not(button).removeClass('active');
-        flagMenu.find('li').not(button).removeClass('active');
+        var mainChildren = mainMenu.children,
+            flagMenuList = flagMenu.querySelectorAll('li');
+
+        for (i = 0; i < mainChildren.length; i++) {
+            if (mainChildren[i] !== button) {
+                mainChildren[i].classList.remove('active');
+            }
+        }
+
+        for (i = 0; i < flagMenuList.length; i++) {
+            if (flagMenuList[i] !== button) {
+                flagMenuList[i].classList.remove('active');
+            }
+        }
     }
 
     function onButtonClick(button, chart) {
-        var annotating = button.attr('id').split('-')[1];
+        var annotating = button.getAttribute('id').split('-')[1];
         var annotation = H.Annotation[chart.annotating];
 
         resetOtherClass(button);
-        button.toggleClass('active');
+        button.classList.toggle('active');
 
         if (chart.annotating && annotation && annotation.reset) {
             annotation.reset();
@@ -664,41 +713,55 @@ window.analyzes = [{
         chart.annotating = annotating === chart.annotating ? null : annotating;
     }
 
-    function sideMenu() {
-        resetOtherClass();
-        mainMenu.off('click');
-        $("#container").highcharts().annotating = null;
+    function menuOnClick(e) {
 
-        mainMenu.on('click', 'button', function () {
-            var button = $(this);
-            var id = button.attr('id');
+        var button = e.target;
+        var id = button.getAttribute('id');
 
-            if (id === 'annotation-flag') {
-                resetOtherClass(button);
+        if (id === 'annotation-flag') {
+            resetOtherClass(button);
 
-                if (flagMenu.css('display') === 'block') {
-                    flagMenu.hide();
-                    button.removeClass('active');
-
-                } else {
-                    flagMenu.show();
-                    button.addClass('active');
-                }
+            if (flagMenu.style.display === 'block') {
+                flagMenu.style.display = 'none';
+                button.classList.remove('active');
 
             } else {
-                flagMenu.hide();
-                onButtonClick(button, $("#container").highcharts());
+                flagMenu.style.display = 'block';
+                button.classList.add('active');
             }
+
+        } else {
+            flagMenu.style.display = 'none';
+
+            onButtonClick(button, H.getChartById('container'));
+        }
+    }
+
+    function flagMenuClick(e) {
+        onButtonClick(e.target, H.getChartById('container'));
+    }
+
+    function sideMenu() {
+        var menuButtons = mainMenu.querySelectorAll('button'),
+            listButtons = mainMenu.querySelectorAll('li');
+
+        resetOtherClass();
+
+        mainMenu.removeEventListener('click', menuOnClick);
+
+        H.getChartById('container').annotating = null;
+
+        menuButtons.forEach(function (menuButton) {
+            menuButton.addEventListener('click', menuOnClick);
         });
 
-        mainMenu.on('click', 'li', function () {
-            onButtonClick($(this), $("#container").highcharts());
+        listButtons.forEach(function (listButton) {
+            listButton.addEventListener('click', flagMenuClick);
         });
     }
 
-
-
     window.sideMenu = sideMenu;
+
 }(Highcharts));
 
 /***
@@ -822,7 +885,7 @@ function whichAxis(e, chart) {
 (function (H) {
     var defined = H.defined;
 
-    H.wrap(H.Chart.prototype, 'drawAnnotations', function (p) {
+    H.wrap(H.Chart.prototype, 'redrawAnnotations', function (p) {
         var clips = this.annotationsClips || (this.annotationsClips = []);
 
         H.each(this.yAxis, function (yAxis, i) {
@@ -1122,8 +1185,8 @@ function whichAxis(e, chart) {
     }
 
     function onChartClick(e, chart) {
-        var x = e.chartX; //- chart.plotLeft
-        var y = e.chartY; //- chart.plotTop
+        var x = e.chartX;
+        var y = e.chartY;
 
         star(x, y, chart);
     }
@@ -1137,34 +1200,17 @@ function whichAxis(e, chart) {
  * TEXT
  */
 (function (H) {
-  //var x = $('#x');
-  //var y = $('#y');
     var inArray = H.inArray;
 
-    var text = $('#text');
+    var text = document.getElementById('text');
     var x = -9e7;
     var y = -9e7;
     var yAxisIndex = -1;
     var chart = null;
     var counter = -1;
     var annotationToRemove;
-    var form;
 
-    var dialog = $('#annotation-text-form').dialog({
-        autoOpen: false,
-        modal: true,
-        width: 200,
-        position: {
-            of: $('#chart')
-        },
-        title: ''
-    });
-
-    function checkRadio(name, value) {
-        var nameSelector = 'input:radio[name="' + name + '"]';
-        $(nameSelector).prop('checked', false);
-        $(nameSelector + '[value="' + value + '"]').prop('checked', 'checked');
-    }
+    var dialog = document.getElementById('annotation-text-form');
 
     function onPointClick(p) {
         x = p.x;
@@ -1173,30 +1219,27 @@ function whichAxis(e, chart) {
         chart = p.series.chart;
 
         if (yAxisIndex !== -1 && chart) {
-            dialog.dialog('open');
+            dialog.style.display = 'block';
         }
     }
 
     function addText(e) {
         e.preventDefault();
 
-        var backgroundColor = $('input:radio[name="background-color"]:checked').val();
-        var shape = $('input:radio[name="shape"]:checked').val();
+        var backgroundColor = document.querySelector('input[name="background-color"]:checked').value;
+        var shape = document.querySelector('input[name="shape"]:checked').value;
 
         if (annotationToRemove) {
             chart.removeAnnotation(annotationToRemove);
             annotationToRemove = null;
         }
-
         chart.addAnnotation({
             events: {
                 contextmenu: function (e) {
                     e.preventDefault();
 
                     var label = this.options.labels[0];
-                    text.val(label.text);
-                    checkRadio('background-color', label.backgroundColor);
-                    checkRadio('shape', label.shape);
+                    text.value = label.text;
 
                     var point = this.labels[0].points[0];
                     annotationToRemove = this.options.id;
@@ -1205,7 +1248,7 @@ function whichAxis(e, chart) {
             },
             id: 'annotation-text-' + (++counter),
             labels: [{
-                text: text.val(),
+                text: text.value,
                 point: {
                     x: x,
                     y: y,
@@ -1220,13 +1263,12 @@ function whichAxis(e, chart) {
             }]
         });
 
-        dialog.dialog('close');
-        form[0].reset();
+        dialog.style.display = 'none';
         chart = null;
         yAxisIndex = -1;
     }
 
-    form = dialog.find('#add-text-annotation').on('submit', addText);
+    document.getElementById('add-text-annotation').addEventListener('submit', addText);
 
     function onChartClick(e, chart) {
         var yAxis = window.whichAxis(e, chart);
@@ -1466,7 +1508,7 @@ function whichAxis(e, chart) {
 /***
  * MAIN DEMO
  */
-$(function () {
+window.onload = function () {
 
     function isNavigatorAxis(axis) {
         return axis.userOptions.className === 'highcharts-navigator-yaxis';
@@ -1481,13 +1523,13 @@ $(function () {
     }
 
     function getHeight() {
-        return $(window).height() - $('#demo').offset().top;
+        return window.innerHeight - document.getElementById('demo').offsetTop;
     }
 
     var indicatorsList = ['rsi', 'sma'],
-        indicatorContainer = $('#indicators-container'),
-        indicatorsButton = $('#indicators-dropdown'),
-        analyzeButton = $('#analyze-dropdown'),
+        indicatorContainer = document.getElementById('indicators-container'),
+        indicatorsButton = document.getElementById('indicators-dropdown'),
+        analyzeButton = document.getElementById('#analyze-dropdown'),
         advOptions = {
             chart: {
                 type: 'candlestick',
@@ -1651,18 +1693,20 @@ $(function () {
 
     function attachEvents() {
 
+        var selectDropdowns;
+
         window.sideMenu();
 
         function manageIndicators(value, adder, useAxis) {
             var index = -1,
-                chart = $("#container").highcharts(),
+                chart = Highcharts.getChartById('container'),
                 lastYAxis = getLastAxis(chart),
                 lastYAxisIndex,
                 previousYAxis,
                 newHeight,
                 nextAxis;
 
-            $.each(chart.series, function (i, e) {
+            chart.series.forEach(function (e, i) {
                 if (e.options.type === value) {
                     index = i;
                 }
@@ -1691,6 +1735,7 @@ $(function () {
                         }
                     }, false);
                 }
+
                 var lastIndicator = chart.addSeries({
                     linkedTo: 'main',
                     id: 's-' + value,
@@ -1763,24 +1808,27 @@ $(function () {
             }
         }
 
-        $('#menu-nav').on('click', '.select-dropdown', function () {
-            var container = $(this).parent().parent(),
-                dropdown = container.find('.dropdown-menu'),
-                button = container.find('button');
+        selectDropdowns = document.querySelectorAll('#menu-nav .select-dropdown');
 
-            if (dropdown.is(':visible')) {
-                button.removeClass('dropdown-active');
-                dropdown.hide();
-            } else {
-                button.addClass('dropdown-active');
-                dropdown.show();
-            }
+        selectDropdowns.forEach(function (dropdown) {
+            dropdown.addEventListener('click', function (e) {
+                var button = e.target,
+                    dropdownMenu = button.nextElementSibling;
+
+                if (dropdownMenu.style.display === 'block') {
+                    button.classList.remove('dropdown-active');
+                    dropdownMenu.style.display = 'none';
+                } else {
+                    button.classList.add('dropdown-active');
+                    dropdownMenu.style.display = 'block';
+                }
+            });
         });
 
-        $(document).click(function (e) {
-            var $target = $(e.target),
-                isIndica = $target.attr('id') === 'indicators-dropdown',
-                isAnalyze = $target.attr('id') === 'analyze-dropdown',
+        document.addEventListener('click', function (e) {
+            var target = e.target,
+                isIndica = target.getAttribute('id') === 'indicators-dropdown',
+                isAnalyze = target.getAttribute('id') === 'analyze-dropdown',
                 hiders = [],
                 removers = [];
 
@@ -1795,73 +1843,85 @@ $(function () {
                 hiders = ['indicators-container'];
             }
 
-            $.each(removers, function (i, button) {
-                button.removeClass('dropdown-active');
+
+            removers.forEach(function (button) {
+                if (button) {
+                    button.classList.remove('dropdown-active');
+                }
             });
 
-            $.each(hiders, function (i, drop) {
-                $('#' + drop + ' .dropdown-menu').hide();
+            hiders.forEach(function (drop) {
+                document.querySelectorAll('#' + drop + ' .dropdown-menu').forEach(function (dropdown) {
+                    dropdown.style.display = 'none';
+                });
             });
         });
 
-        $('#indicators-container .dropdown-menu a').on('click', function (event) {
+        document.querySelectorAll('#indicators-container .dropdown-menu a').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                var target = e.currentTarget,
+                    val = target.getAttribute('data-value'),
+                    useAxis = target.getAttribute('data-axis'),
+                    inp = target.querySelectorAll('input')[0],
+                    idx;
 
-            var $target = $(event.currentTarget),
-                val = $target.attr('data-value'),
-                useAxis = $target.attr('data-axis'),
-                $inp = $target.find('input'),
-                idx;
+                if ((idx = indicatorsList.indexOf(val)) > -1) {
+                    indicatorsList.splice(idx, 1);
+                    setTimeout(function () {
+                        inp.checked = false;
+                    }, 0);
+                    manageIndicators(val, false, useAxis);
+                } else {
+                    indicatorsList.push(val);
+                    setTimeout(function () {
+                        inp.checked = true;
+                    }, 0);
+                    manageIndicators(val, true, useAxis);
+                }
 
-            if ((idx = indicatorsList.indexOf(val)) > -1) {
-                indicatorsList.splice(idx, 1);
-                setTimeout(function () {
-                    $inp.prop('checked', false);
-                }, 0);
-                manageIndicators(val, false, useAxis);
-            } else {
-                indicatorsList.push(val);
-                setTimeout(function () {
-                    $inp.prop('checked', true);
-                }, 0);
-                manageIndicators(val, true, useAxis);
-            }
+                e.target.blur();
 
-            $(event.target).blur();
-
-            return false;
-        });
-
-        $('#analyze-container .dropdown-menu a').on('click', function (event) {
-
-            var $target = $(event.currentTarget),
-                dataset = window.analyzes[$target.attr('data-value')],
-                chart = $("#container").highcharts();
-
-            advOptions.annotations = dataset.annotations;
-            advOptions.yAxis = dataset.yAxis;
-            advOptions.series = [chart.series[0].userOptions].concat(dataset.indicators, dataset.flags || []);
-
-            // Clear old ones:
-            indicatorContainer.find('input').prop('checked', false);
-            indicatorsList = [];
-            $.each(advOptions.series, function (i, series) {
-                // check new ones:
-                indicatorContainer.find('a[data-value="' + series.type + '"] input').prop('checked', true);
-                indicatorsList.push(series.type);
+                return false;
             });
-
-            $('#container').highcharts(
-                'StockChart',
-                $.extend(true, dataset, advOptions)
-            );
-
-            $(event.target).blur();
-
-            return false;
         });
 
-        $("#highcharts-save").click(function () {
-            var chart = $("#container").highcharts(),
+        document.querySelectorAll('#analyze-container .dropdown-menu a').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                var target = e.currentTarget,
+                    dataset = window.analyzes[target.getAttribute('data-value')],
+                    chart = Highcharts.getChartById('container');
+
+                advOptions.annotations = dataset.annotations;
+                advOptions.yAxis = dataset.yAxis;
+                advOptions.series = [chart.series[0].userOptions].concat(dataset.indicators, dataset.flags || []);
+
+                // Clear old ones:
+                indicatorContainer.querySelectorAll('input').forEach(function (inp) {
+                    inp.checked = false;
+                });
+
+                indicatorsList = [];
+                advOptions.series.forEach(function (series) {
+                    // check new ones:
+                    var inp = indicatorContainer.querySelectorAll('a[data-value="' + series.type + '"] input');
+
+                    if (Highcharts.defined(inp[0])) {
+                        inp[0].checked = true;
+                    }
+
+                    indicatorsList.push(series.type);
+                });
+
+                Highcharts.stockChart('container', Highcharts.extend(dataset, advOptions));
+
+                e.target.blur();
+
+                return false;
+            });
+        });
+
+        document.getElementById('highcharts-save').addEventListener('click', function () {
+            var chart = Highcharts.getChartById('container'),
                 chartYAxis = chart.yAxis,
                 navYAxisIdex = chartYAxis.indexOf(chart.navigator.yAxis),
                 annotations = [],
@@ -1869,7 +1929,7 @@ $(function () {
                 flags = [],
                 yAxis = [];
 
-            $.each(chart.series, function (i, series) {
+            chart.series.forEach(function (series) {
                 if (series instanceof Highcharts.seriesTypes.sma) {
                     var index = indicators.push(series.userOptions);
 
@@ -1883,11 +1943,12 @@ $(function () {
                     flags.push(series.userOptions);
                 }
             });
-            $.each(chart.annotations, function (i, ann) {
+
+            chart.annotations.forEach(function (ann, i) {
                 annotations[i] = ann.options;
             });
 
-            $.each(chart.yAxis, function (i, axis) {
+            chart.yAxis.forEach(function (axis) {
                 if (!isNavigatorAxis(axis)) {
                     yAxis.push(axis.userOptions);
                 }
@@ -1901,33 +1962,38 @@ $(function () {
                 yAxis: yAxis
             }));
         });
-        $("#highcharts-reset").click(function () {
+
+        document.getElementById('highcharts-reset').addEventListener('click', function () {
             if (confirm('Are you sure you want to clear the chart?')) {
-                $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
+                $jsonp('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=callbackfunc', {
+                    callbackName: 'callbackfunc',
+                    onSuccess: function (data) {
+                        var chart = Highcharts.getChartById('container');
 
-                    var chart = $("#container").highcharts();
+                        window.localStorage.removeItem('data');
 
-                    window.localStorage.removeItem('data');
-                    indicatorContainer.find('input').prop('checked', false);
-                    indicatorsList = []; // clear array too
-                    chart.showLoading();
-                    advOptions.series[0].data = data;
-                    advOptions.series = [advOptions.series[0]];
-                    advOptions.yAxis = [
-                        Highcharts.extend(
-                            advOptions.yAxis[0],
-                            {
-                                height: '100%',
-                                resize: {
-                                    enabled: false
+                        indicatorContainer.querySelectorAll('input')[0].checked = false;
+                        indicatorsList = []; // clear array too
+                        chart.showLoading();
+                        advOptions.series[0].data = data;
+                        advOptions.series = [advOptions.series[0]];
+                        advOptions.yAxis = [
+                            Highcharts.extend(
+                                advOptions.yAxis[0],
+                                {
+                                    height: '100%',
+                                    resize: {
+                                        enabled: false
+                                    }
                                 }
-                            }
-                        )
-                    ];
-                    advOptions.indicators = [];
-                    advOptions.annotations = [];
-                    chart.hideLoading();
-                    $('#container').highcharts('StockChart', $.extend(true, {}, advOptions));
+                            )
+                        ];
+                        advOptions.indicators = [];
+                        advOptions.annotations = [];
+                        chart.hideLoading();
+
+                        Highcharts.stockChart('container', Highcharts.extend({}, advOptions));
+                    }
                 });
             }
         });
@@ -1943,28 +2009,27 @@ $(function () {
             return ind.type;
         });
         attachEvents(
-            $('#container')
-                .highcharts('StockChart', $.extend(true, {}, advOptions))
-                .highcharts()
+            Highcharts.stockChart('container', Highcharts.extend({}, advOptions))
         );
     } else {
-        $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
-            advOptions.series[0].data = data;
-            attachEvents(
-                $('#container')
-                    .highcharts('StockChart', $.extend(true, {}, advOptions))
-                    .highcharts()
-            );
+        $jsonp('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=callbackfunc', {
+            callbackName: 'callbackfunc',
+            onSuccess: function (data) {
+                advOptions.series[0].data = data;
+                attachEvents(
+                    Highcharts.stockChart('container', Highcharts.extend({}, advOptions))
+                );
+            }
         });
     }
 
     // Initial select:
-    $.each(indicatorsList, function (i, ind) {
-        indicatorContainer.find('a[data-value="' + ind + '"] input').prop('checked', true);
+    indicatorsList.forEach(function (ind) {
+        indicatorContainer.querySelectorAll('a[data-value="' + ind + '"] input')[0].checked = true;
     });
 
     // Adapt height on resize
-    $(window).on('resize', function () {
-        $('#container').highcharts().setSize(undefined, getHeight(), false);
+    window.addEventListener('resize', function () {
+        Highcharts.getChartById('container').setSize(undefined, getHeight(), false);
     });
-});
+};

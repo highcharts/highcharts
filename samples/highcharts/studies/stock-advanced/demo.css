@@ -255,6 +255,15 @@
 #demo #annotation-text-form {
     color: #707070;
     display: none;
+    background-color:#fff;
+    position: absolute;
+    left:50%;
+    margin-top:;
+    width:188px;
+    top:100px;
+    margin-left: -104px;
+    z-index: 1000;
+    padding:10px;
 }
 
 
