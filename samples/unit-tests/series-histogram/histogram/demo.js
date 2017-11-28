@@ -67,6 +67,20 @@ QUnit.test('Histogram', function (assert) {
         'After removing a point in the base series bin frequencies are calculated correctly'
     );
 
+    chart.addSeries({
+        type: 'histogram',
+        id: 'h-binsNumber-as-function',
+        baseSeries: 's2',
+        binsNumber: function () {
+            return 2;
+        }
+    });
+    assert.ok(
+        true,
+        'Not crashing when function used for binsNumber (#7457)'
+        // when number of bins is correct change this test to check len of yData
+    );
+
 
     var addedHistogram = chart.addSeries({
         type: 'histogram',
