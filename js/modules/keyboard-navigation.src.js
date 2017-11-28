@@ -1093,6 +1093,38 @@ H.Chart.prototype.addExitAnchor = function () {
 };
 
 
+// Clear the chart and reset the navigation state
+H.Chart.prototype.resetKeyboardNavigation = function () {
+	var chart = this,
+		curMod = chart.keyboardNavigationModules[
+			chart.keyboardNavigationModuleIndex || 0
+		];
+	if (curMod && curMod.terminate) {
+		curMod.terminate();
+	}
+	if (chart.focusElement) {
+		chart.focusElement.removeFocusBorder();
+	}
+	chart.keyboardNavigationModuleIndex = 0;
+	chart.keyboardReset = true;
+};
+
+
+/**
+ * On destroy, we need to clean up the focus border and the state
+ */
+H.wrap(H.Series.prototype, 'destroy', function (proceed) {
+	var chart = this.chart;
+	if (chart.highlightedPoint && chart.highlightedPoint.series === this) {
+		delete chart.highlightedPoint;
+		if (chart.focusElement) {
+			chart.focusElement.removeFocusBorder();
+		}
+	}
+	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
+
+
 // Add keyboard navigation events on chart load
 H.Chart.prototype.callbacks.push(function (chart) {
 	var a11yOptions = chart.options.accessibility;
@@ -1128,6 +1160,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 					curNavModule = chart.keyboardNavigationModules[
 						chart.keyboardNavigationModuleIndex
 					];
+				chart.keyboardReset = false;
 				// If there is a nav module for the current index, run it.
 				// Otherwise, we are outside of the chart in some direction.
 				if (curNavModule) {
@@ -1138,13 +1171,25 @@ H.Chart.prototype.callbacks.push(function (chart) {
 				}
 			});
 
+		// Reset chart navigation state if we click outside the chart and it's
+		// not already reset
+		chart.unbindBlurHandler = addEvent(doc, 'mouseup', function () {
+			if (!chart.keyboardReset && !chart.pointer.chartPosition) {
+				chart.resetKeyboardNavigation();
+			}
+		});
+
 		// Add cleanup handlers
 		addEvent(chart, 'destroy', function () {
+			chart.resetKeyboardNavigation();
 			if (chart.unbindExitAnchorFocus && chart.tabExitAnchor) {
 				chart.unbindExitAnchorFocus();
 			}
 			if (chart.unbindKeydownHandler && chart.renderTo) {
 				chart.unbindKeydownHandler();
+			}
+			if (chart.unbindBlurHandler) {
+				chart.unbindBlurHandler();
 			}
 		});		
 	}
