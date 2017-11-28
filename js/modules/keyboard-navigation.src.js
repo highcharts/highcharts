@@ -636,6 +636,21 @@ H.Chart.prototype.highlightExportItem = function (ix) {
 };
 
 
+// Try to highlight the last valid export menu item
+H.Chart.prototype.highlightLastExportItem = function () {
+	var chart = this,
+		i;
+	if (chart.exportDivElements) {
+		i = chart.exportDivElements.length;
+		while (i--) {
+			if (chart.highlightExportItem(i)) {
+				break;
+			}
+		}
+	}
+};
+
+
 // Highlight range selector button by index
 H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
 	var buttons = this.rangeSelector.buttons;
@@ -756,8 +771,8 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					}
 				}
 				if (reachedEnd) {
-					chart.hideExportMenu();
-					return this.move(-1);
+					chart.highlightLastExportItem();
+					return true;
 				}
 			}],
 			// Right/Down
@@ -777,8 +792,8 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					}
 				}
 				if (reachedEnd) {
-					chart.hideExportMenu();
-					return this.move(1); // Next module
+					chart.highlightExportItem(0);
+					return true;
 				}
 			}],
 			// Enter/Spacebar
@@ -805,12 +820,8 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 				chart.showExportMenu();
 				// If coming back to export menu from other module, try to
 				// highlight last item in menu
-				if (direction < 0 && chart.exportDivElements) {
-					for (var i = chart.exportDivElements.length; i > -1; --i) {
-						if (chart.highlightExportItem(i)) {
-							break;
-						}
-					}
+				if (direction < 0) {
+					chart.highlightLastExportItem();
 				}
 			},
 			// Hide the menu
@@ -983,12 +994,10 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 			[[37, 39, 38, 40], function (keyCode) {
 				var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
 				// Try to highlight next/prev legend item
-				if (
-					!chart.highlightLegendItem(
-						chart.highlightedLegendItemIx + direction
-					)
-				) {
-					return this.move(direction);
+				if (!chart.highlightLegendItem(
+					chart.highlightedLegendItemIx + direction
+				)) {
+					this.init(direction);
 				}
 			}],
 			// Enter/Spacebar
