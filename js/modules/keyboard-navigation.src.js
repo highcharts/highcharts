@@ -23,7 +23,7 @@ var win = H.win,
 	fireEvent = H.fireEvent,
 	merge = H.merge,
 	pick = H.pick,
-	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(win.navigator.userAgent);
+	hasSVGFocusSupport;
 
 // Add focus border functionality to SVGElements.
 // Draws a new rect on top of element around its bounding box.
@@ -598,8 +598,9 @@ H.Chart.prototype.hideExportMenu = function () {
 			exportList[this.highlightedExportItem].onmouseout();
 		}	
 		this.highlightedExportItem = 0;
-		if (!isMSBrowser) {
-			// Only focus if not on Edge/IE to work around #7422 a bit
+		if (hasSVGFocusSupport) {
+			// Only focus if we can set focus back to the elements after 
+			// destroying the menu (#7422)
 			this.renderTo.focus();
 		}
 	}
@@ -618,8 +619,9 @@ H.Chart.prototype.highlightExportItem = function (ix) {
 		listItem.tagName === 'DIV' &&
 		!(listItem.children && listItem.children.length)
 	) {
-		if (listItem.focus && !isMSBrowser) {
-			// Only focus if not on Edge/IE to work around #7422 a bit
+		if (listItem.focus && hasSVGFocusSupport) {
+			// Only focus if we can set focus back to the elements after 
+			// destroying the menu (#7422)
 			listItem.focus();
 		}
 		if (curHighlighted && curHighlighted.onmouseout) {
@@ -1095,7 +1097,11 @@ H.Chart.prototype.addExitAnchor = function () {
 H.Chart.prototype.callbacks.push(function (chart) {
 	var a11yOptions = chart.options.accessibility;
 	if (a11yOptions.enabled && a11yOptions.keyboardNavigation.enabled) {
-		
+
+		// Test if we have focus support for SVG elements
+		hasSVGFocusSupport = !!chart.renderTo
+								.getElementsByTagName('g')[0].focus;
+
 		// Init nav modules. We start at the first module, and as the user
 		// navigates through the chart the index will increase to use different
 		// handler modules.
