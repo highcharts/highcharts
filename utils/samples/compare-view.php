@@ -51,7 +51,8 @@
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<script type="text/javascript">		
+		<script type="text/javascript">	
+			/* eslint-disable */	
 			var diff,
 				path = '<?php echo $path ?>',
 				commentHref = 'compare-comment.php?path=<?php echo $path ?>&diff=',
