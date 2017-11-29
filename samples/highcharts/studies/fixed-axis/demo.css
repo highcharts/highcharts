@@ -1,13 +1,13 @@
+.highcharts-outer-container {
+    position: relative;
+    margin: 1em auto;
+}
+.highcharts-scrolling {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+}
 #container {
     max-width: 800px;
     min-width: 600px;
     height: 400px;
-}
-#container-outer {
-	width: 100%;
-	overflow-x: scroll;
-    margin: 1em auto;
-	-webkit-overflow-scrolling: touch;
-	z-index: 1;
-    position: relative;
 }

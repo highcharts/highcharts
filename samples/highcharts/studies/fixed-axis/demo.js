@@ -20,15 +20,15 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
                 'div',
                 null,
                 {
-                    position: 'fixed',
+                    position: 'absolute',
                     zIndex: 2
                 },
                 null,
                 true
             );
-            this.chart.renderTo.parentNode.insertBefore(
+            this.chart.renderTo.parentNode.parentNode.insertBefore(
                 fixedDiv,
-                this.chart.renderTo
+                this.chart.renderTo.parentNode
             );
 
             this.axisRenderer = new Highcharts.Renderer(
