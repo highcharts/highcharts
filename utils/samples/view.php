@@ -22,7 +22,7 @@ $topDomain = $httpHost[sizeof($httpHost) - 1];
 
 // Get HTML and use dev server
 ob_start();
-@include("$path/demo.html");
+@include("$fsPath/demo.html");
 $html = ob_get_clean();
 
 if ($boostCanvas) {
@@ -54,7 +54,7 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 
 // Get CSS and use dev server
 ob_start();
-@include("$path/demo.css");
+@include("$fsPath/demo.css");
 $css = ob_get_clean();
 $css = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $css);
 
@@ -66,7 +66,7 @@ if ($styled) {
 }
 
 ob_start();
-@include("$path/demo.js");
+@include("$fsPath/demo.js");
 $js = ob_get_clean();
 
 
@@ -100,11 +100,11 @@ $themes = array(
 
 
 function getResources() {
-    global $path, $styled, $topDomain;
+    global $fsPath, $styled, $topDomain;
 
     // No idea why file_get_contents doesn't work here...
     ob_start();
-    @include("$path/demo.details");
+    @include("$fsPath/demo.details");
     $s = ob_get_clean();
 
     $html = '';
@@ -156,7 +156,7 @@ function getResources() {
 		<script type="text/javascript">
 		/* eslint-disable */
 		var sampleIndex,
-			path = '<?php echo $path ?>'.replace('../../samples/', ''),
+			path = '<?php echo $path ?>',
 			browser = <?php echo json_encode(getBrowser()); ?>,
 			controller = window.parent && window.parent.controller;
 

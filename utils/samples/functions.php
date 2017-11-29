@@ -10,9 +10,13 @@ if (isset($path) && !preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', 
     die ('Invalid sample path input: ' . $path);
 }
 
-$path = "../../samples/$path";
-$details = @file_get_contents("$path/demo.details");
-$isUnitTest = file_exists("$path/unit-tests.js") || strstr($details, 'qunit') ? true : false;
+$fsPath = str_replace(
+    '/utils/samples',
+    '/samples',
+    dirname(__FILE__)
+) . "/$path";
+$details = @file_get_contents("$fsPath/demo.details");
+$isUnitTest = file_exists("$fsPath/unit-tests.js") || strstr($details, 'qunit') ? true : false;
 $isManual = (strstr($details, 'requiresManualTesting: true') !== false);
 
 
