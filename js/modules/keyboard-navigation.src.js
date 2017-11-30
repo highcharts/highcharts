@@ -297,6 +297,7 @@ function isSkipPoint(point) {
 	return point.isNull && a11yOptions.keyboardNavigation.skipNullPoints ||
 		point.series.options.skipKeyboardNavigation ||
 		!point.series.visible ||
+		point.visible === false ||
 		// Skip all points in a series where pointDescriptionThreshold is
 		// reached
 		(a11yOptions.pointDescriptionThreshold &&
