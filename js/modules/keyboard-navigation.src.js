@@ -105,6 +105,7 @@ H.setOptions({
 			 */
 			enabled: true,
 
+
 			/**
 			 * Options for the focus border drawn around elements while
 			 * navigating through them.
@@ -146,6 +147,24 @@ H.setOptions({
 				 */
 				margin: 2
 			},
+
+			/**
+			 * Set the keyboard navigation mode for the chart. Can be "normal"
+			 * or "serialize". In normal mode, left/right arrow keys move
+			 * between points in a series, while up/down arrow keys move between
+			 * series. Up/down navigation acts intelligently to figure out which
+			 * series makes sense to move to from any given point.
+			 *
+			 * In "serialize" mode, points are instead navigated as a single 
+			 * list. Left/right behaves as in "normal" mode. Up/down arrow keys
+			 * will behave like left/right. This is useful for unifying 
+			 * navigation behavior with/without screen readers enabled.
+			 *
+			 * @type {String}
+			 * @default "normal"
+			 * @since 6.0.4
+			 * @apioption keyboardNavigation.mode
+			 */
 
 			/**
 			 * Skip null points when navigating through points with the
@@ -720,11 +739,21 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 			}],
 			// Up/Down
 			[[38, 40], function (keyCode) {
+				var down = keyCode !== 38,
+					navOptions = chart.options.accessibility.keyboardNavigation;
+				if (navOptions.mode && navOptions.mode === 'serialize') {
+					// Act like left/right
+					if (!chart.highlightAdjacentPoint(down)) {
+						return this.init(down ? 1 : -1);
+					}
+					return true;
+				}
+				// Normal mode, move between series
 				var highlightMethod = chart.highlightedPoint &&
 						chart.highlightedPoint.series.keyboardMoveVertical ?
 						'highlightAdjacentPointVertical' :
 						'highlightAdjacentSeries';
-				chart[highlightMethod](keyCode !== 38);
+				chart[highlightMethod](down);
 				return true;
 			}],
 			// Enter/Spacebar
