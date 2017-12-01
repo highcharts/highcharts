@@ -703,6 +703,12 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
 				'mouseout'
 			);
 		}
+		// Scroll if we have to
+		if (items[ix].pageIx !== undefined &&
+			items[ix].pageIx + 1 !== this.legend.currentPage) {
+			this.legend.scroll(1 + items[ix].pageIx - this.legend.currentPage);
+		}
+		// Focus
 		this.highlightedLegendItemIx = ix;
 		this.setFocusToElement(items[ix].legendItem, items[ix].legendGroup);
 		fireEvent(items[ix].legendGroup.element, 'mouseover');

@@ -827,9 +827,16 @@ Highcharts.Legend.prototype = {
 					len++;
 				}
 
+				// Keep track of which page each item is on
+				item.pageIx = len - 1;
+				if (lastY) {
+					allItems[i - 1].pageIx = len - 1;
+				}
+
 				if (i === allItems.length - 1 &&
 						y + h - pages[len - 1] > clipHeight) {
 					pages.push(y);
+					item.pageIx = len;
 				}
 				if (y !== lastY) {
 					lastY = y;
