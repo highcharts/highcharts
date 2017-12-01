@@ -577,6 +577,7 @@ Highcharts.Legend.prototype = {
 				/(lbv|lm|ltv)/
 			], function (alignments, side) {
 				if (alignments.test(alignment) && !defined(margin[side])) {
+
 					// Now we have detected on which side of the chart we should
 					// reserve space for the legend
 					chart[marginNames[side]] = Math.max(
@@ -589,7 +590,13 @@ Highcharts.Legend.prototype = {
 								(side % 2) ? 'x' : 'y'
 							] +
 							pick(options.margin, 12) +
-							spacing[side]
+							spacing[side] +
+							(
+								side === 0 ?
+									chart.titleOffset +
+										chart.options.title.margin :
+									0
+							) // #7428
 						)
 					);
 				}
@@ -614,7 +621,8 @@ Highcharts.Legend.prototype = {
 			legendHeight,
 			box = legend.box,
 			options = legend.options,
-			padding = legend.padding;
+			padding = legend.padding,
+			alignTo;
 
 		legend.itemX = padding;
 		legend.itemY = legend.initialItemY;
@@ -718,10 +726,20 @@ Highcharts.Legend.prototype = {
 		});
 
 		if (display) {
+
+			// If aligning to the top, adjust for the title (#7428)
+			alignTo = chart.spacingBox;
+			if (options.verticalAlign === 'top' && !options.floating) {
+				alignTo = merge(alignTo, {
+					y: alignTo.y + chart.titleOffset +
+						chart.options.title.margin
+				});
+			}
+
 			legendGroup.align(merge(options, {
 				width: legendWidth,
 				height: legendHeight
-			}), true, 'spacingBox');
+			}), true, alignTo);
 		}
 
 		if (!chart.isResizing) {

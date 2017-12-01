@@ -58,8 +58,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=analytics.
         legend: {
             align: 'left',
             verticalAlign: 'top',
-            y: 20,
-            floating: true,
             borderWidth: 0
         },
 
@@ -101,20 +99,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=analytics.
             }
         }, {
             name: 'New visitors'
-        }],
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 600
-                },
-                chartOptions: {
-                    legend: {
-                        verticalAlign: 'bottom',
-                        y: 0,
-                        floating: false
-                    }
-                }
-            }]
-        }
+        }]
     });
 });
