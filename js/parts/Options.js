@@ -2391,10 +2391,8 @@ H.defaultOptions = {
 		/**
 		 * A string to append to the tooltip format.
 		 * 
-		 * @type {String}
 		 * @sample {highcharts} highcharts/tooltip/footerformat/ A table for value alignment
 		 * @sample {highmaps} maps/tooltip/format/ Format demo
-		 * @default false
 		 * @since 2.2
 		 */
 		footerFormat: '',
