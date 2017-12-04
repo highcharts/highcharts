@@ -679,7 +679,9 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		
 		if (anim.duration) {
 			ca = suckOutCustom(params);
-			params.dummy = 1; // Params need to have a property in order for the step to run (#5765)
+			// Params need to have a property in order for the step to run
+			// (#5765, #7437)
+			params.dummy = wrapper.dummy++;
 
 			if (ca) {
 				to = ca;
@@ -704,6 +706,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		}
 		return proceed.call(this, params, animation, complete);
 	});
+	wrapper.dummy = 0;
 
 	// destroy all children
 	wrapper.destroy = function () {

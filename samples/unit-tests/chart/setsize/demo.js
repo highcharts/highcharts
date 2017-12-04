@@ -137,6 +137,9 @@ QUnit.test('setSize parameters', function (assert) {
 });
 
 QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
+
+    var clock = lolexInstall();
+
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie',
@@ -177,6 +180,22 @@ QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
         chart.series[0].points[0].graphic.getBBox().x < x,
         'Pie has moved'
     );
+
+    // Move it again and verify it has moved
+    var path = chart.series[0].points[0].graphic.element.firstChild
+        .getAttribute('d');
+    chart.setSize(500, undefined, { duration: 25 });
+
+    setTimeout(function () {
+        assert.notEqual(
+            chart.series[0].points[0].graphic.element.firstChild
+                .getAttribute('d'),
+            path,
+            'First point\'s path should be updated (#7437)'
+        );
+    }, 50);
+
+    lolexRunAndUninstall(clock);
 
 
 });
