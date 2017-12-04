@@ -2,10 +2,6 @@
 /**
  * Highcharts plugin to make the Y axis stay fixed when scrolling the chart
  * horizontally on mobile devices.
- *
- * @todo
- * - Currently the Y axis stays fixed vertically too, so it is of no use in
- *   pages that scroll vertically.
  */
 
 Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
@@ -18,7 +14,9 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 
             var fixedDiv = Highcharts.createElement(
                 'div',
-                null,
+                {
+                    className: 'highcharts-fixed'
+                },
                 {
                     position: 'absolute',
                     zIndex: 2
