@@ -1123,7 +1123,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * will be used.
 		 *
 		 * @type      {Number}
-		 * @sample    highcharts\demo\gauge-vu-meter
+		 * @sample    highcharts/demo/gauge-vu-meter
 		 *            Two gauges with different center
 		 * @product   highcharts
 		 * @apioption xAxis.pane
