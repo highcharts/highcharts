@@ -814,9 +814,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
 	// Add accessibility attributes and top level columns
 	H.wrap(chart, 'viewData', function (proceed) {
-		if (!this.dataTableDiv) {
-			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
+		var divExists = this.dataTableDiv;
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		if (!divExists) {
 			var table = doc.getElementById(tableId),
 				head = table.getElementsByTagName('thead')[0],
 				body = table.getElementsByTagName('tbody')[0],
