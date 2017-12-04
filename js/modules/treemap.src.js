@@ -1150,7 +1150,9 @@ seriesType('treemap', 'scatter', {
 		// attribute.
 		if (this.colorAttribs) { // Heatmap is loaded
 			each(this.points, function (point) {
-				point.graphic.css(this.colorAttribs(point));
+				if (point.graphic) {
+					point.graphic.css(this.colorAttribs(point));
+				}
 			}, this);
 		}
 		/*= } =*/
