@@ -77,7 +77,7 @@ if (!is_dir('../samples/temp')) {
 	mkdir('../samples/temp');
 }
 
-if (is_file('../samples/temp/log.txt')) {
+if (sys_get_temp_dir() . '/log.txt') {
 	copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 }
 
