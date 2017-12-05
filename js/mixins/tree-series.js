@@ -1,13 +1,18 @@
 import H from '../parts/Globals.js';
 var each = H.each,
 	extend = H.extend,
+	isArray = H.isArray,
 	isBoolean = function (x) {
 		return typeof x === 'boolean';
 	},
 	isFn = function (x) {
 		return typeof x === 'function';
 	},
-	pick = H.pick;
+	isObject = H.isObject,
+	isNumber = H.isNumber,
+	merge = H.merge,
+	pick = H.pick,
+	reduce = H.reduce;
 // TODO Combine buildTree and buildNode with setTreeValues
 // TODO Remove logic from Treemap and make it utilize this mixin.
 var setTreeValues = function setTreeValues(tree, options) {
@@ -134,8 +139,74 @@ var getColor = function getColor(node, options) {
 	};
 };
 
+/**
+ * getLevelOptions - Creates a map from level number to its given options.
+ * @param {Object} params Object containing parameters.
+ * @param {Object} params.defaults Object containing default options. The
+ * default options are merged with the userOptions to get the final options for
+ * a specific level.
+ * @param {Number} params.levelRoot Which level on the tree where the root node
+ * is located.
+ * @param {Array} params.levels User options from series.levels.
+ * @param {Number} params.height Height of tree.
+ * @return {null|Object} Returns a map from level number to its given options.
+ * Returns null if invalid input parameters.
+ */
+var getLevelOptions = function getLevelOptions(params) {
+	var result = null,
+		defaults,
+		converted,
+		height,
+		i,
+		levelRoot,
+		levels;
+	if (isObject(params)) {
+		result = {};
+		levels = params.levels;
+		levelRoot = isNumber(params.levelRoot) ? params.levelRoot : 0;
+		height = isNumber(params.height) ? params.height : 0;
+		if (isArray(levels)) {
+			defaults = isObject(params.defaults) ? params.defaults : {};
+			converted = reduce(levels, function (obj, item) {
+				var level,
+					levelIsConstant,
+					options;
+				if (isObject(item) && isNumber(item.level)) {
+					options = merge({}, defaults, item);
+					levelIsConstant = options.levelIsConstant;
+					// Delete redundant properties.
+					delete options.levelIsConstant;
+					delete options.level;
+					// Calculate which level these options apply to.
+					level = item.level + (levelIsConstant ? 0 : levelRoot);
+					if (isObject(obj[level])) {
+						extend(obj[level], options);
+					} else {
+						obj[level] = options;
+					}
+				}
+				return obj;
+			}, {});
+		}
+		/**
+		 * Only return options for level 1 and up to height of the tree.
+		 * Add default options for missing levels.
+		 */
+		i = levelRoot > 0 ? levelRoot : 1;
+		for (; i <= height; i++) {
+			if (isObject(converted[i])) {
+				result[i] = converted[i];
+			} else {
+				result[i] = merge({}, defaults);
+			}
+		}
+	}
+	return result;
+};
+
 var result = {
 	getColor: getColor,
+	getLevelOptions: getLevelOptions,
 	setTreeValues: setTreeValues
 };
 export default result;
