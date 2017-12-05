@@ -135,7 +135,7 @@ seriesType('flags', 'column', {
 	 *  or individually for each point. Defaults to `"A"`.
 	 * 
 	 * @type {String}
-	 * @default "A"
+	 * @default A
 	 * @product highstock
 	 * @apioption plotOptions.flags.title
 	 */
@@ -203,8 +203,6 @@ seriesType('flags', 'column', {
 			/**
 			 * The color of the line/border of the flag.
 			 * 
-			 * @type {String}
-			 * @default "black"
 			 * @product highstock
 			 */
 			lineColor: '${palette.neutralColor100}',
@@ -212,8 +210,6 @@ seriesType('flags', 'column', {
 			/**
 			 * The fill or background color of the flag.
 			 * 
-			 * @type {String}
-			 * @default "#FCFFC5"
 			 * @product highstock
 			 */
 			fillColor: '${palette.highlightColor20}'

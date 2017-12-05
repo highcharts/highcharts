@@ -161,7 +161,7 @@ H.setOptions({
 			 * navigation behavior with/without screen readers enabled.
 			 *
 			 * @type {String}
-			 * @default "normal"
+			 * @default normal
 			 * @since 6.0.4
 			 * @apioption keyboardNavigation.mode
 			 */
