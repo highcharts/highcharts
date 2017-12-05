@@ -452,9 +452,7 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		// Grab next/prev point & series
 		newSeries = series[curPoint.series.index + (next ? 1 : -1)];
 		newPoint = curPoints[curPointIndex + (next ? 1 : -1)] ||
-					// Done with this series, try next one, unless shared
-					// tooltip.
-					!chart.tooltip.shared &&
+					// Done with this series, try next one
 					newSeries &&
 					newSeries.points[next ? 0 : newSeries.points.length - 1];
 
