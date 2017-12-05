@@ -28,6 +28,7 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
 	isString = H.isString,
+	keys = H.keys,
 	merge = H.merge,
 	noop = H.noop,
 	pick = H.pick,
@@ -37,6 +38,54 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	setTreeValues = mixinTreeSeries.setTreeValues,
 	reduce = H.reduce;
 
+/**
+ * @param {Object} levelOptions Map of level to its options.
+ * @param {Object} params Object containing parameters.
+ * @param {Number} params.innerRadius
+ * @param {Number} params.outerRadius
+ * @
+ */
+var calculateLevelSizes = function calculateLevelSizes(levelOptions, diffRadius) {
+	var result,
+		remainingSize = diffRadius,
+		levels = keys(levelOptions),
+		totalWeight = 0;
+	/**
+	 * Convert percentage to pixels.
+	 * Calculate the remaining size to divide between "weight" levels.
+	 * Calculate total weight to use in convertion from weight to pixels.
+	 */
+	each(levels, function (level) {
+		var options = levelOptions[level],
+			unit = options.levelSize.unit,
+			value = options.levelSize.value;
+		if (unit === 'weight') {
+			totalWeight += value;
+		} else if (unit === 'percentage') {
+			options.levelSize = {
+				unit: 'pixels',
+				value: (value / 100) * diffRadius
+			};
+			remainingSize -= options.levelSize.value;
+		} else if (unit === 'pixels') {
+			remainingSize -= value;
+		}
+	});
+
+	// Convert weight to pixels.
+	each(levels, function (level) {
+		var options = levelOptions[level],
+			weight;
+		if (options.levelSize.unit === 'weight') {
+			weight = options.levelSize.value;
+			options.levelSize = {
+				unit: 'pixels',
+				value: (weight / totalWeight) * remainingSize
+			};
+		}
+	});
+	return result;
+};
 
 /**
  * getEndPoint - Find a set of coordinates given a start coordinates, an angle,
