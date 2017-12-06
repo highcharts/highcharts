@@ -1,4 +1,4 @@
-QUnit.test('Order of flags of the same x position (#3763)', function (assert) {
+QUnit.test('Flag values and placement', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
                 data: [1, 0, 1],
@@ -41,6 +41,22 @@ QUnit.test('Order of flags of the same x position (#3763)', function (assert) {
             return ret;
         }(series)),
         true,
-        'Order of points the same as data'
+        'Order of points shoule be the same as data (#3763)'
+    );
+
+    assert.strictEqual(
+        chart.series[1].points[0].y,
+        0,
+        'The flag point should have the same Y as the onSeries (#7440)'
+    );
+
+    chart.series[1].addPoint({
+        x: 1.5
+    });
+
+    assert.strictEqual(
+        chart.series[1].points[11].y,
+        0.5,
+        'The interpolated flag should have an interpolated Y value (#7440)'
     );
 });
