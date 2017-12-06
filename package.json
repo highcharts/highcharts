@@ -25,7 +25,8 @@
     "lib"
   ],
   "scripts": {
-    "precommit": "lint-staged && gulp test"
+    "precommit": "lint-staged && gulp test",
+    "post-merge": "gulp styles && gulp scripts"
   },
   "devDependencies": {
     "babel-plugin-transform-es2015-arrow-functions": "^6.8.0",
