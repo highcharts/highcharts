@@ -424,15 +424,19 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				newMax = flipped ? panMin : panMax,
 				paddedMin = Math.min(
 					extremes.dataMin, 
-					axis.toValue(
-						axis.toPixels(extremes.min) - axis.minPixelPadding
-					)
+					halfPointRange ?
+						extremes.min :
+						axis.toValue(
+							axis.toPixels(extremes.min) - axis.minPixelPadding
+						)
 				),
 				paddedMax = Math.max(
 					extremes.dataMax,
-					axis.toValue(
-						axis.toPixels(extremes.max) + axis.minPixelPadding
-					)
+					halfPointRange ?
+						extremes.max :
+						axis.toValue(
+							axis.toPixels(extremes.max) + axis.minPixelPadding
+						)
 				),
 				spill;
 
