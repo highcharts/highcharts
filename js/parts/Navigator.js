@@ -1118,13 +1118,15 @@ Navigator.prototype = {
 				navigator.fixedWidth = range; // #1370
 
 				ext = xAxis.toFixedRange(left, left + range, null, fixedMax);
-				chart.xAxis[0].setExtremes(
-					Math.min(ext.min, ext.max),
-					Math.max(ext.min, ext.max),
-					true,
-					null, // auto animation
-					{ trigger: 'navigator' }
-				);
+				if (defined(ext.min)) { // #7411
+					chart.xAxis[0].setExtremes(
+						Math.min(ext.min, ext.max),
+						Math.max(ext.min, ext.max),
+						true,
+						null, // auto animation
+						{ trigger: 'navigator' }
+					);
+				}
 			}
 		}
 	},

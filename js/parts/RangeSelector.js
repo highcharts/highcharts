@@ -1234,7 +1234,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 			newMax = newMin + fixedRange;
 		}
 	}
-	if (!isNumber(newMin)) { // #1195
+	if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
 		newMin = newMax = undefined;
 	}
 
