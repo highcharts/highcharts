@@ -126,8 +126,8 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
 			radiansCenter = startAngle + (radians / 2),
 			offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
 			values = {
-				x: child.sliced && child.id !== options.idRoot ? offsetPosition.x : x,
-				y: child.sliced && child.id !== options.idRoot ? offsetPosition.y : y,
+				x: child.sliced ? offsetPosition.x : x,
+				y: child.sliced ? offsetPosition.y : y,
 				innerR: innerRadius,
 				r: outerRadius,
 				radius: radius,
@@ -294,7 +294,8 @@ var cbSetTreeValuesBefore = function before(node, options) {
 	if (point) {
 		point.color = node.color;
 		point.colorIndex = node.colorIndex;
-		node.sliced = point.sliced;
+		// Set slicing on node, but avoid slicing the top node.
+		node.sliced = (node.id !== options.idRoot) ? point.sliced : false;
 	}
 	return node;
 };
@@ -700,7 +701,6 @@ var sunburstSeries = {
 			levels: series.options.levels,
 			to: tree.height,
 			defaults: {
-				idRoot: idRoot,
 				levelIsConstant: options.levelIsConstant,
 				levelSize: options.levelSize,
 				slicedOffset: options.slicedOffset
