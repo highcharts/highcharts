@@ -172,7 +172,7 @@ seriesType('histogram', 'column', {
 		fitToBin = fitToBinLeftClosed(binWidth);
 
 		for (x = fitToBin(min); x <= max; x += binWidth) {
-			frequencies[correctFloat(x)] = 0;
+			frequencies[correctFloat(fitToBin(x))] = 0;
 		}
 
 		each(baseData, function (y) {
