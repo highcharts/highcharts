@@ -145,10 +145,9 @@ var getColor = function getColor(node, options) {
  * @param {Object} params.defaults Object containing default options. The
  * default options are merged with the userOptions to get the final options for
  * a specific level.
- * @param {Number} params.levelRoot Which level on the tree where the root node
- * is located.
+ * @param {Number} params.from The lowest level number.
  * @param {Array} params.levels User options from series.levels.
- * @param {Number} params.height Height of tree.
+ * @param {Number} params.to The highest level number.
  * @return {null|Object} Returns a map from level number to its given options.
  * Returns null if invalid input parameters.
  */
@@ -156,15 +155,15 @@ var getLevelOptions = function getLevelOptions(params) {
 	var result = null,
 		defaults,
 		converted,
-		height,
 		i,
-		levelRoot,
+		from,
+		to,
 		levels;
 	if (isObject(params)) {
 		result = {};
+		from = isNumber(params.from) ? params.from : 1;
+		to = isNumber(params.to) ? params.to : 1;
 		levels = params.levels;
-		levelRoot = isNumber(params.levelRoot) ? params.levelRoot : 0;
-		height = isNumber(params.height) ? params.height : 0;
 		if (isArray(levels)) {
 			defaults = isObject(params.defaults) ? params.defaults : {};
 			converted = reduce(levels, function (obj, item) {
@@ -172,13 +171,17 @@ var getLevelOptions = function getLevelOptions(params) {
 					levelIsConstant,
 					options;
 				if (isObject(item) && isNumber(item.level)) {
-					options = merge({}, defaults, item);
-					levelIsConstant = options.levelIsConstant;
+					options = merge({}, item);
+					levelIsConstant = (
+						isBoolean(options.levelIsConstant) ?
+						options.levelIsConstant :
+						defaults.levelIsConstant
+					);
 					// Delete redundant properties.
 					delete options.levelIsConstant;
 					delete options.level;
 					// Calculate which level these options apply to.
-					level = item.level + (levelIsConstant ? 0 : levelRoot);
+					level = item.level + (levelIsConstant ? 0 : from - 1);
 					if (isObject(obj[level])) {
 						extend(obj[level], options);
 					} else {
@@ -188,17 +191,12 @@ var getLevelOptions = function getLevelOptions(params) {
 				return obj;
 			}, {});
 		}
-		/**
-		 * Only return options for level 1 and up to height of the tree.
-		 * Add default options for missing levels.
-		 */
-		i = levelRoot > 0 ? levelRoot : 1;
-		for (; i <= height; i++) {
-			if (isObject(converted[i])) {
-				result[i] = converted[i];
-			} else {
-				result[i] = merge({}, defaults);
-			}
+		for (i = from; i <= to; i++) {
+			result[i] = merge(
+				{},
+				defaults,
+				isObject(converted[i]) ? converted[i] : {}
+			);
 		}
 	}
 	return result;
