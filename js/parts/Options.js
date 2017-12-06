@@ -802,9 +802,10 @@ H.defaultOptions = {
 			theme: {
 
 				/**
-				 * The Z index for the reset zoom button.
+				 * The Z index for the reset zoom button. The default value 
+				 * places it below the tooltip that has Z index 7.
 				 */
-				zIndex: 20
+				zIndex: 6
 			},
 
 			/**

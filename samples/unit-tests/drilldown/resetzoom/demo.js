@@ -249,6 +249,12 @@ QUnit.test('activeDataLabelStyle', function (assert) {
         'We have a zoom button'
     );
 
+    assert.strictEqual(
+        chart.resetZoomButton.zIndex,
+        6,
+        'The zoom button should have Z index 6, below tooltip (#6096)'
+    );
+
     // Drill down
     chart.series[0].points[0].doDrilldown();
     assert.strictEqual(
