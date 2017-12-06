@@ -616,3 +616,73 @@ QUnit.test('Combined column and scatter', function (assert) {
         'Combination chart'
     );
 });
+
+QUnit.test('Item delimiter and decimal point', function (assert) {
+    var chart = new Highcharts.Chart({
+
+        chart: {
+            renderTo: 'container'
+        },
+
+        xAxis: {
+            categories: ['Apples', 'Pears']
+        },
+
+        series: [{
+            data: [1.3, 2.1]
+        }]
+
+    });
+
+
+    assert.equal(
+        chart.getCSV(),
+        '"Category","Series 1"\n"Apples",1.3\n"Pears",2.1',
+        'Default values without useLocalDecimalPoint'
+    );
+
+    // Automatic detection
+    var toLocaleString = Number.prototype.toLocaleString;
+
+    Number.prototype.toLocaleString = function () { // eslint-disable-line no-extend-native
+        return String(this).replace('.', ',');
+    };
+    assert.equal(
+        chart.getCSV(true),
+        '"Category";"Series 1"\n"Apples";1,3\n"Pears";2,1',
+        'Auto-detect European locale'
+    );
+
+    Number.prototype.toLocaleString = function () { // eslint-disable-line no-extend-native
+        return String(this).replace(',', '.');
+    };
+    assert.equal(
+        chart.getCSV(true),
+        '"Category","Series 1"\n"Apples",1.3\n"Pears",2.1',
+        'Auto-detect Anglo-american locale'
+    );
+    // Reset
+    Number.prototype.toLocaleString = toLocaleString; // eslint-disable-line no-extend-native
+
+
+    // Explicit options
+    chart.update({
+        exporting: {
+            csv: {
+                decimalPoint: '_',
+                itemDelimiter: '|'
+            }
+        }
+    });
+    assert.equal(
+        chart.getCSV(true),
+        '"Category"|"Series 1"\n"Apples"|1_3\n"Pears"|2_1',
+        'Explicit decimalPoint and itemDelimiter with useLocalDecimalPoint'
+    );
+    assert.equal(
+        chart.getCSV(),
+        '"Category"|"Series 1"\n"Apples"|1_3\n"Pears"|2_1',
+        'Explicit decimalPoint and itemDelimiter without useLocalDecimalPoint'
+    );
+
+});

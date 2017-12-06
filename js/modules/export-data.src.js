@@ -64,11 +64,23 @@ Highcharts.setOptions({
 			 * See `Highcharts.dateFormat`.
 			 */
 			dateFormat: '%Y-%m-%d %H:%M:%S',
+
+			/**
+			 * Which decimal point to use for exported CSV. Defaults to the same
+			 * as the browser locale, typically `.` (English) or `,` (German,
+			 * French etc).
+			 * @type {String}
+			 */
+			decimalPoint: null,
 			/**
 			 * The item delimiter in the exported data. Use `;` for direct
-			 * exporting to Excel.
+			 * exporting to Excel. Defaults to a best guess based on the browser
+			 * locale. If the locale _decimal point_ is `,`, the `itemDelimiter`
+			 * defaults to `;`, otherwise the `itemDelimiter` defaults to `,`.
+			 *
+			 * @type {String}
 			 */
-			itemDelimiter: ',',
+			itemDelimiter: null,
 			/**
 			 * The line delimiter in the exported data, defaults to a newline.
 			 */
@@ -345,24 +357,30 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
 	var csv = '',
 		rows = this.getDataRows(),
 		csvOptions = this.options.exporting.csv,
+		decimalPoint = pick(
+			csvOptions.decimalPoint,
+			useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.'
+		),
 		// use ';' for direct to Excel
-		itemDelimiter = csvOptions.itemDelimiter,
+		itemDelimiter = pick(
+			csvOptions.itemDelimiter,
+			decimalPoint === ',' ? ';' : ','
+		),
 		// '\n' isn't working with the js csv data extraction
 		lineDelimiter = csvOptions.lineDelimiter;
 
 	// Transform the rows to CSV
 	each(rows, function (row, i) {
 		var val = '',
-			j = row.length,
-			n = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.';
+			j = row.length;
 		while (j--) {
 			val = row[j];
 			if (typeof val === 'string') {
 				val = '"' + val + '"';
 			}
 			if (typeof val === 'number') {
-				if (n === ',') {
-					val = val.toString().replace('.', ',');
+				if (decimalPoint !== '.') {
+					val = val.toString().replace('.', decimalPoint);
 				}
 			}
 			row[j] = val;
