@@ -746,16 +746,19 @@ Highcharts.Pointer.prototype = {
 
 	onContainerMouseDown: function (e) {
 
-		e = this.normalize(e);
+		if (e.button !== 2) {
 
-		this.zoomOption(e);
+			e = this.normalize(e);
 
-		// issue #295, dragging not always working in Firefox
-		if (e.preventDefault) {
-			e.preventDefault();
+			this.zoomOption(e);
+
+			// issue #295, dragging not always working in Firefox
+			if (e.preventDefault) {
+				e.preventDefault();
+			}
+
+			this.dragStart(e);
 		}
-
-		this.dragStart(e);
 	},
 
 
