@@ -143,11 +143,6 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
 var getDlOptions = function getDlOptions(params) {
 	// Set options to new object to avoid problems with scope
 	var shape = isObject(params.shapeArgs) ? params.shapeArgs : {},
-		optionsSeries = (
-			isObject(params.optionsSeries) ?
-			params.optionsSeries.dataLabels :
-			{}
-		),
 		optionsPoint = (
 			isObject(params.optionsPoint) ?
 			params.optionsPoint.dataLabels :
@@ -163,7 +158,7 @@ var getDlOptions = function getDlOptions(params) {
 			style: {
 				width: shape.radius
 			}
-		}, optionsSeries, optionsLevel, optionsPoint),
+		}, optionsLevel, optionsPoint),
 		rotationRad,
 		rotation;
 	if (!isNumber(options.rotation)) {
@@ -560,7 +555,6 @@ var sunburstSeries = {
 			point.dlOptions = getDlOptions({
 				level: level,
 				optionsPoint: point.options,
-				optionsSeries: series.options,
 				shapeArgs: shape
 			});
 			if (!addedHack && visible) {
@@ -695,6 +689,7 @@ var sunburstSeries = {
 			levels: series.options.levels,
 			to: tree.height,
 			defaults: {
+				dataLabels: options.dataLabels,
 				levelIsConstant: options.levelIsConstant,
 				levelSize: options.levelSize,
 				slicedOffset: options.slicedOffset
