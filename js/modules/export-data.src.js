@@ -69,7 +69,8 @@ Highcharts.setOptions({
 			 * Which decimal point to use for exported CSV. Defaults to the same
 			 * as the browser locale, typically `.` (English) or `,` (German,
 			 * French etc).
-			 * @type {String}
+			 * @type  {String}
+			 * @since 6.0.4
 			 */
 			decimalPoint: null,
 			/**
