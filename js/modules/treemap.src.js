@@ -618,7 +618,8 @@ seriesType('treemap', 'scatter', {
 	calculateChildrenAreas: function (parent, area) {
 		var series = this,
 			options = series.options,
-			level = this.levelMap[parent.levelDynamic + 1],
+			mapOptionsToLevel = series.mapOptionsToLevel,
+			level = mapOptionsToLevel[parent.level + 1],
 			algorithm = pick((series[level && level.layoutAlgorithm] && level.layoutAlgorithm), options.layoutAlgorithm),
 			alternate = options.alternateStartingDirection,
 			childrenValues = [],
@@ -943,12 +944,6 @@ seriesType('treemap', 'scatter', {
 
 		// Call prototype function
 		Series.prototype.translate.call(series);
-		// Create a object map from level to options
-		series.levelMap = reduce(series.options.levels || [],
-			function (arr, item) {
-				arr[item.level] = item;
-				return arr;
-			}, {});
 		tree = series.tree = series.getTree(); // @todo Only if series.isDirtyData is true
 		rootNode = series.nodeMap[rootId];
 		series.mapOptionsToLevel = getLevelOptions({
@@ -1027,13 +1022,14 @@ seriesType('treemap', 'scatter', {
 	 */
 	drawDataLabels: function () {
 		var series = this,
+			mapOptionsToLevel = series.mapOptionsToLevel,
 			points = grep(series.points, function (n) {
 				return n.node.visible;
 			}),
 			options,
 			level;
 		each(points, function (point) {
-			level = series.levelMap[point.node.levelDynamic];
+			level = mapOptionsToLevel[point.node.level];
 			// Set options to new object to avoid problems with scope
 			options = { style: {} };
 
@@ -1078,7 +1074,9 @@ seriesType('treemap', 'scatter', {
 	 * Get presentational attributes
 	 */
 	pointAttribs: function (point, state) {
-		var level = point && this.levelMap[point.node.levelDynamic] || {},
+		var series = this,
+			mapOptionsToLevel = series.mapOptionsToLevel,
+			level = point && mapOptionsToLevel[point.node.level] || {},
 			options = this.options,
 			attr,
 			stateOptions = (state && options.states[state]) || {},
