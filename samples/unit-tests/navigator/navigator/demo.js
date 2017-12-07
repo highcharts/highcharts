@@ -429,3 +429,60 @@ QUnit.test('Update navigator series on series update (#4923)', function (assert)
     }, 1);
 
 });
+
+
+QUnit.test('Moving navigator with no series should not break axis (#7411)',
+function (assert) {
+    var chart = Highcharts.stockChart('container', {
+            chart: {
+                animation: false
+            },
+            navigator: {
+                series: {
+                    visible: false
+                }
+            },
+            rangeSelector: {
+                selected: 4
+            },
+            series: [{
+                animation: false,
+                data: [
+                    { x: 1000000, y: 0 },
+                    { x: 100000001, y: 1 },
+                    { x: 1000000002, y: 2 },
+                    { x: 10000000004, y: 4 },
+                    { x: 100000000005, y: 5 },
+                    { x: 1000000000007, y: 7 }
+                ]
+            }]
+        }),
+        controller = TestController(chart),
+        rightHandle = chart.navigator.handles[1],
+        isNum = Highcharts.isNumber;
+
+    assert.ok(
+        isNum(chart.xAxis[0].userMax),
+        'Axis should have proper extremes before messing with navigator.'
+    );
+
+    // Make the nav do its rendering by simulating mouse click and drag on
+    // right handle.
+    function navRender() {
+        var x = rightHandle.x + rightHandle.translateX + rightHandle.width / 2,
+            y = rightHandle.y + rightHandle.translateY + rightHandle.height / 2;
+        controller.triggerOnChart('mousedown', x, y);
+        controller.triggerOnChart('mousemove', x, y);
+        controller.triggerOnChart('mouseup', x, y);
+    }
+
+    navRender();
+    chart.series[0].hide();
+    navRender();
+
+    assert.ok(
+        isNum(chart.xAxis[0].userMax),
+        'Axis should have proper extremes after messing with navigator.'
+    );
+});
+
