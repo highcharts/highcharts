@@ -283,7 +283,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
 			colorIndex: series.colorIndex,
 			colorByPoint: series.colorByPoint,
 			index: options.index,
-			levelMap: options.levelMap,
+			mapOptionsToLevel: options.mapOptionsToLevel,
 			parentColor: nodeParent && nodeParent.color,
 			parentColorIndex: nodeParent && nodeParent.colorIndex,
 			series: options.series,
@@ -474,7 +474,7 @@ var sunburstSeries = {
 	drawDataLabels: noop, // drawDataLabels is called in drawPoints
 	drawPoints: function drawPoints() {
 		var series = this,
-			levelMap = series.levelMap,
+			mapOptionsToLevel = series.mapOptionsToLevel,
 			shapeRoot = series.shapeRoot,
 			group = series.group,
 			hasRendered = series.hasRendered,
@@ -521,7 +521,7 @@ var sunburstSeries = {
 		}
 		each(points, function (point) {
 			var node = point.node,
-				level = levelMap[node.levelDynamic],
+				level = mapOptionsToLevel[node.level],
 				shapeExisting = point.shapeExisting || {},
 				shape = node.shapeArgs || {},
 				animationInfo,
@@ -684,12 +684,6 @@ var sunburstSeries = {
 		series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 		// Call prototype function
 		Series.prototype.translate.call(series);
-		// Create a object map from level to options
-		series.levelMap = reduce(series.options.levels || [],
-			function (arr, item) {
-				arr[item.level] = item;
-				return arr;
-			}, {});
 		// @todo Only if series.isDirtyData is true
 		tree = series.tree = series.getTree();
 		mapIdToNode = series.nodeMap;
@@ -714,7 +708,6 @@ var sunburstSeries = {
 			before: cbSetTreeValuesBefore,
 			idRoot: idRoot,
 			levelIsConstant: options.levelIsConstant,
-			levelMap: series.levelMap,
 			mapOptionsToLevel: mapOptionsToLevel,
 			mapIdToNode: mapIdToNode,
 			points: series.points,
@@ -729,6 +722,8 @@ var sunburstSeries = {
 			y: positions[1]
 		};
 		this.setShapeArgs(nodeTop, values, mapOptionsToLevel);
+		// Set mapOptionsToLevel on series for use in drawPoints.
+		series.mapOptionsToLevel = mapOptionsToLevel;
 	},
 
 	/**

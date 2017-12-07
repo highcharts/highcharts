@@ -70,7 +70,7 @@ var setTreeValues = function setTreeValues(tree, options) {
 
 var getColor = function getColor(node, options) {
 	var index = options.index,
-		levelMap = options.levelMap,
+		mapOptionsToLevel = options.mapOptionsToLevel,
 		parentColor = options.parentColor,
 		parentColorIndex = options.parentColorIndex,
 		series = options.series,
@@ -99,7 +99,7 @@ var getColor = function getColor(node, options) {
 
 	if (node) {
 		point = points[node.i];
-		level = levelMap[node.levelDynamic] || {};
+		level = mapOptionsToLevel[node.level] || {};
 		getColorByPoint = (
 			point &&
 			(
