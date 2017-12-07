@@ -248,9 +248,12 @@ seriesType('column', 'line', {
 	states: {
 
 		/**
-		 * @extends plotOptions.series.states.hover
+		 * Options for the hovered point. These settings override the normal
+		 * state options when a point is moused over or touched.
+		 * 
+		 * @extends   plotOptions.series.states.hover
 		 * @excluding halo,lineWidth,lineWidthPlus,marker
-		 * @product highcharts highstock
+		 * @product   highcharts highstock
 		 */
 		hover: {
 
@@ -262,17 +265,17 @@ seriesType('column', 'line', {
 			 * A specific border color for the hovered point. Defaults to
 			 * inherit the normal state border color.
 			 *
-			 * @type {Color}
-			 * @product highcharts
+			 * @type      {Color}
+			 * @product   highcharts
 			 * @apioption plotOptions.column.states.hover.borderColor
 			 */
 
 			/**
 			 * A specific color for the hovered point.
 			 *
-			 * @type {Color}
-			 * @default undefined
-			 * @product highcharts
+			 * @type      {Color}
+			 * @default   undefined
+			 * @product   highcharts
 			 * @apioption plotOptions.column.states.hover.color
 			 */
 
@@ -285,10 +288,9 @@ seriesType('column', 'line', {
 			 * In styled mode, the hover brightening is by default replaced
 			 * with a fill-opacity set in the `.highcharts-point:hover` rule.
 			 *
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/plotoptions/column-states-hover-brightness/
-			 *         Brighten by 0.5
-			 * @default 0.1
+			 * @sample  {highcharts}
+			 *          highcharts/plotoptions/column-states-hover-brightness/
+			 *          Brighten by 0.5
 			 * @product highcharts highstock
 			 */
 			brightness: 0.1
@@ -297,8 +299,30 @@ seriesType('column', 'line', {
 		},
 		/*= if (build.classic) { =*/
 
+		/**
+		 * Options for the selected point. These settings override the normal
+		 * state options when a point is selected.
+		 *
+		 * @excluding halo,lineWidth,lineWidthPlus,marker
+		 * @product highcharts highstock
+		 */
 		select: {
+			/**
+			 * A specific color for the selected point.
+			 *
+			 * @type    {Color}
+			 * @default #cccccc
+			 * @product highcharts highstock
+			 */
 			color: '${palette.neutralColor20}',
+
+			/**
+			 * A specific border color for the selected point.
+			 *
+			 * @type    {Color}
+			 * @default #000000
+			 * @product highcharts highstock
+			 */
 			borderColor: '${palette.neutralColor100}'
 		}
 		/*= } =*/
@@ -861,11 +885,24 @@ seriesType('column', 'line', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * column](#plotOptions.column).
  *
- * @type {Object}
- * @extends series,plotOptions.column
+ * @type      {Object}
+ * @extends   series,plotOptions.column
  * @excluding dataParser,dataURL,marker
- * @product highcharts highstock
+ * 
+ * @product   highcharts highstock
  * @apioption series.column
+ */
+
+/**
+ * @excluding halo,lineWidth,lineWidthPlus,marker
+ * @product   highcharts highstock
+ * @apioption series.column.states.hover
+ */
+
+/**
+ * @excluding halo,lineWidth,lineWidthPlus,marker
+ * @product   highcharts highstock
+ * @apioption series.column.states.select
  */
 
 /**

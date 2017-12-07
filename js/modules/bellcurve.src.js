@@ -134,7 +134,7 @@ seriesType('bellcurve', 'areaspline', {
     * 
     * @type {Array<Object|Array>}
     * @since 6.0.0
-    * @extends series.bellcurve.data
+    * @extends series.areaspline.data
     * @product highcharts
     * @apioption series.bellcurve.data
     **/
