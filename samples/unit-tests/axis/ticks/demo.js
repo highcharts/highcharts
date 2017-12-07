@@ -70,6 +70,51 @@ QUnit.test('Ticks for a single point.', function (assert) {
     );
 });
 
+QUnit.test('The tickPositions option', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+
+        xAxis: [{
+            tickmarkPlacement: 'on',
+            startOnTick: false,
+            categories: ['Jan 2011', 'Feb 2011', 'Mar 2011', 'Apr 2011',
+                'May 2011', 'Jun 2011', 'Jul 2011', 'Aug 2011', 'Sep 2011',
+                'Oct 2011', 'Nov 2011', 'Dec 2011', 'Jan 2012', 'Feb 2012',
+                'Mar 2012', 'Apr 2012', 'May 2012', 'Jun 2012', 'Jul 2012',
+                'Aug 2012', 'Sep 2012', 'Oct 2012', 'Nov 2012', 'Dec 2012',
+                'Jan 2013'],
+            tickPositions: [0, 7, 15, 24]
+
+        }],
+
+        series: [{
+            data: [134002, 135188, 135647, 136552, 166109, 166769, 141139,
+                141879, 140443, 141188, 178745, 179790, 141385, 142161, 143365,
+                144679, 175150, 141385, 142161, 143365, 144679, 175150, 144679,
+                175150, 175150]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.toString(),
+        '0,7,15,24',
+        'Rendered positions should respect the given option'
+    );
+
+    // Zoom between two ticks
+    chart.xAxis[0].setExtremes(8, 14);
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        0,
+        'No extra ticks should be inserted when zooming between explicit ' +
+        'ticks (#7463)'
+    );
+
+});
+
 QUnit.test(
     'Tick positions with small magnitude intervals (#6183)',
     function (assert) {

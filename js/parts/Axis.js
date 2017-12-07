@@ -3264,7 +3264,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			}
 
 			// If no tick are left, set one tick in the middle (#3195)
-			if (tickPositions.length === 0 && defined(roundedMin)) {
+			if (
+				tickPositions.length === 0 &&
+				defined(roundedMin) &&
+				!this.options.tickPositions
+			) {
 				tickPositions.push((roundedMax + roundedMin) / 2);
 			}
 		}
