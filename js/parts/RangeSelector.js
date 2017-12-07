@@ -549,11 +549,11 @@ RangeSelector.prototype = {
 			if (
 				(type === 'month' || type === 'year') &&
 				(
-					actualRange >=
+					actualRange + 36e5 >=
 					{ month: 28, year: 365 }[type] * day * count + offsetRange
 				) &&
 				(
-					actualRange <=
+					actualRange - 36e5 <=
 					{ month: 31, year: 366 }[type] * day * count + offsetRange
 				)
 			) {

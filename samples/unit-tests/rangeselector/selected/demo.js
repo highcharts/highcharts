@@ -38,6 +38,53 @@ QUnit.test('Fixed range for initial range (#5930)', function (assert) {
     );
 });
 
+QUnit.test('Initially selected when crossing DST (#7458)', function (assert) {
+
+    var chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 0
+        },
+
+        title: {
+            text: 'AAPL Stock Price'
+        },
+
+        series: [{
+            name: 'AAPL',
+            data: [
+                [Date.UTC(2016, 10, 25), 1],
+                [Date.UTC(2016, 11, 25), 1],
+                [Date.UTC(2017, 0, 25), 1],
+                [Date.UTC(2017, 1, 25), 1],
+                [Date.UTC(2017, 2, 25), 1],
+                [Date.UTC(2017, 3, 25), 1],
+                [Date.UTC(2017, 4, 25), 1],
+                [Date.UTC(2017, 5, 25), 1],
+                [Date.UTC(2017, 6, 25), 1],
+                [Date.UTC(2017, 7, 25), 1],
+                [Date.UTC(2017, 8, 25), 1],
+                [Date.UTC(2017, 9, 25), 1],
+                [Date.UTC(2017, 10, 23), 1],
+                [Date.UTC(2017, 10, 24), 1],
+                [Date.UTC(2017, 10, 25), 1]
+            ],
+            dataGrouping: {
+                enabled: false
+            }
+        }]
+    });
+
+    assert.notEqual(
+        chart.container.querySelectorAll(
+            '.highcharts-range-selector-buttons g.highcharts-button'
+        )[0]
+            .getAttribute('class')
+            .indexOf('highcharts-button-pressed'),
+        -1,
+        'The 1M button should be pressed initially'
+    );
+});
+
 QUnit.test('Fixed range for initial range after add points (#6830)', function (assert) {
     var done = assert.async();
 
