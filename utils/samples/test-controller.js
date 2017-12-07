@@ -168,14 +168,17 @@ window.TestController = function (chart) {
      * @param  {Object} extra Extra properties for the event arguments, for
      *    example `{ shiftKey: true }` to emulate that the shift key has been
      *    pressed in a mouse event.
+     * @param  {Boolean} debug Add marks where the event was triggered. Should
+     *    not be enabled in production, as it slows down the test and also
+     *    leaves an element that might catch events and mess up the test result.
      */
-    function triggerOnChart(type, x, y, extra) {
+    function triggerOnChart(type, x, y, extra, debug) {
         var offset = getOffset(chart.container),
             pageX = offset.left + (x || 0),
             pageY = offset.top + (y || 0);
 
         // Leave marks for debugging
-        if (typeof x === 'number' && typeof y === 'number') {
+        if (debug && typeof x === 'number' && typeof y === 'number') {
             chart.renderer.circle(
                 x,
                 y,
