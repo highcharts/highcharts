@@ -25,7 +25,7 @@ QUnit.test('Zoom type', function (assert) {
     var controller = TestController(chart);
 
 
-    // Zoom
+    // Right-click
     controller.mousedown(200, 150, { button: 2 });
     controller.mousemove(250, 150, { button: 2 });
     controller.mouseup();
@@ -39,6 +39,17 @@ QUnit.test('Zoom type', function (assert) {
         chart.xAxis[0].max,
         11,
         'Right button drag should not zoom (#1019)'
+    );
+
+
+    // Zoom
+    controller.mousedown(200, 150);
+    controller.mousemove(250, 150);
+    controller.mouseup();
+    assert.strictEqual(
+        chart.resetZoomButton.zIndex,
+        6,
+        'The zoom button should have Z index 6, below tooltip (#6096)'
     );
 
 
