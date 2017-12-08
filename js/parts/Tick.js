@@ -122,6 +122,7 @@ H.Tick.prototype = {
 	 */
 	handleOverflow: function (xy) {
 		var axis = this.axis,
+			labelOptions = axis.options.labels,
 			pxPos = xy.x,
 			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,
@@ -150,7 +151,7 @@ H.Tick.prototype = {
 
 		// Check if the label overshoots the chart spacing box. If it does, move
 		// it. If it now overshoots the slotWidth, add ellipsis.
-		if (!rotation) {
+		if (!rotation && labelOptions.overflow !== false) {
 			leftPos = pxPos - factor * labelWidth;
 			rightPos = pxPos + (1 - factor) * labelWidth;
 
@@ -200,7 +201,7 @@ H.Tick.prototype = {
 
 		if (textWidth) {
 			css.width = textWidth;
-			if (!(axis.options.labels.style || {}).textOverflow) {
+			if (!(labelOptions.style || {}).textOverflow) {
 				css.textOverflow = 'ellipsis';
 			}
 			label.css(css);

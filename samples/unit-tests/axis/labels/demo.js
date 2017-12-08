@@ -1,3 +1,44 @@
+QUnit.test('Label overflow', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 300,
+            height: 200
+        },
+        xAxis: {
+            min: 0,
+            max: 3,
+            tickInterval: 3,
+            labels: {
+                format: 'LongLabel',
+                overflow: false
+            }
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    var bBox = chart.xAxis[0].ticks[3].label.element.getBBox();
+    assert.ok(
+        bBox.x + bBox.width > chart.chartWidth,
+        'Label should be outside chart area (#7475)'
+    );
+
+    chart.update({
+        xAxis: {
+            labels: {
+                overflow: 'justify'
+            }
+        }
+    });
+    assert.ok(
+        bBox.x + bBox.width > chart.chartWidth,
+        'Label should be inside chart area'
+    );
+
+});
+
 QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
 
     var chart = Highcharts.chart('container', {
