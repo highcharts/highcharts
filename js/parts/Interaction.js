@@ -243,6 +243,11 @@ extend(Legend.prototype, {
 					}
 				};
 
+			// A CSS class to dim or hide other than the hovered series. Event
+			// handling in iOS causes the activeClass to be added prior to click
+			// in some cases (#7418).
+			boxWrapper.removeClass(activeClass);
+
 			// Pass over the click/touch event. #4.
 			event = {
 				browserEvent: event
