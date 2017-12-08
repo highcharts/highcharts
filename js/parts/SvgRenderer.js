@@ -731,7 +731,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	crisp: function (rect, strokeWidth) {
 
 		var wrapper = this,
-			attribs = {},
 			normalizer;
 
 		strokeWidth = strokeWidth || rect.strokeWidth || 0;
@@ -750,14 +749,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		if (defined(rect.strokeWidth)) {
 			rect.strokeWidth = strokeWidth;
 		}
-
-		objectEach(rect, function (val, key) {
-			if (wrapper[key] !== val) { // only set attribute if changed
-				wrapper[key] = attribs[key] = val;
-			}
-		});
-
-		return attribs;
+		return rect;
 	},
 
 	/**
