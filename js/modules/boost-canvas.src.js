@@ -105,7 +105,9 @@ H.initCanvasBoost = function () {
 					0, 
 					width, 
 					height
-				).add(targetGroup);
+				)
+				.addClass('highcharts-boost-canvas')
+				.add(targetGroup);
 
 				target.ctx = ctx = target.canvas.getContext('2d');
 

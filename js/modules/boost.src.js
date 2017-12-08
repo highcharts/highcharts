@@ -2358,7 +2358,9 @@ function createAndAttachRenderer(chart, series) {
 				0,
 				width,
 				height
-			).add(targetGroup);
+			)
+			.addClass('highcharts-boost-canvas')
+			.add(targetGroup);
 
 			target.boostClear = function () {
 				target.renderTarget.attr({ href: '' });
@@ -2711,6 +2713,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
 		!getSeriesBoosting(dataToMeasure) || // First pass with options.data
 		this.type === 'heatmap' ||
 		this.type === 'treemap' ||
+		this.options.stacking || // we need processedYData for the stack (#7481)
 		!this.hasExtremes ||
 		!this.hasExtremes(true)
 	) {
