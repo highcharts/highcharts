@@ -42,6 +42,9 @@ $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
     font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
     font-size: 12px;
 }
+.highcharts-root {
+    display: block;
+}
 .highcharts-root text {
     stroke-width: 0;
 }
