@@ -374,6 +374,10 @@ Series.prototype.setStackedPoints = function () {
 				stack.points[pointKey][0] =
 					stack.points[series.index + ',' + x + ',0'][0];
 			}
+
+		// When updating to null, reset the point stack (#7493)
+		} else {
+			stack.points[pointKey] = stack.points[series.index] = null;
 		}
 
 		// Add value to the stack total
