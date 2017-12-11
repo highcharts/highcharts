@@ -483,17 +483,15 @@ function shouldForceChartSeriesBoosting(chart) {
 	// we should boost the whole chart to avoid running out of webgl contexts.
 	var sboostCount = 0,
 		canBoostCount = 0,
-		allowBoostForce = true,
+		allowBoostForce = pick(
+			chart.options.boost && chart.options.boost.allowForce,
+			true
+		),
 		series;
 
 	if (typeof chart.boostForceChartBoost !== 'undefined') {
 		return chart.boostForceChartBoost;
 	}
-
-	allowBoostForce = chart.options.boost ?
-		(typeof chart.options.boost.allowForce !== 'undefined' ?
-		chart.options.boost.allowForce : allowBoostForce) :
-		allowBoostForce;
 
 	if (chart.series.length > 1) {
 		for (var i = 0; i < chart.series.length; i++) {
@@ -515,8 +513,13 @@ function shouldForceChartSeriesBoosting(chart) {
 		}
 	}
 
-	chart.boostForceChartBoost = (allowBoostForce && canBoostCount === chart.series.length && sboostCount > 0) ||
-			sboostCount > 5;
+	chart.boostForceChartBoost =
+		(
+			allowBoostForce &&
+			canBoostCount === chart.series.length &&
+			sboostCount > 0
+		) ||
+		sboostCount > 5;
 
 	return chart.boostForceChartBoost;
 }
@@ -527,17 +530,16 @@ function shouldForceChartSeriesBoosting(chart) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 Chart.prototype.isChartSeriesBoosting = function () {
-	var threshold = 50;
+	var isSeriesBoosting,
+		threshold = pick(
+			this.options.boost && this.options.boost.seriesThreshold,
+			50
+		);
 
-	threshold = (
-			this.options.boost &&
-			typeof this.options.boost.seriesThreshold !== 'undefined'
-		) ?
-			this.options.boost.seriesThreshold :
-			threshold;
-
-	return threshold <= this.series.length ||
+	isSeriesBoosting = threshold <= this.series.length ||
 		shouldForceChartSeriesBoosting(this);
+
+	return isSeriesBoosting;
 };
 
 /*
@@ -2399,13 +2401,18 @@ function createAndAttachRenderer(chart, series) {
 			width = chart.chartWidth;
 			height = chart.chartHeight;
 
-			(target.renderTargetFo || target.renderTarget).attr({
-				x: 0,
-				y: 0,
-				width: width,
-				height: height,
-				style: 'pointer-events: none; mix-blend-mode: normal; opacity:' + alpha
-			});
+			(target.renderTargetFo || target.renderTarget)
+				.attr({
+					x: 0,
+					y: 0,
+					width: width,
+					height: height
+				})
+				.css({
+					pointerEvents: 'none',
+					mixedBlendMode: 'normal',
+					opacity: alpha
+				});
 
 			if (target instanceof H.Chart) {
 				target.markerGroup.translate(series.xAxis.pos, series.yAxis.pos);
