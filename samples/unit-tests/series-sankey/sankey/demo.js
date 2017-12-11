@@ -33,6 +33,12 @@ QUnit.test('Sankey', function (assert) {
     });
 
     assert.strictEqual(
+        chart.container.querySelector('.highcharts-no-data'),
+        null,
+        'No-data label should not display when there is data (#7489)'
+    );
+
+    assert.strictEqual(
         chart.series[0].points.length,
         4,
         'Series successfully added'
@@ -91,6 +97,12 @@ QUnit.test('Sankey', function (assert) {
         chart.series.length,
         0,
         'Series removed'
+    );
+
+    assert.strictEqual(
+        typeof chart.container.querySelector('.highcharts-no-data'),
+        'object',
+        'No-data label should display when there is no data (#7489)'
     );
 
 });
