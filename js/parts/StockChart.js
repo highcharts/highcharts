@@ -227,7 +227,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				text: null
 			},
 			tooltip: {
-				split: true,
+				split: pick(defaultOptions.tooltip.split, true),
 				crosshairs: true
 			},
 			legend: {
