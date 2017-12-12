@@ -785,6 +785,9 @@ var sunburstSeries = {
 			// Delete this function to allow it only once
 			this.animate = null;
 		}
+	},
+	utils: {
+		range: range
 	}
 };
 
