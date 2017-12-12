@@ -29,7 +29,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
 	isString = H.isString,
-	keys = H.keys,
 	merge = H.merge,
 	noop = H.noop,
 	pick = H.pick,
@@ -39,6 +38,18 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	setTreeValues = mixinTreeSeries.setTreeValues,
 	reduce = H.reduce;
 
+// TODO introduce step, which should default to 1.
+var range = function range(from, to) {
+	var result = [],
+		i;
+	if (isNumber(from) && isNumber(to) && from <= to) {
+		for (i = from; i <= to; i++) {
+			result.push(i);
+		}
+	}
+	return result;
+};
+
 /**
  * @param {Object} levelOptions Map of level to its options.
  * @param {Object} params Object containing parameters.
@@ -46,10 +57,14 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
  * @param {Number} params.outerRadius
  * @
  */
-var calculateLevelSizes = function calculateLevelSizes(levelOptions, diffRadius) {
+var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
 	var result = merge({}, levelOptions), // Copy levelOptions
+		p = isObject(params) ? params : {},
+		diffRadius = isNumber(p.diffRadius) ? p.diffRadius : 0,
+		from = isNumber(p.from) ? p.from : 0,
+		to = isNumber(p.to) ? p.to : 0,
 		remainingSize = diffRadius,
-		levels = keys(levelOptions),
+		levels = range(from, to),
 		totalWeight = 0;
 	/**
 	 * Convert percentage to pixels.
@@ -276,7 +291,6 @@ var cbSetTreeValuesBefore = function before(node, options) {
 		colorInfo = getColor(node, {
 			colors: chart && chart.options && chart.options.colors,
 			colorIndex: series.colorIndex,
-			colorByPoint: series.colorByPoint,
 			index: options.index,
 			mapOptionsToLevel: options.mapOptionsToLevel,
 			parentColor: nodeParent && nodeParent.color,
@@ -319,6 +333,7 @@ var sunburstOptions = {
 	 * @product highcharts
 	 */
 	center: ['50%', '50%'],
+	colorByPoint: false,
 	/**
 	 * @extends plotOptions.series.dataLabels
 	 * @excluding align,allowOverlap,staggerLines,step
@@ -689,6 +704,7 @@ var sunburstSeries = {
 			levels: series.options.levels,
 			to: tree.height,
 			defaults: {
+				colorByPoint: options.colorByPoint,
 				dataLabels: options.dataLabels,
 				levelIsConstant: options.levelIsConstant,
 				levelSize: options.levelSize,
@@ -696,7 +712,11 @@ var sunburstSeries = {
 			}
 		});
 		// NOTE consider doing calculateLevelSizes in a callback to getLevelOptions
-		mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, diffRadius);
+		mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
+			diffRadius: diffRadius,
+			from: nodeRoot.level > 0 ? nodeRoot.level : 1,
+			to: tree.height
+		});
 		// TODO Try to combine setTreeValues & setColorRecursive to avoid
 		//  unnecessary looping.
 		setTreeValues(tree, {

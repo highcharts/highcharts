@@ -100,14 +100,7 @@ var getColor = function getColor(node, options) {
 	if (node) {
 		point = points[node.i];
 		level = mapOptionsToLevel[node.level] || {};
-		getColorByPoint = (
-			point &&
-			(
-				isBoolean(level.colorByPoint) ?
-				level.colorByPoint :
-				!!series.options.colorByPoint
-			)
-		);
+		getColorByPoint = point && level.colorByPoint;
 
 		if (getColorByPoint) {
 			colorIndexByPoint = point.index %
@@ -162,7 +155,6 @@ var getLevelOptions = function getLevelOptions(params) {
 	if (isObject(params)) {
 		result = {};
 		from = isNumber(params.from) ? params.from : 1;
-		to = isNumber(params.to) ? params.to : 1;
 		levels = params.levels;
 		if (isArray(levels)) {
 			defaults = isObject(params.defaults) ? params.defaults : {};
@@ -191,7 +183,8 @@ var getLevelOptions = function getLevelOptions(params) {
 				return obj;
 			}, {});
 		}
-		for (i = from; i <= to; i++) {
+		to = isNumber(params.to) ? params.to : 1;
+		for (i = 0; i <= to; i++) {
 			result[i] = merge(
 				{},
 				defaults,

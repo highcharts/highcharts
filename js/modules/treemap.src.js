@@ -129,7 +129,7 @@ seriesType('treemap', 'scatter', {
 	 * @ignore
 	 */
 	marker: false,
-
+	colorByPoint: false,
 	/**
 	 * @extends plotOptions.heatmap.dataLabels
 	 * @since 4.1.0
@@ -935,6 +935,7 @@ seriesType('treemap', 'scatter', {
 	},
 	translate: function () {
 		var series = this,
+			options = series.options,
 			rootId = series.rootNode = pick(series.rootNode, series.options.rootId, ''),
 			rootNode,
 			pointValues,
@@ -948,10 +949,11 @@ seriesType('treemap', 'scatter', {
 		rootNode = series.nodeMap[rootId];
 		series.mapOptionsToLevel = getLevelOptions({
 			from: rootNode.level > 0 ? rootNode.level : 1,
-			levels: series.options.levels,
+			levels: options.levels,
 			to: tree.height,
 			defaults: {
-				levelIsConstant: series.options.levelIsConstant
+				levelIsConstant: series.options.levelIsConstant,
+				colorByPoint: options.colorByPoint
 			}
 		});
 		if (
@@ -990,7 +992,7 @@ seriesType('treemap', 'scatter', {
 		series.nodeMap[''].pointValues = pointValues = { x: 0, y: 0, width: 100, height: 100 };
 		series.nodeMap[''].values = seriesArea = merge(pointValues, {
 			width: (pointValues.width * series.axisRatio),
-			direction: (series.options.layoutStartingDirection === 'vertical' ? 0 : 1),
+			direction: (options.layoutStartingDirection === 'vertical' ? 0 : 1),
 			val: tree.val
 		});
 		series.calculateChildrenAreas(tree, seriesArea);
@@ -998,12 +1000,12 @@ seriesType('treemap', 'scatter', {
 		// Logic for point colors
 		if (series.colorAxis) {
 			series.translateColors();
-		} else if (!series.options.colorByPoint) {
+		} else if (!options.colorByPoint) {
 			series.setColorRecursive(series.tree);
 		}
 
 		// Update axis extremes according to the root node.
-		if (series.options.allowDrillToNode) {
+		if (options.allowDrillToNode) {
 			val = rootNode.pointValues;
 			series.xAxis.setExtremes(val.x, val.x + val.width, false);
 			series.yAxis.setExtremes(val.y, val.y + val.height, false);
