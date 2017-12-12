@@ -156,8 +156,9 @@ var getLevelOptions = function getLevelOptions(params) {
 		result = {};
 		from = isNumber(params.from) ? params.from : 1;
 		levels = params.levels;
+		converted = {};
+		defaults = isObject(params.defaults) ? params.defaults : {};
 		if (isArray(levels)) {
-			defaults = isObject(params.defaults) ? params.defaults : {};
 			converted = reduce(levels, function (obj, item) {
 				var level,
 					levelIsConstant,

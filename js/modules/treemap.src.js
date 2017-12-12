@@ -26,6 +26,7 @@ var seriesType = H.seriesType,
 		return typeof x === 'boolean';
 	},
 	isNumber = H.isNumber,
+	isObject = H.isObject,
 	isString = H.isString,
 	pick = H.pick,
 	Series = H.Series,
@@ -1077,7 +1078,11 @@ seriesType('treemap', 'scatter', {
 	 */
 	pointAttribs: function (point, state) {
 		var series = this,
-			mapOptionsToLevel = series.mapOptionsToLevel,
+			mapOptionsToLevel = (
+				isObject(series.mapOptionsToLevel) ?
+				series.mapOptionsToLevel :
+				{}
+			),
 			level = point && mapOptionsToLevel[point.node.level] || {},
 			options = this.options,
 			attr,
