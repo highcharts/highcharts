@@ -115,8 +115,8 @@ seriesType('histogram', 'column', {
 	 * 
 	 * For options that apply to multiple series, it is recommended to add
 	 * them to the [plotOptions.series](#plotOptions.series) options structure.
-	 * To apply to all series of this specific type, apply it to [plotOptions.
-	 * histogram](#plotOptions.histogram).
+	 * To apply to all series of this specific type, apply it to 
+	 * [plotOptions.histogram](#plotOptions.histogram).
 	 * 
 	 * @type {Object}
 	 * @since 6.0.0
@@ -142,7 +142,7 @@ seriesType('histogram', 'column', {
 	 * 
 	 * @type {Array<Object|Array>}
 	 * @since 6.0.0
-	 * @extends series.histogram.data
+	 * @extends series.column.data
 	 * @product highcharts
 	 * @apioption series.histogram.data
 	 */

@@ -2325,7 +2325,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		'<': '&lt;',
 		'>': '&gt;',
 		"'": '&#39;', // eslint-disable-line quotes
-		'"': '&quot'
+		'"': '&quot;'
 	},
 
 	/**

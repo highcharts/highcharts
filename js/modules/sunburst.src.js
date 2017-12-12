@@ -707,7 +707,7 @@ var sunburstPoint = {
  * sunburst](#plotOptions.sunburst).
  *
  * @type {Object}
- * @extends plotOptions.sunburst
+ * @extends series,plotOptions.sunburst
  * @excluding dataParser,dataURL,stack
  * @product highcharts
  * @apioption series.sunburst

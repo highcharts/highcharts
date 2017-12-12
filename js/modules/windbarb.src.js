@@ -222,19 +222,30 @@ seriesType('windbarb', 'column', {
 		each(this.points, function (point) {
 			var plotX = point.plotX,
 				plotY = point.plotY;
-			if (!point.graphic) {
-				point.graphic = this.chart.renderer
-					.path()
-					.add(this.markerGroup);
+
+			// Check if it's inside the plot area, but only for the X dimension.
+			if (chart.isInsidePlot(plotX, 0, chart.inverted)) {
+
+				// Create the graphic the first time
+				if (!point.graphic) {
+					point.graphic = this.chart.renderer
+						.path()
+						.add(this.markerGroup);
+				}
+
+				// Position the graphic
+				point.graphic
+					.attr({
+						d: this.windArrow(point),
+						translateX: plotX,
+						translateY: plotY + this.options.yOffset,
+						rotation: point.direction
+					})
+					.attr(this.pointAttribs(point));
+
+			} else if (point.graphic) {
+				point.graphic = point.graphic.destroy();
 			}
-			point.graphic
-				.attr({
-					d: this.windArrow(point),
-					translateX: plotX,
-					translateY: plotY + this.options.yOffset,
-					rotation: point.direction
-				})
-				.attr(this.pointAttribs(point));
 
 			// Set the tooltip anchor position
 			point.tooltipPos = chart.inverted ? 

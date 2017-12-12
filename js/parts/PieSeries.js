@@ -804,7 +804,7 @@ seriesType('pie', 'line', {
 				shapeArgs.y,
 				shapeArgs.r + size,
 				shapeArgs.r + size, {
-					innerR: this.shapeArgs.r,
+					innerR: this.shapeArgs.r - 1,
 					start: shapeArgs.start,
 					end: shapeArgs.end
 				}

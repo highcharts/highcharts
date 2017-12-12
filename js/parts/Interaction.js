@@ -855,12 +855,12 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Set the state of the series. Called internally on mouse interaction and
-	 * select operations, but it can also be called directly to visually
+	 * Set the state of the series. Called internally on mouse interaction
+	 * operations, but it can also be called directly to visually
 	 * highlight a series.
 	 *
 	 * @param  {String} [state]
-	 *         Can be either `hover`, `select` or undefined to set to normal
+	 *         Can be either `hover` or undefined to set to normal
 	 *         state.
 	 */
 	setState: function (state) {
