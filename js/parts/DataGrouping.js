@@ -217,7 +217,6 @@ var arrayMax = H.arrayMax,
 var seriesProto = Series.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
-	baseDestroy = seriesProto.destroy,
 
 	/** 
 	 * 
@@ -716,20 +715,12 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 });
 
 /**
- * Extend the series destroyer
+ * Destroy grouped data on series destroy
  */
-seriesProto.destroy = function () {
-	var series = this,
-		groupedData = series.groupedData || [],
-		i = groupedData.length;
-
-	while (i--) {
-		if (groupedData[i]) {
-			groupedData[i].destroy();
-		}
-	}
-	baseDestroy.apply(series);
-};
+wrap(seriesProto, 'destroy', function (proceed) {
+	proceed.call(this);
+	this.destroyGroupedData();
+});
 
 
 // Handle default options for data grouping. This must be set at runtime because some series types are
