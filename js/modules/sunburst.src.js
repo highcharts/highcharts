@@ -23,12 +23,14 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	getLevelOptions = mixinTreeSeries.getLevelOptions,
 	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
 	grep = H.grep,
+	inArray = H.inArray,
 	isBoolean = function (x) {
 		return typeof x === 'boolean';
 	},
 	isNumber = H.isNumber,
 	isObject = H.isObject,
 	isString = H.isString,
+	keys = H.keys,
 	merge = H.merge,
 	noop = H.noop,
 	pick = H.pick,
@@ -58,48 +60,67 @@ var range = function range(from, to) {
  * @
  */
 var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
-	var result = merge({}, levelOptions), // Copy levelOptions
+	var result,
 		p = isObject(params) ? params : {},
-		diffRadius = isNumber(p.diffRadius) ? p.diffRadius : 0,
-		from = isNumber(p.from) ? p.from : 0,
-		to = isNumber(p.to) ? p.to : 0,
-		remainingSize = diffRadius,
-		levels = range(from, to),
-		totalWeight = 0;
-	/**
-	 * Convert percentage to pixels.
-	 * Calculate the remaining size to divide between "weight" levels.
-	 * Calculate total weight to use in convertion from weight to pixels.
-	 */
-	each(levels, function (level) {
-		var options = result[level],
-			unit = options.levelSize.unit,
-			value = options.levelSize.value;
-		if (unit === 'weight') {
-			totalWeight += value;
-		} else if (unit === 'percentage') {
-			options.levelSize = {
-				unit: 'pixels',
-				value: (value / 100) * diffRadius
-			};
-			remainingSize -= options.levelSize.value;
-		} else if (unit === 'pixels') {
-			remainingSize -= value;
-		}
-	});
+		totalWeight = 0,
+		diffRadius,
+		levels,
+		levelsNotIncluded,
+		remainingSize,
+		from,
+		to;
 
-	// Convert weight to pixels.
-	each(levels, function (level) {
-		var options = result[level],
-			weight;
-		if (options.levelSize.unit === 'weight') {
-			weight = options.levelSize.value;
-			options.levelSize = {
-				unit: 'pixels',
-				value: (weight / totalWeight) * remainingSize
+	if (isObject(levelOptions)) {
+		result = merge({}, levelOptions), // Copy levelOptions
+		from = isNumber(p.from) ? p.from : 0;
+		to = isNumber(p.to) ? p.to : 0;
+		levels = range(from, to);
+		levelsNotIncluded = grep(keys(result), function (k) {
+			return inArray(+k, levels) === -1;
+		});
+		diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
+		/**
+		 * Convert percentage to pixels.
+		 * Calculate the remaining size to divide between "weight" levels.
+		 * Calculate total weight to use in convertion from weight to pixels.
+		 */
+		each(levels, function (level) {
+			var options = result[level],
+				unit = options.levelSize.unit,
+				value = options.levelSize.value;
+			if (unit === 'weight') {
+				totalWeight += value;
+			} else if (unit === 'percentage') {
+				options.levelSize = {
+					unit: 'pixels',
+					value: (value / 100) * diffRadius
+				};
+				remainingSize -= options.levelSize.value;
+			} else if (unit === 'pixels') {
+				remainingSize -= value;
+			}
+		});
+
+		// Convert weight to pixels.
+		each(levels, function (level) {
+			var options = result[level],
+				weight;
+			if (options.levelSize.unit === 'weight') {
+				weight = options.levelSize.value;
+				result[level].levelSize = {
+					unit: 'pixels',
+					value: (weight / totalWeight) * remainingSize
+				};
+			}
+		});
+		// Set all levels not included in interval [from,to] to have 0 pixels.
+		each(levelsNotIncluded, function (level) {
+			result[level].levelSize = {
+				value: 0,
+				unit: 'pixels'
 			};
-		}
-	});
+		})
+	}
 	return result;
 };
 
@@ -787,6 +808,7 @@ var sunburstSeries = {
 		}
 	},
 	utils: {
+		calculateLevelSizes,
 		range: range
 	}
 };
