@@ -1038,7 +1038,7 @@ wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
 			);
 
 		if (point.drilldown && point.dataLabel) {
-			if (css.color === 'contrast') {
+			if (css && css.color === 'contrast') {
 				pointCSS.color = renderer.getContrast(point.color || this.color);
 			}
 			if (dataLabelsOptions && dataLabelsOptions.color) {
