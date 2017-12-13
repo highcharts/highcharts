@@ -129,7 +129,15 @@ Highcharts.setOptions({
 		 *
 		 * @since 6.0.4
 		 */
-		useMultiLevelHeaders: true
+		useMultiLevelHeaders: true,
+
+		/**
+		 * Export-data module required. If using multi level table headers, use
+		 * rowspans for headers that have only one level.
+		 *
+		 * @since 6.0.4
+		 */
+		useRowspanHeaders: true
 	},
 	/**
 	 * @optionparent lang
@@ -498,9 +506,9 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 			return true;
 		},
 		// Get table cell HTML from value
-		getCellHTMLFromValue = function (tag, attrs, value) {
+		getCellHTMLFromValue = function (tag, classes, attrs, value) {
 			var val = value || '',
-				className = 'text';
+				className = 'text' + (classes ? ' ' + classes : '');
 			// Convert to string if number
 			if (typeof val === 'number') {
 				val = val.toString();
@@ -545,8 +553,8 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 						// Add cur to HTML with colspan.
 						html += getCellHTMLFromValue(
 							'th',
+							'highcharts-table-topheading',
 							'scope="col" ' +
-							'class="highcharts-table-topheading" ' +
 							'colspan="' + (curColspan + 1) + '"',
 							cur
 						);
@@ -555,15 +563,20 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 						// Cur is standalone. If it is same as sublevel,
 						// remove sublevel and add just toplevel.
 						if (cur === subheaders[i]) {
-							rowspan = 2;
-							delete subheaders[i];
+							if (options.exporting.useRowspanHeaders) {
+								rowspan = 2;
+								delete subheaders[i];
+							} else {
+								rowspan = 1;
+								subheaders[i] = '';
+							}
 						} else {
 							rowspan = 1;
 						}
 						html += getCellHTMLFromValue(
 							'th',
+							'highcharts-table-topheading',
 							'scope="col"' +
-							'class="highcharts-table-topheading"' +
 							(rowspan > 1 ?
 								' valign="top" rowspan="' + rowspan + '"' :
 							''),
@@ -580,7 +593,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 				for (i = 0, len = subheaders.length; i < len; ++i) {
 					if (subheaders[i] !== undefined) {
 						html += getCellHTMLFromValue(
-							'th', 'scope="col"', subheaders[i]
+							'th', null, 'scope="col"', subheaders[i]
 						);
 					}
 				}
@@ -626,6 +639,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 			// await user feedback on this.
 			html += getCellHTMLFromValue(
 				j ? 'td' : 'th',
+				null,
 				j ? '' : 'scope="row"',
 				row[j]
 			);
