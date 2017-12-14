@@ -81,6 +81,8 @@ Highcharts.setOptions({
 			 *
 			 * Return `false` to use Highcharts' proposed header.
 			 * 
+			 * @sample highcharts/export-data/multilevel-table
+			 *			Multiple table headers
 			 * @type {Function|null}
 			 */
 			columnHeaderFormatter: null,
@@ -127,6 +129,8 @@ Highcharts.setOptions({
 		 * is defined, it has to return objects in order for multi level headers
 		 * to work.
 		 *
+		 * @sample highcharts/export-data/multilevel-table
+		 *			Multiple table headers
 		 * @since 6.0.4
 		 */
 		useMultiLevelHeaders: true,
@@ -135,9 +139,23 @@ Highcharts.setOptions({
 		 * Export-data module required. If using multi level table headers, use
 		 * rowspans for headers that have only one level.
 		 *
+		 * @sample highcharts/export-data/multilevel-table
+		 *			Multiple table headers
 		 * @since 6.0.4
 		 */
 		useRowspanHeaders: true
+		
+		/**
+		 * Export-data module required. Caption for the data table. Same as
+		 * chart title by default. Set to `false` to disable.
+		 *
+		 * @type {Boolean\String}
+		 * @since 6.0.4
+		 * @sample highcharts/export-data/multilevel-table
+		 *			Multiple table headers
+		 * @default undefined
+		 * @apioption exporting.tableCaption
+		 */
 	},
 	/**
 	 * @optionparent lang
