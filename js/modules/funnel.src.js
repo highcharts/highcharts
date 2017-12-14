@@ -121,17 +121,38 @@ seriesType('funnel', 'pie',
 	/**
 	 * Options for the series states.
 	 *
-	 * @optionparent plotOptions.funnel.states
+	 * @product highcharts
 	 */
 	states: {
+		/**
+		 * @excluding halo,marker,lineWidth,lineWidthPlus
+		 * @apioption plotOptions.funnel.states.hover
+		 */
 
 		/**
 		 * Options for a selected funnel item.
+		 *
+		 * @excluding halo,marker,lineWidth,lineWidthPlus
+		 * @product highcharts
 		 */
 		select: {
+			/**
+			 * A specific color for the selected point.
+			 *
+			 * @type    {Color}
+			 * @default #cccccc
+			 * @product highcharts highstock
+			 */
 			color: '${palette.neutralColor20}',
-			borderColor: '${palette.neutralColor100}',
-			shadow: false
+
+			/**
+			 * A specific border color for the selected point.
+			 *
+			 * @type    {Color}
+			 * @default #000000
+			 * @product highcharts highstock
+			 */
+			borderColor: '${palette.neutralColor100}'
 		}
 	}
 	/*= } =*/

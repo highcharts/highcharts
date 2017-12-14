@@ -100,8 +100,6 @@ if (H.seriesTypes.pie) {
 
 /**
  * Accessibility options
- * @type {Object}
- * @optionparent
  */
 H.setOptions({
 
@@ -113,6 +111,8 @@ H.setOptions({
 	 * com/docs/chart-concepts/accessibility).
 	 * 
 	 * @since 5.0.0
+	 * @type {Object}
+	 * @optionparent accessibility
 	 */
 	accessibility: {
 

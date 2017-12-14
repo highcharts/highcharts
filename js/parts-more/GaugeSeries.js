@@ -25,10 +25,13 @@ var each = H.each,
  * Gauges are circular plots displaying one or more values with a dial pointing
  * to values along the perimeter.
  *
- * @sample highcharts/demo/gauge-speedometer/ Gauge chart
- * @extends {plotOptions.line}
- * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,marker,pointPlacement,softThreshold,stacking,step,threshold,turboThreshold,zoneAxis,zones
- * @product highcharts
+ * @sample       highcharts/demo/gauge-speedometer/ Gauge chart
+ * @extends      {plotOptions.line}
+ * @excluding    animationLimit,boostThreshold,connectEnds,connectNulls,
+ *               cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
+ *               marker,negativeColor,pointPlacement,shadow,softThreshold,
+ *               stacking,states,step,threshold,turboThreshold,zoneAxis,zones
+ * @product      highcharts
  * @optionparent plotOptions.gauge
  */
 seriesType('gauge', 'line', {

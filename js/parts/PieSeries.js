@@ -224,7 +224,7 @@ seriesType('pie', 'line', {
 	/** @ignore */
 	legendType: 'point',
 
-	/**	 @ignore */
+	/**	@ignore */
 	marker: null, // point options are specified in the base options
 
 	/**
@@ -341,8 +341,9 @@ seriesType('pie', 'line', {
 	states: {
 
 		/**
-		 * @extends plotOptions.series.states.hover
-		 * @product highcharts
+		 * @extends   plotOptions.series.states.hover
+		 * @excluding marker,lineWidth,lineWidthPlus
+		 * @product   highcharts
 		 */
 		hover: {
 
@@ -353,14 +354,12 @@ seriesType('pie', 'line', {
 			 * In styled mode, the hover brightness is by default replaced
 			 * by a fill-opacity given in the `.highcharts-point-hover` class.
 			 * 
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/plotoptions/pie-states-hover-brightness/ Brightened by 0.5
-			 * @default 0.1
+			 * @sample  {highcharts}
+			 *          highcharts/plotoptions/pie-states-hover-brightness/
+			 *          Brightened by 0.5
 			 * @product highcharts
 			 */
-			brightness: 0.1,
-
-			shadow: false
+			brightness: 0.1
 		}
 	}
 	/*= } =*/

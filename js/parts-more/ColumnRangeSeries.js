@@ -34,12 +34,13 @@ var colProto = seriesTypes.column.prototype;
 var columnRangeOptions = {
 
 	pointRange: null,
+	
+	/** @ignore-option */
 	marker: null,
+
 	states: {
 		hover: {
-			/**
-			 * @ignore-option
-			 */
+			/** @ignore-option */
 			halo: false
 		}
 	}
@@ -50,10 +51,11 @@ var columnRangeOptions = {
 	 * `yLow` and `yHigh` options to allow the higher and lower data label
 	 * sets individually.
 	 *
-	 * @type {Object}
-	 * @extends plotOptions.arearange.dataLabels
-	 * @since 2.3.0
-	 * @product highcharts highstock
+	 * @type      {Object}
+	 * @extends   plotOptions.arearange.dataLabels
+	 * @excluding x,y
+	 * @since     2.3.0
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.columnrange.dataLabels
 	 */
 };
