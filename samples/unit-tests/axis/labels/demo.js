@@ -39,6 +39,142 @@ QUnit.test('Label overflow', function (assert) {
 
 });
 
+QUnit.test('Label reserve space', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'X axis label alignment and reserveSpace'
+        },
+        xAxis: {
+            categories: ['Oranges', 'Apples', 'Pears']
+        },
+        series: [{
+            data: [1, 3, 2]
+        }]
+    });
+
+    var xAxis = chart.xAxis[0],
+        bBox;
+
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'Default - Labels should be between chart border and plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            align: 'left'
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.notOk(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'reserveSpace: null, align: left. - Labels should overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            reserveSpace: false
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.notOk(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'reserveSpace: false, align: left. - Labels should overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            reserveSpace: true
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'reserveSpace: true, align: left. - Labels should not overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            align: 'center'
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'reserveSpace: true, align: center. - Labels should not overlap plot area'
+    );
+
+
+    xAxis.update({
+        opposite: true,
+        labels: {
+            reserveSpace: null,
+            align: null
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true - Labels should be between chart border and plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            align: 'right'
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.notOk(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true, reserveSpace: null, align: right. - Labels should overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            reserveSpace: false
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.notOk(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true, reserveSpace: false, align: right. - Labels should overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            reserveSpace: true
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true, reserveSpace: true, align: right. - Labels should not overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            align: 'center'
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true, reserveSpace: true, align: center. - Labels should not overlap plot area'
+    );
+
+
+});
+
 QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
 
     var chart = Highcharts.chart('container', {

@@ -570,6 +570,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 *             Left
 			 * @sample     {highcharts} highcharts/xaxis/labels-align-right/
 			 *             Right
+			 * @sample     {highcharts}
+			 *             highcharts/xaxis/labels-reservespace-true/
+			 *             Left-aligned labels on a vertical category axis
+			 * @see        [reserveSpace](#xAxis.labels.reserveSpace)
 			 * @apioption  xAxis.labels.align
 			 */
 			// align: 'center',
@@ -699,14 +703,25 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 */
 
 			/**
-			 * Whether to reserve space for the labels. This can be turned off
-			 * when for example the labels are rendered inside the plot area
-			 * instead of outside.
+			 * Whether to reserve space for the labels. By default, space is
+			 * reserved for the labels in these cases:
+			 * 
+			 * * On all horizontal axes.
+			 * * On vertical axes if `label.align` is `right` on a left-side
+			 * axis or `left` on a right-side axis.
+			 * * On vertical axes if `label.align` is `center`.
+			 * 
+			 * This can be turned off when for example the labels are rendered
+			 * inside the plot area instead of outside.
 			 *
 			 * @type      {Boolean}
 			 * @sample    {highcharts} highcharts/xaxis/labels-reservespace/
 			 *            No reserved space, labels inside plot
-			 * @default   true
+			 * @sample    {highcharts}
+			 *            highcharts/xaxis/labels-reservespace-true/
+			 *            Left-aligned labels on a vertical category axis
+			 * @see       [labels.align](#xAxis.labels.align)
+			 * @default   null
 			 * @since     4.1.10
 			 * @product   highcharts
 			 * @apioption xAxis.labels.reserveSpace
@@ -4229,14 +4244,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 			// Left side must be align: right and right side must
 			// have align: left for labels
-			if (
-				labelOptions.reserveSpace !== false &&
-				(
-					side === 0 ||
-					side === 2 ||
-					{ 1: 'left', 3: 'right' }[side] === axis.labelAlign ||
-					axis.labelAlign === 'center'
-				)
+			axis.reserveSpaceDefault = (
+				side === 0 ||
+				side === 2 ||
+				{ 1: 'left', 3: 'right' }[side] === axis.labelAlign
+			);
+			if (pick(
+				labelOptions.reserveSpace,
+				axis.labelAlign === 'center' ? true : null,
+				axis.reserveSpaceDefault)
 			) {
 				each(tickPositions, function (pos) {
 					// get the highest offset
@@ -4249,8 +4265,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 			if (axis.staggerLines) {
 				labelOffset *= axis.staggerLines;
-				axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
 			}
+			axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
 
 		} else { // doesn't have data
 			objectEach(ticks, function (tick, n) {
