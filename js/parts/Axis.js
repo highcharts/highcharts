@@ -3388,50 +3388,53 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			i,
 			len;
 
-		if (currentTickAmount < tickAmount) {
-			while (tickPositions.length < tickAmount) {
+		if (this.hasData()) {
+			if (currentTickAmount < tickAmount) {
+				while (tickPositions.length < tickAmount) {
 
-				// Extend evenly for both sides unless we're on the threshold
-				// (#3965)
-				if (
-					tickPositions.length % 2 ||
-					this.min === threshold
-				) {
-					// to the end
-					tickPositions.push(correctFloat(
-						tickPositions[tickPositions.length - 1] + tickInterval
-					));
-				} else {
-					// to the start
-					tickPositions.unshift(correctFloat(
-						tickPositions[0] - tickInterval
-					));
+					// Extend evenly for both sides unless we're on the
+					// threshold (#3965)
+					if (
+						tickPositions.length % 2 ||
+						this.min === threshold
+					) {
+						// to the end
+						tickPositions.push(correctFloat(
+							tickPositions[tickPositions.length - 1] +
+							tickInterval
+						));
+					} else {
+						// to the start
+						tickPositions.unshift(correctFloat(
+							tickPositions[0] - tickInterval
+						));
+					}
 				}
+				this.transA *= (currentTickAmount - 1) / (tickAmount - 1);
+				this.min = tickPositions[0];
+				this.max = tickPositions[tickPositions.length - 1];
+
+			// We have too many ticks, run second pass to try to reduce ticks
+			} else if (currentTickAmount > tickAmount) {
+				this.tickInterval *= 2;
+				this.setTickPositions();
 			}
-			this.transA *= (currentTickAmount - 1) / (tickAmount - 1);
-			this.min = tickPositions[0];
-			this.max = tickPositions[tickPositions.length - 1];
 
-		// We have too many ticks, run second pass to try to reduce ticks
-		} else if (currentTickAmount > tickAmount) {
-			this.tickInterval *= 2;
-			this.setTickPositions();
-		}
-
-		// The finalTickAmt property is set in getTickAmount
-		if (defined(finalTickAmt)) {
-			i = len = tickPositions.length;
-			while (i--) {
-				if (
-					// Remove every other tick
-					(finalTickAmt === 3 && i % 2 === 1) ||
-					// Remove all but first and last
-					(finalTickAmt <= 2 && i > 0 && i < len - 1)
-				) {
-					tickPositions.splice(i, 1);
+			// The finalTickAmt property is set in getTickAmount
+			if (defined(finalTickAmt)) {
+				i = len = tickPositions.length;
+				while (i--) {
+					if (
+						// Remove every other tick
+						(finalTickAmt === 3 && i % 2 === 1) ||
+						// Remove all but first and last
+						(finalTickAmt <= 2 && i > 0 && i < len - 1)
+					) {
+						tickPositions.splice(i, 1);
+					}
 				}
+				this.finalTickAmt = undefined;
 			}
-			this.finalTickAmt = undefined;
 		}
 	},
 
