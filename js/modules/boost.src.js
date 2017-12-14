@@ -117,6 +117,7 @@
  * a significant speed improvment in charts with a very high
  * amount of series.
  *
+ * @type {Number}
  * @default  null
  * @apioption boost.seriesThreshold
  */
