@@ -3,7 +3,8 @@ Highcharts.chart('container', {
         type: 'line',
         parallelCoordinates: true,
         parallelAxes: {
-            tickAmount: 2
+            tickAmount: 2,
+            min: 0
         }
     },
     title: {

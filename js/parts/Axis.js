@@ -3384,13 +3384,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			tickAmount = this.tickAmount,
 			finalTickAmt = this.finalTickAmt,
 			currentTickAmount = tickPositions && tickPositions.length,
+			threshold = pick(this.threshold, this.softThreshold ? 0 : null),
 			i,
 			len;
 
 		if (currentTickAmount < tickAmount) {
 			while (tickPositions.length < tickAmount) {
-				// Extend evenly for both sides (#3965)
-				if (tickPositions.length % 2) {
+
+				// Extend evenly for both sides unless we're on the threshold
+				// (#3965)
+				if (
+					tickPositions.length % 2 ||
+					this.min === threshold
+				) {
 					// to the end
 					tickPositions.push(correctFloat(
 						tickPositions[tickPositions.length - 1] + tickInterval
