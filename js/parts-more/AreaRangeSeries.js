@@ -440,6 +440,13 @@ seriesType('arearange', 'area', {
 			if (defined(point.plotHighX)) {
 				point.plotX = point.plotHighX;
 			}
+			point._isInside = point.isInside;
+			point.isInside = point.isTopInside =
+				point.plotY !== undefined &&
+				point.plotY >= 0 &&
+				point.plotY <= series.yAxis.len && // #3519
+				point.plotX >= 0 &&
+				point.plotX <= series.xAxis.len;
 			i++;
 		}
 
@@ -451,6 +458,7 @@ seriesType('arearange', 'area', {
 			point = series.points[i];
 			point.upperGraphic = point.graphic;
 			point.graphic = point.lowerGraphic;
+			point.isInside = point._isInside;
 			point.plotY = point._plotY;
 			point.plotX = point._plotX;
 			i++;
@@ -475,8 +483,10 @@ seriesType('arearange', 'area', {
 			this.plotLow = this.plotY = series.yAxis.toPixels(this.low, true);
 		}
 
-		// Bottom state:
-		pointProto.setState.apply(this, arguments);
+		if (series.stateMarkerGraphic) {
+			series.lowerStateMarkerGraphic = series.stateMarkerGraphic;
+			series.stateMarkerGraphic = series.upperStateMarkerGraphic;
+		}
 
 		// Change state also for the top marker
 		this.graphic = this.upperGraphic;
@@ -486,14 +496,10 @@ seriesType('arearange', 'area', {
 			this.plotX = this.plotHighX;
 		}
 
-		this.state = prevState;
-
-		if (series.stateMarkerGraphic) {
-			series.lowerStateMarkerGraphic = series.stateMarkerGraphic;
-			series.stateMarkerGraphic = series.upperStateMarkerGraphic;
-		}
-
+		// Top state:
 		pointProto.setState.apply(this, arguments);
+
+		this.state = prevState;
 
 		// Now restore defaults
 		this.plotY = this.plotLow;
@@ -510,6 +516,9 @@ seriesType('arearange', 'area', {
 			// to avoid reference duplication (#7021)
 			series.lowerStateMarkerGraphic = undefined;
 		}
+
+		pointProto.setState.apply(this, arguments);
+
 	},
 	haloPath: function () {
 		var isPolar = this.series.chart.polar,
@@ -521,24 +530,36 @@ seriesType('arearange', 'area', {
 			this.plotX = this.plotLowX;
 		}
 
-		path = pointProto.haloPath.apply(this, arguments);
+		if (this.isInside) {
+			path = pointProto.haloPath.apply(this, arguments);
+		}
 
 		// Top halo
 		this.plotY = this.plotHigh;
 		if (isPolar) {
 			this.plotX = this.plotHighX;
 		}
-		path = path.concat(
-			pointProto.haloPath.apply(this, arguments)
-		);
+		if (this.isTopInside) {
+			path = path.concat(
+				pointProto.haloPath.apply(this, arguments)
+			);
+		}
 
 		return path;
 	},
-	destroy: function () {
-		if (this.upperGraphic) {
-			this.upperGraphic = this.upperGraphic.destroy();
-		}
-		return pointProto.destroy.apply(this, arguments);
+	destroyElements: function () {
+		var graphics = ['lowerGraphic', 'upperGraphic'];
+
+		each(graphics, function (graphicName) {
+			if (this[graphicName]) {
+				this[graphicName] = this[graphicName].destroy();
+			}
+		}, this);
+
+		// Clear graphic for states, removed in the above each:
+		this.graphic = null;
+
+		return pointProto.destroyElements.apply(this, arguments);
 	}
 });
 

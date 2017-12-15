@@ -12,6 +12,9 @@ QUnit.test('Markers for arearange.', function (assert) {
         },
 
         series: [{
+            marker: {
+                enabled: true
+            },
             data: [
                 [0, 10],
                 [10, 20],
@@ -20,6 +23,16 @@ QUnit.test('Markers for arearange.', function (assert) {
             ]
         }]
     });
+
+    function randomData(n) {
+        var d = [];
+
+        while (n--) {
+            d.push([n, n + 5]);
+        }
+
+        return d;
+    }
 
     Highcharts.each(chart.series[0].points, function (point) {
         assert.ok(
@@ -31,6 +44,21 @@ QUnit.test('Markers for arearange.', function (assert) {
             'Top marker for point: x=' + (point.x) + ' exists.'
         );
     });
+
+    // #6985
+    chart.series[0].setData(randomData(400));
+    chart.xAxis[0].setExtremes(5, 15);
+
+    assert.strictEqual(
+        // Each point has two markers, and
+        // by default sharedStateMarker is created (?)
+        document
+            .getElementById('container') // Check only this chart..
+            .getElementsByClassName('highcharts-point')
+            .length,
+        chart.series[0].points.length * 2 + 1,
+        'No artifacts after zoom (#6985)'
+    );
 });
 
 
