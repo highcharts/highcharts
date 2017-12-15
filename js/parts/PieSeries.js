@@ -804,6 +804,8 @@ seriesType('pie', 'line', {
 				shapeArgs.y,
 				shapeArgs.r + size,
 				shapeArgs.r + size, {
+					// Substract 1px to ensure the background is not bleeding
+					// through between the halo and the slice (#7495).
 					innerR: this.shapeArgs.r - 1,
 					start: shapeArgs.start,
 					end: shapeArgs.end
