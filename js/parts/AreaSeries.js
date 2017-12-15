@@ -20,17 +20,19 @@ var color = H.color,
 
 /**
  * Area series type.
+ *
  * @constructor seriesTypes.area
- * @extends {Series}
+ * @extends     {Series}
  */
 /**
  * The area series type.
- * @extends {plotOptions.line}
- * @product highcharts highstock
- * @sample {highcharts} highcharts/demo/area-basic/
- *         Area chart
- * @sample {highstock} stock/demo/area/
- *         Area chart
+ *
+ * @extends      {plotOptions.line}
+ * @product      highcharts highstock
+ * @sample       {highcharts} highcharts/demo/area-basic/
+ *               Area chart
+ * @sample       {highstock} stock/demo/area/
+ *               Area chart
  * @optionparent plotOptions.area
  */
 seriesType('area', 'line', {
@@ -39,28 +41,35 @@ seriesType('area', 'line', {
 	 * Fill color or gradient for the area. When `null`, the series' `color`
 	 * is used with the series' `fillOpacity`.
 	 * 
-	 * @type {Color}
-	 * @see In styled mode, the fill color can be set with the `.highcharts-area` class name.
-	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/ Null by default
-	 * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/ Gradient
-	 * @default null
-	 * @product highcharts highstock
+	 * In styled mode, the fill color can be set with the `.highcharts-area`
+	 * class name.
+	 *
+	 * @type      {Color}
+	 * @sample    {highcharts} highcharts/plotoptions/area-fillcolor-default/
+	 *            Null by default
+	 * @sample    {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
+	 *            Gradient
+	 * @default   null
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.area.fillColor
 	 */
 
 	/**
 	 * Fill opacity for the area. When you set an explicit `fillColor`,
 	 * the `fillOpacity` is not applied. Instead, you should define the
-	 * opacity in the `fillColor` with an rgba color definition. The `fillOpacity`
-	 * setting, also the default setting, overrides the alpha component
-	 * of the `color` setting.
+	 * opacity in the `fillColor` with an rgba color definition. The
+	 * `fillOpacity` setting, also the default setting, overrides the alpha
+	 * component of the `color` setting.
 	 * 
-	 * @type {Number}
-	 * @see In styled mode, the fill opacity can be set with the `.highcharts-area` class name.
-	 * @sample {highcharts} highcharts/plotoptions/area-fillopacity/ Automatic fill color and fill opacity of 0.1
-	 * @default {highcharts} 0.75
-	 * @default {highstock} .75
-	 * @product highcharts highstock
+	 * In styled mode, the fill opacity can be set with the `.highcharts-area`
+	 * class name.
+	 *
+	 * @type      {Number}
+	 * @sample    {highcharts} highcharts/plotoptions/area-fillopacity/
+	 *            Automatic fill color and fill opacity of 0.1
+	 * @default   {highcharts} 0.75
+	 * @default   {highstock} .75
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.area.fillOpacity
 	 */
 
@@ -69,24 +78,29 @@ seriesType('area', 'line', {
 	 * `color` of the series, but the lineColor setting allows setting a
 	 * separate color for the line without altering the `fillColor`.
 	 * 
-	 * @type {Color}
-	 * @see In styled mode, the line stroke can be set with the `.highcharts-graph` class name.
-	 * @sample {highcharts} highcharts/plotoptions/area-linecolor/ Dark gray line
-	 * @default null
-	 * @product highcharts highstock
+	 * In styled mode, the line stroke can be set with the `.highcharts-graph`
+	 * class name.
+	 *
+	 * @type      {Color}
+	 * @sample    {highcharts} highcharts/plotoptions/area-linecolor/
+	 *            Dark gray line
+	 * @default   null
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.area.lineColor
 	 */
 
 	/**
 	 * A separate color for the negative part of the area.
-	 * 
-	 * @type {Color}
-	 * @see [negativeColor](#plotOptions.area.negativeColor). In styled mode, a negative
-	 * color is set with the `.highcharts-negative` class name ([view live
-	 * demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
-	 * negative-color/)).
-	 * @since 3.0
-	 * @product highcharts
+	 *
+	 * In styled mode, a negative color is set with the `.highcharts-negative`
+	 * class name.
+	 *
+	 * @type      {Color}
+	 * @see       [negativeColor](#plotOptions.area.negativeColor).
+	 * @sample    {highcharts} highcharts/css/series-negative-color/
+	 *            Negative color in styled mode
+	 * @since     3.0
+	 * @product   highcharts
 	 * @apioption plotOptions.area.negativeFillColor
 	 */
 	
@@ -99,9 +113,7 @@ seriesType('area', 'line', {
 	 * 3 will make the Y axis show negative values according to the `minPadding`
 	 * option. If `softThreshold` is `true`, the Y axis starts at 0.
 	 * 
-	 * @type {Boolean}
-	 * @default false
-	 * @since 4.1.9
+	 * @since   4.1.9
 	 * @product highcharts highstock
 	 */
 	softThreshold: false,
@@ -112,10 +124,9 @@ seriesType('area', 'line', {
 	 * behaves like a line series with fill between the graph and the Y
 	 * axis minimum.
 	 * 
-	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/area-threshold/ A threshold of 100
-	 * @default 0
-	 * @since 2.0
+	 * @sample  {highcharts} highcharts/plotoptions/area-threshold/
+	 *          A threshold of 100
+	 * @since   2.0
 	 * @product highcharts highstock
 	 */
 	threshold: 0
@@ -124,12 +135,13 @@ seriesType('area', 'line', {
 	 * Whether the whole area or just the line should respond to mouseover
 	 * tooltips and other mouse or touch events.
 	 * 
-	 * @type {Boolean}
-	 * @sample {highcharts} highcharts/plotoptions/area-trackbyarea/ Display the tooltip when the     area is hovered
-	 * @sample {highstock} highcharts/plotoptions/area-trackbyarea/ Display the tooltip when the     area is hovered
-	 * @default false
-	 * @since 1.1.6
-	 * @product highcharts highstock
+	 * @type      {Boolean}
+	 * @sample    {highcharts|highstock}
+	 *            highcharts/plotoptions/area-trackbyarea/
+	 *            Display the tooltip when the area is hovered
+	 * @default   false
+	 * @since     1.1.6
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.area.trackByArea
 	 */
 	
@@ -137,8 +149,9 @@ seriesType('area', 'line', {
 }, /** @lends seriesTypes.area.prototype */ {
 	singleStacks: false,
 	/** 
-	 * Return an array of stacked points, where null and missing points are replaced by 
-	 * dummy points in order for gaps to be drawn correctly in stacks.
+	 * Return an array of stacked points, where null and missing points are
+	 * replaced by dummy points in order for gaps to be drawn correctly
+	 * in stacks.
 	 */
 	getStackPoints: function (points) {
 		var series = this,
@@ -171,7 +184,9 @@ seriesType('area', 'line', {
 
 			// Sort the keys (#1651)
 			H.objectEach(stack, function (stackX, x) {
-				if (stackX.total !== null) { // nulled after switching between grouping and not (#1651, #2336)
+				// nulled after switching between
+				// grouping and not (#1651, #2336)
+				if (stackX.total !== null) {
 					keys.push(x);
 				}
 			});
@@ -193,33 +208,46 @@ seriesType('area', 'line', {
 
 					// Find left and right cliff. -1 goes left, 1 goes right.
 					each([-1, 1], function (direction) {
-						var nullName = direction === 1 ? 'rightNull' : 'leftNull',
-							cliffName = direction === 1 ? 'rightCliff' : 'leftCliff',
+						var nullName = direction === 1 ?
+								'rightNull' :
+								'leftNull',
+							cliffName = direction === 1 ?
+								'rightCliff' :
+								'leftCliff',
 							cliff = 0,
 							otherStack = stack[keys[idx + direction]];
 
-						// If there is a stack next to this one, to the left or to the right...
+						// If there is a stack next to this one,
+						// to the left or to the right...
 						if (otherStack) {
 							i = seriesIndex;
-							while (i >= 0 && i < seriesLength) { // Can go either up or down, depending on reversedStacks
+							// Can go either up or down,
+							// depending on reversedStacks
+							while (i >= 0 && i < seriesLength) {
 								stackPoint = otherStack.points[i];
 								if (!stackPoint) {
-									// If the next point in this series is missing, mark the point
-									// with point.leftNull or point.rightNull = true.
+									// If the next point in this series
+									// is missing, mark the point
+									// with point.leftNull or
+									// point.rightNull = true.
 									if (i === seriesIndex) {
 										pointMap[x][nullName] = true;
 
-									// If there are missing points in the next stack in any of the 
-									// series below this one, we need to substract the missing values
+									// If there are missing points in
+									// the next stack in any of the 
+									// series below this one, we need
+									// to substract the missing values
 									// and add a hiatus to the left or right.
 									} else if (visibleSeries[i]) {
 										stackedValues = stack[x].points[i];
 										if (stackedValues) {
-											cliff -= stackedValues[1] - stackedValues[0];
+											cliff -= stackedValues[1] -
+												stackedValues[0];
 										}
 									}
 								}
-								// When reversedStacks is true, loop up, else loop down
+								// When reversedStacks is true, loop up,
+								// else loop down
 								i += upOrDown; 
 							}					
 						}
@@ -232,8 +260,8 @@ seriesType('area', 'line', {
 				// correctly.
 				} else {
 
-					// Loop down the stack to find the series below this one that has
-					// a value (#1991)
+					// Loop down the stack to find the series below this
+					// one that has a value (#1991)
 					i = seriesIndex;
 					while (i >= 0 && i < seriesLength) {
 						stackPoint = stack[x].points[i];
@@ -281,12 +309,14 @@ seriesType('area', 'line', {
 			yBottom,
 			connectNulls = options.connectNulls || stacking === 'percent',
 			/**
-			 * To display null points in underlying stacked series, this series graph must be 
-			 * broken, and the area also fall down to fill the gap left by the null point. #2069
+			 * To display null points in underlying stacked series, this
+			 * series graph must be broken, and the area also fall down
+			 * to fill the gap left by the null point. #2069
 			 */
 			addDummyPoints = function (i, otherI, side) {
 				var point = points[i],
-					stackedValues = stacking && stacks[point.x].points[seriesIndex],
+					stackedValues = stacking &&
+						stacks[point.x].points[seriesIndex],
 					nullVal = point[side + 'Null'] || 0,
 					cliffVal = point[side + 'Cliff'] || 0,
 					top,
@@ -295,11 +325,16 @@ seriesType('area', 'line', {
 
 				if (cliffVal || nullVal) {
 
-					top = (nullVal ? stackedValues[0] : stackedValues[1]) + cliffVal;
+					top = (nullVal ? stackedValues[0] : stackedValues[1]) +
+						cliffVal;
 					bottom = stackedValues[0] + cliffVal;
 					isNull = !!nullVal;
 				
-				} else if (!stacking && points[otherI] && points[otherI].isNull) {
+				} else if (
+					!stacking &&
+					points[otherI] &&
+					points[otherI].isNull
+				) {
 					top = bottom = threshold;
 				}
 
@@ -307,13 +342,17 @@ seriesType('area', 'line', {
 				if (top !== undefined) {
 					graphPoints.push({
 						plotX: plotX,
-						plotY: top === null ? translatedThreshold : yAxis.getThreshold(top),
+						plotY: top === null ?
+							translatedThreshold :
+							yAxis.getThreshold(top),
 						isNull: isNull,
 						isCliff: true
 					});
 					bottomPoints.push({
 						plotX: plotX,
-						plotY: bottom === null ? translatedThreshold : yAxis.getThreshold(bottom),
+						plotY: bottom === null ?
+							translatedThreshold :
+							yAxis.getThreshold(bottom),
 						doCurve: false // #1041, gaps in areaspline areas
 					});
 				}
@@ -337,8 +376,8 @@ seriesType('area', 'line', {
 				if (!connectNulls) {
 					addDummyPoints(i, i - 1, 'left');
 				}
-
-				if (!(isNull && !stacking && connectNulls)) { // Skip null point when stacking is false and connectNulls true
+				// Skip null point when stacking is false and connectNulls true
+				if (!(isNull && !stacking && connectNulls)) {
 					graphPoints.push(points[i]);
 					bottomPoints.push({
 						x: i,
@@ -362,8 +401,8 @@ seriesType('area', 'line', {
 		}
 
 		areaPath = topPath.concat(bottomPath);
-		graphPath = getGraphPath.call(this, graphPoints, false, connectNulls); // TODO: don't set leftCliff and rightCliff when connectNulls?
-
+		// TODO: don't set leftCliff and rightCliff when connectNulls?
+		graphPath = getGraphPath.call(this, graphPoints, false, connectNulls);
 		areaPath.xMap = topPath.xMap;
 		this.areaPath = areaPath;
 
@@ -372,8 +411,8 @@ seriesType('area', 'line', {
 
 	/**
 	 * Draw the graph and the underlying area. This method calls the Series base
-	 * function and adds the area. The areaPath is calculated in the getSegmentPath
-	 * method called from Series.prototype.drawGraph.
+	 * function and adds the area. The areaPath is calculated in the
+	 * getSegmentPath method called from Series.prototype.drawGraph.
 	 */
 	drawGraph: function () {
 
@@ -400,7 +439,8 @@ seriesType('area', 'line', {
 		each(zones, function (zone, i) {
 			props.push([
 				'zone-area-' + i, 
-				'highcharts-area highcharts-zone-area-' + i + ' ' + zone.className,
+				'highcharts-area highcharts-zone-area-' + i + ' ' +
+					zone.className,
 				/*= if (build.classic) { =*/
 				zone.color || series.color, 
 				zone.fillColor || options.fillColor
@@ -424,7 +464,9 @@ seriesType('area', 'line', {
 						/*= if (build.classic) { =*/
 						fill: pick(
 							prop[3],
-							color(prop[2]).setOpacity(pick(options.fillOpacity, 0.75)).get()
+							color(prop[2])
+								.setOpacity(pick(options.fillOpacity, 0.75))
+								.get()
 						),
 						/*= } =*/
 						zIndex: 0 // #1069
@@ -448,10 +490,10 @@ seriesType('area', 'line', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * area](#plotOptions.area).
  * 
- * @type {Object}
- * @extends series,plotOptions.area
- * @excluding dataParser,dataURL
- * @product highcharts highstock
+ * @type      {Object}
+ * @extends   series,plotOptions.area
+ * @excluding dataParser,dataURL,type
+ * @product   highcharts highstock
  * @apioption series.area
  */
 
@@ -500,13 +542,18 @@ seriesType('area', 'line', {
  *     }]
  *  ```
  * 
- * @type {Array<Object|Array|Number>}
- * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts highstock
+ * @type      {Array<Object|Array|Number>}
+ * @extends   series.line.data
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects
+ * @product   highcharts highstock
  * @apioption series.area.data
  */

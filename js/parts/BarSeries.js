@@ -39,7 +39,8 @@ seriesType('bar', 'column', null, {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.bar
- * @excluding dataParser,dataURL,marker
+ * @excluding connectNulls,dashStyle,dataParser,dataURL,gapSize,gapUnit,linecap,
+ *            lineWidth,marker,connectEnds,step,type
  * @product   highcharts
  * @apioption series.bar
  */
@@ -132,10 +133,11 @@ seriesType('bar', 'column', null, {
 /**
  * The x position of the data label relative to the data point.
  * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
- *         Data labels inside the bar
- * @default 5
- * @product highcharts
+ * @type      {Number}
+ * @sample    {highcharts}
+ *            highcharts/plotoptions/bar-datalabels-align-inside-bar/
+ *            Data labels inside the bar
+ * @default   5
+ * @product   highcharts
  * @apioption plotOptions.bar.dataLabels.x
  */

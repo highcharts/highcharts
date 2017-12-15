@@ -875,8 +875,7 @@ seriesType('column', 'line', {
  * @type      {Object}
  * @extends   series,plotOptions.column
  * @excluding connectNulls,dashStyle,dataParser,dataURL,gapSize,gapUnit,linecap,
- *            lineWidth,marker,connectEnds,step
- * 
+ *            lineWidth,marker,connectEnds,step,type
  * @product   highcharts highstock
  * @apioption series.column
  */
