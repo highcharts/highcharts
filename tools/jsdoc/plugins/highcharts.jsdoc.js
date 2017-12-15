@@ -119,23 +119,15 @@ function decorateOptions(parent, target, option, filename) {
     option.highcharts.fullname = parent + index;
     option.highcharts.name = index;
     option.highcharts.isOption = true;
-
-    // if (option.comment) {
-    //     option.comment = option.comment.replace('*/', '\n* @apioption ' + parent + index + '\n*/');
-    // } else {
-    //     option.comment = '/** @apioption ' + parent + index + ' */';
-    // }
 }
 
-function addToComment(comment, line) {
-    comment = comment || '';
-
-    return '/*' +
-            comment.replace('/*', '').replace('*/', '') +
-            '\n * ' +
-            line +
-            '\n*/'
-    ;
+function appendComment(node, lines) {
+  if (typeof node.comment !== 'undefined') {
+    node.comment = node.comment + '\n* ' + lines.join('\n* ');
+  } else {
+    node.comment = '* ' + lines.join('\n* ');
+  }
+  node.event = 'jsdocCommentFound';
 }
 
 function nodeVisitor(node, e, parser, currentSourceName) {
@@ -143,43 +135,38 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         args,
         target,
         parent,
-        comment,
         properties,
         fullPath,
         s,
-		shouldIgnore = false
+        shouldIgnore = false
     ;
 
     if (node.highcharts && node.highcharts.isOption) {
 
-		shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
+      shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
 
-		if (shouldIgnore) {
-			return;
-		} else if (e.comment) {
-            e.comment = e.comment.replace('*/', '\n* @optionparent ' + node.highcharts.fullname + '\n*/');
-		} else {
-            e.comment = '/** @optionparent ' + node.highcharts.fullname + ' */';
-        }
-        //if (node.highcharts.name === 'colors') {
-        //    console.log('tagged', node.highcharts.fullname);
-        //}
+      if (shouldIgnore) {
         return;
+      } else {
+        appendComment(node, ['@optionparent ' + node.highcharts.fullname]);
+      }
+
+      return;
     }
 
     if (node.leadingComments && node.leadingComments.length > 0) {
 
-        comment = node.leadingComments[0].raw || node.leadingComments[0].value;
+        if (!e.comment) {
+          e.comment = node.leadingComments[0].raw || node.leadingComments[0].value;
+        }
 
-        s = comment.indexOf('@optionparent');
+        s = e.comment.indexOf('@optionparent');
 
         if (s >= 0) {
-            s = comment.substr(s).replace(/\*/g, '').trim();
+            s = e.comment.substr(s).replace(/\*/g, '').trim();
             fullPath = '';
 
             parent = s.split('\n')[0].trim().split(' ');
-
-            //console.log('doing optionparent:', currentSourceName, '->', parent.length > 1 ? parent[1] : 'root');
 
             if (parent && parent.length > 1) {
                 parent = parent[1].trim() || '';
@@ -211,8 +198,6 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 });
             } else {
                 parent = '';
-
-                //options.children = options.children || {};
                 target = options;
             }
 
