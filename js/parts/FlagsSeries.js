@@ -490,8 +490,10 @@ symbols.flag = function (x, y, w, h, options) {
 	);
 };
 
-// create the circlepin and squarepin icons with anchor
-each(['circle', 'square'], function (shape) {
+/*
+ * Create the circlepin and squarepin icons with anchor
+ */
+function createPinSymbol(shape) {
 	symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
 		var anchorX = options && options.anchorX,
@@ -526,7 +528,9 @@ each(['circle', 'square'], function (shape) {
 
 		return path;
 	};
-});
+}
+createPinSymbol('circle');
+createPinSymbol('square');
 
 /*= if (build.classic) { =*/
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
