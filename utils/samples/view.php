@@ -71,7 +71,7 @@ $js = ob_get_clean();
 
 
 // Old IE
-/*
+//*
 $html .= "
 <!--[if lt IE 9]>
 <script src='http://code.highcharts.$topDomain/modules/oldie.js'></script>
@@ -511,11 +511,11 @@ function getResources() {
 			setUp();
 			<?php echo $js; ?>
 			</script>
-			<?php if (is_file("$path/test-notes.html")) { ?>
+			<?php if (is_file("$fsPath/test-notes.html")) { ?>
 			<section class="test-notes">
 				<header>Test notes</header>
 				<div class="test-notes-content">
-					<?php include("$path/test-notes.html"); ?>
+					<?php include("$fsPath/test-notes.html"); ?>
 				</div>
 			</section>
 			<?php } else { ?>
