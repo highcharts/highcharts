@@ -996,7 +996,10 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
             console.log(message.noSeries);
             reject(new Error(message.noSeries));
         }
-        generate(json, output, onlyBuildCurrent, () => {
+        generate(json, output, onlyBuildCurrent, {
+          platform: 'JS',
+          products: { highcharts: true, highstock: true, highmaps: true }
+        }, () => {
             console.log(message.success);
             resolve(message.success);
         });
