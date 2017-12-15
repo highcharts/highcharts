@@ -29,7 +29,7 @@ var each = H.each,
  * @sample       highcharts/demo/box-plot/ Box plot
  * @extends      {plotOptions.column}
  * @product      highcharts
- * @excluding    borderColor,borderRadius,borderWidth,groupZPadding
+ * @excluding    borderColor,borderRadius,borderWidth,groupZPadding,states
  * @optionparent plotOptions.boxplot
  */
 seriesType('boxplot', 'column', {
@@ -139,11 +139,16 @@ seriesType('boxplot', 'column', {
 	 */
 	medianWidth: 2,
 
+	/*
+	// States are not working and are removed from docs.
+	// Refer to: #2340
 	states: {
 		hover: {
 			brightness: -0.3
 		}
 	},
+	*/
+
 	/**
 	 * The color of the stem, the vertical line extending from the box to
 	 * the whiskers. If `null`, the series color is used.
@@ -520,7 +525,7 @@ seriesType('boxplot', 'column', {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.boxplot
- * @excluding dataParser,dataURL,stack,type
+ * @excluding dataParser,dataURL,stack,stacking,states,type
  * @product   highcharts
  * @apioption series.boxplot
  */
