@@ -4,5 +4,6 @@
    - Paweł Fus
    - Sebastian Bochan
    - Sebastian Domas
+ requiresManualTesting: true
  js_wrap: b
 ...
