@@ -112,6 +112,10 @@ function decorateOptions(parent, target, option, filename) {
                 target[index].meta.default = parseInt(target[index].meta.default, 10);
             }
         }
+    } else {
+      // if (option.leadingComments && option.leadingComments[0].value.indexOf('@apioption') >= 0) {
+        // console.log('OPTION:', option, 'COMMENT:', option.leadingComments);
+      // }
     }
 
     // Add options decorations directly to the node
@@ -122,11 +126,14 @@ function decorateOptions(parent, target, option, filename) {
 }
 
 function appendComment(node, lines) {
+
   if (typeof node.comment !== 'undefined') {
-    node.comment = node.comment + '\n* ' + lines.join('\n* ');
+    node.comment = node.comment.replace(/\/\*/g, '').replace(/\*\//g, '*');
+    node.comment = '/**\n' + node.comment + '\n* ' + lines.join('\n* ') + '\n*/';
   } else {
-    node.comment = '* ' + lines.join('\n* ');
+    node.comment = '/**\n* ' + lines.join('\n* ') + '\n*/';
   }
+
   node.event = 'jsdocCommentFound';
 }
 
@@ -135,6 +142,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         args,
         target,
         parent,
+        comment,
         properties,
         fullPath,
         s,
@@ -147,8 +155,13 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
       if (shouldIgnore) {
         return;
-      } else {
-        appendComment(node, ['@optionparent ' + node.highcharts.fullname]);
+
+      } else if ((e.comment || '').indexOf('@apioption') < 0) {
+        appendComment(e, [
+          '@optionparent ' + node.highcharts.fullname
+        ]);
+      } else if ((e.comment || '').indexOf('@apioption tooltip') >= 0) {
+        console.log(e.comment);
       }
 
       return;
@@ -163,7 +176,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         s = e.comment.indexOf('@optionparent');
 
         if (s >= 0) {
-            s = e.comment.substr(s).replace(/\*/g, '').trim();
+            s = e.comment.substr(s).trim();
             fullPath = '';
 
             parent = s.split('\n')[0].trim().split(' ');
@@ -175,6 +188,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 target = options;
 
                 s.forEach(function (p, i) {
+                    // p = p.trim();
 
                     fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
 
@@ -239,7 +253,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 function augmentOption(path, obj) {
     // This is super nasty.
     var current = options,
-        p = (path || '').split('.')
+        p = (path || '').trim().split('.')
     ;
 
     if (!obj) {
@@ -249,6 +263,8 @@ function augmentOption(path, obj) {
     try {
 
         p.forEach(function (thing, i) {
+            // thing = thing.trim();
+
             if (i === p.length - 1) {
                 // Merge in stuff
                 current[thing] = current[thing] || {};
@@ -333,7 +349,10 @@ function resolveProductTypes(doclet, tagObj) {
 exports.defineTags = function (dictionary) {
     dictionary.defineTag('apioption', {
         onTagged: function (doclet, tagObj) {
-			if (doclet.ignored) return removeOption(tagObj.value);
+
+            if (doclet.ignored) {
+                return removeOption(tagObj.value);
+            }
 
             augmentOption(tagObj.value, doclet);
         }
@@ -398,7 +417,6 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('exclude', {
         onTagged: function (doclet, tagObj) {
-            console.log('@exdlude', tagObj.text)
             var items = tagObj.text.split(',');
 
             doclet.exclude = doclet.exclude || [];
