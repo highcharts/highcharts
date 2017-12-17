@@ -2248,19 +2248,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		};
 	},
 	
-	getSpanWidth: function (wrapper, tspan) {
-		var renderer = this,
-			bBox = wrapper.getBBox(true),
-			actualWidth = bBox.width;
-
-		// Old IE cannot measure the actualWidth for SVG elements (#2314)
-		if (!svg && renderer.forExport) {
-			actualWidth = renderer.measureSpanWidth(
-				tspan.firstChild.data,
-				wrapper.styles
-			);
-		}
-		return actualWidth;
+	/**
+	 * Extendable function to measure the tspan width.
+	 *
+	 * @private
+	 */
+	getSpanWidth: function (wrapper) {
+		return wrapper.getBBox(true).width;
 	},
 	
 	applyEllipsis: function (wrapper, tspan, text, width) {
