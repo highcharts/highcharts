@@ -122,3 +122,36 @@ QUnit.test('Container parent originally detached (#7024)', function (assert) {
         'Chart width detected from CSS'
     );
 });
+
+QUnit.test('Container hidden by display:block !important', function (assert) {
+
+    var style = document.createElement('style');
+    document.head.appendChild(style);
+    style.sheet.insertRule('.ng-cloak { display: none !important; }');
+
+    var c = document.createElement('div');
+    document.body.appendChild(c);
+    c.className = 'ng-cloak';
+
+    var chart = Highcharts.chart(c, {
+        chart: {
+            plotBackgroundColor: 'silver'
+        },
+        title: {
+            text: 'The plot area should not overlap the title'
+        },
+        series: [{
+            data: [1, 3, 2, 4]
+        }]
+    });
+
+    c.className = '';
+
+    assert.ok(
+        chart.plotTop > 15,
+        'The chart should make room for the title when rendered inside a ' +
+        'hidden container (#2631)'
+    );
+    document.body.removeChild(c);
+
+});
