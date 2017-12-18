@@ -2416,7 +2416,10 @@ function createAndAttachRenderer(chart, series) {
 				});
 
 			if (target instanceof H.Chart) {
-				target.markerGroup.translate(series.xAxis.pos, series.yAxis.pos);
+				target.markerGroup.translate(
+					chart.plotLeft,
+					chart.plotTop
+				);
 			}
 		};
 
@@ -2852,7 +2855,7 @@ Series.prototype.destroyGraphics = function () {
 /*
  * Returns true if the current browser supports webgl
  */
-function hasWebGLSupport() {
+H.hasWebGLSupport = function () {
 	var i = 0,
 		canvas,
 		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
@@ -2874,7 +2877,7 @@ function hasWebGLSupport() {
 	}
 
 	return false;
-}
+};
 
 /* Used for treemap|heatmap.drawPoints */
 function pointDrawHandler(proceed) {
@@ -2907,7 +2910,7 @@ function pointDrawHandler(proceed) {
 // /////////////////////////////////////////////////////////////////////////////
 // We're wrapped in a closure, so just return if there's no webgl support
 
-if (!hasWebGLSupport()) {
+if (!H.hasWebGLSupport()) {
 	if (typeof H.initCanvasBoost !== 'undefined') {
 		// Fallback to canvas boost
 		H.initCanvasBoost();
@@ -3016,6 +3019,12 @@ if (!hasWebGLSupport()) {
 			} else {
 				// Use a single group for the markers
 				this.markerGroup = chart.markerGroup;
+
+				// When switching from chart boosting mode, destroy redundant
+				// series boosting targets
+				if (this.renderTarget) {
+					this.renderTarget = this.renderTarget.destroy();
+				}
 			}
 
 			points = this.points = [];
