@@ -2163,16 +2163,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 							xData = grep(xData, isNumber);
 							// Do it again with valid data
 							seriesDataMin = arrayMin(xData);
+							seriesDataMax = arrayMax(xData);
 						}
 
-						axis.dataMin = Math.min(
-							pick(axis.dataMin, xData[0], seriesDataMin),
-							seriesDataMin
-						);
-						axis.dataMax = Math.max(
-							pick(axis.dataMax, xData[0], seriesDataMax),
-							seriesDataMax
-						);
+						if (xData.length) {
+							axis.dataMin = Math.min(
+								pick(axis.dataMin, xData[0], seriesDataMin),
+								seriesDataMin
+							);
+							axis.dataMax = Math.max(
+								pick(axis.dataMax, xData[0], seriesDataMax),
+								seriesDataMax
+							);
+						}
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle
