@@ -1,0 +1,74 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.1//EN'
+  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
+<svg height="225" id="logo-highcharts" version="1.1" viewBox="0 0 225 225" width="225" x="0px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" y="0px">
+	<g id="symbol" transform="translate(10,13.41400146484375) scale(3)">
+		<g>
+			<polygon fill="#30426B" fill-opacity="1" id="svg_3" points="47.25799560546875,31.729999542236328 49.86000061035156,46.16499710083008 68.02400207519531,38.49300003051758 " stroke="#383836" stroke-linejoin="round" stroke-width="0">
+
+			</polygon>
+			<polygon fill="#6699A1" fill-opacity="1" id="svg_4" points="41.53900146484375,0 47.25799560546875,31.730998992919922 68.02299499511719,38.49300003051758 " stroke="#383836" stroke-linejoin="round" stroke-width="0">
+
+			</polygon>
+
+
+			<polygon fill="#6699A1" fill-opacity="1" id="svg_7" points="49.86000061035156,46.16499710083008 53.185997009277344,64.6099967956543 68.02400207519531,38.49300003051758 " stroke="#383836" stroke-linejoin="round" stroke-width="0">
+			</polygon>
+
+			<animateTransform
+	            attributeName="transform"
+	            begin="0s"
+	            dur="2s"
+	            type="rotate"
+	            from="0 45 40"
+	            to="360 45 40"
+	            repeatCount="indefinite" 
+      			calcMode="spline"
+      			keySplines="0.75 0 0.25 1"
+				keyTimes="0;1"
+			/>
+		</g>
+		<g>
+			<polygon fill="#78758C" fill-opacity="1" id="svg_5" points="47.25799560546875,31.729999542236328 68.02400207519531,38.49300003051758 30.31599998474121,26.208999633789062 15.566999435424805,60.650997161865234 49.86000061035156,46.16499710083008 " stroke="#383836" stroke-linejoin="round" stroke-width="0">
+			</polygon>
+			<polygon fill="#8087E8" fill-opacity="1" id="svg_8" points="41.53900146484375,0 30.315000534057617,26.209999084472656 47.25799560546875,31.730998992919922 " stroke="#383836" stroke-linejoin="round" stroke-width="0">
+			</polygon>
+
+
+			<animateTransform
+	            attributeName="transform"
+	            begin="0s"
+	            dur="2s"
+	            type="rotate"
+	            from="0 25 40"
+	            to="-360 25 40"
+	            repeatCount="indefinite" 
+      			calcMode="spline"
+      			keySplines="0.75 0 0.25 1"
+				keyTimes="0;1"
+			/>
+		</g>
+
+		<g>
+
+			<polygon fill="#A3EDBA" fill-opacity="1" id="svg_6" points="15.566999435424805,60.650997161865234 30.315000534057617,26.209999084472656 0,16.334999084472656 " stroke="#383836" stroke-linejoin="round" stroke-width="0">
+			</polygon>
+
+
+			<animateTransform
+	            attributeName="transform"
+	            begin="0s"
+	            dur="2s"
+	            type="rotate"
+	            from="0 15 40"
+	            to="360 15 40"
+	            repeatCount="indefinite" 
+      			calcMode="spline"
+      			keySplines="0.75 0 0.25 1"
+				keyTimes="0;1"
+			/>
+
+		</g>
+	</g>
+</svg>
