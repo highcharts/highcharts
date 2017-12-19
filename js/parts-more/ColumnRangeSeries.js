@@ -255,7 +255,7 @@ seriesType('columnrange', 'arearange', merge(
  * @apioption series.columnrange.data
  */
 
- /**
+/**
  * @excluding halo,lineWidth,lineWidthPlus,marker
  * @product   highcharts highstock
  * @apioption series.columnrange.states.hover

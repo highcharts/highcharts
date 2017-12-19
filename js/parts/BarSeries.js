@@ -106,7 +106,7 @@ seriesType('bar', 'column', null, {
  * @apioption series.bar.data
  */
 
- /**
+/**
  * @excluding halo,lineWidth,lineWidthPlus,marker
  * @product   highcharts highstock
  * @apioption series.bar.states.hover
