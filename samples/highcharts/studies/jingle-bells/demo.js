@@ -193,28 +193,22 @@ var chart = Highcharts.chart('highcharts-container', {
 });
 
 function togglePlay() {
-    document.getElementById('click-to-start').style.display = 'none';
-
-    setTimeout(function () {
+    if (chart.series[1].isSonifying) {
+        clearTimeout(chart.clickToPlayTimeout);
         document.getElementById('click-to-start').style.display = '';
-    }, 39000);
-
-    Highcharts.charts.forEach(function (chart) {
-        chart.series.forEach(function (series, i) {
-            if (i) {
-                series.sonify();
-            }
-        });
-    });
+    } else {
+        document.getElementById('click-to-start').style.display = 'none';
+        chart.clickToPlayTimeout = setTimeout(function () {
+            document.getElementById('click-to-start').style.display = '';
+        }, 39000);
+    }
+    chart.sonify();
 }
 
 document.getElementById(
     'click-to-start'
 ).onclick = snowman.onclick = togglePlay;
 
-//setTimeout(function() {
-
-//}, 1000);
 
 setInterval(function () {
     if (chart.series[0].points) {
