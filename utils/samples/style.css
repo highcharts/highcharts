@@ -131,7 +131,10 @@ body.single-col #report, body.single-col #svg, body.single-col #preview {
 body.manual #comment-placeholder {
 	vertical-align: top;
 }
-
+.description {
+	max-width: 800px;
+	margin: 2em auto;
+}
 .test-notes {
 	margin: 0 0 1em 0;
 	padding: 1em;
