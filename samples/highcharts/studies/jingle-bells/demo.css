@@ -95,3 +95,9 @@ html, body {
   right: -8px;
   top: 5px;
 }
+
+.unsupported {
+    font-size: 14px !important;
+    background-image: none !important;
+    padding-left: 10px !important;
+}

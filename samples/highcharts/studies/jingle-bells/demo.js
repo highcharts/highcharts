@@ -21,7 +21,9 @@ highchartsData.forEach(function (chan) {
 });
 
 var snowman = document.getElementById('snowman'),
-    tooltip = document.getElementById('tooltip');
+    tooltip = document.getElementById('tooltip'),
+    clickToStart = document.getElementById('click-to-start'),
+    bubble = clickToStart.getElementsByClassName('bubble')[0];
 
 var chart = Highcharts.chart('highcharts-container', {
     colors: colors,
@@ -195,19 +197,22 @@ var chart = Highcharts.chart('highcharts-container', {
 function togglePlay() {
     if (chart.series[1].isSonifying) {
         clearTimeout(chart.clickToPlayTimeout);
-        document.getElementById('click-to-start').style.display = '';
+        clickToStart.style.display = '';
     } else {
-        document.getElementById('click-to-start').style.display = 'none';
+        clickToStart.style.display = 'none';
         chart.clickToPlayTimeout = setTimeout(function () {
-            document.getElementById('click-to-start').style.display = '';
+            clickToStart.style.display = '';
         }, 39000);
     }
     chart.sonify();
 }
 
-document.getElementById(
-    'click-to-start'
-).onclick = snowman.onclick = togglePlay;
+if (Highcharts.supportsSonification) {
+    clickToStart.onclick = snowman.onclick = togglePlay;
+} else {
+    bubble.innerHTML = 'Your browser does not support audio';
+    bubble.className += ' unsupported';
+}
 
 
 setInterval(function () {
