@@ -62,6 +62,10 @@ html, body {
   bottom: 60px;
 }
 
+#snowman {
+  cursor: pointer;
+}
+
 .bubble {
   cursor: pointer;
   border: 2px solid #339933;
