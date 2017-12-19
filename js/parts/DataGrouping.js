@@ -718,8 +718,8 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
  * Destroy grouped data on series destroy
  */
 wrap(seriesProto, 'destroy', function (proceed) {
-	proceed.call(this);
 	this.destroyGroupedData();
+	proceed.call(this);
 });
 
 
