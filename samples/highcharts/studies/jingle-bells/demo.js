@@ -40,19 +40,18 @@ var chart = Highcharts.chart('highcharts-container', {
     },
     title: {
         text: 'Happy Holidays!',
-        margin: 0,
         style: {
-            'font-family': 'Great Vibes, cursive',
-            'font-size': '36px',
-            color: '#Fafafa'
+            fontFamily: 'Great Vibes, cursive',
+            fontSize: '36px',
+            color: '#Fafafa',
+            whiteSpace: 'nowrap'
         }
     },
     subtitle: {
-        y: 50,
         text: '...from your friends in Highcharts',
         style: {
-            'font-family': 'verdana, sans-serif',
-            'font-size': '18px',
+            fontFamily: 'verdana, sans-serif',
+            fontSize: '18px',
             color: '#Fafafa'
         }
     },
@@ -86,9 +85,6 @@ var chart = Highcharts.chart('highcharts-container', {
             },
             name: 'Snow',
             type: 'scatter',
-            marker: {
-              //symbol: url(https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/svg/2744.svg)'
-            },
             data: createSnow(),
             minSize: 30,
             maxSize: 50,
@@ -161,20 +157,13 @@ var chart = Highcharts.chart('highcharts-container', {
         {
             visible: false,
             min: 0,
-            max: 100,
-            gridLines: {
-                enabled: false
-            }
+            max: 100
         }
     ],
     tooltip: {
         shared: true,
         useHTML: true,
         backgroundColor: 'rgba(0,0,0,0)',
-        pointFormat: [
-            '<img style="transform:rotate({point.y}deg);"',
-            'class="transition" width="100" height="100" src="snowman.png"/>'
-        ].join(''),
         pointFormatter: function () {
             //tooltip.style.left = this.plotX + 'px';
             //tooltip.style.top = this.plotY + 'px';
@@ -188,6 +177,18 @@ var chart = Highcharts.chart('highcharts-container', {
         headerFormat: '',
         borderWidth: 0,
         shadow: false
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                yAxis: {
+                    visible: false
+                }
+            }
+        }]
     }
 });
 

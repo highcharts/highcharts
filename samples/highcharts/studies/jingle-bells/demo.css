@@ -9,7 +9,7 @@ html, body {
   width: 100%;
   height: 100%;
   position: relative;
-  min-width:430px;
+  min-width: 380px;
   min-height: 400px;
 }
 
