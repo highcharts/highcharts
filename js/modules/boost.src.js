@@ -2837,8 +2837,8 @@ Series.prototype.destroyGraphics = function () {
 	if (points) {
 		for (i = 0; i < points.length; i = i + 1) {
 			point = points[i];
-			if (point && point.graphic) {
-				point.graphic = point.graphic.destroy();
+			if (point && point.destroyElements) {
+				point.destroyElements(); // #7557
 			}
 		}
 	}

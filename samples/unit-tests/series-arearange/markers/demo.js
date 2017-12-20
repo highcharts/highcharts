@@ -51,13 +51,27 @@ QUnit.test('Markers for arearange.', function (assert) {
 
     assert.strictEqual(
         // Each point has two markers, and
-        // by default sharedStateMarker is created (?)
+        // by default extra marker in legend
         document
             .getElementById('container') // Check only this chart..
             .getElementsByClassName('highcharts-point')
             .length,
         chart.series[0].points.length * 2 + 1,
         'No artifacts after zoom (#6985)'
+    );
+
+    // #7557
+    chart.series[0].setData(randomData(400000));
+    chart.xAxis[0].setExtremes(5, 15);
+    chart.xAxis[0].setExtremes(null, null);
+
+    assert.strictEqual(
+        document
+            .getElementById('container') // Check only this chart..
+            .getElementsByClassName('highcharts-point')
+            .length,
+        1, // Marker in the legend
+        'No artifacts after zoom in boost mode (#7557)'
     );
 });
 
