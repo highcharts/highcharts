@@ -71,7 +71,7 @@ extend(Axis.prototype, {
 wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	
-	if (this.options.breaks) {
+	if (this.isBroken) {
 		var axis = this,
 			tickPositions = this.tickPositions,
 			info = this.tickPositions.info,
@@ -103,6 +103,7 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
 	axis.isDirty = axis.isBroken !== isBroken;
 	axis.isBroken = isBroken;
 	axis.options.breaks = axis.userOptions.breaks = breaks;
+	axis.forceRedraw = true; // Force recalculation in setScale
 
 	if (!isBroken) {
 		// Revert to prototype functions
@@ -152,7 +153,7 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
 
 		axis.setExtremes = function (newMin, newMax, redraw, animation, eventArguments) {
 			// If trying to set extremes inside a break, extend it to before and after the break ( #3857 )
-			if (this.options.breaks) {
+			if (this.isBroken) {
 				while (this.isInAnyBreak(newMin)) {
 					newMin -= this.closestPointRange;
 				}				
@@ -166,8 +167,8 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
 		axis.setAxisTranslation = function (saveOld) {
 			Axis.prototype.setAxisTranslation.call(this, saveOld);
 
-
-			if (this.options.breaks) {
+			this.unitLength = null;
+			if (this.isBroken) {
 				var breaks = axis.options.breaks,
 					breakArrayT = [],	// Temporary one
 					breakArray = [],

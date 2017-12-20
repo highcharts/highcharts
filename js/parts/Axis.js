@@ -3307,7 +3307,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 			// render new ticks in old position
 			if (slideInTicks && ticks[pos].isNew) {
-				ticks[pos].render(i, true, 0.1);
+				// Start with negative opacity so that it is visible from
+				// halfway into the animation
+				ticks[pos].render(i, true, -1);
 			}
 
 			ticks[pos].render(i);
