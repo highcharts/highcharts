@@ -3285,6 +3285,15 @@ H.Series = H.seriesType('line', null, { // base series options
 			stackIndicator,
 			closestPointRangePx = Number.MAX_VALUE;
 
+		/*
+		 * Plotted coordinates need to be within a limited range. Drawing too
+		 * far outside the viewport causes various rendering issues (#3201,
+		 * #3923, #7555).
+		 */
+		function limitedRange(val) {
+			return Math.min(Math.max(-1e5, val), 1e5);
+		}
+
 		// Point placement is relative to each series pointRange (#5889)
 		if (pointPlacement === 'between') {
 			pointPlacement = 0.5;
@@ -3313,7 +3322,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// Get the plotX translation
 			point.plotX = plotX = correctFloat( // #5236
-				Math.min(Math.max(-1e5, xAxis.translate(
+				limitedRange(xAxis.translate( // #3923
 					xValue,
 					0,
 					0,
@@ -3321,7 +3330,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					1,
 					pointPlacement,
 					this.type === 'flags'
-				)), 1e5) // #3923
+				)) // #3923
 			);
 
 			// Calculate the bottom y value for stacked series
@@ -3368,7 +3377,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// Set translated yBottom or remove it
 			point.yBottom = defined(yBottom) ?
-				yAxis.translate(yBottom, 0, 1, 0, 1) :
+				limitedRange(yAxis.translate(yBottom, 0, 1, 0, 1)) :
 				null;
 
 			// general hook, used for Highstock compare mode
@@ -3379,10 +3388,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			// Set the the plotY value, reset it for redraws
 			point.plotY = plotY =
 				(typeof yValue === 'number' && yValue !== Infinity) ?
-					Math.min(Math.max(
-						-1e5,
-						yAxis.translate(yValue, 0, 1, 0, 1)), 1e5
-					) : // #3201
+					limitedRange(yAxis.translate(yValue, 0, 1, 0, 1)) : // #3201
 					undefined;
 
 			point.isInside =
