@@ -114,9 +114,7 @@ var collapse = function (axis, node, pos) {
 	var breaks = (axis.options.breaks || []),
 		obj = getBreakFromNode(node, pos, axis.max);
 	breaks.push(obj);
-	axis.update({
-		breaks: breaks
-	});
+	axis.setBreaks(breaks);
 };
 var expand = function (axis, node, pos) {
 	var breaks = (axis.options.breaks || []),
@@ -128,9 +126,7 @@ var expand = function (axis, node, pos) {
 		}
 		return arr;
 	}, []);
-	axis.update({
-		breaks: breaks
-	});
+	axis.setBreaks(breaks);
 };
 var toggleCollapse = function (axis, node, pos) {
 	if (isCollapsed(axis, node, pos)) {
@@ -160,20 +156,21 @@ var renderLabelIcon = function (label, radius, spacing, collapsed) {
 			radius * 2
 		))
 		.attr({
-			'translateX': iconCenter.x,
-			'translateY': iconCenter.y
+			translateX: iconCenter.x,
+			translateY: iconCenter.y,
+			rotation: rotation
 		})
 		.add(label.parentGroup);
 	} else {
 		icon.animate({
-			'translateX': iconCenter.x,
-			'translateY': iconCenter.y
+			translateX: iconCenter.x,
+			translateY: iconCenter.y,
+			rotation: rotation
 		});
 	}
 	icon.attr({
 		'stroke-width': 1,
-		'fill': pick(label.styles.color, '#666'),
-		rotation: rotation
+		'fill': pick(label.styles.color, '#666')
 	});
 
 	// Set the new position, and show or hide
@@ -269,23 +266,26 @@ override(GridAxisTick.prototype, {
 				
 				// Add events to both label text and icon
 				each([label, label.treeIcon], function (object) {
-					// On hover
-					H.addEvent(object.element, 'mouseover', function () {
-						onTickHover(label);
-					});
-					
-					// On hover out
-					H.addEvent(object.element, 'mouseout', function () {
-						onTickHoverExit(label);
-					});
-					
-					H.addEvent(object.element, 'click', function () {
-						var axis = tick.axis,
-							pos = tick.pos;
-						if (axis) {
-							toggleCollapse(axis, axis.treeGridMap[pos], pos);
-						}
-					});
+					if (!object.attachedTreeGridEvents) {
+						// On hover
+						H.addEvent(object.element, 'mouseover', function () {
+							onTickHover(label);
+						});
+						
+						// On hover out
+						H.addEvent(object.element, 'mouseout', function () {
+							onTickHoverExit(label);
+						});
+						
+						H.addEvent(object.element, 'click', function () {
+							var axis = tick.axis,
+								pos = tick.pos;
+							if (axis) {
+								toggleCollapse(axis, axis.treeGridMap[pos], pos);
+							}
+						});
+						object.attachedTreeGridEvents = true;
+					}
 				});
 			}
 		}
