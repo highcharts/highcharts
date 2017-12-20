@@ -1,4 +1,8 @@
-# Sonification
+This holiday season, the Highcharts team honors the talented men and women who
+have worked hard to make technology accessible to visually impaired people. 
 
-This is a real graph showing sound data, made audible by our experimental `sonification.js` module
-as part of our research on [accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
+In our efforts to contribute in this regard, one modality we are experimenting
+with is sonification. 
+
+Our Hertz go out to all our customers this season. We hope you enjoy this
+chart-topper.
