@@ -45,6 +45,7 @@ html, body {
   position: absolute;
   right: 115px;
   bottom: 140px;
+  z-index: 11;
 
   animation-direction: alternate;
   animation-duration: 1s;
