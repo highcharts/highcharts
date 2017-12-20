@@ -749,7 +749,10 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 	
 	/**
-	 * The type of series, for example `line` or `column`.
+	 * The type of series, for example `line` or `column`. By default, the
+	 * series type is inherited from [chart.type](#chart.type), so unless the
+	 * chart is a combination of series types, there is no need to set it on the
+	 * series level.
 	 * 
 	 * @validvalue [null, "line", "spline", "column", "area", "areaspline",
 	 *       "pie", "arearange", "areasplinerange", "boxplot", "bubble",
