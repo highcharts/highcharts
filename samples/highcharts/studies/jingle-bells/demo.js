@@ -51,7 +51,7 @@ var chart = Highcharts.chart('highcharts-container', {
         }
     },
     subtitle: {
-        text: '...from your friends in Highcharts',
+        text: '...from your friends at Highcharts',
         style: {
             fontFamily: 'verdana, sans-serif',
             fontSize: '18px',
