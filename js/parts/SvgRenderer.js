@@ -2677,7 +2677,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			});
 
 			if (wasTooLong) {
-				wrapper.attr('title', wrapper.textStr);
+				wrapper.attr(
+					'title',
+					unescapeEntities(wrapper.textStr) // #7179
+				);
 			}
 			if (tempParent) {
 				tempParent.removeChild(textNode);

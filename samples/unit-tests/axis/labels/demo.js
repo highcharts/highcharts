@@ -175,7 +175,7 @@ QUnit.test('Label reserve space', function (assert) {
 
 });
 
-QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
+QUnit.test('Label ellipsis', function (assert) {
 
     var chart = Highcharts.chart('container', {
 
@@ -187,8 +187,10 @@ QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
             labels: {
                 rotation: 0
             },
-            categories: ['January', 'January', 'January', 'January', 'January', 'January',
-                'January', 'January', 'January', 'January', 'January', 'January'
+            categories: [
+                'January &amp; Entities', 'January', 'January', 'January',
+                'January', 'January', 'January', 'January', 'January',
+                'January', 'January', 'January'
             ]
         },
 
@@ -203,7 +205,14 @@ QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
     assert.strictEqual(
         Math.round(chart.xAxis[0].ticks[0].label.element.getBBox().width),
         Math.round(chart.xAxis[0].ticks[11].label.element.getBBox().width),
-        'All labels should have ellipsis and equal length'
+        'All labels should have ellipsis and equal length (#5968)'
+    );
+
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[0].label.element.querySelector('title').textContent,
+        'January & Entities',
+        'HTML entities should be unescaped in title elements (#7179)'
     );
 });
 
