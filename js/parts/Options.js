@@ -7,13 +7,12 @@
 import H from './Globals.js';
 import './Color.js';
 import './Utilities.js';
+import './Time.js';
+
 var color = H.color,
-	getTZOffset = H.getTZOffset,
 	isTouchDevice = H.isTouchDevice,
 	merge = H.merge,
-	pick = H.pick,
-	svg = H.svg,
-	win = H.win;
+	svg = H.svg;
 		
 /* ****************************************************************************
  * Handle the options                                                         *
@@ -2904,6 +2903,7 @@ H.defaultOptions = {
 		 * @default { "cursor": "pointer", "color": "#999999", "fontSize": "10px" }
 		 */
 		style: {
+
 			cursor: 'pointer',
 			color: '${palette.neutralColor40}',
 			fontSize: '9px'
@@ -2926,88 +2926,6 @@ H.defaultOptions = {
 	}
 };
 
-
-
-/**
- * Sets the getTimezoneOffset function. If the timezone option is set, a default
- * getTimezoneOffset function with that timezone is returned. If not, the
- * specified getTimezoneOffset function is returned. If neither are specified,
- * undefined is returned.
- * @return {function} a getTimezoneOffset function or undefined
- */
-function getTimezoneOffsetOption() {
-	var globalOptions = H.defaultOptions.global,
-		moment = win.moment;
-
-	if (globalOptions.timezone) {
-		if (!moment) {
-			// getTimezoneOffset-function stays undefined because it depends on
-			// Moment.js
-			H.error(25);
-			
-		} else {
-			return function (timestamp) {
-				return -moment.tz(
-					timestamp,
-					globalOptions.timezone
-				).utcOffset();
-			};
-		}
-	}
-
-	// If not timezone is set, look for the getTimezoneOffset callback
-	return globalOptions.useUTC && globalOptions.getTimezoneOffset;
-}
-
-/**
- * Set the time methods globally based on the useUTC option. Time method can be
- *   either local time or UTC (default). It is called internally on initiating
- *   Highcharts and after running `Highcharts.setOptions`.
- *
- * @private
- */
-function setTimeMethods() {
-	var globalOptions = H.defaultOptions.global,
-		Date,
-		useUTC = globalOptions.useUTC,
-		GET = useUTC ? 'getUTC' : 'get',
-		SET = useUTC ? 'setUTC' : 'set',
-		setters = ['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'],
-		getters = setters.concat(['Milliseconds', 'Seconds']),
-		n;
-
-	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
-	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
-	Date.hcGetTimezoneOffset = getTimezoneOffsetOption();
-	Date.hcHasTimeZone = !!(Date.hcTimezoneOffset || Date.hcGetTimezoneOffset);
-	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
-		var d;
-		if (useUTC) {
-			d = Date.UTC.apply(0, arguments);
-			d += getTZOffset(d);
-		} else {
-			d = new Date(
-				year,
-				month,
-				pick(date, 1),
-				pick(hours, 0),
-				pick(minutes, 0),
-				pick(seconds, 0)
-			).getTime();
-		}
-		return d;
-	};
-	
-	// Dynamically set setters and getters. Use for loop, H.each is not yet 
-	// overridden in oldIE.
-	for (n = 0; n < setters.length; n++) {
-		Date['hcGet' + setters[n]] = GET + setters[n];
-	}
-	for (n = 0; n < getters.length; n++) {
-		Date['hcSet' + getters[n]] = SET + getters[n];
-	}
-}
-
 /**
  * Merge the default options with custom options and return the new options
  * structure. Commonly used for defining reusable templates.
@@ -3024,8 +2942,8 @@ H.setOptions = function (options) {
 	// Copy in the default options
 	H.defaultOptions = merge(true, H.defaultOptions, options);
 	
-	// Apply UTC
-	setTimeMethods();
+	// Re-initiate time
+	H.time.init();
 
 	return H.defaultOptions;
 };
@@ -3042,5 +2960,25 @@ H.getOptions = function () {
 // Series defaults
 H.defaultPlotOptions = H.defaultOptions.plotOptions;
 
-// set the default time methods
-setTimeMethods();
+
+// Time utilities
+H.time = new H.Time();
+
+/**
+ * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
+ * human readable date string. The format is a subset of the formats for PHP's
+ * [strftime]{@link
+ * http://www.php.net/manual/en/function.strftime.php} function. Additional
+ * formats can be given in the {@link Highcharts.dateFormats} hook.
+ *
+ * @function #dateFormat
+ * @memberOf Highcharts
+ * @param {String} format - The desired format where various time
+ *        representations are prefixed with %.
+ * @param {Number} timestamp - The JavaScript timestamp.
+ * @param {Boolean} [capitalize=false] - Upper case first letter in the return.
+ * @returns {String} The formatted date.
+ */
+H.dateFormat = function (format, timestamp, capitalize) {
+	return H.time.dateFormat(format, timestamp, capitalize);
+};

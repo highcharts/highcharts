@@ -21,7 +21,6 @@ var addEvent = H.addEvent,
 	each = H.each,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
-	HCDate = H.Date,
 	isNumber = H.isNumber,
 	merge = H.merge,
 	pick = H.pick,
@@ -856,10 +855,11 @@ RangeSelector.prototype = {
 	 * @return {object} Returns min and max for the YTD
 	 */
 	getYTDExtremes: function (dataMax, dataMin, useUTC) {
-		var min,
-			now = new HCDate(dataMax),
-			year = now[HCDate.hcGetFullYear](),
-			startOfYear = useUTC ? HCDate.UTC(year, 0, 1) : +new HCDate(year, 0, 1); // eslint-disable-line new-cap
+		var time = H.time,
+			min,
+			now = new time.Date(dataMax),
+			year = now[time.getFullYear](),
+			startOfYear = useUTC ? time.Date.UTC(year, 0, 1) : +new time.Date(year, 0, 1); // eslint-disable-line new-cap
 		min = Math.max(dataMin || 0, startOfYear);
 		now = now.getTime();
 		return {

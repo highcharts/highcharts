@@ -57,7 +57,7 @@ QUnit.test('timezone', function (assert) {
     oct27Point = chart.series[0].data[3];
 
     assert.equal(
-        typeof Date.hcGetTimezoneOffset,
+        typeof Highcharts.time.getTimezoneOffset,
         'function',
         'timezone option is applied'
     );
@@ -134,7 +134,7 @@ QUnit.test('getTimezoneOffset', function (assert) {
     oct27Point = chart.series[0].data[3];
 
     assert.equal(
-        typeof Date.hcGetTimezoneOffset,
+        typeof Highcharts.time.getTimezoneOffset,
         'function',
         'getTimezoneOffset function is applied'
     );
