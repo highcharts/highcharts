@@ -499,7 +499,7 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
     lolexRunAndUninstall(clock);
 });
 
-QUnit.test('Chained animation', function (assert) {
+QUnit.test('Complete callback', function (assert) {
 
     var clock = lolexInstall();
 
@@ -522,16 +522,39 @@ QUnit.test('Chained animation', function (assert) {
                     { y: 300 },
                     { duration: 50 }
                 );
+
+                assert.strictEqual(
+                    this,
+                    circle,
+                    'The SVGElement should be the context of complete'
+                );
             },
             duration: 50
         });
 
+    setTimeout(function () {
+        assert.strictEqual(
+            circle.element.getAttribute('cy'),
+            '300',
+            'Chained animation has run (#7363)'
+        );
+
+
+        circle.animate({
+            y: 300
+        }, {
+            complete: function () {
+                assert.strictEqual(
+                    this,
+                    circle,
+                    'The SVGElement should be the context of complete when ' +
+                        'skipping animation to equal values (#7146)'
+                );
+            }
+        });
+    }, 150);
+
     // Run and reset animation
     lolexRunAndUninstall(clock);
 
-    assert.strictEqual(
-        circle.element.getAttribute('cy'),
-        '300',
-        'Chained animation has run (#7363)'
-    );
 });

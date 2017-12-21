@@ -112,7 +112,7 @@ function getJS() {
 }
 
 function getHTML($which) {
-	global $fsPath, $leftPath, $rightPath, $rightExporting, $leftExporting,
+	global $path, $fsPath, $leftPath, $rightPath, $rightExporting, $leftExporting,
 		$isUnitTest, $githubServer, $topDomain, $emulateKarma;
 	$bogus = md5('bogus');
 

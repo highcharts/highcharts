@@ -14,15 +14,17 @@ $(function () {
 
         chart.setSize(width, height, false);
 
-        assert.strictEqual(
+        assert.close(
             container.width(),
             width,
+            0.0001,
             "Proper width"
         );
 
-        assert.strictEqual(
+        assert.close(
             container.height(),
             height,
+            0.0001,
             "Proper height"
         );
     });

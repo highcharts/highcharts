@@ -31,9 +31,17 @@ QUnit.test('Ticks for a single point.', function (assert) {
     chart.yAxis[0].update({
         tickAmount: 10
     });
-
     assert.strictEqual(
-        chart.yAxis[0].min < 0 && chart.yAxis[0].max > 1,
+        chart.yAxis[0].min,
+        0,
+        'When softThreshold is true (by default), tick amount should not ' +
+        'extend the ticks below 0'
+    );
+
+
+    chart.series[0].points[0].update(10);
+    assert.strictEqual(
+        chart.yAxis[0].min < 7 && chart.yAxis[0].max > 14,
         true,
         'ticks added via tickAmount increase both min and max (#3965)'
     );

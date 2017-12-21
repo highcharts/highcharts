@@ -12,7 +12,7 @@ foreach($browsers as $browserKey) {
 		foreach ($results as $path => $sample) {
 			// echo "$browserKey, $path, $sample->diff<br>";
 			$range = array();
-			$range[] = $sample->diff;
+			$range[] = @$sample->diff;
 			@$compare[$path]->$browserKey = $sample->diff;
 			if (isset($sample->comment)) {
 				@$compare[$path]->comment = $sample->comment;

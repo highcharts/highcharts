@@ -36,6 +36,11 @@ if ($boostCanvas) {
 	);
 }
 
+$md = false;
+if (is_file("$fsPath/readme.md")) {
+	$md = file_get_contents("$fsPath/readme.md");
+}
+
 $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $html);
 
 
@@ -71,7 +76,7 @@ $js = ob_get_clean();
 
 
 // Old IE
-/*
+//*
 $html .= "
 <!--[if lt IE 9]>
 <script src='http://code.highcharts.$topDomain/modules/oldie.js'></script>
@@ -507,15 +512,29 @@ function getResources() {
 
 			<?php echo $html ?>
 			</div>
+
+			<?php if ($md) { ?>
+			<div class="description" id="description">
+			</div>
+			<script src="https://cdn.rawgit.com/showdownjs/showdown/1.8.5/dist/showdown.min.js"></script>
+			<script>
+				var converter = new showdown.Converter(),
+    				md = `<?php echo str_replace('`', '\`', $md) ?>`,
+    				html = converter.makeHtml(md);
+				document.getElementById('description').innerHTML = html;
+			</script>
+			
+			<?php } ?>
+
 			<script>
 			setUp();
 			<?php echo $js; ?>
 			</script>
-			<?php if (is_file("$path/test-notes.html")) { ?>
+			<?php if (is_file("$fsPath/test-notes.html")) { ?>
 			<section class="test-notes">
 				<header>Test notes</header>
 				<div class="test-notes-content">
-					<?php include("$path/test-notes.html"); ?>
+					<?php include("$fsPath/test-notes.html"); ?>
 				</div>
 			</section>
 			<?php } else { ?>

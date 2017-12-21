@@ -690,13 +690,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		titleId = 'highcharts-title-' + chart.index,
 		tableId = 'highcharts-data-table-' + chart.index,
 		hiddenSectionId = 'highcharts-information-region-' + chart.index,
-		chartTitle = options.title.text || 'Chart',
-		oldColumnHeaderFormatter = (
-			options.exporting &&
-			options.exporting.csv &&
-			options.exporting.csv.columnHeaderFormatter
-		),
-		topLevelColumns = [];
+		chartTitle = options.title.text || 'Chart';
 
 	// Add SVG title/desc tags
 	titleElement.textContent = htmlencode(chartTitle);
@@ -762,96 +756,13 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	// Add top-secret screen reader region
 	chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
-
-	/* Wrap table functionality from export-data */
-	/* TODO: Can't we just do this in export-data? */
-
-	// Keep track of columns
-	merge(true, options.exporting, {
-		csv: {
-			columnHeaderFormatter: function (item, key, keyLength) {
-				if (!item) {
-					return 'Category';
-				}
-				if (item instanceof H.Axis) {
-					return (item.options.title && item.options.title.text) ||
-						(item.isDatetimeAxis ? 'DateTime' : 'Category');
-				}
-				var prevCol = topLevelColumns[topLevelColumns.length - 1];
-				if (keyLength > 1) {
-					// We need multiple levels of column headers
-					// Populate a list of column headers to add in addition to
-					// the ones added by export-data
-					if ((prevCol && prevCol.text) !== item.name) {
-						topLevelColumns.push({
-							text: item.name,
-							span: keyLength
-						});
-					}
-				}
-				if (oldColumnHeaderFormatter) {
-					return oldColumnHeaderFormatter.call(
-						this,
-						item,
-						key,
-						keyLength
-					);
-				}
-				return keyLength > 1 ? key : item.name;
-			}
-		}
-	});
-
-	// Add ID and title/caption to table HTML
+	// Add ID and summary attr to table HTML
 	H.wrap(chart, 'getTable', function (proceed) {
 		return proceed.apply(this, Array.prototype.slice.call(arguments, 1))
 			.replace(
 				'<table>',
 				'<table id="' + tableId + '" summary="Table representation ' +
-					'of chart"><caption>' + chartTitle + '</caption>'
+					'of chart">'
 			);
-	});
-
-	// Add accessibility attributes and top level columns
-	H.wrap(chart, 'viewData', function (proceed) {
-		var divExists = this.dataTableDiv;
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-		if (!divExists) {
-			var table = doc.getElementById(tableId),
-				head = table.getElementsByTagName('thead')[0],
-				body = table.getElementsByTagName('tbody')[0],
-				firstRow = head.firstChild.children,
-				columnHeaderRow = '<tr><td></td>',
-				cell,
-				newCell;
-
-			// Make table focusable by script
-			table.setAttribute('tabindex', '-1');
-
-			// Create row headers
-			each(body.children, function (el) {
-				cell = el.firstChild;
-				newCell = doc.createElement('th');
-				newCell.setAttribute('scope', 'row');
-				newCell.innerHTML = cell.innerHTML;
-				cell.parentNode.replaceChild(newCell, cell);
-			});
-
-			// Set scope for column headers
-			each(firstRow, function (el) {
-				if (el.tagName === 'TH') {
-					el.setAttribute('scope', 'col');
-				}
-			});
-
-			// Add top level columns
-			if (topLevelColumns.length) {
-				each(topLevelColumns, function (col) {
-					columnHeaderRow += '<th scope="col" colspan="' + col.span +
-						'">' + col.text + '</th>';
-				});
-				head.insertAdjacentHTML('afterbegin', columnHeaderRow);
-			}
-		}
 	});
 });

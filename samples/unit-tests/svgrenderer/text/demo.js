@@ -184,7 +184,7 @@ QUnit.test('Dir rtl (#3482)', function (assert) {
     assert.close(
         label.text.element.getBBox().x,
         0,
-        1,
+        2,
         'Label sits nicely inside box'
     );
 

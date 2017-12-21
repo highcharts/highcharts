@@ -344,33 +344,16 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 								cls = attr(parentGroup.element, 'class');
 
 							// Common translate setter for X and Y on the HTML
-							// group. Using CSS transform instead of left and
-							// right prevents flickering in IE and Edge when 
-							// moving tooltip (#6957).
+							// group. Reverted the fix for #6957 du to
+							// positioning problems and offline export (#7254,
+							// #7280, #7529)
 							function translateSetter(value, key) {
 								parentGroup[key] = value;
 
-								// In IE and Edge, use translate because items
-								// would flicker below a HTML tooltip (#6957)
-								if (isMS) {
-									htmlGroupStyle[renderer.getTransformKey()] =
-										'translate(' + (
-											parentGroup.x ||
-											parentGroup.translateX
-										) + 'px,' + (
-											parentGroup.y ||
-											parentGroup.translateY
-										) + 'px)';
-
-								// Otherwise, use left and top. Using translate
-								// doesn't work well with offline export (#7254,
-								// #7280)
+								if (key === 'translateX') {
+									htmlGroupStyle.left = value + 'px';
 								} else {
-									if (key === 'translateX') {
-										htmlGroupStyle.left = value + 'px';
-									} else {
-										htmlGroupStyle.top = value + 'px';
-									}
+									htmlGroupStyle.top = value + 'px';
 								}
 								
 								parentGroup.doTransform = true;

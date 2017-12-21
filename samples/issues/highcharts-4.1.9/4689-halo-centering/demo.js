@@ -39,8 +39,8 @@ $(function () {
 
         function getCenter(box) {
             return [
-                (box.x + box.width / 2).toFixed(1),
-                (box.y + box.height / 2).toFixed(1)
+                (box.x + box.width / 2).toFixed(0),
+                (box.y + box.height / 2).toFixed(0)
             ].join(',');
         }
 

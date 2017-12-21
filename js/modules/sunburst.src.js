@@ -302,6 +302,13 @@ var sunburstOptions = {
 	 * structure.
 	 */
 	levelIsConstant: true,
+	/**
+	 * If a point is sliced, moved out from the center, how many pixels
+	 * should it be moved?.
+	 *
+	 * @since 6.0.4
+	 * @sample highcharts/plotoptions/sunburst-sliced Sliced sunburst
+	 */
 	slicedOffset: 10
 	/**
 	 * Set options on specific levels. Takes precedence over series options,
@@ -745,11 +752,13 @@ var sunburstPoint = {
  */
 
  /**
-  * Whether to display a slice offset from the center.
+  * Whether to display a slice offset from the center. When a sunburst point is 
+  * sliced, its children are also offset.
   *
   * @type {Boolean}
   * @default false
   * @since 6.0.4
+  * @sample highcharts/plotoptions/sunburst-sliced Sliced sunburst
   * @product highcharts
   * @apioption series.sunburst.data.sliced
   */

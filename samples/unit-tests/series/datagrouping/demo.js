@@ -177,3 +177,72 @@ QUnit.test('Data grouping and shoulder values (#4907)', function (assert) {
         'Preserve X positions for shoulder points'  // keyword: cropShoulder
     );
 });
+
+QUnit.test('Switch from grouped to non-grouped', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 600,
+            height: 250
+        },
+        rangeSelector: {
+            allButtonsEnabled: true,
+            buttons: [{
+                type: 'month',
+                count: 1,
+                text: 'Dayly',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['day', [1]]
+                    ]
+                }
+            }, {
+                text: 'Monthly',
+                type: 'month',
+                count: 12,
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['month', [1]]
+                    ]
+                }
+            }],
+            selected: 1
+        },
+        series: [{
+            name: 'AAPL',
+            data: (function () {
+                var arr = [];
+                var y = 0;
+                for (var x = Date.UTC(2017, 0, 1); x < Date.UTC(2018, 0, 1); x += 24 * 36e5) {
+                    arr.push([
+                        x,
+                        y++ % 14
+                    ]);
+                }
+                return arr;
+            }()),
+            type: 'column'
+        }],
+        navigator: {
+            enabled: false
+        },
+        scrollbar: {
+            enabled: false
+        }
+    });
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-series-0 rect').length,
+        12,
+        'Monthly columns'
+    );
+
+    chart.rangeSelector.clickButton(0);
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-series-0 rect').length,
+        32,
+        'Daily columns, monthlies should be removed (#7547)'
+    );
+
+});

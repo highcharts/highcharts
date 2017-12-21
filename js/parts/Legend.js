@@ -553,6 +553,24 @@ Highcharts.Legend.prototype = {
 	},
 
 	/**
+	 * Get a short, three letter string reflecting the alignment and layout.
+	 *
+	 * @private
+	 * @return {String} The alignment, empty string if floating
+	 */
+	getAlignment: function () {
+		var options = this.options;
+
+		// Use the first letter of each alignment option in order to detect
+		// the side. (#4189 - use charAt(x) notation instead of [x] for IE7)
+		return options.floating ? '' : (
+			options.align.charAt(0) +
+			options.verticalAlign.charAt(0) +
+			options.layout.charAt(0)
+		);
+	},
+
+	/**
 	 * Adjust the chart margins by reserving space for the legend on only one
 	 * side of the chart. If the position is set to a corner, top or bottom is
 	 * reserved for horizontal legends and left or right for vertical ones.
@@ -562,13 +580,9 @@ Highcharts.Legend.prototype = {
 	adjustMargins: function (margin, spacing) {
 		var chart = this.chart,
 			options = this.options,
-			// Use the first letter of each alignment option in order to detect
-			// the side. (#4189 - use charAt(x) notation instead of [x] for IE7)
-			alignment = options.align.charAt(0) +
-				options.verticalAlign.charAt(0) +
-				options.layout.charAt(0);
+			alignment = this.getAlignment();
 
-		if (!options.floating) {
+		if (alignment) {
 
 			each([
 				/(lth|ct|rth)/,
@@ -726,10 +740,10 @@ Highcharts.Legend.prototype = {
 		});
 
 		if (display) {
-
-			// If aligning to the top, adjust for the title (#7428)
+			// If aligning to the top and the layout is horizontal, adjust for
+			// the title (#7428)
 			alignTo = chart.spacingBox;
-			if (options.verticalAlign === 'top' && !options.floating) {
+			if (/(lth|ct|rth)/.test(legend.getAlignment())) {
 				alignTo = merge(alignTo, {
 					y: alignTo.y + chart.titleOffset +
 						chart.options.title.margin

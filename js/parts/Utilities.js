@@ -178,7 +178,7 @@ H.Fx.prototype = {
 		if (from === to) {
 			delete options.curAnim[this.prop];
 			if (options.complete && H.keys(options.curAnim).length === 0) {
-				options.complete();
+				options.complete.call(this.elem);
 			}
 		} else { // #7166
 			this.startTime = +new Date();

@@ -274,6 +274,15 @@ H.Tick.prototype = {
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
 			yOffset = labelOptions.y,
+
+			// Adjust for label alignment if we use reserveSpace: true (#5286)
+			labelOffsetCorrection = (
+				!horiz && !axis.reserveSpaceDefault ?
+					-axis.labelOffset * (
+						axis.labelAlign === 'center' ? 0.5 : 1
+					) :
+					0
+			),
 			line;
 
 		if (!defined(yOffset)) {
@@ -288,8 +297,15 @@ H.Tick.prototype = {
 			}
 		}
 
-		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
-			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
+		x = x +
+			labelOptions.x +
+			labelOffsetCorrection +
+			rotCorr.x -
+			(
+				tickmarkOffset && horiz ?
+					tickmarkOffset * transA * (reversed ? -1 : 1) :
+					0
+			);
 		y = y + yOffset - (tickmarkOffset && !horiz ?
 			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
 
