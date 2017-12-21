@@ -332,23 +332,24 @@ seriesType('waterfall', 'column', {
 			length = data.length,
 			lineWidth = this.graph.strokeWidth() + this.borderWidth,
 			normalizer = Math.round(lineWidth) % 2 / 2,
+			reversedXAxis = this.xAxis.reversed,
 			reversedYAxis = this.yAxis.reversed,
 			path = [],
 			prevArgs,
 			pointArgs,
 			i,
 			d;
-
+			
 		for (i = 1; i < length; i++) {
 			pointArgs = data[i].shapeArgs;
 			prevArgs = data[i - 1].shapeArgs;
 
 			d = [
 				'M',
-				prevArgs.x + prevArgs.width,
+				prevArgs.x + (reversedXAxis ? 0 : prevArgs.width),
 				prevArgs.y + data[i - 1].minPointLengthOffset + normalizer,
 				'L',
-				pointArgs.x,
+				pointArgs.x + (reversedXAxis ? prevArgs.width : 0),
 				prevArgs.y + data[i - 1].minPointLengthOffset + normalizer
 			];
 
