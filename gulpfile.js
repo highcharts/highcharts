@@ -997,8 +997,8 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
             reject(new Error(message.noSeries));
         }
         generate(json, output, onlyBuildCurrent, {
-          platform: 'JS',
-          products: { highcharts: true, highstock: true, highmaps: true }
+            platform: 'JS',
+            products: { highcharts: true, highstock: true, highmaps: true }
         }, () => {
             console.log(message.success);
             resolve(message.success);
@@ -1181,11 +1181,11 @@ const uploadFiles = (params) => {
             if (isString(from) && isString(to)) {
                 const content = getFile(from);
                 if (isString(content)) {
-                  const fileType = from.split('.').pop();
-                  filePromise = storage.push(cdn, to, content, mimeType[fileType])
+                    const fileType = from.split('.').pop();
+                    filePromise = storage.push(cdn, to, content, mimeType[fileType])
                       .then(() => isFunction(callback) && callback());
                 } else {
-                  filePromise = Promise.reject(new Error('Path is not a file: ' + from));
+                    filePromise = Promise.reject(new Error('Path is not a file: ' + from));
                 }
             } else {
                 filePromise = Promise.reject(
@@ -1312,7 +1312,9 @@ const startServer = () => {
                 res.writeHead(200, { 'Content-Type': mimes.html });
             } else {
                 file = path.substr(path.lastIndexOf('/') + 1);
-                res.writeHead(200, { 'Content-Type': mimes[path.substr(ti + 1)] });
+                res.writeHead(200, {
+                    'Content-Type': mimes[path.substr(ti + 1)] || mimes.html
+                });
             }
 
             let ext = file.substr(file.lastIndexOf('.') + 1);
