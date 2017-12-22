@@ -5,24 +5,60 @@
  */
 /* eslint max-len: ["warn", { "ignoreUrls": true}] */
 'use strict';
-import H from './Globals.js';
+import Highcharts from './Globals.js';
 
-var extend = H.extend,
+var H = Highcharts,
+
 	merge = H.merge,
 	pick = H.pick,
 	win = H.win;
 
 /**
- * The Time class.
+ * The Time class. Time settings are applied in general for each page using
+ * `Highcharts.setOptions`, or individually for each Chart item through the
+ * [time](https://api.highcharts.com/highcharts/time) options set.
  *
- * @todo for #5168
- * - Go over doclets, review class reference
+ * The Time object is available from
+ * [Chart.time](http://api.highcharts.com/class-reference/Highcharts.Chart#.time),
+ * which refers to  `Highcharts.time` if no individual time settings are
+ * applied.
+ *
+ * @example
+ * // Apply time settings globally
+ * Highcharts.setOptions({
+ *     time: {
+ *         timezone: 'Europe/London'
+ *     }
+ * });
+ * 
+ * // Apply time settings by instance
+ * var chart = Highcharts.chart('container', {
+ *     time: {
+ *         timezone: 'America/New_York'
+ *     },
+ *     series: [{
+ *         data: [1, 4, 3, 5]
+ *     }]
+ * });
+ *
+ * // Use the Time object
+ * console.log(
+ * 	   'Current time in New York',
+ *	    chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
+ * );
+ *
+ * @param  chart {Chart}
+ *         The chart instance. The `Time` instance reads its config options from
+ *         [chart.options.time](/highcharts/time). If omitted, it reads from
+ *         `Highcharts.defaultOptions.time`.
+ * @since  6.0.5
+ * @class
  */
-var Time = H.Time = function (chart) {
+Highcharts.Time = function (chart) {
 	this.init(chart);
 };
 
-extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
+Highcharts.Time.prototype = {
 
 	init: function (chart) {
 		this.chart = chart;
@@ -43,14 +79,30 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 	 * 
 	 * The common use case is that all charts in the same Highcharts object
 	 * share the same time settings, in which case the global settings are set
-	 * using `setOptions`:
+	 * using `setOptions`.
 	 * 
 	 * ```js
+	 * // Apply time settings globally
 	 * Highcharts.setOptions({
 	 *     time: {
 	 *         timezone: 'Europe/London'
 	 *     }
 	 * });
+	 * // Apply time settings by instance
+	 * var chart = Highcharts.chart('container', {
+	 *     time: {
+	 *         timezone: 'America/New_York'
+	 *     },
+	 *     series: [{
+	 *         data: [1, 4, 3, 5]
+	 *     }]
+	 * });
+	 *
+	 * // Use the Time object
+	 * console.log(
+	 * 	   'Current time in New York',
+	 *	    chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
+	 * );
 	 * ```
 	 *
 	 * Since v6.0.5, the time options were moved from the `global` obect to the
@@ -175,6 +227,8 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 		 * Get the time zone offset based on the current timezone information as
 		 * set in the global options.
 		 *
+		 * @function #getTimezoneOffset
+		 * @memberOf Highcharts.Time
 		 * @param  {Number} timestamp
 		 *         The JavaScript timestamp to inspect.
 		 * @return {Number}
@@ -248,7 +302,8 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 	 * a `getTimezoneOffset` option is defined, it is returned. If neither are
 	 * specified, the function using the `timezoneOffset` option or 0 offset is
 	 * returned.
-	 * 
+	 *
+	 * @private
 	 * @return {Function} A getTimezoneOffset function
 	 */
 	timezoneOffsetFunction: function () {
@@ -286,9 +341,20 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 	},
 
 	/**
-	 * The dateFormat function. `Highcharts.dateFormat` redirects here.
+	 * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970)
+	 * into a human readable date string. The format is a subset of the formats
+	 * for PHP's [strftime](http://www.php.net/manual/en/function.strftime.php)
+	 * function. Additional formats can be given in the
+	 * {@link Highcharts.dateFormats} hook.
 	 *
-	 * @private
+	 * @param {String} format
+	 *        The desired format where various time
+	 *        representations are prefixed with %.
+	 * @param {Number} timestamp
+	 *        The JavaScript timestamp.
+	 * @param {Boolean} [capitalize=false]
+	 *        Upper case first letter in the return.
+	 * @returns {String} The formatted date.
 	 */
 	dateFormat: function (format, timestamp, capitalize) {
 		if (!H.defined(timestamp) || isNaN(timestamp)) {
@@ -402,5 +468,5 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 			format;
 	}
 
-}); // end of Time
+}; // end of Time
 
