@@ -1550,7 +1550,8 @@ window.onload = function () {
                 alignTicks: false,
                 events: {
                     load: function () {
-                        this.container.addEventListener('mousemove', Highcharts.Annotation.arrow.onContainerMouseMove.bind(this));
+                        this.onContainerMouseMove = Highcharts.Annotation.arrow.onContainerMouseMove.bind(this);
+                        this.container.addEventListener('mousemove', this.onContainerMouseMove);
                     },
                     click: function (e) {
                         var annotation = Highcharts.Annotation[this.annotating];
@@ -1560,7 +1561,7 @@ window.onload = function () {
                         }
                     },
                     destroy: function () {
-                        this.container.removeEventListener('mousemove', Highcharts.Annotation.arrow.onContainerMouseMove.bind(this));
+                        this.container.removeEventListener('mousemove', this.onContainerMouseMove);
                     }
                 }
             },
