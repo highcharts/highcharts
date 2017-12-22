@@ -549,7 +549,9 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	// Show the label
 	value = snap ? point[this.isXAxis ? 'x' : 'y'] : this.toValue(horiz ? e.chartX : e.chartY);
 	crossLabel.attr({
-		text: formatOption ? format(formatOption, { value: value }) : options.formatter.call(this, value),
+		text: formatOption ?
+			format(formatOption, { value: value }, chart.time) :
+			options.formatter.call(this, value),
 		x: posx,
 		y: posy,
 		visibility: 'visible'

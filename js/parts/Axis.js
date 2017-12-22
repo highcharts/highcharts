@@ -2049,6 +2049,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	defaultLabelFormatter: function () {
 		var axis = this.axis,
 			value = this.value,
+			time = axis.chart.time,
 			categories = axis.categories,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
 			lang = defaultOptions.lang,
@@ -2066,13 +2067,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				axis.tickInterval;
 
 		if (formatOption) {
-			ret = format(formatOption, this);
+			ret = format(formatOption, this, time);
 
 		} else if (categories) {
 			ret = value;
 
 		} else if (dateTimeLabelFormat) { // datetime axis
-			ret = H.dateFormat(dateTimeLabelFormat, value);
+			ret = time.dateFormat(dateTimeLabelFormat, value);
 
 		} else if (i && numericSymbolDetector >= 1000) {
 			// Decide whether we should add a numeric symbol like k (thousands)

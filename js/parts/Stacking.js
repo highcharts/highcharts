@@ -79,10 +79,11 @@ H.StackItem.prototype = {
 	 * Renders the stack total label and adds it to the stack label group.
 	 */
 	render: function (group) {
-		var options = this.options,
+		var chart = this.axis.chart,
+			options = this.options,
 			formatOption = options.format,
 			str = formatOption ?
-				format(formatOption, this) :
+				format(formatOption, this, chart.time) :
 				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden
@@ -92,7 +93,7 @@ H.StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, null, null, options.useHTML)
+				chart.renderer.text(str, null, null, options.useHTML)
 					.css(options.style)
 					.attr({
 						align: this.textAlign,

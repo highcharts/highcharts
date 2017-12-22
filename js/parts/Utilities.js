@@ -429,25 +429,6 @@ H.Fx.prototype.strokeSetter = function () {
 	);
 };
 
-/**
- * Utility function to extend an object with the members of another.
- *
- * @function #extend
- * @memberOf Highcharts
- * @param {Object} a - The object to be extended.
- * @param {Object} b - The object to add to the first one.
- * @returns {Object} Object a, the original object.
- */
-H.extend = function (a, b) {
-	var n;
-	if (!a) {
-		a = {};
-	}
-	for (n in b) {
-		a[n] = b[n];
-	}
-	return a;
-};
 
 /**
  * Utility function to deep merge two or more objects and return a third object.
@@ -702,6 +683,27 @@ H.syncTimeout = function (fn, delay, context) {
 
 
 /**
+ * Utility function to extend an object with the members of another.
+ *
+ * @function #extend
+ * @memberOf Highcharts
+ * @param {Object} a - The object to be extended.
+ * @param {Object} b - The object to add to the first one.
+ * @returns {Object} Object a, the original object.
+ */
+H.extend = function (a, b) {
+	var n;
+	if (!a) {
+		a = {};
+	}
+	for (n in b) {
+		a[n] = b[n];
+	}
+	return a;
+};
+
+
+/**
  * Return the first value that is not null or undefined.
  *
  * @function #pick
@@ -875,143 +877,7 @@ H.wrap = function (obj, method, func) {
 	};
 };
 
-/**
- * Get the time zone offset based on the current timezone information as set in
- * the global options.
- *
- * @function #getTZOffset
- * @memberOf Highcharts
- * @param  {Number} timestamp - The JavaScript timestamp to inspect.
- * @return {Number} - The timezone offset in minutes compared to UTC.
- */
-H.getTZOffset = function (timestamp) {
-	var d = H.Date;
-	return ((d.hcGetTimezoneOffset && d.hcGetTimezoneOffset(timestamp)) ||
-		d.hcTimezoneOffset || 0) * 60000;
-};
 
-/**
- * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
- * human readable date string. The format is a subset of the formats for PHP's
- * [strftime]{@link
- * http://www.php.net/manual/en/function.strftime.php} function. Additional
- * formats can be given in the {@link Highcharts.dateFormats} hook.
- *
- * @function #dateFormat
- * @memberOf Highcharts
- * @param {String} format - The desired format where various time
- *        representations are prefixed with %.
- * @param {Number} timestamp - The JavaScript timestamp.
- * @param {Boolean} [capitalize=false] - Upper case first letter in the return.
- * @returns {String} The formatted date.
- */
-H.dateFormat = function (format, timestamp, capitalize) {
-	if (!H.defined(timestamp) || isNaN(timestamp)) {
-		return H.defaultOptions.lang.invalidDate || '';
-	}
-	format = H.pick(format, '%Y-%m-%d %H:%M:%S');
-
-	var D = H.Date,
-		date = new D(timestamp - H.getTZOffset(timestamp)),
-		// get the basic time values
-		hours = date[D.hcGetHours](),
-		day = date[D.hcGetDay](),
-		dayOfMonth = date[D.hcGetDate](),
-		month = date[D.hcGetMonth](),
-		fullYear = date[D.hcGetFullYear](),
-		lang = H.defaultOptions.lang,
-		langWeekdays = lang.weekdays,
-		shortWeekdays = lang.shortWeekdays,
-		pad = H.pad,
-
-		// List all format keys. Custom formats can be added from the outside. 
-		replacements = H.extend(
-			{
-
-				// Day
-				// Short weekday, like 'Mon'
-				'a': shortWeekdays ?
-					shortWeekdays[day] :
-					langWeekdays[day].substr(0, 3),
-				// Long weekday, like 'Monday'
-				'A': langWeekdays[day],
-				// Two digit day of the month, 01 to 31
-				'd': pad(dayOfMonth),
-				// Day of the month, 1 through 31
-				'e': pad(dayOfMonth, 2, ' '),
-				'w': day,
-
-				// Week (none implemented)
-				// 'W': weekNumber(),
-
-				// Month
-				// Short month, like 'Jan'
-				'b': lang.shortMonths[month],
-				// Long month, like 'January'
-				'B': lang.months[month],
-				// Two digit month number, 01 through 12
-				'm': pad(month + 1),
-
-				// Year
-				// Two digits year, like 09 for 2009
-				'y': fullYear.toString().substr(2, 2),
-				// Four digits year, like 2009
-				'Y': fullYear,
-
-				// Time
-				// Two digits hours in 24h format, 00 through 23
-				'H': pad(hours),
-				// Hours in 24h format, 0 through 23
-				'k': hours,
-				// Two digits hours in 12h format, 00 through 11
-				'I': pad((hours % 12) || 12),
-				// Hours in 12h format, 1 through 12
-				'l': (hours % 12) || 12,
-				// Two digits minutes, 00 through 59
-				'M': pad(date[D.hcGetMinutes]()),
-				// Upper case AM or PM
-				'p': hours < 12 ? 'AM' : 'PM',
-				// Lower case AM or PM
-				'P': hours < 12 ? 'am' : 'pm',
-				// Two digits seconds, 00 through  59
-				'S': pad(date.getSeconds()),
-				// Milliseconds (naming from Ruby)
-				'L': pad(Math.round(timestamp % 1000), 3)
-			},
-			
-			/**
-			 * A hook for defining additional date format specifiers. New
-			 * specifiers are defined as key-value pairs by using the specifier
-			 * as key, and a function which takes the timestamp as value. This
-			 * function returns the formatted portion of the date.
-			 *
-			 * @type {Object}
-			 * @name dateFormats
-			 * @memberOf Highcharts
-			 * @sample highcharts/global/dateformats/ Adding support for week
-			 * number
-			 */
-			H.dateFormats
-		);
-
-
-	// Do the replaces
-	H.objectEach(replacements, function (val, key) {
-		// Regex would do it in one line, but this is faster
-		while (format.indexOf('%' + key) !== -1) {
-			format = format.replace(
-				'%' + key,
-				typeof val === 'function' ? val(timestamp) : val
-			);
-		}
-		
-	});
-
-	// Optionally capitalize the string and return
-	return capitalize ?
-		format.substr(0, 1).toUpperCase() + format.substr(1) :
-		format;
-};
 
 /**
  * Format a single variable. Similar to sprintf, without the % prefix.
@@ -1023,9 +889,13 @@ H.dateFormat = function (format, timestamp, capitalize) {
  * @memberOf Highcharts
  * @param {String} format The format string.
  * @param {*} val The value.
+ * @param {Time}   [time]
+ *        A `Time` instance that determines the date formatting, for example for
+ *        applying time zone corrections to the formatted date.
+ 
  * @returns {String} The formatted representation of the value.
  */
-H.formatSingle = function (format, val) {
+H.formatSingle = function (format, val, time) {
 	var floatRegex = /f$/,
 		decRegex = /\.([0-9])/,
 		lang = H.defaultOptions.lang,
@@ -1043,7 +913,7 @@ H.formatSingle = function (format, val) {
 			);
 		}
 	} else {
-		val = H.dateFormat(format, val);
+		val = (time || H.time).dateFormat(format, val);
 	}
 	return val;
 };
@@ -1054,9 +924,14 @@ H.formatSingle = function (format, val) {
  *
  * @function #format
  * @memberOf Highcharts
- * @param {String} str The string to format.
- * @param {Object} ctx The context, a collection of key-value pairs where each
- *        key is replaced by its value.
+ * @param {String} str
+ *        The string to format.
+ * @param {Object} ctx
+ *        The context, a collection of key-value pairs where each key is
+ *        replaced by its value.
+ * @param {Time}   [time]
+ *        A `Time` instance that determines the date formatting, for example for
+ *        applying time zone corrections to the formatted date.
  * @returns {String} The formatted string.
  *
  * @example
@@ -1066,7 +941,7 @@ H.formatSingle = function (format, val) {
  * );
  * // => The red fox was 3.14 feet long
  */
-H.format = function (str, ctx) {
+H.format = function (str, ctx, time) {
 	var splitter = '{',
 		isInside = false,
 		segment,
@@ -1101,7 +976,7 @@ H.format = function (str, ctx) {
 
 			// Format the replacement
 			if (valueAndFormat.length) {
-				val = H.formatSingle(valueAndFormat.join(':'), val);
+				val = H.formatSingle(valueAndFormat.join(':'), val, time);
 			}
 
 			// Push the result and advance the cursor

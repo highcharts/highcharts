@@ -219,8 +219,18 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		 * @type Object
 		 */
 
+		/**
+		 * The `Time` object associated with the chart. Since v6.0.5, time
+		 * settings can be applied individually for each chart. If no individual
+		 * settings apply, the `Time` object is shared by all instances.
+		 *
+		 * @memberof Highcharts.Chart
+		 * @name time
+		 * @type Highcharts.Time
+		 */
+		this.time = userOptions.time ? new H.Time(this) : H.time;
 
-
+		
 		this.hasCartesianSeries = optionsChart.showAxes;
 		
 		var chart = this;

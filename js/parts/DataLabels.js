@@ -141,6 +141,7 @@ H.distribute = function (boxes, len) {
  */
 Series.prototype.drawDataLabels = function () {
 	var series = this,
+		chart = series.chart,
 		seriesOptions = series.options,
 		options = seriesOptions.dataLabels,
 		points = series.points,
@@ -150,7 +151,7 @@ Series.prototype.drawDataLabels = function () {
 		str,
 		dataLabelsGroup,
 		defer = pick(options.defer, !!seriesOptions.animation),
-		renderer = series.chart.renderer;
+		renderer = chart.renderer;
 
 	/*
 	 * Handle the dataLabels.filter option.
@@ -246,7 +247,7 @@ Series.prototype.drawDataLabels = function () {
 				);
 
 				str = defined(formatString) ?
-					format(formatString, labelConfig) :
+					format(formatString, labelConfig, chart.time) :
 					(
 						options[point.formatPrefix + 'Formatter'] ||
 						options.formatter

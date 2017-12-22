@@ -15,7 +15,6 @@ var addEvent = H.addEvent,
 	arrayMax = H.arrayMax,
 	arrayMin = H.arrayMin,
 	correctFloat = H.correctFloat,
-	Date = H.Date,
 	defaultOptions = H.defaultOptions,
 	defaultPlotOptions = H.defaultPlotOptions,
 	defined = H.defined,
@@ -2495,7 +2494,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			date,
 			pointInterval,
 			pointIntervalUnit = options.pointIntervalUnit,
-			dstCrossover = 0;
+			dstCrossover = 0,
+			time = this.chart.time;
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
 
@@ -2507,24 +2507,27 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		// Added code for pointInterval strings
 		if (pointIntervalUnit) {
-			date = new Date(xIncrement);
+			date = new time.Date(xIncrement);
 
 			if (pointIntervalUnit === 'day') {
-				date = +date[Date.hcSetDate](
-					date[Date.hcGetDate]() + pointInterval
+				date = +date[time.setDate](
+					date[time.getDate]() + pointInterval
 				);
 			} else if (pointIntervalUnit === 'month') {
-				date = +date[Date.hcSetMonth](
-					date[Date.hcGetMonth]() + pointInterval
+				date = +date[time.setMonth](
+					date[time.getMonth]() + pointInterval
 				);
 			} else if (pointIntervalUnit === 'year') {
-				date = +date[Date.hcSetFullYear](
-					date[Date.hcGetFullYear]() + pointInterval
+				date = +date[time.setFullYear](
+					date[time.getFullYear]() + pointInterval
 				);
 			}
 
-			if (Date.hcHasTimeZone) {
-				dstCrossover = H.getTZOffset(date) - H.getTZOffset(xIncrement);
+			if (time.variableTimezone) {
+				dstCrossover = (
+					time.getTimezoneOffset(date) -
+					time.getTimezoneOffset(xIncrement)
+				);
 			}
 			pointInterval = date - xIncrement + dstCrossover;
 
