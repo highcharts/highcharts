@@ -15,8 +15,6 @@ var extend = H.extend,
  * The Time class.
  *
  * @todo for #5168
- * - Search for direct access to time options in the code. For example, acess
- *   to defaultOptions.global.useUTC should be replaced with H.time.useUTC
  * - Implement time options on chart level
  * - Go over doclets, review class reference
  * - Mark global object time options deprecated
