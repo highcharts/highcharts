@@ -43,10 +43,8 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 	 */
 	update: function (options) {
 		var useUTC = options.useUTC,
-			GET = useUTC ? 'getUTC' : 'get',
-			SET = useUTC ? 'setUTC' : 'set',
-			setters = ['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'],
-			getters = setters.concat(['Milliseconds', 'Seconds']),
+			getters = ['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'],
+			setters = getters.concat(['Milliseconds', 'Seconds']),
 			n;
 
 		// Allow using a different Date class
@@ -57,13 +55,14 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 		this.getTimezoneOffset = this.getTimezoneOffsetOption();
 		this.hasTimeZone = !!(this.timezoneOffset || this.getTimezoneOffset);
 
-		// Dynamically set setters and getters. Use for loop, H.each is not yet 
-		// overridden in oldIE.
-		for (n = 0; n < setters.length; n++) {
-			this['get' + setters[n]] = GET + setters[n];
-		}
+		// Dynamically set setters and getters. Sets strings pointing to the
+		// appropriate Date function to use depending on useUTC. Use `for` loop,
+		// H.each is not yet overridden in oldIE.
 		for (n = 0; n < getters.length; n++) {
-			this['set' + getters[n]] = SET + getters[n];
+			this['get' + getters[n]] = (useUTC ? 'getUTC' : 'get') + getters[n];
+		}
+		for (n = 0; n < setters.length; n++) {
+			this['set' + setters[n]] = (useUTC ? 'setUTC' : 'set') + setters[n];
 		}
 	},
 
