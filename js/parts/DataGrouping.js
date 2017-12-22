@@ -660,6 +660,7 @@ wrap(Point.prototype, 'update', function (proceed) {
  */
 wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, labelConfig, isFooter) {
 	var tooltip = this,
+		time = this.chart.time,
 		series = labelConfig.series,
 		options = series.options,
 		tooltipOptions = series.tooltipOptions,
@@ -667,7 +668,6 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 		xDateFormat = tooltipOptions.xDateFormat,
 		xDateFormatEnd,
 		xAxis = series.xAxis,
-		dateFormat = H.dateFormat,
 		currentDataGrouping,
 		dateTimeLabelFormats,
 		labelFormats,
@@ -697,16 +697,19 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 		}
 
 		// now format the key
-		formattedKey = dateFormat(xDateFormat, labelConfig.key);
+		formattedKey = time.dateFormat(xDateFormat, labelConfig.key);
 		if (xDateFormatEnd) {
-			formattedKey += dateFormat(xDateFormatEnd, labelConfig.key + currentDataGrouping.totalRange - 1);
+			formattedKey += time.dateFormat(
+				xDateFormatEnd,
+				labelConfig.key + currentDataGrouping.totalRange - 1
+			);
 		}
 
 		// return the replaced format
 		return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
 			point: extend(labelConfig.point, { key: formattedKey }),
 			series: series
-		});
+		}, time);
 	
 	}
 

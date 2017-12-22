@@ -12,7 +12,6 @@ var addEvent = H.addEvent,
 	Chart = H.Chart,
 	css = H.css,
 	createElement = H.createElement,
-	dateFormat = H.dateFormat,
 	defaultOptions = H.defaultOptions,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
@@ -352,7 +351,7 @@ RangeSelector.prototype = {
 				ytdExtremes = rangeSelector.getYTDExtremes(
 					dataMax,
 					dataMin,
-					H.time.useUTC
+					chart.time.useUTC
 				);
 				newMin = rangeMin = ytdExtremes.min;
 				newMax = ytdExtremes.max;
@@ -517,7 +516,7 @@ RangeSelector.prototype = {
 			ytdExtremes = rangeSelector.getYTDExtremes(
 				dataMax,
 				dataMin,
-				H.time.useUTC
+				chart.time.useUTC
 			),
 			ytdMin = ytdExtremes.min,
 			ytdMax = ytdExtremes.max,
@@ -639,23 +638,24 @@ RangeSelector.prototype = {
 	/**
 	 * Set the internal and displayed value of a HTML input for the dates
 	 * @param {String} name
-	 * @param {Number} time
+	 * @param {Number} inputTime
 	 */
-	setInputValue: function (name, time) {
+	setInputValue: function (name, inputTime) {
 		var options = this.chart.options.rangeSelector,
+			time = this.chart.time,
 			input = this[name + 'Input'];
 
-		if (defined(time)) {
+		if (defined(inputTime)) {
 			input.previousValue = input.HCTime;
-			input.HCTime = time;
+			input.HCTime = inputTime;
 		}
 
-		input.value = dateFormat(
+		input.value = time.dateFormat(
 			options.inputEditDateFormat || '%Y-%m-%d',
 			input.HCTime
 		);
 		this[name + 'DateBox'].attr({
-			text: dateFormat(
+			text: time.dateFormat(
 				options.inputDateFormat || '%b %e, %Y',
 				input.HCTime
 			)
@@ -721,7 +721,7 @@ RangeSelector.prototype = {
 				if (isNumber(value)) {
 
 					// Correct for timezone offset (#433)
-					if (!H.time.useUTC) {
+					if (!chart.time.useUTC) {
 						value = value + new Date().getTimezoneOffset() * 60 * 1000;
 					}
 
@@ -858,7 +858,7 @@ RangeSelector.prototype = {
 	 * @return {object} Returns min and max for the YTD
 	 */
 	getYTDExtremes: function (dataMax, dataMin, useUTC) {
-		var time = H.time,
+		var time = this.chart.time,
 			min,
 			now = new time.Date(dataMax),
 			year = now[time.getFullYear](),

@@ -7,8 +7,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-var dateFormat = H.dateFormat,
-	each = H.each,
+var each = H.each,
 	isObject = H.isObject,
 	pick = H.pick,
 	wrap = H.wrap,
@@ -181,7 +180,7 @@ H.dateFormats = {
 	},
 	// First letter of the day of the week, e.g. 'M' for 'Monday'.
 	E: function (timestamp) {
-		return dateFormat('%a', timestamp, true).charAt(0);
+		return this.dateFormat('%a', timestamp, true).charAt(0);
 	}
 };
 

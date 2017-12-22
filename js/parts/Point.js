@@ -365,7 +365,7 @@ Highcharts.Point.prototype = {
 		return format(pointFormat, {
 			point: this,
 			series: this.series
-		});
+		}, series.chart.time);
 	},
 
 	/**

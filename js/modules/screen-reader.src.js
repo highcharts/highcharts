@@ -19,7 +19,6 @@ var win = H.win,
 	each = H.each,
 	erase = H.erase,
 	addEvent = H.addEvent,
-	dateFormat = H.dateFormat,
 	merge = H.merge,
 	// CSS style to hide element from visual users while still exposing it to
 	// screen readers
@@ -412,11 +411,15 @@ H.Point.prototype.buildPointInfoString = function () {
 		dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
 		timeDesc =
 			dateTimePoint &&
-			dateFormat(
+			series.chart.time.dateFormat.call(
 				a11yOptions.pointDateFormatter &&
 				a11yOptions.pointDateFormatter(point) ||
 				a11yOptions.pointDateFormat ||
-				H.Tooltip.prototype.getXDateFormat(
+				H.Tooltip.prototype.getXDateFormat.call(
+					{ 
+						getDateFormat: H.Tooltip.prototype.getDateFormat,
+						chart: series.chart
+					},
 					point,
 					series.chart.options.tooltip,
 					series.xAxis
