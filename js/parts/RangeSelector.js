@@ -14,7 +14,6 @@ var addEvent = H.addEvent,
 	createElement = H.createElement,
 	dateFormat = H.dateFormat,
 	defaultOptions = H.defaultOptions,
-	useUTC = defaultOptions.global.useUTC,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
 	discardElement = H.discardElement,
@@ -350,7 +349,11 @@ RangeSelector.prototype = {
 					});
 					redraw = false;
 				}
-				ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC);
+				ytdExtremes = rangeSelector.getYTDExtremes(
+					dataMax,
+					dataMin,
+					H.time.useUTC
+				);
 				newMin = rangeMin = ytdExtremes.min;
 				newMax = ytdExtremes.max;
 
@@ -514,7 +517,7 @@ RangeSelector.prototype = {
 			ytdExtremes = rangeSelector.getYTDExtremes(
 				dataMax,
 				dataMin,
-				useUTC
+				H.time.useUTC
 			),
 			ytdMin = ytdExtremes.min,
 			ytdMax = ytdExtremes.max,
@@ -718,7 +721,7 @@ RangeSelector.prototype = {
 				if (isNumber(value)) {
 
 					// Correct for timezone offset (#433)
-					if (!useUTC) {
+					if (!H.time.useUTC) {
 						value = value + new Date().getTimezoneOffset() * 60 * 1000;
 					}
 
