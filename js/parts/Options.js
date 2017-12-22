@@ -2943,6 +2943,11 @@ H.time = new H.Time();
  * http://www.php.net/manual/en/function.strftime.php} function. Additional
  * formats can be given in the {@link Highcharts.dateFormats} hook.
  *
+ * Since v6.0.5, all internal dates are formatted through the
+ * [Chart.time](Chart#time) instance to respect chart-level time settings. The
+ * `Highcharts.dateFormat` function only reflects global time settings set with
+ * `setOptions`.
+ *
  * @function #dateFormat
  * @memberOf Highcharts
  * @param {String} format - The desired format where various time
