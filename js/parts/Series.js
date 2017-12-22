@@ -2523,9 +2523,11 @@ H.Series = H.seriesType('line', null, { // base series options
 				);
 			}
 
-			if (time.hasTimeZone) {
-				dstCrossover =
-					time.getTZOffset(date) - time.getTZOffset(xIncrement);
+			if (time.variableTimezone) {
+				dstCrossover = (
+					time.getTimezoneOffset(date) -
+					time.getTimezoneOffset(xIncrement)
+				);
 			}
 			pointInterval = date - xIncrement + dstCrossover;
 

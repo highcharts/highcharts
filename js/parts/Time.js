@@ -15,7 +15,6 @@ var extend = H.extend,
  * The Time class.
  *
  * @todo for #5168
- * - Review function naming and structure
  * - Search for direct access to time options in the code. For example, acess
  *   to defaultOptions.global.useUTC should be replaced with H.time.useUTC
  * - Implement time options on chart level
@@ -52,8 +51,26 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 
 		this.useUTC = useUTC;
 		this.timezoneOffset = useUTC && options.timezoneOffset;
-		this.getTimezoneOffset = this.getTimezoneOffsetOption();
-		this.hasTimeZone = !!(this.timezoneOffset || this.getTimezoneOffset);
+
+		/**
+		 * Get the time zone offset based on the current timezone information as
+		 * set in the global options.
+		 *
+		 * @param  {Number} timestamp
+		 *         The JavaScript timestamp to inspect.
+		 * @return {Number}
+		 *         The timezone offset in minutes compared to UTC.
+		 */
+		this.getTimezoneOffset = this.timezoneOffsetFunction();
+
+		/*
+		 * The time object has options allowing for variable time zones, meaning
+		 * the axis ticks or series data needs to consider this.
+		 */
+		this.variableTimezone = !!(
+			options.getTimezoneOffset ||
+			options.timezone
+		);
 
 		// Dynamically set setters and getters. Sets strings pointing to the
 		// appropriate Date function to use depending on useUTC. Use `for` loop,
@@ -91,7 +108,7 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 		var d;
 		if (this.useUTC) {
 			d = this.Date.UTC.apply(0, arguments);
-			d += this.getTZOffset(d);
+			d += this.getTimezoneOffset(d);
 		} else {
 			d = new this.Date(
 				year,
@@ -106,33 +123,17 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 	},
 
 	/**
-	 * Get the time zone offset based on the current timezone information as set
-	 * in the global options.
-	 *
-	 * @param  {Number} timestamp
-	 *         The JavaScript timestamp to inspect.
-	 * @return {Number}
-	 *         The timezone offset in minutes compared to UTC.
-	 */
-	getTZOffset: function (timestamp) {
-		return (
-			(
-				this.getTimezoneOffset &&
-				this.getTimezoneOffset(timestamp)
-			) ||
-			this.timezoneOffset || 0
-		) * 60000;
-	},
-
-	/**
-	 * Sets the getTimezoneOffset function. If the timezone option is set, a
+	 * Sets the getTimezoneOffset function. If the `timezone` option is set, a
 	 * default getTimezoneOffset function with that timezone is returned. If
-	 * not, the specified getTimezoneOffset function is returned. If neither are
-	 * specified, undefined is returned.
-	 * @return {function} A getTimezoneOffset function or undefined
+	 * a `getTimezoneOffset` option is defined, it is returned. If neither are
+	 * specified, the function using the `timezoneOffset` option or 0 offset is
+	 * returned.
+	 * 
+	 * @return {Function} A getTimezoneOffset function
 	 */
-	getTimezoneOffsetOption: function () {
-		var globalOptions = H.defaultOptions.global,
+	timezoneOffsetFunction: function () {
+		var time = this,
+			globalOptions = H.defaultOptions.global,
 			moment = win.moment;
 
 		if (globalOptions.timezone) {
@@ -146,13 +147,22 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 					return -moment.tz(
 						timestamp,
 						globalOptions.timezone
-					).utcOffset();
+					).utcOffset() * 60000;
 				};
 			}
 		}
 
 		// If not timezone is set, look for the getTimezoneOffset callback
-		return globalOptions.useUTC && globalOptions.getTimezoneOffset;
+		if (globalOptions.useUTC && globalOptions.getTimezoneOffset) {
+			return function (timestamp) {
+				return globalOptions.getTimezoneOffset(timestamp) * 60000;
+			};
+		}
+
+		// Last, use the `timezoneOffset` option if set
+		return function () {
+			return (time.timezoneOffset || 0) * 60000;
+		};
 	},
 
 	/**
@@ -167,7 +177,7 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 		format = H.pick(format, '%Y-%m-%d %H:%M:%S');
 
 		var D = this.Date,
-			date = new D(timestamp - this.getTZOffset(timestamp)),
+			date = new D(timestamp - this.getTimezoneOffset(timestamp)),
 			// get the basic time values
 			hours = date[this.getHours](),
 			day = date[this.getDay](),

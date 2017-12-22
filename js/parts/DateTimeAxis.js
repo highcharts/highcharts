@@ -8,7 +8,6 @@ import H from './Globals.js';
 import './Utilities.js';
 var Axis = H.Axis,
 	dateFormat = H.dateFormat,
-	defaultOptions = H.defaultOptions,
 	defined = H.defined,
 	each = H.each,
 	extend = H.extend,
@@ -33,11 +32,13 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		tickPositions = [],
 		i,
 		higherRanks = {},
-		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
 		// When crossing DST, use the max. Resolves #6278.
 		minDate = new Date(
-			min - Math.max(time.getTZOffset(min), time.getTZOffset(max))
+			min - Math.max(
+				time.getTimezoneOffset(min),
+				time.getTimezoneOffset(max)
+			)
 		),
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count,
@@ -97,25 +98,26 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		min = minDate.getTime();
 
 		// Handle local timezone offset
-		if (time.hasTimeZone) {
+		if (time.variableTimezone) {
 
 			// Detect whether we need to take the DST crossover into
 			// consideration. If we're crossing over DST, the day length may be
 			// 23h or 25h and we need to compute the exact clock time for each
 			// tick instead of just adding hours. This comes at a cost, so first
 			// we find out if it is needed (#4951).
-			variableDayLength =
-				(!useUTC || !!time.getTimezoneOffset) &&
-				(
-					// Long range, assume we're crossing over.
-					max - min > 4 * timeUnits.month ||
-					// Short range, check if min and max are in different time 
-					// zones.
-					time.getTZOffset(min) !== time.getTZOffset(max)
-				);
+			variableDayLength = (
+				// Long range, assume we're crossing over.
+				max - min > 4 * timeUnits.month ||
+				// Short range, check if min and max are in different time 
+				// zones.
+				time.getTimezoneOffset(min) !== time.getTimezoneOffset(max)
+			);
+		}
 
-			// Adjust minDate to the offset date
-			baseOffset = time.getTZOffset(minDate);
+
+		// Adjust minDate to the offset date
+		baseOffset = time.getTimezoneOffset(minDate);
+		if (baseOffset) {
 			minDate = new Date(min + baseOffset);
 		}
 		
