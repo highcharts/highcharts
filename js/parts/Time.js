@@ -42,39 +42,21 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 	 * @private
 	 */
 	update: function (options) {
-		var Date,
-			useUTC = options.useUTC,
+		var useUTC = options.useUTC,
 			GET = useUTC ? 'getUTC' : 'get',
 			SET = useUTC ? 'setUTC' : 'set',
 			setters = ['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'],
 			getters = setters.concat(['Milliseconds', 'Seconds']),
-			n,
-			time = this;
+			n;
 
 		// Allow using a different Date class
-		this.Date = Date = options.Date || win.Date;
+		this.Date = options.Date || win.Date;
+
+		this.useUTC = useUTC;
 		this.timezoneOffset = useUTC && options.timezoneOffset;
 		this.getTimezoneOffset = this.getTimezoneOffsetOption();
 		this.hasTimeZone = !!(this.timezoneOffset || this.getTimezoneOffset);
 
-		this.makeTime = function (year, month, date, hours, minutes, seconds) {
-			var d;
-			if (useUTC) {
-				d = Date.UTC.apply(0, arguments);
-				d += time.getTZOffset(d);
-			} else {
-				d = new Date(
-					year,
-					month,
-					pick(date, 1),
-					pick(hours, 0),
-					pick(minutes, 0),
-					pick(seconds, 0)
-				).getTime();
-			}
-			return d;
-		};
-		
 		// Dynamically set setters and getters. Use for loop, H.each is not yet 
 		// overridden in oldIE.
 		for (n = 0; n < setters.length; n++) {
@@ -83,6 +65,45 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 		for (n = 0; n < getters.length; n++) {
 			this['set' + getters[n]] = SET + getters[n];
 		}
+	},
+
+	/**
+	 * Make a time and returns milliseconds. Interprets the inputs as UTC time,
+	 * local time or a specific timezone time depending on the current time
+	 * settings.
+	 * 
+	 * @param  {Number} year
+	 *         The year
+	 * @param  {Number} month
+	 *         The month. Zero-based, so January is 0.
+	 * @param  {Number} date
+	 *         The day of the month
+	 * @param  {Number} hours
+	 *         The hour of the day, 0-23.
+	 * @param  {Number} minutes
+	 *         The minutes
+	 * @param  {Number} seconds
+	 *         The seconds
+	 *
+	 * @return {Number}
+	 *         The time in milliseconds since January 1st 1970.
+	 */
+	makeTime: function (year, month, date, hours, minutes, seconds) {
+		var d;
+		if (this.useUTC) {
+			d = this.Date.UTC.apply(0, arguments);
+			d += this.getTZOffset(d);
+		} else {
+			d = new this.Date(
+				year,
+				month,
+				pick(date, 1),
+				pick(hours, 0),
+				pick(minutes, 0),
+				pick(seconds, 0)
+			).getTime();
+		}
+		return d;
 	},
 
 	/**
