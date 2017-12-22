@@ -889,9 +889,13 @@ H.wrap = function (obj, method, func) {
  * @memberOf Highcharts
  * @param {String} format The format string.
  * @param {*} val The value.
+ * @param {Time}   [time]
+ *        A `Time` instance that determines the date formatting, for example for
+ *        applying time zone corrections to the formatted date.
+ 
  * @returns {String} The formatted representation of the value.
  */
-H.formatSingle = function (format, val) {
+H.formatSingle = function (format, val, time) {
 	var floatRegex = /f$/,
 		decRegex = /\.([0-9])/,
 		lang = H.defaultOptions.lang,
@@ -909,7 +913,7 @@ H.formatSingle = function (format, val) {
 			);
 		}
 	} else {
-		val = H.dateFormat(format, val);
+		val = (time || H.time).dateFormat(format, val);
 	}
 	return val;
 };
@@ -920,9 +924,14 @@ H.formatSingle = function (format, val) {
  *
  * @function #format
  * @memberOf Highcharts
- * @param {String} str The string to format.
- * @param {Object} ctx The context, a collection of key-value pairs where each
- *        key is replaced by its value.
+ * @param {String} str
+ *        The string to format.
+ * @param {Object} ctx
+ *        The context, a collection of key-value pairs where each key is
+ *        replaced by its value.
+ * @param {Time}   [time]
+ *        A `Time` instance that determines the date formatting, for example for
+ *        applying time zone corrections to the formatted date.
  * @returns {String} The formatted string.
  *
  * @example
@@ -932,7 +941,7 @@ H.formatSingle = function (format, val) {
  * );
  * // => The red fox was 3.14 feet long
  */
-H.format = function (str, ctx) {
+H.format = function (str, ctx, time) {
 	var splitter = '{',
 		isInside = false,
 		segment,
@@ -967,7 +976,7 @@ H.format = function (str, ctx) {
 
 			// Format the replacement
 			if (valueAndFormat.length) {
-				val = H.formatSingle(valueAndFormat.join(':'), val);
+				val = H.formatSingle(valueAndFormat.join(':'), val, time);
 			}
 
 			// Push the result and advance the cursor

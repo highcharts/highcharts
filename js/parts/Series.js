@@ -2495,7 +2495,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			pointInterval,
 			pointIntervalUnit = options.pointIntervalUnit,
 			dstCrossover = 0,
-			time = H.time;
+			time = this.chart.time;
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
 

@@ -7,7 +7,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 var Axis = H.Axis,
-	dateFormat = H.dateFormat,
 	defined = H.defined,
 	each = H.each,
 	extend = H.extend,
@@ -27,7 +26,7 @@ var Axis = H.Axis,
  * @param {Number} startOfWeek
  */
 Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
-	var time = H.time,
+	var time = this.chart.time,
 		Date = time.Date,
 		tickPositions = [],
 		i,
@@ -173,7 +172,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 					// we're on a full or half hour
 					t % 1800000 === 0 &&
 					// Check for local or global midnight
-					dateFormat('%H%M%S%L', t) === '000000000'
+					time.dateFormat('%H%M%S%L', t) === '000000000'
 				) {
 					higherRanks[t] = 'day';	
 				}

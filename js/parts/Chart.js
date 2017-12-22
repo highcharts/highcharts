@@ -219,8 +219,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		 * @type Object
 		 */
 
+		this.time = userOptions.time ? new H.Time(this) : H.time;
 
-
+		
 		this.hasCartesianSeries = optionsChart.showAxes;
 		
 		var chart = this;

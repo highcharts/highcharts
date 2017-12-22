@@ -16,7 +16,6 @@ var extend = H.extend,
  * The Time class.
  *
  * @todo for #5168
- * - Implement time options on chart level
  * - Go over doclets, review class reference
  * - Implement Chart.update and Chart.time.update
  */
@@ -30,7 +29,7 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 		this.chart = chart;
 		this.update(
 			chart ?
-				chart.time :
+				chart.options.time :
 				merge(H.defaultOptions.global, H.defaultOptions.time)
 		);
 	},
@@ -57,6 +56,15 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 	 * Since v6.0.5, the time options were moved from the `global` obect to the
 	 * `time` object, and time options can be set on each individual chart.
 	 *
+	 * @sample {highcharts|highstock}
+	 *         highcharts/time/timezone/
+	 *         Set the timezone globally
+	 * @sample {highcharts}
+	 *         highcharts/time/individual/
+	 *         Set the timezone per chart instance
+	 * @sample {highstock}
+	 *         stock/time/individual/
+	 *         Set the timezone per chart instance
 	 * @since 6.0.5
 	 * @apioption time
 	 */
@@ -287,7 +295,8 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 		}
 		format = H.pick(format, '%Y-%m-%d %H:%M:%S');
 
-		var D = this.Date,
+		var time = this,
+			D = this.Date,
 			date = new D(timestamp - this.getTimezoneOffset(timestamp)),
 			// get the basic time values
 			hours = date[this.getHours](),
@@ -380,7 +389,7 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 			while (format.indexOf('%' + key) !== -1) {
 				format = format.replace(
 					'%' + key,
-					typeof val === 'function' ? val(timestamp) : val
+					typeof val === 'function' ? val.call(time, timestamp) : val
 				);
 			}
 			
