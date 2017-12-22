@@ -17,7 +17,6 @@ var extend = H.extend,
  *
  * @todo for #5168
  * - Go over doclets, review class reference
- * - Implement Chart.update and Chart.time.update
  */
 var Time = H.Time = function (chart) {
 	this.init(chart);
@@ -30,7 +29,8 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 		this.update(
 			chart ?
 				chart.options.time :
-				merge(H.defaultOptions.global, H.defaultOptions.time)
+				merge(H.defaultOptions.global, H.defaultOptions.time),
+			false
 		);
 	},
 
@@ -151,9 +151,9 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 	},
 
 	/**
-	 * Set the time methods globally based on the options. Time methods can be
-	 * either local time or UTC (default). It is called internally on initiating
-	 * Highcharts and after running `Highcharts.setOptions`.
+	 * Update the Time object with current options. It is called internally on
+	 * initiating Highcharts, after running `Highcharts.setOptions` and on
+	 * `Chart.update`.
 	 *
 	 * @private
 	 */
@@ -200,6 +200,7 @@ extend(Time.prototype, /** @lends Highcharts.Time.prototype */ {
 		for (n = 0; n < setters.length; n++) {
 			this['set' + setters[n]] = (useUTC ? 'setUTC' : 'set') + setters[n];
 		}
+
 	},
 
 	/**
