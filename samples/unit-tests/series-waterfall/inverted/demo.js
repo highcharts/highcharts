@@ -26,7 +26,9 @@ QUnit.test('#5911 - inverted and reversed axes.', function (assert) {
         points = chart.series[0].points,
         boxP1 = points[0].graphic.getBBox(true),
         boxP2 = points[1].graphic.getBBox(true),
-        distanceBetweenPoints = xAxisReversed ? Math.abs(boxP1.x - (boxP2.x + boxP2.width)) : Math.abs(boxP2.x - (boxP1.x + boxP1.width));
+        distanceBetweenPoints = xAxisReversed ?
+            Math.abs(boxP1.x - (boxP2.x + boxP2.width)) :
+            Math.abs(boxP2.x - (boxP1.x + boxP1.width));
 
     function compareWithColumnRange(xAxisReversed, yAxisReversed) {
         Highcharts.each(chart.series[0].points, function (point, index) {
@@ -86,6 +88,6 @@ QUnit.test('#5911 - inverted and reversed axes.', function (assert) {
     assert.deepEqual(
         lineLength,
         distanceBetweenPoints,
-        "Connector line is equal to distance between points."
+        "Connector line is equal to distance between points (#4699)."
     );
 });
