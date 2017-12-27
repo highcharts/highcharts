@@ -1506,7 +1506,10 @@ Navigator.prototype = {
 
 				if (
 					chart.options.scrollbar.liveRedraw ||
-					e.DOMType !== 'mousemove'
+					(
+						e.DOMType !== 'mousemove' &&
+						e.DOMType !== 'touchmove'
+					)
 				) {
 					setTimeout(function () {
 						navigator.onMouseUp(e);
