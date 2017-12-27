@@ -551,7 +551,7 @@ RangeSelector.prototype = {
 				(type === 'month' || type === 'year') &&
 				(
 					actualRange + 36e5 >=
-					{ month: 28, year: 365 }[type] * day * count + offsetRange
+					{ month: 28, year: 365 }[type] * day * count - offsetRange
 				) &&
 				(
 					actualRange - 36e5 <=
