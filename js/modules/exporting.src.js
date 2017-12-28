@@ -1438,7 +1438,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				/*= if (build.classic) { =*/
 				'stroke-linecap': 'round',
 				/*= } =*/
-				title: chart.options.lang[btnOptions._titleKey],
+				title: pick(chart.options.lang[btnOptions._titleKey], ''),
 				zIndex: 3 // #4955
 			});
 		button.menuClassName = options.menuClassName || 'highcharts-menu-' + chart.btnCount++;
