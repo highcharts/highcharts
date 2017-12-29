@@ -3645,7 +3645,6 @@ H.Series = H.seriesType('line', null, { // base series options
 
 					// Shortcuts
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
-					point.hasImage = symbol.indexOf('url') === 0;
 
 					markerAttribs = series.markerAttribs(
 						point,
@@ -3720,6 +3719,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		var seriesMarkerOptions = this.options.marker,
 			seriesStateOptions,
 			pointMarkerOptions = point.marker || {},
+			symbol = pointMarkerOptions.symbol || seriesMarkerOptions.symbol,
 			pointStateOptions,
 			radius = pick(
 				pointMarkerOptions.radius,
@@ -3739,6 +3739,8 @@ H.Series = H.seriesType('line', null, { // base series options
 				radius + (seriesStateOptions && seriesStateOptions.radiusPlus || 0)
 			);
 		}
+
+		point.hasImage = symbol && symbol.indexOf('url') === 0;
 
 		if (point.hasImage) {
 			radius = 0; // and subsequently width and height is not set
