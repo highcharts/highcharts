@@ -1770,7 +1770,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		titleNode.appendChild(
 			doc.createTextNode(
 				// #3276, #3895
-				(String(pick(value), '')).replace(/<[^>]*>/g, '')
+				(String(pick(value), ''))
+					.replace(/<[^>]*>/g, '')
+					.replace(/&lt;/g, '<')
+					.replace(/&gt;/g, '>')
 			)
 		);
 	},
@@ -2370,12 +2373,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 						tspan.getAttribute('style') ? tspan : textNode
 					).h;
 			},
-			unescapeEntities = function (inputStr) {
+			unescapeEntities = function (inputStr, except) {
 				objectEach(renderer.escapes, function (value, key) {
-					inputStr = inputStr.replace(
-						new RegExp(value, 'g'),
-						key
-					);
+					if (!except || inArray(value, except) === -1) {
+						inputStr = inputStr.replace(
+							new RegExp(value, 'g'),
+							key
+						);
+					}
 				});
 				return inputStr;
 			};
@@ -2679,7 +2684,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			if (wasTooLong) {
 				wrapper.attr(
 					'title',
-					unescapeEntities(wrapper.textStr) // #7179
+					unescapeEntities(wrapper.textStr, ['&lt;', '&gt;']) // #7179
 				);
 			}
 			if (tempParent) {
