@@ -539,6 +539,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * 
 	 * It can be also be combined with `pointIntervalUnit` to draw irregular
 	 * time intervals.
+	 *
+	 * Please note that this options applies to the _series data_, not the
+	 * interval of the axis ticks, which is independent.
 	 * 
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/
@@ -557,6 +560,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * but `pointIntervalUnit` also takes the DST crossover into consideration
 	 * when dealing with local time. Combine this option with `pointInterval`
 	 * to draw weeks, quarters, 6 months, 10 years etc.
+	 *
+	 * Please note that this options applies to the _series data_, not the
+	 * interval of the axis ticks, which is independent.
 	 * 
 	 * @validvalue [null, "day", "month", "year"]
 	 * @type {String}
