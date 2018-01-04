@@ -1,226 +1,59 @@
 QUnit.test('Drilldown methods', function (assert) {
 
-    assert.expect(0);
-
+    // Create the chart
     // Create the chart
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'column'
+            type: 'column',
+            animation: false
+        },
+        title: {
+            text: 'Basic drilldown'
         },
         xAxis: {
             type: 'category'
         },
 
         series: [{
-            name: 'Brands',
+            name: 'Things',
             colorByPoint: true,
             data: [{
-                name: 'Microsoft Internet Explorer',
-                y: 56.33,
-                drilldown: 'Microsoft Internet Explorer'
+                name: 'Animals',
+                y: 5,
+                drilldown: 'animals'
             }, {
-                name: 'Chrome',
-                y: 24.03,
-                drilldown: 'Chrome'
+                name: 'Fruits',
+                y: 2,
+                drilldown: 'fruits'
             }, {
-                name: 'Firefox',
-                y: 10.38,
-                drilldown: 'Firefox'
-            }, {
-                name: 'Safari',
-                y: 4.77,
-                drilldown: 'Safari'
-            }, {
-                name: 'Opera',
-                y: 0.91,
-                drilldown: 'Opera'
-            }, {
-                name: 'Proprietary or Undetectable',
-                y: 0.2,
-                drilldown: null
+                name: 'Cars',
+                y: 4,
+                drilldown: 'cars'
             }]
         }],
         drilldown: {
+            animation: false,
             series: [{
-                name: 'Microsoft Internet Explorer',
-                id: 'Microsoft Internet Explorer',
+                id: 'animals',
                 data: [
-                    [
-                        'v11.0',
-                        24.13
-                    ],
-                    [
-                        'v8.0',
-                        17.2
-                    ],
-                    [
-                        'v9.0',
-                        8.11
-                    ],
-                    [
-                        'v10.0',
-                        5.33
-                    ],
-                    [
-                        'v6.0',
-                        1.06
-                    ],
-                    [
-                        'v7.0',
-                        0.5
-                    ]
+                    ['Cats', 4],
+                    ['Dogs', 2],
+                    ['Cows', 1],
+                    ['Sheep', 2],
+                    ['Pigs', 1]
                 ]
             }, {
-                name: 'Chrome',
-                id: 'Chrome',
+                id: 'fruits',
                 data: [
-                    [
-                        'v40.0',
-                        5
-                    ],
-                    [
-                        'v41.0',
-                        4.32
-                    ],
-                    [
-                        'v42.0',
-                        3.68
-                    ],
-                    [
-                        'v39.0',
-                        2.96
-                    ],
-                    [
-                        'v36.0',
-                        2.53
-                    ],
-                    [
-                        'v43.0',
-                        1.45
-                    ],
-                    [
-                        'v31.0',
-                        1.24
-                    ],
-                    [
-                        'v35.0',
-                        0.85
-                    ],
-                    [
-                        'v38.0',
-                        0.6
-                    ],
-                    [
-                        'v32.0',
-                        0.55
-                    ],
-                    [
-                        'v37.0',
-                        0.38
-                    ],
-                    [
-                        'v33.0',
-                        0.19
-                    ],
-                    [
-                        'v34.0',
-                        0.14
-                    ],
-                    [
-                        'v30.0',
-                        0.14
-                    ]
+                    ['Apples', 4],
+                    ['Oranges', 2]
                 ]
             }, {
-                name: 'Firefox',
-                id: 'Firefox',
+                id: 'cars',
                 data: [
-                    [
-                        'v35',
-                        2.76
-                    ],
-                    [
-                        'v36',
-                        2.32
-                    ],
-                    [
-                        'v37',
-                        2.31
-                    ],
-                    [
-                        'v34',
-                        1.27
-                    ],
-                    [
-                        'v38',
-                        1.02
-                    ],
-                    [
-                        'v31',
-                        0.33
-                    ],
-                    [
-                        'v33',
-                        0.22
-                    ],
-                    [
-                        'v32',
-                        0.15
-                    ]
-                ]
-            }, {
-                name: 'Safari',
-                id: 'Safari',
-                data: [
-                    [
-                        'v8.0',
-                        2.56
-                    ],
-                    [
-                        'v7.1',
-                        0.77
-                    ],
-                    [
-                        'v5.1',
-                        0.42
-                    ],
-                    [
-                        'v5.0',
-                        0.3
-                    ],
-                    [
-                        'v6.1',
-                        0.29
-                    ],
-                    [
-                        'v7.0',
-                        0.26
-                    ],
-                    [
-                        'v6.2',
-                        0.17
-                    ]
-                ]
-            }, {
-                name: 'Opera',
-                id: 'Opera',
-                data: [
-                    [
-                        'v12.x',
-                        0.34
-                    ],
-                    [
-                        'v28',
-                        0.24
-                    ],
-                    [
-                        'v27',
-                        0.17
-                    ],
-                    [
-                        'v29',
-                        0.16
-                    ]
+                    ['Toyota', 4],
+                    ['Opel', 2],
+                    ['Volkswagen', 2]
                 ]
             }]
         }
@@ -229,6 +62,87 @@ QUnit.test('Drilldown methods', function (assert) {
     // Expect no JS error (#7602)
     chart.drillUp();
 
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Animals', 'Fruits', 'Cars'],
+        'Initial categories'
+    );
+
+    chart.series[0].points[0].doDrilldown();
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cats', 'Dogs', 'Cows', 'Sheep', 'Pigs'],
+        'First drilldown'
+    );
+
+    chart.drillUp();
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Animals', 'Fruits', 'Cars'],
+        'Initial categories again'
+    );
+
+
+    chart.drillUp(); // Just checking #7602
+
+    // Now update
+    chart.update({
+        series: [{
+            data: [{
+                name: 'Animals2',
+                y: 6,
+                drilldown: 'animals2'
+            }, {
+                name: 'Fruits2',
+                y: 3,
+                drilldown: 'fruits2'
+            }, {
+                name: 'Cars2',
+                y: 5,
+                drilldown: 'cars2'
+            }]
+        }],
+        drilldown: {
+            series: [{
+                id: 'animals2',
+                data: [
+                    ['Cats2', 6],
+                    ['Dogs2', 7],
+                    ['Cows2', 2],
+                    ['Sheep2', 3],
+                    ['Pigs2', 2]
+                ]
+            }, {
+                id: 'fruits2',
+                data: [
+                    ['Apples2', 5],
+                    ['Oranges2', 3]
+                ]
+            }, {
+                id: 'cars2',
+                data: [
+                    ['Toyota2', 5],
+                    ['Opel2', 3],
+                    ['Volkswagen2', 3]
+                ]
+            }]
+        }
+    });
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Animals2', 'Fruits2', 'Cars2'],
+        'Updated top level categories'
+    );
+
+    chart.series[0].points[0].doDrilldown();
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cats2', 'Dogs2', 'Cows2', 'Sheep2', 'Pigs2'],
+        'First drilldown after update (#7600)'
+    );
 
 });
 
