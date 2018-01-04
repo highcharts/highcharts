@@ -1,4 +1,4 @@
-QUnit.test('activeDataLabelStyle', function (assert) {
+QUnit.test('Drilldown and reset zoom', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',

@@ -553,6 +553,10 @@ Chart.prototype.showDrillUpButton = function () {
  * @memberOf Highcharts.Chart
  */
 Chart.prototype.drillUp = function () {
+	if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
+		return;
+	}
+
 	var chart = this,
 		drilldownLevels = chart.drilldownLevels,
 		levelNumber = drilldownLevels[drilldownLevels.length - 1].levelNumber,
