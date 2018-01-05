@@ -5,9 +5,11 @@ Highcharts.chart('container', {
         text: 'Highcharts Histogram'
     },
     xAxis: [{
-        title: { text: 'Data' }
+        title: { text: 'Data' },
+        alignTicks: false
     }, {
         title: { text: 'Histogram' },
+        alignTicks: false,
         opposite: true
     }],
 
