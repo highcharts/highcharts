@@ -19,6 +19,7 @@ var H = Highcharts,
 	extend = H.extend,
 	find = H.find,
 	fireEvent = H.fireEvent,
+	isNumber = H.isNumber,
 	isObject = H.isObject,
 	offset = H.offset,
 	pick = H.pick,
@@ -727,7 +728,10 @@ Highcharts.Pointer.prototype = {
 				}
 
 			}
-			this.selectionMarker = this.selectionMarker.destroy();
+
+			if (isNumber(chart.index)) {
+				this.selectionMarker = this.selectionMarker.destroy();
+			}
 
 			// Reset scaling preview
 			if (hasPinched) {
@@ -736,7 +740,7 @@ Highcharts.Pointer.prototype = {
 		}
 
 		// Reset all
-		if (chart) { // it may be destroyed on mouse up - #877
+		if (chart && isNumber(chart.index)) { // it may be destroyed on mouse up - #877
 			css(chart.container, { cursor: chart._cursor });
 			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
