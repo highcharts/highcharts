@@ -246,15 +246,9 @@ seriesType('boxplot', 'column', {
 	/**
 	 * Get presentational attributes
 	 */
-	pointAttribs: function (point) {
-		var options = this.options,
-			color = (point && point.color) || this.color;
-
-		return {
-			'fill': point.fillColor || options.fillColor || color,
-			'stroke': options.lineColor || color,
-			'stroke-width': options.lineWidth || 0
-		};
+	pointAttribs: function () {
+		// No attributes should be set on point.graphic which is the group
+		return {};
 	},
 	/*= } =*/
 
@@ -317,7 +311,7 @@ seriesType('boxplot', 'column', {
 				shapeArgs = point.shapeArgs; // the box
 
 			/*= if (build.classic) { =*/
-			var boxAttr,
+			var boxAttr = {},
 				stemAttr = {},
 				whiskersAttr = {},
 				medianAttr = {},
@@ -378,7 +372,13 @@ seriesType('boxplot', 'column', {
 				}
 				
 				if (doQuartiles) {
-					boxAttr = series.pointAttribs(point);
+					boxAttr.fill = (
+						point.fillColor ||
+						options.fillColor ||
+						color
+					);
+					boxAttr.stroke = options.lineColor || color;
+					boxAttr['stroke-width'] = options.lineWidth || 0;
 					point.box.attr(boxAttr);
 				}
 				
