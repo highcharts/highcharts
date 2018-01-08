@@ -144,11 +144,19 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 				t = time.makeTime(minYear, minMonth, minDateDate +
 					i * count * (interval === timeUnits.day ? 1 : 7));
 
-			} else if (variableDayLength && interval === timeUnits.hour) {
-				// corrected by the start date time zone offset (baseOffset)
-				// to hide duplicated label (#6797)
-				t = time.makeTime(minYear, minMonth, minDateDate, minHours +
-					i * count, 0, 0, baseOffset) - baseOffset;
+			} else if (
+				variableDayLength &&
+				interval === timeUnits.hour &&
+				count > 1
+			) {
+				// make sure higher ranks are preserved across DST (#6797,
+				// #7621)
+				t = time.makeTime(
+					minYear,
+					minMonth,
+					minDateDate,
+					minHours + i * count
+				);
 
 			// else, the interval is fixed and we use simple addition
 			} else {
