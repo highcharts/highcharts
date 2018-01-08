@@ -441,12 +441,15 @@ seriesType('arearange', 'area', {
 				point.plotX = point.plotHighX;
 			}
 			point._isInside = point.isInside;
-			point.isInside = point.isTopInside =
-				point.plotY !== undefined &&
-				point.plotY >= 0 &&
-				point.plotY <= series.yAxis.len && // #3519
-				point.plotX >= 0 &&
-				point.plotX <= series.xAxis.len;
+			if (!series.chart.polar) {
+				point.isInside = point.isTopInside = (
+					point.plotY !== undefined &&
+					point.plotY >= 0 &&
+					point.plotY <= series.yAxis.len && // #3519
+					point.plotX >= 0 &&
+					point.plotX <= series.xAxis.len
+				);
+			}
 			i++;
 		}
 
