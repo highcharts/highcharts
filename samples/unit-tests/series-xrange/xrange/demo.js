@@ -27,7 +27,8 @@ QUnit.test('X-Range', function (assert) {
         data: [{
             x: Date.UTC(2014, 11, 1),
             x2: Date.UTC(2014, 11, 2),
-            y: 0
+            y: 0,
+            colorIndex: 9
         }, {
             x: Date.UTC(2014, 11, 2),
             x2: Date.UTC(2014, 11, 5),
@@ -46,6 +47,12 @@ QUnit.test('X-Range', function (assert) {
             y: 2
         }]
     });
+
+    assert.strictEqual(
+        chart.series[0].points[0].colorIndex,
+        9,
+        'The point colorIndex option should be applied'
+    );
 
     assert.strictEqual(
         chart.yAxis[0].max,
