@@ -2376,7 +2376,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			unescapeEntities = function (inputStr, except) {
 				objectEach(renderer.escapes, function (value, key) {
 					if (!except || inArray(value, except) === -1) {
-						inputStr = inputStr.replace(
+						inputStr = inputStr.toString().replace(
 							new RegExp(value, 'g'),
 							key
 						);
