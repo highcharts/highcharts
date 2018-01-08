@@ -28,7 +28,7 @@ seriesType('macd', 'sma',
 	 * @optionparent plotOptions.macd
 	 */
 	{
-		name: 'MACD (26, 12, 9)',
+		name: 'MACD',
 		params: {
 			/**
 			 * The short period for indicator calculations.
