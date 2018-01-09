@@ -41,7 +41,6 @@ var addEvent = H.addEvent,
 	removeEvent = H.removeEvent,
 	seriesTypes = H.seriesTypes,
 	splat = H.splat,
-	svg = H.svg,
 	syncTimeout = H.syncTimeout,
 	win = H.win;
 /**
@@ -1933,36 +1932,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	},
 
-
-	/**
-	 * VML namespaces can't be added until after complete. Listening
-	 * for Perini's doScroll hack is not enough.
-	 *
-	 * @todo: Move this to the oldie.js module.
-	 * @private
-	 */
-	isReadyToRender: function () {
-		var chart = this;
-
-		// Note: win == win.top is required
-		if (
-			!svg &&
-			(
-				win == win.top && // eslint-disable-line eqeqeq
-				doc.readyState !== 'complete'
-			) 
-		) {
-			doc.attachEvent('onreadystatechange', function () {
-				doc.detachEvent('onreadystatechange', chart.firstRender);
-				if (doc.readyState === 'complete') {
-					chart.firstRender();
-				}
-			});
-			return false;
-		}
-		return true;
-	},
-
 	/**
 	 * Prepare for first rendering after all data are loaded.
 	 *
@@ -1972,8 +1941,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		var chart = this,
 			options = chart.options;
 
-		// Check whether the chart is ready to render
-		if (!chart.isReadyToRender()) {
+		// Hook for oldIE to check whether the chart is ready to render
+		if (chart.isReadyToRender && !chart.isReadyToRender()) {
 			return;
 		}
 
