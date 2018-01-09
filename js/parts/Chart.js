@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: ["warn", { "ignoreUrls": true}] */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -130,7 +131,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// Handle regular options
 		var options,
 			type,
-			seriesOptions = userOptions.series, // skip merging data points to increase performance
+			// skip merging data points to increase performance
+			seriesOptions = userOptions.series,
 			userPlotOptions = userOptions.plotOptions || {};
 
 		userOptions.series = null;
@@ -150,7 +152,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			userOptions.chart.forExport && userOptions.tooltip.userOptions) ||
 			userOptions.tooltip;
 
-		options.series = userOptions.series = seriesOptions; // set back the series data
+		// set back the series data
+		options.series = userOptions.series = seriesOptions;
 		this.userOptions = userOptions;
 
 		var optionsChart = options.chart;
@@ -276,7 +279,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	initSeries: function (options) {
 		var chart = this,
 			optionsChart = chart.options.chart,
-			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
+			type = (
+				options.type ||
+				optionsChart.type ||
+				optionsChart.defaultSeriesType
+			),
 			series,
 			Constr = seriesTypes[type];
 
@@ -418,7 +425,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		});
 
 		// handle added or removed series
-		if (redrawLegend && legend.options.enabled) { // series or pie points are added or removed
+		if (redrawLegend && legend.options.enabled) {
 			// draw legend graphics
 			legend.render();
 
@@ -456,8 +463,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				var key = axis.min + ',' + axis.max;
 				if (axis.extKey !== key) { // #821, #4452
 					axis.extKey = key;
-					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
-						fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
+
+					// prevent a recursive call to chart.redraw() (#1119)
+					afterRedraw.push(function () {
+						fireEvent(
+							axis,
+							'afterSetExtremes',
+							extend(axis.eventArgs, axis.getExtremes())
+						); // #747, #751
 						delete axis.eventArgs;
 					});
 				}
@@ -1728,15 +1741,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		});
 		chart.getAxisMargins();
 
-		// If the plot area size has changed significantly, calculate tick positions again
+		// If the plot area size has changed significantly, calculate tick
+		// positions again
 		redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-		redoVertical = tempHeight / chart.plotHeight > 1.05; // Height is more sensitive
+		// Height is more sensitive, use lower threshold
+		redoVertical = tempHeight / chart.plotHeight > 1.05;
 
 		if (redoHorizontal || redoVertical) {
 
 			each(axes, function (axis) {
-				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
-					axis.setTickInterval(true); // update to reflect the new margins
+				if (
+					(axis.horiz && redoHorizontal) ||
+					(!axis.horiz && redoVertical)
+				) {
+					// update to reflect the new margins
+					axis.setTickInterval(true);
 				}
 			});
 			chart.getMargins(); // second pass to check for new labels
@@ -1896,8 +1915,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			}
 		});
 
-		// remove container and all SVG
-		if (container) { // can break in IE when destroyed before finished loading
+		// Remove container and all SVG, check container as it can break in IE
+		// when destroyed before finished loading
+		if (container) {
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
@@ -1918,13 +1938,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * VML namespaces can't be added until after complete. Listening
 	 * for Perini's doScroll hack is not enough.
 	 *
+	 * @todo: Move this to the oldie.js module.
 	 * @private
 	 */
 	isReadyToRender: function () {
 		var chart = this;
 
 		// Note: win == win.top is required
-		if ((!svg && (win == win.top && doc.readyState !== 'complete'))) { // eslint-disable-line eqeqeq
+		if (
+			!svg &&
+			(
+				win == win.top && // eslint-disable-line eqeqeq
+				doc.readyState !== 'complete'
+			) 
+		) {
 			doc.attachEvent('onreadystatechange', function () {
 				doc.detachEvent('onreadystatechange', chart.firstRender);
 				if (doc.readyState === 'complete') {
@@ -1973,9 +2000,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		chart.linkSeries();
 
-		// Run an event after axes and series are initialized, but before render. At this stage,
-		// the series data is indexed and cached in the xData and yData arrays, so we can access
-		// those before rendering. Used in Highstock.
+		// Run an event after axes and series are initialized, but before
+		// render. At this stage, the series data is indexed and cached in the
+		// xData and yData arrays, so we can access those before rendering. Used
+		// in Highstock.
 		fireEvent(chart, 'beforeRender');
 
 		// depends on inverted and on margins being set
@@ -1998,7 +2026,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			chart.onload();
 		}
 
-		// If the chart was rendered outside the top container, put it back in (#3679)
+		// If the chart was rendered outside the top container, put it back in
+		// (#3679)
 		chart.temporaryDisplay(true);
 
 	},
@@ -2014,7 +2043,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Run callbacks
 		each([this.callback].concat(this.callbacks), function (fn) {
-			if (fn && this.index !== undefined) { // Chart destroyed in its own callback (#3600)
+			// Chart destroyed in its own callback (#3600)
+			if (fn && this.index !== undefined) {
 				fn.apply(this, [this]);
 			}
 		}, this);
