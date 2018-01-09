@@ -278,6 +278,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * between the two points on either side of the null.
 	 * 
 	 * @type {Boolean}
+	 * @default  false
 	 * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/
 	 *         False by default
 	 * @sample {highcharts} highcharts/plotoptions/series-connectnulls-true/
