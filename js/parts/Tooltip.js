@@ -6,8 +6,7 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-var dateFormat = H.dateFormat,
-	each = H.each,
+var each = H.each,
 	extend = H.extend,
 	format = H.format,
 	isNumber = H.isNumber,
@@ -771,7 +770,8 @@ H.Tooltip.prototype = {
 	 * @return {string} - the optimal date format for a point
 	 */
 	getDateFormat: function (range, date, startOfWeek, dateTimeLabelFormats) {
-		var dateStr = dateFormat('%m-%d %H:%M:%S.%L', date),
+		var time = this.chart.time,
+			dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date),
 			format,
 			n,
 			blank = '01-01 00:00:00.000',
@@ -789,7 +789,7 @@ H.Tooltip.prototype = {
 			// Sunday/Monday, go for the week format
 			if (
 				range === timeUnits.week &&
-				+dateFormat('%w', date) === startOfWeek &&
+				+time.dateFormat('%w', date) === startOfWeek &&
 				dateStr.substr(6) === blank.substr(6)
 			) {
 				n = 'week';
@@ -891,7 +891,7 @@ H.Tooltip.prototype = {
 		return format(formatString, {
 			point: labelConfig,
 			series: series
-		});
+		}, this.chart.time);
 	},
 
 	/**

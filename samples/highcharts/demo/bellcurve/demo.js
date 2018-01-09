@@ -16,9 +16,15 @@ Highcharts.chart('container', {
     },
 
     xAxis: [{
-        title: { text: 'Data' }
+        title: {
+            text: 'Data'
+        },
+        alignTicks: false
     }, {
-        title: { text: 'Bell curve' },
+        title: {
+            text: 'Bell curve'
+        },
+        alignTicks: false,
         opposite: true
     }],
 

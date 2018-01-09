@@ -402,7 +402,7 @@ seriesType('xrange', 'column', {
 			}
 		}
 		/*= } =*/
-		this.colorIndex = this.y % colorCount;
+		this.colorIndex = pick(this.options.colorIndex, this.y % colorCount);
 		
 		return this;
 	},

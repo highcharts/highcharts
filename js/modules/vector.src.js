@@ -72,7 +72,7 @@ seriesType('vector', 'scatter', {
 	 */
 	pointAttribs: function (point, state) {
 		var options = this.options,
-			stroke = this.color,
+			stroke = point.color || this.color,
 			strokeWidth = this.options.lineWidth;
 
 		if (state) {

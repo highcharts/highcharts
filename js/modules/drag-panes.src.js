@@ -6,6 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: ["warn", 80, 4] */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -33,11 +34,10 @@ var hasTouch = H.hasTouch,
 		 *
 		 * This feature requires the `drag-panes.js` module.
 		 *
-		 * @product highstock
-		 * @default 10%
-		 *
-		 * @type {Number|String}
-		 * @sample {highstock} stock/yaxis/resize-min-max-length minLength and maxLength
+		 * @type      {Number|String}
+		 * @product   highstock
+		 * @sample    {highstock} stock/yaxis/resize-min-max-length
+		 *            minLength and maxLength
 		 * @apioption yAxis.minLength
 		 */
 		minLength: '10%',
@@ -48,11 +48,10 @@ var hasTouch = H.hasTouch,
 		 *
 		 * This feature requires the `drag-panes.js` module.
 		 *
-		 * @product highstock
-		 * @default 100%
-		 *
-		 * @type {String|Number}
-		 * @sample {highstock} stock/yaxis/resize-min-max-length minLength and maxLength
+		 * @type      {String|Number}
+		 * @product   highstock
+		 * @sample    {highstock} stock/yaxis/resize-min-max-length
+		 *            minLength and maxLength
 		 * @apioption yAxis.maxLength
 		 */
 		maxLength: '100%',
@@ -62,7 +61,7 @@ var hasTouch = H.hasTouch,
 		 *
 		 * This feature requires the `drag-panes.js` module.
 		 *
-		 * @product highstock
+		 * @product      highstock
 		 * @optionparent yAxis.resize
 		 */
 		resize: {
@@ -82,10 +81,12 @@ var hasTouch = H.hasTouch,
 				 *
 				 * This feature requires the `drag-panes.js` module.
 				 *
-				 * @type {Array.<String|Number>}
+				 * @type    {Array.<String|Number>}
 				 * @default []
-				 * @sample {highstock} stock/yaxis/multiple-resizers Three panes with resizers
-				 * @sample {highstock} stock/yaxis/resize-multiple-axes One resizer controlling multiple axes
+				 * @sample  {highstock} stock/yaxis/multiple-resizers
+				 *          Three panes with resizers
+				 * @sample  {highstock} stock/yaxis/resize-multiple-axes
+				 *          One resizer controlling multiple axes
 				 */
 				next: [],
 
@@ -95,10 +96,11 @@ var hasTouch = H.hasTouch,
 				 *
 				 * This feature requires the `drag-panes.js` module.
 				 *
-				 * @type {Array.<String|Number>}
-				 * @default []
-				 * @sample {highstock} stock/yaxis/multiple-resizers Three panes with resizers
-				 * @sample {highstock} stock/yaxis/resize-multiple-axes One resizer controlling multiple axes
+				 * @type    {Array.<String|Number>}
+				 * @sample  {highstock} stock/yaxis/multiple-resizers
+				 *          Three panes with resizers
+				 * @sample  {highstock} stock/yaxis/resize-multiple-axes
+				 *          One resizer controlling multiple axes
 				 */
 				prev: []
 			},
@@ -108,7 +110,8 @@ var hasTouch = H.hasTouch,
 			 *
 			 * This feature requires the `drag-panes.js` module.
 			 *
-			 * @sample {highstock} stock/demo/candlestick-and-volume Enabled resizer
+			 * @sample {highstock} stock/demo/candlestick-and-volume
+			 *         Enabled resizer
 			 */
 			enabled: false,
 
@@ -130,7 +133,7 @@ var hasTouch = H.hasTouch,
 			 *
 			 * This feature requires the `drag-panes.js` module.
 			 *
-			 * @type {Color}
+			 * @type   {Color}
 			 * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
 			 */
 			lineColor: '${palette.neutralColor20}',
@@ -142,10 +145,9 @@ var hasTouch = H.hasTouch,
 			 *
 			 * This feature requires the `drag-panes.js` module.
 			 *
-			 * @default Solid
 			 * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
-			 * @see For supported options check
-			 * [dashStyle](#plotOptions.series.dashStyle)
+			 * @see    For supported options check
+			 *         [dashStyle](#plotOptions.series.dashStyle)
 			 */
 			lineDashStyle: 'Solid',
 
@@ -580,6 +582,14 @@ wrap(Axis.prototype, 'destroy', function (proceed, keepEvents) {
 
 // Prevent any hover effects while dragging a control line of AxisResizer.
 wrap(Pointer.prototype, 'runPointActions', function (proceed) {
+	if (!this.chart.activeResizer) {
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+	}
+});
+
+// Prevent default drag action detection while dragging a control line
+// of AxisResizer. (#7563)
+wrap(Pointer.prototype, 'drag', function (proceed) {
 	if (!this.chart.activeResizer) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}

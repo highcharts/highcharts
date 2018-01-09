@@ -553,6 +553,10 @@ Chart.prototype.showDrillUpButton = function () {
  * @memberOf Highcharts.Chart
  */
 Chart.prototype.drillUp = function () {
+	if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
+		return;
+	}
+
 	var chart = this,
 		drilldownLevels = chart.drilldownLevels,
 		levelNumber = drilldownLevels[drilldownLevels.length - 1].levelNumber,
@@ -648,6 +652,19 @@ Chart.prototype.drillUp = function () {
 
 	this.ddDupes.length = []; // #3315
 };
+
+// Add update function to be called internally from Chart.update (#7600)
+Chart.prototype.callbacks.push(function () {
+	var chart = this;
+	chart.drilldown = {
+		update: function (options, redraw) {
+			H.merge(true, chart.options.drilldown, options);
+			if (pick(redraw, true)) {
+				chart.redraw();
+			}
+		}
+	};
+});
 
 // Don't show the reset button if we already are displaying the drillUp button.
 wrap(Chart.prototype, 'showResetZoom', function (proceed) {

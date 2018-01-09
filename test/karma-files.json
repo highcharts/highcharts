@@ -42,6 +42,7 @@
 	"code/modules/wordcloud.src.js",
 	"code/modules/xrange.src.js",
 	"code/modules/no-data-to-display.src.js",
+	"code/modules/drag-panes.src.js",
 
 	"code/indicators/indicators.src.js",
 	"code/indicators/accumulation-distribution.src.js",

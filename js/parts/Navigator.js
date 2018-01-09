@@ -1248,7 +1248,9 @@ Navigator.prototype = {
 		var navigator = this,
 			chart = navigator.chart,
 			xAxis = navigator.xAxis,
+			reversed = xAxis && xAxis.reversed,
 			scrollbar = navigator.scrollbar,
+			unionExtremes,
 			fixedMin,
 			fixedMax,
 			ext,
@@ -1261,6 +1263,8 @@ Navigator.prototype = {
 			(navigator.hasDragged && (!scrollbar || !scrollbar.hasDragged)) ||
 			e.trigger === 'scrollbar'
 		) {
+			unionExtremes = navigator.getUnionExtremes();
+
 			// When dragging one handle, make sure the other one doesn't change
 			if (navigator.zoomedMin === navigator.otherHandlePos) {
 				fixedMin = navigator.fixedExtreme;
@@ -1269,8 +1273,16 @@ Navigator.prototype = {
 			}
 			// Snap to right edge (#4076)
 			if (navigator.zoomedMax === navigator.size) {
-				fixedMax = navigator.getUnionExtremes().dataMax;
+				fixedMax = reversed ?
+					unionExtremes.dataMin : unionExtremes.dataMax;
 			}
+
+			// Snap to left edge (#7576)
+			if (navigator.zoomedMin === 0) {
+				fixedMin = reversed ?
+					unionExtremes.dataMax : unionExtremes.dataMin;
+			}
+
 			ext = xAxis.toFixedRange(
 				navigator.zoomedMin,
 				navigator.zoomedMax,
@@ -1506,7 +1518,10 @@ Navigator.prototype = {
 
 				if (
 					chart.options.scrollbar.liveRedraw ||
-					e.DOMType !== 'mousemove'
+					(
+						e.DOMType !== 'mousemove' &&
+						e.DOMType !== 'touchmove'
+					)
 				) {
 					setTimeout(function () {
 						navigator.onMouseUp(e);

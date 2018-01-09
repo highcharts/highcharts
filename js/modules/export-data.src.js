@@ -149,7 +149,7 @@ Highcharts.setOptions({
 		 * Export-data module required. Caption for the data table. Same as
 		 * chart title by default. Set to `false` to disable.
 		 *
-		 * @type {Boolean\String}
+		 * @type {Boolean|String}
 		 * @since 6.0.4
 		 * @sample highcharts/export-data/multilevel-table
 		 *			Multiple table headers
@@ -216,7 +216,8 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *          The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
-	var csvOptions = (this.options.exporting && this.options.exporting.csv) ||
+	var time = this.time,
+		csvOptions = (this.options.exporting && this.options.exporting.csv) ||
 			{},
 		xAxis,
 		xAxes = this.xAxis,
@@ -358,7 +359,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 					rows[key][i + j] = pick(
 						categoryMap[prop][val], // Y axis category if present
 						datetimeValueAxisMap[prop] ?
-							Highcharts.dateFormat(csvOptions.dateFormat, val) :
+							time.dateFormat(csvOptions.dateFormat, val) :
 							null,
 						val
 					);
@@ -411,7 +412,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 					if (row.x instanceof Date) {
 						row.x = row.x.getTime();
 					}
-					category = Highcharts.dateFormat(
+					category = time.dateFormat(
 						csvOptions.dateFormat,
 						row.x
 					);

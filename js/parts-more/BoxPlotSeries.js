@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: ["warn", 80, 4] */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -47,9 +48,9 @@ seriesType('boxplot', 'column', {
 			'Minimum: {point.low}<br/>',
 		/*= } else { =*/
 
-		pointFormat: '' + // eslint-disable-line no-dupe-keys
-			'<span style="color:{point.color}">' +
-			'\u25CF</span> <b> {series.name}</b><br/>' +
+		pointFormat: // eslint-disable-line no-dupe-keys
+			'<span style="color:{point.color}">\u25CF</span> <b> ' +
+			'{series.name}</b><br/>' +
 			'Maximum: {point.high}<br/>' +
 			'Upper quartile: {point.q3}<br/>' +
 			'Median: {point.median}<br/>' +
@@ -247,9 +248,9 @@ seriesType('boxplot', 'column', {
 	/*= } =*/
 
 }, /** @lends seriesTypes.boxplot */ {
+
 	// array point configs are mapped to this
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
-
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.low, point.q1, point.median, point.q3, point.high];
 	},
@@ -261,15 +262,9 @@ seriesType('boxplot', 'column', {
 	/**
 	 * Get presentational attributes
 	 */
-	pointAttribs: function (point) {
-		var options = this.options,
-			color = (point && point.color) || this.color;
-
-		return {
-			'fill': point.fillColor || options.fillColor || color,
-			'stroke': options.lineColor || color,
-			'stroke-width': options.lineWidth || 0
-		};
+	pointAttribs: function () {
+		// No attributes should be set on point.graphic which is the group
+		return {};
 	},
 	/*= } =*/
 
@@ -293,11 +288,7 @@ seriesType('boxplot', 'column', {
 			each(pointArrayMap, function (key) {
 				if (point[key] !== null) {
 					point[key + 'Plot'] = yAxis.translate(
-						point[key],
-						0,
-						1,
-						0,
-						1
+						point[key], 0, 1, 0, 1
 					);
 				}
 			});
@@ -339,7 +330,7 @@ seriesType('boxplot', 'column', {
 				shapeArgs = point.shapeArgs; // the box
 
 			/*= if (build.classic) { =*/
-			var boxAttr,
+			var boxAttr = {},
 				stemAttr = {},
 				whiskersAttr = {},
 				medianAttr = {},
@@ -390,15 +381,14 @@ seriesType('boxplot', 'column', {
 					options.stemWidth,
 					options.lineWidth
 				);
-				stemAttr.dashstyle = point.stemDashStyle ||
-					options.stemDashStyle;
+				stemAttr.dashstyle =
+					point.stemDashStyle || options.stemDashStyle;
 				point.stem.attr(stemAttr);
 				
 				// Whiskers attributes
 				if (whiskerLength) {
-					whiskersAttr.stroke = point.whiskerColor ||
-						options.whiskerColor ||
-						color;
+					whiskersAttr.stroke =
+						point.whiskerColor || options.whiskerColor || color;
 					whiskersAttr['stroke-width'] = pick(
 						point.whiskerWidth,
 						options.whiskerWidth,
@@ -408,15 +398,20 @@ seriesType('boxplot', 'column', {
 				}
 				
 				if (doQuartiles) {
-					boxAttr = series.pointAttribs(point);
+					boxAttr.fill = (
+						point.fillColor ||
+						options.fillColor ||
+						color
+					);
+					boxAttr.stroke = options.lineColor || color;
+					boxAttr['stroke-width'] = options.lineWidth || 0;
 					point.box.attr(boxAttr);
 				}
 				
 
 				// Median attributes
-				medianAttr.stroke = point.medianColor ||
-					options.medianColor ||
-					color;
+				medianAttr.stroke =
+					point.medianColor || options.medianColor || color;
 				medianAttr['stroke-width'] = pick(
 					point.medianWidth,
 					options.medianWidth,
@@ -580,20 +575,15 @@ seriesType('boxplot', 'column', {
  * @type      {Array<Object|Array>}
  * @extends   series.line.data
  * @excluding marker
- * @sample    {highcharts}
- *            highcharts/chart/reflow-true/
+ * @sample    {highcharts} highcharts/chart/reflow-true/
  *            Numerical values
- * @sample    {highcharts}
- *            highcharts/series/data-array-of-arrays/
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
  *            Arrays of numeric x and y
- * @sample    {highcharts}
- *            highcharts/series/data-array-of-arrays-datetime/
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
  *            Arrays of datetime x and y
- * @sample    {highcharts}
- *            highcharts/series/data-array-of-name-value/
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
  *            Arrays of point.name and y
- * @sample    {highcharts}
- *            highcharts/series/data-array-of-objects/
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
  *            Config objects
  * @product   highcharts
  * @apioption series.boxplot.data

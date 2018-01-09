@@ -23,6 +23,8 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 		
 		<script>
 			/* eslint-disable */
+			var controller = window.parent && window.parent.controller;
+
 			var diffThreshold = 0;
 			window.continueBatch = false;
 
@@ -94,6 +96,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 					window.location.reload();
 				});
 
+				/*
 				var fails = 0;
 				$('#fails-only').click(function () {
 
@@ -112,6 +115,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 
 					
 				});
+
 
 				$("#slider").slider({
 					min: 0,
@@ -133,10 +137,11 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 						});
 					}
 				});
+				*/
 
 				$('#main-nav').css('margin-top', $('#top-nav').height());
 
-				countFails();
+				//countFails();
 				
 			});
 			
@@ -285,20 +290,27 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 			Settings
 		</a>
 
+		<!--
 		<a class="button" id="fails-only" title="Show only fails">
 			<i class="icon-filter"></i>
 			Fails only
 			<span id="count-fails"></span>
 		</a>
+		-->
+
+		<div class="text" id="test-status">
+		</div>
 
 		<div class="text">
 			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=Safari">Safari</a>, <a href="?browserKey=PhantomJS">PhantomJS</a>
 		</div>
 
+		<!--
 		<div style="margin-top: 1em">
 			<div style="width: 45%; float:left">Diff limit: <span id="slider-value">0</span></div>
 			<div id="slider" style="width: 45%; float:left"></div>
 		</div>
+		-->
 
 	</div>
 
@@ -311,6 +323,10 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 	<?php
 	$products = array('highcharts', 'maps', 'stock', 'unit-tests', 'issues', 'cloud');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
+	$testStatus = array(
+		'success' => array(),
+		'error' => array()
+	);
 
 	$html = "";
 	$samples = array('');
@@ -429,11 +445,18 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 						$i++;
 					
 					} elseif (preg_match('/^[a-zA-Z0-9\-,]+$/', $innerFile)) {
+						$compareClass = 'different';
 						$html .= "
-						<li class='different'>
+						<li class='$compareClass'>
 							Invalid sample name, use lower case only:<br>$innerFile
 						</li>
 						";
+					}
+
+					if ($compareClass === 'identical') {
+						$testStatus['success'][] = $path;
+					} else if ($compareClass === 'different') {
+						$testStatus['error'][] = $path;
 					}
 				}
 			
@@ -443,11 +466,25 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 	}
 
 	echo $html;
+
+	$samplesJS = sizeof($samples) > 0 ?
+		"'" . join("', '", $samples) . "'":
+		'';
+	$testStatusSuccessJS = sizeof($testStatus['success']) > 0 ?
+		"'" . join("', '", $testStatus['success']) . "'":
+		'';
+	$testStatusErrorJS = sizeof($testStatus['error']) > 0 ?
+		"'" . join("', '", $testStatus['error']) . "'":
+		'';
 ?>
 </div>
 
 <script>
-var samples = ['<?php echo join("', '", $samples); ?>'];
+var samples = [<?php echo $samplesJS; ?>];
+controller.testStatus.success = [<?php echo $testStatusSuccessJS  ?>];
+controller.testStatus.error = [<?php echo $testStatusErrorJS  ?>];
+controller.testStatus.total = samples.length;
+controller.updateStatus();
 </script>
 </body>
 </html>

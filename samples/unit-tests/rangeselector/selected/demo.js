@@ -195,3 +195,37 @@ QUnit.test('JS error on range selector in non-Highstock (#5330)', function (asse
         }]
     });
 });
+
+QUnit.test('1Y button should be selected. (#7467)', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 0,
+            buttons: [{
+                type: 'year',
+                count: 1,
+                offsetMin: -1 * 24 * 3600 * 1000,
+                text: '1y'
+            }]
+        },
+        series: [{
+            data: (function () {
+                var arr = [];
+                for (var i = 0; i < 2000; i++) {
+                    arr.push(i);
+                }
+                return arr;
+            }()),
+            pointInterval: 24 * 36e5
+        }]
+    });
+
+    assert.strictEqual(
+        chart.container.querySelectorAll(
+            '.highcharts-range-selector-buttons g.highcharts-button'
+        )[0]
+            .getAttribute('class')
+            .indexOf('highcharts-button-pressed') > -1,
+        true,
+        '1Y initiallly selected'
+    );
+});
