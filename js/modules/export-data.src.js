@@ -149,7 +149,7 @@ Highcharts.setOptions({
 		 * Export-data module required. Caption for the data table. Same as
 		 * chart title by default. Set to `false` to disable.
 		 *
-		 * @type {Boolean\String}
+		 * @type {Boolean|String}
 		 * @since 6.0.4
 		 * @sample highcharts/export-data/multilevel-table
 		 *			Multiple table headers
