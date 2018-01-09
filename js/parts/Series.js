@@ -3171,12 +3171,14 @@ H.Series = H.seriesType('line', null, { // base series options
 		}
 
 		/**
-		 * Read only. An array containing those values converted to points, but
-		 * in case the series data length exceeds the `cropThreshold`, or if the
-		 * data is grouped, `series.data` doesn't contain all the points. It
-		 * only contains the points that have been created on demand. To
-		 * modify the data, use {@link Highcharts.Series#setData} or {@link
-		 * Highcharts.Point#update}.
+		 * Read only. An array containing those values converted to points.
+		 * In case the series data length exceeds the `cropThreshold`, or if the
+		 * data is grouped, `series.data` doesn't contain all the points. Also,
+		 * in case a series is hidden, the `data` array may be empty. To access 
+		 * raw values, `series.options.data` will always be up to date.
+		 * `Series.data` only contains the points that have been created on
+		 * demand. To modify the data, use {@link Highcharts.Series#setData} or
+		 * {@link Highcharts.Point#update}.
 		 *
 		 * @name data
 		 * @memberOf Highcharts.Series
