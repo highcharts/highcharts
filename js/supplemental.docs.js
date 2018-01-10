@@ -33,9 +33,9 @@
  * maximum is higher, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highcharts} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highcharts
+ * @product highcharts highstock
  * @apioption xAxis.softMax
  */
 
@@ -45,10 +45,9 @@
  * data minimum is lower, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highcharts} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
+ * @product highcharts highstock
  * @apioption xAxis.softMin
  */
 
@@ -1613,10 +1612,9 @@
  * data maximum is higher, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highstock highmaps
+ * @product highcharts highstock
  * @apioption yAxis.softMax
  */
 
@@ -1626,10 +1624,9 @@
  * data minimum is lower, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highstock highmaps
+ * @product highcharts highstock
  * @apioption yAxis.softMin
  */
 
