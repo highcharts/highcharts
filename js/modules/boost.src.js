@@ -1729,6 +1729,10 @@ function GLRenderer(postRenderCallback) {
 				closestLeft.y = y;
 			}
 
+			if (y === null && connectNulls) {
+				continue;
+			}
+
 			// Cull points outside the extremes
 			if (y === null || !isYInside) {
 				beginSegment();
