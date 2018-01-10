@@ -2703,19 +2703,23 @@ each([
 	function branch(proceed) {
 		var letItPass = this.options.stacking &&
 						(method === 'translate' || method === 'generatePoints'),
-			enabled = true;
+			enabled = pick(
+				(
+					this.chart &&
+					this.chart.options &&
+					this.chart.options.boost &&
+					this.chart.options.boost.enabled
+				),
+				true
+			);
 
-		if (this.chart && this.chart.options && this.chart.options.boost) {
-			enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
-				true :
-				this.chart.options.boost.enabled;
-		}
-
-		if (!this.isSeriesBoosting ||
+		if (
+			!this.isSeriesBoosting ||
 			letItPass ||
 			!enabled ||
 			this.type === 'heatmap' ||
-			this.type === 'treemap'
+			this.type === 'treemap' ||
+			H.inArray(this.type, boostable) === -1
 		) {
 
 			proceed.call(this);
