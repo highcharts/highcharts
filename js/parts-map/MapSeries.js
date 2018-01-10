@@ -107,7 +107,6 @@ seriesType('map', 'scatter', {
 	 * @type {Number}
 	 * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
 	 * @default 1
-	 * @product highmaps
 	 * @apioption plotOptions.series.borderWidth
 	 */
 	borderWidth: 1,
@@ -964,7 +963,7 @@ seriesType('map', 'scatter', {
 		clearTimeout(this.colorInterval);
 		if (this.value !== null || this.series.options.nullInteraction) {
 			Point.prototype.onMouseOver.call(this, e);
-		} else { //#3401 Tooltip doesn't hide when hovering over null points
+		} else { // #3401 Tooltip doesn't hide when hovering over null points
 			this.series.onMouseOut(e);
 		}
 	},

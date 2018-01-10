@@ -33,11 +33,20 @@ QUnit.test('getTimezoneOffset is negative, crossing midnight (#5935)', function 
         'Tick positions correct'
     );
 
-    assert.strictEqual(
-        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[2]].label.element.textContent,
-        '02:00',
-        'Tick positions correct, and tick gap lands on the duplicated label (#6797)'
+    assert.deepEqual(
+        Object.keys(chart.xAxis[0].ticks).map(function (pos) {
+            return chart.xAxis[0].ticks[pos].label.element.textContent;
+        }),
+        ['6. Nov', '01:00', '01:00', '02:00', '03:00', '04:00'],
+        'The same label should be repeated across DST change (#6797)'
     );
+
+    // Reset
+    Highcharts.setOptions({
+        global: {
+            getTimezoneOffset: null
+        }
+    });
 });
 
 
@@ -89,6 +98,13 @@ QUnit.test('getTimezoneOffset with small interval (#4951)', function (assert) {
         4,
         '4 higher ranks found'
     );
+
+    // Reset
+    Highcharts.setOptions({
+        global: {
+            getTimezoneOffset: null
+        }
+    });
 });
 
 
@@ -154,6 +170,13 @@ QUnit.test('getTimezoneOffset with bigger interval (#4951)', function (assert) {
             '00:00',
             'Tick is on timezone midnight'
         );
+    });
+
+    // Reset
+    Highcharts.setOptions({
+        global: {
+            getTimezoneOffset: null
+        }
     });
 
 });
@@ -222,5 +245,12 @@ QUnit.test(
             2,
             '2 higher ranks found'
         );
+
+        // Reset
+        Highcharts.setOptions({
+            global: {
+                timezoneOffset: 0
+            }
+        });
     }
 );

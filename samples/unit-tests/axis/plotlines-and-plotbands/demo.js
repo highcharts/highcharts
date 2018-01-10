@@ -1,5 +1,8 @@
 QUnit.test('#6433 - axis.update leaves empty plotbands\' groups', function (assert) {
     var chart = new Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
         xAxis: {
             plotBands: [{
                 from: 0.5,
@@ -25,7 +28,8 @@ QUnit.test('#6433 - axis.update leaves empty plotbands\' groups', function (asse
 QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            animation: false
+            animation: false,
+            width: 600
         },
         xAxis: {
             min: Date.UTC(2016, 0, 13),
@@ -75,5 +79,34 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
         chart.xAxis[0].plotLinesAndBands[1].label.attr('visibility'),
         'hidden',
         'Inside range, label shown'
+    );
+});
+
+QUnit.test('#5909 - missing border on top.', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        xAxis: {
+            plotBands: [{ // mark the weekend
+                color: '#FCFFC5',
+                from: 3,
+                to: 5,
+                zIndex: 10,
+                borderWidth: 3,
+                borderColor: "black"
+            }]
+        },
+        series: [{
+            data: [2900.9, 701.5, 10006.4, 12009.2, 1404.0, 1076.0, 135.6, 148.5, 21006.4]
+        }]
+    });
+
+    var line = chart.xAxis[0].plotLinesAndBands[0].svgElem.d.split(' ');
+
+    assert.strictEqual(
+        line[line.length - 1],
+        'z',
+        'Border is rendered around the shape'
     );
 });

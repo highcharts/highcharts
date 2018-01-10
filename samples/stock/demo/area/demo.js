@@ -4,7 +4,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.jso
     // Create the chart
     Highcharts.stockChart('container', {
 
-
         rangeSelector: {
             selected: 1
         },

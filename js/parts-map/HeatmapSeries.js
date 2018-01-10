@@ -49,6 +49,15 @@ seriesType('heatmap', 'scatter', {
 	borderWidth: 0,
 
 	/**
+	 * Padding between the points in the heatmap.
+	 * 
+	 * @type {Number}
+	 * @default 0
+	 * @since 6.0
+	 * @apioption plotOptions.heatmap.pointPadding
+	 */
+
+	/**
 	 * The main color of the series. In heat maps this color is rarely used,
 	 * as we mostly use the color to denote the value of each point. Unless
 	 * options are set in the [colorAxis](#colorAxis), the default value
@@ -114,7 +123,7 @@ seriesType('heatmap', 'scatter', {
 		},
 
 		hover: {
-			halo: false,  // #3406, halo is not required on heatmaps
+			halo: false,  // #3406, halo is disabled on heatmaps by default
 			brightness: 0.2
 		}
 	}
@@ -153,6 +162,7 @@ seriesType('heatmap', 'scatter', {
 			options = series.options,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
+			seriesPointPadding = options.pointPadding || 0,
 			between = function (x, a, b) {
 				return Math.min(Math.max(a, x), b);
 			};
@@ -183,7 +193,8 @@ seriesType('heatmap', 'scatter', {
 				y2 = between(
 					Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)),
 					-yAxis.len, 2 * yAxis.len
-				);
+				),
+				pointPadding = pick(point.pointPadding, seriesPointPadding);
 
 			// Set plotX and plotY for use in K-D-Tree and more
 			point.plotX = point.clientX = (x1 + x2) / 2;
@@ -191,10 +202,10 @@ seriesType('heatmap', 'scatter', {
 
 			point.shapeType = 'rect';
 			point.shapeArgs = {
-				x: Math.min(x1, x2),
-				y: Math.min(y1, y2),
-				width: Math.abs(x2 - x1),
-				height: Math.abs(y2 - y1)
+				x: Math.min(x1, x2) + pointPadding,
+				y: Math.min(y1, y2) + pointPadding,
+				width: Math.abs(x2 - x1) - pointPadding * 2,
+				height: Math.abs(y2 - y1) - pointPadding * 2
 			};
 		});
 
@@ -227,7 +238,21 @@ seriesType('heatmap', 'scatter', {
 		Series.prototype.getExtremes.call(this);
 	}
 
-}), colorPointMixin);
+}), H.extend({
+	haloPath: function (size) {
+		if (!size) {
+			return [];
+		}
+		var rect = this.shapeArgs;
+		return [
+			'M', rect.x - size, rect.y - size,
+			'L', rect.x - size, rect.y + rect.height + size,
+			rect.x + rect.width + size, rect.y + rect.height + size,
+			rect.x + rect.width + size, rect.y - size,
+			'Z'
+		];
+	}
+}, colorPointMixin));
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -317,17 +342,27 @@ seriesType('heatmap', 'scatter', {
  */
 
 /**
- * The x coordinate of the point.
+ * The x value of the point. For datetime axes,
+ * the X value is the timestamp in milliseconds since 1970.
  * 
  * @type {Number}
- * @product highmaps
+ * @product highcharts highmaps
  * @apioption series.heatmap.data.x
  */
 
 /**
- * The y coordinate of the point.
+ * The y value of the point.
  * 
  * @type {Number}
- * @product highmaps
+ * @product highcharts highmaps
  * @apioption series.heatmap.data.y
  */
+
+/**
+ * Point padding for a single point.
+ *
+ * @type {Number}
+ * @sample maps/plotoptions/tilemap-pointpadding Point padding on tiles
+ * @apioption series.heatmap.data.pointPadding
+ */
+

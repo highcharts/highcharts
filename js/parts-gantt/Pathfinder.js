@@ -517,8 +517,11 @@ Pathfinder.prototype = {
 			if (series.visible) {
 				each(series.points, function (point) {
 					var to,
-						connects = point.options.connect && 
-									H.splat(point.options.connect);
+						connects = (
+							point.options &&
+							point.options.connect && 
+							H.splat(point.options.connect)
+						);
 					if (point.visible && connects) {
 						each(connects, function (connect) {
 							to = chart.get(typeof connect === 'string' ?

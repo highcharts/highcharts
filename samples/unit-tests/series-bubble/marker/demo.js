@@ -51,7 +51,7 @@ QUnit.test('Clicking marker (#6705)', function (assert) {
             point: {
                 events: {
                     click: function () {
-                        console.log('click');
+                        // console.log('click');
                         clicked = true;
                     }
                 }

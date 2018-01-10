@@ -7,7 +7,7 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './ColumnSeries.js';
-import './CenteredSeriesMixin.js';
+import '../mixins/centered-series.js';
 import './Legend.js';
 import './Options.js';
 import './Point.js';
@@ -17,6 +17,7 @@ var addEvent = H.addEvent,
 	defined = H.defined,
 	each = H.each,
 	extend = H.extend,
+	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
 	inArray = H.inArray,
 	LegendSymbolMixin = H.LegendSymbolMixin,
 	noop = H.noop,
@@ -161,7 +162,7 @@ seriesType('pie', 'line', {
 		 * Whether to render the connector as a soft arc or a line with sharp
 		 * break.
 		 * 
-		 * @type {Boolean}
+		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/ Soft
 		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/ Non soft
 		 * @since 2.1.7
@@ -220,6 +221,7 @@ seriesType('pie', 'line', {
 	 * @apioption plotOptions.pie.innerSize
 	 */
 
+	/** @ignore */
 	legendType: 'point',
 
 	/**	 @ignore */
@@ -458,10 +460,10 @@ seriesType('pie', 'line', {
 			start,
 			end,
 			angle,
-			startAngle = options.startAngle || 0,
-			startAngleRad = series.startAngleRad = Math.PI / 180 * (startAngle - 90),
-			endAngleRad = series.endAngleRad = Math.PI / 180 * ((pick(options.endAngle, startAngle + 360)) - 90),
-			circ = endAngleRad - startAngleRad, //2 * Math.PI,
+			radians = getStartAndEndRadians(options.startAngle, options.endAngle),
+			startAngleRad = series.startAngleRad = radians.start,
+			endAngleRad = series.endAngleRad = radians.end,
+			circ = endAngleRad - startAngleRad, // 2 * Math.PI,
 			points = series.points,
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
@@ -575,9 +577,7 @@ seriesType('pie', 'line', {
 			chart = series.chart,
 			renderer = chart.renderer,
 			groupTranslation,
-			//center,
 			graphic,
-			//group,
 			pointAttr,
 			shapeArgs;
 
@@ -591,8 +591,8 @@ seriesType('pie', 'line', {
 
 		// draw the slices
 		each(series.points, function (point) {
+			graphic = point.graphic;
 			if (!point.isNull) {
-				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 
 
@@ -643,6 +643,8 @@ seriesType('pie', 'line', {
 
 				graphic.addClass(point.getClassName());
 						
+			} else if (graphic) {
+				point.graphic = graphic.destroy();
 			}
 		});
 
@@ -802,7 +804,9 @@ seriesType('pie', 'line', {
 				shapeArgs.y,
 				shapeArgs.r + size,
 				shapeArgs.r + size, {
-					innerR: this.shapeArgs.r,
+					// Substract 1px to ensure the background is not bleeding
+					// through between the halo and the slice (#7495).
+					innerR: this.shapeArgs.r - 1,
 					start: shapeArgs.start,
 					end: shapeArgs.end
 				}

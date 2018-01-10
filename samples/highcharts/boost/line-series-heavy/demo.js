@@ -58,7 +58,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Trimmed Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
     },
 
     legend: {
@@ -89,7 +89,7 @@ Highcharts.chart('container', {
     // },
 
     subtitle: {
-        text: 'Using the experimental Highcharts Boost module'
+        text: 'Using the Boost module'
     },
 
     tooltip: {

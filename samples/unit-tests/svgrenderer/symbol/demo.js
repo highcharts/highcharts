@@ -12,7 +12,9 @@ QUnit.test('Symbol tests', function (assert) {
         h
     );
 
-    var url = 'url(testimage.png)';
+    var url = (location.host === 'localhost:9876') ?
+        'url(base/utils/samples/testimage.png)' : // karma
+        'url(testimage.png)'; // utils
 
     function ifDone() {
         count++;
@@ -53,7 +55,8 @@ QUnit.test('Symbol tests', function (assert) {
             'Width ok'
         );
         assert.strictEqual(
-            symbol1.element.getAttribute('transform')
+            symbol1.element.getAttribute('transform') &&
+                symbol1.element.getAttribute('transform')
                 .replace(' ', ','), // MSIE
             'translate(-15,-15)',
             'Translate ok'
@@ -64,7 +67,7 @@ QUnit.test('Symbol tests', function (assert) {
 
     // With explicit size
     var symbol2 = ren
-        .symbol(url, 200, 100, null, null, {
+        .symbol(url.replace(')', '?' + Date.now() + ')'), 200, 100, null, null, {
             width: 20,
             height: 20
         })
@@ -78,7 +81,8 @@ QUnit.test('Symbol tests', function (assert) {
             'Width ok'
         );
         assert.strictEqual(
-            symbol2.element.getAttribute('transform')
+            symbol2.element.getAttribute('transform') &&
+                symbol2.element.getAttribute('transform')
                 .replace(' ', ','), // MSIE
             'translate(-10,-10)',
             'Translate ok'
@@ -104,13 +108,14 @@ QUnit.test('Symbol tests', function (assert) {
             'Label box width ok'
         );
         assert.strictEqual(
+            label.box.element.getAttribute('transform') &&
             label.box.element.getAttribute('transform')
                 .replace('(35)', '(35,0)'), // MSIE
             'translate(35,0)',
             'Label box translate ok, centered in label'
         );
         ifDone();
-        console.log(Highcharts.symbolSizes);
+        // console.log(Highcharts.symbolSizes);
     }, 100);
 
     // Symbol with wrong name #6627

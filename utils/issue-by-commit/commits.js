@@ -343,8 +343,8 @@ $(function() {
 					})
 					.click(function() {
 						$active && $active.removeClass('active').addClass('visited');
-						$(this).addClass('active');
-						$active = $(this);
+						$active = $(this).parent();
+						$active.addClass('active');
 					})
 					.html(message)
 					.appendTo($li);
@@ -383,7 +383,7 @@ $(function() {
 					})
 					.appendTo($li);
 
-				$('<span class="date">' + date + '</span>')
+				$('<span class="date">' + (date || '&nbsp;') + '</span>')
 					.css({
 						marginLeft: 20 + 10 * indentLevel
 					})

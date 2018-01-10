@@ -8,7 +8,7 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
 import './SvgRenderer.js';
-import './VmlRenderer.js';
+import onSeriesMixin from '../mixins/on-series.js';
 var addEvent = H.addEvent,
 	each = H.each,
 	merge = H.merge,
@@ -16,12 +16,10 @@ var addEvent = H.addEvent,
 	Renderer = H.Renderer,
 	Series = H.Series,
 	seriesType = H.seriesType,
-	seriesTypes = H.seriesTypes,
 	SVGRenderer = H.SVGRenderer,
 	TrackerMixin = H.TrackerMixin,
 	VMLRenderer = H.VMLRenderer,
-	symbols = SVGRenderer.prototype.symbols,
-	stableSort = H.stableSort;
+	symbols = SVGRenderer.prototype.symbols;
 
 /**
  * The Flags series.
@@ -65,8 +63,20 @@ seriesType('flags', 'column', {
 	 * @product highstock
 	 * @apioption plotOptions.flags.onSeries
 	 */
-
+	
 	pointRange: 0, // #673
+
+	/**
+	 * Whether the flags are allowed to overlap sideways. If `false`, the flags
+	 * are moved sideways using an algorithm that seeks to place every flag as
+	 * close as possible to its original position.
+	 *
+	 * @sample {highstock} stock/plotoptions/flags-allowoverlapx
+	 *         Allow sideways overlap
+	 *
+	 * @since 6.0.4
+	 */
+	allowOverlapX: false,
 
 	/**
 	 * The shape of the marker. Can be one of "flag", "circlepin", "squarepin",
@@ -125,7 +135,7 @@ seriesType('flags', 'column', {
 	 *  or individually for each point. Defaults to `"A"`.
 	 * 
 	 * @type {String}
-	 * @default "A"
+	 * @default A
 	 * @product highstock
 	 * @apioption plotOptions.flags.title
 	 */
@@ -193,8 +203,6 @@ seriesType('flags', 'column', {
 			/**
 			 * The color of the line/border of the flag.
 			 * 
-			 * @type {String}
-			 * @default "black"
 			 * @product highstock
 			 */
 			lineColor: '${palette.neutralColor100}',
@@ -202,8 +210,6 @@ seriesType('flags', 'column', {
 			/**
 			 * The fill or background color of the flag.
 			 * 
-			 * @type {String}
-			 * @default "#FCFFC5"
 			 * @product highstock
 			 */
 			fillColor: '${palette.highlightColor20}'
@@ -263,107 +269,7 @@ seriesType('flags', 'column', {
 	},
 	/*= } =*/
 
-	/**
-	 * Extend the translate method by placing the point on the related series
-	 */
-	translate: function () {
-
-		seriesTypes.column.prototype.translate.apply(this);
-
-		var series = this,
-			options = series.options,
-			chart = series.chart,
-			points = series.points,
-			cursor = points.length - 1,
-			point,
-			lastPoint,
-			optionsOnSeries = options.onSeries,
-			onSeries = optionsOnSeries && chart.get(optionsOnSeries),
-			onKey = options.onKey || 'y',
-			step = onSeries && onSeries.options.step,
-			onData = onSeries && onSeries.points,
-			i = onData && onData.length,
-			xAxis = series.xAxis,
-			yAxis = series.yAxis,
-			xAxisExt = xAxis.getExtremes(),
-			xOffset = 0,
-			leftPoint,
-			lastX,
-			rightPoint,
-			currentDataGrouping;
-
-		// relate to a master series
-		if (onSeries && onSeries.visible && i) {
-			xOffset = (onSeries.pointXOffset || 0) + (onSeries.barW || 0) / 2;
-			currentDataGrouping = onSeries.currentDataGrouping;
-			lastX = onData[i - 1].x + (currentDataGrouping ? currentDataGrouping.totalRange : 0); // #2374
-
-			// sort the data points
-			stableSort(points, function (a, b) {
-				return (a.x - b.x);
-			});
-
-			onKey = 'plot' + onKey[0].toUpperCase() + onKey.substr(1);
-			while (i-- && points[cursor]) {
-				point = points[cursor];
-				leftPoint = onData[i];
-				if (leftPoint.x <= point.x && leftPoint[onKey] !== undefined) {
-					if (point.x <= lastX) { // #803
-
-						point.plotY = leftPoint[onKey];
-
-						// interpolate between points, #666
-						if (leftPoint.x < point.x && !step) {
-							rightPoint = onData[i + 1];
-							if (rightPoint && rightPoint[onKey] !== undefined) {
-								point.plotY +=
-									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1
-									(rightPoint[onKey] - leftPoint[onKey]); // the y distance
-							}
-						}
-					}
-					cursor--;
-					i++; // check again for points in the same x position
-					if (cursor < 0) {
-						break;
-					}
-				}
-			}
-		}
-
-		// Add plotY position and handle stacking
-		each(points, function (point, i) {
-
-			var stackIndex;
-
-			// Undefined plotY means the point is either on axis, outside series
-			// range or hidden series. If the series is outside the range of the
-			// x axis it should fall through with an undefined plotY, but then
-			// we must remove the shapeArgs (#847).
-			if (point.plotY === undefined) {
-				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) {
-					// we're inside xAxis range
-					point.plotY = chart.chartHeight - xAxis.bottom -
-						(xAxis.opposite ? xAxis.height : 0) +
-						xAxis.offset - yAxis.top; // #3517
-				} else {
-					point.shapeArgs = {}; // 847
-				}
-			}
-			point.plotX += xOffset; // #2049
-			// if multiple flags appear at the same x, order them into a stack
-			lastPoint = points[i - 1];
-			if (lastPoint && lastPoint.plotX === point.plotX) {
-				if (lastPoint.stackIndex === undefined) {
-					lastPoint.stackIndex = 0;
-				}
-				stackIndex = lastPoint.stackIndex + 1;
-			}
-			point.stackIndex = stackIndex; // #3639
-		});
-
-
-	},
+	translate: onSeriesMixin.translate,
 
 	/**
 	 * Draw the markers
@@ -382,10 +288,12 @@ seriesType('flags', 'column', {
 			point,
 			graphic,
 			stackIndex,
-			anchorX,
 			anchorY,
+			attribs,
 			outsideRight,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			boxesMap = {},
+			boxes = [];
 
 		i = points.length;
 		while (i--) {
@@ -399,7 +307,7 @@ seriesType('flags', 'column', {
 			if (plotY !== undefined) {
 				plotY = point.plotY + optionsY - (stackIndex !== undefined && stackIndex * options.stackDistance);
 			}
-			anchorX = stackIndex ? undefined : point.plotX; // skip connectors for higher level stacked points
+			point.anchorX = stackIndex ? undefined : point.plotX; // skip connectors for higher level stacked points
 			anchorY = stackIndex ? undefined : point.plotY;
 
 			graphic = point.graphic;
@@ -439,6 +347,7 @@ seriesType('flags', 'column', {
 					/*= if (build.classic) { =*/
 					graphic.shadow(options.shadow);
 					/*= } =*/
+					graphic.isNew = true;
 				}
 
 				if (plotX > 0) { // #3119
@@ -446,13 +355,34 @@ seriesType('flags', 'column', {
 				}
 
 				// Plant the flag
-				graphic.attr({
-					text: point.options.title || options.title || 'A',
-					x: plotX,
+				attribs = {
 					y: plotY,
-					anchorX: anchorX,
 					anchorY: anchorY
-				});
+				};
+				if (options.allowOverlapX) {
+					attribs.x = plotX;
+					attribs.anchorX = point.anchorX;
+				}
+				graphic.attr({
+					text: point.options.title || options.title || 'A'
+				})[graphic.isNew ? 'attr' : 'animate'](attribs);
+
+				// Rig for the distribute function
+				if (!options.allowOverlapX) {
+					if (!boxesMap[point.plotX]) {
+						boxesMap[point.plotX] = {
+							align: 0,
+							size: graphic.width,
+							target: plotX,
+							anchorX: plotX
+						};
+					} else {
+						boxesMap[point.plotX].size = Math.max(
+							boxesMap[point.plotX].size,
+							graphic.width
+						);
+					}
+				}
 
 				// Set the tooltip anchor position
 				point.tooltipPos = chart.inverted ? 
@@ -463,6 +393,27 @@ seriesType('flags', 'column', {
 				point.graphic = graphic.destroy();
 			}
 
+		}
+		
+		// Handle X-dimension overlapping
+		if (!options.allowOverlapX) {
+			H.objectEach(boxesMap, function (box) {
+				box.plotX = box.anchorX;
+				boxes.push(box);
+			});
+
+			H.distribute(boxes, this.xAxis.len);
+
+			each(points, function (point) {
+				var box = point.graphic && boxesMap[point.plotX];
+				if (box) {
+					point.graphic[point.graphic.isNew ? 'attr' : 'animate']({
+						x: box.pos,
+						anchorX: point.anchorX
+					});
+					point.graphic.isNew = false;
+				}
+			});
 		}
 
 		// Might be a mix of SVG and HTML and we need events for both (#6303)
@@ -526,19 +477,23 @@ symbols.flag = function (x, y, w, h, options) {
 	var anchorX = (options && options.anchorX) || x,
 		anchorY = (options &&  options.anchorY) || y;
 
-	return [
-		'M', anchorX, anchorY,
-		'L', x, y + h,
-		x, y,
-		x + w, y,
-		x + w, y + h,
-		x, y + h,
-		'Z'
-	];
+	return symbols.circle(anchorX - 1, anchorY - 1, 2, 2).concat(
+		[
+			'M', anchorX, anchorY,
+			'L', x, y + h,
+			x, y,
+			x + w, y,
+			x + w, y + h,
+			x, y + h,
+			'Z'
+		]
+	);
 };
 
-// create the circlepin and squarepin icons with anchor
-each(['circle', 'square'], function (shape) {
+/*
+ * Create the circlepin and squarepin icons with anchor
+ */
+function createPinSymbol(shape) {
 	symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
 		var anchorX = options && options.anchorX,
@@ -558,12 +513,24 @@ each(['circle', 'square'], function (shape) {
 			// if the label is below the anchor, draw the connecting line from the top edge of the label
 			// otherwise start drawing from the bottom edge
 			labelTopOrBottomY = (y > anchorY) ? y : y + h;
-			path.push('M', anchorX, labelTopOrBottomY, 'L', anchorX, anchorY);
+			path.push(
+				'M',
+				shape === 'circle' ? path[1] - path[4] : path[1] + path[4] / 2,
+				labelTopOrBottomY,
+				'L',
+				anchorX,
+				anchorY
+			);
+			path = path.concat(
+				symbols.circle(anchorX - 1, anchorY - 1, 2, 2)
+			);
 		}
 
 		return path;
 	};
-});
+}
+createPinSymbol('circle');
+createPinSymbol('square');
 
 /*= if (build.classic) { =*/
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even

@@ -60,9 +60,8 @@ var	merge = H.merge,
  * }
  * </pre>
  * @type {Object}
- * @sample {highcharts} highcharts/annotations/custom-markers/ Define a custom marker for annotations
- * @sample {highstock} highcharts/annotations/custom-markers/ Define a custom marker for annotations
- * @sample {highmaps} highcharts/annotations/custom-markers/ Define a custom marker for annotations
+ * @sample highcharts/annotations/custom-markers/
+ *         Define a custom marker for annotations
  * @since 6.0.0
  * @apioption defs.markers
  */
@@ -163,12 +162,12 @@ var MockPoint = H.MockPoint = function (chart, options) {
 		getPlotBox: seriesPrototype.getPlotBox
 	};
 
-	//this.plotX
-	//this.plotY
+	// this.plotX
+	// this.plotY
 
 	/* Those might not exist if a specific axis was not found/defined */
-	//this.x? 
-	//this.y?
+	// this.x? 
+	// this.y?
 
 	this.init(chart, options);
 };
@@ -365,7 +364,8 @@ Annotation.prototype = {
 		height: 'height',
 		borderRadius: 'r',
 		r: 'r',
-		padding: 'padding'
+		padding: 'padding',
+		dashStyle: 'dashstyle'
 	},
 
 	/**
@@ -374,9 +374,10 @@ Annotation.prototype = {
 	 * pixel coordinates.
 	 *
 	 * @type {Array<Object>}
-	 * @sample {highcharts} highcharts/annotations/basic/ Basic annotations
-	 * @sample {highstock} highcharts/annotations/basic/ Basic annotations
-	 * @sample {highmaps} highcharts/annotations/basic/ Basic annotations
+	 * @sample highcharts/annotations/basic/
+	 *         Basic annotations
+	 * @sample {highstock} stock/annotations/fibonacci-retracements
+	 *         Custom annotation, Fibonacci retracement
 	 * @since 6.0.0
 	 * @optionparent annotations
 	**/
@@ -385,11 +386,8 @@ Annotation.prototype = {
 		/**
 		 * Whether the annotation is visible.
 		 * 
-		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/annotations/visibile/ Set annotation visibility
-		 * @sample {highstock} highcharts/annotations/visibile/ Set annotation visibility
-		 * @sample {highmaps} highcharts/annotations/visibile/ Set annotation visibility
-		 * @since 6.0.0
+		 * @sample highcharts/annotations/visible/
+		 *         Set annotation visibility
 		 */
 		visible: true,
 
@@ -397,23 +395,17 @@ Annotation.prototype = {
 		 * Options for annotation's labels. Each label inherits options
 		 * from the labelOptions object. An option from the labelOptions can be
 		 * overwritten by config for a specific label.
-		 *
-		 * @type {Object}
-		 * @since 6.0.0
-		 **/
+		 */
 		labelOptions: {
 
 			/**
 			 * The alignment of the annotation's label. If right,
 			 * the right side of the label should be touching the point. 
 			 *
-			 * @type {String}
-			 * @validvalues ["left", "center", "right"]
-			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position
-			 * @since 6.0.0
-			 **/
+			 * @validvalue ["left", "center", "right"]
+			 * @sample highcharts/annotations/label-position/
+			 *         Set labels position
+			 */
 			align: 'center',
 
 			/**
@@ -421,69 +413,51 @@ Annotation.prototype = {
 			 * To make the labels less sensitive for overlapping, 
 			 * the can be set to 0.
 			 *
-			 * @type {Boolean}
-			 * @sample {highcharts} highcharts/annotations/tooltip-like/ Hide overlapping labels
-			 * @sample {highstock} highcharts/annotations/tooltip-like/ Hide overlapping labels
-			 * @sample {highmaps} highcharts/annotations/tooltip-like/ Hide overlapping labels
-			 * @since 6.0.0
-			 * @default false
-			 **/
+			 * @sample highcharts/annotations/tooltip-like/
+			 *         Hide overlapping labels
+			 */
 			allowOverlap: false,
 
 			/**
 			 * The background color or gradient for the annotation's label.
 			 *
 			 * @type {Color}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @since 6.0.0
-			 **/
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
+			 */
 			backgroundColor: 'rgba(0, 0, 0, 0.75)',
 
 			/**
 			 * The border color for the annotation's label.
 			 *
 			 * @type {Color}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @since 6.0.0
-			 **/
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
+			 */
 			borderColor: 'black',
 
 			/**
 			 * The border radius in pixels for the annotaiton's label.
 			 *
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @since 6.0.0
-			 **/
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
+			 */
 			borderRadius: 1,
 
 			/**
 			 * The border width in pixels for the annotation's label
 			 *
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @since 6.0.0
-			 **/
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
+			 */
 			borderWidth: 1,
 
 			/**
 			 * Whether to hide the annotation's label that is outside the plot area.
 			 *
-			 * @type {Boolean}
-			 * @sample {highcharts} highcharts/annotations/label-crop-overflow/ Crop or justify labels
-			 * @sample {highstock} highcharts/annotations/label-crop-overflow/ Crop or justify labels
-			 * @sample {highmaps} highcharts/annotations/label-crop-overflow/ Crop or justify labels
-			 * @since 6.0.0
-			 * @default false
-			 **/ 
+			 * @sample highcharts/annotations/label-crop-overflow/
+			 *         Crop or justify labels
+			 */ 
 			crop: false,
 
 			/**
@@ -491,10 +465,8 @@ Annotation.prototype = {
 			 *
 			 * @type {String}
 			 * @see [plotOptions.series.dataLabels.format](plotOptions.series.dataLabels.format.html)
-			 * @sample {highcharts} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highstock} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highmaps} highcharts/annotations/label-text/ Set labels text
-			 * @since 6.0.0
+			 * @sample highcharts/annotations/label-text/
+			 *         Set labels text
 			 * @default undefined
 			 * @apioption annotations.labelOptions.format
 			 **/
@@ -504,10 +476,8 @@ Annotation.prototype = {
 			 *
 			 * @type {String}
 			 * @see [format](annotations.labelOptions.format.html)
-			 * @sample {highcharts} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highstock} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highmaps} highcharts/annotations/label-text/ Set labels text
-			 * @since 6.0.0
+			 * @sample highcharts/annotations/label-text/
+			 *         Set labels text
 			 * @default undefined
 			 * @apioption annotations.labelOptions.text
 			 */
@@ -518,10 +488,8 @@ Annotation.prototype = {
 			 * and the formatter is ignored. `This` refers to a point object.
 			 * 
 			 * @type {Function}
-			 * @sample {highcharts} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highstock} highcharts/annotations/label-text/ Set labels text
-			 * @sample {highmaps} highcharts/annotations/label-text/ Set labels text
-			 * @since 6.0.0
+			 * @sample highcharts/annotations/label-text/
+			 *         Set labels text
 			 * @default function () {
 			 * 	return defined(this.y) ? this.y : 'Annotation label';
 			 * }
@@ -531,39 +499,32 @@ Annotation.prototype = {
 			},
 
 			/**
-			 * How to handle the annotation's label that flow outside the plot area.
-			 * Justify option aligns the label inside the plot area.
+			 * How to handle the annotation's label that flow outside the plot
+			 * area. The justify option aligns the label inside the plot area.
 			 *
-			 * @type {'none' | 'justify'}
-			 * @sample {highcharts} highcharts/annotations/label-crop-overflow/ Crop or justify labels
-			 * @sample {highstock} highcharts/annotations/label-crop-overflow/ Crop or justify labels
-			 * @sample {highmaps} highcharts/annotations/label-crop-overflow/ Crop or justify labels
-			 * @since 6.0.0
+			 * @validvalue ["none", "justify"]
+			 * @sample highcharts/annotations/label-crop-overflow/
+			 *         Crop or justify labels
 			 **/
-			overflow: 'none',
+			overflow: 'justify',
 
 			/**
 			 * When either the borderWidth or the backgroundColor is set,
 			 * this	is the padding within the box.
 			 *
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @since 6.0.0
-			 **/
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
+			 */
 			padding: 5,
 			
 			/**
-			 * The shadow of the box. The shadow can be an object configuration containing color, offsetX, offsetY, opacity and width. 
+			 * The shadow of the box. The shadow can be an object configuration
+			 * containing `color`, `offsetX`, `offsetY`, `opacity` and `width`. 
 			 *
 			 * @type {Boolean|Object}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @since 6.0.0
-			 * @default false
-			 **/
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
+			 */
 			shadow: false,
 
 			/**
@@ -571,9 +532,8 @@ Annotation.prototype = {
 			 * Symbols are predefined functions on the Renderer object.
 			 *
 			 * @type {String}
-			 * @sample {highcharts} highcharts/annotations/shapes/ Available shapes for labels
-			 * @sample {highstock} highcharts/annotations/shapes/ Available shapes for labels
-			 * @sample {highmaps} highcharts/annotations/shapes/ Available shapes for labels
+			 * @sample highcharts/annotations/shapes/
+			 *         Available shapes for labels
 			 **/
 			shape: 'callout',
 
@@ -581,15 +541,13 @@ Annotation.prototype = {
 			 * Styles for the annotation's label.
 			 * 
 			 * @type {CSSObject}
-			 * @sample {highcharts} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highstock} highcharts/annotations/label-presentation/ Set labels graphic options
-			 * @sample {highmaps} highcharts/annotations/label-presentation/ Set labels graphic options
+			 * @sample highcharts/annotations/label-presentation/
+			 *         Set labels graphic options
 			 * @see [plotOptions.series.dataLabels.style](plotOptions.series.dataLabels.style.html)
-			 * @since 6.0.0
 			 **/
 			style: {
 				fontSize: '11px',
-				fontWeigth: 'bold',
+				fontWeight: 'normal',
 				color: 'contrast'
 			},
 
@@ -598,8 +556,7 @@ Annotation.prototype = {
  			 * and-string-formatting#html) to render the annotation's label.
  			 *
  			 * @type {Boolean}
- 			 * @since 6.0.0
- 			 * @default false
+  			 * @default false
 			 **/
 			useHTML: false,
 
@@ -607,11 +564,9 @@ Annotation.prototype = {
 			 * The vertical alignment of the annotation's label.
 			 * 
 			 * @type {String}
-			 * @validvalues ["top", "middle", "bottom"]
-			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position
-			 * @since 6.0.0
+			 * @validvalue ["top", "middle", "bottom"]
+			 * @sample highcharts/annotations/label-position/
+			 *         Set labels position
 			 **/
 			verticalAlign: 'bottom',
 
@@ -620,12 +575,8 @@ Annotation.prototype = {
 			 * Note that if a `distance` is defined, the distance takes
 			 * precedence over `x` and `y` options.
 			 *
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position
-			 * @since 6.0.0
-			 * @default 0
+			 * @sample highcharts/annotations/label-position/
+			 *         Set labels position
 			 **/
 			x: 0,
 
@@ -634,12 +585,8 @@ Annotation.prototype = {
 			 * Note that if a `distance` is defined, the distance takes
 			 * precedence over `x` and `y` options.
 			 *
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position
-			 * @since 6.0.0
-			 * @default -16
+			 * @sample highcharts/annotations/label-position/
+			 *         Set labels position
 			 **/
 			y: -16
 
@@ -647,13 +594,11 @@ Annotation.prototype = {
 			 * The label's pixel distance from the point.
 			 *
 			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highstock} highcharts/annotations/label-position/ Set labels position
-			 * @sample {highmaps} highcharts/annotations/label-position/ Set labels position
+			 * @sample highcharts/annotations/label-position/
+			 *         Set labels position
 			 * @default undefined
 			 * @apioption annotations.labelOptions.distance
 			 **/
-			//distance: 16
 		},
 
 		/**
@@ -661,7 +606,6 @@ Annotation.prototype = {
 		 * labels, they can be added to the [labelOptions](annotations.labelOptions.html).
 		 *
 		 * @type {Array<Object>}
-		 * @since 6.0.0
 		 * @extends annotations.labelOptions
 		 * @apioption annotations.labels
 		 */
@@ -673,10 +617,8 @@ Annotation.prototype = {
 		 * and optionally axes.
 		 *
 		 * @type {String|Object}
-		 * @sample {highcharts} highcharts/annotations/mock-point/ Attach annotation to a mock point
-		 * @sample {highstock} highcharts/annotations/mock-point/ Attach annotation to a mock point
-		 * @sample {highmaps} highcharts/annotations/mock-point/ Attach annotation to a mock point
-		 * @since 6.0.0
+		 * @sample highcharts/annotations/mock-point/
+		 *         Attach annotation to a mock point
 		 * @apioption annotations.labels.point
 		 */
 
@@ -685,7 +627,6 @@ Annotation.prototype = {
 		 * or chart pixel coordinates.
 		 *
 		 * @type {Number}
-		 * @since 6.0.0
 		 * @apioption annotations.labels.point.x
 		 */
 
@@ -694,7 +635,6 @@ Annotation.prototype = {
 		 * or chart pixel coordinates.
 		 *
 		 * @type {Number}
-		 * @since 6.0.0
 		 * @apioption annotations.labels.point.y
 		 */
 
@@ -705,7 +645,6 @@ Annotation.prototype = {
 		 * x coordinate refers to the chart pixels.
 		 * 
 		 * @type {Number|String}
-		 * @since 6.0.0
 		 * @apioption annotations.labels.point.xAxis
 		 */
 
@@ -716,7 +655,6 @@ Annotation.prototype = {
 		 * y coordinate refers to the chart pixels.
 		 *
 		 * @type {Number|String}
-		 * @since 6.0.0
 		 * @apioption annotations.labels.point.yAxis
 		 */
 
@@ -727,7 +665,6 @@ Annotation.prototype = {
 		 * overwritten by config for a specific shape.
 		 *
 		 * @type {Object}
-		 * @since 6.0.0
 		 **/
 		shapeOptions: {
 
@@ -735,22 +672,16 @@ Annotation.prototype = {
 			 * The color of the shape's stroke.
 			 *
 			 * @type {Color}
-			 * @sample {highcharts} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highstock} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highmaps} highcharts/annotations/shape/ Basic shape annotation
-			 * @since 6.0.0
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
 			 **/
 			stroke: 'rgba(0, 0, 0, 0.75)',
 			
 			/**
 			 * The pixel stroke width of the shape.
 			 *
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highstock} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highmaps} highcharts/annotations/shape/ Basic shape annotation
-			 * @since 6.0.0
-			 * @default 1
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
 			 **/
 			strokeWidth: 1,
 
@@ -758,10 +689,8 @@ Annotation.prototype = {
 			 * The color of the shape's fill.
 			 *
 			 * @type {Color}
-			 * @sample {highcharts} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highstock} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highmaps} highcharts/annotations/shape/ Basic shape annotation
-			 * @since 6.0.0
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
 			 **/
 			fill: 'rgba(0, 0, 0, 0.75)',
 
@@ -769,23 +698,17 @@ Annotation.prototype = {
 			 * The type of the shape, e.g. circle or rectangle.
 			 *
 			 * @type {String}
-			 * @sample {highcharts} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highstock} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highmaps} highcharts/annotations/shape/ Basic shape annotation
-			 * @since 6.0.0
-			 * @default rect
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
+			 * @default 'rect'
+			 * @apioption annotations.shapeOptions.type
 			 **/
-			// type: 'rect',
 
 			/**
 			 * The radius of the shape.
 			 *
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highstock} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highmaps} highcharts/annotations/shape/ Basic shape annotation
-			 * @since 6.0.0
-			 * @default 0
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
 			 **/
 			r: 0
 
@@ -793,10 +716,8 @@ Annotation.prototype = {
 			 * The width of the shape.
 			 *
 			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highstock} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highmaps} highcharts/annotations/shape/ Basic shape annotation
-			 * @since 6.0.0
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
 			 * @apioption annotations.shapeOptions.width
 			 **/
 
@@ -804,10 +725,8 @@ Annotation.prototype = {
 			 * The height of the shape.
 			 *
 			 * @type {Number}
-			 * @sample {highcharts} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highstock} highcharts/annotations/shape/ Basic shape annotation
-			 * @sample {highmaps} highcharts/annotations/shape/ Basic shape annotation
-			 * @since 6.0.0
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
 			 * @apioption annotations.shapeOptions.height
 			 **/
 		},
@@ -816,7 +735,6 @@ Annotation.prototype = {
 		 * The Z index of the annotation.
 		 *
 		 * @type {Number}
-		 * @since 6.0.0
 		 * @default 6
 		 **/
 		zIndex: 6
@@ -826,7 +744,6 @@ Annotation.prototype = {
 		 * shapes, then can be added to the [shapeOptions](annotations.shapeOptions.html).
 		 *
 		 * @type {Array<Object>}
-		 * @since 6.0.0
 		 * @extends annotations.shapeOptions
 		 * @apioption annotations.shapes
 		 */
@@ -838,7 +755,6 @@ Annotation.prototype = {
 		 * and optionally axes.
 		 *
 		 * @type {String|Object}
-		 * @since 6.0.0
 		 * @extends annotations.labels.point
 		 * @apioption annotations.shapes.point
 		 */
@@ -850,7 +766,6 @@ Annotation.prototype = {
 		 *
 		 * @type {Array}
 		 * @see [annotations.shapes.point](annotations.shapes.point.html)
-		 * @since 6.0.0
 		 * @apioption annotations.shapes.points
 		 */
 
@@ -860,10 +775,8 @@ Annotation.prototype = {
 		 *
 		 * @type {String}
 		 * @see [defs.markers](defs.markers.html)
-		 * @sample {highcharts} highcharts/annotations/custom-markers/ Define a custom marker for annotations
- 		 * @sample {highstock} highcharts/annotations/custom-markers/ Define a custom marker for annotations
- 		 * @sample {highmaps} highcharts/annotations/custom-markers/ Define a custom marker for annotations
-		 * @since 6.0.0
+		 * @sample highcharts/annotations/custom-markers/
+		 *         Define a custom marker for annotations
 		 * @apioption annotations.shapes.markerEnd
 		 **/
 
@@ -873,11 +786,9 @@ Annotation.prototype = {
 		 *
 		 * @type {String}
 		 * @see [defs.markers](defs.markers.html)
-		 * @sample {highcharts} highcharts/annotations/custom-markers/ Define a custom marker for annotations
- 		 * @sample {highstock} highcharts/annotations/custom-markers/ Define a custom marker for annotations
- 		 * @sample {highmaps} highcharts/annotations/custom-markers/ Define a custom marker for annotations
-		 * @since 6.0.0
-		 * @apioption annotations.shapes.markerStart
+		 * @sample {highcharts} highcharts/annotations/custom-markers/
+		 *         Define a custom marker for annotations
+ 		 * @apioption annotations.shapes.markerStart
 		 **/
 	},
 
@@ -889,10 +800,22 @@ Annotation.prototype = {
 	 *
 	 * @return {undefined}
 	**/
-
 	init: function () {
+		var anno = this;
 		each(this.options.labels || [], this.initLabel, this);
 		each(this.options.shapes || [], this.initShape, this);
+
+		// Push the callback that reports to the overlapping-labels module which
+		// labels it should account for.
+		this.chart.labelCollectors.push(function () {
+			var labels = [];
+			each(anno.labels, function (label) {
+				if (!label.options.allowOverlap) {
+					labels.push(label);
+				}
+			});
+			return labels;
+		});
 	},
 
 	/**
@@ -911,8 +834,6 @@ Annotation.prototype = {
 
 		this.redrawItems(this.shapes);
 		this.redrawItems(this.labels);
-
-		this.collectAndHideLabels();
 	},
 
 	/**
@@ -939,16 +860,23 @@ Annotation.prototype = {
 	 * @return {undefined}
 	**/
 	render: function () {
-		this.group = this.chart.renderer.g('annotation')
+		var renderer = this.chart.renderer;
+
+		var group = this.group = renderer.g('annotation')
 			.attr({
 				zIndex: this.options.zIndex,
-
-				// hideOverlappingLabels requires translation
-				translateX: 0,
-				translateY: 0,
 				visibility: this.options.visible ? 'visible' : 'hidden'
 			})
 			.add();
+
+		this.shapesGroup = renderer.g('annotation-shapes').add(group);
+		this.labelsGroup = renderer.g('annotation-labels').attr({
+      // hideOverlappingLabels requires translation
+			translateX: 0,
+			translateY: 0
+		}).add(group);
+
+		this.shapesGroup.clip(this.chart.plotBoxClip);
 	},
 
 	/**
@@ -959,7 +887,7 @@ Annotation.prototype = {
 	 * If the param is omitted, the annotation's visibility is toggled
 	 * @return {undefined}
 	 **/
-	setVisible(visibility) {
+	setVisible: function (visibility) {
 		var options = this.options,
 			visible = pick(visibility, !options.visible);
 
@@ -970,34 +898,6 @@ Annotation.prototype = {
 		options.visible = visible;
 	},
 
-
-	/**
-	 * Collecting labels and hide them if they overlap
-	 *
-	 * @function #collectAndHideLabels
-	 * @memberOf Highcharts.Annotation#
-	 *
-	 * @return {undefined}
-	**/
-	collectAndHideLabels: function () {
-		var labels = [];
-
-		each(this.labels, function (label) {
-			if (!label.options.allowOverlap) {
-				labels.push(label);
-			}
-		});
-
-		if (labels.length) {
-			this.hideOverlappingLabels(labels);
-		}
-	},
-
-	/**
-	 * @function #hideOverlappingLabels
-	 * @memberOf Highcharts.Annotation#
-	 */
-	hideOverlappingLabels: chartPrototype.hideOverlappingLabels,
 
 	/**
 	 * Destroying an annotation
@@ -1121,7 +1021,8 @@ Annotation.prototype = {
 	redrawItem: function (item) {
 		var points = this.linkPoints(item),
 			itemOptions = item.options,
-			text;
+			text,
+			time = this.chart.time;
 
 		if (!points.length) {
 			this.destroyItem(item);
@@ -1135,7 +1036,7 @@ Annotation.prototype = {
 				text = itemOptions.format || itemOptions.text;
 				item.attr({
 					text: text ?
-						format(text, points[0].getLabelConfig()) :
+						format(text, points[0].getLabelConfig(), time) :
 						itemOptions.formatter.call(points[0])
 				});
 			}
@@ -1160,7 +1061,7 @@ Annotation.prototype = {
 	 * @return {undefined}
 	 */
 	destroyItem: function (item) {
-		//erase from shapes or labels array
+		// erase from shapes or labels array
 		erase(this[item.itemType + 's'], item);
 		item.destroy();
 	},
@@ -1257,10 +1158,12 @@ Annotation.prototype = {
 
 	redrawPath: function (pathItem, isNew) {
 		var points = pathItem.points,
+			strokeWidth = pathItem['stroke-width'],
 			d = ['M'],
 			pointIndex = 0,
 			dIndex = 0,
 			len = points && points.length,
+			crispSegmentIndex,
 			anchor,
 			point,
 			showPath;
@@ -1273,11 +1176,24 @@ Annotation.prototype = {
 				d[++dIndex] = anchor.x;
 				d[++dIndex] = anchor.y;
 
+        // crisping line, it might be replaced with Renderer.prototype.crispLine
+        // but it requires creating many temporary arrays
+				crispSegmentIndex = dIndex % 5;
+				if (crispSegmentIndex === 0) {
+					if (d[crispSegmentIndex + 1] === d[crispSegmentIndex + 4]) {
+						d[crispSegmentIndex + 1] = d[crispSegmentIndex + 4] = Math.round(d[crispSegmentIndex + 1]) - (strokeWidth % 2 / 2);
+					}
+
+					if (d[crispSegmentIndex + 2] === d[crispSegmentIndex + 5]) {
+						d[crispSegmentIndex + 2] = d[crispSegmentIndex + 5] = Math.round(d[crispSegmentIndex + 2]) + (strokeWidth % 2 / 2);
+					}
+				}
+
 				if (pointIndex < len - 1) {
 					d[++dIndex] = 'L';
 				}
 
-				showPath = point.series.visible && point.isInside !== false;
+				showPath = point.series.visible;
 
 			} while (++pointIndex < len && showPath);
 		}
@@ -1298,7 +1214,7 @@ Annotation.prototype = {
 	},
 
 	renderItem: function (item) {
-		item.add(this.group);
+		item.add(item.itemType === 'label' ? this.labelsGroup : this.shapesGroup);
 
 		this.setItemMarkers(item);
 	},
@@ -1410,7 +1326,10 @@ Annotation.prototype = {
 			itemPosRelativeX,
 			itemPosRelativeY,
 
-			showItem = point.series.visible && point.isInside !== false;
+			showItem =
+				point.series.visible &&
+				point.isInside !== false &&
+				(point.mock || point.graphic);
 
 		if (showItem) {
 
@@ -1651,7 +1570,16 @@ H.extend(chartPrototype, {
 		}
 	},
 
-	redrawAnnotations: function () {
+	drawAnnotations: function () {
+		var clip = this.plotBoxClip,
+			plotBox = this.plotBox;
+
+		if (clip) {
+			clip.attr(plotBox);
+		} else {
+			this.plotBoxClip = this.renderer.clipRect(plotBox);
+		}
+
 		each(this.annotations, function (annotation) {
 			annotation.redraw();
 		});
@@ -1666,8 +1594,15 @@ chartPrototype.callbacks.push(function (chart) {
 		chart.addAnnotation(annotationOptions, false);
 	});
 
-	chart.redrawAnnotations();
-	addEvent(chart, 'redraw', chart.redrawAnnotations);
+	chart.drawAnnotations();
+	addEvent(chart, 'redraw', chart.drawAnnotations);
+	addEvent(chart, 'destroy', function () {
+		var plotBoxClip = chart.plotBoxClip;
+
+		if (plotBoxClip && plotBoxClip.destroy) {
+			plotBoxClip.destroy();
+		}
+	});
 });
 
 

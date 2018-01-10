@@ -14,7 +14,7 @@ $(function () {
             title: {
                 text: 'OHLC'
             },
-            height: 160,
+            height: '70%',
             lineWidth: 2,
             min: 0,
             max: 100
@@ -22,8 +22,8 @@ $(function () {
             title: {
                 text: 'Volume'
             },
-            top: 248,
-            height: 60,
+            top: '72%',
+            height: '28%',
             offset: 0,
             lineWidth: 2,
             min: 0,

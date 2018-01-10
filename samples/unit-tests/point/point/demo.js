@@ -116,6 +116,11 @@ QUnit.test(
 QUnit.test(
     'Point with state options (#6401)',
     function (assert) {
+
+        // Boost module adds hex aliases
+        var names = Highcharts.Color.prototype.names;
+        Highcharts.Color.prototype.names = {};
+
         var color = 'red',
             chart = Highcharts.chart('container', {
                 chart: {
@@ -152,20 +157,22 @@ QUnit.test(
             color,
             'Correct fill color on hover'
         );
+
+        Highcharts.Color.prototype.names = names;
     }
 );
 
 QUnit.test('Select and unselect', function (assert) {
 
     var chart = Highcharts.chart('container', {
-            xAxis:[{
+            xAxis: [{
                 min: 0,
                 max: 10
             }],
             series: [{
                 cropThreshold: 5,
                 type: 'column',
-                    allowPointSelect: true,
+                allowPointSelect: true,
                 data: (function (i) {
                     var tab = [];
                     while (i--) {

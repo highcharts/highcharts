@@ -237,7 +237,6 @@ seriesType('funnel', 'pie',
 			fraction = sum ? point.y / sum : 0;
 			y1 = centerY - height / 2 + cumulative * height;
 			y3 = y1 + fraction * height;
-			//tempWidth = neckWidth + (width - neckWidth) * ((height - neckHeight - y1) / (height - neckHeight));
 			tempWidth = getWidthAt(y1);
 			x1 = centerX - tempWidth / 2;
 			x2 = x1 + tempWidth;

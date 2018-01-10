@@ -1,5 +1,9 @@
-
 QUnit.test('Hover color', function (assert) {
+
+    // Cache names from Boost module
+    var colorNames = Highcharts.Color.prototype.names;
+    Highcharts.Color.prototype.names = {};
+
     var chart = Highcharts.mapChart('container', {
             series: [{
                 mapData: Highcharts.maps['custom/europe'],
@@ -47,4 +51,8 @@ QUnit.test('Hover color', function (assert) {
         'red',
         'Point1 does not have red fill'
     );
+
+
+    // Reset
+    Highcharts.Color.prototype.names = colorNames;
 });

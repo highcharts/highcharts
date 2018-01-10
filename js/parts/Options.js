@@ -7,14 +7,12 @@
 import H from './Globals.js';
 import './Color.js';
 import './Utilities.js';
+import './Time.js';
+
 var color = H.color,
-	each = H.each,
-	getTZOffset = H.getTZOffset,
 	isTouchDevice = H.isTouchDevice,
 	merge = H.merge,
-	pick = H.pick,
-	svg = H.svg,
-	win = H.win;
+	svg = H.svg;
 		
 /* ****************************************************************************
  * Handle the options                                                         *
@@ -233,47 +231,6 @@ H.defaultOptions = {
 	global: {
 
 		/**
-		 * Whether to use UTC time for axis scaling, tickmark placement and
-		 * time display in `Highcharts.dateFormat`. Advantages of using UTC
-		 * is that the time displays equally regardless of the user agent's
-		 * time zone settings. Local time can be used when the data is loaded
-		 * in real time or when correct Daylight Saving Time transitions are
-		 * required.
-		 * 
-		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/global/useutc-true/ True by default
-		 * @sample {highcharts} highcharts/global/useutc-false/ False
-		 * @default true
-		 */
-		useUTC: true,
-
-		/*= if (build.classic) { =*/
-
-		/**
-		 * Path to the pattern image required by VML browsers in order to
-		 * draw radial gradients.
-		 * 
-		 * @type {String}
-		 * @default {highcharts} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
-		 * @default {highstock} http://code.highcharts.com/highstock/{version}/gfx/vml-radial-gradient.png
-		 * @default {highmaps} http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
-		 * @since 2.3.0
-		 */
-		VMLRadialGradientURL: 'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png'
-		/*= } =*/
-
-		/**
-		 * A custom `Date` class for advanced date handling. For example,
-		 * [JDate](https://githubcom/tahajahangir/jdate) can be hooked in to
-		 * handle Jalali dates.
-		 * 
-		 * @type {Object}
-		 * @since 4.0.4
-		 * @product highcharts highstock
-		 * @apioption global.Date
-		 */
-
-		/**
 		 * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
 		 * Use the [libURL](#exporting.libURL) option to configure exporting._
 		 * 
@@ -292,59 +249,57 @@ H.defaultOptions = {
 		 */
 
 		/**
-		 * A callback to return the time zone offset for a given datetime. It
-		 * takes the timestamp in terms of milliseconds since January 1 1970,
-		 * and returns the timezone offset in minutes. This provides a hook
-		 * for drawing time based charts in specific time zones using their
-		 * local DST crossover dates, with the help of external libraries.
+		 * This option is deprecated since v6.0.5. Instead, use
+		 * [time.useUTC](#time.useUTC) that supports individual time settings
+		 * per chart.
 		 * 
-		 * @type {Function}
-		 * @see [global.timezoneOffset](#global.timezoneOffset)
-		 * @sample {highcharts} highcharts/global/gettimezoneoffset/
-		 *         Use moment.js to draw Oslo time regardless of browser locale
-		 * @sample {highstock} highcharts/global/gettimezoneoffset/
-		 *         Use moment.js to draw Oslo time regardless of browser locale
-		 * @since 4.1.0
+		 * @deprecated
+		 * @apioption global.useUTC
+		 */
+
+		/**
+		 * This option is deprecated since v6.0.5. Instead, use
+		 * [time.Date](#time.Date) that supports individual time settings
+		 * per chart.
+		 * 
+		 * @deprecated
+		 * @product highcharts highstock
+		 * @apioption global.Date
+		 */
+
+		/**
+		 * This option is deprecated since v6.0.5. Instead, use
+		 * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
+		 * individual time settings per chart.
+		 * 
+		 * @deprecated
 		 * @product highcharts highstock
 		 * @apioption global.getTimezoneOffset
 		 */
 
 		/**
-		 * Requires [moment.js](http://momentjs.com/). If the timezone option
-		 * is specified, it creates a default
-		 * [getTimezoneOffset](#global.getTimezoneOffset) function that looks
-		 * up the specified timezone in moment.js. If moment.js is not included,
-		 * this throws a Highcharts error in the console, but does not crash the
-		 * chart.
+		 * This option is deprecated since v6.0.5. Instead, use
+		 * [time.timezone](#time.timezone) that supports individual time
+		 * settings per chart.
 		 * 
-		 * @type {String}
-		 * @see [getTimezoneOffset](#global.getTimezoneOffset)
-		 * @sample {highcharts} highcharts/global/timezone/ Europe/Oslo
-		 * @sample {highstock} highcharts/global/timezone/ Europe/Oslo
-		 * @default undefined
-		 * @since 5.0.7
+		 * @deprecated
 		 * @product highcharts highstock
 		 * @apioption global.timezone
 		 */
 
 		/**
-		 * The timezone offset in minutes. Positive values are west, negative
-		 * values are east of UTC, as in the ECMAScript [getTimezoneOffset](https://developer.
-		 * mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
-		 * method. Use this to display UTC based data in a predefined time zone.
+		 * This option is deprecated since v6.0.5. Instead, use
+		 * [time.timezoneOffset](#time.timezoneOffset) that supports individual
+		 * time settings per chart.
 		 * 
-		 * @type {Number}
-		 * @see [global.getTimezoneOffset](#global.getTimezoneOffset)
-		 * @sample {highcharts} highcharts/global/timezoneoffset/
-		 *         Timezone offset
-		 * @sample {highstock} highcharts/global/timezoneoffset/
-		 *         Timezone offset
-		 * @default 0
-		 * @since 3.0.8
+		 * @deprecated
 		 * @product highcharts highstock
 		 * @apioption global.timezoneOffset
 		 */
 	},
+
+
+	time: H.Time.prototype.defaultOptions,
 	chart: {
 
 		/**
@@ -818,9 +773,10 @@ H.defaultOptions = {
 			theme: {
 
 				/**
-				 * The Z index for the reset zoom button.
+				 * The Z index for the reset zoom button. The default value 
+				 * places it below the tooltip that has Z index 7.
 				 */
-				zIndex: 20
+				zIndex: 6
 			},
 
 			/**
@@ -949,11 +905,6 @@ H.defaultOptions = {
 		 * @default 0
 		 * @apioption chart.borderWidth
 		 */
-
-		//style: {
-		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
-		//	fontSize: '12px'
-		//},
 
 		/**
 		 * The background color or gradient for the outer chart area.
@@ -1210,7 +1161,7 @@ H.defaultOptions = {
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/chart/spacingtop-100/
-		 * A top spacing of 100
+		 *         A top spacing of 100
 		 * @sample {highcharts} highcharts/chart/spacingtop-10/
 		 *         Floating chart title makes the plot area align to the default
 		 *         spacingTop of 10.
@@ -1361,11 +1312,9 @@ H.defaultOptions = {
 		 * 
 		 * @type {CSSObject}
 		 * @sample {highcharts} highcharts/title/style/ Custom color and weight
-		 * @sample {highcharts} highcharts/css/titles/ Styled mode
 		 * @sample {highstock} stock/chart/title-style/ Custom color and weight
-		 * @sample {highstock} highcharts/css/titles/ Styled mode
-		 * @sample {highmaps} highcharts/css/titles/ Styled mode
-		 * @default {highcharts,highmaps} { "color": "#333333", "fontSize": "18px" }
+		 * @sample highcharts/css/titles/ Styled mode
+		 * @default {highcharts|highmaps} { "color": "#333333", "fontSize": "18px" }
 		 * @default {highstock} { "color": "#333333", "fontSize": "16px" }
 		 * @apioption title.style
 		 */
@@ -1999,7 +1948,6 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/legend/rtl/ Symbol to the right
 		 * @default false
 		 * @since 2.2
-		 * @product highcharts highmaps
 		 * @apioption legend.rtl
 		 */
 
@@ -2415,12 +2363,9 @@ H.defaultOptions = {
 		/**
 		 * A string to append to the tooltip format.
 		 * 
-		 * @type {String}
 		 * @sample {highcharts} highcharts/tooltip/footerformat/ A table for value alignment
 		 * @sample {highmaps} maps/tooltip/format/ Format demo
-		 * @default false
 		 * @since 2.2
-		 * @product highcharts highmaps
 		 */
 		footerFormat: '',
 		
@@ -2693,7 +2638,6 @@ H.defaultOptions = {
 		 * @type {Number}
 		 * @default 500
 		 * @since 3.0
-		 * @product highcharts highmaps
 		 * @apioption tooltip.hideDelay
 		 */
 
@@ -2730,7 +2674,7 @@ H.defaultOptions = {
 		 * 
 		 * @type {String}
 		 * @default callout
-		 * @validvalues ["callout", "square"]
+		 * @validvalue ["callout", "square"]
 		 * @since 4.0
 		 * @apioption tooltip.shape
 		 */
@@ -2750,8 +2694,7 @@ H.defaultOptions = {
 		 * @sample {highcharts} highcharts/tooltip/shared-true/ True
 		 * @sample {highcharts} highcharts/tooltip/shared-x-crosshair/ True with x axis crosshair
 		 * @sample {highcharts} highcharts/tooltip/shared-true-mixed-types/ True with mixed series types
-		 * @default {highcharts} false
-		 * @default {highstock} true
+		 * @default false
 		 * @since 2.1
 		 * @product highcharts highstock
 		 * @apioption tooltip.shared
@@ -2762,12 +2705,19 @@ H.defaultOptions = {
 		 * to the axis. This is recommended over [shared](#tooltip.shared) tooltips
 		 * for charts with multiple line series, generally making them easier
 		 * to read.
+		 *
+		 * @productdesc {highstock} In Highstock, tooltips are split by default
+		 * since v6.0.0. Stock charts typically contain multi-dimension points
+		 * and multiple panes, making split tooltips the preferred layout over
+		 * the previous `shared` tooltip.
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/tooltip/split/ Split tooltip
 		 * @sample {highstock} highcharts/tooltip/split/ Split tooltip
 		 * @sample {highmaps} highcharts/tooltip/split/ Split tooltip
-		 * @default false
+		 * @default {highcharts} false
+		 * @default {highstock} true
+		 * @product highcharts highstock
 		 * @since 5.0.0
 		 * @apioption tooltip.split
 		 */
@@ -2925,6 +2875,7 @@ H.defaultOptions = {
 		 * @default { "cursor": "pointer", "color": "#999999", "fontSize": "10px" }
 		 */
 		style: {
+
 			cursor: 'pointer',
 			color: '${palette.neutralColor40}',
 			fontSize: '9px'
@@ -2947,81 +2898,6 @@ H.defaultOptions = {
 	}
 };
 
-
-
-/**
- * Sets the getTimezoneOffset function. If the timezone option is set, a default
- * getTimezoneOffset function with that timezone is returned. If not, the
- * specified getTimezoneOffset function is returned. If neither are specified,
- * undefined is returned.
- * @return {function} a getTimezoneOffset function or undefined
- */
-function getTimezoneOffsetOption() {
-	var globalOptions = H.defaultOptions.global,
-		moment = win.moment;
-
-	if (globalOptions.timezone) {
-		if (!moment) {
-			// getTimezoneOffset-function stays undefined because it depends on
-			// Moment.js
-			H.error(25);
-			
-		} else {
-			return function (timestamp) {
-				return -moment.tz(
-					timestamp,
-					globalOptions.timezone
-				).utcOffset();
-			};
-		}
-	}
-
-	// If not timezone is set, look for the getTimezoneOffset callback
-	return globalOptions.useUTC && globalOptions.getTimezoneOffset;
-}
-
-/**
- * Set the time methods globally based on the useUTC option. Time method can be
- *   either local time or UTC (default). It is called internally on initiating
- *   Highcharts and after running `Highcharts.setOptions`.
- *
- * @private
- */
-function setTimeMethods() {
-	var globalOptions = H.defaultOptions.global,
-		Date,
-		useUTC = globalOptions.useUTC,
-		GET = useUTC ? 'getUTC' : 'get',
-		SET = useUTC ? 'setUTC' : 'set';
-
-	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
-	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
-	Date.hcGetTimezoneOffset = getTimezoneOffsetOption();
-	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
-		var d;
-		if (useUTC) {
-			d = Date.UTC.apply(0, arguments);
-			d += getTZOffset(d);
-		} else {
-			d = new Date(
-				year,
-				month,
-				pick(date, 1),
-				pick(hours, 0),
-				pick(minutes, 0),
-				pick(seconds, 0)
-			).getTime();
-		}
-		return d;
-	};
-	each(['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'], function (s) {
-		Date['hcGet' + s] = GET + s;
-	});
-	each(['Milliseconds', 'Seconds', 'Minutes', 'Hours', 'Date', 'Month', 'FullYear'], function (s) {
-		Date['hcSet' + s] = SET + s;
-	});
-}
-
 /**
  * Merge the default options with custom options and return the new options
  * structure. Commonly used for defining reusable templates.
@@ -3038,8 +2914,8 @@ H.setOptions = function (options) {
 	// Copy in the default options
 	H.defaultOptions = merge(true, H.defaultOptions, options);
 	
-	// Apply UTC
-	setTimeMethods();
+	// Re-initiate time
+	H.time.init();
 
 	return H.defaultOptions;
 };
@@ -3056,5 +2932,30 @@ H.getOptions = function () {
 // Series defaults
 H.defaultPlotOptions = H.defaultOptions.plotOptions;
 
-// set the default time methods
-setTimeMethods();
+
+// Time utilities
+H.time = new H.Time();
+
+/**
+ * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
+ * human readable date string. The format is a subset of the formats for PHP's
+ * [strftime]{@link
+ * http://www.php.net/manual/en/function.strftime.php} function. Additional
+ * formats can be given in the {@link Highcharts.dateFormats} hook.
+ *
+ * Since v6.0.5, all internal dates are formatted through the
+ * [Chart.time](Chart#time) instance to respect chart-level time settings. The
+ * `Highcharts.dateFormat` function only reflects global time settings set with
+ * `setOptions`.
+ *
+ * @function #dateFormat
+ * @memberOf Highcharts
+ * @param {String} format - The desired format where various time
+ *        representations are prefixed with %.
+ * @param {Number} timestamp - The JavaScript timestamp.
+ * @param {Boolean} [capitalize=false] - Upper case first letter in the return.
+ * @returns {String} The formatted date.
+ */
+H.dateFormat = function (format, timestamp, capitalize) {
+	return H.time.dateFormat(format, timestamp, capitalize);
+};

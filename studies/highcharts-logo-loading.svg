@@ -1,0 +1,75 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.1//EN'
+  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
+<svg height="225" id="logo-highcharts" version="1.1" viewBox="0 0 225 225" width="225" x="0px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" y="0px">
+    <g id="symbol" transform="translate(10,13.41400146484375) scale(3)">
+
+        <g>
+
+            <polygon fill="#8087E8" fill-opacity="1" id="indigo"
+                points="41,0 16,60 49,46" stroke="#383836"
+                stroke-linejoin="round" stroke-width="0" />
+            <animateTransform
+                attributeName="transform"
+                begin="0s"
+                dur="2s"
+                type="rotate"
+                from="0 45 40"
+                to="-360 45 40"
+                repeatCount="indefinite" 
+                  calcMode="spline"
+                  keySplines="0.75 0 0.25 1"
+                keyTimes="0;1"
+            />
+        </g>
+        <g>
+            
+            <polygon fill="#6699A1" fill-opacity="1" id="darkgreen"
+                points="41,0 52,65 68,38" stroke="#383836" stroke-linejoin="round"
+                stroke-width="0" />
+			
+
+            <animateTransform
+                attributeName="transform"
+                begin="0s"
+                dur="2s"
+                type="rotate"
+                from="0 45 40"
+                to="360 45 40"
+                repeatCount="indefinite" 
+                  calcMode="spline"
+                  keySplines="0.75 0 0.25 1"
+                keyTimes="0;1"
+            />
+        </g>
+
+        <g>
+
+
+            <polygon fill="#A3EDBA" fill-opacity="1" id="lightgreen"
+                points="0,17 16,60 68,38" stroke="#383836"
+                stroke-linejoin="round" stroke-width="0"
+                style="mix-blend-mode: multiply" />
+
+
+            <animateTransform
+                attributeName="transform"
+                begin="0s"
+                dur="2s"
+                type="rotate"
+                from="0 15 40"
+                to="360 15 40"
+                repeatCount="indefinite" 
+                  calcMode="spline"
+                  keySplines="0.75 0 0.25 1"
+                keyTimes="0;1"
+            />
+
+        </g>
+
+
+            
+
+    </g>
+</svg>

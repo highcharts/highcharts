@@ -145,13 +145,6 @@ TrackerMixin = H.TrackerMixin = {
 			}
 		}
 
-		// handle single points
-		/*for (i = 0; i < singlePoints.length; i++) {
-			singlePoint = singlePoints[i];
-			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
-			L, singlePoint.plotX + snap, singlePoint.plotY);
-		}*/
-
 		// draw the tracker
 		if (tracker) {
 			tracker.attr({ d: trackerPath });
@@ -218,7 +211,8 @@ extend(Legend.prototype, {
 	setItemEvents: function (item, legendItem, useHTML) {
 		var legend = this,
 			boxWrapper = legend.chart.renderer.boxWrapper,
-			activeClass = 'highcharts-legend-' + (item.series ? 'point' : 'series') + '-active';
+			activeClass = 'highcharts-legend-' +
+				(item instanceof Point ? 'point' : 'series') + '-active';
 
 		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
@@ -248,6 +242,11 @@ extend(Legend.prototype, {
 						item.setVisible();
 					}
 				};
+
+			// A CSS class to dim or hide other than the hovered series. Event
+			// handling in iOS causes the activeClass to be added prior to click
+			// in some cases (#7418).
+			boxWrapper.removeClass(activeClass);
 
 			// Pass over the click/touch event. #4.
 			event = {
@@ -430,15 +429,19 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				newMax = flipped ? panMin : panMax,
 				paddedMin = Math.min(
 					extremes.dataMin, 
-					axis.toValue(
-						axis.toPixels(extremes.min) - axis.minPixelPadding
-					)
+					halfPointRange ?
+						extremes.min :
+						axis.toValue(
+							axis.toPixels(extremes.min) - axis.minPixelPadding
+						)
 				),
 				paddedMax = Math.max(
 					extremes.dataMax,
-					axis.toValue(
-						axis.toPixels(extremes.max) + axis.minPixelPadding
-					)
+					halfPointRange ?
+						extremes.max :
+						axis.toValue(
+							axis.toPixels(extremes.max) + axis.minPixelPadding
+						)
 				),
 				spill;
 
@@ -665,15 +668,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 				point.graphic.addClass('highcharts-point-' + state);
 			}
 
-			/*attribs = radius ? { // new symbol attributes (#507, #612)
-				x: plotX - radius,
-				y: plotY - radius,
-				width: 2 * radius,
-				height: 2 * radius
-			} : {};*/
-
 			/*= if (build.classic) { =*/
-			//attribs = merge(series.pointAttribs(point, state), attribs);
 			point.graphic.animate(
 				series.pointAttribs(point, state),
 				pick(
@@ -860,12 +855,12 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Set the state of the series. Called internally on mouse interaction and
-	 * select operations, but it can also be called directly to visually
+	 * Set the state of the series. Called internally on mouse interaction
+	 * operations, but it can also be called directly to visually
 	 * highlight a series.
 	 *
 	 * @param  {String} [state]
-	 *         Can be either `hover`, `select` or undefined to set to normal
+	 *         Can be either `hover` or undefined to set to normal
 	 *         state.
 	 */
 	setState: function (state) {

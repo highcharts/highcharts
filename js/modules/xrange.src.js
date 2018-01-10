@@ -6,32 +6,62 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @todo
+ * - JSDoc
+ * - New series checklist
+ */
+
 'use strict';
 import H from '../parts/Globals.js';
 
-var defaultPlotOptions = H.getOptions().plotOptions,
-	defined = H.defined,
+var defined = H.defined,
 	color = H.Color,
 	columnType = H.seriesTypes.column,
 	each = H.each,
-	extendClass = H.extendClass,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
 	merge = H.merge,
 	pick = H.pick,
+	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
-	stop = H.stop,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	Point = H.Point,
-	Series = H.Series,
-	pointFormat = '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>',
-	xrange = 'xrange';
+	Series = H.Series;
 
-defaultPlotOptions.xrange = merge(defaultPlotOptions.column, {
+/**
+ * The X-range series displays ranges on the X axis, typically time intervals
+ * with a start and end date.
+ * 
+ * @extends {plotOptions.column}
+ * @excluding boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
+ *         findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
+ *         negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
+ *         pointRange,pointStart,softThreshold,stacking,threshold,data
+ * @product highcharts
+ * @sample {highcharts} highcharts/demo/x-range/
+ *         X-range
+ * @sample {highcharts} highcharts/css/x-range/
+ *         Styled mode X-range
+ * @sample {highcharts} highcharts/chart/inverted-xrange/
+ *         Inverted X-range
+ * @since 6.0.0
+ * @optionparent plotOptions.xrange
+ */
+seriesType('xrange', 'column', {
+	/**
+	 * In an X-range series, this option makes all points of the same Y-axis
+	 * category the same color.
+	 */
+	colorByPoint: true,
 	dataLabels: {
 		verticalAlign: 'middle',
 		inside: true,
+		/**
+		 * The default formatter for X-range data labels displays the percentage
+		 * of the partial fill amount.
+		 */
 		formatter: function () {
 			var point = this.point,
 				amount = point.partialFill;
@@ -45,26 +75,33 @@ defaultPlotOptions.xrange = merge(defaultPlotOptions.column, {
 		}
 	},
 	tooltip: {
-		pointFormat: pointFormat
+		headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
 	},
-	borderRadius: 3
-});
-// TODO: Use new seriesType utility function to do this instead of extendClass
-seriesTypes.xrange = extendClass(columnType, {
-	pointClass: extendClass(Point, {
-		// Add x2 and yCategory to the available properties for tooltip formats
-		getLabelConfig: function () {
-			var point = this,
-				cfg = Point.prototype.getLabelConfig.call(point),
-				yCats = point.series.yAxis.categories;
+	borderRadius: 3,
+	pointRange: 0
+	/**
+	 * A partial fill for each point, typically used to visualize how much of
+	 * a task is performed. The partial fill object can be set either on series
+	 * or point level. 
+	 *
+	 * @sample {highcharts} highcharts/demo/x-range
+	 *         X-range with partial fill
+	 * @type  {Object}
+	 * @product highcharts
+	 * @apioption plotOptions.xrange.partialFill
+	 */
+	/**
+	 * The fill color to be used for partial fills. Defaults to a darker shade
+	 * of the point color.
+	 *
+	 * @type {Color}
+	 * @product highcharts
+	 * @apioption plotOptions.xrange.partialFill.fill
+	 */
 
-			cfg.x2 = point.x2;
-			cfg.yCategory = point.yCategory = yCats && yCats[point.y];
-			return cfg;
-		}
-	}),
-	type: xrange,
-	forceDL: true,
+}, {
+	type: 'xrange',
 	parallelArrays: ['x', 'x2', 'y'],
 	requireSorting: false,
 	animate: seriesTypes.line.prototype.animate,
@@ -89,7 +126,6 @@ seriesTypes.xrange = extendClass(columnType, {
 
 		swapAxes();
 
-		this.yAxis.closestPointRange = 1;
 		metrics = columnType.prototype.getColumnMetrics.call(this);
 
 		swapAxes();
@@ -120,14 +156,20 @@ seriesTypes.xrange = extendClass(columnType, {
 			minPointLength = series.options.minPointLength || 0,
 			plotX = point.plotX,
 			posX = pick(point.x2, point.x + (point.len || 0)),
-			plotX2 = xAxis.toPixels(posX, true),
-			width = plotX2 - plotX,
+			plotX2 = xAxis.translate(posX, 0, 0, 0, 1),
+			length = plotX2 - plotX,
 			widthDifference,
 			shapeArgs,
-			partialFill;
+			partialFill,
+			inverted = this.chart.inverted,
+			borderWidth = pick(series.options.borderWidth, 1),
+			crisper = borderWidth % 2 / 2,
+			dlLeft,
+			dlRight,
+			dlWidth;
 
 		if (minPointLength) {
-			widthDifference = minPointLength - width;
+			widthDifference = minPointLength - length;
 			if (widthDifference < 0) {
 				widthDifference = 0;
 			}
@@ -138,18 +180,34 @@ seriesTypes.xrange = extendClass(columnType, {
 		plotX = Math.max(plotX, -10);
 		plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
 
-		if (plotX2 < plotX) { // #6107
-			plotX2 = plotX;
-		}
-
 		point.shapeArgs = {
-			x: plotX,
-			y: point.plotY + metrics.offset,
-			width: plotX2 - plotX,
-			height: metrics.width
+			x: Math.floor(Math.min(plotX, plotX2)) + crisper,
+			y: Math.floor(point.plotY + metrics.offset) + crisper,
+			width: Math.round(Math.abs(plotX2 - plotX)),
+			height: Math.round(metrics.width),
+			r: series.options.borderRadius
 		};
-		point.tooltipPos[0] += width / 2;
-		point.tooltipPos[1] -= metrics.width / 2;
+
+		// Align data labels inside the shape and inside the plot area
+		dlLeft = point.shapeArgs.x;
+		dlRight = dlLeft + point.shapeArgs.width;
+		if (dlLeft < 0 || dlRight > xAxis.len) {
+			dlLeft = Math.min(xAxis.len, Math.max(0, dlLeft));
+			dlRight = Math.max(0, Math.min(dlRight, xAxis.len));
+			dlWidth = dlRight - dlLeft;
+			point.dlBox = merge(point.shapeArgs, {
+				x: dlLeft,
+				width: dlRight - dlLeft,
+				centerX: dlWidth ? dlWidth / 2 : null
+			});
+
+		} else {
+			point.dlBox = null;
+		}
+		
+		// Tooltip position
+		point.tooltipPos[0] += inverted ? 0 : length / 2;
+		point.tooltipPos[1] -= inverted ? length / 2 : metrics.width / 2;
 
 		// Add a partShapeArgs to the point, based on the shapeArgs property
 		partialFill = point.partialFill;
@@ -167,12 +225,13 @@ seriesTypes.xrange = extendClass(columnType, {
 				x: shapeArgs.x,
 				y: shapeArgs.y,
 				width: shapeArgs.width,
-				height: shapeArgs.height
+				height: shapeArgs.height,
+				r: series.options.borderRadius
 			};
 			point.clipRectArgs = {
 				x: shapeArgs.x,
 				y: shapeArgs.y,
-				width: shapeArgs.width * partialFill,
+				width: Math.round(shapeArgs.width * partialFill),
 				height: shapeArgs.height
 			};
 		}
@@ -180,83 +239,9 @@ seriesTypes.xrange = extendClass(columnType, {
 
 	translate: function () {
 		columnType.prototype.translate.apply(this, arguments);
-		var series = this;
-
-		each(series.points, function (point) {
-			series.translatePoint(point);
-		});
-	},
-
-	/**
-	 * Aligns an individual dataLabel.
-	 *
-	 * TODO: Do we need this for inside datalabels? Seems to work.
-	 *
-	 * @param  {Object} point     the point belonging to the dataLabel
-	 * @param  {Object} dataLabel the dataLabel configuration object
-	 * @param  {Object} options   dataLabel options for the series
-	 * @param  {Object} alignTo
-	 * @param  {Boolean} isNew   Wheter the label is new or already existed
-	 * @return {void}
-	 */
-	alignDataLabel: function (point, dataLabel, options, alignTo, isNew) {
-		var chart = this.chart,
-			align = options.align,
-			inverted = chart.inverted,
-			plotX = pick(point.plotX, -9999),
-			plotY = pick(point.plotY, -9999),
-			verticalAlign = options.verticalAlign,
-			inside = options.inside,
-			pointBox = point.shapeArgs,
-			labelBox = dataLabel.getBBox(),
-			labelTextBox = dataLabel.text.getBBox(),
-			attr = {},
-			visible =
-				this.visible &&
-				(
-					labelTextBox.width <= pointBox.width &&
-					labelTextBox.height <= pointBox.height
-				) &&
-				(
-					this.forceDL ||
-					chart.isInsidePlot(plotX, Math.round(plotY), inverted)
-				);
-
-		if (visible) {
-			if (align === 'right') {
-				if (inside) {
-					attr.x = pointBox.x + pointBox.width - labelBox.width;
-				} else {
-					attr.x = pointBox.x - labelBox.width;
-				}
-			} else if (align === 'left') {
-				if (inside) {
-					attr.x = pointBox.x;
-				} else {
-					attr.x = pointBox.x + pointBox.width + labelBox.x;
-				}
-			} else { // Center
-				attr.x = pointBox.x + pointBox.width / 2 - labelBox.width / 2;
-			}
-
-			if (verticalAlign === 'bottom') {
-				if (inside) {
-					attr.y = pointBox.y + pointBox.height - labelBox.height;
-				} else {
-					attr.y = pointBox.y - labelBox.height;
-				}
-			} else if (verticalAlign === 'top') {
-				if (inside) {
-					attr.y = pointBox.y;
-				} else {
-					attr.y = pointBox.y + pointBox.height;
-				}
-			} else { // Middle
-				attr.y = pointBox.y + pointBox.height / 2 - labelBox.height / 2;
-			}
-
-			dataLabel[isNew ? 'attr' : 'animate'](attr);
-		}
+		each(this.points, function (point) {
+			this.translatePoint(point);
+		}, this);
 	},
 
 	/**
@@ -272,7 +257,6 @@ seriesTypes.xrange = extendClass(columnType, {
 	 */
 	drawPoint: function (point, verb) {
 		var series = this,
-			plotY = point.plotY,
 			seriesOpts = series.options,
 			renderer = series.chart.renderer,
 			graphic = point.graphic,
@@ -285,20 +269,13 @@ seriesTypes.xrange = extendClass(columnType, {
 			state = point.selected && 'select',
 			cutOff = seriesOpts.stacking && !seriesOpts.borderRadius;
 
-		if (isNumber(plotY) && point.y !== null) {
+		if (!point.isNull) {
+
+			// Original graphic
 			if (graphic) { // update
-				stop(graphic);
 				point.graphicOriginal[verb](
 					merge(shapeArgs)
 				);
-				if (partShapeArgs) {
-					point.graphicOverlay[verb](
-						merge(partShapeArgs)
-					);
-					point.clipRect.animate(
-						merge(clipRectArgs)
-					);
-				}
 
 			} else {
 				point.graphic = graphic = renderer.g('point')
@@ -309,7 +286,19 @@ seriesTypes.xrange = extendClass(columnType, {
 					.addClass(point.getClassName())
 					.addClass('highcharts-partfill-original')
 					.add(graphic);
-				if (clipRectArgs && partShapeArgs) {
+			}
+
+			// Partial fill graphic
+			if (partShapeArgs) {
+				if (point.graphicOverlay) {
+					point.graphicOverlay[verb](
+						merge(partShapeArgs)
+					);
+					point.clipRect.animate(
+						merge(clipRectArgs)
+					);
+
+				} else {
 
 					point.clipRect = renderer.clipRect(
 						clipRectArgs.x,
@@ -324,6 +313,7 @@ seriesTypes.xrange = extendClass(columnType, {
 						.clip(point.clipRect);
 				}
 			}
+			
 
 			/*= if (build.classic) { =*/
 			// Presentational
@@ -339,8 +329,11 @@ seriesTypes.xrange = extendClass(columnType, {
 					pfOptions = merge(pfOptions, seriesOpts.partialFill);
 				}
 
-				fill = pfOptions.fill ||
-						color(series.color).brighten(-0.3).get('rgb');
+				fill = (
+					pfOptions.fill ||
+					color(point.color || series.color).brighten(-0.3).get()
+				);
+				
 				point.graphicOverlay
 					.attr(series.pointAttribs(point, state))
 					.attr({
@@ -366,19 +359,70 @@ seriesTypes.xrange = extendClass(columnType, {
 		each(series.points, function (point) {
 			series.drawPoint(point, verb);
 		});
-	},
+	}
 	
 	/**
 	 * Override to remove stroke from points.
 	 * For partial fill.
-	 */
+	 * /
 	pointAttribs: function () {
 		var series = this,
 			retVal = columnType.prototype.pointAttribs.apply(series, arguments);
 		
-		retVal['stroke-width'] = 0;
-		
+		//retVal['stroke-width'] = 0;
 		return retVal;
+	}
+	*/
+
+// Point class properties
+}, {
+
+	/**
+	 * Extend init so that `colorByPoint` for x-range means that one color is 
+	 * applied per Y axis category.
+	 */
+	init: function () {
+
+		Point.prototype.init.apply(this, arguments);
+
+		var colors,
+			series = this.series,
+			colorCount = series.chart.options.chart.colorCount;
+
+		if (!this.y) {
+			this.y = 0;
+		}
+
+		/*= if (build.classic) { =*/
+		if (series.options.colorByPoint) {
+			colors = series.options.colors || series.chart.options.colors;
+			colorCount = colors.length;
+
+			if (!this.options.color && colors[this.y % colorCount]) {
+				this.color = colors[this.y % colorCount];
+			}
+		}
+		/*= } =*/
+		this.colorIndex = pick(this.options.colorIndex, this.y % colorCount);
+		
+		return this;
+	},
+
+	// Add x2 and yCategory to the available properties for tooltip formats
+	getLabelConfig: function () {
+		var point = this,
+			cfg = Point.prototype.getLabelConfig.call(point),
+			yCats = point.series.yAxis.categories;
+
+		cfg.x2 = point.x2;
+		cfg.yCategory = point.yCategory = yCats && yCats[point.y];
+		return cfg;
+	},
+	tooltipDateKeys: ['x', 'x2'],
+
+	isValid: function () {
+		return typeof this.x === 'number' &&
+			typeof this.x2 === 'number';
 	}
 });
 
@@ -392,10 +436,10 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 		modMax;
 	proceed.call(axis);
 	if (axis.isXAxis) {
-		dataMax = pick(axis.dataMax, Number.MIN_VALUE);
+		dataMax = pick(axis.dataMax, -Number.MAX_VALUE);
 		each(axisSeries, function (series) {
-			if (series.type === xrange) {
-				each(series.x2Data || [], function (val) {
+			if (series.x2Data) {
+				each(series.x2Data, function (val) {
 					if (val > dataMax) {
 						dataMax = val;
 						modMax = true;
@@ -408,3 +452,98 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 		}
 	}
 });
+
+
+/**
+ * An `xrange` series. If the [type](#series.xrange.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * xrange](#plotOptions.xrange).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.xrange
+ * @excluding boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
+ *         findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
+ *         negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
+ *         pointRange,pointStart,softThreshold,stacking,threshold
+ * @product highcharts highstock
+ * @apioption series.xrange
+ */
+
+/**
+ * An array of data points for the series. For the `xrange` series type,
+ * points can be given in the following ways:
+ * 
+ * 1.  An array of objects with named values. The objects are point
+ * configuration objects as seen below.
+ * 
+ *  ```js
+ *     data: [{
+ *         x: Date.UTC(2017, 0, 1),
+ *         x2: Date.UTC(2017, 0, 3),
+ *         name: "Test",
+ *         y: 0,
+ *         color: "#00FF00"
+ *     }, {
+ *         x: Date.UTC(2017, 0, 4),
+ *         x2: Date.UTC(2017, 0, 5),
+ *         name: "Deploy",
+ *         y: 1,
+ *         color: "#FF0000"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array|Number>}
+ * @extends series.line.data
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts highstock
+ * @apioption series.xrange.data
+ */
+
+
+/**
+ * The ending X value of the range point.
+ *
+ * @sample {highcharts} highcharts/demo/x-range
+ *         X-range
+ * @type  {Number}
+ * @product highcharts
+ * @apioption plotOptions.xrange.data.x2
+ */
+
+/**
+ * A partial fill for each point, typically used to visualize how much of
+ * a task is performed. The partial fill object can be set either on series
+ * or point level. 
+ *
+ * @sample {highcharts} highcharts/demo/x-range
+ *         X-range with partial fill
+ * @type  {Object|Number}
+ * @product highcharts
+ * @apioption plotOptions.xrange.data.partialFill
+ */
+
+/**
+ * The amount of the X-range point to be filled. Values can be 0-1 and are 
+ * converted to percentages in the default data label formatter.
+ *
+ * @type {Number}
+ * @product highcharts
+ * @apioption plotOptions.xrange.data.partialFill.amount
+ */
+
+/**
+ * The fill color to be used for partial fills. Defaults to a darker shade
+ * of the point color.
+ *
+ * @type {Color}
+ * @product highcharts
+ * @apioption plotOptions.xrange.data.partialFill.fill
+ */

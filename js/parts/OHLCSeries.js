@@ -25,7 +25,7 @@ var each = H.each,
  *
  * @sample stock/demo/ohlc/ OHLC chart
  * @extends {plotOptions.column}
- * @excluding borderColor,borderRadius,borderWidth
+ * @excluding borderColor,borderRadius,borderWidth,crisp
  * @product highstock
  * @optionparent plotOptions.ohlc
  */
@@ -49,7 +49,8 @@ seriesType('ohlc', 'column', {
 	 * The pixel width of the line/border. Defaults to `1`.
 	 * 
 	 * @type {Number}
-	 * @sample {highstock} stock/plotoptions/ohlc-linewidth/ A greater line width
+	 * @sample {highstock} stock/plotoptions/ohlc-linewidth/
+	 *         A greater line width
 	 * @default 1
 	 * @product highstock
 	 */
@@ -57,14 +58,14 @@ seriesType('ohlc', 'column', {
 
 	tooltip: {
 		/*= if (!build.classic) { =*/
-		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' +
+		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' + // eslint-disable-line max-len
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +
 			'Close: {point.close}<br/>',
 		/*= } else { =*/
 
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // eslint-disable-line max-len
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +
@@ -109,7 +110,7 @@ seriesType('ohlc', 'column', {
 
 }, /** @lends seriesTypes.ohlc */ {
 	directTouch: false,
-	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
+	pointArrayMap: ['open', 'high', 'low', 'close'],
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.open, point.high, point.low, point.close];
 	},
@@ -153,20 +154,29 @@ seriesType('ohlc', 'column', {
 		var series = this,
 			yAxis = series.yAxis,
 			hasModifyValue = !!series.modifyValue,
-			translated = ['plotOpen', 'plotHigh', 'plotLow', 'plotClose', 'yBottom']; // translate OHLC for
+			translated = [
+				'plotOpen',
+				'plotHigh',
+				'plotLow',
+				'plotClose',
+				'yBottom'
+			]; // translate OHLC for
 
 		seriesTypes.column.prototype.translate.apply(series);
 
 		// Do the translation
 		each(series.points, function (point) {
-			each([point.open, point.high, point.low, point.close, point.low], function (value, i) {
-				if (value !== null) {
-					if (hasModifyValue) {
-						value = series.modifyValue(value);
+			each(
+				[point.open, point.high, point.low, point.close, point.low],
+				function (value, i) {
+					if (value !== null) {
+						if (hasModifyValue) {
+							value = series.modifyValue(value);
+						}
+						point[translated[i]] = yAxis.toPixels(value, true);
 					}
-					point[translated[i]] = yAxis.toPixels(value, true);
 				}
-			});
+			);
 
 			// Align the tooltip to the high value to avoid covering the point
 			point.tooltipPos[1] =
@@ -202,7 +212,9 @@ seriesType('ohlc', 'column', {
 				}
 
 				/*= if (build.classic) { =*/
-				graphic.attr(series.pointAttribs(point, point.selected && 'select')); // #3897
+				graphic.attr(
+					series.pointAttribs(point, point.selected && 'select')
+				); // #3897
 				/*= } =*/
 
 				// crisp vector coordinates
@@ -266,7 +278,11 @@ seriesType('ohlc', 'column', {
  	 */
 	getClassName: function () {
 		return Point.prototype.getClassName.call(this) +
-			(this.open < this.close ? ' highcharts-point-up' : ' highcharts-point-down');
+			(
+				this.open < this.close ?
+					' highcharts-point-up' :
+					' highcharts-point-down'
+			);
 	}
 });
 

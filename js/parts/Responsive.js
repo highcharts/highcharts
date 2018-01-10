@@ -209,13 +209,13 @@ Chart.prototype.currentOptions = function (options) {
 		var i;
 		H.objectEach(options, function (val, key) {
 			if (!depth && inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
-				options[key] = splat(options[key]);
+				val = splat(val);
 				
 				ret[key] = [];
 				
 				// Iterate over collections like series, xAxis or yAxis and map
 				// the items by index.
-				for (i = 0; i < options[key].length; i++) {
+				for (i = 0; i < val.length; i++) {
 					if (curr[key][i]) { // Item exists in current data (#6347)
 						ret[key][i] = {};
 						getCurrent(

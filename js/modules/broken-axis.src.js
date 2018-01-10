@@ -100,12 +100,52 @@ wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 Axis.prototype.setBreaks = function (breaks, redraw) {
 	var axis = this,
 		isBroken = (isArray(breaks) && !!breaks.length);
+
+	function breakVal2Lin(val) {
+		var nval = val,
+			brk,
+			i;
+
+		for (i = 0; i < axis.breakArray.length; i++) {
+			brk = axis.breakArray[i];
+			if (brk.to <= val) {
+				nval -= brk.len;
+			} else if (brk.from >= val) {
+				break;
+			} else if (axis.isInBreak(brk, val)) {
+				nval -= (val - brk.from);
+				break;
+			}
+		}
+
+		return nval;
+	}
+
+	function breakLin2Val(val) {
+		var nval = val,
+			brk,
+			i;
+
+		for (i = 0; i < axis.breakArray.length; i++) {
+			brk = axis.breakArray[i];
+			if (brk.from >= nval) {
+				break;
+			} else if (brk.to < nval) {
+				nval += brk.len;
+			} else if (axis.isInBreak(brk, nval)) {
+				nval += brk.len;
+			}
+		}
+		return nval;
+	}
+
+
 	axis.isDirty = axis.isBroken !== isBroken;
 	axis.isBroken = isBroken;
 	axis.options.breaks = axis.userOptions.breaks = breaks;
 	axis.forceRedraw = true; // Force recalculation in setScale
 
-	if (!isBroken) {
+	if (!isBroken && axis.val2lin === breakVal2Lin) {
 		// Revert to prototype functions
 		delete axis.val2lin;
 		delete axis.lin2val;
@@ -113,43 +153,8 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
 
 	if (isBroken) {
 		axis.userOptions.ordinal = false;
-		axis.val2lin = function (val) {
-			var nval = val,
-				brk,
-				i;
-
-			for (i = 0; i < axis.breakArray.length; i++) {
-				brk = axis.breakArray[i];
-				if (brk.to <= val) {
-					nval -= brk.len;
-				} else if (brk.from >= val) {
-					break;
-				} else if (axis.isInBreak(brk, val)) {
-					nval -= (val - brk.from);
-					break;
-				}
-			}
-
-			return nval;
-		};
-		
-		axis.lin2val = function (val) {
-			var nval = val,
-				brk,
-				i;
-
-			for (i = 0; i < axis.breakArray.length; i++) {
-				brk = axis.breakArray[i];
-				if (brk.from >= nval) {
-					break;
-				} else if (brk.to < nval) {
-					nval += brk.len;
-				} else if (axis.isInBreak(brk, nval)) {
-					nval += brk.len;
-				}
-			}
-			return nval;
-		};
+		axis.val2lin = breakVal2Lin;
+		axis.lin2val = breakLin2Val;
 
 		axis.setExtremes = function (newMin, newMax, redraw, animation, eventArguments) {
 			// If trying to set extremes inside a break, extend it to before and after the break ( #3857 )
@@ -371,22 +376,15 @@ H.Series.prototype.gappedPath = function () {
 		stack;
 
 	/**
-	 * Defines when to display a gap in the graph, together with the `gapUnit`
-	 * option.
-	 * 
-	 * When the `gapUnit` is `relative` (default), a gap size of 5 means
-	 * that if the distance between two points is greater than five times
-	 * that of the two closest points, the graph will be broken.
-	 *
-	 * When the `gapUnit` is `value`, the gap is based on absolute axis values,
-	 * which on a datetime axis is milliseconds.
+	 * Defines when to display a gap in the graph, together with the
+	 * [gapUnit](plotOptions.series.gapUnit) option.
 	 * 
 	 * In practice, this option is most often used to visualize gaps in
 	 * time series. In a stock chart, intraday data is available for daytime
 	 * hours, while gaps will appear in nights and weekends.
 	 * 
 	 * @type {Number}
-	 * @see [xAxis.breaks](#xAxis.breaks)
+	 * @see [gapUnit](plotOptions.series.gapUnit) and [xAxis.breaks](#xAxis.breaks)
 	 * @sample {highstock} stock/plotoptions/series-gapsize/
 	 *         Setting the gap size to 2 introduces gaps for weekends in daily
 	 *         datasets.
@@ -396,13 +394,25 @@ H.Series.prototype.gappedPath = function () {
 	 */
 	
 	/**
-	 * Together with `gapSize`, this option defines where to draw gaps in the 
-	 * graph.
+	 * Together with [gapSize](plotOptions.series.gapSize), this option defines
+	 * where to draw gaps in the graph.
+	 * 
+	 * When the `gapUnit` is `relative` (default), a gap size of 5 means
+	 * that if the distance between two points is greater than five times
+	 * that of the two closest points, the graph will be broken.
+	 *
+	 * When the `gapUnit` is `value`, the gap is based on absolute axis values,
+	 * which on a datetime axis is milliseconds. Note that this may give 
+	 * unexpected results if `dataGrouping` is enabled (as it is by default),
+	 * because if a series of points are grouped into a larger time span, the
+	 * grouped points may have a greater distance than the absolute `gapSize`.
+	 * This will cause the whole graph to disappear. This also applies to the
+	 * navigator series that inherits gap options from the base series.
 	 *
 	 * @type {String}
 	 * @see [gapSize](plotOptions.series.gapSize)
 	 * @default relative
-	 * @validvalues ["relative", "value"]
+	 * @validvalue ["relative", "value"]
 	 * @since 5.0.13
 	 * @product highstock
 	 * @apioption plotOptions.series.gapUnit

@@ -38,7 +38,6 @@ var addEvent = H.addEvent,
  * @optionparent scrollbar
  */
 var defaultScrollbarOptions =  {
-	//enabled: true
 
 	/**
 	 * The height of the scrollbar. The height also applies to the width
@@ -50,8 +49,7 @@ var defaultScrollbarOptions =  {
 	 * @product highstock
 	 */
 	height: isTouchDevice ? 20 : 14,
-	// trackBorderRadius: 0
-
+	
 	/**
 	 * The border rounding radius of the bar.
 	 * 
@@ -98,9 +96,7 @@ var defaultScrollbarOptions =  {
 	 * @product highstock
 	 */
 	minWidth: 6,
-	//showFull: true,
-	//size: null,
-
+	
 	step: 0.2,
 
 	/**

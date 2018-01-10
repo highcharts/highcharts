@@ -243,7 +243,7 @@ Highcharts.Legend.prototype = {
 	 *
 	 * @private
 	 */
-	positionCheckboxes: function (scrollOffset) {
+	positionCheckboxes: function () {
 		var alignAttr = this.group && this.group.alignAttr,
 			translateY,
 			clipHeight = this.clipHeight || this.legendHeight,
@@ -257,7 +257,7 @@ Highcharts.Legend.prototype = {
 
 				if (checkbox) {
 					top = translateY + titleHeight + checkbox.y +
-						(scrollOffset || 0) + 3;
+						(this.scrollOffset || 0) + 3;
 					css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset +
 							checkbox.x - 20) + 'px',
@@ -266,7 +266,7 @@ Highcharts.Legend.prototype = {
 							clipHeight - 6 ? '' : 'none'
 					});
 				}
-			});
+			}, this);
 		}
 	},
 
@@ -319,7 +319,7 @@ Highcharts.Legend.prototype = {
 		var options = this.options;
 		item.legendItem.attr({
 			text: options.labelFormat ?
-				H.format(options.labelFormat, item) :
+				H.format(options.labelFormat, item, this.chart.time) :
 				options.labelFormatter.call(item)
 		});
 	},
@@ -476,12 +476,14 @@ Highcharts.Legend.prototype = {
 		}
 
 		// If the item exceeds the height, start a new column
-		/*if (!horizontal && legend.itemY + options.y +
+		/*
+		if (!horizontal && legend.itemY + options.y +
 				itemHeight > chart.chartHeight - spacingTop - spacingBottom) {
 			legend.itemY = legend.initialItemY;
 			legend.itemX += legend.maxItemWidth;
 			legend.maxItemWidth = 0;
-		}*/
+		}
+		*/
 
 		// Set the edge positions
 		legend.maxItemWidth = Math.max(legend.maxItemWidth, itemWidth);
@@ -551,6 +553,24 @@ Highcharts.Legend.prototype = {
 	},
 
 	/**
+	 * Get a short, three letter string reflecting the alignment and layout.
+	 *
+	 * @private
+	 * @return {String} The alignment, empty string if floating
+	 */
+	getAlignment: function () {
+		var options = this.options;
+
+		// Use the first letter of each alignment option in order to detect
+		// the side. (#4189 - use charAt(x) notation instead of [x] for IE7)
+		return options.floating ? '' : (
+			options.align.charAt(0) +
+			options.verticalAlign.charAt(0) +
+			options.layout.charAt(0)
+		);
+	},
+
+	/**
 	 * Adjust the chart margins by reserving space for the legend on only one
 	 * side of the chart. If the position is set to a corner, top or bottom is
 	 * reserved for horizontal legends and left or right for vertical ones.
@@ -560,13 +580,9 @@ Highcharts.Legend.prototype = {
 	adjustMargins: function (margin, spacing) {
 		var chart = this.chart,
 			options = this.options,
-			// Use the first letter of each alignment option in order to detect
-			// the side. (#4189 - use charAt(x) notation instead of [x] for IE7)
-			alignment = options.align.charAt(0) +
-				options.verticalAlign.charAt(0) +
-				options.layout.charAt(0);
+			alignment = this.getAlignment();
 
-		if (!options.floating) {
+		if (alignment) {
 
 			each([
 				/(lth|ct|rth)/,
@@ -575,6 +591,7 @@ Highcharts.Legend.prototype = {
 				/(lbv|lm|ltv)/
 			], function (alignments, side) {
 				if (alignments.test(alignment) && !defined(margin[side])) {
+
 					// Now we have detected on which side of the chart we should
 					// reserve space for the legend
 					chart[marginNames[side]] = Math.max(
@@ -587,7 +604,13 @@ Highcharts.Legend.prototype = {
 								(side % 2) ? 'x' : 'y'
 							] +
 							pick(options.margin, 12) +
-							spacing[side]
+							spacing[side] +
+							(
+								side === 0 ?
+									chart.titleOffset +
+										chart.options.title.margin :
+									0
+							) // #7428
 						)
 					);
 				}
@@ -612,7 +635,8 @@ Highcharts.Legend.prototype = {
 			legendHeight,
 			box = legend.box,
 			options = legend.options,
-			padding = legend.padding;
+			padding = legend.padding,
+			alignTo;
 
 		legend.itemX = padding;
 		legend.itemY = legend.initialItemY;
@@ -686,7 +710,7 @@ Highcharts.Legend.prototype = {
 
 		if (legendWidth > 0 && legendHeight > 0) {
 			box[box.isNew ? 'attr' : 'animate'](
-				box.crisp({
+				box.crisp.call({}, { // #7260
 					x: 0,
 					y: 0,
 					width: legendWidth,
@@ -715,24 +739,21 @@ Highcharts.Legend.prototype = {
 			legend.positionItem(item);
 		});
 
-		// 1.x compatibility: positioning based on style
-		/*var props = ['left', 'right', 'top', 'bottom'],
-			prop,
-			i = 4;
-		while (i--) {
-			prop = props[i];
-			if (options.style[prop] && options.style[prop] !== 'auto') {
-				options[i < 2 ? 'align' : 'verticalAlign'] = prop;
-				options[i < 2 ? 'x' : 'y'] = 
-					pInt(options.style[prop]) * (i % 2 ? -1 : 1);
-			}
-		}*/
-
 		if (display) {
+			// If aligning to the top and the layout is horizontal, adjust for
+			// the title (#7428)
+			alignTo = chart.spacingBox;
+			if (/(lth|ct|rth)/.test(legend.getAlignment())) {
+				alignTo = merge(alignTo, {
+					y: alignTo.y + chart.titleOffset +
+						chart.options.title.margin
+				});
+			}
+
 			legendGroup.align(merge(options, {
 				width: legendWidth,
 				height: legendHeight
-			}), true, 'spacingBox');
+			}), true, alignTo);
 		}
 
 		if (!chart.isResizing) {
@@ -820,9 +841,16 @@ Highcharts.Legend.prototype = {
 					len++;
 				}
 
+				// Keep track of which page each item is on
+				item.pageIx = len - 1;
+				if (lastY) {
+					allItems[i - 1].pageIx = len - 1;
+				}
+
 				if (i === allItems.length - 1 &&
 						y + h - pages[len - 1] > clipHeight) {
 					pages.push(y);
+					item.pageIx = len;
 				}
 				if (y !== lastY) {
 					lastY = y;
@@ -911,8 +939,7 @@ Highcharts.Legend.prototype = {
 			clipHeight = this.clipHeight,
 			navOptions = this.options.navigation,
 			pager = this.pager,
-			padding = this.padding,
-			scrollOffset;
+			padding = this.padding;
 
 		// When resizing while looking at the last page
 		if (currentPage > pageCount) {
@@ -966,14 +993,14 @@ Highcharts.Legend.prototype = {
 				});
 			/*= } =*/
 			
-			scrollOffset = -pages[currentPage - 1] + this.initialItemY;
+			this.scrollOffset = -pages[currentPage - 1] + this.initialItemY;
 
 			this.scrollGroup.animate({
-				translateY: scrollOffset
+				translateY: this.scrollOffset
 			});
 
 			this.currentPage = currentPage;
-			this.positionCheckboxes(scrollOffset);
+			this.positionCheckboxes();
 		}
 
 	}

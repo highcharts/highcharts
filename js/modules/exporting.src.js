@@ -665,9 +665,10 @@ defaultOptions.exporting = {
 			 * 
 			 * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down", "menu"]
 			 * @type {String}
-			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
-			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
-			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
+			 * @sample highcharts/exporting/buttons-contextbutton-symbol/
+			 *         Use a circle for symbol
+			 * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
+			 *         Custom shape as symbol
 			 * @default menu
 			 * @since 2.0
 			 */
@@ -918,31 +919,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			.replace(/<\/svg>.*?$/, '</svg>')
 			// Batik doesn't support rgba fills and strokes (#3095)
 			.replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"')
-			/* This fails in IE < 8
-			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
-				return s2 +'.'+ s3[0];
-			})*/
 
 			// Replace HTML entities, issue #347
 			.replace(/&nbsp;/g, '\u00A0') // no-break space
 			.replace(/&shy;/g,  '\u00AD'); // soft hyphen
 
-			/*= if (build.classic) { =*/
-			// IE specific
-		svg = svg
-			.replace(/<IMG /g, '<image ')
-			.replace(/<(\/?)TITLE>/g, '<$1title>')
-			.replace(/height=([^" ]+)/g, 'height="$1"')
-			.replace(/width=([^" ]+)/g, 'width="$1"')
-			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
-			.replace(/ id=([^" >]+)/g, ' id="$1"') // #4003
-			.replace(/class=([^" >]+)/g, 'class="$1"')
-			.replace(/ transform /g, ' ')
-			.replace(/:(path|rect)/g, '$1')
-			.replace(/style="([^"]+)"/g, function (s) {
-				return s.toLowerCase();
-			});
-			/*= } =*/
+		/*= if (build.classic) { =*/
+		// Further sanitize for oldIE
+		if (this.ieSanitizeSVG) {
+			svg = this.ieSanitizeSVG(svg);
+		}
+		/*= } =*/
 		
 		return svg;
 	},
@@ -988,13 +975,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			cssHeight,
 			options = merge(chart.options, chartOptions); // copy the options and add extra options
 
-
-		// IE compatibility hack for generating SVG content that it doesn't really understand
-		if (!doc.createElementNS) {
-			doc.createElementNS = function (ns, tagName) {
-				return doc.createElement(tagName);
-			};
-		}
 
 		// create a sandbox where a new chart will be generated
 		sandbox = createElement('div', null, {
@@ -1458,7 +1438,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				/*= if (build.classic) { =*/
 				'stroke-linecap': 'round',
 				/*= } =*/
-				title: chart.options.lang[btnOptions._titleKey],
+				title: pick(chart.options.lang[btnOptions._titleKey], ''),
 				zIndex: 3 // #4955
 			});
 		button.menuClassName = options.menuClassName || 'highcharts-menu-' + chart.btnCount++;
@@ -1513,7 +1493,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		if (exportSVGElements) {
 			each(exportSVGElements, function (elem, i) {
 
-				// Destroy and null the svg/vml elements
+				// Destroy and null the svg elements
 				if (elem) { // #1822
 					elem.onclick = elem.ontouchstart = null;
 					cacheName = 'cache-' + elem.menuClassName;

@@ -77,7 +77,10 @@ radialAxisMixin = {
 			align: null, // auto
 			distance: 15,
 			x: 0,
-			y: null // auto
+			y: null, // auto
+			style: {
+				textOverflow: 'none' // wrap lines by default (#7248)
+			}
 		},
 		maxPadding: 0,
 		minPadding: 0,
@@ -157,6 +160,12 @@ radialAxisMixin = {
 					innerR: 0
 				}
 			);
+
+			// Bounds used to position the plotLine label next to the line
+			// (#7117)
+			path.xBounds = [this.left + center[0]];
+			path.yBounds = [this.top + center[1] - r];
+			
 		} else {
 			end = this.postTranslate(this.angleRad, r);
 			path = ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];
@@ -418,8 +427,8 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		options,
 		chartOptions = chart.options,
 		paneIndex = userOptions.pane || 0,
-		pane = this.pane = chart.pane[paneIndex],
-		paneOptions = pane.options;
+		pane = this.pane = chart.pane && chart.pane[paneIndex],
+		paneOptions = pane && pane.options;
 
 	// Before prototype.init
 	if (angular) {
@@ -446,14 +455,14 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 	}
 
 	// A pointer back to this axis to borrow geometry
-	if (isCircular) {
+	if (pane && isCircular) {
 		pane.axis = this;
 	}
 
 	// Run prototype.init
 	proceed.call(this, chart, userOptions);
 
-	if (!isHidden && (angular || polar)) {
+	if (!isHidden && pane && (angular || polar)) {
 		options = this.options;
 
 		// Start and end angle options are

@@ -10,9 +10,9 @@ if (isset($path) && !preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', 
     die ('Invalid sample path input: ' . $path);
 }
 
-$path = "../../samples/$path";
-$details = @file_get_contents("$path/demo.details");
-$isUnitTest = file_exists("$path/unit-tests.js") || strstr($details, 'qunit') ? true : false;
+$fsPath = realpath(dirname(__FILE__) . '/../../samples') . '/' . $path;
+$details = @file_get_contents("$fsPath/demo.details");
+$isUnitTest = file_exists("$fsPath/unit-tests.js") || strstr($details, 'qunit') ? true : false;
 $isManual = (strstr($details, 'requiresManualTesting: true') !== false);
 
 
@@ -29,8 +29,14 @@ function getBranch() {
         
 }
 
-function compareJSON() {
-    return 'temp/compare.' . getBranch() . '.json';
+function compareJSON($browserKey = null) {
+
+    if (!isset($browserKey)) {
+        $browser = getBrowser();
+        $browserKey = isset($browser['parent']) ? $browser['parent'] : 'Unknown';
+    }
+    
+    return 'temp/compare.' . getBranch() . '.' . strtolower($browserKey) . '.json';
 }
 
 /**
@@ -139,6 +145,33 @@ function getBrowser() {
     );
 } 
 
+/*
+ * When a reference to a graphics file exists in the demo, copy it over to the
+ * local cache so we can see it while working on utils.highcharts.local.
+ */
+function getGraphics(&$s) {
+
+    global $topDomain;
+
+    $gfxRoot = 'https://www.highcharts.com/samples/graphics';
+
+    $src = dirname(__FILE__) . '/../../samples/graphics';
+    $dest = dirname(__FILE__) . '/cache';
+
+    if (strpos($s, $gfxRoot) !== false) {
+        $files = glob("$src/*.*");
+        foreach($files as $file){
+            $file_to_go = str_replace($src, $dest, $file);
+            copy($file, $file_to_go);
+        }
+    }
+
+    $s = str_replace(
+        $gfxRoot,
+        "http://utils.highcharts.$topDomain/samples/cache",
+        $s
+    );
+}
 
 
 function getFramework($framework) {

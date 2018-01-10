@@ -16,12 +16,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.jso
         },
 
         xAxis: {
-            crosshair: {
-                label: {
-                    enabled: true,
-                    padding: 8
-                }
-            }
+            crosshair: true
         },
 
         yAxis: {

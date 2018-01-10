@@ -79,10 +79,11 @@ H.StackItem.prototype = {
 	 * Renders the stack total label and adds it to the stack label group.
 	 */
 	render: function (group) {
-		var options = this.options,
+		var chart = this.axis.chart,
+			options = this.options,
 			formatOption = options.format,
 			str = formatOption ?
-				format(formatOption, this) :
+				format(formatOption, this, chart.time) :
 				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden
@@ -92,7 +93,7 @@ H.StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, null, null, options.useHTML)
+				chart.renderer.text(str, null, null, options.useHTML)
 					.css(options.style)
 					.attr({
 						align: this.textAlign,
@@ -121,7 +122,7 @@ H.StackItem.prototype = {
 			),
 			yZero = axis.translate(0), // stack origin
 			h = Math.abs(y - yZero), // stack height
-			x = chart.xAxis[0].translate(stackItem.x) + xOffset,	// stack x position
+			x = chart.xAxis[0].translate(stackItem.x) + xOffset, // x position
 			stackBox = stackItem.getStackBox(chart, stackItem, x, y, xWidth, h),
 			label = stackItem.label,
 			alignAttr;
@@ -253,7 +254,7 @@ Axis.prototype.resetStacks = function () {
 				// Reset stacks
 				} else {
 					stack.total = null;
-					stack.cum = null;
+					stack.cumulative = null;
 				}
 			});
 		});
@@ -271,7 +272,7 @@ Axis.prototype.cleanStacks = function () {
 		// reset stacks
 		objectEach(stacks, function (type) {
 			objectEach(type, function (stack) {
-				stack.cum = stack.total;
+				stack.cumulative = stack.total;
 			});
 		});
 	}
@@ -296,7 +297,7 @@ Series.prototype.setStackedPoints = function () {
 		yDataLength = yData.length,
 		seriesOptions = series.options,
 		threshold = seriesOptions.threshold,
-		stackThreshold = seriesOptions.startFromThreshold ? threshold : 0,
+		stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0),
 		stackOption = seriesOptions.stack,
 		stacking = seriesOptions.stacking,
 		stackKey = series.stackKey,
@@ -359,10 +360,10 @@ Series.prototype.setStackedPoints = function () {
 		stack = stacks[key][x];
 		if (y !== null) {
 			stack.points[pointKey] = stack.points[series.index] =
-				[pick(stack.cum, stackThreshold)];
+				[pick(stack.cumulative, stackThreshold)];
 
 			// Record the base of the stack
-			if (!defined(stack.cum)) {
+			if (!defined(stack.cumulative)) {
 				stack.base = pointKey;
 			}
 			stack.touched = yAxis.stacksTouched;
@@ -374,6 +375,10 @@ Series.prototype.setStackedPoints = function () {
 				stack.points[pointKey][0] =
 					stack.points[series.index + ',' + x + ',0'][0];
 			}
+
+		// When updating to null, reset the point stack (#7493)
+		} else {
+			stack.points[pointKey] = stack.points[series.index] = null;
 		}
 
 		// Add value to the stack total
@@ -395,11 +400,11 @@ Series.prototype.setStackedPoints = function () {
 			stack.total = correctFloat(stack.total + (y || 0));
 		}
 
-		stack.cum = pick(stack.cum, stackThreshold) + (y || 0);
+		stack.cumulative = pick(stack.cumulative, stackThreshold) + (y || 0);
 
 		if (y !== null) {
-			stack.points[pointKey].push(stack.cum);
-			stackedYData[i] = stack.cum;
+			stack.points[pointKey].push(stack.cumulative);
+			stackedYData[i] = stack.cumulative;
 		}
 
 	}

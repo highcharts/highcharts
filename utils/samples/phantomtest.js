@@ -12,6 +12,7 @@ Arguments:
 --rightcommit What commit to test (on the right side).
 --single What sample number to run as a single test.
 --start  What sample number to start from. Use this to resume after error.
+--unit   Run only tests from the "unit-tests" folder.
 
 Status
 - Requires PhantomJS 2
@@ -50,6 +51,8 @@ Status
             params.commit = args[j + 1];
         } else if (arg === '--rightcommit') {
             params.rightcommit = args[j + 1];
+        } else if (arg === '--unit') {
+            params.unit = true;
         }
     });
 
@@ -59,7 +62,11 @@ Status
     }
 
     // Add all the samples to the samples array
-    ['unit-tests', 'highcharts', 'maps', 'stock', 'issues', 'cloud'].forEach(function (section) {
+    (
+        params.unit ?
+            ['unit-tests'] :
+            ['unit-tests', 'highcharts', 'maps', 'stock', 'issues', 'cloud']
+    ).forEach(function (section) {
         section = section + '/';
         fs.list('../../samples/' + section).forEach(function (group) {
             if (/^[a-z0-9][a-z0-9\.\-]+$/.test(group) && fs.isDirectory('../../samples/' + section + group)) {

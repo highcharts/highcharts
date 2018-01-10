@@ -52,7 +52,10 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
                 text: 'OHLC'
             },
             height: '60%',
-            lineWidth: 2
+            lineWidth: 2,
+            resize: {
+                enabled: true
+            }
         }, {
             labels: {
                 align: 'right',

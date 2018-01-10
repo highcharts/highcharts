@@ -28,10 +28,10 @@ var animObject = H.animObject,
 	SVGElement = H.SVGElement,
 	SVGRenderer = H.SVGRenderer,
 	wrap = H.wrap;
-/*** 
+/*
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
-	***/
-////// HELPER METHODS //////
+*/
+// HELPER METHODS //
 
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
@@ -256,7 +256,7 @@ SVGRenderer.prototype.polyhedron = function (args) {
 	return result.attr(args);
 };
 
-////// CUBOIDS //////
+// CUBOIDS //
 SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 	var result = this.g(),
@@ -521,7 +521,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	]; // #4774
 };
 
-////// SECTORS //////
+// SECTORS //
 H.SVGRenderer.prototype.arc3d = function (attribs) {
 
 	var wrapper = this.g(),
@@ -679,7 +679,9 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		
 		if (anim.duration) {
 			ca = suckOutCustom(params);
-			params.dummy = 1; // Params need to have a property in order for the step to run (#5765)
+			// Params need to have a property in order for the step to run
+			// (#5765, #7437)
+			params.dummy = wrapper.dummy++;
 
 			if (ca) {
 				to = ca;
@@ -704,6 +706,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		}
 		return proceed.call(this, params, animation, complete);
 	});
+	wrapper.dummy = 0;
 
 	// destroy all children
 	wrapper.destroy = function () {

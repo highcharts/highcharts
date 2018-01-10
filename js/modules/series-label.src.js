@@ -4,8 +4,7 @@
  * License: www.highcharts.com/license
  */
 /**
- * EXPERIMENTAL Highcharts module to place labels next to a series in a natural
- * position.
+ * Highcharts module to place labels next to a series in a natural position.
  *
  * TODO:
  * - add column support (box collision detection, boxesToAvoid logic)
@@ -35,24 +34,86 @@ var labelDistance = 3,
 	Chart = H.Chart;
 
 H.setOptions({
+	/**
+	 * @optionparent plotOptions
+	 */
 	plotOptions: {
 		series: {
+			/**
+			 * Series labels are placed as close to the series as possible in a
+			 * natural way, seeking to avoid other series. The goal of this
+			 * feature is to make the chart more easily readable, like if a
+			 * human designer placed the labels in the optimal position.
+			 *
+			 * The series labels currently work with series types having a
+			 * `graph` or an `area`.
+			 *
+			 * Requires the `series-label.js` module.
+			 *
+			 * @sample highcharts/series-label/line-chart
+			 *         Line chart
+			 * @sample highcharts/demo/streamgraph
+			 *         Stream graph
+			 * @sample highcharts/series-label/stock-chart
+			 *         Stock chart
+			 * @since 6.0.0
+			 * @product highcharts highstock
+			 */
 			label: {
+				/**
+				 * Enable the series label per series.
+				 */
 				enabled: true,
-				// Allow labels to be placed distant to the graph if necessary,
-				// and draw a connector line to the graph
+				/**
+				 * Allow labels to be placed distant to the graph if necessary,
+				 * and draw a connector line to the graph.
+				 */
 				connectorAllowed: true,
-				// If the label is closer than this to a neighbour graph, draw a
-				// connector
+				/**
+				 * If the label is closer than this to a neighbour graph, draw a
+				 * connector.
+				 */
 				connectorNeighbourDistance: 24,
+				/**
+				 * For area-like series, allow the font size to vary so that
+				 * small areas get a smaller font size. The default applies this
+				 * effect to area-like series but not line-like series.
+				 *
+				 * @type {Number}
+				 */
 				minFontSize: null,
+				/**
+				 * For area-like series, allow the font size to vary so that
+				 * small areas get a smaller font size. The default applies this
+				 * effect to area-like series but not line-like series.
+				 *
+				 * @type {Number}
+				 */
 				maxFontSize: null,
+				/**
+				 * Draw the label on the area of an area series. By default it
+				 * is drawn on the area. Set it to `false` to draw it next to
+				 * the graph instead.
+				 * 
+				 * @type {Boolean}
+				 */
 				onArea: null,
+
+				/**
+				 * Styles for the series label. The color defaults to the series
+				 * color, or a contrast color if `onArea`.
+				 */
 				style: {
 					fontWeight: 'bold'
-				}
+				},
 
-				// boxesToAvoid: []
+				/**
+				 * An array of boxes to avoid when laying out the labels. Each 
+				 * item has a `left`, `right`, `top` and `bottom` property.
+				 *
+				 * @type {Array.<Object>}
+				 */
+				boxesToAvoid: []
 			}
 		}
 	}
@@ -134,6 +195,11 @@ SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
  * interpolated positions.
  */
 Series.prototype.getPointsOnGraph = function () {
+
+	if (!this.xAxis && !this.yAxis) {
+		return;
+	}
+
 	var distance = 16,
 		points = this.points,
 		point,
@@ -150,10 +216,12 @@ Series.prototype.getPointsOnGraph = function () {
 		graph = this.graph || this.area,
 		node = graph.element,
 		inverted = this.chart.inverted,
-		paneLeft = inverted ? this.yAxis.pos : this.xAxis.pos,
-		paneTop = inverted ? this.xAxis.pos : this.yAxis.pos,
+		xAxis = this.xAxis,
+		yAxis = this.yAxis,
+		paneLeft = inverted ? yAxis.pos : xAxis.pos,
+		paneTop = inverted ? xAxis.pos : yAxis.pos,
 		onArea = pick(this.options.label.onArea, !!this.area),
-		translatedThreshold = this.yAxis.getThreshold(this.options.threshold);
+		translatedThreshold = yAxis.getThreshold(this.options.threshold);
 
 	// For splines, get the point at length (possible caveat: peaks are not
 	// correctly detected)
@@ -235,6 +303,15 @@ Series.prototype.getPointsOnGraph = function () {
 			}
 		}
 	}
+
+	// Get the bounding box so we can do a quick check first if the bounding
+	// boxes overlap.
+	/*
+	interpolated.bBox = node.getBBox();
+	interpolated.bBox.x += paneLeft;
+	interpolated.bBox.y += paneTop;
+	*/
+
 	return interpolated;
 };
 
@@ -265,6 +342,8 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 		points,
 		leastDistance = 16,
 		withinRange,
+		xDist,
+		yDist,
 		i,
 		j;
 
@@ -346,28 +425,11 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 					(connectorEnabled || withinRange) &&
 					(this !== series || onArea)
 				) {
+					xDist = x + bBox.width / 2 - points[j].chartX;
+					yDist = y + bBox.height / 2 - points[j].chartY;
 					distToOthersSquared = Math.min(
 						distToOthersSquared,
-						(
-							Math.pow(x + bBox.width / 2 - points[j].chartX, 2) +
-							Math.pow(y + bBox.height / 2 - points[j].chartY, 2)
-						)/*,
-						(
-							Math.pow(x - points[j].chartX, 2) +
-							Math.pow(y - points[j].chartY, 2)
-						),
-						(
-							Math.pow(x + bBox.width - points[j].chartX, 2) +
-							Math.pow(y - points[j].chartY, 2)
-						),
-						(
-							Math.pow(x + bBox.width - points[j].chartX, 2) +
-							Math.pow(y + bBox.height - points[j].chartY, 2)
-						),
-						(
-							Math.pow(x - points[j].chartX, 2) +
-							Math.pow(y + bBox.height - points[j].chartY, 2)
-						)*/
+						xDist * xDist + yDist * yDist
 					);
 				}
 			}
@@ -454,6 +516,11 @@ Chart.prototype.drawSeriesLabels = function () {
 	});
 
 	each(chart.series, function (series) {
+
+		if (!series.xAxis && !series.yAxis) {
+			return;
+		}
+
 		var bBox,
 			x,
 			y,
@@ -478,12 +545,14 @@ Chart.prototype.drawSeriesLabels = function () {
 				y >= paneTop && y <= paneTop + paneHeight - bBox.height;
 		}
 
-		if (series.visible && points) {
+		if (series.visible && !series.isSeriesBoosting && points) {
 			if (!label) {
 				series.labelBySeries = label = chart.renderer
 					.label(series.name, 0, -9999, 'connector')
 					.css(extend({
-						color: series.color
+						color: onArea ?
+							chart.renderer.getContrast(series.color) :
+							series.color
 					}, series.options.label.style));
 
 				// Adapt label sizes to the sum of the data
@@ -698,12 +767,17 @@ function drawLabels(proceed) {
 		var options = series.options.label,
 			label = series.labelBySeries,
 			closest = label && label.closest;
-
-		if (options.enabled && series.visible && (series.graph || series.area)) {
+	
+		if (
+			options.enabled &&
+			series.visible &&
+			(series.graph || series.area) &&
+			!series.isSeriesBoosting
+		) {
 			chart.labelSeries.push(series);
 
 			if (options.minFontSize && options.maxFontSize) {
-				series.sum = series.yData.reduce(function (pv, cv) {
+				series.sum = H.reduce(series.yData, function (pv, cv) {
 					return (pv || 0) + (cv || 0);
 				}, 0);
 				chart.labelSeriesMaxSum = Math.max(

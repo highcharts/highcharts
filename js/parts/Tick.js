@@ -53,12 +53,13 @@ H.Tick.prototype = {
 			tickPositionInfo = tickPositions.info,
 			dateTimeLabelFormat;
 
-		// Set the datetime label format. If a higher rank is set for this position, use that. If not,
-		// use the general format.
+		// Set the datetime label format. If a higher rank is set for this
+		// position, use that. If not, use the general format.
 		if (axis.isDatetimeAxis && tickPositionInfo) {
 			dateTimeLabelFormat =
 				options.dateTimeLabelFormats[
-					tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName
+					tickPositionInfo.higherRanks[pos] ||
+					tickPositionInfo.unitName
 				];
 		}
 		// set properties for access in render method
@@ -76,9 +77,6 @@ H.Tick.prototype = {
 			pos: pos
 		});
 
-		// prepare CSS
-		//css = width && { width: Math.max(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
-
 		// first call
 		if (!defined(label)) {
 
@@ -91,13 +89,17 @@ H.Tick.prototype = {
 							labelOptions.useHTML
 						)
 						/*= if (build.classic) { =*/
-						// without position absolute, IE export sometimes is wrong
+						// without position absolute, IE export sometimes is
+						// wrong.
 						.css(merge(labelOptions.style))
 						/*= } =*/
 						.add(axis.labelGroup) :
 					null;
-			tick.labelLength = label && label.getBBox().width; // Un-rotated length
-			tick.rotation = 0; // Base value to detect change for new calls to getBBox
+
+			// Un-rotated length
+			tick.labelLength = label && label.getBBox().width;
+			// Base value to detect change for new calls to getBBox
+			tick.rotation = 0;
 
 		// update
 		} else if (label) {
@@ -115,19 +117,28 @@ H.Tick.prototype = {
 	},
 
 	/**
-	 * Handle the label overflow by adjusting the labels to the left and right edge, or
-	 * hide them if they collide into the neighbour label.
+	 * Handle the label overflow by adjusting the labels to the left and right
+	 * edge, or hide them if they collide into the neighbour label.
 	 */
 	handleOverflow: function (xy) {
 		var axis = this.axis,
+			labelOptions = axis.options.labels,
 			pxPos = xy.x,
 			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,
 			leftBound = pick(axis.labelLeft, Math.min(axis.pos, spacing[3])),
-			rightBound = pick(axis.labelRight, Math.max(axis.pos + axis.len, chartWidth - spacing[1])),
+			rightBound = pick(
+				axis.labelRight,
+				Math.max(
+					!axis.isRadial ? axis.pos + axis.len : 0,
+					chartWidth - spacing[1]
+				)
+			),
 			label = this.label,
 			rotation = this.rotation,
-			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
+			factor = { left: 0, center: 0.5, right: 1 }[
+				axis.labelAlign || label.attr('align')
+			],
 			labelWidth = label.getBBox().width,
 			slotWidth = axis.getSlotWidth(),
 			modifiedSlotWidth = slotWidth,
@@ -138,41 +149,59 @@ H.Tick.prototype = {
 			textWidth,
 			css = {};
 
-		// Check if the label overshoots the chart spacing box. If it does, move it.
-		// If it now overshoots the slotWidth, add ellipsis.
-		if (!rotation) {
+		// Check if the label overshoots the chart spacing box. If it does, move
+		// it. If it now overshoots the slotWidth, add ellipsis.
+		if (!rotation && labelOptions.overflow !== false) {
 			leftPos = pxPos - factor * labelWidth;
 			rightPos = pxPos + (1 - factor) * labelWidth;
 
 			if (leftPos < leftBound) {
 				modifiedSlotWidth = xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
 			} else if (rightPos > rightBound) {
-				modifiedSlotWidth = rightBound - xy.x + modifiedSlotWidth * factor;
+				modifiedSlotWidth =
+					rightBound - xy.x + modifiedSlotWidth * factor;
 				goRight = -1;
 			}
 
 			modifiedSlotWidth = Math.min(slotWidth, modifiedSlotWidth); // #4177
 			if (modifiedSlotWidth < slotWidth && axis.labelAlign === 'center') {
-				xy.x += goRight * (slotWidth - modifiedSlotWidth - xCorrection *
-					(slotWidth - Math.min(labelWidth, modifiedSlotWidth)));
+				xy.x += (
+					goRight *
+					(
+						slotWidth -
+						modifiedSlotWidth -
+						xCorrection * (
+							slotWidth - Math.min(labelWidth, modifiedSlotWidth)
+						)
+					)
+				);
 			}
-			// If the label width exceeds the available space, set a text width to be
-			// picked up below. Also, if a width has been set before, we need to set a new
-			// one because the reported labelWidth will be limited by the box (#3938).
-			if (labelWidth > modifiedSlotWidth || (axis.autoRotation && (label.styles || {}).width)) {
+			// If the label width exceeds the available space, set a text width
+			// to be picked up below. Also, if a width has been set before, we
+			// need to set a new one because the reported labelWidth will be
+			// limited by the box (#3938).
+			if (
+				labelWidth > modifiedSlotWidth ||
+				(axis.autoRotation && (label.styles || {}).width)
+			) {
 				textWidth = modifiedSlotWidth;
 			}
 
-		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
+		// Add ellipsis to prevent rotated labels to be clipped against the edge
+		// of the chart
 		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {
-			textWidth = Math.round(pxPos / Math.cos(rotation * deg2rad) - leftBound);
+			textWidth = Math.round(
+				pxPos / Math.cos(rotation * deg2rad) - leftBound
+			);
 		} else if (rotation > 0 && pxPos + factor * labelWidth > rightBound) {
-			textWidth = Math.round((chartWidth - pxPos) / Math.cos(rotation * deg2rad));
+			textWidth = Math.round(
+				(chartWidth - pxPos) / Math.cos(rotation * deg2rad)
+			);
 		}
 
 		if (textWidth) {
 			css.width = textWidth;
-			if (!(axis.options.labels.style || {}).textOverflow) {
+			if (!(labelOptions.style || {}).textOverflow) {
 				css.textOverflow = 'ellipsis';
 			}
 			label.css(css);
@@ -189,16 +218,39 @@ H.Tick.prototype = {
 
 		return {
 			x: horiz ?
-				axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
-				axis.left + axis.offset +
-					(axis.opposite ?
-						((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - axis.left :
-						0
-					),
+				(
+					axis.translate(pos + tickmarkOffset, null, null, old) +
+					axis.transB
+				) :
+				(
+					axis.left +
+					axis.offset +
+					(
+						axis.opposite ?
+							(
+								(
+									(old && chart.oldChartWidth) ||
+									chart.chartWidth
+								) -
+								axis.right -
+								axis.left
+							) :
+							0
+					)
+				),
 
 			y: horiz ?
-				cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
-				cHeight - axis.translate(pos + tickmarkOffset, null, null, old) - axis.transB
+				(
+					cHeight -
+					axis.bottom +
+					axis.offset -
+					(axis.opposite ? axis.height : 0)
+				) :
+				(
+					cHeight -
+					axis.translate(pos + tickmarkOffset, null, null, old) -
+					axis.transB
+				)
 		};
 
 	},
@@ -206,13 +258,31 @@ H.Tick.prototype = {
 	/**
 	 * Get the x, y position of the tick label
 	 */
-	getLabelPosition: function (x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
+	getLabelPosition: function (
+		x,
+		y,
+		label,
+		horiz,
+		labelOptions,
+		tickmarkOffset,
+		index,
+		step
+	) {
 		var axis = this.axis,
 			transA = axis.transA,
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
 			yOffset = labelOptions.y,
+
+			// Adjust for label alignment if we use reserveSpace: true (#5286)
+			labelOffsetCorrection = (
+				!horiz && !axis.reserveSpaceDefault ?
+					-axis.labelOffset * (
+						axis.labelAlign === 'center' ? 0.5 : 1
+					) :
+					0
+			),
 			line;
 
 		if (!defined(yOffset)) {
@@ -222,12 +292,20 @@ H.Tick.prototype = {
 				yOffset = rotCorr.y + 8;
 			} else {
 				// #3140, #3140
-				yOffset = Math.cos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
+				yOffset = Math.cos(label.rotation * deg2rad) *
+					(rotCorr.y - label.getBBox(false, 0).height / 2);
 			}
 		}
 
-		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
-			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
+		x = x +
+			labelOptions.x +
+			labelOffsetCorrection +
+			rotCorr.x -
+			(
+				tickmarkOffset && horiz ?
+					tickmarkOffset * transA * (reversed ? -1 : 1) :
+					0
+			);
 		y = y + yOffset - (tickmarkOffset && !horiz ?
 			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
 
@@ -443,8 +521,13 @@ H.Tick.prototype = {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (horiz && !axis.isRadial && !labelOptions.step &&
-					!labelOptions.rotation && !old && opacity !== 0) {
+			} else if (
+				horiz &&
+				!labelOptions.step &&
+				!labelOptions.rotation &&
+				!old &&
+				opacity !== 0
+			) {
 				tick.handleOverflow(xy);
 			}
 
@@ -463,7 +546,6 @@ H.Tick.prototype = {
 				label.attr('y', -9999); // #1338
 				tick.isNewLabel = true;
 			}
-			tick.isNew = false;
 		}
 	},
 
@@ -497,6 +579,8 @@ H.Tick.prototype = {
 
 		// the label is created on init - now move it into place
 		this.renderLabel(xy, old, opacity, index);
+
+		tick.isNew = false;
 	},
 
 	/**

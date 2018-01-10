@@ -19,7 +19,8 @@ console.time('scatter');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'xy'
+        zoomType: 'xy',
+        height: '100%'
     },
 
     boost: {
@@ -38,7 +39,10 @@ Highcharts.chart('container', {
         min: 0,
         max: 100,
         minPadding: 0,
-        maxPadding: 0
+        maxPadding: 0,
+        title: {
+            text: null
+        }
     },
 
     title: {
@@ -51,10 +55,11 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'scatter',
-        color: 'rgba(152,0,67,0.1)',
+        color: 'rgb(152, 0, 67)',
+        fillOpacity: 0.1,
         data: data,
         marker: {
-            radius: 0.1
+            radius: 1
         },
         tooltip: {
             followPointer: false,

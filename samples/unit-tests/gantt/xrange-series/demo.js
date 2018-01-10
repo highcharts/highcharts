@@ -109,9 +109,10 @@
                 'point ' + i + ' clipRectArgs has correct calulated x-position'
             );
 
-            assert.equal(
+            assert.close(
                 clipRectArgs.width,
                 shapeArgs.width * partialFill,
+                1,
                 'point ' + i + ' clipRectArgs has correct calculated width'
             );
         }
@@ -142,7 +143,7 @@
             overHeight,
             clipHeight,
             partialFill,
-            error = 0.0001;
+            error = 1;
 
         // THE CHART
         chart = Highcharts.chart('container', defaultChartConfig);

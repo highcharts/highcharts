@@ -1,23 +1,24 @@
 
 
-QUnit.test('Marker size', function (assert) {
-    var series = Highcharts.chart('container', {
-        chart: {
-            animation: false
-        },
-        series: [{
-            data: [1, 2, 3],
-            animation: false,
-            marker: {
+QUnit.test('Marker size and position', function (assert) {
+    var stateMarkerGraphicBBox,
+        series = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+            series: [{
+                data: [1, 2, 3],
                 animation: false,
-                states: {
-                    hover: {
-                        animation: false
+                marker: {
+                    animation: false,
+                    states: {
+                        hover: {
+                            animation: false
+                        }
                     }
                 }
-            }
-        }]
-    }).series[0];
+            }]
+        }).series[0];
 
     // Default size
     assert.strictEqual(
@@ -76,4 +77,28 @@ QUnit.test('Marker size', function (assert) {
         (20 + plotOptions.line.marker.states.hover.radiusPlus) * 2,
         'Individual hover width'
     );
+
+    // Shared graphic position (#7273)
+    series.update({
+        marker: {
+            enabled: false,
+            symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+        }
+    });
+
+    series.points[1].setState('hover');
+    stateMarkerGraphicBBox = series.stateMarkerGraphic.getBBox(true);
+
+    assert.strictEqual(
+        Math.floor(series.points[1].plotX),
+        stateMarkerGraphicBBox.x,
+        'Correct image x-position (#7273)'
+    );
+
+    assert.strictEqual(
+        series.points[1].plotY,
+        stateMarkerGraphicBBox.y,
+        'Correct image y-position (#7273)'
+    );
+
 });

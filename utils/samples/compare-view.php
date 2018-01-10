@@ -49,9 +49,10 @@
 		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/rgbcolor.js"></script>
 		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/canvg.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-
-		<script type="text/javascript">
+		<script type="text/javascript">	
+			/* eslint-disable */	
 			var diff,
 				path = '<?php echo $path ?>',
 				commentHref = 'compare-comment.php?path=<?php echo $path ?>&diff=',
@@ -109,7 +110,9 @@
 					location.href = commentHref;
 				});
 
-				$('#bisect').click(controller.toggleBisect);
+				if (controller) {
+					$('#bisect').click(controller.toggleBisect);
+				}
 
 				$(window).bind('keydown', parent.keyDown);
 
@@ -199,6 +202,8 @@
 
 							showCommentBox();
 
+							controller && controller.updateStatus(path, 'error');
+
 						} else {
 							$span = $('<a>')
 								.attr({
@@ -209,6 +214,8 @@
 								})
 								.html('<i class="<?php echo ($isUnitTest ? 'icon-puzzle-piece' : 'icon-columns'); ?>"></i>')
 								.appendTo(li);
+
+							controller && controller.updateStatus(path, 'success');
 
 						}
 

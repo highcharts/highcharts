@@ -1,10 +1,16 @@
 QUnit.test('Animation x-y', function (assert) {
+
+    // Hijack animation
+    var clock = lolexInstall();
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container1'),
+        div,
         600,
         400
     );
-    var done = assert.async();
 
     var circ = ren.circle(10, 10, 3)
         .attr({
@@ -36,17 +42,26 @@ QUnit.test('Animation x-y', function (assert) {
             10,
             'Y interrupted by second destination'
         );
-        done();
+        document.body.removeChild(div);
     }, 2500);
+
+    // Reset animation
+    lolexRunAndUninstall(clock);
 });
 
 QUnit.test('Path animation', function (assert) {
+
+    // Hijack animation
+    var clock = lolexInstall();
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container2'),
+        div,
         600,
         400
     );
-    var done = assert.async();
 
     var path = ren.path(['M', 10, 30, 'L', 10, 100])
         .attr({
@@ -75,18 +90,27 @@ QUnit.test('Path animation', function (assert) {
             'M 300 30 L 300 400',
             'First animation aborted by shorter second animation'
         );
-        done();
+        document.body.removeChild(div);
     }, 1500);
+
+    // Reset animation
+    lolexRunAndUninstall(clock);
 
 });
 
 QUnit.test('Symbol animation', function (assert) {
+
+    // Hijack animation
+    var clock = lolexInstall();
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container3'),
+        div,
         600,
         400
     );
-    var done = assert.async();
 
     var symbol = ren.symbol('diamond', 30, 20, 5, 5)
         .attr({
@@ -129,18 +153,27 @@ QUnit.test('Symbol animation', function (assert) {
             100,
             'Final height'
         );
-        done();
+        document.body.removeChild(div);
     }, 2500);
+
+    // Reset animation
+    lolexRunAndUninstall(clock);
 
 });
 
 QUnit.test('Animation x-y, stopped by .attr()', function (assert) {
+
+    // Hijack animation
+    var clock = lolexInstall();
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container4'),
+        div,
         600,
         400
     );
-    var done = assert.async();
 
     var circ = ren.circle(10, 10, 3)
         .attr({
@@ -172,17 +205,26 @@ QUnit.test('Animation x-y, stopped by .attr()', function (assert) {
             10,
             'Y interrupted by attr'
         );
-        done();
+
+        document.body.removeChild(div);
     }, 1500);
+
+    // Reset animation
+    lolexRunAndUninstall(clock);
 });
 
 QUnit.test('Animation x-y, stopped by .stop()', function (assert) {
+    // Hijack animation
+    var clock = lolexInstall();
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container5'),
+        div,
         600,
         400
     );
-    var done = assert.async();
 
     var circ = ren.circle(10, 10, 3)
         .attr({
@@ -212,17 +254,27 @@ QUnit.test('Animation x-y, stopped by .stop()', function (assert) {
             300,
             'Y stopped'
         );
-        done();
+
+        document.body.removeChild(div);
     }, 1500);
+
+    // Reset animation
+    lolexRunAndUninstall(clock);
 });
 
 QUnit.test('Fill and stroke animation', function (assert) {
+
+    // Hijack animation
+    var clock = lolexInstall();
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
     var ren = new Highcharts.Renderer(
-        document.getElementById('container6'),
+        div,
         600,
         400
     );
-    var done = assert.async();
     var rgbRegex = /^rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)$/;
 
     var circ = ren.circle(200, 200, 100)
@@ -273,17 +325,28 @@ QUnit.test('Fill and stroke animation', function (assert) {
             rgbRegex.test(circ.attr('stroke')),
             'Stroke is color'
         );
-        console.log('stroke', circ.attr('stroke'));
 
         Highcharts.stop(circ);
-        done();
+
+        document.body.removeChild(div);
     }, 500);
+
+    // Reset animation
+    lolexRunAndUninstall(clock);
 });
 
 QUnit.test('Fill and stroke animation for series points (#6776)', function (assert) {
-    assert.expect(8);
 
-    var chart = Highcharts.chart('container7', {
+    // Hijack animation
+    var clock = lolexInstall();
+
+
+    var div = document.createElement('div');
+    div.style.width = '600px';
+    document.body.appendChild(div);
+
+
+    var chart = Highcharts.chart(div, {
             chart: {
                 animation: true
             },
@@ -303,12 +366,10 @@ QUnit.test('Fill and stroke animation for series points (#6776)', function (asse
                 }
             }]
         }),
-        done = assert.async(),
-        controller = TestController(chart),
         point = chart.series[0].points[0].graphic;
 
     // hover over the point
-    controller.trigger('mouseover', 250, 250);
+    chart.series[0].points[0].setState('hover');
 
     setTimeout(function () {
         assert.notEqual(
@@ -333,7 +394,7 @@ QUnit.test('Fill and stroke animation for series points (#6776)', function (asse
         );
 
         setTimeout(function () {
-            controller.trigger('mouseover', 450, 250);
+            chart.series[0].points[0].setState('');
 
             setTimeout(function () {
                 assert.notEqual(
@@ -356,17 +417,26 @@ QUnit.test('Fill and stroke animation for series points (#6776)', function (asse
                     'rgb(255,0,0)',
                     'Stroke unlike end'
                 );
-                done();
-            }, 100);
+            }, 250);
         }, 500);
-    }, 100);
+    }, 250);
+
+    // Reset animation
+    lolexRunAndUninstall(clock);
 });
 
 
 QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function (assert) {
-    assert.expect(4);
 
-    var chart = Highcharts.chart('container8', {
+    // Hijack animation
+    var clock = lolexInstall();
+
+    var div = document.createElement('div');
+    div.style.width = '600px';
+    document.body.appendChild(div);
+
+
+    var chart = Highcharts.chart(div, {
             chart: {
                 animation: true,
                 options3d: {
@@ -389,12 +459,10 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
                 }
             }]
         }),
-        done = assert.async(),
-        controller = TestController(chart),
         point = chart.series[0].points[0].graphic;
 
     // hover over the point
-    controller.trigger('mouseover', 250, 250);
+    chart.series[0].points[0].setState('hover');
 
     setTimeout(function () {
         assert.notEqual(
@@ -409,7 +477,8 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
         );
 
         setTimeout(function () {
-            controller.trigger('mouseover', 450, 250);
+            //controller.trigger('mouseover', 450, 250);
+            chart.series[0].points[0].setState('');
 
             setTimeout(function () {
                 assert.notEqual(
@@ -422,8 +491,70 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
                     'rgb(255,0,0)',
                     'Fill unlike start'
                 );
-                done();
-            }, 100);
+            }, 250);
         }, 500);
-    }, 100);
+    }, 250);
+
+    // Reset animation
+    lolexRunAndUninstall(clock);
+});
+
+QUnit.test('Complete callback', function (assert) {
+
+    var clock = lolexInstall();
+
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    var circle = ren.circle(10, 100, 10)
+        .attr({
+            fill: 'blue'
+        })
+        .add()
+        .animate({
+            x: 500
+        }, {
+            complete: function () {
+                circle.animate(
+                    { y: 300 },
+                    { duration: 50 }
+                );
+
+                assert.strictEqual(
+                    this,
+                    circle,
+                    'The SVGElement should be the context of complete'
+                );
+            },
+            duration: 50
+        });
+
+    setTimeout(function () {
+        assert.strictEqual(
+            circle.element.getAttribute('cy'),
+            '300',
+            'Chained animation has run (#7363)'
+        );
+
+
+        circle.animate({
+            y: 300
+        }, {
+            complete: function () {
+                assert.strictEqual(
+                    this,
+                    circle,
+                    'The SVGElement should be the context of complete when ' +
+                        'skipping animation to equal values (#7146)'
+                );
+            }
+        });
+    }, 150);
+
+    // Run and reset animation
+    lolexRunAndUninstall(clock);
+
 });

@@ -1,7 +1,7 @@
 /**
  * Checks that tick labels belonging to child points are properly indented.
  */
-QUnit.test('Indentation', function (assert) {
+QUnit.skip('Indentation', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'scatter',

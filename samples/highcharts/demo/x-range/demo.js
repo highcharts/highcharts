@@ -6,11 +6,12 @@ Highcharts.chart('container', {
         text: 'Highcharts X-range'
     },
     xAxis: {
-        type: 'datetime',
-        min: Date.UTC(2014, 11, 3)
+        type: 'datetime'
     },
     yAxis: {
-        title: '',
+        title: {
+            text: ''
+        },
         categories: ['Prototyping', 'Development', 'Testing'],
         reversed: true
     },
@@ -18,12 +19,13 @@ Highcharts.chart('container', {
         name: 'Project 1',
         // pointPadding: 0,
         // groupPadding: 0,
-        borderRadius: 5,
-        pointWidth: 10,
+        borderColor: 'gray',
+        pointWidth: 20,
         data: [{
-            x: Date.UTC(2014, 11, 1),
+            x: Date.UTC(2014, 10, 21),
             x2: Date.UTC(2014, 11, 2),
-            y: 0
+            y: 0,
+            partialFill: 0.25
         }, {
             x: Date.UTC(2014, 11, 2),
             x2: Date.UTC(2014, 11, 5),
@@ -40,7 +42,10 @@ Highcharts.chart('container', {
             x: Date.UTC(2014, 11, 10),
             x2: Date.UTC(2014, 11, 23),
             y: 2
-        }]
+        }],
+        dataLabels: {
+            enabled: true
+        }
     }]
 
 });

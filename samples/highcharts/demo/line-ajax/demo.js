@@ -58,8 +58,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=analytics.
         legend: {
             align: 'left',
             verticalAlign: 'top',
-            y: 20,
-            floating: true,
             borderWidth: 0
         },
 

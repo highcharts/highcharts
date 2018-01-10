@@ -70,19 +70,33 @@ QUnit.test('pointDescriptionThreshold', function (assert) {
 
 QUnit.test('seriesDescriptionFormatter', function (assert) {
     var chart = Highcharts.chart('container', {
-            accessibility: {
-                seriesDescriptionFormatter: function (series) {
-                    return 'yo' + series.index;
-                },
-                describeSingleSeries: true
+        accessibility: {
+            seriesDescriptionFormatter: function (series) {
+                return 'yo ' + series.name;
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6]
-            }]
-        }),
-        point = chart.series[0].points[0];
+            describeSingleSeries: true
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5, 6],
+            name: 'First'
+        }, {
+            data: [1, 2, 3, 4, 5, 6],
+            name: 'Second with <em>markup</em>'
+        }]
+    });
 
-    assert.strictEqual(point.graphic.element.parentNode.getAttribute('aria-label'), 'yo0', 'Custom aria-label on series');
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.element.parentNode
+            .getAttribute('aria-label'),
+        'yo First',
+        'Custom aria-label on series'
+    );
+    assert.strictEqual(
+        chart.series[1].points[0].graphic.element.parentNode
+            .getAttribute('aria-label'),
+        'yo Second with markup',
+        'Custom aria-label, markup stripped away'
+    );
 });
 
 QUnit.test('pointDescriptionFormatter', function (assert) {

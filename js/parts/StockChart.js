@@ -12,7 +12,6 @@ import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
-import './VmlRenderer.js';
 var arrayMax = H.arrayMax,
 	arrayMin = H.arrayMin,
 	Axis = H.Axis,
@@ -59,6 +58,21 @@ var arrayMax = H.arrayMax,
  * @since 1.0.1
  * @product highstock
  * @apioption plotOptions.series.compare
+ */
+
+/**
+ * Defines if comparisson should start from the first point within the visible
+ * range or should start from the first point <b>before</b> the range.
+ * In other words, this flag determines if first point within the visible range
+ * will have 0% (`compareStart=true`) or should have been already calculated
+ * according to the previous point (`compareStart=false`).
+ *
+ * @type {Boolean}
+ * @sample {highstock} stock/plotoptions/series-comparestart/ Calculate compare within visible range
+ * @default false
+ * @since 6.0.0
+ * @product highstock
+ * @apioption plotOptions.series.compareStart
  */
 
 /**
@@ -145,6 +159,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			{ // defaults
 				minPadding: 0,
 				maxPadding: 0,
+				overscroll: 0,
 				ordinal: true,
 				title: {
 					text: null
@@ -172,7 +187,18 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				y: -2
 			},
 			opposite: opposite,
-			showLastLabel: false,
+
+			/**
+			 * @default {highcharts} true
+			 * @default {highstock} false
+			 * @apioption yAxis.showLastLabel
+			 */
+			showLastLabel: !!(
+				// #6104, show last label by default for category axes
+				yAxisOptions.categories ||
+				yAxisOptions.type === 'category'
+			),
+
 			title: {
 				text: null
 			}
@@ -205,7 +231,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				text: null
 			},
 			tooltip: {
-				shared: true,
+				split: pick(defaultOptions.tooltip.split, true),
 				crosshairs: true
 			},
 			legend: {
@@ -290,7 +316,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		x2,
 		y2,
 		result = [],
-		axes = [], //#3416 need a default array
+		axes = [], // #3416 need a default array
 		axes2,
 		uniqueAxes,
 		transVal;
@@ -343,7 +369,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	// Remove duplicates in the axes array. If there are no axes in the axes array,
 	// we are adding an axis without data, so we need to populate this with grid
 	// lines (#2796).
-	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; //#3742
+	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
 	each(axes, function (axis2) {
 		if (
 			inArray(axis2, uniqueAxes) === -1 &&
@@ -400,39 +426,8 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	}
 	return result.length > 0 ?
 		renderer.crispPolyLine(result, lineWidth || 1) :
-		null; //#3557 getPlotLinePath in regular Highcharts also returns null
+		null; // #3557 getPlotLinePath in regular Highcharts also returns null
 });
-
-// Override getPlotBandPath to allow for multipane charts
-Axis.prototype.getPlotBandPath = function (from, to) {
-	var toPath = this.getPlotLinePath(to, null, null, true),
-		path = this.getPlotLinePath(from, null, null, true),
-		result = [],
-		i;
-
-	if (path && toPath) {
-		if (path.toString() === toPath.toString()) {
-			// #6166
-			result = path;
-			result.flat = true;
-		} else {
-			// Go over each subpath
-			for (i = 0; i < path.length; i += 6) {
-				result.push(
-					'M', path[i + 1], path[i + 2],
-					'L', path[i + 4], path[i + 5],
-					toPath[i + 4], toPath[i + 5],
-					toPath[i + 1], toPath[i + 2],
-					'z'
-				);
-			}
-		}
-	} else { // outside the axis area
-		result = null;
-	}
-
-	return result;
-};
 
 // Function to crisp a line with multiple segments
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
@@ -473,7 +468,11 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	proceed.call(this, e, point);
 
 	// Check if the label has to be drawn
-	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !this.cross) {
+	if (
+		!defined(this.crosshair.label) ||
+		!this.crosshair.label.enabled ||
+		!this.cross
+	) {
 		return;
 	}
 
@@ -507,7 +506,12 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// If the label does not exist yet, create it.
 	if (!crossLabel) {
-		crossLabel = this.crossLabel = chart.renderer.label(null, null, null, options.shape || 'callout')
+		crossLabel = this.crossLabel = chart.renderer.label(
+				null,
+				null,
+				null,
+				options.shape || 'callout'
+			)
 			.addClass('highcharts-crosshair-label' +
 				(this.series[0] && ' highcharts-color-' + this.series[0].colorIndex))
 			.attr({
@@ -523,7 +527,8 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		crossLabel
 			.attr({
 				fill: options.backgroundColor ||
-					(this.series[0] && this.series[0].color) || '${palette.neutralColor60}',
+					(this.series[0] && this.series[0].color) ||
+					'${palette.neutralColor60}',
 				stroke: options.borderColor || '',
 				'stroke-width': options.borderWidth || 0
 			})
@@ -552,12 +557,18 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	}
 
 	// Show the label
-	value = snap ? point[this.isXAxis ? 'x' : 'y'] : this.toValue(horiz ? e.chartX : e.chartY);
+	value = snap ?
+		point[this.isXAxis ? 'x' : 'y'] :
+		this.toValue(horiz ? e.chartX : e.chartY);
+
 	crossLabel.attr({
-		text: formatOption ? format(formatOption, { value: value }) : options.formatter.call(this, value),
+		text: formatOption ?
+			format(formatOption, { value: value }, chart.time) :
+			options.formatter.call(this, value),
 		x: posx,
 		y: posy,
-		visibility: 'visible'
+		// Crosshair should be rendered within Axis range (#7219)
+		visibility: value < this.min || value > this.max ? 'hidden' : 'visible'
 	});
 
 	crossBox = crossLabel.getBBox();
@@ -681,6 +692,7 @@ seriesProto.processData = function () {
 		keyIndex = -1,
 		processedXData,
 		processedYData,
+		compareStart = series.options.compareStart === true ? 0 : 1,
 		length,
 		compareValue;
 
@@ -705,11 +717,15 @@ seriesProto.processData = function () {
 		}
 
 		// find the first value for comparison
-		for (i = 0; i < length - 1; i++) {
+		for (i = 0; i < length - compareStart; i++) {
 			compareValue = processedYData[i] && keyIndex > -1 ? 
 				processedYData[i][keyIndex] :
 				processedYData[i];
-			if (isNumber(compareValue) && processedXData[i + 1] >= series.xAxis.min && compareValue !== 0) {
+			if (
+				isNumber(compareValue) &&
+				processedXData[i + compareStart] >= series.xAxis.min &&
+				compareValue !== 0
+			) {
 				series.compareValue = compareValue;
 				break;
 			}

@@ -60,6 +60,20 @@ QUnit.test('softMin and softMax', function (assert) {
         'Soft max, exceeded'
     );
 
+
+    // Zoom in
+    chart.yAxis[0].setExtremes(50, 100);
+    assert.strictEqual(
+        chart.yAxis[0].min,
+        50,
+        'Soft min should allow zoom'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].max,
+        100,
+        'Soft max should allow zoom'
+    );
+
 });
 
 QUnit.test('softMax combined with ceiling (#6359)', function (assert) {

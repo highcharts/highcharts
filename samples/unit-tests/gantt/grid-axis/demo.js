@@ -418,11 +418,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
  */
 QUnit.test('Horizontal axis ticks at start and end', function (assert) {
     var chart,
-        types = Highcharts.seriesTypes,
-        // No grids for pies!
-        ignoreTypes = ['pie'],
-        ignore,
-        type;
+        types = ['line', 'column', 'bar', 'bubble'];
 
     chart = Highcharts.chart('container', {
         chart: {
@@ -470,7 +466,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         }]
     });
 
-    function test(type) {
+    types.forEach(function (type) {
         var axes,
             axis,
             $axisGroup,
@@ -495,25 +491,16 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
             assert.equal(
                 leftTick.x,
                 axisGroupBox.x,
-                type + ' chart leftmost tick is placed correctly'
+                type + ' chart, ' + axis.coll + ', leftmost tick is placed correctly'
             );
 
             assert.equal(
                 type === 'bar' ? rightTick.x + rightTick.width : rightTick.x,
                 axisGroupBox.x + axisGroupBox.width,
-                type + ' chart rightmost tick is placed correctly'
+                type + ' chart, ' + axis.coll + ', rightmost tick is placed correctly'
             );
         }
-    }
-
-    for (type in types) {
-        if (types.hasOwnProperty(type)) {
-            ignore = Highcharts.inArray(type, ignoreTypes) > -1;
-            if (!ignore) {
-                test(type);
-            }
-        }
-    }
+    });
 });
 
 /**
@@ -532,7 +519,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
  * equally distributed, because they may not have the same tick interval as the
  * inner axes.
  */
-QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
+QUnit.skip('Horizontal axis ticks equally distributed', function (assert) {
     var chart,
         axes,
         i,
@@ -781,7 +768,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
  *                        |   4   |
  *                        |_______|
  */
-QUnit.test('Vertical axis tick labels centered', function (assert) {
+QUnit.skip('Vertical axis tick labels centered', function (assert) {
     var chart,
         axes,
         xError = 1.1,

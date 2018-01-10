@@ -1,0 +1,53 @@
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
+<script src="https://www.highcharts.com/samples/maps/demo/all-maps/jquery.combobox.js"></script>
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/tilemap.js"></script>
+<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/mapdata/index.js"></script>
+
+<div id="appContainer">
+	<h1>Tilemap generator</h1>
+	<p>Load a map from the <a href="https://code.highcharts.com/mapdata" target="_blank">Highmaps Map Collection</a>
+		and convert it to a tilemap. The algorithm will output a best guess for
+		the loaded map, which can then be edited to produce the desired result. 
+		Play around with the algorithm parameters to find the best combination
+		for your map. Inverting the chart will swap the X and Y axes, mostly 
+		useful for changing the orientation of honeycomb charts.</p>
+	<div id="controls1">
+		<div class="selector">
+			<label>Load map</label>
+			<select id="mapDropdown" class="ui-widget combobox"></select>
+		</div>
+		<label>Exclude areas by ID<input id="exclude" placeholder="AD,SM,VA"></label>
+		<select id="shapeType">
+			<option value="square" selected>View as squaremap</option> 
+			<option value="circle">View as circlemap</option>
+			<option value="diamond">View as diamondmap</option>
+			<option value="hexagon">View as honeycomb</option>
+		</select>
+		<input id="invert" type="checkbox">Invert Chart</input>
+		<input id="dataLabels" type="checkbox" checked="checked">Data labels</input>
+		<input id="enlarge" type="checkbox">Enlarge</input>
+		<button id="zoomOut">Add space</button>
+	</div>
+	<div id="controls2">
+		<div class="checkboxContainer">
+			<input id="reverse" type="checkbox">Reverse algorithm</input>
+			<input id="labelCenter" type="checkbox" checked="checked">Use label center algorithm</input>
+		</div>
+		<label id="xResLabel" for="xRes">X resolution factor</label>
+		<input type="range" min="0.1" max="10" step="0.05" value="1" id="xRes">
+		<label id="yResLabel" for="yRes">Y resolution factor</label>
+		<input type="range" min="0.1" max="10" step="0.05" value="1" id="yRes">
+	</div>
+	<div id="charts">
+		<div class="container" id="tileContainer"></div>
+		<div class="verticalLine"></div>
+		<div class="container" id="mapContainer"></div>
+	</div>
+	<label>Tile data<textarea id="outputData"></textarea></label>
+	<input id="prettyprint" type="checkbox">Pretty</input>
+</div>

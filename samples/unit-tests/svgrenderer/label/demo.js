@@ -31,7 +31,11 @@ QUnit.test('New label with url symbol (#5635)', function (assert) {
         400
     );
 
-    var label = renderer.label('Max observation', 270, 50, 'url(https://www.highcharts.com/samples/graphics/sun.png)', 100, 100)
+    var url = (location.host === 'localhost:9876') ?
+        'url(base/utils/samples/testimage.png)' : // karma
+        'url(testimage.png)'; // utils
+
+    var label = renderer.label('Max observation', 270, 50, url, 100, 100)
         .attr({
             padding: 8
         })

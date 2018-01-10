@@ -9,9 +9,13 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
+import drawPoint from '../mixins/draw-point.js';
 import '../parts/Series.js';
 var each = H.each,
 	extend = H.extend,
+	isArray = H.isArray,
+	isNumber = H.isNumber,
+	isObject = H.isObject,
 	Series = H.Series;
 
 /**
@@ -68,15 +72,97 @@ var intersectsAnyWord = function intersectsAnyWord(point, points) {
 /**
  * archimedeanSpiral - Gives a set of cordinates for an Archimedian Spiral.
  *
- * @param  {type} t How far along the spiral we have traversed.
- * @return {object} Resulting coordinates, x and y.
+ * @param {number} attempt How far along the spiral we have traversed.
+ * @param {object} params Additional parameters.
+ * @param {object} params.field Size of field.
+ * @return {boolean|object} Resulting coordinates, x and y. False if the word
+ * should be dropped from the visualization.
  */
-var archimedeanSpiral = function archimedeanSpiral(t) {
-	t *= 0.1;
-	return {
-		x: t * Math.cos(t),
-		y: t * Math.sin(t)
-	};
+var archimedeanSpiral = function archimedeanSpiral(attempt, params) {
+	var field = params.field,
+		result = false,
+		maxDelta = (field.width * field.width) + (field.height * field.height),
+		t = attempt * 0.2;
+	// Emergency brake. TODO make spiralling logic more foolproof.
+	if (attempt <= 10000) {
+		result = {
+			x: t * Math.cos(t),
+			y: t * Math.sin(t)
+		};
+		if (!(Math.min(Math.abs(result.x), Math.abs(result.y)) < maxDelta)) {
+			result = false;
+		}
+	}
+	return result;
+};
+
+/**
+ * squareSpiral - Gives a set of cordinates for an rectangular spiral.
+ *
+ * @param {number} attempt How far along the spiral we have traversed.
+ * @param {object} params Additional parameters.
+ * @return {boolean|object} Resulting coordinates, x and y. False if the word
+ * should be dropped from the visualization.
+ */
+var squareSpiral = function squareSpiral(attempt) {
+	var k = Math.ceil((Math.sqrt(attempt) - 1) / 2),
+		t = 2 * k + 1,
+		m = Math.pow(t, 2),
+		isBoolean = function (x) {
+			return typeof x === 'boolean';
+		},
+		result = false;
+	t -= 1;
+	if (attempt <= 10000) {
+		if (isBoolean(result) && attempt >= m - t) {
+			result = {
+				x: k - (m - attempt),
+				y: -k
+			};
+		}
+		m -= t;
+		if (isBoolean(result) && attempt >= m - t) {
+			result = {
+				x: -k,
+				y: -k + (m - attempt)
+			};
+		}
+		
+		m -= t;
+		if (isBoolean(result)) {
+			if (attempt >= m - t) {
+				result = {
+					x: -k + (m - attempt),
+					y: k
+				};
+			} else {
+				result =  {
+					x: k,
+					y: k - (m - attempt - t)
+				};
+			}
+		}
+		result.x *= 5;
+		result.y *= 5;
+	}
+	return result;
+};
+
+/**
+ * rectangularSpiral - Gives a set of cordinates for an rectangular spiral.
+ *
+ * @param {number} attempt How far along the spiral we have traversed.
+ * @param {object} params Additional parameters.
+ * @return {boolean|object} Resulting coordinates, x and y. False if the word
+ * should be dropped from the visualization.
+ */
+var rectangularSpiral = function rectangularSpiral(attempt, params) {
+	var result = squareSpiral(attempt, params),
+		field = params.field;
+	if (result) {
+		result.x *= field.ratio;
+	}
+	return result;
 };
 
 /**
@@ -100,16 +186,9 @@ var getRandomPosition = function getRandomPosition(size) {
  * @return {number} Returns the value to scale the playing field up to the size
  *     of the target area.
  */
-var getScale = function getScale(targetWidth, targetHeight, field, series) {
-	var box = series.group.getBBox(),
-		f = {
-			left: box.x,
-			right: box.x + box.width,
-			top: box.y,
-			bottom: box.y + box.height
-		},
-		height = Math.max(Math.abs(f.top), Math.abs(f.bottom)) * 2,
-		width = Math.max(Math.abs(f.left), Math.abs(f.right)) * 2,
+var getScale = function getScale(targetWidth, targetHeight, field) {
+	var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
+		width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
 		scaleX = 1 / width * targetWidth,
 		scaleY = 1 / height * targetHeight;
 	return Math.min(scaleX, scaleY);
@@ -128,7 +207,8 @@ var getPlayingField = function getPlayingField(targetWidth, targetHeight) {
 	var ratio = targetWidth / targetHeight;
 	return {
 		width: 256 * ratio,
-		height: 256
+		height: 256,
+		ratio: ratio
 	};
 };
 
@@ -156,8 +236,8 @@ var getRotation = function getRotation(orientations, from, to) {
  * @param  {object} field The width and height of the playing field.
  * @return {boolean} Returns true if the word is placed outside the field.
  */
-var outsidePlayingField = function outsidePlayingField(point, field) {
-	var rect = point.graphic.getBBox(),
+var outsidePlayingField = function outsidePlayingField(wrapper, field) {
+	var rect = wrapper.getBBox(),
 		playingField = {
 			left: -(field.width / 2),
 			right: field.width / 2,
@@ -173,30 +253,175 @@ var outsidePlayingField = function outsidePlayingField(point, field) {
 };
 
 /**
- * Default options for the WordCloud series.
+ * intersectionTesting - Check if a point intersects with previously placed
+ * words, or if it goes outside the field boundaries. If a collision, then try
+ * to adjusts the position.
+ *
+ * @param  {object} point Point to test for intersections.
+ * @param  {object} options Options object. 
+ * @return {boolean|object} Returns an object with how much to correct the
+ * positions. Returns false if the word should not be placed at all.
  */
-var WordCloudOptions = {
+var intersectionTesting = function intersectionTesting(point, options) {
+	var placed = options.placed,
+		element = options.element,
+		field = options.field,
+		clientRect = options.clientRect,
+		spiral = options.spiral,
+		attempt = 1,
+		delta = {
+			x: 0,
+			y: 0
+		},
+		rect = point.rect = extend({}, clientRect);
+	/**
+	 * while w intersects any previously placed words:
+	 *    do {
+	 *      move w a little bit along a spiral path
+	 *    } while any part of w is outside the playing field and
+	 *        the spiral radius is still smallish
+	 */
+	while (
+		(
+			intersectsAnyWord(point, placed) ||
+			outsidePlayingField(element, field)
+		) && delta !== false
+	) {
+		delta = spiral(attempt, {
+			field: field
+		});
+		if (isObject(delta)) {
+			// Update the DOMRect with new positions.
+			rect.left = clientRect.left + delta.x;
+			rect.right = rect.left + rect.width;
+			rect.top = clientRect.top + delta.y;
+			rect.bottom = rect.top + rect.height;
+		}
+		attempt++;
+	}
+	return delta;
+};
+
+/**
+ * updateFieldBoundaries - If a rectangle is outside a give field, then the
+ * boundaries of the field is adjusted accordingly. Modifies the field object
+ * which is passed as the first parameter.
+ *
+ * @param  {object} field The bounding box of a playing field.
+ * @param  {object} placement The bounding box for a placed point.
+ * @return {object} Returns a modified field object.
+ */
+var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
+	// TODO improve type checking.
+	if (!isNumber(field.left) || field.left > rectangle.left) {
+		field.left = rectangle.left;
+	}
+	if (!isNumber(field.right) || field.right < rectangle.right) {
+		field.right = rectangle.right;
+	}
+	if (!isNumber(field.top) || field.top > rectangle.top) {
+		field.top = rectangle.top;
+	}
+	if (!isNumber(field.bottom) || field.bottom < rectangle.bottom) {
+		field.bottom = rectangle.bottom;
+	}
+	return field;
+};
+
+/**
+ * A word cloud is a visualization of a set of words, where the size and
+ * placement of a word is determined by how it is weighted.
+ *
+ * @extends {plotOptions.column}
+ * @sample highcharts/demo/wordcloud Word Cloud chart
+ * @excluding allAreas, boostThreshold, clip, colorAxis, compare, compareBase,
+ *            crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor,
+ *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
+ *            groupZPadding, joinBy, maxPointWidth, minPointLength,
+ *            navigatorOptions, negativeColor, pointInterval, pointIntervalUnit,
+ *            pointPadding, pointPlacement, pointRange, pointStart, pointWidth,
+ *            pointStart, pointWidth, shadow, showCheckbox, showInNavigator,
+ *            softThreshold, stacking, threshold, zoneAxis, zones
+ * @product highcharts
+ * @since  6.0.0
+ * @optionparent plotOptions.wordcloud
+ */
+var wordCloudOptions = {
+	animation: {
+		duration: 500
+	},
 	borderWidth: 0,
 	clip: false, // Something goes wrong with clip. // TODO fix this
+	/**
+	 * When using automatic point colors pulled from the `options.colors`
+	 * collection, this option determines whether the chart should receive
+	 * one color per series or one color per point.
+	 *
+	 * @see [series colors](#plotOptions.column.colors)
+	 */
 	colorByPoint: true,
-	fontFamily: 'Impact',
-	placementStrategy: 'random',
+	/**
+	 * This option decides which algorithm is used for placement, and rotation
+	 * of a word. The choice of algorith is therefore a crucial part of the
+	 * resulting layout of the wordcloud.
+	 * It is possible for users to add their own custom placement strategies
+	 * for use in word cloud. Read more about it in our
+	 * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
+	 *
+	 * @validvalue: ["center", "random"]
+	 */
+	placementStrategy: 'center',
+	/**
+	 * Rotation options for the words in the wordcloud.
+	 * @sample highcharts/plotoptions/wordcloud-rotation
+	 *         Word cloud with rotation
+	 */
 	rotation: {
-		from: -60,
-		orientations: 5,
-		to: 60
+		/**
+		 * The smallest degree of rotation for a word.
+		 */
+		from: 0,
+		/**
+		 * The number of possible orientations for a word, within the range of
+		 * `rotation.from` and `rotation.to`.
+		 */
+		orientations: 2,
+		/**
+		 * The largest degree of rotation for a word.
+		 */
+		to: 90
 	},
 	showInLegend: false,
-	spiral: 'archimedean',
+	/**
+	 * Spiral used for placing a word after the inital position experienced a
+	 * collision with either another word or the borders.
+	 * It is possible for users to add their own custom spiralling algorithms
+	 * for use in word cloud. Read more about it in our
+	 * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
+	 *
+	 * @validvalue: ["archimedean", "rectangular", "square"]
+	 */
+	spiral: 'rectangular',
+	/**
+	 * CSS styles for the words.
+	 *
+	 * @type {CSSObject}
+	 * @default {"fontFamily":"sans-serif", "fontWeight": "900"}
+	 */
+	style: {
+		fontFamily: 'sans-serif',
+		fontWeight: '900'
+	},
 	tooltip: {
-		followPointer: true
+		followPointer: true,
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.weight}</b><br/>'
 	}
 };
 
 /**
  * Properties of the WordCloud series.
  */
-var WordCloudSeries = {
+var wordCloudSeries = {
 	animate: Series.prototype.animate,
 	bindAxes: function () {
 		var wordcloudAxis = {
@@ -224,13 +449,19 @@ var WordCloudSeries = {
 	},
 	drawPoints: function () {
 		var series = this,
+			hasRendered = series.hasRendered,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
 			chart = series.chart,
+			group = series.group,
+			options = series.options,
+			animation = options.animation,
+			renderer = chart.renderer,
+			testElement = renderer.text().add(group),
 			placed = [],
-			placementStrategy = series.placementStrategy[series.options.placementStrategy],
-			spiral = series.spirals[series.options.spiral],
-			rotation = series.options.rotation,
+			placementStrategy = series.placementStrategy[options.placementStrategy],
+			spiral = series.spirals[options.spiral],
+			rotation = options.rotation,
 			scale,
 			weights = series.points
 				.map(function (p) {
@@ -238,89 +469,113 @@ var WordCloudSeries = {
 				}),
 			maxWeight = Math.max.apply(null, weights),
 			field = getPlayingField(xAxis.len, yAxis.len),
-			maxDelta = (field.width * field.width) + (field.height * field.height),
 			data = series.points
 				.sort(function (a, b) {
 					return b.weight - a.weight; // Sort descending
 				});
 		each(data, function (point) {
-			var attempt = 0,
-				delta,
-				spiralIsSmallish = true,
-				placement,
-				clientRect,
-				rect;
-			point.relativeWeight = 1 / maxWeight * point.weight;
-			placement = placementStrategy(point, {
-				data: data,
-				field: field,
-				placed: placed,
-				rotation: rotation
-			});
-			if (!point.graphic) {
-				point.graphic = chart.renderer.text(point.name).css({
-					fontSize: series.deriveFontSize(point.relativeWeight),
-					fill: point.color,
-					fontFamily: series.options.fontFamily
-				}).attr({
+			var relativeWeight = 1 / maxWeight * point.weight,
+				css = extend({
+					fontSize: series.deriveFontSize(relativeWeight) + 'px',
+					fill: point.color
+				}, options.style),
+				placement = placementStrategy(point, {
+					data: data,
+					field: field,
+					placed: placed,
+					rotation: rotation
+				}),
+				attr = {
+					align: 'center',
 					x: placement.x,
 					y: placement.y,
-					'text-anchor': 'middle',
+					text: point.name,
 					rotation: placement.rotation
-				}).add(series.group);
-				// Cache the original DOMRect values for later calculations.
-				point.clientRect = clientRect = extend(
-					{},
-					point.graphic.element.getBoundingClientRect()
-				);
-				point.rect = rect = extend({}, clientRect);
-			}
-			/**
-			 * while w intersects any previously placed words:
-			 *    do {
-			 *      move w a little bit along a spiral path
-			 *    } while any part of w is outside the playing field and
-			 *        the spiral radius is still smallish
-			 */
-			while (
-				(
-					intersectsAnyWord(point, placed) ||
-					outsidePlayingField(point, field)
-				) && spiralIsSmallish
-			) {
-				delta = spiral(attempt);
-				// Update the DOMRect with new positions.
-				rect.left = clientRect.left + delta.x;
-				rect.right = rect.left + rect.width;
-				rect.top = clientRect.top + delta.y;
-				rect.bottom = rect.top + rect.height;
-				spiralIsSmallish = (
-					Math.min(Math.abs(delta.x), Math.abs(delta.y)) < maxDelta
-				);
-				attempt++;
-			}
+				},
+				animate,
+				delta,
+				clientRect;
+			testElement.css(css).attr(attr);
+			// Cache the original DOMRect values for later calculations.
+			point.clientRect = clientRect = extend(
+				{},
+				testElement.element.getBoundingClientRect()
+			);
+			delta = intersectionTesting(point, {
+				clientRect: clientRect,
+				element: testElement,
+				field: field,
+				placed: placed,
+				spiral: spiral
+			});
 			/**
 			 * Check if point was placed, if so delete it,
 			 * otherwise place it on the correct positions.
 			 */
-			if (spiralIsSmallish) {
-				point.graphic.attr({
-					x: placement.x + (delta ? delta.x : 0),
-					y: placement.y + (delta ? delta.y : 0)
+			if (isObject(delta)) {
+				attr.x += delta.x;
+				attr.y += delta.y;
+				extend(placement, {
+					left: attr.x  - (clientRect.width / 2),
+					right: attr.x + (clientRect.width / 2),
+					top: attr.y - (clientRect.height / 2),
+					bottom: attr.y + (clientRect.height / 2)
 				});
+				field = updateFieldBoundaries(field, placement);
 				placed.push(point);
+				point.isNull = false;
 			} else {
-				point.graphic = point.graphic.destroy();
+				point.isNull = true;
 			}
+
+			if (animation) {
+				// Animate to new positions
+				animate = {
+					x: attr.x,
+					y: attr.y
+				};
+				// Animate from center of chart
+				if (!hasRendered) {
+					attr.x = 0;
+					attr.y = 0;
+				// or animate from previous position
+				} else {
+					delete attr.x;
+					delete attr.y;
+				}
+			}
+
+			point.draw({
+				animate: animate,
+				attr: attr,
+				css: css,
+				group: group,
+				renderer: renderer,
+				shapeArgs: undefined,
+				shapeType: 'text'
+			});
 		});
+
+		// Destroy the element after use.
+		testElement = testElement.destroy();
+
 		/**
 		 * Scale the series group to fit within the plotArea.
 		 */
-		scale = getScale(xAxis.len, yAxis.len, field, series);
+		scale = getScale(xAxis.len, yAxis.len, field);
 		series.group.attr({
 			scaleX: scale,
 			scaleY: scale
 		});
+	},
+	hasData: function () {
+		var series = this;
+		return (
+			isObject(series) &&
+			series.visible === true &&
+			isArray(series.points) &&
+			series.points.length > 0
+		);
 	},
 	/**
 	 * Strategies used for deciding rotation and initial position of a word.
@@ -336,8 +591,17 @@ var WordCloudSeries = {
 				y: getRandomPosition(field.height) - (field.height / 2),
 				rotation: getRotation(r.orientations, r.from, r.to)
 			};
+		},
+		center: function centerPlacement(point, options) {
+			var r = options.rotation;
+			return {
+				x: 0,
+				y: 0,
+				rotation: getRotation(r.orientations, r.from, r.to)
+			};
 		}
 	},
+	pointArrayMap: ['weight'],
 	/**
 	 * Spirals used for placing a word after the inital position experienced a
 	 *     collision with either another word or the borders.
@@ -345,7 +609,9 @@ var WordCloudSeries = {
 	 *    example.
 	 */
 	spirals: {
-		'archimedean': archimedeanSpiral
+		'archimedean': archimedeanSpiral,
+		'rectangular': rectangularSpiral,
+		'square': squareSpiral
 	},
 	getPlotBox: function () {
 		var series = this,
@@ -368,6 +634,85 @@ var WordCloudSeries = {
 };
 
 /**
- * Assemble the WordCloud series type.
+ * Properties of the Sunburst series.
  */
-H.seriesType('wordcloud', 'column', WordCloudOptions, WordCloudSeries);
+var wordCloudPoint = {
+	draw: drawPoint,
+	shouldDraw: function shouldDraw() {
+		var point = this;
+		return !point.isNull;
+	}
+};
+
+/**
+ * A `wordcloud` series. If the [type](#series.wordcloud.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * wordcloud](#plotOptions.wordcloud).
+ *
+ * @type {Object}
+ * @extends series,plotOptions.wordcloud
+ * @product highcharts
+ * @apioption series.wordcloud
+ */
+
+/**
+ * An array of data points for the series. For the `wordcloud` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 2 values. In this case, the values
+ * correspond to `name,weight`. 
+ * 
+ *  ```js
+ *     data: [
+ *         ['Lorem', 4],
+ *         ['Ipsum', 1]
+ *     ]
+ *  ```
+ * 
+ * 2.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.arearange.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         name: "Lorem",
+ *         weight: 4
+ *     }, {
+ *         name: "Ipsum",
+ *         weight: 1
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array>}
+ * @extends series.line.data
+ * @excluding drilldown,marker,x,y
+ * @product highcharts
+ * @apioption series.wordcloud.data
+ */
+
+/**
+* The name decides the text for a word.
+*
+* @type {String}
+* @default undefined
+* @since 6.0.0
+* @product highcharts
+* @apioption series.sunburst.data.name
+*/
+
+/**
+* The weighting of a word. The weight decides the relative size of a word
+* compared to the rest of the collection.
+*
+* @type {Number}
+* @default undefined
+* @since 6.0.0
+* @product highcharts
+* @apioption series.sunburst.data.weight
+*/
+H.seriesType('wordcloud', 'column', wordCloudOptions, wordCloudSeries, wordCloudPoint);

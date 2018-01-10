@@ -65,7 +65,7 @@ QUnit.test('snap', function (assert) {
     // TODO Test positioning of crosshairs.
 });
 
-QUnit.test('Show only one snapping crosshair at the same time. #6420', function (assert) {
+QUnit.test('Show only one crosshair at the same time (#6420, #7219).', function (assert) {
     var chart = Highcharts.chart('container', {
             xAxis: [{
                 crosshair: true
@@ -73,14 +73,34 @@ QUnit.test('Show only one snapping crosshair at the same time. #6420', function 
                 opposite: true,
                 crosshair: true
             }],
+            yAxis: [{
+                height: '50%',
+                crosshair: {
+                    snap: false,
+                    label: {
+                        enabled: true
+                    }
+                }
+            }, {
+                top: '50%',
+                height: '50%',
+                crosshair: {
+                    snap: false,
+                    label: {
+                        enabled: true
+                    }
+                }
+            }],
             series: [{
                 name: 'Installation',
                 data: [1, 2, 3],
-                xAxis: 0
+                xAxis: 0,
+                yAxis: 0
             }, {
                 name: 'Manufacturing',
                 data: [1, 2, 3].reverse(),
-                xAxis: 1
+                xAxis: 1,
+                yAxis: 1
             }]
         }),
         series1 = chart.series[0],
@@ -90,24 +110,46 @@ QUnit.test('Show only one snapping crosshair at the same time. #6420', function 
     assert.strictEqual(
         series1.xAxis.cross.attr('visibility'),
         'visible',
-        'Hover Series 1: crosshair on xAxis of Series 1 is visible'
+        'Hover Series 1: crosshair on xAxis of Series 1 is visible (#6420)'
     );
     assert.strictEqual(
         !!series2.xAxis.cross,
         false,
-        'Hover Series 1: crosshair on xAxis of Series 2 does not exist'
+        'Hover Series 1: crosshair on xAxis of Series 2 does not exist (#6420)'
+    );
+    assert.strictEqual(
+        series1.yAxis.crossLabel.attr('visibility'),
+        'visible',
+        'Hover Series 1: crosshair label on yAxis of Series 1 is visible (#7219)'
+    );
+    assert.strictEqual(
+        !!series2.yAxis.crossLabel,
+        false,
+        'Hover Series 1: crosshair label on yAxis of Series 2 does not exist (#7219)'
     );
 
     series2.points[2].onMouseOver();
     assert.strictEqual(
         series1.xAxis.cross.attr('visibility'),
         'hidden',
-        'Hover Series 2: crosshair on xAxis of Series 1 is hidden'
+        'Hover Series 2: crosshair on xAxis of Series 1 is hidden (#6420)'
     );
     assert.strictEqual(
         series2.xAxis.cross.attr('visibility'),
         'visible',
-        'Hover Series 2: crosshair on xAxis of Series 2 is visible'
+        'Hover Series 2: crosshair on xAxis of Series 2 is visible (#6420)'
+    );
+
+    series1.points[1].onMouseOver();
+    assert.strictEqual(
+        series1.yAxis.crossLabel.attr('visibility'),
+        'visible',
+        'Hover Series 1 back: crosshair label on yAxis of Series 1 is visible (#7219)'
+    );
+    assert.strictEqual(
+        series2.yAxis.crossLabel.attr('visibility'),
+        'hidden',
+        'Hover Series 1 back: crosshair label on yAxis of Series 2 is hidden (#7219)'
     );
 });
 

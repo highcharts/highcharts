@@ -1,115 +1,136 @@
 /**
  * (c) 2010-2017 Torstein Honsi
  *
+ * Scatter 3D series.
+ *
  * License: www.highcharts.com/license
  */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-var perspective = H.perspective,
-	pick = H.pick,
-	Point = H.Point,
-	seriesTypes = H.seriesTypes,
-	wrap = H.wrap;
-
-/*** 
-	EXTENSION FOR 3D SCATTER CHART
-***/
-
-wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
-//function translate3d(proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	if (!this.chart.is3d()) {
-		return;
-	}
-
-	var series = this,
-		chart = series.chart,
-		zAxis = pick(series.zAxis, chart.options.zAxis[0]),
-		rawPoints = [],
-		rawPoint,
-		projectedPoints,
-		projectedPoint,
-		zValue,
-		i;
-
-	for (i = 0; i < series.data.length; i++) {
-		rawPoint = series.data[i];
-		zValue = zAxis.isLog && zAxis.val2lin ? zAxis.val2lin(rawPoint.z) : rawPoint.z; // #4562
-		rawPoint.plotZ = zAxis.translate(zValue);
-
-		rawPoint.isInside = rawPoint.isInside ? (zValue >= zAxis.min && zValue <= zAxis.max) : false;
-
-		rawPoints.push({
-			x: rawPoint.plotX,
-			y: rawPoint.plotY,
-			z: rawPoint.plotZ
-		});
-	}
-
-	projectedPoints = perspective(rawPoints, chart, true);
-
-	for (i = 0; i < series.data.length; i++) {
-		rawPoint = series.data[i];
-		projectedPoint = projectedPoints[i];
-
-		rawPoint.plotXold = rawPoint.plotX;
-		rawPoint.plotYold = rawPoint.plotY;
-		rawPoint.plotZold = rawPoint.plotZ;
-
-		rawPoint.plotX = projectedPoint.x;
-		rawPoint.plotY = projectedPoint.y;
-		rawPoint.plotZ = projectedPoint.z;
-	
-	}
-
-});
-
-
-wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
-	if (chart.is3d()) {
-		// add a third coordinate
-		this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
-		this.pointArrayMap = ['x', 'y', 'z'];
-		this.parallelArrays = ['x', 'y', 'z'];
-
-		// Require direct touch rather than using the k-d-tree, because the k-d-tree currently doesn't
-		// take the xyz coordinate system into account (#4552)
-		this.directTouch = true;
-	}
-
-	var result = proceed.apply(this, [chart, options]);
-
-	if (this.chart.is3d()) {
-		// Set a new default tooltip formatter
-		var default3dScatterTooltip = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>';
-		if (this.userOptions.tooltip) {
-			this.tooltipOptions.pointFormat = this.userOptions.tooltip.pointFormat || default3dScatterTooltip;
-		} else {
-			this.tooltipOptions.pointFormat = default3dScatterTooltip;
-		}
-	}
-	return result;
-});
+var Point = H.Point,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 /**
- * Updating zIndex for every point - based on the distance from point to camera
+ * A 3D scatter plot uses x, y and z coordinates to display values for three
+ * variables for a set of data.
+ *
+ * @sample {highcharts} highcharts/3d/scatter/
+ *         Simple 3D scatter
+ * @sample {highcharts} highcharts/demo/3d-scatter-draggable
+ *         Draggable 3d scatter
+ * 
+ * @extends {plotOptions.scatter}
+ * @product highcharts
+ * @optionparent plotOptions.scatter3d
  */
-wrap(seriesTypes.scatter.prototype, 'pointAttribs', function (proceed, point) {
-	var pointOptions = proceed.apply(this, [].slice.call(arguments, 1));
-	if (this.chart.is3d() && point) {
-		pointOptions.zIndex = H.pointCameraDistance(point, this.chart);
+seriesType('scatter3d', 'scatter', {
+	tooltip: {
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
 	}
-	return pointOptions;
+
+// Series class
+}, {
+	pointAttribs: function (point) {
+		var attribs = seriesTypes.scatter.prototype.pointAttribs
+			.apply(this, arguments);
+
+		if (this.chart.is3d() && point) {
+			attribs.zIndex = H.pointCameraDistance(point, this.chart);
+		}
+
+		return attribs;
+	},
+	axisTypes: ['xAxis', 'yAxis', 'zAxis'],
+	pointArrayMap: ['x', 'y', 'z'],
+	parallelArrays: ['x', 'y', 'z'],
+
+	// Require direct touch rather than using the k-d-tree, because the k-d-tree
+	// currently doesn't take the xyz coordinate system into account (#4552)
+	directTouch: true
+
+// Point class
+}, {
+	applyOptions: function () {
+		Point.prototype.applyOptions.apply(this, arguments);
+		if (this.z === undefined) {
+			this.z = 0;
+		}
+
+		return this;
+	}
+
 });
 
 
-wrap(Point.prototype, 'applyOptions', function (proceed) {
-	var point = proceed.apply(this, [].slice.call(arguments, 1));
+/**
+ * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * scatter3d](#plotOptions.scatter3d).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.scatter3d
+ * @product highcharts
+ * @apioption series.scatter3d
+ */
 
-	if (this.series.chart.is3d() && point.z === undefined) {
-		point.z = 0;
-	}
-	return point;
-});
+/**
+ * An array of data points for the series. For the `scatter3d` series
+ * type, points can be given in the following ways:
+ * 
+ * 1.  An array of arrays with 3 values. In this case, the values correspond
+ * to `x,y,z`. If the first value is a string, it is applied as the name
+ * of the point, and the `x` value is inferred.
+ * 
+ *  ```js
+ *     data: [
+ *         [0, 0, 1],
+ *         [1, 8, 7],
+ *         [2, 9, 2]
+ *     ]
+ *  ```
+ * 
+ * 3.  An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.scatter3d.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         y: 2,
+ *         z: 24,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         x: 1,
+ *         y: 4,
+ *         z: 12,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array>}
+ * @extends series.scatter.data
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.scatter3d.data
+ */
+
+/**
+ * The z value for each data point.
+ * 
+ * @type {Number}
+ * @product highcharts
+ * @apioption series.scatter3d.data.z
+ */

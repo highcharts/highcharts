@@ -28,20 +28,18 @@ QUnit.test('getBBox with useHTML (#5899)', function (assert) {
     );
 
     var text = ren.text(
-            '<div style="width: 500px">Styled div</div>',
-            20,
-            20,
-            true
-        )
-        .add();
-
+        '<div style="width: 500px">Styled div</div>',
+        20,
+        20,
+        true
+    )
+    .add();
 
     assert.strictEqual(
         text.getBBox().width,
         500,
         'Initial bounding box'
     );
-
 
     text.attr({
         text: '<div style="width: 400px">Styled div</div>'
@@ -51,6 +49,16 @@ QUnit.test('getBBox with useHTML (#5899)', function (assert) {
         text.getBBox().width,
         400,
         'Updated bounding box'
+    );
+
+    text.attr({
+        text: null
+    });
+
+    assert.strictEqual(
+        text.getBBox().width,
+        0,
+        'Null text works fine (#7316)'
     );
 });
 
@@ -69,13 +77,13 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         'Width of text is lower than style.width'
     );
     assert.strictEqual(
-        text1.element.childNodes[0].innerHTML.slice(-1),
+        text1.element.childNodes[0].textContent.slice(-1),
         '\u2026',
         'Ellipsis was added to text node.'
     );
     assert.strictEqual(
-        text1.element.childNodes[0].innerHTML,
-        text2.element.childNodes[0].innerHTML,
+        text1.element.childNodes[0].textContent,
+        text2.element.childNodes[0].textContent,
         'Consistent result between different strings. #6258'
     );
     // TODO 0px does not work, because ellipsis and breaks are not applied
@@ -84,7 +92,7 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
     text1.destroy();
     text1 = chart.renderer.text('01234567', 0, 100).css(style).add();
     assert.strictEqual(
-        text1.element.childNodes[0].innerHTML,
+        text1.element.childNodes[0].textContent,
         '',
         'Width was too small for ellipsis.'
     );
@@ -99,7 +107,7 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         rotation: 90
     }).css(style).add();
     assert.strictEqual(
-        text1.element.childNodes[0].innerHTML.slice(-1),
+        text1.element.childNodes[0].textContent.slice(-1),
         '\u2026',
         'Ellipsis was added to text node which has rotation.'
     );
@@ -111,23 +119,74 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
 });
 
 QUnit.test('BBox for mulitiple lines', function (assert) {
-    var outerHTML,
-        chart = Highcharts.chart('container', {}, function(chart) {
-            var r = chart.renderer,
-                lab = r.label('<span></span><br/>line<br/>line', 20, 20)
-                    .css({
-                        color: '#f00'
-                    })
-                    .attr({
-                        fill: 'rgba(0, 100, 0, 0.75)',
-                        padding: 0
-                    })
-                    .add();
-            outerHTML = lab.text.element.children[0].outerHTML;
-        });
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        200,
+        200
+    );
 
-    assert.ok(
-        !(/dy="\d/.test(outerHTML)),
+    var lab = ren.label('<span></span><br/>line<br/>line', 20, 20)
+        .css({
+            color: '#f00'
+        })
+        .attr({
+            fill: 'rgba(0, 100, 0, 0.75)',
+            padding: 0
+        })
+        .add();
+
+    assert.strictEqual(
+        lab.element.getAttribute('dy'),
+        null,
         "Frist line shouldn't have dy (#6144) - visually the red text fits in the green box."
     );
+});
+
+QUnit.test('HTML entities', function (assert) {
+    var ren = new Highcharts.SVGRenderer(
+        document.getElementById('container'),
+        500,
+        500
+    );
+
+    var text = ren.text('Hello &amp; &lt;tag&gt;', 10, 30).add();
+
+    assert.strictEqual(
+        text.element.textContent,
+        'Hello & <tag>',
+        'HTML entities decoded correctly'
+    );
+
+    text = ren.text('a < b and c > d', 10, 60).add();
+    assert.strictEqual(
+        text.element.textContent,
+        'a < b and c > d',
+        'Tags don\'t start with spaces (#7126)'
+    );
+});
+
+QUnit.test('Dir rtl (#3482)', function (assert) {
+    document.getElementById('container').setAttribute('dir', 'rtl');
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    var label = ren.label('Hello', 100, 100)
+        .attr({
+            stroke: 'blue',
+            'stroke-width': 1,
+            padding: 0
+        })
+        .add();
+
+    assert.close(
+        label.text.element.getBBox().x,
+        0,
+        2,
+        'Label sits nicely inside box'
+    );
+
+    document.getElementById('container').removeAttribute('dir');
 });

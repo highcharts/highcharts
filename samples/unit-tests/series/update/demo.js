@@ -1,6 +1,6 @@
 
 QUnit.test(
-    'Navigator series\' should keep it\'s position in series array, ' +
+    'Navigator series\' should keep its position in series array, ' +
     'even after series.update()',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
@@ -40,6 +40,99 @@ QUnit.test(
     }
 );
 
+QUnit.test('Updating zIndex (#3380)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        title: {
+            text: null
+        },
+
+        plotOptions: {
+            series: {
+                lineWidth: 5
+            }
+        },
+
+        series: [{
+            type: 'column',
+            data: [1, 2],
+            color: 'blue',
+            zIndex: 3
+        }, {
+            data: [2, 1],
+            color: 'yellow',
+            zIndex: 2
+        }]
+    });
+
+    assert.ok(
+        chart.seriesGroup.element.childNodes[0] === chart.series[1].group.element,
+        'Yellow should be below initially'
+    );
+    assert.ok(
+        chart.seriesGroup.element.childNodes[2] === chart.series[0].group.element,
+        'Blue should be on top initially'
+    );
+
+    chart.series[0].update({
+        zIndex: 1
+    });
+
+    assert.ok(
+        chart.seriesGroup.element.childNodes[0] === chart.series[0].group.element,
+        'Yellow should be on top after update'
+    );
+    assert.ok(
+        chart.seriesGroup.element.childNodes[2] === chart.series[1].group.element,
+        'Blue should be below after update'
+    );
+});
+
+
+
+QUnit.test('Update without altering zIndex (#7397)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        title: {
+            text: null
+        },
+
+        plotOptions: {
+            series: {
+                lineWidth: 5
+            }
+        },
+
+        series: [{
+            type: 'column',
+            data: [1, 2],
+            color: 'blue'
+        }, {
+            data: [2, 1],
+            color: 'yellow'
+        }]
+    });
+
+    assert.ok(
+        chart.seriesGroup.element.childNodes[0] === chart.series[0].group.element,
+        'Yellow should be on top initially'
+    );
+    assert.ok(
+        chart.seriesGroup.element.childNodes[2] === chart.series[1].group.element,
+        'Blue should be below initially'
+    );
+
+    chart.series[0].update({
+        type: 'spline'
+    });
+
+    assert.ok(
+        chart.seriesGroup.element.childNodes[0] === chart.series[0].group.element,
+        'Yellow should be on top after update'
+    );
+    assert.ok(
+        chart.seriesGroup.element.childNodes[2] === chart.series[1].group.element,
+        'Blue should be below after update'
+    );
+});
 
 QUnit.test(
     'Updating types, new type lost after second update (#2322)',
@@ -90,6 +183,30 @@ QUnit.test(
     }
 );
 
+QUnit.test('Updating and mouse interaction', function (assert) {
+
+    assert.expect(0);
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'column'
+        },
+        series: [{
+            data: [[0, 10], [1, 19], [2, 8], [3, 24], [4, 67]],
+            events: {
+                mouseOver: function () {
+                    this.update({ dataLabels: { enabled: true } });
+                },
+                mouseOut: function () {
+                    this.update({ dataLabels: { enabled: false } });
+                }
+            }
+        }]
+    });
+
+    chart.series[0].points[0].onMouseOver();
+});
+
 QUnit.test(
     'Udating color index, class name should change',
     function (assert) {
@@ -131,19 +248,24 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Series.update with only data should redirect to setData',
+    'Series.update and setData',
     function (assert) {
         var chart = Highcharts.chart('container', {
 
-            xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            chart: {
+                type: 'area'
+            },
+
+            plotOptions: {
+                area: {
+                    stacking: true
+                }
             },
 
             series: [{
-                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-                    216.4, 194.1, 95.6, 54.4],
-                type: 'column'
+                data: [1, 2, 3, 4, null, null]
+            }, {
+                data: [1, 2, 3, 4, null, null]
             }]
 
         });
@@ -151,8 +273,7 @@ QUnit.test(
         chart.series[0].points[0].kilroyWasHere = true;
 
         chart.series[0].update({
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-                216.4, 194.1, 95.6, 54.4].slice(0).reverse()
+            data: [4, 3, 2, 1, null, null]
         });
 
         assert.strictEqual(
@@ -160,6 +281,17 @@ QUnit.test(
             true,
             'Original point item is preserved'
         );
+
+        chart.series[0].setData([1, 2, 3, 4, 5, null], false);
+        chart.series[1].setData([1, 2, 3, 4, 5, null], false);
+        chart.redraw();
+
+        assert.strictEqual(
+            chart.series[0].graph.element.getAttribute('d').lastIndexOf('M'),
+            0,
+            'Graph is continuous (#7326)'
+        );
+
     }
 );
 

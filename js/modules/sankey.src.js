@@ -1,5 +1,5 @@
 /**
- * Solid angular gauge module
+ * Sankey diagram module
  *
  * (c) 2010-2017 Torstein Honsi
  *
@@ -24,8 +24,12 @@ var defined = H.defined,
  * 
  * @extends {plotOptions.column}
  * @product highcharts
- * @sample {highcharts} highcharts/demo/sankey/
+ * @sample highcharts/demo/sankey-diagram/
  *         Sankey diagram
+ * @sample highcharts/plotoptions/sankey-inverted/
+ *         Inverted sankey diagram
+ * @sample highcharts/plotoptions/sankey-outgoing
+ *         Sankey diagram with outgoing links
  * @since 6.0.0
  * @excluding animationLimit,boostThreshold,borderColor,borderRadius,
  *         borderWidth,crisp,cropThreshold,depth,edgeColor,edgeWidth,
@@ -55,17 +59,39 @@ seriesType('sankey', 'column', {
 		/**
 		 * The [format string](http://www.highcharts.com/docs/chart-concepts/labels-
 		 * and-string-formatting) specifying what to show for _nodes_ in the 
-		 * sankey diagram.
+		 * sankey diagram. By default the `nodeFormatter` returns
+		 * `{point.name}`.
+		 *
+		 * @type {String}
 		 */
-		nodeFormat: '{point.name}',
+		nodeFormat: undefined,
+
+		/**
+		 * Callback to format data labels for _nodes_ in the sankey diagram. 
+		 * The `nodeFormat` option takes precedence over the `nodeFormatter`.
+		 *
+		 * @type {Function}
+		 * @since 6.0.2
+		 */
+		nodeFormatter: function () {
+			return this.point.name;
+		},
 		/**
 		 * The [format string](http://www.highcharts.com/docs/chart-concepts/labels-
 		 * and-string-formatting) specifying what to show for _links_ in the 
-		 * sankey diagram. Defaults to an empty string, in effect disabling the
-		 * labels.
-		 * @default ""
+		 * sankey diagram. Defaults to an empty string returned from the 
+		 * `formatter`, in effect disabling the labels.
 		 */
-		format: '',
+		format: undefined,
+		/**
+		 * Callback to format data labels for _links_ in the sankey diagram. 
+		 * The `format` option takes precedence over the `formatter`.
+		 * 
+		 * @since 6.0.2
+		 */
+		formatter: function () {
+			return '';
+		},
 		inside: true
 	},
 	/*= if (build.classic) { =*/
@@ -107,9 +133,17 @@ seriesType('sankey', 'column', {
 		/**
 		 * The [format string](http://www.highcharts.com/docs/chart-concepts/labels-
 		 * and-string-formatting) specifying what to show for _nodes_ in tooltip
-		 * of a sankey diagram series.
+		 * of a sankey diagram series, as opposed to links.
 		 */
 		nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
+		/**
+		 * A callback for defining the format for _nodes_ in the sankey chart's
+		 * tooltip, as opposed to links.
+		 *
+		 * @type {Function}
+		 * @since 6.0.2
+		 * @apioption plotOptions.sankey.tooltip.nodeFormatter
+		 */
 	}
 
 }, {
@@ -505,3 +539,127 @@ seriesType('sankey', 'column', {
 		return this.isNode || typeof this.weight === 'number';
 	}
 });
+
+
+/**
+ * A `sankey` series. If the [type](#series.sankey.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ * 
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to [plotOptions.
+ * sankey](#plotOptions.sankey).
+ * 
+ * @type {Object}
+ * @extends series,plotOptions.sankey
+ * @excluding dataParser,dataURL
+ * @product highcharts
+ * @apioption series.sankey
+ */
+
+
+/**
+ * A collection of options for the individual nodes. The nodes in a sankey 
+ * diagram are auto-generated instances of `Highcharts.Point`, but options can
+ * be applied here and linked by the `id`.
+ *
+ * @sample highcharts/css/sankey/ Sankey diagram with node options
+ * @type {Array.<Object>}
+ * @product highcharts
+ * @apioption series.sankey.nodes
+ */
+
+/**
+ * The id of the auto-generated node, refering to the `from` or `to` setting of
+ * the link.
+ *
+ * @type {String}
+ * @product highcharts
+ * @apioption series.sankey.nodes.id
+ */
+
+/**
+ * The color of the auto generated node.
+ *
+ * @type {Color}
+ * @product highcharts
+ * @apioption series.sankey.nodes.color
+ */
+
+/**
+ * The color index of the auto generated node, especially for use in styled
+ * mode.
+ *
+ * @type {Number}
+ * @product highcharts
+ * @apioption series.sankey.nodes.colorIndex
+ */
+
+/**
+ * An array of data points for the series. For the `sankey` series type,
+ * points can be given in the following way:
+ * 
+ * An array of objects with named values. The objects are point
+ * configuration objects as seen below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
+ * this option is not available.
+ * 
+ *  ```js
+ *     data: [{
+ *         from: 'Category1',
+ *         to: 'Category2',
+ *         weight: 2
+ *     }, {
+ *         from: 'Category1',
+ *         to: 'Category3',
+ *         weight: 5
+ *     }]
+ *  ```
+ * 
+ * @type {Array<Object|Array|Number>}
+ * @extends series.line.data
+ * @excluding drilldown,marker,x,y
+ * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @product highcharts
+ * @apioption series.sankey.data
+ */
+
+
+/**
+ * The node that the link runs from.
+ * 
+ * @type {String}
+ * @product highcharts
+ * @apioption series.sankey.data.from
+ */
+
+/**
+ * The node that the link runs to.
+ * 
+ * @type {String}
+ * @product highcharts
+ * @apioption series.sankey.data.to
+ */
+
+/**
+ * Whether the link goes out of the system.
+ * 
+ * @type {Boolean}
+ * @default false
+ * @sample highcharts/plotoptions/sankey-outgoing
+ *         Sankey chart with outgoing links
+ * @product highcharts
+ * @apioption series.sankey.data.outgoing
+ */
+
+/**
+ * The weight of the link.
+ * 
+ * @type {Number}
+ * @product highcharts
+ * @apioption series.sankey.data.weight
+ */

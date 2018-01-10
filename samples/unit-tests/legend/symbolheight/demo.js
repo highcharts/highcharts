@@ -6,6 +6,10 @@ QUnit.test(
 
         var done = assert.async();
 
+        var url = (location.host === 'localhost:9876') ?
+            'url(base/utils/samples/testimage.png)' : // karma
+            'url(testimage.png)'; // utils
+
         var chart = Highcharts.chart('container', {
 
             chart: {
@@ -37,7 +41,7 @@ QUnit.test(
             }, {
                 data: [2, 4, 3, 5],
                 marker: {
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    symbol: url.replace(')', '?' + Date.now() + ')')
                 }
             }]
 

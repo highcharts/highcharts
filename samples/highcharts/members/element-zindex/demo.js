@@ -1,5 +1,6 @@
 var renderer,
-    circles = [];
+    circles = [],
+    group2;
 
 
 renderer = new Highcharts.Renderer(
@@ -32,6 +33,33 @@ circles[3] = renderer.circle(350, 200, 60)
         zIndex: 2
     })
     .add();
+
+group2 = renderer.g().add();
+
+circles[4] = renderer.circle(200, 100, 60)
+    .attr({
+        fill: 'pink',
+        zIndex: undefined
+    })
+    .add(group2);
+circles[5] = renderer.circle(250, 100, 60)
+    .attr({
+        fill: 'black',
+        zIndex: -1
+    })
+    .add(group2);
+circles[6] = renderer.circle(300, 100, 60)
+    .attr({
+        fill: 'grey',
+        zIndex: -2
+    })
+    .add(group2);
+circles[7] = renderer.circle(350, 100, 60)
+    .attr({
+        fill: 'orange',
+        zIndex: 10
+    })
+    .add(group2);
 
 $('.update-yellow-z').click(function () {
     circles[1].attr({

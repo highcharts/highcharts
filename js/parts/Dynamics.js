@@ -244,7 +244,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 */
 	propsRequireUpdateSeries: ['chart.inverted', 'chart.polar',
 		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions',
-		'tooltip'],
+		'time', 'tooltip'],
 
 	/**
 	 * A generic function to update any element of the chart. Elements can be
@@ -536,6 +536,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 				}
 				if (options && options.dataLabels && point.dataLabel) { // #2468
 					point.dataLabel = point.dataLabel.destroy();
+				}
+				if (point.connector) {
+					point.connector = point.connector.destroy(); // #7243
 				}
 			}
 
@@ -840,10 +843,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
 			proto = seriesTypes[oldType].prototype,
 			n,
-			preserve = [
+			groups = [
 				'group',
 				'markerGroup',
-				'dataLabelsGroup',
+				'dataLabelsGroup'
+			],
+			preserve = [
 				'navigatorSeries',
 				'baseSeries'
 			],
@@ -862,12 +867,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			return this.setData(newOptions.data, redraw);
 		}
 
-		// If we're changing type or zIndex, create new groups (#3380, #3404)
-		if ((newType && newType !== oldType) || newOptions.zIndex !== undefined) {
-			preserve.length = 0;
-		}
-
-		// Make sure groups are not destroyed (#3094)
+		// Make sure preserved properties are not destroyed (#3094)
+		preserve = groups.concat(preserve);
 		each(preserve, function (prop) {
 			preserve[prop] = series[prop];
 			delete series[prop];
@@ -893,6 +894,19 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		});
 
 		series.init(chart, newOptions);
+
+		// Update the Z index of groups (#3380, #7397)
+		if (newOptions.zIndex !== oldOptions.zIndex) {
+			each(groups, function (groupName) {
+				if (series[groupName]) {
+					series[groupName].attr({
+						zIndex: newOptions.zIndex
+					});
+				}
+			});
+		}
+
+
 		series.oldType = oldType;
 		chart.linkSeries(); // Links are lost in series.remove (#3028)
 		if (pick(redraw, true)) {

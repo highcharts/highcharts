@@ -159,8 +159,13 @@ seriesType('area', 'line', {
 		points = points || this.points;
 
 		if (this.options.stacking) {
-			// Create a map where we can quickly look up the points by their X value.
+			
 			for (i = 0; i < points.length; i++) {
+				// Reset after point update (#7326)
+				points[i].leftNull = points[i].rightNull = null;
+
+				// Create a map where we can quickly look up the points by their
+				// X values.
 				pointMap[points[i].x] = points[i];
 			}
 
@@ -262,7 +267,6 @@ seriesType('area', 'line', {
 			stacking = options.stacking,
 			yAxis = this.yAxis,
 			topPath,
-			//topPoints = [],
 			bottomPath,
 			bottomPoints = [],
 			graphPoints = [],
@@ -410,7 +414,7 @@ seriesType('area', 'line', {
 
 			// Create or update the area
 			if (area) { // update
-				area.endX = areaPath.xMap;
+				area.endX = series.preventGraphAnimation ? null : areaPath.xMap;
 				area.animate({ d: areaPath });
 
 			} else { // create

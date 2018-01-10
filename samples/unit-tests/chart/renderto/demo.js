@@ -2,18 +2,35 @@
 
 
 QUnit.test('Container initially hidden (#6693)', function (assert) {
-    var chart = Highcharts.chart('container', {
+
+    var outerOuter = document.createElement('div');
+    outerOuter.style.visibility = 'hidden';
+    outerOuter.style.display = 'none';
+    document.body.appendChild(outerOuter);
+
+    var outer = document.createElement('div');
+    outer.style.visibility = 'hidden';
+    outerOuter.appendChild(outer);
+
+    var container = document.createElement('div');
+    container.style.display = 'none';
+    container.style.width = '300px';
+    container.style.height = '300px';
+    outer.appendChild(container);
+
+
+    var chart = Highcharts.chart(container, {
         series: [{
             type: 'column',
             data: [1, 3, 2, 4]
         }]
     });
 
-    document.getElementById('container').style.display = 'block';
-    document.getElementById('outer').style.display = 'block';
-    document.getElementById('outer').style.visibility = 'visible';
-    document.getElementById('outer-outer').style.display = 'block';
-    document.getElementById('outer-outer').style.visibility = 'visible';
+    container.style.display = 'block';
+    outer.style.display = 'block';
+    outer.style.visibility = 'visible';
+    outerOuter.style.display = 'block';
+    outerOuter.style.visibility = 'visible';
 
     assert.strictEqual(
         chart.chartHeight,
@@ -104,4 +121,37 @@ QUnit.test('Container parent originally detached (#7024)', function (assert) {
         210,
         'Chart width detected from CSS'
     );
+});
+
+QUnit.test('Container hidden by display:block !important', function (assert) {
+
+    var style = document.createElement('style');
+    document.head.appendChild(style);
+    style.sheet.insertRule('.ng-cloak { display: none !important; }');
+
+    var c = document.createElement('div');
+    document.body.appendChild(c);
+    c.className = 'ng-cloak';
+
+    var chart = Highcharts.chart(c, {
+        chart: {
+            plotBackgroundColor: 'silver'
+        },
+        title: {
+            text: 'The plot area should not overlap the title'
+        },
+        series: [{
+            data: [1, 3, 2, 4]
+        }]
+    });
+
+    c.className = '';
+
+    assert.ok(
+        chart.plotTop > 15,
+        'The chart should make room for the title when rendered inside a ' +
+        'hidden container (#2631)'
+    );
+    document.body.removeChild(c);
+
 });

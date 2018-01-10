@@ -62,43 +62,195 @@
  *  	//Use pre-allocated buffers, much faster,
  *  	//but may cause rendering issues with some data sets
  *  	usePreallocated: boolean - default: false
- *  	//Output rendering time in console
- *  	timeRendering: boolean - default: false
- *  	//Output processing time in console
- *  	timeSeriesProcessing: boolean - default: false
- *  	//Output setup time in console
- *  	timeSetup: boolean - default: false
  *  }
  */
 
- /**
-  * Set the series threshold for when the boost should kick in globally.
-  *
-  * Setting to e.g. 20 will cause the whole chart to enter boost mode
-  * if there are 20 or more series active. When the chart is in boost mode,
-  * every series in it will be rendered to a common canvas. This offers
-  * a significant speed improvment in charts with a very high
-  * amount of series.
-  *
-  * Note: only available when including the boost module.
-  *
-  * @default  null
-  * @apioption boost.seriesThreshold
-  */
+/**
+ * Options for the Boost module. The Boost module allows certain series types
+ * to be rendered by WebGL instead of the default SVG. This allows hundreds of
+ * thousands of data points to be rendered in milliseconds. In addition to the
+ * WebGL rendering it saves time by skipping processing and inspection of the
+ * data wherever possible. This introduces some limitations to what features are
+ * available in Boost mode. See [the docs](https://www.highcharts.com/docs/advanced-chart-features/boost-module)
+ * for details.
+ *
+ * In addition to the global `boost` option, each series has a
+ * [boostThreshold](#plotOptions.series.boostThreshold) that defines when the
+ * boost should kick in.
+ *
+ * Requires the `modules/boost.js` module.
+ *
+ * @sample {highstock} highcharts/boost/line-series-heavy-stock
+ *         Stock chart
+ * @sample {highstock} highcharts/boost/line-series-heavy-dynamic
+ *         Dynamic stock chart
+ * @sample highcharts/boost/line
+ *         Line chart
+ * @sample highcharts/boost/line-series-heavy
+ *         Line chart with hundreds of series
+ * @sample highcharts/boost/scatter
+ *         Scatter chart
+ * @sample highcharts/boost/area
+ *         Area chart
+ * @sample highcharts/boost/arearange
+ *         Arearange chart
+ * @sample highcharts/boost/column
+ *         Column chart
+ * @sample highcharts/boost/bubble
+ *         Bubble chart
+ * @sample highcharts/boost/heatmap
+ *         Heat map
+ * @sample highcharts/boost/treemap
+ *         Tree map
+ *
+ * @product highcharts highstock
+ * @type {Object}
+ * @apioption boost
+ */
 
- /**
-  * Set the point threshold for when a series should enter boost mode.
-  *
-  * Setting it to e.g. 2000 will cause the series to enter boost mode
-  * when there are 2000 or more points in the series.
-  *
-  * Note: only available when including the boost module.
-  *
-  * @default  5000
-  * @apioption plotOptions.series.boostThreshold
-  */
+/**
+ * Set the series threshold for when the boost should kick in globally.
+ *
+ * Setting to e.g. 20 will cause the whole chart to enter boost mode
+ * if there are 20 or more series active. When the chart is in boost mode,
+ * every series in it will be rendered to a common canvas. This offers
+ * a significant speed improvment in charts with a very high
+ * amount of series.
+ *
+ * @type {Number}
+ * @default  null
+ * @apioption boost.seriesThreshold
+ */
 
- /* global Float32Array */
+/**
+ * Enable or disable boost on a chart.
+ *
+ * @type {Boolean}
+ * @default true
+ * @apioption boost.enabled
+ */
+
+/**
+ * Debugging options for boost.
+ * Useful for benchmarking, and general timing.
+ *
+ * @type {Object}
+ * @apioption boost.debug
+ */
+
+/**
+ * Time the series rendering.
+ *
+ * This outputs the time spent on actual rendering in the console when
+ * set to true.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeRendering
+ */
+
+/**
+ * Time the series processing.
+ *
+ * This outputs the time spent on transforming the series data to
+ * vertex buffers when set to true.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeSeriesProcessing
+ */
+
+/**
+ * Time the the WebGL setup.
+ *
+ * This outputs the time spent on setting up the WebGL context,
+ * creating shaders, and textures.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeSetup
+ */
+
+/**
+ * Time the building of the k-d tree.
+ *
+ * This outputs the time spent building the k-d tree used for
+ * markers etc.
+ *
+ * Note that the k-d tree is built async, and runs post-rendering.
+ * Following, it does not affect the performance of the rendering itself.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeKDTree
+ */
+
+/**
+ * Show the number of points skipped through culling.
+ *
+ * When set to true, the number of points skipped in series processing
+ * is outputted. Points are skipped if they are closer than 1 pixel from
+ * each other.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.showSkipSummary
+ */
+
+/**
+ * Time the WebGL to SVG buffer copy
+ *
+ * After rendering, the result is copied to an image which is injected
+ * into the SVG.
+ *
+ * If this property is set to true, the time it takes for the buffer copy
+ * to complete is outputted.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.debug.timeBufferCopy
+ */
+
+/**
+ * Enable or disable GPU translations. GPU translations are faster than doing
+ * the translation in JavaScript.
+ *
+ * This option may cause rendering issues with certain datasets.
+ * Namely, if your dataset has large numbers with small increments (such as
+ * timestamps), it won't work correctly. This is due to floating point
+ * precission.
+ *
+ * @type {Boolean}
+ * @default false
+ * @apioption boost.useGPUTranslations
+ */
+
+/**
+ * Set the point threshold for when a series should enter boost mode.
+ *
+ * Setting it to e.g. 2000 will cause the series to enter boost mode when there
+ * are 2000 or more points in the series.
+ *
+ * To disable boosting on the series, set the `boostThreshold` to 0. Setting it
+ * to 1 will force boosting.
+ *
+ * Requires `modules/boost.js`.
+ *
+ * @type {Number}
+ * @default 5000
+ * @apioption plotOptions.series.boostThreshold
+ */
+
+/**
+ * If set to true, the whole chart will be boosted if one of the series
+ * crosses its threshold, and all the series can be boosted.
+ *
+ * @type {Boolean}
+ * @default true
+ * @apioption boost.allowForce
+ */
+
+/* global Float32Array */
 
 'use strict';
 import H from '../parts/Globals.js';
@@ -112,6 +264,7 @@ import '../parts/Interaction.js';
 var win = H.win,
 	doc = win.document,
 	noop = function () {},
+	Chart = H.Chart,
 	Color = H.Color,
 	Series = H.Series,
 	seriesTypes = H.seriesTypes,
@@ -125,8 +278,25 @@ var win = H.win,
 	pick = H.pick,
 	wrap = H.wrap,
 	plotOptions = H.getOptions().plotOptions,
-	CHUNK_SIZE = 50000,
-	index;
+	CHUNK_SIZE = 30000,
+	mainCanvas = doc.createElement('canvas'),
+	index,
+	boostable = [
+		'area',
+		'arearange',
+		'column',
+		'bar',
+		'line',
+		'scatter',
+		'heatmap',
+		'bubble',
+		'treemap'
+	],
+	boostableMap = {};
+
+each(boostable, function (item) {
+	boostableMap[item] = 1;
+});
 
 // Register color names since GL can't render those directly.
 Color.prototype.names = {
@@ -284,8 +454,12 @@ function patientMax() {
 		r = -Number.MAX_VALUE;
 
 	each(args, function (t) {
-		if (typeof t !== 'undefined' && typeof t.length !== 'undefined') {
-			//r = r < t.length ? t.length : r;
+		if (
+			typeof t !== 'undefined' &&
+			t !== null &&
+			typeof t.length !== 'undefined'
+		) {
+			// r = r < t.length ? t.length : r;
 			if (t.length > 0) {
 				r = t.length;
 				return true;
@@ -298,27 +472,57 @@ function patientMax() {
 
 /*
  * Returns true if we should force chart series boosting
+ * The result of this is cached in chart.boostForceChartBoost.
+ * It's re-fetched on redraw.
+ *
+ * We do this because there's a lot of overhead involved when dealing
+ * with a lot of series.
+ *
  */
 function shouldForceChartSeriesBoosting(chart) {
 	// If there are more than five series currently boosting,
 	// we should boost the whole chart to avoid running out of webgl contexts.
 	var sboostCount = 0,
+		canBoostCount = 0,
+		allowBoostForce = pick(
+			chart.options.boost && chart.options.boost.allowForce,
+			true
+		),
 		series;
+
+	if (typeof chart.boostForceChartBoost !== 'undefined') {
+		return chart.boostForceChartBoost;
+	}
 
 	if (chart.series.length > 1) {
 		for (var i = 0; i < chart.series.length; i++) {
+
 			series = chart.series[i];
+
+			if (boostableMap[series.type]) {
+				++canBoostCount;
+			}
+
 			if (patientMax(
 				series.processedXData,
 				series.options.data,
+				// series.xData,
 				series.points
 			) >= (series.options.boostThreshold || Number.MAX_VALUE)) {
-				sboostCount++;
+				++sboostCount;
 			}
 		}
 	}
 
-	return sboostCount > 5;
+	chart.boostForceChartBoost =
+		(
+			allowBoostForce &&
+			canBoostCount === chart.series.length &&
+			sboostCount > 0
+		) ||
+		sboostCount > 5;
+
+	return chart.boostForceChartBoost;
 }
 
 /*
@@ -326,28 +530,61 @@ function shouldForceChartSeriesBoosting(chart) {
  * @param chart {Highchart.Chart} - the chart to check
  * @returns {Boolean} - true if the chart is in series boost mode
  */
-function isChartSeriesBoosting(chart) {
-	return shouldForceChartSeriesBoosting(chart) || chart.series.length >= pick(
-		chart.options.boost && chart.options.boost.seriesThreshold,
-		50
-	);
-}
+Chart.prototype.isChartSeriesBoosting = function () {
+	var isSeriesBoosting,
+		threshold = pick(
+			this.options.boost && this.options.boost.seriesThreshold,
+			50
+		);
+
+	isSeriesBoosting = threshold <= this.series.length ||
+		shouldForceChartSeriesBoosting(this);
+
+	return isSeriesBoosting;
+};
+
+/*
+ * Get the clip rectangle for a target, either a series or the chart. For the
+ * chart, we need to consider the maximum extent of its Y axes, in case of 
+ * Highstock panes and navigator.
+ */
+Chart.prototype.getBoostClipRect = function (target) {
+	var clipBox = {
+		x: this.plotLeft,
+		y: this.plotTop,
+		width: this.plotWidth,
+		height: this.plotHeight
+	};
+
+	if (target === this) {
+		each(this.yAxis, function (yAxis) {
+			clipBox.y = Math.min(yAxis.pos, clipBox.y);
+			clipBox.height = Math.max(
+				yAxis.pos - this.plotTop + yAxis.len,
+				clipBox.height
+			);
+		}, this);
+	}
+
+	return clipBox;
+};
 
 /*
  * Returns true if the series is in boost mode
  * @param series {Highchart.Series} - the series to check
  * @returns {boolean} - true if the series is in boost mode
  */
-function isSeriesBoosting(series) {
+/*
+function isSeriesBoosting(series, overrideThreshold) {
 	return  isChartSeriesBoosting(series.chart) ||
 			patientMax(
 				series.processedXData,
 				series.options.data,
 				series.points
-			) >= (series.options.boostThreshold || Number.MAX_VALUE);
+			) >= (overrideThreshold || series.options.boostThreshold || Number.MAX_VALUE);
 }
+*/
 
-////////////////////////////////////////////////////////////////////////////////
 // START OF WEBGL ABSTRACTIONS
 
 /*
@@ -373,6 +610,8 @@ function GLShader(gl) {
 			'uniform bool hasThreshold;',
 
 			'uniform bool skipTranslation;',
+
+			'uniform float plotHeight;',
 
 			'uniform float xAxisTrans;',
 			'uniform float xAxisMin;',
@@ -469,6 +708,9 @@ function GLShader(gl) {
 					'v = value;// + yAxisPos;',
 				'} else {',
 					'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord);// + yAxisPos;',
+					'if (v > plotHeight) {',
+						'v = plotHeight;',
+					'}',
 				'}',
 				'if (checkTreshold > 0.0 && hasThreshold) {',
 					'v = min(v, translatedThreshold);',
@@ -494,7 +736,7 @@ function GLShader(gl) {
 			'}'
 			/* eslint-enable */
 		].join('\n'),
-		//Fragment shader source
+		// Fragment shader source
 		fragShade = [
 			/* eslint-disable */
 			'precision highp float;',
@@ -532,26 +774,27 @@ function GLShader(gl) {
 			/* eslint-enable */
 		].join('\n'),
 		uLocations = {},
-		//The shader program
+		// The shader program
 		shaderProgram,
-		//Uniform handle to the perspective matrix
+		// Uniform handle to the perspective matrix
 		pUniform,
-		//Uniform for point size
+		// Uniform for point size
 		psUniform,
-		//Uniform for fill color
+		// Uniform for fill color
 		fillColorUniform,
-		//Uniform for isBubble
+		// Uniform for isBubble
 		isBubbleUniform,
-		//Uniform for bubble abs sizing
+		// Uniform for bubble abs sizing
 		bubbleSizeAbsUniform,
 		bubbleSizeAreaUniform,
-		//Skip translation uniform
+		// Skip translation uniform
 		skipTranslationUniform,
-		//Set to 1 if circle
+		// Set to 1 if circle
 		isCircleUniform,
-		//Uniform for invertion
+		// Uniform for invertion
 		isInverted,
-		//Texture uniform
+		plotHeightUniform,
+		// Texture uniform
 		uSamplerUniform;
 
 	/* String to shader program
@@ -568,7 +811,7 @@ function GLShader(gl) {
 		gl.compileShader(shader);
 
 		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-			//console.error('shader error:', gl.getShaderInfoLog(shader));
+			// console.error('shader error:', gl.getShaderInfoLog(shader));
 			return false;
 		}
 		return shader;
@@ -585,7 +828,7 @@ function GLShader(gl) {
 
 		if (!v || !f) {
 			shaderProgram = false;
-			//console.error('error creating shader program');
+			// console.error('error creating shader program');
 			return false;
 		}
 
@@ -613,7 +856,7 @@ function GLShader(gl) {
 		skipTranslationUniform = uloc('skipTranslation');
 		isCircleUniform = uloc('isCircle');
 		isInverted = uloc('isInverted');
-
+		plotHeightUniform = uloc('plotHeight');
 		return true;
 	}
 
@@ -621,8 +864,11 @@ function GLShader(gl) {
 	 * Destroy the shader
 	 */
 	function destroy() {
-		if (gl && shaderProgram) {
-			gl.deleteProgram(shaderProgram);
+		if (gl) {
+			if (shaderProgram) {
+				gl.deleteProgram(shaderProgram);
+				shaderProgram = false;
+			}
 		}
 	}
 
@@ -663,13 +909,15 @@ function GLShader(gl) {
 		gl.uniform1i(isInverted, flag);
 	}
 
-	////////////////////////////////////////////////////////////////////////////
-
 	/*
 	 * Enable/disable circle drawing
 	 */
 	function setDrawAsCircle(flag) {
 		gl.uniform1i(isCircleUniform, flag ? 1 : 0);
+	}
+
+	function setPlotHeight(n) {
+		gl.uniform1f(plotHeightUniform, n);
 	}
 
 	/*
@@ -773,6 +1021,7 @@ function GLShader(gl) {
 		fillColorUniform: function () {
 			return fillColorUniform;
 		},
+		setPlotHeight: setPlotHeight,
 		setBubbleUniforms: setBubbleUniforms,
 		bind: bind,
 		program: getProgram,
@@ -797,12 +1046,13 @@ function GLShader(gl) {
  * @param gl {WebGLContext} - the context in which to create the buffer
  * @param shader {GLShader} - the shader to use
  */
-function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
+function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
 	var buffer = false,
 		vertAttribute = false,
 		components = dataComponents || 2,
 		preAllocated = false,
 		iterator = 0,
+		// farray = false,
 		data;
 
 	// type = type || 'float';
@@ -810,7 +1060,13 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 	function destroy() {
 		if (buffer) {
 			gl.deleteBuffer(buffer);
+			buffer = false;
+			vertAttribute = false;
 		}
+
+		iterator = 0;
+		components = dataComponents || 2;
+		data = [];
 	}
 
 	/*
@@ -820,12 +1076,13 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
  	 * @param dataComponents {Integer} - the number of components per. indice
 	 */
 	function build(dataIn, attrib, dataComponents) {
+		var farray;
 
 		data = dataIn || [];
 
 		if ((!data || data.length === 0) && !preAllocated) {
-			//console.error('trying to render empty vbuffer');
-			buffer = false;
+			// console.error('trying to render empty vbuffer');
+			destroy();
 			return false;
 		}
 
@@ -835,17 +1092,24 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 			gl.deleteBuffer(buffer);
 		}
 
+		if (!preAllocated) {
+			farray = new Float32Array(data);
+		}
+
 		buffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.bufferData(
 			gl.ARRAY_BUFFER,
-			preAllocated || new Float32Array(data),
+			preAllocated || farray,
 			gl.STATIC_DRAW
 		);
 
 		// gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
 		vertAttribute = gl.getAttribLocation(shader.program(), attrib);
 		gl.enableVertexAttribArray(vertAttribute);
+
+		// Trigger cleanup
+		farray = false;
 
 		return true;
 	}
@@ -859,10 +1123,10 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 		}
 
 		// gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
-		//gl.enableVertexAttribArray(vertAttribute);
-		//gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+		// gl.enableVertexAttribArray(vertAttribute);
+		// gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
-		//gl.enableVertexAttribArray(vertAttribute);
+		// gl.enableVertexAttribArray(vertAttribute);
 	}
 
 	/*
@@ -918,12 +1182,12 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 		size *= 4;
 		iterator = -1;
 
-		//if (!preAllocated || (preAllocated && preAllocated.length !== size)) {
+		// if (!preAllocated || (preAllocated && preAllocated.length !== size)) {
 		preAllocated = new Float32Array(size);
-		//}
+		// }
 	}
 
-	////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 	return {
 		destroy: destroy,
 		bind: bind,
@@ -973,26 +1237,32 @@ function GLRenderer(postRenderCallback) {
 		// Things to draw as "rectangles" (i.e lines)
 		asBar = {
 			'column': true,
+			'bar': true,
 			'area': true
 		},
 		asCircle = {
 			'scatter': true,
 			'bubble': true
 		},
-		//Render settings
+		// Render settings
 		settings = {
 			pointSize: 1,
-			lineWidth: 3,
+			lineWidth: 1,
 			fillColor: '#AA00AA',
 			useAlpha: true,
 			usePreallocated: false,
 			useGPUTranslations: false,
-			timeRendering: false,
-			timeSeriesProcessing: false,
-			timeSetup: false
+			debug: {
+				timeRendering: false,
+				timeSeriesProcessing: false,
+				timeSetup: false,
+				timeBufferCopy: false,
+				timeKDTree: false,
+				showSkipSummary: false
+			}
 		};
 
-	////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	function setOptions(options) {
 		merge(true, settings, options);
@@ -1003,7 +1273,7 @@ function GLRenderer(postRenderCallback) {
 			xData,
 			s;
 
-		if (isSeriesBoosting(series)) {
+		if (series.isSeriesBoosting) {
 			isStacked = !!series.options.stacking;
 			xData = series.xData || series.options.xData || series.processedXData;
 			s = (isStacked ? series.data : (xData || series.options.data)).length;
@@ -1031,7 +1301,7 @@ function GLRenderer(postRenderCallback) {
 		}
 
 		each(chart.series, function (series) {
-			if (isSeriesBoosting(series)) {
+			if (series.isSeriesBoosting) {
 				s += seriesPointCount(series);
 			}
 		});
@@ -1046,7 +1316,7 @@ function GLRenderer(postRenderCallback) {
 			return;
 		}
 
-		if (isSeriesBoosting(series)) {
+		if (series.isSeriesBoosting) {
 			s = seriesPointCount(series);
 		}
 
@@ -1108,6 +1378,7 @@ function GLRenderer(postRenderCallback) {
 			zData = series.zData || options.zData || series.processedZData,
 			yAxis = series.yAxis,
 			xAxis = series.xAxis,
+			plotHeight = series.chart.plotHeight,
 			useRaw = !xData || xData.length === 0,
 			// threshold = options.threshold,
 			// yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -1120,16 +1391,39 @@ function GLRenderer(postRenderCallback) {
 			// caxis,
 			// connectNulls = options.connectNulls,
 			// For some reason eslint doesn't pick up that this is actually used
-			maxVal, //eslint-disable-line no-unused-vars
+			maxVal, // eslint-disable-line no-unused-vars
 			points = series.points || false,
 			lastX = false,
+			lastY = false,
 			minVal,
 			color,
 			scolor,
 			sdata = isStacked ? series.data : (xData || rawData),
 			closestLeft = { x: Number.MIN_VALUE, y: 0 },
-			closestRight = { x: Number.MIN_VALUE, y: 0 }
-			;
+			closestRight = { x: Number.MIN_VALUE, y: 0 },
+
+			skipped = 0,
+
+			cullXThreshold = 1,
+			cullYThreshold = 1,
+
+			// The following are used in the builder while loop
+			x,
+			y,
+			d,
+			z,
+			i = -1,
+			px = false,
+			nx = false,
+			// This is in fact used.
+			low, // eslint-disable-line no-unused-vars
+			chartDestroyed = typeof chart.index === 'undefined',
+			nextInside = false,
+			prevInside = false,
+			pcolor = false,
+			drawAsBar = asBar[series.type],
+			isXInside = false,
+			isYInside = true;
 
 		if (options.boostData && options.boostData.length > 0) {
 			return;
@@ -1147,7 +1441,7 @@ function GLRenderer(postRenderCallback) {
 			}
 		}
 
-		//Push a vertice to the data buffer
+		// Push a vertice to the data buffer
 		function vertice(x, y, checkTreshold, pointSize, color) {
 			pushColor(color);
 			if (settings.usePreallocated) {
@@ -1230,7 +1524,7 @@ function GLRenderer(postRenderCallback) {
 					// better color interpolation.
 
 					// If there's stroking, we do an additional rect
-					//if (pointAttr.stroke !== 'none' && swidth && swidth > 0) {
+					// if (pointAttr.stroke !== 'none' && swidth && swidth > 0) {
 					if (series.type === 'treemap') {
 						swidth = swidth || 1;
 						scolor = H.color(pointAttr.stroke).rgba;
@@ -1285,24 +1579,16 @@ function GLRenderer(postRenderCallback) {
 		// 	}
 		// });
 
-		each(sdata, function (d, i) {
-			var x,
-				y,
-				z,
-				px = false,
-				nx = false,
-				// This is in fact used.
-				low, //eslint-disable-line no-unused-vars
-				chartDestroyed = typeof chart.index === 'undefined',
-				nextInside = false,
-				prevInside = false,
-				pcolor = false,
-				drawAsBar = asBar[series.type],
-				isXInside = false,
-				isYInside = true;
+		while (i < sdata.length - 1) {
+			d = sdata[++i];
+
+			// px = x = y = z = nx = low = false;
+			// chartDestroyed = typeof chart.index === 'undefined';
+			// nextInside = prevInside = pcolor = isXInside = isYInside = false;
+			// drawAsBar = asBar[series.type];
 
 			if (chartDestroyed) {
-				return false;
+				break;
 			}
 
 			// Uncomment this to enable color by point.
@@ -1403,7 +1689,7 @@ function GLRenderer(postRenderCallback) {
 			}
 
 			if (y !== 0 && (!y || !isYInside)) {
-				return;
+				continue;
 			}
 
 			if (x >= xMin && x <= xMax) {
@@ -1411,7 +1697,7 @@ function GLRenderer(postRenderCallback) {
 			}
 
 			if (!isXInside && !nextInside && !prevInside) {
-				return;
+				continue;
 			}
 
 			// Skip translations - temporary floating point fix
@@ -1419,6 +1705,12 @@ function GLRenderer(postRenderCallback) {
 				inst.skipTranslation = true;
 				x = xAxis.toPixels(x, true);
 				y = yAxis.toPixels(y, true);
+
+				// Make sure we're not drawing outside of the chart area.
+				// See #6594.
+				if (y > plotHeight) {
+					y = plotHeight;
+				}
 			}
 
 			if (drawAsBar) {
@@ -1463,6 +1755,35 @@ function GLRenderer(postRenderCallback) {
 				}
 			}
 
+			// If the last _drawn_ point is closer to this point than the
+			// threshold, skip it. Shaves off 20-100ms in processing.
+
+			if (!settings.useGPUTranslations &&
+				!settings.usePreallocated &&
+				(lastX && x - lastX < cullXThreshold) &&
+				(lastY && Math.abs(y - lastY) < cullYThreshold)
+			) {
+				if (settings.debug.showSkipSummary) {
+					++skipped;
+				}
+
+				continue;
+			}
+
+			// Do step line if enabled.
+			// Draws an additional point at the old Y at the new X.
+			// See #6976.
+
+			if (options.step) {
+				vertice(
+					x,
+					lastY,
+					0,
+					2,
+					pcolor
+				);
+			}
+
 			vertice(
 				x,
 				y,
@@ -1482,9 +1803,12 @@ function GLRenderer(postRenderCallback) {
 			// }
 
 			lastX = x;
+			lastY = y;
+		}
 
-			//return true;
-		});
+		if (settings.debug.showSkipSummary) {
+			console.log('skipped points:', skipped); // eslint-disable-line no-console
+		}
 
 		function pushSupplementPoint(point) {
 			if (!settings.useGPUTranslations) {
@@ -1524,8 +1848,8 @@ function GLRenderer(postRenderCallback) {
 			}
 		}
 
-		if (settings.timeSeriesProcessing) {
-			console.time('building ' + s.type + ' series'); //eslint-disable-line no-console
+		if (settings.debug.timeSeriesProcessing) {
+			console.time('building ' + s.type + ' series'); // eslint-disable-line no-console
 		}
 
 		series.push({
@@ -1545,6 +1869,7 @@ function GLRenderer(postRenderCallback) {
 				'arearange': 'lines',
 				'areaspline': 'line_strip',
 				'column': 'lines',
+				'bar': 'lines',
 				'line': 'line_strip',
 				'scatter': 'points',
 				'heatmap': 'triangles',
@@ -1556,8 +1881,8 @@ function GLRenderer(postRenderCallback) {
 		// Add the series data to our buffer(s)
 		pushSeriesData(s, series[series.length - 1]);
 
-		if (settings.timeSeriesProcessing) {
-			console.timeEnd('building ' + s.type + ' series'); //eslint-disable-line no-console
+		if (settings.debug.timeSeriesProcessing) {
+			console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
 		}
 	}
 
@@ -1570,6 +1895,10 @@ function GLRenderer(postRenderCallback) {
 		series = [];
 		exports.data = data = [];
 		markerData = [];
+
+		if (vbuffer) {
+			vbuffer.destroy();
+		}
 	}
 
 	/*
@@ -1626,7 +1955,7 @@ function GLRenderer(postRenderCallback) {
 
 		if (chart) {
 			if (!chart.chartHeight || !chart.chartWidth) {
-				//chart.setChartSize();
+				// chart.setChartSize();
 			}
 
 			width = chart.chartWidth || 800;
@@ -1639,14 +1968,19 @@ function GLRenderer(postRenderCallback) {
 			return false;
 		}
 
-		if (settings.timeRendering) {
-			console.time('gl rendering'); //eslint-disable-line no-console
+		if (settings.debug.timeRendering) {
+			console.time('gl rendering'); // eslint-disable-line no-console
 		}
+
+		gl.canvas.width = width;
+		gl.canvas.height = height;
 
 		shader.bind();
 
+
 		gl.viewport(0, 0, width, height);
 		shader.setPMatrix(orthoMatrix(width, height));
+		shader.setPlotHeight(chart.plotHeight);
 
 		if (settings.lineWidth > 1 && !H.isMS) {
 			gl.lineWidth(settings.lineWidth);
@@ -1660,7 +1994,8 @@ function GLRenderer(postRenderCallback) {
 			shader.setTexture(circleTextureHandle);
 		}
 
-		shader.setInverted(chart.options.chart ? chart.options.chart.inverted : false);
+		shader.setInverted(chart.inverted); // chart.options.chart ? chart.options.chart.inverted : false);
+
 
 		// Render the series
 		each(series, function (s, si) {
@@ -1685,14 +2020,14 @@ function GLRenderer(postRenderCallback) {
 					s.series.color,
 				color;
 
-			if (s.series.fillOpacity) {
+			if (s.series.fillOpacity && options.fillOpacity) {
 				fillColor = new Color(fillColor).setOpacity(
 					pick(options.fillOpacity, 1.0)
 				).get();
 			}
 
 			if (options.colorByPoint) {
-				fillColor = s.series.chart.options.colors[si ];
+				fillColor = s.series.chart.options.colors[si];
 			}
 
 			color = H.color(fillColor).rgba;
@@ -1701,7 +2036,12 @@ function GLRenderer(postRenderCallback) {
 				color[3] = 1.0;
 			}
 
-			//Blending
+			// This is very much temporary
+			if (s.drawMode === 'lines' && settings.useAlpha && color[3] < 1) {
+				color[3] /= 10;
+			}
+
+			// Blending
 			if (options.boostBlending === 'add') {
 				gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 				gl.blendEquation(gl.FUNC_ADD);
@@ -1714,8 +2054,8 @@ function GLRenderer(postRenderCallback) {
 				gl.blendEquation(gl.FUNC_MIN);
 
 			} else {
-				//gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
-				//gl.blendEquation(gl.FUNC_ADD);
+				// gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
+				// gl.blendEquation(gl.FUNC_ADD);
 				gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 			}
 
@@ -1724,7 +2064,7 @@ function GLRenderer(postRenderCallback) {
 			// If there are entries in the colorData buffer, build and bind it.
 			if (s.colorData.length > 0) {
 				shader.setUniform('hasColor', 1.0);
-				cbuffer = GLVertexBuffer(gl, shader); //eslint-disable-line new-cap
+				cbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
 				cbuffer.build(s.colorData, 'aColor', 4);
 				cbuffer.bind();
 			}
@@ -1767,17 +2107,15 @@ function GLRenderer(postRenderCallback) {
 			}
 		});
 
-		vbuffer.destroy();
-
-		if (settings.timeRendering) {
-			console.timeEnd('gl rendering'); //eslint-disable-line no-console
+		if (settings.debug.timeRendering) {
+			console.timeEnd('gl rendering'); // eslint-disable-line no-console
 		}
-
-		flush();
 
 		if (postRenderCallback) {
 			postRenderCallback();
 		}
+
+		flush();
 	}
 
 	/*
@@ -1837,12 +2175,14 @@ function GLRenderer(postRenderCallback) {
 			return false;
 		}
 
-		if (settings.timeSetup) {
-			console.time('gl setup'); //eslint-disable-line no-console
+		if (settings.debug.timeSetup) {
+			console.time('gl setup'); // eslint-disable-line no-console
 		}
 
 		for (; i < contexts.length; i++) {
-			gl = canvas.getContext(contexts[i]);
+			gl = canvas.getContext(contexts[i], {
+			//	premultipliedAlpha: false
+			});
 			if (gl) {
 				break;
 			}
@@ -1863,8 +2203,8 @@ function GLRenderer(postRenderCallback) {
 		// gl.depthMask(gl.FALSE);
 		gl.depthFunc(gl.LESS);
 
-		shader = GLShader(gl); //eslint-disable-line new-cap
-		vbuffer = GLVertexBuffer(gl, shader); //eslint-disable-line new-cap
+		shader = GLShader(gl); // eslint-disable-line new-cap
+		vbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
 
 		textureIsReady = false;
 
@@ -1916,8 +2256,8 @@ function GLRenderer(postRenderCallback) {
 
 		isInited = true;
 
-		if (settings.timeSetup) {
-			console.timeEnd('gl setup'); //eslint-disable-line no-console
+		if (settings.debug.timeSetup) {
+			console.timeEnd('gl setup'); // eslint-disable-line no-console
 		}
 
 		return true;
@@ -1940,6 +2280,7 @@ function GLRenderer(postRenderCallback) {
 	}
 
 	function destroy() {
+		flush();
 		vbuffer.destroy();
 		shader.destroy();
 		if (gl) {
@@ -1951,7 +2292,7 @@ function GLRenderer(postRenderCallback) {
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 	exports = {
 		allocateBufferForSingleSeries: allocateBufferForSingleSeries,
 		pushSeries: pushSeries,
@@ -1977,7 +2318,7 @@ function GLRenderer(postRenderCallback) {
 }
 
 // END OF WEBGL ABSTRACTIONS
-////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 
 /*
  * Create a canvas + context and attach it to the target
@@ -1988,37 +2329,103 @@ function createAndAttachRenderer(chart, series) {
 	var width = chart.chartWidth,
 		height = chart.chartHeight,
 		target = chart,
-		targetGroup = chart.seriesGroup || series.group;
+		targetGroup = chart.seriesGroup || series.group,
+		alpha = 1,
+		foSupported = doc.implementation.hasFeature(
+			'www.http://w3.org/TR/SVG11/feature#Extensibility',
+			'1.1'
+		);
 
-	if (isChartSeriesBoosting(chart)) {
+	if (chart.isChartSeriesBoosting()) {
 		target = chart;
 	} else {
 		target = series;
 	}
 
-	if (target.ogl) {
-		//target.ogl.destroy();
-	}
+	// Support for foreignObject is flimsy as best.
+	// IE does not support it, and Chrome has a bug which messes up
+	// the canvas draw order.
+	// As such, we force the Image fallback for now, but leaving the
+	// actual Canvas path in-place in case this changes in the future.
+	foSupported = false;
 
-	if (!target.image) {
-		target.canvas = doc.createElement('canvas');
+	if (!target.renderTarget) {
+		target.canvas = mainCanvas;
 
-		target.image = chart.renderer.image(
-			'',
-			0,
-			0,
-			width,
-			height
-		).add(targetGroup);
+		// Fall back to image tag if foreignObject isn't supported,
+		// or if we're exporting.
+		if (chart.renderer.forExport || !foSupported) {
+			target.renderTarget = chart.renderer.image(
+				'',
+				0,
+				0,
+				width,
+				height
+			)
+			.addClass('highcharts-boost-canvas')
+			.add(targetGroup);
 
-		target.boostClipRect = chart.renderer.clipRect(
-			chart.plotLeft,
-			chart.plotTop,
-			chart.plotWidth,
-			chart.chartHeight
-		);
+			target.boostClear = function () {
+				target.renderTarget.attr({ href: '' });
+			};
 
-		target.image.clip(target.boostClipRect);
+			target.boostCopy = function () {
+				target.boostResizeTarget();
+				target.renderTarget.attr({
+					href: target.canvas.toDataURL('image/png')
+				});
+			};
+
+		} else {
+			target.renderTargetFo = chart.renderer.createElement('foreignObject')
+				.add(targetGroup);
+
+			target.renderTarget = doc.createElement('canvas');
+			target.renderTargetCtx = target.renderTarget.getContext('2d');
+
+			target.renderTargetFo.element.appendChild(target.renderTarget);
+
+			target.boostClear = function () {
+				target.renderTarget.width = target.canvas.width;
+				target.renderTarget.height = target.canvas.height;
+			};
+
+			target.boostCopy = function () {
+				target.renderTarget.width = target.canvas.width;
+				target.renderTarget.height = target.canvas.height;
+
+				target.renderTargetCtx.drawImage(target.canvas, 0, 0);
+			};
+		}
+
+		target.boostResizeTarget = function () {
+			width = chart.chartWidth;
+			height = chart.chartHeight;
+
+			(target.renderTargetFo || target.renderTarget)
+				.attr({
+					x: 0,
+					y: 0,
+					width: width,
+					height: height
+				})
+				.css({
+					pointerEvents: 'none',
+					mixedBlendMode: 'normal',
+					opacity: alpha
+				});
+
+			if (target instanceof H.Chart) {
+				target.markerGroup.translate(
+					chart.plotLeft,
+					chart.plotTop
+				);
+			}
+		};
+
+		target.boostClipRect = chart.renderer.clipRect();
+
+		(target.renderTargetFo || target.renderTarget).clip(target.boostClipRect);
 
 		if (target instanceof H.Chart) {
 			target.markerGroup = target.renderer.g().add(targetGroup);
@@ -2030,33 +2437,24 @@ function createAndAttachRenderer(chart, series) {
 	target.canvas.width = width;
 	target.canvas.height = height;
 
-	target.image.attr({
-		x: 0,
-		y: 0,
-		width: width,
-		height: height,
-		style: 'pointer-events: none'
-	});
+	target.boostClipRect.attr(chart.getBoostClipRect(target));
 
-	target.boostClipRect.attr({
-		x: chart.plotLeft,
-		y: chart.plotTop,
-		width: chart.plotWidth,
-		height: chart.chartHeight
-	});
+	target.boostResizeTarget();
+	target.boostClear();
 
 	if (!target.ogl) {
-
-
 		target.ogl = GLRenderer(function () { // eslint-disable-line new-cap
-			target.image.attr({
-				href: target.canvas.toDataURL('image/png')
-			});
+			if (target.ogl.settings.debug.timeBufferCopy) {
+				console.time('buffer copy'); // eslint-disable-line no-console
+			}
 
-			// Destroy gl context when we're done with it
-			target.ogl.destroy();
-			target.ogl = false;
-		}); //eslint-disable-line new-cap
+			target.boostCopy();
+
+			if (target.ogl.settings.debug.timeBufferCopy) {
+				console.timeEnd('buffer copy'); // eslint-disable-line no-console
+			}
+
+		}); // eslint-disable-line new-cap
 
 		target.ogl.init(target.canvas);
 		// target.ogl.clear();
@@ -2080,9 +2478,9 @@ function createAndAttachRenderer(chart, series) {
  */
 function renderIfNotSeriesBoosting(renderer, series, chart) {
 	if (renderer &&
-		series.image &&
+		series.renderTarget &&
 		series.canvas &&
-		!isChartSeriesBoosting(chart || series.chart)
+		!(chart || series.chart).isChartSeriesBoosting()
 	) {
 		renderer.render(chart || series.chart);
 	}
@@ -2090,25 +2488,26 @@ function renderIfNotSeriesBoosting(renderer, series, chart) {
 
 function allocateIfNotSeriesBoosting(renderer, series) {
 	if (renderer &&
-		series.image &&
+		series.renderTarget &&
 		series.canvas &&
-		!isChartSeriesBoosting(series.chart)
+		!series.chart.isChartSeriesBoosting()
 	) {
 		renderer.allocateBufferForSingleSeries(series);
 	}
 }
 
 /*
- * An "async" foreach loop.
- * Uses a setTimeout to keep the loop from blocking the UI thread
+ * An "async" foreach loop. Uses a setTimeout to keep the loop from blocking the
+ * UI thread.
+ * 
  * @param arr {Array} - the array to loop through
  * @param fn {Function} - the callback to call for each item
  * @param finalFunc {Function} - the callback to call when done
- * @param chunkSize {Number} - the number of iterations per. timeout
+ * @param chunkSize {Number} - the number of iterations per timeout
  * @param i {Number} - the current index
  * @param noTimeout {Boolean} - set to true to skip timeouts
  */
-function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
+H.eachAsync = function (arr, fn, finalFunc, chunkSize, i, noTimeout) {
 	i = i || 0;
 	chunkSize = chunkSize || CHUNK_SIZE;
 
@@ -2119,19 +2518,20 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 		proceed = fn(arr[i], i);
 		++i;
 	}
+
 	if (proceed) {
 		if (i < arr.length) {
 
 			if (noTimeout) {
-				eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout);
+				H.eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout);
 			} else if (win.requestAnimationFrame) {
-				//If available, do requestAnimationFrame - shaves off a few ms
+				// If available, do requestAnimationFrame - shaves off a few ms
 				win.requestAnimationFrame(function () {
-					eachAsync(arr, fn, finalFunc, chunkSize, i);
+					H.eachAsync(arr, fn, finalFunc, chunkSize, i);
 				});
 			} else {
 				setTimeout(function () {
-					eachAsync(arr, fn, finalFunc, chunkSize, i);
+					H.eachAsync(arr, fn, finalFunc, chunkSize, i);
 				});
 			}
 
@@ -2139,9 +2539,9 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 			finalFunc();
 		}
 	}
-}
+};
 
-////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 // Following is the parts of the boost that's common between OGL/Legacy
 
 /**
@@ -2215,27 +2615,19 @@ wrap(Series.prototype, 'destroy', function (proceed) {
  * to hasExtremes to the methods directly.
  */
 wrap(Series.prototype, 'getExtremes', function (proceed) {
-	if (!isSeriesBoosting(this) || (!this.hasExtremes || !this.hasExtremes())) {
+	if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
 		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
 
 // Set default options
-each([
-	'area',
-	'arearange',
-	'column',
-	'line',
-	'scatter',
-	'heatmap',
-	'bubble',
-	'treemap',
-	'heatmap'
-],
+each(boostable,
 	function (type) {
 		if (plotOptions[type]) {
 			plotOptions[type].boostThreshold = 5000;
 			plotOptions[type].boostData = [];
+
+			seriesTypes[type].prototype.fillOpacity = true;
 		}
 	}
 );
@@ -2256,19 +2648,21 @@ each([
 ], function (method) {
 	function branch(proceed) {
 		var letItPass = this.options.stacking &&
-						(method === 'translate' || method === 'generatePoints');
+						(method === 'translate' || method === 'generatePoints'),
+			enabled = true;
 
-		if (!isSeriesBoosting(this) ||
+		if (this.chart && this.chart.options && this.chart.options.boost) {
+			enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
+				true :
+				this.chart.options.boost.enabled;
+		}
+
+		if (!this.isSeriesBoosting ||
 			letItPass ||
+			!enabled ||
 			this.type === 'heatmap' ||
 			this.type === 'treemap'
 		) {
-
-			// Clear image
-			if (method === 'render' && this.image && !isChartSeriesBoosting(this.chart)) {
-				this.image.attr({ href: '' });
-				this.animate = null; // We're zooming in, don't run animation
-			}
 
 			proceed.call(this);
 
@@ -2286,6 +2680,10 @@ each([
 			wrap(seriesTypes.column.prototype, method, branch);
 		}
 
+		if (seriesTypes.bar) {
+			wrap(seriesTypes.bar.prototype, method, branch);
+		}
+
 		if (seriesTypes.arearange) {
 			wrap(seriesTypes.arearange.prototype, method, branch);
 		}
@@ -2300,10 +2698,164 @@ each([
 	}
 });
 
+/** If the series is a heatmap or treemap, or if the series is not boosting
+ *  do the default behaviour. Otherwise, process if the series has no
+ *  extremes.
+ */
+wrap(Series.prototype, 'processData', function (proceed) {
+
+	var series = this,
+		dataToMeasure = this.options.data;
+
+	// Used twice in this function, first on this.options.data, the second
+	// time it runs the check again after processedXData is built.
+	// @todo Check what happens with data grouping
+	function getSeriesBoosting(data) {
+		return series.chart.isChartSeriesBoosting() || (
+			(data ? data.length : 0) >=
+			(series.options.boostThreshold || Number.MAX_VALUE)
+		);
+	}
+
+	// If there are no extremes given in the options, we also need to process
+	// the data to read the data extremes. If this is a heatmap, do default
+	// behaviour. 
+	if (
+		!getSeriesBoosting(dataToMeasure) || // First pass with options.data
+		this.type === 'heatmap' ||
+		this.type === 'treemap' ||
+		this.options.stacking || // we need processedYData for the stack (#7481)
+		!this.hasExtremes ||
+		!this.hasExtremes(true)
+	) {
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		dataToMeasure = this.processedXData;
+	}
+
+	/*
+	if (!this.hasExtremes || !this.hasExtremes(true)) {
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+	}
+	*/
+
+	// Set the isBoosting flag, second pass with processedXData to see if we
+	// have zoomed.
+	this.isSeriesBoosting = getSeriesBoosting(dataToMeasure);
+
+	// Enter or exit boost mode
+	if (this.isSeriesBoosting) {
+		this.enterBoost();
+	} else if (this.exitBoost) {
+		this.exitBoost();
+	}
+});
+
+wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
+	proceed.call(this, vis, redraw);
+	if (this.visible === false && this.canvas && this.renderTarget) {
+		if (this.ogl) {
+			this.ogl.clear();
+		}
+		this.boostClear();
+	}
+});
+
+/**
+ * Enter boost mode and apply boost-specific properties.
+ */
+Series.prototype.enterBoost = function () {
+
+	this.alteredByBoost = [];
+
+	// Save the original values, including whether it was an own property or
+	// inherited from the prototype.
+	each(['allowDG', 'directTouch', 'stickyTracking'], function (prop) {
+		this.alteredByBoost.push({
+			prop: prop,
+			val: this[prop],
+			own: this.hasOwnProperty(prop)
+		});
+	}, this);
+	
+	this.allowDG = false;
+	this.directTouch = false;
+	this.stickyTracking = true;
+
+	// Once we've been in boost mode, we don't want animation when returning to
+	// vanilla mode.
+	this.animate = null;
+
+	// Hide series label if any
+	if (this.labelBySeries) {
+		this.labelBySeries = this.labelBySeries.destroy();
+	}
+};
+
+/**
+ * Exit from boost mode and restore non-boost properties.
+ */
+Series.prototype.exitBoost = function () {
+	// Reset instance properties and/or delete instance properties and go back
+	// to prototype
+	each(this.alteredByBoost || [], function (setting) {
+		if (setting.own) {
+			this[setting.prop] = setting.val;
+		} else {
+			// Revert to prototype
+			delete this[setting.prop];
+		}
+	}, this);
+
+	// Clear previous run
+	if (this.boostClear) {
+		this.boostClear();
+	}
+			
+};
+
+Series.prototype.hasExtremes = function (checkX) {
+	var options = this.options,
+		data = options.data,
+		xAxis = this.xAxis && this.xAxis.options,
+		yAxis = this.yAxis && this.yAxis.options;
+
+	return 	data.length > (options.boostThreshold || Number.MAX_VALUE) &&
+			isNumber(yAxis.min) && isNumber(yAxis.max) &&
+			(!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
+};
+
+/**
+ * If implemented in the core, parts of this can probably be
+ * shared with other similar methods in Highcharts.
+ */
+Series.prototype.destroyGraphics = function () {
+	var series = this,
+		points = this.points,
+		point,
+		i;
+
+	if (points) {
+		for (i = 0; i < points.length; i = i + 1) {
+			point = points[i];
+			if (point && point.destroyElements) {
+				point.destroyElements(); // #7557
+			}
+		}
+	}
+
+	each(['graph', 'area', 'tracker'], function (prop) {
+		if (series[prop]) {
+			series[prop] = series[prop].destroy();
+		}
+	});
+};
+
+
+
 /*
  * Returns true if the current browser supports webgl
  */
-function hasWebGLSupport() {
+H.hasWebGLSupport = function () {
 	var i = 0,
 		canvas,
 		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
@@ -2325,16 +2877,27 @@ function hasWebGLSupport() {
 	}
 
 	return false;
-}
+};
 
 /* Used for treemap|heatmap.drawPoints */
 function pointDrawHandler(proceed) {
-	if (!isSeriesBoosting(this)) {
+	var enabled = true,
+		renderer;
+
+	if (this.chart.options && this.chart.options.boost) {
+		enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
+			true :
+			this.chart.options.boost.enabled;
+	}
+
+	if (!enabled || !this.isSeriesBoosting) {
 		return proceed.call(this);
 	}
 
-	//Make sure we have a valid OGL context
-	var renderer = createAndAttachRenderer(this.chart, this);
+	this.chart.isBoosting = true;
+
+	// Make sure we have a valid OGL context
+	renderer = createAndAttachRenderer(this.chart, this);
 
 	if (renderer) {
 		allocateIfNotSeriesBoosting(renderer, this);
@@ -2344,10 +2907,10 @@ function pointDrawHandler(proceed) {
 	renderIfNotSeriesBoosting(renderer, this);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 // We're wrapped in a closure, so just return if there's no webgl support
 
-if (!hasWebGLSupport()) {
+if (!H.hasWebGLSupport()) {
 	if (typeof H.initCanvasBoost !== 'undefined') {
 		// Fallback to canvas boost
 		H.initCanvasBoost();
@@ -2356,66 +2919,12 @@ if (!hasWebGLSupport()) {
 	}
 } else {
 
-	////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 	// GL-SPECIFIC WRAPPINGS FOLLOWS
 
-	/** If the series is a heatmap or treemap, or if the series is not boosting
-	 *  do the default behaviour. Otherwise, process if the series has no
-	 *  extremes.
-	 */
-	wrap(Series.prototype, 'processData', function (proceed) {
-		// If this is a heatmap, do default behaviour
-		if (!isSeriesBoosting(this) ||
-			this.type === 'heatmap' ||
-			this.type === 'treemap') {
-			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-		}
-
-		if (!this.hasExtremes || !this.hasExtremes(true)) {
-			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-		}
-	});
+	
 
 	H.extend(Series.prototype, {
-		pointRange: 0,
-		directTouch: false,
-		allowDG: false, // No data grouping, let boost handle large data
-		hasExtremes: function (checkX) {
-			var options = this.options,
-				data = options.data,
-				xAxis = this.xAxis && this.xAxis.options,
-				yAxis = this.yAxis && this.yAxis.options;
-
-			return 	data.length > (options.boostThreshold || Number.MAX_VALUE) &&
-					isNumber(yAxis.min) && isNumber(yAxis.max) &&
-					(!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
-		},
-
-		/**
-		 * If implemented in the core, parts of this can probably be
-		 * shared with other similar methods in Highcharts.
-		 */
-		destroyGraphics: function () {
-			var series = this,
-				points = this.points,
-				point,
-				i;
-
-			if (points) {
-				for (i = 0; i < points.length; i = i + 1) {
-					point = points[i];
-					if (point && point.graphic) {
-						point.graphic = point.graphic.destroy();
-					}
-				}
-			}
-
-			each(['graph', 'area', 'tracker'], function (prop) {
-				if (series[prop]) {
-					series[prop] = series[prop].destroy();
-				}
-			});
-		},
 
 		renderCanvas: function () {
 			var series = this,
@@ -2424,11 +2933,8 @@ if (!hasWebGLSupport()) {
 				chart = series.chart,
 				xAxis = this.xAxis,
 				yAxis = this.yAxis,
-				//ctx,
-				//c = 0,
 				xData = options.xData || series.processedXData,
 				yData = options.yData || series.processedYData,
-
 				rawData = options.data,
 				xExtremes = xAxis.getExtremes(),
 				xMin = xExtremes.min,
@@ -2453,9 +2959,12 @@ if (!hasWebGLSupport()) {
 				maxVal,
 				minI,
 				maxI,
+				boostOptions,
+
+				xDataFull = this.xData || this.options.xData || this.processedXData || false,
 
 				addKDPoint = function (clientX, plotY, i) {
-					//Shaves off about 60ms compared to repeated concatination
+					// Shaves off about 60ms compared to repeated concatination
 					index = clientX + ',' + plotY;
 
 					// The k-d tree requires series points.
@@ -2470,6 +2979,7 @@ if (!hasWebGLSupport()) {
 						}
 
 						points.push({
+							x: xDataFull ? xDataFull[cropStart + i] : false,
 							clientX: clientX,
 							plotX: clientX,
 							plotY: plotY,
@@ -2481,22 +2991,24 @@ if (!hasWebGLSupport()) {
 			// Get or create the renderer
 			renderer = createAndAttachRenderer(chart, series);
 
+			chart.isBoosting = true;
+
+			boostOptions = renderer.settings;
+
 			if (!this.visible) {
-				if (!isChartSeriesBoosting(chart) && renderer) {
-					renderer.clear();
-					this.image.attr({ href: '' });
-				}
 				return;
 			}
 
 			// If we are zooming out from SVG mode, destroy the graphics
 			if (this.points || this.graph) {
+
+				this.animate = null;
 				this.destroyGraphics();
 			}
 
 			// If we're rendering per. series we should create the marker groups
 			// as usual.
-			if (!isChartSeriesBoosting(chart)) {
+			if (!chart.isChartSeriesBoosting()) {
 				this.markerGroup = series.plotGroup(
 					'markerGroup',
 					'markers',
@@ -2505,8 +3017,14 @@ if (!hasWebGLSupport()) {
 					chart.seriesGroup
 				);
 			} else {
-				//Use a single group for the markers
+				// Use a single group for the markers
 				this.markerGroup = chart.markerGroup;
+
+				// When switching from chart boosting mode, destroy redundant
+				// series boosting targets
+				if (this.renderTarget) {
+					this.renderTarget = this.renderTarget.destroy();
+				}
 			}
 
 			points = this.points = [];
@@ -2519,7 +3037,7 @@ if (!hasWebGLSupport()) {
 				renderer.pushSeries(series);
 				// Perform the actual renderer if we're on series level
 				renderIfNotSeriesBoosting(renderer, this, chart);
-				//console.log(series, chart);
+				// console.log(series, chart);
 			}
 
 			/* This builds the KD-tree */
@@ -2609,24 +3127,28 @@ if (!hasWebGLSupport()) {
 
 			function doneProcessing() {
 				fireEvent(series, 'renderedCanvas');
-				// Pass tests in Pointer.
-				// Replace this with a single property, and replace when zooming
-				// in below boostThreshold.
-				series.directTouch = false;
-				series.options.stickyTracking = true;
-
+				
 				// Go back to prototype, ready to build
 				delete series.buildKDTree;
 				series.buildKDTree();
+
+				if (boostOptions.debug.timeKDTree) {
+					console.timeEnd('kd tree building'); // eslint-disable-line no-console
+				}
 			}
 
-			// Loop over the points to build the k-d tree
-			eachAsync(
-				isStacked ? series.data : (xData || rawData),
-				processPoint,
-				doneProcessing,
-				chart.renderer.forExport ? Number.MAX_VALUE : undefined
-			);
+			// Loop over the points to build the k-d tree - skip this if exporting
+			if (!chart.renderer.forExport) {
+				if (boostOptions.debug.timeKDTree) {
+					console.time('kd tree building'); // eslint-disable-line no-console
+				}
+
+				H.eachAsync(
+					isStacked ? series.data : (xData || rawData),
+					processPoint,
+					doneProcessing
+				);
+			}
 		}
 	});
 
@@ -2641,7 +3163,6 @@ if (!hasWebGLSupport()) {
 		function (t) {
 			if (seriesTypes[t]) {
 				wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
-				seriesTypes[t].prototype.directTouch = false; // Use k-d-tree
 			}
 		}
 	);
@@ -2650,14 +3171,14 @@ if (!hasWebGLSupport()) {
 		// By default, the bubble series does not use the KD-tree, so force it
 		// to.
 		delete seriesTypes.bubble.prototype.buildKDTree;
-		seriesTypes.bubble.prototype.directTouch = false;
+		// seriesTypes.bubble.prototype.directTouch = false;
 
 		// Needed for markers to work correctly
 		wrap(
 			seriesTypes.bubble.prototype,
 			'markerAttribs',
 			function (proceed) {
-				if (isSeriesBoosting(this)) {
+				if (this.isSeriesBoosting) {
 					return false;
 				}
 				return proceed.apply(this, [].slice.call(arguments, 1));
@@ -2673,19 +3194,10 @@ if (!hasWebGLSupport()) {
 		sampling: true
 	});
 
+
 	extend(seriesTypes.column.prototype, {
 		fill: true,
 		sampling: true
-	});
-
-	wrap(Series.prototype, 'setVisible', function (proceed, vis) {
-		proceed.call(this, vis, false);
-		if (this.visible === false && this.ogl && this.canvas && this.image) {
-			this.ogl.clear();
-			this.image.attr({ href: '' });
-		} else {
-			this.chart.redraw();
-		}
 	});
 
 	/**
@@ -2695,40 +3207,49 @@ if (!hasWebGLSupport()) {
 
 		/* Convert chart-level canvas to image */
 		function canvasToSVG() {
-			if (chart.ogl && isChartSeriesBoosting(chart)) {
+			if (chart.ogl && chart.isChartSeriesBoosting()) {
 				chart.ogl.render(chart);
 			}
 		}
 
 		/* Clear chart-level canvas */
 		function preRender() {
+			// Reset force state
+			chart.boostForceChartBoost = undefined;
+			chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
+			chart.isBoosting = false;
 
-			if (!isChartSeriesBoosting(chart) && chart.didBoost) {
+			if (!chart.isChartSeriesBoosting() && chart.didBoost) {
 				chart.didBoost = false;
-				// Clear the canvas
-				if (chart.image) {
-					chart.image.attr({ href: '' });
-				}
 			}
 
-			if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
+			// Clear the canvas
+			if (chart.boostClear) {
+				chart.boostClear();
+			}
+
+			if (chart.canvas && chart.ogl && chart.isChartSeriesBoosting()) {
 				chart.didBoost = true;
 
 				// Allocate
 				chart.ogl.allocateBuffer(chart);
 			}
 
-			//see #6518 + #6739
+			// see #6518 + #6739
 			if (chart.markerGroup && chart.xAxis && chart.xAxis.length > 0 && chart.yAxis && chart.yAxis.length > 0) {
 				chart.markerGroup.translate(
 					chart.xAxis[0].pos,
 					chart.yAxis[0].pos
 				);
 			}
-
 		}
 
 		addEvent(chart, 'predraw', preRender);
 		addEvent(chart, 'render', canvasToSVG);
+
+		// addEvent(chart, 'zoom', function () {
+		// 	chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
+		// });
+
 	});
 } // if hasCanvasSupport

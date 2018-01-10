@@ -46,15 +46,6 @@ function getDistance(pt1, pt2) {
 }
 
 
-// Internationalization
-Highcharts.setOptions({
-    lang: {
-        thousandsSep: ' '
-    }
-});
-
-
-
 var xml = document.getElementById('data'),
     data = [],
     lastPoint,

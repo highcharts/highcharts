@@ -72,9 +72,29 @@ QUnit.test('Zoom and pan key', function (assert) {
         true,
         'Has panned'
     );
-    assert.strictEqual(
+    assert.close(
         chart.xAxis[0].max - chart.xAxis[0].min,
         firstZoom.max - firstZoom.min,
+        0.00001, // Roundoff error in Firefox
+        'Has preserved range'
+    );
+
+    // Pan
+    test.mousedown(100, 200, { shiftKey: true });
+    for (var x = 110; x < 400; x += 10) {
+        test.mousemove(x, 100, { shiftKey: true });
+    }
+    test.mouseup();
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Chart should not pan out of data bounds (#7451)'
+    );
+    assert.close(
+        chart.xAxis[0].max - chart.xAxis[0].min,
+        firstZoom.max - firstZoom.min,
+        0.00001, // Roundoff error in Firefox
         'Has preserved range'
     );
 

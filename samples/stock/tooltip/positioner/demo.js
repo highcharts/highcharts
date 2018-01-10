@@ -10,7 +10,8 @@ Highcharts.stockChart('container', {
         positioner: function () {
             return { x: 10, y: 35 };
         },
-        shadow: false
+        shadow: false,
+        split: false
     },
 
     rangeSelector: {

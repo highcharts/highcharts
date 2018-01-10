@@ -217,15 +217,14 @@ var arrayMax = H.arrayMax,
 var seriesProto = Series.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
-	baseDestroy = seriesProto.destroy,
 
 	/** 
 	 * 
 	 */
 	commonOptions = {
 		approximation: 'average', // average, open, high, low, close, sum
-		//enabled: null, // (true for stock charts, false for basic),
-		//forced: undefined,
+		// enabled: null, // (true for stock charts, false for basic),
+		// forced: undefined,
 		groupPixelWidth: 2,
 		// the first one is the point or start value, the second is the start value if we're dealing with range,
 		// the third one is the end value if dealing with a range
@@ -308,7 +307,7 @@ var seriesProto = Series.prototype,
 	 * only of numbers. In case null values belong to the group, the property
 	 * .hasNulls will be set to true on the array.
 	 */
-	approximations = {
+	approximations = H.approximations = {
 		sum: function (arr) {
 			var len = arr.length,
 				ret;
@@ -349,7 +348,9 @@ var seriesProto = Series.prototype,
 				ret.push(approximations.average(arr));
 			});
 
-			return ret;
+			// Return undefined when first elem. is undefined and let
+			// sum method handle null (#7377)
+			return ret[0] === undefined ? undefined : ret;
 		},
 		open: function (arr) {
 			return arr.length ? arr[0] : (arr.hasNulls ? null : undefined);
@@ -387,7 +388,6 @@ var seriesProto = Series.prototype,
 			// else, return is undefined
 		}
 	};
-
 
 /**
  * Takes parallel arrays of x and y data and groups the data into intervals 
@@ -530,7 +530,9 @@ seriesProto.processData = function () {
 			pick(dataGroupingOptions.enabled, chart.options.isStock),
 		visible = series.visible || !chart.options.chart.ignoreHiddenSeries,
 		hasGroupedData,
-		skip;
+		skip,
+		lastDataGrouping = this.currentDataGrouping,
+		currentDataGrouping;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
@@ -576,7 +578,7 @@ seriesProto.processData = function () {
 
 			// prevent the smoothed data to spill out left and right, and make
 			// sure data is not shifted to the left
-			if (dataGroupingOptions.smoothed) {
+			if (dataGroupingOptions.smoothed && groupedXData.length) {
 				i = groupedXData.length - 1;
 				groupedXData[i] = Math.min(groupedXData[i], xMax);
 				while (i-- && i > 0) {
@@ -586,7 +588,7 @@ seriesProto.processData = function () {
 			}
 
 			// record what data grouping values were used
-			series.currentDataGrouping = groupPositions.info;
+			currentDataGrouping = groupPositions.info;
 			series.closestPointRange = groupPositions.info.totalRange;
 			series.groupMap = groupedData[2];
 
@@ -603,9 +605,14 @@ seriesProto.processData = function () {
 			series.processedXData = groupedXData;
 			series.processedYData = groupedYData;
 		} else {
-			series.currentDataGrouping = series.groupMap = null;
+			series.groupMap = null;
 		}
 		series.hasGroupedData = hasGroupedData;
+		series.currentDataGrouping = currentDataGrouping;
+
+		series.preventGraphAnimation = 
+			(lastDataGrouping && lastDataGrouping.totalRange) !==
+			(currentDataGrouping && currentDataGrouping.totalRange);
 	}
 };
 
@@ -653,6 +660,7 @@ wrap(Point.prototype, 'update', function (proceed) {
  */
 wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, labelConfig, isFooter) {
 	var tooltip = this,
+		time = this.chart.time,
 		series = labelConfig.series,
 		options = series.options,
 		tooltipOptions = series.tooltipOptions,
@@ -660,7 +668,6 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 		xDateFormat = tooltipOptions.xDateFormat,
 		xDateFormatEnd,
 		xAxis = series.xAxis,
-		dateFormat = H.dateFormat,
 		currentDataGrouping,
 		dateTimeLabelFormats,
 		labelFormats,
@@ -690,16 +697,19 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 		}
 
 		// now format the key
-		formattedKey = dateFormat(xDateFormat, labelConfig.key);
+		formattedKey = time.dateFormat(xDateFormat, labelConfig.key);
 		if (xDateFormatEnd) {
-			formattedKey += dateFormat(xDateFormatEnd, labelConfig.key + currentDataGrouping.totalRange - 1);
+			formattedKey += time.dateFormat(
+				xDateFormatEnd,
+				labelConfig.key + currentDataGrouping.totalRange - 1
+			);
 		}
 
 		// return the replaced format
 		return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
 			point: extend(labelConfig.point, { key: formattedKey }),
 			series: series
-		});
+		}, time);
 	
 	}
 
@@ -708,20 +718,12 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 });
 
 /**
- * Extend the series destroyer
+ * Destroy grouped data on series destroy
  */
-seriesProto.destroy = function () {
-	var series = this,
-		groupedData = series.groupedData || [],
-		i = groupedData.length;
-
-	while (i--) {
-		if (groupedData[i]) {
-			groupedData[i].destroy();
-		}
-	}
-	baseDestroy.apply(series);
-};
+wrap(seriesProto, 'destroy', function (proceed) {
+	this.destroyGroupedData();
+	proceed.call(this);
+});
 
 
 // Handle default options for data grouping. This must be set at runtime because some series types are

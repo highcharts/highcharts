@@ -1,11 +1,15 @@
 QUnit.test('Verify that references to unused clip paths are removed after animation',
     function (assert) {
+
+        // Hijack animation
+        var clock = lolexInstall();
+
         var done = assert.async(2),
             // Get list of unique clip path references
             getClipPathSet = function (chart) {
                 var clipPathList = [];
                 Highcharts.each(
-                    chart.container.querySelectorAll('[clip-path]'),
+                    chart.container.querySelectorAll('[clip-path],[CLIP-PATH]'),
                     function (clipPath) {
                         var p = clipPath.getAttribute('clip-path');
                         if (p !== 'none' && Highcharts.inArray(p, clipPathList) < 0) {
@@ -47,5 +51,9 @@ QUnit.test('Verify that references to unused clip paths are removed after animat
                 'There are only references to one clipPath after animation'
             );
             done();
-        }, 10);
+        }, 20);
+
+
+        // Reset animation
+        lolexRunAndUninstall(clock);
     });

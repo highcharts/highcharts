@@ -3,11 +3,11 @@ QUnit.test('Positioning labels according to real points', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
                 data: [
-                {y: 1, id: 'id1'}, 
-                {y: 1, id: 'id2'}, 
-                {y: 3, id: 'id3'}, 
-                {y: 4, id: 'id4'}, 
-                {y: 5, id: 'id5'}
+                    { y: 1, id: 'id1' },
+                    { y: 1, id: 'id2' },
+                    { y: 3, id: 'id3' },
+                    { y: 4, id: 'id4' },
+                    { y: 5, id: 'id5' }
                 ]
             }],
 
@@ -54,7 +54,6 @@ QUnit.test('Positioning labels according to real points', function (assert) {
     assert.strictEqual(Math.round(label1.x), Math.round(x1), 'x position - left aligned with no offset');
     assert.strictEqual(Math.round(label1.y), Math.round(y1), 'y position - top aligned with no offset');
 
-    
     var p2 = chart.series[0].data[1],
         x2 = Math.round(xAxis.toPixels(p2.x) + 20),
         y2 = Math.round(yAxis.toPixels(p2.y) - 20),
@@ -63,18 +62,15 @@ QUnit.test('Positioning labels according to real points', function (assert) {
     assert.strictEqual(Math.round(label2.x), x2, 'x position - left aligned with x offset');
     assert.strictEqual(Math.round(label2.y), y2, 'y position - top aligned with y offset');
 
-
     var p3 = chart.series[0].data[2],
         label3 = chart.annotations[0].labels[2],
         x3 = Math.round(xAxis.toPixels(p3.x) - Math.round(label3.width / 2)),
         y3 = Math.round(yAxis.toPixels(p3.y) - label3.height - 20);
 
-    assert.strictEqual(Math.round(label3.x), x3, 'x position - distance');
-    assert.strictEqual(Math.round(label3.y), y3, 'y position - distance');
+    assert.close(Math.round(label3.x), x3, 2, 'x position - distance');
+    assert.close(Math.round(label3.y), y3, 1, 'y position - distance');
 
-
-    var p4 = chart.series[0].data[3],
-        label4 = chart.annotations[0].labels[3],
+    var label4 = chart.annotations[0].labels[3],
         x4 = 0,
         y4 = 0;
 
@@ -91,11 +87,11 @@ QUnit.test('Positioning labels according to real points - inverted chart', funct
 
             series: [{
                 data: [
-                {y: 1, id: 'id1'}, 
-                {y: 1, id: 'id2'}, 
-                {y: 3, id: 'id3'}, 
-                {y: 4, id: 'id4'}, 
-                {y: 5, id: 'id5'}
+                    { y: 1, id: 'id1' },
+                    { y: 1, id: 'id2' },
+                    { y: 3, id: 'id3' },
+                    { y: 4, id: 'id4' },
+                    { y: 5, id: 'id5' }
                 ]
             }],
 
@@ -142,7 +138,7 @@ QUnit.test('Positioning labels according to real points - inverted chart', funct
     assert.strictEqual(Math.round(label1.x), Math.round(x1), 'x position - left aligned with no offset');
     assert.strictEqual(Math.round(label1.y), Math.round(y1), 'y position - top aligned with no offset');
 
-    
+
     var p2 = chart.series[0].data[1],
         x2 = Math.round(yAxis.toPixels(p2.y) + 20),
         y2 = Math.round(xAxis.toPixels(p2.x) - 20),
@@ -155,14 +151,13 @@ QUnit.test('Positioning labels according to real points - inverted chart', funct
     var p3 = chart.series[0].data[2],
         label3 = chart.annotations[0].labels[2],
         x3 = Math.round(yAxis.toPixels(p3.y) + 20),
-        y3 = Math.round(xAxis.toPixels(p3.x) - label3.height / 2);
+        y3 = Math.round(Math.round(xAxis.toPixels(p3.x)) - label3.height / 2);
 
     assert.strictEqual(Math.round(label3.x), x3, 'x position - distance');
     assert.strictEqual(Math.round(label3.y), y3, 'y position - distance');
 
 
-    var p4 = chart.series[0].data[3],
-        label4 = chart.annotations[0].labels[3],
+    var label4 = chart.annotations[0].labels[3],
         x4 = 20,
         y4 = 20;
 
@@ -191,20 +186,14 @@ QUnit.test('Positioning labels according to mock points', function (assert) {
             y: 100
         },
 
-        p4 = {
-            x: 250,
-            y: 1,
-            yAxis: 0
-        },
-
         chart = Highcharts.chart('container', {
             series: [{
                 data: [
-                {y: 1, id: 'id1'}, 
-                {y: 1, id: 'id2'}, 
-                {y: 3, id: 'id3'}, 
-                {y: 4, id: 'id4'}, 
-                {y: 5, id: 'id5'}
+                    { y: 1, id: 'id1' },
+                    { y: 1, id: 'id2' },
+                    { y: 3, id: 'id3' },
+                    { y: 4, id: 'id4' },
+                    { y: 5, id: 'id5' }
                 ]
             }],
 
@@ -243,7 +232,7 @@ QUnit.test('Positioning labels according to mock points', function (assert) {
 
         xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0];
-    
+
     var label1 = chart.annotations[0].labels[0],
         x1 = Math.round(xAxis.toPixels(p1.x) - label1.width),
         y1 = Math.round(yAxis.toPixels(p1.y) - label1.height);
@@ -296,12 +285,6 @@ QUnit.test('Positioning labels according to mock points - inverted chart', funct
             y: 100
         },
 
-        p4 = {
-            x: 250,
-            y: 1,
-            yAxis: 0
-        },
-
         chart = Highcharts.chart('container', {
             chart: {
                 inverted: true
@@ -309,11 +292,11 @@ QUnit.test('Positioning labels according to mock points - inverted chart', funct
 
             series: [{
                 data: [
-                {y: 1, id: 'id1'}, 
-                {y: 1, id: 'id2'}, 
-                {y: 3, id: 'id3'}, 
-                {y: 4, id: 'id4'}, 
-                {y: 5, id: 'id5'}
+                    { y: 1, id: 'id1' },
+                    { y: 1, id: 'id2' },
+                    { y: 3, id: 'id3' },
+                    { y: 4, id: 'id4' },
+                    { y: 5, id: 'id5' }
                 ]
             }],
 
@@ -353,7 +336,7 @@ QUnit.test('Positioning labels according to mock points - inverted chart', funct
 
         xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0];
-    
+
     var label1 = chart.annotations[0].labels[0],
         x1 = Math.round(yAxis.toPixels(p1.y) - label1.width),
         y1 = Math.round(xAxis.toPixels(p1.x) - label1.height);

@@ -42,6 +42,9 @@ $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
     font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
     font-size: 12px;
 }
+.highcharts-root {
+    display: block;
+}
 .highcharts-root text {
     stroke-width: 0;
 }
@@ -148,6 +151,10 @@ $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
     fill: $neutral-color-3;
     fill-opacity: 0.85;
 }
+.highcharts-tooltip-box .highcharts-label-box {
+    fill: $neutral-color-3;
+    fill-opacity: 0.85;
+}
 
 .highcharts-selection-marker {
     fill: $highlight-color-80;
@@ -218,7 +225,7 @@ g.highcharts-series,
     fill: none;
     stroke-width: 0;
 }
-.highcharts-data-label text {
+.highcharts-data-label text, text.highcharts-data-label {
     fill: $neutral-color-80;
 }
 .highcharts-data-label-connector {
@@ -624,7 +631,9 @@ input.highcharts-range-selector {
 .highcharts-drilldown-point {
     cursor: pointer;
 }
-.highcharts-drilldown-data-label text, .highcharts-drilldown-axis-label {
+.highcharts-drilldown-data-label text,
+text.highcharts-drilldown-data-label,
+.highcharts-drilldown-axis-label {
     cursor: pointer;
     fill: $highlight-color-100;
     font-weight: bold;
@@ -636,4 +645,26 @@ input.highcharts-range-selector {
     font-weight: bold;
     font-size: 12px;
     fill: $neutral-color-60;
+}
+
+/* Drag-panes module */
+.highcharts-axis-resizer {
+    cursor: ns-resize;
+    stroke: black;
+    stroke-width: 2px;
+}
+
+/* Bullet type series */
+.highcharts-bullet-target {
+    stroke-width: 0;
+}
+
+/* Lineargauge type series */
+.highcharts-lineargauge-target {
+	stroke-width: 1px;
+	stroke: $neutral-color-80;
+}
+.highcharts-lineargauge-target-line {
+	stroke-width: 1px;
+    stroke: $neutral-color-80;
 }

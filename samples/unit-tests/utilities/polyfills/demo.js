@@ -1,9 +1,8 @@
 
-
-// Delete IE > 8 functions
-delete Array.prototype.map;
-
 QUnit.test('Highcharts', function (assert) {
+
+    var map = Array.prototype.map;
+    delete Array.prototype.map;
 
     var chart = Highcharts.chart('container', {
         series: [{
@@ -16,9 +15,13 @@ QUnit.test('Highcharts', function (assert) {
         'Chart is created'
     );
 
+    Array.prototype.map = map; // eslint-disable-line no-extend-native
 });
 
 QUnit.test('Highstock', function (assert) {
+
+    var map = Array.prototype.map;
+    delete Array.prototype.map;
 
     var chart = Highcharts.stockChart('container', {
         series: [{
@@ -31,9 +34,14 @@ QUnit.test('Highstock', function (assert) {
         'Chart is created'
     );
 
+    Array.prototype.map = map; // eslint-disable-line no-extend-native
+
 });
 
 QUnit.test('Highmaps', function (assert) {
+
+    var map = Array.prototype.map;
+    delete Array.prototype.map;
 
     var chart = Highcharts.mapChart('container', {
         series: [{
@@ -45,5 +53,7 @@ QUnit.test('Highmaps', function (assert) {
         typeof chart === 'object',
         'Chart is created'
     );
+
+    Array.prototype.map = map; // eslint-disable-line no-extend-native
 
 });

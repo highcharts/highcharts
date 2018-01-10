@@ -21,12 +21,23 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: [100, 300, {
+        data: [{
+            y: 100,
+            dataLabels: {
+                align: 'right',
+                rotation: 45,
+                shape: null
+            }
+        }, {
+            y: 300
+        }, {
             y: 500,
             dataLabels: {
                 className: 'highlight'
             }
-        }, 400]
+        }, {
+            y: 400
+        }]
     }]
 
 });

@@ -17,6 +17,7 @@ var attr = H.attr,
 	isFirefox = H.isFirefox,
 	isMS = H.isMS,
 	isWebKit = H.isWebKit,
+	pick = H.pick,
 	pInt = H.pInt,
 	SVGElement = H.SVGElement,
 	SVGRenderer = H.SVGRenderer,
@@ -60,12 +61,6 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 	htmlGetBBox: function () {
 		var wrapper = this,
 			element = wrapper.element;
-
-		// faking getBBox in exported SVG in legacy IE (is this a duplicate of
-		// the fix for #1079?)
-		if (element.nodeName === 'text') {
-			element.style.position = 'absolute';
-		}
 
 		return {
 			x: element.offsetLeft,
@@ -202,16 +197,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey =
-				isMS ?
-					'-ms-transform' :
-					isWebKit ?
-						'-webkit-transform' :
-						isFirefox ?
-							'MozTransform' :
-							win.opera ?
-								'-o-transform' :
-								'';
+			cssTransformKey = this.renderer.getTransformKey();
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform =
 			'rotate(' + rotation + 'deg)';
@@ -232,6 +218,19 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
 // Extend SvgRenderer for useHTML option.
 extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
+
+	getTransformKey: function () {
+		return isMS && !/Edge/.test(win.navigator.userAgent) ?
+			'-ms-transform' :
+			isWebKit ?
+				'-webkit-transform' :
+				isFirefox ?
+					'MozTransform' :
+					win.opera ?
+						'-o-transform' :
+						'';
+	},
+
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the
 	 * SVG renderer through the useHTML option.
@@ -266,7 +265,8 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 			if (value !== element.innerHTML) {
 				delete this.bBox;
 			}
-			element.innerHTML = this.textStr = value;
+			this.textStr = value;
+			element.innerHTML = pick(value, '');
 			wrapper.htmlUpdateTransform();
 		};
 
@@ -343,6 +343,22 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 							var htmlGroupStyle,
 								cls = attr(parentGroup.element, 'class');
 
+							// Common translate setter for X and Y on the HTML
+							// group. Reverted the fix for #6957 du to
+							// positioning problems and offline export (#7254,
+							// #7280, #7529)
+							function translateSetter(value, key) {
+								parentGroup[key] = value;
+
+								if (key === 'translateX') {
+									htmlGroupStyle.left = value + 'px';
+								} else {
+									htmlGroupStyle.top = value + 'px';
+								}
+								
+								parentGroup.doTransform = true;
+							}
+
 							if (cls) {
 								cls = { className: cls };
 							} // else null
@@ -371,10 +387,17 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 							// Set listeners to update the HTML div's position
 							// whenever the SVG group position is changed.
 							extend(parentGroup, {
-								classSetter: function (value) {
-									this.element.setAttribute('class', value);
-									htmlGroup.className = value;
-								},
+								// (#7287) Pass htmlGroup to use
+								// the related group 
+								classSetter: (function (htmlGroup) {
+									return function (value) {
+										this.element.setAttribute(
+											'class',
+											value
+										);
+										htmlGroup.className = value;
+									};
+								}(htmlGroup)),
 								on: function () {
 									if (parents[0].div) { // #6418
 										wrapper.on.apply(
@@ -384,16 +407,8 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 									}
 									return parentGroup;
 								},
-								translateXSetter: function (value, key) {
-									htmlGroupStyle.left = value + 'px';
-									parentGroup[key] = value;
-									parentGroup.doTransform = true;
-								},
-								translateYSetter: function (value, key) {
-									htmlGroupStyle.top = value + 'px';
-									parentGroup[key] = value;
-									parentGroup.doTransform = true;
-								}
+								translateXSetter: translateSetter,
+								translateYSetter: translateSetter
 							});
 							addSetters(parentGroup, htmlGroupStyle);
 						});

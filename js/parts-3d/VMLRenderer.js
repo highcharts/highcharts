@@ -8,7 +8,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
-import '../parts/VmlRenderer.js';
 /*= if (build.classic) { =*/
 var Axis = H.Axis,
 	SVGRenderer = H.SVGRenderer,
@@ -29,7 +28,8 @@ if (VMLRenderer) {
 	VMLRenderer.prototype.toLinePath = SVGRenderer.prototype.toLinePath;
 	VMLRenderer.prototype.toLineSegments = SVGRenderer.prototype.toLineSegments;
 
-	VMLRenderer.prototype.createElement3D = SVGRenderer.prototype.createElement3D;
+	VMLRenderer.prototype.createElement3D =
+		SVGRenderer.prototype.createElement3D;
 
 	VMLRenderer.prototype.arc3d = function (shapeArgs) {
 		var result = SVGRenderer.prototype.arc3d.call(this, shapeArgs);

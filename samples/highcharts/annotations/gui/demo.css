@@ -1,0 +1,17 @@
+#container {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+fieldset {
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+input[type="text"] {
+  width: 130px;
+}
+
+ul {
+  list-style-type: none;
+}

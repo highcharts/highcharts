@@ -4,17 +4,19 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-/* global win */
-var doc = win.document,
-	SVG_NS = 'http://www.w3.org/2000/svg',
-	userAgent = (win.navigator && win.navigator.userAgent) || '',
-	svg = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
-	isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,
-	vml = !svg,
-	isFirefox = /Firefox/.test(userAgent),
-	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38
+/* global win, window */
 
-var Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
+// glob is a temporary fix to allow our es-modules to work.
+var glob = typeof win === 'undefined' ? window : win,
+	doc = glob.document,
+	SVG_NS = 'http://www.w3.org/2000/svg',
+	userAgent = (glob.navigator && glob.navigator.userAgent) || '',
+	svg = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
+	isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera,
+	isFirefox = /Firefox/.test(userAgent),
+	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38;
+
+var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
 	product: '@product.name@',
 	version: '@product.version@',
 	deg2rad: Math.PI * 2 / 360,
@@ -30,8 +32,7 @@ var Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
 	seriesTypes: {},
 	symbolSizes: {},
 	svg: svg,
-	vml: vml,
-	win: win,
+	win: glob,
 	marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	noop: function () {
 		return undefined;

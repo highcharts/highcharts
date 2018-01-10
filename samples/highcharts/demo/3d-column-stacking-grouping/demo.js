@@ -16,14 +16,21 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas'],
+        labels: {
+            skew3d: true,
+            style: {
+                fontSize: '16px'
+            }
+        }
     },
 
     yAxis: {
         allowDecimals: false,
         min: 0,
         title: {
-            text: 'Number of fruits'
+            text: 'Number of fruits',
+            skew3d: true
         }
     },
 

@@ -14,14 +14,13 @@ var exec = require('child_process').execSync;
 var logger = require('jsdoc/util/logger');
 var Doclet = require('jsdoc/doclet.js').Doclet;
 var fs = require('fs');
-var proc = require(hcRoot + '/assembler/process.js');
+var getPalette = require('highcharts-assembler/src/process.js').getPalette;
 var options = {
     _meta: {
         commit: '',
         branch: ''
     }
 };
-
 
 function getLocation(option) {
     return {
@@ -120,23 +119,15 @@ function decorateOptions(parent, target, option, filename) {
     option.highcharts.fullname = parent + index;
     option.highcharts.name = index;
     option.highcharts.isOption = true;
-
-    // if (option.comment) {
-    //     option.comment = option.comment.replace('*/', '\n* @apioption ' + parent + index + '\n*/');
-    // } else {
-    //     option.comment = '/** @apioption ' + parent + index + ' */';
-    // }
 }
 
-function addToComment(comment, line) {
-    comment = comment || '';
-
-    return '/*' +
-            comment.replace('/*', '').replace('*/', '') +
-            '\n * ' +
-            line +
-            '\n*/'
-    ;
+function appendComment(node, lines) {
+  if (typeof node.comment !== 'undefined') {
+    node.comment = node.comment + '\n* ' + lines.join('\n* ');
+  } else {
+    node.comment = '* ' + lines.join('\n* ');
+  }
+  node.event = 'jsdocCommentFound';
 }
 
 function nodeVisitor(node, e, parser, currentSourceName) {
@@ -144,36 +135,38 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         args,
         target,
         parent,
-        comment,
         properties,
         fullPath,
-        s
+        s,
+        shouldIgnore = false
     ;
 
     if (node.highcharts && node.highcharts.isOption) {
-        if (e.comment) {
-            e.comment = e.comment.replace('*/', '\n* @optionparent ' + node.highcharts.fullname + '\n*/');
-        } else {
-            e.comment = '/** @optionparent ' + node.highcharts.fullname + ' */';
-        }
-        //if (node.highcharts.name === 'colors') {
-        //    console.log('tagged', node.highcharts.fullname);
-        //}
+
+      shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
+
+      if (shouldIgnore) {
         return;
+      } else {
+        appendComment(node, ['@optionparent ' + node.highcharts.fullname]);
+      }
+
+      return;
     }
 
     if (node.leadingComments && node.leadingComments.length > 0) {
-        comment = node.leadingComments[0].raw;
 
-        s = comment.indexOf('@optionparent');
+        if (!e.comment) {
+          e.comment = node.leadingComments[0].raw || node.leadingComments[0].value;
+        }
+
+        s = e.comment.indexOf('@optionparent');
 
         if (s >= 0) {
-            s = comment.substr(s).replace(/\*/g, '').trim();
+            s = e.comment.substr(s).replace(/\*/g, '').trim();
             fullPath = '';
 
             parent = s.split('\n')[0].trim().split(' ');
-
-            //console.log('doing optionparent:', currentSourceName, '->', parent.length > 1 ? parent[1] : 'root');
 
             if (parent && parent.length > 1) {
                 parent = parent[1].trim() || '';
@@ -182,6 +175,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 target = options;
 
                 s.forEach(function (p, i) {
+
                     fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
 
                     target[p] = target[p] || {};
@@ -204,8 +198,6 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 });
             } else {
                 parent = '';
-
-                //options.children = options.children || {};
                 target = options;
             }
 
@@ -256,28 +248,6 @@ function augmentOption(path, obj) {
 
     try {
 
-        // if (p.length === 1) {
-        //     current[p[0]] = current[p[0]] || {};
-        //     current[p[0]].doclet = {};
-        //     current[p[0]].meta = {};
-        //     current[p[0]].children = {};
-
-        //     Object.keys(obj).forEach(function (property) {
-        //         if (property !== 'comment' && property !== 'meta') {
-        //             current[p[0]].doclet[property] = obj[property];
-        //         }
-        //     });
-        //     return;
-        // }
-
-        // if (p.length === 1) {
-        //     if (current.children) {
-        //         current = current.children;
-        //     } else {
-        //         current = current.children = {};
-        //     }
-        // }
-
         p.forEach(function (thing, i) {
             if (i === p.length - 1) {
                 // Merge in stuff
@@ -299,17 +269,6 @@ function augmentOption(path, obj) {
                         current[thing].doclet[property] = obj[property];
                     }
                 });
-
-                //==current[thing].meta = current[thing].meta || {};
-
-                // if (obj && obj.meta) {
-                //     if (!current[thing].meta.filename === '??') {
-                //         current[thing].meta.filename = obj.meta.filename.substr(
-                //             obj.meta.filename.indexOf('highcharts/')
-                //         );
-                //     }
-                // }
-
                 return;
             }
 
@@ -320,6 +279,31 @@ function augmentOption(path, obj) {
     } catch (e) {
         console.log('ERROR deducing path', path);
     }
+}
+
+function removeOption(path) {
+	var current = options,
+		p = (path || '').split('.')
+	;
+
+	console.log('removing', path);
+
+	if (!obj) {
+		return;
+	}
+
+	p.some(function (thing, i) {
+		if (i === p.length - 1) {
+			delete curent[thing];
+			return true;
+		}
+
+		if (!current[thing]) {
+			return true;
+		}
+
+		current = current[thing].children;
+	});
 }
 
 /**
@@ -349,6 +333,8 @@ function resolveProductTypes(doclet, tagObj) {
 exports.defineTags = function (dictionary) {
     dictionary.defineTag('apioption', {
         onTagged: function (doclet, tagObj) {
+			if (doclet.ignored) return removeOption(tagObj.value);
+
             augmentOption(tagObj.value, doclet);
         }
     });
@@ -360,14 +346,20 @@ exports.defineTags = function (dictionary) {
 
             var text = valueObj.value;
 
-            var del = text.indexOf(' '),
-                name = text.substr(del).trim().replace(/\s\s+/g, ' ')
+            var del = text.search(/\s/),
+                name = text.substr(del).trim().replace(/\s\s+/g, ' '),
+                value = text.substr(0, del).trim(),
+                folder = hcRoot + /samples/ + value
             ;
 
             doclet.samples = doclet.samples || [];
+
+            if (!fs.existsSync(folder)) {
+                console.error('@sample does not exist: ' + value);
+            }
             doclet.samples.push({
                 name: name,
-                value: text.substr(0, del).trim(),
+                value: value,
                 products: valueObj.products
             });
         }
@@ -381,6 +373,8 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('optionparent', {
         onTagged: function (doclet, tagObj) {
+			if (doclet.ignored) return removeOption(tagObj.value);
+
             //doclet.fullname = tagObj.value;
             augmentOption(tagObj.value, doclet);
         }
@@ -388,7 +382,17 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('product', {
         onTagged: function (doclet, tagObj) {
-            doclet.products = tagObj.value.split(' ');
+			var adds = tagObj.value.split(' ');
+			doclet.products = doclet.products || [];
+
+			// Need to make sure we don't add dupes
+			adds.forEach(function (add) {
+				if (doclet.products.filter(function (e) {
+					return e === add;
+				}).length === 0) {
+					doclet.products.push(add);
+				}
+			});
         }
     });
 
@@ -416,6 +420,12 @@ exports.defineTags = function (dictionary) {
             });
         }
     });
+
+	dictionary.defineTag('ignore-option', {
+		onTagged: function (doclet, tagObj) {
+			doclet.ignored = true;
+		}
+	});
 
     dictionary.defineTag('default', {
         onTagged: function (doclet, tagObj) {
@@ -445,7 +455,39 @@ exports.defineTags = function (dictionary) {
         }
     });
 
-    dictionary.defineTag('extends', {
+	function handleValue(doclet, tagObj) {
+		doclet.values = tagObj.value;
+		return;
+
+		var t;
+		doclet.values = doclet.values || [];
+
+		// A lot of these options are defined as json.
+		try {
+			t = JSON.parse(tagObj.value);
+			if (Array.isArray(t)) {
+				doclet.values = doclet.values.concat(t);
+			} else {
+				doclet.values.push(t);
+			}
+		} catch (e) {
+			doclet.values.push(tabObj.value);
+		}
+	}
+
+	dictionary.defineTag('validvalue', {
+		onTagged: function (doclet, tag) {
+			handleValue(doclet, tag);
+		}
+	});
+
+	dictionary.defineTag('values', {
+		onTagged: function (doclet, tag) {
+			handleValue(doclet, tag);
+		}
+	});
+
+	dictionary.defineTag('extends', {
         onTagged: function (doclet, tagObj) {
             doclet.extends = tagObj.value;
         }
@@ -462,7 +504,7 @@ exports.astNodeVisitor = {
 
 exports.handlers = {
     beforeParse: function (e) {
-        var palette = proc.getPalette(hcRoot + '/css/highcharts.scss');
+        var palette = getPalette(hcRoot + '/css/highcharts.scss');
 
         Object.keys(palette).forEach(function (key) {
             var reg = new RegExp('\\$\\{palette\\.' + key + '\\}', 'g');

@@ -11,6 +11,9 @@ if (isset($_GET['styled'])) {
 }
 $styled = @$_SESSION['styled'];
 
+// Emulate legacy canvas boost
+$boostCanvas = false;
+
 
 $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);
@@ -19,8 +22,25 @@ $topDomain = $httpHost[sizeof($httpHost) - 1];
 
 // Get HTML and use dev server
 ob_start();
-@include("$path/demo.html");
+@include("$fsPath/demo.html");
 $html = ob_get_clean();
+
+if ($boostCanvas) {
+	$html = str_replace(
+		'<script src="https://code.highcharts.com/modules/boost.js"></script>',
+
+		'<script>delete window.WebGLRenderingContext</script>' .
+		'<script src="https://code.highcharts.com/modules/boost-canvas.js"></script>' .
+		'<script src="https://code.highcharts.com/modules/boost.js"></script>',
+		$html
+	);
+}
+
+$md = false;
+if (is_file("$fsPath/readme.md")) {
+	$md = file_get_contents("$fsPath/readme.md");
+}
+
 $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $html);
 
 
@@ -35,23 +55,38 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 	$html = str_replace("sonification.js?$time", 'sonification.js', $html);
 }
 
-// Highchart 5 preview
-$html = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $html);
 
 
 // Get CSS and use dev server
 ob_start();
-@include("$path/demo.css");
+@include("$fsPath/demo.css");
 $css = ob_get_clean();
 $css = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $css);
 
-// Highchart 5 preview
-$css = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $css);
+// Styled mode
 if ($styled) {
 	$html = str_replace("code.highcharts.$topDomain/js/", "code.highcharts.$topDomain/", $html); // some to classic
 	$html = str_replace("code.highcharts.$topDomain/", "code.highcharts.$topDomain/js/", $html); // all to styled
 	$css = "@import 'http://code.highcharts.$topDomain/css/highcharts.css';";
 }
+
+ob_start();
+@include("$fsPath/demo.js");
+$js = ob_get_clean();
+
+
+// Old IE
+//*
+$html .= "
+<!--[if lt IE 9]>
+<script src='http://code.highcharts.$topDomain/modules/oldie.js'></script>
+<![endif]-->
+";
+// */
+
+getGraphics($html);
+getGraphics($js);
+getGraphics($css);
 
 
 // Handle themes
@@ -70,11 +105,11 @@ $themes = array(
 
 
 function getResources() {
-    global $path, $styled, $topDomain;
+    global $fsPath, $styled, $topDomain;
 
     // No idea why file_get_contents doesn't work here...
     ob_start();
-    @include("$path/demo.details");
+    @include("$fsPath/demo.details");
     $s = ob_get_clean();
 
     $html = '';
@@ -114,6 +149,7 @@ function getResources() {
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Sample viewer - Highcharts</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
 		<?php if ($isUnitTest) { ?>
@@ -125,7 +161,7 @@ function getResources() {
 		<script type="text/javascript">
 		/* eslint-disable */
 		var sampleIndex,
-			path = '<?php echo $path ?>'.replace('../../samples/', ''),
+			path = '<?php echo $path ?>',
 			browser = <?php echo json_encode(getBrowser()); ?>,
 			controller = window.parent && window.parent.controller;
 
@@ -476,15 +512,29 @@ function getResources() {
 
 			<?php echo $html ?>
 			</div>
+
+			<?php if ($md) { ?>
+			<div class="description" id="description">
+			</div>
+			<script src="https://cdn.rawgit.com/showdownjs/showdown/1.8.5/dist/showdown.min.js"></script>
+			<script>
+				var converter = new showdown.Converter(),
+    				md = `<?php echo str_replace('`', '\`', $md) ?>`,
+    				html = converter.makeHtml(md);
+				document.getElementById('description').innerHTML = html;
+			</script>
+			
+			<?php } ?>
+
 			<script>
 			setUp();
-			<?php @include("$path/demo.js"); ?>
+			<?php echo $js; ?>
 			</script>
-			<?php if (is_file("$path/test-notes.html")) { ?>
+			<?php if (is_file("$fsPath/test-notes.html")) { ?>
 			<section class="test-notes">
 				<header>Test notes</header>
 				<div class="test-notes-content">
-					<?php include("$path/test-notes.html"); ?>
+					<?php include("$fsPath/test-notes.html"); ?>
 				</div>
 			</section>
 			<?php } else { ?>

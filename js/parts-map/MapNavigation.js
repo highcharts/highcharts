@@ -236,11 +236,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 	 *         Fix the zoom to this position if possible.
 	 */
 	mapZoom: function (howMuch, centerXArg, centerYArg, mouseX, mouseY) {
-		/*if (this.isMapZooming) {
-			this.mapZoomQueue = arguments;
-			return;
-		}*/
-
 		var chart = this,
 			xAxis = chart.xAxis[0],
 			xRange = xAxis.max - xAxis.min,
@@ -290,11 +285,14 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 		}
 
 		// Prevent zooming until this one is finished animating
-		/*chart.holdMapZoom = true;
+		/*
+		chart.holdMapZoom = true;
 		setTimeout(function () {
 			chart.holdMapZoom = false;
-		}, 200);*/
-		/*delay = animation ? animation.duration || 500 : 0;
+		}, 200);
+		*/
+		/*
+		delay = animation ? animation.duration || 500 : 0;
 		if (delay) {
 			chart.isMapZooming = true;
 			setTimeout(function () {
@@ -304,7 +302,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				}
 				chart.mapZoomQueue = null;
 			}, delay);
-		}*/
+		}
+		*/
 
 		chart.redraw();
 	}

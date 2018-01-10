@@ -7,8 +7,8 @@ QUnit.test('Show and hide duration', function (assert) {
     chart.showLoading();
     oldOp = parseFloat(chart.loadingDiv.style.opacity);
     assert.strictEqual(
-        oldOp,
-        0,
+        oldOp.toPrecision(3),
+        '0.00',
         'Starting...'
     );
 

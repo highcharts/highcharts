@@ -1,34 +1,31 @@
 /* eslint func-style:0 */
 
-
-var config = {
-    chart: {
-        type: 'column',
-        animation: false,
-        height: 300
-    },
-
-    plotOptions: {
-        series: {
-            animation: false
-        }
-    },
-
-    series: [{
-        data: [1, 3, 2, 4],
-        name: 'First'
-    }, {
-        data: [5, 3, 4, 1],
-        name: 'Last'
-    }]
-};
-
 QUnit.test('Option chart.type update', function (assert) {
-    var cfg = Highcharts.merge(config),
+    var cfg = {
+            chart: {
+                type: 'column',
+                animation: false,
+                height: 300
+            },
+
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+
+            series: [{
+                data: [1, 3, 2, 4],
+                name: 'First'
+            }, {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }]
+        },
         chart;
 
     cfg.series[1].type = 'pie';
-    chart = Highcharts.chart($('<div>').appendTo('#container')[0], cfg);
+    chart = Highcharts.chart('container', cfg);
 
     assert.strictEqual(
         chart.series[0].type,
@@ -111,7 +108,27 @@ QUnit.test('Option chart.type update', function (assert) {
 });
 
 QUnit.test('Chart.update with style', function (assert) {
-    var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config, {
+    var chart = Highcharts.chart('container', Highcharts.merge({
+        chart: {
+            type: 'column',
+            animation: false,
+            height: 300
+        },
+
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        },
+
+        series: [{
+            data: [1, 3, 2, 4],
+            name: 'First'
+        }, {
+            data: [5, 3, 4, 1],
+            name: 'Last'
+        }]
+    }, {
         chart: {
             style: {
                 fontFamily: 'verdana'
@@ -141,11 +158,31 @@ QUnit.test('Chart.update with style', function (assert) {
 });
 
 QUnit.test('Chart.update with with or height', function (assert) {
-    var cfg = Highcharts.merge(config),
+    var cfg = {
+            chart: {
+                type: 'column',
+                animation: false,
+                height: 300
+            },
+
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+
+            series: [{
+                data: [1, 3, 2, 4],
+                name: 'First'
+            }, {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }]
+        },
         chart;
     cfg.chart.width = 400;
     cfg.chart.height = 400;
-    chart = Highcharts.chart($('<div>').appendTo('#container')[0], cfg);
+    chart = Highcharts.chart('container', cfg);
 
     assert.strictEqual(
         chart.chartWidth,

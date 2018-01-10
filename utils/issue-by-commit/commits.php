@@ -11,33 +11,46 @@ try {
 } catch (Exception $e) {
 	$error = "Error connecting to the local git repo <b>highcharts.com</b>. Make sure git is running.<br/><br>" . $e->getMessage();
 }
-if (@$_POST['branch']) {
+if (@$_POST['branch'] || @$_POST['alltags'] == 'on') {
 	try {
 
 		// Post to session
 		$_SESSION['branch'] = @$_POST['branch'];
 		$_SESSION['after'] = @$_POST['after'];
 		$_SESSION['before'] = @$_POST['before'];
+		$_SESSION['alltags'] = @$_POST['alltags'];
 		
-		// Prepare command
-		//$cmd = 'log > ' . sys_get_temp_dir() . '/log.txt --format="%h|%ci|%s|%p" ';
-		$cmd = 'log > ' . sys_get_temp_dir() .
-			'/log.txt --graph --format="<br>%h<br>%ci<br>%s<br>%p" ';
 
-		// Date
-		if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $_SESSION['after'])) {
-			$cmd .= '--after={' . $_SESSION['after'] . '} --before={' . @$_SESSION['before'] . '}';
+		if (@$_POST['alltags'] == 'on') {
 
-		// Tag or commit
+			$s = '';
+			$tags = $repo->list_tags();
+			usort($tags, 'version_compare');
+			$tags = array_reverse($tags);
+			foreach ($tags as $tag) {
+				$s .= "* <br>$tag<br><br>$tag<br>$tag\n";
+			}
+			file_put_contents(sys_get_temp_dir() . '/log.txt', $s);
 		} else {
-			$cmd .= '' . $_SESSION['after'] . '..' . (isset($_SESSION['before']) ? $_SESSION['before'] : 'HEAD');
-		}
+			// Prepare command
+			$cmd = 'log > ' . sys_get_temp_dir() .
+				'/log.txt --graph --format="<br>%h<br>%ci<br>%s<br>%p" ';
 
-		// Repo
-		$activeBranch = $repo->active_branch();
-		$repo->checkout($_SESSION['branch']);
-		$repo->run($cmd);
-		$repo->checkout($activeBranch);
+			// Date
+			if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $_SESSION['after'])) {
+				$cmd .= '--after={' . $_SESSION['after'] . '} --before={' . @$_SESSION['before'] . '}';
+
+			// Tag or commit
+			} else {
+				$cmd .= '' . $_SESSION['after'] . '..' . (isset($_SESSION['before']) ? $_SESSION['before'] : 'HEAD');
+			}
+
+			// Repo
+			$activeBranch = $repo->active_branch();
+			$repo->checkout($_SESSION['branch']);
+			$repo->run($cmd);
+			$repo->checkout($activeBranch);
+		}
 
 
 		$commitsKey = join(array($_SESSION['branch'],$_SESSION['after'],$_SESSION['before']), ',');
@@ -49,7 +62,7 @@ if (@$_POST['branch']) {
 if (!isset($_SESSION['branch'])) {
 	$_SESSION['branch'] = 'master';
 }
-if (!isset($_SESSION['after'])) {
+if (!isset($_SESSION['after']) && $_SESSION['alltags'] != 'on') {
 
 	$tags = $repo->list_tags();
 	usort($tags, 'version_compare');
@@ -64,7 +77,7 @@ if (!is_dir('../samples/temp')) {
 	mkdir('../samples/temp');
 }
 
-if (is_file('../samples/temp/log.txt')) {
+if (sys_get_temp_dir() . '/log.txt') {
 	copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 }
 
@@ -75,7 +88,7 @@ if (is_file('../samples/temp/log.txt')) {
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 		<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
 		
-		<script src="commits.js?1"></script>
+		<script src="commits.js"></script>
 		
 		<style type="text/css">
 			* {
@@ -94,15 +107,13 @@ if (is_file('../samples/temp/log.txt')) {
 			
 			a {
 				text-decoration: none;
-				border-right: 10px solid white;
-				background: rgba(255,255,255,0.75);
 			}
 
-			a.visited {
+			li.visited a {
 				color: silver;
 			}
-			a.active {
-				border-right-color: black;
+			li.active {
+				background: linear-gradient(to right, rgba(255,255,255,0), rgb(124,181,236));
 			}
 			
 			body {
@@ -123,7 +134,6 @@ if (is_file('../samples/temp/log.txt')) {
 			.date {
 				color: gray;
 				display: block;
-				background: white;
 			}
 			.parents {
 				position: absolute;
@@ -134,6 +144,9 @@ if (is_file('../samples/temp/log.txt')) {
 				border-radius: 5px;
 				border-width: 2px;
 				border-color: black;
+			}
+			input:disabled {
+				color: silver;
 			}
 			.message {
 				display: block;
@@ -221,6 +234,21 @@ if (is_file('../samples/temp/log.txt')) {
 				font-size: 0.9em;
 			}
 		</style>
+
+		<script>
+		/* eslint-disable */
+		document.addEventListener('DOMContentLoaded', function () {
+			var alltags = document.getElementById('alltags');
+			alltags.addEventListener('change', function () {
+				this.form.querySelectorAll('input, select').forEach(function (input) {
+					if (input !== alltags && input.type !== 'submit') {
+						input.disabled = alltags.checked;
+					}
+				});
+			});
+		});
+
+		</script>
 	</head>
 	
 	<body>
@@ -248,8 +276,12 @@ if (is_file('../samples/temp/log.txt')) {
 			<input type="text" name="after" value="<?php echo $_SESSION['after'] ?>" />
 			to
 			<input type="text" name="before" value="<?php echo @$_SESSION['before'] ?>" />
+
+			<input type="checkbox" name="alltags" id="alltags" />
+			<label title="Loads all releases, use this for course filtering" 
+				for="alltags">Releases only</label>
 			
-			<input type="submit" value="Submit"/>
+			<input type="submit" value="Submit" />
 			<a id="setdata" href="main.php" target="main">Change test data</a>
 			</div>
 

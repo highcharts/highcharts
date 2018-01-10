@@ -268,58 +268,65 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 	return retVal;
 });
 
-// TODO: Overrides the default function, don't need to wrap.
-wrap(Axis.prototype, 'getTitlePosition', function () {
-	// compute anchor points for each of the title align options
-	var axis = this,
-		title = axis.axisTitle,
-		titleWidth = title && title.getBBox().width,
-		horiz = axis.horiz,
-		axisLeft = axis.left,
-		axisTop = axis.top,
-		axisWidth = axis.width,
-		axisHeight = axis.height,
-		axisTitleOptions = axis.options.title,
-		opposite = axis.opposite,
-		offset = axis.offset,
-		tickSize = axis.tickSize() || [0],
-		xOption = axisTitleOptions.x || 0,
-		yOption = axisTitleOptions.y || 0,
-		titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10), // TODO: What is 10? And 5 even?
-		titleFontSize = axis.chart.renderer.fontMetrics(
-			axisTitleOptions.style && axisTitleOptions.style.fontSize,
-			title
-		).f,
-		// TODO account for alignment
-		// the position in the perpendicular direction of the axis
-		offAxis = (horiz ? axisTop + axisHeight : axisLeft) +
-			(horiz ? 1 : -1) * // horizontal axis reverses the margin
-			(opposite ? -1 : 1) * // so does opposite axes
-			(tickSize[0] / 2) +
-			(axis.side === axisSide.bottom ? titleFontSize : 0);
+wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
 
-	return {
-		x: horiz ?
-			axisLeft - titleWidth / 2 - titleMargin + xOption :
-			offAxis + (opposite ? axisWidth : 0) + offset + xOption,
-		y: horiz ?
-			offAxis - (opposite ? axisHeight : 0) + (opposite ? titleFontSize : -titleFontSize) / 2 + offset + yOption :
-			axisTop - titleMargin + yOption
-	};
+	if (this.options.grid) {
+		// compute anchor points for each of the title align options
+		var axis = this,
+			title = axis.axisTitle,
+			titleWidth = title && title.getBBox().width,
+			horiz = axis.horiz,
+			axisLeft = axis.left,
+			axisTop = axis.top,
+			axisWidth = axis.width,
+			axisHeight = axis.height,
+			axisTitleOptions = axis.options.title,
+			opposite = axis.opposite,
+			offset = axis.offset,
+			tickSize = axis.tickSize() || [0],
+			xOption = axisTitleOptions.x || 0,
+			yOption = axisTitleOptions.y || 0,
+			titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10),
+			titleFontSize = axis.chart.renderer.fontMetrics(
+				axisTitleOptions.style && axisTitleOptions.style.fontSize,
+				title
+			).f,
+			// TODO account for alignment
+			// the position in the perpendicular direction of the axis
+			offAxis = (horiz ? axisTop + axisHeight : axisLeft) +
+				(horiz ? 1 : -1) * // horizontal axis reverses the margin
+				(opposite ? -1 : 1) * // so does opposite axes
+				(tickSize[0] / 2) +
+				(axis.side === axisSide.bottom ? titleFontSize : 0);
+
+		return {
+			x: horiz ?
+				axisLeft - titleWidth / 2 - titleMargin + xOption :
+				offAxis + (opposite ? axisWidth : 0) + offset + xOption,
+			y: horiz ?
+				(
+					offAxis -
+					(opposite ? axisHeight : 0) +
+					(opposite ? titleFontSize : -titleFontSize) / 2 +
+					offset +
+					yOption
+				) :
+				axisTop - titleMargin + yOption
+		};
+	}
+
+	return proceed.apply(this, argsToArray(arguments));
 });
 
 /**
  * Avoid altering tickInterval when reserving space.
  */
 wrap(Axis.prototype, 'unsquish', function (proceed) {
-	var axis = this,
-		retVal;
-	if (axis.categories) {
-		retVal = this.tickInterval;
-	} else {
-		retVal = proceed.apply(axis, argsToArray(arguments));
+	if (this.options.grid && this.categories) {
+		return this.tickInterval;
 	}
-	return retVal;
+
+	return proceed.apply(this, argsToArray(arguments));
 });
 
 /**

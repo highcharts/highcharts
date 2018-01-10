@@ -17,11 +17,11 @@ QUnit.test('Logarithmic axis (#5646)', function (assert) {
         assert.strictEqual(
             typeof chart.series[0].points[i].graphic.attr('height'),
             'number',
-            'Point ' + i + ' has height'
+            'Point ' + i + ' height attribute should be a number'
         );
         assert.ok(
             chart.series[0].points[i].graphic.attr('height') < chart.yAxis[0].len,
-            'Point ' + i + ' ok'
+            'Point ' + i + ' height should be less than yAxis.len'
         );
     });
 });

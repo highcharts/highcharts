@@ -3,6 +3,10 @@ ini_set('display_errors', 'on');
 session_start();
 require_once('../settings.php');
 
+// When emulating karma, load all Highcharts files
+$emulateKarma = false;
+
+
 // Server variables
 $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);
@@ -55,11 +59,11 @@ function cachify($s) {
 }
 
 function getResources() {
-	global $path;
+	global $fsPath;
 
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	@include("$path/demo.details");
+	@include("$fsPath/demo.details");
 	$s = ob_get_clean();
 
 	$html = '';
@@ -92,11 +96,11 @@ function getResources() {
 }
 
 function getJS() {
-	global $path, $topDomain;
+	global $fsPath, $topDomain;
 
 
 	ob_start();
-	include("$path/demo.js");
+	include("$fsPath/demo.js");
 	$s = ob_get_clean();
 	$_SESSION['js'] = $s; // for issue-by-commit
 
@@ -108,13 +112,38 @@ function getJS() {
 }
 
 function getHTML($which) {
-	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting, $isUnitTest, $githubServer;
+	global $path, $fsPath, $leftPath, $rightPath, $rightExporting, $leftExporting,
+		$isUnitTest, $githubServer, $topDomain, $emulateKarma;
 	$bogus = md5('bogus');
 
+	
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	if (is_file("$path/demo.html")) {
-		include("$path/demo.html");
+
+	if ($emulateKarma && $isUnitTest) {
+		$files = json_decode(
+			file_get_contents(__DIR__ . '/../../test/karma-files.json')
+		);
+		$scripttags = '';
+
+		foreach ($files as $file) {
+			$file = preg_replace('/^code\//', "http://code.highcharts.$topDomain/", $file);
+			$scripttags .= "<script src='$file'></script>\n";
+		}
+
+		echo '<html>
+	<head>
+		' . $scripttags . '
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+
+		<div id="container" style="width: 600px; margin: 0 auto"></div>
+	</body>
+</html>';
+	} elseif (is_file("$fsPath/demo.html")) {
+		include("$fsPath/demo.html");
 
 	} elseif ($which === 'right') {
 		echo "
@@ -129,10 +158,6 @@ function getHTML($which) {
 	}
 	
 	$s = ob_get_clean();
-
-	// Highchart 5 preview
-	$s = str_replace("code.highcharts.com/5/", "code.highcharts.com/", $s);
-
 
 	// for issue-by-commit
 	$issueHTML = $s;
@@ -152,7 +177,7 @@ function getHTML($which) {
 		throw window.demoError;
 		</script>";
 	}
-	if (strstr($s, '.src.js')) {
+	if (strstr($s, '.src.js') && !$emulateKarma) {
 		$s .= "
 		<script>
 		window.demoError = 'Do not use src.js files in demos. Use .js compiled files, and add rewrite in .htaccess ($path)';
@@ -200,19 +225,19 @@ function getHTML($which) {
 }
 
 function getCompareTooltips() {
-	global $path;
+	global $fsPath;
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	@include("$path/demo.details");
+	@include("$fsPath/demo.details");
 	$yaml = ob_get_clean();
 
 	return strstr($yaml, 'compareTooltips: true');
 }
 function getExportInnerHTML() {
-	global $path;
+	global $fsPath;
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	@include("$path/demo.details");
+	@include("$fsPath/demo.details");
 	$yaml = ob_get_clean();
 
 	return strstr($yaml, 'exportInnerHTML: true');
@@ -223,20 +248,21 @@ function getExportInnerHTML() {
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Highcharts demo</title>
 		<?php echo getFramework($_GET['which'] === 'left' ? $leftFramework : $rightFramework); ?>
 		<?php echo getResources(); ?>
 
-		<?php if (is_file("$path/unit-tests.js")) : ?>
+		<?php if (is_file("$fsPath/unit-tests.js")) : ?>
 		<script src="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.js"></script>
 		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.css" />
    		<?php endif; ?>
-   		<script src="test-controller.js"></script>
+   		<script src="test-controller.js?<?php echo uniqid(); ?>"></script>
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
 			<?php 
-			$css = @file_get_contents("$path/demo.css");
+			$css = @file_get_contents("$fsPath/demo.css");
 
 			// Highchart 5 preview
 			$css = str_replace("code.highcharts.com/5/", "code.highcharts.com/", $css);
@@ -249,6 +275,7 @@ function getExportInnerHTML() {
 		</style>
 
 		<script type="text/javascript">
+			/* eslint-disable */
 			var chart,
 				randomValues = [0.14102989272214472, 0.0351817375048995, 0.10094573209062219, 0.35990892769768834, 0.7690574480220675, 0.16634021210484207, 0.3944594960194081, 0.7656398438848555, 0.27706647920422256, 0.5681763959582895, 0.513730650767684, 0.26344996923580766, 0.09001278411597013, 0.2977627406362444, 0.6982127586379647, 0.9593012358527631, 0.8456065070349723, 0.26248381356708705, 0.12872424302622676, 0.25530692492611706, 0.9969052199739963, 0.09259856841526926, 0.9022860133554786, 0.3393681487068534, 0.41671016393229365, 0.10582929337397218, 0.1322793234139681, 0.595869708340615, 0.050670077092945576, 0.8613549116998911, 0.17356411134824157, 0.16447093593887985, 0.44514468451961875, 0.15736589767038822, 0.8677479331381619, 0.30932203005068004, 0.6120233973488212, 0.001859797164797783, 0.7689258102327585, 0.7421043077483773, 0.7548440918326378, 0.9667320610024035, 0.13654314493760467, 0.6277681242208928, 0.002858637133613229, 0.6877673089038581, 0.44036358245648444, 0.3101970909629017, 0.013212101766839623, 0.7115063068922609, 0.2931885647121817, 0.5031651991885155, 0.8921459852717817, 0.547999506117776, 0.010382920736446977, 0.9862914837431163, 0.9629317701328546, 0.07685352209955454, 0.2859949553385377, 0.5578324059024453, 0.7765828191768378, 0.1696563793811947, 0.34366130153648555, 0.11959927808493376, 0.8898638435639441, 0.8963573810178787, 0.332408863119781, 0.27137733018025756, 0.3066735703032464, 0.2789501305669546, 0.4567076754756272, 0.09539463231340051, 0.9158625246491283, 0.2145260546822101, 0.8913846455980092, 0.22340057184919715, 0.09033847553655505, 0.49042539740912616, 0.4070818084292114, 0.5827512110117823, 0.1993762720376253, 0.9264022477436811, 0.3290765874553472, 0.07792594563215971, 0.7663758248090744, 0.4329648329876363, 0.10257583996281028, 0.8170149670913815, 0.41387700103223324, 0.7504217880778015, 0.08603733032941818, 0.17256441875360906, 0.4064991301856935, 0.829071992309764, 0.6997416105587035, 0.2686419754754752, 0.36025605257600546, 0.6014082923065871, 0.9787689209915698, 0.016065671807155013],
 				randomCursor = 0,
@@ -368,10 +395,12 @@ function getExportInnerHTML() {
 			}
 
 			function error(e) {
-				e = 'ERROR (' + which + ' frame): ' + (e.message || e);
-				console.error(e);
-				parent.window.error = e;
-				parent.window.onDifferent('Error');
+				if (which === 'right') {
+					e = 'ERROR (' + which + ' frame): ' + (e.message || e);
+					console.error(e);
+					parent.window.error = e;
+					parent.window.onDifferent('Error');
+				}
 			}
 
 			function tryToRun(proceed) {
@@ -457,6 +486,7 @@ function getExportInnerHTML() {
 							hoverPoint = series[0] && series[0].points[x],
 							pointOrPoints;
 						if (hoverPoint) {
+							/*
 							if  (chart.tooltip.options.shared) {
 								pointOrPoints = [];
 								Highcharts.each(series, function (s) {
@@ -470,16 +500,17 @@ function getExportInnerHTML() {
 							} else {
 								pointOrPoints = hoverPoint;
 							}
+							*/
 							hoverPoint.onMouseOver();
 							// Note: As of 5.0.8 onMouseOver takes care of refresh.
-							chart.tooltip.refresh(pointOrPoints);
+							//chart.tooltip.refresh(pointOrPoints);
 						}
 					});
 					<?php endif ?>
 
-					<?php if (file_exists("$path/test.js")) : ?>
+					<?php if (file_exists("$fsPath/test.js")) : ?>
 
-					<?php include("$path/test.js"); ?>
+					<?php include("$fsPath/test.js"); ?>
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
 						try {
 							test(chart);
@@ -529,7 +560,7 @@ function getExportInnerHTML() {
 
 		$(function () {
 		<?php
-			@include("$path/unit-tests.js");
+			@include("$fsPath/unit-tests.js");
 		?>
 		});
 		</script>
@@ -537,7 +568,7 @@ function getExportInnerHTML() {
 	</head>
 	<body>
 
-		<?php if (is_file("$path/unit-tests.js")) { ?>
+		<?php if (is_file("$fsPath/unit-tests.js")) { ?>
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
 		<?php } ?>

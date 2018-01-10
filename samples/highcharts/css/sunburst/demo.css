@@ -1,0 +1,27 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+#container {
+	min-width: 310px;
+	max-width: 800px;
+	margin: 0 auto
+}
+.highcharts-sunburst-series .highcharts-point {
+    stroke: white;
+    stroke-width: 1px;
+}
+
+/* General data label style */
+text.highcharts-data-label {
+	fill: black;
+	text-shadow: 1px 1px white, 1px -1px white, -1px -1px white, -1px 1px white;
+}
+
+/* For the darkest columns, invert the data label text color and shadow */
+text.highcharts-data-label-color-0,
+text.highcharts-data-label-color-1,
+text.highcharts-data-label-color-4,
+text.highcharts-data-label-color-5,
+text.highcharts-data-label-color-7 {
+	fill: white;
+	text-shadow: 1px 1px black, 1px -1px black, -1px -1px black, -1px 1px black;
+}

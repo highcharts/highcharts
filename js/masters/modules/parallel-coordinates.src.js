@@ -1,7 +1,7 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
  *
- * Item series type for Highcharts
+ * Support for parallel coordinates in Highcharts
  *
  * (c) 2010-2017 Pawel Fus
  *

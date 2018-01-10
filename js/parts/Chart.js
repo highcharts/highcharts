@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: ["warn", { "ignoreUrls": true}] */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -26,7 +27,6 @@ var addEvent = H.addEvent,
 	extend = H.extend,
 	find = H.find,
 	fireEvent = H.fireEvent,
-	getStyle = H.getStyle,
 	grep = H.grep,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
@@ -41,10 +41,8 @@ var addEvent = H.addEvent,
 	removeEvent = H.removeEvent,
 	seriesTypes = H.seriesTypes,
 	splat = H.splat,
-	svg = H.svg,
 	syncTimeout = H.syncTimeout,
-	win = H.win,
-	Renderer = H.Renderer;
+	win = H.win;
 /**
  * The Chart class. The recommended constructor is {@link Highcharts#chart}.
  * @class Highcharts.Chart
@@ -132,7 +130,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// Handle regular options
 		var options,
 			type,
-			seriesOptions = userOptions.series, // skip merging data points to increase performance
+			// skip merging data points to increase performance
+			seriesOptions = userOptions.series,
 			userPlotOptions = userOptions.plotOptions || {};
 
 		userOptions.series = null;
@@ -152,7 +151,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			userOptions.chart.forExport && userOptions.tooltip.userOptions) ||
 			userOptions.tooltip;
 
-		options.series = userOptions.series = seriesOptions; // set back the series data
+		// set back the series data
+		options.series = userOptions.series = seriesOptions;
 		this.userOptions = userOptions;
 
 		var optionsChart = options.chart;
@@ -162,8 +162,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		this.margin = [];
 		this.spacing = [];
 
-		//this.runChartClick = chartEvents && !!chartEvents.click;
 		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
+
+		// An array of functions that returns labels that should be considered
+		// for anti-collision
+		this.labelCollectors = [];
 
 		this.callback = callback;
 		this.isResizing = 0;
@@ -218,36 +221,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		 * @type Object
 		 */
 
+		/**
+		 * The `Time` object associated with the chart. Since v6.0.5, time
+		 * settings can be applied individually for each chart. If no individual
+		 * settings apply, the `Time` object is shared by all instances.
+		 *
+		 * @memberof Highcharts.Chart
+		 * @name time
+		 * @type Highcharts.Time
+		 */
+		this.time = userOptions.time ? new H.Time(this) : H.time;
 
-
+		
 		this.hasCartesianSeries = optionsChart.showAxes;
-		//this.axisOffset = undefined;
-		//this.inverted = undefined;
-		//this.loadingShown = undefined;
-		//this.container = undefined;
-		//this.chartWidth = undefined;
-		//this.chartHeight = undefined;
-		//this.marginRight = undefined;
-		//this.marginBottom = undefined;
-		//this.containerWidth = undefined;
-		//this.containerHeight = undefined;
-		//this.oldChartWidth = undefined;
-		//this.oldChartHeight = undefined;
-
-		//this.renderTo = undefined;
-
-		//this.spacingBox = undefined
-
-		//this.legend = undefined;
-
-		// Elements
-		//this.chartBackground = undefined;
-		//this.plotBackground = undefined;
-		//this.plotBGImage = undefined;
-		//this.plotBorder = undefined;
-		//this.loadingDiv = undefined;
-		//this.loadingSpan = undefined;
-
+		
 		var chart = this;
 
 		// Add the chart to the global lookup
@@ -291,7 +278,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	initSeries: function (options) {
 		var chart = this,
 			optionsChart = chart.options.chart,
-			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
+			type = (
+				options.type ||
+				optionsChart.type ||
+				optionsChart.defaultSeriesType
+			),
 			series,
 			Constr = seriesTypes[type];
 
@@ -433,7 +424,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		});
 
 		// handle added or removed series
-		if (redrawLegend && legend.options.enabled) { // series or pie points are added or removed
+		if (redrawLegend && legend.options.enabled) {
 			// draw legend graphics
 			legend.render();
 
@@ -475,8 +466,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				var key = axis.min + ',' + axis.max;
 				if (axis.extKey !== key) { // #821, #4452
 					axis.extKey = key;
-					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
-						fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
+
+					// prevent a recursive call to chart.redraw() (#1119)
+					afterRedraw.push(function () {
+						fireEvent(
+							axis,
+							'afterSetExtremes',
+							extend(axis.eventArgs, axis.getExtremes())
+						); // #747, #751
 						delete axis.eventArgs;
 					});
 				}
@@ -696,7 +693,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				chart[name] = title = title.destroy(); // remove old
 			}
 
-			if (chartTitleOptions && chartTitleOptions.text && !title) {
+			if (chartTitleOptions && !title) {
 				chart[name] = chart.renderer.text(
 					chartTitleOptions.text,
 					0,
@@ -798,10 +795,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Get inner width and height
 		if (!defined(widthOption)) {
-			chart.containerWidth = getStyle(renderTo, 'width');
+			chart.containerWidth = H.getStyle(renderTo, 'width');
 		}
 		if (!defined(heightOption)) {
-			chart.containerHeight = getStyle(renderTo, 'height');
+			chart.containerHeight = H.getStyle(renderTo, 'height');
 		}
 		
 		/**
@@ -827,7 +824,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			H.relativeLength(
 				heightOption,
 				chart.chartWidth
-			) || chart.containerHeight || 400
+			) ||
+			(chart.containerHeight > 1 ? chart.containerHeight : 400)
 		);
 	},
 
@@ -856,7 +854,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 					doc.body.appendChild(node);
 				}
 				if (
-					getStyle(node, 'display', false) === 'none' ||
+					H.getStyle(node, 'display', false) === 'none' ||
 					node.hcOricDetached
 				) {
 					node.hcOrigStyle = {
@@ -1015,7 +1013,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		chart._cursor = container.style.cursor;
 
 		// Initialize the renderer
-		Ren = H[optionsChart.renderer] || Renderer;
+		Ren = H[optionsChart.renderer] || H.Renderer;
+		
 		/**
 		 * The renderer instance of the chart. Each chart instance has only one
 		 * associated renderer.
@@ -1071,7 +1070,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		}
 
 		// Adjust for legend
-		if (chart.legend.display) {
+		if (chart.legend && chart.legend.display) {
 			chart.legend.adjustMargins(margin, spacing);
 		}
 
@@ -1080,9 +1079,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			chart[chart.extraMargin.type] =
 				(chart[chart.extraMargin.type] || 0) + chart.extraMargin.value;
 		}
-		if (chart.extraTopMargin) {
-			chart.plotTop += chart.extraTopMargin;
+		
+		// adjust for rangeSelector 
+		if (chart.adjustPlotArea) {
+			chart.adjustPlotArea();
 		}
+
 		if (!skipAxes) {
 			this.getAxisMargins();
 		}
@@ -1140,8 +1142,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				defined(optionsChart.width) &&
 				defined(optionsChart.height)
 			),
-			width = optionsChart.width || getStyle(renderTo, 'width'),
-			height = optionsChart.height || getStyle(renderTo, 'height'),
+			width = optionsChart.width || H.getStyle(renderTo, 'width'),
+			height = optionsChart.height || H.getStyle(renderTo, 'height'),
 			target = e ? e.target : win;
 
 		// Width and height checks for display:none. Target is doc in IE8 and
@@ -1309,11 +1311,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			plotHeight,
 			plotBorderWidth;
 
-		function clipOffsetSide(side) {
-			var offset = clipOffset[side] || 0;
-			return Math.max(plotBorderWidth || offset, offset) / 2;
-		}
-
 		/**
 		 * The current left position of the plot area in pixels.
 		 *
@@ -1376,21 +1373,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		};
 
 		plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2);
-		clipX = Math.ceil(clipOffsetSide(3));
-		clipY = Math.ceil(clipOffsetSide(0));
+		clipX = Math.ceil(Math.max(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = Math.ceil(Math.max(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
 			x: clipX, 
 			y: clipY, 
 			width: Math.floor(
 				chart.plotSizeX -
-				clipOffsetSide(1) -
+				Math.max(plotBorderWidth, clipOffset[1]) / 2 -
 				clipX
 			), 
 			height: Math.max(
 				0,
 				Math.floor(
 					chart.plotSizeY -
-					clipOffsetSide(2) -
+					Math.max(plotBorderWidth, clipOffset[2]) / 2 -
 					clipY
 				)
 			)
@@ -1432,7 +1429,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			chart[m] = pick(chart.margin[side], chart.spacing[side]);
 		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
-		chart.clipOffset = [];
+		chart.clipOffset = [0, 0, 0, 0];
 	},
 
 	/**
@@ -1573,7 +1570,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			y: plotTop,
 			width: plotWidth,
 			height: plotHeight
-		}, -plotBorder.strokeWidth())); //#3282 plotBorder should be negative;
+		}, -plotBorder.strokeWidth())); // #3282 plotBorder should be negative;
 
 		// reset
 		chart.isDirtyBox = false;
@@ -1737,7 +1734,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Record preliminary dimensions for later comparison
 		tempWidth = chart.plotWidth;
-		tempHeight = chart.plotHeight = chart.plotHeight - 21; // 21 is the most common correction for X axis labels
+		// 21 is the most common correction for X axis labels
+		// use Math.max to prevent negative plotHeight
+		tempHeight = chart.plotHeight = Math.max(chart.plotHeight - 21, 0);
 
 		// Get margins by pre-rendering axes
 		each(axes, function (axis) {
@@ -1745,15 +1744,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		});
 		chart.getAxisMargins();
 
-		// If the plot area size has changed significantly, calculate tick positions again
+		// If the plot area size has changed significantly, calculate tick
+		// positions again
 		redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-		redoVertical = tempHeight / chart.plotHeight > 1.05; // Height is more sensitive
+		// Height is more sensitive, use lower threshold
+		redoVertical = tempHeight / chart.plotHeight > 1.05;
 
 		if (redoHorizontal || redoVertical) {
 
 			each(axes, function (axis) {
-				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
-					axis.setTickInterval(true); // update to reflect the new margins
+				if (
+					(axis.horiz && redoHorizontal) ||
+					(!axis.horiz && redoVertical)
+				) {
+					// update to reflect the new margins
+					axis.setTickInterval(true);
 				}
 			});
 			chart.getMargins(); // second pass to check for new labels
@@ -1913,8 +1918,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			}
 		});
 
-		// remove container and all SVG
-		if (container) { // can break in IE when destroyed before finished loading
+		// Remove container and all SVG, check container as it can break in IE
+		// when destroyed before finished loading
+		if (container) {
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
@@ -1930,29 +1936,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	},
 
-
-	/**
-	 * VML namespaces can't be added until after complete. Listening
-	 * for Perini's doScroll hack is not enough.
-	 *
-	 * @private
-	 */
-	isReadyToRender: function () {
-		var chart = this;
-
-		// Note: win == win.top is required
-		if ((!svg && (win == win.top && doc.readyState !== 'complete'))) { // eslint-disable-line eqeqeq
-			doc.attachEvent('onreadystatechange', function () {
-				doc.detachEvent('onreadystatechange', chart.firstRender);
-				if (doc.readyState === 'complete') {
-					chart.firstRender();
-				}
-			});
-			return false;
-		}
-		return true;
-	},
-
 	/**
 	 * Prepare for first rendering after all data are loaded.
 	 *
@@ -1962,8 +1945,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		var chart = this,
 			options = chart.options;
 
-		// Check whether the chart is ready to render
-		if (!chart.isReadyToRender()) {
+		// Hook for oldIE to check whether the chart is ready to render
+		if (chart.isReadyToRender && !chart.isReadyToRender()) {
 			return;
 		}
 
@@ -1990,9 +1973,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		chart.linkSeries();
 
-		// Run an event after axes and series are initialized, but before render. At this stage,
-		// the series data is indexed and cached in the xData and yData arrays, so we can access
-		// those before rendering. Used in Highstock.
+		// Run an event after axes and series are initialized, but before
+		// render. At this stage, the series data is indexed and cached in the
+		// xData and yData arrays, so we can access those before rendering. Used
+		// in Highstock.
 		fireEvent(chart, 'beforeRender');
 
 		// depends on inverted and on margins being set
@@ -2015,7 +1999,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			chart.onload();
 		}
 
-		// If the chart was rendered outside the top container, put it back in (#3679)
+		// If the chart was rendered outside the top container, put it back in
+		// (#3679)
 		chart.temporaryDisplay(true);
 
 	},
@@ -2031,7 +2016,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Run callbacks
 		each([this.callback].concat(this.callbacks), function (fn) {
-			if (fn && this.index !== undefined) { // Chart destroyed in its own callback (#3600)
+			// Chart destroyed in its own callback (#3600)
+			if (fn && this.index !== undefined) {
 				fn.apply(this, [this]);
 			}
 		}, this);

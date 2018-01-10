@@ -52,22 +52,23 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 });
 
 wrap(PlotLineOrBand.prototype, 'render', function (proceed) {
-	var plotLoB = this,
-		options = plotLoB.options,
-		format = options.label.format,
-		formatter = options.label.formatter,
-		currentDateIndicator = options.currentDateIndicator;
+	var options = this.options,
+		format,
+		formatter;
 
-	if (currentDateIndicator) {
+	if (options.currentDateIndicator && options.label) {
+		format = options.label.format;
+		formatter = options.label.formatter;
+		
 		options.value = new Date();
 		if (typeof formatter === 'function') {
-			options.label.text = formatter(plotLoB);
+			options.label.text = formatter(this);
 		} else {
 			options.label.text = H.dateFormat(format, new Date());
 		}
 	}
 
-	return proceed.apply(plotLoB, Array.prototype.slice.call(arguments, 1));
+	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 wrap(PlotLineOrBand.prototype, 'renderLabel', function (proceed) {

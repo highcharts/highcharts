@@ -70,7 +70,12 @@ QUnit.test('nullInteraction', function (assert) {
 
     var controller = new TestController(chart);
 
-    controller.moveToElement(chart.series[0].points[0].graphic.element, 50, 50);
+    var point = chart.series[0].points[0];
+    controller.moveToElement(
+        chart.container,
+        chart.plotLeft + point.plotX,
+        chart.plotTop + point.plotY
+    );
 
     assert.strictEqual(
         chart.tooltip.label.attr('visibility'),

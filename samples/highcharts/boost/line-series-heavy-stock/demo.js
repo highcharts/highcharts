@@ -62,7 +62,7 @@ Highcharts.stockChart('container', {
     },
 
     title: {
-        text: 'Trimmed Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
     },
 
     navigator: {
@@ -100,12 +100,12 @@ Highcharts.stockChart('container', {
     },
 
     subtitle: {
-        text: 'Using the experimental Highcharts Boost module'
+        text: 'Using the Boost module'
     },
 
     tooltip: {
         valueDecimals: 2,
-        shared: false
+        split: false
     },
 
     series: series

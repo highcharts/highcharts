@@ -9,7 +9,7 @@ $(function () {
         series: [{
             data: data,
             type: 'flags',
-
+            allowOverlapX: true,
             dataGrouping: {
                 enabled: true,
                 groupPixelWidth: 10,

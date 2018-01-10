@@ -37,45 +37,37 @@ QUnit.test(
     }
 );
 QUnit.test('Axis.isBroken', function (assert) {
-    var H = Highcharts,
-        Axis = H.Axis,
-        init = Axis.prototype.init,
-        defaultOptions = H.getOptions(),
-        chart = {
-            axes: [],
-            yAxis: [],
-            options: {
-                tooltip: defaultOptions.tooltip
-            }
-        },
-        axis = {
-            defaultOptions: Axis.prototype.defaultOptions,
-            setOptions: Axis.prototype.setOptions
-        },
-        userOptions = {
-            breaks: undefined
-        };
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2, 3, 4, 5, 6, 7, 8]
+        }]
+    });
 
-    init.call(axis, chart, userOptions);
     assert.strictEqual(
-        axis.isBroken,
+        chart.xAxis[0].isBroken,
         false,
         'Axis.breaks: undefined results in Axis.isBroken: false.'
     );
 
-    userOptions.breaks = [];
-    init.call(axis, chart, userOptions);
+    chart.update({
+        xAxis: {
+            breaks: []
+        }
+    });
     assert.strictEqual(
-        axis.isBroken,
+        chart.xAxis[0].isBroken,
         false,
         'Axis.breaks: [] results in Axis.isBroken: false.'
     );
 
-    userOptions.breaks = [{}];
-    init.call(axis, chart, userOptions);
-    // @todo Consider adding more clever checks for isBroken.
+    chart.update({
+        xAxis: {
+            breaks: [{}]
+        }
+    });
+
     assert.strictEqual(
-        axis.isBroken,
+        chart.xAxis[0].isBroken,
         true,
         'Axis.breaks: [{}] results in Axis.isBroken: true.'
     );
@@ -113,4 +105,74 @@ QUnit.test('Axis breaks with categories', function (assert) {
     );
 
 
+});
+
+QUnit.test('Axis breaks with scatter series', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        "xAxis": {
+            "breaks": [{
+                "to": 1272240000000,
+                "from": 1272067200000
+            }]
+        },
+        "series": [{
+            "type": "scatter",
+            "data": [
+                [
+                    1271980800000,
+                    0
+                ],
+                [
+                    1272240000000,
+                    2
+                ],
+                [
+                    1272326400000,
+                    1
+                ],
+                [
+                    1272412800000,
+                    5
+                ],
+                [
+                    1272499200000,
+                    4
+                ]
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        4,
+        'X axis has ticks (#7275)'
+    );
+
+});
+
+QUnit.test('Axis breaks on Y axis', function (assert) {
+    var chart = Highcharts.chart('container', {
+        yAxis: {
+            breaks: [{
+                from: 50,
+                to: 100,
+                breakSize: 0
+            }]
+        },
+        series: [{ data: [0, 49, 101, 150] }]
+    });
+
+    assert.strictEqual(
+        typeof chart.yAxis[0].toPixels(50),
+        'number',
+        'Axis to pixels ok'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(50),
+        chart.yAxis[0].toPixels(100),
+        '50 and 100 translate to the same axis position'
+    );
 });

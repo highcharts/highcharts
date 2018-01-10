@@ -2,6 +2,10 @@
 
 
 QUnit.test('setSize parameters', function (assert) {
+
+    document.getElementById('container').style.height = '400px';
+    document.getElementById('container').style.width = '600px';
+
     var chart = Highcharts.chart('container', {
         chart: {
             animation: false
@@ -133,6 +137,9 @@ QUnit.test('setSize parameters', function (assert) {
 });
 
 QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
+
+    var clock = lolexInstall();
+
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie',
@@ -174,34 +181,58 @@ QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
         'Pie has moved'
     );
 
+    // Move it again and verify it has moved
+    var path = chart.series[0].points[0].graphic.element.firstChild
+        .getAttribute('d');
+    chart.setSize(500, undefined, { duration: 25 });
+
+    setTimeout(function () {
+        var newPath = chart.series && chart.series[0].points[0].graphic
+            .element.firstChild
+            .getAttribute('d');
+        assert.strictEqual(
+            path.indexOf('M'),
+            0,
+            'Path is a path'
+        );
+        assert.notEqual(
+            newPath,
+            path,
+            'First point\'s path should be updated (#7437)'
+        );
+    }, 50);
+
+    lolexRunAndUninstall(clock);
+
 
 });
 
 QUnit.test('Titles with useHTML: true adjust chart after resize (#3481)', function (assert) {
     var chart = Highcharts.chart('container', {
-        chart: {
-            width: 800,
-            height: 400
-        },
-        title: {
-            useHTML: true,
-            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque molestie mauris sed nibh pulvinar, sed commodo metus sodales. Mauris congue quam ultrices suscipit dictum."
-        },
-        subtitle: {
-            useHTML: true,
-            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat."
-        },
+            chart: {
+                width: 800,
+                height: 400,
+                animation: false
+            },
+            title: {
+                useHTML: true,
+                text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque molestie mauris sed nibh pulvinar, sed commodo metus sodales. Mauris congue quam ultrices suscipit dictum."
+            },
+            subtitle: {
+                useHTML: true,
+                text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat."
+            },
 
-        series: [{
-            data: [1, 2, 3]
-        }]
-    }),
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }),
         plotTop = chart.plotTop;
 
     // smaller
     chart.setSize(600, 400);
 
-     assert.ok(
+    assert.ok(
         plotTop < chart.plotTop,
         'plot top adjusted'
     );
@@ -218,8 +249,148 @@ QUnit.test('Titles with useHTML: true adjust chart after resize (#3481)', functi
     // bigger
     chart.setSize(1000, 400);
 
-     assert.ok(
+    assert.ok(
         plotTop > chart.plotTop,
         'plot top adjusted'
     );
+});
+
+QUnit.test('Columns were cut by cliprect, when resizing chart during initial animation.', function (assert) {
+
+    // Hijack animation
+    var clock = lolexInstall();
+
+
+    var temp = [],
+        rain = [],
+    // Nearest hour to now
+        done = assert.async(),
+        chart;
+
+    for (var i = 0; i < 24; i++) {
+        temp.push([
+            i * 3600000,
+            Math.random()
+        ]);
+        rain.push([
+            i * 3600000,
+            Math.random()
+        ]);
+    }
+
+// create the chart
+    $('#container').highcharts('StockChart', {
+        chart: {
+            animation: false,
+            width: 550
+        },
+        yAxis: [{
+            height: '63%'
+        }, {
+            top: '80%',
+            height: '20%',
+            offset: 0
+        }],
+
+        series: [{
+            data: temp,
+            yAxis: 0
+        }, {
+            type: 'column',
+            data: rain,
+            animation: true,
+            yAxis: 1
+        }]
+    });
+
+    setTimeout(function () {
+        chart = $('#container').highcharts();
+
+        chart.setSize(700, 450);
+
+        assert.strictEqual(
+            chart.series[1].clipBox.width,
+            chart.series[1].xAxis.len,
+            'Correct clipbox width.'
+        );
+        done();
+    }, 10);
+
+    lolexRunAndUninstall(clock);
+});
+
+QUnit.test('Polar chart resize (#5220)', function (assert) {
+    var chart;
+    $('#container').highcharts({
+
+        chart: {
+            polar: true,
+            width: 400,
+            height: 400
+        },
+
+        title: {
+            text: 'Highcharts Polar Chart'
+        },
+
+        pane: {
+            startAngle: 0,
+            endAngle: 360
+        },
+
+        yAxis: {
+            min: 0
+        },
+
+        plotOptions: {
+            series: {
+                pointStart: 0,
+                pointInterval: 45
+            },
+            column: {
+                pointPadding: 0,
+                groupPadding: 0
+            }
+        },
+
+        series: [{
+            type: 'column',
+            name: 'Column',
+            data: [8, 7, 6, 5, 4, 3, 2, 1],
+            pointPlacement: 'between'
+        }, {
+            type: 'line',
+            name: 'Line',
+            data: [1, 2, 3, 4, 5, 6, 7, 8]
+        }, {
+            type: 'area',
+            name: 'Area',
+            data: [1, 8, 2, 7, 3, 6, 4, 5]
+        }]
+    });
+
+    chart = $('#container').highcharts();
+
+    assert.strictEqual(
+        chart.container.querySelector('svg').getAttribute('width'),
+        '400',
+        'Chart has correct width'
+    );
+
+    chart.setSize(70, 70, false);
+
+    assert.strictEqual(
+        chart.container.querySelector('svg').getAttribute('width'),
+        '70',
+        'Chart has correct width after setSize to smaller'
+    );
+
+    chart.setSize(500, 500, false);
+
+    assert.strictEqual(
+        chart.container.querySelector('svg').getAttribute('width'),
+        '500',
+        'Chart has correct width after setSize to larger'
+    );
+
 });

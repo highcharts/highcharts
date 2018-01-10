@@ -6,7 +6,7 @@
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: yFiles for HTML Support Team <yfileshtml@yworks.com>
  *   homepage: https://github.com/yWorks/svg2pdf.js#readme
- *   version: 1.0.5
+ *   version: 1.1.0
  *
  * svgpath:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -1888,6 +1888,15 @@ SOFTWARE.
         }
 
         pathSegList.push(pathSeg);
+
+        // "If a moveto is followed by multiple pairs of coordinates, the subsequent pairs are treated as implicit
+        // lineto commands"
+        if (type === "m") {
+          type = "l";
+        } else if (type === "M") {
+          type = "L";
+        }
+
         i += length;
       } while(i < coords.length);
     }
@@ -1926,6 +1935,20 @@ SOFTWARE.
   var getAngle = function (from, to) {
     return Math.atan2(to[1] - from[1], to[0] - from[0]);
   };
+
+  function normalize(v) {
+    var length = Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+    return [v[0] / length, v[1] / length];
+  }
+
+  function getDirectionVector(from, to) {
+    var v = [to[0] - from[0], to[1] - from[1]];
+    return normalize(v);
+  }
+
+  function addVectors(v1, v2) {
+    return [v1[0] + v2[0], v1[1] + v2[1]];
+  }
 
   // mirrors p1 at p2
   var mirrorPoint = function (p1, p2) {
@@ -1966,6 +1989,90 @@ SOFTWARE.
     }
   };
 
+  var AttributeState = function () {
+    this.fillMode = "F";
+    this.strokeMode = "";
+
+    this.color = new RGBColor("rgb(0, 0, 0)");
+    this.fill = new RGBColor("rgb(0, 0, 0)");
+    this.fillOpacity = 1.0;
+    // this.fillRule = "nonzero";
+    this.fontFamily = "times";
+    this.fontSize = 16;
+    // this.fontStyle = "normal";
+    // this.fontVariant = "normal";
+    // this.fontWeight = "normal";
+    this.opacity = 1.0;
+    this.stroke = null;
+    this.strokeDasharray = null;
+    this.strokeDashoffset = null;
+    this.strokeLinecap = "butt";
+    this.strokeLinejoin = "miter";
+    this.strokeMiterlimit = 4.0;
+    this.strokeOpacity = 1.0;
+    this.strokeWidth = 1.0;
+    // this.textAlign = "start";
+    this.textAnchor = "start";
+    this.visibility = "visible";
+  };
+
+  AttributeState.prototype.clone = function () {
+    var clone = new AttributeState();
+    Object.getOwnPropertyNames(this).forEach(function (name) {
+      clone[name] = this[name];
+    }, this);
+    return clone;
+  };
+
+  /**
+   * @constructor
+   * @property {Marker[]} markers
+   */
+  function MarkerList() {
+    this.markers = [];
+  }
+
+  /**
+   * @param {Marker} marker
+   */
+  MarkerList.prototype.addMarker = function addMarker(marker) {
+    this.markers.push(marker);
+  };
+
+  MarkerList.prototype.draw = function (tfMatrix, attributeState) {
+    for (var i = 0; i < this.markers.length; i++) {
+      var marker = this.markers[i];
+
+      var tf;
+      var angle = marker.angle, anchor = marker.anchor;
+      var cos = Math.cos(angle);
+      var sin = Math.sin(angle);
+      // position at and rotate around anchor
+      tf = new _pdf.Matrix(cos, sin, -sin, cos, anchor[0], anchor[1]);
+      // scale with stroke-width
+      tf = _pdf.matrixMult(new _pdf.Matrix(attributeState.strokeWidth, 0, 0, attributeState.strokeWidth, 0, 0), tf);
+
+      tf = _pdf.matrixMult(tf, tfMatrix);
+
+      // as the marker is already scaled by the current line width we must not apply the line width twice!
+      _pdf.saveGraphicsState();
+      _pdf.setLineWidth(1.0);
+      _pdf.doFormObject(marker.id, tf);
+      _pdf.restoreGraphicsState();
+    }
+  };
+
+  /**
+   * @param {string} id
+   * @param {[number,number]} anchor
+   * @param {number} angle
+   */
+  function Marker(id, anchor, angle) {
+    this.id = id;
+    this.anchor = anchor;
+    this.angle = angle;
+  }
+
   // returns the node for the specified id or incrementally removes prefixes to search "higher" levels
   var getFromDefs = function (id, defs) {
     var regExp = /_\d+_/;
@@ -1991,44 +2098,86 @@ SOFTWARE.
     return clone;
   };
 
+  function computeViewBoxTransform(node, bounds, eX, eY, eWidth, eHeight) {
+    var vbX = bounds[0];
+    var vbY = bounds[1];
+    var vbWidth = bounds[2];
+    var vbHeight = bounds[3];
+
+    var scaleX = eWidth / vbWidth;
+    var scaleY = eHeight / vbHeight;
+
+    var align, meetOrSlice;
+    var preserveAspectRatio = node.getAttribute("preserveAspectRatio");
+    if (preserveAspectRatio) {
+      var alignAndMeetOrSlice = preserveAspectRatio.split(" ");
+      align = alignAndMeetOrSlice[0];
+      meetOrSlice = alignAndMeetOrSlice[1] || "meet";
+    } else {
+      align = "xMidYMid";
+      meetOrSlice = "meet"
+    }
+
+    if (align !== "none") {
+      if (meetOrSlice === "meet") {
+        // uniform scaling with min scale
+        scaleX = scaleY = Math.min(scaleX, scaleY);
+      } else if (meetOrSlice === "slice") {
+        // uniform scaling with max scale
+        scaleX = scaleY = Math.max(scaleX, scaleY);
+      }
+    }
+
+    var translateX = eX - (vbX * scaleX);
+    var translateY = eY - (vbY * scaleY);
+
+    if (align.indexOf("xMid") >= 0) {
+      translateX += (eWidth - vbWidth * scaleX) / 2;
+    } else if (align.indexOf("xMax") >= 0) {
+      translateX += eWidth - vbWidth * scaleX;
+    }
+
+    if (align.indexOf("yMid") >= 0) {
+      translateY += (eHeight - vbHeight * scaleY) / 2;
+    } else if (align.indexOf("yMax") >= 0) {
+      translateY += (eHeight - vbHeight * scaleY);
+    }
+
+    var translate = new _pdf.Matrix(1, 0, 0, 1, translateX, translateY);
+    var scale = new _pdf.Matrix(scaleX, 0, 0, scaleY, 0, 0);
+
+    return _pdf.matrixMult(scale, translate);
+  }
+
   // computes the transform directly applied at the node (such as viewbox scaling and the "transform" atrribute)
   // x,y,cx,cy,r,... are omitted
   var computeNodeTransform = function (node) {
-    var height, width, viewBoxHeight, viewBoxWidth, bounds, viewBox, y, x;
+    var viewBox, x, y;
     var nodeTransform = _pdf.unitMatrix;
     if (nodeIs(node, "svg,g")) {
       x = parseFloat(node.getAttribute("x")) || 0;
       y = parseFloat(node.getAttribute("y")) || 0;
 
-      // jquery doesn't like camelCase notation...
       viewBox = node.getAttribute("viewBox");
       if (viewBox) {
-        bounds = parseFloats(viewBox);
-        viewBoxWidth = bounds[2] - bounds[0];
-        viewBoxHeight = bounds[3] - bounds[1];
-        width = parseFloat(node.getAttribute("width")) || viewBoxWidth;
-        height = parseFloat(node.getAttribute("height")) || viewBoxHeight;
-        nodeTransform = new _pdf.Matrix(width / viewBoxWidth, 0, 0, height / viewBoxHeight, x - bounds[0], y - bounds[1]);
+        var width = parseFloat(node.getAttribute("width"));
+        var height = parseFloat(node.getAttribute("height"));
+        nodeTransform = computeViewBoxTransform(node, parseFloats(viewBox), x, y, width, height)
       } else {
         nodeTransform = new _pdf.Matrix(1, 0, 0, 1, x, y);
       }
     } else if (nodeIs(node, "marker")) {
-      x = -parseFloat(node.getAttribute("refX")) || 0;
-      y = -parseFloat(node.getAttribute("refY")) || 0;
+      x = parseFloat(node.getAttribute("refX")) || 0;
+      y = parseFloat(node.getAttribute("refY")) || 0;
 
       viewBox = node.getAttribute("viewBox");
       if (viewBox) {
-        bounds = parseFloats(viewBox);
-        viewBoxWidth = bounds[2] - bounds[0];
-        viewBoxHeight = bounds[3] - bounds[1];
-        width = parseFloat(node.getAttribute("markerWidth")) || viewBoxWidth;
-        height = parseFloat(node.getAttribute("markerHeight")) || viewBoxHeight;
-
-        var s = new _pdf.Matrix(width / viewBoxWidth, 0, 0, height / viewBoxHeight, 0, 0);
-        var t = new _pdf.Matrix(1, 0, 0, 1, x, y);
-        nodeTransform = _pdf.matrixMult(t, s);
+        var bounds = parseFloats(viewBox);
+        bounds[0] = bounds[1] = 0; // for some reason vbX anc vbY seem to be ignored for markers
+        nodeTransform = computeViewBoxTransform(node, bounds, 0, 0, node.getAttribute("markerWidth"), node.getAttribute("markerHeight"));
+        nodeTransform = _pdf.matrixMult(new _pdf.Matrix(1, 0, 0, 1, -x, -y), nodeTransform);
       } else {
-        nodeTransform = new _pdf.Matrix(1, 0, 0, 1, x, y);
+        nodeTransform = new _pdf.Matrix(1, 0, 0, 1, -x, -y);
       }
     }
 
@@ -2150,6 +2299,10 @@ SOFTWARE.
   // returns the untransformed bounding box [x, y, width, height] of an svg element (quite expensive for path and polygon objects, as
   // the whole points/d-string has to be processed)
   var getUntransformedBBox = function (node) {
+    if (getAttribute(node, "display") === "none") {
+      return [0, 0, 0, 0];
+    }
+
     var i, minX, minY, maxX, maxY, viewBox, vb, boundingBox;
     var pf = parseFloat;
 
@@ -2371,16 +2524,54 @@ SOFTWARE.
   };
 
   // draws a polygon
-  var polygon = function (node, tfMatrix, colorMode, gradient, gradientMatrix) {
+  var polygon = function (node, tfMatrix, colorMode, gradient, gradientMatrix, svgIdPrefix, attributeState) {
     var points = parsePointsString(node.getAttribute("points"));
     var lines = [{op: "m", c: multVecMatrix(points[0], tfMatrix)}];
-    for (var i = 1; i < points.length; i++) {
+    var i, angle;
+    for (i = 1; i < points.length; i++) {
       var p = points[i];
       var to = multVecMatrix(p, tfMatrix);
       lines.push({op: "l", c: to});
     }
     lines.push({op: "h"});
     _pdf.path(lines, colorMode, gradient, gradientMatrix);
+
+    var markerEnd = node.getAttribute("marker-end"),
+        markerStart = node.getAttribute("marker-start"),
+        markerMid = node.getAttribute("marker-mid");
+
+    if (markerStart || markerMid || markerEnd) {
+      var length = lines.length;
+      var markers = new MarkerList();
+      if (markerStart) {
+        markerStart = svgIdPrefix.get() + iriReference.exec(markerStart)[1];
+        angle = addVectors(getDirectionVector(lines[0].c, lines[1].c), getDirectionVector(lines[length - 2].c, lines[0].c));
+        markers.addMarker(new Marker(markerStart, lines[0].c, Math.atan2(angle[1], angle[0])));
+      }
+
+      if (markerMid) {
+        markerMid = svgIdPrefix.get() + iriReference.exec(markerMid)[1];
+        var prevAngle = getDirectionVector(lines[0].c, lines[1].c), curAngle;
+        for (i = 1; i < lines.length - 2; i++) {
+          curAngle = getDirectionVector(lines[i].c, lines[i + 1].c);
+          angle = addVectors(prevAngle, curAngle);
+          markers.addMarker(new Marker(markerMid, lines[i].c, Math.atan2(angle[1], angle[0])));
+          prevAngle = curAngle;
+        }
+
+        curAngle = getDirectionVector(lines[length - 2].c, lines[0].c);
+        angle = addVectors(prevAngle, curAngle);
+        markers.addMarker(new Marker(markerMid, lines[length - 2].c, Math.atan2(angle[1], angle[0])));
+      }
+
+      if (markerEnd) {
+        markerEnd = svgIdPrefix.get() + iriReference.exec(markerEnd)[1];
+        angle = addVectors(getDirectionVector(lines[0].c, lines[1].c), getDirectionVector(lines[length - 2].c, lines[0].c));
+        markers.addMarker(new Marker(markerEnd, lines[0].c, Math.atan2(angle[1], angle[0])));
+      }
+
+      markers.draw(_pdf.unitMatrix, attributeState);
+    }
   };
 
   // draws an image (converts it to jpeg first, as jsPDF doesn't support png or other formats)
@@ -2401,23 +2592,34 @@ SOFTWARE.
     context.fillStyle = "#fff";
     context.fillRect(0, 0, width, height);
     context.drawImage(image, 0, 0, width, height);
-    var jpegUrl = canvas.toDataURL("image/jpeg");
 
-    _pdf.addImage(jpegUrl,
-        "jpeg",
-        x,
-        y,
-        width,
-        height
-    );
+    try {
+      var jpegUrl = canvas.toDataURL("image/jpeg");
+
+      _pdf.addImage(jpegUrl,
+          "jpeg",
+          x,
+          y,
+          width,
+          height
+      );
+    } catch (e) {
+      (typeof console === "object"
+          && console.warn
+          && console.warn('svg2pdfjs: Images with external resource link are not supported! ("' + imageUrl + '")'));
+    }
   };
 
   // draws a path
-  var path = function (node, tfMatrix, svgIdPrefix, colorMode, gradient, gradientMatrix) {
+  var path = function (node, tfMatrix, svgIdPrefix, colorMode, gradient, gradientMatrix, attributeState) {
     var list = getPathSegList(node);
     var markerEnd = node.getAttribute("marker-end"),
         markerStart = node.getAttribute("marker-start"),
         markerMid = node.getAttribute("marker-mid");
+
+    markerEnd && (markerEnd = svgIdPrefix.get() + iriReference.exec(markerEnd)[1]);
+    markerStart && (markerStart = svgIdPrefix.get() + iriReference.exec(markerStart)[1]);
+    markerMid && (markerMid = svgIdPrefix.get() + iriReference.exec(markerMid)[1]);
 
     var getLinesFromPath = function (pathSegList, tfMatrix) {
       var x = 0, y = 0;
@@ -2425,17 +2627,9 @@ SOFTWARE.
       var prevX, prevY, newX, newY;
       var to, p, p2, p3;
       var lines = [];
-      var markers = [];
+      var markers = new MarkerList();
       var op;
-      var prevAngle = 0, curAngle;
-
-      var addMarker = function (angle, anchor, type) {
-        var cos = Math.cos(angle);
-        var sin = Math.sin(angle);
-        var tf;
-        tf = new _pdf.Matrix(cos, sin, -sin, cos, anchor[0], anchor[1]);
-        markers.push({type: type, tf: _pdf.matrixMult(tf, tfMatrix)});
-      };
+      var prevAngle = [0, 0], curAngle;
 
       for (var i = 0; i < list.numberOfItems; i++) {
         var seg = list.getItem(i);
@@ -2549,16 +2743,16 @@ SOFTWARE.
             && !(i === 1 && "mM".indexOf(list.getItem(i - 1).pathSegTypeAsLetter) >= 0);
 
         if ("sScCqQtT".indexOf(cmd) >= 0) {
-          hasStartMarker && addMarker(getAngle([x, y], p2), [x, y], "start");
-          hasEndMarker && addMarker(getAngle(p3, to), to, "end");
+          hasStartMarker && markers.addMarker(new Marker(markerStart, [x, y], getAngle([x, y], p2)));
+          hasEndMarker && markers.addMarker(new Marker(markerEnd, to, getAngle(p3, to)));
           if (hasMidMarker) {
-            curAngle = getAngle([x, y], p2);
+            curAngle = getDirectionVector([x, y], p2);
             curAngle = "mM".indexOf(list.getItem(i - 1).pathSegTypeAsLetter) >= 0 ?
-                curAngle : .5 * (prevAngle + curAngle);
-            addMarker(curAngle, [x, y], "mid");
+                curAngle : normalize(addVectors(prevAngle, curAngle));
+            markers.addMarker(new Marker(markerMid, [x, y], Math.atan2(curAngle[1], curAngle[0])));
           }
 
-          prevAngle = getAngle(p3, to);
+          prevAngle = getDirectionVector(p3, to);
 
           prevX = x;
           prevY = y;
@@ -2573,14 +2767,14 @@ SOFTWARE.
             ]
           });
         } else if ("lLhHvVmM".indexOf(cmd) >= 0) {
-          curAngle = getAngle([x, y], to);
-          hasStartMarker && addMarker(curAngle, [x, y], "start");
-          hasEndMarker && addMarker(curAngle, to, "end");
+          curAngle = getDirectionVector([x, y], to);
+          hasStartMarker && markers.addMarker(new Marker(markerStart, [x, y], Math.atan2(curAngle[1], curAngle[0])));
+          hasEndMarker && markers.addMarker(new Marker(markerEnd, to, Math.atan2(curAngle[1], curAngle[0])));
           if (hasMidMarker) {
             var angle = "mM".indexOf(cmd) >= 0 ?
                 prevAngle : "mM".indexOf(list.getItem(i - 1).pathSegTypeAsLetter) >= 0 ?
-                curAngle : .5 * (prevAngle + curAngle);
-            addMarker(angle, [x, y], "mid");
+                curAngle : normalize(addVectors(prevAngle, curAngle));
+            markers.addMarker(new Marker(markerMid, [x, y], Math.atan2(angle[1], angle[0])));
           }
           prevAngle = curAngle;
 
@@ -2604,27 +2798,12 @@ SOFTWARE.
     };
     var lines = getLinesFromPath(list, tfMatrix);
 
-    if (markerEnd || markerStart || markerMid) {
-      for (var i = 0; i < lines.markers.length; i++) {
-        var marker = lines.markers[i];
-        var markerElement;
-        switch (marker.type) {
-          case "start":
-            markerElement = svgIdPrefix.get() + iriReference.exec(markerStart)[1];
-            break;
-          case "end":
-            markerElement = svgIdPrefix.get() + iriReference.exec(markerEnd)[1];
-            break;
-          case "mid":
-            markerElement = svgIdPrefix.get() + iriReference.exec(markerMid)[1];
-            break;
-        }
-        _pdf.doFormObject(markerElement, marker.tf);
-      }
-    }
-
     if (lines.lines.length > 0) {
       _pdf.path(lines.lines, colorMode, gradient, gradientMatrix);
+    }
+
+    if (markerEnd || markerStart || markerMid) {
+      lines.markers.draw(tfMatrix, attributeState);
     }
   };
 
@@ -2650,10 +2829,28 @@ SOFTWARE.
   };
 
   // draws a line
-  var line = function (node, tfMatrix) {
+  var line = function (node, tfMatrix, svgIdPrefix, attributeState) {
     var p1 = multVecMatrix([parseFloat(node.getAttribute('x1')), parseFloat(node.getAttribute('y1'))], tfMatrix);
     var p2 = multVecMatrix([parseFloat(node.getAttribute('x2')), parseFloat(node.getAttribute('y2'))], tfMatrix);
-    _pdf.line(p1[0], p1[1], p2[0], p2[1]);
+
+    if (attributeState.strokeMode === "D"){
+      _pdf.line(p1[0], p1[1], p2[0], p2[1]);
+    }
+
+    var markerStart = node.getAttribute("marker-start"),
+        markerEnd = node.getAttribute("marker-end");
+
+    if (markerStart || markerEnd) {
+      var markers = new MarkerList();
+      var angle = getAngle(p1, p2);
+      if (markerStart) {
+        markers.addMarker(new Marker(svgIdPrefix.get() + iriReference.exec(markerStart)[1], p1, angle));
+      }
+      if (markerEnd) {
+        markers.addMarker(new Marker(svgIdPrefix.get() + iriReference.exec(markerEnd)[1], p2, angle));
+      }
+      markers.draw(_pdf.unitMatrix, attributeState);
+    }
   };
 
   // draws a rect
@@ -2710,7 +2907,7 @@ SOFTWARE.
   };
 
   // draws a text element and its tspan children
-  var text = function (node, tfMatrix, hasFillColor, fillRGB) {
+  var text = function (node, tfMatrix, hasFillColor, fillRGB, attributeState) {
     _pdf.saveGraphicsState();
     setTextProperties(node, fillRGB);
 
@@ -2770,15 +2967,18 @@ SOFTWARE.
     x = toPixels(node.getAttribute("dx"), pdfFontSize);
     y = toPixels(node.getAttribute("dy"), pdfFontSize);
 
+    var visibility = getAttribute(node, "visibility") || attributeState.visibility;
     // when there are no tspans draw the text directly
     if (node.childElementCount === 0) {
-      _pdf.text(
-          (x - xOffset),
-          y,
-          transformText(node, removeNewlinesAndTrim(node.textContent)),
-          void 0,
-          m
-      );
+      if (visibility === "visible") {
+        _pdf.text(
+            (x - xOffset),
+            y,
+            transformText(node, removeNewlinesAndTrim(node.textContent)),
+            void 0,
+            m
+        );
+      }
     } else {
       // otherwise loop over tspans and position each relative to the previous one
       forEachChild(node, function (i, tSpan) {
@@ -2789,13 +2989,16 @@ SOFTWARE.
         var tSpanColor = getAttribute(tSpan, "fill");
         setTextProperties(tSpan, tSpanColor && new RGBColor(tSpanColor));
         var extent = tSpan.getExtentOfChar(0);
-        _pdf.text(
-            extent.x - textX,//x - xOffset,
-            extent.y + extent.height * 0.7 - textY, // 0.7 roughly mimicks the text baseline
-            transformText(node, removeNewlinesAndTrim(tSpan.textContent)),
-            void 0,
-            m
-        );
+        var tSpanVisibility = getAttribute(tSpan, "visibility") || visibility;
+        if (tSpanVisibility === "visible") {
+          _pdf.text(
+              extent.x - textX,//x - xOffset,
+              extent.y + extent.height * 0.7 - textY, // 0.7 roughly mimicks the text baseline
+              transformText(node, removeNewlinesAndTrim(tSpan.textContent)),
+              void 0,
+              m
+          );
+        }
 
         _pdf.restoreGraphicsState();
       });
@@ -2807,10 +3010,10 @@ SOFTWARE.
   };
 
   // As defs elements are allowed to appear after they are referenced, we search for them first
-  var findAndRenderDefs = function (node, tfMatrix, defs, svgIdPrefix, withinDefs) {
+  var findAndRenderDefs = function (node, tfMatrix, defs, svgIdPrefix, withinDefs, attributeState) {
     forEachChild(node, function (i, child) {
       if (child.tagName.toLowerCase() === "defs") {
-        renderNode(child, tfMatrix, defs, svgIdPrefix, withinDefs);
+        renderNode(child, tfMatrix, defs, svgIdPrefix, withinDefs, attributeState);
         // prevent defs from being evaluated twice // TODO: make this better
         child.parentNode.removeChild(child);
       }
@@ -2818,18 +3021,18 @@ SOFTWARE.
   };
 
   // processes a svg node
-  var svg = function (node, tfMatrix, defs, svgIdPrefix, withinDefs) {
+  var svg = function (node, tfMatrix, defs, svgIdPrefix, withinDefs, attributeState) {
     // create a new prefix and clone the defs, as defs within the svg should not be visible outside
     var newSvgIdPrefix = svgIdPrefix.nextChild();
     var newDefs = cloneDefs(defs);
-    findAndRenderDefs(node, tfMatrix, newDefs, newSvgIdPrefix, withinDefs);
-    renderChildren(node, tfMatrix, newDefs, newSvgIdPrefix, withinDefs);
+    findAndRenderDefs(node, tfMatrix, newDefs, newSvgIdPrefix, withinDefs, attributeState);
+    renderChildren(node, tfMatrix, newDefs, newSvgIdPrefix, withinDefs, attributeState);
   };
 
   // renders all children of a node
-  var renderChildren = function (node, tfMatrix, defs, svgIdPrefix, withinDefs) {
+  var renderChildren = function (node, tfMatrix, defs, svgIdPrefix, withinDefs, attributeState) {
     forEachChild(node, function (i, node) {
-      renderNode(node, tfMatrix, defs, svgIdPrefix, withinDefs);
+      renderNode(node, tfMatrix, defs, svgIdPrefix, withinDefs, attributeState);
     });
   };
 
@@ -2867,7 +3070,7 @@ SOFTWARE.
     defs[id] = node;
   };
 
-  var pattern = function (node, defs, svgIdPrefix) {
+  var pattern = function (node, defs, svgIdPrefix, attributeState) {
     var id = svgIdPrefix.get() + node.getAttribute("id");
     defs[id] = node;
 
@@ -2878,7 +3081,7 @@ SOFTWARE.
 
     _pdf.beginTilingPattern(pattern);
     // continue without transformation
-    renderChildren(node, _pdf.unitMatrix, defs, svgIdPrefix, false);
+    renderChildren(node, _pdf.unitMatrix, defs, svgIdPrefix, false, attributeState);
     _pdf.endTilingPattern(id, pattern);
   };
 
@@ -2924,12 +3127,25 @@ SOFTWARE.
    * @param defs The defs map holding all svg nodes that can be referenced
    * @param svgIdPrefix The current id prefix
    * @param withinDefs True iff we are top-level within a defs node, so the target can be switched to an pdf form object
+   * @param {AttributeState} attributeState Keeps track of parent attributes that are inherited automatically
    */
-  var renderNode = function (node, contextTransform, defs, svgIdPrefix, withinDefs) {
+  var renderNode = function (node, contextTransform, defs, svgIdPrefix, withinDefs, attributeState) {
+    attributeState = attributeState.clone();
+
+    if (getAttribute(node, "display") === "none") {
+      return;
+    }
+
+    var visibility = attributeState.visibility = getAttribute(node, "visibility") || attributeState.visibility;
+    if (visibility === "hidden" && !nodeIs(node, "svg,g,marker,a,pattern,defs,text")) {
+      return;
+    }
+
     var tfMatrix,
         hasFillColor = false,
         fillRGB = null,
-        colorMode = null,
+        fillMode = "inherit",
+        strokeMode = "inherit",
         fillUrl = null,
         fillData = null,
         bBox;
@@ -2967,7 +3183,7 @@ SOFTWARE.
       function setDefaultColor() {
         fillRGB = new RGBColor("rgb(0, 0, 0)");
         hasFillColor = true;
-        colorMode = "F";
+        fillMode = "F";
       }
 
       var fillColor = getAttribute(node, "fill");
@@ -2996,6 +3212,8 @@ SOFTWARE.
             var gradientTransform = parseTransform(fill.getAttribute("gradientTransform"));
 
             fillData = _pdf.matrixMult(gradientTransform, gradientUnitsMatrix);
+
+            fillMode = "";
           } else if (fill && nodeIs(fill, "pattern")) {
             var fillBBox, y, width, height, x;
             fillData = {};
@@ -3036,9 +3254,9 @@ SOFTWARE.
             fillData.matrix = _pdf.matrixMult(
                 _pdf.matrixMult(patternContentUnitsMatrix, patternUnitsMatrix), tfMatrix);
 
-            colorMode = "F";
+            fillMode = "F";
           } else {
-            // unsupported fill argument (e.g. patterns) -> fill black
+            // unsupported fill argument -> fill black
             fillUrl = fill = null;
             setDefaultColor();
           }
@@ -3047,19 +3265,20 @@ SOFTWARE.
           fillRGB = parseColor(fillColor);
           if (fillRGB.ok) {
             hasFillColor = true;
-            colorMode = 'F';
+            fillMode = "F";
           } else {
-            colorMode = null;
+            fillMode = "";
           }
         }
-      } else {
-        // if no fill attribute is provided the default fill color is black
-        setDefaultColor();
       }
 
       // opacity is realized via a pdf graphics state
       var opacity = 1.0;
-      var nodeOpacity = node.getAttribute("opacity") || node.getAttribute("fill-opacity");
+      var nodeOpacity = getAttribute(node, "opacity")
+          || getAttribute(node, "fill-opacity")
+          // this is a quickfix: pdf can't handle different opacity values for stroke and fill
+          // we could split the primitive into two parts, however
+          || getAttribute(node, "stroke-opacity");
       if (nodeOpacity) {
         opacity *= parseFloat(nodeOpacity);
       }
@@ -3072,60 +3291,76 @@ SOFTWARE.
     if (nodeIs(node, "g,path,rect,ellipse,line,circle,polygon")) {
       // text has no fill color, so don't apply it until here
       if (hasFillColor) {
+        attributeState.fill = fillRGB;
         _pdf.setFillColor(fillRGB.r, fillRGB.g, fillRGB.b);
       }
 
       // stroke mode
-      var strokeColor = node.getAttribute('stroke');
+      var strokeColor = getAttribute(node, "stroke");
       if (strokeColor) {
-        var strokeWidth;
-        if (node.hasAttribute("stroke-width")) {
-          strokeWidth = Math.abs(parseFloat(node.getAttribute('stroke-width')));
+        var strokeWidth = getAttribute(node, "stroke-width");
+        if (strokeWidth !== void 0 && strokeWidth !== "") {
+          strokeWidth = Math.abs(parseFloat(strokeWidth));
+          attributeState.strokeWidth = strokeWidth;
           _pdf.setLineWidth(strokeWidth);
         }
         var strokeRGB = new RGBColor(strokeColor);
         if (strokeRGB.ok) {
+          attributeState.color = strokeRGB;
           _pdf.setDrawColor(strokeRGB.r, strokeRGB.g, strokeRGB.b);
           if (strokeWidth !== 0) {
             // pdf spec states: "A line width of 0 denotes the thinnest line that can be rendered at device resolution:
             // 1 device pixel wide". SVG, however, does not draw zero width lines.
-            colorMode = (colorMode || "") + "D";
+            strokeMode = "D";
+          } else {
+            strokeMode = "";
           }
         }
-        if (node.hasAttribute("stroke-linecap")) {
-          _pdf.setLineCap(node.getAttribute("stroke-linecap"));
+        var lineCap = getAttribute(node, "stroke-linecap");
+        if (lineCap) {
+          _pdf.setLineCap(attributeState.strokeLinecap = lineCap);
         }
-        if (node.hasAttribute("stroke-linejoin")) {
-          _pdf.setLineJoin(node.getAttribute("stroke-linejoin"));
+        var lineJoin = getAttribute(node, "stroke-linejoin");
+        if (lineJoin) {
+          _pdf.setLineJoin(attributeState.strokeLinejoin = lineJoin);
         }
-        if (node.hasAttribute("stroke-dasharray")) {
-          _pdf.setLineDashPattern(
-              parseFloats(node.getAttribute("stroke-dasharray")),
-              parseInt(node.getAttribute("stroke-dashoffset")) || 0
-          );
+        var dashArray = getAttribute(node, "stroke-dasharray");
+        if (dashArray) {
+          dashArray = parseFloats(dashArray);
+          var dashOffset = parseInt(getAttribute(node, "stroke-dashoffset")) || 0;
+          attributeState.strokeDasharray = dashArray;
+          attributeState.strokeDashoffset = dashOffset;
+          _pdf.setLineDashPattern(dashArray, dashOffset);
         }
-        if (node.hasAttribute("stroke-miterlimit")) {
-          _pdf.setLineMiterLimit(parseFloat(node.getAttribute("stroke-miterlimit")));
+        var miterLimit = getAttribute(node, "stroke-miterlimit");
+        if (miterLimit !== void 0 && miterLimit !== "") {
+          _pdf.setLineMiterLimit(attributeState.strokeMiterlimit = parseFloat(miterLimit));
         }
       }
     }
+
+    // inherit fill and stroke mode if not specified at this node
+    fillMode = attributeState.fillMode = fillMode === "inherit" ? attributeState.fillMode : fillMode;
+    strokeMode = attributeState.strokeMode = strokeMode === "inherit" ? attributeState.strokeMode : strokeMode;
+
+    var colorMode = fillMode + strokeMode;
 
     setTextProperties(node, fillRGB);
 
     // do the actual drawing
     switch (node.tagName.toLowerCase()) {
       case 'svg':
-        svg(node, tfMatrix, defs, svgIdPrefix, withinDefs);
+        svg(node, tfMatrix, defs, svgIdPrefix, withinDefs, attributeState);
         break;
       case 'g':
-        findAndRenderDefs(node, tfMatrix, defs, svgIdPrefix, withinDefs);
+        findAndRenderDefs(node, tfMatrix, defs, svgIdPrefix, withinDefs, attributeState);
       case 'a':
       case "marker":
-        renderChildren(node, tfMatrix, defs, svgIdPrefix, withinDefs);
+        renderChildren(node, tfMatrix, defs, svgIdPrefix, withinDefs, attributeState);
         break;
 
       case 'defs':
-        renderChildren(node, tfMatrix, defs, svgIdPrefix, true);
+        renderChildren(node, tfMatrix, defs, svgIdPrefix, true, attributeState);
         break;
 
       case 'use':
@@ -3133,7 +3368,7 @@ SOFTWARE.
         break;
 
       case 'line':
-        line(node, tfMatrix);
+        line(node, tfMatrix, svgIdPrefix, attributeState);
         break;
 
       case 'rect':
@@ -3151,15 +3386,15 @@ SOFTWARE.
         circle(node, colorMode, fillUrl, fillData);
         break;
       case 'text':
-        text(node, tfMatrix, hasFillColor, fillRGB);
+        text(node, tfMatrix, hasFillColor, fillRGB, attributeState);
         break;
 
       case 'path':
-        path(node, tfMatrix, svgIdPrefix, colorMode, fillUrl, fillData);
+        path(node, tfMatrix, svgIdPrefix, colorMode, fillUrl, fillData, attributeState);
         break;
 
       case 'polygon':
-        polygon(node, tfMatrix, colorMode, fillUrl, fillData);
+        polygon(node, tfMatrix, colorMode, fillUrl, fillData, svgIdPrefix, attributeState);
         break;
 
       case 'image':
@@ -3188,7 +3423,7 @@ SOFTWARE.
         break;
 
       case "pattern":
-        pattern(node, defs, svgIdPrefix);
+        pattern(node, defs, svgIdPrefix, attributeState);
         break;
     }
 
@@ -3212,7 +3447,16 @@ SOFTWARE.
     _pdf.saveGraphicsState();
     _pdf.setCurrentTransformationMatrix(new _pdf.Matrix(k, 0, 0, k, xOffset, yOffset));
 
-    renderNode(element.cloneNode(true), _pdf.unitMatrix, {}, new SvgPrefix(""), false);
+    // set default values that differ from pdf defaults
+    var attributeState = new AttributeState();
+    _pdf.setLineWidth(attributeState.strokeWidth);
+    var fill = attributeState.fill;
+    _pdf.setFillColor(fill.r, fill.g, fill.b);
+    _pdf.setFont(attributeState.fontFamily);
+    _pdf.setFontSize(attributeState.fontSize);
+
+    // start rendering
+    renderNode(element.cloneNode(true), _pdf.unitMatrix, {}, new SvgPrefix(""), false, attributeState);
 
     _pdf.restoreGraphicsState();
 
