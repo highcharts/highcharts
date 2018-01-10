@@ -1850,8 +1850,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				if (otherElement !== element) {
 					if (
 						// Negative zIndex versus no zIndex:
-						// On all levels except the highest. If the parent is <svg>,
-						// then we don't want to put items before <desc> or <defs>
+						// On all levels except the highest. If the parent is
+						// <svg>, then we don't want to put items before <desc>
+						// or <defs>
 						(value < 0 && undefinedOtherZIndex && !svgParent && !i)
 					) {
 						parentNode.insertBefore(element, childNodes[i]);
@@ -1859,8 +1860,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 					} else if (
 						// Insert after the first element with a lower zIndex
 						pInt(otherZIndex) <= value ||
-						// If negative zIndex, add this before first undefined zIndex element
-						(undefinedOtherZIndex && (!defined(value) || value >= 0))
+						// If negative zIndex, add this before first undefined
+						// zIndex element
+						(
+							undefinedOtherZIndex &&
+							(!defined(value) || value >= 0)
+						)
 					) {
 						parentNode.insertBefore(
 							element,
@@ -2741,7 +2746,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 					safe++;
 				}
 
-				spans.push(node.textContent.substr(startPos, endPos - startPos));
+				spans.push(
+					node.textContent.substr(startPos, endPos - startPos)
+				);
 
 				startPos = endPos;
 				pos = startPos + guessedLineCharLength;

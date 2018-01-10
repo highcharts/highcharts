@@ -17,7 +17,7 @@
         "guard-for-in": 0,                          /*@todo: Make the each function handle objects, then run a guarded for-in there.*/
         "indent": ["warn", "tab"],
         "lines-around-comment": 0,
-        //"max-len": ["warn", 80, 4],
+        // "max-len": ["warn", { "ignoreUrls": true}],
         "newline-after-var": 0,
         "no-alert": 2,
         "no-console": 2,

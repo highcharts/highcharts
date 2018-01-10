@@ -156,7 +156,8 @@ H.Tick.prototype = {
 			rightPos = pxPos + (1 - factor) * labelWidth;
 
 			if (leftPos < leftBound) {
-				modifiedSlotWidth = xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
+				modifiedSlotWidth =
+					xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
 			} else if (rightPos > rightBound) {
 				modifiedSlotWidth =
 					rightBound - xy.x + modifiedSlotWidth * factor;
