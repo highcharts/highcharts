@@ -251,7 +251,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
  *
  * @extends {plotOptions.pie}
  * @sample highcharts/demo/sunburst Sunburst chart
- * @excluding allAreas, center, clip, colorAxis, compare, compareBase,
+ * @excluding allAreas, clip, colorAxis, compare, compareBase,
  *            dataGrouping, depth, endAngle, gapSize, gapUnit,
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *            minSize, navigatorOptions, pointRange
@@ -263,7 +263,7 @@ var sunburstOptions = {
 	 * The center of the sunburst chart relative to the plot area. Can be
 	 * percentages or pixel values.
 	 *
-	 * @type {Array<String|Number>}
+	 * @type {Array<String|Number>}	
 	 * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
 	 * @product highcharts
 	 */
