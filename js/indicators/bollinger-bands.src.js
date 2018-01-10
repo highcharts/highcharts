@@ -132,6 +132,7 @@ H.seriesType('bb', 'sma',
 	}, /** @lends Highcharts.Series.prototype */ {
 		pointArrayMap: ['top', 'middle', 'bottom'],
 		pointValKey: 'middle',
+		nameComponents: ['period', 'standardDeviation'],
 		init: function () {
 			SMA.prototype.init.apply(this, arguments);
 

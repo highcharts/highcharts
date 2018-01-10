@@ -76,7 +76,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
             data: volume,
             yAxis: 1
         }, {
-            name: 'Money Flow Index (14)',
             type: 'mfi',
             linkedTo: 'aapl',
             yAxis: 2,

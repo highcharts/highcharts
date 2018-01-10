@@ -28,11 +28,9 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
             data: data
         }, {
             type: 'ema',
-            name: 'EMA (14)',
             linkedTo: 'aapl'
         }, {
             type: 'ema',
-            name: 'EMA (50)',
             linkedTo: 'aapl',
             params: {
                 period: 50

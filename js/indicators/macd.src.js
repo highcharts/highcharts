@@ -28,7 +28,6 @@ seriesType('macd', 'sma',
 	 * @optionparent plotOptions.macd
 	 */
 	{
-		name: 'MACD (26, 12, 9)',
 		params: {
 			/**
 			 * The short period for indicator calculations.
@@ -129,6 +128,7 @@ seriesType('macd', 'sma',
 		dataGrouping: 'averages',
 		minPointLength: 0
 	}, {
+		nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
 		// "y" value is treated as Histogram data
 		pointArrayMap: ['y', 'signal', 'MACD'],
 		parallelArrays: ['x', 'y', 'signal', 'MACD'],

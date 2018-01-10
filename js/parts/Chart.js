@@ -312,8 +312,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		for (; i < series.length; i++) {
 			if (series[i]) {
 				series[i].index = i;
-				series[i].name = series[i].name || 
-					'Series ' + (series[i].index + 1);
+				series[i].name = series[i].getName();
 			}
 		}
 	},
