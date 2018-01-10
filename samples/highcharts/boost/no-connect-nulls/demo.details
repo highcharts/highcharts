@@ -1,0 +1,7 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Christer Vasseng 
+ requiresManualTesting: true
+ js_wrap: b
+...
