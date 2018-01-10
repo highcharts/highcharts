@@ -73,6 +73,7 @@ seriesType('roc', 'sma',
 			period: 9
 		}
 	}, {
+		nameBase: 'Rate of Change',
 		getValues: function (series, params) {
 			var period = params.period,
 				xVal = series.xData,

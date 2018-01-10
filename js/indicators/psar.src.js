@@ -116,7 +116,6 @@ H.seriesType('psar', 'sma',
 	 */
 
 	{
-		name: 'PSAR',
 		lineWidth: 0,
 		marker: {
 			enabled: true
@@ -182,6 +181,7 @@ H.seriesType('psar', 'sma',
 			decimals: 4
 		}
 	}, {
+		nameComponents: false,
 		getValues: function (series, params) {
 			var xVal = series.xData,
 				yVal = series.yData,

@@ -2688,6 +2688,17 @@ H.Series = H.seriesType('line', null, { // base series options
 		return options;
 	},
 
+	/**
+	 * Return series name in "Series {Number}" format or the one defined by a
+	 * user. This method can be simply overridden as series name format can
+	 * vary (e.g. technical indicators).
+	 *
+	 * @return  {String} The series name.
+	 */
+	getName: function () {
+		return this.name || 'Series ' + (this.index + 1);
+	},
+
 	getCyclic: function (prop, value, defaults) {
 		var i,
 			chart = this.chart,

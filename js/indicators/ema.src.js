@@ -40,7 +40,6 @@ seriesType('ema', 'sma',
 	 * @optionparent plotOptions.ema
 	 */
 	{
-		name: 'EMA (14)',
 		params: {
 			index: 0,
 			period: 14

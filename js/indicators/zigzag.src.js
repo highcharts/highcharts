@@ -31,7 +31,6 @@ seriesType('zigzag', 'sma',
 	 * @optionparent plotOptions.zigzag
 	 */
 	{
-		name: 'Zig Zag (1%)',
 		/**
 		 * @excluding index,period
 		 */
@@ -73,6 +72,8 @@ seriesType('zigzag', 'sma',
 			deviation: 1
 		}
 	}, {
+		nameComponents: ['deviation'],
+		nameBase: 'Zig Zag',
 		getValues: function (series, params) {
 			var lowIndex = params.lowIndex,
 				highIndex = params.highIndex,

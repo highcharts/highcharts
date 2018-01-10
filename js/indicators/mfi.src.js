@@ -55,8 +55,6 @@ H.seriesType('mfi', 'sma',
 	 */
 
 	{
-
-		name: 'Money Flow Index (14)',
 		/**
 		 * @excluding index
 		 */
@@ -83,6 +81,7 @@ H.seriesType('mfi', 'sma',
 
 		}
 	}, {
+		nameBase: 'Money Flow Index',
 		getValues: function (series, params) {
 			var period = params.period,
 				xVal = series.xData,

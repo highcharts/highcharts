@@ -50,7 +50,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
         }, {
             type: 'vwap',
             linkedTo: 'AAPL',
-            name: 'Volume Weighted Average Price (VWAP)',
             showInLegend: true
         }]
     });

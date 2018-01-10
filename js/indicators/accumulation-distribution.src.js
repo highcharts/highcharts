@@ -34,7 +34,6 @@ seriesType('ad', 'sma',
 	 * @optionparent plotOptions.ad
 	 */
 	{
-		name: 'Accumulation/Distribution',
 		params: {
 			/**
 			 * The id of volume series which is mandatory.
@@ -48,6 +47,8 @@ seriesType('ad', 'sma',
 			volumeSeriesID: 'volume'
 		}
 	}, {
+		nameComponents: false,
+		nameBase: 'Accumulation/Distribution',
 		getValues: function (series, params) {
 			var period = params.period,
 				xVal = series.xData,

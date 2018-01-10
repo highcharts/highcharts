@@ -31,11 +31,11 @@ seriesType('momentum', 'sma',
 	 * @optionparent plotOptions.momentum
 	 */
 	{
-		name: 'Momentum (14)',
 		params: {
 			period: 14
 		}
 	}, {
+		nameBase: 'Momentum',
 		getValues: function (series, params) {
 			var period = params.period,
 				xVal = series.xData,
