@@ -233,7 +233,6 @@ H.seriesType('bb', 'sma',
 				point,
 				i;
 
-			// BB requires close value
 			if (xVal.length < period) {
 				return false;
 			}
