@@ -24,12 +24,9 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
         map = Highcharts.map;
 
     function arrToPrecision(arr) {
-        var precision = 1e4;
-
         return map(arr, function (point) {
             return map(point, Math.round);
         });
-
     }
 
     assert.strictEqual(
@@ -136,5 +133,25 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
             [15395, 15106, 14816]
         ],
         'Correct values after point.remove()'
+    );
+
+    chart.addSeries({
+        type: 'area',
+        id: 'area-main',
+        data: [15302, 15316, 15395, 15395]
+    }, false);
+
+    chart.addSeries({
+        type: 'bb',
+        linkedTo: 'area-main',
+        params: {
+            period: 3
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[1].data.length > 0,
+        true,
+        'BB compatible with one dimensional data (#7648).'
     );
 });
