@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: ["warn", { "ignoreUrls": true}] */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -20,12 +21,18 @@ var Axis = H.Axis,
  * with the time positions. Used in datetime axes as well as for grouping
  * data on a datetime axis.
  *
- * @param {Object} normalizedInterval The interval in axis values (ms) and the count
+ * @param {Object} normalizedInterval
+ *        The interval in axis values (ms) and thecount
  * @param {Number} min The minimum in axis values
  * @param {Number} max The maximum in axis values
  * @param {Number} startOfWeek
  */
-Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
+Axis.prototype.getTimeTicks = function (
+	normalizedInterval,
+	min,
+	max,
+	startOfWeek
+) {
 	var time = this.chart.time,
 		Date = time.Date,
 		tickPositions = [],
@@ -45,12 +52,16 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		variableDayLength;
 
 	if (defined(min)) { // #1300
-		minDate[time.setMilliseconds](interval >= timeUnits.second ? 0 : // #3935
-			count * Math.floor(minDate.getMilliseconds() / count)); // #3652, #3654
+		minDate[time.setMilliseconds](interval >= timeUnits.second ?
+			0 : // #3935
+			count * Math.floor(minDate.getMilliseconds() / count)
+		); // #3652, #3654
 
 		if (interval >= timeUnits.second) { // second
-			minDate[time.setSeconds](interval >= timeUnits.minute ? 0 : // #3935
-				count * Math.floor(minDate.getSeconds() / count));
+			minDate[time.setSeconds](interval >= timeUnits.minute ?
+				0 : // #3935
+				count * Math.floor(minDate.getSeconds() / count)
+			);
 		}
 
 		if (interval >= timeUnits.minute) { // minute
@@ -82,8 +93,11 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate[time.setDate](minDate[time.getDate]() - minDate[time.getDay]() +
-				pick(startOfWeek, 1));
+			minDate[time.setDate](
+				minDate[time.getDate]() -
+				minDate[time.getDay]() +
+				pick(startOfWeek, 1)
+			);
 		}
 
 
@@ -206,7 +220,10 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
  * prevent it for running over again for each segment having the same interval.
  * #662, #697.
  */
-Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
+Axis.prototype.normalizeTimeTickInterval = function (
+	tickInterval,
+	unitsOption
+) {
 	var units = unitsOption || [[
 			'millisecond', // unit name
 			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
@@ -246,7 +263,8 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 
 
 		if (units[i + 1]) {
-			// lessThan is in the middle between the highest multiple and the next unit.
+			// lessThan is in the middle between the highest multiple and the
+			// next unit.
 			var lessThan = (interval * multiples[multiples.length - 1] +
 						timeUnits[units[i + 1][0]]) / 2;
 
@@ -266,7 +284,9 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 	count = normalizeTickInterval(
 		tickInterval / interval,
 		multiples,
-		unit[0] === 'year' ? Math.max(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+		unit[0] === 'year' ?
+			Math.max(getMagnitude(tickInterval / interval), 1) : // #1913, #2360
+			1
 	);
 
 	return {
