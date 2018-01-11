@@ -18,9 +18,15 @@ QUnit.test('data-google-spreadsheetloading', function (assert) {
             );
 
             assert.strictEqual(
+                options.series.length,
+                2,
+                'correct number of series'
+            );
+
+            assert.strictEqual(
                 options.series[0].data.length,
-              9,
-              'correct amount of rows'
+                9,
+                'correct amount of rows'
             );
 
             assert.strictEqual(
@@ -30,9 +36,27 @@ QUnit.test('data-google-spreadsheetloading', function (assert) {
             );
 
             assert.strictEqual(
+                options.series[1].data[0][1],
+                70.4,
+                'correct value in series 2 row 1'
+            );
+
+            assert.strictEqual(
                 options.series[1].data[3][1],
                 null,
                 'null values respected'
+            );
+
+            assert.strictEqual(
+                options.series[0].name,
+                'Percentage',
+                'correct name for series 1'
+            );
+
+            assert.strictEqual(
+                options.series[1].name,
+                'Thing',
+                'correct name for series 2'
             );
 
             unlisten();
