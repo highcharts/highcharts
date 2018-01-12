@@ -2914,8 +2914,11 @@ H.setOptions = function (options) {
 	// Copy in the default options
 	H.defaultOptions = merge(true, H.defaultOptions, options);
 	
-	// Re-initiate time
-	H.time.init();
+	// Update the time object
+	H.time.update(
+		merge(H.defaultOptions.global, H.defaultOptions.time),
+		false
+	);
 
 	return H.defaultOptions;
 };
@@ -2934,7 +2937,7 @@ H.defaultPlotOptions = H.defaultOptions.plotOptions;
 
 
 // Time utilities
-H.time = new H.Time();
+H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a

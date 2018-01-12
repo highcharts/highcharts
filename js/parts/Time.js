@@ -47,28 +47,16 @@ var H = Highcharts,
  *	    chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
- * @param  chart {Chart}
- *         The chart instance. The `Time` instance reads its config options from
- *         [chart.options.time](/highcharts/time). If omitted, it reads from
- *         `Highcharts.defaultOptions.time`.
+ * @param  options {Object}
+ *         Time options as defined in [chart.options.time](/highcharts/time).
  * @since  6.0.5
  * @class
  */
-Highcharts.Time = function (chart) {
-	this.init(chart);
+Highcharts.Time = function (options) {
+	this.update(options, false);
 };
 
 Highcharts.Time.prototype = {
-
-	init: function (chart) {
-		this.chart = chart;
-		this.update(
-			chart ?
-				chart.options.time :
-				merge(H.defaultOptions.global, H.defaultOptions.time),
-			false
-		);
-	},
 
 	/**
 	 * Time options that can apply globally or to individual charts. These
@@ -210,12 +198,12 @@ Highcharts.Time.prototype = {
 	 * @private
 	 */
 	update: function (options) {
-		var useUTC = pick(options.useUTC, true),
+		var useUTC = pick(options && options.useUTC, true),
 			getters = ['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'],
 			setters = getters.concat(['Milliseconds', 'Seconds']),
 			n;
 
-		this.options = merge(true, this.options || {}, options);
+		this.options = options = merge(true, this.options || {}, options);
 
 		// Allow using a different Date class
 		this.Date = options.Date || win.Date;
