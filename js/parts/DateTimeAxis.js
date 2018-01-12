@@ -152,11 +152,15 @@ Axis.prototype.getTimeTicks = function (
 			// if we're using global time, the interval is not fixed as it jumps
 			// one hour at the DST crossover
 			} else if (
-					variableDayLength &&
-					(interval === timeUnits.day || interval === timeUnits.week)
-				) {
-				t = time.makeTime(minYear, minMonth, minDateDate +
-					i * count * (interval === timeUnits.day ? 1 : 7));
+				variableDayLength &&
+				(interval === timeUnits.day || interval === timeUnits.week)
+			) {
+				t = time.makeTime(
+					minYear,
+					minMonth,
+					minDateDate +
+						i * count * (interval === timeUnits.day ? 1 : 7)
+				);
 
 			} else if (
 				variableDayLength &&
