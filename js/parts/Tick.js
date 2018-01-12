@@ -97,7 +97,11 @@ H.Tick.prototype = {
 					null;
 
 			// Un-rotated length
-			tick.labelLength = label && label.getBBox().width;
+			if (label) {
+				label.textPxLength = label.getBBox().width;	
+			}
+			
+
 			// Base value to detect change for new calls to getBBox
 			tick.rotation = 0;
 

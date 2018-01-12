@@ -3969,8 +3969,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Get the longest label length
 		each(tickPositions, function (tick) {
 			tick = ticks[tick];
-			if (tick && tick.labelLength > maxLabelLength) {
-				maxLabelLength = tick.labelLength;
+			if (
+				tick &&
+				tick.label &&
+				tick.label.textPxLength > maxLabelLength
+			) {
+				maxLabelLength = tick.label.textPxLength;
 			}
 		});
 		this.maxLabelLength = maxLabelLength;
@@ -4015,7 +4019,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 						// Set the correct width in order to read
 						// the bounding box height (#4678, #5034)
-						} else if (ticks[pos].labelLength > slotWidth) {
+						} else if (label.textPxLength > slotWidth) {
 							label.css({ width: slotWidth + 'px' });
 						}
 

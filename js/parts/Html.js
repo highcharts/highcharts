@@ -90,7 +90,18 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 			y = wrapper.y || 0,
 			align = wrapper.textAlign || 'left',
 			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			styles = wrapper.styles;
+			styles = wrapper.styles,
+			whiteSpace = styles && styles.whiteSpace;
+
+		function getTextPxLength() {
+			// Reset multiline/ellipsis in order to read width (#4928,
+			// #5417)
+			css(elem, {
+				width: '',
+				whiteSpace: whiteSpace || 'nowrap'
+			});
+			return elem.offsetWidth;
+		}
 
 		// apply translate
 		css(elem, {
@@ -120,24 +131,44 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
 			var rotation = wrapper.rotation,
 				baseline,
-				textWidth = pInt(wrapper.textWidth),
-				whiteSpace = styles && styles.whiteSpace,
+				textWidth = wrapper.textWidth && pInt(wrapper.textWidth),
 				currentTextTransform = [
 					rotation,
 					align,
 					elem.innerHTML,
-					wrapper.textWidth,
 					wrapper.textAlign
 				].join(',');
 
+			// Update textWidth. Use the memoized textPxLength if possible, to
+			// avoid the getTextPxLength function using elem.offsetWidth.
+			// Calling offsetWidth affects rendering time as it forces layout
+			// (#7656).					
+			if (
+				textWidth !== wrapper.oldTextWidth &&
+				(
+					(textWidth > wrapper.oldTextWidth) ||
+					(wrapper.textPxLength || getTextPxLength()) > textWidth
+				) &&
+				/[ \-]/.test(elem.textContent || elem.innerText)
+			) { // #983, #1254
+				css(elem, {
+					width: textWidth + 'px',
+					display: 'block',
+					whiteSpace: whiteSpace || 'normal' // #3331
+				});
+				wrapper.oldTextWidth = textWidth;
+			}
+
 			// Do the calculations and DOM access only if properties changed
 			if (currentTextTransform !== wrapper.cTT) {
-
-
 				baseline = renderer.fontMetrics(elem.style.fontSize).b;
 
-				// Renderer specific handling of span rotation
-				if (defined(rotation)) {
+				// Renderer specific handling of span rotation, but only if we
+				// have something to update.
+				if (
+					defined(rotation) &&
+					rotation !== (wrapper.oldRotation || 0)
+				) {
 					wrapper.setSpanRotation(
 						rotation,
 						alignCorrection,
@@ -145,28 +176,10 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 					);
 				}
 
-				// Reset multiline/ellipsis in order to read width (#4928,
-				// #5417)
-				css(elem, {
-					width: '',
-					whiteSpace: whiteSpace || 'nowrap'
-				});
-
-				// Update textWidth
-				if (
-					elem.offsetWidth > textWidth &&
-					/[ \-]/.test(elem.textContent || elem.innerText)
-				) { // #983, #1254
-					css(elem, {
-						width: textWidth + 'px',
-						display: 'block',
-						whiteSpace: whiteSpace || 'normal' // #3331
-					});
-				}
-
-
 				wrapper.getSpanCorrection(
-					elem.offsetWidth,
+					// Avoid elem.offsetWidth if we can, it affects rendering
+					// time heavily (#7656)
+					wrapper.textPxLength || elem.offsetWidth,
 					baseline,
 					alignCorrection,
 					rotation,
@@ -180,15 +193,9 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 				top: (y + (wrapper.yCorr || 0)) + 'px'
 			});
 
-			// Force reflow in webkit to apply the left and top on useHTML
-			// element (#1249)
-			if (isWebKit) {
-				// Assigned to baseline for lint purpose
-				baseline = elem.offsetHeight;
-			}
-
 			// record current text transform
 			wrapper.cTT = currentTextTransform;
+			wrapper.oldRotation = rotation;
 		}
 	},
 
@@ -267,7 +274,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 			}
 			this.textStr = value;
 			element.innerHTML = pick(value, '');
-			wrapper.htmlUpdateTransform();
+			wrapper.doTransform = true;
 		};
 
 		// Add setters for the element itself (#4938)
@@ -286,7 +293,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 				key = 'textAlign';
 			}
 			wrapper[key] = value;
-			wrapper.htmlUpdateTransform();
+			wrapper.doTransform = true;
 		};
 
 		// Set the default attributes
@@ -309,6 +316,16 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
 		// Use the HTML specific .css method
 		wrapper.css = wrapper.htmlCss;
+
+		// Runs at the end of .attr()
+		wrapper.afterSetters = function () {
+			// Update transform. Do this outside the loop to prevent redundant
+			// updating for batch setting of attributes.
+			if (this.doTransform) {
+				this.htmlUpdateTransform();
+				this.doTransform = false;
+			}
+		};
 
 		// This is specific for HTML within SVG
 		if (isSVG) {
