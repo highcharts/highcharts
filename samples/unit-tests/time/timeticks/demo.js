@@ -1,233 +1,235 @@
-(function () {
-    var isCET = (
-        new Date().toString().indexOf('CET') !== -1 ||
-        new Date().toString().indexOf('CEST') !== -1
+QUnit.test('Time ticks, ten minutesacross DST', function (assert) {
+    var time = new Highcharts.Time({
+        timezone: 'CET'
+    });
+
+
+    var ticks = time.getTimeTicks(
+        {
+            unitRange: 60000,
+            count: 10
+        },
+        Date.UTC(2022, 9, 29, 23),
+        Date.UTC(2022, 9, 30, 2)
     );
 
+    assert.deepEqual(
+        ticks.map(function (tick) {
+            return time.dateFormat('%H:%M', tick);
+        }),
+        [
+            "01:00",
+            "01:10",
+            "01:20",
+            "01:30",
+            "01:40",
+            "01:50",
+            "02:00",
+            "02:10",
+            "02:20",
+            "02:30",
+            "02:40",
+            "02:50",
+            "02:00",
+            "02:10",
+            "02:20",
+            "02:30",
+            "02:40",
+            "02:50",
+            "03:00"
+        ],
+        'Ten minutes. DST transition should be reflected.'
+    );
 
-    function checkHours(name, month, day) {
-        QUnit[isCET ? 'test' : 'skip'](name + ' - set and get hours across DST transition', function (assert) {
-            var timeTZ = new Highcharts.Time({
-                timezone: 'CET'
-            });
-            var timeLocal = new Highcharts.Time({
-                useUTC: false
-            });
-
-            var datesTZ = [],
-                datesLocal = [],
-                getsTZ = [],
-                getsLocal = [],
-                offsetsTZ = [],
-                offsetsLocal = [],
-                madeTimesTZ = [],
-                madeTimesLocal = [];
-
-            var ms, dateTZ, dateLocal;
-
-            for (var hours = 20; hours < 50; hours++) {
-                ms = Date.UTC(2022, month, day, hours, 0, 0);
-                dateTZ = new Date(ms);
-                dateLocal = new Date(ms);
-
-                // Getters
-                getsTZ.push(timeTZ.get('Hours', dateTZ));
-                getsLocal.push(timeLocal.get('Hours', dateLocal));
-
-                // Setters. Generate different times and set the hour to 0. Test
-                // which date it lands on.
-                timeTZ.set('Hours', dateTZ, 0);
-                timeLocal.set('Hours', dateLocal, 0);
-                datesTZ.push(dateTZ.toString());
-                datesLocal.push(dateLocal.toString());
-
-                // Timezone offsets
-                offsetsTZ.push(timeTZ.getTimezoneOffset(dateTZ));
-                offsetsLocal.push(timeLocal.getTimezoneOffset(dateLocal));
-
-                // makeTime tests
-                /*
-                madeTimesTZ.push(
-                    new Date(
-                        timeTZ.makeTime(2017, 9, 28, hours, 0, 0)
-                    ).toISOString()
-                );
-                madeTimesLocal.push(
-                    new Date(
-                        timeLocal.makeTime(2017, 9, 28, hours, 0, 0)
-                    ).toISOString()
-                );
-                */
-            }
-
-            assert.deepEqual(
-                getsTZ,
-                getsLocal,
-                'Time getters: Specific CET should equal local CET'
-            );
+});
 
 
-            assert.deepEqual(
-                datesTZ,
-                datesLocal,
-                'Time setters: Specific CET should equal local CET'
-            );
-
-            assert.deepEqual(
-                offsetsTZ,
-                offsetsLocal,
-                'Time.getTimezoneOffset: Specific CET should equal local CET'
-            );
-
-            assert.deepEqual(
-                madeTimesTZ,
-                madeTimesLocal,
-                'Time.makeTime: Specific CET should equal local CET'
-            );
-
-        /*
-        console.table(datesTZ.map((dateTZ, i) => ({
-            datesTZ: datesTZ[i],
-            datesLocal: datesLocal[i]
-        })));
-        // */
-        /*
-
-            var ticks = time.getTimeTicks(
-                {
-                    unitRange: 36e5,
-                    count: 1
-                },
-                Date.UTC(2017, 9, 28, 20),
-                Date.UTC(2017, 9, 29, 10)
-            );
-            console.table(
-                ticks.map(tick => ({
-                    'UTC':  new Date(tick).getUTCHours(),
-                    'Prod':  time.dateFormat('%H', tick),
-                    'time.get':  time.get('Hours', new Date(tick))
-                }))
-            );
-        //*/
+QUnit.test('Time ticks, single hour across DST', function (assert) {
+    var time = new Highcharts.Time({
+        timezone: 'CET'
+    });
 
 
-        });
-    }
+    var ticks = time.getTimeTicks(
+        {
+            unitRange: 36e5,
+            count: 1
+        },
+        Date.UTC(2022, 9, 29, 20),
+        Date.UTC(2022, 9, 30, 10)
+    );
 
-    checkHours('Spring', 2, 26);
-    checkHours('Autumn', 9, 29);
+    assert.deepEqual(
+        ticks.map(function (tick) {
+            return time.dateFormat('%H:00', tick);
+        }),
+        [
+            "22:00",
+            "23:00",
+            "00:00",
+            "01:00",
+            "02:00",
+            "02:00",
+            "03:00",
+            "04:00",
+            "05:00",
+            "06:00",
+            "07:00",
+            "08:00",
+            "09:00",
+            "10:00",
+            "11:00"
+        ],
+        'Single hour. Hours should adapt to local time zone transition, ' +
+        '02:00 repeated twice'
+    );
 
+});
 
-    function checkDays(name, month) {
-        QUnit[isCET ? 'test' : 'skip'](name + ' - set and get days across DST transition', function (assert) {
-            var timeTZ = new Highcharts.Time({
-                timezone: 'CET'
-            });
-            var timeLocal = new Highcharts.Time({
-                useUTC: false
-            });
-
-            var datesTZ = [],
-                datesLocal = [],
-                getsTZ = [],
-                getsLocal = [],
-                offsetsTZ = [],
-                offsetsLocal = [],
-                madeTimesTZ = [],
-                madeTimesLocal = [];
-
-            var ms, dateTZ, dateLocal;
-
-            for (var day = 1; day < 35; day++) {
-                ms = Date.UTC(2022, month, day, 0, 0, 0);
-                dateTZ = new Date(ms);
-                dateLocal = new Date(ms);
-
-                // Getters
-                getsTZ.push(timeTZ.get('Hours', dateTZ));
-                getsLocal.push(timeLocal.get('Hours', dateLocal));
-
-                // Setters. Generate different times and set the date to 0. Test
-                // which date it lands on.
-                timeTZ.set('Date', dateTZ, 1);
-                timeLocal.set('Date', dateLocal, 1);
-                datesTZ.push(dateTZ.toString());
-                datesLocal.push(dateLocal.toString());
-
-                // Timezone offsets
-                offsetsTZ.push(timeTZ.getTimezoneOffset(dateTZ));
-                offsetsLocal.push(timeLocal.getTimezoneOffset(dateLocal));
-
-                // makeTime tests
-                /*
-                madeTimesTZ.push(
-                    new Date(
-                        timeTZ.makeTime(2017, 9, 28, hours, 0, 0)
-                    ).toISOString()
-                );
-                madeTimesLocal.push(
-                    new Date(
-                        timeLocal.makeTime(2017, 9, 28, hours, 0, 0)
-                    ).toISOString()
-                );
-                */
-            }
-
-            assert.deepEqual(
-                getsTZ,
-                getsLocal,
-                'Time getters: Specific CET should equal local CET'
-            );
+QUnit.test('Time ticks, two hours across DST', function (assert) {
+    var time = new Highcharts.Time({
+        timezone: 'CET'
+    });
 
 
-            assert.deepEqual(
-                datesTZ,
-                datesLocal,
-                'Time setters: Specific CET should equal local CET'
-            );
+    var ticks = time.getTimeTicks(
+        {
+            unitRange: 36e5,
+            count: 2
+        },
+        Date.UTC(2022, 9, 29, 20),
+        Date.UTC(2022, 9, 30, 10)
+    );
 
-            assert.deepEqual(
-                offsetsTZ,
-                offsetsLocal,
-                'Time.getTimezoneOffset: Specific CET should equal local CET'
-            );
+    assert.deepEqual(
+        ticks.map(function (tick) {
+            return time.dateFormat('%H:00', tick);
+        }),
+        [
+            "22:00",
+            "00:00",
+            "02:00",
+            "04:00",
+            "06:00",
+            "08:00",
+            "10:00",
+            "12:00"
+        ],
+        'Hours should adapt to local time zone transition.'
+    );
+});
 
-            assert.deepEqual(
-                madeTimesTZ,
-                madeTimesLocal,
-                'Time.makeTime: Specific CET should equal local CET'
-            );
-
-            /*
-            console.table(datesTZ.map((dateTZ, i) => ({
-                datesTZ: datesTZ[i],
-                datesLocal: datesLocal[i]
-            })));
-            // */
-            /*
-
-            var ticks = time.getTimeTicks(
-                {
-                    unitRange: 36e5,
-                    count: 1
-                },
-                Date.UTC(2017, 9, 28, 20),
-                Date.UTC(2017, 9, 29, 10)
-            );
-            console.table(
-                ticks.map(tick => ({
-                    'UTC':  new Date(tick).getUTCHours(),
-                    'Prod':  time.dateFormat('%H', tick),
-                    'time.get':  time.get('Hours', new Date(tick))
-                }))
-            );
-        //*/
+QUnit.test('Time ticks, 12h across DST', function (assert) {
+    var time = new Highcharts.Time({
+        timezone: 'CET'
+    });
 
 
-        });
-    }
+    var ticks = time.getTimeTicks(
+        {
+            unitRange: 36e5,
+            count: 12
+        },
+        Date.UTC(2022, 9, 26, 20),
+        Date.UTC(2022, 10, 2, 10)
+    );
+
+    assert.deepEqual(
+        ticks.map(function (tick) {
+            return time.dateFormat('%H:00', tick);
+        }),
+        [
+            "12:00",
+            "00:00",
+            "12:00",
+            "00:00",
+            "12:00",
+            "00:00",
+            "12:00",
+            "00:00",
+            "12:00",
+            "00:00",
+            "12:00",
+            "00:00",
+            "12:00",
+            "00:00",
+            "12:00"
+        ],
+        'Hours should adapt to local time zone transition.'
+    );
+});
+
+QUnit.test('Time ticks, full days across DST', function (assert) {
+    var time = new Highcharts.Time({
+        timezone: 'CET'
+    });
 
 
-    checkDays('Spring', 2);
-    checkDays('Autumn', 9);
-}());
+    var ticks = time.getTimeTicks(
+        {
+            unitRange: 24 * 36e5
+        },
+        Date.UTC(2022, 9, 26, 20),
+        Date.UTC(2022, 10, 2, 10)
+    );
+
+    assert.deepEqual(
+        ticks.map(function (tick) {
+            return time.dateFormat('%H:00', tick);
+        }),
+        [
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00"
+        ],
+        'All ticks should land on timezone midnight'
+    );
+
+});
+
+QUnit.skip('Time ticks, months', function (assert) {
+    var time = new Highcharts.Time({
+        timezone: 'CET'
+    });
+
+
+    var ticks = time.getTimeTicks(
+        {
+            unitRange: 30 * 24 * 36e5
+        },
+        Date.UTC(2022, 0, 1, 0),
+        Date.UTC(2022, 11, 31, 23)
+    );
+
+    assert.deepEqual(
+        ticks.map(function (tick) {
+            return time.dateFormat('%H:00', tick);
+        }),
+        [
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00",
+            "00:00"
+        ],
+        'All ticks should land on timezone midnight'
+    );
+
+    /*
+    console.table(ticks.map(tick => ({
+        utc: new Date(tick).toUTCString(),
+        cet: new Date(tick).toString()
+    })))
+    // */
+
+});

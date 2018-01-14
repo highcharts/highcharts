@@ -546,15 +546,9 @@ Highcharts.Time.prototype = {
 			higherRanks = {},
 			minYear, // used in months and years as a basis for Date.UTC()
 			// When crossing DST, use the max. Resolves #6278.
-			minDate = new Date(
-				min - Math.max(
-					time.getTimezoneOffset(min),
-					time.getTimezoneOffset(max)
-				)
-			),
+			minDate = new Date(min),
 			interval = normalizedInterval.unitRange,
-			count = normalizedInterval.count,
-			baseOffset, // #6797
+			count = normalizedInterval.count || 1,
 			variableDayLength;
 
 		if (defined(min)) { // #1300
@@ -576,8 +570,15 @@ Highcharts.Time.prototype = {
 			}
 
 			if (interval >= timeUnits.hour) { // hour
-				minDate[time.setHours](interval >= timeUnits.day ? 0 :
-					count * Math.floor(minDate[time.getHours]() / count));
+				time.set(
+					'Hours',
+					minDate,
+					interval >= timeUnits.day ?
+						0 :
+						count * Math.floor(
+							time.get('Hours', minDate) / count
+						)
+				);
 			}
 
 			if (interval >= timeUnits.day) { // day
@@ -586,8 +587,12 @@ Highcharts.Time.prototype = {
 			}
 
 			if (interval >= timeUnits.month) { // month
-				minDate[time.setMonth](interval >= timeUnits.year ? 0 :
-					count * Math.floor(minDate[time.getMonth]() / count));
+				time.set(
+					'Month',
+					minDate,
+					interval >= timeUnits.year ? 0 :
+						count * Math.floor(time.get('Month', minDate) / count)
+				);
 				minYear = minDate[time.getFullYear]();
 			}
 
@@ -608,10 +613,10 @@ Highcharts.Time.prototype = {
 
 
 			// Get basics for variable time spans
-			minYear = minDate[time.getFullYear]();
-			var minMonth = minDate[time.getMonth](),
-				minDateDate = minDate[time.getDate](),
-				minHours = minDate[time.getHours]();
+			minYear = time.get('FullYear', minDate);
+			var minMonth = time.get('Month', minDate),
+				minDateDate = time.get('Date', minDate),
+				minHours = time.get('Hours', minDate);
 			
 			// Redefine min to the floored/rounded minimum time (#7432)
 			min = minDate.getTime();
@@ -620,10 +625,10 @@ Highcharts.Time.prototype = {
 			if (time.variableTimezone) {
 
 				// Detect whether we need to take the DST crossover into
-				// consideration. If we're crossing over DST, the day length may be
-				// 23h or 25h and we need to compute the exact clock time for each
-				// tick instead of just adding hours. This comes at a cost, so first
-				// we find out if it is needed (#4951).
+				// consideration. If we're crossing over DST, the day length may
+				// be 23h or 25h and we need to compute the exact clock time for
+				// each tick instead of just adding hours. This comes at a cost,
+				// so first we find out if it is needed (#4951).
 				variableDayLength = (
 					// Long range, assume we're crossing over.
 					max - min > 4 * timeUnits.month ||
@@ -632,14 +637,6 @@ Highcharts.Time.prototype = {
 					time.getTimezoneOffset(min) !== time.getTimezoneOffset(max)
 				);
 			}
-
-
-			// Adjust minDate to the offset date
-			baseOffset = time.getTimezoneOffset(minDate);
-			if (baseOffset) {
-				minDate = new Date(min + baseOffset);
-			}
-			
 
 			// Iterate and add tick positions at appropriate values
 			var t = minDate.getTime();
@@ -655,8 +652,8 @@ Highcharts.Time.prototype = {
 				} else if (interval === timeUnits.month) {
 					t = time.makeTime(minYear, minMonth + i * count);
 
-				// if we're using global time, the interval is not fixed as it jumps
-				// one hour at the DST crossover
+				// if we're using global time, the interval is not fixed as it
+				// jumps one hour at the DST crossover
 				} else if (
 					variableDayLength &&
 					(interval === timeUnits.day || interval === timeUnits.week)
@@ -695,8 +692,8 @@ Highcharts.Time.prototype = {
 
 
 			// Handle higher ranks. Mark new days if the time is on midnight
-			// (#950, #1649, #1760, #3349). Use a reasonable dropout threshold to 
-			// prevent looping over dense data grouping (#6156).
+			// (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
+			// to prevent looping over dense data grouping (#6156).
 			if (interval <= timeUnits.hour && tickPositions.length < 10000) {
 				each(tickPositions, function (t) {
 					if (
