@@ -9,7 +9,6 @@
  * @todo - Refactoring time
  * - Tests for western time zones. Set up test on American servers using
  *   BrowserStack?
- * - Check time zone handling in series pointInterval implementation
  * - Remove Time.setHours and etc and remove all references
  * - Performance test and profile Time.set and Time.makeTime
  */
