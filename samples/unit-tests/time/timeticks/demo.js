@@ -200,6 +200,50 @@
         );
     });
 
+
+    QUnit[isCET ? 'test' : 'skip']('Time ticks local, 12h across DST', function (assert) {
+        var time = new Highcharts.Time({
+            useUTC: false
+        });
+
+
+        var ticks = time.getTimeTicks(
+            {
+                unitRange: 36e5,
+                count: 12
+            },
+            Date.UTC(2022, 9, 26, 20),
+            Date.UTC(2022, 10, 2, 10)
+        );
+
+        assert.deepEqual(
+            ticks.map(function (tick) {
+                return [
+                    Highcharts.pad(new Date(tick).getHours(), 2),
+                    Highcharts.pad(new Date(tick).getMinutes(), 2)
+                ].join(':');
+            }),
+            [
+                "12:00",
+                "00:00",
+                "12:00",
+                "00:00",
+                "12:00",
+                "00:00",
+                "12:00",
+                "00:00",
+                "12:00",
+                "00:00",
+                "12:00",
+                "00:00",
+                "12:00",
+                "00:00",
+                "12:00"
+            ],
+            'Hours should adapt to local time zone transition.'
+        );
+    });
+
     QUnit.test('Time ticks, full days across DST', function (assert) {
         var time = new Highcharts.Time({
             timezone: 'CET'
