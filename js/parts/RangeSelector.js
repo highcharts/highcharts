@@ -1292,8 +1292,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
  * @return {number} The new minimum value.
  */
 Axis.prototype.minFromRange = function () {
-	var time = this.chart.time,
-		rangeOptions = this.range,
+	var rangeOptions = this.range,
 		type = rangeOptions.type,
 		timeName = { month: 'Month', year: 'FullYear' }[type],
 		min,
@@ -1302,14 +1301,15 @@ Axis.prototype.minFromRange = function () {
 		range,
 		// Get the true range from a start date
 		getTrueRange = function (base, count) {
-			var date = new time.Date(base),
-				basePeriod = time.get(timeName, date);
+			var date = new Date(base),
+				basePeriod = date['get' + timeName]();
 
-			time.set(timeName, date, basePeriod + count);
+			date['set' + timeName](basePeriod + count);
 
-			if (basePeriod === time.get(timeName, date)) {
-				time.set('Date', date, 0); // #6537
+			if (basePeriod === date['get' + timeName]()) {
+				date.setDate(0); // #6537
 			}
+
 			return date.getTime() - base;
 		};
 
