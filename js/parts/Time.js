@@ -10,8 +10,7 @@
  * - Tests for western time zones. Set up test on American servers using
  *   BrowserStack?
  * - Check tests for dateFormat
- * - Tests for local time. hasVariableTime must be true in order for the 
- *   tick positioning to be on par.
+ * - Check time zone handling in series pointInterval implementation
  * - Remove Time.setHours and etc and remove all references
  * - Make Axis.getTimeTicks point to Time.getTimeTicks
  * - Performance test and profile Time.set and Time.makeTime
@@ -247,6 +246,7 @@ Highcharts.Time.prototype = {
 		 * the axis ticks or series data needs to consider this.
 		 */
 		this.variableTimezone = !!(
+			!useUTC ||
 			options.getTimezoneOffset ||
 			options.timezone
 		);
