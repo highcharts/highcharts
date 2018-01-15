@@ -7,8 +7,6 @@
 
 /**
  * @todo - Refactoring time
- * - Tests for western time zones. Set up test on American servers using
- *   BrowserStack?
  * - Remove Time.setHours and etc and remove all references
  * - Performance test and profile Time.set and Time.makeTime
  */
