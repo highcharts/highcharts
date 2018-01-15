@@ -4,6 +4,20 @@
  * License: www.highcharts.com/license
  */
 /* eslint max-len: ["warn", { "ignoreUrls": true}] */
+
+/**
+ * @todo - Refactoring time
+ * - Tests for western time zones. Set up test on American servers using
+ *   BrowserStack?
+ * - Check tests for dateFormat
+ * - Tests for local time. hasVariableTime must be true in order for the 
+ *   tick positioning to be on par.
+ * - Remove Time.setHours and etc and remove all references
+ * - Make Axis.getTimeTicks point to Time.getTimeTicks
+ * - Performance test and profile Time.set and Time.makeTime
+ */
+
+
 'use strict';
 import Highcharts from './Globals.js';
 
@@ -264,15 +278,31 @@ Highcharts.Time.prototype = {
 				return ret;
 			};
 			this.set = function (unit, date, value) {
-				var ms;
+				var ms, offset, newOffset;
 
-				// Adjust by timezone
-				ms = date.getTime() - time.getTimezoneOffset(date);
-				date.setTime(ms);
+				// For lower order time units, just set it directly using local
+				// time
+				if (
+					H.inArray(unit, ['Milliseconds', 'Seconds', 'Minutes']) !==
+					-1
+				) {
+					date['set' + unit](value);
+				
+				// Higher order time units need to take the time zone into
+				// account
+				} else {
 
-				date['setUTC' + unit](value);
-				ms = date.getTime() + time.getTimezoneOffset(date);
-				date.setTime(ms);
+					// Adjust by timezone
+					offset = time.getTimezoneOffset(date);
+					ms = date.getTime() - offset;
+					date.setTime(ms);
+
+					date['setUTC' + unit](value);
+					newOffset = time.getTimezoneOffset(date);
+
+					ms = date.getTime() + newOffset;
+					date.setTime(ms);
+				}
 
 			};
 
@@ -328,6 +358,13 @@ Highcharts.Time.prototype = {
 				
 			if (offset !== newOffset) {
 				d += newOffset - offset;
+
+			// A special case for transitioning from summer time to winter time.
+			// When the clock is set back, the same time is repeated twice, i.e.
+			// 02:30 am is repeated since the clock is set back from 3 am to 
+			// 2 am. We need to make the same time as local Date does.
+			} else if (offset - 36e5 === this.getTimezoneOffset(d - 36e5)) {
+				d -= 36e5;
 			}
 
 		} else {
@@ -552,21 +589,31 @@ Highcharts.Time.prototype = {
 			variableDayLength;
 
 		if (defined(min)) { // #1300
-			minDate[time.setMilliseconds](interval >= timeUnits.second ?
-				0 : // #3935
-				count * Math.floor(minDate.getMilliseconds() / count)
+			time.set(
+				'Milliseconds',
+				minDate,
+				interval >= timeUnits.second ?
+					0 : // #3935
+					count * Math.floor(
+						time.get('Milliseconds', minDate) / count
+					)
 			); // #3652, #3654
 
 			if (interval >= timeUnits.second) { // second
-				minDate[time.setSeconds](interval >= timeUnits.minute ?
-					0 : // #3935
-					count * Math.floor(minDate.getSeconds() / count)
+				time.set('Seconds',
+					minDate,
+					interval >= timeUnits.minute ?
+						0 : // #3935
+						count * Math.floor(time.get('Seconds', minDate) / count)
 				);
 			}
 
 			if (interval >= timeUnits.minute) { // minute
-				minDate[time.setMinutes](interval >= timeUnits.hour ? 0 :
-					count * Math.floor(minDate[time.getMinutes]() / count));
+				time.set('Minutes',	minDate,
+					interval >= timeUnits.hour ?
+						0 :
+						count * Math.floor(time.get('Minutes', minDate) / count)
+				);
 			}
 
 			if (interval >= timeUnits.hour) { // hour
@@ -582,8 +629,13 @@ Highcharts.Time.prototype = {
 			}
 
 			if (interval >= timeUnits.day) { // day
-				minDate[time.setDate](interval >= timeUnits.month ? 1 :
-					count * Math.floor(minDate[time.getDate]() / count));
+				time.set(
+					'Date',
+					minDate,
+					interval >= timeUnits.month ?
+						1 :
+						count * Math.floor(time.get('Date', minDate) / count)
+					);
 			}
 
 			if (interval >= timeUnits.month) { // month
@@ -598,16 +650,20 @@ Highcharts.Time.prototype = {
 
 			if (interval >= timeUnits.year) { // year
 				minYear -= minYear % count;
-				minDate[time.setFullYear](minYear);
+				time.set('FullYear', minDate, minYear);
 			}
 
 			// week is a special case that runs outside the hierarchy
 			if (interval === timeUnits.week) {
 				// get start of current week, independent of count
-				minDate[time.setDate](
-					minDate[time.getDate]() -
-					minDate[time.getDay]() +
-					pick(startOfWeek, 1)
+				time.set(
+					'Date',
+					minDate, 
+					(
+						time.get('Date', minDate) -
+						time.get('Day', minDate) +
+						pick(startOfWeek, 1)
+					)
 				);
 			}
 

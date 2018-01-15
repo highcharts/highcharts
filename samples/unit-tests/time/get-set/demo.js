@@ -19,9 +19,7 @@
                 getsTZ = [],
                 getsLocal = [],
                 offsetsTZ = [],
-                offsetsLocal = [],
-                madeTimesTZ = [],
-                madeTimesLocal = [];
+                offsetsLocal = [];
 
             var ms, dateTZ, dateLocal;
 
@@ -45,19 +43,6 @@
                 offsetsTZ.push(timeTZ.getTimezoneOffset(dateTZ));
                 offsetsLocal.push(timeLocal.getTimezoneOffset(dateLocal));
 
-                // makeTime tests
-                /*
-                madeTimesTZ.push(
-                    new Date(
-                        timeTZ.makeTime(2017, 9, 28, hours, 0, 0)
-                    ).toISOString()
-                );
-                madeTimesLocal.push(
-                    new Date(
-                        timeLocal.makeTime(2017, 9, 28, hours, 0, 0)
-                    ).toISOString()
-                );
-                */
             }
 
             assert.deepEqual(
@@ -79,11 +64,6 @@
                 'Time.getTimezoneOffset: Specific CET should equal local CET'
             );
 
-            assert.deepEqual(
-                madeTimesTZ,
-                madeTimesLocal,
-                'Time.makeTime: Specific CET should equal local CET'
-            );
 
         /*
         console.table(datesTZ.map((dateTZ, i) => ({
@@ -114,9 +94,6 @@
         });
     }
 
-    checkHours('Spring', 2, 26);
-    checkHours('Autumn', 9, 29);
-
 
     function checkDays(name, month) {
         QUnit[isCET ? 'test' : 'skip'](name + ' - set and get days across DST transition', function (assert) {
@@ -132,9 +109,7 @@
                 getsTZ = [],
                 getsLocal = [],
                 offsetsTZ = [],
-                offsetsLocal = [],
-                madeTimesTZ = [],
-                madeTimesLocal = [];
+                offsetsLocal = [];
 
             var ms, dateTZ, dateLocal;
 
@@ -158,19 +133,6 @@
                 offsetsTZ.push(timeTZ.getTimezoneOffset(dateTZ));
                 offsetsLocal.push(timeLocal.getTimezoneOffset(dateLocal));
 
-                // makeTime tests
-                /*
-                madeTimesTZ.push(
-                    new Date(
-                        timeTZ.makeTime(2017, 9, 28, hours, 0, 0)
-                    ).toISOString()
-                );
-                madeTimesLocal.push(
-                    new Date(
-                        timeLocal.makeTime(2017, 9, 28, hours, 0, 0)
-                    ).toISOString()
-                );
-                */
             }
 
             assert.deepEqual(
@@ -190,12 +152,6 @@
                 offsetsTZ,
                 offsetsLocal,
                 'Time.getTimezoneOffset: Specific CET should equal local CET'
-            );
-
-            assert.deepEqual(
-                madeTimesTZ,
-                madeTimesLocal,
-                'Time.makeTime: Specific CET should equal local CET'
             );
 
             /*
@@ -227,7 +183,83 @@
         });
     }
 
+    QUnit[isCET ? 'test' : 'skip']('All levels setters', function (assert) {
+        var timeTZ = new Highcharts.Time({
+                timezone: 'CET'
+            }),
+            timeLocal = new Highcharts.Time({
+                useUTC: false
+            });
 
+        var ms = Date.UTC(2022, 9, 29, 23, 30),
+            dateTZ = new Date(ms),
+            dateLocal = new Date(ms);
+
+        timeTZ.set('Minutes', dateTZ, 0);
+        timeLocal.set('Minutes', dateLocal, 0);
+        assert.strictEqual(
+            dateTZ.toString(),
+            dateLocal.toString(),
+            'Set minutes inside the DST transition'
+        );
+
+        [
+            'Milliseconds',
+            'Seconds',
+            'Minutes',
+            'Hours',
+            'Date',
+            'Month',
+            'FullYear'
+        ].forEach(function (key) {
+            var dateTZ = new Date(
+                    Date.UTC(2022, 11, 31, 22, 59, 59)
+                ),
+                dateLocal = new Date(
+                    Date.UTC(2022, 11, 31, 22, 59, 59)
+                );
+
+            timeTZ.set(key, dateTZ, 0);
+            timeLocal.set(key, dateLocal, 0);
+
+            assert.strictEqual(
+                dateTZ.toString(),
+                dateLocal.toString(),
+                key + ' set to 0, CET should be the same as local time'
+            );
+        });
+
+    });
+
+    QUnit[isCET ? 'test' : 'skip']('Maketime', function (assert) {
+        var timeTZ = new Highcharts.Time({
+                timezone: 'CET'
+            }),
+            timeLocal = new Highcharts.Time({
+                useUTC: false
+            });
+
+        for (var hours = 24; hours < 30; hours++) {
+            for (var minutes = 0; minutes < 60; minutes += 15) {
+                var tz = new Date(
+                    timeTZ.makeTime(2017, 9, 28, hours, minutes, 0)
+                ).toString();
+
+                var local = new Date(
+                    timeLocal.makeTime(2017, 9, 28, hours, minutes, 0)
+                ).toString();
+
+                assert.strictEqual(
+                    tz,
+                    local,
+                    'UTC ' + hours + ':' + minutes + ' - CET time should be same as local'
+                );
+            }
+        }
+    });
+
+    checkHours('Spring', 2, 26);
+    checkHours('Autumn', 9, 29);
     checkDays('Spring', 2);
     checkDays('Autumn', 9);
 }());
