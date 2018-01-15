@@ -5,13 +5,6 @@
  */
 /* eslint max-len: ["warn", { "ignoreUrls": true}] */
 
-/**
- * @todo - Refactoring time
- * - Remove Time.setHours and etc and remove all references
- * - Performance test and profile Time.set and Time.makeTime
- */
-
-
 'use strict';
 import Highcharts from './Globals.js';
 
@@ -210,9 +203,6 @@ Highcharts.Time.prototype = {
 	 */
 	update: function (options) {
 		var useUTC = pick(options && options.useUTC, true),
-			getters = ['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'],
-			setters = getters.concat(['Milliseconds', 'Seconds']),
-			n,
 			time = this;
 
 		this.options = options = merge(true, this.options || {}, options);
@@ -246,20 +236,7 @@ Highcharts.Time.prototype = {
 			options.timezone
 		);
 
-		// Dynamically set setters and getters. Sets strings pointing to the
-		// appropriate Date function to use depending on useUTC. Use `for` loop,
-		// H.each is not yet overridden in oldIE.
-		for (n = 0; n < getters.length; n++) {
-			this['get' + getters[n]] = (useUTC ? 'getUTC' : 'get') + getters[n];
-		}
-		for (n = 0; n < setters.length; n++) {
-			this['set' + setters[n]] = (useUTC ? 'setUTC' : 'set') + setters[n];
-		}
-
 		// UTC time with timezone handling
-		// @todo Optimize for lower levels - no need to adjust to timezone
-		// when dealing with minutes (except half hour time zones), seconds
-		// and milliseconds
 		if (this.variableTimezone || this.timezoneOffset) {
 			this.get = function (unit, date) {
 				var realMs = date.getTime(),
@@ -505,7 +482,7 @@ Highcharts.Time.prototype = {
 					// Hours in 12h format, 1 through 12
 					'l': (hours % 12) || 12,
 					// Two digits minutes, 00 through 59
-					'M': pad(date[this.getMinutes]()),
+					'M': pad(time.get('Minutes', date)),
 					// Upper case AM or PM
 					'p': hours < 12 ? 'AM' : 'PM',
 					// Lower case AM or PM
@@ -553,10 +530,9 @@ Highcharts.Time.prototype = {
 	},
 
 	/**
-	 * Set the tick positions to a time unit that makes sense, for example
-	 * on the first of each month or on every Monday. Return an array
-	 * with the time positions. Used in datetime axes as well as for grouping
-	 * data on a datetime axis.
+	 * Return an array with time positions distributed on round time values
+	 * right and right after min and max. Used in datetime axes as well as for
+	 * grouping data on a datetime axis.
 	 *
 	 * @param {Object} normalizedInterval
 	 *        The interval in axis values (ms) and thecount
@@ -639,7 +615,7 @@ Highcharts.Time.prototype = {
 					interval >= timeUnits.year ? 0 :
 						count * Math.floor(time.get('Month', minDate) / count)
 				);
-				minYear = minDate[time.getFullYear]();
+				minYear = time.get('FullYear', minDate);
 			}
 
 			if (interval >= timeUnits.year) { // year
