@@ -9,10 +9,8 @@
  * @todo - Refactoring time
  * - Tests for western time zones. Set up test on American servers using
  *   BrowserStack?
- * - Check tests for dateFormat
  * - Check time zone handling in series pointInterval implementation
  * - Remove Time.setHours and etc and remove all references
- * - Make Axis.getTimeTicks point to Time.getTimeTicks
  * - Performance test and profile Time.set and Time.makeTime
  */
 
@@ -265,7 +263,7 @@ Highcharts.Time.prototype = {
 		// @todo Optimize for lower levels - no need to adjust to timezone
 		// when dealing with minutes (except half hour time zones), seconds
 		// and milliseconds
-		if (this.variableTimezone) {
+		if (this.variableTimezone || this.timezoneOffset) {
 			this.get = function (unit, date) {
 				var realMs = date.getTime(),
 					ms = realMs - time.getTimezoneOffset(date),
@@ -453,14 +451,13 @@ Highcharts.Time.prototype = {
 		format = H.pick(format, '%Y-%m-%d %H:%M:%S');
 
 		var time = this,
-			D = this.Date,
-			date = new D(timestamp - this.getTimezoneOffset(timestamp)),
+			date = new this.Date(timestamp),
 			// get the basic time values
-			hours = date[this.getHours](),
-			day = date[this.getDay](),
-			dayOfMonth = date[this.getDate](),
-			month = date[this.getMonth](),
-			fullYear = date[this.getFullYear](),
+			hours = this.get('Hours', date),
+			day = this.get('Day', date),
+			dayOfMonth = this.get('Date', date),
+			month = this.get('Month', date),
+			fullYear = this.get('FullYear', date),
 			lang = H.defaultOptions.lang,
 			langWeekdays = lang.weekdays,
 			shortWeekdays = lang.shortWeekdays,
