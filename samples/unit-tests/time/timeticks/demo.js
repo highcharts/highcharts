@@ -84,6 +84,75 @@
 
     });
 
+    QUnit.test(
+        'Time ticks, half hour across DST, western time zone',
+        function (assert) {
+            var time = new Highcharts.Time({
+                timezone: 'America/New_York'
+            });
+
+
+            var ticks = time.getTimeTicks(
+                {
+                    unitRange: 60000,
+                    count: 30
+                },
+                Date.UTC(2022, 10, 6, 2),
+                Date.UTC(2022, 10, 6, 8)
+            );
+
+            assert.deepEqual(
+                ticks.map(function (tick) {
+                    return [
+                        Highcharts.pad(new Date(tick).getUTCHours(), 2),
+                        Highcharts.pad(new Date(tick).getUTCMinutes(), 2)
+                    ].join(':');
+                }),
+                [
+                    "02:00",
+                    "02:30",
+                    "03:00",
+                    "03:30",
+                    "04:00",
+                    "04:30",
+                    "05:00",
+                    "05:30",
+                    "06:00",
+                    "06:30",
+                    "07:00",
+                    "07:30",
+                    "08:00"
+                ],
+                '30 minutes, UTC. There should be a continuous range from ' +
+                '2 am UTC to 8 am UTC'
+            );
+
+            assert.deepEqual(
+                ticks.map(function (tick) {
+                    return time.dateFormat(null, tick);
+                }),
+                [
+                    "2022-11-05 22:00:00",
+                    "2022-11-05 22:30:00",
+                    "2022-11-05 23:00:00",
+                    "2022-11-05 23:30:00",
+                    "2022-11-06 00:00:00",
+                    "2022-11-06 00:30:00",
+                    "2022-11-06 01:00:00",
+                    "2022-11-06 01:30:00",
+                    "2022-11-06 01:00:00",
+                    "2022-11-06 01:30:00",
+                    "2022-11-06 02:00:00",
+                    "2022-11-06 02:30:00",
+                    "2022-11-06 03:00:00"
+                ],
+                '30 minutes, New York time. DST transition should be ' +
+                'reflected, so the same hour appears twice.'
+            );
+
+        }
+    );
+
 
     QUnit.test('Time ticks, single hour across DST', function (assert) {
         var time = new Highcharts.Time({
