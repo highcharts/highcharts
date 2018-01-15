@@ -2547,7 +2547,6 @@ H.Series = H.seriesType('line', null, { // base series options
 			date,
 			pointInterval,
 			pointIntervalUnit = options.pointIntervalUnit,
-			dstCrossover = 0,
 			time = this.chart.time;
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
@@ -2563,26 +2562,26 @@ H.Series = H.seriesType('line', null, { // base series options
 			date = new time.Date(xIncrement);
 
 			if (pointIntervalUnit === 'day') {
-				date = +date[time.setDate](
-					date[time.getDate]() + pointInterval
+				time.set(
+					'Date',
+					date,
+					time.get('Date', date) + pointInterval
 				);
 			} else if (pointIntervalUnit === 'month') {
-				date = +date[time.setMonth](
-					date[time.getMonth]() + pointInterval
+				time.set(
+					'Month',
+					date,
+					time.get('Month', date) + pointInterval
 				);
 			} else if (pointIntervalUnit === 'year') {
-				date = +date[time.setFullYear](
-					date[time.getFullYear]() + pointInterval
+				time.set(
+					'FullYear',
+					date,
+					time.get('FullYear', date) + pointInterval
 				);
 			}
 
-			if (time.variableTimezone) {
-				dstCrossover = (
-					time.getTimezoneOffset(date) -
-					time.getTimezoneOffset(xIncrement)
-				);
-			}
-			pointInterval = date - xIncrement + dstCrossover;
+			pointInterval = date.getTime() - xIncrement;
 
 		}
 
