@@ -31,7 +31,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
             linkedTo: 'aapl'
         }, {
             type: 'zigzag',
-            name: 'Zig Zag (5%)',
             linkedTo: 'aapl',
             params: {
                 deviation: 5

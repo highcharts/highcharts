@@ -88,7 +88,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv
                 enabled: false
             }
         }, {
-            name: 'Chaikin Money Flow (50)',
             type: 'cmf',
             linkedTo: 'aapl',
             yAxis: 2,

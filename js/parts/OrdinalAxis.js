@@ -13,7 +13,6 @@ var addEvent = H.addEvent,
 	Axis = H.Axis,
 	Chart = H.Chart,
 	css = H.css,
-	dateFormat = H.dateFormat,
 	defined = H.defined,
 	each = H.each,
 	extend = H.extend,
@@ -64,7 +63,8 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 		outsideMax,
 		groupPositions = [],
 		lastGroupPosition = -Number.MAX_VALUE,
-		tickPixelIntervalOption = this.options.tickPixelInterval;
+		tickPixelIntervalOption = this.options.tickPixelInterval,
+		time = this.chart.time;
 
 	// The positions are not always defined, for example for ordinal positions when data
 	// has regular interval (#1557, #2090)
@@ -123,7 +123,10 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 		// Compare points two by two
 		for (start = 1; start < end; start++) {
-			if (dateFormat('%d', groupPositions[start]) !== dateFormat('%d', groupPositions[start - 1])) {
+			if (
+				time.dateFormat('%d', groupPositions[start]) !==
+				time.dateFormat('%d', groupPositions[start - 1])
+			) {
 				higherRanks[groupPositions[start]] = 'day';
 				hasCrossedHigherRank = true;
 			}

@@ -1,4 +1,4 @@
-$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?', function (data) {
     var ohlc = [],
         volume = [];
 
@@ -50,7 +50,6 @@ $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.
         }, {
             type: 'vbp',
             linkedTo: 'AAPL',
-            name: 'Volume By Price (VBP)',
             showInLegend: true
         }]
     });

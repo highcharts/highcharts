@@ -31,7 +31,8 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
                     dataMin: now - (36 * month),
                     dataMax: now,
                     hasVisibleSeries: true
-                }]
+                }],
+                time: new Highcharts.Time()
             },
             getYTDExtremes: RangeSelector.prototype.getYTDExtremes,
             options: {
@@ -94,9 +95,14 @@ QUnit.test('RangeSelector.getYTDExtremes', function (assert) {
         startOfYear = +new Date(year, 0, 1),
         startOfUTCYear = +new Date(Date.UTC(year, 0, 1)),
         dataMin = now - (24 * month),
-        dataMax = now;
+        dataMax = now,
+        ctx = {
+            chart: {
+                time: new Highcharts.Time()
+            }
+        };
     assert.deepEqual(
-        getYTDExtremes(dataMax, dataMin),
+        getYTDExtremes.call(ctx, dataMax, dataMin),
         {
             min: startOfYear,
             max: now
@@ -105,7 +111,7 @@ QUnit.test('RangeSelector.getYTDExtremes', function (assert) {
     );
 
     assert.deepEqual(
-        getYTDExtremes(dataMax, dataMin, true),
+        getYTDExtremes.call(ctx, dataMax, dataMin, true),
         {
             min: startOfUTCYear,
             max: now
@@ -115,7 +121,7 @@ QUnit.test('RangeSelector.getYTDExtremes', function (assert) {
 
     dataMax = now - 1; // Current date minus 1 millisecond
     assert.deepEqual(
-        getYTDExtremes(dataMax, dataMin),
+        getYTDExtremes.call(ctx, dataMax, dataMin),
         {
             min: startOfYear,
             max: dataMax
@@ -125,7 +131,7 @@ QUnit.test('RangeSelector.getYTDExtremes', function (assert) {
 
     dataMin = startOfYear + 1; // Start of year plus 1 millisecond
     assert.deepEqual(
-        getYTDExtremes(dataMax, dataMin),
+        getYTDExtremes.call(ctx, dataMax, dataMin),
         {
             min: dataMin,
             max: dataMax

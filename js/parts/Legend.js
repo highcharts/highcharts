@@ -319,7 +319,7 @@ Highcharts.Legend.prototype = {
 		var options = this.options;
 		item.legendItem.attr({
 			text: options.labelFormat ?
-				H.format(options.labelFormat, item) :
+				H.format(options.labelFormat, item, this.chart.time) :
 				options.labelFormatter.call(item)
 		});
 	},

@@ -215,8 +215,8 @@ window.TestController = function (chart) {
      *    example `{ shiftKey: true }` to emulate that the shift key has been
      *    pressed in a mouse event.
      */
-    function trigger(type, x, y, extra) {
-        triggerOnChart(type, x, y, extra);
+    function trigger(type, x, y, extra, debug) {
+        triggerOnChart(type, x, y, extra, debug);
     }
 
     /**
@@ -379,8 +379,8 @@ window.TestController = function (chart) {
         'touchmove',
         'touchend'
     ].forEach(function (type) {
-        controller[type] = function (x, y, extra) {
-            trigger(type, x, y, extra);
+        controller[type] = function (x, y, extra, debug) {
+            trigger(type, x, y, extra, debug);
         };
     });
     controller.setPositionToElement(chart.container);

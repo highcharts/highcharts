@@ -38,7 +38,6 @@ H.seriesType('pivotpoints', 'sma',
 	 * @optionparent plotOptions.pivotpoints
 	 */
 	{
-		name: 'Pivot Points (28)',
 		/**
 		 * @excluding index
 		 */
@@ -66,6 +65,7 @@ H.seriesType('pivotpoints', 'sma',
 			approximation: 'averages'
 		}
 	}, {
+		nameBase: 'Pivot Points',
 		pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
 		pointValKey: 'P',
 		toYData: function (point) {

@@ -545,7 +545,7 @@ Chart.prototype.isChartSeriesBoosting = function () {
 
 /*
  * Get the clip rectangle for a target, either a series or the chart. For the
- * chart, we need to consider the maximum extent of its Y axes, in case of 
+ * chart, we need to consider the maximum extent of its Y axes, in case of
  * Highstock panes and navigator.
  */
 Chart.prototype.getBoostClipRect = function (target) {
@@ -1389,7 +1389,7 @@ function GLRenderer(postRenderCallback) {
 			// colorIndex = 0,
 			// Required for color axis support
 			// caxis,
-			// connectNulls = options.connectNulls,
+			connectNulls = options.connectNulls,
 			// For some reason eslint doesn't pick up that this is actually used
 			maxVal, // eslint-disable-line no-unused-vars
 			points = series.points || false,
@@ -1454,6 +1454,33 @@ function GLRenderer(postRenderCallback) {
 			}
 		}
 
+		function closeSegment() {
+			if (inst.segments.length) {
+				inst.segments[inst.segments.length - 1].to = data.length;
+			}
+		}
+
+		// Create a new segment for the current set
+		function beginSegment() {
+			// Insert a segment on the series.
+			// A segment is just a start indice.
+			// When adding a segment, if one exists from before, it should
+			// set the previous segment's end
+
+			if (inst.segments.length &&
+				inst.segments[inst.segments.length - 1].from === data.length
+			) {
+				return;
+			}
+
+			closeSegment();
+
+			inst.segments.push({
+				from: data.length
+			});
+
+		}
+
 		// Push a rectangle to the data buffer
 		function pushRect(x, y, w, h, color) {
 			pushColor(color);
@@ -1470,6 +1497,9 @@ function GLRenderer(postRenderCallback) {
 			pushColor(color);
 			vertice(x + w, y);
 		}
+
+		// Create the first segment
+		beginSegment();
 
 		// Special case for point shapes
 		if (points && points.length > 0) {
@@ -1569,6 +1599,8 @@ function GLRenderer(postRenderCallback) {
 				}
 			});
 
+			closeSegment();
+
 			return;
 		}
 
@@ -1652,6 +1684,11 @@ function GLRenderer(postRenderCallback) {
 				}
 			}
 
+			if (!connectNulls && (x === null || y === null)) {
+				beginSegment();
+				continue;
+			}
+
 			if (nx && nx >= xMin && nx <= xMax) {
 				nextInside = true;
 			}
@@ -1674,7 +1711,11 @@ function GLRenderer(postRenderCallback) {
 				low = y - d.y;
 			}
 
-			if (!series.requireSorting) {
+			if (yMin !== null &&
+				typeof yMin !== 'undefined' &&
+				yMax !== null &&
+				typeof yMax !== 'undefined'
+			) {
 				isYInside = y >= yMin && y <= yMax;
 			}
 
@@ -1688,7 +1729,13 @@ function GLRenderer(postRenderCallback) {
 				closestLeft.y = y;
 			}
 
-			if (y !== 0 && (!y || !isYInside)) {
+			if (y === null && connectNulls) {
+				continue;
+			}
+
+			// Cull points outside the extremes
+			if (y === null || !isYInside) {
+				beginSegment();
 				continue;
 			}
 
@@ -1833,6 +1880,8 @@ function GLRenderer(postRenderCallback) {
 			pushSupplementPoint(closestLeft);
 			pushSupplementPoint(closestRight);
 		}
+
+		closeSegment();
 	}
 
 	/*
@@ -1842,7 +1891,7 @@ function GLRenderer(postRenderCallback) {
 	 */
 	function pushSeries(s) {
 		if (series.length > 0) {
-			series[series.length - 1].to = data.length;
+			// series[series.length - 1].to = data.length;
 			if (series[series.length - 1].hasMarkers) {
 				series[series.length - 1].markerTo = markerData.length;
 			}
@@ -1853,7 +1902,8 @@ function GLRenderer(postRenderCallback) {
 		}
 
 		series.push({
-			from: data.length,
+			segments: [],
+			// from: data.length,
 			markerFrom: markerData.length,
 			// Push RGBA values to this array to use per. point coloring.
 			// It should be 0-padded, so each component should be pushed in
@@ -2000,6 +2050,7 @@ function GLRenderer(postRenderCallback) {
 		// Render the series
 		each(series, function (s, si) {
 			var options = s.series.options,
+				sindex,
 				threshold = options.threshold,
 				hasThreshold = isNumber(threshold),
 				yBottom = s.series.yAxis.getThreshold(threshold),
@@ -2094,7 +2145,14 @@ function GLRenderer(postRenderCallback) {
 			shader.setDrawAsCircle((asCircle[s.series.type] && textureIsReady) || false);
 
 			// Do the actual rendering
-			vbuffer.render(s.from, s.to, s.drawMode);
+			// vbuffer.render(s.from, s.to, s.drawMode);
+			for (sindex = 0; sindex < s.segments.length; sindex++) {
+				vbuffer.render(
+					s.segments[sindex].from,
+					s.segments[sindex].to,
+					s.drawMode
+				);
+			}
 
 			if (s.hasMarkers && showMarkers) {
 				if (options.marker && options.marker.radius) {
@@ -2499,7 +2557,7 @@ function allocateIfNotSeriesBoosting(renderer, series) {
 /*
  * An "async" foreach loop. Uses a setTimeout to keep the loop from blocking the
  * UI thread.
- * 
+ *
  * @param arr {Array} - the array to loop through
  * @param fn {Function} - the callback to call for each item
  * @param finalFunc {Function} - the callback to call when done
@@ -2649,19 +2707,23 @@ each([
 	function branch(proceed) {
 		var letItPass = this.options.stacking &&
 						(method === 'translate' || method === 'generatePoints'),
-			enabled = true;
+			enabled = pick(
+				(
+					this.chart &&
+					this.chart.options &&
+					this.chart.options.boost &&
+					this.chart.options.boost.enabled
+				),
+				true
+			);
 
-		if (this.chart && this.chart.options && this.chart.options.boost) {
-			enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
-				true :
-				this.chart.options.boost.enabled;
-		}
-
-		if (!this.isSeriesBoosting ||
+		if (
+			!this.isSeriesBoosting ||
 			letItPass ||
 			!enabled ||
 			this.type === 'heatmap' ||
-			this.type === 'treemap'
+			this.type === 'treemap' ||
+			H.inArray(this.type, boostable) === -1
 		) {
 
 			proceed.call(this);
@@ -2719,7 +2781,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
 
 	// If there are no extremes given in the options, we also need to process
 	// the data to read the data extremes. If this is a heatmap, do default
-	// behaviour. 
+	// behaviour.
 	if (
 		!getSeriesBoosting(dataToMeasure) || // First pass with options.data
 		this.type === 'heatmap' ||
@@ -2776,7 +2838,7 @@ Series.prototype.enterBoost = function () {
 			own: this.hasOwnProperty(prop)
 		});
 	}, this);
-	
+
 	this.allowDG = false;
 	this.directTouch = false;
 	this.stickyTracking = true;
@@ -2810,7 +2872,7 @@ Series.prototype.exitBoost = function () {
 	if (this.boostClear) {
 		this.boostClear();
 	}
-			
+
 };
 
 Series.prototype.hasExtremes = function (checkX) {
@@ -2922,7 +2984,7 @@ if (!H.hasWebGLSupport()) {
 	// /////////////////////////////////////////////////////////////////////////
 	// GL-SPECIFIC WRAPPINGS FOLLOWS
 
-	
+
 
 	H.extend(Series.prototype, {
 
@@ -3127,7 +3189,7 @@ if (!H.hasWebGLSupport()) {
 
 			function doneProcessing() {
 				fireEvent(series, 'renderedCanvas');
-				
+
 				// Go back to prototype, ready to build
 				delete series.buildKDTree;
 				series.buildKDTree();

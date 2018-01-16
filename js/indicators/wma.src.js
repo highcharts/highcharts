@@ -60,7 +60,6 @@ seriesType('wma', 'sma',
 	 * @optionparent plotOptions.wma
 	 */
 	{
-		name: 'WMA (9)',
 		params: {
 			index: 3,
 			period: 9

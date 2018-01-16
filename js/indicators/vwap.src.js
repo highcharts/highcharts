@@ -33,7 +33,6 @@ seriesType('vwap', 'sma',
 	 * @optionparent plotOptions.vwap
 	 */
 	{
-		name: 'VWAP (30)',
 		/**
 		 * @excluding index
 		 */

@@ -41,7 +41,6 @@ seriesType('cci', 'sma',
 	 * @optionparent plotOptions.cci
 	 */
 	{
-		name: 'CCI (14)',
 		params: {
 			period: 14
 		}

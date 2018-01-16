@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: ["warn", 80, 4] */
 'use strict';
 import Highcharts from './Globals.js';
 import './Utilities.js';
@@ -114,14 +115,18 @@ Highcharts.Point.prototype = {
 
 		// copy options directly to point
 		extend(point, options);
-		point.options = point.options ? extend(point.options, options) : options;
+		point.options = point.options ?
+			extend(point.options, options) :
+			options;
 
-		// Since options are copied into the Point instance, some accidental options must be shielded (#5681)
+		// Since options are copied into the Point instance, some accidental
+		// options must be shielded (#5681)
 		if (options.group) {
 			delete point.group;
 		}
 
-		// For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
+		// For higher dimension series types. For instance, for ranges, point.y
+		// is mapped to point.low.
 		if (pointValKey) {
 			point.y = point[pointValKey];
 		}
@@ -135,9 +140,15 @@ Highcharts.Point.prototype = {
 			point.state = 'select';
 		}
 
-		// If no x is set by now, get auto incremented value. All points must have an
-		// x value, however the y value can be null to create a gap in the series
-		if ('name' in point && x === undefined && series.xAxis && series.xAxis.hasNames) {
+		// If no x is set by now, get auto incremented value. All points must
+		// have an x value, however the y value can be null to create a gap in
+		// the series
+		if (
+			'name' in point &&
+			x === undefined &&
+			series.xAxis &&
+			series.xAxis.hasNames
+		) {
 			point.x = series.xAxis.nameToX(point);
 		}
 		if (point.x === undefined && series) {
@@ -187,7 +198,8 @@ Highcharts.Point.prototype = {
 				i++;
 			}
 			while (j < valueCount) {
-				if (!keys || options[i] !== undefined) { // Skip undefined positions for keys
+				// Skip undefined positions for keys
+				if (!keys || options[i] !== undefined) {
 					ret[pointArrayMap[j]] = options[i];
 				}
 				i++;
@@ -196,8 +208,9 @@ Highcharts.Point.prototype = {
 		} else if (typeof options === 'object') {
 			ret = options;
 
-			// This is the fastest way to detect if there are individual point dataLabels that need
-			// to be considered in drawDataLabels. These can only occur in object configs.
+			// This is the fastest way to detect if there are individual point
+			// dataLabels that need to be considered in drawDataLabels. These
+			// can only occur in object configs.
 			if (options.dataLabels) {
 				series._hasPointLabels = true;
 			}
@@ -280,8 +293,8 @@ Highcharts.Point.prototype = {
 			point.onMouseOut();
 		}
 
-		// remove all events
-		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
+		// Remove all events
+		if (point.graphic || point.dataLabel) {
 			removeEvent(point);
 			point.destroyElements();
 		}
@@ -304,7 +317,13 @@ Highcharts.Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'connector', 'shadowGroup'],
+			props = [
+				'graphic',
+				'dataLabel',
+				'dataLabelUpper',
+				'connector',
+				'shadowGroup'
+			],
 			prop,
 			i = 6;
 		while (i--) {
@@ -353,19 +372,26 @@ Highcharts.Point.prototype = {
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
-		// Loop over the point array map and replace unformatted values with sprintf formatting markup
+		// Loop over the point array map and replace unformatted values with
+		// sprintf formatting markup
 		each(series.pointArrayMap || ['y'], function (key) {
 			key = '{point.' + key; // without the closing bracket
 			if (valuePrefix || valueSuffix) {
-				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
+				pointFormat = pointFormat.replace(
+					key + '}',
+					valuePrefix + key + '}' + valueSuffix
+				);
 			}
-			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
+			pointFormat = pointFormat.replace(
+				key + '}',
+				key + ':,.' + valueDecimals + 'f}'
+			);
 		});
 
 		return format(pointFormat, {
 			point: this,
 			series: this.series
-		});
+		}, series.chart.time);
 	},
 
 	/**
@@ -382,16 +408,27 @@ Highcharts.Point.prototype = {
 			seriesOptions = series.options;
 
 		// load event handlers on demand to save time on mouseover/out
-		if (seriesOptions.point.events[eventType] || (point.options && point.options.events && point.options.events[eventType])) {
+		if (
+			seriesOptions.point.events[eventType] ||
+			(
+				point.options &&
+				point.options.events &&
+				point.options.events[eventType]
+			)
+		) {
 			this.importEvents();
 		}
 
 		// add default handler if in selection mode
 		if (eventType === 'click' && seriesOptions.allowPointSelect) {
 			defaultFunction = function (event) {
-				// Control key is for Windows, meta (= Cmd key) for Mac, Shift for Opera
-				if (point.select) { // Could be destroyed by prior event handlers (#2911)
-					point.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
+				// Control key is for Windows, meta (= Cmd key) for Mac, Shift
+				// for Opera. 
+				if (point.select) { // #2911
+					point.select(
+						null,
+						event.ctrlKey || event.metaKey || event.shiftKey
+					);
 				}
 			};
 		}

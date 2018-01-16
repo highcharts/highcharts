@@ -188,9 +188,9 @@ QUnit.test('Label ellipsis', function (assert) {
                 rotation: 0
             },
             categories: [
-                'January &amp; Entities', 'January', 'January', 'January',
+                'January &amp; Entities', 'January &lt;Not a tag&gt;',
                 'January', 'January', 'January', 'January', 'January',
-                'January', 'January', 'January'
+                'January', 'January', 'January', 'January', 'January'
             ]
         },
 
@@ -212,6 +212,11 @@ QUnit.test('Label ellipsis', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].ticks[0].label.element.querySelector('title').textContent,
         'January & Entities',
+        'HTML entities should be unescaped in title elements (#7179)'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].ticks[1].label.element.querySelector('title').textContent,
+        'January <Not a tag>',
         'HTML entities should be unescaped in title elements (#7179)'
     );
 });

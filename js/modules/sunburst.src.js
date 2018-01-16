@@ -761,7 +761,7 @@ var sunburstSeries = {
 			end: radians.end,
 			r: innerRadius,
 			start: radians.start,
-			val: nodeTop.val,
+			val: nodeRoot.val,
 			x: positions[0],
 			y: positions[1]
 		};

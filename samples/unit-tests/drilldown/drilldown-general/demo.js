@@ -1,3 +1,152 @@
+QUnit.test('Drilldown methods', function (assert) {
+
+    // Create the chart
+    // Create the chart
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            animation: false
+        },
+        title: {
+            text: 'Basic drilldown'
+        },
+        xAxis: {
+            type: 'category'
+        },
+
+        series: [{
+            name: 'Things',
+            colorByPoint: true,
+            data: [{
+                name: 'Animals',
+                y: 5,
+                drilldown: 'animals'
+            }, {
+                name: 'Fruits',
+                y: 2,
+                drilldown: 'fruits'
+            }, {
+                name: 'Cars',
+                y: 4,
+                drilldown: 'cars'
+            }]
+        }],
+        drilldown: {
+            animation: false,
+            series: [{
+                id: 'animals',
+                data: [
+                    ['Cats', 4],
+                    ['Dogs', 2],
+                    ['Cows', 1],
+                    ['Sheep', 2],
+                    ['Pigs', 1]
+                ]
+            }, {
+                id: 'fruits',
+                data: [
+                    ['Apples', 4],
+                    ['Oranges', 2]
+                ]
+            }, {
+                id: 'cars',
+                data: [
+                    ['Toyota', 4],
+                    ['Opel', 2],
+                    ['Volkswagen', 2]
+                ]
+            }]
+        }
+    });
+
+    // Expect no JS error (#7602)
+    chart.drillUp();
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Animals', 'Fruits', 'Cars'],
+        'Initial categories'
+    );
+
+    chart.series[0].points[0].doDrilldown();
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cats', 'Dogs', 'Cows', 'Sheep', 'Pigs'],
+        'First drilldown'
+    );
+
+    chart.drillUp();
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Animals', 'Fruits', 'Cars'],
+        'Initial categories again'
+    );
+
+
+    chart.drillUp(); // Just checking #7602
+
+    // Now update
+    chart.update({
+        series: [{
+            data: [{
+                name: 'Animals2',
+                y: 6,
+                drilldown: 'animals2'
+            }, {
+                name: 'Fruits2',
+                y: 3,
+                drilldown: 'fruits2'
+            }, {
+                name: 'Cars2',
+                y: 5,
+                drilldown: 'cars2'
+            }]
+        }],
+        drilldown: {
+            series: [{
+                id: 'animals2',
+                data: [
+                    ['Cats2', 6],
+                    ['Dogs2', 7],
+                    ['Cows2', 2],
+                    ['Sheep2', 3],
+                    ['Pigs2', 2]
+                ]
+            }, {
+                id: 'fruits2',
+                data: [
+                    ['Apples2', 5],
+                    ['Oranges2', 3]
+                ]
+            }, {
+                id: 'cars2',
+                data: [
+                    ['Toyota2', 5],
+                    ['Opel2', 3],
+                    ['Volkswagen2', 3]
+                ]
+            }]
+        }
+    });
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Animals2', 'Fruits2', 'Cars2'],
+        'Updated top level categories'
+    );
+
+    chart.series[0].points[0].doDrilldown();
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cats2', 'Dogs2', 'Cows2', 'Sheep2', 'Pigs2'],
+        'First drilldown after update (#7600)'
+    );
+
+});
+
+
 QUnit.test('activeDataLabelStyle', function (assert) {
     function getDataLabelFill(point) {
         return point.dataLabel.element.childNodes[0].style.fill;

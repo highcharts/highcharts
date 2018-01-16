@@ -231,7 +231,13 @@ seriesType('xrange', 'column', {
 			point.clipRectArgs = {
 				x: shapeArgs.x,
 				y: shapeArgs.y,
-				width: Math.round(shapeArgs.width * partialFill),
+				width: Math.max(
+					Math.round(
+						length * partialFill +
+						(point.plotX - plotX)
+					),
+					0
+				),
 				height: shapeArgs.height
 			};
 		}
@@ -403,7 +409,7 @@ seriesType('xrange', 'column', {
 			}
 		}
 		/*= } =*/
-		this.colorIndex = this.y % colorCount;
+		this.colorIndex = pick(this.options.colorIndex, this.y % colorCount);
 		
 		return this;
 	},
@@ -468,7 +474,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  * @excluding boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
  *         findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
  *         negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
- *         pointRange,pointStart,softThreshold,stacking,threshold,data
+ *         pointRange,pointStart,softThreshold,stacking,threshold
  * @product highcharts highstock
  * @apioption series.xrange
  */

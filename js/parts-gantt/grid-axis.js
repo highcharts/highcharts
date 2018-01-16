@@ -7,8 +7,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-var dateFormat = H.dateFormat,
-	each = H.each,
+var each = H.each,
 	isObject = H.isObject,
 	pick = H.pick,
 	wrap = H.wrap,
@@ -170,18 +169,18 @@ Axis.prototype.addTitle = function () {
 H.dateFormats = {
 	// Week number
 	W: function (timestamp) {
-		var date = new Date(timestamp),
-			day = date.getUTCDay() === 0 ? 7 : date.getUTCDay(),
+		var date = new this.Date(timestamp),
+			day = this.get('Day', date) === 0 ? 7 : this.get('Day', date),
 			time = date.getTime(),
-			startOfYear = new Date(date.getUTCFullYear(), 0, 1, -6),
+			startOfYear = new Date(this.get('FullYear', date), 0, 1, -6),
 			dayNumber;
-		date.setDate(date.getUTCDate() + 4 - day);
+		this.set('Date', date, this.get('Date', date) + 4 - day);
 		dayNumber = Math.floor((time - startOfYear) / 86400000);
 		return 1 + Math.floor(dayNumber / 7);
 	},
 	// First letter of the day of the week, e.g. 'M' for 'Monday'.
 	E: function (timestamp) {
-		return dateFormat('%a', timestamp, true).charAt(0);
+		return this.dateFormat('%a', timestamp, true).charAt(0);
 	}
 };
 

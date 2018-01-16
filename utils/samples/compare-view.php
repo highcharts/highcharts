@@ -202,6 +202,8 @@
 
 							showCommentBox();
 
+							controller && controller.updateStatus(path, 'error');
+
 						} else {
 							$span = $('<a>')
 								.attr({
@@ -212,6 +214,8 @@
 								})
 								.html('<i class="<?php echo ($isUnitTest ? 'icon-puzzle-piece' : 'icon-columns'); ?>"></i>')
 								.appendTo(li);
+
+							controller && controller.updateStatus(path, 'success');
 
 						}
 

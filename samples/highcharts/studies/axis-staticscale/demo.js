@@ -1,7 +1,7 @@
 
 function getPoint(i) {
     return {
-        name: new Date(Date.now() + i * 1000),
+        name: Date.UTC(2018, 0, 1) + i * 1000,
         y: Math.random()
     };
 }

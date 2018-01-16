@@ -51,7 +51,6 @@ seriesType('atr', 'sma',
 	 * @optionparent plotOptions.atr
 	 */
 	{
-		name: 'ATR (14)',
 		params: {
 			period: 14
 		}

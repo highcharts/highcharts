@@ -23,7 +23,6 @@ H.seriesType('rsi', 'sma',
 		 * @optionparent plotOptions.rsi
 		 */
 	{
-		name: 'RSI (14)',
 		/**
 		 * @excluding index
 		 */

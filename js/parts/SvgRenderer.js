@@ -1770,7 +1770,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		titleNode.appendChild(
 			doc.createTextNode(
 				// #3276, #3895
-				(String(pick(value), '')).replace(/<[^>]*>/g, '')
+				(String(pick(value), ''))
+					.replace(/<[^>]*>/g, '')
+					.replace(/&lt;/g, '<')
+					.replace(/&gt;/g, '>')
 			)
 		);
 	},
@@ -1847,8 +1850,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				if (otherElement !== element) {
 					if (
 						// Negative zIndex versus no zIndex:
-						// On all levels except the highest. If the parent is <svg>,
-						// then we don't want to put items before <desc> or <defs>
+						// On all levels except the highest. If the parent is
+						// <svg>, then we don't want to put items before <desc>
+						// or <defs>
 						(value < 0 && undefinedOtherZIndex && !svgParent && !i)
 					) {
 						parentNode.insertBefore(element, childNodes[i]);
@@ -1856,8 +1860,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 					} else if (
 						// Insert after the first element with a lower zIndex
 						pInt(otherZIndex) <= value ||
-						// If negative zIndex, add this before first undefined zIndex element
-						(undefinedOtherZIndex && (!defined(value) || value >= 0))
+						// If negative zIndex, add this before first undefined
+						// zIndex element
+						(
+							undefinedOtherZIndex &&
+							(!defined(value) || value >= 0)
+						)
 					) {
 						parentNode.insertBefore(
 							element,
@@ -2370,12 +2378,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 						tspan.getAttribute('style') ? tspan : textNode
 					).h;
 			},
-			unescapeEntities = function (inputStr) {
+			unescapeEntities = function (inputStr, except) {
 				objectEach(renderer.escapes, function (value, key) {
-					inputStr = inputStr.replace(
-						new RegExp(value, 'g'),
-						key
-					);
+					if (!except || inArray(value, except) === -1) {
+						inputStr = inputStr.toString().replace(
+							new RegExp(value, 'g'),
+							key
+						);
+					}
 				});
 				return inputStr;
 			};
@@ -2679,7 +2689,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			if (wasTooLong) {
 				wrapper.attr(
 					'title',
-					unescapeEntities(wrapper.textStr) // #7179
+					unescapeEntities(wrapper.textStr, ['&lt;', '&gt;']) // #7179
 				);
 			}
 			if (tempParent) {
@@ -2736,7 +2746,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 					safe++;
 				}
 
-				spans.push(node.textContent.substr(startPos, endPos - startPos));
+				spans.push(
+					node.textContent.substr(startPos, endPos - startPos)
+				);
 
 				startPos = endPos;
 				pos = startPos + guessedLineCharLength;

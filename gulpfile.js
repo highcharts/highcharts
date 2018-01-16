@@ -377,6 +377,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts/Series.js',
         './js/parts/StockChart.js',
         './js/parts/SVGRenderer.js',
+        './js/parts/Time.js',
         './js/parts-map/GeoJSON.js',
         './js/parts-map/Map.js',
         './js/parts-map/MapNavigation.js',
@@ -996,10 +997,7 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
             console.log(message.noSeries);
             reject(new Error(message.noSeries));
         }
-        generate(json, output, onlyBuildCurrent, {
-            platform: 'JS',
-            products: { highcharts: true, highstock: true, highmaps: true }
-        }, () => {
+        generate(json, output, onlyBuildCurrent, () => {
             console.log(message.success);
             resolve(message.success);
         });
@@ -1312,7 +1310,9 @@ const startServer = () => {
                 res.writeHead(200, { 'Content-Type': mimes.html });
             } else {
                 file = path.substr(path.lastIndexOf('/') + 1);
-                res.writeHead(200, { 'Content-Type': mimes[path.substr(ti + 1)] });
+                res.writeHead(200, {
+                    'Content-Type': mimes[path.substr(ti + 1)] || mimes.html
+                });
             }
 
             let ext = file.substr(file.lastIndexOf('.') + 1);
@@ -1380,7 +1380,6 @@ const jsdoc = () => {
 
 gulp.task('start-api-server', startServer);
 gulp.task('upload-api', uploadAPIDocs);
-gulp.task('generate-api', generateAPIDocs);
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-api', cleanApi);
 gulp.task('clean-dist', cleanDist);
@@ -1453,6 +1452,17 @@ gulp.task('scripts-new', () => {
     // Build all module files
     const pathJSParts = './js/';
     const pathESModules = './code/';
+    const getTime = () => {
+        const date = new Date();
+        const pad = val => {
+            return (val <= 9 ? '0' + val : '' + val);
+        };
+        return [
+            pad(date.getHours()),
+            pad(date.getMinutes()),
+            pad(date.getSeconds())
+        ].join(':');
+    };
     buildModules({
         base: pathJSParts,
         output: pathESModules,
@@ -1501,7 +1511,8 @@ gulp.task('scripts-new', () => {
             const pathRelative = relative(pathJSParts, pathFile);
             console.log([
                 '',
-                `${event.type}:`.cyan + ` ${relative('.', pathFile)}`,
+                `${event.type}:`.cyan + ` ${relative('.', pathFile)} ` +
+                getTime().gray,
                 'Rebuilding files: '.cyan,
                 types
                     .map((type) => `- ${join(pathESModules, type === 'css' ? 'js' : '', 'es-modules', pathRelative)}`.gray)
@@ -1529,7 +1540,8 @@ gulp.task('scripts-new', () => {
                       return arr;
                   }, []);
                 console.log([
-                    `${event.type}:`.cyan + ` ${relative('.', pathFile)}`,
+                    `${event.type}:`.cyan + ` ${relative('.', pathFile)} ` +
+                    getTime().gray,
                     'Rebuilding files: '.cyan,
                     filesModified
                       .map(str => `- ${join('code', type === 'css' ? 'js' : '', str)}`.gray)

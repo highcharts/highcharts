@@ -31,7 +31,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
             linkedTo: 'aapl'
         }, {
             type: 'wma',
-            name: 'WMA (50)',
             linkedTo: 'aapl',
             params: {
                 period: 50

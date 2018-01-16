@@ -27,7 +27,7 @@ QUnit.test('Markers for arearange.', function (assert) {
     function randomData(n) {
         var d = [];
 
-        while (n--) {
+        for (var i = 0; i < n; i++) {
             d.push([n, n + 5]);
         }
 
