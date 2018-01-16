@@ -936,11 +936,11 @@ H.Axis.prototype.getDDPoints = function (x) {
 	each(this.series, function (series) {
 		var i,
 			xData = series.xData,
-			points = series.points;
+			points = series.points || [];
 		
-		for (i = 0; i < xData.length; i++) {
-			if (xData[i] === x && series.options.data[i] && series.options.data[i].drilldown) {
-				ret.push(points ? points[i] : true);
+		for (i = 0; i < points.length; i++) {
+			if (points[i] && points[i].x === x && points[i].drilldown) {
+				ret.push(points[i]);
 				break;
 			}
 		}

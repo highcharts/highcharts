@@ -3584,7 +3584,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			}
 		}
 
-		if (options.clip !== false) {
+		if (options.clip) {
 			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
 			this.markerGroup.clip(markerClipRect);
 			this.sharedClipKey = sharedClipKey;
