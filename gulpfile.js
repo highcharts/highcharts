@@ -1380,7 +1380,6 @@ const jsdoc = () => {
 
 gulp.task('start-api-server', startServer);
 gulp.task('upload-api', uploadAPIDocs);
-gulp.task('generate-api', generateAPIDocs);
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-api', cleanApi);
 gulp.task('clean-dist', cleanDist);
