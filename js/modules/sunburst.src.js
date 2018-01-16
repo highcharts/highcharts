@@ -71,7 +71,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
 		to;
 
 	if (isObject(levelOptions)) {
-		result = merge({}, levelOptions), // Copy levelOptions
+		result = merge({}, levelOptions); // Copy levelOptions
 		from = isNumber(p.from) ? p.from : 0;
 		to = isNumber(p.to) ? p.to : 0;
 		levels = range(from, to);
@@ -119,7 +119,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
 				value: 0,
 				unit: 'pixels'
 			};
-		})
+		});
 	}
 	return result;
 };
@@ -391,6 +391,7 @@ var sunburstOptions = {
 	levelIsConstant: true,
 	/**
 	 * Determines the width of the ring per level.
+	 * @since 6.0.5
 	 */
 	levelSize: {
 		/**
@@ -410,6 +411,13 @@ var sunburstOptions = {
 		 */
 		unit: 'weight'
 	},
+	/**
+	 * If a point is sliced, moved out from the center, how many pixels
+	 * should it be moved?.
+	 *
+	 * @since 6.0.4
+	 * @sample highcharts/plotoptions/sunburst-sliced Sliced sunburst
+	 */
 	slicedOffset: 10
 	/**
 	 * Set options on specific levels. Takes precedence over series options,
@@ -834,7 +842,7 @@ var sunburstPoint = {
  * sunburst](#plotOptions.sunburst).
  *
  * @type {Object}
- * @extends plotOptions.sunburst
+ * @extends series,plotOptions.sunburst
  * @excluding dataParser,dataURL,stack
  * @product highcharts
  * @apioption series.sunburst
@@ -872,11 +880,13 @@ var sunburstPoint = {
  */
 
  /**
-  * Whether to display a slice offset from the center.
+  * Whether to display a slice offset from the center. When a sunburst point is 
+  * sliced, its children are also offset.
   *
   * @type {Boolean}
   * @default false
   * @since 6.0.4
+  * @sample highcharts/plotoptions/sunburst-sliced Sliced sunburst
   * @product highcharts
   * @apioption series.sunburst.data.sliced
   */

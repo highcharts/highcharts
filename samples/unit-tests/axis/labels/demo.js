@@ -1,4 +1,181 @@
-QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
+QUnit.test('Label overflow', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 300,
+            height: 200
+        },
+        xAxis: {
+            min: 0,
+            max: 3,
+            tickInterval: 3,
+            labels: {
+                format: 'LongLabel',
+                overflow: false
+            }
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    var bBox = chart.xAxis[0].ticks[3].label.element.getBBox();
+    assert.ok(
+        bBox.x + bBox.width > chart.chartWidth,
+        'Label should be outside chart area (#7475)'
+    );
+
+    chart.update({
+        xAxis: {
+            labels: {
+                overflow: 'justify'
+            }
+        }
+    });
+    assert.ok(
+        bBox.x + bBox.width > chart.chartWidth,
+        'Label should be inside chart area'
+    );
+
+});
+
+QUnit.test('Label reserve space', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'X axis label alignment and reserveSpace'
+        },
+        xAxis: {
+            categories: ['Oranges', 'Apples', 'Pears']
+        },
+        series: [{
+            data: [1, 3, 2]
+        }]
+    });
+
+    var xAxis = chart.xAxis[0],
+        bBox;
+
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'Default - Labels should be between chart border and plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            align: 'left'
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.notOk(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'reserveSpace: null, align: left. - Labels should overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            reserveSpace: false
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.notOk(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'reserveSpace: false, align: left. - Labels should overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            reserveSpace: true
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'reserveSpace: true, align: left. - Labels should not overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            align: 'center'
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
+        'reserveSpace: true, align: center. - Labels should not overlap plot area'
+    );
+
+
+    xAxis.update({
+        opposite: true,
+        labels: {
+            reserveSpace: null,
+            align: null
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true - Labels should be between chart border and plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            align: 'right'
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.notOk(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true, reserveSpace: null, align: right. - Labels should overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            reserveSpace: false
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.notOk(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true, reserveSpace: false, align: right. - Labels should overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            reserveSpace: true
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true, reserveSpace: true, align: right. - Labels should not overlap plot area'
+    );
+
+    xAxis.update({
+        labels: {
+            align: 'center'
+        }
+    });
+    bBox = xAxis.ticks[0].label.element.getBBox();
+    assert.ok(
+        bBox.x > chart.plotLeft + chart.plotWidth &&
+            bBox.x + bBox.width < chart.chartWidth,
+        'opposite: true, reserveSpace: true, align: center. - Labels should not overlap plot area'
+    );
+
+
+});
+
+QUnit.test('Label ellipsis', function (assert) {
 
     var chart = Highcharts.chart('container', {
 
@@ -10,8 +187,10 @@ QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
             labels: {
                 rotation: 0
             },
-            categories: ['January', 'January', 'January', 'January', 'January', 'January',
-                'January', 'January', 'January', 'January', 'January', 'January'
+            categories: [
+                'January &amp; Entities', 'January', 'January', 'January',
+                'January', 'January', 'January', 'January', 'January',
+                'January', 'January', 'January'
             ]
         },
 
@@ -26,7 +205,14 @@ QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
     assert.strictEqual(
         Math.round(chart.xAxis[0].ticks[0].label.element.getBBox().width),
         Math.round(chart.xAxis[0].ticks[11].label.element.getBBox().width),
-        'All labels should have ellipsis and equal length'
+        'All labels should have ellipsis and equal length (#5968)'
+    );
+
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[0].label.element.querySelector('title').textContent,
+        'January & Entities',
+        'HTML entities should be unescaped in title elements (#7179)'
     );
 });
 

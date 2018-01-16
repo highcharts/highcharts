@@ -187,9 +187,16 @@ QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
     chart.setSize(500, undefined, { duration: 25 });
 
     setTimeout(function () {
+        var newPath = chart.series && chart.series[0].points[0].graphic
+            .element.firstChild
+            .getAttribute('d');
+        assert.strictEqual(
+            path.indexOf('M'),
+            0,
+            'Path is a path'
+        );
         assert.notEqual(
-            chart.series[0].points[0].graphic.element.firstChild
-                .getAttribute('d'),
+            newPath,
             path,
             'First point\'s path should be updated (#7437)'
         );

@@ -339,22 +339,15 @@ H.Series.prototype.gappedPath = function () {
 		stack;
 
 	/**
-	 * Defines when to display a gap in the graph, together with the `gapUnit`
-	 * option.
-	 * 
-	 * When the `gapUnit` is `relative` (default), a gap size of 5 means
-	 * that if the distance between two points is greater than five times
-	 * that of the two closest points, the graph will be broken.
-	 *
-	 * When the `gapUnit` is `value`, the gap is based on absolute axis values,
-	 * which on a datetime axis is milliseconds.
+	 * Defines when to display a gap in the graph, together with the
+	 * [gapUnit](plotOptions.series.gapUnit) option.
 	 * 
 	 * In practice, this option is most often used to visualize gaps in
 	 * time series. In a stock chart, intraday data is available for daytime
 	 * hours, while gaps will appear in nights and weekends.
 	 * 
 	 * @type {Number}
-	 * @see [xAxis.breaks](#xAxis.breaks)
+	 * @see [gapUnit](plotOptions.series.gapUnit) and [xAxis.breaks](#xAxis.breaks)
 	 * @sample {highstock} stock/plotoptions/series-gapsize/
 	 *         Setting the gap size to 2 introduces gaps for weekends in daily
 	 *         datasets.
@@ -364,8 +357,20 @@ H.Series.prototype.gappedPath = function () {
 	 */
 	
 	/**
-	 * Together with `gapSize`, this option defines where to draw gaps in the 
-	 * graph.
+	 * Together with [gapSize](plotOptions.series.gapSize), this option defines
+	 * where to draw gaps in the graph.
+	 * 
+	 * When the `gapUnit` is `relative` (default), a gap size of 5 means
+	 * that if the distance between two points is greater than five times
+	 * that of the two closest points, the graph will be broken.
+	 *
+	 * When the `gapUnit` is `value`, the gap is based on absolute axis values,
+	 * which on a datetime axis is milliseconds. Note that this may give 
+	 * unexpected results if `dataGrouping` is enabled (as it is by default),
+	 * because if a series of points are grouped into a larger time span, the
+	 * grouped points may have a greater distance than the absolute `gapSize`.
+	 * This will cause the whole graph to disappear. This also applies to the
+	 * navigator series that inherits gap options from the base series.
 	 *
 	 * @type {String}
 	 * @see [gapSize](plotOptions.series.gapSize)

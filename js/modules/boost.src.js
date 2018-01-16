@@ -117,6 +117,7 @@
  * a significant speed improvment in charts with a very high
  * amount of series.
  *
+ * @type {Number}
  * @default  null
  * @apioption boost.seriesThreshold
  */
@@ -483,17 +484,15 @@ function shouldForceChartSeriesBoosting(chart) {
 	// we should boost the whole chart to avoid running out of webgl contexts.
 	var sboostCount = 0,
 		canBoostCount = 0,
-		allowBoostForce = true,
+		allowBoostForce = pick(
+			chart.options.boost && chart.options.boost.allowForce,
+			true
+		),
 		series;
 
 	if (typeof chart.boostForceChartBoost !== 'undefined') {
 		return chart.boostForceChartBoost;
 	}
-
-	allowBoostForce = chart.options.boost ?
-		(typeof chart.options.boost.allowForce !== 'undefined' ?
-		chart.options.boost.allowForce : allowBoostForce) :
-		allowBoostForce;
 
 	if (chart.series.length > 1) {
 		for (var i = 0; i < chart.series.length; i++) {
@@ -515,8 +514,13 @@ function shouldForceChartSeriesBoosting(chart) {
 		}
 	}
 
-	chart.boostForceChartBoost = (allowBoostForce && canBoostCount === chart.series.length && sboostCount > 0) ||
-			sboostCount > 5;
+	chart.boostForceChartBoost =
+		(
+			allowBoostForce &&
+			canBoostCount === chart.series.length &&
+			sboostCount > 0
+		) ||
+		sboostCount > 5;
 
 	return chart.boostForceChartBoost;
 }
@@ -527,17 +531,16 @@ function shouldForceChartSeriesBoosting(chart) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 Chart.prototype.isChartSeriesBoosting = function () {
-	var threshold = 50;
+	var isSeriesBoosting,
+		threshold = pick(
+			this.options.boost && this.options.boost.seriesThreshold,
+			50
+		);
 
-	threshold = (
-			this.options.boost &&
-			typeof this.options.boost.seriesThreshold !== 'undefined'
-		) ?
-			this.options.boost.seriesThreshold :
-			threshold;
-
-	return threshold <= this.series.length ||
+	isSeriesBoosting = threshold <= this.series.length ||
 		shouldForceChartSeriesBoosting(this);
+
+	return isSeriesBoosting;
 };
 
 /*
@@ -2358,7 +2361,9 @@ function createAndAttachRenderer(chart, series) {
 				0,
 				width,
 				height
-			).add(targetGroup);
+			)
+			.addClass('highcharts-boost-canvas')
+			.add(targetGroup);
 
 			target.boostClear = function () {
 				target.renderTarget.attr({ href: '' });
@@ -2397,16 +2402,24 @@ function createAndAttachRenderer(chart, series) {
 			width = chart.chartWidth;
 			height = chart.chartHeight;
 
-			(target.renderTargetFo || target.renderTarget).attr({
-				x: 0,
-				y: 0,
-				width: width,
-				height: height,
-				style: 'pointer-events: none; mix-blend-mode: normal; opacity:' + alpha
-			});
+			(target.renderTargetFo || target.renderTarget)
+				.attr({
+					x: 0,
+					y: 0,
+					width: width,
+					height: height
+				})
+				.css({
+					pointerEvents: 'none',
+					mixedBlendMode: 'normal',
+					opacity: alpha
+				});
 
 			if (target instanceof H.Chart) {
-				target.markerGroup.translate(series.xAxis.pos, series.yAxis.pos);
+				target.markerGroup.translate(
+					chart.plotLeft,
+					chart.plotTop
+				);
 			}
 		};
 
@@ -2711,6 +2724,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
 		!getSeriesBoosting(dataToMeasure) || // First pass with options.data
 		this.type === 'heatmap' ||
 		this.type === 'treemap' ||
+		this.options.stacking || // we need processedYData for the stack (#7481)
 		!this.hasExtremes ||
 		!this.hasExtremes(true)
 	) {
@@ -2823,8 +2837,8 @@ Series.prototype.destroyGraphics = function () {
 	if (points) {
 		for (i = 0; i < points.length; i = i + 1) {
 			point = points[i];
-			if (point && point.graphic) {
-				point.graphic = point.graphic.destroy();
+			if (point && point.destroyElements) {
+				point.destroyElements(); // #7557
 			}
 		}
 	}
@@ -2841,7 +2855,7 @@ Series.prototype.destroyGraphics = function () {
 /*
  * Returns true if the current browser supports webgl
  */
-function hasWebGLSupport() {
+H.hasWebGLSupport = function () {
 	var i = 0,
 		canvas,
 		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
@@ -2863,7 +2877,7 @@ function hasWebGLSupport() {
 	}
 
 	return false;
-}
+};
 
 /* Used for treemap|heatmap.drawPoints */
 function pointDrawHandler(proceed) {
@@ -2896,7 +2910,7 @@ function pointDrawHandler(proceed) {
 // /////////////////////////////////////////////////////////////////////////////
 // We're wrapped in a closure, so just return if there's no webgl support
 
-if (!hasWebGLSupport()) {
+if (!H.hasWebGLSupport()) {
 	if (typeof H.initCanvasBoost !== 'undefined') {
 		// Fallback to canvas boost
 		H.initCanvasBoost();
@@ -3005,6 +3019,12 @@ if (!hasWebGLSupport()) {
 			} else {
 				// Use a single group for the markers
 				this.markerGroup = chart.markerGroup;
+
+				// When switching from chart boosting mode, destroy redundant
+				// series boosting targets
+				if (this.renderTarget) {
+					this.renderTarget = this.renderTarget.destroy();
+				}
 			}
 
 			points = this.points = [];

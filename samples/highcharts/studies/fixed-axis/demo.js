@@ -1,64 +1,93 @@
 
 /**
  * Highcharts plugin to make the Y axis stay fixed when scrolling the chart
- * horizontally on mobile devices.
+ * horizontally on mobile devices. Supports left and right side axes.
  */
-
-Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
-    proceed.call(this);
-
-    if (!this.horiz && this.options.fixed) {
-
-        // First render
-        if (!this.axisRenderer) {
-
-            var fixedDiv = Highcharts.createElement(
-                'div',
-                {
-                    className: 'highcharts-fixed'
-                },
-                {
-                    position: 'absolute',
-                    zIndex: 2
-                },
-                null,
-                true
-            );
-            this.chart.renderTo.parentNode.parentNode.insertBefore(
-                fixedDiv,
-                this.chart.renderTo.parentNode
-            );
-
-            this.axisRenderer = new Highcharts.Renderer(
-                fixedDiv,
-                0,
-                0
-            );
-
-            this.background = this.chart.renderer.rect()
-                .attr({
-                    fill: 'rgba(255,255,255,0.85)',
-                    zIndex: -1
-                })
-                .add(this.axisGroup);
-
-            this.axisGroup.add(this.axisRenderer.boxWrapper);
-            this.labelGroup.add(this.axisRenderer.boxWrapper);
-        }
-
-        // Update positions
-        this.background.attr({
-            x: 0,
-            y: this.chart.plotTop - 1,
-            width: this.chart.plotLeft,
-            height: this.chart.plotHeight + 2
+(function (H) {
+    H.addEvent(H.Chart.prototype, 'render', function () {
+        H.each(this.axes, function (axis) {
+            axis.applyFixed();
         });
-        this.axisRenderer.setSize(
-            this.chart.plotLeft,
-            this.chart.chartHeight
-        );
-    }
-});
+    });
+
+    H.Axis.prototype.applyFixed = function () {
+        var chart = this.chart,
+            outerContainer = chart.renderTo.parentNode.parentNode,
+            width,
+            left;
+
+        if (!this.horiz && this.options.fixed) {
+
+            // First render
+            if (!this.fixedDiv) {
+
+                this.fixedDiv = H.createElement(
+                    'div',
+                    {
+                        className: 'highcharts-fixed'
+                    },
+                    {
+                        position: 'absolute',
+                        overflow: 'hidden',
+                        zIndex: 2
+                    },
+                    null,
+                    true
+                );
+                outerContainer.insertBefore(
+                    this.fixedDiv,
+                    this.chart.renderTo.parentNode
+                );
+
+                this.axisRenderer = new H.Renderer(
+                    this.fixedDiv,
+                    0,
+                    0
+                );
+
+                this.background = chart.renderer.rect()
+                    .attr({
+                        fill: 'rgba(255,255,255,0.85)',
+                        zIndex: -1
+                    })
+                    .add(this.axisGroup);
+
+                this.axisGroup.add(this.axisRenderer.boxWrapper);
+                this.labelGroup.add(this.axisRenderer.boxWrapper);
+            }
+
+            // Update positions
+            width = this.opposite ?
+                chart.chartWidth - chart.plotWidth - chart.plotLeft :
+                chart.plotLeft;
+            left = this.opposite ?
+                chart.plotLeft + chart.plotWidth :
+                0;
+
+            if (this.opposite) {
+                this.fixedDiv.style.left = Math.min(
+                    0,
+                    outerContainer.offsetWidth - chart.chartWidth
+                ) + 'px';
+                this.fixedDiv.style.width = chart.chartWidth + 'px';
+            }
+
+            this.fixedDiv.style.clip = 'rect(0,' + (left + width) + 'px,' +
+                chart.chartHeight + 'px,' + left + 'px)';
+
+            this.background.attr({
+                x: left + 'px',
+                y: chart.plotTop - 1,
+                width: width,
+                height: chart.plotHeight + 2
+            });
+            this.axisRenderer.setSize(
+                chart.chartWidth,
+                chart.chartHeight
+            );
+        }
+    };
+}(Highcharts));
 
 Highcharts.chart('container', {
     chart: {

@@ -132,6 +132,7 @@ each([
 	'gauge',
 	'heatmap',
 	'pie',
+	'sankey',
 	'treemap',
 	'waterfall'
 ], function (type) {

@@ -25,7 +25,7 @@ var each = H.each,
  *
  * @sample stock/demo/ohlc/ OHLC chart
  * @extends {plotOptions.column}
- * @excluding borderColor,borderRadius,borderWidth
+ * @excluding borderColor,borderRadius,borderWidth,crisp
  * @product highstock
  * @optionparent plotOptions.ohlc
  */

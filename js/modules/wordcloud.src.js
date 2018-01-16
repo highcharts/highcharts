@@ -654,7 +654,7 @@ var wordCloudPoint = {
  * wordcloud](#plotOptions.wordcloud).
  *
  * @type {Object}
- * @extends plotOptions.wordcloud
+ * @extends series,plotOptions.wordcloud
  * @product highcharts
  * @apioption series.wordcloud
  */

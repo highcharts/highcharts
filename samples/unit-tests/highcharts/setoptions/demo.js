@@ -1,4 +1,4 @@
-QUnit.test('Rangeselector, scrollbar, navigator should be hidden by setOptions.', function (assert) {
+QUnit.test('Stock chart specific options in setOptions', function (assert) {
 
     var chart;
 
@@ -23,6 +23,9 @@ QUnit.test('Rangeselector, scrollbar, navigator should be hidden by setOptions.'
         },
         rangeSelector: {
             enabled: false
+        },
+        tooltip: {
+            split: false
         }
     });
 
@@ -36,6 +39,13 @@ QUnit.test('Rangeselector, scrollbar, navigator should be hidden by setOptions.'
         chart.navigator && chart.scrollbar && chart.rangeSelector,
         undefined,
         'navigator, scrollbar, rangeSelector disabled'
+    );
+    chart.series[0].points[0].onMouseOver();
+
+    assert.strictEqual(
+        chart.tooltip.split,
+        false,
+        'The instanciated tooltip should not be split (#7307)'
     );
 
     chart = $('#container').highcharts('StockChart', {
@@ -63,4 +73,5 @@ QUnit.test('Rangeselector, scrollbar, navigator should be hidden by setOptions.'
     delete Highcharts.defaultOptions.scrollbar.enabled;
     delete Highcharts.defaultOptions.navigator.enabled;
     delete Highcharts.defaultOptions.rangeSelector.enabled;
+    delete Highcharts.defaultOptions.tooltip.split;
 });

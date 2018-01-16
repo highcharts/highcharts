@@ -243,6 +243,11 @@ extend(Legend.prototype, {
 					}
 				};
 
+			// A CSS class to dim or hide other than the hovered series. Event
+			// handling in iOS causes the activeClass to be added prior to click
+			// in some cases (#7418).
+			boxWrapper.removeClass(activeClass);
+
 			// Pass over the click/touch event. #4.
 			event = {
 				browserEvent: event
@@ -424,15 +429,19 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				newMax = flipped ? panMin : panMax,
 				paddedMin = Math.min(
 					extremes.dataMin, 
-					axis.toValue(
-						axis.toPixels(extremes.min) - axis.minPixelPadding
-					)
+					halfPointRange ?
+						extremes.min :
+						axis.toValue(
+							axis.toPixels(extremes.min) - axis.minPixelPadding
+						)
 				),
 				paddedMax = Math.max(
 					extremes.dataMax,
-					axis.toValue(
-						axis.toPixels(extremes.max) + axis.minPixelPadding
-					)
+					halfPointRange ?
+						extremes.max :
+						axis.toValue(
+							axis.toPixels(extremes.max) + axis.minPixelPadding
+						)
 				),
 				spill;
 
@@ -846,12 +855,12 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Set the state of the series. Called internally on mouse interaction and
-	 * select operations, but it can also be called directly to visually
+	 * Set the state of the series. Called internally on mouse interaction
+	 * operations, but it can also be called directly to visually
 	 * highlight a series.
 	 *
 	 * @param  {String} [state]
-	 *         Can be either `hover`, `select` or undefined to set to normal
+	 *         Can be either `hover` or undefined to set to normal
 	 *         state.
 	 */
 	setState: function (state) {

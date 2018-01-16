@@ -20,6 +20,7 @@ $(function () {
         xAxis: [{
             categories: ["AB", "CD", "EF"]
         }, {
+            type: 'category'
         }]
     });
 

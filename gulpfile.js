@@ -996,7 +996,10 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
             console.log(message.noSeries);
             reject(new Error(message.noSeries));
         }
-        generate(json, output, onlyBuildCurrent, () => {
+        generate(json, output, onlyBuildCurrent, {
+            platform: 'JS',
+            products: { highcharts: true, highstock: true, highmaps: true }
+        }, () => {
             console.log(message.success);
             resolve(message.success);
         });
@@ -1177,9 +1180,13 @@ const uploadFiles = (params) => {
             let filePromise;
             if (isString(from) && isString(to)) {
                 const content = getFile(from);
-                const fileType = from.split('.').pop();
-                filePromise = storage.push(cdn, to, content, mimeType[fileType])
-                    .then(() => isFunction(callback) && callback());
+                if (isString(content)) {
+                    const fileType = from.split('.').pop();
+                    filePromise = storage.push(cdn, to, content, mimeType[fileType])
+                      .then(() => isFunction(callback) && callback());
+                } else {
+                    filePromise = Promise.reject(new Error('Path is not a file: ' + from));
+                }
             } else {
                 filePromise = Promise.reject(
                     new Error([
@@ -1230,7 +1237,7 @@ const uploadAPIDocs = () => {
         const getMapOfFromTo = (fileName) => {
             let to = fileName;
             if (tag !== 'current') {
-                let parts = fileName.split('/');
+                let parts = to.split('/');
                 parts.splice(1, 0, tag);
                 to = parts.join('/');
             }

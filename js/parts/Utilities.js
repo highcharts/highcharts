@@ -178,7 +178,7 @@ H.Fx.prototype = {
 		if (from === to) {
 			delete options.curAnim[this.prop];
 			if (options.complete && H.keys(options.curAnim).length === 0) {
-				options.complete();
+				options.complete.call(this.elem);
 			}
 		} else { // #7166
 			this.startTime = +new Date();
@@ -1762,7 +1762,11 @@ H.addEvent = function (el, type, fn) {
 	// If events are previously set directly on the prototype, pick them up 
 	// and copy them over to the instance. Otherwise instance handlers would
 	// be set on the prototype and apply to multiple charts in the page.
-	if (el.hcEvents && !el.hasOwnProperty('hcEvents')) {
+	if (
+		el.hcEvents &&
+		// IE8, window and document don't have hasOwnProperty
+		!Object.prototype.hasOwnProperty.call(el, 'hcEvents')
+	) {
 		itemEvents = {};
 		H.objectEach(el.hcEvents, function (handlers, eventType) {
 			itemEvents[eventType] = handlers.slice(0);

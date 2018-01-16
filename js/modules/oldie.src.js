@@ -1326,6 +1326,21 @@ if (!svg) {
 	H.Renderer = VMLRenderer;
 }
 
+SVGRenderer.prototype.getSpanWidth = function (wrapper, tspan) {
+	var renderer = this,
+		bBox = wrapper.getBBox(true),
+		actualWidth = bBox.width;
+
+	// Old IE cannot measure the actualWidth for SVG elements (#2314)
+	if (!svg && renderer.forExport) {
+		actualWidth = renderer.measureSpanWidth(
+			tspan.firstChild.data,
+			wrapper.styles
+		);
+	}
+	return actualWidth;
+};
+
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	var measuringSpan = doc.createElement('span'),

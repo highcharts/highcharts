@@ -47,6 +47,8 @@ H.Series.prototype.translate3dPoints = function () {
 			rawPoint.isInside = rawPoint.isInside ?
 				(zValue >= zAxis.min && zValue <= zAxis.max) :
 				false;
+		} else {
+			rawPoint.plotZ = 0;
 		}
 
 		rawPoints.push({

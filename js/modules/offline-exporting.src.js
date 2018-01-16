@@ -293,18 +293,27 @@ Highcharts.downloadSVGLocal = function (
 		var textElements = dummySVGContainer.getElementsByTagName('text'),
 			titleElements,
 			svgData,
-			svgElementStyle = dummySVGContainer
-				.getElementsByTagName('svg')[0].style;
+			// Copy style property to element from parents if it's not there.
+			// Searches up hierarchy until it finds prop, or hits the chart
+			// container.
+			setStylePropertyFromParents = function (el, propName) {
+				var curParent = el;
+				while (curParent && curParent !== dummySVGContainer) {
+					if (curParent.style[propName]) {
+						el.style[propName] = curParent.style[propName];
+						break;
+					}
+					curParent = curParent.parentNode;
+				}
+			};
 
-		// Workaround for the text styling. Making sure it does pick up the root
-		// element
+		// Workaround for the text styling. Making sure it does pick up settings
+		// for parent elements.
 		each(textElements, function (el) {
 			// Workaround for the text styling. making sure it does pick up the
 			// root element
 			each(['font-family', 'font-size'], function (property) {
-				if (!el.style[property] && svgElementStyle[property]) {
-					el.style[property] = svgElementStyle[property];
-				}
+				setStylePropertyFromParents(el, property);
 			});
 			el.style['font-family'] = (
 				el.style['font-family'] &&

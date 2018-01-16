@@ -38,7 +38,8 @@ var onSeriesMixin = {
 			leftPoint,
 			lastX,
 			rightPoint,
-			currentDataGrouping;
+			currentDataGrouping,
+			distanceRatio;
 
 		// relate to a master series
 		if (onSeries && onSeries.visible && i) {
@@ -56,8 +57,10 @@ var onSeriesMixin = {
 
 			onKey = 'plot' + onKey[0].toUpperCase() + onKey.substr(1);
 			while (i-- && points[cursor]) {
-				point = points[cursor];
 				leftPoint = onData[i];
+				point = points[cursor];
+				point.y = leftPoint.y;
+				
 				if (leftPoint.x <= point.x && leftPoint[onKey] !== undefined) {
 					if (point.x <= lastX) { // #803
 
@@ -67,14 +70,16 @@ var onSeriesMixin = {
 						if (leftPoint.x < point.x && !step) {
 							rightPoint = onData[i + 1];
 							if (rightPoint && rightPoint[onKey] !== undefined) {
+								// the distance ratio, between 0 and 1
+								distanceRatio = (point.x - leftPoint.x) /
+									(rightPoint.x - leftPoint.x);
 								point.plotY +=
-									// the distance ratio, between 0 and 1
-									(
-										(point.x - leftPoint.x) /
-										(rightPoint.x - leftPoint.x)
-									) * 
-									// the y distance
+									distanceRatio * 
+									// the plotY distance
 									(rightPoint[onKey] - leftPoint[onKey]);
+								point.y += 
+									distanceRatio *
+									(rightPoint.y - leftPoint.y);
 							}
 						}
 					}

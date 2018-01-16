@@ -253,7 +253,7 @@ Axis.prototype.resetStacks = function () {
 				// Reset stacks
 				} else {
 					stack.total = null;
-					stack.cum = null;
+					stack.cumulative = null;
 				}
 			});
 		});
@@ -271,7 +271,7 @@ Axis.prototype.cleanStacks = function () {
 		// reset stacks
 		objectEach(stacks, function (type) {
 			objectEach(type, function (stack) {
-				stack.cum = stack.total;
+				stack.cumulative = stack.total;
 			});
 		});
 	}
@@ -359,10 +359,10 @@ Series.prototype.setStackedPoints = function () {
 		stack = stacks[key][x];
 		if (y !== null) {
 			stack.points[pointKey] = stack.points[series.index] =
-				[pick(stack.cum, stackThreshold)];
+				[pick(stack.cumulative, stackThreshold)];
 
 			// Record the base of the stack
-			if (!defined(stack.cum)) {
+			if (!defined(stack.cumulative)) {
 				stack.base = pointKey;
 			}
 			stack.touched = yAxis.stacksTouched;
@@ -374,6 +374,10 @@ Series.prototype.setStackedPoints = function () {
 				stack.points[pointKey][0] =
 					stack.points[series.index + ',' + x + ',0'][0];
 			}
+
+		// When updating to null, reset the point stack (#7493)
+		} else {
+			stack.points[pointKey] = stack.points[series.index] = null;
 		}
 
 		// Add value to the stack total
@@ -395,11 +399,11 @@ Series.prototype.setStackedPoints = function () {
 			stack.total = correctFloat(stack.total + (y || 0));
 		}
 
-		stack.cum = pick(stack.cum, stackThreshold) + (y || 0);
+		stack.cumulative = pick(stack.cumulative, stackThreshold) + (y || 0);
 
 		if (y !== null) {
-			stack.points[pointKey].push(stack.cum);
-			stackedYData[i] = stack.cum;
+			stack.points[pointKey].push(stack.cumulative);
+			stackedYData[i] = stack.cumulative;
 		}
 
 	}

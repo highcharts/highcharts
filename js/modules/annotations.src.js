@@ -1325,7 +1325,10 @@ Annotation.prototype = {
 			itemPosRelativeX,
 			itemPosRelativeY,
 
-			showItem = point.series.visible && point.isInside !== false;
+			showItem =
+				point.series.visible &&
+				point.isInside !== false &&
+				(point.mock || point.graphic);
 
 		if (showItem) {
 

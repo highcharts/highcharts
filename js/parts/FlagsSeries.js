@@ -135,7 +135,7 @@ seriesType('flags', 'column', {
 	 *  or individually for each point. Defaults to `"A"`.
 	 * 
 	 * @type {String}
-	 * @default "A"
+	 * @default A
 	 * @product highstock
 	 * @apioption plotOptions.flags.title
 	 */
@@ -203,8 +203,6 @@ seriesType('flags', 'column', {
 			/**
 			 * The color of the line/border of the flag.
 			 * 
-			 * @type {String}
-			 * @default "black"
 			 * @product highstock
 			 */
 			lineColor: '${palette.neutralColor100}',
@@ -212,8 +210,6 @@ seriesType('flags', 'column', {
 			/**
 			 * The fill or background color of the flag.
 			 * 
-			 * @type {String}
-			 * @default "#FCFFC5"
 			 * @product highstock
 			 */
 			fillColor: '${palette.highlightColor20}'
@@ -494,8 +490,10 @@ symbols.flag = function (x, y, w, h, options) {
 	);
 };
 
-// create the circlepin and squarepin icons with anchor
-each(['circle', 'square'], function (shape) {
+/*
+ * Create the circlepin and squarepin icons with anchor
+ */
+function createPinSymbol(shape) {
 	symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
 		var anchorX = options && options.anchorX,
@@ -530,7 +528,9 @@ each(['circle', 'square'], function (shape) {
 
 		return path;
 	};
-});
+}
+createPinSymbol('circle');
+createPinSymbol('square');
 
 /*= if (build.classic) { =*/
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even

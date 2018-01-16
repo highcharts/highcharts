@@ -193,7 +193,11 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			 * @default {highstock} false
 			 * @apioption yAxis.showLastLabel
 			 */
-			showLastLabel: false,
+			showLastLabel: !!(
+				// #6104, show last label by default for category axes
+				yAxisOptions.categories ||
+				yAxisOptions.type === 'category'
+			),
 
 			title: {
 				text: null
@@ -227,7 +231,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				text: null
 			},
 			tooltip: {
-				split: true,
+				split: pick(defaultOptions.tooltip.split, true),
 				crosshairs: true
 			},
 			legend: {

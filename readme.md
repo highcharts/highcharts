@@ -11,7 +11,7 @@ This is the *working repo* for Highcharts. If you simply want to include Highcha
 ### Use our CDN
 Instead of downloading, you can use our CDN to access files directly. See [code.highcharts.com](https://code.highcharts.com) for details.
 ```
-<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
 ```
 ### Install from npm
 See [npm documentation](https://docs.npmjs.com/) on how to get started with npm.

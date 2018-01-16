@@ -402,8 +402,8 @@ RangeSelector.prototype = {
 	},
 
 	/**
-	 * Set the selected option. This method only sets the internal flag, it doesn't
-	 * update the buttons or the actual zoomed range.
+	 * Set the selected option. This method only sets the internal flag, it
+	 * doesn't update the buttons or the actual zoomed range.
 	 */
 	setSelected: function (selected) {
 		this.selected = this.options.selected = selected;
@@ -442,16 +442,19 @@ RangeSelector.prototype = {
 	init: function (chart) {
 		var rangeSelector = this,
 			options = chart.options.rangeSelector,
-			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
+			buttonOptions = options.buttons ||
+				[].concat(rangeSelector.defaultButtons),
 			selectedOption = options.selected,
 			blurInputs = function () {
 				var minInput = rangeSelector.minInput,
 					maxInput = rangeSelector.maxInput;
-				if (minInput && minInput.blur) { // #3274 in some case blur is not defined
-					fireEvent(minInput, 'blur'); // #3274
+
+				// #3274 in some case blur is not defined
+				if (minInput && minInput.blur) {
+					fireEvent(minInput, 'blur');
 				}
-				if (maxInput && maxInput.blur) { // #3274 in some case blur is not defined
-					fireEvent(maxInput, 'blur'); // #3274
+				if (maxInput && maxInput.blur) {
+					fireEvent(maxInput, 'blur');
 				}
 			};
 
@@ -475,11 +478,16 @@ RangeSelector.prototype = {
 
 
 		addEvent(chart, 'load', function () {
-			// If a data grouping is applied to the current button, release it when extremes change
+			// If a data grouping is applied to the current button, release it
+			// when extremes change
 			if (chart.xAxis && chart.xAxis[0]) {
 				addEvent(chart.xAxis[0], 'setExtremes', function (e) {
-					if (this.max - this.min !== chart.fixedRange && e.trigger !== 'rangeSelectorButton' &&
-							e.trigger !== 'updatedData' && rangeSelector.forcedDataGrouping) {
+					if (
+						this.max - this.min !== chart.fixedRange &&
+						e.trigger !== 'rangeSelectorButton' &&
+						e.trigger !== 'updatedData' &&
+						rangeSelector.forcedDataGrouping
+					) {
 						this.setDataGrouping(false, false);
 					}
 				});
@@ -488,7 +496,8 @@ RangeSelector.prototype = {
 	},
 
 	/**
-	 * Dynamically update the range selector buttons after a new range has been set
+	 * Dynamically update the range selector buttons after a new range has been
+	 * set
 	 */
 	updateButtonStates: function () {
 		var rangeSelector = this,
@@ -497,10 +506,17 @@ RangeSelector.prototype = {
 			actualRange = Math.round(baseAxis.max - baseAxis.min),
 			hasNoData = !baseAxis.hasVisibleSeries,
 			day = 24 * 36e5, // A single day in milliseconds
-			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis,
+			unionExtremes = (
+				chart.scroller &&
+				chart.scroller.getUnionExtremes()
+			) || baseAxis,
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
-			ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC),
+			ytdExtremes = rangeSelector.getYTDExtremes(
+				dataMax,
+				dataMin,
+				useUTC
+			),
 			ytdMin = ytdExtremes.min,
 			ytdMax = ytdExtremes.max,
 			selected = rangeSelector.selected,
@@ -518,9 +534,11 @@ RangeSelector.prototype = {
 				select,
 				offsetRange = rangeOptions._offsetMax - rangeOptions._offsetMin,
 				isSelected = i === selected,
-				// Disable buttons where the range exceeds what is allowed in the current view
+				// Disable buttons where the range exceeds what is allowed in
+				// the current view
 				isTooGreatRange = range > dataMax - dataMin,
-				// Disable buttons where the range is smaller than the minimum range
+				// Disable buttons where the range is smaller than the minimum
+				// range
 				isTooSmallRange = range < baseAxis.minRange,
 				// Do not select the YTD button if not explicitly told so
 				isYTDButNotSelected = false,
@@ -530,8 +548,14 @@ RangeSelector.prototype = {
 			// Months and years have a variable range so we check the extremes
 			if (
 				(type === 'month' || type === 'year') &&
-				(actualRange >= { month: 28, year: 365 }[type] * day * count + offsetRange) &&
-				(actualRange <= { month: 31, year: 366 }[type] * day * count + offsetRange)
+				(
+					actualRange + 36e5 >=
+					{ month: 28, year: 365 }[type] * day * count + offsetRange
+				) &&
+				(
+					actualRange - 36e5 <=
+					{ month: 31, year: 366 }[type] * day * count + offsetRange
+				)
 			) {
 				isSameRange = true;
 			} else if (type === 'ytd') {
@@ -539,11 +563,17 @@ RangeSelector.prototype = {
 				isYTDButNotSelected = !isSelected;
 			} else if (type === 'all') {
 				isSameRange = baseAxis.max - baseAxis.min >= dataMax - dataMin;
-				isAllButAlreadyShowingAll = !isSelected && selectedExists && isSameRange;
+				isAllButAlreadyShowingAll = (
+					!isSelected &&
+					selectedExists &&
+					isSameRange
+				);
 			}
-			// The new zoom area happens to match the range for a button - mark it selected.
-			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
-			// demos when selecting 1h and scroll across the night gap.
+
+			// The new zoom area happens to match the range for a button - mark
+			// it selected. This happens when scrolling across an ordinal gap.
+			// It can be seen in the intraday demos when selecting 1h and scroll
+			// across the night gap.
 			disable = (
 				!allButtonsEnabled &&
 				(
@@ -579,8 +609,8 @@ RangeSelector.prototype = {
 		var type = rangeOptions.type,
 			count = rangeOptions.count || 1,
 
-			// these time intervals have a fixed number of milliseconds, as opposed
-			// to month, ytd and year
+			// these time intervals have a fixed number of milliseconds, as
+			// opposed to month, ytd and year
 			fixedTimes = {
 				millisecond: 1,
 				second: 1000,
@@ -594,12 +624,14 @@ RangeSelector.prototype = {
 		if (fixedTimes[type]) {
 			rangeOptions._range = fixedTimes[type] * count;
 		} else if (type === 'month' || type === 'year') {
-			rangeOptions._range = { month: 30, year: 365 }[type] * 24 * 36e5 * count;
+			rangeOptions._range =
+				{ month: 30, year: 365 }[type] * 24 * 36e5 * count;
 		}
 
 		rangeOptions._offsetMin = pick(rangeOptions.offsetMin, 0);
 		rangeOptions._offsetMax = pick(rangeOptions.offsetMax, 0);
-		rangeOptions._range += rangeOptions._offsetMax - rangeOptions._offsetMin;
+		rangeOptions._range +=
+			rangeOptions._offsetMax - rangeOptions._offsetMin;
 	},
 
 	/**
@@ -621,7 +653,10 @@ RangeSelector.prototype = {
 			input.HCTime
 		);
 		this[name + 'DateBox'].attr({
-			text: dateFormat(options.inputDateFormat || '%b %e, %Y', input.HCTime)
+			text: dateFormat(
+				options.inputDateFormat || '%b %e, %Y',
+				input.HCTime
+			)
 		});
 	},
 
@@ -1234,7 +1269,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 			newMax = newMin + fixedRange;
 		}
 	}
-	if (!isNumber(newMin)) { // #1195
+	if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
 		newMin = newMax = undefined;
 	}
 

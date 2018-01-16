@@ -532,7 +532,7 @@ QUnit.test(
                 lineWidth: 1,
                 title: {
                     text: 'Primary Axis'
-                },
+                }
             }, {
                 lineWidth: 1,
                 opposite: true,
@@ -590,3 +590,40 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Show last label on category axes by default in Highstock (#6104)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+                yAxis: [{
+                    categories: []
+                }, {
+                    opposite: false
+                }, {
+                    opposite: false,
+                    type: 'category'
+                }],
+                series: [{
+                    data: [1, 2, 2, 1]
+                }, {
+                    data: [10, 12, 12, 11],
+                    yAxis: 1
+                }, {
+                    data: [20, 22, 22, 21],
+                    yAxis: 2
+                }]
+            }),
+            yAxes = chart.yAxis;
+
+        assert.ok(yAxes[0].categories && yAxes[0].options.showLastLabel,
+            'First axis has categories and shows last label');
+
+        assert.notOk(yAxes[1].categories || yAxes[1].options.showLastLabel,
+            '2nd axis does not have categories or shows last label');
+
+        assert.ok(yAxes[2].categories && yAxes[2].options.showLastLabel,
+            '3rd axis has categories and shows last label');
+    }
+);
+
+
