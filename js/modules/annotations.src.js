@@ -24,6 +24,7 @@ var	merge = H.merge,
 	format = H.format,
 	pick = H.pick,
 	destroyObjectProperties = H.destroyObjectProperties,
+	grep = H.grep,
 
 	tooltipPrototype = H.Tooltip.prototype,
 	seriesPrototype = H.Series.prototype,
@@ -807,15 +808,13 @@ Annotation.prototype = {
 
 		// Push the callback that reports to the overlapping-labels module which
 		// labels it should account for.
-		this.chart.labelCollectors.push(function () {
-			var labels = [];
-			each(anno.labels, function (label) {
-				if (!label.options.allowOverlap) {
-					labels.push(label);
-				}
+		this.labelCollector = function () {
+			return grep(anno.labels, function (label) {
+				return !label.options.allowOverlap;
 			});
-			return labels;
-		});
+		};
+
+		this.chart.labelCollectors.push(this.labelCollector);
 	},
 
 	/**
@@ -909,6 +908,8 @@ Annotation.prototype = {
 	**/
 	destroy: function () {
 		var chart = this.chart;
+
+		erase(this.chart.labelCollectors, this.labelCollector);
 
 		each(this.labels, function (label) {
 			label.destroy();
