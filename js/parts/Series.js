@@ -107,7 +107,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 
 	/**
-	 * Pixel with of the graph line.
+	 * Pixel width of the graph line.
 	 * 
 	 * @type {Number}
 	 * @see In styled mode, the line stroke-width can be set with the
@@ -1954,7 +1954,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			},
 
 			/**
-			 * Pixel with of the graph line. By default this property is
+			 * Pixel width of the graph line. By default this property is
 			 * undefined, and the `lineWidthPlus` property dictates how much
 			 * to increase the linewidth from normal state.
 			 * 
