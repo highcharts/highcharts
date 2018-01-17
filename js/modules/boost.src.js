@@ -2162,7 +2162,13 @@ function GLRenderer(postRenderCallback) {
 					shader.setPointSize(10);
 				}
 				shader.setDrawAsCircle(true);
-				vbuffer.render(s.from, s.to, 'POINTS');
+				for (sindex = 0; sindex < s.segments.length; sindex++) {
+					vbuffer.render(
+						s.segments[sindex].from,
+						s.segments[sindex].to,
+						'POINTS'
+					);
+				}
 			}
 		});
 
