@@ -392,11 +392,13 @@ var sunburstOptions = {
 	/**
 	 * Determines the width of the ring per level.
 	 * @since 6.0.5
+	 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/ Sunburst with various sizes per level
 	 */
 	levelSize: {
 		/**
 		 * The value used for calculating the width of the ring. Its' affect is
 		 * determined by `levelSize.unit`.
+		 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/ Sunburst with various sizes per level
 		 */
 		value: 1,
 		/**
@@ -408,6 +410,7 @@ var sunburstOptions = {
 		 * distributes it accross all "weighted" levels. The value relative to the
 		 * sum of all weights determines the width.
 		 * @validvalue ["percentage", "pixels", "weight"]
+		 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/ Sunburst with various sizes per level
 		 */
 		unit: 'weight'
 	},
