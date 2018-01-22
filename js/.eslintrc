@@ -40,9 +40,20 @@
         "require-jsdoc": 0,
         "strict": 0,
         "valid-jsdoc": 0,
-        "one-var": 0                                /*@todo: Before launch HC5, set to [2, "always"]*/
+        "one-var": 0,                                /*@todo: Before launch HC5, set to [2, "always"]*/
+
+
+        "security/detect-object-injection": 0,
+        "security/detect-non-literal-fs-filename": 0 /* N/A for Highcharts, we do only client side */
+        
     },
     "parserOptions": {
         "sourceType": "module"
-    }
+    },
+    "plugins": [
+        "security"
+    ],
+    "extends": [
+        "plugin:security/recommended"
+    ]
 }

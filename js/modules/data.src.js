@@ -339,11 +339,21 @@ Highcharts.extend(Data.prototype, {
 	 * Initialize the Data object with the given options
 	 */
 	init: function (options, chartOptions) {
+
+		var decimalPoint = options.decimalPoint;
+
+		if (decimalPoint !== '.' || decimalPoint !== ',') {
+			decimalPoint = undefined;
+		}
 		this.options = options;
 		this.chartOptions = chartOptions;
 		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
 		this.firstRowAsNames = pick(options.firstRowAsNames, true);
-		this.decimalRegex = options.decimalPoint && new RegExp('^(-?[0-9]+)' + options.decimalPoint + '([0-9]+)$');
+
+		this.decimalRegex = (
+			decimalPoint &&
+			new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$') // eslint-disable-line security/detect-non-literal-regexp
+		);
 
 		// This is a two-dimensional array holding the raw, trimmed string values
 		// with the same organisation as the columns array. It makes it possible
@@ -750,8 +760,8 @@ Highcharts.extend(Data.prototype, {
 					options.decimalPoint = ',';
 				}
 
-				// Apply a new decimal regex based on the pressumed decimal sep.
-				self.decimalRegex = new RegExp(
+				// Apply a new decimal regex based on the presumed decimal sep.
+				self.decimalRegex = new RegExp( // eslint-disable-line security/detect-non-literal-regexp
 					'^(-?[0-9]+)' +
 					options.decimalPoint +
 					'([0-9]+)$'

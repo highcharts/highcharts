@@ -2382,7 +2382,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				objectEach(renderer.escapes, function (value, key) {
 					if (!except || inArray(value, except) === -1) {
 						inputStr = inputStr.toString().replace(
-							new RegExp(value, 'g'),
+							new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
 							key
 						);
 					}
