@@ -665,10 +665,8 @@ var sunburstSeries = {
 			var values = childrenValues[index],
 				angle = values.start + ((values.end - values.start) / 2),
 				radius = values.innerR + ((values.r - values.innerR) / 2),
-				isCircle = (
-					values.innerR === 0 &&
-					(values.end - values.start) > 6.28
-				),
+				radians = (values.end - values.start),
+				isCircle = (values.innerR === 0 && radians > 6.28),
 				center = (
 					isCircle ?
 					{ x: values.x, y: values.y } :
@@ -682,14 +680,11 @@ var sunburstSeries = {
 						child.val
 					) :
 					child.childrenTotal
-				),
-				innerArcFraction = (values.end - values.start) / (2 * Math.PI),
-				perimeter = 2 * Math.PI * values.innerR;
-
+				);
 			// The inner arc length is a convenience for data label filters.
 			if (this.points[child.i]) {
-				this.points[child.i].innerArcLength =
-					innerArcFraction * perimeter;
+				this.points[child.i].innerArcLength = radians * values.innerR;
+				this.points[child.i].outerArcLength = radians * values.r;
 			}
 
 			child.shapeArgs = merge(values, {
