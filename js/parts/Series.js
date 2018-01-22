@@ -1494,9 +1494,12 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * The border radius in pixels for the data label.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highmaps} maps/plotoptions/series-datalabels-box/ Data labels box options
+		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
+		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
+		 * @sample {highmaps} maps/plotoptions/series-datalabels-box/
+		 *         Data labels box options
 		 * @default 0
 		 * @since 2.2.1
 		 * @apioption plotOptions.series.dataLabels.borderRadius
@@ -1507,20 +1510,21 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * The border width in pixels for the data label.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
+		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
+		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
 		 * @default 0
 		 * @since 2.2.1
 		 * @apioption plotOptions.series.dataLabels.borderWidth
 		 */
 		
 		/**
-		 * A class name for the data label. Particularly in styled mode, this can
-		 * be used to give each series' or point's data label unique styling.
-		 * In addition to this option, a default color class name is added
-		 * so that we can give the labels a [contrast text shadow](http://jsfiddle.
-		 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-
-		 * label-contrast/).
+		 * A class name for the data label. Particularly in styled mode, this
+		 * can be used to give each series' or point's data label unique
+		 * styling. In addition to this option, a default color class name is
+		 * added so that we can give the labels a
+		 * [contrast text shadow](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-label-contrast/).
 		 * 
 		 * @type {String}
 		 * @sample {highcharts} highcharts/css/series-datalabels/ Styling by CSS
@@ -1531,12 +1535,13 @@ H.Series = H.seriesType('line', null, { // base series options
 		 */
 		
 		/**
-		 * The text color for the data labels. Defaults to `null`. For certain series
-		 * types, like column or map, the data labels can be drawn inside the points.
-		 * In this case the data label will be drawn with maximum contrast by default.
-		 * Additionally, it will be given a `text-outline` style with the opposite
-		 * color, to further increase the contrast. This can be overridden by setting
-		 * the `text-outline` style to `none` in the `dataLabels.style` option.
+		 * The text color for the data labels. Defaults to `null`. For certain
+		 * series types, like column or map, the data labels can be drawn inside
+		 * the points. In this case the data label will be drawn with maximum
+		 * contrast by default. Additionally, it will be given a `text-outline`
+		 * style with the opposite color, to further increase the contrast. This
+		 * can be overridden by setting the `text-outline` style to `none` in
+		 * the `dataLabels.style` option.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-color/
