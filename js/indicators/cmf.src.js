@@ -24,7 +24,6 @@ H.seriesType('cmf', 'sma',
    * @optionparent plotOptions.cmf
    */
 	{
-		name: 'Chaikin Money Flow (14)',
 		params: {
 			period: 14,
 
@@ -34,6 +33,7 @@ H.seriesType('cmf', 'sma',
 			volumeSeriesID: 'volume'
 		}
 	}, {
+		nameBase: 'Chaikin Money Flow',
 		/**
 		 * Checks if the series and volumeSeries are accessible, number of points.x is longer than period, is series has OHLC data
 		 * @returns {Boolean} true if series is valid and can be computed, otherwise false

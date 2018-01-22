@@ -31,13 +31,15 @@ seriesType('sma', 'line',
 	 */
 	{
 		/**
-		 * The series name.
+		 * The name of the series as shown in the legend, tooltip etc. If not
+		 * set, it will be based on a technical indicator type and default 
+		 * params.
 		 * 
 		 * @type {String}
 		 * @since 6.0.0
 		 * @product highstock
 		 */
-		name: 'SMA (14)',
+		name: undefined,
 		tooltip: {
 			/**
 			 * Number of decimals in indicator series.
@@ -80,6 +82,7 @@ seriesType('sma', 'line',
 			series: true,
 			eventName: 'updatedData'
 		},
+		nameComponents: ['period'],
 		calculateOn: 'init',
 		init: function (chart, options) {
 			var indicator = this;
@@ -151,6 +154,26 @@ seriesType('sma', 'line',
 			}
 
 			return indicator;
+		},
+		getName: function () {
+			var name = this.name,
+				params = [];
+
+			if (!name) {
+
+				each(
+					this.nameComponents,
+					function (component) {
+						params.push(this.options.params[component]); 
+					},
+					this
+				);
+
+				name = (this.nameBase || this.type.toUpperCase()) + 
+					(this.nameComponents ? ' (' + params.join(', ') + ')' : '');
+			}
+
+			return name;
 		},
 		getValues: function (series, params) {
 			var period = params.period,

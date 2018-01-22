@@ -1182,12 +1182,15 @@ H.Series = H.seriesType('line', null, { // base series options
 				 */
 
 				/**
-				 * The radius of the point marker. In hover state, it defaults to the
-				 * normal state's radius + 2 as per the [radiusPlus](#plotOptions.series.
-				 * marker.states.hover.radiusPlus) option.
+				 * The radius of the point marker. In hover state, it defaults
+				 * to the normal state's radius + 2 as per the
+				 * [radiusPlus](#plotOptions.series.marker.states.hover.radiusPlus)
+				 * option.
 				 * 
 				 * @type {Number}
-				 * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-radius/ 10px radius
+				 * @sample {highcharts}
+				 *         highcharts/plotoptions/series-marker-states-hover-radius/
+				 *         10px radius
 				 * @product highcharts highstock
 				 * @apioption plotOptions.series.marker.states.hover.radius
 				 */
@@ -1196,8 +1199,12 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * The number of pixels to increase the radius of the hovered point.
 				 * 
 				 * @type {Number}
-				 * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/ 5 pixels greater radius on hover
-				 * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/ 5 pixels greater radius on hover
+				 * @sample {highcharts}
+				 *         highcharts/plotoptions/series-states-hover-linewidthplus/
+				 *         5 pixels greater radius on hover
+				 * @sample {highstock}
+				 *         highcharts/plotoptions/series-states-hover-linewidthplus/
+				 *         5 pixels greater radius on hover
 				 * @default 2
 				 * @since 4.0.3
 				 * @product highcharts highstock
@@ -1210,8 +1217,12 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * The additional line width for a hovered point.
 				 * 
 				 * @type {Number}
-				 * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/ 2 pixels wider on hover
-				 * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/ 2 pixels wider on hover
+				 * @sample {highcharts}
+				 *         highcharts/plotoptions/series-states-hover-linewidthplus/
+				 *         2 pixels wider on hover
+				 * @sample {highstock}
+				 *         highcharts/plotoptions/series-states-hover-linewidthplus/
+				 *         2 pixels wider on hover
 				 * @default 1
 				 * @since 4.0.3
 				 * @product highcharts highstock
@@ -1236,7 +1247,8 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * Enable or disable visible feedback for selection.
 				 * 
 				 * @type {Boolean}
-				 * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-enabled/
+				 * @sample {highcharts}
+				 *         highcharts/plotoptions/series-marker-states-select-enabled/
 				 *         Disabled select state
 				 * @default true
 				 * @product highcharts highstock
@@ -1247,7 +1259,8 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * The fill color of the point marker.
 				 * 
 				 * @type {Color}
-				 * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
+				 * @sample {highcharts}
+				 *         highcharts/plotoptions/series-marker-states-select-fillcolor/
 				 *         Solid red discs for selected points
 				 * @default null
 				 * @product highcharts highstock
@@ -1257,11 +1270,12 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
 				/**
-				 * The color of the point marker's outline. When `null`, the series'
-				 * or point's color is used.
+				 * The color of the point marker's outline. When `null`, the
+				 * series' or point's color is used.
 				 * 
 				 * @type {Color}
-				 * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
+				 * @sample {highcharts}
+				 *         highcharts/plotoptions/series-marker-states-select-linecolor/
 				 *         Red line color for selected points
 				 * @default #000000
 				 * @product highcharts highstock
@@ -1274,7 +1288,8 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * The width of the point marker's outline.
 				 * 
 				 * @type {Number}
-				 * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linewidth/
+				 * @sample {highcharts}
+				 *         highcharts/plotoptions/series-marker-states-select-linewidth/
 				 *         3px line width for selected points
 				 * @default 0
 				 * @product highcharts highstock
@@ -1282,11 +1297,12 @@ H.Series = H.seriesType('line', null, { // base series options
 				lineWidth: 2
 
 				/**
-				 * The radius of the point marker. In hover state, it defaults to the
-				 * normal state's radius + 2.
+				 * The radius of the point marker. In hover state, it defaults
+				 * to the normal state's radius + 2.
 				 * 
 				 * @type {Number}
-				 * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-radius/
+				 * @sample {highcharts}
+				 *         highcharts/plotoptions/series-marker-states-select-radius/
 				 *         10px radius for selected points
 				 * @product highcharts highstock
 				 * @apioption plotOptions.series.marker.states.select.radius
@@ -1314,37 +1330,53 @@ H.Series = H.seriesType('line', null, { // base series options
 			 * Fires when a point is clicked. One parameter, `event`, is passed
 			 * to the function, containing common event information.
 			 * 
-			 * If the `series.allowPointSelect` option is true, the default action
-			 * for the point's click event is to toggle the point's select state.
-			 *  Returning `false` cancels this action.
+			 * If the `series.allowPointSelect` option is true, the default
+			 * action for the point's click event is to toggle the point's
+			 * select state. Returning `false` cancels this action.
 			 * 
 			 * @type {Function}
 			 * @context Point
-			 * @sample {highcharts} highcharts/plotoptions/series-point-events-click/ Click marker to alert values
-			 * @sample {highcharts} highcharts/plotoptions/series-point-events-click-column/ Click column
-			 * @sample {highcharts} highcharts/plotoptions/series-point-events-click-url/ Go to URL
-			 * @sample {highmaps} maps/plotoptions/series-point-events-click/ Click marker to display values
-			 * @sample {highmaps} maps/plotoptions/series-point-events-click-url/ Go to URL
+			 * @sample {highcharts}
+			 *         highcharts/plotoptions/series-point-events-click/
+			 *         Click marker to alert values
+			 * @sample {highcharts}
+			 *         highcharts/plotoptions/series-point-events-click-column/
+			 *         Click column
+			 * @sample {highcharts}
+			 *         highcharts/plotoptions/series-point-events-click-url/
+			 *         Go to URL
+			 * @sample {highmaps}
+			 *         maps/plotoptions/series-point-events-click/
+			 *         Click marker to display values
+			 * @sample {highmaps}
+			 *         maps/plotoptions/series-point-events-click-url/
+			 *         Go to URL
 			 * @apioption plotOptions.series.point.events.click
 			 */
 
 			/**
-			 * Fires when the mouse leaves the area close to the point. One parameter,
-			 * `event`, is passed to the function, containing common event information.
+			 * Fires when the mouse leaves the area close to the point. One
+			 * parameter, `event`, is passed to the function, containing common
+			 * event information.
 			 * 
 			 * @type {Function}
 			 * @context Point
-			 * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/ Show values in the chart's corner on mouse over
+			 * @sample {highcharts}
+			 *         highcharts/plotoptions/series-point-events-mouseover/
+			 *         Show values in the chart's corner on mouse over
 			 * @apioption plotOptions.series.point.events.mouseOut
 			 */
 
 			/**
-			 * Fires when the mouse enters the area close to the point. One parameter,
-			 * `event`, is passed to the function, containing common event information.
+			 * Fires when the mouse enters the area close to the point. One
+			 * parameter, `event`, is passed to the function, containing common
+			 * event information.
 			 * 
 			 * @type {Function}
 			 * @context Point
-			 * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/ Show values in the chart's corner on mouse over
+			 * @sample {highcharts}
+			 *         highcharts/plotoptions/series-point-events-mouseover/
+			 *         Show values in the chart's corner on mouse over
 			 * @apioption plotOptions.series.point.events.mouseOver
 			 */
 
@@ -1355,46 +1387,59 @@ H.Series = H.seriesType('line', null, { // base series options
 			 * 
 			 * @type {Function}
 			 * @context Point
-			 * @sample {highcharts} highcharts/plotoptions/series-point-events-remove/ Remove point and confirm
+			 * @sample {highcharts}
+			 *         highcharts/plotoptions/series-point-events-remove/
+			 *         Remove point and confirm
 			 * @since 1.2.0
 			 * @apioption plotOptions.series.point.events.remove
 			 */
 
 			/**
-			 * Fires when the point is selected either programmatically or following
-			 * a click on the point. One parameter, `event`, is passed to the function.
-			 *  Returning `false` cancels the operation.
+			 * Fires when the point is selected either programmatically or
+			 * following a click on the point. One parameter, `event`, is passed
+			 * to the function. Returning `false` cancels the operation.
 			 * 
 			 * @type {Function}
 			 * @context Point
-			 * @sample {highcharts} highcharts/plotoptions/series-point-events-select/ Report the last selected point
-			 * @sample {highmaps} maps/plotoptions/series-allowpointselect/ Report select and unselect
+			 * @sample {highcharts}
+			 *         highcharts/plotoptions/series-point-events-select/
+			 *         Report the last selected point
+			 * @sample {highmaps}
+			 *         maps/plotoptions/series-allowpointselect/
+			 *         Report select and unselect
 			 * @since 1.2.0
 			 * @apioption plotOptions.series.point.events.select
 			 */
 
 			/**
-			 * Fires when the point is unselected either programmatically or following
-			 * a click on the point. One parameter, `event`, is passed to the function.
+			 * Fires when the point is unselected either programmatically or
+			 * following a click on the point. One parameter, `event`, is passed
+			 * to the function.
 			 *  Returning `false` cancels the operation.
 			 * 
 			 * @type {Function}
 			 * @context Point
-			 * @sample {highcharts} highcharts/plotoptions/series-point-events-unselect/ Report the last unselected point
-			 * @sample {highmaps} maps/plotoptions/series-allowpointselect/ Report select and unselect
+			 * @sample {highcharts}
+			 *         highcharts/plotoptions/series-point-events-unselect/
+			 *         Report the last unselected point
+			 * @sample {highmaps}
+			 *         maps/plotoptions/series-allowpointselect/
+			 *         Report select and unselect
 			 * @since 1.2.0
 			 * @apioption plotOptions.series.point.events.unselect
 			 */
 
 			/**
-			 * Fires when the point is updated programmatically through the `.update()`
-			 * method. One parameter, `event`, is passed to the function. The new
-			 * point options can be accessed through `event.options`. Returning
-			 * `false` cancels the operation.
+			 * Fires when the point is updated programmatically through the
+			 * `.update()` method. One parameter, `event`, is passed to the
+			 * function. The new point options can be accessed through
+			 * `event.options`. Returning `false` cancels the operation.
 			 * 
 			 * @type {Function}
 			 * @context Point
-			 * @sample {highcharts} highcharts/plotoptions/series-point-events-update/ Confirm point updating
+			 * @sample {highcharts}
+			 *         highcharts/plotoptions/series-point-events-update/
+			 *         Confirm point updating
 			 * @since 1.2.0
 			 * @apioption plotOptions.series.point.events.update
 			 */
@@ -1408,9 +1453,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * Options for the series data labels, appearing next to each data
 	 * point.
 	 * 
-	 * In styled mode, the data labels can be styled wtih the `.highcharts-data-label-box` and `.highcharts-data-label` class names ([see example](http://jsfiddle.
-	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-
-	 * datalabels)).
+	 * In styled mode, the data labels can be styled wtih the
+	 * `.highcharts-data-label-box` and `.highcharts-data-label` class names
+	 * ([see example](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels)).
 	 */
 	dataLabels: {
 
@@ -1419,13 +1464,15 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * The alignment of the data label compared to the point. If `right`,
 		 * the right side of the label should be touching the point. For
 		 * points with an extent, like columns, the alignments also dictates
-		 * how to align it inside the box, as given with the [inside](#plotOptions.
-		 * column.dataLabels.inside) option. Can be one of "left", "center"
-		 * or "right".
+		 * how to align it inside the box, as given with the
+		 * [inside](#plotOptions.column.dataLabels.inside) option. Can be one of
+		 * `left`, `center` or `right`.
 		 * 
 		 * @validvalue ["left", "center", "right"]
 		 * @type {String}
-		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-align-left/ Left aligned
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-datalabels-align-left/
+		 *         Left aligned
 		 * @default center
 		 */
 		align: 'center',
@@ -1437,9 +1484,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * series.dataLabels.padding) can be set to 0.
 		 * 
 		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
-		 * @sample {highstock} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
-		 * @sample {highmaps} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
+		 * @sample highcharts/plotoptions/series-datalabels-allowoverlap-false/
+		 *         Don't allow overlap
 		 * @default false
 		 * @since 4.1.0
 		 * @apioption plotOptions.series.dataLabels.allowOverlap
@@ -1450,9 +1496,12 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * The border radius in pixels for the data label.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highmaps} maps/plotoptions/series-datalabels-box/ Data labels box options
+		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
+		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
+		 * @sample {highmaps} maps/plotoptions/series-datalabels-box/
+		 *         Data labels box options
 		 * @default 0
 		 * @since 2.2.1
 		 * @apioption plotOptions.series.dataLabels.borderRadius
@@ -1463,20 +1512,21 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * The border width in pixels for the data label.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
+		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
+		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
 		 * @default 0
 		 * @since 2.2.1
 		 * @apioption plotOptions.series.dataLabels.borderWidth
 		 */
 		
 		/**
-		 * A class name for the data label. Particularly in styled mode, this can
-		 * be used to give each series' or point's data label unique styling.
-		 * In addition to this option, a default color class name is added
-		 * so that we can give the labels a [contrast text shadow](http://jsfiddle.
-		 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-
-		 * label-contrast/).
+		 * A class name for the data label. Particularly in styled mode, this
+		 * can be used to give each series' or point's data label unique
+		 * styling. In addition to this option, a default color class name is
+		 * added so that we can give the labels a
+		 * [contrast text shadow](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-label-contrast/).
 		 * 
 		 * @type {String}
 		 * @sample {highcharts} highcharts/css/series-datalabels/ Styling by CSS
@@ -1487,12 +1537,13 @@ H.Series = H.seriesType('line', null, { // base series options
 		 */
 		
 		/**
-		 * The text color for the data labels. Defaults to `null`. For certain series
-		 * types, like column or map, the data labels can be drawn inside the points.
-		 * In this case the data label will be drawn with maximum contrast by default.
-		 * Additionally, it will be given a `text-outline` style with the opposite
-		 * color, to further increase the contrast. This can be overridden by setting
-		 * the `text-outline` style to `none` in the `dataLabels.style` option.
+		 * The text color for the data labels. Defaults to `null`. For certain
+		 * series types, like column or map, the data labels can be drawn inside
+		 * the points. In this case the data label will be drawn with maximum
+		 * contrast by default. Additionally, it will be given a `text-outline`
+		 * style with the opposite color, to further increase the contrast. This
+		 * can be overridden by setting the `text-outline` style to `none` in
+		 * the `dataLabels.style` option.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-color/
@@ -2503,7 +2554,6 @@ H.Series = H.seriesType('line', null, { // base series options
 			date,
 			pointInterval,
 			pointIntervalUnit = options.pointIntervalUnit,
-			dstCrossover = 0,
 			time = this.chart.time;
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
@@ -2519,26 +2569,26 @@ H.Series = H.seriesType('line', null, { // base series options
 			date = new time.Date(xIncrement);
 
 			if (pointIntervalUnit === 'day') {
-				date = +date[time.setDate](
-					date[time.getDate]() + pointInterval
+				time.set(
+					'Date',
+					date,
+					time.get('Date', date) + pointInterval
 				);
 			} else if (pointIntervalUnit === 'month') {
-				date = +date[time.setMonth](
-					date[time.getMonth]() + pointInterval
+				time.set(
+					'Month',
+					date,
+					time.get('Month', date) + pointInterval
 				);
 			} else if (pointIntervalUnit === 'year') {
-				date = +date[time.setFullYear](
-					date[time.getFullYear]() + pointInterval
+				time.set(
+					'FullYear',
+					date,
+					time.get('FullYear', date) + pointInterval
 				);
 			}
 
-			if (time.variableTimezone) {
-				dstCrossover = (
-					time.getTimezoneOffset(date) -
-					time.getTimezoneOffset(xIncrement)
-				);
-			}
-			pointInterval = date - xIncrement + dstCrossover;
+			pointInterval = date.getTime() - xIncrement;
 
 		}
 
@@ -2642,6 +2692,17 @@ H.Series = H.seriesType('line', null, { // base series options
 			}
 		}
 		return options;
+	},
+
+	/**
+	 * Return series name in "Series {Number}" format or the one defined by a
+	 * user. This method can be simply overridden as series name format can
+	 * vary (e.g. technical indicators).
+	 *
+	 * @return  {String} The series name.
+	 */
+	getName: function () {
+		return this.name || 'Series ' + (this.index + 1);
 	},
 
 	getCyclic: function (prop, value, defaults) {

@@ -997,10 +997,7 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
             console.log(message.noSeries);
             reject(new Error(message.noSeries));
         }
-        generate(json, output, onlyBuildCurrent, {
-            platform: 'JS',
-            products: { highcharts: true, highstock: true, highmaps: true }
-        }, () => {
+        generate(json, output, onlyBuildCurrent, () => {
             console.log(message.success);
             resolve(message.success);
         });
@@ -1383,7 +1380,6 @@ const jsdoc = () => {
 
 gulp.task('start-api-server', startServer);
 gulp.task('upload-api', uploadAPIDocs);
-gulp.task('generate-api', generateAPIDocs);
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-api', cleanApi);
 gulp.task('clean-dist', cleanDist);

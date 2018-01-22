@@ -230,7 +230,13 @@ seriesType('xrange', 'column', {
 			point.clipRectArgs = {
 				x: shapeArgs.x,
 				y: shapeArgs.y,
-				width: Math.round(shapeArgs.width * partialFill),
+				width: Math.max(
+					Math.round(
+						length * partialFill +
+						(point.plotX - plotX)
+					),
+					0
+				),
 				height: shapeArgs.height
 			};
 		}

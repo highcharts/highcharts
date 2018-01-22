@@ -1059,9 +1059,22 @@ H.normalizeTickInterval = function (interval, multiples, magnitude,
 	for (i = 0; i < multiples.length; i++) {
 		retInterval = multiples[i];
 		// only allow tick amounts smaller than natural
-		if ((hasTickAmount && retInterval * magnitude >= interval) || 
-				(!hasTickAmount && (normalized <= (multiples[i] +
-				(multiples[i + 1] || multiples[i])) / 2))) {
+		if (
+			(
+				hasTickAmount &&
+				retInterval * magnitude >= interval
+			) || 
+			(
+				!hasTickAmount &&
+				(
+					normalized <=
+					(
+						multiples[i] +
+						(multiples[i + 1] || multiples[i])
+					) / 2
+				)
+			)
+		) {
 			break;
 		}
 	}

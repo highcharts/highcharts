@@ -115,6 +115,8 @@ H.seriesType('stochastic', 'sma',
 			approximation: 'averages'
 		}
 	}, /** @lends Highcharts.Series.prototype */ {
+		nameComponents: ['periods'],
+		nameBase: 'Stochastic',
 		pointArrayMap: ['y', 'smoothed'],
 		parallelArrays: ['x', 'y', 'smoothed'],
 		pointValKey: 'y',

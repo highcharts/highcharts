@@ -294,10 +294,13 @@ seriesType('variablepie', 'pie',
 			series.getX = function (y, left, point) {
 				var radii = point.series.radii[point.index];
 				angle = Math.asin(
-					Math.min(
-						(y - positions[1]) /
-						(radii + point.labelDistance),
-						1
+					Math.max(	// #7663
+						Math.min(
+							(y - positions[1]) /
+							(radii + point.labelDistance),
+							1
+						),
+						-1
 					)
 				);
 				return positions[0] +
