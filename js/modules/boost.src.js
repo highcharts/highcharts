@@ -1766,6 +1766,14 @@ function GLRenderer(postRenderCallback) {
 				maxVal = y;
 				minVal = low;
 
+				if (low === false || typeof low === 'undefined') {
+					if (y < 0) {
+						minVal = y;
+					} else {
+						minVal = 0;
+					}
+				}
+
 				if (!settings.useGPUTranslations) {
 					minVal = yAxis.toPixels(minVal, true);
 				}
@@ -3105,7 +3113,7 @@ if (!H.hasWebGLSupport()) {
 					clientX,
 					plotY,
 					isNull,
-					low,
+					low = false,
 					chartDestroyed = typeof chart.index === 'undefined',
 					isYInside = true;
 
