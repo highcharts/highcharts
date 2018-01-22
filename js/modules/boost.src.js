@@ -1238,7 +1238,8 @@ function GLRenderer(postRenderCallback) {
 		asBar = {
 			'column': true,
 			'bar': true,
-			'area': true
+			'area': true,
+			'arearange': true
 		},
 		asCircle = {
 			'scatter': true,
@@ -1763,12 +1764,7 @@ function GLRenderer(postRenderCallback) {
 			if (drawAsBar) {
 
 				maxVal = y;
-				minVal = 0;
-
-				if (y < 0) {
-					minVal = y;
-					y = 0;
-				}
+				minVal = low;
 
 				if (!settings.useGPUTranslations) {
 					minVal = yAxis.toPixels(minVal, true);
