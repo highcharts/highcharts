@@ -469,7 +469,7 @@ extend(defaultOptions, {
 		 * @type {Object}
 		 * @extends {yAxis}
 		 * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
-		 *          scrollbar,top,units,maxRange
+		 *          scrollbar,top,units,maxRange,minLength,maxLength,resize
 		 * @product highstock
 		 */
 		yAxis: {

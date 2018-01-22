@@ -57,11 +57,12 @@ var hasTouch = H.hasTouch,
 		maxLength: '100%',
 
 		/**
-		 * Options for axis resizing for Drag Panes module.
-		 *
-		 * This feature requires the `drag-panes.js` module.
+		 * Options for axis resizing. This feature requires the `drag-panes.js`
+		 * module.
 		 *
 		 * @product      highstock
+		 * @sample	{highstock} stock/demo/candlestick-and-volume
+		 *          Axis resizing enabled
 		 * @optionparent yAxis.resize
 		 */
 		resize: {
