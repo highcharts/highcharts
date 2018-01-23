@@ -58,8 +58,10 @@ var hasTouch = H.hasTouch,
 
 		/**
 		 * Options for axis resizing. This feature requires the
-		 * [drag-panes.js](http://code.highcharts.com/stock/modules/drag-panes.js)
-		 * module.
+		 * `drag-panes.js` -
+		 * [classic](http://code.highcharts.com/stock/modules/drag-panes.js) or
+		 * [styled](http://code.highcharts.com/stock/js/modules/drag-panes.js)
+		 * mode - module.
 		 *
 		 * @product highstock
 		 * @sample	{highstock} stock/demo/candlestick-and-volume
