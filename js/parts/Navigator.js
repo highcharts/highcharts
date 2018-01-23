@@ -1091,6 +1091,7 @@ Navigator.prototype = {
 			range = navigator.range,
 			chartX = e.chartX,
 			fixedMax,
+			fixedMin,
 			ext,
 			left;
 
@@ -1112,12 +1113,24 @@ Navigator.prototype = {
 				left = Math.max(0, left);
 			} else if (index === 2 && left + range >= navigatorSize) {
 				left = navigatorSize - range;
-				fixedMax = navigator.getUnionExtremes().dataMax; // #2293, #3543
+				if (xAxis.reversed) {
+					// #7713
+					left -= range;
+					fixedMin = navigator.getUnionExtremes().dataMin;
+				} else {
+					// #2293, #3543
+					fixedMax = navigator.getUnionExtremes().dataMax;
+				}
 			}
 			if (left !== zoomedMin) { // it has actually moved
 				navigator.fixedWidth = range; // #1370
 
-				ext = xAxis.toFixedRange(left, left + range, null, fixedMax);
+				ext = xAxis.toFixedRange(
+					left,
+					left + range,
+					fixedMin,
+					fixedMax
+				);
 				if (defined(ext.min)) { // #7411
 					chart.xAxis[0].setExtremes(
 						Math.min(ext.min, ext.max),
@@ -1921,7 +1934,8 @@ Navigator.prototype = {
 
 		// If the scrollbar is scrolled all the way to the right, keep right as
 		// new data  comes in.
-		navigator.stickToMax =
+		navigator.stickToMax = navigator.xAxis.reversed ?
+			Math.round(navigator.zoomedMin) === 0 :
 			Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 
 		// Detect whether the zoomed area should stick to the minimum or
