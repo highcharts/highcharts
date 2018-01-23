@@ -1120,6 +1120,20 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @product highcharts highstock
 		 */
 		states: {
+
+			/** 
+			 * The normal state of a single point marker. Currently only used
+			 * for setting animation when returning to normal state from hover.
+			 * @type {Object}
+			 */
+			normal: {
+				/**
+				 * Animation when returning to normal state after hovering.
+				 * @type {Boolean|Object}
+				 * @default true
+				 */
+			},
+
 			/**
 			 * The hover state for a single point marker.
 			 * @product highcharts highstock
@@ -1966,6 +1980,19 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 	states: {
 
+		/** 
+		 * The normal state of a series, or for point items in column, pie and
+		 * similar series. Currently only used for setting animation when
+		 * returning to normal state from hover.
+		 * @type {Object}
+		 */
+		normal: {
+			/**
+			 * Animation when returning to normal state after hovering.
+			 * @type {Boolean|Object}
+			 * @default true
+			 */
+		},
 
 		/**
 		 * Options for the hovered series. These settings override the normal

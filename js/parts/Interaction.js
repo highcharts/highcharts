@@ -609,12 +609,15 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			plotX = Math.floor(point.plotX), // #4586
 			plotY = point.plotY,
 			series = point.series,
-			stateOptions = series.options.states[state] || {},
+			stateOptions = series.options.states[state || 'normal'] || {},
 			markerOptions = defaultPlotOptions[series.type].marker &&
 				series.options.marker,
 			normalDisabled = markerOptions && markerOptions.enabled === false,
-			markerStateOptions = (markerOptions && markerOptions.states &&
-				markerOptions.states[state]) || {},
+			markerStateOptions = (
+				markerOptions &&
+				markerOptions.states &&
+				markerOptions.states[state || 'normal']
+			) || {},
 			stateDisabled = markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			pointMarker = point.marker || {},
@@ -748,7 +751,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 					// #5818, #5903, #6705
 					.add((point.graphic || stateMarkerGraphic).parentGroup);
 			}
-			halo[move ? 'animate' : 'attr']({
+			halo.show()[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
 			halo.attr({
@@ -767,7 +770,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
 		} else if (halo && halo.point && halo.point.haloPath) {
 			// Animate back to 0 on the current halo point (#6055)
-			halo.animate({ d: halo.point.haloPath(0) });
+			halo.animate(
+				{ d: halo.point.haloPath(0) },
+				null,
+				// Hide after unhovering. The `complete` callback runs in the
+				// halo's context (#7681).
+				halo.hide
+			);
 		}
 
 		point.state = state;
@@ -917,8 +926,11 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 				graph.animate(
 					attribs,
 					pick(
-						series.chart.options.chart.animation,
-						stateOptions[state] && stateOptions[state].animation
+						(
+							stateOptions[state || 'normal'] &&
+							stateOptions[state || 'normal'].animation
+						),
+						series.chart.options.chart.animation
 					)
 				);
 				while (series['zone-graph-' + i]) {

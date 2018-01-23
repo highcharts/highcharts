@@ -119,23 +119,7 @@ seriesType('heatmap', 'scatter', {
 	},
 
 	states: {
-		/**
-		 * Options for the normal point.
-		 *
-		 * @product highcharts highmaps
-		 */
-		normal: {
-			/**
-			 * Animation setting for the normal point.
-			 *
-			 * @product highcharts highmaps
-			 */
-			animation: true
-		},
 
-		/**
-		 * @excluding halo,lineWidth,lineWidthPlus,marker
-		 */
 		hover: {
 			/** @ignore */
 			halo: false,  // #3406, halo is disabled on heatmaps by default

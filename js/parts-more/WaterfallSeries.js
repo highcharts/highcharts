@@ -165,9 +165,10 @@ seriesType('waterfall', 'column', {
 				point.x,
 				series.index
 			);
-			range = stack ?
-				stack[point.x].points[stackIndicator.key] :
-				[0, yValue];
+			range = pick(
+				stack && stack[point.x].points[stackIndicator.key],
+				[0, yValue]
+			);
 
 			// override point value for sums
 			// #3710 Update point does not propagate to sum
