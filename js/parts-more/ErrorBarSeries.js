@@ -113,7 +113,7 @@ seriesType('errorbar', 'boxplot', {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.errorbar
- * @excluding dataParser,dataURL,stack,stacking,type
+ * @excluding dataParser,dataURL,stack,stacking
  * @product   highcharts
  * @apioption series.errorbar
  */

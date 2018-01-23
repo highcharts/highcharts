@@ -104,7 +104,7 @@ seriesType('scatter', 'line', {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.scatter
- * @excluding dataParser,dataURL,type
+ * @excluding dataParser,dataURL
  * @product   highcharts highstock
  * @apioption series.scatter
  */

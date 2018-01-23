@@ -45,7 +45,7 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.areaspline
- * @excluding dataParser,dataURL,type
+ * @excluding dataParser,dataURL
  * @product   highcharts highstock
  * @apioption series.areaspline
  */

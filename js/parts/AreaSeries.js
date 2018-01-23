@@ -492,7 +492,7 @@ seriesType('area', 'line', {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.area
- * @excluding dataParser,dataURL,type
+ * @excluding dataParser,dataURL
  * @product   highcharts highstock
  * @apioption series.area
  */

@@ -580,7 +580,7 @@ Axis.prototype.beforePadding = function () {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.bubble
- * @excluding dataParser,dataURL,stack,type
+ * @excluding dataParser,dataURL,stack
  * @product   highcharts
  * @apioption series.bubble
  */

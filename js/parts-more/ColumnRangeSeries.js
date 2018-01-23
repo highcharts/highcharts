@@ -192,7 +192,7 @@ seriesType('columnrange', 'arearange', merge(
  *
  * @type      {Object}
  * @extends   series,plotOptions.columnrange
- * @excluding dataParser,dataURL,stack,stacking,type
+ * @excluding dataParser,dataURL,stack,stacking
  * @product   highcharts highstock
  * @apioption series.columnrange
  */

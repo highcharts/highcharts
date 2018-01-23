@@ -520,7 +520,7 @@ seriesType('boxplot', 'column', {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.boxplot
- * @excluding dataParser,dataURL,marker,stack,stacking,states,type
+ * @excluding dataParser,dataURL,marker,stack,stacking,states
  * @product   highcharts
  * @apioption series.boxplot
  */

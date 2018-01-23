@@ -114,7 +114,7 @@ seriesType('bellcurve', 'areaspline', {
     * @type      {Object}
     * @since     6.0.0
     * @extends   series,plotOptions.bellcurve
-    * @excluding dataParser,dataURL,data,type
+    * @excluding dataParser,dataURL,data
     * @product   highcharts
     * @apioption series.bellcurve
     **/

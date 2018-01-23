@@ -600,7 +600,7 @@ seriesType('arearange', 'area', {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.arearange
- * @excluding dataParser,dataURL,stack,stacking,type
+ * @excluding dataParser,dataURL,stack,stacking
  * @product   highcharts highstock
  * @apioption series.arearange
  */

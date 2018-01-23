@@ -40,7 +40,7 @@ seriesType('bar', 'column', null, {
  * @type      {Object}
  * @extends   series,plotOptions.bar
  * @excluding connectNulls,dashStyle,dataParser,dataURL,gapSize,gapUnit,linecap,
- *            lineWidth,marker,connectEnds,step,type
+ *            lineWidth,marker,connectEnds,step
  * @product   highcharts
  * @apioption series.bar
  */

@@ -285,7 +285,7 @@ seriesType('bullet', 'column',
  * @type      {Object}
  * @since     6.0.0
  * @extends   series,plotOptions.bullet
- * @excluding dataParser,dataURL,marker,type
+ * @excluding dataParser,dataURL,marker
  * @product   highcharts
  * @apioption series.bullet
  */

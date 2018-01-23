@@ -40,7 +40,7 @@ seriesType('areasplinerange', 'arearange', null, {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.areasplinerange
- * @excluding dataParser,dataURL,stack,type
+ * @excluding dataParser,dataURL,stack
  * @product   highcharts highstock
  * @apioption series.areasplinerange
  */
