@@ -561,7 +561,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
 		// In accordance with animate, run a complete callback
 		if (complete) {
-			complete();
+			complete.call(this);
 		}
 
 		return ret;

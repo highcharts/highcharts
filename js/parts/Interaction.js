@@ -751,7 +751,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 					// #5818, #5903, #6705
 					.add((point.graphic || stateMarkerGraphic).parentGroup);
 			}
-			halo[move ? 'animate' : 'attr']({
+			halo.show()[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
 			halo.attr({
@@ -770,7 +770,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
 		} else if (halo && halo.point && halo.point.haloPath) {
 			// Animate back to 0 on the current halo point (#6055)
-			halo.animate({ d: halo.point.haloPath(0) });
+			halo.animate(
+				{ d: halo.point.haloPath(0) },
+				null,
+				// Hide after unhovering. The `complete` callback runs in the
+				// halo's context (#7681).
+				halo.hide
+			);
 		}
 
 		point.state = state;
