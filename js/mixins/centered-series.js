@@ -12,8 +12,8 @@ var deg2rad = H.deg2rad,
 	relativeLength = H.relativeLength;
 H.CenteredSeriesMixin = {
 	/**
-	 * Get the center of the pie based on the size and center options relative to the
-	 * plot area. Borrowed by the polar and gauge series types.
+	 * Get the center of the pie based on the size and center options relative
+	 * to the plot area. Borrowed by the polar and gauge series types.
 	 */
 	getCenter: function () {
 
@@ -24,7 +24,12 @@ H.CenteredSeriesMixin = {
 			plotWidth = chart.plotWidth - 2 * slicingRoom,
 			plotHeight = chart.plotHeight - 2 * slicingRoom,
 			centerOption = options.center,
-			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
+			positions = [
+				pick(centerOption[0], '50%'),
+				pick(centerOption[1], '50%'),
+				options.size || '100%',
+				options.innerSize || 0
+			],
 			smallestSize = Math.min(plotWidth, plotHeight),
 			i,
 			value;
@@ -37,8 +42,10 @@ H.CenteredSeriesMixin = {
 			// i == 1: centerY, relative to height
 			// i == 2: size, relative to smallestSize
 			// i == 3: innerSize, relative to size
-			positions[i] = relativeLength(value, [plotWidth, plotHeight, smallestSize, positions[2]][i]) +
-				(handleSlicingRoom ? slicingRoom : 0);
+			positions[i] = relativeLength(
+				value,
+				[plotWidth, plotHeight, smallestSize, positions[2]][i]
+			) +	(handleSlicingRoom ? slicingRoom : 0);
 
 		}
 		// innerSize cannot be larger than size (#3632)

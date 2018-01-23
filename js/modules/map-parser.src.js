@@ -7,7 +7,7 @@
  * SVG map parser. 
  * This file requires data.js.
  */
-
+/* eslint max-len: 0 */
 /* global document, jQuery, $ */
 'use strict';
 import H from '../parts/Globals.js';

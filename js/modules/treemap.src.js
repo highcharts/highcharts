@@ -4,6 +4,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -1423,11 +1424,16 @@ seriesType('treemap', 'scatter', {
  * @type {Array<Object|Number>}
  * @extends series.heatmap.data
  * @excluding x,y
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts
  * @apioption series.treemap.data
  */

@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -553,7 +554,7 @@ seriesType('area', 'line', {
  * @sample    {highcharts} highcharts/series/data-array-of-name-value/
  *            Arrays of point.name and y
  * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
+ *            Config objects    
  * @product   highcharts highstock
  * @apioption series.area.data
  */

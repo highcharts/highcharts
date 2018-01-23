@@ -16,6 +16,7 @@
  * http://jsfiddle.net/highcharts/264Nm/
  * http://jsfiddle.net/highcharts/y5A37/
  */
+/* eslint max-len: 0 */
 
 'use strict';
 import H from '../parts/Globals.js';

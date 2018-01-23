@@ -3,7 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import Highcharts from './Globals.js';
 import './Utilities.js';

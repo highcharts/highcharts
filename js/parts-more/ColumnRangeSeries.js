@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -250,7 +251,7 @@ seriesType('columnrange', 'arearange', merge(
  * @sample    {highcharts} highcharts/series/data-array-of-name-value/
  *            Arrays of point.name and y
  * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
+ *            Config objects    
  * @product   highcharts highstock
  * @apioption series.columnrange.data
  */

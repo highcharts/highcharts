@@ -32,7 +32,8 @@ function meanDeviation(arr, sma) {
  */
 seriesType('cci', 'sma', 
 	/**
-	 * Commodity Channel Index (CCI). This series requires `linkedTo` option to be set.
+	 * Commodity Channel Index (CCI). This series requires `linkedTo` option to
+	 * be set.
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -59,7 +60,11 @@ seriesType('cci', 'sma',
 				CCIPoint, p, len, smaTP, TPtemp, meanDev, i;
 
 			// CCI requires close value
-			if (xVal.length <= period || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (
+				xVal.length <= period ||
+				!isArray(yVal[0]) ||
+				yVal[0].length !== 4
+			) {
 				return false;
 			}
 			

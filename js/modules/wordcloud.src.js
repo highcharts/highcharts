@@ -459,7 +459,9 @@ var wordCloudSeries = {
 			renderer = chart.renderer,
 			testElement = renderer.text().add(group),
 			placed = [],
-			placementStrategy = series.placementStrategy[options.placementStrategy],
+			placementStrategy = series.placementStrategy[
+				options.placementStrategy
+			],
 			spiral = series.spirals[options.spiral],
 			rotation = options.rotation,
 			scale,
@@ -675,8 +677,9 @@ var wordCloudPoint = {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.arearange.turboThreshold),
- * this option is not available.
+ * points exceeds the series'
+ * [turboThreshold](#series.arearange.turboThreshold), this option is not
+ * available.
  * 
  *  ```js
  *     data: [{
@@ -715,4 +718,10 @@ var wordCloudPoint = {
 * @product highcharts
 * @apioption series.sunburst.data.weight
 */
-H.seriesType('wordcloud', 'column', wordCloudOptions, wordCloudSeries, wordCloudPoint);
+H.seriesType(
+	'wordcloud',
+	'column',
+	wordCloudOptions,
+	wordCloudSeries,
+	wordCloudPoint
+);

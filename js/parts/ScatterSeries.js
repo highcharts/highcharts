@@ -71,7 +71,7 @@ seriesType('scatter', 'line', {
 			'<span style="font-size: 0.85em"> {series.name}</span><br/>',
 		/*= } else { =*/
 
-		headerFormat: // eslint-disable-line max-len
+		headerFormat: 
 			'<span class="highcharts-color-{point.colorIndex}">\u25CF</span> ' +
 			'<span class="highcharts-header"> {series.name}</span><br/>',
 		/*= } =*/

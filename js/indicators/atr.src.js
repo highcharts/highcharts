@@ -42,7 +42,8 @@ function populateAverage(points, xVal, yVal, i, period, prevATR) {
  */
 seriesType('atr', 'sma', 
 	/**
-	 * Average true range indicator (ATR). This series requires `linkedTo` option to be set.
+	 * Average true range indicator (ATR). This series requires `linkedTo`
+	 * option to be set.
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -72,7 +73,10 @@ seriesType('atr', 'sma',
 
 			points = [[xValue, yValue]];
 		
-			if ((xVal.length <= period) || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (
+				(xVal.length <= period) || !isArray(yVal[0]) ||
+				yVal[0].length !== 4
+			) {
 				return false;
 			}
 
@@ -81,7 +85,14 @@ seriesType('atr', 'sma',
 				accumulateAverage(points, xVal, yVal, i);
 
 				if (period < range) {
-					point = populateAverage(points, xVal, yVal, i, period, prevATR);
+					point = populateAverage(
+						points,
+						xVal,
+						yVal,
+						i,
+						period,
+						prevATR
+					);
 					prevATR = point[1];
 					ATR.push(point);
 					xData.push(point[0]);

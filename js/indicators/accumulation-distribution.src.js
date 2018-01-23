@@ -10,7 +10,9 @@ function populateAverage(xVal, yVal, yValVolume, i) {
 		low = yVal[i][2],
 		close = yVal[i][3],
 		volume = yValVolume[i],
-		adY = close === high && close === low || high === low ? 0 : ((2 * close - low - high) / (high - low)) * volume,
+		adY = close === high && close === low || high === low ?
+			0 :
+			((2 * close - low - high) / (high - low)) * volume,
 		adX = xVal[i];
 		
 	return [adX, adY];
@@ -24,7 +26,8 @@ function populateAverage(xVal, yVal, yValVolume, i) {
  */
 seriesType('ad', 'sma',
 	/**
-	 * Accumulation Distribution (AD). This series requires `linkedTo` option to be set.
+	 * Accumulation Distribution (AD). This series requires `linkedTo` option to
+	 * be set.
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock

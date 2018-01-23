@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
