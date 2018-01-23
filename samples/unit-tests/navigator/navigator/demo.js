@@ -36,7 +36,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Reversed xAxis with navigator should allow zooming.',
+    'Reversed xAxis with navigator',
     function (assert) {
 
         var chart = new Highcharts.StockChart({
@@ -49,12 +49,22 @@ QUnit.test(
                         [15, 22]
                     ]
                 }],
+                rangeSelector: {
+                    buttons: [{
+                        count: 5,
+                        type: 'millisecond',
+                        text: '5ms'
+                    }],
+                    inputEnabled: false,
+                    selected: 0
+                },
                 navigator: {
                     xAxis: {
                         reversed: true
                     }
                 },
                 xAxis: {
+                    reversed: true,
                     minRange: 1
                 }
             }),
@@ -62,6 +72,13 @@ QUnit.test(
             navigator = chart.scroller,
             done = assert.async();
 
+        chart.series[0].addPoint([20, 23]);
+
+        assert.strictEqual(
+            chart.xAxis[0].max,
+            20,
+            'Correct extremes after addPoint() (#7713).'
+        );
 
         navigator.handlesMousedown({
             pageX: offset.left + 578,
@@ -82,10 +99,10 @@ QUnit.test(
                 DOMType: 'mouseup'
             });
             assert.strictEqual(
-            chart.series[0].points !== null,
-            true,
-            'Navigator works.'
-          );
+                chart.series[0].points !== null,
+                true,
+                'Zooming works fine (#4114).'
+            );
             done();
         }, 0);
     }
