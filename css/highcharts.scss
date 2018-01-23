@@ -668,3 +668,14 @@ text.highcharts-drilldown-data-label,
 	stroke-width: 1px;
     stroke: $neutral-color-80;
 }
+
+/* Annotations module */
+.highcharts-annotation-label-box {
+    stroke-width: 1px;
+    stroke: $neutral-color-100;
+    fill: $neutral-color-100;
+    fill-opacity: 0.75;
+}
+.highcharts-annotation-label text {
+    fill: $neutral-color-10;
+}

@@ -1,0 +1,11 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+#container {
+    max-width: 800px;
+    height: 400px;
+    margin: 1em auto;
+}
+
+.climb text {
+	fill: gray;
+	font-weight: normal;
+}
