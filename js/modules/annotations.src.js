@@ -24,6 +24,8 @@ var	merge = H.merge,
 	find = H.find,
 	format = H.format,
 	pick = H.pick,
+	objectEach = H.objectEach,
+	uniqueKey = H.uniqueKey,
 	destroyObjectProperties = H.destroyObjectProperties,
 	grep = H.grep,
 
@@ -47,6 +49,7 @@ var	merge = H.merge,
  * {
  *   arrow: {
  *     id: 'arrow',
+ *     tagName: 'marker',
  *     refY: 5,
  *     refX: 5,
  *     markerWidth: 10,
@@ -64,11 +67,14 @@ var	merge = H.merge,
  * @type {Object}
  * @sample highcharts/annotations/custom-markers/
  *         Define a custom marker for annotations
+ * @sample highcharts/css/annotations-markers/
+ *         Define markers in a styled mode
  * @since 6.0.0
- * @apioption defs.markers
+ * @apioption defs
  */
 var defaultMarkers = {
 	arrow: {
+		tagName: 'marker',
 		render: false,
 		id: 'arrow',
 		refY: 5,
@@ -79,7 +85,9 @@ var defaultMarkers = {
 			tagName: 'path',
 			attrs: {
 				d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
+        /*= if (build.classic) { =*/
 				strokeWidth: 0
+        /*= } =*/
 			}
 		}]
 	}
@@ -100,7 +108,7 @@ extend(MarkerMixin, {
 
 
 H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
-	var markerId = pick(id, H.uniqueKey()),
+	var markerId = pick(id, uniqueKey()),
 		marker = this.createElement('marker').attr({
 			id: markerId,
 			markerWidth: pick(markerOptions.markerWidth, 20),
@@ -110,12 +118,15 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
 			orient: markerOptions.orient || 'auto'
 		}).add(this.defs),
 
-		attrs = {
-			stroke: markerOptions.color || 'none',
-			fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
-		},
+		attrs = {},
 		children = markerOptions.children;
 
+  /*= if (build.classic) { =*/
+	attrs  = {
+		stroke: markerOptions.color || 'none',
+		fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
+	};
+  /*= } =*/
 	marker.id = markerId;
 
 	each(children, function (child) {
@@ -1189,7 +1200,7 @@ Annotation.prototype = {
 
 	redrawPath: function (pathItem, isNew) {
 		var points = pathItem.points,
-			strokeWidth = pathItem['stroke-width'],
+			strokeWidth = pathItem['stroke-width'] || 1,
 			d = ['M'],
 			pointIndex = 0,
 			dIndex = 0,
@@ -1253,29 +1264,30 @@ Annotation.prototype = {
 	setItemMarkers: function (item) {
 		var itemOptions = item.options,
 			chart = this.chart,
-			markers = chart.options.defs.markers,
+			defs = chart.options.defs,
 			fill = itemOptions.fill,
 			color = defined(fill) && fill !== 'none' ? fill : itemOptions.stroke,
 
 
 			setMarker = function (markerType) {
 				var markerId = itemOptions[markerType],
-					marker,
+					def,
 					predefinedMarker,
-					key;
+					key,
+					marker;
 
 				if (markerId) {
-					for (key in markers) {
-						marker = markers[key];
-						if (markerId === marker.id) {
-							predefinedMarker = marker;
+					for (key in defs) {
+						def = defs[key];
+						if (markerId === def.id && def.tagName === 'marker') {
+							predefinedMarker = def;
 							break;
 						}
 					}
 
 					if (predefinedMarker) {
 						marker = item[markerType] = chart.renderer.addMarker(
-							null, 
+							(itemOptions.id || uniqueKey()) + '-' + predefinedMarker.id, 
 							merge(predefinedMarker, { color: color })
 						);
 
@@ -1637,26 +1649,20 @@ chartPrototype.callbacks.push(function (chart) {
 });
 
 
+
+/*= if (build.classic) { =*/
 H.wrap(chartPrototype, 'getContainer', function (p) {
 	p.call(this);
 
-	var renderer = this.renderer,
-		options = this.options,
-		key,
-		markers,
-		marker;
+	var defs = this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-	options.defs = merge(options.defs || {}, { markers: defaultMarkers });
-	markers = options.defs.markers;
-
-	for (key in markers) {
-		marker = markers[key];
-		
-		if (pick(marker.render, true)) {
-			renderer.addMarker(marker.id, marker);			
+	objectEach(defs, function (def) {
+		if (def.tagName === 'marker' && def.render !== false) {
+			this.renderer.addMarker(def.id, def);
 		}
-	}
+	}, this);
 });
+/*= } =*/
 
 
 /* ************************************************************************* */
