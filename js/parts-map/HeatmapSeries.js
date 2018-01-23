@@ -118,10 +118,6 @@ seriesType('heatmap', 'scatter', {
 
 	states: {
 
-		normal: {
-			animation: true
-		},
-
 		hover: {
 			halo: false,  // #3406, halo is disabled on heatmaps by default
 			brightness: 0.2

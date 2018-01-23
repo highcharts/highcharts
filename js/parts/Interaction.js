@@ -609,12 +609,15 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			plotX = Math.floor(point.plotX), // #4586
 			plotY = point.plotY,
 			series = point.series,
-			stateOptions = series.options.states[state] || {},
+			stateOptions = series.options.states[state || 'normal'] || {},
 			markerOptions = defaultPlotOptions[series.type].marker &&
 				series.options.marker,
 			normalDisabled = markerOptions && markerOptions.enabled === false,
-			markerStateOptions = (markerOptions && markerOptions.states &&
-				markerOptions.states[state]) || {},
+			markerStateOptions = (
+				markerOptions &&
+				markerOptions.states &&
+				markerOptions.states[state || 'normal']
+			) || {},
 			stateDisabled = markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			pointMarker = point.marker || {},
@@ -917,8 +920,11 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 				graph.animate(
 					attribs,
 					pick(
-						series.chart.options.chart.animation,
-						stateOptions[state] && stateOptions[state].animation
+						(
+							stateOptions[state || 'normal'] &&
+							stateOptions[state || 'normal'].animation
+						),
+						series.chart.options.chart.animation
 					)
 				);
 				while (series['zone-graph-' + i]) {
