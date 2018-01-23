@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -115,7 +115,7 @@ seriesType('variablepie', 'pie',
 		sizeBy: 'area',
 
 		tooltip: {
-			pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>Value: {point.y}<br/>Size: {point.z}<br/>' // eslint-disable-line max-len
+			pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>Value: {point.y}<br/>Size: {point.z}<br/>'
 		}
 	}, {
 		pointArrayMap: ['y', 'z'],

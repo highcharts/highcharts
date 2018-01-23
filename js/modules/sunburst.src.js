@@ -7,6 +7,7 @@
  * This is an experimental Highcharts module which enables visualization
  * of a word cloud.
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../mixins/centered-series.js';

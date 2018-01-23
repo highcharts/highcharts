@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", { "ignoreUrls": true}] */
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';

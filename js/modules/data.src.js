@@ -5,7 +5,7 @@
  *
  * License: www.highcharts.com/license
  */
-
+/* eslint max-len: 0 */
 /* global XMLHttpRequest */
 'use strict';
 import Highcharts from '../parts/Globals.js';

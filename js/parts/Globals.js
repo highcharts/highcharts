@@ -11,10 +11,17 @@ var glob = typeof win === 'undefined' ? window : win,
 	doc = glob.document,
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	userAgent = (glob.navigator && glob.navigator.userAgent) || '',
-	svg = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
+	svg = (
+		doc &&
+		doc.createElementNS &&
+		!!doc.createElementNS(SVG_NS, 'svg').createSVGRect
+	),
 	isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera,
 	isFirefox = /Firefox/.test(userAgent),
-	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38;
+	hasBidiBug = (
+		isFirefox &&
+		parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
+	);
 
 var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
 	product: '@product.name@',

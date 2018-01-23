@@ -8,7 +8,7 @@
  * It is recommended to include this module in conditional comments targeting
  * IE9 and IE10.
  */
-
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';

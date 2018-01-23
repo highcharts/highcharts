@@ -10,7 +10,7 @@
 // - Deprecate repo and plugins page
 // - Before official release, set up systematic tests for all series types
 
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';

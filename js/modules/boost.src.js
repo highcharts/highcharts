@@ -1,3 +1,4 @@
+/* eslint max-len: 0 */
 /**
  * License: www.highcharts.com/license
  * Author: Christer Vasseng, Torstein Honsi

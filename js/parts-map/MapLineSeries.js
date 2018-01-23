@@ -53,9 +53,14 @@ seriesType('mapline', 'map', {
 	 * Get presentational attributes
 	 */
 	pointAttribs: function (point, state) {
-		var attr = seriesTypes.map.prototype.pointAttribs.call(this, point, state);
+		var attr = seriesTypes.map.prototype.pointAttribs.call(
+			this,
+			point,
+			state
+		);
 
-		// The difference from a map series is that the stroke takes the point color
+		// The difference from a map series is that the stroke takes the point
+		// color
 		attr.fill = this.options.fillColor;
 
 		return attr;

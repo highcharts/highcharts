@@ -22,7 +22,8 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 		xData = [],
 		useMapGeometry;
 
-	// Remove the xData array and cache it locally so that the proceed method doesn't use it
+	// Remove the xData array and cache it locally so that the proceed method
+	// doesn't use it
 	if (isXAxis) {
 		each(this.series, function (series, i) {
 			if (series.useMapGeometry) {
@@ -87,7 +88,8 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
 
-		mapRatio = plotRatio / ((xAxis.max - xAxis.min) / (this.max - this.min));
+		mapRatio = plotRatio /
+			((xAxis.max - xAxis.min) / (this.max - this.min));
 
 		// What axis to pad to put the map in the middle
 		padAxis = mapRatio < 1 ? this : xAxis;
@@ -101,7 +103,13 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		if (fixTo) {
 			fixDiff = fixTo[1] - padAxis.toValue(fixTo[0], true);
 			fixDiff *= padAxis.transA;
-			if (Math.abs(fixDiff) > padAxis.minPixelPadding || (padAxis.min === padAxis.dataMin && padAxis.max === padAxis.dataMax)) { // zooming out again, keep within restricted area
+			if (
+				Math.abs(fixDiff) > padAxis.minPixelPadding ||
+				(
+					padAxis.min === padAxis.dataMin &&
+					padAxis.max === padAxis.dataMax
+				)
+			) { // zooming out again, keep within restricted area
 				fixDiff = 0;
 			}
 			padAxis.minPixelPadding -= fixDiff;

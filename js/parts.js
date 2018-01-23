@@ -1,5 +1,5 @@
 'use strict';
-/* eslint-disable no-unused-vars */
+/* eslint-disable max-len, no-unused-vars */
 var HighchartsConfig = {
 	'version': [{
 		'highcharts': '4.0.1-modified'

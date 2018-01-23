@@ -22,7 +22,7 @@ var addEvent = H.addEvent,
 	seriesTypes = H.seriesTypes,
 	stableSort = H.stableSort;
 
-/* eslint max-len: ["warn", 80, 4] */
+    
 /**
  * General distribution algorithm for distributing labels of differing size
  * along a confined length in two dimensions. The algorithm takes an array of
