@@ -83,10 +83,8 @@ seriesType('bubble', 'scatter', {
 		lineWidth: 1,
 		/**
 		 * The fill opacity of the bubble markers.
-		 * @type {Number}
-		 * @default 0.5
-		 * @product highcharts
 		 */
+		fillOpacity: 0.5,
 		/*= } =*/
 		/**
 		 * In bubble charts, the radius is overridden and determined based on 
@@ -119,7 +117,6 @@ seriesType('bubble', 'scatter', {
 		 *         General chart with predefined, graphic and custom markers
 		 * @default circle
 		 * @since 5.0.11
-		 * @product highcharts
 		 */
 		symbol: 'circle'
 	},
@@ -284,7 +281,7 @@ seriesType('bubble', 'scatter', {
 	/*= if (build.classic) { =*/
 	pointAttribs: function (point, state) {
 		var markerOptions = this.options.marker,
-			fillOpacity = pick(markerOptions.fillOpacity, 0.5),
+			fillOpacity = markerOptions.fillOpacity,
 			attr = Series.prototype.pointAttribs.call(this, point, state);
 
 		if (fillOpacity !== 1) {
