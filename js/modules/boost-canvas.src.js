@@ -3,12 +3,12 @@
  * Author: Torstein Honsi, Christer Vasseng
  *
  * This module serves as a fallback for the Boost module in IE9 and IE10. Newer
- * browsers support WebGL which is faster. 
+ * browsers support WebGL which is faster.
  *
  * It is recommended to include this module in conditional comments targeting
  * IE9 and IE10.
  */
-
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -98,12 +98,12 @@ H.initCanvasBoost = function () {
 
 			if (!target.canvas) {
 				target.canvas = doc.createElement('canvas');
-				
+
 				target.renderTarget = chart.renderer.image(
-					'', 
-					0, 
-					0, 
-					width, 
+					'',
+					0,
+					0,
+					width,
 					height
 				)
 				.addClass('highcharts-boost-canvas')
@@ -117,13 +117,22 @@ H.initCanvasBoost = function () {
 					});
 				}
 
-				target.boostClear = function () {
-					ctx.clearRect(0, 0, target.canvas.width, target.canvas.height);
+				target.boostCopy = function () {
+					target.renderTarget.attr({
+						href: target.canvas.toDataURL('image/png')
+					});
+				};
 
-					if (target.renderTarget) {
-						target.renderTarget.attr({
-							href: ''
-						});
+				target.boostClear = function () {
+					ctx.clearRect(
+						0,
+						0,
+						target.canvas.width,
+						target.canvas.height
+					);
+
+					if (target === this) {
+						target.renderTarget.attr({ href: '' });
 					}
 				};
 
@@ -157,14 +166,18 @@ H.initCanvasBoost = function () {
 			return ctx;
 		},
 
-		/** 
+		/**
 		 * Draw the canvas image inside an SVG image
 		 */
 		canvasToSVG: function () {
 			if (!this.chart.isChartSeriesBoosting()) {
-				this.renderTarget.attr({ href: this.canvas.toDataURL('image/png') });
+				if (this.boostCopy || this.chart.boostCopy) {
+					(this.boostCopy || this.chart.boostCopy)();
+				}
 			} else {
-				this.boostClear();
+				if (this.boostClear) {
+					this.boostClear();
+				}
 			}
 		},
 
@@ -313,6 +326,10 @@ H.initCanvasBoost = function () {
 					}
 				};
 
+			if (this.renderTarget) {
+				this.renderTarget.attr({ 'href': '' });
+			}
+
 			// If we are zooming out from SVG mode, destroy the graphics
 			if (this.points || this.graph) {
 				this.destroyGraphics();
@@ -335,7 +352,19 @@ H.initCanvasBoost = function () {
 			points = this.points = [];
 			ctx = this.getContext();
 			series.buildKDTree = noop; // Do not start building while drawing
-			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+			if (this.boostClear) {
+				this.boostClear();
+			}
+
+			// if (this.canvas) {
+			// 	ctx.clearRect(
+			// 		0,
+			// 		0,
+			// 		this.canvas.width,
+			// 		this.canvas.height
+			// 	);
+			// }
 
 			if (!this.visible) {
 				return;
@@ -483,7 +512,9 @@ H.initCanvasBoost = function () {
 					wasNull = isNull && !connectNulls;
 
 					if (i % CHUNK_SIZE === 0) {
-						series.canvasToSVG();
+						if (series.boostCopy || series.chart.boostCopy) {
+							(series.boostCopy || series.chart.boostCopy)();
+						}
 					}
 				}
 
@@ -492,6 +523,11 @@ H.initCanvasBoost = function () {
 				var loadingDiv = chart.loadingDiv,
 					loadingShown = chart.loadingShown;
 				stroke();
+
+				// if (series.boostCopy || series.chart.boostCopy) {
+				// 	(series.boostCopy || series.chart.boostCopy)();
+				// }
+
 				series.canvasToSVG();
 
 				if (boostSettings.timeRendering) {
@@ -574,11 +610,9 @@ H.initCanvasBoost = function () {
 	});
 
 	H.Chart.prototype.callbacks.push(function (chart) {
-		function canvasToSVG() {			
-			if (chart.renderTarget && chart.canvas) {
-				chart.renderTarget.attr({ 
-					href: chart.canvas.toDataURL('image/png') 
-				});
+		function canvasToSVG() {
+			if (chart.boostCopy) {
+				chart.boostCopy();
 			}
 		}
 

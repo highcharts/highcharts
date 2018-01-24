@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -82,10 +83,8 @@ seriesType('bubble', 'scatter', {
 		lineWidth: 1,
 		/**
 		 * The fill opacity of the bubble markers.
-		 * @type {Number}
-		 * @default 0.5
-		 * @product highcharts
 		 */
+		fillOpacity: 0.5,
 		/*= } =*/
 		/**
 		 * In bubble charts, the radius is overridden and determined based on 
@@ -118,7 +117,6 @@ seriesType('bubble', 'scatter', {
 		 *         General chart with predefined, graphic and custom markers
 		 * @default circle
 		 * @since 5.0.11
-		 * @product highcharts
 		 */
 		symbol: 'circle'
 	},
@@ -283,7 +281,7 @@ seriesType('bubble', 'scatter', {
 	/*= if (build.classic) { =*/
 	pointAttribs: function (point, state) {
 		var markerOptions = this.options.marker,
-			fillOpacity = pick(markerOptions.fillOpacity, 0.5),
+			fillOpacity = markerOptions.fillOpacity,
 			attr = Series.prototype.pointAttribs.call(this, point, state);
 
 		if (fillOpacity !== 1) {
@@ -600,11 +598,16 @@ Axis.prototype.beforePadding = function () {
  * @type {Array<Object|Array>}
  * @extends series.line.data
  * @excluding marker
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts
  * @apioption series.bubble.data
  */

@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -24,6 +25,7 @@ var	merge = H.merge,
 	format = H.format,
 	pick = H.pick,
 	destroyObjectProperties = H.destroyObjectProperties,
+	grep = H.grep,
 
 	tooltipPrototype = H.Tooltip.prototype,
 	seriesPrototype = H.Series.prototype,
@@ -353,19 +355,22 @@ Annotation.prototype = {
 	 * @type {Object}
 	 */
 	attrsMap: {
+		/*= if (build.classic) { =*/
 		backgroundColor: 'fill',
 		borderColor: 'stroke',
 		borderWidth: 'stroke-width',
+		dashStyle: 'dashstyle',
 		strokeWidth: 'stroke-width',
 		stroke: 'stroke',
 		fill: 'fill',
+
+		/*= } =*/
 		zIndex: 'zIndex',
 		width: 'width',
 		height: 'height',
 		borderRadius: 'r',
 		r: 'r',
-		padding: 'padding',
-		dashStyle: 'dashstyle'
+		padding: 'padding'
 	},
 
 	/**
@@ -376,6 +381,10 @@ Annotation.prototype = {
 	 * @type {Array<Object>}
 	 * @sample highcharts/annotations/basic/
 	 *         Basic annotations
+	 * @sample highcharts/demo/annotations/
+	 *         Advanced annotations
+	 * @sample highcharts/css/annotations
+	 *         Styled mode
 	 * @sample {highstock} stock/annotations/fibonacci-retracements
 	 *         Custom annotation, Fibonacci retracement
 	 * @since 6.0.0
@@ -442,7 +451,7 @@ Annotation.prototype = {
 			 * @sample highcharts/annotations/label-presentation/
 			 *         Set labels graphic options
 			 */
-			borderRadius: 1,
+			borderRadius: 3,
 
 			/**
 			 * The border width in pixels for the annotation's label
@@ -451,6 +460,15 @@ Annotation.prototype = {
 			 *         Set labels graphic options
 			 */
 			borderWidth: 1,
+
+			/**
+			 * A class name for styling by CSS.
+			 *
+			 * @sample highcharts/css/annotations
+			 *         Styled mode annotations
+			 * @since 6.0.5
+			 */
+			className: '',
 
 			/**
 			 * Whether to hide the annotation's label that is outside the plot area.
@@ -807,15 +825,13 @@ Annotation.prototype = {
 
 		// Push the callback that reports to the overlapping-labels module which
 		// labels it should account for.
-		this.chart.labelCollectors.push(function () {
-			var labels = [];
-			each(anno.labels, function (label) {
-				if (!label.options.allowOverlap) {
-					labels.push(label);
-				}
+		this.labelCollector = function () {
+			return grep(anno.labels, function (label) {
+				return !label.options.allowOverlap;
 			});
-			return labels;
-		});
+		};
+
+		this.chart.labelCollectors.push(this.labelCollector);
 	},
 
 	/**
@@ -910,6 +926,8 @@ Annotation.prototype = {
 	destroy: function () {
 		var chart = this.chart;
 
+		erase(this.chart.labelCollectors, this.labelCollector);
+
 		each(this.labels, function (label) {
 			label.destroy();
 		});
@@ -960,6 +978,11 @@ Annotation.prototype = {
 
 		shape.attr(attr);
 
+
+		if (options.className) {
+			shape.addClass(options.className);
+		}
+
 		this.shapes.push(shape);
 	},
 
@@ -974,7 +997,6 @@ Annotation.prototype = {
 	**/
 	initLabel: function (labelOptions) {
 		var options = merge(this.options.labelOptions, labelOptions),
-			style = options.style,
 			attr = this.attrsFromOptions(options),
 
 			label = this.chart.renderer.label(
@@ -988,14 +1010,6 @@ Annotation.prototype = {
 				'annotation-label'
 			);
 
-		if (style.color === 'contrast') {
-			style.color = this.chart.renderer.getContrast(
-				inArray(options.shape, this.shapesWithoutBackground) > -1 ? 
-				'#FFFFFF' :
-				options.backgroundColor
-			);
-		}
-
 		label.points = [];
 		label.options = options;
 		label.itemType = 'label';
@@ -1004,8 +1018,25 @@ Annotation.prototype = {
 		label.labelrank = options.labelrank;
 		label.annotation = this;
 
-		label.attr(attr).css(style).shadow(options.shadow);
+		label.attr(attr);
 
+		/*= if (build.classic) { =*/
+		var style = options.style;
+		if (style.color === 'contrast') {
+			style.color = this.chart.renderer.getContrast(
+				inArray(options.shape, this.shapesWithoutBackground) > -1 ? 
+				'#FFFFFF' :
+				options.backgroundColor
+			);
+		}
+		label.css(style).shadow(options.shadow);
+		/*= } =*/
+
+		if (options.className) {
+			label.addClass(options.className);
+		}
+		
+		
 		this.labels.push(label);
 	},
 

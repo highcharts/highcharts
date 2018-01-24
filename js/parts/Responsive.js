@@ -180,10 +180,13 @@ Chart.prototype.setResponsive = function (redraw) {
 Chart.prototype.matchResponsiveRule = function (rule, matches) {
 	var condition = rule.condition,
 		fn = condition.callback || function () {
-			return this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
-				this.chartHeight <= pick(condition.maxHeight, Number.MAX_VALUE) &&
+			return (
+				this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
+				this.chartHeight <=
+					pick(condition.maxHeight, Number.MAX_VALUE) &&
 				this.chartWidth >= pick(condition.minWidth, 0) &&
-				this.chartHeight >= pick(condition.minHeight, 0);
+				this.chartHeight >= pick(condition.minHeight, 0)
+			);
 		};		
 
 	if (fn.call(this)) {

@@ -48,8 +48,8 @@ seriesType('bullet', 'column',
 		 */
 		targetOptions: {
 			/**
-			 * The width of the rectangle representing the target. Could be set as
-			 * a pixel value or as a percentage of a column width.
+			 * The width of the rectangle representing the target. Could be set
+			 * as a pixel value or as a percentage of a column width.
 			 * 
 			 * @type {Number|String}
 			 * @since 6.0.0

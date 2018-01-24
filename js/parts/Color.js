@@ -34,17 +34,23 @@ H.Color = function (input) {
 };
 H.Color.prototype = {
 
-	// Collection of parsers. This can be extended from the outside by pushing parsers
-	// to Highcharts.Color.prototype.parsers.
+	// Collection of parsers. This can be extended from the outside by pushing
+	// parsers to Highcharts.Color.prototype.parsers.
 	parsers: [{
 		// RGBA color
-		regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+		regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/, // eslint-disable-line security/detect-unsafe-regex
 		parse: function (result) {
-			return [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
+			return [
+				pInt(result[1]),
+				pInt(result[2]),
+				pInt(result[3]),
+				parseFloat(result[4], 10)
+			];
 		}
 	}, {
 		// RGB color
-		regex: /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
+		regex:
+			/rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
 		parse: function (result) {
 			return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
 		}

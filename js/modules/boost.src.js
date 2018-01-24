@@ -1,3 +1,4 @@
+/* eslint max-len: 0 */
 /**
  * License: www.highcharts.com/license
  * Author: Christer Vasseng, Torstein Honsi
@@ -2161,7 +2162,13 @@ function GLRenderer(postRenderCallback) {
 					shader.setPointSize(10);
 				}
 				shader.setDrawAsCircle(true);
-				vbuffer.render(s.from, s.to, 'POINTS');
+				for (sindex = 0; sindex < s.segments.length; sindex++) {
+					vbuffer.render(
+						s.segments[sindex].from,
+						s.segments[sindex].to,
+						'POINTS'
+					);
+				}
 			}
 		});
 
@@ -2723,7 +2730,7 @@ each([
 			!enabled ||
 			this.type === 'heatmap' ||
 			this.type === 'treemap' ||
-			H.inArray(this.type, boostable) === -1
+			!boostableMap[this.type]
 		) {
 
 			proceed.call(this);
@@ -2779,36 +2786,37 @@ wrap(Series.prototype, 'processData', function (proceed) {
 		);
 	}
 
-	// If there are no extremes given in the options, we also need to process
-	// the data to read the data extremes. If this is a heatmap, do default
-	// behaviour.
-	if (
-		!getSeriesBoosting(dataToMeasure) || // First pass with options.data
-		this.type === 'heatmap' ||
-		this.type === 'treemap' ||
-		this.options.stacking || // we need processedYData for the stack (#7481)
-		!this.hasExtremes ||
-		!this.hasExtremes(true)
-	) {
+	if (boostableMap[this.type]) {
+
+		// If there are no extremes given in the options, we also need to
+		// process the data to read the data extremes. If this is a heatmap, do
+		// default behaviour.
+		if (
+			!getSeriesBoosting(dataToMeasure) || // First pass with options.data
+			this.type === 'heatmap' ||
+			this.type === 'treemap' ||
+			this.options.stacking || // processedYData for the stack (#7481)
+			!this.hasExtremes ||
+			!this.hasExtremes(true)
+		) {
+			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+			dataToMeasure = this.processedXData;
+		}		
+
+		// Set the isBoosting flag, second pass with processedXData to see if we
+		// have zoomed.
+		this.isSeriesBoosting = getSeriesBoosting(dataToMeasure);
+
+		// Enter or exit boost mode
+		if (this.isSeriesBoosting) {
+			this.enterBoost();
+		} else if (this.exitBoost) {
+			this.exitBoost();
+		}
+
+	// The series type is not boostable
+	} else {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-		dataToMeasure = this.processedXData;
-	}
-
-	/*
-	if (!this.hasExtremes || !this.hasExtremes(true)) {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-	}
-	*/
-
-	// Set the isBoosting flag, second pass with processedXData to see if we
-	// have zoomed.
-	this.isSeriesBoosting = getSeriesBoosting(dataToMeasure);
-
-	// Enter or exit boost mode
-	if (this.isSeriesBoosting) {
-		this.enterBoost();
-	} else if (this.exitBoost) {
-		this.exitBoost();
 	}
 });
 

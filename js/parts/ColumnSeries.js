@@ -202,7 +202,8 @@ seriesType('column', 'line', {
 	 * @type {Number}
 	 * @sample {highcharts} highcharts/plotoptions/column-minpointlength/
 	 *         Zero base value
-	 * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/
+	 * @sample {highcharts}
+	 *         highcharts/plotoptions/column-minpointlength-pos-and-neg/
 	 *         Positive and negative close to zero values
 	 * @default 0
 	 * @product highcharts highstock

@@ -103,8 +103,10 @@ var getColor = function getColor(node, options) {
 		getColorByPoint = point && level.colorByPoint;
 
 		if (getColorByPoint) {
-			colorIndexByPoint = point.index %
-				(colors ? colors.length : series.chart.options.chart.colorCount);
+			colorIndexByPoint = point.index % (colors ?
+				colors.length :
+				series.chart.options.chart.colorCount
+			);
 			colorByPoint = colors && colors[colorIndexByPoint];
 		}
 

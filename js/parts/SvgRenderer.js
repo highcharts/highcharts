@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -560,7 +561,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
 		// In accordance with animate, run a complete callback
 		if (complete) {
-			complete();
+			complete.call(this);
 		}
 
 		return ret;
@@ -2382,7 +2383,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				objectEach(renderer.escapes, function (value, key) {
 					if (!except || inArray(value, except) === -1) {
 						inputStr = inputStr.toString().replace(
-							new RegExp(value, 'g'),
+							new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
 							key
 						);
 					}

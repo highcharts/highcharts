@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -1119,6 +1120,20 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @product highcharts highstock
 		 */
 		states: {
+
+			/** 
+			 * The normal state of a single point marker. Currently only used
+			 * for setting animation when returning to normal state from hover.
+			 * @type {Object}
+			 */
+			normal: {
+				/**
+				 * Animation when returning to normal state after hovering.
+				 * @type {Boolean|Object}
+				 * @default true
+				 */
+			},
+
 			/**
 			 * The hover state for a single point marker.
 			 * @product highcharts highstock
@@ -1494,9 +1509,12 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * The border radius in pixels for the data label.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highmaps} maps/plotoptions/series-datalabels-box/ Data labels box options
+		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
+		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
+		 * @sample {highmaps} maps/plotoptions/series-datalabels-box/
+		 *         Data labels box options
 		 * @default 0
 		 * @since 2.2.1
 		 * @apioption plotOptions.series.dataLabels.borderRadius
@@ -1507,20 +1525,21 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * The border width in pixels for the data label.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
+		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
+		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/
+		 *         Data labels box options
 		 * @default 0
 		 * @since 2.2.1
 		 * @apioption plotOptions.series.dataLabels.borderWidth
 		 */
 		
 		/**
-		 * A class name for the data label. Particularly in styled mode, this can
-		 * be used to give each series' or point's data label unique styling.
-		 * In addition to this option, a default color class name is added
-		 * so that we can give the labels a [contrast text shadow](http://jsfiddle.
-		 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-
-		 * label-contrast/).
+		 * A class name for the data label. Particularly in styled mode, this
+		 * can be used to give each series' or point's data label unique
+		 * styling. In addition to this option, a default color class name is
+		 * added so that we can give the labels a
+		 * [contrast text shadow](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-label-contrast/).
 		 * 
 		 * @type {String}
 		 * @sample {highcharts} highcharts/css/series-datalabels/ Styling by CSS
@@ -1531,12 +1550,13 @@ H.Series = H.seriesType('line', null, { // base series options
 		 */
 		
 		/**
-		 * The text color for the data labels. Defaults to `null`. For certain series
-		 * types, like column or map, the data labels can be drawn inside the points.
-		 * In this case the data label will be drawn with maximum contrast by default.
-		 * Additionally, it will be given a `text-outline` style with the opposite
-		 * color, to further increase the contrast. This can be overridden by setting
-		 * the `text-outline` style to `none` in the `dataLabels.style` option.
+		 * The text color for the data labels. Defaults to `null`. For certain
+		 * series types, like column or map, the data labels can be drawn inside
+		 * the points. In this case the data label will be drawn with maximum
+		 * contrast by default. Additionally, it will be given a `text-outline`
+		 * style with the opposite color, to further increase the contrast. This
+		 * can be overridden by setting the `text-outline` style to `none` in
+		 * the `dataLabels.style` option.
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-color/
@@ -1958,6 +1978,19 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 	states: {
 
+		/** 
+		 * The normal state of a series, or for point items in column, pie and
+		 * similar series. Currently only used for setting animation when
+		 * returning to normal state from hover.
+		 * @type {Object}
+		 */
+		normal: {
+			/**
+			 * Animation when returning to normal state after hovering.
+			 * @type {Boolean|Object}
+			 * @default true
+			 */
+		},
 
 		/**
 		 * Options for the hovered series. These settings override the normal
@@ -4766,11 +4799,16 @@ H.Series = H.seriesType('line', null, { // base series options
  *  ```
  * 
  * @type {Array<Object|Array|Number>}
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @apioption series.line.data
  */
 
