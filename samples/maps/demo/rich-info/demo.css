@@ -35,7 +35,11 @@
 
 @media screen and (max-width: 920px) {
     #wrapper, #container,  #info {
-        width:100%;
+        float: none;
+        width: 100%;
         height: auto;
+        margin: 0.5em 0;
+        padding: 0;
+        border: none;
     }
 }
