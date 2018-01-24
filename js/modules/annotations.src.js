@@ -26,6 +26,8 @@ var	merge = H.merge,
 	pick = H.pick,
 	objectEach = H.objectEach,
 	uniqueKey = H.uniqueKey,
+	doc = H.doc,
+	splat = H.splat,
 	destroyObjectProperties = H.destroyObjectProperties,
 
 	tooltipPrototype = H.Tooltip.prototype,
@@ -82,12 +84,10 @@ var defaultMarkers = {
 		markerHeight: 10,
 		children: [{
 			tagName: 'path',
-			attrs: {
-				d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
-        /*= if (build.classic) { =*/
-				strokeWidth: 0
-        /*= } =*/
-			}
+			d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
+      /*= if (build.classic) { =*/
+			strokeWidth: 0
+      /*= } =*/
 		}]
 	}
 };
@@ -105,34 +105,75 @@ extend(MarkerMixin, {
 	markerStartSetter: MarkerMixin.markerSetter('marker-start')
 });
 
+/*= if (build.classic) { =*/
+// In a styled mode definition is implemented
+H.SVGRenderer.prototype.definition = function (def) {
+	var ren = this;
+
+	function recurse(config, parent) {
+		var ret;
+		each(splat(config), function (item) {
+			var node = ren.createElement(item.tagName),
+				attr = {};
+
+      // Set attributes
+			objectEach(item, function (val, key) {
+				if (
+          key !== 'tagName' &&
+          key !== 'children' &&
+          key !== 'textContent'
+        ) {
+					attr[key] = val;
+				}
+			});
+			node.attr(attr);
+
+      // Add to the tree
+			node.add(parent || ren.defs);
+
+      // Add text content
+			if (item.textContent) {
+				node.element.appendChild(
+          doc.createTextNode(item.textContent)
+        );
+			}
+
+      // Recurse
+			recurse(item.children || [], node);
+
+			ret = node;
+		});
+
+    // Return last node added (on top level it's the only one)
+		return ret;
+	}
+	return recurse(def);
+};
+/*= } =*/
 
 H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
-	var markerId = pick(id, uniqueKey()),
-		marker = this.createElement('marker').attr({
-			id: markerId,
-			markerWidth: pick(markerOptions.markerWidth, 20),
-			markerHeight: pick(markerOptions.markerHeight, 20),
-			refX: markerOptions.refX || 0,
-			refY: markerOptions.refY || 0,
-			orient: markerOptions.orient || 'auto'
-		}).add(this.defs),
-
-		attrs = {},
-		children = markerOptions.children;
+	var options = { id: id };
 
   /*= if (build.classic) { =*/
-	attrs  = {
+	var attrs  = {
 		stroke: markerOptions.color || 'none',
 		fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
 	};
-  /*= } =*/
-	marker.id = markerId;
 
-	each(children, function (child) {
-		this.createElement(child.tagName)
-			.attr(merge(attrs, child.attrs))
-			.add(marker);
-	}, this);
+	options.children = H.map(markerOptions.children, function (child) {
+		return merge(attrs, child);
+	});
+  /*= } =*/
+
+	var marker = this.definition(merge({
+		markerWidth: 20,
+		markerHeight: 20,
+		refX: 0,
+		refY: 0,
+		orient: 'auto'
+	}, markerOptions, options));
+
+	marker.id = id;
 
 	return marker;
 };
@@ -1290,7 +1331,7 @@ Annotation.prototype = {
 							merge(predefinedMarker, { color: color })
 						);
 
-						item.attr(markerType, marker.id);
+						item.attr(markerType, marker.attr('id'));
 					}
 				}
 			};
@@ -1649,19 +1690,19 @@ chartPrototype.callbacks.push(function (chart) {
 
 
 
-/*= if (build.classic) { =*/
 H.wrap(chartPrototype, 'getContainer', function (p) {
+	this.options.defs = merge(defaultMarkers, this.options.defs || {});
+  
 	p.call(this);
 
-	var defs = this.options.defs = merge(defaultMarkers, this.options.defs || {});
-
-	objectEach(defs, function (def) {
+  /*= if (build.classic) { =*/
+	objectEach(this.options.defs, function (def) {
 		if (def.tagName === 'marker' && def.render !== false) {
 			this.renderer.addMarker(def.id, def);
 		}
 	}, this);
+  /*= } =*/
 });
-/*= } =*/
 
 
 /* ************************************************************************* */

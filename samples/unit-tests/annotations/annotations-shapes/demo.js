@@ -115,9 +115,7 @@ QUnit.test('Drawing path with a marker', function (assert) {
                 markerHeight: 10,
                 children: [{
                     tagName: 'path',
-                    attrs: {
-                        d: 'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an arrow)
-                    }
+                    d: 'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an arrow)
                 }]
             }
         },

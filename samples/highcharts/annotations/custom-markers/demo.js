@@ -26,11 +26,9 @@ Highcharts.chart('container', {
             id: 'custom-shape',
             children: [{
                 tagName: 'path',
-                attrs: {
-                    d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
+                d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
           // fill: 'black'
           // if the child does not have define fill/stroke attributes it inherits fill or stroke from the referencer element
-                }
             }],
             markerWidth: 40,
             markerHeight: 40,
@@ -40,23 +38,18 @@ Highcharts.chart('container', {
         marker1: {
             children: [{
                 tagName: 'circle',
-                attrs: {
-                    r: 9,
-                    cx: 11,
-                    cy: 11,
-                    fill: 'rgba(224, 101, 0, 0.6'
-                }
+                r: 9,
+                cx: 11,
+                cy: 11,
+                fill: 'rgba(224, 101, 0, 0.6'
             }, {
                 tagName: 'circle',
-                attrs: {
-                    r: 10,
-                    cx: 11,
-                    cy: 11,
-                    fill: 'none',
-                    'stroke-width': 2,
-                    stroke: 'black'
-                }
-
+                r: 10,
+                cx: 11,
+                cy: 11,
+                fill: 'none',
+                'stroke-width': 2,
+                stroke: 'black'
             }],
             tagName: 'marker',
             id: 'circle',
