@@ -25,9 +25,7 @@ Highcharts.chart('container', {
             id: 'custom-shape',
             children: [{
                 tagName: 'path',
-                attrs: {
-                    d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
-                }
+                d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
             }],
             markerWidth: 40,
             markerHeight: 40,
@@ -37,19 +35,14 @@ Highcharts.chart('container', {
         marker1: {
             children: [{
                 tagName: 'circle',
-                attrs: {
-                    r: 9,
-                    cx: 11,
-                    cy: 11
-                }
+                r: 9,
+                cx: 11,
+                cy: 11
             }, {
                 tagName: 'circle',
-                attrs: {
-                    r: 10,
-                    cx: 11,
-                    cy: 11
-                }
-
+                r: 10,
+                cx: 11,
+                cy: 11
             }],
             tagName: 'marker',
             id: 'circle',
