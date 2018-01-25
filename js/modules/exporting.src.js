@@ -1576,7 +1576,24 @@ Chart.prototype.inlineStyles = function () {
 		whitelist = renderer.inlineWhitelist, // For IE
 		unstyledElements = renderer.unstyledElements,
 		defaultStyles = {},
-		dummySVG;
+		dummySVG,
+		iframe,
+		iframeDoc;
+
+	// Create an iframe where we read default styles without pollution from this
+	// body
+	iframe = doc.createElement('iframe');
+	css(iframe, {
+		width: '1px',
+		height: '1px',
+		visibility: 'hidden'
+	});
+	doc.body.appendChild(iframe);
+	iframeDoc = iframe.contentWindow.document;
+	iframeDoc.open();
+	iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+	iframeDoc.close();
+
 	
 	/**
 	 * Make hyphenated property names out of camelCase
@@ -1630,8 +1647,13 @@ Chart.prototype.inlineStyles = function () {
 			}
 
 			if (!blacklisted) {
-				// If parent node has the same style, it gets inherited, no need to inline it
-				if (parentStyles[prop] !== val && defaultStyles[node.nodeName][prop] !== val) {
+				// If parent node has the same style, it gets inherited, no need
+				// to inline it. Top-level props should be diffed against parent
+				// (#7687).
+				if (
+					(parentStyles[prop] !== val || node.nodeName === 'svg') &&
+					defaultStyles[node.nodeName][prop] !== val
+				) {
 					// Attributes
 					if (inlineToAttributes.indexOf(prop) !== -1) {
 						node.setAttribute(hyphenate(prop), val);
@@ -1649,12 +1671,14 @@ Chart.prototype.inlineStyles = function () {
 
 			// Get default styles from the browser so that we don't have to add these
 			if (!defaultStyles[node.nodeName]) {
-				if (!dummySVG) {
+				/*if (!dummySVG) {
 					dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
 					dummySVG.setAttribute('version', '1.1');
 					doc.body.appendChild(dummySVG);
 				}
-				dummy = doc.createElementNS(node.namespaceURI, node.nodeName);
+				*/
+				dummySVG = iframeDoc.getElementsByTagName('svg')[0];
+				dummy = iframeDoc.createElementNS(node.namespaceURI, node.nodeName);
 				dummySVG.appendChild(dummy);
 				defaultStyles[node.nodeName] = merge(win.getComputedStyle(dummy, null)); // Copy, so we can remove the node
 				dummySVG.removeChild(dummy);
