@@ -4070,12 +4070,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				// This needs to go before the CSS in old IE (#4502)
 				label.attr(attr);
 
-				if (commonWidth && !labelOptions.style.width && (
-					// Speed optimizing, #7656
-					commonWidth < label.textPxLength ||
-					// Resetting CSS, #4928
-					label.element.tagName === 'SPAN'
-				)) {
+				if (
+					commonWidth &&
+					!(labelOptions.style && labelOptions.style.width) &&
+					(
+						// Speed optimizing, #7656
+						commonWidth < label.textPxLength ||
+						// Resetting CSS, #4928
+						label.element.tagName === 'SPAN'
+					)
+				) {
 					label.css({
 						width: commonWidth,
 						textOverflow: (
