@@ -818,10 +818,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				delete styles.width;
 			}
 
-			// serialize and set style attribute
-			if (isMS && !svg) {
-				css(this.element, styles);
-			} else {
+			// Serialize and set style attribute
+			if (elem.namespaceURI === this.SVG_NS) { // #7633
 				hyphenate = function (a, b) {
 					return '-' + b.toLowerCase();
 				};
@@ -835,6 +833,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				if (serializedCss) {
 					attr(elem, 'style', serializedCss); // #1881
 				}
+			} else {
+				css(elem, styles);
 			}
 
 
