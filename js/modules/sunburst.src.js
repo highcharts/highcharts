@@ -659,14 +659,15 @@ var sunburstSeries = {
 			// Collect all children which should be included
 			children = grep(parent.children, function (n) {
 				return n.visible;
-			});
+			}),
+			twoPi = 6.28; // Two times Pi.
 		childrenValues = this.layoutAlgorithm(parentValues, children, options);
 		each(children, function (child, index) {
 			var values = childrenValues[index],
 				angle = values.start + ((values.end - values.start) / 2),
 				radius = values.innerR + ((values.r - values.innerR) / 2),
 				radians = (values.end - values.start),
-				isCircle = (values.innerR === 0 && radians > 6.28),
+				isCircle = (values.innerR === 0 && radians > twoPi),
 				center = (
 					isCircle ?
 					{ x: values.x, y: values.y } :
