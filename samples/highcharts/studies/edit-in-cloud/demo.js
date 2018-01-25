@@ -6,7 +6,6 @@
  *   JSON.
  *
  * @todo
- * - HTML in the title breaks exporting to the cloud
  * - Long configs fail
  * - Dynamically updated charts probably fail, we need a generic
  *   Chart.getOptions function that returns all non-default options. Should also
@@ -40,8 +39,6 @@
             }
         };
         params = JSON.stringify(params);
-        params = encodeURIComponent(params);
-        params = unescape(params);
         params = btoa(params);
 
         // Open new tab
