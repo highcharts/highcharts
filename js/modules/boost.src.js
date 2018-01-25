@@ -94,9 +94,11 @@
  * @sample highcharts/boost/area
  *         Area chart
  * @sample highcharts/boost/arearange
- *         Arearange chart
+ *         Area range chart
  * @sample highcharts/boost/column
  *         Column chart
+ * @sample highcharts/boost/columnrange
+ *         Column range chart
  * @sample highcharts/boost/bubble
  *         Bubble chart
  * @sample highcharts/boost/heatmap
@@ -286,6 +288,7 @@ var win = H.win,
 		'area',
 		'arearange',
 		'column',
+		'columnrange',
 		'bar',
 		'line',
 		'scatter',
@@ -1238,6 +1241,7 @@ function GLRenderer(postRenderCallback) {
 		// Things to draw as "rectangles" (i.e lines)
 		asBar = {
 			'column': true,
+			'columnrange': true,
 			'bar': true,
 			'area': true,
 			'arearange': true
@@ -1924,6 +1928,7 @@ function GLRenderer(postRenderCallback) {
 				'arearange': 'lines',
 				'areaspline': 'line_strip',
 				'column': 'lines',
+				'columnrange': 'lines',
 				'bar': 'lines',
 				'line': 'line_strip',
 				'scatter': 'points',
@@ -2749,25 +2754,14 @@ each([
 
 	// A special case for some types - their translate method is already wrapped
 	if (method === 'translate') {
-		if (seriesTypes.column) {
-			wrap(seriesTypes.column.prototype, method, branch);
-		}
-
-		if (seriesTypes.bar) {
-			wrap(seriesTypes.bar.prototype, method, branch);
-		}
-
-		if (seriesTypes.arearange) {
-			wrap(seriesTypes.arearange.prototype, method, branch);
-		}
-
-		if (seriesTypes.treemap) {
-			wrap(seriesTypes.treemap.prototype, method, branch);
-		}
-
-		if (seriesTypes.heatmap) {
-			wrap(seriesTypes.heatmap.prototype, method, branch);
-		}
+		each(
+			['column', 'bar', 'arearange', 'columnrange', 'heatmap', 'treemap'],
+			function (type) {
+				if (seriesTypes[type]) {
+					wrap(seriesTypes[type].prototype, method, branch);
+				}
+			}
+		);
 	}
 });
 
