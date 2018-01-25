@@ -2379,6 +2379,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			translatedValue,
 			axis.translate(value, null, null, old)
 		);
+		// Keep the translated value within sane bounds, and avoid Infinity to
+		// fail the isNumber test (#7709).
+		translatedValue = Math.min(Math.max(-1e5, translatedValue), 1e5);
+		
+
 		x1 = x2 = Math.round(translatedValue + transB);
 		y1 = y2 = Math.round(cHeight - translatedValue - transB);
 		if (!isNumber(translatedValue)) { // no min or max
