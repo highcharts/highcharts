@@ -2688,7 +2688,8 @@ H.defaultOptions = {
 		 * optimized charts.
 		 * 
 		 * See also [tooltip.split](#tooltip.split), that is better suited for
-		 * charts with many series, especially line-type series.
+		 * charts with many series, especially line-type series. `tooltip.split`
+		 * option takes precedence over `tooltip.shared`.
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/tooltip/shared-false/ False by default
@@ -2705,7 +2706,7 @@ H.defaultOptions = {
 		 * Split the tooltip into one label per series, with the header close
 		 * to the axis. This is recommended over [shared](#tooltip.shared) tooltips
 		 * for charts with multiple line series, generally making them easier
-		 * to read.
+		 * to read. This option takes precedence over `tooltip.shared`.
 		 *
 		 * @productdesc {highstock} In Highstock, tooltips are split by default
 		 * since v6.0.0. Stock charts typically contain multi-dimension points
