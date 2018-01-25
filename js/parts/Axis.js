@@ -3955,7 +3955,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			labelMetrics = this.labelMetrics(),
 			textOverflowOption = labelOptions.style &&
 				labelOptions.style.textOverflow,
-			css,
+			commonWidth,
+			commonTextOverflow,
 			maxLabelLength = 0,
 			label,
 			i,
@@ -3997,10 +3998,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Handle word-wrap or ellipsis on vertical axis
 		} else if (slotWidth) {
 			// For word-wrap or ellipsis
-			css = { width: innerWidth + 'px' };
+			commonWidth = innerWidth;
 
 			if (!textOverflowOption) {
-				css.textOverflow = 'clip';
+				commonTextOverflow = 'clip';
 
 				// On vertical axis, only allow word wrap if there is room
 				// for more lines.
@@ -4029,7 +4030,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 								(labelMetrics.h - labelMetrics.f)
 							)
 						) {
-							label.specCss = { textOverflow: 'ellipsis' };
+							label.specificTextOverflow = 'ellipsis';
 						}
 					}
 				}
@@ -4039,15 +4040,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		// Add ellipsis if the label length is significantly longer than ideal
 		if (attr.rotation) {
-			css = { 
-				width: (
-					maxLabelLength > chart.chartHeight * 0.5 ?
-						chart.chartHeight * 0.33 :
-						chart.chartHeight
-				) + 'px'
-			};
+			commonWidth = (
+				maxLabelLength > chart.chartHeight * 0.5 ?
+					chart.chartHeight * 0.33 :
+					chart.chartHeight
+			);
 			if (!textOverflowOption) {
-				css.textOverflow = 'ellipsis';
+				commonTextOverflow = 'ellipsis';
 			}
 		}
 
@@ -4066,10 +4065,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				// This needs to go before the CSS in old IE (#4502)
 				label.attr(attr);
 
-				if (css) {
-					label.css(merge(css, label.specCss));
+				if (commonWidth && !labelOptions.style.width && (
+					// Speed optimizing, #7656
+					commonWidth < label.textPxLength ||
+					// Resetting CSS, #4928
+					label.element.tagName === 'SPAN'
+				)) {
+					label.css({
+						width: commonWidth,
+						textOverflow: (
+							label.specificTextOverflow ||
+							commonTextOverflow
+						)
+					});
 				}
-				delete label.specCss;
+				delete label.specificTextOverflow;
 				tick.rotation = attr.rotation;
 			}
 		});

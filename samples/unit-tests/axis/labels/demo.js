@@ -288,7 +288,7 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
     });
 
     assert.ok(
-        chart.xAxis[0].ticks[3].label.getBBox().width <= 30, //40 - padding
+        chart.xAxis[0].ticks[3].label.getBBox().width <= 40,
         'Label width set correctly'
     );
 
