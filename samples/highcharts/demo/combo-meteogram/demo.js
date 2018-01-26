@@ -326,6 +326,12 @@ Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
             })
             .add();
     }
+
+      // Center items in block
+    chart.get('windbarbs').markerGroup.attr({
+        translateX: chart.get('windbarbs').markerGroup.translateX + 8
+    });
+
 };
 
 /**
@@ -389,7 +395,8 @@ Meteogram.prototype.getChartOptions = function () {
             showLastLabel: true,
             labels: {
                 format: '{value:%H}'
-            }
+            },
+            crosshair: true
         }, { // Top X axis
             linkedTo: 0,
             type: 'datetime',
@@ -535,6 +542,7 @@ Meteogram.prototype.getChartOptions = function () {
         }, {
             name: 'Wind',
             type: 'windbarb',
+            id: 'windbarbs',
             color: Highcharts.getOptions().colors[1],
             lineWidth: 1.5,
             data: this.winds,
@@ -620,13 +628,13 @@ Meteogram.prototype.parseYrData = function () {
         });
 
         meteogram.precipitations.push({
-            x: (from + to) / 2,
+            x: from,
             y: parseFloat(time.precipitation['@attributes'].value)
         });
 
         if (i % 2 === 0) {
             meteogram.winds.push({
-                x: (from + to) / 2,
+                x: from,
                 value: parseFloat(time.windSpeed['@attributes'].mps),
                 direction: parseFloat(time.windDirection['@attributes'].deg)
             });
