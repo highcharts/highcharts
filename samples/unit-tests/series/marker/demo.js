@@ -96,8 +96,8 @@ QUnit.test('Marker size and position', function (assert) {
     );
 
     assert.strictEqual(
-        series.points[1].plotY,
-        stateMarkerGraphicBBox.y,
+        Math.floor(series.points[1].plotY),
+        Math.floor(stateMarkerGraphicBBox.y),
         'Correct image y-position (#7273)'
     );
 

@@ -19,11 +19,11 @@ var seriesType = H.seriesType,
 	reduce = H.reduce;
 
 
-/* ***************************************************************************
+/** ****************************************************************************
  *
  * BELL CURVE
  *
- **************************************************************************** */
+ ******************************************************************************/
 
 function mean(data) {
 	var length = data.length,
@@ -71,12 +71,12 @@ function normalDensity(x, mean, standardDeviation) {
  * deviation of the base series data and plots the curve according to the
  * calculated parameters.
  *
- * @product highcharts
- * @sample {highcharts} highcharts/demo/bellcurve/ Bell curve
- * @since 6.0.0
- * @extends plotOptions.areaspline
- * @excluding boostThreshold,connectNulls,stacking,pointInterval,
- *            pointIntervalUnit
+ * @product      highcharts
+ * @sample       {highcharts} highcharts/demo/bellcurve/ Bell curve
+ * @since        6.0.0
+ * @extends      plotOptions.areaspline
+ * @excluding    boostThreshold,connectNulls,stacking,pointInterval,
+ *               pointIntervalUnit
  * @optionparent plotOptions.bellcurve
  **/
 seriesType('bellcurve', 'areaspline', {
@@ -108,14 +108,14 @@ seriesType('bellcurve', 'areaspline', {
     * 
     * For options that apply to multiple series, it is recommended to add
     * them to the [plotOptions.series](#plotOptions.series) options structure.
-    * To apply to all series of this specific type, apply it to [plotOptions.
-    * bellcurve](#plotOptions.bellcurve).
+    * To apply to all series of this specific type, apply it to
+    * [plotOptions.bellcurve](#plotOptions.bellcurve).
     * 
-    * @type {Object}
-    * @since 6.0.0
-    * @extends series,plotOptions.bellcurve
+    * @type      {Object}
+    * @since     6.0.0
+    * @extends   series,plotOptions.bellcurve
     * @excluding dataParser,dataURL,data
-    * @product highcharts
+    * @product   highcharts
     * @apioption series.bellcurve
     **/
    
@@ -123,8 +123,8 @@ seriesType('bellcurve', 'areaspline', {
     * An integer identifying the index to use for the base series, or a string
     * representing the id of the series.
     *
-    * @type {Number|String}
-    * @default undefined
+    * @type      {Number|String}
+    * @default   undefined
     * @apioption series.bellcurve.baseSeries
     **/  
 
@@ -132,12 +132,13 @@ seriesType('bellcurve', 'areaspline', {
     * An array of data points for the series. For the `bellcurve` series type,
     * points are calculated dynamically.
     * 
-    * @type {Array<Object|Array>}
-    * @since 6.0.0
-    * @extends series.areaspline.data
-    * @product highcharts
+    * @type      {Array<Object|Array>}
+    * @since     6.0.0
+    * @extends   series.areaspline.data
+    * @product   highcharts
     * @apioption series.bellcurve.data
     **/
+
 }, merge(derivedSeriesMixin, {
 	setMean: function () {
 		this.mean = correctFloat(mean(this.baseSeries.yData));

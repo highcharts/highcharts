@@ -40,6 +40,8 @@ seriesType('heatmap', 'scatter', {
 
 	/**
 	 * Animation is disabled by default on the heatmap series.
+	 *
+	 * @type {Boolean|Object}
 	 */
 	animation: false,
 
@@ -119,7 +121,19 @@ seriesType('heatmap', 'scatter', {
 	states: {
 
 		hover: {
+			/** @ignore */
 			halo: false,  // #3406, halo is disabled on heatmaps by default
+
+			/**
+			 * How much to brighten the point on interaction. Requires the main
+			 * color to be defined in hex or rgb(a) format.
+			 *
+			 * In styled mode, the hover brightening is by default replaced
+			 * with a fill-opacity set in the `.highcharts-point:hover` rule.
+			 * 
+			 * @type {Number}
+			 * @product highcharts highmaps
+			 */
 			brightness: 0.2
 		}
 	}
