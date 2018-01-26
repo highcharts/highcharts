@@ -182,6 +182,20 @@ Meteogram.prototype.getSymbolSprites = function (symbolSize) {
         '23': {
             x: 0,
             y: 18 * symbolSize
+        },
+
+        // Newly added by yr.no, use closest similar
+        '44d': {
+            x: 0,
+            y: 12 * symbolSize
+        },
+        '49': {
+            x: 0,
+            y: 12 * symbolSize
+        },
+        '50': {
+            x: 0,
+            y: 12 * symbolSize
         }
     };
 };
@@ -250,7 +264,7 @@ Meteogram.prototype.drawWeatherSymbols = function (chart) {
         var sprite,
             group;
 
-        if (meteogram.resolution > 36e5 || i % 2 === 0) {
+        if (meteogram.resolution > 36e5 || i % 2 === 1) {
 
             sprite = symbolSprites[meteogram.symbols[i]];
             if (sprite) {
@@ -335,7 +349,8 @@ Meteogram.prototype.getChartOptions = function () {
             marginTop: 50,
             plotBorderWidth: 1,
             width: 800,
-            height: 310
+            height: 310,
+            alignTicks: false
         },
 
         title: {
@@ -407,23 +422,8 @@ Meteogram.prototype.getChartOptions = function () {
                 width: 1,
                 zIndex: 2
             }],
-            // Custom positioner to provide even temperature ticks from top down
-            tickPositioner: function () {
-                var max = Math.ceil(this.max) + 1,
-                    pos = max - 12, // start
-                    ret;
-
-                if (pos < this.min) {
-                    ret = [];
-                    while (pos <= max) {
-                        ret.push(pos += 1);
-                    }
-                } // else return undefined and go auto
-
-                return ret;
-
-            },
             maxPadding: 0.3,
+            minRange: 8,
             tickInterval: 1,
             gridLineColor: (Highcharts.theme && Highcharts.theme.background2) || '#F0F0F0'
 
@@ -435,7 +435,9 @@ Meteogram.prototype.getChartOptions = function () {
                 enabled: false
             },
             gridLineWidth: 0,
-            tickLength: 0
+            tickLength: 0,
+            minRange: 10,
+            min: 0
 
         }, { // Air pressure
             allowDecimals: false,
@@ -534,6 +536,7 @@ Meteogram.prototype.getChartOptions = function () {
             name: 'Wind',
             type: 'windbarb',
             color: Highcharts.getOptions().colors[1],
+            lineWidth: 1.5,
             data: this.winds,
             vectorLength: 18,
             yOffset: -15,
