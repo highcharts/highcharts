@@ -2707,9 +2707,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		if (!defined(nameX)) {
 			nameX = this.options.uniqueNames === false ?
 				point.series.autoIncrement() : 
-				inArray(point.name, names);
+				(
+					explicitCategories ?
+						inArray(point.name, names) :
+						pick(names[point.name], -1)
+
+				);
 		}
-		if (nameX === -1) { // The name is not found in currenct categories
+		if (nameX === -1) { // Not found in currenct categories
 			if (!explicitCategories) {
 				x = names.length;
 			}
@@ -2720,6 +2725,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Write the last point's name to the names array
 		if (x !== undefined) {
 			this.names[x] = point.name;
+			// Backwards mapping is much faster than array searching (#7725)
+			this.names[point.name] = x;
 		}
 
 		return x;
@@ -2731,10 +2738,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	 * @private
 	 */
 	updateNames: function () {
-		var axis = this;
+		var axis = this,
+			names = this.names,
+			i = names.length;
 
-		if (this.names.length > 0) {
-			this.names.length = 0;
+		if (i > 0) {
+			while (i--) {
+				delete names[names[i]];
+			}
+			names.length = 0;
 			this.minRange = this.userMinRange; // Reset
 			each(this.series || [], function (series) {
 			
