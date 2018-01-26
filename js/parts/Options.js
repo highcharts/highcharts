@@ -2688,8 +2688,8 @@ H.defaultOptions = {
 		 * optimized charts.
 		 * 
 		 * See also [tooltip.split](#tooltip.split), that is better suited for
-		 * charts with many series, especially line-type series. `tooltip.split`
-		 * option takes precedence over `tooltip.shared`.
+		 * charts with many series, especially line-type series. The
+		 * `tooltip.split` option takes precedence over `tooltip.shared`.
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/tooltip/shared-false/ False by default
