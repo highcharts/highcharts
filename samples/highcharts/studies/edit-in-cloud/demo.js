@@ -26,6 +26,17 @@
             });
         }
 
+        function openInCloud(data, direct) {
+            // Open new tab
+            var a = document.createElement('a');
+            a.href = 'https://cloud.highcharts.com/create?' +
+                     (direct ? 'c' : 'q') + '=' + data;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
         var options = H.merge(this.userOptions);
         removeFunctions(options);
         var params = {
@@ -42,14 +53,22 @@
         params = JSON.stringify(params);
         params = btoa(encodeURIComponent(params));
 
-        // Open new tab
-        var a = document.createElement('a');
-        a.href = 'https://cloud.highcharts.com/create?c=' + params;
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        if (params.length < 2500) {
+            // We can skip the storage and just open it directly
+            return openInCloud(params, true);
+        }
 
+        Highcharts.ajax({
+            url: 'https://cloud-api.highcharts.com/openincloud',
+            type: 'post',
+            dataType: 'json',
+            data: params,
+            success: function (result) {
+                if (result && result.ok && result.id) {
+                    openInCloud(result.id);
+                }
+            }
+        });
     };
 
     H.getOptions().lang.editInCloud = 'Edit in Cloud';
