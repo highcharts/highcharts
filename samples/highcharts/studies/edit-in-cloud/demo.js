@@ -1,5 +1,6 @@
 
 
+
 Highcharts.getOptions().lang.editInCloud = 'Edit in Cloud';
 Highcharts.getOptions().exporting.buttons.contextButton.menuItems.push(
     'separator',

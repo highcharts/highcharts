@@ -390,6 +390,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/export-data.src.js',
+        './js/modules/data.src.js',
         './js/modules/offline-exporting.src.js'
     ];
     const optionsJSDoc = {
