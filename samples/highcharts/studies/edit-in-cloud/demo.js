@@ -38,8 +38,9 @@
                 }
             }
         };
+
         params = JSON.stringify(params);
-        params = btoa(params);
+        params = btoa(encodeURIComponent(params));
 
         // Open new tab
         var a = document.createElement('a');
