@@ -33,7 +33,7 @@ var defined = H.defined,
  *               findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
  *               negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
  *               pointRange,pointStart,softThreshold,stacking,threshold,data
- * @product      highcharts
+ * @product      highcharts highstock
  * @sample       {highcharts} highcharts/demo/x-range/
  *               X-range
  * @sample       {highcharts} highcharts/css/x-range/
@@ -69,12 +69,8 @@ seriesType('xrange', 'column', {
 		}
 	},
 	tooltip: {
-		headerFormat:
-			'<span style="font-size: 0.85em">{point.x} - {point.x2}</span>' +
-			'<br/>',
-		pointFormat:
-			'<span style="color:{point.color}">\u25CF</span> ' +
-			'{series.name}: <b>{point.yCategory}</b><br/>'
+		headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
 	},
 	borderRadius: 3,
 	pointRange: 0
@@ -86,7 +82,7 @@ seriesType('xrange', 'column', {
 	 * @sample    {highcharts} highcharts/demo/x-range
 	 *            X-range with partial fill
 	 * @type      {Object}
-	 * @product   highcharts
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.xrange.partialFill
 	 */
 
@@ -95,7 +91,7 @@ seriesType('xrange', 'column', {
 	 * of the point color.
 	 *
 	 * @type      {Color}
-	 * @product   highcharts
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.xrange.partialFill.fill
 	 */
 
@@ -474,7 +470,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  *            findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
  *            negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
  *            pointRange,pointStart,softThreshold,stacking,threshold
- * @product   highcharts
+ * @product   highcharts highstock
  * @apioption series.xrange
  */
 
@@ -513,7 +509,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  *            Arrays of point.name and y
  * @sample    {highcharts} highcharts/series/data-array-of-objects/
  *            Config objects
- * @product   highcharts
+ * @product   highcharts highstock
  * @apioption series.xrange.data
  */
 
@@ -523,7 +519,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  * @sample    {highcharts} highcharts/demo/x-range
  *            X-range
  * @type      {Number}
- * @product   highcharts
+ * @product   highcharts highstock
  * @apioption plotOptions.xrange.data.x2
  */
 
@@ -535,7 +531,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  * @sample    {highcharts} highcharts/demo/x-range
  *            X-range with partial fill
  * @type      {Object|Number}
- * @product   highcharts
+ * @product   highcharts highstock
  * @apioption plotOptions.xrange.data.partialFill
  */
 
@@ -544,7 +540,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  * converted to percentages in the default data label formatter.
  *
  * @type      {Number}
- * @product   highcharts
+ * @product   highcharts highstock
  * @apioption plotOptions.xrange.data.partialFill.amount
  */
 
@@ -553,6 +549,6 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
  * of the point color.
  *
  * @type      {Color}
- * @product   highcharts
+ * @product   highcharts highstock
  * @apioption plotOptions.xrange.data.partialFill.fill
  */
