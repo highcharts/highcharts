@@ -24,6 +24,10 @@ var	merge = H.merge,
 	find = H.find,
 	format = H.format,
 	pick = H.pick,
+	objectEach = H.objectEach,
+	uniqueKey = H.uniqueKey,
+	doc = H.doc,
+	splat = H.splat,
 	destroyObjectProperties = H.destroyObjectProperties,
 	grep = H.grep,
 
@@ -47,6 +51,7 @@ var	merge = H.merge,
  * {
  *   arrow: {
  *     id: 'arrow',
+ *     tagName: 'marker',
  *     refY: 5,
  *     refX: 5,
  *     markerWidth: 10,
@@ -64,11 +69,14 @@ var	merge = H.merge,
  * @type {Object}
  * @sample highcharts/annotations/custom-markers/
  *         Define a custom marker for annotations
+ * @sample highcharts/css/annotations-markers/
+ *         Define markers in a styled mode
  * @since 6.0.0
- * @apioption defs.markers
+ * @apioption defs
  */
 var defaultMarkers = {
 	arrow: {
+		tagName: 'marker',
 		render: false,
 		id: 'arrow',
 		refY: 5,
@@ -77,10 +85,10 @@ var defaultMarkers = {
 		markerHeight: 10,
 		children: [{
 			tagName: 'path',
-			attrs: {
-				d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
-				strokeWidth: 0
-			}
+			d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
+      /*= if (build.classic) { =*/
+			strokeWidth: 0
+      /*= } =*/
 		}]
 	}
 };
@@ -98,31 +106,75 @@ extend(MarkerMixin, {
 	markerStartSetter: MarkerMixin.markerSetter('marker-start')
 });
 
+/*= if (build.classic) { =*/
+// In a styled mode definition is implemented
+H.SVGRenderer.prototype.definition = function (def) {
+	var ren = this;
+
+	function recurse(config, parent) {
+		var ret;
+		each(splat(config), function (item) {
+			var node = ren.createElement(item.tagName),
+				attr = {};
+
+      // Set attributes
+			objectEach(item, function (val, key) {
+				if (
+          key !== 'tagName' &&
+          key !== 'children' &&
+          key !== 'textContent'
+        ) {
+					attr[key] = val;
+				}
+			});
+			node.attr(attr);
+
+      // Add to the tree
+			node.add(parent || ren.defs);
+
+      // Add text content
+			if (item.textContent) {
+				node.element.appendChild(
+          doc.createTextNode(item.textContent)
+        );
+			}
+
+      // Recurse
+			recurse(item.children || [], node);
+
+			ret = node;
+		});
+
+    // Return last node added (on top level it's the only one)
+		return ret;
+	}
+	return recurse(def);
+};
+/*= } =*/
 
 H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
-	var markerId = pick(id, H.uniqueKey()),
-		marker = this.createElement('marker').attr({
-			id: markerId,
-			markerWidth: pick(markerOptions.markerWidth, 20),
-			markerHeight: pick(markerOptions.markerHeight, 20),
-			refX: markerOptions.refX || 0,
-			refY: markerOptions.refY || 0,
-			orient: markerOptions.orient || 'auto'
-		}).add(this.defs),
+	var options = { id: id };
 
-		attrs = {
-			stroke: markerOptions.color || 'none',
-			fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
-		},
-		children = markerOptions.children;
+  /*= if (build.classic) { =*/
+	var attrs  = {
+		stroke: markerOptions.color || 'none',
+		fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
+	};
 
-	marker.id = markerId;
+	options.children = H.map(markerOptions.children, function (child) {
+		return merge(attrs, child);
+	});
+  /*= } =*/
 
-	each(children, function (child) {
-		this.createElement(child.tagName)
-			.attr(merge(attrs, child.attrs))
-			.add(marker);
-	}, this);
+	var marker = this.definition(merge({
+		markerWidth: 20,
+		markerHeight: 20,
+		refX: 0,
+		refY: 0,
+		orient: 'auto'
+	}, markerOptions, options));
+
+	marker.id = id;
 
 	return marker;
 };
@@ -1189,7 +1241,7 @@ Annotation.prototype = {
 
 	redrawPath: function (pathItem, isNew) {
 		var points = pathItem.points,
-			strokeWidth = pathItem['stroke-width'],
+			strokeWidth = pathItem['stroke-width'] || 1,
 			d = ['M'],
 			pointIndex = 0,
 			dIndex = 0,
@@ -1253,33 +1305,34 @@ Annotation.prototype = {
 	setItemMarkers: function (item) {
 		var itemOptions = item.options,
 			chart = this.chart,
-			markers = chart.options.defs.markers,
+			defs = chart.options.defs,
 			fill = itemOptions.fill,
 			color = defined(fill) && fill !== 'none' ? fill : itemOptions.stroke,
 
 
 			setMarker = function (markerType) {
 				var markerId = itemOptions[markerType],
-					marker,
+					def,
 					predefinedMarker,
-					key;
+					key,
+					marker;
 
 				if (markerId) {
-					for (key in markers) {
-						marker = markers[key];
-						if (markerId === marker.id) {
-							predefinedMarker = marker;
+					for (key in defs) {
+						def = defs[key];
+						if (markerId === def.id && def.tagName === 'marker') {
+							predefinedMarker = def;
 							break;
 						}
 					}
 
 					if (predefinedMarker) {
 						marker = item[markerType] = chart.renderer.addMarker(
-							null, 
+							(itemOptions.id || uniqueKey()) + '-' + predefinedMarker.id, 
 							merge(predefinedMarker, { color: color })
 						);
 
-						item.attr(markerType, marker.id);
+						item.attr(markerType, marker.attr('id'));
 					}
 				}
 			};
@@ -1637,25 +1690,19 @@ chartPrototype.callbacks.push(function (chart) {
 });
 
 
+
 H.wrap(chartPrototype, 'getContainer', function (p) {
+	this.options.defs = merge(defaultMarkers, this.options.defs || {});
+  
 	p.call(this);
 
-	var renderer = this.renderer,
-		options = this.options,
-		key,
-		markers,
-		marker;
-
-	options.defs = merge(options.defs || {}, { markers: defaultMarkers });
-	markers = options.defs.markers;
-
-	for (key in markers) {
-		marker = markers[key];
-		
-		if (pick(marker.render, true)) {
-			renderer.addMarker(marker.id, marker);			
+  /*= if (build.classic) { =*/
+	objectEach(this.options.defs, function (def) {
+		if (def.tagName === 'marker' && def.render !== false) {
+			this.renderer.addMarker(def.id, def);
 		}
-	}
+	}, this);
+  /*= } =*/
 });
 
 

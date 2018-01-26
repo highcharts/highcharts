@@ -1085,6 +1085,19 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @product highcharts highstock
 		 * @apioption plotOptions.series.marker.symbol
 		 */
+		
+		/**
+		 * The threshold for how dense the point markers should be before they
+		 * are hidden, given that `enabled` is not defined. The number indicates
+		 * the horizontal distance between the two closest points in the series,
+		 * as multiples of the `marker.radius`. In other words, the default
+		 * value of 2 means points are hidden if overlapping horizontally.
+		 *
+		 * @since  6.0.5
+		 * @sample highcharts/plotoptions/series-marker-enabledthreshold
+		 *         A higher threshold
+		 */
+		enabledThreshold: 2,
 
 		/**
 		 * The radius of the point marker.
@@ -3727,7 +3740,10 @@ H.Series = H.seriesType('line', null, { // base series options
 				seriesMarkerOptions.enabled,
 				xAxis.isRadial ? true : null,
 				// Use larger or equal as radius is null in bubbles (#6321)
-				series.closestPointRangePx >= 2 * seriesMarkerOptions.radius
+				series.closestPointRangePx >= (
+					seriesMarkerOptions.enabledThreshold *
+					seriesMarkerOptions.radius
+				)
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {

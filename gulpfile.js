@@ -16,6 +16,9 @@ const {
     removeDirectory,
     writeFile
 } = require('highcharts-assembler/src/utilities.js');
+const {
+  checkDependency
+} = require('./tools/filesystem.js');
 
 
 /**
@@ -128,6 +131,8 @@ const getFileOptions = (base) => {
  * @return undefined
  */
 const scripts = () => {
+    // Check if the installed version of the assembler matches the dependency.
+    checkDependency('highcharts-assembler', 'err', 'devDependencies');
     const build = require('highcharts-assembler');
     // const argv = require('yargs').argv; Already declared in the upper scope
     const files = (argv.file) ? argv.file.split(',') : null;
@@ -1416,6 +1421,7 @@ gulp.task('dist', () => {
 });
 
 gulp.task('scripts-new', () => {
+    checkDependency('highcharts-assembler', 'err', 'devDependencies');
     const {
         join,
         relative,

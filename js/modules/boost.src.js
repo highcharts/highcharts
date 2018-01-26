@@ -94,9 +94,11 @@
  * @sample highcharts/boost/area
  *         Area chart
  * @sample highcharts/boost/arearange
- *         Arearange chart
+ *         Area range chart
  * @sample highcharts/boost/column
  *         Column chart
+ * @sample highcharts/boost/columnrange
+ *         Column range chart
  * @sample highcharts/boost/bubble
  *         Bubble chart
  * @sample highcharts/boost/heatmap
@@ -286,6 +288,7 @@ var win = H.win,
 		'area',
 		'arearange',
 		'column',
+		'columnrange',
 		'bar',
 		'line',
 		'scatter',
@@ -1238,8 +1241,10 @@ function GLRenderer(postRenderCallback) {
 		// Things to draw as "rectangles" (i.e lines)
 		asBar = {
 			'column': true,
+			'columnrange': true,
 			'bar': true,
-			'area': true
+			'area': true,
+			'arearange': true
 		},
 		asCircle = {
 			'scatter': true,
@@ -1764,11 +1769,14 @@ function GLRenderer(postRenderCallback) {
 			if (drawAsBar) {
 
 				maxVal = y;
-				minVal = 0;
+				minVal = low;
 
-				if (y < 0) {
-					minVal = y;
-					y = 0;
+				if (low === false || typeof low === 'undefined') {
+					if (y < 0) {
+						minVal = y;
+					} else {
+						minVal = 0;
+					}
 				}
 
 				if (!settings.useGPUTranslations) {
@@ -1920,6 +1928,7 @@ function GLRenderer(postRenderCallback) {
 				'arearange': 'lines',
 				'areaspline': 'line_strip',
 				'column': 'lines',
+				'columnrange': 'lines',
 				'bar': 'lines',
 				'line': 'line_strip',
 				'scatter': 'points',
@@ -2162,7 +2171,13 @@ function GLRenderer(postRenderCallback) {
 					shader.setPointSize(10);
 				}
 				shader.setDrawAsCircle(true);
-				vbuffer.render(s.from, s.to, 'POINTS');
+				for (sindex = 0; sindex < s.segments.length; sindex++) {
+					vbuffer.render(
+						s.segments[sindex].from,
+						s.segments[sindex].to,
+						'POINTS'
+					);
+				}
 			}
 		});
 
@@ -2739,25 +2754,14 @@ each([
 
 	// A special case for some types - their translate method is already wrapped
 	if (method === 'translate') {
-		if (seriesTypes.column) {
-			wrap(seriesTypes.column.prototype, method, branch);
-		}
-
-		if (seriesTypes.bar) {
-			wrap(seriesTypes.bar.prototype, method, branch);
-		}
-
-		if (seriesTypes.arearange) {
-			wrap(seriesTypes.arearange.prototype, method, branch);
-		}
-
-		if (seriesTypes.treemap) {
-			wrap(seriesTypes.treemap.prototype, method, branch);
-		}
-
-		if (seriesTypes.heatmap) {
-			wrap(seriesTypes.heatmap.prototype, method, branch);
-		}
+		each(
+			['column', 'bar', 'arearange', 'columnrange', 'heatmap', 'treemap'],
+			function (type) {
+				if (seriesTypes[type]) {
+					wrap(seriesTypes[type].prototype, method, branch);
+				}
+			}
+		);
 	}
 });
 
@@ -3111,7 +3115,7 @@ if (!H.hasWebGLSupport()) {
 					clientX,
 					plotY,
 					isNull,
-					low,
+					low = false,
 					chartDestroyed = typeof chart.index === 'undefined',
 					isYInside = true;
 
