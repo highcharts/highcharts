@@ -91,17 +91,19 @@ H.setOptions({
 		/**
 		 * Options for keyboard navigation.
 		 * 
-		 * @type {Object}
-		 * @since 5.0.0
+		 * @type      {Object}
+		 * @since     5.0.0
+		 * @apioption accessibility.keyboardNavigation
 		 */
 		keyboardNavigation: {
 
 			/**
 			 * Enable keyboard navigation for the chart.
 			 * 
-			 * @type {Boolean}
-			 * @default true
-			 * @since 5.0.0
+			 * @type      {Boolean}
+			 * @default   true
+			 * @since     5.0.0
+			 * @apioption accessibility.keyboardNavigation.enabled
 			 */
 			enabled: true,
 
@@ -110,20 +112,30 @@ H.setOptions({
 			 * Options for the focus border drawn around elements while
 			 * navigating through them.
 			 *
-			 * @sample highcharts/accessibility/custom-focus
-			  *			Custom focus ring
-			 * @since 6.0.3
+			 * @type      {Object}
+			 * @sample    highcharts/accessibility/custom-focus
+			 *            Custom focus ring
+			 * @since     6.0.3
+			 * @apioption accessibility.keyboardNavigation.focusBorder
 			 */
 			focusBorder: {
 				/**
 				 * Enable/disable focus border for chart.
+				 *
+				 * @type      {Boolean}
+				 * @default   true
+				 * @since     6.0.3
+				 * @apioption accessibility.keyboardNavigation.focusBorder.enabled
 				 */
 				enabled: true,
 
 				/**
 				 * Hide the browser's default focus indicator.
 				 *
-				 * @since 6.0.4
+				 * @type      {Boolean}
+				 * @default   true
+				 * @since     6.0.4
+				 * @apioption accessibility.keyboardNavigation.focusBorder.hideBrowserFocusOutline
 				 */
 				hideBrowserFocusOutline: true,
 
@@ -135,15 +147,48 @@ H.setOptions({
 				 * 
 				 * In styled mode, the border is given the 
 				 * `.highcharts-focus-border` class.
+				 *
+				 * @type      {Object}
+				 * @since     6.0.3
+				 * @apioption accessibility.keyboardNavigation.focusBorder.style
 				 */
 				style: {
+					/**
+					 * Color of the focus border.
+					 *
+					 * @type      {Color}
+					 * @default   #000000
+					 * @since     6.0.3
+					 * @apioption accessibility.keyboardNavigation.focusBorder.style.color
+					*/
 					color: '${palette.highlightColor80}',
+					/**
+					 * Line width of the focus border.
+					 *
+					 * @type      {Number}
+					 * @default   2
+					 * @since     6.0.3
+					 * @apioption accessibility.keyboardNavigation.focusBorder.style.lineWidth
+					*/
 					lineWidth: 2,
+					/**
+					 * Border radius of the focus border.
+					 *
+					 * @type      {Number}
+					 * @default   3
+					 * @since     6.0.3
+					 * @apioption accessibility.keyboardNavigation.focusBorder.style.borderRadius
+					*/
 					borderRadius: 3
 				},
 
 				/**
 				 * Focus border margin around the elements.
+				 *
+				 * @type      {Number}
+				 * @default   2
+				 * @since     6.0.3
+				 * @apioption accessibility.keyboardNavigation.focusBorder.margin
 				 */
 				margin: 2
 			},
@@ -160,18 +205,20 @@ H.setOptions({
 			 * will behave like left/right. This is useful for unifying 
 			 * navigation behavior with/without screen readers enabled.
 			 *
-			 * @type {String}
-			 * @default normal
-			 * @since 6.0.4
-			 * @apioption keyboardNavigation.mode
+			 * @type      {String}
+			 * @default   normal
+			 * @since     6.0.4
+			 * @apioption accessibility.keyboardNavigation.mode
 			 */
 
 			/**
 			 * Skip null points when navigating through points with the
 			 * keyboard.
 			 * 
-			 * @type {Boolean}
-			 * @since 5.0.0
+			 * @type      {Boolean}
+			 * @default   true
+			 * @since     5.0.0
+			 * @apioption accessibility.keyboardNavigation.skipNullPoints
 			 */
 			skipNullPoints: true
 		}

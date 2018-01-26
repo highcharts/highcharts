@@ -143,18 +143,10 @@ H.wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
 var defaultOptions = H.getOptions();
 
 /**
- * Options to render charts in 3 dimensions. 
- * This feature requires highcharts-3d.js, found in the download package, 
- * or online at code.highcharts.com/highcharts-3d.js.
  * @optionparent
  */
 var extendedOptions = 	{
 
-	/**
-	 * Options regarding the chart area and plot area as well as general
-	 * chart options.
-	 *
-	 */
 	chart: {
 
 		/**

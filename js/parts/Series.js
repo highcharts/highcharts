@@ -108,7 +108,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 
 	/**
-	 * Pixel with of the graph line.
+	 * Pixel width of the graph line.
 	 * 
 	 * @type {Number}
 	 * @see In styled mode, the line stroke-width can be set with the
@@ -1174,36 +1174,38 @@ H.Series = H.seriesType('line', null, { // base series options
 				enabled: true,
 
 				/**
-				 * The fill color of the marker in hover state.
+				 * The fill color of the marker in hover state. When `null`, the
+				 * series' or point's fillColor for normal state is used.
 				 * 
-				 * @type {Color}
-				 * @default null
-				 * @product highcharts highstock
+				 * @type      {Color}
+				 * @default   null
+				 * @product   highcharts highstock
 				 * @apioption plotOptions.series.marker.states.hover.fillColor
 				 */
 
 				/**
 				 * The color of the point marker's outline. When `null`, the
-				 * series' or point's color is used.
+				 * series' or point's lineColor for normal state is used.
 				 * 
-				 * @type {Color}
-				 * @sample {highcharts}
-				 *         highcharts/plotoptions/series-marker-states-hover-linecolor/
-				 *         White fill color, black line color
-				 * @default #ffffff
-				 * @product highcharts highstock
+				 * @type      {Color}
+				 * @sample    {highcharts}
+				 *            highcharts/plotoptions/series-marker-states-hover-linecolor/
+				 *            White fill color, black line color
+				 * @default   null
+				 * @product   highcharts highstock
 				 * @apioption plotOptions.series.marker.states.hover.lineColor
 				 */
 
 				/**
-				 * The width of the point marker's outline.
+				 * The width of the point marker's outline. When `null`, the
+				 * series' or point's lineWidth for normal state is used.
 				 * 
-				 * @type {Number}
-				 * @sample {highcharts}
-				 *         highcharts/plotoptions/series-marker-states-hover-linewidth/
-				 *         3px line width
-				 * @default 0
-				 * @product highcharts highstock
+				 * @type      {Number}
+				 * @sample    {highcharts}
+				 *            highcharts/plotoptions/series-marker-states-hover-linewidth/
+				 *            3px line width
+				 * @default   null
+				 * @product   highcharts highstock
 				 * @apioption plotOptions.series.marker.states.hover.lineWidth
 				 */
 
@@ -2071,7 +2073,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			},
 
 			/**
-			 * Pixel with of the graph line. By default this property is
+			 * Pixel width of the graph line. By default this property is
 			 * undefined, and the `lineWidthPlus` property dictates how much
 			 * to increase the linewidth from normal state.
 			 * 

@@ -338,7 +338,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
  *
  * @extends {plotOptions.pie}
  * @sample highcharts/demo/sunburst Sunburst chart
- * @excluding allAreas, center, clip, colorAxis, compare, compareBase,
+ * @excluding allAreas, clip, colorAxis, compare, compareBase,
  *            dataGrouping, depth, endAngle, gapSize, gapUnit,
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *            minSize, navigatorOptions, pointRange
@@ -350,7 +350,7 @@ var sunburstOptions = {
 	 * The center of the sunburst chart relative to the plot area. Can be
 	 * percentages or pixel values.
 	 *
-	 * @type {Array<String|Number>}
+	 * @type {Array<String|Number>}	
 	 * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
 	 * @product highcharts
 	 */
@@ -659,16 +659,15 @@ var sunburstSeries = {
 			// Collect all children which should be included
 			children = grep(parent.children, function (n) {
 				return n.visible;
-			});
+			}),
+			twoPi = 6.28; // Two times Pi.
 		childrenValues = this.layoutAlgorithm(parentValues, children, options);
 		each(children, function (child, index) {
 			var values = childrenValues[index],
 				angle = values.start + ((values.end - values.start) / 2),
 				radius = values.innerR + ((values.r - values.innerR) / 2),
-				isCircle = (
-					values.innerR === 0 &&
-					(values.end - values.start) > 6.28
-				),
+				radians = (values.end - values.start),
+				isCircle = (values.innerR === 0 && radians > twoPi),
 				center = (
 					isCircle ?
 					{ x: values.x, y: values.y } :
@@ -682,14 +681,11 @@ var sunburstSeries = {
 						child.val
 					) :
 					child.childrenTotal
-				),
-				innerArcFraction = (values.end - values.start) / (2 * Math.PI),
-				perimeter = 2 * Math.PI * values.innerR;
-
+				);
 			// The inner arc length is a convenience for data label filters.
 			if (this.points[child.i]) {
-				this.points[child.i].innerArcLength =
-					innerArcFraction * perimeter;
+				this.points[child.i].innerArcLength = radians * values.innerR;
+				this.points[child.i].outerArcLength = radians * values.r;
 			}
 
 			child.shapeArgs = merge(values, {
