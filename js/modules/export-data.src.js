@@ -794,8 +794,7 @@ Highcharts.Chart.prototype.viewData = function () {
 Highcharts.Chart.prototype.editInCloud = function () {
 
 	var options,
-		params,
-		a;
+		params;
 
 	// Recursively remove function callbacks
 	function removeFunctions(ob) {
@@ -807,6 +806,17 @@ Highcharts.Chart.prototype.editInCloud = function () {
 				removeFunctions(ob[key]);
 			}
 		});
+	}
+
+	function openInCloud(data, direct) {
+		// Open new tab
+		var a = doc.createElement('a');
+		a.href = 'https://cloud.highcharts.com/create?' +
+			(direct ? 'c' : 'q') + '=' + data;
+		a.target = '_blank';
+		doc.body.appendChild(a);
+		a.click();
+		doc.body.removeChild(a);
 	}
 
 	options = Highcharts.merge(this.userOptions);
@@ -825,14 +835,22 @@ Highcharts.Chart.prototype.editInCloud = function () {
 	params = JSON.stringify(params);
 	params = win.btoa(encodeURIComponent(params));
 
-	// Open new tab
-	a = doc.createElement('a');
-	a.href = 'https://cloud.highcharts.com/create?c=' + params;
-	a.target = '_blank';
-	doc.body.appendChild(a);
-	a.click();
-	doc.body.removeChild(a);
+	if (params.length < 2500) {
+		// We can skip the storage and just open it directly
+		return openInCloud(params, true);
+	}
 
+	Highcharts.ajax({
+		url: 'https://cloud-api.highcharts.com/openincloud',
+		type: 'post',
+		dataType: 'json',
+		data: params,
+		success: function (result) {
+			if (result && result.ok && result.id) {
+				openInCloud(result.id);
+			}
+		}
+	});
 };
 
 // Add "Download CSV" to the exporting menu.
