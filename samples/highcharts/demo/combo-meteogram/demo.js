@@ -157,6 +157,23 @@ Meteogram.prototype.getChartOptions = function () {
             alignTicks: false
         },
 
+        defs: {
+            patterns: [{
+                'id': 'precipitation-error',
+                'path': {
+                    d: [
+                        'M', 3.3, 0, 'L', -6.7, 10,
+                        'M', 6.7, 0, 'L', -3.3, 10,
+                        'M', 10, 0, 'L', 0, 10,
+                        'M', 13.3, 0, 'L', 3.3, 10,
+                        'M', 16.7, 0, 'L', 6.7, 10
+                    ].join(' '),
+                    stroke: '#68CFE8',
+                    strokeWidth: 1
+                }
+            }]
+        },
+
         title: {
             text: this.getTitle(),
             align: 'left'
@@ -306,7 +323,7 @@ Meteogram.prototype.getChartOptions = function () {
             name: 'Precipitation',
             data: this.precipitationsError,
             type: 'column',
-            color: 'rgba(104,207,232,0.5)',
+            color: 'url(#precipitation-error)',
             yAxis: 1,
             groupPadding: 0,
             pointPadding: 0,
@@ -324,7 +341,8 @@ Meteogram.prototype.getChartOptions = function () {
                     }
                 },
                 style: {
-                    fontSize: '8px'
+                    fontSize: '8px',
+                    color: 'gray'
                 }
             }
         }, {
@@ -344,7 +362,8 @@ Meteogram.prototype.getChartOptions = function () {
                     }
                 },
                 style: {
-                    fontSize: '8px'
+                    fontSize: '8px',
+                    color: 'gray'
                 }
             },
             tooltip: {
