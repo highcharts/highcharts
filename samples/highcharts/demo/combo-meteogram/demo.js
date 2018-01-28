@@ -29,8 +29,8 @@ function Meteogram(xml, container) {
     // Parallel arrays for the chart data, these are populated as the XML/JSON file
     // is loaded
     this.symbols = [];
-    this.symbolNames = [];
     this.precipitations = [];
+    this.precipitationsError = []; // Only for some data sets
     this.winds = [];
     this.temperatures = [];
     this.pressures = [];
@@ -61,37 +61,6 @@ Meteogram.prototype.smoothLine = function (data) {
         sum = (data[i - 1] || data[i]).y + value + (data[i + 1] || data[i]).y;
         data[i].y = Math.max(value - 0.5, Math.min(sum / 3, value + 0.5));
     }
-};
-
-/**
- * Callback function that is called from Highcharts on hovering each point and returns
- * HTML for the tooltip.
- */
-Meteogram.prototype.tooltipFormatter = function (tooltip) {
-
-    // Create the header with reference to the time interval
-    var index = tooltip.points[0].point.index,
-        ret = '<small>' + Highcharts.dateFormat('%A, %b %e, %H:%M', tooltip.x) + '-' +
-            Highcharts.dateFormat('%H:%M', tooltip.points[0].point.to) + '</small><br>';
-
-    // Symbol text
-    ret += '<b>' + this.symbolNames[index] + '</b>';
-
-    ret += '<table>';
-
-    // Add all series
-    Highcharts.each(tooltip.points, function (point) {
-        var series = point.series;
-        ret += '<tr><td><span style="color:' + series.color + '">\u25CF</span> ' + series.name +
-            ': </td><td style="white-space:nowrap">' + Highcharts.pick(point.point.value, point.y) +
-            series.options.tooltip.valueSuffix + '</td></tr>';
-    });
-
-    // Close
-    ret += '</table>';
-
-
-    return ret;
 };
 
 /**
@@ -204,9 +173,10 @@ Meteogram.prototype.getChartOptions = function () {
         tooltip: {
             shared: true,
             useHTML: true,
-            formatter: function () {
-                return meteogram.tooltipFormatter(this);
-            }
+            headerFormat:
+                '<small>{point.x:%A, %b %e, %H:%M} - {point.point.to:%H:%M}</small><br>' +
+                '<b>{point.point.symbolName}</b><br>'
+
         },
 
         xAxis: [{ // Bottom X axis
@@ -326,11 +296,37 @@ Meteogram.prototype.getChartOptions = function () {
                 }
             },
             tooltip: {
-                valueSuffix: '°C'
+                pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                    '{series.name}: <b>{point.value}°C</b><br/>'
             },
             zIndex: 1,
             color: '#FF3333',
             negativeColor: '#48AFE8'
+        }, {
+            name: 'Precipitation',
+            data: this.precipitationsError,
+            type: 'column',
+            color: 'rgba(104,207,232,0.5)',
+            yAxis: 1,
+            groupPadding: 0,
+            pointPadding: 0,
+            tooltip: {
+                valueSuffix: ' mm',
+                pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                    '{series.name}: <b>{point.minvalue} mm - {point.maxvalue} mm</b><br/>'
+            },
+            grouping: false,
+            dataLabels: {
+                enabled: meteogram.hasPrecipitationError,
+                formatter: function () {
+                    if (this.point.maxvalue > 0) {
+                        return this.point.maxvalue;
+                    }
+                },
+                style: {
+                    fontSize: '8px'
+                }
+            }
         }, {
             name: 'Precipitation',
             data: this.precipitations,
@@ -339,10 +335,9 @@ Meteogram.prototype.getChartOptions = function () {
             yAxis: 1,
             groupPadding: 0,
             pointPadding: 0,
-            borderWidth: 0,
-            shadow: false,
+            grouping: false,
             dataLabels: {
-                enabled: true,
+                enabled: !meteogram.hasPrecipitationError,
                 formatter: function () {
                     if (this.y > 0) {
                         return this.y;
@@ -353,7 +348,7 @@ Meteogram.prototype.getChartOptions = function () {
                 }
             },
             tooltip: {
-                valueSuffix: 'mm'
+                valueSuffix: ' mm'
             }
         }, {
             name: 'Air pressure',
@@ -446,20 +441,35 @@ Meteogram.prototype.parseYrData = function () {
 
         // Populate the parallel arrays
         meteogram.symbols.push(time.symbol['@attributes']['var'].match(/[0-9]{2}[dnm]?/)[0]); // eslint-disable-line dot-notation
-        meteogram.symbolNames.push(time.symbol['@attributes'].name);
 
         meteogram.temperatures.push({
             x: from,
             y: parseInt(time.temperature['@attributes'].value, 10),
             // custom options used in the tooltip formatter
             to: to,
-            index: i
+            symbolName: time.symbol['@attributes'].name
         });
 
         meteogram.precipitations.push({
             x: from,
-            y: parseFloat(time.precipitation['@attributes'].value)
+            y: parseFloat(
+                Highcharts.pick(
+                    time.precipitation['@attributes'].minvalue,
+                    time.precipitation['@attributes'].value
+                )
+            )
         });
+
+        if (time.precipitation['@attributes'].maxvalue !== undefined) {
+            meteogram.hasPrecipitationError = true;
+            meteogram.precipitationsError.push({
+                x: from,
+                y: parseFloat(time.precipitation['@attributes'].maxvalue),
+                minvalue: parseFloat(time.precipitation['@attributes'].minvalue),
+                maxvalue: parseFloat(time.precipitation['@attributes'].maxvalue),
+                value: parseFloat(time.precipitation['@attributes'].value)
+            });
+        }
 
         if (i % 2 === 0) {
             meteogram.winds.push({
