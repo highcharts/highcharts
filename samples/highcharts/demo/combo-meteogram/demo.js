@@ -72,13 +72,13 @@ Meteogram.prototype.drawWeatherSymbols = function (chart) {
     var meteogram = this;
 
     $.each(chart.series[0].data, function (i, point) {
-        if (meteogram.resolution > 36e5 || i % 2 === 1) {
+        if (meteogram.resolution > 36e5 || i % 2 === 0) {
 
             chart.renderer
                 .image(
                     'https://cdn.rawgit.com/YR/weather-symbols/6.0.2/dist/svg/' +
                         meteogram.symbols[i] + '.svg',
-                    point.plotX + chart.plotLeft - 15,
+                    point.plotX + chart.plotLeft - 8,
                     point.plotY + chart.plotTop - 30,
                     30,
                     30
