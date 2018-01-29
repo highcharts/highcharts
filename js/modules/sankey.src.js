@@ -611,6 +611,17 @@ seriesType('sankey', 'column', {
  */
 
 /**
+ * The name to display for the node in data labels and tooltips. Use this when
+ * the name is different from the `id`. Where the id must be unique for each
+ * node, this is not necessary for the name.
+ *
+ * @type {String}
+ * @sample highcharts/css/sankey/ Sankey diagram with node options
+ * @product highcharts
+ * @apioption series.sankey.nodes.name
+ */
+
+/**
  * The vertical offset of a node in terms of weight. Positive values shift the
  * node downwards, negative shift it upwards.
  *
