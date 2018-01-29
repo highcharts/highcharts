@@ -1,5 +1,3 @@
-/* Training date, Miles for training run,  Training time, Shoe brand, Running pace per mile,  Short or long, After 2004 */
-/* Shoe brands: Other, Adidas, Mizuno, Asics, Brooks, New Balance, Izumi*/
 [
   [1012518000000, 5, 2311020, 0, 462180, 1, 0],
   [1012690800000, 5, 2464980, 0, 493020.00000000006, 1, 0],
