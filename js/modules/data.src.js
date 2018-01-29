@@ -427,7 +427,7 @@ Highcharts.extend(Data.prototype, {
 
 		var decimalPoint = options.decimalPoint;
 
-		if (decimalPoint !== '.' || decimalPoint !== ',') {
+		if (decimalPoint !== '.' && decimalPoint !== ',') {
 			decimalPoint = undefined;
 		}
 		this.options = options;
