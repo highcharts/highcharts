@@ -27,8 +27,6 @@ Highcharts.chart('container', {
             children: [{
                 tagName: 'path',
                 d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
-          // fill: 'black'
-          // if the child does not have define fill/stroke attributes it inherits fill or stroke from the referencer element
             }],
             markerWidth: 40,
             markerHeight: 40,

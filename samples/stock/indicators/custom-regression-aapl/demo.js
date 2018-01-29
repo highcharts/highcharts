@@ -61,7 +61,7 @@ Highcharts.seriesType(
     }
 );
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/aapl-c.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/aapl-c.json', function (data) {
 
     Highcharts.stockChart('container', {
 

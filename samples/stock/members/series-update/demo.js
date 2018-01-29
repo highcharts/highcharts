@@ -1,5 +1,5 @@
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/aapl-ohlc.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/aapl-ohlc.json', function (data) {
 
     // The data point configurations are arrays on the form [x, open, high, low, close].
     // In order to make this understandable for different series types like line, column
