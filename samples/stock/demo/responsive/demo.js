@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/aapl-c.json', function (data) {
 
     // Create the chart
     var chart = Highcharts.stockChart('container', {

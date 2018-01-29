@@ -1,4 +1,4 @@
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/aapl-ohlcv.json', function (data) {
     var ohlc = [],
         volume = [];
 

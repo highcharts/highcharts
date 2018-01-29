@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=australia.geo.json&callback=?', function (geojson) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/australia.geo.json', function (geojson) {
 
     // Prepare the geojson
     var states = Highcharts.geojson(geojson, 'map'),
