@@ -332,7 +332,9 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
  * module as of #5045.
  */
 H.Series.prototype.gappedPath = function () {
-	var gapSize = this.options.gapSize,
+	var currentDataGrouping = this.currentDataGrouping,
+		groupingSize = currentDataGrouping ? currentDataGrouping.totalRange : 0,
+		gapSize = this.options.gapSize,
 		points = this.points.slice(),
 		i = points.length - 1,
 		yAxis = this.yAxis,
@@ -383,10 +385,14 @@ H.Series.prototype.gappedPath = function () {
 	 */
 
 	if (gapSize && i > 0) { // #5008
-
 		// Gap unit is relative
 		if (this.options.gapUnit !== 'value') {
 			gapSize *= this.closestPointRange;
+		}
+
+		// Setting a new gapSize in case dataGrouping is enabled
+		if (groupingSize && groupingSize > gapSize) {
+			gapSize = groupingSize;
 		}
 
 		// extension for ordinal breaks
