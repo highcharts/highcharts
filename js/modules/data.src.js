@@ -70,14 +70,14 @@ Highcharts.ajax = function (attr) {
 			error: false,
 			data: false,
 			headers: {}
-	}, attr),
-	headers = {
+		}, attr),
+		headers = {
 			json: 'application/json',
 			xml: 'application/xml',
 			text: 'text/plain',
 			octet: 'application/octet-stream'
-	},
-	r = new XMLHttpRequest();
+		},
+		r = new XMLHttpRequest();
 
 	function handleError(xhr, err) {
 		if (options.error) {
@@ -1116,7 +1116,7 @@ Highcharts.extend(Data.prototype, {
 				googleSpreadsheetKey,
 				worksheet,
 				'public/values?alt=json'
-				].join('/');
+			].join('/');
 
 			Highcharts.ajax({
 				url: url,
