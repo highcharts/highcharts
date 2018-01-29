@@ -136,7 +136,8 @@ Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
  * Get the title based on the XML data
  */
 Meteogram.prototype.getTitle = function () {
-    return 'Meteogram for ' + this.xml.location.name + ', ' + this.xml.location.country;
+    return 'Meteogram for ' + this.xml.querySelector('location name').textContent +
+        ', ' + this.xml.querySelector('location country').textContent;
 };
 
 /**
@@ -181,7 +182,7 @@ Meteogram.prototype.getChartOptions = function () {
 
         credits: {
             text: 'Forecast from <a href="http://yr.no">yr.no</a>',
-            href: this.xml.credit.link['@attributes'].url,
+            href: this.xml.querySelector('credit link').getAttribute('url'),
             position: {
                 x: -40
             }
@@ -430,83 +431,97 @@ Meteogram.prototype.parseYrData = function () {
 
     var meteogram = this,
         xml = this.xml,
-        pointStart;
+        pointStart,
+        forecast = xml && xml.querySelector('forecast');
 
-    if (!xml || !xml.forecast) {
+    if (!forecast) {
         return this.error();
     }
 
-    // The returned xml variable is a JavaScript representation of the provided XML,
-    // generated on the server by running PHP simple_load_xml and converting it to
-    // JavaScript by json_encode.
-    $.each(xml.forecast.tabular.time, function (i, time) {
-        // Get the times - only Safari can't parse ISO8601 so we need to do some replacements
-        var from = time['@attributes'].from + ' UTC',
-            to = time['@attributes'].to + ' UTC';
+    // The returned xml variable is a JavaScript representation of the provided
+    // XML, generated on the server by running PHP simple_load_xml and
+    // converting it to JavaScript by json_encode.
+    Highcharts.each(
+        forecast.querySelectorAll('tabular time'),
+        function (time, i) {
+            // Get the times - only Safari can't parse ISO8601 so we need to do
+            // some replacements
+            var from = time.getAttribute('from') + ' UTC',
+                to = time.getAttribute('to') + ' UTC';
 
-        from = from.replace(/-/g, '/').replace('T', ' ');
-        from = Date.parse(from);
-        to = to.replace(/-/g, '/').replace('T', ' ');
-        to = Date.parse(to);
+            from = from.replace(/-/g, '/').replace('T', ' ');
+            from = Date.parse(from);
+            to = to.replace(/-/g, '/').replace('T', ' ');
+            to = Date.parse(to);
 
-        if (to > pointStart + 4 * 24 * 36e5) {
-            return;
-        }
+            if (to > pointStart + 4 * 24 * 36e5) {
+                return;
+            }
 
-        // If it is more than an hour between points, show all symbols
-        if (i === 0) {
-            meteogram.resolution = to - from;
-        }
+            // If it is more than an hour between points, show all symbols
+            if (i === 0) {
+                meteogram.resolution = to - from;
+            }
 
-        // Populate the parallel arrays
-        meteogram.symbols.push(time.symbol['@attributes']['var'].match(/[0-9]{2}[dnm]?/)[0]); // eslint-disable-line dot-notation
+            // Populate the parallel arrays
+            meteogram.symbols.push(
+                time.querySelector('symbol').getAttribute('var')
+                    .match(/[0-9]{2}[dnm]?/)[0]
+            );
 
-        meteogram.temperatures.push({
-            x: from,
-            y: parseInt(time.temperature['@attributes'].value, 10),
-            // custom options used in the tooltip formatter
-            to: to,
-            symbolName: time.symbol['@attributes'].name
-        });
+            meteogram.temperatures.push({
+                x: from,
+                y: parseInt(
+                    time.querySelector('temperature').getAttribute('value'),
+                    10
+                ),
+                // custom options used in the tooltip formatter
+                to: to,
+                symbolName: time.querySelector('symbol').getAttribute('name')
+            });
 
-        meteogram.precipitations.push({
-            x: from,
-            y: parseFloat(
-                Highcharts.pick(
-                    time.precipitation['@attributes'].minvalue,
-                    time.precipitation['@attributes'].value
+            var precipitation = time.querySelector('precipitation');
+            meteogram.precipitations.push({
+                x: from,
+                y: parseFloat(
+                    Highcharts.pick(
+                        precipitation.getAttribute('minvalue'),
+                        precipitation.getAttribute('value')
+                    )
                 )
-            )
-        });
-
-        if (time.precipitation['@attributes'].maxvalue !== undefined) {
-            meteogram.hasPrecipitationError = true;
-            meteogram.precipitationsError.push({
-                x: from,
-                y: parseFloat(time.precipitation['@attributes'].maxvalue),
-                minvalue: parseFloat(time.precipitation['@attributes'].minvalue),
-                maxvalue: parseFloat(time.precipitation['@attributes'].maxvalue),
-                value: parseFloat(time.precipitation['@attributes'].value)
             });
-        }
 
-        if (i % 2 === 0) {
-            meteogram.winds.push({
+            if (precipitation.getAttribute('maxvalue')) {
+                meteogram.hasPrecipitationError = true;
+                meteogram.precipitationsError.push({
+                    x: from,
+                    y: parseFloat(precipitation.getAttribute('maxvalue')),
+                    minvalue: parseFloat(precipitation.getAttribute('minvalue')),
+                    maxvalue: parseFloat(precipitation.getAttribute('maxvalue')),
+                    value: parseFloat(precipitation.getAttribute('value'))
+                });
+            }
+
+            if (i % 2 === 0) {
+                meteogram.winds.push({
+                    x: from,
+                    value: parseFloat(time.querySelector('windSpeed')
+                        .getAttribute('mps')),
+                    direction: parseFloat(time.querySelector('windDirection')
+                        .getAttribute('deg'))
+                });
+            }
+
+            meteogram.pressures.push({
                 x: from,
-                value: parseFloat(time.windSpeed['@attributes'].mps),
-                direction: parseFloat(time.windDirection['@attributes'].deg)
+                y: parseFloat(time.querySelector('pressure').getAttribute('value'))
             });
-        }
 
-        meteogram.pressures.push({
-            x: from,
-            y: parseFloat(time.pressure['@attributes'].value)
-        });
-
-        if (i === 0) {
-            pointStart = (from + to) / 2;
+            if (i === 0) {
+                pointStart = (from + to) / 2;
+            }
         }
-    });
+    );
 
     // Smooth the line
     this.smoothLine(this.temperatures);
@@ -535,8 +550,8 @@ if (!location.hash) {
 // https://github.com/highcharts/highcharts/blob/master/samples/data/jsonp.php
 // for source code.
 $.ajax({
-    dataType: 'json',
-    url: 'https://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',
+    dataType: 'xml',
+    url: 'https://cors.io/?' + location.hash.substr(1),
     success: function (xml) {
         window.meteogram = new Meteogram(xml, 'container');
     },
