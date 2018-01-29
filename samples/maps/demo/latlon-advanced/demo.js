@@ -1,9 +1,7 @@
 
-
 var H = Highcharts,
     map = H.maps['countries/us/us-all'],
     chart;
-
 
 // Add series with state capital bubbles
 $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/us-capitals.json', function (json) {
@@ -14,7 +12,6 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/us-
     });
 
     chart = Highcharts.mapChart('container', {
-
         title: {
             text: 'Highmaps lat/lon demo'
         },
@@ -74,7 +71,6 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/us-
 // Display custom label with lat/lon next to crosshairs
 $('#container').mousemove(function (e) {
     var position;
-
     if (chart) {
         if (!chart.lab) {
             chart.lab = chart.renderer.text('', 0, 0)

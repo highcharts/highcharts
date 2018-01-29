@@ -1,5 +1,4 @@
 
-
 // Prepare random data
 var data = [
     ['DE.SH', 728],
@@ -24,6 +23,9 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/ger
 
     // Initiate the chart
     Highcharts.mapChart('container', {
+        chart: {
+            map: geojson
+        },
 
         title: {
             text: 'GeoJSON in Highmaps'
@@ -42,9 +44,8 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/ger
 
         series: [{
             data: data,
-            mapData: geojson,
-            joinBy: ['code_hasc', 0],
             keys: ['code_hasc', 'value'],
+            joinBy: 'code_hasc',
             name: 'Random data',
             states: {
                 hover: {

@@ -1,5 +1,4 @@
 
-
 #demo-wrapper {
     max-width: 1000px;
     margin: 0 auto;
@@ -141,21 +140,4 @@
         border-left: none;
         border-top: 1px solid silver;
     }
-    /*
-    .selector {
-        width: 300px;
-    }
-    .selector .custom-combobox .custom-combobox-input {
-        width: 190px;
-    }
-    .selector .custom-combobox-toggle {
-        left: 226px;
-    }
-    .selector #btn-next-map {
-        left: 310px;
-    }
-    */
-
 }
-
-

@@ -1,9 +1,11 @@
 
-
 $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/world-population-density.json', function (data) {
 
     // Initiate the chart
     Highcharts.mapChart('container', {
+        chart: {
+            map: 'custom/world'
+        },
 
         title: {
             text: 'Zoom in on country by double click'
@@ -22,7 +24,6 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/wor
 
         series: [{
             data: data,
-            mapData: Highcharts.maps['custom/world'],
             joinBy: ['iso-a2', 'code'],
             name: 'Population density',
             states: {
