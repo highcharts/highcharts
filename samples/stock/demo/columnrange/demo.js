@@ -1,6 +1,6 @@
 
 // Notice that the dataset has missing data
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/range.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/17d0385/samples/data/range.json', function (data) {
 
     Highcharts.stockChart('container', {
 
