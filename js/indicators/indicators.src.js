@@ -85,7 +85,7 @@ seriesType('sma', 'line',
 			eventName: 'updatedData'
 		},
 		nameComponents: ['period'],
-		namePostfixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
+		nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
 		calculateOn: 'init',
 		init: function (chart, options) {
 			var indicator = this;
@@ -169,7 +169,7 @@ seriesType('sma', 'line',
 					function (component, index) {
 						params.push(
 							this.options.params[component] +
-							pick(this.namePostfixes[index], '')
+							pick(this.nameSuffixes[index], '')
 						);
 					},
 					this
