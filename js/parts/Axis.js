@@ -2710,7 +2710,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				(
 					explicitCategories ?
 						inArray(point.name, names) :
-						pick(names[point.name], -1)
+						pick(names['s' + point.name], -1)
 
 				);
 		}
@@ -2726,7 +2726,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		if (x !== undefined) {
 			this.names[x] = point.name;
 			// Backwards mapping is much faster than array searching (#7725)
-			this.names[point.name] = x;
+			this.names['s' + point.name] = x;
 		}
 
 		return x;
@@ -2744,7 +2744,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		if (i > 0) {
 			while (i--) {
-				delete names[names[i]];
+				delete names['s' + names[i]];
 			}
 			names.length = 0;
 			this.minRange = this.userMinRange; // Reset
