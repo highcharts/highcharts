@@ -1,4 +1,4 @@
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/aapl-ohlcv.json', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
 
     // split the data set into ohlc and volume
     var ohlc = [],

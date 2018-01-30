@@ -1,5 +1,5 @@
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/us-population-density.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-population-density.json', function (data) {
 
     // Make codes uppercase to match the map data
     $.each(data, function () {
