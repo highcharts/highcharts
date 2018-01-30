@@ -1,12 +1,10 @@
 
-
 // Load the data from a Google Spreadsheet
 // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc&output=html
 Highcharts.data({
-
     googleSpreadsheetKey: '0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc',
 
-    // custom handler for columns
+    // Custom handler for columns
     parsed: function (columns) {
 
         /**
@@ -55,11 +53,13 @@ Highcharts.data({
         var keys = columns[0],
             names = columns[1],
             percent = columns[7],
+            mapData = Highcharts.maps['countries/us/us-all'],
             // Build the chart options
             options = {
                 chart: {
-                    renderTo: 'container',
                     type: 'map',
+                    map: mapData,
+                    renderTo: 'container',
                     borderWidth: 1
                 },
 
@@ -88,7 +88,6 @@ Highcharts.data({
                 },
 
                 colorAxis: {
-
                     dataClasses: [{
                         from: -100,
                         to: 0,
@@ -104,7 +103,6 @@ Highcharts.data({
 
                 series: [{
                     data: [],
-                    mapData: Highcharts.maps['countries/us/us-all'],
                     joinBy: 'postal-code',
                     dataLabels: {
                         enabled: true,
@@ -127,8 +125,7 @@ Highcharts.data({
                 }, {
                     name: 'Separators',
                     type: 'mapline',
-                    data: Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline'),
-                    color: 'silver',
+                    nullColor: 'silver',
                     showInLegend: false,
                     enableMouseTracking: false
                 }]
@@ -136,7 +133,7 @@ Highcharts.data({
         keys = keys.map(function (key) {
             return key.toUpperCase();
         });
-        Highcharts.each(options.series[0].mapData.features, function (mapPoint) {
+        Highcharts.each(mapData.features, function (mapPoint) {
             if (mapPoint.properties['postal-code']) {
                 var postalCode = mapPoint.properties['postal-code'],
                     i = $.inArray(postalCode, keys);

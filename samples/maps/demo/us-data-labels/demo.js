@@ -1,5 +1,4 @@
 
-
 // Load the data from the HTML table and tag it with an upper case name used for joining
 var data = [],
     // Get the map data
@@ -8,7 +7,7 @@ var data = [],
 Highcharts.data({
     table: document.getElementById('data'),
     startColumn: 1,
-    startRow: 1,
+    firstRowAsNames: false,
     complete: function (options) {
         $.each(options.series[0].data, function () {
             data.push({
@@ -40,9 +39,6 @@ $.each(mapData, function () {
     // Tag it for joining
     this.ucName = this.name.toUpperCase();
 });
-
-
-
 
 // Initiate the chart
 Highcharts.mapChart('container', {
