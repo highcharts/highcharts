@@ -1,5 +1,5 @@
 
-QUnit.test('dataGrouping with gapSize', function (assert) {
+QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {
             height: 400,
@@ -61,18 +61,11 @@ QUnit.test('dataGrouping with gapSize', function (assert) {
         }]
     });
 
-    var series = chart.series[0],
-        d = 'M 0 160 L 104 266.6666666666667 L 208 53.333333333333314 L 312 160 M 416 160 L 520 266.6666666666667';
+    var series = chart.series[0];
 
     assert.strictEqual(
         series.graph.attr('d').lastIndexOf('L'),
         77,
         'Graph visible when dataGrouping is enabled'
-    );
-
-    assert.strictEqual(
-        series.graph.attr('d'),
-        d,
-        'Path is correct'
     );
 });

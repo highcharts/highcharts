@@ -333,7 +333,7 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
  */
 H.Series.prototype.gappedPath = function () {
 	var currentDataGrouping = this.currentDataGrouping,
-		groupingSize = currentDataGrouping ? currentDataGrouping.totalRange : 0,
+		groupingSize = currentDataGrouping && currentDataGrouping.totalRange,
 		gapSize = this.options.gapSize,
 		points = this.points.slice(),
 		i = points.length - 1,
@@ -345,6 +345,13 @@ H.Series.prototype.gappedPath = function () {
 	 * Defines when to display a gap in the graph, together with the
 	 * [gapUnit](plotOptions.series.gapUnit) option.
 	 * 
+	 * In case when `dataGrouping` is enabled, points can be grouped into a 
+	 * larger time span. This can make the grouped points to have a greater 
+	 * distance than the absolute value of `gapSize` property, which will result 
+	 * in disappearing graph completely. To prevent this situation the mentioned 
+	 * distance between grouped points is used instead of previously defined 
+	 * `gapSize`.
+	 *
 	 * In practice, this option is most often used to visualize gaps in
 	 * time series. In a stock chart, intraday data is available for daytime
 	 * hours, while gaps will appear in nights and weekends.
@@ -358,7 +365,7 @@ H.Series.prototype.gappedPath = function () {
 	 * @product highstock
 	 * @apioption plotOptions.series.gapSize
 	 */
-	
+
 	/**
 	 * Together with [gapSize](plotOptions.series.gapSize), this option defines
 	 * where to draw gaps in the graph.
@@ -368,11 +375,7 @@ H.Series.prototype.gappedPath = function () {
 	 * that of the two closest points, the graph will be broken.
 	 *
 	 * When the `gapUnit` is `value`, the gap is based on absolute axis values,
-	 * which on a datetime axis is milliseconds. Note that this may give 
-	 * unexpected results if `dataGrouping` is enabled (as it is by default),
-	 * because if a series of points are grouped into a larger time span, the
-	 * grouped points may have a greater distance than the absolute `gapSize`.
-	 * This will cause the whole graph to disappear. This also applies to the
+	 * which on a datetime axis is milliseconds. This also applies to the
 	 * navigator series that inherits gap options from the base series.
 	 *
 	 * @type {String}
