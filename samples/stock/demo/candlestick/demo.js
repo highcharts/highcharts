@@ -1,5 +1,5 @@
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/aapl-ohlc.json', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
 
     // create the chart
     Highcharts.stockChart('container', {

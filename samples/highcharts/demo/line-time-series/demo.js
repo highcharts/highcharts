@@ -1,6 +1,6 @@
 
 $.getJSON(
-    'https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/usdeur.json',
+    'https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/usdeur.json',
     function (data) {
 
         Highcharts.chart('container', {
