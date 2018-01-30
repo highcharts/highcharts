@@ -1490,34 +1490,35 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				wrapper.parentGroup,
 			grandParent,
 			ownerSVGElement = element.ownerSVGElement,
-			i;
+			i,
+			clipPath = wrapper.clipPath;
 
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover =
 			element.onmousemove = element.point = null;
 		stop(wrapper); // stop running animations
 
-		if (wrapper.clipPath && ownerSVGElement) {
+		if (clipPath && ownerSVGElement) {
 			// Look for existing references to this clipPath and remove them
 			// before destroying the element (#6196).
 			each(
 				// The upper case version is for Edge
 				ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
 				function (el) {
+					var clipPathAttr = el.getAttribute('clip-path'),
+						clipPathId = clipPath.element.id;
 					// Include the closing paranthesis in the test to rule out
-					// id's from 10 and above (#6550)
-					if (el
-						.getAttribute('clip-path')
-						.match(RegExp(
-							// Edge puts quotes inside the url, others not
-							'[\("]#' + wrapper.clipPath.element.id + '[\)"]'
-						))
+					// id's from 10 and above (#6550). Edge puts quotes inside
+					// the url, others not.
+					if (
+						clipPathAttr.indexOf('(#' + clipPathId + ')') > -1 ||
+						clipPathAttr.indexOf('("#' + clipPathId + '")') > -1
 					) {
 						el.removeAttribute('clip-path');
 					}
 				}
 			);
-			wrapper.clipPath = wrapper.clipPath.destroy();
+			wrapper.clipPath = clipPath.destroy();
 		}
 
 		// Destroy stops in case this is a gradient object
