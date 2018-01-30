@@ -21,14 +21,17 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	extend = H.extend,
 	getCenter = CenteredSeriesMixin.getCenter,
 	getColor = mixinTreeSeries.getColor,
+	getLevelOptions = mixinTreeSeries.getLevelOptions,
 	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
 	grep = H.grep,
+	inArray = H.inArray,
 	isBoolean = function (x) {
 		return typeof x === 'boolean';
 	},
 	isNumber = H.isNumber,
 	isObject = H.isObject,
 	isString = H.isString,
+	keys = H.keys,
 	merge = H.merge,
 	noop = H.noop,
 	pick = H.pick,
@@ -38,6 +41,89 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	setTreeValues = mixinTreeSeries.setTreeValues,
 	reduce = H.reduce;
 
+// TODO introduce step, which should default to 1.
+var range = function range(from, to) {
+	var result = [],
+		i;
+	if (isNumber(from) && isNumber(to) && from <= to) {
+		for (i = from; i <= to; i++) {
+			result.push(i);
+		}
+	}
+	return result;
+};
+
+/**
+ * @param {Object} levelOptions Map of level to its options.
+ * @param {Object} params Object containing parameters.
+ * @param {Number} params.innerRadius
+ * @param {Number} params.outerRadius
+ * @
+ */
+var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
+	var result,
+		p = isObject(params) ? params : {},
+		totalWeight = 0,
+		diffRadius,
+		levels,
+		levelsNotIncluded,
+		remainingSize,
+		from,
+		to;
+
+	if (isObject(levelOptions)) {
+		result = merge({}, levelOptions); // Copy levelOptions
+		from = isNumber(p.from) ? p.from : 0;
+		to = isNumber(p.to) ? p.to : 0;
+		levels = range(from, to);
+		levelsNotIncluded = grep(keys(result), function (k) {
+			return inArray(+k, levels) === -1;
+		});
+		diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
+		/**
+		 * Convert percentage to pixels.
+		 * Calculate the remaining size to divide between "weight" levels.
+		 * Calculate total weight to use in convertion from weight to pixels.
+		 */
+		each(levels, function (level) {
+			var options = result[level],
+				unit = options.levelSize.unit,
+				value = options.levelSize.value;
+			if (unit === 'weight') {
+				totalWeight += value;
+			} else if (unit === 'percentage') {
+				options.levelSize = {
+					unit: 'pixels',
+					value: (value / 100) * diffRadius
+				};
+				remainingSize -= options.levelSize.value;
+			} else if (unit === 'pixels') {
+				remainingSize -= value;
+			}
+		});
+
+		// Convert weight to pixels.
+		each(levels, function (level) {
+			var options = result[level],
+				weight;
+			if (options.levelSize.unit === 'weight') {
+				weight = options.levelSize.value;
+				result[level].levelSize = {
+					unit: 'pixels',
+					value: (weight / totalWeight) * remainingSize
+				};
+			}
+		});
+		// Set all levels not included in interval [from,to] to have 0 pixels.
+		each(levelsNotIncluded, function (level) {
+			result[level].levelSize = {
+				value: 0,
+				unit: 'pixels'
+			};
+		});
+	}
+	return result;
+};
 
 /**
  * getEndPoint - Find a set of coordinates given a start coordinates, an angle,
@@ -62,8 +148,13 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
 		total = parent.val,
 		x = parent.x,
 		y = parent.y,
+		radius = (
+			isObject(options.levelSize) && isNumber(options.levelSize.value) ?
+			options.levelSize.value :
+			0
+		),
 		innerRadius = parent.r,
-		outerRadius = innerRadius + parent.radius,
+		outerRadius = innerRadius + radius,
 		slicedOffset = isNumber(options.slicedOffset) ? options.slicedOffset : 0;
 
 	return reduce(children || [], function (arr, child) {
@@ -72,11 +163,11 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
 			radiansCenter = startAngle + (radians / 2),
 			offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
 			values = {
-				x: child.sliced && child.id !== options.idRoot ? offsetPosition.x : x,
-				y: child.sliced && child.id !== options.idRoot ? offsetPosition.y : y,
+				x: child.sliced ? offsetPosition.x : x,
+				y: child.sliced ? offsetPosition.y : y,
 				innerR: innerRadius,
 				r: outerRadius,
-				radius: parent.radius,
+				radius: radius,
 				start: startAngle,
 				end: startAngle + radians
 			};
@@ -89,11 +180,6 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
 var getDlOptions = function getDlOptions(params) {
 	// Set options to new object to avoid problems with scope
 	var shape = isObject(params.shapeArgs) ? params.shapeArgs : {},
-		optionsSeries = (
-			isObject(params.optionsSeries) ?
-			params.optionsSeries.dataLabels :
-			{}
-		),
 		optionsPoint = (
 			isObject(params.optionsPoint) ?
 			params.optionsPoint.dataLabels :
@@ -109,7 +195,7 @@ var getDlOptions = function getDlOptions(params) {
 			style: {
 				width: shape.radius
 			}
-		}, optionsSeries, optionsLevel, optionsPoint),
+		}, optionsLevel, optionsPoint),
 		rotationRad,
 		rotation;
 	if (!isNumber(options.rotation)) {
@@ -227,9 +313,8 @@ var cbSetTreeValuesBefore = function before(node, options) {
 		colorInfo = getColor(node, {
 			colors: chart && chart.options && chart.options.colors,
 			colorIndex: series.colorIndex,
-			colorByPoint: series.colorByPoint,
 			index: options.index,
-			levelMap: options.levelMap,
+			mapOptionsToLevel: options.mapOptionsToLevel,
 			parentColor: nodeParent && nodeParent.color,
 			parentColorIndex: nodeParent && nodeParent.colorIndex,
 			series: options.series,
@@ -240,7 +325,8 @@ var cbSetTreeValuesBefore = function before(node, options) {
 	if (point) {
 		point.color = node.color;
 		point.colorIndex = node.colorIndex;
-		node.sliced = point.sliced;
+		// Set slicing on node, but avoid slicing the top node.
+		node.sliced = (node.id !== options.idRoot) ? point.sliced : false;
 	}
 	return node;
 };
@@ -252,7 +338,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
  *
  * @extends {plotOptions.pie}
  * @sample highcharts/demo/sunburst Sunburst chart
- * @excluding allAreas, center, clip, colorAxis, compare, compareBase,
+ * @excluding allAreas, clip, colorAxis, compare, compareBase,
  *            dataGrouping, depth, endAngle, gapSize, gapUnit,
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *            minSize, navigatorOptions, pointRange
@@ -264,11 +350,12 @@ var sunburstOptions = {
 	 * The center of the sunburst chart relative to the plot area. Can be
 	 * percentages or pixel values.
 	 *
-	 * @type {Array<String|Number>}
+	 * @type {Array<String|Number>}	
 	 * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
 	 * @product highcharts
 	 */
 	center: ['50%', '50%'],
+	colorByPoint: false,
 	/**
 	 * @extends plotOptions.series.dataLabels
 	 * @excluding align,allowOverlap,staggerLines,step
@@ -303,6 +390,31 @@ var sunburstOptions = {
 	 * structure.
 	 */
 	levelIsConstant: true,
+	/**
+	 * Determines the width of the ring per level.
+	 * @since 6.0.5
+	 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/ Sunburst with various sizes per level
+	 */
+	levelSize: {
+		/**
+		 * The value used for calculating the width of the ring. Its' affect is
+		 * determined by `levelSize.unit`.
+		 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/ Sunburst with various sizes per level
+		 */
+		value: 1,
+		/**
+		 * How to interpret `levelSize.value`.
+		 * `percentage` gives a width relative to result of outer radius minus
+		 * inner radius.
+		 * `pixels` gives the ring a fixed width in pixels.
+		 * `weight` takes the remaining width after percentage and pixels, and
+		 * distributes it accross all "weighted" levels. The value relative to the
+		 * sum of all weights determines the width.
+		 * @validvalue ["percentage", "pixels", "weight"]
+		 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/ Sunburst with various sizes per level
+		 */
+		unit: 'weight'
+	},
 	/**
 	 * If a point is sliced, moved out from the center, how many pixels
 	 * should it be moved?.
@@ -369,6 +481,12 @@ var sunburstOptions = {
 	 * @apioption plotOptions.sunburst.levels.dataLabels
 	 */
 	/**
+	 * Can set a `levelSize` on all points which lies on the same level.
+	 *
+	 * @type {Object}
+	 * @apioption plotOptions.sunburst.levels.levelSize
+	 */
+	/**
 	 * Can set a `rotation` on all points which lies on the same level.
 	 *
 	 * @type {Number}
@@ -399,7 +517,7 @@ var sunburstSeries = {
 	drawDataLabels: noop, // drawDataLabels is called in drawPoints
 	drawPoints: function drawPoints() {
 		var series = this,
-			levelMap = series.levelMap,
+			mapOptionsToLevel = series.mapOptionsToLevel,
 			shapeRoot = series.shapeRoot,
 			group = series.group,
 			hasRendered = series.hasRendered,
@@ -446,7 +564,7 @@ var sunburstSeries = {
 		}
 		each(points, function (point) {
 			var node = point.node,
-				level = levelMap[node.levelDynamic],
+				level = mapOptionsToLevel[node.level],
 				shapeExisting = point.shapeExisting || {},
 				shape = node.shapeArgs || {},
 				animationInfo,
@@ -485,7 +603,6 @@ var sunburstSeries = {
 			point.dlOptions = getDlOptions({
 				level: level,
 				optionsPoint: point.options,
-				optionsSeries: series.options,
 				shapeArgs: shape
 			});
 			if (!addedHack && visible) {
@@ -535,21 +652,22 @@ var sunburstSeries = {
 	/*
 	 * Set the shape arguments on the nodes. Recursive from root down.
 	 */
-	setShapeArgs: function (parent, parentValues, options) {
+	setShapeArgs: function (parent, parentValues, mapOptionsToLevel) {
 		var childrenValues = [],
+			level = parent.level + 1,
+			options = mapOptionsToLevel[level],
 			// Collect all children which should be included
 			children = grep(parent.children, function (n) {
 				return n.visible;
-			});
+			}),
+			twoPi = 6.28; // Two times Pi.
 		childrenValues = this.layoutAlgorithm(parentValues, children, options);
 		each(children, function (child, index) {
 			var values = childrenValues[index],
 				angle = values.start + ((values.end - values.start) / 2),
 				radius = values.innerR + ((values.r - values.innerR) / 2),
-				isCircle = (
-					values.innerR === 0 &&
-					(values.end - values.start) > 6.28
-				),
+				radians = (values.end - values.start),
+				isCircle = (values.innerR === 0 && radians > twoPi),
 				center = (
 					isCircle ?
 					{ x: values.x, y: values.y } :
@@ -563,14 +681,11 @@ var sunburstSeries = {
 						child.val
 					) :
 					child.childrenTotal
-				),
-				innerArcFraction = (values.end - values.start) / (2 * Math.PI),
-				perimeter = 2 * Math.PI * values.innerR;
-
+				);
 			// The inner arc length is a convenience for data label filters.
 			if (this.points[child.i]) {
-				this.points[child.i].innerArcLength =
-					innerArcFraction * perimeter;
+				this.points[child.i].innerArcLength = radians * values.innerR;
+				this.points[child.i].outerArcLength = radians * values.r;
 			}
 
 			child.shapeArgs = merge(values, {
@@ -582,7 +697,7 @@ var sunburstSeries = {
 			});
 			// If node has children, then call method recursively
 			if (child.children.length) {
-				this.setShapeArgs(child, child.values, options);
+				this.setShapeArgs(child, child.values, mapOptionsToLevel);
 			}
 		}, this);
 	},
@@ -595,56 +710,64 @@ var sunburstSeries = {
 			radians = series.startAndEndRadians = getStartAndEndRadians(options.startAngle, options.endAngle),
 			innerRadius = positions[3] / 2,
 			outerRadius = positions[2] / 2,
+			diffRadius = outerRadius - innerRadius,
 			idRoot = series.rootNode = pick(series.rootNode, options.rootId, ''),
 			mapIdToNode = series.nodeMap,
+			mapOptionsToLevel,
 			idTop,
 			nodeRoot = mapIdToNode && mapIdToNode[idRoot],
 			nodeTop,
-			radiusPerLevel,
 			tree,
-			height,
 			values;
 		series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 		// Call prototype function
 		Series.prototype.translate.call(series);
-		// Create a object map from level to options
-		series.levelMap = reduce(series.options.levels || [],
-			function (arr, item) {
-				arr[item.level] = item;
-				return arr;
-			}, {});
 		// @todo Only if series.isDirtyData is true
 		tree = series.tree = series.getTree();
 		mapIdToNode = series.nodeMap;
 		nodeRoot = mapIdToNode[idRoot];
 		idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
 		nodeTop = mapIdToNode[idTop];
+		mapOptionsToLevel = getLevelOptions({
+			from: nodeRoot.level > 0 ? nodeRoot.level : 1,
+			levels: series.options.levels,
+			to: tree.height,
+			defaults: {
+				colorByPoint: options.colorByPoint,
+				dataLabels: options.dataLabels,
+				levelIsConstant: options.levelIsConstant,
+				levelSize: options.levelSize,
+				slicedOffset: options.slicedOffset
+			}
+		});
+		// NOTE consider doing calculateLevelSizes in a callback to getLevelOptions
+		mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
+			diffRadius: diffRadius,
+			from: nodeRoot.level > 0 ? nodeRoot.level : 1,
+			to: tree.height
+		});
 		// TODO Try to combine setTreeValues & setColorRecursive to avoid
 		//  unnecessary looping.
 		setTreeValues(tree, {
 			before: cbSetTreeValuesBefore,
 			idRoot: idRoot,
 			levelIsConstant: options.levelIsConstant,
-			levelMap: series.levelMap,
+			mapOptionsToLevel: mapOptionsToLevel,
 			mapIdToNode: mapIdToNode,
 			points: series.points,
 			series: series
 		});
-		height = (idRoot === idTop) ? nodeRoot.height : nodeRoot.height + 1;
-		radiusPerLevel = (outerRadius - innerRadius) / height;
 		values = mapIdToNode[''].shapeArgs = {
 			end: radians.end,
 			r: innerRadius,
-			radius: radiusPerLevel,
 			start: radians.start,
 			val: nodeRoot.val,
 			x: positions[0],
 			y: positions[1]
 		};
-		this.setShapeArgs(nodeTop, values, {
-			idRoot: idRoot,
-			slicedOffset: options.slicedOffset
-		});
+		this.setShapeArgs(nodeTop, values, mapOptionsToLevel);
+		// Set mapOptionsToLevel on series for use in drawPoints.
+		series.mapOptionsToLevel = mapOptionsToLevel;
 	},
 
 	/**
@@ -691,6 +814,10 @@ var sunburstSeries = {
 			// Delete this function to allow it only once
 			this.animate = null;
 		}
+	},
+	utils: {
+		calculateLevelSizes,
+		range: range
 	}
 };
 

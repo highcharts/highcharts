@@ -7,10 +7,9 @@
  */
 
 // @todo
-// - Deprecate repo and plugins page
-// - Before official release, set up systematic tests for all series types
+// - Set up systematic tests for all series types, paired with tests of the data
+//   module importing the same data.
 
-    
 'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -213,7 +212,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *			defined, this can override the behavior.
  *
  * @returns {Array.<Array>}
- *          The current chart data
+ *		  The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 	var time = this.time,
@@ -440,12 +439,12 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
  * Export-data module required. Returns the current chart data as a CSV string.
  *
  * @param  {Boolean} useLocalDecimalPoint
- *         Whether to use the local decimal point as detected from the browser.
- *         This makes it easier to export data to Excel in the same locale as
- *         the user is.
+ *		 Whether to use the local decimal point as detected from the browser.
+ *		 This makes it easier to export data to Excel in the same locale as
+ *		 the user is.
  *
  * @returns {String}
- *          CSV representation of the data
+ *		  CSV representation of the data
  */
 Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
 	var csv = '',
@@ -495,9 +494,9 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  * data.
  *
  * @sample  highcharts/export-data/viewdata/ 
- *          View the data from the export menu
+ *		  View the data from the export menu
  * @returns {String}
- *          HTML representation of the data.
+ *		  HTML representation of the data.
  */
 Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 	var html = '<table>',
@@ -779,6 +778,80 @@ Highcharts.Chart.prototype.viewData = function () {
 	this.dataTableDiv.innerHTML = this.getTable();
 };
 
+/**
+ * Experimental function to send a chart's config to the Cloud for editing.
+ *
+ * Limitations
+ * - All functions (formatters and callbacks) are removed since they're not
+ *   JSON.
+ *
+ * @todo
+ * - Long configs fail
+ * - Dynamically updated charts probably fail, we need a generic
+ *   Chart.getOptions function that returns all non-default options. Should also
+ *   be used by the export module.
+ */
+Highcharts.Chart.prototype.editInCloud = function () {
+
+	var options,
+		params;
+
+	// Recursively remove function callbacks
+	function removeFunctions(ob) {
+		Object.keys(ob).forEach(function (key) {
+			if (typeof ob[key] === 'function') {
+				delete ob[key];
+			}
+			if (Highcharts.isObject(ob[key])) { // object and not an array
+				removeFunctions(ob[key]);
+			}
+		});
+	}
+
+	function openInCloud(data, direct) {
+		// Open new tab
+		var a = doc.createElement('a');
+		a.href = 'https://cloud.highcharts.com/create?' +
+			(direct ? 'c' : 'q') + '=' + data;
+		a.target = '_blank';
+		doc.body.appendChild(a);
+		a.click();
+		doc.body.removeChild(a);
+	}
+
+	options = Highcharts.merge(this.userOptions);
+	removeFunctions(options);
+	params = {
+		name: (options.title && options.title.text) || 'Chart title',
+		options: options,
+		settings: {
+			constructor: 'Chart',
+			dataProvider: {
+				csv: this.getCSV()
+			}
+		}
+	};
+
+	params = JSON.stringify(params);
+	params = win.btoa(encodeURIComponent(params));
+
+	if (params.length < 2500) {
+		// We can skip the storage and just open it directly
+		return openInCloud(params, true);
+	}
+
+	Highcharts.ajax({
+		url: 'https://cloud-api.highcharts.com/openincloud',
+		type: 'post',
+		dataType: 'json',
+		data: params,
+		success: function (result) {
+			if (result && result.ok && result.id) {
+				openInCloud(result.id);
+			}
+		}
+	});
+};
 
 // Add "Download CSV" to the exporting menu.
 var exportingOptions = Highcharts.getOptions().exporting;

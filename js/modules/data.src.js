@@ -44,6 +44,91 @@ if (!Array.prototype.some) {
 }
 
 /**
+ * @typedef {Object} AjaxSettings
+ * @property {String} url - The URL to call
+ * @property {('get'|'post'|'update'|'delete')} type - The verb to use
+ * @property {('json'|'xml'|'text'|'octet')} dataType - The data type expected
+ * @property {Function} success - Function to call on success
+ * @property {Function} error - Function to call on error
+ * @property {Object} data - The payload to send
+ * @property {Object} headers - The headers; keyed on header name
+ */
+
+/**
+ * Perform an Ajax call.
+ *
+ * @memberof Highcharts
+ * @param {AjaxSettings} - The Ajax settings to use
+ *
+ */
+Highcharts.ajax = function (attr) {
+	var options = Highcharts.merge(true, {
+			url: false,
+			type: 'GET',
+			dataType: 'json',
+			success: false,
+			error: false,
+			data: false,
+			headers: {}
+		}, attr),
+		headers = {
+			json: 'application/json',
+			xml: 'application/xml',
+			text: 'text/plain',
+			octet: 'application/octet-stream'
+		},
+		r = new XMLHttpRequest();
+
+	function handleError(xhr, err) {
+		if (options.error) {
+			options.error(xhr, err);
+		} else {
+			// Maybe emit a highcharts error event here
+		}
+	}
+
+	if (!options.url) {
+		return false;
+	}
+
+	r.open(options.type.toUpperCase(), options.url, true);
+	r.setRequestHeader(
+		'Content-Type',
+		headers[options.dataType] || headers.text
+	);
+
+	Highcharts.objectEach(options.headers, function (val, key) {
+		r.setRequestHeader(key, val);
+	});
+
+	r.onreadystatechange = function () {
+		var res;
+
+		if (r.readyState === 4) {
+			if (r.status === 200) {
+				res = r.responseText;
+				if (options.dataType === 'json') {
+					try {
+						res = JSON.parse(res);
+					} catch (e) {
+						return handleError(r, e);
+					}
+				}
+				return options.success && options.success(res);
+			}
+
+			handleError(r, r.responseText);
+		}
+	};
+
+	try {
+		options.data = JSON.stringify(options.data);
+	} catch (e) {}
+
+	r.send(options.data || true);
+};
+
+/**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also
  * the [tutorial article on the Data module](http://www.highcharts.com/docs/working-
@@ -342,7 +427,7 @@ Highcharts.extend(Data.prototype, {
 
 		var decimalPoint = options.decimalPoint;
 
-		if (decimalPoint !== '.' || decimalPoint !== ',') {
+		if (decimalPoint !== '.' && decimalPoint !== ',') {
 			decimalPoint = undefined;
 		}
 		this.options = options;
@@ -1027,34 +1112,20 @@ Highcharts.extend(Data.prototype, {
 		 */
 		function fetchSheet(fn) {
 			var url = [
-					'https://spreadsheets.google.com/feeds/cells',
-					googleSpreadsheetKey,
-					worksheet,
-					'public/values?alt=json'
-				].join('/'),
-				r = new XMLHttpRequest();
+				'https://spreadsheets.google.com/feeds/cells',
+				googleSpreadsheetKey,
+				worksheet,
+				'public/values?alt=json'
+			].join('/');
 
-			r.open('GET', url, true);
-			r.setRequestHeader('Content-Type', 'application/json');
-
-			r.onreadystatechange = function () {
-				var json;
-
-				if (r.readyState === 4 && r.status === 200) {
-					if (r.status === 200) {
-						try {
-							json = JSON.parse(r.responseText);
-						} catch (e) {
-							return options.error && options.error(e, r);
-						}
-						return fn && fn(json);
-					}
-
-					return options.error && options.error(r.responseText, r);
+			Highcharts.ajax({
+				url: url,
+				dataType: 'json',
+				success: fn,
+				error: function (xhr, text) {
+					return options.error && options.error(text, xhr);
 				}
-			};
-
-			r.send(true);
+			});
 		}
 
 		if (googleSpreadsheetKey) {

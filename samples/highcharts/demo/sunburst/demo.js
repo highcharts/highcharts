@@ -1405,6 +1405,17 @@ Highcharts.chart('container', {
             }
         },
         levels: [{
+            level: 1,
+            levelIsConstant: false,
+            dataLabels: {
+                rotationMode: 'parallel',
+                filter: {
+                    property: 'outerArcLength',
+                    operator: '>',
+                    value: 64
+                }
+            }
+        }, {
             level: 2,
             colorByPoint: true,
             dataLabels: {

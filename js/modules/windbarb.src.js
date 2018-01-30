@@ -54,7 +54,7 @@ seriesType('windbarb', 'column', {
 		 * names can be internationalized by modifying
 		 * `Highcharts.seriesTypes.windbarb.prototype.beaufortNames`.
 		 */
-		pointFormat: '<b>{series.name}</b>: {point.value} ({point.beaufort})<br/>'
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b> ({point.beaufort})<br/>'
 	},
 	/**
 	 * Pixel length of the stems.

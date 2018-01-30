@@ -7,6 +7,20 @@
 /* eslint max-len: 0 */
 
 /**
+ * An optional scrollbar to display on the X axis in response to limiting
+ * the minimum and maximum of the axis values.
+ *
+ * In styled mode, all the presentational options for the scrollbar
+ * are replaced by the classes `.highcharts-scrollbar-thumb`, `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`, `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
+ *
+ * @extends scrollbar
+ * @sample {highstock} stock/yaxis/heatmap-scrollbars/ Heatmap with both scrollbars
+ * @since 4.2.6
+ * @product highstock
+ * @apioption xAxis.scrollbar
+ */
+
+/**
  * Whether to show the axis line and title when the axis has no data.
  *
  * @type {Boolean}
@@ -33,9 +47,9 @@
  * maximum is higher, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highcharts} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highcharts
+ * @product highcharts highstock
  * @apioption xAxis.softMax
  */
 
@@ -45,10 +59,9 @@
  * data minimum is lower, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highcharts} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
+ * @product highcharts highstock
  * @apioption xAxis.softMin
  */
 
@@ -1613,10 +1626,9 @@
  * data maximum is higher, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highstock highmaps
+ * @product highcharts highstock
  * @apioption yAxis.softMax
  */
 
@@ -1626,10 +1638,9 @@
  * data minimum is lower, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highstock highmaps
+ * @product highcharts highstock
  * @apioption yAxis.softMin
  */
 

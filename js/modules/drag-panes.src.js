@@ -421,7 +421,11 @@ H.AxisResizer.prototype = {
 					minLength, maxLength;
 
 				// Skip if axis is not found
-				if (!axisOptions) {
+				// or it is navigator's yAxis (#7732)
+				if (
+					!axisOptions ||
+					axisOptions.id === 'navigator-y-axis'
+				) {
 					return;
 				}
 

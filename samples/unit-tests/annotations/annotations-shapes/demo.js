@@ -105,20 +105,18 @@ QUnit.test('Drawing path with a marker', function (assert) {
         },
 
         defs: {
-            markers: {
-                marker0: {
-                    id: 'arrow-marker',
-                    refY: 5,
-                    refX: 5,
-                    markerWidth: 10,
-                    markerHeight: 10,
-                    children: [{
-                        tagName: 'path',
-                        attrs: {
-                            d: 'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an arrow)
-                        }
-                    }]
-                }
+            marker0: {
+                render: false,
+                id: 'arrow-marker',
+                tagName: 'marker',
+                refY: 5,
+                refX: 5,
+                markerWidth: 10,
+                markerHeight: 10,
+                children: [{
+                    tagName: 'path',
+                    d: 'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an arrow)
+                }]
             }
         },
 
@@ -140,12 +138,18 @@ QUnit.test('Drawing path with a marker', function (assert) {
                 type: 'path',
                 points: [{ x: 200, y: 100 }, '2'],
                 markerEnd: 'arrow-marker',
-                markerStart: 'arrow-marker'
+                markerStart: 'arrow-marker',
+                id: 'shape'
             }]
         }]
     });
 
-    var marker = document.getElementById('arrow-marker');
+    assert.notOk(
+        document.getElementById('arrow-marker'),
+        'The base marker is not created with the render = false'
+    );
+
+    var marker = document.getElementById('shape-arrow-marker');
     assert.ok(marker, 'Marker is created');
     assert.strictEqual(marker.parentNode.nodeName, 'defs', 'Marker is placed in defs tag');
 

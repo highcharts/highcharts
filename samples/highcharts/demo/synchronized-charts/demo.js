@@ -1,7 +1,8 @@
 /*
-The purpose of this demo is to demonstrate how multiple charts on the same page can be linked
-through DOM and Highcharts events and API methods. It takes a standard Highcharts config with a
-small variation for each data set, and a mouse/touch event handler to bind the charts together.
+The purpose of this demo is to demonstrate how multiple charts on the same page
+can be linked through DOM and Highcharts events and API methods. It takes a
+standard Highcharts config with a small variation for each data set, and a
+mouse/touch event handler to bind the charts together.
 */
 
 
@@ -18,8 +19,10 @@ $('#container').bind('mousemove touchmove touchstart', function (e) {
 
     for (i = 0; i < Highcharts.charts.length; i = i + 1) {
         chart = Highcharts.charts[i];
-        event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
-        point = chart.series[0].searchPoint(event, true); // Get the hovered point
+        // Find coordinates within the chart
+        event = chart.pointer.normalize(e.originalEvent);
+        // Get the hovered point
+        point = chart.series[0].searchPoint(event, true);
 
         if (point) {
             point.highlight(e);
@@ -27,7 +30,8 @@ $('#container').bind('mousemove touchmove touchstart', function (e) {
     }
 });
 /**
- * Override the reset function, we don't need to hide the tooltips and crosshairs.
+ * Override the reset function, we don't need to hide the tooltips and
+ * crosshairs.
  */
 Highcharts.Pointer.prototype.reset = function () {
     return undefined;
@@ -37,6 +41,7 @@ Highcharts.Pointer.prototype.reset = function () {
  * Highlight a point by showing tooltip, setting hover state and draw crosshair
  */
 Highcharts.Point.prototype.highlight = function (event) {
+    event = this.series.chart.pointer.normalize(event);
     this.onMouseOver(); // Show the hover marker
     this.series.chart.tooltip.refresh(this); // Show the tooltip
     this.series.chart.xAxis[0].drawCrosshair(event, this); // Show the crosshair
@@ -52,7 +57,13 @@ function syncExtremes(e) {
         Highcharts.each(Highcharts.charts, function (chart) {
             if (chart !== thisChart) {
                 if (chart.xAxis[0].setExtremes) { // It is null while updating
-                    chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, { trigger: 'syncExtremes' });
+                    chart.xAxis[0].setExtremes(
+                        e.min,
+                        e.max,
+                        undefined,
+                        false,
+                        { trigger: 'syncExtremes' }
+                    );
                 }
             }
         });
@@ -60,76 +71,79 @@ function syncExtremes(e) {
 }
 
 // Get the data. The contents of the data file can be viewed at
-// https://github.com/highcharts/highcharts/blob/master/samples/data/activity.json
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=activity.json&callback=?', function (activity) {
-    $.each(activity.datasets, function (i, dataset) {
+$.getJSON(
+    'https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/activity.json',
+    function (activity) {
+        $.each(activity.datasets, function (i, dataset) {
 
-        // Add X values
-        dataset.data = Highcharts.map(dataset.data, function (val, j) {
-            return [activity.xData[j], val];
-        });
-
-        $('<div class="chart">')
-            .appendTo('#container')
-            .highcharts({
-                chart: {
-                    marginLeft: 40, // Keep all charts left aligned
-                    spacingTop: 20,
-                    spacingBottom: 20
-                },
-                title: {
-                    text: dataset.name,
-                    align: 'left',
-                    margin: 0,
-                    x: 30
-                },
-                credits: {
-                    enabled: false
-                },
-                legend: {
-                    enabled: false
-                },
-                xAxis: {
-                    crosshair: true,
-                    events: {
-                        setExtremes: syncExtremes
-                    },
-                    labels: {
-                        format: '{value} km'
-                    }
-                },
-                yAxis: {
-                    title: {
-                        text: null
-                    }
-                },
-                tooltip: {
-                    positioner: function () {
-                        return {
-                            x: this.chart.chartWidth - this.label.width, // right aligned
-                            y: 10 // align to title
-                        };
-                    },
-                    borderWidth: 0,
-                    backgroundColor: 'none',
-                    pointFormat: '{point.y}',
-                    headerFormat: '',
-                    shadow: false,
-                    style: {
-                        fontSize: '18px'
-                    },
-                    valueDecimals: dataset.valueDecimals
-                },
-                series: [{
-                    data: dataset.data,
-                    name: dataset.name,
-                    type: dataset.type,
-                    color: Highcharts.getOptions().colors[i],
-                    fillOpacity: 0.3,
-                    tooltip: {
-                        valueSuffix: ' ' + dataset.unit
-                    }
-                }]
+            // Add X values
+            dataset.data = Highcharts.map(dataset.data, function (val, j) {
+                return [activity.xData[j], val];
             });
-    });
-});
+
+            $('<div class="chart">')
+                .appendTo('#container')
+                .highcharts({
+                    chart: {
+                        marginLeft: 40, // Keep all charts left aligned
+                        spacingTop: 20,
+                        spacingBottom: 20
+                    },
+                    title: {
+                        text: dataset.name,
+                        align: 'left',
+                        margin: 0,
+                        x: 30
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        crosshair: true,
+                        events: {
+                            setExtremes: syncExtremes
+                        },
+                        labels: {
+                            format: '{value} km'
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: null
+                        }
+                    },
+                    tooltip: {
+                        positioner: function () {
+                            return {
+                                // right aligned
+                                x: this.chart.chartWidth - this.label.width,
+                                y: 10 // align to title
+                            };
+                        },
+                        borderWidth: 0,
+                        backgroundColor: 'none',
+                        pointFormat: '{point.y}',
+                        headerFormat: '',
+                        shadow: false,
+                        style: {
+                            fontSize: '18px'
+                        },
+                        valueDecimals: dataset.valueDecimals
+                    },
+                    series: [{
+                        data: dataset.data,
+                        name: dataset.name,
+                        type: dataset.type,
+                        color: Highcharts.getOptions().colors[i],
+                        fillOpacity: 0.3,
+                        tooltip: {
+                            valueSuffix: ' ' + dataset.unit
+                        }
+                    }]
+                });
+        });
+    }
+);

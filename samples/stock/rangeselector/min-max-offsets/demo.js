@@ -1,7 +1,7 @@
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data) {
     // Create the chart
     Highcharts.stockChart('container', {
-        
+
         rangeSelector: {
             buttonTheme: {
                 width: 120
@@ -10,7 +10,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.jso
                 type: 'ytd',
                 count: 1,
                 text: 'YTD - 31 of Dec',
-                offsetMin: - 24 * 3600 * 1000
+                offsetMin: -24 * 3600 * 1000
             }, {
                 type: 'ytd',
                 count: 1,

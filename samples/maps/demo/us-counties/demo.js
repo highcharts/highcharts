@@ -1,5 +1,5 @@
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=us-counties-unemployment.json&callback=?', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-counties-unemployment.json', function (data) {
 
     /**
      * Data parsed from http://www.bls.gov/lau/#tables
@@ -11,7 +11,15 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=us-countie
      */
 
     var countiesMap = Highcharts.geojson(Highcharts.maps['countries/us/us-all-all']),
+        // Extract the line paths from the GeoJSON
         lines = Highcharts.geojson(Highcharts.maps['countries/us/us-all-all'], 'mapline'),
+        // Filter out the state borders and separator lines, we want these in separate series
+        borderLines = Highcharts.grep(lines, function (l) {
+            return l.properties['hc-group'] === '__border_lines__';
+        }),
+        separatorLines = Highcharts.grep(lines, function (l) {
+            return l.properties['hc-group'] === '__separator_lines__';
+        }),
         options;
 
     // Add state acronym for tooltip
@@ -101,12 +109,12 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=us-countie
         }, {
             type: 'mapline',
             name: 'State borders',
-            data: [lines[0]],
+            data: borderLines,
             color: 'white'
         }, {
             type: 'mapline',
             name: 'Separator',
-            data: [lines[1]],
+            data: separatorLines,
             color: 'gray'
         }]
     };

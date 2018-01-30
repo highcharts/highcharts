@@ -639,32 +639,6 @@ window.analyzes = [{
 }];
 
 /***
- * JSONP
- */
-
-function $jsonp(src, options) {
-    var callbackName = options.callbackName || 'callback',
-        onSuccess = options.onSuccess || function () {},
-        timeout = options.timeout || 10; // sec
-
-    var timeoutTrigger = window.setTimeout(function () {
-        window[callbackName] = function () {};
-    }, timeout * 1000);
-
-    window[callbackName] = function (data) {
-        window.clearTimeout(timeoutTrigger);
-        onSuccess(data);
-    };
-
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.src = src;
-
-    document.getElementsByTagName('head')[0].appendChild(script);
-}
-
-/***
  * Get chart by ID
  */
 
@@ -1983,12 +1957,16 @@ window.onload = function () {
 
         document.getElementById('highcharts-reset').addEventListener('click', function () {
             if (confirm('Are you sure you want to clear the chart?')) {
-                $jsonp('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=callbackfunc', {
-                    callbackName: 'callbackfunc',
-                    onSuccess: function (data) {
+                Highcharts.ajax({
+                    url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+                    dataType: 'text',
+                    success: function (data) {
                         var chart = Highcharts.getChartById('container');
 
                         window.localStorage.removeItem('data');
+
+                        data = data.replace(/\/\*.*\*\//g, '');
+                        data = JSON.parse(data);
 
                         indicatorContainer.querySelectorAll('input')[0].checked = false;
                         indicatorsList = []; // clear array too
@@ -2030,9 +2008,12 @@ window.onload = function () {
             Highcharts.stockChart('container', Highcharts.extend({}, advOptions))
         );
     } else {
-        $jsonp('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=callbackfunc', {
-            callbackName: 'callbackfunc',
-            onSuccess: function (data) {
+        Highcharts.ajax({
+            url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+            dataType: 'text',
+            success: function (data) {
+                data = data.replace(/\/\*.*\*\//g, '');
+                data = JSON.parse(data);
                 advOptions.series[0].data = data;
                 attachEvents(
                     Highcharts.stockChart('container', Highcharts.extend({}, advOptions))
