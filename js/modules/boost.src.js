@@ -1884,7 +1884,10 @@ function GLRenderer(postRenderCallback) {
 			);
 		}
 
-		if (!lastX && connectNulls !== false) {
+		if (!lastX &&
+			connectNulls !== false &&
+			closestLeft > Number.MIN_VALUE &&
+			closestRight < Number.MAX_VALUE) {
 			// There are no points within the selected range
 			pushSupplementPoint(closestLeft);
 			pushSupplementPoint(closestRight);
