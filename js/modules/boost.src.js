@@ -1884,7 +1884,7 @@ function GLRenderer(postRenderCallback) {
 			);
 		}
 
-		if (!lastX) {
+		if (!lastX && connectNulls !== false) {
 			// There are no points within the selected range
 			pushSupplementPoint(closestLeft);
 			pushSupplementPoint(closestRight);
@@ -2799,7 +2799,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
 		) {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 			dataToMeasure = this.processedXData;
-		}		
+		}
 
 		// Set the isBoosting flag, second pass with processedXData to see if we
 		// have zoomed.
