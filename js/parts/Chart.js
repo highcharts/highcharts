@@ -230,7 +230,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		 * @name time
 		 * @type Highcharts.Time
 		 */
-		this.time = userOptions.time ? new H.Time(userOptions.time) : H.time;
+		this.time = userOptions.time && H.keys(userOptions.time).length ?
+			new H.Time(userOptions.time) :
+			H.time;
 
 		
 		this.hasCartesianSeries = optionsChart.showAxes;
