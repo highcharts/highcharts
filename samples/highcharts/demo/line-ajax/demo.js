@@ -2,7 +2,7 @@
 
 // Get the CSV and create the chart
 $.ajax({
-    url: 'https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/analytics.csv',
+    url: 'https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/analytics.csv',
     success: function (csv) {
         Highcharts.chart('container', {
 

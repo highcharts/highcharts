@@ -1958,7 +1958,7 @@ window.onload = function () {
         document.getElementById('highcharts-reset').addEventListener('click', function () {
             if (confirm('Are you sure you want to clear the chart?')) {
                 Highcharts.ajax({
-                    url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+                    url: 'https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/aapl-ohlc.json',
                     dataType: 'text',
                     success: function (data) {
                         var chart = Highcharts.getChartById('container');
@@ -2009,7 +2009,7 @@ window.onload = function () {
         );
     } else {
         Highcharts.ajax({
-            url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+            url: 'https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/aapl-ohlc.json',
             dataType: 'text',
             success: function (data) {
                 data = data.replace(/\/\*.*\*\//g, '');

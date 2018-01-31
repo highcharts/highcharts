@@ -1,11 +1,13 @@
 
+
 /*
 TODO:
 - Check data labels after drilling. Label rank? New positions?
+- Not US Mainland text
+- Separators
 */
 
 var data = Highcharts.geojson(Highcharts.maps['countries/us/us-all']),
-    separators = Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline'),
     // Some responsiveness
     small = $('#container').width() < 400;
 
@@ -15,11 +17,12 @@ $.each(data, function (i) {
     this.value = i; // Non-random bogus data
 });
 
-// Instantiate the map
+// Instanciate the map
 Highcharts.mapChart('container', {
     chart: {
         events: {
             drilldown: function (e) {
+
                 if (!e.seriesOptions) {
                     var chart = this,
                         mapKey = 'countries/us/' + e.point.drilldown + '-all',
@@ -27,6 +30,7 @@ Highcharts.mapChart('container', {
                         fail = setTimeout(function () {
                             if (!Highcharts.maps[mapKey]) {
                                 chart.showLoading('<i class="icon-frown"></i> Failed loading ' + e.point.name);
+
                                 fail = setTimeout(function () {
                                     chart.hideLoading();
                                 }, 1000);
@@ -60,10 +64,11 @@ Highcharts.mapChart('container', {
                     });
                 }
 
+
                 this.setTitle(null, { text: e.point.name });
             },
             drillup: function () {
-                this.setTitle(null, { text: '' });
+                this.setTitle(null, { text: 'USA' });
             }
         }
     },
@@ -73,7 +78,7 @@ Highcharts.mapChart('container', {
     },
 
     subtitle: {
-        text: '',
+        text: 'USA',
         floating: true,
         align: 'right',
         y: 50,
@@ -117,14 +122,6 @@ Highcharts.mapChart('container', {
         dataLabels: {
             enabled: true,
             format: '{point.properties.postal-code}'
-        }
-    }, {
-        type: 'mapline',
-        data: separators,
-        color: 'silver',
-        enableMouseTracking: false,
-        animation: {
-            duration: 500
         }
     }],
 

@@ -1,26 +1,21 @@
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-population-density.json', function (data) {
+
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/us-population-density.json', function (data) {
 
     // Make codes uppercase to match the map data
     $.each(data, function () {
         this.code = this.code.toUpperCase();
     });
 
-    // Instantiate the map
+    // Instanciate the map
     Highcharts.mapChart('container', {
 
         chart: {
-            map: 'countries/us/us-all',
             borderWidth: 1
         },
 
         title: {
             text: 'US population density (/km²)'
-        },
-
-        exporting: {
-            sourceWidth: 600,
-            sourceHeight: 500
         },
 
         legend: {
@@ -53,6 +48,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-p
                 duration: 1000
             },
             data: data,
+            mapData: Highcharts.maps['countries/us/us-all'],
             joinBy: ['postal-code', 'code'],
             dataLabels: {
                 enabled: true,

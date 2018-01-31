@@ -1,6 +1,7 @@
 
+
 $.ajax({
-    url: 'https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/world-population-history.csv',
+    url: 'https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/world-population-history.csv',
     success: function (csv) {
 
         // Parse the CSV Data
@@ -35,6 +36,7 @@ $.ajax({
                 data = row.slice(4);
 
             $.each(data, function (i, val) {
+
                 val = val.replace(quoteRegex, '');
                 if (numRegex.test(val)) {
                     val = parseInt(val, 10);
@@ -42,8 +44,9 @@ $.ajax({
                     val = null;
                 }
                 data[i] = val;
-            });
 
+
+            });
             countries[row[1]] = {
                 name: row[0],
                 code3: row[1],

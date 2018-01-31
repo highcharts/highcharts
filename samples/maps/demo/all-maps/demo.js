@@ -1,4 +1,5 @@
 
+
 /**
  * This is a complicated demo of Highmaps, not intended to get you up to speed
  * quickly, but to show off some basic maps and features in one single place.
@@ -65,7 +66,7 @@ $("#mapDropdown").change(function () {
 
         // Update info box download links
         $("#download").html(
-            '<a class="button" target="_blank" href="https://jsfiddle.net/gh/get/jquery/1.11.0/' +
+            '<a class="button" target="_blank" href="http://jsfiddle.net/gh/get/jquery/1.11.0/' +
                 'highcharts/highcharts/tree/master/samples/mapdata/' + mapKey + '">' +
                 'View clean demo</a>' +
                 '<div class="or-view-as">... or view as ' +

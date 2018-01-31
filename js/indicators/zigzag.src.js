@@ -73,7 +73,6 @@ seriesType('zigzag', 'sma',
 		}
 	}, {
 		nameComponents: ['deviation'],
-		nameSuffixes: ['%'],
 		nameBase: 'Zig Zag',
 		getValues: function (series, params) {
 			var lowIndex = params.lowIndex,

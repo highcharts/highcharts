@@ -1,6 +1,6 @@
 
 var chart;
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/world-population-density.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/world-population-density.json', function (data) {
 
     // Initiate the chart
     chart = Highcharts.mapChart('container', {

@@ -1,5 +1,5 @@
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-counties-unemployment.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/2c6e896/samples/data/us-counties-unemployment.json', function (data) {
 
     /**
      * Data parsed from http://www.bls.gov/lau/#tables
@@ -19,18 +19,18 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-c
         }),
         separatorLines = Highcharts.grep(lines, function (l) {
             return l.properties['hc-group'] === '__separator_lines__';
-        });
+        }),
+        options;
 
     // Add state acronym for tooltip
     Highcharts.each(countiesMap, function (mapPoint) {
         mapPoint.name = mapPoint.name + ', ' + mapPoint.properties['hc-key'].substr(3, 2);
     });
 
-    // Create the map
-    Highcharts.mapChart('container', {
+    options = {
         chart: {
             borderWidth: 1,
-            marginRight: 20 // for the legend
+            marginRight: 50 // for the legend
         },
 
         title: {
@@ -38,10 +38,20 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-c
         },
 
         legend: {
+            title: {
+                text: 'Unemployment<br>rate',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                }
+            },
             layout: 'vertical',
             align: 'right',
             floating: true,
-            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)'
+            valueDecimals: 0,
+            valueSuffix: '%',
+            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)',
+            symbolRadius: 0,
+            symbolHeight: 14
         },
 
         mapNavigation: {
@@ -49,13 +59,30 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-c
         },
 
         colorAxis: {
-            min: 0,
-            max: 25,
-            tickInterval: 5,
-            stops: [[0, '#F1EEF6'], [0.65, '#900037'], [1, '#500007']],
-            labels: {
-                format: '{value}%'
-            }
+            dataClasses: [{
+                from: 0,
+                to: 2,
+                color: "#F1EEF6"
+            }, {
+                from: 2,
+                to: 4,
+                color: "#D4B9DA"
+            }, {
+                from: 4,
+                to: 6,
+                color: "#C994C7"
+            }, {
+                from: 6,
+                to: 8,
+                color: "#DF65B0"
+            }, {
+                from: 8,
+                to: 10,
+                color: "#DD1C77"
+            }, {
+                from: 10,
+                color: "#980043"
+            }]
         },
 
         plotOptions: {
@@ -90,5 +117,8 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-c
             data: separatorLines,
             color: 'gray'
         }]
-    });
+    };
+
+    // Instanciate the map
+    $('#container').highcharts('Map', options);
 });

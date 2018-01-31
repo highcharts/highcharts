@@ -3,8 +3,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var pick = H.pick,
-	each = H.each,
+var each = H.each,
 	error = H.error,
 	Series = H.Series,
 	isArray = H.isArray,
@@ -85,7 +84,6 @@ seriesType('sma', 'line',
 			eventName: 'updatedData'
 		},
 		nameComponents: ['period'],
-		nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
 		calculateOn: 'init',
 		init: function (chart, options) {
 			var indicator = this;
@@ -166,11 +164,8 @@ seriesType('sma', 'line',
 
 				each(
 					this.nameComponents,
-					function (component, index) {
-						params.push(
-							this.options.params[component] +
-							pick(this.nameSuffixes[index], '')
-						);
+					function (component) {
+						params.push(this.options.params[component]); 
 					},
 					this
 				);

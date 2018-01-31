@@ -1,11 +1,11 @@
 
-// Instantiate the map
+
+
+// Instanciate the map
 Highcharts.mapChart('container', {
     chart: {
-        map: 'custom/europe',
         spacingBottom: 20
     },
-
     title: {
         text: 'Europe time zones'
     },
@@ -21,44 +21,45 @@ Highcharts.mapChart('container', {
             dataLabels: {
                 enabled: true,
                 color: '#FFFFFF',
-                style: {
-                    fontWeight: 'bold'
-                },
-                // Only show dataLabels for areas with high label rank
-                format: null,
                 formatter: function () {
                     if (this.point.properties && this.point.properties.labelrank.toString() < 5) {
                         return this.point.properties['iso-a2'];
                     }
+                },
+                format: null,
+                style: {
+                    fontWeight: 'bold'
                 }
             },
+            mapData: Highcharts.maps['custom/europe'],
             tooltip: {
                 headerFormat: '',
                 pointFormat: '{point.name}: <b>{series.name}</b>'
             }
+
         }
     },
 
     series: [{
         name: 'UTC',
-        data: ['IE', 'IS', 'GB', 'PT'].map(function (code) {
+        data: $.map(['IE', 'IS', 'GB', 'PT'], function (code) {
             return { code: code };
         })
     }, {
         name: 'UTC + 1',
-        data: ['NO', 'SE', 'DK', 'DE', 'NL', 'BE', 'LU', 'ES', 'FR', 'PL', 'CZ', 'AT', 'CH', 'LI', 'SK', 'HU',
-            'SI', 'IT', 'SM', 'HR', 'BA', 'YF', 'ME', 'AL', 'MK'].map(function (code) {
-                return { code: code };
-            })
+        data: $.map(['NO', 'SE', 'DK', 'DE', 'NL', 'BE', 'LU', 'ES', 'FR', 'PL', 'CZ', 'AT', 'CH', 'LI', 'SK', 'HU',
+                'SI', 'IT', 'SM', 'HR', 'BA', 'YF', 'ME', 'AL', 'MK'], function (code) {
+            return { code: code };
+        })
     }, {
         name: 'UTC + 2',
-        data: ['FI', 'EE', 'LV', 'LT', 'BY', 'UA', 'MD', 'RO', 'BG', 'GR', 'TR', 'CY'].map(function (code) {
+        data: $.map(['FI', 'EE', 'LV', 'LT', 'BY', 'UA', 'MD', 'RO', 'BG', 'GR', 'TR', 'CY'], function (code) {
             return { code: code };
         })
     }, {
         name: 'UTC + 3',
-        data: [{
-            code: 'RU'
-        }]
+        data: $.map(['RU'], function (code) {
+            return { code: code };
+        })
     }]
 });
