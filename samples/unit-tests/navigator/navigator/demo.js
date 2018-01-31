@@ -281,7 +281,7 @@ QUnit.test('Extremes in navigator with empty series initalized (#5390)', functio
 
 });
 
-QUnit.test('Live data changes', function (assert) {
+QUnit.test('Add point and disabled navigator (#3452)', function (assert) {
 
     var chart,
         x = 0;
@@ -340,15 +340,16 @@ QUnit.test('Live data changes', function (assert) {
         }
     });
 
+
     assert.strictEqual(
         chart.xAxis[0].min,
         900,
-        'Initial min with disabled navigator (#3452)'
+        'Initial min'
     );
     assert.strictEqual(
         chart.xAxis[0].max,
         1000,
-        'Initial max with disabled navigator (#3452)'
+        'Initial max'
     );
 
     // Add one point, the zoomed range should now move
@@ -357,36 +358,13 @@ QUnit.test('Live data changes', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].min,
         901,
-        'Adapted min with disabled navigator (#3452)'
+        'Adapted min'
     );
     assert.strictEqual(
         chart.xAxis[0].max,
         1001,
-        'Adapted max with disabled navigator (#3452)'
+        'Adapted max'
     );
-
-    // Set new data
-    chart.series[0].setData([
-        [1, 60],
-        [2, 80]
-    ], false);
-
-    // Set extremes
-    chart.xAxis[0].setExtremes(1, 4, false);
-
-    chart.redraw();
-
-    assert.strictEqual(
-        chart.xAxis[0].min,
-        1,
-        'Adapted min after setData() and setExtremes() (#7632)'
-    );
-    assert.strictEqual(
-        chart.xAxis[0].max,
-        4,
-        'Adapted max after setData() and setExtremes() (#7632)'
-    );
-
 });
 
 QUnit.test('Empty scroller with Axis min set (#5172)', function (assert) {

@@ -1881,9 +1881,9 @@ Navigator.prototype = {
 
 			// When the extremes have been set by range selector button, don't
 			// stick to min or max. The range selector buttons will handle the
-			// extremes. (#5489, #7632)
+			// extremes. (#5489)
 			unmutable = baseXAxis.eventArgs &&
-				baseXAxis.eventArgs.type === 'setExtremes';
+				baseXAxis.eventArgs.trigger === 'rangeSelectorButton';
 
 		if (!unmutable) {
 
