@@ -32,18 +32,6 @@ var colProto = seriesTypes.column.prototype;
  */
 var columnRangeOptions = {
 
-	pointRange: null,
-	
-	/** @ignore-option */
-	marker: null,
-
-	states: {
-		hover: {
-			/** @ignore-option */
-			halo: false
-		}
-	}
-
 	/**
 	 * Extended data labels for range series types. Range series data labels
 	 * have no `x` and `y` options. Instead, they have `xLow`, `xHigh`,
@@ -57,6 +45,18 @@ var columnRangeOptions = {
 	 * @product   highcharts highstock
 	 * @apioption plotOptions.columnrange.dataLabels
 	 */
+
+	pointRange: null,
+	
+	/** @ignore-option */
+	marker: null,
+
+	states: {
+		hover: {
+			/** @ignore-option */
+			halo: false
+		}
+	}
 };
 /**
  * The ColumnRangeSeries class

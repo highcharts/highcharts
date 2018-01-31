@@ -268,10 +268,6 @@ seriesType('ohlc', 'column', {
 
 	animate: null // Disable animation
 
-/**
- * @constructor seriesTypes.ohlc.prototype.pointClass
- * @extends {Point}
- */
 }, /** @lends seriesTypes.ohlc.prototype.pointClass.prototype */ {
 	/**
  	 * Extend the parent method by adding up or down to the class name.

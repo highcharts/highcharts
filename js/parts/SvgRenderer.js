@@ -2676,7 +2676,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 							}
 
 							spanNo++;
-							// */
 						}
 					}
 				});

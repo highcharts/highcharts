@@ -116,26 +116,6 @@ H.setOptions({
 	accessibility: {
 
 		/**
-		 * Enable accessibility features for the chart.
-		 * 
-		 * @type {Boolean}
-		 * @default true
-		 * @since 5.0.0
-		 */
-		enabled: true,
-
-		/**
-		 * When a series contains more points than this, we no longer expose
-		 * information about individual points to screen readers.
-		 * 
-		 * Set to `false` to disable.
-		 * 
-		 * @type {Number|Boolean}
-		 * @since 5.0.0
-		 */
-		pointDescriptionThreshold: false // set to false to disable
-
-		/**
 		 * Whether or not to add series descriptions to charts with a single
 		 * series.
 		 * 
@@ -224,6 +204,26 @@ H.setOptions({
 		 * @since 5.0.0
 		 * @apioption accessibility.seriesDescriptionFormatter
 		 */
+
+		/**
+		 * Enable accessibility features for the chart.
+		 * 
+		 * @type {Boolean}
+		 * @default true
+		 * @since 5.0.0
+		 */
+		enabled: true,
+
+		/**
+		 * When a series contains more points than this, we no longer expose
+		 * information about individual points to screen readers.
+		 * 
+		 * Set to `false` to disable.
+		 * 
+		 * @type {Number|Boolean}
+		 * @since 5.0.0
+		 */
+		pointDescriptionThreshold: false // set to false to disable
 	}
 });
 

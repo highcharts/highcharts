@@ -847,129 +847,127 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * be attached to the series at run time using the `Highcharts.addEvent`
 	 * function.
 	 */
-	events: {
 
-		/**
-		 * Fires after the series has finished its initial animation, or in
-		 * case animation is disabled, immediately as the series is displayed.
-		 * 
-		 * @type {Function}
-		 * @context Series
-		 * @sample {highcharts}
-		 *         highcharts/plotoptions/series-events-afteranimate/
-		 *         Show label after animate
-		 * @sample {highstock}
-		 *         highcharts/plotoptions/series-events-afteranimate/
-		 *         Show label after animate
-		 * @since 4.0
-		 * @product highcharts highstock
-		 * @apioption plotOptions.series.events.afterAnimate
-		 */
+	/**
+	 * Fires after the series has finished its initial animation, or in
+	 * case animation is disabled, immediately as the series is displayed.
+	 * 
+	 * @type {Function}
+	 * @context Series
+	 * @sample {highcharts}
+	 *         highcharts/plotoptions/series-events-afteranimate/
+	 *         Show label after animate
+	 * @sample {highstock}
+	 *         highcharts/plotoptions/series-events-afteranimate/
+	 *         Show label after animate
+	 * @since 4.0
+	 * @product highcharts highstock
+	 * @apioption plotOptions.series.events.afterAnimate
+	 */
 
-		/**
-		 * Fires when the checkbox next to the series' name in the legend is
-		 * clicked. One parameter, `event`, is passed to the function. The state
-		 * of the checkbox is found by `event.checked`. The checked item is
-		 * found by `event.item`. Return `false` to prevent the default action
-		 * which is to toggle the select state of the series.
-		 * 
-		 * @type {Function}
-		 * @context Series
-		 * @sample {highcharts}
-		 *         highcharts/plotoptions/series-events-checkboxclick/
-		 *         Alert checkbox status
-		 * @since 1.2.0
-		 * @apioption plotOptions.series.events.checkboxClick
-		 */
+	/**
+	 * Fires when the checkbox next to the series' name in the legend is
+	 * clicked. One parameter, `event`, is passed to the function. The state
+	 * of the checkbox is found by `event.checked`. The checked item is
+	 * found by `event.item`. Return `false` to prevent the default action
+	 * which is to toggle the select state of the series.
+	 * 
+	 * @type {Function}
+	 * @context Series
+	 * @sample {highcharts}
+	 *         highcharts/plotoptions/series-events-checkboxclick/
+	 *         Alert checkbox status
+	 * @since 1.2.0
+	 * @apioption plotOptions.series.events.checkboxClick
+	 */
 
-		/**
-		 * Fires when the series is clicked. One parameter, `event`, is passed
-		 * to the function, containing common event information. Additionally,
-		 * `event.point` holds a pointer to the nearest point on the graph.
-		 * 
-		 * @type {Function}
-		 * @context Series
-		 * @sample {highcharts} highcharts/plotoptions/series-events-click/
-		 *         Alert click info
-		 * @sample {highstock} stock/plotoptions/series-events-click/
-		 *         Alert click info
-		 * @sample {highmaps} maps/plotoptions/series-events-click/
-		 *         Display click info in subtitle
-		 * @apioption plotOptions.series.events.click
-		 */
+	/**
+	 * Fires when the series is clicked. One parameter, `event`, is passed
+	 * to the function, containing common event information. Additionally,
+	 * `event.point` holds a pointer to the nearest point on the graph.
+	 * 
+	 * @type {Function}
+	 * @context Series
+	 * @sample {highcharts} highcharts/plotoptions/series-events-click/
+	 *         Alert click info
+	 * @sample {highstock} stock/plotoptions/series-events-click/
+	 *         Alert click info
+	 * @sample {highmaps} maps/plotoptions/series-events-click/
+	 *         Display click info in subtitle
+	 * @apioption plotOptions.series.events.click
+	 */
 
-		/**
-		 * Fires when the series is hidden after chart generation time, either
-		 * by clicking the legend item or by calling `.hide()`.
-		 * 
-		 * @type {Function}
-		 * @context Series
-		 * @sample {highcharts} highcharts/plotoptions/series-events-hide/
-		 *         Alert when the series is hidden by clicking the legend item
-		 * @since 1.2.0
-		 * @apioption plotOptions.series.events.hide
-		 */
+	/**
+	 * Fires when the series is hidden after chart generation time, either
+	 * by clicking the legend item or by calling `.hide()`.
+	 * 
+	 * @type {Function}
+	 * @context Series
+	 * @sample {highcharts} highcharts/plotoptions/series-events-hide/
+	 *         Alert when the series is hidden by clicking the legend item
+	 * @since 1.2.0
+	 * @apioption plotOptions.series.events.hide
+	 */
 
-		/**
-		 * Fires when the legend item belonging to the series is clicked. One
-		 * parameter, `event`, is passed to the function. The default action
-		 * is to toggle the visibility of the series. This can be prevented
-		 * by returning `false` or calling `event.preventDefault()`.
-		 * 
-		 * @type {Function}
-		 * @context Series
-		 * @sample {highcharts}
-		 *         highcharts/plotoptions/series-events-legenditemclick/
-		 *         Confirm hiding and showing
-		 * @apioption plotOptions.series.events.legendItemClick
-		 */
+	/**
+	 * Fires when the legend item belonging to the series is clicked. One
+	 * parameter, `event`, is passed to the function. The default action
+	 * is to toggle the visibility of the series. This can be prevented
+	 * by returning `false` or calling `event.preventDefault()`.
+	 * 
+	 * @type {Function}
+	 * @context Series
+	 * @sample {highcharts}
+	 *         highcharts/plotoptions/series-events-legenditemclick/
+	 *         Confirm hiding and showing
+	 * @apioption plotOptions.series.events.legendItemClick
+	 */
 
-		/**
-		 * Fires when the mouse leaves the graph. One parameter, `event`, is
-		 * passed to the function, containing common event information. If the
-		 * [stickyTracking](#plotOptions.series) option is true, `mouseOut`
-		 * doesn't happen before the mouse enters another graph or leaves the
-		 * plot area.
-		 * 
-		 * @type {Function}
-		 * @context Series
-		 * @sample {highcharts}
-		 *         highcharts/plotoptions/series-events-mouseover-sticky/
-		 *         With sticky tracking    by default
-		 * @sample {highcharts}
-		 *         highcharts/plotoptions/series-events-mouseover-no-sticky/
-		 *         Without sticky tracking
-		 * @apioption plotOptions.series.events.mouseOut
-		 */
+	/**
+	 * Fires when the mouse leaves the graph. One parameter, `event`, is
+	 * passed to the function, containing common event information. If the
+	 * [stickyTracking](#plotOptions.series) option is true, `mouseOut`
+	 * doesn't happen before the mouse enters another graph or leaves the
+	 * plot area.
+	 * 
+	 * @type {Function}
+	 * @context Series
+	 * @sample {highcharts}
+	 *         highcharts/plotoptions/series-events-mouseover-sticky/
+	 *         With sticky tracking    by default
+	 * @sample {highcharts}
+	 *         highcharts/plotoptions/series-events-mouseover-no-sticky/
+	 *         Without sticky tracking
+	 * @apioption plotOptions.series.events.mouseOut
+	 */
 
-		/**
-		 * Fires when the mouse enters the graph. One parameter, `event`, is
-		 * passed to the function, containing common event information.
-		 * 
-		 * @type {Function}
-		 * @context Series
-		 * @sample {highcharts}
-		 *         highcharts/plotoptions/series-events-mouseover-sticky/
-		 *         With sticky tracking by default
-		 * @sample {highcharts}
-		 *         highcharts/plotoptions/series-events-mouseover-no-sticky/
-		 *         Without sticky tracking
-		 * @apioption plotOptions.series.events.mouseOver
-		 */
+	/**
+	 * Fires when the mouse enters the graph. One parameter, `event`, is
+	 * passed to the function, containing common event information.
+	 * 
+	 * @type {Function}
+	 * @context Series
+	 * @sample {highcharts}
+	 *         highcharts/plotoptions/series-events-mouseover-sticky/
+	 *         With sticky tracking by default
+	 * @sample {highcharts}
+	 *         highcharts/plotoptions/series-events-mouseover-no-sticky/
+	 *         Without sticky tracking
+	 * @apioption plotOptions.series.events.mouseOver
+	 */
 
-		/**
-		 * Fires when the series is shown after chart generation time, either
-		 * by clicking the legend item or by calling `.show()`.
-		 * 
-		 * @type {Function}
-		 * @context Series
-		 * @sample {highcharts} highcharts/plotoptions/series-events-show/
-		 *         Alert when the series is shown by clicking the legend item.
-		 * @since 1.2.0
-		 * @apioption plotOptions.series.events.show
-		 */
-
-	},
+	/**
+	 * Fires when the series is shown after chart generation time, either
+	 * by clicking the legend item or by calling `.show()`.
+	 * 
+	 * @type {Function}
+	 * @context Series
+	 * @sample {highcharts} highcharts/plotoptions/series-events-show/
+	 *         Alert when the series is shown by clicking the legend item.
+	 * @since 1.2.0
+	 * @apioption plotOptions.series.events.show
+	 */
+	events: {},
 
 
 
@@ -1143,8 +1141,8 @@ H.Series = H.seriesType('line', null, { // base series options
 				/**
 				 * Animation when returning to normal state after hovering.
 				 * @type {Boolean|Object}
-				 * @default true
 				 */
+				animation: true
 			},
 
 			/**
@@ -1273,6 +1271,18 @@ H.Series = H.seriesType('line', null, { // base series options
 			select: {
 
 				/**
+				 * The radius of the point marker. In hover state, it defaults
+				 * to the normal state's radius + 2.
+				 * 
+				 * @type {Number}
+				 * @sample {highcharts}
+				 *         highcharts/plotoptions/series-marker-states-select-radius/
+				 *         10px radius for selected points
+				 * @product highcharts highstock
+				 * @apioption plotOptions.series.marker.states.select.radius
+				 */
+
+				/**
 				 * Enable or disable visible feedback for selection.
 				 * 
 				 * @type {Boolean}
@@ -1325,18 +1335,6 @@ H.Series = H.seriesType('line', null, { // base series options
 				 */
 				lineWidth: 2
 
-				/**
-				 * The radius of the point marker. In hover state, it defaults
-				 * to the normal state's radius + 2.
-				 * 
-				 * @type {Number}
-				 * @sample {highcharts}
-				 *         highcharts/plotoptions/series-marker-states-select-radius/
-				 *         10px radius for selected points
-				 * @product highcharts highstock
-				 * @apioption plotOptions.series.marker.states.select.radius
-				 */
-
 			}
 			/*= } =*/
 		}
@@ -1351,129 +1349,127 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
 		/**
+		 * Fires when a point is clicked. One parameter, `event`, is passed
+		 * to the function, containing common event information.
+		 * 
+		 * If the `series.allowPointSelect` option is true, the default
+		 * action for the point's click event is to toggle the point's
+		 * select state. Returning `false` cancels this action.
+		 * 
+		 * @type {Function}
+		 * @context Point
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-point-events-click/
+		 *         Click marker to alert values
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-point-events-click-column/
+		 *         Click column
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-point-events-click-url/
+		 *         Go to URL
+		 * @sample {highmaps}
+		 *         maps/plotoptions/series-point-events-click/
+		 *         Click marker to display values
+		 * @sample {highmaps}
+		 *         maps/plotoptions/series-point-events-click-url/
+		 *         Go to URL
+		 * @apioption plotOptions.series.point.events.click
+		 */
+
+		/**
+		 * Fires when the mouse leaves the area close to the point. One
+		 * parameter, `event`, is passed to the function, containing common
+		 * event information.
+		 * 
+		 * @type {Function}
+		 * @context Point
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-point-events-mouseover/
+		 *         Show values in the chart's corner on mouse over
+		 * @apioption plotOptions.series.point.events.mouseOut
+		 */
+
+		/**
+		 * Fires when the mouse enters the area close to the point. One
+		 * parameter, `event`, is passed to the function, containing common
+		 * event information.
+		 * 
+		 * @type {Function}
+		 * @context Point
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-point-events-mouseover/
+		 *         Show values in the chart's corner on mouse over
+		 * @apioption plotOptions.series.point.events.mouseOver
+		 */
+
+		/**
+		 * Fires when the point is removed using the `.remove()` method. One
+		 * parameter, `event`, is passed to the function. Returning `false`
+		 * cancels the operation.
+		 * 
+		 * @type {Function}
+		 * @context Point
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-point-events-remove/
+		 *         Remove point and confirm
+		 * @since 1.2.0
+		 * @apioption plotOptions.series.point.events.remove
+		 */
+
+		/**
+		 * Fires when the point is selected either programmatically or
+		 * following a click on the point. One parameter, `event`, is passed
+		 * to the function. Returning `false` cancels the operation.
+		 * 
+		 * @type {Function}
+		 * @context Point
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-point-events-select/
+		 *         Report the last selected point
+		 * @sample {highmaps}
+		 *         maps/plotoptions/series-allowpointselect/
+		 *         Report select and unselect
+		 * @since 1.2.0
+		 * @apioption plotOptions.series.point.events.select
+		 */
+
+		/**
+		 * Fires when the point is unselected either programmatically or
+		 * following a click on the point. One parameter, `event`, is passed
+		 * to the function.
+		 *  Returning `false` cancels the operation.
+		 * 
+		 * @type {Function}
+		 * @context Point
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-point-events-unselect/
+		 *         Report the last unselected point
+		 * @sample {highmaps}
+		 *         maps/plotoptions/series-allowpointselect/
+		 *         Report select and unselect
+		 * @since 1.2.0
+		 * @apioption plotOptions.series.point.events.unselect
+		 */
+
+		/**
+		 * Fires when the point is updated programmatically through the
+		 * `.update()` method. One parameter, `event`, is passed to the
+		 * function. The new point options can be accessed through
+		 * `event.options`. Returning `false` cancels the operation.
+		 * 
+		 * @type {Function}
+		 * @context Point
+		 * @sample {highcharts}
+		 *         highcharts/plotoptions/series-point-events-update/
+		 *         Confirm point updating
+		 * @since 1.2.0
+		 * @apioption plotOptions.series.point.events.update
+		 */
+		
+		/**
 		 * Events for each single point.
 		 */
-		events: {
-
-			/**
-			 * Fires when a point is clicked. One parameter, `event`, is passed
-			 * to the function, containing common event information.
-			 * 
-			 * If the `series.allowPointSelect` option is true, the default
-			 * action for the point's click event is to toggle the point's
-			 * select state. Returning `false` cancels this action.
-			 * 
-			 * @type {Function}
-			 * @context Point
-			 * @sample {highcharts}
-			 *         highcharts/plotoptions/series-point-events-click/
-			 *         Click marker to alert values
-			 * @sample {highcharts}
-			 *         highcharts/plotoptions/series-point-events-click-column/
-			 *         Click column
-			 * @sample {highcharts}
-			 *         highcharts/plotoptions/series-point-events-click-url/
-			 *         Go to URL
-			 * @sample {highmaps}
-			 *         maps/plotoptions/series-point-events-click/
-			 *         Click marker to display values
-			 * @sample {highmaps}
-			 *         maps/plotoptions/series-point-events-click-url/
-			 *         Go to URL
-			 * @apioption plotOptions.series.point.events.click
-			 */
-
-			/**
-			 * Fires when the mouse leaves the area close to the point. One
-			 * parameter, `event`, is passed to the function, containing common
-			 * event information.
-			 * 
-			 * @type {Function}
-			 * @context Point
-			 * @sample {highcharts}
-			 *         highcharts/plotoptions/series-point-events-mouseover/
-			 *         Show values in the chart's corner on mouse over
-			 * @apioption plotOptions.series.point.events.mouseOut
-			 */
-
-			/**
-			 * Fires when the mouse enters the area close to the point. One
-			 * parameter, `event`, is passed to the function, containing common
-			 * event information.
-			 * 
-			 * @type {Function}
-			 * @context Point
-			 * @sample {highcharts}
-			 *         highcharts/plotoptions/series-point-events-mouseover/
-			 *         Show values in the chart's corner on mouse over
-			 * @apioption plotOptions.series.point.events.mouseOver
-			 */
-
-			/**
-			 * Fires when the point is removed using the `.remove()` method. One
-			 * parameter, `event`, is passed to the function. Returning `false`
-			 * cancels the operation.
-			 * 
-			 * @type {Function}
-			 * @context Point
-			 * @sample {highcharts}
-			 *         highcharts/plotoptions/series-point-events-remove/
-			 *         Remove point and confirm
-			 * @since 1.2.0
-			 * @apioption plotOptions.series.point.events.remove
-			 */
-
-			/**
-			 * Fires when the point is selected either programmatically or
-			 * following a click on the point. One parameter, `event`, is passed
-			 * to the function. Returning `false` cancels the operation.
-			 * 
-			 * @type {Function}
-			 * @context Point
-			 * @sample {highcharts}
-			 *         highcharts/plotoptions/series-point-events-select/
-			 *         Report the last selected point
-			 * @sample {highmaps}
-			 *         maps/plotoptions/series-allowpointselect/
-			 *         Report select and unselect
-			 * @since 1.2.0
-			 * @apioption plotOptions.series.point.events.select
-			 */
-
-			/**
-			 * Fires when the point is unselected either programmatically or
-			 * following a click on the point. One parameter, `event`, is passed
-			 * to the function.
-			 *  Returning `false` cancels the operation.
-			 * 
-			 * @type {Function}
-			 * @context Point
-			 * @sample {highcharts}
-			 *         highcharts/plotoptions/series-point-events-unselect/
-			 *         Report the last unselected point
-			 * @sample {highmaps}
-			 *         maps/plotoptions/series-allowpointselect/
-			 *         Report select and unselect
-			 * @since 1.2.0
-			 * @apioption plotOptions.series.point.events.unselect
-			 */
-
-			/**
-			 * Fires when the point is updated programmatically through the
-			 * `.update()` method. One parameter, `event`, is passed to the
-			 * function. The new point options can be accessed through
-			 * `event.options`. Returning `false` cancels the operation.
-			 * 
-			 * @type {Function}
-			 * @context Point
-			 * @sample {highcharts}
-			 *         highcharts/plotoptions/series-point-events-update/
-			 *         Confirm point updating
-			 * @since 1.2.0
-			 * @apioption plotOptions.series.point.events.update
-			 */
-
-		}
+		events: {}
 	},
 
 
@@ -1741,6 +1737,77 @@ H.Series = H.seriesType('line', null, { // base series options
 		},
 
 		/**
+		 * The name of a symbol to use for the border around the label. Symbols
+		 * are predefined functions on the Renderer object.
+		 * 
+		 * @type {String}
+		 * @sample highcharts/plotoptions/series-datalabels-shape/
+		 *         A callout for annotations
+		 * @default square
+		 * @since 4.1.2
+		 * @apioption plotOptions.series.dataLabels.shape
+		 */
+
+		/**
+		 * The Z index of the data labels. The default Z index puts it above
+		 * the series. Use a Z index of 2 to display it behind the series.
+		 * 
+		 * @type {Number}
+		 * @default 6
+		 * @since 2.3.5
+		 * @apioption plotOptions.series.dataLabels.zIndex
+		 */
+		
+		/**
+		 * A declarative filter for which data labels to display. The
+		 * declarative filter is designed for use when callback functions are
+		 * not available, like when the chart options require a pure JSON
+		 * structure or for use with graphical editors. For programmatic
+		 * control, use the `formatter` instead, and return `false` to disable
+		 * a single data label.
+		 *
+		 * @example
+		 * filter: {
+         *     property: 'percentage',
+         *     operator: '>',
+         *     value: 4
+         * }
+		 *
+		 * @sample highcharts/demo/pie-monochrome
+		 *         Data labels filtered by percentage
+		 *
+		 * @type {Object}
+		 * @since 6.0.3
+		 * @apioption plotOptions.series.dataLabels.filter
+		 */
+		
+		/**
+		 * The point property to filter by. Point options are passed directly to
+		 * properties, additionally there are `y` value, `percentage` and others
+		 * listed under [Point](https://api.highcharts.com/class-reference/Highcharts.Point)
+		 * members.
+		 *
+		 * @type {String}
+		 * @apioption plotOptions.series.dataLabels.filter.property
+		 */
+		
+		/**
+		 * The operator to compare by. Can be one of `>`, `<`, `>=`, `<=`, `==`,
+		 * and `===`.
+		 *
+		 * @type {String}
+		 * @validvalue [">", "<", ">=", "<=", "==", "===""]
+		 * @apioption plotOptions.series.dataLabels.filter.operator
+		 */
+		
+		/**
+		 * The value to compare against.
+		 *
+		 * @type {Mixed}
+		 * @apioption plotOptions.series.dataLabels.filter.value
+		 */
+
+		/**
 		 * The background color or gradient for the data label.
 		 * 
 		 * @type {Color}
@@ -1881,83 +1948,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @since 2.2.1
 		 */
 		padding: 5
-
-		/**
-		 * The name of a symbol to use for the border around the label. Symbols
-		 * are predefined functions on the Renderer object.
-		 * 
-		 * @type {String}
-		 * @sample highcharts/plotoptions/series-datalabels-shape/
-		 *         A callout for annotations
-		 * @default square
-		 * @since 4.1.2
-		 * @apioption plotOptions.series.dataLabels.shape
-		 */
-
-		/**
-		 * The Z index of the data labels. The default Z index puts it above
-		 * the series. Use a Z index of 2 to display it behind the series.
-		 * 
-		 * @type {Number}
-		 * @default 6
-		 * @since 2.3.5
-		 * @apioption plotOptions.series.dataLabels.zIndex
-		 */
-		
-		/**
-		 * A declarative filter for which data labels to display. The
-		 * declarative filter is designed for use when callback functions are
-		 * not available, like when the chart options require a pure JSON
-		 * structure or for use with graphical editors. For programmatic
-		 * control, use the `formatter` instead, and return `false` to disable
-		 * a single data label.
-		 *
-		 * @example
-		 * filter: {
-         *     property: 'percentage',
-         *     operator: '>',
-         *     value: 4
-         * }
-		 *
-		 * @sample highcharts/demo/pie-monochrome
-		 *         Data labels filtered by percentage
-		 *
-		 * @type {Object}
-		 * @since 6.0.3
-		 * @apioption plotOptions.series.dataLabels.filter
-		 */
-		
-		/**
-		 * The point property to filter by. Point options are passed directly to
-		 * properties, additionally there are `y` value, `percentage` and others
-		 * listed under [Point](https://api.highcharts.com/class-reference/Highcharts.Point)
-		 * members.
-		 *
-		 * @type {String}
-		 * @apioption plotOptions.series.dataLabels.filter.property
-		 */
-		
-		/**
-		 * The operator to compare by. Can be one of `>`, `<`, `>=`, `<=`, `==`,
-		 * and `===`.
-		 *
-		 * @type {String}
-		 * @validvalue [">", "<", ">=", "<=", "==", "===""]
-		 * @apioption plotOptions.series.dataLabels.filter.operator
-		 */
-		
-		/**
-		 * The value to compare against.
-		 *
-		 * @type {Mixed}
-		 * @apioption plotOptions.series.dataLabels.filter.value
-		 */
 	},
-	// draw points outside the plot area when the number of points is less than
-	// this
-
-
-
+	
 	/**
 	 * When the series contains less points than the crop threshold, all
 	 * points are drawn, even if the points fall outside the visible plot
@@ -2024,8 +2016,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			/**
 			 * Animation when returning to normal state after hovering.
 			 * @type {Boolean|Object}
-			 * @default true
 			 */
+			animation: true
 		},
 
 		/**

@@ -120,6 +120,19 @@ seriesType('sankey', 'column', {
 		}
 	},
 	tooltip: {
+		/**
+		 * A callback for defining the format for _nodes_ in the sankey chart's
+		 * tooltip, as opposed to links.
+		 *
+		 * @type {Function}
+		 * @since 6.0.2
+		 * @apioption plotOptions.sankey.tooltip.nodeFormatter
+		 */
+		
+		/**
+		 * Whether the tooltip should follow the pointer or stay fixed on the
+		 * item.
+		 */
 		followPointer: true,
 
 		/*= if (build.classic) { =*/
@@ -136,14 +149,6 @@ seriesType('sankey', 'column', {
 		 * of a sankey diagram series, as opposed to links.
 		 */
 		nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
-		/**
-		 * A callback for defining the format for _nodes_ in the sankey chart's
-		 * tooltip, as opposed to links.
-		 *
-		 * @type {Function}
-		 * @since 6.0.2
-		 * @apioption plotOptions.sankey.tooltip.nodeFormatter
-		 */
 	}
 
 }, {

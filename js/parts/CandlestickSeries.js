@@ -25,6 +25,24 @@ var defaultPlotOptions = H.defaultPlotOptions,
  * @optionparent plotOptions.candlestick
  */
 var candlestickOptions = {
+	
+	/**
+	 * The specific line color for up candle sticks. The default is to inherit
+	 * the general `lineColor` setting.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
+	 * @default null
+	 * @since 1.3.6
+	 * @product highstock
+	 * @apioption plotOptions.candlestick.upLineColor
+	 */
+	/*= } =*/
+
+	/**
+	 * @default ohlc
+	 * @apioption plotOptions.candlestick.dataGrouping.approximation
+	 */
 
 	states: {
 
@@ -96,24 +114,6 @@ var candlestickOptions = {
 	upColor: '${palette.backgroundColor}',
 
 	stickyTracking: true
-	
-	/**
-	 * The specific line color for up candle sticks. The default is to inherit
-	 * the general `lineColor` setting.
-	 * 
-	 * @type {Color}
-	 * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
-	 * @default null
-	 * @since 1.3.6
-	 * @product highstock
-	 * @apioption plotOptions.candlestick.upLineColor
-	 */
-	/*= } =*/
-
-	/**
-	 * @default ohlc
-	 * @apioption plotOptions.candlestick.dataGrouping.approximation
-	 */
 
 };
 

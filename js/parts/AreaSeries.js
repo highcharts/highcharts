@@ -106,6 +106,20 @@ seriesType('area', 'line', {
 	 */
 	
 	/**
+	 * Whether the whole area or just the line should respond to mouseover
+	 * tooltips and other mouse or touch events.
+	 * 
+	 * @type      {Boolean}
+	 * @sample    {highcharts|highstock}
+	 *            highcharts/plotoptions/area-trackbyarea/
+	 *            Display the tooltip when the area is hovered
+	 * @default   false
+	 * @since     1.1.6
+	 * @product   highcharts highstock
+	 * @apioption plotOptions.area.trackByArea
+	 */
+	
+	/**
 	 * When this is true, the series will not cause the Y axis to cross
 	 * the zero plane (or [threshold](#plotOptions.series.threshold) option)
 	 * unless the data actually crosses the plane.
@@ -131,20 +145,6 @@ seriesType('area', 'line', {
 	 * @product highcharts highstock
 	 */
 	threshold: 0
-	
-	/**
-	 * Whether the whole area or just the line should respond to mouseover
-	 * tooltips and other mouse or touch events.
-	 * 
-	 * @type      {Boolean}
-	 * @sample    {highcharts|highstock}
-	 *            highcharts/plotoptions/area-trackbyarea/
-	 *            Display the tooltip when the area is hovered
-	 * @default   false
-	 * @since     1.1.6
-	 * @product   highcharts highstock
-	 * @apioption plotOptions.area.trackByArea
-	 */
 	
 
 }, /** @lends seriesTypes.area.prototype */ {

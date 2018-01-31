@@ -666,8 +666,9 @@ if (!svg) {
 			var strokeElem = element.getElementsByTagName('stroke')[0] ||
 				createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
 			strokeElem[key] = value || 'solid';
-			this[key] = value; /* because changing stroke-width will change the dash length
-				and cause an epileptic effect */
+			// Because changing stroke-width will change the dash length and
+			// cause an epileptic effect
+			this[key] = value;
 		},
 		dSetter: function (value, key, element) {
 			var i,

@@ -85,6 +85,18 @@ seriesType('heatmap', 'scatter', {
 	 * @apioption plotOptions.heatmap.colsize
 	 */
 	
+	/**
+	 * The row size - how many Y axis units each heatmap row should span.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} maps/demo/heatmap/ 1 by default
+	 * @sample {highmaps} maps/demo/heatmap/ 1 by default
+	 * @default 1
+	 * @since 4.0
+	 * @product highcharts highmaps
+	 * @apioption plotOptions.heatmap.rowsize
+	 */
+	
 	/*= if (build.classic) { =*/
 
 	/**
@@ -137,17 +149,6 @@ seriesType('heatmap', 'scatter', {
 			brightness: 0.2
 		}
 	}
-	/**
-	 * The row size - how many Y axis units each heatmap row should span.
-	 * 
-	 * @type {Number}
-	 * @sample {highcharts} maps/demo/heatmap/ 1 by default
-	 * @sample {highmaps} maps/demo/heatmap/ 1 by default
-	 * @default 1
-	 * @since 4.0
-	 * @product highcharts highmaps
-	 * @apioption plotOptions.heatmap.rowsize
-	 */
 
 }, merge(colorSeriesMixin, {
 	pointArrayMap: ['y', 'value'],

@@ -204,6 +204,15 @@ seriesType('map', 'scatter', {
 			halo: null,
 
 			/**
+			 * The color of the shape in this state
+			 * 
+			 * @type {Color}
+			 * @sample {highmaps} maps/plotoptions/series-states-hover/ Hover options
+			 * @product highmaps
+			 * @apioption plotOptions.series.states.hover.color
+			 */
+
+			/**
 			 * The border color of the point in this state.
 			 * 
 			 * @type {Color}
@@ -229,15 +238,6 @@ seriesType('map', 'scatter', {
 			 * @apioption plotOptions.series.states.hover.brightness
 			 */
 			brightness: 0.2
-
-			/**
-			 * The color of the shape in this state
-			 * 
-			 * @type {Color}
-			 * @sample {highmaps} maps/plotoptions/series-states-hover/ Hover options
-			 * @product highmaps
-			 * @apioption plotOptions.series.states.hover.color
-			 */
 
 		},
 
