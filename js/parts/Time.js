@@ -335,7 +335,10 @@ Highcharts.Time.prototype = {
 			// When the clock is set back, the same time is repeated twice, i.e.
 			// 02:30 am is repeated since the clock is set back from 3 am to 
 			// 2 am. We need to make the same time as local Date does.
-			} else if (offset - 36e5 === this.getTimezoneOffset(d - 36e5)) {
+			} else if (
+				offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
+				(H.isChrome || H.isMS)
+			) {
 				d -= 36e5;
 			}
 

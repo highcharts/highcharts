@@ -33,6 +33,7 @@ var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
 	isMS: isMS,
 	isWebKit: /AppleWebKit/.test(userAgent),
 	isFirefox: isFirefox,
+	isChrome: userAgent.indexOf('Chrome') !== -1,
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS: SVG_NS,
 	chartCount: 0,
