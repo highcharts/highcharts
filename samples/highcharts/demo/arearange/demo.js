@@ -1,6 +1,6 @@
 
 $.getJSON(
-    'https://cdn.rawgit.com/highcharts/highcharts/17d0385/samples/data/range.json',
+    'https://cdn.rawgit.com/highcharts/highcharts/v6.0.5/samples/data/range.json',
     function (data) {
 
         Highcharts.chart('container', {

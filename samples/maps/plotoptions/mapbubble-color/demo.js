@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/b3c376d/samples/data/world-population.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.5/samples/data/world-population.json', function (data) {
 
     Highcharts.mapChart('container', {
         chart: {
