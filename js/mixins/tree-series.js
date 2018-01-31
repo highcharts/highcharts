@@ -1,13 +1,18 @@
 import H from '../parts/Globals.js';
 var each = H.each,
 	extend = H.extend,
+	isArray = H.isArray,
 	isBoolean = function (x) {
 		return typeof x === 'boolean';
 	},
 	isFn = function (x) {
 		return typeof x === 'function';
 	},
-	pick = H.pick;
+	isObject = H.isObject,
+	isNumber = H.isNumber,
+	merge = H.merge,
+	pick = H.pick,
+	reduce = H.reduce;
 // TODO Combine buildTree and buildNode with setTreeValues
 // TODO Remove logic from Treemap and make it utilize this mixin.
 var setTreeValues = function setTreeValues(tree, options) {
@@ -65,7 +70,7 @@ var setTreeValues = function setTreeValues(tree, options) {
 
 var getColor = function getColor(node, options) {
 	var index = options.index,
-		levelMap = options.levelMap,
+		mapOptionsToLevel = options.mapOptionsToLevel,
 		parentColor = options.parentColor,
 		parentColorIndex = options.parentColorIndex,
 		series = options.series,
@@ -94,19 +99,14 @@ var getColor = function getColor(node, options) {
 
 	if (node) {
 		point = points[node.i];
-		level = levelMap[node.levelDynamic] || {};
-		getColorByPoint = (
-			point &&
-			(
-				isBoolean(level.colorByPoint) ?
-				level.colorByPoint :
-				!!series.options.colorByPoint
-			)
-		);
+		level = mapOptionsToLevel[node.level] || {};
+		getColorByPoint = point && level.colorByPoint;
 
 		if (getColorByPoint) {
-			colorIndexByPoint = point.index %
-				(colors ? colors.length : series.chart.options.chart.colorCount);
+			colorIndexByPoint = point.index % (colors ?
+				colors.length :
+				series.chart.options.chart.colorCount
+			);
 			colorByPoint = colors && colors[colorIndexByPoint];
 		}
 
@@ -134,8 +134,73 @@ var getColor = function getColor(node, options) {
 	};
 };
 
+/**
+ * getLevelOptions - Creates a map from level number to its given options.
+ * @param {Object} params Object containing parameters.
+ * @param {Object} params.defaults Object containing default options. The
+ * default options are merged with the userOptions to get the final options for
+ * a specific level.
+ * @param {Number} params.from The lowest level number.
+ * @param {Array} params.levels User options from series.levels.
+ * @param {Number} params.to The highest level number.
+ * @return {null|Object} Returns a map from level number to its given options.
+ * Returns null if invalid input parameters.
+ */
+var getLevelOptions = function getLevelOptions(params) {
+	var result = null,
+		defaults,
+		converted,
+		i,
+		from,
+		to,
+		levels;
+	if (isObject(params)) {
+		result = {};
+		from = isNumber(params.from) ? params.from : 1;
+		levels = params.levels;
+		converted = {};
+		defaults = isObject(params.defaults) ? params.defaults : {};
+		if (isArray(levels)) {
+			converted = reduce(levels, function (obj, item) {
+				var level,
+					levelIsConstant,
+					options;
+				if (isObject(item) && isNumber(item.level)) {
+					options = merge({}, item);
+					levelIsConstant = (
+						isBoolean(options.levelIsConstant) ?
+						options.levelIsConstant :
+						defaults.levelIsConstant
+					);
+					// Delete redundant properties.
+					delete options.levelIsConstant;
+					delete options.level;
+					// Calculate which level these options apply to.
+					level = item.level + (levelIsConstant ? 0 : from - 1);
+					if (isObject(obj[level])) {
+						extend(obj[level], options);
+					} else {
+						obj[level] = options;
+					}
+				}
+				return obj;
+			}, {});
+		}
+		to = isNumber(params.to) ? params.to : 1;
+		for (i = 0; i <= to; i++) {
+			result[i] = merge(
+				{},
+				defaults,
+				isObject(converted[i]) ? converted[i] : {}
+			);
+		}
+	}
+	return result;
+};
+
 var result = {
 	getColor: getColor,
+	getLevelOptions: getLevelOptions,
 	setTreeValues: setTreeValues
 };
 export default result;

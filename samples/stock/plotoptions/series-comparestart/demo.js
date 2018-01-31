@@ -59,7 +59,7 @@ function createChart() {
 
 $.each(names, function (i, name) {
 
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/' + name.toLowerCase() + '-c.json',    function (data) {
 
         seriesOptions[i] = {
             name: name,

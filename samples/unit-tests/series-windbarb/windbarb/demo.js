@@ -95,4 +95,22 @@ QUnit.test('Inside or outside plot area', function (assert) {
         ].join(','),
         'Hidden points ouside plot area (#7507)'
     );
+
+
+    chart.xAxis[0].setExtremes(
+        1485681192000,
+        1485700200000,
+        true,
+        false
+    );
+    assert.strictEqual(
+        chart.series[0].points.some(function (point) {
+            return (
+                point.graphic &&
+                point.graphic.attr('translateY').toString() === 'NaN'
+            );
+        }),
+        false,
+        'All valid points should be translated (#7507)'
+    );
 });

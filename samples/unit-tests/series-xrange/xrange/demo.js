@@ -27,7 +27,8 @@ QUnit.test('X-Range', function (assert) {
         data: [{
             x: Date.UTC(2014, 11, 1),
             x2: Date.UTC(2014, 11, 2),
-            y: 0
+            y: 0,
+            colorIndex: 9
         }, {
             x: Date.UTC(2014, 11, 2),
             x2: Date.UTC(2014, 11, 5),
@@ -46,6 +47,12 @@ QUnit.test('X-Range', function (assert) {
             y: 2
         }]
     });
+
+    assert.strictEqual(
+        chart.series[0].points[0].colorIndex,
+        9,
+        'The point colorIndex option should be applied'
+    );
 
     assert.strictEqual(
         chart.yAxis[0].max,
@@ -94,6 +101,27 @@ QUnit.test('X-Range', function (assert) {
         chart.series.length,
         0,
         'No series left'
+    );
+
+    // #7617
+    chart.addSeries({
+        pointWidth: 20,
+        data: [{
+            x: 1,
+            x2: 9,
+            y: 0,
+            partialFill: 0.25
+        }]
+    }, false);
+    chart.xAxis[0].setExtremes(2, null);
+
+    var point = chart.series[0].points[0],
+        clipBox = point.clipRect.getBBox(true);
+
+    assert.strictEqual(
+        Math.round(chart.xAxis[0].toValue(clipBox.width - clipBox.x)),
+        (point.x2 - point.x) * point.partialFill,
+        'Clip rect ends at correct position after zoom (#7617).'
     );
 });
 

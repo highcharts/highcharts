@@ -15,10 +15,10 @@ var Series = H.Series,
  * A scatter plot uses cartesian coordinates to display values for two variables
  * for a set of data.
  *
- * @sample {highcharts} highcharts/demo/scatter/ Scatter plot
- * 
- * @extends {plotOptions.line}
- * @product highcharts highstock
+ * @sample       {highcharts} highcharts/demo/scatter/
+ *               Scatter plot
+ * @extends      {plotOptions.line}
+ * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
 seriesType('scatter', 'line', {
@@ -26,12 +26,10 @@ seriesType('scatter', 'line', {
 	/**
 	 * The width of the line connecting the data points.
 	 * 
-	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
-	 *         0 by default
-	 * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
-	 *         1px
-	 * @default 0
+	 * @sample  {highcharts} highcharts/plotoptions/scatter-linewidth-none/
+	 *          0 by default
+	 * @sample  {highcharts} highcharts/plotoptions/scatter-linewidth-1/
+	 *          1px
 	 * @product highcharts highstock
 	 */
 	lineWidth: 0,
@@ -50,9 +48,9 @@ seriesType('scatter', 'line', {
 	 * is false and `tooltip.shared` is false, the tooltip will be hidden
 	 * when moving the mouse between series.
 	 * 
-	 * @type {Boolean}
-	 * @default false
-	 * @product highcharts highstock
+	 * @type      {Boolean}
+	 * @default   false
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.scatter.stickyTracking
 	 */
 
@@ -73,7 +71,9 @@ seriesType('scatter', 'line', {
 			'<span style="font-size: 0.85em"> {series.name}</span><br/>',
 		/*= } else { =*/
 
-		headerFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <span class="highcharts-header"> {series.name}</span><br/>', // eslint-disable-line max-len
+		headerFormat: 
+			'<span class="highcharts-color-{point.colorIndex}">\u25CF</span> ' +
+			'<span class="highcharts-header"> {series.name}</span><br/>',
 		/*= } =*/
 
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
@@ -99,13 +99,13 @@ seriesType('scatter', 'line', {
  * 
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * scatter](#plotOptions.scatter).
+ * To apply to all series of this specific type, apply it to
+ * [plotOptions.scatter](#plotOptions.scatter).
  * 
- * @type {Object}
- * @extends series,plotOptions.scatter
- * @excluding dataParser,dataURL,stack
- * @product highcharts highstock
+ * @type      {Object}
+ * @extends   series,plotOptions.scatter
+ * @excluding dataParser,dataURL
+ * @product   highcharts highstock
  * @apioption series.scatter
  */
 
@@ -154,19 +154,18 @@ seriesType('scatter', 'line', {
  *     }]
  *  ```
  * 
- * @type {Array<Object|Array|Number>}
- * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/
- *         Config objects
- * @product highcharts highstock
+ * @type      {Array<Object|Array|Number>}
+ * @extends   series.line.data
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects
+ * @product   highcharts highstock
  * @apioption series.scatter.data
  */
-

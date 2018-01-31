@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -224,7 +225,7 @@ seriesType('pie', 'line', {
 	/** @ignore */
 	legendType: 'point',
 
-	/**	 @ignore */
+	/**	@ignore */
 	marker: null, // point options are specified in the base options
 
 	/**
@@ -341,8 +342,9 @@ seriesType('pie', 'line', {
 	states: {
 
 		/**
-		 * @extends plotOptions.series.states.hover
-		 * @product highcharts
+		 * @extends   plotOptions.series.states.hover
+		 * @excluding marker,lineWidth,lineWidthPlus
+		 * @product   highcharts
 		 */
 		hover: {
 
@@ -353,14 +355,12 @@ seriesType('pie', 'line', {
 			 * In styled mode, the hover brightness is by default replaced
 			 * by a fill-opacity given in the `.highcharts-point-hover` class.
 			 * 
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/plotoptions/pie-states-hover-brightness/ Brightened by 0.5
-			 * @default 0.1
+			 * @sample  {highcharts}
+			 *          highcharts/plotoptions/pie-states-hover-brightness/
+			 *          Brightened by 0.5
 			 * @product highcharts
 			 */
-			brightness: 0.1,
-
-			shadow: false
+			brightness: 0.1
 		}
 	}
 	/*= } =*/
@@ -804,6 +804,8 @@ seriesType('pie', 'line', {
 				shapeArgs.y,
 				shapeArgs.r + size,
 				shapeArgs.r + size, {
+					// Substract 1px to ensure the background is not bleeding
+					// through between the halo and the slice (#7495).
 					innerR: this.shapeArgs.r - 1,
 					start: shapeArgs.start,
 					end: shapeArgs.end
@@ -858,11 +860,16 @@ seriesType('pie', 'line', {
  * @type {Array<Object|Number>}
  * @extends series.line.data
  * @excluding marker,x
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts
  * @apioption series.pie.data
  */

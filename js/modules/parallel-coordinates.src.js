@@ -5,7 +5,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Axis.js';
@@ -452,10 +452,11 @@ function addFormattedValue(proceed) {
 				extend(
 					this,
 					{ value: this.y }
-				)
+				),
+				chart.time
 			);
 		} else if (yAxis.isDatetimeAxis) {
-			formattedValue = H.dateFormat(
+			formattedValue = chart.time.dateFormat(
 				yAxisOptions.dateTimeLabelFormats[
 					yAxis.tickPositions.info.unitName
 				],

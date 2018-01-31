@@ -20,9 +20,10 @@ seriesType('bar', 'column', null, {
  * A bar series is a special type of column series where the columns are
  * horizontal.
  *
- * @sample highcharts/demo/bar-basic/ Bar chart
- * @extends {plotOptions.column}
- * @product highcharts
+ * @sample       highcharts/demo/bar-basic/
+ *               Bar chart
+ * @extends      {plotOptions.column}
+ * @product      highcharts
  * @optionparent plotOptions.bar
  */
 
@@ -36,10 +37,11 @@ seriesType('bar', 'column', null, {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * bar](#plotOptions.bar).
  * 
- * @type {Object}
- * @extends series,plotOptions.bar
- * @excluding dataParser,dataURL
- * @product highcharts
+ * @type      {Object}
+ * @extends   series,plotOptions.bar
+ * @excluding connectNulls,dashStyle,dataParser,dataURL,gapSize,gapUnit,linecap,
+ *            lineWidth,marker,connectEnds,step
+ * @product   highcharts
  * @apioption series.bar
  */
 
@@ -88,35 +90,54 @@ seriesType('bar', 'column', null, {
  *     }]
  *  ```
  * 
- * @type {Array<Object|Array|Number>}
- * @extends series.column.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts
+ * @type      {Array<Object|Array|Number>}
+ * @extends   series.column.data
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects
+ * @product   highcharts
  * @apioption series.bar.data
+ */
+
+/**
+ * @excluding halo,lineWidth,lineWidthPlus,marker
+ * @product   highcharts highstock
+ * @apioption series.bar.states.hover
+ */
+
+/**
+ * @excluding halo,lineWidth,lineWidthPlus,marker
+ * @product   highcharts highstock
+ * @apioption series.bar.states.select
  */
 
 /**
  * Alignment of the data label relative to the data point.
  * 
- * @type {String}
- * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
- *         Data labels inside the bar
- * @default left
- * @product highcharts
+ * @type      {String}
+ * @sample    {highcharts}
+ *            highcharts/plotoptions/bar-datalabels-align-inside-bar/
+ *            Data labels inside the bar
+ * @default   left
+ * @product   highcharts
  * @apioption plotOptions.bar.dataLabels.align
  */
 
 /**
  * The x position of the data label relative to the data point.
  * 
- * @type {Number}
- * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
- *         Data labels inside the bar
- * @default 5
- * @product highcharts
+ * @type      {Number}
+ * @sample    {highcharts}
+ *            highcharts/plotoptions/bar-datalabels-align-inside-bar/
+ *            Data labels inside the bar
+ * @default   5
+ * @product   highcharts
  * @apioption plotOptions.bar.dataLabels.x
  */

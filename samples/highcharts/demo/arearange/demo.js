@@ -1,41 +1,44 @@
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
+$.getJSON(
+    'https://cdn.rawgit.com/highcharts/highcharts/v6.0.5/samples/data/range.json',
+    function (data) {
 
-    Highcharts.chart('container', {
+        Highcharts.chart('container', {
 
-        chart: {
-            type: 'arearange',
-            zoomType: 'x'
-        },
+            chart: {
+                type: 'arearange',
+                zoomType: 'x'
+            },
 
-        title: {
-            text: 'Temperature variation by day'
-        },
-
-        xAxis: {
-            type: 'datetime'
-        },
-
-        yAxis: {
             title: {
-                text: null
-            }
-        },
+                text: 'Temperature variation by day'
+            },
 
-        tooltip: {
-            crosshairs: true,
-            shared: true,
-            valueSuffix: '°C'
-        },
+            xAxis: {
+                type: 'datetime'
+            },
 
-        legend: {
-            enabled: false
-        },
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
 
-        series: [{
-            name: 'Temperatures',
-            data: data
-        }]
+            tooltip: {
+                crosshairs: true,
+                shared: true,
+                valueSuffix: '°C'
+            },
 
-    });
-});
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                name: 'Temperatures',
+                data: data
+            }]
+
+        });
+    }
+);

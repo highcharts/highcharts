@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/world-population-density.json', function (data) {
 
     // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
     $.each(data, function () {

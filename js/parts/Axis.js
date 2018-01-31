@@ -1298,7 +1298,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * CSS styles for the title. If the title text is longer than the
 			 * axis length, it will wrap to multiple lines by default. This can
 			 * be customized by setting `textOverflow: 'ellipsis'`, by 
-			 * setting a specific `width` or by setting `wordSpace: 'nowrap'`.
+			 * setting a specific `width` or by setting `whiteSpace: 'nowrap'`.
 			 * 
 			 * In styled mode, the stroke width is given in the
 			 * `.highcharts-axis-title` class.
@@ -2049,6 +2049,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	defaultLabelFormatter: function () {
 		var axis = this.axis,
 			value = this.value,
+			time = axis.chart.time,
 			categories = axis.categories,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
 			lang = defaultOptions.lang,
@@ -2066,13 +2067,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				axis.tickInterval;
 
 		if (formatOption) {
-			ret = format(formatOption, this);
+			ret = format(formatOption, this, time);
 
 		} else if (categories) {
 			ret = value;
 
 		} else if (dateTimeLabelFormat) { // datetime axis
-			ret = H.dateFormat(dateTimeLabelFormat, value);
+			ret = time.dateFormat(dateTimeLabelFormat, value);
 
 		} else if (i && numericSymbolDetector >= 1000) {
 			// Decide whether we should add a numeric symbol like k (thousands)
@@ -2163,16 +2164,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 							xData = grep(xData, isNumber);
 							// Do it again with valid data
 							seriesDataMin = arrayMin(xData);
+							seriesDataMax = arrayMax(xData);
 						}
 
-						axis.dataMin = Math.min(
-							pick(axis.dataMin, xData[0], seriesDataMin),
-							seriesDataMin
-						);
-						axis.dataMax = Math.max(
-							pick(axis.dataMax, xData[0], seriesDataMax),
-							seriesDataMax
-						);
+						if (xData.length) {
+							axis.dataMin = Math.min(
+								pick(axis.dataMin, xData[0], seriesDataMin),
+								seriesDataMin
+							);
+							axis.dataMax = Math.max(
+								pick(axis.dataMax, xData[0], seriesDataMax),
+								seriesDataMax
+							);
+						}
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle
@@ -2375,6 +2379,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			translatedValue,
 			axis.translate(value, null, null, old)
 		);
+		// Keep the translated value within sane bounds, and avoid Infinity to
+		// fail the isNumber test (#7709).
+		translatedValue = Math.min(Math.max(-1e5, translatedValue), 1e5);
+		
+
 		x1 = x2 = Math.round(translatedValue + transB);
 		y1 = y2 = Math.round(cHeight - translatedValue - transB);
 		if (!isNumber(translatedValue)) { // no min or max
@@ -2698,9 +2707,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		if (!defined(nameX)) {
 			nameX = this.options.uniqueNames === false ?
 				point.series.autoIncrement() : 
-				inArray(point.name, names);
+				(
+					explicitCategories ?
+						inArray(point.name, names) :
+						pick(names['s' + point.name], -1)
+
+				);
 		}
-		if (nameX === -1) { // The name is not found in currenct categories
+		if (nameX === -1) { // Not found in currenct categories
 			if (!explicitCategories) {
 				x = names.length;
 			}
@@ -2711,6 +2725,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Write the last point's name to the names array
 		if (x !== undefined) {
 			this.names[x] = point.name;
+			// Backwards mapping is much faster than array searching (#7725)
+			this.names['s' + point.name] = x;
 		}
 
 		return x;
@@ -2722,10 +2738,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	 * @private
 	 */
 	updateNames: function () {
-		var axis = this;
+		var axis = this,
+			names = this.names,
+			i = names.length;
 
-		if (this.names.length > 0) {
-			this.names.length = 0;
+		if (i > 0) {
+			while (i--) {
+				delete names['s' + names[i]];
+			}
+			names.length = 0;
 			this.minRange = this.userMinRange; // Reset
 			each(this.series || [], function (series) {
 			
@@ -3951,7 +3972,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			labelMetrics = this.labelMetrics(),
 			textOverflowOption = labelOptions.style &&
 				labelOptions.style.textOverflow,
-			css,
+			commonWidth,
+			commonTextOverflow,
 			maxLabelLength = 0,
 			label,
 			i,
@@ -3965,8 +3987,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Get the longest label length
 		each(tickPositions, function (tick) {
 			tick = ticks[tick];
-			if (tick && tick.labelLength > maxLabelLength) {
-				maxLabelLength = tick.labelLength;
+			if (
+				tick &&
+				tick.label &&
+				tick.label.textPxLength > maxLabelLength
+			) {
+				maxLabelLength = tick.label.textPxLength;
 			}
 		});
 		this.maxLabelLength = maxLabelLength;
@@ -3989,10 +4015,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Handle word-wrap or ellipsis on vertical axis
 		} else if (slotWidth) {
 			// For word-wrap or ellipsis
-			css = { width: innerWidth + 'px' };
+			commonWidth = innerWidth;
 
 			if (!textOverflowOption) {
-				css.textOverflow = 'clip';
+				commonTextOverflow = 'clip';
 
 				// On vertical axis, only allow word wrap if there is room
 				// for more lines.
@@ -4011,7 +4037,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 						// Set the correct width in order to read
 						// the bounding box height (#4678, #5034)
-						} else if (ticks[pos].labelLength > slotWidth) {
+						} else if (label.textPxLength > slotWidth) {
 							label.css({ width: slotWidth + 'px' });
 						}
 
@@ -4021,7 +4047,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 								(labelMetrics.h - labelMetrics.f)
 							)
 						) {
-							label.specCss = { textOverflow: 'ellipsis' };
+							label.specificTextOverflow = 'ellipsis';
 						}
 					}
 				}
@@ -4031,15 +4057,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		// Add ellipsis if the label length is significantly longer than ideal
 		if (attr.rotation) {
-			css = { 
-				width: (
-					maxLabelLength > chart.chartHeight * 0.5 ?
-						chart.chartHeight * 0.33 :
-						chart.chartHeight
-				) + 'px'
-			};
+			commonWidth = (
+				maxLabelLength > chart.chartHeight * 0.5 ?
+					chart.chartHeight * 0.33 :
+					chart.chartHeight
+			);
 			if (!textOverflowOption) {
-				css.textOverflow = 'ellipsis';
+				commonTextOverflow = 'ellipsis';
 			}
 		}
 
@@ -4058,10 +4082,25 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				// This needs to go before the CSS in old IE (#4502)
 				label.attr(attr);
 
-				if (css) {
-					label.css(merge(css, label.specCss));
+				if (
+					commonWidth &&
+					!(labelOptions.style && labelOptions.style.width) &&
+					(
+						// Speed optimizing, #7656
+						commonWidth < label.textPxLength ||
+						// Resetting CSS, #4928
+						label.element.tagName === 'SPAN'
+					)
+				) {
+					label.css({
+						width: commonWidth,
+						textOverflow: (
+							label.specificTextOverflow ||
+							commonTextOverflow
+						)
+					});
 				}
-				delete label.specCss;
+				delete label.specificTextOverflow;
 				tick.rotation = attr.rotation;
 			}
 		});

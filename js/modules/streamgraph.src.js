@@ -38,13 +38,16 @@ seriesType('streamgraph', 'areaspline', {
 	 * in order to center the full stack vertically.
 	 */
 	streamStacker: function (pointExtremes, stack, i) {
+		var reversedStacks = H.pick(this.yAxis.options.reversedStacks, true);
+
 		// Y bottom value
 		pointExtremes[0] -= stack.total / 2;
 		// Y value
 		pointExtremes[1] -= stack.total / 2;
+
 		this.stackedYData[i] = this.index === 0 ?
-			pointExtremes[1] :
-			pointExtremes[0];
+			pointExtremes[+reversedStacks] :
+			pointExtremes[+!reversedStacks];
 	}
 });
 
@@ -112,11 +115,16 @@ seriesType('streamgraph', 'areaspline', {
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts highstock
  * @apioption series.streamgraph.data
  */

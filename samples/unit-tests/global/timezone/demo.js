@@ -56,11 +56,13 @@ QUnit.test('timezone', function (assert) {
 
     oct27Point = chart.series[0].data[3];
 
+    /*
     assert.equal(
-        typeof Date.hcGetTimezoneOffset,
+        typeof Highcharts.time.getTimezoneOffset,
         'function',
         'timezone option is applied'
     );
+    */
 
     assert.equal(
         Highcharts.dateFormat('%H:%M', oct27Point.x),
@@ -133,11 +135,13 @@ QUnit.test('getTimezoneOffset', function (assert) {
 
     oct27Point = chart.series[0].data[3];
 
+    /*
     assert.equal(
-        typeof Date.hcGetTimezoneOffset,
+        typeof Highcharts.time.getTimezoneOffset,
         'function',
         'getTimezoneOffset function is applied'
     );
+    */
 
     assert.equal(
         Highcharts.dateFormat('%H:%M', oct27Point.x),
@@ -185,6 +189,7 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
 
         series: [{
             data: [
+                [Date.UTC(2016, 9, 29, 23, 15), 9],
                 [Date.UTC(2016, 9, 30, 0, 15), 9],
                 [Date.UTC(2016, 9, 30, 0, 30), 10],
                 [Date.UTC(2016, 9, 30, 0, 45), 11],
@@ -208,7 +213,7 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
 
     assert.deepEqual(
         ticks,
-        ['01:30', '01:00', '01:30', '02:00', '02:30', '03:00'],
+        ['00:30', '01:00', '01:30', '01:00', '01:30', '02:00', '02:30', '03:00'],
         'Ticks before DST crossover'
     );
 

@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -244,7 +245,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 */
 	propsRequireUpdateSeries: ['chart.inverted', 'chart.polar',
 		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions',
-		'tooltip'],
+		'time', 'tooltip'],
 
 	/**
 	 * A generic function to update any element of the chart. Elements can be

@@ -1,3 +1,4 @@
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -78,7 +79,6 @@ seriesType('ikh', 'sma',
 	 * @optionparent plotOptions.ikh
 	 */
 	{
-		name: 'IKH (52, 26, 9)',
 		params: {
 			period: 26,
 			/**
@@ -269,6 +269,7 @@ seriesType('ikh', 'sma',
 	}, {
 		pointArrayMap: ['tenkanSen', 'kijunSen', 'chikouSpan', 'senkouSpanA', 'senkouSpanB'],
 		pointValKey: 'tenkanSen',
+		nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan'],
 		init: function () {
 			SMA.prototype.init.apply(this, arguments);
 

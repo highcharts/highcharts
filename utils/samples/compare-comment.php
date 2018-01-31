@@ -70,6 +70,8 @@ $symbols = array('check', 'exclamation-sign');
 		</style>
 		<script>
 
+		var controller = window.parent && window.parent.controller;
+		var path = '<?php echo $path ?>';
 		$(function () {
 			$('#submit-actual').click(function () {
 				$('#diff').attr(
@@ -89,14 +91,16 @@ $symbols = array('check', 'exclamation-sign');
 			if (window.parent.frames[0]) {
 				var contentWin = (window.parent.parent || window.parent).frames[0],
 					contentDoc = contentWin.document,
-					sampleIndex = contentWin.samples.indexOf('<?php echo $path ?>'),
+					sampleIndex = contentWin.samples.indexOf(path),
 					li = contentDoc.getElementById('li' + sampleIndex);
 
 				// Sample is different but approved
 				<?php if ($comment->symbol === 'check' && $comment->diff == $diff): ?>
 					$(li).addClass('approved');
+					controller.updateStatus(path, 'success');
 				<?php else: ?>
 					$(li).removeClass('approved');
+					controller.updateStatus(path, 'error');
 				<?php endif; ?>
 
 				$('.comment', li).html("<i class='icon-<?php echo $comment->symbol ?>' title='<?php echo $comment->title ?>'></i>" +

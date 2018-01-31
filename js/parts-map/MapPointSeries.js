@@ -49,7 +49,12 @@ seriesType('mappoint', 'scatter', {
 // Point class
 }, {
 	applyOptions: function (options, x) {
-		var mergedOptions = options.lat !== undefined && options.lon !== undefined ? merge(options, this.series.chart.fromLatLonToPoint(options)) : options;
+		var mergedOptions = (
+			options.lat !== undefined &&
+			options.lon !== undefined ?
+				merge(options, this.series.chart.fromLatLonToPoint(options)) :
+				options
+		);
 		return Point.prototype.applyOptions.call(this, mergedOptions, x);
 	}
 });

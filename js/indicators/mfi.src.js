@@ -43,8 +43,8 @@ function calculateRawMoneyFlow(typicalPrice, volume) {
 H.seriesType('mfi', 'sma', 
 
 	/**
-	 * Money Flow Index. This series requires `linkedTo`
-	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 * Money Flow Index. This series requires `linkedTo` option to be set and
+	 * should be loaded after the `stock/indicators/indicators.js` file.
 	 *
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -55,8 +55,6 @@ H.seriesType('mfi', 'sma',
 	 */
 
 	{
-
-		name: 'Money Flow Index (14)',
 		/**
 		 * @excluding index
 		 */
@@ -83,6 +81,7 @@ H.seriesType('mfi', 'sma',
 
 		}
 	}, {
+		nameBase: 'Money Flow Index',
 		getValues: function (series, params) {
 			var period = params.period,
 				xVal = series.xData,
@@ -118,7 +117,11 @@ H.seriesType('mfi', 'sma',
 			}
 
 			// MFI requires high low and close values
-			if ((xVal.length <= period) || !isArray(yVal[0]) || yVal[0].length !== 4 || !yValVolume) {
+			if (
+				(xVal.length <= period) || !isArray(yVal[0]) ||
+				yVal[0].length !== 4 ||
+				!yValVolume
+			) {
 				return false;
 			}
 			// Calculate first typical price
@@ -130,7 +133,10 @@ H.seriesType('mfi', 'sma',
 				newTypicalPrice = calculateTypicalPrice(yVal[range]);
 				isUp = newTypicalPrice >= oldTypicalPrice ? true : false;
 				// Calculate raw money flow
-				rawMoneyFlow = calculateRawMoneyFlow(newTypicalPrice, yValVolume[range]);
+				rawMoneyFlow = calculateRawMoneyFlow(
+					newTypicalPrice,
+					yValVolume[range]
+				);
 				// Add to array
 				positiveMoneyFlow.push(isUp ? rawMoneyFlow : 0);
 				negativeMoneyFlow.push(isUp ? 0 : rawMoneyFlow);
@@ -146,7 +152,10 @@ H.seriesType('mfi', 'sma',
 					newTypicalPrice = calculateTypicalPrice(yVal[i]);
 					isUp = newTypicalPrice > oldTypicalPrice ? true : false;
 					// Calculate raw money flow
-					rawMoneyFlow = calculateRawMoneyFlow(newTypicalPrice, yValVolume[i]);
+					rawMoneyFlow = calculateRawMoneyFlow(
+						newTypicalPrice,
+						yValVolume[i]
+					);
 					// Add to array
 					positiveMoneyFlow.push(isUp ? rawMoneyFlow : 0);
 					negativeMoneyFlow.push(isUp ? 0 : rawMoneyFlow);
@@ -157,7 +166,10 @@ H.seriesType('mfi', 'sma',
 				positiveMoneyFlowSum = sumArray(positiveMoneyFlow);
 
 				moneyFlowRatio = positiveMoneyFlowSum / negativeMoneyFlowSum;
-				MFIPoint = toFixed(100 - (100 / (1 + moneyFlowRatio)), decimals);
+				MFIPoint = toFixed(
+					100 - (100 / (1 + moneyFlowRatio)),
+					decimals
+				);
 				MFI.push([xVal[i], MFIPoint]);
 				xData.push(xVal[i]);
 				yData.push(MFIPoint);

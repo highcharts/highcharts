@@ -228,6 +228,35 @@ if (!svg) {
 		return svg;
 	};
 
+	/**
+	 * VML namespaces can't be added until after complete. Listening
+	 * for Perini's doScroll hack is not enough.
+	 *
+	 * @todo: Move this to the oldie.js module.
+	 * @private
+	 */
+	Chart.prototype.isReadyToRender = function () {
+		var chart = this;
+
+		// Note: win == win.top is required
+		if (
+			!svg &&
+			(
+				win == win.top && // eslint-disable-line eqeqeq
+				doc.readyState !== 'complete'
+			) 
+		) {
+			doc.attachEvent('onreadystatechange', function () {
+				doc.detachEvent('onreadystatechange', chart.firstRender);
+				if (doc.readyState === 'complete') {
+					chart.firstRender();
+				}
+			});
+			return false;
+		}
+		return true;
+	};
+
 	// IE compatibility hack for generating SVG content that it doesn't really
 	// understand. Used by the exporting module.
 	if (!doc.createElementNS) {
@@ -1325,6 +1354,21 @@ if (!svg) {
 	// general renderer
 	H.Renderer = VMLRenderer;
 }
+
+SVGRenderer.prototype.getSpanWidth = function (wrapper, tspan) {
+	var renderer = this,
+		bBox = wrapper.getBBox(true),
+		actualWidth = bBox.width;
+
+	// Old IE cannot measure the actualWidth for SVG elements (#2314)
+	if (!svg && renderer.forExport) {
+		actualWidth = renderer.measureSpanWidth(
+			tspan.firstChild.data,
+			wrapper.styles
+		);
+	}
+	return actualWidth;
+};
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {

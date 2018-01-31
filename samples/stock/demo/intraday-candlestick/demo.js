@@ -1,5 +1,5 @@
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=new-intraday.json&callback=?', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/new-intraday.json', function (data) {
 
     // create the chart
     Highcharts.stockChart('container', {

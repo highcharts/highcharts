@@ -248,7 +248,7 @@ seriesType('sankey', 'column', {
 			var offset = 0;
 			for (var i = 0; i < column.length; i++) {
 				if (column[i] === node) {
-					return offset;
+					return offset + (node.options.offset || 0);
 				}
 				offset += column[i].getSum() * factor + nodePadding;
 			}
@@ -282,20 +282,22 @@ seriesType('sankey', 'column', {
 				i,
 				point;
 
-			// No links to this node, place it left
-			if (node.linksTo.length === 0) {
-				node.column = 0;
+			if (!H.defined(node.options.column)) {
+				// No links to this node, place it left
+				if (node.linksTo.length === 0) {
+					node.column = 0;
 
-			// There are incoming links, place it to the right of the
-			// highest order column that links to this one.
-			} else {
-				for (i = 0; i < node.linksTo.length; i++) {
-					point = node.linksTo[0];
-					if (point.fromNode.column > fromColumn) {
-						fromColumn = point.fromNode.column;
+				// There are incoming links, place it to the right of the
+				// highest order column that links to this one.
+				} else {
+					for (i = 0; i < node.linksTo.length; i++) {
+						point = node.linksTo[0];
+						if (point.fromNode.column > fromColumn) {
+							fromColumn = point.fromNode.column;
+						}
 					}
+					node.column = fromColumn + 1;
 				}
-				node.column = fromColumn + 1;
 			}
 
 			if (!columns[node.column]) {
@@ -596,6 +598,43 @@ seriesType('sankey', 'column', {
  */
 
 /**
+ * An optional column index of where to place the node. The default behaviour is
+ * to place it next to the preceding node.
+ *
+ * @type {Undefined|Number}
+ * @default undefined
+ * @sample highcharts/plotoptions/sankey-node-column/
+ *         Specified node column
+ * @product highcharts
+ * @since 6.0.5
+ * @apioption series.sankey.nodes.column
+ */
+
+/**
+ * The name to display for the node in data labels and tooltips. Use this when
+ * the name is different from the `id`. Where the id must be unique for each
+ * node, this is not necessary for the name.
+ *
+ * @type {String}
+ * @sample highcharts/css/sankey/ Sankey diagram with node options
+ * @product highcharts
+ * @apioption series.sankey.nodes.name
+ */
+
+/**
+ * The vertical offset of a node in terms of weight. Positive values shift the
+ * node downwards, negative shift it upwards.
+ *
+ * @type {Number}
+ * @default 0
+ * @sample highcharts/plotoptions/sankey-node-column/
+ *         Specified node offset
+ * @product highcharts
+ * @since 6.0.5
+ * @apioption series.sankey.nodes.offset
+ */
+
+/**
  * An array of data points for the series. For the `sankey` series type,
  * points can be given in the following way:
  * 
@@ -619,11 +658,16 @@ seriesType('sankey', 'column', {
  * @type {Array<Object|Array|Number>}
  * @extends series.line.data
  * @excluding drilldown,marker,x,y
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts
  * @apioption series.sankey.data
  */

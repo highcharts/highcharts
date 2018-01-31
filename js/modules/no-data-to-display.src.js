@@ -36,8 +36,8 @@ extend(defaultOptions.lang, {
 // Add default display options for message
 /**
  * Options for displaying a message like "No data to display". 
- * This feature requires the file no-data-to-display.js to be loaded in the page. 
- * The actual text to display is set in the lang.noData option.
+ * This feature requires the file no-data-to-display.js to be loaded in the
+ * page. The actual text to display is set in the lang.noData option.
  * @type {Object}
  * @optionparent noData
  */
@@ -148,7 +148,11 @@ each([
  * points on this series within the plot area.
  */
 H.Series.prototype.hasData = function () {
-	return this.visible && this.dataMax !== undefined && this.dataMin !== undefined; // #3703
+	return (
+		this.visible &&
+		this.dataMax !== undefined &&
+		this.dataMin !== undefined // #3703
+	);
 };
 
 /**
@@ -184,7 +188,11 @@ chartPrototype.showNoData = function (str) {
 
 		chart.noDataLabel.add();
 
-		chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
+		chart.noDataLabel.align(
+			extend(chart.noDataLabel.getBBox(), noDataOptions.position),
+			false,
+			'plotBox'
+		);
 	}
 };
 

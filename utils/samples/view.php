@@ -36,6 +36,11 @@ if ($boostCanvas) {
 	);
 }
 
+$md = false;
+if (is_file("$fsPath/readme.md")) {
+	$md = file_get_contents("$fsPath/readme.md");
+}
+
 $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $html);
 
 
@@ -507,6 +512,20 @@ function getResources() {
 
 			<?php echo $html ?>
 			</div>
+
+			<?php if ($md) { ?>
+			<div class="description" id="description">
+			</div>
+			<script src="https://cdn.rawgit.com/showdownjs/showdown/1.8.5/dist/showdown.min.js"></script>
+			<script>
+				var converter = new showdown.Converter(),
+    				md = `<?php echo str_replace('`', '\`', $md) ?>`,
+    				html = converter.makeHtml(md);
+				document.getElementById('description').innerHTML = html;
+			</script>
+			
+			<?php } ?>
+
 			<script>
 			setUp();
 			<?php echo $js; ?>

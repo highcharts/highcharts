@@ -41,7 +41,8 @@ defaultOptions.mapNavigation = {
 	 * option set.
 	 * 
 	 * @type {Object}
-	 * @sample {highmaps} maps/mapnavigation/button-theme/ Theming the navigation buttons
+	 * @sample {highmaps} maps/mapnavigation/button-theme/
+	 *         Theming the navigation buttons
 	 * @product highmaps
 	 */
 	buttonOptions: {
@@ -154,9 +155,10 @@ defaultOptions.mapNavigation = {
 	/**
 	 * The individual buttons for the map navigation. This usually includes
 	 * the zoom in and zoom out buttons. Properties for each button is
-	 * inherited from [mapNavigation.buttonOptions](#mapNavigation.buttonOptions),
-	 * while individual options can be overridden. But default, the `onclick`,
-	 *  `text` and `y` options are individual.
+	 * inherited from
+	 * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
+	 * individual options can be overridden. But default, the `onclick`, `text`
+	 * and `y` options are individual.
 	 * 
 	 * @type {Object}
 	 * @product highmaps
@@ -164,10 +166,11 @@ defaultOptions.mapNavigation = {
 	buttons: {
 
 		/**
-		 * Options for the zoom in button. Properties for the zoom in and
-		 * zoom out buttons are inherited from [mapNavigation.buttonOptions](#mapNavigation.
-		 * buttonOptions), while individual options can be overridden. By
-		 * default, the `onclick`, `text` and `y` options are individual.
+		 * Options for the zoom in button. Properties for the zoom in and zoom
+		 * out buttons are inherited from
+		 * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
+		 * individual options can be overridden. By default, the `onclick`,
+		 * `text` and `y` options are individual.
 		 * 
 		 * @type {Object}
 		 * @extends mapNavigation.buttonOptions
@@ -200,7 +203,8 @@ defaultOptions.mapNavigation = {
 			text: '+',
 
 			/**
-			 * The position of the zoomIn button relative to the vertical alignment.
+			 * The position of the zoomIn button relative to the vertical
+			 * alignment.
 			 * 
 			 * @type {Number}
 			 * @default 0
@@ -211,9 +215,10 @@ defaultOptions.mapNavigation = {
 
 		/**
 		 * Options for the zoom out button. Properties for the zoom in and
-		 * zoom out buttons are inherited from [mapNavigation.buttonOptions](#mapNavigation.
-		 * buttonOptions), while individual options can be overridden. By
-		 * default, the `onclick`, `text` and `y` options are individual.
+		 * zoom out buttons are inherited from
+		 * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
+		 * individual options can be overridden. By default, the `onclick`,
+		 * `text` and `y` options are individual.
 		 * 
 		 * @type {Object}
 		 * @extends mapNavigation.buttonOptions
@@ -246,7 +251,8 @@ defaultOptions.mapNavigation = {
 			text: '-',
 
 			/**
-			 * The position of the zoomOut button relative to the vertical alignment.
+			 * The position of the zoomOut button relative to the vertical
+			 * alignment.
 			 * 
 			 * @type {Number}
 			 * @default 28
@@ -305,7 +311,16 @@ H.maps = {};
 
 
 // Create symbols for the zoom buttons
-function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
+function selectiveRoundedRect(
+	x,
+	y,
+	w,
+	h,
+	rTopLeft,
+	rTopRight,
+	rBottomRight,
+	rBottomLeft
+) {
 	return [
 		'M', x + rTopLeft, y,
 		// top side
@@ -341,12 +356,13 @@ SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
 SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 	return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
 };
-// The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
-// VML browsers need this in order to generate shapes in export. Now share
+// The symbol callbacks are generated on the SVGRenderer object in all browsers.
+// Even VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
 if (Renderer === VMLRenderer) {
 	each(['topbutton', 'bottombutton'], function (shape) {
-		VMLRenderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
+		VMLRenderer.prototype.symbols[shape] =
+			SVGRenderer.prototype.symbols[shape];
 	});
 }
 
@@ -366,12 +382,13 @@ if (Renderer === VMLRenderer) {
  * @param  {Function} callback
  *         A function to execute when the chart object is finished loading and
  *         rendering. In most cases the chart is built in one thread, but in
- *         Internet Explorer version 8 or less the chart is sometimes initialized
- *         before the document is ready, and in these cases the chart object
- *         will not be finished synchronously. As a consequence, code that
- *         relies on the newly built Chart object should always run in the
- *         callback. Defining a {@link https://api.highcharts.com/highstock/chart.events.load|
- *         chart.event.load} handler is equivalent.
+ *         Internet Explorer version 8 or less the chart is sometimes
+ *         initialized before the document is ready, and in these cases the
+ *         chart object will not be finished synchronously. As a consequence,
+ *         code that relies on the newly built Chart object should always run in
+ *         the callback. Defining a
+ *         {@link https://api.highcharts.com/highstock/chart.events.load|chart.event.load}
+ *         handler is equivalent.
  *
  * @return {Chart}
  *         The chart object.
@@ -407,8 +424,15 @@ H.Map = H.mapChart = function (a, b, c) {
 				type: 'map'
 			},
 			credits: {
-				mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'),
-				mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
+				mapText: pick(
+					defaultCreditsOptions.mapText,
+					' \u00a9 <a href="{geojson.copyrightUrl}">' +
+						'{geojson.copyrightShort}</a>'
+				),
+				mapTextFull: pick(
+					defaultCreditsOptions.mapTextFull,
+					'{geojson.copyright}'
+				)
 			},
 			tooltip: {
 				followTouchMove: false

@@ -20,11 +20,11 @@ var areaProto = H.seriesTypes.area.prototype,
  * The area spline series is an area series where the graph between the points
  * is smoothed into a spline.
  * 
- * @extends plotOptions.area
+ * @extends   plotOptions.area
  * @excluding step
- * @sample {highcharts} highcharts/demo/areaspline/ Area spline chart
- * @sample {highstock} stock/demo/areaspline/ Area spline chart
- * @product highcharts highstock
+ * @sample    {highcharts} highcharts/demo/areaspline/ Area spline chart
+ * @sample    {highstock} stock/demo/areaspline/ Area spline chart
+ * @product   highcharts highstock
  * @apioption plotOptions.areaspline
  */
 seriesType('areaspline', 'spline', defaultPlotOptions.area, {
@@ -43,10 +43,10 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * areaspline](#plotOptions.areaspline).
  * 
- * @type {Object}
- * @extends series,plotOptions.areaspline
+ * @type      {Object}
+ * @extends   series,plotOptions.areaspline
  * @excluding dataParser,dataURL
- * @product highcharts highstock
+ * @product   highcharts highstock
  * @apioption series.areaspline
  */
 
@@ -79,8 +79,9 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  * 
  * 3.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.areaspline.turboThreshold),
- * this option is not available.
+ * points exceeds the series'
+ * [turboThreshold](#series.areaspline.turboThreshold), this option is not
+ * available.
  * 
  *  ```js
  *     data: [{
@@ -96,15 +97,18 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  *     }]
  *  ```
  * 
- * @type {Array<Object|Array|Number>}
- * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts highstock
+ * @type      {Array<Object|Array|Number>}
+ * @extends   series.line.data
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects
+ * @product   highcharts highstock
  * @apioption series.areaspline.data
  */
-
-

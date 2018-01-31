@@ -1,0 +1,110 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.main-container {
+  width: 100%;
+  height: 60%;
+  position: relative;
+  min-width: 380px;
+  min-height: 400px;
+  max-height: 600px;
+  overflow-x: hidden;
+}
+
+.highcharts-container {
+  padding: 0px;
+  margin: 0px;
+  width: 100%;
+  height: 100%;
+
+}
+
+.transition {
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
+
+@keyframes bounce {
+  from {
+    bottom: 100px;
+  }
+
+  to {
+    bottom: 95px;
+  }
+}
+
+.click-to-start {
+  text-align: left;
+  margin-bottom: 10px;
+  position: absolute;
+  right: 115px;
+  bottom: 140px;
+  z-index: 11;
+
+  animation-direction: alternate;
+  animation-duration: 1s;
+  animation-name: bounce;
+  animation-iteration-count: infinite;
+}
+
+.tooltip {
+  color: #fafafa;
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  z-index: 10;
+  right: 10px;
+  bottom: 60px;
+}
+
+#snowman {
+  cursor: pointer;
+}
+
+.bubble {
+  cursor: pointer;
+  border: 2px solid #339933;
+  line-height: 38px;
+  text-align: center;
+  font-size: 22px;
+  color: #242424;
+  position: relative;
+  width: 250px;
+  height: 40px;
+  padding: 0px;
+  padding-left: 20px;
+  background: #FFFFFF;
+  background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Speaker_Icon.svg/600px-Speaker_Icon.svg.png);
+  background-position: 10px 4px;
+  background-repeat: no-repeat;
+  background-size: auto 70%;
+  -webkit-border-radius: 37px;
+  -moz-border-radius: 37px;
+  border-radius: 37px;
+}
+
+.bubble:after {
+  border: 2px solid #339933;
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 15px 0 15px 15px;
+  border-color: transparent #FFFFFF;
+  display: block;
+  width: 0;
+  z-index: 1;
+  right: -8px;
+  top: 5px;
+}
+
+.unsupported {
+    font-size: 14px !important;
+    background-image: none !important;
+    padding-left: 10px !important;
+}

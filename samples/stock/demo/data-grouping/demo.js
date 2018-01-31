@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=large-dataset.json&callback=?', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/large-dataset.json', function (data) {
 
     // Create a timer
     var start = +new Date();

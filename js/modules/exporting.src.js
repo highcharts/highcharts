@@ -6,7 +6,7 @@
  * License: www.highcharts.com/license
  */
 
-/* eslint indent:0 */
+/* eslint indent:0, max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -665,9 +665,10 @@ defaultOptions.exporting = {
 			 * 
 			 * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down", "menu"]
 			 * @type {String}
-			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
-			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
-			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-symbol/ Use a circle for symbol
+			 * @sample highcharts/exporting/buttons-contextbutton-symbol/
+			 *         Use a circle for symbol
+			 * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
+			 *         Custom shape as symbol
 			 * @default menu
 			 * @since 2.0
 			 */
@@ -912,7 +913,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			.replace(/url\(("|&quot;)(\S+)("|&quot;)\)/g, 'url($2)')
 			.replace(/url\([^#]+#/g, 'url(#')
 			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
-			.replace(/ (NS[0-9]+\:)?href=/g, ' xlink:href=') // #3567
+			.replace(/ (|NS[0-9]+\:)href=/g, ' xlink:href=') // #3567
 			.replace(/\n/, ' ')
 			// Any HTML added to the container after the SVG (#894)
 			.replace(/<\/svg>.*?$/, '</svg>')
@@ -1437,7 +1438,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				/*= if (build.classic) { =*/
 				'stroke-linecap': 'round',
 				/*= } =*/
-				title: chart.options.lang[btnOptions._titleKey],
+				title: pick(chart.options.lang[btnOptions._titleKey], ''),
 				zIndex: 3 // #4955
 			});
 		button.menuClassName = options.menuClassName || 'highcharts-menu-' + chart.btnCount++;
@@ -1575,7 +1576,24 @@ Chart.prototype.inlineStyles = function () {
 		whitelist = renderer.inlineWhitelist, // For IE
 		unstyledElements = renderer.unstyledElements,
 		defaultStyles = {},
-		dummySVG;
+		dummySVG,
+		iframe,
+		iframeDoc;
+
+	// Create an iframe where we read default styles without pollution from this
+	// body
+	iframe = doc.createElement('iframe');
+	css(iframe, {
+		width: '1px',
+		height: '1px',
+		visibility: 'hidden'
+	});
+	doc.body.appendChild(iframe);
+	iframeDoc = iframe.contentWindow.document;
+	iframeDoc.open();
+	iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+	iframeDoc.close();
+
 	
 	/**
 	 * Make hyphenated property names out of camelCase
@@ -1629,8 +1647,13 @@ Chart.prototype.inlineStyles = function () {
 			}
 
 			if (!blacklisted) {
-				// If parent node has the same style, it gets inherited, no need to inline it
-				if (parentStyles[prop] !== val && defaultStyles[node.nodeName][prop] !== val) {
+				// If parent node has the same style, it gets inherited, no need
+				// to inline it. Top-level props should be diffed against parent
+				// (#7687).
+				if (
+					(parentStyles[prop] !== val || node.nodeName === 'svg') &&
+					defaultStyles[node.nodeName][prop] !== val
+				) {
 					// Attributes
 					if (inlineToAttributes.indexOf(prop) !== -1) {
 						node.setAttribute(hyphenate(prop), val);
@@ -1648,12 +1671,14 @@ Chart.prototype.inlineStyles = function () {
 
 			// Get default styles from the browser so that we don't have to add these
 			if (!defaultStyles[node.nodeName]) {
-				if (!dummySVG) {
+				/*if (!dummySVG) {
 					dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
 					dummySVG.setAttribute('version', '1.1');
 					doc.body.appendChild(dummySVG);
 				}
-				dummy = doc.createElementNS(node.namespaceURI, node.nodeName);
+				*/
+				dummySVG = iframeDoc.getElementsByTagName('svg')[0];
+				dummy = iframeDoc.createElementNS(node.namespaceURI, node.nodeName);
 				dummySVG.appendChild(dummy);
 				defaultStyles[node.nodeName] = merge(win.getComputedStyle(dummy, null)); // Copy, so we can remove the node
 				dummySVG.removeChild(dummy);

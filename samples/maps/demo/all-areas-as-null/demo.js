@@ -1,13 +1,14 @@
-
-// Instanciate the map
+// Instantiate the map
 Highcharts.mapChart('container', {
     chart: {
+        map: 'custom/europe',
         borderWidth: 1
     },
 
     title: {
         text: 'Nordic countries'
     },
+
     subtitle: {
         text: 'Demo of drawing all areas in the map, only highlighting partial data'
     },
@@ -18,7 +19,6 @@ Highcharts.mapChart('container', {
 
     series: [{
         name: 'Country',
-        mapData: Highcharts.maps['custom/europe'],
         data: [
             ['is', 1],
             ['no', 1],

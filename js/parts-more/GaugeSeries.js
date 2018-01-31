@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -25,10 +26,13 @@ var each = H.each,
  * Gauges are circular plots displaying one or more values with a dial pointing
  * to values along the perimeter.
  *
- * @sample highcharts/demo/gauge-speedometer/ Gauge chart
- * @extends {plotOptions.line}
- * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,marker,pointPlacement,softThreshold,stacking,step,threshold,turboThreshold,zoneAxis,zones
- * @product highcharts
+ * @sample       highcharts/demo/gauge-speedometer/ Gauge chart
+ * @extends      {plotOptions.line}
+ * @excluding    animationLimit,boostThreshold,connectEnds,connectNulls,
+ *               cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
+ *               marker,negativeColor,pointPlacement,shadow,softThreshold,
+ *               stacking,states,step,threshold,turboThreshold,zoneAxis,zones
+ * @product      highcharts
  * @optionparent plotOptions.gauge
  */
 seriesType('gauge', 'line', {
@@ -37,9 +41,9 @@ seriesType('gauge', 'line', {
 	 * Data labels for the gauge. For gauges, the data labels are enabled
 	 * by default and shown in a bordered box below the point.
 	 * 
-	 * @type {Object}
+	 * @type    {Object}
 	 * @extends plotOptions.series.dataLabels
-	 * @since 2.3.0
+	 * @since   2.3.0
 	 * @product highcharts
 	 */
 	dataLabels: {
@@ -47,8 +51,7 @@ seriesType('gauge', 'line', {
 		/**
 		 * Enable or disable the data labels.
 		 * 
-		 * @type {Boolean}
-		 * @since 2.3.0
+		 * @since   2.3.0
 		 * @product highcharts highmaps
 		 */
 		enabled: true,
@@ -59,9 +62,7 @@ seriesType('gauge', 'line', {
 		 * The y position offset of the label relative to the center of the
 		 * gauge.
 		 * 
-		 * @type {Number}
-		 * @default 15
-		 * @since 2.3.0
+		 * @since   2.3.0
 		 * @product highcharts highmaps
 		 */
 		y: 15,
@@ -69,9 +70,7 @@ seriesType('gauge', 'line', {
 		/**
 		 * The border radius in pixels for the gauge's data label.
 		 * 
-		 * @type {Number}
-		 * @default 3
-		 * @since 2.3.0
+		 * @since   2.3.0
 		 * @product highcharts highmaps
 		 */
 		borderRadius: 3,
@@ -81,8 +80,6 @@ seriesType('gauge', 'line', {
 		/**
 		 * The vertical alignment of the data label.
 		 * 
-		 * @type {String}
-		 * @default top
 		 * @product highcharts highmaps
 		 */
 		verticalAlign: 'top',
@@ -91,9 +88,7 @@ seriesType('gauge', 'line', {
 		 * The Z index of the data labels. A value of 2 display them behind
 		 * the dial.
 		 * 
-		 * @type {Number}
-		 * @default 2
-		 * @since 2.1.5
+		 * @since   2.1.5
 		 * @product highcharts highmaps
 		 */
 		zIndex: 2,
@@ -103,9 +98,7 @@ seriesType('gauge', 'line', {
 		/**
 		 * The border width in pixels for the gauge data label.
 		 * 
-		 * @type {Number}
-		 * @default 1
-		 * @since 2.3.0
+		 * @since   2.3.0
 		 * @product highcharts highmaps
 		 */
 		borderWidth: 1,
@@ -113,9 +106,9 @@ seriesType('gauge', 'line', {
 		/**
 		 * The border color for the data label.
 		 * 
-		 * @type {Color}
+		 * @type    {Color}
 		 * @default #cccccc
-		 * @since 2.3.0
+		 * @since   2.3.0
 		 * @product highcharts highmaps
 		 */
 		borderColor: '${palette.neutralColor20}'
@@ -125,12 +118,12 @@ seriesType('gauge', 'line', {
 	/**
 	 * Options for the dial or arrow pointer of the gauge.
 	 * 
-	 * In styled mode, the dial is styled with the `.highcharts-gauge-
-	 * series .highcharts-dial` rule.
+	 * In styled mode, the dial is styled with the
+	 * `.highcharts-gauge-series .highcharts-dial` rule.
 	 * 
-	 * @type {Object}
-	 * @sample {highcharts} highcharts/css/gauge/ Styled mode
-	 * @since 2.3.0
+	 * @type    {Object}
+	 * @sample  {highcharts} highcharts/css/gauge/ Styled mode
+	 * @since   2.3.0
 	 * @product highcharts
 	 */
 	
@@ -141,12 +134,12 @@ seriesType('gauge', 'line', {
 		 * The length of the dial's base part, relative to the total radius
 		 * or length of the dial.
 		 * 
-		 * @type {String}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-		 *         Dial options demonstrated
-		 * @default 70%
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {String}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+		 *            Dial options demonstrated
+		 * @default   70%
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.dial.baseLength
 		 */
 		
@@ -154,12 +147,12 @@ seriesType('gauge', 'line', {
 		 * The pixel width of the base of the gauge dial. The base is the part
 		 * closest to the pivot, defined by baseLength.
 		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-		 *         Dial options demonstrated
-		 * @default 3
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {Number}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+		 *            Dial options demonstrated
+		 * @default   3
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.dial.baseWidth
 		 */
 		
@@ -167,12 +160,12 @@ seriesType('gauge', 'line', {
 		 * The radius or length of the dial, in percentages relative to the
 		 * radius of the gauge itself.
 		 * 
-		 * @type {String}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-		 *         Dial options demonstrated
-		 * @default 80%
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {String}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+		 *            Dial options demonstrated
+		 * @default   80%
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.dial.radius
 		 */
 		
@@ -180,11 +173,12 @@ seriesType('gauge', 'line', {
 		 * The length of the dial's rear end, the part that extends out on the
 		 * other side of the pivot. Relative to the dial's length.
 		 * 
-		 * @type {String}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
-		 * @default 10%
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {String}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+		 *            Dial options demonstrated
+		 * @default   10%
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.dial.rearLength
 		 */
 		
@@ -192,11 +186,12 @@ seriesType('gauge', 'line', {
 		 * The width of the top of the dial, closest to the perimeter. The pivot
 		 * narrows in from the base to the top.
 		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
-		 * @default 1
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {Number}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+		 *            Dial options demonstrated
+		 * @default   1
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.dial.topWidth
 		 */
 		
@@ -205,11 +200,12 @@ seriesType('gauge', 'line', {
 		/**
 		 * The background or fill color of the gauge's dial.
 		 * 
-		 * @type {Color}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
-		 * @default #000000
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {Color}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+		 *            Dial options demonstrated
+		 * @default   #000000
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.dial.backgroundColor
 		 */
 		
@@ -217,22 +213,24 @@ seriesType('gauge', 'line', {
 		 * The border color or stroke of the gauge's dial. By default, the borderWidth
 		 * is 0, so this must be set in addition to a custom border color.
 		 * 
-		 * @type {Color}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
-		 * @default #cccccc
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {Color}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+		 *            Dial options demonstrated
+		 * @default   #cccccc
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.dial.borderColor
 		 */
 		
 		/**
 		 * The width of the gauge dial border in pixels.
 		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-dial/ Dial options demonstrated
-		 * @default 0
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {Number}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+		 *            Dial options demonstrated
+		 * @default   0
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.dial.borderWidth
 		 */
 		/*= } =*/
@@ -244,25 +242,25 @@ seriesType('gauge', 'line', {
 	 * many degrees. Say if the gauge axis goes from 0 to 60, a value of
 	 * 100, or 1000, will show 5 degrees beyond the end of the axis.
 	 * 
-	 * @type {Number}
-	 * @see [wrap](#plotOptions.gauge.wrap)
-	 * @sample {highcharts} highcharts/plotoptions/gauge-overshoot/
-	 *         Allow 5 degrees overshoot
-	 * @default 0
-	 * @since 3.0.10
-	 * @product highcharts
+	 * @type      {Number}
+	 * @see       [wrap](#plotOptions.gauge.wrap)
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-overshoot/
+	 *            Allow 5 degrees overshoot
+	 * @default   0
+	 * @since     3.0.10
+	 * @product   highcharts
 	 * @apioption plotOptions.gauge.overshoot
 	 */
 
 	/**
 	 * Options for the pivot or the center point of the gauge.
 	 * 
-	 * In styled mode, the pivot is styled with the `.highcharts-gauge-
-	 * series .highcharts-pivot` rule.
+	 * In styled mode, the pivot is styled with the
+	 * `.highcharts-gauge-series .highcharts-pivot` rule.
 	 * 
-	 * @type {Object}
-	 * @sample {highcharts} highcharts/css/gauge/ Styled mode
-	 * @since 2.3.0
+	 * @type    {Object}
+	 * @sample  {highcharts} highcharts/css/gauge/ Styled mode
+	 * @since   2.3.0
 	 * @product highcharts
 	 */	
 	pivot: {
@@ -270,11 +268,12 @@ seriesType('gauge', 'line', {
 		/**
 		 * The pixel radius of the pivot.
 		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
-		 * @default 5
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {Number}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
+		 *            Pivot options demonstrated
+		 * @default   5
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.pivot.radius
 		 */
 		
@@ -283,11 +282,12 @@ seriesType('gauge', 'line', {
 		/**
 		 * The border or stroke width of the pivot.
 		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
-		 * @default 0
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {Number}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
+		 *            Pivot options demonstrated
+		 * @default   0
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.pivot.borderWidth
 		 */
 		
@@ -296,22 +296,24 @@ seriesType('gauge', 'line', {
 		 * the borderWidth must also be set to something other than the default
 		 * 0.
 		 * 
-		 * @type {Color}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
-		 * @default #cccccc
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {Color}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
+		 *            Pivot options demonstrated
+		 * @default   #cccccc
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.pivot.borderColor
  		*/
 
 		/**
 		 * The background color or fill of the pivot.
 		 * 
-		 * @type {Color}
-		 * @sample {highcharts} highcharts/plotoptions/gauge-pivot/ Pivot options demonstrated
-		 * @default #000000
-		 * @since 2.3.0
-		 * @product highcharts
+		 * @type      {Color}
+		 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
+		 *            Pivot options demonstrated
+		 * @default   #000000
+		 * @since     2.3.0
+		 * @product   highcharts
 		 * @apioption plotOptions.gauge.pivot.backgroundColor
 		 */
 		/*= } =*/
@@ -325,8 +327,7 @@ seriesType('gauge', 'line', {
 	 * Whether to display this particular series or series type in the
 	 * legend. Defaults to false for gauge series.
 	 * 
-	 * @type {Boolean}
-	 * @since 2.3.0
+	 * @since   2.3.0
 	 * @product highcharts
 	 */
 	showInLegend: false
@@ -336,11 +337,11 @@ seriesType('gauge', 'line', {
 	 * instance, in a full-range gauge going from 0 to 360, a value of 400
 	 * will point to 40\. When `wrap` is `false`, the dial stops at 360.
 	 * 
-	 * @type {Boolean}
-	 * @see [overshoot](#plotOptions.gauge.overshoot)
-	 * @default true
-	 * @since 3.0
-	 * @product highcharts
+	 * @type      {Boolean}
+	 * @see       [overshoot](#plotOptions.gauge.overshoot)
+	 * @default   true
+	 * @since     3.0
+	 * @product   highcharts
 	 * @apioption plotOptions.gauge.wrap
 	 */
 
@@ -348,8 +349,8 @@ seriesType('gauge', 'line', {
 
 // Prototype members
 }, {
-	// chart.angular will be set to true when a gauge series is present, and this will
-	// be used on the axes
+	// chart.angular will be set to true when a gauge series is present,
+	// and this will be used on the axes
 	angular: true,
 	directTouch: true, // #5063
 	drawGraph: noop,
@@ -373,21 +374,31 @@ seriesType('gauge', 'line', {
 		each(series.points, function (point) {
 
 			var dialOptions = merge(options.dial, point.dial),
-				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
-				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
-				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
+				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) /
+					200,
+				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) /
+					100,
+				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) /
+					100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1,
 				overshoot = options.overshoot,
-				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
+				rotation = yAxis.startAngleRad +
+					yAxis.translate(point.y, null, null, null, true);
 
 			// Handle the wrap and overshoot options
 			if (isNumber(overshoot)) {
 				overshoot = overshoot / 180 * Math.PI;
-				rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));
+				rotation = Math.max(
+					yAxis.startAngleRad - overshoot,
+					Math.min(yAxis.endAngleRad + overshoot, rotation)
+				);
 
 			} else if (options.wrap === false) {
-				rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
+				rotation = Math.max(
+					yAxis.startAngleRad,
+					Math.min(yAxis.endAngleRad, rotation)
+				);
 			}
 
 			rotation = rotation * 180 / Math.PI;
@@ -441,7 +452,8 @@ seriesType('gauge', 'line', {
 			} else {
 				point.graphic = renderer[point.shapeType](shapeArgs)
 					.attr({
-						rotation: shapeArgs.rotation, // required by VML when animation is false
+						// required by VML when animation is false
+						rotation: shapeArgs.rotation,
 						zIndex: 1
 					})
 					.addClass('highcharts-dial')
@@ -452,7 +464,8 @@ seriesType('gauge', 'line', {
 				point.graphic.attr({
 					stroke: dialOptions.borderColor || 'none',
 					'stroke-width': dialOptions.borderWidth || 0,
-					fill: dialOptions.backgroundColor || '${palette.neutralColor100}'
+					fill: dialOptions.backgroundColor ||
+						'${palette.neutralColor100}'
 				});
 				/*= } =*/
 			}
@@ -477,8 +490,10 @@ seriesType('gauge', 'line', {
 			// Presentational attributes
 			series.pivot.attr({
 				'stroke-width': pivotOptions.borderWidth || 0,
-				stroke: pivotOptions.borderColor || '${palette.neutralColor20}',
-				fill: pivotOptions.backgroundColor || '${palette.neutralColor100}'
+				stroke: pivotOptions.borderColor ||
+					'${palette.neutralColor20}',
+				fill: pivotOptions.backgroundColor ||
+					'${palette.neutralColor100}'
 			});
 			/*= } =*/
 		}
@@ -525,8 +540,8 @@ seriesType('gauge', 'line', {
 	},
 
 	/**
-	 * Extend the basic setData method by running processData and generatePoints immediately,
-	 * in order to access the points from the legend.
+	 * Extend the basic setData method by running processData and generatePoints
+	 * immediately, in order to access the points from the legend.
 	 */
 	setData: function (data, redraw) {
 		Series.prototype.setData.call(this, data, false);
@@ -558,13 +573,13 @@ seriesType('gauge', 'line', {
  * 
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * gauge](#plotOptions.gauge).
+ * To apply to all series of this specific type, apply it to
+ * [plotOptions.gauge](#plotOptions.gauge).
  * 
- * @type {Object}
- * @extends series,plotOptions.gauge
- * @excluding dataParser,dataURL,stack
- * @product highcharts
+ * @type      {Object}
+ * @extends   series,plotOptions.gauge
+ * @excluding dataParser,dataURL,stack,stacking
+ * @product   highcharts
  * @apioption series.gauge
  */
 
@@ -597,14 +612,19 @@ seriesType('gauge', 'line', {
  * 
  * The typical gauge only contains a single data value.
  * 
- * @type {Array<Object|Number>}
- * @extends series.line.data
+ * @type      {Array<Object|Number>}
+ * @extends   series.line.data
  * @excluding drilldown,marker,x
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects
+ * @product   highcharts
  * @apioption series.gauge.data
  */

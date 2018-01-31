@@ -33,7 +33,6 @@ var onSeriesMixin = {
 			i = onData && onData.length,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
-			xAxisExt = xAxis.getExtremes(),
 			xOffset = 0,
 			leftPoint,
 			lastX,
@@ -97,12 +96,14 @@ var onSeriesMixin = {
 
 			var stackIndex;
 
+			point.plotX += xOffset; // #2049
+
 			// Undefined plotY means the point is either on axis, outside series
 			// range or hidden series. If the series is outside the range of the
 			// x axis it should fall through with an undefined plotY, but then
 			// we must remove the shapeArgs (#847).
 			if (point.plotY === undefined) {
-				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) {
+				if (point.plotX >= 0 && point.plotX <= xAxis.len) {
 					// we're inside xAxis range
 					point.plotY = chart.chartHeight - xAxis.bottom -
 						(xAxis.opposite ? xAxis.height : 0) +
@@ -111,7 +112,7 @@ var onSeriesMixin = {
 					point.shapeArgs = {}; // 847
 				}
 			}
-			point.plotX += xOffset; // #2049
+
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];
 			if (lastPoint && lastPoint.plotX === point.plotX) {

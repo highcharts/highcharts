@@ -1,3 +1,4 @@
+/* eslint max-len: 0 */
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -23,7 +24,6 @@ H.seriesType('rsi', 'sma',
 		 * @optionparent plotOptions.rsi
 		 */
 	{
-		name: 'RSI (14)',
 		/**
 		 * @excluding index
 		 */

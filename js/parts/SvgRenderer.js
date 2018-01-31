@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -560,7 +561,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
 		// In accordance with animate, run a complete callback
 		if (complete) {
-			complete();
+			complete.call(this);
 		}
 
 		return ret;
@@ -817,10 +818,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				delete styles.width;
 			}
 
-			// serialize and set style attribute
-			if (isMS && !svg) {
-				css(this.element, styles);
-			} else {
+			// Serialize and set style attribute
+			if (elem.namespaceURI === this.SVG_NS) { // #7633
 				hyphenate = function (a, b) {
 					return '-' + b.toLowerCase();
 				};
@@ -834,6 +833,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				if (serializedCss) {
 					attr(elem, 'style', serializedCss); // #1881
 				}
+			} else {
+				css(elem, styles);
 			}
 
 
@@ -1489,34 +1490,35 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				wrapper.parentGroup,
 			grandParent,
 			ownerSVGElement = element.ownerSVGElement,
-			i;
+			i,
+			clipPath = wrapper.clipPath;
 
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover =
 			element.onmousemove = element.point = null;
 		stop(wrapper); // stop running animations
 
-		if (wrapper.clipPath && ownerSVGElement) {
+		if (clipPath && ownerSVGElement) {
 			// Look for existing references to this clipPath and remove them
 			// before destroying the element (#6196).
 			each(
 				// The upper case version is for Edge
 				ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
 				function (el) {
+					var clipPathAttr = el.getAttribute('clip-path'),
+						clipPathId = clipPath.element.id;
 					// Include the closing paranthesis in the test to rule out
-					// id's from 10 and above (#6550)
-					if (el
-						.getAttribute('clip-path')
-						.match(RegExp(
-							// Edge puts quotes inside the url, others not
-							'[\("]#' + wrapper.clipPath.element.id + '[\)"]'
-						))
+					// id's from 10 and above (#6550). Edge puts quotes inside
+					// the url, others not.
+					if (
+						clipPathAttr.indexOf('(#' + clipPathId + ')') > -1 ||
+						clipPathAttr.indexOf('("#' + clipPathId + '")') > -1
 					) {
 						el.removeAttribute('clip-path');
 					}
 				}
 			);
-			wrapper.clipPath = wrapper.clipPath.destroy();
+			wrapper.clipPath = clipPath.destroy();
 		}
 
 		// Destroy stops in case this is a gradient object
@@ -1770,7 +1772,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		titleNode.appendChild(
 			doc.createTextNode(
 				// #3276, #3895
-				(String(pick(value), '')).replace(/<[^>]*>/g, '')
+				(String(pick(value), ''))
+					.replace(/<[^>]*>/g, '')
+					.replace(/&lt;/g, '<')
+					.replace(/&gt;/g, '>')
 			)
 		);
 	},
@@ -1847,8 +1852,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				if (otherElement !== element) {
 					if (
 						// Negative zIndex versus no zIndex:
-						// On all levels except the highest. If the parent is <svg>,
-						// then we don't want to put items before <desc> or <defs>
+						// On all levels except the highest. If the parent is
+						// <svg>, then we don't want to put items before <desc>
+						// or <defs>
 						(value < 0 && undefinedOtherZIndex && !svgParent && !i)
 					) {
 						parentNode.insertBefore(element, childNodes[i]);
@@ -1856,8 +1862,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 					} else if (
 						// Insert after the first element with a lower zIndex
 						pInt(otherZIndex) <= value ||
-						// If negative zIndex, add this before first undefined zIndex element
-						(undefinedOtherZIndex && (!defined(value) || value >= 0))
+						// If negative zIndex, add this before first undefined
+						// zIndex element
+						(
+							undefinedOtherZIndex &&
+							(!defined(value) || value >= 0)
+						)
 					) {
 						parentNode.insertBefore(
 							element,
@@ -2248,19 +2258,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		};
 	},
 	
-	getSpanWidth: function (wrapper, tspan) {
-		var renderer = this,
-			bBox = wrapper.getBBox(true),
-			actualWidth = bBox.width;
-
-		// Old IE cannot measure the actualWidth for SVG elements (#2314)
-		if (!svg && renderer.forExport) {
-			actualWidth = renderer.measureSpanWidth(
-				tspan.firstChild.data,
-				wrapper.styles
-			);
-		}
-		return actualWidth;
+	/**
+	 * Extendable function to measure the tspan width.
+	 *
+	 * @private
+	 */
+	getSpanWidth: function (wrapper) {
+		return wrapper.getBBox(true).width;
 	},
 	
 	applyEllipsis: function (wrapper, tspan, text, width) {
@@ -2376,12 +2380,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 						tspan.getAttribute('style') ? tspan : textNode
 					).h;
 			},
-			unescapeEntities = function (inputStr) {
+			unescapeEntities = function (inputStr, except) {
 				objectEach(renderer.escapes, function (value, key) {
-					inputStr = inputStr.replace(
-						new RegExp(value, 'g'),
-						key
-					);
+					if (!except || inArray(value, except) === -1) {
+						inputStr = inputStr.toString().replace(
+							new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
+							key
+						);
+					}
 				});
 				return inputStr;
 			};
@@ -2553,11 +2559,34 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 								);
 							}
 
-							/* 
+							/*
+							// Experimental text wrapping based on
+							// getSubstringLength
 							if (width) {
-								renderer.breakText(wrapper, width);
+								var spans = renderer.breakText(wrapper, width);
+
+								each(spans, function (span) {
+
+									var dy = getLineHeight(tspan);
+									tspan = doc.createElementNS(
+										SVG_NS,
+										'tspan'
+									);
+									tspan.appendChild(
+										doc.createTextNode(span)
+									);
+									attr(tspan, {
+										dy: dy,
+										x: parentX
+									});
+									if (spanStyle) { // #390
+										attr(tspan, 'style', spanStyle);
+									}
+									textNode.appendChild(tspan);
+								});
+
 							}
-							*/
+							// */
 
 							// Check width and apply soft breaks or ellipsis
 							if (width) {
@@ -2647,6 +2676,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 							}
 
 							spanNo++;
+							// */
 						}
 					}
 				});
@@ -2659,7 +2689,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			});
 
 			if (wasTooLong) {
-				wrapper.attr('title', wrapper.textStr);
+				wrapper.attr(
+					'title',
+					unescapeEntities(wrapper.textStr, ['&lt;', '&gt;']) // #7179
+				);
 			}
 			if (tempParent) {
 				tempParent.removeChild(textNode);
@@ -2678,40 +2711,56 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	breakText: function (wrapper, width) {
 		var bBox = wrapper.getBBox(),
 			node = wrapper.element,
-			textLength = node.textContent.length,
+			charnum = node.textContent.length,
+			stringWidth,
 			// try this position first, based on average character width
-			pos = Math.round(width * textLength / bBox.width),
+			guessedLineCharLength = Math.round(width * charnum / bBox.width),
+			pos = guessedLineCharLength,
+			spans = [],
 			increment = 0,
-			finalPos;
+			startPos = 0,
+			endPos,
+			safe = 0;
 
 		if (bBox.width > width) {
-			while (finalPos === undefined) {
-				textLength = node.getSubStringLength(0, pos);
+			while (startPos < charnum && safe < 100) {
 
-				if (textLength <= width) {
-					if (increment === -1) {
-						finalPos = pos;
+				while (endPos === undefined && safe < 100) {
+					stringWidth = node.getSubStringLength(
+						startPos,
+						pos - startPos
+					);
+
+					if (stringWidth <= width) {
+						if (increment === -1) {
+							endPos = pos;
+						} else {
+							increment = 1;
+						}
 					} else {
-						increment = 1;
+						if (increment === 1) {
+							endPos = pos - 1;
+						} else {
+							increment = -1;
+						}
 					}
-				} else {
-					if (increment === 1) {
-						finalPos = pos - 1;
-					} else {
-						increment = -1;
-					}
+					pos += increment;
+					safe++;
 				}
-				pos += increment;
+
+				spans.push(
+					node.textContent.substr(startPos, endPos - startPos)
+				);
+
+				startPos = endPos;
+				pos = startPos + guessedLineCharLength;
+				endPos = undefined;			
 			}
 		}
-		console.log(
-			'width',
-			width,
-			'stringWidth',
-			node.getSubStringLength(0, finalPos)
-		)
+
+		return spans;
 	},
-	*/
+	// */
 
 	/**
 	 * Returns white for dark colors and black for bright colors.

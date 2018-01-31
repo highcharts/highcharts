@@ -97,7 +97,11 @@ H.Tick.prototype = {
 					null;
 
 			// Un-rotated length
-			tick.labelLength = label && label.getBBox().width;
+			if (label) {
+				label.textPxLength = label.getBBox().width;	
+			}
+			
+
 			// Base value to detect change for new calls to getBBox
 			tick.rotation = 0;
 
@@ -156,7 +160,8 @@ H.Tick.prototype = {
 			rightPos = pxPos + (1 - factor) * labelWidth;
 
 			if (leftPos < leftBound) {
-				modifiedSlotWidth = xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
+				modifiedSlotWidth =
+					xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
 			} else if (rightPos > rightBound) {
 				modifiedSlotWidth =
 					rightBound - xy.x + modifiedSlotWidth * factor;

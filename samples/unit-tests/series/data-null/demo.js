@@ -40,3 +40,33 @@ QUnit.test('Zeroes on log axis', function (assert) {
         'Gap detected'
     );
 });
+
+QUnit.test('X is null (#7515)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        series: [{
+            data: [{
+                x: 100,
+                y: 100
+            }]
+        }, {
+            data: [{
+                x: null,
+                y: 95
+            }]
+        }]
+
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[100].label.element.textContent,
+        '100',
+        'X axis should be rendered for the first series'
+    );
+
+    assert.strictEqual(
+        chart.yAxis[0].ticks[100].label.element.textContent,
+        '100',
+        'X axis should be rendered for the first series'
+    );
+});

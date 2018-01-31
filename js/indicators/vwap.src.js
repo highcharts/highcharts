@@ -5,7 +5,7 @@
  *
  * License: www.highcharts.com/license
  */
-
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -33,7 +33,6 @@ seriesType('vwap', 'sma',
 	 * @optionparent plotOptions.vwap
 	 */
 	{
-		name: 'VWAP (30)',
 		/**
 		 * @excluding index
 		 */

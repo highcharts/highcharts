@@ -1,3 +1,4 @@
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -40,7 +41,6 @@ seriesType('ema', 'sma',
 	 * @optionparent plotOptions.ema
 	 */
 	{
-		name: 'EMA (14)',
 		params: {
 			index: 0,
 			period: 14

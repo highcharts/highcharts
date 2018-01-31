@@ -1,3 +1,4 @@
+/* eslint max-len: 0 */
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -21,7 +22,6 @@ H.seriesType('priceenvelopes', 'sma',
 	 * @optionparent plotOptions.priceenvelopes
 	 */
 	{
-		name: 'Price envelopes (20, 0.1, 0.1)',
 		marker: {
 			enabled: false
 		},
@@ -116,6 +116,8 @@ H.seriesType('priceenvelopes', 'sma',
 			approximation: 'averages'
 		}
 	}, /** @lends Highcharts.Series.prototype */ {
+		nameComponents: ['period', 'topBand', 'bottomBand'],
+		nameBase: 'Price envelopes',
 		pointArrayMap: ['top', 'middle', 'bottom'],
 		parallelArrays: ['x', 'y', 'top', 'bottom'],
 		pointValKey: 'middle',

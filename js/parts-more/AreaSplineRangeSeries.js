@@ -17,12 +17,12 @@ var seriesType = H.seriesType,
  * the graph outlining the area is a smoothed spline. Requires
  * `highcharts-more.js`.
  * 
- * @extends plotOptions.arearange
+ * @extends   plotOptions.arearange
  * @excluding step
- * @since 2.3.0
- * @sample {highstock} stock/demo/areasplinerange/ Area spline range
- * @sample {highstock} stock/demo/areasplinerange/ Area spline range
- * @product highcharts highstock
+ * @since     2.3.0
+ * @sample    {highstock|highstock} stock/demo/areasplinerange/
+ *            Area spline range
+ * @product   highcharts highstock
  * @apioption plotOptions.areasplinerange
  */
 seriesType('areasplinerange', 'arearange', null, {
@@ -30,19 +30,18 @@ seriesType('areasplinerange', 'arearange', null, {
 });
 
 /**
- * A `areasplinerange` series. If the [type](#series.areasplinerange.
- * type) option is not specified, it is inherited from [chart.type](#chart.
- * type).
+ * A `areasplinerange` series. If the [type](#series.areasplinerange.type)
+ * option is not specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.
  * To apply to all series of this specific type, apply it to [plotOptions.
  * areasplinerange](#plotOptions.areasplinerange).
  * 
- * @type {Object}
- * @extends series,plotOptions.areasplinerange
+ * @type      {Object}
+ * @extends   series,plotOptions.areasplinerange
  * @excluding dataParser,dataURL,stack
- * @product highcharts highstock
+ * @product   highcharts highstock
  * @apioption series.areasplinerange
  */
 
@@ -87,13 +86,18 @@ seriesType('areasplinerange', 'arearange', null, {
  *     }]
  *  ```
  * 
- * @type {Array<Object|Array>}
- * @extends series.arearange.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts highstock
+ * @type      {Array<Object|Array>}
+ * @extends   series.arearange.data
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects
+ * @product   highcharts highstock
  * @apioption series.areasplinerange.data
  */

@@ -40,4 +40,16 @@ QUnit.test('variable-pie', function (assert) {
         7,
         'removePoint'
     );
+
+
+    chart.series[0].setData([27, 38, 22, 11, 2]);
+    var pos = [
+        chart.series[0].data[4].dataLabel.x,
+        chart.series[0].data[4].dataLabel.y
+    ];
+    assert.ok(
+        !isNaN(pos[0]) && !isNaN(pos[1]),
+        'dataLabel drawn correctly'
+    );
+
 });

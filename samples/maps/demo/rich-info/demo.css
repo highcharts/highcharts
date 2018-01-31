@@ -6,6 +6,7 @@
     width: 1000px;
     margin: 0 auto;
     padding: 0;
+    overflow:visible;
 }
 #container {
     float: left;
@@ -30,4 +31,15 @@
 
 #info h4 {
     margin: 1em 0 0 0;
+}
+
+@media screen and (max-width: 920px) {
+    #wrapper, #container,  #info {
+        float: none;
+        width: 100%;
+        height: auto;
+        margin: 0.5em 0;
+        padding: 0;
+        border: none;
+    }
 }

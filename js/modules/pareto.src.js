@@ -24,7 +24,7 @@ var each = H.each,
  */
 
 /**
- * A pareto diagram is a type of chart that contains both bars and a line graph, 
+ * A pareto diagram is a type of chart that contains both bars and a line graph,
  * where individual values are represented in descending order by bars, 
  * and the cumulative total is represented by the line.
  * 
@@ -35,9 +35,10 @@ var each = H.each,
  * @since 6.0.0
  * @excluding allAreas,boostThreshold,borderColor,borderRadius,
  *         borderWidth,crisp,colorAxis,depth,data,edgeColor,edgeWidth,
- *         findNearestPointBy,gapSize,gapUnit,grouping,groupPadding,groupZPadding,maxPointWidth,
- *         keys,negativeColor,pointInterval,pointIntervalUnit,pointPadding,
- *         pointPlacement,pointRange,pointStart,pointWidth,shadow,step,softThreshold,
+ *         findNearestPointBy,gapSize,gapUnit,grouping,groupPadding,
+ *         groupZPadding,maxPointWidth,keys,negativeColor,pointInterval,
+ *         pointIntervalUnit,pointPadding,pointPlacement,pointRange,pointStart,
+ *         pointWidth,shadow,step,softThreshold,
  *         stacking,threshold,zoneAxis,zones
  * @optionparent plotOptions.pareto
  */
@@ -60,7 +61,10 @@ seriesType('pareto', 'line', {
 				yValues = this.baseSeries.yData,
 				sum = this.sumPointsPercents(yValues, xValues, null, true);
 
-			this.setData(this.sumPointsPercents(yValues, xValues, sum, false), false);
+			this.setData(
+				this.sumPointsPercents(yValues, xValues, sum, false),
+				false
+			);
 		}
 	},
 	/**
@@ -84,7 +88,9 @@ seriesType('pareto', 'line', {
 					sumY += point;
 				} else {
 					percentPoint = (point / sum) * 100;
-					percentPoints.push([xValues[i], correctFloat(sumPercent + percentPoint)]);
+					percentPoints.push(
+						[xValues[i], correctFloat(sumPercent + percentPoint)]
+					);
 					sumPercent += percentPoint;
 				}
 			}

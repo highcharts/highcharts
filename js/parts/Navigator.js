@@ -3,7 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -469,7 +469,7 @@ extend(defaultOptions, {
 		 * @type {Object}
 		 * @extends {yAxis}
 		 * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
-		 *          scrollbar,top,units,maxRange
+		 *          scrollbar,top,units,maxRange,minLength,maxLength,resize
 		 * @product highstock
 		 */
 		yAxis: {
@@ -1091,6 +1091,7 @@ Navigator.prototype = {
 			range = navigator.range,
 			chartX = e.chartX,
 			fixedMax,
+			fixedMin,
 			ext,
 			left;
 
@@ -1112,12 +1113,24 @@ Navigator.prototype = {
 				left = Math.max(0, left);
 			} else if (index === 2 && left + range >= navigatorSize) {
 				left = navigatorSize - range;
-				fixedMax = navigator.getUnionExtremes().dataMax; // #2293, #3543
+				if (xAxis.reversed) {
+					// #7713
+					left -= range;
+					fixedMin = navigator.getUnionExtremes().dataMin;
+				} else {
+					// #2293, #3543
+					fixedMax = navigator.getUnionExtremes().dataMax;
+				}
 			}
 			if (left !== zoomedMin) { // it has actually moved
 				navigator.fixedWidth = range; // #1370
 
-				ext = xAxis.toFixedRange(left, left + range, null, fixedMax);
+				ext = xAxis.toFixedRange(
+					left,
+					left + range,
+					fixedMin,
+					fixedMax
+				);
 				if (defined(ext.min)) { // #7411
 					chart.xAxis[0].setExtremes(
 						Math.min(ext.min, ext.max),
@@ -1248,7 +1261,9 @@ Navigator.prototype = {
 		var navigator = this,
 			chart = navigator.chart,
 			xAxis = navigator.xAxis,
+			reversed = xAxis && xAxis.reversed,
 			scrollbar = navigator.scrollbar,
+			unionExtremes,
 			fixedMin,
 			fixedMax,
 			ext,
@@ -1261,6 +1276,8 @@ Navigator.prototype = {
 			(navigator.hasDragged && (!scrollbar || !scrollbar.hasDragged)) ||
 			e.trigger === 'scrollbar'
 		) {
+			unionExtremes = navigator.getUnionExtremes();
+
 			// When dragging one handle, make sure the other one doesn't change
 			if (navigator.zoomedMin === navigator.otherHandlePos) {
 				fixedMin = navigator.fixedExtreme;
@@ -1269,8 +1286,16 @@ Navigator.prototype = {
 			}
 			// Snap to right edge (#4076)
 			if (navigator.zoomedMax === navigator.size) {
-				fixedMax = navigator.getUnionExtremes().dataMax;
+				fixedMax = reversed ?
+					unionExtremes.dataMin : unionExtremes.dataMax;
 			}
+
+			// Snap to left edge (#7576)
+			if (navigator.zoomedMin === 0) {
+				fixedMin = reversed ?
+					unionExtremes.dataMax : unionExtremes.dataMin;
+			}
+
 			ext = xAxis.toFixedRange(
 				navigator.zoomedMin,
 				navigator.zoomedMax,
@@ -1506,7 +1531,10 @@ Navigator.prototype = {
 
 				if (
 					chart.options.scrollbar.liveRedraw ||
-					e.DOMType !== 'mousemove'
+					(
+						e.DOMType !== 'mousemove' &&
+						e.DOMType !== 'touchmove'
+					)
 				) {
 					setTimeout(function () {
 						navigator.onMouseUp(e);
@@ -1906,7 +1934,8 @@ Navigator.prototype = {
 
 		// If the scrollbar is scrolled all the way to the right, keep right as
 		// new data  comes in.
-		navigator.stickToMax =
+		navigator.stickToMax = navigator.xAxis.reversed ?
+			Math.round(navigator.zoomedMin) === 0 :
 			Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 
 		// Detect whether the zoomed area should stick to the minimum or

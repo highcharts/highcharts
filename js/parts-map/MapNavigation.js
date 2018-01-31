@@ -195,8 +195,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 			var pos = dim[0],
 				size = dim[1];
 
-			if (inner[pos] + inner[size] > outer[pos] + outer[size]) { // right overflow
-				if (inner[size] > outer[size]) { // the general size is greater, fit fully to outer
+			if (inner[pos] + inner[size] > outer[pos] + outer[size]) { // right
+				// the general size is greater, fit fully to outer
+				if (inner[size] > outer[size]) {
 					inner[size] = outer[size];
 					inner[pos] = outer[pos];
 				} else { // align right
@@ -313,7 +314,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
  * Extend the Chart.render method to add zooming and panning
  */
 wrap(Chart.prototype, 'render', function (proceed) {
-	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
+	// Render the plus and minus buttons. Doing this before the shapes makes
+	// getBBox much quicker, at least in Chrome.
 	this.mapNavigation = new MapNavigation(this);
 	this.mapNavigation.update();
 

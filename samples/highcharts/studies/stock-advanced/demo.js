@@ -639,32 +639,6 @@ window.analyzes = [{
 }];
 
 /***
- * JSONP
- */
-
-function $jsonp(src, options) {
-    var callbackName = options.callbackName || 'callback',
-        onSuccess = options.onSuccess || function () {},
-        timeout = options.timeout || 10; // sec
-
-    var timeoutTrigger = window.setTimeout(function () {
-        window[callbackName] = function () {};
-    }, timeout * 1000);
-
-    window[callbackName] = function (data) {
-        window.clearTimeout(timeoutTrigger);
-        onSuccess(data);
-    };
-
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.src = src;
-
-    document.getElementsByTagName('head')[0].appendChild(script);
-}
-
-/***
  * Get chart by ID
  */
 
@@ -768,7 +742,7 @@ function $jsonp(src, options) {
  * ANNOTATIONS BUNDLE
  */
 function whichAxis(e, chart) {
-    var y = e.clientY;
+    var y = e.chartY;
     var i = 0,
         len = chart.yAxis.length;
     var axis;
@@ -885,7 +859,7 @@ function whichAxis(e, chart) {
 (function (H) {
     var defined = H.defined;
 
-    H.wrap(H.Chart.prototype, 'redrawAnnotations', function (p) {
+    H.wrap(H.Chart.prototype, 'drawAnnotations', function (p) {
         var clips = this.annotationsClips || (this.annotationsClips = []);
 
         H.each(this.yAxis, function (yAxis, i) {
@@ -938,6 +912,8 @@ function whichAxis(e, chart) {
     var inArray = H.inArray;
     var points = [];
     var yAxisIndex = -1;
+    var idCounter = -1;
+    var arrow;
 
     function point(p) {
         var point = { x: p.x, y: p.y, xAxis: 0, yAxis: yAxisIndex };
@@ -954,31 +930,35 @@ function whichAxis(e, chart) {
             shapes: [{
                 type: 'path',
                 points: [ start, stop ]
-            }]
+            }],
+            id: ++idCounter
         };
 
         if (withMarker) {
             options.shapes[0].markerEnd = 'arrow';
         }
 
-        chart.addAnnotation(options);
+        return chart.addAnnotation(options);
+    }
+
+    function reset() {
+        yAxisIndex = -1;
+        points = [];
+        arrow = null;
     }
 
     function onPointClick(p, withMarker) {
-        if (!points[0]) {
+        if (!points[0] && !arrow) {
             yAxisIndex = inArray(p.series.yAxis, p.series.chart.yAxis);
-            points.push(p);
+            points.push(p, p);
+            arrow = arrowLine(points, p.series.chart, withMarker);
             return;
         }
 
-        if (yAxisIndex !== -1 && inArray(p.series.yAxis, p.series.chart.yAxis) === yAxisIndex) {
-            points.push(p);
-        }
-
-        if (points.length === 2) {
-            arrowLine(points, p.series.chart, withMarker);
-            points = [];
-            yAxisIndex = -1;
+        if (points.length === 2 && arrow && yAxisIndex !== -1 && inArray(p.series.yAxis, p.series.chart.yAxis) === yAxisIndex) {
+            p.series.chart.removeAnnotation(idCounter);
+            arrowLine([points[0], p], p.series.chart, withMarker);
+            reset();
         }
     }
 
@@ -990,19 +970,24 @@ function whichAxis(e, chart) {
         onPointClick({ x: x, y: y, series: { yAxis: yAxis, chart: chart } }, withMarker);
     }
 
-
-
-    function reset() {
-        yAxisIndex = -1;
-        points = [];
-    }
-
     H.Annotation.arrow = {
         onPointClick: function (p) {
             onPointClick(p, true);
         },
         onChartClick: function (e, chart) {
             onChartClick(e, chart, true);
+        },
+        onContainerMouseMove: function (e) {
+            if (points.length === 2 && arrow) {
+                var shape = arrow.shapes[0];
+                var ne = this.pointer.normalize(e);
+                var d = shape.d.split(' ');
+
+                d[4] = ne.chartX;
+                d[5] = ne.chartY;
+
+                shape.attr('d', d);
+            }
         },
         reset: reset
     };
@@ -1538,12 +1523,19 @@ window.onload = function () {
                 spacingLeft: 50,
                 alignTicks: false,
                 events: {
+                    load: function () {
+                        this.onContainerMouseMove = Highcharts.Annotation.arrow.onContainerMouseMove.bind(this);
+                        this.container.addEventListener('mousemove', this.onContainerMouseMove);
+                    },
                     click: function (e) {
                         var annotation = Highcharts.Annotation[this.annotating];
 
                         if (annotation && annotation.onChartClick) {
                             annotation.onChartClick(e, this);
                         }
+                    },
+                    destroy: function () {
+                        this.container.removeEventListener('mousemove', this.onContainerMouseMove);
                     }
                 }
             },
@@ -1965,12 +1957,16 @@ window.onload = function () {
 
         document.getElementById('highcharts-reset').addEventListener('click', function () {
             if (confirm('Are you sure you want to clear the chart?')) {
-                $jsonp('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=callbackfunc', {
-                    callbackName: 'callbackfunc',
-                    onSuccess: function (data) {
+                Highcharts.ajax({
+                    url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+                    dataType: 'text',
+                    success: function (data) {
                         var chart = Highcharts.getChartById('container');
 
                         window.localStorage.removeItem('data');
+
+                        data = data.replace(/\/\*.*\*\//g, '');
+                        data = JSON.parse(data);
 
                         indicatorContainer.querySelectorAll('input')[0].checked = false;
                         indicatorsList = []; // clear array too
@@ -2012,9 +2008,12 @@ window.onload = function () {
             Highcharts.stockChart('container', Highcharts.extend({}, advOptions))
         );
     } else {
-        $jsonp('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=callbackfunc', {
-            callbackName: 'callbackfunc',
-            onSuccess: function (data) {
+        Highcharts.ajax({
+            url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+            dataType: 'text',
+            success: function (data) {
+                data = data.replace(/\/\*.*\*\//g, '');
+                data = JSON.parse(data);
                 advOptions.series[0].data = data;
                 attachEvents(
                     Highcharts.stockChart('container', Highcharts.extend({}, advOptions))

@@ -1,6 +1,5 @@
 
-
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=australia.geo.json&callback=?', function (geojson) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/australia.geo.json', function (geojson) {
 
     // Prepare the geojson
     var states = Highcharts.geojson(geojson, 'map'),
@@ -44,7 +43,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=australia.
         if (this.properties.code_hasc === 'AU.QL') {
             this.middleY = 0.7;
         }
-
     });
 
     $.each(cities, function () {
@@ -53,10 +51,8 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=australia.
         }
     });
 
-
     // Initiate the chart
     Highcharts.mapChart('container', {
-
         title: {
             text: 'Highmaps from geojson with multiple geometry types'
         },
@@ -67,7 +63,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=australia.
                 verticalAlign: 'bottom'
             }
         },
-
 
         series: [{
             name: 'States and territories',
@@ -92,6 +87,11 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=australia.
             name: 'Rivers',
             type: 'mapline',
             data: rivers,
+            states: {
+                hover: {
+                    lineWidth: 3
+                }
+            },
             color: Highcharts.getOptions().colors[0],
             tooltip: {
                 pointFormat: '{point.properties.NAME}'

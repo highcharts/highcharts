@@ -5,7 +5,7 @@
  *
  * License: www.highcharts.com/license
  */
-
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -63,7 +63,6 @@ seriesType('vbp', 'sma',
 	 * @optionparent plotOptions.vbp
 	 */
 	{
-		name: 'Volume by Price',
 		/**
 		 * @excluding index,period
 		 */
@@ -185,6 +184,7 @@ seriesType('vbp', 'sma',
 			}
 		}
 	}, {
+		nameBase: 'Volume by Price',
 		bindTo: {
 			series: false,
 			eventName: 'afterSetExtremes'

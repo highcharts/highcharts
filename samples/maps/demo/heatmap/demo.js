@@ -1,16 +1,13 @@
 
-
 Highcharts.chart('container', {
-
-    data: {
-        csv: document.getElementById('csv').innerHTML
-    },
-
     chart: {
         type: 'heatmap',
         inverted: true
     },
 
+    data: {
+        csv: document.getElementById('csv').innerHTML
+    },
 
     title: {
         text: 'Highcharts heat map',
@@ -62,5 +59,4 @@ Highcharts.chart('container', {
             pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
         }
     }]
-
 });

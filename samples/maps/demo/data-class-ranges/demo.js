@@ -1,20 +1,15 @@
 
-
-
-
-
 // Load the data from a Google Spreadsheet
 // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
 Highcharts.data({
-
     googleSpreadsheetKey: '0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc',
 
-    // custom handler when the spreadsheet is parsed
+    // Custom handler when the spreadsheet is parsed
     parsed: function (columns) {
 
         // Read the columns into the data array
         var data = [];
-        $.each(columns[0], function (i, code) {
+        Highcharts.each(columns[0], function (code, i) {
             data.push({
                 code: code.toUpperCase(),
                 value: parseFloat(columns[2][i]),
@@ -22,10 +17,10 @@ Highcharts.data({
             });
         });
 
-
         // Initiate the chart
         Highcharts.mapChart('container', {
             chart: {
+                map: 'custom/world',
                 borderWidth: 1
             },
 
@@ -82,7 +77,6 @@ Highcharts.data({
 
             series: [{
                 data: data,
-                mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 animation: true,
                 name: 'Population density',
@@ -99,9 +93,9 @@ Highcharts.data({
         });
     },
     error: function () {
-        $('#container').html('<div class="loading">' +
+        document.getElementById('container').innerHTML = '<div class="loading">' +
             '<i class="icon-frown icon-large"></i> ' +
             'Error loading data from Google Spreadsheets' +
-            '</div>');
+            '</div>';
     }
 });
