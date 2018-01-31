@@ -1,10 +1,9 @@
 (function () {
     var isCET = (
         new Date().toString().indexOf('CET') !== -1 ||
-        new Date().toString().indexOf('CEST') !== -1
+        new Date().toString().indexOf('CEST') !== -1 ||
+        new Date().toString().indexOf('W. Europe Standard Time') !== -1 // Edge
     );
-
-
     function checkHours(name, month, day) {
         QUnit[isCET ? 'test' : 'skip'](name + ' - set and get hours across DST transition', function (assert) {
             var timeTZ = new Highcharts.Time({
