@@ -1,4 +1,5 @@
 /* eslint-disable */
+/* eslint-env node,es6 */
 /**
  * @module plugins/highcharts.jsdoc
  * @author Chris Vasseng
@@ -13,6 +14,7 @@ var parseTag = require('jsdoc/tag/type').parse;
 var exec = require('child_process').execSync;
 var logger = require('jsdoc/util/logger');
 var Doclet = require('jsdoc/doclet.js').Doclet;
+var colors = require('colors');
 var fs = require('fs');
 var getPalette = require('highcharts-assembler/src/process.js').getPalette;
 var options = {
@@ -532,6 +534,17 @@ exports.handlers = {
                 palette[key]
             );
         });
+
+        var match = e.source.match(/\s\*\/[\s]+\}/g);
+        if (match) {
+            console.log(
+`Warning: Detected ${match.length} cases of a comment followed by } in
+${e.filename}.
+This may lead to loose doclets not being parsed into the API. Move them up
+before functional code for JSDoc to see them.`.yellow
+            );
+        }
+
     },
 
     jsdocCommentFound: function (e) {

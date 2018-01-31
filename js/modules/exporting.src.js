@@ -205,6 +205,19 @@ defaultOptions.navigation = {
 		 */
 
 		/**
+		 * The vertical offset of the button's position relative to its
+		 * `verticalAlign`.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @default 0
+		 * @since 2.0
+		 * @apioption navigation.buttonOptions.y
+		 */
+
+		/**
 		 * The vertical alignment of the buttons. Can be one of "top", "middle"
 		 * or "bottom".
 		 * 
@@ -231,19 +244,6 @@ defaultOptions.navigation = {
 		 * @apioption navigation.buttonOptions.width
 		 */
 		width: 24
-
-		/**
-		 * The vertical offset of the button's position relative to its
-		 * `verticalAlign`.
-		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
-		 * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
-		 * @default 0
-		 * @since 2.0
-		 * @apioption navigation.buttonOptions.y
-		 */
 	}
 };
 
@@ -1821,5 +1821,5 @@ Chart.prototype.callbacks.push(function (chart) {
 			chart.renderTo.parentNode.appendChild(pre);
 		};
 	}
-	// */
+	//*/
 });

@@ -736,7 +736,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @default   0
 			 * @apioption xAxis.labels.rotation
 			 */
-			// rotation: 0,
 
 			/**
 			 * Horizontal axes only. The number of lines to spread the labels
@@ -775,7 +774,27 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @since     2.1
 			 * @apioption xAxis.labels.step
 			 */
-			// step: null,
+			
+
+			/**
+			 * The y position offset of the label relative to the tick position
+			 * on the axis. The default makes it adapt to the font size on
+			 * bottom axis.
+			 *
+			 * @type      {Number}
+			 * @sample    {highcharts} highcharts/xaxis/labels-x/
+			 *            Y axis labels placed on grid lines
+			 * @default   null
+			 * @apioption xAxis.labels.y
+			 */
+
+			/**
+			 * The Z index for the axis labels.
+			 *
+			 * @type {Number}
+			 * @default 7
+			 * @apioption xAxis.labels.zIndex
+			 */
 
 			/*= if (build.classic) { =*/
 
@@ -815,26 +834,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 *         Y axis labels placed on grid lines
 			 */
 			x: 0
-
-			/**
-			 * The y position offset of the label relative to the tick position
-			 * on the axis. The default makes it adapt to the font size on
-			 * bottom axis.
-			 *
-			 * @type      {Number}
-			 * @sample    {highcharts} highcharts/xaxis/labels-x/
-			 *            Y axis labels placed on grid lines
-			 * @default   null
-			 * @apioption xAxis.labels.y
-			 */
-
-			/**
-			 * The Z index for the axis labels.
-			 *
-			 * @type {Number}
-			 * @default 7
-			 * @apioption xAxis.labels.zIndex
-			 */
 		},
 
 		/**

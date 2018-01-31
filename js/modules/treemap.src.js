@@ -253,6 +253,14 @@ seriesType('treemap', 'scatter', {
 		position: {
 
 			/**
+			 * Vertical alignment of the button.
+			 *
+			 * @default top
+			 * @validvalue ["top", "middle", "bottom"]
+			 * @apioption plotOptions.treemap.drillUpButton.position.verticalAlign
+			 */
+
+			/**
 			 * Horizontal alignment of the button.
 			 * @validvalue ["left", "center", "right"]
 			 */
@@ -269,14 +277,6 @@ seriesType('treemap', 'scatter', {
 			 * Vertical offset of the button.
 			 */
 			y: 10
-
-			/**
-			 * Vertical alignment of the button.
-			 *
-			 * @default top
-			 * @validvalue ["top", "middle", "bottom"]
-			 * @apioption plotOptions.treemap.drillUpButton.position.verticalAlign
-			 */
 		}
 	},
 	/*= if (build.classic) { =*/

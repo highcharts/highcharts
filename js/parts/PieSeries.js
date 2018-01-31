@@ -681,7 +681,7 @@ seriesType('pie', 'line', {
 /**
  * @constructor seriesTypes.pie.prototype.pointClass
  * @extends {Point}
- */
+ **/
 }, /** @lends seriesTypes.pie.prototype.pointClass.prototype */ {
 	/**
 	 * Initiate the pie slice

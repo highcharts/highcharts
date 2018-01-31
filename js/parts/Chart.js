@@ -1196,7 +1196,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				chart.reflow();
 			});
 		}
-		*/
+		//*/
 	},
 
 	/**

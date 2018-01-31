@@ -51,6 +51,17 @@ defaultOptions.noData = {
 	 * @product highcharts highstock
 	 * @apioption noData.attr
 	 */
+	
+	/**
+	 * Whether to insert the label as HTML, or as pseudo-HTML rendered with
+	 * SVG.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.1.10
+	 * @product highcharts highstock
+	 * @apioption noData.useHTML
+	 */
 
 	/**
 	 * The position of the no-data label, relative to the plot area.
@@ -98,17 +109,6 @@ defaultOptions.noData = {
 		 */
 		verticalAlign: 'middle'
 	}
-	
-	/**
-	 * Whether to insert the label as HTML, or as pseudo-HTML rendered with
-	 * SVG.
-	 * 
-	 * @type {Boolean}
-	 * @default false
-	 * @since 4.1.10
-	 * @product highcharts highstock
-	 * @apioption noData.useHTML
-	 */
 };
 
 /*= if (build.classic) { =*/
@@ -138,7 +138,7 @@ each([
 ], function (type) {
 	if (seriesTypes[type]) {
 		seriesTypes[type].prototype.hasData = function () {
-			return !!this.points.length; /* != 0 */
+			return !!this.points.length; // != 0
 		};
 	}
 });

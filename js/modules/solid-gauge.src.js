@@ -163,10 +163,6 @@ colorAxisMethods = {
  */
 var solidGaugeOptions = {
 	/**
-	 * Whether to give each point an individual color.
-	 */
-	colorByPoint: true
-	/**
 	 * Whether the strokes of the solid gauge should be `round` or `square`.
 	 * 
 	 * @validvalue ["square", "round"]
@@ -200,6 +196,11 @@ var solidGaugeOptions = {
 	 * @product highcharts
 	 * @apioption plotOptions.solidgauge.threshold
 	 */
+	
+	/**
+	 * Whether to give each point an individual color.
+	 */
+	colorByPoint: true
 
 };
 

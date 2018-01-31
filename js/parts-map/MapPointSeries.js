@@ -25,6 +25,10 @@ var merge = H.merge,
 seriesType('mappoint', 'scatter', {
 
 	dataLabels: {
+		/**
+		 * @default {point.name}
+		 * @apioption plotOptions.mappoint.dataLabels.format
+		 */
 		enabled: true,
 		formatter: function () { // #2945
 			return this.point.name;
@@ -35,10 +39,6 @@ seriesType('mappoint', 'scatter', {
 		style: {
 			color: '${palette.neutralColor100}'
 		}
-		/**
-		 * @default {point.name}
-		 * @apioption plotOptions.mappoint.dataLabels.format
-		 */
 	}
 
 // Prototype members

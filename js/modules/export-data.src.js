@@ -44,6 +44,19 @@ Highcharts.setOptions({
 	 * @optionparent exporting
 	 */
 	exporting: {
+		
+		/**
+		 * Export-data module required. Caption for the data table. Same as
+		 * chart title by default. Set to `false` to disable.
+		 *
+		 * @type {Boolean|String}
+		 * @since 6.0.4
+		 * @sample highcharts/export-data/multilevel-table
+		 *			Multiple table headers
+		 * @default undefined
+		 * @apioption exporting.tableCaption
+		 */
+		
 		/**
 		 * Options for exporting data to CSV or ExCel, or displaying the data
 		 * in a HTML table or a JavaScript structure. Requires the
@@ -143,18 +156,6 @@ Highcharts.setOptions({
 		 * @since 6.0.4
 		 */
 		useRowspanHeaders: true
-
-		/**
-		 * Export-data module required. Caption for the data table. Same as
-		 * chart title by default. Set to `false` to disable.
-		 *
-		 * @type {Boolean|String}
-		 * @since 6.0.4
-		 * @sample highcharts/export-data/multilevel-table
-		 *			Multiple table headers
-		 * @default undefined
-		 * @apioption exporting.tableCaption
-		 */
 	},
 	/**
 	 * @optionparent lang

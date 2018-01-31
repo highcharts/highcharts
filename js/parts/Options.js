@@ -229,75 +229,74 @@ H.defaultOptions = {
 	 * });</pre>
 	 *
 	 */
-	global: {
 
-		/**
-		 * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
-		 * Use the [libURL](#exporting.libURL) option to configure exporting._
-		 * 
-		 * The URL to the additional file to lazy load for Android 2.x devices.
-		 * These devices don't support SVG, so we download a helper file that
-		 * contains [canvg](http://code.google.com/p/canvg/), its dependency
-		 * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
-		 * our site, you can install canvas-tools.js on your own server and
-		 * change this option accordingly.
-		 * 
-		 * @type {String}
-		 * @deprecated
-		 * @default http://code.highcharts.com/{version}/modules/canvas-tools.js
-		 * @product highcharts highmaps
-		 * @apioption global.canvasToolsURL
-		 */
+	/**
+	 * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
+	 * Use the [libURL](#exporting.libURL) option to configure exporting._
+	 * 
+	 * The URL to the additional file to lazy load for Android 2.x devices.
+	 * These devices don't support SVG, so we download a helper file that
+	 * contains [canvg](http://code.google.com/p/canvg/), its dependency
+	 * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
+	 * our site, you can install canvas-tools.js on your own server and
+	 * change this option accordingly.
+	 * 
+	 * @type {String}
+	 * @deprecated
+	 * @default http://code.highcharts.com/{version}/modules/canvas-tools.js
+	 * @product highcharts highmaps
+	 * @apioption global.canvasToolsURL
+	 */
 
-		/**
-		 * This option is deprecated since v6.0.5. Instead, use
-		 * [time.useUTC](#time.useUTC) that supports individual time settings
-		 * per chart.
-		 * 
-		 * @deprecated
-		 * @apioption global.useUTC
-		 */
+	/**
+	 * This option is deprecated since v6.0.5. Instead, use
+	 * [time.useUTC](#time.useUTC) that supports individual time settings
+	 * per chart.
+	 * 
+	 * @deprecated
+	 * @apioption global.useUTC
+	 */
 
-		/**
-		 * This option is deprecated since v6.0.5. Instead, use
-		 * [time.Date](#time.Date) that supports individual time settings
-		 * per chart.
-		 * 
-		 * @deprecated
-		 * @product highcharts highstock
-		 * @apioption global.Date
-		 */
+	/**
+	 * This option is deprecated since v6.0.5. Instead, use
+	 * [time.Date](#time.Date) that supports individual time settings
+	 * per chart.
+	 * 
+	 * @deprecated
+	 * @product highcharts highstock
+	 * @apioption global.Date
+	 */
 
-		/**
-		 * This option is deprecated since v6.0.5. Instead, use
-		 * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
-		 * individual time settings per chart.
-		 * 
-		 * @deprecated
-		 * @product highcharts highstock
-		 * @apioption global.getTimezoneOffset
-		 */
+	/**
+	 * This option is deprecated since v6.0.5. Instead, use
+	 * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
+	 * individual time settings per chart.
+	 * 
+	 * @deprecated
+	 * @product highcharts highstock
+	 * @apioption global.getTimezoneOffset
+	 */
 
-		/**
-		 * This option is deprecated since v6.0.5. Instead, use
-		 * [time.timezone](#time.timezone) that supports individual time
-		 * settings per chart.
-		 * 
-		 * @deprecated
-		 * @product highcharts highstock
-		 * @apioption global.timezone
-		 */
+	/**
+	 * This option is deprecated since v6.0.5. Instead, use
+	 * [time.timezone](#time.timezone) that supports individual time
+	 * settings per chart.
+	 * 
+	 * @deprecated
+	 * @product highcharts highstock
+	 * @apioption global.timezone
+	 */
 
-		/**
-		 * This option is deprecated since v6.0.5. Instead, use
-		 * [time.timezoneOffset](#time.timezoneOffset) that supports individual
-		 * time settings per chart.
-		 * 
-		 * @deprecated
-		 * @product highcharts highstock
-		 * @apioption global.timezoneOffset
-		 */
-	},
+	/**
+	 * This option is deprecated since v6.0.5. Instead, use
+	 * [time.timezoneOffset](#time.timezoneOffset) that supports individual
+	 * time settings per chart.
+	 * 
+	 * @deprecated
+	 * @product highcharts highstock
+	 * @apioption global.timezoneOffset
+	 */
+	global: {},
 
 
 	time: H.Time.prototype.defaultOptions,
@@ -756,6 +755,21 @@ H.defaultOptions = {
 		 *
 		 */
 		resetZoomButton: {
+			
+			/**
+			 * What frame the button should be placed related to. Can be either
+			 * `plot` or `chart`
+			 * 
+			 * @validvalue ["plot", "chart"]
+			 * @type {String}
+			 * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/
+			 *         Relative to the chart
+			 * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
+			 *         Relative to the chart
+			 * @default plot
+			 * @since 2.2
+			 * @apioption chart.resetZoomButton.relativeTo
+			 */
 
 			/**
 			 * A collection of attributes for the button. The object takes SVG
@@ -824,160 +838,7 @@ H.defaultOptions = {
 				 */
 				y: 10
 			}
-			
-			/**
-			 * What frame the button should be placed related to. Can be either
-			 * `plot` or `chart`
-			 * 
-			 * @validvalue ["plot", "chart"]
-			 * @type {String}
-			 * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/
-			 *         Relative to the chart
-			 * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
-			 *         Relative to the chart
-			 * @default plot
-			 * @since 2.2
-			 * @apioption chart.resetZoomButton.relativeTo
-			 */
 		},
-
-		/**
-		 * An explicit width for the chart. By default (when `null`) the width
-		 * is calculated from the offset width of the containing element.
-		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/chart/width/ 800px wide
-		 * @sample {highstock} stock/chart/width/ 800px wide
-		 * @sample {highmaps} maps/chart/size/ Chart with explicit size
-		 * @default null
-		 */
-		width: null,
-
-		/**
-		 * An explicit height for the chart. If a _number_, the height is
-		 * given in pixels. If given a _percentage string_ (for example `'56%'`),
-		 * the height is given as the percentage of the actual chart width.
-		 * This allows for preserving the aspect ratio across responsive
-		 * sizes.
-		 * 
-		 * By default (when `null`) the height is calculated from the offset
-		 * height of the containing element, or 400 pixels if the containing
-		 * element's height is 0.
-		 * 
-		 * @type {Number|String}
-		 * @sample {highcharts} highcharts/chart/height/
-		 *         500px height
-		 * @sample {highstock} stock/chart/height/
-		 *         300px height
-		 * @sample {highmaps} maps/chart/size/
-		 *         Chart with explicit size
-		 * @sample highcharts/chart/height-percent/
-		 *         Highcharts with percentage height
-		 * @default null
-		 */
-		height: null,
-		
-		/*= if (build.classic) { =*/
-
-		/**
-		 * The color of the outer chart border.
-		 * 
-		 * @type {Color}
-		 * @see In styled mode, the stroke is set with the `.highcharts-background`
-		 * class.
-		 * @sample {highcharts} highcharts/chart/bordercolor/ Brown border
-		 * @sample {highstock} stock/chart/border/ Brown border
-		 * @sample {highmaps} maps/chart/border/ Border options
-		 * @default #335cad
-		 */
-		borderColor: '${palette.highlightColor80}',
-		
-		/**
-		 * The pixel width of the outer chart border.
-		 * 
-		 * @type {Number}
-		 * @see In styled mode, the stroke is set with the `.highcharts-background`
-		 * class.
-		 * @sample {highcharts} highcharts/chart/borderwidth/ 5px border
-		 * @sample {highstock} stock/chart/border/
-		 *         2px border
-		 * @sample {highmaps} maps/chart/border/
-		 *         Border options
-		 * @default 0
-		 * @apioption chart.borderWidth
-		 */
-
-		/**
-		 * The background color or gradient for the outer chart area.
-		 * 
-		 * @type {Color}
-		 * @see In styled mode, the background is set with the `.highcharts-background` class.
-		 * @sample {highcharts} highcharts/chart/backgroundcolor-color/ Color
-		 * @sample {highcharts} highcharts/chart/backgroundcolor-gradient/ Gradient
-		 * @sample {highstock} stock/chart/backgroundcolor-color/
-		 *         Color
-		 * @sample {highstock} stock/chart/backgroundcolor-gradient/
-		 *         Gradient
-		 * @sample {highmaps} maps/chart/backgroundcolor-color/
-		 *         Color
-		 * @sample {highmaps} maps/chart/backgroundcolor-gradient/
-		 *         Gradient
-		 * @default #FFFFFF
-		 */
-		backgroundColor: '${palette.backgroundColor}',
-		
-		/**
-		 * The background color or gradient for the plot area.
-		 * 
-		 * @type {Color}
-		 * @see In styled mode, the plot background is set with the `.highcharts-plot-background` class.
-		 * @sample {highcharts} highcharts/chart/plotbackgroundcolor-color/
-		 *         Color
-		 * @sample {highcharts} highcharts/chart/plotbackgroundcolor-gradient/
-		 *         Gradient
-		 * @sample {highstock} stock/chart/plotbackgroundcolor-color/
-		 *         Color
-		 * @sample {highstock} stock/chart/plotbackgroundcolor-gradient/
-		 *         Gradient
-		 * @sample {highmaps} maps/chart/plotbackgroundcolor-color/
-		 *         Color
-		 * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/
-		 *         Gradient
-		 * @default null
-		 * @apioption chart.plotBackgroundColor
-		 */
-				
-
-		/**
-		 * The URL for an image to use as the plot background. To set an image
-		 * as the background for the entire chart, set a CSS background image
-		 * to the container element. Note that for the image to be applied to
-		 * exported charts, its URL needs to be accessible by the export server.
-		 * 
-		 * @type {String}
-		 * @see In styled mode, a plot background image can be set with the
-		 * `.highcharts-plot-background` class and a [custom pattern](http://www.
-		 * highcharts.com/docs/chart-design-and-style/gradients-shadows-and-
-		 * patterns).
-		 * @sample {highcharts} highcharts/chart/plotbackgroundimage/ Skies
-		 * @sample {highstock} stock/chart/plotbackgroundimage/ Skies
-		 * @default null
-		 * @apioption chart.plotBackgroundImage
-		 */
-
-		/**
-		 * The color of the inner chart or plot area border.
-		 * 
-		 * @type {Color}
-		 * @see In styled mode, a plot border stroke can be set with the `.
-		 * highcharts-plot-border` class.
-		 * @sample {highcharts} highcharts/chart/plotbordercolor/ Blue border
-		 * @sample {highstock} stock/chart/plotborder/ Blue border
-		 * @sample {highmaps} maps/chart/plotborder/ Plot border options
-		 * @default #cccccc
-		 */
-		plotBorderColor: '${palette.neutralColor20}'
-		
 
 		/**
 		 * The pixel width of the plot area border.
@@ -1038,9 +899,6 @@ H.defaultOptions = {
 		 * @since 2.1
 		 * @apioption chart.reflow
 		 */
-		/*= } =*/
-
-
 
 		/**
 		 * The HTML element where the chart will be rendered. If it is a string,
@@ -1230,6 +1088,145 @@ H.defaultOptions = {
 		 * @product highcharts highstock
 		 * @apioption chart.zoomType
 		 */
+
+		/**
+		 * An explicit width for the chart. By default (when `null`) the width
+		 * is calculated from the offset width of the containing element.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/chart/width/ 800px wide
+		 * @sample {highstock} stock/chart/width/ 800px wide
+		 * @sample {highmaps} maps/chart/size/ Chart with explicit size
+		 * @default null
+		 */
+		width: null,
+
+		/**
+		 * An explicit height for the chart. If a _number_, the height is
+		 * given in pixels. If given a _percentage string_ (for example `'56%'`),
+		 * the height is given as the percentage of the actual chart width.
+		 * This allows for preserving the aspect ratio across responsive
+		 * sizes.
+		 * 
+		 * By default (when `null`) the height is calculated from the offset
+		 * height of the containing element, or 400 pixels if the containing
+		 * element's height is 0.
+		 * 
+		 * @type {Number|String}
+		 * @sample {highcharts} highcharts/chart/height/
+		 *         500px height
+		 * @sample {highstock} stock/chart/height/
+		 *         300px height
+		 * @sample {highmaps} maps/chart/size/
+		 *         Chart with explicit size
+		 * @sample highcharts/chart/height-percent/
+		 *         Highcharts with percentage height
+		 * @default null
+		 */
+		height: null,
+		
+		/*= if (build.classic) { =*/
+
+		/**
+		 * The color of the outer chart border.
+		 * 
+		 * @type {Color}
+		 * @see In styled mode, the stroke is set with the `.highcharts-background`
+		 * class.
+		 * @sample {highcharts} highcharts/chart/bordercolor/ Brown border
+		 * @sample {highstock} stock/chart/border/ Brown border
+		 * @sample {highmaps} maps/chart/border/ Border options
+		 * @default #335cad
+		 */
+		borderColor: '${palette.highlightColor80}',
+		
+		/**
+		 * The pixel width of the outer chart border.
+		 * 
+		 * @type {Number}
+		 * @see In styled mode, the stroke is set with the `.highcharts-background`
+		 * class.
+		 * @sample {highcharts} highcharts/chart/borderwidth/ 5px border
+		 * @sample {highstock} stock/chart/border/
+		 *         2px border
+		 * @sample {highmaps} maps/chart/border/
+		 *         Border options
+		 * @default 0
+		 * @apioption chart.borderWidth
+		 */
+
+		/**
+		 * The background color or gradient for the outer chart area.
+		 * 
+		 * @type {Color}
+		 * @see In styled mode, the background is set with the `.highcharts-background` class.
+		 * @sample {highcharts} highcharts/chart/backgroundcolor-color/ Color
+		 * @sample {highcharts} highcharts/chart/backgroundcolor-gradient/ Gradient
+		 * @sample {highstock} stock/chart/backgroundcolor-color/
+		 *         Color
+		 * @sample {highstock} stock/chart/backgroundcolor-gradient/
+		 *         Gradient
+		 * @sample {highmaps} maps/chart/backgroundcolor-color/
+		 *         Color
+		 * @sample {highmaps} maps/chart/backgroundcolor-gradient/
+		 *         Gradient
+		 * @default #FFFFFF
+		 */
+		backgroundColor: '${palette.backgroundColor}',
+		
+		/**
+		 * The background color or gradient for the plot area.
+		 * 
+		 * @type {Color}
+		 * @see In styled mode, the plot background is set with the `.highcharts-plot-background` class.
+		 * @sample {highcharts} highcharts/chart/plotbackgroundcolor-color/
+		 *         Color
+		 * @sample {highcharts} highcharts/chart/plotbackgroundcolor-gradient/
+		 *         Gradient
+		 * @sample {highstock} stock/chart/plotbackgroundcolor-color/
+		 *         Color
+		 * @sample {highstock} stock/chart/plotbackgroundcolor-gradient/
+		 *         Gradient
+		 * @sample {highmaps} maps/chart/plotbackgroundcolor-color/
+		 *         Color
+		 * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/
+		 *         Gradient
+		 * @default null
+		 * @apioption chart.plotBackgroundColor
+		 */
+				
+
+		/**
+		 * The URL for an image to use as the plot background. To set an image
+		 * as the background for the entire chart, set a CSS background image
+		 * to the container element. Note that for the image to be applied to
+		 * exported charts, its URL needs to be accessible by the export server.
+		 * 
+		 * @type {String}
+		 * @see In styled mode, a plot background image can be set with the
+		 * `.highcharts-plot-background` class and a [custom pattern](http://www.
+		 * highcharts.com/docs/chart-design-and-style/gradients-shadows-and-
+		 * patterns).
+		 * @sample {highcharts} highcharts/chart/plotbackgroundimage/ Skies
+		 * @sample {highstock} stock/chart/plotbackgroundimage/ Skies
+		 * @default null
+		 * @apioption chart.plotBackgroundImage
+		 */
+
+		/**
+		 * The color of the inner chart or plot area border.
+		 * 
+		 * @type {Color}
+		 * @see In styled mode, a plot border stroke can be set with the `.
+		 * highcharts-plot-border` class.
+		 * @sample {highcharts} highcharts/chart/plotbordercolor/ Blue border
+		 * @sample {highstock} stock/chart/plotborder/ Blue border
+		 * @sample {highmaps} maps/chart/plotborder/ Plot border options
+		 * @default #cccccc
+		 */
+		plotBorderColor: '${palette.neutralColor20}'
+		/*= } =*/
+		
 	},
 
 	/**
@@ -1238,57 +1235,6 @@ H.defaultOptions = {
 	 * @sample {highmaps} maps/title/title/ Title options demonstrated
 	 */
 	title: {
-
-		/**
-		 * The title of the chart. To disable the title, set the `text` to
-		 * `null`.
-		 * 
-		 * @type {String}
-		 * @sample {highcharts} highcharts/title/text/ Custom title
-		 * @sample {highstock} stock/chart/title-text/ Custom title
-		 * @default {highcharts|highmaps} Chart title
-		 * @default {highstock} null
-		 */
-		text: 'Chart title',
-
-		/**
-		 * The horizontal alignment of the title. Can be one of "left", "center"
-		 * and "right".
-		 * 
-		 * @validvalue ["left", "center", "right"]
-		 * @type {String}
-		 * @sample {highcharts} highcharts/title/align/ Aligned to the plot area (x = 70px     = margin left - spacing left)
-		 * @sample {highstock} stock/chart/title-align/ Aligned to the plot area (x = 50px     = margin left - spacing left)
-		 * @default center
-		 * @since 2.0
-		 */
-		align: 'center',
-
-		/**
-		 * The margin between the title and the plot area, or if a subtitle
-		 * is present, the margin between the subtitle and the plot area.
-		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/title/margin-50/ A chart title margin of 50
-		 * @sample {highcharts} highcharts/title/margin-subtitle/ The same margin applied with a subtitle
-		 * @sample {highstock} stock/chart/title-margin/ A chart title margin of 50
-		 * @default 15
-		 * @since 2.1
-		 */
-		margin: 15,
-
-		/**
-		 * Adjustment made to the title width, normally to reserve space for
-		 * the exporting burger menu.
-		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/title/widthadjust/ Wider menu, greater padding
-		 * @sample {highstock} highcharts/title/widthadjust/ Wider menu, greater padding
-		 * @sample {highmaps} highcharts/title/widthadjust/ Wider menu, greater padding
-		 * @default -44
-		 * @since 4.2.5
-		 */
-		widthAdjust: -44
 
 		/**
 		 * When the title is floating, the plot area will not move to make space
@@ -1372,6 +1318,57 @@ H.defaultOptions = {
 		 * @apioption title.y
 		 */
 
+		/**
+		 * The title of the chart. To disable the title, set the `text` to
+		 * `null`.
+		 * 
+		 * @type {String}
+		 * @sample {highcharts} highcharts/title/text/ Custom title
+		 * @sample {highstock} stock/chart/title-text/ Custom title
+		 * @default {highcharts|highmaps} Chart title
+		 * @default {highstock} null
+		 */
+		text: 'Chart title',
+
+		/**
+		 * The horizontal alignment of the title. Can be one of "left", "center"
+		 * and "right".
+		 * 
+		 * @validvalue ["left", "center", "right"]
+		 * @type {String}
+		 * @sample {highcharts} highcharts/title/align/ Aligned to the plot area (x = 70px     = margin left - spacing left)
+		 * @sample {highstock} stock/chart/title-align/ Aligned to the plot area (x = 50px     = margin left - spacing left)
+		 * @default center
+		 * @since 2.0
+		 */
+		align: 'center',
+
+		/**
+		 * The margin between the title and the plot area, or if a subtitle
+		 * is present, the margin between the subtitle and the plot area.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/title/margin-50/ A chart title margin of 50
+		 * @sample {highcharts} highcharts/title/margin-subtitle/ The same margin applied with a subtitle
+		 * @sample {highstock} stock/chart/title-margin/ A chart title margin of 50
+		 * @default 15
+		 * @since 2.1
+		 */
+		margin: 15,
+
+		/**
+		 * Adjustment made to the title width, normally to reserve space for
+		 * the exporting burger menu.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/title/widthadjust/ Wider menu, greater padding
+		 * @sample {highstock} highcharts/title/widthadjust/ Wider menu, greater padding
+		 * @sample {highmaps} highcharts/title/widthadjust/ Wider menu, greater padding
+		 * @default -44
+		 * @since 4.2.5
+		 */
+		widthAdjust: -44
+
 	},
 
 	/**
@@ -1383,44 +1380,6 @@ H.defaultOptions = {
 	 * @sample {highmaps} maps/title/subtitle/ Subtitle options demonstrated
 	 */
 	subtitle: {
-
-		/**
-		 * The subtitle of the chart.
-		 * 
-		 * @type {String}
-		 * @sample {highcharts} highcharts/subtitle/text/ Custom subtitle
-		 * @sample {highcharts} highcharts/subtitle/text-formatted/ Formatted and linked text.
-		 * @sample {highstock} stock/chart/subtitle-text Custom subtitle
-		 * @sample {highstock} stock/chart/subtitle-text-formatted Formatted and linked text.
-		 */
-		text: '',
-
-		/**
-		 * The horizontal alignment of the subtitle. Can be one of "left",
-		 *  "center" and "right".
-		 * 
-		 * @validvalue ["left", "center", "right"]
-		 * @type {String}
-		 * @sample {highcharts} highcharts/subtitle/align/ Footnote at right of plot area
-		 * @sample {highstock} stock/chart/subtitle-footnote Footnote at bottom right of plot area
-		 * @default center
-		 * @since 2.0
-		 */
-		align: 'center',
-
-		/**
-		 * Adjustment made to the subtitle width, normally to reserve space
-		 * for the exporting burger menu.
-		 * 
-		 * @type {Number}
-		 * @see [title.widthAdjust](#title.widthAdjust)
-		 * @sample {highcharts} highcharts/title/widthadjust/ Wider menu, greater padding
-		 * @sample {highstock} highcharts/title/widthadjust/ Wider menu, greater padding
-		 * @sample {highmaps} highcharts/title/widthadjust/ Wider menu, greater padding
-		 * @default -44
-		 * @since 4.2.5
-		 */
-		widthAdjust: -44
 
 		/**
 		 * When the subtitle is floating, the plot area will not move to make
@@ -1510,6 +1469,44 @@ H.defaultOptions = {
 		 * @since 2.0
 		 * @apioption subtitle.y
 		 */
+
+		/**
+		 * The subtitle of the chart.
+		 * 
+		 * @type {String}
+		 * @sample {highcharts} highcharts/subtitle/text/ Custom subtitle
+		 * @sample {highcharts} highcharts/subtitle/text-formatted/ Formatted and linked text.
+		 * @sample {highstock} stock/chart/subtitle-text Custom subtitle
+		 * @sample {highstock} stock/chart/subtitle-text-formatted Formatted and linked text.
+		 */
+		text: '',
+
+		/**
+		 * The horizontal alignment of the subtitle. Can be one of "left",
+		 *  "center" and "right".
+		 * 
+		 * @validvalue ["left", "center", "right"]
+		 * @type {String}
+		 * @sample {highcharts} highcharts/subtitle/align/ Footnote at right of plot area
+		 * @sample {highstock} stock/chart/subtitle-footnote Footnote at bottom right of plot area
+		 * @default center
+		 * @since 2.0
+		 */
+		align: 'center',
+
+		/**
+		 * Adjustment made to the subtitle width, normally to reserve space
+		 * for the exporting burger menu.
+		 * 
+		 * @type {Number}
+		 * @see [title.widthAdjust](#title.widthAdjust)
+		 * @sample {highcharts} highcharts/title/widthadjust/ Wider menu, greater padding
+		 * @sample {highstock} highcharts/title/widthadjust/ Wider menu, greater padding
+		 * @sample {highmaps} highcharts/title/widthadjust/ Wider menu, greater padding
+		 * @default -44
+		 * @since 4.2.5
+		 */
+		widthAdjust: -44
 	},
 
 	/**
@@ -1819,38 +1816,6 @@ H.defaultOptions = {
 		 *
 		 */
 		navigation: {
-			/*= if (build.classic) { =*/
-
-			/**
-			 * The color for the active up or down arrow in the legend page navigation.
-			 * 
-			 * @type {Color}
-			 * @see In styled mode, the active arrow be styled with the `.highcharts-legend-nav-active` class.
-			 * @sample {highcharts} highcharts/legend/navigation/ Legend page navigation demonstrated
-			 * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
-			 * @default #003399
-			 * @since 2.2.4
-			 */
-			activeColor: '${palette.highlightColor100}',
-
-			/**
-			 * The color of the inactive up or down arrow in the legend page
-			 * navigation. .
-			 * 
-			 * @type {Color}
-			 * @see In styled mode, the inactive arrow be styled with the
-			 *      `.highcharts-legend-nav-inactive` class.
-			 * @sample {highcharts} highcharts/legend/navigation/
-			 *         Legend page navigation demonstrated
-			 * @sample {highstock} highcharts/legend/navigation/
-			 *         Legend page navigation demonstrated
-			 * @default {highcharts} #cccccc
-			 * @default {highstock} #cccccc
-			 * @default {highmaps} ##cccccc
-			 * @since 2.2.4
-			 */
-			inactiveColor: '${palette.neutralColor20}'
-			/*= } =*/
 
 			/**
 			 * How to animate the pages when navigating up or down. A value of `true`
@@ -1910,6 +1875,39 @@ H.defaultOptions = {
 			 * @since 2.2.4
 			 * @apioption legend.navigation.style
 			 */
+			
+			/*= if (build.classic) { =*/
+
+			/**
+			 * The color for the active up or down arrow in the legend page navigation.
+			 * 
+			 * @type {Color}
+			 * @see In styled mode, the active arrow be styled with the `.highcharts-legend-nav-active` class.
+			 * @sample {highcharts} highcharts/legend/navigation/ Legend page navigation demonstrated
+			 * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
+			 * @default #003399
+			 * @since 2.2.4
+			 */
+			activeColor: '${palette.highlightColor100}',
+
+			/**
+			 * The color of the inactive up or down arrow in the legend page
+			 * navigation. .
+			 * 
+			 * @type {Color}
+			 * @see In styled mode, the inactive arrow be styled with the
+			 *      `.highcharts-legend-nav-inactive` class.
+			 * @sample {highcharts} highcharts/legend/navigation/
+			 *         Legend page navigation demonstrated
+			 * @sample {highstock} highcharts/legend/navigation/
+			 *         Legend page navigation demonstrated
+			 * @default {highcharts} #cccccc
+			 * @default {highstock} #cccccc
+			 * @default {highmaps} ##cccccc
+			 * @since 2.2.4
+			 */
+			inactiveColor: '${palette.neutralColor20}'
+			/*= } =*/
 		},
 		
 		/**
@@ -2294,213 +2292,6 @@ H.defaultOptions = {
 	 *
 	 */
 	tooltip: {
-
-		/**
-		 * Enable or disable the tooltip.
-		 * 
-		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/tooltip/enabled/ Disabled
-		 * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/ Disable tooltip and show values on chart instead
-		 * @default true
-		 */
-		enabled: true,
-
-		/**
-		 * Enable or disable animation of the tooltip. In slow legacy IE browsers
-		 * the animation is disabled by default.
-		 * 
-		 * @type {Boolean}
-		 * @default true
-		 * @since 2.3.0
-		 */
-		animation: svg,
-
-		/**
-		 * The radius of the rounded border corners.
-		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/tooltip/bordercolor-default/ 5px by default
-		 * @sample {highcharts} highcharts/tooltip/borderradius-0/ Square borders
-		 * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
-		 * @default 3
-		 */
-		borderRadius: 3,
-
-		/**
-		 * For series on a datetime axes, the date format in the tooltip's
-		 * header will by default be guessed based on the closest data points.
-		 * This member gives the default string representations used for
-		 * each unit. For an overview of the replacement codes, see [dateFormat](#Highcharts.
-		 * dateFormat).
-		 * 
-		 * Defaults to:
-		 * 
-		 * <pre>{
-		 *     millisecond:"%A, %b %e, %H:%M:%S.%L",
-		 *     second:"%A, %b %e, %H:%M:%S",
-		 *     minute:"%A, %b %e, %H:%M",
-		 *     hour:"%A, %b %e, %H:%M",
-		 *     day:"%A, %b %e, %Y",
-		 *     week:"Week from %A, %b %e, %Y",
-		 *     month:"%B %Y",
-		 *     year:"%Y"
-		 * }</pre>
-		 * 
-		 * @type {Object}
-		 * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
-		 * @product highcharts highstock
-		 */
-		dateTimeLabelFormats: {
-			millisecond: '%A, %b %e, %H:%M:%S.%L',
-			second: '%A, %b %e, %H:%M:%S',
-			minute: '%A, %b %e, %H:%M',
-			hour: '%A, %b %e, %H:%M',
-			day: '%A, %b %e, %Y',
-			week: 'Week from %A, %b %e, %Y',
-			month: '%B %Y',
-			year: '%Y'
-		},
-
-		/**
-		 * A string to append to the tooltip format.
-		 * 
-		 * @sample {highcharts} highcharts/tooltip/footerformat/ A table for value alignment
-		 * @sample {highmaps} maps/tooltip/format/ Format demo
-		 * @since 2.2
-		 */
-		footerFormat: '',
-		
-		/**
-		 * Padding inside the tooltip, in pixels.
-		 * 
-		 * @type {Number}
-		 * @default 8
-		 * @since 5.0.0
-		 */
-		padding: 8,
-
-		/**
-		 * Proximity snap for graphs or single points. It defaults to 10 for
-		 * mouse-powered devices and 25 for touch devices.
-		 * 
-		 * Note that in most cases the whole plot area captures the mouse
-		 * movement, and in these cases `tooltip.snap` doesn't make sense.
-		 * This applies when [stickyTracking](#plotOptions.series.stickyTracking)
-		 * is `true` (default) and when the tooltip is [shared](#tooltip.shared)
-		 * or [split](#tooltip.split).
-		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/tooltip/bordercolor-default/ 10 px by default
-		 * @sample {highcharts} highcharts/tooltip/snap-50/ 50 px on graph
-		 * @default 10/25
-		 * @since 1.2.0
-		 * @product highcharts highstock
-		 */
-		snap: isTouchDevice ? 25 : 10,
-		/*= if (!build.classic) { =*/
-		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
-		pointFormat: '<span class="highcharts-color-{point.colorIndex}">' +
-			'\u25CF</span> {series.name}: <span class="highcharts-strong">' +
-			'{point.y}</span><br/>',
-		/*= } else { =*/
-
-		/**
-		 * The background color or gradient for the tooltip.
-		 * 
-		 * In styled mode, the stroke width is set in the `.highcharts-tooltip-box` class.
-		 * 
-		 * @type {Color}
-		 * @sample {highcharts} highcharts/tooltip/backgroundcolor-solid/ Yellowish background
-		 * @sample {highcharts} highcharts/tooltip/backgroundcolor-gradient/ Gradient
-		 * @sample {highcharts} highcharts/css/tooltip-border-background/ Tooltip in styled mode
-		 * @sample {highstock} stock/tooltip/general/ Custom tooltip
-		 * @sample {highstock} highcharts/css/tooltip-border-background/ Tooltip in styled mode
-		 * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
-		 * @sample {highmaps} highcharts/css/tooltip-border-background/ Tooltip in styled mode
-		 * @default rgba(247,247,247,0.85)
-		 */
-		backgroundColor: color('${palette.neutralColor3}').setOpacity(0.85).get(),
-
-		/**
-		 * The pixel width of the tooltip border.
-		 * 
-		 * In styled mode, the stroke width is set in the `.highcharts-tooltip-box` class.
-		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/tooltip/bordercolor-default/ 2px by default
-		 * @sample {highcharts} highcharts/tooltip/borderwidth/ No border (shadow only)
-		 * @sample {highcharts} highcharts/css/tooltip-border-background/ Tooltip in styled mode
-		 * @sample {highstock} stock/tooltip/general/ Custom tooltip
-		 * @sample {highstock} highcharts/css/tooltip-border-background/ Tooltip in styled mode
-		 * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
-		 * @sample {highmaps} highcharts/css/tooltip-border-background/ Tooltip in styled mode
-		 * @default 1
-		 */
-		borderWidth: 1,
-
-		/**
-		 * The HTML of the tooltip header line. Variables are enclosed by
-		 * curly brackets. Available variables are `point.key`, `series.name`,
-		 * `series.color` and other members from the `point` and `series`
-		 * objects. The `point.key` variable contains the category name, x
-		 * value or datetime string depending on the type of axis. For datetime
-		 * axes, the `point.key` date format can be set using tooltip.xDateFormat.
-		 * 
-		 * @type {String}
-		 * @sample {highcharts} highcharts/tooltip/footerformat/
-		 *         A HTML table in the tooltip
-		 * @sample {highstock} highcharts/tooltip/footerformat/
-		 *         A HTML table in the tooltip
-		 * @sample {highmaps} maps/tooltip/format/ Format demo
-		 */
-		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-
-		/**
-		 * The HTML of the point's line in the tooltip. Variables are enclosed
-		 * by curly brackets. Available variables are point.x, point.y, series.
-		 * name and series.color and other properties on the same form. Furthermore,
-		 * point.y can be extended by the `tooltip.valuePrefix` and `tooltip.
-		 * valueSuffix` variables. This can also be overridden for each series,
-		 * which makes it a good hook for displaying units.
-		 * 
-		 * In styled mode, the dot is colored by a class name rather
-		 * than the point color.
-		 * 
-		 * @type {String}
-		 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
-		 * @sample {highmaps} maps/tooltip/format/ Format demo
-		 * @default <span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>
-		 * @since 2.2
-		 */
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
-
-		/**
-		 * Whether to apply a drop shadow to the tooltip.
-		 * 
-		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/tooltip/bordercolor-default/ True by default
-		 * @sample {highcharts} highcharts/tooltip/shadow/ False
-		 * @sample {highmaps} maps/tooltip/positioner/ Fixed tooltip position, border and shadow disabled
-		 * @default true
-		 */
-		shadow: true,
-
-		/**
-		 * CSS styles for the tooltip. The tooltip can also be styled through
-		 * the CSS class `.highcharts-tooltip`.
-		 * 
-		 * @type {CSSObject}
-		 * @sample {highcharts} highcharts/tooltip/style/ Greater padding, bold text
-		 * @default { "color": "#333333", "cursor": "default", "fontSize": "12px", "pointerEvents": "none", "whiteSpace": "nowrap" }
-		 */
-		style: {
-			color: '${palette.neutralColor80}',
-			cursor: 'default',
-			fontSize: '12px',
-			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
-			whiteSpace: 'nowrap'
-		}
-		/*= } =*/
 		
 
 		/**
@@ -2788,6 +2579,213 @@ H.defaultOptions = {
 		 * @product highcharts highstock
 		 * @apioption tooltip.xDateFormat
 		 */
+
+		/**
+		 * Enable or disable the tooltip.
+		 * 
+		 * @type {Boolean}
+		 * @sample {highcharts} highcharts/tooltip/enabled/ Disabled
+		 * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/ Disable tooltip and show values on chart instead
+		 * @default true
+		 */
+		enabled: true,
+
+		/**
+		 * Enable or disable animation of the tooltip. In slow legacy IE browsers
+		 * the animation is disabled by default.
+		 * 
+		 * @type {Boolean}
+		 * @default true
+		 * @since 2.3.0
+		 */
+		animation: svg,
+
+		/**
+		 * The radius of the rounded border corners.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/tooltip/bordercolor-default/ 5px by default
+		 * @sample {highcharts} highcharts/tooltip/borderradius-0/ Square borders
+		 * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
+		 * @default 3
+		 */
+		borderRadius: 3,
+
+		/**
+		 * For series on a datetime axes, the date format in the tooltip's
+		 * header will by default be guessed based on the closest data points.
+		 * This member gives the default string representations used for
+		 * each unit. For an overview of the replacement codes, see [dateFormat](#Highcharts.
+		 * dateFormat).
+		 * 
+		 * Defaults to:
+		 * 
+		 * <pre>{
+		 *     millisecond:"%A, %b %e, %H:%M:%S.%L",
+		 *     second:"%A, %b %e, %H:%M:%S",
+		 *     minute:"%A, %b %e, %H:%M",
+		 *     hour:"%A, %b %e, %H:%M",
+		 *     day:"%A, %b %e, %Y",
+		 *     week:"Week from %A, %b %e, %Y",
+		 *     month:"%B %Y",
+		 *     year:"%Y"
+		 * }</pre>
+		 * 
+		 * @type {Object}
+		 * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
+		 * @product highcharts highstock
+		 */
+		dateTimeLabelFormats: {
+			millisecond: '%A, %b %e, %H:%M:%S.%L',
+			second: '%A, %b %e, %H:%M:%S',
+			minute: '%A, %b %e, %H:%M',
+			hour: '%A, %b %e, %H:%M',
+			day: '%A, %b %e, %Y',
+			week: 'Week from %A, %b %e, %Y',
+			month: '%B %Y',
+			year: '%Y'
+		},
+
+		/**
+		 * A string to append to the tooltip format.
+		 * 
+		 * @sample {highcharts} highcharts/tooltip/footerformat/ A table for value alignment
+		 * @sample {highmaps} maps/tooltip/format/ Format demo
+		 * @since 2.2
+		 */
+		footerFormat: '',
+		
+		/**
+		 * Padding inside the tooltip, in pixels.
+		 * 
+		 * @type {Number}
+		 * @default 8
+		 * @since 5.0.0
+		 */
+		padding: 8,
+
+		/**
+		 * Proximity snap for graphs or single points. It defaults to 10 for
+		 * mouse-powered devices and 25 for touch devices.
+		 * 
+		 * Note that in most cases the whole plot area captures the mouse
+		 * movement, and in these cases `tooltip.snap` doesn't make sense.
+		 * This applies when [stickyTracking](#plotOptions.series.stickyTracking)
+		 * is `true` (default) and when the tooltip is [shared](#tooltip.shared)
+		 * or [split](#tooltip.split).
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/tooltip/bordercolor-default/ 10 px by default
+		 * @sample {highcharts} highcharts/tooltip/snap-50/ 50 px on graph
+		 * @default 10/25
+		 * @since 1.2.0
+		 * @product highcharts highstock
+		 */
+		snap: isTouchDevice ? 25 : 10,
+		/*= if (!build.classic) { =*/
+		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
+		pointFormat: '<span class="highcharts-color-{point.colorIndex}">' +
+			'\u25CF</span> {series.name}: <span class="highcharts-strong">' +
+			'{point.y}</span><br/>',
+		/*= } else { =*/
+
+		/**
+		 * The background color or gradient for the tooltip.
+		 * 
+		 * In styled mode, the stroke width is set in the `.highcharts-tooltip-box` class.
+		 * 
+		 * @type {Color}
+		 * @sample {highcharts} highcharts/tooltip/backgroundcolor-solid/ Yellowish background
+		 * @sample {highcharts} highcharts/tooltip/backgroundcolor-gradient/ Gradient
+		 * @sample {highcharts} highcharts/css/tooltip-border-background/ Tooltip in styled mode
+		 * @sample {highstock} stock/tooltip/general/ Custom tooltip
+		 * @sample {highstock} highcharts/css/tooltip-border-background/ Tooltip in styled mode
+		 * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
+		 * @sample {highmaps} highcharts/css/tooltip-border-background/ Tooltip in styled mode
+		 * @default rgba(247,247,247,0.85)
+		 */
+		backgroundColor: color('${palette.neutralColor3}').setOpacity(0.85).get(),
+
+		/**
+		 * The pixel width of the tooltip border.
+		 * 
+		 * In styled mode, the stroke width is set in the `.highcharts-tooltip-box` class.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/tooltip/bordercolor-default/ 2px by default
+		 * @sample {highcharts} highcharts/tooltip/borderwidth/ No border (shadow only)
+		 * @sample {highcharts} highcharts/css/tooltip-border-background/ Tooltip in styled mode
+		 * @sample {highstock} stock/tooltip/general/ Custom tooltip
+		 * @sample {highstock} highcharts/css/tooltip-border-background/ Tooltip in styled mode
+		 * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
+		 * @sample {highmaps} highcharts/css/tooltip-border-background/ Tooltip in styled mode
+		 * @default 1
+		 */
+		borderWidth: 1,
+
+		/**
+		 * The HTML of the tooltip header line. Variables are enclosed by
+		 * curly brackets. Available variables are `point.key`, `series.name`,
+		 * `series.color` and other members from the `point` and `series`
+		 * objects. The `point.key` variable contains the category name, x
+		 * value or datetime string depending on the type of axis. For datetime
+		 * axes, the `point.key` date format can be set using tooltip.xDateFormat.
+		 * 
+		 * @type {String}
+		 * @sample {highcharts} highcharts/tooltip/footerformat/
+		 *         A HTML table in the tooltip
+		 * @sample {highstock} highcharts/tooltip/footerformat/
+		 *         A HTML table in the tooltip
+		 * @sample {highmaps} maps/tooltip/format/ Format demo
+		 */
+		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+
+		/**
+		 * The HTML of the point's line in the tooltip. Variables are enclosed
+		 * by curly brackets. Available variables are point.x, point.y, series.
+		 * name and series.color and other properties on the same form. Furthermore,
+		 * point.y can be extended by the `tooltip.valuePrefix` and `tooltip.
+		 * valueSuffix` variables. This can also be overridden for each series,
+		 * which makes it a good hook for displaying units.
+		 * 
+		 * In styled mode, the dot is colored by a class name rather
+		 * than the point color.
+		 * 
+		 * @type {String}
+		 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
+		 * @sample {highmaps} maps/tooltip/format/ Format demo
+		 * @default <span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>
+		 * @since 2.2
+		 */
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+
+		/**
+		 * Whether to apply a drop shadow to the tooltip.
+		 * 
+		 * @type {Boolean}
+		 * @sample {highcharts} highcharts/tooltip/bordercolor-default/ True by default
+		 * @sample {highcharts} highcharts/tooltip/shadow/ False
+		 * @sample {highmaps} maps/tooltip/positioner/ Fixed tooltip position, border and shadow disabled
+		 * @default true
+		 */
+		shadow: true,
+
+		/**
+		 * CSS styles for the tooltip. The tooltip can also be styled through
+		 * the CSS class `.highcharts-tooltip`.
+		 * 
+		 * @type {CSSObject}
+		 * @sample {highcharts} highcharts/tooltip/style/ Greater padding, bold text
+		 * @default { "color": "#333333", "cursor": "default", "fontSize": "12px", "pointerEvents": "none", "whiteSpace": "nowrap" }
+		 */
+		style: {
+			color: '${palette.neutralColor80}',
+			cursor: 'default',
+			fontSize: '12px',
+			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
+			whiteSpace: 'nowrap'
+		}
+		/*= } =*/
 	},
 
 
