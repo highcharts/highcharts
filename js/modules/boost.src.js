@@ -1405,7 +1405,7 @@ function GLRenderer(postRenderCallback) {
 			color,
 			scolor,
 			sdata = isStacked ? series.data : (xData || rawData),
-			closestLeft = { x: Number.MIN_VALUE, y: 0 },
+			closestLeft = { x: -Number.MAX_VALUE, y: 0 },
 			closestRight = { x: Number.MIN_VALUE, y: 0 },
 
 			skipped = 0,
@@ -1886,7 +1886,7 @@ function GLRenderer(postRenderCallback) {
 
 		if (!lastX &&
 			connectNulls !== false &&
-			closestLeft > Number.MIN_VALUE &&
+			closestLeft > -Number.MAX_VALUE &&
 			closestRight < Number.MAX_VALUE) {
 			// There are no points within the selected range
 			pushSupplementPoint(closestLeft);
