@@ -49,13 +49,16 @@
 
 
         "security/detect-object-injection": 0,
-        "security/detect-non-literal-fs-filename": 0 /* N/A for Highcharts, we do only client side */
+        "security/detect-non-literal-fs-filename": 0 /* N/A for Highcharts, we do only client side */,
+        
+        "highcharts/unparsable-doclet": 0
         
     },
     "parserOptions": {
         "sourceType": "module"
     },
     "plugins": [
+        "highcharts",
         "security"
     ],
     "extends": [
