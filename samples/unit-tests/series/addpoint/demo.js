@@ -1,10 +1,20 @@
 QUnit.test('Add point without shift', function (assert) {
-    var chart = $('#container').highcharts(),
+    var chart = Highcharts
+        .stockChart('container', {
+            chart: {
+                width: 800
+            },
+            rangeSelector: {
+                selected: 1
+            },
+            series: [{
+                data: usdeur.splice(0, 500)
+            }]
+        }),
         maxX;
 
     function add100() {
-        var chart = $('#container').highcharts(),
-            i = 0,
+        var i = 0,
             series = chart.series[0],
             data = usdeur.splice(0, 100);
 
@@ -44,7 +54,8 @@ QUnit.test('Add point without shift', function (assert) {
         chart.series[0].xData[400]
     );
 
-    // Once the navigator is disconnected from the max, it should stay after adding points.
+    // Once the navigator is disconnected from the max, it should stay after
+    // adding points.
     var minBefore = chart.xAxis[0].min,
         maxBefore = chart.xAxis[0].max;
 
