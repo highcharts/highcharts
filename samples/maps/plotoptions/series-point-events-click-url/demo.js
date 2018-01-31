@@ -20,7 +20,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/worl
                 point: {
                     events: {
                         click: function () {
-                            location.href = 'http://en.wikipedia.org/wiki/' + this.name;
+                            location.href = 'https://en.wikipedia.org/wiki/' + this.name;
                         }
                     }
                 }

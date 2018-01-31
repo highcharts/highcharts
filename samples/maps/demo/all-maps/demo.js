@@ -2,7 +2,8 @@
 /**
  * This is a complicated demo of Highmaps, not intended to get you up to speed
  * quickly, but to show off some basic maps and features in one single place.
- * For the basic demo, check out http://www.highcharts.com/maps/demo/geojson instead.
+ * For the basic demo, check out https://www.highcharts.com/maps/demo/geojson
+ * instead.
  */
 
 // Base path to maps
