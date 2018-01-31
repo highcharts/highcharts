@@ -53,7 +53,7 @@ Highcharts.setOptions({
 		 *
 		 * @sample  highcharts/export-data/categorized/ Categorized data
 		 * @sample  highcharts/export-data/stock-timeaxis/ Highstock time axis
-		 * 
+		 *
 		 * @since 6.0.0
 		 */
 		csv: {
@@ -64,11 +64,11 @@ Highcharts.setOptions({
 			 * - `keyLength` - The amount of value keys for this item, for
 			 *   example a range series has the keys `low` and `high` so the
 			 *   key length is 2.
-			 * 
-			 * If [useMultiLevelHeaders](#exporting.useMultiLevelHeaders) is 
+			 *
+			 * If [useMultiLevelHeaders](#exporting.useMultiLevelHeaders) is
 			 * true, columnHeaderFormatter by default returns an object with
 			 * columnTitle and topLevelColumnTitle for each key. Columns with
-			 * the same topLevelColumnTitle have their titles merged into a 
+			 * the same topLevelColumnTitle have their titles merged into a
 			 * single cell with colspan for table/Excel export.
 			 *
 			 * If `useMultiLevelHeaders` is false, or for CSV export, it returns
@@ -79,7 +79,7 @@ Highcharts.setOptions({
 			 * "DateTime" by default.
 			 *
 			 * Return `false` to use Highcharts' proposed header.
-			 * 
+			 *
 			 * @sample highcharts/export-data/multilevel-table
 			 *			Multiple table headers
 			 * @type {Function|null}
@@ -114,7 +114,7 @@ Highcharts.setOptions({
 			lineDelimiter: '\n'
 		},
 		/**
-		 * Export-data module required. Show a HTML table below the chart with 
+		 * Export-data module required. Show a HTML table below the chart with
 		 * the chart's current data.
 		 *
 		 * @sample highcharts/export-data/showtable/ Show the table
@@ -143,7 +143,7 @@ Highcharts.setOptions({
 		 * @since 6.0.4
 		 */
 		useRowspanHeaders: true
-		
+
 		/**
 		 * Export-data module required. Caption for the data table. Same as
 		 * chart title by default. Set to `false` to disable.
@@ -189,7 +189,7 @@ Highcharts.addEvent(Highcharts.Chart.prototype, 'render', function () {
 	}
 });
 
-// Set up key-to-axis bindings. This is used when the Y axis is datetime or 
+// Set up key-to-axis bindings. This is used when the Y axis is datetime or
 // categorized. For example in an arearange series, the low and high values
 // sholud be formatted according to the Y axis type, and in order to link them
 // we need this map.
@@ -207,8 +207,8 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  * current chart data.
  *
  * @param  {Boolean} multiLevelHeaders
- *			Use multilevel headers for the rows by default. Adds an extra row 
- *			with top level headers. If a custom columnHeaderFormatter is 
+ *			Use multilevel headers for the rows by default. Adds an extra row
+ *			with top level headers. If a custom columnHeaderFormatter is
  *			defined, this can override the behavior.
  *
  * @returns {Array.<Array>}
@@ -493,7 +493,7 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  * Export-data module required. Build a HTML table with the chart's current
  * data.
  *
- * @sample  highcharts/export-data/viewdata/ 
+ * @sample  highcharts/export-data/viewdata/
  *		  View the data from the export menu
  * @returns {String}
  *		  HTML representation of the data.
@@ -624,7 +624,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 	// Add table caption
 	if (options.exporting.tableCaption !== false) {
 		html += '<caption class="highcharts-table-caption">' + pick(
-				options.exporting.tableCaption, 
+				options.exporting.tableCaption,
 				(
 					options.title.text ?
 					htmlencode(options.title.text) :
@@ -642,13 +642,13 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 
 	// Add header
 	html += getTableHeaderHTML(
-		topHeaders, 
-		subHeaders, 
+		topHeaders,
+		subHeaders,
 		Math.max(rowLength, subHeaders.length)
 	);
 
 	// Transform the rows to HTML
-	html += '<tbody>';			
+	html += '<tbody>';
 	each(rows, function (row) {
 		html += '<tr>';
 		for (var j = 0; j < rowLength; j++) {
@@ -794,6 +794,7 @@ Highcharts.Chart.prototype.viewData = function () {
 Highcharts.Chart.prototype.editInCloud = function () {
 
 	var options,
+		paramObj,
 		params;
 
 	// Recursively remove function callbacks
@@ -821,7 +822,7 @@ Highcharts.Chart.prototype.editInCloud = function () {
 
 	options = Highcharts.merge(this.userOptions);
 	removeFunctions(options);
-	params = {
+	paramObj = {
 		name: (options.title && options.title.text) || 'Chart title',
 		options: options,
 		settings: {
@@ -832,7 +833,7 @@ Highcharts.Chart.prototype.editInCloud = function () {
 		}
 	};
 
-	params = JSON.stringify(params);
+	params = JSON.stringify(paramObj);
 	params = win.btoa(encodeURIComponent(params));
 
 	if (params.length < 2500) {
@@ -844,7 +845,7 @@ Highcharts.Chart.prototype.editInCloud = function () {
 		url: 'https://cloud-api.highcharts.com/openincloud',
 		type: 'post',
 		dataType: 'json',
-		data: params,
+		data: paramObj,
 		success: function (result) {
 			if (result && result.ok && result.id) {
 				openInCloud(result.id);
