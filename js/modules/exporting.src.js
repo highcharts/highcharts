@@ -1671,7 +1671,8 @@ Chart.prototype.inlineStyles = function () {
 
 			// Get default styles from the browser so that we don't have to add these
 			if (!defaultStyles[node.nodeName]) {
-				/*if (!dummySVG) {
+				/*
+				if (!dummySVG) {
 					dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
 					dummySVG.setAttribute('version', '1.1');
 					doc.body.appendChild(dummySVG);

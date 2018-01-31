@@ -20,7 +20,7 @@
         "max-len": [
             "warn", {
                 "ignoreUrls": true,
-                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|@default)"
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|@default|@apioption)"
             }
         ],
         "newline-after-var": 0,
