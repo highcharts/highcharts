@@ -1209,9 +1209,12 @@ H.Chart.prototype.addExitAnchor = function () {
 // Clear the chart and reset the navigation state
 H.Chart.prototype.resetKeyboardNavigation = function () {
 	var chart = this,
-		curMod = chart.keyboardNavigationModules[
-			chart.keyboardNavigationModuleIndex || 0
-		];
+		curMod = (
+			chart.keyboardNavigationModules &&
+			chart.keyboardNavigationModules[
+				chart.keyboardNavigationModuleIndex || 0
+			]
+		);
 	if (curMod && curMod.terminate) {
 		curMod.terminate();
 	}
@@ -1287,7 +1290,10 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		// Reset chart navigation state if we click outside the chart and it's
 		// not already reset
 		chart.unbindBlurHandler = addEvent(doc, 'mouseup', function () {
-			if (!chart.keyboardReset && !chart.pointer.chartPosition) {
+			if (
+				!chart.keyboardReset &&
+				!(chart.pointer && chart.pointer.chartPosition)
+			) {
 				chart.resetKeyboardNavigation();
 			}
 		});
