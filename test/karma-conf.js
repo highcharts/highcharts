@@ -276,6 +276,20 @@ module.exports = function (config) {
             require('./karma-imagecapture-reporter.js')
         ],
 
+        formatError: function (s) {
+            let ret = s.replace(
+                /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
+                function (a, b, c) {
+                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan + '\n' +
+                    '\t' + a.replace(/^@/, '@ ') + '\n<<<splitter>>>';
+                }
+            );
+
+            // Skip the call stack, it's internal QUnit stuff
+            ret = ret.split('<<<splitter>>>')[0];
+
+            return ret;
+        },
 
         preprocessors: {
             '**/unit-tests/*/*/demo.js': ['generic'],
