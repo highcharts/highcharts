@@ -1554,7 +1554,8 @@ SVGRenderer.prototype.inlineBlacklist = [
 	/[lL]ogical(Width|Height)$/,
 	/perspective/,
 	/TapHighlightColor/,
-	/^transition/
+	/^transition/,
+	/^length$/ // #7700
 	// /^text (border|color|cursor|height|webkitBorder)/
 ];
 SVGRenderer.prototype.unstyledElements = [
