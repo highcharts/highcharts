@@ -1,8 +1,6 @@
-# Dual axes, line, and column
+# Multiple axes 
+Multiple axes allow the visualization of multiple and completely different data set on the same chart. 
+Avoid visualization too much series type on the same chart, and use different shapes and colors for each data set to help the general users and the color blind community to better explore the chart.
 
-This demo uses two different y axes to represent completely different data set such as the temperature and the rainfall. It combines the benefits of a column series type and the line series type.
-The column series type shows the rainfall **comparison** for each month, where the line series type visualizes the **variation** of the temperature over the time.
-
-#### Tip
-
-Notice the use of the [opposite](http://api.highcharts.com/highcharts/yAxis.opposite) feature to set the rainfall axis on the right side.
+####  Tip
+Use the option [opposite](http://api.highcharts.com/highcharts/yAxis.opposite) to set up axes in the opposite direction for more clarity.
