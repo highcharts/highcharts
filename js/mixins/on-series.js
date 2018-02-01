@@ -11,6 +11,20 @@ var each = H.each,
 	stableSort = H.stableSort;
 
 var onSeriesMixin = {
+
+	/**
+	 * Override getPlotBox. If the onSeries option is valid, return the plot box
+	 * of the onSeries, otherwise proceed as usual.
+	 */
+	getPlotBox: function () {
+		return H.Series.prototype.getPlotBox.call(
+			(
+				this.options.onSeries &&
+				this.chart.get(this.options.onSeries)
+			) || this
+		);
+	},
+
 	/**
 	 * Extend the translate method by placing the point on the related series
 	 */

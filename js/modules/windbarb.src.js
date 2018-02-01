@@ -101,6 +101,7 @@ seriesType('windbarb', 'column', {
 	markerAttribs: function () {
 		return undefined;
 	},
+	getPlotBox: onSeriesMixin.getPlotBox,
 	/**
 	 * Create a single wind arrow. It is later rotated around the zero
 	 * centerpoint.

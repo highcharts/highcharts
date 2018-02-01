@@ -273,6 +273,7 @@ seriesType('flags', 'column', {
 	/*= } =*/
 
 	translate: onSeriesMixin.translate,
+	getPlotBox: onSeriesMixin.getPlotBox,
 
 	/**
 	 * Draw the markers
