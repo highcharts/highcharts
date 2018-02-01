@@ -36,6 +36,7 @@
         "no-undefined": 0,
         "no-underscore-dangle": 0,                  /*@todo: Check this*/
         "object-curly-spacing": [2, "always"],
+        "object-shorthand": ["error", "never"],     /* Closure Compiler chokes on it */
         "space-before-function-paren": [2, {
             "anonymous": "always",
             "named": "never"

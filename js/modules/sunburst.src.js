@@ -830,7 +830,7 @@ var sunburstSeries = {
 		}
 	},
 	utils: {
-		calculateLevelSizes,
+		calculateLevelSizes: calculateLevelSizes,
 		range: range
 	}
 };
