@@ -41,52 +41,14 @@ const getProductVersion = () => {
  *   and reuse it on github.highcharts.com
  * @return {Object} Object containing all fileOptions
  */
-const getFileOptions = (base) => {
-    const DS = '[\\\\\\\/]';
-    const NOTDS = '[^\\\\\\\/]';
-    const SINGLEDS = DS + NOTDS; // Regex: Single directory seperator
-    const folders = {
-        'parts': 'parts' + SINGLEDS + '+\.js$',
-        'parts-more': 'parts-more' + SINGLEDS + '+\.js$',
-        'highchartsFiles': [
-            'parts' + DS + 'Globals\.js$',
-            'parts' + DS + 'SvgRenderer\.js$',
-            'parts' + DS + 'Html\.js$',
-            'parts' + DS + 'VmlRenderer\.js$',
-            'parts' + DS + 'Axis\.js$',
-            'parts' + DS + 'DateTimeAxis\.js$',
-            'parts' + DS + 'LogarithmicAxis\.js$',
-            'parts' + DS + 'Tooltip\.js$',
-            'parts' + DS + 'Pointer\.js$',
-            'parts' + DS + 'TouchPointer\.js$',
-            'parts' + DS + 'MSPointer\.js$',
-            'parts' + DS + 'Legend\.js$',
-            'parts' + DS + 'Chart\.js$',
-            'parts' + DS + 'Stacking\.js$',
-            'parts' + DS + 'Dynamics\.js$',
-            'parts' + DS + 'AreaSeries\.js$',
-            'parts' + DS + 'SplineSeries\.js$',
-            'parts' + DS + 'AreaSplineSeries\.js$',
-            'parts' + DS + 'ColumnSeries\.js$',
-            'parts' + DS + 'BarSeries\.js$',
-            'parts' + DS + 'ScatterSeries\.js$',
-            'parts' + DS + 'PieSeries\.js$',
-            'parts' + DS + 'DataLabels\.js$',
-            'modules' + DS + 'overlapping-datalabels.src\.js$',
-            'parts' + DS + 'Interaction\.js$',
-            'parts' + DS + 'Responsive\.js$',
-            'parts' + DS + 'Color\.js$',
-            'parts' + DS + 'Options\.js$',
-            'parts' + DS + 'PlotLineOrBand\.js$',
-            'parts' + DS + 'Tick\.js$',
-            'parts' + DS + 'Point\.js$',
-            'parts' + DS + 'Series\.js$',
-            'parts' + DS + 'Utilities\.js$'
-        ]
-    };
+const getFileOptions = (files) => {
+    const highchartsFiles = replaceAll(
+      getOrderedDependencies('js/masters/highcharts.src.js').join('|'),
+      sep,
+      `\\${sep}`
+    );
 
     // Modules should not be standalone, and they should exclude all parts files.
-    const files = getFilesInFolder(base, true, '');
     const fileOptions = files
         .reduce((obj, file) => {
             if (file.indexOf('modules') > -1 || file.indexOf('themes') > -1 || file.indexOf('indicators') > -1) {
@@ -135,13 +97,16 @@ const scripts = () => {
     // Check if the installed version of the assembler matches the dependency.
     checkDependency('highcharts-assembler', 'err', 'devDependencies');
     const build = require('highcharts-assembler');
-    // const argv = require('yargs').argv; Already declared in the upper scope
-    const files = (argv.file) ? argv.file.split(',') : null;
+    const base = './js/masters/';
+    const files = (
+      (argv.file) ?
+      argv.file.split(',') :
+      getFilesInFolder(base, true, '')
+    )
     const type = (argv.type) ? argv.type : 'both';
     const debug = argv.d || false;
     const version = getProductVersion();
-    const base = './js/masters/';
-    const fileOptions = getFileOptions(base);
+    const fileOptions = getFileOptions(files);
 
     return build({
         base: base,
@@ -1511,16 +1476,16 @@ gulp.task('scripts-new', () => {
     const isUndefined = (x) => typeof x === 'undefined';
     const version = getProductVersion();
     const pathMasters = './js/masters/';
-    const fileOptions = getFileOptions(pathMasters);
-    const mapTypeToSource = {
-        'classic': './code/es-modules',
-        'css': './code/js/es-modules'
-    };
     const files = (
       (argv.file) ?
       argv.file.split(',') :
       getFilesInFolder(pathMasters, true)
     );
+    const fileOptions = getFileOptions(files);
+    const mapTypeToSource = {
+        'classic': './code/es-modules',
+        'css': './code/js/es-modules'
+    };
     const dependencyList = {
         'classic': {},
         'css': {}
