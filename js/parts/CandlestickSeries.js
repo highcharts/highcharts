@@ -37,7 +37,6 @@ var candlestickOptions = {
 	 * @product highstock
 	 * @apioption plotOptions.candlestick.upLineColor
 	 */
-	/*= } =*/
 
 	/**
 	 * @default ohlc
@@ -112,6 +111,7 @@ var candlestickOptions = {
 	 * @product highstock
 	 */
 	upColor: '${palette.backgroundColor}',
+	/*= } =*/
 
 	stickyTracking: true
 

@@ -70,3 +70,4 @@ samples/highcharts/common-js/webpack/demo.js
 
 /tmp/processed.api.json
 /package-lock.json
+/temp.js
