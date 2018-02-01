@@ -336,7 +336,7 @@ Highcharts.Time.prototype = {
 			// 2 am. We need to make the same time as local Date does.
 			} else if (
 				offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
-				(H.isChrome || H.isMS)
+				!H.isSafari
 			) {
 				d -= 36e5;
 			}

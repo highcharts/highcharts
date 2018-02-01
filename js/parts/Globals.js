@@ -17,7 +17,8 @@ var glob = typeof win === 'undefined' ? window : win,
 		!!doc.createElementNS(SVG_NS, 'svg').createSVGRect
 	),
 	isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera,
-	isFirefox = /Firefox/.test(userAgent),
+	isFirefox = userAgent.indexOf('Firefox') !== -1,
+	isChrome = userAgent.indexOf('Chrome') !== -1,
 	hasBidiBug = (
 		isFirefox &&
 		parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
@@ -31,9 +32,10 @@ var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
 	hasBidiBug: hasBidiBug,
 	hasTouch: doc && doc.documentElement.ontouchstart !== undefined,
 	isMS: isMS,
-	isWebKit: /AppleWebKit/.test(userAgent),
+	isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
 	isFirefox: isFirefox,
-	isChrome: userAgent.indexOf('Chrome') !== -1,
+	isChrome: isChrome,
+	isSafari: !isChrome && userAgent.indexOf('Safari') !== -1,
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS: SVG_NS,
 	chartCount: 0,
