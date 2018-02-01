@@ -15,10 +15,10 @@
         "consistent-return": 0,
         "func-style": 0,
         "guard-for-in": 0,                          /*@todo: Make the each function handle objects, then run a guarded for-in there.*/
-        "indent": ["warn", "tab"],
+        "indent": ["error", "tab"],
         "lines-around-comment": 0,
         "max-len": [
-            "warn", {
+            "error", {
                 "ignoreUrls": true,
                 "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|@default|@apioption)"
             }
@@ -41,7 +41,7 @@
             "named": "never"
         }], /*JSLint style*/
         "quotes": [2, "single"],
-        "spaced-comment": ["warn", "always", { "markers": ["="] }],
+        "spaced-comment": ["error", "always", { "markers": ["="] }],
         "require-jsdoc": 0,
         "strict": 0,
         "valid-jsdoc": 0,
@@ -51,7 +51,7 @@
         "security/detect-object-injection": 0,
         "security/detect-non-literal-fs-filename": 0 /* N/A for Highcharts, we do only client side */,
         
-        "highcharts/unparsable-doclet": 0
+        "highcharts/unparsable-doclet": 2
         
     },
     "parserOptions": {
