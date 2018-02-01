@@ -156,6 +156,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
       shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
 
       if (shouldIgnore) {
+		removeOption(node.highcharts.fullname);
         return;
 
       } else if ((e.comment || '').indexOf('@apioption') < 0) {
@@ -304,15 +305,15 @@ function removeOption(path) {
 		p = (path || '').split('.')
 	;
 
-	console.log('removing', path);
+	// console.log('found ignored option: removing', path);
 
-	if (!obj) {
+	if (!p) {
 		return;
 	}
 
 	p.some(function (thing, i) {
 		if (i === p.length - 1) {
-			delete curent[thing];
+			delete current[thing];
 			return true;
 		}
 
