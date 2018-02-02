@@ -97,6 +97,180 @@ if (H.seriesTypes.pie) {
 }
 
 
+/** 
+ * i18n utility function. Format a single array statement in a format string. If
+ * the statement is not an array statement, returns the statement within
+ * brackets. Invalid array statements return an empty string.
+ */
+function formatArrayStatement(statement, ctx) {
+	var eachStart = statement.indexOf('_each('),
+		indexStart = statement.indexOf('['),
+		indexEnd = statement.indexOf(']'),
+		arr;
+
+	// Dealing with an each-function?
+	if (eachStart > -1) {
+		var eachEnd = statement.slice(eachStart)
+				.indexOf(')') + eachStart,
+			preEach = statement.substring(0, eachStart),
+			postEach = statement.substring(eachEnd + 1),
+			eachStatement = statement.substring(eachStart + 6, eachEnd),
+			eachArguments = eachStatement.split(','),
+			lenArg = Number(eachArguments[1]),
+			len,
+			result = '';
+		arr = ctx[eachArguments[0]];
+		if (arr) {
+			lenArg = isNaN(lenArg) ? arr.length : lenArg;
+			len = lenArg < 0 ?
+				arr.length + lenArg :
+				Math.min(lenArg, arr.length); // Overshoot
+			// Run through the array for the specified length
+			for (var i = 0; i < len; ++i) {
+				result += preEach + arr[i] + postEach;
+			}
+		}				
+		return result.length ? result : '';	
+	}
+
+	// Array index
+	if (indexStart > -1) {
+		var arrayName = statement.substring(0, indexStart),
+			ix = Number(statement.substring(indexStart + 1, indexEnd)),
+			val;
+		arr = ctx[arrayName];
+		if (!isNaN(ix) && arr) {
+			if (ix < 0) {
+				val = arr[arr.length + ix];
+				// Handle negative overshoot
+				if (val === undefined) {
+					val = arr[0];
+				}
+			} else {
+				val = arr[ix];
+				// Handle positive overshoot
+				if (val === undefined) {
+					val = arr[arr.length - 1];
+				}
+			}
+		}
+		return val !== undefined ? val : '';
+	}
+
+	// Standard substitution, delegate to H.format or similar
+	return '{' + statement + '}';
+}
+
+
+/**
+ * i18n formatting function. Extends H.format() functionality by also handling
+ * arrays in the context. Arrays can be indexed as follows:
+ *
+ *  Format: 'This is the first index: {myArray[0]}. The last: {myArray[-1]}.'
+ *  Context: { myArray: [0, 1, 2, 3, 4, 5] }
+ *  Result: 'This is the first index: 0. The last: 5.'
+ *
+ * They can also be iterated using the _each() function. This will repeat the
+ * contents of the bracket expression for each element. Example:
+ *
+ *  Format: 'List contains: {_each(myArray)cm }'
+ *  Context: { myArray: [0, 1, 2] }
+ *  Result: 'List contains: 0cm 1cm 2cm '
+ *
+ * The _each() function optionally takes a length parameter. If positive, this
+ * parameter specifies the max number of elements to iterate through. If
+ * negative, the function will subtract the number from the length of the array.
+ * Use this to stop iterating before the array ends. Example:
+ *
+ *  Format: 'List contains: {_each(myArray, -1), }and {myArray[-1]}.'
+ *  Context: { myArray: [0, 1, 2, 3] }
+ *  Result: 'List contains: 0, 1, 2, and 3.'
+ *
+ * @param   {string} formatString The string to format.
+ * @param   {object} context Context to apply to the format string.
+ * @param   {Time} time A `Time` instance for date formatting, passed on to
+ *                 H.format().
+ * @return  {string} The formatted string.
+ */
+H.i18nFormat = function (formatString, context, time) {
+	var getFirstBracketStatement = function (sourceStr, offset) {
+			var str = sourceStr.slice(offset || 0),
+				startBracket = str.indexOf('{'),
+				endBracket = str.indexOf('}');
+			if (startBracket > -1 && endBracket > startBracket) {
+				return {
+					statement: str.substring(startBracket + 1, endBracket),
+					begin: offset + startBracket + 1,
+					end: offset + endBracket
+				};
+			}
+		},
+		tokens = [],
+		bracketRes,
+		constRes,
+		cursor = 0;
+
+	// Tokenize format string into bracket statements and constants
+	do {
+		bracketRes = getFirstBracketStatement(formatString, cursor);
+		constRes = formatString.substring(
+			cursor,
+			bracketRes && bracketRes.begin - 1
+		);
+
+		// If we have constant content before this bracket statement, add it
+		if (constRes.length) {
+			tokens.push({
+				value: constRes,
+				type: 'constant'
+			});
+		}
+
+		// Add the bracket statement
+		if (bracketRes) {
+			tokens.push({
+				value: bracketRes.statement,
+				type: 'statement'
+			});
+		}
+
+		cursor = bracketRes && bracketRes.end + 1;
+	} while (bracketRes);
+
+	// Perform the formatting. The formatArrayStatement function returns the
+	// statement in brackets if it is not an array statement, which means it
+	// gets picked up by H.format below.
+	each(tokens, function (token) {
+		if (token.type === 'statement') {
+			token.value = formatArrayStatement(token.value, context);
+		}
+	});
+
+	// Join string back together and pass to H.format to pick up non-array
+	// statements.
+	return H.format(H.reduce(tokens, function (acc, cur) {
+		return acc + cur.value;
+	}, ''), context, time);
+};
+
+
+/**
+ * Apply context to a format string from lang options of the chart.
+ * @param  {string} langKey Key (using dot notation) into lang option structure
+ * @param  {object} context Context to apply to the format string
+ * @return {string} The formatted string
+ */
+H.Chart.prototype.langFormat = function (langKey, context) {
+	var keys = langKey.split('.'),
+		formatString = this.options.lang,
+		i = 0;
+	for (; i < keys.length; ++i) {
+		formatString = formatString && formatString[keys[i]];
+	}
+	return typeof formatString === 'string' && H.format(formatString, context);	
+};
+
+
 /**
  * Accessibility options
  */
