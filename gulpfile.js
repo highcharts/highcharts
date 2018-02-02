@@ -1339,7 +1339,7 @@ const startServer = () => {
 
     console.log(
         'Starting API docs server',
-        ('http://localhost:' + docport).blue.underline.bgWhite
+        ('http://localhost:' + docport).cyan
     );
 };
 
@@ -1371,13 +1371,13 @@ const jsdoc = () => {
         gulp.watch(watchFiles, ['jsdoc']);
         console.log('Watching file changes in JS files and templates');
 
-        if (!apiServerRunning) {
-            startServer();
-            apiServerRunning = true;
-        }
-
     } else {
         console.log('Tip: use the --watch argument to watch JS file changes');
+    }
+
+    if (!apiServerRunning) {
+        startServer();
+        apiServerRunning = true;
     }
 
     return generateClassReferences(optionsClassReference)
