@@ -156,7 +156,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		};
 
 	// apply X axis options to both single and multi y axes
-	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
+	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions, i) {
 		return merge(
 			{ // defaults
 				minPadding: 0,
@@ -172,6 +172,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				showLastLabel: true
 			}, 
 			defaultOptions.xAxis, // #3802
+			defaultOptions.xAxis && defaultOptions.xAxis[i], // #7690
 			xAxisOptions, // user options
 			{ // forced options
 				type: 'datetime',
@@ -182,7 +183,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 	});
 
 	// apply Y axis options to both single and multi y axes
-	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
+	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions, i) {
 		opposite = pick(yAxisOptions.opposite, true);
 		return merge({ // defaults
 			labels: {
@@ -206,6 +207,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			}
 		}, 
 		defaultOptions.yAxis, // #3802
+		defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
 		yAxisOptions // user options
 		);
 	});
