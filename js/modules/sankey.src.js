@@ -677,6 +677,16 @@ seriesType('sankey', 'column', {
  * @apioption series.sankey.data
  */
 
+/**
+ * The color for the individual _link_. By default, the link color is the same
+ * as the node it extends from. The `series.fillOpacity` option also applies to
+ * the points, so when setting a specific link color, consider setting the
+ * `fillOpacity` to 1.
+ * 
+ * @type {String}
+ * @product highcharts
+ * @apioption series.sankey.data.color
+ */
 
 /**
  * The node that the link runs from.
