@@ -495,8 +495,7 @@ const compileLib = () => {
     const sourceFolder = './vendor/';
     const files = ['canvg.src.js', 'rgbcolor.src.js'];
     return compile(files, sourceFolder)
-        .then(console.log)
-        .catch(console.log);
+        .then(console.log);
 };
 
 const cleanCode = () => {
@@ -516,15 +515,14 @@ const cleanCode = () => {
 const cleanDist = () => {
     return removeDirectory('./build/dist').then(() => {
         console.log('Successfully removed dist directory.');
-    }).catch(console.log);
+    });
 };
 
 const cleanApi = () => {
     return removeDirectory('./build/api')
         .then(() => {
             console.log('Successfully removed api directory.');
-        })
-        .catch(console.log);
+        });
 };
 
 const copyFile = (source, target) => new Promise((resolve, reject) => {
@@ -843,8 +841,7 @@ const filesize = () => {
             const values = obj[key];
             report(key, values.new, values.head);
         });
-    })
-    .catch(console.log);
+    });
 };
 
 /**
