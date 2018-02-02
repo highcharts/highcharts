@@ -484,52 +484,53 @@ const generateClassReferences = ({ templateDir, destination }) => {
     });
 };
 
-const compile = (files, sourceFolder) => {
-    const createSourceMap = true;
-
-    console.log(colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.'));
+const compileSingleFile = (path, sourceFolder, createSourceMap) => {
+    const closureCompiler = require('google-closure-compiler-js');
+    const sourcePath = sourceFolder + path;
+    const outputPath = sourcePath.replace('.src.js', '.js');
+    const src = getFile(sourcePath);
+    const getErrorMessage = (e) => {
+        return [
+            'Compile error in file: ' + path,
+            '- Type: ' + e.type,
+            '- Line: ' + e.lineNo,
+            '- Char : ' + e.charNo,
+            '- Description: ' + e.description
+        ].join('\n');
+    };
     return new Promise((resolve, reject) => {
-        files.forEach(path => {
-            const closureCompiler = require('google-closure-compiler-js');
-            // const fs = require('fs');
-            const sourcePath = sourceFolder + path;
-            const outputPath = sourcePath.replace('.src.js', '.js');
-            const src = getFile(sourcePath);
-            const getErrorMessage = (e) => {
-                return [
-                    'Compile error in file: ' + path,
-                    '- Type: ' + e.type,
-                    '- Line: ' + e.lineNo,
-                    '- Char : ' + e.charNo,
-                    '- Description: ' + e.description
-                ].join('\n');
-            };
-            const out = closureCompiler.compile({
-                compilationLevel: 'SIMPLE_OPTIMIZATIONS',
-                jsCode: [{
-                    src: src
-                }],
-                languageIn: 'ES5',
-                languageOut: 'ES5',
-                createSourceMap: createSourceMap
-            });
-            const errors = out.errors;
-            if (errors.length) {
-                const msg = errors.map((e) => {
-                    return getErrorMessage(e);
-                }).join('\n');
-                reject(msg);
-            } else {
-                writeFile(outputPath, out.compiledCode);
-                if (createSourceMap) {
-                    writeFile(outputPath + '.map', out.sourceMap);
-                }
-                // @todo add filesize information
-                console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
-            }
-        });
-        resolve('Compile is complete');
+      const out = closureCompiler.compile({
+          compilationLevel: 'SIMPLE_OPTIMIZATIONS',
+          jsCode: [{
+              src: src
+          }],
+          languageIn: 'ES5',
+          languageOut: 'ES5',
+          createSourceMap: createSourceMap
+      });
+      const errors = out.errors;
+      if (errors.length) {
+          const msg = errors.map(getErrorMessage).join('\n');
+          reject(msg);
+      } else {
+          writeFile(outputPath, out.compiledCode);
+          if (createSourceMap) {
+              writeFile(outputPath + '.map', out.sourceMap);
+          }
+          // @todo add filesize information
+          console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
+      }
     });
+}
+
+const compile = (files, sourceFolder) => {
+    console.log(
+      colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.')
+    );
+    const createSourceMap = true;
+    const promises = files
+      .map(path => compileSingleFile(path, sourceFolder, createSourceMap))
+    return Promise.all(promises);
 };
 
 /**
@@ -537,10 +538,9 @@ const compile = (files, sourceFolder) => {
  */
 const compileScripts = () => {
     const sourceFolder = './code/';
-    const files = getFilesInFolder(sourceFolder, true, '').filter(path => path.endsWith('.src.js'));
-    return compile(files, sourceFolder)
-        .then(console.log)
-        .catch(console.log);
+    const files = getFilesInFolder(sourceFolder, true, '')
+      .filter(path => path.endsWith('.src.js'));
+    return compile(files, sourceFolder);
 };
 
 /**
