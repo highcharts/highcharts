@@ -883,10 +883,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	/**
 	 * Get the computed stroke width in pixel values. This is used extensively
 	 * when drawing shapes to ensure the shapes are rendered crisp and
-	 * positioned correctly relative to each other. Using `shape-rendering: 
-	 * crispEdges` leaves us less control over positioning, for example when we
-	 * want to stack columns next to each other, or position things 
-	 * pixel-perfectly within the plot box.
+	 * positioned correctly relative to each other. Using
+	 * `shape-rendering: crispEdges` leaves us less control over positioning,
+	 * for example when we want to stack columns next to each other, or position
+	 * things pixel-perfectly within the plot box.
 	 *
 	 * The common pattern when placing a shape is:
 	 * * Create the SVGElement and add it to the DOM. In styled mode, it will
@@ -2939,8 +2939,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	/**
 	 * Make a straight line crisper by not spilling out to neighbour pixels.
 	 * 
-	 * @param {Array} points - The original points on the format `['M', 0, 0,
-	 *    'L', 100, 0]`.
+	 * @param {Array} points - The original points on the format
+	 *                       `['M', 0, 0, 'L', 100, 0]`.
 	 * @param {number} width - The width of the line.
 	 * @returns {Array} The original points array, but modified to render
 	 * crisply.

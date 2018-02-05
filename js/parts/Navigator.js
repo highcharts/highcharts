@@ -265,8 +265,8 @@ extend(defaultOptions, {
 		 * navigator.
 		 *
 		 * @type {Number}
-		 * @see In styled mode, the outline stroke width is set with the `.
-		 * highcharts-navigator-outline` class.
+		 * @see In styled mode, the outline stroke width is set with the
+		 * `.highcharts-navigator-outline` class.
 		 * @sample {highstock} stock/navigator/outline/ 2px blue outline
 		 * @default 2
 		 * @product highstock
@@ -297,8 +297,8 @@ extend(defaultOptions, {
 		 * }</pre>
 		 *
 		 * @type {Object}
-		 * @see In styled mode, the navigator series is styled with the `.
-		 * highcharts-navigator-series` class.
+		 * @see In styled mode, the navigator series is styled with the
+		 *      `.highcharts-navigator-series` class.
 		 * @sample {highstock} stock/navigator/series-data/
 		 *         Using a separate data set for the navigator
 		 * @sample {highstock} stock/navigator/series/

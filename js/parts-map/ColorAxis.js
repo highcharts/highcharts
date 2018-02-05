@@ -131,8 +131,8 @@ if (!H.ColorAxis) {
 			 * The name of the data class as it appears in the legend. If no name
 			 * is given, it is automatically created based on the `from` and `to`
 			 * values. For full programmatic control, [legend.labelFormatter](#legend.
-			 * labelFormatter) can be used. In the formatter, `this.from` and `this.
-			 * to` can be accessed.
+			 * labelFormatter) can be used. In the formatter, `this.from` and
+			 * `this.to` can be accessed.
 			 * 
 			 * @type {String}
 			 * @sample {highmaps} maps/coloraxis/dataclasses-name/ Named data classes
@@ -261,8 +261,8 @@ if (!H.ColorAxis) {
 
 			/**
 			 * The triangular marker on a scalar color axis that points to the
-			 * value of the hovered area. To disable the marker, set `marker:
-			 * null`.
+			 * value of the hovered area. To disable the marker, set
+			 * `marker: null`.
 			 * 
 			 * @type {Object}
 			 * @sample {highmaps} maps/coloraxis/marker/ Black marker

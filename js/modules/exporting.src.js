@@ -676,7 +676,7 @@ defaultOptions.exporting = {
 
 			/**
 			 * The key to a [lang](#lang) option setting that is used for the
-			 * button`s title tooltip. When the key is `contextButtonTitle`, it
+			 * button's title tooltip. When the key is `contextButtonTitle`, it
 			 * refers to [lang.contextButtonTitle](#lang.contextButtonTitle)
 			 * that defaults to "Chart context menu".
 			 * @type {String}

@@ -265,8 +265,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	
 	/**
 	 * Styled mode only. A specific color index to use for the series, so its
-	 * graphic representations are given the class name `highcharts-color-
-	 * {n}`.
+	 * graphic representations are given the class name `highcharts-color-{n}`.
 	 * 
 	 * @type {Number}
 	 * @since 5.0.0
@@ -1662,8 +1661,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * 
 		 * <td>`this.series`:</td>
 		 * 
-		 * <td>The series object. The series name is available through `this.
-		 * series.name`.</td>
+		 * <td>The series object. The series name is available through
+		 * `this.series.name`.</td>
 		 * 
 		 * </tr>
 		 * 
@@ -2249,9 +2248,10 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * the X axis, Y axis or Z axis for bubbles, according to the `zoneAxis`
 	 * option.
 	 * 
-	 * In styled mode, the color zones are styled with the `.highcharts-
-	 * zone-{n}` class, or custom classed from the `className` option ([view
-	 * live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/)).
+	 * In styled mode, the color zones are styled with the
+	 * `.highcharts-zone-{n}` class, or custom classed from the `className`
+	 * option
+	 * ([view live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/)).
 	 * 
 	 * @type {Array}
 	 * @see [zoneAxis](#plotOptions.series.zoneAxis)

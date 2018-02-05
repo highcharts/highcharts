@@ -69,9 +69,9 @@ extend(defaultOptions, {
 		 * 
 		 * CSS styles for the text label.
 		 * 
-		 * In styled mode, the buttons are styled by the `.highcharts-
-		 * range-selector-buttons .highcharts-button` rule with its different
-		 * states.
+		 * In styled mode, the buttons are styled by the
+		 * `.highcharts-range-selector-buttons .highcharts-button` rule with its
+		 * different states.
 		 * 
 		 * @type {Object}
 		 * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs

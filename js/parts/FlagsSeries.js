@@ -175,8 +175,8 @@ seriesType('flags', 'column', {
 	/**
 	 * The color of the line/border of the flag.
 	 * 
-	 * In styled mode, the stroke is set in the `.highcharts-flag-series
-	 * .highcharts-point` rule.
+	 * In styled mode, the stroke is set in the
+	 * `.highcharts-flag-series.highcharts-point` rule.
 	 * 
 	 * @type      {Color}
 	 * @default   #000000
@@ -222,8 +222,8 @@ seriesType('flags', 'column', {
 	/**
 	 * The text styles of the flag.
 	 * 
-	 * In styled mode, the styles are set in the `.highcharts-flag-
-	 * series .highcharts-point` rule.
+	 * In styled mode, the styles are set in the
+	 * `.highcharts-flag-series .highcharts-point` rule.
 	 * 
 	 * @type    {CSSObject}
 	 * @default { "fontSize": "11px", "fontWeight": "bold" }

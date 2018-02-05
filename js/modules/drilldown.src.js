@@ -185,7 +185,7 @@ defaultOptions.drilldown = {
 	drillUpButton: {
 		/**
 		 * What box to align the button to. Can be either `plotBox` or
-		 * `spacingBox.
+		 * `spacingBox`.
 		 * 
 		 * @type {String}
 		 * @default plotBox

@@ -330,8 +330,8 @@ Highcharts.ajax = function (attr) {
 /**
  * A callback function to access the parsed columns, the two-dimentional
  * input data array directly, before they are interpreted into series
- * data and categories. Return `false` to stop completion, or call `this.
- * complete()` to continue async.
+ * data and categories. Return `false` to stop completion, or call
+ * `this.complete()` to continue async.
  *
  * @type {Function}
  * @see [data.complete](#data.complete)

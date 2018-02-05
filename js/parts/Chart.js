@@ -1202,7 +1202,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	/**
 	 * Resize the chart to a given width and height. In order to set the width
 	 * only, the height argument may be skipped. To set the height only, pass
-	 * `undefined for the width.
+	 * `undefined` for the width.
 	 * @param  {Number|undefined|null} [width]
 	 *         The new pixel width of the chart. Since v4.2.6, the argument can
 	 *         be `undefined` in order to preserve the current value (when

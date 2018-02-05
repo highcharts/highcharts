@@ -29,8 +29,8 @@ H.defaultOptions = {
 	 * all colors are used, new colors are pulled from the start again.
 	 *
 	 * Default colors can also be set on a series or series.type basis,
-	 * see [column.colors](#plotOptions.column.colors), [pie.colors](#plotOptions.
-	 * pie.colors).
+	 * see [column.colors](#plotOptions.column.colors),
+	 * [pie.colors](#plotOptions.pie.colors).
 	 *
 	 * In styled mode, the colors option doesn't exist. Instead, colors
 	 * are defined in CSS and applied either through series or point class
@@ -403,9 +403,9 @@ H.defaultOptions = {
 		 *
 		 * Information on the clicked spot can be found through `event.xAxis`
 		 * and `event.yAxis`, which are arrays containing the axes of each dimension
-		 * and each axis' value at the clicked spot. The primary axes are `event.
-		 * xAxis[0]` and `event.yAxis[0]`. Remember the unit of a datetime axis
-		 * is milliseconds since 1970-01-01 00:00:00.
+		 * and each axis' value at the clicked spot. The primary axes are
+		 * `event.xAxis[0]` and `event.yAxis[0]`. Remember the unit of a
+		 * datetime axis is milliseconds since 1970-01-01 00:00:00.
 		 *
 		 * <pre>click: function(e) {
 		 *     console.log(
@@ -666,8 +666,8 @@ H.defaultOptions = {
 		/**
 		 * In styled mode, this sets how many colors the class names
 		 * should rotate between. With ten colors, series (or points) are
-		 * given class names like `highcharts-color-0`, `highcharts-color-
-		 * 0` [...] `highcharts-color-9`. The equivalent in non-styled mode
+		 * given class names like `highcharts-color-0`, `highcharts-color-0`
+		 * [...] `highcharts-color-9`. The equivalent in non-styled mode
 		 * is to set colors using the [colors](#colors) setting.
 		 *
 		 * @type {Number}
@@ -870,8 +870,8 @@ H.defaultOptions = {
 
 		/**
 		 * When true, cartesian charts like line, spline, area and column are
-		 * transformed into the polar coordinate system. Requires `highcharts-
-		 * more.js`.
+		 * transformed into the polar coordinate system. Requires
+		 * `highcharts-more.js`.
 		 *
 		 * @type {Boolean}
 		 * @default false
@@ -1217,8 +1217,8 @@ H.defaultOptions = {
 		 * The color of the inner chart or plot area border.
 		 *
 		 * @type {Color}
-		 * @see In styled mode, a plot border stroke can be set with the `.
-		 * highcharts-plot-border` class.
+		 * @see In styled mode, a plot border stroke can be set with the
+		 *      `.highcharts-plot-border` class.
 		 * @sample {highcharts} highcharts/chart/plotbordercolor/ Blue border
 		 * @sample {highstock} stock/chart/plotborder/ Blue border
 		 * @sample {highmaps} maps/chart/plotborder/ Plot border options
@@ -1971,8 +1971,8 @@ H.defaultOptions = {
 		 * instead. A `width` property can be added to control the text width.
 		 *
 		 * @type {CSSObject}
-		 * @see In styled mode, the legend items can be styled with the `.
-		 * highcharts-legend-item` class.
+		 * @see In styled mode, the legend items can be styled with the
+		 * `.highcharts-legend-item` class.
 		 * @sample {highcharts} highcharts/legend/itemstyle/ Bold black text
 		 * @sample {highmaps} maps/legend/itemstyle/ Item text styles
 		 * @default { "color": "#333333", "cursor": "pointer", "fontSize": "12px", "fontWeight": "bold", "textOverflow": "ellipsis" }
@@ -2744,9 +2744,9 @@ H.defaultOptions = {
 		 * The HTML of the point's line in the tooltip. Variables are enclosed
 		 * by curly brackets. Available variables are point.x, point.y, series.
 		 * name and series.color and other properties on the same form. Furthermore,
-		 * point.y can be extended by the `tooltip.valuePrefix` and `tooltip.
-		 * valueSuffix` variables. This can also be overridden for each series,
-		 * which makes it a good hook for displaying units.
+		 * point.y can be extended by the `tooltip.valuePrefix` and
+		 * `tooltip.valueSuffix` variables. This can also be overridden for each
+		 * series, which makes it a good hook for displaying units.
 		 *
 		 * In styled mode, the dot is colored by a class name rather
 		 * than the point color.
@@ -2886,8 +2886,9 @@ H.defaultOptions = {
 		 * The text for the credits label.
 		 *
 		 * @productdesc {highmaps}
-		 * If a map is loaded as GeoJSON, the text defaults to `Highcharts @
-		 * {map-credits}`. Otherwise, it defaults to `Highcharts.com`.
+		 * If a map is loaded as GeoJSON, the text defaults to
+		 * `Highcharts @ {map-credits}`. Otherwise, it defaults to
+		 * `Highcharts.com`.
 		 *
 		 * @type {String}
 		 * @sample {highcharts} highcharts/credits/href/ Custom URL and text

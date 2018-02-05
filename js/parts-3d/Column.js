@@ -20,8 +20,7 @@ var each = H.each,
 
 
 /**
- * Depth of the columns in a 3D column chart. Requires `highcharts-3d.
- * js`.
+ * Depth of the columns in a 3D column chart. Requires `highcharts-3d.js`.
  * 
  * @type {Number}
  * @default 25

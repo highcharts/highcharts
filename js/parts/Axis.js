@@ -436,10 +436,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * chart. One parameter, `event`, is passed to the function, containing
 		 * common event information.
 		 *
-		 * The new user set minimum and maximum values can be found by `event.
-		 * min` and `event.max`. These reflect the axis minimum and maximum
-		 * in axis values. The actual data extremes are found in `event.dataMin`
-		 * and `event.dataMax`.
+		 * The new user set minimum and maximum values can be found by
+		 * `event.min` and `event.max`. These reflect the axis minimum and
+		 * maximum in axis values. The actual data extremes are found in
+		 * `event.dataMin` and `event.dataMax`.
 		 *
 		 * @type      {Function}
 		 * @context   Axis
@@ -475,10 +475,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * chart. One parameter, `event`, is passed to the function,
 		 * containing common event information.
 		 *
-		 * The new user set minimum and maximum values can be found by `event.
-		 * min` and `event.max`. These reflect the axis minimum and maximum
-		 * in data values. When an axis is zoomed all the way out from the 
-		 * "Reset zoom" button, `event.min` and `event.max` are null, and
+		 * The new user set minimum and maximum values can be found by
+		 * `event.min` and `event.max`. These reflect the axis minimum and
+		 * maximum in data values. When an axis is zoomed all the way out from
+		 * the "Reset zoom" button, `event.min` and `event.max` are null, and
 		 * the new extremes are set based on `this.dataMin` and `this.dataMax`.
 		 *
 		 * @type      {Function}

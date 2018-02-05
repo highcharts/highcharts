@@ -255,8 +255,8 @@
  */
 
 /**
- * A custom class name, in addition to the default `highcharts-plot-
- * band`, to apply to each individual band.
+ * A custom class name, in addition to the default `highcharts-plot-band`, to
+ * apply to each individual band.
  *
  * @type {String}
  * @since 5.0.0
@@ -462,8 +462,8 @@
  */
 
 /**
- * A custom class name, in addition to the default `highcharts-plot-
- * line`, to apply to each individual line.
+ * A custom class name, in addition to the default `highcharts-plot-line`, to
+ * apply to each individual line.
  *
  * @type {String}
  * @since 5.0.0
@@ -1277,9 +1277,8 @@
 /**
  * CSS for the HTML inputs in the range selector.
  *
- * In styled mode, the inputs are styled by the `.highcharts-range-
- * input text` rule in SVG mode, and `input.highcharts-range-selector`
- * when active.
+ * In styled mode, the inputs are styled by the `.highcharts-range-input text`
+ * rule in SVG mode, and `input.highcharts-range-selector` when active.
  *
  * @type {CSSObject}
  * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
@@ -1400,8 +1399,8 @@
  */
 
 /**
- * Defined the time span for the button. Can be one of `"millisecond",
- * "second", "minute", "hour", "day", "week", "month", "ytd", "all"`.
+ * Defined the time span for the button. Can be one of `millisecond`,
+ * `second`, `minute`, `hour`, `day`, `week`, `month`, `ytd`, `all`.
  *
  * @validvalue ["millisecond", "second", "minute", "day", "week", "month", "ytd", "all"]
  * @type {String}
@@ -1444,8 +1443,8 @@
 
 
 /**
- * How many decimals to show for the `point.change` value when the `series.
- * compare` option is set. This is overridable in each series' tooltip
+ * How many decimals to show for the `point.change` value when the
+ * `series.compare` option is set. This is overridable in each series' tooltip
  * options object. The default is to preserve all decimals.
  *
  * @type {Number}

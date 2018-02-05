@@ -69,8 +69,8 @@ seriesType('waterfall', 'column', {
 	 * *   LongDashDot
 	 * *   LongDashDotDot
 	 * 
-	 * In styled mode, the stroke dash-array can be set with the `.
-	 * highcharts-graph` class.
+	 * In styled mode, the stroke dash-array can be set with the
+	 * `.highcharts-graph` class.
 	 * 
 	 * @type    {String}
 	 * @default Dot
