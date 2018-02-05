@@ -18,18 +18,20 @@ $(function () {
         var g = ren.box.querySelector('g');
 
 
-        assert.strictEqual(
+        assert.close(
             g.getBoundingClientRect().left,
             100,
+            1, // +/- 0.5px in Edge
             "Box is left aligned"
         );
 
 
         lbl.attr({ align: 'right' });
 
-        assert.strictEqual(
+        assert.close(
             g.getBoundingClientRect().right,
             100,
+            1, // +/- 0.5px in Edge
             "Box is right aligned"
         );
 
