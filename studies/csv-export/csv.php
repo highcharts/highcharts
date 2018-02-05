@@ -5,11 +5,12 @@
  * production! This file may be removed at any time.
  */
 
-$csv = $_POST['csv'];
+$csv = utf8_decode($_POST['csv']);
+$filename = $_POST['filename'] ? $_POST['filename'] : 'chart';
 
 if ($csv) {
 	header('Content-type: text/csv');
-	header('Content-disposition: attachment;filename=chart.csv');
+	header('Content-disposition: attachment;filename='.$filename.'.csv');
 	echo $csv;
 }
 
