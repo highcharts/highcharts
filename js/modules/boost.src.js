@@ -1412,6 +1412,7 @@ function GLRenderer(postRenderCallback) {
 
 			cullXThreshold = 1,
 			cullYThreshold = 1,
+			mx,
 
 			// The following are used in the builder while loop
 			x,
@@ -1802,11 +1803,17 @@ function GLRenderer(postRenderCallback) {
 				// 		false
 				// 	)), 1e5)
 				// );
+				
+				if (settings.useGPUTranslations) {
+					mx = xAxis.toPixels(x, true);
+				} else {
+					mx = x;
+				}
 
 				if (lastX !== false) {
 					series.closestPointRangePx = Math.min(
 						series.closestPointRangePx,
-						Math.abs(x - lastX)
+						Math.abs(mx - lastX)
 					);
 				}
 			}
