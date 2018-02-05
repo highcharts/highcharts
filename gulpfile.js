@@ -4,6 +4,7 @@
 
 'use strict';
 const colors = require('colors');
+const glob = require('glob');
 const gulp = require('gulp');
 const argv = require('yargs').argv;
 const fs = require('fs');
@@ -295,6 +296,53 @@ gulp.task('ftp-watch', function () {
  */
 gulp.task('test', done => {
 
+    const lastRunFile = __dirname + '/test/last-run.json';
+
+    const getModifiedTime = (pattern) => {
+        let mtimeMs = 0;
+        glob.sync(pattern).forEach(file => {
+            mtimeMs = Math.max(
+                mtimeMs,
+                fs.statSync(file).mtimeMs
+            );
+        });
+        return mtimeMs;
+    };
+
+    const shouldRun = () => {
+        // let lastBuildMTime = getModifiedTime(__dirname + '/code/**/*.js');
+        let sourceMTime = getModifiedTime(__dirname + '/js/**/*.js');
+        let unitTestsMTime = getModifiedTime(__dirname + '/samples/unit-tests/**/*.*');
+        let lastSuccessfulRun = 0;
+
+        if (fs.existsSync(lastRunFile)) {
+            lastSuccessfulRun = require(lastRunFile).lastSuccessfulRun;
+        }
+        /*
+        console.log(
+            'lastBuildMTime', new Date(lastBuildMTime),
+            'sourceMTime', new Date(sourceMTime),
+            'unitTestsMTime', new Date(unitTestsMTime),
+            'lastSuccessfulRun', new Date(lastSuccessfulRun)
+        );
+        */
+
+        // Arguments passed, always run. No arguments gives [ '_', '$0' ]
+        if (Object.keys(argv).length > 2) {
+            return true;
+        }
+
+        if (sourceMTime < lastSuccessfulRun && unitTestsMTime < lastSuccessfulRun) {
+            console.log(`
+Source code and unit tests have not been modified since the last successful test
+run.
+            `.green);
+            return false;
+        }
+        return true;
+    };
+
+
     if (argv.help) {
         console.log(
 `
@@ -328,22 +376,32 @@ Available arguments for 'gulp test':
         return;
     }
 
-    console.log('Run ' + 'gulp test --help'.cyan + ' for available options');
+    if (shouldRun()) {
 
-    const Server = require('karma').Server;
-    const gutils = require('gulp-util');
-    new Server({
-        configFile: __dirname + '/test/karma-conf.js',
-        singleRun: true
-    }, err => {
-        if (err === 0) {
-            done();
-        } else {
-            done(new gutils.PluginError('karma', {
-                message: 'Tests failed'
-            }));
-        }
-    }).start();
+        console.log('Run ' + 'gulp test --help'.cyan + ' for available options');
+
+        const Server = require('karma').Server;
+        const gutils = require('gulp-util');
+        new Server({
+            configFile: __dirname + '/test/karma-conf.js',
+            singleRun: true
+        }, err => {
+            if (err === 0) {
+                done();
+
+                fs.writeFileSync(
+                    lastRunFile,
+                    JSON.stringify({ lastSuccessfulRun: Date.now() })
+                );
+            } else {
+                done(new gutils.PluginError('karma', {
+                    message: 'Tests failed'
+                }));
+            }
+        }).start();
+    } else {
+        done();
+    }
 });
 
 /**
