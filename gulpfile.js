@@ -333,10 +333,7 @@ gulp.task('test', done => {
         }
 
         if (sourceMTime < lastSuccessfulRun && unitTestsMTime < lastSuccessfulRun) {
-            console.log(`
-Source code and unit tests have not been modified since the last successful test
-run.
-            `.green);
+            console.log('\n✓'.green + ' Source code and unit tests not modified since the last successful test run.\n'.gray);
             return false;
         }
         return true;
