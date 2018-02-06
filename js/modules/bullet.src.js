@@ -350,7 +350,7 @@ seriesType('bullet', 'column',
 /**
  * Individual target options for each point.
  * 
- * @extends   series.bullet.targetOptions
+ * @extends   plotOptions.bullet.targetOptions
  * @product   highcharts
  * @apioption series.bullet.data.targetOptions
  */
