@@ -253,6 +253,56 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+function isBool (what) {
+    return (what === true || what === false);
+};
+
+
+function isNum(what) {
+    return !isNaN(parseFloat(what)) && isFinite(what);
+};
+
+function isBool (what) {
+    return (what === true || what === false);
+};
+
+function isStr (what) {
+    return (typeof what === 'string' || what instanceof String);
+};
+
+function inferType(node) {
+	var defVal;
+
+	node.doclet = node.doclet || {};
+	node.meta = node.meta || {};
+
+	if (typeof node.doclet.type !== 'undefined') {
+		// We allready have a type, so no infering is required
+		return;
+	}
+
+	defVal = node.doclet.defaultvalue;
+
+	if (typeof node.meta.default !== 'undefined' && typeof node.doclet.defaultvalue === 'undefined') {
+		defVal = node.meta.default;
+	}
+	
+	node.doclet.type = { names: [] };
+	
+	if (isBool(defVal)) {
+		node.doclet.type.names.push('Boolean');
+	}
+	
+	if (isNum(defVal)) {
+		node.doclet.type.names.push('Number');
+	}
+	
+	if (isStr(defVal)) {
+		node.doclet.type.names.push('String');
+	}
+
+}
+
 function augmentOption(path, obj) {
     // This is super nasty.
     var current = options,
@@ -561,6 +611,30 @@ before functional code for JSDoc to see them.`.yellow
         options._meta.commit = exec('git rev-parse --short HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.branch = exec('git rev-parse --abbrev-ref HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.date = (new Date()).toString();
+
+		function inferTypeForTree(obj) {
+			inferType(obj);
+		
+			if (obj.meta && obj.meta.filename) {
+				// Remove user-identifiable info in filename
+				obj.meta.filename = obj.meta.filename.substr(
+					obj.meta.filename.indexOf('highcharts')
+				);
+			}
+
+			// Infer types
+			if (obj.children) {
+				Object.keys(obj.children).forEach(function (child) {
+					inferTypeForTree(obj.children[child]);
+				});
+			}
+		}
+
+		Object.keys(options).forEach(function (name) {
+			if (name !== '_meta') {
+				inferTypeForTree(options[name]);
+			}
+		});
 
         dumpOptions();
     }
