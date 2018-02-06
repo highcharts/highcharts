@@ -398,6 +398,15 @@ if (!H.ColorAxis) {
 			 */
 
 			/**
+			 * Fires when the legend item belonging to the colorAxis is clicked.
+			 * One parameter, `event`, is passed to the function.
+			 * 
+			 * @type      {Function}
+			 * @product   highcharts highmaps
+			 * @apioption colorAxis.events.legendItemClick
+			 */
+
+			/**
 			 * Whether to display the colorAxis in the legend.
 			 * 
 			 * @type {Boolean}
