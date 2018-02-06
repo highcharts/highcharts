@@ -19,7 +19,7 @@ function populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index, SMA) 
 		yValue = index < 0 ? yVal[i - 1] : yVal[i - 1][index],
 		y;
 
-	y = calEMA === 0 ? SMA : ((yValue * EMApercent) + (calEMA * (1 - EMApercent)));
+	y = calEMA === undefined ? SMA : ((yValue * EMApercent) + (calEMA * (1 - EMApercent)));
 
 	return [x, y];
 }
@@ -52,7 +52,6 @@ seriesType('ema', 'sma',
 				yVal = series.yData,
 				yValLen = yVal ? yVal.length : 0,
 				EMApercent = (2 / (period + 1)),
-				calEMA = 0,
 				range = 0,
 				sum = 0,
 				EMA = [],
@@ -61,8 +60,9 @@ seriesType('ema', 'sma',
 				index = -1,
 				points = [],
 				SMA = 0,
-				i,
-				EMAPoint;
+				calEMA,
+				EMAPoint,
+				i;
 				
 			// Check period, if bigger than points length, skip
 			if (xVal.length < period) {
