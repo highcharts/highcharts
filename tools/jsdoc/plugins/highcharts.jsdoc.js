@@ -281,6 +281,18 @@ function inferType(node) {
 	if (typeof node.meta.default !== 'undefined' && typeof node.doclet.defaultvalue === 'undefined') {
 		defVal = node.meta.default;
 	}
+
+	if (typeof defVal === 'undefined') {
+		// There may still be hope - if this node has children, it's an object.
+		if (node.children && Object.keys(node.children).length) {
+			node.doclet.type = {
+				names: ['Object']
+			};
+		}
+
+		// We can't infer this type, so abort.
+		return;
+	}
 	
 	node.doclet.type = { names: [] };
 	
@@ -294,6 +306,11 @@ function inferType(node) {
 	
 	if (isStr(defVal)) {
 		node.doclet.type.names.push('String');
+	}
+
+	// If we were unable to deduce a type, assume it's an object
+	if (node.doclet.type.names.length === 0) {
+		node.doclet.type.names.push('Object');
 	}
 
 }
