@@ -29,6 +29,14 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Correct values'
     );
 
+    chart.series[0].setData([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22.15, 22.39, 22.38]);
+
+    assert.deepEqual(
+        chart.series[1].yData,
+        [0, 4.027272727272727, 7.365950413223141, 10.095777610818933],
+        'Correct values'
+    );
+
     chart.series[0].addPoint(22.38);
 
     assert.strictEqual(
