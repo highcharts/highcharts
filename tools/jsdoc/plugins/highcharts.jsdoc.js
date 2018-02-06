@@ -253,11 +253,6 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function isBool (what) {
-    return (what === true || what === false);
-};
-
-
 function isNum(what) {
     return !isNaN(parseFloat(what)) && isFinite(what);
 };
