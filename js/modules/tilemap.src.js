@@ -622,10 +622,11 @@ seriesType('tilemap', 'heatmap', {
  * To apply to all series of this specific type, apply it to [plotOptions.
  * tilemap](#plotOptions.tilemap).
  *
- * @type {Object}
- * @extends series,plotOptions.tilemap
- * @excluding joinBy, shadow, allAreas, mapData
- * @product highcharts highmaps
+ * @type      {Object}
+ * @extends   series,plotOptions.tilemap
+ * @excluding allAreas,dataParser,dataURL,joinBy,mapData,marker,pointRange,
+ *            shadow,stack
+ * @product   highcharts highmaps
  * @apioption series.tilemap
  */
 

@@ -1016,7 +1016,7 @@ seriesType('map', 'scatter', {
  * 
  * @type {Object}
  * @extends series,plotOptions.map
- * @excluding dataParser,dataURL
+ * @excluding dataParser,dataURL,marker
  * @product highmaps
  * @apioption series.map
  */

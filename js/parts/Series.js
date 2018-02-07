@@ -979,8 +979,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * In styled mode, the markers can be styled with the `.highcharts-point`,
 	 * `.highcharts-point-hover` and `.highcharts-point-select`
 	 * class names.
-	 * 
-	 * @product highcharts highstock
 	 */
 	marker: {
 		/*= if (build.classic) { =*/
@@ -993,7 +991,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
 		 *         2px blue marker
 		 * @default 0
-		 * @product highcharts highstock
 		 */
 		lineWidth: 0,
 
@@ -1005,7 +1002,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
 		 *         Inherit from series color (null)
-		 * @product highcharts highstock
 		 */
 		lineColor: '${palette.backgroundColor}',
 		
@@ -1017,7 +1013,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
 		 *         White fill
 		 * @default null
-		 * @product highcharts highstock
 		 * @apioption plotOptions.series.marker.fillColor
 		 */
 		
@@ -1037,7 +1032,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 *         Enabled markers
 		 * @default {highcharts} null
 		 * @default {highstock} false
-		 * @product highcharts highstock
 		 * @apioption plotOptions.series.marker.enabled
 		 */
 		
@@ -1054,7 +1048,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 *         Fixed width and height
 		 * @default null
 		 * @since 4.0.4
-		 * @product highcharts highstock
 		 * @apioption plotOptions.series.marker.height
 		 */
 
@@ -1079,7 +1072,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * @sample {highstock} highcharts/plotoptions/series-marker-symbol/
 		 *         Predefined, graphic and custom markers
 		 * @default null
-		 * @product highcharts highstock
 		 * @apioption plotOptions.series.marker.symbol
 		 */
 		
@@ -1099,11 +1091,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		/**
 		 * The radius of the point marker.
 		 * 
-		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/series-marker-radius/
 		 *         Bigger markers
-		 * @default 4
-		 * @product highcharts highstock
 		 */
 		radius: 4,
 
@@ -1120,25 +1109,25 @@ H.Series = H.seriesType('line', null, { // base series options
 		 *         Fixed width and height
 		 * @default null
 		 * @since 4.0.4
-		 * @product highcharts highstock
 		 * @apioption plotOptions.series.marker.width
 		 */
 
 
 		/**
 		 * States for a single point marker.
-		 * @product highcharts highstock
 		 */
 		states: {
 
 			/** 
 			 * The normal state of a single point marker. Currently only used
 			 * for setting animation when returning to normal state from hover.
+			 *
 			 * @type {Object}
 			 */
 			normal: {
 				/**
 				 * Animation when returning to normal state after hovering.
+				 *
 				 * @type {Boolean|Object}
 				 */
 				animation: true
@@ -1146,12 +1135,14 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			/**
 			 * The hover state for a single point marker.
-			 * @product highcharts highstock
+			 *
+			 * @type {Object}
 			 */
 			hover: {
 
 				/**
 				 * Animation when hovering over the marker.
+				 *
 				 * @type {Boolean|Object}
 				 */
 				animation: {
@@ -1161,12 +1152,9 @@ H.Series = H.seriesType('line', null, { // base series options
 				/**
 				 * Enable or disable the point marker.
 				 * 
-				 * @type {Boolean}
 				 * @sample {highcharts}
 				 *         highcharts/plotoptions/series-marker-states-hover-enabled/
 				 *         Disabled hover state
-				 * @default true
-				 * @product highcharts highstock
 				 */
 				enabled: true,
 
@@ -1176,7 +1164,6 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * 
 				 * @type      {Color}
 				 * @default   null
-				 * @product   highcharts highstock
 				 * @apioption plotOptions.series.marker.states.hover.fillColor
 				 */
 
@@ -1189,7 +1176,6 @@ H.Series = H.seriesType('line', null, { // base series options
 				 *            highcharts/plotoptions/series-marker-states-hover-linecolor/
 				 *            White fill color, black line color
 				 * @default   null
-				 * @product   highcharts highstock
 				 * @apioption plotOptions.series.marker.states.hover.lineColor
 				 */
 
@@ -1202,7 +1188,6 @@ H.Series = H.seriesType('line', null, { // base series options
 				 *            highcharts/plotoptions/series-marker-states-hover-linewidth/
 				 *            3px line width
 				 * @default   null
-				 * @product   highcharts highstock
 				 * @apioption plotOptions.series.marker.states.hover.lineWidth
 				 */
 
@@ -1216,7 +1201,6 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * @sample {highcharts}
 				 *         highcharts/plotoptions/series-marker-states-hover-radius/
 				 *         10px radius
-				 * @product highcharts highstock
 				 * @apioption plotOptions.series.marker.states.hover.radius
 				 */
 				
@@ -1224,16 +1208,13 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * The number of pixels to increase the radius of the hovered
 				 * point.
 				 * 
-				 * @type {Number}
 				 * @sample {highcharts}
 				 *         highcharts/plotoptions/series-states-hover-linewidthplus/
 				 *         5 pixels greater radius on hover
 				 * @sample {highstock}
 				 *         highcharts/plotoptions/series-states-hover-linewidthplus/
 				 *         5 pixels greater radius on hover
-				 * @default 2
 				 * @since 4.0.3
-				 * @product highcharts highstock
 				 */
 				radiusPlus: 2,
 
@@ -1242,16 +1223,13 @@ H.Series = H.seriesType('line', null, { // base series options
 				/**
 				 * The additional line width for a hovered point.
 				 * 
-				 * @type {Number}
 				 * @sample {highcharts}
 				 *         highcharts/plotoptions/series-states-hover-linewidthplus/
 				 *         2 pixels wider on hover
 				 * @sample {highstock}
 				 *         highcharts/plotoptions/series-states-hover-linewidthplus/
 				 *         2 pixels wider on hover
-				 * @default 1
 				 * @since 4.0.3
-				 * @product highcharts highstock
 				 */
 				lineWidthPlus: 1
 				/*= } =*/
@@ -1264,8 +1242,6 @@ H.Series = H.seriesType('line', null, { // base series options
 			 * The appearance of the point marker when selected. In order to
 			 * allow a point to be selected, set the `series.allowPointSelect`
 			 * option to true.
-			 * 
-			 * @product highcharts highstock
 			 */
 			select: {
 
@@ -1277,7 +1253,6 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * @sample {highcharts}
 				 *         highcharts/plotoptions/series-marker-states-select-radius/
 				 *         10px radius for selected points
-				 * @product highcharts highstock
 				 * @apioption plotOptions.series.marker.states.select.radius
 				 */
 
@@ -1289,7 +1264,6 @@ H.Series = H.seriesType('line', null, { // base series options
 				 *         highcharts/plotoptions/series-marker-states-select-enabled/
 				 *         Disabled select state
 				 * @default true
-				 * @product highcharts highstock
 				 * @apioption plotOptions.series.marker.states.select.enabled
 				 */
 
@@ -1300,12 +1274,9 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * @sample {highcharts}
 				 *         highcharts/plotoptions/series-marker-states-select-fillcolor/
 				 *         Solid red discs for selected points
-				 * @default null
-				 * @product highcharts highstock
+				 * @default #cccccc
 				 */
 				fillColor: '${palette.neutralColor20}',
-
-
 
 				/**
 				 * The color of the point marker's outline. When `null`, the
@@ -1316,24 +1287,17 @@ H.Series = H.seriesType('line', null, { // base series options
 				 *         highcharts/plotoptions/series-marker-states-select-linecolor/
 				 *         Red line color for selected points
 				 * @default #000000
-				 * @product highcharts highstock
 				 */
 				lineColor: '${palette.neutralColor100}',
-
-
 
 				/**
 				 * The width of the point marker's outline.
 				 * 
-				 * @type {Number}
 				 * @sample {highcharts}
 				 *         highcharts/plotoptions/series-marker-states-select-linewidth/
 				 *         3px line width for selected points
-				 * @default 0
-				 * @product highcharts highstock
 				 */
 				lineWidth: 2
-
 			}
 			/*= } =*/
 		}

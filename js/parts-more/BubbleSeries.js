@@ -59,24 +59,12 @@ seriesType('bubble', 'scatter', {
 	 *            Negative bubbles
 	 * @default   true
 	 * @since     3.0
-	 * @product   highcharts
 	 * @apioption plotOptions.bubble.displayNegative
 	 */
 
 	/**
-	 * Options for the point markers of line-like series. Properties like
-	 * `fillColor`, `lineColor` and `lineWidth` define the visual appearance
-	 * of the markers. Other series types, like column series, don't have
-	 * markers, but have visual options on the series level instead.
-	 * 
-	 * In styled mode, the markers can be styled with the `.highcharts-point`,
-	 * `.highcharts-point-hover` and `.highcharts-point-select`
-	 * class names.
-	 * 
-	 * @type      {Object}
 	 * @extends   plotOptions.series.marker
-	 * @excluding enabled,height,radius,width
-	 * @product   highcharts
+	 * @excluding enabled,enabledThreshold,height,radius,width
 	 */
 	marker: {
 		/*= if (build.classic) { =*/
@@ -133,7 +121,7 @@ seriesType('bubble', 'scatter', {
 	 * @type    {Number|String}
 	 * @sample  {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
 	 * @since   3.0
-	 * @product highcharts
+	 * @product highcharts highstock
 	 */
 	minSize: 8,
 
@@ -143,10 +131,11 @@ seriesType('bubble', 'scatter', {
 	 * Can be either pixels (when no unit is given), or a percentage of
 	 * the smallest one of the plot width and height.
 	 * 
+	 * @type    {Number|String}
 	 * @sample  {highcharts} highcharts/plotoptions/bubble-size/
 	 *          Bubble size
 	 * @since   3.0
-	 * @product highcharts
+	 * @product highcharts highstock
 	 */
 	maxSize: '20%',
 	
@@ -174,7 +163,6 @@ seriesType('bubble', 'scatter', {
 	 *             Comparison of area and size
 	 * @default    area
 	 * @since      3.0.7
-	 * @product    highcharts
 	 * @apioption  plotOptions.bubble.sizeBy
 	 */
 	
@@ -574,7 +562,7 @@ Axis.prototype.beforePadding = function () {
  * @type      {Object}
  * @extends   series,plotOptions.bubble
  * @excluding dataParser,dataURL,stack
- * @product   highcharts
+ * @product   highcharts highstock
  * @apioption series.bubble
  */
 
@@ -644,4 +632,9 @@ Axis.prototype.beforePadding = function () {
  * @type {Number}
  * @product highcharts
  * @apioption series.bubble.data.z
+ */
+
+/**
+ * @excluding enabled,enabledThreshold,height,radius,width
+ * @apioption series.bubble.marker
  */
