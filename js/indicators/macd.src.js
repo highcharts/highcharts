@@ -236,12 +236,12 @@ seriesType('macd', 'sma',
 		},
 		getValues: function (series, params) {
 			var j = 0,
-				shortEMA,
-				longEMA,
 				MACD = [],
 				xMACD = [],
 				yMACD = [],
 				signalLine = [],
+				shortEMA,
+				longEMA,
 				i;
 
 			// Calculating the short and long EMA used when calculating the MACD
@@ -264,7 +264,7 @@ seriesType('macd', 'sma',
 			// Subtract each Y value from the EMA's and create the new dataset
 			// (MACD)
 			for (i = 1; i <= shortEMA.length; i++) {
-				if (longEMA[i - 1] && longEMA[i - 1][1]) {
+				if (defined(longEMA[i - 1]) && defined(longEMA[i - 1][1])) {
 					MACD.push([
 						shortEMA[i + params.shortPeriod + 1][0], 
 						0,
