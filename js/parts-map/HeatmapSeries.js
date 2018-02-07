@@ -279,7 +279,7 @@ seriesType('heatmap', 'scatter', {
  * 
  * @type {Object}
  * @extends series,plotOptions.heatmap
- * @excluding dataParser,dataURL,stack
+ * @excluding dataParser,dataURL,marker,pointRange,stack
  * @product highcharts highmaps
  * @apioption series.heatmap
  */

@@ -80,7 +80,7 @@ seriesType('mapline', 'map', {
  * 
  * @type {Object}
  * @extends series,plotOptions.mapline
- * @excluding dataParser,dataURL
+ * @excluding dataParser,dataURL,marker
  * @product highmaps
  * @apioption series.mapline
  */
