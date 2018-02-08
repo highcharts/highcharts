@@ -735,7 +735,7 @@ Annotation.prototype = {
 		 * overwritten by config for a specific shape.
 		 *
 		 * @type {Object}
-		 **/
+		 */
 		shapeOptions: {
 
 			/**
