@@ -667,7 +667,7 @@ before functional code for JSDoc to see them.`.yellow
 			}
 		});
 
-		console.log(Object.keys(files));
+		// console.log(Object.keys(files));
 
         dumpOptions();
     }
