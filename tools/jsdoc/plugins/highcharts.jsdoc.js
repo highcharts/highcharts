@@ -148,6 +148,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         properties,
         fullPath,
         s,
+		rawComment,
         shouldIgnore = false
     ;
 
@@ -173,7 +174,18 @@ function nodeVisitor(node, e, parser, currentSourceName) {
     if (node.leadingComments && node.leadingComments.length > 0) {
 
         if (!e.comment) {
-          e.comment = node.leadingComments[0].raw || node.leadingComments[0].value;
+			rawComment = '';
+			(node.leadingComments || []).some(function (c) {
+				// We only use the one containing @optionparent
+				rawComment = c.raw || c.value;
+				if (rawComment.indexOf('@optionparent') >= 0) {
+					return true;
+				}
+				return false;
+			});
+
+			e.comment = rawComment;
+          // e.comment = node.leadingComments[0].raw || node.leadingComments[0].value;
         }
 
         s = e.comment.indexOf('@optionparent');
@@ -220,6 +232,8 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
             if (target) {
                 if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
+					console.log('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
+					// console.log('Found series type:', properties, JSON.stringify(node.arguments[2], false, '  '));
                     properties = node.arguments[2].properties;
                 } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
                     properties = node.arguments[0].properties;
@@ -232,6 +246,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 } else if (node.operator === '=' && node.right.type === 'ObjectExpression') {
                     properties = node.right.properties;
                 } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
+console.log('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
                     properties = node.right.arguments[2].properties;
                 } else {
                     logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
@@ -624,6 +639,8 @@ before functional code for JSDoc to see them.`.yellow
         options._meta.branch = exec('git rev-parse --abbrev-ref HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.date = (new Date()).toString();
 
+		let files = {};
+
 		function inferTypeForTree(obj) {
 			inferType(obj);
 		
@@ -633,6 +650,8 @@ before functional code for JSDoc to see them.`.yellow
 					obj.meta.filename.indexOf('highcharts')
 				);
 			}
+
+			files[obj.meta.filename] = 1;
 
 			// Infer types
 			if (obj.children) {
@@ -647,6 +666,8 @@ before functional code for JSDoc to see them.`.yellow
 				inferTypeForTree(options[name]);
 			}
 		});
+
+		console.log(Object.keys(files));
 
         dumpOptions();
     }
