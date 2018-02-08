@@ -536,22 +536,27 @@ Meteogram.prototype.parseYrData = function () {
  // On DOM ready...
 
 // Set the hash to the yr.no URL we want to parse
+var place,
+    url;
 if (!location.hash) {
-    var place = 'United_Kingdom/England/London';
+    place = 'United_Kingdom/England/London';
     //place = 'France/Rhône-Alpes/Val_d\'Isère~2971074';
     //place = 'Norway/Sogn_og_Fjordane/Vik/Målset';
     //place = 'United_States/California/San_Francisco';
     //place = 'United_States/Minnesota/Minneapolis';
-    location.hash = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
 
+    url = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
+    location.hash = url;
 }
 
-// Then get the XML file through Highcharts' jsonp provider, see
-// https://github.com/highcharts/highcharts/blob/master/samples/data/jsonp.php
-// for source code.
+// Then get the XML file through Highcharts' CORS proxy. Our proxy is limited to
+// this specific location. Useing the third party, rate limited cors.io service
+// for experimenting with other locations.
 $.ajax({
     dataType: 'xml',
-    url: 'https://cors.io/?' + location.hash.substr(1),
+    url: place === 'United_Kingdom/England/London' ?
+        'https://www.highcharts.com/samples/data/cors.php?url=' + url :
+        'https://cors.io/?' + url,
     success: function (xml) {
         window.meteogram = new Meteogram(xml, 'container');
     },
