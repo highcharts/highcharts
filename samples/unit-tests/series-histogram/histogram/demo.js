@@ -9,6 +9,9 @@ QUnit.test('Histogram', function (assert) {
         }, {
             data: [1, 1, 1, 1, 2, 2, 2, 3],
             id: 's2'
+        }, {
+            data: [0.4131376140169578, 0.4131376140169578, 0.4131376140169578, 0.4131376140169578, 0.4131376140169578],
+            id: 's3'
         }]
     });
 
@@ -81,7 +84,6 @@ QUnit.test('Histogram', function (assert) {
         // when number of bins is correct change this test to check len of yData
     );
 
-
     var addedHistogram = chart.addSeries({
         type: 'histogram',
         id: 'h2',
@@ -94,9 +96,28 @@ QUnit.test('Histogram', function (assert) {
         'Added histogram dynamically is calculated correctly'
     );
 
+    var h3 = chart.addSeries({
+        type: 'histogram',
+        id: 'h3',
+        baseSeries: 's3'
+    });
+
+    assert.ok(
+        h3 && h3.points.length === 1 &&
+        h3.points[0].x === Highcharts.correctFloat(0.4131376140169578) &&
+        h3.points[0].y === 5,
+        'The base series for the histogram has equaled values, #7825'
+    );
+
     baseSeries.remove();
-    assert.ok(Highcharts.inArray(histogram, chart.series) !== -1, 'Histogram is not removed after the base series is removed');
+    assert.ok(
+        Highcharts.inArray(histogram, chart.series) !== -1,
+        'Histogram is not removed after the base series is removed'
+    );
 
     histogram.remove();
-    assert.ok(Highcharts.inArray(histogram, chart.series) === -1, 'Histogram is removed after histogram.remove()');
+    assert.ok(
+        Highcharts.inArray(histogram, chart.series) === -1,
+        'Histogram is removed after histogram.remove()'
+    );
 });
