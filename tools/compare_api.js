@@ -232,11 +232,11 @@ const compare = (comparePath, inputPath) => {
 
     if (missing > 0) {
         console.log(
-            'There are',
+            'There is a difference of',
             ('' + missing).bold.red,
-            'missing options! It is',
+            'in option counts! Deploying the new API is',
             'NOT'.red,
-            'recommended that this API version is deployed!'
+            'recommended!'
         );
     }
 
