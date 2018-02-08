@@ -1069,6 +1069,24 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
 });
 
 /**
+ * Some random tests for tree.json's consistency
+ */
+const testTree = (treeFile) => new Promise((resolve, reject) => {
+    const tree = JSON.parse(fs.readFileSync(treeFile, 'utf8'));
+
+    if (Object.keys(tree.plotOptions.children).length < 66) {
+        reject('Tree.json should contain at least 66 series types');
+
+    // } else if (Object.keys(tree.plotOptions.children.pie.children).length < 10) {
+    //    reject('Tree.json should contain at least X properties for pies');
+
+    } else {
+        resolve();
+    }
+
+});
+
+/**
  * Creates the Highcharts API
  *
  * @param {object} options The options for generating the API
@@ -1107,7 +1125,8 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
             }
         }));
     })
-    .then(() => generateAPI(treeFile, output, onlyBuildCurrent));
+    .then(() => generateAPI(treeFile, output, onlyBuildCurrent))
+    .then(() => testTree(treeFile));
 };
 
 const logUpdate = require('log-update');
