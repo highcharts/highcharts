@@ -57,6 +57,17 @@ function fitToBinLeftClosed(binWidth) {
 }
 
 /**
+ * Identity function - takes a param and returns that param
+ * It is used to grouping data with the same values
+ *
+ * @param {number} y - value
+ * @returns {number}
+ **/
+function identity(y) {
+	return y;
+}
+
+/**
  * Histogram class
  * 
  * @constructor seriesTypes.histogram
@@ -132,9 +143,11 @@ seriesType('histogram', 'column', {
 			binWidth :
 			(max - min) / binsNumber;
 
-		fitToBin = fitToBinLeftClosed(binWidth);
+		fitToBin = binWidth ? fitToBinLeftClosed(binWidth) : identity;
 
-		for (x = fitToBin(min); x <= max; x += binWidth) {
+    // If binWidth is 0 then max and min are equaled,
+    // increment the x with some positive value to quit the loop
+		for (x = fitToBin(min); x <= max; x += (binWidth || 1)) {
 			frequencies[correctFloat(fitToBin(x))] = 0;
 		}
 
