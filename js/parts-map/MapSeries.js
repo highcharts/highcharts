@@ -131,7 +131,9 @@ seriesType('map', 'scatter', {
 	 * @apioption plotOptions.series.colorAxis
 	 */
 	
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	marker: null,
 
 	stickyTracking: false,
@@ -172,7 +174,9 @@ seriesType('map', 'scatter', {
 		padding: 0
 	},
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	turboThreshold: 0,
 
 	tooltip: {

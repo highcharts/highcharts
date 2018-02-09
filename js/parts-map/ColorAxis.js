@@ -150,7 +150,9 @@ if (!H.ColorAxis) {
 			 * @apioption colorAxis.dataClasses.to
 			 */
 
-			/** @ignore */
+			/** 
+	 		 * @ignore
+	 		 */
 			lineWidth: 0,
 
 			/**
@@ -281,7 +283,9 @@ if (!H.ColorAxis) {
 					duration: 50
 				},
 
-				/** @ignore */
+				/** 
+				 * @ignore
+				 */
 				width: 0.01,
 				/*= if (build.classic) { =*/
 

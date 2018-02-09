@@ -531,6 +531,16 @@ Annotation.prototype = {
 			crop: false,
 
 			/**
+			 * The label's pixel distance from the point.
+			 *
+			 * @type {Number}
+			 * @sample highcharts/annotations/label-position/
+			 *         Set labels position
+			 * @default undefined
+			 * @apioption annotations.labelOptions.distance
+			 **/
+
+			/**
 			 * A [format](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting) string for the data label.
 			 *
 			 * @type {String}
@@ -659,16 +669,6 @@ Annotation.prototype = {
 			 *         Set labels position
 			 **/
 			y: -16
-
-			/**
-			 * The label's pixel distance from the point.
-			 *
-			 * @type {Number}
-			 * @sample highcharts/annotations/label-position/
-			 *         Set labels position
-			 * @default undefined
-			 * @apioption annotations.labelOptions.distance
-			 **/
 		},
 
 		/**
@@ -727,87 +727,8 @@ Annotation.prototype = {
 		 * @type {Number|String}
 		 * @apioption annotations.labels.point.yAxis
 		 */
-
-
-		/**
-		 * Options for annotation's shapes. Each shape inherits options
-		 * from the shapeOptions object. An option from the shapeOptions can be
-		 * overwritten by config for a specific shape.
-		 *
-		 * @type {Object}
-		 */
-		shapeOptions: {
-
-			/**
-			 * The color of the shape's stroke.
-			 *
-			 * @type {Color}
-			 * @sample highcharts/annotations/shape/
-			 *         Basic shape annotation
-			 **/
-			stroke: 'rgba(0, 0, 0, 0.75)',
-			
-			/**
-			 * The pixel stroke width of the shape.
-			 *
-			 * @sample highcharts/annotations/shape/
-			 *         Basic shape annotation
-			 **/
-			strokeWidth: 1,
-
-			/**
-			 * The color of the shape's fill.
-			 *
-			 * @type {Color}
-			 * @sample highcharts/annotations/shape/
-			 *         Basic shape annotation
-			 **/
-			fill: 'rgba(0, 0, 0, 0.75)',
-
-			/**
-			 * The type of the shape, e.g. circle or rectangle.
-			 *
-			 * @type {String}
-			 * @sample highcharts/annotations/shape/
-			 *         Basic shape annotation
-			 * @default 'rect'
-			 * @apioption annotations.shapeOptions.type
-			 **/
-
-			/**
-			 * The radius of the shape.
-			 *
-			 * @sample highcharts/annotations/shape/
-			 *         Basic shape annotation
-			 **/
-			r: 0
-
-			/**
-			 * The width of the shape.
-			 *
-			 * @type {Number}
-			 * @sample highcharts/annotations/shape/
-			 *         Basic shape annotation
-			 * @apioption annotations.shapeOptions.width
-			 **/
-
-			/**
-			 * The height of the shape.
-			 *
-			 * @type {Number}
-			 * @sample highcharts/annotations/shape/
-			 *         Basic shape annotation
-			 * @apioption annotations.shapeOptions.height
-			 **/
-		},
-
-		/**
-		 * The Z index of the annotation.
-		 *
-		 * @type {Number}
-		 * @default 6
-		 **/
-		zIndex: 6
+		
+		
 
 		/**
 		 * An array of shapes for the annotation. For options that apply to multiple
@@ -860,6 +781,87 @@ Annotation.prototype = {
 		 *         Define a custom marker for annotations
  		 * @apioption annotations.shapes.markerStart
 		 **/
+
+
+		/**
+		 * Options for annotation's shapes. Each shape inherits options
+		 * from the shapeOptions object. An option from the shapeOptions can be
+		 * overwritten by config for a specific shape.
+		 *
+		 * @type {Object}
+		 */
+		shapeOptions: {
+
+			/**
+			 * The width of the shape.
+			 *
+			 * @type {Number}
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
+			 * @apioption annotations.shapeOptions.width
+			 **/
+
+			/**
+			 * The height of the shape.
+			 *
+			 * @type {Number}
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
+			 * @apioption annotations.shapeOptions.height
+			 **/
+
+			/**
+			 * The color of the shape's stroke.
+			 *
+			 * @type {Color}
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
+			 **/
+			stroke: 'rgba(0, 0, 0, 0.75)',
+			
+			/**
+			 * The pixel stroke width of the shape.
+			 *
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
+			 **/
+			strokeWidth: 1,
+
+			/**
+			 * The color of the shape's fill.
+			 *
+			 * @type {Color}
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
+			 **/
+			fill: 'rgba(0, 0, 0, 0.75)',
+
+			/**
+			 * The type of the shape, e.g. circle or rectangle.
+			 *
+			 * @type {String}
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
+			 * @default 'rect'
+			 * @apioption annotations.shapeOptions.type
+			 **/
+
+			/**
+			 * The radius of the shape.
+			 *
+			 * @sample highcharts/annotations/shape/
+			 *         Basic shape annotation
+			 **/
+			r: 0
+		},
+
+		/**
+		 * The Z index of the annotation.
+		 *
+		 * @type {Number}
+		 * @default 6
+		 **/
+		zIndex: 6
 	},
 
 	/**

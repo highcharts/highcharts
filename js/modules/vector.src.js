@@ -33,7 +33,9 @@ seriesType('vector', 'scatter', {
 	 */
 	lineWidth: 2,
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	marker: null,
 	/**
 	 * What part of the vector it should be rotated around. Can be one of

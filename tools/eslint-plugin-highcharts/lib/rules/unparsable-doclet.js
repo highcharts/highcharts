@@ -29,15 +29,23 @@ module.exports = {
         const code = context.getSourceCode()
             .lines
 
-            // Handle doclets followed by a comment line
-            .map(line => line.split('//')[0])
+            .map(line => {
+                // Handle doclets followed by a comment line
+                line = line.split('//')[0];
+
+                // Handle doclets followed by supercode
+                line = line.replace('/*= } =*/', '');
+
+                return line;
+
+            })
             .join('\n');
 
         //----------------------------------------------------------------------
         // Helpers
         //----------------------------------------------------------------------
         const program = (node) => {
-            const regex = /\s\*\/[\s]+\}/;
+            const regex = /\s[\*]{1,2}\/[\s]+\}/;
             if (regex.test(code)) {
 
                 let codeBefore = code.split(regex)[0];

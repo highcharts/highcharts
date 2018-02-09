@@ -103,7 +103,9 @@ seriesType('funnel', 'pie',
 	 */
 	reversed: false,
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
 	/*= if (build.classic) { =*/

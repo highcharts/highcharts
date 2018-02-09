@@ -124,7 +124,9 @@ seriesType('column', 'line', {
 	 * @apioption plotOptions.column.grouping
 	 */
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	marker: null, // point options are specified in the base options
 
 	/**
@@ -325,7 +327,9 @@ seriesType('column', 'line', {
 	softThreshold: false,
 
 	// false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
-	/**	@ignore */
+	/** 
+	 * @ignore
+	 */
 	startFromThreshold: true,
 
 	stickyTracking: false,
@@ -347,20 +351,6 @@ seriesType('column', 'line', {
 	/*= if (build.classic) { =*/
 
 	/**
-	 * The color of the border surrounding each column or bar.
-	 *
-	 * In styled mode, the border stroke can be set with the `.highcharts-point`
-	 * rule.
-	 *
-	 * @type    {Color}
-	 * @sample  {highcharts} highcharts/plotoptions/column-bordercolor/
-	 *          Dark gray border
-	 * @default #ffffff
-	 * @product highcharts highstock
-	 */
-	borderColor: '${palette.backgroundColor}'
-
-	/**
 	 * The width of the border surrounding each column or bar.
 	 *
 	 * In styled mode, the stroke width can be set with the `.highcharts-point`
@@ -373,7 +363,20 @@ seriesType('column', 'line', {
 	 * @product   highcharts highstock
 	 * @apioption plotOptions.column.borderWidth
 	 */
-	// borderWidth: 1
+
+	/**
+	 * The color of the border surrounding each column or bar.
+	 *
+	 * In styled mode, the border stroke can be set with the `.highcharts-point`
+	 * rule.
+	 *
+	 * @type    {Color}
+	 * @sample  {highcharts} highcharts/plotoptions/column-bordercolor/
+	 *          Dark gray border
+	 * @default #ffffff
+	 * @product highcharts highstock
+	 */
+	borderColor: '${palette.backgroundColor}'
 
 	/*= } =*/
 

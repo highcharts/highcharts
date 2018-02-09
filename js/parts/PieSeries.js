@@ -70,7 +70,9 @@ seriesType('pie', 'line', {
 
 	clip: false,
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	colorByPoint: true, // always true for pies
 
 	/**
@@ -222,7 +224,9 @@ seriesType('pie', 'line', {
 	 * @apioption plotOptions.pie.innerSize
 	 */
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	legendType: 'point',
 
 	/**	@ignore */
@@ -678,10 +682,6 @@ seriesType('pie', 'line', {
 	getSymbol: noop
 
 
-/**
- * @constructor seriesTypes.pie.prototype.pointClass
- * @extends {Point}
- **/
 }, /** @lends seriesTypes.pie.prototype.pointClass.prototype */ {
 	/**
 	 * Initiate the pie slice

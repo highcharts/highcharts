@@ -139,116 +139,113 @@ seriesType('gauge', 'line', {
 	 * @since   2.3.0
 	 * @product highcharts
 	 */
-	
+	dial: {},
 
-	dial: {
-		
-		/**
-		 * The length of the dial's base part, relative to the total radius
-		 * or length of the dial.
-		 * 
-		 * @type      {String}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
-		 *            Dial options demonstrated
-		 * @default   70%
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.dial.baseLength
-		 */
-		
-		/**
-		 * The pixel width of the base of the gauge dial. The base is the part
-		 * closest to the pivot, defined by baseLength.
-		 * 
-		 * @type      {Number}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
-		 *            Dial options demonstrated
-		 * @default   3
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.dial.baseWidth
-		 */
-		
-		/**
-		 * The radius or length of the dial, in percentages relative to the
-		 * radius of the gauge itself.
-		 * 
-		 * @type      {String}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
-		 *            Dial options demonstrated
-		 * @default   80%
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.dial.radius
-		 */
-		
-		/**
-		 * The length of the dial's rear end, the part that extends out on the
-		 * other side of the pivot. Relative to the dial's length.
-		 * 
-		 * @type      {String}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
-		 *            Dial options demonstrated
-		 * @default   10%
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.dial.rearLength
-		 */
-		
-		/**
-		 * The width of the top of the dial, closest to the perimeter. The pivot
-		 * narrows in from the base to the top.
-		 * 
-		 * @type      {Number}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
-		 *            Dial options demonstrated
-		 * @default   1
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.dial.topWidth
-		 */
-		
-		/*= if (build.classic) { =*/
-		
-		/**
-		 * The background or fill color of the gauge's dial.
-		 * 
-		 * @type      {Color}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
-		 *            Dial options demonstrated
-		 * @default   #000000
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.dial.backgroundColor
-		 */
-		
-		/**
-		 * The border color or stroke of the gauge's dial. By default, the borderWidth
-		 * is 0, so this must be set in addition to a custom border color.
-		 * 
-		 * @type      {Color}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
-		 *            Dial options demonstrated
-		 * @default   #cccccc
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.dial.borderColor
-		 */
-		
-		/**
-		 * The width of the gauge dial border in pixels.
-		 * 
-		 * @type      {Number}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
-		 *            Dial options demonstrated
-		 * @default   0
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.dial.borderWidth
-		 */
-		/*= } =*/
-		
-	},
+	/**
+	 * The length of the dial's base part, relative to the total radius
+	 * or length of the dial.
+	 * 
+	 * @type      {String}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+	 *            Dial options demonstrated
+	 * @default   70%
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.dial.baseLength
+	 */
+	
+	/**
+	 * The pixel width of the base of the gauge dial. The base is the part
+	 * closest to the pivot, defined by baseLength.
+	 * 
+	 * @type      {Number}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+	 *            Dial options demonstrated
+	 * @default   3
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.dial.baseWidth
+	 */
+	
+	/**
+	 * The radius or length of the dial, in percentages relative to the
+	 * radius of the gauge itself.
+	 * 
+	 * @type      {String}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+	 *            Dial options demonstrated
+	 * @default   80%
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.dial.radius
+	 */
+	
+	/**
+	 * The length of the dial's rear end, the part that extends out on the
+	 * other side of the pivot. Relative to the dial's length.
+	 * 
+	 * @type      {String}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+	 *            Dial options demonstrated
+	 * @default   10%
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.dial.rearLength
+	 */
+	
+	/**
+	 * The width of the top of the dial, closest to the perimeter. The pivot
+	 * narrows in from the base to the top.
+	 * 
+	 * @type      {Number}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+	 *            Dial options demonstrated
+	 * @default   1
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.dial.topWidth
+	 */
+	
+	/*= if (build.classic) { =*/
+	
+	/**
+	 * The background or fill color of the gauge's dial.
+	 * 
+	 * @type      {Color}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+	 *            Dial options demonstrated
+	 * @default   #000000
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.dial.backgroundColor
+	 */
+	
+	/**
+	 * The border color or stroke of the gauge's dial. By default, the borderWidth
+	 * is 0, so this must be set in addition to a custom border color.
+	 * 
+	 * @type      {Color}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+	 *            Dial options demonstrated
+	 * @default   #cccccc
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.dial.borderColor
+	 */
+	
+	/**
+	 * The width of the gauge dial border in pixels.
+	 * 
+	 * @type      {Number}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
+	 *            Dial options demonstrated
+	 * @default   0
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.dial.borderWidth
+	 */
+	
+	/*= } =*/
 
 	/**
 	 * Allow the dial to overshoot the end of the perimeter axis by this
@@ -276,61 +273,61 @@ seriesType('gauge', 'line', {
 	 * @since   2.3.0
 	 * @product highcharts
 	 */	
-	pivot: {
+	pivot: {},
 
-		/**
-		 * The pixel radius of the pivot.
-		 * 
-		 * @type      {Number}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
-		 *            Pivot options demonstrated
-		 * @default   5
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.pivot.radius
-		 */
+	/**
+	 * The pixel radius of the pivot.
+	 * 
+	 * @type      {Number}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
+	 *            Pivot options demonstrated
+	 * @default   5
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.pivot.radius
+	 */
+	
+	/*= if (build.classic) { =*/
+
+	/**
+	 * The border or stroke width of the pivot.
+	 * 
+	 * @type      {Number}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
+	 *            Pivot options demonstrated
+	 * @default   0
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.pivot.borderWidth
+	 */
+	
+	/**
+	 * The border or stroke color of the pivot. In able to change this,
+	 * the borderWidth must also be set to something other than the default
+	 * 0.
+	 * 
+	 * @type      {Color}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
+	 *            Pivot options demonstrated
+	 * @default   #cccccc
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.pivot.borderColor
+		*/
+
+	/**
+	 * The background color or fill of the pivot.
+	 * 
+	 * @type      {Color}
+	 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
+	 *            Pivot options demonstrated
+	 * @default   #000000
+	 * @since     2.3.0
+	 * @product   highcharts
+	 * @apioption plotOptions.gauge.pivot.backgroundColor
+	 */
+	/*= } =*/
 		
-		/*= if (build.classic) { =*/
-
-		/**
-		 * The border or stroke width of the pivot.
-		 * 
-		 * @type      {Number}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
-		 *            Pivot options demonstrated
-		 * @default   0
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.pivot.borderWidth
-		 */
-		
-		/**
-		 * The border or stroke color of the pivot. In able to change this,
-		 * the borderWidth must also be set to something other than the default
-		 * 0.
-		 * 
-		 * @type      {Color}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
-		 *            Pivot options demonstrated
-		 * @default   #cccccc
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.pivot.borderColor
- 		*/
-
-		/**
-		 * The background color or fill of the pivot.
-		 * 
-		 * @type      {Color}
-		 * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
-		 *            Pivot options demonstrated
-		 * @default   #000000
-		 * @since     2.3.0
-		 * @product   highcharts
-		 * @apioption plotOptions.gauge.pivot.backgroundColor
-		 */
-		/*= } =*/
-	},
 
 	tooltip: {
 		headerFormat: ''

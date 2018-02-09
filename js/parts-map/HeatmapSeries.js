@@ -120,7 +120,9 @@ seriesType('heatmap', 'scatter', {
 		padding: 0 // #3837
 	},
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	marker: null,
 
 	/**	@ignore */
@@ -133,7 +135,9 @@ seriesType('heatmap', 'scatter', {
 	states: {
 
 		hover: {
-			/** @ignore */
+			/** 
+			 * @ignore
+			 */
 			halo: false,  // #3406, halo is disabled on heatmaps by default
 
 			/**
