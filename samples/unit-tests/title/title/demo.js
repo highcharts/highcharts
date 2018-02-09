@@ -59,3 +59,27 @@ QUnit.test('The title should have correct font-size (#2944)', function (assert) 
         'Font size is 30px'
     );
 });
+
+QUnit.test('useHTML and title alignment', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 500,
+            borderWidth: 1,
+            height: 150
+        },
+        exporting: {
+            enabled: false
+        },
+        title: {
+            useHTML: true,
+            align: 'right',
+            text: 'Here is a title that helps show the issue, it is pretty long'
+        }
+    });
+
+    assert.ok(
+        chart.title.element.offsetLeft + chart.title.element.offsetWidth <
+        chart.chartWidth,
+        'The title should not spill out of the chart area (#7787)'
+    );
+});

@@ -136,6 +136,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 					rotation,
 					align,
 					elem.innerHTML,
+					wrapper.textWidth,
 					wrapper.textAlign
 				].join(',');
 
