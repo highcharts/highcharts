@@ -156,7 +156,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Test {_each(arr, -2)}.',
+            'Test {_each(arr,-2)}.',
             { arr: [0, 1, 2, 3, 4, 5] }
         ),
         'Test 0123.',
@@ -170,4 +170,74 @@ QUnit.test('i18nFormat', function (assert) {
         'We have 0.0, 0.1, 0.2, 0.3, 0.4, and 0.5.',
         'Array each combination'
     );
+    assert.strictEqual(
+        Highcharts.i18nFormat(
+            'Items: {_plural(num, many, one)}.',
+            { num: 1 }
+        ),
+        'Items: one.',
+        'Plural conditional 1'
+    );
+    assert.strictEqual(
+        Highcharts.i18nFormat(
+            'Items: {_plural(num, many)}.',
+            { num: 1 }
+        ),
+        'Items: many.',
+        'Plural conditional 2'
+    );
+    assert.strictEqual(
+        Highcharts.i18nFormat(
+            'Items: {_plural(num)}.',
+            { num: 1 }
+        ),
+        'Items: .',
+        'Plural conditional 3'
+    );
+    assert.strictEqual(
+        Highcharts.i18nFormat(
+            'Items: {_plural(num, many, one, two)}.',
+            { num: 2 }
+        ),
+        'Items: two.',
+        'Plural conditional 4'
+    );
+    assert.strictEqual(
+        Highcharts.i18nFormat(
+            'Items: {_plural(num,many,one,two,none)}.',
+            { num: 0 }
+        ),
+        'Items: none.',
+        'Plural conditional 5'
+    );
+    assert.strictEqual(
+        Highcharts.i18nFormat(
+            'Items: {_plural(num, many, one, two, none)}.',
+            { num: 19 }
+        ),
+        'Items: many.',
+        'Plural conditional 6'
+    );
+});
+
+QUnit.test('Chart lang can be configured', function (assert) {
+    var chart = Highcharts.chart('container', {
+        lang: {
+            accessibility: {
+                chartContainerLabel: 'testing',
+                structureHeading: 'testing2',
+                chartTypes: {
+                    lineSingle: 'testing3'
+                }
+            }
+        },
+        series: [{ data: [1, 2, 3] }]
+    });
+
+    assert.strictEqual(chart.renderTo.getAttribute('aria-label'), 'testing',
+        'Container label configured');
+
+    assert.ok(chart.screenReaderRegion.innerHTML.indexOf(
+        '<h4>testing2</h4><div>testing3</div>'
+    ) > 0);
 });
