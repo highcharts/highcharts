@@ -4645,6 +4645,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		// (See #322) series.isDirty = series.isDirtyData = false; // means
 		// data is in accordance with what you see
 		series.hasRendered = true;
+
+		fireEvent(series, 'afterRender');
 	},
 
 	/**

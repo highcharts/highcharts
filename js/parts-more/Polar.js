@@ -232,8 +232,8 @@ wrap(seriesProto, 'translate', function (proceed) {
 	// Run uber method
 	proceed.call(this);
 
-	// Postprocess plot coordinates
 	if (chart.polar) {
+		// Postprocess plot coordinates
 		this.kdByAngle = chart.tooltip && chart.tooltip.shared;
 
 		if (!this.preventPostTranslate) {
@@ -244,6 +244,26 @@ wrap(seriesProto, 'translate', function (proceed) {
 				// Translate plotX, plotY from angle and radius to true plot coordinates
 				this.toXY(points[i]);
 			}
+		}
+
+		// Perform clip after render
+		if (!this.hasClipCircleSetter) {
+			this.hasClipCircleSetter = Boolean(
+				H.addEvent(this, 'afterRender', function () {
+					var circ;
+					if (chart.polar) {
+						circ = this.yAxis.center;
+						this.group.clip(
+							chart.renderer.clipCircle(
+								circ[0],
+								circ[1],
+								circ[2] / 2
+							)
+						);
+						this.setClip = H.noop;
+					}
+				})
+			);
 		}
 	}
 });
@@ -513,6 +533,21 @@ wrap(pointerProto, 'getCoordinates', function (proceed, e) {
 
 	return ret;
 });
+
+H.SVGRenderer.prototype.clipCircle = function (x, y, r) {
+	var wrapper,
+		id = H.uniqueKey(),
+
+		clipPath = this.createElement('clipPath').attr({
+			id: id
+		}).add(this.defs);
+
+	wrapper = this.circle(x, y, r).add(clipPath);
+	wrapper.id = id;
+	wrapper.clipPath = clipPath;
+
+	return wrapper;        
+};
 
 wrap(H.Chart.prototype, 'getAxes', function (proceed) {
 
