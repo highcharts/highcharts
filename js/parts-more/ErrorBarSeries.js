@@ -63,6 +63,7 @@ seriesType('errorbar', 'boxplot', {
 	 * and high values. When `null`, the general
 	 * [lineWidth](#plotOptions.errorbar.lineWidth) applies.
 	 * 
+	 * @type    {Number}
 	 * @sample  {highcharts} highcharts/plotoptions/error-bar-styling/
 	 *          Error bar styling
 	 * @since   3.0
