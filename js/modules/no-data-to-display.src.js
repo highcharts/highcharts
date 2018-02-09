@@ -27,7 +27,9 @@ extend(defaultOptions.lang, {
 	 * @type {String}
 	 * @default No data to display
 	 * @since 3.0.8
-	 * @product highcharts
+	 * @product highcharts highstock
+	 * @sample highcharts/no-data-to-display/no-data-line
+     *         No-data text
 	 * @apioption lang.noData
 	 */
 	noData: 'No data to display'
@@ -39,6 +41,11 @@ extend(defaultOptions.lang, {
  * This feature requires the file no-data-to-display.js to be loaded in the
  * page. The actual text to display is set in the lang.noData option.
  * @type {Object}
+ *
+ * @sample highcharts/no-data-to-display/no-data-line
+ *         Line chart with no-data module
+ * @sample highcharts/no-data-to-display/no-data-pie
+ *         Pie chart with no-data module
  * @optionparent noData
  */
 defaultOptions.noData = {
@@ -115,6 +122,9 @@ defaultOptions.noData = {
 // Presentational
 /**
  * CSS styles for the no-data label.
+ *
+ * @sample highcharts/no-data-to-display/no-data-line
+ *         Styled no-data text
  * @optionparent noData.style
  */
 defaultOptions.noData.style = {
