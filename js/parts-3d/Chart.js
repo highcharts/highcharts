@@ -295,6 +295,10 @@ var extendedOptions = 	{
 				 * @product highcharts
 				 * @apioption chart.options3d.frame.bottom.visible
 				 */
+
+				/**
+				 * The bottom of the frame around a 3D chart.
+				 */
 				bottom: {},
 
 				/**
