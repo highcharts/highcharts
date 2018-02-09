@@ -250,7 +250,8 @@ seriesType('gauge', 'line', {
 	/**
 	 * Allow the dial to overshoot the end of the perimeter axis by this
 	 * many degrees. Say if the gauge axis goes from 0 to 60, a value of
-	 * 100, or 1000, will show 5 degrees beyond the end of the axis.
+	 * 100, or 1000, will show 5 degrees beyond the end of the axis when this
+	 * option is set to 5.
 	 * 
 	 * @type      {Number}
 	 * @see       [wrap](#plotOptions.gauge.wrap)
@@ -575,7 +576,11 @@ seriesType('gauge', 'line', {
  * 
  * @type      {Object}
  * @extends   series,plotOptions.gauge
- * @excluding dataParser,dataURL,stack,stacking
+ * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,
+ *            cropThreshold,dashStyle,dataParser,dataURL,findNearestPointBy,
+ *            getExtremesFromAll,marker,negativeColor,pointPlacement,shadow,
+ *            softThreshold,stack,stacking,states,step,threshold,
+ *            turboThreshold,zoneAxis,zones
  * @product   highcharts
  * @apioption series.gauge
  */
