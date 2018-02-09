@@ -374,7 +374,7 @@ seriesType('xrange', 'column', {
 		//retVal['stroke-width'] = 0;
 		return retVal;
 	}
-	*/
+	//*/
 
 // Point class properties
 }, {

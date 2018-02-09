@@ -500,15 +500,6 @@ seriesType('tilemap', 'heatmap', {
 	pointPadding: 2,
 
 	/**
-	 * The shape of the tiles in the tilemap. Possible values are `hexagon`,
-	 * `circle`, `diamond`, and `square`.
-	 *
-	 * @sample maps/demo/circlemap-africa Circular tile shapes
-	 * @sample maps/demo/diamondmap Diamond tile shapes
-	 */
-	tileShape: 'hexagon'
-
-	/**
 	 * The column size - how many X axis units each column in the tilemap
 	 * should span. Works as in [Heatmaps](#plotOptions.heatmap.colsize).
 	 *
@@ -531,6 +522,15 @@ seriesType('tilemap', 'heatmap', {
  	 * @product highcharts highmaps
  	 * @apioption plotOptions.tilemap.rowsize
  	 */
+
+	/**
+	 * The shape of the tiles in the tilemap. Possible values are `hexagon`,
+	 * `circle`, `diamond`, and `square`.
+	 *
+	 * @sample maps/demo/circlemap-africa Circular tile shapes
+	 * @sample maps/demo/diamondmap Diamond tile shapes
+	 */
+	tileShape: 'hexagon'
 
 // Prototype functions
 }, {

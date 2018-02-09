@@ -279,88 +279,8 @@ seriesType('treemap', 'scatter', {
 			y: 10
 		}
 	},
-	/*= if (build.classic) { =*/
-	// Presentational options
 
-	/**
-	 * The color of the border surrounding each tree map item.
-	 *
-	 * @type {Color}
-	 * @default #e6e6e6
-	 * @product highcharts
-	 */
-	borderColor: '${palette.neutralColor10}',
-
-	/**
-	 * The width of the border surrounding each tree map item.
-	 */
-	borderWidth: 1,
-
-	/**
-	 * The opacity of a point in treemap. When a point has children, the
-	 * visibility of the children is determined by the opacity.
-	 *
-	 * @type {Number}
-	 * @default 0.15
-	 * @since 4.2.4
-	 * @product highcharts
-	 */
-	opacity: 0.15,
-
-	/**
-	 * A wrapper object for all the series options in specific states.
-	 *
-	 * @extends plotOptions.heatmap.states
-	 * @product highcharts
-	 */
-	states: {
-
-		/**
-		 * Options for the hovered series
-		 *
-		 * @extends plotOptions.heatmap.states.hover
-		 * @excluding halo
-		 * @product highcharts
-		 */
-		hover: {
-
-			/**
-			 * The border color for the hovered state.
-			 */
-			borderColor: '${palette.neutralColor40}',
-
-			/**
-			 * Brightness for the hovered point. Defaults to 0 if the heatmap
-			 * series is loaded, otherwise 0.1.
-			 *
-			 * @default null
-			 * @type {Number}
-			 */
-			brightness: seriesTypes.heatmap ? 0 : 0.1,
-			/**
-			* @extends plotOptions.heatmap.states.hover.halo
-			*/
-			halo: false,
-			/**
-			 * The opacity of a point in treemap. When a point has children,
-			 * the visibility of the children is determined by the opacity.
-			 *
-			 * @type {Number}
-			 * @default 0.75
-			 * @since 4.2.4
-			 * @product highcharts
-			 */
-			opacity: 0.75,
-
-			/**
-			 * The shadow option for hovered state.
-			 */
-			shadow: false
-		}
-	}
-	/*= } =*/
-
-
+	
 	/**
 	 * Set options on specific levels. Takes precedence over series options,
 	 * but not point options.
@@ -492,6 +412,90 @@ seriesType('treemap', 'scatter', {
 	 * @product highcharts
 	 * @apioption plotOptions.treemap.levels.level
 	 */
+
+	
+	/*= if (build.classic) { =*/
+	// Presentational options
+
+	/**
+	 * The color of the border surrounding each tree map item.
+	 *
+	 * @type {Color}
+	 * @default #e6e6e6
+	 * @product highcharts
+	 */
+	borderColor: '${palette.neutralColor10}',
+
+	/**
+	 * The width of the border surrounding each tree map item.
+	 */
+	borderWidth: 1,
+
+	/**
+	 * The opacity of a point in treemap. When a point has children, the
+	 * visibility of the children is determined by the opacity.
+	 *
+	 * @type {Number}
+	 * @default 0.15
+	 * @since 4.2.4
+	 * @product highcharts
+	 */
+	opacity: 0.15,
+
+	/**
+	 * A wrapper object for all the series options in specific states.
+	 *
+	 * @extends plotOptions.heatmap.states
+	 * @product highcharts
+	 */
+	states: {
+
+		/**
+		 * Options for the hovered series
+		 *
+		 * @extends plotOptions.heatmap.states.hover
+		 * @excluding halo
+		 * @product highcharts
+		 */
+		hover: {
+
+			/**
+			 * The border color for the hovered state.
+			 */
+			borderColor: '${palette.neutralColor40}',
+
+			/**
+			 * Brightness for the hovered point. Defaults to 0 if the heatmap
+			 * series is loaded, otherwise 0.1.
+			 *
+			 * @default null
+			 * @type {Number}
+			 */
+			brightness: seriesTypes.heatmap ? 0 : 0.1,
+			/**
+			* @extends plotOptions.heatmap.states.hover.halo
+			*/
+			halo: false,
+			/**
+			 * The opacity of a point in treemap. When a point has children,
+			 * the visibility of the children is determined by the opacity.
+			 *
+			 * @type {Number}
+			 * @default 0.75
+			 * @since 4.2.4
+			 * @product highcharts
+			 */
+			opacity: 0.75,
+
+			/**
+			 * The shadow option for hovered state.
+			 */
+			shadow: false
+		}
+	}
+	/*= } =*/
+
+
 
 // Prototype members
 }, {

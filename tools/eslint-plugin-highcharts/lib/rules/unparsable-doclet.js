@@ -30,7 +30,7 @@ module.exports = {
             .lines
 
             // Handle doclets followed by a comment line
-            // .map(line => line.split('//')[0])
+            .map(line => line.split('//')[0])
             .join('\n');
 
         //----------------------------------------------------------------------

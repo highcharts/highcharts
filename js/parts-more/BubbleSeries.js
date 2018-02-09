@@ -224,23 +224,6 @@ seriesType('bubble', 'scatter', {
 	turboThreshold: 0,
 
 	/**
-	 * When [displayNegative](#plotOptions.bubble.displayNegative) is `false`,
-	 * bubbles with lower Z values are skipped. When `displayNegative`
-	 * is `true` and a [negativeColor](#plotOptions.bubble.negativeColor)
-	 * is given, points with lower Z is colored.
-	 * 
-	 * @type    {Number}
-	 * @sample  {highcharts} highcharts/plotoptions/bubble-negative/
-	 *          Negative bubbles
-	 * @default 0
-	 * @since   3.0
-	 * @product highcharts
-	 */
-	zThreshold: 0,
-
-	zoneAxis: 'z'
-
-	/**
 	 * The minimum for the Z value range. Defaults to the highest Z value
 	 * in the data.
 	 * 
@@ -267,6 +250,23 @@ seriesType('bubble', 'scatter', {
 	 * @product   highcharts
 	 * @apioption plotOptions.bubble.zMin
 	 */
+
+	/**
+	 * When [displayNegative](#plotOptions.bubble.displayNegative) is `false`,
+	 * bubbles with lower Z values are skipped. When `displayNegative`
+	 * is `true` and a [negativeColor](#plotOptions.bubble.negativeColor)
+	 * is given, points with lower Z is colored.
+	 * 
+	 * @type    {Number}
+	 * @sample  {highcharts} highcharts/plotoptions/bubble-negative/
+	 *          Negative bubbles
+	 * @default 0
+	 * @since   3.0
+	 * @product highcharts
+	 */
+	zThreshold: 0,
+
+	zoneAxis: 'z'
 
 // Prototype members
 }, {
