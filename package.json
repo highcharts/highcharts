@@ -35,7 +35,7 @@
     "colors": "~1.1.2",
     "eslint": "3.12.2",
     "eslint-plugin-security": "^1.4.0",
-    "eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts",
+    "eslint-plugin-highcharts": "file:tools/eslint-plugin-highcharts",
     "fs-extra": "^2.1.2",
     "gifencoder": "^1.1.0",
     "google-closure-compiler-js": "^20160916.0.0",
