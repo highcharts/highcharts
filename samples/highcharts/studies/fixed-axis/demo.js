@@ -94,10 +94,12 @@ Highcharts.chart('container', {
         type: 'spline'
     },
     title: {
-        text: 'Fixed Y axis'
+        text: 'Fixed Y axis',
+        align: 'left'
     },
     subtitle: {
-        text: 'Open on mobile and scroll sideways'
+        text: 'Open on mobile and scroll sideways',
+        align: 'left'
     },
     xAxis: {
         type: 'datetime',
@@ -116,6 +118,11 @@ Highcharts.chart('container', {
     tooltip: {
         valueSuffix: ' m/s'
     },
+
+    legend: {
+        align: 'left'
+    },
+
     plotOptions: {
         spline: {
             lineWidth: 4,
