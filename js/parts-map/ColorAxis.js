@@ -119,34 +119,42 @@ if (!H.ColorAxis) {
 			 */
 
 			/**
-			 * The start of the value range that the data class represents, relating
-			 * to the point value.
+			 * The start of the value range that the data class represents,
+			 * relating to the point value.
+			 *
+			 * Range of each dataClass is closed on both ends, but will but can
+			 * be overridden by next dataClass.
 			 * 
-			 * @type {Number}
-			 * @product highcharts highmaps
+			 * @type      {Number}
+			 * @product   highcharts highmaps
 			 * @apioption colorAxis.dataClasses.from
 			 */
 
 			/**
-			 * The name of the data class as it appears in the legend. If no name
-			 * is given, it is automatically created based on the `from` and `to`
-			 * values. For full programmatic control, [legend.labelFormatter](#legend.
-			 * labelFormatter) can be used. In the formatter, `this.from` and
-			 * `this.to` can be accessed.
+			 * The name of the data class as it appears in the legend.
+			 * If no name is given, it is automatically created based on the
+			 * `from` and `to` values. For full programmatic control,
+			 * [legend.labelFormatter](#legend.labelFormatter) can be used.
+			 * In the formatter, `this.from` and `this.to` can be accessed.
 			 * 
-			 * @type {String}
-			 * @sample {highmaps} maps/coloraxis/dataclasses-name/ Named data classes
-			 * @sample {highmaps} maps/coloraxis/dataclasses-labelformatter/ Formatted data classes
-			 * @product highcharts highmaps
+			 * @type      {String}
+			 * @sample    {highmaps} maps/coloraxis/dataclasses-name/
+			 *            Named data classes
+			 * @sample    {highmaps} maps/coloraxis/dataclasses-labelformatter/
+			 *            Formatted data classes
+			 * @product   highcharts highmaps
 			 * @apioption colorAxis.dataClasses.name
 			 */
 
 			/**
-			 * The end of the value range that the data class represents, relating
-			 * to the point value.
+			 * The end of the value range that the data class represents,
+			 * relating to the point value.
+			 *
+			 * Range of each dataClass is closed on both ends, but will but can
+			 * be overridden by next dataClass.
 			 * 
-			 * @type {Number}
-			 * @product highcharts highmaps
+			 * @type      {Number}
+			 * @product   highcharts highmaps
 			 * @apioption colorAxis.dataClasses.to
 			 */
 
