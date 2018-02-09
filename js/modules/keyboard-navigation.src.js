@@ -86,6 +86,15 @@ function stripTags(s) {
 
 
 H.setOptions({
+	lang: {
+		accessibility: {
+			mapZoomIn: 'Zoom chart',
+			mapZoomOut: 'Zoom out chart',
+			rangeSelectorButton: 'Select range {buttonText}',
+			legendItem: 'Toggle visibility of series {itemName}'
+		}
+	},
+	
 	accessibility: {
 
 		/**
@@ -988,7 +997,10 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					button.element.setAttribute('role', 'button');
 					button.element.setAttribute(
 						'aria-label',
-						'Zoom ' + (i ? 'out ' : '') + 'chart'
+						chart.langFormat(
+							'accessibility.mapZoom' + (i ? 'Out' : 'In'),
+							{ chart: chart }
+						)
 					);
 				});
 
@@ -1040,7 +1052,13 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					button.element.setAttribute('role', 'button');
 					button.element.setAttribute(
 						'aria-label',
-						'Select range ' + (button.text && button.text.textStr)
+						chart.langFormat(
+							'accessibility.rangeSelectorButton',
+							{ 
+								chart: chart,
+								buttonText: button.text && button.text.textStr
+							}
+						)
 					);
 				});
 				// Focus first/last button
@@ -1132,7 +1150,13 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					item.legendGroup.element.setAttribute('role', 'button');
 					item.legendGroup.element.setAttribute(
 						'aria-label',
-						stripTags('Toggle visibility of series ' + item.name)
+						chart.langFormat(
+							'accessibility.legendItem',
+							{ 
+								chart: chart,
+								itemName: stripTags(item.name)
+							}
+						)
 					);
 				});
 				// Focus first/last item
