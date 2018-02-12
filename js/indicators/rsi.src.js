@@ -1,4 +1,3 @@
-/* eslint max-len: 0 */
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -13,8 +12,9 @@ function toFixed(a, n) {
 
 H.seriesType('rsi', 'sma',
 		/**
-		 * Relative strength index (RSI) technical indicator. This series requires `linkedTo`
-		 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+		 * Relative strength index (RSI) technical indicator. This series
+		 * requires the `linkedTo` option to be set and should be loaded after
+		 * the `stock/indicators/indicators.js` file.
 		 *
 		 * @extends {plotOptions.sma}
 		 * @product highstock
@@ -104,14 +104,19 @@ H.seriesType('rsi', 'sma',
 					(avgLoss * (period - 1) + loss) / period,
 					decimals
 				);
-				// If average-loss is equal zero, then by definition RSI is set to 100:
+				// If average-loss is equal zero, then by definition RSI is set
+				// to 100:
 				if (avgLoss === 0) {
 					RSIPoint = 100;
-				// If average-gain is equal zero, then by definition RSI is set to 0:
+				// If average-gain is equal zero, then by definition RSI is set
+				// to 0:
 				} else if (avgGain === 0) {
 					RSIPoint = 0;
 				} else {
-					RSIPoint = toFixed(100 - (100 / (1 + (avgGain / avgLoss))), decimals);
+					RSIPoint = toFixed(
+						100 - (100 / (1 + (avgGain / avgLoss))),
+						decimals
+					);
 				}
 
 				RSI.push([xVal[i], RSIPoint]);

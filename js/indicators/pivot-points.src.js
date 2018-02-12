@@ -1,4 +1,3 @@
-/* eslint max-len: 0 */
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -28,8 +27,8 @@ function destroyExtraLabels(point, functionName) {
 
 H.seriesType('pivotpoints', 'sma',
 	/**
-	 * Pivot points indicator. This series requires `linkedTo`
-	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 * Pivot points indicator. This series requires the `linkedTo` option to be
+	 * set and should be loaded after `stock/indicators/indicators.js` file.
 	 *
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -45,8 +44,9 @@ H.seriesType('pivotpoints', 'sma',
 		params: {
 			period: 28,
 			/**
-			 * Algorithm used to calculate ressistance and support lines based on pivot points.
-			 * Implemented algorithms: `'standard'`, `'fibonacci'` and `'camarilla'`
+			 * Algorithm used to calculate ressistance and support lines based
+			 * on pivot points. Implemented algorithms: `'standard'`,
+			 * `'fibonacci'` and `'camarilla'`
 			 * 
 			 * @type {String}
 			 * @since 6.0.0
@@ -153,8 +153,9 @@ H.seriesType('pivotpoints', 'sma',
 			if (indicator.options.dataLabels.enabled) {
 				pointsLength = indicator.points.length;
 
-				// For every Ressitance/Support group we need to render labels
-				// Add one more item, which will just store dataLabels from previous iteration
+				// For every Ressitance/Support group we need to render labels.
+				// Add one more item, which will just store dataLabels from
+				// previous iteration
 				each(pointMapping.concat([false]), function (position, k) {
 					i = pointsLength;
 					while (i--) {
@@ -162,7 +163,8 @@ H.seriesType('pivotpoints', 'sma',
 
 						if (!position) {
 							// Store S4 dataLabel too:
-							point['dataLabel' + pointMapping[k - 1]] = point.dataLabel;
+							point['dataLabel' + pointMapping[k - 1]] =
+								point.dataLabel;
 						} else {
 							point.y = point[position];
 							point.pivotLine = position;
@@ -171,10 +173,14 @@ H.seriesType('pivotpoints', 'sma',
 
 							// Store previous label
 							if (k) {
-								point['dataLabel' + pointMapping[k - 1]] = point.dataLabel;
+								point['dataLabel' + pointMapping[k - 1]] =
+									point.dataLabel;
 							}
 
-							point.dataLabel = currentLabel = currentLabel && currentLabel.element ? currentLabel : null;
+							point.dataLabel = currentLabel =
+								currentLabel && currentLabel.element ?
+									currentLabel :
+									null;
 						}
 					}
 					SMA.prototype.drawDataLabels.apply(indicator, arguments);
@@ -187,7 +193,7 @@ H.seriesType('pivotpoints', 'sma',
 				yVal = series.yData,
 				yValLen = yVal ? yVal.length : 0,
 				placement = this[params.algorithm + 'Placement'],
-				PP = [], // 0- from, 1- to, 2- R1, 3- R2, 4- pivot, 5- S1, 6- S2 etc.
+				PP = [], // 0- from, 1- to, 2- R1, 3- R2, 4- pivot, 5- S1 etc.
 				endTimestamp,
 				xData = [],
 				yData = [],
@@ -230,7 +236,8 @@ H.seriesType('pivotpoints', 'sma',
 
 			// We don't know exact position in ordinal axis
 			// So we use simple logic:
-			// Get first point in last range, calculate visible average range and multiply by period
+			// Get first point in last range, calculate visible average range
+			// and multiply by period
 			this.endPoint = slicedX[0] +
 				((endTimestamp - slicedX[0]) / slicedXLen) * period;
 
@@ -315,8 +322,8 @@ H.seriesType('pivotpoints', 'sma',
 );
 
 /**
- * A pivot points indicator. If the [type](#series.pivotpoints.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A pivot points indicator. If the [type](#series.pivotpoints.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
  *
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.

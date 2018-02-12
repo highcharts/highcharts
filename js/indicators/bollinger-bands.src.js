@@ -1,4 +1,3 @@
-/* eslint max-len: 0 */
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -29,8 +28,8 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
 
 H.seriesType('bb', 'sma',
 	/**
-	 * Bollinger bands (BB). This series requires `linkedTo`
-	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 * Bollinger bands (BB). This series requires the `linkedTo` option to be
+	 * set and should be loaded after the `stock/indicators/indicators.js` file.
 	 *
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -76,8 +75,8 @@ H.seriesType('bb', 'sma',
 				 */
 				lineWidth: 1,
 				/**
-				 * Color of the line.
-				 * If not set, it's inherited from [plotOptions.bb.color](#plotOptions.bb.color).
+				 * Color of the line. If not set, it's inherited from
+				 * [plotOptions.bb.color](#plotOptions.bb.color).
 				 *
 				 * @type {String}
 				 * @since 6.0.0
@@ -100,31 +99,7 @@ H.seriesType('bb', 'sma',
 			}
 		},
 		tooltip: {
-			/**
-			 * The HTML of the point's line in the tooltip. Variables are enclosed
-			 * by curly brackets. Available variables are point.x, point.y, series.
-			 * name and series.color and other properties on the same form. Furthermore,
-			 * point.y can be extended by the `tooltip.valuePrefix` and
-			 * `tooltip.valueSuffix` variables. This can also be overridden for
-			 * each series, which makes it a good hook for displaying units.
-			 *
-			 * In styled mode, the dot is colored by a class name rather
-			 * than the point color.
-			 *
-			 * @type {String}
-			 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
-			 * @sample {highmaps} maps/tooltip/format/ Format demo
-			 * @default
-			 *	<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>
-			 *		Top: {point.top}<br/>
-			 *		Middle: {point.middle}<br/>
-			 *		Bottom: {point.bottom}<br/>
-			 */
-			pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
-				'<b> {series.name}</b><br/>' +
-				'Top: {point.top}<br/>' +
-				'Middle: {point.middle}<br/>' +
-				'Bottom: {point.bottom}<br/>'
+			pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
 		},
 		marker: {
 			enabled: false
@@ -163,11 +138,17 @@ H.seriesType('bb', 'sma',
 			SMA.prototype.translate.apply(indicator, arguments);
 
 			each(indicator.points, function (point) {
-				each([point.top, point.middle, point.bottom], function (value, i) {
-					if (value !== null) {
-						point[translatedBB[i]] = indicator.yAxis.toPixels(value, true);
+				each(
+					[point.top, point.middle, point.bottom],
+					function (value, i) {
+						if (value !== null) {
+							point[translatedBB[i]] = indicator.yAxis.toPixels(
+								value,
+								true
+							);
+						}
 					}
-				});
+				);
 			});
 		},
 		drawGraph: function () {
@@ -202,7 +183,10 @@ H.seriesType('bb', 'sma',
 			// Modify options and generate lines:
 			each(['topLine', 'bottomLine'], function (lineName, i) {
 				indicator.points = deviations[i];
-				indicator.options = merge(middleLineOptions[lineName].styles, gappedExtend);
+				indicator.options = merge(
+					middleLineOptions[lineName].styles,
+					gappedExtend
+				);
 				indicator.graph = indicator['graph' + lineName];
 				SMA.prototype.drawGraph.call(indicator);
 

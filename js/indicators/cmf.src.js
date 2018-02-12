@@ -6,7 +6,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 
 'use strict';
 import H from '../parts/Globals.js';
@@ -29,40 +28,64 @@ H.seriesType('cmf', 'sma',
 			period: 14,
 
       /**
-       * The id of another series to use its data as volume data for the indiator calculation.
+       * The id of another series to use its data as volume data for the
+       * indiator calculation.
        */
 			volumeSeriesID: 'volume'
 		}
 	}, {
 		nameBase: 'Chaikin Money Flow',
 		/**
-		 * Checks if the series and volumeSeries are accessible, number of points.x is longer than period, is series has OHLC data
-		 * @returns {Boolean} true if series is valid and can be computed, otherwise false
+		 * Checks if the series and volumeSeries are accessible, number of
+		 * points.x is longer than period, is series has OHLC data
+		 * @returns {Boolean}
+		 *          true if series is valid and can be computed, otherwise false
 		 **/
 		isValid: function () {
 			var chart = this.chart,
 				options = this.options,
 				series = this.linkedParent,
-				volumeSeries = this.volumeSeries || (this.volumeSeries = chart.get(options.params.volumeSeriesID)),
-				isSeriesOHLC = series && series.yData && series.yData[0].length === 4;
+				volumeSeries = (
+					this.volumeSeries ||
+					(
+						this.volumeSeries =
+						chart.get(options.params.volumeSeriesID)
+					)
+				),
+				isSeriesOHLC = (
+					series &&
+					series.yData &&
+					series.yData[0].length === 4
+				);
 
 			function isLengthValid(serie) {
-				return serie.xData && serie.xData.length >= options.params.period;
+				return serie.xData &&
+					serie.xData.length >= options.params.period;
 			}
 
-			return !!(series && volumeSeries && isLengthValid(series) && isLengthValid(volumeSeries) && isSeriesOHLC);
+			return !!(
+				series &&
+				volumeSeries &&
+				isLengthValid(series) &&
+				isLengthValid(volumeSeries) && isSeriesOHLC
+			);
 		},
 
 		/**
 		 * @typedef {Object} Values
-		 * @property {Number[][]} values combined xData and yData values into a tuple
-		 * @property {Number[]} xData values represent x timestamp values
-		 * @property {Number[]} yData values represent y values
+		 * @property {Number[][]} values
+		 *           Combined xData and yData values into a tuple
+		 * @property {Number[]} xData
+		 *           Values represent x timestamp values
+		 * @property {Number[]} yData
+		 *           Values represent y values
 		**/
 
 		/**
 		 * Returns indicator's data
-		 * @returns {False | Values} Returns false if the indicator is not valid, otherwise returns Values object
+		 * @returns {False | Values}
+		 *          Returns false if the indicator is not valid, otherwise
+		 *          returns Values object
 		**/
 		getValues: function (series, params) {
 			if (!this.isValid()) {
@@ -98,7 +121,8 @@ H.seriesType('cmf', 'sma',
 				nullIndex = -1;
 
 			/**
-	 		* Calculates money flow volume, changes i, nullIndex vars from upper scope!
+	 		* Calculates money flow volume, changes i, nullIndex vars from upper
+	 		* scope!
 	 		* @private
 	 		* @param {Number[]} ohlc OHLC point
 	 		* @param {Number} volume Volume point's y value
@@ -128,23 +152,35 @@ H.seriesType('cmf', 'sma',
 					return ((c - l) - (h - c)) / (h - l);
 				}
 
-				return isValid ? getMoneyFlowMultiplier(high, low, close) * volume : ((nullIndex = i), null);
+				return isValid ?
+					getMoneyFlowMultiplier(high, low, close) * volume :
+					((nullIndex = i), null);
 			}
 
 
 			if (period > 0 && period <= len) {
 				for (i = 0; i < period; i++) {
-					moneyFlowVolume[i] = getMoneyFlowVolume(seriesYData[i], volumeSeriesYData[i]);
+					moneyFlowVolume[i] = getMoneyFlowVolume(
+						seriesYData[i],
+						volumeSeriesYData[i]
+					);
 					sumVolume += volumeSeriesYData[i];
 					sumMoneyFlowVolume += moneyFlowVolume[i];
 				}
 
 				moneyFlowXData.push(xData[i - 1]);
-				moneyFlowYData.push(i - nullIndex >= period && sumVolume !== 0 ? sumMoneyFlowVolume / sumVolume : null);
+				moneyFlowYData.push(
+					i - nullIndex >= period && sumVolume !== 0 ?
+						sumMoneyFlowVolume / sumVolume :
+						null
+				);
 				values.push([moneyFlowXData[0], moneyFlowYData[0]]);
 
 				for (; i < len; i++) {
-					moneyFlowVolume[i] = getMoneyFlowVolume(seriesYData[i], volumeSeriesYData[i]);
+					moneyFlowVolume[i] = getMoneyFlowVolume(
+						seriesYData[i],
+						volumeSeriesYData[i]
+					);
 
 					sumVolume -= volumeSeriesYData[i - period];
 					sumVolume += volumeSeriesYData[i];
@@ -152,7 +188,12 @@ H.seriesType('cmf', 'sma',
 					sumMoneyFlowVolume -= moneyFlowVolume[i - period];
 					sumMoneyFlowVolume += moneyFlowVolume[i];
 
-					point = [xData[i], i - nullIndex >= period ? sumMoneyFlowVolume / sumVolume : null];
+					point = [
+						xData[i],
+						i - nullIndex >= period ?
+							sumMoneyFlowVolume / sumVolume :
+							null
+					];
 
 					moneyFlowXData.push(point[0]);
 					moneyFlowYData.push(point[1]);

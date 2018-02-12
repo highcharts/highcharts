@@ -5,7 +5,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -39,8 +38,9 @@ seriesType('vwap', 'sma',
 		params: {
 			period: 30,
 			/**
-			 * The id of volume series which is mandatory.
-			 * For example using OHLC data, volumeSeriesID='volume' means the indicator will be calculated using OHLC and volume values.
+			 * The id of volume series which is mandatory. For example using
+			 * OHLC data, volumeSeriesID='volume' means the indicator will be
+			 * calculated using OHLC and volume values.
 			 * 
 			 * @type {String}
 			 * @since 6.0.0
@@ -50,7 +50,8 @@ seriesType('vwap', 'sma',
 		}
 	}, {
 		/**
-		 * Returns the final values of the indicator ready to be presented on a chart
+		 * Returns the final values of the indicator ready to be presented on a
+		 * chart
 		 * @returns {Object} Object containing computed VWAP
 		 **/
 		getValues: function (series, params) {
@@ -77,18 +78,33 @@ seriesType('vwap', 'sma',
 				isOHLC = false;
 			}
 
-			return indicator.calculateVWAPValues(isOHLC, xValues, yValues, volumeSeries, period);
+			return indicator.calculateVWAPValues(
+				isOHLC,
+				xValues,
+				yValues,
+				volumeSeries,
+				period
+			);
 		},
 		/**
-		 * Main algorithm used to calculate Volume Weighted Average Price (VWAP) values
+		 * Main algorithm used to calculate Volume Weighted Average Price (VWAP)
+		 * values
 		 * @param {Boolean} isOHLC says if data has OHLC format
 		 * @param {Array} xValues array of timestamps
-		 * @param {Array} yValues array of yValues, can be an array of a four arrays (OHLC) or array of values (line)
+		 * @param {Array} yValues
+		 *        array of yValues, can be an array of a four arrays (OHLC) or
+		 *        array of values (line)
 		 * @param {Array} volumeSeries volume series
 		 * @param {Number} period number of points to be calculated
 		 * @returns {Object} Object contains computed VWAP
 		 **/
-		calculateVWAPValues: function (isOHLC, xValues, yValues, volumeSeries, period) {
+		calculateVWAPValues: function (
+			isOHLC,
+			xValues,
+			yValues,
+			volumeSeries,
+			period
+		) {
 			var volumeValues = volumeSeries.yData,
 				volumeLength = volumeSeries.xData.length,
 				pointsLength = xValues.length,
@@ -111,12 +127,19 @@ seriesType('vwap', 'sma',
 			}
 
 			for (i = 0, j = 0; i < commonLength; i++) {
-				// Depending on whether series is OHLC or line type, price is average of the high, low and close or a simple value
-				typicalPrice = isOHLC ? ((yValues[i][1] + yValues[i][2] + yValues[i][3]) / 3) : yValues[i];
+				// Depending on whether series is OHLC or line type, price is
+				// average of the high, low and close or a simple value
+				typicalPrice = isOHLC ?
+					((yValues[i][1] + yValues[i][2] + yValues[i][3]) / 3) :
+					yValues[i];
 				typicalPrice *= volumeValues[i];
 
-				cPrice = j ? (cumulativePrice[i - 1] + typicalPrice) : typicalPrice;
-				cVolume = j ? (cumulativeVolume[i - 1] + volumeValues[i]) : volumeValues[i];
+				cPrice = j ?
+					(cumulativePrice[i - 1] + typicalPrice) :
+					typicalPrice;
+				cVolume = j ?
+					(cumulativeVolume[i - 1] + volumeValues[i]) :
+					volumeValues[i];
 
 				cumulativePrice.push(cPrice);
 				cumulativeVolume.push(cVolume);
@@ -141,8 +164,9 @@ seriesType('vwap', 'sma',
 	});
 
 /**
- * A `Volume Weighted Average Price (VWAP)` series. If the [type](#series.vwap.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A `Volume Weighted Average Price (VWAP)` series. If the
+ * [type](#series.vwap.type) option is not specified, it is inherited from
+ * [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.

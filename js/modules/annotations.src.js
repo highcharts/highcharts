@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -346,9 +345,12 @@ MockPoint.prototype = {
 	 * @memberOf Highcharts.MockPoint#
 	 *
 	 * @return {Object} labelConfig - label config object
-	 * @return {Number|undefined} labelConfig.x - x value translated to x axis scale
-	 * @return {Number|undefined} labelConfig.y - y value translated to y axis scale
-	 * @return {MockPoint} labelConfig.point - the instance of the point
+	 * @return {Number|undefined} labelConfig.x
+	 *         X value translated to x axis scale
+	 * @return {Number|undefined} labelConfig.y
+	 *         Y value translated to y axis scale
+	 * @return {MockPoint} labelConfig.point
+	 *         The instance of the point
 	 */
 	getLabelConfig: function () {
 		return {
@@ -369,8 +371,8 @@ MockPoint.prototype = {
 H.defaultOptions.annotations = [];
 
 /**
- * An annotation class which serves as a container for items like labels or shapes.
- * Created items are positioned on the chart either by linking them to
+ * An annotation class which serves as a container for items like labels or
+ * shapes. Created items are positioned on the chart either by linking them to
  * existing points or created mock points 
  * 
  * @class Annotation
@@ -523,7 +525,8 @@ Annotation.prototype = {
 			className: '',
 
 			/**
-			 * Whether to hide the annotation's label that is outside the plot area.
+			 * Whether to hide the annotation's label that is outside the plot
+			 * area.
 			 *
 			 * @sample highcharts/annotations/label-crop-overflow/
 			 *         Crop or justify labels
@@ -544,7 +547,8 @@ Annotation.prototype = {
 			 * A [format](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting) string for the data label.
 			 *
 			 * @type {String}
-			 * @see [plotOptions.series.dataLabels.format](plotOptions.series.dataLabels.format.html)
+			 * @see    [plotOptions.series.dataLabels.format](plotOptions.
+			 *         series.dataLabels.format.html)
 			 * @sample highcharts/annotations/label-text/
 			 *         Set labels text
 			 * @default undefined
@@ -563,9 +567,10 @@ Annotation.prototype = {
 			 */
 
 			/**
-			 * Callback JavaScript function to format the annotation's label. Note that
-			 * if a `format` or `text` are defined, the format or text take precedence
-			 * and the formatter is ignored. `This` refers to a point object.
+			 * Callback JavaScript function to format the annotation's label.
+			 * Note that if a `format` or `text` are defined, the format or text
+			 * take precedence and the formatter is ignored. `This` refers to a
+			 * point object.
 			 * 
 			 * @type {Function}
 			 * @sample highcharts/annotations/label-text/
@@ -623,7 +628,8 @@ Annotation.prototype = {
 			 * @type {CSSObject}
 			 * @sample highcharts/annotations/label-presentation/
 			 *         Set labels graphic options
-			 * @see [plotOptions.series.dataLabels.style](plotOptions.series.dataLabels.style.html)
+			 * @see    [plotOptions.series.dataLabels.style](plotOptions.series.
+			 *         dataLabels.style.html)
 			 **/
 			style: {
 				fontSize: '11px',
@@ -632,8 +638,8 @@ Annotation.prototype = {
 			},
 
 			/**
-			 * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
- 			 * and-string-formatting#html) to render the annotation's label.
+			 * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+			 * to render the annotation's label.
  			 *
  			 * @type {Boolean}
   			 * @default false
@@ -672,8 +678,9 @@ Annotation.prototype = {
 		},
 
 		/**
-		 * An array of labels for the annotation. For options that apply to multiple
-		 * labels, they can be added to the [labelOptions](annotations.labelOptions.html).
+		 * An array of labels for the annotation. For options that apply to
+		 * multiple labels, they can be added to the
+		 * [labelOptions](annotations.labelOptions.html).
 		 *
 		 * @type {Array<Object>}
 		 * @extends annotations.labelOptions
@@ -682,9 +689,9 @@ Annotation.prototype = {
 
 		/**
 		 * This option defines the point to which the label will be connected.
-		 * It can be either the point which exists in the series - it is referenced
-		 * by the point's id - or a new point with defined x, y properies
-		 * and optionally axes.
+		 * It can be either the point which exists in the series - it is
+		 * referenced by the point's id - or a new point with defined x, y
+		 * properies and optionally axes.
 		 *
 		 * @type {String|Object}
 		 * @sample highcharts/annotations/mock-point/
@@ -731,8 +738,9 @@ Annotation.prototype = {
 		
 
 		/**
-		 * An array of shapes for the annotation. For options that apply to multiple
-		 * shapes, then can be added to the [shapeOptions](annotations.shapeOptions.html).
+		 * An array of shapes for the annotation. For options that apply to
+		 * multiple shapes, then can be added to the
+		 * [shapeOptions](annotations.shapeOptions.html).
 		 *
 		 * @type {Array<Object>}
 		 * @extends annotations.shapeOptions
@@ -741,9 +749,9 @@ Annotation.prototype = {
 
 		/**
 		 * This option defines the point to which the shape will be connected.
-		 * It can be either the point which exists in the series - it is referenced
-		 * by the point's id - or a new point with defined x, y properties
-		 * and optionally axes.
+		 * It can be either the point which exists in the series - it is
+		 * referenced by the point's id - or a new point with defined x, y
+		 * properties and optionally axes.
 		 *
 		 * @type {String|Object}
 		 * @extends annotations.labels.point
@@ -889,8 +897,8 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * Main method for drawing an annotation, it is called everytime on chart redraw
-	 * and once on chart's load
+	 * Main method for drawing an annotation, it is called everytime on chart
+	 * redraw and once on chart's load
 	 *
 	 * @function #redraw
 	 * @memberOf Highcharts.Annotation#
@@ -1176,7 +1184,8 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * Linking item with the point or points and returning an array of linked points
+	 * Linking item with the point or points and returning an array of linked
+	 * points.
 	 *
 	 * @function #linkPoints
 	 * @memberOf Highcharts.Annotation#
@@ -1189,7 +1198,10 @@ Annotation.prototype = {
 	 *	}
 	 */
 	linkPoints: function (item) {
-		var pointsOptions = item.options.points || (item.options.point && H.splat(item.options.point)),
+		var pointsOptions = (
+				item.options.points ||
+				(item.options.point && H.splat(item.options.point))
+			),
 			points = item.points,
 			len = pointsOptions && pointsOptions.length,
 			i,
@@ -1215,7 +1227,8 @@ Annotation.prototype = {
 	 * @memberOf Highcharts.Annotation#
 	 *
 	 * @param {Object} item
-	 * @param {Boolean} isNew - if the label is re-positioned (is not new) it is animated
+	 * @param {Boolean} isNew
+	 *        If the label is re-positioned (is not new) it is animated
 	 * @return {undefined}
 	 */
 	alignItem: function (item, isNew) {
@@ -1261,16 +1274,21 @@ Annotation.prototype = {
 				d[++dIndex] = anchor.x;
 				d[++dIndex] = anchor.y;
 
-        // crisping line, it might be replaced with Renderer.prototype.crispLine
-        // but it requires creating many temporary arrays
+				// Crisping line, it might be replaced with
+				// Renderer.prototype.crispLine but it requires creating many
+				// temporary arrays
 				crispSegmentIndex = dIndex % 5;
 				if (crispSegmentIndex === 0) {
 					if (d[crispSegmentIndex + 1] === d[crispSegmentIndex + 4]) {
-						d[crispSegmentIndex + 1] = d[crispSegmentIndex + 4] = Math.round(d[crispSegmentIndex + 1]) - (strokeWidth % 2 / 2);
+						d[crispSegmentIndex + 1] = d[crispSegmentIndex + 4] =
+							Math.round(d[crispSegmentIndex + 1]) -
+							(strokeWidth % 2 / 2);
 					}
 
 					if (d[crispSegmentIndex + 2] === d[crispSegmentIndex + 5]) {
-						d[crispSegmentIndex + 2] = d[crispSegmentIndex + 5] = Math.round(d[crispSegmentIndex + 2]) + (strokeWidth % 2 / 2);
+						d[crispSegmentIndex + 2] = d[crispSegmentIndex + 5] =
+							Math.round(d[crispSegmentIndex + 2]) +
+							(strokeWidth % 2 / 2);
 					}
 				}
 
@@ -1299,7 +1317,11 @@ Annotation.prototype = {
 	},
 
 	renderItem: function (item) {
-		item.add(item.itemType === 'label' ? this.labelsGroup : this.shapesGroup);
+		item.add(
+			item.itemType === 'label' ?
+				this.labelsGroup :
+				this.shapesGroup
+		);
 
 		this.setItemMarkers(item);
 	},
@@ -1309,7 +1331,9 @@ Annotation.prototype = {
 			chart = this.chart,
 			defs = chart.options.defs,
 			fill = itemOptions.fill,
-			color = defined(fill) && fill !== 'none' ? fill : itemOptions.stroke,
+			color = defined(fill) && fill !== 'none' ?
+				fill :
+				itemOptions.stroke,
 
 
 			setMarker = function (markerType) {
@@ -1330,7 +1354,8 @@ Annotation.prototype = {
 
 					if (predefinedMarker) {
 						marker = item[markerType] = chart.renderer.addMarker(
-							(itemOptions.id || uniqueKey()) + '-' + predefinedMarker.id, 
+							(itemOptions.id || uniqueKey()) + '-' +
+								predefinedMarker.id, 
 							merge(predefinedMarker, { color: color })
 						);
 
@@ -1361,8 +1386,10 @@ Annotation.prototype = {
 	 * @param {Object} item
 	 * @param {Highcharts.Point|Highcharts.MockPoint} point
 	 * @return {Object} anchor
-	 * @return {AnchorPosition} anchor.relativePosition - relative to the plot area position
-	 * @return {AnchorPosition} anchor.absolutePosition - absolute position
+	 * @return {AnchorPosition} anchor.relativePosition
+	 *         Relative to the plot area position
+	 * @return {AnchorPosition} anchor.absolutePosition
+	 *         Absolute position
 	 */
 	itemAnchor: function (item, point) {
 		var plotBox = point.series.getPlotBox(),
@@ -1420,7 +1447,10 @@ Annotation.prototype = {
 		if (showItem) {
 
 			if (defined(itemOptions.distance) || itemOptions.positioner) {
-				itemPosition = (itemOptions.positioner || tooltipPrototype.getPosition).call(
+				itemPosition = (
+					itemOptions.positioner ||
+					tooltipPrototype.getPosition
+				).call(
 					{
 						chart: chart,
 						distance: pick(itemOptions.distance, 16)
@@ -1432,7 +1462,8 @@ Annotation.prototype = {
 						plotY: anchorRelativePosition.y,
 						negative: point.negative,
 						ttBelow: point.ttBelow,
-						h: anchorRelativePosition.height || anchorRelativePosition.width
+						h: anchorRelativePosition.height ||
+							anchorRelativePosition.width
 					}
 				);
 
@@ -1523,9 +1554,10 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * Returns new alignment options for a label if the label is outside the plot area.
-	 * It is almost a one-to-one copy from Series.prototype.justifyDataLabel 
-	 * except it does not mutate the label and it works with absolute instead of relative position
+	 * Returns new alignment options for a label if the label is outside the
+	 * plot area. It is almost a one-to-one copy from
+	 * Series.prototype.justifyDataLabel except it does not mutate the label and
+	 * it works with absolute instead of relative position.
 	 *
 	 * @function #justifiedOptions
 	 * @memberOf Highcharts.Annotation#

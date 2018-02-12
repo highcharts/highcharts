@@ -1,4 +1,3 @@
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -14,12 +13,23 @@ function accumulateAverage(points, xVal, yVal, i, index) {
 	points.push([xValue, yValue]);
 }
 
-function populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index, SMA) {
+function populateAverage(
+	points,
+	xVal,
+	yVal,
+	i,
+	EMApercent,
+	calEMA,
+	index,
+	SMA
+) {
 	var x = xVal[i - 1],
 		yValue = index < 0 ? yVal[i - 1] : yVal[i - 1][index],
 		y;
 
-	y = calEMA === undefined ? SMA : ((yValue * EMApercent) + (calEMA * (1 - EMApercent)));
+	y = calEMA === undefined ?
+		SMA :
+		((yValue * EMApercent) + (calEMA * (1 - EMApercent)));
 
 	return [x, y];
 }
@@ -31,7 +41,8 @@ function populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index, SMA) 
  */
 seriesType('ema', 'sma', 
 	/**
-	 * Exponential moving average indicator (EMA). This series requires `linkedTo` option to be set.
+	 * Exponential moving average indicator (EMA). This series requires the
+	 * `linkedTo` option to be set.
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -86,7 +97,16 @@ seriesType('ema', 'sma',
 
 			// Calculate value one-by-one for each period in visible data
 			for (i = range; i < yValLen; i++) {
-				EMAPoint = populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index, SMA);
+				EMAPoint = populateAverage(
+					points,
+					xVal,
+					yVal,
+					i,
+					EMApercent,
+					calEMA,
+					index,
+					SMA
+				);
 				EMA.push(EMAPoint);
 				xData.push(EMAPoint[0]);
 				yData.push(EMAPoint[1]);
@@ -95,7 +115,15 @@ seriesType('ema', 'sma',
 				accumulateAverage(points, xVal, yVal, i, index);
 			}
 
-			EMAPoint = populateAverage(points, xVal, yVal, i, EMApercent, calEMA, index);
+			EMAPoint = populateAverage(
+				points,
+				xVal,
+				yVal,
+				i,
+				EMApercent,
+				calEMA,
+				index
+			);
 			EMA.push(EMAPoint);
 			xData.push(EMAPoint[0]);
 			yData.push(EMAPoint[1]);

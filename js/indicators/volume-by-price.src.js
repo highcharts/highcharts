@@ -5,7 +5,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -76,8 +75,9 @@ seriesType('vbp', 'sma',
 			 */
 			ranges: 12,
 			/**
-			 * The id of volume series which is mandatory.
-			 * For example using OHLC data, volumeSeriesID='volume' means the indicator will be calculated using OHLC and volume values.
+			 * The id of volume series which is mandatory. For example using
+			 * OHLC data, volumeSeriesID='volume' means the indicator will be
+			 * calculated using OHLC and volume values.
 			 * 
 			 * @type {String}
 			 * @since 6.0.0
@@ -226,14 +226,16 @@ seriesType('vbp', 'sma',
 				}
 			}
 
-			// If base series is deleted, indicator series data is filled with an empty array
+			// If base series is deleted, indicator series data is filled with
+			// an empty array
 			indicator.dataEventsToUnbind.push(
 				addEvent(baseSeries, 'remove', function () {
 					toEmptyIndicator();
 				})
 			);
 
-			// If volume series is deleted, indicator series data is filled with an empty array
+			// If volume series is deleted, indicator series data is filled with
+			// an empty array
 			if (volumeSeries) {
 				indicator.dataEventsToUnbind.push(
 					addEvent(volumeSeries, 'remove', function () {
@@ -251,13 +253,16 @@ seriesType('vbp', 'sma',
 
 			if (H.svg && !init) {
 				attr.translateX = series.yAxis.pos;
-				series.group.animate(attr, H.extend(H.animObject(series.options.animation), {
-					step: function (val, fx) {
-						series.group.attr({
-							scaleX: Math.max(0.001, fx.pos)
-						});
-					}
-				}));
+				series.group.animate(
+					attr,
+					H.extend(H.animObject(series.options.animation), {
+						step: function (val, fx) {
+							series.group.attr({
+								scaleX: Math.max(0.001, fx.pos)
+							});
+						}
+					})
+				);
 
 				// Delete this function to allow it only once
 				series.animate = null;
@@ -277,7 +282,9 @@ seriesType('vbp', 'sma',
 		// Function responsible for dividing volume into positive and negative
 		posNegVolume: function (initVol, pos) {
 			var indicator = this,
-				signOrder = pos ? ['positive', 'negative'] : ['negative', 'positive'],
+				signOrder = pos ?
+					['positive', 'negative'] :
+					['negative', 'positive'],
 				volumeDivision = indicator.options.volumeDivision,
 				pointLength = indicator.points.length,
 				posWidths = [],
@@ -307,17 +314,27 @@ seriesType('vbp', 'sma',
 					wholeVol = priceZone.wholeVolumeData;
 
 					if (wholeVol) {
-						posWidths.push(pointWidth / wholeVol * priceZone.positiveVolumeData);
-						negWidths.push(pointWidth / wholeVol * priceZone.negativeVolumeData);
+						posWidths.push(
+							pointWidth / wholeVol * priceZone.positiveVolumeData
+						);
+						negWidths.push(
+							pointWidth / wholeVol * priceZone.negativeVolumeData
+						);
 					} else {
 						posWidths.push(0);
 						negWidths.push(0);
 					}
 				}
 
-				point.color = pos ? volumeDivision.styles.positiveColor : volumeDivision.styles.negativeColor;
-				point.shapeArgs.width = pos ? indicator.posWidths[i] : indicator.negWidths[i];
-				point.shapeArgs.x = pos ? point.shapeArgs.x : indicator.posWidths[i];
+				point.color = pos ?
+					volumeDivision.styles.positiveColor :
+					volumeDivision.styles.negativeColor;
+				point.shapeArgs.width = pos ?
+					indicator.posWidths[i] :
+					indicator.negWidths[i];
+				point.shapeArgs.x = pos ?
+					point.shapeArgs.x :
+					indicator.posWidths[i];
 			}
 		},
 		translate: function () {
@@ -347,13 +364,17 @@ seriesType('vbp', 'sma',
 
 			// Do translate operation when points exist
 			if (indicatorPoints.length) {
-				pointPadding = options.pointPadding < 0.5 ? options.pointPadding : 0.1;
+				pointPadding = options.pointPadding < 0.5 ?
+					options.pointPadding :
+					0.1;
 				volumeDataArray = indicator.volumeDataArray;
 				maxVolume = H.arrayMax(volumeDataArray);
 				primalBarWidth = chart.plotWidth / 2;
 				chartPlotTop = chart.plotTop;
-				barHeight = abs(yAxis.toPixels(yAxisMin) - yAxis.toPixels(yAxisMin + indicator.rangeStep));
-				oldBarHeight = abs(yAxis.toPixels(yAxisMin) - yAxis.toPixels(yAxisMin + indicator.rangeStep));
+				barHeight = abs(yAxis.toPixels(yAxisMin) -
+					yAxis.toPixels(yAxisMin + indicator.rangeStep));
+				oldBarHeight = abs(yAxis.toPixels(yAxisMin) -
+					yAxis.toPixels(yAxisMin + indicator.rangeStep));
 
 				if (pointPadding) {
 					barHeightP = abs(barHeight * (1 - 2 * pointPadding));
@@ -363,11 +384,26 @@ seriesType('vbp', 'sma',
 
 				each(indicatorPoints, function (point, index) {
 					barX = point.barX = point.plotX = 0;
-					barY = point.plotY = yAxis.toPixels(priceZones[index].start) - chartPlotTop - (yAxis.reversed ? (barHeight - oldBarHeight) : barHeight) - yBarOffset;
-					barWidth = correctFloat(primalBarWidth * priceZones[index].wholeVolumeData / maxVolume);
+					barY = point.plotY = (
+						yAxis.toPixels(priceZones[index].start) -
+						chartPlotTop -
+						(
+							yAxis.reversed ?
+								(barHeight - oldBarHeight) :
+								barHeight
+						) -
+						yBarOffset
+					);
+					barWidth = correctFloat(
+						primalBarWidth *
+						priceZones[index].wholeVolumeData / maxVolume
+					);
 					point.pointWidth = barWidth;
 
-					point.shapeArgs = indicator.crispCol.apply(indicator, [barX, barY, barWidth, barHeight]);
+					point.shapeArgs = indicator.crispCol.apply(
+						indicator,
+						[barX, barY, barWidth, barHeight]
+					);
 
 					point.volumeNeg = priceZones[index].negativeVolumeData;
 					point.volumePos = priceZones[index].positiveVolumeData;
@@ -375,7 +411,12 @@ seriesType('vbp', 'sma',
 				});
 
 				if (zoneLinesOptions.enabled) {
-					indicator.drawZones(chart, yAxis, indicator.zoneStarts, zoneLinesOptions.styles);
+					indicator.drawZones(
+						chart,
+						yAxis,
+						indicator.zoneStarts,
+						zoneLinesOptions.styles
+					);
 				}
 			}
 		},
@@ -395,7 +436,8 @@ seriesType('vbp', 'sma',
 			// Checks if base series exists
 			if (!chart) {
 				return H.error(
-					'Base series not found! In case it has been removed, add a new one.',
+					'Base series not found! In case it has been removed, add ' +
+					'a new one.',
 					true
 				);
 			}
@@ -422,8 +464,15 @@ seriesType('vbp', 'sma',
 				);
 			}
 
-			// Price zones contains all the information about the zones (index, start, end, volumes, etc.)
-			priceZones = indicator.priceZones = indicator.specifyZones(isOHLC, xValues, yValues, ranges, volumeSeries);
+			// Price zones contains all the information about the zones (index,
+			// start, end, volumes, etc.)
+			priceZones = indicator.priceZones = indicator.specifyZones(
+				isOHLC,
+				xValues,
+				yValues,
+				ranges,
+				volumeSeries
+			);
 
 			each(priceZones, function (zone, index) {
 				VBP.push([zone.x, zone.end]);
@@ -438,11 +487,21 @@ seriesType('vbp', 'sma',
 			};
 		},
 		// Specifing where each zone should start ans end
-		specifyZones: function (isOHLC, xValues, yValues, ranges, volumeSeries) {
+		specifyZones: function (
+			isOHLC,
+			xValues,
+			yValues,
+			ranges,
+			volumeSeries
+		) {
 			var indicator = this,
 				rangeExtremes = isOHLC ? arrayExtremesOHLC(yValues) : false,
-				lowRange = rangeExtremes ? rangeExtremes.min : H.arrayMin(yValues),
-				highRange = rangeExtremes ? rangeExtremes.max : H.arrayMax(yValues),
+				lowRange = rangeExtremes ?
+					rangeExtremes.min :
+					H.arrayMin(yValues),
+				highRange = rangeExtremes ?
+					rangeExtremes.max :
+					H.arrayMax(yValues),
 				zoneStarts = indicator.zoneStarts = [],
 				priceZones = [],
 				i = 0,
@@ -459,7 +518,8 @@ seriesType('vbp', 'sma',
 				return [];
 			}
 
-			rangeStep = indicator.rangeStep = correctFloat(highRange - lowRange) / ranges;
+			rangeStep = indicator.rangeStep =
+				correctFloat(highRange - lowRange) / ranges;
 			zoneStarts.push(lowRange);
 
 			for (; i < ranges - 1; i++) {
@@ -479,10 +539,22 @@ seriesType('vbp', 'sma',
 				});
 			}
 
-			return indicator.volumePerZone(isOHLC, priceZones, volumeSeries, xValues, yValues);
+			return indicator.volumePerZone(
+				isOHLC,
+				priceZones,
+				volumeSeries,
+				xValues,
+				yValues
+			);
 		},
 		// Calculating sum of volume values for a specific zone
-		volumePerZone: function (isOHLC, priceZones, volumeSeries, xValues, yValues) {
+		volumePerZone: function (
+			isOHLC,
+			priceZones,
+			volumeSeries,
+			xValues,
+			yValues
+		) {
 			var indicator = this,
 				volumeXData = volumeSeries.processedXData,
 				volumeYData = volumeSeries.processedYData,
@@ -497,13 +569,18 @@ seriesType('vbp', 'sma',
 
 			// Checks if each point has a corresponding volume value
 			if (abs(baseSeriesLength - volumeSeriesLength)) {
-				// If the first point don't have volume, add 0 value at the beggining of the volume array
+				// If the first point don't have volume, add 0 value at the
+				// beggining of the volume array
 				if (xValues[0] !== volumeXData[0]) {
 					volumeYData.unshift(0);
 				}
 
-				// If the last point don't have volume, add 0 value at the end of the volume array
-				if (xValues[baseSeriesLength - 1] !== volumeXData[volumeSeriesLength - 1]) {
+				// If the last point don't have volume, add 0 value at the end
+				// of the volume array
+				if (
+					xValues[baseSeriesLength - 1] !==
+					volumeXData[volumeSeriesLength - 1]
+				) {
 					volumeYData.push(0);
 				}
 			}
@@ -519,19 +596,26 @@ seriesType('vbp', 'sma',
 					startFlag = false;
 					endFlag = false;
 					value = isOHLC ? yValues[i][3] : yValues[i];
-					previousValue = i ? (isOHLC ? yValues[i - 1][3] : yValues[i - 1]) : value;
+					previousValue = i ?
+						(isOHLC ? yValues[i - 1][3] : yValues[i - 1]) :
+						value;
 
-					//	Checks if this is the point with the lowest close value and if so, adds it calculations
+					//	Checks if this is the point with the lowest close value
+					//	and if so, adds it calculations
 					if (value <= zone.start && zone.index === 0) {
 						startFlag = true;
 					}
 					
-					//	Checks if this is the point with the highest close value and if so, adds it calculations
+					//	Checks if this is the point with the highest close value
+					//	and if so, adds it calculations
 					if (value >= zone.end && zone.index === lastZoneIndex) {
 						endFlag = true;
 					}
 
-					if ((value > zone.start || startFlag) && (value < zone.end || endFlag)) {
+					if (
+						(value > zone.start || startFlag) &&
+						(value < zone.end || endFlag)
+					) {
 						zone.wholeVolumeData += volumeYData[i];
 
 						if (previousValue > value) {
@@ -575,14 +659,14 @@ seriesType('vbp', 'sma',
 					d: zoneLinesPath
 				});
 			} else {
-				zoneLinesSVG = indicator.zoneLinesSVG = renderer.path(zoneLinesPath)
-				.attr({
-					'stroke-width': zonesStyles.lineWidth,
-					'stroke': zonesStyles.color,
-					'dashstyle': zonesStyles.dashStyle,
-					'zIndex': indicator.group.zIndex + 0.1
-				})
-				.add(indicator.group);
+				zoneLinesSVG = indicator.zoneLinesSVG =
+					renderer.path(zoneLinesPath).attr({
+						'stroke-width': zonesStyles.lineWidth,
+						'stroke': zonesStyles.color,
+						'dashstyle': zonesStyles.dashStyle,
+						'zIndex': indicator.group.zIndex + 0.1
+					})
+					.add(indicator.group);
 			}
 		}
 	}, {
@@ -596,8 +680,8 @@ seriesType('vbp', 'sma',
 	});
 
 /**
- * A `Volume By Price (VBP)` series. If the [type](#series.vbp.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A `Volume By Price (VBP)` series. If the [type](#series.vbp.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
  * 
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.

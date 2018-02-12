@@ -1,4 +1,3 @@
-/* eslint max-len: 0 */
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -11,8 +10,9 @@ var each = H.each,
 
 H.seriesType('priceenvelopes', 'sma',
 	/**
-	 * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations. This series requires `linkedTo`
-	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
+	 * This series requires the `linkedTo` option to be set and should be loaded
+	 * after the `stock/indicators/indicators.js` file.
 	 *
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -26,31 +26,7 @@ H.seriesType('priceenvelopes', 'sma',
 			enabled: false
 		},
 		tooltip: {
-			/**
-			 * The HTML of the point's line in the tooltip. Variables are enclosed
-			 * by curly brackets. Available variables are point.x, point.y, series.
-			 * name and series.color and other properties on the same form. Furthermore,
-			 * point.y can be extended by the `tooltip.valuePrefix` and
-			 * `tooltip.valueSuffix` variables. This can also be overridden for
-			 * each series, which makes it a good hook for displaying units.
-			 *
-			 * In styled mode, the dot is colored by a class name rather
-			 * than the point color.
-			 *
-			 * @type {String}
-			 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
-			 * @sample {highmaps} maps/tooltip/format/ Format demo
-			 * @default
-			 *	<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>
-			 *		Top: {point.top}<br/>
-			 *		Middle: {point.middle}<br/>
-			 *		Bottom: {point.bottom}<br/>
-			 */
-			pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
-				'<b> {series.name}</b><br/>' +
-				'Top: {point.top}<br/>' +
-				'Middle: {point.middle}<br/>' +
-				'Bottom: {point.bottom}<br/>'
+			pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
 		},
 		params: {
 			period: 20,
@@ -90,8 +66,9 @@ H.seriesType('priceenvelopes', 'sma',
 				 */
 				lineWidth: 1,
 				/**
-				 * Color of the line.
-				 * If not set, it's inherited from [plotOptions.priceenvelopes.color](#plotOptions.priceenvelopes.color).
+				 * Color of the line. If not set, it's inherited from
+				 * [plotOptions.priceenvelopes.color](#plotOptions.
+				 * priceenvelopes.color).
 				 *
 				 * @type {String}
 				 * @since 6.0.0
@@ -148,11 +125,15 @@ H.seriesType('priceenvelopes', 'sma',
 			SMA.prototype.translate.apply(indicator);
 
 			each(indicator.points, function (point) {
-				each([point.top, point.middle, point.bottom], function (value, i) {
-					if (value !== null) {
-						point[translatedEnvelopes[i]] = indicator.yAxis.toPixels(value, true);
+				each(
+					[point.top, point.middle, point.bottom],
+					function (value, i) {
+						if (value !== null) {
+							point[translatedEnvelopes[i]] =
+								indicator.yAxis.toPixels(value, true);
+						}
 					}
-				});
+				);
 			});
 		},
 		drawGraph: function () {
@@ -187,7 +168,10 @@ H.seriesType('priceenvelopes', 'sma',
 			// Modify options and generate lines:
 			each(['topLine', 'bottomLine'], function (lineName, i) {
 				indicator.points = deviations[i];
-				indicator.options = merge(middleLineOptions[lineName].styles, gappedExtend);
+				indicator.options = merge(
+					middleLineOptions[lineName].styles,
+					gappedExtend
+				);
 				indicator.graph = indicator['graph' + lineName];
 				SMA.prototype.drawGraph.call(indicator);
 
@@ -219,7 +203,11 @@ H.seriesType('priceenvelopes', 'sma',
 				i;
 
 			// Price envelopes requires close value
-			if (xVal.length < period || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (
+				xVal.length < period ||
+				!isArray(yVal[0]) ||
+				yVal[0].length !== 4
+			) {
 				return false;
 			}
 
@@ -251,8 +239,8 @@ H.seriesType('priceenvelopes', 'sma',
 );
 
 /**
- * A price envelopes indicator. If the [type](#series.priceenvelopes.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A price envelopes indicator. If the [type](#series.priceenvelopes.type)
+ * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * For options that apply to multiple series, it is recommended to add
  * them to the [plotOptions.series](#plotOptions.series) options structure.

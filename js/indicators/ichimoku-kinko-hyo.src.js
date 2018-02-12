@@ -1,4 +1,3 @@
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -47,7 +46,10 @@ function getClosestPointRange(axis) {
 			
 			for (i = loopLength; i > 0; i--) {
 				distance = xData[i] - xData[i - 1];
-				if (closestDataRange === UNDEFINED || distance < closestDataRange) {
+				if (
+					closestDataRange === UNDEFINED ||
+					distance < closestDataRange
+				) {
 					closestDataRange = distance;
 				}
 			}
@@ -65,7 +67,8 @@ function getClosestPointRange(axis) {
  */
 seriesType('ikh', 'sma', 
 	/**
-	 * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be set.
+	 * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
+	 * set.
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -74,8 +77,8 @@ seriesType('ikh', 'sma',
 	 * @since 6.0.0
 	 * @excluding
 	 * 			allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-	 * 			showInNavigator,navigatorOptions,pointInterval,pointIntervalUnit,
-	 *			pointPlacement,pointRange,pointStart
+	 * 			showInNavigator,navigatorOptions,pointInterval,
+	 * 			pointIntervalUnit,pointPlacement,pointRange,pointStart
 	 * @optionparent plotOptions.ikh
 	 */
 	{
@@ -267,7 +270,13 @@ seriesType('ikh', 'sma',
 			approximation: 'averages'
 		}
 	}, {
-		pointArrayMap: ['tenkanSen', 'kijunSen', 'chikouSpan', 'senkouSpanA', 'senkouSpanB'],
+		pointArrayMap: [
+			'tenkanSen',
+			'kijunSen',
+			'chikouSpan',
+			'senkouSpanA',
+			'senkouSpanB'
+		],
 		pointValKey: 'tenkanSen',
 		nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan'],
 		init: function () {
@@ -331,7 +340,8 @@ seriesType('ikh', 'sma',
 							true
 						);
 
-						// add extra parameters for support tooltip in moved lines
+						// add extra parameters for support tooltip in moved
+						// lines
 						point.plotY = point['plot' + value];
 						point.tooltipPos = [point.plotX, point['plot' + value]];
 						point.isNull = false;
@@ -378,18 +388,32 @@ seriesType('ikh', 'sma',
 			}
 
 			// Modify options and generate lines:
-			each(['tenkanLine', 'kijunLine', 'chikouLine', 'senkouSpanA', 'senkouSpanB', 'senkouSpan'], function (lineName, i) {
+			each([
+				'tenkanLine',
+				'kijunLine',
+				'chikouLine',
+				'senkouSpanA',
+				'senkouSpanB',
+				'senkouSpan'
+			], function (lineName, i) {
 				// First line is rendered by default option
 				indicator.points = allIchimokuPoints[i];
-				indicator.options = merge(mainLineOptions[lineName].styles, gappedExtend);
+				indicator.options = merge(
+					mainLineOptions[lineName].styles,
+					gappedExtend
+				);
 				indicator.graph = indicator['graph' + lineName];
 
-				// For span, we need an access to the next points, used in getGraphPath()
+				// For span, we need an access to the next points, used in
+				// getGraphPath()
 				indicator.nextPoints = allIchimokuPoints[i - 1];
 				if (i === 5) {
 
 					indicator.points = allIchimokuPoints[i - 1];
-					indicator.options = merge(mainLineOptions[lineName].styles, gappedExtend);
+					indicator.options = merge(
+						mainLineOptions[lineName].styles,
+						gappedExtend
+					);
 					indicator.graph = indicator['graph' + lineName];
 					indicator.nextPoints = allIchimokuPoints[i - 2];
 
@@ -485,7 +509,11 @@ seriesType('ikh', 'sma',
 				SSB;
 
 			// ikh requires close value
-			if (xVal.length <= period || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (
+				xVal.length <= period ||
+				!isArray(yVal[0]) ||
+				yVal[0].length !== 4
+			) {
 				return false;
 			}
 

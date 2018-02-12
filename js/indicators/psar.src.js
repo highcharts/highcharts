@@ -7,7 +7,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 
 'use strict';
 
@@ -186,11 +185,14 @@ H.seriesType('psar', 'sma',
 		getValues: function (series, params) {
 			var xVal = series.xData,
 				yVal = series.yData,
-				extremePoint = yVal[0][1], // Extreme point is the lowest low for falling and highest high for rising psar - and we are starting with falling
+				// Extreme point is the lowest low for falling and highest high
+				// for rising psar - and we are starting with falling
+				extremePoint = yVal[0][1],
 				accelerationFactor = params.initialAccelerationFactor,
 				maxAccelerationFactor = params.maxAccelerationFactor,
 				increment = params.increment,
-				initialAccelerationFactor = params.initialAccelerationFactor, // Set initial acc factor (for every new trend!)
+				// Set initial acc factor (for every new trend!)
+				initialAccelerationFactor = params.initialAccelerationFactor,
 				PSAR = yVal[0][2],
 				decimals = params.decimals,
 				index = params.index,
@@ -215,7 +217,10 @@ H.seriesType('psar', 'sma',
 			direction = (yVal[ind][1] > PSAR) ? 1 : -1;
 			EPMinusPSAR = getEPMinusPSAR(extremePoint, PSAR);
 			accelerationFactor = params.initialAccelerationFactor;
-			accelerationFactorMultiply = getAccelerationFactorMultiply(accelerationFactor, EPMinusPSAR);
+			accelerationFactorMultiply = getAccelerationFactorMultiply(
+				accelerationFactor,
+				EPMinusPSAR
+			);
 
 			PSARArr.push([xVal[index], PSAR]);
 			xData.push(xVal[index]);
