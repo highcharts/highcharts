@@ -108,7 +108,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Test {_each(arr)}',
+            'Test {#each(arr)}',
             { arr: [0, 1, 2, 3, 4, 5] }
         ),
         'Test 012345',
@@ -116,7 +116,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Test {!_each(arr)} {_each(arr)!}.',
+            'Test {!#each(arr)} {#each(arr)!}.',
             { arr: [0, 1, 2, 3, 4, 5] }
         ),
         'Test !0!1!2!3!4!5 0!1!2!3!4!5!.',
@@ -124,7 +124,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Test {!!_each(arr)??}.',
+            'Test {!!#each(arr)??}.',
             { arr: [0, 1, 2, 3, 4, 5] }
         ),
         'Test !!0??!!1??!!2??!!3??!!4??!!5??.',
@@ -132,7 +132,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Test {!!_each(arr)??}.',
+            'Test {!!#each(arr)??}.',
             { arr: [0, 1, 2, 3, 4, 5] }
         ),
         'Test !!0??!!1??!!2??!!3??!!4??!!5??.',
@@ -140,7 +140,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Test {_each(arr, 3)}.',
+            'Test {#each(arr, 3)}.',
             { arr: [0, 1, 2, 3, 4, 5] }
         ),
         'Test 012.',
@@ -148,7 +148,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Test {_each(arr, 30)}{asdf_each(arr, -30)asdf}.',
+            'Test {#each(arr, 30)}{asdf#each(arr, -30)asdf}.',
             { arr: [0, 1, 2, 3, 4, 5] }
         ),
         'Test 012345.',
@@ -156,7 +156,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Test {_each(arr,-2)}.',
+            'Test {#each(arr,-2)}.',
             { arr: [0, 1, 2, 3, 4, 5] }
         ),
         'Test 0123.',
@@ -164,7 +164,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'We have {0._each(arr, -1), }and 0.{arr[-1]}.',
+            'We have {0.#each(arr, -1), }and 0.{arr[-1]}.',
             { arr: [0, 1, 2, 3, 4, 5] }
         ),
         'We have 0.0, 0.1, 0.2, 0.3, 0.4, and 0.5.',
@@ -172,7 +172,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Items: {_plural(num, many, one)}.',
+            'Items: {#plural(num, many, one)}.',
             { num: 1 }
         ),
         'Items: one.',
@@ -180,7 +180,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Items: {_plural(num, many)}.',
+            'Items: {#plural(num, many)}.',
             { num: 1 }
         ),
         'Items: many.',
@@ -188,7 +188,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Items: {_plural(num)}.',
+            'Items: {#plural(num)}.',
             { num: 1 }
         ),
         'Items: .',
@@ -196,7 +196,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Items: {_plural(num, many, one, two)}.',
+            'Items: {#plural(num, many, one, two)}.',
             { num: 2 }
         ),
         'Items: two.',
@@ -204,7 +204,7 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Items: {_plural(num,many,one,two,none)}.',
+            'Items: {#plural(num,many,one,two,none)}.',
             { num: 0 }
         ),
         'Items: none.',
@@ -212,11 +212,19 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Items: {_plural(num, many, one, two, none)}.',
+            'Items: {#plural(num, many, one, two, none)}.',
             { num: 19 }
         ),
         'Items: many.',
         'Plural conditional 6'
+    );
+    assert.strictEqual(
+        Highcharts.i18nFormat(
+            'Items: {#plural(num, many,)}.',
+            { num: 1 }
+        ),
+        'Items: .',
+        'Plural conditional 7'
     );
 });
 
