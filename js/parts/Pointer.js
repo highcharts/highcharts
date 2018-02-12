@@ -815,10 +815,10 @@ Highcharts.Pointer.prototype = {
 	},
 
 	onContainerMouseDown: function (e) {
+		// Normalize before the 'if' for the legacy IE (#7850)
+		e = this.normalize(e);
 
 		if (e.button !== 2) {
-
-			e = this.normalize(e);
 
 			this.zoomOption(e);
 
