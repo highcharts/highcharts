@@ -122,8 +122,8 @@ if (!H.ColorAxis) {
 			 * The start of the value range that the data class represents,
 			 * relating to the point value.
 			 *
-			 * Range of each dataClass is closed on both ends, but will but can
-			 * be overridden by next dataClass.
+			 * The range of each `dataClass` is closed in both ends, but can be
+			 * overridden by the next `dataClass`.
 			 * 
 			 * @type      {Number}
 			 * @product   highcharts highmaps
@@ -150,8 +150,8 @@ if (!H.ColorAxis) {
 			 * The end of the value range that the data class represents,
 			 * relating to the point value.
 			 *
-			 * Range of each dataClass is closed on both ends, but will but can
-			 * be overridden by next dataClass.
+			 * The range of each `dataClass` is closed in both ends, but can be
+			 * overridden by the next `dataClass`.
 			 * 
 			 * @type      {Number}
 			 * @product   highcharts highmaps
