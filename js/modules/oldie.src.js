@@ -657,6 +657,12 @@ if (!svg) {
 				this.element.setAttribute(key, value);
 			}
 		},
+		getAttr: function (key) {
+			if (this.docMode8) { // IE8 setAttribute bug
+				return this.element[key];
+			}
+			return this.element.getAttribute(key);
+		},
 		classSetter: function (value) {
 			// IE8 Standards mode has problems retrieving the className unless set like this.
 			// IE8 Standards can't set the class name before the element is appended.
@@ -778,6 +784,12 @@ if (!svg) {
 		},
 		zIndexSetter: function (value, key, element) {
 			element.style[key] = value;
+		},
+		fillGetter: function () {
+			return this.getAttr('fillcolor') || '';
+		},
+		strokeGetter: function () {
+			return this.getAttr('strokecolor') || '';
 		}
 	};
 	VMLElement['stroke-opacitySetter'] = VMLElement['fill-opacitySetter'];
