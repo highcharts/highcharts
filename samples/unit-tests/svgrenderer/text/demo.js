@@ -142,7 +142,7 @@ QUnit.test('BBox for mulitiple lines', function (assert) {
     );
 });
 
-QUnit.test('HTML entities', function (assert) {
+QUnit.test('HTML', function (assert) {
     var ren = new Highcharts.SVGRenderer(
         document.getElementById('container'),
         500,
@@ -162,6 +162,20 @@ QUnit.test('HTML entities', function (assert) {
         text.element.textContent,
         'a < b and c > d',
         'Tags don\'t start with spaces (#7126)'
+    );
+
+    var html = ren.text('useHTML', 100, 100, true).add();
+    assert.close(
+        html.element.offsetLeft,
+        100,
+        1,
+        'Left offset should reflect initial position'
+    );
+    assert.close(
+        html.element.offsetHeight + html.element.offsetTop,
+        100,
+        10,
+        'Top offset should reflect initial position'
     );
 });
 
