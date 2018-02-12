@@ -746,7 +746,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				titleSize = titleOptions.style.fontSize;
 				/*= } =*/
 				titleSize = renderer.fontMetrics(titleSize, title).b;
-				
 				title
 					.css({
 						width: (titleOptions.width ||

@@ -4171,7 +4171,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			})
 			.addClass('highcharts-axis-title')
 			/*= if (build.classic) { =*/
-			.css(axisTitleOptions.style)
+			// #7814, don't mutate style option
+			.css(merge(axisTitleOptions.style))
 			/*= } =*/
 			.add(axis.axisGroup);
 			axis.axisTitle.isNew = true;
@@ -4188,7 +4189,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		}
 		/*= } =*/
 			
-		
 		// hide or show the title depending on whether showEmpty is set
 		axis.axisTitle[display ? 'show' : 'hide'](true);
 	},

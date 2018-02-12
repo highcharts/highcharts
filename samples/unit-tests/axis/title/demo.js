@@ -253,6 +253,12 @@ QUnit.test('Axis title multiline', function (assert) {
         'Title is multiline'
     );
 
+    assert.strictEqual(
+        chart.yAxis[1].options.title.style.width,
+        undefined,
+        'Title style width option should be left undefined (#7614)'
+    );
+
     var crammedPlotWidth = chart.plotWidth;
     assert.ok(
         chart.plotWidth < 150,
