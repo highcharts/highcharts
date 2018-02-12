@@ -74,6 +74,7 @@ each(['column', 'pie'], function (type) {
 	}
 });
 
+
 /**
  * Strip HTML tags away from a string. Used for aria-label attributes, painting
  * on a canvas will fail if the text contains tags.
@@ -85,16 +86,10 @@ function stripTags(s) {
 }
 
 
+/**
+ * Set default keyboard navigation options
+ */
 H.setOptions({
-	lang: {
-		accessibility: {
-			mapZoomIn: 'Zoom chart',
-			mapZoomOut: 'Zoom out chart',
-			rangeSelectorButton: 'Select range {buttonText}',
-			legendItem: 'Toggle visibility of series {itemName}'
-		}
-	},
-	
 	accessibility: {
 
 		/**
