@@ -1897,7 +1897,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Initial categories
 		axis.hasNames = type === 'category' || options.categories === true;
 		axis.categories = options.categories || axis.hasNames;
-		axis.names = axis.names || []; // Preserve on update (#3830)
+		if (!axis.names) { // Preserve on update (#3830)
+			axis.names = [];
+			axis.names.keys = {};
+		} 
+
 
 		// Placeholder for plotlines and plotbands groups
 		axis.plotLinesAndBandsGroups = {};
@@ -2709,7 +2713,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				(
 					explicitCategories ?
 						inArray(point.name, names) :
-						pick(names['s' + point.name], -1)
+						pick(names.keys[point.name], -1)
 
 				);
 		}
@@ -2725,7 +2729,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		if (x !== undefined) {
 			this.names[x] = point.name;
 			// Backwards mapping is much faster than array searching (#7725)
-			this.names['s' + point.name] = x;
+			this.names.keys[point.name] = x;
 		}
 
 		return x;
@@ -2742,10 +2746,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			i = names.length;
 
 		if (i > 0) {
-			while (i--) {
-				delete names['s' + names[i]];
-			}
+			each(H.keys(names.keys), function (key) {
+				delete names.keys[key];
+			});
 			names.length = 0;
+
 			this.minRange = this.userMinRange; // Reset
 			each(this.series || [], function (series) {
 			
