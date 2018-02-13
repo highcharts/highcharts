@@ -11,7 +11,7 @@ $.ajax({
             },
 
             title: {
-                text: 'Daily visits at www.highcharts.com'
+                text: 'Daily sessions at www.highcharts.com'
             },
 
             subtitle: {
@@ -80,7 +80,7 @@ $.ajax({
                                     },
                                     headingText: this.series.name,
                                     maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':<br/> ' +
-                                        this.y + ' visits',
+                                        this.y + ' sessions',
                                     width: 200
                                 });
                             }
@@ -93,13 +93,13 @@ $.ajax({
             },
 
             series: [{
-                name: 'All visits',
+                name: 'All sessions',
                 lineWidth: 4,
                 marker: {
                     radius: 4
                 }
             }, {
-                name: 'New visitors'
+                name: 'New users'
             }]
         });
     }
