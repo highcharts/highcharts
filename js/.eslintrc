@@ -6,6 +6,7 @@
         "module": true,
         "setInterval": true,
         "setTimeout": true,
+        "XMLHttpRequest": true
     },   
     "rules": {
         "camelcase": [2, {
