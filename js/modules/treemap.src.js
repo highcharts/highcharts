@@ -976,7 +976,7 @@ seriesType('treemap', 'scatter', {
 		tree = series.tree = series.getTree(); // @todo Only if series.isDirtyData is true
 		rootNode = series.nodeMap[rootId];
 		series.mapOptionsToLevel = getLevelOptions({
-			from: rootNode.level > 0 ? rootNode.level : 1,
+			from: rootNode.level + 1,
 			levels: options.levels,
 			to: tree.height,
 			defaults: {
