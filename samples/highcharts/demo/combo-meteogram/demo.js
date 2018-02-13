@@ -545,16 +545,16 @@ if (!location.hash) {
     //place = 'United_States/California/San_Francisco';
     //place = 'United_States/Minnesota/Minneapolis';
 
-    url = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
-    location.hash = url;
+    location.hash = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
 }
 
 // Then get the XML file through Highcharts' CORS proxy. Our proxy is limited to
 // this specific location. Useing the third party, rate limited cors.io service
 // for experimenting with other locations.
+url = location.hash.substr(1);
 $.ajax({
     dataType: 'xml',
-    url: place === 'United_Kingdom/England/London' ?
+    url: url === 'https://www.yr.no/place/United_Kingdom/England/London/forecast_hour_by_hour.xml' ?
         'https://www.highcharts.com/samples/data/cors.php?url=' + url :
         'https://cors.io/?' + url,
     success: function (xml) {
