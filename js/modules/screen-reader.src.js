@@ -426,7 +426,7 @@ H.Point.prototype.buildPointInfoString = function () {
 		dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
 		timeDesc =
 			dateTimePoint &&
-			series.chart.time.dateFormat.call(
+			series.chart.time.dateFormat(
 				a11yOptions.pointDateFormatter &&
 				a11yOptions.pointDateFormatter(point) ||
 				a11yOptions.pointDateFormat ||
