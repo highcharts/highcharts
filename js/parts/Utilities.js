@@ -1638,7 +1638,9 @@ H.objectEach = function (obj, fn, ctx) {
 H.isPrototype = function (obj) {
 	// return Object.getPrototypeOf(obj) === Object.prototype;
 	return (
+		obj === H.Axis.prototype || 
 		obj === H.Chart.prototype || 
+		obj === H.Point.prototype || 
 		obj === H.Series.prototype
 	);
 };

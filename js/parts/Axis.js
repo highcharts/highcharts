@@ -3532,6 +3532,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		} else if (axis.cleanStacks) {
 			axis.cleanStacks();
 		}
+
+		fireEvent(this, 'afterSetScale');
 	},
 
 	/**
