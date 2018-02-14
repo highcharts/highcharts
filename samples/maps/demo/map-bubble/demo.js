@@ -39,8 +39,8 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.5/samples/data/worl
             enableMouseTracking: false
         }, {
             type: 'mapbubble',
-            name: 'Population 2013',
-            joinBy: ['iso-a2', 'code'],
+            name: 'Population 2016',
+            joinBy: ['iso-a3', 'code3'],
             data: data,
             minSize: 4,
             maxSize: '12%',
