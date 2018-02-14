@@ -15,6 +15,27 @@ QUnit.test('Mock Point translations from x/y in the options to plotX/plotY', fun
             }, {
                 xAxis: 1,
                 data: [[0, 1]]
+            }, {
+                data: [
+                    [-20, 5],
+                    [2, 5], {
+                        x: 5,
+                        y: 2,
+                        marker: {
+                            enabled: false
+                        }
+                    }, {
+                        x: 110,
+                        y: 4,
+                        marker: {
+                            enabled: false
+                        }
+                    },
+                    [112, 4]
+                ],
+                marker: {
+                    enabled: true
+                }
             }]
         }),
 
@@ -80,5 +101,56 @@ QUnit.test('Mock Point translations from x/y in the options to plotX/plotY', fun
         Math.round(point.plotX),
         Math.round(options.x),
         'plotX translation from pixels'
+    );
+
+
+    var isInsidePane = Highcharts.MockPoint.prototype.isInsidePane;
+    var points = chart.series[2].points;
+
+    assert.notOk(
+        isInsidePane.call(points[0]),
+        'The real point is outside the pane area'
+    );
+
+    assert.ok(
+        isInsidePane.call(points[1]),
+        'The real point is inside the pane area'
+    );
+
+    assert.ok(
+        isInsidePane.call(points[2]),
+        'The real point without marker is inside the pane area'
+    );
+
+    assert.notOk(
+        isInsidePane.call(points[3]),
+        'The real point without marker is outside the pane area'
+    );
+
+    chart.xAxis[0].setExtremes(109, 113);
+
+    assert.notOk(
+        isInsidePane.call(points[0]),
+        'After set extremes - the real point is outside the pane area'
+    );
+
+    assert.notOk(
+        isInsidePane.call(points[1]),
+        'After set extremes - the real point is outside the pane area'
+    );
+
+    assert.notOk(
+        isInsidePane.call(points[2]),
+        'After set extremes - the real point without marker is outside the pane area'
+    );
+
+    assert.ok(
+        isInsidePane.call(points[3]),
+        'After set extreems - the real point without marker is inside the pane area'
+    );
+
+    assert.ok(
+        isInsidePane.call(points[4]),
+        'After set extreems - the real point is inside the pane area'
     );
 });
