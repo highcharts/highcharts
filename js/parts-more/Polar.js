@@ -262,7 +262,7 @@ if (!H.polarExtended) {
 	 * chart were a cartesian plane, where plotX denotes the angle in radians
 	 * and (yAxis.len - plotY) is the pixel distance from center.
 	 */
-	H.addEvent(seriesProto, 'translate', function () {
+	H.addEvent(seriesProto, 'afterTranslate', function () {
 		var chart = this.chart,
 			points,
 			i;
