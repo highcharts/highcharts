@@ -148,15 +148,16 @@
     padding: 0px;
 }
 
+#demo button:hover,
+#demo #submenu li:hover {
+    background-color: #333333;
+}
+
 #demo button.active,
 #demo #submenu li.active {
     background-color: #29ABE2;
 }
 
-#demo button:hover,
-#demo #submenu li:hover {
-    background-color: #333333;
-}
 
 #demo button#annotation-line {
     -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/line.svg);
