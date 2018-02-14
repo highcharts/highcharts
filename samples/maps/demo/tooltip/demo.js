@@ -1,9 +1,9 @@
 
 $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/world-population-density.json', function (data) {
 
-    // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
+    // Prevent logarithmic errors in color calulcation
     $.each(data, function () {
-        this.flag = this.code.replace('UK', 'GB').toLowerCase();
+        this.value = (this.value < 1 ? 1 : this.value);
     });
 
     // Initiate the chart
@@ -39,7 +39,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/worl
             shadow: false,
             useHTML: true,
             padding: 0,
-            pointFormat: '<span class="f32"><span class="flag {point.flag}">' +
+            pointFormat: '<span class="f32"><span class="flag {point.properties.hc-key}">' +
                 '</span></span> {point.name}<br>' +
                 '<span style="font-size:30px">{point.value}/km²</span>',
             positioner: function () {
@@ -55,7 +55,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/worl
 
         series: [{
             data: data,
-            joinBy: ['iso-a2', 'code'],
+            joinBy: ['iso-a3', 'code3'],
             name: 'Population density',
             states: {
                 hover: {

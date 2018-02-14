@@ -1,6 +1,11 @@
 
 $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/world-population-density.json', function (data) {
 
+    // Prevent logarithmic errors in color calulcation
+    $.each(data, function () {
+        this.value = (this.value < 1 ? 1 : this.value);
+    });
+
     // Initiate the chart
     Highcharts.mapChart('container', {
         chart: {
@@ -24,7 +29,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/worl
 
         series: [{
             data: data,
-            joinBy: ['iso-a2', 'code'],
+            joinBy: ['iso-a3', 'code3'],
             name: 'Population density',
             states: {
                 hover: {
