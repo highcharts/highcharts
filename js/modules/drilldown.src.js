@@ -24,7 +24,6 @@ var animObject = H.animObject,
 	format = H.format,
 	objectEach = H.objectEach,
 	pick = H.pick,
-	wrap = H.wrap,
 	Chart = H.Chart,
 	seriesTypes = H.seriesTypes,
 	PieSeries = seriesTypes.pie,
@@ -696,9 +695,9 @@ Chart.prototype.callbacks.push(function () {
 });
 
 // Don't show the reset button if we already are displaying the drillUp button.
-wrap(Chart.prototype, 'showResetZoom', function (proceed) {
-	if (!this.drillUpButton) {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+H.addEvent(Chart.prototype, 'beforeShowResetZoom', function () {
+	if (this.drillUpButton) {
+		return false;
 	}
 });
 
@@ -1051,20 +1050,18 @@ Tick.prototype.drillable = function () {
 /**
  * Always keep the drillability updated (#3951)
  */
-wrap(Tick.prototype, 'addLabel', function (proceed) {
-	proceed.call(this);
-	this.drillable();
-});
+H.addEvent(Tick.prototype, 'afterRender', Tick.prototype.drillable);
 
 
 /**
  * On initialization of each point, identify its label and make it clickable.
  * Also, provide a list of points associated to that label.
  */
-wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
-	var point = proceed.call(this, series, options, x),
+H.addEvent(H.Point.prototype, 'afterInit', function () {
+	var point = this,
+		series = point.series,
 		xAxis = series.xAxis,
-		tick = xAxis && xAxis.ticks[x];
+		tick = xAxis && xAxis.ticks[point.x];
 
 	if (point.drilldown) {
 		
@@ -1090,11 +1087,9 @@ wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
 	return point;
 });
 
-wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
+H.addEvent(H.Series.prototype, 'afterDrawDataLabels', function () {
 	var css = this.chart.options.drilldown.activeDataLabelStyle,
 		renderer = this.chart.renderer;
-
-	proceed.call(this);
 
 	each(this.points, function (point) {
 		var dataLabelsOptions = point.options.dataLabels,
@@ -1139,36 +1134,19 @@ var applyCursorCSS = function (element, cursor, addClass) {
 };
 
 // Mark the trackers with a pointer 
-var drawTrackerWrapper = function (proceed) {
-	proceed.call(this);
+H.addEvent(H.Series.prototype, 'afterDrawTracker', function () {
 	each(this.points, function (point) {
 		if (point.drilldown && point.graphic) {
 			applyCursorCSS(point.graphic, 'pointer', true);
 		}
 	});
-};
+});
 
-var setPointStateWrapper = function (proceed, state) {
-	var ret = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-	if (this.drilldown && this.series.halo && state === 'hover') {
+H.addEvent(H.Point.prototype, 'afterSetState', function () {
+	if (this.drilldown && this.series.halo && this.state === 'hover') {
 		applyCursorCSS(this.series.halo, 'pointer', true);
 	} else if (this.series.halo) {
 		applyCursorCSS(this.series.halo, 'auto', false);
 	}
-	return ret;
-};
-
-
-objectEach(seriesTypes, function (seriesType) {
-	wrap(
-		seriesType.prototype,
-		'drawTracker',
-		drawTrackerWrapper
-	);
-	wrap(
-		seriesType.prototype.pointClass.prototype,
-		'setState',
-		setPointStateWrapper
-	);
 });

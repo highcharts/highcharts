@@ -586,6 +586,8 @@ H.Tick.prototype = {
 		this.renderLabel(xy, old, opacity, index);
 
 		tick.isNew = false;
+
+		H.fireEvent(this, 'afterRender');
 	},
 
 	/**

@@ -95,6 +95,9 @@ Highcharts.Point.prototype = {
 		point.colorIndex = pick(point.colorIndex, colorIndex);
 
 		series.chart.pointCount++;
+
+		fireEvent(point, 'afterInit');
+		
 		return point;
 	},
 	/**

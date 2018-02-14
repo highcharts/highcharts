@@ -92,6 +92,8 @@ TrackerMixin = H.TrackerMixin = {
 			});
 			series._hasTracking = true;
 		}
+
+		fireEvent(this, 'afterDrawTracker');
 	},
 
 	/**
@@ -200,6 +202,7 @@ TrackerMixin = H.TrackerMixin = {
 				}
 			});
 		}
+		fireEvent(this, 'afterDrawTracker');
 	}
 };
 /* End TrackerMixin */
@@ -343,21 +346,23 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 			chart.zoomOut();
 		}
 
-		this.resetZoomButton = chart.renderer.button(
-				lang.resetZoom,
-				null,
-				null,
-				zoomOut,
-				theme,
-				states && states.hover
-			)
-			.attr({
-				align: btnOptions.position.align,
-				title: lang.resetZoomTitle
-			})
-			.addClass('highcharts-reset-zoom')
-			.add()
-			.align(btnOptions.position, false, alignTo);
+		fireEvent(this, 'beforeShowResetZoom', null, function () {
+			chart.resetZoomButton = chart.renderer.button(
+					lang.resetZoom,
+					null,
+					null,
+					zoomOut,
+					theme,
+					states && states.hover
+				)
+				.attr({
+					align: btnOptions.position.align,
+					title: lang.resetZoomTitle
+				})
+				.addClass('highcharts-reset-zoom')
+				.add()
+				.align(btnOptions.position, false, alignTo);
+		});
 
 	},
 
@@ -837,6 +842,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 		}
 
 		point.state = state;
+
+		fireEvent(point, 'afterSetState');
 	},
 
 	/**

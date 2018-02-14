@@ -349,6 +349,8 @@ Series.prototype.drawDataLabels = function () {
 			}
 		});
 	}
+
+	H.fireEvent(this, 'afterDrawDataLabels');
 };
 
 /**

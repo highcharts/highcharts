@@ -1641,7 +1641,8 @@ H.isPrototype = function (obj) {
 		obj === H.Axis.prototype || 
 		obj === H.Chart.prototype || 
 		obj === H.Point.prototype || 
-		obj === H.Series.prototype
+		obj === H.Series.prototype ||
+		obj === H.Tick.prototype
 	);
 };
 
