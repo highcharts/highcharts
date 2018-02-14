@@ -1,4 +1,4 @@
-#Basic line
+# Basic line
 A [line chart](https://api.highcharts.com/highcharts/plotOptions.line) is often used to visualize [trends](https://smartvikisogn.github.io/HChartsCatalog/webpages/trend.html). In this demo, the number of employees in the solar installation is in a constant progress since 2013, where the other sector’s employees number has been stable.
 
 #### Tip

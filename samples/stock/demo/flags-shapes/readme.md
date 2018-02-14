@@ -1,4 +1,4 @@
-#Flags shapes and colors
+# Flags shapes and colors
 This demo visualizes the exchange rate using flags with colors to attract the users’ attention to specific events.
 
 #### Tip

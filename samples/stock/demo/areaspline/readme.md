@@ -1,4 +1,4 @@
-#Area spline
+# Area spline
 [Area spline](https://api.highcharts.com/highstock/series.areaspline) is a variant of the area chart with smooth curves. 
 
 #### Tip

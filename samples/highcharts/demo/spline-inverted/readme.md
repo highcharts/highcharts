@@ -1,4 +1,4 @@
-#Spline with inverted axes
+# Spline with inverted axes
 [Spline chart](https://api.highcharts.com/highcharts/plotOptions.spline) is a good choice to visualize data that shows gradual progression. The spline chart has smooth curves compare to the line chart. 
 
 ####  Tip

@@ -1,4 +1,4 @@
-#With data labels
+# With data labels
 Data labels increase the chart comprehension and readability. Feel free to enable the data labels, in case of a small data set.
 
 #### Tip

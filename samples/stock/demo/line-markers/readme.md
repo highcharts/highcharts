@@ -1,4 +1,4 @@
-#Line with markers and shadow
+# Line with markers and shadow
 Symbols and shapes help the users to easily and quickly spot points of interest on a chart. The following demo has the marker option enabled to draw attention to specific data.
 
 #### Tip
