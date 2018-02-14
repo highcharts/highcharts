@@ -710,6 +710,70 @@ window.analyzes = [{
             onButtonClick(button, H.getChartById('container'));
         }
     }
+    var tooltipDelay = 1000,
+        tooltipIsWaiting = false;
+    function menuOnOver(e) {
+        var button = e.target;
+        tooltipIsWaiting = button.getAttribute('data-description');
+        setTimeout(function () {
+            var description = button.getAttribute('data-description');
+            if (tooltipIsWaiting === description) {
+                var chart = H.getChartById('container'),
+                    fakePoint = {
+                        name: description,
+                        plotX: button.clientWidth / 2 - chart.plotLeft,
+                        plotY: button.offsetTop + button.clientHeight / 2 + 3,
+                        ttBelow: true,
+                        series: {
+                            chart: chart,
+                            xAxis: chart.xAxis[0],
+                            yAxis: chart.yAxis[0],
+                            tooltipOptions: {
+                                pointFormat: '{point.name}'
+                            },
+                            options: {
+                                dataGrouping: {}
+                            }
+                        }
+                    };
+
+                if (!chart.menuTooltip) {
+                    chart.menuTooltip = new H.Tooltip(
+                        chart,
+                        H.merge(
+                            chart.options.tooltip,
+                            {
+                                split: false,
+                                positioner: function (w, h, p) {
+                                    return {
+                                        x: p.plotX + 90,
+                                        y: p.plotY + h
+                                    };
+                                }
+                            }
+                        )
+                    );
+                }
+
+                fakePoint.setState = H.noop;
+                fakePoint.getLabelConfig = H.Point.prototype.getLabelConfig;
+                fakePoint.tooltipFormatter = H.Point.prototype.tooltipFormatter;
+
+                chart.menuTooltip.isHidden = true;
+                chart.menuTooltip.refresh(fakePoint);
+            }
+        }, tooltipDelay);
+    }
+
+    function menuOnOut() {
+        var chart = H.getChartById('container');
+        if (tooltipIsWaiting) {
+            tooltipIsWaiting = false;
+        }
+        if (chart.menuTooltip) {
+            chart.menuTooltip.hide();
+        }
+    }
 
     function flagMenuClick(e) {
         onButtonClick(e.target, H.getChartById('container'));
@@ -727,6 +791,8 @@ window.analyzes = [{
 
         menuButtons.forEach(function (menuButton) {
             menuButton.addEventListener('click', menuOnClick);
+            menuButton.addEventListener('mouseover', menuOnOver);
+            menuButton.addEventListener('mouseout', menuOnOut);
         });
 
         listButtons.forEach(function (listButton) {
