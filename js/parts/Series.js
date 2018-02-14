@@ -3531,6 +3531,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			point.zone = this.zones.length && point.getZone();
 		}
 		series.closestPointRangePx = closestPointRangePx;
+
+		fireEvent(this, 'afterTranslate');
 	},
 
 	/**
