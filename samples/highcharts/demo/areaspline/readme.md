@@ -3,4 +3,4 @@
 
 ####  Tip
 Notice the use of the plotBands feature to highlight a specific spot on the chart. 
-Change the opacity of the area by setting the feature [fillOpacity](http://api.highcharts.com/highcharts/plotOptions.area.fillOpacity) under plotOptions.
+Change the opacity of the area by setting the feature [fillOpacity](https://api.highcharts.com/highcharts/plotOptions.area.fillOpacity) under plotOptions.

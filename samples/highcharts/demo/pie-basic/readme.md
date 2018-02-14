@@ -3,4 +3,4 @@ The [pie chart](https://api.highcharts.com/highcharts/plotOptions.pie) is an exc
 
 ####  Tip
 Users can get confused quickly if a high number of data sets is used.
-Notice the use of the feature [sliced](http://api.highcharts.com/highcharts/series%3Cpie%3E.data.sliced) to detach the slice from the center.
+Notice the use of the feature [sliced](https://api.highcharts.com/highcharts/series%3Cpie%3E.data.sliced) to detach the slice from the center.

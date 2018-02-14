@@ -3,4 +3,4 @@ The zooming capability is a powerful feature that allows users to interact and e
 
 #### Tip
 Enable the zooming capability by using the zoomType option.
-Notice the appearance of the [reset zoom button](http://api.highcharts.com/highcharts/chart.resetZoomButton) after the zooming capability is activated.
+Notice the appearance of the [reset zoom button](https://api.highcharts.com/highcharts/chart.resetZoomButton) after the zooming capability is activated.

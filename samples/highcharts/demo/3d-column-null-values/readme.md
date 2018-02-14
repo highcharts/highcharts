@@ -1,3 +1,4 @@
 # 3D column with null and 0 values
-The value null doesn’t mean zero, and this demo visualizes it very well. The null value is the absence of value, where the zero value is the absence of quantity. 
+Unlike 2D chart, 3D column charts are well suited for highlighting the difference between a null value
+and a 0.
  

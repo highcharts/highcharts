@@ -3,4 +3,4 @@ A [gauge chart](https://api.highcharts.com/highcharts/plotOptions.gauge) is an e
 
 ####  Tip
 Use the [pane]() feature to set up the arc shape and color. 
-To customize the colors of each range use the [plotBands](http://api.highcharts.com/highcharts/yAxis.plotLines) feature.
+To customize the colors of each range use the [plotBands](https://api.highcharts.com/highcharts/yAxis.plotLines) feature.
