@@ -975,6 +975,12 @@ function whichAxis(e, chart) {
         }, this);
 
         p.call(this);
+
+        Highcharts.each(this.annotations, function (annotation) {
+            if (!annotation.options.id) {
+                annotation.options.id = Highcharts.uniqueKey();
+            }
+        });
     });
 
     H.wrap(H.Annotation.prototype, 'render', function (p) {
@@ -997,7 +1003,55 @@ function whichAxis(e, chart) {
             });
         }
 
+        this.group.on('click', function (e) {
+            if (!annotation.chart.annotating) {
+                e.stopPropagation();
+
+                var bb = annotation.bb,
+                    bbox,
+                    distance;
+
+                if (bb) {
+                    bb.destroy();
+                    annotation.bb = null;
+                } else {
+                    bbox = annotation.group.getBBox();
+                    distance = 10;
+
+                    annotation.bb = annotation.chart.renderer
+						.rect(
+							bbox.x - distance,
+							bbox.y - distance,
+							bbox.width + 2 * distance,
+							bbox.height + 2 * distance
+						)
+						.add()
+						.attr({
+    'stroke-width': 1,
+    stroke: 'black',
+    'stroke-dasharray': '5,5',
+    zIndex: 99
+});
+                }
+            }
+        });
     });
+
+    document.addEventListener('keyup', function (e) {
+        if (e.keyCode === 46 || e.keyCode === 8) {
+            var annotationsToRemove = Highcharts.grep(
+				Highcharts.charts[0].annotations, function (annotation) {
+    return annotation.bb;
+});
+
+            H.each(annotationsToRemove, function (annotation) {
+                annotation.chart.removeAnnotation(annotation.options.id);
+            });
+
+            console.log(annotationsToRemove);
+        }
+    });
+
 }(Highcharts));
 
 /***
@@ -1116,7 +1170,7 @@ function whichAxis(e, chart) {
             },
             x: 0,
             y: 0,
-            fill: 'none'
+            fill: 'transparent'
         };
 
         if (type === 'circle') {
@@ -1287,7 +1341,7 @@ function whichAxis(e, chart) {
     var y = -9e7;
     var yAxisIndex = -1;
     var chart = null;
-    var counter = -1;
+    var counter = 100;
     var annotationToRemove;
 
     var dialog = document.getElementById('annotation-text-form');
