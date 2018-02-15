@@ -1346,7 +1346,9 @@ function whichAxis(e, chart) {
 
     var dialog = document.getElementById('annotation-text-form');
 
-    function onPointClick(p) {
+    function onPointClick(p, e) {
+
+        var left, top;
         x = p.x;
         y = p.y;
         yAxisIndex = inArray(p.series.yAxis, p.series.chart.yAxis);
@@ -1355,6 +1357,25 @@ function whichAxis(e, chart) {
         if (yAxisIndex !== -1 && chart) {
             dialog.style.display = 'block';
         }
+
+        if (e) {
+            e = chart.pointer.normalize(e);
+            left = e.chartX;
+            top = e.chartY;
+        } else {
+            left = p.plotX + p.series.xAxis.pos;
+            top = p.plotY + p.series.yAxis.pos;
+        }
+
+        if (left < 100) {
+            left = 0;
+        }
+        if (top > chart.chartHeight - dialog.offsetHeight - 10) {
+            top = chart.chartHeight - dialog.offsetHeight - 10;
+        }
+        dialog.style.left = left + 'px';
+        dialog.style.top = top + 'px';
+
     }
 
     function addText(e) {
@@ -1409,7 +1430,7 @@ function whichAxis(e, chart) {
         var x = chart.xAxis[0].toValue(e.chartX);
         var y = yAxis ? yAxis.toValue(e.chartY) : -9e7;
 
-        onPointClick({ x: x, y: y, series: { yAxis: yAxis, chart: chart } });
+        onPointClick({ x: x, y: y, series: { yAxis: yAxis, chart: chart } }, e);
     }
 
     H.Annotation.text = {
