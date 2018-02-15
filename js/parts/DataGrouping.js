@@ -826,14 +826,18 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	var options = proceed.call(this, itemOptions),
 		type = this.type,
 		plotOptions = this.chart.options.plotOptions,
-		defaultOptions = defaultPlotOptions[type].dataGrouping;
+		defaultOptions = defaultPlotOptions[type].dataGrouping,
+		// External series, for example technical indicators should also
+		// inherit commonOptions which are not available outside this module
+		baseOptions = this.useCommonDataGrouping && commonOptions;
 
-	if (specificOptions[type]) { // #1284
+	if (specificOptions[type] || baseOptions) { // #1284
 		if (!defaultOptions) {
 			defaultOptions = merge(commonOptions, specificOptions[type]);
 		}
 
 		options.dataGrouping = merge(
+			baseOptions,
 			defaultOptions,
 			plotOptions.series && plotOptions.series.dataGrouping, // #1228
 			plotOptions[type].dataGrouping, // Set by the StockChart constructor

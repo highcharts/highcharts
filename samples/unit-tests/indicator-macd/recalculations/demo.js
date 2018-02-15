@@ -284,4 +284,15 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         ],
         'Correct values after point.remove()'
     );
+
+    chart.series[0].update({
+        dataGrouping: {
+            forced: true
+        }
+    });
+
+    assert.ok(
+        chart.series[1].currentDataGrouping !== undefined,
+        'DataGrouping applied to MACD series too (#7823).'
+    );
 });

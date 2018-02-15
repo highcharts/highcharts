@@ -126,7 +126,9 @@ seriesType('macd', 'sma',
 				'Signal: {point.signal}<br/>' +
 				'Histogram: {point.y}<br/>'
 		},
-		dataGrouping: 'averages',
+		dataGrouping: {
+			approximation: 'averages'
+		},
 		minPointLength: 0
 	}, {
 		nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
