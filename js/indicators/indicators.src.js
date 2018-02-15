@@ -86,6 +86,7 @@ seriesType('sma', 'line',
 			series: true,
 			eventName: 'updatedData'
 		},
+		useCommonDataGrouping: true,
 		nameComponents: ['period'],
 		nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
 		calculateOn: 'init',
