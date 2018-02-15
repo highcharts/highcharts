@@ -790,6 +790,10 @@ if (!svg) {
 		},
 		strokeGetter: function () {
 			return this.getAttr('strokecolor') || '';
+		},
+		// #7850
+		classGetter: function () {
+			return this.getAttr('className') || '';
 		}
 	};
 	VMLElement['stroke-opacitySetter'] = VMLElement['fill-opacitySetter'];

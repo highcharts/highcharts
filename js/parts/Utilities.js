@@ -639,6 +639,11 @@ H.attr = function (elem, prop, value) {
 		// get the value
 		} else if (elem && elem.getAttribute) {
 			ret = elem.getAttribute(prop);
+
+			// IE7 and below cannot get class through getAttribute (#7850)
+			if (!ret && prop === 'class') {
+				ret = elem.getAttribute(prop + 'Name');
+			}
 		}
 
 	// else if prop is defined, it is a hash of key/value pairs
