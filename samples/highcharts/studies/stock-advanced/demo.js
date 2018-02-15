@@ -769,6 +769,8 @@ function menuOnOut() {
     function onButtonClick(button, chart) {
         var annotating = button.getAttribute('id').split('-')[1];
         var annotation = H.Annotation[chart.annotating];
+        // Selection button should highlight only annotations and flags:
+        var selection = annotating === 'selection' && annotating !== chart.annotating;
 
         resetOtherClass(button);
         button.classList.toggle('active');
@@ -787,9 +789,16 @@ function menuOnOut() {
         );
         chart.container.classList.toggle(
             'crosshair-on-chart',
+            !selection &&
             H.Annotation[annotating] !== annotation &&
             H.Annotation[annotating].onChartClick
         );
+
+        if (selection) {
+            chart.container.classList.add('crosshair-on-annotation');
+        } else {
+            chart.container.classList.remove('crosshair-on-annotation');
+        }
 
         chart.annotating = annotating === chart.annotating ? null : annotating;
 

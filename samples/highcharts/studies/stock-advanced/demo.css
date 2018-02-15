@@ -379,6 +379,8 @@
 }
 
 #demo #container .crosshair-on-point .highcharts-tracker path:hover,
-#demo #container .crosshair-on-chart .highcharts-plot-background:hover {
+#demo #container .crosshair-on-chart .highcharts-plot-background:hover,
+#demo #container .crosshair-on-annotation .highcharts-annotation:hover,
+#demo #container .crosshair-on-annotation .highcharts-flags-series:hover {
     cursor: crosshair;
 }
