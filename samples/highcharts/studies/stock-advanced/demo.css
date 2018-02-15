@@ -373,3 +373,8 @@
     -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/flag-diamondpin.svg);
     mask-image: url(https://www.highcharts.com/samples/graphics/flag-diamondpin.svg);
 }
+
+#demo #container .crosshair-on-point .highcharts-tracker path:hover,
+#demo #container .crosshair-on-chart .highcharts-plot-background:hover {
+    cursor: crosshair;
+}
