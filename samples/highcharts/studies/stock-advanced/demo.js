@@ -981,8 +981,7 @@ function whichAxis(e, chart) {
 (function (H) {
     var defined = H.defined;
 
-    H.Annotation.prototype.drawBB = function () {
-        var bbox = this.group.getBBox();
+    H.Annotation.drawBB = function (renderer, element, bbox, group) {
         var distance = 10;
         var attrs = {
             x: bbox.x - distance,
@@ -991,19 +990,23 @@ function whichAxis(e, chart) {
             height: bbox.height + 2 * distance
         };
 
-        if (!this.bb) {
-            this.bb = this.chart.renderer
-            .rect()
-            .add()
-            .attr({
-                'stroke-width': 1,
-                stroke: 'black',
-                'stroke-dasharray': '5,5',
-                zIndex: 99
-            });
+        if (!element.bb) {
+            element.bb = renderer
+                .rect()
+                .add(group)
+                .attr({
+                    'stroke-width': 1,
+                    stroke: 'black',
+                    'stroke-dasharray': '5,5',
+                    zIndex: 99
+                });
         }
 
-        this.bb.attr(attrs);
+        element.bb.attr(attrs);
+    };
+
+    H.Annotation.prototype.drawBB = function () {
+        H.Annotation.drawBB(this.chart.renderer, this, this.group.getBBox());
     };
 
     H.Annotation.prototype.select = function () {
@@ -1097,15 +1100,29 @@ function whichAxis(e, chart) {
 
     document.addEventListener('keyup', function (e) {
         if (e.keyCode === 46 || e.keyCode === 8) {
+            var chart = H.charts[0];
+            var hasBB = function (item) {
+                return item.bb;
+            };
+
             var annotationsToRemove = Highcharts.grep(
-                Highcharts.charts[0].annotations,
-                function (annotation) {
-                    return annotation.bb;
-                }
+                chart.annotations,
+                hasBB
             );
 
             H.each(annotationsToRemove, function (annotation) {
                 annotation.chart.removeAnnotation(annotation.options.id);
+            });
+
+            var flagsToRemove = H.grep(
+                chart.series,
+                function (series) {
+                    return series.type === 'flags' && hasBB(series.points[0]);
+                }
+            );
+
+            H.each(flagsToRemove, function (flag) {
+                flag.remove();
             });
         }
     });
@@ -1350,7 +1367,7 @@ function whichAxis(e, chart) {
         var bbox, x, y;
 
         if (group) {
-            bbox = this.group.getBBox();
+            bbox = this.group.element.getBBox();
             x = group.x - bbox.width * scale / 1.5;
             y = group.y - bbox.height * scale / 1.5;
 
@@ -1358,7 +1375,6 @@ function whichAxis(e, chart) {
                 transform: 'translate(' + x + ', ' + y + ') scale(' + scale + ')'
             });
         }
-
     });
 
 
@@ -1644,8 +1660,8 @@ function whichAxis(e, chart) {
         path = symbols.diamond(x, y, w, h);
 
         if (anchorX && anchorY) {
-      // if the label is below the anchor, draw the connecting line from the top edge of the label
-      // otherwise start drawing from the bottom edge
+            // if the label is below the anchor, draw the connecting line from the top edge of the label
+            // otherwise start drawing from the bottom edge
             labelTopOrBottomY = (y > anchorY) ? y : y + h;
             path.push('M', anchorX, labelTopOrBottomY, 'L', anchorX, anchorY);
         }
@@ -1653,20 +1669,79 @@ function whichAxis(e, chart) {
         return path;
     };
 
+    H.seriesTypes.flags.prototype.drawBB = function (point) {
+        var graphic = point.graphic;
+        var bbox = graphic.element.getBBox();
+        var offsetX =
+            point.series.options.shape !== 'flag' ? bbox.width / 2 : 0;
+
+        H.Annotation.drawBB(
+            point.series.chart.renderer,
+            point,
+            {
+                x: graphic.x + point.series.group.translateX - offsetX,
+                y: graphic.y + point.series.group.translateY,
+                width: bbox.width,
+                height: bbox.height
+            }
+        );
+    };
+
+    H.wrap(H.seriesTypes.flags.prototype, 'destroy', function (p) {
+        H.each(this.points, function (point) {
+            if (point.bb) {
+                point.bb.destroy();
+                point.bb = null;
+            }
+
+            point.graphic.element.onclick = null;
+        });
+
+        p.apply(this, Array.prototype.slice.call(1, arguments));
+    });
+
     H.wrap(H.seriesTypes.flags.prototype, 'drawPoints', function (p) {
-        p.call(this);
+        var series = this;
 
-        var style = this.options.style;
+        p.call(series);
 
-        if (style && style.dy) {
-            H.each(this.points, function (point) {
-                if (point.graphic) {
-                    point.graphic.text.attr({
+        var style = series.options.style;
+
+        H.each(series.points, function (point) {
+            var graphic = point.graphic;
+
+            if (graphic) {
+                if (style && style.dy) {
+                    graphic.text.attr({
                         dy: style.dy
                     });
                 }
-            });
-        }
+
+                if (!graphic.element.onclick) {
+                    graphic.element.onclick = function (e) {
+                        if (series.chart.annotating === 'selection') {
+                            e.stopPropagation();
+
+                            if (!point.bb) {
+                                series.drawBB(point);
+                            } else {
+                                point.bb.destroy();
+                                point.bb = null;
+                            }
+                        }
+                    };
+                }
+
+                if (point.bb) {
+                    series.drawBB(point);
+                }
+            }
+        });
+    });
+
+    H.wrap(H.seriesTypes.flags.prototype, 'redraw', function (p) {
+        p.apply(this, Array.prototype.slice.call(1, arguments));
+
     });
 
 
@@ -1725,8 +1800,19 @@ function whichAxis(e, chart) {
 (function (H) {
     H.Annotation.selection = {
         onChartClick: function () {
+            var chart = Highcharts.charts[0];
+
             H.each(Highcharts.charts[0].annotations, function (annotation) {
                 annotation.unselect();
+            });
+
+            H.each(chart.series, function (series) {
+                var point = series.points[0];
+
+                if (series.type === 'flags' && point.bb) {
+                    point.bb.destroy();
+                    point.bb = null;
+                }
             });
         }
     };
