@@ -981,26 +981,34 @@ function whichAxis(e, chart) {
 (function (H) {
     var defined = H.defined;
 
-    H.Annotation.prototype.select = function () {
-        this.unselect();
-
+    H.Annotation.prototype.drawBB = function () {
         var bbox = this.group.getBBox();
         var distance = 10;
+        var attrs = {
+            x: bbox.x - distance,
+            y: bbox.y - distance,
+            width: bbox.width + 2 * distance,
+            height: bbox.height + 2 * distance
+        };
 
-        this.bb = this.chart.renderer
-      .rect(
-        bbox.x - distance,
-        bbox.y - distance,
-        bbox.width + 2 * distance,
-        bbox.height + 2 * distance
-      )
-      .add()
-      .attr({
-          'stroke-width': 1,
-          stroke: 'black',
-          'stroke-dasharray': '5,5',
-          zIndex: 99
-      });
+        if (!this.bb) {
+            this.bb = this.chart.renderer
+            .rect()
+            .add()
+            .attr({
+                'stroke-width': 1,
+                stroke: 'black',
+                'stroke-dasharray': '5,5',
+                zIndex: 99
+            });
+        }
+
+        this.bb.attr(attrs);
+    };
+
+    H.Annotation.prototype.select = function () {
+        this.unselect();
+        this.drawBB();
     };
 
     H.Annotation.prototype.unselect = function () {
@@ -1016,6 +1024,14 @@ function whichAxis(e, chart) {
 
         if (!this.options.id) {
             this.options.id = H.uniqueKey();
+        }
+    });
+
+    H.wrap(H.Annotation.prototype, 'redraw', function (p) {
+        p.call(this);
+
+        if (this.bb) {
+            this.drawBB();
         }
     });
 
