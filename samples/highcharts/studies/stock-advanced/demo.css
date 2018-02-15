@@ -158,6 +158,10 @@
     background-color: #29ABE2;
 }
 
+#demo button#annotation-selection {
+    -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/cursor.svg);
+    mask-image: url(https://www.highcharts.com/samples/graphics/cursor.svg);
+}
 
 #demo button#annotation-line {
     -webkit-mask-image: url(https://www.highcharts.com/samples/graphics/line.svg);

@@ -777,7 +777,7 @@ function menuOnOut() {
             annotation.reset();
         }
 
-        // Change curosor on the point/plotting area:
+        // Change cursor on the point/plotting area:
         chart.container.classList.toggle(
             'crosshair-on-point',
             // Annotation type changed
@@ -792,6 +792,10 @@ function menuOnOut() {
         );
 
         chart.annotating = annotating === chart.annotating ? null : annotating;
+
+        H.each(H.charts[0].annotations, function (annotation) {
+            annotation.unselect();
+        });
     }
 
     function menuOnClick(e) {
@@ -968,6 +972,36 @@ function whichAxis(e, chart) {
 (function (H) {
     var defined = H.defined;
 
+    H.Annotation.prototype.select = function () {
+        this.unselect();
+
+        var bbox = this.group.getBBox();
+        var distance = 10;
+
+        this.bb = this.chart.renderer
+      .rect(
+        bbox.x - distance,
+        bbox.y - distance,
+        bbox.width + 2 * distance,
+        bbox.height + 2 * distance
+      )
+      .add()
+      .attr({
+          'stroke-width': 1,
+          stroke: 'black',
+          'stroke-dasharray': '5,5',
+          zIndex: 99
+      });
+    };
+
+    H.Annotation.prototype.unselect = function () {
+        if (this.bb) {
+            this.bb.destroy();
+        }
+
+        this.bb = null;
+    };
+
     H.wrap(H.Annotation.prototype, 'init', function (p, chart, options) {
         p.call(this, chart, options);
 
@@ -1024,34 +1058,13 @@ function whichAxis(e, chart) {
         }
 
         this.group.on('click', function (e) {
-            if (!annotation.chart.annotating) {
+            if (annotation.chart.annotating === 'selection') {
                 e.stopPropagation();
 
-                var bb = annotation.bb,
-                    bbox,
-                    distance;
-
-                if (bb) {
-                    bb.destroy();
-                    annotation.bb = null;
+                if (annotation.bb) {
+                    annotation.unselect();
                 } else {
-                    bbox = annotation.group.getBBox();
-                    distance = 10;
-
-                    annotation.bb = annotation.chart.renderer
-                    .rect(
-                      bbox.x - distance,
-                      bbox.y - distance,
-                      bbox.width + 2 * distance,
-                      bbox.height + 2 * distance
-                    )
-                    .add()
-                    .attr({
-                        'stroke-width': 1,
-                        stroke: 'black',
-                        'stroke-dasharray': '5,5',
-                        zIndex: 99
-                    });
+                    annotation.select();
                 }
             }
         });
@@ -1681,6 +1694,18 @@ function whichAxis(e, chart) {
     });
 }(Highcharts));
 
+/**
+ * SELECTION
+ */
+(function (H) {
+    H.Annotation.selection = {
+        onChartClick: function () {
+            H.each(Highcharts.charts[0].annotations, function (annotation) {
+                annotation.unselect();
+            });
+        }
+    };
+}(Highcharts));
 /***
  * MAIN DEMO
  */
