@@ -968,6 +968,14 @@ function whichAxis(e, chart) {
 (function (H) {
     var defined = H.defined;
 
+    H.wrap(H.Annotation.prototype, 'init', function (p, chart, options) {
+        p.call(this, chart, options);
+
+        if (!this.options.id) {
+            this.options.id = H.uniqueKey();
+        }
+    });
+
     H.wrap(H.Chart.prototype, 'drawAnnotations', function (p) {
         var clips = this.annotationsClips || (this.annotationsClips = []);
 
@@ -989,12 +997,6 @@ function whichAxis(e, chart) {
         }, this);
 
         p.call(this);
-
-        Highcharts.each(this.annotations, function (annotation) {
-            if (!annotation.options.id) {
-                annotation.options.id = Highcharts.uniqueKey();
-            }
-        });
     });
 
     H.wrap(H.Annotation.prototype, 'render', function (p) {
@@ -1033,19 +1035,19 @@ function whichAxis(e, chart) {
                     distance = 10;
 
                     annotation.bb = annotation.chart.renderer
-						.rect(
-							bbox.x - distance,
-							bbox.y - distance,
-							bbox.width + 2 * distance,
-							bbox.height + 2 * distance
-						)
-						.add()
-						.attr({
-    'stroke-width': 1,
-    stroke: 'black',
-    'stroke-dasharray': '5,5',
-    zIndex: 99
-});
+                    .rect(
+                      bbox.x - distance,
+                      bbox.y - distance,
+                      bbox.width + 2 * distance,
+                      bbox.height + 2 * distance
+                    )
+                    .add()
+                    .attr({
+                        'stroke-width': 1,
+                        stroke: 'black',
+                        'stroke-dasharray': '5,5',
+                        zIndex: 99
+                    });
                 }
             }
         });
@@ -1054,15 +1056,15 @@ function whichAxis(e, chart) {
     document.addEventListener('keyup', function (e) {
         if (e.keyCode === 46 || e.keyCode === 8) {
             var annotationsToRemove = Highcharts.grep(
-				Highcharts.charts[0].annotations, function (annotation) {
-    return annotation.bb;
-});
+                Highcharts.charts[0].annotations,
+                function (annotation) {
+                    return annotation.bb;
+                }
+            );
 
             H.each(annotationsToRemove, function (annotation) {
                 annotation.chart.removeAnnotation(annotation.options.id);
             });
-
-            console.log(annotationsToRemove);
         }
     });
 
