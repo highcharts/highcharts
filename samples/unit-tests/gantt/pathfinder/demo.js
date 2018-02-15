@@ -1,5 +1,12 @@
 (function () {
-    var squareChartConfig;
+    var squareChartConfig,
+        connectionFromPoint = function (point) {
+            var connections = point.series.chart.pathfinder.connections;
+            return Highcharts.find(connections, function (connection) {
+                return connection.fromPoint === point ||
+                        connection.endPoint === point;
+            });
+        };
 
     QUnit.testStart(function () {
         var axisConfig = {
@@ -29,6 +36,9 @@
                 width: 400,
                 height: 400,
                 spacing: [15, 15, 15, 15]
+            },
+            pathfinder: {
+                animation: false
             },
 
             // Fill the square with a center point, and add points at top,
@@ -83,7 +93,7 @@
         };
     });
 
-    QUnit.skip('Marker placement', function (assert) {
+    QUnit.test('Marker placement', function (assert) {
         var error = 0,
             startPositions = {
                 5: {
@@ -126,8 +136,9 @@
             y;
 
         Highcharts.each(points, function (point) {
-            if (point.id !== 'center') { // All but the center point
-                graphic = point.connectingPathGraphics;
+            var connection = connectionFromPoint(point);
+            if (point.id !== 'center' && connection) { // All but the center point
+                graphic = connection.graphics;
                 start = graphic.start.element.getBBox();
                 end = graphic.end.element.getBBox();
                 x = point.x;
@@ -167,7 +178,7 @@
     });
 
     // Checks that the rotation of the markers is correctly calculated.
-    QUnit.skip('Marker rotation', function (assert) {
+    QUnit.test('Marker rotation', function (assert) {
         var error = 0.001,
             startAngles = {
                 5: {
@@ -188,7 +199,7 @@
             endAngles = {
                 5: {
                     5: 135,
-                    10: 180,
+                    10: -180,
                     15: -135
                 },
                 10: {
@@ -210,8 +221,9 @@
             y;
 
         Highcharts.each(points, function (point) {
-            if (point.id !== 'center') { // All but the center point
-                graphic = point.connectingPathGraphics;
+            var connection = connectionFromPoint(point);
+            if (point.id !== 'center' && connection) { // All but the center point
+                graphic = connection.graphics;
                 start = graphic.start;
                 end = graphic.end;
                 x = point.x;
@@ -236,7 +248,7 @@
      * Checks that markers align correctly when paths are given a specific
      * alignment.
      */
-    QUnit.skip('Marker alignment', function (assert) {
+    QUnit.test('Marker alignment', function (assert) {
         var error = 0.01,
             chart,
             series = squareChartConfig.series[0],
@@ -272,7 +284,8 @@
 
             Highcharts.each(connectorPoints, function (point) {
                 var pointBox = point.graphic.getBBox(),
-                    graphic = point.connectingPathGraphics,
+                    connection = connectionFromPoint(point),
+                    graphic = connection.graphics,
                     // Check only the start marker, because both start and end
                     // markers should be placed using the same logic. If end marker
                     // starts acting up, add another pair of asserts for that as
@@ -349,10 +362,13 @@
     /**
      * Checks that options are applied correctly
      */
-    QUnit.skip('Options applied correctly', function (assert) {
+    QUnit.test('Options applied correctly', function (assert) {
         var pathWithoutMarkers,
             pathWithMarkers,
             chart = Highcharts.chart('container', {
+                pathfinder: {
+                    animation: false
+                },
                 series: [{
                     // Default pathfinder settings
                     data: [{
@@ -382,8 +398,10 @@
                 }]
             });
 
-        pathWithoutMarkers = chart.series[0].points[0].connectingPathGraphics;
-        pathWithMarkers = chart.series[1].points[0].connectingPathGraphics;
+        pathWithoutMarkers = connectionFromPoint(
+            chart.series[0].points[0]).graphics;
+        pathWithMarkers = connectionFromPoint(
+            chart.series[1].points[0]).graphics;
 
         assert.ok(
             typeof pathWithoutMarkers.start === 'undefined' &&

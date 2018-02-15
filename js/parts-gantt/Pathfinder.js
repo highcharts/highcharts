@@ -189,6 +189,10 @@ Connection.prototype = {
 		var connection = this,
 			chart = this.chart,
 			pathfinder = chart.pathfinder,
+			animate = !(
+				chart.options.pathfinder &&
+				chart.options.pathfinder.animation === false
+			),
 			pathGraphic = connection.graphics && connection.graphics.path;
 
 		// Add the SVG element of the pathfinder group if it doesn't exist
@@ -215,18 +219,21 @@ Connection.prototype = {
 		}
 
 		// Set path attribs and animate to the new path
-		pathGraphic.attr(attribs);
-		pathGraphic.animate({
-			d: path,
-			opacity: 1
-		}, {
-			complete: complete
-		});
+		if (animate) {
+			pathGraphic.attr(attribs);
+			pathGraphic.animate({
+				d: path,
+				opacity: 1
+			}, null, complete);
+		} else {
+			pathGraphic.attr(extend(attribs, {
+				d: path,
+				opacity: 1
+			}), null, complete);
+		}
 
 		// Store reference on connection
-		if (!this.graphics) {
-			this.graphics = {};
-		}
+		this.graphics = this.graphics || {};
 		this.graphics.path = pathGraphic;
 	},
 
@@ -291,6 +298,9 @@ Connection.prototype = {
 		} else {
 			width = height = options.radius * 2;
 		}
+
+		// Add graphics object if it does not exist
+		connection.graphics = connection.graphics || {};
 
 		// Remove old marker
 		if (connection.graphics[type]) {
@@ -750,10 +760,10 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	getRadiansToVector: function (v1, v2) {
 		var box;
 		if (!defined(v2)) {
-			box = this.graphic.getBBox();
+			box = getPointBB(this);
 			v2 = {
-				x: box.x + box.width / 2,
-				y: box.y + box.height / 2
+				x: (box.xMin + box.xMax) / 2,
+				y: (box.yMin + box.yMax) / 2
 			};
 		}
 		return Math.atan2(v2.y - v1.y, v1.x - v2.x);
@@ -775,14 +785,16 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	getMarkerVector: function (radians, markerRadius, anchor) {
 		var twoPI = Math.PI * 2.0,
 			theta = radians,
-			rect = this.graphic.getBBox(),
-			rAtan = Math.atan2(rect.height, rect.width),
+			bb =  getPointBB(this),
+			rectWidth = bb.xMax - bb.xMin,
+			rectHeight = bb.yMax - bb.yMin,
+			rAtan = Math.atan2(rectHeight, rectWidth),
 			tanTheta = 1,
 			leftOrRightRegion = false,
-			rectHalfWidth = rect.width / 2.0,
-			rectHalfHeight = rect.height / 2.0,
-			rectHorizontalCenter = rect.x + rectHalfWidth,
-			rectVerticalCenter = rect.y + rectHalfHeight,
+			rectHalfWidth = rectWidth / 2.0,
+			rectHalfHeight = rectHeight / 2.0,
+			rectHorizontalCenter = bb.xMin + rectHalfWidth,
+			rectVerticalCenter = bb.yMin + rectHalfHeight,
 			edgePoint = {
 				x: rectHorizontalCenter,
 				y: rectVerticalCenter
@@ -822,7 +834,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			edgePoint.x += xFactor * (rectHalfWidth);
 			edgePoint.y += yFactor * (rectHalfWidth) * tanTheta;
 		} else {
-			edgePoint.x += xFactor * (rect.height / (2.0 * tanTheta));
+			edgePoint.x += xFactor * (rectHeight / (2.0 * tanTheta));
 			edgePoint.y += yFactor * (rectHalfHeight);
 		}
 
