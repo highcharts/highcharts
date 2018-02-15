@@ -11,113 +11,20 @@ const fs = require('fs');
 const {
     getFilesInFolder
 } = require('highcharts-assembler/src/build.js');
-
 const {
     getFile,
     removeDirectory,
     writeFile
 } = require('highcharts-assembler/src/utilities.js');
 const {
+    getFileOptions,
+    getProductVersion,
+    scripts
+} = require('./tools/build.js');
+const {
   checkDependency
 } = require('./tools/filesystem.js');
 
-
-/**
- * Get the product version from build.properties.
- * The product version is used in license headers and in package names.
- * @return {string|null} Returns version number or null if not found.
- */
-const getProductVersion = () => {
-    const {
-        regexGetCapture
-    } = require('highcharts-assembler/src/dependencies.js');
-    const properties = fs.readFileSync('./build.properties', 'utf8');
-    return regexGetCapture(/product\.version=(.+)/, properties);
-};
-
-/**
- * Returns fileOptions for the build script
- * @todo Move this functionality to the build script,
- *   and reuse it on github.highcharts.com
- * @return {Object} Object containing all fileOptions
- */
-const getFileOptions = (files) => {
-    const highchartsFiles = replaceAll(
-      getOrderedDependencies('js/masters/highcharts.src.js').join('|'),
-      sep,
-      `\\${sep}`
-    );
-
-    // Modules should not be standalone, and they should exclude all parts files.
-    const fileOptions = files
-        .reduce((obj, file) => {
-            if (file.indexOf('modules') > -1 || file.indexOf('themes') > -1 || file.indexOf('indicators') > -1) {
-                obj[file] = {
-                    exclude: new RegExp(folders.parts),
-                    umd: false
-                };
-            }
-            return obj;
-        }, {});
-
-    /**
-     * Special cases
-     * solid-gauge should also exclude gauge-series
-     * highcharts-more and highcharts-3d is also not standalone.
-     */
-    fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|'));
-    fileOptions['modules/map.src.js'].product = 'Highmaps';
-    fileOptions['modules/map-parser.src.js'].product = 'Highmaps';
-    fileOptions['modules/stock.src.js'].exclude = new RegExp(folders.highchartsFiles.join('|'));
-    Object.assign(fileOptions, {
-        'highcharts-more.src.js': {
-            exclude: new RegExp(folders.parts),
-            umd: false
-        },
-        'highcharts-3d.src.js': {
-            exclude: new RegExp(folders.parts),
-            umd: false
-        },
-        'highmaps.src.js': {
-            product: 'Highmaps'
-        },
-        'highstock.src.js': {
-            product: 'Highstock'
-        }
-    });
-    return fileOptions;
-};
-
-/**
- * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
- * @param {string} --file Optional command line argument. Use to build a one or sevral files. Usage: "gulp build --file highcharts.js,modules/data.src.js"
- * @return undefined
- */
-const scripts = () => {
-    // Check if the installed version of the assembler matches the dependency.
-    checkDependency('highcharts-assembler', 'err', 'devDependencies');
-    const build = require('highcharts-assembler');
-    const base = './js/masters/';
-    const files = (
-      (argv.file) ?
-      argv.file.split(',') :
-      getFilesInFolder(base, true, '')
-    )
-    const type = (argv.type) ? argv.type : 'both';
-    const debug = argv.d || false;
-    const version = getProductVersion();
-    const fileOptions = getFileOptions(files);
-
-    return build({
-        base: base,
-        debug: debug,
-        fileOptions: fileOptions,
-        files: files,
-        output: './code/',
-        type: type,
-        version: version
-    });
-};
 
 /**
  * Creates a set of ES6-modules which is distributable.
@@ -679,7 +586,7 @@ const createProductJS = () => {
     },
     "Highstock": {
         "date": "${date}",
-        "nr": "${version}"
+        "nr": "${version}"<
     },
     "Highmaps": {
         "date": "${date}",
@@ -1431,7 +1338,26 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
 gulp.task('jsdoc', jsdoc);
 gulp.task('styles', styles);
-gulp.task('scripts', scripts);
+/**
+ * Gulp task to run the building process of distribution files. By default it
+ * builds all the distribution files. Usage: "gulp build".
+ * @param {string} --file Optional command line argument. Use to build a one
+ * or sevral files. Usage: "gulp build --file highcharts.js,modules/data.src.js"
+ * TODO add --help command to inform about usage.
+ * @return undefined
+ */
+gulp.task('scripts', () => {
+    const options = {
+        files: (
+            (argv.file) ?
+            argv.file.split(',') :
+            null
+        ),
+        type: (argv.type) ? argv.type : null,
+        debug: argv.d || false
+    };
+    return scripts(options);
+});
 gulp.task('build-modules', buildESModules);
 gulp.task('lint', lint);
 gulp.task('lint-samples', lintSamples);
