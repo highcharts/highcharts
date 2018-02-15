@@ -17,14 +17,9 @@ const {
     writeFile
 } = require('highcharts-assembler/src/utilities.js');
 const {
-    getFileOptions,
-    getProductVersion,
-    scripts
+    scripts,
+    getBuildScripts
 } = require('./tools/build.js');
-const {
-  checkDependency
-} = require('./tools/filesystem.js');
-
 
 /**
  * Creates a set of ES6-modules which is distributable.
@@ -1384,148 +1379,25 @@ gulp.task('dist', () => {
 });
 
 gulp.task('scripts-new', () => {
-    checkDependency('highcharts-assembler', 'err', 'devDependencies');
-    const {
-        join,
-        relative,
-        resolve,
-        sep
-    } = require('path');
-    const {
-      getOrderedDependencies
-    } = require('highcharts-assembler/src/dependencies.js');
-    const {
-      buildDistFromModules,
-      buildModules
-    } = require('highcharts-assembler/src/build.js');
-    const isUndefined = (x) => typeof x === 'undefined';
-    const version = getProductVersion();
-    const pathMasters = './js/masters/';
-    const files = (
-      (argv.file) ?
-      argv.file.split(',') :
-      getFilesInFolder(pathMasters, true)
-    );
-    const fileOptions = getFileOptions(files);
-    const mapTypeToSource = {
-        'classic': './code/es-modules',
-        'css': './code/js/es-modules'
-    };
-    const dependencyList = {
-        'classic': {},
-        'css': {}
-    };
-    const types = isString(argv.type) ? argv.type.split(',') : ['classic', 'css'];
-    const debug = argv.d || false;
     const watch = argv.watch || false;
-    // Build all module files
-    const pathJSParts = './js/';
-    const pathESModules = './code/';
-    const getTime = () => {
-        const date = new Date();
-        const pad = val => {
-            return (val <= 9 ? '0' + val : '' + val);
-        };
-        return [
-            pad(date.getHours()),
-            pad(date.getMinutes()),
-            pad(date.getSeconds())
-        ].join(':');
-    };
-    buildModules({
-        base: pathJSParts,
-        output: pathESModules,
-        type: types
+    const {
+        fnFirstBuild,
+        mapOfWatchFn
+    } = getBuildScripts({
+        debug: argv.d || false,
+        files: (
+            (argv.file) ?
+            argv.file.split(',') :
+            null
+        ),
+        type: (argv.type) ? argv.type : null,
+        watch
     });
-    types.forEach((type) => {
-        const pathSource = mapTypeToSource[type];
-        const pathESMasters = join(pathSource, 'masters');
-        buildDistFromModules({
-            base: pathESMasters,
-            debug: debug,
-            fileOptions: fileOptions,
-            files: files,
-            output: './code/',
-            type: [type],
-            version: version
-        });
-    });
-    if (watch === true) {
-        types.forEach((type) => {
-            const pathSource = mapTypeToSource[type];
-            files.forEach((filename) => {
-                const options = fileOptions[filename];
-                const exclude = (
-                  !isUndefined(options) && !isUndefined(options.exclude) ?
-                  options.exclude :
-                  false
-                );
-                const pathFile = join(pathSource, 'masters', filename);
-                const list = getOrderedDependencies(pathFile)
-                    .filter((pathModule) => {
-                        let result = true;
-                        if (exclude) {
-                            result = !exclude.test(pathModule);
-                        }
-                        return result;
-                    })
-                    .map((str) => {
-                        return resolve(str);
-                    });
-                dependencyList[type][pathFile] = list;
-            });
-        });
-        gulp.watch('./js/**/*.js', (event) => {
-            const pathFile = event.path;
-            const pathRelative = relative(pathJSParts, pathFile);
-            console.log([
-                '',
-                `${event.type}:`.cyan + ` ${relative('.', pathFile)} ` +
-                getTime().gray,
-                'Rebuilding files: '.cyan,
-                types
-                    .map((type) => `- ${join(pathESModules, type === 'css' ? 'js' : '', 'es-modules', pathRelative)}`.gray)
-                    .join('\n')
-            ].join('\n'));
-            return buildModules({
-                base: pathJSParts,
-                files: [pathRelative.split(sep).join('/')],
-                output: pathESModules,
-                type: types
-            });
-        });
-        types.forEach((type) => {
-            const pathSource = mapTypeToSource[type];
-            const typeList = dependencyList[type];
-            const pathESMasters = join(pathSource, 'masters');
-            gulp.watch(join(pathSource, '**/*.js'), (event) => {
-                const pathFile = event.path;
-                const filesModified = Object.keys(typeList)
-                  .reduce((arr, pathMaster) => {
-                      const list = dependencyList[type][pathMaster];
-                      if (list.includes(pathFile)) {
-                          arr.push(relative(pathESMasters, pathMaster).split(sep).join('/'));
-                      }
-                      return arr;
-                  }, []);
-                console.log([
-                    `${event.type}:`.cyan + ` ${relative('.', pathFile)} ` +
-                    getTime().gray,
-                    'Rebuilding files: '.cyan,
-                    filesModified
-                      .map(str => `- ${join('code', type === 'css' ? 'js' : '', str)}`.gray)
-                      .join('\n')
-                ].join('\n'));
-                buildDistFromModules({
-                    base: pathESMasters,
-                    debug: debug,
-                    fileOptions: fileOptions,
-                    files: filesModified,
-                    output: './code/',
-                    type: [type],
-                    version: version
-                });
-            });
+    fnFirstBuild();
+    if (watch) {
+        Object.keys(mapOfWatchFn).forEach((key) => {
+            const fn = mapOfWatchFn[key];
+            gulp.watch(key, fn);
         });
     }
 });
