@@ -258,11 +258,7 @@
     display: none;
     background-color:#fff;
     position: absolute;
-    left:50%;
-    margin-top:;
     width:188px;
-    top:100px;
-    margin-left: -104px;
     z-index: 1000;
     padding:10px;
     box-shadow: 2px 3px 20px #888888;
