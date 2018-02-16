@@ -2824,9 +2824,8 @@ wrap(Series.prototype, 'processData', function (proceed) {
 	}
 });
 
-wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
-	proceed.call(this, vis, redraw);
-	if (this.visible === false && this.canvas && this.renderTarget) {
+addEvent(Series.prototype, 'hide', function () {
+	if (this.canvas && this.renderTarget) {
 		if (this.ogl) {
 			this.ogl.clear();
 		}
