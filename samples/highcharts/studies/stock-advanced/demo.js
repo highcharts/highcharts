@@ -785,13 +785,13 @@ function menuOnOut() {
             // Annotation type changed
             H.Annotation[annotating] !== annotation &&
             // Annotation on click action
-            H.Annotation[annotating].onPointClick
+            H.defined(H.Annotation[annotating].onPointClick)
         );
         chart.container.classList.toggle(
             'crosshair-on-chart',
             !selection &&
             H.Annotation[annotating] !== annotation &&
-            H.Annotation[annotating].onChartClick
+            H.defined(H.Annotation[annotating].onChartClick)
         );
 
         if (selection) {
