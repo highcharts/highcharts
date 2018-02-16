@@ -499,29 +499,30 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
         ].join('\n');
     };
     return new Promise((resolve, reject) => {
-      const out = closureCompiler.compile({
-          compilationLevel: 'SIMPLE_OPTIMIZATIONS',
-          jsCode: [{
-              src: src
-          }],
-          languageIn: 'ES5',
-          languageOut: 'ES5',
-          createSourceMap: createSourceMap
-      });
-      const errors = out.errors;
-      if (errors.length) {
-          const msg = errors.map(getErrorMessage).join('\n');
-          reject(msg);
-      } else {
-          writeFile(outputPath, out.compiledCode);
-          if (createSourceMap) {
-              writeFile(outputPath + '.map', out.sourceMap);
-          }
-          // @todo add filesize information
-          console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
-      }
+        const out = closureCompiler.compile({
+            compilationLevel: 'SIMPLE_OPTIMIZATIONS',
+            jsCode: [{
+                src: src
+            }],
+            languageIn: 'ES5',
+            languageOut: 'ES5',
+            createSourceMap: createSourceMap
+        });
+        const errors = out.errors;
+        if (errors.length) {
+            const msg = errors.map(getErrorMessage).join('\n');
+            reject(msg);
+        } else {
+            writeFile(outputPath, out.compiledCode);
+            if (createSourceMap) {
+                writeFile(outputPath + '.map', out.sourceMap);
+            }
+            // @todo add filesize information
+            console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
+            resolve();
+        }
     });
-}
+};
 
 const compile = (files, sourceFolder) => {
     console.log(
@@ -529,7 +530,7 @@ const compile = (files, sourceFolder) => {
     );
     const createSourceMap = true;
     const promises = files
-      .map(path => compileSingleFile(path, sourceFolder, createSourceMap))
+      .map(path => compileSingleFile(path, sourceFolder, createSourceMap));
     return Promise.all(promises);
 };
 

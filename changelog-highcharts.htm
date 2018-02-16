@@ -1,23 +1,35 @@
-<p>Highcharts 6.0.6 (2018-02-05)</p>
+<p>Highcharts 6.0.7 (2018-02-16)</p>
+<ul>
+    <li>Added internationalization support for the accessibility module. See <a href="https://api.highcharts.com/highcharts/lang.accessibility">lang.accessibility</a>.</li>
+</ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="heading-6-0-6-bug-fixes" class="panel-heading">
+        <div id="heading-6-0-7-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#6-0-6-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#6-0-7-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="6-0-6-bug-fixes" class="panel-collapse collapse">
+        <div id="6-0-7-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7700">#7700</a>, SVG offline export in styled mode in IE11 added <code>length</code> to styles.</li>
-                    <li>Fixed failing test on FireFox, <code>getBBox()</code> shouldn't be used on clipRect elements.</li>
-                    <li>Fixed issue with markers always being visible when using GPU translations in boost.</li>
-                    <li>Fixed syntax error causing missing <code>sunburst.js</code> file in distributions, see <a href="https://github.com/highslide-software/highcharts.com/issues/7775">#7775</a>.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7730">#7730</a>, <code>connectNulls</code> in Boost failed with zooming.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7716">#7716</a>, point padding caused extra points where there should be none. See</li>
-    
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/150">#150</a>, grid lines did not always align to plot border and to other axis' grid lines.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/1813">#1813</a>, graphs and areas were not clipped when exceeding perimeter in polar charts.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7191">#7191</a>, level options was applied to wrong level in treemap when <code>levelIsConstant</code> is false.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7729">#7729</a>, <code>highcharts-more.js</code> couldn't be included multiple times without errors.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7787">#7787</a>, a regression causing incorrect title alignment when useHTML was enabled in v6.0.5.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7800">#7800</a>, error on hovering points in IE11 + compatibility mode.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7806">#7806</a>, API reference had a wrong extend for bullet's targetOptions.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7812">#7812</a>, a regression causing wrong initial position of text with <code>useHTML</code>.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7814">#7814</a>, multiline axis title didn't reflow to chart resize.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7817">#7817</a>, regression with categories in drilldown. Point names were not properly purged from Axis.names array.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7825">#7825</a>, histogram threw error if the base series had equaled values.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7826">#7826</a>, annotations were hidden if the points had disabled markers.</li>
+                    reference description for chart.options3d.frame.bottom.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7850">#7850</a>, legacy IE event for <code>onContainerMouseDown</code> wasn't provided properly.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7854">#7854</a>, accessibility of datetime charts.</li>
+                    
                 </ul>
             </div>
         </div>

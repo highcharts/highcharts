@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "6.0.6",
+  "version": "6.0.7",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -34,8 +34,8 @@
     "closurecompiler": "^1.6.1",
     "colors": "~1.1.2",
     "eslint": "3.12.2",
-    "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-highcharts": "file:tools/eslint-plugin-highcharts",
+    "eslint-plugin-security": "^1.4.0",
     "fs-extra": "^2.1.2",
     "gifencoder": "^1.1.0",
     "google-closure-compiler-js": "^20160916.0.0",
