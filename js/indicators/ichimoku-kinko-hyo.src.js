@@ -59,6 +59,23 @@ function getClosestPointRange(axis) {
 	return closestDataRange;
 }
 
+// Data integrity in Ichimoku is different than default "averages":
+// Point: [undefined, value, value, ...] is correct
+// Point: [undefined, undefined, undefined, ...] is incorrect
+H.approximations['ichimoku-averages'] = function () {
+	var ret = [],
+		isEmptyRange;
+
+	each(arguments, function (arr, i) {
+		ret.push(H.approximations.average(arr));
+		isEmptyRange = !isEmptyRange && ret[i] === undefined;
+	});
+
+	// Return undefined when first elem. is undefined and let
+	// sum method handle null (#7377)
+	return isEmptyRange ? undefined : ret;
+};
+
 /**
  * The IKH series type.
  *
@@ -267,7 +284,7 @@ seriesType('ikh', 'sma',
 			}
 		},
 		dataGrouping: {
-			approximation: 'averages'
+			approximation: 'ichimoku-averages'
 		}
 	}, {
 		pointArrayMap: [
