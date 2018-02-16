@@ -1115,7 +1115,7 @@ function whichAxis(e, chart) {
     H.wrap(H.Annotation.prototype, 'init', function (p, chart, options) {
         p.call(this, chart, options);
 
-        if (!this.options.id) {
+        if (!defined(this.options.id)) {
             this.options.id = H.uniqueKey();
         }
     });
@@ -1250,6 +1250,10 @@ function whichAxis(e, chart) {
 
         if (withMarker) {
             options.shapes[0].markerEnd = 'arrow';
+        }
+
+        if (arrow) {
+            chart.removeAnnotation(idCounter - 1);
         }
 
         return chart.addAnnotation(options);
