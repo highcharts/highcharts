@@ -1006,7 +1006,97 @@ function whichAxis(e, chart) {
     };
 
     H.Annotation.prototype.drawBB = function () {
-        H.Annotation.drawBB(this.chart.renderer, this, this.group.getBBox());
+        H.Annotation.drawBB(this.chart.renderer, this, this.getBBox(), this.group);
+    };
+
+    H.Annotation.prototype.getBBox = function () {
+        var minX = Infinity;
+        var minY = Infinity;
+        var maxX = -Infinity;
+        var maxY = -Infinity;
+
+        H.each(this.shapes, function (item) {
+            var width = 0;
+            var height = 0;
+            var bbox;
+
+            if (item.type === 'rect' || item.type === 'circle') {
+                bbox = item.getBBox();
+                width = bbox.width;
+                height = bbox.height;
+            }
+
+            H.each(item.points, function (point) {
+                var plotBox = point.series.getPlotBox();
+                var x1 = point.plotX + plotBox.translateX - width / 2;
+                var y1 = point.plotY + plotBox.translateY - height / 2;
+                var x2 = x1 + width;
+                var y2 = y1 + height;
+
+                if (x1 < minX) {
+                    minX = x1;
+                }
+                if (x2 > maxX) {
+                    maxX = x2;
+                }
+                if (y1 < minY) {
+                    minY = y1;
+                }
+                if (y2 > maxY) {
+                    maxY = y2;
+                }
+            });
+        });
+
+        H.each(this.labels, function (label) {
+            var options = label.options;
+            var verticalAlign = options.verticalAlign;
+            var align = options.align;
+
+            var offsetY = options.y;
+            if (verticalAlign === 'bottom') {
+                offsetY -= label.height;
+            } else if (verticalAlign === 'middle') {
+                offsetY -= label.height / 2;
+            }
+
+            var offsetX = options.x;
+            if (align === 'center') {
+                offsetX -= label.width / 2;
+            } else if (align === 'right') {
+                offsetX -= label.width;
+            }
+
+            var point = label.points[0];
+            var plotBox = point.series.getPlotBox();
+            var x1 = point.plotX + plotBox.translateX + offsetX;
+            var y1 = point.plotY + plotBox.translateY + offsetY;
+            var x2 = x1 + label.width;
+            var y2 = y1 + label.height;
+
+            if (x1 < minX) {
+                minX = x1;
+            }
+            if (x2 > maxX) {
+                maxX = x2;
+            }
+            if (y1 < minY) {
+                minY = y1;
+            }
+            if (y2 > maxY) {
+                maxY = y2;
+            }
+        });
+
+        minX = Math.round(minX);
+        minY = Math.round(minY);
+
+        return {
+            x: minX,
+            y: minY,
+            width: Math.round(maxX) - minX,
+            height: Math.round(maxY) - minY
+        };
     };
 
     H.Annotation.prototype.select = function () {
@@ -1679,8 +1769,8 @@ function whichAxis(e, chart) {
             point.series.chart.renderer,
             point,
             {
-                x: graphic.x + point.series.group.translateX - offsetX,
-                y: graphic.y + point.series.group.translateY,
+                x: point.plotX + point.series.group.translateX - offsetX,
+                y: point.plotY + point.series.group.translateY - bbox.height,
                 width: bbox.width,
                 height: bbox.height
             }
@@ -1690,13 +1780,16 @@ function whichAxis(e, chart) {
     H.wrap(H.seriesTypes.flags.prototype, 'destroy', function (p) {
         H.each(this.points, function (point) {
             if (point.bb) {
-                point.bb.destroy();
-                point.bb = null;
+                point.bb = point.bb.destroy();
             }
 
             point.graphic.element.onclick = null;
         });
 
+        p.apply(this, Array.prototype.slice.call(1, arguments));
+    });
+
+    H.wrap(H.seriesTypes.flags.prototype, 'redraw', function (p) {
         p.apply(this, Array.prototype.slice.call(1, arguments));
     });
 
@@ -1722,19 +1815,22 @@ function whichAxis(e, chart) {
                         if (series.chart.annotating === 'selection') {
                             e.stopPropagation();
 
-                            if (!point.bb) {
+                            point.showBB = !point.showBB;
+
+                            if (point.showBB) {
                                 series.drawBB(point);
                             } else {
-                                point.bb.destroy();
-                                point.bb = null;
+                                point.bb = point.bb.destroy();
                             }
                         }
                     };
                 }
 
-                if (point.bb) {
+                if (point.showBB) {
                     series.drawBB(point);
                 }
+            } else if (point.bb) {
+                point.bb = point.bb.destroy();
             }
         });
     });
@@ -1810,8 +1906,7 @@ function whichAxis(e, chart) {
                 var point = series.points[0];
 
                 if (series.type === 'flags' && point.bb) {
-                    point.bb.destroy();
-                    point.bb = null;
+                    point.bb = point.bb.destroy();
                 }
             });
         }
