@@ -708,6 +708,10 @@ Pathfinder.prototype = {
 	}
 };
 
+// Add to Highcharts namespace
+H.Connection = Connection;
+H.Pathfinder = Pathfinder;
+
 
 // Add pathfinding capabilities to Points
 extend(H.Point.prototype, /** @lends Point.prototype */ {
