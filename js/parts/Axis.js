@@ -3286,6 +3286,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				this.adjustTickAmount();
 			}
 		}
+
+		fireEvent(this, 'afterSetTickPositions');
 	},
 
 	/**

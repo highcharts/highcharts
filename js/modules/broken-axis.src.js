@@ -76,9 +76,7 @@ extend(Axis.prototype, {
 	}
 });
 
-wrap(Axis.prototype, 'setTickPositions', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-	
+addEvent(Axis, 'afterSetTickPositions', function () {
 	if (this.options.breaks) {
 		var axis = this,
 			tickPositions = this.tickPositions,
