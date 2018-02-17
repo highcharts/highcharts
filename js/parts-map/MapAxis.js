@@ -10,35 +10,38 @@ import '../parts/Axis.js';
 var addEvent = H.addEvent,
 	Axis = H.Axis,
 	each = H.each,
-	pick = H.pick,
-	wrap = H.wrap;
+	pick = H.pick;
+
 /**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
-wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
-	var isXAxis = this.isXAxis,
-		dataMin,
-		dataMax,
-		xData = [],
-		useMapGeometry;
+addEvent(Axis, 'getSeriesExtremes', function () {
+	var xData = [];
 
 	// Remove the xData array and cache it locally so that the proceed method
 	// doesn't use it
-	if (isXAxis) {
+	if (this.isXAxis) {
 		each(this.series, function (series, i) {
 			if (series.useMapGeometry) {
 				xData[i] = series.xData;
 				series.xData = [];
 			}
 		});
+		this.seriesXData = xData;
 	}
 
-	// Call base to reach normal cartesian series (like mappoint)
-	proceed.call(this);
+});
+
+addEvent(Axis, 'afterGetSeriesExtremes', function () {
+
+	var xData = this.seriesXData,
+		dataMin,
+		dataMax,
+		useMapGeometry;
 
 	// Run extremes logic for map and mapline
-	if (isXAxis) {
+	if (this.isXAxis) {
 		dataMin = pick(this.dataMin, Number.MAX_VALUE);
 		dataMax = pick(this.dataMax, -Number.MAX_VALUE);
 		each(this.series, function (series, i) {
@@ -53,7 +56,10 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 			this.dataMin = dataMin;
 			this.dataMax = dataMax;
 		}
+
+		delete this.seriesXData;
 	}
+
 });
 
 /**

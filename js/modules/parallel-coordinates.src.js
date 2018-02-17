@@ -281,7 +281,7 @@ addEvent(Axis, 'afterSetOptions', function (e) {
  * Consider:
  * - using series.points instead of series.yData
  */
-wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
+addEvent(Axis, 'getSeriesExtremes', function (e) {
 	if (this.chart && this.chart.hasParallelCoordinates && !this.isXAxis) {
 		var index = this.parallelPosition,
 			currentPoints = [];
@@ -293,8 +293,8 @@ wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
 		});
 		this.dataMin = arrayMin(currentPoints);
 		this.dataMax = arrayMax(currentPoints);
-	} else {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+		e.preventDefault();
 	}
 });
 

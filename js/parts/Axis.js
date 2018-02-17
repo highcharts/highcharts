@@ -2125,105 +2125,113 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	getSeriesExtremes: function () {
 		var axis = this,
 			chart = axis.chart;
-		axis.hasVisibleSeries = false;
 
-		// Reset properties in case we're redrawing (#3353)
-		axis.dataMin = axis.dataMax = axis.threshold = null;
-		axis.softThreshold = !axis.isXAxis;
+		fireEvent(this, 'getSeriesExtremes', null, function () {
 
-		if (axis.buildStacks) {
-			axis.buildStacks();
-		}
+			axis.hasVisibleSeries = false;
 
-		// loop through this axis' series
-		each(axis.series, function (series) {
+			// Reset properties in case we're redrawing (#3353)
+			axis.dataMin = axis.dataMax = axis.threshold = null;
+			axis.softThreshold = !axis.isXAxis;
 
-			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
+			if (axis.buildStacks) {
+				axis.buildStacks();
+			}
 
-				var seriesOptions = series.options,
-					xData,
-					threshold = seriesOptions.threshold,
-					seriesDataMin,
-					seriesDataMax;
+			// loop through this axis' series
+			each(axis.series, function (series) {
 
-				axis.hasVisibleSeries = true;
+				if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
-				// Validate threshold in logarithmic axes
-				if (axis.positiveValuesOnly && threshold <= 0) {
-					threshold = null;
-				}
+					var seriesOptions = series.options,
+						xData,
+						threshold = seriesOptions.threshold,
+						seriesDataMin,
+						seriesDataMax;
 
-				// Get dataMin and dataMax for X axes
-				if (axis.isXAxis) {
-					xData = series.xData;
-					if (xData.length) {
-						// If xData contains values which is not numbers, then
-						// filter them out. To prevent performance hit, we only
-						// do this after we have already found seriesDataMin
-						// because in most cases all data is valid. #5234.
-						seriesDataMin = arrayMin(xData);
-						seriesDataMax = arrayMax(xData);
-						
-						if (
-							!isNumber(seriesDataMin) &&
-							!(seriesDataMin instanceof Date) // #5010
-						) {
-							xData = grep(xData, isNumber);
-							// Do it again with valid data
+					axis.hasVisibleSeries = true;
+
+					// Validate threshold in logarithmic axes
+					if (axis.positiveValuesOnly && threshold <= 0) {
+						threshold = null;
+					}
+
+					// Get dataMin and dataMax for X axes
+					if (axis.isXAxis) {
+						xData = series.xData;
+						if (xData.length) {
+							// If xData contains values which is not numbers,
+							// then filter them out. To prevent performance hit,
+							// we only do this after we have already found
+							// seriesDataMin because in most cases all data is
+							// valid. #5234.
 							seriesDataMin = arrayMin(xData);
 							seriesDataMax = arrayMax(xData);
+							
+							if (
+								!isNumber(seriesDataMin) &&
+								!(seriesDataMin instanceof Date) // #5010
+							) {
+								xData = grep(xData, isNumber);
+								// Do it again with valid data
+								seriesDataMin = arrayMin(xData);
+								seriesDataMax = arrayMax(xData);
+							}
+
+							if (xData.length) {
+								axis.dataMin = Math.min(
+									pick(axis.dataMin, xData[0], seriesDataMin),
+									seriesDataMin
+								);
+								axis.dataMax = Math.max(
+									pick(axis.dataMax, xData[0], seriesDataMax),
+									seriesDataMax
+								);
+							}
 						}
 
-						if (xData.length) {
+					// Get dataMin and dataMax for Y axes, as well as handle
+					// stacking and processed data
+					} else {
+
+						// Get this particular series extremes
+						series.getExtremes();
+						seriesDataMax = series.dataMax;
+						seriesDataMin = series.dataMin;
+
+						// Get the dataMin and dataMax so far. If percentage is
+						// used, the min and max are always 0 and 100. If
+						// seriesDataMin and seriesDataMax is null, then series
+						// doesn't have active y data, we continue with nulls
+						if (defined(seriesDataMin) && defined(seriesDataMax)) {
 							axis.dataMin = Math.min(
-								pick(axis.dataMin, xData[0], seriesDataMin),
+								pick(axis.dataMin, seriesDataMin),
 								seriesDataMin
 							);
 							axis.dataMax = Math.max(
-								pick(axis.dataMax, xData[0], seriesDataMax),
+								pick(axis.dataMax, seriesDataMax),
 								seriesDataMax
 							);
 						}
-					}
 
-				// Get dataMin and dataMax for Y axes, as well as handle
-				// stacking and processed data
-				} else {
-
-					// Get this particular series extremes
-					series.getExtremes();
-					seriesDataMax = series.dataMax;
-					seriesDataMin = series.dataMin;
-
-					// Get the dataMin and dataMax so far. If percentage is
-					// used, the min and max are always 0 and 100. If
-					// seriesDataMin and seriesDataMax is null, then series
-					// doesn't have active y data, we continue with nulls
-					if (defined(seriesDataMin) && defined(seriesDataMax)) {
-						axis.dataMin = Math.min(
-							pick(axis.dataMin, seriesDataMin),
-							seriesDataMin
-						);
-						axis.dataMax = Math.max(
-							pick(axis.dataMax, seriesDataMax),
-							seriesDataMax
-						);
-					}
-
-					// Adjust to threshold
-					if (defined(threshold)) {
-						axis.threshold = threshold;
-					}
-					// If any series has a hard threshold, it takes precedence
-					if (
-						!seriesOptions.softThreshold ||
-						axis.positiveValuesOnly
-					) {
-						axis.softThreshold = false;
+						// Adjust to threshold
+						if (defined(threshold)) {
+							axis.threshold = threshold;
+						}
+						// If any series has a hard threshold, it takes
+						// precedence
+						if (
+							!seriesOptions.softThreshold ||
+							axis.positiveValuesOnly
+						) {
+							axis.softThreshold = false;
+						}
 					}
 				}
-			}
+			});
 		});
+
+		fireEvent(this, 'afterGetSeriesExtremes');
 	},
 
 	/**
