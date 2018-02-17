@@ -2880,6 +2880,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Translation addend
 		axis.transB = axis.horiz ? axis.left : axis.bottom;
 		axis.minPixelPadding = transA * minPointOffset;
+
+		fireEvent(this, 'afterSetAxisTranslation');
 	},
 
 	minFromRange: function () {

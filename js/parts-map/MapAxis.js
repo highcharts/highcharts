@@ -59,7 +59,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 /**
  * Override axis translation to make sure the aspect ratio is always kept
  */
-wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
+addEvent(Axis, 'afterSetAxisTranslation', function () {
 	var chart = this.chart,
 		mapRatio,
 		plotRatio = chart.plotWidth / chart.plotHeight,
@@ -69,10 +69,6 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		fixTo,
 		fixDiff,
 		preserveAspectRatio;
-
-
-	// Run the parent method
-	proceed.call(this);
 
 	// Check for map-like series
 	if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
