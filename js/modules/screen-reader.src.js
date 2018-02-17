@@ -293,7 +293,7 @@ function reverseChildNodes(node) {
 
 
 // Whenever drawing series, put info on DOM elements
-H.addEvent(H.Series.prototype, 'afterRender', function () {
+H.addEvent(H.Series, 'afterRender', function () {
 	if (this.chart.options.accessibility.enabled) {
 		this.setA11yDescription();
 	}

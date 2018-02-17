@@ -389,7 +389,7 @@ wrap(SeriesProto, 'translate', function (proceed) {
 /**
  * On destroy, we need to remove series from each axis.series
  */
-H.addEvent(SeriesProto, 'destroy', function () {
+H.addEvent(H.Series, 'destroy', function () {
 	if (this.chart.hasParallelCoordinates) {
 		each(this.chart.axes || [], function (axis) {
 			if (axis && axis.series) {

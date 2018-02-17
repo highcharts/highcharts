@@ -2824,7 +2824,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
 	}
 });
 
-addEvent(Series.prototype, 'hide', function () {
+addEvent(Series, 'hide', function () {
 	if (this.canvas && this.renderTarget) {
 		if (this.ogl) {
 			this.ogl.clear();

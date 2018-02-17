@@ -726,7 +726,7 @@ seriesProto.generatePoints = function () {
  * Override point prototype to throw a warning when trying to update grouped
  * points
  */
-H.addEvent(Point.prototype, 'update', function () {
+H.addEvent(Point, 'update', function () {
 	if (this.dataGroup) {
 		H.error(24);
 		return false;
@@ -816,7 +816,7 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
 /**
  * Destroy grouped data on series destroy
  */
-H.addEvent(seriesProto, 'destroy', seriesProto.destroyGroupedData);
+H.addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 
 
 // Handle default options for data grouping. This must be set at runtime because
@@ -854,7 +854,7 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
  * previous data grouping of neighbour series into accound when determining
  * group pixel width (#2692).
  */
-H.addEvent(Axis.prototype, 'afterSetScale', function () {
+H.addEvent(Axis, 'afterSetScale', function () {
 	each(this.series, function (series) {
 		series.hasProcessed = false;
 	});

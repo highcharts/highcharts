@@ -1630,23 +1630,6 @@ H.objectEach = function (obj, fn, ctx) {
 };
 
 /**
- * Return true if an element is a prototype. Used by Highcharts to set events
- * on prototypes, that are fired by instances of the same.
- * @param  {Object}  obj The item to evaluate.
- * @return {Boolean}    True if it is a first-level prototype.
- */
-H.isPrototype = function (obj) {
-	// return Object.getPrototypeOf(obj) === Object.prototype;
-	return (
-		obj === H.Axis.prototype || 
-		obj === H.Chart.prototype || 
-		obj === H.Point.prototype || 
-		obj === H.Series.prototype ||
-		obj === H.Tick.prototype
-	);
-};
-
-/**
  * Add an event listener.
  *
  * @function #addEvent
@@ -1661,15 +1644,16 @@ H.isPrototype = function (obj) {
 H.addEvent = function (el, type, fn) {
 
 	var events,
-		collectionName,
 		addEventListener = el.addEventListener || H.addEventListenerPolyfill;
 
-	// If we're setting events directly on the prototype, use a separate
+	// If we're setting events directly on the constructor, use a separate
 	// collection, `protoEvents` to distinguish it from the item events in
 	// `hcEvents`.
-	collectionName = H.isPrototype(el) ? 'protoEvents' : 'hcEvents';
-
-	events = el[collectionName] = el[collectionName] || {};
+	if (typeof el === 'function' && el.prototype) {
+		events = el.prototype.protoEvents = el.prototype.protoEvents || {};
+	} else {
+		events = el.hcEvents = el.hcEvents || {};
+	}
 
 	// Handle DOM events
 	if (addEventListener) {
