@@ -1817,7 +1817,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		var isXAxis = userOptions.isX,
 			axis = this;
 
-
 		/**
 		 * The Chart that the axis belongs to.
 		 *
@@ -1850,6 +1849,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 */
 		axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
+		fireEvent(this, 'init', { userOptions: userOptions });
 
 		axis.opposite = userOptions.opposite; // needed in setOptions
 
@@ -2017,6 +2017,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			axis.val2lin = axis.log2lin;
 			axis.lin2val = axis.lin2log;
 		}
+		
+		fireEvent(this, 'afterInit');
 	},
 
 	/**
@@ -2039,6 +2041,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				userOptions
 			)
 		);
+
+		fireEvent(this, 'afterSetOptions');
 	},
 
 	/**

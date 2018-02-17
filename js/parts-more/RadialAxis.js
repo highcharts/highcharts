@@ -9,7 +9,8 @@ import '../parts/Utilities.js';
 import '../parts/Axis.js';
 import '../parts/Tick.js';
 import './Pane.js';
-var Axis = H.Axis,
+var addEvent = H.addEvent,
+	Axis = H.Axis,
 	each = H.each,
 	extend = H.extend,
 	map = H.map,
@@ -473,25 +474,23 @@ if (!H.radialAxisExtended) {
 	};
 
 	/**
-	 * Override axisProto.init to mix in special axis instance functions and
-	 * function overrides
+	 * Actions before axis init.
 	 */
-	wrap(axisProto, 'init', function (proceed, chart, userOptions) {
-		var angular = chart.angular,
+	addEvent(Axis, 'init', function (e) {
+		var chart = this.chart,
+			angular = chart.angular,
 			polar = chart.polar,
-			isX = userOptions.isX,
+			isX = this.isXAxis,
 			isHidden = angular && isX,
 			isCircular,
-			options,
 			chartOptions = chart.options,
-			paneIndex = userOptions.pane || 0,
-			pane = this.pane = chart.pane && chart.pane[paneIndex],
-			paneOptions = pane && pane.options;
+			paneIndex = e.userOptions.pane || 0,
+			pane = this.pane = chart.pane && chart.pane[paneIndex];
 
 		// Before prototype.init
 		if (angular) {
 			extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);
-			isCircular =  !isX;
+			isCircular = !isX;
 			if (isCircular) {
 				this.defaultRadialOptions = this.defaultRadialGaugeOptions;
 			}
@@ -519,12 +518,20 @@ if (!H.radialAxisExtended) {
 			pane.axis = this;
 		}
 
-		// Run prototype.init
-		proceed.call(this, chart, userOptions);
+		this.isCircular = isCircular;
 
-		if (!isHidden && pane && (angular || polar)) {
-			options = this.options;
+	});
 
+	addEvent(Axis, 'afterInit', function () {
+
+		var chart = this.chart,
+			options = this.options,
+			isHidden = chart.angular && this.isXAxis,
+			pane = this.pane,
+			paneOptions = pane && pane.options;
+
+		if (!isHidden && pane && (chart.angular || chart.polar)) {
+			
 			// Start and end angle options are
 			// given in degrees relative to top, while internal computations are
 			// in radians relative to right (like SVG).
@@ -537,8 +544,6 @@ if (!H.radialAxisExtended) {
 				pick(paneOptions.endAngle, paneOptions.startAngle + 360) - 90
 			) *	Math.PI / 180; // Gauges
 			this.offset = options.offset || 0;
-
-			this.isCircular = isCircular;
 
 		}
 
