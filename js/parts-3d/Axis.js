@@ -118,9 +118,8 @@ var extendedOptions = {
 merge(true, Axis.prototype.defaultOptions, extendedOptions);
 
 
-wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
+addEvent(Axis, 'afterSetOptions', function () {
 	var options;
-	proceed.call(this, userOptions);
 	if (this.chart.is3d && this.chart.is3d() && this.coll !== 'colorAxis') {
 		options = this.options;
 		options.tickWidth = pick(options.tickWidth, 0);

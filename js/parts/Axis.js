@@ -2017,7 +2017,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			axis.val2lin = axis.log2lin;
 			axis.lin2val = axis.lin2log;
 		}
-		
+
 		fireEvent(this, 'afterInit');
 	},
 
@@ -2042,7 +2042,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			)
 		);
 
-		fireEvent(this, 'afterSetOptions');
+		fireEvent(this, 'afterSetOptions', { userOptions: userOptions });
 	},
 
 	/**

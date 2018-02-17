@@ -15,11 +15,13 @@ import '../parts/Series.js';
 /**
  * Extensions for parallel coordinates plot.
  */
-var SeriesProto = H.Series.prototype,
+var Axis = H.Axis,
+	SeriesProto = H.Series.prototype,
 	ChartProto = H.Chart.prototype,
 	AxisProto = H.Axis.prototype;
 
-var pick = H.pick,
+var addEvent = H.addEvent,
+	pick = H.pick,
 	each = H.each,
 	wrap = H.wrap,
 	merge = H.merge,
@@ -240,12 +242,10 @@ AxisProto.keepProps.push('parallelPosition');
 /**
  * Update default options with predefined for a parallel coords.
  */
-wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
+addEvent(Axis, 'afterSetOptions', function (e) {
 	var axis = this,
 		chart = axis.chart,
 		axisPosition = ['left', 'width', 'height', 'top'];
-
-	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
 	if (chart.hasParallelCoordinates) {
 		if (chart.inverted) {
@@ -256,13 +256,13 @@ wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
 			axis.options = merge(
 				axis.options,
 				defaultXAxisOptions,
-				userOptions
+				e.userOptions
 			);
 		} else {
 			axis.options = merge(
 				axis.options,
 				axis.chart.options.chart.parallelAxes,
-				userOptions
+				e.userOptions
 			);
 			axis.parallelPosition = pick(
 				axis.parallelPosition,
