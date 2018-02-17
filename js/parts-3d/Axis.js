@@ -13,6 +13,7 @@ import '../parts/Chart.js';
 import '../parts/Tick.js';
 var ZAxis,
 
+	addEvent = H.addEvent,
 	Axis = H.Axis,
 	Chart = H.Chart,
 	deg2rad = H.deg2rad,
@@ -464,13 +465,12 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed) {
 	proceed.apply(this, [].slice.call(args, 1));
 });
 
-wrap(Axis.prototype, 'destroy', function (proceed) {
+addEvent(Axis, 'destroy', function () {
 	each(['backFrame', 'bottomFrame', 'sideFrame'], function (prop) {
 		if (this[prop]) {
 			this[prop] = this[prop].destroy();
 		}
 	}, this);
-	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 /*

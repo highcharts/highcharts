@@ -4798,6 +4798,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			plotGroup,
 			i;
 
+		fireEvent(this, 'destroy', { keepEvents: keepEvents });
+
 		// Remove the events
 		if (!keepEvents) {
 			removeEvent(axis);
