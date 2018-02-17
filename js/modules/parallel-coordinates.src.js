@@ -389,17 +389,15 @@ wrap(SeriesProto, 'translate', function (proceed) {
 /**
  * On destroy, we need to remove series from each axis.series
  */
-wrap(SeriesProto, 'destroy', function (proceed) {
+H.addEvent(SeriesProto, 'destroy', function () {
 	if (this.chart.hasParallelCoordinates) {
-		var series = this;
 		each(this.chart.axes || [], function (axis) {
 			if (axis && axis.series) {
-				erase(axis.series, series);
+				erase(axis.series, this);
 				axis.isDirty = axis.forceRedraw = true;
 			}
-		});
+		}, this);
 	}
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 function addFormattedValue(proceed) {
