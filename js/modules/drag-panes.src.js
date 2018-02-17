@@ -547,9 +547,7 @@ H.AxisResizer.prototype = {
 Axis.prototype.keepProps.push('resizer');
 
 // Add new AxisResizer, update or remove it
-wrap(Axis.prototype, 'render', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
+addEvent(Axis, 'afterRender', function () {
 	var axis = this,
 		resizer = axis.resizer,
 		resizerOptions = axis.options.resize,

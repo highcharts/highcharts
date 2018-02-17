@@ -4756,6 +4756,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// End stacked totals
 
 		axis.isDirty = false;
+
+		fireEvent(this, 'afterRender');
 	},
 
 	/**

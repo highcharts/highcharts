@@ -7,7 +7,8 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
-var Axis = H.Axis,
+var addEvent = H.addEvent,
+	Axis = H.Axis,
 	each = H.each,
 	pick = H.pick,
 	wrap = H.wrap;
@@ -120,7 +121,6 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 /**
  * Override Axis.render in order to delete the fixTo prop
  */
-wrap(Axis.prototype, 'render', function (proceed) {
-	proceed.call(this);
+addEvent(Axis, 'render', function () {
 	this.fixTo = null;
 });

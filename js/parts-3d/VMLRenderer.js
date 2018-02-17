@@ -9,7 +9,8 @@ import '../parts/Utilities.js';
 import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
 /*= if (build.classic) { =*/
-var Axis = H.Axis,
+var addEvent = H.addEvent,
+	Axis = H.Axis,
 	SVGRenderer = H.SVGRenderer,
 	VMLRenderer = H.VMLRenderer;
 
@@ -39,8 +40,8 @@ if (VMLRenderer) {
 
 	H.VMLRenderer.prototype.arc3dPath = H.SVGRenderer.prototype.arc3dPath;
 
-	H.wrap(Axis.prototype, 'render', function (proceed) {
-		proceed.apply(this, [].slice.call(arguments, 1));
+	addEvent(Axis, 'render', function () {
+
 		// VML doesn't support a negative z-index
 		if (this.sideFrame) {
 			this.sideFrame.css({ zIndex: 0 });
