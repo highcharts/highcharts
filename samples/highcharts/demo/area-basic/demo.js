@@ -30,7 +30,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '{series.name} had <b>{point.y:,.0f}</b><br/>warheads stockpiled in {point.x}'
+        pointFormat: '{series.name} had stockpiled <b>{point.y:,.0f}</b><br/>warheads in {point.x}'
     },
     plotOptions: {
         area: {
