@@ -9,7 +9,7 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Sources: <a href="https://thebulletin.org/2006/july/global-nuclear-stockpiles-1945-2006">' +
             'thebulletin.org</a> &amp; <a href="https://www.armscontrol.org/factsheets/Nuclearweaponswhohaswhat">' +
-            'www.armscontrol.org</a>'
+            'armscontrol.org</a>'
     },
     xAxis: {
         allowDecimals: false,
