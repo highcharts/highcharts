@@ -879,6 +879,26 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 */
 
 		/**
+		 * When using multiple axis, the ticks of two or more opposite axes
+		 * will automatically be aligned by adding ticks to the axis or axes
+		 * with the least ticks, as if `tickAmount` were specified.
+		 *
+		 * This can be prevented by setting `alignTicks` to false. If the grid
+		 * lines look messy, it's a good idea to hide them for the secondary
+		 * axis by setting `gridLineWidth` to 0.
+		 *
+		 * If `startOnTick` or `endOnTick` in an Axis options are set to false,
+		 * then the `alignTicks ` will be disabled for the Axis.
+		 *
+		 * Disabled for logarithmic axes.
+		 *
+		 * @type      {Boolean}
+		 * @default   true
+		 * @product   highcharts highstock
+		 * @apioption xAxis.alignTicks
+		 */
+
+		/**
 		 * Padding of the max value relative to the length of the axis. A
 		 * padding of 0.05 will make a 100px axis 5px longer. This is useful
 		 * when you don't want the highest data value to appear on the edge
@@ -3330,6 +3350,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			// Only if alignTicks is true
 			this.chart.options.chart.alignTicks !== false &&
 			options.alignTicks !== false &&
+			
+			// Disabled when startOnTick or endOnTick are false (#7604)
+			options.startOnTick !== false &&
+			options.endOnTick !== false &&
 
 			// Don't try to align ticks on a log axis, they are not evenly
 			// spaced (#6021)
