@@ -140,34 +140,28 @@ const scripts = (params) => {
 };
 
 
-const getListOfDependencies = (files, types, fileOptions, mapTypeToSource) => {
-    const dependencyList = {
-        'classic': {},
-        'css': {}
-    };
-    types.forEach((type) => {
-        const pathSource = mapTypeToSource[type];
-        files.forEach((filename) => {
-            const options = fileOptions[filename];
-            const exclude = (
-              !isUndefined(options) && !isUndefined(options.exclude) ?
-              options.exclude :
-              false
-            );
-            const pathFile = join(pathSource, 'masters', filename);
-            const list = getOrderedDependencies(pathFile)
-                .filter((pathModule) => {
-                    let result = true;
-                    if (exclude) {
-                        result = !exclude.test(pathModule);
-                    }
-                    return result;
-                })
-                .map((str) => {
-                    return resolve(str);
-                });
-            dependencyList[type][pathFile] = list;
-        });
+const getListOfDependencies = (files, fileOptions, pathSource) => {
+    const dependencyList = {};
+    files.forEach((filename) => {
+        const options = fileOptions[filename];
+        const exclude = (
+            !isUndefined(options) && !isUndefined(options.exclude) ?
+            options.exclude :
+            false
+        );
+        const pathFile = join(pathSource, 'masters', filename);
+        const list = getOrderedDependencies(pathFile)
+            .filter((pathModule) => {
+                let result = true;
+                if (exclude) {
+                    result = !exclude.test(pathModule);
+                }
+                return result;
+            })
+            .map((str) => {
+                return resolve(str);
+            });
+        dependencyList[pathFile] = list;
     });
     return dependencyList;
 };
@@ -291,23 +285,21 @@ const getBuildScripts = (params) => {
             }
         }
     };
-    const dependencyList = getListOfDependencies(
-        files,
-        types,
-        fileOptions,
-        mapTypeToSource
-    );
     types.forEach((type) => {
         const pathSource = mapTypeToSource[type];
-        const typeList = dependencyList[type];
         const pathESMasters = join(pathSource, 'masters');
         const key = join(pathSource, '**/*.js').split(sep).join('/');
         const fn = (event) => {
+            const dependencies = getListOfDependencies(
+                files,
+                fileOptions,
+                pathSource
+            );
             watchESModules(
                 event,
                 options,
                 type,
-                typeList,
+                dependencies,
                 pathESMasters
             );
         };
