@@ -407,7 +407,9 @@ const compile = (files, sourceFolder) => {
 const compileScripts = () => {
     const sourceFolder = './code/';
     const files = getFilesInFolder(sourceFolder, true, '')
-      .filter(path => path.endsWith('.src.js'));
+        // Compile all files ending with .src.js.
+        // Do not compile files in ./es-modules or ./js/es-modules.
+      .filter(path => (path.endsWith('.src.js') && !path.includes('es-modules')));
     return compile(files, sourceFolder);
 };
 
@@ -1368,7 +1370,7 @@ gulp.task('dist', () => {
     return Promise.resolve()
         .then(gulpify('cleanCode', cleanCode))
         .then(gulpify('styles', styles))
-        .then(gulpify('scripts', scripts))
+        .then(gulpify('scripts', getBuildScripts({}).fnFirstBuild))
         .then(gulpify('lint', lint))
         .then(gulpify('compile', compileScripts))
         .then(gulpify('cleanDist', cleanDist))
