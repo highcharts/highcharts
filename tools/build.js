@@ -286,7 +286,7 @@ const getBuildScripts = (params) => {
             return fnFirstBuild(options);
         },
         mapOfWatchFn: {
-            './js/**/*.js': (event) => {
+            'js/**/*.js': (event) => {
                 return watchSourceFiles(event, types);
             }
         }
@@ -301,7 +301,7 @@ const getBuildScripts = (params) => {
         const pathSource = mapTypeToSource[type];
         const typeList = dependencyList[type];
         const pathESMasters = join(pathSource, 'masters');
-        const key = join(pathSource, '**/*.js');
+        const key = join(pathSource, '**/*.js').split(sep).join('/');
         const fn = (event) => {
             watchESModules(
                 event,

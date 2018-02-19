@@ -39,16 +39,19 @@ const buildESModules = () => {
 const styles = () => {
     const sass = require('node-sass');
     const fileName = 'highcharts';
+    const input = './css/' + fileName + '.scss';
+    const output = './code/css/' + fileName + '.css';
     return new Promise((resolve, reject) => {
         sass.render({
-            file: './css/' + fileName + '.scss',
+            file: input,
             outputStyle: 'expanded'
         }, (err, result) => {
             if (err) {
                 console.error(err);
                 reject(err);
             } else {
-                writeFile('./code/css/' + fileName + '.css', result.css);
+                writeFile(output, result.css);
+                console.log(`Completed rendering of ${input} to ${output}`);
                 resolve();
             }
         });
@@ -89,16 +92,6 @@ const lintSamples = () => {
     ]);
     console.log(formatter(report.results));
 };
-
-/**
- * Watch changes to JS and SCSS files
- */
-gulp.task('default', ['styles', 'scripts'], () => {
-    // If styling changes, then build new css and js files.
-    gulp.watch(['./css/*.scss'], ['styles', 'scripts']);
-    // If js parts files changes, then build new js files.
-    gulp.watch(['./js/!(adapters|builds)/*.js'], ['scripts']);
-});
 
 gulp.task('ftp', function () {
     const ftp = require('vinyl-ftp');
@@ -1345,15 +1338,26 @@ gulp.task('styles', styles);
  */
 gulp.task('scripts', () => {
     const options = {
+        debug: argv.d || false,
         files: (
             (argv.file) ?
             argv.file.split(',') :
             null
         ),
         type: (argv.type) ? argv.type : null,
-        debug: argv.d || false
+        watch: argv.watch || false
     };
-    return scripts(options);
+    const {
+        fnFirstBuild,
+        mapOfWatchFn
+    } = getBuildScripts(options);
+    fnFirstBuild();
+    if (options.watch) {
+        Object.keys(mapOfWatchFn).forEach((key) => {
+            const fn = mapOfWatchFn[key];
+            gulp.watch(key, fn);
+        });
+    }
 });
 gulp.task('build-modules', buildESModules);
 gulp.task('lint', lint);
@@ -1362,6 +1366,60 @@ gulp.task('compile', compileScripts);
 gulp.task('compile-lib', compileLib);
 gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
 gulp.task('examples', createAllExamples);
+
+/**
+ * Watch changes to JS and SCSS files
+ */
+gulp.task('default', () => {
+    const {
+        fnFirstBuild,
+        mapOfWatchFn
+    } = getBuildScripts({});
+    const {
+        relative,
+        sep
+    } = require('path');
+    const watchlist = [
+        './css/*.scss',
+        './js/**/*.js',
+        './code/es-modules/**/*.js',
+        './code/js/es-modules/**/*.js'
+    ];
+    const msgBuildAll = 'Completed building of all JS files.';
+    let watcher;
+    const onChange = (event) => {
+        const path = relative('.', event.path).split(sep).join('/');
+        if (path.startsWith('css')) {
+            // Stop the watcher temporarily.
+            watcher.end();
+            watcher = null;
+            // Run styles and build all files.
+            styles()
+            .then(() => {
+                fnFirstBuild();
+                console.log(msgBuildAll);
+                // Start watcher again.
+                watcher = gulp.watch(watchlist, onChange);
+            });
+        } else if (path.startsWith('js')) {
+            // Build es-modules
+            mapOfWatchFn['js/**/*.js'](event);
+        } else if (path.startsWith('code/es-modules')) {
+            // Build dist files in classic mode.
+            mapOfWatchFn['code/es-modules/**/*.js'](event);
+        } else if (path.startsWith('code/js/es-modules')) {
+            // Build dist files in styled mode.
+            mapOfWatchFn['code/js/es-modules/**/*.js'](event);
+        }
+    };
+    return styles()
+    .then(() => {
+        fnFirstBuild();
+        console.log(msgBuildAll);
+        // Start watching source files.
+        watcher = gulp.watch(watchlist, onChange);
+    });
+});
 
 /**
  * Create distribution files
@@ -1379,30 +1437,6 @@ gulp.task('dist', () => {
         .then(gulpify('createExamples', createAllExamples))
         .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))
         .then(gulpify('ant-dist', antDist));
-});
-
-gulp.task('scripts-new', () => {
-    const watch = argv.watch || false;
-    const {
-        fnFirstBuild,
-        mapOfWatchFn
-    } = getBuildScripts({
-        debug: argv.d || false,
-        files: (
-            (argv.file) ?
-            argv.file.split(',') :
-            null
-        ),
-        type: (argv.type) ? argv.type : null,
-        watch
-    });
-    fnFirstBuild();
-    if (watch) {
-        Object.keys(mapOfWatchFn).forEach((key) => {
-            const fn = mapOfWatchFn[key];
-            gulp.watch(key, fn);
-        });
-    }
 });
 
 gulp.task('browserify', function () {
