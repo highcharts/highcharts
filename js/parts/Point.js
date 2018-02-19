@@ -23,7 +23,7 @@ var Point,
 /**
  * The Point object. The point objects are generated from the `series.data` 
  * configuration objects or raw numbers. They can be accessed from the
- * `Series.points` array. Other ways to instaniate points are through {@link
+ * `Series.points` array. Other ways to instantiate points are through {@link
  * Highcharts.Series#addPoint} or {@link Highcharts.Series#setData}.
  *
  * @class
