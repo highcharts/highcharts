@@ -48,3 +48,58 @@ QUnit.test('hasData', function (assert) {
       'should return true if series.visible is true, and series.points has length > 0'
     );
 });
+
+QUnit.test('getRotation', function (assert) {
+    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+        getRotation = wordcloudPrototype.utils.getRotation;
+    assert.strictEqual(
+        getRotation(undefined, 0, -60, 60),
+        false,
+        'should return false when orientations is not a Number.'
+    );
+    assert.strictEqual(
+        getRotation(-1, 2, -60, 60),
+        false,
+        'should return false if orientations is negative.'
+    );
+    assert.strictEqual(
+        getRotation(3, undefined, -60, 60),
+        false,
+        'should return false when index is not a Number.'
+    );
+    assert.strictEqual(
+        getRotation(3, -1, -60, 60),
+        false,
+        'should return false if index is negative.'
+    );
+    assert.strictEqual(
+        getRotation(3, 0, undefined, 60),
+        false,
+        'should return false when from is not a Number.'
+    );
+    assert.strictEqual(
+        getRotation(1, 2, 60, -60),
+        false,
+        'should return false if from is larger then to.'
+    );
+    assert.strictEqual(
+        getRotation(3, 0, -60, undefined),
+        false,
+        'should return false when from is not a Number.'
+    );
+    assert.strictEqual(
+        getRotation(3, 0, -60, 60),
+        -60,
+        'should return -60 which is the 1st of 3 orientations between -60 to 60.'
+    );
+    assert.strictEqual(
+        getRotation(3, 1, -60, 60),
+        0,
+        'should return 0 which is the 2nd of 3 orientations between -60 to 60.'
+    );
+    assert.strictEqual(
+        getRotation(3, 2, -60, 60),
+        60,
+        'should return 60 which is the 3rd of 3 orientations between -60 to 60.'
+    );
+});
