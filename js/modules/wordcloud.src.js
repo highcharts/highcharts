@@ -217,16 +217,35 @@ var getPlayingField = function getPlayingField(targetWidth, targetHeight) {
  * getRotation - Calculates a number of degrees to rotate, based upon a number
  *     of orientations within a range from-to.
  *
- * @param  {type} orientations Number of orientations.
- * @param  {type} from The smallest degree of rotation.
- * @param  {type} to The largest degree of rotation.
- * @return {type} Returns the resulting rotation for the word.
+ * @param  {number} orientations Number of orientations.
+ * @param  {number} index Index of point, used to decide orientation.
+ * @param  {number} from The smallest degree of rotation.
+ * @param  {number} to The largest degree of rotation.
+ * @return {boolean|number} Returns the resulting rotation for the word. Returns
+ * false if invalid input parameters.
  */
-var getRotation = function getRotation(orientations, from, to) {
-	var range = to - from,
-		intervals = range / (orientations - 1),
-		orientation = Math.floor(Math.random() * orientations);
-	return from + (orientation * intervals);
+var getRotation = function getRotation(orientations, index, from, to) {
+	var result = false, // Default to false
+		range,
+		intervals,
+		orientation;
+
+	// Check if we have valid input parameters.
+	if (
+		isNumber(orientations) &&
+		isNumber(index) &&
+		isNumber(from) &&
+		isNumber(to) &&
+		orientations > -1 &&
+		index > -1 &&
+		to > from
+	) {
+		range = to - from;
+		intervals = range / (orientations - 1);
+		orientation = index % orientations;
+		result = from + (orientation * intervals);
+	}
+	return result;
 };
 
 /**
@@ -591,7 +610,7 @@ var wordCloudSeries = {
 			return {
 				x: getRandomPosition(field.width) - (field.width / 2),
 				y: getRandomPosition(field.height) - (field.height / 2),
-				rotation: getRotation(r.orientations, r.from, r.to)
+				rotation: getRotation(r.orientations, point.index, r.from, r.to)
 			};
 		},
 		center: function centerPlacement(point, options) {
@@ -599,7 +618,7 @@ var wordCloudSeries = {
 			return {
 				x: 0,
 				y: 0,
-				rotation: getRotation(r.orientations, r.from, r.to)
+				rotation: getRotation(r.orientations, point.index, r.from, r.to)
 			};
 		}
 	},
@@ -614,6 +633,9 @@ var wordCloudSeries = {
 		'archimedean': archimedeanSpiral,
 		'rectangular': rectangularSpiral,
 		'square': squareSpiral
+	},
+	utils: {
+		getRotation: getRotation
 	},
 	getPlotBox: function () {
 		var series = this,
