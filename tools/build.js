@@ -48,7 +48,9 @@ const getProductVersion = () => {
  */
 const getFileOptions = (files) => {
     const highchartsFiles = replaceAll(
-        getOrderedDependencies('js/masters/highcharts.src.js').join('|'),
+        getOrderedDependencies('js/masters/highcharts.src.js')
+        .map((path) => relative('js', path))
+        .join('|'),
         sep,
         `\\${sep}`
     );
@@ -73,9 +75,15 @@ const getFileOptions = (files) => {
      * solid-gauge should also exclude gauge-series
      * highcharts-more and highcharts-3d is also not standalone.
      */
-    fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([highchartsFiles, 'GaugeSeries\.js$'].join('|'));
-    fileOptions['modules/map.src.js'].product = 'Highmaps';
-    fileOptions['modules/map-parser.src.js'].product = 'Highmaps';
+    if (fileOptions['modules/solid-gauge.src.js']) {
+        fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([highchartsFiles, 'GaugeSeries\.js$'].join('|'));
+    }
+    if (fileOptions['modules/map.src.js']) {
+        fileOptions['modules/map.src.js'].product = 'Highmaps';
+    }
+    if (fileOptions['modules/map-parser.src.js']) {
+        fileOptions['modules/map-parser.src.js'].product = 'Highmaps';
+    }
     Object.assign(fileOptions, {
         'highcharts-more.src.js': {
             exclude: new RegExp(highchartsFiles),
