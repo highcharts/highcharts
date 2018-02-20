@@ -4887,6 +4887,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			categorized,
 			graphic = this.cross;
 
+		fireEvent(this, 'drawCrosshair', { e: e, point: point });
+
 		// Use last available event when updating non-snapped crosshairs without
 		// mouse interaction (#5287)
 		if (!e) {
@@ -4912,7 +4914,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 					);
 			} else if (defined(point)) {
 				// #3834
-				pos = this.isXAxis ? point.plotX : this.len - point.plotY;
+				pos = pick(
+					point.crosshairPos, // 3D axis extension
+					this.isXAxis ? point.plotX : this.len - point.plotY
+				);
 			}
 
 			if (defined(pos)) {
@@ -4984,6 +4989,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			}
 			this.cross.e = e;
 		}
+
+		fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
 	},
 
 	/**

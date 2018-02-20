@@ -451,17 +451,14 @@ wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
 	return fix3dPosition(this, pos, true);
 });
 
-wrap(Axis.prototype, 'drawCrosshair', function (proceed) {
-	var args = arguments;
+addEvent(Axis, 'drawCrosshair', function (e) {
 	if (this.chart.is3d() && this.coll !== 'colorAxis') {
-		if (args[2]) {
-			args[2] = {
-				plotX: args[2].plotXold || args[2].plotX,
-				plotY: args[2].plotYold || args[2].plotY
-			};
+		if (e.point) {
+			e.point.crosshairPos = this.isXAxis ?
+				e.point.plotXold || e.point.plotX :
+				this.len - (e.point.plotYold || e.point.plotY);
 		}
 	}
-	proceed.apply(this, [].slice.call(args, 1));
 });
 
 addEvent(Axis, 'destroy', function () {

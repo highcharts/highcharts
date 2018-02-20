@@ -12,7 +12,8 @@ import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
-var arrayMax = H.arrayMax,
+var addEvent = H.addEvent,
+	arrayMax = H.arrayMax,
 	arrayMin = H.arrayMin,
 	Axis = H.Axis,
 	Chart = H.Chart,
@@ -499,12 +500,9 @@ wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 	}
 });
 
-// Wrapper to draw the label
-wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+// Extend crosshairs to also draw the label
+addEvent(Axis, 'afterDrawCrosshair', function (event) {
 	
-	// Draw the crosshair
-	proceed.call(this, e, point);
-
 	// Check if the label has to be drawn
 	if (
 		!defined(this.crosshair.label) ||
@@ -531,12 +529,10 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		tickInside = this.options.tickPosition === 'inside',
 		snap = this.crosshair.snap !== false,
 		value,
-		offset = 0;
-
-	// Use last available event (#5287)
-	if (!e) {
-		e = this.cross && this.cross.e;
-	}
+		offset = 0,
+		// Use last available event (#5287)
+		e = event.e || (this.cross && this.cross.e),
+		point = event.point;
 
 	align = (horiz ? 'center' : opposite ?
 		(this.labelAlign === 'right' ? 'right' : 'left') :
