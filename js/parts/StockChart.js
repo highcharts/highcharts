@@ -298,15 +298,13 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 // Clear axis from label panes (#6071)
-wrap(Axis.prototype, 'destroy', function (proceed) {
+addEvent(Axis, 'destroy', function () {
 	var chart = this.chart,
 		key = this.options && (this.options.top + ',' + this.options.height);
 
 	if (key && chart._labelPanes && chart._labelPanes[key] === this) {
 		delete chart._labelPanes[key];
 	}
-
-	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts
