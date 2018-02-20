@@ -576,7 +576,7 @@ const createProductJS = () => {
     },
     "Highstock": {
         "date": "${date}",
-        "nr": "${version}"<
+        "nr": "${version}"
     },
     "Highmaps": {
         "date": "${date}",
