@@ -672,7 +672,7 @@ seriesProto.processData = function () {
 				groupedXData[0] < xAxis.dataMin &&
 				visible
 			) {
-				if (xAxis.min === xAxis.dataMin) {
+				if (xAxis.min <= xAxis.dataMin) {
 					xAxis.min = groupedXData[0];
 				}
 				xAxis.dataMin = groupedXData[0];
@@ -953,6 +953,9 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 			seriesOptions.dataGrouping = dataGrouping;
 		}, false);
 	}
+
+	// Clear ordinal slope, so we won't accidentaly use the old one (#7827)
+	this.ordinalSlope = null;
 
 	if (redraw) {
 		this.chart.redraw();

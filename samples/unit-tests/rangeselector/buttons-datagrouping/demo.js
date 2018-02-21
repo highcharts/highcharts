@@ -7,6 +7,7 @@ QUnit.test('getUnionExtremes', function (assert) {
         },
 
         rangeSelector: {
+            allButtonsEnabled: true,
             buttons: [{
                 type: 'month',
                 count: 3,
@@ -25,8 +26,15 @@ QUnit.test('getUnionExtremes', function (assert) {
             }, {
                 type: 'all',
                 text: 'All'
+            }, {
+                type: 'all',
+                text: 'ALL G',
+                dataGrouping: {
+                    forced: true,
+                    units: [['year', null]]
+                }
             }],
-            selected: 3
+            selected: 4
         },
 
         series: [{
@@ -92,5 +100,46 @@ QUnit.test('getUnionExtremes', function (assert) {
         chart.xAxis[0].max,
         Date.UTC(2011, 8, 27),
         'All'
+    );
+
+
+    chart.series[0].update({
+        type: 'column',
+        data: [
+            [1501632000000, 0],
+            [1504310400000, 0],
+            [1506643200000, 4],
+            [1506729600000, 0],
+            [1506816000000, 2],
+            [1506902400000, 4],
+            [1506988800000, 2],
+            [1507075200000, 1],
+            [1507161600000, 2],
+            [1507248000000, 1],
+            [1507334400000, 2],
+            [1507420800000, 2],
+            [1507507200000, 1],
+            [1507593600000, 1],
+            [1507680000000, 3],
+            [1507766400000, 0],
+            [1507852800000, 0],
+            [1507939200000, 0],
+            [1508025600000, 1],
+            [1509494400000, 0]
+        ]
+    });
+
+    chart.rangeSelector.clickButton(0);
+    chart.rangeSelector.clickButton(3);
+
+    assert.ok(
+        chart.series[0].points[0].isInside,
+        'Column rendered inside the given range (#7827).'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        2,
+        'Two xAxis ticks rendered (#7827).'
     );
 });
