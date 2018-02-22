@@ -10,7 +10,8 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-var Chart = H.Chart,
+var addEvent = H.addEvent,
+	Chart = H.Chart,
 	each = H.each,
 	merge = H.merge,
 	perspective = H.perspective,
@@ -344,12 +345,9 @@ merge(true, defaultOptions, extendedOptions);
 
 /*= if (!build.classic) { =*/
 /**
- * Override the getContainer by adding the required CSS classes for column 
- * sides (#6018)
+ * Add the required CSS classes for column sides (#6018)
  */
-wrap(Chart.prototype, 'getContainer', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
+addEvent(Chart, 'afterGetContainer', function () {
 	this.renderer.definition({
 		tagName: 'style',
 		textContent: 
