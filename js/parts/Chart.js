@@ -567,7 +567,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			yAxisOptions = options.yAxis = splat(options.yAxis || {}),
 			optionsArray;
 
-		fireEvent(this, 'beforeGetAxes');
+		fireEvent(this, 'getAxes');
 
 		// make sure the options are arrays and add some members
 		each(xAxisOptions, function (axis, i) {
@@ -585,6 +585,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		each(optionsArray, function (axisOptions) {
 			new Axis(chart, axisOptions); // eslint-disable-line no-new
 		});
+
+		fireEvent(this, 'afterGetAxes');
 	},
 
 

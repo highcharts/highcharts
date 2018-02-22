@@ -11,7 +11,8 @@ import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
-var Axis = H.Axis,
+var addEvent = H.addEvent,
+	Axis = H.Axis,
 	Chart = H.Chart,
 	color = H.color,
 	ColorAxis,
@@ -940,12 +941,10 @@ if (!H.ColorAxis) {
 	/**
 	 * Extend the chart getAxes method to also get the color axis
 	 */
-	wrap(Chart.prototype, 'getAxes', function (proceed) {
+	addEvent(Chart, 'afterGetAxes', function () {
 
 		var options = this.options,
 			colorAxisOptions = options.colorAxis;
-
-		proceed.call(this);
 
 		this.colorAxis = [];
 		if (colorAxisOptions) {

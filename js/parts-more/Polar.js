@@ -610,7 +610,7 @@ if (!H.polarExtended) {
 		return wrapper;        
 	};
 
-	H.addEvent(H.Chart, 'beforeGetAxes', function () {
+	H.addEvent(H.Chart, 'getAxes', function () {
 
 		if (!this.pane) {
 			this.pane = [];

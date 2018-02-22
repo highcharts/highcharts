@@ -554,14 +554,12 @@ extend(ZAxis.prototype, {
 
 
 /**
-* Extend the chart getAxes method to also get the color axis
+* Get the Z axis in addition to the default X and Y.
 */
-wrap(Chart.prototype, 'getAxes', function (proceed) {
+addEvent(Chart, 'afterGetAxes', function () {
 	var chart = this,
 		options = this.options,
 		zAxisOptions = options.zAxis = splat(options.zAxis || {});
-
-	proceed.call(this);
 
 	if (!chart.is3d()) {
 		return;
