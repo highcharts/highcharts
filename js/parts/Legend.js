@@ -606,11 +606,12 @@ Highcharts.Legend.prototype = {
 							pick(options.margin, 12) +
 							spacing[side] +
 							(
-								side === 0 ?
+								side === 0 &&
+								chart.options.title.margin !== undefined ?
 									chart.titleOffset +
 										chart.options.title.margin :
 									0
-							) // #7428
+							) // #7428, #7894
 						)
 					);
 				}
