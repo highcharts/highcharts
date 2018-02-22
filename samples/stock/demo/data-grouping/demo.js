@@ -54,7 +54,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/larg
         },
 
         title: {
-            text: 'Hourly temperatures in Vik i Sogn, Norway, 2009-2015'
+            text: 'Hourly temperatures in Vik i Sogn, Norway, 2009-2017'
         },
 
         subtitle: {
