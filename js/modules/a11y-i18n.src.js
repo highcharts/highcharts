@@ -271,6 +271,7 @@ H.setOptions({
 			viewAsDataTable: 'View as data table.',
 			chartHeading: 'Chart graphic.',
 			chartContainerLabel: 'Interactive chart. {title}. Use up and down arrows to navigate with most screen readers.',
+			svgContainerTitle: '{chartTitle}',
 			rangeSelectorMinInput: 'Select start date.',
 			rangeSelectorMaxInput: 'Select end date.',
 			tableSummary: 'Table representation of chart.',
