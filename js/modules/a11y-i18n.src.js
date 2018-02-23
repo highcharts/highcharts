@@ -271,7 +271,6 @@ H.setOptions({
 			viewAsDataTable: 'View as data table.',
 			chartHeading: 'Chart graphic.',
 			chartContainerLabel: 'Interactive chart. {title}. Use up and down arrows to navigate with most screen readers.',
-			svgContainerTitle: '{chartTitle}',
 			rangeSelectorMinInput: 'Select start date.',
 			rangeSelectorMaxInput: 'Select end date.',
 			tableSummary: 'Table representation of chart.',
@@ -279,6 +278,16 @@ H.setOptions({
 			mapZoomOut: 'Zoom out chart',
 			rangeSelectorButton: 'Select range {buttonText}',
 			legendItem: 'Toggle visibility of series {itemName}',
+
+			/**
+			 * Title element text for the chart SVG element. Leave this
+			 * empty to disable adding the title element. Browsers will display
+			 * this content when hovering over elements in the chart. Assistive
+			 * technology may use this element to label the chart.
+			 *
+			 * @since 6.0.8
+			 */
+			svgContainerTitle: '{chartTitle}',
 
 			/**
 			 * Descriptions of lesser known series types. The relevant
