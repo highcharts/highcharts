@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-    
+
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -702,10 +702,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		return;
 	}
 
-	var	titleElement = doc.createElementNS(
-			'http://www.w3.org/2000/svg',
-			'title'
-		),
+	var	titleElement,
 		exportGroupElement = doc.createElementNS(
 			'http://www.w3.org/2000/svg',
 			'g'
@@ -717,12 +714,24 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		hiddenSectionId = 'highcharts-information-region-' + chart.index,
 		chartTitle = options.title.text || chart.langFormat(
 			'accessibility.defaultChartTitle', { chart: chart }
-		);
+		),
+		svgContainerTitle = stripTags(chart.langFormat(
+			'accessibility.svgContainerTitle', {
+				chartTitle: chartTitle
+			}
+		));
 
-	// Add SVG title/desc tags
-	titleElement.textContent = htmlencode(chartTitle);
-	titleElement.id = titleId;
-	descElement.parentNode.insertBefore(titleElement, descElement);
+	// Add SVG title tag if it is set
+	if (svgContainerTitle.length) {
+		titleElement = doc.createElementNS(
+				'http://www.w3.org/2000/svg',
+				'title'
+			);
+		titleElement.textContent = svgContainerTitle;
+		titleElement.id = titleId;
+		descElement.parentNode.insertBefore(titleElement, descElement);
+	}
+	
 	chart.renderTo.setAttribute('role', 'region');
 	chart.renderTo.setAttribute(
 		'aria-label',
