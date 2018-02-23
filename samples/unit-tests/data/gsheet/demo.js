@@ -1,4 +1,4 @@
-QUnit.test('data-google-spreadsheetloading', function (assert) {
+QUnit.skip('data-google-spreadsheetloading', function (assert) {
 
     var done = assert.async(),
         chart;

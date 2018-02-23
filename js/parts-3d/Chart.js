@@ -429,7 +429,7 @@ wrap(Chart.prototype, 'renderSeries', function (proceed) {
 	}
 });
 
-wrap(Chart.prototype, 'drawChartBox', function (proceed) {
+addEvent(Chart, 'afterDrawChartBox', function () {
 	if (this.is3d()) {
 		var chart = this,
 			renderer = chart.renderer,
@@ -679,8 +679,6 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 			]
 		});
 	}
-	
-	return proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 Chart.prototype.retrieveStacks = function (stacking) {
