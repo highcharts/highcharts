@@ -1345,16 +1345,10 @@ Axis.prototype.minFromRange = function () {
 };
 
 // Initialize rangeselector for stock charts
-wrap(Chart.prototype, 'init', function (proceed, options, callback) {
-
-	addEvent(this, 'init', function () {
-		if (this.options.rangeSelector.enabled) {
-			this.rangeSelector = new RangeSelector(this);
-		}
-	});
-
-	proceed.call(this, options, callback);
-
+addEvent(Chart, 'afterGetContainer', function () {
+	if (this.options.rangeSelector.enabled) {
+		this.rangeSelector = new RangeSelector(this);
+	}
 });
 
 wrap(Chart.prototype, 'render', function (proceed, options, callback) {

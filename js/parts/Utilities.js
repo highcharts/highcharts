@@ -1826,7 +1826,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 			
 	// Run the default if not prevented
 	if (defaultFunction && !eventArguments.defaultPrevented) {
-		defaultFunction(eventArguments);
+		defaultFunction.call(el, eventArguments);
 	}
 };
 

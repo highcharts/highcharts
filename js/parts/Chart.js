@@ -134,142 +134,153 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			seriesOptions = userOptions.series,
 			userPlotOptions = userOptions.plotOptions || {};
 
-		userOptions.series = null;
-		options = merge(defaultOptions, userOptions); // do the merge
+		// Fire the event with a default function
+		fireEvent(this,	'init',	{ args: arguments }, function () {
 
-		// Override (by copy of user options) or clear tooltip options
-		// in chart.options.plotOptions (#6218)
-		for (type in options.plotOptions) {
-			options.plotOptions[type].tooltip = (
-				userPlotOptions[type] &&
-				merge(userPlotOptions[type].tooltip) // override by copy
-			) || undefined; // or clear
-		}
-		// User options have higher priority than default options (#6218).
-		// In case of exporting: path is changed
-		options.tooltip.userOptions = (userOptions.chart &&
-			userOptions.chart.forExport && userOptions.tooltip.userOptions) ||
-			userOptions.tooltip;
+			userOptions.series = null;
+			options = merge(defaultOptions, userOptions); // do the merge
 
-		// set back the series data
-		options.series = userOptions.series = seriesOptions;
-		this.userOptions = userOptions;
+			// Override (by copy of user options) or clear tooltip options
+			// in chart.options.plotOptions (#6218)
+			for (type in options.plotOptions) {
+				options.plotOptions[type].tooltip = (
+					userPlotOptions[type] &&
+					merge(userPlotOptions[type].tooltip) // override by copy
+				) || undefined; // or clear
+			}
+			// User options have higher priority than default options
+			// (#6218). In case of exporting: path is changed
+			options.tooltip.userOptions = (
+				userOptions.chart &&
+				userOptions.chart.forExport &&
+				userOptions.tooltip.userOptions
+			) || userOptions.tooltip;
 
-		var optionsChart = options.chart;
+			// set back the series data
+			options.series = userOptions.series = seriesOptions;
+			this.userOptions = userOptions;
 
-		var chartEvents = optionsChart.events;
+			var optionsChart = options.chart;
 
-		this.margin = [];
-		this.spacing = [];
+			var chartEvents = optionsChart.events;
 
-		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
+			this.margin = [];
+			this.spacing = [];
 
-		// An array of functions that returns labels that should be considered
-		// for anti-collision
-		this.labelCollectors = [];
+			// Pixel data bounds for touch zoom
+			this.bounds = { h: {}, v: {} };
 
-		this.callback = callback;
-		this.isResizing = 0;
+			// An array of functions that returns labels that should be
+			// considered for anti-collision
+			this.labelCollectors = [];
 
-		/**
-		 * The options structure for the chart. It contains members for the sub
-		 * elements like series, legend, tooltip etc.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name options
-		 * @type {Options}
-		 */
-		this.options = options;
-		/**
-		 * All the axes in the chart.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name axes
-		 * @see  Highcharts.Chart.xAxis
-		 * @see  Highcharts.Chart.yAxis
-		 * @type {Array.<Highcharts.Axis>}
-		 */
-		this.axes = [];
+			this.callback = callback;
+			this.isResizing = 0;
 
-		/**
-		 * All the current series in the chart.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name series
-		 * @type {Array.<Highcharts.Series>}
-		 */
-		this.series = [];
+			/**
+			 * The options structure for the chart. It contains members for
+			 * the sub elements like series, legend, tooltip etc.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name options
+			 * @type {Options}
+			 */
+			this.options = options;
+			/**
+			 * All the axes in the chart.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name axes
+			 * @see  Highcharts.Chart.xAxis
+			 * @see  Highcharts.Chart.yAxis
+			 * @type {Array.<Highcharts.Axis>}
+			 */
+			this.axes = [];
 
-		/**
-		 * The chart title. The title has an `update` method that allows
-		 * modifying the options directly or indirectly via `chart.update`.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name title
-		 * @type Object
-		 *
-		 * @sample highcharts/members/title-update/
-		 *         Updating titles
-		 */
-		
-		/**
-		 * The chart subtitle. The subtitle has an `update` method that allows
-		 * modifying the options directly or indirectly via `chart.update`.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name subtitle
-		 * @type Object
-		 */
+			/**
+			 * All the current series in the chart.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name series
+			 * @type {Array.<Highcharts.Series>}
+			 */
+			this.series = [];
 
-		/**
-		 * The `Time` object associated with the chart. Since v6.0.5, time
-		 * settings can be applied individually for each chart. If no individual
-		 * settings apply, the `Time` object is shared by all instances.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name time
-		 * @type Highcharts.Time
-		 */
-		this.time = userOptions.time && H.keys(userOptions.time).length ?
-			new H.Time(userOptions.time) :
-			H.time;
+			/**
+			 * The chart title. The title has an `update` method that allows
+			 * modifying the options directly or indirectly via
+			 * `chart.update`.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name title
+			 * @type Object
+			 *
+			 * @sample highcharts/members/title-update/
+			 *         Updating titles
+			 */
+			
+			/**
+			 * The chart subtitle. The subtitle has an `update` method that
+			 * allows modifying the options directly or indirectly via
+			 * `chart.update`.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name subtitle
+			 * @type Object
+			 */
 
-		
-		this.hasCartesianSeries = optionsChart.showAxes;
-		
-		var chart = this;
+			/**
+			 * The `Time` object associated with the chart. Since v6.0.5,
+			 * time settings can be applied individually for each chart. If
+			 * no individual settings apply, the `Time` object is shared by
+			 * all instances.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name time
+			 * @type Highcharts.Time
+			 */
+			this.time = 
+				userOptions.time && H.keys(userOptions.time).length ?
+					new H.Time(userOptions.time) :
+					H.time;
 
-		// Add the chart to the global lookup
-		chart.index = charts.length;
+			
+			this.hasCartesianSeries = optionsChart.showAxes;
+			
+			var chart = this;
 
-		charts.push(chart);
-		H.chartCount++;
+			// Add the chart to the global lookup
+			chart.index = charts.length;
 
-		// Chart event handlers
-		if (chartEvents) {
-			objectEach(chartEvents, function (event, eventType) {
-				addEvent(chart, eventType, event);
-			});
-		}
+			charts.push(chart);
+			H.chartCount++;
 
-		/**
-		 * A collection of the X axes in the chart.
-		 * @type {Array.<Highcharts.Axis>}
-		 * @name xAxis
-		 * @memberOf Highcharts.Chart
-		 */
-		chart.xAxis = [];
-		/**
-		 * A collection of the Y axes in the chart.
-		 * @type {Array.<Highcharts.Axis>}
-		 * @name yAxis
-		 * @memberOf Highcharts.Chart
-		 */
-		chart.yAxis = [];
+			// Chart event handlers
+			if (chartEvents) {
+				objectEach(chartEvents, function (event, eventType) {
+					addEvent(chart, eventType, event);
+				});
+			}
 
-		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
+			/**
+			 * A collection of the X axes in the chart.
+			 * @type {Array.<Highcharts.Axis>}
+			 * @name xAxis
+			 * @memberOf Highcharts.Chart
+			 */
+			chart.xAxis = [];
+			/**
+			 * A collection of the Y axes in the chart.
+			 * @type {Array.<Highcharts.Axis>}
+			 * @name yAxis
+			 * @memberOf Highcharts.Chart
+			 */
+			chart.yAxis = [];
 
-		chart.firstRender();
+			chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
+
+			chart.firstRender();
+		});
 	},
 
 	/**
@@ -1956,10 +1967,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Create the container
 		chart.getContainer();
-
-		// Run an early event after the container and renderer are established
-		fireEvent(chart, 'init');
-
 
 		chart.resetMargins();
 		chart.setChartSize();
