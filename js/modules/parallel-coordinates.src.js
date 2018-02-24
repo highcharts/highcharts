@@ -16,8 +16,9 @@ import '../parts/Series.js';
  * Extensions for parallel coordinates plot.
  */
 var Axis = H.Axis,
+	Chart = H.Chart,
 	SeriesProto = H.Series.prototype,
-	ChartProto = H.Chart.prototype,
+	ChartProto = Chart.prototype,
 	AxisProto = H.Axis.prototype;
 
 var addEvent = H.addEvent,
@@ -126,7 +127,7 @@ H.setOptions({
 /**
  * Initialize parallelCoordinates
  */
-addEvent(H.Chart, 'init', function (e) {
+addEvent(Chart, 'init', function (e) {
 	var options = e.args[0],
 		defaultyAxis = splat(options.yAxis || {}),
 		yAxisLength = defaultyAxis.length,
@@ -181,7 +182,8 @@ addEvent(H.Chart, 'init', function (e) {
 /**
  * Initialize parallelCoordinates
  */
-wrap(ChartProto, 'update', function (proceed, options) {
+addEvent(Chart, 'update', function (e) {
+	var options = e.options;
 	if (options.chart) {
 		if (defined(options.chart.parallelCoordinates)) {
 			this.hasParallelCoordinates = options.chart.parallelCoordinates;
@@ -197,8 +199,6 @@ wrap(ChartProto, 'update', function (proceed, options) {
 			});
 		}
 	}
-
-	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {

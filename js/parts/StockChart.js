@@ -904,7 +904,8 @@ wrap(Chart.prototype, 'getSelectedPoints', function (proceed) {
 	return points;
 });
 
-wrap(Chart.prototype, 'update', function (proceed, options) {
+addEvent(Chart, 'update', function (e) {
+	var options = e.options;
 	// Use case: enabling scrollbar from a disabled state.
 	// Scrollbar needs to be initialized from a controller, Navigator in this
 	// case (#6615)
@@ -913,6 +914,4 @@ wrap(Chart.prototype, 'update', function (proceed, options) {
 		this.navigator.update({}, false);
 		delete options.scrollbar;
 	}
-
-	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });

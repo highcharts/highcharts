@@ -301,6 +301,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			newHeight,
 			itemsForRemoval = [];
 
+		fireEvent(chart, 'update', { options: options });
+
 		// If the top-level chart option is present, some special updates are required		
 		if (optionsChart) {
 			merge(true, chart.options.chart, optionsChart);
