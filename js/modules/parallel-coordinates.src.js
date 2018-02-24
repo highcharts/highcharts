@@ -126,8 +126,9 @@ H.setOptions({
 /**
  * Initialize parallelCoordinates
  */
-wrap(ChartProto, 'init', function (proceed, options, callback) {
-	var defaultyAxis = splat(options.yAxis || {}),
+addEvent(H.Chart, 'init', function (e) {
+	var options = e.args[0],
+		defaultyAxis = splat(options.yAxis || {}),
 		yAxisLength = defaultyAxis.length,
 		newYAxes = [];
 	/**
@@ -149,14 +150,14 @@ wrap(ChartProto, 'init', function (proceed, options, callback) {
 			newYAxes.push({});
 		}
 
-		options = merge(
-			{
-				legend: {
-					enabled: false
-				}
-			},
+		if (!options.legend) {
+			options.legend = {};
+		}
+		options.legend.enabled = false;
+		merge(
+			true,
 			options,
-			// Disable boost:
+			// Disable boost
 			{
 				boost: {
 					seriesThreshold: Number.MAX_SAFE_INTEGER
@@ -175,8 +176,6 @@ wrap(ChartProto, 'init', function (proceed, options, callback) {
 			splat(options.xAxis || {})[0]
 		);
 	}
-
-	return proceed.call(this, options, callback);
 });
 
 /**
