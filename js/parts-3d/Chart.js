@@ -405,11 +405,10 @@ addEvent(Chart, 'beforeRedraw', function () {
 	}
 });
 
-wrap(Chart.prototype, 'render', function (proceed) {
+addEvent(Chart, 'beforeRender', function () {
 	if (this.is3d()) {
 		this.frame3d = this.get3dFrame();
 	}
-	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Draw the series in the reverse order (#3803, #3917)
