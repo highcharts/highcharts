@@ -1464,14 +1464,17 @@ Navigator.prototype = {
 			// If not, set up an event to listen for added series
 			} else if (chart.series.length === 0) {
 
-				wrap(chart, 'redraw', function (proceed, animation) {
-					// We've got one, now add it as base and reset chart.redraw
-					if (chart.series.length > 0 && !navigator.series) {
-						navigator.setBaseSeries();
-						chart.redraw = proceed; // reset
+				navigator.unbindRedraw = addEvent(
+					chart,
+					'beforeRedraw',
+					function () {
+						// We've got one, now add it as base
+						if (chart.series.length > 0 && !navigator.series) {
+							navigator.setBaseSeries();
+							navigator.unbindRedraw(); // reset
+						}
 					}
-					proceed.call(chart, animation);
-				});
+				);
 			}
 
 			// Render items, so we can bind events to them:
