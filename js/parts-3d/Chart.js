@@ -369,11 +369,9 @@ wrap(Chart.prototype, 'setClassName', function (proceed) {
 	}
 });
 
-H.wrap(H.Chart.prototype, 'setChartSize', function (proceed) {
+addEvent(H.Chart, 'afterSetChartSize', function () {
 	var chart = this,
 		options3d = chart.options.chart.options3d;
-
-	proceed.apply(chart, [].slice.call(arguments, 1));
 
 	if (chart.is3d()) {
 		var inverted = chart.inverted,

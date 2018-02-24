@@ -1415,6 +1415,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				axis.setAxisTranslation();
 			});
 		}
+
+		fireEvent(chart, 'afterSetChartSize');
 	},
 
 	/**

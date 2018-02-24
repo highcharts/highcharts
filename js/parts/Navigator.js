@@ -2091,7 +2091,7 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
  * the legend, is determined. #367. We can't use Chart.getMargins, because
  * labels offsets are not calculated yet.
  */
-wrap(Chart.prototype, 'setChartSize', function (proceed) {
+addEvent(Chart, 'afterSetChartSize', function () {
 
 	var legend = this.legend,
 		navigator = this.navigator,
@@ -2099,8 +2099,6 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 		legendOptions,
 		xAxis,
 		yAxis;
-
-	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (navigator) {
 		legendOptions = legend && legend.options;
