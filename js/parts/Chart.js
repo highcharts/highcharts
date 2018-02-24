@@ -1676,6 +1676,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				}
 			}
 		});
+
+		fireEvent(this, 'afterLinkSeries');
 	},
 
 	/**
