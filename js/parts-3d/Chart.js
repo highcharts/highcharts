@@ -397,13 +397,12 @@ H.wrap(H.Chart.prototype, 'setChartSize', function (proceed) {
 	}
 });
 
-wrap(Chart.prototype, 'redraw', function (proceed) {
+addEvent(Chart, 'beforeRedraw', function () {
 	if (this.is3d()) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
 		this.frame3d = this.get3dFrame();
 	}
-	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 wrap(Chart.prototype, 'render', function (proceed) {

@@ -366,6 +366,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 *         If or how to apply animation to the redraw.
 	 */
 	redraw: function (animation) {
+
+		fireEvent(this, 'beforeRedraw');
+
 		var chart = this,
 			axes = chart.axes,
 			series = chart.series,
