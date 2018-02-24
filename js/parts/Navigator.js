@@ -2072,17 +2072,11 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 });
 
 // Initialize navigator for stock charts
-wrap(Chart.prototype, 'init', function (proceed, options, callback) {
-
-	addEvent(this, 'beforeRender', function () {
-		var options = this.options;
-		if (options.navigator.enabled || options.scrollbar.enabled) {
-			this.scroller = this.navigator = new Navigator(this);
-		}
-	});
-
-	proceed.call(this, options, callback);
-
+addEvent(Chart, 'beforeRender', function () {
+	var options = this.options;
+	if (options.navigator.enabled || options.scrollbar.enabled) {
+		this.scroller = this.navigator = new Navigator(this);
+	}
 });
 
 /**
