@@ -994,9 +994,7 @@ if (!H.ColorAxis) {
 	});
 
 	// Updates in the legend need to be reflected in the color axis (6888)
-	wrap(Legend.prototype, 'update', function (proceed) {
-		proceed.apply(this, [].slice.call(arguments, 1));
-
+	addEvent(Legend, 'afterUpdate', function () {
 		if (this.chart.colorAxis[0]) {
 			this.chart.colorAxis[0].update({}, arguments[2]);
 		}
