@@ -489,8 +489,7 @@ H.Axis.prototype.getDescription = function () {
 
 
 // Whenever adding or removing series, keep track of types present in chart
-H.wrap(H.Series.prototype, 'init', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+addEvent(H.Series, 'afterInit', function () {
 	var chart = this.chart;
 	if (chart.options.accessibility.enabled) {
 		chart.types = chart.types || [];
@@ -499,25 +498,25 @@ H.wrap(H.Series.prototype, 'init', function (proceed) {
 		if (chart.types.indexOf(this.type) < 0) {
 			chart.types.push(this.type);
 		}
-		
-		addEvent(this, 'remove', function () {
-			var removedSeries = this,
-				hasType = false;
-			
-			// Check if any of the other series have the same type as this one.
-			// Otherwise remove it from the list.
-			each(chart.series, function (s) {
-				if (
-					s !== removedSeries &&
-					chart.types.indexOf(removedSeries.type) < 0
-				) {
-					hasType = true;
-				}
-			});
-			if (!hasType) {
-				erase(chart.types, removedSeries.type);
-			}
-		});
+	}
+});
+addEvent(H.Series, 'remove', function () {
+	var chart = this.chart,
+		removedSeries = this,
+		hasType = false;
+	
+	// Check if any of the other series have the same type as this one.
+	// Otherwise remove it from the list.
+	each(chart.series, function (s) {
+		if (
+			s !== removedSeries &&
+			chart.types.indexOf(removedSeries.type) < 0
+		) {
+			hasType = true;
+		}
+	});
+	if (!hasType) {
+		erase(chart.types, removedSeries.type);
 	}
 });
 
