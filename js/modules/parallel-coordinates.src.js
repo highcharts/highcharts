@@ -342,9 +342,7 @@ wrap(SeriesProto, 'bindAxes', function (proceed) {
 /**
  * Translate each point using corresponding yAxis.
  */
-wrap(SeriesProto, 'translate', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
+addEvent(H.Series, 'afterTranslate', function () {
 	var series = this,
 		chart = this.chart,
 		points = series.points,
