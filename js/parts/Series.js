@@ -2719,6 +2719,9 @@ H.Series = H.seriesType('line', null, { // base series options
 				});
 			}
 		}
+
+		fireEvent(this, 'afterSetOptions', { options: options });
+
 		return options;
 	},
 
