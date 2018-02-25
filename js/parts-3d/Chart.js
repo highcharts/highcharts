@@ -28,14 +28,19 @@ Chart.prototype.propsRequireUpdateSeries.push('chart.options3d');
 
 // Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to the
 // real 'scatter3d' series type. 
-wrap(Chart.prototype, 'initSeries', function (proceed, options) {
-	var type = options.type ||
-		this.options.chart.type ||
-		this.options.chart.defaultSeriesType;
-	if (this.is3d() && type === 'scatter') {
-		options.type = 'scatter3d';
+addEvent(Chart, 'afterInit', function () {
+	var options = this.options;
+	
+	if (this.is3d()) {
+		each(options.series, function (s) {
+			var type = s.type ||
+				options.chart.type ||
+				options.chart.defaultSeriesType;
+			if (type === 'scatter') {
+				s.type = 'scatter3d';
+			}
+		});
 	}
-	return proceed.call(this, options);
 });
 
 /**

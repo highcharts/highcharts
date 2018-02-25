@@ -279,6 +279,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 			chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
 
+			// Fire after init but before first render, before axes and series
+			// have been initialized.
+			fireEvent(chart, 'afterInit');
+
 			chart.firstRender();
 		});
 	},
