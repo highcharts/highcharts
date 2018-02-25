@@ -2668,7 +2668,7 @@ wrap(Series.prototype, 'searchPoint', function (proceed) {
  * Normally this is handled by Series.destroy that calls Point.destroy,
  * but the fake search points are not registered like that.
  */
-wrap(Series.prototype, 'destroy', function (proceed) {
+addEvent(Series, 'destroy', function () {
 	var series = this,
 		chart = series.chart;
 
@@ -2685,8 +2685,6 @@ wrap(Series.prototype, 'destroy', function (proceed) {
 	if (chart.hoverPoint && chart.hoverPoint.series === series) {
 		chart.hoverPoint = null;
 	}
-
-	proceed.call(this);
 });
 
 /**
