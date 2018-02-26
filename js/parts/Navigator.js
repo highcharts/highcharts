@@ -2165,21 +2165,11 @@ wrap(Series.prototype, 'addPoint', function (
 });
 
 // Handle adding new series
-wrap(Chart.prototype, 'addSeries', function (
-	proceed,
-	options,
-	redraw,
-	animation
-) {
-	var series = proceed.call(this, options, false, animation);
+addEvent(Chart, 'afterAddSeries', function () {
 	if (this.navigator) {
 		// Recompute which series should be shown in navigator, and add them
 		this.navigator.setBaseSeries(null, false);
 	}
-	if (pick(redraw, true)) {
-		this.redraw();
-	}
-	return series;
 });
 
 // Handle updating series

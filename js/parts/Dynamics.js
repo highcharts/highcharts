@@ -73,6 +73,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
 				chart.linkSeries();
+
+				fireEvent(chart, 'afterAddSeries');
+				
 				if (redraw) {
 					chart.redraw(animation);
 				}
