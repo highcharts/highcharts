@@ -2183,13 +2183,9 @@ wrap(Chart.prototype, 'addSeries', function (
 });
 
 // Handle updating series
-wrap(Series.prototype, 'update', function (proceed, newOptions, redraw) {
-	proceed.call(this, newOptions, false);
+addEvent(Series, 'afterUpdate', function () {
 	if (this.chart.navigator && !this.options.isInternal) {
 		this.chart.navigator.setBaseSeries(null, false);
-	}
-	if (pick(redraw, true)) {
-		this.chart.redraw();
 	}
 });
 

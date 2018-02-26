@@ -912,6 +912,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
 		series.oldType = oldType;
 		chart.linkSeries(); // Links are lost in series.remove (#3028)
+
+		fireEvent(this, 'afterUpdate');
+		
 		if (pick(redraw, true)) {
 			chart.redraw(false);
 		}
