@@ -9,6 +9,7 @@ import './Utilities.js';
 var correctFloat = H.correctFloat,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
+	fireEvent = H.fireEvent,
 	isNumber = H.isNumber,
 	merge = H.merge,
 	pick = H.pick,
@@ -288,7 +289,8 @@ H.Tick.prototype = {
 					) :
 					0
 			),
-			line;
+			line,
+			pos = {};
 
 		if (!defined(yOffset)) {
 			if (axis.side === 0) {
@@ -323,10 +325,12 @@ H.Tick.prototype = {
 			y += line * (axis.labelOffset / staggerLines);
 		}
 
-		return {
-			x: x,
-			y: Math.round(y)
-		};
+		pos.x = x;
+		pos.y = Math.round(y);
+
+		fireEvent(this, 'afterGetLabelPosition', { pos: pos });
+
+		return pos;
 	},
 
 	/**

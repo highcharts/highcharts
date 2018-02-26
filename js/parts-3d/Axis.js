@@ -441,9 +441,8 @@ wrap(Tick.prototype, 'getMarkPath', function (proceed) {
 	return this.axis.chart.renderer.toLineSegments(pArr);
 });
 
-wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
-	var pos = proceed.apply(this, [].slice.call(arguments, 1));
-	return fix3dPosition(this.axis, pos);
+addEvent(Tick, 'afterGetLabelPosition', function (e) {
+	extend(e.pos, fix3dPosition(this.axis, e.pos));
 });
 
 wrap(Axis.prototype, 'getTitlePosition', function (proceed) {

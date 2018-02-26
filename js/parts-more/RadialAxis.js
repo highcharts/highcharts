@@ -579,21 +579,12 @@ if (!H.radialAxisExtended) {
 	});
 
 	/**
-	 * Wrap the getLabelPosition function to find the center position of the
-	 * label based on the distance option
+	 * Find the center position of the label based on the distance option. 
 	 */
-	wrap(tickProto, 'getLabelPosition', function (
-		proceed,
-		x,
-		y,
-		label,
-		horiz,
-		labelOptions,
-		tickmarkOffset,
-		index,
-		step
-	) {
+	addEvent(Tick, 'afterGetLabelPosition', function (e) {
 		var axis = this.axis,
+			label = this.label,
+			labelOptions = axis.options.labels,
 			optionsY = labelOptions.y,
 			ret,
 			centerSlot = 20, // 20 degrees to each side at the top and bottom
@@ -648,23 +639,10 @@ if (!H.radialAxisExtended) {
 				});
 			}
 
-			ret.x += labelOptions.x;
-			ret.y += optionsY;
+			e.pos.x = ret.x + labelOptions.x;
+			e.pos.y = ret.y + optionsY;
 
-		} else {
-			ret = proceed.call(
-				this,
-				x,
-				y,
-				label,
-				horiz,
-				labelOptions,
-				tickmarkOffset,
-				index,
-				step
-			);
 		}
-		return ret;
 	});
 
 	/**
