@@ -1385,6 +1385,7 @@ function GLRenderer(postRenderCallback) {
 			yAxis = series.yAxis,
 			xAxis = series.xAxis,
 			plotHeight = series.chart.plotHeight,
+			plotWidth = series.chart.plotWidth,
 			useRaw = !xData || xData.length === 0,
 			// threshold = options.threshold,
 			// yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -1433,6 +1434,11 @@ function GLRenderer(postRenderCallback) {
 
 		if (options.boostData && options.boostData.length > 0) {
 			return;
+		}
+
+		if (chart.inverted) {
+			plotHeight = series.chart.plotWidth;
+			plotWidth = series.chart.plotHeight;
 		}
 
 		series.closestPointRangePx = Number.MAX_VALUE;
@@ -1764,6 +1770,11 @@ function GLRenderer(postRenderCallback) {
 				if (y > plotHeight) {
 					y = plotHeight;
 				}
+
+				if (x > plotWidth) {
+					x = plotWidth;
+				}
+
 			}
 
 			if (drawAsBar) {
@@ -2162,11 +2173,13 @@ function GLRenderer(postRenderCallback) {
 			// If the line width is < 0, skip rendering of the lines. See #7833.
 			if (lineWidth > 0 || s.drawMode !== 'line_strip') {
 				for (sindex = 0; sindex < s.segments.length; sindex++) {
+					// if (s.segments[sindex].from < s.segments[sindex].to) {
 					vbuffer.render(
 						s.segments[sindex].from,
 						s.segments[sindex].to,
 						s.drawMode
 					);
+					// }
 				}
 			}
 
@@ -2178,11 +2191,13 @@ function GLRenderer(postRenderCallback) {
 				}
 				shader.setDrawAsCircle(true);
 				for (sindex = 0; sindex < s.segments.length; sindex++) {
+					// if (s.segments[sindex].from < s.segments[sindex].to) {
 					vbuffer.render(
 						s.segments[sindex].from,
 						s.segments[sindex].to,
 						'POINTS'
 					);
+					// }
 				}
 			}
 		});
@@ -2831,6 +2846,7 @@ addEvent(Series.prototype, 'hide', function () {
 		}
 		this.boostClear();
 	}
+
 });
 
 /**
