@@ -217,15 +217,16 @@ H.Tick.prototype = {
 	/**
 	 * Get the x and y position for ticks and labels
 	 */
-	getPosition: function (horiz, pos, tickmarkOffset, old) {
+	getPosition: function (horiz, tickPos, tickmarkOffset, old) {
 		var axis = this.axis,
 			chart = axis.chart,
-			cHeight = (old && chart.oldChartHeight) || chart.chartHeight;
+			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
+			pos;
 
-		return {
+		pos = {
 			x: horiz ?
 				H.correctFloat(
-					axis.translate(pos + tickmarkOffset, null, null, old) +
+					axis.translate(tickPos + tickmarkOffset, null, null, old) +
 					axis.transB
 				) :
 				(
@@ -254,10 +255,14 @@ H.Tick.prototype = {
 				) :
 				H.correctFloat(
 					cHeight -
-					axis.translate(pos + tickmarkOffset, null, null, old) -
+					axis.translate(tickPos + tickmarkOffset, null, null, old) -
 					axis.transB
 				)
 		};
+
+		fireEvent(this, 'afterGetPosition', { pos: pos });
+
+		return pos;
 
 	},
 

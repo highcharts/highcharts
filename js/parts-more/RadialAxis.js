@@ -564,18 +564,10 @@ if (!H.radialAxisExtended) {
 	/**
 	 * Add special cases within the Tick class' methods for radial axes.
 	 */
-	wrap(tickProto, 'getPosition', function (
-		proceed,
-		horiz,
-		pos,
-		tickmarkOffset,
-		old
-	) {
-		var axis = this.axis;
-
-		return axis.getPosition ?
-			axis.getPosition(pos) :
-			proceed.call(this, horiz, pos, tickmarkOffset, old);
+	addEvent(Tick, 'afterGetPosition', function (e) {
+		if (this.axis.getPosition) {
+			extend(e.pos, this.axis.getPosition(this.pos));
+		}
 	});
 
 	/**
