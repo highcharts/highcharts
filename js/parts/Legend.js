@@ -554,6 +554,9 @@ Highcharts.Legend.prototype = {
 				);
 			}
 		});
+
+		fireEvent(this, 'afterGetAllItems', { allItems: allItems });
+		
 		return allItems;
 	},
 

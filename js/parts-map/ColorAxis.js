@@ -23,8 +23,7 @@ var addEvent = H.addEvent,
 	LegendSymbolMixin = H.LegendSymbolMixin,
 	noop = H.noop,
 	merge = H.merge,
-	pick = H.pick,
-	wrap = H.wrap;
+	pick = H.pick;
 
 // If ColorAxis already exists, we may be loading the heatmap module on top of
 // Highmaps.
@@ -954,34 +953,34 @@ if (!H.ColorAxis) {
 
 
 	/**
-	 * Wrap the legend getAllItems method to add the color axis. This also removes
-	 * the axis' own series to prevent them from showing up individually.
+	 * Add the color axis. This also removes the axis' own series to prevent
+	 * them from showing up individually.
 	 */
-	wrap(Legend.prototype, 'getAllItems', function (proceed) {
-		var allItems = [],
+	addEvent(Legend, 'afterGetAllItems', function (e) {
+		var colorAxisItems = [],
 			colorAxis = this.chart.colorAxis[0];
 
 		if (colorAxis && colorAxis.options) {
 			if (colorAxis.options.showInLegend) {
 				// Data classes
 				if (colorAxis.options.dataClasses) {
-					allItems = allItems.concat(
-						colorAxis.getDataClassLegendSymbols()
-					);
+					colorAxisItems = colorAxis.getDataClassLegendSymbols();
 				// Gradient legend
 				} else {
 					// Add this axis on top
-					allItems.push(colorAxis);
+					colorAxisItems.push(colorAxis);
 				}
 			}
 
 			// Don't add the color axis' series
 			each(colorAxis.series, function (series) {
-				series.options.showInLegend = false;
+				H.erase(e.allItems, series);
 			});
 		}
 
-		return allItems.concat(proceed.call(this));
+		while (colorAxisItems.length) {
+			e.allItems.unshift(colorAxisItems.pop());
+		}
 	});
 
 	addEvent(Legend, 'afterColorizeItem', function (e) {
