@@ -4019,7 +4019,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		// Clear the animation timeout if we are destroying the series during
 		// initial animation
-		clearTimeout(series.animationTimeout);
+		H.clearTimeout(series.animationTimeout);
 
 		// Destroy all SVGElements associated to the series
 		objectEach(series, function (val, prop) {

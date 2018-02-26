@@ -411,7 +411,7 @@ H.initCanvasBoost = function () {
 						opacity: 1
 					}
 				});
-				clearTimeout(destroyLoadingDiv);
+				H.clearTimeout(destroyLoadingDiv);
 				chart.showLoading('Drawing...');
 				chart.options.loading = loadingOptions; // reset
 			}

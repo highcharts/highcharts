@@ -1,7 +1,7 @@
 {
     "globals": {
         "clearInterval": true,
-        "clearTimeout": true,
+        "clearTimeout": false,
         "console": true,
         "module": true,
         "setInterval": true,

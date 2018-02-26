@@ -672,7 +672,7 @@ H.splat = function (obj) {
  * @param   {Number}   delay - Delay in milliseconds.
  * @param   {Object}   [context] - The context.
  * @returns {Number} An identifier for the timeout that can later be cleared
- * with clearTimeout.
+ * with H.clearTimeout.
  */
 H.syncTimeout = function (fn, delay, context) {
 	if (delay) {
@@ -681,6 +681,20 @@ H.syncTimeout = function (fn, delay, context) {
 	fn.call(0, context);
 };
 
+/**
+ * Internal clear timeout.
+ * Function checks if the `id` was not removed (e.g. by `chart.destroy()`).
+ * For the details see issue #7901.
+ *
+ * @function #clearTimeout
+ * @memberOf Highcharts
+ * @param   {Number}   id - id of a timeout.
+ */
+H.clearTimeout = function (id) {
+	if (H.defined(id)) {
+		clearTimeout(id);
+	}
+};
 
 /**
  * Utility function to extend an object with the members of another.
