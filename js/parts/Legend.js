@@ -152,6 +152,8 @@ Highcharts.Legend.prototype = {
 			legendSymbol.attr(symbolAttr);
 		}
 		/*= } =*/
+
+		fireEvent(this, 'afterColorizeItem', { item: item, visible: visible });
 	},
 
 	/**

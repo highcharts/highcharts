@@ -984,11 +984,10 @@ if (!H.ColorAxis) {
 		return allItems.concat(proceed.call(this));
 	});
 
-	wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
-		proceed.call(this, item, visible);
-		if (visible && item.legendColor) {
-			item.legendSymbol.attr({
-				fill: item.legendColor
+	addEvent(Legend, 'afterColorizeItem', function (e) {
+		if (e.visible && e.item.legendColor) {
+			e.item.legendSymbol.attr({
+				fill: e.item.legendColor
 			});
 		}
 	});
