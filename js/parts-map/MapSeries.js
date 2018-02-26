@@ -965,7 +965,7 @@ seriesType('map', 'scatter', {
 	 * Stop the fade-out
 	 */
 	onMouseOver: function (e) {
-		clearTimeout(this.colorInterval);
+		H.clearTimeout(this.colorInterval);
 		if (this.value !== null || this.series.options.nullInteraction) {
 			Point.prototype.onMouseOver.call(this, e);
 		} else { // #3401 Tooltip doesn't hide when hovering over null points

@@ -761,7 +761,7 @@ function drawLabels(proceed) {
 	chart.labelSeries = [];
 	chart.labelSeriesMaxSum = 0;
 
-	clearTimeout(chart.seriesLabelTimer);
+	H.clearTimeout(chart.seriesLabelTimer);
 
 	// Which series should have labels
 	each(chart.series, function (series) {
