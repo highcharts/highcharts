@@ -687,9 +687,9 @@ H.syncTimeout = function (fn, delay, context) {
 };
 
 /**
- * Internal clear timeout.
- * Function checks if the `id` was not removed (e.g. by `chart.destroy()`).
- * For the details see issue #7901.
+ * Internal clear timeout. The function checks that the `id` was not removed
+ * (e.g. by `chart.destroy()`). For the details see
+ * [issue #7901](https://github.com/highcharts/highcharts/issues/7901).
  *
  * @function #clearTimeout
  * @memberOf Highcharts
