@@ -25,7 +25,7 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 
 var labelDistance = 3,
-	wrap = H.wrap,
+	addEvent = H.addEvent,
 	each = H.each,
 	extend = H.extend,
 	isNumber = H.isNumber,
@@ -747,7 +747,7 @@ Chart.prototype.drawSeriesLabels = function () {
 /**
  * Prepare drawing series labels
  */
-function drawLabels(proceed) {
+function drawLabels() {
 
 	var chart = this,
 		delay = Math.max(
@@ -755,8 +755,6 @@ function drawLabels(proceed) {
 			250
 		),
 		initial = !chart.hasRendered;
-
-	proceed.apply(chart, [].slice.call(arguments, 1));
 
 	chart.labelSeries = [];
 	chart.labelSeriesMaxSum = 0;
@@ -814,5 +812,4 @@ function drawLabels(proceed) {
 	}, chart.renderer.forExport ? 0 : delay);
 
 }
-wrap(Chart.prototype, 'render', drawLabels);
-wrap(Chart.prototype, 'redraw', drawLabels);
+addEvent(Chart, 'render', drawLabels);

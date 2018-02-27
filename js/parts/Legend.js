@@ -13,6 +13,7 @@ var H = Highcharts,
 	discardElement = H.discardElement,
 	defined = H.defined,
 	each = H.each,
+	fireEvent = H.fireEvent,
 	isFirefox = H.isFirefox,
 	marginNames = H.marginNames,
 	merge = H.merge,
@@ -98,6 +99,8 @@ Highcharts.Legend.prototype = {
 		if (pick(redraw, true)) {
 			chart.redraw();
 		}
+
+		fireEvent(this, 'afterUpdate');
 	},
 
 	/**
@@ -149,6 +152,8 @@ Highcharts.Legend.prototype = {
 			legendSymbol.attr(symbolAttr);
 		}
 		/*= } =*/
+
+		fireEvent(this, 'afterColorizeItem', { item: item, visible: visible });
 	},
 
 	/**
@@ -549,6 +554,9 @@ Highcharts.Legend.prototype = {
 				);
 			}
 		});
+
+		fireEvent(this, 'afterGetAllItems', { allItems: allItems });
+		
 		return allItems;
 	},
 

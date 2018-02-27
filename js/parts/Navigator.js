@@ -1464,14 +1464,17 @@ Navigator.prototype = {
 			// If not, set up an event to listen for added series
 			} else if (chart.series.length === 0) {
 
-				wrap(chart, 'redraw', function (proceed, animation) {
-					// We've got one, now add it as base and reset chart.redraw
-					if (chart.series.length > 0 && !navigator.series) {
-						navigator.setBaseSeries();
-						chart.redraw = proceed; // reset
+				navigator.unbindRedraw = addEvent(
+					chart,
+					'beforeRedraw',
+					function () {
+						// We've got one, now add it as base
+						if (chart.series.length > 0 && !navigator.series) {
+							navigator.setBaseSeries();
+							navigator.unbindRedraw(); // reset
+						}
 					}
-					proceed.call(chart, animation);
-				});
+				);
 			}
 
 			// Render items, so we can bind events to them:
@@ -2069,17 +2072,11 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 });
 
 // Initialize navigator for stock charts
-wrap(Chart.prototype, 'init', function (proceed, options, callback) {
-
-	addEvent(this, 'beforeRender', function () {
-		var options = this.options;
-		if (options.navigator.enabled || options.scrollbar.enabled) {
-			this.scroller = this.navigator = new Navigator(this);
-		}
-	});
-
-	proceed.call(this, options, callback);
-
+addEvent(Chart, 'beforeRender', function () {
+	var options = this.options;
+	if (options.navigator.enabled || options.scrollbar.enabled) {
+		this.scroller = this.navigator = new Navigator(this);
+	}
 });
 
 /**
@@ -2088,7 +2085,7 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
  * the legend, is determined. #367. We can't use Chart.getMargins, because
  * labels offsets are not calculated yet.
  */
-wrap(Chart.prototype, 'setChartSize', function (proceed) {
+addEvent(Chart, 'afterSetChartSize', function () {
 
 	var legend = this.legend,
 		navigator = this.navigator,
@@ -2096,8 +2093,6 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 		legendOptions,
 		xAxis,
 		yAxis;
-
-	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (navigator) {
 		legendOptions = legend && legend.options;
@@ -2170,31 +2165,17 @@ wrap(Series.prototype, 'addPoint', function (
 });
 
 // Handle adding new series
-wrap(Chart.prototype, 'addSeries', function (
-	proceed,
-	options,
-	redraw,
-	animation
-) {
-	var series = proceed.call(this, options, false, animation);
+addEvent(Chart, 'afterAddSeries', function () {
 	if (this.navigator) {
 		// Recompute which series should be shown in navigator, and add them
 		this.navigator.setBaseSeries(null, false);
 	}
-	if (pick(redraw, true)) {
-		this.redraw();
-	}
-	return series;
 });
 
 // Handle updating series
-wrap(Series.prototype, 'update', function (proceed, newOptions, redraw) {
-	proceed.call(this, newOptions, false);
+addEvent(Series, 'afterUpdate', function () {
 	if (this.chart.navigator && !this.options.isInternal) {
 		this.chart.navigator.setBaseSeries(null, false);
-	}
-	if (pick(redraw, true)) {
-		this.chart.redraw();
 	}
 });
 

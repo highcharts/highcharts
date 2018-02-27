@@ -20,7 +20,7 @@ var Chart = H.Chart,
 // Collect potensial overlapping data labels. Stack labels probably don't need
 // to be considered because they are usually accompanied by data labels that lie
 // inside the columns.
-addEvent(Chart.prototype, 'render', function collectAndHide() {
+addEvent(Chart, 'render', function collectAndHide() {
 	var labels = [];
 
 	// Consider external label collectors

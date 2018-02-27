@@ -9,7 +9,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-var defined = H.defined,
+var addEvent = H.addEvent,
+	defined = H.defined,
 	color = H.Color,
 	columnType = H.seriesTypes.column,
 	each = H.each,
@@ -19,7 +20,6 @@ var defined = H.defined,
 	pick = H.pick,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
-	wrap = H.wrap,
 	Axis = H.Axis,
 	Point = H.Point,
 	Series = H.Series;
@@ -431,12 +431,12 @@ seriesType('xrange', 'column', {
 /**
  * Max x2 should be considered in xAxis extremes
  */
-wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
+addEvent(Axis, 'afterGetSeriesExtremes', function () {
 	var axis = this,
 		axisSeries = axis.series,
 		dataMax,
 		modMax;
-	proceed.call(axis);
+	
 	if (axis.isXAxis) {
 		dataMax = pick(axis.dataMax, -Number.MAX_VALUE);
 		each(axisSeries, function (series) {

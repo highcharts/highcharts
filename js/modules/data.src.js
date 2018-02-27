@@ -11,7 +11,9 @@ import '../parts/Utilities.js';
 import '../parts/Chart.js';
 
 // Utilities
-var win = Highcharts.win,
+var addEvent = Highcharts.addEvent,
+	Chart = Highcharts.Chart,
+	win = Highcharts.win,
 	doc = win.document,
 	each = Highcharts.each,
 	objectEach = Highcharts.objectEach,
@@ -1783,13 +1785,16 @@ Highcharts.data = function (options, chartOptions) {
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
 // option group, data.
-Highcharts.wrap(
-	Highcharts.Chart.prototype,
+addEvent(
+	Chart,
 	'init',
-	function (proceed, userOptions, callback) {
-		var chart = this;
+	function (e) {
+		var chart = this,
+			userOptions = e.args[0],
+			callback = e.args[1];
 
-		if (userOptions && userOptions.data) {
+		if (userOptions && userOptions.data && !chart.hasDataDef) {
+			chart.hasDataDef = true;
 			chart.data = new Data(Highcharts.extend(userOptions.data, {
 
 				afterComplete: function (dataOptions) {
@@ -1817,12 +1822,13 @@ Highcharts.wrap(
 					// Do the merge
 					userOptions = Highcharts.merge(dataOptions, userOptions);
 
-					proceed.call(chart, userOptions, callback);
+					// Run chart.init again
+					chart.init(userOptions, callback);
 				}
 			}), userOptions);
 			chart.data.chart = chart;
-		} else {
-			proceed.call(chart, userOptions, callback);
+
+			e.preventDefault();
 		}
 	}
 );

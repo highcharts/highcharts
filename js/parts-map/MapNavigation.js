@@ -13,8 +13,7 @@ var addEvent = H.addEvent,
 	each = H.each,
 	extend = H.extend,
 	merge = H.merge,
-	pick = H.pick,
-	wrap = H.wrap;
+	pick = H.pick;
 
 function stopEvent(e) {
 	if (e) {
@@ -313,11 +312,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-wrap(Chart.prototype, 'render', function (proceed) {
+addEvent(Chart, 'beforeRender', function () {
 	// Render the plus and minus buttons. Doing this before the shapes makes
 	// getBBox much quicker, at least in Chrome.
 	this.mapNavigation = new MapNavigation(this);
 	this.mapNavigation.update();
-
-	proceed.call(this);
 });

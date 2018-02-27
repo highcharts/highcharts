@@ -9,7 +9,8 @@ import '../parts/Utilities.js';
 import '../parts/Axis.js';
 import '../parts/Series.js';
 
-var pick = H.pick,
+var addEvent = H.addEvent,
+	pick = H.pick,
 	wrap = H.wrap,
 	each = H.each,
 	extend = H.extend,
@@ -75,9 +76,7 @@ extend(Axis.prototype, {
 	}
 });
 
-wrap(Axis.prototype, 'setTickPositions', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-	
+addEvent(Axis, 'afterSetTickPositions', function () {
 	if (this.options.breaks) {
 		var axis = this,
 			tickPositions = this.tickPositions,
@@ -96,14 +95,17 @@ wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 	}
 });
 
-wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+// Force Axis to be not-ordinal when breaks are defined
+addEvent(Axis, 'afterSetOptions', function () {
+	if (this.options.breaks && this.options.breaks.length) {
+		this.options.ordinal = false;
+	}
+});
+
+addEvent(Axis, 'afterInit', function () {
 	var axis = this,
 		breaks;
-	// Force Axis to be not-ordinal when breaks are defined
-	if (userOptions.breaks && userOptions.breaks.length) {
-		userOptions.ordinal = false;
-	}
-	proceed.call(this, chart, userOptions);
+	
 	breaks = this.options.breaks;
 	axis.isBroken = (isArray(breaks) && !!breaks.length);
 	if (axis.isBroken) {

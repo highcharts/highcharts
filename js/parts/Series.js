@@ -2427,6 +2427,8 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		// Insert the series and re-order all series above the insertion point.
 		chart.orderSeries(this.insert(chartSeries));
+
+		fireEvent(this, 'afterInit');
 	},
 
 	/**
@@ -2717,6 +2719,9 @@ H.Series = H.seriesType('line', null, { // base series options
 				});
 			}
 		}
+
+		fireEvent(this, 'afterSetOptions', { options: options });
+
 		return options;
 	},
 
