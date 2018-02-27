@@ -180,7 +180,7 @@ Highcharts.setOptions({
 });
 
 // Add an event listener to handle the showTable option
-Highcharts.addEvent(Highcharts.Chart.prototype, 'render', function () {
+Highcharts.addEvent(Highcharts.Chart, 'render', function () {
 	if (
 		this.options &&
 		this.options.exporting &&

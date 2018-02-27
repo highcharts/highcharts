@@ -8,7 +8,8 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
-var each = H.each,
+var addEvent = H.addEvent,
+	each = H.each,
 	perspective = H.perspective,
 	pick = H.pick,
 	Series = H.Series,
@@ -251,10 +252,9 @@ wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
-wrap(seriesTypes.column.prototype, 'init', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	if (this.chart.is3d()) {
+seriesTypes.column.prototype.handle3dGrouping = true;
+addEvent(Series, 'afterInit', function () {
+	if (this.chart.is3d() && this.handle3dGrouping) {
 		var seriesOptions = this.options,
 			grouping = seriesOptions.grouping,
 			stacking = seriesOptions.stacking,

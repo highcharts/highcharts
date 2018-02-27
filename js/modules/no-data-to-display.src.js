@@ -236,7 +236,7 @@ chartPrototype.hasData = function () {
 /**
  * Add event listener to handle automatic show or hide no-data message
  */
-H.addEvent(chartPrototype, 'render', function handleNoData() {
+H.addEvent(H.Chart, 'render', function handleNoData() {
 	if (this.hasData()) {
 		this.hideNoData();
 	} else {

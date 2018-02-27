@@ -13,6 +13,7 @@ import '../parts/Chart.js';
 import '../parts/Tick.js';
 var ZAxis,
 
+	addEvent = H.addEvent,
 	Axis = H.Axis,
 	Chart = H.Chart,
 	deg2rad = H.deg2rad,
@@ -117,9 +118,8 @@ var extendedOptions = {
 merge(true, Axis.prototype.defaultOptions, extendedOptions);
 
 
-wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
+addEvent(Axis, 'afterSetOptions', function () {
 	var options;
-	proceed.call(this, userOptions);
 	if (this.chart.is3d && this.chart.is3d() && this.coll !== 'colorAxis') {
 		options = this.options;
 		options.tickWidth = pick(options.tickWidth, 0);
@@ -441,9 +441,8 @@ wrap(Tick.prototype, 'getMarkPath', function (proceed) {
 	return this.axis.chart.renderer.toLineSegments(pArr);
 });
 
-wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
-	var pos = proceed.apply(this, [].slice.call(arguments, 1));
-	return fix3dPosition(this.axis, pos);
+addEvent(Tick, 'afterGetLabelPosition', function (e) {
+	extend(e.pos, fix3dPosition(this.axis, e.pos));
 });
 
 wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
@@ -451,26 +450,22 @@ wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
 	return fix3dPosition(this, pos, true);
 });
 
-wrap(Axis.prototype, 'drawCrosshair', function (proceed) {
-	var args = arguments;
+addEvent(Axis, 'drawCrosshair', function (e) {
 	if (this.chart.is3d() && this.coll !== 'colorAxis') {
-		if (args[2]) {
-			args[2] = {
-				plotX: args[2].plotXold || args[2].plotX,
-				plotY: args[2].plotYold || args[2].plotY
-			};
+		if (e.point) {
+			e.point.crosshairPos = this.isXAxis ?
+				e.point.plotXold || e.point.plotX :
+				this.len - (e.point.plotYold || e.point.plotY);
 		}
 	}
-	proceed.apply(this, [].slice.call(args, 1));
 });
 
-wrap(Axis.prototype, 'destroy', function (proceed) {
+addEvent(Axis, 'destroy', function () {
 	each(['backFrame', 'bottomFrame', 'sideFrame'], function (prop) {
 		if (this[prop]) {
 			this[prop] = this[prop].destroy();
 		}
 	}, this);
-	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 /*
@@ -558,14 +553,12 @@ extend(ZAxis.prototype, {
 
 
 /**
-* Extend the chart getAxes method to also get the color axis
+* Get the Z axis in addition to the default X and Y.
 */
-wrap(Chart.prototype, 'getAxes', function (proceed) {
+addEvent(Chart, 'afterGetAxes', function () {
 	var chart = this,
 		options = this.options,
 		zAxisOptions = options.zAxis = splat(options.zAxis || {});
-
-	proceed.call(this);
 
 	if (!chart.is3d()) {
 		return;

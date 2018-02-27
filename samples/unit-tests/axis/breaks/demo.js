@@ -37,45 +37,34 @@ QUnit.test(
     }
 );
 QUnit.test('Axis.isBroken', function (assert) {
-    var H = Highcharts,
-        Axis = H.Axis,
-        init = Axis.prototype.init,
-        defaultOptions = H.getOptions(),
-        chart = {
-            axes: [],
-            yAxis: [],
-            options: {
-                tooltip: defaultOptions.tooltip
-            }
-        },
-        axis = {
-            defaultOptions: Axis.prototype.defaultOptions,
-            setOptions: Axis.prototype.setOptions
-        },
-        userOptions = {
-            breaks: undefined
-        };
 
-    init.call(axis, chart, userOptions);
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 3, 2, 4]
+        }]
+    });
     assert.strictEqual(
-        axis.isBroken,
+        chart.xAxis[0].isBroken,
         false,
         'Axis.breaks: undefined results in Axis.isBroken: false.'
     );
 
-    userOptions.breaks = [];
-    init.call(axis, chart, userOptions);
+    chart.xAxis[0].update({
+        breaks: []
+    });
     assert.strictEqual(
-        axis.isBroken,
+        chart.xAxis[0].isBroken,
         false,
         'Axis.breaks: [] results in Axis.isBroken: false.'
     );
 
-    userOptions.breaks = [{}];
-    init.call(axis, chart, userOptions);
-    // @todo Consider adding more clever checks for isBroken.
+    chart.xAxis[0].update({
+        breaks: [{}]
+    });
     assert.strictEqual(
-        axis.isBroken,
+        chart.xAxis[0].isBroken,
         true,
         'Axis.breaks: [{}] results in Axis.isBroken: true.'
     );

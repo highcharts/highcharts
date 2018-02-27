@@ -11,7 +11,8 @@ import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
-var Axis = H.Axis,
+var addEvent = H.addEvent,
+	Axis = H.Axis,
 	Chart = H.Chart,
 	color = H.color,
 	ColorAxis,
@@ -22,8 +23,7 @@ var Axis = H.Axis,
 	LegendSymbolMixin = H.LegendSymbolMixin,
 	noop = H.noop,
 	merge = H.merge,
-	pick = H.pick,
-	wrap = H.wrap;
+	pick = H.pick;
 
 // If ColorAxis already exists, we may be loading the heatmap module on top of
 // Highmaps.
@@ -940,12 +940,10 @@ if (!H.ColorAxis) {
 	/**
 	 * Extend the chart getAxes method to also get the color axis
 	 */
-	wrap(Chart.prototype, 'getAxes', function (proceed) {
+	addEvent(Chart, 'afterGetAxes', function () {
 
 		var options = this.options,
 			colorAxisOptions = options.colorAxis;
-
-		proceed.call(this);
 
 		this.colorAxis = [];
 		if (colorAxisOptions) {
@@ -955,49 +953,46 @@ if (!H.ColorAxis) {
 
 
 	/**
-	 * Wrap the legend getAllItems method to add the color axis. This also removes
-	 * the axis' own series to prevent them from showing up individually.
+	 * Add the color axis. This also removes the axis' own series to prevent
+	 * them from showing up individually.
 	 */
-	wrap(Legend.prototype, 'getAllItems', function (proceed) {
-		var allItems = [],
+	addEvent(Legend, 'afterGetAllItems', function (e) {
+		var colorAxisItems = [],
 			colorAxis = this.chart.colorAxis[0];
 
 		if (colorAxis && colorAxis.options) {
 			if (colorAxis.options.showInLegend) {
 				// Data classes
 				if (colorAxis.options.dataClasses) {
-					allItems = allItems.concat(
-						colorAxis.getDataClassLegendSymbols()
-					);
+					colorAxisItems = colorAxis.getDataClassLegendSymbols();
 				// Gradient legend
 				} else {
 					// Add this axis on top
-					allItems.push(colorAxis);
+					colorAxisItems.push(colorAxis);
 				}
 			}
 
 			// Don't add the color axis' series
 			each(colorAxis.series, function (series) {
-				series.options.showInLegend = false;
+				H.erase(e.allItems, series);
 			});
 		}
 
-		return allItems.concat(proceed.call(this));
+		while (colorAxisItems.length) {
+			e.allItems.unshift(colorAxisItems.pop());
+		}
 	});
 
-	wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
-		proceed.call(this, item, visible);
-		if (visible && item.legendColor) {
-			item.legendSymbol.attr({
-				fill: item.legendColor
+	addEvent(Legend, 'afterColorizeItem', function (e) {
+		if (e.visible && e.item.legendColor) {
+			e.item.legendSymbol.attr({
+				fill: e.item.legendColor
 			});
 		}
 	});
 
 	// Updates in the legend need to be reflected in the color axis (6888)
-	wrap(Legend.prototype, 'update', function (proceed) {
-		proceed.apply(this, [].slice.call(arguments, 1));
-
+	addEvent(Legend, 'afterUpdate', function () {
 		if (this.chart.colorAxis[0]) {
 			this.chart.colorAxis[0].update({}, arguments[2]);
 		}

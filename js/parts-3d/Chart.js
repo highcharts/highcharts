@@ -10,7 +10,8 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-var Chart = H.Chart,
+var addEvent = H.addEvent,
+	Chart = H.Chart,
 	each = H.each,
 	merge = H.merge,
 	perspective = H.perspective,
@@ -27,14 +28,19 @@ Chart.prototype.propsRequireUpdateSeries.push('chart.options3d');
 
 // Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to the
 // real 'scatter3d' series type. 
-wrap(Chart.prototype, 'initSeries', function (proceed, options) {
-	var type = options.type ||
-		this.options.chart.type ||
-		this.options.chart.defaultSeriesType;
-	if (this.is3d() && type === 'scatter') {
-		options.type = 'scatter3d';
+addEvent(Chart, 'afterInit', function () {
+	var options = this.options;
+	
+	if (this.is3d()) {
+		each(options.series, function (s) {
+			var type = s.type ||
+				options.chart.type ||
+				options.chart.defaultSeriesType;
+			if (type === 'scatter') {
+				s.type = 'scatter3d';
+			}
+		});
 	}
-	return proceed.call(this, options);
 });
 
 /**
@@ -344,12 +350,9 @@ merge(true, defaultOptions, extendedOptions);
 
 /*= if (!build.classic) { =*/
 /**
- * Override the getContainer by adding the required CSS classes for column 
- * sides (#6018)
+ * Add the required CSS classes for column sides (#6018)
  */
-wrap(Chart.prototype, 'getContainer', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
+addEvent(Chart, 'afterGetContainer', function () {
 	this.renderer.definition({
 		tagName: 'style',
 		textContent: 
@@ -371,11 +374,9 @@ wrap(Chart.prototype, 'setClassName', function (proceed) {
 	}
 });
 
-H.wrap(H.Chart.prototype, 'setChartSize', function (proceed) {
+addEvent(H.Chart, 'afterSetChartSize', function () {
 	var chart = this,
 		options3d = chart.options.chart.options3d;
-
-	proceed.apply(chart, [].slice.call(arguments, 1));
 
 	if (chart.is3d()) {
 		var inverted = chart.inverted,
@@ -399,20 +400,18 @@ H.wrap(H.Chart.prototype, 'setChartSize', function (proceed) {
 	}
 });
 
-wrap(Chart.prototype, 'redraw', function (proceed) {
+addEvent(Chart, 'beforeRedraw', function () {
 	if (this.is3d()) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
 		this.frame3d = this.get3dFrame();
 	}
-	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-wrap(Chart.prototype, 'render', function (proceed) {
+addEvent(Chart, 'beforeRender', function () {
 	if (this.is3d()) {
 		this.frame3d = this.get3dFrame();
 	}
-	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Draw the series in the reverse order (#3803, #3917)
@@ -431,7 +430,7 @@ wrap(Chart.prototype, 'renderSeries', function (proceed) {
 	}
 });
 
-wrap(Chart.prototype, 'drawChartBox', function (proceed) {
+addEvent(Chart, 'afterDrawChartBox', function () {
 	if (this.is3d()) {
 		var chart = this,
 			renderer = chart.renderer,
@@ -681,8 +680,6 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 			]
 		});
 	}
-	
-	return proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 Chart.prototype.retrieveStacks = function (stacking) {

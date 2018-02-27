@@ -1345,16 +1345,10 @@ Axis.prototype.minFromRange = function () {
 };
 
 // Initialize rangeselector for stock charts
-wrap(Chart.prototype, 'init', function (proceed, options, callback) {
-
-	addEvent(this, 'init', function () {
-		if (this.options.rangeSelector.enabled) {
-			this.rangeSelector = new RangeSelector(this);
-		}
-	});
-
-	proceed.call(this, options, callback);
-
+addEvent(Chart, 'afterGetContainer', function () {
+	if (this.options.rangeSelector.enabled) {
+		this.rangeSelector = new RangeSelector(this);
+	}
 });
 
 wrap(Chart.prototype, 'render', function (proceed, options, callback) {
@@ -1389,9 +1383,10 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 
 });
 
-wrap(Chart.prototype, 'update', function (proceed, options, redraw, oneToOne) {
+addEvent(Chart, 'update', function (e) {
 
 	var chart = this,
+		options = e.options,
 		rangeSelector = chart.rangeSelector,
 		verticalAlign;
 
@@ -1414,12 +1409,14 @@ wrap(Chart.prototype, 'update', function (proceed, options, redraw, oneToOne) {
 		}
 	}
 
-	proceed.call(this, H.merge(true, options, {
+	// @todo Refactor this. The options shouldn't be mutated, instead the
+	// margins should be handled at run time.
+	H.merge(true, options, {
 		chart: {
 			marginBottom: pick(options.chart && options.chart.marginBottom, chart.margin.bottom),
 			spacingBottom: pick(options.chart && options.chart.spacingBottom, chart.spacing.bottom)
 		}
-	}), redraw, oneToOne);
+	});
 
 });
 

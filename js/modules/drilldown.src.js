@@ -695,7 +695,7 @@ Chart.prototype.callbacks.push(function () {
 });
 
 // Don't show the reset button if we already are displaying the drillUp button.
-H.addEvent(Chart.prototype, 'beforeShowResetZoom', function () {
+H.addEvent(Chart, 'beforeShowResetZoom', function () {
 	if (this.drillUpButton) {
 		return false;
 	}
@@ -1050,14 +1050,14 @@ Tick.prototype.drillable = function () {
 /**
  * Always keep the drillability updated (#3951)
  */
-H.addEvent(Tick.prototype, 'afterRender', Tick.prototype.drillable);
+H.addEvent(Tick, 'afterRender', Tick.prototype.drillable);
 
 
 /**
  * On initialization of each point, identify its label and make it clickable.
  * Also, provide a list of points associated to that label.
  */
-H.addEvent(H.Point.prototype, 'afterInit', function () {
+H.addEvent(H.Point, 'afterInit', function () {
 	var point = this,
 		series = point.series,
 		xAxis = series.xAxis,
@@ -1087,7 +1087,7 @@ H.addEvent(H.Point.prototype, 'afterInit', function () {
 	return point;
 });
 
-H.addEvent(H.Series.prototype, 'afterDrawDataLabels', function () {
+H.addEvent(H.Series, 'afterDrawDataLabels', function () {
 	var css = this.chart.options.drilldown.activeDataLabelStyle,
 		renderer = this.chart.renderer;
 
@@ -1134,7 +1134,7 @@ var applyCursorCSS = function (element, cursor, addClass) {
 };
 
 // Mark the trackers with a pointer 
-H.addEvent(H.Series.prototype, 'afterDrawTracker', function () {
+H.addEvent(H.Series, 'afterDrawTracker', function () {
 	each(this.points, function (point) {
 		if (point.drilldown && point.graphic) {
 			applyCursorCSS(point.graphic, 'pointer', true);
@@ -1143,7 +1143,7 @@ H.addEvent(H.Series.prototype, 'afterDrawTracker', function () {
 });
 
 
-H.addEvent(H.Point.prototype, 'afterSetState', function () {
+H.addEvent(H.Point, 'afterSetState', function () {
 	if (this.drilldown && this.series.halo && this.state === 'hover') {
 		applyCursorCSS(this.series.halo, 'pointer', true);
 	} else if (this.series.halo) {

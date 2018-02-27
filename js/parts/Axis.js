@@ -1837,7 +1837,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		var isXAxis = userOptions.isX,
 			axis = this;
 
-
 		/**
 		 * The Chart that the axis belongs to.
 		 *
@@ -1870,6 +1869,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 */
 		axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
+		fireEvent(this, 'init', { userOptions: userOptions });
 
 		axis.opposite = userOptions.opposite; // needed in setOptions
 
@@ -2037,6 +2037,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			axis.val2lin = axis.log2lin;
 			axis.lin2val = axis.lin2log;
 		}
+
+		fireEvent(this, 'afterInit');
 	},
 
 	/**
@@ -2059,6 +2061,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				userOptions
 			)
 		);
+
+		fireEvent(this, 'afterSetOptions', { userOptions: userOptions });
 	},
 
 	/**
@@ -2141,105 +2145,113 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	getSeriesExtremes: function () {
 		var axis = this,
 			chart = axis.chart;
-		axis.hasVisibleSeries = false;
 
-		// Reset properties in case we're redrawing (#3353)
-		axis.dataMin = axis.dataMax = axis.threshold = null;
-		axis.softThreshold = !axis.isXAxis;
+		fireEvent(this, 'getSeriesExtremes', null, function () {
 
-		if (axis.buildStacks) {
-			axis.buildStacks();
-		}
+			axis.hasVisibleSeries = false;
 
-		// loop through this axis' series
-		each(axis.series, function (series) {
+			// Reset properties in case we're redrawing (#3353)
+			axis.dataMin = axis.dataMax = axis.threshold = null;
+			axis.softThreshold = !axis.isXAxis;
 
-			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
+			if (axis.buildStacks) {
+				axis.buildStacks();
+			}
 
-				var seriesOptions = series.options,
-					xData,
-					threshold = seriesOptions.threshold,
-					seriesDataMin,
-					seriesDataMax;
+			// loop through this axis' series
+			each(axis.series, function (series) {
 
-				axis.hasVisibleSeries = true;
+				if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
-				// Validate threshold in logarithmic axes
-				if (axis.positiveValuesOnly && threshold <= 0) {
-					threshold = null;
-				}
+					var seriesOptions = series.options,
+						xData,
+						threshold = seriesOptions.threshold,
+						seriesDataMin,
+						seriesDataMax;
 
-				// Get dataMin and dataMax for X axes
-				if (axis.isXAxis) {
-					xData = series.xData;
-					if (xData.length) {
-						// If xData contains values which is not numbers, then
-						// filter them out. To prevent performance hit, we only
-						// do this after we have already found seriesDataMin
-						// because in most cases all data is valid. #5234.
-						seriesDataMin = arrayMin(xData);
-						seriesDataMax = arrayMax(xData);
-						
-						if (
-							!isNumber(seriesDataMin) &&
-							!(seriesDataMin instanceof Date) // #5010
-						) {
-							xData = grep(xData, isNumber);
-							// Do it again with valid data
+					axis.hasVisibleSeries = true;
+
+					// Validate threshold in logarithmic axes
+					if (axis.positiveValuesOnly && threshold <= 0) {
+						threshold = null;
+					}
+
+					// Get dataMin and dataMax for X axes
+					if (axis.isXAxis) {
+						xData = series.xData;
+						if (xData.length) {
+							// If xData contains values which is not numbers,
+							// then filter them out. To prevent performance hit,
+							// we only do this after we have already found
+							// seriesDataMin because in most cases all data is
+							// valid. #5234.
 							seriesDataMin = arrayMin(xData);
 							seriesDataMax = arrayMax(xData);
+							
+							if (
+								!isNumber(seriesDataMin) &&
+								!(seriesDataMin instanceof Date) // #5010
+							) {
+								xData = grep(xData, isNumber);
+								// Do it again with valid data
+								seriesDataMin = arrayMin(xData);
+								seriesDataMax = arrayMax(xData);
+							}
+
+							if (xData.length) {
+								axis.dataMin = Math.min(
+									pick(axis.dataMin, xData[0], seriesDataMin),
+									seriesDataMin
+								);
+								axis.dataMax = Math.max(
+									pick(axis.dataMax, xData[0], seriesDataMax),
+									seriesDataMax
+								);
+							}
 						}
 
-						if (xData.length) {
+					// Get dataMin and dataMax for Y axes, as well as handle
+					// stacking and processed data
+					} else {
+
+						// Get this particular series extremes
+						series.getExtremes();
+						seriesDataMax = series.dataMax;
+						seriesDataMin = series.dataMin;
+
+						// Get the dataMin and dataMax so far. If percentage is
+						// used, the min and max are always 0 and 100. If
+						// seriesDataMin and seriesDataMax is null, then series
+						// doesn't have active y data, we continue with nulls
+						if (defined(seriesDataMin) && defined(seriesDataMax)) {
 							axis.dataMin = Math.min(
-								pick(axis.dataMin, xData[0], seriesDataMin),
+								pick(axis.dataMin, seriesDataMin),
 								seriesDataMin
 							);
 							axis.dataMax = Math.max(
-								pick(axis.dataMax, xData[0], seriesDataMax),
+								pick(axis.dataMax, seriesDataMax),
 								seriesDataMax
 							);
 						}
-					}
 
-				// Get dataMin and dataMax for Y axes, as well as handle
-				// stacking and processed data
-				} else {
-
-					// Get this particular series extremes
-					series.getExtremes();
-					seriesDataMax = series.dataMax;
-					seriesDataMin = series.dataMin;
-
-					// Get the dataMin and dataMax so far. If percentage is
-					// used, the min and max are always 0 and 100. If
-					// seriesDataMin and seriesDataMax is null, then series
-					// doesn't have active y data, we continue with nulls
-					if (defined(seriesDataMin) && defined(seriesDataMax)) {
-						axis.dataMin = Math.min(
-							pick(axis.dataMin, seriesDataMin),
-							seriesDataMin
-						);
-						axis.dataMax = Math.max(
-							pick(axis.dataMax, seriesDataMax),
-							seriesDataMax
-						);
-					}
-
-					// Adjust to threshold
-					if (defined(threshold)) {
-						axis.threshold = threshold;
-					}
-					// If any series has a hard threshold, it takes precedence
-					if (
-						!seriesOptions.softThreshold ||
-						axis.positiveValuesOnly
-					) {
-						axis.softThreshold = false;
+						// Adjust to threshold
+						if (defined(threshold)) {
+							axis.threshold = threshold;
+						}
+						// If any series has a hard threshold, it takes
+						// precedence
+						if (
+							!seriesOptions.softThreshold ||
+							axis.positiveValuesOnly
+						) {
+							axis.softThreshold = false;
+						}
 					}
 				}
-			}
+			});
 		});
+
+		fireEvent(this, 'afterGetSeriesExtremes');
 	},
 
 	/**
@@ -2896,6 +2908,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Translation addend
 		axis.transB = axis.horiz ? axis.left : axis.bottom;
 		axis.minPixelPadding = transA * minPointOffset;
+
+		fireEvent(this, 'afterSetAxisTranslation');
 	},
 
 	minFromRange: function () {
@@ -3292,6 +3306,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				this.adjustTickAmount();
 			}
 		}
+
+		fireEvent(this, 'afterSetTickPositions');
 	},
 
 	/**
@@ -4776,6 +4792,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// End stacked totals
 
 		axis.isDirty = false;
+
+		fireEvent(this, 'afterRender');
 	},
 
 	/**
@@ -4821,6 +4839,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			plotLinesAndBands = axis.plotLinesAndBands,
 			plotGroup,
 			i;
+
+		fireEvent(this, 'destroy', { keepEvents: keepEvents });
 
 		// Remove the events
 		if (!keepEvents) {
@@ -4891,6 +4911,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			categorized,
 			graphic = this.cross;
 
+		fireEvent(this, 'drawCrosshair', { e: e, point: point });
+
 		// Use last available event when updating non-snapped crosshairs without
 		// mouse interaction (#5287)
 		if (!e) {
@@ -4916,7 +4938,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 					);
 			} else if (defined(point)) {
 				// #3834
-				pos = this.isXAxis ? point.plotX : this.len - point.plotY;
+				pos = pick(
+					point.crosshairPos, // 3D axis extension
+					this.isXAxis ? point.plotX : this.len - point.plotY
+				);
 			}
 
 			if (defined(pos)) {
@@ -4988,6 +5013,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			}
 			this.cross.e = e;
 		}
+
+		fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
 	},
 
 	/**

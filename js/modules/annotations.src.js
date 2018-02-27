@@ -1738,18 +1738,16 @@ chartPrototype.callbacks.push(function (chart) {
 
 
 
-H.wrap(chartPrototype, 'getContainer', function (p) {
+addEvent(H.Chart, 'afterGetContainer', function () {
 	this.options.defs = merge(defaultMarkers, this.options.defs || {});
   
-	p.call(this);
-
-  /*= if (build.classic) { =*/
+    /*= if (build.classic) { =*/
 	objectEach(this.options.defs, function (def) {
 		if (def.tagName === 'marker' && def.render !== false) {
 			this.renderer.addMarker(def.id, def);
 		}
 	}, this);
-  /*= } =*/
+    /*= } =*/
 });
 
 

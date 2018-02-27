@@ -1248,7 +1248,7 @@ H.Chart.prototype.resetKeyboardNavigation = function () {
 /**
  * On destroy, we need to clean up the focus border and the state
  */
-H.addEvent(H.Series.prototype, 'destroy', function () {
+H.addEvent(H.Series, 'destroy', function () {
 	var chart = this.chart;
 	if (chart.highlightedPoint && chart.highlightedPoint.series === this) {
 		delete chart.highlightedPoint;

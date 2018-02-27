@@ -73,6 +73,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
 				chart.linkSeries();
+
+				fireEvent(chart, 'afterAddSeries');
+				
 				if (redraw) {
 					chart.redraw(animation);
 				}
@@ -300,6 +303,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			newWidth,
 			newHeight,
 			itemsForRemoval = [];
+
+		fireEvent(chart, 'update', { options: options });
 
 		// If the top-level chart option is present, some special updates are required		
 		if (optionsChart) {
@@ -910,6 +915,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
 		series.oldType = oldType;
 		chart.linkSeries(); // Links are lost in series.remove (#3028)
+
+		fireEvent(this, 'afterUpdate');
+		
 		if (pick(redraw, true)) {
 			chart.redraw(false);
 		}
