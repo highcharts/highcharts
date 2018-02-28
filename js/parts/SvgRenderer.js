@@ -4130,6 +4130,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			wrapper.x = value; // for animation getter
 			if (alignFactor) {
 				value -= alignFactor * ((width || bBox.width) + 2 * padding);
+
+				// Force animation even when setting to the same value (#7898)
+				wrapper['forceAnimate:x'] = true;
 			}
 			wrapperX = Math.round(value);
 			wrapper.attr('translateX', wrapperX);

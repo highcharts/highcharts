@@ -558,3 +558,59 @@ QUnit.test('Complete callback', function (assert) {
     lolexRunAndUninstall(clock);
 
 });
+
+QUnit.test('Animation and text alignment', function (assert) {
+    var clock = lolexInstall();
+
+    var btn;
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        400
+    );
+
+    var box = {
+        x: 10,
+        y: 10,
+        width: 300,
+        height: 380
+    };
+
+    ren.rect(box)
+        .attr({
+            'stroke': 'silver',
+            'stroke-width': 1
+        })
+        .add();
+
+    function setTextAndAlign() {
+        btn.attr({
+            text: 'Longer text'
+        }).align(null, false, box);
+    }
+
+    btn = ren.button('Click me')
+        .attr({
+            align: 'right'
+        })
+        .add()
+        .align({
+            align: 'right',
+            x: 0,
+            y: 0
+        }, false, box);
+
+    var initialRight = btn.translateX + btn.getBBox().width;
+    setTextAndAlign();
+
+    assert.close(
+        btn.translateX + btn.getBBox().width,
+        initialRight,
+        1,
+        'The button should still be right aligned (#7898)'
+    );
+
+
+    // Run and reset animation
+    lolexRunAndUninstall(clock);
+});
