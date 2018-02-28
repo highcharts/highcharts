@@ -599,7 +599,8 @@ if (!H.radialAxisExtended) {
 			// Vertically centered
 			} else if (optionsY === null) {
 				optionsY = (
-					axis.chart.renderer.fontMetrics(label.styles.fontSize).b -
+					axis.chart.renderer
+						.fontMetrics(label.styles && label.styles.fontSize).b -
 					label.getBBox().height / 2
 				);
 			}
