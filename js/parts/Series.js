@@ -3318,6 +3318,9 @@ H.Series = H.seriesType('line', null, { // base series options
 			xMax = xExtremes.max,
 			validValue,
 			withinRange,
+			// Handle X outside the viewed area. This does not work with non-
+			// sorted data like scatter (#7639).
+			shoulder = this.requireSorting ? 1 : 0,
 			x,
 			y,
 			i,
@@ -3333,14 +3336,19 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// For points within the visible range, including the first point
 			// outside the visible range (#7061), consider y extremes.
-			validValue =
+			validValue = (
 				(isNumber(y, true) || isArray(y)) &&
-				(!yAxis.positiveValuesOnly || (y.length || y > 0));
-			withinRange =
+				(!yAxis.positiveValuesOnly || (y.length || y > 0))
+			);
+			withinRange = (
 				this.getExtremesFromAll ||
 				this.options.getExtremesFromAll ||
 				this.cropped ||
-				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
+				(
+					(xData[i + shoulder] || x) >= xMin &&
+					(xData[i - shoulder] || x) <= xMax
+				)
+			);
 
 			if (validValue && withinRange) {
 

@@ -372,10 +372,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 	 * @private
 	 */
 	zoomOut: function () {
-		var chart = this;
-		fireEvent(chart, 'selection', { resetSelection: true }, function () {
-			chart.zoom();
-		});
+		fireEvent(this, 'selection', { resetSelection: true }, this.zoom);
 	},
 
 	/**
