@@ -2348,9 +2348,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			hasMarkup = textStr.indexOf('<') !== -1,
 			lines,
 			childNodes = textNode.childNodes,
-			clsRegex,
-			styleRegex,
-			hrefRegex,
 			wasTooLong,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
@@ -2390,6 +2387,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 					}
 				});
 				return inputStr;
+			},
+			parseAttribute = function (s, attr) {
+				var start,
+					delimiter;
+
+				start = s.indexOf('<');
+				s = s.substring(start, s.indexOf('>') - start);
+
+				start = s.indexOf(attr + '=');
+				if (start !== -1) {
+					start = start + attr.length + 1;
+					delimiter = s.charAt(start);
+					if (delimiter === '"' || delimiter === "'") { // eslint-disable-line quotes
+						s = s.substring(start + 1);
+						return s.substring(0, s.indexOf(delimiter));
+					}
+				}
 			};
 
 		// The buildText code is quite heavy, so if we're not changing something
@@ -2426,10 +2440,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		// Complex strings, add more logic
 		} else {
-
-			clsRegex = /<.*class="([^"]+)".*>/;
-			styleRegex = /<.*style="([^"]+)".*>/;
-			hrefRegex = /<.*href="([^"]+)".*>/;
 
 			if (tempParent) {
 				// attach it to the DOM to read offset width
@@ -2485,27 +2495,31 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 								renderer.SVG_NS,
 								'tspan'
 							),
-							spanCls,
-							spanStyle; // #390
-						if (clsRegex.test(span)) {
-							spanCls = span.match(clsRegex)[1];
-							attr(tspan, 'class', spanCls);
+							classAttribute,
+							styleAttribute, // #390
+							hrefAttribute;
+						
+						classAttribute = parseAttribute(span, 'class');
+						if (classAttribute) {
+							attr(tspan, 'class', classAttribute);
 						}
-						if (styleRegex.test(span)) {
-							spanStyle = span.match(styleRegex)[1].replace(
+
+						styleAttribute = parseAttribute(span, 'style');
+						if (styleAttribute) {
+							styleAttribute = styleAttribute.replace(
 								/(;| |^)color([ :])/,
 								'$1fill$2'
 							);
-							attr(tspan, 'style', spanStyle);
+							attr(tspan, 'style', styleAttribute);
 						}
 
 						// Not for export - #1529
-						if (hrefRegex.test(span) && !forExport) {
+						hrefAttribute = parseAttribute(span, 'href');
+						if (hrefAttribute && !forExport) {
 							attr(
 								tspan,
 								'onclick',
-								'location.href=\"' +
-									span.match(hrefRegex)[1] + '\"'
+								'location.href=\"' + hrefAttribute + '\"'
 							);
 							attr(tspan, 'class', 'highcharts-anchor');
 							/*= if (build.classic) { =*/
@@ -2649,8 +2663,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 												dy: dy,
 												x: parentX
 											});
-											if (spanStyle) { // #390
-												attr(tspan, 'style', spanStyle);
+											if (styleAttribute) { // #390
+												attr(
+													tspan,
+													'style',
+													styleAttribute
+												);
 											}
 											textNode.appendChild(tspan);
 										}

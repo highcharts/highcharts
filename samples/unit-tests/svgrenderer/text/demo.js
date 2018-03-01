@@ -204,3 +204,39 @@ QUnit.test('Dir rtl (#3482)', function (assert) {
 
     document.getElementById('container').removeAttribute('dir');
 });
+
+QUnit.test('Attributes', function (assert) {
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    var text = ren
+        .text(
+            'The quick brown fox jumps <span class="red">over</span> the lazy dog',
+            20,
+            20
+        )
+        .add();
+
+    assert.strictEqual(
+        text.element.childNodes[1].getAttribute('class'),
+        'red',
+        'Double quotes, red span should be picked up'
+    );
+
+    text = ren
+        .text(
+            "The quick brown fox jumps <span class='red'>over</span> the lazy dog",
+            20,
+            20
+        )
+        .add();
+
+    assert.strictEqual(
+        text.element.childNodes[1].getAttribute('class'),
+        'red',
+        'Single quotes, red span should be picked up'
+    );
+});
