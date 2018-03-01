@@ -218,10 +218,10 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market share, January, 2015 to May, 2015'
+        text: 'Browser market share, January, 2018'
     },
     subtitle: {
-        text: 'Source: <a href="http://netmarketshare.com/">netmarketshare.com</a>'
+        text: 'Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
     },
     yAxis: {
         title: {
