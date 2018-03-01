@@ -258,7 +258,7 @@
     color: #333333;
 }
 
-#demo #annotation-text-form {
+#demo #annotation-text-form, #demo #annotation-flag-form {
     color: #707070;
     display: none;
     background-color:#fff;
@@ -270,7 +270,7 @@
 }
 
 
-#demo #annotation-text-form fieldset {
+#demo #annotation-text-form fieldset, #demo #annotation-flag-form fieldset {
     border-color: #ccc;
     border-style: solid;
     border-width: 1px;
