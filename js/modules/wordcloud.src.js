@@ -16,6 +16,7 @@ var each = H.each,
 	isArray = H.isArray,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
+	reduce = H.reduce,
 	Series = H.Series;
 
 /**
@@ -201,13 +202,39 @@ var getScale = function getScale(targetWidth, targetHeight, field) {
  *
  * @param  {number} targetWidth Width of the target area.
  * @param  {number} targetHeight Height of the target area.
+ * @param  {array} data Array of {@link Point} objects.
+ * @param  {object} data.dimensions The height and width of the word.
  * @return {object} The width and height of the playing field.
  */
-var getPlayingField = function getPlayingField(targetWidth, targetHeight) {
-	var ratio = targetWidth / targetHeight;
+var getPlayingField = function getPlayingField(
+	targetWidth,
+	targetHeight,
+	data
+) {
+	var ratio = targetWidth / targetHeight,
+		info = reduce(data, function (obj, point) {
+			var dimensions = point.dimensions;
+			// Find largest height.
+			obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
+			// Find largest width.
+			obj.maxWidth = Math.max(obj.maxWidth, dimensions.width);
+			// Sum up the total area of all the words.
+			obj.area += dimensions.width * dimensions.height;
+			return obj;
+		}, {
+			maxHeight: 0,
+			maxWidth: 0,
+			area: 0
+		}),
+		/**
+		 * Use largest width, largest height, or root of total area to give size
+		 * to the playing field.
+		 * Add extra 10 percentage to ensure enough space.
+		 */
+		x = 1.1 * Math.max(info.maxHeight, info.maxWidth, Math.sqrt(info.area));
 	return {
-		width: 256 * ratio,
-		height: 256,
+		width: x * ratio,
+		height: x,
 		ratio: ratio
 	};
 };
@@ -489,11 +516,39 @@ var wordCloudSeries = {
 					return p.weight;
 				}),
 			maxWeight = Math.max.apply(null, weights),
-			field = getPlayingField(xAxis.len, yAxis.len),
 			data = series.points
 				.sort(function (a, b) {
 					return b.weight - a.weight; // Sort descending
-				});
+				}),
+			field;
+
+		// Get the dimensions for each word.
+		// Used in calculating the playing field.
+		each(data, function (point) {
+			var relativeWeight = 1 / maxWeight * point.weight,
+				css = extend({
+					fontSize: series.deriveFontSize(relativeWeight) + 'px'
+				}, options.style),
+				bBox;
+
+			testElement.css(css).attr({
+				x: 0,
+				y: 0,
+				text: point.name
+			});
+
+			// TODO Replace all use of clientRect with bBox.
+			bBox = testElement.getBBox(true);
+			point.dimensions = {
+				height: bBox.height,
+				width: bBox.width
+			};
+		});
+
+		// Calculate the playing field.
+		field = getPlayingField(xAxis.len, yAxis.len, data);
+
+		// Draw all the points.
 		each(data, function (point) {
 			var relativeWeight = 1 / maxWeight * point.weight,
 				css = extend({
