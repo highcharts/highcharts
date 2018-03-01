@@ -264,10 +264,10 @@ var outsidePlayingField = function outsidePlayingField(wrapper, field) {
 			bottom: field.height / 2
 		};
 	return !(
-		playingField.left < rect.x &&
-		playingField.right > (rect.x + rect.width) &&
-		playingField.top < rect.y &&
-		playingField.bottom > (rect.y + rect.height)
+		playingField.left < (rect.x - rect.width / 2) &&
+		playingField.right > (rect.x + rect.width / 2) &&
+		playingField.top < (rect.y - rect.height / 2) &&
+		playingField.bottom > (rect.y + rect.height / 2)
 	);
 };
 
