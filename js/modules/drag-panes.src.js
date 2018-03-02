@@ -547,9 +547,7 @@ H.AxisResizer.prototype = {
 Axis.prototype.keepProps.push('resizer');
 
 // Add new AxisResizer, update or remove it
-wrap(Axis.prototype, 'render', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
+addEvent(Axis, 'afterRender', function () {
 	var axis = this,
 		resizer = axis.resizer,
 		resizerOptions = axis.options.resize,
@@ -581,11 +579,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 });
 
 // Clear resizer on axis remove.
-wrap(Axis.prototype, 'destroy', function (proceed, keepEvents) {
-	if (!keepEvents && this.resizer) {
+addEvent(Axis, 'destroy', function (e) {
+	if (!e.keepEvents && this.resizer) {
 		this.resizer.destroy();
 	}
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 // Prevent any hover effects while dragging a control line of AxisResizer.

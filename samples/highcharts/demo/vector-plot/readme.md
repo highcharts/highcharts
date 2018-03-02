@@ -3,4 +3,4 @@
 
 ####  Tip
 Use the module /module/vector.js to use the vector plot.
-Highlight a specific vector by changing its color: {x:5, y:5, length:300, direction:18, color: '# ff0000'}, check the complete demo [here](http://jsfiddle.net/highcharts/4427op90/).
+Highlight a specific vector by changing its color: {x:5, y:5, length:300, direction:18, color: '# ff0000'}, check the complete demo [here](https://jsfiddle.net/highcharts/4427op90/).

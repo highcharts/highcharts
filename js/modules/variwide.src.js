@@ -16,7 +16,8 @@
 import H from '../parts/Globals.js';
 import '../parts/AreaSeries.js';
 
-var seriesType = H.seriesType,
+var addEvent = H.addEvent,
+	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
 	each = H.each,
 	pick = H.pick;
@@ -146,16 +147,14 @@ H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
 		this.axis.series[0].postTranslate(index, xy[xOrY] - this.axis.pos);
 };
 
-H.wrap(H.Tick.prototype, 'getPosition', function (proceed, horiz, pos) {
+addEvent(H.Tick, 'afterGetPosition', function (e) {
 	var axis = this.axis,
-		xy = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
-		xOrY = horiz ? 'x' : 'y';
+		xOrY = axis.horiz ? 'x' : 'y';
 
 	if (axis.categories && axis.variwide) {
-		this[xOrY + 'Orig'] = xy[xOrY];
-		this.postTranslate(xy, xOrY, pos);
+		this[xOrY + 'Orig'] = e.pos[xOrY];
+		this.postTranslate(e.pos, xOrY, this.pos);
 	}
-	return xy;
 });
 
 H.wrap(H.Tick.prototype, 'getLabelPosition', function (

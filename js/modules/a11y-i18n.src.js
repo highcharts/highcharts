@@ -280,6 +280,16 @@ H.setOptions({
 			legendItem: 'Toggle visibility of series {itemName}',
 
 			/**
+			 * Title element text for the chart SVG element. Leave this
+			 * empty to disable adding the title element. Browsers will display
+			 * this content when hovering over elements in the chart. Assistive
+			 * technology may use this element to label the chart.
+			 *
+			 * @since 6.0.8
+			 */
+			svgContainerTitle: '{chartTitle}',
+
+			/**
 			 * Descriptions of lesser known series types. The relevant
 			 * description is added to the screen reader information region
 			 * when these series types are used.

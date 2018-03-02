@@ -3,4 +3,4 @@ A stacked bar chart is an excellent choice to compare categories. By stacking se
 Stacked column chart also helps to show data that accumulated into a sum. From Wikipedia: “The stacked bar chart stacks bars that represent different groups on top of each other. The height of the resulting bar shows the combined result of the groups”.
 
 ####  Tip
-Notice the use of the option [stackLabels](http://api.highcharts.com/highcharts/yAxis.stackLabels) to visualize the total value on each column.
+Notice the use of the option [stackLabels](https://api.highcharts.com/highcharts/yAxis.stackLabels) to visualize the total value on each column.

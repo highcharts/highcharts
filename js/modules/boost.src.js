@@ -1385,6 +1385,7 @@ function GLRenderer(postRenderCallback) {
 			yAxis = series.yAxis,
 			xAxis = series.xAxis,
 			plotHeight = series.chart.plotHeight,
+			plotWidth = series.chart.plotWidth,
 			useRaw = !xData || xData.length === 0,
 			// threshold = options.threshold,
 			// yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -1412,7 +1413,6 @@ function GLRenderer(postRenderCallback) {
 
 			cullXThreshold = 1,
 			cullYThreshold = 1,
-			mx,
 
 			// The following are used in the builder while loop
 			x,
@@ -1434,6 +1434,11 @@ function GLRenderer(postRenderCallback) {
 
 		if (options.boostData && options.boostData.length > 0) {
 			return;
+		}
+
+		if (chart.inverted) {
+			plotHeight = series.chart.plotWidth;
+			plotWidth = series.chart.plotHeight;
 		}
 
 		series.closestPointRangePx = Number.MAX_VALUE;
@@ -1765,6 +1770,11 @@ function GLRenderer(postRenderCallback) {
 				if (y > plotHeight) {
 					y = plotHeight;
 				}
+
+				if (x > plotWidth) {
+					x = plotWidth;
+				}
+
 			}
 
 			if (drawAsBar) {
@@ -1803,17 +1813,11 @@ function GLRenderer(postRenderCallback) {
 				// 		false
 				// 	)), 1e5)
 				// );
-				
-				if (settings.useGPUTranslations) {
-					mx = xAxis.toPixels(x, true);
-				} else {
-					mx = x;
-				}
 
 				if (lastX !== false) {
 					series.closestPointRangePx = Math.min(
 						series.closestPointRangePx,
-						Math.abs(mx - lastX)
+						Math.abs(x - lastX)
 					);
 				}
 			}
@@ -2169,11 +2173,13 @@ function GLRenderer(postRenderCallback) {
 			// If the line width is < 0, skip rendering of the lines. See #7833.
 			if (lineWidth > 0 || s.drawMode !== 'line_strip') {
 				for (sindex = 0; sindex < s.segments.length; sindex++) {
+					// if (s.segments[sindex].from < s.segments[sindex].to) {
 					vbuffer.render(
 						s.segments[sindex].from,
 						s.segments[sindex].to,
 						s.drawMode
 					);
+					// }
 				}
 			}
 
@@ -2185,11 +2191,13 @@ function GLRenderer(postRenderCallback) {
 				}
 				shader.setDrawAsCircle(true);
 				for (sindex = 0; sindex < s.segments.length; sindex++) {
+					// if (s.segments[sindex].from < s.segments[sindex].to) {
 					vbuffer.render(
 						s.segments[sindex].from,
 						s.segments[sindex].to,
 						'POINTS'
 					);
+					// }
 				}
 			}
 		});
@@ -2675,7 +2683,7 @@ wrap(Series.prototype, 'searchPoint', function (proceed) {
  * Normally this is handled by Series.destroy that calls Point.destroy,
  * but the fake search points are not registered like that.
  */
-wrap(Series.prototype, 'destroy', function (proceed) {
+addEvent(Series, 'destroy', function () {
 	var series = this,
 		chart = series.chart;
 
@@ -2692,8 +2700,6 @@ wrap(Series.prototype, 'destroy', function (proceed) {
 	if (chart.hoverPoint && chart.hoverPoint.series === series) {
 		chart.hoverPoint = null;
 	}
-
-	proceed.call(this);
 });
 
 /**
@@ -2831,14 +2837,14 @@ wrap(Series.prototype, 'processData', function (proceed) {
 	}
 });
 
-wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
-	proceed.call(this, vis, redraw);
-	if (this.visible === false && this.canvas && this.renderTarget) {
+addEvent(Series, 'hide', function () {
+	if (this.canvas && this.renderTarget) {
 		if (this.ogl) {
 			this.ogl.clear();
 		}
 		this.boostClear();
 	}
+
 });
 
 /**

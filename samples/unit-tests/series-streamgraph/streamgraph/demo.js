@@ -31,5 +31,24 @@ QUnit.test('Streamgraph extremes', function (assert) {
         [-24, 24],
         'Extremes with reversedStacks: false (#7281)'
     );
+
+    chart.series[0].hide();
+    chart.series[1].hide();
+    assert.deepEqual(
+        [chart.yAxis[0].min, chart.yAxis[0].max],
+        [-7.5, 7.5],
+        'Extremes with a single series, previous series hidden (#7896)'
+    );
+
+
+    chart.series[2].remove();
+    chart.series[1].remove();
+    chart.series[0].show();
+    assert.deepEqual(
+        [chart.yAxis[0].min, chart.yAxis[0].max],
+        [-6.5, 6.5],
+        'Extremes with a single series (#7896)'
+    );
+
 });
 

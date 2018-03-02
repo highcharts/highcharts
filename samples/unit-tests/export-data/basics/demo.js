@@ -687,3 +687,62 @@ QUnit.test('Item delimiter and decimal point', function (assert) {
     );
 
 });
+
+QUnit.test('Zoomed chart', function (assert) {
+    var numberOfPoints = 400,
+        data = [],
+        i = 0;
+
+    for (; i < numberOfPoints; i++) {
+        data.push(i);
+    }
+
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            min: 50,
+            max: 70
+        },
+        series: [{
+            data: data,
+            marker: {
+                enabled: false
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.getDataRows().length,
+        401,
+        'All data points should be exported (#7913)'
+    );
+});
+
+QUnit.test('Boosted chart', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        plotOptions: {
+            series: {
+                pointStart: 0,
+                pointInterval: 10
+            }
+        },
+
+        series: [{
+            data: [1, 2, 3, 4],
+            boostThreshold: 1
+        }]
+
+    });
+
+    assert.deepEqual(
+        chart.getDataRows(),
+        [
+            ["Category", "Series 1"],
+            [0, 1],
+            [10, 2],
+            [20, 3],
+            [30, 4]
+        ],
+        'Boosted chart'
+    );
+});

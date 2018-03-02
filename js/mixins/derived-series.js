@@ -5,8 +5,6 @@ import '../parts/Series.js';
 var each = H.each,
 	Series = H.Series,
 	addEvent = H.addEvent,
-	fireEvent = H.fireEvent,
-	wrap = H.wrap,
 	noop = H.noop;
 
 
@@ -72,19 +70,23 @@ var derivedSeriesMixin = {
 		var derivedSeries = this,
 			chartSeriesLinked;
 
-		chartSeriesLinked = addEvent(this.chart, 'seriesLinked', function () {
-			derivedSeries.setBaseSeries();
+		chartSeriesLinked = addEvent(
+			this.chart,
+			'afterLinkSeries',
+			function () {
+				derivedSeries.setBaseSeries();
 
-			if (derivedSeries.baseSeries && !derivedSeries.initialised) {
-				derivedSeries.setDerivedData();
-				derivedSeries.addBaseSeriesEvents();
-				derivedSeries.initialised = true;
+				if (derivedSeries.baseSeries && !derivedSeries.initialised) {
+					derivedSeries.setDerivedData();
+					derivedSeries.addBaseSeriesEvents();
+					derivedSeries.initialised = true;
+				}
 			}
-		});
+		);
 
 		this.eventRemovers.push(
-        chartSeriesLinked
-      );
+			chartSeriesLinked
+		);
 	},
 
   /**
@@ -134,14 +136,5 @@ var derivedSeriesMixin = {
 		Series.prototype.destroy.apply(this, arguments);
 	}
 };
-
-/**
- * Adds a new chart event after the series are linked
- **/
-wrap(H.Chart.prototype, 'linkSeries', function (p) {
-	p.call(this);
-
-	fireEvent(this, 'seriesLinked');
-});
 
 export default derivedSeriesMixin;

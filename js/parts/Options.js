@@ -311,15 +311,22 @@ H.defaultOptions = {
 		 * lines look messy, it's a good idea to hide them for the secondary
 		 * axis by setting `gridLineWidth` to 0.
 		 *
-		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/chart/alignticks-true/ True by default
-		 * @sample {highcharts} highcharts/chart/alignticks-false/ False
-		 * @sample {highstock} stock/chart/alignticks-true/
-		 *         True by default
-		 * @sample {highstock} stock/chart/alignticks-false/
-		 *         False
-		 * @default true
-		 * @product highcharts highstock
+		 * If `startOnTick` or `endOnTick` in an Axis options are set to false,
+		 * then the `alignTicks ` will be disabled for the Axis.
+		 *
+		 * Disabled for logarithmic axes.
+		 *
+		 * @type      {Boolean}
+		 * @sample    {highcharts} highcharts/chart/alignticks-true/
+		 *            True by default
+		 * @sample    {highcharts} highcharts/chart/alignticks-false/
+		 *            False
+		 * @sample    {highstock} stock/chart/alignticks-true/
+		 *            True by default
+		 * @sample    {highstock} stock/chart/alignticks-false/
+		 *            False
+		 * @default   true
+		 * @product   highcharts highstock
 		 * @apioption chart.alignTicks
 		 */
 

@@ -8,7 +8,8 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
-var each = H.each,
+var addEvent = H.addEvent,
+	each = H.each,
 	perspective = H.perspective,
 	pick = H.pick,
 	Series = H.Series,
@@ -67,6 +68,20 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	}
 });
 
+// In 3D we need to pass point.outsidePlot option to the justifyDataLabel
+// method for disabling justifying dataLabels in columns outside plot
+wrap(H.Series.prototype, 'alignDataLabel', function (proceed) {
+	arguments[3].outside3dPlot = arguments[1].outside3dPlot;
+	proceed.apply(this, [].slice.call(arguments, 1));
+});
+
+// Don't use justifyDataLabel when point is outsidePlot
+wrap(H.Series.prototype, 'justifyDataLabel', function (proceed) {
+	return !(arguments[2].outside3dPlot) ?
+		proceed.apply(this, [].slice.call(arguments, 1)) :
+		false;
+});
+
 seriesTypes.column.prototype.translate3dPoints = function () {};
 seriesTypes.column.prototype.translate3dShapes = function () {
 
@@ -90,6 +105,8 @@ seriesTypes.column.prototype.translate3dShapes = function () {
 
 	z += (seriesOptions.groupZPadding || 1);
 	each(series.data, function (point) {
+		// #7103 Reset outside3dPlot flag
+		point.outside3dPlot = null;
 		if (point.y !== null) {
 			var shapeArgs = point.shapeArgs,
 				tooltipPos = point.tooltipPos,
@@ -126,6 +143,8 @@ seriesTypes.column.prototype.translate3dShapes = function () {
 					for (var key in shapeArgs) { // Set args to 0 if column is outside the chart.
 						shapeArgs[key] = 0;
 					}
+					// #7103 outside3dPlot flag is set on Points which are currently outside of plot.
+					point.outside3dPlot = true;
 				}
 			});
 
@@ -233,10 +252,9 @@ wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
-wrap(seriesTypes.column.prototype, 'init', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	if (this.chart.is3d()) {
+seriesTypes.column.prototype.handle3dGrouping = true;
+addEvent(Series, 'afterInit', function () {
+	if (this.chart.is3d() && this.handle3dGrouping) {
 		var seriesOptions = this.options,
 			grouping = seriesOptions.grouping,
 			stacking = seriesOptions.stacking,
@@ -293,12 +311,13 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 			chart = series.chart;
 
 		var args = arguments,
-			alignTo = args[4];
+			alignTo = args[4],
+			point = args[1];
 
 		var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
 		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
-		alignTo.y = pos.y;
+		alignTo.y = point.outside3dPlot ? -9e9 : pos.y; // #7103 If point is outside of plotArea, hide data label.
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));

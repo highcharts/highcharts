@@ -38,16 +38,13 @@ seriesType('streamgraph', 'areaspline', {
 	 * in order to center the full stack vertically.
 	 */
 	streamStacker: function (pointExtremes, stack, i) {
-		var reversedStacks = H.pick(this.yAxis.options.reversedStacks, true);
-
 		// Y bottom value
 		pointExtremes[0] -= stack.total / 2;
 		// Y value
 		pointExtremes[1] -= stack.total / 2;
 
-		this.stackedYData[i] = this.index === 0 ?
-			pointExtremes[+reversedStacks] :
-			pointExtremes[+!reversedStacks];
+		// Record the Y data for use when getting axis extremes
+		this.stackedYData[i] = pointExtremes;
 	}
 });
 

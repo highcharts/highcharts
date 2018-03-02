@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-    
+
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -293,8 +293,7 @@ function reverseChildNodes(node) {
 
 
 // Whenever drawing series, put info on DOM elements
-H.wrap(H.Series.prototype, 'render', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+H.addEvent(H.Series, 'afterRender', function () {
 	if (this.chart.options.accessibility.enabled) {
 		this.setA11yDescription();
 	}
@@ -490,8 +489,7 @@ H.Axis.prototype.getDescription = function () {
 
 
 // Whenever adding or removing series, keep track of types present in chart
-H.wrap(H.Series.prototype, 'init', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+addEvent(H.Series, 'afterInit', function () {
 	var chart = this.chart;
 	if (chart.options.accessibility.enabled) {
 		chart.types = chart.types || [];
@@ -500,25 +498,25 @@ H.wrap(H.Series.prototype, 'init', function (proceed) {
 		if (chart.types.indexOf(this.type) < 0) {
 			chart.types.push(this.type);
 		}
-		
-		addEvent(this, 'remove', function () {
-			var removedSeries = this,
-				hasType = false;
-			
-			// Check if any of the other series have the same type as this one.
-			// Otherwise remove it from the list.
-			each(chart.series, function (s) {
-				if (
-					s !== removedSeries &&
-					chart.types.indexOf(removedSeries.type) < 0
-				) {
-					hasType = true;
-				}
-			});
-			if (!hasType) {
-				erase(chart.types, removedSeries.type);
-			}
-		});
+	}
+});
+addEvent(H.Series, 'remove', function () {
+	var chart = this.chart,
+		removedSeries = this,
+		hasType = false;
+	
+	// Check if any of the other series have the same type as this one.
+	// Otherwise remove it from the list.
+	each(chart.series, function (s) {
+		if (
+			s !== removedSeries &&
+			chart.types.indexOf(removedSeries.type) < 0
+		) {
+			hasType = true;
+		}
+	});
+	if (!hasType) {
+		erase(chart.types, removedSeries.type);
 	}
 });
 
@@ -702,10 +700,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		return;
 	}
 
-	var	titleElement = doc.createElementNS(
-			'http://www.w3.org/2000/svg',
-			'title'
-		),
+	var	titleElement,
 		exportGroupElement = doc.createElementNS(
 			'http://www.w3.org/2000/svg',
 			'g'
@@ -717,12 +712,24 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		hiddenSectionId = 'highcharts-information-region-' + chart.index,
 		chartTitle = options.title.text || chart.langFormat(
 			'accessibility.defaultChartTitle', { chart: chart }
-		);
+		),
+		svgContainerTitle = stripTags(chart.langFormat(
+			'accessibility.svgContainerTitle', {
+				chartTitle: chartTitle
+			}
+		));
 
-	// Add SVG title/desc tags
-	titleElement.textContent = htmlencode(chartTitle);
-	titleElement.id = titleId;
-	descElement.parentNode.insertBefore(titleElement, descElement);
+	// Add SVG title tag if it is set
+	if (svgContainerTitle.length) {
+		titleElement = doc.createElementNS(
+				'http://www.w3.org/2000/svg',
+				'title'
+			);
+		titleElement.textContent = svgContainerTitle;
+		titleElement.id = titleId;
+		descElement.parentNode.insertBefore(titleElement, descElement);
+	}
+	
 	chart.renderTo.setAttribute('role', 'region');
 	chart.renderTo.setAttribute(
 		'aria-label',

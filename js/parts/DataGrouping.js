@@ -10,7 +10,8 @@ import './Utilities.js';
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
-var arrayMax = H.arrayMax,
+var addEvent = H.addEvent,
+	arrayMax = H.arrayMax,
 	arrayMin = H.arrayMin,
 	Axis = H.Axis,
 	defaultPlotOptions = H.defaultPlotOptions,
@@ -672,7 +673,7 @@ seriesProto.processData = function () {
 				groupedXData[0] < xAxis.dataMin &&
 				visible
 			) {
-				if (xAxis.min === xAxis.dataMin) {
+				if (xAxis.min <= xAxis.dataMin) {
 					xAxis.min = groupedXData[0];
 				}
 				xAxis.dataMin = groupedXData[0];
@@ -726,11 +727,10 @@ seriesProto.generatePoints = function () {
  * Override point prototype to throw a warning when trying to update grouped
  * points
  */
-wrap(Point.prototype, 'update', function (proceed) {
+addEvent(Point, 'update', function () {
 	if (this.dataGroup) {
 		H.error(24);
-	} else {
-		proceed.apply(this, [].slice.call(arguments, 1));
+		return false;
 	}
 });
 
@@ -817,39 +817,38 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
 /**
  * Destroy grouped data on series destroy
  */
-wrap(seriesProto, 'destroy', function (proceed) {
-	this.destroyGroupedData();
-	proceed.call(this);
-});
+addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 
 
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
-wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
+addEvent(Series, 'afterSetOptions', function (e) {
 
-	var options = proceed.call(this, itemOptions),
+	var options = e.options,
 		type = this.type,
 		plotOptions = this.chart.options.plotOptions,
-		defaultOptions = defaultPlotOptions[type].dataGrouping;
+		defaultOptions = defaultPlotOptions[type].dataGrouping,
+		// External series, for example technical indicators should also
+		// inherit commonOptions which are not available outside this module
+		baseOptions = this.useCommonDataGrouping && commonOptions;
 
-	if (specificOptions[type]) { // #1284
+	if (specificOptions[type] || baseOptions) { // #1284
 		if (!defaultOptions) {
 			defaultOptions = merge(commonOptions, specificOptions[type]);
 		}
 
 		options.dataGrouping = merge(
+			baseOptions,
 			defaultOptions,
 			plotOptions.series && plotOptions.series.dataGrouping, // #1228
 			plotOptions[type].dataGrouping, // Set by the StockChart constructor
-			itemOptions.dataGrouping
+			this.userOptions.dataGrouping
 		);
 	}
 
 	if (this.chart.options.isStock) {
 		this.requireSorting = true;
 	}
-
-	return options;
 });
 
 
@@ -858,8 +857,7 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
  * previous data grouping of neighbour series into accound when determining
  * group pixel width (#2692).
  */
-wrap(Axis.prototype, 'setScale', function (proceed) {
-	proceed.call(this);
+addEvent(Axis, 'afterSetScale', function () {
 	each(this.series, function (series) {
 		series.hasProcessed = false;
 	});
@@ -958,6 +956,9 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 			seriesOptions.dataGrouping = dataGrouping;
 		}, false);
 	}
+
+	// Clear ordinal slope, so we won't accidentaly use the old one (#7827)
+	this.ordinalSlope = null;
 
 	if (redraw) {
 		this.chart.redraw();

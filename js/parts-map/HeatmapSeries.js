@@ -32,7 +32,7 @@ var colorPointMixin = H.colorPointMixin,
  * @sample highcharts/demo/heatmap-canvas/
  *         Heavy heatmap
  * @extends {plotOptions.scatter}
- * @excluding marker,pointRange
+ * @excluding marker,pointRange,pointPlacement
  * @product highcharts highmaps
  * @optionparent plotOptions.heatmap
  */

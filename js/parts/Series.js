@@ -2427,6 +2427,8 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		// Insert the series and re-order all series above the insertion point.
 		chart.orderSeries(this.insert(chartSeries));
+
+		fireEvent(this, 'afterInit');
 	},
 
 	/**
@@ -2717,6 +2719,9 @@ H.Series = H.seriesType('line', null, { // base series options
 				});
 			}
 		}
+
+		fireEvent(this, 'afterSetOptions', { options: options });
+
 		return options;
 	},
 
@@ -2814,6 +2819,103 @@ H.Series = H.seriesType('line', null, { // base series options
 	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
 
 	/**
+	 * Internal function called from setData. If the point count is the same as
+	 * is was, or if there are overlapping X values, just run Point.update which
+	 * is cheaper, allows animation, and keeps references to points. This also
+	 * allows adding or removing points if the X-es don't match.
+	 *
+	 * @private
+	 */ 
+	updateData: function (data) {
+		var options = this.options,
+			oldData = this.points,
+			pointsToAdd = [],
+			hasUpdatedByKey,
+			i,
+			point,
+			lastIndex,
+			requireSorting = this.requireSorting;
+
+		// Iterate the new data
+		each(data, function (pointOptions) {
+			var x,
+				pointIndex;
+			
+			// Get the x of the new data point
+			x = (
+				H.defined(pointOptions) &&
+				this.pointClass.prototype.optionsToObject.call(
+					{ series: this },
+					pointOptions
+				).x
+			);
+
+			if (typeof x === 'number') {
+				// Search for the same X in the existing data set
+				pointIndex = H.inArray(x, this.xData, lastIndex);
+
+				// Matching X not found, add point (but later)
+				if (pointIndex === -1) {
+					pointsToAdd.push(pointOptions);
+					
+				// Matching X found, update
+				} else if (pointOptions !== options.data[pointIndex]) {
+					oldData[pointIndex].update(
+						pointOptions,
+						false,
+						null,
+						false
+					);
+
+					// Mark it touched, below we will remove all points that
+					// are not touched.
+					oldData[pointIndex].touched = true;
+
+					// Speed optimize by only searching from last known index.
+					// Performs ~20% bettor on large data sets.
+					if (requireSorting) {
+						lastIndex = pointIndex;
+					}
+				}
+				hasUpdatedByKey = true;
+			}
+		}, this);
+
+		// Remove points that don't exist in the updated data set
+		if (hasUpdatedByKey) {
+			i = oldData.length;
+			while (i--) {
+				point = oldData[i];
+				if (!point.touched) {
+					point.remove(false);
+				}
+				point.touched = false;
+			}
+
+		// If we did not find keys (x-values), and the length is the same,
+		// update one-to-one
+		} else if (data.length === oldData.length) {
+			each(data, function (point, i) {
+				// .update doesn't exist on a linked, hidden series (#3709)
+				if (oldData[i].update && point !== options.data[i]) {
+					oldData[i].update(point, false, null, false);
+				}
+			});
+
+		// Did not succeed in updating data
+		} else {
+			return false;
+		}
+
+		// Add new points
+		each(pointsToAdd, function (point) {
+			this.addPoint(point, false);
+		}, this);
+
+		return true;
+	},
+
+	/**
 	 * Apply a new set of data to the series and optionally redraw it. The new
 	 * data array is passed by reference (except in case of `updatePoints`), and
 	 * may later be mutated when updating the chart data.
@@ -2864,7 +2966,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			xData = this.xData,
 			yData = this.yData,
 			pointArrayMap = series.pointArrayMap,
-			valueCount = pointArrayMap && pointArrayMap.length;
+			valueCount = pointArrayMap && pointArrayMap.length,
+			updatedData;
 
 		data = data || [];
 		dataLength = data.length;
@@ -2875,19 +2978,15 @@ H.Series = H.seriesType('line', null, { // base series options
 		if (
 			updatePoints !== false &&
 			dataLength &&
-			oldDataLength === dataLength &&
+			oldDataLength && 
 			!series.cropped &&
 			!series.hasGroupedData &&
 			series.visible
 		) {
-			each(data, function (point, i) {
-				// .update doesn't exist on a linked, hidden series (#3709)
-				if (oldData[i].update && point !== options.data[i]) {
-					oldData[i].update(point, false, null, false);
-				}
-			});
+			updatedData = this.updateData(data);
+		}
 
-		} else {
+		if (!updatedData) {
 
 			// Reset properties
 			series.xIncrement = null;
@@ -3313,6 +3412,9 @@ H.Series = H.seriesType('line', null, { // base series options
 			xMax = xExtremes.max,
 			validValue,
 			withinRange,
+			// Handle X outside the viewed area. This does not work with non-
+			// sorted data like scatter (#7639).
+			shoulder = this.requireSorting ? 1 : 0,
 			x,
 			y,
 			i,
@@ -3328,14 +3430,19 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// For points within the visible range, including the first point
 			// outside the visible range (#7061), consider y extremes.
-			validValue =
+			validValue = (
 				(isNumber(y, true) || isArray(y)) &&
-				(!yAxis.positiveValuesOnly || (y.length || y > 0));
-			withinRange =
+				(!yAxis.positiveValuesOnly || (y.length || y > 0))
+			);
+			withinRange = (
 				this.getExtremesFromAll ||
 				this.options.getExtremesFromAll ||
 				this.cropped ||
-				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
+				(
+					(xData[i + shoulder] || x) >= xMin &&
+					(xData[i - shoulder] || x) <= xMax
+				)
+			);
 
 			if (validValue && withinRange) {
 
@@ -3531,6 +3638,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			point.zone = this.zones.length && point.getZone();
 		}
 		series.closestPointRangePx = closestPointRangePx;
+
+		fireEvent(this, 'afterTranslate');
 	},
 
 	/**
@@ -4017,7 +4126,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		// Clear the animation timeout if we are destroying the series during
 		// initial animation
-		clearTimeout(series.animationTimeout);
+		H.clearTimeout(series.animationTimeout);
 
 		// Destroy all SVGElements associated to the series
 		objectEach(series, function (val, prop) {

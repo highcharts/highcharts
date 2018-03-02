@@ -3,5 +3,5 @@
 
 ####  Tip
 Use x and y coordinates in the data array as following data:[[x,y]()]() .
-Customize the points on the chart by using the [marker](http://api.highcharts.com/highcharts/plotOptions.scatter.marker.states.hover) option under plotOptions.
-Notice the fixed legend thanks to the setting in the [legend](http://api.highcharts.com/highcharts/legend) option.
+Customize the points on the chart by using the [marker](https://api.highcharts.com/highcharts/plotOptions.scatter.marker.states.hover) option under plotOptions.
+Notice the fixed legend thanks to the setting in the [legend](https://api.highcharts.com/highcharts/legend) option.

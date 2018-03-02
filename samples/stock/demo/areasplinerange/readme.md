@@ -1,4 +1,4 @@
-#Area spline range
+# Area spline range
 [Area spline range](https://api.highcharts.com/highstock/series.areasplinerange) is a variant of area range chart used to visualize the gap between two series, and to add the smooth curve effect.
 
 #### Tip

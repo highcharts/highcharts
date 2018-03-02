@@ -1278,7 +1278,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 					menu.hideTimer = setTimeout(hide, 500);
 				}),
 				addEvent(menu, 'mouseenter', function () {
-					clearTimeout(menu.hideTimer);
+					H.clearTimeout(menu.hideTimer);
 				}),
 
 				// Hide it on clicking or touching outside the menu (#2258, #2335,
@@ -1513,7 +1513,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			each(exportDivElements, function (elem, i) {
 
 				// Remove the event handler
-				clearTimeout(elem.hideTimer); // #5427
+				H.clearTimeout(elem.hideTimer); // #5427
 				removeEvent(elem, 'mouseleave');
 
 				// Remove inline events

@@ -180,7 +180,7 @@ Highcharts.setOptions({
 });
 
 // Add an event listener to handle the showTable option
-Highcharts.addEvent(Highcharts.Chart.prototype, 'render', function () {
+Highcharts.addEvent(Highcharts.Chart, 'render', function () {
 	if (
 		this.options &&
 		this.options.exporting &&
@@ -272,6 +272,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 			categoryMap = {},
 			datetimeValueAxisMap = {},
 			xAxisIndex = Highcharts.inArray(series.xAxis, xAxes),
+			mockSeries,
 			j;
 
 		// Map the categories for value axes
@@ -325,10 +326,27 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 				j++;
 			}
 
-			each(series.points, function (point, pIdx) {
-				var key = point.x,
+			mockSeries = {
+				chart: series.chart,
+				autoIncrement: series.autoIncrement,
+				options: series.options,
+				pointArrayMap: series.pointArrayMap
+			};
+
+			// Export directly from options.data because we need the uncropped
+			// data (#7913), and we need to support Boost (#7026).
+			each(series.options.data, function eachData(options, pIdx) {
+				var key,
 					prop,
-					val;
+					val,
+					point;
+
+				point = { series: mockSeries };
+				series.pointClass.prototype.applyOptions.apply(
+					point,
+					[options]
+				);
+				key = point.x;
 
 				if (xTaken) {
 					if (xTaken[key]) {
@@ -350,7 +368,10 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
 				// Pies, funnels, geo maps etc. use point name in X row
 				if (!series.xAxis || series.exportKey === 'name') {
-					rows[key].name = point.name;
+					rows[key].name = (
+						series.data[pIdx] &&
+						series.data[pIdx].name
+					);
 				}
 
 				while (j < valueCount) {

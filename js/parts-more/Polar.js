@@ -262,13 +262,10 @@ if (!H.polarExtended) {
 	 * chart were a cartesian plane, where plotX denotes the angle in radians
 	 * and (yAxis.len - plotY) is the pixel distance from center.
 	 */
-	wrap(seriesProto, 'translate', function (proceed) {
+	H.addEvent(Series, 'afterTranslate', function () {
 		var chart = this.chart,
 			points,
 			i;
-
-		// Run uber method
-		proceed.call(this);
 
 		if (chart.polar) {
 			// Postprocess plot coordinates
@@ -613,7 +610,7 @@ if (!H.polarExtended) {
 		return wrapper;        
 	};
 
-	wrap(H.Chart.prototype, 'getAxes', function (proceed) {
+	H.addEvent(H.Chart, 'getAxes', function () {
 
 		if (!this.pane) {
 			this.pane = [];
@@ -624,13 +621,9 @@ if (!H.polarExtended) {
 				this
 			);
 		}, this);
-		
-		proceed.call(this);
 	});
 
-	wrap(H.Chart.prototype, 'drawChartBox', function (proceed) {
-		proceed.call(this);
-
+	H.addEvent(H.Chart, 'afterDrawChartBox', function () {
 		each(this.pane, function (pane) {
 			pane.render();
 		});

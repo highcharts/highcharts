@@ -12,7 +12,8 @@ import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
-var arrayMax = H.arrayMax,
+var addEvent = H.addEvent,
+	arrayMax = H.arrayMax,
 	arrayMin = H.arrayMin,
 	Axis = H.Axis,
 	Chart = H.Chart,
@@ -297,15 +298,13 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 // Clear axis from label panes (#6071)
-wrap(Axis.prototype, 'destroy', function (proceed) {
+addEvent(Axis, 'destroy', function () {
 	var chart = this.chart,
 		key = this.options && (this.options.top + ',' + this.options.height);
 
 	if (key && chart._labelPanes && chart._labelPanes[key] === this) {
 		delete chart._labelPanes[key];
 	}
-
-	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts
@@ -499,12 +498,9 @@ wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 	}
 });
 
-// Wrapper to draw the label
-wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+// Extend crosshairs to also draw the label
+addEvent(Axis, 'afterDrawCrosshair', function (event) {
 	
-	// Draw the crosshair
-	proceed.call(this, e, point);
-
 	// Check if the label has to be drawn
 	if (
 		!defined(this.crosshair.label) ||
@@ -531,12 +527,10 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		tickInside = this.options.tickPosition === 'inside',
 		snap = this.crosshair.snap !== false,
 		value,
-		offset = 0;
-
-	// Use last available event (#5287)
-	if (!e) {
-		e = this.cross && this.cross.e;
-	}
+		offset = 0,
+		// Use last available event (#5287)
+		e = event.e || (this.cross && this.cross.e),
+		point = event.point;
 
 	align = (horiz ? 'center' : opposite ?
 		(this.labelAlign === 'right' ? 'right' : 'left') :
@@ -910,7 +904,8 @@ wrap(Chart.prototype, 'getSelectedPoints', function (proceed) {
 	return points;
 });
 
-wrap(Chart.prototype, 'update', function (proceed, options) {
+addEvent(Chart, 'update', function (e) {
+	var options = e.options;
 	// Use case: enabling scrollbar from a disabled state.
 	// Scrollbar needs to be initialized from a controller, Navigator in this
 	// case (#6615)
@@ -919,6 +914,4 @@ wrap(Chart.prototype, 'update', function (proceed, options) {
 		this.navigator.update({}, false);
 		delete options.scrollbar;
 	}
-
-	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });

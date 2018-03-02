@@ -85,9 +85,9 @@ var defaultMarkers = {
 		children: [{
 			tagName: 'path',
 			d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
-      /*= if (build.classic) { =*/
+			/*= if (build.classic) { =*/
 			strokeWidth: 0
-      /*= } =*/
+			/*= } =*/
 		}]
 	}
 };
@@ -116,7 +116,7 @@ H.SVGRenderer.prototype.definition = function (def) {
 			var node = ren.createElement(item.tagName),
 				attr = {};
 
-      // Set attributes
+			// Set attributes
 			objectEach(item, function (val, key) {
 				if (
           key !== 'tagName' &&
@@ -128,23 +128,23 @@ H.SVGRenderer.prototype.definition = function (def) {
 			});
 			node.attr(attr);
 
-      // Add to the tree
+			// Add to the tree
 			node.add(parent || ren.defs);
 
-      // Add text content
+			// Add text content
 			if (item.textContent) {
 				node.element.appendChild(
           doc.createTextNode(item.textContent)
         );
 			}
 
-      // Recurse
+			// Recurse
 			recurse(item.children || [], node);
 
 			ret = node;
 		});
 
-    // Return last node added (on top level it's the only one)
+		// Return last node added (on top level it's the only one)
 		return ret;
 	}
 	return recurse(def);
@@ -154,7 +154,7 @@ H.SVGRenderer.prototype.definition = function (def) {
 H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
 	var options = { id: id };
 
-  /*= if (build.classic) { =*/
+	/*= if (build.classic) { =*/
 	var attrs  = {
 		stroke: markerOptions.color || 'none',
 		fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
@@ -163,7 +163,7 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
 	options.children = H.map(markerOptions.children, function (child) {
 		return merge(attrs, child);
 	});
-  /*= } =*/
+	/*= } =*/
 
 	var marker = this.definition(merge({
 		markerWidth: 20,
@@ -287,24 +287,17 @@ MockPoint.prototype = {
 	translate: function () {
 		var series = this.series,
 			xAxis = series.xAxis,
-			yAxis = series.yAxis,
-			plotX = this.plotX,
-			plotY = this.plotY,
-			isInside = true;
+			yAxis = series.yAxis;
 
 		if (xAxis) {
-			this.plotX = plotX = xAxis.toPixels(this.x, true);
-
-			isInside = plotX >= 0 && plotX <= xAxis.len;
+			this.plotX = xAxis.toPixels(this.x, true);
 		}
 
 		if (yAxis) {
-			this.plotY = plotY = yAxis.toPixels(this.y, true);
-
-			isInside = isInside && plotY >= 0 && plotY <= yAxis.len;
+			this.plotY = yAxis.toPixels(this.y, true);
 		}
 
-		this.isInside = isInside;
+		this.isInside = this.isInsidePane();
 	},
 
 	/**
@@ -358,6 +351,27 @@ MockPoint.prototype = {
 			y: this.y,
 			point: this
 		};
+	},
+
+	isInsidePane: function () {
+		var	plotX = this.plotX,
+			plotY = this.plotY,
+			xAxis = this.series.xAxis,
+			yAxis = this.series.yAxis,
+			isInside = true;
+
+		if (xAxis) {
+			isInside = defined(plotX) && plotX >= 0 && plotX <= xAxis.len;
+		}
+
+		if (yAxis) {
+			isInside =
+				isInside &&
+				defined(plotY) &&
+				plotY >= 0 && plotY <= yAxis.len;
+		}
+
+		return isInside;
 	}
 };
 
@@ -1441,8 +1455,7 @@ Annotation.prototype = {
 
 			showItem =
 				point.series.visible &&
-				point.isInside !== false &&
-				(point.mock || point.graphic);
+				MockPoint.prototype.isInsidePane.call(point);
 
 		if (showItem) {
 
@@ -1725,18 +1738,16 @@ chartPrototype.callbacks.push(function (chart) {
 
 
 
-H.wrap(chartPrototype, 'getContainer', function (p) {
+addEvent(H.Chart, 'afterGetContainer', function () {
 	this.options.defs = merge(defaultMarkers, this.options.defs || {});
   
-	p.call(this);
-
-  /*= if (build.classic) { =*/
+    /*= if (build.classic) { =*/
 	objectEach(this.options.defs, function (def) {
 		if (def.tagName === 'marker' && def.render !== false) {
 			this.renderer.addMarker(def.id, def);
 		}
 	}, this);
-  /*= } =*/
+    /*= } =*/
 });
 
 
