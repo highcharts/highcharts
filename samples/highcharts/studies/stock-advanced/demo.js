@@ -2145,6 +2145,54 @@ window.onload = function () {
                     text: 'All'
                 }]
             },
+            responsive: {
+                rules: [{
+                    chartOptions: {
+                        rangeSelector: {
+                            buttonPosition: {
+                                align: 'left',
+                                x: 130
+                            }
+                        }
+                    },
+                    condition: {
+                        maxWidth: 1250
+                    }
+                }, {
+                    chartOptions: {
+                        rangeSelector: {
+                            buttonPosition: {
+                                align: 'left',
+                                x: 120
+                            },
+                            inputPosition: {
+                                x: -75
+                            }
+                        }
+                    },
+                    condition: {
+                        maxWidth: 950
+                    }
+                }, {
+                    chartOptions: {
+                        rangeSelector: {
+                            buttonPosition: {
+                                align: 'left',
+                                x: 0,
+                                y: 40
+                            },
+                            inputPosition: {
+                                align: 'right',
+                                x: 0,
+                                y: 40
+                            }
+                        }
+                    },
+                    condition: {
+                        maxWidth: 900
+                    }
+                }]
+            },
             yAxis: [{
                 height: '50%',
                 resize: {
