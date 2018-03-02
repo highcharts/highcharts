@@ -1,5 +1,5 @@
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-counties-unemployment.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/us-counties-unemployment.json', function (data) {
 
     /**
      * Data parsed from http://www.bls.gov/lau/#tables

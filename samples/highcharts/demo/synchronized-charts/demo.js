@@ -72,7 +72,7 @@ function syncExtremes(e) {
 
 // Get the data. The contents of the data file can be viewed at
 $.getJSON(
-    'https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/activity.json',
+    'https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/activity.json',
     function (activity) {
         $.each(activity.datasets, function (i, dataset) {
 
