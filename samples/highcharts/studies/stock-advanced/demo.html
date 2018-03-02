@@ -178,32 +178,44 @@
       <fieldset>
         <legend>Background color</legend>
         <div>
-          <input type='radio' value='rgba(0, 0, 0, 0.75)' name='background-color' checked>
-          <label>black</label>
+          <label>
+          	<input type='radio' value='rgba(0, 0, 0, 0.75)' name='background-color' checked>
+          	Black
+          </label>
         </div>
         <div>
-          <input type='radio' value='rgba(255, 0, 0, 0.75)' name='background-color'>
-          <label>red</label>
+          <label>
+          	<input type='radio' value='rgba(255, 0, 0, 0.75)' name='background-color'>
+          	Red
+          </label>
         </div>
         <div>
-          <input type='radio' value='rgba(0, 0, 255, 0.75)' name='background-color'>
-          <label>blue</label>
+          <label>
+          	<input type='radio' value='rgba(0, 0, 255, 0.75)' name='background-color'>
+          	Blue
+          </label>
         </div>
       </fieldset>
 
       <fieldset>
         <legend>Shape</legend>
         <div>
-          <input type='radio' name='shape' value='callout' checked>
-          <label>Callout</label>
+          <label>
+          	<input type='radio' name='shape' value='callout' checked>
+          	Callout
+          </label>
         </div>
         <div>
-          <input type='radio' name='shape' value='connector'>
-          <label>Connector</label>
+          <label>
+          	<input type='radio' name='shape' value='connector'>
+          	Connector
+          </label>
         </div>
         <div>
-          <input type='radio' name='shape' value='circle'>
-          <label>Circle</label>
+          <label>
+          	<input type='radio' name='shape' value='circle'>
+          	Circle
+          </label>
         </div>
       </fieldset>
 
@@ -216,11 +228,11 @@
     <form id="add-flag-annotation">
       <fieldset>
         <legend>Title</legend>
-        <input type='text' id='flag-title' style='width: 130px' maxlength='3' />
+        <input type='text' id='flag-title' style='width: 50px' maxlength='3' />
       </fieldset>
       <fieldset>
-        <legend>Text</legend>
-        <input type='text' id='flag-text' style='width: 130px' />
+        <legend>Tooltip text</legend>
+        <input type='text' id='flag-text' style='width: 150px' />
       </fieldset>
 
       <input type='submit' style='position:absolute; top:-1000px;' />
