@@ -88,7 +88,6 @@
 
 #demo .select-dropdown::after {
     content: '▽';
-    float: right;
     margin: 0 0 0 10px;
     -moz-transition: 0.5s all;
     -webkit-transition: 0.5s all;
@@ -294,7 +293,6 @@
 #demo {
     float: left;
     position: relative;
-    min-width: 1250px;
     width: 100%;
 }
 
