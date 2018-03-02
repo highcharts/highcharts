@@ -34,7 +34,7 @@ const checkDependency = (name, severity = 'warn', type = 'dependencies') => {
     const actual = require(`${name}/package.json`).version;
     const mismatch = !dependency.endsWith(actual);
     const action = {
-        warn: (message) => log(message),
+        warn: (message) => log(message.yellow),
         err: (message) => error(message)
     };
     if (mismatch) {

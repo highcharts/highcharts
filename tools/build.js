@@ -142,7 +142,7 @@ const getBuildOptions = (input) => {
 };
 
 const scripts = (params) => {
-    checkDependency('highcharts-assembler', 'err', 'devDependencies');
+    checkDependency('highcharts-assembler', 'warn', 'devDependencies');
     const options = getBuildOptions(params);
     return build(options);
 };
@@ -275,7 +275,7 @@ const fnFirstBuild = (options) => {
 };
 
 const getBuildScripts = (params) => {
-    checkDependency('highcharts-assembler', 'err', 'devDependencies');
+    checkDependency('highcharts-assembler', 'warn', 'devDependencies');
     const options = getBuildOptions(params);
     const {
         files,
