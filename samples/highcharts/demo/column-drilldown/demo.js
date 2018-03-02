@@ -39,7 +39,7 @@ Highcharts.chart('container', {
 
     "series": [
         {
-            "name": "Browser names",
+            "name": "Browsers",
             "colorByPoint": true,
             "data": [
                 {
