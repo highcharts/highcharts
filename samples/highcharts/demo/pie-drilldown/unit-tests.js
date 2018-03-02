@@ -20,7 +20,7 @@ QUnit.test('Pie drilldown', function (assert) {
 
         assert.equal(
             chart.series[0].name,
-            'IE',
+            'Chrome',
             'Second level name'
         );
 
@@ -35,7 +35,7 @@ QUnit.test('Pie drilldown', function (assert) {
         chart.drillUp();
         assert.equal(
             chart.series[0].name,
-            'Brands',
+            'Browsers',
             'First level name'
         );
 
