@@ -863,13 +863,15 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			// animation has first run. This happens when calling update
 			// directly after chart initialization, or when applying responsive
 			// rules (#6912).
-			animation = series.finishedAnimating && { animation: false };
+			animation = series.finishedAnimating && { animation: false },
+			keys = H.keys(newOptions).sort().toString();
 
 		// Running Series.update to update the data only is an intuitive usage,
 		// so we want to make sure that when used like this, we run the
 		// cheaper setData function and allow animation instead of completely
-		// recreating the series instance.
-		if (Object.keys && Object.keys(newOptions).toString() === 'data') {
+		// recreating the series instance. The `data,name` case is for the data
+		// module or when setting new data by `chart.update`.
+		if (keys === 'data' || keys === 'data,name') {
 			return this.setData(newOptions.data, redraw);
 		}
 

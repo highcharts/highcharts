@@ -1458,10 +1458,14 @@ H.getStyle = function (el, prop, toInt) {
  * @memberOf Highcharts
  * @param {*} item - The item to search for.
  * @param {arr} arr - The array or node collection to search in.
+ * @param {fromIndex} [fromIndex=0] - The index to start searching from.
  * @returns {Number} - The index within the array, or -1 if not found.
  */
-H.inArray = function (item, arr) {
-	return (H.indexOfPolyfill || Array.prototype.indexOf).call(arr, item);
+H.inArray = function (item, arr, fromIndex) {
+	return (
+		H.indexOfPolyfill ||
+		Array.prototype.indexOf.call(arr, item, fromIndex)
+	);
 };
 
 /**

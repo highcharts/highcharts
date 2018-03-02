@@ -1769,7 +1769,7 @@ Highcharts.extend(Data.prototype, {
 		if (options) {
 			// Set the complete handler
 			options.afterComplete = function (dataOptions) {
-				chart.update(dataOptions, redraw);
+				chart.update(dataOptions, redraw, true);
 			};
 			// Apply it
 			Highcharts.data(options);
