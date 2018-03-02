@@ -4295,18 +4295,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				/*= } =*/
 			]];
 
-		// Add the zone properties if any
-		each(this.zones, function (zone, i) {
-			props.push([
-				'zone-graph-' + i,
-				'highcharts-graph highcharts-zone-graph-' + i + ' ' +
-					(zone.className || ''),
-				/*= if (build.classic) { =*/
-				zone.color || series.color,
-				zone.dashStyle || options.dashStyle
-				/*= } =*/
-			]);
-		});
+		props = series.getZonesGraphs(props);
 
 		// Draw the graph
 		each(props, function (prop, i) {
@@ -4356,6 +4345,29 @@ H.Series = H.seriesType('line', null, { // base series options
 				graph.isArea = graphPath.isArea; // For arearange animation
 			}
 		});
+	},
+
+	/**
+	 * Get zones properties for building graphs.
+	 * Extendable by series with multiple lines within one series.
+	 *
+	 * @private
+	 */
+	getZonesGraphs: function (props) {
+		// Add the zone properties if any
+		each(this.zones, function (zone, i) {
+			props.push([
+				'zone-graph-' + i,
+				'highcharts-graph highcharts-zone-graph-' + i + ' ' +
+					(zone.className || ''),
+				/*= if (build.classic) { =*/
+				zone.color || this.color,
+				zone.dashStyle || this.options.dashStyle
+				/*= } =*/
+			]);
+		}, this);
+
+		return props;
 	},
 
 	/**
@@ -4489,6 +4501,11 @@ H.Series = H.seriesType('line', null, { // base series options
 				}
 				// if this zone extends out of the axis, ignore the others
 				ignoreZones = threshold.value > extremes.max;
+
+				// Clear translatedTo for indicators
+				if (series.resetZones && translatedTo === 0) {
+					translatedTo = undefined;
+				}
 			});
 			this.clips = clips;
 		}
