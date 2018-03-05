@@ -808,7 +808,9 @@ function drawLabels() {
 	});
 
 	chart.seriesLabelTimer = H.syncTimeout(function () {
-		chart.drawSeriesLabels();
+		if (chart.series && chart.labelSeries) { // #7931, chart destroyed
+			chart.drawSeriesLabels();
+		}
 	}, chart.renderer.forExport ? 0 : delay);
 
 }
