@@ -22,3 +22,35 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Use HTML and legend item resizing', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 800,
+            height: 250
+        },
+        legend: {
+            useHTML: true,
+            itemStyle: {
+                textOverflow: 'clip'
+            }
+        },
+        series: [{
+            name: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAA long tiiiiiiiiiiiiiiiiiitle',
+            data: [39]
+        }, {
+            name: 'BBBBBBBBBBBBBBBBBBBBBBBBBBBB long tiiiiiiiiiiiiiiiiiitle',
+            data: [12]
+        }]
+    });
+
+    var legendHeight = chart.legend.legendHeight;
+
+    chart.setSize(350);
+
+    assert.notEqual(
+        chart.legend.legendHeight,
+        legendHeight,
+        'Texts should be wrapped, legend height should change (#7874)'
+    );
+});
