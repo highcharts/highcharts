@@ -864,65 +864,93 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			// directly after chart initialization, or when applying responsive
 			// rules (#6912).
 			animation = series.finishedAnimating && { animation: false },
-			keys = H.keys(newOptions).sort().toString();
+			allowSoftUpdate = [
+				'data',
+				'name',
+				'turboThreshold'
+			],
+			keys = H.keys(newOptions),
+			doSoftUpdate = keys.length > 0;
 
 		// Running Series.update to update the data only is an intuitive usage,
 		// so we want to make sure that when used like this, we run the
 		// cheaper setData function and allow animation instead of completely
-		// recreating the series instance. The `data,name` case is for the data
-		// module or when setting new data by `chart.update`.
-		if (keys === 'data' || keys === 'data,name') {
-			return this.setData(newOptions.data, redraw);
-		}
-
-		// Make sure preserved properties are not destroyed (#3094)
-		preserve = groups.concat(preserve);
-		each(preserve, function (prop) {
-			preserve[prop] = series[prop];
-			delete series[prop];
+		// recreating the series instance. This includes sideways animation when
+		// adding points to the data set. The `name` should also support soft 
+		// update because the data module sets name and data when setting new
+		// data by `chart.update`.
+		each(keys, function (key) {
+			if (inArray(key, allowSoftUpdate) === -1) {
+				doSoftUpdate = false;
+			}
 		});
+		if (doSoftUpdate) {
+			if (newOptions.data) {
+				this.setData(newOptions.data, false);
+			}
+			if (newOptions.name) {
+				this.setName(newOptions.name, false);
+			}
+		} else {
 
-		// Do the merge, with some forced options
-		newOptions = merge(oldOptions, animation, {
-			index: series.index,
-			pointStart: series.xData[0] // when updating after addPoint
-		}, { data: series.options.data }, newOptions);
-
-		// Destroy the series and delete all properties. Reinsert all methods
-		// and properties from the new type prototype (#2270, #3719)
-		series.remove(false, null, false);
-		for (n in proto) {
-			series[n] = undefined;
-		}
-		extend(series, seriesTypes[newType || oldType].prototype);
-
-		// Re-register groups (#3094) and other preserved properties
-		each(preserve, function (prop) {
-			series[prop] = preserve[prop];
-		});
-
-		series.init(chart, newOptions);
-
-		// Update the Z index of groups (#3380, #7397)
-		if (newOptions.zIndex !== oldOptions.zIndex) {
-			each(groups, function (groupName) {
-				if (series[groupName]) {
-					series[groupName].attr({
-						zIndex: newOptions.zIndex
-					});
-				}
+			// Make sure preserved properties are not destroyed (#3094)
+			preserve = groups.concat(preserve);
+			each(preserve, function (prop) {
+				preserve[prop] = series[prop];
+				delete series[prop];
 			});
+
+			// Do the merge, with some forced options
+			newOptions = merge(oldOptions, animation, {
+				index: series.index,
+				pointStart: series.xData[0] // when updating after addPoint
+			}, { data: series.options.data }, newOptions);
+
+			// Destroy the series and delete all properties. Reinsert all methods
+			// and properties from the new type prototype (#2270, #3719)
+			series.remove(false, null, false);
+			for (n in proto) {
+				series[n] = undefined;
+			}
+			extend(series, seriesTypes[newType || oldType].prototype);
+
+			// Re-register groups (#3094) and other preserved properties
+			each(preserve, function (prop) {
+				series[prop] = preserve[prop];
+			});
+
+			series.init(chart, newOptions);
+
+			// Update the Z index of groups (#3380, #7397)
+			if (newOptions.zIndex !== oldOptions.zIndex) {
+				each(groups, function (groupName) {
+					if (series[groupName]) {
+						series[groupName].attr({
+							zIndex: newOptions.zIndex
+						});
+					}
+				});
+			}
+
+
+			series.oldType = oldType;
+			chart.linkSeries(); // Links are lost in series.remove (#3028)
+
 		}
-
-
-		series.oldType = oldType;
-		chart.linkSeries(); // Links are lost in series.remove (#3028)
-
 		fireEvent(this, 'afterUpdate');
 		
 		if (pick(redraw, true)) {
 			chart.redraw(false);
 		}
+	},
+
+	/**
+	 * Used from within series.update
+	 * @private
+	 */
+	setName: function (name) {
+		this.name = this.options.name = this.userOptions.name = name;
+		this.chart.isDirtyLegend = true;
 	}
 });
 
