@@ -183,8 +183,11 @@ Highcharts.Point.prototype = {
 			pointArrayMap = keys || series.pointArrayMap || ['y'],
 			valueCount = pointArrayMap.length,
 			firstItemType,
+			nestedKeys,
+			nestedRet,
 			i = 0,
-			j = 0;
+			j = 0,
+			k;
 
 		if (isNumber(options) || options === null) {
 			ret[pointArrayMap[0]] = options;
@@ -203,7 +206,22 @@ Highcharts.Point.prototype = {
 			while (j < valueCount) {
 				// Skip undefined positions for keys
 				if (!keys || options[i] !== undefined) {
-					ret[pointArrayMap[j]] = options[i];
+					nestedKeys = pointArrayMap[j].split('.');
+					if (nestedKeys.length > 1) {
+						// Handle nested keys, e.g. ['color.pattern.image']
+						nestedRet = ret;
+						for (k = 0; k < nestedKeys.length - 1; ++k) {
+							if (typeof nestedRet[nestedKeys[k]] !== 'object') {
+								nestedRet[nestedKeys[k]] = {};
+							}
+							nestedRet = nestedRet[nestedKeys[k]];
+						}
+						nestedRet[
+							nestedKeys[nestedKeys.length - 1]
+						] = options[i];
+					} else {
+						ret[pointArrayMap[j]] = options[i];
+					}
 				}
 				i++;
 				j++;
