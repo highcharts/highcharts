@@ -337,3 +337,30 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Setting showInLegend dynamically', function (assert) {
+    var s = Highcharts.chart('container', {
+        series: [{
+            showInLegend: false
+        }]
+    }).series[0];
+
+    s.update({
+        pointStart: 100
+    });
+
+    s.update({
+        data: [1, 2, 3, 4],
+        showInLegend: false
+    });
+
+    assert.deepEqual(
+        s.points.map(function (p) {
+            return p.x;
+        }),
+        [100, 101, 102, 103],
+        'Points should start from 100 (#7933)'
+    );
+});
+
+

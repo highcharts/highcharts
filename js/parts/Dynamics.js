@@ -903,7 +903,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			// Do the merge, with some forced options
 			newOptions = merge(oldOptions, animation, {
 				index: series.index,
-				pointStart: series.xData[0] // when updating after addPoint
+				pointStart: pick(
+					oldOptions.pointStart, // when updating from blank (#7933)
+					series.xData[0] // when updating after addPoint
+				)
 			}, { data: series.options.data }, newOptions);
 
 			// Destroy the series and delete all properties. Reinsert all methods
