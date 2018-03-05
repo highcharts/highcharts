@@ -306,7 +306,8 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/modules/exporting.src.js',
         './js/modules/export-data.src.js',
         './js/modules/data.src.js',
-        './js/modules/offline-exporting.src.js'
+        './js/modules/offline-exporting.src.js',
+        './js/modules/pattern-fill.src.js'
     ];
     const optionsJSDoc = {
         navOptions: {
