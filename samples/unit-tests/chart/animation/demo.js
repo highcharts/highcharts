@@ -8,31 +8,25 @@ QUnit.test('Animation duration', function (assert) {
 
         clock = lolexInstall();
 
-        var chart = Highcharts.chart('container', {
+        var chart = Highcharts
+            .chart('container', {
 
-            chart: {
-                animation: {
-                    duration: 1000
-                }
-            },
+                chart: {
+                    animation: {
+                        duration: 1000
+                    }
+                },
 
-            xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-            },
+                xAxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                },
 
-            series: [{
-                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-            }]
+                series: [{
+                    data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+                }]
 
-        });
-
-        var i = 1;
-        $('#update').click(function () {
-            chart.series[0].data[0].update(i % 2 ? 200 : 0);
-            i += 1;
-        });
-
-        var point = chart.series[0].points[0],
+            }),
+            point = chart.series[0].points[0],
             initialPos = point.series.yAxis.toPixels(point.y, true),
             realPos,
             done = assert.async();
@@ -82,4 +76,33 @@ QUnit.test('Animation duration', function (assert) {
 
     }
 
+});
+
+QUnit.test('No animation', function (assert) {
+
+    var chart = Highcharts
+        .chart('container', {
+
+            chart: {
+                animation: false
+            },
+
+            xAxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            }]
+
+        }),
+        point = chart.series[0].points[0];
+
+    chart.series[0].points[0].update(200);
+
+    assert.strictEqual(
+        point.graphic.attr('y') + point.graphic.attr('height') / 2,
+        point.series.yAxis.toPixels(point.y, true),
+        'Point is placed sync'
+    );
 });
