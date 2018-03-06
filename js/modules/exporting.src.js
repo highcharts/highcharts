@@ -6,7 +6,7 @@
  * License: www.highcharts.com/license
  */
 
-/* eslint indent:0, max-len: 0 */
+/* eslint indent:0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -95,8 +95,9 @@ extend(defaultOptions.lang, {
 	contextButtonTitle: 'Chart context menu'
 });
 
-// Buttons and menus are collected in a separate config option set called 'navigation'.
-// This can be extended later to add control buttons like zoom and pan right click menus.
+// Buttons and menus are collected in a separate config option set called
+// 'navigation'. This can be extended later to add control buttons like zoom and
+// pan right click menus.
 defaultOptions.navigation = {
 	buttonOptions: {
 		theme: {},
@@ -105,9 +106,8 @@ defaultOptions.navigation = {
 		 * Whether to enable buttons.
 		 * 
 		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
-		 * @sample {highstock} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
+		 * @sample highcharts/navigation/buttonoptions-enabled/
+		 *         Exporting module loaded but buttons disabled
 		 * @default true
 		 * @since 2.0
 		 * @apioption navigation.buttonOptions.enabled
@@ -117,9 +117,8 @@ defaultOptions.navigation = {
 		 * The pixel size of the symbol on the button.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample highcharts/navigation/buttonoptions-height/
+		 *         Bigger buttons
 		 * @default 14
 		 * @since 2.0
 		 * @apioption navigation.buttonOptions.symbolSize
@@ -130,9 +129,8 @@ defaultOptions.navigation = {
 		 * The x position of the center of the symbol inside the button.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample highcharts/navigation/buttonoptions-height/
+		 *         Bigger buttons
 		 * @default 12.5
 		 * @since 2.0
 		 * @apioption navigation.buttonOptions.symbolX
@@ -143,9 +141,8 @@ defaultOptions.navigation = {
 		 * The y position of the center of the symbol inside the button.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample highcharts/navigation/buttonoptions-height/
+		 *         Bigger buttons
 		 * @default 10.5
 		 * @since 2.0
 		 * @apioption navigation.buttonOptions.symbolY
@@ -157,9 +154,8 @@ defaultOptions.navigation = {
 		 * 
 		 * @validvalue ["left", "center", "right"]
 		 * @type {String}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-align/ Center aligned
-		 * @sample {highstock} highcharts/navigation/buttonoptions-align/ Center aligned
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-align/ Center aligned
+		 * @sample highcharts/navigation/buttonoptions-align/
+		 *         Center aligned
 		 * @default right
 		 * @since 2.0
 		 * @apioption navigation.buttonOptions.align
@@ -180,9 +176,8 @@ defaultOptions.navigation = {
 		 * Pixel height of the buttons.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample highcharts/navigation/buttonoptions-height/
+		 *         Bigger buttons
 		 * @default 22
 		 * @since 2.0
 		 * @apioption navigation.buttonOptions.height
@@ -193,12 +188,10 @@ defaultOptions.navigation = {
 		 * A text string to add to the individual button.
 		 * 
 		 * @type {String}
-		 * @sample {highcharts} highcharts/exporting/buttons-text/ Full text button
-		 * @sample {highcharts} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
-		 * @sample {highstock} highcharts/exporting/buttons-text/ Full text button
-		 * @sample {highstock} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
-		 * @sample {highmaps} highcharts/exporting/buttons-text/ Full text button
-		 * @sample {highmaps} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
+		 * @sample highcharts/exporting/buttons-text/
+		 *         Full text button
+		 * @sample highcharts/exporting/buttons-text-symbol/
+		 *         Combined symbol and text
 		 * @default null
 		 * @since 3.0
 		 * @apioption navigation.buttonOptions.text
@@ -209,9 +202,8 @@ defaultOptions.navigation = {
 		 * `verticalAlign`.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
-		 * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample highcharts/navigation/buttonoptions-verticalalign/
+		 *         Buttons at lower right
 		 * @default 0
 		 * @since 2.0
 		 * @apioption navigation.buttonOptions.y
@@ -223,9 +215,8 @@ defaultOptions.navigation = {
 		 * 
 		 * @validvalue ["top", "middle", "bottom"]
 		 * @type {String}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
-		 * @sample {highstock} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
+		 * @sample highcharts/navigation/buttonoptions-verticalalign/
+		 *         Buttons at lower right
 		 * @default top
 		 * @since 2.0
 		 * @apioption navigation.buttonOptions.verticalAlign
@@ -236,9 +227,8 @@ defaultOptions.navigation = {
 		 * The pixel width of the button.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample highcharts/navigation/buttonoptions-height/
+		 *         Bigger buttons
 		 * @default 24
 		 * @since 2.0
 		 * @apioption navigation.buttonOptions.width
@@ -252,7 +242,8 @@ defaultOptions.navigation = {
 
 merge(true, defaultOptions.navigation, 
 /**
- * A collection of options for buttons and menus appearing in the exporting module.
+ * A collection of options for buttons and menus appearing in the exporting
+ * module.
  * @type {Object}
  * @optionparent navigation
  */
@@ -265,9 +256,7 @@ merge(true, defaultOptions.navigation,
 	 * @type {CSSObject}
 	 * @see In styled mode, the menu is styled with the `.highcharts-menu`
 	 * class.
-	 * @sample {highcharts} highcharts/navigation/menustyle/ Light gray menu background
-	 * @sample {highstock} highcharts/navigation/menustyle/ Light gray menu background
-	 * @sample {highmaps} highcharts/navigation/menustyle/ Light gray menu background
+	 * @sample highcharts/navigation/menustyle/ Light gray menu background
 	 * @default { "border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0" }
 	 * @since 2.0
 	 */
@@ -283,10 +272,10 @@ merge(true, defaultOptions.navigation,
 	 * in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In styled mode, the menu items are styled with the `.highcharts-menu-item` class.
-	 * @sample {highcharts} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
-	 * @sample {highstock} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
-	 * @sample {highmaps} highcharts/navigation/menuitemstyle/ Add a grey stripe to the left
+	 * @see     In styled mode, the menu items are styled with the
+	 *          `.highcharts-menu-item` class.
+	 * @sample  {highcharts} highcharts/navigation/menuitemstyle/
+	 *          Add a grey stripe to the left
 	 * @default { "padding": "0.5em 1em", "color": "#333333", "background": "none" }
 	 * @since 2.0
 	 */
@@ -308,10 +297,9 @@ merge(true, defaultOptions.navigation,
 	 *  The menu items are rendered in HTML.
 	 * 
 	 * @type {CSSObject}
-	 * @see In styled mode, the menu items are styled with the `.highcharts-menu-item` class.
-	 * @sample {highcharts} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
-	 * @sample {highstock} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
-	 * @sample {highmaps} highcharts/navigation/menuitemhoverstyle/ Bold text on hover
+	 * @see    In styled mode, the menu items are styled with the
+	 *         `.highcharts-menu-item` class.
+	 * @sample highcharts/navigation/menuitemhoverstyle/ Bold text on hover
 	 * @default { "background": "#335cad", "color": "#ffffff" }
 	 * @since 2.0
 	 */
@@ -324,7 +312,8 @@ merge(true, defaultOptions.navigation,
 	 * A collection of options for buttons appearing in the exporting module.
 	 * 
 	 * 
-	 * In styled mode, the buttons are styled with the `.highcharts-contextbutton` and `.highcharts-button-symbol` class.
+	 * In styled mode, the buttons are styled with the
+	 * `.highcharts-contextbutton` and `.highcharts-button-symbol` classes.
 	 *
 	 */
 	buttonOptions: {
@@ -333,9 +322,8 @@ merge(true, defaultOptions.navigation,
 		 * Fill color for the symbol within the button.
 		 * 
 		 * @type {Color}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-symbolfill/ Blue symbol stroke for one of the buttons
-		 * @sample {highstock} highcharts/navigation/buttonoptions-symbolfill/ Blue symbol stroke for one of the buttons
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-symbolfill/ Blue symbol stroke for one of the buttons
+		 * @sample highcharts/navigation/buttonoptions-symbolfill/
+		 *         Blue symbol stroke for one of the buttons
 		 * @default #666666
 		 * @since 2.0
 		 */
@@ -345,9 +333,8 @@ merge(true, defaultOptions.navigation,
 		 * The color of the symbol's stroke or line.
 		 * 
 		 * @type {Color}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-symbolstroke/ Blue symbol stroke
-		 * @sample {highstock} highcharts/navigation/buttonoptions-symbolstroke/ Blue symbol stroke
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-symbolstroke/ Blue symbol stroke
+		 * @sample highcharts/navigation/buttonoptions-symbolstroke/
+		 *         Blue symbol stroke
 		 * @default #666666
 		 * @since 2.0
 		 */
@@ -357,9 +344,8 @@ merge(true, defaultOptions.navigation,
 		 * The pixel stroke width of the symbol on the button.
 		 * 
 		 * @type {Number}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highstock} highcharts/navigation/buttonoptions-height/ Bigger buttons
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
+		 * @sample highcharts/navigation/buttonoptions-height/
+		 *         Bigger buttons
 		 * @default 1
 		 * @since 2.0
 		 */
@@ -372,9 +358,8 @@ merge(true, defaultOptions.navigation,
 		 * objects.
 		 * 
 		 * @type {Object}
-		 * @sample {highcharts} highcharts/navigation/buttonoptions-theme/ Theming the buttons
-		 * @sample {highstock} highcharts/navigation/buttonoptions-theme/ Theming the buttons
-		 * @sample {highmaps} highcharts/navigation/buttonoptions-theme/ Theming the buttons
+		 * @sample highcharts/navigation/buttonoptions-theme/
+		 *         Theming the buttons
 		 * @since 3.0
 		 */
 		theme: {
@@ -401,7 +386,8 @@ merge(true, defaultOptions.navigation,
 // Add the export related options
 
 /**
- * Options for the exporting module. For an overview on the matter, see [the docs](http://www.highcharts.com/docs/export-module/export-module-overview).
+ * Options for the exporting module. For an overview on the matter, see
+ * [the docs](http://www.highcharts.com/docs/export-module/export-module-overview).
  * @type {Object}
  * @optionparent exporting
  */
@@ -620,15 +606,15 @@ defaultOptions.exporting = {
 			 * the popup menu.
 			 * 
 			 * @type {Function}
-			 * @sample {highcharts} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
-			 * @sample {highstock} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
-			 * @sample {highmaps} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
+			 * @sample highcharts/exporting/buttons-contextbutton-onclick/
+			 *         Skip the menu and export the chart directly
 			 * @since 2.0
 			 * @apioption exporting.buttons.contextButton.onclick
 			 */
 			
 			/**
-			 * See [navigation.buttonOptions.symbolFill](#navigation.buttonOptions.symbolFill).
+			 * See [navigation.buttonOptions.symbolFill](
+			 * #navigation.buttonOptions.symbolFill).
 			 * 
 			 * @type {Color}
 			 * @default #666666
@@ -660,8 +646,8 @@ defaultOptions.exporting = {
 
 			/**
 			 * The symbol for the button. Points to a definition function in
-			 * the `Highcharts.Renderer.symbols` collection. The default `exportIcon`
-			 * function is part of the exporting module.
+			 * the `Highcharts.Renderer.symbols` collection. The default
+			 * `exportIcon` function is part of the exporting module.
 			 * 
 			 * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down", "menu"]
 			 * @type {String}
@@ -740,7 +726,8 @@ defaultOptions.exporting = {
 	 * 
 	 * <dt>textKey</dt>
 	 * 
-	 * <dd>If internationalization is required, the key to a language string</dd>
+	 * <dd>If internationalization is required, the key to a language string
+	 * </dd>
 	 * 
 	 * </dl>
 	 * 
@@ -826,11 +813,7 @@ defaultOptions.exporting = {
  * 
  * @type {Function}
  * @context Chart
- * @sample {highcharts} highcharts/chart/events-beforeprint-afterprint/
- *         Rescale the chart to print
- * @sample {highstock} highcharts/chart/events-beforeprint-afterprint/
- *         Rescale the chart to print
- * @sample {highmaps} highcharts/chart/events-beforeprint-afterprint/
+ * @sample highcharts/chart/events-beforeprint-afterprint/
  *         Rescale the chart to print
  * @since 4.1.0
  * @apioption chart.events.afterPrint
@@ -842,11 +825,7 @@ defaultOptions.exporting = {
  * 
  * @type {Function}
  * @context Chart
- * @sample {highcharts} highcharts/chart/events-beforeprint-afterprint/
- *         Rescale the chart to print
- * @sample {highstock} highcharts/chart/events-beforeprint-afterprint/
- *         Rescale the chart to print
- * @sample {highmaps} highcharts/chart/events-beforeprint-afterprint/
+ * @sample highcharts/chart/events-beforeprint-afterprint/
  *         Rescale the chart to print
  * @since 4.1.0
  * @apioption chart.events.beforePrint
@@ -912,13 +891,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
 			.replace(/url\(("|&quot;)(\S+)("|&quot;)\)/g, 'url($2)')
 			.replace(/url\([^#]+#/g, 'url(#')
-			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
+			.replace(
+				/<svg /,
+				'<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
+			)
 			.replace(/ (|NS[0-9]+\:)href=/g, ' xlink:href=') // #3567
 			.replace(/\n/, ' ')
 			// Any HTML added to the container after the SVG (#894)
 			.replace(/<\/svg>.*?$/, '</svg>')
 			// Batik doesn't support rgba fills and strokes (#3095)
-			.replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"')
+			.replace(
+				/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, // eslint-disable-line max-len
+				'$1="rgb($2)" $1-opacity="$3"'
+			)
 
 			// Replace HTML entities, issue #347
 			.replace(/&nbsp;/g, '\u00A0') // no-break space
@@ -973,7 +958,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			sourceHeight,
 			cssWidth,
 			cssHeight,
-			options = merge(chart.options, chartOptions); // copy the options and add extra options
+			// Copy the options and add extra options
+			options = merge(chart.options, chartOptions);
 
 
 		// create a sandbox where a new chart will be generated
@@ -1018,7 +1004,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				visible: serie.visible
 			});
 
-			if (!seriesOptions.isInternal) { // used for the navigator series that has its own option set
+			// Used for the navigator series that has its own option set
+			if (!seriesOptions.isInternal) {
 				options.series.push(seriesOptions);
 			}
 		});
@@ -1081,8 +1068,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			chartOptions,
 			{
 				exporting: {
-					sourceWidth: (options && options.sourceWidth) || chartExportingOptions.sourceWidth,
-					sourceHeight: (options && options.sourceHeight) || chartExportingOptions.sourceHeight
+					sourceWidth: (
+						(options && options.sourceWidth) ||
+						chartExportingOptions.sourceWidth
+					),
+					sourceHeight: (
+						(options && options.sourceHeight) ||
+						chartExportingOptions.sourceHeight
+					)
 				}
 			}
 		));
@@ -1131,7 +1124,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		H.post(exportingOptions.url, {
 			filename: exportingOptions.filename || 'chart',
 			type: exportingOptions.type,
-			width: exportingOptions.width || 0, // IE8 fails to post undefined correctly, so use 0
+			// IE8 fails to post undefined correctly, so use 0
+			width: exportingOptions.width || 0,
 			scale: exportingOptions.scale,
 			svg: svg
 		}, exportingOptions.formAttributes);
@@ -1252,7 +1246,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				padding: menuPadding + 'px'
 			}, chart.container);
 
-			innerMenu = createElement('div', { className: 'highcharts-menu' }, null, menu);
+			innerMenu = createElement(
+				'div',
+				{ className: 'highcharts-menu' },
+				null,
+				menu
+			);
 
 			/*= if (build.classic) { =*/
 			// Presentational CSS
@@ -1281,8 +1280,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 					H.clearTimeout(menu.hideTimer);
 				}),
 
-				// Hide it on clicking or touching outside the menu (#2258, #2335,
-				// #2407)
+				// Hide it on clicking or touching outside the menu (#2258,
+				// #2335, #2407)
 				addEvent(doc, 'mouseup', function (e) {
 					if (!chart.pointer.inClass(e.target, className)) {
 						hide();
@@ -1315,7 +1314,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 									item.onclick.apply(chart, arguments);
 								}
 							},
-							innerHTML: item.text || chart.options.lang[item.textKey]
+							innerHTML: (
+								item.text ||
+								chart.options.lang[item.textKey]
+							)
 						}, null, innerMenu);
 
 						/*= if (build.classic) { =*/
@@ -1336,7 +1338,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				}
 			});
 
-			// Keep references to menu and innerMenu div to be able to destroy them
+			// Keep references to menu and innerMenu div to be able to destroy
+			// them
 			chart.exportDivElements.push(innerMenu, menu);
 
 			chart.exportMenuWidth = menu.offsetWidth;
@@ -1352,7 +1355,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			menuStyle.left = (x - menuPadding) + 'px';
 		}
 		// if outside bottom, bottom align it
-		if (y + height + chart.exportMenuHeight > chartHeight && button.alignOptions.verticalAlign !== 'top') {
+		if (
+			y + height + chart.exportMenuHeight > chartHeight &&
+			button.alignOptions.verticalAlign !== 'top'
+		) {
 			menuStyle.bottom = (chartHeight - y - menuPadding)  + 'px';
 		} else {
 			menuStyle.top = (y + height - menuPadding) + 'px';
@@ -1432,7 +1438,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			});
 		}
 
-		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
+		button = renderer
+			.button(btnOptions.text, 0, 0, callback, attr, hover, select)
 			.addClass(options.className)
 			.attr({
 				/*= if (build.classic) { =*/
@@ -1441,7 +1448,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				title: pick(chart.options.lang[btnOptions._titleKey], ''),
 				zIndex: 3 // #4955
 			});
-		button.menuClassName = options.menuClassName || 'highcharts-menu-' + chart.btnCount++;
+		button.menuClassName = (
+			options.menuClassName ||
+			'highcharts-menu-' + chart.btnCount++
+		);
 
 		if (btnOptions.symbol) {
 			symbol = renderer.symbol(
@@ -1471,7 +1481,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				x: pick(btnOptions.x, chart.buttonOffset) // #1654
 			}), true, 'spacingBox');
 
-		chart.buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
+		chart.buttonOffset += (
+			(button.width + btnOptions.buttonSpacing) *
+			(btnOptions.align === 'right' ? -1 : 1)
+		);
 
 		chart.exportSVGElements.push(button, symbol);
 
@@ -1517,7 +1530,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				removeEvent(elem, 'mouseleave');
 
 				// Remove inline events
-				chart.exportDivElements[i] = elem.onmouseout = elem.onmouseover = elem.ontouchstart = elem.onclick = null;
+				chart.exportDivElements[i] =
+					elem.onmouseout =
+					elem.onmouseover =
+					elem.ontouchstart =
+					elem.onclick = null;
 
 				// Destroy the div by moving to garbage bin
 				discardElement(elem);
@@ -1567,7 +1584,8 @@ SVGRenderer.prototype.unstyledElements = [
 /**
  * Analyze inherited styles from stylesheets and add them inline
  *
- * @todo: What are the border styles for text about? In general, text has a lot of properties.
+ * @todo: What are the border styles for text about? In general, text has a lot
+ * of properties.
  * @todo: Make it work with IE9 and IE10.
  */
 Chart.prototype.inlineStyles = function () {
@@ -1644,7 +1662,10 @@ Chart.prototype.inlineStyles = function () {
 
 			i = blacklist.length;
 			while (i-- && !blacklisted) {
-				blacklisted = blacklist[i].test(prop) || typeof val === 'function';
+				blacklisted = (
+					blacklist[i].test(prop) ||
+					typeof val === 'function'
+				);
 			}
 
 			if (!blacklisted) {
@@ -1666,11 +1687,17 @@ Chart.prototype.inlineStyles = function () {
 			}
 		}
 
-		if (node.nodeType === 1 && unstyledElements.indexOf(node.nodeName) === -1) {
+		if (
+			node.nodeType === 1 &&
+			unstyledElements.indexOf(node.nodeName) === -1
+		) {
 			styles = win.getComputedStyle(node, null);
-			parentStyles = node.nodeName === 'svg' ? {} : win.getComputedStyle(node.parentNode, null);
+			parentStyles = node.nodeName === 'svg' ?
+				{} :
+				win.getComputedStyle(node.parentNode, null);
 
-			// Get default styles from the browser so that we don't have to add these
+			// Get default styles from the browser so that we don't have to add
+			// these
 			if (!defaultStyles[node.nodeName]) {
 				/*
 				if (!dummySVG) {
@@ -1680,9 +1707,15 @@ Chart.prototype.inlineStyles = function () {
 				}
 				*/
 				dummySVG = iframeDoc.getElementsByTagName('svg')[0];
-				dummy = iframeDoc.createElementNS(node.namespaceURI, node.nodeName);
+				dummy = iframeDoc.createElementNS(
+					node.namespaceURI,
+					node.nodeName
+				);
 				dummySVG.appendChild(dummy);
-				defaultStyles[node.nodeName] = merge(win.getComputedStyle(dummy, null)); // Copy, so we can remove the node
+				// Copy, so we can remove the node
+				defaultStyles[node.nodeName] = merge(
+					win.getComputedStyle(dummy, null)
+				);
 				dummySVG.removeChild(dummy);
 			}
 
@@ -1699,7 +1732,10 @@ Chart.prototype.inlineStyles = function () {
 			// Apply styles
 			if (cssText) {
 				styleAttr = node.getAttribute('style');
-				node.setAttribute('style', (styleAttr ? styleAttr + ';' : '') + cssText);
+				node.setAttribute(
+					'style',
+					(styleAttr ? styleAttr + ';' : '') + cssText
+				);
 			}
 
 			// Set default stroke width (needed at least for IE)

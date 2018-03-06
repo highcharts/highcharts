@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -1193,8 +1192,8 @@ H.Series = H.seriesType('line', null, { // base series options
 
 				/**
 				 * The radius of the point marker. In hover state, it defaults
-				 * to the normal state's radius + 2 as per the
-				 * [radiusPlus](#plotOptions.series.marker.states.hover.radiusPlus)
+				 * to the normal state's radius + 2 as per the [radiusPlus](
+				 * #plotOptions.series.marker.states.hover.radiusPlus)
 				 * option.
 				 * 
 				 * @type {Number}

@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -71,7 +70,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			fireEvent(chart, 'addSeries', { options: options }, function () {
 				series = chart.initSeries(options);
 
-				chart.isDirtyLegend = true; // the series array is out of sync with the display
+				chart.isDirtyLegend = true;
 				chart.linkSeries();
 
 				fireEvent(chart, 'afterAddSeries');
@@ -219,7 +218,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			loadingDiv = this.loadingDiv;
 
 		if (loadingDiv) {
-			loadingDiv.className = 'highcharts-loading highcharts-loading-hidden';
+			loadingDiv.className =
+				'highcharts-loading highcharts-loading-hidden';
 			/*= if (build.classic) { =*/
 			animate(loadingDiv, {
 				opacity: 0
@@ -235,20 +235,46 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/** 
-	 * These properties cause isDirtyBox to be set to true when updating. Can be extended from plugins.
+	 * These properties cause isDirtyBox to be set to true when updating. Can be
+	 * extended from plugins.
 	 */
-	propsRequireDirtyBox: ['backgroundColor', 'borderColor', 'borderWidth', 'margin', 'marginTop', 'marginRight',
-		'marginBottom', 'marginLeft', 'spacing', 'spacingTop', 'spacingRight', 'spacingBottom', 'spacingLeft',
-		'borderRadius', 'plotBackgroundColor', 'plotBackgroundImage', 'plotBorderColor', 'plotBorderWidth', 
-		'plotShadow', 'shadow'],
+	propsRequireDirtyBox: [
+		'backgroundColor',
+		'borderColor',
+		'borderWidth',
+		'margin',
+		'marginTop',
+		'marginRight',
+		'marginBottom',
+		'marginLeft',
+		'spacing',
+		'spacingTop',
+		'spacingRight',
+		'spacingBottom',
+		'spacingLeft',
+		'borderRadius',
+		'plotBackgroundColor',
+		'plotBackgroundImage',
+		'plotBorderColor',
+		'plotBorderWidth', 
+		'plotShadow',
+		'shadow'
+	],
 
 	/** 
 	 * These properties cause all series to be updated when updating. Can be
 	 * extended from plugins.
 	 */
-	propsRequireUpdateSeries: ['chart.inverted', 'chart.polar',
-		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions',
-		'time', 'tooltip'],
+	propsRequireUpdateSeries: [
+		'chart.inverted',
+		'chart.polar',
+		'chart.ignoreHiddenSeries',
+		'chart.type',
+		'colors',
+		'plotOptions',
+		'time',
+		'tooltip'
+	],
 
 	/**
 	 * A generic function to update any element of the chart. Elements can be
@@ -306,7 +332,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		fireEvent(chart, 'update', { options: options });
 
-		// If the top-level chart option is present, some special updates are required		
+		// If the top-level chart option is present, some special updates are
+		// required		
 		if (optionsChart) {
 			merge(true, chart.options.chart, optionsChart);
 
@@ -327,7 +354,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			}
 
 			objectEach(optionsChart, function (val, key) {
-				if (inArray('chart.' + key, chart.propsRequireUpdateSeries) !== -1) {
+				if (
+					inArray('chart.' + key, chart.propsRequireUpdateSeries) !==
+					-1
+				) {
 					updateAllSeries = true;
 				}
 				// Only dirty box
@@ -536,7 +566,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 				// Destroy so we can get new elements
 				if (graphic && graphic.element) {
 					// "null" is also a valid symbol
-					if (options && options.marker && options.marker.symbol !== undefined) {
+					if (
+						options &&
+						options.marker &&
+						options.marker.symbol !== undefined
+					) {
 						point.graphic = graphic.destroy();
 					}
 				}
@@ -603,7 +637,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	 *         Remove selected points in Highmaps
 	 */
 	remove: function (redraw, animation) {
-		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
+		this.series.removePoint(
+			inArray(this, this.series.data),
+			redraw,
+			animation
+		);
 	}
 });
 
@@ -665,8 +703,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		// Optional redraw, defaults to true
 		redraw = pick(redraw, true);
 
-		// Get options and push the point to xData, yData and series.options. In series.generatePoints
-		// the Point instance will be created on demand and pushed to the series.data array.
+		// Get options and push the point to xData, yData and series.options. In
+		// series.generatePoints the Point instance will be created on demand
+		// and pushed to the series.data array.
 		point = { series: series };
 		series.pointClass.prototype.applyOptions.apply(point, [options]);
 		x = point.x;
@@ -680,8 +719,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			}
 		}
 		
-		series.updateParallelArrays(point, 'splice', i, 0, 0); // insert undefined item
-		series.updateParallelArrays(point, i); // update it
+		// Insert undefined item
+		series.updateParallelArrays(point, 'splice', i, 0, 0);
+		// Update it
+		series.updateParallelArrays(point, i);
 
 		if (names && point.name) {
 			names[x] = point.name;
@@ -720,9 +761,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	},
 
 	/**
-	 * Remove a point from the series. Unlike the {@link Highcharts.Point#remove}
-	 * method, this can also be done on a point that is not instanciated because
-	 * it is outside the view or subject to Highstock data grouping.
+	 * Remove a point from the series. Unlike the
+	 * {@link Highcharts.Point#remove} method, this can also be done on a point
+	 * that is not instanciated because it is outside the view or subject to
+	 * Highstock data grouping.
 	 *
 	 * @param  {Number} i
 	 *         The index of the point in the {@link Highcharts.Series.data|data}
@@ -753,7 +795,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 				}
 				data.splice(i, 1);
 				series.options.data.splice(i, 1);
-				series.updateParallelArrays(point || { series: series }, 'splice', i, 1);
+				series.updateParallelArrays(
+					point || { series: series },
+					'splice',
+					i,
+					1
+				);
 
 				if (point) {
 					point.destroy();
@@ -846,7 +893,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			// is merged in with type specific plotOptions
 			oldOptions = series.userOptions,
 			oldType = series.oldType || series.type,
-			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
+			newType = (
+				newOptions.type ||
+				oldOptions.type ||
+				chart.options.chart.type
+			),
 			proto = seriesTypes[oldType].prototype,
 			n,
 			groups = [
@@ -909,8 +960,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 				)
 			}, { data: series.options.data }, newOptions);
 
-			// Destroy the series and delete all properties. Reinsert all methods
-			// and properties from the new type prototype (#2270, #3719)
+			// Destroy the series and delete all properties. Reinsert all
+			// methods and properties from the new type prototype (#2270,
+			// #3719).
 			series.remove(false, null, false);
 			for (n in proto) {
 				series[n] = undefined;
