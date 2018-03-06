@@ -1,8 +1,6 @@
 
 QUnit.test('Hidden data labels became visible', function (assert) {
 
-    var done = assert.async();
-
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie',
@@ -170,28 +168,73 @@ QUnit.test('Hidden data labels became visible', function (assert) {
         }
     });
 
+    assert.equal(
+        chart.series.length,
+        1,
+        'Chart created'
+    );
+
     function getVisibilities() {
         return chart.get('brands').points.map(function (point) {
             return point.dataLabel.element.getAttribute('visibility');
         });
     }
 
-    var visibilities = getVisibilities();
-    chart.series[0].points[0].doDrilldown();
+    var clock = null,
+        done = assert.async();
 
-    setTimeout(function () {
-        chart.drillUp();
-    }, 25);
+    try {
 
+        var visibilities = getVisibilities();
 
-    setTimeout(function () {
-        var newVisibilities = getVisibilities();
+        clock = lolexInstall(chart);
 
-        assert.deepEqual(
-            newVisibilities,
-            visibilities,
-            'The same data labels are visible and hidden'
-        );
-        done();
-    }, 200);
+        chart.series[0].points[0].doDrilldown();
+
+        setTimeout(function () {
+
+            assert.equal(
+                chart.series[0].name,
+                'Microsoft Internet Explorer',
+                'Second level name'
+            );
+
+            assert.strictEqual(
+                Highcharts.color(
+                    chart.series[0].points[3].graphic.element.getAttribute('fill')
+                ).get(),
+                Highcharts.color(Highcharts.getOptions().colors[3]).get(),
+                'Point color should be animated'
+            );
+
+            chart.drillUp();
+
+            assert.equal(
+                chart.series[0].name,
+                'Brands',
+                'First level name'
+            );
+
+        }, 50);
+
+        setTimeout(function () {
+
+            var newVisibilities = getVisibilities();
+
+            assert.deepEqual(
+                newVisibilities,
+                visibilities,
+                'The visible state of the data labels should be the same'
+            );
+
+            done();
+        }, 100);
+
+        lolexRunAndUninstall(clock);
+
+    } finally {
+
+        lolexUninstall(clock);
+
+    }
 });
