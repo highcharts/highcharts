@@ -2143,7 +2143,14 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
 		if (pointIsArray) {
 			point.push(value);
 		} else {
-			point[reader.configName] = value;
+			if (reader.configName.indexOf('.') > 0) {
+				// Handle nested property names
+				Highcharts.Point.prototype.setNestedProperty(
+					point, value, reader.configName
+				);
+			} else {
+				point[reader.configName] = value;
+			}
 		}
 	});
 

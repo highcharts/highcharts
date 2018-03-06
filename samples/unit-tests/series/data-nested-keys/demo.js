@@ -83,3 +83,96 @@ QUnit.test('Nested properties in series.keys', function (assert) {
         'Point 8 has correct options'
     );
 });
+
+
+QUnit.test('Nested properties in CSV', function (assert) {
+    var data = 'Name,Value,Labels,Color,Test1,Test2\n' +
+                'Bob,1,1,"#ff0000",Hello,12\n' +
+                'Frank,1,0,red,0.45,Testing string\n',
+        chart = Highcharts.chart('container', {
+            data: {
+                csv: data,
+                seriesMapping: [{
+                    'dataLabels.enabled': 2,
+                    'dataLabels.color': 3,
+                    'test.test2.test3.test4': 4,
+                    'test.test2.test3.test5': 5
+                }]
+            },
+            series: [{
+                dataLabels: {
+                    enabled: true
+                },
+                type: 'pie'
+            }]
+        }),
+        points = chart.series[0].points;
+
+    assert.ok(
+        points[0].name === 'Bob' &&
+        points[0].y === 1 &&
+        points[0].options.dataLabels.enabled &&
+        points[0].options.dataLabels.color === '#ff0000' &&
+        points[0].options.test.test2.test3.test4 === 'Hello' &&
+        points[0].options.test.test2.test3.test5 === 12,
+        'Point 1 has correct options'
+    );
+
+    assert.ok(
+        points[1].name === 'Frank' &&
+        points[1].y === 1 &&
+        !points[1].options.dataLabels.enabled &&
+        points[1].options.dataLabels.color === 'red' &&
+        points[1].options.test.test2.test3.test4 === 0.45 &&
+        points[1].options.test.test2.test3.test5 === 'Testing string',
+        'Point 2 has correct options'
+    );
+});
+
+
+QUnit.test('Nested properties in maps', function (assert) {
+    var chart = Highcharts.mapChart('container', {
+            series: [{
+                dataLabels: {
+                    enabled: true
+                },
+                mapData: [{
+                    name: 'Bob',
+                    path: 'M0,0L10,0L10,10z'
+                }, {
+                    name: 'Frank',
+                    path: 'M-10,-10L-20,-10L-20,-20z'
+                }],
+                joinBy: 'name',
+                keys: [
+                    'name',
+                    'value',
+                    'dataLabels.enabled',
+                    'test.test2.test3.test4'
+                ],
+                data: [
+                    ['Frank', 1],
+                    ['Bob', 2, 0, 'Test string']
+                ]
+            }]
+        }),
+        points = chart.series[0].points;
+
+    assert.ok(
+        points[0].name === 'Frank' &&
+        points[0].value === 1 &&
+        points[0].dataLabel &&
+        !points[0].options.test,
+        'Point 1 has correct options'
+    );
+
+    assert.ok(
+        points[1].name === 'Bob' &&
+        points[1].value === 2 &&
+        !points[1].options.dataLabels.enabled &&
+        points[1].options.test.test2.test3.test4 === 'Test string',
+        'Point 2 has correct options'
+    );
+});
+
+
