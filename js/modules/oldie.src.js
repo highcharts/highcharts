@@ -6,7 +6,6 @@
  * License: www.highcharts.com/license
  */
 
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -310,8 +309,8 @@ if (!svg) {
 		docMode8: doc && doc.documentMode === 8,
 
 		/**
-		 * Initialize a new VML element wrapper. It builds the markup as a string
-		 * to minimize DOM traffic.
+		 * Initialize a new VML element wrapper. It builds the markup as a
+		 * string to minimize DOM traffic.
 		 * @param {Object} renderer
 		 * @param {Object} nodeName
 		 */
@@ -379,7 +378,8 @@ if (!svg) {
 				wrapper.onAdd();
 			}
 
-			// IE8 Standards can't set the class name before the element is appended
+			// IE8 Standards can't set the class name before the element is
+			// appended
 			if (this.className) {
 				this.attr('class', this.className);
 			}
@@ -396,10 +396,11 @@ if (!svg) {
 		 * Set the rotation of a span with oldIE's filter
 		 */
 		setSpanRotation: function () {
-			// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
-			// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
-			// has support for CSS3 transform. The getBBox method also needs to be updated
-			// to compensate for the rotation, like it currently does for SVG.
+			// Adjust for alignment and rotation. Rotation of useHTML content is
+			// not yet implemented but it can probably be implemented for
+			// Firefox 3.5+ on user request. FF3.5+ has support for CSS3
+			// transform. The getBBox method also needs to be updated to
+			// compensate for the rotation, like it currently does for SVG.
 			// Test case: http://jsfiddle.net/highcharts/Ybt44/
 
 			var rotation = this.rotation,
@@ -407,16 +408,24 @@ if (!svg) {
 				sintheta = Math.sin(rotation * deg2rad);
 						
 			css(this.element, {
-				filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
+				filter: rotation ? [
+					'progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 					', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
-					', sizingMethod=\'auto expand\')'].join('') : 'none'
+					', sizingMethod=\'auto expand\')'
+				].join('') : 'none'
 			});
 		},
 
 		/**
 		 * Get the positioning correction for the span after rotating.
 		 */
-		getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
+		getSpanCorrection: function (
+			width,
+			baseline,
+			alignCorrection,
+			rotation,
+			align
+		) {
 
 			var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
 				sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
@@ -430,13 +439,25 @@ if (!svg) {
 
 			// correct for baseline and corners spilling out after rotation
 			quad = costheta * sintheta < 0;
-			this.xCorr += sintheta * baseline * (quad ? 1 - alignCorrection : alignCorrection);
-			this.yCorr -= costheta * baseline * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
+			this.xCorr += (
+				sintheta *
+				baseline *
+				(quad ? 1 - alignCorrection : alignCorrection)
+			);
+			this.yCorr -= (
+				costheta *
+				baseline *
+				(rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1)
+			);
 			// correct for the length/height of the text
 			if (nonLeft) {
 				this.xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
 				if (rotation) {
-					this.yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
+					this.yCorr -= (
+						height *
+						alignCorrection *
+						(sintheta < 0 ? -1 : 1)
+					);
 				}
 				css(this.element, {
 					textAlign: align
@@ -445,8 +466,8 @@ if (!svg) {
 		},
 
 		/**
-		 * Converts a subset of an SVG path definition to its VML counterpart. Takes an array
-		 * as the parameter and returns a string.
+		 * Converts a subset of an SVG path definition to its VML counterpart.
+		 * Takes an array as the parameter and returns a string.
 		 */
 		pathToVML: function (value) {
 			// convert paths
@@ -465,10 +486,14 @@ if (!svg) {
 				} else {
 					path[i] = value[i];
 
-					// When the start X and end X coordinates of an arc are too close,
-					// they are rounded to the same value above. In this case, substract or
-					// add 1 from the end X and Y positions. #186, #760, #1371, #1410.
-					if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
+					// When the start X and end X coordinates of an arc are too
+					// close, they are rounded to the same value above. In this
+					// case, substract or add 1 from the end X and Y positions.
+					// #186, #760, #1371, #1410.
+					if (
+						value.isArc &&
+						(value[i] === 'wa' || value[i] === 'at')
+					) {
 						// Start and end X
 						if (path[i + 5] === path[i + 7]) {
 							path[i + 7] += value[i + 7] > value[i + 5] ? 1 : -1;
@@ -496,7 +521,9 @@ if (!svg) {
 
 			if (clipRect) {
 				clipMembers = clipRect.members;
-				erase(clipMembers, wrapper); // Ensure unique list of elements (#1258)
+
+				// Ensure unique list of elements (#1258)
+				erase(clipMembers, wrapper);
 				clipMembers.push(wrapper);
 				wrapper.destroyClip = function () {
 					erase(clipMembers, wrapper);
@@ -507,7 +534,9 @@ if (!svg) {
 				if (wrapper.destroyClip) {
 					wrapper.destroyClip();
 				}
-				cssRet = { clip: wrapper.docMode8 ? 'inherit' : 'rect(auto)' }; // #1214
+				cssRet = {
+					clip: wrapper.docMode8 ? 'inherit' : 'rect(auto)'
+				}; // #1214
 			}
 
 			return wrapper.css(cssRet);
@@ -522,11 +551,13 @@ if (!svg) {
 
 		/**
 		 * Removes a child either by removeChild or move to garbageBin.
-		 * Issue 490; in VML removeChild results in Orphaned nodes according to sIEve, discardElement does not.
+		 * Issue 490; in VML removeChild results in Orphaned nodes according to
+		 * sIEve, discardElement does not.
 		 */
 		safeRemoveChild: function (element) {
-			// discardElement will detach the node from its parent before attaching it
-			// to the garbage bin. Therefore it is important that the node is attached and have parent.
+			// discardElement will detach the node from its parent before
+			// attaching it to the garbage bin. Therefore it is important that
+			// the node is attached and have parent.
 			if (element.parentNode) {
 				discardElement(element);
 			}
@@ -565,17 +596,21 @@ if (!svg) {
 
 			var len;
 
-			path = path.split(/[ ,,]/); // The extra comma tricks the trailing comma remover in "gulp scripts" task
+			// The extra comma tricks the trailing comma remover in
+			// "gulp scripts" task
+			path = path.split(/[ ,,]/);
 			len = path.length;
 
 			if (len === 9 || len === 11) {
-				path[len - 4] = path[len - 2] = pInt(path[len - 2]) - 10 * length;
+				path[len - 4] = path[len - 2] =
+					pInt(path[len - 2]) - 10 * length;
 			}
 			return path.join(' ');
 		},
 
 		/**
-		 * Apply a drop shadow by copying elements and giving them different strokes
+		 * Apply a drop shadow by copying elements and giving them different
+		 * strokes
 		 * @param {Boolean|Object} shadowOptions
 		 */
 		shadow: function (shadowOptions, group, cutOff) {
@@ -600,24 +635,33 @@ if (!svg) {
 
 			if (shadowOptions) {
 				shadowWidth = pick(shadowOptions.width, 3);
-				shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
+				shadowElementOpacity =
+					(shadowOptions.opacity || 0.15) / shadowWidth;
 				for (i = 1; i <= 3; i++) {
 
 					strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
 
 					// Cut off shadows for stacked column items
 					if (cutOff) {
-						modifiedPath = this.cutOffPath(path.value, strokeWidth + 0.5);
+						modifiedPath = this.cutOffPath(
+							path.value,
+							strokeWidth + 0.5
+						);
 					}
 
-					markup = ['<shape isShadow="true" strokeweight="', strokeWidth,
+					markup = [
+						'<shape isShadow="true" strokeweight="', strokeWidth,
 						'" filled="false" path="', modifiedPath,
-						'" coordsize="10 10" style="', element.style.cssText, '" />'];
+						'" coordsize="10 10" style="', element.style.cssText,
+						'" />'
+					];
 
 					shadow = createElement(renderer.prepVML(markup),
 						null, {
-							left: pInt(elemStyle.left) + pick(shadowOptions.offsetX, 1),
-							top: pInt(elemStyle.top) + pick(shadowOptions.offsetY, 1)
+							left: pInt(elemStyle.left) +
+								pick(shadowOptions.offsetX, 1),
+							top: pInt(elemStyle.top) +
+								pick(shadowOptions.offsetY, 1)
 						}
 					);
 					if (cutOff) {
@@ -664,13 +708,19 @@ if (!svg) {
 			return this.element.getAttribute(key);
 		},
 		classSetter: function (value) {
-			// IE8 Standards mode has problems retrieving the className unless set like this.
-			// IE8 Standards can't set the class name before the element is appended.
+			// IE8 Standards mode has problems retrieving the className unless
+			// set like this. IE8 Standards can't set the class name before the
+			// element is appended.
 			(this.added ? this.element : this).className = value;
 		},
 		dashstyleSetter: function (value, key, element) {
 			var strokeElem = element.getElementsByTagName('stroke')[0] ||
-				createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
+				createElement(
+					this.renderer.prepVML(['<stroke/>']),
+					null,
+					null,
+					element
+				);
 			strokeElem[key] = value || 'solid';
 			// Because changing stroke-width will change the dash length and
 			// cause an epileptic effect
@@ -680,7 +730,8 @@ if (!svg) {
 			var i,
 				shadows = this.shadows;
 			value = value || [];
-			this.d = value.join && value.join(' '); // used in getter for animation
+			// Used in getter for animation
+			this.d = value.join && value.join(' ');
 
 			element.path = value = this.pathToVML(value);
 
@@ -688,7 +739,9 @@ if (!svg) {
 			if (shadows) {
 				i = shadows.length;
 				while (i--) {
-					shadows[i].path = shadows[i].cutOff ? this.cutOffPath(value, shadows[i].cutOff) : value;
+					shadows[i].path = shadows[i].cutOff ?
+						this.cutOffPath(value, shadows[i].cutOff) :
+						value;
 				}
 			}
 			this.setAttr(key, value);
@@ -699,28 +752,38 @@ if (!svg) {
 				element.style.color = value;
 			} else if (nodeName !== 'IMG') { // #1336
 				element.filled = value !== 'none';
-				this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
+				this.setAttr(
+					'fillcolor',
+					this.renderer.color(value, element, key, this)
+				);
 			}
 		},
 		'fill-opacitySetter': function (value, key, element) {
 			createElement(
-				this.renderer.prepVML(['<', key.split('-')[0], ' opacity="', value, '"/>']),
+				this.renderer.prepVML(
+					['<', key.split('-')[0], ' opacity="', value, '"/>']
+				),
 				null,
 				null,
 				element
 			);
 		},
-		opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
+		// Don't bother - animation is too slow and filters introduce artifacts
+		opacitySetter: noop,
 		rotationSetter: function (value, key, element) {
 			var style = element.style;
 			this[key] = style[key] = value; // style is for #1873
 
-			// Correction for the 1x1 size of the shape container. Used in gauge needles.
+			// Correction for the 1x1 size of the shape container. Used in gauge
+			// needles.
 			style.left = -Math.round(Math.sin(value * deg2rad) + 1) + 'px';
 			style.top = Math.round(Math.cos(value * deg2rad)) + 'px';
 		},
 		strokeSetter: function (value, key, element) {
-			this.setAttr('strokecolor', this.renderer.color(value, element, key, this));
+			this.setAttr(
+				'strokecolor',
+				this.renderer.color(value, element, key, this)
+			);
 		},
 		'stroke-widthSetter': function (value, key, element) {
 			element.stroked = !!value; // VML "stroked" attribute
@@ -747,14 +810,15 @@ if (!svg) {
 				});
 			}
 
-			// Instead of toggling the visibility CSS property, move the div out of the viewport.
-			// This works around #61 and #586
+			// Instead of toggling the visibility CSS property, move the div out
+			// of the viewport. This works around #61 and #586
 			if (element.nodeName === 'DIV') {
 				value = value === 'hidden' ? '-999em' : 0;
 
-				// In order to redraw, IE7 needs the div to be visible when tucked away
-				// outside the viewport. So the visibility is actually opposite of
-				// the expected value. This applies to the tooltip only.
+				// In order to redraw, IE7 needs the div to be visible when
+				// tucked away outside the viewport. So the visibility is
+				// actually opposite of the expected value. This applies to the
+				// tooltip only.
 				if (!this.docMode8) {
 					element.style[key] = value ? 'visible' : 'hidden';
 				}
@@ -769,13 +833,12 @@ if (!svg) {
 				key = 'left';
 			} else if (key === 'y') {
 				key = 'top';
-			}/* else {
-				value = Math.max(0, value); // don't set width or height below zero (#311)
-			}*/
+			}
 
 			// clipping rectangle special
 			if (this.updateClipping) {
-				this[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
+				// the key is now 'left' or 'top' for 'x' and 'y'
+				this[key] = value;
 				this.updateClipping();
 			} else {
 				// normal
@@ -847,9 +910,10 @@ if (!svg) {
 
 			renderer.setSize(width, height, false);
 
-			// The only way to make IE6 and IE7 print is to use a global namespace. However,
-			// with IE8 the only way to make the dynamic shapes visible in screen and print mode
-			// seems to be to add the xmlns attribute and the behaviour style inline.
+			// The only way to make IE6 and IE7 print is to use a global
+			// namespace. However, with IE8 the only way to make the dynamic
+			// shapes visible in screen and print mode seems to be to add the
+			// xmlns attribute and the behaviour style inline.
 			if (!doc.namespaces.hcv) {
 
 				doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
@@ -868,16 +932,16 @@ if (!svg) {
 
 
 		/**
-		 * Detect whether the renderer is hidden. This happens when one of the parent elements
-		 * has display: none
+		 * Detect whether the renderer is hidden. This happens when one of the
+		 * parent elements has display: none
 		 */
 		isHidden: function () {
 			return !this.box.offsetWidth;
 		},
 
 		/**
-		 * Define a clipping rectangle. In VML it is accomplished by storing the values
-		 * for setting the CSS style to all associated members.
+		 * Define a clipping rectangle. In VML it is accomplished by storing the
+		 * values for setting the CSS style to all associated members.
 		 *
 		 * @param {Number} x
 		 * @param {Number} y
@@ -890,7 +954,8 @@ if (!svg) {
 			var clipRect = this.createElement(),
 				isObj = isObject(x);
 
-			// mimic a rectangle with its style object for automatic updating in attr
+			// mimic a rectangle with its style object for automatic updating in
+			// attr
 			return extend(clipRect, {
 				members: [],
 				count: 0,
@@ -926,7 +991,8 @@ if (!svg) {
 					return ret;
 				},
 
-				// used in attr and animation to update the clipping of all members
+				// used in attr and animation to update the clipping of all
+				// members
 				updateClipping: function () {
 					each(clipRect.members, function (member) {
 						// Member.element is falsy on deleted series, like in
@@ -943,8 +1009,8 @@ if (!svg) {
 
 
 		/**
-		 * Take a color and return it if it's a string, make it a gradient if it's a
-		 * gradient configuration object, and apply opacity.
+		 * Take a color and return it if it's a string, make it a gradient if
+		 * it's a gradient configuration object, and apply opacity.
 		 *
 		 * @param {Object} color The color or config object
 		 */
@@ -983,13 +1049,18 @@ if (!svg) {
 					lastStop,
 					colors = [],
 					addFillNode = function () {
-						// Add the fill subnode. When colors attribute is used, the meanings of opacity and o:opacity2
-						// are reversed.
+						// Add the fill subnode. When colors attribute is used,
+						// the meanings of opacity and o:opacity2 are reversed.
 						markup = ['<fill colors="' + colors.join(',') + 
 							'" opacity="', opacity2, '" o:opacity2="',
 							opacity1, '" type="', fillType, '" ', fillAttr,
 							'focus="100%" method="any" />'];
-						createElement(renderer.prepVML(markup), null, null, elem);
+						createElement(
+							renderer.prepVML(markup),
+							null,
+							null,
+							elem
+						);
 					};
 
 				// Extend from 0 to 1
@@ -1022,7 +1093,8 @@ if (!svg) {
 					// Build the color attribute
 					colors.push((stop[0] * 100) + '% ' + stopColor);
 
-					// Only start and end opacities are allowed, so we use the first and the last
+					// Only start and end opacities are allowed, so we use the
+					// first and the last
 					if (!i) {
 						opacity1 = stopOpacity;
 						color2 = stopColor;
@@ -1061,12 +1133,16 @@ if (!svg) {
 							applyRadialGradient = function () {
 								if (radialReference) {
 									bBox = wrapper.getBBox();
-									cx += (radialReference[0] - bBox.x) / bBox.width - 0.5;
-									cy += (radialReference[1] - bBox.y) / bBox.height - 0.5;
+									cx += (radialReference[0] - bBox.x) /
+										bBox.width - 0.5;
+									cy += (radialReference[1] - bBox.y) /
+										bBox.height - 0.5;
 									sizex *= radialReference[2] / bBox.width;
 									sizey *= radialReference[2] / bBox.height;
 								}
-								fillAttr = 'src="' + H.getOptions().global.VMLRadialGradientURL + '" ' +
+								fillAttr = 'src="' +
+									H.getOptions().global.VMLRadialGradientURL +
+									'" ' +
 									'size="' + sizex + ',' + sizey + '" ' +
 									'origin="0.5,0.5" ' +
 									'position="' + cx + ',' + cy + '" ' +
@@ -1079,16 +1155,19 @@ if (!svg) {
 						if (wrapper.added) {
 							applyRadialGradient();
 						} else {
-							// We need to know the bounding box to get the size and position right
+							// We need to know the bounding box to get the size
+							// and position right
 							wrapper.onAdd = applyRadialGradient;
 						}
 
-						// The fill element's color attribute is broken in IE8 standards mode, so we
-						// need to set the parent shape's fillcolor attribute instead.
+						// The fill element's color attribute is broken in IE8
+						// standards mode, so we need to set the parent shape's
+						// fillcolor attribute instead.
 						ret = color1;
 					}
 
-				// Gradients are not supported for VML stroke, return the first color. #722.
+				// Gradients are not supported for VML stroke, return the first
+				// color. #722.
 				} else {
 					ret = stopColor;
 				}
@@ -1099,13 +1178,18 @@ if (!svg) {
 
 				colorObject = H.color(color);
 
-				wrapper[prop + '-opacitySetter'](colorObject.get('a'), prop, elem);
+				wrapper[prop + '-opacitySetter'](
+					colorObject.get('a'),
+					prop,
+					elem
+				);
 
 				ret = colorObject.get('rgb');
 
 
 			} else {
-				var propNodes = elem.getElementsByTagName(prop); // 'stroke' or 'fill' node
+				// 'stroke' or 'fill' node
+				var propNodes = elem.getElementsByTagName(prop);
 				if (propNodes.length) {
 					propNodes[0].opacity = 1;
 					propNodes[0].type = 'solid';
@@ -1127,9 +1211,15 @@ if (!svg) {
 			markup = markup.join('');
 
 			if (isIE8) { // add xmlns and style inline
-				markup = markup.replace('/>', ' xmlns="urn:schemas-microsoft-com:vml" />');
+				markup = markup.replace(
+					'/>',
+					' xmlns="urn:schemas-microsoft-com:vml" />'
+				);
 				if (markup.indexOf('style="') === -1) {
-					markup = markup.replace('/>', ' style="' + vmlStyle + '" />');
+					markup = markup.replace(
+						'/>',
+						' style="' + vmlStyle + '" />'
+					);
 				} else {
 					markup = markup.replace('style="', 'style="' + vmlStyle);
 				}
@@ -1187,9 +1277,9 @@ if (!svg) {
 		},
 
 		/**
-		 * Create a group using an outer div and an inner v:group to allow rotating
-		 * and flipping. A simple v:group would have problems with positioning
-		 * child HTML elements and CSS clip.
+		 * Create a group using an outer div and an inner v:group to allow
+		 * rotating and flipping. A simple v:group would have problems with
+		 * positioning child HTML elements and CSS clip.
 		 *
 		 * @param {String} name The name of the group
 		 */
@@ -1199,7 +1289,10 @@ if (!svg) {
 
 			// set the class name
 			if (name) {
-				attribs = { 'className': 'highcharts-' + name, 'class': 'highcharts-' + name };
+				attribs = {
+					'className': 'highcharts-' + name,
+					'class': 'highcharts-' + name
+				};
 			}
 
 			// the div to hold HTML and clipping
@@ -1232,7 +1325,8 @@ if (!svg) {
 		},
 
 		/**
-		 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
+		 * For rectangles, VML uses a shape for rect to overcome bugs and
+		 * rotation problems
 		 */
 		createElement: function (nodeName) {
 			return nodeName === 'rect' ?
@@ -1241,7 +1335,8 @@ if (!svg) {
 		},
 
 		/**
-		 * In the VML renderer, each child of an inverted div (group) is inverted
+		 * In the VML renderer, each child of an inverted div (group) is
+		 * inverted
 		 * @param {Object} element
 		 * @param {Object} parentNode
 		 */
@@ -1252,8 +1347,10 @@ if (!svg) {
 
 			css(element, {
 				flip: 'x',
-				left: pInt(parentStyle.width) - (imgStyle ? pInt(imgStyle.top) : 1),
-				top: pInt(parentStyle.height) - (imgStyle ? pInt(imgStyle.left) : 1),
+				left: pInt(parentStyle.width) -
+					(imgStyle ? pInt(imgStyle.top) : 1),
+				top: pInt(parentStyle.height) -
+					(imgStyle ? pInt(imgStyle.left) : 1),
 				rotation: -90
 			});
 
@@ -1324,7 +1421,8 @@ if (!svg) {
 				return ret;
 
 			},
-			// Add circle symbol path. This performs significantly faster than v:oval.
+			// Add circle symbol path. This performs significantly faster than
+			// v:oval.
 			circle: function (x, y, w, h, wrapper) {
 
 				if (wrapper && defined(wrapper.r)) {
@@ -1352,9 +1450,10 @@ if (!svg) {
 				];
 			},
 			/**
-			 * Add rectangle symbol path which eases rotation and omits arcsize problems
-			 * compared to the built-in VML roundrect shape. When borders are not rounded,
-			 * use the simpler square path, else use the callout path without the arrow.
+			 * Add rectangle symbol path which eases rotation and omits arcsize
+			 * problems compared to the built-in VML roundrect shape. When
+			 * borders are not rounded, use the simpler square path, else use
+			 * the callout path without the arrow.
 			 */
 			rect: function (x, y, w, h, options) {
 				return SVGRenderer.prototype.symbols[

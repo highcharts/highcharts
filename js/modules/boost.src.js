@@ -1,24 +1,17 @@
-/* eslint max-len: 0 */
 /**
  * License: www.highcharts.com/license
  * Author: Christer Vasseng, Torstein Honsi
  *
- * This is an experimental Highcharts module that draws long data series on a canvas
- * in order to increase performance of the initial load time and tooltip responsiveness.
+ * This is a Highcharts module that draws long data series on a cannvas in order
+ * to increase performance of the initial load time and tooltip responsiveness.
  *
  * Compatible with WebGL compatible browsers (not IE < 11).
  *
- * Development plan
- * - Column range.
- * - Check how it works with Highstock and data grouping. Currently it only works when navigator.adaptToUpdatedData
- *   is false. It is also recommended to set scrollbar.liveRedraw to false.
- * - Check inverted charts.
- * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
-	 that with initial series animation).
- *
  * If this module is taken in as part of the core
- * - All the loading logic should be merged with core. Update styles in the core.
- * - Most of the method wraps should probably be added directly in parent methods.
+ * - All the loading logic should be merged with core. Update styles in the
+ *   core.
+ * - Most of the method wraps should probably be added directly in parent
+ *   methods.
  *
  * Notes for boost mode
  * - Area lines are not drawn
@@ -30,26 +23,31 @@
  * - Marker shapes are not supported: markers will always be circles
  *
  * Optimizing tips for users
- * - Set extremes (min, max) explicitly on the axes in order for Highcharts to avoid computing extremes.
- * - Set enableMouseTracking to false on the series to improve total rendering time.
- * - The default threshold is set based on one series. If you have multiple, dense series, the combined
- *   number of points drawn gets higher, and you may want to set the threshold lower in order to
- *   use optimizations.
- * - If drawing large scatter charts, it's beneficial to set the marker radius to a value
- *   less than 1. This is to add additional spacing to make the chart more readable.
- * - If the value increments on both the X and Y axis aren't small, consider setting
- *	 useGPUTranslations to true on the boost settings object. If you do this and
- *	 the increments are small (e.g. datetime axis with small time increments)
- *	 it may cause rendering issues due to floating point rounding errors,
- *	 so your millage may vary.
+ * - Set extremes (min, max) explicitly on the axes in order for Highcharts to 
+ *   avoid computing extremes.
+ * - Set enableMouseTracking to false on the series to improve total rendering
+ * 	 time.
+ * - The default threshold is set based on one series. If you have multiple,
+ *   dense series, the combined number of points drawn gets higher, and you may
+ *   want to set the threshold lower in order to use optimizations.
+ * - If drawing large scatter charts, it's beneficial to set the marker radius
+ *   to a value less than 1. This is to add additional spacing to make the chart
+ *   more readable.
+ * - If the value increments on both the X and Y axis aren't small, consider
+ *   setting useGPUTranslations to true on the boost settings object. If you do
+ *   this and the increments are small (e.g. datetime axis with small time
+ *   increments) it may cause rendering issues due to floating point rounding
+ *   errors, so your millage may vary.
  *
  * Settings
  *	There are two ways of setting the boost threshold:
- *	- Per. series: boost based on number of points in individual series
- *	- Per. chart: boost based on the number of series
+ *	- Per series: boost based on number of points in individual series
+ *	- Per chart: boost based on the number of series
  *
- *  To set the series boost threshold, set seriesBoostThreshold on the chart object.
- *  To set the series-specific threshold, set boostThreshold on the series object.
+ *  To set the series boost threshold, set seriesBoostThreshold on the chart
+ *  object.
+ *  To set the series-specific threshold, set boostThreshold on the series
+ *  object.
  *
  *  In addition, the following can be set in the boost object:
  *  {
@@ -72,8 +70,9 @@
  * thousands of data points to be rendered in milliseconds. In addition to the
  * WebGL rendering it saves time by skipping processing and inspection of the
  * data wherever possible. This introduces some limitations to what features are
- * available in Boost mode. See [the docs](https://www.highcharts.com/docs/advanced-chart-features/boost-module)
- * for details.
+ * available in Boost mode. See [the docs](
+ * https://www.highcharts.com/docs/advanced-chart-features/boost-module) for
+ * details.
  *
  * In addition to the global `boost` option, each series has a
  * [boostThreshold](#plotOptions.series.boostThreshold) that defines when the
@@ -585,7 +584,11 @@ function isSeriesBoosting(series, overrideThreshold) {
 				series.processedXData,
 				series.options.data,
 				series.points
-			) >= (overrideThreshold || series.options.boostThreshold || Number.MAX_VALUE);
+			) >= (
+				overrideThreshold ||
+				series.options.boostThreshold ||
+				Number.MAX_VALUE
+			);
 }
 */
 
@@ -955,8 +958,14 @@ function GLShader(gl) {
 
 			gl.uniform1i(isBubbleUniform, 1);
 			gl.uniform1i(isCircleUniform, 1);
-			gl.uniform1i(bubbleSizeAreaUniform, series.options.sizeBy !== 'width');
-			gl.uniform1i(bubbleSizeAbsUniform, series.options.sizeByAbsoluteValue);
+			gl.uniform1i(
+				bubbleSizeAreaUniform,
+				series.options.sizeBy !== 'width'
+			);
+			gl.uniform1i(
+				bubbleSizeAbsUniform,
+				series.options.sizeByAbsoluteValue
+			);
 
 			setUniform('bubbleZMin', zMin);
 			setUniform('bubbleZMax', zMax);
@@ -1129,7 +1138,9 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
 		// gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
 		// gl.enableVertexAttribArray(vertAttribute);
 		// gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-		gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
+		gl.vertexAttribPointer(
+			vertAttribute, components, gl.FLOAT, false, 0, 0
+		);
 		// gl.enableVertexAttribArray(vertAttribute);
 	}
 
@@ -1186,9 +1197,7 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
 		size *= 4;
 		iterator = -1;
 
-		// if (!preAllocated || (preAllocated && preAllocated.length !== size)) {
 		preAllocated = new Float32Array(size);
-		// }
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -1281,8 +1290,13 @@ function GLRenderer(postRenderCallback) {
 
 		if (series.isSeriesBoosting) {
 			isStacked = !!series.options.stacking;
-			xData = series.xData || series.options.xData || series.processedXData;
-			s = (isStacked ? series.data : (xData || series.options.data)).length;
+			xData = (
+				series.xData ||
+				series.options.xData ||
+				series.processedXData
+			);
+			s = (isStacked ? series.data : (xData || series.options.data))
+				.length;
 
 			if (series.type === 'treemap') {
 				s *= 12;
@@ -1542,7 +1556,11 @@ function GLRenderer(postRenderCallback) {
 					swidth,
 					pointAttr;
 
-				if (typeof plotY !== 'undefined' && !isNaN(plotY) && point.y !== null) {
+				if (
+					typeof plotY !== 'undefined' &&
+					!isNaN(plotY) &&
+					point.y !== null
+				) {
 					shapeArgs = point.shapeArgs;
 
 					/*= if (build.classic) { =*/
@@ -1566,7 +1584,6 @@ function GLRenderer(postRenderCallback) {
 					// better color interpolation.
 
 					// If there's stroking, we do an additional rect
-					// if (pointAttr.stroke !== 'none' && swidth && swidth > 0) {
 					if (series.type === 'treemap') {
 						swidth = swidth || 1;
 						scolor = H.color(pointAttr.stroke).rgba;
@@ -1591,9 +1608,9 @@ function GLRenderer(postRenderCallback) {
 
 					// Fixes issues with inverted heatmaps (see #6981)
 					// The root cause is that the coordinate system is flipped.
-					// In other words, instead of [0,0] being top-left, it's bottom-right.
-					// This causes a vertical and horizontal flip in the resulting image,
-					// making it rotated 180 degrees.
+					// In other words, instead of [0,0] being top-left, it's
+					// bottom-right. This causes a vertical and horizontal flip
+					// in the resulting image, making it rotated 180 degrees.
 					if (series.type === 'heatmap' && chart.inverted) {
 						shapeArgs.x = xAxis.len - shapeArgs.x;
 						shapeArgs.y = yAxis.len - shapeArgs.y;
@@ -1935,7 +1952,9 @@ function GLRenderer(postRenderCallback) {
 			series: s,
 			zMin: Number.MAX_VALUE,
 			zMax: -Number.MAX_VALUE,
-			hasMarkers: s.options.marker ? s.options.marker.enabled !== false : false,
+			hasMarkers: s.options.marker ?
+				s.options.marker.enabled !== false :
+				false,
 			showMarksers: true,
 			drawMode: ({
 				'area': 'lines',
@@ -2068,14 +2087,16 @@ function GLRenderer(postRenderCallback) {
 			shader.setTexture(circleTextureHandle);
 		}
 
-		shader.setInverted(chart.inverted); // chart.options.chart ? chart.options.chart.inverted : false);
+		shader.setInverted(chart.inverted);
 
 
 		// Render the series
 		each(series, function (s, si) {
 			var options = s.series.options,
 				sindex,
-				lineWidth = typeof options.lineWidth !== 'undefined' ? options.lineWidth : 1,
+				lineWidth = typeof options.lineWidth !== 'undefined' ?
+					options.lineWidth :
+					1,
 				threshold = options.threshold,
 				hasThreshold = isNumber(threshold),
 				yBottom = s.series.yAxis.getThreshold(threshold),
@@ -2130,9 +2151,14 @@ function GLRenderer(postRenderCallback) {
 				gl.blendEquation(gl.FUNC_MIN);
 
 			} else {
-				// gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
+				// gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 				// gl.blendEquation(gl.FUNC_ADD);
-				gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+				gl.blendFuncSeparate(
+					gl.SRC_ALPHA,
+					gl.ONE_MINUS_SRC_ALPHA,
+					gl.ONE,
+					gl.ONE_MINUS_SRC_ALPHA
+				);
 			}
 
 			shader.reset();
@@ -2167,7 +2193,9 @@ function GLRenderer(postRenderCallback) {
 				shader.setBubbleUniforms(s.series, s.zMin, s.zMax);
 			}
 
-			shader.setDrawAsCircle((asCircle[s.series.type] && textureIsReady) || false);
+			shader.setDrawAsCircle(
+				(asCircle[s.series.type] && textureIsReady) || false
+			);
 
 			// Do the actual rendering
 			// If the line width is < 0, skip rendering of the lines. See #7833.
@@ -2337,10 +2365,26 @@ function GLRenderer(postRenderCallback) {
 				circleTexture
 			);
 
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+			gl.texParameteri(
+				gl.TEXTURE_2D,
+				gl.TEXTURE_WRAP_S,
+				gl.CLAMP_TO_EDGE
+			);
+			gl.texParameteri(
+				gl.TEXTURE_2D,
+				gl.TEXTURE_WRAP_T,
+				gl.CLAMP_TO_EDGE
+			);
+			gl.texParameteri(
+				gl.TEXTURE_2D,
+				gl.TEXTURE_MAG_FILTER,
+				gl.LINEAR
+			);
+			gl.texParameteri(
+				gl.TEXTURE_2D,
+				gl.TEXTURE_MIN_FILTER,
+				gl.LINEAR
+			);
 
 			// gl.generateMipmap(gl.TEXTURE_2D);
 
@@ -2472,7 +2516,8 @@ function createAndAttachRenderer(chart, series) {
 			};
 
 		} else {
-			target.renderTargetFo = chart.renderer.createElement('foreignObject')
+			target.renderTargetFo = chart.renderer
+				.createElement('foreignObject')
 				.add(targetGroup);
 
 			target.renderTarget = doc.createElement('canvas');
@@ -2520,7 +2565,8 @@ function createAndAttachRenderer(chart, series) {
 
 		target.boostClipRect = chart.renderer.clipRect();
 
-		(target.renderTargetFo || target.renderTarget).clip(target.boostClipRect);
+		(target.renderTargetFo || target.renderTarget)
+			.clip(target.boostClipRect);
 
 		if (target instanceof H.Chart) {
 			target.markerGroup = target.renderer.g().add(targetGroup);
@@ -3048,7 +3094,12 @@ if (!H.hasWebGLSupport()) {
 				maxI,
 				boostOptions,
 
-				xDataFull = this.xData || this.options.xData || this.processedXData || false,
+				xDataFull = (
+					this.xData ||
+					this.options.xData ||
+					this.processedXData ||
+					false
+				),
 
 				addKDPoint = function (clientX, plotY, i) {
 					// Shaves off about 60ms compared to repeated concatination
@@ -3188,8 +3239,9 @@ if (!H.hasWebGLSupport()) {
 								}
 
 							}
-							if (clientX !== lastClientX) { // Add points and reset
-								if (minI !== undefined) { // then maxI is also a number
+							// Add points and reset
+							if (clientX !== lastClientX) {
+								if (minI !== undefined) { // maxI is number too
 									plotY = yAxis.toPixels(maxVal, true);
 									yBottom = yAxis.toPixels(minVal, true);
 
@@ -3224,7 +3276,8 @@ if (!H.hasWebGLSupport()) {
 				}
 			}
 
-			// Loop over the points to build the k-d tree - skip this if exporting
+			// Loop over the points to build the k-d tree - skip this if
+			// exporting
 			if (!chart.renderer.forExport) {
 				if (boostOptions.debug.timeKDTree) {
 					console.time('kd tree building'); // eslint-disable-line no-console
@@ -3323,7 +3376,13 @@ if (!H.hasWebGLSupport()) {
 			}
 
 			// see #6518 + #6739
-			if (chart.markerGroup && chart.xAxis && chart.xAxis.length > 0 && chart.yAxis && chart.yAxis.length > 0) {
+			if (
+				chart.markerGroup &&
+				chart.xAxis &&
+				chart.xAxis.length > 0 &&
+				chart.yAxis &&
+				chart.yAxis.length > 0
+			) {
 				chart.markerGroup.translate(
 					chart.xAxis[0].pos,
 					chart.yAxis[0].pos
