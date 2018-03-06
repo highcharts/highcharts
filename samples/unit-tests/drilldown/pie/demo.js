@@ -1,5 +1,5 @@
 
-QUnit.test('Hidden data labels became visible', function (assert) {
+QUnit.test('Pie color and data labels', function (assert) {
 
     var chart = Highcharts.chart('container', {
         chart: {
