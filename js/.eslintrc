@@ -54,6 +54,7 @@
         "security/detect-non-literal-fs-filename": 0 /* N/A for Highcharts, we do only client side */,
         
         "highcharts/no-newline-in-doclet-code": 2,
+        "highcharts/no-newline-in-doclet-link": 2,
         "highcharts/unparsable-doclet": 2
         
     },

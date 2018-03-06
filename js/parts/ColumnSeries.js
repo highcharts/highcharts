@@ -73,8 +73,8 @@ seriesType('column', 'line', {
 
 	/**
 	 * A series specific or series type specific color set to apply instead
-	 * of the global [colors](#colors) when [colorByPoint](#plotOptions.
-	 * column.colorByPoint) is true.
+	 * of the global [colors](#colors) when [colorByPoint](
+	 * #plotOptions.column.colorByPoint) is true.
 	 *
 	 * @type      {Array<Color>}
 	 * @since     3.0

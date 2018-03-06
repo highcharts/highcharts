@@ -441,9 +441,9 @@ defaultOptions.exporting = {
 	
 	/**
 	 * Function to call if the offline-exporting module fails to export
-	 * a chart on the client side, and [fallbackToExportServer](#exporting.
-	 * fallbackToExportServer) is disabled. If left undefined, an exception
-	 * is thrown instead.
+	 * a chart on the client side, and [fallbackToExportServer](
+	 * #exporting.fallbackToExportServer) is disabled. If left undefined, an
+	 * exception is thrown instead.
 	 * 
 	 * @type {Function}
 	 * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
@@ -521,8 +521,8 @@ defaultOptions.exporting = {
 	
 	/**
 	 * The pixel width of charts exported to PNG or JPG. As of Highcharts
-	 * 3.0, the default pixel width is a function of the [chart.width](#chart.
-	 * width) or [exporting.sourceWidth](#exporting.sourceWidth) and the
+	 * 3.0, the default pixel width is a function of the [chart.width](
+	 * #chart.width) or [exporting.sourceWidth](#exporting.sourceWidth) and the
 	 * [exporting.scale](#exporting.scale).
 	 * 
 	 * @type {Number}
@@ -573,8 +573,8 @@ defaultOptions.exporting = {
 	 * may look good on a website, it will look bad in print. The default
 	 * scale of 2 makes this chart export to a 1200px PNG or JPG.
 	 * 
-	 * @see [chart.width](#chart.width), [exporting.sourceWidth](#exporting.
-	 * sourceWidth)
+	 * @see    [chart.width](#chart.width),
+	 *         [exporting.sourceWidth](#exporting.sourceWidth)
 	 * @sample {highcharts} highcharts/exporting/scale/ Scale demonstrated
 	 * @sample {highstock} highcharts/exporting/scale/ Scale demonstrated
 	 * @sample {highmaps} maps/exporting/scale/ Scale demonstrated

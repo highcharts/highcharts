@@ -240,8 +240,8 @@ H.setOptions({
  * module.
  * 
  * @type {Boolean}
- * @see [accessibility.keyboardNavigation](#accessibility.keyboardNavigation.
- * enabled)
+ * @see [accessibility.keyboardNavigation](
+ *      #accessibility.keyboardNavigation.enabled)
  * @default true
  * @since 5.0.13
  * @apioption legend.keyboardNavigation.enabled

@@ -83,8 +83,8 @@
 
 /**
  * The interval of the tick marks in axis units. When `null`, the tick
- * interval is computed to approximately follow the [tickPixelInterval](#xAxis.
- * tickPixelInterval) on linear and datetime axes. On categorized axes,
+ * interval is computed to approximately follow the [tickPixelInterval](
+ * #xAxis.tickPixelInterval) on linear and datetime axes. On categorized axes,
  * a `null` tickInterval will default to 1, one category. Note that
  * datetime axes are based on milliseconds, so for example an interval
  * of one day is expressed as `24 * 3600 * 1000`.
@@ -101,9 +101,10 @@
  * If the chart has multiple axes, the [alignTicks](#chart.alignTicks)
  * option may interfere with the `tickInterval` setting.
  *
- * @type {Number}
- * @see [tickPixelInterval](#xAxis.tickPixelInterval), [tickPositions](#xAxis.
- * tickPositions), [tickPositioner](#xAxis.tickPositioner)
+ * @type   {Number}
+ * @see    [tickPixelInterval](#xAxis.tickPixelInterval),
+ *         [tickPositions](#xAxis.tickPositions),
+ *         [tickPositioner](#xAxis.tickPositioner)
  * @sample {highcharts} highcharts/xaxis/tickinterval-5/ Tick interval of 5 on a linear axis
  * @sample {highstock} stock/xaxis/tickinterval/ Tick interval of 0.01 on Y axis
  * @default null
@@ -112,10 +113,10 @@
 
 /**
  * A callback function returning array defining where the ticks are
- * laid out on the axis. This overrides the default behaviour of [tickPixelInterval](#xAxis.
- * tickPixelInterval) and [tickInterval](#xAxis.tickInterval). The automatic
- * tick positions are accessible through `this.tickPositions` and can
- * be modified by the callback.
+ * laid out on the axis. This overrides the default behaviour of
+ * [tickPixelInterval](#xAxis.tickPixelInterval) and
+ * [tickInterval](#xAxis.tickInterval). The automatic tick positions are
+ * accessible through `this.tickPositions` and can be modified by the callback.
  *
  * @type {Function}
  * @see [tickPositions](#xAxis.tickPositions)
@@ -889,8 +890,8 @@
  * In a gauge chart, this option determines the inner radius of the
  * plot band that stretches along the perimeter. It can be given as
  * a percentage string, like `"100%"`, or as a pixel number, like `100`.
- * By default, the inner radius is controlled by the [thickness](#yAxis.
- * plotBands.thickness) option.
+ * By default, the inner radius is controlled by the [thickness](
+ * #yAxis.plotBands.thickness) option.
  *
  * @type {Number|String}
  * @sample {highcharts} highcharts/xaxis/plotbands-gauge Gauge plot band
@@ -1848,8 +1849,8 @@
  */
 
 /**
- * Enables zooming by mouse wheel. By default it inherits the [enabled](#mapNavigation.
- * enabled) setting.
+ * Enables zooming by mouse wheel. By default it inherits the [enabled](
+ * #mapNavigation.enabled) setting.
  *
  * @type {Boolean}
  * @product highmaps
@@ -1860,8 +1861,8 @@
  * Whether to enable multitouch zooming. Note that if the chart covers
  * the viewport, this prevents the user from using multitouch and touchdrag
  * on the web page, so you should make sure the user is not trapped
- * inside the chart. By default it inherits the [enabled](#mapNavigation.
- * enabled) setting.
+ * inside the chart. By default it inherits the [enabled](
+ * #mapNavigation.enabled) setting.
  *
  * @type {Boolean}
  * @product highmaps

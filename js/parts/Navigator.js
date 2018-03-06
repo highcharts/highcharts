@@ -21,9 +21,9 @@ import './Scrollbar.js';
  * [series](#series).
  *
  *
- * These options are merged with options in [navigator.series](#navigator.
- * series), and will take precedence if the same option is defined both
- * places.
+ * These options are merged with options in [navigator.series](
+ * #navigator.series), and will take precedence if the same option is defined
+ * both places.
  *
  * @type {Object}
  * @see [navigator.series](#navigator.series)
