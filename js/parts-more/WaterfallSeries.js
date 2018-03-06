@@ -22,7 +22,10 @@ var correctFloat = H.correctFloat,
  * A waterfall chart displays sequentially introduced positive or negative
  * values in cumulative columns.
  *
- * @sample       highcharts/demo/waterfall/ Waterfall chart
+ * @sample       highcharts/demo/waterfall/
+ *               Waterfall chart
+ * @sample       highcharts/plotoptions/waterfall-stacked/
+ *               Stacked waterfall chart
  * @extends      {plotOptions.column}
  * @product      highcharts
  * @optionparent plotOptions.waterfall
