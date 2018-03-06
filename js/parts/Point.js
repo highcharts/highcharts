@@ -166,6 +166,32 @@ Highcharts.Point.prototype = {
 	},
 
 	/**
+	 * Set a value in an object, on the property defined by key. The key
+	 * supports nested properties using dot notation. The function modifies the
+	 * input object and does not make a copy.
+	 *
+	 * @param  {Object} object The object to set the value on.
+	 * @param  {Mixed} value The value to set.
+	 * @param  {String} key Key to the property to set.
+	 *
+	 * @return {Object} The modified object.
+	 */
+	setNestedProperty: function (object, value, key) {
+		var nestedKeys = key.split('.'),
+			nestedRet = object;
+		for (var i = 0; i < nestedKeys.length - 1; ++i) {
+			if (typeof nestedRet[nestedKeys[i]] !== 'object') {
+				nestedRet[nestedKeys[i]] = {};
+			}
+			nestedRet = nestedRet[nestedKeys[i]];
+		}
+		nestedRet[
+			nestedKeys[nestedKeys.length - 1]
+		] = value;
+		return object;
+	},
+
+	/**
 	 * Transform number or array configs into objects. Used internally to unify
 	 * the different configuration formats for points. For example, a simple
 	 * number `10` in a line series will be transformed to `{ y: 10 }`, and an
@@ -183,11 +209,8 @@ Highcharts.Point.prototype = {
 			pointArrayMap = keys || series.pointArrayMap || ['y'],
 			valueCount = pointArrayMap.length,
 			firstItemType,
-			nestedKeys,
-			nestedRet,
 			i = 0,
-			j = 0,
-			k;
+			j = 0;
 
 		if (isNumber(options) || options === null) {
 			ret[pointArrayMap[0]] = options;
@@ -206,19 +229,12 @@ Highcharts.Point.prototype = {
 			while (j < valueCount) {
 				// Skip undefined positions for keys
 				if (!keys || options[i] !== undefined) {
-					nestedKeys = pointArrayMap[j].split('.');
-					if (nestedKeys.length > 1) {
+					if (pointArrayMap[j].indexOf('.') > 0) {
 						// Handle nested keys, e.g. ['color.pattern.image']
-						nestedRet = ret;
-						for (k = 0; k < nestedKeys.length - 1; ++k) {
-							if (typeof nestedRet[nestedKeys[k]] !== 'object') {
-								nestedRet[nestedKeys[k]] = {};
-							}
-							nestedRet = nestedRet[nestedKeys[k]];
-						}
-						nestedRet[
-							nestedKeys[nestedKeys.length - 1]
-						] = options[i];
+						// Avoid function call unless necessary.
+						H.Point.prototype.setNestedProperty(
+							ret, options[i], pointArrayMap[j]
+						);
 					} else {
 						ret[pointArrayMap[j]] = options[i];
 					}
