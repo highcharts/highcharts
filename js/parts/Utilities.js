@@ -835,8 +835,13 @@ H.extendClass = function (parent, members) {
  * @returns {String} The padded string.
  */
 H.pad = function (number, length, padder) {
-	return new Array((length || 2) + 1 -
-		String(number).length).join(padder || 0) + number;
+	return new Array(
+			(length || 2) +
+			1 -
+			String(number)
+				.replace('-', '')
+				.length
+		).join(padder || 0) + number;
 };
 
 /**
