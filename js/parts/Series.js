@@ -2849,7 +2849,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				).x
 			);
 
-			if (typeof x === 'number') {
+			if (isNumber(x)) {
 				// Search for the same X in the existing data set
 				pointIndex = H.inArray(x, this.xData, lastIndex);
 
@@ -2936,10 +2936,11 @@ H.Series = H.seriesType('line', null, { // base series options
 	 *         the points are changed. Set false to disable animation, or a
 	 *         configuration object to set duration or easing.
 	 * @param  {Boolean} [updatePoints=true]
-	 *         When the updated data is the same length as the existing data,
-	 *         points will be updated instead of replaced. This allows updating
-	 *         with animation and performs better. In this case, the original
-	 *         array is not passed by reference. Set false to prevent.
+	 *         When the updated data is the same length as the existing data, or
+	 *         points can be matched by X values, points will be updated instead
+	 *         of replaced. This allows updating with animation and performs
+	 *         better. In this case, the original array is not passed by
+	 *         reference. Set `false` to prevent.
 	 *
 	 * @sample highcharts/members/series-setdata/
 	 *         Set new data from a button
