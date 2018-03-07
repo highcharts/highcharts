@@ -808,7 +808,8 @@ Highcharts.Chart.prototype.viewData = function () {
  *   JSON.
  *
  * @todo
- * - Long configs fail
+ * - Let the Cloud throw a friendly warning about unsupported structures like
+ *   formatters.
  * - Dynamically updated charts probably fail, we need a generic
  *   Chart.getOptions function that returns all non-default options. Should also
  *   be used by the export module.
