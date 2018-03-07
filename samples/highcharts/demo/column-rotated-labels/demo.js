@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'World\'s largest cities per 2014'
+        text: 'World\'s largest cities per 2017'
     },
     subtitle: {
         text: 'Source: <a href="http://en.wikipedia.org/wiki/List_of_cities_proper_by_population">Wikipedia</a>'
@@ -29,7 +29,7 @@ Highcharts.chart('container', {
         enabled: false
     },
     tooltip: {
-        pointFormat: 'Population in 2008: <b>{point.y:.1f} millions</b>'
+        pointFormat: 'Population in 2017: <b>{point.y:.1f} millions</b>'
     },
     series: [{
         name: 'Population',
