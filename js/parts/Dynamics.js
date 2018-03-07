@@ -342,6 +342,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				chart.setClassName(optionsChart.className);
 			}
 
+			if ('reflow' in optionsChart) {
+				chart.setReflow(optionsChart.reflow);
+			}
+
 			if ('inverted' in optionsChart || 'polar' in optionsChart) {
 				// Parse options.chart.inverted and options.chart.polar together
 				// with the available series.
