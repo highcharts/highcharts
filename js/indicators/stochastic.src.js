@@ -80,8 +80,8 @@ H.seriesType('stochastic', 'sma',
 				lineWidth: 1,
 				/**
 				 * Color of the line. If not set, it's inherited from
-				 * [plotOptions.stochastic.color](#plotOptions.stochastic.
-				 * color).
+				 * [plotOptions.stochastic.color](
+				 * #plotOptions.stochastic.color).
 				 *
 				 * @type {String}
 				 * @since 6.0.0

@@ -67,8 +67,8 @@ H.seriesType('priceenvelopes', 'sma',
 				lineWidth: 1,
 				/**
 				 * Color of the line. If not set, it's inherited from
-				 * [plotOptions.priceenvelopes.color](#plotOptions.
-				 * priceenvelopes.color).
+				 * [plotOptions.priceenvelopes.color](
+				 * #plotOptions.priceenvelopes.color).
 				 *
 				 * @type {String}
 				 * @since 6.0.0

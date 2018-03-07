@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -183,8 +182,8 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * Enable or disable the initial animation when a series is displayed.
 	 * The animation can also be set as a configuration object. Please
 	 * note that this option only applies to the initial animation of the
-	 * series itself. For other animations, see [chart.animation](#chart.
-	 * animation) and the animation parameter under the API methods. The
+	 * series itself. For other animations, see [chart.animation](
+	 * #chart.animation) and the animation parameter under the API methods. The
 	 * following properties are supported:
 	 * 
 	 * <dl>
@@ -455,9 +454,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * 
 	 * @sample {highcharts|highstock} highcharts/series/legendindex/
 	 *         Legend in opposite order
-	 * @type {Number}
-	 * @see [legend.reversed](#legend.reversed), [yAxis.reversedStacks](#yAxis.
-	 * reversedStacks)
+	 * @type   {Number}
+	 * @see    [legend.reversed](#legend.reversed),
+	 *         [yAxis.reversedStacks](#yAxis.reversedStacks)
 	 * @apioption series.legendIndex
 	 */
 
@@ -522,9 +521,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 
 	/**
-	 * Same as [accessibility.pointDescriptionFormatter](#accessibility.
-	 * pointDescriptionFormatter), but for an individual series. Overrides
-	 * the chart wide configuration.
+	 * Same as [accessibility.pointDescriptionFormatter](
+	 * #accessibility.pointDescriptionFormatter), but for an individual series.
+	 * Overrides the chart wide configuration.
 	 * 
 	 * @type {Function}
 	 * @since 5.0.12
@@ -592,9 +591,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * textual options, numeric point placement options won't affect axis
 	 * padding.
 	 * 
-	 * Note that pointPlacement needs a [pointRange](#plotOptions.series.
-	 * pointRange) to work. For column series this is computed, but for
-	 * line-type series it needs to be set.
+	 * Note that pointPlacement needs a [pointRange](
+	 * #plotOptions.series.pointRange) to work. For column series this is
+	 * computed, but for line-type series it needs to be set.
 	 * 
 	 * Defaults to `null` in cartesian charts, `"between"` in polar charts.
 	 * 
@@ -1193,8 +1192,8 @@ H.Series = H.seriesType('line', null, { // base series options
 
 				/**
 				 * The radius of the point marker. In hover state, it defaults
-				 * to the normal state's radius + 2 as per the
-				 * [radiusPlus](#plotOptions.series.marker.states.hover.radiusPlus)
+				 * to the normal state's radius + 2 as per the [radiusPlus](
+				 * #plotOptions.series.marker.states.hover.radiusPlus)
 				 * option.
 				 * 
 				 * @type {Number}
@@ -1468,8 +1467,8 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		/**
 		 * Whether to allow data labels to overlap. To make the labels less
-		 * sensitive for overlapping, the [dataLabels.padding](#plotOptions.
-		 * series.dataLabels.padding) can be set to 0.
+		 * sensitive for overlapping, the [dataLabels.padding](
+		 * #plotOptions.series.dataLabels.padding) can be set to 0.
 		 * 
 		 * @type {Boolean}
 		 * @sample highcharts/plotoptions/series-datalabels-allowoverlap-false/
@@ -5047,8 +5046,8 @@ H.Series = H.seriesType('line', null, { // base series options
 
 /**
  * Individual data label for each point. The options are the same as
- * the ones for [plotOptions.series.dataLabels](#plotOptions.series.
- * dataLabels)
+ * the ones for [plotOptions.series.dataLabels](
+ * #plotOptions.series.dataLabels).
  * 
  * @type {Object}
  * @sample highcharts/point/datalabels/

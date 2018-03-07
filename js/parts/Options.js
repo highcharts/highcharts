@@ -336,8 +336,8 @@ H.defaultOptions = {
 		 * disabled throughout the chart by setting it to false here. It can
 		 * be overridden for each individual API method as a function parameter.
 		 * The only animation not affected by this option is the initial series
-		 * animation, see [plotOptions.series.animation](#plotOptions.series.
-		 * animation).
+		 * animation, see [plotOptions.series.animation](
+		 * #plotOptions.series.animation).
 		 *
 		 * The animation can either be set as a boolean or a configuration
 		 * object. If `true`, it will use the 'swing' jQuery easing and a
@@ -1284,8 +1284,8 @@ H.defaultOptions = {
 
 		/**
 		 * The vertical alignment of the title. Can be one of `"top"`, `"middle"`
-		 * and `"bottom"`. When a value is given, the title behaves as if [floating](#title.
-		 * floating) were `true`.
+		 * and `"bottom"`. When a value is given, the title behaves as if
+		 * [floating](#title.floating) were `true`.
 		 *
 		 * @validvalue ["top", "middle", "bottom"]
 		 * @type {String}
@@ -1522,10 +1522,11 @@ H.defaultOptions = {
 	 * each series item as given in the series array.
 	 *
 	 * Configuration options for the series are given in three levels. Options
-	 * for all series in a chart are given in the [plotOptions.series](#plotOptions.
-	 * series) object. Then options for all series of a specific type are
-	 * given in the plotOptions of that type, for example plotOptions.line.
-	 * Next, options for one single series are given in [the series array](#series).
+	 * for all series in a chart are given in the [plotOptions.series](
+	 * #plotOptions.series) object. Then options for all series of a specific
+	 * type are given in the plotOptions of that type, for example
+	 * `plotOptions.line`. Next, options for one single series are given in
+	 * [the series array](#series).
 	 *
 	 */
 	plotOptions: {},
@@ -2320,8 +2321,8 @@ H.defaultOptions = {
 
 		/**
 		 * Since 4.1, the crosshair definitions are moved to the Axis object
-		 * in order for a better separation from the tooltip. See [xAxis.crosshair](#xAxis.
-		 * crosshair)<a>.</a>
+		 * in order for a better separation from the tooltip. See
+		 * [xAxis.crosshair](#xAxis.crosshair)<a>.</a>
 		 *
 		 * @type {Mixed}
 		 * @deprecated
@@ -2337,8 +2338,8 @@ H.defaultOptions = {
 		 * this way for scatter, bubble and pie series by override in the `plotOptions`
 		 * for those series types.
 		 *
-		 * For touch moves to behave the same way, [followTouchMove](#tooltip.
-		 * followTouchMove) must be `true` also.
+		 * For touch moves to behave the same way, [followTouchMove](
+		 * #tooltip.followTouchMove) must be `true` also.
 		 *
 		 * @type {Boolean}
 		 * @default {highcharts} false
@@ -2622,8 +2623,8 @@ H.defaultOptions = {
 		 * For series on a datetime axes, the date format in the tooltip's
 		 * header will by default be guessed based on the closest data points.
 		 * This member gives the default string representations used for
-		 * each unit. For an overview of the replacement codes, see [dateFormat](#Highcharts.
-		 * dateFormat).
+		 * each unit. For an overview of the replacement codes, see
+		 * [dateFormat](#Highcharts.dateFormat).
 		 *
 		 * Defaults to:
 		 *

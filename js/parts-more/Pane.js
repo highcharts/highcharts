@@ -270,9 +270,7 @@ extend(Pane.prototype, {
 		},
 		/*= } =*/
 
-		/** 
-		 * @ignore
-		 */
+		/** @ignore-option */
 		from: -Number.MAX_VALUE, // corrected to axis min
 
 		/**
@@ -286,9 +284,7 @@ extend(Pane.prototype, {
 		 */
 		innerRadius: 0,
 
-		/** 
-		 * @ignore
-		 */
+		/** @ignore-option */
 		to: Number.MAX_VALUE, // corrected to axis max
 
 		/**

@@ -248,12 +248,12 @@ H.setOptions({
 		 * com/docs/chart-concepts/accessibility).
 		 *
 		 * For more dynamic control over the accessibility functionality, see
-		 * [accessibility.pointDescriptionFormatter](accessibility.
-		 * pointDescriptionFormatter),
-		 * [accessibility.seriesDescriptionFormatter](accessibility.
-		 * seriesDescriptionFormatter), and
-		 * [accessibility.screenReaderSectionFormatter](accessibility.
-		 * screenReaderSectionFormatter).
+		 * [accessibility.pointDescriptionFormatter](
+		 * accessibility.pointDescriptionFormatter),
+		 * [accessibility.seriesDescriptionFormatter](
+		 * accessibility.seriesDescriptionFormatter), and
+		 * [accessibility.screenReaderSectionFormatter](
+		 * accessibility.screenReaderSectionFormatter).
 		 *
 		 * @since 6.0.6
 		 * @type {Object}
@@ -391,8 +391,8 @@ H.setOptions({
 			/**
 			 * Lang configuration for different series types. For more dynamic
 			 * control over the series element descriptions, see
-			 * [accessibility.seriesDescriptionFormatter](accessibility.
-			 * seriesDescriptionFormatter).
+			 * [accessibility.seriesDescriptionFormatter](
+			 * accessibility.seriesDescriptionFormatter).
 			 *
 			 * @since 6.0.6
 			 * @type {Object}

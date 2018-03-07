@@ -1252,7 +1252,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				'',
 				rotation || 0,
 				fontSize,
-				styles && styles.width,
+				wrapper.textWidth, // #7874, also useHTML
 				styles && styles.textOverflow // #5968
 			]
 			.join(',');

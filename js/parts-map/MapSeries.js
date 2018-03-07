@@ -1082,8 +1082,8 @@ seriesType('map', 'scatter', {
 
 /**
  * Individual data label for each point. The options are the same as
- * the ones for [plotOptions.series.dataLabels](#plotOptions.series.
- * dataLabels)
+ * the ones for [plotOptions.series.dataLabels](
+ * #plotOptions.series.dataLabels).
  * 
  * @type {Object}
  * @sample {highmaps} maps/series/data-datalabels/ Disable data labels for individual areas

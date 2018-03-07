@@ -52,9 +52,9 @@ var addEvent = H.addEvent,
  *         The chart options structure.
  * @param  {Function} [callback]
  *         Function to run when the chart has loaded and and all external images
- *         are loaded. Defining a {@link
- *         https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
- *         handler is equivalent.
+ *         are loaded. Defining a [chart.event.load](
+ *         https://api.highcharts.com/highcharts/chart.events.load) handler is
+ *         equivalent.
  *
  * @example
  * var chart = Highcharts.chart('container', {
@@ -1196,19 +1196,26 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Add the event handlers necessary for auto resizing, depending on the 
-	 * `chart.events.reflow` option.
+	 * Toggle the event handlers necessary for auto resizing, depending on the 
+	 * `chart.reflow` option.
 	 *
 	 * @private
 	 */
-	initReflow: function () {
-		var chart = this,
-			unbind;
-		
-		unbind = addEvent(win, 'resize', function (e) {
-			chart.reflow(e);
-		});
-		addEvent(chart, 'destroy', unbind);
+	setReflow: function (reflow) {
+
+		var chart = this;
+
+		if (reflow !== false && !this.unbindReflow) {
+			this.unbindReflow = addEvent(win, 'resize', function (e) {
+				chart.reflow(e);
+			});
+			addEvent(this, 'destroy', this.unbindReflow);
+
+		} else if (reflow === false && this.unbindReflow) {
+
+			// Unbind and unset
+			this.unbindReflow = this.unbindReflow();
+		}
 
 		// The following will add listeners to re-fit the chart before and after
 		// printing (#2284). However it only works in WebKit. Should have worked
@@ -2049,8 +2056,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		
 
 		// Set up auto resize, check for not destroyed (#6068)
-		if (defined(this.index) && this.options.chart.reflow !== false) {
-			this.initReflow();
+		if (defined(this.index)) {
+			this.setReflow(this.options.chart.reflow);
 		}
 
 		// Don't run again

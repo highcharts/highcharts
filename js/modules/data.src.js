@@ -178,11 +178,11 @@ Highcharts.ajax = function (attr) {
  */
 
 /**
- * A comma delimited string to be parsed. Related options are [startRow](#data.
- * startRow), [endRow](#data.endRow), [startColumn](#data.startColumn)
+ * A comma delimited string to be parsed. Related options are [startRow](
+ * #data.startRow), [endRow](#data.endRow), [startColumn](#data.startColumn)
  * and [endColumn](#data.endColumn) to delimit what part of the table
- * is used. The [lineDelimiter](#data.lineDelimiter) and [itemDelimiter](#data.
- * itemDelimiter) options define the CSV delimiter formats.
+ * is used. The [lineDelimiter](#data.lineDelimiter) and [itemDelimiter](
+ * #data.itemDelimiter) options define the CSV delimiter formats.
  *
  * The built-in CSV parser doesn't support all flavours of CSV, so in
  * some cases it may be necessary to use an external CSV parser. See

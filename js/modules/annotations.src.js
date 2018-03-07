@@ -561,8 +561,8 @@ Annotation.prototype = {
 			 * A [format](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting) string for the data label.
 			 *
 			 * @type {String}
-			 * @see    [plotOptions.series.dataLabels.format](plotOptions.
-			 *         series.dataLabels.format.html)
+			 * @see    [plotOptions.series.dataLabels.format](
+			 *         plotOptions.series.dataLabels.format.html)
 			 * @sample highcharts/annotations/label-text/
 			 *         Set labels text
 			 * @default undefined
@@ -642,8 +642,8 @@ Annotation.prototype = {
 			 * @type {CSSObject}
 			 * @sample highcharts/annotations/label-presentation/
 			 *         Set labels graphic options
-			 * @see    [plotOptions.series.dataLabels.style](plotOptions.series.
-			 *         dataLabels.style.html)
+			 * @see    [plotOptions.series.dataLabels.style](
+			 *         plotOptions.series.dataLabels.style.html)
 			 **/
 			style: {
 				fontSize: '11px',

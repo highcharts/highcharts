@@ -337,13 +337,14 @@ if (!H.ColorAxis) {
 			},
 
 			/**
-			 * The color to represent the minimum of the color axis. Unless [dataClasses](#colorAxis.
-			 * dataClasses) or [stops](#colorAxis.stops) are set, the gradient
-			 * starts at this value.
+			 * The color to represent the minimum of the color axis. Unless
+			 * [dataClasses](#colorAxis.dataClasses) or
+			 * [stops](#colorAxis.stops) are set, the gradient starts at this
+			 * value.
 			 * 
-			 * If dataClasses are set, the color is based on minColor and maxColor
-			 * unless a color is set for each data class, or the [dataClassColor](#colorAxis.
-			 * dataClassColor) is set.
+			 * If dataClasses are set, the color is based on minColor and
+			 * maxColor unless a color is set for each data class, or the
+			 * [dataClassColor](#colorAxis.dataClassColor) is set.
 			 * 
 			 * @type {Color}
 			 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
@@ -354,13 +355,14 @@ if (!H.ColorAxis) {
 			minColor: '${palette.highlightColor10}',
 
 			/**
-			 * The color to represent the maximum of the color axis. Unless [dataClasses](#colorAxis.
-			 * dataClasses) or [stops](#colorAxis.stops) are set, the gradient
-			 * ends at this value.
+			 * The color to represent the maximum of the color axis. Unless
+			 * [dataClasses](#colorAxis.dataClasses) or
+			 * [stops](#colorAxis.stops) are set, the gradient ends at this
+			 * value.
 			 * 
-			 * If dataClasses are set, the color is based on minColor and maxColor
-			 * unless a color is set for each data class, or the [dataClassColor](#colorAxis.
-			 * dataClassColor) is set.
+			 * If dataClasses are set, the color is based on minColor and
+			 * maxColor unless a color is set for each data class, or the
+			 * [dataClassColor](#colorAxis.dataClassColor) is set.
 			 * 
 			 * @type {Color}
 			 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis

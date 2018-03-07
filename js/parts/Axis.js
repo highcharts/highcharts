@@ -1255,9 +1255,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * If tickInterval is `null` this option sets the approximate pixel
 		 * interval of the tick marks. Not applicable to categorized axis.
 		 * 
-		 * The tick interval is also influenced by the [minTickInterval](#xAxis.
-		 * minTickInterval) option, that, by default prevents ticks from being
-		 * denser than the data points.
+		 * The tick interval is also influenced by the [minTickInterval](
+		 * #xAxis.minTickInterval) option, that, by default prevents ticks from
+		 * being denser than the data points.
 		 * 
 		 * @see    [tickInterval](#xAxis.tickInterval),
 		 *         [tickPositioner](#xAxis.tickPositioner),

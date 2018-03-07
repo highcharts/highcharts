@@ -45,8 +45,8 @@ if (seriesTypes.bubble) {
 		/**
 		 * Whether to display negative sized bubbles. The threshold is given
 		 * by the [zThreshold](#plotOptions.mapbubble.zThreshold) option, and negative
-		 * bubbles can be visualized by setting [negativeColor](#plotOptions.
-		 * bubble.negativeColor).
+		 * bubbles can be visualized by setting [negativeColor](
+		 * #plotOptions.bubble.negativeColor).
 		 * 
 		 * @type {Boolean}
 		 * @default true
@@ -67,8 +67,8 @@ if (seriesTypes.bubble) {
 		 */
 
 		/**
-		 * When a point's Z value is below the [zThreshold](#plotOptions.mapbubble.
-		 * zThreshold) setting, this color is used.
+		 * When a point's Z value is below the [zThreshold](
+		 * #plotOptions.mapbubble.zThreshold) setting, this color is used.
 		 * 
 		 * @type {Color}
 		 * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/

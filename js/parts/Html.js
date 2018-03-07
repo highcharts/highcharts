@@ -265,7 +265,8 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 						proceed.call(this, value, key, elem);
 						style[key] = value;
 					});
-				});				
+				});
+				element.addedSetters = true;
 			};
 
 		// Text setter
@@ -428,7 +429,9 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 								translateXSetter: translateSetter,
 								translateYSetter: translateSetter
 							});
-							addSetters(parentGroup, htmlGroupStyle);
+							if (!parentGroup.addedSetters) {
+								addSetters(parentGroup, htmlGroupStyle);
+							}
 						});
 
 					}

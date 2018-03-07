@@ -16,7 +16,6 @@
  * http://jsfiddle.net/highcharts/264Nm/
  * http://jsfiddle.net/highcharts/y5A37/
  */
-/* eslint max-len: 0 */
 
 'use strict';
 import H from '../parts/Globals.js';
@@ -494,9 +493,9 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 };
 
 /**
- * The main initiator method that runs on chart level after initiation and redraw. It runs in 
- * a timeout to prevent locking, and loops over all series, taking all series and labels into
- * account when placing the labels.
+ * The main initiator method that runs on chart level after initiation and
+ * redraw. It runs in  a timeout to prevent locking, and loops over all series,
+ * taking all series and labels into account when placing the labels.
  */
 Chart.prototype.drawSeriesLabels = function () {
 	
@@ -661,8 +660,16 @@ Chart.prototype.drawSeriesLabels = function () {
 
 			// Brute force, try all positions on the chart in a 16x16 grid
 			if (!results.length && !onArea) {
-				for (x = paneLeft + paneWidth - bBox.width; x >= paneLeft; x -= 16) {
-					for (y = paneTop; y < paneTop + paneHeight - bBox.height; y += 16) {
+				for (
+					x = paneLeft + paneWidth - bBox.width;
+					x >= paneLeft;
+					x -= 16
+				) {
+					for (
+						y = paneTop;
+						y < paneTop + paneHeight - bBox.height;
+						y += 16
+					) {
 						clearPoint = series.checkClearPoint(x, y, bBox, true);
 						if (clearPoint) {
 							results.push(clearPoint);
@@ -808,7 +815,9 @@ function drawLabels() {
 	});
 
 	chart.seriesLabelTimer = H.syncTimeout(function () {
-		chart.drawSeriesLabels();
+		if (chart.series && chart.labelSeries) { // #7931, chart destroyed
+			chart.drawSeriesLabels();
+		}
 	}, chart.renderer.forExport ? 0 : delay);
 
 }
