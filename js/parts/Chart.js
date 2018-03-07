@@ -52,9 +52,9 @@ var addEvent = H.addEvent,
  *         The chart options structure.
  * @param  {Function} [callback]
  *         Function to run when the chart has loaded and and all external images
- *         are loaded. Defining a {@link
- *         https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
- *         handler is equivalent.
+ *         are loaded. Defining a [chart.event.load](
+ *         https://api.highcharts.com/highcharts/chart.events.load) handler is
+ *         equivalent.
  *
  * @example
  * var chart = Highcharts.chart('container', {
@@ -1197,7 +1197,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	/**
 	 * Toggle the event handlers necessary for auto resizing, depending on the 
-	 * `chart.events.reflow` option.
+	 * `chart.reflow` option.
 	 *
 	 * @private
 	 */
