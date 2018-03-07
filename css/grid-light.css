@@ -1,0 +1,105 @@
+@import 'https://fonts.googleapis.com/css?family=Dosis:400,600';
+
+.highcharts-container {
+  background: url(http://www.highcharts.com/samples/graphics/sand.png);
+}
+
+/* Series options */
+/* Default colors */
+.highcharts-color-0 {
+  fill: #7cb5ec;
+  stroke: #7cb5ec;
+}
+
+.highcharts-color-1 {
+  fill: #f7a35c;
+  stroke: #f7a35c;
+}
+
+.highcharts-color-2 {
+  fill: #90ee7e;
+  stroke: #90ee7e;
+}
+
+.highcharts-color-3 {
+  fill: #7798BF;
+  stroke: #7798BF;
+}
+
+.highcharts-color-4 {
+  fill: #aaeeee;
+  stroke: #aaeeee;
+}
+
+.highcharts-color-5 {
+  fill: #ff0066;
+  stroke: #ff0066;
+}
+
+.highcharts-color-6 {
+  fill: #eeaaee;
+  stroke: #eeaaee;
+}
+
+.highcharts-color-7 {
+  fill: #55BF3B;
+  stroke: #55BF3B;
+}
+
+.highcharts-color-8 {
+  fill: #DF5353;
+  stroke: #DF5353;
+}
+
+.highcharts-color-9 {
+  fill: #7798BF;
+  stroke: #7798BF;
+}
+
+.highcharts-color-10 {
+  fill: #aaeeee;
+  stroke: #aaeeee;
+}
+
+.highcharts-candlestick-series .highcharts-point {
+  stroke: #404048;
+}
+
+.highcharts-root, .highcharts-menu {
+    font-family: Dosis, serif;
+}
+
+/* Titles */
+.highcharts-title {
+  fill: black;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+/* Axes */
+.highcharts-axis-labels {
+  font-size: 12px;
+}
+
+.highcharts-xaxis-grid, .highcharts-xaxis-grid .highcharts-grid-line {
+  stroke-width: 1px;
+}
+
+.highcharts-yaxis .highcharts-axis-title {
+  text-transform: uppercase; 
+}
+
+/* Tooltip */
+.highcharts-tooltip-box { 
+   stroke-width: 0;
+}
+
+.highcharts-tooltip-box .highcharts-label-box, .highcharts-tooltip-box { 
+   fill: rgba(219,219,216,0.8);
+}
+
+/* Legend */
+.highcharts-legend-item text {
+  font-size: 13px;
+  font-weight: bold;
+}
