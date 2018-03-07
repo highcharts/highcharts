@@ -48,6 +48,40 @@ function dumpOptions() {
     );
 }
 
+function resolveBinaryExpression(node) {
+	var val = '';
+	var lside = '';
+	var rside = '';
+
+	if (node.left.type === 'Literal') {
+		lside = node.left.value;	
+	} 
+		
+	if (node.right.type === 'Literal') {
+		rside = node.right.value;
+	}
+
+	if (node.left.type === 'BinaryExpression') {
+		lside = resolveBinaryExpression(node.left);
+	}
+
+	if (node.right.type === 'BinaryExpression') {
+		rside = resolveBinaryExpression(node.right);
+	}
+
+	if (node.operator === '+') {
+		val = lside + rside;
+	}
+
+	// This is totally not needed, but maybe someone is doing something
+	// really really strange, so might as well support it
+	if (node.operator === '-') {
+		val = lside - rside;
+	}
+
+	return val;
+}
+
 function decorateOptions(parent, target, option, filename) {
     var index;
 
@@ -114,6 +148,8 @@ function decorateOptions(parent, target, option, filename) {
                 target[index].meta.default = parseInt(target[index].meta.default, 10);
             }
         }
+	} else if (option.value && option.value.type === 'BinaryExpression') {
+		target[index].meta.default = resolveBinaryExpression(option.value);
     } else {
       // if (option.leadingComments && option.leadingComments[0].value.indexOf('@apioption') >= 0) {
         // console.log('OPTION:', option, 'COMMENT:', option.leadingComments);
