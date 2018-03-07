@@ -1,0 +1,155 @@
+@import 'https://fonts.googleapis.com/css?family=Signika:400,700';
+
+.highcharts-container {
+  background: url(http://www.highcharts.com/samples/graphics/sand.png);
+}
+
+/* Series options */
+/* Default colors */
+.highcharts-color-0 {
+  fill: #f45b5b;
+  stroke: #f45b5b;
+}
+
+.highcharts-color-1 {
+  fill: #8085e9;
+  stroke: #8085e9;
+}
+
+.highcharts-color-2 {
+  fill: #8d4654;
+  stroke: #8d4654;
+}
+
+.highcharts-color-3 {
+  fill: #7798BF;
+  stroke: #7798BF;
+}
+
+.highcharts-color-4 {
+  fill: #aaeeee;
+  stroke: #aaeeee;
+}
+
+.highcharts-color-5 {
+  fill: #ff0066;
+  stroke: #ff0066;
+}
+
+.highcharts-color-6 {
+  fill: #eeaaee;
+  stroke: #eeaaee;
+}
+
+.highcharts-color-7 {
+  fill: #55BF3B;
+  stroke: #55BF3B;
+}
+
+.highcharts-color-8 {
+  fill: #DF5353;
+  stroke: #DF5353;
+}
+
+.highcharts-color-9 {
+  fill: #7798BF;
+  stroke: #7798BF;
+}
+
+.highcharts-color-10 {
+  fill: #aaeeee;
+  stroke: #aaeeee;
+}
+
+.highcharts-data-label { 
+   fill: #B0B0B3;
+}
+
+.highcharts-data-label text {
+   fill: #B0B0B3;
+}
+
+.highcharts-boxplot-box {
+   fill: #505053;
+}
+
+.highcharts-candlestick-series .highcharts-point {
+  stroke: white;
+}
+
+.highcharts-root, .highcharts-menu {
+    font-family: Signika, serif;
+}
+
+.highcharts-background {
+  fill: none;
+}
+
+/* Titles */
+.highcharts-title {
+  fill: black;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Axes */
+.highcharts-axis-labels {
+  font-size: 12px;
+}
+
+/* Tooltip */
+.highcharts-tooltip-box { 
+  stroke-width: 0px;
+}
+
+.highcharts-tooltip-box .highcharts-label-box, .highcharts-tooltip-box { 
+  fill: white;
+}
+
+/* Legend */
+.highcharts-legend-item text {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+/* RangeSelector */
+.highcharts-range-selector-buttons text {
+  fill: black;
+}
+
+.highcharts-range-selector-buttons {
+   fill: white;
+}
+
+.highcharts-range-selector-buttons .highcharts-button {
+   fill: white;
+   cursor: pointer;
+}
+
+.highcharts-range-selector-buttons .highcharts-button .highcharts-button-box {
+   stroke: #C0C0C8;
+   stroke-width: 1px;
+}
+
+.highcharts-range-selector-buttons .highcharts-button-pressed {
+   fill: #D0D0D8;
+}
+
+.highcharts-range-selector-buttons .highcharts-button-pressed text {
+   fill: black;
+}
+
+/* Navigator */
+.highcharts-navigator-series {
+  fill: #f45b5b;
+  stroke: #f45b5b;
+}
+
+.highcharts-navigator-xaxis .highcharts-grid-line {
+  stroke: #D0D0D8;
+} 
+
+/* Scrollbar */
+.highcharts-scrollbar-track {
+  stroke: #C0C0C8;
+}
