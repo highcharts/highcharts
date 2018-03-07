@@ -4,10 +4,8 @@
  *
  * License: www.highcharts.com/license
  *
- * This is an experimental Highcharts module which enables visualization
- * of a word cloud.
+ * This module implements sunburst charts in Highcharts.
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../mixins/centered-series.js';
@@ -155,7 +153,9 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
 		),
 		innerRadius = parent.r,
 		outerRadius = innerRadius + radius,
-		slicedOffset = isNumber(options.slicedOffset) ? options.slicedOffset : 0;
+		slicedOffset = isNumber(options.slicedOffset) ?
+			options.slicedOffset :
+			0;
 
 	return reduce(children || [], function (arr, child) {
 		var percentage = (1 / total) * child.val,
@@ -332,8 +332,8 @@ var cbSetTreeValuesBefore = function before(node, options) {
 };
 
 /**
- * A Sunburst displays hierarchical data, where a level in the hierarchy is represented by a circle.
- * The center represents the root node of the tree.
+ * A Sunburst displays hierarchical data, where a level in the hierarchy is
+ * represented by a circle. The center represents the root node of the tree.
  * The visualization bears a resemblance to both treemap and pie charts.
  *
  * @extends {plotOptions.pie}
@@ -449,8 +449,9 @@ var sunburstOptions = {
 	 * The center of the sunburst chart relative to the plot area. Can be
 	 * percentages or pixel values.
 	 *
-	 * @type {Array<String|Number>}	
-	 * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
+	 * @type    {Array<String|Number>}	
+	 * @sample  {highcharts} highcharts/plotoptions/pie-center/
+	 *          Centered at 100, 100
 	 * @product highcharts
 	 */
 	center: ['50%', '50%'],
@@ -492,13 +493,15 @@ var sunburstOptions = {
 	/**
 	 * Determines the width of the ring per level.
 	 * @since 6.0.5
-	 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/ Sunburst with various sizes per level
+	 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
+	 *         Sunburst with various sizes per level
 	 */
 	levelSize: {
 		/**
 		 * The value used for calculating the width of the ring. Its' affect is
 		 * determined by `levelSize.unit`.
-		 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/ Sunburst with various sizes per level
+		 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
+		 *         Sunburst with various sizes per level
 		 */
 		value: 1,
 		/**
@@ -507,10 +510,11 @@ var sunburstOptions = {
 		 * inner radius.
 		 * `pixels` gives the ring a fixed width in pixels.
 		 * `weight` takes the remaining width after percentage and pixels, and
-		 * distributes it accross all "weighted" levels. The value relative to the
-		 * sum of all weights determines the width.
+		 * distributes it accross all "weighted" levels. The value relative to
+		 * the sum of all weights determines the width.
 		 * @validvalue ["percentage", "pixels", "weight"]
-		 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/ Sunburst with various sizes per level
+		 * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
+		 *         Sunburst with various sizes per level
 		 */
 		unit: 'weight'
 	},
@@ -572,7 +576,10 @@ var sunburstSeries = {
 				var s = series;
 				animateLabelsCalled = true;
 				if (s.dataLabelsGroup) {
-					s.dataLabelsGroup.animate({ opacity: 1, visibility: 'visible' });
+					s.dataLabelsGroup.animate({
+						opacity: 1,
+						visibility: 'visible'
+					});
 				}
 			};
 		}
@@ -721,11 +728,15 @@ var sunburstSeries = {
 		var series = this,
 			options = series.options,
 			positions = series.center = getCenter.call(series),
-			radians = series.startAndEndRadians = getStartAndEndRadians(options.startAngle, options.endAngle),
+			radians = series.startAndEndRadians = getStartAndEndRadians(
+				options.startAngle,
+				options.endAngle
+			),
 			innerRadius = positions[3] / 2,
 			outerRadius = positions[2] / 2,
 			diffRadius = outerRadius - innerRadius,
-			idRoot = series.rootNode = pick(series.rootNode, options.rootId, ''),
+			idRoot = series.rootNode =
+				pick(series.rootNode, options.rootId, ''),
 			mapIdToNode = series.nodeMap,
 			mapOptionsToLevel,
 			idTop,
@@ -754,7 +765,8 @@ var sunburstSeries = {
 				slicedOffset: options.slicedOffset
 			}
 		});
-		// NOTE consider doing calculateLevelSizes in a callback to getLevelOptions
+		// NOTE consider doing calculateLevelSizes in a callback to
+		// getLevelOptions
 		mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
 			diffRadius: diffRadius,
 			from: nodeRoot.level > 0 ? nodeRoot.level : 1,

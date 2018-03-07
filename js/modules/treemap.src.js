@@ -4,7 +4,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -500,7 +499,9 @@ seriesType('treemap', 'scatter', {
 // Prototype members
 }, {
 	pointArrayMap: ['value'],
-	axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
+	axisTypes: seriesTypes.heatmap ?
+		['xAxis', 'yAxis', 'colorAxis'] :
+		['xAxis', 'yAxis'],
 	directTouch: true,
 	optionalAxis: 'colorAxis',
 	getSymbol: noop,
@@ -573,7 +574,13 @@ seriesType('treemap', 'scatter', {
 
 		// Actions
 		each((list[id] || []), function (i) {
-			child = series.buildNode(series.points[i].id, i, (level + 1), list, id);
+			child = series.buildNode(
+				series.points[i].id,
+				i,
+				(level + 1),
+				list,
+				id
+			);
 			height = Math.max(child.height + 1, height);
 			children.push(child);
 		});
@@ -648,7 +655,14 @@ seriesType('treemap', 'scatter', {
 			options = series.options,
 			mapOptionsToLevel = series.mapOptionsToLevel,
 			level = mapOptionsToLevel[parent.level + 1],
-			algorithm = pick((series[level && level.layoutAlgorithm] && level.layoutAlgorithm), options.layoutAlgorithm),
+			algorithm = pick(
+				(
+					series[level &&
+					level.layoutAlgorithm] &&
+					level.layoutAlgorithm
+				),
+				options.layoutAlgorithm
+			),
 			alternate = options.alternateStartingDirection,
 			childrenValues = [],
 			children;
@@ -659,7 +673,9 @@ seriesType('treemap', 'scatter', {
 		});
 
 		if (level && level.layoutStartingDirection) {
-			area.direction = level.layoutStartingDirection === 'vertical' ? 0 : 1;
+			area.direction = level.layoutStartingDirection === 'vertical' ?
+				0 :
+				1;
 		}
 		childrenValues = series[algorithm](area, children);
 		each(children, function (child, index) {
@@ -705,10 +721,18 @@ seriesType('treemap', 'scatter', {
 
 			// Points which is ignored, have no values.
 			if (values && node.visible) {
-				x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1)) - crispCorr;
-				x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1)) - crispCorr;
-				y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1)) - crispCorr;
-				y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1)) - crispCorr;
+				x1 = Math.round(
+					xAxis.translate(values.x, 0, 0, 0, 1)
+				) - crispCorr;
+				x2 = Math.round(
+					xAxis.translate(values.x + values.width, 0, 0, 0, 1)
+				) - crispCorr;
+				y1 = Math.round(
+					yAxis.translate(values.y, 0, 0, 0, 1)
+				) - crispCorr;
+				y2 = Math.round(
+					yAxis.translate(values.y + values.height, 0, 0, 0, 1)
+				) - crispCorr;
 				// Set point values
 				point.shapeType = 'rect';
 				point.shapeArgs = {
@@ -730,7 +754,13 @@ seriesType('treemap', 'scatter', {
 	/**
 	 * Set the node's color recursively, from the parent down.
 	 */
-	setColorRecursive: function (node, parentColor, colorIndex, index, siblings) {
+	setColorRecursive: function (
+		node,
+		parentColor,
+		colorIndex,
+		index,
+		siblings
+	) {
 		var series = this,
 			chart = series && series.chart,
 			colors = chart && chart.options && chart.options.colors,
@@ -894,17 +924,34 @@ seriesType('treemap', 'scatter', {
 			direction = parent.direction,
 			i = 0,
 			end = children.length - 1,
-			group = new this.algorithmGroup(parent.height, parent.width, direction, plot); // eslint-disable-line new-cap
+			group = new this.algorithmGroup( // eslint-disable-line new-cap
+				parent.height,
+				parent.width,
+				direction,
+				plot
+			);
 		// Loop through and calculate all areas
 		each(children, function (child) {
 			pTot = (parent.width * parent.height) * (child.val / parent.val);
 			group.addElement(pTot);
 			if (group.lP.nR > group.lP.lR) {
-				series.algorithmCalcPoints(directionChange, false, group, childrenArea, plot);
+				series.algorithmCalcPoints(
+					directionChange,
+					false,
+					group,
+					childrenArea,
+					plot
+				);
 			}
 			// If last child, then calculate all remaining areas
 			if (i === end) {
-				series.algorithmCalcPoints(directionChange, true, group, childrenArea, plot);
+				series.algorithmCalcPoints(
+					directionChange,
+					true,
+					group,
+					childrenArea,
+					plot
+				);
 			}
 			i = i + 1;
 		});
@@ -964,7 +1011,8 @@ seriesType('treemap', 'scatter', {
 	translate: function () {
 		var series = this,
 			options = series.options,
-			rootId = series.rootNode = pick(series.rootNode, series.options.rootId, ''),
+			rootId = series.rootNode =
+				pick(series.rootNode, series.options.rootId, ''),
 			rootNode,
 			pointValues,
 			seriesArea,
@@ -973,7 +1021,9 @@ seriesType('treemap', 'scatter', {
 
 		// Call prototype function
 		Series.prototype.translate.call(series);
-		tree = series.tree = series.getTree(); // @todo Only if series.isDirtyData is true
+
+		// @todo Only if series.isDirtyData is true
+		tree = series.tree = series.getTree();
 		rootNode = series.nodeMap[rootId];
 		series.mapOptionsToLevel = getLevelOptions({
 			from: rootNode.level + 1,
@@ -1003,21 +1053,25 @@ seriesType('treemap', 'scatter', {
 			return next;
 		});
 		// Children of the root node is by default visible
-		recursive(series.nodeMap[series.rootNode].children, function (children) {
-			var next = false;
-			each(children, function (child) {
-				child.visible = true;
-				if (child.children.length) {
-					next = (next || []).concat(child.children);
-				}
-			});
-			return next;
-		});
+		recursive(
+			series.nodeMap[series.rootNode].children,
+			function (children) {
+				var next = false;
+				each(children, function (child) {
+					child.visible = true;
+					if (child.children.length) {
+						next = (next || []).concat(child.children);
+					}
+				});
+				return next;
+			}
+		);
 		series.setTreeValues(tree);
 
 		// Calculate plotting values.
 		series.axisRatio = (series.xAxis.len / series.yAxis.len);
-		series.nodeMap[''].pointValues = pointValues = { x: 0, y: 0, width: 100, height: 100 };
+		series.nodeMap[''].pointValues = pointValues =
+			{ x: 0, y: 0, width: 100, height: 100 };
 		series.nodeMap[''].values = seriesArea = merge(pointValues, {
 			width: (pointValues.width * series.axisRatio),
 			direction: (options.layoutStartingDirection === 'vertical' ? 0 : 1),
@@ -1045,7 +1099,8 @@ seriesType('treemap', 'scatter', {
 		series.setPointValues();
 	},
 	/**
-	 * Extend drawDataLabels with logic to handle custom options related to the treemap series:
+	 * Extend drawDataLabels with logic to handle custom options related to the
+	 * treemap series:
 	 * - Points which is not a leaf node, has dataLabels disabled by default.
 	 * - Options set on series.levels is merged in.
 	 * - Width of the dataLabel is set to match the width of the point shape.
@@ -1078,7 +1133,9 @@ seriesType('treemap', 'scatter', {
 			if (point.shapeArgs) {
 				options.style.width = point.shapeArgs.width;
 				if (point.dataLabel) {
-					point.dataLabel.css({ width: point.shapeArgs.width + 'px' });
+					point.dataLabel.css({
+						width: point.shapeArgs.width + 'px'
+					});
 				}
 			}
 
@@ -1117,8 +1174,8 @@ seriesType('treemap', 'scatter', {
 			className = (point && point.getClassName()) || '',
 			opacity;
 
-		// Set attributes by precedence. Point trumps level trumps series. Stroke width uses pick
-		// because it can be 0.
+		// Set attributes by precedence. Point trumps level trumps series.
+		// Stroke width uses pick because it can be 0.
 		attr = {
 			'stroke':
 				(point && point.borderColor) ||
@@ -1145,7 +1202,9 @@ seriesType('treemap', 'scatter', {
 			attr['stroke-width'] = 0;
 
 		// Nodes with children that accept interaction
-		} else if (className.indexOf('highcharts-internal-node-interactive') !== -1) {
+		} else if (
+			className.indexOf('highcharts-internal-node-interactive') !== -1
+		) {
 			opacity = pick(stateOptions.opacity, options.opacity);
 			attr.fill = color(attr.fill).setOpacity(opacity).get();
 			attr.cursor = 'pointer';
@@ -1155,7 +1214,9 @@ seriesType('treemap', 'scatter', {
 
 		} else if (state) {
 			// Brighten and hoist the hover nodes
-			attr.fill = color(attr.fill).brighten(stateOptions.brightness).get();
+			attr.fill = color(attr.fill)
+				.brighten(stateOptions.brightness)
+				.get();
 		}
 		return attr;
 	},
@@ -1175,7 +1236,9 @@ seriesType('treemap', 'scatter', {
 			if (!series[groupKey]) {
 				series[groupKey] = series.chart.renderer.g(groupKey)
 					.attr({
-						zIndex: 1000 - point.node.levelDynamic // @todo Set the zIndex based upon the number of levels, instead of using 1000
+						// @todo Set the zIndex based upon the number of levels,
+						// instead of using 1000
+						zIndex: 1000 - point.node.levelDynamic
 					})
 					.add(series.group);
 			}
@@ -1198,11 +1261,14 @@ seriesType('treemap', 'scatter', {
 		}
 		/*= } =*/
 
-		// If drillToNode is allowed, set a point cursor on clickables & add drillId to point
+		// If drillToNode is allowed, set a point cursor on clickables & add
+		// drillId to point
 		if (series.options.allowDrillToNode) {
 			each(points, function (point) {
 				if (point.graphic) {
-					point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
+					point.drillId = series.options.interactByLeaf ?
+						series.drillToByLeaf(point) :
+						series.drillToByGroup(point);
 				}
 			});
 		}
@@ -1224,12 +1290,16 @@ seriesType('treemap', 'scatter', {
 	* Finds the drill id for a parent node.
 	* Returns false if point should not have a click event
 	* @param {Object} point
-	* @return {String|Boolean} Drill to id or false when point should not have a click event
+	* @return {String|Boolean} Drill to id or false when point should not have a
+	*         click event
 	*/
 	drillToByGroup: function (point) {
 		var series = this,
 			drillId = false;
-		if ((point.node.level - series.nodeMap[series.rootNode].level) === 1 && !point.node.isLeaf) {
+		if (
+			(point.node.level - series.nodeMap[series.rootNode].level) === 1 &&
+			!point.node.isLeaf
+		) {
 			drillId = point.id;
 		}
 		return drillId;
@@ -1238,7 +1308,8 @@ seriesType('treemap', 'scatter', {
 	* Finds the drill id for a leaf node.
 	* Returns false if point should not have a click event
 	* @param {Object} point
-	* @return {String|Boolean} Drill to id or false when point should not have a click event
+	* @return {String|Boolean} Drill to id or false when point should not have a
+	*         click event
 	*/
 	drillToByLeaf: function (point) {
 		var series = this,
@@ -1309,7 +1380,11 @@ seriesType('treemap', 'scatter', {
 				zIndex: 7
 			})
 			.add()
-			.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
+			.align(
+				buttonOptions.position,
+				false,
+				buttonOptions.relativeTo || 'plotBox'
+			);
 		} else {
 			this.drillUpButton.placed = false;
 			this.drillUpButton.attr({
@@ -1365,7 +1440,10 @@ seriesType('treemap', 'scatter', {
 		if (this.node.level <= series.nodeMap[series.rootNode].level) {
 			className += ' highcharts-above-level';
 
-		} else if (!this.node.isLeaf && !pick(options.interactByLeaf, !options.allowDrillToNode)) {
+		} else if (
+			!this.node.isLeaf &&
+			!pick(options.interactByLeaf, !options.allowDrillToNode)
+		) {
 			className += ' highcharts-internal-node-interactive';
 
 		} else if (!this.node.isLeaf) {

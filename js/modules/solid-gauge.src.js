@@ -5,7 +5,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -32,26 +31,30 @@ var pInt = H.pInt,
  * @param {boolean} [options.rounded] - Whether to draw rounded edges.
  * @return {Array} Path of the created arc. 
  */
-wrap(Renderer.prototype.symbols, 'arc', function (proceed, x, y, w, h, options) {
-	var arc = proceed,
-		path = arc(x, y, w, h, options);
-	if (options.rounded) {
-		var r = options.r || w,
-			smallR = (r - options.innerR) / 2,
-			x1 = path[1],
-			y1 = path[2],
-			x2 = path[12],
-			y2 = path[13],
-			roundStart = ['A', smallR, smallR, 0, 1, 1, x1, y1],
-			roundEnd = ['A', smallR, smallR, 0, 1, 1, x2, y2];
-		// Insert rounded edge on end, and remove line.
-		path.splice.apply(path, [path.length - 1, 0].concat(roundStart));
-		// Insert rounded edge on end, and remove line.
-		path.splice.apply(path, [11, 3].concat(roundEnd));
+wrap(
+	Renderer.prototype.symbols,
+	'arc',
+	function (proceed, x, y, w, h, options) {
+		var arc = proceed,
+			path = arc(x, y, w, h, options);
+		if (options.rounded) {
+			var r = options.r || w,
+				smallR = (r - options.innerR) / 2,
+				x1 = path[1],
+				y1 = path[2],
+				x2 = path[12],
+				y2 = path[13],
+				roundStart = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+				roundEnd = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+			// Insert rounded edge on end, and remove line.
+			path.splice.apply(path, [path.length - 1, 0].concat(roundStart));
+			// Insert rounded edge on end, and remove line.
+			path.splice.apply(path, [11, 3].concat(roundEnd));
+		}
+		
+		return path;
 	}
-	
-	return path;
-});
+);
 
 // These methods are defined in the ColorAxis object, and copied here.
 // If we implement an AMD system we should make ColorAxis a dependency.
@@ -116,7 +119,10 @@ colorAxisMethods = {
 				dataClass = dataClasses[i];
 				from = dataClass.from;
 				to = dataClass.to;
-				if ((from === undefined || value >= from) && (to === undefined || value <= to)) {
+				if (
+					(from === undefined || value >= from) &&
+					(to === undefined || value <= to)
+				) {
 					color = dataClass.color;
 					if (point) {
 						point.dataClass = i;
@@ -267,9 +273,18 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
 
 		each(series.points, function (point) {
 			var graphic = point.graphic,
-				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true),
-				radius = (pInt(pick(point.options.radius, options.radius, 100)) * center[2]) / 200,
-				innerRadius = (pInt(pick(point.options.innerRadius, options.innerRadius, 60)) * center[2]) / 200,
+				rotation = yAxis.startAngleRad +
+					yAxis.translate(point.y, null, null, null, true),
+				radius = (
+					pInt(
+						pick(point.options.radius, options.radius, 100)
+					) * center[2]
+				) / 200,
+				innerRadius = (
+					pInt(
+						pick(point.options.innerRadius, options.innerRadius, 60)
+					) * center[2]
+				) / 200,
 				shapeArgs,
 				d,
 				toColor = yAxis.toColor(point.y, point),
@@ -286,11 +301,17 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
 			}
 
 			// Handle overshoot and clipping to axis max/min
-			rotation = Math.max(axisMinAngle - overshootVal, Math.min(axisMaxAngle + overshootVal, rotation));
+			rotation = Math.max(
+				axisMinAngle - overshootVal,
+				Math.min(axisMaxAngle + overshootVal, rotation)
+			);
 
 			// Handle the wrap option
 			if (options.wrap === false) {
-				rotation = Math.max(axisMinAngle, Math.min(axisMaxAngle, rotation));
+				rotation = Math.max(
+					axisMinAngle,
+					Math.min(axisMaxAngle, rotation)
+				);
 			}
 
 			minAngle = Math.min(rotation, series.thresholdAngleRad);
@@ -388,8 +409,8 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.solidgauge.turboThreshold),
- * this option is not available.
+ * points exceeds the series' [turboThreshold](
+ * #series.solidgauge.turboThreshold), this option is not available.
  * 
  *  ```js
  *     data: [{
