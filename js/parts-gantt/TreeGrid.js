@@ -103,6 +103,13 @@ var getBreakFromNode = function (node, pos, max) {
 	};
 };
 
+/**
+ * Check if a node is collapsed.
+ * @param {object} axis The axis to check against.
+ * @param {object} node The node to check if is collapsed.
+ * @param {number} pos The tick position to collapse.
+ * @returns {boolean} Returns true if collapsed, false if expanded.
+ */
 var isCollapsed = function (axis, node, pos) {
 	var breaks = (axis.options.breaks || []),
 		obj = getBreakFromNode(node, pos, axis.max);
@@ -110,31 +117,57 @@ var isCollapsed = function (axis, node, pos) {
 		return b.from === obj.from && b.to === obj.to;
 	});
 };
+
+/**
+ * Calculates the new axis breaks to collapse a node.
+ * @param {object} axis The axis to check against.
+ * @param {object} node The node to collapse.
+ * @param {number} pos The tick position to collapse.
+ * @returns {array} Returns an array of the new breaks for the axis.
+ */
 var collapse = function (axis, node, pos) {
 	var breaks = (axis.options.breaks || []),
 		obj = getBreakFromNode(node, pos, axis.max);
 	breaks.push(obj);
-	axis.setBreaks(breaks);
+	return breaks;
 };
+
+/**
+ * Calculates the new axis breaks to expand a node.
+ * @param {object} axis The axis to check against.
+ * @param {object} node The node to expand.
+ * @param {number} pos The tick position to expand.
+ * @returns {array} Returns an array of the new breaks for the axis.
+ */
 var expand = function (axis, node, pos) {
 	var breaks = (axis.options.breaks || []),
 		obj = getBreakFromNode(node, pos, axis.max);
 	// Remove the break from the axis breaks array.
-	breaks = reduce(breaks, function (arr, b) {
+	return reduce(breaks, function (arr, b) {
 		if (b.to !== obj.to || b.from !== obj.from) {
 			arr.push(b);
 		}
 		return arr;
 	}, []);
-	axis.setBreaks(breaks);
 };
+
+/**
+ * Calculates the new axis breaks after toggling the collapse/expand state of a
+ * node. If it is collapsed it will be expanded, and if it is exapended it will
+ * be collapsed.
+ * @param {object} axis The axis to check against.
+ * @param {object} node The node to toggle.
+ * @param {number} pos The tick position to toggle.
+ * @returns {array} Returns an array of the new breaks for the axis.
+ */
 var toggleCollapse = function (axis, node, pos) {
-	if (isCollapsed(axis, node, pos)) {
-		expand(axis, node, pos);
-	} else {
-		collapse(axis, node, pos);
-	}
+	return (
+		isCollapsed(axis, node, pos) ?
+		expand(axis, node, pos) :
+		collapse(axis, node, pos)
+	);
 };
+
 var renderLabelIcon = function (label, radius, spacing, collapsed) {
 	var renderer = label.renderer,
 		labelBox = label.xy,
@@ -278,11 +311,7 @@ override(GridAxisTick.prototype, {
 						});
 						
 						H.addEvent(object.element, 'click', function () {
-							var axis = tick.axis,
-								pos = tick.pos;
-							if (axis) {
-								toggleCollapse(axis, axis.treeGridMap[pos], pos);
-							}
+							tick.toggleCollapse();
 						});
 						object.attachedTreeGridEvents = true;
 					}
@@ -291,6 +320,48 @@ override(GridAxisTick.prototype, {
 		}
 	}
 });
+
+/**
+ * Collapse the grid cell.
+ * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
+ * explicit call to {@link Highcharts.Chart#redraw}
+ */
+GridAxisTick.prototype.collapse = function (redraw) {
+	var tick = this,
+		axis = tick.axis,
+		pos = tick.pos,
+		node = axis.treeGridMap[pos],
+		breaks = collapse(axis, node, pos);
+	axis.setBreaks(breaks, pick(redraw, true));
+};
+
+/**
+ * Expand the grid cell.
+ * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
+ * explicit call to {@link Highcharts.Chart#redraw}
+ */
+GridAxisTick.prototype.expand = function (redraw) {
+	var tick = this,
+		axis = tick.axis,
+		pos = tick.pos,
+		node = axis.treeGridMap[pos],
+		breaks = expand(axis, node, pos);
+	axis.setBreaks(breaks, pick(redraw, true));
+};
+
+/**
+ * Toggle the collapse/expand state of the grid cell.
+ * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
+ * explicit call to {@link Highcharts.Chart#redraw}
+ */
+GridAxisTick.prototype.toggleCollapse = function (redraw) {
+	var tick = this,
+		axis = tick.axis,
+		pos = tick.pos,
+		node = axis.treeGridMap[pos],
+		breaks = toggleCollapse(axis, node, pos);
+	axis.setBreaks(breaks, pick(redraw, true));
+};
 
 GridAxis.prototype.updateYNames = function () {
 	var axis = this,
