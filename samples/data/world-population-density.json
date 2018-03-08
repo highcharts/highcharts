@@ -1,1072 +1,1307 @@
 [
 	{
-		"code": "AF",
-		"value": 53,
-		"name": "Afghanistan"
+		"code3": "ABW",
+		"name": "Aruba",
+		"value": 583
 	},
 	{
-		"code": "AL",
-		"value": 117,
-		"name": "Albania"
+		"code3": "AFG",
+		"name": "Afghanistan",
+		"value": 54
 	},
 	{
-		"code": "DZ",
-		"value": 15,
-		"name": "Algeria"
+		"code3": "AGO",
+		"name": "Angola",
+		"value": 24
 	},
 	{
-		"code": "AS",
-		"value": 342,
-		"name": "American Samoa"
+		"code3": "ALB",
+		"name": "Albania",
+		"value": 105
 	},
 	{
-		"code": "AD",
-		"value": 181,
-		"name": "Andorra"
+		"code3": "AND",
+		"name": "Andorra",
+		"value": 164
 	},
 	{
-		"code": "AO",
-		"value": 15,
-		"name": "Angola"
+		"code3": "ARB",
+		"name": "Arab World",
+		"value": 30
 	},
 	{
-		"code": "AI",
-		"value": 202,
-		"name": "Antigua and Barbuda"
+		"code3": "ARE",
+		"name": "United Arab Emirates",
+		"value": 112
 	},
 	{
-		"code": "AR",
-		"value": 15,
-		"name": "Argentina"
+		"code3": "ARG",
+		"name": "Argentina",
+		"value": 16
 	},
 	{
-		"code": "AM",
-		"value": 109,
-		"name": "Armenia"
+		"code3": "ARM",
+		"name": "Armenia",
+		"value": 103
 	},
 	{
-		"code": "AW",
-		"value": 597,
-		"name": "Aruba"
+		"code3": "ASM",
+		"name": "American Samoa",
+		"value": 280
 	},
 	{
-		"code": "AU",
-		"value": 3,
-		"name": "Australia"
+		"code3": "ATG",
+		"name": "Antigua and Barbuda",
+		"value": 232
 	},
 	{
-		"code": "AT",
-		"value": 102,
-		"name": "Austria"
+		"code3": "AUS",
+		"name": "Australia",
+		"value": 3
 	},
 	{
-		"code": "AZ",
-		"value": 110,
-		"name": "Azerbaijan"
+		"code3": "AUT",
+		"name": "Austria",
+		"value": 106
 	},
 	{
-		"code": "BS",
-		"value": 34,
-		"name": "Bahamas, The"
+		"code3": "AZE",
+		"name": "Azerbaijan",
+		"value": 119
 	},
 	{
-		"code": "BH",
-		"value": 1660,
-		"name": "Bahrain"
+		"code3": "BDI",
+		"name": "Burundi",
+		"value": 423
 	},
 	{
-		"code": "BD",
-		"value": 1142,
-		"name": "Bangladesh"
+		"code3": "BEL",
+		"name": "Belgium",
+		"value": 377
 	},
 	{
-		"code": "BB",
-		"value": 636,
-		"name": "Barbados"
+		"code3": "BEN",
+		"name": "Benin",
+		"value": 99
 	},
 	{
-		"code": "BY",
-		"value": 47,
-		"name": "Belarus"
+		"code3": "BFA",
+		"name": "Burkina Faso",
+		"value": 70
 	},
 	{
-		"code": "BE",
-		"value": 359,
-		"name": "Belgium"
+		"code3": "BGD",
+		"name": "Bangladesh",
+		"value": 1265
 	},
 	{
-		"code": "BZ",
-		"value": 15,
-		"name": "Belize"
+		"code3": "BGR",
+		"name": "Bulgaria",
+		"value": 65
 	},
 	{
-		"code": "BJ",
-		"value": 80,
-		"name": "Benin"
+		"code3": "BHR",
+		"name": "Bahrain",
+		"value": 1936
 	},
 	{
-		"code": "BM",
-		"value": 1292,
-		"name": "Bermuda"
+		"code3": "BHS",
+		"name": "Bahamas, The",
+		"value": 39
 	},
 	{
-		"code": "BT",
-		"value": 19,
-		"name": "Bhutan"
+		"code3": "BIH",
+		"name": "Bosnia and Herzegovina",
+		"value": 68
 	},
 	{
-		"code": "BO",
-		"value": 9,
-		"name": "Bolivia"
+		"code3": "BLR",
+		"name": "Belarus",
+		"value": 47
 	},
 	{
-		"code": "BA",
-		"value": 73,
-		"name": "Bosnia and Herzegovina"
+		"code3": "BLZ",
+		"name": "Belize",
+		"value": 16
 	},
 	{
-		"code": "BW",
-		"value": 4,
-		"name": "Botswana"
+		"code3": "BMU",
+		"name": "Bermuda",
+		"value": 1307
 	},
 	{
-		"code": "BR",
-		"value": 23,
-		"name": "Brazil"
+		"code3": "BOL",
+		"name": "Bolivia",
+		"value": 10
 	},
 	{
-		"code": "BN",
-		"value": 76,
-		"name": "Brunei Darussalam"
+		"code3": "BRA",
+		"name": "Brazil",
+		"value": 25
 	},
 	{
-		"code": "BG",
-		"value": 69,
-		"name": "Bulgaria"
+		"code3": "BRB",
+		"name": "Barbados",
+		"value": 665
 	},
 	{
-		"code": "BF",
-		"value": 60,
-		"name": "Burkina Faso"
+		"code3": "BRN",
+		"name": "Brunei Darussalam",
+		"value": 81
 	},
 	{
-		"code": "BI",
-		"value": 326,
-		"name": "Burundi"
+		"code3": "BTN",
+		"name": "Bhutan",
+		"value": 21
 	},
 	{
-		"code": "KH",
-		"value": 80,
-		"name": "Cambodia"
+		"code3": "BWA",
+		"name": "Botswana",
+		"value": 4
 	},
 	{
-		"code": "CM",
-		"value": 41,
-		"name": "Cameroon"
+		"code3": "CAF",
+		"name": "Central African Republic",
+		"value": 7
 	},
 	{
-		"code": "CA",
-		"value": 4,
-		"name": "Canada"
+		"code3": "CAN",
+		"name": "Canada",
+		"value": 4
 	},
 	{
-		"code": "CV",
-		"value": 123,
-		"name": "Cape Verde"
+		"code3": "CEB",
+		"name": "Central Europe and the Baltics",
+		"value": 93
 	},
 	{
-		"code": "KY",
-		"value": 234,
-		"name": "Cayman Islands"
+		"code3": "CHE",
+		"name": "Switzerland",
+		"value": 214
 	},
 	{
-		"code": "CF",
-		"value": 7,
-		"name": "Central African Republic"
+		"code3": "CHI",
+		"name": "Channel Islands",
+		"value": 868
 	},
 	{
-		"code": "TD",
-		"value": 9,
-		"name": "Chad"
+		"code3": "CHL",
+		"name": "Chile",
+		"value": 24
 	},
 	{
-		"code": "CL",
-		"value": 23,
-		"name": "Chile"
+		"code3": "CHN",
+		"name": "China",
+		"value": 147
 	},
 	{
-		"code": "CN",
-		"value": 143,
-		"name": "China"
+		"code3": "CIV",
+		"name": "Cote d'Ivoire",
+		"value": 76
 	},
 	{
-		"code": "CO",
-		"value": 42,
-		"name": "Colombia"
+		"code3": "CMR",
+		"name": "Cameroon",
+		"value": 51
 	},
 	{
-		"code": "KM",
-		"value": 395,
-		"name": "Comoros"
+		"code3": "COD",
+		"name": "Congo, Dem. Rep.",
+		"value": 36
 	},
 	{
-		"code": "CD",
-		"value": 29,
-		"name": "Congo, Dem. Rep."
+		"code3": "COG",
+		"name": "Congo, Rep.",
+		"value": 15
 	},
 	{
-		"code": "CG",
-		"value": 12,
-		"name": "Congo, Rep."
+		"code3": "COL",
+		"name": "Colombia",
+		"value": 44
 	},
 	{
-		"code": "CR",
-		"value": 91,
-		"name": "Costa Rica"
+		"code3": "COM",
+		"name": "Comoros",
+		"value": 437
 	},
 	{
-		"code": "CI",
-		"value": 62,
-		"name": "Cote d'Ivoire"
+		"code3": "CPV",
+		"name": "Cabo Verde",
+		"value": 135
 	},
 	{
-		"code": "HR",
-		"value": 79,
-		"name": "Croatia"
+		"code3": "CRI",
+		"name": "Costa Rica",
+		"value": 96
 	},
 	{
-		"code": "CU",
-		"value": 106,
-		"name": "Cuba"
+		"code3": "CSS",
+		"name": "Caribbean small states",
+		"value": 18
 	},
 	{
-		"code": "CW",
-		"value": 321,
-		"name": "Curacao"
+		"code3": "CUB",
+		"name": "Cuba",
+		"value": 110
 	},
 	{
-		"code": "CY",
-		"value": 119,
-		"name": "Cyprus"
+		"code3": "CUW",
+		"name": "Curacao",
+		"value": 363
 	},
 	{
-		"code": "CZ",
-		"value": 136,
-		"name": "Czech Republic"
+		"code3": "CYM",
+		"name": "Cayman Islands",
+		"value": 258
 	},
 	{
-		"code": "DK",
-		"value": 131,
-		"name": "Denmark"
+		"code3": "CYP",
+		"name": "Cyprus",
+		"value": 128
 	},
 	{
-		"code": "DJ",
-		"value": 38,
-		"name": "Djibouti"
+		"code3": "CZE",
+		"name": "Czech Republic",
+		"value": 137
 	},
 	{
-		"code": "DM",
-		"value": 90,
-		"name": "Dominica"
+		"code3": "DEU",
+		"name": "Germany",
+		"value": 237
 	},
 	{
-		"code": "DO",
-		"value": 205,
-		"name": "Dominican Republic"
+		"code3": "DJI",
+		"name": "Djibouti",
+		"value": 41
 	},
 	{
-		"code": "EC",
-		"value": 58,
-		"name": "Ecuador"
+		"code3": "DMA",
+		"name": "Dominica",
+		"value": 99
 	},
 	{
-		"code": "EG",
-		"value": 81,
-		"name": "Egypt, Arab Rep."
+		"code3": "DNK",
+		"name": "Denmark",
+		"value": 136
 	},
 	{
-		"code": "SV",
-		"value": 299,
-		"name": "El Salvador"
+		"code3": "DOM",
+		"name": "Dominican Republic",
+		"value": 223
 	},
 	{
-		"code": "GQ",
-		"value": 25,
-		"name": "Equatorial Guinea"
+		"code3": "DZA",
+		"name": "Algeria",
+		"value": 17
 	},
 	{
-		"code": "ER",
-		"value": 52,
-		"name": "Eritrea"
+		"code3": "EAP",
+		"name": "East Asia & Pacific (excluding high income)",
+		"value": 130
 	},
 	{
-		"code": "EE",
-		"value": 32,
-		"name": "Estonia"
+		"code3": "EAR",
+		"name": "Early-demographic dividend",
+		"value": 97
 	},
 	{
-		"code": "ET",
-		"value": 83,
-		"name": "Ethiopia"
+		"code3": "EAS",
+		"name": "East Asia & Pacific",
+		"value": 95
 	},
 	{
-		"code": "FO",
-		"value": 35,
-		"name": "Faeroe Islands"
+		"code3": "ECA",
+		"name": "Europe & Central Asia (excluding high income)",
+		"value": 18
 	},
 	{
-		"code": "FJ",
-		"value": 47,
-		"name": "Fiji"
+		"code3": "ECS",
+		"name": "Europe & Central Asia",
+		"value": 33
 	},
 	{
-		"code": "FI",
-		"value": 18,
-		"name": "Finland"
+		"code3": "ECU",
+		"name": "Ecuador",
+		"value": 67
 	},
 	{
-		"code": "FR",
-		"value": 118,
-		"name": "France"
+		"code3": "EGY",
+		"name": "Egypt, Arab Rep.",
+		"value": 98
 	},
 	{
-		"code": "PF",
-		"value": 74,
-		"name": "French Polynesia"
+		"code3": "EMU",
+		"name": "Euro area",
+		"value": 127
 	},
 	{
-		"code": "GA",
-		"value": 6,
-		"name": "Gabon"
+		"code3": "ESP",
+		"name": "Spain",
+		"value": 93
 	},
 	{
-		"code": "GM",
-		"value": 173,
-		"name": "Gambia, The"
+		"code3": "EST",
+		"name": "Estonia",
+		"value": 31
 	},
 	{
-		"code": "GE",
-		"value": 78,
-		"name": "Georgia"
+		"code3": "ETH",
+		"name": "Ethiopia",
+		"value": 105
 	},
 	{
-		"code": "DE",
-		"value": 234,
-		"name": "Germany"
+		"code3": "EUU",
+		"name": "European Union",
+		"value": 121
 	},
 	{
-		"code": "GH",
-		"value": 107,
-		"name": "Ghana"
+		"code3": "FCS",
+		"name": "Fragile and conflict affected situations",
+		"value": 34
 	},
 	{
-		"code": "GR",
-		"value": 88,
-		"name": "Greece"
+		"code3": "FIN",
+		"name": "Finland",
+		"value": 18
 	},
 	{
-		"code": "GL",
-		"value": 0.02,
-		"name": "Greenland"
+		"code3": "FJI",
+		"name": "Fiji",
+		"value": 50
 	},
 	{
-		"code": "GD",
-		"value": 307,
-		"name": "Grenada"
+		"code3": "FRA",
+		"name": "France",
+		"value": 123
 	},
 	{
-		"code": "GU",
-		"value": 333,
-		"name": "Guam"
+		"code3": "FRO",
+		"name": "Faroe Islands",
+		"value": 35
 	},
 	{
-		"code": "GT",
-		"value": 134,
-		"name": "Guatemala"
+		"code3": "FSM",
+		"name": "Micronesia, Fed. Sts.",
+		"value": 151
 	},
 	{
-		"code": "GN",
-		"value": 41,
-		"name": "Guinea"
+		"code3": "GAB",
+		"name": "Gabon",
+		"value": 8
 	},
 	{
-		"code": "GW",
-		"value": 54,
-		"name": "Guinea-Bissau"
+		"code3": "GBR",
+		"name": "United Kingdom",
+		"value": 273
 	},
 	{
-		"code": "GY",
-		"value": 4,
-		"name": "Guyana"
+		"code3": "GEO",
+		"name": "Georgia",
+		"value": 53
 	},
 	{
-		"code": "HT",
-		"value": 363,
-		"name": "Haiti"
+		"code3": "GHA",
+		"name": "Ghana",
+		"value": 127
 	},
 	{
-		"code": "HN",
-		"value": 68,
-		"name": "Honduras"
+		"code3": "GIB",
+		"name": "Gibraltar",
+		"value": 3500
 	},
 	{
-		"code": "HK",
-		"value": 6783,
-		"name": "Hong Kong SAR, China"
+		"code3": "GIN",
+		"name": "Guinea",
+		"value": 52
 	},
 	{
-		"code": "HU",
-		"value": 112,
-		"name": "Hungary"
+		"code3": "GMB",
+		"name": "Gambia, The",
+		"value": 208
 	},
 	{
-		"code": "IS",
-		"value": 3,
-		"name": "Iceland"
+		"code3": "GNB",
+		"name": "Guinea-Bissau",
+		"value": 66
 	},
 	{
-		"code": "IN",
-		"value": 394,
-		"name": "India"
+		"code3": "GNQ",
+		"name": "Equatorial Guinea",
+		"value": 45
 	},
 	{
-		"code": "ID",
-		"value": 132,
-		"name": "Indonesia"
+		"code3": "GRC",
+		"name": "Greece",
+		"value": 83
 	},
 	{
-		"code": "IR",
-		"value": 45,
-		"name": "Iran, Islamic Rep."
+		"code3": "GRD",
+		"name": "Grenada",
+		"value": 318
 	},
 	{
-		"code": "IQ",
-		"value": 73,
-		"name": "Iraq"
+		"code3": "GRL",
+		"name": "Greenland",
+		"value": 0
 	},
 	{
-		"code": "IE",
-		"value": 65,
-		"name": "Ireland"
+		"code3": "GTM",
+		"name": "Guatemala",
+		"value": 158
 	},
 	{
-		"code": "IM",
-		"value": 145,
-		"name": "Isle of Man"
+		"code3": "GUM",
+		"name": "Guam",
+		"value": 304
 	},
 	{
-		"code": "IL",
-		"value": 352,
-		"name": "Israel"
+		"code3": "GUY",
+		"name": "Guyana",
+		"value": 4
 	},
 	{
-		"code": "IT",
-		"value": 206,
-		"name": "Italy"
+		"code3": "HIC",
+		"name": "High income",
+		"value": 34
 	},
 	{
-		"code": "JM",
-		"value": 250,
-		"name": "Jamaica"
+		"code3": "HKG",
+		"name": "Hong Kong SAR, China",
+		"value": 7053
 	},
 	{
-		"code": "JP",
-		"value": 350,
-		"name": "Japan"
+		"code3": "HND",
+		"name": "Honduras",
+		"value": 83
 	},
 	{
-		"code": "JO",
-		"value": 69,
-		"name": "Jordan"
+		"code3": "HPC",
+		"name": "Heavily indebted poor countries (HIPC)",
+		"value": 39
 	},
 	{
-		"code": "KZ",
-		"value": 6,
-		"name": "Kazakhstan"
+		"code3": "HRV",
+		"name": "Croatia",
+		"value": 74
 	},
 	{
-		"code": "KE",
-		"value": 71,
-		"name": "Kenya"
+		"code3": "HTI",
+		"name": "Haiti",
+		"value": 398
 	},
 	{
-		"code": "KI",
-		"value": 123,
-		"name": "Kiribati"
+		"code3": "HUN",
+		"name": "Hungary",
+		"value": 108
 	},
 	{
-		"code": "KP",
-		"value": 202,
-		"name": "Korea, Dem. Rep."
+		"code3": "IBD",
+		"name": "IBRD only",
+		"value": 68
 	},
 	{
-		"code": "KR",
-		"value": 504,
-		"name": "Korea, Rep."
+		"code3": "IBT",
+		"name": "IDA & IBRD total",
+		"value": 66
 	},
 	{
-		"code": "XK",
-		"value": 167,
-		"name": "Kosovo"
+		"code3": "IDA",
+		"name": "IDA total",
+		"value": 61
 	},
 	{
-		"code": "KW",
-		"value": 154,
-		"name": "Kuwait"
+		"code3": "IDB",
+		"name": "IDA blend",
+		"value": 90
 	},
 	{
-		"code": "KG",
-		"value": 28,
-		"name": "Kyrgyz Republic"
+		"code3": "IDN",
+		"name": "Indonesia",
+		"value": 146
 	},
 	{
-		"code": "LA",
-		"value": 27,
-		"name": "Lao PDR"
+		"code3": "IDX",
+		"name": "IDA only",
+		"value": 53
 	},
 	{
-		"code": "LV",
-		"value": 36,
-		"name": "Latvia"
+		"code3": "IMN",
+		"name": "Isle of Man",
+		"value": 147
 	},
 	{
-		"code": "LB",
-		"value": 413,
-		"name": "Lebanon"
+		"code3": "IND",
+		"name": "India",
+		"value": 450
 	},
 	{
-		"code": "LS",
-		"value": 72,
-		"name": "Lesotho"
+		"code3": "IRL",
+		"name": "Ireland",
+		"value": 70
 	},
 	{
-		"code": "LR",
-		"value": 41,
-		"name": "Liberia"
+		"code3": "IRN",
+		"name": "Iran, Islamic Rep.",
+		"value": 50
 	},
 	{
-		"code": "LY",
-		"value": 4,
-		"name": "Libya"
+		"code3": "IRQ",
+		"name": "Iraq",
+		"value": 88
 	},
 	{
-		"code": "LI",
-		"value": 225,
-		"name": "Liechtenstein"
+		"code3": "ISL",
+		"name": "Iceland",
+		"value": 3
 	},
 	{
-		"code": "LT",
-		"value": 53,
-		"name": "Lithuania"
+		"code3": "ISR",
+		"name": "Israel",
+		"value": 401
 	},
 	{
-		"code": "LU",
-		"value": 195,
-		"name": "Luxembourg"
+		"code3": "ITA",
+		"name": "Italy",
+		"value": 206
 	},
 	{
-		"code": "MO",
-		"value": 19416,
-		"name": "Macao SAR, China"
+		"code3": "JAM",
+		"name": "Jamaica",
+		"value": 267
 	},
 	{
-		"code": "MK",
-		"value": 82,
-		"name": "Macedonia, FYR"
+		"code3": "JOR",
+		"name": "Jordan",
+		"value": 109
 	},
 	{
-		"code": "MG",
-		"value": 36,
-		"name": "Madagascar"
+		"code3": "JPN",
+		"name": "Japan",
+		"value": 347
 	},
 	{
-		"code": "MW",
-		"value": 158,
-		"name": "Malawi"
+		"code3": "KAZ",
+		"name": "Kazakhstan",
+		"value": 7
 	},
 	{
-		"code": "MY",
-		"value": 86,
-		"name": "Malaysia"
+		"code3": "KEN",
+		"name": "Kenya",
+		"value": 87
 	},
 	{
-		"code": "MV",
-		"value": 1053,
-		"name": "Maldives"
+		"code3": "KGZ",
+		"name": "Kyrgyz Republic",
+		"value": 32
 	},
 	{
-		"code": "ML",
-		"value": 13,
-		"name": "Mali"
+		"code3": "KHM",
+		"name": "Cambodia",
+		"value": 91
 	},
 	{
-		"code": "MT",
-		"value": 1291,
-		"name": "Malta"
+		"code3": "KIR",
+		"name": "Kiribati",
+		"value": 143
 	},
 	{
-		"code": "MH",
-		"value": 300,
-		"name": "Marshall Islands"
+		"code3": "KNA",
+		"name": "St. Kitts and Nevis",
+		"value": 212
 	},
 	{
-		"code": "MR",
-		"value": 3,
-		"name": "Mauritania"
+		"code3": "KOR",
+		"name": "Korea, Rep.",
+		"value": 528
 	},
 	{
-		"code": "MU",
-		"value": 631,
-		"name": "Mauritius"
+		"code3": "KWT",
+		"name": "Kuwait",
+		"value": 232
 	},
 	{
-		"code": "YT",
-		"value": 552,
-		"name": "Mayotte"
+		"code3": "LAC",
+		"name": "Latin America & Caribbean (excluding high income)",
+		"value": 32
 	},
 	{
-		"code": "MX",
-		"value": 58,
-		"name": "Mexico"
+		"code3": "LAO",
+		"name": "Lao PDR",
+		"value": 30
 	},
 	{
-		"code": "FM",
-		"value": 159,
-		"name": "Micronesia, Fed. Sts."
+		"code3": "LBN",
+		"name": "Lebanon",
+		"value": 595
 	},
 	{
-		"code": "MD",
-		"value": 124,
-		"name": "Moldova"
+		"code3": "LBR",
+		"name": "Liberia",
+		"value": 49
 	},
 	{
-		"code": "MC",
-		"value": 17704,
-		"name": "Monaco"
+		"code3": "LBY",
+		"name": "Libya",
+		"value": 4
 	},
 	{
-		"code": "MN",
-		"value": 2,
-		"name": "Mongolia"
+		"code3": "LCA",
+		"name": "St. Lucia",
+		"value": 293
 	},
 	{
-		"code": "ME",
-		"value": 47,
-		"name": "Montenegro"
+		"code3": "LCN",
+		"name": "Latin America & Caribbean",
+		"value": 32
 	},
 	{
-		"code": "MA",
-		"value": 72,
-		"name": "Morocco"
+		"code3": "LDC",
+		"name": "Least developed countries: UN classification",
+		"value": 50
 	},
 	{
-		"code": "MZ",
-		"value": 30,
-		"name": "Mozambique"
+		"code3": "LIC",
+		"name": "Low income",
+		"value": 51
 	},
 	{
-		"code": "MM",
-		"value": 73,
-		"name": "Myanmar"
+		"code3": "LIE",
+		"name": "Liechtenstein",
+		"value": 238
 	},
 	{
-		"code": "NA",
-		"value": 3,
-		"name": "Namibia"
+		"code3": "LKA",
+		"name": "Sri Lanka",
+		"value": 340
 	},
 	{
-		"code": "NP",
-		"value": 209,
-		"name": "Nepal"
+		"code3": "LMC",
+		"name": "Lower middle income",
+		"value": 132
 	},
 	{
-		"code": "NL",
-		"value": 492,
-		"name": "Netherlands"
+		"code3": "LMY",
+		"name": "Low & middle income",
+		"value": 67
 	},
 	{
-		"code": "NC",
-		"value": 14,
-		"name": "New Caledonia"
+		"code3": "LSO",
+		"name": "Lesotho",
+		"value": 74
 	},
 	{
-		"code": "NZ",
-		"value": 17,
-		"name": "New Zealand"
+		"code3": "LTE",
+		"name": "Late-demographic dividend",
+		"value": 51
 	},
 	{
-		"code": "NI",
-		"value": 48,
-		"name": "Nicaragua"
+		"code3": "LTU",
+		"name": "Lithuania",
+		"value": 46
 	},
 	{
-		"code": "NE",
-		"value": 12,
-		"name": "Niger"
+		"code3": "LUX",
+		"name": "Luxembourg",
+		"value": 228
 	},
 	{
-		"code": "NG",
-		"value": 174,
-		"name": "Nigeria"
+		"code3": "LVA",
+		"name": "Latvia",
+		"value": 31
 	},
 	{
-		"code": "MP",
-		"value": 132,
-		"name": "Northern Mariana Islands"
+		"code3": "MAC",
+		"name": "Macao SAR, China",
+		"value": 20767
 	},
 	{
-		"code": "NO",
-		"value": 16,
-		"name": "Norway"
+		"code3": "MAF",
+		"name": "St. Martin (French part)",
+		"value": 592
 	},
 	{
-		"code": "OM",
-		"value": 9,
-		"name": "Oman"
+		"code3": "MAR",
+		"name": "Morocco",
+		"value": 80
 	},
 	{
-		"code": "PK",
-		"value": 225,
-		"name": "Pakistan"
+		"code3": "MCO",
+		"name": "Monaco",
+		"value": 19500
 	},
 	{
-		"code": "PW",
-		"value": 45,
-		"name": "Palau"
+		"code3": "MDA",
+		"name": "Moldova",
+		"value": 108
 	},
 	{
-		"code": "PA",
-		"value": 47,
-		"name": "Panama"
+		"code3": "MDG",
+		"name": "Madagascar",
+		"value": 44
 	},
 	{
-		"code": "PG",
-		"value": 15,
-		"name": "Papua New Guinea"
+		"code3": "MDV",
+		"name": "Maldives",
+		"value": 1410
 	},
 	{
-		"code": "PY",
-		"value": 16,
-		"name": "Paraguay"
+		"code3": "MEA",
+		"name": "Middle East & North Africa",
+		"value": 40
 	},
 	{
-		"code": "PE",
-		"value": 23,
-		"name": "Peru"
+		"code3": "MEX",
+		"name": "Mexico",
+		"value": 66
 	},
 	{
-		"code": "PH",
-		"value": 313,
-		"name": "Philippines"
+		"code3": "MHL",
+		"name": "Marshall Islands",
+		"value": 294
 	},
 	{
-		"code": "PL",
-		"value": 126,
-		"name": "Poland"
+		"code3": "MIC",
+		"name": "Middle income",
+		"value": 69
 	},
 	{
-		"code": "PT",
-		"value": 116,
-		"name": "Portugal"
+		"code3": "MKD",
+		"name": "Macedonia, FYR",
+		"value": 83
 	},
 	{
-		"code": "PR",
-		"value": 449,
-		"name": "Puerto Rico"
+		"code3": "MLI",
+		"name": "Mali",
+		"value": 15
 	},
 	{
-		"code": "WA",
-		"value": 152,
-		"name": "Qatar"
+		"code3": "MLT",
+		"name": "Malta",
+		"value": 1372
 	},
 	{
-		"code": "RO",
-		"value": 93,
-		"name": "Romania"
+		"code3": "MMR",
+		"name": "Myanmar",
+		"value": 82
 	},
 	{
-		"code": "RU",
-		"value": 9,
-		"name": "Russian Federation"
+		"code3": "MNA",
+		"name": "Middle East & North Africa (excluding high income)",
+		"value": 44
 	},
 	{
-		"code": "RW",
-		"value": 431,
-		"name": "Rwanda"
+		"code3": "MNE",
+		"name": "Montenegro",
+		"value": 46
 	},
 	{
-		"code": "WS",
-		"value": 65,
-		"name": "Samoa"
+		"code3": "MNG",
+		"name": "Mongolia",
+		"value": 2
 	},
 	{
-		"code": "SM",
-		"value": 526,
-		"name": "San Marino"
+		"code3": "MNP",
+		"name": "Northern Mariana Islands",
+		"value": 120
 	},
 	{
-		"code": "ST",
-		"value": 172,
-		"name": "Sao Tome and Principe"
+		"code3": "MOZ",
+		"name": "Mozambique",
+		"value": 38
 	},
 	{
-		"code": "SA",
-		"value": 14,
-		"name": "Saudi Arabia"
+		"code3": "MRT",
+		"name": "Mauritania",
+		"value": 4
 	},
 	{
-		"code": "SN",
-		"value": 65,
-		"name": "Senegal"
+		"code3": "MUS",
+		"name": "Mauritius",
+		"value": 624
 	},
 	{
-		"code": "RS",
-		"value": 83,
-		"name": "Serbia"
+		"code3": "MWI",
+		"name": "Malawi",
+		"value": 198
 	},
 	{
-		"code": "SC",
-		"value": 188,
-		"name": "Seychelles"
+		"code3": "MYS",
+		"name": "Malaysia",
+		"value": 96
 	},
 	{
-		"code": "SL",
-		"value": 82,
-		"name": "Sierra Leone"
+		"code3": "NAC",
+		"name": "North America",
+		"value": 20
 	},
 	{
-		"code": "SG",
-		"value": 7252,
-		"name": "Singapore"
+		"code3": "NAM",
+		"name": "Namibia",
+		"value": 3
 	},
 	{
-		"code": "SK",
-		"value": 113,
-		"name": "Slovak Republic"
+		"code3": "NCL",
+		"name": "New Caledonia",
+		"value": 15
 	},
 	{
-		"code": "SI",
-		"value": 102,
-		"name": "Slovenia"
+		"code3": "NER",
+		"name": "Niger",
+		"value": 17
 	},
 	{
-		"code": "SB",
-		"value": 19,
-		"name": "Solomon Islands"
+		"code3": "NGA",
+		"name": "Nigeria",
+		"value": 210
 	},
 	{
-		"code": "SO",
-		"value": 15,
-		"name": "Somalia"
+		"code3": "NIC",
+		"name": "Nicaragua",
+		"value": 52
 	},
 	{
-		"code": "ZA",
-		"value": 41,
-		"name": "South Africa"
+		"code3": "NLD",
+		"name": "Netherlands",
+		"value": 507
 	},
 	{
-		"code": "SS",
-		"value": 13,
-		"name": "South Sudan"
+		"code3": "NOR",
+		"name": "Norway",
+		"value": 14
 	},
 	{
-		"code": "ES",
-		"value": 92,
-		"name": "Spain"
+		"code3": "NPL",
+		"name": "Nepal",
+		"value": 204
 	},
 	{
-		"code": "LK",
-		"value": 333,
-		"name": "Sri Lanka"
+		"code3": "NRU",
+		"name": "Nauru",
+		"value": 650
 	},
 	{
-		"code": "KN",
-		"value": 202,
-		"name": "St. Kitts and Nevis"
+		"code3": "NZL",
+		"name": "New Zealand",
+		"value": 18
 	},
 	{
-		"code": "LC",
-		"value": 285,
-		"name": "St. Lucia"
+		"code3": "OED",
+		"name": "OECD members",
+		"value": 38
 	},
 	{
-		"code": "MF",
-		"value": 556,
-		"name": "St. Martin (French part)"
+		"code3": "OMN",
+		"name": "Oman",
+		"value": 15
 	},
 	{
-		"code": "VC",
-		"value": 280,
-		"name": "St. Vincent and the Grenadines"
+		"code3": "OSS",
+		"name": "Other small states",
+		"value": 15
 	},
 	{
-		"code": "SD",
-		"value": 16,
-		"name": "Sudan"
+		"code3": "PAK",
+		"name": "Pakistan",
+		"value": 256
 	},
 	{
-		"code": "SR",
-		"value": 3,
-		"name": "Suriname"
+		"code3": "PAN",
+		"name": "Panama",
+		"value": 55
 	},
 	{
-		"code": "SZ",
-		"value": 69,
-		"name": "Swaziland"
+		"code3": "PER",
+		"name": "Peru",
+		"value": 25
 	},
 	{
-		"code": "SE",
-		"value": 23,
-		"name": "Sweden"
+		"code3": "PHL",
+		"name": "Philippines",
+		"value": 352
 	},
 	{
-		"code": "CH",
-		"value": 196,
-		"name": "Switzerland"
+		"code3": "PLW",
+		"name": "Palau",
+		"value": 48
 	},
 	{
-		"code": "SY",
-		"value": 111,
-		"name": "Syrian Arab Republic"
+		"code3": "PNG",
+		"name": "Papua New Guinea",
+		"value": 18
 	},
 	{
-		"code": "TJ",
-		"value": 49,
-		"name": "Tajikistan"
+		"code3": "POL",
+		"name": "Poland",
+		"value": 124
 	},
 	{
-		"code": "TZ",
-		"value": 51,
-		"name": "Tanzania"
+		"code3": "PRE",
+		"name": "Pre-demographic dividend",
+		"value": 45
 	},
 	{
-		"code": "TH",
-		"value": 135,
-		"name": "Thailand"
+		"code3": "PRI",
+		"name": "Puerto Rico",
+		"value": 384
 	},
 	{
-		"code": "TP",
-		"value": 76,
-		"name": "Timor-Leste"
+		"code3": "PRK",
+		"name": "Korea, Dem. People’s Rep.",
+		"value": 212
 	},
 	{
-		"code": "TG",
-		"value": 111,
-		"name": "Togo"
+		"code3": "PRT",
+		"name": "Portugal",
+		"value": 112
 	},
 	{
-		"code": "TO",
-		"value": 145,
-		"name": "Tonga"
+		"code3": "PRY",
+		"name": "Paraguay",
+		"value": 17
 	},
 	{
-		"code": "TT",
-		"value": 261,
-		"name": "Trinidad and Tobago"
+		"code3": "PSE",
+		"name": "West Bank and Gaza",
+		"value": 776
 	},
 	{
-		"code": "TN",
-		"value": 68,
-		"name": "Tunisia"
+		"code3": "PSS",
+		"name": "Pacific island small states",
+		"value": 38
 	},
 	{
-		"code": "TR",
-		"value": 95,
-		"name": "Turkey"
+		"code3": "PST",
+		"name": "Post-demographic dividend",
+		"value": 35
 	},
 	{
-		"code": "TM",
-		"value": 11,
-		"name": "Turkmenistan"
+		"code3": "PYF",
+		"name": "French Polynesia",
+		"value": 77
 	},
 	{
-		"code": "TC",
-		"value": 40,
-		"name": "Turks and Caicos Islands"
+		"code3": "QAT",
+		"name": "Qatar",
+		"value": 227
 	},
 	{
-		"code": "TV",
-		"value": 328,
-		"name": "Tuvalu"
+		"code3": "ROU",
+		"name": "Romania",
+		"value": 85
 	},
 	{
-		"code": "UG",
-		"value": 170,
-		"name": "Uganda"
+		"code3": "RUS",
+		"name": "Russian Federation",
+		"value": 9
 	},
 	{
-		"code": "UA",
-		"value": 79,
-		"name": "Ukraine"
+		"code3": "RWA",
+		"name": "Rwanda",
+		"value": 495
 	},
 	{
-		"code": "AE",
-		"value": 90,
-		"name": "United Arab Emirates"
+		"code3": "SAS",
+		"name": "South Asia",
+		"value": 375
 	},
 	{
-		"code": "GB",
-		"value": 257,
-		"name": "United Kingdom"
+		"code3": "SAU",
+		"name": "Saudi Arabia",
+		"value": 15
 	},
 	{
-		"code": "US",
-		"value": 34,
-		"name": "United States"
+		"code3": "SDN",
+		"name": "Sudan",
+		"value": 17
 	},
 	{
-		"code": "UY",
-		"value": 19,
-		"name": "Uruguay"
+		"code3": "SEN",
+		"name": "Senegal",
+		"value": 82
 	},
 	{
-		"code": "UZ",
-		"value": 66,
-		"name": "Uzbekistan"
+		"code3": "SGP",
+		"name": "Singapore",
+		"value": 8023
 	},
 	{
-		"code": "VU",
-		"value": 20,
-		"name": "Vanuatu"
+		"code3": "SLB",
+		"name": "Solomon Islands",
+		"value": 22
 	},
 	{
-		"code": "VE",
-		"value": 33,
-		"name": "Venezuela, RB"
+		"code3": "SLE",
+		"name": "Sierra Leone",
+		"value": 105
 	},
 	{
-		"code": "VN",
-		"value": 280,
-		"name": "Vietnam"
+		"code3": "SLV",
+		"name": "El Salvador",
+		"value": 308
 	},
 	{
-		"code": "VI",
-		"value": 314,
-		"name": "Virgin Islands (U.S.)"
+		"code3": "SMR",
+		"name": "San Marino",
+		"value": 550
 	},
 	{
-		"code": "PS",
-		"value": 690,
-		"name": "West Bank and Gaza"
+		"code3": "SOM",
+		"name": "Somalia",
+		"value": 24
 	},
 	{
-		"code": "EH",
-		"value": 2,
-		"name": "Western Sahara"
+		"code3": "SRB",
+		"name": "Serbia",
+		"value": 80
 	},
 	{
-		"code": "YE",
-		"value": 46,
-		"name": "Yemen, Rep."
+		"code3": "SSA",
+		"name": "Sub-Saharan Africa (excluding high income)",
+		"value": 45
 	},
 	{
-		"code": "ZM",
-		"value": 17,
-		"name": "Zambia"
+		"code3": "SSF",
+		"name": "Sub-Saharan Africa",
+		"value": 45
 	},
 	{
-		"code": "ZW",
-		"value": 32,
-		"name": "Zimbabwe"
+		"code3": "SST",
+		"name": "Small states",
+		"value": 16
+	},
+	{
+		"code3": "STP",
+		"name": "Sao Tome and Principe",
+		"value": 213
+	},
+	{
+		"code3": "SUR",
+		"name": "Suriname",
+		"value": 4
+	},
+	{
+		"code3": "SVK",
+		"name": "Slovak Republic",
+		"value": 113
+	},
+	{
+		"code3": "SVN",
+		"name": "Slovenia",
+		"value": 103
+	},
+	{
+		"code3": "SWE",
+		"name": "Sweden",
+		"value": 24
+	},
+	{
+		"code3": "SWZ",
+		"name": "Swaziland",
+		"value": 79
+	},
+	{
+		"code3": "SXM",
+		"name": "Sint Maarten (Dutch part)",
+		"value": 1177
+	},
+	{
+		"code3": "SYC",
+		"name": "Seychelles",
+		"value": 207
+	},
+	{
+		"code3": "SYR",
+		"name": "Syrian Arab Republic",
+		"value": 99
+	},
+	{
+		"code3": "TCA",
+		"name": "Turks and Caicos Islands",
+		"value": 37
+	},
+	{
+		"code3": "TCD",
+		"name": "Chad",
+		"value": 12
+	},
+	{
+		"code3": "TEA",
+		"name": "East Asia & Pacific (IDA & IBRD countries)",
+		"value": 129
+	},
+	{
+		"code3": "TEC",
+		"name": "Europe & Central Asia (IDA & IBRD countries)",
+		"value": 20
+	},
+	{
+		"code3": "TGO",
+		"name": "Togo",
+		"value": 143
+	},
+	{
+		"code3": "THA",
+		"name": "Thailand",
+		"value": 135
+	},
+	{
+		"code3": "TJK",
+		"name": "Tajikistan",
+		"value": 64
+	},
+	{
+		"code3": "TKM",
+		"name": "Turkmenistan",
+		"value": 12
+	},
+	{
+		"code3": "TLA",
+		"name": "Latin America & the Caribbean (IDA & IBRD countries)",
+		"value": 32
+	},
+	{
+		"code3": "TLS",
+		"name": "Timor-Leste",
+		"value": 87
+	},
+	{
+		"code3": "TMN",
+		"name": "Middle East & North Africa (IDA & IBRD countries)",
+		"value": 43
+	},
+	{
+		"code3": "TON",
+		"name": "Tonga",
+		"value": 150
+	},
+	{
+		"code3": "TSA",
+		"name": "South Asia (IDA & IBRD)",
+		"value": 375
+	},
+	{
+		"code3": "TSS",
+		"name": "Sub-Saharan Africa (IDA & IBRD countries)",
+		"value": 45
+	},
+	{
+		"code3": "TTO",
+		"name": "Trinidad and Tobago",
+		"value": 267
+	},
+	{
+		"code3": "TUN",
+		"name": "Tunisia",
+		"value": 74
+	},
+	{
+		"code3": "TUR",
+		"name": "Turkey",
+		"value": 105
+	},
+	{
+		"code3": "TUV",
+		"name": "Tuvalu",
+		"value": 367
+	},
+	{
+		"code3": "TZA",
+		"name": "Tanzania",
+		"value": 65
+	},
+	{
+		"code3": "UGA",
+		"name": "Uganda",
+		"value": 214
+	},
+	{
+		"code3": "UKR",
+		"name": "Ukraine",
+		"value": 77
+	},
+	{
+		"code3": "UMC",
+		"name": "Upper middle income",
+		"value": 45
+	},
+	{
+		"code3": "URY",
+		"name": "Uruguay",
+		"value": 20
+	},
+	{
+		"code3": "USA",
+		"name": "United States",
+		"value": 36
+	},
+	{
+		"code3": "UZB",
+		"name": "Uzbekistan",
+		"value": 76
+	},
+	{
+		"code3": "VCT",
+		"name": "St. Vincent and the Grenadines",
+		"value": 282
+	},
+	{
+		"code3": "VEN",
+		"name": "Venezuela, RB",
+		"value": 36
+	},
+	{
+		"code3": "VGB",
+		"name": "British Virgin Islands",
+		"value": 207
+	},
+	{
+		"code3": "VIR",
+		"name": "Virgin Islands (U.S.)",
+		"value": 294
+	},
+	{
+		"code3": "VNM",
+		"name": "Vietnam",
+		"value": 302
+	},
+	{
+		"code3": "VUT",
+		"name": "Vanuatu",
+		"value": 23
+	},
+	{
+		"code3": "WLD",
+		"name": "World",
+		"value": 58
+	},
+	{
+		"code3": "WSM",
+		"name": "Samoa",
+		"value": 69
+	},
+	{
+		"code3": "XKX",
+		"name": "Kosovo",
+		"value": 167
+	},
+	{
+		"code3": "YEM",
+		"name": "Yemen, Rep.",
+		"value": 54
+	},
+	{
+		"code3": "ZAF",
+		"name": "South Africa",
+		"value": 47
+	},
+	{
+		"code3": "ZMB",
+		"name": "Zambia",
+		"value": 23
+	},
+	{
+		"code3": "ZWE",
+		"name": "Zimbabwe",
+		"value": 43
 	}
 ]

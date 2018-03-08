@@ -44,7 +44,7 @@ $.each(mapData, function () {
 Highcharts.mapChart('container', {
 
     title: {
-        text: 'US unemployment rate 2015'
+        text: 'US unemployment rate in Dec. 2017'
     },
 
     subtitle: {
