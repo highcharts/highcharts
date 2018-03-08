@@ -99,7 +99,7 @@ H.Tick.prototype = {
 
 			// Un-rotated length
 			if (label) {
-				label.textPxLength = label.getBBox().width;	
+				label.textPxLength = label.getBBox().width;
 			}
 			
 
