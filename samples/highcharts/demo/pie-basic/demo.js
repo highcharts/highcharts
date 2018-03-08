@@ -7,7 +7,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares January, 2015 to May, 2015'
+        text: 'Browser market shares in January, 2018'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -29,25 +29,34 @@ Highcharts.chart('container', {
         name: 'Brands',
         colorByPoint: true,
         data: [{
-            name: 'IE',
-            y: 56.33
-        }, {
             name: 'Chrome',
-            y: 24.03,
+            y: 61.41,
             sliced: true,
             selected: true
         }, {
+            name: 'Internet Explorer',
+            y: 11.84
+        }, {
             name: 'Firefox',
-            y: 10.38
+            y: 10.85
+        }, {
+            name: 'Edge',
+            y: 4.67
         }, {
             name: 'Safari',
-            y: 4.77
+            y: 4.18
+        }, {
+            name: 'Sogou Explorer',
+            y: 1.64
         }, {
             name: 'Opera',
-            y: 0.91
+            y: 1.6
+        }, {
+            name: 'QQ',
+            y: 1.2
         }, {
             name: 'Other',
-            y: 0.2
+            y: 2.61
         }]
     }]
 });

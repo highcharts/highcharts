@@ -46,14 +46,14 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'Brands',
+        name: 'Share',
         data: [
-            { name: 'IE', y: 56.33 },
-            { name: 'Chrome', y: 24.03 },
-            { name: 'Firefox', y: 10.38 },
-            { name: 'Safari', y: 4.77 },
-            { name: 'Opera', y: 0.91 },
-            { name: 'Other', y: 0.2 }
+            { name: 'Chrome', y: 61.41 },
+            { name: 'Internet Explorer', y: 11.84 },
+            { name: 'Firefox', y: 10.85 },
+            { name: 'Edge', y: 4.67 },
+            { name: 'Safari', y: 4.18 },
+            { name: 'Other', y: 7.05 }
         ]
     }]
 });

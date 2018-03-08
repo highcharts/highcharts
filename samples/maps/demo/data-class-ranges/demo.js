@@ -1,8 +1,8 @@
 
 // Load the data from a Google Spreadsheet
-// https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
+// https://docs.google.com/spreadsheets/d/1WBx3mRqiomXk_ks1a5sEAtJGvYukguhAkcCuRDrY1L0/pubhtml
 Highcharts.data({
-    googleSpreadsheetKey: '0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc',
+    googleSpreadsheetKey: '1WBx3mRqiomXk_ks1a5sEAtJGvYukguhAkcCuRDrY1L0',
 
     // Custom handler when the spreadsheet is parsed
     parsed: function (columns) {
@@ -77,7 +77,7 @@ Highcharts.data({
 
             series: [{
                 data: data,
-                joinBy: ['iso-a2', 'code'],
+                joinBy: ['iso-a3', 'code'],
                 animation: true,
                 name: 'Population density',
                 states: {

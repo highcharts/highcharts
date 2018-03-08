@@ -449,7 +449,8 @@ Series.prototype.alignDataLabel = function (
 				alignAttr.x -= bBox.width;
 				alignAttr.y -= negRotation ? 0 : bBox.height;
 			}
-			
+			dataLabel.placed = true;
+			dataLabel.alignAttr = alignAttr;
 
 		} else {
 			dataLabel.align(options, null, alignTo);

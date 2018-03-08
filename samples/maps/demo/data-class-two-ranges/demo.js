@@ -1,8 +1,8 @@
 
 // Load the data from a Google Spreadsheet
-// https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc&output=html
+// https://docs.google.com/spreadsheets/d/14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY/pubhtml
 Highcharts.data({
-    googleSpreadsheetKey: '0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc',
+    googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
 
     // Custom handler for columns
     parsed: function (columns) {
@@ -33,13 +33,13 @@ Highcharts.data({
                 series: [{
                     name: 'Votes',
                     data: [{
-                        name: 'Obama',
+                        name: 'Trump',
                         color: '#0200D0',
-                        y: parseInt(columns[3][row], 10)
-                    }, {
-                        name: 'Romney',
-                        color: '#C40401',
                         y: parseInt(columns[4][row], 10)
+                    }, {
+                        name: 'Clinton',
+                        color: '#C40401',
+                        y: parseInt(columns[3][row], 10)
                     }],
                     dataLabels: {
                         format: '<b>{point.name}</b> {point.percentage:.1f}%'
@@ -64,11 +64,10 @@ Highcharts.data({
                 },
 
                 title: {
-                    text: 'US presidential election 2012 results'
+                    text: 'US presidential election 2016 results'
                 },
                 subtitle: {
-                    text: 'Source: <a href="http://en.wikipedia.org/wiki/United_States_presidential_election,' +
-                        '_2012">Wikipedia</a>'
+                    text: 'Source: <a href="https://transition.fec.gov/pubrec/fe2016/2016presgeresults.pdf">Federal Election Commission</a>'
                 },
 
                 legend: {
@@ -92,12 +91,12 @@ Highcharts.data({
                         from: -100,
                         to: 0,
                         color: '#C40401',
-                        name: 'Romney'
+                        name: 'Clinton'
                     }, {
                         from: 0,
                         to: 100,
                         color: '#0200D0',
-                        name: 'Obama'
+                        name: 'Trump'
                     }]
                 },
 
@@ -112,7 +111,7 @@ Highcharts.data({
                             textTransform: 'uppercase'
                         }
                     },
-                    name: 'Democrats margin',
+                    name: 'Republicans margin',
                     point: {
                         events: {
                             click: pointClick
