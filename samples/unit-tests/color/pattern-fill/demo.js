@@ -372,3 +372,104 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
         'Pattern should have an image element.'
     );
 });
+
+
+QUnit.test('Image auto resize with aspect ratio', function (assert) {
+    var chart = Highcharts.mapChart('container', {
+            chart: {
+                map: 'custom/europe',
+                width: 600,
+                height: 600,
+                animation: false
+            },
+            legend: {
+                enabled: false
+            },
+            series: [{
+                keys: ['hc-key', 'value', 'color'],
+                color: {
+                    pattern: {
+                        aspectRatio: 3 / 2
+                    }
+                },
+                allAreas: false,
+                data: [
+                    ['no', 1, {
+                        pattern: {
+                            image: 'abc'
+                        }
+                    }],
+                    ['at', 1, {
+                        pattern: {
+                            image: 'def'
+                        }
+                    }]
+                ]
+            }]
+        }),
+        norwayPoint = chart.series[0].points[0],
+        austriaPoint = chart.series[0].points[1],
+        test = function () {
+            var norwayPattern = document.getElementById(
+                    norwayPoint.graphic.element.getAttribute('fill')
+                        .replace('url(#', '')
+                        .replace(')', '')
+                ),
+                austriaPattern = document.getElementById(
+                    austriaPoint.graphic.element.getAttribute('fill')
+                        .replace('url(#', '')
+                        .replace(')', '')
+                ),
+                norwayBB = norwayPoint.graphic.getBBox(true),
+                austriaBB = austriaPoint.graphic.getBBox(true);
+
+            assert.strictEqual(
+                '' + Math.ceil(norwayBB.height),
+                norwayPattern.getAttribute('height'),
+                'Norway pattern should have BBox height'
+            );
+
+            assert.strictEqual(
+                '' + Math.ceil(austriaBB.width),
+                austriaPattern.getAttribute('width'),
+                'Austria pattern should have BBox width'
+            );
+
+            assert.strictEqual(
+                '' + Math.ceil(norwayBB.height * 1.5),
+                norwayPattern.getAttribute('width'),
+                'Norway pattern should have ratio adjusted width'
+            );
+
+            assert.strictEqual(
+                '' + Math.ceil(austriaBB.width / 1.5),
+                austriaPattern.getAttribute('height'),
+                'Austria pattern should have ratio adjusted height'
+            );
+        },
+        patterns = [];
+
+    test();
+    chart.setSize(200, 200);
+    test();
+
+    assert.strictEqual(
+        Highcharts.grep(chart.renderer.defIds, function (id) {
+            return id.indexOf('highcharts-pattern-') > -1;
+        }).length,
+        2,
+        'Verify that old pattern IDs are free'
+    );
+
+    Highcharts.objectEach(chart.renderer.patternElements, function (el) {
+        if (el.id.indexOf('highcharts-pattern-') === 0) {
+            patterns.push(el);
+        }
+    });
+
+    assert.strictEqual(
+        patterns.length,
+        2,
+        'Verify that old patterns are gone after resize'
+    );
+});
