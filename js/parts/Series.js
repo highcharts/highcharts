@@ -2553,6 +2553,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					var val = key === 'y' && series.toYData ?
 						series.toYData(point) :
 						point[key];
+						if (!series[key + 'Data']) series[key + 'Data'] = [];
 					series[key + 'Data'][i] = val;
 				} :
 				// Apply the method specified in i with the following arguments
@@ -2995,6 +2996,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// Update parallel arrays
 			each(this.parallelArrays, function (key) {
+				if (!series[key + 'Data']) series[key + 'Data'] = [];
 				series[key + 'Data'].length = 0;
 			});
 
@@ -3059,6 +3061,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			}
 
 			series.data = [];
+			series.userOptions = series.userOptions || {};
 			series.options.data = series.userOptions.data = data;
 
 			// destroy old points
@@ -3075,6 +3078,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			}
 
 			// redraw
+			chart = chart || {};
 			series.isDirty = chart.isDirtyBox = true;
 			series.isDirtyData = !!oldData;
 			animation = false;
@@ -3087,7 +3091,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			this.generatePoints();
 		}
 
-		if (redraw) {
+		if (chart.redraw && redraw) {
 			chart.redraw(animation);
 		}
 	},
@@ -4143,11 +4147,13 @@ H.Series = H.seriesType('line', null, { // base series options
 		});
 
 		// remove from hoverSeries
-		if (chart.hoverSeries === series) {
-			chart.hoverSeries = null;
+		if (chart) {
+			if (chart.hoverSeries === series) {
+				chart.hoverSeries = null;
+			}
+			erase(chart.series, series);
+			chart.orderSeries();
 		}
-		erase(chart.series, series);
-		chart.orderSeries();
 
 		// clear all members
 		objectEach(series, function (val, prop) {
