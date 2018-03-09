@@ -121,6 +121,12 @@ seriesType('waterfall', 'column', {
 	pointValKey: 'y',
 
 	/**
+	 * Property needed to prevent lines between the columns from disappearing
+	 * when negativeColor is used.
+	 */
+	showLine: true,
+
+	/**
 	 * Translate data points from raw values
 	 */
 	translate: function () {
