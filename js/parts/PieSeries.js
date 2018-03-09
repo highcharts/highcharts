@@ -134,6 +134,16 @@ seriesType('pie', 'line', {
 		 * @product highcharts
 		 * @apioption plotOptions.pie.dataLabels.connectorWidth
 		 */
+		
+		/**
+		 * @sample {highcharts}
+		 *         highcharts/plotOptions/pie-datalabels-overflow
+		 *         Long labels truncated with an ellipsis by default
+		 * @sample {highcharts}
+		 *         highcharts/plotOptions/pie-datalabels-overflow-wrap
+		 *         Long labels are wrapped
+		 * @apioption plotOptions.pie.dataLabels.style
+		 */
 
 		/**
 		 * The distance of the data label from the pie's edge. Negative numbers
@@ -174,7 +184,6 @@ seriesType('pie', 'line', {
 		 */
 
 		x: 0
-		// y: 0
 	},
 
 	/**

@@ -38,7 +38,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 		if (textWidth) {
 			delete styles.width;
 			wrapper.textWidth = textWidth;
-			wrapper.updateTransform();
+			wrapper.htmlUpdateTransform();
 		}
 		if (styles && styles.textOverflow === 'ellipsis') {
 			styles.whiteSpace = 'nowrap';
@@ -180,7 +180,10 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 				wrapper.getSpanCorrection(
 					// Avoid elem.offsetWidth if we can, it affects rendering
 					// time heavily (#7656)
-					wrapper.textPxLength || elem.offsetWidth,
+					(
+						(!defined(rotation) && wrapper.textPxLength) || // #7920
+						elem.offsetWidth
+					),
 					baseline,
 					alignCorrection,
 					rotation,

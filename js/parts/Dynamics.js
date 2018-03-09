@@ -312,11 +312,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 *         `series` property will leave all series untouched. If the series
 	 *         have id's, the new series options will be matched by id, and the
 	 *         remaining ones removed.
+	 * @param  {AnimationOptions} [animation=true]
+	 *         Whether to apply animation, and optionally animation
+	 *         configuration.
 	 *
 	 * @sample highcharts/members/chart-update/
 	 *         Update chart geometry 
 	 */
-	update: function (options, redraw, oneToOne) {
+	update: function (options, redraw, oneToOne, animation) {
 		var chart = this,
 			adders = {
 				credits: 'addCredits',
@@ -499,9 +502,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		newHeight = optionsChart && optionsChart.height;
 		if ((isNumber(newWidth) && newWidth !== chart.chartWidth) ||
 				(isNumber(newHeight) && newHeight !== chart.chartHeight)) {
-			chart.setSize(newWidth, newHeight);
+			chart.setSize(newWidth, newHeight, animation);
 		} else if (pick(redraw, true)) {
-			chart.redraw();
+			chart.redraw(animation);
 		}
 	},
 
