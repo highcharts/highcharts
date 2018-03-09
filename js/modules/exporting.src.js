@@ -1459,7 +1459,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 					btnOptions.symbolX - (symbolSize / 2),
 					btnOptions.symbolY - (symbolSize / 2),
 					symbolSize,
-					symbolSize
+					symbolSize,
+					// If symbol is an image, scale it (#7957)
+					{
+						width: symbolSize,
+						height: symbolSize
+					}
 				)
 				.addClass('highcharts-button-symbol')
 				.attr({
