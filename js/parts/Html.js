@@ -38,7 +38,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 		if (textWidth) {
 			delete styles.width;
 			wrapper.textWidth = textWidth;
-			wrapper.updateTransform();
+			wrapper.htmlUpdateTransform();
 		}
 		if (styles && styles.textOverflow === 'ellipsis') {
 			styles.whiteSpace = 'nowrap';
