@@ -30,6 +30,8 @@ QUnit.test('Exported chart sourceWidth and sourceHeight', function (assert) {
         }),
         done = assert.async();
 
+    var originalPost = Highcharts.post;
+
     Highcharts.post = function (url, data) {
 
         function serialize(obj) {
@@ -68,10 +70,12 @@ QUnit.test('Exported chart sourceWidth and sourceHeight', function (assert) {
 
                     document.body.appendChild(img);
 
+                    Highcharts.post = originalPost;
                     done();
                 };
             },
             error: function () {
+                Highcharts.post = originalPost;
                 done();
             }
         });
