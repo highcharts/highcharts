@@ -156,6 +156,8 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
  * 	automatically computed if not added, and identical patterns are reused. To
  * 	refer to an existing pattern for a Highcharts color, use
  *	`color: "url(#pattern-id)"`.
+ * @property {Object|Boolean} animation Animation options for the image pattern
+ *  loading.
  *
  * @example
  * // Pattern used as a color option
@@ -180,8 +182,9 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
  *
  * @return {Object} The added pattern. Undefined if the pattern already exists.
  */
-H.SVGRenderer.prototype.addPattern = function (options) {
+H.SVGRenderer.prototype.addPattern = function (options, animation) {
 	var pattern,
+		animate = H.pick(animation, true),
 		path,
 		defaultSize = 32,
 		width = options.width || options._width || defaultSize,
@@ -189,6 +192,7 @@ H.SVGRenderer.prototype.addPattern = function (options) {
 		color = options.color || '#343434',
 		id = options.id,
 		ren = this,
+		img,
 		rect = function (fill) {
 			ren.rect(0, 0, width, height)
 				.attr({
@@ -244,9 +248,19 @@ H.SVGRenderer.prototype.addPattern = function (options) {
 
 	// Image pattern
 	} else if (options.image) {
-		this.image(
+		img = this.image(
 			options.image, 0, 0, width, height
-		).add(pattern);
+		).attr({
+			opacity: animate ? 0 : 1
+		}).add(pattern);
+		H.addEvent(img.element, 'load', function () {
+			img[
+				animate ?
+				'animate' :
+				'attr'
+			]({ 'opacity': 1 }, animate ? animate : 1);
+			H.removeEvent(img.element, 'load');
+		});
 	}
 
 	if (options.opacity !== undefined) {
@@ -397,7 +411,11 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
 
 		// Add it. This function does nothing if an element with this ID
 		// already exists.
-		this.addPattern(pattern);
+		this.addPattern(pattern, H.animObject(H.pick(
+			pattern.animation,
+			this.globalAnimation,
+			{ duration: 100 }
+		)));
 
 		value = 'url(' + this.url + '#' + pattern.id + ')';
 
