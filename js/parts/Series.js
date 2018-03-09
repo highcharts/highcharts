@@ -445,6 +445,8 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * @see [series.data](#series.line.data)
 	 * @sample {highcharts|highstock} highcharts/series/data-keys/
 	 *         An extended data array with keys
+	 * @sample {highcharts|highstock} highcharts/series/data-nested-keys/
+	 *         Nested keys used to access object properties
 	 * @since 4.1.6
 	 * @product highcharts highstock
 	 * @apioption plotOptions.series.keys
