@@ -1,8 +1,10 @@
 
 // Define the data, linking flags to each point's color.pattern.image. We
 // specify a smaller border width for the smaller states. For some states we
-// also specify an explicit width/height for the images, where the default is
-// not satisfactory.
+// also specify an explicit x/y offset for the images, where the default is
+// not satisfactory. Aspect ratio is provided in series definition, and the
+// width height for each image is calculated automatically based on that and the
+// bounding box of each state.
 var data = [
     ['Alabama', 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Alabama.svg'],
     ['Alaska', 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Flag_of_Alaska.svg', 1, 10, -10],

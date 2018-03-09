@@ -374,13 +374,12 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
 });
 
 
-QUnit.test('Image auto resize with aspect ratio', function (assert) {
+QUnit.test('Image auto resize with aspect ratio - map', function (assert) {
     var chart = Highcharts.mapChart('container', {
             chart: {
                 map: 'custom/europe',
                 width: 600,
-                height: 600,
-                animation: false
+                height: 600
             },
             legend: {
                 enabled: false
@@ -472,4 +471,54 @@ QUnit.test('Image auto resize with aspect ratio', function (assert) {
         2,
         'Verify that old patterns are gone after resize'
     );
+});
+
+
+QUnit.test('Image auto resize with aspect ratio - column', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                width: 600,
+                height: 600,
+                type: 'column'
+            },
+            legend: {
+                enabled: false
+            },
+            series: [{
+                data: [{
+                    y: 1,
+                    color: {
+                        pattern: {
+                            aspectRatio: 3 / 2,
+                            image: 'abc'
+                        }
+                    }
+                }]
+            }]
+        }),
+        point = chart.series[0].points[0],
+        test = function () {
+            var columnPattern = document.getElementById(
+                    point.graphic.element.getAttribute('fill')
+                        .replace('url(#', '')
+                        .replace(')', '')
+                ),
+                bb = point.graphic.getBBox(true);
+
+            assert.strictEqual(
+                '' + Math.ceil(bb.height),
+                columnPattern.getAttribute('height'),
+                'Pattern should have BBox height'
+            );
+
+            assert.strictEqual(
+                '' + Math.ceil(bb.height * 1.5),
+                columnPattern.getAttribute('width'),
+                'Pattern should have ratio adjusted width'
+            );
+        };
+
+    test();
+    chart.setSize(200, 200);
+    test();
 });
