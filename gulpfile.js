@@ -36,9 +36,8 @@ const buildESModules = () => {
     });
 };
 
-const styles = () => {
+const compileSingleStyle = (fileName) => {
     const sass = require('node-sass');
-    const fileName = 'highcharts';
     const input = './css/' + fileName + '.scss';
     const output = './code/css/' + fileName + '.css';
     return new Promise((resolve, reject) => {
@@ -56,6 +55,12 @@ const styles = () => {
             }
         });
     });
+};
+
+const styles = () => {
+    const files = ['highcharts', 'dark-uniqua', 'sand-signika', 'grid-light'];
+    const promises = files.map(file => compileSingleStyle(file));
+    return Promise.all(promises);
 };
 
 /**
