@@ -1,6 +1,27 @@
+
 QUnit.test('Exported chart width', function (assert) {
-    var chart = Highcharts.charts[0],
+
+    var chart = Highcharts
+        .chart('container', {
+            title: {
+                text: 'Highcharts export width test'
+            },
+            subtitle: {
+                text: 'Exported chart should be 200px wide'
+            },
+            xAxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            }],
+            exporting: {
+                width: 200
+            }
+        }),
         done = assert.async();
+
+    var originalPost = Highcharts.post;
 
     Highcharts.post = function (url, data) {
 
@@ -29,12 +50,13 @@ QUnit.test('Exported chart width', function (assert) {
                         'Generated image is 200px'
                     );
 
-                    document.body.appendChild(img);
+                    Highcharts.post = originalPost;
 
                     done();
                 };
             },
             error: function () {
+                Highcharts.post = originalPost;
                 done();
             }
         });
@@ -43,4 +65,5 @@ QUnit.test('Exported chart width', function (assert) {
     chart.exportChart({
         width: 200
     });
+
 });
