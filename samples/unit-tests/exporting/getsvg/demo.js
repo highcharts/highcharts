@@ -1,5 +1,5 @@
 
-QUnit.test('Additional options with series option', function (assert) {
+QUnit.test('getSVG', function (assert) {
 
     var chart = Highcharts.chart('container', {
 
@@ -22,7 +22,9 @@ QUnit.test('Additional options with series option', function (assert) {
 
     });
 
-    var svg, output;
+    var initialChartsLength = Highcharts.charts.length,
+        svg,
+        output;
 
     svg = chart.getSVG({
         yAxis: [{
@@ -34,6 +36,36 @@ QUnit.test('Additional options with series option', function (assert) {
             name: 'New Series Name'
         }]
     });
+
+    assert.strictEqual(
+        Highcharts.charts.length,
+        initialChartsLength,
+        'Chart length is still as initial'
+    );
+
+    assert.strictEqual(
+        typeof svg,
+        'string',
+        'SVG is string'
+    );
+
+    assert.strictEqual(
+        svg.indexOf('<svg '),
+        0,
+        'Starts correctly'
+    );
+
+    assert.strictEqual(
+        svg.indexOf('</svg>'),
+        svg.length - 6,
+        'Ends correctly'
+    );
+
+    assert.strictEqual(
+        svg.length > 1000,
+        true,
+        'Has some content'
+    );
 
     output = document.getElementById('output');
     output.innerHTML = svg;
@@ -62,26 +94,6 @@ QUnit.test('Additional options with series option', function (assert) {
         ).textContent,
         'Second Series Name',
         'Reference by id, series name ok'
-    );
-
-});
-
-QUnit.test('Highcharts.chart array should not alter (#6569)', function (assert) {
-
-    var chart = Highcharts.chart('container', {
-        series: [{
-            data: [5, 10]
-        }]
-    });
-
-    var initialChartsLength = Highcharts.charts.length;
-
-    chart.getSVG();
-
-    assert.strictEqual(
-        Highcharts.charts.length,
-        initialChartsLength,
-        'Chart length is still as initial'
     );
 
 });
