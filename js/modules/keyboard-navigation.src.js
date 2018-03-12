@@ -423,7 +423,7 @@ H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
 			browserFocusElement.css({ outline: 'none' });
 		}
 	}
-	if (focusBorderOptions.enabled && svgElement !== this.focusElement) {
+	if (focusBorderOptions.enabled) {
 		// Remove old focus border
 		if (this.focusElement) {
 			this.focusElement.removeFocusBorder();
@@ -1113,7 +1113,8 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 				// Try to highlight next/prev legend item
 				if (!chart.highlightLegendItem(
 					chart.highlightedLegendItemIx + direction
-				)) {
+				) && chart.legend.allItems.length > 1) {
+					// Wrap around if more than 1 item
 					this.init(direction);
 				}
 			}],
