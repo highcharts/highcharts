@@ -19,7 +19,7 @@ $neutral-color-5: #505053;
 // Colored, shades
 $highlight-color-100: #F0F0F3;
 $highlight-color-60: rgba(255,255,255,0.1);
-$highlight-color-20: #707073;
+$highlight-color-20: $neutral-color-10;
 
 // Data-labels
 $data-label-color: #B0B0B3;
@@ -33,19 +33,19 @@ $tooltip-background: rgba(0, 0, 0, 0.85);
 
 // Range-selector
 $range-selector-input-text: silver;
-$range-selector-input-border: #505053;
+$range-selector-input-border: $neutral-color-5;
 
 // Buttons
-$highcharts-button-background: #505053;
+$highcharts-button-background: $neutral-color-5;
 $highcharts-button-text:  #ccc;
 
 $highcharts-button-pressed-background: #000003;
-$highcharts-button-pressed-text:  #fff;
+$highcharts-button-pressed-text:  $neutral-color-100;
 
-$highcharts-button-hover-background: #707073;
-$highcharts-button-hover-text:  #fff;
+$highcharts-button-hover-background: $neutral-color-10;
+$highcharts-button-hover-text:  $neutral-color-100;
 
-$context-button-background: #505053;
+$context-button-background: $neutral-color-5;
 
 // Navigator
 $navigator-series-fill: #7798BF;
@@ -81,7 +81,7 @@ $scrollbar-track-border: #404043;
 
 // Navigator
 .highcharts-navigator .highcharts-navigator-handle {
-  fill: #666;
+  fill: $neutral-color-40;
   stroke: #aaa;
 }
 
@@ -90,12 +90,12 @@ $scrollbar-track-border: #404043;
 }
 
 .highcharts-navigator .highcharts-navigator-xaxis .highcharts-grid-line {
-  stroke: #505053;
+  stroke: $neutral-color-5;
 } 
 
 // Scrollbar
 .highcharts-scrollbar .highcharts-scrollbar-rifles {
-  stroke: #FFF;
+  stroke: $neutral-color-100;
 }
 
 .highcharts-scrollbar .highcharts-scrollbar-button { 

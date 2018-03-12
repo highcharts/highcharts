@@ -39,41 +39,41 @@ $axis-labels-font-size: 0.9em !default;
 
 // Tooltip
 $tooltip-border: 1px !default;
-$tooltip-background: #f7f7f7 !default;
+$tooltip-background: $neutral-color-3 !default;
 
 // Axes
 $xaxis-grid-line: 0px !default;
 
 // Range-selector
 $range-selector-button-border: 0px !default;
-$range-selector-input-text: #333333 !default;
-$range-selector-input-border: #cccccc !default;
+$range-selector-input-text: $neutral-color-80 !default;
+$range-selector-input-border: $neutral-color-20 !default;
 
 // Data-labels
-$data-label-color: #333333 !default;
+$data-label-color: $neutral-color-80 !default;
 
 // Buttons
-$highcharts-button-background: #f7f7f7 !default;
-$highcharts-button-border: #cccccc !default;
-$highcharts-button-text:  #333333 !default;
-
-$highcharts-button-pressed-background: #e6ebf5 !default;
-$highcharts-button-pressed-border: #cccccc !default;
-$highcharts-button-pressed-text:  #333333 !default;
-
-$highcharts-button-hover-background: #e6e6e6 !default;
-$highcharts-button-hover-border: #cccccc !default;
-$highcharts-button-hover-text:  #333333 !default;
-
 $context-button-background:#ffffff !default;
 
+$highcharts-button-background: $neutral-color-3 !default;
+$highcharts-button-border: $neutral-color-20 !default;
+$highcharts-button-text:  $neutral-color-80 !default;
+
+$highcharts-button-pressed-background: $highlight-color-10 !default;
+$highcharts-button-pressed-border: $neutral-color-20 !default;
+$highcharts-button-pressed-text:  $neutral-color-80 !default;
+
+$highcharts-button-hover-background: $neutral-color-10 !default;
+$highcharts-button-hover-border: $neutral-color-20 !default;
+$highcharts-button-hover-text:  $neutral-color-80 !default;
+
 // Navigator
-$navigator-series-fill: #335cad !default;
-$navigator-series-border: #335cad !default;
+$navigator-series-fill: $highlight-color-80 !default;
+$navigator-series-border: $highlight-color-80 !default;
 
 // Scrollbar
-$scrollbar-track-background: #f2f2f2 !default;
-$scrollbar-track-border: #f2f2f2 !default;
+$scrollbar-track-background: $neutral-color-5 !default;
+$scrollbar-track-border: $neutral-color-5 !default;
 
 .highcharts-container {
     position: relative;
