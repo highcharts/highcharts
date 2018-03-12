@@ -173,10 +173,10 @@ H.Series.prototype.hasData = function () {
 chartPrototype.showNoData = function (str) {
 	var chart = this,
 		options = chart.options,
-		text = str || options.lang.noData,
-		noDataOptions = options.noData;
+		text = str || (options && options.lang.noData),
+		noDataOptions = options && options.noData;
 
-	if (!chart.noDataLabel) {
+	if (!chart.noDataLabel && chart.renderer) {
 		chart.noDataLabel = chart.renderer
 			.label(
 				text, 
@@ -221,7 +221,7 @@ chartPrototype.hideNoData = function () {
  */	
 chartPrototype.hasData = function () {
 	var chart = this,
-		series = chart.series,
+		series = chart.series || [],
 		i = series.length;
 
 	while (i--) {
