@@ -414,8 +414,8 @@ Highcharts.ajax = function (attr) {
 
 
 // The Data constructor
-var Data = function (dataOptions, chartOptions) {
-	this.init(dataOptions, chartOptions);
+var Data = function (dataOptions, chartOptions, chart) {
+	this.init(dataOptions, chartOptions, chart);
 };
 
 // Set the prototype properties
@@ -424,13 +424,16 @@ Highcharts.extend(Data.prototype, {
 	/**
 	 * Initialize the Data object with the given options
 	 */
-	init: function (options, chartOptions) {
+	init: function (options, chartOptions, chart) {
 
 		var decimalPoint = options.decimalPoint;
 
+		this.chart = chart;
+		
 		if (decimalPoint !== '.' && decimalPoint !== ',') {
 			decimalPoint = undefined;
 		}
+		
 		this.options = options;
 		this.chartOptions = chartOptions;
 		this.columns = (
@@ -438,6 +441,7 @@ Highcharts.extend(Data.prototype, {
 			this.rowsToColumns(options.rows) ||
 			[]
 		);
+		
 		this.firstRowAsNames = pick(options.firstRowAsNames, true);
 
 		this.decimalRegex = (
@@ -466,6 +470,9 @@ Highcharts.extend(Data.prototype, {
 
 			// Parse a Google Spreadsheet
 			this.parseGoogleSpreadsheet();
+	
+			// Fetch live data
+			this.fetchLiveData();
 		}
 
 	},
@@ -1132,6 +1139,97 @@ Highcharts.extend(Data.prototype, {
 			this.dataFound(); // continue
 		}
 	},
+
+
+	/**
+	 * Fetch or refetch live data
+	 */
+	fetchLiveData: function () {
+		var chart = this.chart,
+			options = this.options,
+			pollingEnabled = true, // options.enableAutoRefresh
+			updateIntervalMs = (options.dataRefreshRate || 2) * 1000,
+			updatedOptions = Highcharts.merge({}, options, true);
+
+		// Do not allow polling more than once a second
+		if (updateIntervalMs < 1000) {
+			updateIntervalMs = 1000;
+		}
+
+		updatedOptions.csvURL = false;
+	
+		function performFetch(initialFetch) {
+
+			function beforeFetch(url) {
+				if (url.indexOf('http') !== 0) {
+					if (options.error) {
+						options.error('Invalid URL');
+					}
+					return false;
+				}
+			
+				if (initialFetch) {
+					// chart.showLoading('Loading Data');
+				}
+
+				return true;
+			}
+
+			function afterFetch() {
+				if (initialFetch) {
+					// chart.hideLoading();
+				}
+			}
+
+			function poll() {
+				// Refetch in updateIntervalMs milliseconds.
+				// Doing this rather than setInterval
+				// ensures that the polling stops if the file becomes
+				// M.I.A.
+				if (pollingEnabled) {
+					setTimeout(performFetch, updateIntervalMs);
+				}
+			}
+
+			if (options.csvURL) {
+				// Fetch remote CSV
+				if (!beforeFetch(options.csvURL)) {
+					return;
+				}
+
+				Highcharts.ajax({
+					url: options.csvURL,
+					dataType: 'text',
+					success: function (res) {
+						updatedOptions.csv = res;
+
+					// if (initialFetch) {
+						// self.parseCSV(updatedOptions);
+					// } else {
+						chart.update({
+							data: updatedOptions
+						});
+					// }
+
+						poll();
+					},
+					error: function (xhr, text) {
+						return options.error && options.error(text, xhr);
+					}
+				});
+
+				afterFetch();
+
+			} else if (options.rowsURL) {
+
+			} else if (options.columnsURL) {
+
+			}
+		}
+
+		performFetch(true);
+	},
+
 
 	/**
 	 * Parse a Google spreadsheet.
@@ -1825,8 +1923,7 @@ addEvent(
 					// Run chart.init again
 					chart.init(userOptions, callback);
 				}
-			}), userOptions);
-			chart.data.chart = chart;
+			}), userOptions, chart);
 
 			e.preventDefault();
 		}
