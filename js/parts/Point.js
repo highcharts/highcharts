@@ -3,7 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
-    
+	
 'use strict';
 import Highcharts from './Globals.js';
 import './Utilities.js';
@@ -177,17 +177,16 @@ Highcharts.Point.prototype = {
 	 * @return {Object} The modified object.
 	 */
 	setNestedProperty: function (object, value, key) {
-		var nestedKeys = key.split('.'),
-			nestedRet = object;
-		for (var i = 0; i < nestedKeys.length - 1; ++i) {
-			if (typeof nestedRet[nestedKeys[i]] !== 'object') {
-				nestedRet[nestedKeys[i]] = {};
-			}
-			nestedRet = nestedRet[nestedKeys[i]];
-		}
-		nestedRet[
-			nestedKeys[nestedKeys.length - 1]
-		] = value;
+		var nestedKeys = key.split('.');
+		H.reduce(nestedKeys, function (result, key, i, arr) {
+			var isLastKey = arr.length - 1 === i;
+			result[key] = (
+				isLastKey ?
+				value :
+				(H.isObject(result[key], true) ? result[key] : {})
+			);
+			return result[key];
+		}, object);
 		return object;
 	},
 
