@@ -547,7 +547,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 		},
 		// Get table cell HTML from value
 		getCellHTMLFromValue = function (tag, classes, attrs, value) {
-			var val = value || '',
+			var val = pick(value, ''),
 				className = 'text' + (classes ? ' ' + classes : '');
 			// Convert to string if number
 			if (typeof val === 'number') {
