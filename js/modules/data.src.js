@@ -426,7 +426,8 @@ Highcharts.extend(Data.prototype, {
 	 */
 	init: function (options, chartOptions, chart) {
 
-		var decimalPoint = options.decimalPoint;
+		var decimalPoint = options.decimalPoint,
+			hasData;
 
 		this.chart = chart;
 		
@@ -458,23 +459,34 @@ Highcharts.extend(Data.prototype, {
 		// No need to parse or interpret anything
 		if (this.columns.length) {
 			this.dataFound();
-
-		// Parse and interpret
-		} else {
-
-			// Parse a CSV string if options.csv is given
-			this.parseCSV();
-
-			// Parse a HTML table if options.table is given
-			this.parseTable();
-
-			// Parse a Google Spreadsheet
-			this.parseGoogleSpreadsheet();
-	
-			// Fetch live data
-			this.fetchLiveData();
+			hasData = true;
 		}
 
+		if (!hasData) {
+			// Fetch live data
+			hasData = this.fetchLiveData();
+		}
+
+		if (!hasData) {
+			// Parse a CSV string if options.csv is given. The parseCSV function
+			// returns a columns array, if it has no length, we have no data
+			hasData = Boolean(this.parseCSV().length);
+		}
+
+		if (!hasData) {
+			// Parse a HTML table if options.table is given
+			hasData = Boolean(this.parseTable().length);
+		}
+
+		if (!hasData) {
+			// Parse a Google Spreadsheet
+			hasData = this.parseGoogleSpreadsheet();
+		}
+
+
+		if (!hasData && options.afterComplete) {
+			options.afterComplete();
+		}
 	},
 
 	/**
@@ -1138,6 +1150,7 @@ Highcharts.extend(Data.prototype, {
 
 			this.dataFound(); // continue
 		}
+		return columns;
 	},
 
 
@@ -1156,7 +1169,10 @@ Highcharts.extend(Data.prototype, {
 			updateIntervalMs = 1000;
 		}
 
+		// No accidental loops, please
 		updatedOptions.csvURL = false;
+		updatedOptions.rowsURL = false;
+		updatedOptions.columnsURL = false;
 	
 		function performFetch(initialFetch) {
 
@@ -1207,7 +1223,7 @@ Highcharts.extend(Data.prototype, {
 						// self.parseCSV(updatedOptions);
 					// } else {
 						chart.update({
-							data: updatedOptions
+							data: updatedOptions 
 						});
 					// }
 
@@ -1228,6 +1244,10 @@ Highcharts.extend(Data.prototype, {
 		}
 
 		performFetch(true);
+
+		return (options && 
+			(options.csvURL || options.rowsURL || options.columnsURL)
+		);
 	},
 
 
@@ -1353,6 +1373,7 @@ Highcharts.extend(Data.prototype, {
 				self.dataFound();
 			});
 		}
+		return Boolean(googleSpreadsheetKey);
 	},
 
 	/**

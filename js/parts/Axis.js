@@ -4123,7 +4123,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		// Apply general and specific CSS
 		each(tickPositions, function (pos) {
 			var tick = ticks[pos],
-				label = tick && tick.label;
+				label = tick && tick.label,
+				css = {};
 			if (label) {
 				// This needs to go before the CSS in old IE (#4502)
 				label.attr(attr);
@@ -4138,13 +4139,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 						label.element.tagName === 'SPAN'
 					)
 				) {
-					label.css({
-						width: commonWidth,
-						textOverflow: (
+					css.width = commonWidth;
+					if (!textOverflowOption) {
+						css.textOverflow = (
 							label.specificTextOverflow ||
 							commonTextOverflow
-						)
-					});
+						);
+					}
+					label.css(css);
+
 				}
 				delete label.specificTextOverflow;
 				tick.rotation = attr.rotation;

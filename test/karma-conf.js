@@ -285,6 +285,13 @@ module.exports = function (config) {
                 }
             );
 
+            ret = s.replace(
+                /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/,
+                function (a, b, c) {
+                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan;
+                }
+            );
+
             // Skip the call stack, it's internal QUnit stuff
             ret = ret.split('<<<splitter>>>')[0];
 

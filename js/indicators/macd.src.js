@@ -64,6 +64,11 @@ seriesType('macd', 'sma',
 		 * @product highstock
 		 */
 		signalLine: {
+			/**
+			 * @extends plotOptions.macd.zones
+			 * @sample  stock/indicators/macd-zones Zones in MACD
+			 */
+			zones: [],
 			styles: {
 				/**
 				 * Pixel width of the line.
@@ -91,6 +96,11 @@ seriesType('macd', 'sma',
 		 * @product highstock
 		 */
 		macdLine: {
+			/**
+			 * @extends plotOptions.macd.zones
+			 * @sample  stock/indicators/macd-zones Zones in MACD
+			 */
+			zones: [],
 			styles: {
 				/**
 				 * Pixel width of the line.
@@ -157,6 +167,20 @@ seriesType('macd', 'sma',
 					}
 				}
 			}, this.options);
+
+			// Zones have indexes automatically calculated, we need to
+			// translate them to support multiple lines within one indicator
+			this.macdZones = {
+				zones: this.options.macdLine.zones,
+				startIndex: 0
+			};
+			this.signalZones = {
+				zones: this.macdZones.zones.concat(
+					this.options.signalLine.zones
+				),
+				startIndex: this.macdZones.zones.length
+			};
+			this.resetZones = true;
 		},
 		toYData: function (point) {
 			return [point.y, point.signal, point.MACD];
@@ -192,6 +216,7 @@ seriesType('macd', 'sma',
 				mainLinePoints = indicator.points,
 				pointsLength = mainLinePoints.length,
 				mainLineOptions = indicator.options,
+				histogramZones = indicator.zones,
 				gappedExtend = {
 					options: {
 						gapSize: mainLineOptions.gapSize
@@ -227,6 +252,11 @@ seriesType('macd', 'sma',
 					gappedExtend
 				);
 				indicator.graph = indicator['graph' + lineName];
+
+				// Zones extension:
+				indicator.currentLineZone = lineName + 'Zones';
+				indicator.zones = indicator[indicator.currentLineZone].zones;
+
 				SMA.prototype.drawGraph.call(indicator);
 				indicator['graph' + lineName] = indicator.graph;
 			});
@@ -234,7 +264,45 @@ seriesType('macd', 'sma',
 			// Restore options:
 			indicator.points = mainLinePoints;
 			indicator.options = mainLineOptions;
+			indicator.zones = histogramZones;
+			indicator.currentLineZone = null;
 			// indicator.graph = null;
+		},
+		getZonesGraphs: function (props) {
+			var allZones = SMA.prototype.getZonesGraphs.call(this, props),
+				currentZones = allZones;
+
+			if (this.currentLineZone) {
+				currentZones = allZones.splice(
+					this[this.currentLineZone].startIndex + 1
+				);
+
+				if (!currentZones.length) {
+					// Line has no zones, return basic graph "zone"
+					currentZones = [props[0]];
+				} else {
+					// Add back basic prop:
+					currentZones.splice(0, 0, props[0]);
+				}
+			}
+
+			return currentZones;
+		},
+		applyZones: function () {
+			// Histogram zones are handled by drawPoints method
+			// Here we need to apply zones for all lines
+			var histogramZones = this.zones;
+
+			// signalZones.zones contains all zones:
+			this.zones = this.signalZones.zones;
+			SMA.prototype.applyZones.call(this);
+
+			// applyZones hides only main series.graph, hide macd line manually
+			if (this.options.macdLine.zones.length) {
+				this.graphmacd.hide();
+			}
+
+			this.zones = histogramZones;
 		},
 		getValues: function (series, params) {
 			var j = 0,
