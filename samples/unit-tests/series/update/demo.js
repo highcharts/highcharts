@@ -3,7 +3,8 @@ QUnit.test(
     'Navigator series\' should keep its position in series array, ' +
     'even after series.update()',
     function (assert) {
-        var chart = Highcharts.stockChart('container', {
+        var chart = Highcharts
+            .stockChart('container', {
                 series: [{
                     data: [1, 2, 3],
                     id: '1'
@@ -363,4 +364,243 @@ QUnit.test('Setting showInLegend dynamically', function (assert) {
     );
 });
 
+QUnit.test('Series.update', function (assert) {
 
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            showEmpty: false
+        },
+
+        yAxis: {
+            showEmpty: false
+        },
+
+        series: [{
+            allowPointSelect: true,
+            data: [ // use names for display in pie data labels
+                ['January', 29.9],
+                ['February', 71.5],
+                ['March', 106.4],
+                ['April', 129.2],
+                ['May', 144.0],
+                ['June', 176.0],
+                ['July', 135.6],
+                ['August', 148.5],
+                {
+                    name: 'September',
+                    y: 216.4,
+                    selected: true,
+                    sliced: true
+                },
+                ['October', 194.1],
+                ['November', 95.6],
+                ['December', 54.4]
+            ],
+            marker: {
+                enabled: false
+            },
+            showInLegend: true
+        }]
+    });
+
+    chart.name = false;
+
+    var enableDataLabels = true,
+        enableMarkers = true,
+        color = false;
+
+    // Text content
+    assert.strictEqual(
+        chart.series[0].legendItem.element.textContent,
+        'Series 1',
+        'Text content enitial'
+    );
+    chart.series[0].update({
+        name: chart.name ? null : 'First'
+    });
+    chart.name = !chart.name;
+    assert.strictEqual(
+        chart.series[0].legendItem.element.textContent,
+        'First',
+        'Text content should change'
+    );
+
+    // Data labels
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel,
+        undefined,
+        'Data labels initial'
+    );
+    chart.series[0].update({
+        dataLabels: {
+            enabled: enableDataLabels
+        }
+    });
+    enableDataLabels = !enableDataLabels;
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.element.textContent.substr(0, 4),
+        '29.9',
+        'Data labels changed'
+    );
+
+    // Markers
+    assert.strictEqual(
+        chart.series[0].points[0].graphic,
+        undefined,
+        'Markers initial'
+    );
+    chart.series[0].update({
+        marker: {
+            enabled: enableMarkers
+        }
+    });
+    enableMarkers = !enableMarkers;
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.element.nodeName,
+        'path',
+        'Markers changed'
+    );
+
+    // Color
+    assert.strictEqual(
+        chart.series[0].graph.element.getAttribute('stroke'),
+        Highcharts.getOptions().colors[0],
+        'Color initial'
+    );
+    chart.series[0].update({
+        color: color ? null : Highcharts.getOptions().colors[1]
+    });
+    color = !color;
+    assert.strictEqual(
+        chart.series[0].graph.element.getAttribute('stroke'),
+        Highcharts.getOptions().colors[1],
+        'Color changed - graph'
+    );
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.element.getAttribute('fill'),
+        Highcharts.getOptions().colors[1],
+        'Color changed - marker'
+    );
+
+    // Type column
+    chart.series[0].update({
+        type: 'column'
+    });
+    assert.strictEqual(
+        chart.series[0].type,
+        'column',
+        'Column type'
+    );
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.element.nodeName,
+        'rect',
+        'Column point'
+    );
+
+    // Type line
+    chart.series[0].update({
+        type: 'line'
+    });
+    assert.strictEqual(
+        chart.series[0].type,
+        'line',
+        'Line type'
+    );
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.symbolName,
+        'circle',
+        'Line point'
+    );
+
+    // Type spline
+    chart.series[0].update({
+        type: 'spline'
+    });
+    assert.strictEqual(
+        chart.series[0].type,
+        'spline',
+        'Spline type'
+    );
+    assert.strictEqual(
+        chart.series[0].graph.element.getAttribute('d').indexOf('C') !== -1, // has curved path
+        true,
+        'Curved path'
+    );
+
+    // Type area
+    chart.series[0].update({
+        type: 'area'
+    });
+    assert.strictEqual(
+        chart.series[0].type,
+        'area',
+        'Area type'
+    );
+    assert.strictEqual(
+        chart.series[0].area.element.nodeName,
+        'path',
+        'Has area'
+    );
+
+    // Type areaspline
+    chart.series[0].update({
+        type: 'areaspline'
+    });
+    assert.strictEqual(
+        chart.series[0].type,
+        'areaspline',
+        'Areaspline type'
+    );
+    assert.strictEqual(
+        chart.series[0].graph.element.getAttribute('d').indexOf('C') !== -1, // has curved path
+        true,
+        'Curved path'
+    );
+    assert.strictEqual(
+        chart.series[0].area.element.nodeName,
+        'path',
+        'Has area'
+    );
+
+    // Type scatter
+    chart.series[0].update({
+        type: 'scatter'
+    });
+    assert.strictEqual(
+        chart.series[0].type,
+        'scatter',
+        'Scatter type'
+    );
+    assert.strictEqual(
+        typeof chart.series[0].graph,
+        'undefined',
+        'Has no graph'
+    );
+
+    // Type pie
+    chart.series[0].update({
+        type: 'pie'
+    });
+    assert.strictEqual(
+        chart.series[0].type,
+        'pie',
+        'Pie type'
+    );
+    assert.strictEqual(
+        typeof chart.series[0].graph,
+        'undefined',
+        'Has no graph'
+    );
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.element.getAttribute('d').indexOf('A') !== -1, // has arc
+        true,
+        'Arced path'
+    );
+    assert.strictEqual(
+        chart.series[0].points[8].sliced,
+        true,
+        'Sliced slice'
+    );
+
+});
