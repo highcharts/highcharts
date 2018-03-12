@@ -412,6 +412,56 @@ Highcharts.ajax = function (attr) {
  * @apioption data.table
  */
 
+/**
+ * An URL to a remote CSV dataset.
+ * Will be fetched when the chart is created using Ajax.
+ *
+ * @type {String}
+ * @apioption data.csvURL
+ */
+
+/**
+ * An URL to a remote JSON dataset, structured as a row array.
+ * Will be fetched when the chart is created using Ajax.
+ *
+ * @type {String}
+ * @apioption data.rowsURL
+ */
+
+/**
+ * An URL to a remote JSON dataset, structured as a column array.
+ * Will be fetched when the chart is created using Ajax.
+ *
+ * @type {String}
+ * @apioption data.columnsURL
+ */
+
+/**
+ * Sets the refresh rate for data polling when importing remote dataset by 
+ * setting [data.csvURL](data.csvURL), [data.rowsURL](data.rowsURL), or 
+ * [data.columnsURL](data.columnsURL).
+ *
+ * Note that polling must be enabled by setting 
+ * [data.enablePolling](data.enablePolling) to true.
+ *
+ * The value is the number of seconds between pollings.
+ * It cannot be set to less than 1 second.
+ *
+ * @default 1
+ * @type {Number}
+ * @apioption data.dataRefreshRate
+ */
+
+/**
+ * Enables automatic refetching of remote datasets every _n_ seconds (defined by
+ * setting [data.dataRefreshRate](data.dataRefreshRate)).
+ *
+ * Only works when either 
+ *
+ * @type {Bool}
+ * @default false
+ * @apioption data.enablePolling
+ */
 
 // The Data constructor
 var Data = function (dataOptions, chartOptions, chart) {
@@ -1160,86 +1210,80 @@ Highcharts.extend(Data.prototype, {
 	fetchLiveData: function () {
 		var chart = this.chart,
 			options = this.options,
-			pollingEnabled = true, // options.enableAutoRefresh
+			pollingEnabled = options.enablePolling,
 			updateIntervalMs = (options.dataRefreshRate || 2) * 1000,
-			updatedOptions = Highcharts.merge({}, options, true);
+			originalOptions = Highcharts.merge(options);
+
+		if (!options || 
+			(!options.csvURL && !options.rowsURL && !options.columnsURL)
+		) {
+			return false;
+		}
 
 		// Do not allow polling more than once a second
 		if (updateIntervalMs < 1000) {
 			updateIntervalMs = 1000;
 		}
 
-		// No accidental loops, please
-		updatedOptions.csvURL = false;
-		updatedOptions.rowsURL = false;
-		updatedOptions.columnsURL = false;
-	
-		function performFetch(initialFetch) {
+		delete options.csvURL;
+		delete options.rowsURL;
+		delete options.columnsURL;
 
-			function beforeFetch(url) {
-				if (url.indexOf('http') !== 0) {
-					if (options.error) {
+		function performFetch(/* initialFetch */) {
+
+			// Helper function for doing the data fetch + polling
+			function request(url, done, tp) {
+				if (!url || url.indexOf('http') !== 0) {
+					if (url && options.error) {
 						options.error('Invalid URL');
 					}
 					return false;
 				}
-			
-				if (initialFetch) {
-					// chart.showLoading('Loading Data');
-				}
-
-				return true;
-			}
-
-			function afterFetch() {
-				if (initialFetch) {
-					// chart.hideLoading();
-				}
-			}
-
-			function poll() {
-				// Refetch in updateIntervalMs milliseconds.
-				// Doing this rather than setInterval
-				// ensures that the polling stops if the file becomes
-				// M.I.A.
-				if (pollingEnabled) {
-					setTimeout(performFetch, updateIntervalMs);
-				}
-			}
-
-			if (options.csvURL) {
-				// Fetch remote CSV
-				if (!beforeFetch(options.csvURL)) {
-					return;
-				}
 
 				Highcharts.ajax({
-					url: options.csvURL,
-					dataType: 'text',
+					url: url,
+					dataType: tp || 'json',
 					success: function (res) {
-						updatedOptions.csv = res;
+						if (chart && chart.series) {
+							done(res);
+						}
 
-					// if (initialFetch) {
-						// self.parseCSV(updatedOptions);
-					// } else {
-						chart.update({
-							data: updatedOptions 
-						});
-					// }
+						// Poll
+						if (pollingEnabled) {
+							setTimeout(performFetch, updateIntervalMs);
+						}
 
-						poll();
 					},
 					error: function (xhr, text) {
 						return options.error && options.error(text, xhr);
 					}
 				});
 
-				afterFetch();
+				return true;
+			}
 
-			} else if (options.rowsURL) {
-
-			} else if (options.columnsURL) {
-
+			if (!request(originalOptions.csvURL, function (res) {
+				chart.update({
+					data: {
+						csv: res
+					}
+				});
+			}, 'text')) {
+				if (!request(originalOptions.rowsURL, function (res) {
+					chart.update({
+						data: {
+							rows: res
+						}
+					});
+				})) {
+					request(originalOptions.columnsURL, function (res) {
+						chart.update({
+							data: {
+								columns: res
+							}
+						});
+					});
+				}
 			}
 		}
 
@@ -1924,13 +1968,17 @@ addEvent(
 						if (typeof userOptions.series === 'object') {
 							i = Math.max(
 								userOptions.series.length,
-								dataOptions.series.length
+								dataOptions && dataOptions.series ?
+									dataOptions.series.length :
+									0
 							);
 							while (i--) {
 								series = userOptions.series[i] || {};
 								userOptions.series[i] = Highcharts.merge(
 									series,
-									dataOptions.series[i]
+									dataOptions && dataOptions.series ?
+										dataOptions.series[i] :
+										{}
 								);
 							}
 						} else { // Allow merging in dataOptions.series (#2856)
