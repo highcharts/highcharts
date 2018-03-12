@@ -56,9 +56,11 @@ QUnit.test('Show loading', function (assert) {
             done();
         }, 50);
 
+        lolexRunAndUninstall(clock);
+
     } finally {
 
-        lolexRunAndUninstall(clock);
+        lolexUninstall(clock);
 
     }
 
