@@ -9,14 +9,14 @@ QUnit.test("Categorized", function (assert) {
         },
 
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            data: [29.9, 0, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
 
     });
 
     var csv = '"Category","Series 1"\n' +
         '"Jan",29.9\n' +
-        '"Feb",71.5\n' +
+        '"Feb",0\n' +
         '"Mar",106.4\n' +
         '"Apr",129.2\n' +
         '"May",144\n' +
@@ -509,7 +509,7 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
             // accessibility module added.
             .replace(/<table[^>]+>/g, '<table>')
             .replace('<caption>Chart title</caption>', ''),
-        '<table><caption class="highcharts-table-caption">Chart title</caption><thead><tr><th scope="col" class="text">Category</th><th scope="col" class="text">Drop 2</th><th scope="col" class="text">Full</th></tr></thead><tbody><tr><th scope="row" class="empty"></th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">1</th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">2</th>' +
+        '<table><caption class="highcharts-table-caption">Chart title</caption><thead><tr><th scope="col" class="text">Category</th><th scope="col" class="text">Drop 2</th><th scope="col" class="text">Full</th></tr></thead><tbody><tr><th scope="row" class="number">0</th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">1</th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">2</th>' +
         '<td class="empty"></td><td class="number">2</td></tr><tr><th scope="row" class="number">3</th><td class="number">3</td><td class="number">3</td></tr><tr><th scope="row" class="number">4</th><td class="number">4</td><td class="number">4</td></tr></tbody></table>',
         'Empty data in table'
     );
