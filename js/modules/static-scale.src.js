@@ -12,7 +12,7 @@ var Chart = H.Chart,
 	pick = H.pick;
 
 Chart.prototype.adjustHeight = function () {
-	each(this.axes, function (axis) {
+	each(this.axes || [], function (axis) {
 		var chart = axis.chart,
 			animate = !!chart.initiatedScale && chart.options.animation,
 			staticScale = axis.options.staticScale,

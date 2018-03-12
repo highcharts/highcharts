@@ -4402,7 +4402,9 @@ H.Series = H.seriesType('line', null, { // base series options
 			horiz = axis.horiz;
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
-			if (graph) {
+			// unless it is not waterfall series, then use showLine property to 
+			// set lines between columns to be visible (#7862)
+			if (graph && !this.showLine) {
 				graph.hide();
 			}
 			if (area) {

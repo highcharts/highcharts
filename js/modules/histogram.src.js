@@ -145,10 +145,14 @@ seriesType('histogram', 'column', {
 
 		fitToBin = binWidth ? fitToBinLeftClosed(binWidth) : identity;
 
-    // If binWidth is 0 then max and min are equaled,
-    // increment the x with some positive value to quit the loop
-		for (x = fitToBin(min); x <= max; x += (binWidth || 1)) {
-			frequencies[correctFloat(fitToBin(x))] = 0;
+		// If binWidth is 0 then max and min are equaled,
+		// increment the x with some positive value to quit the loop
+		for (
+			x = fitToBin(min);
+			x <= max;
+			x = correctFloat(x + (binWidth || 1))
+		) {
+			frequencies[correctFloat(fitToBin((x)))] = 0;
 		}
 
 		each(baseData, function (y) {
