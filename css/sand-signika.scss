@@ -22,17 +22,17 @@ $axis-labels-font-size: 12px;
 
 // Tooltip
 $tooltip-border: 0px;
-$tooltip-background: #fff;
+$tooltip-background: $neutral-color-100;
 
 // Buttons
-$highcharts-button-background: #fff;
+$highcharts-button-background: $neutral-color-100;
 $highcharts-button-border: #C0C0C8;
 $highcharts-button-text:  #000;
 
 $highcharts-button-pressed-background: #D0D0D8;
 $highcharts-button-pressed-text:  #000;
 
-$context-button-background: #fff;
+$context-button-background: $neutral-color-100;
 
 // Navigator
 $navigator-series-fill: #f45b5b;
