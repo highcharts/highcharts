@@ -1060,8 +1060,7 @@ Highcharts.extend(Data.prototype, {
 					!(options.dateFormats || self.dateFormats)[calculatedFormat]
 				) {
 					// This should emit an event instead
-					fireEvent('invalidDateFormat');
-					Highcharts.error('Could not deduce date format');
+					fireEvent('deduceDateFailed');
 					return format;
 				}
 
