@@ -1,4 +1,4 @@
-/*
+
 QUnit.test('Chart destroy', function (assert) {
 
     var chart = Highcharts
@@ -35,7 +35,7 @@ QUnit.test('Chart destroy', function (assert) {
     );
 
 });
-*/
+
 QUnit.test('Chart destroy from its own callback', function (assert) {
 
     var done = assert.async();
@@ -60,7 +60,7 @@ QUnit.test('Chart destroy from its own callback', function (assert) {
 
         this.destroy();
 
-        /*assert.strictEqual(
+        assert.strictEqual(
             this.series,
             undefined,
             'Properties deleted'
@@ -70,7 +70,7 @@ QUnit.test('Chart destroy from its own callback', function (assert) {
             document.getElementById('container').innerHTML,
             '',
             'Container emptied'
-        );*/
+        );
 
         done();
 

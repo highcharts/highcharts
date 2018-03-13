@@ -13,7 +13,12 @@ QUnit.test('Basic accessible chart', function (assert) {
         'There be ARIA on point'
     );
 
-    assert.ok(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be screen reader region');
+    assert.ok(
+        chart.screenReaderRegion &&
+        chart.screenReaderRegion.hiddenSection &&
+        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
+        'There be screen reader region'
+    );
 });
 
 QUnit.test('Accessible chart with multiple series', function (assert) {
@@ -39,7 +44,12 @@ QUnit.test('Accessible chart with multiple series', function (assert) {
 
 QUnit.test('Empty chart', function (assert) {
     var chart = Highcharts.chart('container', {});
-    assert.ok(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be screen reader region');
+    assert.ok(
+        chart.screenReaderRegion &&
+        chart.screenReaderRegion.hiddenSection &&
+        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
+        'There be screen reader region'
+    );
 });
 
 // Pie charts are treated somewhat differently, so do a separate test for these
@@ -57,5 +67,10 @@ QUnit.test('Accessible pie', function (assert) {
         'There be ARIA on point'
     );
 
-    assert.ok(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be screen reader region');
+    assert.ok(
+        chart.screenReaderRegion &&
+        chart.screenReaderRegion.hiddenSection &&
+        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
+        'There be screen reader region'
+    );
 });
