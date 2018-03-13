@@ -13,7 +13,7 @@ Highcharts.chart('container', {
     },
 
     data: {
-        columnsURL: 'https://s3-eu-west-1.amazonaws.com/demo-live-data.highcharts.com/time-cols.json',
+        columnsURL: 'https://demo-live-data.highcharts.com/time-cols.json',
         enablePolling: true
     }
 });

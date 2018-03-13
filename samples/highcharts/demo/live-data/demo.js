@@ -1,4 +1,4 @@
-var defaultData = 'https://s3-eu-west-1.amazonaws.com/demo-live-data.highcharts.com/time-data.csv';
+var defaultData = 'https://demo-live-data.highcharts.com/time-data.csv';
 var urlInput = document.getElementById('fetchURL');
 var pollingCheckbox = document.getElementById('enablePolling');
 var pollingInput = document.getElementById('pollingTime');

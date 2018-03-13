@@ -13,7 +13,7 @@ Highcharts.chart('container', {
     },
 
     data: {
-        csvURL: 'https://s3-eu-west-1.amazonaws.com/demo-live-data.highcharts.com/sine-data.csv',
+        csvURL: 'https://demo-live-data.highcharts.com/sine-data.csv',
         enablePolling: true
     }
 });
