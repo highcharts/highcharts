@@ -11,7 +11,12 @@ QUnit.test('Basic stock chart', function (assert) {
         'There be ARIA on series'
     );
 
-    assert.ok(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be screen reader region');
+    assert.ok(
+        chart.screenReaderRegion &&
+        chart.screenReaderRegion.hiddenSection &&
+        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
+        'There be screen reader region'
+    );
 });
 
 QUnit.test('Stock chart with markers', function (assert) {
