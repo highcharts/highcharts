@@ -43,17 +43,17 @@ H.extend(H.SVGElement.prototype, {
 			bb.height + 2 * pad,
 			style && style.borderRadius
 		)
-			.addClass('highcharts-focus-border')
-			/*= if (build.classic) { =*/
-			.attr({
-				stroke: style && style.stroke,
-				'stroke-width': style && style.strokeWidth
-			})
-			/*= } =*/
-			.attr({
-				zIndex: 99
-			})
-			.add(this.parentGroup);
+		.addClass('highcharts-focus-border')
+		/*= if (build.classic) { =*/
+		.attr({
+			stroke: style && style.stroke,
+			'stroke-width': style && style.strokeWidth
+		})
+		/*= } =*/
+		.attr({
+			zIndex: 99
+		})
+		.add(this.parentGroup);
 	},
 
 	removeFocusBorder: function () {
@@ -373,9 +373,9 @@ function getClosestPoint(point, series, xWeight, yWeight) {
 			continue;
 		}
 		distance = (point.plotX - dPoint.plotX) *
-			(point.plotX - dPoint.plotX) * (xWeight || 1) +
-			(point.plotY - dPoint.plotY) *
-			(point.plotY - dPoint.plotY) * (yWeight || 1);
+				(point.plotX - dPoint.plotX) * (xWeight || 1) +
+				(point.plotY - dPoint.plotY) *
+				(point.plotY - dPoint.plotY) * (yWeight || 1);
 		if (distance < minDistance) {
 			minDistance = distance;
 			minIx = i;
@@ -410,7 +410,7 @@ H.Axis.prototype.panStep = function (direction, granularity) {
 // svgElement and sets the focus to focusElement.
 H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
 	var focusBorderOptions = this.options.accessibility
-		.keyboardNavigation.focusBorder,
+				.keyboardNavigation.focusBorder,
 		browserFocusElement = focusElement || svgElement;
 	// Set browser focus if possible
 	if (
@@ -423,7 +423,7 @@ H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
 			browserFocusElement.css({ outline: 'none' });
 		}
 	}
-	if (focusBorderOptions.enabled && svgElement !== this.focusElement) {
+	if (focusBorderOptions.enabled) {
 		// Remove old focus border
 		if (this.focusElement) {
 			this.focusElement.removeFocusBorder();
@@ -474,7 +474,7 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		curPoints = curPoint && curPoint.series.points,
 		lastSeries = chart.series && chart.series[chart.series.length - 1],
 		lastPoint = lastSeries && lastSeries.points &&
-			lastSeries.points[lastSeries.points.length - 1],
+					lastSeries.points[lastSeries.points.length - 1],
 		newSeries,
 		newPoint;
 
@@ -503,9 +503,9 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		// Grab next/prev point & series
 		newSeries = series[curPoint.series.index + (next ? 1 : -1)];
 		newPoint = curPoints[curPointIndex + (next ? 1 : -1)] ||
-			// Done with this series, try next one
-			newSeries &&
-			newSeries.points[next ? 0 : newSeries.points.length - 1];
+					// Done with this series, try next one
+					newSeries &&
+					newSeries.points[next ? 0 : newSeries.points.length - 1];
 
 		// If there is no adjacent point, we return false
 		if (!newPoint) {
@@ -558,7 +558,7 @@ H.Chart.prototype.highlightAdjacentSeries = function (down) {
 		curPoint = chart.highlightedPoint,
 		lastSeries = chart.series && chart.series[chart.series.length - 1],
 		lastPoint = lastSeries && lastSeries.points &&
-			lastSeries.points[lastSeries.points.length - 1];
+					lastSeries.points[lastSeries.points.length - 1];
 
 	// If no point is highlighted, highlight the first/last point
 	if (!chart.highlightedPoint) {
@@ -811,9 +811,9 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 				}
 				// Normal mode, move between series
 				var highlightMethod = chart.highlightedPoint &&
-					chart.highlightedPoint.series.keyboardMoveVertical ?
-					'highlightAdjacentPointVertical' :
-					'highlightAdjacentSeries';
+						chart.highlightedPoint.series.keyboardMoveVertical ?
+						'highlightAdjacentPointVertical' :
+						'highlightAdjacentSeries';
 				chart[highlightMethod](down);
 				return true;
 			}],
@@ -1113,7 +1113,8 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 				// Try to highlight next/prev legend item
 				if (!chart.highlightLegendItem(
 					chart.highlightedLegendItemIx + direction
-				)) {
+				) && chart.legend.allItems.length > 1) {
+					// Wrap around if more than 1 item
 					this.init(direction);
 				}
 			}],

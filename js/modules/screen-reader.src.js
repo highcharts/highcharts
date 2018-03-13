@@ -212,41 +212,41 @@ H.setOptions({
 				) && {} || chart.getAxesDescription();
 
 			return '<div>' + chart.langFormat(
-				'accessibility.navigationHint', formatContext
-			) + '</div><h3>' +
-				(
-					options.title.text ?
-						htmlencode(options.title.text) :
-						chart.langFormat(
-							'accessibility.defaultChartTitle', formatContext
+						'accessibility.navigationHint', formatContext
+					) + '</div><h3>' +
+					(
+						options.title.text ?
+							htmlencode(options.title.text) :
+							chart.langFormat(
+								'accessibility.defaultChartTitle', formatContext
+							)
+					) +
+					(
+						options.subtitle && options.subtitle.text ?
+							'. ' + htmlencode(options.subtitle.text) :
+							''
+					) +
+					'</h3><h4>' + chart.langFormat(
+						'accessibility.longDescriptionHeading', formatContext
+					) + '</h4><div>' +
+					(
+						options.chart.description || chart.langFormat(
+							'accessibility.noDescription', formatContext
 						)
-				) +
-				(
-					options.subtitle && options.subtitle.text ?
-						'. ' + htmlencode(options.subtitle.text) :
-						''
-				) +
-				'</h3><h4>' + chart.langFormat(
-					'accessibility.longDescriptionHeading', formatContext
-				) + '</h4><div>' +
-				(
-					options.chart.description || chart.langFormat(
-						'accessibility.noDescription', formatContext
-					)
-				) +
-				'</div><h4>' + chart.langFormat(
-					'accessibility.structureHeading', formatContext
-				) + '</h4><div>' +
-				(
-					options.chart.typeDescription ||
-					chart.getTypeDescription()
-				) + '</div>' +
-				(axesDesc.xAxis ? (
-					'<div>' + axesDesc.xAxis + '</div>'
-				) : '') +
-				(axesDesc.yAxis ? (
-					'<div>' + axesDesc.yAxis + '</div>'
-				) : '');
+					) +
+					'</div><h4>' + chart.langFormat(
+						'accessibility.structureHeading', formatContext
+					) + '</h4><div>' +
+					(
+						options.chart.typeDescription ||
+						chart.getTypeDescription()
+					) + '</div>' +
+					(axesDesc.xAxis ? (
+						'<div>' + axesDesc.xAxis + '</div>'
+					) : '') +
+					(axesDesc.yAxis ? (
+						'<div>' + axesDesc.yAxis + '</div>'
+					) : '');
 		}
 	}
 });
@@ -407,9 +407,9 @@ H.Series.prototype.buildSeriesInfoString = function () {
 		);
 
 	return summary + (description ? ' ' + description : '') + (
-		chart.yAxis.length > 1 && this.yAxis ?
-			' ' + yAxisInfo : ''
-	) + (
+			chart.yAxis.length > 1 && this.yAxis ?
+				' ' + yAxisInfo : ''
+		) + (
 			chart.xAxis.length > 1 && this.xAxis ?
 				' ' + xAxisInfo : ''
 		);
@@ -642,7 +642,7 @@ H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
 // tableId is the HTML id of the table to focus when clicking the table anchor
 // in the screen reader region.
 H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
-	var chart = this,
+	var	chart = this,
 		hiddenSection = doc.createElement('div'),
 		tableShortcut = doc.createElement('h4'),
 		tableShortcutAnchor = doc.createElement('a'),
@@ -724,7 +724,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		return;
 	}
 
-	var titleElement,
+	var	titleElement,
 		exportGroupElement = doc.createElementNS(
 			'http://www.w3.org/2000/svg',
 			'g'
@@ -746,9 +746,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	// Add SVG title tag if it is set
 	if (svgContainerTitle.length) {
 		titleElement = doc.createElementNS(
-			'http://www.w3.org/2000/svg',
-			'title'
-		);
+				'http://www.w3.org/2000/svg',
+				'title'
+			);
 		titleElement.textContent = svgContainerTitle;
 		titleElement.id = titleId;
 		descElement.parentNode.insertBefore(titleElement, descElement);
@@ -809,7 +809,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 					'aria-label',
 					chart.langFormat(
 						'accessibility.rangeSelector' +
-						(i ? 'MaxInput' : 'MinInput'), { chart: chart }
+							(i ? 'MaxInput' : 'MinInput'), { chart: chart }
 					)
 				);
 			}
