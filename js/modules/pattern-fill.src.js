@@ -173,6 +173,13 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
  *			opacity: 0.5
  *     }
  * }
+ *
+ * @sample highcharts/series/pattern-fill-area/
+ *         Define a custom path pattern
+ * @sample highcharts/series/pattern-fill-pie/
+ *         Default patterns and a custom image pattern
+ * @sample maps/demo/pattern-fill-map/
+ *         Custom images on map
  */
 /**
  * Add a pattern to the renderer.
