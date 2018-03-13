@@ -95,12 +95,8 @@ Highcharts.mapChart('container', {
     tooltip: {
         useHTML: true,
         borderColor: '#aaa',
-        formatter: function () {
-            return '<b>' + this.point.name +
-                '</b><br><image width="150" height="100" src="' +
-                this.point.options.color.pattern.image +
-                '"></image>';
-        }
+        headerFormat: '<b>{point.point.name}</b><br>',
+        pointFormat: '<image width="150" height="100" src="{point.options.color.pattern.image}"></image>'
     },
 
     // Define the series
