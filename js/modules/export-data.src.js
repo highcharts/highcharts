@@ -474,7 +474,9 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
 		csvOptions = this.options.exporting.csv,
 		decimalPoint = pick(
 			csvOptions.decimalPoint,
-			useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.'
+			csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
+				(1.1).toLocaleString()[1] :
+				'.'
 		),
 		// use ';' for direct to Excel
 		itemDelimiter = pick(
