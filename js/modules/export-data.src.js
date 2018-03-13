@@ -474,7 +474,9 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
 		csvOptions = this.options.exporting.csv,
 		decimalPoint = pick(
 			csvOptions.decimalPoint,
-			useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.'
+			csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
+				(1.1).toLocaleString()[1] :
+				'.'
 		),
 		// use ';' for direct to Excel
 		itemDelimiter = pick(
@@ -547,7 +549,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 		},
 		// Get table cell HTML from value
 		getCellHTMLFromValue = function (tag, classes, attrs, value) {
-			var val = value || '',
+			var val = pick(value, ''),
 				className = 'text' + (classes ? ' ' + classes : '');
 			// Convert to string if number
 			if (typeof val === 'number') {

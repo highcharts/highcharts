@@ -236,7 +236,8 @@ Highcharts.Pointer.prototype = {
 		var series = point.series,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
-			plotX = pick(point.clientX, point.plotX);
+			plotX = pick(point.clientX, point.plotX),
+			shapeArgs = point.shapeArgs;
 
 		if (xAxis && yAxis) {
 			return inverted ? {
@@ -245,6 +246,12 @@ Highcharts.Pointer.prototype = {
 			} : {
 				chartX: plotX + xAxis.pos,
 				chartY: point.plotY + yAxis.pos
+			};
+		} else if (shapeArgs && shapeArgs.x && shapeArgs.y) {
+			// E.g. pies do not have axes
+			return {
+				chartX: shapeArgs.x,
+				chartY: shapeArgs.y
 			};
 		}
 	},
