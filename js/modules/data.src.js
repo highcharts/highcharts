@@ -1932,6 +1932,17 @@ Highcharts.extend(Data.prototype, {
 		if (options) {
 			// Set the complete handler
 			options.afterComplete = function (dataOptions) {
+				// Avoid setting axis options unless the type changes. Running
+				// Axis.update will cause the whole structure to be destroyed
+				// and rebuilt, and animation is lost.
+				if (
+					dataOptions.xAxis &&
+					chart.xAxis[0] &&
+					dataOptions.xAxis.type === chart.xAxis[0].options.type
+				) {
+					delete dataOptions.xAxis;
+				}
+
 				chart.update(dataOptions, redraw, true);
 			};
 			// Apply it
