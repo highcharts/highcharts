@@ -533,7 +533,6 @@ Highcharts.extend(Data.prototype, {
 			hasData = this.parseGoogleSpreadsheet();
 		}
 
-
 		if (!hasData && options.afterComplete) {
 			options.afterComplete();
 		}
@@ -1299,20 +1298,22 @@ Highcharts.extend(Data.prototype, {
 	 * Parse a Google spreadsheet.
 	 */
 	parseGoogleSpreadsheet: function () {
-		var self = this,
-			options = this.options,
+		var options = this.options,
 			googleSpreadsheetKey = options.googleSpreadsheetKey,
+			chart = this.chart,
 			// use sheet 1 as the default rather than od6
 			// as the latter sometimes cause issues (it looks like it can
 			// be renamed in some cases, ref. a fogbugz case).
 			worksheet = options.googleSpreadsheetWorksheet || 1,
-			columns = this.columns,
 			startRow = options.startRow || 0,
 			endRow = options.endRow || Number.MAX_VALUE,
 			startColumn = options.startColumn || 0,
 			endColumn = options.endColumn || Number.MAX_VALUE,
-			gr, // google row
-			gc; // google column
+			refreshRate = (options.dataRefreshRate || 2) * 1000;
+
+		if (refreshRate < 4000) {
+			refreshRate = 4000;
+		}
 
 		/*
 		 * Fetch the actual spreadsheet using XMLHttpRequest
@@ -1328,7 +1329,15 @@ Highcharts.extend(Data.prototype, {
 			Highcharts.ajax({
 				url: url,
 				dataType: 'json',
-				success: fn,
+				success: function (json) {
+					fn(json);
+
+					if (options.enablePolling) {
+						setTimeout(function () {
+							fetchSheet(fn);
+						}, options.dataRefreshRate);	
+					}
+				},
 				error: function (xhr, text) {
 					return options.error && options.error(text, xhr);
 				}
@@ -1336,16 +1345,26 @@ Highcharts.extend(Data.prototype, {
 		}
 
 		if (googleSpreadsheetKey) {
+
+			delete options.googleSpreadsheetKey;
+			
 			fetchSheet(function (json) {
 				// Prepare the data from the spreadsheat
-				var cells = json.feed.entry,
+				var columns = [],
+					cells = json.feed.entry,
 					cell,
-					cellCount = cells.length,
+					cellCount = (cells || []).length,
 					colCount = 0,
 					rowCount = 0,
 					val,
+					gr,
+					gc,
 					cellInner,
 					i;
+
+				if (!cells || cells.length === 0) {
+					return false;
+				}
 
 				// First, find the total number of columns and rows that
 				// are actually filled with data
@@ -1361,12 +1380,6 @@ Highcharts.extend(Data.prototype, {
 						// Create new columns with the length of either
 						// end-start or rowCount
 						columns[i - startColumn] = [];
-
-						// Setting the length to avoid jslint warning
-						columns[i - startColumn].length = Math.min(
-							rowCount,
-							endRow - startRow
-						);
 					}
 				}
 
@@ -1414,10 +1427,18 @@ Highcharts.extend(Data.prototype, {
 					}
 				});
 
-				self.dataFound();
+				if (chart && chart.series) {
+					chart.update({
+						data: {
+							columns: columns
+						}
+					});
+				}
 			});
 		}
-		return Boolean(googleSpreadsheetKey);
+
+		// This is an intermediate fetch, so always return false.
+		return false;
 	},
 
 	/**
