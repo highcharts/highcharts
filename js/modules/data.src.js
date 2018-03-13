@@ -1228,7 +1228,7 @@ Highcharts.extend(Data.prototype, {
 		delete options.rowsURL;
 		delete options.columnsURL;
 
-		function performFetch(/* initialFetch */) {
+		function performFetch(initialFetch) {
 
 			// Helper function for doing the data fetch + polling
 			function request(url, done, tp) {
@@ -1237,6 +1237,11 @@ Highcharts.extend(Data.prototype, {
 						options.error('Invalid URL');
 					}
 					return false;
+				}
+
+				if (initialFetch) {
+					clearTimeout(chart.liveDataTimeout);
+					chart.liveDataURL = url;	
 				}
 
 				Highcharts.ajax({
@@ -1248,8 +1253,10 @@ Highcharts.extend(Data.prototype, {
 						}
 
 						// Poll
-						if (pollingEnabled) {
-							setTimeout(performFetch, updateIntervalMs);
+						if (pollingEnabled && chart.liveDataURL === url) {
+							// We need to stop doing this if the URL has changed
+							chart.liveDataTimeout = 
+								setTimeout(performFetch, updateIntervalMs);
 						}
 
 					},
