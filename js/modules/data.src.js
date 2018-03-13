@@ -413,7 +413,7 @@ Highcharts.ajax = function (attr) {
  */
 
 /**
- * An URL to a remote CSV dataset.
+ * A URL to a remote CSV dataset.
  * Will be fetched when the chart is created using Ajax.
  *
  * @type {String}
@@ -421,7 +421,7 @@ Highcharts.ajax = function (attr) {
  */
 
 /**
- * An URL to a remote JSON dataset, structured as a row array.
+ * A URL to a remote JSON dataset, structured as a row array.
  * Will be fetched when the chart is created using Ajax.
  *
  * @type {String}
@@ -429,7 +429,7 @@ Highcharts.ajax = function (attr) {
  */
 
 /**
- * An URL to a remote JSON dataset, structured as a column array.
+ * A URL to a remote JSON dataset, structured as a column array.
  * Will be fetched when the chart is created using Ajax.
  *
  * @type {String}
