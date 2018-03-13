@@ -477,34 +477,28 @@ H.addEvent(H.Chart, 'endResize', function () {
  */
 H.addEvent(H.Chart, 'redraw', function () {
 	var usedIds = [],
-		patterns = H.grep(this.renderer.defIds || [], function (pattern) {
+		renderer = this.renderer,
+		// Get the autocomputed patterns - these are the ones we might delete
+		patterns = H.grep(renderer.defIds || [], function (pattern) {
 			return pattern.indexOf &&
 				pattern.indexOf('highcharts-pattern-') === 0;
-		}),
-		renderer = this.renderer;
+		});
 
 	if (patterns.length) {
-		// Only loop through all points if we are actually using patterns
-		each(this.series, function (series) {
-			each(series.points, function (point) {
-				var pointId;
-				if (point.color.pattern) {
-					pointId = point.shapeArgs && 
-							point.shapeArgs.fill &&
-							point.shapeArgs.fill.toString() ||
-							point.graphic &&
-							point.graphic.element &&
-							(
-								point.graphic.element.getAttribute('fill') ||
-								point.graphic.element.getAttribute('color')
-							);
-					usedIds.push(
-						pointId && pointId
-							.substring(pointId.indexOf('url(#') + 5)
-							.replace(')', '')
-					);
-				}
-			});
+		// Look through the DOM for usage of the patterns. This can be points,
+		// series, tooltips etc.
+		each(this.renderTo.querySelectorAll(
+			'[color^="url(#"], [fill^="url(#"], [stroke^="url(#"]'
+		), function (node) {
+			var id = node.getAttribute('fill') ||
+					node.getAttribute('color') ||
+					node.getAttribute('stroke');
+			if (id) {
+				usedIds.push(id
+					.substring(id.indexOf('url(#') + 5)
+					.replace(')', '')
+				);
+			}
 		});
 
 		// Loop through the patterns that exist and see if they are used
