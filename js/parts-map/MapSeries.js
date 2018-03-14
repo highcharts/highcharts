@@ -71,6 +71,7 @@ seriesType('map', 'scatter', {
 
 	animation: false, // makes the complex shapes slow
 
+	/*= if (build.classic) { =*/
 	/**
 	 * The color to apply to null points.
 	 * 
@@ -83,17 +84,6 @@ seriesType('map', 'scatter', {
 	 * @product highmaps
 	 */
 	nullColor: '${palette.neutralColor3}',
-
-	/**
-	 * Whether to allow pointer interaction like tooltips and mouse events
-	 * on null points.
-	 * 
-	 * @type {Boolean}
-	 * @default false
-	 * @since 4.2.7
-	 * @product highmaps
-	 * @apioption plotOptions.map.nullInteraction
-	 */
 
 	/**
 	 * The border color of the map areas.
@@ -119,6 +109,18 @@ seriesType('map', 'scatter', {
 	 * @apioption plotOptions.series.borderWidth
 	 */
 	borderWidth: 1,
+	/*= } =*/
+
+	/**
+	 * Whether to allow pointer interaction like tooltips and mouse events
+	 * on null points.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.2.7
+	 * @product highmaps
+	 * @apioption plotOptions.map.nullInteraction
+	 */
 
 	/**
 	 * Set this option to `false` to prevent a series from connecting to
@@ -253,9 +255,11 @@ seriesType('map', 'scatter', {
 
 		},
 
+		/*= if (build.classic) { =*/
 		select: {
 			color: '${palette.neutralColor20}'
 		}
+		/*= } =*/
 	}
 
 // Prototype members
