@@ -37,7 +37,7 @@ var win = H.win,
 H.Series.prototype.commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'];
 H.Series.prototype.specialKeys = [
 	'z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close'
-];
+]; 
 if (H.seriesTypes.pie) {
 	// A pie is always simple. Don't quote me on that.
 	H.seriesTypes.pie.prototype.specialKeys = [];
@@ -110,7 +110,7 @@ H.setOptions({
 		 * @since 5.0.0
 		 * @apioption accessibility.onTableAnchorClick
 		 */
-
+		
 		/**
 		 * Date format to use for points on datetime axes when describing them
 		 * to screen reader users.
@@ -138,7 +138,7 @@ H.setOptions({
 		 * @since 5.0.0
 		 * @apioption accessibility.pointDateFormatter
 		 */
-
+		
 		/**
 		 * Formatter function to use instead of the default for point
 		 * descriptions.
@@ -151,7 +151,7 @@ H.setOptions({
 		 * @since 5.0.0
 		 * @apioption accessibility.pointDescriptionFormatter
 		 */
-
+		
 		/**
 		 * Formatter function to use instead of the default for series
 		 * descriptions. Receives one argument, `series`, referring to the
@@ -183,7 +183,7 @@ H.setOptions({
 		 * @since 5.0.0
 		 */
 		pointDescriptionThreshold: false, // set to false to disable
-
+		
 		/**
 		 * A formatter function to create the HTML contents of the hidden screen
 		 * reader information region. Receives one argument, `chart`, referring
@@ -212,41 +212,41 @@ H.setOptions({
 				) && {} || chart.getAxesDescription();
 
 			return '<div>' + chart.langFormat(
-				'accessibility.navigationHint', formatContext
-			) + '</div><h3>' +
-				(
-					options.title.text ?
-						htmlencode(options.title.text) :
-						chart.langFormat(
-							'accessibility.defaultChartTitle', formatContext
+						'accessibility.navigationHint', formatContext
+					) + '</div><h3>' +
+					(
+						options.title.text ? 
+							htmlencode(options.title.text) : 
+							chart.langFormat(
+								'accessibility.defaultChartTitle', formatContext
+							)
+					) +
+					(
+						options.subtitle &&	options.subtitle.text ?
+							'. ' + htmlencode(options.subtitle.text) :
+							''
+					) +
+					'</h3><h4>' + chart.langFormat(
+						'accessibility.longDescriptionHeading', formatContext
+					) + '</h4><div>' +
+					(
+						options.chart.description || chart.langFormat(
+							'accessibility.noDescription', formatContext
 						)
-				) +
-				(
-					options.subtitle && options.subtitle.text ?
-						'. ' + htmlencode(options.subtitle.text) :
-						''
-				) +
-				'</h3><h4>' + chart.langFormat(
-					'accessibility.longDescriptionHeading', formatContext
-				) + '</h4><div>' +
-				(
-					options.chart.description || chart.langFormat(
-						'accessibility.noDescription', formatContext
-					)
-				) +
-				'</div><h4>' + chart.langFormat(
-					'accessibility.structureHeading', formatContext
-				) + '</h4><div>' +
-				(
-					options.chart.typeDescription ||
-					chart.getTypeDescription()
-				) + '</div>' +
-				(axesDesc.xAxis ? (
-					'<div>' + axesDesc.xAxis + '</div>'
-				) : '') +
-				(axesDesc.yAxis ? (
-					'<div>' + axesDesc.yAxis + '</div>'
-				) : '');
+					) +
+					'</div><h4>' + chart.langFormat(
+						'accessibility.structureHeading', formatContext
+					) + '</h4><div>' +
+					(
+						options.chart.typeDescription ||
+						chart.getTypeDescription()
+					) +	'</div>' +
+					(axesDesc.xAxis ? (
+						'<div>' + axesDesc.xAxis + '</div>'
+					) : '') +
+					(axesDesc.yAxis ? (
+						'<div>' + axesDesc.yAxis + '</div>'
+					) : '');
 		}
 	}
 });
@@ -265,22 +265,22 @@ H.setOptions({
  * @apioption chart.description
  */
 
-/**
-* A text description of the chart type.
-* 
-* If the Accessibility module is loaded, this will be included in the
-* description of the chart in the screen reader information region.
-* 
-* 
-* Highcharts will by default attempt to guess the chart type, but for
-* more complex charts it is recommended to specify this property for
-* clarity.
-* 
-* @type {String}
-* @default undefined
-* @since 5.0.0
-* @apioption chart.typeDescription
-*/
+ /**
+ * A text description of the chart type.
+ * 
+ * If the Accessibility module is loaded, this will be included in the
+ * description of the chart in the screen reader information region.
+ * 
+ * 
+ * Highcharts will by default attempt to guess the chart type, but for
+ * more complex charts it is recommended to specify this property for
+ * clarity.
+ * 
+ * @type {String}
+ * @default undefined
+ * @since 5.0.0
+ * @apioption chart.typeDescription
+ */
 
 
 // Utility function. Reverses child nodes of a DOM element
@@ -337,9 +337,9 @@ H.Series.prototype.setA11yDescription = function () {
 					point.graphic.element.setAttribute('role', 'img');
 					point.graphic.element.setAttribute('tabindex', '-1');
 					point.graphic.element.setAttribute('aria-label', stripTags(
-						point.series.options.pointDescriptionFormatter &&
+						point.series.options.pointDescriptionFormatter && 
 						point.series.options.pointDescriptionFormatter(point) ||
-						a11yOptions.pointDescriptionFormatter &&
+						a11yOptions.pointDescriptionFormatter && 
 						a11yOptions.pointDescriptionFormatter(point) ||
 						point.buildPointInfoString()
 					));
@@ -349,7 +349,7 @@ H.Series.prototype.setA11yDescription = function () {
 		// Make series element accessible
 		if (this.chart.series.length > 1 || a11yOptions.describeSingleSeries) {
 			seriesEl.setAttribute(
-				'role',
+				'role', 
 				this.options.exposeElementToA11y ? 'img' : 'region'
 			);
 			seriesEl.setAttribute('tabindex', '-1');
@@ -378,9 +378,9 @@ H.Series.prototype.buildSeriesInfoString = function () {
 		),
 		xAxisInfo = chart.langFormat(
 			'accessibility.series.xAxisDescription',
-			{
+			{ 
 				name: this.xAxis && this.xAxis.getDescription(),
-				series: this
+				series: this 
 			}
 		),
 		yAxisInfo = chart.langFormat(
@@ -398,7 +398,7 @@ H.Series.prototype.buildSeriesInfoString = function () {
 			series: this
 		},
 		combination = chart.types.length === 1 ? '' : 'Combination',
-		summary = chart.langFormat(
+		summary =  chart.langFormat(
 			'accessibility.series.summary.' + this.type + combination,
 			summaryContext
 		) || chart.langFormat(
@@ -407,9 +407,9 @@ H.Series.prototype.buildSeriesInfoString = function () {
 		);
 
 	return summary + (description ? ' ' + description : '') + (
-		chart.yAxis.length > 1 && this.yAxis ?
-			' ' + yAxisInfo : ''
-	) + (
+			chart.yAxis.length > 1 && this.yAxis ?
+				' ' + yAxisInfo : ''
+		) + (
 			chart.xAxis.length > 1 && this.xAxis ?
 				' ' + xAxisInfo : ''
 		);
@@ -430,7 +430,7 @@ H.Point.prototype.buildPointInfoString = function () {
 				a11yOptions.pointDateFormatter(point) ||
 				a11yOptions.pointDateFormat ||
 				H.Tooltip.prototype.getXDateFormat.call(
-					{
+					{ 
 						getDateFormat: H.Tooltip.prototype.getDateFormat,
 						chart: series.chart
 					},
@@ -459,7 +459,7 @@ H.Point.prototype.buildPointInfoString = function () {
 		});
 	} else {
 		// Pick and choose properties for a succint label
-		infoString =
+		infoString = 
 			(
 				this.name ||
 				timeDesc ||
@@ -493,7 +493,7 @@ addEvent(H.Series, 'afterInit', function () {
 	var chart = this.chart;
 	if (chart.options.accessibility.enabled) {
 		chart.types = chart.types || [];
-
+		
 		// Add type to list if does not exist
 		if (chart.types.indexOf(this.type) < 0) {
 			chart.types.push(this.type);
@@ -504,7 +504,7 @@ addEvent(H.Series, 'remove', function () {
 	var chart = this.chart,
 		removedSeries = this,
 		hasType = false;
-
+	
 	// Check if any of the other series have the same type as this one.
 	// Otherwise remove it from the list.
 	each(chart.series, function (s) {
@@ -570,7 +570,7 @@ H.Chart.prototype.getTypeDescription = function () {
 			formatContext
 		)
 	) +
-		(typeDesc ? ' ' + typeDesc : '');
+	(typeDesc ? ' ' + typeDesc : '');
 };
 
 
@@ -615,7 +615,7 @@ H.Chart.prototype.getAxesDescription = function () {
 
 
 // Set a11y attribs on exporting menu
-H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
+H.Chart.prototype.addAccessibleContextMenuAttribs =	function () {
 	var exportList = this.exportDivElements;
 	if (exportList) {
 		// Set tabindex on the menu items to allow focusing by script
@@ -642,8 +642,8 @@ H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
 // tableId is the HTML id of the table to focus when clicking the table anchor
 // in the screen reader region.
 H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
-	var chart = this,
-		hiddenSection = doc.createElement('div'),
+	var	chart = this,
+		hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
 		tableShortcut = doc.createElement('h4'),
 		tableShortcutAnchor = doc.createElement('a'),
 		chartHeading = doc.createElement('h4');
@@ -688,30 +688,6 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 	// Hide the section and the chart heading
 	merge(true, chartHeading.style, hiddenStyle);
 	merge(true, hiddenSection.style, hiddenStyle);
-
-	// Create public property
-
-	chart.screenReaderRegion = {
-		chartHeading: chartHeading,
-		hiddenSection: hiddenSection
-	};
-
-	// Clean up hidden elements
-	H.addEvent(chart, 'destroy', function () {
-		if (this.screenReaderRegion) {
-			if (this.screenReaderRegion.chartHeading &&
-				this.screenReaderRegion.chartHeading.parentNode) {
-				this.screenReaderRegion.chartHeading.parentNode
-					.removeChild(this.screenReaderRegion.chartHeading);
-			}
-			if (this.screenReaderRegion.hiddenSection &&
-				this.screenReaderRegion.hiddenSection.parentNode) {
-				this.screenReaderRegion.hiddenSection.parentNode
-					.removeChild(this.screenReaderRegion.hiddenSection);
-			}
-			delete this.screenReaderRegion;
-		}
-	});
 };
 
 
@@ -724,7 +700,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		return;
 	}
 
-	var titleElement,
+	var	titleElement,
 		exportGroupElement = doc.createElementNS(
 			'http://www.w3.org/2000/svg',
 			'g'
@@ -746,14 +722,14 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	// Add SVG title tag if it is set
 	if (svgContainerTitle.length) {
 		titleElement = doc.createElementNS(
-			'http://www.w3.org/2000/svg',
-			'title'
-		);
+				'http://www.w3.org/2000/svg',
+				'title'
+			);
 		titleElement.textContent = svgContainerTitle;
 		titleElement.id = titleId;
 		descElement.parentNode.insertBefore(titleElement, descElement);
 	}
-
+	
 	chart.renderTo.setAttribute('role', 'region');
 	chart.renderTo.setAttribute(
 		'aria-label',
@@ -809,7 +785,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 					'aria-label',
 					chart.langFormat(
 						'accessibility.rangeSelector' +
-						(i ? 'MaxInput' : 'MinInput'), { chart: chart }
+							(i ? 'MaxInput' : 'MinInput'), { chart: chart }
 					)
 				);
 			}

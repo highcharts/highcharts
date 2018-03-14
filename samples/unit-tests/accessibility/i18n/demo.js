@@ -245,7 +245,7 @@ QUnit.test('Chart lang can be configured', function (assert) {
     assert.strictEqual(chart.renderTo.getAttribute('aria-label'), 'testing',
         'Container label configured');
 
-    assert.ok(chart.screenReaderRegion.hiddenSection.innerHTML.indexOf(
+    assert.ok(chart.screenReaderRegion.innerHTML.indexOf(
         '<h4>testing2</h4><div>testing3</div>'
     ) > 0);
 });

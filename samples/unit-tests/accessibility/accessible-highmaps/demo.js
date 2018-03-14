@@ -11,12 +11,7 @@ QUnit.test('Basic map', function (assert) {
         }]
     });
 
-    assert.ok(
-        chart.screenReaderRegion &&
-        chart.screenReaderRegion.hiddenSection &&
-        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
-        'There be screen reader region'
-    );
+    assert.ok(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be screen reader region');
 });
 
 QUnit.test('Map with series info', function (assert) {
@@ -39,12 +34,7 @@ QUnit.test('Map with series info', function (assert) {
         'There be ARIA on series'
     );
 
-    assert.ok(
-        chart.screenReaderRegion &&
-        chart.screenReaderRegion.hiddenSection &&
-        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
-        'There be screen reader region'
-    );
+    assert.ok(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be screen reader region');
 });
 
 QUnit.test('Map with point info', function (assert) {

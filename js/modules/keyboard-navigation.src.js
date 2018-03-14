@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -43,17 +43,17 @@ H.extend(H.SVGElement.prototype, {
 			bb.height + 2 * pad,
 			style && style.borderRadius
 		)
-			.addClass('highcharts-focus-border')
-			/*= if (build.classic) { =*/
-			.attr({
-				stroke: style && style.stroke,
-				'stroke-width': style && style.strokeWidth
-			})
-			/*= } =*/
-			.attr({
-				zIndex: 99
-			})
-			.add(this.parentGroup);
+		.addClass('highcharts-focus-border')
+		/*= if (build.classic) { =*/
+		.attr({
+			stroke: style && style.stroke,
+			'stroke-width': style && style.strokeWidth
+		})
+		/*= } =*/
+		.attr({
+			zIndex: 99
+		})
+        .add(this.parentGroup);
 	},
 
 	removeFocusBorder: function () {
@@ -277,7 +277,7 @@ KeyboardNavigationModule.prototype = {
 				handled = codeSet[1].call(navModule, keyCode, e) === false ?
 					// If explicitly returning false, we haven't handled it
 					false :
-					true;
+					true; 
 			}
 		});
 		// Default tab handler, move to next/prev module
@@ -299,7 +299,7 @@ KeyboardNavigationModule.prototype = {
 		var newModule = chart.keyboardNavigationModules[
 			chart.keyboardNavigationModuleIndex
 		];
-
+		
 		// Remove existing focus border if any
 		if (chart.focusElement) {
 			chart.focusElement.removeFocusBorder();
@@ -373,9 +373,9 @@ function getClosestPoint(point, series, xWeight, yWeight) {
 			continue;
 		}
 		distance = (point.plotX - dPoint.plotX) *
-			(point.plotX - dPoint.plotX) * (xWeight || 1) +
-			(point.plotY - dPoint.plotY) *
-			(point.plotY - dPoint.plotY) * (yWeight || 1);
+				(point.plotX - dPoint.plotX) * (xWeight || 1) +
+				(point.plotY - dPoint.plotY) *
+				(point.plotY - dPoint.plotY) * (yWeight || 1);
 		if (distance < minDistance) {
 			minDistance = distance;
 			minIx = i;
@@ -410,11 +410,11 @@ H.Axis.prototype.panStep = function (direction, granularity) {
 // svgElement and sets the focus to focusElement.
 H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
 	var focusBorderOptions = this.options.accessibility
-		.keyboardNavigation.focusBorder,
+				.keyboardNavigation.focusBorder,
 		browserFocusElement = focusElement || svgElement;
 	// Set browser focus if possible
 	if (
-		browserFocusElement.element &&
+		browserFocusElement.element && 
 		browserFocusElement.element.focus
 	) {
 		browserFocusElement.element.focus();
@@ -473,8 +473,8 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		curPointIndex = curPoint && curPoint.index || 0,
 		curPoints = curPoint && curPoint.series.points,
 		lastSeries = chart.series && chart.series[chart.series.length - 1],
-		lastPoint = lastSeries && lastSeries.points &&
-			lastSeries.points[lastSeries.points.length - 1],
+		lastPoint = lastSeries && lastSeries.points && 
+					lastSeries.points[lastSeries.points.length - 1],
 		newSeries,
 		newPoint;
 
@@ -503,9 +503,9 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		// Grab next/prev point & series
 		newSeries = series[curPoint.series.index + (next ? 1 : -1)];
 		newPoint = curPoints[curPointIndex + (next ? 1 : -1)] ||
-			// Done with this series, try next one
-			newSeries &&
-			newSeries.points[next ? 0 : newSeries.points.length - 1];
+					// Done with this series, try next one
+					newSeries &&
+					newSeries.points[next ? 0 : newSeries.points.length - 1];
 
 		// If there is no adjacent point, we return false
 		if (!newPoint) {
@@ -558,7 +558,7 @@ H.Chart.prototype.highlightAdjacentSeries = function (down) {
 		curPoint = chart.highlightedPoint,
 		lastSeries = chart.series && chart.series[chart.series.length - 1],
 		lastPoint = lastSeries && lastSeries.points &&
-			lastSeries.points[lastSeries.points.length - 1];
+					lastSeries.points[lastSeries.points.length - 1];
 
 	// If no point is highlighted, highlight the first/last point
 	if (!chart.highlightedPoint) {
@@ -613,13 +613,13 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
 	}
 	each(this.series, function (series) {
 		each(series.points, function (point) {
-			if (point.plotY === undefined || point.plotX === undefined ||
+			if (point.plotY === undefined || point.plotX === undefined || 
 				point === curPoint) {
 				return;
 			}
 			var yDistance = point.plotY - curPoint.plotY,
 				width = Math.abs(point.plotX - curPoint.plotX),
-				distance = Math.abs(yDistance) * Math.abs(yDistance) +
+				distance = Math.abs(yDistance) * Math.abs(yDistance) + 
 					width * width * 4; // Weigh horizontal distance highly
 
 			// Reverse distance number if axis is reversed
@@ -667,7 +667,7 @@ H.Chart.prototype.hideExportMenu = function () {
 			exportList[this.highlightedExportItem].onmouseout
 		) {
 			exportList[this.highlightedExportItem].onmouseout();
-		}
+		}	
 		this.highlightedExportItem = 0;
 		if (hasSVGFocusSupport) {
 			// Only focus if we can set focus back to the elements after 
@@ -681,10 +681,10 @@ H.Chart.prototype.hideExportMenu = function () {
 // Highlight export menu item by index
 H.Chart.prototype.highlightExportItem = function (ix) {
 	var listItem = this.exportDivElements && this.exportDivElements[ix],
-		curHighlighted =
+		curHighlighted = 
 			this.exportDivElements &&
 			this.exportDivElements[this.highlightedExportItem];
-
+		
 	if (
 		listItem &&
 		listItem.tagName === 'DIV' &&
@@ -771,7 +771,7 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
 
 // Add keyboard navigation handling modules to chart
 H.Chart.prototype.addKeyboardNavigationModules = function () {
-	var chart = this;
+	var chart = this;	
 
 	function navModuleFactory(id, keyMap, options) {
 		return new KeyboardNavigationModule(chart, merge({
@@ -811,9 +811,9 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 				}
 				// Normal mode, move between series
 				var highlightMethod = chart.highlightedPoint &&
-					chart.highlightedPoint.series.keyboardMoveVertical ?
-					'highlightAdjacentPointVertical' :
-					'highlightAdjacentSeries';
+						chart.highlightedPoint.series.keyboardMoveVertical ?
+						'highlightAdjacentPointVertical' :
+						'highlightAdjacentSeries';
 				chart[highlightMethod](down);
 				return true;
 			}],
@@ -957,7 +957,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 				) { // trying to go somewhere we can't?
 					chart.mapZoom(); // Reset zoom
 					// Nowhere to go, go to prev/next module
-					return this.move(e.shiftKey ? -1 : 1);
+					return this.move(e.shiftKey ? -1 : 1); 
 				}
 				chart.focusedMapNavButtonIx += e.shiftKey ? -1 : 1;
 				button = chart.mapNavButtons[chart.focusedMapNavButtonIx];
@@ -1049,7 +1049,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 						'aria-label',
 						chart.langFormat(
 							'accessibility.rangeSelectorButton',
-							{
+							{ 
 								chart: chart,
 								buttonText: button.text && button.text.textStr
 							}
@@ -1069,10 +1069,10 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 			[[9, 38, 40], function (keyCode, e) {
 				var direction =
 					(keyCode === 9 && e.shiftKey || keyCode === 38) ? -1 : 1,
-
+					
 					newIx = chart.highlightedInputRangeIx =
 						chart.highlightedInputRangeIx + direction;
-
+				
 				// Try to highlight next/prev item in list.
 				if (newIx > 1 || newIx < 0) { // Out of range
 					return this.move(direction);
@@ -1135,7 +1135,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					chart.legend.display &&
 					!(chart.colorAxis && chart.colorAxis.length) &&
 					(chart.options.legend &&
-					chart.options.legend.keyboardNavigation &&
+					chart.options.legend.keyboardNavigation && 
 					chart.options.legend.keyboardNavigation.enabled) !== false;
 			},
 
@@ -1148,7 +1148,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 						'aria-label',
 						chart.langFormat(
 							'accessibility.legendItem',
-							{
+							{ 
 								chart: chart,
 								itemName: stripTags(item.name)
 							}
@@ -1187,21 +1187,11 @@ H.Chart.prototype.addExitAnchor = function () {
 	});
 
 	chart.renderTo.appendChild(chart.tabExitAnchor);
-
-	H.addEvent(chart, 'destroy', function () {
-		if (this.tabExitAnchor) {
-			if (this.tabExitAnchor.parentNode) {
-				this.tabExitAnchor.parentNode.removeChild(this.tabExitAnchor);
-			}
-			delete this.tabExitAnchor;
-		}
-	});
-
-	return addEvent(chart.tabExitAnchor, 'focus',
-		function (ev) {
+	return addEvent(chart.tabExitAnchor, 'focus', 
+		function (ev) {		
 			var e = ev || win.event,
 				curModule;
-
+			
 			// If focusing and we are exiting, do nothing once.
 			if (!chart.exiting) {
 
@@ -1242,7 +1232,7 @@ H.Chart.prototype.resetKeyboardNavigation = function () {
 		curMod = (
 			chart.keyboardNavigationModules &&
 			chart.keyboardNavigationModules[
-			chart.keyboardNavigationModuleIndex || 0
+				chart.keyboardNavigationModuleIndex || 0
 			]
 		);
 	if (curMod && curMod.terminate) {
@@ -1277,7 +1267,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
 		// Test if we have focus support for SVG elements
 		hasSVGFocusSupport = !!chart.renderTo
-			.getElementsByTagName('g')[0].focus;
+								.getElementsByTagName('g')[0].focus;
 
 		// Init nav modules. We start at the first module, and as the user
 		// navigates through the chart the index will increase to use different
@@ -1339,6 +1329,6 @@ H.Chart.prototype.callbacks.push(function (chart) {
 			if (chart.unbindBlurHandler) {
 				chart.unbindBlurHandler();
 			}
-		});
+		});		
 	}
 });
