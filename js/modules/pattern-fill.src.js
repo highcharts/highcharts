@@ -66,8 +66,13 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
 		return;
 	}
 
-	var bBox = this.graphic && this.graphic.getBBox(true) || {},
-		shapeArgs = this.shapeArgs;		
+	var bBox = this.graphic && (
+			this.graphic.getBBox &&
+			this.graphic.getBBox(true) ||
+			this.graphic.element &&
+			this.graphic.element.getBBox()
+		) || {},
+		shapeArgs = this.shapeArgs;
 
 	// Prefer using shapeArgs, as it is animation agnostic
 	if (shapeArgs) {
@@ -199,7 +204,6 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
 		color = options.color || '#343434',
 		id = options.id,
 		ren = this,
-		img,
 		rect = function (fill) {
 			ren.rect(0, 0, width, height)
 				.attr({
@@ -255,19 +259,17 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
 
 	// Image pattern
 	} else if (options.image) {
-		img = this.image(
-			options.image, 0, 0, width, height
-		).attr({
-			opacity: animate ? 0 : 1
-		}).add(pattern);
-		H.addEvent(img.element, 'load', function () {
-			img[
-				animate ?
-				'animate' :
-				'attr'
-			]({ 'opacity': 1 }, animate ? animate : 1);
-			H.removeEvent(img.element, 'load');
-		});
+		if (animate) {
+			this.image(
+				options.image, 0, 0, width, height, function () {
+					// Onload
+					this.animate({ opacity: 1 }, animate);
+					H.removeEvent(this.element, 'load');
+				}
+			).attr({ opacity: 0 }).add(pattern);
+		} else {
+			this.image(options.image, 0, 0, width, height).add(pattern);
+		}
 	}
 
 	if (options.opacity !== undefined) {
@@ -400,7 +402,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
 		// and running the algorithm again.
 		if (pattern._width === 'defer' || pattern._height === 'defer') {
 			H.Point.prototype.calculatePatternDimensions.call(
-				{ graphic: element }, pattern
+				{ graphic: { element: element } }, pattern
 			);
 		}
 

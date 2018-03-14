@@ -362,7 +362,7 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
 
     assert.strictEqual(
         customPattern.getAttribute('height'),
-        '' + Math.round(finlandPoint.graphic.element.getBBox().height),
+        '' + Math.ceil(finlandPoint.graphic.element.getBBox().height),
         'Height of point pattern should be autocomputed.'
     );
 
