@@ -420,7 +420,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
 
 		// Add it. This function does nothing if an element with this ID
 		// already exists.
-		this.addPattern(pattern, H.animObject(H.pick(
+		this.addPattern(pattern, !this.forExport && H.animObject(H.pick(
 			pattern.animation,
 			this.globalAnimation,
 			{ duration: 100 }
