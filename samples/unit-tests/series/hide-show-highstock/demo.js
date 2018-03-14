@@ -1,18 +1,27 @@
+
 QUnit.test('Show-hide series', function (assert) {
 
-    var chart = Highcharts.charts[0],
+    var chart =  Highcharts.stockChart('container',
+        {
+            rangeSelector: {
+                selected: 1
+            },
+            series: [{
+                name: 'USD to EUR',
+                data: usdeur
+            }]
+        }),
         series = chart.series[0];
 
     assert.strictEqual(
         series.group.element.getAttribute('visibility'),
         null,
-        'Series visible, visibility attribute not set'
+        'Series should be visible and visibility attribute should not be set'
     );
-
     assert.strictEqual(
         series.yAxis.hasData(),
         true,
-        'Axis visible'
+        'Series yAxis should be visible'
     );
 
     // Hide series
@@ -20,12 +29,12 @@ QUnit.test('Show-hide series', function (assert) {
     assert.strictEqual(
         series.group.attr('visibility'),
         'hidden',
-        'Series hidden'
+        'Series group should be hidden'
     );
     assert.strictEqual(
         series.yAxis.hasData(),
         false,
-        'Axis hidden'
+        'Series yAxis should be hidden'
     );
 
     // Show series
@@ -33,12 +42,12 @@ QUnit.test('Show-hide series', function (assert) {
     assert.strictEqual(
         series.group.element.getAttribute('visibility'),
         null,
-        'Series visible, no visibility attribute means inherited'
+        'Series should be visible and visibility attribute should be inherited'
     );
     assert.strictEqual(
         series.yAxis.hasData(),
         true,
-        'Axis visible'
+        'Series yAxis should be visible'
     );
 
 });
