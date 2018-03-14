@@ -420,6 +420,8 @@ Highcharts.ajax = function (attr) {
  * Will be fetched when the chart is created using Ajax.
  *
  * @type {String}
+ * @sample highcharts/data/livedata-csv
+ *         CSV with live polling
  * @apioption data.csvURL
  */
 
@@ -428,6 +430,8 @@ Highcharts.ajax = function (attr) {
  * Will be fetched when the chart is created using Ajax.
  *
  * @type {String}
+ * @sample highcharts/data/livedata-rows
+ *         Rows with live polling
  * @apioption data.rowsURL
  */
 
@@ -436,6 +440,8 @@ Highcharts.ajax = function (attr) {
  * Will be fetched when the chart is created using Ajax.
  *
  * @type {String}
+ * @sample highcharts/data/livedata-columns
+ *         Columns with live polling
  * @apioption data.columnsURL
  */
 
@@ -452,6 +458,8 @@ Highcharts.ajax = function (attr) {
  *
  * @default 1
  * @type {Number}
+ * @sample highcharts/demo/live-data
+ *         Live data with user set refresh rate
  * @apioption data.dataRefreshRate
  */
 
@@ -461,6 +469,8 @@ Highcharts.ajax = function (attr) {
  *
  * Only works when either 
  *
+ * @sample highcharts/demo/live-data
+ *         Live data
  * @sample highcharts/data/livedata-spreadsheet
  *         Google Spreadsheet with polling
  *
