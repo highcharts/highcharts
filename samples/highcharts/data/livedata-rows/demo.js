@@ -13,6 +13,7 @@ Highcharts.chart('container', {
 
     data: {
         rowsURL: 'https://demo-live-data.highcharts.com/time-rows.json',
+        firstRowAsNames: false,
         enablePolling: true
     }
 });

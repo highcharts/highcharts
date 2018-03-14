@@ -14,6 +14,7 @@ Highcharts.chart('container', {
 
     data: {
         columnsURL: 'https://demo-live-data.highcharts.com/time-cols.json',
+        firstRowAsNames: false,
         enablePolling: true
     }
 });
