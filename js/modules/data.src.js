@@ -20,6 +20,7 @@ var addEvent = Highcharts.addEvent,
 	pick = Highcharts.pick,
 	inArray = Highcharts.inArray,
 	isNumber = Highcharts.isNumber,
+	merge = Highcharts.merge,
 	splat = Highcharts.splat,
 	fireEvent = Highcharts.fireEvent,
 	some,
@@ -62,7 +63,7 @@ if (!Array.prototype.some) {
  *
  */
 Highcharts.ajax = function (attr) {
-	var options = Highcharts.merge(true, {
+	var options = merge(true, {
 			url: false,
 			type: 'GET',
 			dataType: 'json',
@@ -498,14 +499,18 @@ Highcharts.extend(Data.prototype, {
 		var decimalPoint = options.decimalPoint,
 			hasData;
 
-		this.chart = chart;
+		if (chartOptions) {
+			this.chartOptions = chartOptions;
+		}
+		if (chart) {
+			this.chart = chart;
+		}
 		
 		if (decimalPoint !== '.' && decimalPoint !== ',') {
 			decimalPoint = undefined;
 		}
 		
 		this.options = options;
-		this.chartOptions = chartOptions;
 		this.columns = (
 			options.columns ||
 			this.rowsToColumns(options.rows) ||
@@ -1235,7 +1240,7 @@ Highcharts.extend(Data.prototype, {
 			currentRetries = 0,
 			pollingEnabled = options.enablePolling,
 			updateIntervalMs = (options.dataRefreshRate || 2) * 1000,
-			originalOptions = Highcharts.merge(options);
+			originalOptions = merge(options);
 
 		if (!options || 
 			(!options.csvURL && !options.rowsURL && !options.columnsURL)
@@ -2006,7 +2011,8 @@ Highcharts.extend(Data.prototype, {
 				chart.update(dataOptions, redraw, true);
 			};
 			// Apply it
-			Highcharts.data(options);
+			merge(true, this.options, options);
+			this.init(this.options);
 		}
 	}
 });
@@ -2045,7 +2051,7 @@ addEvent(
 							);
 							while (i--) {
 								series = userOptions.series[i] || {};
-								userOptions.series[i] = Highcharts.merge(
+								userOptions.series[i] = merge(
 									series,
 									dataOptions && dataOptions.series ?
 										dataOptions.series[i] :
@@ -2058,7 +2064,7 @@ addEvent(
 					}
 
 					// Do the merge
-					userOptions = Highcharts.merge(dataOptions, userOptions);
+					userOptions = merge(dataOptions, userOptions);
 
 					// Run chart.init again
 					chart.init(userOptions, callback);
