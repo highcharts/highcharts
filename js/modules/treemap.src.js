@@ -1011,13 +1011,16 @@ seriesType('treemap', 'scatter', {
 	translate: function () {
 		var series = this,
 			options = series.options,
-			rootId = series.rootNode =
-				pick(series.rootNode, series.options.rootId, ''),
+			rootId = pick(series.rootNode, options.rootId, ''),
 			rootNode,
 			pointValues,
 			seriesArea,
 			tree,
 			val;
+
+		// Set rootId on series.userOptions to pick it up in exporting.
+		// Set rootId on series to pick it up on next translate.
+		series.userOptions.rootId = series.rootNode = rootId;
 
 		// Call prototype function
 		Series.prototype.translate.call(series);
