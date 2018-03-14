@@ -512,7 +512,11 @@ Highcharts.extend(Data.prototype, {
 			[]
 		);
 		
-		this.firstRowAsNames = pick(options.firstRowAsNames, true);
+		this.firstRowAsNames = pick(
+			options.firstRowAsNames, 
+			this.firstRowAsNames, 
+			true
+		);
 
 		this.decimalRegex = (
 			decimalPoint &&
@@ -1227,6 +1231,8 @@ Highcharts.extend(Data.prototype, {
 	fetchLiveData: function () {
 		var chart = this.chart,
 			options = this.options,
+			maxRetries = 3,
+			currentRetries = 0,
 			pollingEnabled = options.enablePolling,
 			updateIntervalMs = (options.dataRefreshRate || 2) * 1000,
 			originalOptions = Highcharts.merge(options);
@@ -1262,6 +1268,15 @@ Highcharts.extend(Data.prototype, {
 					chart.liveDataURL = url;	
 				}
 
+				function poll() {
+					// Poll
+					if (pollingEnabled && chart.liveDataURL === url) {
+						// We need to stop doing this if the URL has changed
+						chart.liveDataTimeout = 
+							setTimeout(performFetch, updateIntervalMs);
+					}
+				}
+
 				Highcharts.ajax({
 					url: url,
 					dataType: tp || 'json',
@@ -1269,16 +1284,15 @@ Highcharts.extend(Data.prototype, {
 						if (chart && chart.series) {
 							done(res);
 						}
-
-						// Poll
-						if (pollingEnabled && chart.liveDataURL === url) {
-							// We need to stop doing this if the URL has changed
-							chart.liveDataTimeout = 
-								setTimeout(performFetch, updateIntervalMs);
-						}
+						
+						poll();
 
 					},
 					error: function (xhr, text) {
+						if (++currentRetries < maxRetries) {
+							poll();
+						}
+
 						return options.error && options.error(text, xhr);
 					}
 				});
@@ -1832,8 +1846,8 @@ Highcharts.extend(Data.prototype, {
 		if (options.complete || options.afterComplete) {
 
 			// Get the names and shift the top row
-			for (i = 0; i < columns.length; i++) {
-				if (this.firstRowAsNames) {
+			if (this.firstRowAsNames) {
+				for (i = 0; i < columns.length; i++) {
 					columns[i].name = columns[i].shift();
 				}
 			}
