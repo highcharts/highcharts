@@ -15,7 +15,12 @@ QUnit.test('Accessibility disabled', function (assert) {
         'There be no ARIA on point'
     );
 
-    assert.notOk(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be no screen reader region');
+    assert.notOk(
+        chart.screenReaderRegion &&
+        chart.screenReaderRegion.hiddenSection &&
+        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
+        'There be no screen reader region'
+    );
 });
 
 QUnit.test('No data', function (assert) {
@@ -25,13 +30,17 @@ QUnit.test('No data', function (assert) {
         series: [{}]
     });
     assert.ok(
-        chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'),
+        chart.screenReaderRegion &&
+        chart.screenReaderRegion.hiddenSection &&
+        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
         'There be screen reader region, empty series'
     );
 
     chart = Highcharts.chart('container', {});
     assert.ok(
-        chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'),
+        chart.screenReaderRegion &&
+        chart.screenReaderRegion.hiddenSection &&
+        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
         'There be screen reader region, no series option'
     );
 
@@ -39,7 +48,9 @@ QUnit.test('No data', function (assert) {
         series: []
     });
     assert.ok(
-        chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'),
+        chart.screenReaderRegion &&
+        chart.screenReaderRegion.hiddenSection &&
+        chart.screenReaderRegion.hiddenSection.getAttribute('aria-label'),
         'There be screen reader region, no series items'
     );
 });
@@ -125,5 +136,10 @@ QUnit.test('Chart description', function (assert) {
         }]
     });
 
-    assert.ok(chart.screenReaderRegion.innerHTML.indexOf('Description: Yo.') > -1, 'Chart description included in screen reader region');
+    assert.ok(
+        chart.screenReaderRegion &&
+        chart.screenReaderRegion.hiddenSection &&
+        chart.screenReaderRegion.hiddenSection.innerHTML.indexOf('Description: Yo.') > -1,
+        'Chart description included in screen reader region'
+    );
 });
