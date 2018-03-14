@@ -423,6 +423,8 @@ Highcharts.ajax = function (attr) {
  * @type {String}
  * @sample highcharts/data/livedata-csv
  *         CSV with live polling
+ * @sample highcharts/data/livedata-static-x
+ *		   CSV with live polling and static x-values
  * @apioption data.csvURL
  */
 
@@ -475,8 +477,6 @@ Highcharts.ajax = function (attr) {
  *
  * @sample highcharts/demo/live-data
  *         Live data
- * @sample highcharts/data/livedata-spreadsheet
- *         Google Spreadsheet with polling
  *
  * @type {Bool}
  * @default false
