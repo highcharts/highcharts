@@ -1,4 +1,11 @@
 
+// We use a darker border for some states, with a smaller border width, but
+// individual border width is not supported for MS browsers, so we use a 1px
+// border for all points on MS browsers.
+var isMSBrowser = /Edge\/|Trident\/|MSIE /.test(navigator.userAgent),
+    darkBorderColor = '#ccc';
+
+
 // Define the data, linking flags to each point's color.pattern.image. We
 // specify a smaller border width for the smaller states. For some states we
 // also specify an explicit x/y offset for the images, where the default is
@@ -10,13 +17,13 @@ var data = [
     ['Alaska', 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Flag_of_Alaska.svg', 1, 10, -10],
     ['Arizona', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Flag_of_Arizona.svg'],
     ['Arkansas', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Flag_of_Arkansas.svg'],
-    ['California', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Flag_of_California.svg/640px-Flag_of_California.svg.png', 1, null, null, '#ddd'],
+    ['California', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Flag_of_California.svg/640px-Flag_of_California.svg.png', 1, null, null, darkBorderColor],
     ['Colorado', 'https://upload.wikimedia.org/wikipedia/commons/4/46/Flag_of_Colorado.svg'],
     ['Connecticut', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Flag_of_Connecticut.svg/621px-Flag_of_Connecticut.svg.png', 1],
     ['Delaware', 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Flag_of_Delaware.svg/640px-Flag_of_Delaware.svg.png', 1],
-    ['Florida', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Flag_of_Florida.svg/640px-Flag_of_Florida.svg.png', 1, null, null, '#ddd'],
+    ['Florida', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Flag_of_Florida.svg/640px-Flag_of_Florida.svg.png', 1, null, null, darkBorderColor],
     ['Georgia', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Flag_of_Georgia_%28U.S._state%29.svg/640px-Flag_of_Georgia_%28U.S._state%29.svg.png'],
-    ['Hawaii', 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Flag_of_Hawaii.svg', 1, null, null, '#aaa'],
+    ['Hawaii', 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Flag_of_Hawaii.svg', 1, null, null, darkBorderColor],
     ['Idaho', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_Idaho.svg/609px-Flag_of_Idaho.svg.png'],
     ['Illinois', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Flag_of_Illinois.svg/800px-Flag_of_Illinois.svg.png'],
     ['Indiana', 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Flag_of_Indiana.svg'],
@@ -25,8 +32,8 @@ var data = [
     ['Kentucky', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Flag_of_Kentucky.svg/640px-Flag_of_Kentucky.svg.png'],
     ['Louisiana', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Flag_of_Louisiana.svg/640px-Flag_of_Louisiana.svg.png', 3],
     ['Maine', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Flag_of_Maine.svg/640px-Flag_of_Maine.svg.png', 2],
-    ['Maryland', 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Flag_of_Maryland.svg', 1, null, null, '#aaa'],
-    ['Massachusetts', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Flag_of_Massachusetts.svg/800px-Flag_of_Massachusetts.svg.png', 1, null, null, '#eee'],
+    ['Maryland', 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Flag_of_Maryland.svg', 1, null, null, darkBorderColor],
+    ['Massachusetts', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Flag_of_Massachusetts.svg/800px-Flag_of_Massachusetts.svg.png', 1, null, null, darkBorderColor],
     ['Michigan', 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Flag_of_Michigan.svg/640px-Flag_of_Michigan.svg.png', 2],
     ['Minnesota', 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Flag_of_Minnesota.svg/640px-Flag_of_Minnesota.svg.png'],
     ['Mississippi', 'https://upload.wikimedia.org/wikipedia/commons/4/42/Flag_of_Mississippi.svg'],
@@ -107,7 +114,7 @@ Highcharts.mapChart('container', {
         ],
         joinBy: 'name',
         data: data,
-        borderWidth: 5,
+        borderWidth: isMSBrowser ? 1 : 5,
         borderColor: '#fff',
         color: {
             pattern: {

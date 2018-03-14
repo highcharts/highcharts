@@ -3211,6 +3211,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 *    image file width.
 	 * @param {number} [height] The image height. If omitted it defaults to the
 	 *    image file height.
+	 * @param {function} [onload] Event handler for image load.
 	 * @returns {SVGElement} The generated wrapper element.
 	 *
 	 * @sample highcharts/members/renderer-image-on-chart/
@@ -3218,11 +3219,25 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 * @sample highcharts/members/renderer-image/
 	 *         Add an image independent of a chart
 	 */
-	image: function (src, x, y, width, height) {
+	image: function (src, x, y, width, height, onload) {
 		var attribs = {
 				preserveAspectRatio: 'none'
 			},
-			elemWrapper;
+			elemWrapper,
+			dummy,
+			setSVGImageSource = function (el, src) {
+				// Set the href in the xlink namespace
+				if (el.setAttributeNS) {
+					el.setAttributeNS(
+						'http://www.w3.org/1999/xlink', 'href', src
+					);
+				} else {
+					// could be exporting in IE
+					// using href throws "not supported" in ie7 and under,
+					// requries regex shim to fix later
+					el.setAttribute('hc-svg-href', src);
+				}
+			};
 
 		// optional properties
 		if (arguments.length > 1) {
@@ -3236,16 +3251,25 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		elemWrapper = this.createElement('image').attr(attribs);
 
-		// set the href in the xlink namespace
-		if (elemWrapper.element.setAttributeNS) {
-			elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink',
-				'href', src);
+		// Add load event if supplied
+		if (onload) {
+			// We have to use a dummy HTML image since IE support for SVG image
+			// load events is very buggy. First set a transparent src, wait for
+			// dummy to load, and then add the real src to the SVG image.
+			setSVGImageSource(
+				elemWrapper.element,
+				'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' /* eslint-disable-line */
+			);
+			dummy = new win.Image();
+			addEvent(dummy, 'load', function (e) {
+				setSVGImageSource(elemWrapper.element, src);
+				onload.call(elemWrapper, e);
+			});
+			dummy.src = src;
 		} else {
-			// could be exporting in IE
-			// using href throws "not supported" in ie7 and under, requries
-			// regex shim to fix later
-			elemWrapper.element.setAttribute('hc-svg-href', src);
+			setSVGImageSource(elemWrapper.element, src);
 		}
+
 		return elemWrapper;
 	},
 
