@@ -1,8 +1,7 @@
 
 Highcharts.chart('container', {
     chart: {
-        type: 'spline',
-        height: 800
+        type: 'spline'
     },
     title: {
         text: 'Live Data (CSV)'
@@ -13,7 +12,7 @@ Highcharts.chart('container', {
     },
 
     data: {
-        csvURL: 'https://demo-live-data.highcharts.com/sine-data.csv',
+        csvURL: 'https://demo-live-data.highcharts.com/time-data.csv',
         enablePolling: true
     }
 });

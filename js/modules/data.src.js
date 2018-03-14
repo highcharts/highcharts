@@ -273,7 +273,10 @@ Highcharts.ajax = function (attr) {
  * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
  *
  * @type {String}
- * @sample {highcharts} highcharts/data/google-spreadsheet/ Load a Google Spreadsheet
+ * @sample {highcharts} highcharts/data/google-spreadsheet/
+ *         Load a Google Spreadsheet
+ * @sample highcharts/data/livedata-spreadsheet
+ *         Live data with polling
  * @since 4.0
  * @product highcharts
  * @apioption data.googleSpreadsheetKey
@@ -457,6 +460,9 @@ Highcharts.ajax = function (attr) {
  * setting [data.dataRefreshRate](data.dataRefreshRate)).
  *
  * Only works when either 
+ *
+ * @sample highcharts/data/livedata-spreadsheet
+ *         Google Spreadsheet with polling
  *
  * @type {Bool}
  * @default false

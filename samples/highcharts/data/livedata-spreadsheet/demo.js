@@ -1,8 +1,7 @@
 
 Highcharts.chart('container', {
     chart: {
-        type: 'spline',
-        height: 800
+        type: 'spline'
     },
     title: {
         text: 'Live Data (Google Spreadsheets)'
