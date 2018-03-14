@@ -447,8 +447,9 @@ Highcharts.ajax = function (attr) {
 
 /**
  * Sets the refresh rate for data polling when importing remote dataset by 
- * setting [data.csvURL](data.csvURL), [data.rowsURL](data.rowsURL), or 
- * [data.columnsURL](data.columnsURL).
+ * setting [data.csvURL](data.csvURL), [data.rowsURL](data.rowsURL), 
+ * [data.columnsURL](data.columnsURL), or 
+ * [data.googleSpreadsheetKey](data.googleSpreadsheetKey).
  *
  * Note that polling must be enabled by setting 
  * [data.enablePolling](data.enablePolling) to true.
@@ -467,7 +468,9 @@ Highcharts.ajax = function (attr) {
  * Enables automatic refetching of remote datasets every _n_ seconds (defined by
  * setting [data.dataRefreshRate](data.dataRefreshRate)).
  *
- * Only works when either 
+ * Only works when either [data.csvURL](data.csvURL), 
+ * [data.rowsURL](data.rowsURL), [data.columnsURL](data.columnsURL), or 
+ * [data.googleSpreadsheetKey](data.googleSpreadsheetKey).
  *
  * @sample highcharts/demo/live-data
  *         Live data
