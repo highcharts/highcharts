@@ -417,6 +417,10 @@ addEvent(H.Chart, 'afterSetChartSize', function () {
 		if (options3d.fitToPlot === true) {
 			chart.scale3d = getScale(chart, options3d.depth);
 		}
+		// Recalculate the 3d frame with every call of setChartSize,
+		// instead of doing it after every redraw(). It avoids ticks
+		// and axis title outside of chart.
+		chart.frame3d = this.get3dFrame(); // #7942
 	}
 });
 
@@ -424,7 +428,6 @@ addEvent(Chart, 'beforeRedraw', function () {
 	if (this.is3d()) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
-		this.frame3d = this.get3dFrame();
 	}
 });
 
