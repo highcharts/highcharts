@@ -439,6 +439,30 @@ QUnit.test('Series.update types, new type lost after second update (#2322)', fun
 
 });
 
+// Highcharts 4.1.10, Issue #4801:
+// setting 'visible' by series.update has no effect
+QUnit.test('Updating series.visible in series.update() should also update visibility. (#4801)', function (assert) {
+
+    var chart = $("#container").highcharts({
+        series: [{
+            data: [29.9, 71.5, 106.4]
+        }, {
+            data: [144.0, 176.0, 135.6],
+            visible: false
+        }]
+    }).highcharts();
+
+    chart.series[1].update({
+        visible: true
+    });
+
+    assert.ok(
+        chart.series[1].group.attr("visibility") !== "hidden",
+        'Series should be visible'
+    );
+
+});
+
 QUnit.test('Series.update zIndex (#3380)', function (assert) {
 
     var chart = Highcharts.chart('container', {
