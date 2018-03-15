@@ -194,11 +194,6 @@ if (seriesTypes.bubble) {
  * is not specified, it is inherited from [chart.type](#chart.type).
  * 
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * mapbubble](#plotOptions.mapbubble).
- * 
  * @type {Object}
  * @extends series,plotOptions.mapbubble
  * @excluding dataParser,dataURL

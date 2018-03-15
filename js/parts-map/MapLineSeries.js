@@ -73,11 +73,6 @@ seriesType('mapline', 'map', {
  * A `mapline` series. If the [type](#series.mapline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * mapline](#plotOptions.mapline).
- * 
  * @type {Object}
  * @extends series,plotOptions.mapline
  * @excluding dataParser,dataURL,marker

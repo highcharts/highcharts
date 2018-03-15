@@ -129,11 +129,6 @@ seriesType('roc', 'sma',
  *
  * This series requires `linkedTo` option to be set.
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to
- * [plotOptions.wma](#plotOptions.wma).
- * 
  * @type {Object}
  * @since 6.0.0
  * @extends series,plotOptions.roc

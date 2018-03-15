@@ -460,11 +460,6 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * An `xrange` series. If the [type](#series.xrange.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to
- * [plotOptions.xrange](#plotOptions.xrange).
- * 
  * @type      {Object}
  * @extends   series,plotOptions.xrange
  * @excluding boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
