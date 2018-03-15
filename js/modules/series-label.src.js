@@ -66,9 +66,13 @@ H.setOptions({
 				enabled: true,
 				/**
 				 * Allow labels to be placed distant to the graph if necessary,
-				 * and draw a connector line to the graph.
+				 * and draw a connector line to the graph. Setting this option
+				 * to true may decrease the performance significantly, since the
+				 * algorithm with systematically search for open spaces in the
+				 * while plot area. Visually, it may also result in a more
+				 * cluttered chart, though more of the series will be labeled.
 				 */
-				connectorAllowed: true,
+				connectorAllowed: false,
 				/**
 				 * If the label is closer than this to a neighbour graph, draw a
 				 * connector.
@@ -659,7 +663,7 @@ Chart.prototype.drawSeriesLabels = function () {
 			}
 
 			// Brute force, try all positions on the chart in a 16x16 grid
-			if (!results.length && !onArea) {
+			if (labelOptions.connectorAllowed && !results.length && !onArea) {
 				for (
 					x = paneLeft + paneWidth - bBox.width;
 					x >= paneLeft;
