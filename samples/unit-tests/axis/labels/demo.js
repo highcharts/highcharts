@@ -411,3 +411,28 @@ QUnit.test('Handle overflow in polar charts (#7248)', function (assert) {
     assertInside();
 
 });
+
+// Highcharts 4.1.3, Issue #3891:
+// Axis labels rotation does not work properly
+QUnit.test('Labels text height (#3891)', function (assert) {
+
+    $('#container').highcharts({
+        xAxis: {
+            labels: {
+                rotation: 270
+            },
+            categories: ['January', 'February', 'March']
+        },
+
+        series: [{
+            data: [1, 3, 2]
+        }]
+    });
+
+    assert.equal(
+        $('#container').highcharts().xAxis[0].ticks[0].label.rotation,
+        270,
+        'Rotation set to 270'
+    );
+
+});
