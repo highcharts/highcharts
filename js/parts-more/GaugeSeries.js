@@ -569,11 +569,6 @@ seriesType('gauge', 'line', {
  * A `gauge` series. If the [type](#series.gauge.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to
- * [plotOptions.gauge](#plotOptions.gauge).
- * 
  * @type      {Object}
  * @extends   series,plotOptions.gauge
  * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,

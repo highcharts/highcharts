@@ -272,11 +272,6 @@ seriesType('heatmap', 'scatter', {
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * heatmap](#plotOptions.heatmap).
- * 
  * @type {Object}
  * @extends series,plotOptions.heatmap
  * @excluding dataParser,dataURL,marker,pointRange,stack

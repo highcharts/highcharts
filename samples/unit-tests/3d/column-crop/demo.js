@@ -149,4 +149,37 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
         'DataLabels are hidden outside plotArea with stacking enabled'
     );
 
+    chart.yAxis[0].setExtremes(null, null);
+    chart.series[0].remove();
+
+    chart.update({
+        yAxis: {
+            min: null,
+            max: null
+        },
+        xAxis: {
+            min: null,
+            max: null
+        }
+    });
+
+    var oldTitleX = Number(chart.yAxis[0].axisTitle.element.attributes.x.value);
+    var oldTitleY = Number(chart.yAxis[0].axisTitle.element.attributes.y.value);
+
+    // toggle series visibility
+    chart.series[0].setVisible();
+    chart.series[0].setVisible();
+
+    var newTitleX = Number(chart.yAxis[0].axisTitle.element.attributes.x.value);
+    var newTitleY = Number(chart.yAxis[0].axisTitle.element.attributes.y.value);
+
+    assert.strictEqual(
+    (
+        oldTitleX === newTitleX &&
+        oldTitleY === newTitleY
+    ),
+    true,
+    'yAxis title is on the same position after toggling series visibility'
+    );
+
 });

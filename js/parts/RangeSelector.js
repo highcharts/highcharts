@@ -1392,6 +1392,7 @@ addEvent(Chart, 'update', function (e) {
 
 	this.extraBottomMargin = false;
 	this.extraTopMargin = false;
+	this.isDirtyBox = true; //	#7684 - ignored spacingBottom after update
 
 	if (rangeSelector) {
 
@@ -1407,16 +1408,8 @@ addEvent(Chart, 'update', function (e) {
 				this.extraTopMargin = true;
 			}
 		}
-	}
 
-	// @todo Refactor this. The options shouldn't be mutated, instead the
-	// margins should be handled at run time.
-	H.merge(true, options, {
-		chart: {
-			marginBottom: pick(options.chart && options.chart.marginBottom, chart.margin.bottom),
-			spacingBottom: pick(options.chart && options.chart.spacingBottom, chart.spacing.bottom)
-		}
-	});
+	}
 
 });
 
@@ -1446,7 +1439,6 @@ Chart.prototype.adjustPlotArea = function () {
 		rangeSelectorHeight;
 
 	if (this.rangeSelector) {
-
 		rangeSelectorHeight = rangeSelector.getHeight();
 			
 		if (this.extraTopMargin) {

@@ -196,7 +196,7 @@ module.exports = function (config) {
         frameworks: ['qunit'],
         files: files.concat([
             {
-                pattern: 'utils/samples/*.png', // testimage.png
+                pattern: 'test/*.png', // testimage.png
                 watched: false,
                 included: false,
                 served: true
@@ -209,7 +209,7 @@ module.exports = function (config) {
             },
 
             // Set up
-            'utils/samples/test-controller.js',
+            'test/test-controller.js',
             'test/karma-setup.js'
         ], tests),
 

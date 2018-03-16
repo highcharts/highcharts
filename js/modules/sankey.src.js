@@ -553,11 +553,6 @@ seriesType('sankey', 'column', {
  * A `sankey` series. If the [type](#series.sankey.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to
- * [plotOptions.sankey](#plotOptions.sankey).
- * 
  * @type      {Object}
  * @extends   series,plotOptions.sankey
  * @excluding animationLimit,boostThreshold,borderColor,borderRadius,

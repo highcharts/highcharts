@@ -20,6 +20,7 @@ var addEvent = H.addEvent,
 	pInt = H.pInt,
 	Tick = H.Tick,
 	wrap = H.wrap,
+	correctFloat = H.correctFloat,
 	
 
 	hiddenAxisMixin, // @todo Extract this to a new file
@@ -234,7 +235,8 @@ if (!H.radialAxisExtended) {
 			this.autoConnect = (
 				this.isCircular &&
 				pick(this.userMax, this.options.max) === undefined &&
-				this.endAngleRad - this.startAngleRad === 2 * Math.PI
+				correctFloat(this.endAngleRad - this.startAngleRad) ===
+				correctFloat(2 * Math.PI)
 			);
 			
 			if (this.autoConnect) {

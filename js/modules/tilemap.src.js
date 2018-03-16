@@ -617,11 +617,6 @@ seriesType('tilemap', 'heatmap', {
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * tilemap](#plotOptions.tilemap).
- *
  * @type      {Object}
  * @extends   series,plotOptions.tilemap
  * @excluding allAreas,dataParser,dataURL,joinBy,mapData,marker,pointRange,
