@@ -7,7 +7,7 @@ QUnit.test(
         var done = assert.async();
 
         var url = (location.host === 'localhost:9876') ?
-            'url(base/utils/samples/testimage.png)' : // karma
+            'url(base/test/testimage.png)' : // karma
             'url(testimage.png)'; // utils
 
         var chart = Highcharts.chart('container', {
