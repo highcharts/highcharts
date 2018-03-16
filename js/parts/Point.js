@@ -3,7 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
-    
+	
 'use strict';
 import Highcharts from './Globals.js';
 import './Utilities.js';
@@ -166,6 +166,31 @@ Highcharts.Point.prototype = {
 	},
 
 	/**
+	 * Set a value in an object, on the property defined by key. The key
+	 * supports nested properties using dot notation. The function modifies the
+	 * input object and does not make a copy.
+	 *
+	 * @param  {Object} object The object to set the value on.
+	 * @param  {Mixed} value The value to set.
+	 * @param  {String} key Key to the property to set.
+	 *
+	 * @return {Object} The modified object.
+	 */
+	setNestedProperty: function (object, value, key) {
+		var nestedKeys = key.split('.');
+		H.reduce(nestedKeys, function (result, key, i, arr) {
+			var isLastKey = arr.length - 1 === i;
+			result[key] = (
+				isLastKey ?
+				value :
+				(H.isObject(result[key], true) ? result[key] : {})
+			);
+			return result[key];
+		}, object);
+		return object;
+	},
+
+	/**
 	 * Transform number or array configs into objects. Used internally to unify
 	 * the different configuration formats for points. For example, a simple
 	 * number `10` in a line series will be transformed to `{ y: 10 }`, and an
@@ -203,7 +228,15 @@ Highcharts.Point.prototype = {
 			while (j < valueCount) {
 				// Skip undefined positions for keys
 				if (!keys || options[i] !== undefined) {
-					ret[pointArrayMap[j]] = options[i];
+					if (pointArrayMap[j].indexOf('.') > 0) {
+						// Handle nested keys, e.g. ['color.pattern.image']
+						// Avoid function call unless necessary.
+						H.Point.prototype.setNestedProperty(
+							ret, options[i], pointArrayMap[j]
+						);
+					} else {
+						ret[pointArrayMap[j]] = options[i];
+					}
 				}
 				i++;
 				j++;

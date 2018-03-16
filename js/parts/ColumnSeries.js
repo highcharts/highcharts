@@ -746,15 +746,15 @@ seriesType('column', 'line', {
 		// draw the columns
 		each(series.points, function (point) {
 			var plotY = point.plotY,
-				graphic = point.graphic;
+				graphic = point.graphic,
+				verb = graphic && chart.pointCount < animationLimit ?
+					'animate' : 'attr';
 
 			if (isNumber(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
 				if (graphic) { // update
-					graphic[
-						chart.pointCount < animationLimit ? 'animate' : 'attr'
-					](
+					graphic[verb](
 						merge(shapeArgs)
 					);
 
@@ -773,8 +773,7 @@ seriesType('column', 'line', {
 
 				/*= if (build.classic) { =*/
 				// Presentational
-				graphic
-					.attr(series.pointAttribs(
+				graphic[verb](series.pointAttribs(
 						point,
 						point.selected && 'select'
 					))

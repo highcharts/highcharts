@@ -700,6 +700,37 @@ H.addEvent(Chart, 'beforeShowResetZoom', function () {
 		return false;
 	}
 });
+H.addEvent(Chart, 'render', function setDDPoints() {
+	each(this.xAxis || [], function (axis) {
+		axis.ddPoints = {};
+		each(axis.series, function (series) {
+			var i,
+				xData = series.xData || [],
+				points = series.points,
+				p;
+
+			for (i = 0; i < xData.length; i++) {
+				p = series.options.data[i];
+				
+				// The `drilldown` property can only be set on an array or an 
+				// object
+				if (typeof p !== 'number') {
+
+					// Convert array to object (#8008)
+					p = series.pointClass.prototype.optionsToObject
+						.call({ series: series }, p);
+
+					if (p.drilldown) {
+						if (!axis.ddPoints[xData[i]]) {
+							axis.ddPoints[xData[i]] = [];
+						}
+						axis.ddPoints[xData[i]].push(points ? points[i] : true);
+					}
+				}
+			}
+		});
+	});
+});
 
 
 /**
@@ -984,24 +1015,7 @@ H.Axis.prototype.drilldownCategory = function (x, e) {
  * Return drillable points for this specific X value
  */
 H.Axis.prototype.getDDPoints = function (x) {
-	var ret = [];
-	each(this.series, function (series) {
-		var i,
-			xData = series.xData,
-			points = series.points;
-		
-		for (i = 0; i < xData.length; i++) {
-			if (
-				xData[i] === x &&
-				series.options.data[i] &&
-				series.options.data[i].drilldown
-			) {
-				ret.push(points ? points[i] : true);
-				break;
-			}
-		}
-	});
-	return ret;
+	return this.ddPoints && this.ddPoints[x];
 };
 
 
@@ -1016,7 +1030,7 @@ Tick.prototype.drillable = function () {
 		ddPointsX = isDrillable && axis.getDDPoints(pos);
 
 	if (isDrillable) {
-		if (label && ddPointsX.length) {
+		if (label && ddPointsX && ddPointsX.length) {
 			label.drillable = true;
 
 			/*= if (build.classic) { =*/
