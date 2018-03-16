@@ -1876,7 +1876,7 @@ Navigator.prototype = {
 			range = baseMax - baseMin,
 			stickToMin = navigator.stickToMin,
 			stickToMax = navigator.stickToMax,
-			overscroll = baseXAxis.options.overscroll,
+			overscroll = pick(baseXAxis.options.overscroll, 0),
 			newMax,
 			newMin,
 			navigatorSeries = navigator.series && navigator.series[0],
