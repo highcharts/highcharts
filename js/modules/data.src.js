@@ -421,10 +421,10 @@ Highcharts.ajax = function (attr) {
  * Will be fetched when the chart is created using Ajax.
  *
  * @type {String}
+ * @sample highcharts/data/livedata-columns
+ *		   Categorized bar chart with CSV and live polling
  * @sample highcharts/data/livedata-csv
- *         CSV with live polling
- * @sample highcharts/data/livedata-static-x
- *		   CSV with live polling and static x-values
+ *         Time based line chart with CSV and live polling
  * @apioption data.csvURL
  */
 
@@ -477,6 +477,8 @@ Highcharts.ajax = function (attr) {
  *
  * @sample highcharts/demo/live-data
  *         Live data
+ * @sample highcharts/data/livedata-columns
+ *		   Categorized bar chart with CSV and live polling
  *
  * @type {Bool}
  * @default false
