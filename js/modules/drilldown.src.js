@@ -729,6 +729,10 @@ H.addEvent(Chart, 'render', function setDDPoints() {
 				}
 			}
 		});
+
+		// Add drillability to ticks, and always keep it drillability updated
+		// (#3951)
+		objectEach(axis.ticks, Tick.prototype.drillable);
 	});
 });
 
@@ -1061,11 +1065,6 @@ Tick.prototype.drillable = function () {
 	}
 };
 
-/**
- * Always keep the drillability updated (#3951)
- */
-H.addEvent(Tick, 'afterRender', Tick.prototype.drillable);
-
 
 /**
  * On initialization of each point, identify its label and make it clickable.
@@ -1073,9 +1072,7 @@ H.addEvent(Tick, 'afterRender', Tick.prototype.drillable);
  */
 H.addEvent(H.Point, 'afterInit', function () {
 	var point = this,
-		series = point.series,
-		xAxis = series.xAxis,
-		tick = xAxis && xAxis.ticks[point.x];
+		series = point.series;
 
 	if (point.drilldown) {
 		
@@ -1091,11 +1088,6 @@ H.addEvent(H.Point, 'afterInit', function () {
 			}
 		});
 
-	}
-
-	// Add or remove click handler and style on the tick label
-	if (tick) {
-		tick.drillable();
 	}
 
 	return point;
