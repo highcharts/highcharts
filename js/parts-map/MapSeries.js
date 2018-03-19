@@ -469,8 +469,14 @@ seriesType('map', 'scatter', {
 					}
 					// Run through pointArrayMap and what's left of the point data array in parallel, copying over the values
 					for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
-						if (pointArrayMap[j]) {
-							data[i][pointArrayMap[j]] = val[ix];
+						if (pointArrayMap[j] && val[ix] !== undefined) {
+							if (pointArrayMap[j].indexOf('.') > 0) {
+								H.Point.prototype.setNestedProperty(
+									data[i], val[ix], pointArrayMap[j]
+								);
+							} else {
+								data[i][pointArrayMap[j]] = val[ix];
+							}
 						}
 					}
 				}

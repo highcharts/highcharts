@@ -2,7 +2,7 @@
 
 (function () {
     var url = (location.host === 'localhost:9876') ?
-        'url(base/utils/samples/testimage.png)' : // karma
+        'url(base/test/testimage.png)' : // karma
         'url(testimage.png)'; // utils
 
     QUnit.test('Load event without images', function (assert) {

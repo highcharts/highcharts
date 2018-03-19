@@ -20,6 +20,7 @@ var addEvent = Highcharts.addEvent,
 	pick = Highcharts.pick,
 	inArray = Highcharts.inArray,
 	isNumber = Highcharts.isNumber,
+	merge = Highcharts.merge,
 	splat = Highcharts.splat,
 	fireEvent = Highcharts.fireEvent,
 	some,
@@ -62,7 +63,7 @@ if (!Array.prototype.some) {
  *
  */
 Highcharts.ajax = function (attr) {
-	var options = Highcharts.merge(true, {
+	var options = merge(true, {
 			url: false,
 			type: 'GET',
 			dataType: 'json',
@@ -273,7 +274,10 @@ Highcharts.ajax = function (attr) {
  * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
  *
  * @type {String}
- * @sample {highcharts} highcharts/data/google-spreadsheet/ Load a Google Spreadsheet
+ * @sample {highcharts} highcharts/data/google-spreadsheet/
+ *         Load a Google Spreadsheet
+ * @sample highcharts/data/livedata-spreadsheet
+ *         Live data with polling
  * @since 4.0
  * @product highcharts
  * @apioption data.googleSpreadsheetKey
@@ -412,10 +416,76 @@ Highcharts.ajax = function (attr) {
  * @apioption data.table
  */
 
+/**
+ * A URL to a remote CSV dataset.
+ * Will be fetched when the chart is created using Ajax.
+ *
+ * @type {String}
+ * @sample highcharts/data/livedata-csv
+ *         CSV with live polling
+ * @sample highcharts/data/livedata-static-x
+ *		   CSV with live polling and static x-values
+ * @apioption data.csvURL
+ */
+
+/**
+ * A URL to a remote JSON dataset, structured as a row array.
+ * Will be fetched when the chart is created using Ajax.
+ *
+ * @type {String}
+ * @sample highcharts/data/livedata-rows
+ *         Rows with live polling
+ * @apioption data.rowsURL
+ */
+
+/**
+ * A URL to a remote JSON dataset, structured as a column array.
+ * Will be fetched when the chart is created using Ajax.
+ *
+ * @type {String}
+ * @sample highcharts/data/livedata-columns
+ *         Columns with live polling
+ * @apioption data.columnsURL
+ */
+
+/**
+ * Sets the refresh rate for data polling when importing remote dataset by 
+ * setting [data.csvURL](data.csvURL), [data.rowsURL](data.rowsURL), 
+ * [data.columnsURL](data.columnsURL), or 
+ * [data.googleSpreadsheetKey](data.googleSpreadsheetKey).
+ *
+ * Note that polling must be enabled by setting 
+ * [data.enablePolling](data.enablePolling) to true.
+ *
+ * The value is the number of seconds between pollings.
+ * It cannot be set to less than 1 second.
+ *
+ * @default 1
+ * @type {Number}
+ * @sample highcharts/demo/live-data
+ *         Live data with user set refresh rate
+ * @apioption data.dataRefreshRate
+ */
+
+/**
+ * Enables automatic refetching of remote datasets every _n_ seconds (defined by
+ * setting [data.dataRefreshRate](data.dataRefreshRate)).
+ *
+ * Only works when either [data.csvURL](data.csvURL), 
+ * [data.rowsURL](data.rowsURL), [data.columnsURL](data.columnsURL), or 
+ * [data.googleSpreadsheetKey](data.googleSpreadsheetKey).
+ *
+ * @sample highcharts/demo/live-data
+ *         Live data
+ *
+ * @type {Bool}
+ * @default false
+ * @apioption data.enablePolling
+ */
 
 // The Data constructor
-var Data = function (dataOptions, chartOptions) {
-	this.init(dataOptions, chartOptions);
+var Data = function (dataOptions, chartOptions, chart) {
+	this.init(dataOptions, chartOptions, chart);
 };
 
 // Set the prototype properties
@@ -424,22 +494,34 @@ Highcharts.extend(Data.prototype, {
 	/**
 	 * Initialize the Data object with the given options
 	 */
-	init: function (options, chartOptions) {
+	init: function (options, chartOptions, chart) {
 
 		var decimalPoint = options.decimalPoint,
 			hasData;
 
+		if (chartOptions) {
+			this.chartOptions = chartOptions;
+		}
+		if (chart) {
+			this.chart = chart;
+		}
+		
 		if (decimalPoint !== '.' && decimalPoint !== ',') {
 			decimalPoint = undefined;
 		}
+		
 		this.options = options;
-		this.chartOptions = chartOptions;
 		this.columns = (
 			options.columns ||
 			this.rowsToColumns(options.rows) ||
 			[]
 		);
-		this.firstRowAsNames = pick(options.firstRowAsNames, true);
+		
+		this.firstRowAsNames = pick(
+			options.firstRowAsNames, 
+			this.firstRowAsNames, 
+			true
+		);
 
 		this.decimalRegex = (
 			decimalPoint &&
@@ -459,6 +541,11 @@ Highcharts.extend(Data.prototype, {
 		}
 
 		if (!hasData) {
+			// Fetch live data
+			hasData = this.fetchLiveData();
+		}
+
+		if (!hasData) {
 			// Parse a CSV string if options.csv is given. The parseCSV function
 			// returns a columns array, if it has no length, we have no data
 			hasData = Boolean(this.parseCSV().length);
@@ -470,7 +557,6 @@ Highcharts.extend(Data.prototype, {
 		}
 
 		if (!hasData) {
-
 			// Parse a Google Spreadsheet
 			hasData = this.parseGoogleSpreadsheet();
 		}
@@ -1002,8 +1088,7 @@ Highcharts.extend(Data.prototype, {
 					!(options.dateFormats || self.dateFormats)[calculatedFormat]
 				) {
 					// This should emit an event instead
-					fireEvent('invalidDateFormat');
-					Highcharts.error('Could not deduce date format');
+					fireEvent('deduceDateFailed');
 					return format;
 				}
 
@@ -1144,24 +1229,135 @@ Highcharts.extend(Data.prototype, {
 		return columns;
 	},
 
+
+	/**
+	 * Fetch or refetch live data
+	 */
+	fetchLiveData: function () {
+		var chart = this.chart,
+			options = this.options,
+			maxRetries = 3,
+			currentRetries = 0,
+			pollingEnabled = options.enablePolling,
+			updateIntervalMs = (options.dataRefreshRate || 2) * 1000,
+			originalOptions = merge(options);
+
+		if (!options || 
+			(!options.csvURL && !options.rowsURL && !options.columnsURL)
+		) {
+			return false;
+		}
+
+		// Do not allow polling more than once a second
+		if (updateIntervalMs < 1000) {
+			updateIntervalMs = 1000;
+		}
+
+		delete options.csvURL;
+		delete options.rowsURL;
+		delete options.columnsURL;
+
+		function performFetch(initialFetch) {
+
+			// Helper function for doing the data fetch + polling
+			function request(url, done, tp) {
+				if (!url || url.indexOf('http') !== 0) {
+					if (url && options.error) {
+						options.error('Invalid URL');
+					}
+					return false;
+				}
+
+				if (initialFetch) {
+					clearTimeout(chart.liveDataTimeout);
+					chart.liveDataURL = url;	
+				}
+
+				function poll() {
+					// Poll
+					if (pollingEnabled && chart.liveDataURL === url) {
+						// We need to stop doing this if the URL has changed
+						chart.liveDataTimeout = 
+							setTimeout(performFetch, updateIntervalMs);
+					}
+				}
+
+				Highcharts.ajax({
+					url: url,
+					dataType: tp || 'json',
+					success: function (res) {
+						if (chart && chart.series) {
+							done(res);
+						}
+						
+						poll();
+
+					},
+					error: function (xhr, text) {
+						if (++currentRetries < maxRetries) {
+							poll();
+						}
+
+						return options.error && options.error(text, xhr);
+					}
+				});
+
+				return true;
+			}
+
+			if (!request(originalOptions.csvURL, function (res) {
+				chart.update({
+					data: {
+						csv: res
+					}
+				});
+			}, 'text')) {
+				if (!request(originalOptions.rowsURL, function (res) {
+					chart.update({
+						data: {
+							rows: res
+						}
+					});
+				})) {
+					request(originalOptions.columnsURL, function (res) {
+						chart.update({
+							data: {
+								columns: res
+							}
+						});
+					});
+				}
+			}
+		}
+
+		performFetch(true);
+
+		return (options && 
+			(options.csvURL || options.rowsURL || options.columnsURL)
+		);
+	},
+
+
 	/**
 	 * Parse a Google spreadsheet.
 	 */
 	parseGoogleSpreadsheet: function () {
-		var self = this,
-			options = this.options,
+		var options = this.options,
 			googleSpreadsheetKey = options.googleSpreadsheetKey,
+			chart = this.chart,
 			// use sheet 1 as the default rather than od6
 			// as the latter sometimes cause issues (it looks like it can
 			// be renamed in some cases, ref. a fogbugz case).
 			worksheet = options.googleSpreadsheetWorksheet || 1,
-			columns = this.columns,
 			startRow = options.startRow || 0,
 			endRow = options.endRow || Number.MAX_VALUE,
 			startColumn = options.startColumn || 0,
 			endColumn = options.endColumn || Number.MAX_VALUE,
-			gr, // google row
-			gc; // google column
+			refreshRate = (options.dataRefreshRate || 2) * 1000;
+
+		if (refreshRate < 4000) {
+			refreshRate = 4000;
+		}
 
 		/*
 		 * Fetch the actual spreadsheet using XMLHttpRequest
@@ -1177,7 +1373,15 @@ Highcharts.extend(Data.prototype, {
 			Highcharts.ajax({
 				url: url,
 				dataType: 'json',
-				success: fn,
+				success: function (json) {
+					fn(json);
+
+					if (options.enablePolling) {
+						setTimeout(function () {
+							fetchSheet(fn);
+						}, options.dataRefreshRate);	
+					}
+				},
 				error: function (xhr, text) {
 					return options.error && options.error(text, xhr);
 				}
@@ -1185,16 +1389,26 @@ Highcharts.extend(Data.prototype, {
 		}
 
 		if (googleSpreadsheetKey) {
+
+			delete options.googleSpreadsheetKey;
+			
 			fetchSheet(function (json) {
 				// Prepare the data from the spreadsheat
-				var cells = json.feed.entry,
+				var columns = [],
+					cells = json.feed.entry,
 					cell,
-					cellCount = cells.length,
+					cellCount = (cells || []).length,
 					colCount = 0,
 					rowCount = 0,
 					val,
+					gr,
+					gc,
 					cellInner,
 					i;
+
+				if (!cells || cells.length === 0) {
+					return false;
+				}
 
 				// First, find the total number of columns and rows that
 				// are actually filled with data
@@ -1210,12 +1424,6 @@ Highcharts.extend(Data.prototype, {
 						// Create new columns with the length of either
 						// end-start or rowCount
 						columns[i - startColumn] = [];
-
-						// Setting the length to avoid jslint warning
-						columns[i - startColumn].length = Math.min(
-							rowCount,
-							endRow - startRow
-						);
 					}
 				}
 
@@ -1263,10 +1471,18 @@ Highcharts.extend(Data.prototype, {
 					}
 				});
 
-				self.dataFound();
+				if (chart && chart.series) {
+					chart.update({
+						data: {
+							columns: columns
+						}
+					});
+				}
 			});
 		}
-		return Boolean(googleSpreadsheetKey);
+
+		// This is an intermediate fetch, so always return false.
+		return false;
 	},
 
 	/**
@@ -1635,8 +1851,8 @@ Highcharts.extend(Data.prototype, {
 		if (options.complete || options.afterComplete) {
 
 			// Get the names and shift the top row
-			for (i = 0; i < columns.length; i++) {
-				if (this.firstRowAsNames) {
+			if (this.firstRowAsNames) {
+				for (i = 0; i < columns.length; i++) {
 					columns[i].name = columns[i].shift();
 				}
 			}
@@ -1781,10 +1997,22 @@ Highcharts.extend(Data.prototype, {
 		if (options) {
 			// Set the complete handler
 			options.afterComplete = function (dataOptions) {
+				// Avoid setting axis options unless the type changes. Running
+				// Axis.update will cause the whole structure to be destroyed
+				// and rebuilt, and animation is lost.
+				if (
+					dataOptions.xAxis &&
+					chart.xAxis[0] &&
+					dataOptions.xAxis.type === chart.xAxis[0].options.type
+				) {
+					delete dataOptions.xAxis;
+				}
+
 				chart.update(dataOptions, redraw, true);
 			};
 			// Apply it
-			Highcharts.data(options);
+			merge(true, this.options, options);
+			this.init(this.options);
 		}
 	}
 });
@@ -1817,13 +2045,17 @@ addEvent(
 						if (typeof userOptions.series === 'object') {
 							i = Math.max(
 								userOptions.series.length,
-								dataOptions.series.length
+								dataOptions && dataOptions.series ?
+									dataOptions.series.length :
+									0
 							);
 							while (i--) {
 								series = userOptions.series[i] || {};
-								userOptions.series[i] = Highcharts.merge(
+								userOptions.series[i] = merge(
 									series,
-									dataOptions.series[i]
+									dataOptions && dataOptions.series ?
+										dataOptions.series[i] :
+										{}
 								);
 							}
 						} else { // Allow merging in dataOptions.series (#2856)
@@ -1832,13 +2064,12 @@ addEvent(
 					}
 
 					// Do the merge
-					userOptions = Highcharts.merge(dataOptions, userOptions);
+					userOptions = merge(dataOptions, userOptions);
 
 					// Run chart.init again
 					chart.init(userOptions, callback);
 				}
-			}), userOptions);
-			chart.data.chart = chart;
+			}), userOptions, chart);
 
 			e.preventDefault();
 		}
@@ -1912,7 +2143,14 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
 		if (pointIsArray) {
 			point.push(value);
 		} else {
-			point[reader.configName] = value;
+			if (reader.configName.indexOf('.') > 0) {
+				// Handle nested property names
+				Highcharts.Point.prototype.setNestedProperty(
+					point, value, reader.configName
+				);
+			} else {
+				point[reader.configName] = value;
+			}
 		}
 	});
 

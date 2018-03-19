@@ -50,7 +50,6 @@ const compileSingleStyle = (fileName) => {
                 reject(err);
             } else {
                 writeFile(output, result.css);
-                console.log(`Completed rendering of ${input} to ${output}`);
                 resolve();
             }
         });
@@ -60,7 +59,9 @@ const compileSingleStyle = (fileName) => {
 const styles = () => {
     const files = ['highcharts', 'dark-uniqua', 'sand-signika', 'grid-light'];
     const promises = files.map(file => compileSingleStyle(file));
-    return Promise.all(promises);
+    return Promise.all(promises).then(() => {
+        console.log('Built CSS files from SASS.'.cyan);
+    });
 };
 
 /**
@@ -311,7 +312,8 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/modules/exporting.src.js',
         './js/modules/export-data.src.js',
         './js/modules/data.src.js',
-        './js/modules/offline-exporting.src.js'
+        './js/modules/offline-exporting.src.js',
+        './js/modules/pattern-fill.src.js'
     ];
     const optionsJSDoc = {
         navOptions: {
@@ -1390,7 +1392,7 @@ gulp.task('default', () => {
         './code/es-modules/**/*.js',
         './code/js/es-modules/**/*.js'
     ];
-    const msgBuildAll = 'Completed building of all JS files.';
+    const msgBuildAll = 'Built JS files from modules.'.cyan;
     let watcher;
     const onChange = (event) => {
         const path = relative('.', event.path).split(sep).join('/');

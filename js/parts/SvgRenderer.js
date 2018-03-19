@@ -192,7 +192,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 */
 	/**
 	 * Build and apply an SVG gradient out of a common JavaScript configuration
-	 * object. This function is called from the attribute setters.
+	 * object. This function is called from the attribute setters. An event
+	 * hook is added for supporting other complex color types.
 	 *
 	 * @private
 	 * @param {GradientOptions} color The gradient options structure.
@@ -200,7 +201,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * `stroke`. 
 	 * @param {SVGDOMElement} elem SVG DOM element to apply the gradient on.
 	 */
-	colorGradient: function (color, prop, elem) {
+	complexColor: function (color, prop, elem) {
 		var renderer = this.renderer,
 			colorObject,
 			gradName,
@@ -216,107 +217,112 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			key = [],
 			value;
 
-		// Apply linear or radial gradients
-		if (color.radialGradient) {
-			gradName = 'radialGradient';
-		} else if (color.linearGradient) {
-			gradName = 'linearGradient';
-		}
+		H.fireEvent(this.renderer, 'complexColor', {
+			args: arguments
+		}, function () {
+			// Apply linear or radial gradients
+			if (color.radialGradient) {
+				gradName = 'radialGradient';
+			} else if (color.linearGradient) {
+				gradName = 'linearGradient';
+			}
 
-		if (gradName) {
-			gradAttr = color[gradName];
-			gradients = renderer.gradients;
-			stops = color.stops;
-			radialReference = elem.radialReference;
+			if (gradName) {
+				gradAttr = color[gradName];
+				gradients = renderer.gradients;
+				stops = color.stops;
+				radialReference = elem.radialReference;
 
-			// Keep < 2.2 kompatibility
-			if (isArray(gradAttr)) {
-				color[gradName] = gradAttr = {
-					x1: gradAttr[0],
-					y1: gradAttr[1],
-					x2: gradAttr[2],
-					y2: gradAttr[3],
-					gradientUnits: 'userSpaceOnUse'
+				// Keep < 2.2 kompatibility
+				if (isArray(gradAttr)) {
+					color[gradName] = gradAttr = {
+						x1: gradAttr[0],
+						y1: gradAttr[1],
+						x2: gradAttr[2],
+						y2: gradAttr[3],
+						gradientUnits: 'userSpaceOnUse'
+					};
+				}
+
+				// Correct the radial gradient for the radial reference system
+				if (
+					gradName === 'radialGradient' &&
+					radialReference &&
+					!defined(gradAttr.gradientUnits)
+				) {
+					// Save the radial attributes for updating
+					radAttr = gradAttr;
+					gradAttr = merge(
+						gradAttr,
+						renderer.getRadialAttr(radialReference, radAttr),
+						{ gradientUnits: 'userSpaceOnUse' }
+					);
+				}
+
+				// Build the unique key to detect whether we need to create a
+				// new element (#1282)
+				objectEach(gradAttr, function (val, n) {
+					if (n !== 'id') {
+						key.push(n, val);
+					}
+				});
+				objectEach(stops, function (val) {
+					key.push(val);
+				});
+				key = key.join(',');
+
+				// Check if a gradient object with the same config object is
+				// created within this renderer
+				if (gradients[key]) {
+					id = gradients[key].attr('id');
+
+				} else {
+
+					// Set the id and create the element
+					gradAttr.id = id = H.uniqueKey();
+					gradients[key] = gradientObject =
+						renderer.createElement(gradName)
+							.attr(gradAttr)
+							.add(renderer.defs);
+
+					gradientObject.radAttr = radAttr;
+
+					// The gradient needs to keep a list of stops to be able to
+					// destroy them
+					gradientObject.stops = [];
+					each(stops, function (stop) {
+						var stopObject;
+						if (stop[1].indexOf('rgba') === 0) {
+							colorObject = H.color(stop[1]);
+							stopColor = colorObject.get('rgb');
+							stopOpacity = colorObject.get('a');
+						} else {
+							stopColor = stop[1];
+							stopOpacity = 1;
+						}
+						stopObject = renderer.createElement('stop').attr({
+							offset: stop[0],
+							'stop-color': stopColor,
+							'stop-opacity': stopOpacity
+						}).add(gradientObject);
+
+						// Add the stop element to the gradient
+						gradientObject.stops.push(stopObject);
+					});
+				}
+
+				// Set the reference to the gradient object
+				value = 'url(' + renderer.url + '#' + id + ')';
+				elem.setAttribute(prop, value);
+				elem.gradient = key;
+
+				// Allow the color to be concatenated into tooltips formatters
+				// etc. (#2995)
+				color.toString = function () {
+					return value;
 				};
 			}
-
-			// Correct the radial gradient for the radial reference system
-			if (
-				gradName === 'radialGradient' &&
-				radialReference &&
-				!defined(gradAttr.gradientUnits)
-			) {
-				radAttr = gradAttr; // Save the radial attributes for updating
-				gradAttr = merge(
-					gradAttr,
-					renderer.getRadialAttr(radialReference, radAttr),
-					{ gradientUnits: 'userSpaceOnUse' }
-				);
-			}
-
-			// Build the unique key to detect whether we need to create a new
-			// element (#1282)
-			objectEach(gradAttr, function (val, n) {
-				if (n !== 'id') {
-					key.push(n, val);
-				}
-			});
-			objectEach(stops, function (val) {
-				key.push(val);
-			});
-			key = key.join(',');
-
-			// Check if a gradient object with the same config object is created
-			// within this renderer
-			if (gradients[key]) {
-				id = gradients[key].attr('id');
-
-			} else {
-
-				// Set the id and create the element
-				gradAttr.id = id = H.uniqueKey();
-				gradients[key] = gradientObject =
-					renderer.createElement(gradName)
-						.attr(gradAttr)
-						.add(renderer.defs);
-
-				gradientObject.radAttr = radAttr;
-
-				// The gradient needs to keep a list of stops to be able to
-				// destroy them
-				gradientObject.stops = [];
-				each(stops, function (stop) {
-					var stopObject;
-					if (stop[1].indexOf('rgba') === 0) {
-						colorObject = H.color(stop[1]);
-						stopColor = colorObject.get('rgb');
-						stopOpacity = colorObject.get('a');
-					} else {
-						stopColor = stop[1];
-						stopOpacity = 1;
-					}
-					stopObject = renderer.createElement('stop').attr({
-						offset: stop[0],
-						'stop-color': stopColor,
-						'stop-opacity': stopOpacity
-					}).add(gradientObject);
-
-					// Add the stop element to the gradient
-					gradientObject.stops.push(stopObject);
-				});
-			}
-
-			// Set the reference to the gradient object
-			value = 'url(' + renderer.url + '#' + id + ')';
-			elem.setAttribute(prop, value);
-			elem.gradient = key;
-
-			// Allow the color to be concatenated into tooltips formatters etc.
-			// (#2995)
-			color.toString = function () {
-				return value;
-			};
-		}
+		});
 	},
 
 	/**
@@ -1794,7 +1800,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		if (typeof value === 'string') {
 			element.setAttribute(key, value);
 		} else if (value) {
-			this.colorGradient(value, key, element);
+			this.complexColor(value, key, element);
 		}
 	},
 	visibilitySetter: function (value, key, element) {
@@ -3205,6 +3211,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 *    image file width.
 	 * @param {number} [height] The image height. If omitted it defaults to the
 	 *    image file height.
+	 * @param {function} [onload] Event handler for image load.
 	 * @returns {SVGElement} The generated wrapper element.
 	 *
 	 * @sample highcharts/members/renderer-image-on-chart/
@@ -3212,11 +3219,25 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 * @sample highcharts/members/renderer-image/
 	 *         Add an image independent of a chart
 	 */
-	image: function (src, x, y, width, height) {
+	image: function (src, x, y, width, height, onload) {
 		var attribs = {
 				preserveAspectRatio: 'none'
 			},
-			elemWrapper;
+			elemWrapper,
+			dummy,
+			setSVGImageSource = function (el, src) {
+				// Set the href in the xlink namespace
+				if (el.setAttributeNS) {
+					el.setAttributeNS(
+						'http://www.w3.org/1999/xlink', 'href', src
+					);
+				} else {
+					// could be exporting in IE
+					// using href throws "not supported" in ie7 and under,
+					// requries regex shim to fix later
+					el.setAttribute('hc-svg-href', src);
+				}
+			};
 
 		// optional properties
 		if (arguments.length > 1) {
@@ -3230,16 +3251,25 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		elemWrapper = this.createElement('image').attr(attribs);
 
-		// set the href in the xlink namespace
-		if (elemWrapper.element.setAttributeNS) {
-			elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink',
-				'href', src);
+		// Add load event if supplied
+		if (onload) {
+			// We have to use a dummy HTML image since IE support for SVG image
+			// load events is very buggy. First set a transparent src, wait for
+			// dummy to load, and then add the real src to the SVG image.
+			setSVGImageSource(
+				elemWrapper.element,
+				'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' /* eslint-disable-line */
+			);
+			dummy = new win.Image();
+			addEvent(dummy, 'load', function (e) {
+				setSVGImageSource(elemWrapper.element, src);
+				onload.call(elemWrapper, e);
+			});
+			dummy.src = src;
 		} else {
-			// could be exporting in IE
-			// using href throws "not supported" in ie7 and under, requries
-			// regex shim to fix later
-			elemWrapper.element.setAttribute('hc-svg-href', src);
+			setSVGImageSource(elemWrapper.element, src);
 		}
+
 		return elemWrapper;
 	},
 

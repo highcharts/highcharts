@@ -791,7 +791,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		this.titleOffset = titleOffset; // used in getMargins
 
 		if (!this.isDirtyBox && requiresDirtyBox) {
-			this.isDirtyBox = requiresDirtyBox;
+			this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
 			// Redraw if necessary (#2719, #2744)
 			if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
 				this.redraw();
