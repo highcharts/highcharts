@@ -1459,7 +1459,7 @@ Navigator.prototype = {
 
 			// If we have a base series, initialize the navigator series
 			if (baseSeries || navigatorOptions.series.data) {
-				navigator.updateNavigatorSeries();
+				navigator.updateNavigatorSeries(false);
 
 			// If not, set up an event to listen for added series
 			} else if (chart.series.length === 0) {
@@ -1631,7 +1631,7 @@ Navigator.prototype = {
 
 		// When run after render, this.xAxis already exists
 		if (this.xAxis && !this.xAxis.fake) {
-			this.updateNavigatorSeries(redraw);
+			this.updateNavigatorSeries(true, redraw);
 		}
 	},
 
@@ -1639,7 +1639,7 @@ Navigator.prototype = {
 	 * Update series in the navigator from baseSeries, adding new if does not
 	 * exist.
 	 */
-	updateNavigatorSeries: function (redraw) {
+	updateNavigatorSeries: function (addEvents, redraw) {
 		var navigator = this,
 			chart = navigator.chart,
 			baseSeries = navigator.baseSeries,
@@ -1783,7 +1783,9 @@ Navigator.prototype = {
 			});
 		}
 
-		this.addBaseSeriesEvents();
+		if (addEvents) {
+			this.addBaseSeriesEvents();
+		}
 	},
 
 	/**
