@@ -2034,6 +2034,7 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
 		zoomType = chartOptions.chart.zoomType,
+		pinchType = chartOptions.chart.pinchType,
 		previousZoom,
 		navigator = chartOptions.navigator,
 		rangeSelector = chartOptions.rangeSelector,
@@ -2041,10 +2042,9 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 
 	if (this.isXAxis && ((navigator && navigator.enabled) ||
 			(rangeSelector && rangeSelector.enabled))) {
-
 		// For x only zooming, fool the chart.zoom method not to create the zoom
 		// button because the property already exists
-		if (zoomType === 'x') {
+		if (zoomType === 'x' || pinchType === 'x') {
 			chart.resetZoomButton = 'blocked';
 
 		// For y only zooming, ignore the X axis completely
@@ -2055,7 +2055,10 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 		// then when the reset button is pressed, revert to this state. This
 		// should apply only if the chart is initialized with a range (#6612),
 		// otherwise zoom all the way out.
-		} else if (zoomType === 'xy' && this.options.range) {
+		} else if (
+			(zoomType === 'xy' || pinchType === 'xy') &&
+			this.options.range
+		) {
 
 			previousZoom = this.previousZoom;
 			if (defined(newMin)) {
