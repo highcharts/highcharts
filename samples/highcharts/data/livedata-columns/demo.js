@@ -58,11 +58,13 @@ Highcharts.chart('container', {
             }],
             dataLabels: {
                 enabled: true,
-                formatter: function () {
-                    return Math.round(this.y) + '%';
-                }
+                format: '{point.y:.0f}%'
             }
         }
+    },
+    tooltip: {
+        valueDecimals: 1,
+        valueSuffix: '%'
     },
     xAxis: {
         type: 'category',
