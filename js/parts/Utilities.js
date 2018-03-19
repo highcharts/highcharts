@@ -1652,7 +1652,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
 H.objectEach = function (obj, fn, ctx) {
 	for (var key in obj) {
 		if (obj.hasOwnProperty(key)) {
-			fn.call(ctx, obj[key], key, obj);
+			fn.call(ctx || obj[key], obj[key], key, obj);
 		}
 	}
 };
