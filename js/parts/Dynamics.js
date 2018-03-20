@@ -601,7 +601,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 					isObject(options, true)
 				) ?
 				point.options :
-				options;
+				pick(options, seriesOptions.data[i]);
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;

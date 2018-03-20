@@ -3,6 +3,10 @@ QUnit.test(
     function (assert) {
         var chart = $('#container').highcharts({
 
+            navigator: {
+                enabled: true
+            },
+
             series: [{
                 data: [1, 2, 3],
                 turboThreshold: 2
@@ -50,6 +54,20 @@ QUnit.test(
             }).join(','),
             'number,number,[object Object]',
             'Points are mixed'
+        );
+
+        chart.series[0].points[1].update();
+
+        assert.strictEqual(
+            chart.series[0].options.data[1],
+            2,
+            'Update without options should keep original value (#8023).'
+        );
+
+        assert.strictEqual(
+            chart.xAxis[0].max,
+            chart.xAxis[0].dataMax,
+            'Correct extremes after point update (#8023).'
         );
     }
 );
