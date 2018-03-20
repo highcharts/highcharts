@@ -3225,14 +3225,15 @@ H.Series = H.seriesType('line', null, { // base series options
 	 *
 	 * @private
 	 */
-	cropData: function (xData, yData, min, max) {
+	cropData: function (xData, yData, min, max, cropShoulder) {
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
-			// line-type series need one point outside
-			cropShoulder = pick(this.cropShoulder, 1),
 			i,
 			j;
+
+		// line-type series need one point outside
+		cropShoulder = pick(cropShoulder, this.cropShoulder, 1);
 
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
