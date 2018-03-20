@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -127,23 +126,30 @@ seriesTypes.column.prototype.translate3dShapes = function () {
 					borderlessBase = 0;
 				}
 				if (
-						borderlessBase + shapeArgs[d[1]] > series[d[0] + 'Axis'].len &&
-						shapeArgs[d[1]] !== 0 // Do not change height/width of column if 0.
-						// #6708
-					) {
-					shapeArgs[d[1]] = series[d[0] + 'Axis'].len - shapeArgs[d[0]];
+					(
+						borderlessBase + shapeArgs[d[1]] >
+						series[d[0] + 'Axis'].len
+					) &&
+					// Do not change height/width of column if 0 (#6708)
+					shapeArgs[d[1]] !== 0 
+				) {
+					shapeArgs[d[1]] =
+						series[d[0] + 'Axis'].len - shapeArgs[d[0]];
 				}
 				if (
-						(shapeArgs[d[1]] !== 0) && // Do not remove columns with zero height/width.
-						(
-							shapeArgs[d[0]] >= series[d[0] + 'Axis'].len ||
-							shapeArgs[d[0]] + shapeArgs[d[1]] <= borderCrisp
-						)
-					) {
-					for (var key in shapeArgs) { // Set args to 0 if column is outside the chart.
+					// Do not remove columns with zero height/width.
+					(shapeArgs[d[1]] !== 0) &&
+					(
+						shapeArgs[d[0]] >= series[d[0] + 'Axis'].len ||
+						shapeArgs[d[0]] + shapeArgs[d[1]] <= borderCrisp
+					)
+				) {
+					// Set args to 0 if column is outside the chart.
+					for (var key in shapeArgs) {
 						shapeArgs[key] = 0;
 					}
-					// #7103 outside3dPlot flag is set on Points which are currently outside of plot.
+					// #7103 outside3dPlot flag is set on Points which are
+					// currently outside of plot.
 					point.outside3dPlot = true;
 				}
 			});
@@ -154,7 +160,11 @@ seriesTypes.column.prototype.translate3dShapes = function () {
 			shapeArgs.insidePlotArea = true;
 
 			// Translate the tooltip position in 3d space
-			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, true)[0];
+			tooltipPos = perspective(
+				[{ x: tooltipPos[0], y: tooltipPos[1], z: z }],
+				chart,
+				true
+			)[0];
 			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
 	});
@@ -181,9 +191,16 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 						point.shapeArgs.height = 1;
 						if (!reversed) {
 							if (point.stackY) {
-								point.shapeArgs.y = point.plotY + yAxis.translate(point.stackY);
+								point.shapeArgs.y =
+									point.plotY + yAxis.translate(point.stackY);
 							} else {
-								point.shapeArgs.y = point.plotY + (point.negative ? -point.height : point.height);
+								point.shapeArgs.y =
+									point.plotY +
+									(
+										point.negative ?
+										-point.height :
+										point.height
+									);
 							}
 						}
 					}
@@ -196,7 +213,10 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 						point.shapeArgs.y = point.shapey;	// #2968
 						// null value do not have a graphic
 						if (point.graphic) {
-							point.graphic.animate(point.shapeArgs, series.options.animation);
+							point.graphic.animate(
+								point.shapeArgs,
+								series.options.animation
+							);
 						}
 					}
 				});
@@ -217,40 +237,51 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
  * all columns will have the same zIndex in comparison with different series
  */
 
-wrap(seriesTypes.column.prototype, 'plotGroup', function (proceed, prop, name, visibility, zIndex, parent) {
-	if (this.chart.is3d() && parent && !this[prop]) {
-		if (!this.chart.columnGroup) {
-			this.chart.columnGroup = this.chart.renderer.g('columnGroup').add(parent);
+wrap(
+	seriesTypes.column.prototype,
+	'plotGroup',
+	function (proceed, prop, name, visibility, zIndex, parent) {
+		if (this.chart.is3d() && parent && !this[prop]) {
+			if (!this.chart.columnGroup) {
+				this.chart.columnGroup =
+					this.chart.renderer.g('columnGroup').add(parent);
+			}
+			this[prop] = this.chart.columnGroup;
+			this.chart.columnGroup.attr(this.getPlotBox());
+			this[prop].survive = true;
 		}
-		this[prop] = this.chart.columnGroup;
-		this.chart.columnGroup.attr(this.getPlotBox());
-		this[prop].survive = true;
+		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
-	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-});
+);
 
 /*
  * When series is not added to group it is needed to change 
  * setVisible method to allow correct Legend funcionality
  * This wrap is basing on pie chart series
  */
-wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
-	var series = this,
-		pointVis;
-	if (series.chart.is3d()) {
-		each(series.data, function (point) {
-			point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
-			pointVis = vis ? 'visible' : 'hidden';
-			series.options.data[inArray(point, series.data)] = point.options;
-			if (point.graphic) {
-				point.graphic.attr({
-					visibility: pointVis
-				});
-			}
-		});
+wrap(
+	seriesTypes.column.prototype,
+	'setVisible',
+	function (proceed, vis) {
+		var series = this,
+			pointVis;
+		if (series.chart.is3d()) {
+			each(series.data, function (point) {
+				point.visible = point.options.visible = vis =
+					vis === undefined ? !point.visible : vis;
+				pointVis = vis ? 'visible' : 'hidden';
+				series.options.data[inArray(point, series.data)] =
+					point.options;
+				if (point.graphic) {
+					point.graphic.attr({
+						visibility: pointVis
+					});
+				}
+			});
+		}
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-});
+);
 
 seriesTypes.column.prototype.handle3dGrouping = true;
 addEvent(Series, 'afterInit', function () {
@@ -270,9 +301,11 @@ addEvent(Series, 'afterInit', function () {
 					break;
 				}
 			}
-			z = (10 * (stacks.totalStacks - stacks[stack].position)) + (reversedStacks ? i : -i); // #4369
+			z = (10 * (stacks.totalStacks - stacks[stack].position)) +
+				(reversedStacks ? i : -i); // #4369
 
-			// In case when axis is reversed, columns are also reversed inside the group (#3737)
+			// In case when axis is reversed, columns are also reversed inside
+			// the group (#3737)
 			if (!this.xAxis.reversed) {
 				z = (stacks.totalStacks * 10) - z;
 			}
@@ -298,15 +331,20 @@ function pointAttribs(proceed) {
 wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 if (seriesTypes.columnrange) {
 	wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
-	seriesTypes.columnrange.prototype.plotGroup = seriesTypes.column.prototype.plotGroup;
-	seriesTypes.columnrange.prototype.setVisible = seriesTypes.column.prototype.setVisible;
+	seriesTypes.columnrange.prototype.plotGroup =
+		seriesTypes.column.prototype.plotGroup;
+	seriesTypes.columnrange.prototype.setVisible =
+		seriesTypes.column.prototype.setVisible;
 }
 /*= } =*/
 
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 	
 	// Only do this for 3D columns and columnranges
-	if (this.chart.is3d() && (this.type === 'column' || this.type === 'columnrange')) {
+	if (
+		this.chart.is3d() &&
+		(this.type === 'column' || this.type === 'columnrange')
+	) {
 		var series = this,
 			chart = series.chart;
 
@@ -317,7 +355,8 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 		var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
 		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
-		alignTo.y = point.outside3dPlot ? -9e9 : pos.y; // #7103 If point is outside of plotArea, hide data label.
+		// #7103 If point is outside of plotArea, hide data label.
+		alignTo.y = point.outside3dPlot ? -9e9 : pos.y;
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -348,7 +387,8 @@ wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) { // #3946
 */
 /*
 var defaultOptions = H.getOptions();
-defaultOptions.plotOptions.cylinder = H.merge(defaultOptions.plotOptions.column);
+defaultOptions.plotOptions.cylinder =
+	H.merge(defaultOptions.plotOptions.column);
 var CylinderSeries = H.extendClass(seriesTypes.column, {
 	type: 'cylinder'
 });
@@ -370,7 +410,9 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		depth = cylOptions.depth || 0,
 		alpha = chart.alpha3d;
 
-	var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	var z = cylOptions.stacking ?
+		(this.options.stack || 0) * depth :
+		series._i * depth;
 	z += depth / 2;
 
 	if (cylOptions.grouping !== false) { z = 0; }
@@ -385,7 +427,8 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		shapeArgs.end = 2 * PI;
 		shapeArgs.r = depth * 0.95;
 		shapeArgs.innerR = 0;
-		shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
+		shapeArgs.depth =
+			shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
 		shapeArgs.alpha = 90 - alpha;
 		shapeArgs.beta = 0;
 	});

@@ -41,14 +41,16 @@ QUnit.test('Mouse interaction', function (assert) {
     controller.mousemove(300, 200);
     controller.mouseup();
 
-    assert.strictEqual(
+    assert.close(
         chart.xAxis[0].getExtremes().min,
         0,
+        0.00001,
         'Min should be 0'
     );
-    assert.strictEqual(
+    assert.close(
         chart.xAxis[0].getExtremes().max,
         5,
+        0.00001,
         'Max should be 5'
     );
 
