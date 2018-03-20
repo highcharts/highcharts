@@ -1,5 +1,5 @@
 QUnit.test(
-    'Width and height',
+    'General Navigator tests',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             legend: {
@@ -31,6 +31,15 @@ QUnit.test(
             chart.series[1].clipBox.height,
             100,
             'Navigator series has correct clipping rect height (#5904)'
+        );
+
+        chart.series[1].remove(false);
+        chart.series[0].remove();
+
+        assert.strictEqual(
+            chart.series.length,
+            0,
+            'All series, including navSeries, removed without errors (#5581)'
         );
     }
 );
