@@ -213,6 +213,11 @@ module.exports = function (config) {
             'test/karma-setup.js'
         ], tests),
 
+        proxies: {
+            '/abc': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+            '/def': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=='
+        },
+
         // These ones fail
         exclude: [
             // The configuration currently loads classic mode only. Styled mode
