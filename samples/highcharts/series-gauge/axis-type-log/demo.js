@@ -1,3 +1,5 @@
+// Highcharts 4.1.1, Issue #3852
+// logarithmic axis on gauge not displaying correctly
 $(function () {
 
     $('#container').highcharts({
@@ -67,4 +69,5 @@ $(function () {
         }]
 
     });
+
 });
