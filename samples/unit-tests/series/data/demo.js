@@ -1,6 +1,6 @@
 
-
 QUnit.test('NaN in graphs', function (assert) {
+
     var chart = Highcharts.chart('container', {
 
         series: [{
@@ -13,11 +13,13 @@ QUnit.test('NaN in graphs', function (assert) {
         chart.series[0].graph.attr('d').length > 100,
         'Path is ok'
     );
+
     assert.notEqual(
         chart.series[0].graph.attr('d'),
         'M 0 0',
         'Path is ok'
     );
+
 });
 
 QUnit.test('Zeroes on log axis', function (assert) {
@@ -39,9 +41,11 @@ QUnit.test('Zeroes on log axis', function (assert) {
         'M',
         'Gap detected'
     );
+
 });
 
 QUnit.test('X is null (#7515)', function (assert) {
+
     var chart = Highcharts.chart('container', {
 
         series: [{
@@ -69,4 +73,30 @@ QUnit.test('X is null (#7515)', function (assert) {
         '100',
         'X axis should be rendered for the first series'
     );
+
+});
+
+// Highcharts 4.1.1, Issue #3793
+// Dealing with large numbers on yAxis
+QUnit.test('Huge numbers (#3793)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        title: {
+            text: 'Huge numbers failed with JS error'
+        },
+        series: [{
+            data: [
+                1.7976931348623157e+300,
+                1.7976931348623157e+301,
+                1.7976931348623157e+306]
+        }]
+    });
+
+    assert.ok(
+        chart.series[0] &&
+        chart.series[0].data[2] &&
+        chart.series[0].data[2].graphic instanceof Highcharts.SVGElement,
+        'Points should be rendered'
+    );
+
 });
