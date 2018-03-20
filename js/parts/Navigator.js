@@ -1400,7 +1400,7 @@ Navigator.prototype = {
 			xAxisIndex = chart.xAxis.length,
 			yAxisIndex = chart.yAxis.length,
 			baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis ||
-				chart.xAxis[0];
+				chart.xAxis[0] || { options: {} };
 
 		// Make room for the navigator, can be placed around the chart:
 		chart.extraMargin = {
@@ -1876,7 +1876,7 @@ Navigator.prototype = {
 			range = baseMax - baseMin,
 			stickToMin = navigator.stickToMin,
 			stickToMax = navigator.stickToMax,
-			overscroll = baseXAxis.options.overscroll,
+			overscroll = pick(baseXAxis.options.overscroll, 0),
 			newMax,
 			newMin,
 			navigatorSeries = navigator.series && navigator.series[0],
@@ -2184,7 +2184,7 @@ Chart.prototype.callbacks.push(function (chart) {
 		navigator = chart.navigator;
 
 	// Initiate the navigator
-	if (navigator) {
+	if (navigator && chart.xAxis[0]) {
 		extremes = chart.xAxis[0].getExtremes();
 		navigator.render(extremes.min, extremes.max);
 	}
