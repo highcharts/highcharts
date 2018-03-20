@@ -44,23 +44,23 @@ H.StackItem = function (axis, options, isNegative, x, stackOption) {
 	// Initialize total value
 	this.total = null;
 
-	// This will keep each points' extremes stored by series.index and point 
+	// This will keep each points' extremes stored by series.index and point
 	// index
 	this.points = {};
 
-	// Save the stack option on the series configuration object, and whether to 
+	// Save the stack option on the series configuration object, and whether to
 	// treat it as percent
 	this.stack = stackOption;
 	this.leftCliff = 0;
 	this.rightCliff = 0;
 
-	// The align options and text align varies on whether the stack is negative 
+	// The align options and text align varies on whether the stack is negative
 	// and if the chart is inverted or not.
 	// First test the user supplied value, then use the dynamic.
 	this.alignOptions = {
 		align: options.align ||
 			(inverted ? (isNegative ? 'left' : 'right') : 'center'),
-		verticalAlign: options.verticalAlign || 
+		verticalAlign: options.verticalAlign ||
 			(inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
 		y: pick(options.y, inverted ? 4 : (isNegative ? 14 : -6)),
 		x: pick(options.x, inverted ? (isNegative ? -6 : 6) : 0)
@@ -123,7 +123,15 @@ H.StackItem.prototype = {
 			yZero = axis.translate(0), // stack origin
 			h = Math.abs(y - yZero), // stack height
 			x = chart.xAxis[0].translate(stackItem.x) + xOffset, // x position
-			stackBox = stackItem.getStackBox(chart, stackItem, x, y, xWidth, h),
+			stackBox = stackItem.getStackBox(
+				chart,
+				stackItem,
+				x,
+				y,
+				xWidth,
+				h,
+				axis
+			),
 			label = stackItem.label,
 			alignAttr;
 
@@ -140,20 +148,20 @@ H.StackItem.prototype = {
 				) ? 'show' : 'hide'](true);
 		}
 	},
-	getStackBox: function (chart, stackItem, x, y, xWidth, h) {
+	getStackBox: function (chart, stackItem, x, y, xWidth, h, axis) {
 		var reversed = stackItem.axis.reversed,
 			inverted = chart.inverted,
-			plotHeight = chart.plotHeight,
+			axisPos = axis.height + axis.pos - chart.plotTop,
 			neg = (stackItem.isNegative && !reversed) ||
 				(!stackItem.isNegative && reversed); // #4056
 
 		return { // this is the box for the complete stack
 			x: inverted ? (neg ? y : y - h) : x,
 			y: inverted ?
-					plotHeight - x - xWidth :
+					axisPos - x - xWidth :
 					(neg ?
-						(plotHeight - y - h) :
-						plotHeight - y
+						(axisPos - y - h) :
+						axisPos - y
 					),
 			width: inverted ? h : xWidth,
 			height: inverted ? xWidth : h
@@ -250,7 +258,7 @@ Axis.prototype.resetStacks = function () {
 				if (stack.touched < axis.stacksTouched) {
 					stack.destroy();
 					delete type[key];
-		
+
 				// Reset stacks
 				} else {
 					stack.total = null;
@@ -367,7 +375,7 @@ Series.prototype.setStackedPoints = function () {
 				stack.base = pointKey;
 			}
 			stack.touched = yAxis.stacksTouched;
-		
+
 
 			// In area charts, if there are multiple points on the same X value,
 			// let the area fill the full span of those points
