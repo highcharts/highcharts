@@ -1,3 +1,5 @@
+// Highcharts 4.1.1, Issue #3841
+// 3d miltiple column - wrong rendering - HC 4.1
 $(function () {
     // Set up the chart
     Highcharts.chart('container', {
