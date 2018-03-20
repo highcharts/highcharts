@@ -62,3 +62,47 @@ QUnit.test('Updating to null value (#7493)', function (assert) {
     );
 
 });
+
+QUnit.test("StackLabels position with multiple yAxis (#7798)", function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        plotOptions: {
+            series: {
+                type: 'column',
+                stacking: 'normal'
+            }
+        },
+        yAxis: [{
+            top: '0%',
+            height: '30%',
+            stackLabels: {
+                enabled: true,
+                allowOverlap: true
+            }
+        }, {
+            top: '30%',
+            height: '70%',
+            stackLabels: {
+                enabled: true,
+                allowOverlap: true
+            }
+        }],
+        series: [{
+            data: [1, 2]
+        }, {
+            data: [2, 2]
+        }, {
+            data: [3, 1],
+            yAxis: 1
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].stacks.column[0].label.alignAttr.y <
+        chart.series[1].points[0].plotY,
+        true,
+        'Stack labels should be above the stack'
+    );
+});
