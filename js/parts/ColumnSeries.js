@@ -124,7 +124,7 @@ seriesType('column', 'line', {
 	 * @apioption plotOptions.column.grouping
 	 */
 
-	/** 
+	/**
 	 * @ignore
 	 */
 	marker: null, // point options are specified in the base options
@@ -230,7 +230,7 @@ seriesType('column', 'line', {
 		/**
 		 * Options for the hovered point. These settings override the normal
 		 * state options when a point is moused over or touched.
-		 * 
+		 *
 		 * @extends   plotOptions.series.states.hover
 		 * @excluding halo,lineWidth,lineWidthPlus,marker
 		 * @product   highcharts highstock
@@ -328,7 +328,7 @@ seriesType('column', 'line', {
 	softThreshold: false,
 
 	// false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
-	/** 
+	/**
 	 * @ignore
 	 */
 	startFromThreshold: true,
@@ -800,6 +800,9 @@ seriesType('column', 'line', {
 	animate: function (init) {
 		var series = this,
 			yAxis = this.yAxis,
+			xAxisLineSpace = this.xAxis.axisLine ? // #8031
+				Math.floor(this.xAxis.axisLine.strokeWidth() / 2) :
+				0,
 			options = series.options,
 			inverted = this.chart.inverted,
 			attr = {},
@@ -813,7 +816,7 @@ seriesType('column', 'line', {
 				translatedThreshold = Math.min(
 					yAxis.pos + yAxis.len,
 					Math.max(yAxis.pos, yAxis.toPixels(options.threshold))
-				);
+				) - xAxisLineSpace;
 				if (inverted) {
 					attr.translateX = translatedThreshold - yAxis.len;
 				} else {
