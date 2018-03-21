@@ -198,9 +198,36 @@ var getLevelOptions = function getLevelOptions(params) {
 	return result;
 };
 
+/**
+ * Update the rootId property on the series. Also makes sure that it is
+ * accessible to exporting.
+ * @param {object} series The series to operate on.
+ * @returns Returns the resulting rootId after update.
+ */
+var updateRootId = function (series) {
+	var rootId,
+		options;
+	if (isObject(series)) {
+		// Get the series options.
+		options = isObject(series.options) ? series.options : {};
+
+		// Calculate the rootId.
+		rootId = pick(series.rootNode, options.rootId, '');
+
+		// Set rootId on series.userOptions to pick it up in exporting.
+		if (isObject(series.userOptions)) {
+			series.userOptions.rootId = rootId;
+		}
+		// Set rootId on series to pick it up on next update.
+		series.rootNode = rootId;
+	}
+	return rootId;
+};
+
 var result = {
 	getColor: getColor,
 	getLevelOptions: getLevelOptions,
-	setTreeValues: setTreeValues
+	setTreeValues: setTreeValues,
+	updateRootId: updateRootId
 };
 export default result;

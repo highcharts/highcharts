@@ -48,7 +48,8 @@ var seriesType = H.seriesType,
 		if (next !== false) {
 			recursive(next, func, context);
 		}
-	};
+	},
+	updateRootId = mixinTreeSeries.updateRootId;
 
 /**
  * A treemap displays hierarchical data using nested rectangles. The data can be
@@ -1011,16 +1012,13 @@ seriesType('treemap', 'scatter', {
 	translate: function () {
 		var series = this,
 			options = series.options,
-			rootId = pick(series.rootNode, options.rootId, ''),
+			// NOTE: updateRootId modifies series.
+			rootId = updateRootId(series),
 			rootNode,
 			pointValues,
 			seriesArea,
 			tree,
 			val;
-
-		// Set rootId on series.userOptions to pick it up in exporting.
-		// Set rootId on series to pick it up on next translate.
-		series.userOptions.rootId = series.rootNode = rootId;
 
 		// Call prototype function
 		Series.prototype.translate.call(series);

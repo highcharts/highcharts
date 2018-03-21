@@ -32,12 +32,12 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 	keys = H.keys,
 	merge = H.merge,
 	noop = H.noop,
-	pick = H.pick,
 	rad2deg = 180 / Math.PI,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
 	setTreeValues = mixinTreeSeries.setTreeValues,
-	reduce = H.reduce;
+	reduce = H.reduce,
+	updateRootId = mixinTreeSeries.updateRootId;
 
 // TODO introduce step, which should default to 1.
 var range = function range(from, to) {
@@ -539,7 +539,7 @@ var sunburstSeries = {
 			shapeRoot = series.shapeRoot,
 			group = series.group,
 			hasRendered = series.hasRendered,
-			idRoot = series.rootNode,
+			idRoot = series.rootId,
 			idPreviousRoot = series.idPreviousRoot,
 			nodeMap = series.nodeMap,
 			nodePreviousRoot = nodeMap[idPreviousRoot],
@@ -735,12 +735,12 @@ var sunburstSeries = {
 			innerRadius = positions[3] / 2,
 			outerRadius = positions[2] / 2,
 			diffRadius = outerRadius - innerRadius,
-			idRoot = series.rootNode =
-				pick(series.rootNode, options.rootId, ''),
+			// NOTE: updateRootId modifies series.
+			rootId = updateRootId(series),
 			mapIdToNode = series.nodeMap,
 			mapOptionsToLevel,
 			idTop,
-			nodeRoot = mapIdToNode && mapIdToNode[idRoot],
+			nodeRoot = mapIdToNode && mapIdToNode[rootId],
 			nodeTop,
 			tree,
 			values;
@@ -750,7 +750,7 @@ var sunburstSeries = {
 		// @todo Only if series.isDirtyData is true
 		tree = series.tree = series.getTree();
 		mapIdToNode = series.nodeMap;
-		nodeRoot = mapIdToNode[idRoot];
+		nodeRoot = mapIdToNode[rootId];
 		idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
 		nodeTop = mapIdToNode[idTop];
 		mapOptionsToLevel = getLevelOptions({
@@ -776,7 +776,7 @@ var sunburstSeries = {
 		//  unnecessary looping.
 		setTreeValues(tree, {
 			before: cbSetTreeValuesBefore,
-			idRoot: idRoot,
+			idRoot: rootId,
 			levelIsConstant: options.levelIsConstant,
 			mapOptionsToLevel: mapOptionsToLevel,
 			mapIdToNode: mapIdToNode,
