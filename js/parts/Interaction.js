@@ -47,7 +47,7 @@ TrackerMixin = H.TrackerMixin = {
 			onMouseOver = function (e) {
 				var point = pointer.getPointFromEvent(e);
 				// undefined on graph in scatterchart
-				if (point !== undefined) { 
+				if (point !== undefined) {
 					pointer.isDirectTouch = true;
 					point.onMouseOver(e);
 				}
@@ -214,7 +214,7 @@ TrackerMixin = H.TrackerMixin = {
  */
 
 if (seriesTypes.column) {
-	seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
+	seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 if (seriesTypes.pie) {
@@ -240,10 +240,10 @@ extend(Legend.prototype, {
 		// itself (#1249)
 		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState('hover');
-			
+
 			// A CSS class to dim or hide other than the hovered series
 			boxWrapper.addClass(activeClass);
-			
+
 			/*= if (build.classic) { =*/
 			legendItem.css(legend.options.itemHoverStyle);
 			/*= } =*/
@@ -257,7 +257,7 @@ extend(Legend.prototype, {
 
 			// A CSS class to dim or hide other than the hovered series
 			boxWrapper.removeClass(activeClass);
-			
+
 			item.setState();
 		})
 		.on('click', function (event) {
@@ -303,8 +303,8 @@ extend(Legend.prototype, {
 		addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
 			fireEvent(
-				item.series || item, 
-				'checkboxClick', 
+				item.series || item,
+				'checkboxClick',
 				{ // #3712
 					checked: target.checked,
 					item: item
@@ -458,7 +458,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				mousePos = e[horiz ? 'chartX' : 'chartY'],
 				mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
 				startPos = chart[mouseDown],
-				halfPointRange = (axis.pointRange || 0) / 2,
+				halfPointRange = (axis.pointRange || 0) /
+					(axis.reversed ? -2 : 2),
 				extremes = axis.getExtremes(),
 				panMin = axis.toValue(startPos - mousePos, true) +
 					halfPointRange,
@@ -468,7 +469,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				newMin = flipped ? panMax : panMin,
 				newMax = flipped ? panMin : panMax,
 				paddedMin = Math.min(
-					extremes.dataMin, 
+					extremes.dataMin,
 					halfPointRange ?
 						extremes.min :
 						axis.toValue(
@@ -562,9 +563,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			selected ? 'select' : 'unselect',
 			{ accumulate: accumulate },
 			function () {
-			
+
 				/**
-				 * Whether the point is selected or not. 
+				 * Whether the point is selected or not.
 				 * @see Point#select
 				 * @see Chart#getSelectedPoints
 				 * @memberof Point
@@ -598,7 +599,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	/**
 	 * Runs on mouse over the point. Called internally from mouse and touch
 	 * events.
-	 * 
+	 *
 	 * @param {Object} e The event arguments
 	 */
 	onMouseOver: function (e) {
@@ -684,19 +685,19 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 		if (
 			// already has this state
 			(state === point.state && !move) ||
-			
+
 			// selected points don't respond to hover
 			(point.selected && state !== 'select') ||
-			
+
 			// series' state options is disabled
 			(stateOptions.enabled === false) ||
-			
+
 			// general point marker's state options is disabled
 			(state && (
-				stateDisabled || 
+				stateDisabled ||
 				(normalDisabled && markerStateOptions.enabled === false)
 			)) ||
-			
+
 			// individual point marker's state options is disabled
 			(
 				state &&
@@ -815,7 +816,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			});
 			halo.attr({
 				'class': 'highcharts-halo highcharts-color-' +
-					pick(point.colorIndex, series.colorIndex) 
+					pick(point.colorIndex, series.colorIndex)
 			});
 			halo.point = point; // #6055
 
@@ -857,7 +858,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 		return chart.renderer.symbols.circle(
 			Math.floor(this.plotX) - size,
 			this.plotY - size,
-			size * 2, 
+			size * 2,
 			size * 2
 		);
 	}
@@ -961,7 +962,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 				if (group) {
 					// Old state
 					if (series.state) {
-						group.removeClass('highcharts-series-' + series.state);	
+						group.removeClass('highcharts-series-' + series.state);
 					}
 					// New state
 					if (state) {
@@ -989,7 +990,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 				attribs = {
 					'stroke-width': lineWidth
 				};
-				
+
 				// Animate the graph stroke-width. By default a quick animation
 				// to hover, slower to un-hover.
 				graph.animate(
@@ -1047,7 +1048,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 			'tt'
 		], function (key) {
 			if (series[key]) {
-				series[key][showOrHide]();				
+				series[key][showOrHide]();
 			}
 		});
 
@@ -1131,7 +1132,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	 */
 	select: function (selected) {
 		var series = this;
-		
+
 		series.selected = selected = (selected === undefined) ?
 			!series.selected :
 			selected;
