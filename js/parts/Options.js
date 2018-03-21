@@ -1650,6 +1650,16 @@ H.defaultOptions = {
 		align: 'center',
 
 		/**
+		 * If the [layout](legend.layout) is `horizontal` and the legend items
+		 * span over two lines or more, whether to align the items into vertical
+		 * columns. Setting this to `false` makes room for more items, but will
+		 * look more messy.
+		 *
+		 * @since 6.1.0
+		 */
+		alignColumns: true,
+
+		/**
 		 * When the legend is floating, the plot area ignores it and is allowed
 		 * to be placed below it.
 		 *
