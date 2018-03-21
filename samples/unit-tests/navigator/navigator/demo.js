@@ -503,3 +503,28 @@ function (assert) {
     );
 });
 
+QUnit.test(
+    'Update of adaptToUpdatedData should remove all related events (#8038)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            series: [{
+                data: [1, 2, 3]
+            }],
+            navigator: {
+                adaptToUpdatedData: true
+            }
+        });
+
+        chart.update({
+            navigator: {
+                adaptToUpdatedData: false
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].hcEvents.updatedData.length,
+            1,
+            'Only one event remaining'
+        );
+    }
+);

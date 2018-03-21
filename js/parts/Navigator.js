@@ -1459,7 +1459,7 @@ Navigator.prototype = {
 
 			// If we have a base series, initialize the navigator series
 			if (baseSeries || navigatorOptions.series.data) {
-				navigator.updateNavigatorSeries();
+				navigator.updateNavigatorSeries(false);
 
 			// If not, set up an event to listen for added series
 			} else if (chart.series.length === 0) {
@@ -1631,7 +1631,7 @@ Navigator.prototype = {
 
 		// When run after render, this.xAxis already exists
 		if (this.xAxis && !this.xAxis.fake) {
-			this.updateNavigatorSeries(redraw);
+			this.updateNavigatorSeries(true, redraw);
 		}
 	},
 
@@ -1639,7 +1639,7 @@ Navigator.prototype = {
 	 * Update series in the navigator from baseSeries, adding new if does not
 	 * exist.
 	 */
-	updateNavigatorSeries: function (redraw) {
+	updateNavigatorSeries: function (addEvents, redraw) {
 		var navigator = this,
 			chart = navigator.chart,
 			baseSeries = navigator.baseSeries,
@@ -1783,7 +1783,9 @@ Navigator.prototype = {
 			});
 		}
 
-		this.addBaseSeriesEvents();
+		if (addEvents) {
+			this.addBaseSeriesEvents();
+		}
 	},
 
 	/**
@@ -2034,6 +2036,7 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
 		zoomType = chartOptions.chart.zoomType,
+		pinchType = chartOptions.chart.pinchType,
 		previousZoom,
 		navigator = chartOptions.navigator,
 		rangeSelector = chartOptions.rangeSelector,
@@ -2041,10 +2044,9 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 
 	if (this.isXAxis && ((navigator && navigator.enabled) ||
 			(rangeSelector && rangeSelector.enabled))) {
-
 		// For x only zooming, fool the chart.zoom method not to create the zoom
 		// button because the property already exists
-		if (zoomType === 'x') {
+		if (zoomType === 'x' || pinchType === 'x') {
 			chart.resetZoomButton = 'blocked';
 
 		// For y only zooming, ignore the X axis completely
@@ -2055,7 +2057,10 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 		// then when the reset button is pressed, revert to this state. This
 		// should apply only if the chart is initialized with a range (#6612),
 		// otherwise zoom all the way out.
-		} else if (zoomType === 'xy' && this.options.range) {
+		} else if (
+			(zoomType === 'xy' || pinchType === 'xy') &&
+			this.options.range
+		) {
 
 			previousZoom = this.previousZoom;
 			if (defined(newMin)) {
