@@ -584,6 +584,7 @@ if (seriesTypes.pie) {
 			connectorWidth = pick(options.connectorWidth, 1),
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
+			maxWidth = Math.round(chart.chartWidth / 4) + 'px',
 			connector,
 			seriesCenter = series.center,
 			radius = seriesCenter[2] / 2,
@@ -613,9 +614,9 @@ if (seriesTypes.pie) {
 			if (point.dataLabel && point.visible && point.dataLabel.shortened) {
 				point.dataLabel
 					.attr({
-						width: 'auto'
+						width: maxWidth
 					}).css({
-						width: 'auto',					
+						width: maxWidth,					
 						textOverflow: 'clip'
 					});
 				point.dataLabel.shortened = false;
@@ -634,6 +635,24 @@ if (seriesTypes.pie) {
 
 				// Reset positions (#4905)
 				point.dataLabel._pos = null;
+
+				// Avoid long labels sqeezing the pie size too far down
+				/*= if (build.classic) { =*/
+				if (
+					!defined(options.style.width) &&
+					!defined(
+						point.options.dataLabels &&
+						point.options.dataLabels.style &&
+						point.options.dataLabels.style.width
+					)
+				) {
+				/*= } =*/
+					point.dataLabel.css({
+						width: maxWidth
+					});
+				/*= if (build.classic) { =*/
+				}
+				/*= } =*/
 			}
 		});
 

@@ -136,9 +136,10 @@ seriesType('pie', 'line', {
 		 */
 		
 		/**
+		 * 
 		 * @sample {highcharts}
 		 *         highcharts/plotOptions/pie-datalabels-overflow
-		 *         Long labels truncated with an ellipsis by default
+		 *         Long labels truncated with an ellipsis
 		 * @sample {highcharts}
 		 *         highcharts/plotOptions/pie-datalabels-overflow-wrap
 		 *         Long labels are wrapped
