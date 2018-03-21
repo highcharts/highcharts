@@ -301,22 +301,22 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
                 data: [
                     ['no', 1, {
                         pattern: {
-                            image: 'abc'
+                            image: 'base/test/1x1b.png'
                         }
                     }],
                     ['dk', 1, {
                         pattern: {
-                            image: 'abc'
+                            image: 'base/test/1x1b.png'
                         }
                     }],
                     ['se', 1, {
                         pattern: {
-                            image: 'def'
+                            image: 'base/test/1x1w.png'
                         }
                     }],
                     ['fi', 1, {
                         pattern: {
-                            image: 'def',
+                            image: 'base/test/1x1w.png',
                             width: 10,
                             height: null // Autocompute
                         }
@@ -395,12 +395,12 @@ QUnit.test('Image auto resize with aspect ratio - map', function (assert) {
                 data: [
                     ['no', 1, {
                         pattern: {
-                            image: 'abc'
+                            image: 'base/test/1x1b.png'
                         }
                     }],
                     ['at', 1, {
                         pattern: {
-                            image: 'def'
+                            image: 'base/test/1x1w.png'
                         }
                     }]
                 ]
@@ -490,7 +490,7 @@ QUnit.test('Image auto resize with aspect ratio - column', function (assert) {
                     color: {
                         pattern: {
                             aspectRatio: 3 / 2,
-                            image: 'abc'
+                            image: 'base/test/1x1b.png'
                         }
                     }
                 }]
