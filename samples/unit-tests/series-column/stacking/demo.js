@@ -34,8 +34,6 @@ QUnit.test(
             data1 = chart.series[0].data,
             data2 = chart.series[1].data;
 
-        console.log(allObjectProperties());
-
         for (var i = 0, ie = data1.length; i < ie; ++i) {
             assert.ok(
                 data1[i].graphic.element,
