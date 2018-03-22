@@ -25,8 +25,8 @@
     "lib"
   ],
   "scripts": {
-    "test": "gulp test",
-    "testall": "gulp test --browsers all",
+    "test": "gulp test --all",
+    "testall": "gulp test --all --browsers all",
     "precommit": "lint-staged && gulp test",
     "post-merge": "gulp styles && gulp scripts && gulp test"
   },
