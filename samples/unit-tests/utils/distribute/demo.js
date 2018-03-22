@@ -154,7 +154,7 @@
             };
         });
 
-        Highcharts.distribute(boxes, len);
+        Highcharts.distribute(boxes, len, 100);
 
         visualize(boxes);
 
