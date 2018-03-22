@@ -484,11 +484,6 @@ function allObjectProperties(obj) { // eslint-disable-line no-unused-vars
                     resultDictionary[propertyName] = 'Highcharts.Time';
                 } else {
                     resultDictionary[propertyName] = typeof obj[propertyName];
-                    if (resultDictionary[propertyName] === 'object' &&
-                        typeof obj[propertyName].prototype === 'undefined'
-                    ) {
-                        resultDictionary[propertyName] = 'dictionary';
-                    }
                 }
             });
     }
