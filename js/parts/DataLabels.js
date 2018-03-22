@@ -20,6 +20,7 @@ var addEvent = H.addEvent,
 	relativeLength = H.relativeLength,
 	Series = H.Series,
 	seriesTypes = H.seriesTypes,
+	some = H.some,
 	stableSort = H.stableSort;
 
     
@@ -30,15 +31,16 @@ var addEvent = H.addEvent,
  * close as possible to their targets, skipping the lowest ranked labels if
  * necessary.
  */
-H.distribute = function (boxes, len) {
-	
+H.distribute = function (boxes, len, maxDistance) {
+
 	var i, 
 		overlapping = true,
 		origBoxes = boxes, // Original array will be altered with added .pos
 		restBoxes = [], // The outranked overshoot
 		box,
 		target,
-		total = 0;
+		total = 0,
+		reducedLen = origBoxes.reducedLen || len;
 
 	function sortByTarget(a, b) {
 		return a.target - b.target;
@@ -52,13 +54,13 @@ H.distribute = function (boxes, len) {
 	}
 
 	// Sort by rank, then slice away overshoot
-	if (total > len) {
+	if (total > reducedLen) {
 		stableSort(boxes, function (a, b) {
 			return (b.rank || 0) - (a.rank || 0);
 		});
 		i = 0;
 		total = 0;
-		while (total <= len) {
+		while (total <= reducedLen) {
 			total += boxes[i].size;
 			i++;
 		}
@@ -118,20 +120,54 @@ H.distribute = function (boxes, len) {
 		}
 	}
 
+	// Add the rest (hidden boxes)
+	origBoxes.push.apply(origBoxes, restBoxes);
+	
+
 	// Now the composite boxes are placed, we need to put the original boxes
 	// within them
 	i = 0;
-	each(boxes, function (box) {
+	some(boxes, function (box) {
 		var posInCompositeBox = 0;
-		each(box.targets, function () {
+		if (some(box.targets, function () {
 			origBoxes[i].pos = box.pos + posInCompositeBox;
+
+			// If the distance between the position and the target exceeds 
+			// maxDistance, abort the loop and decrease the length in increments
+			// of 10% to recursively reduce the  number of visible boxes by
+			// rank. Once all boxes are within the maxDistance, we're good.
+			if (
+				Math.abs(origBoxes[i].pos - origBoxes[i].target) >
+				maxDistance
+			) {
+				// Reset the positions that are already set
+				each(origBoxes.slice(0, i + 1), function (box) {
+					delete box.pos;
+				});
+
+				// Try with a smaller length
+				origBoxes.reducedLen =
+					(origBoxes.reducedLen || len) - (len * 0.1);
+
+				// Recurse
+				if (origBoxes.reducedLen) {
+					H.distribute(origBoxes, len, maxDistance);
+				}
+
+				// Exceeded maxDistance => abort
+				return true;
+			}
+
 			posInCompositeBox += origBoxes[i].size;
 			i++;
-		});
+
+		})) {
+			// Exceeded maxDistance => abort
+			return true;
+		}
 	});
 	
 	// Add the rest (hidden) boxes and sort by target
-	origBoxes.push.apply(origBoxes, restBoxes);
 	stableSort(origBoxes, sortByTarget);
 };
 
@@ -584,6 +620,7 @@ if (seriesTypes.pie) {
 			connectorWidth = pick(options.connectorWidth, 1),
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
+			maxWidth = Math.round(chart.chartWidth / 3),
 			connector,
 			seriesCenter = series.center,
 			radius = seriesCenter[2] / 2,
@@ -615,7 +652,7 @@ if (seriesTypes.pie) {
 					.attr({
 						width: 'auto'
 					}).css({
-						width: 'auto',					
+						width: 'auto',
 						textOverflow: 'clip'
 					});
 				point.dataLabel.shortened = false;
@@ -634,6 +671,29 @@ if (seriesTypes.pie) {
 
 				// Reset positions (#4905)
 				point.dataLabel._pos = null;
+
+				// Avoid long labels squeezing the pie size too far down
+				/*= if (build.classic) { =*/
+				if (
+					!defined(options.style.width) &&
+					!defined(
+						point.options.dataLabels &&
+						point.options.dataLabels.style &&
+						point.options.dataLabels.style.width
+					)
+				) {
+				/*= } =*/
+					if (point.dataLabel.getBBox().width > maxWidth) {
+						point.dataLabel.css({
+							// Use a fraction of the maxWidth to avoid wrapping
+							// close to the end of the string.
+							width: maxWidth * 0.7
+						});
+						point.dataLabel.shortened = true;
+					}
+				/*= if (build.classic) { =*/
+				}
+				/*= } =*/
 			}
 		});
 
@@ -649,7 +709,8 @@ if (seriesTypes.pie) {
 				naturalY,
 				sideOverflow,
 				positionsIndex, // Point index in positions array.
-				size;
+				size,
+				distributionLength;
 
 			if (!length) {
 				return;
@@ -693,7 +754,12 @@ if (seriesTypes.pie) {
 						}) - 1;
 					}
 				});
-				H.distribute(positions, bottom + size - top);
+				distributionLength = bottom + size - top;
+				H.distribute(
+					positions,
+					distributionLength,
+					distributionLength / 5
+				);
 			}
 
 			// Now the used slots are sorted, fill them up sequentially

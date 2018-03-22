@@ -9,7 +9,10 @@ Highcharts.chart('container', {
         pie: {
             size: '50%',
             dataLabels: {
-                enabled: true
+                enabled: true,
+                style: {
+                    textOverflow: 'ellipsis'
+                }
             }
         }
     },

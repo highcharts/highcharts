@@ -4211,6 +4211,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 						}
 					});
 					text.css(textStyles);
+					
+					if ('width' in textStyles) {
+						updateBoxSize();
+					}
 				}
 				return baseCss.call(wrapper, styles);
 			},
