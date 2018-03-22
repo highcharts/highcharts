@@ -483,9 +483,9 @@ function allObjectProperties(obj) { // eslint-disable-line no-unused-vars
                 } else {
                     resultDictionary[propertyName] = typeof obj[propertyName];
                     if (resultDictionary[propertyName] === 'object') {
-                        if (obj[propertyName].length) {
+                        if (obj[propertyName] instanceof Array) {
                             resultDictionary[propertyName] = 'array';
-                        } else if (!obj[propertyName].prototype) {
+                        } else if (typeof obj[propertyName].prototype === 'undefined') {
                             resultDictionary[propertyName] = 'dictionary';
                         }
                     }
