@@ -38,7 +38,7 @@ var addEvent = H.addEvent,
 
 
 	seriesProto = Series.prototype,
-	seriesInit = seriesProto.init, 
+	seriesInit = seriesProto.init,
 	seriesProcessData = seriesProto.processData,
 	pointTooltipFormatter = Point.prototype.tooltipFormatter;
 
@@ -49,7 +49,7 @@ var addEvent = H.addEvent,
  * or absolute change depending on whether `compare` is set to `"percent"`
  * or `"value"`. When this is applied to multiple series, it allows
  * comparing the development of the series against each other.
- * 
+ *
  * @type {String}
  * @see [compareBase](#plotOptions.series.compareBase),
  *      [Axis.setCompare()](#Axis.setCompare())
@@ -80,7 +80,7 @@ var addEvent = H.addEvent,
 /**
  * When [compare](#plotOptions.series.compare) is `percent`, this option
  * dictates whether to use 0 or 100 as the base of comparison.
- * 
+ *
  * @validvalue [0, 100]
  * @type {Number}
  * @sample {highstock} / Compare base is 100
@@ -93,7 +93,7 @@ var addEvent = H.addEvent,
 /**
  * Factory function for creating new stock charts. Creates a new {@link Chart|
  * Chart} object with different default options than the basic Chart.
- * 
+ *
  * @function #stockChart
  * @memberOf Highcharts
  *
@@ -171,7 +171,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 					overflow: 'justify'
 				},
 				showLastLabel: true
-			}, 
+			},
 			defaultOptions.xAxis, // #3802
 			defaultOptions.xAxis && defaultOptions.xAxis[i], // #7690
 			xAxisOptions, // user options
@@ -206,7 +206,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			title: {
 				text: null
 			}
-		}, 
+		},
 		defaultOptions.yAxis, // #3802
 		defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
 		yAxisOptions // user options
@@ -257,7 +257,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			}
 
 		},
-		
+
 		options, // user's options
 
 		{ // forced options
@@ -267,7 +267,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 
 	options.series = seriesOptions;
 
-	return hasRenderToArg ? 
+	return hasRenderToArg ?
 		new Chart(a, options, c) :
 		new Chart(options, b);
 };
@@ -353,7 +353,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
 		if (isString(opt)) {
 			return [chart.get(opt)];
 		}
-		
+
 		// Auto detect based on existing series
 		return map(series, function (s) {
 			return s[otherColl];
@@ -465,7 +465,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
 
 // Function to crisp a line with multiple segments
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
-	// points format: ['M', 0, 0, 'L', 100, 0]		
+	// points format: ['M', 0, 0, 'L', 100, 0]
 	// normalize to a crisp line
 	var i;
 	for (i = 0; i < points.length; i = i + 6) {
@@ -490,7 +490,7 @@ if (Renderer === VMLRenderer) {
 
 // Wrapper to hide the label
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
-	
+
 	proceed.call(this, i);
 
 	if (this.crossLabel) {
@@ -500,7 +500,7 @@ wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 
 // Extend crosshairs to also draw the label
 addEvent(Axis, 'afterDrawCrosshair', function (event) {
-	
+
 	// Check if the label has to be drawn
 	if (
 		!defined(this.crosshair.label) ||
@@ -659,7 +659,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
 /* ****************************************************************************
  * Start value compare logic												  *
  *****************************************************************************/
-	
+
 /**
  * Extend series.init by adding a method to modify the y value used for plotting
  * on the y axis. This method is called both from the axis when finding dataMin
@@ -693,7 +693,7 @@ seriesProto.setCompare = function (compare) {
 	this.modifyValue = (compare === 'value' || compare === 'percent') ?
 		function (value, point) {
 			var compareValue = this.compareValue;
-			
+
 			if (
 				value !== undefined &&
 				compareValue !== undefined
@@ -702,13 +702,13 @@ seriesProto.setCompare = function (compare) {
 				// Get the modified value
 				if (compare === 'value') {
 					value -= compareValue;
-				
+
 				// Compare percent
 				} else {
-					value = 100 * (value / compareValue) - 
+					value = 100 * (value / compareValue) -
 						(this.options.compareBase === 100 ? 0 : 100);
 				}
-				
+
 				// record for tooltip etc.
 				if (point) {
 					point.change = value;
@@ -768,7 +768,7 @@ seriesProto.processData = function () {
 
 		// find the first value for comparison
 		for (i = 0; i < length - compareStart; i++) {
-			compareValue = processedYData[i] && keyIndex > -1 ? 
+			compareValue = processedYData[i] && keyIndex > -1 ?
 				processedYData[i][keyIndex] :
 				processedYData[i];
 			if (
@@ -844,8 +844,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 			point.change,
 			pick(point.series.tooltipOptions.changeDecimals, 2)
 		)
-	); 
-	
+	);
+
 	return pointTooltipFormatter.apply(this, [pointFormat]);
 };
 
@@ -860,6 +860,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
+	var clipHeight;
 	// Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
 	// if the series type handles clipping in the animate method (#2975).
 	if (
@@ -868,23 +869,27 @@ wrap(Series.prototype, 'render', function (proceed) {
 		this.xAxis &&
 		!this.xAxis.isRadial // Gauge, #6192
 	) {
+		// Include xAxis line width, #8031
+		clipHeight = this.yAxis.len - (this.xAxis.axisLine ?
+			Math.floor(this.xAxis.axisLine.strokeWidth() / 2) :
+			0);
 
 		// First render, initial clip box
 		if (!this.clipBox && this.animate) {
 			this.clipBox = merge(this.chart.clipBox);
 			this.clipBox.width = this.xAxis.len;
-			this.clipBox.height = this.yAxis.len;
+			this.clipBox.height = clipHeight;
 
 		// On redrawing, resizing etc, update the clip rectangle
 		} else if (this.chart[this.sharedClipKey]) {
 			this.chart[this.sharedClipKey].attr({
 				width: this.xAxis.len,
-				height: this.yAxis.len
+				height: clipHeight
 			});
 		// #3111
 		} else if (this.clipBox) {
 			this.clipBox.width = this.xAxis.len;
-			this.clipBox.height = this.yAxis.len;
+			this.clipBox.height = clipHeight;
 		}
 	}
 	proceed.call(this);
