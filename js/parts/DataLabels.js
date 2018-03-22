@@ -150,7 +150,7 @@ H.distribute = function (boxes, len, maxDistance) {
 					(origBoxes.reducedLen || len) - (len * 0.1);
 
 				// Recurse
-				if (origBoxes.reducedLen) {
+				if (origBoxes.reducedLen > len * 0.1) {
 					H.distribute(origBoxes, len, maxDistance);
 				}
 
