@@ -620,7 +620,7 @@ if (seriesTypes.pie) {
 			connectorWidth = pick(options.connectorWidth, 1),
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
-			maxWidth = Math.round(chart.chartWidth / 4) + 'px',
+			maxWidth = Math.round(chart.chartWidth / 3),
 			connector,
 			seriesCenter = series.center,
 			radius = seriesCenter[2] / 2,
@@ -650,9 +650,9 @@ if (seriesTypes.pie) {
 			if (point.dataLabel && point.visible && point.dataLabel.shortened) {
 				point.dataLabel
 					.attr({
-						width: maxWidth
+						width: 'auto'
 					}).css({
-						width: maxWidth,					
+						width: 'auto',
 						textOverflow: 'clip'
 					});
 				point.dataLabel.shortened = false;
@@ -672,7 +672,7 @@ if (seriesTypes.pie) {
 				// Reset positions (#4905)
 				point.dataLabel._pos = null;
 
-				// Avoid long labels sqeezing the pie size too far down
+				// Avoid long labels squeezing the pie size too far down
 				/*= if (build.classic) { =*/
 				if (
 					!defined(options.style.width) &&
@@ -683,9 +683,14 @@ if (seriesTypes.pie) {
 					)
 				) {
 				/*= } =*/
-					point.dataLabel.css({
-						width: maxWidth
-					});
+					if (point.dataLabel.getBBox().width > maxWidth) {
+						point.dataLabel.css({
+							// Use a fraction of the maxWidth to avoid wrapping
+							// close to the end of the string.
+							width: maxWidth * 0.7
+						});
+						point.dataLabel.shortened = true;
+					}
 				/*= if (build.classic) { =*/
 				}
 				/*= } =*/
