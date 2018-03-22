@@ -462,6 +462,8 @@ function allObjectProperties(obj) { // eslint-disable-line no-unused-vars
                 }
                 if (obj[propertyName] === null) {
                     resultDictionary[propertyName] = 'null';
+                } else if (obj[propertyName] instanceof Array) {
+                    resultDictionary[propertyName] = 'Array';
                 } else if (obj[propertyName] instanceof Highcharts.Axis) {
                     resultDictionary[propertyName] = 'Highcharts.Axis';
                 } else if (obj[propertyName] instanceof Highcharts.Chart) {
@@ -482,16 +484,13 @@ function allObjectProperties(obj) { // eslint-disable-line no-unused-vars
                     resultDictionary[propertyName] = 'Highcharts.Time';
                 } else {
                     resultDictionary[propertyName] = typeof obj[propertyName];
-                    if (resultDictionary[propertyName] === 'object') {
-                        if (obj[propertyName] instanceof Array) {
-                            resultDictionary[propertyName] = 'array';
-                        } else if (typeof obj[propertyName].prototype === 'undefined') {
-                            resultDictionary[propertyName] = 'dictionary';
-                        }
+                    if (resultDictionary[propertyName] === 'object' &&
+                        typeof obj[propertyName].prototype === 'undefined'
+                    ) {
+                        resultDictionary[propertyName] = 'dictionary';
                     }
                 }
-            }
-        );
+            });
     }
 
     return resultDictionary;
