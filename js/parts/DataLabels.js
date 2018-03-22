@@ -154,7 +154,7 @@ H.distribute = function (boxes, len, maxDistance) {
 					H.distribute(origBoxes, len, maxDistance);
 				}
 
-				// Exceeded maxDistance => abort and recurse
+				// Exceeded maxDistance => abort
 				return true;
 			}
 
@@ -162,7 +162,7 @@ H.distribute = function (boxes, len, maxDistance) {
 			i++;
 
 		})) {
-			// Exceeded maxDistance => abort and recurse
+			// Exceeded maxDistance => abort
 			return true;
 		}
 	});

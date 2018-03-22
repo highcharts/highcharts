@@ -1725,8 +1725,10 @@ H.defaultOptions = {
 		 */
 
 		/**
-		 * The width for each legend item. This is useful in a horizontal layout
-		 * with many items when you want the items to align vertically. .
+		 * The width for each legend item. By default the items are laid out
+		 * successively. In a [horizontal layout](legend.layout), if the items
+		 * are laid out across two rows or more, they will be vertically aligned
+		 * depending on the [legend.alignColumns](legend.alignColumns) option.
 		 *
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/legend/itemwidth-default/ Null by default
