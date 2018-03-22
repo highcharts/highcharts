@@ -1517,6 +1517,22 @@ H.find = Array.prototype.find ?
 	};
 
 /**
+ * Test whether at least one element in the array passes the test implemented by
+ * the provided function.
+ *
+ * @function #some
+ * @memberOf Highcharts
+ * @param  {Array}   arr  The array to test
+ * @param  {Function} fn  The function to run on each item. Return truty to pass
+ *                        the test. Receives arguments `currentValue`, `index`
+ *                        and `array`.
+ * @param  {Object}   ctx The context.
+ */
+H.some = function (arr, fn, ctx) {
+	return (H.somePolyfill || Array.prototype.some).call(arr, fn, ctx);
+};
+
+/**
  * Map an array by a callback.
  *
  * @function #map

@@ -180,6 +180,77 @@ QUnit.test(
             chart.series[0].points[0].dataLabel.opacity,
             1,
             'First data label is visible'
-        )
+        );
+    }
+);
+
+// Highcharts 4.1.1, Issue #3866
+// Data Labels are not rendering for column charts when series are shown/hidden
+QUnit.skip(
+    'Datalabels overlap in hidden series (#3866)',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+            chart: {
+                width: 400,
+                type: 'column'
+            },
+            title: {
+                text: 'Test for data labels allowOverlap'
+            },
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{y} km'
+                    }
+                }
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6],
+                name: '1. Click me'
+            }, {
+                data: [1.1, 2.1, 3.1, 4.1, 5.1, 6.1],
+                name: '2. My data labels should show'
+            }]
+        });
+
+        assert.strictEqual(
+            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
+            3,
+            'With both series should only be 3 labels visible.'
+        );
+
+        chart.series[1].hide();
+
+        assert.strictEqual(
+            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
+            6,
+            'With only first series should be 6 labels visible.'
+        );
+
+        chart.series[1].show();
+
+        assert.strictEqual(
+            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
+            3,
+            'With both series should only be 3 labels visible.'
+        );
+
+        chart.series[0].hide();
+
+        assert.strictEqual(
+            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
+            6,
+            'With only second series should be 6 labels visible.'
+        );
+
+        chart.series[1].hide();
+
+        assert.strictEqual(
+            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
+            0,
+            'With no series should be no labels visible.'
+        );
     }
 );

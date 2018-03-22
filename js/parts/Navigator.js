@@ -1833,7 +1833,9 @@ Navigator.prototype = {
 			addEvent(base, 'remove', function () {
 				if (this.navigatorSeries) {
 					erase(navigator.series, this.navigatorSeries);
-					this.navigatorSeries.remove(false);
+					if (defined(this.navigatorSeries.options)) {
+						this.navigatorSeries.remove(false);
+					}
 					delete this.navigatorSeries;
 				}
 			});

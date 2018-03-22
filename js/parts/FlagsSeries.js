@@ -414,7 +414,7 @@ seriesType('flags', 'column', {
 				boxes.push(box);
 			});
 
-			H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len);
+			H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
 			each(points, function (point) {
 				var box = point.graphic && boxesMap[point.plotX];

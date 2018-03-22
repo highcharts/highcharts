@@ -72,8 +72,6 @@ Highcharts.Legend.prototype = {
 		this.itemMarginTop = options.itemMarginTop || 0;
 		this.padding = padding;
 		this.initialItemY = padding - 5; // 5 is pixels above the text
-		this.maxItemWidth = 0;
-		this.itemHeight = 0;
 		this.symbolWidth = pick(options.symbolWidth, 16);
 		this.pages = [];
 
@@ -349,15 +347,9 @@ Highcharts.Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			/*= } =*/
-			padding = legend.padding,
 			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
-			itemHeight,
-			widthOption = options.width,
-			itemMarginBottom = options.itemMarginBottom || 0,
-			itemMarginTop = legend.itemMarginTop,
 			bBox,
-			itemWidth,
 			li = item.legendItem,
 			isSeries = !item.series,
 			series = !isSeries && item.series.drawLegendSymbol ?
@@ -415,7 +407,8 @@ Highcharts.Legend.prototype = {
 					fontSize,
 					li
 				);
-				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
+				legend.baseline =
+					legend.fontMetrics.f + 3 + legend.itemMarginTop;
 				li.attr('y', legend.baseline);
 			}
 
@@ -457,69 +450,83 @@ Highcharts.Legend.prototype = {
 		// calculate the positions for the next line
 		bBox = li.getBBox();
 
-		itemWidth = item.checkboxOffset =
+		item.itemWidth = item.checkboxOffset =
 			options.itemWidth ||
 			item.legendItemWidth ||
 			bBox.width + itemExtraWidth;
-		legend.itemHeight = itemHeight = Math.round(
+		legend.maxItemWidth = Math.max(legend.maxItemWidth, item.itemWidth);
+		legend.totalItemWidth += item.itemWidth;
+		legend.itemHeight = item.itemHeight = Math.round(
 			item.legendItemHeight || bBox.height || legend.symbolHeight
 		);
+	},
+
+	/**
+	 * Get the position of the item in the layout. We now know the 
+	 * maxItemWidth from the previous loop.
+	 *
+	 * @private
+	 */
+	layoutItem: function (item) {
+
+		var options = this.options,
+			padding = this.padding,
+			horizontal = options.layout === 'horizontal',
+			itemHeight = item.itemHeight,
+			itemMarginBottom = options.itemMarginBottom || 0,
+			itemMarginTop = this.itemMarginTop,
+			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
+			widthOption = options.width,
+			maxLegendWidth = widthOption || (
+				this.chart.spacingBox.width - 2 * padding - options.x
+			),
+			itemWidth = (
+					options.alignColumns &&
+					this.totalItemWidth > maxLegendWidth
+				) ? 
+				this.maxItemWidth :
+				item.itemWidth;
 
 		// If the item exceeds the width, start a new line
 		if (
 			horizontal &&
-			legend.itemX - padding + itemWidth > (
-				widthOption || (
-					chart.spacingBox.width - 2 * padding - options.x
-				)
-			)
+			this.itemX - padding + itemWidth > maxLegendWidth
 		) {
-			legend.itemX = padding;
-			legend.itemY += itemMarginTop + legend.lastLineHeight +
+			this.itemX = padding;
+			this.itemY += itemMarginTop + this.lastLineHeight +
 				itemMarginBottom;
-			legend.lastLineHeight = 0; // reset for next line (#915, #3976)
+			this.lastLineHeight = 0; // reset for next line (#915, #3976)
 		}
-
-		// If the item exceeds the height, start a new column
-		/*
-		if (!horizontal && legend.itemY + options.y +
-				itemHeight > chart.chartHeight - spacingTop - spacingBottom) {
-			legend.itemY = legend.initialItemY;
-			legend.itemX += legend.maxItemWidth;
-			legend.maxItemWidth = 0;
-		}
-		*/
 
 		// Set the edge positions
-		legend.maxItemWidth = Math.max(legend.maxItemWidth, itemWidth);
-		legend.lastItemY = itemMarginTop + legend.itemY + itemMarginBottom;
-		legend.lastLineHeight = Math.max( // #915
+		this.lastItemY = itemMarginTop + this.itemY + itemMarginBottom;
+		this.lastLineHeight = Math.max( // #915
 			itemHeight,
-			legend.lastLineHeight
+			this.lastLineHeight
 		);
 
 		// cache the position of the newly generated or reordered items
-		item._legendItemPos = [legend.itemX, legend.itemY];
+		item._legendItemPos = [this.itemX, this.itemY];
 
 		// advance
 		if (horizontal) {
-			legend.itemX += itemWidth;
+			this.itemX += itemWidth;
 
 		} else {
-			legend.itemY += itemMarginTop + itemHeight + itemMarginBottom;
-			legend.lastLineHeight = itemHeight;
+			this.itemY += itemMarginTop + itemHeight + itemMarginBottom;
+			this.lastLineHeight = itemHeight;
 		}
 
 		// the width of the widest item
-		legend.offsetWidth = widthOption || Math.max(
+		this.offsetWidth = widthOption || Math.max(
 			(
-				horizontal ? legend.itemX - padding - (item.checkbox ?
+				horizontal ? this.itemX - padding - (item.checkbox ?
 					// decrease by itemDistance only when no checkbox #4853
 					0 :
 					itemDistance
 				) : itemWidth
 			) + padding,
-			legend.offsetWidth
+			this.offsetWidth
 		);
 	},
 
@@ -682,11 +689,15 @@ Highcharts.Legend.prototype = {
 		legend.allItems = allItems;
 		legend.display = display = !!allItems.length;
 
-		// render the items
+		// Render the items. First we run a loop to set the text and properties
+		// and read all the bounding boxes. The next loop computes the item
+		// positions based on the bounding boxes.
 		legend.lastLineHeight = 0;
-		each(allItems, function (item) {
-			legend.renderItem(item);
-		});
+		legend.maxItemWidth = 0;
+		legend.totalItemWidth = 0;
+		legend.itemHeight = 0;
+		each(allItems, legend.renderItem, legend);
+		each(allItems, legend.layoutItem, legend);
 
 		// Get the box
 		legendWidth = (options.width || legend.offsetWidth) + padding;
@@ -744,9 +755,7 @@ Highcharts.Legend.prototype = {
 
 		// Now that the legend width and height are established, put the items
 		// in the final position
-		each(allItems, function (item) {
-			legend.positionItem(item);
-		});
+		each(allItems, legend.positionItem, legend);
 
 		if (display) {
 			// If aligning to the top and the layout is horizontal, adjust for

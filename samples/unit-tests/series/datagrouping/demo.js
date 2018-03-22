@@ -1,3 +1,55 @@
+
+QUnit.test('General dataGrouping options', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        chart: {
+            type: 'column'
+        },
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    enabled: true,
+                    forced: true,
+                    units: [
+                        ['millisecond', [5]]
+                    ]
+                }
+            }
+        },
+
+        xAxis: {
+            min: 1
+        },
+
+        series: [{
+            dataGrouping: {
+                groupAll: true
+            },
+            data: [
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            ]
+        }, {
+            dataGrouping: {
+                groupAll: false
+            },
+            data: [
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        5,
+        'All points are used to calculate gorups (#5344)'
+    );
+
+    assert.strictEqual(
+        chart.series[1].points[0].y,
+        4,
+        'Only visible points are used to calculate gorups (#5344)'
+    );
+});
+
 QUnit.test('dataGrouping and keys', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {
@@ -138,9 +190,6 @@ QUnit.test('Hidden series shouldn\'t have `undefined`-points in a series.points 
 
 QUnit.test('Data grouping and shoulder values (#4907)', function (assert) {
     var chart = Highcharts.stockChart('container', {
-        chart: {
-            renderTo: 'container'
-        },
         xAxis: {
             type: 'datetime',
             ordinal: false,

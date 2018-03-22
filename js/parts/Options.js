@@ -1650,6 +1650,16 @@ H.defaultOptions = {
 		align: 'center',
 
 		/**
+		 * If the [layout](legend.layout) is `horizontal` and the legend items
+		 * span over two lines or more, whether to align the items into vertical
+		 * columns. Setting this to `false` makes room for more items, but will
+		 * look more messy.
+		 *
+		 * @since 6.1.0
+		 */
+		alignColumns: true,
+
+		/**
 		 * When the legend is floating, the plot area ignores it and is allowed
 		 * to be placed below it.
 		 *
@@ -1715,8 +1725,10 @@ H.defaultOptions = {
 		 */
 
 		/**
-		 * The width for each legend item. This is useful in a horizontal layout
-		 * with many items when you want the items to align vertically. .
+		 * The width for each legend item. By default the items are laid out
+		 * successively. In a [horizontal layout](legend.layout), if the items
+		 * are laid out across two rows or more, they will be vertically aligned
+		 * depending on the [legend.alignColumns](legend.alignColumns) option.
 		 *
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/legend/itemwidth-default/ Null by default

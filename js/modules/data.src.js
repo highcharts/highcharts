@@ -23,26 +23,8 @@ var addEvent = Highcharts.addEvent,
 	merge = Highcharts.merge,
 	splat = Highcharts.splat,
 	fireEvent = Highcharts.fireEvent,
-	some,
+	some = Highcharts.some,
 	SeriesBuilder;
-
-// `some` function
-if (!Array.prototype.some) {
-	some = function (arr, fn, ctx) { // legacy
-		var i = 0,
-			len = arr.length;
-
-		for (; i < len; i++) {
-			if (fn.call(ctx, arr[i], i, arr) === true) {
-				return;
-			}
-		}
-	};
-} else {
-	some = function (arr, fn, ctx) {
-		Array.prototype.some.call(arr, fn, ctx);
-	};
-}
 
 /**
  * @typedef {Object} AjaxSettings

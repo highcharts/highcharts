@@ -7,6 +7,8 @@ Highcharts.chart('container', {
     },
 
     legend: {
+        // itemWidth: null // => default
+        // alignColumns: true  // => default
     },
 
     series: [{

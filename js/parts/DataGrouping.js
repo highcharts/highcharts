@@ -152,6 +152,23 @@ var addEvent = H.addEvent,
  * @apioption plotOptions.series.dataGrouping.groupPixelWidth
  */
 
+ /**
+ * By deafault only points within the visible range are grouped.
+ * Enabling this option will force dataGrouping to calculate all grouped points
+ * for a given dataset. That options prevents for example column series to
+ * calculate grouped point partially. Effect is similar to
+ * [Series.getExtremesFromAll](#plotOptions.series.getExtremesFromAll) but does
+ * not affect yAxis extremes.
+ * 
+ * @type {Boolean}
+ * @sample {highstock} stock/plotoptions/series-datagrouping-groupall/
+ *         Two series with the same data but different groupAll setting
+ * @default false
+ * @since 6.1.0
+ * @product highstock
+ * @apioption plotOptions.series.dataGrouping.groupAll
+ */
+
 /**
  * Normally, a group is indexed by the start of that group, so for example
  * when 30 daily values are grouped into one month, that month's x value
@@ -583,14 +600,15 @@ seriesProto.processData = function () {
 		hasGroupedData,
 		skip,
 		lastDataGrouping = this.currentDataGrouping,
-		currentDataGrouping;
+		currentDataGrouping,
+		croppedData;
 
-	// run base method
+	// Run base method
 	series.forceCrop = groupingEnabled; // #334
 	series.groupPixelWidth = null; // #2110
 	series.hasProcessed = true; // #2692
 
-	// skip if processData returns false or if grouping is disabled (in that
+	// Skip if processData returns false or if grouping is disabled (in that
 	// order)
 	skip = (
 		baseProcessData.apply(series, arguments) === false ||
@@ -600,8 +618,10 @@ seriesProto.processData = function () {
 		series.destroyGroupedData();
 
 		var i,
-			processedXData = series.processedXData,
-			processedYData = series.processedYData,
+			processedXData = dataGroupingOptions.groupAll ? series.xData :
+				series.processedXData,
+			processedYData = dataGroupingOptions.groupAll ? series.yData :
+				series.processedYData,
 			plotSizeX = chart.plotSizeX,
 			xAxis = series.xAxis,
 			ordinal = xAxis.options.ordinal,
@@ -613,7 +633,7 @@ seriesProto.processData = function () {
 		if (groupPixelWidth) {
 			hasGroupedData = true;
 
-			// force recreation of point instances in series.translate, #5699
+			// Force recreation of point instances in series.translate, #5699
 			series.isDirty = true;
 			series.points = null; // #6709
 
@@ -650,7 +670,7 @@ seriesProto.processData = function () {
 				groupedXData = groupedData[0],
 				groupedYData = groupedData[1];
 
-			// prevent the smoothed data to spill out left and right, and make
+			// Prevent the smoothed data to spill out left and right, and make
 			// sure data is not shifted to the left
 			if (dataGroupingOptions.smoothed && groupedXData.length) {
 				i = groupedXData.length - 1;
@@ -661,7 +681,7 @@ seriesProto.processData = function () {
 				groupedXData[0] = Math.max(groupedXData[0], xMin);
 			}
 
-			// record what data grouping values were used
+			// Record what data grouping values were used
 			currentDataGrouping = groupPositions.info;
 			series.closestPointRange = groupPositions.info.totalRange;
 			series.groupMap = groupedData[2];
@@ -679,7 +699,20 @@ seriesProto.processData = function () {
 				xAxis.dataMin = groupedXData[0];
 			}
 
-			// set series props
+			// We calculated all group positions but we should render
+			// only the ones within the visible range
+			if (dataGroupingOptions.groupAll) {
+				croppedData = series.cropData(
+					groupedXData,
+					groupedYData,
+					xAxis.min,
+					xAxis.max,
+					1 // Ordinal xAxis will remove left-most points otherwise
+				);
+				groupedXData = croppedData.xData;
+				groupedYData = croppedData.yData;
+			}
+			// Set series props
 			series.processedXData = groupedXData;
 			series.processedYData = groupedYData;
 		} else {
