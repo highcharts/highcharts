@@ -433,3 +433,61 @@ function lolexRunAndUninstall(clock) { // eslint-disable-line no-unused-vars
         lolexUninstall(clock);
     }
 }
+
+/**
+ * Helper to get core types of all object properties.
+ * @param  {Object} obj  The object with properties.
+ * @return {Object} A dictionary with property names and type strings.
+ */
+function allObjectProperties(obj) { // eslint-disable-line no-unused-vars
+
+    var resultDictionary = {};
+
+    if (typeof obj !== 'object') {
+        resultDictionary[typeof obj] = typeof obj;
+    } else if (obj === null) {
+        resultDictionary.null = 'null';
+    } else {
+        Object
+            .keys(obj)
+            .sort((a, b) => {
+                if (a === b) {
+                    return 0;
+                }
+                return (a < b ? -1 : 1);
+            })
+            .forEach(propertyName => {
+                if (!obj.hasOwnProperty(propertyName)) {
+                    return;
+                }
+                if (obj[propertyName] === null) {
+                    resultDictionary[propertyName] = 'null';
+                } else if (obj[propertyName] instanceof Array) {
+                    resultDictionary[propertyName] = 'Array';
+                } else if (obj[propertyName] instanceof Highcharts.Axis) {
+                    resultDictionary[propertyName] = 'Highcharts.Axis';
+                } else if (obj[propertyName] instanceof Highcharts.Chart) {
+                    resultDictionary[propertyName] = 'Highcharts.Chart';
+                } else if (obj[propertyName] instanceof Highcharts.Legend) {
+                    resultDictionary[propertyName] = 'Highcharts.Legend';
+                } else if (obj[propertyName] instanceof Highcharts.Point) {
+                    resultDictionary[propertyName] = 'Highcharts.Point';
+                } else if (obj[propertyName] instanceof Highcharts.Pointer) {
+                    resultDictionary[propertyName] = 'Highcharts.Pointer';
+                } else if (obj[propertyName] instanceof Highcharts.Series) {
+                    resultDictionary[propertyName] = 'Highcharts.Series';
+                } else if (obj[propertyName] instanceof Highcharts.SVGElement) {
+                    resultDictionary[propertyName] = 'Highcharts.SVGElement';
+                } else if (obj[propertyName] instanceof Highcharts.SVGRenderer) {
+                    resultDictionary[propertyName] = 'Highcharts.SVGRenderer';
+                } else if (obj[propertyName] instanceof Highcharts.Time) {
+                    resultDictionary[propertyName] = 'Highcharts.Time';
+                } else {
+                    resultDictionary[propertyName] = typeof obj[propertyName];
+                }
+            });
+    }
+
+    return resultDictionary;
+
+}
