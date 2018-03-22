@@ -153,10 +153,10 @@ var addEvent = H.addEvent,
  */
 
  /**
- * By deafault only points within the visible range are grouped.
- * Enabling this option will force dataGrouping to calculate all grouped points
- * for a given dataset. That options prevents for example column series to
- * calculate grouped point partially. Effect is similar to
+ * By default only points within the visible range are grouped. Enabling this
+ * option will force data grouping to calculate all grouped points for a given
+ * dataset. That option prevents for example a column series from calculating
+ * a grouped point partially. The effect is similar to
  * [Series.getExtremesFromAll](#plotOptions.series.getExtremesFromAll) but does
  * not affect yAxis extremes.
  * 
