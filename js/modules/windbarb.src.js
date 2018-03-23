@@ -69,9 +69,9 @@ seriesType('windbarb', 'column', {
 	 */
 	yOffset: -20,
 	/**
-	 * Horizontal offset from the cartesian position, in pixels. When chart is
-	 * inverted, this option allows translation like
-	 * [yOffset](#plotOptions.windbarb.yOffset) in non inverted chart.
+	 * Horizontal offset from the cartesian position, in pixels. When the chart
+	 * is inverted, this option allows translation like
+	 * [yOffset](#plotOptions.windbarb.yOffset) in non inverted charts.
 	 *
 	 * @since 6.1.0
 	 */
