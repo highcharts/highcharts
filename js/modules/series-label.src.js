@@ -50,11 +50,11 @@ H.setOptions({
 			 *
 			 * Requires the `series-label.js` module.
 			 *
-			 * @sample highcharts/series-label/line-chart
+			 * @sample highcharts/series-line/label
 			 *         Line chart
 			 * @sample highcharts/demo/streamgraph
 			 *         Stream graph
-			 * @sample highcharts/series-label/stock-chart
+			 * @sample stock/series/label
 			 *         Stock chart
 			 * @since 6.0.0
 			 * @product highcharts highstock
