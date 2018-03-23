@@ -285,6 +285,7 @@ seriesType('flags', 'column', {
 			renderer = chart.renderer,
 			plotX,
 			plotY,
+			inverted = chart.inverted,
 			options = series.options,
 			optionsY = options.y,
 			shape,
@@ -302,7 +303,7 @@ seriesType('flags', 'column', {
 		i = points.length;
 		while (i--) {
 			point = points[i];
-			outsideRight = point.plotX > series.xAxis.len;
+			outsideRight = (inverted ? point.plotY : point.plotX) > series.xAxis.len;
 			plotX = point.plotX;
 			stackIndex = point.stackIndex;
 			shape = point.options.shape || options.shape;
@@ -395,10 +396,7 @@ seriesType('flags', 'column', {
 				}
 
 				// Set the tooltip anchor position
-				point.tooltipPos = chart.inverted ? [
-					yAxis.len + yAxis.pos - chart.plotLeft - plotY,
-					series.xAxis.len - plotX
-				] :	[
+				point.tooltipPos = [
 					plotX,
 					plotY + yAxis.pos - chart.plotTop
 				]; // #6327
@@ -416,7 +414,7 @@ seriesType('flags', 'column', {
 				boxes.push(box);
 			});
 
-			H.distribute(boxes, this.xAxis.len, 100);
+			H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
 			each(points, function (point) {
 				var box = point.graphic && boxesMap[point.plotX];
@@ -491,7 +489,11 @@ seriesType('flags', 'column', {
 
 	animate: noop, // Disable animation
 	buildKDTree: noop,
-	setClip: noop
+	setClip: noop,
+	/**
+	 * Don't invert the flag marker group (#4960)
+	 */
+	invertGroups: noop
 
 });
 

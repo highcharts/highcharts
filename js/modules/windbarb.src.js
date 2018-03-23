@@ -10,6 +10,7 @@ import H from '../parts/Globals.js';
 import onSeriesMixin from '../mixins/on-series.js';
 
 var each = H.each,
+	noop = H.noop,
 	seriesType = H.seriesType;
 
 /**
@@ -66,7 +67,15 @@ seriesType('windbarb', 'column', {
 	 * `null`, and that they don't overlap the linked series when `onSeries` is
 	 * given.
 	 */
-	yOffset: -20
+	yOffset: -20,
+	/**
+	 * Horizontal offset from the cartesian position, in pixels. When chart is
+	 * inverted, this option allows translation like
+	 * [yOffset](#plotOptions.windbarb.yOffset) in non inverted chart.
+	 *
+	 * @since 6.1.0
+	 */
+	xOffset: 0
 }, {
 	pointArrayMap: ['value', 'direction'],
 	parallelArrays: ['x', 'value', 'direction'],
@@ -219,13 +228,16 @@ seriesType('windbarb', 'column', {
 
 	drawPoints: function () {
 		var chart = this.chart,
-			yAxis = this.yAxis;
+			yAxis = this.yAxis,
+			inverted = chart.inverted,
+			shapeOffset = this.options.vectorLength / 2;
+
 		each(this.points, function (point) {
 			var plotX = point.plotX,
 				plotY = point.plotY;
 
 			// Check if it's inside the plot area, but only for the X dimension.
-			if (chart.isInsidePlot(plotX, 0, chart.inverted)) {
+			if (chart.isInsidePlot(plotX, 0, false)) {
 
 				// Create the graphic the first time
 				if (!point.graphic) {
@@ -238,7 +250,7 @@ seriesType('windbarb', 'column', {
 				point.graphic
 					.attr({
 						d: this.windArrow(point),
-						translateX: plotX,
+						translateX: plotX + this.options.xOffset,
 						translateY: plotY + this.options.yOffset,
 						rotation: point.direction
 					})
@@ -249,15 +261,11 @@ seriesType('windbarb', 'column', {
 			}
 
 			// Set the tooltip anchor position
-			point.tooltipPos = chart.inverted ? 
-			[
-				yAxis.len + yAxis.pos - chart.plotLeft - plotY,
-				this.xAxis.len - plotX
-			] :
-			[
-				plotX,
-				plotY + yAxis.pos - chart.plotTop + this.options.yOffset -
-					this.options.vectorLength / 2
+			point.tooltipPos = [
+				plotX + this.options.xOffset + (inverted && !this.onSeries ?
+					shapeOffset : 0),
+				plotY + this.options.yOffset - (inverted ? 0 :
+					shapeOffset + yAxis.pos - chart.plotTop)
 			]; // #6327
 		}, this);
 	}, 
@@ -277,7 +285,12 @@ seriesType('windbarb', 'column', {
 
 			this.animate = null;
 		}
-	}
+	},
+
+	/**
+	 * Don't invert the marker group (#4960)
+	 */
+	invertGroups: noop
 }, {
 	isValid: function () {
 		return H.isNumber(this.value) && this.value >= 0;
