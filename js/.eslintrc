@@ -16,7 +16,6 @@
         "consistent-return": 0,
         "func-style": 0,
         "guard-for-in": 0,                          /*@todo: Make the each function handle objects, then run a guarded for-in there.*/
-        "indent": ["error", "tab"],
         "lines-around-comment": 0,
         "max-len": [
             "error", {
@@ -33,7 +32,6 @@
         "no-multi-spaces": 0,                       /*Should be fixed*/
         "no-nested-ternary": 0,
         "no-shadow": 0,                             /*Same variable names in nested scopes. @todo: Fix this, it is useful*/
-        "no-trailing-spaces": 0,
         "no-undefined": 0,
         "no-underscore-dangle": 0,                  /*@todo: Check this*/
         "object-curly-spacing": [2, "always"],

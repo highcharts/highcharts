@@ -9,14 +9,14 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 
 var seriesType = H.seriesType,
-	seriesTypes = H.seriesTypes;
+    seriesTypes = H.seriesTypes;
 
 /**
  * The area spline range is a cartesian series type with higher and
  * lower Y values along an X axis. The area inside the range is colored, and
  * the graph outlining the area is a smoothed spline. Requires
  * `highcharts-more.js`.
- * 
+ *
  * @extends   plotOptions.arearange
  * @excluding step
  * @since     2.3.0
@@ -26,13 +26,13 @@ var seriesType = H.seriesType,
  * @apioption plotOptions.areasplinerange
  */
 seriesType('areasplinerange', 'arearange', null, {
-	getPointSpline: seriesTypes.spline.prototype.getPointSpline
+    getPointSpline: seriesTypes.spline.prototype.getPointSpline
 });
 
 /**
  * A `areasplinerange` series. If the [type](#series.areasplinerange.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
- * 
+ *
  * @type      {Object}
  * @extends   series,plotOptions.areasplinerange
  * @excluding dataParser,dataURL,stack
@@ -43,7 +43,7 @@ seriesType('areasplinerange', 'arearange', null, {
 /**
  * An array of data points for the series. For the `areasplinerange`
  * series type, points can be given in the following ways:
- * 
+ *
  * 1.  An array of arrays with 3 or 2 values. In this case, the values
  * correspond to `x,low,high`. If the first value is a string, it is
  * applied as the name of the point, and the `x` value is inferred.
@@ -51,7 +51,7 @@ seriesType('areasplinerange', 'arearange', null, {
  * should be of length 2\. Then the `x` value is automatically calculated,
  * either starting at 0 and incremented by 1, or from `pointStart`
  * and `pointInterval` given in the series options.
- * 
+ *
  *  ```js
  *     data: [
  *         [0, 0, 5],
@@ -59,12 +59,12 @@ seriesType('areasplinerange', 'arearange', null, {
  *         [2, 5, 2]
  *     ]
  *  ```
- * 
+ *
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series' [turboThreshold](
  * #series.areasplinerange.turboThreshold), this option is not available.
- * 
+ *
  *  ```js
  *     data: [{
  *         x: 1,
@@ -80,7 +80,7 @@ seriesType('areasplinerange', 'arearange', null, {
  *         color: "#FF00FF"
  *     }]
  *  ```
- * 
+ *
  * @type      {Array<Object|Array>}
  * @extends   series.arearange.data
  * @sample    {highcharts} highcharts/chart/reflow-true/

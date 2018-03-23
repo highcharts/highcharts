@@ -8,18 +8,18 @@ import H from './Globals.js';
 import './Chart.js';
 import './Utilities.js';
 var Chart = H.Chart,
-	each = H.each,
-	inArray = H.inArray,
-	isArray = H.isArray,
-	isObject = H.isObject,
-	pick = H.pick,
-	splat = H.splat;
+    each = H.each,
+    inArray = H.inArray,
+    isArray = H.isArray,
+    isObject = H.isObject,
+    pick = H.pick,
+    splat = H.splat;
 
 
 /**
  * Allows setting a set of rules to apply for different screen or chart
  * sizes. Each rule specifies additional chart options.
- * 
+ *
  * @sample {highstock} stock/demo/responsive/ Stock chart
  * @sample highcharts/responsive/axis/ Axis
  * @sample highcharts/responsive/legend/ Legend
@@ -31,7 +31,7 @@ var Chart = H.Chart,
 /**
  * A set of rules for responsive settings. The rules are executed from
  * the top down.
- * 
+ *
  * @type {Array<Object>}
  * @sample {highcharts} highcharts/responsive/axis/ Axis changes
  * @sample {highstock} highcharts/responsive/axis/ Axis changes
@@ -44,7 +44,7 @@ var Chart = H.Chart,
  * A full set of chart options to apply as overrides to the general
  * chart options. The chart options are applied when the given rule
  * is active.
- * 
+ *
  * A special case is configuration objects that take arrays, for example
  * [xAxis](#xAxis), [yAxis](#yAxis) or [series](#series). For these
  * collections, an `id` option is used to map the new option set to
@@ -52,7 +52,7 @@ var Chart = H.Chart,
  * the item of the same indexupdated. So for example, setting `chartOptions`
  * with two series items without an `id`, will cause the existing chart's
  * two series to be updated with respective options.
- * 
+ *
  * @type {Object}
  * @sample {highstock} stock/demo/responsive/ Stock chart
  * @sample highcharts/responsive/axis/ Axis
@@ -64,7 +64,7 @@ var Chart = H.Chart,
 
 /**
  * Under which conditions the rule applies.
- * 
+ *
  * @type {Object}
  * @since 5.0.0
  * @apioption responsive.rules.condition
@@ -75,7 +75,7 @@ var Chart = H.Chart,
  * rule applies. Return `true` if it applies. This opens for checking
  * against other metrics than the chart size, or example the document
  * size or other elements.
- * 
+ *
  * @type {Function}
  * @context Chart
  * @since 5.0.0
@@ -84,7 +84,7 @@ var Chart = H.Chart,
 
 /**
  * The responsive rule applies if the chart height is less than this.
- * 
+ *
  * @type {Number}
  * @since 5.0.0
  * @apioption responsive.rules.condition.maxHeight
@@ -92,7 +92,7 @@ var Chart = H.Chart,
 
 /**
  * The responsive rule applies if the chart width is less than this.
- * 
+ *
  * @type {Number}
  * @sample highcharts/responsive/axis/ Max width is 500
  * @since 5.0.0
@@ -101,7 +101,7 @@ var Chart = H.Chart,
 
 /**
  * The responsive rule applies if the chart height is greater than this.
- * 
+ *
  * @type {Number}
  * @default 0
  * @since 5.0.0
@@ -110,7 +110,7 @@ var Chart = H.Chart,
 
 /**
  * The responsive rule applies if the chart width is greater than this.
- * 
+ *
  * @type {Number}
  * @default 0
  * @since 5.0.0
@@ -122,76 +122,76 @@ var Chart = H.Chart,
  * responsiveness.
  */
 Chart.prototype.setResponsive = function (redraw) {
-	var options = this.options.responsive,
-		ruleIds = [],
-		currentResponsive = this.currentResponsive,
-		currentRuleIds;
+    var options = this.options.responsive,
+        ruleIds = [],
+        currentResponsive = this.currentResponsive,
+        currentRuleIds;
 
-	if (options && options.rules) {
-		each(options.rules, function (rule) {
-			if (rule._id === undefined) {
-				rule._id = H.uniqueKey();
-			}
-			
-			this.matchResponsiveRule(rule, ruleIds, redraw);
-		}, this);
-	}
+    if (options && options.rules) {
+        each(options.rules, function (rule) {
+            if (rule._id === undefined) {
+                rule._id = H.uniqueKey();
+            }
 
-	// Merge matching rules
-	var mergedOptions = H.merge.apply(0, H.map(ruleIds, function (ruleId) {
-		return H.find(options.rules, function (rule) {
-			return rule._id === ruleId;
-		}).chartOptions;
-	}));
+            this.matchResponsiveRule(rule, ruleIds, redraw);
+        }, this);
+    }
 
-	// Stringified key for the rules that currently apply.
-	ruleIds = ruleIds.toString() || undefined;
-	currentRuleIds = currentResponsive && currentResponsive.ruleIds;
+    // Merge matching rules
+    var mergedOptions = H.merge.apply(0, H.map(ruleIds, function (ruleId) {
+        return H.find(options.rules, function (rule) {
+            return rule._id === ruleId;
+        }).chartOptions;
+    }));
+
+    // Stringified key for the rules that currently apply.
+    ruleIds = ruleIds.toString() || undefined;
+    currentRuleIds = currentResponsive && currentResponsive.ruleIds;
 
 
-	// Changes in what rules apply
-	if (ruleIds !== currentRuleIds) {
+    // Changes in what rules apply
+    if (ruleIds !== currentRuleIds) {
 
-		// Undo previous rules. Before we apply a new set of rules, we need to
-		// roll back completely to base options (#6291).
-		if (currentResponsive) {
-			this.update(currentResponsive.undoOptions, redraw);
-		}
+        // Undo previous rules. Before we apply a new set of rules, we need to
+        // roll back completely to base options (#6291).
+        if (currentResponsive) {
+            this.update(currentResponsive.undoOptions, redraw);
+        }
 
-		if (ruleIds) {
-			// Get undo-options for matching rules
-			this.currentResponsive = {
-				ruleIds: ruleIds,
-				mergedOptions: mergedOptions,
-				undoOptions: this.currentOptions(mergedOptions)
-			};
+        if (ruleIds) {
+            // Get undo-options for matching rules
+            this.currentResponsive = {
+                ruleIds: ruleIds,
+                mergedOptions: mergedOptions,
+                undoOptions: this.currentOptions(mergedOptions)
+            };
 
-			this.update(mergedOptions, redraw);
-		
-		} else {
-			this.currentResponsive = undefined;	
-		}
-	}
+            this.update(mergedOptions, redraw);
+
+        } else {
+            this.currentResponsive = undefined;
+        }
+    }
 };
 
 /**
  * Handle a single responsiveness rule
  */
 Chart.prototype.matchResponsiveRule = function (rule, matches) {
-	var condition = rule.condition,
-		fn = condition.callback || function () {
-			return (
-				this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
-				this.chartHeight <=
-					pick(condition.maxHeight, Number.MAX_VALUE) &&
-				this.chartWidth >= pick(condition.minWidth, 0) &&
-				this.chartHeight >= pick(condition.minHeight, 0)
-			);
-		};		
+    var condition = rule.condition,
+        fn = condition.callback || function () {
+            return (
+                this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
+                this.chartHeight <=
+                    pick(condition.maxHeight, Number.MAX_VALUE) &&
+                this.chartWidth >= pick(condition.minWidth, 0) &&
+                this.chartHeight >= pick(condition.minHeight, 0)
+            );
+        };
 
-	if (fn.call(this)) {
-		matches.push(rule._id);
-	}
+    if (fn.call(this)) {
+        matches.push(rule._id);
+    }
 
 };
 
@@ -202,42 +202,42 @@ Chart.prototype.matchResponsiveRule = function (rule, matches) {
  */
 Chart.prototype.currentOptions = function (options) {
 
-	var ret = {};
+    var ret = {};
 
-	/**
-	 * Recurse over a set of options and its current values,
-	 * and store the current values in the ret object.
-	 */
-	function getCurrent(options, curr, ret, depth) {
-		var i;
-		H.objectEach(options, function (val, key) {
-			if (!depth && inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
-				val = splat(val);
-				
-				ret[key] = [];
-				
-				// Iterate over collections like series, xAxis or yAxis and map
-				// the items by index.
-				for (i = 0; i < val.length; i++) {
-					if (curr[key][i]) { // Item exists in current data (#6347)
-						ret[key][i] = {};
-						getCurrent(
-							val[i],
-							curr[key][i],
-							ret[key][i],
-							depth + 1
-						);
-					}
-				}
-			} else if (isObject(val)) {
-				ret[key] = isArray(val) ? [] : {};
-				getCurrent(val, curr[key] || {}, ret[key], depth + 1);
-			} else {
-				ret[key] = curr[key] || null;
-			}
-		});
-	}
+    /**
+     * Recurse over a set of options and its current values,
+     * and store the current values in the ret object.
+     */
+    function getCurrent(options, curr, ret, depth) {
+        var i;
+        H.objectEach(options, function (val, key) {
+            if (!depth && inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
+                val = splat(val);
 
-	getCurrent(options, this.options, ret, 0);
-	return ret;
+                ret[key] = [];
+
+                // Iterate over collections like series, xAxis or yAxis and map
+                // the items by index.
+                for (i = 0; i < val.length; i++) {
+                    if (curr[key][i]) { // Item exists in current data (#6347)
+                        ret[key][i] = {};
+                        getCurrent(
+                            val[i],
+                            curr[key][i],
+                            ret[key][i],
+                            depth + 1
+                        );
+                    }
+                }
+            } else if (isObject(val)) {
+                ret[key] = isArray(val) ? [] : {};
+                getCurrent(val, curr[key] || {}, ret[key], depth + 1);
+            } else {
+                ret[key] = curr[key] || null;
+            }
+        });
+    }
+
+    getCurrent(options, this.options, ret, 0);
+    return ret;
 };
