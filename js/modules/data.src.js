@@ -258,7 +258,7 @@ Highcharts.ajax = function (attr) {
  * @type {String}
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
- * @sample highcharts/data/livedata-spreadsheet
+ * @sample highcharts/data/livedata-categories
  *         Live data with polling
  * @since 4.0
  * @product highcharts
