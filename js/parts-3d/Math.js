@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -12,35 +11,47 @@ import '../parts/Utilities.js';
  */
 var deg2rad = H.deg2rad,
     pick = H.pick;
+
+/* eslint-disable max-len */
 /**
  * Apply 3-D rotation
- * Euler Angles (XYZ): cosA = cos(Alfa|Roll), cosB = cos(Beta|Pitch), cosG = cos(Gamma|Yaw)
+ * Euler Angles (XYZ):
+ *     cosA = cos(Alfa|Roll)
+ *     cosB = cos(Beta|Pitch)
+ *     cosG = cos(Gamma|Yaw)
  *
  * Composite rotation:
  * |          cosB * cosG             |           cosB * sinG            |    -sinB    |
  * | sinA * sinB * cosG - cosA * sinG | sinA * sinB * sinG + cosA * cosG | sinA * cosB |
  * | cosA * sinB * cosG + sinA * sinG | cosA * sinB * sinG - sinA * cosG | cosA * cosB |
  *
- * Now, Gamma/Yaw is not used (angle=0), so we assume cosG = 1 and sinG = 0, so we get:
+ * Now, Gamma/Yaw is not used (angle=0), so we assume cosG = 1 and sinG = 0, so
+ * we get:
  * |     cosB    |   0    |   - sinB    |
  * | sinA * sinB |  cosA  | sinA * cosB |
  * | cosA * sinB | - sinA | cosA * cosB |
  *
- * But in browsers, y is reversed, so we get sinA => -sinA. The general result is:
+ * But in browsers, y is reversed, so we get sinA => -sinA. The general result
+ * is:
  * |      cosB     |   0    |    - sinB     |     | x |     | px |
  * | - sinA * sinB |  cosA  | - sinA * cosB |  x  | y |  =  | py |
  * |  cosA * sinB  |  sinA  |  cosA * cosB  |     | z |     | pz |
  */
+/* eslint-enable max-len */
 function rotate3D(x, y, z, angles) {
     return {
         x: angles.cosB * x - angles.sinB * z,
-        y: -angles.sinA * angles.sinB * x + angles.cosA * y - angles.cosB * angles.sinA * z,
-        z: angles.cosA * angles.sinB * x + angles.sinA * y + angles.cosA * angles.cosB * z
+        y: -angles.sinA * angles.sinB * x + angles.cosA * y -
+            angles.cosB * angles.sinA * z,
+        z: angles.cosA * angles.sinB * x + angles.sinA * y +
+            angles.cosA * angles.cosB * z
     };
 }
 
 function perspective3D(coordinate, origin, distance) {
-    var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ? distance / (coordinate.z + origin.z + distance) : 1;
+    var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
+        distance / (coordinate.z + origin.z + distance) :
+        1;
     return {
         x: coordinate.x * projection,
         y: coordinate.y * projection
@@ -88,7 +99,8 @@ H.perspective = function (points, chart, insidePlotArea) {
                 (point.z || 0) - origin.z,
                 angles
             ),
-            coordinate = perspective3D(rotated, origin, origin.vd); // Apply perspective
+            // Apply perspective
+            coordinate = perspective3D(rotated, origin, origin.vd);
 
         // Apply translation
         coordinate.x = coordinate.x * scale + origin.x;
@@ -104,7 +116,8 @@ H.perspective = function (points, chart, insidePlotArea) {
 };
 
 /**
- * Calculate a distance from camera to points - made for calculating zIndex of scatter points.
+ * Calculate a distance from camera to points - made for calculating zIndex of
+ * scatter points.
  * Parameters:
  *        - coordinates: The coordinates of the specific point
  *        - chart: the chart
@@ -116,9 +129,14 @@ H.pointCameraDistance = function (coordinates, chart) {
         cameraPosition = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,
-            z: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0) + options3d.depth
+            z: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0) +
+                options3d.depth
         },
-        distance = Math.sqrt(Math.pow(cameraPosition.x - coordinates.plotX, 2) + Math.pow(cameraPosition.y - coordinates.plotY, 2) + Math.pow(cameraPosition.z - coordinates.plotZ, 2));
+        distance = Math.sqrt(
+            Math.pow(cameraPosition.x - coordinates.plotX, 2) +
+            Math.pow(cameraPosition.y - coordinates.plotY, 2) +
+            Math.pow(cameraPosition.z - coordinates.plotZ, 2)
+        );
     return distance;
 };
 
