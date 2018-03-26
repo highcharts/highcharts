@@ -386,7 +386,7 @@ Highcharts.downloadSVGLocal = function (
 		Highcharts.imageToDataUrl(
 			svgurl,
 			imageType,
-			{ /* args */ },
+			{},
 			scale,
 			function (imageURL) {
 				// Success

@@ -26,19 +26,19 @@ var animObject = H.animObject,
  * The column series type.
  *
  * @constructor seriesTypes.column
- * @augments Series
+ * @augments    Series
  */
 
 /**
  * Column series display one column per value along an X axis.
  *
- * @sample {highcharts} highcharts/demo/column-basic/ Column chart
- * @sample {highstock} stock/demo/column/ Column chart
+ * @sample       {highcharts} highcharts/demo/column-basic/ Column chart
+ * @sample       {highstock} stock/demo/column/ Column chart
  *
- * @extends {plotOptions.line}
- * @product highcharts highstock
- * @excluding connectNulls,dashStyle,gapSize,gapUnit,linecap,lineWidth,marker,
- *          connectEnds,step
+ * @extends      {plotOptions.line}
+ * @product      highcharts highstock
+ * @excluding    connectNulls,dashStyle,gapSize,gapUnit,linecap,lineWidth,
+ *               marker,connectEnds,step
  * @optionparent plotOptions.column
  */
 seriesType('column', 'line', {
@@ -46,53 +46,39 @@ seriesType('column', 'line', {
 	/**
 	 * The corner radius of the border surrounding each column or bar.
 	 *
-	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/column-borderradius/
-	 *         Rounded columns
+	 * @type    {Number}
+	 * @sample  {highcharts} highcharts/plotoptions/column-borderradius/
+	 *          Rounded columns
 	 * @default 0
 	 * @product highcharts highstock
 	 */
 	borderRadius: 0,
 
 	/**
-	 * The width of the border surrounding each column or bar.
-	 *
-	 * In styled mode, the stroke width can be set with the `.highcharts-point`
-	 * rule.
-	 *
-	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/column-borderwidth/
-	 *         2px black border
-	 * @default 1
-	 * @product highcharts highstock
-	 * @apioption plotOptions.column.borderWidth
-	 */
-
-	/**
 	 * When using automatic point colors pulled from the `options.colors`
 	 * collection, this option determines whether the chart should receive
 	 * one color per series or one color per point.
 	 *
-	 * @type {Boolean}
-	 * @see [series colors](#plotOptions.column.colors)
-	 * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
-	 *         False by default
-	 * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
-	 *         True
-	 * @default false
-	 * @since 2.0
-	 * @product highcharts highstock
+	 * @type      {Boolean}
+	 * @see       [series colors](#plotOptions.column.colors)
+	 * @sample    {highcharts} highcharts/plotoptions/column-colorbypoint-false/
+	 *            False by default
+	 * @sample    {highcharts} highcharts/plotoptions/column-colorbypoint-true/
+	 *            True
+	 * @default   false
+	 * @since     2.0
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.column.colorByPoint
 	 */
 
 	/**
 	 * A series specific or series type specific color set to apply instead
-	 * of the global [colors](#colors) when [colorByPoint](#plotOptions.
-	 * column.colorByPoint) is true.
+	 * of the global [colors](#colors) when [colorByPoint](
+	 * #plotOptions.column.colorByPoint) is true.
 	 *
-	 * @type {Array<Color>}
-	 * @since 3.0
-	 * @product highcharts highstock
+	 * @type      {Array<Color>}
+	 * @since     3.0
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.column.colors
 	 */
 
@@ -104,11 +90,9 @@ seriesType('column', 'line', {
 	 * to `false` may look better, even though each column is rendered
 	 * blurry.
 	 *
-	 * @type {Boolean}
-	 * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
-	 *         Crisp is false
-	 * @default true
-	 * @since 5.0.10
+	 * @sample  {highcharts} highcharts/plotoptions/column-crisp-false/
+	 *          Crisp is false
+	 * @since   5.0.10
 	 * @product highcharts highstock
 	 */
 	crisp: true,
@@ -116,12 +100,10 @@ seriesType('column', 'line', {
 	/**
 	 * Padding between each value groups, in x axis units.
 	 *
-	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/column-grouppadding-default/
-	 *         0.2 by default
-	 * @sample {highcharts} highcharts/plotoptions/column-grouppadding-none/
-	 *         No group padding - all columns are evenly spaced
-	 * @default 0.2
+	 * @sample  {highcharts} highcharts/plotoptions/column-grouppadding-default/
+	 *          0.2 by default
+	 * @sample  {highcharts} highcharts/plotoptions/column-grouppadding-none/
+	 *          No group padding - all columns are evenly spaced
 	 * @product highcharts highstock
 	 */
 	groupPadding: 0.2,
@@ -131,17 +113,20 @@ seriesType('column', 'line', {
 	 * of each other. Non-grouped columns will be laid out individually
 	 * and overlap each other.
 	 *
-	 * @type {Boolean}
-	 * @sample {highcharts} highcharts/plotoptions/column-grouping-false/
-	 *         Grouping disabled
-	 * @sample {highstock} highcharts/plotoptions/column-grouping-false/
-	 *         Grouping disabled
-	 * @default true
-	 * @since 2.3.0
-	 * @product highcharts highstock
+	 * @type      {Boolean}
+	 * @sample    {highcharts} highcharts/plotoptions/column-grouping-false/
+	 *            Grouping disabled
+	 * @sample    {highstock} highcharts/plotoptions/column-grouping-false/
+	 *            Grouping disabled
+	 * @default   true
+	 * @since     2.3.0
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.column.grouping
 	 */
 
+	/** 
+	 * @ignore
+	 */
 	marker: null, // point options are specified in the base options
 
 	/**
@@ -149,29 +134,27 @@ seriesType('column', 'line', {
 	 * of a bar in a bar chart. This prevents the columns from becoming
 	 * too wide when there is a small number of points in the chart.
 	 *
-	 * @type {Number}
-	 * @see [pointWidth](#plotOptions.column.pointWidth)
-	 * @sample {highcharts} highcharts/plotoptions/column-maxpointwidth-20/
-	 *         Limited to 50
-	 * @sample {highstock} highcharts/plotoptions/column-maxpointwidth-20/
-	 *         Limited to 50
-	 * @default null
-	 * @since 4.1.8
-	 * @product highcharts highstock
+	 * @type      {Number}
+	 * @see       [pointWidth](#plotOptions.column.pointWidth)
+	 * @sample    {highcharts} highcharts/plotoptions/column-maxpointwidth-20/
+	 *            Limited to 50
+	 * @sample    {highstock} highcharts/plotoptions/column-maxpointwidth-20/
+	 *            Limited to 50
+	 * @default   null
+	 * @since     4.1.8
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.column.maxPointWidth
 	 */
 
 	/**
 	 * Padding between each column or bar, in x axis units.
 	 *
-	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/column-pointpadding-default/
-	 *         0.1 by default
-	 * @sample {highcharts} highcharts/plotoptions/column-pointpadding-025/
-	 *         0.25
-	 * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
-	 *         0 for tightly packed columns
-	 * @default 0.1
+	 * @sample  {highcharts} highcharts/plotoptions/column-pointpadding-default/
+	 *          0.1 by default
+	 * @sample  {highcharts} highcharts/plotoptions/column-pointpadding-025/
+	 *          0.25
+	 * @sample  {highcharts} highcharts/plotoptions/column-pointpadding-none/
+	 *          0 for tightly packed columns
 	 * @product highcharts highstock
 	 */
 	pointPadding: 0.1,
@@ -181,14 +164,14 @@ seriesType('column', 'line', {
 	 * `null`, the width is calculated from the `pointPadding` and
 	 * `groupPadding`.
 	 *
-	 * @type {Number}
-	 * @see [maxPointWidth](#plotOptions.column.maxPointWidth)
-	 * @sample {highcharts} highcharts/plotoptions/column-pointwidth-20/
-	 *         20px wide columns regardless of chart width or the amount of data
-	 *         points
-	 * @default null
-	 * @since 1.2.5
-	 * @product highcharts highstock
+	 * @type      {Number}
+	 * @see       [maxPointWidth](#plotOptions.column.maxPointWidth)
+	 * @sample    {highcharts} highcharts/plotoptions/column-pointwidth-20/
+	 *            20px wide columns regardless of chart width or the amount
+	 *            of data points
+	 * @default   null
+	 * @since     1.2.5
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.column.pointWidth
 	 */
 
@@ -199,12 +182,12 @@ seriesType('column', 'line', {
 	 * column charts, minPointLength might not be respected for tightly
 	 * packed values.
 	 *
-	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/column-minpointlength/
-	 *         Zero base value
-	 * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/
-	 *         Positive and negative close to zero values
-	 * @default 0
+	 * @sample  {highcharts}
+	 *          highcharts/plotoptions/column-minpointlength/
+	 *          Zero base value
+	 * @sample  {highcharts}
+	 *          highcharts/plotoptions/column-minpointlength-pos-and-neg/
+	 *          Positive and negative close to zero values
 	 * @product highcharts highstock
 	 */
 	minPointLength: 0,
@@ -219,8 +202,6 @@ seriesType('column', 'line', {
 	 * that fall within the plot area. The advantage of cropping away invisible
 	 * points is to increase performance on large series. .
 	 *
-	 * @type {Number}
-	 * @default 50
 	 * @product highcharts highstock
 	 */
 	cropThreshold: 50,
@@ -235,12 +216,11 @@ seriesType('column', 'line', {
 	 * The default `null` means it is computed automatically, but this option
 	 * can be used to override the automatic value.
 	 *
-	 * @type {Number}
-	 * @sample {highcharts} highcharts/plotoptions/column-pointrange/
-	 *         Set the point range to one day on a data set with one week
-	 *         between the points
-	 * @default null
-	 * @since 2.3
+	 * @type    {Number}
+	 * @sample  {highcharts} highcharts/plotoptions/column-pointrange/
+	 *          Set the point range to one day on a data set with one week
+	 *          between the points
+	 * @since   2.3
 	 * @product highcharts highstock
 	 */
 	pointRange: null,
@@ -257,10 +237,9 @@ seriesType('column', 'line', {
 		 */
 		hover: {
 
-			/**
-			 * @ignore-option
-			 */
+			/** @ignore-option */
 			halo: false,
+
 			/**
 			 * A specific border color for the hovered point. Defaults to
 			 * inherit the normal state border color.
@@ -343,16 +322,15 @@ seriesType('column', 'line', {
 	 * 3 will make the Y axis show negative values according to the `minPadding`
 	 * option. If `softThreshold` is `true`, the Y axis starts at 0.
 	 *
-	 * @type {Boolean}
-	 * @default {highcharts} true
-	 * @default {highstock} false
-	 * @since 4.1.9
+	 * @since   4.1.9
 	 * @product highcharts highstock
 	 */
 	softThreshold: false,
 
 	// false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
-	/**	@ignore */
+	/** 
+	 * @ignore
+	 */
 	startFromThreshold: true,
 
 	stickyTracking: false,
@@ -366,13 +344,26 @@ seriesType('column', 'line', {
 	 * between values above and below a threshold. If `null`, the columns
 	 * extend from the padding Y axis minimum.
 	 *
-	 * @type {Number}
-	 * @default 0
-	 * @since 2.0
+	 * @since   2.0
 	 * @product highcharts
 	 */
 	threshold: 0,
+
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The width of the border surrounding each column or bar.
+	 *
+	 * In styled mode, the stroke width can be set with the `.highcharts-point`
+	 * rule.
+	 *
+	 * @type      {Number}
+	 * @sample    {highcharts} highcharts/plotoptions/column-borderwidth/
+	 *            2px black border
+	 * @default   1
+	 * @product   highcharts highstock
+	 * @apioption plotOptions.column.borderWidth
+	 */
 
 	/**
 	 * The color of the border surrounding each column or bar.
@@ -380,14 +371,14 @@ seriesType('column', 'line', {
 	 * In styled mode, the border stroke can be set with the `.highcharts-point`
 	 * rule.
 	 *
-	 * @type {Color}
-	 * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
-	 *         Dark gray border
+	 * @type    {Color}
+	 * @sample  {highcharts} highcharts/plotoptions/column-bordercolor/
+	 *          Dark gray border
 	 * @default #ffffff
 	 * @product highcharts highstock
 	 */
 	borderColor: '${palette.backgroundColor}'
-	// borderWidth: 1
+
 	/*= } =*/
 
 }, /** @lends seriesTypes.column.prototype */ {
@@ -755,15 +746,15 @@ seriesType('column', 'line', {
 		// draw the columns
 		each(series.points, function (point) {
 			var plotY = point.plotY,
-				graphic = point.graphic;
+				graphic = point.graphic,
+				verb = graphic && chart.pointCount < animationLimit ?
+					'animate' : 'attr';
 
 			if (isNumber(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
 				if (graphic) { // update
-					graphic[
-						chart.pointCount < animationLimit ? 'animate' : 'attr'
-					](
+					graphic[verb](
 						merge(shapeArgs)
 					);
 
@@ -782,8 +773,7 @@ seriesType('column', 'line', {
 
 				/*= if (build.classic) { =*/
 				// Presentational
-				graphic
-					.attr(series.pointAttribs(
+				graphic[verb](series.pointAttribs(
 						point,
 						point.selected && 'select'
 					))
@@ -880,15 +870,10 @@ seriesType('column', 'line', {
  * A `column` series. If the [type](#series.column.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * column](#plotOptions.column).
- *
  * @type      {Object}
  * @extends   series,plotOptions.column
- * @excluding dataParser,dataURL,marker
- * 
+ * @excluding connectNulls,dashStyle,dataParser,dataURL,gapSize,gapUnit,linecap,
+ *            lineWidth,marker,connectEnds,step
  * @product   highcharts highstock
  * @apioption series.column
  */
@@ -950,19 +935,47 @@ seriesType('column', 'line', {
  *     }]
  *  ```
  *
- * @type {Array<Object|Array|Number>}
- * @extends series.line.data
+ * @type      {Array<Object|Array|Number>}
+ * @extends   series.line.data
  * @excluding marker
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/
- *         Config objects
- * @product highcharts highstock
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects
+ * @product   highcharts highstock
  * @apioption series.column.data
  */
 
+/**
+ * The color of the border surrounding the column or bar.
+ *
+ * In styled mode, the border stroke can be set with the `.highcharts-point`
+ * rule.
+ *
+ * @type      {Color}
+ * @sample    {highcharts} highcharts/plotoptions/column-bordercolor/
+ *            Dark gray border
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption series.column.data.borderColor
+ */
+
+/**
+ * The width of the border surrounding the column or bar.
+ *
+ * In styled mode, the stroke width can be set with the `.highcharts-point`
+ * rule.
+ *
+ * @type      {Number}
+ * @sample    {highcharts} highcharts/plotoptions/column-borderwidth/
+ *            2px black border
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption series.column.data.borderWidth
+ */

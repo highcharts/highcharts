@@ -836,4 +836,12 @@
             'All date objects inside object are recursively converted'
         );
     });
+
+    QUnit.test('pad', function (assert) {
+        assert.strictEqual(
+            Highcharts.pad(-1000, 3),
+            '-1000',
+            'The same number, no error (#5308)'
+        );
+    });
 }());

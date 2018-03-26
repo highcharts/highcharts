@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -10,7 +11,8 @@ import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
-var Axis = H.Axis,
+var addEvent = H.addEvent,
+	Axis = H.Axis,
 	Chart = H.Chart,
 	color = H.color,
 	ColorAxis,
@@ -21,8 +23,7 @@ var Axis = H.Axis,
 	LegendSymbolMixin = H.LegendSymbolMixin,
 	noop = H.noop,
 	merge = H.merge,
-	pick = H.pick,
-	wrap = H.wrap;
+	pick = H.pick;
 
 // If ColorAxis already exists, we may be loading the heatmap module on top of
 // Highmaps.
@@ -118,38 +119,48 @@ if (!H.ColorAxis) {
 			 */
 
 			/**
-			 * The start of the value range that the data class represents, relating
-			 * to the point value.
+			 * The start of the value range that the data class represents,
+			 * relating to the point value.
+			 *
+			 * The range of each `dataClass` is closed in both ends, but can be
+			 * overridden by the next `dataClass`.
 			 * 
-			 * @type {Number}
-			 * @product highcharts highmaps
+			 * @type      {Number}
+			 * @product   highcharts highmaps
 			 * @apioption colorAxis.dataClasses.from
 			 */
 
 			/**
-			 * The name of the data class as it appears in the legend. If no name
-			 * is given, it is automatically created based on the `from` and `to`
-			 * values. For full programmatic control, [legend.labelFormatter](#legend.
-			 * labelFormatter) can be used. In the formatter, `this.from` and `this.
-			 * to` can be accessed.
+			 * The name of the data class as it appears in the legend.
+			 * If no name is given, it is automatically created based on the
+			 * `from` and `to` values. For full programmatic control,
+			 * [legend.labelFormatter](#legend.labelFormatter) can be used.
+			 * In the formatter, `this.from` and `this.to` can be accessed.
 			 * 
-			 * @type {String}
-			 * @sample {highmaps} maps/coloraxis/dataclasses-name/ Named data classes
-			 * @sample {highmaps} maps/coloraxis/dataclasses-labelformatter/ Formatted data classes
-			 * @product highcharts highmaps
+			 * @type      {String}
+			 * @sample    {highmaps} maps/coloraxis/dataclasses-name/
+			 *            Named data classes
+			 * @sample    {highmaps} maps/coloraxis/dataclasses-labelformatter/
+			 *            Formatted data classes
+			 * @product   highcharts highmaps
 			 * @apioption colorAxis.dataClasses.name
 			 */
 
 			/**
-			 * The end of the value range that the data class represents, relating
-			 * to the point value.
+			 * The end of the value range that the data class represents,
+			 * relating to the point value.
+			 *
+			 * The range of each `dataClass` is closed in both ends, but can be
+			 * overridden by the next `dataClass`.
 			 * 
-			 * @type {Number}
-			 * @product highcharts highmaps
+			 * @type      {Number}
+			 * @product   highcharts highmaps
 			 * @apioption colorAxis.dataClasses.to
 			 */
 
-			/** @ignore */
+			/** 
+	 		 * @ignore
+	 		 */
 			lineWidth: 0,
 
 			/**
@@ -260,8 +271,8 @@ if (!H.ColorAxis) {
 
 			/**
 			 * The triangular marker on a scalar color axis that points to the
-			 * value of the hovered area. To disable the marker, set `marker:
-			 * null`.
+			 * value of the hovered area. To disable the marker, set
+			 * `marker: null`.
 			 * 
 			 * @type {Object}
 			 * @sample {highmaps} maps/coloraxis/marker/ Black marker
@@ -280,7 +291,9 @@ if (!H.ColorAxis) {
 					duration: 50
 				},
 
-				/** @ignore */
+				/** 
+				 * @ignore
+				 */
 				width: 0.01,
 				/*= if (build.classic) { =*/
 
@@ -324,13 +337,14 @@ if (!H.ColorAxis) {
 			},
 
 			/**
-			 * The color to represent the minimum of the color axis. Unless [dataClasses](#colorAxis.
-			 * dataClasses) or [stops](#colorAxis.stops) are set, the gradient
-			 * starts at this value.
+			 * The color to represent the minimum of the color axis. Unless
+			 * [dataClasses](#colorAxis.dataClasses) or
+			 * [stops](#colorAxis.stops) are set, the gradient starts at this
+			 * value.
 			 * 
-			 * If dataClasses are set, the color is based on minColor and maxColor
-			 * unless a color is set for each data class, or the [dataClassColor](#colorAxis.
-			 * dataClassColor) is set.
+			 * If dataClasses are set, the color is based on minColor and
+			 * maxColor unless a color is set for each data class, or the
+			 * [dataClassColor](#colorAxis.dataClassColor) is set.
 			 * 
 			 * @type {Color}
 			 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
@@ -341,13 +355,14 @@ if (!H.ColorAxis) {
 			minColor: '${palette.highlightColor10}',
 
 			/**
-			 * The color to represent the maximum of the color axis. Unless [dataClasses](#colorAxis.
-			 * dataClasses) or [stops](#colorAxis.stops) are set, the gradient
-			 * ends at this value.
+			 * The color to represent the maximum of the color axis. Unless
+			 * [dataClasses](#colorAxis.dataClasses) or
+			 * [stops](#colorAxis.stops) are set, the gradient ends at this
+			 * value.
 			 * 
-			 * If dataClasses are set, the color is based on minColor and maxColor
-			 * unless a color is set for each data class, or the [dataClassColor](#colorAxis.
-			 * dataClassColor) is set.
+			 * If dataClasses are set, the color is based on minColor and
+			 * maxColor unless a color is set for each data class, or the
+			 * [dataClassColor](#colorAxis.dataClassColor) is set.
 			 * 
 			 * @type {Color}
 			 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
@@ -394,6 +409,15 @@ if (!H.ColorAxis) {
 			 * @type {Boolean}
 			 * @product highcharts highmaps
 			 * @apioption colorAxis.reversed
+			 */
+
+			/**
+			 * Fires when the legend item belonging to the colorAxis is clicked.
+			 * One parameter, `event`, is passed to the function.
+			 * 
+			 * @type      {Function}
+			 * @product   highcharts highmaps
+			 * @apioption colorAxis.events.legendItemClick
 			 */
 
 			/**
@@ -918,12 +942,10 @@ if (!H.ColorAxis) {
 	/**
 	 * Extend the chart getAxes method to also get the color axis
 	 */
-	wrap(Chart.prototype, 'getAxes', function (proceed) {
+	addEvent(Chart, 'afterGetAxes', function () {
 
 		var options = this.options,
 			colorAxisOptions = options.colorAxis;
-
-		proceed.call(this);
 
 		this.colorAxis = [];
 		if (colorAxisOptions) {
@@ -933,49 +955,46 @@ if (!H.ColorAxis) {
 
 
 	/**
-	 * Wrap the legend getAllItems method to add the color axis. This also removes
-	 * the axis' own series to prevent them from showing up individually.
+	 * Add the color axis. This also removes the axis' own series to prevent
+	 * them from showing up individually.
 	 */
-	wrap(Legend.prototype, 'getAllItems', function (proceed) {
-		var allItems = [],
+	addEvent(Legend, 'afterGetAllItems', function (e) {
+		var colorAxisItems = [],
 			colorAxis = this.chart.colorAxis[0];
 
 		if (colorAxis && colorAxis.options) {
 			if (colorAxis.options.showInLegend) {
 				// Data classes
 				if (colorAxis.options.dataClasses) {
-					allItems = allItems.concat(
-						colorAxis.getDataClassLegendSymbols()
-					);
+					colorAxisItems = colorAxis.getDataClassLegendSymbols();
 				// Gradient legend
 				} else {
 					// Add this axis on top
-					allItems.push(colorAxis);
+					colorAxisItems.push(colorAxis);
 				}
 			}
 
 			// Don't add the color axis' series
 			each(colorAxis.series, function (series) {
-				series.options.showInLegend = false;
+				H.erase(e.allItems, series);
 			});
 		}
 
-		return allItems.concat(proceed.call(this));
+		while (colorAxisItems.length) {
+			e.allItems.unshift(colorAxisItems.pop());
+		}
 	});
 
-	wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
-		proceed.call(this, item, visible);
-		if (visible && item.legendColor) {
-			item.legendSymbol.attr({
-				fill: item.legendColor
+	addEvent(Legend, 'afterColorizeItem', function (e) {
+		if (e.visible && e.item.legendColor) {
+			e.item.legendSymbol.attr({
+				fill: e.item.legendColor
 			});
 		}
 	});
 
 	// Updates in the legend need to be reflected in the color axis (6888)
-	wrap(Legend.prototype, 'update', function (proceed) {
-		proceed.apply(this, [].slice.call(arguments, 1));
-
+	addEvent(Legend, 'afterUpdate', function () {
 		if (this.chart.colorAxis[0]) {
 			this.chart.colorAxis[0].update({}, arguments[2]);
 		}

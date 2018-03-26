@@ -27,7 +27,9 @@ extend(defaultOptions.lang, {
 	 * @type {String}
 	 * @default No data to display
 	 * @since 3.0.8
-	 * @product highcharts
+	 * @product highcharts highstock
+	 * @sample highcharts/no-data-to-display/no-data-line
+     *         No-data text
 	 * @apioption lang.noData
 	 */
 	noData: 'No data to display'
@@ -36,9 +38,14 @@ extend(defaultOptions.lang, {
 // Add default display options for message
 /**
  * Options for displaying a message like "No data to display". 
- * This feature requires the file no-data-to-display.js to be loaded in the page. 
- * The actual text to display is set in the lang.noData option.
+ * This feature requires the file no-data-to-display.js to be loaded in the
+ * page. The actual text to display is set in the lang.noData option.
  * @type {Object}
+ *
+ * @sample highcharts/no-data-to-display/no-data-line
+ *         Line chart with no-data module
+ * @sample highcharts/no-data-to-display/no-data-pie
+ *         Pie chart with no-data module
  * @optionparent noData
  */
 defaultOptions.noData = {
@@ -50,6 +57,17 @@ defaultOptions.noData = {
 	 * @since 3.0.8
 	 * @product highcharts highstock
 	 * @apioption noData.attr
+	 */
+	
+	/**
+	 * Whether to insert the label as HTML, or as pseudo-HTML rendered with
+	 * SVG.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.1.10
+	 * @product highcharts highstock
+	 * @apioption noData.useHTML
 	 */
 
 	/**
@@ -98,23 +116,15 @@ defaultOptions.noData = {
 		 */
 		verticalAlign: 'middle'
 	}
-	
-	/**
-	 * Whether to insert the label as HTML, or as pseudo-HTML rendered with
-	 * SVG.
-	 * 
-	 * @type {Boolean}
-	 * @default false
-	 * @since 4.1.10
-	 * @product highcharts highstock
-	 * @apioption noData.useHTML
-	 */
 };
 
 /*= if (build.classic) { =*/
 // Presentational
 /**
  * CSS styles for the no-data label.
+ *
+ * @sample highcharts/no-data-to-display/no-data-line
+ *         Styled no-data text
  * @optionparent noData.style
  */
 defaultOptions.noData.style = {
@@ -138,7 +148,7 @@ each([
 ], function (type) {
 	if (seriesTypes[type]) {
 		seriesTypes[type].prototype.hasData = function () {
-			return !!this.points.length; /* != 0 */
+			return !!this.points.length; // != 0
 		};
 	}
 });
@@ -148,7 +158,11 @@ each([
  * points on this series within the plot area.
  */
 H.Series.prototype.hasData = function () {
-	return this.visible && this.dataMax !== undefined && this.dataMin !== undefined; // #3703
+	return (
+		this.visible &&
+		this.dataMax !== undefined &&
+		this.dataMin !== undefined // #3703
+	);
 };
 
 /**
@@ -159,10 +173,10 @@ H.Series.prototype.hasData = function () {
 chartPrototype.showNoData = function (str) {
 	var chart = this,
 		options = chart.options,
-		text = str || options.lang.noData,
-		noDataOptions = options.noData;
+		text = str || (options && options.lang.noData),
+		noDataOptions = options && options.noData;
 
-	if (!chart.noDataLabel) {
+	if (!chart.noDataLabel && chart.renderer) {
 		chart.noDataLabel = chart.renderer
 			.label(
 				text, 
@@ -184,7 +198,11 @@ chartPrototype.showNoData = function (str) {
 
 		chart.noDataLabel.add();
 
-		chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
+		chart.noDataLabel.align(
+			extend(chart.noDataLabel.getBBox(), noDataOptions.position),
+			false,
+			'plotBox'
+		);
 	}
 };
 
@@ -203,7 +221,7 @@ chartPrototype.hideNoData = function () {
  */	
 chartPrototype.hasData = function () {
 	var chart = this,
-		series = chart.series,
+		series = chart.series || [],
 		i = series.length;
 
 	while (i--) {
@@ -218,7 +236,7 @@ chartPrototype.hasData = function () {
 /**
  * Add event listener to handle automatic show or hide no-data message
  */
-H.addEvent(chartPrototype, 'render', function handleNoData() {
+H.addEvent(H.Chart, 'render', function handleNoData() {
 	if (this.hasData()) {
 		this.hideNoData();
 	} else {

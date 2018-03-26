@@ -70,8 +70,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			fireEvent(chart, 'addSeries', { options: options }, function () {
 				series = chart.initSeries(options);
 
-				chart.isDirtyLegend = true; // the series array is out of sync with the display
+				chart.isDirtyLegend = true;
 				chart.linkSeries();
+
+				fireEvent(chart, 'afterAddSeries');
+				
 				if (redraw) {
 					chart.redraw(animation);
 				}
@@ -215,7 +218,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			loadingDiv = this.loadingDiv;
 
 		if (loadingDiv) {
-			loadingDiv.className = 'highcharts-loading highcharts-loading-hidden';
+			loadingDiv.className =
+				'highcharts-loading highcharts-loading-hidden';
 			/*= if (build.classic) { =*/
 			animate(loadingDiv, {
 				opacity: 0
@@ -231,20 +235,46 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/** 
-	 * These properties cause isDirtyBox to be set to true when updating. Can be extended from plugins.
+	 * These properties cause isDirtyBox to be set to true when updating. Can be
+	 * extended from plugins.
 	 */
-	propsRequireDirtyBox: ['backgroundColor', 'borderColor', 'borderWidth', 'margin', 'marginTop', 'marginRight',
-		'marginBottom', 'marginLeft', 'spacing', 'spacingTop', 'spacingRight', 'spacingBottom', 'spacingLeft',
-		'borderRadius', 'plotBackgroundColor', 'plotBackgroundImage', 'plotBorderColor', 'plotBorderWidth', 
-		'plotShadow', 'shadow'],
+	propsRequireDirtyBox: [
+		'backgroundColor',
+		'borderColor',
+		'borderWidth',
+		'margin',
+		'marginTop',
+		'marginRight',
+		'marginBottom',
+		'marginLeft',
+		'spacing',
+		'spacingTop',
+		'spacingRight',
+		'spacingBottom',
+		'spacingLeft',
+		'borderRadius',
+		'plotBackgroundColor',
+		'plotBackgroundImage',
+		'plotBorderColor',
+		'plotBorderWidth', 
+		'plotShadow',
+		'shadow'
+	],
 
 	/** 
 	 * These properties cause all series to be updated when updating. Can be
 	 * extended from plugins.
 	 */
-	propsRequireUpdateSeries: ['chart.inverted', 'chart.polar',
-		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions',
-		'time', 'tooltip'],
+	propsRequireUpdateSeries: [
+		'chart.inverted',
+		'chart.polar',
+		'chart.ignoreHiddenSeries',
+		'chart.type',
+		'colors',
+		'plotOptions',
+		'time',
+		'tooltip'
+	],
 
 	/**
 	 * A generic function to update any element of the chart. Elements can be
@@ -282,11 +312,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 *         `series` property will leave all series untouched. If the series
 	 *         have id's, the new series options will be matched by id, and the
 	 *         remaining ones removed.
+	 * @param  {AnimationOptions} [animation=true]
+	 *         Whether to apply animation, and optionally animation
+	 *         configuration.
 	 *
 	 * @sample highcharts/members/chart-update/
 	 *         Update chart geometry 
 	 */
-	update: function (options, redraw, oneToOne) {
+	update: function (options, redraw, oneToOne, animation) {
 		var chart = this,
 			adders = {
 				credits: 'addCredits',
@@ -300,13 +333,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			newHeight,
 			itemsForRemoval = [];
 
-		// If the top-level chart option is present, some special updates are required		
+		fireEvent(chart, 'update', { options: options });
+
+		// If the top-level chart option is present, some special updates are
+		// required		
 		if (optionsChart) {
 			merge(true, chart.options.chart, optionsChart);
 
 			// Setter function
 			if ('className' in optionsChart) {
 				chart.setClassName(optionsChart.className);
+			}
+
+			if ('reflow' in optionsChart) {
+				chart.setReflow(optionsChart.reflow);
 			}
 
 			if ('inverted' in optionsChart || 'polar' in optionsChart) {
@@ -321,7 +361,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			}
 
 			objectEach(optionsChart, function (val, key) {
-				if (inArray('chart.' + key, chart.propsRequireUpdateSeries) !== -1) {
+				if (
+					inArray('chart.' + key, chart.propsRequireUpdateSeries) !==
+					-1
+				) {
 					updateAllSeries = true;
 				}
 				// Only dirty box
@@ -459,9 +502,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		newHeight = optionsChart && optionsChart.height;
 		if ((isNumber(newWidth) && newWidth !== chart.chartWidth) ||
 				(isNumber(newHeight) && newHeight !== chart.chartHeight)) {
-			chart.setSize(newWidth, newHeight);
+			chart.setSize(newWidth, newHeight, animation);
 		} else if (pick(redraw, true)) {
-			chart.redraw();
+			chart.redraw(animation);
 		}
 	},
 
@@ -530,7 +573,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 				// Destroy so we can get new elements
 				if (graphic && graphic.element) {
 					// "null" is also a valid symbol
-					if (options && options.marker && options.marker.symbol !== undefined) {
+					if (
+						options &&
+						options.marker &&
+						options.marker.symbol !== undefined
+					) {
 						point.graphic = graphic.destroy();
 					}
 				}
@@ -554,7 +601,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 					isObject(options, true)
 				) ?
 				point.options :
-				options;
+				pick(options, seriesOptions.data[i]);
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;
@@ -597,7 +644,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	 *         Remove selected points in Highmaps
 	 */
 	remove: function (redraw, animation) {
-		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
+		this.series.removePoint(
+			inArray(this, this.series.data),
+			redraw,
+			animation
+		);
 	}
 });
 
@@ -659,8 +710,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		// Optional redraw, defaults to true
 		redraw = pick(redraw, true);
 
-		// Get options and push the point to xData, yData and series.options. In series.generatePoints
-		// the Point instance will be created on demand and pushed to the series.data array.
+		// Get options and push the point to xData, yData and series.options. In
+		// series.generatePoints the Point instance will be created on demand
+		// and pushed to the series.data array.
 		point = { series: series };
 		series.pointClass.prototype.applyOptions.apply(point, [options]);
 		x = point.x;
@@ -674,8 +726,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			}
 		}
 		
-		series.updateParallelArrays(point, 'splice', i, 0, 0); // insert undefined item
-		series.updateParallelArrays(point, i); // update it
+		// Insert undefined item
+		series.updateParallelArrays(point, 'splice', i, 0, 0);
+		// Update it
+		series.updateParallelArrays(point, i);
 
 		if (names && point.name) {
 			names[x] = point.name;
@@ -714,9 +768,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	},
 
 	/**
-	 * Remove a point from the series. Unlike the {@link Highcharts.Point#remove}
-	 * method, this can also be done on a point that is not instanciated because
-	 * it is outside the view or subject to Highstock data grouping.
+	 * Remove a point from the series. Unlike the
+	 * {@link Highcharts.Point#remove} method, this can also be done on a point
+	 * that is not instanciated because it is outside the view or subject to
+	 * Highstock data grouping.
 	 *
 	 * @param  {Number} i
 	 *         The index of the point in the {@link Highcharts.Series.data|data}
@@ -747,7 +802,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 				}
 				data.splice(i, 1);
 				series.options.data.splice(i, 1);
-				series.updateParallelArrays(point || { series: series }, 'splice', i, 1);
+				series.updateParallelArrays(
+					point || { series: series },
+					'splice',
+					i,
+					1
+				);
 
 				if (point) {
 					point.destroy();
@@ -840,7 +900,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			// is merged in with type specific plotOptions
 			oldOptions = series.userOptions,
 			oldType = series.oldType || series.type,
-			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
+			newType = (
+				newOptions.type ||
+				oldOptions.type ||
+				chart.options.chart.type
+			),
 			proto = seriesTypes[oldType].prototype,
 			n,
 			groups = [
@@ -857,61 +921,98 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			// animation has first run. This happens when calling update
 			// directly after chart initialization, or when applying responsive
 			// rules (#6912).
-			animation = series.finishedAnimating && { animation: false };
+			animation = series.finishedAnimating && { animation: false },
+			allowSoftUpdate = [
+				'data',
+				'name',
+				'turboThreshold'
+			],
+			keys = H.keys(newOptions),
+			doSoftUpdate = keys.length > 0;
 
 		// Running Series.update to update the data only is an intuitive usage,
 		// so we want to make sure that when used like this, we run the
 		// cheaper setData function and allow animation instead of completely
-		// recreating the series instance.
-		if (Object.keys && Object.keys(newOptions).toString() === 'data') {
-			return this.setData(newOptions.data, redraw);
-		}
-
-		// Make sure preserved properties are not destroyed (#3094)
-		preserve = groups.concat(preserve);
-		each(preserve, function (prop) {
-			preserve[prop] = series[prop];
-			delete series[prop];
+		// recreating the series instance. This includes sideways animation when
+		// adding points to the data set. The `name` should also support soft 
+		// update because the data module sets name and data when setting new
+		// data by `chart.update`.
+		each(keys, function (key) {
+			if (inArray(key, allowSoftUpdate) === -1) {
+				doSoftUpdate = false;
+			}
 		});
+		if (doSoftUpdate) {
+			if (newOptions.data) {
+				this.setData(newOptions.data, false);
+			}
+			if (newOptions.name) {
+				this.setName(newOptions.name, false);
+			}
+		} else {
 
-		// Do the merge, with some forced options
-		newOptions = merge(oldOptions, animation, {
-			index: series.index,
-			pointStart: series.xData[0] // when updating after addPoint
-		}, { data: series.options.data }, newOptions);
-
-		// Destroy the series and delete all properties. Reinsert all methods
-		// and properties from the new type prototype (#2270, #3719)
-		series.remove(false, null, false);
-		for (n in proto) {
-			series[n] = undefined;
-		}
-		extend(series, seriesTypes[newType || oldType].prototype);
-
-		// Re-register groups (#3094) and other preserved properties
-		each(preserve, function (prop) {
-			series[prop] = preserve[prop];
-		});
-
-		series.init(chart, newOptions);
-
-		// Update the Z index of groups (#3380, #7397)
-		if (newOptions.zIndex !== oldOptions.zIndex) {
-			each(groups, function (groupName) {
-				if (series[groupName]) {
-					series[groupName].attr({
-						zIndex: newOptions.zIndex
-					});
-				}
+			// Make sure preserved properties are not destroyed (#3094)
+			preserve = groups.concat(preserve);
+			each(preserve, function (prop) {
+				preserve[prop] = series[prop];
+				delete series[prop];
 			});
+
+			// Do the merge, with some forced options
+			newOptions = merge(oldOptions, animation, {
+				index: series.index,
+				pointStart: pick(
+					oldOptions.pointStart, // when updating from blank (#7933)
+					series.xData[0] // when updating after addPoint
+				)
+			}, { data: series.options.data }, newOptions);
+
+			// Destroy the series and delete all properties. Reinsert all
+			// methods and properties from the new type prototype (#2270,
+			// #3719).
+			series.remove(false, null, false);
+			for (n in proto) {
+				series[n] = undefined;
+			}
+			extend(series, seriesTypes[newType || oldType].prototype);
+
+			// Re-register groups (#3094) and other preserved properties
+			each(preserve, function (prop) {
+				series[prop] = preserve[prop];
+			});
+
+			series.init(chart, newOptions);
+
+			// Update the Z index of groups (#3380, #7397)
+			if (newOptions.zIndex !== oldOptions.zIndex) {
+				each(groups, function (groupName) {
+					if (series[groupName]) {
+						series[groupName].attr({
+							zIndex: newOptions.zIndex
+						});
+					}
+				});
+			}
+
+
+			series.oldType = oldType;
+			chart.linkSeries(); // Links are lost in series.remove (#3028)
+
 		}
-
-
-		series.oldType = oldType;
-		chart.linkSeries(); // Links are lost in series.remove (#3028)
+		fireEvent(this, 'afterUpdate');
+		
 		if (pick(redraw, true)) {
 			chart.redraw(false);
 		}
+	},
+
+	/**
+	 * Used from within series.update
+	 * @private
+	 */
+	setName: function (name) {
+		this.name = this.options.name = this.userOptions.name = name;
+		this.chart.isDirtyLegend = true;
 	}
 });
 

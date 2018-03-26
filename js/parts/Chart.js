@@ -3,7 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", { "ignoreUrls": true}] */
+    
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -52,9 +52,9 @@ var addEvent = H.addEvent,
  *         The chart options structure.
  * @param  {Function} [callback]
  *         Function to run when the chart has loaded and and all external images
- *         are loaded. Defining a {@link
- *         https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
- *         handler is equivalent.
+ *         are loaded. Defining a [chart.event.load](
+ *         https://api.highcharts.com/highcharts/chart.events.load) handler is
+ *         equivalent.
  *
  * @example
  * var chart = Highcharts.chart('container', {
@@ -134,140 +134,157 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			seriesOptions = userOptions.series,
 			userPlotOptions = userOptions.plotOptions || {};
 
-		userOptions.series = null;
-		options = merge(defaultOptions, userOptions); // do the merge
+		// Fire the event with a default function
+		fireEvent(this,	'init',	{ args: arguments }, function () {
 
-		// Override (by copy of user options) or clear tooltip options
-		// in chart.options.plotOptions (#6218)
-		for (type in options.plotOptions) {
-			options.plotOptions[type].tooltip = (
-				userPlotOptions[type] &&
-				merge(userPlotOptions[type].tooltip) // override by copy
-			) || undefined; // or clear
-		}
-		// User options have higher priority than default options (#6218).
-		// In case of exporting: path is changed
-		options.tooltip.userOptions = (userOptions.chart &&
-			userOptions.chart.forExport && userOptions.tooltip.userOptions) ||
-			userOptions.tooltip;
+			userOptions.series = null;
+			options = merge(defaultOptions, userOptions); // do the merge
 
-		// set back the series data
-		options.series = userOptions.series = seriesOptions;
-		this.userOptions = userOptions;
+			// Override (by copy of user options) or clear tooltip options
+			// in chart.options.plotOptions (#6218)
+			for (type in options.plotOptions) {
+				options.plotOptions[type].tooltip = (
+					userPlotOptions[type] &&
+					merge(userPlotOptions[type].tooltip) // override by copy
+				) || undefined; // or clear
+			}
+			// User options have higher priority than default options
+			// (#6218). In case of exporting: path is changed
+			options.tooltip.userOptions = (
+				userOptions.chart &&
+				userOptions.chart.forExport &&
+				userOptions.tooltip.userOptions
+			) || userOptions.tooltip;
 
-		var optionsChart = options.chart;
+			// set back the series data
+			options.series = userOptions.series = seriesOptions;
+			this.userOptions = userOptions;
 
-		var chartEvents = optionsChart.events;
+			var optionsChart = options.chart;
 
-		this.margin = [];
-		this.spacing = [];
+			var chartEvents = optionsChart.events;
 
-		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
+			this.margin = [];
+			this.spacing = [];
 
-		// An array of functions that returns labels that should be considered
-		// for anti-collision
-		this.labelCollectors = [];
+			// Pixel data bounds for touch zoom
+			this.bounds = { h: {}, v: {} };
 
-		this.callback = callback;
-		this.isResizing = 0;
+			// An array of functions that returns labels that should be
+			// considered for anti-collision
+			this.labelCollectors = [];
 
-		/**
-		 * The options structure for the chart. It contains members for the sub
-		 * elements like series, legend, tooltip etc.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name options
-		 * @type {Options}
-		 */
-		this.options = options;
-		/**
-		 * All the axes in the chart.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name axes
-		 * @see  Highcharts.Chart.xAxis
-		 * @see  Highcharts.Chart.yAxis
-		 * @type {Array.<Highcharts.Axis>}
-		 */
-		this.axes = [];
+			this.callback = callback;
+			this.isResizing = 0;
 
-		/**
-		 * All the current series in the chart.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name series
-		 * @type {Array.<Highcharts.Series>}
-		 */
-		this.series = [];
+			/**
+			 * The options structure for the chart. It contains members for
+			 * the sub elements like series, legend, tooltip etc.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name options
+			 * @type {Options}
+			 */
+			this.options = options;
+			/**
+			 * All the axes in the chart.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name axes
+			 * @see  Highcharts.Chart.xAxis
+			 * @see  Highcharts.Chart.yAxis
+			 * @type {Array.<Highcharts.Axis>}
+			 */
+			this.axes = [];
 
-		/**
-		 * The chart title. The title has an `update` method that allows
-		 * modifying the options directly or indirectly via `chart.update`.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name title
-		 * @type Object
-		 *
-		 * @sample highcharts/members/title-update/
-		 *         Updating titles
-		 */
-		
-		/**
-		 * The chart subtitle. The subtitle has an `update` method that allows
-		 * modifying the options directly or indirectly via `chart.update`.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name subtitle
-		 * @type Object
-		 */
+			/**
+			 * All the current series in the chart.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name series
+			 * @type {Array.<Highcharts.Series>}
+			 */
+			this.series = [];
 
-		/**
-		 * The `Time` object associated with the chart. Since v6.0.5, time
-		 * settings can be applied individually for each chart. If no individual
-		 * settings apply, the `Time` object is shared by all instances.
-		 *
-		 * @memberof Highcharts.Chart
-		 * @name time
-		 * @type Highcharts.Time
-		 */
-		this.time = userOptions.time ? new H.Time(this) : H.time;
+			/**
+			 * The chart title. The title has an `update` method that allows
+			 * modifying the options directly or indirectly via
+			 * `chart.update`.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name title
+			 * @type Object
+			 *
+			 * @sample highcharts/members/title-update/
+			 *         Updating titles
+			 */
+			
+			/**
+			 * The chart subtitle. The subtitle has an `update` method that
+			 * allows modifying the options directly or indirectly via
+			 * `chart.update`.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name subtitle
+			 * @type Object
+			 */
 
-		
-		this.hasCartesianSeries = optionsChart.showAxes;
-		
-		var chart = this;
+			/**
+			 * The `Time` object associated with the chart. Since v6.0.5,
+			 * time settings can be applied individually for each chart. If
+			 * no individual settings apply, the `Time` object is shared by
+			 * all instances.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name time
+			 * @type Highcharts.Time
+			 */
+			this.time = 
+				userOptions.time && H.keys(userOptions.time).length ?
+					new H.Time(userOptions.time) :
+					H.time;
 
-		// Add the chart to the global lookup
-		chart.index = charts.length;
+			
+			this.hasCartesianSeries = optionsChart.showAxes;
+			
+			var chart = this;
 
-		charts.push(chart);
-		H.chartCount++;
+			// Add the chart to the global lookup
+			chart.index = charts.length;
 
-		// Chart event handlers
-		if (chartEvents) {
-			objectEach(chartEvents, function (event, eventType) {
-				addEvent(chart, eventType, event);
-			});
-		}
+			charts.push(chart);
+			H.chartCount++;
 
-		/**
-		 * A collection of the X axes in the chart.
-		 * @type {Array.<Highcharts.Axis>}
-		 * @name xAxis
-		 * @memberOf Highcharts.Chart
-		 */
-		chart.xAxis = [];
-		/**
-		 * A collection of the Y axes in the chart.
-		 * @type {Array.<Highcharts.Axis>}
-		 * @name yAxis
-		 * @memberOf Highcharts.Chart
-		 */
-		chart.yAxis = [];
+			// Chart event handlers
+			if (chartEvents) {
+				objectEach(chartEvents, function (event, eventType) {
+					addEvent(chart, eventType, event);
+				});
+			}
 
-		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
+			/**
+			 * A collection of the X axes in the chart.
+			 * @type {Array.<Highcharts.Axis>}
+			 * @name xAxis
+			 * @memberOf Highcharts.Chart
+			 */
+			chart.xAxis = [];
+			/**
+			 * A collection of the Y axes in the chart.
+			 * @type {Array.<Highcharts.Axis>}
+			 * @name yAxis
+			 * @memberOf Highcharts.Chart
+			 */
+			chart.yAxis = [];
 
-		chart.firstRender();
+			chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
+
+			// Fire after init but before first render, before axes and series
+			// have been initialized.
+			fireEvent(chart, 'afterInit');
+
+			chart.firstRender();
+		});
 	},
 
 	/**
@@ -312,8 +329,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		for (; i < series.length; i++) {
 			if (series[i]) {
 				series[i].index = i;
-				series[i].name = series[i].name || 
-					'Series ' + (series[i].index + 1);
+				series[i].name = series[i].getName();
 			}
 		}
 	},
@@ -354,6 +370,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 *         If or how to apply animation to the redraw.
 	 */
 	redraw: function (animation) {
+
+		fireEvent(this, 'beforeRedraw');
+
 		var chart = this,
 			axes = chart.axes,
 			series = chart.series,
@@ -570,6 +589,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			yAxisOptions = options.yAxis = splat(options.yAxis || {}),
 			optionsArray;
 
+		fireEvent(this, 'getAxes');
+
 		// make sure the options are arrays and add some members
 		each(xAxisOptions, function (axis, i) {
 			axis.index = i;
@@ -586,6 +607,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		each(optionsArray, function (axisOptions) {
 			new Axis(chart, axisOptions); // eslint-disable-line no-new
 		});
+
+		fireEvent(this, 'afterGetAxes');
 	},
 
 
@@ -749,7 +772,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				titleSize = titleOptions.style.fontSize;
 				/*= } =*/
 				titleSize = renderer.fontMetrics(titleSize, title).b;
-				
 				title
 					.css({
 						width: (titleOptions.width ||
@@ -773,7 +795,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		this.titleOffset = titleOffset; // used in getMargins
 
 		if (!this.isDirtyBox && requiresDirtyBox) {
-			this.isDirtyBox = requiresDirtyBox;
+			this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
 			// Redraw if necessary (#2719, #2744)
 			if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
 				this.redraw();
@@ -1044,6 +1066,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Add a reference to the charts index
 		chart.renderer.chartIndex = chart.index;
+
+		fireEvent(this, 'afterGetContainer');
 	},
 
 	/**
@@ -1159,7 +1183,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				width !== chart.containerWidth ||
 				height !== chart.containerHeight
 			) {
-				clearTimeout(chart.reflowTimeout);
+				H.clearTimeout(chart.reflowTimeout);
 				// When called from window.resize, e is set, else it's called
 				// directly (#2224)
 				chart.reflowTimeout = syncTimeout(function () {
@@ -1176,19 +1200,26 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Add the event handlers necessary for auto resizing, depending on the 
-	 * `chart.events.reflow` option.
+	 * Toggle the event handlers necessary for auto resizing, depending on the 
+	 * `chart.reflow` option.
 	 *
 	 * @private
 	 */
-	initReflow: function () {
-		var chart = this,
-			unbind;
-		
-		unbind = addEvent(win, 'resize', function (e) {
-			chart.reflow(e);
-		});
-		addEvent(chart, 'destroy', unbind);
+	setReflow: function (reflow) {
+
+		var chart = this;
+
+		if (reflow !== false && !this.unbindReflow) {
+			this.unbindReflow = addEvent(win, 'resize', function (e) {
+				chart.reflow(e);
+			});
+			addEvent(this, 'destroy', this.unbindReflow);
+
+		} else if (reflow === false && this.unbindReflow) {
+
+			// Unbind and unset
+			this.unbindReflow = this.unbindReflow();
+		}
 
 		// The following will add listeners to re-fit the chart before and after
 		// printing (#2284). However it only works in WebKit. Should have worked
@@ -1199,13 +1230,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				chart.reflow();
 			});
 		}
-		*/
+		//*/
 	},
 
 	/**
 	 * Resize the chart to a given width and height. In order to set the width
 	 * only, the height argument may be skipped. To set the height only, pass
-	 * `undefined for the width.
+	 * `undefined` for the width.
 	 * @param  {Number|undefined|null} [width]
 	 *         The new pixel width of the chart. Since v4.2.6, the argument can
 	 *         be `undefined` in order to preserve the current value (when
@@ -1399,6 +1430,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				axis.setAxisTranslation();
 			});
 		}
+
+		fireEvent(chart, 'afterSetChartSize');
 	},
 
 	/**
@@ -1574,6 +1607,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// reset
 		chart.isDirtyBox = false;
+
+		fireEvent(this, 'afterDrawChartBox');
 	},
 
 	/**
@@ -1656,6 +1691,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				}
 			}
 		});
+
+		fireEvent(this, 'afterLinkSeries');
 	},
 
 	/**
@@ -1953,10 +1990,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// Create the container
 		chart.getContainer();
 
-		// Run an early event after the container and renderer are established
-		fireEvent(chart, 'init');
-
-
 		chart.resetMargins();
 		chart.setChartSize();
 
@@ -2027,8 +2060,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		
 
 		// Set up auto resize, check for not destroyed (#6068)
-		if (defined(this.index) && this.options.chart.reflow !== false) {
-			this.initReflow();
+		if (defined(this.index)) {
+			this.setReflow(this.options.chart.reflow);
 		}
 
 		// Don't run again

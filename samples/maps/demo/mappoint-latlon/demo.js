@@ -1,7 +1,10 @@
 
-
 // Initiate the chart
 Highcharts.mapChart('container', {
+
+    chart: {
+        map: 'countries/gb/gb-all'
+    },
 
     title: {
         text: 'Highmaps basic lat/lon demo'
@@ -18,7 +21,6 @@ Highcharts.mapChart('container', {
 
     series: [{
         // Use the gb-all map with no data as a basemap
-        mapData: Highcharts.maps['countries/gb/gb-all'],
         name: 'Basemap',
         borderColor: '#A0A0A0',
         nullColor: 'rgba(200, 200, 200, 0.3)',
@@ -26,8 +28,7 @@ Highcharts.mapChart('container', {
     }, {
         name: 'Separators',
         type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/gb/gb-all'], 'mapline'),
-        color: '#707070',
+        nullColor: '#707070',
         showInLegend: false,
         enableMouseTracking: false
     }, {

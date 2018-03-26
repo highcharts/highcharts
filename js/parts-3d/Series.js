@@ -8,18 +8,15 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-var perspective = H.perspective,
-	pick = H.pick,
-	wrap = H.wrap;
+var addEvent = H.addEvent,
+	perspective = H.perspective,
+	pick = H.pick;
 
 // Wrap the translate method to post-translate points into 3D perspective
-wrap(H.Series.prototype, 'translate', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
+addEvent(H.Series, 'afterTranslate', function () {
 	if (this.chart.is3d()) {
 		this.translate3dPoints();
 	}
-
 });
 
 /**

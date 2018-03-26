@@ -66,7 +66,8 @@ seriesType('polygon', 'scatter', {
 	},
 	drawGraph: function () {
 		/*= if (build.classic) { =*/
-		this.options.fillColor = this.color; // Hack into the fill logic in area.drawGraph
+		// Hack into the fill logic in area.drawGraph
+		this.options.fillColor = this.color;
 		/*= } =*/
 		seriesTypes.area.prototype.drawGraph.call(this);
 	},
@@ -80,11 +81,6 @@ seriesType('polygon', 'scatter', {
 /**
  * A `polygon` series. If the [type](#series.polygon.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * polygon](#plotOptions.polygon).
  * 
  * @type {Object}
  * @extends series,plotOptions.polygon
@@ -140,11 +136,16 @@ seriesType('polygon', 'scatter', {
  * 
  * @type {Array<Object|Array>}
  * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
  * @product highcharts highstock
  * @apioption series.polygon.data
  */

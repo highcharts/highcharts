@@ -5,8 +5,6 @@ import '../parts/Series.js';
 var each = H.each,
 	Series = H.Series,
 	addEvent = H.addEvent,
-	fireEvent = H.fireEvent,
-	wrap = H.wrap,
 	noop = H.noop;
 
 
@@ -17,7 +15,8 @@ var each = H.each,
 **************************************************************************** */
 
 /**
- * Provides methods for auto setting/updating series data based on the based series data,
+ * Provides methods for auto setting/updating series data based on the based
+ * series data.
  * 
  * @mixin
  **/
@@ -38,9 +37,10 @@ var derivedSeriesMixin = {
 	},
 
   /**
-   * Method to be implemented - inside the method the series has already access to the base series
-   * via m `this.baseSeries` and the bases data is initialised. It should
-   * return data in the format accepted by Series.setData() method
+   * Method to be implemented - inside the method the series has already access
+   * to the base series via m `this.baseSeries` and the bases data is
+   * initialised. It should return data in the format accepted by
+   * `Series.setData()` method
    *
    * @returns {Array} - an array of data
    **/
@@ -70,19 +70,23 @@ var derivedSeriesMixin = {
 		var derivedSeries = this,
 			chartSeriesLinked;
 
-		chartSeriesLinked = addEvent(this.chart, 'seriesLinked', function () {
-			derivedSeries.setBaseSeries();
+		chartSeriesLinked = addEvent(
+			this.chart,
+			'afterLinkSeries',
+			function () {
+				derivedSeries.setBaseSeries();
 
-			if (derivedSeries.baseSeries && !derivedSeries.initialised) {
-				derivedSeries.setDerivedData();
-				derivedSeries.addBaseSeriesEvents();
-				derivedSeries.initialised = true;
+				if (derivedSeries.baseSeries && !derivedSeries.initialised) {
+					derivedSeries.setDerivedData();
+					derivedSeries.addBaseSeriesEvents();
+					derivedSeries.initialised = true;
+				}
 			}
-		});
+		);
 
 		this.eventRemovers.push(
-        chartSeriesLinked
-      );
+			chartSeriesLinked
+		);
 	},
 
   /**
@@ -96,14 +100,22 @@ var derivedSeriesMixin = {
 			updatedDataRemover,
 			destroyRemover;
 
-		updatedDataRemover = addEvent(derivedSeries.baseSeries, 'updatedData', function () {
-			derivedSeries.setDerivedData();
-		});
+		updatedDataRemover = addEvent(
+			derivedSeries.baseSeries,
+			'updatedData',
+			function () {
+				derivedSeries.setDerivedData();
+			}
+		);
 
-		destroyRemover = addEvent(derivedSeries.baseSeries, 'destroy', function () {
-			derivedSeries.baseSeries = null;
-			derivedSeries.initialised = false;
-		});
+		destroyRemover = addEvent(
+			derivedSeries.baseSeries,
+			'destroy',
+			function () {
+				derivedSeries.baseSeries = null;
+				derivedSeries.initialised = false;
+			}
+		);
 
 		derivedSeries.eventRemovers.push(
         updatedDataRemover,
@@ -124,14 +136,5 @@ var derivedSeriesMixin = {
 		Series.prototype.destroy.apply(this, arguments);
 	}
 };
-
-/**
- * Adds a new chart event after the series are linked
- **/
-wrap(H.Chart.prototype, 'linkSeries', function (p) {
-	p.call(this);
-
-	fireEvent(this, 'seriesLinked');
-});
 
 export default derivedSeriesMixin;

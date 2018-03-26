@@ -19,7 +19,8 @@ var seriesType = H.seriesType,
  */
 seriesType('macd', 'sma', 
 	/**
-	 * Moving Average Convergence Divergence (MACD). This series requires `linkedTo` option to be set.
+	 * Moving Average Convergence Divergence (MACD). This series requires
+	 * `linkedTo` option to be set.
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -28,7 +29,6 @@ seriesType('macd', 'sma',
 	 * @optionparent plotOptions.macd
 	 */
 	{
-		name: 'MACD (26, 12, 9)',
 		params: {
 			/**
 			 * The short period for indicator calculations.
@@ -64,6 +64,11 @@ seriesType('macd', 'sma',
 		 * @product highstock
 		 */
 		signalLine: {
+			/**
+			 * @extends plotOptions.macd.zones
+			 * @sample  stock/indicators/macd-zones Zones in MACD
+			 */
+			zones: [],
 			styles: {
 				/**
 				 * Pixel width of the line.
@@ -91,6 +96,11 @@ seriesType('macd', 'sma',
 		 * @product highstock
 		 */
 		macdLine: {
+			/**
+			 * @extends plotOptions.macd.zones
+			 * @sample  stock/indicators/macd-zones Zones in MACD
+			 */
+			zones: [],
 			styles: {
 				/**
 				 * Pixel width of the line.
@@ -126,9 +136,12 @@ seriesType('macd', 'sma',
 				'Signal: {point.signal}<br/>' +
 				'Histogram: {point.y}<br/>'
 		},
-		dataGrouping: 'averages',
+		dataGrouping: {
+			approximation: 'averages'
+		},
 		minPointLength: 0
 	}, {
+		nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
 		// "y" value is treated as Histogram data
 		pointArrayMap: ['y', 'signal', 'MACD'],
 		parallelArrays: ['x', 'y', 'signal', 'MACD'],
@@ -154,6 +167,20 @@ seriesType('macd', 'sma',
 					}
 				}
 			}, this.options);
+
+			// Zones have indexes automatically calculated, we need to
+			// translate them to support multiple lines within one indicator
+			this.macdZones = {
+				zones: this.options.macdLine.zones,
+				startIndex: 0
+			};
+			this.signalZones = {
+				zones: this.macdZones.zones.concat(
+					this.options.signalLine.zones
+				),
+				startIndex: this.macdZones.zones.length
+			};
+			this.resetZones = true;
 		},
 		toYData: function (point) {
 			return [point.y, point.signal, point.MACD];
@@ -167,7 +194,10 @@ seriesType('macd', 'sma',
 			each(indicator.points, function (point) {
 				each([point.signal, point.MACD], function (value, i) {
 					if (value !== null) {
-						point[plotNames[i]] = indicator.yAxis.toPixels(value, true);
+						point[plotNames[i]] = indicator.yAxis.toPixels(
+							value,
+							true
+						);
 					}
 				});
 			});
@@ -186,6 +216,7 @@ seriesType('macd', 'sma',
 				mainLinePoints = indicator.points,
 				pointsLength = mainLinePoints.length,
 				mainLineOptions = indicator.options,
+				histogramZones = indicator.zones,
 				gappedExtend = {
 					options: {
 						gapSize: mainLineOptions.gapSize
@@ -216,8 +247,16 @@ seriesType('macd', 'sma',
 			// Modify options and generate smoothing line:
 			each(['macd', 'signal'], function (lineName, i) {
 				indicator.points = otherSignals[i];
-				indicator.options = merge(mainLineOptions[lineName + 'Line'].styles, gappedExtend);
+				indicator.options = merge(
+					mainLineOptions[lineName + 'Line'].styles,
+					gappedExtend
+				);
 				indicator.graph = indicator['graph' + lineName];
+
+				// Zones extension:
+				indicator.currentLineZone = lineName + 'Zones';
+				indicator.zones = indicator[indicator.currentLineZone].zones;
+
 				SMA.prototype.drawGraph.call(indicator);
 				indicator['graph' + lineName] = indicator.graph;
 			});
@@ -225,16 +264,54 @@ seriesType('macd', 'sma',
 			// Restore options:
 			indicator.points = mainLinePoints;
 			indicator.options = mainLineOptions;
+			indicator.zones = histogramZones;
+			indicator.currentLineZone = null;
 			// indicator.graph = null;
+		},
+		getZonesGraphs: function (props) {
+			var allZones = SMA.prototype.getZonesGraphs.call(this, props),
+				currentZones = allZones;
+
+			if (this.currentLineZone) {
+				currentZones = allZones.splice(
+					this[this.currentLineZone].startIndex + 1
+				);
+
+				if (!currentZones.length) {
+					// Line has no zones, return basic graph "zone"
+					currentZones = [props[0]];
+				} else {
+					// Add back basic prop:
+					currentZones.splice(0, 0, props[0]);
+				}
+			}
+
+			return currentZones;
+		},
+		applyZones: function () {
+			// Histogram zones are handled by drawPoints method
+			// Here we need to apply zones for all lines
+			var histogramZones = this.zones;
+
+			// signalZones.zones contains all zones:
+			this.zones = this.signalZones.zones;
+			SMA.prototype.applyZones.call(this);
+
+			// applyZones hides only main series.graph, hide macd line manually
+			if (this.options.macdLine.zones.length) {
+				this.graphmacd.hide();
+			}
+
+			this.zones = histogramZones;
 		},
 		getValues: function (series, params) {
 			var j = 0,
-				shortEMA,
-				longEMA,
 				MACD = [],
 				xMACD = [],
 				yMACD = [],
 				signalLine = [],
+				shortEMA,
+				longEMA,
 				i;
 
 			// Calculating the short and long EMA used when calculating the MACD
@@ -254,19 +331,22 @@ seriesType('macd', 'sma',
 			longEMA = longEMA.values;
 
 
-			// Subtract each Y value from the EMA's and create the new dataset (MACD)
+			// Subtract each Y value from the EMA's and create the new dataset
+			// (MACD)
 			for (i = 1; i <= shortEMA.length; i++) {
-				if (longEMA[i - 1] && longEMA[i - 1][1]) {
+				if (defined(longEMA[i - 1]) && defined(longEMA[i - 1][1])) {
 					MACD.push([
 						shortEMA[i + params.shortPeriod + 1][0], 
 						0,
 						null,
-						shortEMA[i + params.shortPeriod + 1][1] - longEMA[i - 1][1]
+						shortEMA[i + params.shortPeriod + 1][1] -
+							longEMA[i - 1][1]
 					]);
 				}
 			}
 
-			// Set the Y and X data of the MACD. This is used in calculating the signal line.
+			// Set the Y and X data of the MACD. This is used in calculating the
+			// signal line.
 			for (i = 0; i < MACD.length; i++) {
 				xMACD.push(MACD[i][0]);
 				yMACD.push([0, null, MACD[i][3]]);
@@ -286,7 +366,8 @@ seriesType('macd', 'sma',
 
 			signalLine = signalLine.values;
 
-			// Setting the MACD Histogram. In comparison to the loop with pure MACD this loop uses MACD x value not xData.
+			// Setting the MACD Histogram. In comparison to the loop with pure
+			// MACD this loop uses MACD x value not xData.
 			for (i = 0; i < MACD.length; i++) {
 				if (MACD[i][0] >= signalLine[0][0]) { // detect the first point
 
@@ -316,11 +397,6 @@ seriesType('macd', 'sma',
 /**
  * A `MACD` series. If the [type](#series.macd.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to 
- * [plotOptions.macd](#plotOptions.macd).
  * 
  * @type {Object}
  * @since 6.0.0

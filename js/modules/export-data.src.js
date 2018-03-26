@@ -7,10 +7,9 @@
  */
 
 // @todo
-// - Deprecate repo and plugins page
-// - Before official release, set up systematic tests for all series types
+// - Set up systematic tests for all series types, paired with tests of the data
+//   module importing the same data.
 
-/* eslint max-len: ["warn", 80, 4] */
 'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -45,6 +44,19 @@ Highcharts.setOptions({
 	 * @optionparent exporting
 	 */
 	exporting: {
+		
+		/**
+		 * Export-data module required. Caption for the data table. Same as
+		 * chart title by default. Set to `false` to disable.
+		 *
+		 * @type {Boolean|String}
+		 * @since 6.0.4
+		 * @sample highcharts/export-data/multilevel-table
+		 *			Multiple table headers
+		 * @default undefined
+		 * @apioption exporting.tableCaption
+		 */
+		
 		/**
 		 * Options for exporting data to CSV or ExCel, or displaying the data
 		 * in a HTML table or a JavaScript structure. Requires the
@@ -54,7 +66,7 @@ Highcharts.setOptions({
 		 *
 		 * @sample  highcharts/export-data/categorized/ Categorized data
 		 * @sample  highcharts/export-data/stock-timeaxis/ Highstock time axis
-		 * 
+		 *
 		 * @since 6.0.0
 		 */
 		csv: {
@@ -65,11 +77,11 @@ Highcharts.setOptions({
 			 * - `keyLength` - The amount of value keys for this item, for
 			 *   example a range series has the keys `low` and `high` so the
 			 *   key length is 2.
-			 * 
-			 * If [useMultiLevelHeaders](#exporting.useMultiLevelHeaders) is 
+			 *
+			 * If [useMultiLevelHeaders](#exporting.useMultiLevelHeaders) is
 			 * true, columnHeaderFormatter by default returns an object with
 			 * columnTitle and topLevelColumnTitle for each key. Columns with
-			 * the same topLevelColumnTitle have their titles merged into a 
+			 * the same topLevelColumnTitle have their titles merged into a
 			 * single cell with colspan for table/Excel export.
 			 *
 			 * If `useMultiLevelHeaders` is false, or for CSV export, it returns
@@ -80,7 +92,7 @@ Highcharts.setOptions({
 			 * "DateTime" by default.
 			 *
 			 * Return `false` to use Highcharts' proposed header.
-			 * 
+			 *
 			 * @sample highcharts/export-data/multilevel-table
 			 *			Multiple table headers
 			 * @type {Function|null}
@@ -115,7 +127,7 @@ Highcharts.setOptions({
 			lineDelimiter: '\n'
 		},
 		/**
-		 * Export-data module required. Show a HTML table below the chart with 
+		 * Export-data module required. Show a HTML table below the chart with
 		 * the chart's current data.
 		 *
 		 * @sample highcharts/export-data/showtable/ Show the table
@@ -144,18 +156,6 @@ Highcharts.setOptions({
 		 * @since 6.0.4
 		 */
 		useRowspanHeaders: true
-		
-		/**
-		 * Export-data module required. Caption for the data table. Same as
-		 * chart title by default. Set to `false` to disable.
-		 *
-		 * @type {Boolean|String}
-		 * @since 6.0.4
-		 * @sample highcharts/export-data/multilevel-table
-		 *			Multiple table headers
-		 * @default undefined
-		 * @apioption exporting.tableCaption
-		 */
 	},
 	/**
 	 * @optionparent lang
@@ -180,7 +180,7 @@ Highcharts.setOptions({
 });
 
 // Add an event listener to handle the showTable option
-Highcharts.addEvent(Highcharts.Chart.prototype, 'render', function () {
+Highcharts.addEvent(Highcharts.Chart, 'render', function () {
 	if (
 		this.options &&
 		this.options.exporting &&
@@ -190,7 +190,7 @@ Highcharts.addEvent(Highcharts.Chart.prototype, 'render', function () {
 	}
 });
 
-// Set up key-to-axis bindings. This is used when the Y axis is datetime or 
+// Set up key-to-axis bindings. This is used when the Y axis is datetime or
 // categorized. For example in an arearange series, the low and high values
 // sholud be formatted according to the Y axis type, and in order to link them
 // we need this map.
@@ -208,12 +208,12 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  * current chart data.
  *
  * @param  {Boolean} multiLevelHeaders
- *			Use multilevel headers for the rows by default. Adds an extra row 
- *			with top level headers. If a custom columnHeaderFormatter is 
+ *			Use multilevel headers for the rows by default. Adds an extra row
+ *			with top level headers. If a custom columnHeaderFormatter is
  *			defined, this can override the behavior.
  *
  * @returns {Array.<Array>}
- *          The current chart data
+ *		  The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 	var time = this.time,
@@ -272,6 +272,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 			categoryMap = {},
 			datetimeValueAxisMap = {},
 			xAxisIndex = Highcharts.inArray(series.xAxis, xAxes),
+			mockSeries,
 			j;
 
 		// Map the categories for value axes
@@ -325,10 +326,27 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 				j++;
 			}
 
-			each(series.points, function (point, pIdx) {
-				var key = point.x,
+			mockSeries = {
+				chart: series.chart,
+				autoIncrement: series.autoIncrement,
+				options: series.options,
+				pointArrayMap: series.pointArrayMap
+			};
+
+			// Export directly from options.data because we need the uncropped
+			// data (#7913), and we need to support Boost (#7026).
+			each(series.options.data, function eachData(options, pIdx) {
+				var key,
 					prop,
-					val;
+					val,
+					point;
+
+				point = { series: mockSeries };
+				series.pointClass.prototype.applyOptions.apply(
+					point,
+					[options]
+				);
+				key = point.x;
 
 				if (xTaken) {
 					if (xTaken[key]) {
@@ -350,7 +368,10 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
 				// Pies, funnels, geo maps etc. use point name in X row
 				if (!series.xAxis || series.exportKey === 'name') {
-					rows[key].name = point.name;
+					rows[key].name = (
+						series.data[pIdx] &&
+						series.data[pIdx].name
+					);
 				}
 
 				while (j < valueCount) {
@@ -440,12 +461,12 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
  * Export-data module required. Returns the current chart data as a CSV string.
  *
  * @param  {Boolean} useLocalDecimalPoint
- *         Whether to use the local decimal point as detected from the browser.
- *         This makes it easier to export data to Excel in the same locale as
- *         the user is.
+ *		 Whether to use the local decimal point as detected from the browser.
+ *		 This makes it easier to export data to Excel in the same locale as
+ *		 the user is.
  *
  * @returns {String}
- *          CSV representation of the data
+ *		  CSV representation of the data
  */
 Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
 	var csv = '',
@@ -453,7 +474,9 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
 		csvOptions = this.options.exporting.csv,
 		decimalPoint = pick(
 			csvOptions.decimalPoint,
-			useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.'
+			csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
+				(1.1).toLocaleString()[1] :
+				'.'
 		),
 		// use ';' for direct to Excel
 		itemDelimiter = pick(
@@ -494,10 +517,10 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  * Export-data module required. Build a HTML table with the chart's current
  * data.
  *
- * @sample  highcharts/export-data/viewdata/ 
- *          View the data from the export menu
+ * @sample  highcharts/export-data/viewdata/
+ *		  View the data from the export menu
  * @returns {String}
- *          HTML representation of the data.
+ *		  HTML representation of the data.
  */
 Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 	var html = '<table>',
@@ -526,7 +549,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 		},
 		// Get table cell HTML from value
 		getCellHTMLFromValue = function (tag, classes, attrs, value) {
-			var val = value || '',
+			var val = pick(value, ''),
 				className = 'text' + (classes ? ' ' + classes : '');
 			// Convert to string if number
 			if (typeof val === 'number') {
@@ -625,7 +648,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 	// Add table caption
 	if (options.exporting.tableCaption !== false) {
 		html += '<caption class="highcharts-table-caption">' + pick(
-				options.exporting.tableCaption, 
+				options.exporting.tableCaption,
 				(
 					options.title.text ?
 					htmlencode(options.title.text) :
@@ -643,13 +666,13 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 
 	// Add header
 	html += getTableHeaderHTML(
-		topHeaders, 
-		subHeaders, 
+		topHeaders,
+		subHeaders,
 		Math.max(rowLength, subHeaders.length)
 	);
 
 	// Transform the rows to HTML
-	html += '<tbody>';			
+	html += '<tbody>';
 	each(rows, function (row) {
 		html += '<tr>';
 		for (var j = 0; j < rowLength; j++) {
@@ -779,6 +802,82 @@ Highcharts.Chart.prototype.viewData = function () {
 	this.dataTableDiv.innerHTML = this.getTable();
 };
 
+/**
+ * Experimental function to send a chart's config to the Cloud for editing.
+ *
+ * Limitations
+ * - All functions (formatters and callbacks) are removed since they're not
+ *   JSON.
+ *
+ * @todo
+ * - Let the Cloud throw a friendly warning about unsupported structures like
+ *   formatters.
+ * - Dynamically updated charts probably fail, we need a generic
+ *   Chart.getOptions function that returns all non-default options. Should also
+ *   be used by the export module.
+ */
+Highcharts.Chart.prototype.editInCloud = function () {
+
+	var options,
+		paramObj,
+		params;
+
+	// Recursively remove function callbacks
+	function removeFunctions(ob) {
+		Object.keys(ob).forEach(function (key) {
+			if (typeof ob[key] === 'function') {
+				delete ob[key];
+			}
+			if (Highcharts.isObject(ob[key])) { // object and not an array
+				removeFunctions(ob[key]);
+			}
+		});
+	}
+
+	function openInCloud(data, direct) {
+		// Open new tab
+		var a = doc.createElement('a');
+		a.href = 'https://cloud.highcharts.com/create?' +
+			(direct ? 'c' : 'q') + '=' + data;
+		a.target = '_blank';
+		doc.body.appendChild(a);
+		a.click();
+		doc.body.removeChild(a);
+	}
+
+	options = Highcharts.merge(this.userOptions);
+	removeFunctions(options);
+	paramObj = {
+		name: (options.title && options.title.text) || 'Chart title',
+		options: options,
+		settings: {
+			constructor: 'Chart',
+			dataProvider: {
+				csv: this.getCSV()
+			}
+		}
+	};
+
+	params = JSON.stringify(paramObj);
+	params = win.btoa(encodeURIComponent(params));
+
+	if (params.length < 2500) {
+		// We can skip the storage and just open it directly
+		return openInCloud(params, true);
+	}
+
+	Highcharts.ajax({
+		url: 'https://cloud-api.highcharts.com/openincloud',
+		type: 'post',
+		dataType: 'json',
+		data: paramObj,
+		success: function (result) {
+			if (result && result.ok && result.id) {
+				openInCloud(result.id);
+			}
+		}
+	});
+};
 
 // Add "Download CSV" to the exporting menu.
 var exportingOptions = Highcharts.getOptions().exporting;

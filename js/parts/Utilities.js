@@ -3,7 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from './Globals.js';
 
@@ -175,7 +175,7 @@ H.Fx.prototype = {
 				}
 			};
 
-		if (from === to) {
+		if (from === to && !this.elem['forceAnimate:' + this.prop]) {
 			delete options.curAnim[this.prop];
 			if (options.complete && H.keys(options.curAnim).length === 0) {
 				options.complete.call(this.elem);
@@ -639,6 +639,11 @@ H.attr = function (elem, prop, value) {
 		// get the value
 		} else if (elem && elem.getAttribute) {
 			ret = elem.getAttribute(prop);
+
+			// IE7 and below cannot get class through getAttribute (#7850)
+			if (!ret && prop === 'class') {
+				ret = elem.getAttribute(prop + 'Name');
+			}
 		}
 
 	// else if prop is defined, it is a hash of key/value pairs
@@ -672,7 +677,7 @@ H.splat = function (obj) {
  * @param   {Number}   delay - Delay in milliseconds.
  * @param   {Object}   [context] - The context.
  * @returns {Number} An identifier for the timeout that can later be cleared
- * with clearTimeout.
+ * with H.clearTimeout.
  */
 H.syncTimeout = function (fn, delay, context) {
 	if (delay) {
@@ -681,6 +686,20 @@ H.syncTimeout = function (fn, delay, context) {
 	fn.call(0, context);
 };
 
+/**
+ * Internal clear timeout. The function checks that the `id` was not removed
+ * (e.g. by `chart.destroy()`). For the details see
+ * [issue #7901](https://github.com/highcharts/highcharts/issues/7901).
+ *
+ * @function #clearTimeout
+ * @memberOf Highcharts
+ * @param   {Number}   id - id of a timeout.
+ */
+H.clearTimeout = function (id) {
+	if (H.defined(id)) {
+		clearTimeout(id);
+	}
+};
 
 /**
  * Utility function to extend an object with the members of another.
@@ -816,8 +835,13 @@ H.extendClass = function (parent, members) {
  * @returns {String} The padded string.
  */
 H.pad = function (number, length, padder) {
-	return new Array((length || 2) + 1 -
-		String(number).length).join(padder || 0) + number;
+	return new Array(
+			(length || 2) +
+			1 -
+			String(number)
+				.replace('-', '')
+				.length
+		).join(padder || 0) + number;
 };
 
 /**
@@ -1074,9 +1098,22 @@ H.normalizeTickInterval = function (interval, multiples, magnitude,
 	for (i = 0; i < multiples.length; i++) {
 		retInterval = multiples[i];
 		// only allow tick amounts smaller than natural
-		if ((hasTickAmount && retInterval * magnitude >= interval) || 
-				(!hasTickAmount && (normalized <= (multiples[i] +
-				(multiples[i + 1] || multiples[i])) / 2))) {
+		if (
+			(
+				hasTickAmount &&
+				retInterval * magnitude >= interval
+			) || 
+			(
+				!hasTickAmount &&
+				(
+					normalized <=
+					(
+						multiples[i] +
+						(multiples[i + 1] || multiples[i])
+					) / 2
+				)
+			)
+		) {
 			break;
 		}
 	}
@@ -1441,10 +1478,14 @@ H.getStyle = function (el, prop, toInt) {
  * @memberOf Highcharts
  * @param {*} item - The item to search for.
  * @param {arr} arr - The array or node collection to search in.
+ * @param {fromIndex} [fromIndex=0] - The index to start searching from.
  * @returns {Number} - The index within the array, or -1 if not found.
  */
-H.inArray = function (item, arr) {
-	return (H.indexOfPolyfill || Array.prototype.indexOf).call(arr, item);
+H.inArray = function (item, arr, fromIndex) {
+	return (
+		H.indexOfPolyfill ||
+		Array.prototype.indexOf.call(arr, item, fromIndex)
+	);
 };
 
 /**
@@ -1489,6 +1530,22 @@ H.find = Array.prototype.find ?
 			}
 		}
 	};
+
+/**
+ * Test whether at least one element in the array passes the test implemented by
+ * the provided function.
+ *
+ * @function #some
+ * @memberOf Highcharts
+ * @param  {Array}   arr  The array to test
+ * @param  {Function} fn  The function to run on each item. Return truty to pass
+ *                        the test. Receives arguments `currentValue`, `index`
+ *                        and `array`.
+ * @param  {Object}   ctx The context.
+ */
+H.some = function (arr, fn, ctx) {
+	return (H.somePolyfill || Array.prototype.some).call(arr, fn, ctx);
+};
 
 /**
  * Map an array by a callback.
@@ -1626,7 +1683,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
 H.objectEach = function (obj, fn, ctx) {
 	for (var key in obj) {
 		if (obj.hasOwnProperty(key)) {
-			fn.call(ctx, obj[key], key, obj);
+			fn.call(ctx || obj[key], obj[key], key, obj);
 		}
 	}
 };
@@ -1646,25 +1703,16 @@ H.objectEach = function (obj, fn, ctx) {
 H.addEvent = function (el, type, fn) {
 
 	var events,
-		itemEvents,
 		addEventListener = el.addEventListener || H.addEventListenerPolyfill;
 
-	// If events are previously set directly on the prototype, pick them up 
-	// and copy them over to the instance. Otherwise instance handlers would
-	// be set on the prototype and apply to multiple charts in the page.
-	if (
-		el.hcEvents &&
-		// IE8, window and document don't have hasOwnProperty
-		!Object.prototype.hasOwnProperty.call(el, 'hcEvents')
-	) {
-		itemEvents = {};
-		H.objectEach(el.hcEvents, function (handlers, eventType) {
-			itemEvents[eventType] = handlers.slice(0);
-		});
-		el.hcEvents = itemEvents;
+	// If we're setting events directly on the constructor, use a separate
+	// collection, `protoEvents` to distinguish it from the item events in
+	// `hcEvents`.
+	if (typeof el === 'function' && el.prototype) {
+		events = el.prototype.protoEvents = el.prototype.protoEvents || {};
+	} else {
+		events = el.hcEvents = el.hcEvents || {};
 	}
-
-	events = el.hcEvents = el.hcEvents || {};
 
 	// Handle DOM events
 	if (addEventListener) {
@@ -1698,7 +1746,6 @@ H.addEvent = function (el, type, fn) {
 H.removeEvent = function (el, type, fn) {
 	
 	var events,
-		hcEvents = el.hcEvents,
 		index;
 
 	function removeOneEvent(type, fn) {
@@ -1710,7 +1757,7 @@ H.removeEvent = function (el, type, fn) {
 		}
 	}
 
-	function removeAllEvents() {
+	function removeAllEvents(eventCollection) {
 		var types,
 			len;
 
@@ -1722,39 +1769,42 @@ H.removeEvent = function (el, type, fn) {
 			types = {};
 			types[type] = true;
 		} else {
-			types = hcEvents;
+			types = eventCollection;
 		}
 
 		H.objectEach(types, function (val, n) {
-			if (hcEvents[n]) {
-				len = hcEvents[n].length;
+			if (eventCollection[n]) {
+				len = eventCollection[n].length;
 				while (len--) {
-					removeOneEvent(n, hcEvents[n][len]);
+					removeOneEvent(n, eventCollection[n][len]);
 				}
 			}
 		});
 	}
 
-	if (hcEvents) {
-		if (type) {
-			events = hcEvents[type] || [];
-			if (fn) {
-				index = H.inArray(fn, events);
-				if (index > -1) {
-					events.splice(index, 1);
-					hcEvents[type] = events;
-				}
-				removeOneEvent(type, fn);
+	H.each(['protoEvents', 'hcEvents'], function (coll) {
+		var eventCollection = el[coll];
+		if (eventCollection) {
+			if (type) {
+				events = eventCollection[type] || [];
+				if (fn) {
+					index = H.inArray(fn, events);
+					if (index > -1) {
+						events.splice(index, 1);
+						eventCollection[type] = events;
+					}
+					removeOneEvent(type, fn);
 
+				} else {
+					removeAllEvents(eventCollection);
+					eventCollection[type] = [];
+				}
 			} else {
-				removeAllEvents();
-				hcEvents[type] = [];
+				removeAllEvents(eventCollection);
+				el[coll] = {};
 			}
-		} else {
-			removeAllEvents();
-			el.hcEvents = {};
 		}
-	}
+	});
 };
 
 /**
@@ -1773,7 +1823,6 @@ H.removeEvent = function (el, type, fn) {
  */
 H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 	var e,
-		hcEvents = el.hcEvents,
 		events,
 		len,
 		i,
@@ -1793,45 +1842,50 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 			el.fireEvent(type, e);
 		}
 
-	} else if (hcEvents) {
+	} else {
+
+		H.each(['protoEvents', 'hcEvents'], function (coll) {
 		
-		events = hcEvents[type] || [];
-		len = events.length;
+			if (el[coll]) {
+				events = el[coll][type] || [];
+				len = events.length;
 
-		if (!eventArguments.target) { // We're running a custom event
+				if (!eventArguments.target) { // We're running a custom event
 
-			H.extend(eventArguments, {
-				// Attach a simple preventDefault function to skip default
-				// handler if called. The built-in defaultPrevented property is
-				// not overwritable (#5112)
-				preventDefault: function () {
-					eventArguments.defaultPrevented = true;
-				},
-				// Setting target to native events fails with clicking the
-				// zoom-out button in Chrome.
-				target: el,
-				// If the type is not set, we're running a custom event (#2297).
-				// If it is set, we're running a browser event, and setting it
-				// will cause en error in IE8 (#2465).		
-				type: type
-			});
-		}
+					H.extend(eventArguments, {
+						// Attach a simple preventDefault function to skip
+						// default handler if called. The built-in
+						// defaultPrevented property is not overwritable (#5112)
+						preventDefault: function () {
+							eventArguments.defaultPrevented = true;
+						},
+						// Setting target to native events fails with clicking
+						// the zoom-out button in Chrome.
+						target: el,
+						// If the type is not set, we're running a custom event
+						// (#2297). If it is set, we're running a browser event,
+						// and setting it will cause en error in IE8 (#2465).
+						type: type
+					});
+				}
 
-		
-		for (i = 0; i < len; i++) {
-			fn = events[i];
+				
+				for (i = 0; i < len; i++) {
+					fn = events[i];
 
-			// If the event handler return false, prevent the default handler
-			// from executing
-			if (fn && fn.call(el, eventArguments) === false) {
-				eventArguments.preventDefault();
+					// If the event handler return false, prevent the default
+					// handler from executing
+					if (fn && fn.call(el, eventArguments) === false) {
+						eventArguments.preventDefault();
+					}
+				}
 			}
-		}
+		});
 	}
 			
 	// Run the default if not prevented
 	if (defaultFunction && !eventArguments.defaultPrevented) {
-		defaultFunction(eventArguments);
+		defaultFunction.call(el, eventArguments);
 	}
 };
 

@@ -23,11 +23,11 @@ Highcharts.chart('container', {
             ['Renewable', 'Industrial', 11],
             ['Nuclear', 'Industrial', 0],
 
-            ['Oil', 'Residential & Commercial', 17],
-            ['Natural Gas', 'Residential & Commercial', 76],
-            ['Coal', 'Residential & Commercial', 1],
-            ['Renewable', 'Residential & Commercial', 7],
-            ['Nuclear', 'Residential & Commercial', 0],
+            ['Oil', 'R&C', 17],
+            ['Natural Gas', 'R&C', 76],
+            ['Coal', 'R&C', 1],
+            ['Renewable', 'R&C', 7],
+            ['Nuclear', 'R&C', 0],
 
             ['Oil', 'Electric Power', 1],
             ['Natural Gas', 'Electric Power', 18],
@@ -51,6 +51,9 @@ Highcharts.chart('container', {
         }, {
             id: 'Nuclear',
             colorIndex: 4
+        }, {
+            id: 'R&C',
+            name: 'Residential & Commercial'
         }],
         type: 'sankey',
         name: 'Energy in the United States'

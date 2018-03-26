@@ -639,32 +639,6 @@ window.analyzes = [{
 }];
 
 /***
- * JSONP
- */
-
-function $jsonp(src, options) {
-    var callbackName = options.callbackName || 'callback',
-        onSuccess = options.onSuccess || function () {},
-        timeout = options.timeout || 10; // sec
-
-    var timeoutTrigger = window.setTimeout(function () {
-        window[callbackName] = function () {};
-    }, timeout * 1000);
-
-    window[callbackName] = function (data) {
-        window.clearTimeout(timeoutTrigger);
-        onSuccess(data);
-    };
-
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.src = src;
-
-    document.getElementsByTagName('head')[0].appendChild(script);
-}
-
-/***
  * Get chart by ID
  */
 
@@ -673,6 +647,99 @@ function $jsonp(src, options) {
         return H.charts[document.getElementById(id).getAttribute('data-highcharts-chart')];
     };
 }(Highcharts));
+
+/***
+ * Tooltip feature for custom elements:
+ */
+Highcharts.tooltipDelay = 1000;
+Highcharts.tooltipIsWaiting = false;
+function menuOnOver(e) {
+    var button = e.target;
+    Highcharts.tooltipIsWaiting = button.getAttribute('data-description');
+    setTimeout(function () {
+        var description = button.getAttribute('data-description');
+        if (Highcharts.tooltipIsWaiting === description) {
+            var chart = Highcharts.getChartById('container'),
+                buttonBox = button.getBoundingClientRect(), // IE9+
+                chartBox = chart.container.getBoundingClientRect(), // IE9+
+                ttBelow = button.getAttribute('data-tt-below') || false,
+                fakePoint = {
+                    name: description,
+                    plotX: buttonBox.left + buttonBox.width -
+                        (ttBelow ? 73 : 90),
+                    plotY: buttonBox.top - chartBox.top - buttonBox.height -
+                        (ttBelow ? 30 : 0),
+                    ttBelow: ttBelow,
+                    series: {
+                        chart: chart,
+                        xAxis: chart.xAxis[0],
+                        yAxis: chart.yAxis[0],
+                        tooltipOptions: {
+                            pointFormat: '{point.name}'
+                        },
+                        options: {
+                            dataGrouping: {}
+                        }
+                    }
+                };
+
+            if (!chart.menuTooltip) {
+                chart.menuTooltip = new Highcharts.Tooltip(
+                    chart,
+                    Highcharts.merge(
+                        chart.options.tooltip,
+                        {
+                            split: false,
+                            style: {
+                                width: 220
+                            },
+                            positioner: function (w, h, p) {
+                                var chart = this.chart,
+                                    offset = p.ttBelow ? {
+                                        x: -20 - w / 2,
+                                        y: 90
+                                    } : {
+                                        x: 90,
+                                        y: 30
+                                    },
+                                    x = p.plotX + offset.x,
+                                    y = p.plotY + offset.y;
+
+                                x = Math.min(
+                                    chart.plotWidth - w + chart.plotLeft,
+                                    x
+                                );
+
+                                return {
+                                    x: x,
+                                    y: y
+                                };
+                            }
+                        }
+                    )
+                );
+            }
+
+            fakePoint.setState = Highcharts.noop;
+            fakePoint.getLabelConfig = Highcharts.Point.prototype.getLabelConfig;
+            fakePoint.tooltipFormatter = Highcharts.Point.prototype.tooltipFormatter;
+
+            chart.menuTooltip.isHidden = true;
+            chart.menuTooltip.refresh(fakePoint);
+        }
+    }, Highcharts.tooltipDelay);
+}
+
+function menuOnOut() {
+    var chart = Highcharts.getChartById('container');
+    if (Highcharts.tooltipIsWaiting) {
+        Highcharts.tooltipIsWaiting = false;
+    }
+    if (chart.menuTooltip) {
+        chart.menuTooltip.hide();
+    }
+}
+
 
 /***
  * SIDE MENU
@@ -702,6 +769,8 @@ function $jsonp(src, options) {
     function onButtonClick(button, chart) {
         var annotating = button.getAttribute('id').split('-')[1];
         var annotation = H.Annotation[chart.annotating];
+        // Selection button should highlight only annotations and flags:
+        var selection = annotating === 'selection' && annotating !== chart.annotating;
 
         resetOtherClass(button);
         button.classList.toggle('active');
@@ -710,13 +779,41 @@ function $jsonp(src, options) {
             annotation.reset();
         }
 
+        // Change cursor on the point/plotting area:
+        chart.container.classList.toggle(
+            'crosshair-on-point',
+            // Annotation type changed
+            H.Annotation[annotating] !== annotation &&
+            // Annotation on click action
+            H.defined(H.Annotation[annotating].onPointClick)
+        );
+        chart.container.classList.toggle(
+            'crosshair-on-chart',
+            !selection &&
+            H.Annotation[annotating] !== annotation &&
+            H.defined(H.Annotation[annotating].onChartClick)
+        );
+
+        if (selection) {
+            chart.container.classList.add('crosshair-on-annotation');
+        } else {
+            chart.container.classList.remove('crosshair-on-annotation');
+        }
+
         chart.annotating = annotating === chart.annotating ? null : annotating;
+
+        H.each(H.charts[0].annotations, function (annotation) {
+            annotation.unselect();
+        });
     }
 
     function menuOnClick(e) {
 
         var button = e.target;
         var id = button.getAttribute('id');
+
+        window.flagDialogReset();
+        window.textDialogReset();
 
         if (id === 'annotation-flag') {
             resetOtherClass(button);
@@ -738,6 +835,8 @@ function $jsonp(src, options) {
     }
 
     function flagMenuClick(e) {
+        window.flagDialogReset();
+
         onButtonClick(e.target, H.getChartById('container'));
     }
 
@@ -753,6 +852,8 @@ function $jsonp(src, options) {
 
         menuButtons.forEach(function (menuButton) {
             menuButton.addEventListener('click', menuOnClick);
+            menuButton.addEventListener('mouseover', menuOnOver);
+            menuButton.addEventListener('mouseout', menuOnOut);
         });
 
         listButtons.forEach(function (listButton) {
@@ -885,6 +986,153 @@ function whichAxis(e, chart) {
 (function (H) {
     var defined = H.defined;
 
+    H.Annotation.drawBB = function (renderer, element, bbox, group) {
+        var distance = 10;
+        var attrs = {
+            x: bbox.x - distance,
+            y: bbox.y - distance,
+            width: bbox.width + 2 * distance,
+            height: bbox.height + 2 * distance
+        };
+
+        if (!element.bb) {
+            element.bb = renderer
+                .rect()
+                .add(group)
+                .attr({
+                    'stroke-width': 1,
+                    stroke: 'blue',
+                    'stroke-dasharray': '5,5',
+                    zIndex: 99
+                });
+        }
+
+        element.bb.attr(attrs);
+    };
+
+    H.Annotation.prototype.drawBB = function () {
+        H.Annotation.drawBB(this.chart.renderer, this, this.getBBox(), this.group);
+    };
+
+    H.Annotation.prototype.getBBox = function () {
+        var minX = Infinity;
+        var minY = Infinity;
+        var maxX = -Infinity;
+        var maxY = -Infinity;
+
+        H.each(this.shapes, function (item) {
+            var width = 0;
+            var height = 0;
+            var bbox;
+
+            if (item.type === 'rect' || item.type === 'circle') {
+                bbox = item.getBBox();
+                width = bbox.width;
+                height = bbox.height;
+            }
+
+            H.each(item.points, function (point) {
+                var plotBox = point.series.getPlotBox();
+                var x1 = point.plotX + plotBox.translateX - width / 2;
+                var y1 = point.plotY + plotBox.translateY - height / 2;
+                var x2 = x1 + width;
+                var y2 = y1 + height;
+
+                if (x1 < minX) {
+                    minX = x1;
+                }
+                if (x2 > maxX) {
+                    maxX = x2;
+                }
+                if (y1 < minY) {
+                    minY = y1;
+                }
+                if (y2 > maxY) {
+                    maxY = y2;
+                }
+            });
+        });
+
+        H.each(this.labels, function (label) {
+            var options = label.options;
+            var verticalAlign = options.verticalAlign;
+            var align = options.align;
+
+            var offsetY = options.y;
+            if (verticalAlign === 'bottom') {
+                offsetY -= label.height;
+            } else if (verticalAlign === 'middle') {
+                offsetY -= label.height / 2;
+            }
+
+            var offsetX = options.x;
+            if (align === 'center') {
+                offsetX -= label.width / 2;
+            } else if (align === 'right') {
+                offsetX -= label.width;
+            }
+
+            var point = label.points[0];
+            var plotBox = point.series.getPlotBox();
+            var x1 = point.plotX + plotBox.translateX + offsetX;
+            var y1 = point.plotY + plotBox.translateY + offsetY;
+            var x2 = x1 + label.width;
+            var y2 = y1 + label.height;
+
+            if (x1 < minX) {
+                minX = x1;
+            }
+            if (x2 > maxX) {
+                maxX = x2;
+            }
+            if (y1 < minY) {
+                minY = y1;
+            }
+            if (y2 > maxY) {
+                maxY = y2;
+            }
+        });
+
+        minX = Math.round(minX);
+        minY = Math.round(minY);
+
+        return {
+            x: minX,
+            y: minY,
+            width: Math.round(maxX) - minX,
+            height: Math.round(maxY) - minY
+        };
+    };
+
+    H.Annotation.prototype.select = function () {
+        this.unselect();
+        this.drawBB();
+    };
+
+    H.Annotation.prototype.unselect = function () {
+        if (this.bb) {
+            this.bb.destroy();
+        }
+
+        this.bb = null;
+    };
+
+    H.wrap(H.Annotation.prototype, 'init', function (p, chart, options) {
+        p.call(this, chart, options);
+
+        if (!defined(this.options.id)) {
+            this.options.id = H.uniqueKey();
+        }
+    });
+
+    H.wrap(H.Annotation.prototype, 'redraw', function (p) {
+        p.call(this);
+
+        if (this.bb) {
+            this.drawBB();
+        }
+    });
+
     H.wrap(H.Chart.prototype, 'drawAnnotations', function (p) {
         var clips = this.annotationsClips || (this.annotationsClips = []);
 
@@ -918,6 +1166,10 @@ function whichAxis(e, chart) {
             this.group.clip(clip);
         }
 
+        if (this.options.shapesGroupClip === false) {
+            this.shapesGroup.clip();
+        }
+
         var annotation = this;
         var events = this.options.events;
         var contextmenu = events && events.contextmenu;
@@ -928,7 +1180,48 @@ function whichAxis(e, chart) {
             });
         }
 
+        this.group.on('click', function (e) {
+            if (annotation.chart.annotating === 'selection') {
+                e.stopPropagation();
+
+                if (annotation.bb) {
+                    annotation.unselect();
+                } else {
+                    annotation.select();
+                }
+            }
+        });
     });
+
+    document.addEventListener('keyup', function (e) {
+        if (e.keyCode === 46 || e.keyCode === 8) {
+            var chart = H.charts[0];
+            var hasBB = function (item) {
+                return item.bb;
+            };
+
+            var annotationsToRemove = Highcharts.grep(
+                chart.annotations,
+                hasBB
+            );
+
+            H.each(annotationsToRemove, function (annotation) {
+                annotation.chart.removeAnnotation(annotation.options.id);
+            });
+
+            var flagsToRemove = H.grep(
+                chart.series,
+                function (series) {
+                    return series.type === 'flags' && hasBB(series.points[0]);
+                }
+            );
+
+            H.each(flagsToRemove, function (flag) {
+                flag.remove();
+            });
+        }
+    });
+
 }(Highcharts));
 
 /***
@@ -962,6 +1255,10 @@ function whichAxis(e, chart) {
 
         if (withMarker) {
             options.shapes[0].markerEnd = 'arrow';
+        }
+
+        if (arrow) {
+            chart.removeAnnotation(idCounter - 1);
         }
 
         return chart.addAnnotation(options);
@@ -1047,7 +1344,7 @@ function whichAxis(e, chart) {
             },
             x: 0,
             y: 0,
-            fill: 'none'
+            fill: 'transparent'
         };
 
         if (type === 'circle') {
@@ -1087,6 +1384,39 @@ function whichAxis(e, chart) {
     });
 
 }(Highcharts));
+
+/***
+ * DIALOG
+ */
+
+(function () {
+    function getDialogPosition(p, e, dialog, chart) {
+        var left, top;
+
+        if (e) {
+            e = chart.pointer.normalize(e);
+            left = e.chartX;
+            top = e.chartY;
+        } else {
+            left = p.plotX + p.series.xAxis.pos;
+            top = p.plotY + p.series.yAxis.pos;
+        }
+
+        if (left < 100) {
+            left = 0;
+        }
+        if (top > chart.chartHeight - dialog.offsetHeight - 10) {
+            top = chart.chartHeight - dialog.offsetHeight - 10;
+        }
+
+        return {
+            left: left,
+            top: top
+        };
+    }
+
+    window.getDialogPosition = getDialogPosition;
+}());
 
 /***
  * STAR
@@ -1169,15 +1499,14 @@ function whichAxis(e, chart) {
         var bbox, x, y;
 
         if (group) {
-            bbox = this.group.getBBox();
+            bbox = this.group.element.getBBox();
             x = group.x - bbox.width * scale / 1.5;
             y = group.y - bbox.height * scale / 1.5;
 
-            this.group.attr({
+            this.shapesGroup.attr({
                 transform: 'translate(' + x + ', ' + y + ') scale(' + scale + ')'
             });
         }
-
     });
 
 
@@ -1185,6 +1514,7 @@ function whichAxis(e, chart) {
     function star(x, y, chart) {
         chart.addAnnotation({
             group: { x: x, y: y },
+            shapesGroupClip: false,
             shapes: [{
                 animateStar: true,
                 type: 'path',
@@ -1218,12 +1548,23 @@ function whichAxis(e, chart) {
     var y = -9e7;
     var yAxisIndex = -1;
     var chart = null;
-    var counter = -1;
+    var counter = 100;
     var annotationToRemove;
 
     var dialog = document.getElementById('annotation-text-form');
 
-    function onPointClick(p) {
+    function reset() {
+        dialog.style.display = 'none';
+        yAxisIndex = -1;
+        chart = null;
+        annotationToRemove = null;
+    }
+
+    window.textDialogReset = reset;
+
+    function onPointClick(p, e) {
+        var position;
+
         x = p.x;
         y = p.y;
         yAxisIndex = inArray(p.series.yAxis, p.series.chart.yAxis);
@@ -1232,6 +1573,11 @@ function whichAxis(e, chart) {
         if (yAxisIndex !== -1 && chart) {
             dialog.style.display = 'block';
         }
+
+        position = window.getDialogPosition(p, e, dialog, chart);
+
+        dialog.style.left = position.left + 'px';
+        dialog.style.top = position.top + 'px';
     }
 
     function addText(e) {
@@ -1242,8 +1588,8 @@ function whichAxis(e, chart) {
 
         if (annotationToRemove) {
             chart.removeAnnotation(annotationToRemove);
-            annotationToRemove = null;
         }
+
         chart.addAnnotation({
             events: {
                 contextmenu: function (e) {
@@ -1274,9 +1620,7 @@ function whichAxis(e, chart) {
             }]
         });
 
-        dialog.style.display = 'none';
-        chart = null;
-        yAxisIndex = -1;
+        reset();
     }
 
     document.getElementById('add-text-annotation').addEventListener('submit', addText);
@@ -1286,7 +1630,7 @@ function whichAxis(e, chart) {
         var x = chart.xAxis[0].toValue(e.chartX);
         var y = yAxis ? yAxis.toValue(e.chartY) : -9e7;
 
-        onPointClick({ x: x, y: y, series: { yAxis: yAxis, chart: chart } });
+        onPointClick({ x: x, y: y, series: { yAxis: yAxis, chart: chart } }, e);
     }
 
     H.Annotation.text = {
@@ -1441,8 +1785,8 @@ function whichAxis(e, chart) {
         path = symbols.diamond(x, y, w, h);
 
         if (anchorX && anchorY) {
-      // if the label is below the anchor, draw the connecting line from the top edge of the label
-      // otherwise start drawing from the bottom edge
+            // if the label is below the anchor, draw the connecting line from the top edge of the label
+            // otherwise start drawing from the bottom edge
             labelTopOrBottomY = (y > anchorY) ? y : y + h;
             path.push('M', anchorX, labelTopOrBottomY, 'L', anchorX, anchorY);
         }
@@ -1450,42 +1794,166 @@ function whichAxis(e, chart) {
         return path;
     };
 
+    var inArray = H.inArray;
+    var dialog = document.getElementById('annotation-flag-form');
+    var flagTextInput = document.getElementById('flag-text');
+    var flagTitleInput = document.getElementById('flag-title');
+    var clickedPoint = null;
+    var chosenShape = null;
+    var flagToRemove = null;
+
+    dialog.style.display = 'none';
+
+    H.seriesTypes.flags.prototype.drawBB = function (point) {
+        var graphic = point.graphic;
+        var bbox = graphic.element.getBBox();
+        var offsetX =
+			point.series.options.shape !== 'flag' ? bbox.width / 2 : 0;
+
+        H.Annotation.drawBB(
+            point.series.chart.renderer,
+            point,
+            {
+                x: point.plotX + point.series.group.translateX - offsetX,
+                y: point.plotY + point.series.group.translateY - bbox.height,
+                width: bbox.width,
+                height: bbox.height
+            }
+        );
+    };
+
+    H.wrap(H.seriesTypes.flags.prototype, 'destroy', function (p) {
+        H.each(this.points, function (point) {
+            if (point.bb) {
+                point.bb = point.bb.destroy();
+            }
+
+            point.graphic.element.onclick = null;
+            point.graphic.element.oncontextmenu = null;
+        });
+
+        p.apply(this, Array.prototype.slice.call(1, arguments));
+    });
+
+    function onPointClick(shape) {
+        return function (p, e, editFlag) {
+            if (p.series.type !== 'flags' || editFlag) {
+                clickedPoint = p;
+                chosenShape = shape;
+                flagTextInput.value = '';
+                flagTitleInput.value = '';
+
+                var yAxisIndex = inArray(p.series.yAxis, p.series.chart.yAxis);
+                var chart = p.series.chart;
+                var position;
+
+                if (yAxisIndex !== -1 && chart) {
+                    dialog.style.display = 'block';
+                }
+
+                position = window.getDialogPosition(p, e, dialog, chart);
+
+                dialog.style.left = position.left + 'px';
+                dialog.style.top = position.top + 'px';
+            }
+        };
+    }
+
     H.wrap(H.seriesTypes.flags.prototype, 'drawPoints', function (p) {
-        p.call(this);
+        var series = this;
 
-        var style = this.options.style;
+        p.call(series);
 
-        if (style && style.dy) {
-            H.each(this.points, function (point) {
-                if (point.graphic) {
-                    point.graphic.text.attr({
-                        dy: style.dy
+        var style = series.options.style;
+
+        H.each(series.points, function (point) {
+            var graphic = point.graphic;
+
+            if (graphic) {
+                if (style && style.dy) {
+                    graphic.text.attr({
+                        dy: style.dy,
+                        'pointer-events': 'none'
                     });
                 }
-            });
-        }
+
+                if (!graphic.element.onclick) {
+                    graphic.element.onclick = function (e) {
+                        if (series.chart.annotating === 'selection') {
+                            e.stopPropagation();
+
+                            point.showBB = !point.showBB;
+
+                            if (point.showBB) {
+                                series.drawBB(point);
+                            } else {
+                                point.bb = point.bb.destroy();
+                            }
+                        }
+                    };
+                }
+
+                if (!graphic.element.oncontextmenu) {
+                    graphic.element.oncontextmenu = function (e) {
+                        e.preventDefault();
+
+                        flagTextInput.value = point.options.text;
+                        flagTitleInput.value = point.options.title;
+
+                        var seriesOptions = point.series.options;
+
+                        flagToRemove = seriesOptions.id;
+                        onPointClick(seriesOptions.shape)(point, undefined, true);
+                    };
+                }
+
+                if (point.showBB) {
+                    series.drawBB(point);
+                }
+            } else if (point.bb) {
+                point.bb = point.bb.destroy();
+            }
+        });
     });
 
 
-    var inArray = H.inArray;
-    var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    var letterIndex = -1;
+    function reset() {
+        dialog.style.display = 'none';
+        clickedPoint = null;
+        chosenShape = null;
+        flagToRemove = null;
+    }
 
-    function onPointClick(shape) {
-        return function (p) {
-            var chart = p.series.chart;
+    window.flagDialogReset = reset;
 
-            var id = p.series.options.id;
-            var yAxisIndex = inArray(p.series.yAxis, chart.yAxis);
+    function addFlag(e) {
+        e.preventDefault();
+
+
+        if (clickedPoint) {
+            var chart = clickedPoint.series.chart;
+            var id = clickedPoint.series.options.id;
+            var yAxisIndex = inArray(clickedPoint.series.yAxis, chart.yAxis);
+            var x = clickedPoint.x;
+            var color;
+
+            if (flagToRemove) {
+				// the clicked point is from the flag series so id must be taken from the onSeries
+                id = clickedPoint.series.options.onSeries;
+                color = clickedPoint.series.color;
+                chart.get(flagToRemove).remove();
+            }
 
             if (id && yAxisIndex !== -1) {
                 var options = {
                     type: 'flags',
                     onSeries: id,
-                    shape: shape,
+                    shape: chosenShape,
+                    id: 'flag-' + H.uniqueKey(),
                     data: [{
-                        x: p.x,
-                        title: letters[++letterIndex % letters.length]
+                        x: x,
+                        title: flagTitleInput.value,
+                        text: flagTextInput.value
                     }],
                     yAxis: yAxisIndex,
                     style: {
@@ -1497,17 +1965,26 @@ function whichAxis(e, chart) {
                     width: 25,
                     height: 25,
                     y: -50,
-                    enableMouseTracking: false
+                    enableMouseTracking: true
                 };
 
-                if (shape === 'diamondpin') {
+                if (chosenShape === 'diamondpin') {
                     options.width = 30;
+                }
+
+                if (color) {
+                    options.color = color;
                 }
 
                 chart.addSeries(options);
             }
-        };
+        }
+
+
+        reset();
     }
+
+    document.getElementById('add-flag-annotation').addEventListener('submit', addFlag);
 
     H.each(['flag', 'circlepin', 'squarepin', 'diamondpin'], function (shape) {
         H.Annotation[shape] = {
@@ -1516,6 +1993,28 @@ function whichAxis(e, chart) {
     });
 }(Highcharts));
 
+/**
+ * SELECTION
+ */
+(function (H) {
+    H.Annotation.selection = {
+        onChartClick: function () {
+            var chart = Highcharts.charts[0];
+
+            H.each(Highcharts.charts[0].annotations, function (annotation) {
+                annotation.unselect();
+            });
+
+            H.each(chart.series, function (series) {
+                var point = series.points[0];
+
+                if (series.type === 'flags' && point.bb) {
+                    point.bb = point.bb.destroy();
+                }
+            });
+        }
+    };
+}(Highcharts));
 /***
  * MAIN DEMO
  */
@@ -1548,6 +2047,8 @@ window.onload = function () {
                 height: getHeight(),
                 spacingLeft: 50,
                 alignTicks: false,
+                // Keep events for cursor change:
+                plotBackgroundColor: 'transparent',
                 events: {
                     load: function () {
                         this.onContainerMouseMove = Highcharts.Annotation.arrow.onContainerMouseMove.bind(this);
@@ -1644,6 +2145,54 @@ window.onload = function () {
                     text: 'All'
                 }]
             },
+            responsive: {
+                rules: [{
+                    chartOptions: {
+                        rangeSelector: {
+                            buttonPosition: {
+                                align: 'left',
+                                x: 130
+                            }
+                        }
+                    },
+                    condition: {
+                        maxWidth: 1250
+                    }
+                }, {
+                    chartOptions: {
+                        rangeSelector: {
+                            buttonPosition: {
+                                align: 'left',
+                                x: 120
+                            },
+                            inputPosition: {
+                                x: -75
+                            }
+                        }
+                    },
+                    condition: {
+                        maxWidth: 950
+                    }
+                }, {
+                    chartOptions: {
+                        rangeSelector: {
+                            buttonPosition: {
+                                align: 'left',
+                                x: 0,
+                                y: 40
+                            },
+                            inputPosition: {
+                                align: 'right',
+                                x: 0,
+                                y: 40
+                            }
+                        }
+                    },
+                    condition: {
+                        maxWidth: 900
+                    }
+                }]
+            },
             yAxis: [{
                 height: '50%',
                 resize: {
@@ -1711,7 +2260,9 @@ window.onload = function () {
 
     function attachEvents() {
 
-        var selectDropdowns;
+        var selectDropdowns,
+            highchartsSave = document.getElementById('highcharts-save'),
+            highchartsReset = document.getElementById('highcharts-reset');
 
         window.sideMenu();
 
@@ -1938,7 +2489,7 @@ window.onload = function () {
             });
         });
 
-        document.getElementById('highcharts-save').addEventListener('click', function () {
+        highchartsSave.addEventListener('click', function () {
             var chart = Highcharts.getChartById('container'),
                 chartYAxis = chart.yAxis,
                 navYAxisIdex = chartYAxis.indexOf(chart.navigator.yAxis),
@@ -1981,14 +2532,18 @@ window.onload = function () {
             }));
         });
 
-        document.getElementById('highcharts-reset').addEventListener('click', function () {
+        highchartsReset.addEventListener('click', function () {
             if (confirm('Are you sure you want to clear the chart?')) {
-                $jsonp('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=callbackfunc', {
-                    callbackName: 'callbackfunc',
-                    onSuccess: function (data) {
+                Highcharts.ajax({
+                    url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+                    dataType: 'text',
+                    success: function (data) {
                         var chart = Highcharts.getChartById('container');
 
                         window.localStorage.removeItem('data');
+
+                        data = data.replace(/\/\*.*\*\//g, '');
+                        data = JSON.parse(data);
 
                         indicatorContainer.querySelectorAll('input')[0].checked = false;
                         indicatorsList = []; // clear array too
@@ -2015,6 +2570,12 @@ window.onload = function () {
                 });
             }
         });
+
+
+        highchartsSave.addEventListener('mouseover', menuOnOver);
+        highchartsSave.addEventListener('mouseout', menuOnOut);
+        highchartsReset.addEventListener('mouseover', menuOnOver);
+        highchartsReset.addEventListener('mouseout', menuOnOut);
     }
 
     if (defaultData) {
@@ -2030,9 +2591,12 @@ window.onload = function () {
             Highcharts.stockChart('container', Highcharts.extend({}, advOptions))
         );
     } else {
-        $jsonp('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=callbackfunc', {
-            callbackName: 'callbackfunc',
-            onSuccess: function (data) {
+        Highcharts.ajax({
+            url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+            dataType: 'text',
+            success: function (data) {
+                data = data.replace(/\/\*.*\*\//g, '');
+                data = JSON.parse(data);
                 advOptions.series[0].data = data;
                 attachEvents(
                     Highcharts.stockChart('container', Highcharts.extend({}, advOptions))

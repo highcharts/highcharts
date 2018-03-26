@@ -10,13 +10,57 @@
         });
     });
 
+    H.Chart.prototype.setUpScrolling = function () {
+
+        // Add the necessary divs to provide scrolling
+        this.scrollingContainer = H.createElement('div', {
+            'className': 'highcharts-scrolling'
+        }, {
+            overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch'
+        }, this.renderTo);
+
+        this.innerContainer = H.createElement('div', {
+            'className': 'highcharts-inner-container'
+        }, null, this.scrollingContainer);
+
+        // Now move the container inside
+        this.innerContainer.appendChild(this.container);
+
+        // Set scroll position
+        if (this.options.chart.scrollPositionX) {
+            this.scrollingContainer.scrollLeft =
+                (this.chartWidth - this.viewWidth) *
+                this.options.chart.scrollPositionX;
+        }
+
+        // Don't run again
+        delete this.setUpScrolling;
+    };
+
+    H.wrap(H.Chart.prototype, 'getChartSize', function (proceed) {
+        proceed.call(this);
+
+        if (this.options.chart.scrollMinWidth) {
+            this.viewWidth = this.chartWidth;
+            this.chartWidth = Math.max(
+                this.chartWidth,
+                this.options.chart.scrollMinWidth
+            );
+        }
+
+    });
+
     H.Axis.prototype.applyFixed = function () {
         var chart = this.chart,
-            outerContainer = chart.renderTo.parentNode.parentNode,
             width,
             left;
 
         if (!this.horiz && this.options.fixed) {
+
+            if (chart.setUpScrolling) {
+                chart.setUpScrolling();
+            }
 
             // First render
             if (!this.fixedDiv) {
@@ -34,9 +78,9 @@
                     null,
                     true
                 );
-                outerContainer.insertBefore(
+                chart.renderTo.insertBefore(
                     this.fixedDiv,
-                    this.chart.renderTo.parentNode
+                    chart.renderTo.firstChild
                 );
 
                 this.axisRenderer = new H.Renderer(
@@ -45,9 +89,12 @@
                     0
                 );
 
+                // Axis background
                 this.background = chart.renderer.rect()
                     .attr({
-                        fill: 'rgba(255,255,255,0.85)',
+                        fill: Highcharts.color(
+                            chart.options.chart.backgroundColor || '#fff'
+                        ).setOpacity(0.85).get(),
                         zIndex: -1
                     })
                     .add(this.axisGroup);
@@ -67,7 +114,7 @@
             if (this.opposite) {
                 this.fixedDiv.style.left = Math.min(
                     0,
-                    outerContainer.offsetWidth - chart.chartWidth
+                    chart.renderTo.offsetWidth - chart.chartWidth
                 ) + 'px';
                 this.fixedDiv.style.width = chart.chartWidth + 'px';
             }
@@ -82,7 +129,7 @@
                 height: chart.plotHeight + 2
             });
             this.axisRenderer.setSize(
-                chart.chartWidth,
+                this.opposite ? chart.chartWidth : chart.viewWidth,
                 chart.chartHeight
             );
         }
@@ -91,13 +138,16 @@
 
 Highcharts.chart('container', {
     chart: {
-        type: 'spline'
+        type: 'spline',
+        scrollMinWidth: 800
     },
     title: {
-        text: 'Fixed Y axis'
+        text: 'Fixed Y axis',
+        align: 'left'
     },
     subtitle: {
-        text: 'Open on mobile and scroll sideways'
+        text: 'Open on mobile and scroll sideways',
+        align: 'left'
     },
     xAxis: {
         type: 'datetime',
@@ -116,6 +166,11 @@ Highcharts.chart('container', {
     tooltip: {
         valueSuffix: ' m/s'
     },
+
+    legend: {
+        align: 'left'
+    },
+
     plotOptions: {
         spline: {
             lineWidth: 4,

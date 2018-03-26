@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../mixins/centered-series.js';
@@ -132,6 +133,19 @@ extend(Pane.prototype, {
 	 * @optionparent pane
 	 */
 	defaultOptions: {
+		
+		/**
+		 * The end angle of the polar X axis or gauge value axis, given in degrees
+		 * where 0 is north. Defaults to [startAngle](#pane.startAngle) + 360.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/
+		 *         VU-meter with custom start and end angle
+		 * @since 2.3.0
+		 * @product highcharts
+		 * @apioption pane.endAngle
+		 */
+		
 		/**
 		 * The center of a polar chart or angular gauge, given as an array
 		 * of [x, y] positions. Positions can be given as integers that transform
@@ -168,18 +182,6 @@ extend(Pane.prototype, {
 		 * @product highcharts
 		 */
 		startAngle: 0
-		
-		/**
-		 * The end angle of the polar X axis or gauge value axis, given in degrees
-		 * where 0 is north. Defaults to [startAngle](#pane.startAngle) + 360.
-		 * 
-		 * @type {Number}
-		 * @sample {highcharts} highcharts/demo/gauge-vu-meter/
-		 *         VU-meter with custom start and end angle
-		 * @since 2.3.0
-		 * @product highcharts
-		 * @apioption pane.endAngle
-		 */
 	},
 
 	/**
@@ -268,7 +270,7 @@ extend(Pane.prototype, {
 		},
 		/*= } =*/
 
-		/** @ignore */
+		/** @ignore-option */
 		from: -Number.MAX_VALUE, // corrected to axis min
 
 		/**
@@ -282,7 +284,7 @@ extend(Pane.prototype, {
 		 */
 		innerRadius: 0,
 
-		/** @ignore */
+		/** @ignore-option */
 		to: Number.MAX_VALUE, // corrected to axis max
 
 		/**

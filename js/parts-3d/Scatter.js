@@ -68,9 +68,6 @@ seriesType('scatter3d', 'scatter', {
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
  * scatter3d](#plotOptions.scatter3d).
  * 
  * @type {Object}
@@ -97,8 +94,9 @@ seriesType('scatter3d', 'scatter', {
  * 
  * 3.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.scatter3d.turboThreshold),
- * this option is not available.
+ * points exceeds the series'
+ * [turboThreshold](#series.scatter3d.turboThreshold), this option is not
+ * available.
  * 
  *  ```js
  *     data: [{
@@ -118,11 +116,16 @@ seriesType('scatter3d', 'scatter', {
  * 
  * @type {Array<Object|Array>}
  * @extends series.scatter.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts
  * @apioption series.scatter3d.data
  */

@@ -1,11 +1,12 @@
 {
     "globals": {
         "clearInterval": true,
-        "clearTimeout": true,
+        "clearTimeout": false,
         "console": true,
         "module": true,
         "setInterval": true,
         "setTimeout": true,
+        "XMLHttpRequest": true
     },   
     "rules": {
         "camelcase": [2, {
@@ -15,9 +16,14 @@
         "consistent-return": 0,
         "func-style": 0,
         "guard-for-in": 0,                          /*@todo: Make the each function handle objects, then run a guarded for-in there.*/
-        "indent": ["warn", "tab"],
+        "indent": ["error", "tab"],
         "lines-around-comment": 0,
-        //"max-len": ["warn", 80, 4],
+        "max-len": [
+            "error", {
+                "ignoreUrls": true,
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|@default|@apioption|@validvalue)"
+            }
+        ],
         "newline-after-var": 0,
         "no-alert": 2,
         "no-console": 2,
@@ -31,18 +37,35 @@
         "no-undefined": 0,
         "no-underscore-dangle": 0,                  /*@todo: Check this*/
         "object-curly-spacing": [2, "always"],
+        "object-shorthand": ["error", "never"],     /* Closure Compiler chokes on it */
         "space-before-function-paren": [2, {
             "anonymous": "always",
             "named": "never"
         }], /*JSLint style*/
         "quotes": [2, "single"],
-        "spaced-comment": ["warn", "always", { "markers": ["="] }],
+        "spaced-comment": ["error", "always", { "markers": ["="] }],
         "require-jsdoc": 0,
         "strict": 0,
         "valid-jsdoc": 0,
-        "one-var": 0                                /*@todo: Before launch HC5, set to [2, "always"]*/
+        "one-var": 0,                                /*@todo: Before launch HC5, set to [2, "always"]*/
+
+
+        "security/detect-object-injection": 0,
+        "security/detect-non-literal-fs-filename": 0 /* N/A for Highcharts, we do only client side */,
+        
+        "highcharts/no-newline-in-doclet-code": 2,
+        "highcharts/no-newline-in-doclet-link": 2,
+        "highcharts/unparsable-doclet": 2
+        
     },
     "parserOptions": {
         "sourceType": "module"
-    }
+    },
+    "plugins": [
+        "highcharts",
+        "security"
+    ],
+    "extends": [
+        "plugin:security/recommended"
+    ]
 }

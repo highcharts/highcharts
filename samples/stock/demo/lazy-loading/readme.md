@@ -1,0 +1,3 @@
+# 1.7 million points with async loading
+The ability to visualize a large number of data (big-data) without delay  is a necessity for industries, such as the financial services, where making quick and accurate decisions is important. In this demo the data handling is done on the server, and the browser only loads relevant data for the selected time span and resolution. 
+Use the [events](https://api.highcharts.com/highstock/xAxis.events) feature with the [afterSetExtremes](https://api.highcharts.com/highstock/xAxis.events.afterSetExtremes) function in the xAxis option to handle the selector new position.

@@ -20,15 +20,15 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Temperature variation by day and hour through 2013',
+        text: 'Temperature variation by day and hour through 2017',
         align: 'left',
         x: 40
     },
 
     xAxis: {
         type: 'datetime',
-        min: Date.UTC(2013, 0, 1),
-        max: Date.UTC(2014, 0, 1),
+        min: Date.UTC(2017, 0, 1),
+        max: Date.UTC(2017, 11, 31, 23, 59, 59),
         labels: {
             align: 'left',
             x: 5,

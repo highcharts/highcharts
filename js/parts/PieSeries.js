@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -69,7 +70,9 @@ seriesType('pie', 'line', {
 
 	clip: false,
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	colorByPoint: true, // always true for pies
 
 	/**
@@ -131,6 +134,17 @@ seriesType('pie', 'line', {
 		 * @product highcharts
 		 * @apioption plotOptions.pie.dataLabels.connectorWidth
 		 */
+		
+		/**
+		 * 
+		 * @sample {highcharts}
+		 *         highcharts/plotOptions/pie-datalabels-overflow
+		 *         Long labels truncated with an ellipsis
+		 * @sample {highcharts}
+		 *         highcharts/plotOptions/pie-datalabels-overflow-wrap
+		 *         Long labels are wrapped
+		 * @apioption plotOptions.pie.dataLabels.style
+		 */
 
 		/**
 		 * The distance of the data label from the pie's edge. Negative numbers
@@ -171,7 +185,6 @@ seriesType('pie', 'line', {
 		 */
 
 		x: 0
-		// y: 0
 	},
 
 	/**
@@ -221,10 +234,12 @@ seriesType('pie', 'line', {
 	 * @apioption plotOptions.pie.innerSize
 	 */
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	legendType: 'point',
 
-	/**	 @ignore */
+	/**	@ignore */
 	marker: null, // point options are specified in the base options
 
 	/**
@@ -243,14 +258,16 @@ seriesType('pie', 'line', {
 	 * The diameter of the pie relative to the plot area. Can be a percentage
 	 * or pixel value. Pixel values are given as integers. The default
 	 * behaviour (as of 3.0) is to scale to the plot area and give room
-	 * for data labels within the plot area. As a consequence, the size
+	 * for data labels within the plot area.
+	 * [slicedOffset](#plotOptions.pie.slicedOffset) is also included 
+	 * in the default size calculation. As a consequence, the size
 	 * of the pie may vary when points are updated and data labels more
 	 * around. In that case it is best to set a fixed value, for example
 	 * `"75%"`.
 	 * 
-	 * @type {String|Number}
-	 * @sample {highcharts} highcharts/plotoptions/pie-size/ Smaller pie
-	 * @default  
+	 * @type    {String|Number}
+	 * @sample  {highcharts} highcharts/plotoptions/pie-size/
+	 *          Smaller pie
 	 * @product highcharts
 	 */
 	size: null,
@@ -341,8 +358,9 @@ seriesType('pie', 'line', {
 	states: {
 
 		/**
-		 * @extends plotOptions.series.states.hover
-		 * @product highcharts
+		 * @extends   plotOptions.series.states.hover
+		 * @excluding marker,lineWidth,lineWidthPlus
+		 * @product   highcharts
 		 */
 		hover: {
 
@@ -353,14 +371,12 @@ seriesType('pie', 'line', {
 			 * In styled mode, the hover brightness is by default replaced
 			 * by a fill-opacity given in the `.highcharts-point-hover` class.
 			 * 
-			 * @type {Number}
-			 * @sample {highcharts} highcharts/plotoptions/pie-states-hover-brightness/ Brightened by 0.5
-			 * @default 0.1
+			 * @sample  {highcharts}
+			 *          highcharts/plotoptions/pie-states-hover-brightness/
+			 *          Brightened by 0.5
 			 * @product highcharts
 			 */
-			brightness: 0.1,
-
-			shadow: false
+			brightness: 0.1
 		}
 	}
 	/*= } =*/
@@ -678,10 +694,6 @@ seriesType('pie', 'line', {
 	getSymbol: noop
 
 
-/**
- * @constructor seriesTypes.pie.prototype.pointClass
- * @extends {Point}
- */
 }, /** @lends seriesTypes.pie.prototype.pointClass.prototype */ {
 	/**
 	 * Initiate the pie slice
@@ -818,11 +830,6 @@ seriesType('pie', 'line', {
  * A `pie` series. If the [type](#series.pie.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * pie](#plotOptions.pie).
- * 
  * @type {Object}
  * @extends series,plotOptions.pie
  * @excluding dataParser,dataURL,stack,xAxis,yAxis
@@ -860,11 +867,16 @@ seriesType('pie', 'line', {
  * @type {Array<Object|Number>}
  * @extends series.line.data
  * @excluding marker,x
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts
  * @apioption series.pie.data
  */

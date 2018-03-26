@@ -3,12 +3,11 @@
  * Author: Torstein Honsi, Christer Vasseng
  *
  * This module serves as a fallback for the Boost module in IE9 and IE10. Newer
- * browsers support WebGL which is faster. 
+ * browsers support WebGL which is faster.
  *
  * It is recommended to include this module in conditional comments targeting
  * IE9 and IE10.
  */
-
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -45,7 +44,11 @@ H.initCanvasBoost = function () {
 						shapeArgs,
 						pointAttr;
 
-					if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+					if (
+						plotY !== undefined &&
+						!isNaN(plotY) &&
+						point.y !== null
+					) {
 						shapeArgs = point.shapeArgs;
 
 						/*= if (build.classic) { =*/
@@ -55,17 +58,25 @@ H.initCanvasBoost = function () {
 						/*= } =*/
 
 						ctx.fillStyle = pointAttr.fill;
-						ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+						ctx.fillRect(
+							shapeArgs.x,
+							shapeArgs.y,
+							shapeArgs.width,
+							shapeArgs.height
+						);
 					}
 				});
 
 				this.canvasToSVG();
 
 			} else {
-				this.chart.showLoading('Your browser doesn\'t support HTML5 canvas, <br>please use a modern browser');
+				this.chart.showLoading(
+					'Your browser doesn\'t support HTML5 canvas, <br>' +
+					'please use a modern browser');
 
-				// Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on
-				// charts with more than a few thousand points.
+				// Uncomment this to provide low-level (slow) support in oldIE.
+				// It will cause script errors on charts with more than a few
+				// thousand points.
 				// arguments[0].call(this);
 			}
 		});
@@ -75,8 +86,8 @@ H.initCanvasBoost = function () {
 	H.extend(Series.prototype, {
 
 		/**
-		 * Create a hidden canvas to draw the graph on. The contents is later copied over
-		 * to an SVG image element.
+		 * Create a hidden canvas to draw the graph on. The contents is later
+		 * copied over to an SVG image element.
 		 */
 		getContext: function () {
 			var chart = this.chart,
@@ -98,12 +109,12 @@ H.initCanvasBoost = function () {
 
 			if (!target.canvas) {
 				target.canvas = doc.createElement('canvas');
-				
+
 				target.renderTarget = chart.renderer.image(
-					'', 
-					0, 
-					0, 
-					width, 
+					'',
+					0,
+					0,
+					width,
 					height
 				)
 				.addClass('highcharts-boost-canvas')
@@ -117,13 +128,22 @@ H.initCanvasBoost = function () {
 					});
 				}
 
-				target.boostClear = function () {
-					ctx.clearRect(0, 0, target.canvas.width, target.canvas.height);
+				target.boostCopy = function () {
+					target.renderTarget.attr({
+						href: target.canvas.toDataURL('image/png')
+					});
+				};
 
-					if (target.renderTarget) {
-						target.renderTarget.attr({
-							href: ''
-						});
+				target.boostClear = function () {
+					ctx.clearRect(
+						0,
+						0,
+						target.canvas.width,
+						target.canvas.height
+					);
+
+					if (target === this) {
+						target.renderTarget.attr({ href: '' });
 					}
 				};
 
@@ -157,14 +177,18 @@ H.initCanvasBoost = function () {
 			return ctx;
 		},
 
-		/** 
+		/**
 		 * Draw the canvas image inside an SVG image
 		 */
 		canvasToSVG: function () {
 			if (!this.chart.isChartSeriesBoosting()) {
-				this.renderTarget.attr({ href: this.canvas.toDataURL('image/png') });
+				if (this.boostCopy || this.chart.boostCopy) {
+					(this.boostCopy || this.chart.boostCopy)();
+				}
 			} else {
-				this.boostClear();
+				if (this.boostClear) {
+					this.boostClear();
+				}
 			}
 		},
 
@@ -181,7 +205,8 @@ H.initCanvasBoost = function () {
 				activeBoostSettings = chart.options.boost || {},
 				boostSettings = {
 					timeRendering: activeBoostSettings.timeRendering || false,
-					timeSeriesProcessing: activeBoostSettings.timeSeriesProcessing || false,
+					timeSeriesProcessing:
+						activeBoostSettings.timeSeriesProcessing || false,
 					timeSetup: activeBoostSettings.timeSetup || false
 				},
 				ctx,
@@ -213,7 +238,8 @@ H.initCanvasBoost = function () {
 				hasThreshold = isNumber(threshold),
 				translatedThreshold = yBottom,
 				doFill = this.fill,
-				isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
+				isRange = series.pointArrayMap &&
+					series.pointArrayMap.join(',') === 'low,high',
 				isStacked = !!options.stacking,
 				cropStart = series.cropStart || 0,
 				loadingOptions = chart.options.loading,
@@ -228,7 +254,9 @@ H.initCanvasBoost = function () {
 				kdIndex,
 				sdata = isStacked ? series.data : (xData || rawData),
 				fillColor = series.fillOpacity ?
-						new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
+						new Color(series.color).setOpacity(
+							pick(options.fillOpacity, 0.75)
+						).get() :
 						series.color,
 
 				stroke = function () {
@@ -251,7 +279,11 @@ H.initCanvasBoost = function () {
 						}
 					}
 
-					if (chart.scroller && series.options.className === 'highcharts-navigator-series') {
+					if (
+						chart.scroller &&
+						series.options.className ===
+							'highcharts-navigator-series'
+					) {
 						plotY += chart.scroller.top;
 						if (yBottom) {
 							yBottom += chart.scroller.top;
@@ -266,7 +298,13 @@ H.initCanvasBoost = function () {
 						ctx.moveTo(clientX, plotY);
 					} else {
 						if (cvsDrawPoint) {
-							cvsDrawPoint(ctx, clientX, plotY, yBottom, lastPoint);
+							cvsDrawPoint(
+								ctx,
+								clientX,
+								plotY,
+								yBottom,
+								lastPoint
+							);
 						} else if (cvsLineTo) {
 							cvsLineTo(ctx, clientX, plotY);
 						} else if (cvsMarker) {
@@ -274,8 +312,9 @@ H.initCanvasBoost = function () {
 						}
 					}
 
-					// We need to stroke the line for every 1000 pixels. It will crash the browser
-					// memory use if we stroke too infrequently.
+					// We need to stroke the line for every 1000 pixels. It will
+					// crash the browser memory use if we stroke too
+					// infrequently.
 					c = c + 1;
 					if (c === strokeBatch) {
 						stroke();
@@ -294,8 +333,9 @@ H.initCanvasBoost = function () {
 					// Avoid more string concatination than required
 					kdIndex = clientX + ',' + plotY;
 
-					// The k-d tree requires series points. Reduce the amount of points, since the time to build the
-					// tree increases exponentially.
+					// The k-d tree requires series points. Reduce the amount of
+					// points, since the time to build the tree increases
+					// exponentially.
 					if (enableMouseTracking && !pointTaken[kdIndex]) {
 						pointTaken[kdIndex] = true;
 
@@ -312,6 +352,10 @@ H.initCanvasBoost = function () {
 						});
 					}
 				};
+
+			if (this.renderTarget) {
+				this.renderTarget.attr({ 'href': '' });
+			}
 
 			// If we are zooming out from SVG mode, destroy the graphics
 			if (this.points || this.graph) {
@@ -335,7 +379,19 @@ H.initCanvasBoost = function () {
 			points = this.points = [];
 			ctx = this.getContext();
 			series.buildKDTree = noop; // Do not start building while drawing
-			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+			if (this.boostClear) {
+				this.boostClear();
+			}
+
+			// if (this.canvas) {
+			// 	ctx.clearRect(
+			// 		0,
+			// 		0,
+			// 		this.canvas.width,
+			// 		this.canvas.height
+			// 	);
+			// }
 
 			if (!this.visible) {
 				return;
@@ -345,7 +401,8 @@ H.initCanvasBoost = function () {
 			if (rawData.length > 99999) {
 				chart.options.loading = merge(loadingOptions, {
 					labelStyle: {
-						backgroundColor: H.color('${palette.backgroundColor}').setOpacity(0.75).get(),
+						backgroundColor: H.color('${palette.backgroundColor}')
+							.setOpacity(0.75).get(),
 						padding: '1em',
 						borderRadius: '0.5em'
 					},
@@ -354,7 +411,7 @@ H.initCanvasBoost = function () {
 						opacity: 1
 					}
 				});
-				clearTimeout(destroyLoadingDiv);
+				H.clearTimeout(destroyLoadingDiv);
 				chart.showLoading('Drawing...');
 				chart.options.loading = loadingOptions; // reset
 			}
@@ -455,14 +512,23 @@ H.initCanvasBoost = function () {
 								}
 
 							}
-							if (clientX !== lastClientX) { // Add points and reset
-								if (minI !== undefined) { // then maxI is also a number
+							// Add points and reset
+							if (clientX !== lastClientX) {
+								if (minI !== undefined) { // maxI also a number
 									plotY = yAxis.toPixels(maxVal, true);
 									yBottom = yAxis.toPixels(minVal, true);
 									drawPoint(
 										clientX,
-										hasThreshold ? Math.min(plotY, translatedThreshold) : plotY,
-										hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom,
+										hasThreshold ?
+											Math.min(
+												plotY,
+												translatedThreshold
+											) : plotY,
+										hasThreshold ?
+											Math.max(
+												yBottom,
+												translatedThreshold
+											) : yBottom,
 										i
 									);
 									addKDPoint(clientX, plotY, maxI);
@@ -483,7 +549,9 @@ H.initCanvasBoost = function () {
 					wasNull = isNull && !connectNulls;
 
 					if (i % CHUNK_SIZE === 0) {
-						series.canvasToSVG();
+						if (series.boostCopy || series.chart.boostCopy) {
+							(series.boostCopy || series.chart.boostCopy)();
+						}
 					}
 				}
 
@@ -492,6 +560,11 @@ H.initCanvasBoost = function () {
 				var loadingDiv = chart.loadingDiv,
 					loadingShown = chart.loadingShown;
 				stroke();
+
+				// if (series.boostCopy || series.chart.boostCopy) {
+				// 	(series.boostCopy || series.chart.boostCopy)();
+				// }
+
 				series.canvasToSVG();
 
 				if (boostSettings.timeRendering) {
@@ -500,9 +573,10 @@ H.initCanvasBoost = function () {
 
 				fireEvent(series, 'renderedCanvas');
 
-				// Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
-				// CSS animation looks good, but then it must be deleted in timeout. If we add the module to core,
-				// change hideLoading so we can skip this block.
+				// Do not use chart.hideLoading, as it runs JS animation and
+				// will be blocked by buildKDTree. CSS animation looks good, but
+				// then it must be deleted in timeout. If we add the module to
+				// core, change hideLoading so we can skip this block.
 				if (loadingShown) {
 					extend(loadingDiv.style, {
 						transition: 'opacity 250ms',
@@ -517,36 +591,53 @@ H.initCanvasBoost = function () {
 					}, 250);
 				}
 
-				delete series.buildKDTree; // Go back to prototype, ready to build
+				// Go back to prototype, ready to build
+				delete series.buildKDTree;
+
 				series.buildKDTree();
 
-			// Don't do async on export, the exportChart, getSVGForExport and getSVG methods are not chained for it.
+			// Don't do async on export, the exportChart, getSVGForExport and
+			// getSVG methods are not chained for it.
 			}, chart.renderer.forExport ? Number.MAX_VALUE : undefined);
 		}
 	});
 
-	/*
-	wrap(Series.prototype, 'setData', function (proceed) {
-		if (!this.hasExtremes || !this.hasExtremes(true) || this.type === 'heatmap') {
-			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-		}
-	});
-	*/
-	seriesTypes.scatter.prototype.cvsMarkerCircle = function (ctx, clientX, plotY, r) {
+	seriesTypes.scatter.prototype.cvsMarkerCircle = function (
+		ctx,
+		clientX,
+		plotY,
+		r
+	) {
 		ctx.moveTo(clientX, plotY);
 		ctx.arc(clientX, plotY, r, 0, 2 * Math.PI, false);
 	};
 
 	// Rect is twice as fast as arc, should be used for small markers
-	seriesTypes.scatter.prototype.cvsMarkerSquare = function (ctx, clientX, plotY, r) {
+	seriesTypes.scatter.prototype.cvsMarkerSquare = function (
+		ctx,
+		clientX,
+		plotY,
+		r
+	) {
 		ctx.rect(clientX - r, plotY - r, r * 2, r * 2);
 	};
 	seriesTypes.scatter.prototype.fill = true;
 
 	if (seriesTypes.bubble) {
-		seriesTypes.bubble.prototype.cvsMarkerCircle = function (ctx, clientX, plotY, r, i) {
+		seriesTypes.bubble.prototype.cvsMarkerCircle = function (
+			ctx,
+			clientX,
+			plotY,
+			r,
+			i
+		) {
 			ctx.moveTo(clientX, plotY);
-			ctx.arc(clientX, plotY, this.radii && this.radii[i], 0, 2 * Math.PI, false);
+			ctx.arc(
+				clientX,
+				plotY,
+				this.radii && this.radii[i], 0, 2 * Math.PI,
+				false
+			);
 		};
 		seriesTypes.bubble.prototype.cvsStrokeBatch = 1;
 	}
@@ -574,11 +665,9 @@ H.initCanvasBoost = function () {
 	});
 
 	H.Chart.prototype.callbacks.push(function (chart) {
-		function canvasToSVG() {			
-			if (chart.renderTarget && chart.canvas) {
-				chart.renderTarget.attr({ 
-					href: chart.canvas.toDataURL('image/png') 
-				});
+		function canvasToSVG() {
+			if (chart.boostCopy) {
+				chart.boostCopy();
 			}
 		}
 

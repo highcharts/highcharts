@@ -5,7 +5,6 @@
  *
  * License: www.highcharts.com/license
  */
-
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -32,26 +31,30 @@ var pInt = H.pInt,
  * @param {boolean} [options.rounded] - Whether to draw rounded edges.
  * @return {Array} Path of the created arc. 
  */
-wrap(Renderer.prototype.symbols, 'arc', function (proceed, x, y, w, h, options) {
-	var arc = proceed,
-		path = arc(x, y, w, h, options);
-	if (options.rounded) {
-		var r = options.r || w,
-			smallR = (r - options.innerR) / 2,
-			x1 = path[1],
-			y1 = path[2],
-			x2 = path[12],
-			y2 = path[13],
-			roundStart = ['A', smallR, smallR, 0, 1, 1, x1, y1],
-			roundEnd = ['A', smallR, smallR, 0, 1, 1, x2, y2];
-		// Insert rounded edge on end, and remove line.
-		path.splice.apply(path, [path.length - 1, 0].concat(roundStart));
-		// Insert rounded edge on end, and remove line.
-		path.splice.apply(path, [11, 3].concat(roundEnd));
+wrap(
+	Renderer.prototype.symbols,
+	'arc',
+	function (proceed, x, y, w, h, options) {
+		var arc = proceed,
+			path = arc(x, y, w, h, options);
+		if (options.rounded) {
+			var r = options.r || w,
+				smallR = (r - options.innerR) / 2,
+				x1 = path[1],
+				y1 = path[2],
+				x2 = path[12],
+				y2 = path[13],
+				roundStart = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+				roundEnd = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+			// Insert rounded edge on end, and remove line.
+			path.splice.apply(path, [path.length - 1, 0].concat(roundStart));
+			// Insert rounded edge on end, and remove line.
+			path.splice.apply(path, [11, 3].concat(roundEnd));
+		}
+		
+		return path;
 	}
-	
-	return path;
-});
+);
 
 // These methods are defined in the ColorAxis object, and copied here.
 // If we implement an AMD system we should make ColorAxis a dependency.
@@ -116,7 +119,10 @@ colorAxisMethods = {
 				dataClass = dataClasses[i];
 				from = dataClass.from;
 				to = dataClass.to;
-				if ((from === undefined || value >= from) && (to === undefined || value <= to)) {
+				if (
+					(from === undefined || value >= from) &&
+					(to === undefined || value <= to)
+				) {
 					color = dataClass.color;
 					if (point) {
 						point.dataClass = i;
@@ -157,15 +163,11 @@ colorAxisMethods = {
  *
  * @sample highcharts/demo/gauge-solid/ Solid gauges
  * @extends plotOptions.gauge
- * @excluding dial,pivot
+ * @excluding dial,pivot,wrap
  * @product highcharts
  * @optionparent plotOptions.solidgauge
  */
 var solidGaugeOptions = {
-	/**
-	 * Whether to give each point an individual color.
-	 */
-	colorByPoint: true
 	/**
 	 * Whether the strokes of the solid gauge should be `round` or `square`.
 	 * 
@@ -176,6 +178,19 @@ var solidGaugeOptions = {
 	 * @since 4.2.2
 	 * @product highcharts
 	 * @apioption plotOptions.solidgauge.linecap
+	 */
+
+	/**
+	 * Allow the gauge to overshoot the end of the perimeter axis by this
+	 * many degrees. Say if the gauge axis goes from 0 to 60, a value of
+	 * 100, or 1000, will show 5 degrees beyond the end of the axis when this
+	 * option is set to 5.
+	 * 
+	 * @type      {Number}
+	 * @default   0
+	 * @since     3.0.10
+	 * @product   highcharts
+	 * @apioption plotOptions.solidgauge.overshoot
 	 */
 
 	/**
@@ -200,6 +215,11 @@ var solidGaugeOptions = {
 	 * @product highcharts
 	 * @apioption plotOptions.solidgauge.threshold
 	 */
+	
+	/**
+	 * Whether to give each point an individual color.
+	 */
+	colorByPoint: true
 
 };
 
@@ -253,9 +273,18 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
 
 		each(series.points, function (point) {
 			var graphic = point.graphic,
-				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true),
-				radius = (pInt(pick(point.options.radius, options.radius, 100)) * center[2]) / 200,
-				innerRadius = (pInt(pick(point.options.innerRadius, options.innerRadius, 60)) * center[2]) / 200,
+				rotation = yAxis.startAngleRad +
+					yAxis.translate(point.y, null, null, null, true),
+				radius = (
+					pInt(
+						pick(point.options.radius, options.radius, 100)
+					) * center[2]
+				) / 200,
+				innerRadius = (
+					pInt(
+						pick(point.options.innerRadius, options.innerRadius, 60)
+					) * center[2]
+				) / 200,
 				shapeArgs,
 				d,
 				toColor = yAxis.toColor(point.y, point),
@@ -272,11 +301,17 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
 			}
 
 			// Handle overshoot and clipping to axis max/min
-			rotation = Math.max(axisMinAngle - overshootVal, Math.min(axisMaxAngle + overshootVal, rotation));
+			rotation = Math.max(
+				axisMinAngle - overshootVal,
+				Math.min(axisMaxAngle + overshootVal, rotation)
+			);
 
 			// Handle the wrap option
 			if (options.wrap === false) {
-				rotation = Math.max(axisMinAngle, Math.min(axisMaxAngle, rotation));
+				rotation = Math.max(
+					axisMinAngle,
+					Math.min(axisMaxAngle, rotation)
+				);
 			}
 
 			minAngle = Math.min(rotation, series.thresholdAngleRad);
@@ -345,15 +380,14 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * is not specified, it is inherited from [chart.type](#chart.type).
  * 
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * solidgauge](#plotOptions.solidgauge).
- * 
- * @type {Object}
- * @extends series,plotOptions.solidgauge
- * @excluding dataParser,dataURL,stack
- * @product highcharts
+ * @type      {Object}
+ * @extends   series,plotOptions.solidgauge
+ * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,
+ *            cropThreshold,dashStyle,dataParser,dataURL,dial,
+ *            findNearestPointBy,getExtremesFromAll,marker,negativeColor,
+ *            pointPlacement,pivot,shadow,softThreshold,stack,stacking,states,
+ *            step,threshold,turboThreshold,wrap,zoneAxis,zones
+ * @product   highcharts
  * @apioption series.solidgauge
  */
 
@@ -370,8 +404,8 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.solidgauge.turboThreshold),
- * this option is not available.
+ * points exceeds the series' [turboThreshold](
+ * #series.solidgauge.turboThreshold), this option is not available.
  * 
  *  ```js
  *     data: [{
@@ -389,11 +423,16 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * 
  * @type {Array<Object|Number>}
  * @extends series.gauge.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts
  * @apioption series.solidgauge.data
  */

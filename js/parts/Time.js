@@ -3,14 +3,18 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", { "ignoreUrls": true}] */
+    
+
 'use strict';
 import Highcharts from './Globals.js';
 
 var H = Highcharts,
-
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
 	merge = H.merge,
 	pick = H.pick,
+	timeUnits = H.timeUnits,
 	win = H.win;
 
 /**
@@ -47,28 +51,16 @@ var H = Highcharts,
  *	    chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
- * @param  chart {Chart}
- *         The chart instance. The `Time` instance reads its config options from
- *         [chart.options.time](/highcharts/time). If omitted, it reads from
- *         `Highcharts.defaultOptions.time`.
+ * @param  options {Object}
+ *         Time options as defined in [chart.options.time](/highcharts/time).
  * @since  6.0.5
  * @class
  */
-Highcharts.Time = function (chart) {
-	this.init(chart);
+Highcharts.Time = function (options) {
+	this.update(options, false);
 };
 
 Highcharts.Time.prototype = {
-
-	init: function (chart) {
-		this.chart = chart;
-		this.update(
-			chart ?
-				chart.options.time :
-				merge(H.defaultOptions.global, H.defaultOptions.time),
-			false
-		);
-	},
 
 	/**
 	 * Time options that can apply globally or to individual charts. These
@@ -120,87 +112,86 @@ Highcharts.Time.prototype = {
 	 * @since 6.0.5
 	 * @apioption time
 	 */
-	defaultOptions: {
-		/**
-		 * Whether to use UTC time for axis scaling, tickmark placement and
-		 * time display in `Highcharts.dateFormat`. Advantages of using UTC
-		 * is that the time displays equally regardless of the user agent's
-		 * time zone settings. Local time can be used when the data is loaded
-		 * in real time or when correct Daylight Saving Time transitions are
-		 * required.
-		 * 
-		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/time/useutc-true/ True by default
-		 * @sample {highcharts} highcharts/time/useutc-false/ False
-		 * @apioption time.useUTC
-		 * @default true
-		 */
+	
+	/**
+	 * Whether to use UTC time for axis scaling, tickmark placement and
+	 * time display in `Highcharts.dateFormat`. Advantages of using UTC
+	 * is that the time displays equally regardless of the user agent's
+	 * time zone settings. Local time can be used when the data is loaded
+	 * in real time or when correct Daylight Saving Time transitions are
+	 * required.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/time/useutc-true/ True by default
+	 * @sample {highcharts} highcharts/time/useutc-false/ False
+	 * @apioption time.useUTC
+	 * @default true
+	 */
 
-		/**
-		 * A custom `Date` class for advanced date handling. For example,
-		 * [JDate](https://githubcom/tahajahangir/jdate) can be hooked in to
-		 * handle Jalali dates.
-		 * 
-		 * @type {Object}
-		 * @since 4.0.4
-		 * @product highcharts highstock
-		 * @apioption time.Date
-		 */
+	/**
+	 * A custom `Date` class for advanced date handling. For example,
+	 * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
+	 * handle Jalali dates.
+	 * 
+	 * @type {Object}
+	 * @since 4.0.4
+	 * @product highcharts highstock
+	 * @apioption time.Date
+	 */
 
-		/**
-		 * A callback to return the time zone offset for a given datetime. It
-		 * takes the timestamp in terms of milliseconds since January 1 1970,
-		 * and returns the timezone offset in minutes. This provides a hook
-		 * for drawing time based charts in specific time zones using their
-		 * local DST crossover dates, with the help of external libraries.
-		 * 
-		 * @type {Function}
-		 * @see [global.timezoneOffset](#global.timezoneOffset)
-		 * @sample {highcharts|highstock}
-		 *         highcharts/time/gettimezoneoffset/
-		 *         Use moment.js to draw Oslo time regardless of browser locale
-		 * @since 4.1.0
-		 * @product highcharts highstock
-		 * @apioption time.getTimezoneOffset
-		 */
+	/**
+	 * A callback to return the time zone offset for a given datetime. It
+	 * takes the timestamp in terms of milliseconds since January 1 1970,
+	 * and returns the timezone offset in minutes. This provides a hook
+	 * for drawing time based charts in specific time zones using their
+	 * local DST crossover dates, with the help of external libraries.
+	 * 
+	 * @type {Function}
+	 * @see [global.timezoneOffset](#global.timezoneOffset)
+	 * @sample {highcharts|highstock}
+	 *         highcharts/time/gettimezoneoffset/
+	 *         Use moment.js to draw Oslo time regardless of browser locale
+	 * @since 4.1.0
+	 * @product highcharts highstock
+	 * @apioption time.getTimezoneOffset
+	 */
 
-		/**
-		 * Requires [moment.js](http://momentjs.com/). If the timezone option
-		 * is specified, it creates a default
-		 * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
-		 * up the specified timezone in moment.js. If moment.js is not included,
-		 * this throws a Highcharts error in the console, but does not crash the
-		 * chart.
-		 * 
-		 * @type {String}
-		 * @see [getTimezoneOffset](#time.getTimezoneOffset)
-		 * @sample {highcharts|highstock}
-		 *         highcharts/time/timezone/
-		 *         Europe/Oslo
-		 * @default undefined
-		 * @since 5.0.7
-		 * @product highcharts highstock
-		 * @apioption time.timezone
-		 */		
+	/**
+	 * Requires [moment.js](http://momentjs.com/). If the timezone option
+	 * is specified, it creates a default
+	 * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
+	 * up the specified timezone in moment.js. If moment.js is not included,
+	 * this throws a Highcharts error in the console, but does not crash the
+	 * chart.
+	 * 
+	 * @type {String}
+	 * @see [getTimezoneOffset](#time.getTimezoneOffset)
+	 * @sample {highcharts|highstock}
+	 *         highcharts/time/timezone/
+	 *         Europe/Oslo
+	 * @default undefined
+	 * @since 5.0.7
+	 * @product highcharts highstock
+	 * @apioption time.timezone
+	 */		
 
-		/**
-		 * The timezone offset in minutes. Positive values are west, negative
-		 * values are east of UTC, as in the ECMAScript
-		 * [getTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
-		 * method. Use this to display UTC based data in a predefined time zone.
-		 * 
-		 * @type {Number}
-		 * @see [time.getTimezoneOffset](#time.getTimezoneOffset)
-		 * @sample {highcharts|highstock}
-		 *         highcharts/time/timezoneoffset/
-		 *         Timezone offset
-		 * @default 0
-		 * @since 3.0.8
-		 * @product highcharts highstock
-		 * @apioption time.timezoneOffset
-		 */
-
-	},
+	/**
+	 * The timezone offset in minutes. Positive values are west, negative
+	 * values are east of UTC, as in the ECMAScript
+	 * [getTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
+	 * method. Use this to display UTC based data in a predefined time zone.
+	 * 
+	 * @type {Number}
+	 * @see [time.getTimezoneOffset](#time.getTimezoneOffset)
+	 * @sample {highcharts|highstock}
+	 *         highcharts/time/timezoneoffset/
+	 *         Timezone offset
+	 * @default 0
+	 * @since 3.0.8
+	 * @product highcharts highstock
+	 * @apioption time.timezoneOffset
+	 */
+	defaultOptions: {},
 
 	/**
 	 * Update the Time object with current options. It is called internally on
@@ -210,12 +201,10 @@ Highcharts.Time.prototype = {
 	 * @private
 	 */
 	update: function (options) {
-		var useUTC = pick(options.useUTC, true),
-			getters = ['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'],
-			setters = getters.concat(['Milliseconds', 'Seconds']),
-			n;
+		var useUTC = pick(options && options.useUTC, true),
+			time = this;
 
-		this.options = merge(true, this.options || {}, options);
+		this.options = options = merge(true, this.options || {}, options);
 
 		// Allow using a different Date class
 		this.Date = options.Date || win.Date;
@@ -241,18 +230,70 @@ Highcharts.Time.prototype = {
 		 * the axis ticks or series data needs to consider this.
 		 */
 		this.variableTimezone = !!(
+			!useUTC ||
 			options.getTimezoneOffset ||
 			options.timezone
 		);
 
-		// Dynamically set setters and getters. Sets strings pointing to the
-		// appropriate Date function to use depending on useUTC. Use `for` loop,
-		// H.each is not yet overridden in oldIE.
-		for (n = 0; n < getters.length; n++) {
-			this['get' + getters[n]] = (useUTC ? 'getUTC' : 'get') + getters[n];
-		}
-		for (n = 0; n < setters.length; n++) {
-			this['set' + setters[n]] = (useUTC ? 'setUTC' : 'set') + setters[n];
+		// UTC time with timezone handling
+		if (this.variableTimezone || this.timezoneOffset) {
+			this.get = function (unit, date) {
+				var realMs = date.getTime(),
+					ms = realMs - time.getTimezoneOffset(date),
+					ret;
+
+				date.setTime(ms); // Temporary adjust to timezone
+				ret = date['getUTC' + unit]();
+				date.setTime(realMs); // Reset
+
+				return ret;
+			};
+			this.set = function (unit, date, value) {
+				var ms, offset, newOffset;
+
+				// For lower order time units, just set it directly using local
+				// time
+				if (
+					H.inArray(unit, ['Milliseconds', 'Seconds', 'Minutes']) !==
+					-1
+				) {
+					date['set' + unit](value);
+				
+				// Higher order time units need to take the time zone into
+				// account
+				} else {
+
+					// Adjust by timezone
+					offset = time.getTimezoneOffset(date);
+					ms = date.getTime() - offset;
+					date.setTime(ms);
+
+					date['setUTC' + unit](value);
+					newOffset = time.getTimezoneOffset(date);
+
+					ms = date.getTime() + newOffset;
+					date.setTime(ms);
+				}
+
+			};
+
+		// UTC time with no timezone handling
+		} else if (useUTC) {
+			this.get = function (unit, date) {
+				return date['getUTC' + unit]();
+			};
+			this.set = function (unit, date, value) {
+				return date['setUTC' + unit](value);
+			};
+
+		// Local time
+		} else {
+			this.get = function (unit, date) {
+				return date['get' + unit]();
+			};
+			this.set = function (unit, date, value) {
+				return date['set' + unit](value);
+			};
 		}
 
 	},
@@ -279,10 +320,27 @@ Highcharts.Time.prototype = {
 	 *         The time in milliseconds since January 1st 1970.
 	 */
 	makeTime: function (year, month, date, hours, minutes, seconds) {
-		var d;
+		var d, offset, newOffset;
 		if (this.useUTC) {
 			d = this.Date.UTC.apply(0, arguments);
-			d += this.getTimezoneOffset(d);
+			offset = this.getTimezoneOffset(d);
+			d += offset;
+			newOffset = this.getTimezoneOffset(d);
+				
+			if (offset !== newOffset) {
+				d += newOffset - offset;
+
+			// A special case for transitioning from summer time to winter time.
+			// When the clock is set back, the same time is repeated twice, i.e.
+			// 02:30 am is repeated since the clock is set back from 3 am to 
+			// 2 am. We need to make the same time as local Date does.
+			} else if (
+				offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
+				!H.isSafari
+			) {
+				d -= 36e5;
+			}
+
 		} else {
 			d = new this.Date(
 				year,
@@ -310,6 +368,12 @@ Highcharts.Time.prototype = {
 		var time = this,
 			options = this.options,
 			moment = win.moment;
+
+		if (!this.useUTC) {
+			return function (timestamp) {
+				return new Date(timestamp).getTimezoneOffset() * 60000;
+			};
+		}
 
 		if (options.timezone) {
 			if (!moment) {
@@ -363,14 +427,13 @@ Highcharts.Time.prototype = {
 		format = H.pick(format, '%Y-%m-%d %H:%M:%S');
 
 		var time = this,
-			D = this.Date,
-			date = new D(timestamp - this.getTimezoneOffset(timestamp)),
+			date = new this.Date(timestamp),
 			// get the basic time values
-			hours = date[this.getHours](),
-			day = date[this.getDay](),
-			dayOfMonth = date[this.getDate](),
-			month = date[this.getMonth](),
-			fullYear = date[this.getFullYear](),
+			hours = this.get('Hours', date),
+			day = this.get('Day', date),
+			dayOfMonth = this.get('Date', date),
+			month = this.get('Month', date),
+			fullYear = this.get('FullYear', date),
 			lang = H.defaultOptions.lang,
 			langWeekdays = lang.weekdays,
 			shortWeekdays = lang.shortWeekdays,
@@ -421,7 +484,7 @@ Highcharts.Time.prototype = {
 					// Hours in 12h format, 1 through 12
 					'l': (hours % 12) || 12,
 					// Two digits minutes, 00 through 59
-					'M': pad(date[this.getMinutes]()),
+					'M': pad(time.get('Minutes', date)),
 					// Upper case AM or PM
 					'p': hours < 12 ? 'AM' : 'PM',
 					// Lower case AM or PM
@@ -466,6 +529,222 @@ Highcharts.Time.prototype = {
 		return capitalize ?
 			format.substr(0, 1).toUpperCase() + format.substr(1) :
 			format;
+	},
+
+	/**
+	 * Return an array with time positions distributed on round time values
+	 * right and right after min and max. Used in datetime axes as well as for
+	 * grouping data on a datetime axis.
+	 *
+	 * @param {Object} normalizedInterval
+	 *        The interval in axis values (ms) and thecount
+	 * @param {Number} min The minimum in axis values
+	 * @param {Number} max The maximum in axis values
+	 * @param {Number} startOfWeek
+	 */
+	getTimeTicks: function (
+		normalizedInterval,
+		min,
+		max,
+		startOfWeek
+	) {
+		var time = this,
+			Date = time.Date,
+			tickPositions = [],
+			i,
+			higherRanks = {},
+			minYear, // used in months and years as a basis for Date.UTC()
+			// When crossing DST, use the max. Resolves #6278.
+			minDate = new Date(min),
+			interval = normalizedInterval.unitRange,
+			count = normalizedInterval.count || 1,
+			variableDayLength;
+
+		if (defined(min)) { // #1300
+			time.set(
+				'Milliseconds',
+				minDate,
+				interval >= timeUnits.second ?
+					0 : // #3935
+					count * Math.floor(
+						time.get('Milliseconds', minDate) / count
+					)
+			); // #3652, #3654
+
+			if (interval >= timeUnits.second) { // second
+				time.set('Seconds',
+					minDate,
+					interval >= timeUnits.minute ?
+						0 : // #3935
+						count * Math.floor(time.get('Seconds', minDate) / count)
+				);
+			}
+
+			if (interval >= timeUnits.minute) { // minute
+				time.set('Minutes',	minDate,
+					interval >= timeUnits.hour ?
+						0 :
+						count * Math.floor(time.get('Minutes', minDate) / count)
+				);
+			}
+
+			if (interval >= timeUnits.hour) { // hour
+				time.set(
+					'Hours',
+					minDate,
+					interval >= timeUnits.day ?
+						0 :
+						count * Math.floor(
+							time.get('Hours', minDate) / count
+						)
+				);
+			}
+
+			if (interval >= timeUnits.day) { // day
+				time.set(
+					'Date',
+					minDate,
+					interval >= timeUnits.month ?
+						1 :
+						count * Math.floor(time.get('Date', minDate) / count)
+					);
+			}
+
+			if (interval >= timeUnits.month) { // month
+				time.set(
+					'Month',
+					minDate,
+					interval >= timeUnits.year ? 0 :
+						count * Math.floor(time.get('Month', minDate) / count)
+				);
+				minYear = time.get('FullYear', minDate);
+			}
+
+			if (interval >= timeUnits.year) { // year
+				minYear -= minYear % count;
+				time.set('FullYear', minDate, minYear);
+			}
+
+			// week is a special case that runs outside the hierarchy
+			if (interval === timeUnits.week) {
+				// get start of current week, independent of count
+				time.set(
+					'Date',
+					minDate, 
+					(
+						time.get('Date', minDate) -
+						time.get('Day', minDate) +
+						pick(startOfWeek, 1)
+					)
+				);
+			}
+
+
+			// Get basics for variable time spans
+			minYear = time.get('FullYear', minDate);
+			var minMonth = time.get('Month', minDate),
+				minDateDate = time.get('Date', minDate),
+				minHours = time.get('Hours', minDate);
+			
+			// Redefine min to the floored/rounded minimum time (#7432)
+			min = minDate.getTime();
+
+			// Handle local timezone offset
+			if (time.variableTimezone) {
+
+				// Detect whether we need to take the DST crossover into
+				// consideration. If we're crossing over DST, the day length may
+				// be 23h or 25h and we need to compute the exact clock time for
+				// each tick instead of just adding hours. This comes at a cost,
+				// so first we find out if it is needed (#4951).
+				variableDayLength = (
+					// Long range, assume we're crossing over.
+					max - min > 4 * timeUnits.month ||
+					// Short range, check if min and max are in different time 
+					// zones.
+					time.getTimezoneOffset(min) !== time.getTimezoneOffset(max)
+				);
+			}
+
+			// Iterate and add tick positions at appropriate values
+			var t = minDate.getTime();
+			i = 1;
+			while (t < max) {
+				tickPositions.push(t);
+
+				// if the interval is years, use Date.UTC to increase years
+				if (interval === timeUnits.year) {
+					t = time.makeTime(minYear + i * count, 0);
+
+				// if the interval is months, use Date.UTC to increase months
+				} else if (interval === timeUnits.month) {
+					t = time.makeTime(minYear, minMonth + i * count);
+
+				// if we're using global time, the interval is not fixed as it
+				// jumps one hour at the DST crossover
+				} else if (
+					variableDayLength &&
+					(interval === timeUnits.day || interval === timeUnits.week)
+				) {
+					t = time.makeTime(
+						minYear,
+						minMonth,
+						minDateDate +
+							i * count * (interval === timeUnits.day ? 1 : 7)
+					);
+
+				} else if (
+					variableDayLength &&
+					interval === timeUnits.hour &&
+					count > 1
+				) {
+					// make sure higher ranks are preserved across DST (#6797,
+					// #7621)
+					t = time.makeTime(
+						minYear,
+						minMonth,
+						minDateDate,
+						minHours + i * count
+					);
+
+				// else, the interval is fixed and we use simple addition
+				} else {
+					t += interval * count;
+				}
+
+				i++;
+			}
+
+			// push the last time
+			tickPositions.push(t);
+
+
+			// Handle higher ranks. Mark new days if the time is on midnight
+			// (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
+			// to prevent looping over dense data grouping (#6156).
+			if (interval <= timeUnits.hour && tickPositions.length < 10000) {
+				each(tickPositions, function (t) {
+					if (
+						// Speed optimization, no need to run dateFormat unless
+						// we're on a full or half hour
+						t % 1800000 === 0 &&
+						// Check for local or global midnight
+						time.dateFormat('%H%M%S%L', t) === '000000000'
+					) {
+						higherRanks[t] = 'day';	
+					}
+				});
+			}
+		}
+
+
+		// record information on the chosen unit - for dynamic label formatter
+		tickPositions.info = extend(normalizedInterval, {
+			higherRanks: higherRanks,
+			totalRange: interval * count
+		});
+
+		return tickPositions;
 	}
 
 }; // end of Time

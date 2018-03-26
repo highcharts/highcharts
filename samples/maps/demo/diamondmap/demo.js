@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+Highcharts.chart('container', {
     chart: {
         type: 'tilemap',
         marginTop: 15,
@@ -94,6 +94,6 @@ var chart = Highcharts.chart('container', {
                 'Iterate after final testing and finalize implementation of the idea.']
         ]
     }]
+}, function (chart) {
+    chart.tooltip.refresh(chart.series[0].points[0]); // Show tooltip of the first point on load
 });
-
-chart.tooltip.refresh(chart.series[0].points[0]); // Show tooltip of the first point on load

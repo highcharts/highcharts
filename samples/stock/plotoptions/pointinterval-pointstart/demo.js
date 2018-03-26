@@ -2,7 +2,7 @@
 Highcharts.stockChart('container', {
 
     title: {
-        text: 'Start at the first of April'
+        text: 'Start at the first of January, 2009'
     },
 
     rangeSelector: {
@@ -12,7 +12,7 @@ Highcharts.stockChart('container', {
     series: [{
         name: 'Temperature',
         data: temperatures,
-        pointStart: Date.UTC(2004, 3, 1), // first of April
+        pointStart: Date.UTC(2009, 0, 1), // first of April
         pointInterval: 3600 * 1000, // hourly data
         tooltip: {
             valueDecimals: 1,

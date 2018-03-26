@@ -9,6 +9,7 @@ import './Utilities.js';
 var correctFloat = H.correctFloat,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
+	fireEvent = H.fireEvent,
 	isNumber = H.isNumber,
 	merge = H.merge,
 	pick = H.pick,
@@ -97,7 +98,11 @@ H.Tick.prototype = {
 					null;
 
 			// Un-rotated length
-			tick.labelLength = label && label.getBBox().width;
+			if (label) {
+				label.textPxLength = label.getBBox().width;
+			}
+			
+
 			// Base value to detect change for new calls to getBBox
 			tick.rotation = 0;
 
@@ -156,7 +161,8 @@ H.Tick.prototype = {
 			rightPos = pxPos + (1 - factor) * labelWidth;
 
 			if (leftPos < leftBound) {
-				modifiedSlotWidth = xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
+				modifiedSlotWidth =
+					xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
 			} else if (rightPos > rightBound) {
 				modifiedSlotWidth =
 					rightBound - xy.x + modifiedSlotWidth * factor;
@@ -211,15 +217,16 @@ H.Tick.prototype = {
 	/**
 	 * Get the x and y position for ticks and labels
 	 */
-	getPosition: function (horiz, pos, tickmarkOffset, old) {
+	getPosition: function (horiz, tickPos, tickmarkOffset, old) {
 		var axis = this.axis,
 			chart = axis.chart,
-			cHeight = (old && chart.oldChartHeight) || chart.chartHeight;
+			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
+			pos;
 
-		return {
+		pos = {
 			x: horiz ?
-				(
-					axis.translate(pos + tickmarkOffset, null, null, old) +
+				H.correctFloat(
+					axis.translate(tickPos + tickmarkOffset, null, null, old) +
 					axis.transB
 				) :
 				(
@@ -246,12 +253,16 @@ H.Tick.prototype = {
 					axis.offset -
 					(axis.opposite ? axis.height : 0)
 				) :
-				(
+				H.correctFloat(
 					cHeight -
-					axis.translate(pos + tickmarkOffset, null, null, old) -
+					axis.translate(tickPos + tickmarkOffset, null, null, old) -
 					axis.transB
 				)
 		};
+
+		fireEvent(this, 'afterGetPosition', { pos: pos });
+
+		return pos;
 
 	},
 
@@ -283,7 +294,8 @@ H.Tick.prototype = {
 					) :
 					0
 			),
-			line;
+			line,
+			pos = {};
 
 		if (!defined(yOffset)) {
 			if (axis.side === 0) {
@@ -318,10 +330,12 @@ H.Tick.prototype = {
 			y += line * (axis.labelOffset / staggerLines);
 		}
 
-		return {
-			x: x,
-			y: Math.round(y)
-		};
+		pos.x = x;
+		pos.y = Math.round(y);
+
+		fireEvent(this, 'afterGetLabelPosition', { pos: pos });
+
+		return pos;
 	},
 
 	/**
@@ -581,6 +595,8 @@ H.Tick.prototype = {
 		this.renderLabel(xy, old, opacity, index);
 
 		tick.isNew = false;
+
+		H.fireEvent(this, 'afterRender');
 	},
 
 	/**

@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/world-population-density.json', function (data) {
 
     // Initiate the chart
     Highcharts.mapChart('container', {
@@ -20,7 +20,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-popu
                 point: {
                     events: {
                         click: function () {
-                            location.href = 'http://en.wikipedia.org/wiki/' + this.name;
+                            location.href = 'https://en.wikipedia.org/wiki/' + this.name;
                         }
                     }
                 }

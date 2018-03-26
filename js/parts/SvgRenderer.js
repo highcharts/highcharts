@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -191,7 +192,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 */
 	/**
 	 * Build and apply an SVG gradient out of a common JavaScript configuration
-	 * object. This function is called from the attribute setters.
+	 * object. This function is called from the attribute setters. An event
+	 * hook is added for supporting other complex color types.
 	 *
 	 * @private
 	 * @param {GradientOptions} color The gradient options structure.
@@ -199,7 +201,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * `stroke`. 
 	 * @param {SVGDOMElement} elem SVG DOM element to apply the gradient on.
 	 */
-	colorGradient: function (color, prop, elem) {
+	complexColor: function (color, prop, elem) {
 		var renderer = this.renderer,
 			colorObject,
 			gradName,
@@ -215,107 +217,112 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 			key = [],
 			value;
 
-		// Apply linear or radial gradients
-		if (color.radialGradient) {
-			gradName = 'radialGradient';
-		} else if (color.linearGradient) {
-			gradName = 'linearGradient';
-		}
+		H.fireEvent(this.renderer, 'complexColor', {
+			args: arguments
+		}, function () {
+			// Apply linear or radial gradients
+			if (color.radialGradient) {
+				gradName = 'radialGradient';
+			} else if (color.linearGradient) {
+				gradName = 'linearGradient';
+			}
 
-		if (gradName) {
-			gradAttr = color[gradName];
-			gradients = renderer.gradients;
-			stops = color.stops;
-			radialReference = elem.radialReference;
+			if (gradName) {
+				gradAttr = color[gradName];
+				gradients = renderer.gradients;
+				stops = color.stops;
+				radialReference = elem.radialReference;
 
-			// Keep < 2.2 kompatibility
-			if (isArray(gradAttr)) {
-				color[gradName] = gradAttr = {
-					x1: gradAttr[0],
-					y1: gradAttr[1],
-					x2: gradAttr[2],
-					y2: gradAttr[3],
-					gradientUnits: 'userSpaceOnUse'
+				// Keep < 2.2 kompatibility
+				if (isArray(gradAttr)) {
+					color[gradName] = gradAttr = {
+						x1: gradAttr[0],
+						y1: gradAttr[1],
+						x2: gradAttr[2],
+						y2: gradAttr[3],
+						gradientUnits: 'userSpaceOnUse'
+					};
+				}
+
+				// Correct the radial gradient for the radial reference system
+				if (
+					gradName === 'radialGradient' &&
+					radialReference &&
+					!defined(gradAttr.gradientUnits)
+				) {
+					// Save the radial attributes for updating
+					radAttr = gradAttr;
+					gradAttr = merge(
+						gradAttr,
+						renderer.getRadialAttr(radialReference, radAttr),
+						{ gradientUnits: 'userSpaceOnUse' }
+					);
+				}
+
+				// Build the unique key to detect whether we need to create a
+				// new element (#1282)
+				objectEach(gradAttr, function (val, n) {
+					if (n !== 'id') {
+						key.push(n, val);
+					}
+				});
+				objectEach(stops, function (val) {
+					key.push(val);
+				});
+				key = key.join(',');
+
+				// Check if a gradient object with the same config object is
+				// created within this renderer
+				if (gradients[key]) {
+					id = gradients[key].attr('id');
+
+				} else {
+
+					// Set the id and create the element
+					gradAttr.id = id = H.uniqueKey();
+					gradients[key] = gradientObject =
+						renderer.createElement(gradName)
+							.attr(gradAttr)
+							.add(renderer.defs);
+
+					gradientObject.radAttr = radAttr;
+
+					// The gradient needs to keep a list of stops to be able to
+					// destroy them
+					gradientObject.stops = [];
+					each(stops, function (stop) {
+						var stopObject;
+						if (stop[1].indexOf('rgba') === 0) {
+							colorObject = H.color(stop[1]);
+							stopColor = colorObject.get('rgb');
+							stopOpacity = colorObject.get('a');
+						} else {
+							stopColor = stop[1];
+							stopOpacity = 1;
+						}
+						stopObject = renderer.createElement('stop').attr({
+							offset: stop[0],
+							'stop-color': stopColor,
+							'stop-opacity': stopOpacity
+						}).add(gradientObject);
+
+						// Add the stop element to the gradient
+						gradientObject.stops.push(stopObject);
+					});
+				}
+
+				// Set the reference to the gradient object
+				value = 'url(' + renderer.url + '#' + id + ')';
+				elem.setAttribute(prop, value);
+				elem.gradient = key;
+
+				// Allow the color to be concatenated into tooltips formatters
+				// etc. (#2995)
+				color.toString = function () {
+					return value;
 				};
 			}
-
-			// Correct the radial gradient for the radial reference system
-			if (
-				gradName === 'radialGradient' &&
-				radialReference &&
-				!defined(gradAttr.gradientUnits)
-			) {
-				radAttr = gradAttr; // Save the radial attributes for updating
-				gradAttr = merge(
-					gradAttr,
-					renderer.getRadialAttr(radialReference, radAttr),
-					{ gradientUnits: 'userSpaceOnUse' }
-				);
-			}
-
-			// Build the unique key to detect whether we need to create a new
-			// element (#1282)
-			objectEach(gradAttr, function (val, n) {
-				if (n !== 'id') {
-					key.push(n, val);
-				}
-			});
-			objectEach(stops, function (val) {
-				key.push(val);
-			});
-			key = key.join(',');
-
-			// Check if a gradient object with the same config object is created
-			// within this renderer
-			if (gradients[key]) {
-				id = gradients[key].attr('id');
-
-			} else {
-
-				// Set the id and create the element
-				gradAttr.id = id = H.uniqueKey();
-				gradients[key] = gradientObject =
-					renderer.createElement(gradName)
-						.attr(gradAttr)
-						.add(renderer.defs);
-
-				gradientObject.radAttr = radAttr;
-
-				// The gradient needs to keep a list of stops to be able to
-				// destroy them
-				gradientObject.stops = [];
-				each(stops, function (stop) {
-					var stopObject;
-					if (stop[1].indexOf('rgba') === 0) {
-						colorObject = H.color(stop[1]);
-						stopColor = colorObject.get('rgb');
-						stopOpacity = colorObject.get('a');
-					} else {
-						stopColor = stop[1];
-						stopOpacity = 1;
-					}
-					stopObject = renderer.createElement('stop').attr({
-						offset: stop[0],
-						'stop-color': stopColor,
-						'stop-opacity': stopOpacity
-					}).add(gradientObject);
-
-					// Add the stop element to the gradient
-					gradientObject.stops.push(stopObject);
-				});
-			}
-
-			// Set the reference to the gradient object
-			value = 'url(' + renderer.url + '#' + id + ')';
-			elem.setAttribute(prop, value);
-			elem.gradient = key;
-
-			// Allow the color to be concatenated into tooltips formatters etc.
-			// (#2995)
-			color.toString = function () {
-				return value;
-			};
-		}
+		});
 	},
 
 	/**
@@ -560,7 +567,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
 		// In accordance with animate, run a complete callback
 		if (complete) {
-			complete();
+			complete.call(this);
 		}
 
 		return ret;
@@ -817,10 +824,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				delete styles.width;
 			}
 
-			// serialize and set style attribute
-			if (isMS && !svg) {
-				css(this.element, styles);
-			} else {
+			// Serialize and set style attribute
+			if (elem.namespaceURI === this.SVG_NS) { // #7633
 				hyphenate = function (a, b) {
 					return '-' + b.toLowerCase();
 				};
@@ -834,6 +839,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				if (serializedCss) {
 					attr(elem, 'style', serializedCss); // #1881
 				}
+			} else {
+				css(elem, styles);
 			}
 
 
@@ -882,10 +889,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	/**
 	 * Get the computed stroke width in pixel values. This is used extensively
 	 * when drawing shapes to ensure the shapes are rendered crisp and
-	 * positioned correctly relative to each other. Using `shape-rendering: 
-	 * crispEdges` leaves us less control over positioning, for example when we
-	 * want to stack columns next to each other, or position things 
-	 * pixel-perfectly within the plot box.
+	 * positioned correctly relative to each other. Using
+	 * `shape-rendering: crispEdges` leaves us less control over positioning,
+	 * for example when we want to stack columns next to each other, or position
+	 * things pixel-perfectly within the plot box.
 	 *
 	 * The common pattern when placing a shape is:
 	 * * Create the SVGElement and add it to the DOM. In styled mode, it will
@@ -1251,7 +1258,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				'',
 				rotation || 0,
 				fontSize,
-				styles && styles.width,
+				wrapper.textWidth, // #7874, also useHTML
 				styles && styles.textOverflow // #5968
 			]
 			.join(',');
@@ -1489,34 +1496,35 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				wrapper.parentGroup,
 			grandParent,
 			ownerSVGElement = element.ownerSVGElement,
-			i;
+			i,
+			clipPath = wrapper.clipPath;
 
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover =
 			element.onmousemove = element.point = null;
 		stop(wrapper); // stop running animations
 
-		if (wrapper.clipPath && ownerSVGElement) {
+		if (clipPath && ownerSVGElement) {
 			// Look for existing references to this clipPath and remove them
 			// before destroying the element (#6196).
 			each(
 				// The upper case version is for Edge
 				ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
 				function (el) {
+					var clipPathAttr = el.getAttribute('clip-path'),
+						clipPathId = clipPath.element.id;
 					// Include the closing paranthesis in the test to rule out
-					// id's from 10 and above (#6550)
-					if (el
-						.getAttribute('clip-path')
-						.match(RegExp(
-							// Edge puts quotes inside the url, others not
-							'[\("]#' + wrapper.clipPath.element.id + '[\)"]'
-						))
+					// id's from 10 and above (#6550). Edge puts quotes inside
+					// the url, others not.
+					if (
+						clipPathAttr.indexOf('(#' + clipPathId + ')') > -1 ||
+						clipPathAttr.indexOf('("#' + clipPathId + '")') > -1
 					) {
 						el.removeAttribute('clip-path');
 					}
 				}
 			);
-			wrapper.clipPath = wrapper.clipPath.destroy();
+			wrapper.clipPath = clipPath.destroy();
 		}
 
 		// Destroy stops in case this is a gradient object
@@ -1792,7 +1800,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		if (typeof value === 'string') {
 			element.setAttribute(key, value);
 		} else if (value) {
-			this.colorGradient(value, key, element);
+			this.complexColor(value, key, element);
 		}
 	},
 	visibilitySetter: function (value, key, element) {
@@ -1850,8 +1858,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				if (otherElement !== element) {
 					if (
 						// Negative zIndex versus no zIndex:
-						// On all levels except the highest. If the parent is <svg>,
-						// then we don't want to put items before <desc> or <defs>
+						// On all levels except the highest. If the parent is
+						// <svg>, then we don't want to put items before <desc>
+						// or <defs>
 						(value < 0 && undefinedOtherZIndex && !svgParent && !i)
 					) {
 						parentNode.insertBefore(element, childNodes[i]);
@@ -1859,8 +1868,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 					} else if (
 						// Insert after the first element with a lower zIndex
 						pInt(otherZIndex) <= value ||
-						// If negative zIndex, add this before first undefined zIndex element
-						(undefinedOtherZIndex && (!defined(value) || value >= 0))
+						// If negative zIndex, add this before first undefined
+						// zIndex element
+						(
+							undefinedOtherZIndex &&
+							(!defined(value) || value >= 0)
+						)
 					) {
 						parentNode.insertBefore(
 							element,
@@ -2341,9 +2354,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			hasMarkup = textStr.indexOf('<') !== -1,
 			lines,
 			childNodes = textNode.childNodes,
-			clsRegex,
-			styleRegex,
-			hrefRegex,
 			wasTooLong,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
@@ -2377,12 +2387,29 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				objectEach(renderer.escapes, function (value, key) {
 					if (!except || inArray(value, except) === -1) {
 						inputStr = inputStr.toString().replace(
-							new RegExp(value, 'g'),
+							new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
 							key
 						);
 					}
 				});
 				return inputStr;
+			},
+			parseAttribute = function (s, attr) {
+				var start,
+					delimiter;
+
+				start = s.indexOf('<');
+				s = s.substring(start, s.indexOf('>') - start);
+
+				start = s.indexOf(attr + '=');
+				if (start !== -1) {
+					start = start + attr.length + 1;
+					delimiter = s.charAt(start);
+					if (delimiter === '"' || delimiter === "'") { // eslint-disable-line quotes
+						s = s.substring(start + 1);
+						return s.substring(0, s.indexOf(delimiter));
+					}
+				}
 			};
 
 		// The buildText code is quite heavy, so if we're not changing something
@@ -2419,10 +2446,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		// Complex strings, add more logic
 		} else {
-
-			clsRegex = /<.*class="([^"]+)".*>/;
-			styleRegex = /<.*style="([^"]+)".*>/;
-			hrefRegex = /<.*href="([^"]+)".*>/;
 
 			if (tempParent) {
 				// attach it to the DOM to read offset width
@@ -2478,27 +2501,31 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 								renderer.SVG_NS,
 								'tspan'
 							),
-							spanCls,
-							spanStyle; // #390
-						if (clsRegex.test(span)) {
-							spanCls = span.match(clsRegex)[1];
-							attr(tspan, 'class', spanCls);
+							classAttribute,
+							styleAttribute, // #390
+							hrefAttribute;
+						
+						classAttribute = parseAttribute(span, 'class');
+						if (classAttribute) {
+							attr(tspan, 'class', classAttribute);
 						}
-						if (styleRegex.test(span)) {
-							spanStyle = span.match(styleRegex)[1].replace(
+
+						styleAttribute = parseAttribute(span, 'style');
+						if (styleAttribute) {
+							styleAttribute = styleAttribute.replace(
 								/(;| |^)color([ :])/,
 								'$1fill$2'
 							);
-							attr(tspan, 'style', spanStyle);
+							attr(tspan, 'style', styleAttribute);
 						}
 
 						// Not for export - #1529
-						if (hrefRegex.test(span) && !forExport) {
+						hrefAttribute = parseAttribute(span, 'href');
+						if (hrefAttribute && !forExport) {
 							attr(
 								tspan,
 								'onclick',
-								'location.href=\"' +
-									span.match(hrefRegex)[1] + '\"'
+								'location.href=\"' + hrefAttribute + '\"'
 							);
 							attr(tspan, 'class', 'highcharts-anchor');
 							/*= if (build.classic) { =*/
@@ -2642,8 +2669,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 												dy: dy,
 												x: parentX
 											});
-											if (spanStyle) { // #390
-												attr(tspan, 'style', spanStyle);
+											if (styleAttribute) { // #390
+												attr(
+													tspan,
+													'style',
+													styleAttribute
+												);
 											}
 											textNode.appendChild(tspan);
 										}
@@ -2669,7 +2700,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 							}
 
 							spanNo++;
-							// */
 						}
 					}
 				});
@@ -2741,7 +2771,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 					safe++;
 				}
 
-				spans.push(node.textContent.substr(startPos, endPos - startPos));
+				spans.push(
+					node.textContent.substr(startPos, endPos - startPos)
+				);
 
 				startPos = endPos;
 				pos = startPos + guessedLineCharLength;
@@ -2931,8 +2963,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	/**
 	 * Make a straight line crisper by not spilling out to neighbour pixels.
 	 * 
-	 * @param {Array} points - The original points on the format `['M', 0, 0,
-	 *    'L', 100, 0]`.
+	 * @param {Array} points - The original points on the format
+	 *                       `['M', 0, 0, 'L', 100, 0]`.
 	 * @param {number} width - The width of the line.
 	 * @returns {Array} The original points array, but modified to render
 	 * crisply.
@@ -3179,6 +3211,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 *    image file width.
 	 * @param {number} [height] The image height. If omitted it defaults to the
 	 *    image file height.
+	 * @param {function} [onload] Event handler for image load.
 	 * @returns {SVGElement} The generated wrapper element.
 	 *
 	 * @sample highcharts/members/renderer-image-on-chart/
@@ -3186,11 +3219,25 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 * @sample highcharts/members/renderer-image/
 	 *         Add an image independent of a chart
 	 */
-	image: function (src, x, y, width, height) {
+	image: function (src, x, y, width, height, onload) {
 		var attribs = {
 				preserveAspectRatio: 'none'
 			},
-			elemWrapper;
+			elemWrapper,
+			dummy,
+			setSVGImageSource = function (el, src) {
+				// Set the href in the xlink namespace
+				if (el.setAttributeNS) {
+					el.setAttributeNS(
+						'http://www.w3.org/1999/xlink', 'href', src
+					);
+				} else {
+					// could be exporting in IE
+					// using href throws "not supported" in ie7 and under,
+					// requries regex shim to fix later
+					el.setAttribute('hc-svg-href', src);
+				}
+			};
 
 		// optional properties
 		if (arguments.length > 1) {
@@ -3204,16 +3251,25 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		elemWrapper = this.createElement('image').attr(attribs);
 
-		// set the href in the xlink namespace
-		if (elemWrapper.element.setAttributeNS) {
-			elemWrapper.element.setAttributeNS('http://www.w3.org/1999/xlink',
-				'href', src);
+		// Add load event if supplied
+		if (onload) {
+			// We have to use a dummy HTML image since IE support for SVG image
+			// load events is very buggy. First set a transparent src, wait for
+			// dummy to load, and then add the real src to the SVG image.
+			setSVGImageSource(
+				elemWrapper.element,
+				'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' /* eslint-disable-line */
+			);
+			dummy = new win.Image();
+			addEvent(dummy, 'load', function (e) {
+				setSVGImageSource(elemWrapper.element, src);
+				onload.call(elemWrapper, e);
+			});
+			dummy.src = src;
 		} else {
-			// could be exporting in IE
-			// using href throws "not supported" in ie7 and under, requries
-			// regex shim to fix later
-			elemWrapper.element.setAttribute('hc-svg-href', src);
+			setSVGImageSource(elemWrapper.element, src);
 		}
+
 		return elemWrapper;
 	},
 
@@ -4122,6 +4178,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			wrapper.x = value; // for animation getter
 			if (alignFactor) {
 				value -= alignFactor * ((width || bBox.width) + 2 * padding);
+
+				// Force animation even when setting to the same value (#7898)
+				wrapper['forceAnimate:x'] = true;
 			}
 			wrapperX = Math.round(value);
 			wrapper.attr('translateX', wrapperX);
@@ -4152,6 +4211,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 						}
 					});
 					text.css(textStyles);
+					
+					if ('width' in textStyles) {
+						updateBoxSize();
+					}
 				}
 				return baseCss.call(wrapper, styles);
 			},

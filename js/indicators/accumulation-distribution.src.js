@@ -10,7 +10,9 @@ function populateAverage(xVal, yVal, yValVolume, i) {
 		low = yVal[i][2],
 		close = yVal[i][3],
 		volume = yValVolume[i],
-		adY = close === high && close === low || high === low ? 0 : ((2 * close - low - high) / (high - low)) * volume,
+		adY = close === high && close === low || high === low ?
+			0 :
+			((2 * close - low - high) / (high - low)) * volume,
 		adX = xVal[i];
 		
 	return [adX, adY];
@@ -24,7 +26,8 @@ function populateAverage(xVal, yVal, yValVolume, i) {
  */
 seriesType('ad', 'sma',
 	/**
-	 * Accumulation Distribution (AD). This series requires `linkedTo` option to be set.
+	 * Accumulation Distribution (AD). This series requires `linkedTo` option to
+	 * be set.
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -34,7 +37,6 @@ seriesType('ad', 'sma',
 	 * @optionparent plotOptions.ad
 	 */
 	{
-		name: 'Accumulation/Distribution',
 		params: {
 			/**
 			 * The id of volume series which is mandatory.
@@ -48,6 +50,8 @@ seriesType('ad', 'sma',
 			volumeSeriesID: 'volume'
 		}
 	}, {
+		nameComponents: false,
+		nameBase: 'Accumulation/Distribution',
 		getValues: function (series, params) {
 			var period = params.period,
 				xVal = series.xData,
@@ -103,11 +107,6 @@ seriesType('ad', 'sma',
 /**
  * A `AD` series. If the [type](#series.ad.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to 
- * [plotOptions.ad](#plotOptions.ad).
  * 
  * @type {Object}
  * @since 6.0.0

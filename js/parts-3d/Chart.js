@@ -9,7 +9,8 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-var Chart = H.Chart,
+var addEvent = H.addEvent,
+	Chart = H.Chart,
 	each = H.each,
 	merge = H.merge,
 	perspective = H.perspective,
@@ -18,7 +19,10 @@ var Chart = H.Chart,
 
 // Shorthand to check the is3d flag
 Chart.prototype.is3d = function () {
-	return this.options.chart.options3d && this.options.chart.options3d.enabled; // #4280
+	return (
+		this.options.chart.options3d &&
+		this.options.chart.options3d.enabled
+	); // #4280
 };
 
 Chart.prototype.propsRequireDirtyBox.push('chart.options3d');
@@ -26,22 +30,28 @@ Chart.prototype.propsRequireUpdateSeries.push('chart.options3d');
 
 // Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to the
 // real 'scatter3d' series type. 
-wrap(Chart.prototype, 'initSeries', function (proceed, options) {
-	var type = options.type ||
-		this.options.chart.type ||
-		this.options.chart.defaultSeriesType;
-	if (this.is3d() && type === 'scatter') {
-		options.type = 'scatter3d';
+addEvent(Chart, 'afterInit', function () {
+	var options = this.options;
+	
+	if (this.is3d()) {
+		each(options.series, function (s) {
+			var type = s.type ||
+				options.chart.type ||
+				options.chart.defaultSeriesType;
+			if (type === 'scatter') {
+				s.type = 'scatter3d';
+			}
+		});
 	}
-	return proceed.call(this, options);
 });
 
 /**
  * Calculate scale of the 3D view. That is required to
  * fit chart's 3D projection into the actual plotting area. Reported as #4933.
- * @notice This function should ideally take the plot values instead of a chart object, 
- *         but since the chart object is needed for perspective it is not practical. 
- *         Possible to make both getScale and perspective more logical and also immutable.
+ * @notice This function should ideally take the plot values instead of a chart
+ *		 object, but since the chart object is needed for perspective it is
+ *		 not practical. Possible to make both getScale and perspective more
+ *		 logical and also immutable.
  * @param  {Object} chart Chart object
  * @param  {Number} chart.plotLeft
  * @param  {Number} chart.plotWidth
@@ -108,26 +118,41 @@ function getScale(chart, depth) {
 
 	// Left edge:
 	if (plotLeft > bbox3d.minX) {
-		scale = Math.min(scale, 1 - Math.abs((plotLeft + originX) / (bbox3d.minX + originX)) % 1);
+		scale = Math.min(
+			scale,
+			1 - Math.abs((plotLeft + originX) / (bbox3d.minX + originX)) % 1
+		);
 	}
 
 	// Right edge:
 	if (plotRight < bbox3d.maxX) {
-		scale = Math.min(scale, (plotRight - originX) / (bbox3d.maxX - originX));
+		scale = Math.min(
+			scale,
+			(plotRight - originX) / (bbox3d.maxX - originX)
+		);
 	}
 
 	// Top edge:
 	if (plotTop > bbox3d.minY) {
 		if (bbox3d.minY < 0) {
-			scale = Math.min(scale, (plotTop + originY) / (-bbox3d.minY + plotTop + originY));
+			scale = Math.min(
+				scale,
+				(plotTop + originY) / (-bbox3d.minY + plotTop + originY)
+			);
 		} else {
-			scale = Math.min(scale, 1 - (plotTop + originY) / (bbox3d.minY + originY) % 1);
+			scale = Math.min(
+				scale,
+				1 - (plotTop + originY) / (bbox3d.minY + originY) % 1
+			);
 		}
 	}
 
 	// Bottom edge:
 	if (plotBottom < bbox3d.maxY) {
-		scale = Math.min(scale, Math.abs((plotBottom - originY) / (bbox3d.maxY - originY)));
+		scale = Math.min(
+			scale,
+			Math.abs((plotBottom - originY) / (bbox3d.maxY - originY))
+		);
 	}
 
 	return scale;
@@ -142,18 +167,10 @@ H.wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
 var defaultOptions = H.getOptions();
 
 /**
- * Options to render charts in 3 dimensions. 
- * This feature requires highcharts-3d.js, found in the download package, 
- * or online at code.highcharts.com/highcharts-3d.js.
  * @optionparent
  */
 var extendedOptions = 	{
 
-	/**
-	 * Options regarding the chart area and plot area as well as general
-	 * chart options.
-	 *
-	 */
 	chart: {
 
 		/**
@@ -219,9 +236,10 @@ var extendedOptions = 	{
 			fitToPlot: true,
 
 			/**
-			 * Defines the distance the viewer is standing in front of the chart,
-			 * this setting is important to calculate the perspective effect
-			 * in column and scatter charts. It is not used for 3D pie charts.
+			 * Defines the distance the viewer is standing in front of the
+			 * chart, this setting is important to calculate the perspective
+			 * effect in column and scatter charts. It is not used for 3D pie
+			 * charts.
 			 * 
 			 * @type {Number}
 			 * @default 100
@@ -267,42 +285,46 @@ var extendedOptions = 	{
 				 * @since 4.0
 				 * @product highcharts
 				 */
-				bottom: {
-					/**
-					 * The color of the panel.
-					 * 
-					 * @type {Color}
-					 * @default transparent
-					 * @since 4.0
-					 * @product highcharts
-					 * @apioption chart.options3d.frame.bottom.color
-					 */
+				
+				/**
+				 * The color of the panel.
+				 * 
+				 * @type {Color}
+				 * @default transparent
+				 * @since 4.0
+				 * @product highcharts
+				 * @apioption chart.options3d.frame.bottom.color
+				 */
 
-					/**
-					 * The thickness of the panel.
-					 * 
-					 * @type {Number}
-					 * @default 1
-					 * @since 4.0
-					 * @product highcharts
-					 * @apioption chart.options3d.frame.bottom.size
-					 */
+				/**
+				 * The thickness of the panel.
+				 * 
+				 * @type {Number}
+				 * @default 1
+				 * @since 4.0
+				 * @product highcharts
+				 * @apioption chart.options3d.frame.bottom.size
+				 */
 
-					/**
-					 * Whether to display the frame. Possible values are `true`, `false`,
-					 * `"auto"` to display only the frames behind the data, and `"default"`
-					 * to display faces behind the data based on the axis layout, ignoring
-					 * the point of view.
-					 * 
-					 * @validvalue ["default", "auto", true, false]
-					 * @type {Boolean|String}
-					 * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
-					 * @default default
-					 * @since 5.0.12
-					 * @product highcharts
-					 * @apioption chart.options3d.frame.bottom.visible
-					 */
-				},
+				/**
+				 * Whether to display the frame. Possible values are `true`,
+				 * `false`, `"auto"` to display only the frames behind the data,
+				 * and `"default"` to display faces behind the data based on the
+				 * axis layout, ignoring the point of view.
+				 * 
+				 * @validvalue ["default", "auto", true, false]
+				 * @type {Boolean|String}
+				 * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
+				 * @default default
+				 * @since 5.0.12
+				 * @product highcharts
+				 * @apioption chart.options3d.frame.bottom.visible
+				 */
+
+				/**
+				 * The bottom of the frame around a 3D chart.
+				 */
+				bottom: {},
 
 				/**
 				 * The top of the frame around a 3D chart.
@@ -347,12 +369,9 @@ merge(true, defaultOptions, extendedOptions);
 
 /*= if (!build.classic) { =*/
 /**
- * Override the getContainer by adding the required CSS classes for column 
- * sides (#6018)
+ * Add the required CSS classes for column sides (#6018)
  */
-wrap(Chart.prototype, 'getContainer', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
+addEvent(Chart, 'afterGetContainer', function () {
 	this.renderer.definition({
 		tagName: 'style',
 		textContent: 
@@ -374,11 +393,9 @@ wrap(Chart.prototype, 'setClassName', function (proceed) {
 	}
 });
 
-H.wrap(H.Chart.prototype, 'setChartSize', function (proceed) {
+addEvent(H.Chart, 'afterSetChartSize', function () {
 	var chart = this,
 		options3d = chart.options.chart.options3d;
-
-	proceed.apply(chart, [].slice.call(arguments, 1));
 
 	if (chart.is3d()) {
 		var inverted = chart.inverted,
@@ -395,27 +412,29 @@ H.wrap(H.Chart.prototype, 'setChartSize', function (proceed) {
 		clipBox[h] = chart.chartHeight + (margin[0] || 0) + (margin[2] || 0);
 
 		// Set scale, used later in perspective method():
-		chart.scale3d = 1; // @notice getScale uses perspective, so scale3d has to be reset.
+		// getScale uses perspective, so scale3d has to be reset.
+		chart.scale3d = 1;
 		if (options3d.fitToPlot === true) {
 			chart.scale3d = getScale(chart, options3d.depth);
 		}
+		// Recalculate the 3d frame with every call of setChartSize,
+		// instead of doing it after every redraw(). It avoids ticks
+		// and axis title outside of chart.
+		chart.frame3d = this.get3dFrame(); // #7942
 	}
 });
 
-wrap(Chart.prototype, 'redraw', function (proceed) {
+addEvent(Chart, 'beforeRedraw', function () {
 	if (this.is3d()) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
-		this.frame3d = this.get3dFrame();
 	}
-	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-wrap(Chart.prototype, 'render', function (proceed) {
+addEvent(Chart, 'beforeRender', function () {
 	if (this.is3d()) {
 		this.frame3d = this.get3dFrame();
 	}
-	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Draw the series in the reverse order (#3803, #3917)
@@ -434,7 +453,7 @@ wrap(Chart.prototype, 'renderSeries', function (proceed) {
 	}
 });
 
-wrap(Chart.prototype, 'drawChartBox', function (proceed) {
+addEvent(Chart, 'afterDrawChartBox', function () {
 	if (this.is3d()) {
 		var chart = this,
 			renderer = chart.renderer,
@@ -466,226 +485,787 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				front: renderer.polyhedron().add()
 			};
 		}
-
 		this.frameShapes.bottom[verb]({
 			'class': 'highcharts-3d-frame highcharts-3d-frame-bottom',
 			zIndex: frame.bottom.frontFacing ? -1000 : 1000,
-			faces: [
-				{ // bottom
-					fill: H.color(frame.bottom.color).brighten(0.1).get(),
-					vertexes: [{ x: xmm, y: ypp, z: zmm }, { x: xpp, y: ypp, z: zmm }, { x: xpp, y: ypp, z: zpp }, { x: xmm, y: ypp, z: zpp }],
-					enabled: frame.bottom.visible
-				},
-				{ // top
-					fill: H.color(frame.bottom.color).brighten(0.1).get(),
-					vertexes: [{ x: xm, y: yp, z: zp }, { x: xp, y: yp, z: zp }, { x: xp, y: yp, z: zm }, { x: xm, y: yp, z: zm }],
-					enabled: frame.bottom.visible
-				},
-				{ // left
-					fill: H.color(frame.bottom.color).brighten(-0.1).get(),
-					vertexes: [{ x: xmm, y: ypp, z: zmm }, { x: xmm, y: ypp, z: zpp }, { x: xm, y: yp, z: zp }, { x: xm, y: yp, z: zm }],
-					enabled: frame.bottom.visible && !frame.left.visible
-				},
-				{ // right
-					fill: H.color(frame.bottom.color).brighten(-0.1).get(),
-					vertexes: [{ x: xpp, y: ypp, z: zpp }, { x: xpp, y: ypp, z: zmm }, { x: xp, y: yp, z: zm }, { x: xp, y: yp, z: zp }],
-					enabled: frame.bottom.visible && !frame.right.visible
-				},
-				{ // front
-					fill: H.color(frame.bottom.color).get(),
-					vertexes: [{ x: xpp, y: ypp, z: zmm }, { x: xmm, y: ypp, z: zmm }, { x: xm, y: yp, z: zm }, { x: xp, y: yp, z: zm }],
-					enabled: frame.bottom.visible && !frame.front.visible
-				},
-				{ // back
-					fill: H.color(frame.bottom.color).get(),
-					vertexes: [{ x: xmm, y: ypp, z: zpp }, { x: xpp, y: ypp, z: zpp }, { x: xp, y: yp, z: zp }, { x: xm, y: yp, z: zp }],
-					enabled: frame.bottom.visible && !frame.back.visible
-				}
-			]
+			faces: [{ // bottom
+				fill: H.color(frame.bottom.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xmm,
+					y: ypp,
+					z: zpp
+				}],
+				enabled: frame.bottom.visible
+			},
+			{ // top
+				fill: H.color(frame.bottom.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xm,
+					y: yp,
+					z: zp
+				}, {
+					x: xp,
+					y: yp,
+					z: zp
+				}, {
+					x: xp,
+					y: yp,
+					z: zm
+				}, {
+					x: xm,
+					y: yp,
+					z: zm
+				}],
+				enabled: frame.bottom.visible
+			},
+			{ // left
+				fill: H.color(frame.bottom.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xmm,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xm,
+					y: yp,
+					z: zp
+				}, {
+					x: xm,
+					y: yp,
+					z: zm
+				}],
+				enabled: frame.bottom.visible && !frame.left.visible
+			},
+			{ // right
+				fill: H.color(frame.bottom.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xpp,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xp,
+					y: yp,
+					z: zm
+				}, {
+					x: xp,
+					y: yp,
+					z: zp
+				}],
+				enabled: frame.bottom.visible && !frame.right.visible
+			},
+			{ // front
+				fill: H.color(frame.bottom.color).get(),
+				vertexes: [{
+					x: xpp,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xmm,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xm,
+					y: yp,
+					z: zm
+				}, {
+					x: xp,
+					y: yp,
+					z: zm
+				}],
+				enabled: frame.bottom.visible && !frame.front.visible
+			},
+			{ // back
+				fill: H.color(frame.bottom.color).get(),
+				vertexes: [{
+					x: xmm,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xp,
+					y: yp,
+					z: zp
+				}, {
+					x: xm,
+					y: yp,
+					z: zp
+				}],
+				enabled: frame.bottom.visible && !frame.back.visible
+			}]
 		});
 		this.frameShapes.top[verb]({
 			'class': 'highcharts-3d-frame highcharts-3d-frame-top',
 			zIndex: frame.top.frontFacing ? -1000 : 1000,
-			faces: [
-				{ // bottom
-					fill: H.color(frame.top.color).brighten(0.1).get(),
-					vertexes: [{ x: xmm, y: ymm, z: zpp }, { x: xpp, y: ymm, z: zpp }, { x: xpp, y: ymm, z: zmm }, { x: xmm, y: ymm, z: zmm }],
-					enabled: frame.top.visible
-				},
-				{ // top
-					fill: H.color(frame.top.color).brighten(0.1).get(),
-					vertexes: [{ x: xm, y: ym, z: zm }, { x: xp, y: ym, z: zm }, { x: xp, y: ym, z: zp }, { x: xm, y: ym, z: zp }],
-					enabled: frame.top.visible
-				},
-				{ // left
-					fill: H.color(frame.top.color).brighten(-0.1).get(),
-					vertexes: [{ x: xmm, y: ymm, z: zpp }, { x: xmm, y: ymm, z: zmm }, { x: xm, y: ym, z: zm }, { x: xm, y: ym, z: zp }],
-					enabled: frame.top.visible && !frame.left.visible
-				},
-				{ // right
-					fill: H.color(frame.top.color).brighten(-0.1).get(),
-					vertexes: [{ x: xpp, y: ymm, z: zmm }, { x: xpp, y: ymm, z: zpp }, { x: xp, y: ym, z: zp }, { x: xp, y: ym, z: zm }],
-					enabled: frame.top.visible && !frame.right.visible
-				},
-				{ // front
-					fill: H.color(frame.top.color).get(),
-					vertexes: [{ x: xmm, y: ymm, z: zmm }, { x: xpp, y: ymm, z: zmm }, { x: xp, y: ym, z: zm }, { x: xm, y: ym, z: zm }],
-					enabled: frame.top.visible && !frame.front.visible
-				},
-				{ // back
-					fill: H.color(frame.top.color).get(),
-					vertexes: [{ x: xpp, y: ymm, z: zpp }, { x: xmm, y: ymm, z: zpp }, { x: xm, y: ym, z: zp }, { x: xp, y: ym, z: zp }],
-					enabled: frame.top.visible && !frame.back.visible
-				}
-			]
+			faces: [{ // bottom
+				fill: H.color(frame.top.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zmm
+				}],
+				enabled: frame.top.visible
+			},
+			{ // top
+				fill: H.color(frame.top.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xm,
+					y: ym,
+					z: zm
+				}, {
+					x: xp,
+					y: ym,
+					z: zm
+				}, {
+					x: xp,
+					y: ym,
+					z: zp
+				}, {
+					x: xm,
+					y: ym,
+					z: zp
+				}],
+				enabled: frame.top.visible
+			},
+			{ // left
+				fill: H.color(frame.top.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xm,
+					y: ym,
+					z: zm
+				}, {
+					x: xm,
+					y: ym,
+					z: zp
+				}],
+				enabled: frame.top.visible && !frame.left.visible
+			},
+			{ // right
+				fill: H.color(frame.top.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xpp,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xp,
+					y: ym,
+					z: zp
+				}, {
+					x: xp,
+					y: ym,
+					z: zm
+				}],
+				enabled: frame.top.visible && !frame.right.visible
+			},
+			{ // front
+				fill: H.color(frame.top.color).get(),
+				vertexes: [{
+					x: xmm,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xp,
+					y: ym,
+					z: zm
+				}, {
+					x: xm,
+					y: ym,
+					z: zm
+				}],
+				enabled: frame.top.visible && !frame.front.visible
+			},
+			{ // back
+				fill: H.color(frame.top.color).get(),
+				vertexes: [{
+					x: xpp,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xm,
+					y: ym,
+					z: zp
+				}, {
+					x: xp,
+					y: ym,
+					z: zp
+				}],
+				enabled: frame.top.visible && !frame.back.visible
+			}]
 		});
 		this.frameShapes.left[verb]({
 			'class': 'highcharts-3d-frame highcharts-3d-frame-left',
 			zIndex: frame.left.frontFacing ? -1000 : 1000,
-			faces: [
-				{ // bottom
-					fill: H.color(frame.left.color).brighten(0.1).get(),
-					vertexes: [{ x: xmm, y: ypp, z: zmm }, { x: xm, y: yp, z: zm }, { x: xm, y: yp, z: zp }, { x: xmm, y: ypp, z: zpp }],
-					enabled: frame.left.visible && !frame.bottom.visible
-				},
-				{ // top
-					fill: H.color(frame.left.color).brighten(0.1).get(),
-					vertexes: [{ x: xmm, y: ymm, z: zpp }, { x: xm, y: ym, z: zp }, { x: xm, y: ym, z: zm }, { x: xmm, y: ymm, z: zmm }],
-					enabled: frame.left.visible && !frame.top.visible
-				},
-				{ // left
-					fill: H.color(frame.left.color).brighten(-0.1).get(),
-					vertexes: [{ x: xmm, y: ypp, z: zpp }, { x: xmm, y: ymm, z: zpp }, { x: xmm, y: ymm, z: zmm }, { x: xmm, y: ypp, z: zmm }],
-					enabled: frame.left.visible
-				},
-				{ // right
-					fill: H.color(frame.left.color).brighten(-0.1).get(),
-					vertexes: [{ x: xm, y: ym, z: zp }, { x: xm, y: yp, z: zp }, { x: xm, y: yp, z: zm }, { x: xm, y: ym, z: zm }],
-					enabled: frame.left.visible
-				},
-				{ // front
-					fill: H.color(frame.left.color).get(),
-					vertexes: [{ x: xmm, y: ypp, z: zmm }, { x: xmm, y: ymm, z: zmm }, { x: xm, y: ym, z: zm }, { x: xm, y: yp, z: zm }],
-					enabled: frame.left.visible && !frame.front.visible
-				},
-				{ // back
-					fill: H.color(frame.left.color).get(),
-					vertexes: [{ x: xmm, y: ymm, z: zpp }, { x: xmm, y: ypp, z: zpp }, { x: xm, y: yp, z: zp }, { x: xm, y: ym, z: zp }],
-					enabled: frame.left.visible && !frame.back.visible
-				}
-			]
+			faces: [{ // bottom
+				fill: H.color(frame.left.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xm,
+					y: yp,
+					z: zm
+				}, {
+					x: xm,
+					y: yp,
+					z: zp
+				}, {
+					x: xmm,
+					y: ypp,
+					z: zpp
+				}],
+				enabled: frame.left.visible && !frame.bottom.visible
+			},
+			{ // top
+				fill: H.color(frame.left.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xm,
+					y: ym,
+					z: zp
+				}, {
+					x: xm,
+					y: ym,
+					z: zm
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zmm
+				}],
+				enabled: frame.left.visible && !frame.top.visible
+			},
+			{ // left
+				fill: H.color(frame.left.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xmm,
+					y: ypp,
+					z: zmm
+				}],
+				enabled: frame.left.visible
+			},
+			{ // right
+				fill: H.color(frame.left.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xm,
+					y: ym,
+					z: zp
+				}, {
+					x: xm,
+					y: yp,
+					z: zp
+				}, {
+					x: xm,
+					y: yp,
+					z: zm
+				}, {
+					x: xm,
+					y: ym,
+					z: zm
+				}],
+				enabled: frame.left.visible
+			},
+			{ // front
+				fill: H.color(frame.left.color).get(),
+				vertexes: [{
+					x: xmm,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xm,
+					y: ym,
+					z: zm
+				}, {
+					x: xm,
+					y: yp,
+					z: zm
+				}],
+				enabled: frame.left.visible && !frame.front.visible
+			},
+			{ // back
+				fill: H.color(frame.left.color).get(),
+				vertexes: [{
+					x: xmm,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xmm,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xm,
+					y: yp,
+					z: zp
+				}, {
+					x: xm,
+					y: ym,
+					z: zp
+				}],
+				enabled: frame.left.visible && !frame.back.visible
+			}]
 		});
 		this.frameShapes.right[verb]({
 			'class': 'highcharts-3d-frame highcharts-3d-frame-right',
 			zIndex: frame.right.frontFacing ? -1000 : 1000,
-			faces: [
-				{ // bottom
-					fill: H.color(frame.right.color).brighten(0.1).get(),
-					vertexes: [{ x: xpp, y: ypp, z: zpp }, { x: xp, y: yp, z: zp }, { x: xp, y: yp, z: zm }, { x: xpp, y: ypp, z: zmm }],
-					enabled: frame.right.visible && !frame.bottom.visible
-				},
-				{ // top
-					fill: H.color(frame.right.color).brighten(0.1).get(),
-					vertexes: [{ x: xpp, y: ymm, z: zmm }, { x: xp, y: ym, z: zm }, { x: xp, y: ym, z: zp }, { x: xpp, y: ymm, z: zpp }],
-					enabled: frame.right.visible && !frame.top.visible
-				},
-				{ // left
-					fill: H.color(frame.right.color).brighten(-0.1).get(),
-					vertexes: [{ x: xp, y: ym, z: zm }, { x: xp, y: yp, z: zm }, { x: xp, y: yp, z: zp }, { x: xp, y: ym, z: zp }],
-					enabled: frame.right.visible
-				},
-				{ // right
-					fill: H.color(frame.right.color).brighten(-0.1).get(),
-					vertexes: [{ x: xpp, y: ypp, z: zmm }, { x: xpp, y: ymm, z: zmm }, { x: xpp, y: ymm, z: zpp }, { x: xpp, y: ypp, z: zpp }],
-					enabled: frame.right.visible
-				},
-				{ // front
-					fill: H.color(frame.right.color).get(),
-					vertexes: [{ x: xpp, y: ymm, z: zmm }, { x: xpp, y: ypp, z: zmm }, { x: xp, y: yp, z: zm }, { x: xp, y: ym, z: zm }],
-					enabled: frame.right.visible && !frame.front.visible
-				},
-				{ // back
-					fill: H.color(frame.right.color).get(),
-					vertexes: [{ x: xpp, y: ypp, z: zpp }, { x: xpp, y: ymm, z: zpp }, { x: xp, y: ym, z: zp }, { x: xp, y: yp, z: zp }],
-					enabled: frame.right.visible && !frame.back.visible
-				}
-			]
+			faces: [{ // bottom
+				fill: H.color(frame.right.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xpp,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xp,
+					y: yp,
+					z: zp
+				}, {
+					x: xp,
+					y: yp,
+					z: zm
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zmm
+				}],
+				enabled: frame.right.visible && !frame.bottom.visible
+			},
+			{ // top
+				fill: H.color(frame.right.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xpp,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xp,
+					y: ym,
+					z: zm
+				}, {
+					x: xp,
+					y: ym,
+					z: zp
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zpp
+				}],
+				enabled: frame.right.visible && !frame.top.visible
+			},
+			{ // left
+				fill: H.color(frame.right.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xp,
+					y: ym,
+					z: zm
+				}, {
+					x: xp,
+					y: yp,
+					z: zm
+				}, {
+					x: xp,
+					y: yp,
+					z: zp
+				}, {
+					x: xp,
+					y: ym,
+					z: zp
+				}],
+				enabled: frame.right.visible
+			},
+			{ // right
+				fill: H.color(frame.right.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xpp,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zpp
+				}],
+				enabled: frame.right.visible
+			},
+			{ // front
+				fill: H.color(frame.right.color).get(),
+				vertexes: [{
+					x: xpp,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xp,
+					y: yp,
+					z: zm
+				}, {
+					x: xp,
+					y: ym,
+					z: zm
+				}],
+				enabled: frame.right.visible && !frame.front.visible
+			},
+			{ // back
+				fill: H.color(frame.right.color).get(),
+				vertexes: [{
+					x: xpp,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xp,
+					y: ym,
+					z: zp
+				}, {
+					x: xp,
+					y: yp,
+					z: zp
+				}],
+				enabled: frame.right.visible && !frame.back.visible
+			}]
 		});
 		this.frameShapes.back[verb]({
 			'class': 'highcharts-3d-frame highcharts-3d-frame-back',
 			zIndex: frame.back.frontFacing ? -1000 : 1000,
-			faces: [
-				{ // bottom
-					fill: H.color(frame.back.color).brighten(0.1).get(),
-					vertexes: [{ x: xpp, y: ypp, z: zpp }, { x: xmm, y: ypp, z: zpp }, { x: xm, y: yp, z: zp }, { x: xp, y: yp, z: zp }],
-					enabled: frame.back.visible && !frame.bottom.visible
-				},
-				{ // top
-					fill: H.color(frame.back.color).brighten(0.1).get(),
-					vertexes: [{ x: xmm, y: ymm, z: zpp }, { x: xpp, y: ymm, z: zpp }, { x: xp, y: ym, z: zp }, { x: xm, y: ym, z: zp }],
-					enabled: frame.back.visible && !frame.top.visible
-				},
-				{ // left
-					fill: H.color(frame.back.color).brighten(-0.1).get(),
-					vertexes: [{ x: xmm, y: ypp, z: zpp }, { x: xmm, y: ymm, z: zpp }, { x: xm, y: ym, z: zp }, { x: xm, y: yp, z: zp }],
-					enabled: frame.back.visible && !frame.left.visible
-				},
-				{ // right
-					fill: H.color(frame.back.color).brighten(-0.1).get(),
-					vertexes: [{ x: xpp, y: ymm, z: zpp }, { x: xpp, y: ypp, z: zpp }, { x: xp, y: yp, z: zp }, { x: xp, y: ym, z: zp }],
-					enabled: frame.back.visible && !frame.right.visible
-				},
-				{ // front
-					fill: H.color(frame.back.color).get(),
-					vertexes: [{ x: xm, y: ym, z: zp }, { x: xp, y: ym, z: zp }, { x: xp, y: yp, z: zp }, { x: xm, y: yp, z: zp }],
-					enabled: frame.back.visible
-				},
-				{ // back
-					fill: H.color(frame.back.color).get(),
-					vertexes: [{ x: xmm, y: ypp, z: zpp }, { x: xpp, y: ypp, z: zpp }, { x: xpp, y: ymm, z: zpp }, { x: xmm, y: ymm, z: zpp }],
-					enabled: frame.back.visible
-				}
-			]
+			faces: [{ // bottom
+				fill: H.color(frame.back.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xpp,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xmm,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xm,
+					y: yp,
+					z: zp
+				}, {
+					x: xp,
+					y: yp,
+					z: zp
+				}],
+				enabled: frame.back.visible && !frame.bottom.visible
+			},
+			{ // top
+				fill: H.color(frame.back.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xp,
+					y: ym,
+					z: zp
+				}, {
+					x: xm,
+					y: ym,
+					z: zp
+				}],
+				enabled: frame.back.visible && !frame.top.visible
+			},
+			{ // left
+				fill: H.color(frame.back.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xm,
+					y: ym,
+					z: zp
+				}, {
+					x: xm,
+					y: yp,
+					z: zp
+				}],
+				enabled: frame.back.visible && !frame.left.visible
+			},
+			{ // right
+				fill: H.color(frame.back.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xpp,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xp,
+					y: yp,
+					z: zp
+				}, {
+					x: xp,
+					y: ym,
+					z: zp
+				}],
+				enabled: frame.back.visible && !frame.right.visible
+			},
+			{ // front
+				fill: H.color(frame.back.color).get(),
+				vertexes: [{
+					x: xm,
+					y: ym,
+					z: zp
+				}, {
+					x: xp,
+					y: ym,
+					z: zp
+				}, {
+					x: xp,
+					y: yp,
+					z: zp
+				}, {
+					x: xm,
+					y: yp,
+					z: zp
+				}],
+				enabled: frame.back.visible
+			},
+			{ // back
+				fill: H.color(frame.back.color).get(),
+				vertexes: [{
+					x: xmm,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zpp
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zpp
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zpp
+				}],
+				enabled: frame.back.visible
+			}]
 		});
 		this.frameShapes.front[verb]({
 			'class': 'highcharts-3d-frame highcharts-3d-frame-front',
 			zIndex: frame.front.frontFacing ? -1000 : 1000,
-			faces: [
-				{ // bottom
-					fill: H.color(frame.front.color).brighten(0.1).get(),
-					vertexes: [{ x: xmm, y: ypp, z: zmm }, { x: xpp, y: ypp, z: zmm }, { x: xp, y: yp, z: zm }, { x: xm, y: yp, z: zm }],
-					enabled: frame.front.visible && !frame.bottom.visible
-				},
-				{ // top
-					fill: H.color(frame.front.color).brighten(0.1).get(),
-					vertexes: [{ x: xpp, y: ymm, z: zmm }, { x: xmm, y: ymm, z: zmm }, { x: xm, y: ym, z: zm }, { x: xp, y: ym, z: zm }],
-					enabled: frame.front.visible && !frame.top.visible
-				},
-				{ // left
-					fill: H.color(frame.front.color).brighten(-0.1).get(),
-					vertexes: [{ x: xmm, y: ymm, z: zmm }, { x: xmm, y: ypp, z: zmm }, { x: xm, y: yp, z: zm }, { x: xm, y: ym, z: zm }],
-					enabled: frame.front.visible && !frame.left.visible
-				},
-				{ // right
-					fill: H.color(frame.front.color).brighten(-0.1).get(),
-					vertexes: [{ x: xpp, y: ypp, z: zmm }, { x: xpp, y: ymm, z: zmm }, { x: xp, y: ym, z: zm }, { x: xp, y: yp, z: zm }],
-					enabled: frame.front.visible && !frame.right.visible
-				},
-				{ // front
-					fill: H.color(frame.front.color).get(),
-					vertexes: [{ x: xp, y: ym, z: zm }, { x: xm, y: ym, z: zm }, { x: xm, y: yp, z: zm }, { x: xp, y: yp, z: zm }],
-					enabled: frame.front.visible
-				},
-				{ // back
-					fill: H.color(frame.front.color).get(),
-					vertexes: [{ x: xpp, y: ypp, z: zmm }, { x: xmm, y: ypp, z: zmm }, { x: xmm, y: ymm, z: zmm }, { x: xpp, y: ymm, z: zmm }],
-					enabled: frame.front.visible
-				}
-			]
+			faces: [{ // bottom
+				fill: H.color(frame.front.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xp,
+					y: yp,
+					z: zm
+				}, {
+					x: xm,
+					y: yp,
+					z: zm
+				}],
+				enabled: frame.front.visible && !frame.bottom.visible
+			},
+			{ // top
+				fill: H.color(frame.front.color).brighten(0.1).get(),
+				vertexes: [{
+					x: xpp,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xm,
+					y: ym,
+					z: zm
+				}, {
+					x: xp,
+					y: ym,
+					z: zm
+				}],
+				enabled: frame.front.visible && !frame.top.visible
+			},
+			{ // left
+				fill: H.color(frame.front.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xmm,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xmm,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xm,
+					y: yp,
+					z: zm
+				}, {
+					x: xm,
+					y: ym,
+					z: zm
+				}],
+				enabled: frame.front.visible && !frame.left.visible
+			},
+			{ // right
+				fill: H.color(frame.front.color).brighten(-0.1).get(),
+				vertexes: [{
+					x: xpp,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xp,
+					y: ym,
+					z: zm
+				}, {
+					x: xp,
+					y: yp,
+					z: zm
+				}],
+				enabled: frame.front.visible && !frame.right.visible
+			},
+			{ // front
+				fill: H.color(frame.front.color).get(),
+				vertexes: [{
+					x: xp,
+					y: ym,
+					z: zm
+				}, {
+					x: xm,
+					y: ym,
+					z: zm
+				}, {
+					x: xm,
+					y: yp,
+					z: zm
+				}, {
+					x: xp,
+					y: yp,
+					z: zm
+				}],
+				enabled: frame.front.visible
+			},
+			{ // back
+				fill: H.color(frame.front.color).get(),
+				vertexes: [{
+					x: xpp,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xmm,
+					y: ypp,
+					z: zmm
+				}, {
+					x: xmm,
+					y: ymm,
+					z: zmm
+				}, {
+					x: xpp,
+					y: ymm,
+					z: zmm
+				}],
+				enabled: frame.front.visible
+			}]
 		});
 	}
-	
-	return proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 Chart.prototype.retrieveStacks = function (stacking) {
@@ -695,7 +1275,10 @@ Chart.prototype.retrieveStacks = function (stacking) {
 		i = 1;
 
 	each(this.series, function (s) {
-		stackNumber = pick(s.options.stack, (stacking ? 0 : series.length - 1 - s.index)); // #3841, #4532
+		stackNumber = pick(
+			s.options.stack,
+			(stacking ? 0 : series.length - 1 - s.index)
+		); // #3841, #4532
 		if (!stacks[stackNumber]) {
 			stacks[stackNumber] = { series: [s], position: i };
 			i++;
@@ -729,12 +1312,42 @@ Chart.prototype.get3dFrame = function () {
 			}
 			return 0;
 		},
-		bottomOrientation = faceOrientation([{ x: xm, y: yp, z: zp }, { x: xp, y: yp, z: zp }, { x: xp, y: yp, z: zm }, { x: xm, y: yp, z: zm }]),
-		topOrientation    = faceOrientation([{ x: xm, y: ym, z: zm }, { x: xp, y: ym, z: zm }, { x: xp, y: ym, z: zp }, { x: xm, y: ym, z: zp }]),
-		leftOrientation   = faceOrientation([{ x: xm, y: ym, z: zm }, { x: xm, y: ym, z: zp }, { x: xm, y: yp, z: zp }, { x: xm, y: yp, z: zm }]),
-		rightOrientation  = faceOrientation([{ x: xp, y: ym, z: zp }, { x: xp, y: ym, z: zm }, { x: xp, y: yp, z: zm }, { x: xp, y: yp, z: zp }]),
-		frontOrientation  = faceOrientation([{ x: xm, y: yp, z: zm }, { x: xp, y: yp, z: zm }, { x: xp, y: ym, z: zm }, { x: xm, y: ym, z: zm }]),
-		backOrientation   = faceOrientation([{ x: xm, y: ym, z: zp }, { x: xp, y: ym, z: zp }, { x: xp, y: yp, z: zp }, { x: xm, y: yp, z: zp }]),
+		bottomOrientation = faceOrientation([
+			{ x: xm, y: yp, z: zp },
+			{ x: xp, y: yp, z: zp },
+			{ x: xp, y: yp, z: zm },
+			{ x: xm, y: yp, z: zm }
+		]),
+		topOrientation	= faceOrientation([
+			{ x: xm, y: ym, z: zm },
+			{ x: xp, y: ym, z: zm },
+			{ x: xp, y: ym, z: zp },
+			{ x: xm, y: ym, z: zp }
+		]),
+		leftOrientation   = faceOrientation([
+			{ x: xm, y: ym, z: zm },
+			{ x: xm, y: ym, z: zp },
+			{ x: xm, y: yp, z: zp },
+			{ x: xm, y: yp, z: zm }
+		]),
+		rightOrientation  = faceOrientation([
+			{ x: xp, y: ym, z: zp },
+			{ x: xp, y: ym, z: zm },
+			{ x: xp, y: yp, z: zm },
+			{ x: xp, y: yp, z: zp }
+		]),
+		frontOrientation  = faceOrientation([
+			{ x: xm, y: yp, z: zm },
+			{ x: xp, y: yp, z: zm },
+			{ x: xp, y: ym, z: zm },
+			{ x: xm, y: ym, z: zm }
+		]),
+		backOrientation   = faceOrientation([
+			{ x: xm, y: ym, z: zp },
+			{ x: xp, y: ym, z: zp },
+			{ x: xp, y: yp, z: zp },
+			{ x: xm, y: yp, z: zp }
+		]),
 		defaultShowBottom = false,
 		defaultShowTop = false,
 		defaultShowLeft = false,
@@ -793,8 +1406,8 @@ Chart.prototype.get3dFrame = function () {
 		};
 	};
 
-	// docs @TODO: Add all frame options (left, right, top, bottom, front, back) to
-	// apioptions JSDoc once the new system is up.
+	// docs @TODO: Add all frame options (left, right, top, bottom, front, back)
+	// to apioptions JSDoc once the new system is up.
 	var ret = {
 		// FIXME: Previously, left/right, top/bottom and front/back pairs shared
 		// size and color.
@@ -845,59 +1458,126 @@ Chart.prototype.get3dFrame = function () {
 	};
 
 
-	// Decide the bast place to put axis title/labels based on the visible faces.
-	// Ideally, The labels can only be on the edge between a visible face and an invisble one.
-	// Also, the Y label should be one the left-most edge (right-most if opposite),
+	// Decide the bast place to put axis title/labels based on the visible
+	// faces. Ideally, The labels can only be on the edge between a visible face
+	// and an invisble one. Also, the Y label should be one the left-most edge
+	// (right-most if opposite),
 	if (options3d.axisLabelPosition === 'auto') {
 		var isValidEdge = function (face1, face2) {
-			return (face1.visible !== face2.visible) ||
-				(face1.visible && face2.visible && (face1.frontFacing !== face2.frontFacing));
+			return (
+				(face1.visible !== face2.visible) ||
+				(
+					face1.visible &&
+					face2.visible &&
+					(face1.frontFacing !== face2.frontFacing)
+				)
+			);
 		};
 
 		var yEdges = [];
 		if (isValidEdge(ret.left, ret.front)) {
-			yEdges.push({ y: (ym + yp) / 2, x: xm, z: zm, xDir: { x: 1, y: 0, z: 0 } });
+			yEdges.push({
+				y: (ym + yp) / 2,
+				x: xm,
+				z: zm,
+				xDir: { x: 1, y: 0, z: 0 }
+			});
 		}
 		if (isValidEdge(ret.left, ret.back)) {
-			yEdges.push({ y: (ym + yp) / 2, x: xm, z: zp, xDir: { x: 0, y: 0, z: -1 } });
+			yEdges.push({
+				y: (ym + yp) / 2,
+				x: xm,
+				z: zp,
+				xDir: { x: 0, y: 0, z: -1 }
+			});
 		}
 		if (isValidEdge(ret.right, ret.front)) {
-			yEdges.push({ y: (ym + yp) / 2, x: xp, z: zm, xDir: { x: 0, y: 0, z: 1 } });
+			yEdges.push({
+				y: (ym + yp) / 2,
+				x: xp,
+				z: zm,
+				xDir: { x: 0, y: 0, z: 1 }
+			});
 		}
 		if (isValidEdge(ret.right, ret.back)) {
-			yEdges.push({ y: (ym + yp) / 2, x: xp, z: zp, xDir: { x: -1, y: 0, z: 0 } });
+			yEdges.push({
+				y: (ym + yp) / 2,
+				x: xp,
+				z: zp,
+				xDir: { x: -1, y: 0, z: 0 }
+			});
 		}
 
 		var xBottomEdges = [];
 		if (isValidEdge(ret.bottom, ret.front)) {
-			xBottomEdges.push({ x: (xm + xp) / 2, y: yp, z: zm, xDir: { x: 1, y: 0, z: 0 } });
+			xBottomEdges.push({
+				x: (xm + xp) / 2,
+				y: yp,
+				z: zm,
+				xDir: { x: 1, y: 0, z: 0 }
+			});
 		}
 		if (isValidEdge(ret.bottom, ret.back)) {
-			xBottomEdges.push({ x: (xm + xp) / 2, y: yp, z: zp, xDir: { x: -1, y: 0, z: 0 } });
+			xBottomEdges.push({
+				x: (xm + xp) / 2,
+				y: yp,
+				z: zp,
+				xDir: { x: -1, y: 0, z: 0 }
+			});
 		}
 
 		var xTopEdges = [];
 		if (isValidEdge(ret.top, ret.front)) {
-			xTopEdges.push({ x: (xm + xp) / 2, y: ym, z: zm, xDir: { x: 1, y: 0, z: 0 } });
+			xTopEdges.push({
+				x: (xm + xp) / 2,
+				y: ym,
+				z: zm,
+				xDir: { x: 1, y: 0, z: 0 }
+			});
 		}
 		if (isValidEdge(ret.top, ret.back)) {
-			xTopEdges.push({ x: (xm + xp) / 2, y: ym, z: zp, xDir: { x: -1, y: 0, z: 0 } });
+			xTopEdges.push({
+				x: (xm + xp) / 2,
+				y: ym,
+				z: zp,
+				xDir: { x: -1, y: 0, z: 0 }
+			});
 		}
 
 		var zBottomEdges = [];
 		if (isValidEdge(ret.bottom, ret.left)) {
-			zBottomEdges.push({ z: (zm + zp) / 2, y: yp, x: xm, xDir: { x: 0, y: 0, z: -1 } });
+			zBottomEdges.push({
+				z: (zm + zp) / 2,
+				y: yp,
+				x: xm,
+				xDir: { x: 0, y: 0, z: -1 }
+			});
 		}
 		if (isValidEdge(ret.bottom, ret.right)) {
-			zBottomEdges.push({ z: (zm + zp) / 2, y: yp, x: xp, xDir: { x: 0, y: 0, z: 1 } });
+			zBottomEdges.push({
+				z: (zm + zp) / 2,
+				y: yp,
+				x: xp,
+				xDir: { x: 0, y: 0, z: 1 }
+			});
 		}
 
 		var zTopEdges = [];
 		if (isValidEdge(ret.top, ret.left)) {
-			zTopEdges.push({ z: (zm + zp) / 2, y: ym, x: xm, xDir: { x: 0, y: 0, z: -1 } });
+			zTopEdges.push({
+				z: (zm + zp) / 2,
+				y: ym,
+				x: xm,
+				xDir: { x: 0, y: 0, z: -1 }
+			});
 		}
 		if (isValidEdge(ret.top, ret.right)) {
-			zTopEdges.push({ z: (zm + zp) / 2, y: ym, x: xp, xDir: { x: 0, y: 0, z: 1 } });
+			zTopEdges.push({
+				z: (zm + zp) / 2,
+				y: ym,
+				x: xp,
+				xDir: { x: 0, y: 0, z: 1 }
+			});
 		}
 
 		var pickEdge = function (edges, axis, mult) {
@@ -909,9 +1589,18 @@ Chart.prototype.get3dFrame = function () {
 			var best = 0,
 				projections = perspective(edges, chart, false);
 			for (var i = 1; i < projections.length; i++) {
-				if (mult * projections[i][axis] > mult * projections[best][axis]) {
+				if (
+					mult * projections[i][axis] >
+					mult * projections[best][axis]
+				) {
 					best = i;
-				} else if ((mult * projections[i][axis] === mult * projections[best][axis]) && (projections[i].z < projections[best].z)) {
+				} else if (
+					(
+						mult * projections[i][axis] ===
+						mult * projections[best][axis]
+					) &&
+					(projections[i].z < projections[best].z)
+				) {
 					best = i;
 				}
 			}
@@ -942,8 +1631,20 @@ Chart.prototype.get3dFrame = function () {
 				'bottom': { y: yp, z: zm, xDir: { x: 1, y: 0, z: 0 } }
 			},
 			z: {
-				'top': { x: defaultShowLeft ? xp : xm, y: ym, xDir: defaultShowLeft ? { x: 0, y: 0, z: 1 } : { x: 0, y: 0, z: -1 } },
-				'bottom': { x: defaultShowLeft ? xp : xm, y: yp, xDir: defaultShowLeft ? { x: 0, y: 0, z: 1 } : { x: 0, y: 0, z: -1 } }
+				'top': {
+					x: defaultShowLeft ? xp : xm,
+					y: ym,
+					xDir: defaultShowLeft ?
+						{ x: 0, y: 0, z: 1 } :
+						{ x: 0, y: 0, z: -1 }
+				},
+				'bottom': {
+					x: defaultShowLeft ? xp : xm,
+					y: yp,
+					xDir: defaultShowLeft ?
+						{ x: 0, y: 0, z: 1 } :
+						{ x: 0, y: 0, z: -1 }
+				}
 			}
 		};
 	}

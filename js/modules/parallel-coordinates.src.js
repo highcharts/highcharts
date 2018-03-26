@@ -5,7 +5,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Axis.js';
@@ -15,11 +15,14 @@ import '../parts/Series.js';
 /**
  * Extensions for parallel coordinates plot.
  */
-var SeriesProto = H.Series.prototype,
-	ChartProto = H.Chart.prototype,
+var Axis = H.Axis,
+	Chart = H.Chart,
+	SeriesProto = H.Series.prototype,
+	ChartProto = Chart.prototype,
 	AxisProto = H.Axis.prototype;
 
-var pick = H.pick,
+var addEvent = H.addEvent,
+	pick = H.pick,
 	each = H.each,
 	wrap = H.wrap,
 	merge = H.merge,
@@ -124,8 +127,9 @@ H.setOptions({
 /**
  * Initialize parallelCoordinates
  */
-wrap(ChartProto, 'init', function (proceed, options, callback) {
-	var defaultyAxis = splat(options.yAxis || {}),
+addEvent(Chart, 'init', function (e) {
+	var options = e.args[0],
+		defaultyAxis = splat(options.yAxis || {}),
 		yAxisLength = defaultyAxis.length,
 		newYAxes = [];
 	/**
@@ -147,14 +151,14 @@ wrap(ChartProto, 'init', function (proceed, options, callback) {
 			newYAxes.push({});
 		}
 
-		options = merge(
-			{
-				legend: {
-					enabled: false
-				}
-			},
+		if (!options.legend) {
+			options.legend = {};
+		}
+		options.legend.enabled = false;
+		merge(
+			true,
 			options,
-			// Disable boost:
+			// Disable boost
 			{
 				boost: {
 					seriesThreshold: Number.MAX_SAFE_INTEGER
@@ -173,14 +177,13 @@ wrap(ChartProto, 'init', function (proceed, options, callback) {
 			splat(options.xAxis || {})[0]
 		);
 	}
-
-	return proceed.call(this, options, callback);
 });
 
 /**
  * Initialize parallelCoordinates
  */
-wrap(ChartProto, 'update', function (proceed, options) {
+addEvent(Chart, 'update', function (e) {
+	var options = e.options;
 	if (options.chart) {
 		if (defined(options.chart.parallelCoordinates)) {
 			this.hasParallelCoordinates = options.chart.parallelCoordinates;
@@ -196,8 +199,6 @@ wrap(ChartProto, 'update', function (proceed, options) {
 			});
 		}
 	}
-
-	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
@@ -240,12 +241,10 @@ AxisProto.keepProps.push('parallelPosition');
 /**
  * Update default options with predefined for a parallel coords.
  */
-wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
+addEvent(Axis, 'afterSetOptions', function (e) {
 	var axis = this,
 		chart = axis.chart,
 		axisPosition = ['left', 'width', 'height', 'top'];
-
-	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
 	if (chart.hasParallelCoordinates) {
 		if (chart.inverted) {
@@ -256,13 +255,13 @@ wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
 			axis.options = merge(
 				axis.options,
 				defaultXAxisOptions,
-				userOptions
+				e.userOptions
 			);
 		} else {
 			axis.options = merge(
 				axis.options,
 				axis.chart.options.chart.parallelAxes,
-				userOptions
+				e.userOptions
 			);
 			axis.parallelPosition = pick(
 				axis.parallelPosition,
@@ -281,7 +280,7 @@ wrap(AxisProto, 'setOptions', function (proceed, userOptions) {
  * Consider:
  * - using series.points instead of series.yData
  */
-wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
+addEvent(Axis, 'getSeriesExtremes', function (e) {
 	if (this.chart && this.chart.hasParallelCoordinates && !this.isXAxis) {
 		var index = this.parallelPosition,
 			currentPoints = [];
@@ -293,8 +292,8 @@ wrap(AxisProto, 'getSeriesExtremes', function (proceed) {
 		});
 		this.dataMin = arrayMin(currentPoints);
 		this.dataMax = arrayMax(currentPoints);
-	} else {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+		e.preventDefault();
 	}
 });
 
@@ -343,9 +342,7 @@ wrap(SeriesProto, 'bindAxes', function (proceed) {
 /**
  * Translate each point using corresponding yAxis.
  */
-wrap(SeriesProto, 'translate', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
+addEvent(H.Series, 'afterTranslate', function () {
 	var series = this,
 		chart = this.chart,
 		points = series.points,
@@ -389,17 +386,15 @@ wrap(SeriesProto, 'translate', function (proceed) {
 /**
  * On destroy, we need to remove series from each axis.series
  */
-wrap(SeriesProto, 'destroy', function (proceed) {
+H.addEvent(H.Series, 'destroy', function () {
 	if (this.chart.hasParallelCoordinates) {
-		var series = this;
 		each(this.chart.axes || [], function (axis) {
 			if (axis && axis.series) {
-				erase(axis.series, series);
+				erase(axis.series, this);
 				axis.isDirty = axis.forceRedraw = true;
 			}
-		});
+		}, this);
 	}
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 function addFormattedValue(proceed) {

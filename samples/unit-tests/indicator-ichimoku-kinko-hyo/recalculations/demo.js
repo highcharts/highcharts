@@ -5,6 +5,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         series: [{
             id: 'main',
             type: 'candlestick',
+            dataGrouping: {
+                enabled: false
+            },
             data: [
                 [1285891200000, 40.88, 40.94, 40.19, 40.36, 112101444],
                 [1286150400000, 40.23, 40.41, 39.68, 39.81, 108824968],
@@ -295,7 +298,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             ]
         }, {
             type: 'ikh',
-            linkedTo: 'main'
+            linkedTo: 'main',
+            dataGrouping: {
+                enabled: false
+            }
         }]
     });
 

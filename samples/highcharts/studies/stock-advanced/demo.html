@@ -5,6 +5,7 @@
 
 <script src="https://code.highcharts.com/modules/annotations.js"></script>
 <script src="https://code.highcharts.com/modules/drag-panes.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
 
 <script src="https://code.highcharts.com/indicators/indicators.js"></script>
 
@@ -30,15 +31,16 @@
 
 	<div id="demo">
     <div id="menu-side">
-      <button id="annotation-line"></button>
-      <button id="annotation-rect"></button>
-      <button id="annotation-circle"></button>
-      <button id="annotation-arrow"></button>
-      <button id="annotation-tunnel"></button>
-      <button id="annotation-text"></button>
-      <button id="annotation-fibonacci"></button>
-      <button id="annotation-flag"></button>
-      <button id="annotation-feature"></button>
+		<button id="annotation-selection" data-description="Select an annotation. Click on the annotation and it will be outlined."></button>
+		<button id="annotation-line" data-description="Draw a line. Click for the start point, click again for the end point."></button>
+		<!-- <button id="annotation-rect" data-description="Add a rectangle. It sticks to the series when candle is clicked. It is not related to any point on a chart otherwise and it won't scale while scaling the chart."></button>
+		<button id="annotation-circle" data-description="Add a circle. It sticks to the series when candle is clicked. It is not related to any point on a chart otherwise and it won't scale while scaling the chart."></button> -->
+		<button id="annotation-arrow" data-description="Draw an arrow. Click for the start point, click again for the end point."></button>
+		<button id="annotation-tunnel" data-description="Draw a tunnel. Click on two candles to show a tunnel between them."></button>
+		<button id="annotation-text" data-description="Add a text annotation. Click on any point in the plot area to place a text there."></button>
+		<button id="annotation-fibonacci" data-description="Draw Fibonacci retracements. Click on two points to show retracement lines between them."></button>
+		<button id="annotation-flag" data-description="Add various flags to the chart. Click on any point on a series to add a flag."></button>
+		<!-- <button id="annotation-feature" data-description="Example of adding any type of object to the chart."></button> -->
       <div id="submenu">
 		  <div class="left">
 		    <div class="empty">
@@ -160,8 +162,8 @@
 		</div>
 	</div>
 	<div id="highcharts-manage-chart">
-		<button id="highcharts-save" title="Save chart"></button>
-		<button id="highcharts-reset" title="Clear chart"></button>
+		<button id="highcharts-save" data-tt-below="true" data-description="Saves your chart in your browser's memory. If you come back later, the chart will be still here."></button>
+		<button id="highcharts-reset" data-tt-below="true" data-description="Removes all annotations and indicators from the chart."></button>
 	</div>
 
 	<div id="container"></div>
@@ -176,37 +178,63 @@
       <fieldset>
         <legend>Background color</legend>
         <div>
-          <input type='radio' value='rgba(0, 0, 0, 0.75)' name='background-color' checked>
-          <label>black</label>
+          <label>
+          	<input type='radio' value='rgba(0, 0, 0, 0.75)' name='background-color' checked>
+          	Black
+          </label>
         </div>
         <div>
-          <input type='radio' value='rgba(255, 0, 0, 0.75)' name='background-color'>
-          <label>red</label>
+          <label>
+          	<input type='radio' value='rgba(255, 0, 0, 0.75)' name='background-color'>
+          	Red
+          </label>
         </div>
         <div>
-          <input type='radio' value='rgba(0, 0, 255, 0.75)' name='background-color'>
-          <label>blue</label>
+          <label>
+          	<input type='radio' value='rgba(0, 0, 255, 0.75)' name='background-color'>
+          	Blue
+          </label>
         </div>
       </fieldset>
 
       <fieldset>
         <legend>Shape</legend>
         <div>
-          <input type='radio' name='shape' value='callout' checked>
-          <label>Callout</label>
+          <label>
+          	<input type='radio' name='shape' value='callout' checked>
+          	Callout
+          </label>
         </div>
         <div>
-          <input type='radio' name='shape' value='connector'>
-          <label>Connector</label>
+          <label>
+          	<input type='radio' name='shape' value='connector'>
+          	Connector
+          </label>
         </div>
         <div>
-          <input type='radio' name='shape' value='circle'>
-          <label>Circle</label>
+          <label>
+          	<input type='radio' name='shape' value='circle'>
+          	Circle
+          </label>
         </div>
       </fieldset>
 
       <input type='hidden' id='x' />
       <input type='hidden' id='y' />
+      <input type='submit' style='position:absolute; top:-1000px;' />
+    </form>
+  </div>
+  <div id='annotation-flag-form'>
+    <form id="add-flag-annotation">
+      <fieldset>
+        <legend>Title</legend>
+        <input type='text' id='flag-title' style='width: 50px' maxlength='3' />
+      </fieldset>
+      <fieldset>
+        <legend>Tooltip text</legend>
+        <input type='text' id='flag-text' style='width: 150px' />
+      </fieldset>
+
       <input type='submit' style='position:absolute; top:-1000px;' />
     </form>
   </div> 

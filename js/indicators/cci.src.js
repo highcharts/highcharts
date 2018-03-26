@@ -32,7 +32,8 @@ function meanDeviation(arr, sma) {
  */
 seriesType('cci', 'sma', 
 	/**
-	 * Commodity Channel Index (CCI). This series requires `linkedTo` option to be set.
+	 * Commodity Channel Index (CCI). This series requires `linkedTo` option to
+	 * be set.
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -41,7 +42,6 @@ seriesType('cci', 'sma',
 	 * @optionparent plotOptions.cci
 	 */
 	{
-		name: 'CCI (14)',
 		params: {
 			period: 14
 		}
@@ -60,7 +60,11 @@ seriesType('cci', 'sma',
 				CCIPoint, p, len, smaTP, TPtemp, meanDev, i;
 
 			// CCI requires close value
-			if (xVal.length <= period || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (
+				xVal.length <= period ||
+				!isArray(yVal[0]) ||
+				yVal[0].length !== 4
+			) {
 				return false;
 			}
 			
@@ -99,11 +103,6 @@ seriesType('cci', 'sma',
 /**
  * A `CCI` series. If the [type](#series.cci.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to 
- * [plotOptions.cci](#plotOptions.cci).
  * 
  * @type {Object}
  * @since 6.0.0

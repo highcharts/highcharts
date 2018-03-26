@@ -42,9 +42,9 @@ seriesType('streamgraph', 'areaspline', {
 		pointExtremes[0] -= stack.total / 2;
 		// Y value
 		pointExtremes[1] -= stack.total / 2;
-		this.stackedYData[i] = this.index === 0 ?
-			pointExtremes[1] :
-			pointExtremes[0];
+
+		// Record the Y data for use when getting axis extremes
+		this.stackedYData[i] = pointExtremes;
 	}
 });
 
@@ -52,11 +52,6 @@ seriesType('streamgraph', 'areaspline', {
 /**
  * A `streamgraph` series. If the [type](#series.streamgraph.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * streamgraph](#plotOptions.streamgraph).
  * 
  * @type {Object}
  * @extends series,plotOptions.streamgraph
@@ -112,11 +107,16 @@ seriesType('streamgraph', 'areaspline', {
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts highstock
  * @apioption series.streamgraph.data
  */

@@ -7,10 +7,25 @@
 import H from '../parts/Globals.js';
 
 var each = H.each,
+	defined = H.defined,
 	seriesTypes = H.seriesTypes,
 	stableSort = H.stableSort;
 
 var onSeriesMixin = {
+
+	/**
+	 * Override getPlotBox. If the onSeries option is valid, return the plot box
+	 * of the onSeries, otherwise proceed as usual.
+	 */
+	getPlotBox: function () {
+		return H.Series.prototype.getPlotBox.call(
+			(
+				this.options.onSeries &&
+				this.chart.get(this.options.onSeries)
+			) || this
+		);
+	},
+
 	/**
 	 * Extend the translate method by placing the point on the related series
 	 */
@@ -31,6 +46,7 @@ var onSeriesMixin = {
 			step = onSeries && onSeries.options.step,
 			onData = onSeries && onSeries.points,
 			i = onData && onData.length,
+			inverted = chart.inverted,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
 			xOffset = 0,
@@ -101,13 +117,21 @@ var onSeriesMixin = {
 			// Undefined plotY means the point is either on axis, outside series
 			// range or hidden series. If the series is outside the range of the
 			// x axis it should fall through with an undefined plotY, but then
-			// we must remove the shapeArgs (#847).
-			if (point.plotY === undefined) {
+			// we must remove the shapeArgs (#847). For inverted charts, we need
+			// to calculate position anyway, because series.invertGroups is not
+			// defined
+			if (point.plotY === undefined || inverted) {
 				if (point.plotX >= 0 && point.plotX <= xAxis.len) {
-					// we're inside xAxis range
-					point.plotY = chart.chartHeight - xAxis.bottom -
-						(xAxis.opposite ? xAxis.height : 0) +
-						xAxis.offset - yAxis.top; // #3517
+					// We're inside xAxis range
+					if (inverted) {
+						point.plotY = xAxis.translate(point.x, 0, 1, 0, 1);
+						point.plotX = defined(point.y) ?
+							yAxis.translate(point.y, 0, 0, 0, 1) : 0;
+					} else {
+						point.plotY = chart.chartHeight - xAxis.bottom -
+							(xAxis.opposite ? xAxis.height : 0) +
+							xAxis.offset - yAxis.top; // #3517
+					}
 				} else {
 					point.shapeArgs = {}; // 847
 				}
@@ -124,7 +148,7 @@ var onSeriesMixin = {
 			point.stackIndex = stackIndex; // #3639
 		});
 
-
+		this.onSeries = onSeries;
 	}
 };
 export default onSeriesMixin;

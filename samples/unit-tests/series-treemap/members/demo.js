@@ -37,7 +37,6 @@ QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
                     }
                 },
                 type: 'treemap',
-                levelMap: {},
                 options: {
                     states: {
                         hover: {},

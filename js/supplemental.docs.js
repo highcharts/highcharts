@@ -7,6 +7,20 @@
 /* eslint max-len: 0 */
 
 /**
+ * An optional scrollbar to display on the X axis in response to limiting
+ * the minimum and maximum of the axis values.
+ *
+ * In styled mode, all the presentational options for the scrollbar
+ * are replaced by the classes `.highcharts-scrollbar-thumb`, `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`, `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
+ *
+ * @extends scrollbar
+ * @sample {highstock} stock/yaxis/heatmap-scrollbars/ Heatmap with both scrollbars
+ * @since 4.2.6
+ * @product highstock
+ * @apioption xAxis.scrollbar
+ */
+
+/**
  * Whether to show the axis line and title when the axis has no data.
  *
  * @type {Boolean}
@@ -33,9 +47,9 @@
  * maximum is higher, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highcharts} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highcharts
+ * @product highcharts highstock
  * @apioption xAxis.softMax
  */
 
@@ -45,10 +59,9 @@
  * data minimum is lower, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highcharts} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
+ * @product highcharts highstock
  * @apioption xAxis.softMin
  */
 
@@ -70,8 +83,8 @@
 
 /**
  * The interval of the tick marks in axis units. When `null`, the tick
- * interval is computed to approximately follow the [tickPixelInterval](#xAxis.
- * tickPixelInterval) on linear and datetime axes. On categorized axes,
+ * interval is computed to approximately follow the [tickPixelInterval](
+ * #xAxis.tickPixelInterval) on linear and datetime axes. On categorized axes,
  * a `null` tickInterval will default to 1, one category. Note that
  * datetime axes are based on milliseconds, so for example an interval
  * of one day is expressed as `24 * 3600 * 1000`.
@@ -88,9 +101,10 @@
  * If the chart has multiple axes, the [alignTicks](#chart.alignTicks)
  * option may interfere with the `tickInterval` setting.
  *
- * @type {Number}
- * @see [tickPixelInterval](#xAxis.tickPixelInterval), [tickPositions](#xAxis.
- * tickPositions), [tickPositioner](#xAxis.tickPositioner)
+ * @type   {Number}
+ * @see    [tickPixelInterval](#xAxis.tickPixelInterval),
+ *         [tickPositions](#xAxis.tickPositions),
+ *         [tickPositioner](#xAxis.tickPositioner)
  * @sample {highcharts} highcharts/xaxis/tickinterval-5/ Tick interval of 5 on a linear axis
  * @sample {highstock} stock/xaxis/tickinterval/ Tick interval of 0.01 on Y axis
  * @default null
@@ -99,10 +113,10 @@
 
 /**
  * A callback function returning array defining where the ticks are
- * laid out on the axis. This overrides the default behaviour of [tickPixelInterval](#xAxis.
- * tickPixelInterval) and [tickInterval](#xAxis.tickInterval). The automatic
- * tick positions are accessible through `this.tickPositions` and can
- * be modified by the callback.
+ * laid out on the axis. This overrides the default behaviour of
+ * [tickPixelInterval](#xAxis.tickPixelInterval) and
+ * [tickInterval](#xAxis.tickInterval). The automatic tick positions are
+ * accessible through `this.tickPositions` and can be modified by the callback.
  *
  * @type {Function}
  * @see [tickPositions](#xAxis.tickPositions)
@@ -242,8 +256,8 @@
  */
 
 /**
- * A custom class name, in addition to the default `highcharts-plot-
- * band`, to apply to each individual band.
+ * A custom class name, in addition to the default `highcharts-plot-band`, to
+ * apply to each individual band.
  *
  * @type {String}
  * @since 5.0.0
@@ -449,8 +463,8 @@
  */
 
 /**
- * A custom class name, in addition to the default `highcharts-plot-
- * line`, to apply to each individual line.
+ * A custom class name, in addition to the default `highcharts-plot-line`, to
+ * apply to each individual line.
  *
  * @type {String}
  * @since 5.0.0
@@ -876,8 +890,8 @@
  * In a gauge chart, this option determines the inner radius of the
  * plot band that stretches along the perimeter. It can be given as
  * a percentage string, like `"100%"`, or as a pixel number, like `100`.
- * By default, the inner radius is controlled by the [thickness](#yAxis.
- * plotBands.thickness) option.
+ * By default, the inner radius is controlled by the [thickness](
+ * #yAxis.plotBands.thickness) option.
  *
  * @type {Number|String}
  * @sample {highcharts} highcharts/xaxis/plotbands-gauge Gauge plot band
@@ -1264,9 +1278,8 @@
 /**
  * CSS for the HTML inputs in the range selector.
  *
- * In styled mode, the inputs are styled by the `.highcharts-range-
- * input text` rule in SVG mode, and `input.highcharts-range-selector`
- * when active.
+ * In styled mode, the inputs are styled by the `.highcharts-range-input text`
+ * rule in SVG mode, and `input.highcharts-range-selector` when active.
  *
  * @type {CSSObject}
  * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
@@ -1387,8 +1400,8 @@
  */
 
 /**
- * Defined the time span for the button. Can be one of `"millisecond",
- * "second", "minute", "hour", "day", "week", "month", "ytd", "all"`.
+ * Defined the time span for the button. Can be one of `millisecond`,
+ * `second`, `minute`, `hour`, `day`, `week`, `month`, `ytd`, `all`.
  *
  * @validvalue ["millisecond", "second", "minute", "day", "week", "month", "ytd", "all"]
  * @type {String}
@@ -1431,8 +1444,8 @@
 
 
 /**
- * How many decimals to show for the `point.change` value when the `series.
- * compare` option is set. This is overridable in each series' tooltip
+ * How many decimals to show for the `point.change` value when the
+ * `series.compare` option is set. This is overridable in each series' tooltip
  * options object. The default is to preserve all decimals.
  *
  * @type {Number}
@@ -1608,15 +1621,14 @@
  */
 
 /**
- * A soft maximum for the axis. If the series data maximum is greater
+ * A soft maximum for the axis. If the series data maximum is less
  * than this, the axis will stay at this maximum, but if the series
  * data maximum is higher, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highstock highmaps
+ * @product highcharts highstock
  * @apioption yAxis.softMax
  */
 
@@ -1626,10 +1638,9 @@
  * data minimum is lower, the axis will flex to show all data.
  *
  * @type {Number}
- * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
- * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
+ * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highstock highmaps
+ * @product highcharts highstock
  * @apioption yAxis.softMin
  */
 
@@ -1838,8 +1849,8 @@
  */
 
 /**
- * Enables zooming by mouse wheel. By default it inherits the [enabled](#mapNavigation.
- * enabled) setting.
+ * Enables zooming by mouse wheel. By default it inherits the [enabled](
+ * #mapNavigation.enabled) setting.
  *
  * @type {Boolean}
  * @product highmaps
@@ -1850,8 +1861,8 @@
  * Whether to enable multitouch zooming. Note that if the chart covers
  * the viewport, this prevents the user from using multitouch and touchdrag
  * on the web page, so you should make sure the user is not trapped
- * inside the chart. By default it inherits the [enabled](#mapNavigation.
- * enabled) setting.
+ * inside the chart. By default it inherits the [enabled](
+ * #mapNavigation.enabled) setting.
  *
  * @type {Boolean}
  * @product highmaps

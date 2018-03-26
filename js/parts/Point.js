@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+	
 'use strict';
 import Highcharts from './Globals.js';
 import './Utilities.js';
@@ -22,7 +23,7 @@ var Point,
 /**
  * The Point object. The point objects are generated from the `series.data` 
  * configuration objects or raw numbers. They can be accessed from the
- * `Series.points` array. Other ways to instaniate points are through {@link
+ * `Series.points` array. Other ways to instantiate points are through {@link
  * Highcharts.Series#addPoint} or {@link Highcharts.Series#setData}.
  *
  * @class
@@ -94,6 +95,9 @@ Highcharts.Point.prototype = {
 		point.colorIndex = pick(point.colorIndex, colorIndex);
 
 		series.chart.pointCount++;
+
+		fireEvent(point, 'afterInit');
+		
 		return point;
 	},
 	/**
@@ -114,17 +118,27 @@ Highcharts.Point.prototype = {
 
 		// copy options directly to point
 		extend(point, options);
-		point.options = point.options ? extend(point.options, options) : options;
+		point.options = point.options ?
+			extend(point.options, options) :
+			options;
 
-		// Since options are copied into the Point instance, some accidental options must be shielded (#5681)
+		// Since options are copied into the Point instance, some accidental
+		// options must be shielded (#5681)
 		if (options.group) {
 			delete point.group;
 		}
 
-		// For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
+		// For higher dimension series types. For instance, for ranges, point.y
+		// is mapped to point.low.
 		if (pointValKey) {
 			point.y = point[pointValKey];
-		} else if (defined(point.name) && !defined(point.y) && series.yAxis && series.yAxis.hasNames && series.yAxis.nameToY) {
+		} else if (
+			defined(point.name) &&
+			!defined(point.y) &&
+			series.yAxis &&
+			series.yAxis.hasNames &&
+			series.yAxis.nameToY
+		) {
 			point.y = series.yAxis.nameToY(point);
 		}
 		point.isNull = pick(
@@ -137,9 +151,15 @@ Highcharts.Point.prototype = {
 			point.state = 'select';
 		}
 
-		// If no x is set by now, get auto incremented value. All points must have an
-		// x value, however the y value can be null to create a gap in the series
-		if ('name' in point && x === undefined && series.xAxis && series.xAxis.hasNames) {
+		// If no x is set by now, get auto incremented value. All points must
+		// have an x value, however the y value can be null to create a gap in
+		// the series
+		if (
+			'name' in point &&
+			x === undefined &&
+			series.xAxis &&
+			series.xAxis.hasNames
+		) {
 			point.x = series.xAxis.nameToX(point);
 		}
 		if (point.x === undefined && series) {
@@ -151,6 +171,31 @@ Highcharts.Point.prototype = {
 		}
 		
 		return point;
+	},
+
+	/**
+	 * Set a value in an object, on the property defined by key. The key
+	 * supports nested properties using dot notation. The function modifies the
+	 * input object and does not make a copy.
+	 *
+	 * @param  {Object} object The object to set the value on.
+	 * @param  {Mixed} value The value to set.
+	 * @param  {String} key Key to the property to set.
+	 *
+	 * @return {Object} The modified object.
+	 */
+	setNestedProperty: function (object, value, key) {
+		var nestedKeys = key.split('.');
+		H.reduce(nestedKeys, function (result, key, i, arr) {
+			var isLastKey = arr.length - 1 === i;
+			result[key] = (
+				isLastKey ?
+				value :
+				(H.isObject(result[key], true) ? result[key] : {})
+			);
+			return result[key];
+		}, object);
+		return object;
 	},
 
 	/**
@@ -189,8 +234,17 @@ Highcharts.Point.prototype = {
 				i++;
 			}
 			while (j < valueCount) {
-				if (!keys || options[i] !== undefined) { // Skip undefined positions for keys
-					ret[pointArrayMap[j]] = options[i];
+				// Skip undefined positions for keys
+				if (!keys || options[i] !== undefined) {
+					if (pointArrayMap[j].indexOf('.') > 0) {
+						// Handle nested keys, e.g. ['color.pattern.image']
+						// Avoid function call unless necessary.
+						H.Point.prototype.setNestedProperty(
+							ret, options[i], pointArrayMap[j]
+						);
+					} else {
+						ret[pointArrayMap[j]] = options[i];
+					}
 				}
 				i++;
 				j++;
@@ -198,8 +252,9 @@ Highcharts.Point.prototype = {
 		} else if (typeof options === 'object') {
 			ret = options;
 
-			// This is the fastest way to detect if there are individual point dataLabels that need
-			// to be considered in drawDataLabels. These can only occur in object configs.
+			// This is the fastest way to detect if there are individual point
+			// dataLabels that need to be considered in drawDataLabels. These
+			// can only occur in object configs.
 			if (options.dataLabels) {
 				series._hasPointLabels = true;
 			}
@@ -282,8 +337,8 @@ Highcharts.Point.prototype = {
 			point.onMouseOut();
 		}
 
-		// remove all events
-		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
+		// Remove all events
+		if (point.graphic || point.dataLabel) {
 			removeEvent(point);
 			point.destroyElements();
 		}
@@ -306,7 +361,13 @@ Highcharts.Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'connector', 'shadowGroup'],
+			props = [
+				'graphic',
+				'dataLabel',
+				'dataLabelUpper',
+				'connector',
+				'shadowGroup'
+			],
 			prop,
 			i = 6;
 		while (i--) {
@@ -355,13 +416,20 @@ Highcharts.Point.prototype = {
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
-		// Loop over the point array map and replace unformatted values with sprintf formatting markup
+		// Loop over the point array map and replace unformatted values with
+		// sprintf formatting markup
 		each(series.pointArrayMap || ['y'], function (key) {
 			key = '{point.' + key; // without the closing bracket
 			if (valuePrefix || valueSuffix) {
-				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
+				pointFormat = pointFormat.replace(
+					key + '}',
+					valuePrefix + key + '}' + valueSuffix
+				);
 			}
-			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
+			pointFormat = pointFormat.replace(
+				key + '}',
+				key + ':,.' + valueDecimals + 'f}'
+			);
 		});
 
 		return format(pointFormat, {
@@ -384,16 +452,27 @@ Highcharts.Point.prototype = {
 			seriesOptions = series.options;
 
 		// load event handlers on demand to save time on mouseover/out
-		if (seriesOptions.point.events[eventType] || (point.options && point.options.events && point.options.events[eventType])) {
+		if (
+			seriesOptions.point.events[eventType] ||
+			(
+				point.options &&
+				point.options.events &&
+				point.options.events[eventType]
+			)
+		) {
 			this.importEvents();
 		}
 
 		// add default handler if in selection mode
 		if (eventType === 'click' && seriesOptions.allowPointSelect) {
 			defaultFunction = function (event) {
-				// Control key is for Windows, meta (= Cmd key) for Mac, Shift for Opera
-				if (point.select) { // Could be destroyed by prior event handlers (#2911)
-					point.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
+				// Control key is for Windows, meta (= Cmd key) for Mac, Shift
+				// for Opera. 
+				if (point.select) { // #2911
+					point.select(
+						null,
+						event.ctrlKey || event.metaKey || event.shiftKey
+					);
 				}
 			};
 		}

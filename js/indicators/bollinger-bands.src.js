@@ -9,14 +9,16 @@ var each = H.each,
 	SMA = H.seriesTypes.sma;
 
 // Utils:
-function getStandardDeviation(arr, mean) {
+function getStandardDeviation(arr, index, isOHLC, mean) {
 	var variance = 0,
 		arrLen = arr.length,
 		std = 0,
-		i = 0;
+		i = 0,
+		value;
 
 	for (; i < arrLen; i++) {
-		variance += (arr[i][3] - mean) * (arr[i][3] - mean);
+		value = (isOHLC ? arr[i][index] : arr[i]) - mean;
+		variance += value * value;
 	}
 	variance = variance / (arrLen - 1);
 
@@ -26,8 +28,8 @@ function getStandardDeviation(arr, mean) {
 
 H.seriesType('bb', 'sma',
 	/**
-	 * Bollinger bands (BB). This series requires `linkedTo`
-	 * option to be set and should be loaded after `stock/indicators/indicators.js` file.
+	 * Bollinger bands (BB). This series requires the `linkedTo` option to be
+	 * set and should be loaded after the `stock/indicators/indicators.js` file.
 	 *
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -73,8 +75,8 @@ H.seriesType('bb', 'sma',
 				 */
 				lineWidth: 1,
 				/**
-				 * Color of the line.
-				 * If not set, it's inherited from [plotOptions.bb.color](#plotOptions.bb.color).
+				 * Color of the line. If not set, it's inherited from
+				 * [plotOptions.bb.color](#plotOptions.bb.color).
 				 *
 				 * @type {String}
 				 * @since 6.0.0
@@ -97,31 +99,7 @@ H.seriesType('bb', 'sma',
 			}
 		},
 		tooltip: {
-			/**
-			 * The HTML of the point's line in the tooltip. Variables are enclosed
-			 * by curly brackets. Available variables are point.x, point.y, series.
-			 * name and series.color and other properties on the same form. Furthermore,
-			 * point.y can be extended by the `tooltip.valuePrefix` and `tooltip.
-			 * valueSuffix` variables. This can also be overridden for each series,
-			 * which makes it a good hook for displaying units.
-			 *
-			 * In styled mode, the dot is colored by a class name rather
-			 * than the point color.
-			 *
-			 * @type {String}
-			 * @sample {highcharts} highcharts/tooltip/pointformat/ A different point format with value suffix
-			 * @sample {highmaps} maps/tooltip/format/ Format demo
-			 * @default
-			 *	<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>
-			 *		Top: {point.top}<br/>
-			 *		Middle: {point.middle}<br/>
-			 *		Bottom: {point.bottom}<br/>
-			 */
-			pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
-				'<b> {series.name}</b><br/>' +
-				'Top: {point.top}<br/>' +
-				'Middle: {point.middle}<br/>' +
-				'Bottom: {point.bottom}<br/>'
+			pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
 		},
 		marker: {
 			enabled: false
@@ -132,6 +110,7 @@ H.seriesType('bb', 'sma',
 	}, /** @lends Highcharts.Series.prototype */ {
 		pointArrayMap: ['top', 'middle', 'bottom'],
 		pointValKey: 'middle',
+		nameComponents: ['period', 'standardDeviation'],
 		init: function () {
 			SMA.prototype.init.apply(this, arguments);
 
@@ -159,11 +138,17 @@ H.seriesType('bb', 'sma',
 			SMA.prototype.translate.apply(indicator, arguments);
 
 			each(indicator.points, function (point) {
-				each([point.top, point.middle, point.bottom], function (value, i) {
-					if (value !== null) {
-						point[translatedBB[i]] = indicator.yAxis.toPixels(value, true);
+				each(
+					[point.top, point.middle, point.bottom],
+					function (value, i) {
+						if (value !== null) {
+							point[translatedBB[i]] = indicator.yAxis.toPixels(
+								value,
+								true
+							);
+						}
 					}
-				});
+				);
 			});
 		},
 		drawGraph: function () {
@@ -198,7 +183,10 @@ H.seriesType('bb', 'sma',
 			// Modify options and generate lines:
 			each(['topLine', 'bottomLine'], function (lineName, i) {
 				indicator.points = deviations[i];
-				indicator.options = merge(middleLineOptions[lineName].styles, gappedExtend);
+				indicator.options = merge(
+					middleLineOptions[lineName].styles,
+					gappedExtend
+				);
 				indicator.graph = indicator['graph' + lineName];
 				SMA.prototype.drawGraph.call(indicator);
 
@@ -226,26 +214,37 @@ H.seriesType('bb', 'sma',
 				slicedX,
 				slicedY,
 				stdDev,
+				isOHLC,
 				point,
 				i;
 
-			// BB requires close value
-			if (xVal.length < period || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (xVal.length < period) {
 				return false;
 			}
+
+			isOHLC = isArray(yVal[0]);
 
 			for (i = period; i <= yValLen; i++) {
 				slicedX = xVal.slice(i - period, i);
 				slicedY = yVal.slice(i - period, i);
 
-				point = SMA.prototype.getValues.call(this, {
-					xData: slicedX,
-					yData: slicedY
-				}, params);
+				point = SMA.prototype.getValues.call(
+					this,
+					{
+						xData: slicedX,
+						yData: slicedY
+					},
+					params
+				);
 
 				date = point.xData[0];
 				ML = point.yData[0];
-				stdDev = getStandardDeviation(slicedY, ML);
+				stdDev = getStandardDeviation(
+					slicedY,
+					params.index,
+					isOHLC,
+					ML
+				);
 				TL = ML + standardDeviation * stdDev;
 				BL = ML - standardDeviation * stdDev;
 
@@ -266,11 +265,6 @@ H.seriesType('bb', 'sma',
 /**
  * A bollinger bands indicator. If the [type](#series.bb.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- *
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * bb](#plotOptions.bb).
  *
  * @type {Object}
  * @since 6.0.0

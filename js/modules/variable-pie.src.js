@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -115,7 +115,7 @@ seriesType('variablepie', 'pie',
 		sizeBy: 'area',
 
 		tooltip: {
-			pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>Value: {point.y}<br/>Size: {point.z}<br/>' // eslint-disable-line max-len
+			pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>Value: {point.y}<br/>Size: {point.z}<br/>'
 		}
 	}, {
 		pointArrayMap: ['y', 'z'],
@@ -294,10 +294,13 @@ seriesType('variablepie', 'pie',
 			series.getX = function (y, left, point) {
 				var radii = point.series.radii[point.index];
 				angle = Math.asin(
-					Math.min(
-						(y - positions[1]) /
-						(radii + point.labelDistance),
-						1
+					Math.max(	// #7663
+						Math.min(
+							(y - positions[1]) /
+							(radii + point.labelDistance),
+							1
+						),
+						-1
 					)
 				);
 				return positions[0] +
@@ -406,11 +409,6 @@ seriesType('variablepie', 'pie',
 /**
  * A `variablepie` series. If the [type](#series.variablepie.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * variablepie](#plotOptions.variablepie).
  * 
  * @type {Object}
  * @extends series,plotOptions.variablepie

@@ -288,8 +288,40 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
     });
 
     assert.ok(
-        chart.xAxis[0].ticks[3].label.getBBox().width <= 30, //40 - padding
+        chart.xAxis[0].ticks[3].label.getBBox().width <= 40,
         'Label width set correctly'
+    );
+
+});
+
+QUnit.test('Explicit textOverflow setting', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 250
+        },
+        xAxis: {
+            categories: ['Very long month name', 'Feb', 'Mar'],
+            labels: {
+                style: {
+                    textOverflow: 'ellipsis'
+                }
+            }
+        },
+        yAxis: {
+            visible: false
+        },
+        series: [{
+            data: [250.0, 71.5, 106.4],
+            type: 'bar',
+            colorByPoint: true,
+            showInLegend: false
+        }]
+
+    });
+
+    assert.ok(
+        chart.xAxis[0].ticks[0].label.getBBox().height <= 25,
+        'Label has correct ellipsis (#7968)'
     );
 
 });
@@ -377,5 +409,30 @@ QUnit.test('Handle overflow in polar charts (#7248)', function (assert) {
 
     chart.setSize(600);
     assertInside();
+
+});
+
+// Highcharts 4.1.3, Issue #3891:
+// Axis labels rotation does not work properly
+QUnit.test('Labels text height (#3891)', function (assert) {
+
+    $('#container').highcharts({
+        xAxis: {
+            labels: {
+                rotation: 270
+            },
+            categories: ['January', 'February', 'March']
+        },
+
+        series: [{
+            data: [1, 3, 2]
+        }]
+    });
+
+    assert.equal(
+        $('#container').highcharts().xAxis[0].ticks[0].label.rotation,
+        270,
+        'Rotation set to 270'
+    );
 
 });

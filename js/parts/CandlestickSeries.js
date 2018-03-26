@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -24,6 +25,23 @@ var defaultPlotOptions = H.defaultPlotOptions,
  * @optionparent plotOptions.candlestick
  */
 var candlestickOptions = {
+	
+	/**
+	 * The specific line color for up candle sticks. The default is to inherit
+	 * the general `lineColor` setting.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
+	 * @default null
+	 * @since 1.3.6
+	 * @product highstock
+	 * @apioption plotOptions.candlestick.upLineColor
+	 */
+
+	/**
+	 * @default ohlc
+	 * @apioption plotOptions.candlestick.dataGrouping.approximation
+	 */
 
 	states: {
 
@@ -55,8 +73,8 @@ var candlestickOptions = {
 	/**
 	 * The color of the line/border of the candlestick.
 	 * 
-	 * In styled mode, the line stroke can be set with the `.highcharts-
-	 * candlestick-series .highcahrts-point` rule.
+	 * In styled mode, the line stroke can be set with the
+	 * `.highcharts-candlestick-series .highcahrts-point` rule.
 	 * 
 	 * @type {Color}
 	 * @see [upLineColor](#plotOptions.candlestick.upLineColor)
@@ -71,8 +89,8 @@ var candlestickOptions = {
 	 * The pixel width of the candlestick line/border. Defaults to `1`.
 	 * 
 	 * 
-	 * In styled mode, the line stroke width can be set with the `.
-	 * highcharts-candlestick-series .highcahrts-point` rule.
+	 * In styled mode, the line stroke width can be set with the
+	 * `.highcharts-candlestick-series .highcahrts-point` rule.
 	 * 
 	 * @type {Number}
 	 * @default 1
@@ -83,8 +101,8 @@ var candlestickOptions = {
 	/**
 	 * The fill color of the candlestick when values are rising.
 	 * 
-	 * In styled mode, the up color can be set with the `.highcharts-
-	 * candlestick-series .highcharts-point-up` rule.
+	 * In styled mode, the up color can be set with the
+	 * `.highcharts-candlestick-series .highcharts-point-up` rule.
 	 * 
 	 * @type {Color}
 	 * @sample {highstock} stock/plotoptions/candlestick-color/ Custom colors
@@ -93,26 +111,9 @@ var candlestickOptions = {
 	 * @product highstock
 	 */
 	upColor: '${palette.backgroundColor}',
-
-	stickyTracking: true
-	
-	/**
-	 * The specific line color for up candle sticks. The default is to inherit
-	 * the general `lineColor` setting.
-	 * 
-	 * @type {Color}
-	 * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
-	 * @default null
-	 * @since 1.3.6
-	 * @product highstock
-	 * @apioption plotOptions.candlestick.upLineColor
-	 */
 	/*= } =*/
 
-	/**
-	 * @default ohlc
-	 * @apioption plotOptions.candlestick.dataGrouping.approximation
-	 */
+	stickyTracking: true
 
 };
 
@@ -243,13 +244,8 @@ seriesType('candlestick', 'ohlc', merge(
 
 /**
  * A `candlestick` series. If the [type](#series.candlestick.type)
- * option is not specified, it is inherited from [chart.type](#chart.
- * type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * candlestick](#plotOptions.candlestick).
+ * option is not specified, it is inherited from [chart.type](
+ * #chart.type).
  * 
  * @type {Object}
  * @extends series,plotOptions.candlestick
@@ -280,8 +276,8 @@ seriesType('candlestick', 'ohlc', merge(
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.candlestick.
- * turboThreshold), this option is not available.
+ * points exceeds the series' [turboThreshold](
+ * #series.candlestick.turboThreshold), this option is not available.
  * 
  *  ```js
  *     data: [{

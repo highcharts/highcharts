@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Axis.js';
@@ -68,9 +69,9 @@ extend(defaultOptions, {
 		 * 
 		 * CSS styles for the text label.
 		 * 
-		 * In styled mode, the buttons are styled by the `.highcharts-
-		 * range-selector-buttons .highcharts-button` rule with its different
-		 * states.
+		 * In styled mode, the buttons are styled by the
+		 * `.highcharts-range-selector-buttons .highcharts-button` rule with its
+		 * different states.
 		 * 
 		 * @type {Object}
 		 * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
@@ -315,6 +316,7 @@ RangeSelector.prototype = {
 				ctx = {
 					range: rangeOptions,
 					max: newMax,
+					chart: chart,
 					dataMin: dataMin,
 					dataMax: dataMax
 				};
@@ -861,7 +863,7 @@ RangeSelector.prototype = {
 		var time = this.chart.time,
 			min,
 			now = new time.Date(dataMax),
-			year = now[time.getFullYear](),
+			year = time.get('FullYear', now),
 			startOfYear = useUTC ? time.Date.UTC(year, 0, 1) : +new time.Date(year, 0, 1); // eslint-disable-line new-cap
 		min = Math.max(dataMin || 0, startOfYear);
 		now = now.getTime();
@@ -1343,16 +1345,10 @@ Axis.prototype.minFromRange = function () {
 };
 
 // Initialize rangeselector for stock charts
-wrap(Chart.prototype, 'init', function (proceed, options, callback) {
-
-	addEvent(this, 'init', function () {
-		if (this.options.rangeSelector.enabled) {
-			this.rangeSelector = new RangeSelector(this);
-		}
-	});
-
-	proceed.call(this, options, callback);
-
+addEvent(Chart, 'afterGetContainer', function () {
+	if (this.options.rangeSelector.enabled) {
+		this.rangeSelector = new RangeSelector(this);
+	}
 });
 
 wrap(Chart.prototype, 'render', function (proceed, options, callback) {
@@ -1387,14 +1383,16 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 
 });
 
-wrap(Chart.prototype, 'update', function (proceed, options, redraw, oneToOne) {
+addEvent(Chart, 'update', function (e) {
 
 	var chart = this,
+		options = e.options,
 		rangeSelector = chart.rangeSelector,
 		verticalAlign;
 
 	this.extraBottomMargin = false;
 	this.extraTopMargin = false;
+	this.isDirtyBox = true; //	#7684 - ignored spacingBottom after update
 
 	if (rangeSelector) {
 
@@ -1410,14 +1408,8 @@ wrap(Chart.prototype, 'update', function (proceed, options, redraw, oneToOne) {
 				this.extraTopMargin = true;
 			}
 		}
-	}
 
-	proceed.call(this, H.merge(true, options, {
-		chart: {
-			marginBottom: pick(options.chart && options.chart.marginBottom, chart.margin.bottom),
-			spacingBottom: pick(options.chart && options.chart.spacingBottom, chart.spacing.bottom)
-		}
-	}), redraw, oneToOne);
+	}
 
 });
 
@@ -1447,7 +1439,6 @@ Chart.prototype.adjustPlotArea = function () {
 		rangeSelectorHeight;
 
 	if (this.rangeSelector) {
-
 		rangeSelectorHeight = rangeSelector.getHeight();
 			
 		if (this.extraTopMargin) {

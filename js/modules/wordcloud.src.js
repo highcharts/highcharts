@@ -16,6 +16,7 @@ var each = H.each,
 	isArray = H.isArray,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
+	reduce = H.reduce,
 	Series = H.Series;
 
 /**
@@ -201,13 +202,39 @@ var getScale = function getScale(targetWidth, targetHeight, field) {
  *
  * @param  {number} targetWidth Width of the target area.
  * @param  {number} targetHeight Height of the target area.
+ * @param  {array} data Array of {@link Point} objects.
+ * @param  {object} data.dimensions The height and width of the word.
  * @return {object} The width and height of the playing field.
  */
-var getPlayingField = function getPlayingField(targetWidth, targetHeight) {
-	var ratio = targetWidth / targetHeight;
+var getPlayingField = function getPlayingField(
+	targetWidth,
+	targetHeight,
+	data
+) {
+	var ratio = targetWidth / targetHeight,
+		info = reduce(data, function (obj, point) {
+			var dimensions = point.dimensions;
+			// Find largest height.
+			obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
+			// Find largest width.
+			obj.maxWidth = Math.max(obj.maxWidth, dimensions.width);
+			// Sum up the total area of all the words.
+			obj.area += dimensions.width * dimensions.height;
+			return obj;
+		}, {
+			maxHeight: 0,
+			maxWidth: 0,
+			area: 0
+		}),
+		/**
+		 * Use largest width, largest height, or root of total area to give size
+		 * to the playing field.
+		 * Add extra 10 percentage to ensure enough space.
+		 */
+		x = 1.1 * Math.max(info.maxHeight, info.maxWidth, Math.sqrt(info.area));
 	return {
-		width: 256 * ratio,
-		height: 256,
+		width: x * ratio,
+		height: x,
 		ratio: ratio
 	};
 };
@@ -217,16 +244,35 @@ var getPlayingField = function getPlayingField(targetWidth, targetHeight) {
  * getRotation - Calculates a number of degrees to rotate, based upon a number
  *     of orientations within a range from-to.
  *
- * @param  {type} orientations Number of orientations.
- * @param  {type} from The smallest degree of rotation.
- * @param  {type} to The largest degree of rotation.
- * @return {type} Returns the resulting rotation for the word.
+ * @param  {number} orientations Number of orientations.
+ * @param  {number} index Index of point, used to decide orientation.
+ * @param  {number} from The smallest degree of rotation.
+ * @param  {number} to The largest degree of rotation.
+ * @return {boolean|number} Returns the resulting rotation for the word. Returns
+ * false if invalid input parameters.
  */
-var getRotation = function getRotation(orientations, from, to) {
-	var range = to - from,
-		intervals = range / (orientations - 1),
-		orientation = Math.floor(Math.random() * orientations);
-	return from + (orientation * intervals);
+var getRotation = function getRotation(orientations, index, from, to) {
+	var result = false, // Default to false
+		range,
+		intervals,
+		orientation;
+
+	// Check if we have valid input parameters.
+	if (
+		isNumber(orientations) &&
+		isNumber(index) &&
+		isNumber(from) &&
+		isNumber(to) &&
+		orientations > -1 &&
+		index > -1 &&
+		to > from
+	) {
+		range = to - from;
+		intervals = range / (orientations - 1);
+		orientation = index % orientations;
+		result = from + (orientation * intervals);
+	}
+	return result;
 };
 
 /**
@@ -245,10 +291,10 @@ var outsidePlayingField = function outsidePlayingField(wrapper, field) {
 			bottom: field.height / 2
 		};
 	return !(
-		playingField.left < rect.x &&
-		playingField.right > (rect.x + rect.width) &&
-		playingField.top < rect.y &&
-		playingField.bottom > (rect.y + rect.height)
+		playingField.left < (rect.x - rect.width / 2) &&
+		playingField.right > (rect.x + rect.width / 2) &&
+		playingField.top < (rect.y - rect.height / 2) &&
+		playingField.bottom > (rect.y + rect.height / 2)
 	);
 };
 
@@ -459,7 +505,9 @@ var wordCloudSeries = {
 			renderer = chart.renderer,
 			testElement = renderer.text().add(group),
 			placed = [],
-			placementStrategy = series.placementStrategy[options.placementStrategy],
+			placementStrategy = series.placementStrategy[
+				options.placementStrategy
+			],
 			spiral = series.spirals[options.spiral],
 			rotation = options.rotation,
 			scale,
@@ -468,11 +516,39 @@ var wordCloudSeries = {
 					return p.weight;
 				}),
 			maxWeight = Math.max.apply(null, weights),
-			field = getPlayingField(xAxis.len, yAxis.len),
 			data = series.points
 				.sort(function (a, b) {
 					return b.weight - a.weight; // Sort descending
-				});
+				}),
+			field;
+
+		// Get the dimensions for each word.
+		// Used in calculating the playing field.
+		each(data, function (point) {
+			var relativeWeight = 1 / maxWeight * point.weight,
+				css = extend({
+					fontSize: series.deriveFontSize(relativeWeight) + 'px'
+				}, options.style),
+				bBox;
+
+			testElement.css(css).attr({
+				x: 0,
+				y: 0,
+				text: point.name
+			});
+
+			// TODO Replace all use of clientRect with bBox.
+			bBox = testElement.getBBox(true);
+			point.dimensions = {
+				height: bBox.height,
+				width: bBox.width
+			};
+		});
+
+		// Calculate the playing field.
+		field = getPlayingField(xAxis.len, yAxis.len, data);
+
+		// Draw all the points.
 		each(data, function (point) {
 			var relativeWeight = 1 / maxWeight * point.weight,
 				css = extend({
@@ -589,7 +665,7 @@ var wordCloudSeries = {
 			return {
 				x: getRandomPosition(field.width) - (field.width / 2),
 				y: getRandomPosition(field.height) - (field.height / 2),
-				rotation: getRotation(r.orientations, r.from, r.to)
+				rotation: getRotation(r.orientations, point.index, r.from, r.to)
 			};
 		},
 		center: function centerPlacement(point, options) {
@@ -597,7 +673,7 @@ var wordCloudSeries = {
 			return {
 				x: 0,
 				y: 0,
-				rotation: getRotation(r.orientations, r.from, r.to)
+				rotation: getRotation(r.orientations, point.index, r.from, r.to)
 			};
 		}
 	},
@@ -612,6 +688,9 @@ var wordCloudSeries = {
 		'archimedean': archimedeanSpiral,
 		'rectangular': rectangularSpiral,
 		'square': squareSpiral
+	},
+	utils: {
+		getRotation: getRotation
 	},
 	getPlotBox: function () {
 		var series = this,
@@ -648,11 +727,6 @@ var wordCloudPoint = {
  * A `wordcloud` series. If the [type](#series.wordcloud.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * wordcloud](#plotOptions.wordcloud).
- *
  * @type {Object}
  * @extends series,plotOptions.wordcloud
  * @product highcharts
@@ -675,8 +749,9 @@ var wordCloudPoint = {
  * 
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.arearange.turboThreshold),
- * this option is not available.
+ * points exceeds the series'
+ * [turboThreshold](#series.arearange.turboThreshold), this option is not
+ * available.
  * 
  *  ```js
  *     data: [{
@@ -715,4 +790,10 @@ var wordCloudPoint = {
 * @product highcharts
 * @apioption series.sunburst.data.weight
 */
-H.seriesType('wordcloud', 'column', wordCloudOptions, wordCloudSeries, wordCloudPoint);
+H.seriesType(
+	'wordcloud',
+	'column',
+	wordCloudOptions,
+	wordCloudSeries,
+	wordCloudPoint
+);

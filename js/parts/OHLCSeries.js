@@ -58,14 +58,14 @@ seriesType('ohlc', 'column', {
 
 	tooltip: {
 		/*= if (!build.classic) { =*/
-		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' + // eslint-disable-line max-len
+		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' +
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +
 			'Close: {point.close}<br/>',
 		/*= } else { =*/
 
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // eslint-disable-line max-len
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +
@@ -268,10 +268,6 @@ seriesType('ohlc', 'column', {
 
 	animate: null // Disable animation
 
-/**
- * @constructor seriesTypes.ohlc.prototype.pointClass
- * @extends {Point}
- */
 }, /** @lends seriesTypes.ohlc.prototype.pointClass.prototype */ {
 	/**
  	 * Extend the parent method by adding up or down to the class name.
@@ -289,11 +285,6 @@ seriesType('ohlc', 'column', {
 /**
  * A `ohlc` series. If the [type](#series.ohlc.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * ohlc](#plotOptions.ohlc).
  * 
  * @type {Object}
  * @extends series,plotOptions.ohlc

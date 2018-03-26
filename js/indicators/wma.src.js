@@ -60,7 +60,6 @@ seriesType('wma', 'sma',
 	 * @optionparent plotOptions.wma
 	 */
 	{
-		name: 'WMA (9)',
 		params: {
 			index: 3,
 			period: 9
@@ -124,11 +123,6 @@ seriesType('wma', 'sma',
 /**
  * A `WMA` series. If the [type](#series.wma.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to
- * [plotOptions.wma](#plotOptions.wma).
  * 
  * @type {Object}
  * @since 6.0.0

@@ -53,9 +53,14 @@ seriesType('mapline', 'map', {
 	 * Get presentational attributes
 	 */
 	pointAttribs: function (point, state) {
-		var attr = seriesTypes.map.prototype.pointAttribs.call(this, point, state);
+		var attr = seriesTypes.map.prototype.pointAttribs.call(
+			this,
+			point,
+			state
+		);
 
-		// The difference from a map series is that the stroke takes the point color
+		// The difference from a map series is that the stroke takes the point
+		// color
 		attr.fill = this.options.fillColor;
 
 		return attr;
@@ -68,14 +73,9 @@ seriesType('mapline', 'map', {
  * A `mapline` series. If the [type](#series.mapline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * mapline](#plotOptions.mapline).
- * 
  * @type {Object}
  * @extends series,plotOptions.mapline
- * @excluding dataParser,dataURL
+ * @excluding dataParser,dataURL,marker
  * @product highmaps
  * @apioption series.mapline
  */

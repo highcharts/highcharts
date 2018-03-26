@@ -42,7 +42,8 @@ function populateAverage(points, xVal, yVal, i, period, prevATR) {
  */
 seriesType('atr', 'sma', 
 	/**
-	 * Average true range indicator (ATR). This series requires `linkedTo` option to be set.
+	 * Average true range indicator (ATR). This series requires `linkedTo`
+	 * option to be set.
 	 * 
 	 * @extends {plotOptions.sma}
 	 * @product highstock
@@ -51,7 +52,6 @@ seriesType('atr', 'sma',
 	 * @optionparent plotOptions.atr
 	 */
 	{
-		name: 'ATR (14)',
 		params: {
 			period: 14
 		}
@@ -73,7 +73,10 @@ seriesType('atr', 'sma',
 
 			points = [[xValue, yValue]];
 		
-			if ((xVal.length <= period) || !isArray(yVal[0]) || yVal[0].length !== 4) {
+			if (
+				(xVal.length <= period) || !isArray(yVal[0]) ||
+				yVal[0].length !== 4
+			) {
 				return false;
 			}
 
@@ -82,7 +85,14 @@ seriesType('atr', 'sma',
 				accumulateAverage(points, xVal, yVal, i);
 
 				if (period < range) {
-					point = populateAverage(points, xVal, yVal, i, period, prevATR);
+					point = populateAverage(
+						points,
+						xVal,
+						yVal,
+						i,
+						period,
+						prevATR
+					);
 					prevATR = point[1];
 					ATR.push(point);
 					xData.push(point[0]);
@@ -112,11 +122,6 @@ seriesType('atr', 'sma',
 /**
  * A `ATR` series. If the [type](#series.atr.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to 
- * [plotOptions.atr](#plotOptions.atr).
  * 
  * @type {Object}
  * @since 6.0.0

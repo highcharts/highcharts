@@ -7,36 +7,41 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
-var Axis = H.Axis,
+var addEvent = H.addEvent,
+	Axis = H.Axis,
 	each = H.each,
-	pick = H.pick,
-	wrap = H.wrap;
+	pick = H.pick;
+
 /**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
-wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
-	var isXAxis = this.isXAxis,
-		dataMin,
-		dataMax,
-		xData = [],
-		useMapGeometry;
+addEvent(Axis, 'getSeriesExtremes', function () {
+	var xData = [];
 
-	// Remove the xData array and cache it locally so that the proceed method doesn't use it
-	if (isXAxis) {
+	// Remove the xData array and cache it locally so that the proceed method
+	// doesn't use it
+	if (this.isXAxis) {
 		each(this.series, function (series, i) {
 			if (series.useMapGeometry) {
 				xData[i] = series.xData;
 				series.xData = [];
 			}
 		});
+		this.seriesXData = xData;
 	}
 
-	// Call base to reach normal cartesian series (like mappoint)
-	proceed.call(this);
+});
+
+addEvent(Axis, 'afterGetSeriesExtremes', function () {
+
+	var xData = this.seriesXData,
+		dataMin,
+		dataMax,
+		useMapGeometry;
 
 	// Run extremes logic for map and mapline
-	if (isXAxis) {
+	if (this.isXAxis) {
 		dataMin = pick(this.dataMin, Number.MAX_VALUE);
 		dataMax = pick(this.dataMax, -Number.MAX_VALUE);
 		each(this.series, function (series, i) {
@@ -51,13 +56,16 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 			this.dataMin = dataMin;
 			this.dataMax = dataMax;
 		}
+
+		delete this.seriesXData;
 	}
+
 });
 
 /**
  * Override axis translation to make sure the aspect ratio is always kept
  */
-wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
+addEvent(Axis, 'afterSetAxisTranslation', function () {
 	var chart = this.chart,
 		mapRatio,
 		plotRatio = chart.plotWidth / chart.plotHeight,
@@ -67,10 +75,6 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		fixTo,
 		fixDiff,
 		preserveAspectRatio;
-
-
-	// Run the parent method
-	proceed.call(this);
 
 	// Check for map-like series
 	if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
@@ -87,7 +91,8 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
 
-		mapRatio = plotRatio / ((xAxis.max - xAxis.min) / (this.max - this.min));
+		mapRatio = plotRatio /
+			((xAxis.max - xAxis.min) / (this.max - this.min));
 
 		// What axis to pad to put the map in the middle
 		padAxis = mapRatio < 1 ? this : xAxis;
@@ -101,7 +106,13 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		if (fixTo) {
 			fixDiff = fixTo[1] - padAxis.toValue(fixTo[0], true);
 			fixDiff *= padAxis.transA;
-			if (Math.abs(fixDiff) > padAxis.minPixelPadding || (padAxis.min === padAxis.dataMin && padAxis.max === padAxis.dataMax)) { // zooming out again, keep within restricted area
+			if (
+				Math.abs(fixDiff) > padAxis.minPixelPadding ||
+				(
+					padAxis.min === padAxis.dataMin &&
+					padAxis.max === padAxis.dataMax
+				)
+			) { // zooming out again, keep within restricted area
 				fixDiff = 0;
 			}
 			padAxis.minPixelPadding -= fixDiff;
@@ -112,7 +123,6 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 /**
  * Override Axis.render in order to delete the fixTo prop
  */
-wrap(Axis.prototype, 'render', function (proceed) {
-	proceed.call(this);
+addEvent(Axis, 'render', function () {
 	this.fixTo = null;
 });

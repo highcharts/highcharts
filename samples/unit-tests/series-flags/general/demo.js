@@ -60,3 +60,34 @@ QUnit.test('Flag values and placement', function (assert) {
         'The interpolated flag should have an interpolated Y value (#7440)'
     );
 });
+
+QUnit.test('Flags in panes', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        yAxis: [{
+            height: '50%'
+        }, {
+            top: '50%',
+            height: '50%'
+        }],
+        series: [{
+            data: [1, 2, 3, 4]
+        }, {
+            data: [4, 3, 2, 1],
+            yAxis: 1,
+            id: 'lower'
+        }, {
+            type: 'flags',
+            onSeries: 'lower',
+            data: [{
+                x: 2,
+                title: 'I should be on the lower series'
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[2].group.attr('translateY'),
+        chart.series[1].group.attr('translateY'),
+        'The flag series group should have the same vertical translation as its onSeries group'
+    );
+});

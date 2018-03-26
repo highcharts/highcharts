@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -57,11 +57,15 @@ var hasTouch = H.hasTouch,
 		maxLength: '100%',
 
 		/**
-		 * Options for axis resizing for Drag Panes module.
+		 * Options for axis resizing. This feature requires the
+		 * `drag-panes.js` -
+		 * [classic](http://code.highcharts.com/stock/modules/drag-panes.js) or
+		 * [styled](http://code.highcharts.com/stock/js/modules/drag-panes.js)
+		 * mode - module.
 		 *
-		 * This feature requires the `drag-panes.js` module.
-		 *
-		 * @product      highstock
+		 * @product highstock
+		 * @sample	{highstock} stock/demo/candlestick-and-volume
+		 *          Axis resizing enabled
 		 * @optionparent yAxis.resize
 		 */
 		resize: {
@@ -417,7 +421,11 @@ H.AxisResizer.prototype = {
 					minLength, maxLength;
 
 				// Skip if axis is not found
-				if (!axisOptions) {
+				// or it is navigator's yAxis (#7732)
+				if (
+					!axisOptions ||
+					axisOptions.id === 'navigator-y-axis'
+				) {
 					return;
 				}
 
@@ -539,9 +547,7 @@ H.AxisResizer.prototype = {
 Axis.prototype.keepProps.push('resizer');
 
 // Add new AxisResizer, update or remove it
-wrap(Axis.prototype, 'render', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
+addEvent(Axis, 'afterRender', function () {
 	var axis = this,
 		resizer = axis.resizer,
 		resizerOptions = axis.options.resize,
@@ -573,11 +579,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 });
 
 // Clear resizer on axis remove.
-wrap(Axis.prototype, 'destroy', function (proceed, keepEvents) {
-	if (!keepEvents && this.resizer) {
+addEvent(Axis, 'destroy', function (e) {
+	if (!e.keepEvents && this.resizer) {
 		this.resizer.destroy();
 	}
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 // Prevent any hover effects while dragging a control line of AxisResizer.

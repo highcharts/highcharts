@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -17,6 +17,7 @@ import '../parts/Point.js';
 var win = H.win,
 	doc = win.document,
 	each = H.each,
+	map = H.map,
 	erase = H.erase,
 	addEvent = H.addEvent,
 	merge = H.merge,
@@ -29,61 +30,7 @@ var win = H.win,
 		width: '1px',
 		height: '1px',
 		overflow: 'hidden'
-	},
-	// Human readable description of series and each point in singular and
-	// plural
-	typeToSeriesMap = {
-		'default': ['series', 'data point', 'data points'],
-		'line': ['line', 'data point', 'data points'],
-		'spline': ['line', 'data point', 'data points'],
-		'area': ['line', 'data point', 'data points'],
-		'areaspline': ['line', 'data point', 'data points'],
-		'pie': ['pie', 'slice', 'slices'],
-		'column': ['column series', 'column', 'columns'],
-		'bar': ['bar series', 'bar', 'bars'],
-		'scatter': ['scatter series', 'data point', 'data points'],
-		'boxplot': ['boxplot series', 'box', 'boxes'],
-		'arearange': ['arearange series', 'data point', 'data points'],
-		'areasplinerange': [
-			'areasplinerange series',
-			'data point',
-			'data points'
-		],
-		'bubble': ['bubble series', 'bubble', 'bubbles'],
-		'columnrange': ['columnrange series', 'column', 'columns'],
-		'errorbar': ['errorbar series', 'errorbar', 'errorbars'],
-		'funnel': ['funnel', 'data point', 'data points'],
-		'pyramid': ['pyramid', 'data point', 'data points'],
-		'waterfall': ['waterfall series', 'column', 'columns'],
-		'map': ['map', 'area', 'areas'],
-		'mapline': ['line', 'data point', 'data points'],
-		'mappoint': ['point series', 'data point', 'data points'],
-		'mapbubble': ['bubble series', 'bubble', 'bubbles']
-	},
-	// Descriptions for exotic chart types
-	typeDescriptionMap = {
-		boxplot: ' Box plot charts are typically used to display groups of ' +
-			'statistical data. Each data point in the chart can have up to 5 ' +
-			'values: minimum, lower quartile, median, upper quartile and ' +
-			'maximum. ',
-		arearange: ' Arearange charts are line charts displaying a range ' +
-			'between a lower and higher value for each point. ',
-		areasplinerange: ' These charts are line charts displaying a range ' +
-			'between a lower and higher value for each point. ',
-		bubble: ' Bubble charts are scatter charts where each data point ' +
-			'also has a size value. ',
-		columnrange: ' Columnrange charts are column charts displaying a ' +
-			'range between a lower and higher value for each point. ',
-		errorbar: ' Errorbar series are used to display the variability of ' +
-			'the data. ',
-		funnel: ' Funnel charts are used to display reduction of data in ' +
-			'stages. ',
-		pyramid: ' Pyramid charts consist of a single pyramid with item ' +
-			'heights corresponding to each point value. ',
-		waterfall: ' A waterfall chart is a column chart where each column ' +
-			'contributes towards a total end value. '
 	};
-
 
 // If a point has one of the special keys defined, we expose all keys to the
 // screen reader.
@@ -98,9 +45,34 @@ if (H.seriesTypes.pie) {
 
 
 /**
+ * HTML encode some characters vulnerable for XSS.
+ * @param  {string} html The input string
+ * @return {string} The excaped string
+ */
+function htmlencode(html) {
+	return html
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#x27;')
+		.replace(/\//g, '&#x2F;');
+}
+
+
+/**
+ * Strip HTML tags away from a string. Used for aria-label attributes, painting
+ * on a canvas will fail if the text contains tags.
+ * @param  {String} s The input string
+ * @return {String}   The filtered string
+ */
+function stripTags(s) {
+	return typeof s === 'string' ? s.replace(/<\/?[^>]+(>|$)/g, '') : s;
+}
+
+
+/**
  * Accessibility options
- * @type {Object}
- * @optionparent
  */
 H.setOptions({
 
@@ -112,28 +84,10 @@ H.setOptions({
 	 * com/docs/chart-concepts/accessibility).
 	 * 
 	 * @since 5.0.0
+	 * @type {Object}
+	 * @optionparent accessibility
 	 */
 	accessibility: {
-
-		/**
-		 * Enable accessibility features for the chart.
-		 * 
-		 * @type {Boolean}
-		 * @default true
-		 * @since 5.0.0
-		 */
-		enabled: true,
-
-		/**
-		 * When a series contains more points than this, we no longer expose
-		 * information about individual points to screen readers.
-		 * 
-		 * Set to `false` to disable.
-		 * 
-		 * @type {Number|Boolean}
-		 * @since 5.0.0
-		 */
-		pointDescriptionThreshold: false // set to false to disable
 
 		/**
 		 * Whether or not to add series descriptions to charts with a single
@@ -199,6 +153,38 @@ H.setOptions({
 		 */
 		
 		/**
+		 * Formatter function to use instead of the default for series
+		 * descriptions. Receives one argument, `series`, referring to the
+		 * series to describe. Should return a String with the description of
+		 * the series for a screen reader user.
+		 * 
+		 * @type {Function}
+		 * @see [series.description](#plotOptions.series.description)
+		 * @since 5.0.0
+		 * @apioption accessibility.seriesDescriptionFormatter
+		 */
+
+		/**
+		 * Enable accessibility features for the chart.
+		 * 
+		 * @type {Boolean}
+		 * @default true
+		 * @since 5.0.0
+		 */
+		enabled: true,
+
+		/**
+		 * When a series contains more points than this, we no longer expose
+		 * information about individual points to screen readers.
+		 * 
+		 * Set to `false` to disable.
+		 * 
+		 * @type {Number|Boolean}
+		 * @since 5.0.0
+		 */
+		pointDescriptionThreshold: false, // set to false to disable
+		
+		/**
 		 * A formatter function to create the HTML contents of the hidden screen
 		 * reader information region. Receives one argument, `chart`, referring
 		 * to the chart object. Should return a String with the HTML content
@@ -210,20 +196,58 @@ H.setOptions({
 		 * @type {Function}
 		 * @default undefined
 		 * @since 5.0.0
-		 * @apioption accessibility.screenReaderSectionFormatter
 		 */
-		
-		/**
-		 * Formatter function to use instead of the default for series
-		 * descriptions. Receives one argument, `series`, referring to the
-		 * series to describe. Should return a String with the description of
-		 * the series for a screen reader user.
-		 * 
-		 * @type {Function}
-		 * @see [series.description](#plotOptions.series.description)
-		 * @since 5.0.0
-		 * @apioption accessibility.seriesDescriptionFormatter
-		 */
+		screenReaderSectionFormatter: function (chart) {
+			var options = chart.options,
+				chartTypes = chart.types || [],
+				formatContext = {
+					chart: chart,
+					numSeries: chart.series && chart.series.length
+				},
+				// Build axis info - but not for pies and maps. Consider not
+				// adding for certain other types as well (funnel, pyramid?)
+				axesDesc = (
+					chartTypes.length === 1 && chartTypes[0] === 'pie' ||
+					chartTypes[0] === 'map'
+				) && {} || chart.getAxesDescription();
+
+			return '<div>' + chart.langFormat(
+						'accessibility.navigationHint', formatContext
+					) + '</div><h3>' +
+					(
+						options.title.text ? 
+							htmlencode(options.title.text) : 
+							chart.langFormat(
+								'accessibility.defaultChartTitle', formatContext
+							)
+					) +
+					(
+						options.subtitle &&	options.subtitle.text ?
+							'. ' + htmlencode(options.subtitle.text) :
+							''
+					) +
+					'</h3><h4>' + chart.langFormat(
+						'accessibility.longDescriptionHeading', formatContext
+					) + '</h4><div>' +
+					(
+						options.chart.description || chart.langFormat(
+							'accessibility.noDescription', formatContext
+						)
+					) +
+					'</div><h4>' + chart.langFormat(
+						'accessibility.structureHeading', formatContext
+					) + '</h4><div>' +
+					(
+						options.chart.typeDescription ||
+						chart.getTypeDescription()
+					) +	'</div>' +
+					(axesDesc.xAxis ? (
+						'<div>' + axesDesc.xAxis + '</div>'
+					) : '') +
+					(axesDesc.yAxis ? (
+						'<div>' + axesDesc.yAxis + '</div>'
+					) : '');
+		}
 	}
 });
 
@@ -259,32 +283,6 @@ H.setOptions({
  */
 
 
-/**
- * HTML encode some characters vulnerable for XSS.
- * @param  {string} html The input string
- * @return {string} The excaped string
- */
-function htmlencode(html) {
-	return html
-		.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&#x27;')
-		.replace(/\//g, '&#x2F;');
-}
-
-/**
- * Strip HTML tags away from a string. Used for aria-label attributes, painting
- * on a canvas will fail if the text contains tags.
- * @param  {String} s The input string
- * @return {String}   The filtered string
- */
-function stripTags(s) {
-	return typeof s === 'string' ? s.replace(/<\/?[^>]+(>|$)/g, '') : s;
-}
-
-
 // Utility function. Reverses child nodes of a DOM element
 function reverseChildNodes(node) {
 	var i = node.childNodes.length;
@@ -295,8 +293,7 @@ function reverseChildNodes(node) {
 
 
 // Whenever drawing series, put info on DOM elements
-H.wrap(H.Series.prototype, 'render', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+H.addEvent(H.Series, 'afterRender', function () {
 	if (this.chart.options.accessibility.enabled) {
 		this.setA11yDescription();
 	}
@@ -371,33 +368,50 @@ H.Series.prototype.setA11yDescription = function () {
 
 // Return string with information about series
 H.Series.prototype.buildSeriesInfoString = function () {
-	var typeInfo = (
-			typeToSeriesMap[this.type] ||
-			typeToSeriesMap['default'] // eslint-disable-line dot-notation
+	var chart = this.chart,
+		desc = this.description || this.options.description,
+		description = desc && chart.langFormat(
+			'accessibility.series.description', {
+				description: desc,
+				series: this
+			}
 		),
-		description = this.description || this.options.description;
-	return (this.name ? this.name + ', ' : '') +
-		(this.chart.types.length === 1 ? typeInfo[0] : 'series') +
-		' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
-		(
-			this.chart.types.length === 1 ?
-				' with ' :
-				'. ' + typeInfo[0] + ' with '
-		) +
-		(
-			this.points.length + ' ' +
-			(this.points.length === 1 ? typeInfo[1] : typeInfo[2])
-		) +
-		(description ? '. ' + description : '') +
-		(
-			this.chart.yAxis.length > 1 && this.yAxis ?
-				'. Y axis, ' + this.yAxis.getDescription() :
-				''
-		) +
-		(
-			this.chart.xAxis.length > 1 && this.xAxis ?
-				'. X axis, ' + this.xAxis.getDescription() :
-				''
+		xAxisInfo = chart.langFormat(
+			'accessibility.series.xAxisDescription',
+			{ 
+				name: this.xAxis && this.xAxis.getDescription(),
+				series: this 
+			}
+		),
+		yAxisInfo = chart.langFormat(
+			'accessibility.series.yAxisDescription',
+			{
+				name: this.yAxis && this.yAxis.getDescription(),
+				series: this
+			}
+		),
+		summaryContext = {
+			name: this.name || '',
+			ix: this.index + 1,
+			numSeries: chart.series.length,
+			numPoints: this.points.length,
+			series: this
+		},
+		combination = chart.types.length === 1 ? '' : 'Combination',
+		summary =  chart.langFormat(
+			'accessibility.series.summary.' + this.type + combination,
+			summaryContext
+		) || chart.langFormat(
+			'accessibility.series.summary.default' + combination,
+			summaryContext
+		);
+
+	return summary + (description ? ' ' + description : '') + (
+			chart.yAxis.length > 1 && this.yAxis ?
+				' ' + yAxisInfo : ''
+		) + (
+			chart.xAxis.length > 1 && this.xAxis ?
+				' ' + xAxisInfo : ''
 		);
 };
 
@@ -411,7 +425,7 @@ H.Point.prototype.buildPointInfoString = function () {
 		dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
 		timeDesc =
 			dateTimePoint &&
-			series.chart.time.dateFormat.call(
+			series.chart.time.dateFormat(
 				a11yOptions.pointDateFormatter &&
 				a11yOptions.pointDateFormatter(point) ||
 				a11yOptions.pointDateFormat ||
@@ -468,14 +482,14 @@ H.Axis.prototype.getDescription = function () {
 		this.axisTitle && this.axisTitle.textStr ||
 		this.options.id ||
 		this.categories && 'categories' ||
+		this.isDatetimeAxis && 'Time' ||
 		'values'
 	);
 };
 
 
 // Whenever adding or removing series, keep track of types present in chart
-H.wrap(H.Series.prototype, 'init', function (proceed) {
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+addEvent(H.Series, 'afterInit', function () {
 	var chart = this.chart;
 	if (chart.options.accessibility.enabled) {
 		chart.types = chart.types || [];
@@ -484,44 +498,79 @@ H.wrap(H.Series.prototype, 'init', function (proceed) {
 		if (chart.types.indexOf(this.type) < 0) {
 			chart.types.push(this.type);
 		}
-		
-		addEvent(this, 'remove', function () {
-			var removedSeries = this,
-				hasType = false;
-			
-			// Check if any of the other series have the same type as this one.
-			// Otherwise remove it from the list.
-			each(chart.series, function (s) {
-				if (
-					s !== removedSeries &&
-					chart.types.indexOf(removedSeries.type) < 0
-				) {
-					hasType = true;
-				}
-			});
-			if (!hasType) {
-				erase(chart.types, removedSeries.type);
-			}
-		});
+	}
+});
+addEvent(H.Series, 'remove', function () {
+	var chart = this.chart,
+		removedSeries = this,
+		hasType = false;
+	
+	// Check if any of the other series have the same type as this one.
+	// Otherwise remove it from the list.
+	each(chart.series, function (s) {
+		if (
+			s !== removedSeries &&
+			chart.types.indexOf(removedSeries.type) < 0
+		) {
+			hasType = true;
+		}
+	});
+	if (!hasType) {
+		erase(chart.types, removedSeries.type);
 	}
 });
 
 
 // Return simplified description of chart type. Some types will not be familiar
-// to most screen reader users, but we try.
+// to most screen reader users, but in those cases we try to add a description
+// of the type.
 H.Chart.prototype.getTypeDescription = function () {
 	var firstType = this.types && this.types[0],
-		mapTitle = this.series[0] && this.series[0].mapTitle;
+		firstSeries = this.series && this.series[0] || {},
+		mapTitle = firstSeries.mapTitle,
+		typeDesc = this.langFormat(
+			'accessibility.seriesTypeDescriptions.' + firstType,
+			{ chart: this }
+		),
+		formatContext = {
+			numSeries: this.series.length,
+			numPoints: firstSeries.points && firstSeries.points.length,
+			chart: this,
+			mapTitle: mapTitle
+		},
+		multi = this.series && this.series.length === 1 ? 'Single' : 'Multiple';
+
 	if (!firstType) {
-		return 'Empty chart.';
+		return this.langFormat(
+			'accessibility.chartTypes.emptyChart', formatContext
+		);
 	} else if (firstType === 'map') {
-		return mapTitle ? 'Map of ' + mapTitle : 'Map of unspecified region.';
+		return mapTitle ?
+			this.langFormat(
+				'accessibility.chartTypes.mapTypeDescription',
+				formatContext
+			) :
+			this.langFormat(
+				'accessibility.chartTypes.unknownMap',
+				formatContext
+			);
 	} else if (this.types.length > 1) {
-		return 'Combination chart.';
-	} else if (['spline', 'area', 'areaspline'].indexOf(firstType) > -1) {
-		return 'Line chart.';
+		return this.langFormat(
+			'accessibility.chartTypes.combinationChart', formatContext
+		);
 	}
-	return firstType + ' chart.' + (typeDescriptionMap[firstType] || '');
+
+	return (
+		this.langFormat(
+			'accessibility.chartTypes.' + firstType + multi,
+			formatContext
+		) ||
+		this.langFormat(
+			'accessibility.chartTypes.default' + multi,
+			formatContext
+		)
+	) +
+	(typeDesc ? ' ' + typeDesc : '');
 };
 
 
@@ -529,35 +578,38 @@ H.Chart.prototype.getTypeDescription = function () {
 H.Chart.prototype.getAxesDescription = function () {
 	var numXAxes = this.xAxis.length,
 		numYAxes = this.yAxis.length,
-		desc = {},
-		i;
+		desc = {};
 
 	if (numXAxes) {
-		desc.xAxis = 'The chart has ' + numXAxes +
-			(numXAxes > 1 ? ' X axes' : ' X axis') + ' displaying ';
-		if (numXAxes < 2) {
-			desc.xAxis += this.xAxis[0].getDescription() + '.';
-		} else {
-			for (i = 0; i < numXAxes - 1; ++i) {
-				desc.xAxis += (i ? ', ' : '') + this.xAxis[i].getDescription();
+		desc.xAxis = this.langFormat(
+			'accessibility.axis.xAxisDescription' + (
+				numXAxes > 1 ? 'Plural' : 'Singular'
+			),
+			{
+				chart: this,
+				names: map(this.xAxis, function (axis) {
+					return axis.getDescription();
+				}),
+				numAxes: numXAxes
 			}
-			desc.xAxis += ' and ' + this.xAxis[i].getDescription() + '.';
-		}
+		);
 	}
 
 	if (numYAxes) {
-		desc.yAxis = 'The chart has ' + numYAxes +
-		(numYAxes > 1 ? ' Y axes' : ' Y axis') + ' displaying ';
-		if (numYAxes < 2) {
-			desc.yAxis += this.yAxis[0].getDescription() + '.';
-		} else {
-			for (i = 0; i < numYAxes - 1; ++i) {
-				desc.yAxis += (i ? ', ' : '') + this.yAxis[i].getDescription();
+		desc.yAxis = this.langFormat(
+			'accessibility.axis.yAxisDescription' + (
+				numYAxes > 1 ? 'Plural' : 'Singular'
+			),
+			{
+				chart: this,
+				names: map(this.yAxis, function (axis) {
+					return axis.getDescription();
+				}),
+				numAxes: numYAxes
 			}
-			desc.yAxis += ' and ' + this.yAxis[i].getDescription() + '.';
-		}
+		);
 	}
-	
+
 	return desc;
 };
 
@@ -577,7 +629,11 @@ H.Chart.prototype.addAccessibleContextMenuAttribs =	function () {
 		});
 		// Set accessibility properties on parent div
 		exportList[0].parentNode.setAttribute('role', 'menu');
-		exportList[0].parentNode.setAttribute('aria-label', 'Chart export');
+		exportList[0].parentNode.setAttribute('aria-label',
+			this.langFormat(
+				'accessibility.exporting.chartMenuLabel', { chart: this }
+			)
+		);
 	}
 };
 
@@ -587,81 +643,45 @@ H.Chart.prototype.addAccessibleContextMenuAttribs =	function () {
 // in the screen reader region.
 H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 	var	chart = this,
-		series = chart.series,
-		options = chart.options,
-		a11yOptions = options.accessibility,
 		hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
 		tableShortcut = doc.createElement('h4'),
 		tableShortcutAnchor = doc.createElement('a'),
-		chartHeading = doc.createElement('h4'),
-		chartTypes = chart.types || [],
-		// Build axis info - but not for pies and maps. Consider not adding for
-		// certain other types as well (funnel, pyramid?)
-		axesDesc = (
-			chartTypes.length === 1 && chartTypes[0] === 'pie' ||
-			chartTypes[0] === 'map'
-		) && {} || chart.getAxesDescription(),
-		chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] ||
-			typeToSeriesMap['default']; // eslint-disable-line dot-notation
+		chartHeading = doc.createElement('h4');
 
 	hiddenSection.setAttribute('id', id);
 	hiddenSection.setAttribute('role', 'region');
 	hiddenSection.setAttribute(
 		'aria-label',
-		'Chart screen reader information.'
+		chart.langFormat(
+			'accessibility.screenReaderRegionLabel', { chart: this }
+		)
 	);
 
-	hiddenSection.innerHTML = 
-		a11yOptions.screenReaderSectionFormatter &&
-		a11yOptions.screenReaderSectionFormatter(chart) ||
-		'<div>Use regions/landmarks to skip ahead to chart' +
-		(series.length > 1 ? ' and navigate between data series' : '') +
-		'.</div><h3>' +
-		(options.title.text ? htmlencode(options.title.text) : 'Chart') +
-		(
-			options.subtitle &&	options.subtitle.text ?
-				'. ' + htmlencode(options.subtitle.text) :
-				''
-		) +
-		'</h3><h4>Long description.</h4><div>' +
-		(options.chart.description || 'No description available.') +
-		'</div><h4>Structure.</h4><div>Chart type: ' +
-		(options.chart.typeDescription || chart.getTypeDescription()) +
-		'</div>' +
-		(
-			series.length === 1 ?
-				(
-					'<div>' + chartTypeInfo[0] + ' with ' +
-					series[0].points.length + ' ' +
-					(
-						series[0].points.length === 1 ?
-							chartTypeInfo[1] :
-							chartTypeInfo[2]
-					) +
-					'.</div>'
-				) : ''
-		) +
-		(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
-		(axesDesc.yAxis ? ('<div>' + axesDesc.yAxis + '</div>') : '');
+	hiddenSection.innerHTML = chart.options.accessibility
+		.screenReaderSectionFormatter(chart);
 
 	// Add shortcut to data table if export-data is loaded
 	if (chart.getCSV) {
-		tableShortcutAnchor.innerHTML = 'View as data table.';
+		tableShortcutAnchor.innerHTML = chart.langFormat(
+			'accessibility.viewAsDataTable', { chart: chart }
+		);
 		tableShortcutAnchor.href = '#' + tableId;
 		// Make this unreachable by user tabbing
 		tableShortcutAnchor.setAttribute('tabindex', '-1');
 		tableShortcutAnchor.onclick =
-			a11yOptions.onTableAnchorClick || function () {
+			chart.options.accessibility.onTableAnchorClick || function () {
 				chart.viewData();
 				doc.getElementById(tableId).focus();
 			};
 		tableShortcut.appendChild(tableShortcutAnchor);
 		hiddenSection.appendChild(tableShortcut);
 	}
-	
+
 	// Note: JAWS seems to refuse to read aria-label on the container, so add an
 	// h4 element as title for the chart.
-	chartHeading.innerHTML = 'Chart graphic.';
+	chartHeading.innerHTML = chart.langFormat(
+		'accessibility.chartHeading', { chart: chart }
+	);
 	chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
 	chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
 
@@ -680,10 +700,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		return;
 	}
 
-	var	titleElement = doc.createElementNS(
-			'http://www.w3.org/2000/svg',
-			'title'
-		),
+	var	titleElement,
 		exportGroupElement = doc.createElementNS(
 			'http://www.w3.org/2000/svg',
 			'g'
@@ -693,18 +710,35 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		titleId = 'highcharts-title-' + chart.index,
 		tableId = 'highcharts-data-table-' + chart.index,
 		hiddenSectionId = 'highcharts-information-region-' + chart.index,
-		chartTitle = options.title.text || 'Chart';
+		chartTitle = options.title.text || chart.langFormat(
+			'accessibility.defaultChartTitle', { chart: chart }
+		),
+		svgContainerTitle = stripTags(chart.langFormat(
+			'accessibility.svgContainerTitle', {
+				chartTitle: chartTitle
+			}
+		));
 
-	// Add SVG title/desc tags
-	titleElement.textContent = htmlencode(chartTitle);
-	titleElement.id = titleId;
-	descElement.parentNode.insertBefore(titleElement, descElement);
+	// Add SVG title tag if it is set
+	if (svgContainerTitle.length) {
+		titleElement = doc.createElementNS(
+				'http://www.w3.org/2000/svg',
+				'title'
+			);
+		titleElement.textContent = svgContainerTitle;
+		titleElement.id = titleId;
+		descElement.parentNode.insertBefore(titleElement, descElement);
+	}
+	
 	chart.renderTo.setAttribute('role', 'region');
 	chart.renderTo.setAttribute(
 		'aria-label',
-		stripTags(
-			'Interactive chart. ' + chartTitle +
-			'. Use up and down arrows to navigate with most screen readers.'
+		chart.langFormat(
+			'accessibility.chartContainerLabel',
+			{
+				title: stripTags(chartTitle),
+				chart: chart
+			}
 		)
 	);
 
@@ -727,16 +761,20 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		chart.exportSVGElements[0].element.setAttribute('role', 'button');
 		chart.exportSVGElements[0].element.setAttribute(
 			'aria-label',
-			'View export menu'
+			chart.langFormat(
+				'accessibility.exporting.menuButtonLabel', { chart: chart }
+			)
 		);
 		exportGroupElement.appendChild(chart.exportSVGElements[0].element);
 		exportGroupElement.setAttribute('role', 'region');
-		exportGroupElement.setAttribute('aria-label', 'Chart export menu');
+		exportGroupElement.setAttribute('aria-label', chart.langFormat(
+			'accessibility.exporting.exportRegionLabel', { chart: chart }
+		));
 		parent.appendChild(exportGroupElement);
 	}
 
 	// Set screen reader properties on input boxes for range selector. We need
-	// to do this regardless of whether or not these are visible, as they are 
+	// to do this regardless of whether or not these are visible, as they are
 	// by default part of the page's tabindex unless we set them to -1.
 	if (chart.rangeSelector) {
 		each(['minInput', 'maxInput'], function (key, i) {
@@ -745,7 +783,10 @@ H.Chart.prototype.callbacks.push(function (chart) {
 				chart.rangeSelector[key].setAttribute('role', 'textbox');
 				chart.rangeSelector[key].setAttribute(
 					'aria-label',
-					'Select ' + (i ? 'end' : 'start') + ' date.'
+					chart.langFormat(
+						'accessibility.rangeSelector' +
+							(i ? 'MaxInput' : 'MinInput'), { chart: chart }
+					)
 				);
 			}
 		});
@@ -764,8 +805,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		return proceed.apply(this, Array.prototype.slice.call(arguments, 1))
 			.replace(
 				'<table>',
-				'<table id="' + tableId + '" summary="Table representation ' +
-					'of chart">'
+				'<table id="' + tableId + '" summary="' + chart.langFormat(
+					'accessibility.tableSummary', { chart: chart }
+				) + '">'
 			);
 	});
 });

@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -20,29 +21,16 @@ var colProto = seriesTypes.column.prototype;
  * Y values along an X axis. Requires `highcharts-more.js`. To display
  * horizontal bars, set [chart.inverted](#chart.inverted) to `true`.
  *
- * @type {Object}
- * @extends plotOptions.column
- * @excluding negativeColor,stacking,softThreshold,threshold
- * @sample {highcharts} highcharts/demo/columnrange/
- *         Inverted column range
- * @sample {highstock} highcharts/demo/columnrange/
- *         Inverted column range
- * @since 2.3.0
- * @product highcharts highstock
+ * @type         {Object}
+ * @extends      plotOptions.column
+ * @excluding    negativeColor,stacking,softThreshold,threshold
+ * @sample       {highcharts|highstock} highcharts/demo/columnrange/
+ *               Inverted column range
+ * @since        2.3.0
+ * @product      highcharts highstock
  * @optionparent plotOptions.columnrange
  */
 var columnRangeOptions = {
-
-	pointRange: null,
-	marker: null,
-	states: {
-		hover: {
-			/**
-			 * @ignore-option
-			 */
-			halo: false
-		}
-	}
 
 	/**
 	 * Extended data labels for range series types. Range series data labels
@@ -50,12 +38,25 @@ var columnRangeOptions = {
 	 * `yLow` and `yHigh` options to allow the higher and lower data label
 	 * sets individually.
 	 *
-	 * @type {Object}
-	 * @extends plotOptions.arearange.dataLabels
-	 * @since 2.3.0
-	 * @product highcharts highstock
+	 * @type      {Object}
+	 * @extends   plotOptions.arearange.dataLabels
+	 * @excluding x,y
+	 * @since     2.3.0
+	 * @product   highcharts highstock
 	 * @apioption plotOptions.columnrange.dataLabels
 	 */
+
+	pointRange: null,
+	
+	/** @ignore-option */
+	marker: null,
+
+	states: {
+		hover: {
+			/** @ignore-option */
+			halo: false
+		}
+	}
 };
 /**
  * The ColumnRangeSeries class
@@ -125,7 +126,12 @@ seriesType('columnrange', 'arearange', merge(
 				start = point.barX + startAngleRad;
 				point.shapeType = 'path';
 				point.shapeArgs = {
-					d: series.polarArc(y + height, y, start, start + point.pointWidth)
+					d: series.polarArc(
+						y + height,
+						y,
+						start,
+						start + point.pointWidth
+					)
 				};
 			} else {
 
@@ -177,18 +183,13 @@ seriesType('columnrange', 'arearange', merge(
 
 /**
  * A `columnrange` series. If the [type](#series.columnrange.type)
- * option is not specified, it is inherited from [chart.type](#chart.
- * type).
+ * option is not specified, it is inherited from
+ * [chart.type](#chart.type).
  *
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * columnrange](#plotOptions.columnrange).
- *
- * @type {Object}
- * @extends series,plotOptions.columnrange
- * @excluding dataParser,dataURL,stack
- * @product highcharts highstock
+ * @type      {Object}
+ * @extends   series,plotOptions.columnrange
+ * @excluding dataParser,dataURL,stack,stacking
+ * @product   highcharts highstock
  * @apioption series.columnrange
  */
 
@@ -214,8 +215,8 @@ seriesType('columnrange', 'arearange', merge(
  *
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.columnrange.
- * turboThreshold), this option is not available.
+ * points exceeds the series' [turboThreshold](
+ * #series.columnrange.turboThreshold), this option is not available.
  *
  *  ```js
  *     data: [{
@@ -233,15 +234,31 @@ seriesType('columnrange', 'arearange', merge(
  *     }]
  *  ```
  *
- * @type {Array<Object|Array>}
- * @extends series.arearange.data
+ * @type      {Array<Object|Array>}
+ * @extends   series.arearange.data
  * @excluding marker
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts highstock
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects    
+ * @product   highcharts highstock
  * @apioption series.columnrange.data
  */
 
+/**
+ * @excluding halo,lineWidth,lineWidthPlus,marker
+ * @product   highcharts highstock
+ * @apioption series.columnrange.states.hover
+ */
+
+/**
+ * @excluding halo,lineWidth,lineWidthPlus,marker
+ * @product   highcharts highstock
+ * @apioption series.columnrange.states.select
+ */

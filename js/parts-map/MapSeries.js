@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -48,6 +49,14 @@ var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 seriesType('map', 'scatter', {
 
 	/**
+	 * Define the z index of the series.
+	 * 
+	 * @type {Number}
+	 * @product highmaps
+	 * @apioption plotOptions.series.zIndex
+	 */
+
+	/**
 	 * Whether all areas of the map defined in `mapData` should be rendered.
 	 * If `true`, areas which don't correspond to a data point, are rendered
 	 * as `null` points. If `false`, those areas are skipped.
@@ -62,6 +71,7 @@ seriesType('map', 'scatter', {
 
 	animation: false, // makes the complex shapes slow
 
+	/*= if (build.classic) { =*/
 	/**
 	 * The color to apply to null points.
 	 * 
@@ -74,17 +84,6 @@ seriesType('map', 'scatter', {
 	 * @product highmaps
 	 */
 	nullColor: '${palette.neutralColor3}',
-
-	/**
-	 * Whether to allow pointer interaction like tooltips and mouse events
-	 * on null points.
-	 * 
-	 * @type {Boolean}
-	 * @default false
-	 * @since 4.2.7
-	 * @product highmaps
-	 * @apioption plotOptions.map.nullInteraction
-	 */
 
 	/**
 	 * The border color of the map areas.
@@ -102,14 +101,26 @@ seriesType('map', 'scatter', {
 	/**
 	 * The border width of each map area.
 	 * 
-	 * In styled mode, the border stroke width is given in the `.highcharts-point` class.
+	 * In styled mode, the border stroke width is given in the
+	 * `.highcharts-point` class.
 	 * 
-	 * @type {Number}
-	 * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
-	 * @default 1
+	 * @sample    {highmaps} maps/plotoptions/series-border/ Borders demo
+	 * @product   highmaps
 	 * @apioption plotOptions.series.borderWidth
 	 */
 	borderWidth: 1,
+	/*= } =*/
+
+	/**
+	 * Whether to allow pointer interaction like tooltips and mouse events
+	 * on null points.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.2.7
+	 * @product highmaps
+	 * @apioption plotOptions.map.nullInteraction
+	 */
 
 	/**
 	 * Set this option to `false` to prevent a series from connecting to
@@ -122,7 +133,9 @@ seriesType('map', 'scatter', {
 	 * @apioption plotOptions.series.colorAxis
 	 */
 	
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	marker: null,
 
 	stickyTracking: false,
@@ -163,7 +176,9 @@ seriesType('map', 'scatter', {
 		padding: 0
 	},
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	turboThreshold: 0,
 
 	tooltip: {
@@ -203,6 +218,15 @@ seriesType('map', 'scatter', {
 			halo: null,
 
 			/**
+			 * The color of the shape in this state
+			 * 
+			 * @type {Color}
+			 * @sample {highmaps} maps/plotoptions/series-states-hover/ Hover options
+			 * @product highmaps
+			 * @apioption plotOptions.series.states.hover.color
+			 */
+
+			/**
 			 * The border color of the point in this state.
 			 * 
 			 * @type {Color}
@@ -229,29 +253,14 @@ seriesType('map', 'scatter', {
 			 */
 			brightness: 0.2
 
-			/**
-			 * The color of the shape in this state
-			 * 
-			 * @type {Color}
-			 * @sample {highmaps} maps/plotoptions/series-states-hover/ Hover options
-			 * @product highmaps
-			 * @apioption plotOptions.series.states.hover.color
-			 */
-
 		},
 
+		/*= if (build.classic) { =*/
 		select: {
 			color: '${palette.neutralColor20}'
 		}
+		/*= } =*/
 	}
-
-	/**
-	 * Define the z index of the series.
-	 * 
-	 * @type {Number}
-	 * @product highmaps
-	 * @apioption plotOptions.series.zIndex
-	 */
 
 // Prototype members
 }, merge(colorSeriesMixin, {
@@ -460,8 +469,14 @@ seriesType('map', 'scatter', {
 					}
 					// Run through pointArrayMap and what's left of the point data array in parallel, copying over the values
 					for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
-						if (pointArrayMap[j]) {
-							data[i][pointArrayMap[j]] = val[ix];
+						if (pointArrayMap[j] && val[ix] !== undefined) {
+							if (pointArrayMap[j].indexOf('.') > 0) {
+								H.Point.prototype.setNestedProperty(
+									data[i], val[ix], pointArrayMap[j]
+								);
+							} else {
+								data[i][pointArrayMap[j]] = val[ix];
+							}
 						}
 					}
 				}
@@ -960,7 +975,7 @@ seriesType('map', 'scatter', {
 	 * Stop the fade-out
 	 */
 	onMouseOver: function (e) {
-		clearTimeout(this.colorInterval);
+		H.clearTimeout(this.colorInterval);
 		if (this.value !== null || this.series.options.nullInteraction) {
 			Point.prototype.onMouseOver.call(this, e);
 		} else { // #3401 Tooltip doesn't hide when hovering over null points
@@ -1008,14 +1023,9 @@ seriesType('map', 'scatter', {
  * A `map` series. If the [type](#series.map.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * map](#plotOptions.map).
- * 
  * @type {Object}
  * @extends series,plotOptions.map
- * @excluding dataParser,dataURL
+ * @excluding dataParser,dataURL,marker
  * @product highmaps
  * @apioption series.map
  */
@@ -1077,8 +1087,8 @@ seriesType('map', 'scatter', {
 
 /**
  * Individual data label for each point. The options are the same as
- * the ones for [plotOptions.series.dataLabels](#plotOptions.series.
- * dataLabels)
+ * the ones for [plotOptions.series.dataLabels](
+ * #plotOptions.series.dataLabels).
  * 
  * @type {Object}
  * @sample {highmaps} maps/series/data-datalabels/ Disable data labels for individual areas

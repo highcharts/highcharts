@@ -7,7 +7,6 @@
  * SVG map parser. 
  * This file requires data.js.
  */
-
 /* global document, jQuery, $ */
 'use strict';
 import H from '../parts/Globals.js';
@@ -81,18 +80,29 @@ H.extend(H.Data.prototype, {
 					positions = 6;
 				}
 
-				// When moving after a closed subpath, start again from previous subpath's starting point
+				// When moving after a closed subpath, start again from previous
+				// subpath's starting point
 				if (operator === 'm') {
-					startPoint = [parseFloat(path[i + 1]) + startPoint[0], parseFloat(path[i + 2]) + startPoint[1]];
+					startPoint = [
+						parseFloat(path[i + 1]) + startPoint[0],
+						parseFloat(path[i + 2]) + startPoint[1]
+					];
 				} else if (operator === 'M') {
-					startPoint = [parseFloat(path[i + 1]), parseFloat(path[i + 2])];
+					startPoint = [
+						parseFloat(path[i + 1]),
+						parseFloat(path[i + 2])
+					];
 				}
 				
 				// Enter or exit relative mode
 				if (operator === 'm' || operator === 'l' || operator === 'c') {
 					path[i] = operator.toUpperCase();
 					isRelative = true;
-				} else if (operator === 'M' || operator === 'L' || operator === 'C') {
+				} else if (
+					operator === 'M' ||
+					operator === 'L' ||
+					operator === 'C'
+				) {
 					isRelative = false;
 
 				
@@ -135,7 +145,10 @@ H.extend(H.Data.prototype, {
 
 				if (position % 2 === 1) { // y
 					// only translate absolute points or initial moveTo
-					if (matrix && (!isRelative || (operator === 'm' && i < 3))) {
+					if (
+						matrix &&
+						(!isRelative || (operator === 'm' && i < 3))
+					) {
 						point = matrixTransform([path[i - 1], path[i]], matrix);
 						path[i - 1] = point[0];
 						path[i] = point[1];
@@ -210,7 +223,10 @@ H.extend(H.Data.prototype, {
 		// Borrow the map series type's getBox method
 		mapProto.getBox.call(fakeSeries, arr);
 
-		origSize = Math.max(fakeSeries.maxX - fakeSeries.minX, fakeSeries.maxY - fakeSeries.minY);
+		origSize = Math.max(
+			fakeSeries.maxX - fakeSeries.minX,
+			fakeSeries.maxY - fakeSeries.minY
+		);
 		scale = scale || 1000;
 		transA = scale / origSize;
 
@@ -223,7 +239,8 @@ H.extend(H.Data.prototype, {
 
 			var i,
 				path;
-			point.path = path = mapProto.translatePath.call(fakeSeries, point.path, true);
+			point.path = path =
+				mapProto.translatePath.call(fakeSeries, point.path, true);
 			i = path.length;
 			while (i--) {
 				if (typeof path[i] === 'number') {
@@ -247,9 +264,18 @@ H.extend(H.Data.prototype, {
 			options = this.options;
 
 		function getPathLikeChildren(parent) {
-			return Array.prototype.slice.call(parent.getElementsByTagName('path'))
-				.concat(Array.prototype.slice.call(parent.getElementsByTagName('polygon')))
-				.concat(Array.prototype.slice.call(parent.getElementsByTagName('rect')));
+			return Array.prototype.slice
+				.call(parent.getElementsByTagName('path'))
+				.concat(
+					Array.prototype.slice.call(
+						parent.getElementsByTagName('polygon')
+					)
+				)
+				.concat(
+					Array.prototype.slice.call(
+						parent.getElementsByTagName('rect')
+					)
+				);
 		}
 
 		function getPathDefinition(node) {
@@ -283,11 +309,19 @@ H.extend(H.Data.prototype, {
 				nameTag = desc[0] && desc[0].getElementsByTagName('name'),
 				name = nameTag && nameTag[0] && nameTag[0].innerText;
 
-			return name || elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
+			return (
+				name ||
+				elem.getAttribute('inkscape:label') ||
+				elem.getAttribute('id') ||
+				elem.getAttribute('class')
+			);
 		}
 
 		function hasFill(elem) {
-			return !/fill[\s]?\:[\s]?none/.test(elem.getAttribute('style')) && elem.getAttribute('fill') !== 'none';
+			return (
+				!/fill[\s]?\:[\s]?none/.test(elem.getAttribute('style')) &&
+				elem.getAttribute('fill') !== 'none'
+			);
 		}
 
 		function handleSVG(xml) {
@@ -358,29 +392,35 @@ H.extend(H.Data.prototype, {
 			
 			// Iterate groups to find sub paths
 			if (handleGroups) {
-				each(lastCommonAncestor.getElementsByTagName('g'), function (g) {
-					var groupPath = [],
-						pathHasFill;
-					
-					each(getPathLikeChildren(g), function (path) {
-						if (!path.skip) {
-							groupPath = groupPath.concat(
-								data.pathToArray(getPathDefinition(path), getTranslate(path))
-							);
+				each(
+					lastCommonAncestor.getElementsByTagName('g'),
+					function (g) {
+						var groupPath = [],
+							pathHasFill;
+						
+						each(getPathLikeChildren(g), function (path) {
+							if (!path.skip) {
+								groupPath = groupPath.concat(
+									data.pathToArray(
+										getPathDefinition(path),
+										getTranslate(path)
+									)
+								);
 
-							if (hasFill(path)) {
-								pathHasFill = true;
+								if (hasFill(path)) {
+									pathHasFill = true;
+								}
+								
+								path.skip = true;
 							}
-							
-							path.skip = true;
-						}
-					});
-					arr.push({
-						name: getName(g),
-						path: groupPath,
-						hasFill: pathHasFill
-					});
-				});
+						});
+						arr.push({
+							name: getName(g),
+							path: groupPath,
+							hasFill: pathHasFill
+						});
+					}
+				);
 			}
 			
 			// Iterate the remaining paths that are not parts of groups
@@ -388,7 +428,10 @@ H.extend(H.Data.prototype, {
 				if (!path.skip) {
 					arr.push({
 						name: getName(path),
-						path: data.pathToArray(getPathDefinition(path), getTranslate(path)),
+						path: data.pathToArray(
+							getPathDefinition(path),
+							getTranslate(path)
+						),
 						hasFill: hasFill(path)
 					});
 				}			

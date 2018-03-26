@@ -500,15 +500,6 @@ seriesType('tilemap', 'heatmap', {
 	pointPadding: 2,
 
 	/**
-	 * The shape of the tiles in the tilemap. Possible values are `hexagon`,
-	 * `circle`, `diamond`, and `square`.
-	 *
-	 * @sample maps/demo/circlemap-africa Circular tile shapes
-	 * @sample maps/demo/diamondmap Diamond tile shapes
-	 */
-	tileShape: 'hexagon'
-
-	/**
 	 * The column size - how many X axis units each column in the tilemap
 	 * should span. Works as in [Heatmaps](#plotOptions.heatmap.colsize).
 	 *
@@ -531,6 +522,15 @@ seriesType('tilemap', 'heatmap', {
  	 * @product highcharts highmaps
  	 * @apioption plotOptions.tilemap.rowsize
  	 */
+
+	/**
+	 * The shape of the tiles in the tilemap. Possible values are `hexagon`,
+	 * `circle`, `diamond`, and `square`.
+	 *
+	 * @sample maps/demo/circlemap-africa Circular tile shapes
+	 * @sample maps/demo/diamondmap Diamond tile shapes
+	 */
+	tileShape: 'hexagon'
 
 // Prototype functions
 }, {
@@ -617,15 +617,11 @@ seriesType('tilemap', 'heatmap', {
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * tilemap](#plotOptions.tilemap).
- *
- * @type {Object}
- * @extends series,plotOptions.tilemap
- * @excluding joinBy, shadow, allAreas, mapData
- * @product highcharts highmaps
+ * @type      {Object}
+ * @extends   series,plotOptions.tilemap
+ * @excluding allAreas,dataParser,dataURL,joinBy,mapData,marker,pointRange,
+ *            shadow,stack
+ * @product   highcharts highmaps
  * @apioption series.tilemap
  */
 
@@ -677,11 +673,16 @@ seriesType('tilemap', 'heatmap', {
   * @extends series.heatmap.data
   * @excluding marker
   * @sample maps/series/tilemap-gridoffset Offset grid coordinates
-  * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
-  * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
-  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
-  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
-  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+  * @sample {highcharts} highcharts/chart/reflow-true/
+  *         Numerical values
+  * @sample {highcharts} highcharts/series/data-array-of-arrays/
+  *         Arrays of numeric x and y
+  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+  *         Arrays of datetime x and y
+  * @sample {highcharts} highcharts/series/data-array-of-name-value/
+  *         Arrays of point.name and y
+  * @sample {highcharts} highcharts/series/data-array-of-objects/
+  *         Config objects
   * @product highcharts highmaps
   * @apioption series.tilemap.data
   */

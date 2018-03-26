@@ -30,6 +30,51 @@ $highlight-color-60: #6685c2 !default; // Navigator mask fill.
 $highlight-color-20: #ccd6eb !default; // Ticks and axis line.
 $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
 
+// Fonts
+$font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !default;
+$title-font-size: 1.5em !default;
+$subtitle-font-size: 1em !default;
+$legend-font-size: 1em !default;
+$axis-labels-font-size: 0.9em !default;
+
+// Tooltip
+$tooltip-border: 1px !default;
+$tooltip-background: $neutral-color-3 !default;
+
+// Axes
+$xaxis-grid-line: 0px !default;
+
+// Range-selector
+$range-selector-button-border: 0px !default;
+$range-selector-input-text: $neutral-color-80 !default;
+$range-selector-input-border: $neutral-color-20 !default;
+
+// Data-labels
+$data-label-color: $neutral-color-80 !default;
+
+// Buttons
+$context-button-background: $background-color !default;
+
+$highcharts-button-background: $neutral-color-3 !default;
+$highcharts-button-border: $neutral-color-20 !default;
+$highcharts-button-text:  $neutral-color-80 !default;
+
+$highcharts-button-pressed-background: $highlight-color-10 !default;
+$highcharts-button-pressed-border: $neutral-color-20 !default;
+$highcharts-button-pressed-text:  $neutral-color-80 !default;
+
+$highcharts-button-hover-background: $neutral-color-10 !default;
+$highcharts-button-hover-border: $neutral-color-20 !default;
+$highcharts-button-hover-text:  $neutral-color-80 !default;
+
+// Navigator
+$navigator-series-fill: $highlight-color-80 !default;
+$navigator-series-border: $highlight-color-80 !default;
+
+// Scrollbar
+$scrollbar-track-background: $neutral-color-5 !default;
+$scrollbar-track-border: $neutral-color-5 !default;
+
 .highcharts-container {
     position: relative;
     overflow: hidden;
@@ -39,7 +84,7 @@ $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
     line-height: normal;
     z-index: 0; /* #1072 */
     -webkit-tap-highlight-color: rgba(0,0,0,0);
-    font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+    font-family: $font-family;
     font-size: 12px;
 }
 .highcharts-root {
@@ -73,7 +118,7 @@ $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
 /* Titles */
 .highcharts-title {
     fill: $neutral-color-80;
-    font-size: 1.5em;
+    font-size: $title-font-size;
 }
 .highcharts-subtitle {
     fill: $neutral-color-60;
@@ -93,14 +138,14 @@ $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
 .highcharts-axis-labels {
     fill: $neutral-color-60;
     cursor: default;
-    font-size: 0.9em;
+    font-size: $axis-labels-font-size;
 }
 .highcharts-grid-line {
     fill: none;
     stroke: $neutral-color-10;
 }
 .highcharts-xaxis-grid .highcharts-grid-line {
-    stroke-width: 0;
+    stroke-width: $xaxis-grid-line;
 }
 .highcharts-tick {
     stroke: $highlight-color-20;
@@ -147,12 +192,12 @@ $highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
     font-size: 0.85em;
 }
 .highcharts-tooltip-box {
-    stroke-width: 1px;
-    fill: $neutral-color-3;
+    stroke-width: $tooltip-border;
+    fill: $tooltip-background;
     fill-opacity: 0.85;
 }
 .highcharts-tooltip-box .highcharts-label-box {
-    fill: $neutral-color-3;
+    fill: $tooltip-background;
     fill-opacity: 0.85;
 }
 
@@ -226,7 +271,7 @@ g.highcharts-series,
     stroke-width: 0;
 }
 .highcharts-data-label text, text.highcharts-data-label {
-    fill: $neutral-color-80;
+    fill: $data-label-color;
 }
 .highcharts-data-label-connector {
     fill: none;
@@ -319,6 +364,7 @@ g.highcharts-series,
 .highcharts-legend-item text {
     fill: $neutral-color-80;
     font-weight: bold;
+    font-size: $legend-font-size;
     cursor: pointer;
     stroke-width: 0;
 }
@@ -434,8 +480,8 @@ g.highcharts-series,
     cursor: ew-resize;
 }
 .highcharts-navigator-series {
-    fill: $highlight-color-80;
-    stroke: $highlight-color-80;
+    fill: $navigator-series-fill;
+    stroke: $navigator-series-border;
 }
 .highcharts-navigator-series .highcharts-graph {
     stroke-width: 1px;
@@ -474,35 +520,42 @@ g.highcharts-series,
     stroke-width: 1px;
 }
 .highcharts-scrollbar-track {
-    fill: $neutral-color-5;
-    stroke: $neutral-color-5;
+    fill: $scrollbar-track-background;
+    stroke: $scrollbar-track-border;
     stroke-width: 1px;
 }
 .highcharts-button {
-    fill: $neutral-color-3;
-    stroke: $neutral-color-20;
+    fill: $highcharts-button-background;
+    stroke: $highcharts-button-border;
     cursor: default;
     stroke-width: 1px;
     transition: fill 250ms;
 }
 .highcharts-button text {
-    fill: $neutral-color-80;
+    fill: $highcharts-button-text;
 }
 .highcharts-button-hover {
     transition: fill 0ms;
-    fill: $neutral-color-10;
-    stroke: $neutral-color-80;
+    fill: $highcharts-button-hover-background;
+    stroke: $highcharts-button-hover-border;
+}
+.highcharts-button-hover text {
+    fill: $highcharts-button-hover-text;
 }
 .highcharts-button-pressed {
     font-weight: bold;
-    fill: $highlight-color-10;
-    stroke: $highlight-color-80;
+    fill: $highcharts-button-pressed-background;
+    stroke: $highcharts-button-pressed-border;
+}
+.highcharts-button-pressed text {
+    fill: $highcharts-button-pressed-text;
+    font-weight: bold;
 }
 .highcharts-button-disabled text {
-    fill: $neutral-color-20;
+    fill: $highcharts-button-text;
 }
 .highcharts-range-selector-buttons .highcharts-button {
-    stroke-width: 0;
+    stroke-width: $range-selector-button-border;
 }
 .highcharts-range-label rect {
     fill: none;
@@ -514,7 +567,11 @@ g.highcharts-series,
     fill: none;
 }
 .highcharts-range-input text {
-    fill: $neutral-color-80;
+    fill: $range-selector-input-text
+}
+.highcharts-range-input {
+    stroke-width:1px;
+    stroke: $range-selector-input-border;
 }
 input.highcharts-range-selector {
     position: absolute;
@@ -597,7 +654,7 @@ input.highcharts-range-selector {
 
 /* Exporting module */
 .highcharts-contextbutton {
-    fill: $background-color; /* needed to capture hover */
+    fill: $context-button-background; /* needed to capture hover */
     stroke: none;
     stroke-linecap: round;
 }
@@ -667,4 +724,15 @@ text.highcharts-drilldown-data-label,
 .highcharts-lineargauge-target-line {
 	stroke-width: 1px;
     stroke: $neutral-color-80;
+}
+
+/* Annotations module */
+.highcharts-annotation-label-box {
+    stroke-width: 1px;
+    stroke: $neutral-color-100;
+    fill: $neutral-color-100;
+    fill-opacity: 0.75;
+}
+.highcharts-annotation-label text {
+    fill: $neutral-color-10;
 }

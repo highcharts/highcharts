@@ -3,7 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import Highcharts from './Globals.js';
 import './Utilities.js';
@@ -236,7 +236,8 @@ Highcharts.Pointer.prototype = {
 		var series = point.series,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
-			plotX = pick(point.clientX, point.plotX);
+			plotX = pick(point.clientX, point.plotX),
+			shapeArgs = point.shapeArgs;
 
 		if (xAxis && yAxis) {
 			return inverted ? {
@@ -245,6 +246,12 @@ Highcharts.Pointer.prototype = {
 			} : {
 				chartX: plotX + xAxis.pos,
 				chartY: point.plotY + yAxis.pos
+			};
+		} else if (shapeArgs && shapeArgs.x && shapeArgs.y) {
+			// E.g. pies do not have axes
+			return {
+				chartX: shapeArgs.x,
+				chartY: shapeArgs.y
 			};
 		}
 	},
@@ -815,10 +822,10 @@ Highcharts.Pointer.prototype = {
 	},
 
 	onContainerMouseDown: function (e) {
+		// Normalize before the 'if' for the legacy IE (#7850)
+		e = this.normalize(e);
 
 		if (e.button !== 2) {
-
-			e = this.normalize(e);
 
 			this.zoomOption(e);
 

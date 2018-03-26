@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -74,6 +74,7 @@ each(['column', 'pie'], function (type) {
 	}
 });
 
+
 /**
  * Strip HTML tags away from a string. Used for aria-label attributes, painting
  * on a canvas will fail if the text contains tags.
@@ -85,23 +86,28 @@ function stripTags(s) {
 }
 
 
+/**
+ * Set default keyboard navigation options
+ */
 H.setOptions({
 	accessibility: {
 
 		/**
 		 * Options for keyboard navigation.
 		 * 
-		 * @type {Object}
-		 * @since 5.0.0
+		 * @type      {Object}
+		 * @since     5.0.0
+		 * @apioption accessibility.keyboardNavigation
 		 */
 		keyboardNavigation: {
 
 			/**
 			 * Enable keyboard navigation for the chart.
 			 * 
-			 * @type {Boolean}
-			 * @default true
-			 * @since 5.0.0
+			 * @type      {Boolean}
+			 * @default   true
+			 * @since     5.0.0
+			 * @apioption accessibility.keyboardNavigation.enabled
 			 */
 			enabled: true,
 
@@ -110,20 +116,30 @@ H.setOptions({
 			 * Options for the focus border drawn around elements while
 			 * navigating through them.
 			 *
-			 * @sample highcharts/accessibility/custom-focus
-			  *			Custom focus ring
-			 * @since 6.0.3
+			 * @type      {Object}
+			 * @sample    highcharts/accessibility/custom-focus
+			 *            Custom focus ring
+			 * @since     6.0.3
+			 * @apioption accessibility.keyboardNavigation.focusBorder
 			 */
 			focusBorder: {
 				/**
 				 * Enable/disable focus border for chart.
+				 *
+				 * @type      {Boolean}
+				 * @default   true
+				 * @since     6.0.3
+				 * @apioption accessibility.keyboardNavigation.focusBorder.enabled
 				 */
 				enabled: true,
 
 				/**
 				 * Hide the browser's default focus indicator.
 				 *
-				 * @since 6.0.4
+				 * @type      {Boolean}
+				 * @default   true
+				 * @since     6.0.4
+				 * @apioption accessibility.keyboardNavigation.focusBorder.hideBrowserFocusOutline
 				 */
 				hideBrowserFocusOutline: true,
 
@@ -135,15 +151,48 @@ H.setOptions({
 				 * 
 				 * In styled mode, the border is given the 
 				 * `.highcharts-focus-border` class.
+				 *
+				 * @type      {Object}
+				 * @since     6.0.3
+				 * @apioption accessibility.keyboardNavigation.focusBorder.style
 				 */
 				style: {
+					/**
+					 * Color of the focus border.
+					 *
+					 * @type      {Color}
+					 * @default   #000000
+					 * @since     6.0.3
+					 * @apioption accessibility.keyboardNavigation.focusBorder.style.color
+					*/
 					color: '${palette.highlightColor80}',
+					/**
+					 * Line width of the focus border.
+					 *
+					 * @type      {Number}
+					 * @default   2
+					 * @since     6.0.3
+					 * @apioption accessibility.keyboardNavigation.focusBorder.style.lineWidth
+					*/
 					lineWidth: 2,
+					/**
+					 * Border radius of the focus border.
+					 *
+					 * @type      {Number}
+					 * @default   3
+					 * @since     6.0.3
+					 * @apioption accessibility.keyboardNavigation.focusBorder.style.borderRadius
+					*/
 					borderRadius: 3
 				},
 
 				/**
 				 * Focus border margin around the elements.
+				 *
+				 * @type      {Number}
+				 * @default   2
+				 * @since     6.0.3
+				 * @apioption accessibility.keyboardNavigation.focusBorder.margin
 				 */
 				margin: 2
 			},
@@ -160,18 +209,20 @@ H.setOptions({
 			 * will behave like left/right. This is useful for unifying 
 			 * navigation behavior with/without screen readers enabled.
 			 *
-			 * @type {String}
-			 * @default normal
-			 * @since 6.0.4
-			 * @apioption keyboardNavigation.mode
+			 * @type      {String}
+			 * @default   normal
+			 * @since     6.0.4
+			 * @apioption accessibility.keyboardNavigation.mode
 			 */
 
 			/**
 			 * Skip null points when navigating through points with the
 			 * keyboard.
 			 * 
-			 * @type {Boolean}
-			 * @since 5.0.0
+			 * @type      {Boolean}
+			 * @default   true
+			 * @since     5.0.0
+			 * @apioption accessibility.keyboardNavigation.skipNullPoints
 			 */
 			skipNullPoints: true
 		}
@@ -189,8 +240,8 @@ H.setOptions({
  * module.
  * 
  * @type {Boolean}
- * @see [accessibility.keyboardNavigation](#accessibility.keyboardNavigation.
- * enabled)
+ * @see [accessibility.keyboardNavigation](
+ *      #accessibility.keyboardNavigation.enabled)
  * @default true
  * @since 5.0.13
  * @apioption legend.keyboardNavigation.enabled
@@ -372,7 +423,7 @@ H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
 			browserFocusElement.css({ outline: 'none' });
 		}
 	}
-	if (focusBorderOptions.enabled && svgElement !== this.focusElement) {
+	if (focusBorderOptions.enabled) {
 		// Remove old focus border
 		if (this.focusElement) {
 			this.focusElement.removeFocusBorder();
@@ -941,7 +992,10 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					button.element.setAttribute('role', 'button');
 					button.element.setAttribute(
 						'aria-label',
-						'Zoom ' + (i ? 'out ' : '') + 'chart'
+						chart.langFormat(
+							'accessibility.mapZoom' + (i ? 'Out' : 'In'),
+							{ chart: chart }
+						)
 					);
 				});
 
@@ -993,7 +1047,13 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					button.element.setAttribute('role', 'button');
 					button.element.setAttribute(
 						'aria-label',
-						'Select range ' + (button.text && button.text.textStr)
+						chart.langFormat(
+							'accessibility.rangeSelectorButton',
+							{ 
+								chart: chart,
+								buttonText: button.text && button.text.textStr
+							}
+						)
 					);
 				});
 				// Focus first/last button
@@ -1053,7 +1113,8 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 				// Try to highlight next/prev legend item
 				if (!chart.highlightLegendItem(
 					chart.highlightedLegendItemIx + direction
-				)) {
+				) && chart.legend.allItems.length > 1) {
+					// Wrap around if more than 1 item
 					this.init(direction);
 				}
 			}],
@@ -1085,7 +1146,13 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					item.legendGroup.element.setAttribute('role', 'button');
 					item.legendGroup.element.setAttribute(
 						'aria-label',
-						stripTags('Toggle visibility of series ' + item.name)
+						chart.langFormat(
+							'accessibility.legendItem',
+							{ 
+								chart: chart,
+								itemName: stripTags(item.name)
+							}
+						)
 					);
 				});
 				// Focus first/last item
@@ -1162,9 +1229,12 @@ H.Chart.prototype.addExitAnchor = function () {
 // Clear the chart and reset the navigation state
 H.Chart.prototype.resetKeyboardNavigation = function () {
 	var chart = this,
-		curMod = chart.keyboardNavigationModules[
-			chart.keyboardNavigationModuleIndex || 0
-		];
+		curMod = (
+			chart.keyboardNavigationModules &&
+			chart.keyboardNavigationModules[
+				chart.keyboardNavigationModuleIndex || 0
+			]
+		);
 	if (curMod && curMod.terminate) {
 		curMod.terminate();
 	}
@@ -1179,7 +1249,7 @@ H.Chart.prototype.resetKeyboardNavigation = function () {
 /**
  * On destroy, we need to clean up the focus border and the state
  */
-H.wrap(H.Series.prototype, 'destroy', function (proceed) {
+H.addEvent(H.Series, 'destroy', function () {
 	var chart = this.chart;
 	if (chart.highlightedPoint && chart.highlightedPoint.series === this) {
 		delete chart.highlightedPoint;
@@ -1187,7 +1257,6 @@ H.wrap(H.Series.prototype, 'destroy', function (proceed) {
 			chart.focusElement.removeFocusBorder();
 		}
 	}
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 
@@ -1240,7 +1309,10 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		// Reset chart navigation state if we click outside the chart and it's
 		// not already reset
 		chart.unbindBlurHandler = addEvent(doc, 'mouseup', function () {
-			if (!chart.keyboardReset && !chart.pointer.chartPosition) {
+			if (
+				!chart.keyboardReset &&
+				!(chart.pointer && chart.pointer.chartPosition)
+			) {
 				chart.resetKeyboardNavigation();
 			}
 		});

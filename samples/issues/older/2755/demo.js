@@ -10,8 +10,8 @@ $(function () {
             categories: [
                 'style="text-decoration:underline; color:#f00"',
                 'Some <span style="text-decoration:underline; color:#f00">styled</span> text',
-                'href="http://www.highcharts.com"',
-                'Some <a href="http://www.highcharts.com">linked</a> text'
+                'href="https://www.highcharts.com"',
+                'Some <a href="https://www.highcharts.com">linked</a> text'
             ]
         },
         title: {

@@ -15,19 +15,21 @@ var pick = H.pick,
  * A spline series is a special type of line series, where the segments between
  * the data points are smoothed.
  *
- * @sample {highcharts} highcharts/demo/spline-irregular-time/ Spline chart
- * @sample {highstock} stock/demo/spline/ Spline chart
- * 
- * @extends plotOptions.series
+ * @sample    {highcharts} highcharts/demo/spline-irregular-time/
+ *            Spline chart
+ * @sample    {highstock} stock/demo/spline/
+ *            Spline chart
+ * @extends   plotOptions.series
  * @excluding step
- * @product highcharts highstock
+ * @product   highcharts highstock
  * @apioption plotOptions.spline
  */
 
 /**
  * Spline series type.
+ *
  * @constructor seriesTypes.spline
- * @extends {Series}
+ * @extends     {Series}
  */
 seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 	/**
@@ -173,15 +175,10 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
  * A `spline` series. If the [type](#series.spline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * spline](#plotOptions.spline).
- * 
- * @type {Object}
- * @extends series,plotOptions.spline
- * @excluding dataParser,dataURL
- * @product highcharts highstock
+ * @type      {Object}
+ * @extends   series,plotOptions.spline
+ * @excluding dataParser,dataURL,step
+ * @product   highcharts highstock
  * @apioption series.spline
  */
 
@@ -230,18 +227,18 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
  *     }]
  *  ```
  * 
- * @type {Array<Object|Array|Number>}
- * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/
- *         Config objects
- * @product highcharts highstock
+ * @type      {Array<Object|Array|Number>}
+ * @extends   series.line.data
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects
+ * @product   highcharts highstock
  * @apioption series.spline.data
  */

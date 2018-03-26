@@ -19,7 +19,10 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
                 grouping: false,
                 groupZPadding: 10,
                 pointPadding: 0.2,
-                depth: 40
+                depth: 40,
+                dataLabels: {
+                    enabled: true
+                }
             }
         },
         xAxis: {
@@ -105,5 +108,78 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     chart.yAxis[0].setExtremes(2, 5);
 
     testColumnCrop(chart, 'Bars');
+
+    // dataLabels testing
+
+    chart.yAxis[0].setExtremes(7, 12);
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+    var point0 = chart.series[0].points[0];
+
+    assert.strictEqual(
+        (
+            point0.outside3dPlot &&
+            point0.dataLabel.alignAttr.y <= -9e9
+        ),
+        true,
+        'DataLabels are hidden outside plotArea with reversed axis'
+    );
+
+    chart.addSeries({
+        stacking: 'normal',
+        data: [{
+            x: 5,
+            y: 8
+        }],
+        zIndex: 3
+    });
+
+    assert.strictEqual(
+        (
+            point0.outside3dPlot &&
+            point0.dataLabel.alignAttr.y <= -9e9
+        ),
+        true,
+        'DataLabels are hidden outside plotArea with stacking enabled'
+    );
+
+    chart.yAxis[0].setExtremes(null, null);
+    chart.series[0].remove();
+
+    chart.update({
+        yAxis: {
+            min: null,
+            max: null
+        },
+        xAxis: {
+            min: null,
+            max: null
+        }
+    });
+
+    var oldTitleX = Number(chart.yAxis[0].axisTitle.element.attributes.x.value);
+    var oldTitleY = Number(chart.yAxis[0].axisTitle.element.attributes.y.value);
+
+    // toggle series visibility
+    chart.series[0].setVisible();
+    chart.series[0].setVisible();
+
+    var newTitleX = Number(chart.yAxis[0].axisTitle.element.attributes.x.value);
+    var newTitleY = Number(chart.yAxis[0].axisTitle.element.attributes.y.value);
+
+    assert.strictEqual(
+    (
+        oldTitleX === newTitleX &&
+        oldTitleY === newTitleY
+    ),
+    true,
+    'yAxis title is on the same position after toggling series visibility'
+    );
 
 });

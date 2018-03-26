@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "6.0.4",
+  "version": "6.0.7",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -25,15 +25,24 @@
     "lib"
   ],
   "scripts": {
+    "test": "gulp test",
+    "testall": "gulp test --browsers all",
     "precommit": "lint-staged && gulp test",
-    "post-merge": "gulp styles && gulp scripts"
+    "post-merge": "gulp styles && gulp scripts && gulp test"
   },
   "devDependencies": {
+    "aws-sdk": "^2.94.0",
+    "babel-runtime": "^6.20.0",
+    "glob": "^7.1.2",
+    "safe-regex": "^1.1.0",
+    "taffydb": "^2.7.3",
     "babel-plugin-transform-es2015-arrow-functions": "^6.8.0",
     "browserify": "^12.0.2",
     "closurecompiler": "^1.6.1",
     "colors": "~1.1.2",
     "eslint": "3.12.2",
+    "eslint-plugin-highcharts": "file:tools/eslint-plugin-highcharts",
+    "eslint-plugin-security": "^1.4.0",
     "fs-extra": "^2.1.2",
     "gifencoder": "^1.1.0",
     "google-closure-compiler-js": "^20160916.0.0",
@@ -43,7 +52,7 @@
     "gulp-jsdoc3": "^1.0.1",
     "gzip-size": "^3.0.0",
     "highcharts-api-doc-gen": "github:highcharts/api-docs",
-    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.0.8",
+    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.0.25",
     "husky": "^0.14.3",
     "js-yaml": "^3.10.0",
     "karma": "^1.7.1",
@@ -75,11 +84,5 @@
       "git add"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>",
-  "dependencies": {
-    "aws-sdk": "^2.94.0",
-    "babel-runtime": "^6.20.0",
-    "glob": "^7.1.2",
-    "taffydb": "^2.7.3"
-  }
+  "license": "SEE LICENSE IN <license.txt>"
 }

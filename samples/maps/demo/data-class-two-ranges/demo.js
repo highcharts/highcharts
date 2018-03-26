@@ -1,12 +1,10 @@
 
-
 // Load the data from a Google Spreadsheet
-// https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc&output=html
+// https://docs.google.com/spreadsheets/d/14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY/pubhtml
 Highcharts.data({
+    googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
 
-    googleSpreadsheetKey: '0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc',
-
-    // custom handler for columns
+    // Custom handler for columns
     parsed: function (columns) {
 
         /**
@@ -35,13 +33,13 @@ Highcharts.data({
                 series: [{
                     name: 'Votes',
                     data: [{
-                        name: 'Obama',
+                        name: 'Trump',
                         color: '#0200D0',
-                        y: parseInt(columns[3][row], 10)
-                    }, {
-                        name: 'Romney',
-                        color: '#C40401',
                         y: parseInt(columns[4][row], 10)
+                    }, {
+                        name: 'Clinton',
+                        color: '#C40401',
+                        y: parseInt(columns[3][row], 10)
                     }],
                     dataLabels: {
                         format: '<b>{point.name}</b> {point.percentage:.1f}%'
@@ -55,20 +53,21 @@ Highcharts.data({
         var keys = columns[0],
             names = columns[1],
             percent = columns[7],
+            mapData = Highcharts.maps['countries/us/us-all'],
             // Build the chart options
             options = {
                 chart: {
-                    renderTo: 'container',
                     type: 'map',
+                    map: mapData,
+                    renderTo: 'container',
                     borderWidth: 1
                 },
 
                 title: {
-                    text: 'US presidential election 2012 results'
+                    text: 'US presidential election 2016 results'
                 },
                 subtitle: {
-                    text: 'Source: <a href="http://en.wikipedia.org/wiki/United_States_presidential_election,' +
-                        '_2012">Wikipedia</a>'
+                    text: 'Source: <a href="https://transition.fec.gov/pubrec/fe2016/2016presgeresults.pdf">Federal Election Commission</a>'
                 },
 
                 legend: {
@@ -88,23 +87,21 @@ Highcharts.data({
                 },
 
                 colorAxis: {
-
                     dataClasses: [{
                         from: -100,
                         to: 0,
                         color: '#C40401',
-                        name: 'Romney'
+                        name: 'Clinton'
                     }, {
                         from: 0,
                         to: 100,
                         color: '#0200D0',
-                        name: 'Obama'
+                        name: 'Trump'
                     }]
                 },
 
                 series: [{
                     data: [],
-                    mapData: Highcharts.maps['countries/us/us-all'],
                     joinBy: 'postal-code',
                     dataLabels: {
                         enabled: true,
@@ -114,7 +111,7 @@ Highcharts.data({
                             textTransform: 'uppercase'
                         }
                     },
-                    name: 'Democrats margin',
+                    name: 'Republicans margin',
                     point: {
                         events: {
                             click: pointClick
@@ -127,8 +124,7 @@ Highcharts.data({
                 }, {
                     name: 'Separators',
                     type: 'mapline',
-                    data: Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline'),
-                    color: 'silver',
+                    nullColor: 'silver',
                     showInLegend: false,
                     enableMouseTracking: false
                 }]
@@ -136,7 +132,7 @@ Highcharts.data({
         keys = keys.map(function (key) {
             return key.toUpperCase();
         });
-        Highcharts.each(options.series[0].mapData.features, function (mapPoint) {
+        Highcharts.each(mapData.features, function (mapPoint) {
             if (mapPoint.properties['postal-code']) {
                 var postalCode = mapPoint.properties['postal-code'],
                     i = $.inArray(postalCode, keys);

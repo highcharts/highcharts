@@ -32,7 +32,7 @@ var colorPointMixin = H.colorPointMixin,
  * @sample highcharts/demo/heatmap-canvas/
  *         Heavy heatmap
  * @extends {plotOptions.scatter}
- * @excluding marker,pointRange
+ * @excluding marker,pointRange,pointPlacement
  * @product highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
@@ -40,6 +40,8 @@ seriesType('heatmap', 'scatter', {
 
 	/**
 	 * Animation is disabled by default on the heatmap series.
+	 *
+	 * @type {Boolean|Object}
 	 */
 	animation: false,
 
@@ -83,6 +85,18 @@ seriesType('heatmap', 'scatter', {
 	 * @apioption plotOptions.heatmap.colsize
 	 */
 	
+	/**
+	 * The row size - how many Y axis units each heatmap row should span.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} maps/demo/heatmap/ 1 by default
+	 * @sample {highmaps} maps/demo/heatmap/ 1 by default
+	 * @default 1
+	 * @since 4.0
+	 * @product highcharts highmaps
+	 * @apioption plotOptions.heatmap.rowsize
+	 */
+	
 	/*= if (build.classic) { =*/
 
 	/**
@@ -106,7 +120,9 @@ seriesType('heatmap', 'scatter', {
 		padding: 0 // #3837
 	},
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	marker: null,
 
 	/**	@ignore */
@@ -118,26 +134,25 @@ seriesType('heatmap', 'scatter', {
 
 	states: {
 
-		normal: {
-			animation: true
-		},
-
 		hover: {
+			/** 
+			 * @ignore
+			 */
 			halo: false,  // #3406, halo is disabled on heatmaps by default
+
+			/**
+			 * How much to brighten the point on interaction. Requires the main
+			 * color to be defined in hex or rgb(a) format.
+			 *
+			 * In styled mode, the hover brightening is by default replaced
+			 * with a fill-opacity set in the `.highcharts-point:hover` rule.
+			 * 
+			 * @type {Number}
+			 * @product highcharts highmaps
+			 */
 			brightness: 0.2
 		}
 	}
-	/**
-	 * The row size - how many Y axis units each heatmap row should span.
-	 * 
-	 * @type {Number}
-	 * @sample {highcharts} maps/demo/heatmap/ 1 by default
-	 * @sample {highmaps} maps/demo/heatmap/ 1 by default
-	 * @default 1
-	 * @since 4.0
-	 * @product highcharts highmaps
-	 * @apioption plotOptions.heatmap.rowsize
-	 */
 
 }, merge(colorSeriesMixin, {
 	pointArrayMap: ['y', 'value'],
@@ -257,14 +272,9 @@ seriesType('heatmap', 'scatter', {
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * heatmap](#plotOptions.heatmap).
- * 
  * @type {Object}
  * @extends series,plotOptions.heatmap
- * @excluding dataParser,dataURL,stack
+ * @excluding dataParser,dataURL,marker,pointRange,stack
  * @product highcharts highmaps
  * @apioption series.heatmap
  */
@@ -313,11 +323,16 @@ seriesType('heatmap', 'scatter', {
  * @type {Array<Object|Array>}
  * @extends series.line.data
  * @excluding marker
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
  * @product highcharts highmaps
  * @apioption series.heatmap.data
  */

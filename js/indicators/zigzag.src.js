@@ -31,7 +31,6 @@ seriesType('zigzag', 'sma',
 	 * @optionparent plotOptions.zigzag
 	 */
 	{
-		name: 'Zig Zag (1%)',
 		/**
 		 * @excluding index,period
 		 */
@@ -73,6 +72,9 @@ seriesType('zigzag', 'sma',
 			deviation: 1
 		}
 	}, {
+		nameComponents: ['deviation'],
+		nameSuffixes: ['%'],
+		nameBase: 'Zig Zag',
 		getValues: function (series, params) {
 			var lowIndex = params.lowIndex,
 				highIndex = params.highIndex,
@@ -208,11 +210,6 @@ seriesType('zigzag', 'sma',
 /**
  * A `Zig Zag` series. If the [type](#series.zigzag.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to
- * [plotOptions.zigzag](#plotOptions.zigzag).
  * 
  * @type {Object}
  * @since 6.0.0

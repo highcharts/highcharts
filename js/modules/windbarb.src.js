@@ -10,6 +10,7 @@ import H from '../parts/Globals.js';
 import onSeriesMixin from '../mixins/on-series.js';
 
 var each = H.each,
+	noop = H.noop,
 	seriesType = H.seriesType;
 
 /**
@@ -54,7 +55,7 @@ seriesType('windbarb', 'column', {
 		 * names can be internationalized by modifying
 		 * `Highcharts.seriesTypes.windbarb.prototype.beaufortNames`.
 		 */
-		pointFormat: '<b>{series.name}</b>: {point.value} ({point.beaufort})<br/>'
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b> ({point.beaufort})<br/>'
 	},
 	/**
 	 * Pixel length of the stems.
@@ -66,7 +67,15 @@ seriesType('windbarb', 'column', {
 	 * `null`, and that they don't overlap the linked series when `onSeries` is
 	 * given.
 	 */
-	yOffset: -20
+	yOffset: -20,
+	/**
+	 * Horizontal offset from the cartesian position, in pixels. When the chart
+	 * is inverted, this option allows translation like
+	 * [yOffset](#plotOptions.windbarb.yOffset) in non inverted charts.
+	 *
+	 * @since 6.1.0
+	 */
+	xOffset: 0
 }, {
 	pointArrayMap: ['value', 'direction'],
 	parallelArrays: ['x', 'value', 'direction'],
@@ -101,6 +110,7 @@ seriesType('windbarb', 'column', {
 	markerAttribs: function () {
 		return undefined;
 	},
+	getPlotBox: onSeriesMixin.getPlotBox,
 	/**
 	 * Create a single wind arrow. It is later rotated around the zero
 	 * centerpoint.
@@ -218,13 +228,16 @@ seriesType('windbarb', 'column', {
 
 	drawPoints: function () {
 		var chart = this.chart,
-			yAxis = this.yAxis;
+			yAxis = this.yAxis,
+			inverted = chart.inverted,
+			shapeOffset = this.options.vectorLength / 2;
+
 		each(this.points, function (point) {
 			var plotX = point.plotX,
 				plotY = point.plotY;
 
 			// Check if it's inside the plot area, but only for the X dimension.
-			if (chart.isInsidePlot(plotX, 0, chart.inverted)) {
+			if (chart.isInsidePlot(plotX, 0, false)) {
 
 				// Create the graphic the first time
 				if (!point.graphic) {
@@ -237,7 +250,7 @@ seriesType('windbarb', 'column', {
 				point.graphic
 					.attr({
 						d: this.windArrow(point),
-						translateX: plotX,
+						translateX: plotX + this.options.xOffset,
 						translateY: plotY + this.options.yOffset,
 						rotation: point.direction
 					})
@@ -248,15 +261,11 @@ seriesType('windbarb', 'column', {
 			}
 
 			// Set the tooltip anchor position
-			point.tooltipPos = chart.inverted ? 
-			[
-				yAxis.len + yAxis.pos - chart.plotLeft - plotY,
-				this.xAxis.len - plotX
-			] :
-			[
-				plotX,
-				plotY + yAxis.pos - chart.plotTop + this.options.yOffset -
-					this.options.vectorLength / 2
+			point.tooltipPos = [
+				plotX + this.options.xOffset + (inverted && !this.onSeries ?
+					shapeOffset : 0),
+				plotY + this.options.yOffset - (inverted ? 0 :
+					shapeOffset + yAxis.pos - chart.plotTop)
 			]; // #6327
 		}, this);
 	}, 
@@ -276,7 +285,12 @@ seriesType('windbarb', 'column', {
 
 			this.animate = null;
 		}
-	}
+	},
+
+	/**
+	 * Don't invert the marker group (#4960)
+	 */
+	invertGroups: noop
 }, {
 	isValid: function () {
 		return H.isNumber(this.value) && this.value >= 0;
@@ -288,11 +302,6 @@ seriesType('windbarb', 'column', {
 /**
  * A `windbarb` series. If the [type](#series.windbarb.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * windbarb](#plotOptions.windbarb).
  * 
  * @type {Object}
  * @extends series,plotOptions.windbarb
@@ -336,11 +345,16 @@ seriesType('windbarb', 'column', {
  * 
  * @type {Array<Object|Array|Number>}
  * @extends series.line.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts highstock
  * @apioption series.windbarb.data
  */

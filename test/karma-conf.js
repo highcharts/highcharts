@@ -196,7 +196,7 @@ module.exports = function (config) {
         frameworks: ['qunit'],
         files: files.concat([
             {
-                pattern: 'utils/samples/*.png', // testimage.png
+                pattern: 'test/*.png', // testimage.png
                 watched: false,
                 included: false,
                 served: true
@@ -209,7 +209,7 @@ module.exports = function (config) {
             },
 
             // Set up
-            'utils/samples/test-controller.js',
+            'test/test-controller.js',
             'test/karma-setup.js'
         ], tests),
 
@@ -276,6 +276,27 @@ module.exports = function (config) {
             require('./karma-imagecapture-reporter.js')
         ],
 
+        formatError: function (s) {
+            let ret = s.replace(
+                /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
+                function (a, b, c) {
+                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan + '\n' +
+                    '\t' + a.replace(/^@/, '@ ') + '\n<<<splitter>>>';
+                }
+            );
+
+            ret = s.replace(
+                /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/,
+                function (a, b, c) {
+                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan;
+                }
+            );
+
+            // Skip the call stack, it's internal QUnit stuff
+            ret = ret.split('<<<splitter>>>')[0];
+
+            return ret;
+        },
 
         preprocessors: {
             '**/unit-tests/*/*/demo.js': ['generic'],
