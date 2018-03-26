@@ -14,7 +14,7 @@ var seriesType = H.seriesType;
  * The Bar series class
  */
 seriesType('bar', 'column', null, {
-	inverted: true
+    inverted: true
 });
 /**
  * A bar series is a special type of column series where the columns are
@@ -31,7 +31,7 @@ seriesType('bar', 'column', null, {
 /**
  * A `bar` series. If the [type](#series.bar.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).
- * 
+ *
  * @type      {Object}
  * @extends   series,plotOptions.bar
  * @excluding connectNulls,dashStyle,dataParser,dataURL,gapSize,gapUnit,linecap,
@@ -43,21 +43,21 @@ seriesType('bar', 'column', null, {
 /**
  * An array of data points for the series. For the `bar` series type,
  * points can be given in the following ways:
- * 
+ *
  * 1.  An array of numerical values. In this case, the numerical values
  * will be interpreted as `y` options. The `x` values will be automatically
  * calculated, either starting at 0 and incremented by 1, or from `pointStart`
  * and `pointInterval` given in the series options. If the axis has
  * categories, these will be used. Example:
- * 
+ *
  *  ```js
  *  data: [0, 5, 3, 5]
  *  ```
- * 
+ *
  * 2.  An array of arrays with 2 values. In this case, the values correspond
  * to `x,y`. If the first value is a string, it is applied as the name
  * of the point, and the `x` value is inferred.
- * 
+ *
  *  ```js
  *     data: [
  *         [0, 5],
@@ -65,12 +65,12 @@ seriesType('bar', 'column', null, {
  *         [2, 3]
  *     ]
  *  ```
- * 
+ *
  * 3.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.bar.turboThreshold),
  * this option is not available.
- * 
+ *
  *  ```js
  *     data: [{
  *         x: 1,
@@ -84,7 +84,7 @@ seriesType('bar', 'column', null, {
  *         color: "#FF00FF"
  *     }]
  *  ```
- * 
+ *
  * @type      {Array<Object|Array|Number>}
  * @extends   series.column.data
  * @sample    {highcharts} highcharts/chart/reflow-true/
@@ -115,7 +115,7 @@ seriesType('bar', 'column', null, {
 
 /**
  * Alignment of the data label relative to the data point.
- * 
+ *
  * @type      {String}
  * @sample    {highcharts}
  *            highcharts/plotoptions/bar-datalabels-align-inside-bar/
@@ -127,7 +127,7 @@ seriesType('bar', 'column', null, {
 
 /**
  * The x position of the data label relative to the data point.
- * 
+ *
  * @type      {Number}
  * @sample    {highcharts}
  *            highcharts/plotoptions/bar-datalabels-align-inside-bar/
