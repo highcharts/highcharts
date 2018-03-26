@@ -3,25 +3,25 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var isArray = H.isArray,
-	seriesType = H.seriesType;
+    seriesType = H.seriesType;
 
 // Utils:
 function sumArray(array) {
-	return H.reduce(array, function (prev, cur) {
-		return prev + cur;
-	}, 0);
+    return H.reduce(array, function (prev, cur) {
+        return prev + cur;
+    }, 0);
 }
 
 function meanDeviation(arr, sma) {
-	var len = arr.length,
-		sum = 0,
-		i;
+    var len = arr.length,
+        sum = 0,
+        i;
 
-	for (i = 0; i < len; i++) {
-		sum += Math.abs(sma - (arr[i]));
-	}
+    for (i = 0; i < len; i++) {
+        sum += Math.abs(sma - (arr[i]));
+    }
 
-	return sum;
+    return sum;
 }
 
 /**
@@ -30,80 +30,80 @@ function meanDeviation(arr, sma) {
  * @constructor seriesTypes.cci
  * @augments seriesTypes.sma
  */
-seriesType('cci', 'sma', 
-	/**
-	 * Commodity Channel Index (CCI). This series requires `linkedTo` option to
-	 * be set.
-	 * 
-	 * @extends {plotOptions.sma}
-	 * @product highstock
-	 * @sample {highstock} stock/indicators/cci CCI indicator
-	 * @since 6.0.0
-	 * @optionparent plotOptions.cci
-	 */
-	{
-		params: {
-			period: 14
-		}
-	}, {
-		getValues: function (series, params) {
-			var period = params.period,
-				xVal = series.xData,
-				yVal = series.yData,
-				yValLen = yVal ? yVal.length : 0,
-				TP = [],
-				periodTP = [],
-				range = 1,
-				CCI = [],
-				xData = [],
-				yData = [],
-				CCIPoint, p, len, smaTP, TPtemp, meanDev, i;
+seriesType('cci', 'sma',
+    /**
+     * Commodity Channel Index (CCI). This series requires `linkedTo` option to
+     * be set.
+     *
+     * @extends {plotOptions.sma}
+     * @product highstock
+     * @sample {highstock} stock/indicators/cci CCI indicator
+     * @since 6.0.0
+     * @optionparent plotOptions.cci
+     */
+    {
+        params: {
+            period: 14
+        }
+    }, {
+        getValues: function (series, params) {
+            var period = params.period,
+                xVal = series.xData,
+                yVal = series.yData,
+                yValLen = yVal ? yVal.length : 0,
+                TP = [],
+                periodTP = [],
+                range = 1,
+                CCI = [],
+                xData = [],
+                yData = [],
+                CCIPoint, p, len, smaTP, TPtemp, meanDev, i;
 
-			// CCI requires close value
-			if (
-				xVal.length <= period ||
-				!isArray(yVal[0]) ||
-				yVal[0].length !== 4
-			) {
-				return false;
-			}
-			
-			// accumulate first N-points
-			while (range < period) {
-				p = yVal[range - 1];
-				TP.push((p[1] + p[2] + p[3]) / 3);
-				range++;
-			}
+            // CCI requires close value
+            if (
+                xVal.length <= period ||
+                !isArray(yVal[0]) ||
+                yVal[0].length !== 4
+            ) {
+                return false;
+            }
 
-			for (i = period; i <= yValLen; i++) {
+            // accumulate first N-points
+            while (range < period) {
+                p = yVal[range - 1];
+                TP.push((p[1] + p[2] + p[3]) / 3);
+                range++;
+            }
 
-				p = yVal[i - 1];
-				TPtemp = (p[1] + p[2] + p[3]) / 3;
-				len = TP.push(TPtemp);
-				periodTP = TP.slice(len - period);
+            for (i = period; i <= yValLen; i++) {
 
-				smaTP = sumArray(periodTP) / period;
-				meanDev = meanDeviation(periodTP, smaTP) / period;
+                p = yVal[i - 1];
+                TPtemp = (p[1] + p[2] + p[3]) / 3;
+                len = TP.push(TPtemp);
+                periodTP = TP.slice(len - period);
 
-				CCIPoint = ((TPtemp - smaTP) / (0.015 * meanDev));
+                smaTP = sumArray(periodTP) / period;
+                meanDev = meanDeviation(periodTP, smaTP) / period;
 
-				CCI.push([xVal[i - 1], CCIPoint]);
-				xData.push(xVal[i - 1]);
-				yData.push(CCIPoint);
-			}
+                CCIPoint = ((TPtemp - smaTP) / (0.015 * meanDev));
 
-			return {
-				values: CCI,
-				xData: xData,
-				yData: yData
-			};
-		}
-	});
+                CCI.push([xVal[i - 1], CCIPoint]);
+                xData.push(xVal[i - 1]);
+                yData.push(CCIPoint);
+            }
+
+            return {
+                values: CCI,
+                xData: xData,
+                yData: yData
+            };
+        }
+    });
 
 /**
  * A `CCI` series. If the [type](#series.cci.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
+ *
  * @type {Object}
  * @since 6.0.0
  * @extends series,plotOptions.cci
