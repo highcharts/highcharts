@@ -1076,8 +1076,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             delete chart.options[key];
         }
 
-        each(chart[key], function (axis, i) { // Re-index, #1706
-            axis.options.index = i;
+        each(chart[key], function (axis, i) { // Re-index, #1706, #8075
+            axis.options.index = axis.userOptions.index = i;
         });
         this.destroy();
         chart.isDirtyBox = true;
