@@ -3,7 +3,7 @@ QUnit.test('Single point is null (#6637)', function (assert) {
     var chart = Highcharts.chart('container', {
 
         chart: {
-            type: 'bubble',
+            type: 'bubble'
         },
 
         series: [{

@@ -18,10 +18,10 @@ QUnit.test('Solid gauge styled series color (#6350)', function (assert) {
             startAngle: -90,
             endAngle: 90,
             background: {
-              backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
-              innerRadius: '60%',
-              outerRadius: '100%',
-              shape: 'arc'
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                innerRadius: '60%',
+                outerRadius: '100%',
+                shape: 'arc'
             }
         },
 
@@ -57,11 +57,11 @@ QUnit.test('Solid gauge styled series color (#6350)', function (assert) {
     // The speed gauge
     var chart = Highcharts.chart('container', Highcharts.merge(gaugeOptions, {
         yAxis: {
-          min: 0,
-          max: 200
+            min: 0,
+            max: 200
         },
         series: [{
-          data: [80]
+            data: [80]
         }]
     }));
 
