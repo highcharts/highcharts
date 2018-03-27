@@ -21,6 +21,9 @@ var argsToArray = function (args) {
 	extend = H.extend,
 	merge = H.merge,
 	inArray = H.inArray,
+	isBoolean = function (x) {
+		return typeof x === 'boolean';
+	},
 	isNumber = H.isNumber,
 	isObject = function (x) {
 		// Always use strict mode.
@@ -206,19 +209,23 @@ var onTickHoverExit = function (label) {
  * Creates a tree structure of the data, and the tree-grid. Calculates
  * categories, and y-values of points based on the tree.
  * @param {Array} data All the data points to display in the axis.
+ * @param {boolean} uniqueNames Wether or not the data node with the same name
+ * should share grid cell. If true they do not share cell. True by default.
  * @returns {object} Returns an object containing categories, mapOfIdToNode,
  * mapOfPosToGridNode, and tree.
  * @todo There should be only one point per line.
  * @todo It should be optional to have one category per point, or merge cells
  * @todo Add unit-tests.
  */
-var getTreeGridFromData = function (data) {
+var getTreeGridFromData = function (data, uniqueNames) {
 	var categories = [],
 		mapOfIdToNode = {},
 		mapOfPosToGridNode = {},
 		posIterator = -1,
+		uniqueNamesEnabled = isBoolean(uniqueNames) ? uniqueNames : true,
 		tree,
-		treeParams;
+		treeParams,
+		updateYValuesAndTickPos;
 
 	// Build the tree from the series data.
 	treeParams = {
@@ -242,23 +249,25 @@ var getTreeGridFromData = function (data) {
 			var data = isObject(node.data) ? node.data : {},
 				name = isString(data.name) ? data.name : '',
 				parentNode = mapOfIdToNode[node.parent],
-				parentGridNode,
+				parentGridNode = (
+					isObject(parentNode) ?
+					mapOfPosToGridNode[parentNode.pos] :
+					null
+				),
 				pos;
 
-			// If the node has a parent, check if a gridNode with the same
-			// name exists already.
-			if (isObject(parentNode)) {
-				parentGridNode = mapOfPosToGridNode[parentNode.pos];
-				// If if there is a gridNode with the same name, reuse pos.
-				if (isNumber(parentGridNode.children[name])) {
-					pos = parentGridNode.children[name];
-				// If not, add a new gridNode.
-				} else {
-					pos = posIterator++;
-					categories.push(name);
-					parentGridNode.children[name] = pos;
-				}
+			// If not unique names, look for a sibling node with the same name.
+			if (
+				!uniqueNamesEnabled &&
+				isObject(parentGridNode) &&
+				isNumber(parentGridNode.children[name])
+			) {
+				// If if there is a gridNode with the same name, reuse position.
+				pos = parentGridNode.children[name];
+				// Add data node to list of nodes in the grid node.
+				mapOfPosToGridNode[pos].nodes.push(node);
 			} else {
+				// If it is a new grid node, increment position.
 				pos = posIterator++;
 			}
 
@@ -266,8 +275,19 @@ var getTreeGridFromData = function (data) {
 			if (!mapOfPosToGridNode[pos]) {
 				mapOfPosToGridNode[pos] = {
 					name: name,
+					nodes: [node],
 					children: {}
 				};
+
+				// If not root, then add name to categories.
+				if (pos !== -1) {
+					categories.push(name);
+				}
+
+				// Add name to list of children.
+				if (isObject(parentGridNode)) {
+					parentGridNode.children[name] = pos;
+				}
 			}
 
 			// Add data node to map
@@ -277,16 +297,41 @@ var getTreeGridFromData = function (data) {
 
 			// Assign pos to data node
 			node.pos = pos;
-
-			// Assign position as y-value to the point
-			// NOTE: this modifies the point data.
-			if (pos > -1) {
-				data.y = pos;
-			}
 		}
 	};
 
+	updateYValuesAndTickPos = function (map) {
+		var start = 0,
+			newMap = {
+				'-1': map['-1']
+			};
+		each(categories, function (name, i) {
+			var gridNode = mapOfPosToGridNode[i],
+				nodes = gridNode.nodes,
+				end = start + nodes.length - 1,
+				diff = (end - start) / 2,
+				pos = start + diff;
+			each(nodes, function (node, j) {
+				node.data.y = start + j;
+				node.pos = pos;
+			});
+			newMap[pos] = gridNode;
+			gridNode.pos = pos;
+			gridNode.tickmarkOffset = diff + 0.5;
+
+			// Update start for the next iteration.
+			start = end + 1;
+		});
+		return newMap;
+	};
+
+	// Create tree from data
 	tree = Tree.getTree(data, treeParams);
+
+	// Update y values of data, and set calculate tick positions.
+	mapOfPosToGridNode = updateYValuesAndTickPos(mapOfPosToGridNode);
+
+	// Return the resulting data.
 	return {
 		categories: categories,
 		mapOfIdToNode: mapOfIdToNode,
@@ -349,6 +394,62 @@ override(GridAxis.prototype, {
 		}
 
 		return retVal;
+	},
+	/**
+	 * Generates a tick for initial positioning.
+	 *
+	 * @private
+	 * @param {function} proceed The original generateTick function.
+	 * @param {number} pos The tick position in axis values.
+	 */
+	generateTick: function (proceed, pos) {
+		var axis = this,
+			isTreeGrid = axis.options.type === 'tree-grid',
+			ticks = axis.ticks,
+			gridNode;
+
+		if (isTreeGrid) {
+			gridNode = axis.mapOfPosToGridNode[pos];
+			if (!ticks[pos]) {
+				ticks[pos] = new GridAxisTick(axis, pos, null, undefined, {
+					category: gridNode.name,
+					tickmarkOffset: gridNode.tickmarkOffset
+				});
+			} else {
+				// update labels depending on tick interval
+				ticks[pos].addLabel();
+			}
+		} else {
+			proceed.apply(axis, argsToArray(arguments));
+		}
+	},
+	/**
+	 * Set the tick positions, tickInterval, axis min and max.
+	 *
+	 * @private
+	 */
+	setTickInterval: function (proceed) {
+		var axis = this,
+			isTreeGrid = axis.options.type === 'tree-grid';
+
+		if (isTreeGrid) {
+			axis.min = axis.dataMin;
+			axis.max = axis.dataMax;
+			axis.tickmarkOffset = 0.5;
+			axis.tickInterval = 1;
+			axis.tickPositions  = reduce(
+				keys(axis.mapOfPosToGridNode),
+				function (arr, pos) {
+					if (pos !== '-1') {
+						arr.push(+pos);
+					}
+					return arr;
+				},
+				[]
+			);
+		} else {
+			proceed.apply(axis, argsToArray(arguments));
+		}
 	}
 });
 override(GridAxisTick.prototype, {
@@ -409,7 +510,9 @@ override(GridAxisTick.prototype, {
 
 GridAxis.prototype.updateYNames = function () {
 	var axis = this,
-		isTreeGrid = axis.options.type === 'tree-grid',
+		options = axis.options,
+		isTreeGrid = options.type === 'tree-grid',
+		uniqueNames = options.uniqueNames,
 		isYAxis = !axis.isXAxis,
 		series = axis.series,
 		treeGrid,
@@ -422,7 +525,7 @@ GridAxis.prototype.updateYNames = function () {
 		}, []);
 
 		// Calculate categories and the hierarchy for the grid.
-		treeGrid = getTreeGridFromData(data);
+		treeGrid = getTreeGridFromData(data, uniqueNames);
 
 		// Assign values to the axis.
 		axis.categories = treeGrid.categories;

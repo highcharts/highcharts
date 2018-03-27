@@ -10,19 +10,35 @@ var correctFloat = H.correctFloat,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
 	isNumber = H.isNumber,
+	isString = H.isString,
 	merge = H.merge,
 	pick = H.pick,
 	deg2rad = H.deg2rad;
 
 /**
  * The Tick class
+ * @param {Axis} axis The axis which the tick is displayed on.
+ * @param {number} pos The position of the tick on the axis.
+ * @param {string} [type] The type of tick.
+ * @param {boolean} [noLabel] Wether to disable the label or not. Defaults to
+ * false.
+ * @param {object} [parameters] Optional parameters for the tick.
+ * @param {object} [parameters.tickmarkOffset] Set tickmarkOffset for the tick.
+ * @param {object} [parameters.category] Set category for the tick.
  */
-H.Tick = function (axis, pos, type, noLabel) {
+H.Tick = function (axis, pos, type, noLabel, parameters) {
+	var params = parameters ? parameters : {};
 	this.axis = axis;
 	this.pos = pos;
 	this.type = type || '';
 	this.isNew = true;
 	this.isNewLabel = true;
+	this.tickmarkOffset = pick(params.tickmarkOffset, axis.tickmarkOffset);
+	this.category =  pick(
+		params.category,
+		axis.categories && axis.categories[pos],
+		axis.names && axis.names[pos]
+	);
 
 	if (!type && !noLabel) {
 		this.addLabel();
@@ -38,17 +54,13 @@ H.Tick.prototype = {
 			axis = tick.axis,
 			options = axis.options,
 			chart = axis.chart,
-			categories = axis.categories,
-			names = axis.names,
 			pos = tick.pos,
 			labelOptions = options.labels,
 			str,
 			tickPositions = axis.tickPositions,
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
-			value = categories ?
-				pick(categories[pos], names[pos], pos) :
-				pos,
+			value =  isString(tick.category) ? tick.category : pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
 			dateTimeLabelFormat;
@@ -354,7 +366,7 @@ H.Tick.prototype = {
 			attribs = {},
 			pos = tick.pos,
 			type = tick.type,
-			tickmarkOffset = axis.tickmarkOffset,
+			tickmarkOffset = tick.tickmarkOffset,
 			renderer = axis.chart.renderer;
 
 		/*= if (build.classic) { =*/
@@ -487,7 +499,7 @@ H.Tick.prototype = {
 			label = tick.label,
 			labelOptions = options.labels,
 			step = labelOptions.step,
-			tickmarkOffset = axis.tickmarkOffset,
+			tickmarkOffset = tick.tickmarkOffset,
 			show = true,
 			x = xy.x,
 			y = xy.y;
@@ -561,7 +573,7 @@ H.Tick.prototype = {
 			axis = tick.axis,
 			horiz = axis.horiz,
 			pos = tick.pos,
-			tickmarkOffset = axis.tickmarkOffset,
+			tickmarkOffset = tick.tickmarkOffset,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
