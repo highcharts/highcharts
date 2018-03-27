@@ -10,16 +10,16 @@ import './Legend.js';
 import './AreaSeries.js';
 import './SplineSeries.js';
 var areaProto = H.seriesTypes.area.prototype,
-	defaultPlotOptions = H.defaultPlotOptions,
-	LegendSymbolMixin = H.LegendSymbolMixin,
-	seriesType = H.seriesType;
+    defaultPlotOptions = H.defaultPlotOptions,
+    LegendSymbolMixin = H.LegendSymbolMixin,
+    seriesType = H.seriesType;
 /**
  * AreaSplineSeries object
  */
 /**
  * The area spline series is an area series where the graph between the points
  * is smoothed into a spline.
- * 
+ *
  * @extends   plotOptions.area
  * @excluding step
  * @sample    {highcharts} highcharts/demo/areaspline/ Area spline chart
@@ -28,16 +28,16 @@ var areaProto = H.seriesTypes.area.prototype,
  * @apioption plotOptions.areaspline
  */
 seriesType('areaspline', 'spline', defaultPlotOptions.area, {
-	getStackPoints: areaProto.getStackPoints,
-	getGraphPath: areaProto.getGraphPath,
-	drawGraph: areaProto.drawGraph,
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle
+    getStackPoints: areaProto.getStackPoints,
+    getGraphPath: areaProto.getGraphPath,
+    drawGraph: areaProto.drawGraph,
+    drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
- * 
- * 
+ *
+ *
  * @type      {Object}
  * @extends   series,plotOptions.areaspline
  * @excluding dataParser,dataURL
@@ -49,21 +49,21 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
 /**
  * An array of data points for the series. For the `areaspline` series
  * type, points can be given in the following ways:
- * 
+ *
  * 1.  An array of numerical values. In this case, the numerical values
  * will be interpreted as `y` options. The `x` values will be automatically
  * calculated, either starting at 0 and incremented by 1, or from `pointStart`
  * and `pointInterval` given in the series options. If the axis has
  * categories, these will be used. Example:
- * 
+ *
  *  ```js
  *  data: [0, 5, 3, 5]
  *  ```
- * 
+ *
  * 2.  An array of arrays with 2 values. In this case, the values correspond
  * to `x,y`. If the first value is a string, it is applied as the name
  * of the point, and the `x` value is inferred.
- * 
+ *
  *  ```js
  *     data: [
  *         [0, 10],
@@ -71,13 +71,13 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  *         [2, 3]
  *     ]
  *  ```
- * 
+ *
  * 3.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series'
  * [turboThreshold](#series.areaspline.turboThreshold), this option is not
  * available.
- * 
+ *
  *  ```js
  *     data: [{
  *         x: 1,
@@ -91,7 +91,7 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  *         color: "#FF00FF"
  *     }]
  *  ```
- * 
+ *
  * @type      {Array<Object|Array|Number>}
  * @extends   series.line.data
  * @sample    {highcharts} highcharts/chart/reflow-true/

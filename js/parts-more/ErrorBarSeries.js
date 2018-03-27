@@ -10,11 +10,11 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
 var each = H.each,
-	noop = H.noop,
-	seriesType = H.seriesType,
-	seriesTypes = H.seriesTypes;
+    noop = H.noop,
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes;
 
-/**  
+/**
  * Error bars are a graphical representation of the variability of data and are
  * used on graphs to indicate the error, or uncertainty in a reported
  * measurement.
@@ -26,86 +26,86 @@ var each = H.each,
  * @optionparent plotOptions.errorbar
  */
 seriesType('errorbar', 'boxplot', {
-	/*= if (build.classic) { =*/
+    /*= if (build.classic) { =*/
 
-	/**
-	 * The main color of the bars. This can be overridden by
-	 * [stemColor](#plotOptions.errorbar.stemColor) and
-	 * [whiskerColor](#plotOptions.errorbar.whiskerColor) individually.
-	 * 
-	 * @type    {Color}
-	 * @sample  {highcharts} highcharts/plotoptions/error-bar-styling/
-	 *          Error bar styling
-	 * @default #000000
-	 * @since   3.0
-	 * @product highcharts
-	 */
-	color: '${palette.neutralColor100}',
-	/*= } =*/
+    /**
+     * The main color of the bars. This can be overridden by
+     * [stemColor](#plotOptions.errorbar.stemColor) and
+     * [whiskerColor](#plotOptions.errorbar.whiskerColor) individually.
+     *
+     * @type    {Color}
+     * @sample  {highcharts} highcharts/plotoptions/error-bar-styling/
+     *          Error bar styling
+     * @default #000000
+     * @since   3.0
+     * @product highcharts
+     */
+    color: '${palette.neutralColor100}',
+    /*= } =*/
 
-	grouping: false,
+    grouping: false,
 
-	/**
-	 * The parent series of the error bar. The default value links it to
-	 * the previous series. Otherwise, use the id of the parent series.
-	 * 
-	 * @since   3.0
-	 * @product highcharts
-	 */
-	linkedTo: ':previous',
+    /**
+     * The parent series of the error bar. The default value links it to
+     * the previous series. Otherwise, use the id of the parent series.
+     *
+     * @since   3.0
+     * @product highcharts
+     */
+    linkedTo: ':previous',
 
-	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
-	},
+    tooltip: {
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+    },
 
-	/**
-	 * The line width of the whiskers, the horizontal lines marking low
-	 * and high values. When `null`, the general
-	 * [lineWidth](#plotOptions.errorbar.lineWidth) applies.
-	 * 
-	 * @type    {Number}
-	 * @sample  {highcharts} highcharts/plotoptions/error-bar-styling/
-	 *          Error bar styling
-	 * @since   3.0
-	 * @product highcharts
-	 */
-	whiskerWidth: null
+    /**
+     * The line width of the whiskers, the horizontal lines marking low
+     * and high values. When `null`, the general
+     * [lineWidth](#plotOptions.errorbar.lineWidth) applies.
+     *
+     * @type    {Number}
+     * @sample  {highcharts} highcharts/plotoptions/error-bar-styling/
+     *          Error bar styling
+     * @since   3.0
+     * @product highcharts
+     */
+    whiskerWidth: null
 
 // Prototype members
 }, {
-	type: 'errorbar',
-	pointArrayMap: ['low', 'high'], // array point configs are mapped to this
-	toYData: function (point) { // return a plain array for speedy calculation
-		return [point.low, point.high];
-	},
-	pointValKey: 'high', // defines the top of the tracker
-	doQuartiles: false,
-	drawDataLabels: seriesTypes.arearange ?
-		function () {
-			var valKey = this.pointValKey;
-			seriesTypes.arearange.prototype.drawDataLabels.call(this);
-			// Arearange drawDataLabels does not reset point.y to high,
-			// but to low after drawing (#4133)
-			each(this.data, function (point) {
-				point.y = point[valKey];
-			});
-		} :
-		noop,
+    type: 'errorbar',
+    pointArrayMap: ['low', 'high'], // array point configs are mapped to this
+    toYData: function (point) { // return a plain array for speedy calculation
+        return [point.low, point.high];
+    },
+    pointValKey: 'high', // defines the top of the tracker
+    doQuartiles: false,
+    drawDataLabels: seriesTypes.arearange ?
+        function () {
+            var valKey = this.pointValKey;
+            seriesTypes.arearange.prototype.drawDataLabels.call(this);
+            // Arearange drawDataLabels does not reset point.y to high,
+            // but to low after drawing (#4133)
+            each(this.data, function (point) {
+                point.y = point[valKey];
+            });
+        } :
+        noop,
 
-	/**
-	 * Get the width and X offset, either on top of the linked series column
-	 * or standalone
-	 */
-	getColumnMetrics: function () {
-		return (this.linkedParent && this.linkedParent.columnMetrics) ||
-			seriesTypes.column.prototype.getColumnMetrics.call(this);
-	}
+    /**
+     * Get the width and X offset, either on top of the linked series column
+     * or standalone
+     */
+    getColumnMetrics: function () {
+        return (this.linkedParent && this.linkedParent.columnMetrics) ||
+            seriesTypes.column.prototype.getColumnMetrics.call(this);
+    }
 });
 
 /**
  * A `errorbar` series. If the [type](#series.errorbar.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
- * 
+ *
  * @type      {Object}
  * @extends   series,plotOptions.errorbar
  * @excluding dataParser,dataURL,stack,stacking
@@ -116,7 +116,7 @@ seriesType('errorbar', 'boxplot', {
 /**
  * An array of data points for the series. For the `errorbar` series
  * type, points can be given in the following ways:
- * 
+ *
  * 1.  An array of arrays with 3 or 2 values. In this case, the values
  * correspond to `x,low,high`. If the first value is a string, it is
  * applied as the name of the point, and the `x` value is inferred.
@@ -124,7 +124,7 @@ seriesType('errorbar', 'boxplot', {
  * should be of length 2\. Then the `x` value is automatically calculated,
  * either starting at 0 and incremented by 1, or from `pointStart`
  * and `pointInterval` given in the series options.
- * 
+ *
  *  ```js
  *     data: [
  *         [0, 10, 2],
@@ -132,12 +132,12 @@ seriesType('errorbar', 'boxplot', {
  *         [2, 4, 5]
  *     ]
  *  ```
- * 
+ *
  * 2.  An array of objects with named values. The objects are point
  * configuration objects as seen below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.errorbar.turboThreshold),
  * this option is not available.
- * 
+ *
  *  ```js
  *     data: [{
  *         x: 1,
@@ -153,7 +153,7 @@ seriesType('errorbar', 'boxplot', {
  *         color: "#FF00FF"
  *     }]
  *  ```
- * 
+ *
  * @type      {Array<Object|Array>}
  * @extends   series.arearange.data
  * @excluding dataLabels,drilldown,marker,states
