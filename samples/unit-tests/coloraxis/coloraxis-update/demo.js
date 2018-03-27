@@ -1,4 +1,4 @@
-QUnit.test('Color axis update and resize. #6025', function (assert) {
+QUnit.test('Color axis updates', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'heatmap',
@@ -40,7 +40,7 @@ QUnit.test('Color axis update and resize. #6025', function (assert) {
     assert.strictEqual(
         chart.plotHeight,
         plotHeight,
-        'Geometry ok after update'
+        'Geometry ok after update (#6025)'
     );
 
     // Trigger a chart.redraw
@@ -49,6 +49,13 @@ QUnit.test('Color axis update and resize. #6025', function (assert) {
     assert.strictEqual(
         chart.plotHeight,
         plotHeight,
-        'Geometry ok after resize'
+        'Geometry ok after resize (#6025)'
+    );
+
+    // On Update, no memory leak in colorAxis.undefined.undefined.undefined...
+    assert.strictEqual(
+        chart.options.colorAxis.undefined,
+        undefined,
+        'No extra undefined properties after update'
     );
 });
