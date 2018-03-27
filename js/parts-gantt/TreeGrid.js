@@ -330,6 +330,7 @@ override(GridAxisTick.prototype, {
  * Collapse the grid cell.
  * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
  * explicit call to {@link Highcharts.Chart#redraw}
+ * @sample {gantt} gantt/tree-grid-axis/collapsed/demo.js Dynamically collapse
  */
 GridAxisTick.prototype.collapse = function (redraw) {
     var tick = this,
@@ -344,6 +345,7 @@ GridAxisTick.prototype.collapse = function (redraw) {
  * Expand the grid cell.
  * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
  * explicit call to {@link Highcharts.Chart#redraw}
+ * @sample {gantt} gantt/tree-grid-axis/collapsed/demo.js Dynamically collapse
  */
 GridAxisTick.prototype.expand = function (redraw) {
     var tick = this,
@@ -358,6 +360,7 @@ GridAxisTick.prototype.expand = function (redraw) {
  * Toggle the collapse/expand state of the grid cell.
  * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
  * explicit call to {@link Highcharts.Chart#redraw}
+ * @sample {gantt} gantt/tree-grid-axis/collapsed/demo.js Dynamically collapse
  */
 GridAxisTick.prototype.toggleCollapse = function (redraw) {
     var tick = this,
