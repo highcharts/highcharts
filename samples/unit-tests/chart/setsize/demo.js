@@ -1,6 +1,3 @@
-/* eslint func-style:0 */
-
-
 QUnit.test('setSize parameters', function (assert) {
 
     document.getElementById('container').style.height = '400px';
@@ -208,6 +205,7 @@ QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
 });
 
 QUnit.test('Titles with useHTML: true adjust chart after resize (#3481)', function (assert) {
+
     var chart = Highcharts.chart('container', {
             chart: {
                 width: 800,
@@ -264,8 +262,7 @@ QUnit.test('Columns were cut by cliprect, when resizing chart during initial ani
     var temp = [],
         rain = [],
     // Nearest hour to now
-        done = assert.async(),
-        chart;
+        done = assert.async();
 
     for (var i = 0; i < 24; i++) {
         temp.push([
@@ -278,8 +275,8 @@ QUnit.test('Columns were cut by cliprect, when resizing chart during initial ani
         ]);
     }
 
-// create the chart
-    $('#container').highcharts('StockChart', {
+    // create the chart
+    var chart = Highcharts.stockChart('container', {
         chart: {
             animation: false,
             width: 550
@@ -304,7 +301,6 @@ QUnit.test('Columns were cut by cliprect, when resizing chart during initial ani
     });
 
     setTimeout(function () {
-        chart = $('#container').highcharts();
 
         chart.setSize(700, 450);
 
@@ -313,35 +309,32 @@ QUnit.test('Columns were cut by cliprect, when resizing chart during initial ani
             chart.series[1].xAxis.len,
             'Correct clipbox width.'
         );
+
         done();
+
     }, 10);
 
     lolexRunAndUninstall(clock);
 });
 
 QUnit.test('Polar chart resize (#5220)', function (assert) {
-    var chart;
-    $('#container').highcharts({
 
+    var chart = Highcharts.chart('container', {
         chart: {
             polar: true,
             width: 400,
             height: 400
         },
-
         title: {
             text: 'Highcharts Polar Chart'
         },
-
         pane: {
             startAngle: 0,
             endAngle: 360
         },
-
         yAxis: {
             min: 0
         },
-
         plotOptions: {
             series: {
                 pointStart: 0,
@@ -352,7 +345,6 @@ QUnit.test('Polar chart resize (#5220)', function (assert) {
                 groupPadding: 0
             }
         },
-
         series: [{
             type: 'column',
             name: 'Column',
@@ -368,8 +360,6 @@ QUnit.test('Polar chart resize (#5220)', function (assert) {
             data: [1, 8, 2, 7, 3, 6, 4, 5]
         }]
     });
-
-    chart = $('#container').highcharts();
 
     assert.strictEqual(
         chart.container.querySelector('svg').getAttribute('width'),
@@ -391,6 +381,32 @@ QUnit.test('Polar chart resize (#5220)', function (assert) {
         chart.container.querySelector('svg').getAttribute('width'),
         '500',
         'Chart has correct width after setSize to larger'
+    );
+
+});
+
+// Highcharts 3.0.10, Issue #2857
+// Pie chart resize doesn't always work propery when you have long titles that wrap
+QUnit.test('Title resize (#2857)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+            title: {
+                text: 'Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014'
+            },
+            series: [{
+                type: 'pie',
+                data: [1]
+            }]
+        }),
+        originalPlotBox = chart.plotBox;
+
+    chart.setSize(300); // More line breaks in title
+
+    assert.ok(
+        originalPlotBox.y < chart.plotTop &&
+        originalPlotBox.width > chart.plotWidth &&
+        originalPlotBox.height > chart.plotHeight,
+        'Chart pie should be smaller and positioned lower.'
     );
 
 });
