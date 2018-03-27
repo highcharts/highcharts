@@ -1,6 +1,3 @@
-/* eslint func-style:0 */
-
-
 QUnit.test('Paddings and extremes', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -48,4 +45,49 @@ QUnit.test('Paddings and extremes', function (assert) {
             'Extra space added when startAngle=' + startAngle + ' (#7996).'
         );
     });
+});
+
+// Highcharts 3.0.10, Issue #2848
+// Polar chart with reversed yAxis
+QUnit.test('Polar reversed yaxis (#2848)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            height: 350,
+            polar: true,
+            type: 'line'
+        },
+        yAxis: {
+            reversed: true
+        },
+        series: [{
+            name: 'Allocated Budget',
+            data: [43000, 19000, 60000, 35000, 17000, 10000],
+            pointPlacement: 'on'
+        }, {
+            name: 'Actual Spending',
+            data: [50000, 39000, 42000, 31000, 26000, 14000],
+            pointPlacement: 'on'
+        }]
+    });
+
+    function increaseHeight() {
+
+        chart.update({
+            chart: {
+                height: (chart.plotHeight + 1)
+            }
+        });
+
+        assert.ok(
+            chart.yAxis[0].translationSlope < 0.002,
+            'There should be no increase to the translation slope of the yAxis.'
+        );
+
+    }
+
+    for (var i = 0; i < 100; ++i) {
+        increaseHeight();
+    }
+
 });
