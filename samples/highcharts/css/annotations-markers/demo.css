@@ -1,0 +1,26 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+#container {
+    max-width: 800px;
+    height: 400px;
+    margin: 1em auto;
+}
+
+.shape {
+  fill: none;
+  stroke-width: 1;
+  stroke: red;
+}
+
+#shape-custom-shape path {
+  fill: red;
+}
+
+#shape-circle circle:first-child {
+  fill: rgba(224, 101, 0, 0.6);
+}
+
+#shape-circle circle:nth-child(2) {
+  fill: none;
+  stroke-width: 2;
+  stroke: black;
+}

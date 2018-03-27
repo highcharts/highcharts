@@ -39,7 +39,7 @@ QUnit.test(
 QUnit.test('Axis.isBroken', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{
-            data: [1, 2, 3, 4, 5, 6, 7, 8]
+            data: [1, 2, 3, 4]
         }]
     });
 
@@ -49,10 +49,8 @@ QUnit.test('Axis.isBroken', function (assert) {
         'Axis.breaks: undefined results in Axis.isBroken: false.'
     );
 
-    chart.update({
-        xAxis: {
-            breaks: []
-        }
+    chart.xAxis[0].update({
+        breaks: []
     });
     assert.strictEqual(
         chart.xAxis[0].isBroken,
@@ -60,12 +58,9 @@ QUnit.test('Axis.isBroken', function (assert) {
         'Axis.breaks: [] results in Axis.isBroken: false.'
     );
 
-    chart.update({
-        xAxis: {
-            breaks: [{}]
-        }
+    chart.xAxis[0].update({
+        breaks: [{}]
     });
-
     assert.strictEqual(
         chart.xAxis[0].isBroken,
         true,

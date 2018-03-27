@@ -1,2 +1,3 @@
 vendor/**
 samples/data/maps/*.js
+tools/eslint-plugin-highcharts/node_modules/**

@@ -1,5 +1,5 @@
 QUnit.test(
-    'Width and height',
+    'General Navigator tests',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             legend: {
@@ -32,11 +32,20 @@ QUnit.test(
             100,
             'Navigator series has correct clipping rect height (#5904)'
         );
+
+        chart.series[1].remove(false);
+        chart.series[0].remove();
+
+        assert.strictEqual(
+            chart.series.length,
+            0,
+            'All series, including navSeries, removed without errors (#5581)'
+        );
     }
 );
 
 QUnit.test(
-    'Reversed xAxis with navigator should allow zooming.',
+    'Reversed xAxis with navigator',
     function (assert) {
 
         var chart = new Highcharts.StockChart({
@@ -49,12 +58,22 @@ QUnit.test(
                         [15, 22]
                     ]
                 }],
+                rangeSelector: {
+                    buttons: [{
+                        count: 5,
+                        type: 'millisecond',
+                        text: '5ms'
+                    }],
+                    inputEnabled: false,
+                    selected: 0
+                },
                 navigator: {
                     xAxis: {
                         reversed: true
                     }
                 },
                 xAxis: {
+                    reversed: true,
                     minRange: 1
                 }
             }),
@@ -62,6 +81,13 @@ QUnit.test(
             navigator = chart.scroller,
             done = assert.async();
 
+        chart.series[0].addPoint([20, 23]);
+
+        assert.strictEqual(
+            chart.xAxis[0].max,
+            20,
+            'Correct extremes after addPoint() (#7713).'
+        );
 
         navigator.handlesMousedown({
             pageX: offset.left + 578,
@@ -82,10 +108,10 @@ QUnit.test(
                 DOMType: 'mouseup'
             });
             assert.strictEqual(
-            chart.series[0].points !== null,
-            true,
-            'Navigator works.'
-          );
+                chart.series[0].points !== null,
+                true,
+                'Zooming works fine (#4114).'
+            );
             done();
         }, 0);
     }
@@ -486,3 +512,28 @@ function (assert) {
     );
 });
 
+QUnit.test(
+    'Update of adaptToUpdatedData should remove all related events (#8038)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            series: [{
+                data: [1, 2, 3]
+            }],
+            navigator: {
+                adaptToUpdatedData: true
+            }
+        });
+
+        chart.update({
+            navigator: {
+                adaptToUpdatedData: false
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].hcEvents.updatedData.length,
+            1,
+            'Only one event remaining'
+        );
+    }
+);

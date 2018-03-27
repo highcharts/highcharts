@@ -102,6 +102,30 @@ QUnit.test('X-Range', function (assert) {
         0,
         'No series left'
     );
+
+    // #7617
+    chart.addSeries({
+        pointWidth: 20,
+        data: [{
+            x: 1,
+            x2: 9,
+            y: 0,
+            partialFill: 0.25
+        }]
+    }, false);
+    chart.xAxis[0].setExtremes(2, null);
+
+    var point = chart.series[0].points[0],
+        clipRect = point.clipRect;
+    assert.strictEqual(
+        Math.floor(
+            chart.xAxis[0].toValue(
+                clipRect.attr('width') - clipRect.attr('x')
+            )
+        ),
+        (point.x2 - point.x) * point.partialFill,
+        'Clip rect ends at correct position after zoom (#7617).'
+    );
 });
 
 QUnit.test('X-range data labels', function (assert) {

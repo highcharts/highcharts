@@ -47,7 +47,9 @@ $(function () {
             data: [100, 100, 100]
         }]
     }, function (chart) {
-        chart.yAxis[1].remove();
+        if (chart.yAxis[1]) {
+            chart.yAxis[1].remove();
+        }
     });
 
 });

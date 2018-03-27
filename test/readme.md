@@ -1,8 +1,8 @@
 # Test runner
 
 Use `gulp test` to run the tests using karma and QUnit. All tests in the `samples/unit-tests`
-directory will run. For debugging, it may be convenient to use the
-[visual test tools](https://github.com/highcharts/highcharts/tree/master/utils).
+directory will run. For debugging, it may be convenient to use the visual
+[Highcharts Utils](https://github.com/highcharts/highcharts-utils).
 
 Tests will run on _pre-commit_ and will block committing in case of failure.
 

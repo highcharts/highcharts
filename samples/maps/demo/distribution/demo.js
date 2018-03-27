@@ -1,10 +1,9 @@
 
-
 var series = [{
-    "type": "map",
-    "enableMouseTracking": false,
-    "showInLegend": false,
-    "mapData": [
+    type: 'map',
+    enableMouseTracking: false,
+    showInLegend: false,
+    mapData: [
         {
             "name": "CA-AB",
             "path": "M360,512C333,504,336,506,334,502L333,499L334,493C335,488,335,486,334,483C333,482,332,479,330,477C329,474,328,471,327,469C326,467,325,465,324,463C324,462,323,460,323,459C322,458,322,457,321,456C320,455,319,454,319,454C319,454,319,453,318,452C318,451,317,449,317,447C317,445,316,443,315,442C315,441,314,440,314,439C313,438,312,437,311,436C309,435,309,433,310,433C310,432,310,431,310,430C310,427,314,417,336,356L338,350L349,354C355,356,365,359,370,360C375,362,384,365,390,366C396,368,401,370,401,370C402,370,400,378,400,378C399,378,398,378,398,379C396,379,391,384,391,385C391,385,392,386,393,386C395,387,395,387,396,386C397,386,398,385,398,384C398,384,398,383,399,383C399,384,398,387,397,392C394,402,391,414,388,430C386,437,384,445,383,448C380,462,377,474,375,481C367,516,368,514,367,514C367,513,364,513,360,512z"
@@ -643,8 +642,8 @@ var series = [{
         }
     ]
 }, {
-    type: "map",
-    name: "Wintering",
+    type: 'map',
+    name: 'Wintering',
     data: [
         {
             "name": "path3032",
@@ -852,8 +851,8 @@ var series = [{
         }
     ]
 }, {
-    type: "map",
-    name: "Breeding",
+    type: 'map',
+    name: 'Breeding',
     data: [
         {
             "name": "path3138",
@@ -954,7 +953,7 @@ var series = [{
     ]
 }];
 
-// Instanciate the map
+// Instantiate the map
 Highcharts.mapChart('container', {
     title: {
         text: 'Habitat of the Rusty Blackbird'
@@ -982,7 +981,6 @@ Highcharts.mapChart('container', {
         verticalAlign: 'bottom',
         reversed: true
     },
-
 
     series: series
 });

@@ -626,4 +626,53 @@ QUnit.test(
     }
 );
 
+QUnit.test('Test different point.name types.', function (assert) {
+    var UNDEFINED,
+        labels = ['0', true, false, NaN, '', 'Proper', '6', 0, Infinity],
+        chart = $('#container').highcharts({
+            xAxis: {
+                type: "category"
+            },
+            chart: {
+                width: 600
+            },
+            series: [{
+                data: [{
+                    name: null,
+                    y: 0
+                }, {
+                    name: labels[1],
+                    y: 1
+                }, {
+                    name: labels[2],
+                    y: 2
+                }, {
+                    name: labels[3],
+                    y: 3
+                }, {
+                    name: labels[4],
+                    y: 4
+                }, {
+                    name: labels[5],
+                    y: 5
+                }, {
+                    name: UNDEFINED,
+                    y: 5
+                }, {
+                    name: labels[7],
+                    y: 7
+                }, {
+                    name: labels[8],
+                    y: 8
+                }]
+            }]
+        }).highcharts();
 
+    $.each(chart.xAxis[0].tickPositions, function (i, pos) {
+        assert.strictEqual(
+            chart.xAxis[0].ticks[pos].label.textStr.toString(),
+            labels[pos].toString(),
+            'X axis label for position ' + pos
+        );
+    });
+});

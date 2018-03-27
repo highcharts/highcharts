@@ -25,6 +25,36 @@ QUnit.test('#6433 - axis.update leaves empty plotbands\' groups', function (asse
     );
 });
 
+QUnit.test('#7709 - From and to infinity', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            plotBands: [{
+                color: '#FCFFC5',
+                from: -Infinity,
+                to: Date.UTC(2010, 0, 3)
+            }, {
+                color: '#FCFFC5',
+                from: Date.UTC(2010, 0, 7),
+                to: Infinity
+            }],
+            tickInterval: 24 * 3600 * 1000, // one day
+            type: 'datetime'
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4],
+            pointStart: Date.UTC(2010, 0, 1),
+            pointInterval: 24 * 3600 * 1000
+        }]
+    });
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-plot-band').length,
+        2,
+        'Two plot bands should be created'
+    );
+});
+
 QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

@@ -17,9 +17,7 @@ Highcharts.chart('container', {
             text: 'Altitude'
         },
         labels: {
-            formatter: function () {
-                return this.value + 'km';
-            }
+            format: '{value} km'
         },
         maxPadding: 0.05,
         showLastLabel: true
@@ -29,9 +27,7 @@ Highcharts.chart('container', {
             text: 'Temperature'
         },
         labels: {
-            formatter: function () {
-                return this.value + '°';
-            }
+            format: '{value}°'
         },
         lineWidth: 2
     },

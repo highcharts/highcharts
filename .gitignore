@@ -28,6 +28,7 @@
 /highcharts.com-access.log
 /highcharts.com.site-access.log
 /highcharts.com.site-error.log
+/test/last-run.json
 /utils/issue-by-commit/demo.js
 /utils/issue-by-commit/demo.html
 /utils/issue-by-commit/log.txt
@@ -70,3 +71,4 @@ samples/highcharts/common-js/webpack/demo.js
 
 /tmp/processed.api.json
 /package-lock.json
+/temp.js

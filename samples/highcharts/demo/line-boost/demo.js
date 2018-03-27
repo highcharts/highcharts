@@ -3,11 +3,16 @@
 function getData(n) {
     var arr = [],
         i,
+        x,
         a,
         b,
         c,
         spike;
-    for (i = 0; i < n; i = i + 1) {
+    for (
+        i = 0, x = Date.UTC(new Date().getUTCFullYear(), 0, 1) - n * 36e5;
+        i < n;
+        i = i + 1, x = x + 36e5
+    ) {
         if (i % 100 === 0) {
             a = 2 * Math.random();
         }
@@ -23,7 +28,7 @@ function getData(n) {
             spike = 0;
         }
         arr.push([
-            i,
+            x,
             2 * Math.sin(i / 100) + a + b + c + spike + Math.random()
         ]);
     }
@@ -40,10 +45,6 @@ Highcharts.chart('container', {
         zoomType: 'x'
     },
 
-    boost: {
-        useGPUTranslations: true
-    },
-
     title: {
         text: 'Highcharts drawing ' + n + ' points'
     },
@@ -56,9 +57,14 @@ Highcharts.chart('container', {
         valueDecimals: 2
     },
 
+    xAxis: {
+        type: 'datetime'
+    },
+
     series: [{
         data: data,
-        lineWidth: 0.5
+        lineWidth: 0.5,
+        name: 'Hourly data points'
     }]
 
 });
