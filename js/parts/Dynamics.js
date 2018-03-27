@@ -1032,8 +1032,17 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     update: function (options, redraw) {
         var chart = this.chart;
 
-        options = chart.options[this.coll][this.options.index] =
-            merge(this.userOptions, options);
+        options = merge(this.userOptions, options);
+
+        // Color Axis is not an array,
+        // This change is applied in the ColorAxis wrapper
+        if (chart.options[this.coll].indexOf) {
+            // Don't use this.options.index,
+            // StockChart has Axes in navigator too
+            chart.options[this.coll][
+                chart.options[this.coll].indexOf(this.userOptions)
+            ] = options;
+        }
 
         this.destroy(true);
 

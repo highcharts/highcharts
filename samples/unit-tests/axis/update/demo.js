@@ -32,6 +32,20 @@ QUnit.test('Redraw without series (#5323)', function (assert) {
     );
 });
 
+QUnit.test('Updates after new Axis', function (assert) {
+
+    var chart = new Highcharts.stockChart('container', {});
+
+    chart.addAxis({});
+    chart.yAxis[2].update({});
+
+    assert.strictEqual(
+        chart.options.yAxis.length,
+        2,
+        'Only two entries in options.yAxis: default + new one (#6423)'
+    );
+});
+
 // Highcharts 4.1.1, Issue #3830
 // After updating "xAxis" categories empty (Data defined in a HTML table)
 QUnit.test('Update axis names (#3830)', function (assert) {
