@@ -126,7 +126,7 @@ var candlestickOptions = {
 seriesType('candlestick', 'ohlc', merge(
     defaultPlotOptions.column,
     candlestickOptions
-), /** @lends seriesTypes.candlestick */ {
+), /** @lends seriesTypes.candlestick.prototype */ {
     /*= if (build.classic) { =*/
     /**
      * Postprocess mapping between options and SVG attributes

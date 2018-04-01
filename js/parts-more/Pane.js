@@ -17,13 +17,15 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
  *
  * In the future, this can be extended to basic Highcharts and Highstock.
  *
+ * @class Pane
+ * @memberof H
  */
 function Pane(options, chart) {
     this.init(options, chart);
 }
 
 // Extend the Pane prototype
-extend(Pane.prototype, {
+extend(Pane.prototype, /** @lends Pane.prototype */{
 
     coll: 'pane', // Member of chart.pane
 

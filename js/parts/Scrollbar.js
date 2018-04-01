@@ -224,13 +224,16 @@ var defaultScrollbarOptions =  {
 
 defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.scrollbar);
 
+swapXY =
 /**
-* When we have vertical scrollbar, rifles and arrow in buttons should be rotated.
-* The same method is used in Navigator's handles, to rotate them.
-* @param {Array} path - path to be rotated
-* @param {Boolean} vertical - if vertical scrollbar, swap x-y values
-*/
-H.swapXY = swapXY = function (path, vertical) {
+ * When we have vertical scrollbar, rifles and arrow in buttons should be rotated.
+ * The same method is used in Navigator's handles, to rotate them.
+ *
+ * @param {Array} path - path to be rotated
+ * @param {Boolean} vertical - if vertical scrollbar, swap x-y values
+ * @return {Array}
+ */
+H.swapXY = function (path, vertical) {
     var i,
         len = path.length,
         temp;
@@ -251,6 +254,7 @@ H.swapXY = swapXY = function (path, vertical) {
  * on individual axes.
  *
  * @class
+ * @memberof Highcharts
  * @param {Object} renderer
  * @param {Object} options
  * @param {Object} chart
@@ -577,6 +581,10 @@ Scrollbar.prototype = {
         var scroller = this;
         /**
          * Event handler for the mouse move event.
+         * @function mouseMoveHandler
+         * @memberOf Scrollbar
+         * @instance
+         * @param {MouseEvent} e
          */
         scroller.mouseMoveHandler = function (e) {
             var normalizedEvent = scroller.chart.pointer.normalize(e),
@@ -612,6 +620,10 @@ Scrollbar.prototype = {
 
         /**
          * Event handler for the mouse up event.
+         * @function mouseUpHandler
+         * @memberOf Scrollbar
+         * @instance
+         * @param {MouseEvent} e
          */
         scroller.mouseUpHandler = function (e) {
             if (scroller.hasDragged) {
@@ -626,6 +638,12 @@ Scrollbar.prototype = {
             scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
         };
 
+        /**
+         * @function mouseDownHandler
+         * @memberOf Scrollbar
+         * @instance
+         * @param {MouseEvent} e
+         */
         scroller.mouseDownHandler = function (e) {
             var normalizedEvent = scroller.chart.pointer.normalize(e),
                 mousePosition = scroller.cursorToScrollbarPosition(normalizedEvent);

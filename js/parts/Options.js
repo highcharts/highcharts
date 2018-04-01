@@ -17,6 +17,13 @@ var color = H.color,
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
+
+/**
+ * The overall highcharts options interface
+ * @interface
+ * @name Options
+ * @memberof Highcharts
+ */
 /**
  * @optionparent
  */
@@ -3059,11 +3066,15 @@ H.getOptions = function () {
 };
 
 
-// Series defaults
+/**
+ * Series defaults
+ */
 H.defaultPlotOptions = H.defaultOptions.plotOptions;
 
 
-// Time utilities
+/**
+ * Time utilities
+ */
 H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 
 /**

@@ -39,6 +39,13 @@ var colorPointMixin = H.colorPointMixin,
  * @product      highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
+/**
+ * The heatmap series type.
+ *
+ * @constructor seriesTypes.heatmap
+ * @augments seriesTypes.scatter
+ * @mixes colorSeriesMixin
+ */
 seriesType('heatmap', 'scatter', {
 
     /**
@@ -157,7 +164,7 @@ seriesType('heatmap', 'scatter', {
         }
     }
 
-}, merge(colorSeriesMixin, {
+}, merge(colorSeriesMixin, /** @lends seriesTypes.heatmap.prototype */ {
     pointArrayMap: ['y', 'value'],
     hasPointSpecificOptions: true,
     getExtremesFromAll: true,
@@ -271,6 +278,13 @@ seriesType('heatmap', 'scatter', {
         ];
     }
 }, colorPointMixin));
+
+/**
+ * The point class of heatmap series type.
+ *
+ * @type seriesTypes.heatmap.prototype.pointClass
+ * @mixes colorPointMixin
+ */
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

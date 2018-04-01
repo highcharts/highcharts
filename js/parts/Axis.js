@@ -72,7 +72,6 @@ var Axis = function () {
 };
 
 H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
-
     /**
      * The X axis or category axis. Normally this is the horizontal axis,
      * though if the chart is inverted this is the vertical axis. In case of
@@ -1845,6 +1844,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     chart
          * @memberOf Axis
          * @type     {Chart}
+         * @instance
          */
         axis.chart = chart;
 
@@ -1854,6 +1854,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     horiz
          * @memberOf Axis
          * @type     {Boolean}
+         * @instance
          */
         axis.horiz = chart.inverted && !axis.isZAxis ? !isXAxis : isXAxis;
 
@@ -1868,6 +1869,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     coll
          * @memberOf Axis
          * @type     {String}
+         * @instance
          */
         axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
@@ -1882,6 +1884,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     side
          * @memberOf Axis
          * @type     {Number}
+         * @instance
          */
         axis.side = userOptions.side || (axis.horiz ?
                 (axis.opposite ? 0 : 2) : // top : bottom
@@ -1911,6 +1914,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     reversed
          * @memberOf Axis
          * @type     {Boolean}
+         * @instance
          */
         axis.reversed = options.reversed;
         axis.visible = options.visible !== false;
@@ -1969,6 +1973,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     max
          * @memberOf Axis
          * @type     {Number}
+         * @instance
          */
         axis.max = null;
         /**
@@ -1979,6 +1984,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     min
          * @memberOf Axis
          * @type     {Number}
+         * @instance
          */
         axis.min = null;
 
@@ -1989,6 +1995,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     crosshair
          * @memberOf Axis
          * @type     {AxisCrosshairOptions}
+         * @instance
          */
         axis.crosshair = pick(
             options.crosshair,
@@ -2015,6 +2022,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     series
          * @memberOf Axis
          * @type     {Array.<Series>}
+         * @instance
          */
         axis.series = axis.series || []; // populated by Series
 

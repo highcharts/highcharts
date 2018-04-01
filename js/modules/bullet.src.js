@@ -123,7 +123,7 @@ seriesType('bullet', 'column',
                 '{point.target}</span><br/>'
             /*= } =*/
         }
-    }, {
+    }, /** @lends seriesTypes.bullet.prototype */ {
         pointArrayMap: ['y', 'target'],
         parallelArrays: ['x', 'y', 'target'],
 

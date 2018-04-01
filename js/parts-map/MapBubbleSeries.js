@@ -27,6 +27,12 @@ if (seriesTypes.bubble) {
      * @product highmaps
      * @optionparent plotOptions.mapbubble
      */
+    /**
+     * The mapbubble series type.
+     *
+     * @constructor seriesTypes.mapbubble
+     * @augments seriesTypes.bubble
+     */
     seriesType('mapbubble', 'bubble', {
 
 
@@ -155,7 +161,7 @@ if (seriesTypes.bubble) {
         }
 
     // Prototype members
-    }, {
+    }, /** @lends seriesTypes.mapbubble.prototype */ {
         xyFromShape: true,
         type: 'mapbubble',
         // If one single value is passed, it is interpreted as z
@@ -166,7 +172,7 @@ if (seriesTypes.bubble) {
         setData: seriesTypes.map.prototype.setData
 
     // Point class
-    }, {
+    }, /** @lends seriesTypes.mapbubble.prototype.pointClass.prototype */ {
         applyOptions: function (options, x) {
             var point;
             if (

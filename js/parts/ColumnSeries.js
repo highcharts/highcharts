@@ -26,7 +26,7 @@ var animObject = H.animObject,
  * The column series type.
  *
  * @constructor seriesTypes.column
- * @augments    Series
+ * @augments    seriesTypes.line
  */
 
 /**

@@ -33,6 +33,12 @@ var each = H.each,
  * @excluding    borderColor,borderRadius,borderWidth,groupZPadding,states
  * @optionparent plotOptions.boxplot
  */
+/**
+ * The boxplot series type.
+ *
+ * @constructor seriesTypes.boxplot
+ * @augments seriesTypes.column
+ */
 seriesType('boxplot', 'column', {
 
     threshold: null,
@@ -247,7 +253,7 @@ seriesType('boxplot', 'column', {
     whiskerWidth: 2
     /*= } =*/
 
-}, /** @lends seriesTypes.boxplot */ {
+}, /** @lends seriesTypes.boxplot.prototype */ {
 
     // array point configs are mapped to this
     pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],

@@ -183,7 +183,7 @@ seriesType('vbp', 'sma',
                 fontSize: '7px'
             }
         }
-    }, {
+    }, /** @lends seriesTypes.vbp.prototype */ {
         nameBase: 'Volume by Price',
         bindTo: {
             series: false,

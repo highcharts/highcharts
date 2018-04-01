@@ -530,6 +530,7 @@ var sunburstOptions = {
 
 /**
  * Properties of the Sunburst series.
+ * @lends seriesTypes.sunburst.prototype
  */
 var sunburstSeries = {
     drawDataLabels: noop, // drawDataLabels is called in drawPoints
@@ -849,6 +850,7 @@ var sunburstSeries = {
 
 /**
  * Properties of the Sunburst series.
+ * @lends seriesTypes.sunburst.prototype.pointClass.prototype
  */
 var sunburstPoint = {
     draw: drawPoint,
@@ -900,17 +902,24 @@ var sunburstPoint = {
  * @apioption series.treemap.data.parent
  */
 
- /**
-  * Whether to display a slice offset from the center. When a sunburst point is
-  * sliced, its children are also offset.
-  *
-  * @type {Boolean}
-  * @default false
-  * @since 6.0.4
-  * @sample highcharts/plotoptions/sunburst-sliced Sliced sunburst
-  * @product highcharts
-  * @apioption series.sunburst.data.sliced
-  */
+/**
+ * Whether to display a slice offset from the center. When a sunburst point is
+ * sliced, its children are also offset.
+ *
+ * @type {Boolean}
+ * @default false
+ * @since 6.0.4
+ * @sample highcharts/plotoptions/sunburst-sliced Sliced sunburst
+ * @product highcharts
+ * @apioption series.sunburst.data.sliced
+ */
+
+/**
+ * The sunburst series type.
+ *
+ * @constructor seriesTypes.sunburst
+ * @augments seriesTypes.treemap
+ */
 seriesType(
     'sunburst',
     'treemap',

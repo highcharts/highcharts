@@ -35,6 +35,12 @@ var each = H.each,
  * @product      highcharts
  * @optionparent plotOptions.gauge
  */
+/**
+ * The gauge series type.
+ *
+ * @constructor seriesTypes.gauge
+ * @augments seriesTypes.line
+ */
 seriesType('gauge', 'line', {
 
     /**
@@ -347,7 +353,7 @@ seriesType('gauge', 'line', {
 
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.gauge.prototype */ {
     // chart.angular will be set to true when a gauge series is present,
     // and this will be used on the axes
     angular: true,

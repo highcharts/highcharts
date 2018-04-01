@@ -25,13 +25,19 @@ var Point = H.Point,
  * @product highcharts
  * @optionparent plotOptions.scatter3d
  */
+/**
+ * The scatter3d series type.
+ *
+ * @constructor seriesTypes.scatter3d
+ * @augments seriesTypes.scatter
+ */
 seriesType('scatter3d', 'scatter', {
     tooltip: {
         pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
     }
 
 // Series class
-}, {
+}, /** @lends seriesTypes.scatter3d.prototype */ {
     pointAttribs: function (point) {
         var attribs = seriesTypes.scatter.prototype.pointAttribs
             .apply(this, arguments);
@@ -51,7 +57,7 @@ seriesType('scatter3d', 'scatter', {
     directTouch: true
 
 // Point class
-}, {
+}, /** @lends seriesTypes.scatter3d.prototype.pointClass.prototype */ {
     applyOptions: function () {
         Point.prototype.applyOptions.apply(this, arguments);
         if (this.z === undefined) {

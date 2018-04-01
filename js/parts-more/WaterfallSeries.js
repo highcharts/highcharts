@@ -29,6 +29,12 @@ var correctFloat = H.correctFloat,
  * @product      highcharts
  * @optionparent plotOptions.waterfall
  */
+/**
+ * The waterfall series type.
+ *
+ * @constructor seriesTypes.waterfall
+ * @augments seriesTypes.column
+ */
 seriesType('waterfall', 'column', {
 
     /**
@@ -116,7 +122,7 @@ seriesType('waterfall', 'column', {
     /*= } =*/
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.waterfall.prototype */ {
     pointValKey: 'y',
 
     /**
@@ -462,7 +468,7 @@ seriesType('waterfall', 'column', {
 
 
 // Point members
-}, {
+}, /** @lends seriesTypes.waterfall.prototype.pointClass.prototype */ {
     getClassName: function () {
         var className = Point.prototype.getClassName.call(this);
 

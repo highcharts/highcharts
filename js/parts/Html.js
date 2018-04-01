@@ -29,6 +29,9 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
     /**
      * Apply CSS to HTML elements. This is used in text within SVG rendering and
      * by the VML renderer
+     *
+     * @param {CSSObject} styles
+     * @return {SVGElement}
      */
     htmlCss: function (styles) {
         var wrapper = this,
@@ -57,7 +60,6 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
      *
      * @return {Object} A hash containing values for x, y, width and height
      */
-
     htmlGetBBox: function () {
         var wrapper = this,
             element = wrapper.element;

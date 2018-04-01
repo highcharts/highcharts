@@ -540,6 +540,7 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
  * The Navigator class
  * @param {Object} chart - Chart object
  * @class
+ * @memberof Highcharts
  */
 function Navigator(chart) {
     this.init(chart);

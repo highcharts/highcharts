@@ -280,7 +280,7 @@ seriesType('ikh', 'sma',
         dataGrouping: {
             approximation: 'ichimoku-averages'
         }
-    }, {
+    }, /** @lends seriesTypes.ikh.prototype */ {
         pointArrayMap: [
             'tenkanSen',
             'kijunSen',

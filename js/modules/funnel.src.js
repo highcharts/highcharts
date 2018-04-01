@@ -20,6 +20,12 @@ var seriesType = Highcharts.seriesType,
     each = Highcharts.each;
 
 
+/**
+ * The funnel series type.
+ *
+ * @constructor seriesTypes.funnel
+ * @augments seriesTypes.pie
+ */
 seriesType('funnel', 'pie',
 /**
  * Funnel charts are a type of chart often used to visualize stages in a sales
@@ -156,6 +162,7 @@ seriesType('funnel', 'pie',
 },
 
 // Properties
+/** @lends seriesTypes.funnel.prototype */
 {
     animate: noop,
 
@@ -461,8 +468,12 @@ seriesType('funnel', 'pie',
  * @apioption series.funnel.data
  */
 
+
 /**
- * Pyramid series type.
+ * The Pyramid series type.
+ *
+ * @constructor seriesTypes.pyramid
+ * @augments seriesTypes.funnel
  */
 seriesType('pyramid', 'funnel',
 /**

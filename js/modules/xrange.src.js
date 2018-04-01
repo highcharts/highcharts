@@ -43,6 +43,13 @@ var addEvent = H.addEvent,
  * @since        6.0.0
  * @optionparent plotOptions.xrange
  */
+
+/**
+ * The xrange series type.
+ *
+ * @constructor seriesTypes.xrange
+ * @augments seriesTypes.column
+ */
 seriesType('xrange', 'column', {
     /**
      * A partial fill for each point, typically used to visualize how much of
@@ -96,7 +103,7 @@ seriesType('xrange', 'column', {
     borderRadius: 3,
     pointRange: 0
 
-}, {
+}, /** @lends seriesTypes.xrange.prototype */ {
     type: 'xrange',
     parallelArrays: ['x', 'x2', 'y'],
     requireSorting: false,
@@ -386,7 +393,7 @@ seriesType('xrange', 'column', {
     //*/
 
 // Point class properties
-}, {
+}, /** @lends seriesTypes.xrange.prototype.pointClass.prototype */ {
 
     /**
      * Extend init so that `colorByPoint` for x-range means that one color is

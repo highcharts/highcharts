@@ -29,7 +29,7 @@ var pick = H.pick,
  * Spline series type.
  *
  * @constructor seriesTypes.spline
- * @extends     {Series}
+ * @extends     seriesTypes.line
  */
 seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
     /**

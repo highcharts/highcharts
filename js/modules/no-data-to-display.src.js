@@ -168,6 +168,9 @@ H.Series.prototype.hasData = function () {
 /**
  * Display a no-data message.
  *
+ * @function #showNoData
+ * @memberOf Highcharts.Chart
+ * @instance
  * @param {String} str An optional message to show in place of the default one
  */
 chartPrototype.showNoData = function (str) {
@@ -208,6 +211,10 @@ chartPrototype.showNoData = function (str) {
 
 /**
  * Hide no-data message
+ *
+ * @function #hideNoData
+ * @memberOf Highcharts.Chart
+ * @instance
  */
 chartPrototype.hideNoData = function () {
     var chart = this;
@@ -218,6 +225,10 @@ chartPrototype.hideNoData = function () {
 
 /**
  * Returns true if there are data points within the plot area now
+ *
+ * @function #hasData
+ * @memberOf Highcharts.Chart
+ * @instance
  */
 chartPrototype.hasData = function () {
     var chart = this,

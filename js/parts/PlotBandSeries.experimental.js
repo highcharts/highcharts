@@ -20,11 +20,16 @@ import './Options.js';
 var seriesType = H.seriesType,
     each = H.each,
     Series = H.Series;
-
+/**
+ * The plotband series type.
+ *
+ * @constructor seriesTypes.plotband
+ * @augments seriesTypes.column
+ */
 seriesType('plotband', 'column', {
     lineWidth: 0,
     threshold: null
-}, {
+}, /** @lends seriesTypes.plotband.prototype */ {
     /*= if (build.classic) { =*/
     // mapping between SVG attributes and the corresponding options
     pointAttrToOptions: {

@@ -108,7 +108,7 @@ seriesType('ohlc', 'column', {
 
     stickyTracking: true
 
-}, /** @lends seriesTypes.ohlc */ {
+}, /** @lends seriesTypes.ohlc.prototype */ {
     directTouch: false,
     pointArrayMap: ['open', 'high', 'low', 'close'],
     toYData: function (point) { // return a plain array for speedy calculation

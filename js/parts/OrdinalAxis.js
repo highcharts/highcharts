@@ -387,8 +387,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
      * are no gaps in the ordinal axis this will be the same. The translated value is the value
      * that the point would have if the axis were linear, using the same min and max.
      *
-     * @param Number val The axis value
-     * @param Boolean toIndex Whether to return the index in the ordinalPositions or the new value
+     * @param {Number} val The axis value
+     * @param {Boolean} toIndex Whether to return the index in the ordinalPositions or the new value
      */
     val2lin: function (val, toIndex) {
         var axis = this,
@@ -432,8 +432,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
     /**
      * Translate from linear (internal) to axis value
      *
-     * @param Number val The linear abstracted value
-     * @param Boolean fromIndex Translate from an index in the ordinal positions rather than a value
+     * @param {Number} val The linear abstracted value
+     * @param {Boolean} fromIndex Translate from an index in the ordinal positions rather than a value
      */
     lin2val: function (val, fromIndex) {
         var axis = this,

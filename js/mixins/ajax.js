@@ -19,8 +19,9 @@ import H from '../parts/Globals.js';
 /**
  * Perform an Ajax call.
  *
+ * @function #ajax
  * @memberof Highcharts
- * @param {AjaxSettings} - The Ajax settings to use
+ * @param {AjaxSettings} attr - The Ajax settings to use
  *
  */
 H.ajax = function (attr) {

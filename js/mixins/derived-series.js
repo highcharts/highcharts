@@ -19,7 +19,8 @@ var each = H.each,
  * series data.
  *
  * @mixin
- **/
+ * @memberof Highcharts
+ */
 var derivedSeriesMixin = {
   /**
    * Initialise series
@@ -41,6 +42,8 @@ var derivedSeriesMixin = {
    * to the base series via m `this.baseSeries` and the bases data is
    * initialised. It should return data in the format accepted by
    * `Series.setData()` method
+   *
+   * @function
    *
    * @returns {Array} - an array of data
    **/

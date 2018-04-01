@@ -22,7 +22,7 @@ var color = H.color,
  * Area series type.
  *
  * @constructor seriesTypes.area
- * @extends     {Series}
+ * @augments seriesTypes.line
  */
 /**
  * The area series type.

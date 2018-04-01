@@ -224,8 +224,14 @@ var solidGaugeOptions = {
 };
 
 
-// The solidgauge series type
-H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
+/**
+ * The solidgauge series type.
+ *
+ * @constructor seriesTypes.solidgauge
+ * @augments seriesTypes.gauge
+ */
+// eslint-disable-next-line
+H.seriesType('solidgauge', 'gauge', solidGaugeOptions, /** @lends seriesTypes.solidgauge.prototype */ {
 
     /**
      * Extend the translate function to extend the Y axis with the necessary

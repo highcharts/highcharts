@@ -30,12 +30,15 @@ if (!H.ColorAxis) {
 
     /**
      * The ColorAxis object for inclusion in gradient legends
+     *
+     * @class H.ColorAxis
+     * @extends H.Axis
      */
     ColorAxis = H.ColorAxis = function () {
         this.init.apply(this, arguments);
     };
     extend(ColorAxis.prototype, Axis.prototype);
-    extend(ColorAxis.prototype, {
+    extend(ColorAxis.prototype, /** @lends H.ColorAxis.prototype */ {
         /**
          * A color axis for choropleth maps and heat maps. Visually, the color
          * axis will appear as a gradient or as separate items inside the

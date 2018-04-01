@@ -946,7 +946,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Return an SVG representation of the chart.
      *
-     * @param  chartOptions {Options}
+     * @param {Options} chartOptions
      *         Additional chart options for the generated SVG representation.
      *         For collections like `xAxis`, `yAxis` or `series`, the additional
      *         options is either merged in to the orininal item of the same

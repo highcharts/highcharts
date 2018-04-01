@@ -12,6 +12,9 @@ var seriesType = H.seriesType;
 
 /**
  * The Bar series class
+ *
+ * @constructor seriesTypes.bar
+ * @augments seriesTypes.column
  */
 seriesType('bar', 'column', null, {
     inverted: true

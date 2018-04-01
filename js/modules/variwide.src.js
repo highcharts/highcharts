@@ -34,6 +34,12 @@ var addEvent = H.addEvent,
  * @since 6.0.0
  * @optionparent plotOptions.variwide
  */
+/**
+ * The variwide series type.
+ *
+ * @constructor seriesTypes.variwide
+ * @augments seriesTypes.column
+ */
 seriesType('variwide', 'column', {
     /**
      * In a variwide chart, the point padding is 0 in order to express the
@@ -45,7 +51,7 @@ seriesType('variwide', 'column', {
      * horizontal stacking of items.
      */
     groupPadding: 0
-}, {
+}, /** @lends seriesTypes.variwide.prototype */ {
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
     processData: function () {
@@ -145,7 +151,7 @@ seriesType('variwide', 'column', {
     }
 
 // Point functions
-}, {
+}, /** @lends seriesTypes.variwide.prototype.pointClass.prototype */ {
     isValid: function () {
         return H.isNumber(this.y, true) && H.isNumber(this.z, true);
     }

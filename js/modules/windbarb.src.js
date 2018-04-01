@@ -28,6 +28,12 @@ var each = H.each,
  * @since 6.0.0
  * @optionparent plotOptions.windbarb
  */
+/**
+ * The windbarb series type.
+ *
+ * @constructor seriesTypes.windbarb
+ * @augments seriesTypes.column
+ */
 seriesType('windbarb', 'column', {
     /**
      * The line width of the wind barb symbols.
@@ -76,7 +82,7 @@ seriesType('windbarb', 'column', {
      * @since 6.1.0
      */
     xOffset: 0
-}, {
+}, /** @lends seriesTypes.windbarb.prototype */ {
     pointArrayMap: ['value', 'direction'],
     parallelArrays: ['x', 'value', 'direction'],
     beaufortName: ['Calm', 'Light air', 'Light breeze',
@@ -291,7 +297,7 @@ seriesType('windbarb', 'column', {
      * Don't invert the marker group (#4960)
      */
     invertGroups: noop
-}, {
+}, /** @lends seriesTypes.windbarb.prototype.pointClass.prototype */ {
     isValid: function () {
         return H.isNumber(this.value) && this.value >= 0;
     }
