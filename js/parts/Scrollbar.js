@@ -115,7 +115,7 @@ var defaultScrollbarOptions =  {
     /**
      * The background color of the scrollbar itself.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
      * @default #cccccc
      * @product highstock
@@ -135,7 +135,7 @@ var defaultScrollbarOptions =  {
     /**
      * The color of the scrollbar's border.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @default #cccccc
      * @product highstock
      */
@@ -144,7 +144,7 @@ var defaultScrollbarOptions =  {
     /**
      * The color of the small arrow inside the scrollbar buttons.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
      * @default #333333
      * @product highstock
@@ -154,7 +154,7 @@ var defaultScrollbarOptions =  {
     /**
      * The color of scrollbar buttons.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
      * @default #e6e6e6
      * @product highstock
@@ -164,7 +164,7 @@ var defaultScrollbarOptions =  {
     /**
      * The color of the border of the scrollbar buttons.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
      * @default #cccccc
      * @product highstock
@@ -184,7 +184,7 @@ var defaultScrollbarOptions =  {
     /**
      * The color of the small rifles in the middle of the scrollbar.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @default #333333
      * @product highstock
      */
@@ -193,7 +193,7 @@ var defaultScrollbarOptions =  {
     /**
      * The color of the track background.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
      * @default #f2f2f2
      * @product highstock
@@ -203,7 +203,7 @@ var defaultScrollbarOptions =  {
     /**
      * The color of the border of the scrollbar track.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
      * @default #f2f2f2
      * @product highstock
@@ -224,13 +224,16 @@ var defaultScrollbarOptions =  {
 
 defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.scrollbar);
 
+swapXY =
 /**
-* When we have vertical scrollbar, rifles and arrow in buttons should be rotated.
-* The same method is used in Navigator's handles, to rotate them.
-* @param {Array} path - path to be rotated
-* @param {Boolean} vertical - if vertical scrollbar, swap x-y values
-*/
-H.swapXY = swapXY = function (path, vertical) {
+ * When we have vertical scrollbar, rifles and arrow in buttons should be rotated.
+ * The same method is used in Navigator's handles, to rotate them.
+ *
+ * @param {Array} path - path to be rotated
+ * @param {Boolean} vertical - if vertical scrollbar, swap x-y values
+ * @return {Array}
+ */
+H.swapXY = function (path, vertical) {
     var i,
         len = path.length,
         temp;
@@ -251,6 +254,7 @@ H.swapXY = swapXY = function (path, vertical) {
  * on individual axes.
  *
  * @class
+ * @memberof Highcharts
  * @param {Object} renderer
  * @param {Object} options
  * @param {Object} chart
@@ -577,6 +581,10 @@ Scrollbar.prototype = {
         var scroller = this;
         /**
          * Event handler for the mouse move event.
+         * @function mouseMoveHandler
+         * @memberOf Scrollbar
+         * @instance
+         * @param {MouseEvent} e
          */
         scroller.mouseMoveHandler = function (e) {
             var normalizedEvent = scroller.chart.pointer.normalize(e),
@@ -612,6 +620,10 @@ Scrollbar.prototype = {
 
         /**
          * Event handler for the mouse up event.
+         * @function mouseUpHandler
+         * @memberOf Scrollbar
+         * @instance
+         * @param {MouseEvent} e
          */
         scroller.mouseUpHandler = function (e) {
             if (scroller.hasDragged) {
@@ -626,6 +638,12 @@ Scrollbar.prototype = {
             scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
         };
 
+        /**
+         * @function mouseDownHandler
+         * @memberOf Scrollbar
+         * @instance
+         * @param {MouseEvent} e
+         */
         scroller.mouseDownHandler = function (e) {
             var normalizedEvent = scroller.chart.pointer.normalize(e),
                 mousePosition = scroller.cursorToScrollbarPosition(normalizedEvent);

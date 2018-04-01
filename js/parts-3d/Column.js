@@ -33,7 +33,7 @@ var addEvent = H.addEvent,
  * 3D columns only. The color of the edges. Similar to `borderColor`,
  *  except it defaults to the same color as the column.
  *
- * @type {Color}
+ * @type {ColorString}
  * @product highcharts
  * @apioption plotOptions.column.edgeColor
  */

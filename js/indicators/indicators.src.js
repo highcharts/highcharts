@@ -81,7 +81,7 @@ seriesType('sma', 'line',
              */
             period: 14
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends seriesTypes.sma.prototype */  {
         bindTo: {
             series: true,
             eventName: 'updatedData'

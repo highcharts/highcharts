@@ -72,7 +72,6 @@ var Axis = function () {
 };
 
 H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
-
     /**
      * The X axis or category axis. Normally this is the horizontal axis,
      * though if the chart is inverted this is the vertical axis. In case of
@@ -113,7 +112,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * When using an alternate grid color, a band is painted across the
          * plot area between every other grid line.
          *
-         * @type      {Color}
+         * @type      {ColorString}
          * @sample    {highcharts} highcharts/yaxis/alternategridcolor/
          *            Alternate grid color on the Y axis
          * @sample    {highstock} stock/xaxis/alternategridcolor/
@@ -271,7 +270,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * datetime axes, and `rgba(204,214,235,0.25)` for category axes, where
          * the crosshair by default highlights the whole category.
          *
-         * @type      {Color}
+         * @type      {ColorString}
          * @sample    {highcharts|highstock|highmaps}
          *            highcharts/xaxis/crosshair-customized/
          *            Customized crosshairs
@@ -1368,7 +1367,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * In styled mode, the stroke width is given in the
          * `.highcharts-minor-grid-line` class.
          *
-         * @type    {Color}
+         * @type    {ColorString}
          * @sample  {highcharts} highcharts/yaxis/minorgridlinecolor/
          *          Bright grey lines from Y axis
          * @sample  {highcharts|highstock} highcharts/css/axis-grid/
@@ -1398,7 +1397,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * Color for the minor tick marks.
          *
-         * @type    {Color}
+         * @type    {ColorString}
          * @sample  {highcharts} highcharts/yaxis/minortickcolor/
          *          Black tick marks on Y axis
          * @sample  {highstock} stock/xaxis/minorticks/
@@ -1417,7 +1416,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * In Highmaps, the axis line is hidden by default, because the axis is
          * not visible by default.
          *
-         * @type    {Color}
+         * @type    {ColorString}
          * @sample  {highcharts} highcharts/yaxis/linecolor/
          *          A red line on Y axis
          * @sample  {highcharts|highstock} highcharts/css/axis/
@@ -1454,7 +1453,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @productdesc {highmaps}
          * In Highmaps, the grid lines are hidden by default.
          *
-         * @type    {Color}
+         * @type    {ColorString}
          * @sample  {highcharts} highcharts/yaxis/gridlinecolor/
          *          Green lines
          * @sample  {highcharts|highstock} highcharts/css/axis-grid/
@@ -1491,7 +1490,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * In styled mode, the stroke is given in the `.highcharts-tick`
          * class.
          *
-         * @type    {Color}
+         * @type    {ColorString}
          * @sample  {highcharts} highcharts/xaxis/tickcolor/
          *          Red ticks on X axis
          * @sample  {highcharts|highstock} highcharts/css/axis-grid/
@@ -1845,6 +1844,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     chart
          * @memberOf Axis
          * @type     {Chart}
+         * @instance
          */
         axis.chart = chart;
 
@@ -1854,6 +1854,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     horiz
          * @memberOf Axis
          * @type     {Boolean}
+         * @instance
          */
         axis.horiz = chart.inverted && !axis.isZAxis ? !isXAxis : isXAxis;
 
@@ -1868,6 +1869,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     coll
          * @memberOf Axis
          * @type     {String}
+         * @instance
          */
         axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
@@ -1882,6 +1884,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     side
          * @memberOf Axis
          * @type     {Number}
+         * @instance
          */
         axis.side = userOptions.side || (axis.horiz ?
                 (axis.opposite ? 0 : 2) : // top : bottom
@@ -1911,6 +1914,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     reversed
          * @memberOf Axis
          * @type     {Boolean}
+         * @instance
          */
         axis.reversed = options.reversed;
         axis.visible = options.visible !== false;
@@ -1969,6 +1973,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     max
          * @memberOf Axis
          * @type     {Number}
+         * @instance
          */
         axis.max = null;
         /**
@@ -1979,6 +1984,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     min
          * @memberOf Axis
          * @type     {Number}
+         * @instance
          */
         axis.min = null;
 
@@ -1989,6 +1995,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     crosshair
          * @memberOf Axis
          * @type     {AxisCrosshairOptions}
+         * @instance
          */
         axis.crosshair = pick(
             options.crosshair,
@@ -2015,6 +2022,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @name     series
          * @memberOf Axis
          * @type     {Array<Series>}
+         * @instance
          */
         axis.series = axis.series || []; // populated by Series
 

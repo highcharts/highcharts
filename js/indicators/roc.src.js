@@ -72,7 +72,7 @@ seriesType('roc', 'sma',
             index: 3,
             period: 9
         }
-    }, {
+    }, /** @lends seriesTypes.roc.prototype */ {
         nameBase: 'Rate of Change',
         getValues: function (series, params) {
             var period = params.period,

@@ -48,7 +48,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         The config options for the series.
      * @param  {Boolean} [redraw=true]
      *         Whether to redraw the chart after adding.
-     * @param  {AnimationOptions} animation
+     * @param  {AnimationOptions} [animation]
      *         Whether to apply animation, and optionally animation
      *         configuration.
      *

@@ -437,12 +437,12 @@ H.Fx.prototype.strokeSetter = function () {
  * object argument to create a deep copy of an object.
  *
  * @function #merge
- * @memberOf Highcharts
+ * @memberof Highcharts
  * @param {Boolean} [extend] - Whether to extend the left-side object (a) or
           return a whole new object.
- * @param {Object} a - The first object to extend. When only this is given, the
-          function returns a deep copy.
- * @param {...Object} [n] - An object to merge into the previous one.
+ * @param {Object} [a] - The first object to extend. When only this is given,
+ *        the function returns a deep copy.
+ * @param {...Object} n - An object to merge into the previous one.
  * @returns {Object} - The merged object. If the first argument is true, the
  * return is the same as the second argument.
  */
@@ -660,7 +660,7 @@ H.attr = function (elem, prop, value) {
  *
  * @function #splat
  * @memberOf Highcharts
- * @param obj {*} - The object to splat.
+ * @param {*} obj - The object to splat.
  * @returns {Array} The produced or original array.
  */
 H.splat = function (obj) {
@@ -773,7 +773,8 @@ H.css = function (el, styles) {
 
 /**
  * A HTML DOM element.
- * @typedef {Object} HTMLDOMElement
+ * @typedef {HTMLElement} HTMLDOMElement
+ * @memberof H
  */
 
 /**
@@ -1259,7 +1260,7 @@ H.correctFloat = function (num, prec) {
  *
  * @function #setAnimation
  * @memberOf Highcharts
- * @param {Boolean|Animation} animation - The animation object.
+ * @param {Boolean|AnimationOptions} animation - The animation object.
  * @param {Object} chart - The chart instance.
  *
  * @todo This function always relates to a chart, and sets a property on the
@@ -1468,8 +1469,8 @@ H.getStyle = function (el, prop, toInt) {
  * @function #inArray
  * @memberOf Highcharts
  * @param {*} item - The item to search for.
- * @param {arr} arr - The array or node collection to search in.
- * @param {fromIndex} [fromIndex=0] - The index to start searching from.
+ * @param {Array} arr - The array or node collection to search in.
+ * @param {Number} [fromIndex=0] - The index to start searching from.
  * @returns {Number} - The index within the array, or -1 if not found.
  */
 H.inArray = function (item, arr, fromIndex) {
@@ -1564,7 +1565,7 @@ H.map = function (arr, fn) {
  * Returns an array of a given object's own properties.
  *
  * @function #keys
- * @memberOf highcharts
+ * @memberOf Highcharts
  * @param {Object} obj - The object of which the properties are to be returned.
  * @returns {Array} - An array of strings that represents all the properties.
  */
@@ -1905,6 +1906,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  * booleans, where `false` turns off animation and `true` defaults to a duration
  * of 500ms.
  * @typedef {Object} AnimationOptions
+ * @memberof Highcharts
  * @property {Number} duration - The animation duration in milliseconds.
  * @property {String} [easing] - The name of an easing function as defined on
  *     the `Math` object.

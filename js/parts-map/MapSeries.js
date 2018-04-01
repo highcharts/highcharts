@@ -39,6 +39,13 @@ var colorPointMixin = H.colorPointMixin,
  * @product highmaps
  * @optionparent plotOptions.map
  */
+/**
+ * The map series type.
+ *
+ * @constructor seriesTypes.map
+ * @augments seriesTypes.scatter
+ * @mixes colorSeriesMixin
+ */
 seriesType('map', 'scatter', {
 
     /**
@@ -72,7 +79,7 @@ seriesType('map', 'scatter', {
      * In styled mode, the null point fill is set in the
      * `.highcharts-null-point` class.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highmaps} maps/demo/all-areas-as-null/ Null color
      * @default #f7f7f7
      * @product highmaps
@@ -85,7 +92,7 @@ seriesType('map', 'scatter', {
      * In styled mode, the border stroke is given in the `.highcharts-point`
      * class.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
      * @default #cccccc
      * @product highmaps
@@ -216,7 +223,7 @@ seriesType('map', 'scatter', {
             /**
              * The color of the shape in this state
              *
-             * @type {Color}
+             * @type {ColorString}
              * @sample {highmaps} maps/plotoptions/series-states-hover/
              *         Hover options
              * @product highmaps
@@ -226,7 +233,7 @@ seriesType('map', 'scatter', {
             /**
              * The border color of the point in this state.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @product highmaps
              * @apioption plotOptions.series.states.hover.borderColor
              */
@@ -260,7 +267,7 @@ seriesType('map', 'scatter', {
     }
 
 // Prototype members
-}, merge(colorSeriesMixin, {
+}, merge(colorSeriesMixin, /** @lends seriesTypes.map.prototype */ {
     type: 'map',
     getExtremesFromAll: true,
     useMapGeometry: true, // get axis extremes from paths, not values
@@ -1010,7 +1017,7 @@ seriesType('map', 'scatter', {
     }
 
 // Point class
-}), extend({
+}), extend(/** @lends seriesTypes.map.prototype.pointClass.prototype */ {
     /**
      * Extend the Point object to split paths
      */
@@ -1076,6 +1083,13 @@ seriesType('map', 'scatter', {
         series.chart.redraw();
     }
 }, colorPointMixin));
+
+/**
+ * The point class of map series type.
+ *
+ * @type seriesTypes.map.prototype.pointClass
+ * @mixes colorPointMixin
+ */
 
 /**
  * An array of objects containing a `path` definition and optionally
@@ -1147,7 +1161,7 @@ seriesType('map', 'scatter', {
  * Individual color for the point. By default the color is either used
  * to denote the value, or pulled from the global `colors` array.
  *
- * @type {Color}
+ * @type {ColorString}
  * @default undefined
  * @product highmaps
  * @apioption series.map.data.color

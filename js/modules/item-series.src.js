@@ -21,6 +21,12 @@ var each = H.each,
     pick = H.pick,
     seriesType = H.seriesType;
 
+/**
+ * The item series type.
+ *
+ * @constructor seriesTypes.item
+ * @augments seriesTypes.column
+ */
 seriesType('item', 'column', {
     itemPadding: 0.2,
     marker: {
@@ -30,7 +36,7 @@ seriesType('item', 'column', {
             select: {}
         }
     }
-}, {
+}, /** @lends seriesTypes.item.prototype */ {
     drawPoints: function () {
         var series = this,
             renderer = series.chart.renderer,

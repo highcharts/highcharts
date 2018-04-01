@@ -14,7 +14,10 @@ var areaProto = H.seriesTypes.area.prototype,
     LegendSymbolMixin = H.LegendSymbolMixin,
     seriesType = H.seriesType;
 /**
- * AreaSplineSeries object
+ * The areaspline series type.
+ *
+ * @constructor seriesTypes.areaspline
+ * @augments seriesTypes.spline
  */
 /**
  * The area spline series is an area series where the graph between the points
@@ -27,12 +30,14 @@ var areaProto = H.seriesTypes.area.prototype,
  * @product   highcharts highstock
  * @apioption plotOptions.areaspline
  */
-seriesType('areaspline', 'spline', defaultPlotOptions.area, {
-    getStackPoints: areaProto.getStackPoints,
-    getGraphPath: areaProto.getGraphPath,
-    drawGraph: areaProto.drawGraph,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
-});
+seriesType('areaspline', 'spline', defaultPlotOptions.area,
+    /** @lends seriesTypes.areaspline.prototype */
+    {
+        getStackPoints: areaProto.getStackPoints,
+        getGraphPath: areaProto.getGraphPath,
+        drawGraph: areaProto.drawGraph,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle
+    });
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).

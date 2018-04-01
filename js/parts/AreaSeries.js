@@ -22,7 +22,7 @@ var color = H.color,
  * Area series type.
  *
  * @constructor seriesTypes.area
- * @extends     {Series}
+ * @augments seriesTypes.line
  */
 /**
  * The area series type.
@@ -44,7 +44,7 @@ seriesType('area', 'line', {
      * In styled mode, the fill color can be set with the `.highcharts-area`
      * class name.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @sample    {highcharts} highcharts/plotoptions/area-fillcolor-default/
      *            Null by default
      * @sample    {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
@@ -81,7 +81,7 @@ seriesType('area', 'line', {
      * In styled mode, the line stroke can be set with the `.highcharts-graph`
      * class name.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @sample    {highcharts} highcharts/plotoptions/area-linecolor/
      *            Dark gray line
      * @default   null
@@ -95,7 +95,7 @@ seriesType('area', 'line', {
      * In styled mode, a negative color is set with the `.highcharts-negative`
      * class name.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @see       [negativeColor](#plotOptions.area.negativeColor).
      * @sample    {highcharts} highcharts/css/series-negative-color/
      *            Negative color in styled mode

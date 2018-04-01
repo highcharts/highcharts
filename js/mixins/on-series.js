@@ -11,6 +11,11 @@ var each = H.each,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort;
 
+/**
+ * onseries mixin
+ * @mixin
+ * @memberof Highcharts
+ */
 var onSeriesMixin = {
 
     /**

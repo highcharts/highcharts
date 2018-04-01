@@ -17,6 +17,7 @@ var correctFloat = H.correctFloat,
 
 /**
  * The Tick class
+ * @class
  */
 H.Tick = function (axis, pos, type, noLabel) {
     this.axis = axis;
@@ -567,8 +568,8 @@ H.Tick.prototype = {
     /**
      * Put everything in place
      *
-     * @param index {Number}
-     * @param old {Boolean} Use old coordinates to prepare an animation into new
+     * @param {Number} index
+     * @param {Boolean} old Use old coordinates to prepare an animation into new
      *                      position
      */
     render: function (index, old, opacity) {

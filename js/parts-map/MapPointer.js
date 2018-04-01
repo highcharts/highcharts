@@ -13,7 +13,7 @@ var extend = H.extend,
     wrap = H.wrap;
 
 // Extend the Pointer
-extend(Pointer.prototype, {
+extend(Pointer.prototype, /** @lends Pointer.prototype */{
 
     /**
      * The event handler for the doubleclick event

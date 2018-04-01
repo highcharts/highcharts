@@ -261,6 +261,7 @@ defaultOptions.lang = merge(
 /**
  * The range selector.
  * @class
+ * @memberof Highcharts
  * @param {Object} chart
  */
 function RangeSelector(chart) {

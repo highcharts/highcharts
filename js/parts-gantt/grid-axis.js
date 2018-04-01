@@ -167,7 +167,11 @@ Axis.prototype.addTitle = function () {
  * Add custom date formats
  */
 H.dateFormats = {
-    // Week number
+    /**
+     * Week number
+     * @param {number} timestamp
+     * @return {number}
+     */
     W: function (timestamp) {
         var date = new this.Date(timestamp),
             day = this.get('Day', date) === 0 ? 7 : this.get('Day', date),
@@ -178,7 +182,11 @@ H.dateFormats = {
         dayNumber = Math.floor((time - startOfYear) / 86400000);
         return 1 + Math.floor(dayNumber / 7);
     },
-    // First letter of the day of the week, e.g. 'M' for 'Monday'.
+    /**
+     * First letter of the day of the week, e.g. 'M' for 'Monday'.
+     * @param {number} timestamp
+     * @return {string}
+     */
     E: function (timestamp) {
         return this.dateFormat('%a', timestamp, true).charAt(0);
     }

@@ -22,6 +22,12 @@ var Series = H.Series,
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
+/**
+ * The scatter series type.
+ *
+ * @constructor seriesTypes.scatter
+ * @augments seriesTypes.line
+ */
 seriesType('scatter', 'line', {
 
     /**
@@ -81,7 +87,7 @@ seriesType('scatter', 'line', {
     }
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.scatter.prototype */ {
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,

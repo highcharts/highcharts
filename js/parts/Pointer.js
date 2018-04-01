@@ -97,6 +97,7 @@ Highcharts.Pointer.prototype = {
     },
 
     /**
+     * @memberof Highcharts
      * @typedef  {Object} PointerEvent
      *           A native browser mouse or touch event, extended with position
      *           information relative to the {@link Chart.container}.
@@ -481,7 +482,7 @@ Highcharts.Pointer.prototype = {
      * Reset the tracking by hiding the tooltip, the hover series state and the
      * hover point
      *
-     * @param allowMove {Boolean}
+     * @param {Boolean} allowMove
      *        Instead of destroying the tooltip altogether, allow moving it if
      *        possible.
      */

@@ -160,7 +160,7 @@ H.setOptions({
                     /**
                      * Color of the focus border.
                      *
-                     * @type      {Color}
+                     * @type      {ColorString}
                      * @default   #000000
                      * @since     6.0.3
                      * @apioption accessibility.keyboardNavigation.focusBorder.style.color

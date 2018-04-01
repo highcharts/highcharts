@@ -48,7 +48,7 @@ seriesType('vwap', 'sma',
              */
             volumeSeriesID: 'volume'
         }
-    }, {
+    }, /** @lends seriesTypes.vwap.prototype */ {
         /**
          * Returns the final values of the indicator ready to be presented on a
          * chart

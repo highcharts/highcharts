@@ -64,7 +64,7 @@ seriesType('wma', 'sma',
             index: 3,
             period: 9
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends seriesTypes.wma.prototype */  {
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,

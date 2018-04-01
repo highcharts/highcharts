@@ -10,6 +10,12 @@ function toFixed(a, n) {
     return parseFloat(a.toFixed(n));
 }
 
+/**
+ * The rsi series type.
+ *
+ * @constructor seriesTypes.rsi
+ * @augments seriesTypes.sma
+ */
 H.seriesType('rsi', 'sma',
         /**
          * Relative strength index (RSI) technical indicator. This series
@@ -38,7 +44,7 @@ H.seriesType('rsi', 'sma',
              */
             decimals: 4
         }
-    }, {
+    }, /** @lends seriesTypes.rsi.prototype */ {
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,

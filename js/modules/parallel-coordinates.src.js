@@ -140,6 +140,7 @@ addEvent(Chart, 'init', function (e) {
      * @name hasParallelCoordinates
      * @memberOf Chart
      * @type {Boolean}
+     * @instance
      */
     this.hasParallelCoordinates = options.chart &&
         options.chart.parallelCoordinates;

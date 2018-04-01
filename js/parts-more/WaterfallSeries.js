@@ -29,6 +29,12 @@ var correctFloat = H.correctFloat,
  * @product      highcharts
  * @optionparent plotOptions.waterfall
  */
+/**
+ * The waterfall series type.
+ *
+ * @constructor seriesTypes.waterfall
+ * @augments seriesTypes.column
+ */
 seriesType('waterfall', 'column', {
 
     /**
@@ -39,7 +45,7 @@ seriesType('waterfall', 'column', {
      * `.highcharts-point-negative`, `.highcharts-sum` and
      * `.highcharts-intermediate-sum` classes.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @sample    {highcharts} highcharts/demo/waterfall/ Waterfall
      * @product   highcharts
      * @apioption plotOptions.waterfall.upColor
@@ -62,7 +68,7 @@ seriesType('waterfall', 'column', {
      *
      * In styled mode, the stroke can be set with the `.highcharts-graph` class.
      *
-     * @type    {Color}
+     * @type    {ColorString}
      * @default #333333
      * @since   3.0
      * @product highcharts
@@ -101,7 +107,7 @@ seriesType('waterfall', 'column', {
      * In styled mode, the border stroke can be set with the
      * `.highcharts-point` class.
      *
-     * @type    {Color}
+     * @type    {ColorString}
      * @default #333333
      * @since   3.0
      * @product highcharts
@@ -116,7 +122,7 @@ seriesType('waterfall', 'column', {
     /*= } =*/
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.waterfall.prototype */ {
     pointValKey: 'y',
 
     /**
@@ -462,7 +468,7 @@ seriesType('waterfall', 'column', {
 
 
 // Point members
-}, {
+}, /** @lends seriesTypes.waterfall.prototype.pointClass.prototype */ {
     getClassName: function () {
         var className = Point.prototype.getClassName.call(this);
 

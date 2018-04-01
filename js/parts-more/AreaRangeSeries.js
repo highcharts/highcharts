@@ -32,6 +32,12 @@ var each = H.each,
  * @excluding    stack,stacking
  * @optionparent plotOptions.arearange
  */
+/**
+ * The arearange series type.
+ *
+ * @constructor seriesTypes.arearange
+ * @augments seriesTypes.area
+ */
 seriesType('arearange', 'area', {
     /*= if (build.classic) { =*/
 
@@ -140,7 +146,7 @@ seriesType('arearange', 'area', {
     }
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.arearange.prototype */ {
     pointArrayMap: ['low', 'high'],
     dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
     toYData: function (point) {
@@ -500,7 +506,7 @@ seriesType('arearange', 'area', {
     },
 
     setStackedPoints: noop
-}, {
+}, /** @lends seriesTypes.arearange.prototype.pointClass.prototype */ {
     setState: function () {
         var prevState = this.state,
             series = this.series,

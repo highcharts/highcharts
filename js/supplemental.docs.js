@@ -239,7 +239,7 @@
  * Border color for the plot band. Also requires `borderWidth` to be
  * set.
  *
- * @type {Color}
+ * @type {ColorString}
  * @default null
  * @product highcharts highstock
  * @apioption xAxis.plotBands.borderColor
@@ -267,7 +267,7 @@
 /**
  * The color of the plot band.
  *
- * @type {Color}
+ * @type {ColorString}
  * @sample {highcharts} highcharts/xaxis/plotbands-color/ Color band
  * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
  * @default null
@@ -474,7 +474,7 @@
 /**
  * The color of the line.
  *
- * @type {Color}
+ * @type {ColorString}
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ A red line from X axis
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default null
@@ -791,7 +791,7 @@
  * Solid gauge only. Unless [stops](#yAxis.stops) are set, the color
  * to represent the maximum value of the Y axis.
  *
- * @type {Color}
+ * @type {ColorString}
  * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/ Min and max colors
  * @default #003399
  * @since 4.0
@@ -803,7 +803,7 @@
  * Solid gauge only. Unless [stops](#yAxis.stops) are set, the color
  * to represent the minimum value of the Y axis.
  *
- * @type {Color}
+ * @type {ColorString}
  * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/ Min and max color
  * @default #e6ebf5
  * @since 4.0
@@ -1206,7 +1206,7 @@
 /**
  * The border color of the date input boxes.
  *
- * @type {Color}
+ * @type {ColorString}
  * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
  * @default #cccccc
  * @since 1.3.7
@@ -1524,7 +1524,7 @@
  * The background color for the label. Defaults to the related series
  * color, or `#666666` if that is not available.
  *
- * @type {Color}
+ * @type {ColorString}
  * @since 2.1
  * @product highstock
  * @apioption xAxis.crosshair.label.backgroundColor
@@ -1533,7 +1533,7 @@
 /**
  * The border color for the crosshair label
  *
- * @type {Color}
+ * @type {ColorString}
  * @since 2.1
  * @product highstock
  * @apioption xAxis.crosshair.label.borderColor
@@ -1910,47 +1910,3 @@
  * @product highmaps
  * @apioption mapNavigation.buttons.
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

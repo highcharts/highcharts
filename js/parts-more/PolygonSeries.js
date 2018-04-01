@@ -31,6 +31,12 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  * @product highcharts highstock
  * @optionparent plotOptions.polygon
  */
+/**
+ * The polygon series type.
+ *
+ * @constructor seriesTypes.polygon
+ * @augments seriesTypes.scatter
+ */
 seriesType('polygon', 'scatter', {
     marker: {
         enabled: false,
@@ -48,7 +54,7 @@ seriesType('polygon', 'scatter', {
     trackByArea: true
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.polygon.prototype */ {
     type: 'polygon',
     getGraphPath: function () {
 

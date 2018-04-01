@@ -17,6 +17,13 @@ var color = H.color,
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
+
+/**
+ * The overall highcharts options interface
+ * @interface
+ * @name Options
+ * @memberof Highcharts
+ */
 /**
  * @optionparent
  */
@@ -48,7 +55,7 @@ H.defaultOptions = {
      * <pre>colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
      *    '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']</pre>
      *
-     * @type {Array<Color>}
+     * @type {Array<ColorString>}
      * @sample {highcharts} highcharts/chart/colors/ Assign a global color theme
      * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
@@ -963,7 +970,7 @@ H.defaultOptions = {
          * The background color of the marker square when selecting (zooming
          * in on) an area of the chart.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @see In styled mode, the selection marker fill is set with the
          * `.highcharts-selection-marker` class.
          * @default rgba(51,92,173,0.25)
@@ -1172,7 +1179,7 @@ H.defaultOptions = {
         /**
          * The color of the outer chart border.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @see    In styled mode, the stroke is set with the
          *         `.highcharts-background` class.
          * @sample {highcharts} highcharts/chart/bordercolor/ Brown border
@@ -1200,7 +1207,7 @@ H.defaultOptions = {
         /**
          * The background color or gradient for the outer chart area.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @see    In styled mode, the background is set with the
          *         `.highcharts-background` class.
          * @sample {highcharts} highcharts/chart/backgroundcolor-color/ Color
@@ -1220,7 +1227,7 @@ H.defaultOptions = {
         /**
          * The background color or gradient for the plot area.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @see    In styled mode, the plot background is set with the
          *         `.highcharts-plot-background` class.
          * @sample {highcharts} highcharts/chart/plotbackgroundcolor-color/
@@ -1260,7 +1267,7 @@ H.defaultOptions = {
         /**
          * The color of the inner chart or plot area border.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @see In styled mode, a plot border stroke can be set with the
          *      `.highcharts-plot-border` class.
          * @sample {highcharts} highcharts/chart/plotbordercolor/ Blue border
@@ -1643,7 +1650,7 @@ H.defaultOptions = {
         /**
          * The background color of the legend.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @see In styled mode, the legend background fill can be applied with
          * the `.highcharts-legend-box` class.
          * @sample {highcharts} highcharts/legend/backgroundcolor/
@@ -1871,7 +1878,7 @@ H.defaultOptions = {
         /**
          * The color of the drawn border around the legend.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @see In styled mode, the legend border stroke can be applied with
          * the `.highcharts-legend-box` class.
          * @sample {highcharts} highcharts/legend/bordercolor/ Brown border
@@ -1969,7 +1976,7 @@ H.defaultOptions = {
              * The color for the active up or down arrow in the legend page
              * navigation.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @see     In styled mode, the active arrow be styled with the
              *          `.highcharts-legend-nav-active` class.
              * @sample  {highcharts} highcharts/legend/navigation/
@@ -1985,7 +1992,7 @@ H.defaultOptions = {
              * The color of the inactive up or down arrow in the legend page
              * navigation. .
              *
-             * @type {Color}
+             * @type {ColorString}
              * @see In styled mode, the inactive arrow be styled with the
              *      `.highcharts-legend-nav-inactive` class.
              * @sample {highcharts} highcharts/legend/navigation/
@@ -2392,7 +2399,7 @@ H.defaultOptions = {
          * The color of the tooltip border. When `null`, the border takes the
          * color of the corresponding series or point.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highcharts} highcharts/tooltip/bordercolor-default/
          *         Follow series by default
          * @sample {highcharts} highcharts/tooltip/bordercolor-black/
@@ -2806,7 +2813,7 @@ H.defaultOptions = {
          * In styled mode, the stroke width is set in the
          * `.highcharts-tooltip-box` class.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highcharts} highcharts/tooltip/backgroundcolor-solid/
          *         Yellowish background
          * @sample {highcharts} highcharts/tooltip/backgroundcolor-gradient/
@@ -3068,11 +3075,15 @@ H.getOptions = function () {
 };
 
 
-// Series defaults
+/**
+ * Series defaults
+ */
 H.defaultPlotOptions = H.defaultOptions.plotOptions;
 
 
-// Time utilities
+/**
+ * Time utilities
+ */
 H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 
 /**

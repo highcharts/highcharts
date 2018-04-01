@@ -165,7 +165,7 @@ seriesType('flags', 'column', {
     /**
      * The fill color for the flags.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @default   #ffffff
      * @product   highstock
      */
@@ -177,7 +177,7 @@ seriesType('flags', 'column', {
      * In styled mode, the stroke is set in the
      * `.highcharts-flag-series.highcharts-point` rule.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @default   #000000
      * @product   highstock
      * @apioption plotOptions.flags.lineColor
@@ -201,7 +201,7 @@ seriesType('flags', 'column', {
             /**
              * The color of the line/border of the flag.
              *
-             * @type    {Color}
+             * @type    {ColorString}
              * @default #000000
              * @product highstock
              */
@@ -210,7 +210,7 @@ seriesType('flags', 'column', {
             /**
              * The fill or background color of the flag.
              *
-             * @type    {Color}
+             * @type    {ColorString}
              * @default #ccd6eb
              * @product highstock
              */
@@ -616,7 +616,7 @@ if (Renderer === VMLRenderer) {
  * The fill color of an individual flag. By default it inherits from
  * the series color.
  *
- * @type      {Color}
+ * @type      {ColorString}
  * @product   highstock
  * @apioption series.flags.data.fillColor
  */

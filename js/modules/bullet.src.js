@@ -73,7 +73,7 @@ seriesType('bullet', 'column',
              *
              * In styled mode, use class `highcharts-bullet-target` instead.
              *
-             * @type      {Color}
+             * @type      {ColorString}
              * @since     6.0.0
              * @product   highcharts
              * @apioption plotOptions.bullet.targetOptions.borderColor
@@ -89,7 +89,7 @@ seriesType('bullet', 'column',
              *
              * In styled mode, use class `highcharts-bullet-target` instead.
              *
-             * @type      {Color}
+             * @type      {ColorString}
              * @since     6.0.0
              * @product   highcharts
              * @apioption plotOptions.bullet.targetOptions.color
@@ -123,7 +123,7 @@ seriesType('bullet', 'column',
                 '{point.target}</span><br/>'
             /*= } =*/
         }
-    }, {
+    }, /** @lends seriesTypes.bullet.prototype */ {
         pointArrayMap: ['y', 'target'],
         parallelArrays: ['x', 'y', 'target'],
 

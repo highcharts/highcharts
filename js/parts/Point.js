@@ -55,6 +55,7 @@ Highcharts.Point.prototype = {
          * @name series
          * @memberof Highcharts.Point
          * @type Highcharts.Series
+         * @instance
          */
         point.series = series;
 
@@ -63,7 +64,8 @@ Highcharts.Point.prototype = {
          * The point's current color.
          * @name color
          * @memberof Highcharts.Point
-         * @type {Color}
+         * @type {ColorString}
+         * @instance
          */
         point.color = series.color; // #3445
         /*= } =*/
@@ -91,6 +93,7 @@ Highcharts.Point.prototype = {
          * @name colorIndex
          * @memberof Highcharts.Point
          * @type {Number}
+         * @instance
          */
         point.colorIndex = pick(point.colorIndex, colorIndex);
 
@@ -486,6 +489,7 @@ Highcharts.Point.prototype = {
      * @name visible
      * @memberOf Highcharts.Point
      * @type {Boolean}
+     * @instance
      */
     visible: true
 };
@@ -497,6 +501,7 @@ Highcharts.Point.prototype = {
  * @name category
  * @memberOf Highcharts.Point
  * @type {String|Number}
+ * @instance
  */
 
 /**
@@ -522,6 +527,7 @@ Highcharts.Point.prototype = {
  * @name name
  * @memberOf Highcharts.Point
  * @type {String}
+ * @instance
  */
 
 
@@ -531,6 +537,7 @@ Highcharts.Point.prototype = {
  * @name percentage
  * @memberOf Highcharts.Point
  * @type {Number}
+ * @instance
  */
 
 /**
@@ -540,6 +547,7 @@ Highcharts.Point.prototype = {
  * @name total
  * @memberOf Highcharts.Point
  * @type {Number}
+ * @instance
  */
 
 /**
@@ -548,6 +556,7 @@ Highcharts.Point.prototype = {
  * @name x
  * @memberOf Highcharts.Point
  * @type {Number}
+ * @instance
  */
 
 /**
@@ -556,4 +565,5 @@ Highcharts.Point.prototype = {
  * @name y
  * @memberOf Highcharts.Point
  * @type {Number}
+ * @instance
  */

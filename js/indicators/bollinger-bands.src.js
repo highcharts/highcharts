@@ -26,6 +26,12 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
     return std;
 }
 
+/**
+ * The bb series type.
+ *
+ * @constructor seriesTypes.bb
+ * @augments seriesTypes.sma
+ */
 H.seriesType('bb', 'sma',
     /**
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
@@ -107,7 +113,7 @@ H.seriesType('bb', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends seriesTypes.bb.prototype */  {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameComponents: ['period', 'standardDeviation'],

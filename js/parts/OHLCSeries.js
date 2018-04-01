@@ -111,7 +111,7 @@ seriesType('ohlc', 'column', {
     /**
      * Line color for up points.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @product highstock
      * @apioption plotOptions.ohlc.upColor
      */
@@ -120,7 +120,7 @@ seriesType('ohlc', 'column', {
 
     stickyTracking: true
 
-}, /** @lends seriesTypes.ohlc */ {
+}, /** @lends seriesTypes.ohlc.prototype */ {
     directTouch: false,
     pointArrayMap: ['open', 'high', 'low', 'close'],
     toYData: function (point) { // return a plain array for speedy calculation

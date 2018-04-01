@@ -15,14 +15,6 @@ var each = H.each,
     seriesType = H.seriesType,
     merge = H.merge;
 
-
-/**
- * The pareto series type.
- *
- * @constructor seriesTypes.pareto
- * @augments seriesTypes.line
- */
-
 /**
  * A pareto diagram is a type of chart that contains both bars and a line graph,
  * where individual values are represented in descending order by bars,
@@ -43,16 +35,22 @@ var each = H.each,
  * @optionparent plotOptions.pareto
  */
 
+/**
+ * The pareto series type.
+ *
+ * @constructor seriesTypes.pareto
+ * @augments seriesTypes.line
+ * @mixes derivedSeriesMixin
+ */
 seriesType('pareto', 'line', {
     /**
      * Higher zIndex than column series to draw line above shapes.
      */
     zIndex: 3
-}, merge(derivedSeriesMixin, {
+}, merge(derivedSeriesMixin, /** @lends seriesTypes.pareto.prototype */ {
     /**
      * calculate sum and return percent points
      *
-     * @param  {Object} series
      * @return {Array} Returns array of points [x,y]
      */
     setDerivedData: function () {

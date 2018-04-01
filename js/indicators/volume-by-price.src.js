@@ -106,7 +106,7 @@ seriesType('vbp', 'sma',
                 /**
                  * Color of zone lines.
                  *
-                 * @type {Color}
+                 * @type {ColorString}
                  * @since 6.0.0
                  * @product highstock
                  */
@@ -149,7 +149,7 @@ seriesType('vbp', 'sma',
                 /**
                  * Color of positive volume bars.
                  *
-                 * @type {Color}
+                 * @type {ColorString}
                  * @since 6.0.0
                  * @product highstock
                  */
@@ -157,7 +157,7 @@ seriesType('vbp', 'sma',
                 /**
                  * Color of negative volume bars.
                  *
-                 * @type {Color}
+                 * @type {ColorString}
                  * @since 6.0.0
                  * @product highstock
                  */
@@ -183,7 +183,7 @@ seriesType('vbp', 'sma',
                 fontSize: '7px'
             }
         }
-    }, {
+    }, /** @lends seriesTypes.vbp.prototype */ {
         nameBase: 'Volume by Price',
         bindTo: {
             series: false,

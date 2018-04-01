@@ -26,7 +26,7 @@ var animObject = H.animObject,
  * The column series type.
  *
  * @constructor seriesTypes.column
- * @augments    Series
+ * @augments    seriesTypes.line
  */
 
 /**
@@ -76,7 +76,7 @@ seriesType('column', 'line', {
      * of the global [colors](#colors) when [colorByPoint](
      * #plotOptions.column.colorByPoint) is true.
      *
-     * @type      {Array<Color>}
+     * @type      {Array<ColorString>}
      * @since     3.0
      * @product   highcharts highstock
      * @apioption plotOptions.column.colors
@@ -244,7 +244,7 @@ seriesType('column', 'line', {
              * A specific border color for the hovered point. Defaults to
              * inherit the normal state border color.
              *
-             * @type      {Color}
+             * @type      {ColorString}
              * @product   highcharts
              * @apioption plotOptions.column.states.hover.borderColor
              */
@@ -252,7 +252,7 @@ seriesType('column', 'line', {
             /**
              * A specific color for the hovered point.
              *
-             * @type      {Color}
+             * @type      {ColorString}
              * @default   undefined
              * @product   highcharts
              * @apioption plotOptions.column.states.hover.color
@@ -289,7 +289,7 @@ seriesType('column', 'line', {
             /**
              * A specific color for the selected point.
              *
-             * @type    {Color}
+             * @type    {ColorString}
              * @default #cccccc
              * @product highcharts highstock
              */
@@ -298,7 +298,7 @@ seriesType('column', 'line', {
             /**
              * A specific border color for the selected point.
              *
-             * @type    {Color}
+             * @type    {ColorString}
              * @default #000000
              * @product highcharts highstock
              */
@@ -371,7 +371,7 @@ seriesType('column', 'line', {
      * In styled mode, the border stroke can be set with the `.highcharts-point`
      * rule.
      *
-     * @type    {Color}
+     * @type    {ColorString}
      * @sample  {highcharts} highcharts/plotoptions/column-bordercolor/
      *          Dark gray border
      * @default #ffffff
@@ -961,7 +961,7 @@ seriesType('column', 'line', {
  * In styled mode, the border stroke can be set with the `.highcharts-point`
  * rule.
  *
- * @type      {Color}
+ * @type      {ColorString}
  * @sample    {highcharts} highcharts/plotoptions/column-bordercolor/
  *            Dark gray border
  * @default   undefined

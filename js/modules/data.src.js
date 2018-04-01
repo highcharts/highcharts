@@ -372,13 +372,20 @@ var addEvent = Highcharts.addEvent,
  * @apioption data.enablePolling
  */
 
-// The Data constructor
+/**
+ * The Data constructor
+ * @param dataOptions
+ * @param chartOptions
+ * @param chart
+ * @constructor
+ * @memberof Highcharts
+ */
 var Data = function (dataOptions, chartOptions, chart) {
     this.init(dataOptions, chartOptions, chart);
 };
 
 // Set the prototype properties
-Highcharts.extend(Data.prototype, {
+Highcharts.extend(Data.prototype, /** @lends Highcharts.Data.prototype */ {
 
     /**
      * Initialize the Data object with the given options
@@ -1929,6 +1936,11 @@ Highcharts.extend(Data.prototype, {
 
 // Register the Data prototype and data function on Highcharts
 Highcharts.Data = Data;
+/**
+ *
+ * @param options
+ * @param chartOptions
+ */
 Highcharts.data = function (options, chartOptions) {
     return new Data(options, chartOptions);
 };
@@ -2086,7 +2098,7 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
  * Creates and adds ColumnReader from the given columnIndex and configName.
  * ColumnIndex can be undefined and in that case the reader will be given
  * an index when columns are populated.
- * @param columnIndex {Number | undefined}
+ * @param {Number | undefined} columnIndex
  * @param configName
  */
 SeriesBuilder.prototype.addColumnReader = function (columnIndex, configName) {

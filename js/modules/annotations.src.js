@@ -184,7 +184,6 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
 * MOCK POINT
 *
 **************************************************************************** */
-
 /**
  * A mock point configuration.
  *
@@ -195,7 +194,7 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
  * @property {String|Number} [yAxis] - yAxis index or id
  */
 
-
+var MockPoint =
 /**
  * A trimmed point object which imitates {@link Highchart.Point} class.
  * It is created when there is a need of pointing to some chart's position
@@ -208,7 +207,7 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
  * @param {Highcharts.Chart} - the chart object
  * @param {MockPointOptions} - the options object
  */
-var MockPoint = H.MockPoint = function (chart, options) {
+H.MockPoint = function (chart, options) {
     this.mock = true;
     this.series = {
         visible: true,
@@ -229,6 +228,7 @@ var MockPoint = H.MockPoint = function (chart, options) {
 /**
  * A factory function for creating a mock point object
  *
+ * @class
  * @function #mockPoint
  * @memberOf Highcharts
  *
@@ -393,8 +393,8 @@ H.defaultOptions.annotations = [];
  * @class Annotation
  * @memberOf Highcharts
  *
- * @param {Chart} - the chart object
- * @param {AnnotationOptions} - the options object
+ * @param {Chart} chart - the chart object
+ * @param {AnnotationsOptions} userOptions - the options object
  */
 var Annotation = H.Annotation = function (chart, userOptions) {
 
@@ -440,7 +440,7 @@ var Annotation = H.Annotation = function (chart, userOptions) {
      *
      * @name options
      * @memberOf Highcharts.Annotation#
-     * @type {AnnotationOptions}
+     * @type {AnnotationsOptions}
      */
     this.options = merge(this.defaultOptions, userOptions);
 
@@ -578,7 +578,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
             /**
              * The background color or gradient for the annotation's label.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @sample highcharts/annotations/label-presentation/
              *         Set labels graphic options
              */
@@ -587,7 +587,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
             /**
              * The border color for the annotation's label.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @sample highcharts/annotations/label-presentation/
              *         Set labels graphic options
              */
@@ -915,7 +915,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
             /**
              * The color of the shape's stroke.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @sample highcharts/annotations/shape/
              *         Basic shape annotation
              */
@@ -932,7 +932,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
             /**
              * The color of the shape's fill.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @sample highcharts/annotations/shape/
              *         Basic shape annotation
              */
@@ -968,9 +968,6 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
 
     /**
      * Initialize the annotation.
-     *
-     * @param {Chart} - the chart
-     * @param {AnnotationOptions} - the user options for the annotation
      */
     init: function () {
         var anno = this;
@@ -1435,10 +1432,10 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
      * An object which denotes an anchor position
      *
      * @typedef {Object} AnchorPosition
-     * @property {Number} AnchorPosition.x
-     * @property {Number} AnchorPosition.y
-     * @property {Number} AnchorPosition.height
-     * @property {Number} AnchorPosition.width
+     * @property {Number} x
+     * @property {Number} y
+     * @property {Number} height
+     * @property {Number} width
      */
 
     /**
@@ -1716,11 +1713,11 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
 *
 **************************************************************************** */
 
-H.extend(chartPrototype, /** @lends Chart# */ {
+H.extend(chartPrototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Add an annotation to the chart after render time.
      *
-     * @param  {AnnotationOptions} options
+     * @param  {AnnotationsOptions} options
      *         The series options for the new, detailed series.
      *
      * @return {Highcharts.Annotation} - The newly generated annotation.

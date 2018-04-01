@@ -184,6 +184,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @memberof Highcharts.Chart
              * @name options
              * @type {Options}
+             * @instance
              */
             this.options = options;
             /**
@@ -193,7 +194,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @name axes
              * @see  Highcharts.Chart.xAxis
              * @see  Highcharts.Chart.yAxis
-             * @type {Array<Axis>}
+             * @type {Array.<Highcharts.Axis>}
+             * @instance
              */
             this.axes = [];
 
@@ -202,7 +204,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @memberof Highcharts.Chart
              * @name series
-             * @type {Array<Series>}
+             * @type {Array.<Highcharts.Series>}
+             * @instance
              */
             this.series = [];
 
@@ -214,6 +217,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @memberof Highcharts.Chart
              * @name title
              * @type Object
+             * @instance
              *
              * @sample highcharts/members/title-update/
              *         Updating titles
@@ -227,6 +231,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @memberof Highcharts.Chart
              * @name subtitle
              * @type Object
+             * @instance
              */
 
             /**
@@ -238,6 +243,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @memberof Highcharts.Chart
              * @name time
              * @type Highcharts.Time
+             * @instance
              */
             this.time =
                 userOptions.time && H.keys(userOptions.time).length ?
@@ -267,6 +273,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @type {Array<Axis>}
              * @name xAxis
              * @memberOf Highcharts.Chart
+             * @instance
              */
             chart.xAxis = [];
             /**
@@ -274,6 +281,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @type {Array<Axis>}
              * @name yAxis
              * @memberOf Highcharts.Chart
+             * @instance
              */
             chart.yAxis = [];
 
@@ -542,7 +550,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Get an axis, series or point object by `id` as given in the configuration
      * options. Returns `undefined` if no item is found.
-     * @param id {String} The id as given in the configuration options.
+     * @param {String} id The id as given in the configuration options.
      * @return {Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined}
      *         The retrieved item.
      * @sample highcharts/plotoptions/series-id/
@@ -653,13 +661,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Set a new title or subtitle for the chart.
      *
-     * @param  titleOptions {TitleOptions}
+     * @param {TitleOptions}  titleOptions
      *         New title options. The title text itself is set by the
      *         `titleOptions.text` property.
-     * @param  subtitleOptions {SubtitleOptions}
+     * @param {SubtitleOptions}  subtitleOptions
      *         New subtitle options. The subtitle text itself is set by the
      *         `subtitleOptions.text` property.
-     * @param  redraw {Boolean}
+     * @param  {Boolean} redraw
      *         Whether to redraw the chart or wait for a later call to
      *         `chart.redraw()`.
      *
@@ -825,6 +833,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @name chartWidth
          * @memberOf Chart
          * @type {Number}
+         * @instance
          */
         chart.chartWidth = Math.max( // #1393
             0,
@@ -836,6 +845,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @name chartHeight
          * @memberOf Chart
          * @type {Number}
+         * @instance
          */
         chart.chartHeight = Math.max(
             0,
@@ -1014,8 +1024,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * dynamically inserted into the element given as the `renderTo`
          * parameterin the {@link Highcharts#chart} constructor.
          *
+         * @name container
          * @memberOf Highcharts.Chart
          * @type {HTMLDOMElement}
+         * @instance
          */
         container = createElement(
             'div',
@@ -1039,6 +1051,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @type {SVGRenderer}
          * @name renderer
          * @memberOf Chart
+         * @instance
          */
         chart.renderer = new Ren(
             container,
@@ -1344,6 +1357,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @name plotLeft
          * @memberOf Chart
          * @type {Number}
+         * @instance
          */
         chart.plotLeft = plotLeft = Math.round(chart.plotLeft);
 
@@ -1353,6 +1367,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @name plotTop
          * @memberOf Chart
          * @type {Number}
+         * @instance
          */
         chart.plotTop = plotTop = Math.round(chart.plotTop);
 
@@ -1362,6 +1377,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @name plotWidth
          * @memberOf Chart
          * @type {Number}
+         * @instance
          */
         chart.plotWidth = plotWidth = Math.max(
             0,
@@ -1374,6 +1390,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @name plotHeight
          * @memberOf Chart
          * @type {Number}
+         * @instance
          */
         chart.plotHeight = plotHeight = Math.max(
             0,
@@ -1837,7 +1854,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Set a new credits label for the chart.
      *
-     * @param  {CreditOptions} options
+     * @param  {CreditsOptions} options
      *         A configuration object for the new credits.
      * @sample highcharts/credits/credits-update/ Add and update credits
      */
@@ -1856,6 +1873,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @memberof Highcharts.Chart
              * @name credits
              * @type {Highcharts.SVGElement}
+             * @instance
              */
             this.credits = this.renderer.text(
                 credits.text + (this.mapCredits || ''),
@@ -2017,6 +2035,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @memberof Chart
              * @name pointer
              * @type Pointer
+             * @instance
              */
             chart.pointer = new Pointer(chart, options);
         }

@@ -334,6 +334,8 @@ defaultOptions.drilldown = {
 
 /**
  * A general fadeIn method
+ * @memberOf H.SVGRenderer.prototype.Element
+ * @instance
  */
 H.SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {
     this
@@ -370,6 +372,7 @@ Chart.prototype.addSeriesAsDrilldown = function (point, options) {
     this.addSingleSeriesAsDrilldown(point, options);
     this.applyDrilldown();
 };
+
 Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
     var oldSeries = point.series,
         xAxis = oldSeries.xAxis,
@@ -562,8 +565,8 @@ Chart.prototype.showDrillUpButton = function () {
  * When the chart is drilled down to a child series, calling `chart.drillUp()`
  * will drill up to the parent series. Requires the drilldown module.
  *
- * @function drillUp
- * @memberOf Highcharts.Chart
+ * @memberOf Chart
+ * @instance
  */
 Chart.prototype.drillUp = function () {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
@@ -739,7 +742,11 @@ H.addEvent(Chart, 'render', function setDDPoints() {
 
 /**
  * When drilling up, keep the upper series invisible until the lower series has
- * moved into place
+ * moved into
+ *
+ * @function animateDrillupTo
+ * @memberOf seriesTypes.column
+ * @instance
  */
 ColumnSeries.prototype.animateDrillupTo = function (init) {
     if (!init) {
@@ -800,6 +807,11 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
 
 };
 
+/**
+ * @function animateDrilldown
+ * @memberOf seriesTypes.column
+ * @instance
+ */
 ColumnSeries.prototype.animateDrilldown = function (init) {
     var series = this,
         drilldownLevels = this.chart.drilldownLevels,
@@ -854,6 +866,10 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
 /**
  * When drilling up, pull out the individual point graphics from the lower
  * series and animate them into the origin point in the upper series.
+ *
+ * @function animateDrillupFrom
+ * @memberOf seriesTypes.column
+ * @instance
  */
 ColumnSeries.prototype.animateDrillupFrom = function (level) {
     var animationOptions = animObject(this.chart.options.drilldown.animation),
