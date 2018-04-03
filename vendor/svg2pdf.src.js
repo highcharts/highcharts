@@ -6,11 +6,10 @@
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: yFiles for HTML Support Team <yfileshtml@yworks.com>
  *   homepage: https://github.com/yWorks/svg2pdf.js#readme
- *   version: 1.1.0
+ *   version: 1.2.0
  *
  * svgpath:
  *   license: MIT (http://opensource.org/licenses/MIT)
- *   maintainers: vitaly <vitaly@rcdesign.ru>
  *   homepage: https://github.com/fontello/svgpath#readme
  *   version: 2.2.1
  *
@@ -1770,7 +1769,7 @@ return RGBColor;
 /*
 The MIT License (MIT)
 
-Copyright (c) 2015-2016 yWorks GmbH
+Copyright (c) 2015-2017 yWorks GmbH
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1809,7 +1808,9 @@ SOFTWARE.
 
   var cToQ = 2 / 3; // ratio to convert quadratic bezier curves to cubic ones
 
-  var iriReference = /url\(#([^)]+)\)/;
+  var iriReference = /url\(["']?#([^"']+)["']?\)/;
+
+  var svgNamespaceURI = "http://www.w3.org/2000/svg";
 
 
   // pathSegList is marked deprecated in chrome, so parse the d attribute manually if necessary
@@ -1990,37 +1991,91 @@ SOFTWARE.
   };
 
   var AttributeState = function () {
-    this.fillMode = "F";
-    this.strokeMode = "";
+    this.fillMode = null;
+    this.strokeMode = null;
 
-    this.color = new RGBColor("rgb(0, 0, 0)");
-    this.fill = new RGBColor("rgb(0, 0, 0)");
+    this.color = null;
+    this.fill = null;
     this.fillOpacity = 1.0;
-    // this.fillRule = "nonzero";
-    this.fontFamily = "times";
+    // this.fillRule = null;
+    this.fontFamily = null;
     this.fontSize = 16;
-    // this.fontStyle = "normal";
-    // this.fontVariant = "normal";
-    // this.fontWeight = "normal";
+    this.fontStyle = null;
+    // this.fontVariant = null;
+    this.fontWeight = null;
     this.opacity = 1.0;
     this.stroke = null;
     this.strokeDasharray = null;
     this.strokeDashoffset = null;
-    this.strokeLinecap = "butt";
-    this.strokeLinejoin = "miter";
+    this.strokeLinecap = null;
+    this.strokeLinejoin = null;
     this.strokeMiterlimit = 4.0;
     this.strokeOpacity = 1.0;
     this.strokeWidth = 1.0;
-    // this.textAlign = "start";
-    this.textAnchor = "start";
-    this.visibility = "visible";
+    // this.textAlign = null;
+    this.textAnchor = null;
+    this.visibility = null;
+  };
+
+  AttributeState.default = function () {
+    var attributeState = new AttributeState();
+
+    attributeState.fillMode = "F";
+    attributeState.strokeMode = "";
+
+    attributeState.color = new RGBColor("rgb(0, 0, 0)");
+    attributeState.fill = new RGBColor("rgb(0, 0, 0)");
+    attributeState.fillOpacity = 1.0;
+    // attributeState.fillRule = "nonzero";
+    attributeState.fontFamily = "times";
+    attributeState.fontSize = 16;
+    attributeState.fontStyle = "normal";
+    // attributeState.fontVariant = "normal";
+    attributeState.fontWeight = "normal";
+    attributeState.opacity = 1.0;
+    attributeState.stroke = null;
+    attributeState.strokeDasharray = null;
+    attributeState.strokeDashoffset = null;
+    attributeState.strokeLinecap = "butt";
+    attributeState.strokeLinejoin = "miter";
+    attributeState.strokeMiterlimit = 4.0;
+    attributeState.strokeOpacity = 1.0;
+    attributeState.strokeWidth = 1.0;
+    // attributeState.textAlign = "start";
+    attributeState.textAnchor = "start";
+    attributeState.visibility = "visible";
+
+    return attributeState;
   };
 
   AttributeState.prototype.clone = function () {
     var clone = new AttributeState();
-    Object.getOwnPropertyNames(this).forEach(function (name) {
-      clone[name] = this[name];
-    }, this);
+
+    clone.fillMode = this.fillMode;
+    clone.strokeMode = this.strokeMode;
+
+    clone.color = this.color;
+    clone.fill = this.fill;
+    clone.fillOpacity = this.fillOpacity;
+    // clone.fillRule = this.fillRule;
+    clone.fontFamily = this.fontFamily;
+    clone.fontSize = this.fontSize;
+    clone.fontStyle = this.fontStyle;
+    // clone.fontVariant = this.fontVariant;
+    clone.fontWeight = this.fontWeight;
+    clone.opacity = this.opacity;
+    clone.stroke = this.stroke;
+    clone.strokeDasharray = this.strokeDasharray;
+    clone.strokeDashoffset = this.strokeDashoffset;
+    clone.strokeLinecap = this.strokeLinecap;
+    clone.strokeLinejoin = this.strokeLinejoin;
+    clone.strokeMiterlimit = this.strokeMiterlimit;
+    clone.strokeOpacity = this.strokeOpacity;
+    clone.strokeWidth = this.strokeWidth;
+    // clone.textAlign = this.textAlign;
+    clone.textAnchor = this.textAnchor;
+    clone.visibility = this.visibility;
+
     return clone;
   };
 
@@ -2574,29 +2629,26 @@ SOFTWARE.
     }
   };
 
-  // draws an image (converts it to jpeg first, as jsPDF doesn't support png or other formats)
-  var image = function (node) {
-    // convert image to jpeg
+  // draws an image
+  var image = function (node, svgIdPrefix) {
     var imageUrl = node.getAttribute("xlink:href") || node.getAttribute("href");
-    var image = new Image();
-    image.src = imageUrl;
 
-    var canvas = document.createElement("canvas");
+    var svgDataUrlHeader = "data:image/svg+xml;base64,";
+    if (imageUrl.indexOf(svgDataUrlHeader) === 0) {
+      var svgText = atob(imageUrl.substr(svgDataUrlHeader.length));
+      var parser = new DOMParser();
+      var svgElement = parser.parseFromString(svgText, "image/svg+xml").firstElementChild;
+      renderNode(svgElement, _pdf.unitMatrix, {}, svgIdPrefix, false, AttributeState.default());
+      return;
+    }
+
     var width = parseFloat(node.getAttribute("width")),
         height = parseFloat(node.getAttribute("height")),
         x = parseFloat(node.getAttribute("x") || 0),
         y = parseFloat(node.getAttribute("y") || 0);
-    canvas.width = width;
-    canvas.height = height;
-    var context = canvas.getContext("2d");
-    context.fillStyle = "#fff";
-    context.fillRect(0, 0, width, height);
-    context.drawImage(image, 0, 0, width, height);
 
     try {
-      var jpegUrl = canvas.toDataURL("image/jpeg");
-
-      _pdf.addImage(jpegUrl,
+      _pdf.addImage(imageUrl,
           "jpeg",
           x,
           y,
@@ -2830,8 +2882,8 @@ SOFTWARE.
 
   // draws a line
   var line = function (node, tfMatrix, svgIdPrefix, attributeState) {
-    var p1 = multVecMatrix([parseFloat(node.getAttribute('x1')), parseFloat(node.getAttribute('y1'))], tfMatrix);
-    var p2 = multVecMatrix([parseFloat(node.getAttribute('x2')), parseFloat(node.getAttribute('y2'))], tfMatrix);
+    var p1 = multVecMatrix([parseFloat(node.getAttribute('x1') || 0), parseFloat(node.getAttribute('y1') || 0)], tfMatrix);
+    var p2 = multVecMatrix([parseFloat(node.getAttribute('x2') || 0), parseFloat(node.getAttribute('y2') || 0)], tfMatrix);
 
     if (attributeState.strokeMode === "D"){
       _pdf.line(p1[0], p1[1], p2[0], p2[1]);
@@ -2906,106 +2958,304 @@ SOFTWARE.
     }
   };
 
-  // draws a text element and its tspan children
-  var text = function (node, tfMatrix, hasFillColor, fillRGB, attributeState) {
-    _pdf.saveGraphicsState();
-    setTextProperties(node, fillRGB);
+  /**
+   * Canvas text measuring is a lot faster than svg measuring. However, it is inaccurate for some fonts. So test each
+   * font once and decide if canvas is accurate enough.
+   * @param {string} text
+   * @param {string} fontFamily
+   * @returns {function(string, string, string, string, string)}
+   */
+  var getMeasureFunction = (function getMeasureFunction() {
+    /**
+     * @param {string} text
+     * @param {string} fontFamily
+     * @param {string} fontSize
+     * @param {string} fontStyle
+     * @param {string} fontWeight
+     */
+    function canvasTextMeasure(text, fontFamily, fontSize, fontStyle, fontWeight) {
+      var canvas = document.createElement("canvas");
+      var context = canvas.getContext("2d");
 
-    var getTextOffset = function (textAnchor, width) {
-      var xOffset = 0;
-      switch (textAnchor) {
-        case 'end':
-          xOffset = width;
-          break;
-        case 'middle':
-          xOffset = width / 2;
-          break;
-        case 'start':
-          break;
-      }
-      return xOffset;
-    };
+      context.font = [fontStyle, fontWeight, fontSize, fontFamily].join(" ");
+      return context.measureText(text).width;
+    }
 
     /**
-     * Convert em, px and bare number attributes to pixel values
+     * @param {string} text
+     * @param {string} fontFamily
+     * @param {string} fontSize
+     * @param {string} fontStyle
+     * @param {string} fontWeight
      */
-    var toPixels = function (value, pdfFontSize) {
-      var match;
+    function svgTextMeasure(text, fontFamily, fontSize, fontStyle, fontWeight) {
+      var textNode = document.createElementNS(svgNamespaceURI, "text");
+      textNode.setAttribute("font-family", fontFamily);
+      textNode.setAttribute("font-size", fontSize);
+      textNode.setAttribute("font-style", fontStyle);
+      textNode.setAttribute("font-weight", fontWeight);
+      textNode.appendChild(document.createTextNode(text));
 
-      // em
-      match = value && value.toString().match(/^([\-0-9.]+)em$/);
-      if (match) {
-        return parseFloat(match[1]) * pdfFontSize;
-      }
+      var svg = document.createElementNS(svgNamespaceURI, "svg");
+      svg.appendChild(textNode);
+      svg.setAttribute("visibility", "hidden");
+      document.body.appendChild(svg);
 
-      // pixels
-      match = value && value.toString().match(/^([\-0-9.]+)(px|)$/);
-      if (match) {
-        return parseFloat(match[1]);
-      }
-      return 0;
-    };
+      var width = textNode.getBBox().width;
 
-    // creates an svg element and append the text node to properly measure the text size
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.appendChild(node);
-    svg.setAttribute("visibility", "hidden");
-    document.body.appendChild(svg);
+      document.body.removeChild(svg);
 
-    var box = node.getBBox();
-    var x, y, xOffset = 0;
-    var textAnchor = getAttribute(node, "text-anchor");
-    if (textAnchor) {
-      xOffset = getTextOffset(textAnchor, box.width);
+      return width;
     }
+
+    var testString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789!\"$%&/()=?'\\+*-_.:,;^}][{#~|<>";
+    var epsilon = 0.1;
+    var measureMethods = {};
+
+    return function getMeasureFunction(fontFamily) {
+      var method = measureMethods[fontFamily];
+      if (!method) {
+        var fontSize = "16px";
+        var fontStyle = "normal";
+        var fontWeight = "normal";
+        var canvasWidth = canvasTextMeasure(testString, fontFamily, fontSize, fontStyle, fontWeight);
+        var svgWidth = svgTextMeasure(testString, fontFamily, fontSize, fontStyle, fontWeight);
+
+        method = Math.abs(canvasWidth - svgWidth) < epsilon ? canvasTextMeasure : svgTextMeasure;
+
+        measureMethods[fontFamily] = method;
+      }
+
+      return method;
+    }
+  })();
+
+  /**
+   * @param {string} text
+   * @param {AttributeState} attributeState
+   * @returns {number}
+   */
+  function measureTextWidth(text, attributeState) {
+    if (text.length === 0) {
+      return 0;
+    }
+
+    var fontFamily = attributeState.fontFamily;
+    var measure = getMeasureFunction(fontFamily);
+
+    return measure(text, attributeState.fontFamily, attributeState.fontSize + "px", attributeState.fontStyle, attributeState.fontWeight);
+  }
+
+  /**
+   * @param {string} text
+   * @param {AttributeState} attributeState
+   * @returns {number}
+   */
+  function getTextOffset(text, attributeState) {
+    var textAnchor = attributeState.textAnchor;
+    if (textAnchor === "start") {
+      return 0;
+    }
+
+    var width = measureTextWidth(text, attributeState);
+
+    var xOffset = 0;
+    switch (textAnchor) {
+      case "end":
+        xOffset = width;
+        break;
+      case "middle":
+        xOffset = width / 2;
+        break;
+    }
+
+    return xOffset;
+  }
+
+  /**
+   * @param {string} textAnchor
+   * @param {number} originX
+   * @param {number} originY
+   * @constructor
+   */
+  function TextChunk(textAnchor, originX, originY) {
+    this.texts = [];
+    this.tSpans = [];
+    this.textAnchor = textAnchor;
+    this.originX = originX;
+    this.originY = originY;
+  }
+
+  /**
+   * @param {SVGElement} tSpan
+   * @param {string} text
+   */
+  TextChunk.prototype.add = function(tSpan, text) {
+    this.texts.push(text);
+    this.tSpans.push(tSpan);
+  };
+  /**
+   * Outputs the chunk to pdf.
+   * @param {jsPDF.Matrix} transform
+   * @param {AttributeState} attributeState
+   * @returns {[number, number]} The last current text position.
+   */
+  TextChunk.prototype.put = function (transform, attributeState) {
+    var i, tSpan;
+
+    var xs = [], ys = [], attributeStates = [];
+    var currentTextX = this.originX, currentTextY = this.originY;
+    var minX = currentTextX, maxX = currentTextX;
+    for (i = 0; i < this.tSpans.length; i++) {
+      tSpan = this.tSpans[i];
+      var tSpanAttributeState = attributeStates[i] = attributeState.clone();
+      var tSpanColor = getAttribute(tSpan, "fill");
+      setTextProperties(tSpan, tSpanColor && new RGBColor(tSpanColor), tSpanAttributeState);
+
+      var x = currentTextX;
+      var y = currentTextY;
+
+      var tSpanDx = tSpan.getAttribute("dx");
+      if (tSpanDx !== null) {
+        x += toPixels(tSpanDx, tSpanAttributeState.fontSize);
+      }
+
+      var tSpanDy = tSpan.getAttribute("dy");
+      if (tSpanDy !== null) {
+        y += toPixels(tSpanDy, tSpanAttributeState.fontSize);
+      }
+
+      xs[i] = x;
+      ys[i] = y;
+
+      // add an additional "." (which has approximately the same size as a space character) in order to put
+      // some space between the tSpans (I can't find this in the spec but all browsers do it)
+      currentTextX = x + measureTextWidth(this.texts[i], tSpanAttributeState) + measureTextWidth(".", tSpanAttributeState);
+      currentTextY = y;
+
+      minX = Math.min(minX, x);
+      maxX = Math.max(maxX, currentTextX);
+    }
+
+    var textOffset;
+    switch (this.textAnchor) {
+      case "start": textOffset = 0; break;
+      case "middle": textOffset = (maxX - minX) / 2; break;
+      case "end": textOffset = maxX - minX; break;
+    }
+
+    for (i = 0; i < this.tSpans.length; i++) {
+      tSpan = this.tSpans[i];
+
+      var tSpanVisibility = getAttribute(tSpan, "visibility") || attributeState.visibility;
+      if (tSpanVisibility === "hidden") {
+        continue;
+      }
+
+      _pdf.saveGraphicsState();
+      putTextProperties(attributeStates[i], attributeState);
+
+      _pdf.text(xs[i] - textOffset, ys[i], this.texts[i], void 0, transform);
+
+      _pdf.restoreGraphicsState();
+    }
+
+    return [currentTextX, currentTextY];
+  };
+
+  /**
+   * Convert em, px and bare number attributes to pixel values
+   * @param {string} value
+   * @param {number} pdfFontSize
+   */
+  function toPixels(value, pdfFontSize) {
+    var match;
+
+    // em
+    match = value && value.toString().match(/^([\-0-9.]+)em$/);
+    if (match) {
+      return parseFloat(match[1]) * pdfFontSize;
+    }
+
+    // pixels
+    match = value && value.toString().match(/^([\-0-9.]+)(px|)$/);
+    if (match) {
+      return parseFloat(match[1]);
+    }
+    return 0;
+  }
+
+
+  /**
+   * Draws a text element and its tspan children.
+   * @param {SVGElement} node
+   * @param {jsPDF.Matrix} tfMatrix
+   * @param {boolean} hasFillColor
+   * @param {RGBColor} fillRGB
+   * @param {AttributeState} attributeState
+   */
+  var text = function (node, tfMatrix, hasFillColor, fillRGB, attributeState) {
+    _pdf.saveGraphicsState();
+
+    var dx, dy, xOffset = 0;
 
     var pdfFontSize = _pdf.getFontSize();
     var textX = toPixels(node.getAttribute('x'), pdfFontSize);
     var textY = toPixels(node.getAttribute('y'), pdfFontSize);
-    var m = _pdf.matrixMult(new _pdf.Matrix(1, 0, 0, 1, textX, textY), tfMatrix);
 
-    x = toPixels(node.getAttribute("dx"), pdfFontSize);
-    y = toPixels(node.getAttribute("dy"), pdfFontSize);
+    dx = toPixels(node.getAttribute("dx"), pdfFontSize);
+    dy = toPixels(node.getAttribute("dy"), pdfFontSize);
 
-    var visibility = getAttribute(node, "visibility") || attributeState.visibility;
+    var visibility = attributeState.visibility;
     // when there are no tspans draw the text directly
     if (node.childElementCount === 0) {
+      var transformedText = transformText(node, removeNewlinesAndTrim(node.textContent));
+      xOffset = getTextOffset(transformedText, attributeState);
+
       if (visibility === "visible") {
         _pdf.text(
-            (x - xOffset),
-            y,
-            transformText(node, removeNewlinesAndTrim(node.textContent)),
+            textX + dx - xOffset,
+            textY + dy,
+            transformedText,
             void 0,
-            m
+            tfMatrix
         );
       }
     } else {
       // otherwise loop over tspans and position each relative to the previous one
+      var currentTextSegment = new TextChunk(attributeState.textAnchor, textX + dx, textY + dy);
+
       forEachChild(node, function (i, tSpan) {
         if (!tSpan.textContent || nodeIs(tSpan, 'title,desc,metadata')) {
           return;
         }
-        _pdf.saveGraphicsState();
-        var tSpanColor = getAttribute(tSpan, "fill");
-        setTextProperties(tSpan, tSpanColor && new RGBColor(tSpanColor));
-        var extent = tSpan.getExtentOfChar(0);
-        var tSpanVisibility = getAttribute(tSpan, "visibility") || visibility;
-        if (tSpanVisibility === "visible") {
-          _pdf.text(
-              extent.x - textX,//x - xOffset,
-              extent.y + extent.height * 0.7 - textY, // 0.7 roughly mimicks the text baseline
-              transformText(node, removeNewlinesAndTrim(tSpan.textContent)),
-              void 0,
-              m
-          );
+        // TODO: space between tspans
+
+        var lastPositions;
+
+        var tSpanAbsX = tSpan.getAttribute("x");
+        if (tSpanAbsX !== null) {
+          var x = toPixels(tSpanAbsX, pdfFontSize);
+
+          lastPositions = currentTextSegment.put(tfMatrix, attributeState);
+          currentTextSegment = new TextChunk(tSpan.getAttribute("text-anchor") || attributeState.textAnchor, x, lastPositions[1]);
         }
 
-        _pdf.restoreGraphicsState();
+        var tSpanAbsY = tSpan.getAttribute("y");
+        if (tSpanAbsY !== null) {
+          var y = toPixels(tSpanAbsY, pdfFontSize);
+
+          lastPositions = currentTextSegment.put(tfMatrix, attributeState);
+          currentTextSegment = new TextChunk(tSpan.getAttribute("text-anchor") || attributeState.textAnchor, lastPositions[0], y);
+        }
+
+        transformedText = transformText(node, removeNewlinesAndTrim(tSpan.textContent));
+        currentTextSegment.add(tSpan, transformedText);
       });
 
+      currentTextSegment.put(tfMatrix, attributeState);
     }
 
-    document.body.removeChild(svg);
     _pdf.restoreGraphicsState();
   };
 
@@ -3061,7 +3311,7 @@ SOFTWARE.
     });
 
     if (hasOpacity) {
-      gState = new _pdf.GState({opacity: opacitySum / coords.length});
+      gState = new _pdf.GState({opacity: opacitySum / colors.length});
     }
 
     var pattern = new _pdf.ShadingPattern(type, coords, colors, gState);
@@ -3085,37 +3335,64 @@ SOFTWARE.
     _pdf.endTilingPattern(id, pattern);
   };
 
-  function setTextProperties(node, fillRGB) {
+  function setTextProperties(node, fillRGB, attributeState) {
     var fontFamily = getAttribute(node, "font-family");
     if (fontFamily) {
-      _pdf.setFont(fontFamily);
+      attributeState.fontFamily = fontFamily;
     }
 
     if (fillRGB && fillRGB.ok) {
-      _pdf.setTextColor(fillRGB.r, fillRGB.g, fillRGB.b);
+      attributeState.fill = fillRGB;
     }
 
-    var fontType;
     var fontWeight = getAttribute(node, "font-weight");
     if (fontWeight) {
-      if (fontWeight === "bold") {
-        fontType = "bold";
-      }
+      attributeState.fontWeight = fontWeight;
     }
 
     var fontStyle = getAttribute(node, "font-style");
     if (fontStyle) {
-      if (fontStyle === "italic") {
-        fontType += "italic";
-      }
+      attributeState.fontStyle = fontStyle;
     }
-    _pdf.setFontType(fontType);
 
-    var pdfFontSize = 16;
     var fontSize = getAttribute(node, "font-size");
     if (fontSize) {
-      pdfFontSize = parseFloat(fontSize);
-      _pdf.setFontSize(pdfFontSize);
+      attributeState.fontSize = parseFloat(fontSize);
+    }
+
+    var textAnchor = getAttribute(node, "text-anchor");
+    if (textAnchor) {
+      attributeState.textAnchor = textAnchor;
+    }
+  }
+
+  /**
+   * @param {AttributeState} attributeState
+   * @param {AttributeState} parentAttributeState
+   */
+  function putTextProperties(attributeState, parentAttributeState) {
+    if (attributeState.fontFamily !== parentAttributeState.fontFamily) {
+      _pdf.setFont(attributeState.fontFamily);
+    }
+
+    if (attributeState.fill !== parentAttributeState.fill && attributeState.fill.ok) {
+      var fillRGB = attributeState.fill;
+      _pdf.setTextColor(fillRGB.r, fillRGB.g, fillRGB.b);
+    }
+
+    var fontType = "";
+    if (attributeState.fontWeight !== parentAttributeState.fontWeight && attributeState.fontWeight === "bold") {
+      fontType = "bold";
+    }
+    if (attributeState.fontStyle !== parentAttributeState.fontStyle && attributeState.fontStyle === "italic") {
+      fontType += "italic";
+    }
+    if (fontType !== "") {
+      _pdf.setFontType(fontType);
+    }
+
+    if (attributeState.fontSize !== parentAttributeState.fontSize) {
+      _pdf.setFontSize(attributeState.fontSize);
     }
   }
 
@@ -3130,6 +3407,7 @@ SOFTWARE.
    * @param {AttributeState} attributeState Keeps track of parent attributes that are inherited automatically
    */
   var renderNode = function (node, contextTransform, defs, svgIdPrefix, withinDefs, attributeState) {
+    var parentAttributeState = attributeState;
     attributeState = attributeState.clone();
 
     if (getAttribute(node, "display") === "none") {
@@ -3273,19 +3551,39 @@ SOFTWARE.
       }
 
       // opacity is realized via a pdf graphics state
-      var opacity = 1.0;
-      var nodeOpacity = getAttribute(node, "opacity")
-          || getAttribute(node, "fill-opacity")
-          // this is a quickfix: pdf can't handle different opacity values for stroke and fill
-          // we could split the primitive into two parts, however
-          || getAttribute(node, "stroke-opacity");
-      if (nodeOpacity) {
-        opacity *= parseFloat(nodeOpacity);
+      var fillOpacity = 1.0, strokeOpacity = 1.0;
+      var nodeFillOpacity = getAttribute(node, "fill-opacity");
+      if (nodeFillOpacity) {
+        fillOpacity *= parseFloat(nodeFillOpacity);
       }
       if (fillRGB && typeof fillRGB.a === "number") {
-        opacity *= fillRGB.a;
+        fillOpacity *= fillRGB.a;
       }
-      _pdf.setGState(new _pdf.GState({opacity: opacity}));
+
+      var nodeStrokeOpacity = getAttribute(node, "stroke-opacity");
+      if (nodeStrokeOpacity) {
+        strokeOpacity *= parseFloat(nodeStrokeOpacity);
+      }
+      if (strokeRGB && typeof strokeRGB.a === "number") {
+        strokeOpacity *= strokeRGB.a;
+      }
+
+      var nodeOpacity = getAttribute(node, "opacity");
+      if (nodeOpacity) {
+        var opacity = parseFloat(nodeOpacity);
+        strokeOpacity *= opacity;
+        fillOpacity *= opacity;
+      }
+
+      var hasFillOpacity = fillOpacity < 1.0;
+      var hasStrokeOpacity = strokeOpacity < 1.0;
+      if (hasFillOpacity || hasStrokeOpacity) {
+        var gState = {};
+        hasFillOpacity && (gState["opacity"] = fillOpacity);
+        hasStrokeOpacity && (gState["stroke-opacity"] = strokeOpacity);
+        _pdf.setGState(new _pdf.GState(gState));
+      }
+
     }
 
     if (nodeIs(node, "g,path,rect,ellipse,line,circle,polygon")) {
@@ -3345,7 +3643,8 @@ SOFTWARE.
 
     var colorMode = fillMode + strokeMode;
 
-    setTextProperties(node, fillRGB);
+    setTextProperties(node, fillRGB, attributeState);
+    putTextProperties(attributeState, parentAttributeState);
 
     // do the actual drawing
     switch (node.tagName.toLowerCase()) {
@@ -3399,26 +3698,26 @@ SOFTWARE.
 
       case 'image':
         _pdf.setCurrentTransformationMatrix(tfMatrix);
-        image(node);
+        image(node, svgIdPrefix);
         break;
 
       case "lineargradient":
         putGradient(node, "axial", [
-          node.getAttribute("x1"),
-          node.getAttribute("y1"),
-          node.getAttribute("x2"),
-          node.getAttribute("y2")
+          node.getAttribute("x1") || 0,
+          node.getAttribute("y1") || 0,
+          node.getAttribute("x2") || 1,
+          node.getAttribute("y2") || 0
         ], defs, svgIdPrefix);
         break;
 
       case "radialgradient":
         putGradient(node, "radial", [
-          node.getAttribute("fx") || node.getAttribute("cx"),
-          node.getAttribute("fy") || node.getAttribute("cy"),
+          node.getAttribute("fx") || node.getAttribute("cx") || 0.5,
+          node.getAttribute("fy") || node.getAttribute("cy") || 0.5,
           0,
-          node.getAttribute("cx") || 0,
-          node.getAttribute("cy") || 0,
-          node.getAttribute("r") || 0
+          node.getAttribute("cx") || 0.5,
+          node.getAttribute("cy") || 0.5,
+          node.getAttribute("r") || 0.5
         ], defs, svgIdPrefix);
         break;
 
@@ -3448,7 +3747,7 @@ SOFTWARE.
     _pdf.setCurrentTransformationMatrix(new _pdf.Matrix(k, 0, 0, k, xOffset, yOffset));
 
     // set default values that differ from pdf defaults
-    var attributeState = new AttributeState();
+    var attributeState = AttributeState.default();
     _pdf.setLineWidth(attributeState.strokeWidth);
     var fill = attributeState.fill;
     _pdf.setFillColor(fill.r, fill.g, fill.b);

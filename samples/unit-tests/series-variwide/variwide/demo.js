@@ -7,7 +7,8 @@ QUnit.test('variwide', function (assert) {
         },
 
         xAxis: {
-            type: 'category'
+            type: 'category',
+            crosshair: true
         }
 
     });
@@ -49,6 +50,15 @@ QUnit.test('variwide', function (assert) {
         chart.series[0].points.length,
         3,
         'removePoint'
+    );
+
+    // Show crosshair
+    chart.series[0].points[1].onMouseOver();
+    assert.close(
+        chart.xAxis[0].cross.attr('stroke-width'),
+        chart.series[0].points[1].graphic.element.getAttribute('width'),
+        1,
+        'Crosshair has the same width as category (#8083)'
     );
 });
 
