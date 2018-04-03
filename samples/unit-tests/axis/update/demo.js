@@ -1,4 +1,4 @@
-QUnit.test('Redraw without series (#5323)', function (assert) {
+QUnit.test('General yAxis updates', function (assert) {
 
     var chart = new Highcharts.StockChart({
         chart: {
@@ -13,6 +13,7 @@ QUnit.test('Redraw without series (#5323)', function (assert) {
         }
     });
 
+    // #5323
     chart.yAxis[0].setTitle({
         text: "Bananas"
     });
@@ -28,7 +29,38 @@ QUnit.test('Redraw without series (#5323)', function (assert) {
     assert.strictEqual(
         chart.series[0].points.length,
         3,
-        'Has series with three points'
+        'Redraw without series has series with three points (#5323)'
+    );
+
+    // #8075
+    chart.addAxis({}, false, false);
+    chart.addAxis({}, false, false);
+    chart.yAxis[2].remove();
+
+    assert.strictEqual(
+        chart.yAxis[2].userOptions.index,
+        chart.yAxis.length - 1,
+        'Last index should be less than yAxis array length (#8075) - part I'
+    );
+
+    assert.strictEqual(
+        chart.yAxis[2].options.index,
+        chart.yAxis.length - 1,
+        'Last index should be less than yAxis array length (#8075) - part II'
+    );
+});
+
+QUnit.test('Updates after new Axis', function (assert) {
+
+    var chart = new Highcharts.stockChart('container', {});
+
+    chart.addAxis({});
+    chart.yAxis[2].update({});
+
+    assert.strictEqual(
+        chart.options.yAxis.length,
+        2,
+        'Only two entries in options.yAxis: default + new one (#6423)'
     );
 });
 
