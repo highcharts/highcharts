@@ -2877,6 +2877,9 @@ H.Series = H.seriesType('line', null, { // base series options
                     if (requireSorting) {
                         lastIndex = pointIndex;
                     }
+                // Point exists, no changes, don't remove it
+                } else if (oldData[pointIndex]) {
+                    oldData[pointIndex].touched = true;
                 }
                 hasUpdatedByKey = true;
             }
