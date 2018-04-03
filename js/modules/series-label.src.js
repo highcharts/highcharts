@@ -574,7 +574,7 @@ Chart.prototype.drawSeriesLabels = function () {
                         'stroke-width': 1,
                         zIndex: 3
                     })
-                    .add(series.group)
+                    .add()
                     .animate({ opacity: 1 }, { duration: 200 });
             }
 
@@ -709,8 +709,8 @@ Chart.prototype.drawSeriesLabels = function () {
                     // distractive...
                     var attr = {
                             opacity: chart.renderer.forExport ? 1 : 0,
-                            x: best.x - paneLeft,
-                            y: best.y - paneTop
+                            x: best.x,
+                            y: best.y
                         },
                         anim = {
                             opacity: 1
@@ -726,9 +726,9 @@ Chart.prototype.drawSeriesLabels = function () {
                     series.labelBySeries
                         .attr(extend(attr, {
                             anchorX: best.connectorPoint &&
-                                best.connectorPoint.plotX,
+                                best.connectorPoint.plotX + paneLeft,
                             anchorY: best.connectorPoint &&
-                                best.connectorPoint.plotY
+                                best.connectorPoint.plotY + paneTop
                         }))
                         .animate(anim);
 
@@ -741,8 +741,8 @@ Chart.prototype.drawSeriesLabels = function () {
                     }, true);
                     label.closest = [
                         closest,
-                        best.x - paneLeft - closest.plotX,
-                        best.y - paneTop - closest.plotY
+                        best.x - closest.plotX,
+                        best.y - closest.plotY
                     ];
 
                 }
