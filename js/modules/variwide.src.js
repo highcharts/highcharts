@@ -128,6 +128,10 @@ seriesType('variwide', 'column', {
             point.shapeArgs.x = left;
             point.shapeArgs.width = right - left;
 
+            // Crosshair position (#8083)
+            point.plotX = (left + right) / 2;
+            point.crosshairWidth = right - left;
+
             point.tooltipPos[inverted ? 1 : 0] = this.postTranslate(
                 i,
                 point.tooltipPos[inverted ? 1 : 0]
@@ -146,6 +150,13 @@ H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
     xy[xOrY] = this.axis.pos +
         this.axis.series[0].postTranslate(index, xy[xOrY] - this.axis.pos);
 };
+
+// Same width as the point itself (#8083)
+addEvent(H.Axis, 'afterDrawCrosshair', function (e) {
+    if (this.variwide) {
+        this.cross.attr('stroke-width', e.point && e.point.shapeArgs.width);
+    }
+});
 
 addEvent(H.Tick, 'afterGetPosition', function (e) {
     var axis = this.axis,
