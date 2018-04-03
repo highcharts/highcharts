@@ -4268,6 +4268,9 @@ H.Series = H.seriesType('line', null, { // base series options
                 xMap.push(point.x);
                 if (step) {
                     xMap.push(point.x);
+                    if (step === 2) { // step = center (#8073)
+                        xMap.push(point.x);
+                    }
                 }
 
                 graphPath.push.apply(graphPath, pathToPoint);
