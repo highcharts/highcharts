@@ -116,7 +116,7 @@ Highcharts.setOptions({
     }
 });
 
-var chart = Highcharts.chart('container', {
+Highcharts.chart('container', {
     chart: {
         type: 'column',
         description: 'Chart displaying art grants in 2016, grouped by grant category. ' +
