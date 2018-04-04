@@ -31,8 +31,8 @@ var colorPointMixin = H.colorPointMixin,
     seriesTypes = H.seriesTypes,
     splat = H.splat;
 
-// The vector-effect attribute is not supported in IE <= 11 (at least), so we need
-// diffent logic (#3218)
+// The vector-effect attribute is not supported in IE <= 11 (at least), so we
+// need diffent logic (#3218)
 var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 
 
@@ -62,7 +62,8 @@ seriesType('map', 'scatter', {
      * as `null` points. If `false`, those areas are skipped.
      *
      * @type {Boolean}
-     * @sample {highmaps} maps/plotoptions/series-allareas-false/ All areas set to false
+     * @sample {highmaps} maps/plotoptions/series-allareas-false/
+     *         All areas set to false
      * @default true
      * @product highmaps
      * @apioption plotOptions.series.allAreas
@@ -88,7 +89,8 @@ seriesType('map', 'scatter', {
     /**
      * The border color of the map areas.
      *
-     * In styled mode, the border stroke is given in the `.highcharts-point` class.
+     * In styled mode, the border stroke is given in the `.highcharts-point`
+     * class.
      *
      * @type {Color}
      * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
@@ -198,13 +200,14 @@ seriesType('map', 'scatter', {
         normal: {
 
             /**
-             * Animation options for the fill color when returning from hover state
-             * to normal state. The animation adds some latency in order to reduce
-             * the effect of flickering when hovering in and out of for example
-             * an uneven coastline.
+             * Animation options for the fill color when returning from hover
+             * state to normal state. The animation adds some latency in order
+             * to reduce the effect of flickering when hovering in and out of
+             * for example an uneven coastline.
              *
              * @type {Object|Boolean}
-             * @sample {highmaps} maps/plotoptions/series-states-animation-false/
+             * @sample {highmaps}
+             *         maps/plotoptions/series-states-animation-false/
              *         No animation of fill color
              * @default true
              * @product highmaps
@@ -221,7 +224,8 @@ seriesType('map', 'scatter', {
              * The color of the shape in this state
              *
              * @type {Color}
-             * @sample {highmaps} maps/plotoptions/series-states-hover/ Hover options
+             * @sample {highmaps} maps/plotoptions/series-states-hover/
+             *         Hover options
              * @product highmaps
              * @apioption plotOptions.series.states.hover.color
              */
@@ -243,8 +247,8 @@ seriesType('map', 'scatter', {
              */
 
             /**
-             * The relative brightness of the point when hovered, relative to the
-             * normal point color.
+             * The relative brightness of the point when hovered, relative to
+             * the normal point color.
              *
              * @type {Number}
              * @default 0.2
@@ -269,8 +273,11 @@ seriesType('map', 'scatter', {
     useMapGeometry: true, // get axis extremes from paths, not values
     forceDL: true,
     searchPoint: noop,
-    directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
-    preserveAspectRatio: true, // X axis and Y axis must have same translation slope
+    // When tooltip is not shared, this series (and derivatives) requires direct
+    // touch/hover. KD-tree does not apply.
+    directTouch: true,
+    // X axis and Y axis must have same translation slope
+    preserveAspectRatio: true,
     pointArrayMap: ['value'],
     /**
      * Get the bounding box of all paths in the map combined.
@@ -333,7 +340,10 @@ seriesType('map', 'scatter', {
                     point._minX = pointMinX;
                     point._maxY = pointMaxY;
                     point._minY = pointMinY;
-                    point.labelrank = pick(point.labelrank, (pointMaxX - pointMinX) * (pointMaxY - pointMinY));
+                    point.labelrank = pick(
+                        point.labelrank,
+                        (pointMaxX - pointMinX) * (pointMaxY - pointMinY)
+                    );
                     point._foundBox = true;
                 }
 

@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -51,7 +50,9 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 
         if (interval > 0.3) {
             intermediate = [1, 2, 4];
-        } else if (interval > 0.15) { // 0.2 equals five minor ticks per 1, 10, 100 etc
+
+        // 0.2 equals five minor ticks per 1, 10, 100 etc
+        } else if (interval > 0.15) {
             intermediate = [1, 2, 4, 6, 8];
         } else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
             intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -61,7 +62,12 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
             len = intermediate.length;
             for (j = 0; j < len && !break2; j++) {
                 pos = axis.log2lin(axis.lin2log(i) * intermediate[j]);
-                if (pos > min && (!minor || lastPos <= max) && lastPos !== undefined) { // #1670, lastPos is #3113
+                // #1670, lastPos is #3113
+                if (
+                    pos > min &&
+                    (!minor || lastPos <= max) &&
+                    lastPos !== undefined
+                ) {
                     positions.push(lastPos);
                 }
 
@@ -81,14 +87,20 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
             tickIntervalOption = minor ?
                 this.getMinorTickInterval() :
                 options.tickInterval,
-            filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
-            tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
-            totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
+            filteredTickIntervalOption = tickIntervalOption === 'auto' ?
+                null :
+                tickIntervalOption,
+            tickPixelIntervalOption =
+                options.tickPixelInterval / (minor ? 5 : 1),
+            totalPixelLength = minor ?
+                axisLength / axis.tickPositions.length :
+                axisLength;
 
         interval = pick(
             filteredTickIntervalOption,
             axis._minorAutoInterval,
-            (realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
+            (realMax - realMin) *
+                tickPixelIntervalOption / (totalPixelLength || 1)
         );
 
         interval = normalizeTickInterval(
