@@ -414,12 +414,12 @@ Highcharts.Point.prototype = {
             key = '{point.' + key; // without the closing bracket
             if (valuePrefix || valueSuffix) {
                 pointFormat = pointFormat.replace(
-                    key + '}',
+                    RegExp(key + '}', 'g'),
                     valuePrefix + key + '}' + valueSuffix
                 );
             }
             pointFormat = pointFormat.replace(
-                key + '}',
+                RegExp(key + '}', 'g'),
                 key + ':,.' + valueDecimals + 'f}'
             );
         });
