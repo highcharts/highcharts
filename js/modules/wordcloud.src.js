@@ -407,6 +407,17 @@ var wordCloudOptions = {
      */
     colorByPoint: true,
     /**
+     * A threshold determining the minimum font size that can be applied to a
+     * word.
+     */
+    minFontSize: 1,
+    /**
+     * The word with the largest weight will have a font size equal to this
+     * value. The font size of a word is the ratio between its weight and the
+     * largest occuring weight, multiplied with the value of maxFontSize.
+     */
+    maxFontSize: 25,
+    /**
      * This option decides which algorithm is used for placement, and rotation
      * of a word. The choice of algorith is therefore a crucial part of the
      * resulting layout of the wordcloud.
@@ -486,12 +497,24 @@ var wordCloudSeries = {
     /**
      * deriveFontSize - Calculates the fontSize of a word based on its weight.
      *
-     * @param  {number} relativeWeight The weight of the word, on a scale 0-1.
-     * @return {number} Returns the resulting fontSize of a word.
+     * @param {number} [relativeWeight] The weight of the word, on a scale 0-1.
+     * Defaults to 0.
+     * @param {number} [maxFontSize] The maximum font size of a word. Defaults
+     * to 1.
+     * @param {number} [minFontSize] The minimum font size of a word. Defaults
+     * to 1.
+     * @returns {number} Returns the resulting fontSize of a word. If
+     * minFontSize is larger then maxFontSize the result will equal minFontSize.
      */
-    deriveFontSize: function deriveFontSize(relativeWeight) {
-        var maxFontSize = 25;
-        return Math.floor(maxFontSize * relativeWeight);
+    deriveFontSize: function deriveFontSize(
+        relativeWeight,
+        maxFontSize,
+        minFontSize
+    ) {
+        var weight = isNumber(relativeWeight) ? relativeWeight : 0,
+            max = isNumber(maxFontSize) ? maxFontSize : 1,
+            min = isNumber(minFontSize) ? minFontSize : 1;
+        return Math.floor(Math.max(min, weight * max));
     },
     drawPoints: function () {
         var series = this,
@@ -526,8 +549,13 @@ var wordCloudSeries = {
         // Used in calculating the playing field.
         each(data, function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
+                fontSize = series.deriveFontSize(
+                    relativeWeight,
+                    options.maxFontSize,
+                    options.minFontSize
+                ),
                 css = extend({
-                    fontSize: series.deriveFontSize(relativeWeight) + 'px'
+                    fontSize: fontSize + 'px'
                 }, options.style),
                 bBox;
 
@@ -551,8 +579,13 @@ var wordCloudSeries = {
         // Draw all the points.
         each(data, function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
+                fontSize = series.deriveFontSize(
+                    relativeWeight,
+                    options.maxFontSize,
+                    options.minFontSize
+                ),
                 css = extend({
-                    fontSize: series.deriveFontSize(relativeWeight) + 'px',
+                    fontSize: fontSize + 'px',
                     fill: point.color
                 }, options.style),
                 placement = placementStrategy(point, {
