@@ -28,8 +28,7 @@ var chart,
     }, {
         name: '2017',
         data: [11, 11, 12, 12, 12, 11, 11, 12, 12, 12]
-    }
-];
+    }];
 
 // Initiate the chart
 chart = Highcharts.mapChart('container', {

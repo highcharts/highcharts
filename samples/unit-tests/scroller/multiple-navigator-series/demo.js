@@ -1,7 +1,5 @@
-
-var chart;
 QUnit.test('Multiple series in navigator', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 showInNavigator: true
@@ -17,7 +15,7 @@ QUnit.test('Multiple series in navigator', function (assert) {
 });
 
 QUnit.test('Setting base series on chart', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             baseSeries: 1
         },
@@ -36,7 +34,7 @@ QUnit.test('Setting base series on chart', function (assert) {
 });
 
 QUnit.test('Overriding base series option on chart', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             baseSeries: 1
         },
@@ -56,7 +54,7 @@ QUnit.test('Overriding base series option on chart', function (assert) {
 });
 
 QUnit.test('3 of 4 series shown in navigator', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 showInNavigator: true
@@ -77,7 +75,7 @@ QUnit.test('3 of 4 series shown in navigator', function (assert) {
 });
 
 QUnit.test('No series in navigator', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 showInNavigator: false

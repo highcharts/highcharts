@@ -64,11 +64,11 @@ Highcharts.mapChart('container', {
             format: '{point.name}'
         }
     }, {
-            name: 'Separators',
-            type: 'mapline',
-            data: Highcharts.geojson(Highcharts.maps['countries/no/custom/no-all-svalbard-and-jan-mayen'], 'mapline'),
-            color: 'silver',
-            showInLegend: false,
-            enableMouseTracking: false
-        }]
+        name: 'Separators',
+        type: 'mapline',
+        data: Highcharts.geojson(Highcharts.maps['countries/no/custom/no-all-svalbard-and-jan-mayen'], 'mapline'),
+        color: 'silver',
+        showInLegend: false,
+        enableMouseTracking: false
+    }]
 });
