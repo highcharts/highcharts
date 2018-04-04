@@ -210,6 +210,7 @@ module.exports = function (config) {
 
             // Set up
             'test/test-controller.js',
+            'test/test-templates.js',
             'test/karma-setup.js'
         ], tests),
 
