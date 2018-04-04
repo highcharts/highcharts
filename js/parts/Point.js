@@ -296,7 +296,12 @@ Highcharts.Point.prototype = {
         }
 
         if (zone && zone.color && !this.options.color) {
+            if (!this.nonZonedColor) {
+                this.nonZonedColor = this.color;
+            }
             this.color = zone.color;
+        } else {
+            this.color = this.nonZonedColor;
         }
 
         return zone;
