@@ -2927,7 +2927,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             chart = axis.chart,
             options = axis.options,
             isLog = axis.isLog,
-            log2lin = axis.log2lin,
             isDatetimeAxis = axis.isDatetimeAxis,
             isXAxis = axis.isXAxis,
             isLinked = axis.isLinked,
@@ -3000,8 +2999,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(log2lin(axis.min), 15);
-            axis.max = correctFloat(log2lin(axis.max), 15);
+            axis.min = correctFloat(axis.log2lin(axis.min), 15);
+            axis.max = correctFloat(axis.log2lin(axis.max), 15);
         }
 
         // handle zoomed range
@@ -3770,12 +3769,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      */
     getExtremes: function () {
         var axis = this,
-            isLog = axis.isLog,
-            lin2log = axis.lin2log;
+            isLog = axis.isLog;
 
         return {
-            min: isLog ? correctFloat(lin2log(axis.min)) : axis.min,
-            max: isLog ? correctFloat(lin2log(axis.max)) : axis.max,
+            min: isLog ? correctFloat(axis.lin2log(axis.min)) : axis.min,
+            max: isLog ? correctFloat(axis.lin2log(axis.max)) : axis.max,
             dataMin: axis.dataMin,
             dataMax: axis.dataMax,
             userMin: axis.userMin,
@@ -3797,9 +3795,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     getThreshold: function (threshold) {
         var axis = this,
             isLog = axis.isLog,
-            lin2log = axis.lin2log,
-            realMin = isLog ? lin2log(axis.min) : axis.min,
-            realMax = isLog ? lin2log(axis.max) : axis.max;
+            realMin = isLog ? axis.lin2log(axis.min) : axis.min,
+            realMax = isLog ? axis.lin2log(axis.max) : axis.max;
 
         if (threshold === null) {
             threshold = realMin;
@@ -4625,7 +4622,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             renderer = chart.renderer,
             options = axis.options,
             isLog = axis.isLog,
-            lin2log = axis.lin2log,
             isLinked = axis.isLinked,
             tickPositions = axis.tickPositions,
             axisTitle = axis.axisTitle,
@@ -4701,8 +4697,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
-                            from: isLog ? lin2log(from) : from,
-                            to: isLog ? lin2log(to) : to,
+                            from: isLog ? axis.lin2log(from) : from,
+                            to: isLog ? axis.lin2log(to) : to,
                             color: alternateGridColor
                         };
                         alternateBands[pos].render();

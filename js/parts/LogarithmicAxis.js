@@ -23,8 +23,6 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
     var axis = this,
         options = axis.options,
         axisLength = axis.len,
-        lin2log = axis.lin2log,
-        log2lin = axis.log2lin,
         // Since we use this method for both major and minor ticks,
         // use a local variable and return the result
         positions = [];
@@ -62,7 +60,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
         for (i = roundedMin; i < max + 1 && !break2; i++) {
             len = intermediate.length;
             for (j = 0; j < len && !break2; j++) {
-                pos = log2lin(lin2log(i) * intermediate[j]);
+                pos = axis.log2lin(axis.lin2log(i) * intermediate[j]);
                 if (pos > min && (!minor || lastPos <= max) && lastPos !== undefined) { // #1670, lastPos is #3113
                     positions.push(lastPos);
                 }
@@ -78,8 +76,8 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
     // we might as well handle the tick positions like a linear axis. For
     // example 1.01, 1.02, 1.03, 1.04.
     } else {
-        var realMin = lin2log(min),
-            realMax = lin2log(max),
+        var realMin = axis.lin2log(min),
+            realMax = axis.lin2log(max),
             tickIntervalOption = minor ?
                 this.getMinorTickInterval() :
                 options.tickInterval,
@@ -103,7 +101,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
             interval,
             realMin,
             realMax
-        ), log2lin);
+        ), axis.log2lin);
 
         if (!minor) {
             axis._minorAutoInterval = interval / 5;
