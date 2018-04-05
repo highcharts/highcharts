@@ -329,7 +329,7 @@ extend(defaultOptions, {
             /*= } =*/
 
             /**
-             * @ignore
+             * @ignore-option
              */
             compare: null,
 

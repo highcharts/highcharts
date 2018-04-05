@@ -135,7 +135,7 @@ seriesType('map', 'scatter', {
      */
 
     /**
-     * @ignore
+     * @ignore-option
      */
     marker: null,
 

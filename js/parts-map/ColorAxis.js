@@ -161,7 +161,7 @@ if (!H.ColorAxis) {
              */
 
             /**
-              * @ignore
+              * @ignore-option
               */
             lineWidth: 0,
 
