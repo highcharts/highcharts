@@ -88,7 +88,7 @@ seriesType('bubble', 'scatter', {
          * the point's data value.
          */
         /**
-         * @ignore
+         * @ignore-option
          */
         radius: null,
 
