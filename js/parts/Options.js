@@ -254,6 +254,7 @@ H.defaultOptions = {
      * per chart.
      *
      * @deprecated
+     * @type {Boolean}
      * @apioption global.useUTC
      */
 
@@ -263,6 +264,7 @@ H.defaultOptions = {
      * per chart.
      *
      * @deprecated
+     * @type {Object}
      * @product highcharts highstock
      * @apioption global.Date
      */
@@ -273,6 +275,7 @@ H.defaultOptions = {
      * individual time settings per chart.
      *
      * @deprecated
+     * @type {Function}
      * @product highcharts highstock
      * @apioption global.getTimezoneOffset
      */
@@ -283,6 +286,7 @@ H.defaultOptions = {
      * settings per chart.
      *
      * @deprecated
+     * @type {String}
      * @product highcharts highstock
      * @apioption global.timezone
      */
@@ -293,6 +297,7 @@ H.defaultOptions = {
      * time settings per chart.
      *
      * @deprecated
+     * @type {Number}
      * @product highcharts highstock
      * @apioption global.timezoneOffset
      */
