@@ -1385,6 +1385,7 @@
  * A custom data grouping object for each button.
  *
  * @type {Object}
+ * @extends plotOptions.series.dataGrouping
  * @see [series.dataGrouping](#plotOptions.series.dataGrouping)
  * @sample {highstock} stock/rangeselector/datagrouping/ Data grouping by range selector buttons
  * @product highstock
