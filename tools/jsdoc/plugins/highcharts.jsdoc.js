@@ -724,7 +724,7 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        // specific options for only to this series instance
+        // specific options for this series instance
         type: '${type}'
     }]
 });
