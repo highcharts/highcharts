@@ -902,7 +902,13 @@ if (seriesTypes.pie) {
                         if (isNew) {
                             point.connector = connector = chart.renderer.path()
                                 .addClass('highcharts-data-label-connector ' +
-                                    ' highcharts-color-' + point.colorIndex)
+                                    ' highcharts-color-' + point.colorIndex +
+                                    (
+                                        point.className ?
+                                            ' ' + point.className :
+                                            ''
+                                    )
+                                )
                                 .add(series.dataLabelsGroup);
 
                             /*= if (build.classic) { =*/

@@ -816,7 +816,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             });
             halo.attr({
                 'class': 'highcharts-halo highcharts-color-' +
-                    pick(point.colorIndex, series.colorIndex)
+                    pick(point.colorIndex, series.colorIndex) +
+                    (point.className ? ' ' + point.className : '')
             });
             halo.point = point; // #6055
 
