@@ -295,10 +295,12 @@ Highcharts.Point.prototype = {
             zone = zones[++i];
         }
 
+        // For resetting or reusing the point (#8100)
+        if (!this.nonZonedColor) {
+            this.nonZonedColor = this.color;
+        }
+
         if (zone && zone.color && !this.options.color) {
-            if (!this.nonZonedColor) {
-                this.nonZonedColor = this.color;
-            }
             this.color = zone.color;
         } else {
             this.color = this.nonZonedColor;

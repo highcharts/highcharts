@@ -458,13 +458,17 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 mousePos = e[horiz ? 'chartX' : 'chartY'],
                 mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
                 startPos = chart[mouseDown],
-                halfPointRange = (axis.pointRange || 0) /
-                    (axis.reversed ? -2 : 2),
+                halfPointRange = (axis.pointRange || 0) / 2,
+                pointRangeDirection =
+                    (axis.reversed && !chart.inverted) ||
+                    (!axis.reversed && chart.inverted) ?
+                        -1 :
+                        1,
                 extremes = axis.getExtremes(),
                 panMin = axis.toValue(startPos - mousePos, true) +
-                    halfPointRange,
+                    halfPointRange * pointRangeDirection,
                 panMax = axis.toValue(startPos + axis.len - mousePos, true) -
-                    halfPointRange,
+                    halfPointRange * pointRangeDirection,
                 flipped = panMax < panMin,
                 newMin = flipped ? panMax : panMin,
                 newMax = flipped ? panMin : panMax,
