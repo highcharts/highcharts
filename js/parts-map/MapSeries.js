@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -351,7 +350,10 @@ seriesType('map', 'scatter', {
                 minX = Math.min(minX, point._minX);
                 maxY = Math.max(maxY, point._maxY);
                 minY = Math.min(minY, point._minY);
-                minRange = Math.min(point._maxX - point._minX, point._maxY - point._minY, minRange);
+                minRange = Math.min(
+                    point._maxX - point._minX,
+                    point._maxY - point._minY, minRange
+                );
                 hasBox = true;
             }
         });
@@ -363,13 +365,21 @@ seriesType('map', 'scatter', {
             this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
             this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
 
-            // If no minRange option is set, set the default minimum zooming range to 5 times the
-            // size of the smallest element
+            // If no minRange option is set, set the default minimum zooming
+            // range to 5 times the size of the smallest element
             if (xAxis && xAxis.options.minRange === undefined) {
-                xAxis.minRange = Math.min(5 * minRange, (this.maxX - this.minX) / 5, xAxis.minRange || MAX_VALUE);
+                xAxis.minRange = Math.min(
+                    5 * minRange,
+                    (this.maxX - this.minX) / 5,
+                    xAxis.minRange || MAX_VALUE
+                );
             }
             if (yAxis && yAxis.options.minRange === undefined) {
-                yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
+                yAxis.minRange = Math.min(
+                    5 * minRange,
+                    (this.maxY - this.minY) / 5,
+                    yAxis.minRange || MAX_VALUE
+                );
             }
         }
     },
@@ -429,9 +439,9 @@ seriesType('map', 'scatter', {
     },
 
     /**
-     * Extend setData to join in mapData. If the allAreas option is true, all areas
-     * from the mapData are used, and those that don't correspond to a data value
-     * are given null values.
+     * Extend setData to join in mapData. If the allAreas option is true, all
+     * areas from the mapData are used, and those that don't correspond to a
+     * data value are given null values.
      */
     setData: function (data, redraw, animation, updatePoints) {
         var options = this.options,
@@ -450,7 +460,9 @@ seriesType('map', 'scatter', {
 
         // Collect mapData from chart options if not defined on series
         if (!mapData && globalMapData) {
-            mapData = typeof globalMapData === 'string' ? H.maps[globalMapData] : globalMapData;
+            mapData = typeof globalMapData === 'string' ?
+                H.maps[globalMapData] :
+                globalMapData;
         }
 
         if (joinByNull) {
@@ -472,12 +484,18 @@ seriesType('map', 'scatter', {
                     };
                 } else if (isArray(val)) {
                     data[i] = {};
-                    // Automatically copy first item to hc-key if there is an extra leading string
-                    if (!options.keys && val.length > pointArrayMap.length && typeof val[0] === 'string') {
+                    // Automatically copy first item to hc-key if there is an
+                    // extra leading string
+                    if (
+                        !options.keys &&
+                        val.length > pointArrayMap.length &&
+                        typeof val[0] === 'string'
+                    ) {
                         data[i]['hc-key'] = val[0];
                         ++ix;
                     }
-                    // Run through pointArrayMap and what's left of the point data array in parallel, copying over the values
+                    // Run through pointArrayMap and what's left of the point
+                    // data array in parallel, copying over the values
                     for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
                         if (pointArrayMap[j] && val[ix] !== undefined) {
                             if (pointArrayMap[j].indexOf('.') > 0) {
@@ -499,7 +517,10 @@ seriesType('map', 'scatter', {
         this.getBox(data);
 
         // Pick up transform definitions for chart
-        this.chart.mapTransforms = mapTransforms = chartOptions && chartOptions.mapTransforms || mapData && mapData['hc-transform'] || mapTransforms;
+        this.chart.mapTransforms = mapTransforms =
+            chartOptions && chartOptions.mapTransforms ||
+            mapData && mapData['hc-transform'] ||
+            mapTransforms;
 
         // Cache cos/sin of transform rotation angle
         if (mapTransforms) {
@@ -553,22 +574,35 @@ seriesType('map', 'scatter', {
                     });
                 }
 
-                // Add those map points that don't correspond to data, which will be drawn as null points
+                // Add those map points that don't correspond to data, which
+                // will be drawn as null points
                 dataUsed = '|' + map(dataUsed, function (point) {
                     return point && point[joinBy[0]];
-                }).join('|') + '|'; // String search is faster than array.indexOf
+                }).join('|') + '|'; // Faster than array.indexOf
 
                 each(mapData, function (mapPoint) {
-                    if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
+                    if (
+                        !joinBy[0] ||
+                        dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1
+                    ) {
                         data.push(merge(mapPoint, { value: null }));
-                        updatePoints = false; // #5050 - adding all areas causes the update optimization of setData to kick in, even though the point order has changed
+                        // #5050 - adding all areas causes the update
+                        // optimization of setData to kick in, even though the
+                        // point order has changed
+                        updatePoints = false;
                     }
                 });
             } else {
                 this.getBox(dataUsed); // Issue #4784
             }
         }
-        Series.prototype.setData.call(this, data, redraw, animation, updatePoints);
+        Series.prototype.setData.call(
+            this,
+            data,
+            redraw,
+            animation,
+            updatePoints
+        );
     },
 
 
@@ -584,15 +618,21 @@ seriesType('map', 'scatter', {
     drawDataLabels: noop,
 
     /**
-     * Allow a quick redraw by just translating the area group. Used for zooming and panning
-     * in capable browsers.
+     * Allow a quick redraw by just translating the area group. Used for zooming
+     * and panning in capable browsers.
      */
     doFullTranslate: function () {
-        return this.isDirtyData || this.chart.isResizing || this.chart.renderer.isVML || !this.baseTrans;
+        return (
+            this.isDirtyData ||
+            this.chart.isResizing ||
+            this.chart.renderer.isVML ||
+            !this.baseTrans
+        );
     },
 
     /**
-     * Add the path option for data points. Find the max value for color calculation.
+     * Add the path option for data points. Find the max value for color
+     * calculation.
      */
     translate: function () {
         var series = this,
@@ -636,9 +676,10 @@ seriesType('map', 'scatter', {
         attr = this.colorAttribs(point);
         /*= } =*/
 
-        // If vector-effect is not supported, we set the stroke-width on the group element
-        // and let all point graphics inherit. That way we don't have to iterate over all
-        // points to update the stroke-width on zooming. TODO: Check unstyled
+        // If vector-effect is not supported, we set the stroke-width on the
+        // group element and let all point graphics inherit. That way we don't
+        // have to iterate over all points to update the stroke-width on
+        // zooming.
         if (supportsVectorEffect) {
             attr['vector-effect'] = 'non-scaling-stroke';
         } else {
@@ -649,8 +690,8 @@ seriesType('map', 'scatter', {
     },
 
     /**
-     * Use the drawPoints method of column, that is able to handle simple shapeArgs.
-     * Extend it by assigning the tooltip position.
+     * Use the drawPoints method of column, that is able to handle simple
+     * shapeArgs. Extend it by assigning the tooltip position.
      */
     drawPoints: function () {
         var series = this,
@@ -670,8 +711,8 @@ seriesType('map', 'scatter', {
             startScaleX,
             startScaleY;
 
-        // Set a group that handles transform during zooming and panning in order to preserve clipping
-        // on series.group
+        // Set a group that handles transform during zooming and panning in
+        // order to preserve clipping on series.group
         if (!series.transformGroup) {
             series.transformGroup = renderer.g()
                 .attr({
@@ -692,7 +733,10 @@ seriesType('map', 'scatter', {
 
                     // Restore state color on update/redraw (#3529)
                     if (point.shapeArgs) {
-                        point.shapeArgs.fill = series.pointAttribs(point, point.state).fill;
+                        point.shapeArgs.fill = series.pointAttribs(
+                            point,
+                            point.state
+                        ).fill;
                     }
                 });
             }
@@ -707,10 +751,16 @@ seriesType('map', 'scatter', {
             each(series.points, function (point) {
                 if (point.graphic) {
                     if (point.name) {
-                        point.graphic.addClass('highcharts-name-' + point.name.replace(/ /g, '-').toLowerCase());
+                        point.graphic.addClass(
+                            'highcharts-name-' +
+                            point.name.replace(/ /g, '-').toLowerCase()
+                        );
                     }
                     if (point.properties && point.properties['hc-key']) {
-                        point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
+                        point.graphic.addClass(
+                            'highcharts-key-' +
+                            point.properties['hc-key'].toLowerCase()
+                        );
                     }
 
                     /*= if (!build.classic) { =*/
@@ -721,11 +771,16 @@ seriesType('map', 'scatter', {
                 }
             });
 
-            // Set the base for later scale-zooming. The originX and originY properties are the
-            // axis values in the plot area's upper left corner.
+            // Set the base for later scale-zooming. The originX and originY
+            // properties are the axis values in the plot area's upper left
+            // corner.
             this.baseTrans = {
                 originX: xAxis.min - xAxis.minPixelPadding / xAxis.transA,
-                originY: yAxis.min - yAxis.minPixelPadding / yAxis.transA + (yAxis.reversed ? 0 : yAxis.len / yAxis.transA),
+                originY: (
+                    yAxis.min -
+                    yAxis.minPixelPadding / yAxis.transA +
+                    (yAxis.reversed ? 0 : yAxis.len / yAxis.transA)
+                ),
                 transAX: xAxis.transA,
                 transAY: yAxis.transA
             };
@@ -746,7 +801,12 @@ seriesType('map', 'scatter', {
             translateY = yAxis.toPixels(baseTrans.originY, true);
 
             // Handle rounding errors in normal view (#3789)
-            if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) {
+            if (
+                scaleX > 0.99 &&
+                scaleX < 1.01 &&
+                scaleY > 0.99 &&
+                scaleY < 1.01
+            ) {
                 scaleX = 1;
                 scaleY = 1;
                 translateX = Math.round(translateX);
@@ -801,14 +861,17 @@ seriesType('map', 'scatter', {
 
         }
 
-        // Set the stroke-width directly on the group element so the children inherit it. We need to use
-        // setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be
-        // set.
+        // Set the stroke-width directly on the group element so the children
+        // inherit it. We need to use setAttribute directly, because the
+        // stroke-widthSetter method expects a stroke color also to be set.
         if (!supportsVectorEffect) {
             series.group.element.setAttribute(
                 'stroke-width',
                 series.options[
-                    (series.pointAttrToOptions && series.pointAttrToOptions['stroke-width']) || 'borderWidth'
+                    (
+                        series.pointAttrToOptions &&
+                        series.pointAttrToOptions['stroke-width']
+                    ) || 'borderWidth'
                 ] / (scaleX || 1)
             );
         }
@@ -819,8 +882,8 @@ seriesType('map', 'scatter', {
     },
 
     /**
-     * Draw the data labels. Special for maps is the time that the data labels are drawn (after points),
-     * and the clipping of the dataLabelsGroup.
+     * Draw the data labels. Special for maps is the time that the data labels
+     * are drawn (after points), and the clipping of the dataLabelsGroup.
      */
     drawMapDataLabels: function () {
 
@@ -831,7 +894,8 @@ seriesType('map', 'scatter', {
     },
 
     /**
-     * Override render to throw in an async call in IE8. Otherwise it chokes on the US counties demo.
+     * Override render to throw in an async call in IE8. Otherwise it chokes on
+     * the US counties demo.
      */
     render: function () {
         var series = this,
@@ -848,8 +912,9 @@ seriesType('map', 'scatter', {
     },
 
     /**
-     * The initial animation for the map series. By default, animation is disabled.
-     * Animation of map shapes is not at all supported in VML browsers.
+     * The initial animation for the map series. By default, animation is
+     * disabled. Animation of map shapes is not at all supported in VML
+     * browsers.
      */
     animate: function (init) {
         var chart = this.chart,
@@ -900,14 +965,19 @@ seriesType('map', 'scatter', {
      */
     animateDrilldown: function (init) {
         var toBox = this.chart.plotBox,
-            level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
+            level = this.chart.drilldownLevels[
+                this.chart.drilldownLevels.length - 1
+            ],
             fromBox = level.bBox,
             animationOptions = this.chart.options.drilldown.animation,
             scale;
 
         if (!init) {
 
-            scale = Math.min(fromBox.width / toBox.width, fromBox.height / toBox.height);
+            scale = Math.min(
+                fromBox.width / toBox.width,
+                fromBox.height / toBox.height
+            );
             level.shapeArgs = {
                 scaleX: scale,
                 scaleY: scale,
@@ -936,8 +1006,8 @@ seriesType('map', 'scatter', {
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
     /**
-     * When drilling up, pull out the individual point graphics from the lower series
-     * and animate them into the origin point in the upper series.
+     * When drilling up, pull out the individual point graphics from the lower
+     * series and animate them into the origin point in the upper series.
      */
     animateDrillupFrom: function (level) {
         seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
@@ -945,8 +1015,8 @@ seriesType('map', 'scatter', {
 
 
     /**
-     * When drilling up, keep the upper series invisible until the lower series has
-     * moved into place
+     * When drilling up, keep the upper series invisible until the lower series
+     * has moved into place
      */
     animateDrillupTo: function (init) {
         seriesTypes.column.prototype.animateDrillupTo.call(this, init);
@@ -965,7 +1035,8 @@ seriesType('map', 'scatter', {
             mapPoint;
 
         if (series.mapData) {
-            mapPoint = point[joinBy[1]] !== undefined && series.mapMap[point[joinBy[1]]];
+            mapPoint = point[joinBy[1]] !== undefined &&
+                series.mapMap[point[joinBy[1]]];
             if (mapPoint) {
                 // This applies only to bubbles
                 if (series.xyFromShape) {
@@ -1101,7 +1172,8 @@ seriesType('map', 'scatter', {
  * #plotOptions.series.dataLabels).
  *
  * @type {Object}
- * @sample {highmaps} maps/series/data-datalabels/ Disable data labels for individual areas
+ * @sample  {highmaps} maps/series/data-datalabels/
+ *          Disable data labels for individual areas
  * @product highmaps
  * @apioption series.map.data.dataLabels
  */
