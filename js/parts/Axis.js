@@ -3899,7 +3899,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             getStep = function (spaceNeeded) {
                 var step = spaceNeeded / (slotSize || 1);
                 step = step > 1 ? Math.ceil(step) : 1;
-                return step * tickInterval;
+                return correctFloat(step * tickInterval);
             };
 
         if (horiz) {
