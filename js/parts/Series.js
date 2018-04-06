@@ -3572,7 +3572,7 @@ H.Series = H.seriesType('line', null, { // base series options
                     yBottom === stackThreshold &&
                     stackIndicator.key === stack[xValue].base
                 ) {
-                    yBottom = pick(threshold, yAxis.min);
+                    yBottom = pick(isNumber(threshold) && threshold, yAxis.min);
                 }
                 if (yAxis.positiveValuesOnly && yBottom <= 0) { // #1200, #1232
                     yBottom = null;

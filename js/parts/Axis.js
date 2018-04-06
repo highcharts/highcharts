@@ -2938,7 +2938,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             minTickInterval,
             tickPixelIntervalOption = options.tickPixelInterval,
             categories = axis.categories,
-            threshold = axis.threshold,
+            threshold = isNumber(axis.threshold) ? axis.threshold : null,
             softThreshold = axis.softThreshold,
             thresholdMin,
             thresholdMax,
@@ -3798,8 +3798,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             realMin = isLog ? axis.lin2log(axis.min) : axis.min,
             realMax = isLog ? axis.lin2log(axis.max) : axis.max;
 
-        if (threshold === null) {
+        if (threshold === null || threshold === -Infinity) {
             threshold = realMin;
+        } else if (threshold === Infinity) {
+            threshold = realMax;
         } else if (realMin > threshold) {
             threshold = realMin;
         } else if (realMax < threshold) {
