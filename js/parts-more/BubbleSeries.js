@@ -316,7 +316,10 @@ seriesType('bubble', 'scatter', {
             // the size of the bubble.
             if (options.sizeByAbsoluteValue && value !== null) {
                 value = Math.abs(value - zThreshold);
-                zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
+                zMax = zRange = Math.max(
+                    zMax - zThreshold,
+                    Math.abs(zMin - zThreshold)
+                );
                 zMin = 0;
             }
 
