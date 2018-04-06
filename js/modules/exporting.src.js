@@ -1721,6 +1721,10 @@ Chart.prototype.inlineStyles = function () {
                 defaultStyles[node.nodeName] = merge(
                     win.getComputedStyle(dummy, null)
                 );
+                // Remove default fill, otherwise text disappears when exported
+                if (node.nodeName === 'text') {
+                    delete defaultStyles.text.fill;
+                }
                 dummySVG.removeChild(dummy);
             }
 
