@@ -57,7 +57,12 @@ const compileSingleStyle = (fileName) => {
 };
 
 const styles = () => {
-    const files = ['highcharts', 'dark-uniqua', 'sand-signika', 'grid-light'];
+    const files = [
+        'highcharts',
+        'themes/dark-unica',
+        'themes/sand-signika',
+        'themes/grid-light'
+    ];
     const promises = files.map(file => compileSingleStyle(file));
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);

@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -447,18 +446,32 @@ seriesType('arearange', 'area', {
         // Draw bottom points
         seriesProto.drawPoints.apply(series, arguments);
 
+        // Prepare drawing top points
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
+
+            // Save original props to be overridden by temporary props for top
+            // points
+            point.origProps = {
+                plotY: point.plotY,
+                plotX: point.plotX,
+                isInside: point.isInside,
+                negative: point.negative,
+                zone: point.zone,
+                y: point.y
+            };
+
             point.lowerGraphic = point.graphic;
             point.graphic = point.upperGraphic;
-            point._plotY = point.plotY;
-            point._plotX = point.plotX;
             point.plotY = point.plotHigh;
             if (defined(point.plotHighX)) {
                 point.plotX = point.plotHighX;
             }
-            point._isInside = point.isInside;
+            point.y = point.high;
+            point.negative = point.high < (series.options.threshold || 0);
+            point.zone = series.zones.length && point.getZone();
+
             if (!series.chart.polar) {
                 point.isInside = point.isTopInside = (
                     point.plotY !== undefined &&
@@ -474,14 +487,14 @@ seriesType('arearange', 'area', {
         // Draw top points
         seriesProto.drawPoints.apply(series, arguments);
 
+        // Reset top points preliminary modifications
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
             point.upperGraphic = point.graphic;
             point.graphic = point.lowerGraphic;
-            point.isInside = point._isInside;
-            point.plotY = point._plotY;
-            point.plotX = point._plotX;
+            H.extend(point, point.origProps);
+            delete point.origProps;
             i++;
         }
     },

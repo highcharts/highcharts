@@ -18,6 +18,7 @@ var Series = H.Series,
  * @sample       {highcharts} highcharts/demo/scatter/
  *               Scatter plot
  * @extends      {plotOptions.line}
+ * @excluding    pointPlacement, shadow
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */

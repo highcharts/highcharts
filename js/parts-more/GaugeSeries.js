@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -221,8 +220,9 @@ seriesType('gauge', 'line', {
      */
 
     /**
-     * The border color or stroke of the gauge's dial. By default, the borderWidth
-     * is 0, so this must be set in addition to a custom border color.
+     * The border color or stroke of the gauge's dial. By default, the
+     * borderWidth is 0, so this must be set in addition to a custom border
+     * color.
      *
      * @type      {Color}
      * @sample    {highcharts} highcharts/plotoptions/gauge-dial/

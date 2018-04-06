@@ -5,7 +5,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Threshold is set to 100'
+        text: 'Threshold is set to Infinity'
     },
 
     xAxis: {
@@ -14,7 +14,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            threshold: 100
+            threshold: Infinity
         }
     },
 

@@ -59,7 +59,6 @@ seriesType('macd', 'sma',
         /**
          * The styles for signal line
          *
-         * @type {Number}
          * @since 6.0.0
          * @product highstock
          */
@@ -91,7 +90,6 @@ seriesType('macd', 'sma',
         /**
          * The styles for macd line
          *
-         * @type {Number}
          * @since 6.0.0
          * @product highstock
          */
