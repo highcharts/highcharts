@@ -1,6 +1,22 @@
 (function (global) {
 
     /**
+     * Creates a new container in the DOM tree.
+     *
+     * @return {HTMLElement}
+     * The DOM element of the container
+     */
+    function createContainer() {
+        var container = global.document.createElement('div');
+        container.style.left = '0';
+        container.style.positon = 'absolute';
+        container.style.top = '0';
+        global.document.body.appendChild(container);
+        return container;
+    }
+
+
+    /**
      * Creates a deep copy of entries and properties.
      *
      * @param {array|object} source
@@ -61,35 +77,59 @@
     var chartTemplates = {};
 
     /**
-     * This class creates and registers a new template for testing on generic
-     * charts. It also provides static functions to use registered templates in
-     * test cases.
+     * This class creates a new template for testing on generic charts. It also
+     * provides static functions to use registered templates in test cases.
      *
      * @param {string} name
      * The reference name of the chart
      *
+     * @param {Highcharts.Chart} chartConstructor
+     * The chart constructor function for the template
+     *
+     * @param {object} chartOptions
+     * The default chart Options for the template
+     *
      * @return {ChartTemplate}
      * The new chart template
      */
-    function ChartTemplate(name) {
+    function ChartTemplate(name, chartConstructor, chartOptions) {
 
         if (!(this instanceof ChartTemplate)) {
-            return ChartTemplate.registerTemplate(new ChartTemplate(name));
+            return new ChartTemplate(name, chartConstructor, chartOptions);
         }
 
+        var chart = chartConstructor(createContainer(), chartOptions);
+
+        /**
+         * The chart instance of the chart template
+         *
+         * @type {Highcharts.Chart}
+         */
+        Object.defineProperty(this, 'chart', {
+            configurable: false,
+            enumerable: true,
+            get: function () {
+                return chart;
+            }
+        });
+
+        /**
+         * The name of the chart template
+         *
+         * @type {string}
+         */
         Object.defineProperty(this, 'name', {
             configurable: false,
             enumerable: true,
             get: function () {
                 return name;
-            },
-            writable: false
+            }
         });
 
     }
 
     /**
-     * Prepares a chart template for a test.
+     * Prepares a chart template for a test. This function works asynchronously.
      *
      * @param {string} name
      * The reference name of the template to prepare for the test
@@ -97,12 +137,20 @@
      * @param {object|undefind} chartOptions
      * The additional options to customize the chart of the template
      *
-     * @param {function} callback
-     * The callback with the prepared chart template
+     * @param {function} testCallback
+     * The callback with the prepared chart template as the first argument
+     *
+     * @param {function} finishCallback
+     * The callback after test end and template reset
      *
      * @return {void}
      */
-    ChartTemplate.prepareTemplate = function (name, chartOptions, callback) {
+    ChartTemplate.test = function (
+        name,
+        chartOptions,
+        testCallback,
+        finishCallback
+    ) {
 
         var chartTemplate = chartTemplates[name];
 
@@ -112,10 +160,14 @@
                 chartOptions
             );
             try {
-                callback(chartTemplate);
+                testCallback(chartTemplate);
                 return;
             } finally {
-                chartTemplate.chart.update(originalChartOptions);
+                try {
+                    finishCallback();
+                } finally {
+                    chartTemplate.chart.update(originalChartOptions);
+                }
             }
         }
 
@@ -124,7 +176,12 @@
 
         templateScript.onload = function () {
             global.clearTimeout(loadingTimeout);
-            ChartTemplate.prepareTemplate(name, chartOptions, callback);
+            ChartTemplate.test(
+                name,
+                chartOptions,
+                testCallback,
+                finishCallback
+            );
         };
 
         loadingTimeout = global.setTimeout(function () {
@@ -177,7 +234,7 @@
     Object.freeze(ChartTemplate);
 
     // Publish ChartTemplate in global scope
-    Object.defineProperty(global, 'TestTemplate', {
+    Object.defineProperty(global, 'ChartTemplate', {
         configurable: false,
         enumerable: true,
         value: ChartTemplate,
