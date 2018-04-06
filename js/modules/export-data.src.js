@@ -434,7 +434,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
         // Add the category column
         each(rowArr, function (row) { // eslint-disable-line no-loop-func
             var category = row.name;
-            if (!defined(category)) {
+            if (xAxis && !defined(category)) {
                 if (xAxis.isDatetimeAxis) {
                     if (row.x instanceof Date) {
                         row.x = row.x.getTime();
