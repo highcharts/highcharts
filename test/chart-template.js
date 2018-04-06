@@ -1,5 +1,24 @@
 (function (global) {
 
+    /* *
+     *
+     *  Private Properties
+     *
+     * */
+
+    /**
+     * The chart template registry
+     *
+     * @type {Dictionary<ChartTemplate>}
+     */
+    var chartTemplates = {};
+
+    /* *
+     *
+     *  Private Functions
+     *
+     * */
+
     /**
      * Creates a new container in the DOM tree.
      *
@@ -14,7 +33,6 @@
         global.document.body.appendChild(container);
         return container;
     }
-
 
     /**
      * Creates a deep copy of entries and properties.
@@ -40,7 +58,9 @@
             case 'object':
                 var copy = {};
                 for (var key in propertiesTree) {
-                    if (propertiesTree.hasOwnProperty(key)) {
+                    if (propertiesTree.hasOwnProperty(key) &&
+                        source.hasOwnProperty(key)
+                    ) {
                         copy[key] = treeCopy(source[key], propertiesTree[key]);
                     } else {
                         copy[key] = undefined; // eslint-disable-line no-undefined
@@ -51,30 +71,11 @@
     }
     global.treeCopy = treeCopy;
 
-    /**
-     * Changes options of a chart.
+    /* *
      *
-     * @param {object} chart
-     * The chart as reference
+     *  Constructor
      *
-     * @param {object} newOptions
-     * The new chart options as replacement
-     *
-     * @return {object}
-     * Container with the old chart options, that have been replaced
-     */
-    function replaceChartOptions(chart, newOptions) {
-        if (typeof newOptions !== 'object' ||
-            newOptions === null
-        ) {
-            return {};
-        }
-        var oldOptions = treeCopy(chart.options, newOptions);
-        chart.update(newOptions);
-        return oldOptions;
-    }
-
-    var chartTemplates = {};
+     * */
 
     /**
      * This class creates a new template for testing on generic charts. It also
@@ -98,7 +99,27 @@
             return new ChartTemplate(name, chartConstructor, chartOptions);
         }
 
-        var chart = chartConstructor(createContainer(), chartOptions);
+        var chart = chartConstructor(createContainer(), chartOptions),
+            testCases = [];
+
+        /* *
+         *
+         *  Instance Properties
+         *
+         * */
+
+        /**
+         * The name of the template as a flag in the chart
+         *
+         * @type {string}
+         */
+        Object.defineProperty(chart, 'template', {
+            configurable: false,
+            enumerable: true,
+            get: function () {
+                return name;
+            }
+        });
 
         /**
          * The chart instance of the chart template
@@ -126,7 +147,93 @@
             }
         });
 
+        /**
+         * The state of the chart template
+         *
+         * @type {boolean}
+         */
+        Object.defineProperty(this, 'ready', {
+            configurable: false,
+            enumerable: true,
+            get: function () {
+                return (testCases.length > 0);
+            }
+        });
+
+        /**
+         * The queue of waiting test cases for the chart template
+         *
+         * @type {Array<Object>}
+         */
+        Object.defineProperty(this, 'testCases', {
+            configurable: false,
+            enumerable: true,
+            get: function () {
+                return testCases;
+            }
+        });
+
     }
+
+    /* *
+     *
+     *  Instance Functions
+     *
+     * */
+
+    ChartTemplate.prototype.test = function (
+        chartOptions,
+        testCallback,
+        finishCallback
+    ) {
+
+        var chart = this.chart;
+
+        this.testCases.push({
+            chartOptions: (chartOptions || {}),
+            testCallback: testCallback,
+            finishCallback: finishCallback
+        });
+
+        if (!this.ready) {
+            return;
+        }
+
+        this.ready = false;
+
+        try {
+            var testCase;
+            while (typeof (testCase = this.testCases.shift()) !== 'undefined') {
+
+                var originalOptions = treeCopy(chart.options, testCase.chartOptions);
+
+                try {
+                    chart.update(testCase.chartOptions, true, true);
+                    testCase.testCallback(this);
+                } finally {
+                    try {
+                        testCase.finishCallback();
+                    } finally {
+                        chart.update(
+                            originalOptions,
+                            true,
+                            true
+                        );
+                    }
+                }
+
+            }
+        } finally {
+            this.ready = true;
+        }
+
+    };
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
     /**
      * Prepares a chart template for a test. This function works asynchronously.
@@ -155,20 +262,8 @@
         var chartTemplate = chartTemplates[name];
 
         if (chartTemplate) {
-            var originalChartOptions = replaceChartOptions(
-                chartTemplate.chart,
-                chartOptions
-            );
-            try {
-                testCallback(chartTemplate);
-                return;
-            } finally {
-                try {
-                    finishCallback();
-                } finally {
-                    chartTemplate.chart.update(originalChartOptions);
-                }
-            }
+            chartTemplate.test(chartOptions, testCallback, finishCallback);
+            return;
         }
 
         var loadingTimeout = null,
@@ -206,7 +301,7 @@
      *
      * @return {void}
      */
-    ChartTemplate.registerTemplate = function (chartTemplate) {
+    ChartTemplate.register = function (chartTemplate) {
         if (!(chartTemplate instanceof global.ChartTemplate)) {
             return;
         }
@@ -216,6 +311,12 @@
             chartTemplates[chartTemplate.name] = chartTemplate;
         }
     };
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * The registered chart templates
@@ -230,8 +331,15 @@
         }
     });
 
+    /* *
+     *
+     *  Global
+     *
+     * */
+
     // Prevent changes to ChartTemplate properties
     Object.freeze(ChartTemplate);
+    Object.freeze(ChartTemplate.prototype);
 
     // Publish ChartTemplate in global scope
     Object.defineProperty(global, 'ChartTemplate', {

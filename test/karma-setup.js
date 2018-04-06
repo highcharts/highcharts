@@ -85,14 +85,25 @@ QUnit.module('Highcharts', {
 
     afterEach: function () {
 
-        // Destroy all charts
-        Highcharts.charts.forEach(function (chart) {
-            if (chart && chart.destroy && chart.renderer) {
-                chart.destroy();
-            }
-        });
-        Highcharts.charts.length = 0;
+        var currentChart = null,
+            charts = Highcharts.charts,
+            chartTemplates = [];
 
+        // Destroy all charts, except templates
+        for (var i = 0, ie = charts.length; i < ie; ++i) {
+            currentChart = charts[i];
+            if (!currentChart) {
+                continue;
+            }
+            if (currentChart.template) {
+                chartTemplates.push(currentChart);
+            } else if (currentChart.destroy && currentChart.renderer) {
+                currentChart.destroy();
+            }
+        }
+
+        Highcharts.charts.length = 0;
+        Highcharts.charts = chartTemplates;
     }
 });
 

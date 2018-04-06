@@ -1,19 +1,17 @@
 /* global ChartTemplate, Highcharts */
 
-ChartTemplate.registerTemplate(
-    new ChartTemplate('line-simple', Highcharts.chart, {
+ChartTemplate.register(new ChartTemplate('line-simple', Highcharts.chart, {
 
-        chart: {
-            type: 'line'
-        },
+    chart: {
+        type: 'line'
+    },
 
-        title: {
-            text: 'line-simple'
-        },
+    title: {
+        text: 'line-simple'
+    },
 
-        series: [{
-            data: [1, 3, 2]
-        }]
+    series: [{
+        data: [1, 3, 2]
+    }]
 
-    })
-);
+}));
