@@ -87,23 +87,23 @@ QUnit.module('Highcharts', {
 
         var currentChart = null,
             charts = Highcharts.charts,
-            chartTemplates = [];
+            templateCharts = [];
 
-        // Destroy all charts, except templates
+        // Destroy all charts, except template charts
         for (var i = 0, ie = charts.length; i < ie; ++i) {
             currentChart = charts[i];
             if (!currentChart) {
                 continue;
             }
             if (currentChart.template) {
-                chartTemplates.push(currentChart);
+                templateCharts.push(currentChart);
             } else if (currentChart.destroy && currentChart.renderer) {
                 currentChart.destroy();
             }
         }
 
         Highcharts.charts.length = 0;
-        Highcharts.charts = chartTemplates;
+        Highcharts.charts = templateCharts;
     }
 });
 
