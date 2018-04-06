@@ -1,7 +1,7 @@
 
 QUnit.test('Percentage inner size', function (assert) {
 
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie'
         },
@@ -15,7 +15,7 @@ QUnit.test('Percentage inner size', function (assert) {
         }]
     });
 
-    var series = Highcharts.charts[0].series[0],
+    var series = chart.series[0],
         innerSize = series.options.innerSize;
 
     assert.equal(
