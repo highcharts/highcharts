@@ -1,112 +1,187 @@
-/* global Highcharts, QUnit */
-
 (function (global) {
 
     /**
-     * Creates a deep copy of entries or properties.
+     * Creates a deep copy of entries and properties.
      *
      * @param {array|object} source
-     * The source properties to copy.
+     * The source to copy from.
+     *
+     * @param {object} propertiesTree
+     * The properties tree to copy.
      *
      * @return {array|object}
      * The copy of the source.
      */
-    function deepCopy(source) { // eslint-disable-line no-unused-vars
-        return JSON.parse(JSON.stringify(source));
+    function treeCopy(source, propertiesTree) {
+        if (!source) {
+            return source;
+        }
+        switch (typeof source) {
+            default:
+                return source;
+            case 'array':
+                return JSON.parse(JSON.stringify(source));
+            case 'object':
+                var copy = {};
+                for (var key in propertiesTree) {
+                    if (propertiesTree.hasOwnProperty(key)) {
+                        copy[key] = treeCopy(source[key], propertiesTree[key]);
+                    } else {
+                        copy[key] = undefined; // eslint-disable-line no-undefined
+                    }
+                }
+                return copy;
+        }
     }
+    global.treeCopy = treeCopy;
 
     /**
-     * Changes the options of a chart.
+     * Changes options of a chart.
      *
-     * @param {object} chartOptions
-     * The curent chart options as reference
+     * @param {object} chart
+     * The chart as reference
      *
      * @param {object} newOptions
      * The new chart options as replacement
      *
-     * @param {boolean} preserveOld
-     * True, to deep copy old chart options and return them
-     *
      * @return {object}
-     * The old chart options, that are replaced, or an empty object
+     * Container with the old chart options, that have been replaced
      */
-    function replaceChartOptions(chartOptions, newOptions, preserveOld) {
-
-        var oldOptions = {};
-
-        try {
-            Highcharts.objectEach(newOptions, function (value, key) {
-
-                if (preserveOld) {
-                    oldOptions[key] = deepCopy(chartOptions[key]);
-                }
-
-                chartOptions[key] = value;
-
-            });
-        } catch (error) {
-            global.console.error(error);
+    function replaceChartOptions(chart, newOptions) {
+        if (typeof newOptions !== 'object' ||
+            newOptions === null
+        ) {
+            return {};
         }
-
+        var oldOptions = treeCopy(chart.options, newOptions);
+        chart.update(newOptions);
         return oldOptions;
     }
 
+    var chartTemplates = {};
+
     /**
-     * The test templates provides a fast system to test on a generic chart with
-     * custom changes.
+     * This class creates and registers a new template for testing on generic
+     * charts. It also provides static functions to use registered templates in
+     * test cases.
      *
-     * @param {string} templateName
-     * The template type to test again. See ./test/templates for possible
-     * options.
+     * @param {string} name
+     * The reference name of the chart
      *
-     * @param {object} chartOptions
-     * Additional chart options for the tests.
+     * @return {ChartTemplate}
+     * The new chart template
+     */
+    function ChartTemplate(name) {
+
+        if (!(this instanceof ChartTemplate)) {
+            return ChartTemplate.registerTemplate(new ChartTemplate(name));
+        }
+
+        Object.defineProperty(this, 'name', {
+            configurable: false,
+            enumerable: true,
+            get: function () {
+                return name;
+            },
+            writable: false
+        });
+
+    }
+
+    /**
+     * Prepares a chart template for a test.
      *
-     * @param {function} testCallback
-     * The function callback with the chart template to do tests on.
+     * @param {string} name
+     * The reference name of the template to prepare for the test
+     *
+     * @param {object|undefind} chartOptions
+     * The additional options to customize the chart of the template
+     *
+     * @param {function} callback
+     * The callback with the prepared chart template
      *
      * @return {void}
      */
-    global.testTemplate = function (templateName, chartOptions, testCallback) {
+    ChartTemplate.prepareTemplate = function (name, chartOptions, callback) {
 
-        var templateChart = global.testTemplate[templateName],
-            originalChartOptions = {};
+        var chartTemplate = chartTemplates[name];
 
-        QUnit.module('Template ' + templateName, {
-            beforeEach: function () {
-                originalChartOptions = replaceChartOptions(
-                    templateChart.options,
-                    chartOptions,
-                    true
-                );
-            },
-            afterEach: function () {
-                replaceChartOptions(
-                    templateChart.options,
-                    originalChartOptions,
-                    false
-                );
+        if (chartTemplate) {
+            var originalChartOptions = replaceChartOptions(
+                chartTemplate.chart,
+                chartOptions
+            );
+            try {
+                callback(chartTemplate);
+                return;
+            } finally {
+                chartTemplate.chart.update(originalChartOptions);
             }
-        });
-
-        if (templateChart) {
-
-            Function.call(templateChart, testCallback, templateChart);
-
-        } else {
-
-            var templateScript = global.document.createElement('script');
-
-            templateScript.addEventListener('load', function () {
-
-                templateChart = global.testTemplate[templateName];
-
-                if (!templateChart) {
-                    throw new Error('Loading template ' + templateName + ' failed.');
-                }
-            });
         }
 
+        var loadingTimeout = null,
+            templateScript = global.document.createElement('script');
+
+        templateScript.onload = function () {
+            global.clearTimeout(loadingTimeout);
+            ChartTemplate.prepareTemplate(name, chartOptions, callback);
+        };
+
+        loadingTimeout = global.setTimeout(function () {
+            global.document.body.removeChild(templateScript);
+            throw new Error(
+                'Preparing chart template "' + name +
+                '" resulted in a timeout during loading.'
+            );
+        }, 2000);
+
+        templateScript.src = '/base/test/templates/' + name + '.js';
+
+        global.document.body.appendChild(templateScript);
+
     };
+
+    /**
+     * Registers a chart template for addition
+     *
+     * @param {ChartTemplate} chartTemplate
+     * The chart template to register
+     *
+     * @return {void}
+     */
+    ChartTemplate.registerTemplate = function (chartTemplate) {
+        if (!(chartTemplate instanceof global.ChartTemplate)) {
+            return;
+        }
+        if (chartTemplates[chartTemplate.name]) {
+            throw new Error('Chart template already registered.');
+        } else {
+            chartTemplates[chartTemplate.name] = chartTemplate;
+        }
+    };
+
+    /**
+     * The registered chart templates
+     *
+     * @type {Array<ChartTemplate>}
+     */
+    Object.defineProperty(ChartTemplate, 'templates', {
+        configurable: false,
+        enumerable: true,
+        get: function () {
+            return chartTemplates;
+        }
+    });
+
+    // Prevent changes to ChartTemplate properties
+    Object.freeze(ChartTemplate);
+
+    // Publish ChartTemplate in global scope
+    Object.defineProperty(global, 'TestTemplate', {
+        configurable: false,
+        enumerable: true,
+        value: ChartTemplate,
+        writable: false
+    });
 
 }(this));
