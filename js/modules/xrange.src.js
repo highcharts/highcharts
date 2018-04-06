@@ -352,15 +352,24 @@ seriesType('xrange', 'column', {
 
     drawPoints: function () {
         var series = this,
-            chart = this.chart,
-            options = series.options,
-            animationLimit = options.animationLimit || 250,
-            verb = chart.pointCount < animationLimit ? 'animate' : 'attr';
+            verb = series.getAnimationVerb();
 
-        // draw the columns
+        // Draw the columns
         each(series.points, function (point) {
             series.drawPoint(point, verb);
         });
+    },
+
+
+    /**
+     * Returns "animate", or "attr" if the number of points is above the
+     * animation limit.
+     *
+     * @returns {String}
+     */
+    getAnimationVerb: function () {
+        return this.chart.pointCount < (this.options.animationLimit || 250) ?
+             'animate' : 'attr';
     }
 
     /**
@@ -408,6 +417,12 @@ seriesType('xrange', 'column', {
         this.colorIndex = pick(this.options.colorIndex, this.y % colorCount);
 
         return this;
+    },
+
+    setState: function () {
+        Point.prototype.setState.apply(this, arguments);
+
+        this.series.drawPoint(this, this.series.getAnimationVerb());
     },
 
     // Add x2 and yCategory to the available properties for tooltip formats
