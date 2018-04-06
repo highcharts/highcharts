@@ -205,7 +205,10 @@
             var testCase;
             while (typeof (testCase = this.testCases.shift()) !== 'undefined') {
 
-                var originalOptions = treeCopy(chart.options, testCase.chartOptions);
+                var originalOptions = treeCopy(
+                    chart.options,
+                    testCase.chartOptions
+                );
 
                 try {
                     chart.update(testCase.chartOptions, true, true);
