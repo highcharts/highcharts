@@ -73,7 +73,7 @@ QUnit.test('Size by threshold', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points[0].marker.radius,
-        chart.series[0].maxPxSize / 2,
+        Math.round(chart.series[0].maxPxSize / 2),
         'Correct size of the marker (#8092).'
     );
 
