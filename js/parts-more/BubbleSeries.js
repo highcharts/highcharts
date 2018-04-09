@@ -371,7 +371,7 @@ seriesType('bubble', 'scatter', {
                     // Run animation
                     graphic.animate(animationTarget, this.options.animation);
                 }
-            });
+            }, this);
 
             // delete this function to allow it only once
             this.animate = null;

@@ -14,6 +14,7 @@
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
+import '../mixins/ajax.js';
 
 var defined = Highcharts.defined,
     each = Highcharts.each,
@@ -171,6 +172,11 @@ Highcharts.setOptions({
          * @since 6.0.0
          */
         downloadXLS: 'Download XLS',
+        /**
+         * Export-data module only. The text for the menu item.
+         * @since 6.1.0
+         */
+        openInCloud: 'Open in Highcharts Cloud',
         /**
          * Export-data module only. The text for the menu item.
          * @since 6.0.0
@@ -428,7 +434,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
         // Add the category column
         each(rowArr, function (row) { // eslint-disable-line no-loop-func
             var category = row.name;
-            if (!defined(category)) {
+            if (xAxis && !defined(category)) {
                 if (xAxis.isDatetimeAxis) {
                     if (row.x instanceof Date) {
                         row.x = row.x.getTime();
@@ -816,7 +822,7 @@ Highcharts.Chart.prototype.viewData = function () {
  *   Chart.getOptions function that returns all non-default options. Should also
  *   be used by the export module.
  */
-Highcharts.Chart.prototype.editInCloud = function () {
+Highcharts.Chart.prototype.openInCloud = function () {
 
     var options,
         paramObj,
@@ -901,6 +907,12 @@ if (exportingOptions) {
             onclick: function () {
                 this.viewData();
             }
+        },
+        openInCloud: {
+            textKey: 'openInCloud',
+            onclick: function () {
+                this.openInCloud();
+            }
         }
     });
 
@@ -908,7 +920,8 @@ if (exportingOptions) {
         'separator',
         'downloadCSV',
         'downloadXLS',
-        'viewData'
+        'viewData',
+        'openInCloud'
     );
 }
 
