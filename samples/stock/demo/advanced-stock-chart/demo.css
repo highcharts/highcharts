@@ -28,6 +28,7 @@
 
 #demo #analyze-dropdown {
     width: auto;
+    height: 21px;
     margin-bottom: 0px;
 }
 
@@ -54,7 +55,7 @@
 
 #demo #indicators-dropdown {
     width: auto;
-    height: auto;
+    height: 21px;
     margin-bottom: 0px;
 }
 
@@ -66,6 +67,9 @@
     padding: 4px 10px;
     margin-right: 0px;
     margin-left: 0px;
+    font-weight: normal;
+    text-transform: none;
+    line-height: 12px;
 }
 
 #demo .menu-btn:hover {
@@ -236,6 +240,10 @@
     mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/reset.svg);
 }
 
+#demo .button-group {
+    position: relative;
+}
+
 #demo .dropdown-menu,
 #demo #indicators-container ul.dropdown-menu,
 #demo #analyze-container ul.dropdown-menu {
@@ -249,6 +257,7 @@
 #demo #analyze-container ul.dropdown-menu a {
     color: #707070;
     outline: none;
+    padding: 2px 0;
 }
 
 #demo .dropdown-menu a,
@@ -291,13 +300,7 @@
 }
 
 #demo {
-    float: left;
     position: relative;
-    width: 100%;
-}
-
-#demo #chart {
-    width: 100%;
 }
 
 #demo #menu-side div {
@@ -377,9 +380,9 @@
     mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag-diamondpin.svg);
 }
 
-#demo #container .crosshair-on-point .highcharts-tracker path:hover,
-#demo #container .crosshair-on-chart .highcharts-plot-background:hover,
-#demo #container .crosshair-on-annotation .highcharts-annotation:hover,
-#demo #container .crosshair-on-annotation .highcharts-flags-series:hover {
+#demo #container-inner .crosshair-on-point .highcharts-tracker path:hover,
+#demo #container-inner .crosshair-on-chart .highcharts-plot-background:hover,
+#demo #container-inner .crosshair-on-annotation .highcharts-annotation:hover,
+#demo #container-inner .crosshair-on-annotation .highcharts-flags-series:hover {
     cursor: crosshair;
 }

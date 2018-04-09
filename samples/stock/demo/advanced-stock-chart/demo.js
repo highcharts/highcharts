@@ -1,3 +1,11 @@
+/**
+ * This is a complex demo to demonstrate how Highstock can be set up to
+ * provide a full trading dashboard. It is not intended for implementers who
+ * want to get quickly up and running with simple charts. For that, see for
+ * example the "Single line series" or "Candlestick" demo.
+ */
+
+
 // Predefined analyzes, like default dataset+indicators+annotations
 window.analyzes = [{
     indicators: [{
@@ -644,7 +652,8 @@ window.analyzes = [{
 
 (function (H) {
     H.getChartById = function (id) {
-        return H.charts[document.getElementById(id).getAttribute('data-highcharts-chart')];
+        return H.charts[document.getElementById(id)
+            .getAttribute('data-highcharts-chart')];
     };
 }(Highcharts));
 
@@ -659,7 +668,7 @@ function menuOnOver(e) {
     setTimeout(function () {
         var description = button.getAttribute('data-description');
         if (Highcharts.tooltipIsWaiting === description) {
-            var chart = Highcharts.getChartById('container'),
+            var chart = Highcharts.getChartById('container-inner'),
                 buttonBox = button.getBoundingClientRect(), // IE9+
                 chartBox = chart.container.getBoundingClientRect(), // IE9+
                 ttBelow = button.getAttribute('data-tt-below') || false,
@@ -721,8 +730,10 @@ function menuOnOver(e) {
             }
 
             fakePoint.setState = Highcharts.noop;
-            fakePoint.getLabelConfig = Highcharts.Point.prototype.getLabelConfig;
-            fakePoint.tooltipFormatter = Highcharts.Point.prototype.tooltipFormatter;
+            fakePoint.getLabelConfig =
+                Highcharts.Point.prototype.getLabelConfig;
+            fakePoint.tooltipFormatter =
+                Highcharts.Point.prototype.tooltipFormatter;
 
             chart.menuTooltip.isHidden = true;
             chart.menuTooltip.refresh(fakePoint);
@@ -731,7 +742,7 @@ function menuOnOver(e) {
 }
 
 function menuOnOut() {
-    var chart = Highcharts.getChartById('container');
+    var chart = Highcharts.getChartById('container-inner');
     if (Highcharts.tooltipIsWaiting) {
         Highcharts.tooltipIsWaiting = false;
     }
@@ -770,7 +781,8 @@ function menuOnOut() {
         var annotating = button.getAttribute('id').split('-')[1];
         var annotation = H.Annotation[chart.annotating];
         // Selection button should highlight only annotations and flags:
-        var selection = annotating === 'selection' && annotating !== chart.annotating;
+        var selection = annotating === 'selection' &&
+            annotating !== chart.annotating;
 
         resetOtherClass(button);
         button.classList.toggle('active');
@@ -830,14 +842,14 @@ function menuOnOut() {
         } else {
             flagMenu.style.display = 'none';
 
-            onButtonClick(button, H.getChartById('container'));
+            onButtonClick(button, H.getChartById('container-inner'));
         }
     }
 
     function flagMenuClick(e) {
         window.flagDialogReset();
 
-        onButtonClick(e.target, H.getChartById('container'));
+        onButtonClick(e.target, H.getChartById('container-inner'));
     }
 
     function sideMenu() {
@@ -848,7 +860,7 @@ function menuOnOut() {
 
         mainMenu.removeEventListener('click', menuOnClick);
 
-        H.getChartById('container').annotating = null;
+        H.getChartById('container-inner').annotating = null;
 
         menuButtons.forEach(function (menuButton) {
             menuButton.addEventListener('click', menuOnClick);
@@ -2033,8 +2045,19 @@ window.onload = function () {
     }
 
     function getHeight() {
-        return window.innerHeight - document.getElementById('demo').offsetTop;
+        return Math.max(
+            400,
+            Math.min(
+                1000,
+                Math.round(
+                    window.innerHeight -
+                    Highcharts.offset(document.getElementById('demo')).top -
+                    16
+                )
+            )
+        );
     }
+    document.getElementById('container-inner').style.height = getHeight() + 'px';
 
     var indicatorsList = ['rsi', 'sma'],
         indicatorContainer = document.getElementById('indicators-container'),
@@ -2044,7 +2067,6 @@ window.onload = function () {
             chart: {
                 type: 'candlestick',
                 panning: false,
-                height: getHeight(),
                 spacingLeft: 50,
                 alignTicks: false,
                 // Keep events for cursor change:
@@ -2268,7 +2290,7 @@ window.onload = function () {
 
         function manageIndicators(value, adder, useAxis) {
             var index = -1,
-                chart = Highcharts.getChartById('container'),
+                chart = Highcharts.getChartById('container-inner'),
                 lastYAxis = getLastAxis(chart),
                 lastYAxisIndex,
                 previousYAxis,
@@ -2458,7 +2480,7 @@ window.onload = function () {
             link.addEventListener('click', function (e) {
                 var target = e.currentTarget,
                     dataset = window.analyzes[target.getAttribute('data-value')],
-                    chart = Highcharts.getChartById('container');
+                    chart = Highcharts.getChartById('container-inner');
 
                 advOptions.annotations = dataset.annotations;
                 advOptions.yAxis = dataset.yAxis;
@@ -2481,7 +2503,7 @@ window.onload = function () {
                     indicatorsList.push(series.type);
                 });
 
-                Highcharts.stockChart('container', Highcharts.extend(dataset, advOptions));
+                Highcharts.stockChart('container-inner', Highcharts.extend(dataset, advOptions));
 
                 e.target.blur();
 
@@ -2490,7 +2512,7 @@ window.onload = function () {
         });
 
         highchartsSave.addEventListener('click', function () {
-            var chart = Highcharts.getChartById('container'),
+            var chart = Highcharts.getChartById('container-inner'),
                 chartYAxis = chart.yAxis,
                 navYAxisIdex = chartYAxis.indexOf(chart.navigator.yAxis),
                 annotations = [],
@@ -2535,10 +2557,10 @@ window.onload = function () {
         highchartsReset.addEventListener('click', function () {
             if (confirm('Are you sure you want to clear the chart?')) {
                 Highcharts.ajax({
-                    url: 'http://www.highcharts.local/samples/data/aapl-ohlc.json',
+                    url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
                     dataType: 'text',
                     success: function (data) {
-                        var chart = Highcharts.getChartById('container');
+                        var chart = Highcharts.getChartById('container-inner');
 
                         window.localStorage.removeItem('data');
 
@@ -2565,7 +2587,7 @@ window.onload = function () {
                         advOptions.annotations = [];
                         chart.hideLoading();
 
-                        Highcharts.stockChart('container', Highcharts.extend({}, advOptions));
+                        Highcharts.stockChart('container-inner', Highcharts.extend({}, advOptions));
                     }
                 });
             }
@@ -2588,18 +2610,18 @@ window.onload = function () {
             return ind.type;
         });
         attachEvents(
-            Highcharts.stockChart('container', Highcharts.extend({}, advOptions))
+            Highcharts.stockChart('container-inner', Highcharts.extend({}, advOptions))
         );
     } else {
         Highcharts.ajax({
-            url: 'http://www.highcharts.local/samples/data/aapl-ohlc.json',
+            url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
             dataType: 'text',
             success: function (data) {
                 data = data.replace(/\/\*.*\*\//g, '');
                 data = JSON.parse(data);
                 advOptions.series[0].data = data;
                 attachEvents(
-                    Highcharts.stockChart('container', Highcharts.extend({}, advOptions))
+                    Highcharts.stockChart('container-inner', Highcharts.extend({}, advOptions))
                 );
             }
         });
@@ -2612,6 +2634,12 @@ window.onload = function () {
 
     // Adapt height on resize
     window.addEventListener('resize', function () {
-        Highcharts.getChartById('container').setSize(undefined, getHeight(), false);
+        var height = getHeight();
+        document.getElementById('container-inner').style.height = height + 'px';
+        Highcharts.getChartById('container-inner').setSize(
+            undefined,
+            height,
+            false
+        );
     });
 };
