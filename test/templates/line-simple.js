@@ -1,6 +1,6 @@
 /* global ChartTemplate, Highcharts */
 
-ChartTemplate.register(new ChartTemplate('line-simple', Highcharts.chart, {
+ChartTemplate.register('line-simple', Highcharts.chart, {
 
     chart: {
         type: 'line'
@@ -14,4 +14,4 @@ ChartTemplate.register(new ChartTemplate('line-simple', Highcharts.chart, {
         data: [1, 3, 2]
     }]
 
-}));
+});
