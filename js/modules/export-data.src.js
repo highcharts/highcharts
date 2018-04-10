@@ -300,6 +300,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
         if (
             series.options.includeInCSVExport !== false &&
+            !series.options.isInternal &&
             series.visible !== false // #55
         ) {
 

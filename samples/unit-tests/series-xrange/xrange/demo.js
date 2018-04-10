@@ -126,6 +126,13 @@ QUnit.test('X-Range', function (assert) {
         (point.x2 - point.x) * point.partialFill,
         'Clip rect ends at correct position after zoom (#7617).'
     );
+
+    point.select();
+    assert.strictEqual(
+        point.graphicOriginal.attr('fill'),
+        point.series.options.states.select.color,
+        'Correct fill for a point upon point selection (#8104).'
+    );
 });
 
 QUnit.test('X-range data labels', function (assert) {
