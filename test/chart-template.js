@@ -1,3 +1,4 @@
+/* global Highcharts */
 (function (global) {
 
     /* *
@@ -70,6 +71,24 @@
         }
     }
     global.treeCopy = treeCopy;
+
+    /**
+     * Attachs to the update event of a chart.
+     *
+     * @param {Highcharts.Chart} chart
+     * The instance of the chart
+     *
+     * @param {Array<object>} optionsStorage
+     * The array with previous chart options
+     *
+     * @return {function}
+     * Remove function to stop the attachment
+     */
+    function attachUpdate(chart, optionsStorage) {
+        return Highcharts.addEvent(chart, 'update', function (newOptions) {
+            optionsStorage.push(treeCopy(chart.options, newOptions));
+        });
+    }
 
     /* *
      *
@@ -181,6 +200,21 @@
      *
      * */
 
+    /**
+     * Creates a test case for the current template chart.
+     *
+     * @param {object} chartOptions
+     * Additional options for the chart
+     *
+     * @param {function} testCallback
+     * The callback to test the chart
+     *
+     * @param {function} finishCallback
+     * The callback after the asynchronous test Usually this is the return value
+     * of QUnit.assert.async().
+     *
+     * @return {void}
+     */
     ChartTemplate.prototype.test = function (
         chartOptions,
         testCallback,
@@ -205,10 +239,11 @@
             var testCase;
             while (typeof (testCase = this.testCases.shift()) !== 'undefined') {
 
-                var originalOptions = treeCopy(
-                    chart.options,
-                    testCase.chartOptions
-                );
+                var originalOptions = [treeCopy(
+                        chart.options,
+                        testCase.chartOptions
+                    )],
+                    removeUpdate = attachUpdate(chart, originalOptions);
 
                 try {
                     chart.update(testCase.chartOptions, true, true);
@@ -217,11 +252,18 @@
                     try {
                         testCase.finishCallback();
                     } finally {
-                        chart.update(
-                            originalOptions,
-                            true,
-                            true
-                        );
+                        removeUpdate();
+                        var originalOption;
+                        while (typeof (
+                                originalOption = originalOptions.pop()
+                            ) !== 'undefined'
+                        ) {
+                            chart.update(
+                                originalOption,
+                                false,
+                                true
+                            );
+                        }
                     }
                 }
 
