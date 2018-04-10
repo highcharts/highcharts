@@ -196,14 +196,6 @@ module.exports = function (config) {
         frameworks: ['qunit'],
         files: files.concat([
             {
-                pattern: 'test/templates/**/*.js', // templates
-                type: 'js',
-                watched: false,
-                included: false,
-                served: true,
-                nocache: false
-            },
-            {
                 pattern: 'test/*.png', // testimage.png
                 watched: false,
                 included: false,
@@ -215,9 +207,18 @@ module.exports = function (config) {
                 included: false,
                 served: true
             },
+            // Chart templates
+            'test/chart-template.js',
+            {
+                pattern: 'test/templates/**/*.js',
+                type: 'js',
+                watched: false,
+                included: true,
+                served: true,
+                nocache: false
+            },
 
             // Set up
-            'test/chart-template.js',
             'test/test-controller.js',
             'test/karma-setup.js'
         ], tests),
