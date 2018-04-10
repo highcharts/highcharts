@@ -201,7 +201,8 @@
      * */
 
     /**
-     * Creates a test case for the current template chart.
+     * Creates a test case for the current template chart and add it to the
+     * queue array.
      *
      * @param {object} chartOptions
      * Additional options for the chart
@@ -209,24 +210,20 @@
      * @param {function} testCallback
      * The callback to test the chart
      *
-     * @param {function} finishCallback
-     * The callback after the asynchronous test Usually this is the return value
-     * of QUnit.assert.async().
-     *
      * @return {void}
      */
     ChartTemplate.prototype.test = function (
         chartOptions,
-        testCallback,
-        finishCallback
+        testCallback
     ) {
+
+        chartOptions = (chartOptions || {});
 
         var chart = this.chart;
 
         this.testCases.push({
-            chartOptions: (chartOptions || {}),
-            testCallback: testCallback,
-            finishCallback: finishCallback
+            chartOptions: chartOptions,
+            testCallback: testCallback
         });
 
         if (!this.ready) {
@@ -249,21 +246,17 @@
                     chart.update(testCase.chartOptions, true, true);
                     testCase.testCallback(this);
                 } finally {
-                    try {
-                        testCase.finishCallback();
-                    } finally {
-                        removeUpdate();
-                        var originalOption;
-                        while (typeof (
-                                originalOption = originalOptions.pop()
-                            ) !== 'undefined'
-                        ) {
-                            chart.update(
-                                originalOption,
-                                false,
-                                true
-                            );
-                        }
+                    removeUpdate();
+                    var originalOption;
+                    while (typeof (
+                            originalOption = originalOptions.pop()
+                        ) !== 'undefined'
+                    ) {
+                        chart.update(
+                            originalOption,
+                            false,
+                            true
+                        );
                     }
                 }
 
@@ -292,69 +285,71 @@
      * @param {function} testCallback
      * The callback with the prepared chart template as the first argument
      *
-     * @param {function} finishCallback
-     * The callback after test end and template reset
-     *
      * @return {void}
      */
-    ChartTemplate.test = function (
-        name,
-        chartOptions,
-        testCallback,
-        finishCallback
-    ) {
+    ChartTemplate.test = function (name, chartOptions, testCallback) {
+
+        if (typeof name !== 'string' ||
+            typeof chartOptions !== 'object' ||
+            typeof testCallback !== 'function'
+        ) {
+            throw new Error('Arguments are invalid');
+        }
 
         var chartTemplate = chartTemplates[name];
 
-        if (chartTemplate) {
-            chartTemplate.test(chartOptions, testCallback, finishCallback);
-            return;
+        if (!chartTemplate) {
+            throw new Error('Template "' + name + '" is not registered');
         }
 
-        var loadingTimeout = null,
-            templateScript = global.document.createElement('script');
+        chartOptions = (chartOptions || {});
 
-        templateScript.onload = function () {
-            global.clearTimeout(loadingTimeout);
-            ChartTemplate.test(
-                name,
-                chartOptions,
-                testCallback,
-                finishCallback
+        if (!(chartTemplate instanceof ChartTemplate)) {
+            chartTemplates[name] = new ChartTemplate(
+                chartTemplate.name,
+                chartTemplate.chartConstructor,
+                chartTemplate.chartOptions
             );
-        };
+            chartTemplate = chartTemplates[name];
+        }
 
-        loadingTimeout = global.setTimeout(function () {
-            global.document.body.removeChild(templateScript);
-            throw new Error(
-                'Preparing chart template "' + name +
-                '" resulted in a timeout during loading.'
-            );
-        }, 2000);
-
-        templateScript.src = '/base/test/templates/' + name + '.js';
-
-        global.document.body.appendChild(templateScript);
+        chartTemplate.test(chartOptions, testCallback);
 
     };
 
     /**
-     * Registers a chart template for addition
+     * Registers a chart template for additional tests
      *
-     * @param {ChartTemplate} chartTemplate
-     * The chart template to register
+     * @param {string} name
+     * The reference name of the chart
+     *
+     * @param {Highcharts.Chart} chartConstructor
+     * The chart constructor function for the template
+     *
+     * @param {object} chartOptions
+     * The default chart Options for the template
      *
      * @return {void}
      */
-    ChartTemplate.register = function (chartTemplate) {
-        if (!(chartTemplate instanceof global.ChartTemplate)) {
-            return;
+    ChartTemplate.register = function (name, chartConstructor, chartOptions) {
+
+        if (typeof name !== 'string' ||
+            typeof chartConstructor !== 'function' ||
+            typeof chartOptions !== 'object'
+        ) {
+            throw new Error('Arguments are invalid');
         }
-        if (chartTemplates[chartTemplate.name]) {
-            throw new Error('Chart template already registered.');
-        } else {
-            chartTemplates[chartTemplate.name] = chartTemplate;
+
+        if (chartTemplates[name]) {
+            throw new Error('Chart template already registered');
         }
+
+        chartTemplates[name] = {
+            name,
+            chartConstructor,
+            chartOptions
+        };
+
     };
 
     /* *
