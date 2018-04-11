@@ -1427,7 +1427,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             });
         }
 
-        fireEvent(chart, 'afterSetChartSize');
+        fireEvent(chart, 'afterSetChartSize', { skipAxes: skipAxes });
     },
 
     /**

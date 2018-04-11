@@ -6,6 +6,12 @@ $.ajax({
     success: function (csv) {
         Highcharts.chart('container', {
 
+            chart: {
+                scrollablePlotArea: {
+                    minWidth: 700
+                }
+            },
+
             data: {
                 csv: csv.replace(/\n\n/g, '\n')
             },
