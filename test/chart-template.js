@@ -132,65 +132,74 @@
          *
          * @type {string}
          */
+        chart.template = name;
+        /* //
         Object.defineProperty(chart, 'template', {
             configurable: false,
             enumerable: true,
             get: function () {
                 return name;
             }
-        });
+        }); // */
 
         /**
          * The chart instance of the chart template
          *
          * @type {Highcharts.Chart}
          */
+        this.chart = chart;
+        /* //
         Object.defineProperty(this, 'chart', {
             configurable: false,
             enumerable: true,
             get: function () {
                 return chart;
             }
-        });
+        }); // */
 
         /**
          * The name of the chart template
          *
          * @type {string}
          */
+        this.name = name;
+        /* //
         Object.defineProperty(this, 'name', {
             configurable: false,
             enumerable: true,
             get: function () {
                 return name;
             }
-        });
+        }); // */
 
         /**
          * The state of the chart template
          *
          * @type {boolean}
          */
+        this.ready = true;
+        /* //
         Object.defineProperty(this, 'ready', {
             configurable: false,
             enumerable: true,
-            get: function () {
-                return (testCases.length > 0);
-            }
-        });
+            value: true,
+            writeable: true
+        }); // */
 
         /**
          * The queue of waiting test cases for the chart template
          *
          * @type {Array<Object>}
          */
+        this.testCases = testCases;
+        /* //
         Object.defineProperty(this, 'testCases', {
             configurable: false,
             enumerable: true,
             get: function () {
                 return testCases;
             }
-        });
+        }); // */
 
     }
 
@@ -363,13 +372,15 @@
      *
      * @type {Array<ChartTemplate>}
      */
+    ChartTemplate.templates = chartTemplates;
+    /* //
     Object.defineProperty(ChartTemplate, 'templates', {
         configurable: false,
         enumerable: true,
         get: function () {
             return chartTemplates;
         }
-    });
+    }); // */
 
     /* *
      *
@@ -377,16 +388,19 @@
      *
      * */
 
-    // Prevent changes to ChartTemplate properties
+    global.ChartTemplate = ChartTemplate;
+
+    /* // Prevent changes to ChartTemplate properties
     Object.freeze(ChartTemplate);
     Object.freeze(ChartTemplate.prototype);
+    // */
 
-    // Publish ChartTemplate in global scope
+    /* // Publish ChartTemplate in global scope
     Object.defineProperty(global, 'ChartTemplate', {
         configurable: false,
         enumerable: true,
         value: ChartTemplate,
         writable: false
-    });
+    }); // */
 
 }(this));
