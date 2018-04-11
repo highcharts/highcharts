@@ -974,7 +974,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             for (n in proto) {
                 series[n] = undefined;
             }
-            extend(series, seriesTypes[newType || oldType].prototype);
+            if (seriesTypes[newType || oldType]) {
+                extend(series, seriesTypes[newType || oldType].prototype);
+            } else {
+                H.error(17, true);
+            }
 
             // Re-register groups (#3094) and other preserved properties
             each(preserve, function (prop) {
