@@ -30,7 +30,8 @@ var each = H.each,
  * @excluding    animationLimit,boostThreshold,connectEnds,connectNulls,
  *               cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
  *               marker,negativeColor,pointPlacement,shadow,softThreshold,
- *               stacking,states,step,threshold,turboThreshold,zoneAxis,zones
+ *               stacking,states,step,threshold,turboThreshold,xAxis,zoneAxis,
+ *               zones
  * @product      highcharts
  * @optionparent plotOptions.gauge
  */
