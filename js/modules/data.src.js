@@ -43,8 +43,17 @@ var addEvent = Highcharts.addEvent,
  * @sample {highcharts} highcharts/demo/column-parsed/ HTML table
  * @sample {highcharts} highcharts/data/csv/ CSV
  * @since 4.0
- * @product highcharts
  * @apioption data
+ */
+
+/**
+ * A callback function to modify the CSV before parsing it. Return the modified
+ * string.
+ *
+ * @type {Function}
+ * @sample {highcharts} highcharts/demo/line-ajax/ Modify CSV before parse
+ * @since 6.1
+ * @apioption data.beforeParse
  */
 
 /**
@@ -58,7 +67,6 @@ var addEvent = Highcharts.addEvent,
  * @see [data.rows](#data.rows)
  * @sample {highcharts} highcharts/data/columns/ Columns
  * @since 4.0
- * @product highcharts
  * @apioption data.columns
  */
 
@@ -73,7 +81,6 @@ var addEvent = Highcharts.addEvent,
  * @see [data.parsed](#data.parsed)
  * @sample {highcharts} highcharts/data/complete/ Modify data on complete
  * @since 4.0
- * @product highcharts
  * @apioption data.complete
  */
 
@@ -93,7 +100,6 @@ var addEvent = Highcharts.addEvent,
  * @type {String}
  * @sample {highcharts} highcharts/data/csv/ Data from CSV
  * @since 4.0
- * @product highcharts
  * @apioption data.csv
  */
 
@@ -116,7 +122,6 @@ var addEvent = Highcharts.addEvent,
  * @see [data.parseDate](#data.parseDate)
  * @sample {highcharts} highcharts/data/dateformat-auto/ Best guess date format
  * @since 4.0
- * @product highcharts
  * @apioption data.dateFormat
  */
 
@@ -130,7 +135,6 @@ var addEvent = Highcharts.addEvent,
  * @sample {highcharts} highcharts/data/delimiters/ Comma as decimal point
  * @default .
  * @since 4.1.0
- * @product highcharts
  * @apioption data.decimalPoint
  */
 
@@ -141,7 +145,6 @@ var addEvent = Highcharts.addEvent,
  * @type {Number}
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @since 4.0
- * @product highcharts
  * @apioption data.endColumn
  */
 
@@ -152,7 +155,6 @@ var addEvent = Highcharts.addEvent,
  * @type {Number}
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @since 4.0.4
- * @product highcharts
  * @apioption data.endRow
  */
 
@@ -178,7 +180,6 @@ var addEvent = Highcharts.addEvent,
  * @sample highcharts/data/livedata-spreadsheet
  *         Live data with polling
  * @since 4.0
- * @product highcharts
  * @apioption data.googleSpreadsheetKey
  */
 
@@ -190,7 +191,6 @@ var addEvent = Highcharts.addEvent,
  * @type {String}
  * @sample {highcharts} highcharts/data/google-spreadsheet/ Load a Google Spreadsheet
  * @since 4.0
- * @product highcharts
  * @apioption data.googleSpreadsheetWorksheet
  */
 
@@ -205,7 +205,6 @@ var addEvent = Highcharts.addEvent,
  * @type {String}
  * @sample {highcharts} highcharts/data/delimiters/ Delimiters
  * @since 4.0
- * @product highcharts
  * @apioption data.itemDelimiter
  */
 
@@ -216,7 +215,6 @@ var addEvent = Highcharts.addEvent,
  * @sample {highcharts} highcharts/data/delimiters/ Delimiters
  * @default \n
  * @since 4.0
- * @product highcharts
  * @apioption data.lineDelimiter
  */
 
@@ -227,7 +225,6 @@ var addEvent = Highcharts.addEvent,
  * @type {Function}
  * @see [dateFormat](#data.dateFormat)
  * @since 4.0
- * @product highcharts
  * @apioption data.parseDate
  */
 
@@ -241,7 +238,6 @@ var addEvent = Highcharts.addEvent,
  * @see [data.complete](#data.complete)
  * @sample {highcharts} highcharts/data/parsed/ Modify data after parse
  * @since 4.0
- * @product highcharts
  * @apioption data.parsed
  */
 
@@ -253,7 +249,6 @@ var addEvent = Highcharts.addEvent,
  * @see [data.columns](#data.columns)
  * @sample {highcharts} highcharts/data/rows/ Data in rows
  * @since 4.0
- * @product highcharts
  * @apioption data.rows
  */
 
@@ -264,7 +259,6 @@ var addEvent = Highcharts.addEvent,
  * @type {Array<Object>}
  * @sample {highcharts} highcharts/data/seriesmapping-label/ Label from data set
  * @since 4.0.4
- * @product highcharts
  * @apioption data.seriesMapping
  */
 
@@ -275,7 +269,6 @@ var addEvent = Highcharts.addEvent,
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @default 0
  * @since 4.0
- * @product highcharts
  * @apioption data.startColumn
  */
 
@@ -286,7 +279,6 @@ var addEvent = Highcharts.addEvent,
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @default 0
  * @since 4.0
- * @product highcharts
  * @apioption data.startRow
  */
 
@@ -299,7 +291,6 @@ var addEvent = Highcharts.addEvent,
  * @sample {highcharts} highcharts/data/switchrowsandcolumns/ Switch rows and columns
  * @default false
  * @since 4.0
- * @product highcharts
  * @apioption data.switchRowsAndColumns
  */
 
@@ -311,7 +302,6 @@ var addEvent = Highcharts.addEvent,
  * @type {String|HTMLElement}
  * @sample {highcharts} highcharts/demo/column-parsed/ Parsed table
  * @since 4.0
- * @product highcharts
  * @apioption data.table
  */
 
@@ -1006,6 +996,10 @@ Highcharts.extend(Data.prototype, {
          */
         function deduceAxisTypes() {
 
+        }
+
+        if (csv && options.beforeParse) {
+            csv = options.beforeParse.call(this, csv);
         }
 
         if (csv) {
