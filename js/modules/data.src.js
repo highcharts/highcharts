@@ -177,8 +177,6 @@ var addEvent = Highcharts.addEvent,
  * @type {String}
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
- * @sample highcharts/data/livedata-spreadsheet
- *         Live data with polling
  * @since 4.0
  * @apioption data.googleSpreadsheetKey
  */
