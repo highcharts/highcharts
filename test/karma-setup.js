@@ -103,7 +103,7 @@ QUnit.module('Highcharts', {
         }
 
         Highcharts.charts.length = 0;
-        Array.prototype.push.call(Highcharts.charts, templateCharts);
+        Array.prototype.push.apply(Highcharts.charts, templateCharts);
     }
 });
 
