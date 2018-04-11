@@ -252,7 +252,7 @@
                     removeUpdate = attachUpdate(chart, originalOptions);
 
                 try {
-                    chart.update(testCase.chartOptions, true, true);
+                    chart.update(testCase.chartOptions, true, true, false);
                     testCase.testCallback(this);
                 } finally {
                     removeUpdate();
@@ -261,11 +261,7 @@
                             originalOption = originalOptions.pop()
                         ) !== 'undefined'
                     ) {
-                        chart.update(
-                            originalOption,
-                            false,
-                            true
-                        );
+                        chart.update(originalOption, false, true, false);
                     }
                 }
 
