@@ -841,19 +841,24 @@ Highcharts.Chart.prototype.openInCloud = function () {
         });
     }
 
-    function openInCloud(data, direct) {
-        // Open new tab
-        var a = doc.createElement('a');
-        a.href = 'https://cloud.highcharts.com/create?' +
-            (direct ? 'c' : 'q') + '=' + data;
-        a.target = '_blank';
-        doc.body.appendChild(a);
-        a.click();
-        doc.body.removeChild(a);
+    function openInCloud() {
+        var form = doc.createElement('form');
+        doc.body.appendChild(form);
+        form.method = 'post';
+        form.action = 'https://cloud-api.highcharts.com/openincloud';
+        form.target = '_blank';
+        var input = doc.createElement('input');
+        input.type = 'hidden';
+        input.name = 'chart';
+        input.value = params;
+        form.appendChild(input);
+        form.submit();
+        doc.body.removeChild(form);
     }
 
     options = Highcharts.merge(this.userOptions);
     removeFunctions(options);
+
     paramObj = {
         name: (options.title && options.title.text) || 'Chart title',
         options: options,
@@ -866,24 +871,7 @@ Highcharts.Chart.prototype.openInCloud = function () {
     };
 
     params = JSON.stringify(paramObj);
-    params = win.btoa(encodeURIComponent(params));
-
-    if (params.length < 2500) {
-        // We can skip the storage and just open it directly
-        return openInCloud(params, true);
-    }
-
-    Highcharts.ajax({
-        url: 'https://cloud-api.highcharts.com/openincloud',
-        type: 'post',
-        dataType: 'json',
-        data: paramObj,
-        success: function (result) {
-            if (result && result.ok && result.id) {
-                openInCloud(result.id);
-            }
-        }
-    });
+    openInCloud();
 };
 
 // Add "Download CSV" to the exporting menu.
