@@ -1050,7 +1050,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
         this.destroy(true);
 
-        this.init(chart, extend(options, { events: undefined }));
+        this.init(chart, options);
 
         chart.isDirtyBox = true;
         if (pick(redraw, true)) {
