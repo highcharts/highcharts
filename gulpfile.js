@@ -69,6 +69,11 @@ const styles = () => {
     });
 };
 
+gulp.task('compileTheme', () => {
+    const args = process.argv;
+    compileSingleStyle(args[args.length - 1]);
+});
+
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
  * @parameter {string} -p Command line parameter to set pattern. To lint sample
