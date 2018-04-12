@@ -14,8 +14,8 @@ QUnit.test('Spline zones out of range', function (assert) {
             series: [{
                 type: 'spline',
                 data: [-4, -3, -2, -3, -2, -4],
-                color: '#00F', // setup default zones
-                negativeColor: '#F00', // setup default zones
+                color: '#00f', // setup default zones
+                negativeColor: '#f00', // setup default zones
                 threshold: 0
             }]
         }),
@@ -23,19 +23,19 @@ QUnit.test('Spline zones out of range', function (assert) {
 
     assert.strictEqual(
         series.data[0].graphic.element.getAttribute('fill'),
-        '#F00',
+        '#f00',
         'Point color should be red.'
     );
 
     assert.strictEqual(
         series.data[2].graphic.element.getAttribute('fill'),
-        '#F00',
+        '#f00',
         'Point color should be red.'
     );
 
     assert.strictEqual(
         series.data[5].graphic.element.getAttribute('fill'),
-        '#F00',
+        '#f00',
         'Point color should be red.'
     );
 
