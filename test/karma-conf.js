@@ -148,7 +148,7 @@ const browserStackBrowsers = {
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: '15.0',
+        browser_version: '16.0',
         os: 'Windows',
         os_version: '10'
     },
