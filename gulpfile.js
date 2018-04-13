@@ -423,10 +423,16 @@ const compile = (files, sourceFolder) => {
  */
 const compileScripts = () => {
     const sourceFolder = './code/';
-    const files = getFilesInFolder(sourceFolder, true, '')
-        // Compile all files ending with .src.js.
-        // Do not compile files in ./es-modules or ./js/es-modules.
-      .filter(path => (path.endsWith('.src.js') && !path.includes('es-modules')));
+    // Compile all files ending with .src.js.
+    // Do not compile files in ./es-modules or ./js/es-modules.
+    const isSourceFile = (path) => (
+        path.endsWith('.src.js') && !path.includes('es-modules')
+    );
+    const files = (
+        (argv.file) ?
+        argv.file.split(',') :
+        getFilesInFolder(sourceFolder, true, '').filter(isSourceFile)
+    );
     return compile(files, sourceFolder);
 };
 
