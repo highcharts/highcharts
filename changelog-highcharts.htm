@@ -1,6 +1,20 @@
-<p>Highcharts 6.0.7 (2018-02-16)</p>
+<p>Highcharts 6.1.0 (2018-04-13)</p>
 <ul>
-    <li>Added internationalization support for the accessibility module. See <a href="https://api.highcharts.com/highcharts/lang.accessibility">lang.accessibility</a>.</li>
+    <li>Added feature for loading data directly from a <a href="https://api.highcharts.com/highcharts/data.csvURL">CSV URL</a> or JSON resource, and keeping it dynamically updated through the <a href="https://api.highcharts.com/highcharts/data.enablePolling">data.enablePolling</a> option.</li>
+    <li>Added examples of themes with styled mode: dark-unica, sand-signika, grid-light.</li>
+    <li>Added feature to animate the series when updating data through <code>Series.setData</code>, <code>Series.update</code> or <code>Chart.update</code>. The new logic looks for matching X values and can be disabled through <code>setData's</code> <code>updatePoints</code> option.</li>
+    <li>Added <em>Open in Cloud</em> functionality in the export-data module.</li>
+    <li>Added pattern fill module.</li>
+    <li>Added new feature, <a href="https://api.highcharts.com/highcharts/chart.scrollablePlotArea">chart.scrollablePlotArea</a>, to provide smooth scrolling of data on small devices.</li>
+    <li>Added <code>animation</code> parameter to <code>Chart.update</code>.</li>
+    <li>Added default max-width for pie data labels to avoid long labels squeezing the pie itself.</li>    
+    <li>Added new option, <a href="https://api.highcharts.com/highcharts/data.beforeParse">data.beforeParse</a>, to allow modifying the CSV when using the <code>data.csvURL</code> option.</li>
+    <li>Added new option, <a href="https://api.highcharts.com/highcharts/legend.alignColumns">legend.alignColumns</a>, providing better default layout for multiline horizontal legends.</li>
+    <li>Added support for <code>Infinity</code> and <code>-Infinity</code> values for <a 
+    href="https://api.highcharts.com/highcharts/plotOptions.area.threshold">plotOptions.area.threshold</a>, to make the area extend towards either Y axis extreme. Closes <a href="https://github.com/highcharts/highcharts/issues/8139">#8139</a>.</li>
+    <li>Added support for nested <a href="https://api.highcharts.com/highcharts/series.keys">series.keys</a>.</li>
+    <li>Added options <code>minFontSize</code> and <code>maxFontSize</code> to Wordcloud.</li>
+                    
 </ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
@@ -14,21 +28,55 @@
         <div id="6-0-7-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/150">#150</a>, grid lines did not always align to plot border and to other axis' grid lines.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/1813">#1813</a>, graphs and areas were not clipped when exceeding perimeter in polar charts.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7191">#7191</a>, level options was applied to wrong level in treemap when <code>levelIsConstant</code> is false.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7729">#7729</a>, <code>highcharts-more.js</code> couldn't be included multiple times without errors.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7787">#7787</a>, a regression causing incorrect title alignment when useHTML was enabled in v6.0.5.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7800">#7800</a>, error on hovering points in IE11 + compatibility mode.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7806">#7806</a>, API reference had a wrong extend for bullet's targetOptions.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7812">#7812</a>, a regression causing wrong initial position of text with <code>useHTML</code>.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7814">#7814</a>, multiline axis title didn't reflow to chart resize.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7817">#7817</a>, regression with categories in drilldown. Point names were not properly purged from Axis.names array.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7825">#7825</a>, histogram threw error if the base series had equaled values.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7826">#7826</a>, annotations were hidden if the points had disabled markers.</li>
-                    reference description for chart.options3d.frame.bottom.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7850">#7850</a>, legacy IE event for <code>onContainerMouseDown</code> wasn't provided properly.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7854">#7854</a>, accessibility of datetime charts.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7792">#7792</a> <a href="https://github.com/highcharts/highcharts/issues/7791">#7791</a>, 
+                    inverted charts not clipping correctly in Boost.</li>
+                    <li>Added max distance to the label distribution function, so pie data labels and flags are not drawn too far away from the anchor point.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/4881">#4881</a>, data labels with <code>useHTML</code> caused recursion error in Firefox on Windows.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7026">#7026</a>, export-data did not work when the boost module was active.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7103">#7103</a>, dataLabels not cropped outside extremes.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7186">#7186</a>, added new build script to dist task. Build and includes es-modules in distribution.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7362">#7362</a>, dataLabels were overlapping when rotation was set.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7383">#7383</a>, SVG title tag not configurable.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7491">#7491</a>, missing words in Wordcloud because of too small playing field.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7604">#7604</a>, axes ticks were wrongly aligned when startOnTick or endOnTick were set to alse.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7639">#7639</a>, wrong extremes after repeated zoom in scatter charts.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7798">#7798</a>, stack labels weren't correctly positioned with multiple yAxis</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7850">#7850</a>, legacy IE wasn't getting classes of DOM elements correctly.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7857">#7857</a>, panning was not working when xAxis was reversed.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7862">#7862</a>, connector lines were not visible in waterfall series when negativeColor was used.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7874">#7874</a>, wrong legend item positions when using HTML after setting chart size.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7894">#7894</a>, <a href="https://api.highcharts.com/highcharts/legend.verticalAlign">legend.verticalAlign</a> <code>top</code> failed with no chart title.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7896">#7896</a>, streamgraph rendering and tooltip issues with single series.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7898">#7898</a>, drillup button with long text was not correctly aligned after multi-level drilldown.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7906">#7906</a>, error in gauge chart if no <a href="https://api.highcharts.com/highcharts/yAxis.labels">yAxis.labels</a> config was provided in styled mode.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7931">#7931</a>, error in series-label module when animating while chart was destroyed.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7933">#7933</a>, setting <code>startPoint</code> dynamically failed when data set was empty initially.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7942">#7942</a>, yAxis ticks and title had wrong positions after toggling series visibility.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7957">#7957</a>, custom buttons in exporting didn't rescale image symbols.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7965">#7965</a>, could not toggle the <a href="https://api.highcharts.com/highcharts/chart.reflow">chart.reflow</a> option dynamically with <code>chart.update()</code>.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7968">#7968</a>, a regression causing  ellipsis setting <a href="https://api.highcharts.com/highcharts/xAxis.labels.style">xAxis.labels.style</a> not to work.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7975">#7975</a>, long pie chart data labels were not correctly truncated, and could not be disabled.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7986">#7986</a>, invalid exported CSS when using comma item delimiter and best-guess decimal point in European locales.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7991">#7991</a>, treemap had wrong root on export.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7996">#7996</a>, polar chart with particular  values was rendered wrong.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8008">#8008</a>, drilldown data points set as arrays with keys failed.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8014">#8014</a>, <code>Chart.setTitle</code> didn't result in legend position updating.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8060">#8060</a>, markers flickering after <code>setData()</code> when redraw was deferred.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8073">#8073</a>, animation of graph with center step was distorted.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8075">#8075</a>, adding and removing axes dynamically caused redraw error.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8083">#8083</a>, wrong crosshair width and position for variwide chart.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8092">#8092</a>, <a href="https://api.highcharts.com/highcharts/plotOptions.bubble.sizeByAbsoluteValue">plotOptions.bubble.sizeByAbsoluteValue</a> did not render bubbles when z-values were very close.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8100">#8100</a>, arearange markers did not correctly support negativeColor and zones.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8101">#8101</a>, wrong decimal separator in tooltip with multiple values.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8104">#8104</a>, selected state attributes for a point were not applied in xrange series.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8106">#8106</a>, context was not preserved inside lin2log and log2lin axis functions.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8119">#8119</a>, point class name was not applied to the halo and connector.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8129">#8129</a>, yAxis with <code>tickPixelInterval=1</code> rendered tick close to zero instead of zero.</li>
+                    <li>Fixed Series.update to support soft series name without recreating series.</li>
+                    <li>Fixed data module failing to initialize chart when the data config was empty.</li>
+                    <li>Fixed errors in plugins when destroying a chart from its own callback.</li>
+                    <li>Fixed issue with legend navigation sometimes not focusing for single legend item charts.</li>
+                    <li>Fixed issues with resizing points with autocalculated pattern dimensions.</li>
                     
                 </ul>
             </div>
