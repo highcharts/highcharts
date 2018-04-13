@@ -1420,10 +1420,11 @@ function GLRenderer(postRenderCallback) {
             color,
             scolor,
             sdata = isStacked ? series.data : (xData || rawData),
-            closestLeft = { x: -Number.MAX_VALUE, y: 0 },
-            closestRight = { x: Number.MIN_VALUE, y: 0 },
+            closestLeft = { x: Number.MAX_VALUE, y: 0 },
+            closestRight = { x: -Number.MAX_VALUE, y: 0 },
 
             skipped = 0,
+            hadPoints = false,
 
             cullXThreshold = 1,
             cullYThreshold = 1,
@@ -1754,7 +1755,7 @@ function GLRenderer(postRenderCallback) {
                 closestRight.y = y;
             }
 
-            if (x < xMin && closestLeft.x < xMin) {
+            if (x < xMin && closestLeft.x > xMin) {
                 closestLeft.x = x;
                 closestLeft.y = y;
             }
@@ -1889,13 +1890,15 @@ function GLRenderer(postRenderCallback) {
 
             lastX = x;
             lastY = y;
+
+            hadPoints = true;
         }
 
         if (settings.debug.showSkipSummary) {
             console.log('skipped points:', skipped); // eslint-disable-line no-console
         }
 
-        function pushSupplementPoint(point) {
+        function pushSupplementPoint(point, atStart) {
             if (!settings.useGPUTranslations) {
                 inst.skipTranslation = true;
                 point.x = xAxis.toPixels(point.x, true);
@@ -1905,6 +1908,11 @@ function GLRenderer(postRenderCallback) {
             // We should only do this for lines, and we should ignore markers
             // since there's no point here that would have a marker.
 
+            if (atStart) {
+                data = [point.x, point.y, 0, 2].concat(data);
+                return;
+            }
+
             vertice(
                 point.x,
                 point.y,
@@ -1913,13 +1921,19 @@ function GLRenderer(postRenderCallback) {
             );
         }
 
-        if (!lastX &&
+        if (
+            !hadPoints &&
             connectNulls !== false &&
-            closestLeft > -Number.MAX_VALUE &&
-            closestRight < Number.MAX_VALUE) {
-            // There are no points within the selected range
-            pushSupplementPoint(closestLeft);
-            pushSupplementPoint(closestRight);
+            series.drawMode === 'line_strip'
+        ) {
+            if (closestLeft.x < Number.MAX_VALUE) {
+                // We actually need to push this *before* the complete buffer.
+                pushSupplementPoint(closestLeft, true);
+            }
+
+            if (closestRight.x > -Number.MAX_VALUE) {
+                pushSupplementPoint(closestRight);
+            }
         }
 
         closeSegment();
@@ -2117,6 +2131,13 @@ function GLRenderer(postRenderCallback) {
                     (s.series.pointAttribs && s.series.pointAttribs().fill) ||
                     s.series.color,
                 color;
+
+            if (
+                s.segments.length === 0 ||
+                s.segments[0].from === s.segments[0].to
+            ) {
+                return;
+            }
 
             if (s.series.fillOpacity && options.fillOpacity) {
                 fillColor = new Color(fillColor).setOpacity(
