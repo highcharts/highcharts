@@ -21,6 +21,7 @@ var ZAxis,
     extend = H.extend,
     merge = H.merge,
     perspective = H.perspective,
+    perspective3D = H.perspective3D,
     pick = H.pick,
     shapeArea = H.shapeArea,
     splat = H.splat,
@@ -572,4 +573,53 @@ addEvent(Chart, 'afterGetAxes', function () {
         var zAxis = new ZAxis(chart, axisOptions);
         zAxis.setScale();
     });
+});
+/**
+ * Wrap getSlotWidth function to calculate individual width value
+ * for each slot (#8042).
+ */
+wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
+    if (this.chart.is3d() &&
+        tick &&
+        tick.label &&
+        this.categories
+    ) {
+        var chart = this.chart,
+            ticks = this.ticks,
+            gridBBox = this.gridGroup.element.getBBox(),
+            options3d = chart.options.chart.options3d,
+            origin = {
+                x: chart.plotWidth / 2,
+                y: chart.plotHeight / 2,
+                z: options3d.depth / 2,
+                vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
+            },
+            labelPos,
+            prevLabelPos,
+            tickId = tick.pos,
+            prevTick = ticks[tickId - 1];
+
+        // Check whether the tick is not the first one and previous tick exists,
+        // then calculate position of previous label.
+        if (tickId !== 0 && prevTick) {
+            prevLabelPos = perspective3D({
+                x: prevTick.label.xy.x,
+                y: prevTick.label.xy.y,
+                z: null
+            }, origin, origin.vd);
+        }
+        labelPos = {
+            x: tick.label.xy.x,
+            y: tick.label.xy.y,
+            z: null
+        };
+
+        labelPos = perspective3D(labelPos, origin, origin.vd);
+
+        // If tick is first, return difference between the label position
+        // and first grid line.
+        return prevLabelPos ?
+            labelPos.x - prevLabelPos.x : gridBBox.x - labelPos.x;
+    }
+    return proceed.apply(this, [].slice.call(arguments, 1));
 });
