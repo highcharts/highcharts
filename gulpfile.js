@@ -387,11 +387,24 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
             reject(msg);
         } else {
             writeFile(outputPath, out.compiledCode);
+            let filesize = fs.statSync(outputPath).size;
+            let filesizeKb = (filesize / 1000).toFixed(2) + ' kB';
+
+            if (filesize < 10) {
+                const msg = 'Compiled ' + sourcePath + ' => ' + outputPath +
+                    ', filesize suspiciously small (' + filesizeKb + ')';
+                console.log(msg.red);
+                reject(msg);
+                return;
+            }
+
             if (createSourceMap) {
                 writeFile(outputPath + '.map', out.sourceMap);
             }
-            // @todo add filesize information
-            console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
+            console.log(
+                ('Compiled ' + sourcePath + ' => ' + outputPath).green +
+                (' (' + filesizeKb + ')').gray
+            );
             resolve();
         }
     });
