@@ -20,6 +20,7 @@ const {
     scripts,
     getBuildScripts
 } = require('./tools/build.js');
+const compile = require('./tools/compile.js').compile;
 
 /**
  * Creates a set of ES6-modules which is distributable.
@@ -355,67 +356,6 @@ const generateClassReferences = ({ templateDir, destination }) => {
                 }
             }));
     });
-};
-
-const compileSingleFile = (path, sourceFolder, createSourceMap) => {
-    const closureCompiler = require('google-closure-compiler-js');
-    const sourcePath = sourceFolder + path;
-    const outputPath = sourcePath.replace('.src.js', '.js');
-    const src = getFile(sourcePath);
-    const getErrorMessage = (e) => {
-        return [
-            'Compile error in file: ' + path,
-            '- Type: ' + e.type,
-            '- Line: ' + e.lineNo,
-            '- Char : ' + e.charNo,
-            '- Description: ' + e.description
-        ].join('\n');
-    };
-    return new Promise((resolve, reject) => {
-        const out = closureCompiler.compile({
-            compilationLevel: 'SIMPLE_OPTIMIZATIONS',
-            jsCode: [{
-                src: src
-            }],
-            languageIn: 'ES5',
-            languageOut: 'ES5',
-            createSourceMap: createSourceMap
-        });
-        const errors = out.errors;
-        if (errors.length) {
-            const msg = errors.map(getErrorMessage).join('\n');
-            reject(msg);
-        } else {
-            writeFile(outputPath, out.compiledCode);
-            let filesize = fs.statSync(outputPath).size;
-            let filesizeKb = (filesize / 1000).toFixed(2) + ' kB';
-
-            if (filesize < 10) {
-                const msg = 'Compiled ' + sourcePath + ' => ' + outputPath +
-                    ', filesize suspiciously small (' + filesizeKb + ')';
-                console.log(msg.red);
-                reject(msg);
-                return;
-            }
-
-            if (createSourceMap) {
-                writeFile(outputPath + '.map', out.sourceMap);
-            }
-            console.log(
-                ('Compiled ' + sourcePath + ' => ' + outputPath).green +
-                (' (' + filesizeKb + ')').gray
-            );
-            resolve();
-        }
-    });
-};
-
-const compile = (files, sourceFolder) => {
-    console.log(colors.yellow('Warning: This task may take a few minutes.'));
-    const createSourceMap = true;
-    const promises = files
-      .map(path => compileSingleFile(path, sourceFolder, createSourceMap));
-    return Promise.all(promises);
 };
 
 /**
