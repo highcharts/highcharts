@@ -1034,7 +1034,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample highcharts/members/axis-update/ Axis update demo
      */
     update: function (options, redraw) {
-        var chart = this.chart;
+        var chart = this.chart,
+            newEvents = (options.events || {});
 
         options = merge(this.userOptions, options);
 
@@ -1048,9 +1049,15 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             ] = options;
         }
 
-        this.destroy(true);
+        // Remove old events, if no new exist (#8161)
+        objectEach(chart.options[this.coll].events, function (fn, ev) {
+            if (typeof newEvents[ev] === 'undefined') {
+                newEvents[ev] = undefined;
+            }
+        });
 
-        this.init(chart, options);
+        this.destroy(true);
+        this.init(chart, extend(options, { events: newEvents }));
 
         chart.isDirtyBox = true;
         if (pick(redraw, true)) {
