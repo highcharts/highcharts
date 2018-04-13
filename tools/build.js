@@ -231,7 +231,7 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
         fileOptions,
         version
     } = options;
-    buildDistFromModules({
+    return buildDistFromModules({
         base: pathESMasters,
         debug: debug,
         fileOptions: fileOptions,
@@ -259,10 +259,10 @@ const fnFirstBuild = (options) => {
         output: pathESModules,
         type: types
     });
-    types.forEach((type) => {
+    const promises = types.map((type) => {
         const pathSource = mapTypeToSource[type];
         const pathESMasters = join(pathSource, 'masters');
-        buildDistFromModules({
+        return buildDistFromModules({
             base: pathESMasters,
             debug: debug,
             fileOptions: fileOptions,
@@ -272,6 +272,7 @@ const fnFirstBuild = (options) => {
             version: version
         });
     });
+    return Promise.all(promises);
 };
 
 const getBuildScripts = (params) => {
@@ -303,7 +304,7 @@ const getBuildScripts = (params) => {
                 fileOptions,
                 pathSource
             );
-            watchESModules(
+            return watchESModules(
                 event,
                 options,
                 type,
