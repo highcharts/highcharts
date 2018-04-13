@@ -361,7 +361,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
 /**
  * Compile the JS files in the /code folder
  */
-const compileScripts = () => {
+const compileScripts = (args = {}) => {
     const sourceFolder = './code/';
     // Compile all files ending with .src.js.
     // Do not compile files in ./es-modules or ./js/es-modules.
@@ -369,8 +369,8 @@ const compileScripts = () => {
         path.endsWith('.src.js') && !path.includes('es-modules')
     );
     const files = (
-        (argv.file) ?
-        argv.file.split(',') :
+        (args.files) ?
+        args.files :
         getFilesInFolder(sourceFolder, true, '').filter(isSourceFile)
     );
     return compile(files, sourceFolder);
@@ -1333,7 +1333,31 @@ gulp.task('scripts', () => {
 gulp.task('build-modules', buildESModules);
 gulp.task('lint', lint);
 gulp.task('lint-samples', lintSamples);
-gulp.task('compile', compileScripts);
+gulp.task('compile', () => {
+    const messages = {
+        usage: 'Run "gulp compile --help" for information on usage.',
+        help: [
+            '',
+            'Usage: gulp compile [OPTIONS]',
+            '',
+            'Options:',
+            '    --file: Specify a list of files to compile. Files are comma separated e.g "file1,file2".',
+            '    --help: Displays help information.',
+            ''
+        ].join('\n')
+    };
+    let promise = Promise.resolve();
+    if (argv.help) {
+        console.log(messages.help);
+    } else {
+        const files = (argv.file) ? argv.file.split(',') : null;
+        console.log(messages.usage);
+        promise = compileScripts({
+            files
+        });
+    }
+    return promise;
+});
 gulp.task('compile-lib', compileLib);
 gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
 gulp.task('examples', createAllExamples);
