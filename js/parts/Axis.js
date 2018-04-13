@@ -3959,6 +3959,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * rendering and placement.
      *
      * @private
+     *
+     * @param  {Object} tick Optionally, calculate the slot width basing on
+     * tick label. It is used in highcharts-3d module, where the slots has
+     * different widths depending on perspective angles.
+     *
      * @return {Number}
      *         The pixel width allocated to each axis label.
      */
