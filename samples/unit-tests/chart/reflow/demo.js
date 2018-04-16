@@ -10,7 +10,7 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
 
     try {
 
-        clock = lolexInstall();
+        clock = TestUtilities.lolexInstall();
 
         var done = assert.async();
 
@@ -153,11 +153,11 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
 
         }, 400);
 
-        lolexRunAndUninstall(clock);
+        TestUtilities.lolexRunAndUninstall(clock);
 
     } finally {
 
-        lolexUninstall(clock);
+        TestUtilities.lolexUninstall(clock);
 
     }
 

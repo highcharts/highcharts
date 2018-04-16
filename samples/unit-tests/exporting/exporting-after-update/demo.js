@@ -8,11 +8,9 @@ QUnit.test('#6007 - exporting after chart.update()', function (assert) {
             }]
         });
 
-    var clock = null;
+    var clock = TestUtilities.lolexInstall();
 
     try {
-
-        clock = lolexInstall();
 
         var done = assert.async();
 
@@ -39,11 +37,11 @@ QUnit.test('#6007 - exporting after chart.update()', function (assert) {
             done();
         }, 1);
 
-        lolexRunAndUninstall(clock);
+        TestUtilities.lolexRunAndUninstall(clock);
 
     } finally {
 
-        lolexUninstall(clock);
+        TestUtilities.lolexUninstall(clock);
 
     }
 

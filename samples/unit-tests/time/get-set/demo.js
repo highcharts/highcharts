@@ -1,11 +1,8 @@
-(function () {
-    var isCET = (
-        new Date().toString().indexOf('CET') !== -1 ||
-        new Date().toString().indexOf('CEST') !== -1 ||
-        new Date().toString().indexOf('W. Europe Standard Time') !== -1 // Edge
-    );
-    function checkHours(name, month, day) {
-        QUnit[isCET ? 'test' : 'skip'](name + ' - set and get hours across DST transition', function (assert) {
+QUnit[TestUtilities.isCET ? 'test' : 'skip'](
+    name + ' - set and get hours across DST transition',
+    function (assert) {
+
+        function checkHours(name, month, day) {
             var timeTZ = new Highcharts.Time({
                 timezone: 'CET'
             });
@@ -64,38 +61,44 @@
             );
 
 
-        /*
-        console.table(datesTZ.map((dateTZ, i) => ({
-            datesTZ: datesTZ[i],
-            datesLocal: datesLocal[i]
-        })));
-        // */
-        /*
+            /*
+            console.table(datesTZ.map((dateTZ, i) => ({
+                datesTZ: datesTZ[i],
+                datesLocal: datesLocal[i]
+            })));
+            // */
+            /*
 
-            var ticks = time.getTimeTicks(
-                {
-                    unitRange: 36e5,
-                    count: 1
-                },
-                Date.UTC(2017, 9, 28, 20),
-                Date.UTC(2017, 9, 29, 10)
-            );
-            console.table(
-                ticks.map(tick => ({
-                    'UTC':  new Date(tick).getUTCHours(),
-                    'Prod':  time.dateFormat('%H', tick),
-                    'time.get':  time.get('Hours', new Date(tick))
-                }))
-            );
-        //*/
+                var ticks = time.getTimeTicks(
+                    {
+                        unitRange: 36e5,
+                        count: 1
+                    },
+                    Date.UTC(2017, 9, 28, 20),
+                    Date.UTC(2017, 9, 29, 10)
+                );
+                console.table(
+                    ticks.map(tick => ({
+                        'UTC':  new Date(tick).getUTCHours(),
+                        'Prod':  time.dateFormat('%H', tick),
+                        'time.get':  time.get('Hours', new Date(tick))
+                    }))
+                );
+            //*/
 
+        }
 
-        });
+        checkHours('Spring', 2, 26);
+        checkHours('Autumn', 9, 29);
     }
+);
 
+QUnit[TestUtilities.isCET ? 'test' : 'skip'](
+    name + ' - set and get days across DST transition',
+    function (assert) {
 
-    function checkDays(name, month) {
-        QUnit[isCET ? 'test' : 'skip'](name + ' - set and get days across DST transition', function (assert) {
+        function checkDays(name, month) {
+
             var timeTZ = new Highcharts.Time({
                 timezone: 'CET'
             });
@@ -176,13 +179,19 @@
                     'time.get':  time.get('Hours', new Date(tick))
                 }))
             );
-        //*/
+            //*/
 
+        }
 
-        });
+        checkDays('Spring', 2);
+        checkDays('Autumn', 9);
     }
+);
 
-    QUnit[isCET ? 'test' : 'skip']('All levels setters', function (assert) {
+QUnit[TestUtilities.isCET ? 'test' : 'skip'](
+    'All levels setters',
+    function (assert) {
+
         var timeTZ = new Highcharts.Time({
                 timezone: 'CET'
             }),
@@ -227,10 +236,13 @@
                 key + ' set to 0, CET should be the same as local time'
             );
         });
+    }
+);
 
-    });
+QUnit[TestUtilities.isCET ? 'test' : 'skip'](
+    'Maketime',
+    function (assert) {
 
-    QUnit[isCET ? 'test' : 'skip']('Maketime', function (assert) {
         var timeTZ = new Highcharts.Time({
                 timezone: 'CET'
             }),
@@ -255,10 +267,5 @@
                 );
             }
         }
-    });
-
-    checkHours('Spring', 2, 26);
-    checkHours('Autumn', 9, 29);
-    checkDays('Spring', 2);
-    checkDays('Autumn', 9);
-}());
+    }
+);
