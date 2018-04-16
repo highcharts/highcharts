@@ -8,9 +8,6 @@ globals:
     Highcharts: true
     hs: true                    # Highslide
     jQuery: true
-    lolexInstall: true
-    lolexUninstall: true
-    lolexRunAndUninstall: true
     moment: true                # moment.js, used in gettimezoneoffset demo
     MSFT: true
     ohlcdata: true
@@ -18,6 +15,7 @@ globals:
     temperatures: true          # pointinterval-pointstart demo
     usdeur: true
     TestController: true
+    TestUtilities: true
 
 rules:
     consistent-return: 0
