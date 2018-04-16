@@ -29,6 +29,12 @@ var addEvent = H.addEvent,
 /**
  *
  * The scrollbar is a means of panning over the X axis of a stock chart.
+ * Scrollbars can  also be applied to other types of axes, see for example
+ * [scrollable bar chart](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/yaxis/inverted-bar-scrollbar/).
+ *
+ * Another approach to scrollable charts is the [chart.scrollablePlotArea](
+ * https://api.highcharts.com/highcharts/chart.scrollablePlotArea) option that
+ * is especially suitable for simpler cartesian charts on mobile.
  *
  * In styled mode, all the presentational options for the
  * scrollbar are replaced by the classes `.highcharts-scrollbar-thumb`,

@@ -207,6 +207,16 @@ module.exports = function (config) {
                 included: false,
                 served: true
             },
+            // Chart templates
+            'test/chart-template.js',
+            {
+                pattern: 'test/templates/**/*.js',
+                type: 'js',
+                watched: false,
+                included: true,
+                served: true,
+                nocache: false
+            },
 
             // Set up
             'test/test-controller.js',

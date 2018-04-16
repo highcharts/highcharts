@@ -860,6 +860,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
+    var clipHeight;
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).
     if (
@@ -868,23 +869,27 @@ wrap(Series.prototype, 'render', function (proceed) {
         this.xAxis &&
         !this.xAxis.isRadial // Gauge, #6192
     ) {
+        // Include xAxis line width, #8031
+        clipHeight = this.yAxis.len - (this.xAxisLine ?
+            Math.floor(this.xAxis.axisLine.strokeWidth() / 2) :
+            0);
 
         // First render, initial clip box
         if (!this.clipBox && this.animate) {
             this.clipBox = merge(this.chart.clipBox);
             this.clipBox.width = this.xAxis.len;
-            this.clipBox.height = this.yAxis.len;
+            this.clipBox.height = clipHeight;
 
         // On redrawing, resizing etc, update the clip rectangle
         } else if (this.chart[this.sharedClipKey]) {
             this.chart[this.sharedClipKey].attr({
                 width: this.xAxis.len,
-                height: this.yAxis.len
+                height: clipHeight
             });
         // #3111
         } else if (this.clipBox) {
             this.clipBox.width = this.xAxis.len;
-            this.clipBox.height = this.yAxis.len;
+            this.clipBox.height = clipHeight;
         }
     }
     proceed.call(this);

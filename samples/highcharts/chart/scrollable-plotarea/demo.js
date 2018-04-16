@@ -11,7 +11,7 @@ Highcharts.chart('container', {
         text: 'Scrollable plot area'
     },
     subtitle: {
-        text: 'Open on mobile and scroll sideways, or click button below'
+        text: 'Open on mobile and scroll sideways'
     },
     xAxis: {
         type: 'datetime',

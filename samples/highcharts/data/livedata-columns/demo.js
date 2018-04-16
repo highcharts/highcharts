@@ -1,7 +1,8 @@
 Highcharts.chart('container', {
     chart: {
         type: 'bar',
-        height: 600
+        height: 650,
+        width: 1300
     },
     title: {
         text: 'Server Monitoring Demo'

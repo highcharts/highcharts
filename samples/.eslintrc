@@ -4,6 +4,7 @@ env:
 globals:
     $: true
     ADBE: true
+    ChartTemplate: true
     GOOGL: true
     Highcharts: true
     hs: true                    # Highslide
@@ -13,9 +14,9 @@ globals:
     ohlcdata: true
     QUnit: true
     temperatures: true          # pointinterval-pointstart demo
-    usdeur: true
     TestController: true
     TestUtilities: true
+    usdeur: true
 
 rules:
     consistent-return: 0
