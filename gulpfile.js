@@ -845,42 +845,6 @@ const createAllExamples = () => new Promise((resolve) => {
     resolve();
 });
 
-/**
- * Copy new current version files into a versioned folder
- */
-/*
-const copyAPIFiles = (dist, version) => {
-    const B = require('./assembler/build.js');
-    const notVersionedFolder = (file) => !(
-        (file.split('/').length > 1) && // is folder
-        !isNaN(file.charAt(0)) // is numbered
-    );
-    const message = {
-        'start': 'Started process of copying API files from to a versioned folder.',
-        'successCopy': 'Finished with copying current API to '
-    };
-    console.log(message.start);
-    const paths = ['highcharts', 'highstock', 'highmaps'].reduce((obj, lib) => {
-        const files = B.getFilesInFolder(`${dist}/${lib}/`, true, '');
-        files
-            .filter(notVersionedFolder)
-            .forEach((filename) => {
-                const from = `${dist}/${lib}/${filename}`;
-                const to = `${dist}/${lib}/${version}/${filename}`;
-                obj[from] = to;
-            });
-        return obj;
-    }, {});
-    const promises = Object.keys(paths).map((from) => {
-        const to = paths[from];
-        return copyFile(from, to);
-    });
-    return Promise.all(promises).then(() => {
-        console.log(message.successCopy);
-    });
-};
-*/
-
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
     // const generate = require('highcharts-api-doc-gen/lib/index.js');
     const generate = require('./../api-docs/lib/index.js');
