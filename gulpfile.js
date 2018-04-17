@@ -1009,10 +1009,7 @@ const asyncForeach = (arr, fn) => {
     const generator = (j) => {
         let promise;
         if (j < length) {
-            promise = fn(arr[j], j, arr).then(() => {
-                // console.log('then ' + j)
-                return generator(j + 1);
-            });
+            promise = fn(arr[j], j, arr).then(() => generator(j + 1));
         }
         return promise;
     };
