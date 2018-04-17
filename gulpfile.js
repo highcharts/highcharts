@@ -1013,34 +1013,6 @@ const ProgressBar = function (user) {
     return this;
 };
 
-gulp.task('testing', () => {
-    let messages = [];
-    const min = 500;
-    const max = 2000;
-    for (let i = 0; i < 1000; i++) {
-        messages.push({
-            m: i,
-            time: Math.random() * (max - min) + min
-        });
-    }
-    const bar = new ProgressBar({
-        total: messages.length
-    });
-    const func = (time) => {
-        return new Promise((resolve) => {
-            let interval = setInterval(() => {
-                clearInterval(interval);
-                resolve();
-            }, time);
-        });
-    };
-    return asyncBatchForeach(100, messages, (entry) => {
-        return func(entry.time).then(() => {
-            bar.tick();
-        });
-    });
-});
-
 const isString = x => typeof x === 'string';
 
 const uploadAPIDocs = () => {
