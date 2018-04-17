@@ -9,6 +9,11 @@ const gulp = require('gulp');
 const argv = require('yargs').argv;
 const fs = require('fs');
 const {
+    join,
+    relative,
+    sep
+} = require('path');
+const {
     getFilesInFolder
 } = require('highcharts-assembler/src/build.js');
 const {
@@ -1136,20 +1141,33 @@ const uploadAPIDocs = () => {
     const sourceFolder = './build/api/';
     const bucket = 'api-docs-bucket.highcharts.com';
     const batchSize = 30000;
-    const files = getFilesInFolder(sourceFolder, true, '');
+    const files = (
+        isString(argv.files) ?
+        argv.files.split(',') :
+        getFilesInFolder(sourceFolder, true, '')
+    );
     const tags = isString(argv.tags) ? argv.tags.split(',') : ['current'];
     const getUploadConfig = (tag) => {
+        const errors = [];
         const bar = new ProgressBar({
+            error: '',
             total: files.length,
-            message: `[:bar] - Uploading ${tag}. Completed :count of :total.'`
+            message: `\n[:bar] - Uploading ${tag}. Completed :count of :total.:error`
         });
         const doTick = () => {
             bar.tick();
         };
+        const onError = (err) => {
+            errors.push(`${err.message}. ${err.from} -> ${err.to}`);
+            bar.tick({
+                error: `\n${errors.length} file(s) errored:\n${errors.join('\n')}`
+            });
+        };
         const params = {
-            batchSize: batchSize,
-            bucket: bucket,
-            callback: doTick
+            batchSize,
+            bucket,
+            callback: doTick,
+            onError
         };
         const getMapOfFromTo = (fileName) => {
             let to = fileName;
@@ -1159,16 +1177,34 @@ const uploadAPIDocs = () => {
                 to = parts.join('/');
             }
             return {
-                from: sourceFolder + fileName,
+                from: join(sourceFolder, fileName),
                 to: to
             };
         };
         params.files = files.map(getMapOfFromTo);
         return params;
     };
-    console.log(`Started upload of ${files.length} files to API under tags [${tags.join(', ')}].`);
+    console.log(`Started upload of ${files.length} files to ${bucket} under tags [${tags.join(', ')}].`);
+    const commands = [];
     return asyncForeach(tags, (tag) => {
-        return Promise.resolve(getUploadConfig(tag)).then(uploadFiles);
+        return Promise.resolve(getUploadConfig(tag)).then(uploadFiles)
+        .then((result) => {
+            const { errors } = result;
+            if (errors.length) {
+                const erroredFiles = errors.map((e) => relative(sourceFolder, e.from)
+                    // Make path command line friendly.
+                    .split(sep).join('/'));
+                commands.push(`gulp upload-api --tags ${tag} --files ${erroredFiles.join(',')}`);
+            }
+        });
+    }).then(() => {
+        if (commands.length) {
+            console.log([
+                '',
+                colors.red('Some of the uploads failed, please run the following command to retry:'),
+                commands.join(' && ')
+            ].join('\n'));
+        }
     });
 };
 
@@ -1378,10 +1414,6 @@ gulp.task('default', () => {
         fnFirstBuild,
         mapOfWatchFn
     } = getBuildScripts({});
-    const {
-        relative,
-        sep
-    } = require('path');
     const watchlist = [
         './css/*.scss',
         './js/**/*.js',
