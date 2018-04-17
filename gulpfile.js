@@ -1076,8 +1076,10 @@ const uploadFiles = (params) => {
         batchSize,
         bucket,
         callback,
+        onError = Promise.reject,
         files
     } = params;
+    const errors = [];
     let result;
     if (isString(bucket) && isArray(files)) {
         const cdn = storage.strategy.s3({
@@ -1091,32 +1093,39 @@ const uploadFiles = (params) => {
                 if (isString(content)) {
                     const fileType = from.split('.').pop();
                     filePromise = storage.push(cdn, to, content, mimeType[fileType])
-                      .then(() => isFunction(callback) && callback());
+                        .then(() => isFunction(callback) && callback())
+                        .catch((err) => {
+                            const error = {
+                                message: `S3: ${err.pri && err.pri.message}`,
+                                from: from,
+                                to: to
+                            };
+                            errors.push(error);
+                            return onError(error);
+                        });
                 } else {
-                    filePromise = Promise.reject(new Error('Path is not a file: ' + from));
+                    const error = {
+                        message: 'Path is not a file',
+                        from: from,
+                        to: to
+                    };
+                    errors.push(error);
+                    filePromise = onError(error);
                 }
             } else {
-                filePromise = Promise.reject(
-                    new Error([
-                        'Invalid file information!',
-                        'from: ' + from,
-                        'to: ' + to
-                    ].join('\n'))
-                );
+                const error = {
+                    message: 'Invalid file information!',
+                    from: from,
+                    to: to
+                };
+                errors.push(error);
+                filePromise = onError(error);
             }
             return filePromise;
         };
-        const onError = (err) => {
-            console.log([
-                'Found error',
-                err.stack,
-                ''
-            ].join('\n'));
-        };
-        // const promises = files.map(uploadFile);
-        // result = Promise.all(promises).catch(onError);
-        result = asyncBatchForeach(batchSize, files, uploadFile)
-          .catch((err) => onError(err));
+        result = asyncBatchForeach(batchSize, files, uploadFile).then(() => ({
+            errors
+        }));
     } else {
         result = Promise.reject();
     }
