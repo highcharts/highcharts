@@ -1022,12 +1022,9 @@ const asyncBatchForeach = (batchSize, arr, fn) => {
         let result;
         if (from < length) {
             const batch = arr.slice(from, to);
-            const promises = batch.map((el, i) => {
-                return fn(el, from + i, arr);
-            });
-            result = Promise.all(promises).then(() => {
-                return generator(to, to + batchSize);
-            });
+            const promises = batch.map((el, i) => fn(el, from + i, arr));
+            const next = () => generator(to, to + batchSize);
+            result = Promise.all(promises).then(next);
         }
         return result;
     };
