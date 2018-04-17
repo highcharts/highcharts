@@ -245,20 +245,24 @@
             var testCase;
             while (typeof (testCase = this.testCases.shift()) !== 'undefined') {
 
-                var originalOptions = [treeCopy(
-                        chart.options,
-                        testCase.chartOptions
-                    )],
-                    removeUpdate = attachUpdate(chart, originalOptions);
+                var previousOptions = [],
+                    removeUpdate;
 
                 try {
+                    previousOptions.push(treeCopy(
+                        chart.options,
+                        testCase.chartOptions
+                    ));
+                    removeUpdate = attachUpdate(chart, previousOptions);
                     chart.update(testCase.chartOptions, true, true, false);
                     testCase.testCallback(this);
                 } finally {
-                    removeUpdate();
+                    if (removeUpdate) {
+                        removeUpdate();
+                    }
                     var originalOption;
                     while (typeof (
-                            originalOption = originalOptions.pop()
+                            originalOption = previousOptions.pop()
                         ) !== 'undefined'
                     ) {
                         chart.update(originalOption, false, true, false);
