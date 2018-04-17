@@ -968,10 +968,14 @@ const ProgressBar = function (user) {
         return options.complete.repeat(chars) + options.incomplete.repeat(length - chars);
     };
     const getMsg = (options) => {
-        return options.message
-            .replace(':bar', getBar(options))
-            .replace(':count', options.count)
-            .replace(':total', options.total);
+        const protectedKeys = ['message', 'bar'];
+        const reduceFn = (msg, key) => (
+            protectedKeys.includes(key) ?
+            msg :
+            msg.replace(`:${key}`, options[key])
+        );
+        return Object.keys(options)
+            .reduce(reduceFn, options.message.replace(':bar', getBar(options)));
     };
     const options = Object.assign({
         count: 0,
@@ -988,8 +992,9 @@ const ProgressBar = function (user) {
         this.tick = () => {};
         logUpdate.done();
     };
-    this.tick = function () {
+    this.tick = function (editOptions = {}) {
         options.count++;
+        Object.assign(options, editOptions);
         this.render();
         if (options.count === options.total) {
             this.complete();
