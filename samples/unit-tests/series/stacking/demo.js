@@ -231,7 +231,6 @@ QUnit.test("StackLabels position with multiple yAxis (#7798)", function (assert)
         },
         plotOptions: {
             series: {
-                type: 'column',
                 stacking: 'normal'
             }
         },
@@ -265,5 +264,38 @@ QUnit.test("StackLabels position with multiple yAxis (#7798)", function (assert)
         chart.series[1].points[0].plotY,
         true,
         'Stack labels should be above the stack'
+    );
+});
+
+QUnit.test("Stack Labels position in bar chart (#8187)", function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bar',
+            marginLeft: 200
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true,
+                allowOverlap: true
+            }
+        },
+        series: [{
+            data: [1, 1]
+        }, {
+            data: [1, 1]
+        }]
+    });
+
+    var labelPos = chart.yAxis[0].stacks.bar[0].label.getBBox(true);
+    assert.close(
+        chart.xAxis[0].toPixels(0, true),
+        labelPos.y + (labelPos.height / 2),
+        1,
+        'Stack labels should be properly positioned'
     );
 });
