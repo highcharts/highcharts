@@ -29,7 +29,7 @@
     function createContainer() {
         var container = global.document.createElement('div');
         container.style.left = '0';
-        container.style.positon = 'absolute';
+        container.style.position = 'absolute';
         container.style.top = '0';
         global.document.body.appendChild(container);
         return container;
