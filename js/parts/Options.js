@@ -654,7 +654,7 @@ H.defaultOptions = {
          * is enabled. When [tooltip.followTouchMove](#tooltip.followTouchMove)
          * is true, pinchType only applies to two-finger touches.
          *
-         * @validvalue ["x", "y", "xy"]
+         * @validvalue [null, "x", "y", "xy"]
          * @type {String}
          * @default {highcharts} null
          * @default {highstock} x
@@ -1089,6 +1089,7 @@ H.defaultOptions = {
          * @validvalue [null, "x", "y", "xy"]
          * @type {String}
          * @see [panKey](#chart.panKey)
+         * @default  null
          * @sample {highcharts} highcharts/chart/zoomtype-none/ None by default
          * @sample {highcharts} highcharts/chart/zoomtype-x/ X
          * @sample {highcharts} highcharts/chart/zoomtype-y/ Y
