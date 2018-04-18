@@ -384,10 +384,11 @@ window.TestController = function (chart) {
             trigger(typeLowerCase, x, y, extra, debug);
         };
         controller[type + 'OnElement'] = function (el, x, y, extra) {
-            var elOffset = getOffset(el);
-            var x1 = elOffset.left + (x || 0),
-                y1 = elOffset.top + (y || 0);
-            triggerEvent(typeLowerCase, x1, y1, extra);
+            var elOffset = getOffset(el),
+                offset = getOffset(chart.container),
+                pageX = offset.left + elOffset.left + (x || 0),
+                pageY = offset.top + elOffset.top + (y || 0);
+            triggerEvent(typeLowerCase, pageX, pageY, extra);
         };
     });
     controller.setPositionToElement(chart.container);
