@@ -370,17 +370,25 @@ window.TestController = function (chart) {
     // Shorthand functions. Calls trigger, except the type.
     [
         'click',
-        'mousedown',
-        'mousemove',
-        'mouseup',
-        'mouseout',
-        'mouseover',
-        'touchstart',
-        'touchmove',
-        'touchend'
+        'mouseDown',
+        'mouseMove',
+        'mouseUp',
+        'mouseOut',
+        'mouseOver',
+        'touchStart',
+        'touchMove',
+        'touchEnd'
     ].forEach(function (type) {
-        controller[type] = function (x, y, extra, debug) {
-            trigger(type, x, y, extra, debug);
+        var typeLowerCase = type.toLowerCase();
+        controller[typeLowerCase] = function (x, y, extra, debug) {
+            trigger(typeLowerCase, x, y, extra, debug);
+        };
+        controller[type + 'OnElement'] = function (el, x, y, extra) {
+            var elOffset = getOffset(el),
+                offset = getOffset(chart.container),
+                pageX = offset.left + elOffset.left + (x || 0),
+                pageY = offset.top + elOffset.top + (y || 0);
+            triggerEvent(typeLowerCase, pageX, pageY, extra);
         };
     });
     controller.setPositionToElement(chart.container);
