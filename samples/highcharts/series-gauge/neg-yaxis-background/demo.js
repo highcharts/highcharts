@@ -6,6 +6,10 @@ $(function () {
             type: 'gauge'
         },
 
+        title: {
+            text: 'Negative yAxis.min on solid gauge (#3010)'
+        },
+
         pane: {
             startAngle: -90,
             endAngle: 90,
