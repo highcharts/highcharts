@@ -27,10 +27,11 @@
      * The DOM element of the container
      */
     function createContainer() {
-        var container = global.document.createElement('div');
-        container.style.left = '0';
-        container.style.position = 'absolute';
-        container.style.top = '0';
+        var container = global.document.createElement('div'),
+            containerStyle = container.style;
+        containerStyle.left = '0';
+        containerStyle.position = 'absolute';
+        containerStyle.top = '0';
         global.document.body.appendChild(container);
         return container;
     }
@@ -255,8 +256,10 @@
                     ));
                     removeUpdate = attachUpdate(chart, previousOptions);
                     chart.update(testCase.chartOptions, true, true, false);
+                    chart.container.style.zIndex = '9999';
                     testCase.testCallback(this);
                 } finally {
+                    chart.container.style.zIndex = '';
                     if (removeUpdate) {
                         removeUpdate();
                     }

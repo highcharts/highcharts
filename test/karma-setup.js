@@ -76,14 +76,27 @@ QUnit.module('Highcharts', {
     beforeEach: function () {
 
         // Reset container size that some tests may have modified
-        document.getElementById('container').style.width = 'auto';
-        document.getElementById('container').style.width = 'auto';
+        var containerStyle = document.getElementById('container').style;
+        containerStyle.width = 'auto';
+        containerStyle.height = 'auto';
+        containerStyle.position = 'absolute';
+        containerStyle.left = '8';
+        containerStyle.top = '8';
+        containerStyle.zIndex = '9999';
 
         // Reset randomizer
         Math.randomCursor = 0;
     },
 
     afterEach: function () {
+
+        var containerStyle = document.getElementById('container').style;
+        containerStyle.width = '';
+        containerStyle.height = '';
+        containerStyle.position = '';
+        containerStyle.left = '';
+        containerStyle.top = '';
+        containerStyle.zIndex = '';
 
         var currentChart = null,
             charts = Highcharts.charts,
