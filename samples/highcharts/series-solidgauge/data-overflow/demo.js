@@ -5,7 +5,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Solidgauge past full circle (#2997)'
+        text: 'Solidgauge data overflow past full circle (#2997)'
     },
 
     pane: {
