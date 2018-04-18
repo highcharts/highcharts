@@ -388,7 +388,7 @@ window.TestController = function (chart) {
                 offset = getOffset(chart.container),
                 pageX = offset.left + elOffset.left + (x || 0),
                 pageY = offset.top + elOffset.top + (y || 0);
-            triggerEvent(typeLowerCase, pageX, pageY, extra);
+            triggerEvent(typeLowerCase, pageX, pageY, extra, el);
         };
     });
     controller.setPositionToElement(chart.container);
