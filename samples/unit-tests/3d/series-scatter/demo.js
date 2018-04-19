@@ -36,13 +36,12 @@ QUnit.test('Point is on appropriate position', function (assert) {
         labelPos = axis.ticks[1].label.element.getBoundingClientRect(),
         point = axis.series[0].points[1],
         pointPos = point.graphic.element.getBoundingClientRect(),
-        pointX = pointPos.x + pointPos.width / 2,
-        expectedPointX = parseInt(labelPos.x + labelPos.width / 2, 10);
+        pointX = Math.round(pointPos.x + pointPos.width / 2),
+        expectedPointX = Math.round(labelPos.x + labelPos.width / 2, 10);
 
-    assert.close(
+    assert.strictEqual(
         pointX,
         expectedPointX,
-        2,
         'First point is correctly aligned'
     );
 });
