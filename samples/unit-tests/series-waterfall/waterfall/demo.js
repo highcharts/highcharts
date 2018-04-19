@@ -23,4 +23,19 @@ QUnit.test('General waterfall tests', function (assert) {
     });
 
     assert.ok(1, 'No errors when stacking null points (#7667).');
+
+
+    chart.series[0].update({
+        data: [-20, 10, {
+            isIntermediateSum: true
+        }]
+    }, false);
+    chart.addSeries({
+        stacking: 'normal',
+        data: [-20, 50, {
+            isIntermediateSum: true
+        }]
+    });
+
+    assert.ok(1, 'No errors when stacking starts from negative value (#2280)');
 });
