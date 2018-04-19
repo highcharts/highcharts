@@ -1,13 +1,13 @@
 /* global ChartTemplate, Highcharts */
 
-ChartTemplate.register('line-stock', Highcharts.stock, {
+ChartTemplate.register('stock-line', Highcharts.stockChart, {
 
     chart: {
         type: 'line'
     },
 
     title: {
-        text: 'line-stock'
+        text: 'stock-line'
     },
 
     series: [{
