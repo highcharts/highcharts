@@ -126,6 +126,32 @@ seriesType('waterfall', 'column', {
     showLine: true,
 
     /**
+     * After generating points, set y-values for all sums.
+     */
+    generatePoints: function () {
+        var previousIntermediate = this.options.threshold,
+            point,
+            len,
+            i,
+            y;
+        // Parent call:
+        seriesTypes.column.prototype.generatePoints.apply(this);
+
+        for (i = 0, len = this.points.length; i < len; i++) {
+            point = this.points[i];
+            y = this.processedYData[i];
+            // override point value for sums
+            // #3710 Update point does not propagate to sum
+            if (point.isSum) {
+                point.y = correctFloat(y);
+            } else if (point.isIntermediateSum) {
+                point.y = correctFloat(y - previousIntermediate); // #3840
+                previousIntermediate = y;
+            }
+        }
+    },
+
+    /**
      * Translate data points from raw values
      */
     translate: function () {
@@ -178,13 +204,6 @@ seriesType('waterfall', 'column', {
                 [0, yValue]
             );
 
-            // override point value for sums
-            // #3710 Update point does not propagate to sum
-            if (point.isSum) {
-                point.y = correctFloat(yValue);
-            } else if (point.isIntermediateSum) {
-                point.y = correctFloat(yValue - previousIntermediate); // #3840
-            }
             // up points
             y = Math.max(previousY, previousY + point.y) + range[0];
             shapeArgs.y = yAxis.translate(y, 0, 1, 0, 1);
