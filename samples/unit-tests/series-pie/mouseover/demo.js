@@ -57,8 +57,8 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
             window.setTimeout(function () {
                 var pointBox = points[1].graphic.getBBox();
                 controller.mouseover(
-                    chart.plotLeft + pointBox.x + (pointBox.width / 2),
-                    chart.plotTop + pointBox.y + (pointBox.height / 2)
+                    (chart.plotLeft + pointBox.x + (pointBox.width / 2)),
+                    (chart.plotTop + pointBox.y + (pointBox.height / 2))
                 );
             }, 0);
 
@@ -96,8 +96,8 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
             window.setTimeout(function () {
                 var pointBox = points[2].graphic.getBBox();
                 controller.mouseover(
-                    chart.plotLeft + pointBox.x + (pointBox.width / 2),
-                    chart.plotTop + pointBox.y + (pointBox.height / 2)
+                    (chart.plotLeft + pointBox.x + (pointBox.width / 2)),
+                    (chart.plotTop + pointBox.y + (pointBox.height / 2))
                 );
             }, 4);
 
@@ -111,6 +111,135 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
                         'hidden'
                     ],
                     'Halo should not be visible after mouse over.'
+                );
+            }, 5);
+
+            TestUtilities.lolexRunAndUninstall(clock);
+
+        } catch (error) {
+
+            TestUtilities.lolexUninstall(clock);
+            throw error;
+
+        }
+
+    });
+
+});
+
+
+// Highcharts 4.0.1, Issue #3016
+// Halo on sliced pie serie is displayed incorrectly
+QUnit.test('Halo sliced point (#3016)', function (assert) {
+
+    ChartTemplate.test('pie-simple', {
+        series: [{
+            type: 'pie',
+            data: [{
+                y: 20,
+                name: 'Sliced serie',
+                sliced: true
+            }, {
+                y: 80,
+                dataLabels: {
+                    enabled: false
+                }
+            }]
+        }]
+    }, function (template) {
+
+        var chart = template.chart,
+            controller = TestController(chart),
+            series = chart.series[0],
+            points = series.points;
+
+        assert.deepEqual(
+            [
+                points[0].graphic.element.getAttribute('visibility'),
+                points[1].graphic.element.getAttribute('visibility')
+            ], [
+                null,
+                null
+            ],
+            'Two points should be visible.'
+        );
+
+        assert.strictEqual(
+            typeof series.halo,
+            'undefined',
+            'Halo should not be defined before mouse movements.'
+        );
+
+        var clock = TestUtilities.lolexInstall();
+
+        try {
+
+            window.setTimeout(function () {
+                var pointBox = points[0].graphic.getBBox();
+                controller.mouseover(
+                    (chart.plotLeft + pointBox.x + (pointBox.width / 2)),
+                    (chart.plotTop + pointBox.y + (pointBox.height / 2))
+                );
+            }, 0);
+
+            window.setTimeout(function () {
+                var haloBox = series.halo.getBBox();
+                assert.deepEqual(
+                    [
+                        series.halo.point.name,
+                        series.halo.element.getAttribute('visibility'),
+                        (haloBox.x + haloBox.y)
+                    ], [
+                        points[0].name,
+                        'visible',
+                        0
+                    ],
+                    'Halo should not be visible after mouse over.'
+                );
+            }, 1);
+
+            window.setTimeout(function () {
+                controller.mousemove();
+                controller.mouseout();
+            }, 2);
+
+            window.setTimeout(function () {
+                var haloBox = series.halo.getBBox();
+                assert.deepEqual(
+                    [
+                        series.halo.point.name,
+                        series.halo.element.getAttribute('visibility'),
+                        ((haloBox.x + haloBox.y) === 0)
+                    ], [
+                        points[0].name,
+                        'hidden',
+                        true
+                    ],
+                    'Halo should not be visible after mouse out.'
+                );
+            }, 3);
+
+            window.setTimeout(function () {
+                var pointBox = points[1].graphic.getBBox();
+                controller.mouseover(
+                    (chart.plotLeft + pointBox.x + (pointBox.width / 2) - 10),
+                    (chart.plotTop + pointBox.y + (pointBox.height / 2) + 10)
+                );
+            }, 4);
+
+            window.setTimeout(function () {
+                var haloBox = series.halo.getBBox();
+                assert.deepEqual(
+                    [
+                        series.halo.point.name,
+                        series.halo.element.getAttribute('visibility'),
+                        ((haloBox.x + haloBox.y) > 0)
+                    ], [
+                        points[1].name,
+                        'visible',
+                        true
+                    ],
+                    'Halo should be visible after mouse over.'
                 );
             }, 5);
 
