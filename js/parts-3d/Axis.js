@@ -455,8 +455,8 @@ addEvent(Axis, 'drawCrosshair', function (e) {
     if (this.chart.is3d() && this.coll !== 'colorAxis') {
         if (e.point) {
             e.point.crosshairPos = this.isXAxis ?
-                e.point.plotXold || e.point.plotX :
-                this.len - (e.point.plotYold || e.point.plotY);
+                e.point.axisXpos :
+                this.len - (e.point.axisYpos);
         }
     }
 });

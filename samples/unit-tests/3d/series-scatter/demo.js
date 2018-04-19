@@ -4,10 +4,8 @@ QUnit.test('Point is on appropriate position', function (assert) {
         chart: {
             options3d: {
                 enabled: true,
-                alpha: 10,
-                beta: 10
-            },
-            zoomType: 'x'
+                alpha: 10
+            }
         },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -32,17 +30,19 @@ QUnit.test('Point is on appropriate position', function (assert) {
         }]
     });
 
+    chart.xAxis[0].setExtremes(1, 2, true, false);
+
     var axis = chart.xAxis[0],
-        point = axis.series[0].points[0],
-        pointX = point.clientX,
-        expectedPointX = axis.toPixels(point.x, true);
+        labelPos = axis.ticks[1].label.element.getBoundingClientRect(),
+        point = axis.series[0].points[1],
+        pointPos = point.graphic.element.getBoundingClientRect(),
+        pointX = pointPos.x + pointPos.width / 2,
+        expectedPointX = parseInt(labelPos.x + labelPos.width / 2, 10);
 
-    console.log(expectedPointX, pointX);
-
-    assert.strictEqual(
+    assert.close(
         pointX,
         expectedPointX,
+        2,
         'First point is correctly aligned'
     );
-
 });
