@@ -5,7 +5,7 @@ $(function () {
         },
 
         title: {
-            text: 'Highcharts Waterfall'
+            text: 'Waterfall small columns visibility (#3151)'
         },
 
         subtitle: {
