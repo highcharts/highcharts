@@ -11,16 +11,7 @@ ChartTemplate.register('columnrange-simple', Highcharts.chart, {
     },
 
     series: [{
-        data: [{
-            min: 0,
-            max: 1
-        }, {
-            min: 3,
-            max: 4
-        }, {
-            min: 1,
-            max: 2
-        }]
+        data: [[0, 1], [2, 3], [1, 2]]
     }]
 
 });
