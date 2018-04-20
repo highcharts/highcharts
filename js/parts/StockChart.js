@@ -52,7 +52,7 @@ var addEvent = H.addEvent,
  *
  * @type {String}
  * @see [compareBase](#plotOptions.series.compareBase),
- *      [Axis.setCompare()](#Axis.setCompare())
+ *      [Axis.setCompare()](/class-reference/Highcharts.Axis#setCompare)
  * @sample {highstock} stock/plotoptions/series-compare-percent/ Percent
  * @sample {highstock} stock/plotoptions/series-compare-value/ Value
  * @default undefined

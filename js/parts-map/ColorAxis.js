@@ -61,7 +61,9 @@ if (!H.ColorAxis) {
          * a true category. However, when your data is categorized, it may be as
          * convenient to add each category to a separate series.
          *
-         * See [the Axis object](#Axis) for programmatic access to the axis.
+         * See [the Axis object](/class-reference/Highcharts.Axis) for
+         * programmatic access to the axis.
+         *
          * @extends {xAxis}
          * @excluding allowDecimals,alternateGridColor,breaks,categories,
          *            crosshair,dateTimeLabelFormats,lineWidth,linkedTo,maxZoom,
