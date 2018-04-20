@@ -56,7 +56,7 @@ QUnit.test('variwide', function (assert) {
     chart.series[0].points[1].onMouseOver();
     assert.close(
         chart.xAxis[0].cross.attr('stroke-width'),
-        chart.series[0].points[1].graphic.element.getAttribute('width'),
+        chart.series[0].points[1].crosshairWidth,
         1,
         'Crosshair has the same width as category (#8083)'
     );
