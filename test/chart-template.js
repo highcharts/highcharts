@@ -357,9 +357,9 @@
         }
 
         chartTemplates[name] = {
-            name,
-            chartConstructor,
-            chartOptions
+            name: name,
+            chartConstructor: chartConstructor,
+            chartOptions: chartOptions
         };
 
     };
