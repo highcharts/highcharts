@@ -4,6 +4,7 @@ env:
 globals:
     $: true
     ADBE: true
+    CallAnalyzer: true
     ChartTemplate: true
     GOOGL: true
     Highcharts: true
