@@ -367,7 +367,7 @@ var addEvent = Highcharts.addEvent,
  * @sample highcharts/data/livedata-columns
  *           Categorized bar chart with CSV and live polling
  *
- * @type {Bool}
+ * @type {Boolean}
  * @default false
  * @apioption data.enablePolling
  */
