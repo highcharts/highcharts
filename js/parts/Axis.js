@@ -78,7 +78,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * though if the chart is inverted this is the vertical axis. In case of
      * multiple axes, the xAxis node is an array of configuration objects.
      *
-     * See [the Axis object](#Axis) for programmatic access to the axis.
+     * See [the Axis object](/class-reference/Highcharts.Axis) for
+     * programmatic access to the axis.
      *
      * @productdesc {highmaps}
      * In Highmaps, the axis is hidden, but it is used behind the scenes to
@@ -346,7 +347,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * different units may be used, for example the `day` unit can be used
          * on midnight and `hour` unit be used for intermediate values on the
          * same axis. For an overview of the replacement codes, see
-         * [dateFormat](#Highcharts.dateFormat). Defaults to:
+         * [dateFormat](/class-reference/Highcharts#dateFormat). Defaults to:
          *
          * <pre>{
          *     millisecond: '%H:%M:%S.%L',
@@ -1510,7 +1511,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * In case of multiple axes, the yAxis node is an array of
      * configuration objects.
      *
-     * See [the Axis object](#Axis) for programmatic access to the axis.
+     * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
+     * access to the axis.
      *
      * @extends      xAxis
      * @excluding    ordinal,overscroll
@@ -3959,6 +3961,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * rendering and placement.
      *
      * @private
+     *
+     * @param  {Object} tick Optionally, calculate the slot width basing on
+     * tick label. It is used in highcharts-3d module, where the slots has
+     * different widths depending on perspective angles.
+     *
      * @return {Number}
      *         The pixel width allocated to each axis label.
      */

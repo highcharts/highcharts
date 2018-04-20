@@ -1056,7 +1056,8 @@
 /**
  * The Z axis or depth axis for 3D plots.
  *
- * See [the Axis object](#Axis) for programmatic access to the axis.
+ * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
+ * access to the axis.
  *
  * @extends xAxis
  * @excluding breaks,crosshair,lineColor,lineWidth,nameToX,showEmpty

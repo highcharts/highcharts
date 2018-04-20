@@ -118,7 +118,7 @@ H.setOptions({
          * Defaults to the same format as in tooltip.
          *
          * For an overview of the replacement codes, see
-         * [dateFormat](#Highcharts.dateFormat).
+         * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
          * @type {String}
          * @see [pointDateFormatter](#accessibility.pointDateFormatter)
@@ -131,7 +131,7 @@ H.setOptions({
          * points on datetime axes when describing them to screen reader users.
          * Receives one argument, `point`, referring to the point to describe.
          * Should return a date format string compatible with
-         * [dateFormat](#Highcharts.dateFormat).
+         * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
          * @type {Function}
          * @see [pointDateFormat](#accessibility.pointDateFormat)

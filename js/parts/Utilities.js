@@ -2023,6 +2023,41 @@ H.uniqueKey = (function () {
 }());
 
 /**
+ * A string representation for the current browser. Possible values are
+ * `Chrome`, `Edge`, `Firefox`, `MSIE`, `Netscape`, `Opera`, `PhantomJS`,
+ * `Safari`, and an empty string for unknown browsers.
+ * @type {string}
+ */
+H.browser = (function () {
+    var ua = win.navigator.userAgent;
+    if (/MSIE|Trident/i.test(ua) && !/Opera/i.test(ua)) {
+        return 'MSIE';
+    }
+    if (/Firefox/i.test(ua)) {
+        return 'Firefox';
+    }
+    if (/Edge/i.test(ua)) {
+        return 'Edge';
+    }
+    if (/Chrome/i.test(ua)) {
+        return 'Chrome';
+    }
+    if (/PhantomJS/i.test(ua)) {
+        return 'PhantomJS';
+    }
+    if (/Safari/i.test(ua)) {
+        return 'Safari';
+    }
+    if (/Opera/i.test(ua)) {
+        return 'Opera';
+    }
+    if (/Netscape/i.test(ua)) {
+        return 'Netscape';
+    }
+    return '';
+}());
+
+/**
  * Register Highcharts as a plugin in jQuery
  */
 if (win.jQuery) {
