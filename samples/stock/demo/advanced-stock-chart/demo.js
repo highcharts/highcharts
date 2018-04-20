@@ -664,6 +664,9 @@ Highcharts.tooltipDelay = 1000;
 Highcharts.tooltipIsWaiting = false;
 function menuOnOver(e) {
     var button = e.target;
+    if (button.nodeName === 'SPAN') {
+        button = e.target.parentNode;
+    }
     Highcharts.tooltipIsWaiting = button.getAttribute('data-description');
     setTimeout(function () {
         var description = button.getAttribute('data-description');
@@ -674,8 +677,8 @@ function menuOnOver(e) {
                 ttBelow = button.getAttribute('data-tt-below') || false,
                 fakePoint = {
                     name: description,
-                    plotX: buttonBox.left + buttonBox.width -
-                        (ttBelow ? 73 : 90),
+                    plotX: buttonBox.left - chartBox.left + buttonBox.width -
+                        (ttBelow ? 53 : 70),
                     plotY: buttonBox.top - chartBox.top - buttonBox.height -
                         (ttBelow ? 30 : 0),
                     ttBelow: ttBelow,
@@ -820,8 +823,10 @@ function menuOnOut() {
     }
 
     function menuOnClick(e) {
-
         var button = e.target;
+        if (button.nodeName === 'SPAN') {
+            button = button.parentNode;
+        }
         var id = button.getAttribute('id');
 
         window.flagDialogReset();
@@ -849,7 +854,10 @@ function menuOnOut() {
     function flagMenuClick(e) {
         window.flagDialogReset();
 
-        onButtonClick(e.target, H.getChartById('container-inner'));
+        onButtonClick(
+            e.target.nodeName === 'SPAN' ? e.target.parentNode : e.target,
+            H.getChartById('container-inner')
+        );
     }
 
     function sideMenu() {
@@ -1602,43 +1610,52 @@ function whichAxis(e, chart) {
             chart.removeAnnotation(annotationToRemove);
         }
 
-        chart.addAnnotation({
-            events: {
-                contextmenu: function (e) {
-                    e.preventDefault();
+        if (chart) {
+            chart.addAnnotation({
+                events: {
+                    contextmenu: function (e) {
+                        e.preventDefault();
 
-                    var label = this.options.labels[0];
-                    text.value = label.text;
+                        var label = this.options.labels[0];
+                        text.value = label.text;
 
-                    var point = this.labels[0].points[0];
-                    annotationToRemove = this.options.id;
-                    onPointClick(point);
-                }
-            },
-            id: 'annotation-text-' + (++counter),
-            labels: [{
-                text: text.value,
-                point: {
-                    x: x,
-                    y: y,
-                    xAxis: 0,
-                    yAxis: yAxisIndex
+                        var point = this.labels[0].points[0];
+                        annotationToRemove = this.options.id;
+                        onPointClick(point);
+                    }
                 },
-                backgroundColor: backgroundColor,
-                shape: shape,
-                borderWidth: shape !== 'connector' ? 0 : 1,
-                x: 0,
-                y: shape === 'circle' ? 0 : -16
-            }]
-        });
+                id: 'annotation-text-' + (++counter),
+                labels: [{
+                    text: text.value,
+                    point: {
+                        x: x,
+                        y: y,
+                        xAxis: 0,
+                        yAxis: yAxisIndex
+                    },
+                    backgroundColor: backgroundColor,
+                    shape: shape,
+                    borderWidth: shape !== 'connector' ? 0 : 1,
+                    x: 0,
+                    y: shape === 'circle' ? 0 : -16
+                }]
+            });
+        }
 
         reset();
     }
 
     document.getElementById('add-text-annotation').addEventListener('submit', addText);
+    document.querySelector('#add-text-annotation .cancel').addEventListener(
+        'click',
+        function () {
+            reset();
+            return false;
+        }
+    );
 
     function onChartClick(e, chart) {
-        var yAxis = window.whichAxis(e, chart);
+        var yAxis = whichAxis(e, chart);
         var x = chart.xAxis[0].toValue(e.chartX);
         var y = yAxis ? yAxis.toValue(e.chartY) : -9e7;
 
@@ -1996,7 +2013,17 @@ function whichAxis(e, chart) {
         reset();
     }
 
-    document.getElementById('add-flag-annotation').addEventListener('submit', addFlag);
+    document.getElementById('add-flag-annotation').addEventListener(
+        'submit',
+        addFlag
+    );
+    document.querySelector('#add-flag-annotation .cancel').addEventListener(
+        'click',
+        function () {
+            reset();
+            return false;
+        }
+    );
 
     H.each(['flag', 'circlepin', 'squarepin', 'diamondpin'], function (shape) {
         H.Annotation[shape] = {
