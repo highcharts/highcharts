@@ -226,7 +226,7 @@ H.Series = H.seriesType('line', null, { // base series options
     },
 
     /**
-     * A additional class name to apply to the series' graphical elements. This
+     * An additional class name to apply to the series' graphical elements. This
      * option does not replace default class names of the graphical element.
      * @type {String}
      * @since 5.0.0
