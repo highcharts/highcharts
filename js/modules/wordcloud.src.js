@@ -282,19 +282,18 @@ var getRotation = function getRotation(orientations, index, from, to) {
  * @param  {object} field The width and height of the playing field.
  * @return {boolean} Returns true if the word is placed outside the field.
  */
-var outsidePlayingField = function outsidePlayingField(wrapper, field) {
-    var rect = wrapper.getBBox(),
-        playingField = {
-            left: -(field.width / 2),
-            right: field.width / 2,
-            top: -(field.height / 2),
-            bottom: field.height / 2
-        };
+var outsidePlayingField = function outsidePlayingField(rect, field) {
+    var playingField = {
+        left: -(field.width / 2),
+        right: field.width / 2,
+        top: -(field.height / 2),
+        bottom: field.height / 2
+    };
     return !(
-        playingField.left < (rect.x - rect.width / 2) &&
-        playingField.right > (rect.x + rect.width / 2) &&
-        playingField.top < (rect.y - rect.height / 2) &&
-        playingField.bottom > (rect.y + rect.height / 2)
+        playingField.left < rect.left &&
+        playingField.right > rect.right &&
+        playingField.top < rect.top &&
+        playingField.bottom > rect.bottom
     );
 };
 
@@ -310,16 +309,16 @@ var outsidePlayingField = function outsidePlayingField(wrapper, field) {
  */
 var intersectionTesting = function intersectionTesting(point, options) {
     var placed = options.placed,
-        element = options.element,
         field = options.field,
-        clientRect = options.clientRect,
+        rectangle = options.rectangle,
         spiral = options.spiral,
         attempt = 1,
         delta = {
             x: 0,
             y: 0
         },
-        rect = point.rect = extend({}, clientRect);
+        // Make a copy to update values during intersection testing.
+        rect = point.rect = extend({}, rectangle);
     /**
      * while w intersects any previously placed words:
      *    do {
@@ -330,7 +329,7 @@ var intersectionTesting = function intersectionTesting(point, options) {
     while (
         (
             intersectsAnyWord(point, placed) ||
-            outsidePlayingField(element, field)
+            outsidePlayingField(rect, field)
         ) && delta !== false
     ) {
         delta = spiral(attempt, {
@@ -338,9 +337,9 @@ var intersectionTesting = function intersectionTesting(point, options) {
         });
         if (isObject(delta)) {
             // Update the DOMRect with new positions.
-            rect.left = clientRect.left + delta.x;
+            rect.left = rectangle.left + delta.x;
             rect.right = rect.left + rect.width;
-            rect.top = clientRect.top + delta.y;
+            rect.top = rectangle.top + delta.y;
             rect.bottom = rect.top + rect.height;
         }
         attempt++;
@@ -565,7 +564,6 @@ var wordCloudSeries = {
                 text: point.name
             });
 
-            // TODO Replace all use of clientRect with bBox.
             bBox = testElement.getBBox(true);
             point.dimensions = {
                 height: bBox.height,
@@ -601,22 +599,25 @@ var wordCloudSeries = {
                     text: point.name,
                     rotation: placement.rotation
                 },
-                animate,
-                delta,
-                clientRect;
-            testElement.css(css).attr(attr);
-            // Cache the original DOMRect values for later calculations.
-            point.clientRect = clientRect = extend(
-                {},
-                testElement.element.getBoundingClientRect()
-            );
-            delta = intersectionTesting(point, {
-                clientRect: clientRect,
-                element: testElement,
-                field: field,
-                placed: placed,
-                spiral: spiral
-            });
+                bbox = testElement.css(css).attr(attr).getBBox(),
+                rectangle = {
+                    x: placement.x,
+                    y: placement.y,
+                    width: bbox.width,
+                    height: bbox.height,
+                    left: placement.x - (bbox.width / 2),
+                    right: placement.x + (bbox.width / 2),
+                    top: placement.y - (bbox.height / 2),
+                    bottom: placement.y + (bbox.height / 2)
+                },
+                delta = intersectionTesting(point, {
+                    rectangle: rectangle,
+                    field: field,
+                    placed: placed,
+                    spiral: spiral
+                }),
+                animate;
+
             /**
              * Check if point was placed, if so delete it,
              * otherwise place it on the correct positions.
@@ -625,10 +626,12 @@ var wordCloudSeries = {
                 attr.x += delta.x;
                 attr.y += delta.y;
                 extend(placement, {
-                    left: attr.x  - (clientRect.width / 2),
-                    right: attr.x + (clientRect.width / 2),
-                    top: attr.y - (clientRect.height / 2),
-                    bottom: attr.y + (clientRect.height / 2)
+                    x: attr.x,
+                    y: attr.y,
+                    left: attr.x - (rectangle.width / 2),
+                    right: attr.x + (rectangle.width / 2),
+                    top: attr.y - (rectangle.height / 2),
+                    bottom: attr.y + (rectangle.height / 2)
                 });
                 field = updateFieldBoundaries(field, placement);
                 placed.push(point);
