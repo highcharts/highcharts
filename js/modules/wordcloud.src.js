@@ -625,7 +625,7 @@ var wordCloudSeries = {
             if (isObject(delta)) {
                 attr.x += delta.x;
                 attr.y += delta.y;
-                extend(placement, {
+                extend(rectangle, {
                     x: attr.x,
                     y: attr.y,
                     left: attr.x - (rectangle.width / 2),
@@ -633,7 +633,7 @@ var wordCloudSeries = {
                     top: attr.y - (rectangle.height / 2),
                     bottom: attr.y + (rectangle.height / 2)
                 });
-                field = updateFieldBoundaries(field, placement);
+                field = updateFieldBoundaries(field, rectangle);
                 placed.push(point);
                 point.isNull = false;
             } else {
