@@ -1305,6 +1305,7 @@ const jsdoc = () => {
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
         './../api-docs/include/*.*',
+        './../api-docs/templates/*.handlebars',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
