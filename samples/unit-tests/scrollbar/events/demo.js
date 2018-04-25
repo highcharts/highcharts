@@ -8,7 +8,7 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', functi
                 max: 3.05,
                 events: {
                     afterSetExtremes: function () {
-                        counter ++;
+                        counter++;
                     }
                 }
             },

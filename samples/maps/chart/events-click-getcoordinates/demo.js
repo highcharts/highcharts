@@ -110,80 +110,79 @@ function showMap(mapKey) {
     });
 }
 
+(function () {
+
+    var $select,
+        $option,
+        group,
+        name;
+
+    showMap('custom/world');
+
+    $('#getconfig').click(function () {
+        var chart = Highcharts.charts[0],
+            points,
+            html = '';
+
+        function getPointConfigString(point) {
+            return point.lat ? '{ lat: ' + point.lat + ', lon: ' + point.lon + ' }' :
+                '{ x: ' + point.x + ', y: ' + point.y + ' }';
+        }
+
+        if (chart.get('points').data.length) {
+            points = '{\n    type: "mappoint",\n    data: [\n        ' +
+                $.map(chart.get('points').data, getPointConfigString).join(",\n        ") +
+                '\n    ]\n}';
+            html += '<h3>Points configuration</h3><pre>' + points + '</pre>';
+        }
+
+        if (chart.get('connected-points').data.length) {
+            points = '{\n    type: "mappoint",\n    lineWidth: 2,\n    data: [\n        ' +
+                $.map(chart.get('connected-points').data, getPointConfigString).join(",\n        ") +
+                '\n    ]\n}';
+            html += '<h3>Connected points configuration</h3><pre>' + points + '</pre>';
+        }
+
+        if (!html) {
+            html = 'No points added. Click the map to add points.';
+        }
+
+        $('#code-inner').html(html);
+        $('#container').css({
+            'margin-top': -500
+        });
 
 
-
-
-var $select,
-    $option,
-    group,
-    name;
-
-showMap('custom/world');
-
-$('#getconfig').click(function () {
-    var chart = Highcharts.charts[0],
-        points,
-        html = '';
-
-    function getPointConfigString(point) {
-        return point.lat ? '{ lat: ' + point.lat + ', lon: ' + point.lon + ' }' :
-            '{ x: ' + point.x + ', y: ' + point.y + ' }';
-    }
-
-    if (chart.get('points').data.length) {
-        points = '{\n    type: "mappoint",\n    data: [\n        ' +
-            $.map(chart.get('points').data, getPointConfigString).join(",\n        ") +
-            '\n    ]\n}';
-        html += '<h3>Points configuration</h3><pre>' + points + '</pre>';
-    }
-
-    if (chart.get('connected-points').data.length) {
-        points = '{\n    type: "mappoint",\n    lineWidth: 2,\n    data: [\n        ' +
-            $.map(chart.get('connected-points').data, getPointConfigString).join(",\n        ") +
-            '\n    ]\n}';
-        html += '<h3>Connected points configuration</h3><pre>' + points + '</pre>';
-    }
-
-    if (!html) {
-        html = 'No points added. Click the map to add points.';
-    }
-
-    $('#code-inner').html(html);
-    $('#container').css({
-        'margin-top': -500
+        return false;
     });
 
-
-    return false;
-});
-
-$('#close').click(function () {
-    $('#container').css({
-        'margin-top': 0
+    $('#close').click(function () {
+        $('#container').css({
+            'margin-top': 0
+        });
     });
-});
 
-$select = $('select#maps');
-for (group in Highcharts.mapDataIndex) {
-    if (Highcharts.mapDataIndex.hasOwnProperty(group)) {
-        if (group !== 'version') {
-            for (name in Highcharts.mapDataIndex[group]) {
-                if (Highcharts.mapDataIndex[group].hasOwnProperty(name)) {
-                    $option = $('<option value="' + Highcharts.mapDataIndex[group][name] + '">' + name + '</option>');
-                    if (name === 'World') {
-                        $option.attr('selected', true);
+    $select = $('select#maps');
+    for (group in Highcharts.mapDataIndex) {
+        if (Highcharts.mapDataIndex.hasOwnProperty(group)) {
+            if (group !== 'version') {
+                for (name in Highcharts.mapDataIndex[group]) {
+                    if (Highcharts.mapDataIndex[group].hasOwnProperty(name)) {
+                        $option = $('<option value="' + Highcharts.mapDataIndex[group][name] + '">' + name + '</option>');
+                        if (name === 'World') {
+                            $option.attr('selected', true);
+                        }
+                        $select.append($option);
                     }
-                    $select.append($option);
                 }
             }
         }
     }
-}
-$select.change(function () {
-    var mapKey = $select.val().replace(/\.js$/, '');
-    $.getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
-        showMap(mapKey);
+    $select.change(function () {
+        var mapKey = $select.val().replace(/\.js$/, '');
+        $.getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
+            showMap(mapKey);
+        });
     });
-});
 
+}());

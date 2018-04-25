@@ -952,7 +952,7 @@ Highcharts.chart('container', {
     }],
 
     boost: {
-        useGPUTranslations: true            
+        useGPUTranslations: true
     },
 
     subtitle: {

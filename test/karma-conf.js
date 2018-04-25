@@ -148,7 +148,7 @@ const browserStackBrowsers = {
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: '15.0',
+        browser_version: '16.0',
         os: 'Windows',
         os_version: '10'
     },
@@ -207,9 +207,20 @@ module.exports = function (config) {
                 included: false,
                 served: true
             },
+            // Chart templates
+            'test/chart-template.js',
+            {
+                pattern: 'test/templates/**/*.js',
+                type: 'js',
+                watched: false,
+                included: true,
+                served: true,
+                nocache: false
+            },
 
             // Set up
             'test/test-controller.js',
+            'test/test-utilities.js',
             'test/karma-setup.js'
         ], tests),
 

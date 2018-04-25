@@ -7,7 +7,11 @@ $.getJSON(
 
             chart: {
                 type: 'arearange',
-                zoomType: 'x'
+                zoomType: 'x',
+                scrollablePlotArea: {
+                    minWidth: 600,
+                    scrollPositionX: 1
+                }
             },
 
             title: {

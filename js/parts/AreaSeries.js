@@ -134,12 +134,19 @@ seriesType('area', 'line', {
 
     /**
      * The Y axis value to serve as the base for the area, for distinguishing
-     * between values above and below a threshold. If `null`, the area
-     * behaves like a line series with fill between the graph and the Y
-     * axis minimum.
+     * between values above and below a threshold. The area between the graph
+     * and the threshold is filled.
+     *
+     * * If a number is given, the Y axis will scale to the threshold.
+     * * If `null`, the scaling behaves like a line series with fill between the
+     *   graph and the Y axis minimum.
+     * * If `Infinity` or `-Infinity`, the area between the graph and the
+     *   corresponing Y axis extreme is filled (since v6.1.0).
      *
      * @sample  {highcharts} highcharts/plotoptions/area-threshold/
      *          A threshold of 100
+     * @sample  {highcharts} highcharts/plotoptions/area-threshold-infinity/
+     *          A threshold of Infinity
      * @since   2.0
      * @product highcharts highstock
      */

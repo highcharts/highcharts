@@ -18,6 +18,7 @@ var Series = H.Series,
  * @sample       {highcharts} highcharts/demo/scatter/
  *               Scatter plot
  * @extends      {plotOptions.line}
+ * @excluding    pointPlacement, shadow
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
@@ -56,7 +57,7 @@ seriesType('scatter', 'line', {
 
     /**
      * A configuration object for the tooltip rendering of each single
-     * series. Properties are inherited from <a class="internal">#tooltip</a>.
+     * series. Properties are inherited from [tooltip](#tooltip).
      * Overridable properties are `headerFormat`, `pointFormat`, `yDecimals`,
      * `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other series, in
      * a scatter plot the series.name by default shows in the headerFormat

@@ -974,7 +974,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             for (n in proto) {
                 series[n] = undefined;
             }
-            extend(series, seriesTypes[newType || oldType].prototype);
+            if (seriesTypes[newType || oldType]) {
+                extend(series, seriesTypes[newType || oldType].prototype);
+            } else {
+                H.error(17, true);
+            }
 
             // Re-register groups (#3094) and other preserved properties
             each(preserve, function (prop) {
@@ -1030,14 +1034,30 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample highcharts/members/axis-update/ Axis update demo
      */
     update: function (options, redraw) {
-        var chart = this.chart;
+        var chart = this.chart,
+            newEvents = (options.events || {});
 
-        options = chart.options[this.coll][this.options.index] =
-            merge(this.userOptions, options);
+        options = merge(this.userOptions, options);
+
+        // Color Axis is not an array,
+        // This change is applied in the ColorAxis wrapper
+        if (chart.options[this.coll].indexOf) {
+            // Don't use this.options.index,
+            // StockChart has Axes in navigator too
+            chart.options[this.coll][
+                chart.options[this.coll].indexOf(this.userOptions)
+            ] = options;
+        }
+
+        // Remove old events, if no new exist (#8161)
+        objectEach(chart.options[this.coll].events, function (fn, ev) {
+            if (typeof newEvents[ev] === 'undefined') {
+                newEvents[ev] = undefined;
+            }
+        });
 
         this.destroy(true);
-
-        this.init(chart, extend(options, { events: undefined }));
+        this.init(chart, extend(options, { events: newEvents }));
 
         chart.isDirtyBox = true;
         if (pick(redraw, true)) {
@@ -1076,8 +1096,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             delete chart.options[key];
         }
 
-        each(chart[key], function (axis, i) { // Re-index, #1706
-            axis.options.index = i;
+        each(chart[key], function (axis, i) { // Re-index, #1706, #8075
+            axis.options.index = axis.userOptions.index = i;
         });
         this.destroy();
         chart.isDirtyBox = true;

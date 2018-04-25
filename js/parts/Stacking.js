@@ -151,7 +151,8 @@ H.StackItem.prototype = {
     getStackBox: function (chart, stackItem, x, y, xWidth, h, axis) {
         var reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
-            axisPos = axis.height + axis.pos - chart.plotTop,
+            axisPos = axis.height + axis.pos - (inverted ? chart.plotLeft :
+                chart.plotTop),
             neg = (stackItem.isNegative && !reversed) ||
                 (!stackItem.isNegative && reversed); // #4056
 

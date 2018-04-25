@@ -1,0 +1,33 @@
+// Global font
+@import 'https://fonts.googleapis.com/css?family=Dosis:400,600';
+
+// Colors for data series and points.
+$colors: #7cb5ec #f7a35c #90ee7e #7798BF #aaeeee #ff0066 #eeaaee #55BF3B #DF5353 #7798BF #aaeeee;
+
+// Neutral colors
+$neutral-color-100: #404048;
+$neutral-color-80: #000;
+
+// Fonts
+$font-family: 'Dosis', Arial, Helvetica, sans-serif;
+$title-font-size: 16px;
+$legend-font-size: 13px;
+$axis-labels-font-size: 12px;
+
+// Tooltip
+$tooltip-border: 0px;
+$tooltip-background: rgba(219,219,216,0.8);
+
+// Axes
+$xaxis-grid-line: 1px !default;
+
+// Title
+.highcharts-title, .highcharts-subtitle, .highcharts-yaxis .highcharts-axis-title {
+	text-transform: uppercase;
+}
+
+.highcharts-title {
+	font-weight: bold;
+}
+
+@import '../highcharts';

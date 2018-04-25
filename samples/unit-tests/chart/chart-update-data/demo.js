@@ -76,7 +76,8 @@ QUnit.test(
         assert.strictEqual(
             text.textContent,
             '15:00',
-            'Initial time should be set'
+            'Initial time should be set (Timezone: UTC ' +
+            Math.round((new Date()).getTimezoneOffset() / -60) + ')'
         );
 
         chart.update({

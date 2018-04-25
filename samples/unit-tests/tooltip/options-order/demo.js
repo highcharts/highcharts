@@ -8,6 +8,11 @@ QUnit.test('Options importantance order static', function (assert) {
     * 6) user set -> plotOptions.<seriesType>
     * 7) user set -> series
     */
+    var resetTo = {
+        padding: Highcharts.defaultOptions.tooltip.padding,
+        pointFormat: Highcharts.defaultOptions.tooltip.pointFormat,
+        borderRadius: Highcharts.defaultOptions.tooltip.pointFormat
+    };
     Highcharts.setOptions({
         tooltip: {
             valueDecimals: '1', // 1)
@@ -156,6 +161,18 @@ QUnit.test('Options importantance order static', function (assert) {
         'prefix ',
         '...and 7) option was merged correctly'
     );
+
+    // Reset
+    delete Highcharts.defaultOptions.tooltip.valueDecimals;
+    delete Highcharts.defaultOptions.tooltip.valueSuffix;
+    delete Highcharts.defaultOptions.tooltip.footerFormat;
+    delete Highcharts.defaultOptions.tooltip.valuePrefix;
+    Highcharts.setOptions({
+        tooltip: resetTo
+    });
+
+    delete Highcharts.defaultOptions.plotOptions.series.tooltip;
+    delete Highcharts.defaultOptions.plotOptions.line.tooltip;
 });
 
 QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
@@ -168,6 +185,12 @@ QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
     * 6) user set -> plotOptions.<seriesType>
     * 7) user set -> series
     */
+    var resetTo = {
+        padding: Highcharts.defaultOptions.tooltip.padding,
+        pointFormat: Highcharts.defaultOptions.tooltip.pointFormat,
+        borderRadius: Highcharts.defaultOptions.tooltip.pointFormat
+    };
+
     Highcharts.setOptions({
         tooltip: {
             headerFormat: '1' // 1)
@@ -312,4 +335,16 @@ QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
         '7',
         '7) chart.series[n] used'
     );
+
+    // Reset
+    delete Highcharts.defaultOptions.tooltip.valueDecimals;
+    delete Highcharts.defaultOptions.tooltip.valueSuffix;
+    delete Highcharts.defaultOptions.tooltip.footerFormat;
+    delete Highcharts.defaultOptions.tooltip.valuePrefix;
+    Highcharts.setOptions({
+        tooltip: resetTo
+    });
+
+    delete Highcharts.defaultOptions.plotOptions.series.tooltip;
+    delete Highcharts.defaultOptions.plotOptions.line.tooltip;
 });

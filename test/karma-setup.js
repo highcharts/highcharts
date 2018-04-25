@@ -76,8 +76,13 @@ QUnit.module('Highcharts', {
     beforeEach: function () {
 
         // Reset container size that some tests may have modified
-        document.getElementById('container').style.width = 'auto';
-        document.getElementById('container').style.width = 'auto';
+        var containerStyle = document.getElementById('container').style;
+        containerStyle.width = 'auto';
+        containerStyle.height = 'auto';
+        containerStyle.position = 'absolute';
+        containerStyle.left = '8';
+        containerStyle.top = '8';
+        containerStyle.zIndex = '9999';
 
         // Reset randomizer
         Math.randomCursor = 0;
@@ -85,14 +90,33 @@ QUnit.module('Highcharts', {
 
     afterEach: function () {
 
-        // Destroy all charts
-        Highcharts.charts.forEach(function (chart) {
-            if (chart && chart.destroy && chart.renderer) {
-                chart.destroy();
-            }
-        });
-        Highcharts.charts.length = 0;
+        var containerStyle = document.getElementById('container').style;
+        containerStyle.width = '';
+        containerStyle.height = '';
+        containerStyle.position = '';
+        containerStyle.left = '';
+        containerStyle.top = '';
+        containerStyle.zIndex = '';
 
+        var currentChart = null,
+            charts = Highcharts.charts,
+            templateCharts = [];
+
+        // Destroy all charts, except template charts
+        for (var i = 0, ie = charts.length; i < ie; ++i) {
+            currentChart = charts[i];
+            if (!currentChart) {
+                continue;
+            }
+            if (currentChart.template) {
+                templateCharts.push(currentChart);
+            } else if (currentChart.destroy && currentChart.renderer) {
+                currentChart.destroy();
+            }
+        }
+
+        Highcharts.charts.length = 0;
+        Array.prototype.push.apply(Highcharts.charts, templateCharts);
     }
 });
 

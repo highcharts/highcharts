@@ -125,7 +125,7 @@ seriesType('column', 'line', {
      */
 
     /**
-     * @ignore
+     * @ignore-option
      */
     marker: null, // point options are specified in the base options
 
@@ -329,7 +329,7 @@ seriesType('column', 'line', {
 
     // false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
     /**
-     * @ignore
+     * @ignore-option
      */
     startFromThreshold: true,
 

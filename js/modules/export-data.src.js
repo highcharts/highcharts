@@ -14,6 +14,7 @@
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
+import '../mixins/ajax.js';
 
 var defined = Highcharts.defined,
     each = Highcharts.each,
@@ -173,6 +174,11 @@ Highcharts.setOptions({
         downloadXLS: 'Download XLS',
         /**
          * Export-data module only. The text for the menu item.
+         * @since 6.1.0
+         */
+        openInCloud: 'Open in Highcharts Cloud',
+        /**
+         * Export-data module only. The text for the menu item.
          * @since 6.0.0
          */
         viewData: 'View data table'
@@ -294,6 +300,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
         if (
             series.options.includeInCSVExport !== false &&
+            !series.options.isInternal &&
             series.visible !== false // #55
         ) {
 
@@ -428,7 +435,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
         // Add the category column
         each(rowArr, function (row) { // eslint-disable-line no-loop-func
             var category = row.name;
-            if (!defined(category)) {
+            if (xAxis && !defined(category)) {
                 if (xAxis.isDatetimeAxis) {
                     if (row.x instanceof Date) {
                         row.x = row.x.getTime();
@@ -816,7 +823,7 @@ Highcharts.Chart.prototype.viewData = function () {
  *   Chart.getOptions function that returns all non-default options. Should also
  *   be used by the export module.
  */
-Highcharts.Chart.prototype.editInCloud = function () {
+Highcharts.Chart.prototype.openInCloud = function () {
 
     var options,
         paramObj,
@@ -834,19 +841,24 @@ Highcharts.Chart.prototype.editInCloud = function () {
         });
     }
 
-    function openInCloud(data, direct) {
-        // Open new tab
-        var a = doc.createElement('a');
-        a.href = 'https://cloud.highcharts.com/create?' +
-            (direct ? 'c' : 'q') + '=' + data;
-        a.target = '_blank';
-        doc.body.appendChild(a);
-        a.click();
-        doc.body.removeChild(a);
+    function openInCloud() {
+        var form = doc.createElement('form');
+        doc.body.appendChild(form);
+        form.method = 'post';
+        form.action = 'https://cloud-api.highcharts.com/openincloud';
+        form.target = '_blank';
+        var input = doc.createElement('input');
+        input.type = 'hidden';
+        input.name = 'chart';
+        input.value = params;
+        form.appendChild(input);
+        form.submit();
+        doc.body.removeChild(form);
     }
 
     options = Highcharts.merge(this.userOptions);
     removeFunctions(options);
+
     paramObj = {
         name: (options.title && options.title.text) || 'Chart title',
         options: options,
@@ -859,24 +871,7 @@ Highcharts.Chart.prototype.editInCloud = function () {
     };
 
     params = JSON.stringify(paramObj);
-    params = win.btoa(encodeURIComponent(params));
-
-    if (params.length < 2500) {
-        // We can skip the storage and just open it directly
-        return openInCloud(params, true);
-    }
-
-    Highcharts.ajax({
-        url: 'https://cloud-api.highcharts.com/openincloud',
-        type: 'post',
-        dataType: 'json',
-        data: paramObj,
-        success: function (result) {
-            if (result && result.ok && result.id) {
-                openInCloud(result.id);
-            }
-        }
-    });
+    openInCloud();
 };
 
 // Add "Download CSV" to the exporting menu.
@@ -901,6 +896,12 @@ if (exportingOptions) {
             onclick: function () {
                 this.viewData();
             }
+        },
+        openInCloud: {
+            textKey: 'openInCloud',
+            onclick: function () {
+                this.openInCloud();
+            }
         }
     });
 
@@ -908,7 +909,8 @@ if (exportingOptions) {
         'separator',
         'downloadCSV',
         'downloadXLS',
-        'viewData'
+        'viewData',
+        'openInCloud'
     );
 }
 

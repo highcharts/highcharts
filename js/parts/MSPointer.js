@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -41,7 +40,12 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
         },
         translateMSPointer = function (e, method, wktype, func) {
             var p;
-            if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[H.hoverChartIndex]) {
+            if (
+                (
+                    e.pointerType === 'touch' ||
+                    e.pointerType === e.MSPOINTER_TYPE_TOUCH
+                ) && charts[H.hoverChartIndex]
+            ) {
                 func(e);
                 p = charts[H.hoverChartIndex].pointer;
                 p[method]({
@@ -58,31 +62,62 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
      */
     extend(Pointer.prototype, /** @lends Pointer.prototype */ {
         onContainerPointerDown: function (e) {
-            translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
-                touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
-            });
+            translateMSPointer(
+                e,
+                'onContainerTouchStart',
+                'touchstart',
+                function (e) {
+                    touches[e.pointerId] = {
+                        pageX: e.pageX,
+                        pageY: e.pageY,
+                        target: e.currentTarget
+                    };
+                }
+            );
         },
         onContainerPointerMove: function (e) {
-            translateMSPointer(e, 'onContainerTouchMove', 'touchmove', function (e) {
-                touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY };
-                if (!touches[e.pointerId].target) {
-                    touches[e.pointerId].target = e.currentTarget;
+            translateMSPointer(
+                e,
+                'onContainerTouchMove',
+                'touchmove',
+                function (e) {
+                    touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY };
+                    if (!touches[e.pointerId].target) {
+                        touches[e.pointerId].target = e.currentTarget;
+                    }
                 }
-            });
+            );
         },
         onDocumentPointerUp: function (e) {
-            translateMSPointer(e, 'onDocumentTouchEnd', 'touchend', function (e) {
-                delete touches[e.pointerId];
-            });
+            translateMSPointer(
+                e,
+                'onDocumentTouchEnd',
+                'touchend',
+                function (e) {
+                    delete touches[e.pointerId];
+                }
+            );
         },
 
         /**
          * Add or remove the MS Pointer specific events
          */
         batchMSEvents: function (fn) {
-            fn(this.chart.container, hasPointerEvent ? 'pointerdown' : 'MSPointerDown', this.onContainerPointerDown);
-            fn(this.chart.container, hasPointerEvent ? 'pointermove' : 'MSPointerMove', this.onContainerPointerMove);
-            fn(doc, hasPointerEvent ? 'pointerup' : 'MSPointerUp', this.onDocumentPointerUp);
+            fn(
+                this.chart.container,
+                hasPointerEvent ? 'pointerdown' : 'MSPointerDown',
+                this.onContainerPointerDown
+            );
+            fn(
+                this.chart.container,
+                hasPointerEvent ? 'pointermove' : 'MSPointerMove',
+                this.onContainerPointerMove
+            );
+            fn(
+                doc,
+                hasPointerEvent ? 'pointerup' : 'MSPointerUp',
+                this.onDocumentPointerUp
+            );
         }
     });
 

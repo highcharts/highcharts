@@ -181,7 +181,7 @@
                 // Hyperlinked issue numbers
                 .replace(
                     /#([0-9]+)/g,
-                    '<a href="https://github.com/highslide-software/highcharts.com/issues/$1">#$1</a>'
+                    '<a href="https://github.com/highcharts/highcharts/issues/$1">#$1</a>'
                 )
                 // Code tags
                 .replace(

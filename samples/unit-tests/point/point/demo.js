@@ -200,3 +200,42 @@ QUnit.test('Select and unselect', function (assert) {
         'Unselected point out of range (#6445)'
     );
 });
+
+QUnit.test('Point className on other elements', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [{
+                y: 1
+            }, {
+                y: 2,
+                className: 'my-class'
+            }, {
+                y: 3
+            }],
+            type: 'pie'
+        }]
+    });
+
+    assert.notEqual(
+        chart.series[0].points[1].connector.element
+            .getAttribute('class').indexOf('my-class'),
+        -1,
+        'The connector should have the point className'
+    );
+
+    chart.series[0].points[1].onMouseOver();
+    assert.notEqual(
+        chart.series[0].halo.element
+            .getAttribute('class').indexOf('my-class'),
+        -1,
+        'The halo should have the point className'
+    );
+
+    chart.series[0].points[0].onMouseOver();
+    assert.strictEqual(
+        chart.series[0].halo.element
+            .getAttribute('class').indexOf('my-class'),
+        -1,
+        'The halo for other points should not have the point className'
+    );
+});

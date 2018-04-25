@@ -1,4 +1,3 @@
-
 QUnit.test('Pie color and data labels', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -180,14 +179,12 @@ QUnit.test('Pie color and data labels', function (assert) {
         });
     }
 
-    var clock = null,
-        done = assert.async();
+    var clock = TestUtilities.lolexInstall(chart);
 
     try {
 
-        var visibilities = getVisibilities();
-
-        clock = lolexInstall(chart);
+        var done = assert.async(),
+            visibilities = getVisibilities();
 
         chart.series[0].points[0].doDrilldown();
 
@@ -230,11 +227,11 @@ QUnit.test('Pie color and data labels', function (assert) {
             done();
         }, 100);
 
-        lolexRunAndUninstall(clock);
+        TestUtilities.lolexRunAndUninstall(clock);
 
     } finally {
 
-        lolexUninstall(clock);
+        TestUtilities.lolexUninstall(clock);
 
     }
 });

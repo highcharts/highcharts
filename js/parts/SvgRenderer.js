@@ -3237,6 +3237,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     // requries regex shim to fix later
                     el.setAttribute('hc-svg-href', src);
                 }
+            },
+            onDummyLoad = function (e) {
+                setSVGImageSource(elemWrapper.element, src);
+                onload.call(elemWrapper, e);
             };
 
         // optional properties
@@ -3261,11 +3265,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' /* eslint-disable-line */
             );
             dummy = new win.Image();
-            addEvent(dummy, 'load', function (e) {
-                setSVGImageSource(elemWrapper.element, src);
-                onload.call(elemWrapper, e);
-            });
+            addEvent(dummy, 'load', onDummyLoad);
             dummy.src = src;
+            if (dummy.complete) {
+                onDummyLoad({});
+            }
         } else {
             setSVGImageSource(elemWrapper.element, src);
         }

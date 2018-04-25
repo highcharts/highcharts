@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -31,7 +30,8 @@ var each = H.each,
  * @excluding    animationLimit,boostThreshold,connectEnds,connectNulls,
  *               cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
  *               marker,negativeColor,pointPlacement,shadow,softThreshold,
- *               stacking,states,step,threshold,turboThreshold,zoneAxis,zones
+ *               stacking,states,step,threshold,turboThreshold,xAxis,zoneAxis,
+ *               zones
  * @product      highcharts
  * @optionparent plotOptions.gauge
  */
@@ -221,8 +221,9 @@ seriesType('gauge', 'line', {
      */
 
     /**
-     * The border color or stroke of the gauge's dial. By default, the borderWidth
-     * is 0, so this must be set in addition to a custom border color.
+     * The border color or stroke of the gauge's dial. By default, the
+     * borderWidth is 0, so this must be set in addition to a custom border
+     * color.
      *
      * @type      {Color}
      * @sample    {highcharts} highcharts/plotoptions/gauge-dial/

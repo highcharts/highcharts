@@ -119,20 +119,7 @@
         <property name="annotations.src.file" value="${basedir}/js/modules/${annotations.src.name}"/>
         <property name="highstock-all.minified.name" value="highstock-all.js"/>
 
-        <!-- jsLint -->
-        <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
-        <property name="jslint4java.jar" value="${jslint4java.dir}/jslint4java-2.0.0.jar"/>
-        <taskdef name="jslint"
-            classname="com.googlecode.jslint4java.ant.JSLintTask"
-            classpath="${jslint4java.jar}"/>
-
-        <!-- google closure compiler -->
-        <property name="gcc.dir" value="${tools.dir}/google-closure-compiler"/>
-        <property name="gcc.jar" location="${gcc.dir}/compiler.jar"/>
-
-        <!-- google js-test-driver -->
-        <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
-        <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.5.jar"/>
+        
         <!-- ant-contrib -->
         <property name="ant.contrib.dir" value="${tools.dir}/ant-contrib-0.6-bin"/>
         <property name="ant.contrib.jar" location="${ant.contrib.dir}/lib/ant-contrib-0.6.jar"/>
@@ -408,75 +395,6 @@
 
     </target>
 
-    <!-- Starts the test driver server. -->
-    <target name="server" depends="set.properties" description="Starts the unit test server on localhost:4224.">
-        <!--
-        <exec executable="cmd" dir="${basedir}" osfamily="windows">
-            <arg value="/k start java -jar ${jstestdriver.jar} - -port 4224"/>
-        </exec>
-        -->
-        <java jar="${jstestdriver.jar}" fork="true">
-            <arg value="--port"/>
-            <arg value="4224"/>
-        </java>
-        <echo message="Test server started at localhost:4224"/>
-        <echo message="Before running tests, remember to capture one or more browsers."/>
-        <echo message="Exit the server by pressing Control-C in the java window."/>
-    </target>
-
-    <!-- Starts the test driver server with coverage enabled. -->
-    <!-- This must be done on a separate port to the test-server. -->
-    <target name="server-coverage" depends="set.properties" description="Starts the unit test server with coverage enabled on localhost:5225.">
-        <!-- Copy the jsTestDriverCoverage configuration to root. -->
-        <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
-
-        <exec executable="cmd" dir="${basedir}" >
-            <arg value="/k start java -jar ${jstestdriver.jar} --config jsTestDriverCoverage.conf --port 5225"/>
-        </exec>
-        <echo message="Coverage test server started at localhost:5225"/>
-        <echo message="Before running tests, remember to capture one or more browsers."/>
-        <echo message="Exit the server by pressing Control-C in the java window."/>
-    </target>
-
-    <!-- Runs coverage analysis for the tests. -->
-    <target name="test-coverage" depends="set.properties" description="Runs the unit tests together with code coverage. The server must be running (i.e. 'server-coverage')">
-        <!-- Copy the jsTestDriverCoverage configuration to root. -->
-        <copy file="test/unit/jsTestDriverCoverage.conf" todir="${basedir}" overwrite="true"/>
-
-        <!-- Run the tests with coverage enabled. -->
-        <java jar="${jstestdriver.jar}" fork="true">
-            <arg value="--config"/>
-            <arg value="jsTestDriverCoverage.conf"/>
-            <arg value="--testOutput"/>
-            <arg value="${testoutput.dir}"/>
-            <arg value="--tests"/>
-            <arg value="all"/>
-            <arg value="--verbose"/>
-        </java>
-    </target>
-
-    <!-- Generates a code-coverage report based on the output from the 'test-coverage' task. -->
-    <target name="test-report" depends="set.properties" description="Generates a code-coverage report based on the output from the 'test-coverage' task.">
-        <!-- When running on windows, the output from coverage is windows-style, but the report requires unix-style paths. -->
-        <!-- Replace dos-drive 'C:' with unix style '/C'. -->
-        <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="SF:C:" value="SF:/C" summary="true"/>
-        <!-- Replace dos-paths '\' with unix style '/'. -->
-        <replace file="${testoutput.dir}/jsTestDriver.conf-coverage.dat" token="\" value="/" summary="true"/>
-
-        <!-- Run perl and the genhtml script to create the report. -->
-        <exec executable="perl" dir="${basedir}">
-            <arg value="-w"/>
-            <arg value="tools/lcov-1.9/bin/genhtml"/>
-            <arg line="-o ${coveragereport.dir} --no-branch-coverage --no-function-coverage --legend --title 'Highcharts test coverage' build/tests/jsTestDriver.conf-coverage.dat"/>
-        </exec>
-
-        <!-- Point the browser to the report. -->
-        <property name="browser" location="C:/Program Files (x86)/Mozilla Firefox/firefox.exe"/>
-        <property name="file" location="${coveragereport.dir}/index.html"/>
-        <exec executable="${browser}" spawn="true">
-            <arg value="${file}"/>
-        </exec>
-    </target>
     <!-- gzip javascript files in folder -->
     <target name="gzip-js" description="gzip all javascript versions for upload to Amazon S3" depends="set.properties">
         <property name="gzip.dir" value="${js.dir}/../js-gzip"/>

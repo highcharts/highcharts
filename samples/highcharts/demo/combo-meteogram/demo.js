@@ -153,9 +153,11 @@ Meteogram.prototype.getChartOptions = function () {
             marginRight: 40,
             marginTop: 50,
             plotBorderWidth: 1,
-            width: 800,
             height: 310,
-            alignTicks: false
+            alignTicks: false,
+            scrollablePlotArea: {
+                minWidth: 720
+            }
         },
 
         defs: {
@@ -177,7 +179,11 @@ Meteogram.prototype.getChartOptions = function () {
 
         title: {
             text: this.getTitle(),
-            align: 'left'
+            align: 'left',
+            style: {
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis'
+            }
         },
 
         credits: {

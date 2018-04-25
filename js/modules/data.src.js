@@ -9,6 +9,7 @@
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
+import '../mixins/ajax.js';
 
 // Utilities
 var addEvent = Highcharts.addEvent,
@@ -26,90 +27,6 @@ var addEvent = Highcharts.addEvent,
     some = Highcharts.some,
     SeriesBuilder;
 
-/**
- * @typedef {Object} AjaxSettings
- * @property {String} url - The URL to call
- * @property {('get'|'post'|'update'|'delete')} type - The verb to use
- * @property {('json'|'xml'|'text'|'octet')} dataType - The data type expected
- * @property {Function} success - Function to call on success
- * @property {Function} error - Function to call on error
- * @property {Object} data - The payload to send
- * @property {Object} headers - The headers; keyed on header name
- */
-
-/**
- * Perform an Ajax call.
- *
- * @memberof Highcharts
- * @param {AjaxSettings} - The Ajax settings to use
- *
- */
-Highcharts.ajax = function (attr) {
-    var options = merge(true, {
-            url: false,
-            type: 'GET',
-            dataType: 'json',
-            success: false,
-            error: false,
-            data: false,
-            headers: {}
-        }, attr),
-        headers = {
-            json: 'application/json',
-            xml: 'application/xml',
-            text: 'text/plain',
-            octet: 'application/octet-stream'
-        },
-        r = new XMLHttpRequest();
-
-    function handleError(xhr, err) {
-        if (options.error) {
-            options.error(xhr, err);
-        } else {
-            // Maybe emit a highcharts error event here
-        }
-    }
-
-    if (!options.url) {
-        return false;
-    }
-
-    r.open(options.type.toUpperCase(), options.url, true);
-    r.setRequestHeader(
-        'Content-Type',
-        headers[options.dataType] || headers.text
-    );
-
-    Highcharts.objectEach(options.headers, function (val, key) {
-        r.setRequestHeader(key, val);
-    });
-
-    r.onreadystatechange = function () {
-        var res;
-
-        if (r.readyState === 4) {
-            if (r.status === 200) {
-                res = r.responseText;
-                if (options.dataType === 'json') {
-                    try {
-                        res = JSON.parse(res);
-                    } catch (e) {
-                        return handleError(r, e);
-                    }
-                }
-                return options.success && options.success(res);
-            }
-
-            handleError(r, r.responseText);
-        }
-    };
-
-    try {
-        options.data = JSON.stringify(options.data);
-    } catch (e) {}
-
-    r.send(options.data || true);
-};
 
 /**
  * The Data module provides a simplified interface for adding data to
@@ -126,8 +43,17 @@ Highcharts.ajax = function (attr) {
  * @sample {highcharts} highcharts/demo/column-parsed/ HTML table
  * @sample {highcharts} highcharts/data/csv/ CSV
  * @since 4.0
- * @product highcharts
  * @apioption data
+ */
+
+/**
+ * A callback function to modify the CSV before parsing it. Return the modified
+ * string.
+ *
+ * @type {Function}
+ * @sample {highcharts} highcharts/demo/line-ajax/ Modify CSV before parse
+ * @since 6.1
+ * @apioption data.beforeParse
  */
 
 /**
@@ -141,7 +67,6 @@ Highcharts.ajax = function (attr) {
  * @see [data.rows](#data.rows)
  * @sample {highcharts} highcharts/data/columns/ Columns
  * @since 4.0
- * @product highcharts
  * @apioption data.columns
  */
 
@@ -156,7 +81,6 @@ Highcharts.ajax = function (attr) {
  * @see [data.parsed](#data.parsed)
  * @sample {highcharts} highcharts/data/complete/ Modify data on complete
  * @since 4.0
- * @product highcharts
  * @apioption data.complete
  */
 
@@ -176,7 +100,6 @@ Highcharts.ajax = function (attr) {
  * @type {String}
  * @sample {highcharts} highcharts/data/csv/ Data from CSV
  * @since 4.0
- * @product highcharts
  * @apioption data.csv
  */
 
@@ -199,7 +122,6 @@ Highcharts.ajax = function (attr) {
  * @see [data.parseDate](#data.parseDate)
  * @sample {highcharts} highcharts/data/dateformat-auto/ Best guess date format
  * @since 4.0
- * @product highcharts
  * @apioption data.dateFormat
  */
 
@@ -213,7 +135,6 @@ Highcharts.ajax = function (attr) {
  * @sample {highcharts} highcharts/data/delimiters/ Comma as decimal point
  * @default .
  * @since 4.1.0
- * @product highcharts
  * @apioption data.decimalPoint
  */
 
@@ -224,7 +145,6 @@ Highcharts.ajax = function (attr) {
  * @type {Number}
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @since 4.0
- * @product highcharts
  * @apioption data.endColumn
  */
 
@@ -235,7 +155,6 @@ Highcharts.ajax = function (attr) {
  * @type {Number}
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @since 4.0.4
- * @product highcharts
  * @apioption data.endRow
  */
 
@@ -258,10 +177,7 @@ Highcharts.ajax = function (attr) {
  * @type {String}
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
- * @sample highcharts/data/livedata-categories
- *         Live data with polling
  * @since 4.0
- * @product highcharts
  * @apioption data.googleSpreadsheetKey
  */
 
@@ -273,7 +189,6 @@ Highcharts.ajax = function (attr) {
  * @type {String}
  * @sample {highcharts} highcharts/data/google-spreadsheet/ Load a Google Spreadsheet
  * @since 4.0
- * @product highcharts
  * @apioption data.googleSpreadsheetWorksheet
  */
 
@@ -288,7 +203,6 @@ Highcharts.ajax = function (attr) {
  * @type {String}
  * @sample {highcharts} highcharts/data/delimiters/ Delimiters
  * @since 4.0
- * @product highcharts
  * @apioption data.itemDelimiter
  */
 
@@ -299,7 +213,6 @@ Highcharts.ajax = function (attr) {
  * @sample {highcharts} highcharts/data/delimiters/ Delimiters
  * @default \n
  * @since 4.0
- * @product highcharts
  * @apioption data.lineDelimiter
  */
 
@@ -310,7 +223,6 @@ Highcharts.ajax = function (attr) {
  * @type {Function}
  * @see [dateFormat](#data.dateFormat)
  * @since 4.0
- * @product highcharts
  * @apioption data.parseDate
  */
 
@@ -324,7 +236,6 @@ Highcharts.ajax = function (attr) {
  * @see [data.complete](#data.complete)
  * @sample {highcharts} highcharts/data/parsed/ Modify data after parse
  * @since 4.0
- * @product highcharts
  * @apioption data.parsed
  */
 
@@ -336,7 +247,6 @@ Highcharts.ajax = function (attr) {
  * @see [data.columns](#data.columns)
  * @sample {highcharts} highcharts/data/rows/ Data in rows
  * @since 4.0
- * @product highcharts
  * @apioption data.rows
  */
 
@@ -347,7 +257,6 @@ Highcharts.ajax = function (attr) {
  * @type {Array<Object>}
  * @sample {highcharts} highcharts/data/seriesmapping-label/ Label from data set
  * @since 4.0.4
- * @product highcharts
  * @apioption data.seriesMapping
  */
 
@@ -358,7 +267,6 @@ Highcharts.ajax = function (attr) {
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @default 0
  * @since 4.0
- * @product highcharts
  * @apioption data.startColumn
  */
 
@@ -369,7 +277,6 @@ Highcharts.ajax = function (attr) {
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @default 0
  * @since 4.0
- * @product highcharts
  * @apioption data.startRow
  */
 
@@ -382,7 +289,6 @@ Highcharts.ajax = function (attr) {
  * @sample {highcharts} highcharts/data/switchrowsandcolumns/ Switch rows and columns
  * @default false
  * @since 4.0
- * @product highcharts
  * @apioption data.switchRowsAndColumns
  */
 
@@ -394,7 +300,6 @@ Highcharts.ajax = function (attr) {
  * @type {String|HTMLElement}
  * @sample {highcharts} highcharts/demo/column-parsed/ Parsed table
  * @since 4.0
- * @product highcharts
  * @apioption data.table
  */
 
@@ -462,7 +367,7 @@ Highcharts.ajax = function (attr) {
  * @sample highcharts/data/livedata-columns
  *           Categorized bar chart with CSV and live polling
  *
- * @type {Bool}
+ * @type {Boolean}
  * @default false
  * @apioption data.enablePolling
  */
@@ -1089,6 +994,10 @@ Highcharts.extend(Data.prototype, {
          */
         function deduceAxisTypes() {
 
+        }
+
+        if (csv && options.beforeParse) {
+            csv = options.beforeParse.call(this, csv);
         }
 
         if (csv) {

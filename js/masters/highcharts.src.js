@@ -19,6 +19,7 @@ import '../parts/TouchPointer.js';
 import '../parts/MSPointer.js';
 import '../parts/Legend.js';
 import '../parts/Chart.js';
+import '../parts/ScrollablePlotArea.js';
 import '../parts/Stacking.js';
 import '../parts/Dynamics.js';
 import '../parts/AreaSeries.js';

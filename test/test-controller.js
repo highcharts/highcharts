@@ -1,5 +1,5 @@
 /* eslint valid-jsdoc: 0 */
-/* global Highcharts, console, document, window, lolex, SVGElement */
+/* global Highcharts, console, document, window, SVGElement */
 /**
  * The test controller makes it easy to emulate mouse stuff.
  *
@@ -370,66 +370,27 @@ window.TestController = function (chart) {
     // Shorthand functions. Calls trigger, except the type.
     [
         'click',
-        'mousedown',
-        'mousemove',
-        'mouseup',
-        'mouseout',
-        'mouseover',
-        'touchstart',
-        'touchmove',
-        'touchend'
+        'mouseDown',
+        'mouseMove',
+        'mouseUp',
+        'mouseOut',
+        'mouseOver',
+        'touchStart',
+        'touchMove',
+        'touchEnd'
     ].forEach(function (type) {
-        controller[type] = function (x, y, extra, debug) {
-            trigger(type, x, y, extra, debug);
+        var typeLowerCase = type.toLowerCase();
+        controller[typeLowerCase] = function (x, y, extra, debug) {
+            trigger(typeLowerCase, x, y, extra, debug);
+        };
+        controller[type + 'OnElement'] = function (el, x, y, extra) {
+            var elOffset = getOffset(el),
+                offset = getOffset(chart.container),
+                pageX = offset.left + elOffset.left + (x || 0),
+                pageY = offset.top + elOffset.top + (y || 0);
+            triggerEvent(typeLowerCase, pageX, pageY, extra, el);
         };
     });
     controller.setPositionToElement(chart.container);
     return controller;
 };
-
-
-/**
- * Convience wrapper for installing lolex and bypassing requestAnimationFrame.
- * @return {Object} The clock object
- */
-function lolexInstall() { // eslint-disable-line no-unused-vars
-    var ret;
-    if (typeof lolex !== 'undefined') {
-        window.backupRequestAnimationFrame = window.requestAnimationFrame;
-        window.requestAnimationFrame = null;
-        // Abort running animations, otherwise they will take over
-        Highcharts.timers.length = 0;
-        ret = lolex.install();
-    }
-    return ret;
-}
-
-/**
- * Convenience wrapper for uninstalling lolex.
- * @param  {Object} clock The clock object
- * @return {void}
- */
-function lolexUninstall(clock) { // eslint-disable-line no-unused-vars
-
-    if (typeof lolex !== 'undefined') {
-
-        clock.uninstall();
-
-        // Reset native requestAnimationFrame
-        window.requestAnimationFrame = window.backupRequestAnimationFrame;
-        delete window.backupRequestAnimationFrame;
-    }
-}
-
-/**
- * Convenience wrapper for running timeouts and uninstalling lolex.
- * @param  {Object} clock The clock object
- * @return {void}
- */
-function lolexRunAndUninstall(clock) { // eslint-disable-line no-unused-vars
-
-    if (typeof lolex !== 'undefined') {
-        clock.runAll();
-        lolexUninstall(clock);
-    }
-}
