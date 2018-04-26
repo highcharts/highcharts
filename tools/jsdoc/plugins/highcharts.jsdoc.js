@@ -34,6 +34,7 @@ function getLocation(option) {
             option.key.loc.end
     };
 }
+
 function dumpOptions() {
     fs.writeFile(
         'tree.json',
@@ -46,6 +47,51 @@ function dumpOptions() {
             //console.log('Wrote tree!');
         }
     );
+}
+
+function createOptionsSitemaps() {
+    let sitemaps = {};
+    function addToSitemaps(node, boost, defaultProducts) {
+        if (!node.doclet ||
+            !node.meta ||
+            !node.meta.fullname) {
+            return;
+        }
+        let products = (node.doclet.products || defaultProducts);
+        for (var i = 0, ie = products.length; i < ie; ++i) {
+            let product = products[i];
+            sitemaps[product] = (sitemaps[product] || [])
+            sitemaps[product].push(
+                '<url><loc>https://api.highcharts.com/' +
+                product + '/' + node.meta.fullname +
+                '</loc><priority>' +
+                (boost / 200) +
+                '</priority></url>'
+            );
+        }
+        if (!node.children) {
+            return;
+        }
+        --boost;
+        for (var child in node.children) {
+            addToSitemaps(node.children[child], boost, products);
+        }
+    }
+    for (var option in options) {
+        addToSitemaps(options[option], 100, ['highcharts']);
+    }
+    for (var product in sitemaps) {
+        fs.writeFile(
+            'build/api/' + product + '/sitemap.xml',
+            '<?xml version="1.0" encoding="UTF-8"?>' +
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
+            sitemaps[product].sort().join('') +
+            '</urlset>',
+            function () {
+                //console.log('Wrote sitemap!');
+            }
+        );
+    }
 }
 
 function resolveBinaryExpression(node) {
@@ -747,5 +793,6 @@ Highcharts.chart('container', {
         // console.log(Object.keys(files));
 
         dumpOptions();
+        createOptionsSitemaps();
     }
 };
