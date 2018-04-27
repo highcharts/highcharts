@@ -51,13 +51,13 @@ function dumpOptions() {
 
 function createOptionsSitemaps() {
     let sitemaps = {};
-    function addToSitemaps(node, boost, defaultProducts) {
+    function addToSitemaps(node, boost, parentProducts) {
         if (!node.doclet ||
             !node.meta ||
             !node.meta.fullname) {
             return;
         }
-        let products = (node.doclet.products || defaultProducts);
+        let products = (parentProducts || node.doclet.products);
         for (var i = 0, ie = products.length; i < ie; ++i) {
             let product = products[i];
             sitemaps[product] = (sitemaps[product] || [])
@@ -78,7 +78,17 @@ function createOptionsSitemaps() {
         }
     }
     for (var option in options) {
-        addToSitemaps(options[option], 100, ['highcharts']);
+        if (options[option].doclet &&
+            options[option].doclet.products
+        ) {
+            addToSitemaps(options[option], 100,
+                options[option].doclet.products
+            );
+        } else {
+            addToSitemaps(options[option], 100, [
+                'highcharts', 'highstock', 'highmaps'
+            ]);
+        }
     }
     for (var product in sitemaps) {
         fs.writeFile(
