@@ -64,7 +64,7 @@ function createOptionsSitemaps() {
             sitemaps[product] = (sitemaps[product] || [])
             sitemaps[product].push(
                 '<url><loc>https://api.highcharts.com/' +
-                product + '/' + node.meta.fullname +
+                product + '/' + node.meta.fullname + '.html' +
                 '</loc><priority>' +
                 (boost / 200) +
                 '</priority></url>'
@@ -91,13 +91,21 @@ function createOptionsSitemaps() {
             ]);
         }
     }
+    sitemaps['class-reference'] = (sitemaps['class-reference'] || []);
+    fs.readdirSync('build/api/class-reference').forEach(function (fileName) {
+        sitemaps['class-reference'].push(
+                '<url><loc>https://api.highcharts.com/' +
+                'class-reference/' + fileName +
+                '</loc></url>'
+        );
+    });
     for (var product in sitemaps) {
         sitemapIndex.push(
             '<sitemap><loc>'+
             'https://api.highcharts.com/' + product + '/sitemap.xml' +
             '</loc></sitemap>'
         );
-        fs.writeFile(
+        fs.writeFileSync(
             'build/api/' + product + '/sitemap.xml',
             '<?xml version="1.0" encoding="UTF-8"?>' +
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
@@ -108,7 +116,7 @@ function createOptionsSitemaps() {
             }
         );
     }
-    fs.writeFile(
+    fs.writeFileSync(
         'build/api/sitemap.xml',
         '<?xml version="1.0" encoding="UTF-8"?>' +
         '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
