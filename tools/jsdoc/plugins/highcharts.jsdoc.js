@@ -50,7 +50,8 @@ function dumpOptions() {
 }
 
 function createOptionsSitemaps() {
-    let sitemaps = {};
+    let sitemapIndex = [],
+        sitemaps = {};
     function addToSitemaps(node, boost, parentProducts) {
         if (!node.doclet ||
             !node.meta ||
@@ -91,6 +92,11 @@ function createOptionsSitemaps() {
         }
     }
     for (var product in sitemaps) {
+        sitemapIndex.push(
+            '<sitemap><loc>'+
+            'https://api.highcharts.com/' + product + '/sitemap.xml' +
+            '</loc></sitemap>'
+        );
         fs.writeFile(
             'build/api/' + product + '/sitemap.xml',
             '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -102,6 +108,16 @@ function createOptionsSitemaps() {
             }
         );
     }
+    fs.writeFile(
+        'build/api/sitemap.xml',
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
+        sitemapIndex.sort().join('') +
+        '</sitemapindex>',
+        function () {
+            //console.log('Wrote sitemap index!');
+        }
+    );
 }
 
 function resolveBinaryExpression(node) {
