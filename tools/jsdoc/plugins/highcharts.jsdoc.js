@@ -93,6 +93,9 @@ function createOptionsSitemaps() {
     }
     sitemaps['class-reference'] = (sitemaps['class-reference'] || []);
     fs.readdirSync('build/api/class-reference').forEach(function (fileName) {
+        if (fileName.lastIndexOf('.html') != fileName.length - 5) {
+            return;
+        }
         sitemaps['class-reference'].push(
                 '<url><loc>https://api.highcharts.com/' +
                 'class-reference/' + fileName +
