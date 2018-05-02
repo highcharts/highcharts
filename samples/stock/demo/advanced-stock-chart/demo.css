@@ -8,6 +8,18 @@
     margin: 0px;
 }
 
+#demo * {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+#demo *:before,
+#demo *:after {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
 #demo #highcharts-save {
     margin-right: 7px;
 }
@@ -137,81 +149,72 @@
     top: 50px;
     z-index: 100;
 }
-
 #demo button,
 #demo #submenu li {
-    border: none;
-    background-color: #707070;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    background: transparent;
     clear: both;
     cursor: pointer;
-    color: #707070;
     display: block;
     margin-bottom: 10px;
     height: 30px;
     width: 30px;
     padding: 0px;
+    outline: none;
+    background-repeat: no-repeat;
 }
+
 
 #demo button:hover,
 #demo #submenu li:hover {
-    background-color: #333333;
+    background-color: #efefef;
 }
 
 #demo button.active,
 #demo #submenu li.active {
-    background-color: #29ABE2;
+    border-color: #29ABE2;
+    background-color: #efefef;
 }
 
 #demo button#annotation-selection {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/cursor.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/cursor.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/a87964d6a57f5/samples/graphics/cursor.svg);
 }
 
 #demo button#annotation-line {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/line.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/line.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/line.svg);
 }
 
 #demo button#annotation-rect {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/rect.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/rect.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/rect.svg);
 }
 
 #demo button#annotation-circle {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/circle.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/circle.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/circle.svg);
 }
 
 #demo button#annotation-arrow {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/arrow.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/arrow.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/arrow.svg);
 }
 
 #demo button#annotation-tunnel {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/tunnel.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/tunnel.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/tunnel.svg);
 }
 
 #demo button#annotation-text {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/text.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/text.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/text.svg);
 }
 
 #demo button#annotation-fibonacci {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/fibonacci.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/fibonacci.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/fibonacci.svg);
 }
 
 #demo button#annotation-flag {
-    border: 1px solid red;
-    position: relative;
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag.svg);
 }
 
 #demo button#annotation-feature {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/feature.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/feature.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/feature.svg);
 }
 
 #demo #highcharts-manage-chart {
@@ -231,13 +234,11 @@
 }
 
 #demo #highcharts-save {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/save.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/save.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/save.svg);
 }
 
 #demo #highcharts-reset {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/reset.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/reset.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/reset.svg);
 }
 
 #demo .button-group {
@@ -271,7 +272,7 @@
     display: none;
     background-color:#fff;
     position: absolute;
-    width:188px;
+    width: 240px;
     z-index: 1000;
     padding:10px;
     box-shadow: 2px 3px 20px #888888;
@@ -282,7 +283,24 @@
     border-color: #ccc;
     border-style: solid;
     border-width: 1px;
-    margin-bottom: 10px;
+    margin: 0 0 10px 0;
+    padding: 10px;
+}
+#demo form input[type="text"] {
+    width: 100%;
+}
+#demo form .buttonrow {
+    text-align: right;
+    direction: rtl;
+}
+
+#demo legend {
+    margin: 0;
+    font-size: inherit;
+    border-bottom: none;
+}
+#demo label {
+    font-weight: inherit;
 }
 
 #demo .ui-dialog div.ui-dialog-titlebar.ui-widget-header {
@@ -313,7 +331,8 @@
     pointer-events: none;
     position: absolute;
     z-index: 9999;
-    margin-top: -181px;
+    margin-top: -186px;
+    margin-left: -5px;
 }
 
 #demo .left {
@@ -341,15 +360,13 @@
 
 #demo .empty {
     border-right: 1px solid #cccccc;
-    height: 134px;
+    height: 138px;
     width: 41px;
 }
 
 #demo #submenu ul {
-    margin-left: 0px;
-    margin-bottom: 7px;
-    padding-top: 5px;
-    padding-left: 0px;
+    margin: 10px 0;
+    padding: 0;
 }
 
 #demo #submenu li {
@@ -361,23 +378,19 @@
 }
 
 #demo #submenu li#flag-flag {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag-flag.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag-flag.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag-flag.svg);
 }
 
 #demo #submenu li#flag-circlepin {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag-circlepin.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag-circlepin.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag-circlepin.svg);
 }
 
 #demo #submenu li#flag-squarepin {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag-squarepin.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag-squarepin.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag-squarepin.svg);
 }
 
 #demo #submenu li#flag-diamondpin {
-    -webkit-mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag-diamondpin.svg);
-    mask-image: url(https://cdn.rawgit.com/highcharts/highcharts/32a0a92/samples/graphics/flag-diamondpin.svg);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag-diamondpin.svg);
 }
 
 #demo #container-inner .crosshair-on-point .highcharts-tracker path:hover,
