@@ -50,7 +50,7 @@ function dumpOptions() {
     );
 }
 
-function createOptionsSitemaps() {
+function createSitemaps() {
     let manualBoost = {
             'plotOptions.series': 100,
         },
@@ -864,6 +864,6 @@ Highcharts.chart('container', {
         // console.log(Object.keys(files));
 
         dumpOptions();
-        createOptionsSitemaps();
+        createSitemaps();
     }
 };
