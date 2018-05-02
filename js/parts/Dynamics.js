@@ -432,12 +432,28 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             'colorAxis',
             'pane'
         ], function (coll) {
+            var indexMap;
+
             if (options[coll]) {
+
+                // In stock charts, the navigator series are also part of the
+                // chart.series array, but those series should not be handled
+                // here (#8196).
+                if (coll === 'series') {
+                    indexMap = [];
+                    each(chart[coll], function (s, i) {
+                        if (!s.options.isInternal) {
+                            indexMap.push(i);
+                        }
+                    });
+                }
+
+
                 each(splat(options[coll]), function (newOptions, i) {
                     var item = (
                         defined(newOptions.id) &&
                         chart.get(newOptions.id)
-                    ) || chart[coll][i];
+                    ) || chart[coll][indexMap ? indexMap[i] : i];
                     if (item && item.coll === coll) {
                         item.update(newOptions, false);
 
@@ -462,7 +478,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // Add items for removal
                 if (oneToOne) {
                     each(chart[coll], function (item) {
-                        if (!item.touched) {
+                        if (!item.touched && !item.options.isInternal) {
                             itemsForRemoval.push(item);
                         } else {
                             delete item.touched;
