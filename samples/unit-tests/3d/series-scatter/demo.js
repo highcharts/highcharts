@@ -33,15 +33,18 @@ QUnit.test('Point is on appropriate position', function (assert) {
     chart.xAxis[0].setExtremes(1, 2, true, false);
 
     var axis = chart.xAxis[0],
-        labelPos = axis.ticks[1].label.element.getBoundingClientRect(),
+        labelDim = axis.ticks[1].label.getBBox(),
+        labelPos = Highcharts.offset(axis.ticks[1].label.element),
         point = axis.series[0].points[1],
-        pointPos = point.graphic.element.getBoundingClientRect(),
-        pointX = Math.round(pointPos.x + pointPos.width / 2),
-        expectedPointX = Math.round(labelPos.x + labelPos.width / 2, 10);
+        pointDim = point.graphic.getBBox(),
+        pointPos = Highcharts.offset(point.graphic.element),
+        pointX = (pointPos.left + pointDim.width / 2),
+        expectedPointX = (labelPos.left + labelDim.width / 2);
 
-    assert.strictEqual(
+    assert.close(
         pointX,
         expectedPointX,
+        1.5,
         'First point is correctly aligned'
     );
 });
