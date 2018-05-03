@@ -1013,12 +1013,14 @@ const startServer = () => {
     const base = '127.0.0.1:' + docport;
     const apiPath = __dirname + '/build/api/';
     const mimes = {
-        png: 'image/png',
-        js: 'text/javascript',
-        json: 'text/json',
-        html: 'text/html',
         css: 'text/css',
-        svg: 'image/svg+xml'
+        js: 'text/javascript',
+        json: 'application/json',
+        html: 'text/html',
+        ico: 'image/x-icon',
+        png: 'image/png',
+        svg: 'image/svg+xml',
+        xml: 'application/xml'
     };
 
     http.createServer((req, res) => {
@@ -1056,21 +1058,22 @@ const startServer = () => {
         }
 
         if (req.method === 'GET') {
-            let ti = path.lastIndexOf('.');
-            if (ti < 0 || path.length === 0) {
+            let lastSlash = path.lastIndexOf('/');
+            if (path.length === 0 || (path.length - 1) === lastSlash) {
                 file = 'index.html';
-                res.writeHead(200, { 'Content-Type': mimes.html });
             } else {
-                file = path.substr(path.lastIndexOf('/') + 1);
-                res.writeHead(200, {
-                    'Content-Type': mimes[path.substr(ti + 1)] || mimes.html
-                });
+                file = path.substr(lastSlash + 1);
             }
 
             let ext = file.substr(file.lastIndexOf('.') + 1);
-            if (['js', 'json', 'css', 'svg', 'png', 'jpg', 'html', 'ico'].indexOf(ext) === -1) {
+            if (Object.keys(mimes).indexOf(ext) === -1) {
+                ext = 'html';
                 file += '.html';
             }
+
+            res.writeHead(200, {
+                'Content-Type': mimes[ext] || mimes.html
+            });
 
             return fs.readFile(apiPath + filePath + file, (err, data) => {
                 if (err) {
