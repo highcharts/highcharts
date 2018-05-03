@@ -25,7 +25,7 @@ QUnit.test('Element.on', function (assert) {
             })
             .add();
 
-    var clock = lolexInstall();
+    var clock = TestUtilities.lolexInstall();
 
     try {
 
@@ -66,11 +66,11 @@ QUnit.test('Element.on', function (assert) {
             done();
         }, 600);
 
-        lolexRunAndUninstall(clock);
+        TestUtilities.lolexRunAndUninstall(clock);
 
     } finally {
 
-        lolexUninstall(clock);
+        TestUtilities.lolexUninstall(clock);
 
     }
 

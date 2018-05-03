@@ -75,6 +75,87 @@ QUnit.test('Markers for arearange.', function (assert) {
     );
 });
 
+QUnit.test('Zones', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+
+        title: {
+            text: 'Arearange with zones'
+        },
+
+        series: [{
+            data: [
+                [-3, -1],
+                [-2, 0],
+                [-1, 1],
+                [0, 2],
+                [1, 3],
+                [0, 2],
+                [-1, 1],
+                [-2, 0],
+                [-3, -1]
+            ],
+            type: 'arearange',
+            zones: [{
+                value: 0,
+                color: 'red'
+            }],
+            marker: {
+                enabled: true
+            },
+            color: 'blue'
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series[0].points.map(function (p) {
+            return [
+                p.upperGraphic.attr('fill'),
+                p.lowerGraphic.attr('fill')
+            ];
+        }),
+        [
+            [
+                "red",
+                "red"
+            ],
+            [
+                "blue",
+                "red"
+            ],
+            [
+                "blue",
+                "red"
+            ],
+            [
+                "blue",
+                "blue"
+            ],
+            [
+                "blue",
+                "blue"
+            ],
+            [
+                "blue",
+                "blue"
+            ],
+            [
+                "blue",
+                "red"
+            ],
+            [
+                "blue",
+                "red"
+            ],
+            [
+                "red",
+                "red"
+            ]
+        ],
+        'Upper and lower markers should individually respect the zone setting (#8100)'
+    );
+});
+
 
 QUnit.test('Shared tooltip marker.', function (assert) {
 

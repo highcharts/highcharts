@@ -273,7 +273,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
     }
 
     if (options.opacity !== undefined) {
-        each(pattern.element.children, function (child) {
+        each(pattern.element.childNodes, function (child) {
             child.setAttribute('opacity', options.opacity);
         });
     }

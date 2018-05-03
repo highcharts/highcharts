@@ -5,7 +5,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -41,7 +40,9 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
         options3d = series.chart.options.chart.options3d,
         alpha = options3d.alpha,
         beta = options3d.beta,
-        z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
+        z = seriesOptions.stacking ?
+            (seriesOptions.stack || 0) * depth :
+            series._i * depth;
 
     z += depth / 2;
 
@@ -65,29 +66,45 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
         angle = (shapeArgs.end + shapeArgs.start) / 2;
 
         point.slicedTranslation = {
-            translateX: Math.round(Math.cos(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad)),
-            translateY: Math.round(Math.sin(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad))
+            translateX: Math.round(
+                Math.cos(angle) *
+                seriesOptions.slicedOffset *
+                Math.cos(alpha * deg2rad)
+            ),
+            translateY: Math.round(
+                Math.sin(angle) *
+                seriesOptions.slicedOffset *
+                Math.cos(alpha * deg2rad)
+            )
         };
     });
 });
 
-wrap(seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proceed) {
-    var args = arguments;
-    return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
-});
+wrap(
+    seriesTypes.pie.prototype.pointClass.prototype,
+    'haloPath',
+    function (proceed) {
+        var args = arguments;
+        return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
+    }
+);
 
 /*= if (build.classic) { =*/
-wrap(seriesTypes.pie.prototype, 'pointAttribs', function (proceed, point, state) {
-    var attr = proceed.call(this, point, state),
-        options = this.options;
+wrap(
+    seriesTypes.pie.prototype,
+    'pointAttribs',
+    function (proceed, point, state) {
+        var attr = proceed.call(this, point, state),
+            options = this.options;
 
-    if (this.chart.is3d()) {
-        attr.stroke = options.edgeColor || point.color || this.color;
-        attr['stroke-width'] = pick(options.edgeWidth, 1);
+        if (this.chart.is3d()) {
+            attr.stroke = options.edgeColor || point.color || this.color;
+            attr['stroke-width'] = pick(options.edgeWidth, 1);
+        }
+
+        return attr;
     }
-
-    return attr;
-});
+);
 /*= } =*/
 
 wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
@@ -114,12 +131,13 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
         each(series.data, function (point) {
             var shapeArgs = point.shapeArgs,
                 r = shapeArgs.r,
-                a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad, // #3240 issue with datalabels for 0 and null values
+                // #3240 issue with datalabels for 0 and null values
+                a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad,
                 b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
                 a2 = (shapeArgs.start + shapeArgs.end) / 2,
                 labelPos = point.labelPos,
                 labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]
-                yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)), // + (sin(a2) > 0 ? sin(a1) * d : 0)
+                yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)),
                 xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
             // Apply perspective on label positions

@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "6.0.7",
+  "version": "6.1.0",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -25,10 +25,10 @@
     "lib"
   ],
   "scripts": {
-    "test": "gulp test",
-    "testall": "gulp test --browsers all",
+    "test": "gulp test --all",
+    "testall": "gulp test --all --browsers all",
     "precommit": "lint-staged && gulp test",
-    "post-merge": "gulp styles && gulp scripts && gulp test"
+    "post-merge": "gulp styles && gulp scripts && npm test"
   },
   "devDependencies": {
     "aws-sdk": "^2.94.0",

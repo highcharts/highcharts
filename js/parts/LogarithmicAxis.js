@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -23,8 +22,6 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
     var axis = this,
         options = axis.options,
         axisLength = axis.len,
-        lin2log = axis.lin2log,
-        log2lin = axis.log2lin,
         // Since we use this method for both major and minor ticks,
         // use a local variable and return the result
         positions = [];
@@ -53,7 +50,9 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 
         if (interval > 0.3) {
             intermediate = [1, 2, 4];
-        } else if (interval > 0.15) { // 0.2 equals five minor ticks per 1, 10, 100 etc
+
+        // 0.2 equals five minor ticks per 1, 10, 100 etc
+        } else if (interval > 0.15) {
             intermediate = [1, 2, 4, 6, 8];
         } else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
             intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -62,8 +61,13 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
         for (i = roundedMin; i < max + 1 && !break2; i++) {
             len = intermediate.length;
             for (j = 0; j < len && !break2; j++) {
-                pos = log2lin(lin2log(i) * intermediate[j]);
-                if (pos > min && (!minor || lastPos <= max) && lastPos !== undefined) { // #1670, lastPos is #3113
+                pos = axis.log2lin(axis.lin2log(i) * intermediate[j]);
+                // #1670, lastPos is #3113
+                if (
+                    pos > min &&
+                    (!minor || lastPos <= max) &&
+                    lastPos !== undefined
+                ) {
                     positions.push(lastPos);
                 }
 
@@ -78,19 +82,25 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
     // we might as well handle the tick positions like a linear axis. For
     // example 1.01, 1.02, 1.03, 1.04.
     } else {
-        var realMin = lin2log(min),
-            realMax = lin2log(max),
+        var realMin = axis.lin2log(min),
+            realMax = axis.lin2log(max),
             tickIntervalOption = minor ?
                 this.getMinorTickInterval() :
                 options.tickInterval,
-            filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
-            tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
-            totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
+            filteredTickIntervalOption = tickIntervalOption === 'auto' ?
+                null :
+                tickIntervalOption,
+            tickPixelIntervalOption =
+                options.tickPixelInterval / (minor ? 5 : 1),
+            totalPixelLength = minor ?
+                axisLength / axis.tickPositions.length :
+                axisLength;
 
         interval = pick(
             filteredTickIntervalOption,
             axis._minorAutoInterval,
-            (realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
+            (realMax - realMin) *
+                tickPixelIntervalOption / (totalPixelLength || 1)
         );
 
         interval = normalizeTickInterval(
@@ -103,7 +113,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
             interval,
             realMin,
             realMax
-        ), log2lin);
+        ), axis.log2lin);
 
         if (!minor) {
             axis._minorAutoInterval = interval / 5;

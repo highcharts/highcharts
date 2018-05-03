@@ -226,8 +226,8 @@ H.Series = H.seriesType('line', null, { // base series options
     },
 
     /**
-     * A class name to apply to the series' graphical elements.
-     *
+     * An additional class name to apply to the series' graphical elements. This
+     * option does not replace default class names of the graphical element.
      * @type {String}
      * @since 5.0.0
      * @apioption plotOptions.series.className
@@ -2211,7 +2211,8 @@ H.Series = H.seriesType('line', null, { // base series options
     /**
      * An array defining zones within a series. Zones can be applied to
      * the X axis, Y axis or Z axis for bubbles, according to the `zoneAxis`
-     * option.
+     * option. The zone definitions have to be in ascending order regarding to
+     * the value.
      *
      * In styled mode, the color zones are styled with the
      * `.highcharts-zone-{n}` class, or custom classed from the `className`
@@ -2877,6 +2878,9 @@ H.Series = H.seriesType('line', null, { // base series options
                     if (requireSorting) {
                         lastIndex = pointIndex;
                     }
+                // Point exists, no changes, don't remove it
+                } else if (oldData[pointIndex]) {
+                    oldData[pointIndex].touched = true;
                 }
                 hasUpdatedByKey = true;
             }
@@ -3569,7 +3573,7 @@ H.Series = H.seriesType('line', null, { // base series options
                     yBottom === stackThreshold &&
                     stackIndicator.key === stack[xValue].base
                 ) {
-                    yBottom = pick(threshold, yAxis.min);
+                    yBottom = pick(isNumber(threshold) && threshold, yAxis.min);
                 }
                 if (yAxis.positiveValuesOnly && yBottom <= 0) { // #1200, #1232
                     yBottom = null;
@@ -4265,6 +4269,9 @@ H.Series = H.seriesType('line', null, { // base series options
                 xMap.push(point.x);
                 if (step) {
                     xMap.push(point.x);
+                    if (step === 2) { // step = center (#8073)
+                        xMap.push(point.x);
+                    }
                 }
 
                 graphPath.push.apply(graphPath, pathToPoint);

@@ -71,7 +71,7 @@ seriesType('variwide', 'column', {
      * @param  {Number} x The X pixel position in undistorted axis pixels
      * @return {Number}   Distorted X position
      */
-    postTranslate: function (index, x) {
+    postTranslate: function (index, x, point) {
 
         var axis = this.xAxis,
             relZ = this.relZ,
@@ -84,6 +84,11 @@ seriesType('variwide', 'column', {
             slotRight = (pick(relZ[i + 1], totalZ) / totalZ) * len,
             xInsideLinearSlot = x - linearSlotLeft,
             ret;
+
+        // Set crosshairWidth for every point (#8173)
+        if (point) {
+            point.crosshairWidth = slotRight - slotLeft;
+        }
 
         ret = slotLeft +
             xInsideLinearSlot * (slotRight - slotLeft) /
@@ -113,7 +118,8 @@ seriesType('variwide', 'column', {
         each(this.points, function (point, i) {
             var left = this.postTranslate(
                     i,
-                    point.shapeArgs.x
+                    point.shapeArgs.x,
+                    point
                 ),
                 right = this.postTranslate(
                     i,
@@ -127,6 +133,9 @@ seriesType('variwide', 'column', {
 
             point.shapeArgs.x = left;
             point.shapeArgs.width = right - left;
+
+            // Crosshair position (#8083)
+            point.plotX = (left + right) / 2;
 
             point.tooltipPos[inverted ? 1 : 0] = this.postTranslate(
                 i,
@@ -146,6 +155,13 @@ H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
     xy[xOrY] = this.axis.pos +
         this.axis.series[0].postTranslate(index, xy[xOrY] - this.axis.pos);
 };
+
+// Same width as the category (#8083)
+addEvent(H.Axis, 'afterDrawCrosshair', function (e) {
+    if (this.variwide && this.cross) {
+        this.cross.attr('stroke-width', e.point && e.point.crosshairWidth);
+    }
+});
 
 addEvent(H.Tick, 'afterGetPosition', function (e) {
     var axis = this.axis,

@@ -104,7 +104,8 @@ QUnit.test('#6537 - 1M button should select range 28.02-31.03', function (assert
     assert.strictEqual(
         Highcharts.dateFormat(null, chart.xAxis[0].min),
         '2017-02-28 01:00:00',
-        'xAxis minimum correct'
+        'xAxis minimum correct (Timezone: UTC ' +
+        Math.round((new Date()).getTimezoneOffset() / -60) + ')'
     );
 });
 

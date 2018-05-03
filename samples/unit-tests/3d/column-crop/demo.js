@@ -173,13 +173,65 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     var newTitleX = Number(chart.yAxis[0].axisTitle.element.attributes.x.value);
     var newTitleY = Number(chart.yAxis[0].axisTitle.element.attributes.y.value);
 
+    if (Highcharts.isFirefox) {
+        assert.close(
+            newTitleX,
+            oldTitleX,
+            0.5,
+            'yAxis title is on the same position after toggling series visibility'
+        );
+        assert.close(
+            newTitleY,
+            oldTitleY,
+            0.5,
+            'yAxis title is on the same position after toggling series visibility'
+        );
+    } else {
+        assert.strictEqual(
+        (
+            oldTitleX === newTitleX &&
+            oldTitleY === newTitleY
+        ),
+        true,
+        'yAxis title is on the same position after toggling series visibility'
+        );
+    }
+
+    chart.update({
+        chart: {
+            options3d: {
+                alpha: 5,
+                beta: 10
+            }
+        },
+        yAxis: {
+            reversed: false
+        },
+        xAxis: {
+            type: 'categories',
+            categories: [
+                'One Two Three Four Five Six',
+                'One Two Three Four Five Six',
+                'One Two Three Four Five Six',
+                'One Two Three Four Five Six'
+            ]
+        }
+    });
+    chart.series[0].remove();
+    chart.addSeries({
+        data: [1, 2, 3, 4]
+    });
+
+    var labelWidth = chart.xAxis[0].ticks[0].label.getBBox().width;
+    var yAxisFirstLine = chart.yAxis[0].gridGroup.element.childNodes[0].getBBox();
+    var xAxisFirstLine = chart.xAxis[0].gridGroup.element.childNodes[0].getBBox();
+
     assert.strictEqual(
-    (
-        oldTitleX === newTitleX &&
-        oldTitleY === newTitleY
-    ),
-    true,
-    'yAxis title is on the same position after toggling series visibility'
+        (
+            labelWidth < xAxisFirstLine.x - yAxisFirstLine.x
+        ),
+        true,
+        'xAxis label width is smaller than available slot width'
     );
 
 });

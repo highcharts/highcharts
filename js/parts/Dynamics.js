@@ -432,12 +432,28 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             'colorAxis',
             'pane'
         ], function (coll) {
+            var indexMap;
+
             if (options[coll]) {
+
+                // In stock charts, the navigator series are also part of the
+                // chart.series array, but those series should not be handled
+                // here (#8196).
+                if (coll === 'series') {
+                    indexMap = [];
+                    each(chart[coll], function (s, i) {
+                        if (!s.options.isInternal) {
+                            indexMap.push(i);
+                        }
+                    });
+                }
+
+
                 each(splat(options[coll]), function (newOptions, i) {
                     var item = (
                         defined(newOptions.id) &&
                         chart.get(newOptions.id)
-                    ) || chart[coll][i];
+                    ) || chart[coll][indexMap ? indexMap[i] : i];
                     if (item && item.coll === coll) {
                         item.update(newOptions, false);
 
@@ -462,7 +478,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // Add items for removal
                 if (oneToOne) {
                     each(chart[coll], function (item) {
-                        if (!item.touched) {
+                        if (!item.touched && !item.options.isInternal) {
                             itemsForRemoval.push(item);
                         } else {
                             delete item.touched;
@@ -974,7 +990,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             for (n in proto) {
                 series[n] = undefined;
             }
-            extend(series, seriesTypes[newType || oldType].prototype);
+            if (seriesTypes[newType || oldType]) {
+                extend(series, seriesTypes[newType || oldType].prototype);
+            } else {
+                H.error(17, true);
+            }
 
             // Re-register groups (#3094) and other preserved properties
             each(preserve, function (prop) {
@@ -1030,14 +1050,30 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample highcharts/members/axis-update/ Axis update demo
      */
     update: function (options, redraw) {
-        var chart = this.chart;
+        var chart = this.chart,
+            newEvents = (options.events || {});
 
-        options = chart.options[this.coll][this.options.index] =
-            merge(this.userOptions, options);
+        options = merge(this.userOptions, options);
+
+        // Color Axis is not an array,
+        // This change is applied in the ColorAxis wrapper
+        if (chart.options[this.coll].indexOf) {
+            // Don't use this.options.index,
+            // StockChart has Axes in navigator too
+            chart.options[this.coll][
+                chart.options[this.coll].indexOf(this.userOptions)
+            ] = options;
+        }
+
+        // Remove old events, if no new exist (#8161)
+        objectEach(chart.options[this.coll].events, function (fn, ev) {
+            if (typeof newEvents[ev] === 'undefined') {
+                newEvents[ev] = undefined;
+            }
+        });
 
         this.destroy(true);
-
-        this.init(chart, extend(options, { events: undefined }));
+        this.init(chart, extend(options, { events: newEvents }));
 
         chart.isDirtyBox = true;
         if (pick(redraw, true)) {
@@ -1076,8 +1112,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             delete chart.options[key];
         }
 
-        each(chart[key], function (axis, i) { // Re-index, #1706
-            axis.options.index = i;
+        each(chart[key], function (axis, i) { // Re-index, #1706, #8075
+            axis.options.index = axis.userOptions.index = i;
         });
         this.destroy();
         chart.isDirtyBox = true;

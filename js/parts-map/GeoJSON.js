@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -31,7 +30,15 @@ function pointInPolygon(point, polygon) {
     for (i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
         rel1 = polygon[i][1] > y;
         rel2 = polygon[j][1] > y;
-        if (rel1 !== rel2 && (x < (polygon[j][0] - polygon[i][0]) * (y - polygon[i][1]) / (polygon[j][1] - polygon[i][1]) + polygon[i][0])) {
+        if (
+            rel1 !== rel2 &&
+            (
+                x < (polygon[j][0] -
+                    polygon[i][0]) * (y - polygon[i][1]) /
+                    (polygon[j][1] - polygon[i][1]) +
+                    polygon[i][0]
+            )
+        ) {
             c = !c;
         }
     }
@@ -72,13 +79,26 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
     }
 
     var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]),
-        cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
-        sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
-        rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
+        cosAngle = transform.cosAngle ||
+            (transform.rotation && Math.cos(transform.rotation)),
+        sinAngle = transform.sinAngle ||
+            (transform.rotation && Math.sin(transform.rotation)),
+        rotated = transform.rotation ? [
+            projected[0] * cosAngle + projected[1] * sinAngle,
+            -projected[0] * sinAngle + projected[1] * cosAngle
+        ] : projected;
 
     return {
-        x: ((rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) + (transform.xpan || 0)) * (transform.jsonres || 1) + (transform.jsonmarginX || 0),
-        y: (((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) + (transform.ypan || 0)) * (transform.jsonres || 1) - (transform.jsonmarginY || 0)
+        x: (
+            (rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) +
+            (transform.xpan || 0)
+        ) * (transform.jsonres || 1) +
+        (transform.jsonmarginX || 0),
+        y: (
+            ((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) +
+            (transform.ypan || 0)
+        ) * (transform.jsonres || 1) -
+        (transform.jsonmarginY || 0)
     };
 };
 
@@ -110,11 +130,26 @@ Chart.prototype.transformToLatLon = function (point, transform) {
     }
 
     var normalized = {
-            x: ((point.x - (transform.jsonmarginX || 0)) / (transform.jsonres || 1) - (transform.xpan || 0)) / (transform.scale || 1) + (transform.xoffset || 0),
-            y: ((-point.y - (transform.jsonmarginY || 0)) / (transform.jsonres || 1) + (transform.ypan || 0)) / (transform.scale || 1) + (transform.yoffset || 0)
+            x: (
+                (
+                    point.x -
+                    (transform.jsonmarginX || 0)
+                ) / (transform.jsonres || 1) -
+                (transform.xpan || 0)
+            ) / (transform.scale || 1) +
+            (transform.xoffset || 0),
+            y: (
+                (
+                    -point.y - (transform.jsonmarginY || 0)
+                ) / (transform.jsonres || 1) +
+                (transform.ypan || 0)
+            ) / (transform.scale || 1) +
+            (transform.yoffset || 0)
         },
-        cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
-        sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
+        cosAngle = transform.cosAngle ||
+            (transform.rotation && Math.cos(transform.rotation)),
+        sinAngle = transform.sinAngle ||
+            (transform.rotation && Math.sin(transform.rotation)),
         // Note: Inverted sinAngle to reverse rotation direction
         projected = win.proj4(transform.crs, 'WGS84', transform.rotation ? {
             x: normalized.x * cosAngle + normalized.y * -sinAngle,
@@ -150,13 +185,22 @@ Chart.prototype.fromPointToLatLon = function (point) {
     }
 
     for (transform in transforms) {
-        if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone &&
-                pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
+        if (
+            transforms.hasOwnProperty(transform) &&
+            transforms[transform].hitZone &&
+            pointInPolygon(
+                { x: point.x, y: -point.y },
+                transforms[transform].hitZone.coordinates[0]
+            )
+        ) {
             return this.transformToLatLon(point, transforms[transform]);
         }
     }
 
-    return this.transformToLatLon(point, transforms['default']); // eslint-disable-line dot-notation
+    return this.transformToLatLon(
+        point,
+        transforms['default'] // eslint-disable-line dot-notation
+    );
 };
 
 /**
@@ -193,15 +237,24 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
     }
 
     for (transform in transforms) {
-        if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
+        if (
+            transforms.hasOwnProperty(transform) &&
+            transforms[transform].hitZone
+        ) {
             coords = this.transformFromLatLon(latLon, transforms[transform]);
-            if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {
+            if (pointInPolygon(
+                { x: coords.x, y: -coords.y },
+                transforms[transform].hitZone.coordinates[0]
+            )) {
                 return coords;
             }
         }
     }
 
-    return this.transformFromLatLon(latLon, transforms['default']); // eslint-disable-line dot-notation
+    return this.transformFromLatLon(
+        latLon,
+        transforms['default'] // eslint-disable-line dot-notation
+    );
 };
 
 /**
@@ -314,10 +367,17 @@ H.geojson = function (geojson, hType, series) {
 
     });
 
-    // Create a credits text that includes map source, to be picked up in Chart.addCredits
+    // Create a credits text that includes map source, to be picked up in
+    // Chart.addCredits
     if (series && geojson.copyrightShort) {
-        series.chart.mapCredits = format(series.chart.options.credits.mapText, { geojson: geojson });
-        series.chart.mapCreditsFull = format(series.chart.options.credits.mapTextFull, { geojson: geojson });
+        series.chart.mapCredits = format(
+            series.chart.options.credits.mapText,
+            { geojson: geojson }
+        );
+        series.chart.mapCreditsFull = format(
+            series.chart.options.credits.mapTextFull,
+            { geojson: geojson }
+        );
     }
 
     return mapData;
@@ -330,7 +390,8 @@ wrap(Chart.prototype, 'addCredits', function (proceed, credits) {
 
     credits = merge(true, this.options.credits, credits);
 
-    // Disable credits link if map credits enabled. This to allow for in-text anchors.
+    // Disable credits link if map credits enabled. This to allow for in-text
+    // anchors.
     if (this.mapCredits) {
         credits.href = null;
     }

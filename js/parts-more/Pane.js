@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../mixins/centered-series.js';
@@ -79,7 +78,9 @@ extend(Pane.prototype, {
             );
 
             for (i = 0; i < len; i++) {
-                if (backgroundOption[i] && this.axis) { // #6641 - if axis exists, chart is circular and apply background
+                // #6641 - if axis exists, chart is circular and apply
+                // background
+                if (backgroundOption[i] && this.axis) {
                     this.renderBackground(
                         merge(
                             this.defaultBackgroundOptions,
@@ -135,8 +136,9 @@ extend(Pane.prototype, {
     defaultOptions: {
 
         /**
-         * The end angle of the polar X axis or gauge value axis, given in degrees
-         * where 0 is north. Defaults to [startAngle](#pane.startAngle) + 360.
+         * The end angle of the polar X axis or gauge value axis, given in
+         * degrees where 0 is north. Defaults to [startAngle](#pane.startAngle)
+         * + 360.
          *
          * @type {Number}
          * @sample {highcharts} highcharts/demo/gauge-vu-meter/
@@ -148,8 +150,8 @@ extend(Pane.prototype, {
 
         /**
          * The center of a polar chart or angular gauge, given as an array
-         * of [x, y] positions. Positions can be given as integers that transform
-         * to pixels, or as percentages of the plot area size.
+         * of [x, y] positions. Positions can be given as integers that
+         * transform to pixels, or as percentages of the plot area size.
          *
          * @type {Array<String|Number>}
          * @sample {highcharts} highcharts/demo/gauge-vu-meter/
@@ -256,9 +258,9 @@ extend(Pane.prototype, {
              */
             linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
             /**
-             * The stops is an array of tuples, where the first
-             * item is a float between 0 and 1 assigning the relative position in
-             * the gradient, and the second item is the color.
+             * The stops is an array of tuples, where the first item is a float
+             * between 0 and 1 assigning the relative position in the gradient,
+             * and the second item is the color.
              *
              * @default [[0, #ffffff], [1, #e6e6e6]]
              * @type {Array<Array>}

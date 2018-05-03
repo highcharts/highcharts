@@ -235,7 +235,7 @@ seriesType('pie', 'line', {
      */
 
     /**
-     * @ignore
+     * @ignore-option
      */
     legendType: 'point',
 

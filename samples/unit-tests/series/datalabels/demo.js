@@ -186,7 +186,7 @@ QUnit.test(
 
 // Highcharts 4.1.1, Issue #3866
 // Data Labels are not rendering for column charts when series are shown/hidden
-QUnit.skip(
+QUnit.test(
     'Datalabels overlap in hidden series (#3866)',
     function (assert) {
 
@@ -207,7 +207,25 @@ QUnit.skip(
                 }
             },
             series: [{
-                data: [1, 2, 3, 4, 5, 6],
+                data: [{
+                    labelrank: 1000,
+                    y: 1
+                }, {
+                    labelrank: 1000,
+                    y: 2
+                }, {
+                    labelrank: 1000,
+                    y: 3
+                }, {
+                    labelrank: 1000,
+                    y: 4
+                }, {
+                    labelrank: 1000,
+                    y: 5
+                }, {
+                    labelrank: 1000,
+                    y: 6
+                }],
                 name: '1. Click me'
             }, {
                 data: [1.1, 2.1, 3.1, 4.1, 5.1, 6.1],
@@ -216,41 +234,23 @@ QUnit.skip(
         });
 
         assert.strictEqual(
-            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
-            3,
-            'With both series should only be 3 labels visible.'
-        );
-
-        chart.series[1].hide();
-
-        assert.strictEqual(
-            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
+            chart.series[1].dataLabelsGroup.element.querySelectorAll(
+                'g.highcharts-label[visibility="hidden"]'
+            ).length,
             6,
-            'With only first series should be 6 labels visible.'
-        );
-
-        chart.series[1].show();
-
-        assert.strictEqual(
-            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
-            3,
-            'With both series should only be 3 labels visible.'
+            'All six labels of the second series should be hidden.'
         );
 
         chart.series[0].hide();
 
         assert.strictEqual(
-            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
-            6,
-            'With only second series should be 6 labels visible.'
-        );
-
-        chart.series[1].hide();
-
-        assert.strictEqual(
-            chart.xAxis[0].labelGroup.element.getElementsByTagName('text').length,
+            chart.series[1].dataLabelsGroup.element.querySelectorAll(
+                'g.highcharts-label[visibility="hidden"]'
+            ).length,
             0,
-            'With no series should be no labels visible.'
+            'All six labels of the second series should be visible.'
         );
+
+
     }
 );

@@ -27,13 +27,16 @@ var colorPointMixin = H.colorPointMixin,
  * A heatmap is a graphical representation of data where the individual values
  * contained in a matrix are represented as colors.
  *
- * @sample highcharts/demo/heatmap/
- *         Simple heatmap
- * @sample highcharts/demo/heatmap-canvas/
- *         Heavy heatmap
- * @extends {plotOptions.scatter}
- * @excluding marker,pointRange,pointPlacement
- * @product highcharts highmaps
+ * @sample       highcharts/demo/heatmap/
+ *               Simple heatmap
+ * @sample       highcharts/demo/heatmap-canvas/
+ *               Heavy heatmap
+ * @extends      {plotOptions.scatter}
+ * @excluding    animationLimit,connectEnds,connectNulls,dashStyle,
+ *               findNearestPointBy,getExtremesFromAll,linecap,lineWidth,marker,
+ *               pointInterval,pointIntervalUnit,pointRange,pointStart,shadow,
+ *               softThreshold,stacking,step,threshold
+ * @product      highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
 seriesType('heatmap', 'scatter', {

@@ -436,3 +436,57 @@ QUnit.test('Labels text height (#3891)', function (assert) {
     );
 
 });
+
+// Highcharts 3.0.10, Issue #2806
+// Unable to see all labels on the bar charts
+QUnit.test('Column pointrange (#2806)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Category axis was wrong when the second series had greater point distance than the first series'
+        },
+        xAxis: {
+            categories: ['Cat0', 'Cat1', 'Cat2', 'Cat3']
+        },
+        plotOptions: {
+            column: {
+                stacking: true
+            }
+        },
+        series: [{
+            name: "CL1",
+            data: [{
+                x: 0,
+                y: 1
+            }, {
+                x: 1,
+                y: 2
+            }, {
+                x: 2,
+                y: 2
+            }, {
+                x: 3,
+                y: 2
+            }]
+        }, {
+            name: "CL2",
+            data: [{
+                x: 0,
+                y: 3
+            }, {
+                x: 2,
+                y: 4
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].labelGroup.element.childNodes.length,
+        4,
+        'There should be 4 labels on the xAxis.'
+    );
+
+});

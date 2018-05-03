@@ -78,15 +78,12 @@ QUnit.test('Drilling up left one column semi-opaque (#4667)', function (assert) 
         series: series
     };
 
-    var clock;
+    var clock = TestUtilities.lolexInstall();
 
     try {
 
-        clock = lolexInstall();
-
-        var chart = new Highcharts.Chart(chartConfig);
-
-        var done = assert.async();
+        var chart = new Highcharts.Chart(chartConfig),
+            done = assert.async();
 
         setTimeout(function () {
             assert.strictEqual(
@@ -101,12 +98,11 @@ QUnit.test('Drilling up left one column semi-opaque (#4667)', function (assert) 
         chart.series[0].points[1].doDrilldown();
         chart.drillUp();
 
-        lolexRunAndUninstall(clock);
+        TestUtilities.lolexRunAndUninstall(clock);
 
     } finally {
 
-        lolexUninstall(clock);
+        TestUtilities.lolexUninstall(clock);
 
     }
-
 });

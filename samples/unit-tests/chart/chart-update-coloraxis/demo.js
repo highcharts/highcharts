@@ -1,47 +1,47 @@
-/* eslint func-style:0 */
-
-var config = {
-    colorAxis: {
-        minColor: '#ff0',
-        maxColor: '#f0f',
-        labels: {
-            style: {
-                fontSize: '10px'
-            }
-        },
-        min: 0,
-        max: 10
-    },
-    series: [{
-        type: 'treemap',
-        data: [{
-            value: 6,
-            colorValue: 0
-        }, {
-            value: 6,
-            colorValue: 2
-        }, {
-            value: 4,
-            colorValue: 3
-        }, {
-            value: 3,
-            colorValue: 4
-        }, {
-            value: 2,
-            colorValue: 5
-        }, {
-            value: 2,
-            colorValue: 6
-        }, {
-            value: 1,
-            colorValue: 10
-        }]
-    }]
-};
 
 QUnit.test(
     'Update colorAxis through chart.update (#3936)',
     function (assert) {
+
+        var config = {
+            colorAxis: {
+                minColor: '#ff0',
+                maxColor: '#f0f',
+                labels: {
+                    style: {
+                        fontSize: '10px'
+                    }
+                },
+                min: 0,
+                max: 10
+            },
+            series: [{
+                type: 'treemap',
+                data: [{
+                    value: 6,
+                    colorValue: 0
+                }, {
+                    value: 6,
+                    colorValue: 2
+                }, {
+                    value: 4,
+                    colorValue: 3
+                }, {
+                    value: 3,
+                    colorValue: 4
+                }, {
+                    value: 2,
+                    colorValue: 5
+                }, {
+                    value: 2,
+                    colorValue: 6
+                }, {
+                    value: 1,
+                    colorValue: 10
+                }]
+            }]
+        };
+
         var chart = Highcharts.chart(
             $('<div>').appendTo('#container')[0],
             Highcharts.merge(config)

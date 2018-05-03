@@ -6,8 +6,8 @@ QUnit.test('Capture POST', function (assert) {
             backgroundColor: {
                 linearGradient: [0, 0, 0, 300],
                 stops: [
-                    [0, '#FFFFFF'],
-                    [1, '#E0E0E0']
+                    [0, '#ffffff'],
+                    [1, '#e0e0e0']
                 ]
             }
         },
@@ -40,7 +40,7 @@ QUnit.test('Capture POST', function (assert) {
         // Run export width custom background
         chart.exportChart(null, {
             chart: {
-                backgroundColor: '#FFEEFF'
+                backgroundColor: '#ffeeff'
             }
         });
         assert.strictEqual(
@@ -62,7 +62,7 @@ QUnit.test('Capture POST', function (assert) {
         );
 
         assert.notEqual(
-            postData.svg.indexOf('#FFEEFF'),
+            postData.svg.indexOf('#ffeeff'),
             -1,
             'Solid background is there'
         );

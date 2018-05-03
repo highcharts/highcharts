@@ -97,6 +97,8 @@ QUnit.test('Destroy map', function (assert) {
         'SVG in container'
     );
 
+    var chartIndex = (Highcharts.charts.length - 1);
+
     chart.destroy();
 
     assert.ok(
@@ -105,9 +107,15 @@ QUnit.test('Destroy map', function (assert) {
     );
 
     assert.strictEqual(
-        Highcharts.charts[0],
+        chart.renderer,
         undefined,
-        'Chart removed'
+        'Chart renderer should be removed'
+    );
+
+    assert.strictEqual(
+        Highcharts.charts[chartIndex],
+        undefined,
+        'Chart should be removed'
     );
 
 });

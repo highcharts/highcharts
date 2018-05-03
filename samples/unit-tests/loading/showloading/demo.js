@@ -13,7 +13,7 @@ QUnit.test('Show loading', function (assert) {
             }]
         });
 
-    var clock = lolexInstall();
+    var clock = TestUtilities.lolexInstall();
 
     try {
 
@@ -56,11 +56,11 @@ QUnit.test('Show loading', function (assert) {
             done();
         }, 50);
 
-        lolexRunAndUninstall(clock);
+        TestUtilities.lolexRunAndUninstall(clock);
 
     } finally {
 
-        lolexUninstall(clock);
+        TestUtilities.lolexUninstall(clock);
 
     }
 

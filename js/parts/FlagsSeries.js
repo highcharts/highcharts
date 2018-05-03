@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -303,7 +302,8 @@ seriesType('flags', 'column', {
         i = points.length;
         while (i--) {
             point = points[i];
-            outsideRight = (inverted ? point.plotY : point.plotX) > series.xAxis.len;
+            outsideRight =
+                (inverted ? point.plotY : point.plotX) > series.xAxis.len;
             plotX = point.plotX;
             stackIndex = point.stackIndex;
             shape = point.options.shape || options.shape;

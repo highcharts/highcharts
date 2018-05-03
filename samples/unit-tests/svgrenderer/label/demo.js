@@ -70,3 +70,33 @@ QUnit.test('Box with nested ems (#5932)', function (assert) {
         'Nested em is included'
     );
 });
+
+// Highcharts 3.0.10, Issue #2794
+// Renderer.label with <br> tags
+QUnit.test('buildText fontSize (#2794)', function (assert) {
+
+    Highcharts.chart('container', {
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0]
+        }]
+    }, function (chart) {
+
+        var renderer = chart.renderer,
+            group = renderer.g().add(),
+            catchedException;
+
+        try {
+            renderer.label('Regression caused').add(group);
+            renderer.label('error in <br> wrapped text', 0, 20).add(group);
+        } catch (exception) {
+            catchedException = exception;
+        }
+
+        assert.ok(
+            !catchedException,
+            'There should be not exception, when adding labels to a group.'
+        );
+
+    });
+
+});

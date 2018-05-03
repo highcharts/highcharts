@@ -1484,8 +1484,8 @@ H.getStyle = function (el, prop, toInt) {
 H.inArray = function (item, arr, fromIndex) {
     return (
         H.indexOfPolyfill ||
-        Array.prototype.indexOf.call(arr, item, fromIndex)
-    );
+        Array.prototype.indexOf
+    ).call(arr, item, fromIndex);
 };
 
 /**

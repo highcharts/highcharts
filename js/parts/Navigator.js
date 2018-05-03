@@ -61,6 +61,7 @@ var addEvent = H.addEvent,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
+    isTouchDevice = H.isTouchDevice,
     merge = H.merge,
     pick = H.pick,
     removeEvent = H.removeEvent,
@@ -329,7 +330,7 @@ extend(defaultOptions, {
             /*= } =*/
 
             /**
-             * @ignore
+             * @ignore-option
              */
             compare: null,
 
@@ -2048,7 +2049,10 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
             (rangeSelector && rangeSelector.enabled))) {
         // For x only zooming, fool the chart.zoom method not to create the zoom
         // button because the property already exists
-        if (zoomType === 'x' || pinchType === 'x') {
+        if (
+            (!isTouchDevice && zoomType === 'x') ||
+            (isTouchDevice && pinchType === 'x')
+        ) {
             chart.resetZoomButton = 'blocked';
 
         // For y only zooming, ignore the X axis completely
@@ -2060,7 +2064,10 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
         // should apply only if the chart is initialized with a range (#6612),
         // otherwise zoom all the way out.
         } else if (
-            (zoomType === 'xy' || pinchType === 'xy') &&
+            (
+                (!isTouchDevice && zoomType === 'xy') ||
+                (isTouchDevice && pinchType === 'xy')
+            ) &&
             this.options.range
         ) {
 

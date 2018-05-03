@@ -211,7 +211,18 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         'Pie with equal length, reuse all points'
     );
 
+    // #8060
+    // No redraw, keep previous markers on a chart:
+    s.setData([[0, 0], [1, 1]]);
+    s.setData([[0, 0], [1, 1], [2, 2]], false, false, true);
 
+    assert.deepEqual(
+        s.points.map(function (p) {
+            return Highcharts.defined(p.graphic);
+        }),
+        [true, true],
+        'Old points have markers when redraw is set to false (#8060)'
+    );
 });
 
 

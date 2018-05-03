@@ -6,7 +6,7 @@ QUnit.test('Animation duration', function (assert) {
 
     try {
 
-        clock = lolexInstall();
+        clock = TestUtilities.lolexInstall();
 
         var chart = Highcharts
             .chart('container', {
@@ -68,11 +68,11 @@ QUnit.test('Animation duration', function (assert) {
             done();
         }, 1200);
 
-        lolexRunAndUninstall(clock);
+        TestUtilities.lolexRunAndUninstall(clock);
 
     } finally {
 
-        lolexUninstall(clock);
+        TestUtilities.lolexUninstall(clock);
 
     }
 

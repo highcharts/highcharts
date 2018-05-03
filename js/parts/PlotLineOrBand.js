@@ -59,14 +59,13 @@ H.PlotLineOrBand.prototype = {
             groupAttribs = {},
             renderer = axis.chart.renderer,
             groupName = isBand ? 'bands' : 'lines',
-            group,
-            log2lin = axis.log2lin;
+            group;
 
         // logarithmic conversion
         if (axis.isLog) {
-            from = log2lin(from);
-            to = log2lin(to);
-            value = log2lin(value);
+            from = axis.log2lin(from);
+            to = axis.log2lin(to);
+            value = axis.log2lin(value);
         }
 
         /*= if (build.classic) { =*/

@@ -1,7 +1,5 @@
-
-var chart;
 QUnit.test('Set options on navigator series', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 showInNavigator: true
@@ -20,7 +18,7 @@ QUnit.test('Set options on navigator series', function (assert) {
 });
 
 QUnit.test('Set navigator options on chart', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             series: {
                 color: '#f00'
@@ -42,7 +40,7 @@ QUnit.test('Set navigator options on chart', function (assert) {
 });
 
 QUnit.test('Set navigator options on both chart and series', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             series: {
                 color: '#f00'
@@ -67,7 +65,7 @@ QUnit.test('Set navigator options on both chart and series', function (assert) {
 });
 
 QUnit.test('Set navigator data on series', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 showInNavigator: true
@@ -86,7 +84,7 @@ QUnit.test('Set navigator data on series', function (assert) {
 });
 
 QUnit.test('Set navigator data on chart', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             series: {
                 data: [2, 3, 2, 3, 2, 3, 2, 3]
@@ -108,7 +106,7 @@ QUnit.test('Set navigator data on chart', function (assert) {
 });
 
 QUnit.test('Pure navigator series, data set on chart', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             series: {
                 data: [2, 3, 2, 3, 2, 3, 2, 3]
@@ -125,7 +123,7 @@ QUnit.test('Pure navigator series, data set on chart', function (assert) {
 });
 
 QUnit.test('Pure navigator series, data set on series', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         series: [{
             showInNavigator: false,
             data: [1, 2, 5, 4]
@@ -140,7 +138,7 @@ QUnit.test('Pure navigator series, data set on series', function (assert) {
 });
 
 QUnit.test('Set navigator data on chart and series', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             series: {
                 data: [2, 3, 2, 3, 2, 3, 2, 3]
@@ -166,7 +164,7 @@ QUnit.test('Set navigator data on chart and series', function (assert) {
 });
 
 QUnit.test('Set navigator series option as array', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             series: [{
                 data: [2, 3, 2, 3, 2, 3, 2, 3]
@@ -193,7 +191,7 @@ QUnit.test('Set navigator series option as array', function (assert) {
 });
 
 QUnit.test('Set only navigator series option as array', function (assert) {
-    chart = Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         navigator: {
             series: [{
                 data: [2, 3, 2, 3, 2, 3, 2, 3],
