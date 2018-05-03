@@ -864,6 +864,6 @@ Highcharts.chart('container', {
         // console.log(Object.keys(files));
 
         dumpOptions();
-        createSitemaps();
+        // createSitemaps();
     }
 };
