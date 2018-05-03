@@ -219,6 +219,40 @@ QUnit.test('Label ellipsis', function (assert) {
         'January <Not a tag>',
         'HTML entities should be unescaped in title elements (#7179)'
     );
+
+});
+
+QUnit.skip('Label ellipsis and expanding', function (assert) {
+
+    var chart = new Highcharts.chart('container', {
+        chart: {
+            width: 320
+        },
+        xAxis: {
+            labels: {
+                autoRotation: false,
+                padding: 10
+            },
+            categories: ['Fuel', 'Insurance', 'Maintenance', 'Ground', 'Data']
+        },
+        series: [{
+            type: 'column',
+            data: [5, 12, 15, 19, 21]
+        }]
+    });
+
+    assert.notEqual(
+        chart.xAxis[0].ticks[1].label.element.textContent.indexOf('…'),
+        -1,
+        'The second label should contain an ellipsis'
+    );
+
+    chart.setSize(620);
+    assert.strictEqual(
+        chart.xAxis[0].ticks[1].label.element.textContent.indexOf('…'),
+        -1,
+        'The third label should not contain an ellipsis (#8210)'
+    );
 });
 
 QUnit.test('Correct float (#6085)', function (assert) {
