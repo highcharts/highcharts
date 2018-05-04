@@ -229,9 +229,9 @@ var getPlayingField = function getPlayingField(
         /**
          * Use largest width, largest height, or root of total area to give size
          * to the playing field.
-         * Add extra 10 percentage to ensure enough space.
+         * Add extra 100 percentage to ensure enough space.
          */
-        x = 1.1 * Math.max(info.maxHeight, info.maxWidth, Math.sqrt(info.area));
+        x = 2 * Math.max(info.maxHeight, info.maxWidth, Math.sqrt(info.area));
     return {
         width: x * ratio,
         height: x,
