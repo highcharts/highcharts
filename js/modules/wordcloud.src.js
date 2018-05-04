@@ -756,7 +756,8 @@ var wordCloudPoint = {
     shouldDraw: function shouldDraw() {
         var point = this;
         return !point.isNull;
-    }
+    },
+    weight: 1
 };
 
 /**
