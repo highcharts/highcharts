@@ -692,6 +692,11 @@ before functional code for JSDoc to see them.`.yellow
             // Infer types
             if (obj.children) {
                 Object.keys(obj.children).forEach(function (child) {
+                    // work around #8260:
+                    if (child === '' || child === 'undefined') {
+                        delete obj.children[child];
+                        return;
+                    }
                     inferTypeForTree(obj.children[child]);
                 });
             }
@@ -737,6 +742,11 @@ Highcharts.chart('container', {
         }
 
         Object.keys(options).forEach(function (name) {
+            // work around #8260:
+            if (name === '' || name === 'undefined') {
+                delete options[name];
+                return;
+            }
             if (name !== '_meta') {
                 inferTypeForTree(options[name]);
             }
