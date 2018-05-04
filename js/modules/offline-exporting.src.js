@@ -334,7 +334,7 @@ Highcharts.downloadSVGLocal = function (
                 successCallback();
             }
         } catch (e) {
-            failCallback();
+            failCallback(e);
         }
     }
 
@@ -355,7 +355,7 @@ Highcharts.downloadSVGLocal = function (
                 successCallback();
             }
         } catch (e) {
-            failCallback();
+            failCallback(e);
         }
     } else if (imageType === 'application/pdf') {
         if (win.jsPDF && win.svg2pdf) {
@@ -396,7 +396,7 @@ Highcharts.downloadSVGLocal = function (
                         successCallback();
                     }
                 } catch (e) {
-                    failCallback();
+                    failCallback(e);
                 }
             }, function () {
                 // Failed due to tainted canvas
@@ -422,7 +422,7 @@ Highcharts.downloadSVGLocal = function (
                                 successCallback();
                             }
                         } catch (e) {
-                            failCallback();
+                            failCallback(e);
                         } finally {
                             finallyHandler();
                         }
@@ -543,7 +543,7 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
             );
         }
     } catch (e) {
-        failCallback();
+        failCallback(e);
     }
 };
 
@@ -565,12 +565,12 @@ Highcharts.Chart.prototype.exportChartLocal = function (
 ) {
     var chart = this,
         options = Highcharts.merge(chart.options.exporting, exportingOptions),
-        fallbackToExportServer = function () {
+        fallbackToExportServer = function (err) {
             if (options.fallbackToExportServer === false) {
                 if (options.error) {
-                    options.error(options);
+                    options.error(options, err);
                 } else {
-                    throw 'Fallback to export server disabled';
+                    Highcharts.error(28, true); // Fallback disabled
                 }
             } else {
                 chart.exportChart(options);
@@ -583,7 +583,9 @@ Highcharts.Chart.prototype.exportChartLocal = function (
                 svg.indexOf('<foreignObject') > -1 &&
                 options.type !== 'image/svg+xml'
             ) {
-                fallbackToExportServer();
+                fallbackToExportServer(
+                    'Image type not supported for charts with embedded HTML'
+                );
             } else {
                 Highcharts.downloadSVGLocal(
                     svg,
@@ -647,7 +649,9 @@ Highcharts.Chart.prototype.exportChartLocal = function (
             chart.container.getElementsByTagName('image').length
         )
     ) {
-        fallbackToExportServer();
+        fallbackToExportServer(
+            'Image type not supported for this chart/browser.'
+        );
         return;
     }
 
