@@ -7,6 +7,43 @@
     window.TestUtilities = (window.TestUtilities || {});
 
     /**
+    + * A string representation for the current browser. Possible values are
+    + * `Chrome`, `Edge`, `Firefox`, `MSIE`, `Netscape`, `Opera`, `PhantomJS`,
+    + * `Safari`, and an empty string for unknown browsers.
+    + * @type {string}
+    + */
+    window.TestUtilities.browser = (function () {
+        var userAgent = window.navigator.userAgent;
+        if ((new RegExp('MSIE|Trident', 'i')).test(userAgent) &&
+            !(new RegExp('Opera', 'i')).test(userAgent)
+        ) {
+            return 'MSIE';
+        }
+        if ((new RegExp('Firefox', 'i')).test(userAgent)) {
+            return 'Firefox';
+        }
+        if ((new RegExp('Edge', 'i')).test(userAgent)) {
+            return 'Edge';
+        }
+        if ((new RegExp('Chrome', 'i')).test(userAgent)) {
+            return 'Chrome';
+        }
+        if ((new RegExp('PhantomJS', 'i')).test(userAgent)) {
+            return 'PhantomJS';
+        }
+        if ((new RegExp('Safari', 'i')).test(userAgent)) {
+            return 'Safari';
+        }
+        if ((new RegExp('Opera', 'i')).test(userAgent)) {
+            return 'Opera';
+        }
+        if ((new RegExp('Netscape', 'i')).test(userAgent)) {
+            return 'Netscape';
+        }
+        return '';
+    }());
+
+    /**
      * Calls a function only, if the system is set to specific timezones.
      *
      * @param {string[]} timezones
