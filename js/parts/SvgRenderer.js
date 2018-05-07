@@ -2687,7 +2687,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
                                         // a single word is pressing it out
                                         if (actualWidth > width) {
-                                            width = actualWidth;
+                                            // one more pixel for Chrome, #3158
+                                            width = actualWidth + 1;
                                         }
                                     } else { // append to existing line tspan
                                         tspan.removeChild(tspan.firstChild);
