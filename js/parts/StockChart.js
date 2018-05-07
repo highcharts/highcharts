@@ -870,7 +870,7 @@ wrap(Series.prototype, 'render', function (proceed) {
         !this.xAxis.isRadial // Gauge, #6192
     ) {
         // Include xAxis line width, #8031
-        clipHeight = this.yAxis.len - (this.xAxisLine ?
+        clipHeight = this.yAxis.len - (this.xAxis.axisLine ?
             Math.floor(this.xAxis.axisLine.strokeWidth() / 2) :
             0);
 
