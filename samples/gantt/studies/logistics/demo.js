@@ -124,6 +124,9 @@ Highcharts.ganttChart('container', {
         enabled: false
     },
     series: convertInformationToSeries(information),
+    tooltip: {
+        enabled: false
+    },
     xAxis: [{
         type: 'datetime',
         currentDateIndicator: true,
