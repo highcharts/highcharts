@@ -1056,6 +1056,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Get the SVG from the container's innerHTML
         svg = chartCopy.getChartHTML();
+        fireEvent(this, 'getSVG', { chartCopy: chartCopy });
 
         svg = chart.sanitizeSVG(svg, options);
 
