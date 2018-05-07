@@ -34,6 +34,12 @@ var information = {
             ladenVoyage: 10 * days,
             unloading: 1 * days,
             ballastVoyage: 5 * days
+        }, {
+            start: today + 75 * days,
+            loading: 1 * days + 2 * hours + 45 * minutes,
+            ladenVoyage: 21 * days,
+            unloading: 1 * days + 5 * hours,
+            ballastVoyage: 14 * days
         }]
     }, {
         name: 'Vessel 2',
@@ -112,6 +118,9 @@ var getCategoriesFromInformation = function (information) {
     });
 };
 
+var xAxisMin = today - (10 * days),
+    xAxisMax = xAxisMin + 90 * days;
+
 Highcharts.ganttChart('container', {
     plotOptions: {
         series: {
@@ -122,6 +131,13 @@ Highcharts.ganttChart('container', {
     },
     legend: {
         enabled: false
+    },
+    rangeSelector: {
+        enabled: true,
+        selected: 1
+    },
+    scrollbar: {
+        enabled: true
     },
     series: convertInformationToSeries(information),
     tooltip: {
@@ -134,6 +150,8 @@ Highcharts.ganttChart('container', {
         labels: {
             format: undefined
         },
+        min: xAxisMin,
+        max: xAxisMax,
         tickInterval: undefined
     }],
     yAxis: [{
