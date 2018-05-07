@@ -4156,7 +4156,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     label.css(css);
 
                 // Reset previously shortened label (#8210)
-                } else if (label.styles.width && !css.width && !widthOption) {
+                } else if (
+                    label.styles &&
+                    label.styles.width &&
+                    !css.width &&
+                    !widthOption
+                ) {
                     label.css({ width: null });
                 }
 
