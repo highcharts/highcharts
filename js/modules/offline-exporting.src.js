@@ -12,7 +12,8 @@ import '../parts/Chart.js';
 import '../parts/Options.js';
 /* global MSBlobBuilder */
 
-var merge = Highcharts.merge,
+var addEvent = Highcharts.addEvent,
+    merge = Highcharts.merge,
     win = Highcharts.win,
     nav = win.navigator,
     doc = win.document,
@@ -499,20 +500,11 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
             }
         };
 
-    // Hook into getSVG to get a copy of the chart copy's container
-    Highcharts.wrap(
-        Highcharts.Chart.prototype,
-        'getChartHTML',
-        function (proceed) {
-            var ret = proceed.apply(
-                this,
-                Array.prototype.slice.call(arguments, 1)
-            );
-            chartCopyOptions = this.options;
-            chartCopyContainer = this.container.cloneNode(true);
-            return ret;
-        }
-    );
+    // Hook into getSVG to get a copy of the chart copy's container (#8273)
+    chart.unbindGetSVG = addEvent(chart, 'getSVG', function (e) {
+        chartCopyOptions = e.chartCopy.options;
+        chartCopyContainer = e.chartCopy.container.cloneNode(true);
+    });
 
     // Trigger hook to get chart copy
     chart.getSVGForExport(options, chartOptions);
@@ -545,6 +537,9 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
     } catch (e) {
         failCallback(e);
     }
+
+    // Clean up
+    chart.unbindGetSVG();
 };
 
 /**
