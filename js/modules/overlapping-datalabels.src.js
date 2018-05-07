@@ -44,7 +44,7 @@ addEvent(Chart, 'render', function collectAndHide() {
     each(this.series || [], function (series) {
         var dlOptions = series.options.dataLabels,
             // Range series have two collections
-            collections = series.dataLabelCollections || ['dataLabel'];
+            collections = series.dataLabelCollections || ['dataLabels'];
 
         if (
             (dlOptions.enabled || series._hasPointLabels) &&
@@ -53,7 +53,15 @@ addEvent(Chart, 'render', function collectAndHide() {
         ) { // #3866
             each(collections, function (coll) {
                 each(series.points, function (point) {
-                    if (point[coll]) {
+                    if (point.dataLabels) {
+                        each(point.dataLabels, function (label) {
+                            label.labelrank = pick(
+                                point.labelrank,
+                                point.shapeArgs && point.shapeArgs.height
+                            ); // #4118
+                            labels.push(label);
+                        });
+                    } else if (point[coll]) {
                         point[coll].labelrank = pick(
                             point.labelrank,
                             point.shapeArgs && point.shapeArgs.height

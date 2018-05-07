@@ -127,6 +127,9 @@ Highcharts.Point.prototype = {
         if (options.group) {
             delete point.group;
         }
+        if (options.dataLabels) {
+            delete point.dataLabels;
+        }
 
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
@@ -337,8 +340,13 @@ Highcharts.Point.prototype = {
         }
 
         // Remove all events
-        if (point.graphic || point.dataLabel) {
+        if (point.graphic || point.dataLabel || point.dataLabels) {
             removeEvent(point);
+            if (point.dataLabels) {
+                each(point.dataLabels, function (label) {
+                    label.destroy();
+                });
+            }
             point.destroyElements();
         }
 
