@@ -2,3 +2,15 @@
     max-width: 800px;
     margin: 1em auto;
 }
+
+.info-span .utilized {
+    font-size: 14px;
+}
+
+.info-span.ok {
+    color: #788c6b;
+}
+
+.info-span.warn {
+    color: #fbe496;
+}

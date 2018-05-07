@@ -20,6 +20,8 @@ var information = {
     },
     vessels: [{
         name: 'Vessel 1',
+        utilized: 95,
+        idle: 10,
         trips: [{
             start: today + days,
             loading: 1 * days + 2 * hours + 45 * minutes,
@@ -35,6 +37,8 @@ var information = {
         }]
     }, {
         name: 'Vessel 2',
+        utilized: 75,
+        idle: 23,
         trips: [{
             start: today - 5 * days,
             loading: 1 * days + 2 * hours + 45 * minutes,
@@ -93,6 +97,21 @@ var convertInformationToSeries = function (info) {
     }, []);
 };
 
+var getCategoriesFromInformation = function (information) {
+    var vessels = information.vessels;
+    return vessels.map(function (vessel) {
+        var idle = vessel.idle,
+            utilized = vessel.utilized,
+            className = utilized > 75 ? 'ok' : 'warn';
+        return [
+            '<span class="info-span ' + className + '">',
+            '    <span class="utilized">' + utilized + '%</span><br/>',
+            '    <span>t: ' + idle + ' days</span>',
+            '</span>'
+        ].join('\n');
+    });
+};
+
 Highcharts.ganttChart('container', {
     plotOptions: {
         series: {
@@ -117,11 +136,14 @@ Highcharts.ganttChart('container', {
     yAxis: [{
         type: 'grid',
         maxPadding: 0,
+        labels: {
+            useHTML: true
+        },
         grid: {
             columns: [{
                 categories: ['Vessel 1', 'Vessel 2']
             }, {
-                categories: ['Info 1', 'Info 2']
+                categories: getCategoriesFromInformation(information)
             }]
         }
     }]
