@@ -809,13 +809,19 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             }
 
             // Get the text width from style
-            textWidth = this.textWidth = (
-                styles &&
-                styles.width &&
-                styles.width !== 'auto' &&
-                elem.nodeName.toLowerCase() === 'text' &&
-                pInt(styles.width)
-            );
+            if (styles) {
+                // Previously set, unset it (#8234)
+                if (styles.width === null || styles.width === 'auto') {
+                    delete this.textWidth;
+
+                // Apply new
+                } else if (
+                    elem.nodeName.toLowerCase() === 'text' &&
+                    styles.width
+                ) {
+                    textWidth = this.textWidth = pInt(styles.width);
+                }
+            }
 
             // store object
             this.styles = styles;

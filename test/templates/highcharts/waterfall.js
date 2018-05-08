@@ -1,13 +1,11 @@
-/* global ChartTemplate, Highcharts */
-
-ChartTemplate.register('waterfall-simple', Highcharts.chart, {
+TestTemplate.register('highcharts/waterfall', Highcharts.chart, {
 
     chart: {
         type: 'waterfall'
     },
 
     title: {
-        text: 'waterfall-simple'
+        text: 'template/highcharts/waterfall'
     },
 
     series: [{
