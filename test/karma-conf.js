@@ -207,8 +207,8 @@ module.exports = function (config) {
                 included: false,
                 served: true
             },
-            // Chart templates
-            'test/chart-template.js',
+            // Test templates
+            'test/test-template.js',
             {
                 pattern: 'test/templates/**/*.js',
                 type: 'js',
