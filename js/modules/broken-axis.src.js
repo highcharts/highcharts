@@ -23,7 +23,7 @@ function stripArguments() {
     return Array.prototype.slice.call(arguments, 1);
 }
 
-extend(Axis.prototype, {
+extend(Axis.prototype, /** @lends H.Axis.prototype */ {
     isInBreak: function (brk, val) {
         var ret,
             repeat = brk.repeat || Infinity,

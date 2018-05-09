@@ -13,6 +13,9 @@ var defined = H.defined,
 
 /**
  * Mixin for maps and heatmaps
+ * @mixin
+ * @name colorPointMixin
+ * @memberof Highcharts
  */
 H.colorPointMixin = {
     /**
@@ -52,6 +55,12 @@ H.colorPointMixin = {
     }
 };
 
+/**
+ * color series mixin
+ * @mixin
+ * @name colorSeriesMixin
+ * @memberof Highcharts
+ */
 H.colorSeriesMixin = {
     pointArrayMap: ['value'],
     axisTypes: ['xAxis', 'yAxis', 'colorAxis'],

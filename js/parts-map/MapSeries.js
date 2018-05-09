@@ -45,6 +45,13 @@ var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
  * @product highmaps
  * @optionparent plotOptions.map
  */
+/**
+ * The map series type.
+ *
+ * @constructor seriesTypes.map
+ * @augments seriesTypes.scatter
+ * @mixes colorSeriesMixin
+ */
 seriesType('map', 'scatter', {
 
     /**
@@ -266,7 +273,7 @@ seriesType('map', 'scatter', {
     }
 
 // Prototype members
-}, merge(colorSeriesMixin, {
+}, merge(colorSeriesMixin, /** @lends seriesTypes.map.prototype */ {
     type: 'map',
     getExtremesFromAll: true,
     useMapGeometry: true, // get axis extremes from paths, not values
@@ -1023,7 +1030,7 @@ seriesType('map', 'scatter', {
     }
 
 // Point class
-}), extend({
+}), extend(/** @lends seriesTypes.map.prototype.pointClass.prototype */ {
     /**
      * Extend the Point object to split paths
      */
@@ -1089,6 +1096,13 @@ seriesType('map', 'scatter', {
         series.chart.redraw();
     }
 }, colorPointMixin));
+
+/**
+ * The point class of map series type.
+ *
+ * @type seriesTypes.map.prototype.pointClass
+ * @mixes colorPointMixin
+ */
 
 /**
  * An array of objects containing a `path` definition and optionally

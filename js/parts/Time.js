@@ -51,7 +51,7 @@ var H = Highcharts,
  *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
- * @param  options {Object}
+ * @param  {Object} options
  *         Time options as defined in [chart.options.time](/highcharts/time).
  * @since  6.0.5
  * @class

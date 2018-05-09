@@ -117,7 +117,7 @@ seriesType('variablepie', 'pie',
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>Value: {point.y}<br/>Size: {point.z}<br/>'
         }
-    }, {
+    }, /** @lends seriesTypes.variablepie.prototype */ {
         pointArrayMap: ['y', 'z'],
         parallelArrays: ['x', 'y', 'z'],
 

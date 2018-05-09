@@ -62,6 +62,12 @@ var seriesType = H.seriesType,
  * @product highcharts
  * @optionparent plotOptions.treemap
  */
+/**
+ * The treemap series type.
+ *
+ * @constructor seriesTypes.treemap
+ * @augments seriesTypes.scatter
+ */
 seriesType('treemap', 'scatter', {
 
     /**
@@ -515,7 +521,7 @@ seriesType('treemap', 'scatter', {
 
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.treemap.prototype */ {
     pointArrayMap: ['value'],
     axisTypes: seriesTypes.heatmap ?
         ['xAxis', 'yAxis', 'colorAxis'] :
@@ -537,7 +543,7 @@ seriesType('treemap', 'scatter', {
     /**
      * Creates an object map from parent id to childrens index.
      * @param {Array} data List of points set in options.
-     * @param {string} data[].parent Parent id of point.
+     * @param {string} data.parent Parent id of point.
      * @param {Array} ids List of all point ids.
      * @return {Object} Map from parent id to children index in data.
      */
@@ -1448,7 +1454,7 @@ seriesType('treemap', 'scatter', {
     }
 
 // Point class
-}, {
+}, /** @lends seriesTypes.treemap.prototype.pointClass.prototype */ {
     getClassName: function () {
         var className = H.Point.prototype.getClassName.call(this),
             series = this.series,

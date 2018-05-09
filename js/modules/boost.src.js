@@ -528,9 +528,8 @@ function shouldForceChartSeriesBoosting(chart) {
     return chart.boostForceChartBoost;
 }
 
-/*
+/**
  * Returns true if the chart is in series boost mode
- * @param chart {Highchart.Chart} - the chart to check
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 Chart.prototype.isChartSeriesBoosting = function () {
@@ -546,7 +545,7 @@ Chart.prototype.isChartSeriesBoosting = function () {
     return isSeriesBoosting;
 };
 
-/*
+/**
  * Get the clip rectangle for a target, either a series or the chart. For the
  * chart, we need to consider the maximum extent of its Y axes, in case of
  * Highstock panes and navigator.
@@ -572,9 +571,9 @@ Chart.prototype.getBoostClipRect = function (target) {
     return clipBox;
 };
 
-/*
+/**
  * Returns true if the series is in boost mode
- * @param series {Highchart.Series} - the series to check
+ * @param {Highchart.Series} series - the series to check
  * @returns {boolean} - true if the series is in boost mode
  */
 /*
@@ -594,9 +593,11 @@ function isSeriesBoosting(series, overrideThreshold) {
 
 // START OF WEBGL ABSTRACTIONS
 
-/*
+/**
  * A static shader mimicing axis translation functions found in parts/Axis
- * @param gl {WebGLContext} - the context in which the shader is active
+ *
+ * @typedef {Function} GLShader
+ * @param {WebGLRenderingContext} gl - the context in which the shader is active
  */
 function GLShader(gl) {
     var vertShade = [
@@ -824,7 +825,7 @@ function GLShader(gl) {
         return shader;
     }
 
-    /*
+    /**
      * Create the shader.
      * Loads the shader program statically defined above
      */
@@ -888,11 +889,11 @@ function GLShader(gl) {
         gl.useProgram(shaderProgram);
     }
 
-    /*
+    /**
      * Set a uniform value.
      * This uses a hash map to cache uniform locations.
-     * @param name {string} - the name of the uniform to set
-     * @param val {float} - the value to set
+     * @param {string} name - the name of the uniform to set
+     * @param {number} val - the value to set
      */
     function setUniform(name, val) {
         var u = uLocations[name] =    uLocations[name] ||
@@ -900,7 +901,7 @@ function GLShader(gl) {
         gl.uniform1f(u, val);
     }
 
-    /*
+    /**
      * Set the active texture
      * @param texture - the texture
      */
@@ -935,9 +936,9 @@ function GLShader(gl) {
         gl.uniform1i(isCircleUniform, 0);
     }
 
-    /*
+    /**
      * Set bubble uniforms
-     * @param series {Highcharts.Series} - the series to use
+     * @param {Highcharts.Series} series - the series to use
      */
     function setBubbleUniforms(series, zCalcMin, zCalcMax) {
         var seriesOptions = series.options,
@@ -975,9 +976,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set the Color uniform.
-     * @param color {Array<float>} - an array with RGBA values
+     * @param {Array<number>} color - an array with RGBA values
      */
     function setColor(color) {
         gl.uniform4f(
@@ -996,23 +997,23 @@ function GLShader(gl) {
         gl.uniform1i(skipTranslationUniform, flag === true ? 1 : 0);
     }
 
-    /*
+    /**
      * Set the perspective matrix
-     * @param m {Matrix4x4} - the matrix
+     * @param {Matrix4x4} m - the matrix
      */
     function setPMatrix(m) {
         gl.uniformMatrix4fv(pUniform, false, m);
     }
 
-    /*
+    /**
      * Set the point size.
-     * @param p {float} - point size
+     * @param {number} p - point size
      */
     function setPointSize(p) {
         gl.uniform1f(psUniform, p);
     }
 
-    /*
+    /**
      * Get the shader program handle
      * @returns {GLInt} - the handle for the program
      */
@@ -1052,12 +1053,12 @@ function GLShader(gl) {
     };
 }
 
-/*
+/**
  * Vertex Buffer abstraction
  * A vertex buffer is a set of vertices which are passed to the GPU
  * in a single call.
- * @param gl {WebGLContext} - the context in which to create the buffer
- * @param shader {GLShader} - the shader to use
+ * @param {WebGLRenderingContext} gl - the context in which to create the buffer
+ * @param {GLShader} shader - the shader to use
  */
 function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
     var buffer = false,
@@ -1082,11 +1083,11 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
         data = [];
     }
 
-    /*
+    /**
      * Build the buffer
-      * @param dataIn {Array<float>} - a 0 padded array of indices
-      * @param attrib {String} - the name of the Attribute to bind the buffer to
-      * @param dataComponents {Integer} - the number of components per. indice
+      * @param {Array<number>} dataIn - a 0 padded array of indices
+      * @param {String} attrib - the name of the Attribute to bind the buffer to
+      * @param {number} dataComponents - the number of components per. indice
      */
     function build(dataIn, attrib, dataComponents) {
         var farray;
@@ -1144,11 +1145,11 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
         // gl.enableVertexAttribArray(vertAttribute);
     }
 
-    /*
+    /**
      * Render the buffer
-     * @param from {Integer} - the start indice
-     * @param to {Integer} - the end indice
-     * @param drawMode {String} - the draw mode
+     * @param {number} from - the start indice
+     * @param {number} to - the end indice
+     * @param {String} drawMode - the draw mode
      */
     function render(from, to, drawMode) {
         var length = preAllocated ? preAllocated.length : data.length;
@@ -1189,7 +1190,7 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
         }
     }
 
-    /*
+    /**
      * Note about pre-allocated buffers:
      *     - This is slower for charts with many series
      */
@@ -1343,7 +1344,7 @@ function GLRenderer(postRenderCallback) {
         vbuffer.allocate(s);
     }
 
-    /*
+    /**
      * Returns an orthographic perspective matrix
      * @param {number} width - the width of the viewport in pixels
      * @param {number} height - the height of the viewport in pixels
@@ -1367,9 +1368,9 @@ function GLRenderer(postRenderCallback) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 
-    /*
+    /**
      * Get the WebGL context
-     * @returns {WebGLContext} - the context
+     * @returns {WebGLRenderingContext} - the context
      */
     function getGL() {
         return gl;
@@ -1925,10 +1926,10 @@ function GLRenderer(postRenderCallback) {
         closeSegment();
     }
 
-    /*
+    /**
      * Push a series to the renderer
      * If we render the series immediatly, we don't have to loop later
-     * @param s {Highchart.Series} - the series to push
+     * @param {Highcharts.Series} s - the series to push
      */
     function pushSeries(s) {
         if (series.length > 0) {
@@ -1995,9 +1996,9 @@ function GLRenderer(postRenderCallback) {
         }
     }
 
-    /*
+    /**
      * Pass x-axis to shader
-     * @param axis {Highcharts.Axis} - the x-axis
+     * @param {Highcharts.Axis} axis - the x-axis
      */
     function setXAxis(axis) {
         if (!shader) {
@@ -2013,9 +2014,9 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('xAxisCVSCoord', !axis.horiz);
     }
 
-    /*
+    /**
      * Pass y-axis to shader
-     * @param axis {Highcharts.Axis} - the y-axis
+     * @param {Highcharts.Axis} axis - the y-axis
      */
     function setYAxis(axis) {
         if (!shader) {
@@ -2031,10 +2032,10 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('yAxisCVSCoord', !axis.horiz);
     }
 
-    /*
+    /**
      * Set the translation threshold
-     * @param has {boolean} - has threshold flag
-     * @param translation {Float} - the threshold
+     * @param {boolean} has - has threshold flag
+     * @param {number} translation - the threshold
      */
     function setThreshold(has, translation) {
         shader.setUniform('hasThreshold', has);
@@ -2270,11 +2271,11 @@ function GLRenderer(postRenderCallback) {
         }
     }
 
-    /*
+    /**
      * Set the viewport size in pixels
      * Creates an orthographic perspective matrix and applies it.
-     * @param w {Integer} - the width of the viewport
-     * @param h {Integer} - the height of the viewport
+     * @param {number} w - the width of the viewport
+     * @param {number} h - the height of the viewport
      */
     function setSize(w, h) {
         // Skip if there's no change
@@ -2289,9 +2290,9 @@ function GLRenderer(postRenderCallback) {
         shader.setPMatrix(orthoMatrix(width, height));
     }
 
-    /*
+    /**
      * Init OpenGL
-     * @param canvas {HTMLCanvas} - the canvas to render to
+     * @param {HTMLCanvas} canvas - the canvas to render to
      */
     function init(canvas, noFlush) {
         var i = 0,
@@ -2412,7 +2413,7 @@ function GLRenderer(postRenderCallback) {
         return true;
     }
 
-    /*
+    /**
      * Check if we have a valid OGL context
      * @returns {Boolean} - true if the context is valid
      */
@@ -2420,7 +2421,7 @@ function GLRenderer(postRenderCallback) {
         return gl !== false;
     }
 
-    /*
+    /**
      * Check if the renderer has been initialized
      * @returns {Boolean} - true if it has, false if not
      */
@@ -2469,10 +2470,10 @@ function GLRenderer(postRenderCallback) {
 // END OF WEBGL ABSTRACTIONS
 // /////////////////////////////////////////////////////////////////////////////
 
-/*
+/**
  * Create a canvas + context and attach it to the target
- * @param target {Highcharts.Chart|Highcharts.Series} - the canvas target
- * @param chart {Highcharts.Chart} - the chart
+ * @param {Highcharts.Chart|Highcharts.Series} target - the canvas target
+ * @param {Highcharts.Chart} chart - the chart
  */
 function createAndAttachRenderer(chart, series) {
     var width = chart.chartWidth,
@@ -2621,11 +2622,11 @@ function createAndAttachRenderer(chart, series) {
     return target.ogl;
 }
 
-/*
+/**
  * Performs the actual render if the renderer is
  * attached to the series.
- * @param renderer {OGLRenderer} - the renderer
- * @param series {Highcharts.Series} - the series
+ * @param {OGLRenderer} renderer - the renderer
+ * @param {Highcharts.Series} series - the series
  */
 function renderIfNotSeriesBoosting(renderer, series, chart) {
     if (renderer &&
@@ -2647,16 +2648,16 @@ function allocateIfNotSeriesBoosting(renderer, series) {
     }
 }
 
-/*
+/**
  * An "async" foreach loop. Uses a setTimeout to keep the loop from blocking the
  * UI thread.
  *
- * @param arr {Array} - the array to loop through
- * @param fn {Function} - the callback to call for each item
- * @param finalFunc {Function} - the callback to call when done
- * @param chunkSize {Number} - the number of iterations per timeout
- * @param i {Number} - the current index
- * @param noTimeout {Boolean} - set to true to skip timeouts
+ * @param {Array} arr - the array to loop through
+ * @param {Function} fn - the callback to call for each item
+ * @param {Function} finalFunc - the callback to call when done
+ * @param {Number} chunkSize - the number of iterations per timeout
+ * @param {Number} i - the current index
+ * @param {Boolean} noTimeout - set to true to skip timeouts
  */
 H.eachAsync = function (arr, fn, finalFunc, chunkSize, i, noTimeout) {
     i = i || 0;
@@ -2995,7 +2996,7 @@ Series.prototype.destroyGraphics = function () {
 
 
 
-/*
+/**
  * Returns true if the current browser supports webgl
  */
 H.hasWebGLSupport = function () {

@@ -37,6 +37,12 @@ var arrayMax = H.arrayMax,
  * @product      highcharts highstock
  * @optionparent plotOptions.bubble
  */
+/**
+ * The bubble series type.
+ *
+ * @constructor seriesTypes.bubble
+ * @augments seriesTypes.scatter
+ */
 seriesType('bubble', 'scatter', {
 
     dataLabels: {
@@ -266,7 +272,7 @@ seriesType('bubble', 'scatter', {
     zoneAxis: 'z'
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.bubble.prototype */ {
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
     trackerGroups: ['group', 'dataLabelsGroup'],
@@ -429,7 +435,7 @@ seriesType('bubble', 'scatter', {
     applyZones: noop
 
 // Point class
-}, {
+}, /** @lends seriesTypes.bubble.prototype.pointClass.prototype */ {
     haloPath: function (size) {
         return Point.prototype.haloPath.call(
             this,

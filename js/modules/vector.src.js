@@ -26,6 +26,12 @@ var each = H.each,
  * @since 6.0.0
  * @optionparent plotOptions.vector
  */
+/**
+ * The vector series type.
+ *
+ * @constructor seriesTypes.vector
+ * @augments seriesTypes.scatter
+ */
 seriesType('vector', 'scatter', {
 
     /**
@@ -65,7 +71,7 @@ seriesType('vector', 'scatter', {
      */
     vectorLength: 20
 
-}, {
+}, /** @lends seriesTypes.vector.prototype */ {
     pointArrayMap: ['y', 'length', 'direction'],
     parallelArrays: ['x', 'y', 'length', 'direction'],
 

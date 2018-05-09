@@ -33,6 +33,9 @@ if (!H.polarExtended) {
     /**
      * Search a k-d tree by the point angle, used for shared tooltips in polar
      * charts
+     *
+     * @function #searchPointByAngle
+     * @memberOf Highcharts.Series.prototype
      */
     seriesProto.searchPointByAngle = function (e) {
         var series = this,
@@ -50,9 +53,15 @@ if (!H.polarExtended) {
 
     /**
      * #6212 Calculate connectors for spline series in polar chart.
+     *
+     * @function getConnectors
+     * @memberOf Highcharts.Series.prototype
+     * @param {Array<Point>} segment
+     * @param {number} index
      * @param {Boolean} calculateNeighbours
      *        Check if connectors should be calculated for neighbour points as
      *        well allows short recurence
+     * @param {boolean} connectEnds
      */
     seriesProto.getConnectors = function (
         segment,
@@ -177,6 +186,9 @@ if (!H.polarExtended) {
     /**
      * Translate a point's plotX and plotY from the internal angle and radius
      * measures to true plotX, plotY coordinates
+     *
+     * @function #toXY
+     * @memberOf Highcharts.Series.prototype
      */
     seriesProto.toXY = function (point) {
         var xy,
@@ -439,6 +451,10 @@ if (!H.polarExtended) {
 
         colProto = seriesTypes.column.prototype;
 
+        /**
+         * @function polarArc
+         * @memberOf seriesTypes.column.prototype
+         */
         colProto.polarArc = function (low, high, start, end) {
             var center = this.xAxis.center,
                 len = this.yAxis.len;

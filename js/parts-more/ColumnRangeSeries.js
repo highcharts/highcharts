@@ -60,12 +60,18 @@ var columnRangeOptions = {
 /**
  * The ColumnRangeSeries class
  */
+/**
+ * The columnrange series type.
+ *
+ * @constructor seriesTypes.columnrange
+ * @augments seriesTypes.arearange
+ */
 seriesType('columnrange', 'arearange', merge(
     defaultPlotOptions.column,
     defaultPlotOptions.arearange,
     columnRangeOptions
 
-), {
+), /** @lends seriesTypes.columnrange.prototype */ {
     /**
      * Translate data points from raw values x and y to plotX and plotY
      */
@@ -175,7 +181,7 @@ seriesType('columnrange', 'arearange', merge(
     translate3dShapes: function () {
         return colProto.translate3dShapes.apply(this, arguments);
     }
-}, {
+}, /** @lends seriesTypes.columnrange.prototype.pointClass.prototype */ {
     setState: colProto.pointClass.prototype.setState
 });
 

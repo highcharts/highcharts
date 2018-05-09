@@ -33,7 +33,7 @@ var addEvent = H.addEvent,
  * The pie series type.
  *
  * @constructor seriesTypes.pie
- * @augments Series
+ * @augments seriesTypes.line
  */
 
 /**

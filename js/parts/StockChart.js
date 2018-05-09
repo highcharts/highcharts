@@ -664,6 +664,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
  * Extend series.init by adding a method to modify the y value used for plotting
  * on the y axis. This method is called both from the axis when finding dataMin
  * and dataMax, and from the series.translate method.
+ *
+ * @function init
+ * @memberOf Highcharts.Series.prototype
  */
 seriesProto.init = function () {
 
@@ -682,7 +685,7 @@ seriesProto.init = function () {
  * series.
  *
  * @function setCompare
- * @memberOf Series.prototype
+ * @memberOf Highcharts.Series.prototype
  *
  * @param  {String} compare
  *         Can be one of `null`, `"percent"` or `"value"`.

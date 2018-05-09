@@ -32,10 +32,14 @@ var addEvent = H.addEvent,
     svg = H.svg,
     TrackerMixin;
 
+TrackerMixin =
 /**
  * TrackerMixin for points and graphs.
+ * @mixin
+ * @name TrackerMixin
+ * @memberof Highcharts
  */
-TrackerMixin = H.TrackerMixin = {
+H.TrackerMixin = {
 
     /**
      * Draw the tracker for a point.
@@ -228,7 +232,7 @@ if (seriesTypes.scatter) {
 /*
  * Extend Legend for item events
  */
-extend(Legend.prototype, {
+extend(Legend.prototype, /** @lends Legend.prototype */ {
 
     setItemEvents: function (item, legendItem, useHTML) {
         var legend = this,
@@ -575,6 +579,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                  * @memberof Point
                  * @name selected
                  * @type {Boolean}
+                 * @instance
                  */
                 point.selected = point.options.selected = selected;
                 series.options.data[inArray(point, series.data)] =

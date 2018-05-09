@@ -33,7 +33,7 @@ H.seriesType('cmf', 'sma',
        */
             volumeSeriesID: 'volume'
         }
-    }, {
+    }, /** @lends seriesTypes.cmf.prototype */ {
         nameBase: 'Chaikin Money Flow',
         /**
          * Checks if the series and volumeSeries are accessible, number of
@@ -83,7 +83,7 @@ H.seriesType('cmf', 'sma',
 
         /**
          * Returns indicator's data
-         * @returns {False | Values}
+         * @returns {false | Values}
          *          Returns false if the indicator is not valid, otherwise
          *          returns Values object
         **/

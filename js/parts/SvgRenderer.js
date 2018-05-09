@@ -48,7 +48,8 @@ var SVGElement,
     win = H.win;
 
 /**
- * @typedef {Object} SVGDOMElement - An SVG DOM element.
+ * @typedef {Window.SVGElement} SVGDOMElement - An SVG DOM element.
+ * @memberof H
  */
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
@@ -104,7 +105,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          *
          * @name  element
          * @memberOf SVGElement
-         * @type {SVGDOMNode|HTMLDOMNode}
+         * @type {SVGDOMElement|HTMLDOMElement}
+         * @instance
          */
         this.element = nodeName === 'span' ?
             createElement(nodeName) :
@@ -116,6 +118,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * @name renderer
          * @memberOf SVGElement
          * @type {SVGRenderer}
+         * @instance
          */
         this.renderer = renderer;
     },
@@ -1124,7 +1127,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @param {Boolean} [alignByTranslate=false] Use the `transform` attribute
      *   with translateX and translateY custom attributes to align this elements
      *   rather than `x` and `y` attributes.
-     * @param {String|Object} box The box to align to, needs a width and height.
+     * @param {String|Object} [box] The box to align to, needs a width and height.
      *   When the box is a string, it refers to an object in the Renderer. For
      *   example, when box is `spacingBox`, it refers to `Renderer.spacingBox`
      *   which holds `width`, `height`, `x` and `y` properties.
@@ -1990,6 +1993,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     /**
      * Initialize the SVGRenderer. Overridable initiator function that takes
      * the same parameters as the constructor.
+     *
+     * @param {HTMLElement} container
+     * @param {number} width
+     * @param {number} height
+     * @param {CSSObject} style
+     * @param {boolean} forExport
+     * @param {boolean} allowHTML
      */
     init: function (container, width, height, style, forExport, allowHTML) {
         var renderer = this,
@@ -2025,6 +2035,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
          * @name box
          * @memberOf SVGRenderer
          * @type {SVGDOMElement}
+         * @instance
          */
         this.box = element;
         /**
@@ -2033,6 +2044,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
          * @name boxWrapper
          * @memberOf SVGRenderer
          * @type {SVGElement}
+         * @instance
          */
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
@@ -2066,6 +2078,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
          * @type {SVGElement}
          * @name defs
          * @memberOf SVGRenderer
+         * @instance
          */
         renderer.defs = this.createElement('defs').add();
         renderer.allowHTML = allowHTML;
@@ -3307,6 +3320,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} [options.r] - The radius of an `arc` symbol, or the
      *    border radius for the `callout` symbol.
      * @param {number} [options.start] - The start angle of an `arc` symbol.
+     * @return {SVGElement}
      */
     symbol: function (symbol, x, y, width, height, options) {
 
@@ -3472,12 +3486,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     },
 
     /**
-     * @typedef {string} Symbol
-     *
      * Can be one of `arc`, `callout`, `circle`, `diamond`, `square`,
      * `triangle`, `triangle-down`. Symbols are used internally for point
      * markers, button and label borders and backgrounds, or custom shapes.
      * Extendable by adding to {@link SVGRenderer#symbols}.
+     *
+     * @typedef {string} Symbol
+     * @memberof Highcharts
      */
     /**
      * An extendable collection of functions for defining symbol paths.
@@ -4287,5 +4302,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 }); // end SVGRenderer
 
 
-// general renderer
+/**
+ * general renderer
+ * @typedef {SVGRenderer} Renderer
+ * @memberOf H
+ */
 H.Renderer = SVGRenderer;

@@ -25,9 +25,16 @@ var seriesType = H.seriesType,
  * @product   highcharts highstock
  * @apioption plotOptions.areasplinerange
  */
-seriesType('areasplinerange', 'arearange', null, {
-    getPointSpline: seriesTypes.spline.prototype.getPointSpline
-});
+/**
+ * The areasplinerange series type.
+ *
+ * @constructor seriesTypes.areasplinerange
+ * @augments seriesTypes.arearange
+ */
+seriesType('areasplinerange', 'arearange', null,
+    /** @lends seriesTypes.areasplinerange.prototype */ {
+        getPointSpline: seriesTypes.spline.prototype.getPointSpline
+    });
 
 /**
  * A `areasplinerange` series. If the [type](#series.areasplinerange.type)

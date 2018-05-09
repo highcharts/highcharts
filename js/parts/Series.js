@@ -87,7 +87,10 @@ var addEvent = H.addEvent,
  *         The series options.
  *
  */
-
+/**
+ * @class seriesTypes.line
+ * @extends Highcharts.Series
+ */
 /**
  * General options for all series types.
  * @optionparent plotOptions.series
@@ -2325,9 +2328,11 @@ H.Series = H.seriesType('line', null, { // base series options
         /**
          * Read only. The chart that the series belongs to.
          *
+         * @readonly
          * @name chart
          * @memberOf Series
          * @type {Chart}
+         * @instance
          */
         series.chart = chart;
 
@@ -2336,18 +2341,22 @@ H.Series = H.seriesType('line', null, { // base series options
          * type in the series options anc can be altered using {@link
          * Series#update}.
          *
+         * @readonly
          * @name type
          * @memberOf Series
          * @type String
+         * @instance
          */
 
         /**
          * Read only. The series' current options. To update, use {@link
          * Series#update}.
          *
+         * @readonly
          * @name options
          * @memberOf Series
          * @type SeriesOptions
+         * @instance
          */
         series.options = options = series.setOptions(options);
         series.linkedSeries = [];
@@ -2364,6 +2373,7 @@ H.Series = H.seriesType('line', null, { // base series options
              * @name name
              * @memberOf Series
              * @type {String}
+             * @instance
              */
             name: options.name,
             state: '',
@@ -2372,18 +2382,22 @@ H.Series = H.seriesType('line', null, { // base series options
              * Series#show}, {@link Series#hide}, or in the initial
              * configuration.
              *
+             * @readonly
              * @name visible
              * @memberOf Series
              * @type {Boolean}
+             * @instance
              */
             visible: options.visible !== false, // true by default
             /**
              * Read only. The series' selected state as set by {@link
              * Highcharts.Series#select}.
              *
+             * @readonly
              * @name selected
              * @memberOf Series
              * @type {Boolean}
+             * @instance
              */
             selected: options.selected === true // false by default
         });
@@ -2511,17 +2525,21 @@ H.Series = H.seriesType('line', null, { // base series options
                      * Read only. The unique xAxis object associated with the
                      * series.
                      *
+                     * @readonly
                      * @name xAxis
                      * @memberOf Series
                      * @type Axis
+                     * @instance
                      */
                     /**
                      * Read only. The unique yAxis object associated with the
                      * series.
                      *
+                     * @readonly
                      * @name yAxis
                      * @memberOf Series
                      * @type Axis
+                     * @instance
                      */
                     series[AXIS] = axis;
 
@@ -3330,6 +3348,7 @@ H.Series = H.seriesType('line', null, { // base series options
                  * @name dataGroup
                  * @memberOf Point
                  * @type {Object}
+                 * @instance
                  *
                  */
                 point.dataGroup = series.groupMap[i];
@@ -3375,10 +3394,12 @@ H.Series = H.seriesType('line', null, { // base series options
          * demand. To modify the data, use {@link Highcharts.Series#setData} or
          * {@link Highcharts.Point#update}.
          *
+         * @readonly
          * @name data
          * @memberOf Highcharts.Series
          * @see  Series.points
          * @type {Array.<Highcharts.Point>}
+         * @instance
          */
         series.data = data;
 
@@ -3393,6 +3414,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * @name points
          * @memberof Series
          * @type {Array.<Point>}
+         * @instance
          */
         series.points = points;
     },
@@ -3902,6 +3924,7 @@ H.Series = H.seriesType('line', null, { // base series options
                          * @memberof Point
                          * @name graphic
                          * @type {SVGElement}
+                         * @instance
                          */
                         point.graphic = graphic = chart.renderer.symbol(
                             symbol,

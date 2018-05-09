@@ -92,7 +92,7 @@ H.seriesType('priceenvelopes', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends seriesTypes.priceenvelopes.prototype */  {
         nameComponents: ['period', 'topBand', 'bottomBand'],
         nameBase: 'Price envelopes',
         pointArrayMap: ['top', 'middle', 'bottom'],

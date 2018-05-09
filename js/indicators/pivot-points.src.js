@@ -65,7 +65,7 @@ H.seriesType('pivotpoints', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, {
+    }, /** @lends seriesTypes.pivotpoints.prototype */ {
         nameBase: 'Pivot Points',
         pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
         pointValKey: 'P',

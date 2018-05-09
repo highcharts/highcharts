@@ -1025,10 +1025,12 @@ Highcharts.Legend.prototype = {
 
 };
 
-/*
+/**
  * LegendSymbolMixin
+ * @mixin
+ * @name LegendSymbolMixin
+ * @memberof Highcharts
  */
-
 H.LegendSymbolMixin = {
 
     /**

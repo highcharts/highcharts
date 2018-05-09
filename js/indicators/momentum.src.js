@@ -34,7 +34,7 @@ seriesType('momentum', 'sma',
         params: {
             period: 14
         }
-    }, {
+    }, /** @lends seriesTypes.momentum.prototype */ {
         nameBase: 'Momentum',
         getValues: function (series, params) {
             var period = params.period,

@@ -38,7 +38,7 @@ H.seriesType('rsi', 'sma',
              */
             decimals: 4
         }
-    }, {
+    }, /** @lends seriesTypes.rsi.prototype */ {
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,

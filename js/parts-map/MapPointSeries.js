@@ -22,6 +22,12 @@ var merge = H.merge,
  * @product highmaps
  * @optionparent plotOptions.mappoint
  */
+/**
+ * The mappoint series type.
+ *
+ * @constructor seriesTypes.mappoint
+ * @augments seriesTypes.scatter
+ */
 seriesType('mappoint', 'scatter', {
 
     dataLabels: {
@@ -42,7 +48,7 @@ seriesType('mappoint', 'scatter', {
     }
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.mappoint.prototype */ {
     type: 'mappoint',
     forceDL: true
 

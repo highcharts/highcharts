@@ -62,7 +62,7 @@ function normalDensity(x, mean, standardDeviation) {
  *
  * @constructor seriesTypes.bellcurve
  * @augments seriesTypes.areaspline
- * @mixes DerivedSeriesMixin
+ * @mixes derivedSeriesMixin
  **/
 
 /**
@@ -102,7 +102,7 @@ seriesType('bellcurve', 'areaspline', {
         enabled: false
     }
 
-}, merge(derivedSeriesMixin, {
+}, merge(derivedSeriesMixin, /** @lends seriesTypes.bellcurve.prototype */ {
     setMean: function () {
         this.mean = correctFloat(mean(this.baseSeries.yData));
     },

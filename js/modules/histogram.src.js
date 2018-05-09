@@ -68,14 +68,6 @@ function identity(y) {
 }
 
 /**
- * Histogram class
- *
- * @constructor seriesTypes.histogram
- * @augments seriesTypes.column
- * @mixes DerivedSeriesMixin
- **/
-
-/**
  * A histogram is a column series which represents the distribution of the data
  * set in the base series. Histogram splits data into bins and shows their
  * frequencies.
@@ -87,6 +79,14 @@ function identity(y) {
  * @excluding boostThreshold, pointInterval, pointIntervalUnit, stacking
  * @optionparent plotOptions.histogram
  **/
+
+/**
+ * The histogram series type.
+ *
+ * @constructor seriesTypes.histogram
+ * @augments seriesTypes.column
+ * @mixes derivedSeriesMixin
+ */
 seriesType('histogram', 'column', {
     /**
       * A preferable number of bins. It is a suggestion, so a histogram may have
@@ -120,7 +120,7 @@ seriesType('histogram', 'column', {
             ' {series.name} <b>{point.y}</b><br/>'
     }
 
-}, merge(derivedSeriesMixin, {
+}, merge(derivedSeriesMixin, /** @lends seriesTypes.histogram.prototype */ {
     setDerivedData: function () {
         var data = this.derivedData(
             this.baseSeries.yData,

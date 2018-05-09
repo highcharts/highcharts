@@ -39,6 +39,13 @@ var defined = H.defined,
  *               shadow,softThreshold,stacking,threshold,zoneAxis,zones
  * @optionparent plotOptions.sankey
  */
+
+/**
+ * The sankey series type.
+ *
+ * @constructor seriesTypes.sankey
+ * @augments seriesTypes.column
+ */
 seriesType('sankey', 'column', {
     colorByPoint: true,
     /**
@@ -152,7 +159,7 @@ seriesType('sankey', 'column', {
         nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
     }
 
-}, {
+}, /** @lends seriesTypes.sankey.prototype */ {
     isCartesian: false,
     forceDL: true,
     /**
@@ -597,7 +604,7 @@ seriesType('sankey', 'column', {
         this.points = points;
     },
     animate: H.Series.prototype.animate
-}, {
+}, /** @lends seriesTypes.sankey.prototype.pointClass.prototype */ {
     getClassName: function () {
         return 'highcharts-link ' + Point.prototype.getClassName.call(this);
     },
@@ -667,7 +674,7 @@ seriesType('sankey', 'column', {
  * An optional column index of where to place the node. The default behaviour is
  * to place it next to the preceding node.
  *
- * @type      {Undefined|Number}
+ * @type      {undefined|Number}
  * @default   undefined
  * @sample    highcharts/plotoptions/sankey-node-column/
  *            Specified node column

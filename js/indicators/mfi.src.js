@@ -80,7 +80,7 @@ H.seriesType('mfi', 'sma',
             decimals: 4
 
         }
-    }, {
+    }, /** @lends seriesTypes.mfi.prototype */ {
         nameBase: 'Money Flow Index',
         getValues: function (series, params) {
             var period = params.period,
