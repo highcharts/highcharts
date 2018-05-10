@@ -1796,6 +1796,18 @@ symbols.menu = function (x, y, width, height) {
     return arr;
 };
 
+symbols.menuball = function (x, y, width, height) {
+    var path = [],
+        h = (height / 3) - 2;
+
+    path = path.concat(
+                this.circle(width - h, y, h, h),
+                this.circle(width - h, y + h + 4, h, h),
+                this.circle(width - h, y + 2 * (h + 4), h, h)
+            );
+    return path;
+};
+
 // Add the buttons on chart load
 Chart.prototype.renderExporting = function () {
     var chart = this,
