@@ -10,6 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import drawPoint from '../mixins/draw-point.js';
+import collision from '../mixins/collision.js';
 import '../parts/Series.js';
 var each = H.each,
     extend = H.extend,
@@ -726,7 +727,8 @@ var wordCloudSeries = {
         'square': squareSpiral
     },
     utils: {
-        getRotation: getRotation
+        getRotation: getRotation,
+        isPolygonsColliding: collision.isPolygonsColliding
     },
     getPlotBox: function () {
         var series = this,

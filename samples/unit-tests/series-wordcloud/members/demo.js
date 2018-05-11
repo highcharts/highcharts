@@ -162,3 +162,45 @@ QUnit.test('deriveFontSize', function (assert) {
         'should return the minFontSize if the result of relativeWeight times maxFontSize is lower.'
     );
 });
+
+/**
+ * TODO: isPolygonsColliding is a part of a mixin collision.js. This should have
+ * its own seperate test, but it is currently not possible because
+ * we can't test something that is not accesible on the Highcharts object.
+ */
+QUnit.test('isPolygonsColliding', function (assert) {
+    console.clear();
+    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+        isPolygonsColliding = wordcloudPrototype.utils.isPolygonsColliding,
+        polygonA = [[10, 10], [20, 30], [30, 10]],
+        polygonB = [[40, 10], [50, 30], [60, 10]],
+        polygonC = [[20, 20], [30, 40], [40, 20]],
+        polygonD = [[30, 0], [30, 40], [70, 40], [70, 0]],
+        print = function (polygon) {
+            return '((' + polygon.join('), (') + '))';
+        };
+
+    assert.strictEqual(
+        isPolygonsColliding(polygonA, polygonB),
+        false,
+        'Polygons A' + print(polygonA) + '  and B' + print(polygonB) + ' are not overlapping.'
+    );
+
+    assert.strictEqual(
+        isPolygonsColliding(polygonA, polygonC),
+        true,
+        'Polygons A' + print(polygonA) + '  and C' + print(polygonC) + ' are overlapping.'
+    );
+
+    assert.strictEqual(
+        isPolygonsColliding(polygonB, polygonC),
+        false,
+        'Polygons B' + print(polygonB) + '  and C' + print(polygonC) + ' are not overlapping.'
+    );
+
+    assert.strictEqual(
+        isPolygonsColliding(polygonC, polygonD),
+        true,
+        'Polygons C' + print(polygonC) + '  and D' + print(polygonD) + ' are overlapping.'
+    );
+});
