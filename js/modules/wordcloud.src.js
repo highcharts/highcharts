@@ -728,7 +728,9 @@ var wordCloudSeries = {
     },
     utils: {
         getRotation: getRotation,
-        isPolygonsColliding: collision.isPolygonsColliding
+        isPolygonsColliding: collision.isPolygonsColliding,
+        rotate2DToOrigin: collision.rotate2DToOrigin,
+        rotate2DToPoint: collision.rotate2DToPoint
     },
     getPlotBox: function () {
         var series = this,
