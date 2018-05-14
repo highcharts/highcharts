@@ -1,7 +1,20 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-var find = H.find,
+var deg2rad = H.deg2rad,
+    find = H.find,
+    isNumber = H.isNumber,
     reduce = H.reduce;
+
+/**
+ * Alternative solution to correctFloat.
+ * E.g H.correctFloat(123, 2) returns 120, when it should be 123.
+ */
+var correctFloat = function (number, precision) {
+    var p = isNumber(precision) ? precision : 14,
+        magnitude = Math.pow(10, p);
+    return Math.round(number * magnitude) / magnitude;
+};
+
 /**
  * Calculates the normals to a line between two points.
  * @param {Array} p1 Start point for the line. Array of x and y value.
@@ -53,6 +66,41 @@ var project = function project(polygon, target) {
 };
 
 /**
+ * Rotates a point clockwise around the origin.
+ * @param {Array} point The x and y coordinates for the point.
+ * @param {Number} angle The angle of rotation.
+ * @returns {Array} The x and y coordinate for the rotated point.
+ */
+var rotate2DToOrigin = function (point, angle) {
+    var x = point[0],
+        y = point[1],
+        rad = deg2rad * -angle,
+        cosAngle = Math.cos(rad),
+        sinAngle = Math.sin(rad);
+    return [
+        correctFloat(x * cosAngle - y * sinAngle),
+        correctFloat(x * sinAngle + y * cosAngle)
+    ];
+};
+
+/**
+ * Rotate a point clockwise around another point.
+ * @param {Array} point The x and y coordinates for the point.
+ * @param {Array} origin The point to rotate around.
+ * @param {Number} angle The angle of rotation.
+ * @returns {Array} The x and y coordinate for the rotated point.
+ */
+var rotate2DToPoint = function (point, origin, angle) {
+    var x = point[0] - origin[0],
+        y = point[1] - origin[1],
+        rotated = rotate2DToOrigin([x, y], angle);
+    return [
+        rotated[0] + origin[0],
+        rotated[1] + origin[1]
+    ];
+};
+
+/**
  * Checks wether two convex polygons are colliding by using the Separating Axis
  * Theorem.
  * @param {Array} polygon1 First polygon.
@@ -97,7 +145,9 @@ var isPolygonsColliding = function isPolygonsColliding(polygon1, polygon2) {
 };
 
 var collision = {
-    isPolygonsColliding: isPolygonsColliding
+    isPolygonsColliding: isPolygonsColliding,
+    rotate2DToOrigin: rotate2DToOrigin,
+    rotate2DToPoint: rotate2DToPoint
 };
 
 export default collision;

@@ -204,3 +204,43 @@ QUnit.test('isPolygonsColliding', function (assert) {
         'Polygons C' + print(polygonC) + '  and D' + print(polygonD) + ' are overlapping.'
     );
 });
+
+QUnit.test('rotate2DToOrigin', function (assert) {
+    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+        rotate2DToOrigin = wordcloudPrototype.utils.rotate2DToOrigin;
+
+    assert.deepEqual(
+        rotate2DToOrigin([3, 0], 90),
+        [0, -3],
+        'Rotating (3, 0) 90° should equal (0, -3).'
+    );
+
+    assert.deepEqual(
+        rotate2DToOrigin([3, 0], 360),
+        [3, 0],
+        'Rotating (3, 0) 360° should equal (3, 0).'
+    );
+
+    assert.deepEqual(
+        rotate2DToOrigin([0, 3], 90),
+        [3, 0],
+        'Rotating (0, 3) 90° should equal (3, 0).'
+    );
+});
+
+QUnit.test('rotate2DToPoint', function (assert) {
+    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+        rotate2DToPoint = wordcloudPrototype.utils.rotate2DToPoint;
+
+    assert.deepEqual(
+        rotate2DToPoint([3, 0], [0, 0], 90),
+        [0, -3],
+        'Rotating (3, 0) 90° around (0,0) should equal (0, -3).'
+    );
+
+    assert.deepEqual(
+        rotate2DToPoint([0, 6], [0, 3], 90),
+        [3, 3],
+        'Rotating (0, 6) 90° around (0, 3) should equal (3, 3).'
+    );
+});
