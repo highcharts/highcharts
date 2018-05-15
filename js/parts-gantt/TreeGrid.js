@@ -264,7 +264,7 @@ override(GridAxis.prototype, {
             treeDepth = axis.tree && axis.tree.height;
 
         if (axis.options.type === 'tree-grid') {
-            retVal += indentPx * 2 * (treeDepth - 1);
+            retVal += indentPx * (treeDepth - 1);
         }
 
         return retVal;
@@ -283,11 +283,11 @@ override(GridAxisTick.prototype, {
             isTreeGrid = options.type === 'tree-grid',
             hasLabel = label && label.element;
 
-        proceed.apply(tick, argsToArray(arguments));
-
         if (isTreeGrid && node) {
             xy.x += iconRadius + (iconSpacing * 2) + (level * indentPx);
-
+        }
+        proceed.apply(tick, argsToArray(arguments));
+        if (isTreeGrid && node) {
             if (hasLabel && node.children.length > 0) {
                 renderLabelIcon(
                     label,
