@@ -166,7 +166,6 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         nextTickPos = tickPositions[index + 1],
         align = labelOpts.align,
         tickPixelInterval,
-        xChange,
         axisMin,
         lblMetrics,
         axisYCenter,
@@ -213,27 +212,14 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
 
             // Center x position
             // TODO: This probably needs to be fixed. Where does 10 come from?
-            xChange = 10;
             if (align === 'left') {
                 if (!categoryAxis || axis.side === axisSide.left) {
                     retVal.x -= axis.getMaxLabelLength();
-                } else {
-                    xChange = -10;
                 }
             } else if (align === 'right') {
                 if (!categoryAxis || axis.side === axisSide.right) {
                     retVal.x += axis.getMaxLabelLength();
-                } else {
-                    xChange = -10;
                 }
-            } else { // Default: 'center'
-                xChange = axis.getMaxLabelLength() / 2;
-            }
-
-            if (axis.side === axisSide.left) {
-                retVal.x -= xChange;
-            } else {
-                retVal.x += xChange;
             }
         }
     }
