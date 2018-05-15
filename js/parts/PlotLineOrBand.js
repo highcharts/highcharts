@@ -19,8 +19,8 @@ var arrayMax = H.arrayMax,
  * The object wrapper for plot lines and plot bands
  * @param {Object} axis
  * @param {Object} options
- * @class
- * @memberof H
+ * @constructor
+ * @chart-private
  */
 H.PlotLineOrBand = function (axis, options) {
     this.axis = axis;

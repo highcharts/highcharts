@@ -88,6 +88,7 @@ var addEvent = H.addEvent,
  *
  */
 /**
+ * @chart-private
  * @class seriesTypes.line
  * @extends Highcharts.Series
  */

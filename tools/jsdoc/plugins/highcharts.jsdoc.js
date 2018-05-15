@@ -680,7 +680,6 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('default', {
         onTagged: function (doclet, tagObj) {
-
             if (!tagObj.value) {
                 return;
             }

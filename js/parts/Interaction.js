@@ -36,6 +36,7 @@ TrackerMixin =
 /**
  * TrackerMixin for points and graphs.
  * @mixin
+ * @chart-private
  * @name TrackerMixin
  * @memberof Highcharts
  */

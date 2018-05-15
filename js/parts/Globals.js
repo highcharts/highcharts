@@ -85,6 +85,7 @@ var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) :
     chartCount: 0,
     /**
      * @namespace
+     * @chart-private
      */
     seriesTypes: {},
     /**

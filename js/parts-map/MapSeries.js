@@ -42,6 +42,7 @@ var colorPointMixin = H.colorPointMixin,
 /**
  * The map series type.
  *
+ * @chart-private
  * @constructor seriesTypes.map
  * @augments seriesTypes.scatter
  * @mixes colorSeriesMixin

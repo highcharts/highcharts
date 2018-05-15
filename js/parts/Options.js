@@ -21,6 +21,7 @@ var color = H.color,
 /**
  * The overall highcharts options interface
  * @interface
+ * @chart-private
  * @name Options
  * @memberof Highcharts
  */

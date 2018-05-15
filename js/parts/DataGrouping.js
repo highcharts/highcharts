@@ -373,6 +373,7 @@ var seriesProto = Series.prototype,
      * @name approximations
      * @memberof Highcharts
      * @namespace
+     * @chart-private
      */
     H.approximations = {
         /**

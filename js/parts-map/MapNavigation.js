@@ -32,6 +32,7 @@ function stopEvent(e) {
  * and doubleclick handlers for chart zooming.
  *
  * @interface
+ * @chart-private
  * @memberof H
  *
  * @param {Chart} chart The Chart instance.

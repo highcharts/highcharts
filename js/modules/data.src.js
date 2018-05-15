@@ -378,6 +378,7 @@ var addEvent = Highcharts.addEvent,
  * @param chartOptions
  * @param chart
  * @constructor
+ * @chart-private
  * @memberof Highcharts
  */
 var Data = function (dataOptions, chartOptions, chart) {
