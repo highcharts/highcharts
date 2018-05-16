@@ -159,10 +159,14 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         retVal = proceed.apply(tick, argsToArray(arguments)),
         axis = tick.axis,
         options = axis.options,
+        tickWidth = pick(
+            options[tick.tickPrefix + 'Width'],
+            !tick.type && axis.isXAxis ? 1 : 0
+        ),
+        crispCorr = (tickWidth / 2),
         categoryAxis = axis.categories,
         tickInterval = options.tickInterval || axis.tickInterval,
         tickPositions = axis.tickPositions,
-        lastTickPos = tickPositions[tickPositions.length - 2],
         nextTickPos = tickPositions[index + 1],
         align = labelOpts.align,
         tickPixelInterval,
@@ -182,14 +186,10 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         if (horiz) {
             if (!categoryAxis) {
                 // Center x position
-                if (tick.pos === lastTickPos) { // Last tick
-                    retVal.x = (axis.left + axis.len + x) / 2;
-                } else { // First and subsequent ticks
-                    if (isNumber(nextTickPos)) {
-                        x = axis.translate((tick.pos + nextTickPos) / 2);
-                    }
-                    retVal.x = x + axis.left;
+                if (isNumber(nextTickPos)) {
+                    x = axis.translate((tick.pos + nextTickPos) / 2);
                 }
+                retVal.x = Math.round(x - crispCorr) + axis.left;
             }
 
             axisYCenter = (axis.tickSize() / 2);

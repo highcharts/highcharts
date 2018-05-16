@@ -1009,3 +1009,30 @@ QUnit.test('Leftmost ticklabel appears', function (assert) {
         'First tick label has text-anchor equal "middle".'
     );
 });
+
+QUnit.test('Reversed axis', function (assert) {
+    var chart = Highcharts.chart('container', {
+            xAxis: {
+                reversed: true,
+                grid: true
+            },
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+                type: 'column'
+            }]
+        }),
+        axis = chart.xAxis[0],
+        ticks = axis.ticks,
+        tickLabel = ticks[10].label,
+        rightBorder = ticks[10].mark.element.getBBox(),
+        leftBorder = ticks[11].mark.element.getBBox(),
+        center = leftBorder.x + ((rightBorder.x - leftBorder.x) / 2);
+
+    // TODO: extend test to check all tick labels
+    // #6754
+    assert.strictEqual(
+        +tickLabel.element.getAttribute('x'),
+        center,
+        'Last tick label is centered in its grid'
+    );
+});
