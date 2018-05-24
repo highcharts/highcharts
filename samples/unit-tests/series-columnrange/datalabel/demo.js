@@ -2,7 +2,7 @@
 // Column range - centered data labels
 QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
 
-    ChartTemplate.test('columnrange-simple', {
+    TestTemplate.test('highcharts/columnrange', {
         chart: {
             inverted: true
         },
