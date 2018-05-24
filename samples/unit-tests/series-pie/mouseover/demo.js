@@ -2,7 +2,7 @@
 // Halo showing on invisible points in pies
 QUnit.test('Halo invisible point (#3007)', function (assert) {
 
-    ChartTemplate.test('pie-simple', {
+    TestTemplate.test('highcharts/pie', {
         plotOptions: {
             pie: {
                 showInLegend: true
@@ -132,7 +132,7 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
 // Halo on sliced pie serie is displayed incorrectly
 QUnit.test('Halo sliced point (#3016)', function (assert) {
 
-    ChartTemplate.test('pie-simple', {
+    TestTemplate.test('highcharts/pie', {
         series: [{
             type: 'pie',
             data: [{

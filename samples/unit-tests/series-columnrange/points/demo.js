@@ -2,7 +2,7 @@
 // Axis.SetExtremes on inverted columnrange causes some columns to dissapear
 QUnit.test('Long columns and bars (#6835)', function (assert) {
 
-    ChartTemplate.test('columnrange-simple', {
+    TestTemplate.test('highcharts/columnrange', {
         chart: {
             inverted: true,
             width: 1200
