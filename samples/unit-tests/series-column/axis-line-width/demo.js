@@ -7,7 +7,6 @@ QUnit.test('Column with xAxis lineWidth in Highstock (#8031).', function (assert
             lineWidth: 17
         },
         series: [{
-            clip: true,
             data: [400, 124]
         }]
     });

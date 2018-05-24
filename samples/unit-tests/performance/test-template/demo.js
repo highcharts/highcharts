@@ -1,4 +1,4 @@
-QUnit.test('performance/chart-template', function (assert) {
+QUnit.test('performance/test-template', function (assert) {
 
     var rounds = 100,
         totalCount = 0,
@@ -15,7 +15,7 @@ QUnit.test('performance/chart-template', function (assert) {
         if (++totalCount >= rounds) {
             totalTime = ((new Date()).getTime() - totalTime);
             console.log(
-                'performance/chart-template: ' +
+                'performance/test-template: ' +
                 totalCount + ' tests, ' +
                 totalTime + 'ms'
             );
@@ -28,7 +28,7 @@ QUnit.test('performance/chart-template', function (assert) {
     totalTime = (new Date()).getTime();
 
     for (var i = 0, ie = rounds; i < ie; ++i) {
-        ChartTemplate.test('line-simple', {
+        TestTemplate.test('highcharts/line', {
 
             chart: {
                 type: 'column'

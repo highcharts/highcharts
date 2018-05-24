@@ -1871,7 +1871,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
         /**
-         * The x position offset of the label relative to the point.
+         * The x position offset of the label relative to the point in pixels.
          *
          * @type {Number}
          * @sample {highcharts}
@@ -1883,7 +1883,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
         /**
-         * The y position offset of the label relative to the point.
+         * The y position offset of the label relative to the point in pixels.
          *
          * @type {Number}
          * @sample {highcharts}
