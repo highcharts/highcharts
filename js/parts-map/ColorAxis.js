@@ -994,12 +994,12 @@ if (!H.ColorAxis) {
                     // Add this axis on top
                     colorAxisItems.push(colorAxis);
                 }
-            }
 
-            // Don't add the color axis' series
-            each(colorAxis.series, function (series) {
-                H.erase(e.allItems, series);
-            });
+                // Don't add the color axis' series
+                each(colorAxis.series, function (series) {
+                    H.erase(e.allItems, series);
+                });
+            }
         }
 
         while (colorAxisItems.length) {

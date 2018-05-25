@@ -226,8 +226,8 @@ H.Series = H.seriesType('line', null, { // base series options
     },
 
     /**
-     * A class name to apply to the series' graphical elements.
-     *
+     * An additional class name to apply to the series' graphical elements. This
+     * option does not replace default class names of the graphical element.
      * @type {String}
      * @since 5.0.0
      * @apioption plotOptions.series.className
@@ -1872,7 +1872,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
         /**
-         * The x position offset of the label relative to the point.
+         * The x position offset of the label relative to the point in pixels.
          *
          * @type {Number}
          * @sample {highcharts}
@@ -1884,7 +1884,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
         /**
-         * The y position offset of the label relative to the point.
+         * The y position offset of the label relative to the point in pixels.
          *
          * @type {Number}
          * @sample {highcharts}

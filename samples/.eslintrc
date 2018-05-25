@@ -5,7 +5,6 @@ globals:
     $: true
     ADBE: true
     CallAnalyzer: true
-    ChartTemplate: true
     GOOGL: true
     Highcharts: true
     hs: true                    # Highslide
@@ -16,6 +15,7 @@ globals:
     QUnit: true
     temperatures: true          # pointinterval-pointstart demo
     TestController: true
+    TestTemplate: true
     TestUtilities: true
     usdeur: true
 

@@ -8,11 +8,12 @@ Tests will run on _pre-commit_ and will block committing in case of failure.
 
 #### Features
 - *Testing animation*. Animation is by default disabled by
-  `Highcharts.setOptions`. For testing animations, `lolex` is available. It
-  emulates animation in sync. Use the utility functions `lolexInstall` before
-  the test and `lolexRunAndUninstall` after (find samples in the test suite).
-- *Testing with templates*. Chart templates provide generic charts, that can be
-  modified for particular test cases. Use `ChartTemplate.test` inside QUnit with
+  `Highcharts.setOptions`. For testing animations, `TestUtilities.lolex` is
+  available. It emulates animation in sync. Use the utility functions
+  `TestUtilities.lolexInstall` before the test and
+  `TestUtilities.lolexRunAndUninstall` after (find samples in the test suite).
+- *Testing with templates*. Test templates provide generic charts, that can be
+  modified for particular test cases. Use `TestTemplate.test` inside QUnit with
   templates in the `test/templates` directory. *Note*: Templates are, for the
   moment, not available in [Highcharts Utils]. Therefor you should not create
   `demo.details` or `demo.html` in a template-based test case.

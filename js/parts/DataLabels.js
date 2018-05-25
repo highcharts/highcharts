@@ -364,7 +364,7 @@ Series.prototype.drawDataLabels = function () {
                     dataLabel.addClass(
                         ' highcharts-data-label-color-' + point.colorIndex +
                         ' ' + (options.className || '') +
-                        (options.useHTML ? 'highcharts-tracker' : '') // #3398
+                        (options.useHTML ? ' highcharts-tracker' : '') // #3398
                     );
                 } else {
                     attr.text = str;

@@ -3961,6 +3961,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * rendering and placement.
      *
      * @private
+     *
+     * @param  {Object} tick Optionally, calculate the slot width basing on
+     * tick label. It is used in highcharts-3d module, where the slots has
+     * different widths depending on perspective angles.
+     *
      * @return {Number}
      *         The pixel width allocated to each axis label.
      */
@@ -4125,6 +4130,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         each(tickPositions, function (pos) {
             var tick = ticks[pos],
                 label = tick && tick.label,
+                widthOption = labelOptions.style && labelOptions.style.width,
                 css = {};
             if (label) {
                 // This needs to go before the CSS in old IE (#4502)
@@ -4132,7 +4138,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                 if (
                     commonWidth &&
-                    !(labelOptions.style && labelOptions.style.width) &&
+                    !widthOption &&
                     (
                         // Speed optimizing, #7656
                         commonWidth < label.textPxLength ||
@@ -4149,7 +4155,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     }
                     label.css(css);
 
+                // Reset previously shortened label (#8210)
+                } else if (
+                    label.styles &&
+                    label.styles.width &&
+                    !css.width &&
+                    !widthOption
+                ) {
+                    label.css({ width: null });
                 }
+
                 delete label.specificTextOverflow;
                 tick.rotation = attr.rotation;
             }

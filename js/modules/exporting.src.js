@@ -443,7 +443,8 @@ defaultOptions.exporting = {
      * Function to call if the offline-exporting module fails to export
      * a chart on the client side, and [fallbackToExportServer](
      * #exporting.fallbackToExportServer) is disabled. If left undefined, an
-     * exception is thrown instead.
+     * exception is thrown instead. Receives two parameters, the exporting
+     * options, and the error from the module.
      *
      * @type {Function}
      * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
@@ -454,7 +455,14 @@ defaultOptions.exporting = {
 
     /**
      * Whether or not to fall back to the export server if the offline-exporting
-     * module is unable to export the chart on the client side.
+     * module is unable to export the chart on the client side. This happens for
+     * certain browsers, and certain features (e.g.
+     * [allowHTML](#exporting.allowHTML)), depending on the image type exporting
+     * to. For very complex charts, it is possible that export can fail in
+     * browsers that don't support Blob objects, due to data URL length limits.
+     * It is recommended to define the [exporting.error](#exporting.error)
+     * handler if disabling fallback, in order to notify users in case export
+     * fails.
      *
      * @type {Boolean}
      * @default true
@@ -1048,6 +1056,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Get the SVG from the container's innerHTML
         svg = chartCopy.getChartHTML();
+        fireEvent(this, 'getSVG', { chartCopy: chartCopy });
 
         svg = chart.sanitizeSVG(svg, options);
 

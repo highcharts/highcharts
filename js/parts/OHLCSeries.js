@@ -95,6 +95,18 @@ seriesType('ohlc', 'column', {
         }
     },
 
+    /**
+     * Determines which one of `open`, `high`, `low`, `close` values should be
+     * represented as `point.y`, which is later used to set dataLabel position.
+     *
+     * @type       {String}
+     * @validvalue ["open", "high", "low", "close"]
+     * @product    highstock
+     * @sample     {highstock} stock/plotoptions/ohlc-pointvalkey/
+     *             Possible values
+     * @default    close
+     * @apioption  plotOptions.ohlc.pointValKey
+     */
 
     /**
      * Line color for up points.

@@ -1597,7 +1597,7 @@ H.reduce = function (arr, func, initialValue) {
  */
 H.offset = function (el) {
     var docElem = doc.documentElement,
-        box = el.parentElement ? // IE11 throws Unspecified error in test suite
+        box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
             { top: 0, left: 0 };
 

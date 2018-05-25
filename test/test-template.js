@@ -10,9 +10,9 @@
     /**
      * The chart template registry
      *
-     * @type {Dictionary<ChartTemplate>}
+     * @type {Dictionary<TestTemplate>}
      */
-    var chartTemplates = {};
+    var templates = {};
 
     /* *
      *
@@ -27,10 +27,11 @@
      * The DOM element of the container
      */
     function createContainer() {
-        var container = global.document.createElement('div');
-        container.style.left = '0';
-        container.style.positon = 'absolute';
-        container.style.top = '0';
+        var container = global.document.createElement('div'),
+            containerStyle = container.style;
+        containerStyle.left = '0';
+        containerStyle.position = 'absolute';
+        containerStyle.top = '0';
         global.document.body.appendChild(container);
         return container;
     }
@@ -109,13 +110,13 @@
      * @param {object} chartOptions
      * The default chart Options for the template
      *
-     * @return {ChartTemplate}
+     * @return {TestTemplate}
      * The new chart template
      */
-    function ChartTemplate(name, chartConstructor, chartOptions) {
+    function TestTemplate(name, chartConstructor, chartOptions) {
 
-        if (!(this instanceof ChartTemplate)) {
-            return new ChartTemplate(name, chartConstructor, chartOptions);
+        if (!(this instanceof TestTemplate)) {
+            return new TestTemplate(name, chartConstructor, chartOptions);
         }
 
         var chart = chartConstructor(createContainer(), chartOptions),
@@ -221,7 +222,7 @@
      *
      * @return {void}
      */
-    ChartTemplate.prototype.test = function (
+    TestTemplate.prototype.test = function (
         chartOptions,
         testCallback
     ) {
@@ -245,20 +246,26 @@
             var testCase;
             while (typeof (testCase = this.testCases.shift()) !== 'undefined') {
 
-                var originalOptions = [treeCopy(
-                        chart.options,
-                        testCase.chartOptions
-                    )],
-                    removeUpdate = attachUpdate(chart, originalOptions);
+                var previousOptions = [],
+                    removeUpdate;
 
                 try {
+                    previousOptions.push(treeCopy(
+                        chart.options,
+                        testCase.chartOptions
+                    ));
+                    removeUpdate = attachUpdate(chart, previousOptions);
                     chart.update(testCase.chartOptions, true, true, false);
+                    chart.container.style.zIndex = '9999';
                     testCase.testCallback(this);
                 } finally {
-                    removeUpdate();
+                    chart.container.style.zIndex = '';
+                    if (removeUpdate) {
+                        removeUpdate();
+                    }
                     var originalOption;
                     while (typeof (
-                            originalOption = originalOptions.pop()
+                            originalOption = previousOptions.pop()
                         ) !== 'undefined'
                     ) {
                         chart.update(originalOption, false, true, false);
@@ -292,7 +299,7 @@
      *
      * @return {void}
      */
-    ChartTemplate.test = function (name, chartOptions, testCallback) {
+    TestTemplate.test = function (name, chartOptions, testCallback) {
 
         if (typeof name !== 'string' ||
             typeof chartOptions !== 'object' ||
@@ -301,24 +308,24 @@
             throw new Error('Arguments are invalid');
         }
 
-        var chartTemplate = chartTemplates[name];
+        var template = templates[name];
 
-        if (!chartTemplate) {
+        if (!template) {
             throw new Error('Template "' + name + '" is not registered');
         }
 
         chartOptions = (chartOptions || {});
 
-        if (!(chartTemplate instanceof ChartTemplate)) {
-            chartTemplates[name] = new ChartTemplate(
-                chartTemplate.name,
-                chartTemplate.chartConstructor,
-                chartTemplate.chartOptions
+        if (!(template instanceof TestTemplate)) {
+            templates[name] = new TestTemplate(
+                template.name,
+                template.chartConstructor,
+                template.chartOptions
             );
-            chartTemplate = chartTemplates[name];
+            template = templates[name];
         }
 
-        chartTemplate.test(chartOptions, testCallback);
+        template.test(chartOptions, testCallback);
 
     };
 
@@ -336,7 +343,7 @@
      *
      * @return {void}
      */
-    ChartTemplate.register = function (name, chartConstructor, chartOptions) {
+    TestTemplate.register = function (name, chartConstructor, chartOptions) {
 
         if (typeof name !== 'string' ||
             typeof chartConstructor !== 'function' ||
@@ -345,14 +352,14 @@
             throw new Error('Arguments are invalid');
         }
 
-        if (chartTemplates[name]) {
+        if (templates[name]) {
             throw new Error('Chart template already registered');
         }
 
-        chartTemplates[name] = {
-            name,
-            chartConstructor,
-            chartOptions
+        templates[name] = {
+            name: name,
+            chartConstructor: chartConstructor,
+            chartOptions: chartOptions
         };
 
     };
@@ -366,15 +373,15 @@
     /**
      * The registered chart templates
      *
-     * @type {Array<ChartTemplate>}
+     * @type {Array<TestTemplate>}
      */
-    ChartTemplate.templates = chartTemplates;
+    TestTemplate.templates = templates;
     /* //
-    Object.defineProperty(ChartTemplate, 'templates', {
+    Object.defineProperty(TestTemplate, 'templates', {
         configurable: false,
         enumerable: true,
         get: function () {
-            return chartTemplates;
+            return templates;
         }
     }); // */
 
@@ -384,18 +391,18 @@
      *
      * */
 
-    global.ChartTemplate = ChartTemplate;
+    global.TestTemplate = TestTemplate;
 
-    /* // Prevent changes to ChartTemplate properties
-    Object.freeze(ChartTemplate);
-    Object.freeze(ChartTemplate.prototype);
+    /* // Prevent changes to TestTemplate properties
+    Object.freeze(TestTemplate);
+    Object.freeze(TestTemplate.prototype);
     // */
 
-    /* // Publish ChartTemplate in global scope
-    Object.defineProperty(global, 'ChartTemplate', {
+    /* // Publish TestTemplate in global scope
+    Object.defineProperty(global, 'TestTemplate', {
         configurable: false,
         enumerable: true,
-        value: ChartTemplate,
+        value: TestTemplate,
         writable: false
     }); // */
 

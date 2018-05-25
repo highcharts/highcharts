@@ -284,7 +284,7 @@ seriesType('sankey', 'column', {
     createNodeColumns: function () {
         var columns = [];
         each(this.nodes, function (node) {
-            var fromColumn = 0,
+            var fromColumn = -1,
                 i,
                 point;
 
@@ -490,24 +490,82 @@ seriesType('sankey', 'column', {
                     }
 
                     point.shapeType = 'path';
-                    point.shapeArgs = {
-                        d: [
-                            'M', nodeLeft + nodeW, fromY,
-                            'C', nodeLeft + nodeW + curvy, fromY,
-                            right - curvy, toY,
-                            right, toY,
-                            'L',
-                            right + (outgoing ? nodeW : 0),
-                            toY + linkHeight / 2,
-                            'L',
-                            right,
-                            toY + linkHeight,
-                            'C', right - curvy, toY + linkHeight,
-                            nodeLeft + nodeW + curvy, fromY + linkHeight,
-                            nodeLeft + nodeW, fromY + linkHeight,
-                            'z'
-                        ]
-                    };
+
+                    // Links going from left to right
+                    if (right > left) {
+                        point.shapeArgs = {
+                            d: [
+                                'M', nodeLeft + nodeW, fromY,
+                                'C', nodeLeft + nodeW + curvy, fromY,
+                                right - curvy, toY,
+                                right, toY,
+                                'L',
+                                right + (outgoing ? nodeW : 0),
+                                toY + linkHeight / 2,
+                                'L',
+                                right,
+                                toY + linkHeight,
+                                'C', right - curvy, toY + linkHeight,
+                                nodeLeft + nodeW + curvy, fromY + linkHeight,
+                                nodeLeft + nodeW, fromY + linkHeight,
+                                'z'
+                            ]
+                        };
+
+                    // Experimental: Circular links pointing backwards. In
+                    // v6.1.0 this breaks the rendering completely, so even this
+                    // experimental rendering is an improvement. #8218.
+                    // @todo
+                    // - Make room for the link in the layout
+                    // - Automatically determine if the link should go up or
+                    //   down.
+                    } else {
+                        var bend = 20,
+                            vDist = chart.plotHeight - fromY - linkHeight,
+                            x1 = right - bend - linkHeight,
+                            x2 = right - bend,
+                            x3 = right,
+                            x4 = nodeLeft + nodeW,
+                            x5 = x4 + bend,
+                            x6 = x5 + linkHeight,
+                            fy1 = fromY,
+                            fy2 = fromY + linkHeight,
+                            fy3 = fy2 + bend,
+                            y4 = fy3 + vDist,
+                            y5 = y4 + bend,
+                            y6 = y5 + linkHeight,
+                            ty1 = toY,
+                            ty2 = ty1 + linkHeight,
+                            ty3 = ty2 + bend,
+                            cfy1 = fy2 - linkHeight * 0.7,
+                            cy2 = y5 + linkHeight * 0.7,
+                            cty1 = ty2 - linkHeight * 0.7,
+                            cx1 = x3 - linkHeight * 0.7,
+                            cx2 = x4 + linkHeight * 0.7;
+
+                        point.shapeArgs = {
+                            d: [
+                                'M', x4, fy1,
+                                'C', cx2, fy1, x6, cfy1, x6, fy3,
+                                'L', x6, y4,
+                                'C', x6, cy2, cx2, y6, x4, y6,
+                                'L', x3, y6,
+                                'C', cx1, y6, x1, cy2, x1, y4,
+                                'L', x1, ty3,
+                                'C', x1, cty1, cx1, ty1, x3, ty1,
+                                'L', x3, ty2,
+                                'C', x2, ty2, x2, ty2, x2, ty3,
+                                'L', x2, y4,
+                                'C', x2, y5, x2, y5, x3, y5,
+                                'L', x4, y5,
+                                'C', x5, y5, x5, y5, x5, y4,
+                                'L', x5, fy3,
+                                'C', x5, fy2, x5, fy2, x4, fy2,
+                                'z'
+                            ]
+                        };
+
+                    }
 
                     // Place data labels in the middle
                     point.dlBox = {
