@@ -2,12 +2,12 @@
 /* global Highcharts */
 (function (window) {
 
-    var applyLogger,
-        callLogger,
+    var // applyLogger,
+        // callLogger,
         // isHighcharts,
-        originalApply = Function.prototype.apply,
-        originalCall = Function.prototype.call,
-        printLive = false,
+        // originalApply = Function.prototype.apply,
+        // originalCall = Function.prototype.call,
+        // printLive = false,
         stackDepth = 0,
         stackLog = [],
         wrapStack = [];
@@ -17,7 +17,7 @@
      *
      * @return {any}
      * The return value of the applied function.
-     */
+     *
     applyLogger = function () {
         Function.prototype.call = originalCall;
         Function.prototype.apply = originalApply;
@@ -36,13 +36,14 @@
             Function.prototype.call = callLogger;
         }
     };
+    // */
 
     /**
      * The internal logger for function calls.
      *
      * @return {any}
      * The return value of the called function.
-     */
+     *
     callLogger = function () {
         Function.prototype.call = originalCall;
         Function.prototype.apply = originalApply;
@@ -61,6 +62,7 @@
             Function.prototype.call = callLogger;
         }
     };
+    // */
 
     /*
     isHighcharts = function (obj) {
@@ -101,6 +103,16 @@
     // */
 
     /**
+     * Removes all items from the log.
+     *
+     * @return {void}
+     */
+    window.CallAnalyzer.clearLog = function () {
+        stackDepth = 0;
+        stackLog.length = 0;
+    };
+
+    /**
      * Turns the logging of function calls off.
      *
      * @return {void}
@@ -126,7 +138,7 @@
      */
     window.CallAnalyzer.getLog = function (filter) {
 
-        window.CallAnalyzer.deactivate();
+        // window.CallAnalyzer.deactivate();
 
         if (typeof filter !== 'function') {
             return stackLog;
@@ -265,7 +277,7 @@
      */
     window.CallAnalyzer.printLog = function (filter) {
 
-        window.CallAnalyzer.deactivate();
+        // window.CallAnalyzer.deactivate();
 
         var log = window.CallAnalyzer.getLog(filter),
             logItem,
