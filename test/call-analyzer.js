@@ -1,13 +1,16 @@
 /* eslint no-console: 0, no-extend-native: 0 */
+/* global Highcharts */
 (function (window) {
 
     var applyLogger,
         callLogger,
+        // isHighcharts,
         originalApply = Function.prototype.apply,
         originalCall = Function.prototype.call,
         printLive = false,
         stackDepth = 0,
-        stackLog = [];
+        stackLog = [],
+        wrapStack = [];
 
     /**
      * The internal logger for function applies.
@@ -59,6 +62,23 @@
         }
     };
 
+    /*
+    isHighcharts = function (obj) {
+        return (window.Highcharts && (
+            obj instanceof Highcharts.Annotation ||
+            obj instanceof Highcharts.Axis ||
+            obj instanceof Highcharts.Chart ||
+            obj instanceof Highcharts.Legend ||
+            obj instanceof Highcharts.Point ||
+            obj instanceof Highcharts.Pointer ||
+            obj instanceof Highcharts.Series ||
+            obj instanceof Highcharts.SVGElement ||
+            obj instanceof Highcharts.SVGRenderer ||
+            obj instanceof Highcharts.Time
+        ));
+    };
+    // */
+
     /**
      * The call analyzer to track function calls.
      */
@@ -71,25 +91,27 @@
      * Optional flag to activate live print of function calls.
      *
      * @return {void}
-     */
+     *
     window.CallAnalyzer.activate = function (live) {
         stackDepth = 0;
         printLive = live;
         Function.prototype.apply = applyLogger;
         Function.prototype.call = callLogger;
     };
+    // */
 
     /**
      * Turns the logging of function calls off.
      *
      * @return {void}
-     */
+     *
     window.CallAnalyzer.deactivate = function () {
         Function.prototype.apply = originalApply;
         Function.prototype.call = originalCall;
         printLive = false;
         stackDepth = 0;
     };
+    // */
 
     /**
      * Returns an array of log items. Each log item contains the properties
@@ -124,6 +146,115 @@
     };
 
     /**
+     * Wraps the official Highcharts classes.
+     *
+     * @return {void}
+     */
+    window.CallAnalyzer.wrapHighcharts = function () {
+
+        if (!window.Highcharts) {
+            return;
+        }
+
+        /**
+         * Creates a wrapper for a given function.
+         *
+         * @param {function} fn
+         * The function to wrap.
+         *
+         * @param {string} fnName
+         * The name of the function to wrap.
+         *
+         * @return {function}
+         * The wrapper for the function.
+         */
+        function createWrapper(fn, fnName) {
+            return function () {
+                try {
+                    stackLog.push({
+                        functionName: fnName,
+                        stackDepth: stackDepth++
+                    });
+                    return fn.apply(this, arguments);
+                } finally {
+                    --stackDepth;
+                }
+            };
+        }
+
+        /**
+         * Wrap the function properties of an object.
+         *
+         * @param {object} obj
+         * The object to wrap.
+         *
+         * @return {void}
+         */
+        function wrap(obj) {
+
+            var prop;
+
+            for (var key in obj) {
+
+                if (typeof obj[key] === 'undefined' ||
+                    obj[key] === null ||
+                    !obj.hasOwnProperty(key)
+                ) {
+                    continue;
+                }
+
+                prop = obj[key];
+
+                if (typeof prop === 'function') {
+
+                    obj[key] = createWrapper(prop, key);
+
+                    if (typeof prop.prototype !== 'undefined') {
+                        obj[key].prototype = prop.prototype;
+                    }
+
+                    wrapStack.push({
+                        obj: obj,
+                        property: prop,
+                        functionName: key
+                    });
+                }
+
+            }
+        }
+
+        wrap(Highcharts.Annotation.prototype);
+        wrap(Highcharts.Axis.prototype);
+        wrap(Highcharts.Chart.prototype);
+        wrap(Highcharts.Legend.prototype);
+        wrap(Highcharts.Point.prototype);
+        wrap(Highcharts.Pointer.prototype);
+        wrap(Highcharts.Series.prototype);
+        wrap(Highcharts.SVGElement.prototype);
+        wrap(Highcharts.SVGRenderer.prototype);
+        wrap(Highcharts.Time.prototype);
+
+    };
+
+    /**
+     * Unwraps the official Highcharts classes.
+     *
+     * @return {void}
+     */
+    window.CallAnalyzer.unwrapHighcharts = function () {
+
+        if (!window.Highcharts) {
+            return;
+        }
+
+        for (var i = 0, ie = wrapStack.length, wrap; i < ie; ++i) {
+            wrap = wrapStack[i];
+            wrap.obj[wrap.functionName] = wrap.property;
+        }
+
+    };
+
+    /**
      * Prints the log into the console log.
      *
      * @param {function} filter
@@ -138,23 +269,28 @@
 
         var log = window.CallAnalyzer.getLog(filter),
             logItem,
-            logPrefix = '',
+            logSpacing = '',
             logString = '';
 
         for (var i = 0, ie = log.length; i < ie; ++i) {
             logItem = log[i];
-            if (logItem.stackDepth < logPrefix.length) {
-                logPrefix = (
-                    logItem.stackDepth < 1 ? '' :
-                    logPrefix.substr(logPrefix.length - logItem.stackDepth)
-                );
-            } else if (logItem.stackDepth > logPrefix.length) {
-                logPrefix = (logPrefix.length < 1 ? '∟' : ' ' + logPrefix);
+            if (logItem.stackDepth < logSpacing.length) {
+                logSpacing = logSpacing.substring(0, logSpacing.length - 2);
+                logString += '\n' + logSpacing + '}';
+            } else if (logItem.stackDepth > logSpacing.length) {
+                logSpacing += '  ';
+                logString += ' {';
             }
-            logString += '\n' + logPrefix + (logItem.name || '<anonymous>');
+            logString += '\n' + logSpacing;
+            logString += (logItem.functionName || '<anonymous>');
+        }
+
+        if (logString.indexOf('{') >= 0) {
+            logString += '\n}';
         }
 
         window.console.log(logString);
+
     };
 
 }(this));
