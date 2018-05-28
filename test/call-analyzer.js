@@ -200,9 +200,12 @@
          * @param {object} obj
          * The object to wrap.
          *
+         * @param {string} objName
+         * The name in the parent object.
+         *
          * @return {void}
          */
-        function wrap(obj) {
+        function wrap(obj, objName) {
 
             var prop;
 
@@ -219,7 +222,7 @@
 
                 if (typeof prop === 'function') {
 
-                    obj[key] = createWrapper(prop, key);
+                    obj[key] = createWrapper(prop, objName + '.' + key);
 
                     if (typeof prop.prototype !== 'undefined') {
                         obj[key].prototype = prop.prototype;
@@ -235,16 +238,33 @@
             }
         }
 
-        wrap(Highcharts.Annotation.prototype);
-        wrap(Highcharts.Axis.prototype);
-        wrap(Highcharts.Chart.prototype);
-        wrap(Highcharts.Legend.prototype);
-        wrap(Highcharts.Point.prototype);
-        wrap(Highcharts.Pointer.prototype);
-        wrap(Highcharts.Series.prototype);
-        wrap(Highcharts.SVGElement.prototype);
-        wrap(Highcharts.SVGRenderer.prototype);
-        wrap(Highcharts.Time.prototype);
+        for (var className in Highcharts) {
+
+            if (typeof Highcharts[className] === 'undefined' ||
+                Highcharts[className] === null ||
+                !Highcharts.hasOwnProperty(className)
+            ) {
+                continue;
+            }
+
+            switch (className) {
+                default:
+                    continue;
+                case 'Annotation':
+                case 'Axis':
+                case 'Chart':
+                case 'Legend':
+                case 'Point':
+                case 'Pointer':
+                case 'Series':
+                case 'SVGElement':
+                case 'SVGRenderer':
+                case 'Time':
+                    wrap(Highcharts[className].prototype, className);
+                    break;
+            }
+
+        }
 
     };
 
@@ -294,7 +314,7 @@
                 logString += ' {';
             }
             logString += '\n' + logSpacing;
-            logString += (logItem.functionName || '<anonymous>');
+            logString += (logItem.functionName || '<anonymous>') + '()';
         }
 
         if (logString.indexOf('{') >= 0) {
