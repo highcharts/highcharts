@@ -22,7 +22,6 @@ var Chart = H.Chart,
 // inside the columns.
 addEvent(Chart, 'render', function collectAndHide() {
     var labels = [];
-
     // Consider external label collectors
     each(this.labelCollectors || [], function (collector) {
         labels = labels.concat(collector());
@@ -53,7 +52,11 @@ addEvent(Chart, 'render', function collectAndHide() {
         ) { // #3866
             each(collections, function (coll) {
                 each(series.points, function (point) {
-                    if (point[coll]) {
+                    if (
+                        point[coll] &&
+                        (!point.graphic ||
+                        point.graphic.visibility !== 'hidden')  // #7815
+                    ) {
                         point[coll].labelrank = pick(
                             point.labelrank,
                             point.shapeArgs && point.shapeArgs.height

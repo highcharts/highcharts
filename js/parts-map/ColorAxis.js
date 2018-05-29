@@ -930,10 +930,14 @@ if (!H.ColorAxis) {
                                 each(series.points, function (point) {
                                     if (point.dataClass === i) {
                                         point.setVisible(vis);
+                                        // To avoid dataLabel animation
+                                        if (point.dataLabel) {
+                                            point.dataLabel.isOld = false;
+                                        }
                                     }
                                 });
                             });
-
+                            H.fireEvent(chart, 'render'); // #7815
                             chart.legend.colorizeItem(this, vis);
                         }
                     }, dataClass));
