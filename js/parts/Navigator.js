@@ -2164,15 +2164,12 @@ addEvent(Chart, 'update', function (e) {
     var newOptions = (e.options.navigator || {}),
         options = (this.options.navigator || {});
 
-    if (this.navigator ||
-        this.scroller ||
-        !newOptions.enabled ||
-        newOptions.enabled !== true
+    if (!this.navigator &&
+        !this.scroller &&
+        newOptions.enabled === true
     ) {
-        return;
+        merge(true, options, newOptions);
     }
-
-    merge(true, options, newOptions);
 
 });
 
@@ -2181,15 +2178,12 @@ addEvent(Chart, 'afterUpdate', function (e) {
 
     var newOptions = (e.options.navigator || {});
 
-    if (this.navigator ||
-        this.scroller ||
-        !newOptions.enabled ||
-        newOptions.enabled !== true
+    if (!this.navigator &&
+        !this.scroller &&
+        newOptions.enabled === true
     ) {
-        return;
+        this.scroller = this.navigator = new Navigator(this);
     }
-
-    this.scroller = this.navigator = new Navigator(this);
 
 });
 
