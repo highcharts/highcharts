@@ -2335,7 +2335,7 @@ H.defaultOptions = {
          *
          * @type {CSSObject}
          * @see In styled mode, the loading label is styled with the
-         * `.highcharts-legend-loading-inner` class.
+         * `.highcharts-loading-inner` class.
          * @sample {highcharts|highmaps} highcharts/loading/labelstyle/ Vertically centered
          * @sample {highstock} stock/loading/general/ Label styles
          * @default { "fontWeight": "bold", "position": "relative", "top": "45%" }
@@ -2351,7 +2351,7 @@ H.defaultOptions = {
          * CSS styles for the loading screen that covers the plot area.
          *
          * In styled mode, the loading label is styled with the
-         * `.highcharts-legend-loading` class.
+         * `.highcharts-loading` class.
          *
          * @type    {CSSObject}
          * @sample  {highcharts|highmaps} highcharts/loading/style/

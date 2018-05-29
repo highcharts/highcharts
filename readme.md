@@ -86,3 +86,10 @@ If you want to do modifications to Highcharts or fix issues, you may build your 
 npm install
 gulp
 ```
+
+## Generate API docs
+Clone the repositories `api-docs` and `highcharts-docstrap` in the same parent
+folder as this `highcharts` repository. Do not forgett to install depending
+modules in this repositories by `npm i`. Finally you can run in this
+`highcharts` repository the doc generator with `gulp jsdoc --watch`, which also
+starts a new server with the generated API documentation.

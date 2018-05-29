@@ -3989,6 +3989,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 defined(text.textStr) &&
                 text.getBBox()
             ); // #3295 && 3514 box failure when string equals 0
+
             wrapper.width = (
                 (width || bBox.width || 0) +
                 2 * padding +
@@ -3999,7 +4000,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             // Update the label-scoped y offset
             baselineOffset = padding +
                 renderer.fontMetrics(style && style.fontSize, text).b;
-
 
             if (needsBox) {
 
@@ -4055,6 +4055,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             // update if anything changed
             if (textX !== text.x || textY !== text.y) {
                 text.attr('x', textX);
+                if (text.hasBoxWidthChanged) { // #8159 - prevent misplaced data labels in treemap (useHTML: true)
+                    bBox = text.getBBox(true);
+                    updateBoxSize();
+                }
                 if (textY !== undefined) {
                     text.attr('y', textY);
                 }
