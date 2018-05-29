@@ -522,6 +522,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else if (pick(redraw, true)) {
             chart.redraw(animation);
         }
+
+        fireEvent(chart, 'afterUpdate', { options: options });
+
     },
 
     /**
