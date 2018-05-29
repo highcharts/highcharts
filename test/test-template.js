@@ -74,21 +74,36 @@
     global.treeCopy = treeCopy;
 
     /**
-     * Attachs to the update event of a chart.
+     * Listens on the update event of a chart and saves changes for undo.
      *
      * @param {Highcharts.Chart} chart
      * The instance of the chart
      *
-     * @param {Array<object>} optionsStorage
-     * The array with previous chart options
-     *
      * @return {function}
-     * Remove function to stop the attachment
+     * Undo function to restore original state
      */
-    function attachUpdate(chart, optionsStorage) {
-        return Highcharts.addEvent(chart, 'update', function (newOptions) {
-            optionsStorage.push(treeCopy(chart.options, newOptions));
-        });
+    function updateUndoFor(chart) {
+
+        var undoStack = [],
+            removeEvent;
+
+        removeEvent = Highcharts.addEvent(chart, 'update',
+            function (args) {
+                undoStack.push(treeCopy(chart.options, args.options));
+            }
+        );
+
+        return function () {
+
+            removeEvent();
+
+            var undoOption;
+            while (typeof (undoOption = undoStack.pop()) !== 'undefined') {
+                chart.update(undoOption, false, true, false);
+            }
+
+        };
+
     }
 
     /* *
@@ -134,14 +149,6 @@
          * @type {string}
          */
         chart.template = name;
-        /* //
-        Object.defineProperty(chart, 'template', {
-            configurable: false,
-            enumerable: true,
-            get: function () {
-                return name;
-            }
-        }); // */
 
         /**
          * The chart instance of the chart template
@@ -149,14 +156,6 @@
          * @type {Highcharts.Chart}
          */
         this.chart = chart;
-        /* //
-        Object.defineProperty(this, 'chart', {
-            configurable: false,
-            enumerable: true,
-            get: function () {
-                return chart;
-            }
-        }); // */
 
         /**
          * The name of the chart template
@@ -164,14 +163,6 @@
          * @type {string}
          */
         this.name = name;
-        /* //
-        Object.defineProperty(this, 'name', {
-            configurable: false,
-            enumerable: true,
-            get: function () {
-                return name;
-            }
-        }); // */
 
         /**
          * The state of the chart template
@@ -179,13 +170,6 @@
          * @type {boolean}
          */
         this.ready = true;
-        /* //
-        Object.defineProperty(this, 'ready', {
-            configurable: false,
-            enumerable: true,
-            value: true,
-            writeable: true
-        }); // */
 
         /**
          * The queue of waiting test cases for the chart template
@@ -193,14 +177,6 @@
          * @type {Array<Object>}
          */
         this.testCases = testCases;
-        /* //
-        Object.defineProperty(this, 'testCases', {
-            configurable: false,
-            enumerable: true,
-            get: function () {
-                return testCases;
-            }
-        }); // */
 
     }
 
@@ -243,40 +219,35 @@
         this.ready = false;
 
         try {
+
             var testCase;
             while (typeof (testCase = this.testCases.shift()) !== 'undefined') {
 
-                var previousOptions = [],
-                    removeUpdate;
+                var undoUpdates;
 
                 try {
-                    previousOptions.push(treeCopy(
-                        chart.options,
-                        testCase.chartOptions
-                    ));
-                    removeUpdate = attachUpdate(chart, previousOptions);
+
+                    undoUpdates = updateUndoFor(chart);
                     chart.update(testCase.chartOptions, true, true, false);
                     chart.container.style.zIndex = '9999';
                     testCase.testCallback(this);
+
                 } finally {
+
+                    if (typeof undoUpdates === 'function') {
+                        undoUpdates();
+                    }
+
                     chart.container.style.zIndex = '';
-                    if (removeUpdate) {
-                        removeUpdate();
-                    }
-                    var originalOption;
-                    while (typeof (
-                            originalOption = previousOptions.pop()
-                        ) !== 'undefined'
-                    ) {
-                        chart.update(originalOption, false, true, false);
-                    }
+
                 }
-
             }
-        } finally {
-            this.ready = true;
-        }
 
+        } finally {
+
+            this.ready = true;
+
+        }
     };
 
     /* *
@@ -376,14 +347,6 @@
      * @type {Array<TestTemplate>}
      */
     TestTemplate.templates = templates;
-    /* //
-    Object.defineProperty(TestTemplate, 'templates', {
-        configurable: false,
-        enumerable: true,
-        get: function () {
-            return templates;
-        }
-    }); // */
 
     /* *
      *
@@ -392,18 +355,5 @@
      * */
 
     global.TestTemplate = TestTemplate;
-
-    /* // Prevent changes to TestTemplate properties
-    Object.freeze(TestTemplate);
-    Object.freeze(TestTemplate.prototype);
-    // */
-
-    /* // Publish TestTemplate in global scope
-    Object.defineProperty(global, 'TestTemplate', {
-        configurable: false,
-        enumerable: true,
-        value: TestTemplate,
-        writable: false
-    }); // */
 
 }(this));
