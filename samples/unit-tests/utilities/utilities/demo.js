@@ -382,6 +382,14 @@
             '2016-05-07',
             dateFormat('%Y-%m-%d', new Date('Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight Time)'))
         );
+
+        // Issue #8150
+        assertEquals(
+            assert,
+            'Issue #8150, month without leading zero',
+            '10/4 2018',
+            dateFormat('%e/%o %Y', Date.UTC(2018, 3, 10))
+        );
     });
 
 
