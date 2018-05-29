@@ -28,7 +28,8 @@
     "test": "gulp test --all",
     "testall": "gulp test --all --browsers all",
     "precommit": "lint-staged && gulp test",
-    "post-merge": "gulp styles && gulp scripts && npm test"
+    "post-merge": "gulp styles && gulp scripts && npm test",
+    "jsdoc": "gulp jsdoc --watch"
   },
   "devDependencies": {
     "aws-sdk": "^2.94.0",
