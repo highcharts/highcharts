@@ -2158,6 +2158,41 @@ addEvent(Chart, 'afterSetChartSize', function () {
     }
 });
 
+// Merge options, if no scrolling exists yet
+addEvent(Chart, 'update', function (e) {
+
+    var newOptions = (e.options.navigator || {}),
+        options = (this.options.navigator || {});
+
+    if (this.navigator ||
+        this.scroller ||
+        !newOptions.enabled ||
+        newOptions.enabled !== true
+    ) {
+        return;
+    }
+
+    merge(true, options, newOptions);
+
+});
+
+// Initiate navigator, if no scrolling exists yet
+addEvent(Chart, 'afterUpdate', function (e) {
+
+    var newOptions = (e.options.navigator || {});
+
+    if (this.navigator ||
+        this.scroller ||
+        !newOptions.enabled ||
+        newOptions.enabled !== true
+    ) {
+        return;
+    }
+
+    this.scroller = this.navigator = new Navigator(this);
+
+});
+
 // Pick up badly formatted point options to addPoint
 wrap(Series.prototype, 'addPoint', function (
     proceed,
