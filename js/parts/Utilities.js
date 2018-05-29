@@ -1372,7 +1372,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
     // A string containing the positive integer component of the number
     strinteger = String(H.pInt(roundedNumber));
 
-    // Leftover after grouping into thousands. Can be 0, 1 or 3.
+    // Leftover after grouping into thousands. Can be 0, 1 or 2.
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
     // Language

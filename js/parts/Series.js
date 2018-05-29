@@ -137,8 +137,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * Allow this series' points to be selected by clicking on the graphic
      * (columns, point markers, pie slices, map areas etc).
      *
-     * @see [Chart#getSelectedPoints]
-     *      (../class-reference/Highcharts.Chart#getSelectedPoints).
+     * @see [Chart#getSelectedPoints](Highcharts.Chart#getSelectedPoints).
      *
      * @type {Boolean}
      * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-line/
