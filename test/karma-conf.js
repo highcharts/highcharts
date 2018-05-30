@@ -127,14 +127,14 @@ const browserStackBrowsers = {
     'Mac.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '59.0',
+        browser_version: '60.0',
         os: 'OS X',
         os_version: 'High Sierra'
     },
     'Mac.Safari': {
         base: 'BrowserStack',
         browser: 'safari',
-        browser_version: '11.0',
+        browser_version: '11.1',
         os: 'OS X',
         os_version: 'High Sierra'
     },
@@ -155,7 +155,7 @@ const browserStackBrowsers = {
     'Win.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '59.0',
+        browser_version: '60.0',
         os: 'Windows',
         os_version: '10'
     },
