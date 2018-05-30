@@ -401,7 +401,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
             inArray(axis2, uniqueAxes) === -1 &&
             // Do not draw on axis which overlap completely. #5424
             !H.find(uniqueAxes, function (unique) {
-                return unique.pos === axis2.pos && unique.len && axis2.len;
+                return unique.pos === axis2.pos && unique.len === axis2.len;
             })
         ) {
             uniqueAxes.push(axis2);
