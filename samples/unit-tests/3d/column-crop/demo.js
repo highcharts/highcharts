@@ -215,11 +215,10 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
                 'One Two Three Four Five Six',
                 'One Two Three Four Five Six'
             ]
-        }
-    });
-    chart.series[0].remove();
-    chart.addSeries({
-        data: [1, 2, 3, 4]
+        },
+        series: [{
+            data: [1, 2, 3, 4]
+        }]
     });
 
     var labelWidth = chart.xAxis[0].ticks[0].label.getBBox().width;

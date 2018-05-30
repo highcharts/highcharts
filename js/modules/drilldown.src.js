@@ -55,8 +55,8 @@ extend(defaultOptions.lang, {
  *
  * The drilldown feature requires the drilldown.js file to be loaded,
  * found in the modules directory of the download package, or online at
- * (code.highcharts.com/modules/drilldown.js)[code.highcharts.com/modules/
- * drilldown.js].
+ * [code.highcharts.com/modules/drilldown.js
+ * ](code.highcharts.com/modules/drilldown.js).
  *
  * @type {Object}
  * @optionparent drilldown
