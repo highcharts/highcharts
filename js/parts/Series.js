@@ -2408,6 +2408,27 @@ H.Series = H.seriesType('line', null, { // base series options
         series.getColor();
         series.getSymbol();
 
+        switch (series.symbol) {
+            case 'circle':
+                series.symbolUnicode = '●';
+                break;
+            case 'diamond':
+                series.symbolUnicode = '♦';
+                break;
+            case 'square':
+                series.symbolUnicode = '■';
+                break;
+            case 'triangle':
+                series.symbolUnicode = '▲';
+                break;
+            case 'triangle-down':
+                series.symbolUnicode = '▼';
+                break;
+            default:
+                series.symbolUnicode = '■';
+                break;
+        }
+
         // Set the data
         each(series.parallelArrays, function (key) {
             series[key + 'Data'] = [];
