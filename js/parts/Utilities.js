@@ -1699,6 +1699,12 @@ H.addEvent = function (el, type, fn) {
         events = el.hcEvents = el.hcEvents || {};
     }
 
+    // Allow click events added to points, otherwise they will be prevented by
+    // the TouchPointer.pinch function after a pinch zoom operation (#7091).
+    if (H.Point && el instanceof H.Point && el.series && el.series.chart) {
+        el.series.chart.runTrackerClick = true;
+    }
+
     // Handle DOM events
     if (addEventListener) {
         addEventListener.call(el, type, fn, false);
