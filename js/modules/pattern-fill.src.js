@@ -263,7 +263,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
             this.image(
                 options.image, 0, 0, width, height, function () {
                     // Onload
-                    this.animate({ opacity: 1 }, animate);
+                    this.animate({ opacity: options.opacity || 1 }, animate);
                     H.removeEvent(this.element, 'load');
                 }
             ).attr({ opacity: 0 }).add(pattern);
