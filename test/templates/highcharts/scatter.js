@@ -9,17 +9,17 @@ TestTemplate.register('highcharts/scatter', Highcharts.chart, {
     },
 
     xAxis: {
-        min: 0,
-        max: 3
+        min: 1,
+        max: 4
     },
 
     yAxis: {
-        min: 0,
-        max: 3
+        min: 1,
+        max: 4
     },
 
     series: [{
-        data: [[1, 1], [1, 2], [2, 1], [2, 2]]
+        data: [[2, 2], [2, 3], [3, 2], [3, 3]]
     }]
 
 });
