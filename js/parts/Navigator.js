@@ -2161,26 +2161,25 @@ addEvent(Chart, 'afterSetChartSize', function () {
 // Merge options, if no scrolling exists yet
 addEvent(Chart, 'update', function (e) {
 
-    var newOptions = (e.options.navigator || {}),
-        options = (this.options.navigator || {});
+    var navigatorOptions = (e.options.navigator || {}),
+        scrollbarOptions = (e.options.scrollbar || {});
 
-    if (!this.navigator &&
-        !this.scroller &&
-        newOptions.enabled === true
+    if (!this.navigator && !this.scroller &&
+        (navigatorOptions.enabled || scrollbarOptions.enabled)
     ) {
-        merge(true, options, newOptions);
+        merge(true, this.options.navigator, navigatorOptions);
+        merge(true, this.options.scrollbar, scrollbarOptions);
+        delete e.options.navigator;
+        delete e.options.scrollbar;
     }
 
 });
 
 // Initiate navigator, if no scrolling exists yet
-addEvent(Chart, 'afterUpdate', function (e) {
+addEvent(Chart, 'afterUpdate', function () {
 
-    var newOptions = (e.options.navigator || {});
-
-    if (!this.navigator &&
-        !this.scroller &&
-        newOptions.enabled === true
+    if (!this.navigator && !this.scroller &&
+        (this.options.navigator.enabled || this.options.scrollbar.enabled)
     ) {
         this.scroller = this.navigator = new Navigator(this);
     }
