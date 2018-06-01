@@ -1683,9 +1683,15 @@ H.objectEach = function (obj, fn, ctx) {
  * @param {String} type - The event type.
  * @param {Function} fn - The function callback to execute when the event is
  *        fired.
+ * @param {Object} options
+ *        Event options
+ * @param {Number} options.order
+ *        The order the event handler should be called. This opens for having
+ *        one handler be called before another, independent of in which order
+ *        they were added.
  * @returns {Function} A callback function to remove the added event.
  */
-H.addEvent = function (el, type, fn) {
+H.addEvent = function (el, type, fn, options) {
 
     var events,
         addEventListener = el.addEventListener || H.addEventListenerPolyfill;
@@ -1715,6 +1721,14 @@ H.addEvent = function (el, type, fn) {
     }
 
     events[type].push(fn);
+
+    // Order the calls
+    if (options && H.isNumber(options.order)) {
+        fn.order = options.order;
+        events[type].sort(function (a, b) {
+            return a.order - b.order;
+        });
+    }
 
     // Return a function that can be called to remove this event.
     return function () {
