@@ -71,10 +71,8 @@ H.PlotLineOrBand.prototype = {
         /*= if (build.classic) { =*/
         // Set the presentational attributes
         if (isLine) {
-            attribs = {
-                stroke: color,
-                'stroke-width': options.width
-            };
+            attribs.stroke = color;
+            attribs['stroke-width'] = options.width;
             if (options.dashStyle) {
                 attribs.dashstyle = options.dashStyle;
             }

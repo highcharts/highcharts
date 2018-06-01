@@ -708,7 +708,6 @@ if (seriesTypes.pie) {
                 positions = [],
                 naturalY,
                 sideOverflow,
-                positionsIndex, // Point index in positions array.
                 size,
                 distributionLength;
 
@@ -747,11 +746,12 @@ if (seriesTypes.pie) {
                         // point.positionsIndex is needed for getting index of
                         // parameter related to specific point inside positions
                         // array - not every point is in positions array.
-                        point.positionsIndex = positions.push({
+                        point.distributeBox = {
                             target: point.labelPos[1] - point.top + size / 2,
                             size: size,
                             rank: point.y
-                        }) - 1;
+                        };
+                        positions.push(point.distributeBox);
                     }
                 });
                 distributionLength = bottom + size - top;
@@ -766,19 +766,18 @@ if (seriesTypes.pie) {
             for (j = 0; j < length; j++) {
 
                 point = points[j];
-                positionsIndex = point.positionsIndex;
                 labelPos = point.labelPos;
                 dataLabel = point.dataLabel;
                 visibility = point.visible === false ? 'hidden' : 'inherit';
                 naturalY = labelPos[1];
                 y = naturalY;
 
-                if (positions && defined(positions[positionsIndex])) {
-                    if (positions[positionsIndex].pos === undefined) {
+                if (positions && defined(point.distributeBox)) {
+                    if (point.distributeBox.pos === undefined) {
                         visibility = 'hidden';
                     } else {
-                        labelHeight = positions[positionsIndex].size;
-                        y = point.top + positions[positionsIndex].pos;
+                        labelHeight = point.distributeBox.size;
+                        y = point.top + point.distributeBox.pos;
                     }
                 }
 

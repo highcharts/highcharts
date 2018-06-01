@@ -901,6 +901,15 @@ H.defaultOptions = {
          * transformed into the polar coordinate system. Requires
          * `highcharts-more.js`.
          *
+         * @sample {highcharts} highcharts/demo/polar/
+         *         Polar chart
+         * @sample {highcharts} highcharts/demo/polar-wind-rose/
+         *         Wind rose, stacked polar column chart
+         * @sample {highcharts} highcharts/demo/polar-spider/
+         *         Spider web chart
+         * @sample {highcharts} highcharts/parallel-coordinates/polar/
+         *         Star plot, multivariate data in a polar chart
+         *
          * @type {Boolean}
          * @default false
          * @since 2.3.0
