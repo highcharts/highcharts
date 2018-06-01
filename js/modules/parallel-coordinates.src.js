@@ -399,7 +399,7 @@ addEvent(H.Series, 'afterTranslate', function () {
         }
         this.closestPointRangePx = closestPointRangePx;
     }
-});
+}, { order: 1 });
 
 /**
  * On destroy, we need to remove series from each axis.series
