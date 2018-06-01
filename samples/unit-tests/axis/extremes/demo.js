@@ -182,6 +182,44 @@ QUnit.test('Zooming between points (#7061)', function (assert) {
 });
 
 
+QUnit.test('X data with null and negative values (#7369)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        series: [{
+            data: [{
+                x: null,
+                y: 95
+            }, {
+                x: 100,
+                y: 102.9
+            }, {
+                x: -80.8,
+                y: 91.5
+            }]
+        }]
+
+    });
+
+    assert.ok(
+        Highcharts.isNumber(chart.xAxis[0].min),
+        'Valid X axis min'
+    );
+    assert.ok(
+        Highcharts.isNumber(chart.xAxis[0].max),
+        'Valid X axis max'
+    );
+    assert.ok(
+        Highcharts.isNumber(chart.yAxis[0].min),
+        'Valid Y axis min'
+    );
+    assert.ok(
+        Highcharts.isNumber(chart.yAxis[0].max),
+        'Valid Y axis max'
+    );
+});
+
 QUnit.test(
     '#5493, #5823 - Extremes for xAxis with hidden series and dataGrouping',
     function (assert) {
@@ -254,40 +292,83 @@ QUnit.test(
     }
 );
 
-QUnit.test('X data with null and negative values (#7369)', function (assert) {
-    var chart = Highcharts.chart('container', {
+// Highcharts 4.0.1, Issue #3075
+// Touch panning on categorized axis alters range
+QUnit.test('Touch pan categories (#3075)', function (assert) {
+
+    TestTemplate.test('highcharts/area', {
+
         chart: {
-            type: 'scatter'
+            zoomType: 'x'
         },
+
+        xAxis: {
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ]
+        },
+
         series: [{
-            data: [{
-                x: null,
-                y: 95
-            }, {
-                x: 100,
-                y: 102.9
-            }, {
-                x: -80.8,
-                y: 91.5
-            }]
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
+
+    }, function (template) {
+
+        var chart = template.chart,
+            controller = new TestController(chart),
+            xAxis = chart.xAxis[0];
+
+        try {
+
+            assert.deepEqual([
+                typeof xAxis.userMin,
+                typeof xAxis.userMax
+            ], [
+                'undefined',
+                'undefined'
+            ],
+                'The user range of x-axis should be undefined.'
+            );
+
+            xAxis.setExtremes(5, 11, true, false);
+
+            assert.deepEqual([
+                xAxis.userMin,
+                xAxis.userMax
+            ], [
+                5,
+                11
+            ],
+                'The user range of x-axis should be set.'
+            );
+
+            controller.touchstart(300, 100, {
+                preventDefault: function () {}
+            });
+
+            controller.touchmove(100, 100, {
+                preventDefault: function () {}
+            });
+
+            controller.touchend(100, 100);
+
+            assert.deepEqual([
+                xAxis.userMin,
+                xAxis.userMax
+            ], [
+                5,
+                11
+            ],
+                'The user range of x-axis should be unchanged.'
+            );
+
+        } finally {
+
+            xAxis.setExtremes();
+
+        }
 
     });
 
-    assert.ok(
-        Highcharts.isNumber(chart.xAxis[0].min),
-        'Valid X axis min'
-    );
-    assert.ok(
-        Highcharts.isNumber(chart.xAxis[0].max),
-        'Valid X axis max'
-    );
-    assert.ok(
-        Highcharts.isNumber(chart.yAxis[0].min),
-        'Valid Y axis min'
-    );
-    assert.ok(
-        Highcharts.isNumber(chart.yAxis[0].max),
-        'Valid Y axis max'
-    );
 });
