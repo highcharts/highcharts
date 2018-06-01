@@ -513,4 +513,26 @@
         chart.setSize(400, 300, false);
 
     });
+
+    QUnit.test('Event order', function (assert) {
+        var obj = {},
+            calls = [];
+
+        addEvent(obj, 'hit', function () {
+            calls.push('klakk');
+        }, { order: 2 });
+
+        addEvent(obj, 'hit', function () {
+            calls.push('klikk');
+        }, { order: 1 });
+
+        fireEvent(obj, 'hit');
+
+        assert.deepEqual(
+            calls,
+            ['klikk', 'klakk'],
+            'Events should be fired in order'
+        );
+
+    });
 }());
