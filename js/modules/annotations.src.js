@@ -1,7 +1,7 @@
 /**
  * (c) 2009-2017 Highsoft, Black Label
  *
-r* License: www.highcharts.com/license
+ * License: www.highcharts.com/license
  */
 'use strict';
 import H from '../parts/Globals.js';
