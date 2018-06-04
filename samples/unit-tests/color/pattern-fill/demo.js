@@ -522,3 +522,59 @@ QUnit.test('Image auto resize with aspect ratio - column', function (assert) {
     chart.setSize(200, 200);
     test();
 });
+
+
+QUnit.test('Image animation opacity', function (assert) {
+    var clock = TestUtilities.lolexInstall(),
+        done = assert.async(),
+        columnPattern;
+
+    try {
+        Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+                animation: {
+                    enabled: true
+                }
+            },
+            series: [{
+                animation: {
+                    enabled: true
+                },
+                data: [{
+                    y: 1,
+                    color: {
+                        pattern: {
+                            id: 'test-pattern',
+                            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
+                            opacity: 0.5,
+                            animation: {
+                                duration: 50
+                            }
+                        }
+                    }
+                }]
+            }]
+        });
+        columnPattern = document.getElementById('test-pattern');
+
+        assert.strictEqual(
+            columnPattern.firstChild.getAttribute('opacity'),
+            '0',
+            'Pattern should start at 0 opacity'
+        );
+
+        setTimeout(function () {
+            assert.strictEqual(
+                columnPattern.firstChild.getAttribute('opacity'),
+                '0.5',
+                'Pattern should end at 0.5 opacity'
+            );
+            done();
+        }, 100);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});
