@@ -549,6 +549,12 @@ Chart.prototype.drawSeriesLabels = function () {
                 y >= paneTop && y <= paneTop + paneHeight - bBox.height;
         }
 
+        function destroyLabel() {
+            if (label) {
+                series.labelBySeries = label.destroy();
+            }
+        }
+
         if (series.visible && !series.isSeriesBoosting && points) {
             if (!label) {
                 series.labelBySeries = label = chart.renderer
@@ -747,9 +753,11 @@ Chart.prototype.drawSeriesLabels = function () {
 
                 }
 
-            } else if (label) {
-                series.labelBySeries = label.destroy();
+            } else {
+                destroyLabel();
             }
+        } else {
+            destroyLabel();
         }
     });
     // console.timeEnd('drawSeriesLabels');
