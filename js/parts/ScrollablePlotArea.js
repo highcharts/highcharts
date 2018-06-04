@@ -52,7 +52,7 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
             scrollablePlotArea && scrollablePlotArea.minWidth,
         scrollablePixels;
 
-    if (scrollableMinWidth) {
+    if (scrollableMinWidth && !this.renderer.forExport) {
 
         // The amount of pixels to scroll, the difference between chart
         // width and scrollable width
