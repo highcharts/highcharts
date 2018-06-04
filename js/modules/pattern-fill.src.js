@@ -198,6 +198,7 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
 H.SVGRenderer.prototype.addPattern = function (options, animation) {
     var pattern,
         animate = H.pick(animation, true),
+        animationOptions = H.animObject(animate),
         path,
         defaultSize = 32,
         width = options.width || options._width || defaultSize,
@@ -266,7 +267,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
                     // Onload
                     this.animate({
                         opacity: pick(options.opacity, 1)
-                    }, animate);
+                    }, animationOptions);
                     H.removeEvent(this.element, 'load');
                 }
             ).attr({ opacity: 0 }).add(pattern);
@@ -424,11 +425,11 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
 
         // Add it. This function does nothing if an element with this ID
         // already exists.
-        this.addPattern(pattern, !this.forExport && H.animObject(H.pick(
+        this.addPattern(pattern, !this.forExport && H.pick(
             pattern.animation,
             this.globalAnimation,
             { duration: 100 }
-        )));
+        ));
 
         value = 'url(' + this.url + '#' + pattern.id + ')';
 
