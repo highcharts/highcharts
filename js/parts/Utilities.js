@@ -1431,13 +1431,19 @@ H.getStyle = function (el, prop, toInt) {
 
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
-        return Math.min(el.offsetWidth, el.scrollWidth) -
-            H.getStyle(el, 'padding-left') -
-            H.getStyle(el, 'padding-right');
+        return Math.max(
+            0, // #8377
+            Math.min(el.offsetWidth, el.scrollWidth) -
+                H.getStyle(el, 'padding-left') -
+                H.getStyle(el, 'padding-right')
+        );
     } else if (prop === 'height') {
-        return Math.min(el.offsetHeight, el.scrollHeight) -
-            H.getStyle(el, 'padding-top') -
-            H.getStyle(el, 'padding-bottom');
+        return Math.max(
+            0, // #8377
+            Math.min(el.offsetHeight, el.scrollHeight) -
+                H.getStyle(el, 'padding-top') -
+                H.getStyle(el, 'padding-bottom')
+        );
     }
 
     if (!win.getComputedStyle) {

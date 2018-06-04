@@ -791,4 +791,20 @@
             'The same number, no error (#5308)'
         );
     });
+
+
+    QUnit.test('getStyle', function (assert) {
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        div.style.padding = '10px';
+        div.style.display = 'none';
+
+        assert.strictEqual(
+            Highcharts.getStyle(div, 'width'),
+            0,
+            'Width should not be negative (#8377)'
+        );
+
+        document.body.removeChild(div);
+    });
 }());
