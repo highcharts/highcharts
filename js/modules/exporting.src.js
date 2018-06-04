@@ -1252,8 +1252,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }, {
                 position: 'absolute',
                 zIndex: 1000,
-                padding: menuPadding + 'px'
-            }, chart.container);
+                padding: menuPadding + 'px',
+                pointerEvents: 'auto'
+            }, chart.fixedDiv || chart.container);
 
             innerMenu = createElement(
                 'div',
