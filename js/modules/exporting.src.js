@@ -1823,23 +1823,19 @@ Chart.prototype.renderExporting = function () {
     addEvent(chart, 'destroy', chart.destroyExport);
 };
 
-Chart.prototype.callbacks.push(function (chart) {
-
+// Add update methods to handle chart.update and chart.exporting.update and
+// chart.navigation.update. These must be added to the chart instance rather
+// than the Chart prototype in order to use the chart instance inside the update
+// function.
+addEvent(Chart, 'init', function () {
+    var chart = this;
     function update(prop, options, redraw) {
         chart.isDirtyExporting = true;
         merge(true, chart.options[prop], options);
         if (pick(redraw, true)) {
             chart.redraw();
         }
-
     }
-
-    chart.renderExporting();
-
-    addEvent(chart, 'redraw', chart.renderExporting);
-
-    // Add update methods to handle chart.update and chart.exporting.update
-    // and chart.navigation.update.
     each(['exporting', 'navigation'], function (prop) {
         chart[prop] = {
             update: function (options, redraw) {
@@ -1847,6 +1843,14 @@ Chart.prototype.callbacks.push(function (chart) {
             }
         };
     });
+});
+
+Chart.prototype.callbacks.push(function (chart) {
+
+    chart.renderExporting();
+
+    addEvent(chart, 'redraw', chart.renderExporting);
+
 
     // Uncomment this to see a button directly below the chart, for quick
     // testing of export
