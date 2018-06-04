@@ -12,7 +12,8 @@ import '../parts/Utilities.js';
 
 var wrap = H.wrap,
     each = H.each,
-    merge = H.merge;
+    merge = H.merge,
+    pick = H.pick;
 
 
 /**
@@ -263,7 +264,9 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
             this.image(
                 options.image, 0, 0, width, height, function () {
                     // Onload
-                    this.animate({ opacity: options.opacity || 1 }, animate);
+                    this.animate({
+                        opacity: pick(options.opacity, 1)
+                    }, animate);
                     H.removeEvent(this.element, 'load');
                 }
             ).attr({ opacity: 0 }).add(pattern);
@@ -272,7 +275,8 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
         }
     }
 
-    if (options.opacity !== undefined) {
+    // For non-animated patterns, set opacity now
+    if (!(options.image && animate) && options.opacity !== undefined) {
         each(pattern.element.childNodes, function (child) {
             child.setAttribute('opacity', options.opacity);
         });
