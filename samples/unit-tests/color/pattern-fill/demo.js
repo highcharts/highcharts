@@ -549,7 +549,15 @@ QUnit.test('Image animation opacity', function (assert) {
                             image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
                             opacity: 0.5,
                             animation: {
-                                duration: 50
+                                duration: 50,
+                                complete: function () {
+                                    assert.strictEqual(
+                                        columnPattern.firstChild.getAttribute('opacity'),
+                                        '0.5',
+                                        'Pattern should end at 0.5 opacity'
+                                    );
+                                    done();
+                                }
                             }
                         }
                     }
@@ -563,15 +571,6 @@ QUnit.test('Image animation opacity', function (assert) {
             '0',
             'Pattern should start at 0 opacity'
         );
-
-        setTimeout(function () {
-            assert.strictEqual(
-                columnPattern.firstChild.getAttribute('opacity'),
-                '0.5',
-                'Pattern should end at 0.5 opacity'
-            );
-            done();
-        }, 100);
 
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
