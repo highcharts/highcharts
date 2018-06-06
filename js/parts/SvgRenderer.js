@@ -1836,14 +1836,17 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
         if (defined(value)) {
             // So we can read it for other elements in the group
-            element.zIndex = value;
+            element.setAttribute('data-z-index', value);
 
             value = +value;
             if (this[key] === value) { // Only update when needed (#3865)
                 run = false;
             }
-            this[key] = value;
+        } else if (defined(this[key])) {
+            element.removeAttribute('data-z-index');
         }
+
+        this[key] = value;
 
         // Insert according to this and other elements' zIndex. Before .add() is
         // called, nothing is done. Then on add, or by later calls to
@@ -1858,7 +1861,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             childNodes = parentNode.childNodes;
             for (i = childNodes.length - 1; i >= 0 && !inserted; i--) {
                 otherElement = childNodes[i];
-                otherZIndex = otherElement.zIndex;
+                otherZIndex = otherElement.getAttribute('data-z-index');
                 undefinedOtherZIndex = !defined(otherZIndex);
 
                 if (otherElement !== element) {
@@ -4055,7 +4058,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             // update if anything changed
             if (textX !== text.x || textY !== text.y) {
                 text.attr('x', textX);
-                if (text.hasBoxWidthChanged) { // #8159 - prevent misplaced data labels in treemap (useHTML: true)
+                // #8159 - prevent misplaced data labels in treemap
+                // (useHTML: true)
+                if (text.hasBoxWidthChanged) {
                     bBox = text.getBBox(true);
                     updateBoxSize();
                 }
