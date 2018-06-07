@@ -700,11 +700,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
         return;
     }
 
-    var    titleElement,
-        exportGroupElement = doc.createElementNS(
-            'http://www.w3.org/2000/svg',
-            'g'
-        ),
+    var titleElement,
         descElement = chart.container.getElementsByTagName('desc')[0],
         textElements = chart.container.getElementsByTagName('text'),
         titleId = 'highcharts-title-' + chart.index,
@@ -748,9 +744,10 @@ H.Chart.prototype.callbacks.push(function (chart) {
         chart.exportSVGElements[0] &&
         chart.exportSVGElements[0].element
     ) {
-        var oldExportCallback = chart.exportSVGElements[0].element.onclick,
-            parent = chart.exportSVGElements[0].element.parentNode;
-        chart.exportSVGElements[0].element.onclick = function () {
+        // Set event handler on button
+        var button = chart.exportSVGElements[0].element,
+            oldExportCallback = button.onclick;
+        button.onclick = function () {
             oldExportCallback.apply(
                 this,
                 Array.prototype.slice.call(arguments)
@@ -758,19 +755,23 @@ H.Chart.prototype.callbacks.push(function (chart) {
             chart.addAccessibleContextMenuAttribs();
             chart.highlightExportItem(0);
         };
-        chart.exportSVGElements[0].element.setAttribute('role', 'button');
-        chart.exportSVGElements[0].element.setAttribute(
+
+        // Set props on button
+        button.setAttribute('role', 'button');
+        button.setAttribute(
             'aria-label',
             chart.langFormat(
                 'accessibility.exporting.menuButtonLabel', { chart: chart }
             )
         );
-        exportGroupElement.appendChild(chart.exportSVGElements[0].element);
-        exportGroupElement.setAttribute('role', 'region');
-        exportGroupElement.setAttribute('aria-label', chart.langFormat(
-            'accessibility.exporting.exportRegionLabel', { chart: chart }
-        ));
-        parent.appendChild(exportGroupElement);
+
+        // Set props on group
+        chart.exportingGroup.element.setAttribute('role', 'region');
+        chart.exportingGroup.element.setAttribute('aria-label',
+            chart.langFormat(
+                'accessibility.exporting.exportRegionLabel', { chart: chart }
+            )
+        );
     }
 
     // Set screen reader properties on input boxes for range selector. We need
