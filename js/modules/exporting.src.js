@@ -1455,8 +1455,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 /*= if (build.classic) { =*/
                 'stroke-linecap': 'round',
                 /*= } =*/
-                title: pick(chart.options.lang[btnOptions._titleKey], ''),
-                zIndex: 3 // #4955
+                title: pick(chart.options.lang[btnOptions._titleKey], '')
             });
         button.menuClassName = (
             options.menuClassName ||
@@ -1490,7 +1489,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             /*= } =*/
         }
 
-        button.add()
+        button.add(chart.exportingGroup)
             .align(extend(btnOptions, {
                 width: button.width,
                 x: pick(btnOptions.x, chart.buttonOffset) // #1654
@@ -1534,6 +1533,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
             });
             exportSVGElements.length = 0;
+        }
+
+        // Destroy the exporting group
+        if (chart.exportingGroup) {
+            chart.exportingGroup.destroy();
+            delete chart.exportingGroup;
         }
 
         // Destroy the divs for the menu
@@ -1811,6 +1816,11 @@ Chart.prototype.renderExporting = function () {
 
     if (isDirty && exportingOptions.enabled !== false) {
         chart.exportEvents = [];
+
+        chart.exportingGroup = chart.exportingGroup ||
+            chart.renderer.g('exporting-group').attr({
+                zIndex: 3 // #4955, // #8392
+            }).add();
 
         objectEach(buttons, function (button) {
             chart.addButton(button);
