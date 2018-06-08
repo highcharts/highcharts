@@ -218,7 +218,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *            with top level headers. If a custom columnHeaderFormatter is
  *            defined, this can override the behavior.
  *
- * @returns {Array.<Array>}
+ * @returns {Array<Array<Number|String>>}
  *          The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
