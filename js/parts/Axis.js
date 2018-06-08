@@ -2014,7 +2014,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @name     series
          * @memberOf Axis
-         * @type     {Array.<Series>}
+         * @type     {Array<Series>}
          */
         axis.series = axis.series || []; // populated by Series
 
@@ -2381,7 +2381,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *         If given, return the plot line path of a pixel position on the
      *         axis.
      *
-     * @return {Array.<String|Number>}
+     * @return {Array<String|Number>}
      *         The SVG path definition for the plot line.
      */
     getPlotLinePath: function (value, lineWidth, old, force, translatedValue) {
@@ -2454,7 +2454,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @param  {Number} max
      *         Axis maximum.
      *
-     * @return {Array.<Number>}
+     * @return {Array<Number>}
      *         An array of axis values where ticks should be placed.
      */
     getLinearTickPositions: function (tickInterval, min, max) {
@@ -2525,7 +2525,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Internal function to return the minor tick positions. For logarithmic
      * axes, the same logic as for major ticks is reused.
      *
-     * @return {Array.<Number>}
+     * @return {Array<Number>}
      *         An array of axis values where ticks should be placed.
      */
     getMinorTickPositions: function () {
@@ -3843,7 +3843,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @param  {String} prefix
      *         'tick' or 'minorTick'
-     * @return {Array.<Number>}
+     * @return {Array<Number>}
      *         An array of tickLength and tickWidth
      */
     tickSize: function (prefix) {

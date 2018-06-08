@@ -255,7 +255,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @param  {Number} to
      *         The axis value to end on.
      *
-     * @return {Array.<String|Number>}
+     * @return {Array<String|Number>}
      *         The SVG path definition in array form.
      */
     getPlotBandPath: function (from, to) {

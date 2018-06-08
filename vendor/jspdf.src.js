@@ -1816,7 +1816,7 @@
 
     		/**
        * A PDF Tiling pattern.
-       * @param {Array.<Number>} boundingBox The bounding box at which one pattern cell gets clipped.
+       * @param {Array<Number>} boundingBox The bounding box at which one pattern cell gets clipped.
        * @param {Number} xStep Horizontal spacing between pattern cells.
        * @param {Number} yStep Vertical spacing between pattern cells.
        * @param {API.GState=} gState An additional graphics state that gets applied to the pattern (optional).
@@ -2127,7 +2127,7 @@
        * {Matrix|undefined} matrix
        * {Number|undefined} xStep
        * {Number|undefined} yStep
-       * {Array.<Number>|undefined} boundingBox
+       * {Array<Number>|undefined} boundingBox
        */
 
     		/**

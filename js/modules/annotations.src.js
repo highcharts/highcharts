@@ -309,7 +309,7 @@ MockPoint.prototype = {
      *
      * @param {Boolean} [forceTranslate=false] - whether to update the point's
      * coordinates
-     * @return {Array.<Number>} A quadruple of numbers which denotes x, y,
+     * @return {Array<Number>} A quadruple of numbers which denotes x, y,
      * width and height of the box
     **/
     alignToBox: function (forceTranslate) {
@@ -489,7 +489,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
      * Shapes which do not have background - the object is used for proper
      * setting of the contrast color
      *
-     * @type {Array.<String>}
+     * @type {Array<String>}
      * @private
      */
     shapesWithoutBackground: ['connector'],
