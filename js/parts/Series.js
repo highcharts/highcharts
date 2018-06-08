@@ -2438,7 +2438,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * option. Used internally when adding series.
      *
      * @private
-     * @param   {Array.<Series>} collection
+     * @param   {Array<Series>} collection
      *          A collection of series, like `chart.series` or `xAxis.series`.
      * @returns {Number} The index of the series in the collection.
      */
@@ -3377,7 +3377,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * @name data
          * @memberOf Highcharts.Series
          * @see  Series.points
-         * @type {Array.<Highcharts.Point>}
+         * @type {Array<Point>}
          */
         series.data = data;
 
@@ -3391,7 +3391,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * Highcharts.Point#update}.
          * @name points
          * @memberof Series
-         * @type {Array.<Point>}
+         * @type {Array<Point>}
          */
         series.points = points;
     },
@@ -3400,7 +3400,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * Calculate Y extremes for the visible data. The result is set as
      * `dataMin` and `dataMax` on the Series item.
      *
-     * @param  {Array.<Number>} [yData]
+     * @param  {Array<Number>} [yData]
      *         The data to inspect. Defaults to the current data within the
      *         visible range.
      *
@@ -3651,13 +3651,13 @@ H.Series = H.seriesType('line', null, { // base series options
     /**
      * Return the series points with null points filtered out.
      *
-     * @param  {Array.<Point>} [points]
+     * @param  {Array<Point>} [points]
      *         The points to inspect, defaults to {@link Series.points}.
      * @param  {Boolean} [insideOnly=false]
      *         Whether to inspect only the points that are inside the visible
      *         view.
      *
-     * @return {Array.<Point>}
+     * @return {Array<Point>}
      *         The valid points.
      */
     getValidPoints: function (points, insideOnly) {
