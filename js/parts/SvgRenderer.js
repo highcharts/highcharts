@@ -80,7 +80,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * For labels, these CSS properties are applied to the `text` node directly.
      *
      * @private
-     * @type {Array.<string>}
+     * @type {Array<String>}
      */
     textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily',
         'fontStyle', 'color', 'lineHeight', 'width', 'textAlign',
@@ -172,11 +172,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *    to the shape. Ranges 0-1.
      * @property {Number} radialGradient.r Radius relative to the shape. Ranges
      *    0-1.
-     * @property {Array.<Array>} stops The first item in each tuple is the
-     *    position in the gradient, where 0 is the start of the gradient and 1
-     *    is the end of the gradient. Multiple stops can be applied. The second
-     *    item is the color for each stop. This color can also be given in the
-     *    rgba format.
+     * @property {Array<Array<Number|String>>} stops The first item in each
+     *    tuple is the position in the gradient, where 0 is the start of the
+     *    gradient and 1 is the end of the gradient. Multiple stops can be
+     *    applied. The second item is the color for each stop. This color can
+     *    also be given in the rgba format.
      *
      * @example
      * // Linear gradient used as a color option
