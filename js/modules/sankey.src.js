@@ -632,7 +632,7 @@ seriesType('sankey', 'column', {
  *
  * @sample    highcharts/css/sankey/
  *            Sankey diagram with node options
- * @type      {Array.<Object>}
+ * @type      {Array<Object>}
  * @product   highcharts
  * @apioption series.sankey.nodes
  */

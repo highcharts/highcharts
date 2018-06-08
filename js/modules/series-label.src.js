@@ -115,7 +115,7 @@ H.setOptions({
                  * An array of boxes to avoid when laying out the labels. Each
                  * item has a `left`, `right`, `top` and `bottom` property.
                  *
-                 * @type {Array.<Object>}
+                 * @type {Array<Object>}
                  */
                 boxesToAvoid: []
             }
