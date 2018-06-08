@@ -193,7 +193,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @name axes
              * @see  Highcharts.Chart.xAxis
              * @see  Highcharts.Chart.yAxis
-             * @type {Array.<Highcharts.Axis>}
+             * @type {Array<Axis>}
              */
             this.axes = [];
 
@@ -202,7 +202,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @memberof Highcharts.Chart
              * @name series
-             * @type {Array.<Highcharts.Series>}
+             * @type {Array<Series>}
              */
             this.series = [];
 
@@ -264,14 +264,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             /**
              * A collection of the X axes in the chart.
-             * @type {Array.<Highcharts.Axis>}
+             * @type {Array<Axis>}
              * @name xAxis
              * @memberOf Highcharts.Chart
              */
             chart.xAxis = [];
             /**
              * A collection of the Y axes in the chart.
-             * @type {Array.<Highcharts.Axis>}
+             * @type {Array<Axis>}
              * @name yAxis
              * @memberOf Highcharts.Chart
              */
@@ -613,7 +613,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * can be selected by clicking or programmatically by the {@link
      * Highcharts.Point#select} function.
      *
-     * @return {Array.<Highcharts.Point>}
+     * @return {Array<Point>}
      *         The currently selected points.
      *
      * @sample highcharts/plotoptions/series-allowpointselect-line/
@@ -638,7 +638,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * https://api.highcharts.com/highcharts/plotOptions.series.showCheckbox|
      * series.showCheckBox} is true.
      *
-     * @return {Array.<Highcharts.Series>}
+     * @return {Array<Series>}
      *         The currently selected series.
      *
      * @sample highcharts/members/chart-getselectedseries/
