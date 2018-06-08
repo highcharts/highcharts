@@ -188,7 +188,7 @@ extend(Pane.prototype, {
 
     /**
      * An array of background items for the pane.
-     * @type Array.<Object>
+     * @type {Array<Object>}
      * @sample {highcharts} highcharts/demo/gauge-speedometer/
      *         Speedometer gauge with multiple backgrounds
      * @optionparent pane.background
