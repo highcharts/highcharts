@@ -11,6 +11,7 @@ import '../parts-more/RadialAxis.js';
 import '../parts-more/AreaRangeSeries.js';
 import '../parts-more/AreaSplineRangeSeries.js';
 import '../parts-more/ColumnRangeSeries.js';
+import '../parts-more/ColumnPyramidSeries.js';
 import '../parts-more/GaugeSeries.js';
 import '../parts-more/BoxPlotSeries.js';
 import '../parts-more/ErrorBarSeries.js';
