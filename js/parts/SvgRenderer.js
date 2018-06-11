@@ -2721,7 +2721,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 );
             });
 
-            if (wasTooLong) {
+            if (ellipsis && wasTooLong) {
                 wrapper.attr(
                     'title',
                     unescapeEntities(wrapper.textStr, ['&lt;', '&gt;']) // #7179
