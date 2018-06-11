@@ -855,12 +855,15 @@ seriesType('map', 'scatter', {
         // stroke-widthSetter method expects a stroke color also to be set.
         group.element.setAttribute(
             'stroke-width',
-            series.options[
-                (
-                    series.pointAttrToOptions &&
-                    series.pointAttrToOptions['stroke-width']
-                ) || 'borderWidth'
-            ] / (scaleX || 1)
+            (
+                series.options[
+                    (
+                        series.pointAttrToOptions &&
+                        series.pointAttrToOptions['stroke-width']
+                    ) || 'borderWidth'
+                ] ||
+                1 // Styled mode
+            ) / (scaleX || 1)
         );
 
         this.drawMapDataLabels();
