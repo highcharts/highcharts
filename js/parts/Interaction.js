@@ -1091,11 +1091,12 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         if (ignoreHiddenSeries) {
             chart.isDirtyBox = true;
         }
+
+        fireEvent(series, showOrHide);
+
         if (redraw !== false) {
             chart.redraw();
         }
-
-        fireEvent(series, showOrHide);
     },
 
     /**
