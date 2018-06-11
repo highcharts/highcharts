@@ -342,6 +342,14 @@ var HighchartsConfig = {
         },
         'baseUrl': 'parts-more'
     }, {
+        'name': 'ColumnPyramidSeries',
+        'component': 'Columnpyramid',
+        'group': 'Chart and Serie types',
+        'depends': {
+            'component': ['Core', 'Column']
+        },
+        'baseUrl': 'parts-more'
+    }, {
         'name': 'GaugeSeries',
         'component': 'Gauge',
         'group': 'Chart and Serie types',
@@ -610,6 +618,9 @@ var HighchartsConfig = {
             'description': ''
         },
         'Columnrange': {
+            'description': ''
+        },
+        'Columnpyramid': {
             'description': ''
         },
         'Gauge': {
