@@ -3,7 +3,7 @@
 (function (H) {
     Highcharts.Chart.prototype.callbacks.push(function (chart) {
         H.addEvent(chart.container, 'click', function (e) {
-            e = chart.pointer.normalize();
+            e = chart.pointer.normalize(e);
             $('#report').html('Clicked chart at ' + e.chartX + ', ' + e.chartY);
         });
         H.addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
