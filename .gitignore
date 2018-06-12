@@ -36,6 +36,7 @@
 /utils/samples/nightly/
 
 tree.json
+tree_namespace.json
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github
