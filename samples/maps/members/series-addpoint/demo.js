@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/world-population-density.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/680f5d50a47e90f53d814b53f80ce1850b9060c0/samples/data/world-population-density.json', function (data) {
 
 
     // Remove Greenland from the map and the data set
@@ -23,7 +23,6 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/worl
     greenland = Highcharts.extend(data[dataIndex], mapData[mapDataIndex]); // for use below
     data.splice(dataIndex, 1);
     mapData.splice(mapDataIndex, 1);
-    greenland.value = 0.028;
 
     // Initiate the chart
     var chart = Highcharts.mapChart('container', {
