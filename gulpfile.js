@@ -1143,7 +1143,6 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
 gulp.task('jsdoc', jsdoc);
 gulp.task('styles', styles);
-gulp.task('tsd', ['jsdoc'], require('highcharts-typescript-generator').task);
 
 /**
  * Gulp task to run the building process of distribution files. By default it
