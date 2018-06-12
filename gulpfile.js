@@ -846,8 +846,7 @@ const createAllExamples = () => new Promise((resolve) => {
 });
 
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    // const generate = require('highcharts-api-doc-gen/lib/index.js');
-    const generate = require('./../api-docs/lib/index.js');
+    const generate = require('highcharts-api-doc-gen');
     const message = {
         'start': 'Started generating API documentation.',
         'noSeries': 'Missing series in tree.json. Run merge script.',
@@ -1099,7 +1098,7 @@ let apiServerRunning = false;
  */
 const jsdoc = () => {
     const optionsClassReference = {
-        templateDir: './../highcharts-docstrap',
+        templateDir: './node_modules/highcharts-docstrap',
         destination: './build/api/class-reference/'
     };
     const optionsAPI = {
@@ -1111,8 +1110,8 @@ const jsdoc = () => {
     const dir = optionsClassReference.templateDir;
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
-        './../api-docs/include/*.*',
-        './../api-docs/templates/*.handlebars',
+        './node_modules/highcharts-api-docs-gen/include/*.*',
+        './node_modules/highcharts-api-docs-gen/templates/*.handlebars',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
@@ -1144,6 +1143,7 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
 gulp.task('jsdoc', jsdoc);
 gulp.task('styles', styles);
+
 /**
  * Gulp task to run the building process of distribution files. By default it
  * builds all the distribution files. Usage: "gulp build".

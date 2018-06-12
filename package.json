@@ -52,8 +52,9 @@
     "gulp": "^3.9.1",
     "gulp-jsdoc3": "^1.0.1",
     "gzip-size": "^3.0.0",
-    "highcharts-api-doc-gen": "github:highcharts/api-docs",
+    "highcharts-api-docs": "github:highcharts/api-docs",
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.0.25",
+    "highcharts-docstrap": "github:highcharts/highcharts-docstrap",
     "husky": "^0.14.3",
     "js-yaml": "^3.10.0",
     "karma": "^1.7.1",
@@ -85,5 +86,8 @@
       "git add"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>"
+  "license": "SEE LICENSE IN <license.txt>",
+  "dependencies": {
+    "highcharts-api-doc-gen": "github:highcharts/api-docs"
+  }
 }
