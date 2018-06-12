@@ -15,7 +15,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/worl
         }
     }
     for (dataIndex = 0; dataIndex < data.length; dataIndex += 1) {
-        if (data[dataIndex].code === 'GL') {
+        if (data[dataIndex].name === 'Greenland') {
             break;
         }
     }
@@ -23,7 +23,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/worl
     greenland = Highcharts.extend(data[dataIndex], mapData[mapDataIndex]); // for use below
     data.splice(dataIndex, 1);
     mapData.splice(mapDataIndex, 1);
-
+    greenland.value = 0.028;
 
     // Initiate the chart
     var chart = Highcharts.mapChart('container', {
@@ -46,7 +46,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/worl
         series: [{
             data: data,
             mapData: mapData,
-            joinBy: ['iso-a2', 'code'],
+            joinBy: ['iso-a3', 'code3'],
             name: 'Population density',
             states: {
                 hover: {
