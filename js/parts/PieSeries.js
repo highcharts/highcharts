@@ -186,7 +186,7 @@ seriesType('pie', 'line', {
 
          /**
           * Alignment method for data labels. Possible values are: `toPlotEdges` (each label touches
-          * the nearest vertical edge of the plot area) or `toPlotEdges` (connectors have the same x
+          * the nearest vertical edge of the plot area) or `connectors` (connectors have the same x
           * position and the widest label of each half (left & right) touches the nearest vertical edge of
           * the plot area).
           *
