@@ -1054,7 +1054,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
     update: function (options, redraw) {
         var chart = this.chart,
-            newEvents = (options.events || {});
+            newEvents = ((options && options.events) || {});
 
         options = merge(this.userOptions, options);
 
