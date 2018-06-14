@@ -673,7 +673,15 @@ seriesType('map', 'scatter', {
         // Set the stroke-width on the group element and let all point graphics
         // inherit. That way we don't have to iterate over all points to update
         // the stroke-width on zooming.
-        attr['stroke-width'] = 'inherit';
+        attr['stroke-width'] = pick(
+            point.options[
+                (
+                    this.pointAttrToOptions &&
+                    this.pointAttrToOptions['stroke-width']
+                ) || 'borderWidth'
+            ],
+            'inherit'
+        );
 
         return attr;
     },
