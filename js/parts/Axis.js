@@ -4014,6 +4014,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             tickPositions = this.tickPositions,
             ticks = this.ticks,
             labelOptions = this.options.labels,
+            labelStyleOptions = (labelOptions && labelOptions.style || {}),
             horiz = this.horiz,
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
@@ -4130,7 +4131,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         each(tickPositions, function (pos) {
             var tick = ticks[pos],
                 label = tick && tick.label,
-                widthOption = labelOptions.style && labelOptions.style.width,
+                widthOption = labelStyleOptions.width,
                 css = {};
             if (label) {
                 // This needs to go before the CSS in old IE (#4502)
@@ -4139,6 +4140,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 if (
                     commonWidth &&
                     !widthOption &&
+                    // Setting width in this case messes with the bounding box
+                    // (#7975)
+                    labelStyleOptions.whiteSpace !== 'nowrap' &&
                     (
                         // Speed optimizing, #7656
                         commonWidth < label.textPxLength ||
