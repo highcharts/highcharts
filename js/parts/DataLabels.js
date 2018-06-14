@@ -610,6 +610,62 @@ Series.prototype.justifyDataLabel = function (
  * Override the base drawDataLabels method by pie specific functionality
  */
 if (seriesTypes.pie) {
+    seriesTypes.pie.prototype.dataLabelPositioners = {
+
+        // Based on the value computed in Highcharts' distribute algorithm.
+        alignY: function (point) {
+            return point.top + point.distributeBox.pos;
+        },
+        // get the x - use the natural x position for labels near the
+        // top and bottom, to prevent the top and botton slice
+        // connectors from touching each other on either side
+        alignX: function (series, point, y, naturalY, half) {
+            return series.getX(
+                y < point.top + 2 || y > point.bottom - 2 ?
+                naturalY :
+                y,
+                half,
+                point
+        );
+        },
+
+        // dataLabels.distance determines the x position of the label
+        justify: function (point, radius, seriesCenter, half) {
+            return seriesCenter[0] + (half ? -1 : 1) *
+            (radius + point.labelDistance);
+        },
+
+        // Left edges of the left-half labels touch the left edge of the plot
+        // area. Right edges of the right-half labels touch the right edge of
+        // the plot area.
+        alignToPlotEdges: function (dataLabel, half,
+            plotWidth, connectorPadding) {
+            var dataLabelWidth = dataLabel.getBBox().width;
+            return half ? dataLabelWidth + connectorPadding :
+                    plotWidth - dataLabelWidth - connectorPadding;
+        },
+
+        // Connectors of each side end in the same x position. Labels are
+        // alignedto them.  Left edge of the widest left-half label touches the
+        // left edge of the plot area. Right edge of the widest right-half label
+        // touches the right edge of the plot area.
+        alignToConnectors: function (points, half, plotWidth,
+            connectorPadding) {
+            var maxDataLabelWidth = 0,
+                dataLabelWidth;
+
+            // find widest data label
+            each(points, function (point) {
+                dataLabelWidth = point.dataLabel.getBBox().width;
+                if (dataLabelWidth > maxDataLabelWidth) {
+                    maxDataLabelWidth = dataLabelWidth;
+                }
+            });
+            return half ? maxDataLabelWidth + connectorPadding :
+                plotWidth - maxDataLabelWidth - connectorPadding;
+        }
+    };
+
     seriesTypes.pie.prototype.drawDataLabels = function () {
         var series = this,
             data = series.data,
@@ -638,7 +694,8 @@ if (seriesTypes.pie) {
             y,
             visibility,
             j,
-            overflow = [0, 0, 0, 0]; // top, right, bottom, left
+            overflow = [0, 0, 0, 0], // top, right, bottom, left
+            dataLabelPositioners = series.dataLabelPositioners;
 
         // get out if not enabled
         if (!series.visible || (!options.enabled && !series._hasPointLabels)) {
@@ -782,7 +839,8 @@ if (seriesTypes.pie) {
                         visibility = 'hidden';
                     } else {
                         labelHeight = point.distributeBox.size;
-                        y = point.top + point.distributeBox.pos;
+                        // Find label's y position
+                        y = dataLabelPositioners.alignY(point);
                     }
                 }
 
@@ -791,22 +849,26 @@ if (seriesTypes.pie) {
 
                 delete point.positionIndex;
 
-                // get the x - use the natural x position for labels near the
-                // top and bottom, to prevent the top and botton slice
-                // connectors from touching each other on either side
+                // Find label's x position
+                // justify is undocumented in the API - preserve support for it
                 if (options.justify) {
-                    x = seriesCenter[0] +
-                        (i ? -1 : 1) * (radius + point.labelDistance);
+                    x = dataLabelPositioners.justify(point, radius,
+                        seriesCenter, i);
                 } else {
-                    x = series.getX(
-                        y < point.top + 2 || y > point.bottom - 2 ?
-                            naturalY :
-                            y,
-                        i,
-                        point
-                    );
+                    switch (options.alignTo) {
+                        case 'connectors':
+                            x = dataLabelPositioners.alignToConnectors(points,
+                                i, plotWidth, connectorPadding);
+                            break;
+                        case 'plotEdges':
+                            x = dataLabelPositioners.alignToPlotEdges(dataLabel,
+                                 i, plotWidth, connectorPadding);
+                            break;
+                        default:
+                            x = dataLabelPositioners.alignX(series, point, y,
+                                naturalY, i);
+                    }
                 }
-
 
                 // Record the placement and visibility
                 dataLabel._attr = {

@@ -184,6 +184,21 @@ seriesType('pie', 'line', {
          * @apioption plotOptions.pie.dataLabels.softConnector
          */
 
+         /**
+          * Alignment method for data labels. Possible values are: `toPlotEdges` (each label touches
+          * the nearest vertical edge of the plot area) or `toPlotEdges` (connectors have the same x
+          * position and the widest label of each half (left & right) touches the nearest vertical edge of
+          * the plot area).
+          *
+          * @type {String}
+          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-connectors/ alignTo: connectors
+          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-plotedges/ alignTo: plotEdges
+          * @since 6.1.0
+          * @default undefined
+          * @product highcharts
+          * @apioption plotOptions.pie.dataLabels.alignTo
+          */
+
         x: 0
     },
 
