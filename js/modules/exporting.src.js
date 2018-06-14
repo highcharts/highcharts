@@ -1052,8 +1052,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             if (
                 axisCopy &&
                 (
-                    (userMin !== undefined && userMin !== extremes.min) ||
-                    (userMax !== undefined && userMax !== extremes.max)
+                    (userMin !== undefined && userMin !== axisCopy.min) ||
+                    (userMax !== undefined && userMax !== axisCopy.max)
                 )
             ) {
                 axisCopy.setExtremes(userMin, userMax, true, false);
