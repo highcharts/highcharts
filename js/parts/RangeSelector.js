@@ -1521,12 +1521,11 @@ wrap(Chart.prototype, 'redraw', function (proceed, options, callback) {
     proceed.call(this, options, callback);
 });
 
-Chart.prototype.adjustPlotArea = function () {
-    var chart = this,
-        rangeSelector = chart.rangeSelector,
+addEvent(Chart, 'getMargins', function () {
+    var rangeSelector = this.rangeSelector,
         rangeSelectorHeight;
 
-    if (this.rangeSelector) {
+    if (rangeSelector) {
         rangeSelectorHeight = rangeSelector.getHeight();
 
         if (this.extraTopMargin) {
@@ -1537,7 +1536,7 @@ Chart.prototype.adjustPlotArea = function () {
             this.marginBottom += rangeSelectorHeight;
         }
     }
-};
+});
 
 Chart.prototype.callbacks.push(function (chart) {
     var extremes,

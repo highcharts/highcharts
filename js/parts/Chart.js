@@ -1094,17 +1094,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.legend.adjustMargins(margin, spacing);
         }
 
-        // adjust for scroller
-        if (chart.extraMargin) {
-            chart[chart.extraMargin.type] =
-                (chart[chart.extraMargin.type] || 0) + chart.extraMargin.value;
-        }
-
-        // adjust for rangeSelector
-        if (chart.adjustPlotArea) {
-            chart.adjustPlotArea();
-        }
-
         fireEvent(this, 'getMargins');
 
         if (!skipAxes) {
