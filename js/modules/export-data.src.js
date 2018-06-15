@@ -461,6 +461,8 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
     }
     dataRows = dataRows.concat(rowArr);
 
+    Highcharts.fireEvent(this, 'exportData', dataRows);
+
     return dataRows;
 };
 
