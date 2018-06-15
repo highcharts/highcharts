@@ -96,6 +96,21 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'After addPoint number of MACD points is correct'
     );
 
+    chart.series[1].update({
+        params: {
+            shortPeriod: 8,
+            longPeriod: 16,
+            signalPeriod: 9,
+            period: 16
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[1].points.length > 0,
+        true,
+        'Long and short SMA / EMA are correct.'
+    );
+
     chart.series[0].setData([
         [1435017600000, 0, 0, 0, 0],
         [1435104000000, 0, 0, 0, 0],
@@ -146,37 +161,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         [1492041600000, 0.04398, 0.03794, 0.0381, 0.04253],
         [1492128000000, 0.04266, 0.03898, 0.04253, 0.04012]
     ]);
-/*
-    assert.deepEqual(
-        chart.series[1].yData,
-        [
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, null, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0],
-            [0.002571851851851852, 0.0006429629629629631, 0.0032148148148148153],
-            [0.004278005275931203, 0.001712464281945764, 0.005990469557876967],
-            [0.005023277556609541, 0.0029682836710981497, 0.00799156122770769]
-        ],
-        'Correct values'
-    );
-*/
+
     chart.series[0].setData([
         459.99,
         448.85,
@@ -295,4 +280,5 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         chart.series[1].currentDataGrouping !== undefined,
         'DataGrouping applied to MACD series too (#7823).'
     );
+
 });
