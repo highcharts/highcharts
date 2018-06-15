@@ -71,10 +71,8 @@ H.PlotLineOrBand.prototype = {
         /*= if (build.classic) { =*/
         // Set the presentational attributes
         if (isLine) {
-            attribs = {
-                stroke: color,
-                'stroke-width': options.width
-            };
+            attribs.stroke = color;
+            attribs['stroke-width'] = options.width;
             if (options.dashStyle) {
                 attribs.dashstyle = options.dashStyle;
             }
@@ -257,7 +255,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @param  {Number} to
      *         The axis value to end on.
      *
-     * @return {Array.<String|Number>}
+     * @return {Array<String|Number>}
      *         The SVG path definition in array form.
      */
     getPlotBandPath: function (from, to) {

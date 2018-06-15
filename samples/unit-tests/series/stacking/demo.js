@@ -295,7 +295,7 @@ QUnit.test("Stack Labels position in bar chart (#8187)", function (assert) {
     assert.close(
         chart.xAxis[0].toPixels(0, true),
         labelPos.y + (labelPos.height / 2),
-        1,
+        1.2,
         'Stack labels should be properly positioned'
     );
 });

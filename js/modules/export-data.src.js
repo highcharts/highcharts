@@ -198,7 +198,7 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
 
 // Set up key-to-axis bindings. This is used when the Y axis is datetime or
 // categorized. For example in an arearange series, the low and high values
-// sholud be formatted according to the Y axis type, and in order to link them
+// should be formatted according to the Y axis type, and in order to link them
 // we need this map.
 Highcharts.Chart.prototype.setUpKeyToAxis = function () {
     if (seriesTypes.arearange) {
@@ -218,7 +218,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *            with top level headers. If a custom columnHeaderFormatter is
  *            defined, this can override the behavior.
  *
- * @returns {Array.<Array>}
+ * @returns {Array<Array<Number|String>>}
  *          The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {

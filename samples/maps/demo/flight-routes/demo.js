@@ -1,10 +1,10 @@
 
 
-// Initiate the chart
+// Initialize the chart
 var chart = Highcharts.mapChart('container', {
 
     title: {
-        text: 'Highmaps flight routes demo'
+        text: 'Highmaps simple flight routes demo'
     },
 
     legend: {
@@ -19,7 +19,10 @@ var chart = Highcharts.mapChart('container', {
 
     tooltip: {
         formatter: function () {
-            return this.point.id + (this.point.lat ? '<br>Lat: ' + this.point.lat + ' Lon: ' + this.point.lon : '');
+            return this.point.id + (
+                this.point.lat ?
+                '<br>Lat: ' + this.point.lat + ' Lon: ' + this.point.lon : ''
+            );
         }
     },
 
@@ -48,15 +51,14 @@ var chart = Highcharts.mapChart('container', {
         showInLegend: false,
         enableMouseTracking: false
     }, {
-        // Specify points using lat/lon
+        // Specify cities using lat/lon
         type: 'mappoint',
         name: 'Cities',
         dataLabels: {
-            formatter: function () {
-                return this.point.id;
-            }
+            format: '{point.id}'
         },
-        // Use id instead of name to allow for referencing points later
+        // Use id instead of name to allow for referencing points later using
+        // chart.get
         data: [{
             id: 'London',
             lat: 51.507222,
@@ -102,17 +104,18 @@ var chart = Highcharts.mapChart('container', {
     }]
 });
 
-// Function to return a path with an arc between two points
+// Function to return an SVG path between two points, with an arc
 function pointsToPath(from, to, invertArc) {
     var arcPointX = (from.x + to.x) / (invertArc ? 2.4 : 1.6),
         arcPointY = (from.y + to.y) / (invertArc ? 2.4 : 1.6);
-    return 'M' + from.x + ',' + from.y + 'Q' + arcPointX + ' ' + arcPointY + ',' + to.x + ' ' + to.y;
+    return 'M' + from.x + ',' + from.y + 'Q' + arcPointX + ' ' + arcPointY +
+            ',' + to.x + ' ' + to.y;
 }
 
 var londonPoint = chart.get('London'),
     lerwickPoint = chart.get('Lerwick');
 
-// Add the flight routes series for London and Lerwick using the already defined points
+// Add a series of lines for London
 chart.addSeries({
     name: 'London flight routes',
     type: 'mapline',
@@ -141,6 +144,8 @@ chart.addSeries({
         path: pointsToPath(londonPoint, chart.get('Bristol'), true)
     }]
 });
+
+// Add a series of lines for Lerwick
 chart.addSeries({
     name: 'Lerwick flight routes',
     type: 'mapline',

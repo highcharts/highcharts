@@ -850,8 +850,7 @@ const createAllExamples = () => new Promise((resolve) => {
 });
 
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    // const generate = require('highcharts-api-doc-gen/lib/index.js');
-    const generate = require('./../api-docs/lib/index.js');
+    const generate = require('highcharts-api-doc-gen');
     const message = {
         'start': 'Started generating API documentation.',
         'noSeries': 'Missing series in tree.json. Run merge script.',
@@ -1017,12 +1016,14 @@ const startServer = () => {
     const base = '127.0.0.1:' + docport;
     const apiPath = __dirname + '/build/api/';
     const mimes = {
-        png: 'image/png',
-        js: 'text/javascript',
-        json: 'text/json',
-        html: 'text/html',
         css: 'text/css',
-        svg: 'image/svg+xml'
+        js: 'text/javascript',
+        json: 'application/json',
+        html: 'text/html',
+        ico: 'image/x-icon',
+        png: 'image/png',
+        svg: 'image/svg+xml',
+        xml: 'application/xml'
     };
 
     http.createServer((req, res) => {
@@ -1060,21 +1061,22 @@ const startServer = () => {
         }
 
         if (req.method === 'GET') {
-            let ti = path.lastIndexOf('.');
-            if (ti < 0 || path.length === 0) {
+            let lastSlash = path.lastIndexOf('/');
+            if (path.length === 0 || (path.length - 1) === lastSlash) {
                 file = 'index.html';
-                res.writeHead(200, { 'Content-Type': mimes.html });
             } else {
-                file = path.substr(path.lastIndexOf('/') + 1);
-                res.writeHead(200, {
-                    'Content-Type': mimes[path.substr(ti + 1)] || mimes.html
-                });
+                file = path.substr(lastSlash + 1);
             }
 
             let ext = file.substr(file.lastIndexOf('.') + 1);
-            if (['js', 'json', 'css', 'svg', 'png', 'jpg', 'html', 'ico'].indexOf(ext) === -1) {
+            if (Object.keys(mimes).indexOf(ext) === -1) {
+                ext = 'html';
                 file += '.html';
             }
+
+            res.writeHead(200, {
+                'Content-Type': mimes[ext] || mimes.html
+            });
 
             return fs.readFile(apiPath + filePath + file, (err, data) => {
                 if (err) {
@@ -1100,7 +1102,7 @@ let apiServerRunning = false;
  */
 const jsdoc = () => {
     const optionsClassReference = {
-        templateDir: './../highcharts-docstrap',
+        templateDir: './node_modules/highcharts-docstrap',
         destination: './build/api/class-reference/'
     };
     const optionsAPI = {
@@ -1112,7 +1114,8 @@ const jsdoc = () => {
     const dir = optionsClassReference.templateDir;
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
-        './../api-docs/include/*.*',
+        './node_modules/highcharts-api-docs-gen/include/*.*',
+        './node_modules/highcharts-api-docs-gen/templates/*.handlebars',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
@@ -1144,6 +1147,7 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
 gulp.task('jsdoc', jsdoc);
 gulp.task('styles', styles);
+
 /**
  * Gulp task to run the building process of distribution files. By default it
  * builds all the distribution files. Usage: "gulp build".

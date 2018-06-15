@@ -901,6 +901,15 @@ H.defaultOptions = {
          * transformed into the polar coordinate system. Requires
          * `highcharts-more.js`.
          *
+         * @sample {highcharts} highcharts/demo/polar/
+         *         Polar chart
+         * @sample {highcharts} highcharts/demo/polar-wind-rose/
+         *         Wind rose, stacked polar column chart
+         * @sample {highcharts} highcharts/demo/polar-spider/
+         *         Spider web chart
+         * @sample {highcharts} highcharts/parallel-coordinates/polar/
+         *         Star plot, multivariate data in a polar chart
+         *
          * @type {Boolean}
          * @default false
          * @since 2.3.0
@@ -2335,7 +2344,7 @@ H.defaultOptions = {
          *
          * @type {CSSObject}
          * @see In styled mode, the loading label is styled with the
-         * `.highcharts-legend-loading-inner` class.
+         * `.highcharts-loading-inner` class.
          * @sample {highcharts|highmaps} highcharts/loading/labelstyle/ Vertically centered
          * @sample {highstock} stock/loading/general/ Label styles
          * @default { "fontWeight": "bold", "position": "relative", "top": "45%" }
@@ -2351,7 +2360,7 @@ H.defaultOptions = {
          * CSS styles for the loading screen that covers the plot area.
          *
          * In styled mode, the loading label is styled with the
-         * `.highcharts-legend-loading` class.
+         * `.highcharts-loading` class.
          *
          * @type    {CSSObject}
          * @sample  {highcharts|highmaps} highcharts/loading/style/

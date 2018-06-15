@@ -7,7 +7,7 @@ const isString = x => typeof x === 'string';
 const isFunction = x => typeof x === 'function';
 const isArray = x => Array.isArray(x);
 
-const getFile = require('highcharts-assembler/src/utilities.js').getFile;
+const fs = require('fs');
 
 const asyncForeach = (arr, fn) => {
     const length = arr.length;
@@ -40,10 +40,19 @@ const uploadFiles = (params) => {
     const storage = require('./tools/jsdoc/storage/cdn.storage');
     const mimeType = {
         'css': 'text/css',
+        'eot': 'application/vnd.ms-fontobject',
+        'gif': 'image/gif',
         'html': 'text/html',
+        'ico': 'image/x-icon',
+        'jpeg': 'image/jpeg',
+        'jpg': 'image/jpeg',
         'js': 'text/javascript',
         'json': 'application/json',
-        'svg': 'image/svg+xml'
+        'png': 'image/png',
+        'svg': 'image/svg+xml',
+        'ttf': 'application/font-sfnt',
+        'woff': 'application/font-woff',
+        'woff2': 'application/font-woff'
     };
     const {
         batchSize,
@@ -62,10 +71,12 @@ const uploadFiles = (params) => {
             const { from, to } = file;
             let filePromise;
             if (isString(from) && isString(to)) {
-                const content = getFile(from);
-                if (isString(content)) {
-                    const fileType = from.split('.').pop();
-                    filePromise = storage.push(cdn, to, content, mimeType[fileType])
+                // empty encoding -> read as binary buffer
+                const content = fs.readFileSync(from, '');
+                const fileType = from.split('.').pop();
+                let fileMime = mimeType[fileType];
+                if (content && content.length > 0) {
+                    filePromise = storage.push(cdn, to, content, fileMime)
                         .then(() => isFunction(callback) && callback())
                         .catch((err) => {
                             const error = {

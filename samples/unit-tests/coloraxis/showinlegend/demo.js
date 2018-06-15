@@ -43,9 +43,12 @@ QUnit.test('showInLegend. #5544', function (assert) {
             showInLegend: false
         }
     });
-    var colorAxisItem = chart.legend.getAllItems().find(function (item) {
-        return item instanceof Highcharts.ColorAxis;
-    });
+    var colorAxisItem = Highcharts.find(
+        chart.legend.getAllItems(),
+        function (item) {
+            return item instanceof Highcharts.ColorAxis;
+        }
+    );
     assert.ok(!colorAxisItem, 'colorAxis.showInLegend: false');
 
     chart.series[0].points[0].onMouseOver();

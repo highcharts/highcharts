@@ -382,6 +382,14 @@
             '2016-05-07',
             dateFormat('%Y-%m-%d', new Date('Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight Time)'))
         );
+
+        // Issue #8150
+        assertEquals(
+            assert,
+            'Issue #8150, month without leading zero',
+            '10/4 2018',
+            dateFormat('%e/%o %Y', Date.UTC(2018, 3, 10))
+        );
     });
 
 
@@ -843,5 +851,21 @@
             '-1000',
             'The same number, no error (#5308)'
         );
+    });
+
+
+    QUnit.test('getStyle', function (assert) {
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        div.style.padding = '10px';
+        div.style.display = 'none';
+
+        assert.strictEqual(
+            Highcharts.getStyle(div, 'width'),
+            0,
+            'Width should not be negative (#8377)'
+        );
+
+        document.body.removeChild(div);
     });
 }());

@@ -127,6 +127,8 @@ if (!H.radialAxisExtended) {
                 options.plotBands = [];
             }
 
+            H.fireEvent(this, 'afterSetOptions');
+
         },
 
         /**

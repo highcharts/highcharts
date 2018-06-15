@@ -115,7 +115,7 @@ H.setOptions({
                  * An array of boxes to avoid when laying out the labels. Each
                  * item has a `left`, `right`, `top` and `bottom` property.
                  *
-                 * @type {Array.<Object>}
+                 * @type {Array<Object>}
                  */
                 boxesToAvoid: []
             }
@@ -549,6 +549,12 @@ Chart.prototype.drawSeriesLabels = function () {
                 y >= paneTop && y <= paneTop + paneHeight - bBox.height;
         }
 
+        function destroyLabel() {
+            if (label) {
+                series.labelBySeries = label.destroy();
+            }
+        }
+
         if (series.visible && !series.isSeriesBoosting && points) {
             if (!label) {
                 series.labelBySeries = label = chart.renderer
@@ -747,9 +753,11 @@ Chart.prototype.drawSeriesLabels = function () {
 
                 }
 
-            } else if (label) {
-                series.labelBySeries = label.destroy();
+            } else {
+                destroyLabel();
             }
+        } else {
+            destroyLabel();
         }
     });
     // console.timeEnd('drawSeriesLabels');

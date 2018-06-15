@@ -534,7 +534,7 @@ Highcharts.Legend.prototype = {
      * Get all items, which is one item per series for most series and one
      * item per point for pie series and its derivatives.
      *
-     * @return {Array.<Series|Point>}
+     * @return {Array<Series|Point>}
      *         The current items in the legend.
      */
     getAllItems: function () {

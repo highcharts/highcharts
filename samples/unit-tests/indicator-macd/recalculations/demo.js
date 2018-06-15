@@ -295,4 +295,18 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         chart.series[1].currentDataGrouping !== undefined,
         'DataGrouping applied to MACD series too (#7823).'
     );
+
+
+    Highcharts.seriesTypes.macd.prototype.getValues(
+        {
+            xData: [0],
+            yData: [1]
+        },
+        Highcharts.getOptions().plotOptions.macd.params
+    );
+
+    assert.ok(
+        true,
+        'No error when periods are greater than data length (#8376).'
+    );
 });

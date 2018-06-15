@@ -44,6 +44,14 @@ addEvent(Chart, 'afterInit', function () {
         });
     }
 });
+// And do it on dynamic add (#8407)
+addEvent(Chart, 'addSeries', function (e) {
+    if (this.is3d()) {
+        if (e.options.type === 'scatter') {
+            e.options.type = 'scatter3d';
+        }
+    }
+});
 
 /**
  * Calculate scale of the 3D view. That is required to

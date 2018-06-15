@@ -17,6 +17,7 @@ var Doclet = require('jsdoc/doclet.js').Doclet;
 var colors = require('colors');
 var fs = require('fs');
 var getPalette = require('highcharts-assembler/src/process.js').getPalette;
+var path = require('path');
 var options = {
     _meta: {
         commit: '',
@@ -34,6 +35,7 @@ function getLocation(option) {
             option.key.loc.end
     };
 }
+
 function dumpOptions() {
     fs.writeFile(
         'tree.json',
@@ -46,6 +48,121 @@ function dumpOptions() {
             //console.log('Wrote tree!');
         }
     );
+}
+
+function createSitemaps() {
+    let manualBoost = {
+            'plotOptions.series': 100,
+        },
+        sitemapIndex = [],
+        sitemaps = {};
+    // Add function for option sitemaps
+    function addToSitemaps(node, boost, parentProducts) {
+        if (!node.doclet ||
+            !node.meta ||
+            !node.meta.fullname
+        ) {
+            return;
+        }
+        boost = (manualBoost[node.meta.fullname] || boost);
+        let products = (parentProducts || node.doclet.products);
+        for (var i = 0, ie = products.length; i < ie; ++i) {
+            let product = products[i];
+            sitemaps[product] = (sitemaps[product] || [])
+            sitemaps[product].push(
+                '<url><loc>https://api.highcharts.com/' + product + '/' +
+                node.meta.fullname + '.html</loc><priority>' +
+                (boost / 100) +
+                '</priority></url>'
+            );
+        }
+        if (!node.children) {
+            return;
+        }
+        boost -= 5;
+        for (var child in node.children) {
+            addToSitemaps(node.children[child], boost, products);
+        }
+    }
+    // Directory function
+    function createDirectoriesSync(dirPath, mode, callback) {
+        try {
+            fs.mkdirSync(dirPath, mode);
+            callback && callback();
+        } catch (error) {
+            if (error.errno === 34) {
+                createDirectoriesSync(path.dirname(dirPath), mode, callback);
+                createDirectoriesSync(dirPath, mode, callback);
+            }
+        }
+    };
+    // Add Highcharts options
+    for (var option in options) {
+        if (options[option].doclet &&
+            options[option].doclet.products
+        ) {
+            addToSitemaps(options[option], 100,
+                options[option].doclet.products
+            );
+        } else {
+            addToSitemaps(options[option], 100, [
+                'highcharts', 'highstock', 'highmaps'
+            ]);
+        }
+    }
+    // Add Highcharts class reference to products
+    sitemaps['class-reference'] = (sitemaps['class-reference'] || []);
+    fs.readdirSync('build/api/class-reference').forEach(function (fileName) {
+        if (fileName.lastIndexOf('.html') != fileName.length - 5) {
+            return;
+        }
+        sitemaps['class-reference'].push(
+            '<url><loc>https://api.highcharts.com/class-reference/' + fileName +
+            '</loc><priority>0.75</priority></url>'
+        );
+    });
+    // Add Highcharts products to sitemap index
+    for (var product in sitemaps) {
+        sitemapIndex.push(
+            '<sitemap><loc>https://api.highcharts.com/' + product +
+            '/sitemap.xml</loc></sitemap>'
+        );
+    }
+    // Add Highcharts wrapper to sitemap index
+    sitemapIndex.push(
+        '<sitemap><loc>'+
+        'https://api.highcharts.com/ios/highcharts/sitemap.xml' +
+        '</loc></sitemap>'
+    );
+    sitemapIndex.push(
+        '<sitemap><loc>'+
+        'https://api.highcharts.com/android/highcharts/sitemap.xml' +
+        '</loc></sitemap>'
+    );
+    // Write sitemaps
+    try {
+        createDirectoriesSync('build/api');
+        fs.writeFileSync(
+            'build/api/sitemap.xml',
+            '<?xml version="1.0" encoding="UTF-8"?>' +
+            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
+            sitemapIndex.sort().join('') +
+            '</sitemapindex>'
+        );
+        for (var product in sitemaps) {
+            createDirectoriesSync('build/api/' + product);
+            fs.writeFileSync(
+                'build/api/' + product + '/sitemap.xml',
+                '<?xml version="1.0" encoding="UTF-8"?>' +
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
+                sitemaps[product].sort().join('') +
+                '</urlset>'
+            );
+        }
+        //console.log('Wrote sitemaps!');
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 function resolveBinaryExpression(node) {
@@ -692,6 +809,11 @@ before functional code for JSDoc to see them.`.yellow
             // Infer types
             if (obj.children) {
                 Object.keys(obj.children).forEach(function (child) {
+                    // work around #8260:
+                    if (child === '' || child === 'undefined') {
+                        delete obj.children[child];
+                        return;
+                    }
                     inferTypeForTree(obj.children[child]);
                 });
             }
@@ -737,6 +859,11 @@ Highcharts.chart('container', {
         }
 
         Object.keys(options).forEach(function (name) {
+            // work around #8260:
+            if (name === '' || name === 'undefined') {
+                delete options[name];
+                return;
+            }
             if (name !== '_meta') {
                 inferTypeForTree(options[name]);
             }
@@ -747,5 +874,6 @@ Highcharts.chart('container', {
         // console.log(Object.keys(files));
 
         dumpOptions();
+        // createSitemaps();
     }
 };
