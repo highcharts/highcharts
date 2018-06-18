@@ -1585,10 +1585,10 @@ H.keys = function (obj) {
  * @returns {Mixed} - The reduced value.
  */
 H.reduce = function (arr, func, initialValue) {
-    return (H.reducePolyfill || Array.prototype.reduce).call(
+    var fn = (H.reducePolyfill || Array.prototype.reduce);
+    return fn.apply(
         arr,
-        func,
-        initialValue
+        (arguments.length > 2 ? [func, initialValue] : [func])
     );
 };
 

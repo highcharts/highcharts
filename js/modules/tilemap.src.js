@@ -437,7 +437,7 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
                 series.getSeriesPixelPadding(axis);
         }), function (a, b) {
             return (a && a.padding) > (b && b.padding) ? a : b;
-        }) || {
+        }, undefined) || {
             padding: 0,
             axisLengthFactor: 1
         },
