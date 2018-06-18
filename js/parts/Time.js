@@ -217,7 +217,7 @@ Highcharts.Time.prototype = {
          * set in the global options.
          *
          * @function #getTimezoneOffset
-         * @memberOf Highcharts.Time
+         * @memberof Highcharts.Time
          * @param  {Number} timestamp
          *         The JavaScript timestamp to inspect.
          * @return {Number}
@@ -506,7 +506,7 @@ Highcharts.Time.prototype = {
                  *
                  * @type {Object}
                  * @name dateFormats
-                 * @memberOf Highcharts
+                 * @memberof Highcharts
                  * @sample highcharts/global/dateformats/
                  *         Adding support for week
                  * number

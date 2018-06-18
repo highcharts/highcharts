@@ -3038,7 +3038,7 @@ H.defaultOptions = {
  * structure. Commonly used for defining reusable templates.
  *
  * @function #setOptions
- * @memberOf Highcharts
+ * @memberof Highcharts
  * @sample highcharts/global/useutc-false Setting a global option
  * @sample highcharts/members/setoptions Applying a global theme
  * @param {Object} options The new custom chart options.
@@ -3088,7 +3088,7 @@ H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
  * `setOptions`.
  *
  * @function #dateFormat
- * @memberOf Highcharts
+ * @memberof Highcharts
  * @param {String} format - The desired format where various time
  *        representations are prefixed with %.
  * @param {Number} timestamp - The JavaScript timestamp.
