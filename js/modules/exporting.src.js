@@ -1049,7 +1049,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 userMin = extremes.userMin,
                 userMax = extremes.userMax;
 
-            if (axisCopy && (userMin !== undefined || userMax !== undefined)) {
+            if (
+                axisCopy &&
+                (
+                    (userMin !== undefined && userMin !== axisCopy.min) ||
+                    (userMax !== undefined && userMax !== axisCopy.max)
+                )
+            ) {
                 axisCopy.setExtremes(userMin, userMax, true, false);
             }
         });
@@ -1865,30 +1871,35 @@ Chart.prototype.callbacks.push(function (chart) {
     // Uncomment this to see a button directly below the chart, for quick
     // testing of export
     /*
+    var button, viewImage, viewSource;
     if (!chart.renderer.forExport) {
-        var button;
-
-        // View SVG Image
-        button = doc.createElement('button');
-        button.innerHTML = 'View SVG Image';
-        chart.renderTo.parentNode.appendChild(button);
-        button.onclick = function () {
+        viewImage = function () {
             var div = doc.createElement('div');
             div.innerHTML = chart.getSVGForExport();
             chart.renderTo.parentNode.appendChild(div);
         };
 
-        // View SVG Source
-        button = doc.createElement('button');
-        button.innerHTML = 'View SVG Source';
-        chart.renderTo.parentNode.appendChild(button);
-        button.onclick = function () {
+        viewSource = function () {
             var pre = doc.createElement('pre');
             pre.innerHTML = chart.getSVGForExport()
                 .replace(/</g, '\n&lt;')
                 .replace(/>/g, '&gt;');
             chart.renderTo.parentNode.appendChild(pre);
         };
+
+        viewImage();
+
+        // View SVG Image
+        button = doc.createElement('button');
+        button.innerHTML = 'View SVG Image';
+        chart.renderTo.parentNode.appendChild(button);
+        button.onclick = viewImage;
+
+        // View SVG Source
+        button = doc.createElement('button');
+        button.innerHTML = 'View SVG Source';
+        chart.renderTo.parentNode.appendChild(button);
+        button.onclick = viewSource;
     }
     //*/
 });

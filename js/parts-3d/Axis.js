@@ -422,8 +422,6 @@ function fix3dPosition(axis, pos, isTitle) {
             projected.y * projected.matrix[2];
         projected.matrix[5] -= projected.x * projected.matrix[1] +
             projected.y * projected.matrix[3];
-    } else {
-        projected.matrix = null;
     }
 
     return projected;

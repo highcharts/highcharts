@@ -1403,20 +1403,22 @@ Navigator.prototype = {
             baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis ||
                 chart.xAxis[0] || { options: {} };
 
+
         // Make room for the navigator, can be placed around the chart:
-        chart.extraMargin = {
-            type: navigator.opposite ? 'plotTop' : 'marginBottom',
-            value: (
+        addEvent(chart, 'getMargins', function () {
+            var marginName = navigator.opposite ? 'plotTop' : 'marginBottom';
+            if (chart.inverted) {
+                marginName = navigator.opposite ? 'marginRight' : 'plotLeft';
+            }
+
+            chart[marginName] = (chart[marginName] || 0) + (
                 navigatorEnabled || !chart.inverted ?
                     navigator.outlineHeight :
                     0
-            ) + navigatorOptions.margin
-        };
-        if (chart.inverted) {
-            chart.extraMargin.type = navigator.opposite ?
-                'marginRight' :
-                'plotLeft';
-        }
+            ) + navigatorOptions.margin;
+
+        });
+
         chart.isDirtyBox = true;
 
         if (navigator.navigatorEnabled) {

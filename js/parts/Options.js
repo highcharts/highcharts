@@ -3038,7 +3038,7 @@ H.defaultOptions = {
  * structure. Commonly used for defining reusable templates.
  *
  * @function #setOptions
- * @memberOf  Highcharts
+ * @memberOf Highcharts
  * @sample highcharts/global/useutc-false Setting a global option
  * @sample highcharts/members/setoptions Applying a global theme
  * @param {Object} options The new custom chart options.

@@ -349,7 +349,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 chart.setReflow(optionsChart.reflow);
             }
 
-            if ('inverted' in optionsChart || 'polar' in optionsChart) {
+            if (
+                'inverted' in optionsChart ||
+                'polar' in optionsChart ||
+                'type' in optionsChart
+            ) {
                 // Parse options.chart.inverted and options.chart.polar together
                 // with the available series.
                 chart.propFromSeries();
@@ -1054,7 +1058,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
     update: function (options, redraw) {
         var chart = this.chart,
-            newEvents = (options.events || {});
+            newEvents = ((options && options.events) || {});
 
         options = merge(this.userOptions, options);
 
