@@ -1,9 +1,6 @@
 
-// We use a darker border for some states, with a smaller border width, but
-// individual border width is not supported for MS browsers, so we use a 1px
-// border for all points on MS browsers.
-var isMSBrowser = /Edge\/|Trident\/|MSIE /.test(navigator.userAgent),
-    darkBorderColor = '#ccc';
+// We use a darker border for some states
+var darkBorderColor = '#ccc';
 
 
 // Define the data, linking flags to each point's color.pattern.image. We
@@ -114,7 +111,6 @@ Highcharts.mapChart('container', {
         ],
         joinBy: 'name',
         data: data,
-        borderWidth: isMSBrowser ? 1 : 5,
         borderColor: '#fff',
         color: {
             pattern: {

@@ -69,7 +69,8 @@ seriesType('treemap', 'scatter', {
      * zoom in on its children.
      *
      * @type {Boolean}
-     * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/ Enabled
+     * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/
+     *         Enabled
      * @default false
      * @since 4.1.0
      * @product highcharts
@@ -100,8 +101,12 @@ seriesType('treemap', 'scatter', {
      * be false by default.
      *
      * @type {Boolean}
-     * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-false/ False
-     * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowdrilltonode/ InteractByLeaf and allowDrillToNode is true
+     * @sample {highcharts}
+     *         highcharts/plotoptions/treemap-interactbyleaf-false/
+     *         False
+     * @sample {highcharts}
+     *         highcharts/plotoptions/treemap-interactbyleaf-true-and-allowdrilltonode/
+     *         InteractByLeaf and allowDrillToNode is true
      * @since 4.1.2
      * @product highcharts
      * @apioption plotOptions.treemap.interactByLeaf
@@ -111,7 +116,8 @@ seriesType('treemap', 'scatter', {
      * The sort index of the point inside the treemap level.
      *
      * @type {Number}
-     * @sample {highcharts} highcharts/plotoptions/treemap-sortindex/ Sort by years
+     * @sample {highcharts} highcharts/plotoptions/treemap-sortindex/
+     *         Sort by years
      * @since 4.1.10
      * @product highcharts
      * @apioption plotOptions.treemap.sortIndex
@@ -192,12 +198,21 @@ seriesType('treemap', 'scatter', {
      *
      * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
      * @type {String}
-     * @see [How to write your own algorithm](http://www.highcharts.com/docs/chart-
-     * and-series-types/treemap)
-     * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-sliceanddice/ SliceAndDice by default
-     * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-stripes/ Stripes
-     * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-squarified/ Squarified
-     * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-strip/ Strip
+     * @see [How to write your own algorithm](
+     * http://www.highcharts.com/docs/chart-and-series-types/treemap).
+     *
+     * @sample  {highcharts}
+     *          highcharts/plotoptions/treemap-layoutalgorithm-sliceanddice/
+     *          SliceAndDice by default
+     * @sample  {highcharts}
+     *          highcharts/plotoptions/treemap-layoutalgorithm-stripes/
+     *          Stripes
+     * @sample  {highcharts}
+     *          highcharts/plotoptions/treemap-layoutalgorithm-squarified/
+     *          Squarified
+     * @sample  {highcharts}
+     *          highcharts/plotoptions/treemap-layoutalgorithm-strip/
+     *          Strip
      * @default sliceAndDice
      * @since 4.1.0
      * @product highcharts
@@ -222,7 +237,9 @@ seriesType('treemap', 'scatter', {
      * direction will always be the opposite of the previous.
      *
      * @type {Boolean}
-     * @sample {highcharts} highcharts/plotoptions/treemap-alternatestartingdirection-true/ Enabled
+     * @sample  {highcharts}
+     *          highcharts/plotoptions/treemap-alternatestartingdirection-true/
+     *          Enabled
      * @default false
      * @since 4.1.0
      * @product highcharts

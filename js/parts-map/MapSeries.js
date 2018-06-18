@@ -14,7 +14,6 @@ import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 var colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
-    doc = H.doc,
     each = H.each,
     extend = H.extend,
     isNumber = H.isNumber,
@@ -29,11 +28,6 @@ var colorPointMixin = H.colorPointMixin,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     splat = H.splat;
-
-// The vector-effect attribute is not supported in IE <= 11 (at least), so we
-// need diffent logic (#3218)
-var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
-
 
 /**
  * The map series is used for basic choropleth maps, where each map area has a
@@ -676,15 +670,18 @@ seriesType('map', 'scatter', {
         attr = this.colorAttribs(point);
         /*= } =*/
 
-        // If vector-effect is not supported, we set the stroke-width on the
-        // group element and let all point graphics inherit. That way we don't
-        // have to iterate over all points to update the stroke-width on
-        // zooming.
-        if (supportsVectorEffect) {
-            attr['vector-effect'] = 'non-scaling-stroke';
-        } else {
-            attr['stroke-width'] = 'inherit';
-        }
+        // Set the stroke-width on the group element and let all point graphics
+        // inherit. That way we don't have to iterate over all points to update
+        // the stroke-width on zooming.
+        attr['stroke-width'] = pick(
+            point.options[
+                (
+                    this.pointAttrToOptions &&
+                    this.pointAttrToOptions['stroke-width']
+                ) || 'borderWidth'
+            ],
+            'inherit'
+        );
 
         return attr;
     },
@@ -864,17 +861,18 @@ seriesType('map', 'scatter', {
         // Set the stroke-width directly on the group element so the children
         // inherit it. We need to use setAttribute directly, because the
         // stroke-widthSetter method expects a stroke color also to be set.
-        if (!supportsVectorEffect) {
-            series.group.element.setAttribute(
-                'stroke-width',
+        group.element.setAttribute(
+            'stroke-width',
+            (
                 series.options[
                     (
                         series.pointAttrToOptions &&
                         series.pointAttrToOptions['stroke-width']
                     ) || 'borderWidth'
-                ] / (scaleX || 1)
-            );
-        }
+                ] ||
+                1 // Styled mode
+            ) / (scaleX || 1)
+        );
 
         this.drawMapDataLabels();
 

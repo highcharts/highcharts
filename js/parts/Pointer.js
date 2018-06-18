@@ -163,7 +163,7 @@ Highcharts.Pointer.prototype = {
      * Finds the closest point to a set of coordinates, using the k-d-tree
      * algorithm.
      *
-     * @param  {Array.<Series>} series
+     * @param  {Array<Series>} series
      *         All the series to search in.
      * @param  {boolean} shared
      *         Whether it is a shared tooltip or not.
@@ -265,7 +265,7 @@ Highcharts.Pointer.prototype = {
      *         The point currrently beeing hovered.
      * @param  {undefined|Series} existingHoverSeries
      *         The series currently beeing hovered.
-     * @param  {Array.<Series>} series
+     * @param  {Array<Series>} series
      *         All the series in the chart.
      * @param  {boolean} isDirectTouch
      *         Is the pointer directly hovering the point.

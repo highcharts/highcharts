@@ -309,7 +309,7 @@ MockPoint.prototype = {
      *
      * @param {Boolean} [forceTranslate=false] - whether to update the point's
      * coordinates
-     * @return {Array.<Number>} A quadruple of numbers which denotes x, y,
+     * @return {Array<Number>} A quadruple of numbers which denotes x, y,
      * width and height of the box
     **/
     alignToBox: function (forceTranslate) {
@@ -426,7 +426,16 @@ var Annotation = H.Annotation = function (chart, userOptions) {
     this.shapes = [];
 
     /**
-     * The options for the annotations. It containers user defined options
+     * The user options for the annotations.
+     *
+     * @name options
+     * @memberOf Highcharts.Annotation#
+     * @type {AnnotationOptions}
+     */
+    this.userOptions = userOptions;
+
+    /**
+     * The options for the annotations. It contains user defined options
      * merged with the default options.
      *
      * @name options
@@ -480,7 +489,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
      * Shapes which do not have background - the object is used for proper
      * setting of the contrast color
      *
-     * @type {Array.<String>}
+     * @type {Array<String>}
      * @private
      */
     shapesWithoutBackground: ['connector'],
@@ -1052,17 +1061,15 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
      * {@link Highcharts.Chart#removeAnnotation} instead.
     **/
     destroy: function () {
-        var chart = this.chart;
+        var chart = this.chart,
+            destroyItem = function (item) {
+                item.destroy();
+            };
 
         erase(this.chart.labelCollectors, this.labelCollector);
 
-        each(this.labels, function (label) {
-            label.destroy();
-        });
-
-        each(this.shapes, function (shape) {
-            shape.destroy();
-        });
+        each(this.labels, destroyItem);
+        each(this.shapes, destroyItem);
 
         destroyObjectProperties(this, chart);
     },
@@ -1722,6 +1729,7 @@ H.extend(chartPrototype, /** @lends Chart# */ {
         var annotation = new Annotation(this, userOptions);
 
         this.annotations.push(annotation);
+        this.options.annotations.push(userOptions);
 
         if (pick(redraw, true)) {
             annotation.redraw();
@@ -1742,6 +1750,7 @@ H.extend(chartPrototype, /** @lends Chart# */ {
             });
 
         if (annotation) {
+            erase(this.options.annotations, annotation.userOptions);
             erase(annotations, annotation);
             annotation.destroy();
         }
@@ -1773,7 +1782,9 @@ chartPrototype.callbacks.push(function (chart) {
     chart.annotations = [];
 
     each(chart.options.annotations, function (annotationOptions) {
-        chart.addAnnotation(annotationOptions, false);
+        chart.annotations.push(
+            new Annotation(chart, annotationOptions)
+        );
     });
 
     chart.drawAnnotations();

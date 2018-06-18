@@ -312,6 +312,10 @@ seriesType('macd', 'sma',
                 longEMA,
                 i;
 
+            if (series.xData.length < params.longPeriod) {
+                return false;
+            }
+
             // Calculating the short and long EMA used when calculating the MACD
             shortEMA = EMA.prototype.getValues(series,
                 {
@@ -332,7 +336,12 @@ seriesType('macd', 'sma',
             // Subtract each Y value from the EMA's and create the new dataset
             // (MACD)
             for (i = 1; i <= shortEMA.length; i++) {
-                if (defined(longEMA[i - 1]) && defined(longEMA[i - 1][1])) {
+                if (
+                    defined(longEMA[i - 1]) &&
+                    defined(longEMA[i - 1][1]) &&
+                    defined(shortEMA[i + params.shortPeriod + 1]) &&
+                    defined(shortEMA[i + params.shortPeriod + 1][0])
+                    ) {
                     MACD.push([
                         shortEMA[i + params.shortPeriod + 1][0],
                         0,

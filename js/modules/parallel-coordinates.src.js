@@ -54,6 +54,8 @@ var defaultParallelOptions = {
      *
      * @sample {highcharts} /highcharts/demo/parallel-coordinates/
      *         Parallel coordinates demo
+     * @sample {highcharts} highcharts/parallel-coordinates/polar/
+     *         Star plot, multivariate data in a polar chart
      * @since 6.0.0
      * @product highcharts
      */
@@ -154,7 +156,9 @@ addEvent(Chart, 'init', function (e) {
         if (!options.legend) {
             options.legend = {};
         }
-        options.legend.enabled = false;
+        if (options.legend.enabled === undefined) {
+            options.legend.enabled = false;
+        }
         merge(
             true,
             options,
@@ -309,13 +313,18 @@ extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
      * @param  {Object} options {@link Highcharts.Axis#options}.
      */
     setParallelPosition: function (axisPosition, options) {
-        options[axisPosition[0]] = 100 * (this.parallelPosition + 0.5) /
-            (this.chart.parallelInfo.counter + 1) + '%';
-        this[axisPosition[1]] = options[axisPosition[1]] = 0;
+        var fraction = (this.parallelPosition + 0.5) /
+            (this.chart.parallelInfo.counter + 1);
+        if (this.chart.polar) {
+            options.angle = 360 * fraction;
+        } else {
+            options[axisPosition[0]] = 100 * fraction + '%';
+            this[axisPosition[1]] = options[axisPosition[1]] = 0;
 
-        // In case of chart.update(inverted), remove old options:
-        this[axisPosition[2]] = options[axisPosition[2]] = null;
-        this[axisPosition[3]] = options[axisPosition[3]] = null;
+            // In case of chart.update(inverted), remove old options:
+            this[axisPosition[2]] = options[axisPosition[2]] = null;
+            this[axisPosition[3]] = options[axisPosition[3]] = null;
+        }
     }
 });
 
@@ -356,9 +365,18 @@ addEvent(H.Series, 'afterTranslate', function () {
         for (i = 0; i < dataLength; i++) {
             point = points[i];
             if (defined(point.y)) {
-                point.plotX = point.clientX = chart.inverted ?
-                    chart.plotHeight - chart.yAxis[i].top + chart.plotTop :
-                    chart.yAxis[i].left - chart.plotLeft;
+                if (chart.polar) {
+                    point.plotX = chart.yAxis[i].angleRad || 0;
+                } else if (chart.inverted) {
+                    point.plotX = (
+                        chart.plotHeight -
+                        chart.yAxis[i].top +
+                        chart.plotTop
+                    );
+                } else {
+                    point.plotX = chart.yAxis[i].left - chart.plotLeft;
+                }
+                point.clientX = point.plotX;
 
                 point.plotY = chart.yAxis[i]
                     .translate(point.y, false, true, null, true);
@@ -381,7 +399,7 @@ addEvent(H.Series, 'afterTranslate', function () {
         }
         this.closestPointRangePx = closestPointRangePx;
     }
-});
+}, { order: 1 });
 
 /**
  * On destroy, we need to remove series from each axis.series

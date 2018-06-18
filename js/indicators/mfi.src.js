@@ -13,12 +13,13 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var isArray = H.isArray;
+var isArray = H.isArray,
+    reduce = H.reduce;
 
     // Utils:
 function sumArray(array) {
 
-    return array.reduce(function (prev, cur) {
+    return reduce(array, function (prev, cur) {
         return prev + cur;
     });
 }

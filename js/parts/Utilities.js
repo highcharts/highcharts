@@ -1372,7 +1372,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
     // A string containing the positive integer component of the number
     strinteger = String(H.pInt(roundedNumber));
 
-    // Leftover after grouping into thousands. Can be 0, 1 or 3.
+    // Leftover after grouping into thousands. Can be 0, 1 or 2.
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
     // Language
@@ -1431,13 +1431,19 @@ H.getStyle = function (el, prop, toInt) {
 
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
-        return Math.min(el.offsetWidth, el.scrollWidth) -
-            H.getStyle(el, 'padding-left') -
-            H.getStyle(el, 'padding-right');
+        return Math.max(
+            0, // #8377
+            Math.min(el.offsetWidth, el.scrollWidth) -
+                H.getStyle(el, 'padding-left') -
+                H.getStyle(el, 'padding-right')
+        );
     } else if (prop === 'height') {
-        return Math.min(el.offsetHeight, el.scrollHeight) -
-            H.getStyle(el, 'padding-top') -
-            H.getStyle(el, 'padding-bottom');
+        return Math.max(
+            0, // #8377
+            Math.min(el.offsetHeight, el.scrollHeight) -
+                H.getStyle(el, 'padding-top') -
+                H.getStyle(el, 'padding-bottom')
+        );
     }
 
     if (!win.getComputedStyle) {
@@ -1579,10 +1585,10 @@ H.keys = function (obj) {
  * @returns {Mixed} - The reduced value.
  */
 H.reduce = function (arr, func, initialValue) {
-    return (H.reducePolyfill || Array.prototype.reduce).call(
+    var fn = (H.reducePolyfill || Array.prototype.reduce);
+    return fn.apply(
         arr,
-        func,
-        initialValue
+        (arguments.length > 2 ? [func, initialValue] : [func])
     );
 };
 
@@ -1597,7 +1603,7 @@ H.reduce = function (arr, func, initialValue) {
  */
 H.offset = function (el) {
     var docElem = doc.documentElement,
-        box = el.parentElement ? // IE11 throws Unspecified error in test suite
+        box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
             { top: 0, left: 0 };
 
@@ -1683,9 +1689,15 @@ H.objectEach = function (obj, fn, ctx) {
  * @param {String} type - The event type.
  * @param {Function} fn - The function callback to execute when the event is
  *        fired.
+ * @param {Object} options
+ *        Event options
+ * @param {Number} options.order
+ *        The order the event handler should be called. This opens for having
+ *        one handler be called before another, independent of in which order
+ *        they were added.
  * @returns {Function} A callback function to remove the added event.
  */
-H.addEvent = function (el, type, fn) {
+H.addEvent = function (el, type, fn, options) {
 
     var events,
         addEventListener = el.addEventListener || H.addEventListenerPolyfill;
@@ -1699,6 +1711,12 @@ H.addEvent = function (el, type, fn) {
         events = el.hcEvents = el.hcEvents || {};
     }
 
+    // Allow click events added to points, otherwise they will be prevented by
+    // the TouchPointer.pinch function after a pinch zoom operation (#7091).
+    if (H.Point && el instanceof H.Point && el.series && el.series.chart) {
+        el.series.chart.runTrackerClick = true;
+    }
+
     // Handle DOM events
     if (addEventListener) {
         addEventListener.call(el, type, fn, false);
@@ -1709,6 +1727,14 @@ H.addEvent = function (el, type, fn) {
     }
 
     events[type].push(fn);
+
+    // Order the calls
+    if (options && H.isNumber(options.order)) {
+        fn.order = options.order;
+        events[type].sort(function (a, b) {
+            return a.order - b.order;
+        });
+    }
 
     // Return a function that can be called to remove this event.
     return function () {

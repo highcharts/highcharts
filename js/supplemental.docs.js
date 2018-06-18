@@ -812,6 +812,20 @@
  */
 
 /**
+ * This option determines how stacks should be ordered within a group.
+ * For example reversed xAxis also reverses stacks, so first series comes last
+ * in a group. To keep order like for non-reversed xAxis enable this option.
+ *
+ * @type {Boolean}
+ * @sample {highcharts} highcharts/xaxis/reversedstacks/ Reversed stacks comparison
+ * @sample {highstock} highcharts/xaxis/reversedstacks/ Reversed stacks comparison
+ * @default false
+ * @since 6.1.1
+ * @product highcharts highstock
+ * @apioption xAxis.reversedStacks
+ */
+
+/**
  * If `true`, the first series in a stack will be drawn on top in a
  * positive, non-reversed Y axis. If `false`, the first series is in
  * the base of the stack.
@@ -1056,7 +1070,8 @@
 /**
  * The Z axis or depth axis for 3D plots.
  *
- * See [the Axis object](#Axis) for programmatic access to the axis.
+ * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
+ * access to the axis.
  *
  * @extends xAxis
  * @excluding breaks,crosshair,lineColor,lineWidth,nameToX,showEmpty

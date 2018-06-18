@@ -537,3 +537,70 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Navigator series visibility should be in sync with master series (#8374)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+                legend: {
+                    enabled: true
+                },
+                series: [{
+                    data: [1, 2, 3],
+                    visible: false
+                }, {
+                    showInNavigator: true,
+                    data: [30, 22, 10]
+                }]
+            }),
+            series0 = chart.series[0],
+            series1 = chart.series[1];
+
+        assert.strictEqual(
+            // This returns false, when series is hidden:
+            series0.navigatorSeries.visible === true,
+            // Directly visibile = false
+            series0.visible,
+            'Both series[0] and series[0].navigator should be hidden.'
+        );
+
+        assert.strictEqual(
+            series1.navigatorSeries.visible === true,
+            series1.visible,
+            'Both series[1] and series[1].navigator should be visible.'
+        );
+
+        series0.update({
+            visible: true
+        });
+
+        assert.strictEqual(
+            series0.navigatorSeries.visible === true,
+            series0.visible,
+            'Both series[0] and series[0].navigator should be visible.'
+        );
+
+        series1.update({
+            visible: false
+        });
+
+        assert.strictEqual(
+            series1.navigatorSeries.visible === true,
+            series1.visible,
+            'Both series[1] and series[1].navigator should be hidden.'
+        );
+
+        // Order of the events:
+        // - first execute callback for series.hide(), to show navigator series
+        // - then redraw the chart, including navigator series
+        series1.setVisible();
+
+        assert.strictEqual(
+            Highcharts.defined(series1.navigatorSeries.graph) &&
+                series1.navigatorSeries.group.visibility !== 'hidden',
+            true,
+            'Navigator series should be visible.'
+        );
+
+    }
+);

@@ -61,6 +61,12 @@ H.setOptions({
              */
             label: {
                 /**
+                 * The approximate pixel distance from the graph to the label.
+                 *
+                 * @since 6.1.1
+                 */
+                distance: 16,
+                /**
                  * Enable the series label per series.
                  */
                 enabled: true,
@@ -104,6 +110,22 @@ H.setOptions({
                 onArea: null,
 
                 /**
+                 * The placement of the label in the chart. Can be one of
+                 * `plotArea` or `right`. When `plotArea`, it is placed next to
+                 * the graph. When `right`, the chart reserves space for it to
+                 * the right of the plot area, so the label is drawn at the end
+                 * of the graph. The legend must not be aligned right in this
+                 * case, as it will conflict.
+                 *
+                 * @sample highcharts/series-label/placement-right
+                 *         Placement right
+                 * @validvalue ["plotArea", "right"]
+                 * @type {String}
+                 * @since 6.1.1
+                 */
+                placement: 'plotArea',
+
+                /**
                  * Styles for the series label. The color defaults to the series
                  * color, or a contrast color if `onArea`.
                  */
@@ -115,7 +137,7 @@ H.setOptions({
                  * An array of boxes to avoid when laying out the labels. Each
                  * item has a `left`, `right`, `top` and `bottom` property.
                  *
-                 * @type {Array.<Object>}
+                 * @type {Array<Object>}
                  */
                 boxesToAvoid: []
             }
@@ -154,9 +176,14 @@ function boxIntersectLine(x, y, w, h, x1, y1, x2, y2) {
 /**
  * General symbol definition for labels with connector
  */
-SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
-    var anchorX = options && options.anchorX,
-        anchorY = options && options.anchorY,
+SVGRenderer.prototype.symbols.connector = function (x, y, w, h, element) {
+    var anchorX = element && element.anchorX,
+        anchorY = element && element.anchorY,
+        sideConnector = (
+            element &&
+            element.parentGroup &&
+            element.parentGroup.sideConnector
+        ),
         path,
         yOffset,
         lateral = w / 2;
@@ -175,20 +202,20 @@ SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
         }
 
         // Anchor below label
-        if (anchorY > y + h) {
+        if (anchorY > y + h && !sideConnector) {
             path.push('L', x + lateral, y + h);
 
         // Anchor above label
-        } else if (anchorY < y) {
+        } else if (anchorY < y && !sideConnector) {
             path.push('L', x + lateral, y);
 
         // Anchor left of label
         } else if (anchorX < x) {
-            path.push('L', x, y + h / 2);
+            path.push('L', x - 2, y + h / 2);
 
         // Anchor right of label
         } else if (anchorX > x + w) {
-            path.push('L', x + w, y + h / 2);
+            path.push('L', x + w + 2, y + h / 2);
         }
     }
     return path || [];
@@ -204,7 +231,7 @@ Series.prototype.getPointsOnGraph = function () {
         return;
     }
 
-    var distance = 16,
+    var distance = this.options.label.distance,
         points = this.points,
         point,
         last,
@@ -227,9 +254,17 @@ Series.prototype.getPointsOnGraph = function () {
         onArea = pick(this.options.label.onArea, !!this.area),
         translatedThreshold = yAxis.getThreshold(this.options.threshold);
 
+
+    if (this.options.label.placement === 'right') {
+        last = points[points.length - 1];
+        interpolated.push({
+            chartX: paneLeft + this.chart.plotWidth + distance,
+            chartY: paneTop + last.plotY
+        });
+
     // For splines, get the point at length (possible caveat: peaks are not
     // correctly detected)
-    if (this.getPointSpline && node.getPointAtLength && !onArea) {
+    } else if (this.getPointSpline && node.getPointAtLength && !onArea) {
         // If it is animating towards a path definition, use that briefly, and
         // reset
         if (graph.toD) {
@@ -496,6 +531,63 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 
 };
 
+addEvent(Chart, 'getMargins', function () {
+    var chart = this,
+        maxLabelLength = 0;
+
+    each(this.series, function (series) {
+
+        var labelOptions = series.options.label,
+            onArea = labelOptions.onArea,
+            minFontSize = labelOptions.minFontSize,
+            maxFontSize = labelOptions.maxFontSize,
+            label = series.labelBySeries;
+
+        if (!label) {
+            series.labelBySeries = label = chart.renderer
+                .label(series.name, 0, -9999, 'connector')
+                .css(extend({
+                    color: onArea ?
+                        chart.renderer.getContrast(series.color) :
+                        series.color
+                }, series.options.label.style));
+
+            // Adapt label sizes to the sum of the data
+            if (minFontSize && maxFontSize) {
+                label.css({
+                    fontSize: series.labelFontSize(minFontSize, maxFontSize)
+                });
+            }
+
+            label
+                .attr({
+                    padding: 0,
+                    opacity: chart.renderer.forExport ? 1 : 0,
+                    stroke: series.color,
+                    'stroke-width': 1,
+                    zIndex: 3
+                })
+                .add();
+        }
+
+        if (labelOptions.placement === 'right') {
+            maxLabelLength = Math.max(
+                maxLabelLength,
+                label.getBBox().width + labelOptions.distance
+            );
+            label.sideConnector = true;
+        }
+    });
+
+    if (maxLabelLength) {
+        this.marginRight = Math.max(
+            this.marginRight,
+            maxLabelLength + chart.spacing[1]
+        );
+    }
+
+});
+
 /**
  * The main initiator method that runs on chart level after initiation and
  * redraw. It runs in  a timeout to prevent locking, and loops over all series,
@@ -508,6 +600,16 @@ Chart.prototype.drawSeriesLabels = function () {
     var chart = this,
         labelSeries = this.labelSeries;
 
+    function showSeriesLabel(series) {
+        return Boolean(
+            series.visible &&
+            !series.isSeriesBoosting &&
+            series.interpolatedPoints &&
+            series.xAxis &&
+            series.yAxis
+        );
+    }
+
     chart.boxesToAvoid = [];
 
     // Build the interpolated points
@@ -518,6 +620,26 @@ Chart.prototype.drawSeriesLabels = function () {
             chart.boxesToAvoid.push(box);
         });
     });
+
+    // Create distributed boxes for outside labels
+    var boxes = [];
+    each(chart.series, function (series) {
+        var box, height;
+        if (
+            showSeriesLabel(series) &&
+            series.options.label.placement === 'right'
+        ) {
+            box = series.interpolatedPoints[0];
+            height = series.labelBySeries.getBBox().height;
+
+            box.target = box.chartY;
+            box.size = height;
+            boxes.push(box);
+        }
+    });
+    if (boxes.length) {
+        H.distribute(boxes, chart.chartHeight, chart.chartHeight / 2);
+    }
 
     each(chart.series, function (series) {
 
@@ -541,51 +663,49 @@ Chart.prototype.drawSeriesLabels = function () {
             points = series.interpolatedPoints,
             onArea = pick(labelOptions.onArea, !!series.area),
             label = series.labelBySeries,
-            minFontSize = labelOptions.minFontSize,
-            maxFontSize = labelOptions.maxFontSize;
+            placementRight = labelOptions.placement === 'right';
 
         function insidePane(x, y, bBox) {
             return x > paneLeft && x <= paneLeft + paneWidth - bBox.width &&
                 y >= paneTop && y <= paneTop + paneHeight - bBox.height;
         }
 
-        if (series.visible && !series.isSeriesBoosting && points) {
-            if (!label) {
-                series.labelBySeries = label = chart.renderer
-                    .label(series.name, 0, -9999, 'connector')
-                    .css(extend({
-                        color: onArea ?
-                            chart.renderer.getContrast(series.color) :
-                            series.color
-                    }, series.options.label.style));
-
-                // Adapt label sizes to the sum of the data
-                if (minFontSize && maxFontSize) {
-                    label.css({
-                        fontSize: series.labelFontSize(minFontSize, maxFontSize)
-                    });
-                }
-
-                label
-                    .attr({
-                        padding: 0,
-                        opacity: chart.renderer.forExport ? 1 : 0,
-                        stroke: series.color,
-                        'stroke-width': 1,
-                        zIndex: 3
-                    })
-                    .add()
-                    .animate({ opacity: 1 }, { duration: 200 });
+        function destroyLabel() {
+            if (label) {
+                series.labelBySeries = label.destroy();
             }
+        }
+
+        if (showSeriesLabel(series)) {
+
+            // Show the label
+            label.animate({ opacity: 1 }, { duration: 200 });
 
             bBox = label.getBBox();
             bBox.width = Math.round(bBox.width);
 
             // Ideal positions are centered above or below a point on right side
             // of chart
-            for (i = points.length - 1; i > 0; i -= 1) {
+            for (i = points.length - 1; i >= 0; i -= 1) {
 
-                if (onArea) {
+                if (placementRight) {
+
+                    // We know where to put the label, just add one item
+                    var pos = {
+                        x: points[i].chartX,
+                        y: points[i].pos,
+                        weight: 1
+                    };
+                    if (Math.abs(
+                        points[i].target - points[i].size / 2 - points[i].pos
+                    ) > 5) {
+                        pos.connectorPoint =
+                            series.points[series.points.length - 1];
+                    }
+
+                    results.push(pos);
+
+                } else if (onArea) {
 
                     // Centered
                     x = points[i].chartX - bBox.width / 2;
@@ -703,7 +823,7 @@ Chart.prototype.drawSeriesLabels = function () {
                     Math.pow(Math.abs(best.y - label.y), 2)
                 );
 
-                if (dist) {
+                if (dist || placementRight) {
 
                     // Move fast and fade in - pure animation movement is
                     // distractive...
@@ -733,23 +853,26 @@ Chart.prototype.drawSeriesLabels = function () {
                         .animate(anim);
 
                     // Record closest point to stick to for sync redraw
-                    series.options.kdNow = true;
-                    series.buildKDTree();
-                    var closest = series.searchPoint({
-                        chartX: best.x,
-                        chartY: best.y
-                    }, true);
-                    label.closest = [
-                        closest,
-                        best.x - closest.plotX,
-                        best.y - closest.plotY
-                    ];
-
+                    if (!placementRight) {
+                        series.options.kdNow = true;
+                        series.buildKDTree();
+                        var closest = series.searchPoint({
+                            chartX: best.x,
+                            chartY: best.y
+                        }, true);
+                        label.closest = [
+                            closest,
+                            best.x - closest.plotX,
+                            best.y - closest.plotY
+                        ];
+                    }
                 }
 
-            } else if (label) {
-                series.labelBySeries = label.destroy();
+            } else {
+                destroyLabel();
             }
+        } else {
+            destroyLabel();
         }
     });
     // console.timeEnd('drawSeriesLabels');

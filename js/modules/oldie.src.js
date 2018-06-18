@@ -170,9 +170,10 @@ if (!Object.prototype.keys) {
 if (!Array.prototype.reduce) {
     H.reducePolyfill = function (func, initialValue) {
         var context = this,
-            accumulator = initialValue || {},
+            i = arguments.length > 1 ? 0 : 1,
+            accumulator = arguments.length > 1 ? initialValue : this[0],
             len = this.length;
-        for (var i = 0; i < len; ++i) {
+        for (; i < len; ++i) {
             accumulator = func.call(context, accumulator, this[i], i, this);
         }
         return accumulator;

@@ -1,6 +1,6 @@
 QUnit.test('series-line/type', function (assert) {
 
-    ChartTemplate.test('line-simple', {}, function (template) {
+    TestTemplate.test('highcharts/line', {}, function (template) {
 
         var chart = template.chart,
             options = chart.options,
@@ -20,7 +20,7 @@ QUnit.test('series-line/type', function (assert) {
 
     });
 
-    ChartTemplate.test('line-simple', {
+    TestTemplate.test('highcharts/line', {
 
         chart: {
             type: undefined

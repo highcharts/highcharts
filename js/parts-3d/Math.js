@@ -48,15 +48,17 @@ function rotate3D(x, y, z, angles) {
     };
 }
 
-function perspective3D(coordinate, origin, distance) {
+// Perspective3D function is available in global Highcharts scope because is
+// needed also outside of perspective() function (#8042).
+H.perspective3D = function (coordinate, origin, distance) {
     var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
-        distance / (coordinate.z + origin.z + distance) :
-        1;
+    distance / (coordinate.z + origin.z + distance) :
+    1;
     return {
         x: coordinate.x * projection,
         y: coordinate.y * projection
     };
-}
+};
 
 /**
  * Transforms a given array of points according to the angles in chart.options.
@@ -100,7 +102,7 @@ H.perspective = function (points, chart, insidePlotArea) {
                 angles
             ),
             // Apply perspective
-            coordinate = perspective3D(rotated, origin, origin.vd);
+            coordinate = H.perspective3D(rotated, origin, origin.vd);
 
         // Apply translation
         coordinate.x = coordinate.x * scale + origin.x;

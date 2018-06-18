@@ -5,7 +5,8 @@ QUnit.test('Drilldown methods', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
-            animation: false
+            animation: false,
+            width: 600
         },
         title: {
             text: 'Basic drilldown'
@@ -36,7 +37,7 @@ QUnit.test('Drilldown methods', function (assert) {
             series: [{
                 id: 'animals',
                 data: [
-                    ['Cats', 4],
+                    ['The quick brown fox jumps over the lazy dog', 4],
                     ['Dogs', 2],
                     ['Cows', 1],
                     ['Sheep', 2],
@@ -72,8 +73,12 @@ QUnit.test('Drilldown methods', function (assert) {
 
     assert.deepEqual(
         chart.xAxis[0].names,
-        ['Cats', 'Dogs', 'Cows', 'Sheep', 'Pigs'],
+        ['The quick brown fox jumps over the lazy dog', 'Dogs', 'Cows', 'Sheep', 'Pigs'],
         'First drilldown'
+    );
+    assert.ok(
+        chart.xAxis[0].ticks[0].label.element.getBBox().width < 120,
+        'Long label should be wrapped (#8234)'
     );
 
     chart.drillUp();

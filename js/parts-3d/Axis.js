@@ -21,6 +21,7 @@ var ZAxis,
     extend = H.extend,
     merge = H.merge,
     perspective = H.perspective,
+    perspective3D = H.perspective3D,
     pick = H.pick,
     shapeArea = H.shapeArea,
     splat = H.splat,
@@ -421,8 +422,6 @@ function fix3dPosition(axis, pos, isTitle) {
             projected.y * projected.matrix[2];
         projected.matrix[5] -= projected.x * projected.matrix[1] +
             projected.y * projected.matrix[3];
-    } else {
-        projected.matrix = null;
     }
 
     return projected;
@@ -455,8 +454,8 @@ addEvent(Axis, 'drawCrosshair', function (e) {
     if (this.chart.is3d() && this.coll !== 'colorAxis') {
         if (e.point) {
             e.point.crosshairPos = this.isXAxis ?
-                e.point.plotXold || e.point.plotX :
-                this.len - (e.point.plotYold || e.point.plotY);
+                e.point.axisXpos :
+                this.len - (e.point.axisYpos);
         }
     }
 });
@@ -572,4 +571,72 @@ addEvent(Chart, 'afterGetAxes', function () {
         var zAxis = new ZAxis(chart, axisOptions);
         zAxis.setScale();
     });
+});
+/**
+ * Wrap getSlotWidth function to calculate individual width value
+ * for each slot (#8042).
+ */
+wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
+    if (this.chart.is3d() &&
+        tick &&
+        tick.label &&
+        this.categories
+    ) {
+        var chart = this.chart,
+            ticks = this.ticks,
+            gridGroup = this.gridGroup.element.childNodes,
+            firstGridLine = gridGroup[0].getBBox(),
+            frame3DLeft = chart.frameShapes.left.getBBox(),
+            options3d = chart.options.chart.options3d,
+            origin = {
+                x: chart.plotWidth / 2,
+                y: chart.plotHeight / 2,
+                z: options3d.depth / 2,
+                vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
+            },
+            labelPos,
+            prevLabelPos,
+            nextLabelPos,
+            slotWidth,
+            tickId = tick.pos,
+            prevTick = ticks[tickId - 1],
+            nextTick = ticks[tickId + 1];
+
+        // Check whether the tick is not the first one and previous tick exists,
+        // then calculate position of previous label.
+        if (tickId !== 0 && prevTick) {
+            prevLabelPos = perspective3D({
+                x: prevTick.label.xy.x,
+                y: prevTick.label.xy.y,
+                z: null
+            }, origin, origin.vd);
+        }
+        // If next label position is defined, then recalculate its position
+        // basing on the perspective.
+        if (nextTick && nextTick.label.xy) {
+            nextLabelPos = perspective3D({
+                x: nextTick.label.xy.x,
+                y: nextTick.label.xy.y,
+                z: null
+            }, origin, origin.vd);
+        }
+        labelPos = {
+            x: tick.label.xy.x,
+            y: tick.label.xy.y,
+            z: null
+        };
+
+        labelPos = perspective3D(labelPos, origin, origin.vd);
+
+        // If tick is first one, check whether next label position is already
+        // calculated, then return difference between the first and the second
+        // label. If there is no next label position calculated, return the
+        // difference between the first grid line and left 3d frame.
+        slotWidth = Math.abs(prevLabelPos ?
+            labelPos.x - prevLabelPos.x : nextLabelPos ?
+                nextLabelPos.x - labelPos.x : firstGridLine.x - frame3DLeft.x
+        );
+        return slotWidth;
+    }
+    return proceed.apply(this, [].slice.call(arguments, 1));
 });
