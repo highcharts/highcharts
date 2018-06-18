@@ -529,39 +529,6 @@ function fileComplete (e) {
 
 function processingComplete (e) {
 
-    /**
-     * A doclet can contain the following properties: 
-     * access
-     * alias
-     * augments
-     * comment
-     * defaultvalue
-     * deprecated
-     * description
-     * examples
-     * ignore
-     * kind
-     * longname
-     * memberof
-     * meta
-     * name
-     * params
-     * properties
-     * returns
-     * scope
-     * see
-     * since
-     * tags
-     * todo
-     * type
-     * undocumented
-     */
-    console.log(
-        'Processing completed.',
-        'A doclet can contain the following properties:',
-        allDocletPropertyNames.sort().join(', ')
-    );
-
     fs.writeFileSync(
         path.join(rootPath, 'tree-namespace.json'),
         JSON.stringify(namespace, undefined, '\t')
