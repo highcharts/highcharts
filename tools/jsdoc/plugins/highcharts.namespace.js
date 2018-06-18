@@ -136,24 +136,6 @@ function getDeanonymousName (name) {
     }
 }
 
-function getDeclarationFilePath (filePath) {
-
-    let fileExtension = path.extname(filePath);
-
-    if (fileExtension) {
-
-        if (fileExtension === '.ts' &&
-            filePath.lastIndexOf('.d.ts') === (filePath.length - 6)
-        ) {
-            fileExtension = '.d.ts';
-        }
-
-        filePath = filePath.substr(0, fileExtension.length);
-    }
-
-    return (filePath + '.d.ts');
-}
-
 function getDescription (doclet) {
 
     if (doclet.highchartsDescription) {
