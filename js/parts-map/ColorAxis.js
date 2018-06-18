@@ -30,12 +30,15 @@ if (!H.ColorAxis) {
 
     /**
      * The ColorAxis object for inclusion in gradient legends
+     *
+     * @class H.ColorAxis
+     * @extends H.Axis
      */
     ColorAxis = H.ColorAxis = function () {
         this.init.apply(this, arguments);
     };
     extend(ColorAxis.prototype, Axis.prototype);
-    extend(ColorAxis.prototype, {
+    extend(ColorAxis.prototype, /** @lends H.ColorAxis.prototype */ {
         /**
          * A color axis for choropleth maps and heat maps. Visually, the color
          * axis will appear as a gradient or as separate items inside the
@@ -115,7 +118,7 @@ if (!H.ColorAxis) {
              * styled mode, this option is ignored. Instead, use colors defined
              * in CSS.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @sample {highmaps} maps/demo/data-class-two-ranges/
              *         Explicit colors
              * @product highcharts highmaps
@@ -214,7 +217,7 @@ if (!H.ColorAxis) {
              * Color of the grid lines extending from the axis across the
              * gradient.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @sample {highmaps} maps/coloraxis/gridlines/
              *         Grid lines demonstrated
              * @default #e6e6e6
@@ -309,7 +312,7 @@ if (!H.ColorAxis) {
                 /**
                  * The color of the marker.
                  *
-                 * @type {Color}
+                 * @type {ColorString}
                  * @default #999999
                  * @product highcharts highmaps
                  */
@@ -355,7 +358,7 @@ if (!H.ColorAxis) {
              * maxColor unless a color is set for each data class, or the
              * [dataClassColor](#colorAxis.dataClassColor) is set.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/
              *         Min and max colors on scalar (gradient) axis
              * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
@@ -375,7 +378,7 @@ if (!H.ColorAxis) {
              * maxColor unless a color is set for each data class, or the
              * [dataClassColor](#colorAxis.dataClassColor) is set.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/
              *         Min and max colors on scalar (gradient) axis
              * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/

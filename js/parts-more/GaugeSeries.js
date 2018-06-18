@@ -35,6 +35,12 @@ var each = H.each,
  * @product      highcharts
  * @optionparent plotOptions.gauge
  */
+/**
+ * The gauge series type.
+ *
+ * @constructor seriesTypes.gauge
+ * @augments seriesTypes.line
+ */
 seriesType('gauge', 'line', {
 
     /**
@@ -119,7 +125,7 @@ seriesType('gauge', 'line', {
         /**
          * The border color for the data label.
          *
-         * @type    {Color}
+         * @type    {ColorString}
          * @default #cccccc
          * @since   2.3.0
          * @product highcharts highmaps
@@ -211,7 +217,7 @@ seriesType('gauge', 'line', {
     /**
      * The background or fill color of the gauge's dial.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
      *            Dial options demonstrated
      * @default   #000000
@@ -225,7 +231,7 @@ seriesType('gauge', 'line', {
      * borderWidth is 0, so this must be set in addition to a custom border
      * color.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @sample    {highcharts} highcharts/plotoptions/gauge-dial/
      *            Dial options demonstrated
      * @default   #cccccc
@@ -308,7 +314,7 @@ seriesType('gauge', 'line', {
      * the borderWidth must also be set to something other than the default
      * 0.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
      *            Pivot options demonstrated
      * @default   #cccccc
@@ -320,7 +326,7 @@ seriesType('gauge', 'line', {
     /**
      * The background color or fill of the pivot.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @sample    {highcharts} highcharts/plotoptions/gauge-pivot/
      *            Pivot options demonstrated
      * @default   #000000
@@ -347,7 +353,7 @@ seriesType('gauge', 'line', {
 
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.gauge.prototype */ {
     // chart.angular will be set to true when a gauge series is present,
     // and this will be used on the axes
     angular: true,

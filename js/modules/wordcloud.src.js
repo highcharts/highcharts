@@ -477,6 +477,8 @@ var wordCloudOptions = {
 
 /**
  * Properties of the WordCloud series.
+ *
+ * @lends seriesTypes.wordcloud.prototype
  */
 var wordCloudSeries = {
     animate: Series.prototype.animate,
@@ -747,6 +749,7 @@ var wordCloudSeries = {
 
 /**
  * Properties of the Sunburst series.
+ * @lends seriesTypes.wordcloud.prototype.pointClass.prototype
  */
 var wordCloudPoint = {
     draw: drawPoint,
@@ -823,6 +826,12 @@ var wordCloudPoint = {
 * @product highcharts
 * @apioption series.sunburst.data.weight
 */
+/**
+ * The wordcloud series type.
+ *
+ * @constructor seriesTypes.wordcloud
+ * @augments seriesTypes.column
+ */
 H.seriesType(
     'wordcloud',
     'column',

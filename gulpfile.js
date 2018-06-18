@@ -341,6 +341,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
             template: templateDir + '/template'
         },
         plugins: [
+            './tools/jsdoc/plugins/chart-private-tag',
             templateDir + '/plugins/add-namespace',
             templateDir + '/plugins/markdown',
             templateDir + '/plugins/sampletag'
@@ -913,7 +914,10 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/supplemental.docs.js'
     ];
     const configJSDoc = {
-        plugins: ['./tools/jsdoc/plugins/highcharts.jsdoc']
+        plugins: [
+            './tools/jsdoc/plugins/chart-private-tag',
+            './tools/jsdoc/plugins/highcharts.jsdoc'
+        ]
     };
     const jsdoc = require('gulp-jsdoc3');
     return new Promise((resolve, reject) => {

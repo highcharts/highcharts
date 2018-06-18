@@ -33,7 +33,7 @@ var addEvent = H.addEvent,
  * The pie series type.
  *
  * @constructor seriesTypes.pie
- * @augments Series
+ * @augments seriesTypes.line
  */
 
 /**
@@ -79,7 +79,7 @@ seriesType('pie', 'line', {
      * A series specific or series type specific color set to use instead
      * of the global [colors](#colors).
      *
-     * @type {Array<Color>}
+     * @type {Array<ColorString>}
      * @sample {highcharts} highcharts/demo/pie-monochrome/ Set default colors for all pies
      * @since 3.0
      * @product highcharts
@@ -331,7 +331,7 @@ seriesType('pie', 'line', {
      *
      * In styled mode, the border stroke is given in the `.highcharts-point` class.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/ Black border
      * @default #ffffff
      * @product highcharts

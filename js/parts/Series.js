@@ -87,7 +87,11 @@ var addEvent = H.addEvent,
  *         The series options.
  *
  */
-
+/**
+ * @chart-private
+ * @class seriesTypes.line
+ * @extends Highcharts.Series
+ */
 /**
  * General options for all series types.
  * @optionparent plotOptions.series
@@ -249,7 +253,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * color to denote the value of each point. The series color can however be
      * used in a map with multiple series holding categorized data.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highcharts} highcharts/plotoptions/series-color-general/
      *         General plot option
      * @sample {highcharts} highcharts/plotoptions/series-color-specific/
@@ -498,7 +502,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * The color for the parts of the graph or points that are below the
      * [threshold](#plotOptions.series.threshold).
      *
-     * @type {Color}
+     * @type {ColorString}
      * @see In styled mode, a negative color is applied by setting this
      * option to `true` combined with the `.highcharts-negative` class name.
      *
@@ -999,7 +1003,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * The color of the point marker's outline. When `null`, the series'
          * or point's color is used.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         Inherit from series color (null)
          */
@@ -1009,7 +1013,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * The fill color of the point marker. When `null`, the series' or
          * point's color is used.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         White fill
          * @default null
@@ -1162,7 +1166,7 @@ H.Series = H.seriesType('line', null, { // base series options
                  * The fill color of the marker in hover state. When `null`, the
                  * series' or point's fillColor for normal state is used.
                  *
-                 * @type      {Color}
+                 * @type      {ColorString}
                  * @default   null
                  * @apioption plotOptions.series.marker.states.hover.fillColor
                  */
@@ -1171,7 +1175,7 @@ H.Series = H.seriesType('line', null, { // base series options
                  * The color of the point marker's outline. When `null`, the
                  * series' or point's lineColor for normal state is used.
                  *
-                 * @type      {Color}
+                 * @type      {ColorString}
                  * @sample    {highcharts}
                  *            highcharts/plotoptions/series-marker-states-hover-linecolor/
                  *            White fill color, black line color
@@ -1270,7 +1274,7 @@ H.Series = H.seriesType('line', null, { // base series options
                 /**
                  * The fill color of the point marker.
                  *
-                 * @type {Color}
+                 * @type {ColorString}
                  * @sample {highcharts}
                  *         highcharts/plotoptions/series-marker-states-select-fillcolor/
                  *         Solid red discs for selected points
@@ -1282,7 +1286,7 @@ H.Series = H.seriesType('line', null, { // base series options
                  * The color of the point marker's outline. When `null`, the
                  * series' or point's color is used.
                  *
-                 * @type {Color}
+                 * @type {ColorString}
                  * @sample {highcharts}
                  *         highcharts/plotoptions/series-marker-states-select-linecolor/
                  *         Red line color for selected points
@@ -1533,7 +1537,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * can be overridden by setting the `text-outline` style to `none` in
          * the `dataLabels.style` option.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-color/
          *         Red data labels
          * @sample {highmaps} maps/demo/color-axis/
@@ -1773,7 +1777,7 @@ H.Series = H.seriesType('line', null, { // base series options
         /**
          * The background color or gradient for the data label.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
@@ -1785,7 +1789,7 @@ H.Series = H.seriesType('line', null, { // base series options
         /**
          * The border color for the data label. Defaults to `undefined`.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highcharts|highstock}
          *         highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
@@ -2239,7 +2243,7 @@ H.Series = H.seriesType('line', null, { // base series options
     /**
      * Defines the color of the series.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @see [series color](#plotOptions.series.color)
      * @since 4.1.0
      * @product highcharts highstock
@@ -2262,7 +2266,7 @@ H.Series = H.seriesType('line', null, { // base series options
     /**
      * Defines the fill color for the series (in area type series)
      *
-     * @type {Color}
+     * @type {ColorString}
      * @see [fillColor](#plotOptions.area.fillColor)
      * @since 4.1.0
      * @product highcharts highstock
@@ -2324,9 +2328,11 @@ H.Series = H.seriesType('line', null, { // base series options
         /**
          * Read only. The chart that the series belongs to.
          *
+         * @readonly
          * @name chart
          * @memberOf Series
          * @type {Chart}
+         * @instance
          */
         series.chart = chart;
 
@@ -2335,18 +2341,22 @@ H.Series = H.seriesType('line', null, { // base series options
          * type in the series options anc can be altered using {@link
          * Series#update}.
          *
+         * @readonly
          * @name type
          * @memberOf Series
          * @type String
+         * @instance
          */
 
         /**
          * Read only. The series' current options. To update, use {@link
          * Series#update}.
          *
+         * @readonly
          * @name options
          * @memberOf Series
          * @type SeriesOptions
+         * @instance
          */
         series.options = options = series.setOptions(options);
         series.linkedSeries = [];
@@ -2363,6 +2373,7 @@ H.Series = H.seriesType('line', null, { // base series options
              * @name name
              * @memberOf Series
              * @type {String}
+             * @instance
              */
             name: options.name,
             state: '',
@@ -2371,18 +2382,22 @@ H.Series = H.seriesType('line', null, { // base series options
              * Series#show}, {@link Series#hide}, or in the initial
              * configuration.
              *
+             * @readonly
              * @name visible
              * @memberOf Series
              * @type {Boolean}
+             * @instance
              */
             visible: options.visible !== false, // true by default
             /**
              * Read only. The series' selected state as set by {@link
              * Highcharts.Series#select}.
              *
+             * @readonly
              * @name selected
              * @memberOf Series
              * @type {Boolean}
+             * @instance
              */
             selected: options.selected === true // false by default
         });
@@ -2510,17 +2525,21 @@ H.Series = H.seriesType('line', null, { // base series options
                      * Read only. The unique xAxis object associated with the
                      * series.
                      *
+                     * @readonly
                      * @name xAxis
                      * @memberOf Series
                      * @type Axis
+                     * @instance
                      */
                     /**
                      * Read only. The unique yAxis object associated with the
                      * series.
                      *
+                     * @readonly
                      * @name yAxis
                      * @memberOf Series
                      * @type Axis
+                     * @instance
                      */
                     series[AXIS] = axis;
 
@@ -2781,7 +2800,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * Get the series' color based on either the options or pulled from global
      * options.
      *
-     * @return  {Color} The series color.
+     * @return  {ColorString} The series color.
      */
     /*= if (!build.classic) { =*/
     getColor: function () {
@@ -3329,6 +3348,7 @@ H.Series = H.seriesType('line', null, { // base series options
                  * @name dataGroup
                  * @memberOf Point
                  * @type {Object}
+                 * @instance
                  *
                  */
                 point.dataGroup = series.groupMap[i];
@@ -3374,10 +3394,12 @@ H.Series = H.seriesType('line', null, { // base series options
          * demand. To modify the data, use {@link Highcharts.Series#setData} or
          * {@link Highcharts.Point#update}.
          *
+         * @readonly
          * @name data
          * @memberOf Highcharts.Series
          * @see  Series.points
-         * @type {Array<Point>}
+         * @type {Array.<Highcharts.Point>}
+         * @instance
          */
         series.data = data;
 
@@ -3391,7 +3413,8 @@ H.Series = H.seriesType('line', null, { // base series options
          * Highcharts.Point#update}.
          * @name points
          * @memberof Series
-         * @type {Array<Point>}
+         * @type {Array.<Point>}
+         * @instance
          */
         series.points = points;
     },
@@ -3901,6 +3924,7 @@ H.Series = H.seriesType('line', null, { // base series options
                          * @memberof Point
                          * @name graphic
                          * @type {SVGElement}
+                         * @instance
                          */
                         point.graphic = graphic = chart.renderer.symbol(
                             symbol,
@@ -5048,7 +5072,7 @@ H.Series = H.seriesType('line', null, { // base series options
  * In styled mode, the `color` option doesn't take effect. Instead, use
  * `colorIndex`.
  *
- * @type {Color}
+ * @type {ColorString}
  * @sample {highcharts} highcharts/point/color/ Mark the highest point
  * @default undefined
  * @product highcharts highstock

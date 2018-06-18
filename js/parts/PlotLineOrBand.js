@@ -15,9 +15,12 @@ var arrayMax = H.arrayMax,
     erase = H.erase,
     merge = H.merge,
     pick = H.pick;
-/*
+/**
  * The object wrapper for plot lines and plot bands
+ * @param {Object} axis
  * @param {Object} options
+ * @constructor
+ * @chart-private
  */
 H.PlotLineOrBand = function (axis, options) {
     this.axis = axis;
@@ -351,7 +354,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * and addPlotLine internally.
      *
      * @private
-     * @param  options {AxisPlotLinesOptions|AxisPlotBandsOptions}
+     * @param  {AxisPlotLinesOptions|AxisPlotBandsOptions} options
      *         The plotBand or plotLine configuration object.
      */
     addPlotBandOrLine: function (options, coll) {

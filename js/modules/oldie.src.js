@@ -306,6 +306,10 @@ if (!svg) {
         }
 
     };
+    /**
+     * Old IE polyfill for removeEventListener, called from inside the addEvent
+     * function.
+     */
     H.removeEventListenerPolyfill = function (type, fn) {
         if (this.detachEvent) {
             fn = this.hcEventsIE[fn.hcKey];
@@ -316,6 +320,12 @@ if (!svg) {
 
     /**
      * The VML element wrapper.
+     *
+     * @class VMLElement
+     * @extends H.SVGElement
+     * @memberOf H
+     * @borrows SVGElement#htmlCss as VMLElement#css
+     * @borrows SVGElement#htmlUpdateTransform as VMLElement#updateTransform
      */
     VMLElement = {
 
@@ -324,8 +334,11 @@ if (!svg) {
         /**
          * Initialize a new VML element wrapper. It builds the markup as a
          * string to minimize DOM traffic.
-         * @param {Object} renderer
-         * @param {Object} nodeName
+         *
+         * @memberOf VMLElement
+         * @instance
+         * @param {SVGRenderer} renderer
+         * @param {String} nodeName
          */
         init: function (renderer, nodeName) {
             var wrapper = this,
@@ -354,7 +367,10 @@ if (!svg) {
 
         /**
          * Add the node to the given parent
-         * @param {Object} parent
+         * @memberOf VMLElement
+         * @instance
+         * @param {VMLElement} parent
+         * @return {VMLElement}
          */
         add: function (parent) {
             var wrapper = this,
@@ -402,11 +418,15 @@ if (!svg) {
 
         /**
          * VML always uses htmlUpdateTransform
+         * @memberOf VMLElement
+         * @instance
          */
         updateTransform: SVGElement.prototype.htmlUpdateTransform,
 
         /**
          * Set the rotation of a span with oldIE's filter
+         * @memberOf VMLElement
+         * @instance
          */
         setSpanRotation: function () {
             // Adjust for alignment and rotation. Rotation of useHTML content is
@@ -431,6 +451,8 @@ if (!svg) {
 
         /**
          * Get the positioning correction for the span after rotating.
+         * @memberOf VMLElement
+         * @instance
          */
         getSpanCorrection: function (
             width,
@@ -481,6 +503,8 @@ if (!svg) {
         /**
          * Converts a subset of an SVG path definition to its VML counterpart.
          * Takes an array as the parameter and returns a string.
+         * @memberOf VMLElement
+         * @instance
          */
         pathToVML: function (value) {
             // convert paths
@@ -524,8 +548,11 @@ if (!svg) {
 
         /**
          * Set the element's clipping to a predefined rectangle
+         * @memberOf VMLElement
+         * @instance
          *
-         * @param {String} id The id of the clip rectangle
+         * @param {ClipRect} clipRect The id of the clip rectangle
+         * @return {VMLElement}
          */
         clip: function (clipRect) {
             var wrapper = this,
@@ -553,11 +580,12 @@ if (!svg) {
             }
 
             return wrapper.css(cssRet);
-
         },
 
         /**
          * Set styles for the element
+         * @memberOf VMLElement
+         * @instance
          * @param {Object} styles
          */
         css: SVGElement.prototype.htmlCss,
@@ -566,6 +594,8 @@ if (!svg) {
          * Removes a child either by removeChild or move to garbageBin.
          * Issue 490; in VML removeChild results in Orphaned nodes according to
          * sIEve, discardElement does not.
+         * @memberOf VMLElement
+         * @instance
          */
         safeRemoveChild: function (element) {
             // discardElement will detach the node from its parent before
@@ -578,6 +608,8 @@ if (!svg) {
 
         /**
          * Extend element.destroy by removing it from the clip members array
+         * @memberOf VMLElement
+         * @instance
          */
         destroy: function () {
             if (this.destroyClip) {
@@ -589,8 +621,11 @@ if (!svg) {
 
         /**
          * Add an event listener. VML override for normalizing event parameters.
+         * @memberOf VMLElement
+         * @instance
          * @param {String} eventType
          * @param {Function} handler
+         * @returns {VMLElement}
          */
         on: function (eventType, handler) {
             // simplest possible event model for internal use
@@ -604,6 +639,8 @@ if (!svg) {
 
         /**
          * In stacked columns, cut off the shadows so that they don't overlap
+         * @memberOf VMLElement
+         * @instance
          */
         cutOffPath: function (path, length) {
 
@@ -624,7 +661,10 @@ if (!svg) {
         /**
          * Apply a drop shadow by copying elements and giving them different
          * strokes
-         * @param {Boolean|Object} shadowOptions
+         * @memberOf VMLElement
+         * @instance
+         * @param {Boolean|ShadowOptions} shadowOptions
+         * @returns {VMLElement}
          */
         shadow: function (shadowOptions, group, cutOff) {
             var shadows = [],
@@ -883,16 +923,19 @@ if (!svg) {
 
 
     /**
-     * The VML renderer
+     * VMLRendererExtension
+     * @mixin
+     * @memberOf H
+     * @borrows SVGRenderer#html as VMLRendererExtension#text
      */
-    VMLRendererExtension = { // inherit SVGRenderer
-
+    VMLRendererExtension = {
         Element: VMLElement,
         isIE8: win.navigator.userAgent.indexOf('MSIE 8.0') > -1,
 
 
         /**
          * Initialize the VMLRenderer
+         * @instance
          * @param {Object} container
          * @param {Number} width
          * @param {Number} height
@@ -947,6 +990,8 @@ if (!svg) {
         /**
          * Detect whether the renderer is hidden. This happens when one of the
          * parent elements has display: none
+         * @instance
+         * @return {boolean}
          */
         isHidden: function () {
             return !this.box.offsetWidth;
@@ -956,10 +1001,12 @@ if (!svg) {
          * Define a clipping rectangle. In VML it is accomplished by storing the
          * values for setting the CSS style to all associated members.
          *
+         * @instance
          * @param {Number} x
          * @param {Number} y
          * @param {Number} width
          * @param {Number} height
+         * @return {VMLElement}
          */
         clipRect: function (x, y, width, height) {
 
@@ -1025,7 +1072,11 @@ if (!svg) {
          * Take a color and return it if it's a string, make it a gradient if
          * it's a gradient configuration object, and apply opacity.
          *
+         * @instance
          * @param {Object} color The color or config object
+         * @param elem
+         * @param prop
+         * @param wrapper
          */
         color: function (color, elem, prop, wrapper) {
             var renderer = this,
@@ -1215,6 +1266,7 @@ if (!svg) {
 
         /**
          * Take a VML string and prepare it for either IE8 or IE6/IE7.
+         * @instance
          * @param {Array} markup A string array of the VML markup to prepare
          */
         prepVML: function (markup) {
@@ -1246,6 +1298,7 @@ if (!svg) {
 
         /**
          * Create rotated and aligned text
+         * @instance
          * @param {String} str
          * @param {Number} x
          * @param {Number} y
@@ -1254,7 +1307,9 @@ if (!svg) {
 
         /**
          * Create and return a path element
+         * @instance
          * @param {Array} path
+         * @returns {VMLElement}
          */
         path: function (path) {
             var attr = {
@@ -1273,9 +1328,11 @@ if (!svg) {
         /**
          * Create and return a circle element. In VML circles are implemented as
          * shapes, which is faster than v:oval
+         * @instance
          * @param {Number} x
          * @param {Number} y
          * @param {Number} r
+         * @return {SVGElement}
          */
         circle: function (x, y, r) {
             var circle = this.symbol('circle');
@@ -1294,7 +1351,9 @@ if (!svg) {
          * rotating and flipping. A simple v:group would have problems with
          * positioning child HTML elements and CSS clip.
          *
+         * @instance
          * @param {String} name The name of the group
+         * @return {VMLElement}
          */
         g: function (name) {
             var wrapper,
@@ -1316,11 +1375,13 @@ if (!svg) {
 
         /**
          * VML override to create a regular HTML image
+         * @instance
          * @param {String} src
          * @param {Number} x
          * @param {Number} y
          * @param {Number} width
          * @param {Number} height
+         * @return {VMLElement}
          */
         image: function (src, x, y, width, height) {
             var obj = this.createElement('img')
@@ -1340,6 +1401,8 @@ if (!svg) {
         /**
          * For rectangles, VML uses a shape for rect to overcome bugs and
          * rotation problems
+         * @instance
+         * @return {VMLElement}
          */
         createElement: function (nodeName) {
             return nodeName === 'rect' ?
@@ -1350,6 +1413,7 @@ if (!svg) {
         /**
          * In the VML renderer, each child of an inverted div (group) is
          * inverted
+         * @instance
          * @param {Object} element
          * @param {Object} parentNode
          */
@@ -1377,6 +1441,7 @@ if (!svg) {
         /**
          * Symbol definitions that override the parent SVG renderer's symbols
          *
+         * @instance
          */
         symbols: {
             // VML specific arc function
@@ -1475,6 +1540,12 @@ if (!svg) {
             }
         }
     };
+    /**
+     * @class VMLRenderer
+     * @memberOf H
+     * @extends SVGRenderer
+     * @mixes VMLRendererExtension
+     */
     H.VMLRenderer = VMLRenderer = function () {
         this.init.apply(this, arguments);
     };
@@ -1499,7 +1570,9 @@ SVGRenderer.prototype.getSpanWidth = function (wrapper, tspan) {
     return actualWidth;
 };
 
-// This method is used with exporting in old IE, when emulating SVG (see #2314)
+/**
+ * This method is used with exporting in old IE, when emulating SVG (see #2314)
+ */
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
     var measuringSpan = doc.createElement('span'),
         offsetWidth,

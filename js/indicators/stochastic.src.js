@@ -22,6 +22,12 @@ function maxInArray(arr, index) {
     }, 0);
 }
 
+/**
+ * The stochastic series type.
+ *
+ * @constructor seriesTypes.stochastic
+ * @augments seriesTypes.sma
+ */
 H.seriesType('stochastic', 'sma',
     /**
      * Stochastic oscillator. This series requires the `linkedTo` option to be
@@ -93,7 +99,7 @@ H.seriesType('stochastic', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends seriesTypes.stochastic.prototype */  {
         nameComponents: ['periods'],
         nameBase: 'Stochastic',
         pointArrayMap: ['y', 'smoothed'],

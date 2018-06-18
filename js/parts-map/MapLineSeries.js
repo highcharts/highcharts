@@ -20,6 +20,12 @@ var seriesType = H.seriesType,
  * @product highmaps
  * @optionparent plotOptions.mapline
  */
+/**
+ * The mapline series type.
+ *
+ * @constructor seriesTypes.mapline
+ * @augments seriesTypes.map
+ */
 seriesType('mapline', 'map', {
     /*= if (build.classic) { =*/
 
@@ -35,13 +41,13 @@ seriesType('mapline', 'map', {
     /**
      * Fill color for the map line shapes
      *
-     * @type {Color}
+     * @type {ColorString}
      * @default none
      * @product highmaps
      */
     fillColor: 'none'
     /*= } =*/
-}, {
+}, /** @lends seriesTypes.mapline.prototype */ {
     type: 'mapline',
     colorProp: 'stroke',
     /*= if (build.classic) { =*/

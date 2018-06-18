@@ -22,6 +22,12 @@ var seriesType = H.seriesType;
  * @since 6.0.0
  * @optionparent plotOptions.streamgraph
  */
+/**
+ * The streamgraph series type.
+ *
+ * @constructor seriesTypes.streamgraph
+ * @augments seriesTypes.areaspline
+ */
 seriesType('streamgraph', 'areaspline', {
     fillOpacity: 1,
     lineWidth: 0,
@@ -30,7 +36,7 @@ seriesType('streamgraph', 'areaspline', {
     },
     stacking: 'stream'
 // Prototype functions
-}, {
+}, /** @lends seriesTypes.streamgraph.prototype */ {
     negStacks: false,
 
     /**

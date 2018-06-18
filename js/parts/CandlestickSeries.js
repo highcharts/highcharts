@@ -29,7 +29,7 @@ var candlestickOptions = {
      * The specific line color for up candle sticks. The default is to inherit
      * the general `lineColor` setting.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample  {highstock} stock/plotoptions/candlestick-linecolor/
      *          Candlestick line colors
      * @default null
@@ -76,7 +76,7 @@ var candlestickOptions = {
      * In styled mode, the line stroke can be set with the
      * `.highcharts-candlestick-series .highcahrts-point` rule.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @see [upLineColor](#plotOptions.candlestick.upLineColor)
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
@@ -104,7 +104,7 @@ var candlestickOptions = {
      * In styled mode, the up color can be set with the
      * `.highcharts-candlestick-series .highcharts-point-up` rule.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample {highstock} stock/plotoptions/candlestick-color/ Custom colors
      * @sample {highstock} highcharts/css/candlestick/ Colors in styled mode
      * @default #ffffff
@@ -126,7 +126,7 @@ var candlestickOptions = {
 seriesType('candlestick', 'ohlc', merge(
     defaultPlotOptions.column,
     candlestickOptions
-), /** @lends seriesTypes.candlestick */ {
+), /** @lends seriesTypes.candlestick.prototype */ {
     /*= if (build.classic) { =*/
     /**
      * Postprocess mapping between options and SVG attributes

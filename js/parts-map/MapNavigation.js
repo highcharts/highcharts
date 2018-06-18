@@ -30,6 +30,11 @@ function stopEvent(e) {
 /**
  * The MapNavigation handles buttons for navigation in addition to mousewheel
  * and doubleclick handlers for chart zooming.
+ *
+ * @interface
+ * @chart-private
+ * @memberof H
+ *
  * @param {Chart} chart The Chart instance.
  */
 function MapNavigation(chart) {
@@ -41,6 +46,12 @@ function MapNavigation(chart) {
  * @param  {Chart} chart The Chart instance.
  */
 MapNavigation.prototype.init = function (chart) {
+    /**
+     * @name     chart
+     * @memberOf MapNavigation
+     * @type     {Chart}
+     * @instance
+     */
     this.chart = chart;
     chart.mapNavButtons = [];
 };

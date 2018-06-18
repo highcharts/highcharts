@@ -24,6 +24,12 @@ var each = H.each,
  * @product      highcharts highstock
  * @optionparent plotOptions.errorbar
  */
+/**
+ * The errorbar series type.
+ *
+ * @constructor seriesTypes.errorbar
+ * @augments seriesTypes.boxplot
+ */
 seriesType('errorbar', 'boxplot', {
     /*= if (build.classic) { =*/
 
@@ -32,7 +38,7 @@ seriesType('errorbar', 'boxplot', {
      * [stemColor](#plotOptions.errorbar.stemColor) and
      * [whiskerColor](#plotOptions.errorbar.whiskerColor) individually.
      *
-     * @type    {Color}
+     * @type    {ColorString}
      * @sample  {highcharts} highcharts/plotoptions/error-bar-styling/
      *          Error bar styling
      * @default #000000
@@ -71,7 +77,7 @@ seriesType('errorbar', 'boxplot', {
     whiskerWidth: null
 
 // Prototype members
-}, {
+}, /** @lends seriesTypes.errorbar.prototype */ {
     type: 'errorbar',
     pointArrayMap: ['low', 'high'], // array point configs are mapped to this
     toYData: function (point) { // return a plain array for speedy calculation

@@ -71,7 +71,7 @@ seriesType('zigzag', 'sma',
              */
             deviation: 1
         }
-    }, {
+    }, /** @lends seriesTypes.zigzag.prototype */ {
         nameComponents: ['deviation'],
         nameSuffixes: ['%'],
         nameBase: 'Zig Zag',

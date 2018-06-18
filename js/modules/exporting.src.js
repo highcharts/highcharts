@@ -321,7 +321,7 @@ merge(true, defaultOptions.navigation,
         /**
          * Fill color for the symbol within the button.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample highcharts/navigation/buttonoptions-symbolfill/
          *         Blue symbol stroke for one of the buttons
          * @default #666666
@@ -332,7 +332,7 @@ merge(true, defaultOptions.navigation,
         /**
          * The color of the symbol's stroke or line.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample highcharts/navigation/buttonoptions-symbolstroke/
          *         Blue symbol stroke
          * @default #666666
@@ -624,7 +624,7 @@ defaultOptions.exporting = {
              * See [navigation.buttonOptions.symbolFill](
              * #navigation.buttonOptions.symbolFill).
              *
-             * @type {Color}
+             * @type {ColorString}
              * @default #666666
              * @since 2.0
              * @apioption exporting.buttons.contextButton.symbolFill
@@ -946,7 +946,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Return an SVG representation of the chart.
      *
-     * @param  chartOptions {Options}
+     * @param {Options} chartOptions
      *         Additional chart options for the generated SVG representation.
      *         For collections like `xAxis`, `yAxis` or `series`, the additional
      *         options is either merged in to the orininal item of the same

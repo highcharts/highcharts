@@ -179,7 +179,7 @@ H.seriesType('psar', 'sma',
              */
             decimals: 4
         }
-    }, {
+    }, /** @lends seriesTypes.pasr.prototype */ {
         nameComponents: false,
         getValues: function (series, params) {
             var xVal = series.xData,

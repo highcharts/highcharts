@@ -33,6 +33,12 @@ var each = H.each,
  * @excluding    borderColor,borderRadius,borderWidth,groupZPadding,states
  * @optionparent plotOptions.boxplot
  */
+/**
+ * The boxplot series type.
+ *
+ * @constructor seriesTypes.boxplot
+ * @augments seriesTypes.column
+ */
 seriesType('boxplot', 'column', {
 
     threshold: null,
@@ -79,7 +85,7 @@ seriesType('boxplot', 'column', {
      * In styled mode, the fill color can be set with the
      * `.highcharts-boxplot-box` class.
      *
-     * @type    {Color}
+     * @type    {ColorString}
      * @sample  {highcharts} highcharts/plotoptions/box-plot-styling/
      *          Box plot styling
      * @default #ffffff
@@ -111,7 +117,7 @@ seriesType('boxplot', 'column', {
      * In styled mode, the median stroke width can be set with the
      * `.highcharts-boxplot-median` class.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @sample    {highcharts} highcharts/plotoptions/box-plot-styling/
      *            Box plot styling
      * @sample    {highcharts} highcharts/css/boxplot/
@@ -157,7 +163,7 @@ seriesType('boxplot', 'column', {
      * In styled mode, the stem stroke can be set with the
      * `.highcharts-boxplot-stem` class.
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @sample    {highcharts} highcharts/plotoptions/box-plot-styling/
      *            Box plot styling
      * @sample    {highcharts} highcharts/css/boxplot/
@@ -218,7 +224,7 @@ seriesType('boxplot', 'column', {
      * In styled mode, the whisker stroke can be set with the
      * `.highcharts-boxplot-whisker` class .
      *
-     * @type      {Color}
+     * @type      {ColorString}
      * @sample    {highcharts} highcharts/plotoptions/box-plot-styling/
      *            Box plot styling
      * @sample    {highcharts} highcharts/css/boxplot/
@@ -247,7 +253,7 @@ seriesType('boxplot', 'column', {
     whiskerWidth: 2
     /*= } =*/
 
-}, /** @lends seriesTypes.boxplot */ {
+}, /** @lends seriesTypes.boxplot.prototype */ {
 
     // array point configs are mapped to this
     pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],

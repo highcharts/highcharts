@@ -56,7 +56,7 @@ seriesType('ema', 'sma',
             index: 0,
             period: 14
         }
-    }, {
+    }, /** @lends seriesTypes.ema.prototype */ {
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,

@@ -22,6 +22,8 @@ var each = H.each,
  */
 /**
  * Handle color operations. The object methods are chainable.
+ * @class
+ * @chart-private
  * @param {String} input The input color in either rbga or hex format
  */
 H.Color = function (input) {

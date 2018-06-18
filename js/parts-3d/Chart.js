@@ -297,7 +297,7 @@ var extendedOptions =     {
                 /**
                  * The color of the panel.
                  *
-                 * @type {Color}
+                 * @type {ColorString}
                  * @default transparent
                  * @since 4.0
                  * @product highcharts
@@ -1699,7 +1699,7 @@ H.Fx.prototype.matrixSetter = function () {
 /**
  * The color of the panel.
  *
- * @type {Color}
+ * @type {ColorString}
  * @default transparent
  * @since 4.0
  * @product highcharts

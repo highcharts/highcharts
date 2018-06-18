@@ -10,6 +10,13 @@ var deg2rad = H.deg2rad,
     isNumber = H.isNumber,
     pick = H.pick,
     relativeLength = H.relativeLength;
+
+/**
+ * centered series mixin
+ * @mixin
+ * @name CenteredSeriesMixin
+ * @memberof Highcharts
+ */
 H.CenteredSeriesMixin = {
     /**
      * Get the center of the pie based on the size and center options relative

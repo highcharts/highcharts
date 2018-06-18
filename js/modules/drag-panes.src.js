@@ -137,7 +137,7 @@ var hasTouch = H.hasTouch,
              *
              * This feature requires the `drag-panes.js` module.
              *
-             * @type   {Color}
+             * @type   {ColorString}
              * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
              */
             lineColor: '${palette.neutralColor20}',

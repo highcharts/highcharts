@@ -39,6 +39,13 @@ var colorPointMixin = H.colorPointMixin,
  * @product      highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
+/**
+ * The heatmap series type.
+ *
+ * @constructor seriesTypes.heatmap
+ * @augments seriesTypes.scatter
+ * @mixes colorSeriesMixin
+ */
 seriesType('heatmap', 'scatter', {
 
     /**
@@ -68,7 +75,7 @@ seriesType('heatmap', 'scatter', {
      * options are set in the [colorAxis](#colorAxis), the default value
      * is pulled from the [options.colors](#colors) array.
      *
-     * @type {Color}
+     * @type {ColorString}
      * @default null
      * @since 4.0
      * @product highcharts
@@ -106,7 +113,7 @@ seriesType('heatmap', 'scatter', {
      * The color applied to null points. In styled mode, a general CSS class is
      * applied instead.
      *
-     * @type {Color}
+     * @type {ColorString}
      */
     nullColor: '${palette.neutralColor3}',
     /*= } =*/
@@ -157,7 +164,7 @@ seriesType('heatmap', 'scatter', {
         }
     }
 
-}, merge(colorSeriesMixin, {
+}, merge(colorSeriesMixin, /** @lends seriesTypes.heatmap.prototype */ {
     pointArrayMap: ['y', 'value'],
     hasPointSpecificOptions: true,
     getExtremesFromAll: true,
@@ -271,6 +278,13 @@ seriesType('heatmap', 'scatter', {
         ];
     }
 }, colorPointMixin));
+
+/**
+ * The point class of heatmap series type.
+ *
+ * @type seriesTypes.heatmap.prototype.pointClass
+ * @mixes colorPointMixin
+ */
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -345,7 +359,7 @@ seriesType('heatmap', 'scatter', {
  * explicitly, as we use the color to denote the `value`. Options for
  * this are set in the [colorAxis](#colorAxis) configuration.
  *
- * @type {Color}
+ * @type {ColorString}
  * @product highcharts highmaps
  * @apioption series.heatmap.data.color
  */

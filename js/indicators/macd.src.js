@@ -138,7 +138,7 @@ seriesType('macd', 'sma',
             approximation: 'averages'
         },
         minPointLength: 0
-    }, {
+    }, /** @lends seriesTypes.macd.prototype */ {
         nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
         // "y" value is treated as Histogram data
         pointArrayMap: ['y', 'signal', 'MACD'],

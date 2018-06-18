@@ -17,13 +17,15 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
  *
  * In the future, this can be extended to basic Highcharts and Highstock.
  *
+ * @class Pane
+ * @memberof H
  */
 function Pane(options, chart) {
     this.init(options, chart);
 }
 
 // Extend the Pane prototype
-extend(Pane.prototype, {
+extend(Pane.prototype, /** @lends Pane.prototype */{
 
     coll: 'pane', // Member of chart.pane
 
@@ -233,7 +235,7 @@ extend(Pane.prototype, {
         /**
          * The pane background border color.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @default #cccccc
          * @since 2.3.0
          * @product highcharts
@@ -243,7 +245,7 @@ extend(Pane.prototype, {
         /**
          * The background color or gradient for the pane.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @since 2.3.0
          * @product highcharts
          */

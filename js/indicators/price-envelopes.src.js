@@ -8,6 +8,12 @@ var each = H.each,
     isArray = H.isArray,
     SMA = H.seriesTypes.sma;
 
+/**
+ * The priceenvelopes series type.
+ *
+ * @constructor seriesTypes.priceenvelopes
+ * @augments seriesTypes.sma
+ */
 H.seriesType('priceenvelopes', 'sma',
     /**
      * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
@@ -92,7 +98,7 @@ H.seriesType('priceenvelopes', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends seriesTypes.priceenvelopes.prototype */  {
         nameComponents: ['period', 'topBand', 'bottomBand'],
         nameBase: 'Price envelopes',
         pointArrayMap: ['top', 'middle', 'bottom'],

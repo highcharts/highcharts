@@ -49,7 +49,7 @@ seriesType('ad', 'sma',
              */
             volumeSeriesID: 'volume'
         }
-    }, {
+    }, /** @lends seriesTypes.ad.prototype */ {
         nameComponents: false,
         nameBase: 'Accumulation/Distribution',
         getValues: function (series, params) {

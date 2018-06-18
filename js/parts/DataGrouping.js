@@ -328,7 +328,13 @@ var seriesProto = Series.prototype,
 
     // units are defined in a separate array to allow complete overriding in
     // case of a user option
-    defaultDataGroupingUnits = H.defaultDataGroupingUnits = [
+    defaultDataGroupingUnits =
+    /**
+     * @name defaultDataGroupingUnits
+     * @memberof Highcharts
+     * @static
+     */
+    H.defaultDataGroupingUnits = [
         [
             'millisecond', // unit name
             [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
@@ -356,15 +362,24 @@ var seriesProto = Series.prototype,
         ]
     ],
 
-
+    approximations =
     /**
      * Define the available approximation types. The data grouping
      * approximations takes an array or numbers as the first parameter. In case
      * of ohlc, four arrays are sent in as four parameters. Each array consists
      * only of numbers. In case null values belong to the group, the property
      * .hasNulls will be set to true on the array.
+     *
+     * @name approximations
+     * @memberof Highcharts
+     * @namespace
+     * @chart-private
      */
-    approximations = H.approximations = {
+    H.approximations = {
+        /**
+         * @param {number[]} arr
+         * @return {number}
+         */
         sum: function (arr) {
             var len = arr.length,
                 ret;
@@ -384,6 +399,10 @@ var seriesProto = Series.prototype,
 
             return ret;
         },
+        /**
+         * @param {number[]} arr
+         * @return {number}
+         */
         average: function (arr) {
             var len = arr.length,
                 ret = approximations.sum(arr);
@@ -396,8 +415,12 @@ var seriesProto = Series.prototype,
 
             return ret;
         },
-        // The same as average, but for series with multiple values, like area
-        // ranges.
+        /**
+         * The same as average, but for series with multiple values, like area ranges.
+         *
+         * @param {...number[]} args
+         * @return {number[]}
+         */
         averages: function () { // #5479
             var ret = [];
 
@@ -409,26 +432,50 @@ var seriesProto = Series.prototype,
             // sum method handle null (#7377)
             return ret[0] === undefined ? undefined : ret;
         },
+        /**
+         * @param {number[]} arr
+         * @return {number}
+         */
         open: function (arr) {
             return arr.length ? arr[0] : (arr.hasNulls ? null : undefined);
         },
+        /**
+         * @param {number[]} arr
+         * @return {number}
+         */
         high: function (arr) {
             return arr.length ?
                 arrayMax(arr) :
                 (arr.hasNulls ? null : undefined);
         },
+        /**
+         * @param {number[]} arr
+         * @return {number}
+         */
         low: function (arr) {
             return arr.length ?
                 arrayMin(arr) :
                 (arr.hasNulls ? null : undefined);
         },
+        /**
+         * @param {number[]} arr
+         * @return {number}
+         */
         close: function (arr) {
             return arr.length ?
                 arr[arr.length - 1] :
                 (arr.hasNulls ? null : undefined);
         },
-        // ohlc and range are special cases where a multidimensional array is
-        // input and an array is output
+        /**
+         * ohlc and range are special cases where a multidimensional array is
+         * input and an array is output
+         *
+         * @param {number[]} open
+         * @param {number[]} high
+         * @param {number[]} low
+         * @param {number[]} close
+         * @return {number[]}
+         */
         ohlc: function (open, high, low, close) {
             open = approximations.open(open);
             high = approximations.high(high);
@@ -445,6 +492,11 @@ var seriesProto = Series.prototype,
             }
             // else, return is undefined
         },
+        /**
+         * @param {number[]} high
+         * @param {number[]} low
+         * @return {number[]}
+         */
         range: function (low, high) {
             low = approximations.low(low);
             high = approximations.high(high);
@@ -461,6 +513,9 @@ var seriesProto = Series.prototype,
 /**
  * Takes parallel arrays of x and y data and groups the data into intervals
  * defined by groupPositions, a collection of starting x values for each group.
+ *
+ * @function #groupData
+ * @memberOf Highcharts.Series.prototype
  */
 seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
     var series = this,
@@ -730,6 +785,9 @@ seriesProto.processData = function () {
 
 /**
  * Destroy the grouped data points. #622, #740
+ *
+ * @function #destroyGroupedData
+ * @memberOf Highcharts.Series.prototype
  */
 seriesProto.destroyGroupedData = function () {
 
@@ -746,6 +804,9 @@ seriesProto.destroyGroupedData = function () {
 
 /**
  * Override the generatePoints method by adding a reference to grouped data
+ *
+ * @function #generatePoints
+ * @memberOf Highcharts.Series.prototype
  */
 seriesProto.generatePoints = function () {
 

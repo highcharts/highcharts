@@ -27,7 +27,9 @@ var seriesType = H.seriesType,
         };
     };
 
-// Map of shape types
+/**
+ * @type {Object}
+ */
 H.tileShapeTypes = {
 
     /** Hexagon shape type **/
@@ -477,6 +479,12 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
  * @excluding joinBy, shadow, allAreas, mapData, data
  * @optionparent plotOptions.tilemap
  */
+/**
+ * The tilemap series type.
+ *
+ * @constructor seriesTypes.tilemap
+ * @augments seriesTypes.heatmap
+ */
 seriesType('tilemap', 'heatmap', {
 // Default options
     states: {
@@ -533,7 +541,7 @@ seriesType('tilemap', 'heatmap', {
     tileShape: 'hexagon'
 
 // Prototype functions
-}, {
+}, /** @lends seriesTypes.tilemap.prototype */ {
 
     // Set tile shape object on series
     setOptions: function () {
@@ -605,13 +613,20 @@ seriesType('tilemap', 'heatmap', {
         );
     }
 
-}, H.extend({
+}, H.extend(/** @lends seriesTypes.tilemap.prototype.pointClass.prototype */ {
     haloPath: function () {
         return this.series.tileShape.haloPath.apply(this,
             Array.prototype.slice.call(arguments)
         );
     }
 }, H.colorPointMixin));
+
+/**
+ * The point class of tilemap series type.
+ *
+ * @type seriesTypes.tilemap.prototype.pointClass
+ * @mixes colorPointMixin
+ */
 
 /**
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
@@ -692,7 +707,7 @@ seriesType('tilemap', 'heatmap', {
    * explicitly, as we use the color to denote the `value`. Options for
    * this are set in the [colorAxis](#colorAxis) configuration.
    *
-   * @type {Color}
+   * @type {ColorString}
    * @product highcharts highmaps
    * @apioption plotOptions.tilemap.data.color
    */

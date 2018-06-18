@@ -34,6 +34,8 @@ if (!H.radialAxisExtended) {
     /**
      * Augmented methods for the x axis in order to hide it completely, used for
      * the X axis in gauges
+     * @mixin
+     * @memberof Highcharts
      */
     hiddenAxisMixin = {
         getOffset: noop,
@@ -50,8 +52,10 @@ if (!H.radialAxisExtended) {
 
     /**
      * Augmented methods for the value axis
+     * @mixin
+     * @memberof Highcharts
      */
-    radialAxisMixin = {
+    radialAxisMixin = /** lends H.Axis */ {
 
         /**
          * The default options extend defaultYAxisOptions

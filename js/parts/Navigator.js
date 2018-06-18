@@ -216,7 +216,7 @@ extend(defaultOptions, {
             /**
              * The fill for the handle.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @product highstock
              */
             backgroundColor: '${palette.neutralColor5}',
@@ -224,7 +224,7 @@ extend(defaultOptions, {
             /**
              * The stroke for the handle border and the stripes inside.
              *
-             * @type {Color}
+             * @type {ColorString}
              * @product highstock
              */
             borderColor: '${palette.neutralColor40}'
@@ -239,7 +239,7 @@ extend(defaultOptions, {
          * that are currently not visible in the main series. The default
          * color is bluish with an opacity of 0.3 to see the series below.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @see     In styled mode, the mask is styled with the
          *          `.highcharts-navigator-mask` and
          *          `.highcharts-navigator-mask-inside` classes.
@@ -254,7 +254,7 @@ extend(defaultOptions, {
          * The color of the line marking the currently zoomed area in the
          * navigator.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highstock} stock/navigator/outline/ 2px blue outline
          * @default #cccccc
          * @product highstock
@@ -365,7 +365,7 @@ extend(defaultOptions, {
              * Line color for the navigator series. Allows setting the color
              * while disallowing the default candlestick setting.
              *
-             * @type {Color}
+             * @type {ColorString}
              */
             lineColor: null, // #4602
 
@@ -540,6 +540,7 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
  * The Navigator class
  * @param {Object} chart - Chart object
  * @class
+ * @memberof Highcharts
  */
 function Navigator(chart) {
     this.init(chart);

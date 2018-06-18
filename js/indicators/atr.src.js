@@ -55,7 +55,7 @@ seriesType('atr', 'sma',
         params: {
             period: 14
         }
-    }, {
+    }, /** @lends seriesTypes.atr.prototype */ {
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,

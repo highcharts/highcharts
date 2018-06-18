@@ -27,6 +27,12 @@ if (seriesTypes.bubble) {
      * @product highmaps
      * @optionparent plotOptions.mapbubble
      */
+    /**
+     * The mapbubble series type.
+     *
+     * @constructor seriesTypes.mapbubble
+     * @augments seriesTypes.bubble
+     */
     seriesType('mapbubble', 'bubble', {
 
 
@@ -35,7 +41,7 @@ if (seriesTypes.bubble) {
          * The main color of the series. This color affects both the fill and
          * the stroke of the bubble. For enhanced control, use `marker` options.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highmaps} maps/plotoptions/mapbubble-color/ Pink bubbles
          * @product highmaps
          * @apioption plotOptions.mapbubble.color
@@ -69,7 +75,7 @@ if (seriesTypes.bubble) {
          * When a point's Z value is below the [zThreshold](
          * #plotOptions.mapbubble.zThreshold) setting, this color is used.
          *
-         * @type {Color}
+         * @type {ColorString}
          * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/
          *         Negative color below a threshold
          * @default null
@@ -155,7 +161,7 @@ if (seriesTypes.bubble) {
         }
 
     // Prototype members
-    }, {
+    }, /** @lends seriesTypes.mapbubble.prototype */ {
         xyFromShape: true,
         type: 'mapbubble',
         // If one single value is passed, it is interpreted as z
@@ -166,7 +172,7 @@ if (seriesTypes.bubble) {
         setData: seriesTypes.map.prototype.setData
 
     // Point class
-    }, {
+    }, /** @lends seriesTypes.mapbubble.prototype.pointClass.prototype */ {
         applyOptions: function (options, x) {
             var point;
             if (

@@ -484,11 +484,15 @@ Axis.prototype.swapZ = function (p, insidePlotArea) {
     return p;
 };
 
+/**
+ * @class H.ZAxis
+ * @extends H.Axis
+ */
 ZAxis = H.ZAxis = function () {
     this.init.apply(this, arguments);
 };
 extend(ZAxis.prototype, Axis.prototype);
-extend(ZAxis.prototype, {
+extend(ZAxis.prototype, /** @lends H.ZAxis.prototype */{
     isZAxis: true,
     setOptions: function (userOptions) {
         userOptions = merge({

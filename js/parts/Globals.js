@@ -24,26 +24,89 @@ var glob = typeof win === 'undefined' ? window : win,
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
 
-var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
+var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) :
+/** @lends Highcharts */
+{
+    /**
+     * @type {string}
+     */
     product: '@product.name@',
+    /**
+     * @type {string}
+     */
     version: '@product.version@',
+    /**
+     * @type {number}
+     */
     deg2rad: Math.PI * 2 / 360,
+    /**
+     * @type {Document}
+     */
     doc: doc,
+    /**
+     * @type {boolean}
+     */
     hasBidiBug: hasBidiBug,
+    /**
+     * @type {boolean}
+     */
     hasTouch: doc && doc.documentElement.ontouchstart !== undefined,
+    /**
+     * @type {boolean}
+     */
     isMS: isMS,
+    /**
+     * @type {boolean}
+     */
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
+    /**
+     * @type {boolean}
+     */
     isFirefox: isFirefox,
+    /**
+     * @type {boolean}
+     */
     isChrome: isChrome,
+    /**
+     * @type {boolean}
+     */
     isSafari: !isChrome && userAgent.indexOf('Safari') !== -1,
+    /**
+     * @type {boolean}
+     */
     isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
+    /**
+     * @type {string}
+     */
     SVG_NS: SVG_NS,
+    /**
+     * @type {number}
+     */
     chartCount: 0,
+    /**
+     * @namespace
+     * @chart-private
+     */
     seriesTypes: {},
+    /**
+     * @type {Object}
+     */
     symbolSizes: {},
+    /**
+     * @type {Function}
+     */
     svg: svg,
+    /**
+     * @type {Window}
+     */
     win: glob,
+    /**
+     * @type {string[]}
+     */
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
+    /**
+     * @type {Function}
+     */
     noop: function () {
         return undefined;
     },
