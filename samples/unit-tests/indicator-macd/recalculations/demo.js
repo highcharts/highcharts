@@ -96,6 +96,21 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'After addPoint number of MACD points is correct'
     );
 
+    chart.series[1].update({
+        params: {
+            shortPeriod: 8,
+            longPeriod: 16,
+            signalPeriod: 9,
+            period: 16
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[1].points.length > 0,
+        true,
+        'Long and short SMA / EMA are correct.'
+    );
+
     chart.series[0].setData([
         [1435017600000, 0, 0, 0, 0],
         [1435104000000, 0, 0, 0, 0],
