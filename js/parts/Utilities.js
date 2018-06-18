@@ -1564,7 +1564,7 @@ H.map = function (arr, fn) {
  * Returns an array of a given object's own properties.
  *
  * @function #keys
- * @memberOf highcharts
+ * @memberOf Highcharts
  * @param {Object} obj - The object of which the properties are to be returned.
  * @returns {Array} - An array of strings that represents all the properties.
  */
