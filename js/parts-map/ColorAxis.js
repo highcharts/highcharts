@@ -983,7 +983,8 @@ if (!H.ColorAxis) {
      */
     addEvent(Legend, 'afterGetAllItems', function (e) {
         var colorAxisItems = [],
-            colorAxis = this.chart.colorAxis[0];
+            colorAxis = this.chart.colorAxis[0],
+            i;
 
         if (colorAxis && colorAxis.options) {
             if (colorAxis.options.showInLegend) {
@@ -1003,8 +1004,9 @@ if (!H.ColorAxis) {
             }
         }
 
-        while (colorAxisItems.length) {
-            e.allItems.unshift(colorAxisItems.pop());
+        i = colorAxisItems.length;
+        while (i--) {
+            e.allItems.unshift(colorAxisItems[i]);
         }
     });
 
