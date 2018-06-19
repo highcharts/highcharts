@@ -63,7 +63,7 @@ var addEvent = H.addEvent,
  * options.yAxis.
  *
  * @class Highcharts.Axis
- * @memberOf Highcharts
+ * @memberof Highcharts
  * @param {Highcharts.Chart} chart - The Chart instance to apply the axis on.
  * @param {Object} options - Axis options
  */
@@ -1843,7 +1843,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The Chart that the axis belongs to.
          *
          * @name     chart
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {Chart}
          */
         axis.chart = chart;
@@ -1852,7 +1852,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * Whether the axis is horizontal.
          *
          * @name     horiz
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {Boolean}
          */
         axis.horiz = chart.inverted && !axis.isZAxis ? !isXAxis : isXAxis;
@@ -1866,7 +1866,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * {@link Chart.xAxis}.
          *
          * @name     coll
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {String}
          */
         axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
@@ -1880,7 +1880,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * bottom and 3 is left.
          *
          * @name     side
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {Number}
          */
         axis.side = userOptions.side || (axis.horiz ?
@@ -1909,7 +1909,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * option, but inverted charts have reversed xAxis by default.
          *
          * @name     reversed
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {Boolean}
          */
         axis.reversed = options.reversed;
@@ -1967,7 +1967,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * {@link Axis#getExtremes}.
          *
          * @name     max
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {Number}
          */
         axis.max = null;
@@ -1977,7 +1977,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * {@link Axis#getExtremes}.
          *
          * @name     min
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {Number}
          */
         axis.min = null;
@@ -1987,7 +1987,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The processed crosshair options.
          *
          * @name     crosshair
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {AxisCrosshairOptions}
          */
         axis.crosshair = pick(
@@ -2013,7 +2013,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * All series associated to the axis.
          *
          * @name     series
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {Array<Series>}
          */
         axis.series = axis.series || []; // populated by Series

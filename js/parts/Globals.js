@@ -52,7 +52,7 @@ var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
      * position in the array is preserved throughout the page's lifetime. When
      * a chart is destroyed, the array item becomes `undefined`.
      * @type {Array<Chart>}
-     * @memberOf Highcharts
+     * @memberof Highcharts
      */
     charts: []
 };

@@ -1066,7 +1066,7 @@ seriesType('map', 'scatter', {
      * Highmaps only. Zoom in on the point using the global animation.
      *
      * @function #zoomTo
-     * @memberOf Point
+     * @memberof Point
      * @sample maps/members/point-zoomto/
      *         Zoom to points from butons
      */

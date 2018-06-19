@@ -95,7 +95,7 @@ var addEvent = H.addEvent,
  * Chart} object with different default options than the basic Chart.
  *
  * @function #stockChart
- * @memberOf Highcharts
+ * @memberof Highcharts
  *
  * @param  {String|HTMLDOMElement} renderTo
  *         The DOM element to render to, or its id.
@@ -682,7 +682,7 @@ seriesProto.init = function () {
  * series.
  *
  * @function setCompare
- * @memberOf Series.prototype
+ * @memberof Series.prototype
  *
  * @param  {String} compare
  *         Can be one of `null`, `"percent"` or `"value"`.
@@ -812,7 +812,7 @@ wrap(seriesProto, 'getExtremes', function (proceed) {
  *         Chart#redraw},
  *
  * @function setCompare
- * @memberOf Axis.prototype
+ * @memberof Axis.prototype
  *
  * @see    {@link https://api.highcharts.com/highstock/series.plotOptions.compare|
  *         series.plotOptions.compare}
