@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import drawPoint from '../mixins/draw-point.js';
-import collision from '../mixins/collision.js';
+import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 var each = H.each,
     extend = H.extend,
@@ -19,10 +19,10 @@ var each = H.each,
     isObject = H.isObject,
     find = H.find,
     reduce = H.reduce,
-    getBoundingBoxFromPolygon = collision.getBoundingBoxFromPolygon,
-    getPolygon = collision.getPolygon,
-    isPolygonsColliding = collision.isPolygonsColliding,
-    movePolygon = collision.movePolygon,
+    getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
+    getPolygon = polygon.getPolygon,
+    isPolygonsColliding = polygon.isPolygonsColliding,
+    movePolygon = polygon.movePolygon,
     Series = H.Series;
 
 /**
@@ -748,9 +748,9 @@ var wordCloudSeries = {
     },
     utils: {
         getRotation: getRotation,
-        isPolygonsColliding: collision.isPolygonsColliding,
-        rotate2DToOrigin: collision.rotate2DToOrigin,
-        rotate2DToPoint: collision.rotate2DToPoint
+        isPolygonsColliding: isPolygonsColliding,
+        rotate2DToOrigin: polygon.rotate2DToOrigin,
+        rotate2DToPoint: polygon.rotate2DToPoint
     },
     getPlotBox: function () {
         var series = this,
