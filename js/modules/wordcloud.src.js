@@ -18,10 +18,11 @@ var each = H.each,
     isNumber = H.isNumber,
     isObject = H.isObject,
     find = H.find,
-    map = H.map,
     reduce = H.reduce,
+    getBoundingBoxFromPolygon = collision.getBoundingBoxFromPolygon,
+    getPolygon = collision.getPolygon,
     isPolygonsColliding = collision.isPolygonsColliding,
-    rotate2DToPoint = collision.rotate2DToPoint,
+    movePolygon = collision.movePolygon,
     Series = H.Series;
 
 /**
@@ -315,14 +316,6 @@ var outsidePlayingField = function outsidePlayingField(rect, field) {
         playingField.bottom > rect.bottom
     );
 };
-var movePolygon = function (deltaX, deltaY, polygon) {
-    return map(polygon, function (point) {
-        return [
-            point[0] + deltaX,
-            point[1] + deltaY
-        ];
-    });
-};
 
 /**
  * intersectionTesting - Check if a point intersects with previously placed
@@ -507,39 +500,6 @@ var wordCloudOptions = {
     }
 };
 
-var getPolygon = function (x, y, width, height, rotation) {
-    var origin = [x, y],
-        left = x - (width / 2),
-        right = x + (width / 2),
-        top = y - (height / 2),
-        bottom = y + (height / 2),
-        polygon = [
-            [left, top],
-            [right, top],
-            [right, bottom],
-            [left, bottom]
-        ];
-    return map(polygon, function (point) {
-        return rotate2DToPoint(point, origin, -rotation);
-    });
-};
-
-var getBoundingBoxFromPolygon = function (points) {
-    return reduce(points, function (obj, point) {
-        var x = point[0],
-            y = point[1];
-        obj.left = Math.min(x, obj.left);
-        obj.right = Math.max(x, obj.right);
-        obj.bottom = Math.max(y, obj.bottom);
-        obj.top = Math.min(y, obj.top);
-        return obj;
-    }, {
-        left: Number.MAX_SAFE_INTEGER,
-        right: Number.MIN_SAFE_INTEGER,
-        bottom: Number.MIN_SAFE_INTEGER,
-        top: Number.MAX_SAFE_INTEGER
-    });
-};
 /**
  * Properties of the WordCloud series.
  */

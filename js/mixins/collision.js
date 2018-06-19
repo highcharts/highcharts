@@ -138,6 +138,40 @@ var getAxes = function (polygon1, polygon2) {
     return axes1.concat(axes2);
 };
 
+var getPolygon = function (x, y, width, height, rotation) {
+    var origin = [x, y],
+        left = x - (width / 2),
+        right = x + (width / 2),
+        top = y - (height / 2),
+        bottom = y + (height / 2),
+        polygon = [
+            [left, top],
+            [right, top],
+            [right, bottom],
+            [left, bottom]
+        ];
+    return map(polygon, function (point) {
+        return rotate2DToPoint(point, origin, -rotation);
+    });
+};
+
+var getBoundingBoxFromPolygon = function (points) {
+    return reduce(points, function (obj, point) {
+        var x = point[0],
+            y = point[1];
+        obj.left = Math.min(x, obj.left);
+        obj.right = Math.max(x, obj.right);
+        obj.bottom = Math.max(y, obj.bottom);
+        obj.top = Math.min(y, obj.top);
+        return obj;
+    }, {
+        left: Number.MAX_SAFE_INTEGER,
+        right: Number.MIN_SAFE_INTEGER,
+        bottom: Number.MIN_SAFE_INTEGER,
+        top: Number.MAX_SAFE_INTEGER
+    });
+};
+
 var isPolygonsOverlappingOnAxis = function (axis, polygon1, polygon2) {
     var projection1 = project(polygon1, axis),
         projection2 = project(polygon2, axis),
@@ -163,8 +197,20 @@ var isPolygonsColliding = function isPolygonsColliding(polygon1, polygon2) {
     return overlappingOnAllAxes;
 };
 
+var movePolygon = function (deltaX, deltaY, polygon) {
+    return map(polygon, function (point) {
+        return [
+            point[0] + deltaX,
+            point[1] + deltaY
+        ];
+    });
+};
+
 var collision = {
+    getBoundingBoxFromPolygon: getBoundingBoxFromPolygon,
+    getPolygon: getPolygon,
     isPolygonsColliding: isPolygonsColliding,
+    movePolygon: movePolygon,
     rotate2DToOrigin: rotate2DToOrigin,
     rotate2DToPoint: rotate2DToPoint
 };
