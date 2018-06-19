@@ -2,7 +2,9 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var deg2rad = H.deg2rad,
     find = H.find,
+    isArray = H.isArray,
     isNumber = H.isNumber,
+    map = H.map,
     reduce = H.reduce;
 
 /**
@@ -50,19 +52,13 @@ var dotProduct = function dotProduct(a, b) {
  * @param {Array} target The coordinate of pr
  */
 var project = function project(polygon, target) {
-    return reduce(
-        polygon,
-        function (result, point) {
-            var product = dotProduct(point, target);
-            result.min = Math.min(result.min, product);
-            result.max = Math.max(result.max, product);
-            return result;
-        },
-        {
-            min: Number.MAX_SAFE_INTEGER,
-            max: Number.MIN_SAFE_INTEGER
-        }
-    );
+    var products = map(polygon, function (point) {
+        return dotProduct(point, target);
+    });
+    return {
+        min: Math.min.apply(this, products),
+        max: Math.max.apply(this, products)
+    };
 };
 
 /**
@@ -100,6 +96,58 @@ var rotate2DToPoint = function (point, origin, angle) {
     ];
 };
 
+var isAxesEqual = function (axis1, axis2) {
+    return (
+        axis1[0] === axis2[0] &&
+        axis1[1] === axis2[1]
+    );
+};
+
+var getAxesFromPolygon = function (polygon) {
+    var points,
+        axes = polygon.axes;
+    if (!isArray(axes)) {
+        axes = [];
+        points = points = polygon.concat([polygon[0]]);
+        reduce(
+            points,
+            function findAxis(p1, p2) {
+                var normals = getNormals(p1, p2),
+                    axis = normals[0]; // Use the left normal as axis.
+
+                // Check that the axis is unique.
+                if (!find(axes, function (existing) {
+                    return isAxesEqual(existing, axis);
+                })) {
+                    axes.push(axis);
+                }
+
+                // Return p2 to be used as p1 in next iteration.
+                return p2;
+            }
+        );
+        polygon.axes = axes;
+    }
+    return axes;
+};
+
+var getAxes = function (polygon1, polygon2) {
+    // Get the axis from both polygons.
+    var axes1 = getAxesFromPolygon(polygon1),
+        axes2 = getAxesFromPolygon(polygon2);
+    return axes1.concat(axes2);
+};
+
+var isPolygonsOverlappingOnAxis = function (axis, polygon1, polygon2) {
+    var projection1 = project(polygon1, axis),
+        projection2 = project(polygon2, axis),
+        isOverlapping = !(
+            projection2.min > projection1.max ||
+            projection2.max < projection1.min
+        );
+    return !isOverlapping;
+};
+
 /**
  * Checks wether two convex polygons are colliding by using the Separating Axis
  * Theorem.
@@ -108,38 +156,9 @@ var rotate2DToPoint = function (point, origin, angle) {
  * @returns {boolean} Returns true if they are colliding, otherwise false.
  */
 var isPolygonsColliding = function isPolygonsColliding(polygon1, polygon2) {
-    var getAxes = function (polygon1, polygon2) {
-            var existingAxes = {};
-
-            // Get the axis from both polygons.
-            return [polygon1, polygon2].reduce(function (axes, polygon) {
-                var points = polygon.concat([polygon[0]]);
-                points.reduce(function (p1, p2) {
-                    var normals = getNormals(p1, p2),
-                        axis = normals[0], // Use the left normal as axis.
-                        key = axis.toString();
-
-                    // Check that the axis is unique.
-                    if (!existingAxes[key]) {
-                        existingAxes[key] = true;
-                        axes.push(normals[0]);
-                    }
-
-                    // Return p2 to be used as p1 in next iteration.
-                    return p2;
-                });
-                return axes;
-            }, []);
-        },
-        axes = getAxes(polygon1, polygon2),
+    var axes = getAxes(polygon1, polygon2),
         overlappingOnAllAxes = !find(axes, function (axis) {
-            var projection1 = project(polygon1, axis),
-                projection2 = project(polygon2, axis),
-                isOverlapping = !(
-                    projection2.min > projection1.max ||
-                    projection2.max < projection1.min
-                );
-            return !isOverlapping;
+            return isPolygonsOverlappingOnAxis(axis, polygon1, polygon2);
         });
     return overlappingOnAllAxes;
 };
