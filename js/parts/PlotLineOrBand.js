@@ -35,6 +35,9 @@ H.PlotLineOrBand.prototype = {
      * move it.
      */
     render: function () {
+
+        H.fireEvent(this, 'render');
+
         var plotLine = this,
             axis = plotLine.axis,
             horiz = axis.horiz,
