@@ -11,6 +11,7 @@
  * 
  * */
 
+const childProcess = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -31,16 +32,7 @@ const rootPath = process.cwd();
 let allDocletPropertyNames = [],
     apiOptionMembers = [],
     currentFilePath = '',
-    namespace = {
-        doclet: {
-            description: 'Copyright (c) Highsoft AS. All rights reserved.',
-            types: [ 'global' ]
-        },
-        meta: {
-            filename: currentFilePath,
-            line: 0
-        }
-    },
+    namespace = {},
     privateMembers = [];
 
 /* *
@@ -52,7 +44,7 @@ let allDocletPropertyNames = [],
 function isApiOption (doclet) {
 
     let comment = doclet.comment,
-        longname = getLongname(doclet),
+        name = getName(doclet),
         isApiOption = (
             comment.indexOf('@default') >= 0 ||
             comment.indexOf('@product') >= 0 ||
@@ -61,11 +53,11 @@ function isApiOption (doclet) {
         );
 
     if (isApiOption) {
-        apiOptionMembers.push(longname);
+        apiOptionMembers.push(name);
         return true;
     } else {
         return (apiOptionMembers.some(
-            member => longname.indexOf(member) === 0
+            member => name.indexOf(member) === 0
         ));
     }
 }
@@ -78,26 +70,26 @@ function isInstance (doclet) {
         return true;
     }
 
-    let longname = getLongname(doclet);
+    let name = getName(doclet);
 
-    return (longname.lastIndexOf('#') > longname.lastIndexOf('.'));
+    return (name.lastIndexOf('#') > name.lastIndexOf('.'));
 }
 
 function isPrivate (doclet) {
 
-    let longname = getLongname(doclet),
+    let name = getName(doclet),
         privateFlag = (
             doclet.ignore ||
             doclet.name[0] === '_' ||
-            longname.indexOf('~') >= 0
+            name.indexOf('~') >= 0
         );
 
     if (privateFlag) {
-        privateMembers.push(longname);
+        privateMembers.push(name);
         return true;
     } else {
         return (privateMembers.some(member => {
-            return longname.indexOf(member) === 0;
+            return name.indexOf(member) === 0;
         }));
     }
 }
@@ -108,9 +100,9 @@ function isStatic (doclet) {
         return true;
     }
 
-    let longname = getLongname(doclet);
+    let name = getName(doclet);
 
-    return (longname.lastIndexOf('.') > longname.lastIndexOf('#'));
+    return (name.lastIndexOf('.') > name.lastIndexOf('#'));
 }
 
 function isUndocumented (doclet) {
@@ -124,7 +116,7 @@ function isUndocumented (doclet) {
  *
  * */
 
-function getDeanonymousName (name) {
+function getClearName (name) {
 
     if (!name) {
         return '';
@@ -132,7 +124,8 @@ function getDeanonymousName (name) {
         return name
             .replace('~<anonymous>~', '~')
             .replace('~<anonymous>', '')
-            .replace('<anonymous>~', '');
+            .replace('<anonymous>~', '')
+            .replace('#', '.');
     }
 }
 
@@ -181,7 +174,8 @@ function getLightDoclet (doclet) {
 
     let lightDoclet = {
         description: getDescription(doclet),
-        kind: getKind(doclet)
+        kind: getKind(doclet),
+        name: getName(doclet)
     };
 
     if (typeof doclet.deprecated !== 'undefined') {
@@ -199,62 +193,62 @@ function getLightDoclet (doclet) {
     return lightDoclet;
 }
 
-function getLongname (doclet) {
+function getLightMeta (doclet) {
 
-    if (doclet.highchartsLongname) {
-        return doclet.highchartsLongname;
+    let meta = (doclet.meta || {}),
+        line = (meta.lineno || 0);
+
+    return {
+        files: [{
+            path: currentFilePath,
+            line: line
+        }]
+    };
+}
+
+function getName (doclet) {
+
+    if (doclet.highchartsName) {
+        return doclet.highchartsName;
     }
 
-    let kind = getKind(doclet),
-        longname = getDeanonymousName(doclet.longname);
-
+    let name = getClearName(doclet.longname),
+        scope = doclet.scope;
+        
     try {
 
-        if (longname.indexOf('H.') === 0) {
-            longname = longname.substr(2);
-        } else if (longname === 'H') {
-            longname = 'Highcharts';
+        if (name.indexOf('H.') === 0) {
+            name = name.substr(2);
+        } else if (name === 'H') {
+            name = 'Highcharts';
         }
 
-        if (kind !== 'global' &&
-            longname.indexOf('Highcharts.') !== 0
+        if (scope !== 'global' &&
+            name.indexOf('Highcharts.') !== 0
         ) {
             
-            let memberOf = getDeanonymousName(doclet.memberOf);
+            let memberOf = getClearName(doclet.memberOf);
 
             if (memberOf
                 && memberOf.indexOf('Highcharts') === 0
             ) {
-                longname = memberOf + '.' + longname;
+                name = memberOf + '.' + name;
             } else {
-                longname = ('Highcharts.' + longname);
+                name = ('Highcharts.' + name);
             }
         }
 
-        longname = longname.replace('#', '.');
-
-        return longname
+        return name
     
     } finally {
-        doclet.highchartsLongname = longname;
+        doclet.highchartsName = name;
     }
-}
-
-function getMeta (doclet) {
-
-    let meta = doclet.meta,
-        line = meta.lineno;
-
-    return {
-        filename: currentFilePath,
-        line: line
-    };
 }
 
 function getNodeFor (doclet) {
 
     let node = namespace,
-        parts = getLongname(doclet).replace('#', '.').split('.');
+        parts = getName(doclet).replace('#', '.').split('.');
 
     parts.forEach(part => {
 
@@ -300,9 +294,9 @@ function getParameters (doclet) {
     return parameters;
 }
 
-function getReturns (doclet) {
+function getReturn (doclet) {
 
-    let returns = {
+    let returnObj = {
         types: [ 'void' ]
     };
 
@@ -313,15 +307,15 @@ function getReturns (doclet) {
         }
 
         if (item.description) {
-            returns.description = item.description;
+            returnObj.description = item.description;
         }
 
         if (item.type) {
-            returns.types = item.type.slice();
+            returnObj.types = item.type.slice();
         }
     });
 
-    return returns;
+    return returnObj;
 }
 
 function getTypes (doclet) {
@@ -359,6 +353,52 @@ function getUniqueArray(array1, array2) {
 
 /* *
  *
+ *  Update Functions
+ * 
+ * */
+
+function updateNode(node, doclet) {
+
+    let lightDoclet = getLightDoclet(doclet),
+        lightMeta = getLightMeta(doclet),
+        path = lightMeta.files[0].path;
+
+    if (!node.doclet) {
+        node.doclet = lightDoclet;
+    } else {
+        Object.keys(lightDoclet).forEach(key => {
+            if (typeof node.doclet[key] === 'undefined' &&
+                typeof lightDoclet[key] !== 'undefined'
+            ) {
+                node.doclet[key] = lightDoclet[key];
+            }
+        })
+    }
+
+    if (!node.meta) {
+        node.meta = lightMeta;
+    } else {
+        Object.keys(lightMeta).forEach(key => {
+            if (typeof node.meta[key] === 'undefined' &&
+                typeof lightMeta[key] !== 'undefined'
+            ) {
+                node.meta[key] = lightMeta[key];
+            }
+        })
+    }
+
+    if (path &&
+        !node.meta.files.some(file => file.path === path)
+    ) {
+        node.meta.files.push({
+            path: lightMeta.files[0].path,
+            line: lightMeta.files[0].line
+        });
+    }
+}
+
+/* *
+ *
  *  Add Functions
  * 
  * */
@@ -367,29 +407,25 @@ function addClass (doclet) {
 
     let node = getNodeFor(doclet);
 
-    if (!node.doclet) {
-        node.doclet = getLightDoclet(doclet);
+    updateNode(node, doclet);
+
+    if (!node.doclet.parameters) {
         node.doclet.parameters = getParameters(doclet);
     }
-
-    if (!node.meta) {
-        node.meta = getMeta(doclet);
-    }
-
 }
 
 function addFunction (doclet) {
 
     let node = getNodeFor(doclet);
 
-    if (!node.doclet) {
-        node.doclet = getLightDoclet(doclet);
+    updateNode(node, doclet);
+
+    if (!node.doclet.parameters) {
         node.doclet.parameters = getParameters(doclet);
-        node.doclet.returns = getReturns(doclet);
     }
 
-    if (!node.meta) {
-        node.meta = getMeta(doclet);
+    if (!node.doclet.return) {
+        node.doclet.return = getReturn(doclet);
     }
 }
 
@@ -397,13 +433,10 @@ function addMember (doclet) {
 
     let node = getNodeFor(doclet);
 
-    if (!node.doclet) {
-        node.doclet = getLightDoclet(doclet);
-        node.doclet.types = getTypes(doclet);
-    }
+    updateNode(node, doclet);
 
-    if (!node.meta) {
-        node.meta = getMeta(doclet);
+    if (!node.doclet.types) {
+        node.doclet.types = getTypes(doclet);
     }
 }
 
@@ -411,35 +444,26 @@ function addNamespace (doclet) {
 
     let node = getNodeFor(doclet);
 
-    if (!node.doclet) {
-        node.doclet = getLightDoclet(doclet);
-    }
-
-    if (!node.meta) {
-        node.meta = getMeta(doclet);
-    }
+    updateNode(node, doclet);
 }
 
 function addTypeDef (doclet) {
 
-    let longname = getLongname(doclet),
+    let name = getName(doclet),
         node = getNodeFor(doclet);
 
-    if (!node.doclet) {
-        node.doclet = getLightDoclet(doclet);
+    updateNode(node, doclet);
+
+    if (!node.doclet.types) {
         node.doclet.types = getTypes(doclet);
     }
 
-    if (!node.meta) {
-        node.meta = getMeta(doclet);
-    }
-
-    Object.values(doclet.properties || []).forEach(doclet => {
-        doclet.longname = (longname + '.' + doclet.name);
-        doclet.meta = {
-            lineno: node.meta.line
+    Object.values(doclet.properties || []).forEach(propertyDoclet => {
+        propertyDoclet.longname = (name + '.' + propertyDoclet.name);
+        propertyDoclet.meta = {
+            line: node.meta.line
         }
-        addMember(doclet);
+        addMember(propertyDoclet);
     })
 }
 
@@ -451,15 +475,29 @@ function addTypeDef (doclet) {
  * 
  * */
 
+function parseBegin (e) {
+
+    namespace.doclet = {
+        description: 'Copyright (c) Highsoft AS. All rights reserved.',
+        kind: 'global'
+    };
+
+    namespace.meta = {
+        branch: childProcess.execSync('git rev-parse --abbrev-ref HEAD', {cwd: rootPath}).toString().trim(),
+        commit: childProcess.execSync('git rev-parse --short HEAD', {cwd: rootPath}).toString().trim(),
+        date: (new Date()).toString(),
+        files: [],
+        version: require(rootPath  + '/package.json').version
+    };
+}
+
 function fileBegin (e) {
 
-    let filePath = e.filename;
-
-    if (filePath.indexOf(rootPath) === 0) {
-        filePath = filePath.substr(rootPath.length + 1);
-    }
-
-    currentFilePath = filePath;
+    currentFilePath = path.relative(rootPath, e.filename);
+    namespace.meta.files.push({
+        path: currentFilePath,
+        line: 0
+    });
 }
 
 function newDoclet (e) {
@@ -525,6 +563,7 @@ exports.defineTags = function (dictionary) {
 };
 
 exports.handlers = {
+    parseBegin: parseBegin,
     fileBegin: fileBegin,
     newDoclet: newDoclet,
     fileComplete: fileComplete,
