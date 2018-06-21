@@ -64,6 +64,7 @@ addEvent(Chart, 'render', function collectAndHide() {
             });
         }
     });
+
     this.hideOverlappingLabels(labels);
 });
 
@@ -127,26 +128,36 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
             if (
                 label1 && label2 &&
                 label1 !== label2 && // #6465, polar chart with connectEnds
-                label1.placed && label2.placed &&
+                (!label1.alignAttr || label1.placed) && // data labels
+                (!label2.alignAttr || label2.placed) && // data labels
                 label1.newOpacity !== 0 && label2.newOpacity !== 0
             ) {
-                pos1 = label1.alignAttr;
-                pos2 = label2.alignAttr;
+                pos1 = label1.alignAttr || {
+                    x: label1.attr('x'),
+                    y: label1.attr('y')
+                };
+                pos2 = label2.alignAttr || {
+                    x: label2.attr('x'),
+                    y: label2.attr('y')
+                };
+
                 // Different panes have different positions
                 parent1 = label1.parentGroup;
                 parent2 = label2.parentGroup;
+
                 // Substract the padding if no background or border (#4333)
                 padding = 2 * (label1.box ? 0 : (label1.padding || 0));
                 isIntersecting = intersectRect(
-                    pos1.x + parent1.translateX,
-                    pos1.y + parent1.translateY,
+                    pos1.x + (parent1.translateX || 0),
+                    pos1.y + (parent1.translateY || 0),
                     label1.width - padding,
                     label1.height - padding,
-                    pos2.x + parent2.translateX,
-                    pos2.y + parent2.translateY,
+                    pos2.x + (parent2.translateX || 0),
+                    pos2.y + (parent2.translateY || 0),
                     label2.width - padding,
                     label2.height - padding
                 );
+
 
                 if (isIntersecting) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
@@ -164,25 +175,31 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
         if (label) {
             newOpacity = label.newOpacity;
 
-            if (label.oldOpacity !== newOpacity && label.placed) {
+            if (label.oldOpacity !== newOpacity) {
 
                 // Make sure the label is completely hidden to avoid catching
                 // clicks (#4362)
-                if (newOpacity) {
-                    label.show(true);
-                } else {
-                    complete = function () {
-                        label.hide();
-                    };
-                }
+                if (label.alignAttr && label.placed) { // data labels
+                    if (newOpacity) {
+                        label.show(true);
+                    } else {
+                        complete = function () {
+                            label.hide();
+                        };
+                    }
 
-                // Animate or set the opacity
-                label.alignAttr.opacity = newOpacity;
-                label[label.isOld ? 'animate' : 'attr'](
-                    label.alignAttr,
-                    null,
-                    complete
-                );
+                    // Animate or set the opacity
+                    label.alignAttr.opacity = newOpacity;
+                    label[label.isOld ? 'animate' : 'attr'](
+                        label.alignAttr,
+                        null,
+                        complete
+                    );
+                } else { // other labels, tick labels
+                    label.attr({
+                        opacity: newOpacity
+                    });
+                }
 
             }
             label.isOld = true;
