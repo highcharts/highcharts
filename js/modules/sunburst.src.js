@@ -224,7 +224,10 @@ var getDlOptions = function getDlOptions(params) {
         }
 
         if (rotationMode === 'parallel') {
-            options.style.width = shape.radius * 1.5;
+            options.style.width = Math.min(
+                shape.radius * 1.5,
+                (point.outerArcLength + point.innerArcLength) / 2
+            );
         } else {
             options.style.width = shape.radius - 6;
         }
