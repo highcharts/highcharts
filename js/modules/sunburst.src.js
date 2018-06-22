@@ -229,7 +229,7 @@ var getDlOptions = function getDlOptions(params) {
                 (point.outerArcLength + point.innerArcLength) / 2
             );
         } else {
-            options.style.width = shape.radius - 6;
+            options.style.width = shape.radius;
         }
 
         if (
@@ -240,6 +240,11 @@ var getDlOptions = function getDlOptions(params) {
             options.style.width = 1;
         }
 
+        // Apply padding (#8515)
+        options.style.width = Math.max(
+            options.style.width - 2 * (options.padding || 0),
+            1
+        );
 
         rotation = (rotationRad * rad2deg) % 180;
         if (rotationMode === 'parallel') {
