@@ -228,8 +228,8 @@ wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
             path.push(
                 'M', fromPath[i + 1], fromPath[i + 2],
                 'L', fromPath[i + 4], fromPath[i + 5],
-                'L',   toPath[i + 4],   toPath[i + 5],
-                'L',   toPath[i + 1],   toPath[i + 2],
+                'L', toPath[i + 4], toPath[i + 5],
+                'L', toPath[i + 1], toPath[i + 2],
                 'Z');
         }
     }

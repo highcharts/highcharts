@@ -276,7 +276,7 @@ seriesType('variablepie', 'pie',
                 pointRadiusX,
                 pointRadiusY;
 
-            series.startAngleRad =  startAngleRad;
+            series.startAngleRad = startAngleRad;
             series.endAngleRad = endAngleRad;
             // Use calculateExtremes to get series.radii array.
             series.calculateExtremes();

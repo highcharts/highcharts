@@ -438,7 +438,7 @@ Highcharts.Legend.prototype = {
                     options.itemWidth ||
                     options.width ||
                     chart.spacingBox.width
-                ) -    itemExtraWidth
+                ) - itemExtraWidth
             });
         /*= if (build.classic) { =*/
         }

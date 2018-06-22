@@ -10,7 +10,7 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/Tooltip.js';
 
-var    merge = H.merge,
+var merge = H.merge,
     addEvent = H.addEvent,
     extend = H.extend,
     each = H.each,
@@ -155,7 +155,7 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     var options = { id: id };
 
     /*= if (build.classic) { =*/
-    var attrs  = {
+    var attrs = {
         stroke: markerOptions.color || 'none',
         fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
     };
@@ -355,7 +355,7 @@ MockPoint.prototype = {
     },
 
     isInsidePane: function () {
-        var    plotX = this.plotX,
+        var plotX = this.plotX,
             plotY = this.plotY,
             xAxis = this.series.xAxis,
             yAxis = this.series.yAxis,

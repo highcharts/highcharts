@@ -1608,8 +1608,8 @@ H.offset = function (el) {
             { top: 0, left: 0 };
 
     return {
-        top: box.top  + (win.pageYOffset || docElem.scrollTop) -
-            (docElem.clientTop  || 0),
+        top: box.top + (win.pageYOffset || docElem.scrollTop) -
+            (docElem.clientTop || 0),
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };

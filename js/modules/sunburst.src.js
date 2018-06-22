@@ -258,7 +258,7 @@ var getDlOptions = function getDlOptions(params) {
     // NOTE: alignDataLabel positions the data label differntly when rotation is
     // 0. Avoiding this by setting rotation to a small number.
     if (options.rotation === 0) {
-        options.rotation =  0.001;
+        options.rotation = 0.001;
     }
     return options;
 };

@@ -135,7 +135,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             userPlotOptions = userOptions.plotOptions || {};
 
         // Fire the event with a default function
-        fireEvent(this,    'init',    { args: arguments }, function () {
+        fireEvent(this, 'init', { args: arguments }, function () {
 
             userOptions.series = null;
             options = merge(defaultOptions, userOptions); // do the merge

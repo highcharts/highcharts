@@ -157,7 +157,7 @@ var squareSpiral = function squareSpiral(attempt) {
                     y: k
                 };
             } else {
-                result =  {
+                result = {
                     x: k,
                     y: k - (m - attempt - t)
                 };

@@ -139,7 +139,7 @@ H.tileShapeTypes = {
 
                 // Store points for halo creation
                 point.tileEdges = {
-                    x1: x1, x2: x2, x3: x3,    x4: x4, y1: y1, y2: y2, y3: y3
+                    x1: x1, x2: x2, x3: x3, x4: x4, y1: y1, y2: y2, y3: y3
                 };
 
                 // Finally set the shape for this point
@@ -231,7 +231,7 @@ H.tileShapeTypes = {
                     // We calculate the point padding of the midpoints to
                     // preserve the angles of the shape.
                     midPointPadding = pointPadding *
-                        Math.abs(x2 - x1) /    Math.abs(y3 - y2),
+                        Math.abs(x2 - x1) / Math.abs(y3 - y2),
                     xPointPadding = xAxis.reversed ?
                         -midPointPadding : midPointPadding,
                     yPointPadding = yAxis.reversed ?

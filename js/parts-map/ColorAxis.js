@@ -827,7 +827,7 @@ if (!H.ColorAxis) {
                         pos + 4, this.top - 6,
                         pos, this.top,
                         'Z'
-                    ] :    [
+                    ] : [
                         'M',
                         this.left, pos,
                         'L',

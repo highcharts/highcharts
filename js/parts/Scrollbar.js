@@ -44,7 +44,7 @@ var addEvent = H.addEvent,
  * @product highstock
  * @optionparent scrollbar
  */
-var defaultScrollbarOptions =  {
+var defaultScrollbarOptions = {
 
     /**
      * The height of the scrollbar. The height also applies to the width

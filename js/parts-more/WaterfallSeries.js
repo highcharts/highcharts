@@ -214,7 +214,7 @@ seriesType('waterfall', 'column', {
                 shapeArgs.height = Math.min(
                         yAxis.translate(range[0], 0, 1, 0, 1),
                         yAxis.len
-                    ) -    shapeArgs.y; // #4256
+                    ) - shapeArgs.y; // #4256
 
             } else if (point.isIntermediateSum) {
                 shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);

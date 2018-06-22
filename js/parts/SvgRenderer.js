@@ -4123,13 +4123,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         wrapper['text-alignSetter'] = function (value) {
             textAlign = value;
         };
-        wrapper.paddingSetter =  function (value) {
+        wrapper.paddingSetter = function (value) {
             if (defined(value) && value !== padding) {
                 padding = wrapper.padding = value;
                 updateTextPadding();
             }
         };
-        wrapper.paddingLeftSetter =  function (value) {
+        wrapper.paddingLeftSetter = function (value) {
             if (defined(value) && value !== paddingLeft) {
                 paddingLeft = value;
                 updateTextPadding();

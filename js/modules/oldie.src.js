@@ -330,7 +330,7 @@ if (!svg) {
          */
         init: function (renderer, nodeName) {
             var wrapper = this,
-                markup =  ['<', nodeName, ' filled="f" stroked="f"'],
+                markup = ['<', nodeName, ' filled="f" stroked="f"'],
                 style = ['position: ', 'absolute', ';'],
                 isDiv = nodeName === 'div';
 
@@ -345,7 +345,7 @@ if (!svg) {
             // create element with default attributes and style
             if (nodeName) {
                 markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
-                    markup.join('')    :
+                    markup.join('') :
                     renderer.prepVML(markup);
                 wrapper.element = createElement(markup);
             }
@@ -1127,7 +1127,7 @@ if (!svg) {
                         y1 = gradient.y1 || gradient[1] || 0;
                         x2 = gradient.x2 || gradient[2] || 0;
                         y2 = gradient.y2 || gradient[3] || 0;
-                        fillAttr = 'angle="' + (90  - Math.atan(
+                        fillAttr = 'angle="' + (90 - Math.atan(
                             (y2 - y1) / // y vector
                             (x2 - x1) // x vector
                             ) * 180 / Math.PI) + '"';

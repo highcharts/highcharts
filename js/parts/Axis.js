@@ -3041,7 +3041,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 if (!defined(hardMin) && minPadding) {
                     axis.min -= length * minPadding;
                 }
-                if (!defined(hardMax)  && maxPadding) {
+                if (!defined(hardMax) && maxPadding) {
                     axis.max += length * maxPadding;
                 }
             }
@@ -4296,7 +4296,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             ticks = axis.ticks,
             horiz = axis.horiz,
             side = axis.side,
-            invertedSide = chart.inverted  &&
+            invertedSide = chart.inverted &&
                 !axis.isZAxis ? [1, 0, 3, 2][side] : side,
             hasData,
             showAxis,

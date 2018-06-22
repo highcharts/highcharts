@@ -379,7 +379,7 @@ seriesType('macd', 'sma',
                 if (MACD[i][0] >= signalLine[0][0]) { // detect the first point
 
                     MACD[i][2] = signalLine[j][1];
-                    yMACD[i] = [0, signalLine[j][1],  MACD[i][3]];
+                    yMACD[i] = [0, signalLine[j][1], MACD[i][3]];
 
                     if (MACD[i][3] === null) {
                         MACD[i][1] = 0;
