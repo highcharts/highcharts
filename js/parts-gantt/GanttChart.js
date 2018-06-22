@@ -79,7 +79,12 @@ H.ganttChart = function (renderTo, options, callback) {
 
                 // Set default type treegrid, but only if 'categories' is
                 // undefined
-                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid',
+                labels: {
+                    style: {
+                        fontSize: '13px'
+                    }
+                }
             },
             yAxisOptions // user options
         );

@@ -29,7 +29,10 @@ var addEvent = H.addEvent,
         label: {
             format: '%a, %b %d %Y, %H:%M:%S',
             formatter: undefined,
-            rotation: 0
+            rotation: 0,
+            style: {
+                fontSize: '10px'
+            }
         }
     };
 
