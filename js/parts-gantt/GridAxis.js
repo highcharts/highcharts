@@ -173,7 +173,9 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         axisMin,
         lblMetrics,
         axisYCenter,
-        labelYCenter;
+        labelYCenter,
+        left,
+        right;
 
     // Only center tick labels in grid axes
     if (options.grid) {
@@ -187,7 +189,10 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
             if (!categoryAxis) {
                 // Center x position
                 if (isNumber(nextTickPos)) {
-                    x = axis.translate((tick.pos + nextTickPos) / 2);
+                    left = axis.translate(tick.pos);
+                    right = axis.translate(nextTickPos);
+                    x = (left + right) / 2;
+                    tick.slotWidth = Math.abs(right - left);
                 }
                 retVal.x = Math.round(x - crispCorr) + axis.left;
             }

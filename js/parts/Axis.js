@@ -2130,7 +2130,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 ret = time.dateFormat(dateTimeLabelFormats[1], value) +
                     time.dateFormat(
                         dateTimeLabelFormats[2],
-                        value + tickPositionInfo.totalRange - 1
+                        axis.tickPositions[
+                            H.inArray(this.pos, axis.tickPositions) + 1
+                        ] - 1
                     );
 
             } else {
@@ -4002,7 +4004,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @return {Number}
      *         The pixel width allocated to each axis label.
      */
-    getSlotWidth: function () {
+    getSlotWidth: function (tick) {
         // #5086, #1580, #1931
         var chart = this.chart,
             horiz = this.horiz,
@@ -4014,6 +4016,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             marginLeft = chart.margin[3];
 
         return (
+            tick &&
+            tick.slotWidth // Used by grid axis
+        ) || (
             horiz &&
             (labelOptions.step || 0) < 2 &&
             !labelOptions.rotation && // #4415
