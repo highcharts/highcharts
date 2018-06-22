@@ -23,6 +23,8 @@ var correctFloat = H.correctFloat,
  *
  * @sample       highcharts/demo/waterfall/
  *               Waterfall chart
+ * @sample       highcharts/plotoptions/waterfall-inverted/
+ *               Horizontal (inverted) waterfall
  * @sample       highcharts/plotoptions/waterfall-stacked/
  *               Stacked waterfall chart
  * @extends      {plotOptions.column}
