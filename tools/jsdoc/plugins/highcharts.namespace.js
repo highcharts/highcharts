@@ -150,13 +150,12 @@ function getDescription (doclet) {
             if (tagPosition >= 0) {
                 description = comment
                     .substr(0, tagPosition)
-                    .replace('/**', '')
-                    .replace(' * ', '')
-                    .replace(' */', '');
+                    .replace(/\/\*\*| \* | *\//gm, '');
             }
         }
 
-        description = description.replace(/(?:\\n|\s)+/gm, ' ');
+        description = description.replace(/\s+/gm, ' ');
+        description = description.trim();
 
         return description;
 
@@ -188,6 +187,14 @@ function getLightDoclet (doclet) {
 
     if (typeof doclet.defaultvalue !== 'undefined') {
         lightDoclet.defaultValue = doclet.defaultvalue;
+    }
+
+    if (isPrivate(doclet)) {
+        lightDoclet.isPrivate = true;
+    }
+
+    if (isStatic(doclet)) {
+        lightDoclet.isStatic = true;
     }
 
     return lightDoclet;
@@ -357,42 +364,61 @@ function getUniqueArray(array1, array2) {
  * 
  * */
 
-function updateNode(node, doclet) {
+function finalizeNodes (node) {
 
-    let lightDoclet = getLightDoclet(doclet),
-        lightMeta = getLightMeta(doclet),
-        path = lightMeta.files[0].path;
+    let children = (node.children || {});
 
-    if (!node.doclet) {
-        node.doclet = lightDoclet;
-    } else {
-        Object.keys(lightDoclet).forEach(key => {
-            if (typeof node.doclet[key] === 'undefined' &&
-                typeof lightDoclet[key] !== 'undefined'
-            ) {
-                node.doclet[key] = lightDoclet[key];
+    Object
+        .keys(children)
+        .forEach(childName => {
+
+            if (!children[childName].doclet) {
+                delete children[childName];
+            } else {
+                finalizeNodes(children[childName]);
             }
-        })
+        });
+}
+
+function updateNode (node, doclet) {
+
+    let newDoclet = getLightDoclet(doclet),
+        newMeta = getLightMeta(doclet),
+        oldDoclet = node.doclet,
+        oldMeta = node.meta;
+
+    if (!oldDoclet) {
+        oldDoclet = node.doclet = newDoclet;
+    } else {
+        Object.keys(newDoclet).forEach(key => {
+            if (typeof oldDoclet[key] === 'undefined') {
+                oldDoclet[key] = newDoclet[key];
+            }
+        });
     }
 
-    if (!node.meta) {
-        node.meta = lightMeta;
+    if (!oldMeta) {
+        oldMeta = node.meta = newMeta;
     } else {
-        Object.keys(lightMeta).forEach(key => {
-            if (typeof node.meta[key] === 'undefined' &&
-                typeof lightMeta[key] !== 'undefined'
+        Object.keys(newMeta).forEach(key => {
+            if (key !== 'files' &&
+                typeof oldMeta[key] === 'undefined'
             ) {
-                node.meta[key] = lightMeta[key];
+                oldMeta[key] = newMeta[key];
             }
-        })
+        });
     }
 
-    if (path &&
-        !node.meta.files.some(file => file.path === path)
+    let newMetaFilePath = newMeta.files[0].path,
+        newMetaFileLine = newMeta.files[0].line,
+        oldMetaFiles = oldMeta.files;
+
+    if (newMetaFilePath &&
+        !oldMetaFiles.some(file => file.path === newMetaFilePath)
     ) {
-        node.meta.files.push({
-            path: lightMeta.files[0].path,
-            line: lightMeta.files[0].line
+        oldMetaFiles.push({
+            path: newMetaFilePath,
+            line: newMetaFileLine
         });
     }
 }
@@ -479,7 +505,8 @@ function parseBegin (e) {
 
     namespace.doclet = {
         description: 'Copyright (c) Highsoft AS. All rights reserved.',
-        kind: 'global'
+        kind: 'global',
+        name: ''
     };
 
     namespace.meta = {
@@ -521,8 +548,8 @@ function newDoclet (e) {
     switch (kind) {
         default:
             console.error(
-                'Unknown doclet kind: ' + kind,
-                'Found at symbol: ' + doclet.longname
+                'Unknown kind: ' + kind,
+                doclet.longname
             );
             break;
         case 'class':
@@ -536,6 +563,7 @@ function newDoclet (e) {
             break;
         case 'namespace':
             addNamespace(doclet);
+            break;
         case 'typedef':
             addTypeDef(doclet);
             break;
@@ -548,6 +576,8 @@ function fileComplete (e) {
 }
 
 function processingComplete (e) {
+
+    finalizeNodes(namespace);
 
     fs.writeFileSync(
         path.join(rootPath, 'tree-namespace.json'),
