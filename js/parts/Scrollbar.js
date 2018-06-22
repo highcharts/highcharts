@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -29,8 +28,7 @@ var addEvent = H.addEvent,
 /**
  *
  * The scrollbar is a means of panning over the X axis of a stock chart.
- * Scrollbars can  also be applied to other types of axes, see for example
- * [scrollable bar chart](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/yaxis/inverted-bar-scrollbar/).
+ * Scrollbars can  also be applied to other types of axes.
  *
  * Another approach to scrollable charts is the [chart.scrollablePlotArea](
  * https://api.highcharts.com/highcharts/chart.scrollablePlotArea) option that
@@ -40,6 +38,9 @@ var addEvent = H.addEvent,
  * scrollbar are replaced by the classes `.highcharts-scrollbar-thumb`,
  * `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`,
  * `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
+ *
+ * @sample stock/yaxis/inverted-bar-scrollbar/
+ *         A scrollbar on a simple bar chart
  *
  * @product highstock
  * @optionparent scrollbar
@@ -222,11 +223,15 @@ var defaultScrollbarOptions = {
     /*= } =*/
 };
 
-defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.scrollbar);
+defaultOptions.scrollbar = merge(
+    true,
+    defaultScrollbarOptions,
+    defaultOptions.scrollbar
+);
 
 /**
-* When we have vertical scrollbar, rifles and arrow in buttons should be rotated.
-* The same method is used in Navigator's handles, to rotate them.
+* When we have vertical scrollbar, rifles and arrow in buttons should be
+* rotated. The same method is used in Navigator's handles, to rotate them.
 * @param {Array} path - path to be rotated
 * @param {Boolean} vertical - if vertical scrollbar, swap x-y values
 */
@@ -272,7 +277,8 @@ Scrollbar.prototype = {
 
         this.chart = chart;
 
-        this.size = pick(this.options.size, this.options.height); // backward compatibility
+        // backward compatibility
+        this.size = pick(this.options.size, this.options.height);
 
         // Init
         if (options.enabled) {
@@ -373,7 +379,8 @@ Scrollbar.prototype = {
     },
 
     /**
-     * Position the scrollbar, method called from a parent with defined dimensions
+     * Position the scrollbar, method called from a parent with defined
+     * dimensions.
      * @param {Number} x - x-position on the chart
      * @param {Number} y - y-position on the chart
      * @param {Number} width - width of the scrollbar
@@ -401,7 +408,8 @@ Scrollbar.prototype = {
             scroller.barWidth = height - width * 2; // width without buttons
             scroller.x = x = x + scroller.options.margin;
         } else {
-            scroller.height = scroller.xOffset = height = xOffset = scroller.size;
+            scroller.height = scroller.xOffset = height = xOffset =
+                scroller.size;
             scroller.barWidth = width - height * 2; // width without buttons
             scroller.y = scroller.y + scroller.options.margin;
         }
@@ -587,16 +595,26 @@ Scrollbar.prototype = {
                 chartPosition,
                 change;
 
-            // In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
-            // down in the center of the scrollbar. This should be ignored.
-            if (scroller.grabbedCenter && (!e.touches || e.touches[0][direction] !== 0)) { // #4696, scrollbar failed on Android
-                chartPosition = scroller.cursorToScrollbarPosition(normalizedEvent)[direction];
+            // In iOS, a mousemove event with e.pageX === 0 is fired when
+            // holding the finger down in the center of the scrollbar. This
+            // should be ignored.
+            if (
+                scroller.grabbedCenter &&
+                // #4696, scrollbar failed on Android
+                (!e.touches || e.touches[0][direction] !== 0)
+            ) {
+                chartPosition = scroller.cursorToScrollbarPosition(
+                    normalizedEvent
+                )[direction];
                 scrollPosition = scroller[direction];
 
                 change = chartPosition - scrollPosition;
 
                 scroller.hasDragged = true;
-                scroller.updatePosition(initPositions[0] + change, initPositions[1] + change);
+                scroller.updatePosition(
+                    initPositions[0] + change,
+                    initPositions[1] + change
+                );
 
                 if (scroller.hasDragged) {
                     fireEvent(scroller, 'changed', {
@@ -623,12 +641,17 @@ Scrollbar.prototype = {
                     DOMEvent: e
                 });
             }
-            scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
+            scroller.grabbedCenter =
+                scroller.hasDragged =
+                scroller.chartX =
+                scroller.chartY = null;
         };
 
         scroller.mouseDownHandler = function (e) {
             var normalizedEvent = scroller.chart.pointer.normalize(e),
-                mousePosition = scroller.cursorToScrollbarPosition(normalizedEvent);
+                mousePosition = scroller.cursorToScrollbarPosition(
+                    normalizedEvent
+                );
 
             scroller.chartX = mousePosition.chartX;
             scroller.chartY = mousePosition.chartY;
@@ -638,8 +661,12 @@ Scrollbar.prototype = {
         };
 
         scroller.buttonToMinClick = function (e) {
-            var range = correctFloat(scroller.to - scroller.from) * scroller.options.step;
-            scroller.updatePosition(correctFloat(scroller.from - range), correctFloat(scroller.to - range));
+            var range = correctFloat(scroller.to - scroller.from) *
+                scroller.options.step;
+            scroller.updatePosition(
+                correctFloat(scroller.from - range),
+                correctFloat(scroller.to - range)
+            );
             fireEvent(scroller, 'changed', {
                 from: scroller.from,
                 to: scroller.to,
@@ -665,13 +692,21 @@ Scrollbar.prototype = {
                 top = scroller.y + scroller.scrollbarTop,
                 left = scroller.x + scroller.scrollbarLeft;
 
-            if ((scroller.options.vertical && normalizedEvent.chartY > top) ||
-                (!scroller.options.vertical && normalizedEvent.chartX > left)) {
+            if (
+                (scroller.options.vertical && normalizedEvent.chartY > top) ||
+                (!scroller.options.vertical && normalizedEvent.chartX > left)
+            ) {
                 // On the top or on the left side of the track:
-                scroller.updatePosition(scroller.from + range, scroller.to + range);
+                scroller.updatePosition(
+                    scroller.from + range,
+                    scroller.to + range
+                );
             } else {
                 // On the bottom or the right side of the track:
-                scroller.updatePosition(scroller.from - range, scroller.to - range);
+                scroller.updatePosition(
+                    scroller.from - range,
+                    scroller.to - range
+                );
             }
 
             fireEvent(scroller, 'changed', {
@@ -685,17 +720,22 @@ Scrollbar.prototype = {
 
     /**
      * Get normalized (0-1) cursor position over the scrollbar
-     * @param {Event} normalizedEvent - normalized event, with chartX and chartY values
+     * @param {Event} normalizedEvent - normalized event, with chartX and chartY
+     *                                values
      * @return {Object} Local position {chartX, chartY}
      */
     cursorToScrollbarPosition: function (normalizedEvent) {
         var scroller = this,
             options = scroller.options,
-            minWidthDifference = options.minWidth > scroller.calculatedWidth ? options.minWidth : 0; // minWidth distorts translation
+            minWidthDifference = options.minWidth > scroller.calculatedWidth ?
+                options.minWidth :
+                0; // minWidth distorts translation
 
         return {
-            chartX: (normalizedEvent.chartX - scroller.x - scroller.xOffset) / (scroller.barWidth - minWidthDifference),
-            chartY: (normalizedEvent.chartY - scroller.y - scroller.yOffset) / (scroller.barWidth - minWidthDifference)
+            chartX: (normalizedEvent.chartX - scroller.x - scroller.xOffset) /
+                (scroller.barWidth - minWidthDifference),
+            chartY: (normalizedEvent.chartY - scroller.y - scroller.yOffset) /
+                (scroller.barWidth - minWidthDifference)
         };
     },
 
@@ -722,7 +762,11 @@ Scrollbar.prototype = {
      */
     update: function (options) {
         this.destroy();
-        this.init(this.chart.renderer, merge(true, this.options, options), this.chart);
+        this.init(
+            this.chart.renderer,
+            merge(true, this.options, options),
+            this.chart
+        );
     },
 
     /**
@@ -785,13 +829,24 @@ Scrollbar.prototype = {
         this.removeEvents();
 
         // Destroy properties
-        each(['track', 'scrollbarRifles', 'scrollbar', 'scrollbarGroup', 'group'], function (prop) {
-            if (this[prop] && this[prop].destroy) {
-                this[prop] = this[prop].destroy();
-            }
-        }, this);
+        each(
+            [
+                'track',
+                'scrollbarRifles',
+                'scrollbar',
+                'scrollbarGroup',
+                'group'
+            ],
+            function (prop) {
+                if (this[prop] && this[prop].destroy) {
+                    this[prop] = this[prop].destroy();
+                }
+            },
+            this
+        );
 
-        if (scroller && this === scroller.scrollbar) { // #6421, chart may have more scrollbars
+        // #6421, chart may have more scrollbars
+        if (scroller && this === scroller.scrollbar) {
             scroller.scrollbar = null;
 
             // Destroy elements in collection
@@ -812,20 +867,36 @@ wrap(Axis.prototype, 'init', function (proceed) {
         axis.options.scrollbar.vertical = !axis.horiz;
         axis.options.startOnTick = axis.options.endOnTick = false;
 
-        axis.scrollbar = new Scrollbar(axis.chart.renderer, axis.options.scrollbar, axis.chart);
+        axis.scrollbar = new Scrollbar(
+            axis.chart.renderer,
+            axis.options.scrollbar,
+            axis.chart
+        );
 
         addEvent(axis.scrollbar, 'changed', function (e) {
-            var unitedMin = Math.min(pick(axis.options.min, axis.min), axis.min, axis.dataMin),
-                unitedMax = Math.max(pick(axis.options.max, axis.max), axis.max, axis.dataMax),
+            var unitedMin = Math.min(
+                    pick(axis.options.min, axis.min),
+                    axis.min,
+                    axis.dataMin
+                ),
+                unitedMax = Math.max(
+                    pick(axis.options.max, axis.max),
+                    axis.max,
+                    axis.dataMax
+                ),
                 range = unitedMax - unitedMin,
                 to,
                 from;
 
-            if ((axis.horiz && !axis.reversed) || (!axis.horiz && axis.reversed)) {
+            if (
+                (axis.horiz && !axis.reversed) ||
+                (!axis.horiz && axis.reversed)
+            ) {
                 to = unitedMin + range * this.to;
                 from = unitedMin + range * this.from;
             } else {
-                // y-values in browser are reversed, but this also applies for reversed horizontal axis:
+                // y-values in browser are reversed, but this also applies for
+                // reversed horizontal axis:
                 to = unitedMin + range * (1 - this.from);
                 from = unitedMin + range * (1 - this.to);
             }
@@ -891,13 +962,23 @@ wrap(Axis.prototype, 'render', function (proceed) {
                 axis.scrollbar.size + axis.scrollbar.options.margin;
         }
 
-        if (isNaN(scrollMin) || isNaN(scrollMax) || !defined(axis.min) || !defined(axis.max)) {
-            scrollbar.setRange(0, 0); // default action: when there is not extremes on the axis, but scrollbar exists, make it full size
+        if (
+            isNaN(scrollMin) ||
+            isNaN(scrollMax) ||
+            !defined(axis.min) ||
+            !defined(axis.max)
+        ) {
+            // default action: when there is not extremes on the axis, but
+            // scrollbar exists, make it full size
+            scrollbar.setRange(0, 0);
         } else {
             from = (axis.min - scrollMin) / (scrollMax - scrollMin);
             to = (axis.max - scrollMin) / (scrollMax - scrollMin);
 
-            if ((axis.horiz && !axis.reversed) || (!axis.horiz && axis.reversed)) {
+            if (
+                (axis.horiz && !axis.reversed) ||
+                (!axis.horiz && axis.reversed)
+            ) {
                 scrollbar.setRange(from, to);
             } else {
                 scrollbar.setRange(1 - to, 1 - from); // inverse vertical axis
@@ -918,7 +999,8 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 
     if (scrollbar) {
         axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
-        axis.chart.axisOffset[index] += scrollbar.size + scrollbar.options.margin;
+        axis.chart.axisOffset[index] +=
+            scrollbar.size + scrollbar.options.margin;
     }
 });
 
