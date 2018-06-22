@@ -52,16 +52,19 @@ H.Tick.prototype = {
                 pos,
             label = tick.label,
             tickPositionInfo = tickPositions.info,
-            dateTimeLabelFormat;
+            dateTimeLabelFormat,
+            dateTimeLabelFormats;
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
         if (axis.isDatetimeAxis && tickPositionInfo) {
-            dateTimeLabelFormat =
+            dateTimeLabelFormats = H.splat(
                 options.dateTimeLabelFormats[
                     tickPositionInfo.higherRanks[pos] ||
                     tickPositionInfo.unitName
-                ];
+                ]
+            );
+            dateTimeLabelFormat = dateTimeLabelFormats[0];
         }
         // set properties for access in render method
         tick.isFirst = isFirst;
@@ -74,6 +77,8 @@ H.Tick.prototype = {
             isFirst: isFirst,
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat,
+            dateTimeLabelFormats: dateTimeLabelFormats,
+            tickPositionInfo: tickPositionInfo,
             value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
             pos: pos
         });

@@ -368,14 +368,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @product highcharts highstock
          */
         dateTimeLabelFormats: {
-            millisecond: '%H:%M:%S.%L',
-            second: '%H:%M:%S',
-            minute: '%H:%M',
-            hour: '%H:%M',
-            day: '%e. %b',
-            week: '%e. %b',
-            month: '%b \'%y',
-            year: '%Y'
+            millisecond: ['%H:%M:%S.%L', '%H:%M:%S.%L', '-%L'],
+            second: ['%H:%M:%S', '%H:%M:%S', '-%S'],
+            minute: ['%H:%M', '%H:%M', '-%M'],
+            hour: ['%H:%M', '%H:%M', '-%H:%M'],
+            day: ['%e. %b', '%e.', '-%e. %b'],
+            week: ['%e. %b', '%e.', '-%e. %b'],
+            month: ['%b \'%y', '%b', '-%b \'%y'],
+            year: ['%Y', '%Y', '-%y']
         },
 
         /**
@@ -701,6 +701,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @default   5
              * @product   highcharts
              * @apioption xAxis.labels.padding
+             */
+
+            /**
+             * When true, axis labels will be formatted with a _to_ and _from_
+             * date, for example a range decade may be formatted as 2010-19
+             * instead of just adding a label 2010 at the starting point. The
+             * formats for these ranges are added to
+             * [xAxis.labels.dateTimeLabelFormats](
+             * #xAxis.labels.dateTimeLabelFormats), positions 1 and 2 in the
+             * array configuration.
+             *
+             * @type      {Boolean}
+             * @default   false
+             * @since     next
+             * @apioption xAxis.labels.ranges
              */
 
             /**
@@ -2082,6 +2097,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             time = axis.chart.time,
             categories = axis.categories,
             dateTimeLabelFormat = this.dateTimeLabelFormat,
+            dateTimeLabelFormats = this.dateTimeLabelFormats,
+            tickPositionInfo = this.tickPositionInfo,
             lang = defaultOptions.lang,
             numericSymbols = lang.numericSymbols,
             numSymMagnitude = lang.numericSymbolMagnitude || 1000,
@@ -2103,7 +2120,22 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             ret = value;
 
         } else if (dateTimeLabelFormat) { // datetime axis
-            ret = time.dateFormat(dateTimeLabelFormat, value);
+            if (
+                axis.options.labels.ranges &&
+                tickPositionInfo &&
+                tickPositionInfo.count > 1 &&
+                dateTimeLabelFormats.length > 2
+            ) {
+                // Time ranges
+                ret = time.dateFormat(dateTimeLabelFormats[1], value) +
+                    time.dateFormat(
+                        dateTimeLabelFormats[2],
+                        value + tickPositionInfo.totalRange - 1
+                    );
+
+            } else {
+                ret = time.dateFormat(dateTimeLabelFormat, value);
+            }
 
         } else if (i && numericSymbolDetector >= 1000) {
             // Decide whether we should add a numeric symbol like k (thousands)

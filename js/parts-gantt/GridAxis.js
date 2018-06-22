@@ -349,6 +349,13 @@ wrap(Axis.prototype, 'setOptions', function (proceed, options) {
             options.minPadding = pick(options.minPadding, 0);
             options.maxPadding = pick(options.maxPadding, 0);
         }
+
+        // When grid, the ranges option defaults to true
+        merge(true, options, {
+            labels: {
+                ranges: pick(options.labels && options.labels.ranges, true)
+            }
+        });
     }
 
     proceed.apply(this, argsToArray(arguments));
@@ -631,7 +638,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
                         tickPos = axis.tickPositions,
                         options = axis.options,
                         pointProperty = options.pointProperty,
-                        dateTimeLabelFormat = options.dateTimeLabelFormats.day,
+                        dateTimeLabelFormat = H.splat(
+                            options.dateTimeLabelFormats.day
+                        )[0],
                         value = this.value,
                         series = axis.series[0],
                         isFirst = value === tickPos[0],
