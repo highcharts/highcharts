@@ -3,6 +3,7 @@
 /**
  * @module plugins/highcharts.namespace.js
  * @author Sophie Bremer
+ * @author e-cloud
  */
 
 /* *
@@ -349,6 +350,8 @@ function getTypes (doclet) {
             case 'String':
             case 'Symbol':
                 return name.toLowerCase();
+            case 'Color':
+                return 'ColorString';
         }
     });
 }
