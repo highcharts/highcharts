@@ -1724,15 +1724,20 @@ H.defaultOptions = {
          */
 
         /**
-         * The layout of the legend items. Can be one of "horizontal" or
-         * "vertical".
+         * The layout of the legend items. Can be one of `horizontal` or
+         * `vertical` or `proximate`. When `proximate`, the legend items will be
+         * placed as close as possible to the graphs they're representing,
+         * except in inverted charts or when the legend position doesn't allow
+         * it.
          *
-         * @validvalue ["horizontal", "vertical"]
+         * @validvalue ["horizontal", "vertical", "proximate"]
          * @type {String}
          * @sample {highcharts} highcharts/legend/layout-horizontal/
          *         Horizontal by default
          * @sample {highcharts} highcharts/legend/layout-vertical/
          *         Vertical
+         * @sample highcharts/legend/layout-proximate
+         *         Labels proximate to the data
          * @sample {highstock} stock/legend/layout-horizontal/
          *         Horizontal by default
          * @sample {highmaps} maps/legend/padding-itemmargin/
@@ -2233,9 +2238,13 @@ H.defaultOptions = {
          * `layout` option will determine whether to place it above/below
          * or on the side of the plot area.
          *
+         * When the [layout](#legend.layout) option is `proximate`, the
+         * `verticalAlign` option doesn't apply.
+         *
          * @validvalue ["top", "middle", "bottom"]
          * @type {String}
-         * @sample {highcharts} highcharts/legend/verticalalign/ Legend 100px from the top of the chart
+         * @sample {highcharts} highcharts/legend/verticalalign/
+         *         Legend 100px from the top of the chart
          * @sample {highstock} stock/legend/align/ Various legend options
          * @sample {highmaps} maps/legend/alignment/ Legend alignment
          * @default bottom
