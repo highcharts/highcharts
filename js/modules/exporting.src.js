@@ -1302,6 +1302,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     if (!chart.pointer.inClass(e.target, className)) {
                         hide();
                     }
+                }),
+
+                addEvent(menu, 'click', function () {
+                    if (chart.openMenu) {
+                        hide();
+                    }
                 })
             );
 
