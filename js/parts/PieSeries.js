@@ -93,6 +93,7 @@ seriesType('pie', 'line', {
      * @product highcharts
      */
     dataLabels: {
+        allowOverlap: true,
         /**
          * The color of the line connecting the data label to the pie slice.
          * The default color is the same as the point's color.
