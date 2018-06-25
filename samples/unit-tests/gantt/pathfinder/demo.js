@@ -94,7 +94,7 @@
     });
 
     QUnit.test('Marker placement', function (assert) {
-        var error = 0,
+        var error = 0.2,
             startPositions = {
                 5: {
                     5: { x: 3, y: 361 },
@@ -140,7 +140,7 @@
             if (point.id !== 'center' && connection) { // All but the center point
                 graphic = connection.graphics;
                 start = graphic.start.element.getBBox();
-                end = graphic.end.element.getBBox();
+                end = graphic.end ? graphic.end.element.getBBox() : {};
                 x = point.x;
                 y = point.y;
 
@@ -229,13 +229,13 @@
                 x = point.x;
                 y = point.y;
                 assert.close(
-                    start.element.transform.baseVal[0].angle,
+                    start.rotation,
                     startAngles[x][y],
                     error,
                     'Start marker from ' + x + ',' + y + ' rotates correctly'
                 );
                 assert.close(
-                    end.element.transform.baseVal[0].angle,
+                    end.rotation,
                     endAngles[x][y],
                     error,
                     'End marker from ' + x + ',' + y + ' rotates correctly'
@@ -249,7 +249,7 @@
      * alignment.
      */
     QUnit.test('Marker alignment', function (assert) {
-        var error = 0.01,
+        var error = 0.1,
             chart,
             series = squareChartConfig.series[0],
             opts = series.pathfinder,

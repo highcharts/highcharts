@@ -1,0 +1,122 @@
+// Global font
+@import 'https://fonts.googleapis.com/css?family=Unica+One';
+
+// Chart background, point stroke for markers and columns etc
+$background-color: #2a2a2b;
+
+// Colors for data series and points.
+$colors: #2b908f #90ee7e #f45b5b #7798BF #aaeeee #ff0066 #eeaaee #55BF3B #DF5353 #7798BF #aaeeee;
+
+// Neutral colors
+$neutral-color-100: #fff;
+$neutral-color-80: #E0E0E3;
+$neutral-color-60: #E0E0E3;
+$neutral-color-40: #666;
+$neutral-color-20: #606063;
+$neutral-color-10: #707073;
+$neutral-color-5: #505053;
+
+// Colored, shades
+$highlight-color-100: #F0F0F3;
+$highlight-color-60: rgba(255,255,255,0.1);
+$highlight-color-20: $neutral-color-10;
+
+// Data-labels
+$data-label-color: #B0B0B3;
+
+// Fonts
+$font-family: 'Unica One', Arial, Helvetica, sans-serif;
+$title-font-size: 20px;
+
+// Tooltip
+$tooltip-background: rgba(0, 0, 0, 0.85);
+
+// Range-selector
+$range-selector-input-text: silver;
+$range-selector-input-border: $neutral-color-5;
+
+// Buttons
+$highcharts-button-background: $neutral-color-5;
+$highcharts-button-text:  #ccc;
+
+$highcharts-button-pressed-background: #000003;
+$highcharts-button-pressed-text:  $neutral-color-100;
+
+$highcharts-button-hover-background: $neutral-color-10;
+$highcharts-button-hover-text:  $neutral-color-100;
+
+$context-button-background: $neutral-color-5;
+
+// Navigator
+$navigator-series-fill: #7798BF;
+$navigator-series-border: #A6C7ED;
+
+// Navigator
+$scrollbar-track-background: #404043;
+$scrollbar-track-border: #404043;
+
+// Titles
+.highcharts-title, .highcharts-subtitle {
+	text-transform: uppercase;
+}
+
+// Tooltip
+.highcharts-tooltip text { 
+	fill: #F0F0F0
+}
+
+// Range-selector
+.highcharts-range-selector-buttons text {
+	fill: silver;
+}
+
+// Axes
+.highcharts-yaxis-grid  {
+	stroke-width: 1px;
+}
+
+.highcharts-axis-labels, .highcharts-axis-title {
+	fill: #E0E0E3;
+}
+
+// Navigator
+.highcharts-navigator .highcharts-navigator-handle {
+  fill: $neutral-color-40;
+  stroke: #aaa;
+}
+
+.highcharts-navigator .highcharts-navigator-outline {
+  stroke: #CCC;
+}
+
+.highcharts-navigator .highcharts-navigator-xaxis .highcharts-grid-line {
+  stroke: $neutral-color-5;
+} 
+
+// Scrollbar
+.highcharts-scrollbar .highcharts-scrollbar-rifles {
+  stroke: $neutral-color-100;
+}
+
+.highcharts-scrollbar .highcharts-scrollbar-button { 
+  stroke: #606063;
+  fill: #606063;
+}
+
+.highcharts-scrollbar .highcharts-scrollbar-arrow { 
+  fill: #CCC;
+}
+
+.highcharts-scrollbar .highcharts-scrollbar-thumb { 
+   fill: #808083;
+   stroke: #808083;
+}
+
+// Navigation
+.highcharts-contextbutton .highcharts-button-symbol { 
+   stroke: #DDDDDD;
+}
+
+@import '../highcharts';
+
+

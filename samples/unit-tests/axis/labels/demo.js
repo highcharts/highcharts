@@ -219,6 +219,40 @@ QUnit.test('Label ellipsis', function (assert) {
         'January <Not a tag>',
         'HTML entities should be unescaped in title elements (#7179)'
     );
+
+});
+
+QUnit.skip('Label ellipsis and expanding', function (assert) {
+
+    var chart = new Highcharts.chart('container', {
+        chart: {
+            width: 320
+        },
+        xAxis: {
+            labels: {
+                autoRotation: false,
+                padding: 10
+            },
+            categories: ['Fuel', 'Insurance', 'Maintenance', 'Ground', 'Data']
+        },
+        series: [{
+            type: 'column',
+            data: [5, 12, 15, 19, 21]
+        }]
+    });
+
+    assert.notEqual(
+        chart.xAxis[0].ticks[1].label.element.textContent.indexOf('…'),
+        -1,
+        'The second label should contain an ellipsis'
+    );
+
+    chart.setSize(620);
+    assert.strictEqual(
+        chart.xAxis[0].ticks[1].label.element.textContent.indexOf('…'),
+        -1,
+        'The third label should not contain an ellipsis (#8210)'
+    );
 });
 
 QUnit.test('Correct float (#6085)', function (assert) {
@@ -288,8 +322,40 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
     });
 
     assert.ok(
-        chart.xAxis[0].ticks[3].label.getBBox().width <= 30, //40 - padding
+        chart.xAxis[0].ticks[3].label.getBBox().width <= 40,
         'Label width set correctly'
+    );
+
+});
+
+QUnit.test('Explicit textOverflow setting', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 250
+        },
+        xAxis: {
+            categories: ['Very long month name', 'Feb', 'Mar'],
+            labels: {
+                style: {
+                    textOverflow: 'ellipsis'
+                }
+            }
+        },
+        yAxis: {
+            visible: false
+        },
+        series: [{
+            data: [250.0, 71.5, 106.4],
+            type: 'bar',
+            colorByPoint: true,
+            showInLegend: false
+        }]
+
+    });
+
+    assert.ok(
+        chart.xAxis[0].ticks[0].label.getBBox().height <= 25,
+        'Label has correct ellipsis (#7968)'
     );
 
 });
@@ -377,5 +443,84 @@ QUnit.test('Handle overflow in polar charts (#7248)', function (assert) {
 
     chart.setSize(600);
     assertInside();
+
+});
+
+// Highcharts 4.1.3, Issue #3891:
+// Axis labels rotation does not work properly
+QUnit.test('Labels text height (#3891)', function (assert) {
+
+    $('#container').highcharts({
+        xAxis: {
+            labels: {
+                rotation: 270
+            },
+            categories: ['January', 'February', 'March']
+        },
+
+        series: [{
+            data: [1, 3, 2]
+        }]
+    });
+
+    assert.equal(
+        $('#container').highcharts().xAxis[0].ticks[0].label.rotation,
+        270,
+        'Rotation set to 270'
+    );
+
+});
+
+// Highcharts 3.0.10, Issue #2806
+// Unable to see all labels on the bar charts
+QUnit.test('Column pointrange (#2806)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Category axis was wrong when the second series had greater point distance than the first series'
+        },
+        xAxis: {
+            categories: ['Cat0', 'Cat1', 'Cat2', 'Cat3']
+        },
+        plotOptions: {
+            column: {
+                stacking: true
+            }
+        },
+        series: [{
+            name: "CL1",
+            data: [{
+                x: 0,
+                y: 1
+            }, {
+                x: 1,
+                y: 2
+            }, {
+                x: 2,
+                y: 2
+            }, {
+                x: 3,
+                y: 2
+            }]
+        }, {
+            name: "CL2",
+            data: [{
+                x: 0,
+                y: 3
+            }, {
+                x: 2,
+                y: 4
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].labelGroup.element.childNodes.length,
+        4,
+        'There should be 4 labels on the xAxis.'
+    );
 
 });

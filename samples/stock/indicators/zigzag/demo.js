@@ -1,5 +1,5 @@
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
 
     Highcharts.stockChart('container', {
 
@@ -31,7 +31,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
             linkedTo: 'aapl'
         }, {
             type: 'zigzag',
-            name: 'Zig Zag (5%)',
             linkedTo: 'aapl',
             params: {
                 deviation: 5

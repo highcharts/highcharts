@@ -1,6 +1,6 @@
 
 // Notice that the dataset has missing data
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/range.json', function (data) {
 
     Highcharts.stockChart('container', {
 

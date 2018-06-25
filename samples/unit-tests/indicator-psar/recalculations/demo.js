@@ -207,4 +207,35 @@ QUnit.test('Test PSAR calculations on data updates.', function (assert) {
         ],
         'Correct values after point.remove()'
     );
+
+    Highcharts.seriesTypes.psar.prototype.getValues(
+        {
+            xData: [0, 1, 2, 3, 4, 5],
+            yData: [
+                [10, 15, 5, 10],
+                [10, 15, 5, 10],
+                [10, 15, 5, 10],
+                [null, null, null, null],
+                [null, null, null, null],
+                [null, null, null, null],
+                [10, 15, 5, 10],
+                [10, 15, 5, 10]
+            ]
+        },
+        Highcharts.getOptions().plotOptions.psar.params
+    );
+    assert.ok(true, 'No errors when data contains multiple null points.');
+
+    Highcharts.seriesTypes.psar.prototype.getValues(
+        {
+            xData: [0],
+            yData: [1]
+        },
+        Highcharts.getOptions().plotOptions.psar.params
+    );
+
+    assert.ok(
+        true,
+        'No error when index is greater than data length (#8376).'
+    );
 });

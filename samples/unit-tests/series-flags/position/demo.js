@@ -1,3 +1,38 @@
+QUnit.test('Flags on inverted chart', function (assert) {
+    var chart = new Highcharts.chart('container', {
+        chart: {
+            inverted: true
+        },
+        series: [{
+            data: [10, 20, 30, 10, 20, 30],
+            id: 'main'
+        }, {
+            type: 'flags',
+            data: [{
+                x: 3
+            }]
+        }, {
+            type: 'flags',
+            onSeries: 'main',
+            data: [{
+                x: 3
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[1].points[0].plotX,
+        0,
+        'Flag properly placed on xAxis (#4960)'
+    );
+
+    assert.strictEqual(
+        chart.series[2].points[0].plotX,
+        chart.yAxis[0].toPixels(chart.series[0].points[3].y, true),
+        'Flag properly placed on xAxis (#4960)'
+    );
+});
+
 QUnit.test('Flags should be properly placed on xAxis when yAxis.top is set.', function (assert) {
     var top = 80,
         chart = $('#container').highcharts('StockChart', {

@@ -7,321 +7,325 @@
 import H from './Globals.js';
 import './Utilities.js';
 var charts = H.charts,
-	each = H.each,
-	extend = H.extend,
-	map = H.map,
-	noop = H.noop,
-	pick = H.pick,
-	Pointer = H.Pointer;
+    each = H.each,
+    extend = H.extend,
+    map = H.map,
+    noop = H.noop,
+    pick = H.pick,
+    Pointer = H.Pointer;
 
 /* Support for touch devices */
 extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
-	/**
-	 * Run translation operations
-	 */
-	pinchTranslate: function (
-		pinchDown,
-		touches, 
-		transform,
-		selectionMarker,
-		clip,
-		lastValidTouch
-	) {
-		if (this.zoomHor) {
-			this.pinchTranslateDirection(
-				true,
-				pinchDown,
-				touches,
-				transform,
-				selectionMarker,
-				clip,
-				lastValidTouch
-			);
-		}
-		if (this.zoomVert) {
-			this.pinchTranslateDirection(
-				false,
-				pinchDown,
-				touches,
-				transform,
-				selectionMarker,
-				clip,
-				lastValidTouch
-			);
-		}
-	},
+    /**
+     * Run translation operations
+     */
+    pinchTranslate: function (
+        pinchDown,
+        touches,
+        transform,
+        selectionMarker,
+        clip,
+        lastValidTouch
+    ) {
+        if (this.zoomHor) {
+            this.pinchTranslateDirection(
+                true,
+                pinchDown,
+                touches,
+                transform,
+                selectionMarker,
+                clip,
+                lastValidTouch
+            );
+        }
+        if (this.zoomVert) {
+            this.pinchTranslateDirection(
+                false,
+                pinchDown,
+                touches,
+                transform,
+                selectionMarker,
+                clip,
+                lastValidTouch
+            );
+        }
+    },
 
-	/**
-	 * Run translation operations for each direction (horizontal and vertical)
-	 * independently
-	 */
-	pinchTranslateDirection: function (horiz, pinchDown, touches, transform,
-			selectionMarker, clip, lastValidTouch, forcedScale) {
-		var chart = this.chart,
-			xy = horiz ? 'x' : 'y',
-			XY = horiz ? 'X' : 'Y',
-			sChartXY = 'chart' + XY,
-			wh = horiz ? 'width' : 'height',
-			plotLeftTop = chart['plot' + (horiz ? 'Left' : 'Top')],
-			selectionWH,
-			selectionXY,
-			clipXY,
-			scale = forcedScale || 1,
-			inverted = chart.inverted,
-			bounds = chart.bounds[horiz ? 'h' : 'v'],
-			singleTouch = pinchDown.length === 1,
-			touch0Start = pinchDown[0][sChartXY],
-			touch0Now = touches[0][sChartXY],
-			touch1Start = !singleTouch && pinchDown[1][sChartXY],
-			touch1Now = !singleTouch && touches[1][sChartXY],
-			outOfBounds,
-			transformScale,
-			scaleKey,
-			setScale = function () {
-				// Don't zoom if fingers are too close on this axis
-				if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) {
-					scale = forcedScale || 
-						Math.abs(touch0Now - touch1Now) /
-						Math.abs(touch0Start - touch1Start); 
-				}
+    /**
+     * Run translation operations for each direction (horizontal and vertical)
+     * independently
+     */
+    pinchTranslateDirection: function (horiz, pinchDown, touches, transform,
+            selectionMarker, clip, lastValidTouch, forcedScale) {
+        var chart = this.chart,
+            xy = horiz ? 'x' : 'y',
+            XY = horiz ? 'X' : 'Y',
+            sChartXY = 'chart' + XY,
+            wh = horiz ? 'width' : 'height',
+            plotLeftTop = chart['plot' + (horiz ? 'Left' : 'Top')],
+            selectionWH,
+            selectionXY,
+            clipXY,
+            scale = forcedScale || 1,
+            inverted = chart.inverted,
+            bounds = chart.bounds[horiz ? 'h' : 'v'],
+            singleTouch = pinchDown.length === 1,
+            touch0Start = pinchDown[0][sChartXY],
+            touch0Now = touches[0][sChartXY],
+            touch1Start = !singleTouch && pinchDown[1][sChartXY],
+            touch1Now = !singleTouch && touches[1][sChartXY],
+            outOfBounds,
+            transformScale,
+            scaleKey,
+            setScale = function () {
+                // Don't zoom if fingers are too close on this axis
+                if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) {
+                    scale = forcedScale ||
+                        Math.abs(touch0Now - touch1Now) /
+                        Math.abs(touch0Start - touch1Start);
+                }
 
-				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
-				selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] /
-					scale;
-			};
+                clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
+                selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] /
+                    scale;
+            };
 
-		// Set the scale, first pass
-		setScale();
+        // Set the scale, first pass
+        setScale();
 
-		// The clip position (x or y) is altered if out of bounds, the selection
-		// position is not
-		selectionXY = clipXY;
+        // The clip position (x or y) is altered if out of bounds, the selection
+        // position is not
+        selectionXY = clipXY;
 
-		// Out of bounds
-		if (selectionXY < bounds.min) {
-			selectionXY = bounds.min;
-			outOfBounds = true;
-		} else if (selectionXY + selectionWH > bounds.max) {
-			selectionXY = bounds.max - selectionWH;
-			outOfBounds = true;
-		}
+        // Out of bounds
+        if (selectionXY < bounds.min) {
+            selectionXY = bounds.min;
+            outOfBounds = true;
+        } else if (selectionXY + selectionWH > bounds.max) {
+            selectionXY = bounds.max - selectionWH;
+            outOfBounds = true;
+        }
 
-		// Is the chart dragged off its bounds, determined by dataMin and
-		// dataMax?
-		if (outOfBounds) {
+        // Is the chart dragged off its bounds, determined by dataMin and
+        // dataMax?
+        if (outOfBounds) {
 
-			// Modify the touchNow position in order to create an elastic drag
-			// movement. This indicates to the user that the chart is responsive
-			// but can't be dragged further.
-			touch0Now -= 0.8 * (touch0Now - lastValidTouch[xy][0]);
-			if (!singleTouch) {
-				touch1Now -= 0.8 * (touch1Now - lastValidTouch[xy][1]);
-			}
+            // Modify the touchNow position in order to create an elastic drag
+            // movement. This indicates to the user that the chart is responsive
+            // but can't be dragged further.
+            touch0Now -= 0.8 * (touch0Now - lastValidTouch[xy][0]);
+            if (!singleTouch) {
+                touch1Now -= 0.8 * (touch1Now - lastValidTouch[xy][1]);
+            }
 
-			// Set the scale, second pass to adapt to the modified touchNow
-			// positions
-			setScale();
+            // Set the scale, second pass to adapt to the modified touchNow
+            // positions
+            setScale();
 
-		} else {
-			lastValidTouch[xy] = [touch0Now, touch1Now];
-		}
+        } else {
+            lastValidTouch[xy] = [touch0Now, touch1Now];
+        }
 
-		// Set geometry for clipping, selection and transformation
-		if (!inverted) {
-			clip[xy] = clipXY - plotLeftTop;
-			clip[wh] = selectionWH;
-		}
-		scaleKey = inverted ? (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
-		transformScale = inverted ? 1 / scale : scale;
+        // Set geometry for clipping, selection and transformation
+        if (!inverted) {
+            clip[xy] = clipXY - plotLeftTop;
+            clip[wh] = selectionWH;
+        }
+        scaleKey = inverted ? (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
+        transformScale = inverted ? 1 / scale : scale;
 
-		selectionMarker[wh] = selectionWH;
-		selectionMarker[xy] = selectionXY;
-		transform[scaleKey] = scale;
-		transform['translate' + XY] = (transformScale * plotLeftTop) +
-			(touch0Now - (transformScale * touch0Start));
-	},
+        selectionMarker[wh] = selectionWH;
+        selectionMarker[xy] = selectionXY;
+        transform[scaleKey] = scale;
+        transform['translate' + XY] = (transformScale * plotLeftTop) +
+            (touch0Now - (transformScale * touch0Start));
+    },
 
-	/**
-	 * Handle touch events with two touches
-	 */
-	pinch: function (e) {
+    /**
+     * Handle touch events with two touches
+     */
+    pinch: function (e) {
 
-		var self = this,
-			chart = self.chart,
-			pinchDown = self.pinchDown,
-			touches = e.touches,
-			touchesLength = touches.length,
-			lastValidTouch = self.lastValidTouch,
-			hasZoom = self.hasZoom,
-			selectionMarker = self.selectionMarker,
-			transform = {},
-			fireClickEvent = touchesLength === 1 &&
-				((self.inClass(e.target, 'highcharts-tracker') && 
-				chart.runTrackerClick) || self.runChartClick),
-			clip = {};
+        var self = this,
+            chart = self.chart,
+            pinchDown = self.pinchDown,
+            touches = e.touches,
+            touchesLength = touches.length,
+            lastValidTouch = self.lastValidTouch,
+            hasZoom = self.hasZoom,
+            selectionMarker = self.selectionMarker,
+            transform = {},
+            fireClickEvent = touchesLength === 1 && (
+                (
+                    self.inClass(e.target, 'highcharts-tracker') &&
+                    chart.runTrackerClick
+                ) ||
+                self.runChartClick
+            ),
+            clip = {};
 
-		// Don't initiate panning until the user has pinched. This prevents us
-		// from blocking page scrolling as users scroll down a long page
-		// (#4210).
-		if (touchesLength > 1) {
-			self.initiated = true;
-		}
+        // Don't initiate panning until the user has pinched. This prevents us
+        // from blocking page scrolling as users scroll down a long page
+        // (#4210).
+        if (touchesLength > 1) {
+            self.initiated = true;
+        }
 
-		// On touch devices, only proceed to trigger click if a handler is
-		// defined
-		if (hasZoom && self.initiated && !fireClickEvent) {
-			e.preventDefault();
-		}
+        // On touch devices, only proceed to trigger click if a handler is
+        // defined
+        if (hasZoom && self.initiated && !fireClickEvent) {
+            e.preventDefault();
+        }
 
-		// Normalize each touch
-		map(touches, function (e) {
-			return self.normalize(e);
-		});
+        // Normalize each touch
+        map(touches, function (e) {
+            return self.normalize(e);
+        });
 
-		// Register the touch start position
-		if (e.type === 'touchstart') {
-			each(touches, function (e, i) {
-				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
-			});
-			lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] &&
-				pinchDown[1].chartX];
-			lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] &&
-				pinchDown[1].chartY];
+        // Register the touch start position
+        if (e.type === 'touchstart') {
+            each(touches, function (e, i) {
+                pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
+            });
+            lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] &&
+                pinchDown[1].chartX];
+            lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] &&
+                pinchDown[1].chartY];
 
-			// Identify the data bounds in pixels
-			each(chart.axes, function (axis) {
-				if (axis.zoomEnabled) {
-					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
-						minPixelPadding = axis.minPixelPadding,
-						min = axis.toPixels(
-							pick(axis.options.min, axis.dataMin)
-						),
-						max = axis.toPixels(
-							pick(axis.options.max, axis.dataMax)
-						),
-						absMin = Math.min(min, max),
-						absMax = Math.max(min, max);
+            // Identify the data bounds in pixels
+            each(chart.axes, function (axis) {
+                if (axis.zoomEnabled) {
+                    var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
+                        minPixelPadding = axis.minPixelPadding,
+                        min = axis.toPixels(
+                            pick(axis.options.min, axis.dataMin)
+                        ),
+                        max = axis.toPixels(
+                            pick(axis.options.max, axis.dataMax)
+                        ),
+                        absMin = Math.min(min, max),
+                        absMax = Math.max(min, max);
 
-					// Store the bounds for use in the touchmove handler
-					bounds.min = Math.min(axis.pos, absMin - minPixelPadding);
-					bounds.max = Math.max(
-						axis.pos + axis.len,
-						absMax + minPixelPadding
-					);
-				}
-			});
-			self.res = true; // reset on next move
+                    // Store the bounds for use in the touchmove handler
+                    bounds.min = Math.min(axis.pos, absMin - minPixelPadding);
+                    bounds.max = Math.max(
+                        axis.pos + axis.len,
+                        absMax + minPixelPadding
+                    );
+                }
+            });
+            self.res = true; // reset on next move
 
-		// Optionally move the tooltip on touchmove
-		} else if (self.followTouchMove && touchesLength === 1) {
-			this.runPointActions(self.normalize(e));
+        // Optionally move the tooltip on touchmove
+        } else if (self.followTouchMove && touchesLength === 1) {
+            this.runPointActions(self.normalize(e));
 
-		// Event type is touchmove, handle panning and pinching
-		} else if (pinchDown.length) { // can be 0 when releasing, if touchend
-				// fires first
+        // Event type is touchmove, handle panning and pinching
+        } else if (pinchDown.length) { // can be 0 when releasing, if touchend
+                // fires first
 
 
-			// Set the marker
-			if (!selectionMarker) {
-				self.selectionMarker = selectionMarker = extend({
-					destroy: noop,
-					touch: true
-				}, chart.plotBox);
-			}
+            // Set the marker
+            if (!selectionMarker) {
+                self.selectionMarker = selectionMarker = extend({
+                    destroy: noop,
+                    touch: true
+                }, chart.plotBox);
+            }
 
-			self.pinchTranslate(
-				pinchDown,
-				touches,
-				transform,
-				selectionMarker,
-				clip,
-				lastValidTouch
-			);
+            self.pinchTranslate(
+                pinchDown,
+                touches,
+                transform,
+                selectionMarker,
+                clip,
+                lastValidTouch
+            );
 
-			self.hasPinched = hasZoom;
+            self.hasPinched = hasZoom;
 
-			// Scale and translate the groups to provide visual feedback during
-			// pinching
-			self.scaleGroups(transform, clip);
+            // Scale and translate the groups to provide visual feedback during
+            // pinching
+            self.scaleGroups(transform, clip);
 
-			if (self.res) {
-				self.res = false;
-				this.reset(false, 0);
-			}
-		}
-	},
+            if (self.res) {
+                self.res = false;
+                this.reset(false, 0);
+            }
+        }
+    },
 
-	/**
-	 * General touch handler shared by touchstart and touchmove.
-	 */
-	touch: function (e, start) {
-		var chart = this.chart,
-			hasMoved,
-			pinchDown,
-			isInside;
+    /**
+     * General touch handler shared by touchstart and touchmove.
+     */
+    touch: function (e, start) {
+        var chart = this.chart,
+            hasMoved,
+            pinchDown,
+            isInside;
 
-		if (chart.index !== H.hoverChartIndex) {
-			this.onContainerMouseLeave({ relatedTarget: true });
-		}
-		H.hoverChartIndex = chart.index;
+        if (chart.index !== H.hoverChartIndex) {
+            this.onContainerMouseLeave({ relatedTarget: true });
+        }
+        H.hoverChartIndex = chart.index;
 
-		if (e.touches.length === 1) {
+        if (e.touches.length === 1) {
 
-			e = this.normalize(e);
+            e = this.normalize(e);
 
-			isInside = chart.isInsidePlot(
-				e.chartX - chart.plotLeft,
-				e.chartY - chart.plotTop
-			);
-			if (isInside && !chart.openMenu) {
+            isInside = chart.isInsidePlot(
+                e.chartX - chart.plotLeft,
+                e.chartY - chart.plotTop
+            );
+            if (isInside && !chart.openMenu) {
 
-				// Run mouse events and display tooltip etc
-				if (start) {
-					this.runPointActions(e);
-				}
+                // Run mouse events and display tooltip etc
+                if (start) {
+                    this.runPointActions(e);
+                }
 
-				// Android fires touchmove events after the touchstart even if
-				// the finger hasn't moved, or moved only a pixel or two. In iOS
-				// however, the touchmove doesn't fire unless the finger moves
-				// more than ~4px. So we emulate this behaviour in Android by
-				// checking how much it moved, and cancelling on small
-				// distances. #3450.
-				if (e.type === 'touchmove') {
-					pinchDown = this.pinchDown;
-					hasMoved = pinchDown[0] ? Math.sqrt( // #5266
-						Math.pow(pinchDown[0].chartX - e.chartX, 2) +
-						Math.pow(pinchDown[0].chartY - e.chartY, 2)
-					) >= 4 : false;
-				}
+                // Android fires touchmove events after the touchstart even if
+                // the finger hasn't moved, or moved only a pixel or two. In iOS
+                // however, the touchmove doesn't fire unless the finger moves
+                // more than ~4px. So we emulate this behaviour in Android by
+                // checking how much it moved, and cancelling on small
+                // distances. #3450.
+                if (e.type === 'touchmove') {
+                    pinchDown = this.pinchDown;
+                    hasMoved = pinchDown[0] ? Math.sqrt( // #5266
+                        Math.pow(pinchDown[0].chartX - e.chartX, 2) +
+                        Math.pow(pinchDown[0].chartY - e.chartY, 2)
+                    ) >= 4 : false;
+                }
 
-				if (pick(hasMoved, true)) {
-					this.pinch(e);
-				}
+                if (pick(hasMoved, true)) {
+                    this.pinch(e);
+                }
 
-			} else if (start) {
-				// Hide the tooltip on touching outside the plot area (#1203)
-				this.reset();
-			}
+            } else if (start) {
+                // Hide the tooltip on touching outside the plot area (#1203)
+                this.reset();
+            }
 
-		} else if (e.touches.length === 2) {
-			this.pinch(e);
-		}
-	},
+        } else if (e.touches.length === 2) {
+            this.pinch(e);
+        }
+    },
 
-	onContainerTouchStart: function (e) {
-		this.zoomOption(e);
-		this.touch(e, true);
-	},
+    onContainerTouchStart: function (e) {
+        this.zoomOption(e);
+        this.touch(e, true);
+    },
 
-	onContainerTouchMove: function (e) {
-		this.touch(e);
-	},
+    onContainerTouchMove: function (e) {
+        this.touch(e);
+    },
 
-	onDocumentTouchEnd: function (e) {
-		if (charts[H.hoverChartIndex]) {
-			charts[H.hoverChartIndex].pointer.drop(e);
-		}
-	}
+    onDocumentTouchEnd: function (e) {
+        if (charts[H.hoverChartIndex]) {
+            charts[H.hoverChartIndex].pointer.drop(e);
+        }
+    }
 
 });

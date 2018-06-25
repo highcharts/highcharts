@@ -71,11 +71,16 @@ QUnit.test('Point interval unit across DST (#4958)', function (assert) {
     });
 
     // Autumn crossover
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points.map(function (point) {
             return Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x);
-        }).join(','),
-        '2022-10-29 00:00,2022-10-30 00:00,2022-10-31 00:00,2022-11-01 00:00',
+        }),
+        [
+            '2022-10-29 00:00',
+            '2022-10-30 00:00',
+            '2022-10-31 00:00',
+            '2022-11-01 00:00'
+        ],
         'Points should land on local timezone midnight'
     );
 
@@ -83,11 +88,16 @@ QUnit.test('Point interval unit across DST (#4958)', function (assert) {
     chart.series[0].update({
         pointStart: Date.UTC(2022, 2, 26, 0)
     });
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points.map(function (point) {
             return Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x);
-        }).join(','),
-        '2022-03-26 00:00,2022-03-27 00:00,2022-03-28 00:00,2022-03-29 00:00',
+        }),
+        [
+            '2022-03-26 00:00',
+            '2022-03-27 00:00',
+            '2022-03-28 00:00',
+            '2022-03-29 00:00'
+        ],
         'Points should land on local timezone midnight'
     );
 

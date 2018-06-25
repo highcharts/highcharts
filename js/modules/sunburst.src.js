@@ -4,8 +4,7 @@
  *
  * License: www.highcharts.com/license
  *
- * This is an experimental Highcharts module which enables visualization
- * of a word cloud.
+ * This module implements sunburst charts in Highcharts.
  */
 'use strict';
 import H from '../parts/Globals.js';
@@ -15,28 +14,114 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 import '../parts/Series.js';
 import './treemap.src.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
-	Series = H.Series,
-	each = H.each,
-	extend = H.extend,
-	getCenter = CenteredSeriesMixin.getCenter,
-	getColor = mixinTreeSeries.getColor,
-	getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
-	grep = H.grep,
-	isBoolean = function (x) {
-		return typeof x === 'boolean';
-	},
-	isNumber = H.isNumber,
-	isObject = H.isObject,
-	isString = H.isString,
-	merge = H.merge,
-	noop = H.noop,
-	pick = H.pick,
-	rad2deg = 180 / Math.PI,
-	seriesType = H.seriesType,
-	seriesTypes = H.seriesTypes,
-	setTreeValues = mixinTreeSeries.setTreeValues,
-	reduce = H.reduce;
+    Series = H.Series,
+    each = H.each,
+    extend = H.extend,
+    getCenter = CenteredSeriesMixin.getCenter,
+    getColor = mixinTreeSeries.getColor,
+    getLevelOptions = mixinTreeSeries.getLevelOptions,
+    getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
+    grep = H.grep,
+    inArray = H.inArray,
+    isBoolean = function (x) {
+        return typeof x === 'boolean';
+    },
+    isNumber = H.isNumber,
+    isObject = H.isObject,
+    isString = H.isString,
+    keys = H.keys,
+    merge = H.merge,
+    noop = H.noop,
+    rad2deg = 180 / Math.PI,
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes,
+    setTreeValues = mixinTreeSeries.setTreeValues,
+    reduce = H.reduce,
+    updateRootId = mixinTreeSeries.updateRootId;
 
+// TODO introduce step, which should default to 1.
+var range = function range(from, to) {
+    var result = [],
+        i;
+    if (isNumber(from) && isNumber(to) && from <= to) {
+        for (i = from; i <= to; i++) {
+            result.push(i);
+        }
+    }
+    return result;
+};
+
+/**
+ * @param {Object} levelOptions Map of level to its options.
+ * @param {Object} params Object containing parameters.
+ * @param {Number} params.innerRadius
+ * @param {Number} params.outerRadius
+ * @
+ */
+var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
+    var result,
+        p = isObject(params) ? params : {},
+        totalWeight = 0,
+        diffRadius,
+        levels,
+        levelsNotIncluded,
+        remainingSize,
+        from,
+        to;
+
+    if (isObject(levelOptions)) {
+        result = merge({}, levelOptions); // Copy levelOptions
+        from = isNumber(p.from) ? p.from : 0;
+        to = isNumber(p.to) ? p.to : 0;
+        levels = range(from, to);
+        levelsNotIncluded = grep(keys(result), function (k) {
+            return inArray(+k, levels) === -1;
+        });
+        diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
+        /**
+         * Convert percentage to pixels.
+         * Calculate the remaining size to divide between "weight" levels.
+         * Calculate total weight to use in convertion from weight to pixels.
+         */
+        each(levels, function (level) {
+            var options = result[level],
+                unit = options.levelSize.unit,
+                value = options.levelSize.value;
+            if (unit === 'weight') {
+                totalWeight += value;
+            } else if (unit === 'percentage') {
+                options.levelSize = {
+                    unit: 'pixels',
+                    value: (value / 100) * diffRadius
+                };
+                remainingSize -= options.levelSize.value;
+            } else if (unit === 'pixels') {
+                remainingSize -= value;
+            }
+        });
+
+        // Convert weight to pixels.
+        each(levels, function (level) {
+            var options = result[level],
+                weight;
+            if (options.levelSize.unit === 'weight') {
+                weight = options.levelSize.value;
+                result[level].levelSize = {
+                    unit: 'pixels',
+                    value: (weight / totalWeight) * remainingSize
+                };
+            }
+        });
+        // Set all levels not included in interval [from,to] to have 0 pixels.
+        each(levelsNotIncluded, function (level) {
+            result[level].levelSize = {
+                value: 0,
+                unit: 'pixels'
+            };
+        });
+    }
+    return result;
+};
 
 /**
  * getEndPoint - Find a set of coordinates given a start coordinates, an angle,
@@ -49,209 +134,212 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
  * @return {object} Returns the end coordinates, x and y.
  */
 var getEndPoint = function getEndPoint(x, y, angle, distance) {
-	return {
-		x: x + (Math.cos(angle) * distance),
-		y: y + (Math.sin(angle) * distance)
-	};
+    return {
+        x: x + (Math.cos(angle) * distance),
+        y: y + (Math.sin(angle) * distance)
+    };
 };
 
 var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
-	var startAngle = parent.start,
-		range = parent.end - startAngle,
-		total = parent.val,
-		x = parent.x,
-		y = parent.y,
-		innerRadius = parent.r,
-		outerRadius = innerRadius + parent.radius,
-		slicedOffset = isNumber(options.slicedOffset) ? options.slicedOffset : 0;
+    var startAngle = parent.start,
+        range = parent.end - startAngle,
+        total = parent.val,
+        x = parent.x,
+        y = parent.y,
+        radius = (
+            options && isObject(options.levelSize) &&
+                isNumber(options.levelSize.value) ?
+            options.levelSize.value :
+            0
+        ),
+        innerRadius = parent.r,
+        outerRadius = innerRadius + radius,
+        slicedOffset = options && isNumber(options.slicedOffset) ?
+            options.slicedOffset :
+            0;
 
-	return reduce(children || [], function (arr, child) {
-		var percentage = (1 / total) * child.val,
-			radians = percentage * range,
-			radiansCenter = startAngle + (radians / 2),
-			offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
-			values = {
-				x: child.sliced && child.id !== options.idRoot ? offsetPosition.x : x,
-				y: child.sliced && child.id !== options.idRoot ? offsetPosition.y : y,
-				innerR: innerRadius,
-				r: outerRadius,
-				radius: parent.radius,
-				start: startAngle,
-				end: startAngle + radians
-			};
-		arr.push(values);
-		startAngle = values.end;
-		return arr;
-	}, []);
+    return reduce(children || [], function (arr, child) {
+        var percentage = (1 / total) * child.val,
+            radians = percentage * range,
+            radiansCenter = startAngle + (radians / 2),
+            offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
+            values = {
+                x: child.sliced ? offsetPosition.x : x,
+                y: child.sliced ? offsetPosition.y : y,
+                innerR: innerRadius,
+                r: outerRadius,
+                radius: radius,
+                start: startAngle,
+                end: startAngle + radians
+            };
+        arr.push(values);
+        startAngle = values.end;
+        return arr;
+    }, []);
 };
 
 var getDlOptions = function getDlOptions(params) {
-	// Set options to new object to avoid problems with scope
-	var shape = isObject(params.shapeArgs) ? params.shapeArgs : {},
-		optionsSeries = (
-			isObject(params.optionsSeries) ?
-			params.optionsSeries.dataLabels :
-			{}
-		),
-		optionsPoint = (
-			isObject(params.optionsPoint) ?
-			params.optionsPoint.dataLabels :
-			{}
-		),
-		optionsLevel = (
-			isObject(params.level) ?
-			params.level.dataLabels :
-			{}
-		),
-		options = merge({
-			rotationMode: 'perpendicular',
-			style: {
-				width: shape.radius
-			}
-		}, optionsSeries, optionsLevel, optionsPoint),
-		rotationRad,
-		rotation;
-	if (!isNumber(options.rotation)) {
-		rotationRad = (shape.end - (shape.end - shape.start) / 2);
-		rotation = (rotationRad * rad2deg) % 180;
-		if (options.rotationMode === 'parallel') {
-			rotation -= 90;
-		}
-		// Data labels should not rotate beyond 90 degrees, for readability.
-		if (rotation > 90) {
-			rotation -= 180;
-		}
-		options.rotation = rotation;
-	}
-	// NOTE: alignDataLabel positions the data label differntly when rotation is
-	// 0. Avoiding this by setting rotation to a small number.
-	if (options.rotation === 0) {
-		options.rotation =  0.001;
-	}
-	return options;
+    // Set options to new object to avoid problems with scope
+    var shape = isObject(params.shapeArgs) ? params.shapeArgs : {},
+        optionsPoint = (
+            isObject(params.optionsPoint) ?
+            params.optionsPoint.dataLabels :
+            {}
+        ),
+        optionsLevel = (
+            isObject(params.level) ?
+            params.level.dataLabels :
+            {}
+        ),
+        options = merge({
+            rotationMode: 'perpendicular',
+            style: {
+                width: shape.radius
+            }
+        }, optionsLevel, optionsPoint),
+        rotationRad,
+        rotation;
+    if (!isNumber(options.rotation)) {
+        rotationRad = (shape.end - (shape.end - shape.start) / 2);
+        rotation = (rotationRad * rad2deg) % 180;
+        if (options.rotationMode === 'parallel') {
+            rotation -= 90;
+        }
+        // Data labels should not rotate beyond 90 degrees, for readability.
+        if (rotation > 90) {
+            rotation -= 180;
+        }
+        options.rotation = rotation;
+    }
+    // NOTE: alignDataLabel positions the data label differntly when rotation is
+    // 0. Avoiding this by setting rotation to a small number.
+    if (options.rotation === 0) {
+        options.rotation =  0.001;
+    }
+    return options;
 };
 
 var getAnimation = function getAnimation(shape, params) {
-	var point = params.point,
-		radians = params.radians,
-		innerR = params.innerR,
-		idRoot = params.idRoot,
-		idPreviousRoot = params.idPreviousRoot,
-		shapeExisting = params.shapeExisting,
-		shapeRoot = params.shapeRoot,
-		shapePreviousRoot = params.shapePreviousRoot,
-		visible = params.visible,
-		from = {},
-		to = {
-			end: shape.end,
-			start: shape.start,
-			innerR: shape.innerR,
-			r: shape.r,
-			x: shape.x,
-			y: shape.y
-		};
-	if (visible) {
-		// Animate points in
-		if (!point.graphic && shapePreviousRoot) {
-			if (idRoot === point.id) {
-				from = {
-					start: radians.start,
-					end: radians.end
-				};
-			} else {
-				from = (shapePreviousRoot.end <= shape.start) ? {
-					start: radians.end,
-					end: radians.end
-				} : {
-					start: radians.start,
-					end: radians.start
-				};
-			}
-			// Animate from center and outwards.
-			from.innerR = from.r = innerR;
-		}
-	} else {
-		// Animate points out
-		if (point.graphic) {
-			if (idPreviousRoot === point.id) {
-				to = {
-					innerR: innerR,
-					r: innerR
-				};
-			} else if (shapeRoot) {
-				to = (shapeRoot.end <= shapeExisting.start) ?
-				{
-					innerR: innerR,
-					r: innerR,
-					start: radians.end,
-					end: radians.end
-				} : {
-					innerR: innerR,
-					r: innerR,
-					start: radians.start,
-					end: radians.start
-				};
-			}
-		}
-	}
-	return {
-		from: from,
-		to: to
-	};
+    var point = params.point,
+        radians = params.radians,
+        innerR = params.innerR,
+        idRoot = params.idRoot,
+        idPreviousRoot = params.idPreviousRoot,
+        shapeExisting = params.shapeExisting,
+        shapeRoot = params.shapeRoot,
+        shapePreviousRoot = params.shapePreviousRoot,
+        visible = params.visible,
+        from = {},
+        to = {
+            end: shape.end,
+            start: shape.start,
+            innerR: shape.innerR,
+            r: shape.r,
+            x: shape.x,
+            y: shape.y
+        };
+    if (visible) {
+        // Animate points in
+        if (!point.graphic && shapePreviousRoot) {
+            if (idRoot === point.id) {
+                from = {
+                    start: radians.start,
+                    end: radians.end
+                };
+            } else {
+                from = (shapePreviousRoot.end <= shape.start) ? {
+                    start: radians.end,
+                    end: radians.end
+                } : {
+                    start: radians.start,
+                    end: radians.start
+                };
+            }
+            // Animate from center and outwards.
+            from.innerR = from.r = innerR;
+        }
+    } else {
+        // Animate points out
+        if (point.graphic) {
+            if (idPreviousRoot === point.id) {
+                to = {
+                    innerR: innerR,
+                    r: innerR
+                };
+            } else if (shapeRoot) {
+                to = (shapeRoot.end <= shapeExisting.start) ?
+                {
+                    innerR: innerR,
+                    r: innerR,
+                    start: radians.end,
+                    end: radians.end
+                } : {
+                    innerR: innerR,
+                    r: innerR,
+                    start: radians.start,
+                    end: radians.start
+                };
+            }
+        }
+    }
+    return {
+        from: from,
+        to: to
+    };
 };
 
 var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
-	var drillId,
-		node = point.node,
-		nodeRoot;
-	if (!node.isLeaf) {
-		// When it is the root node, the drillId should be set to parent.
-		if (idRoot === point.id) {
-			nodeRoot = mapIdToNode[idRoot];
-			drillId = nodeRoot.parent;
-		} else {
-			drillId = point.id;
-		}
-	}
-	return drillId;
+    var drillId,
+        node = point.node,
+        nodeRoot;
+    if (!node.isLeaf) {
+        // When it is the root node, the drillId should be set to parent.
+        if (idRoot === point.id) {
+            nodeRoot = mapIdToNode[idRoot];
+            drillId = nodeRoot.parent;
+        } else {
+            drillId = point.id;
+        }
+    }
+    return drillId;
 };
 
 var cbSetTreeValuesBefore = function before(node, options) {
-	var mapIdToNode = options.mapIdToNode,
-		nodeParent = mapIdToNode[node.parent],
-		series = options.series,
-		chart = series.chart,
-		points = series.points,
-		point = points[node.i],
-		colorInfo = getColor(node, {
-			colors: chart && chart.options && chart.options.colors,
-			colorIndex: series.colorIndex,
-			colorByPoint: series.colorByPoint,
-			index: options.index,
-			levelMap: options.levelMap,
-			parentColor: nodeParent && nodeParent.color,
-			parentColorIndex: nodeParent && nodeParent.colorIndex,
-			series: options.series,
-			siblings: options.siblings
-		});
-	node.color = colorInfo.color;
-	node.colorIndex = colorInfo.colorIndex;
-	if (point) {
-		point.color = node.color;
-		point.colorIndex = node.colorIndex;
-		node.sliced = point.sliced;
-	}
-	return node;
+    var mapIdToNode = options.mapIdToNode,
+        nodeParent = mapIdToNode[node.parent],
+        series = options.series,
+        chart = series.chart,
+        points = series.points,
+        point = points[node.i],
+        colorInfo = getColor(node, {
+            colors: chart && chart.options && chart.options.colors,
+            colorIndex: series.colorIndex,
+            index: options.index,
+            mapOptionsToLevel: options.mapOptionsToLevel,
+            parentColor: nodeParent && nodeParent.color,
+            parentColorIndex: nodeParent && nodeParent.colorIndex,
+            series: options.series,
+            siblings: options.siblings
+        });
+    node.color = colorInfo.color;
+    node.colorIndex = colorInfo.colorIndex;
+    if (point) {
+        point.color = node.color;
+        point.colorIndex = node.colorIndex;
+        // Set slicing on node, but avoid slicing the top node.
+        node.sliced = (node.id !== options.idRoot) ? point.sliced : false;
+    }
+    return node;
 };
 
 /**
- * A Sunburst displays hierarchical data, where a level in the hierarchy is represented by a circle.
- * The center represents the root node of the tree.
+ * A Sunburst displays hierarchical data, where a level in the hierarchy is
+ * represented by a circle. The center represents the root node of the tree.
  * The visualization bears a resemblance to both treemap and pie charts.
  *
  * @extends {plotOptions.pie}
  * @sample highcharts/demo/sunburst Sunburst chart
- * @excluding allAreas, center, clip, colorAxis, compare, compareBase,
+ * @excluding allAreas, clip, colorAxis, compare, compareBase,
  *            dataGrouping, depth, endAngle, gapSize, gapUnit,
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *            minSize, navigatorOptions, pointRange
@@ -259,459 +347,521 @@ var cbSetTreeValuesBefore = function before(node, options) {
  * @optionparent plotOptions.sunburst
  */
 var sunburstOptions = {
-	/**
-	 * The center of the sunburst chart relative to the plot area. Can be
-	 * percentages or pixel values.
-	 *
-	 * @type {Array<String|Number>}
-	 * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
-	 * @product highcharts
-	 */
-	center: ['50%', '50%'],
-	/**
-	 * @extends plotOptions.series.dataLabels
-	 * @excluding align,allowOverlap,staggerLines,step
-	 */
-	dataLabels: {
-		defer: true,
-		style: {
-			textOverflow: 'ellipsis'
-		},
-		/**
-		 * Decides how the data label will be rotated according to the perimeter
-		 * of the sunburst. It can either be parallel or perpendicular to the
-		 * perimeter.
-		 * `series.rotation` takes precedence over `rotationMode`.
-		 * @since 6.0.0
-		 * @validvalue ["perpendicular", "parallel"]
-		 */
-		rotationMode: 'perpendicular'
-	},
-	/**
-	 * Which point to use as a root in the visualization.
-	 *
-	 * @type {String|undefined}
-	 * @default undefined
-	 */
-	rootId: undefined,
 
-	/**
-	 * Used together with the levels and `allowDrillToNode` options. When
-	 * set to false the first level visible when drilling is considered
-	 * to be level one. Otherwise the level will be the same as the tree
-	 * structure.
-	 */
-	levelIsConstant: true,
-	/**
-	 * If a point is sliced, moved out from the center, how many pixels
-	 * should it be moved?.
-	 *
-	 * @since 6.0.4
-	 * @sample highcharts/plotoptions/sunburst-sliced Sliced sunburst
-	 */
-	slicedOffset: 10
-	/**
-	 * Set options on specific levels. Takes precedence over series options,
-	 * but not point options.
-	 *
-	 * @type {Array<Object>}
-	 * @sample highcharts/demo/sunburst Sunburst chart
-	 * @apioption plotOptions.sunburst.levels
-	 */
-	/**
-	 * Can set a `borderColor` on all points which lies on the same level.
-	 *
-	 * @type {Color}
-	 * @apioption plotOptions.sunburst.levels.borderColor
-	 */
-	/**
-	 * Can set a `borderWidth` on all points which lies on the same level.
-	 *
-	 * @type {Number}
-	 * @apioption plotOptions.sunburst.levels.borderWidth
-	 */
-	/**
-	 * Can set a `borderDashStyle` on all points which lies on the same level.
-	 *
-	 * @type {String}
-	 * @apioption plotOptions.sunburst.levels.borderDashStyle
-	 */
-	/**
-	 * Can set a `color` on all points which lies on the same level.
-	 *
-	 * @type {Color}
-	 * @apioption plotOptions.sunburst.levels.color
-	 */
-	/**
-	 * Can set a `colorVariation` on all points which lies on the same level.
-	 *
-	 * @type {Object}
-	 * @apioption plotOptions.sunburst.levels.colorVariation
-	 */
-	/**
-	 * The key of a color variation. Currently supports `brightness` only.
-	 *
-	 * @type {String}
-	 * @apioption plotOptions.sunburst.levels.colorVariation.key
-	 */
-	/**
-	 * The ending value of a color variation. The last sibling will receive this
-	 * value.
-	 *
-	 * @type {Number}
-	 * @apioption plotOptions.sunburst.levels.colorVariation.to
-	 */
-	/**
-	 * Can set a `dataLabels` on all points which lies on the same level.
-	 *
-	 * @type {Object}
-	 * @apioption plotOptions.sunburst.levels.dataLabels
-	 */
-	/**
-	 * Can set a `rotation` on all points which lies on the same level.
-	 *
-	 * @type {Number}
-	 * @apioption plotOptions.sunburst.levels.rotation
-	 */
-	/**
-	 * Can set a `rotationMode` on all points which lies on the same level.
-	 *
-	 * @type {String}
-	 * @apioption plotOptions.sunburst.levels.rotationMode
-	 */
-	/**
-	 * When enabled the user can click on a point which is a parent and
-	 * zoom in on its children.
-	 *
-	 * @sample highcharts/demo/sunburst
-	 *         Allow drill to node
-	 * @type {Boolean}
-	 * @default false
-	 * @apioption plotOptions.sunburst.allowDrillToNode
-	 */
+    /**
+     * Set options on specific levels. Takes precedence over series options,
+     * but not point options.
+     *
+     * @type {Array<Object>}
+     * @sample highcharts/demo/sunburst Sunburst chart
+     * @apioption plotOptions.sunburst.levels
+     */
+
+    /**
+     * Can set a `borderColor` on all points which lies on the same level.
+     *
+     * @type {Color}
+     * @apioption plotOptions.sunburst.levels.borderColor
+     */
+
+    /**
+     * Can set a `borderWidth` on all points which lies on the same level.
+     *
+     * @type {Number}
+     * @apioption plotOptions.sunburst.levels.borderWidth
+     */
+
+    /**
+     * Can set a `borderDashStyle` on all points which lies on the same level.
+     *
+     * @type {String}
+     * @apioption plotOptions.sunburst.levels.borderDashStyle
+     */
+
+    /**
+     * Can set a `color` on all points which lies on the same level.
+     *
+     * @type {Color}
+     * @apioption plotOptions.sunburst.levels.color
+     */
+
+    /**
+     * Can set a `colorVariation` on all points which lies on the same level.
+     *
+     * @type {Object}
+     * @apioption plotOptions.sunburst.levels.colorVariation
+     */
+
+    /**
+     * The key of a color variation. Currently supports `brightness` only.
+     *
+     * @type {String}
+     * @apioption plotOptions.sunburst.levels.colorVariation.key
+     */
+
+    /**
+     * The ending value of a color variation. The last sibling will receive this
+     * value.
+     *
+     * @type {Number}
+     * @apioption plotOptions.sunburst.levels.colorVariation.to
+     */
+
+    /**
+     * Can set a `dataLabels` on all points which lies on the same level.
+     *
+     * @type {Object}
+     * @apioption plotOptions.sunburst.levels.dataLabels
+     */
+
+    /**
+     * Can set a `levelSize` on all points which lies on the same level.
+     *
+     * @type {Object}
+     * @apioption plotOptions.sunburst.levels.levelSize
+     */
+
+    /**
+     * Can set a `rotation` on all points which lies on the same level.
+     *
+     * @type {Number}
+     * @apioption plotOptions.sunburst.levels.rotation
+     */
+
+    /**
+     * Can set a `rotationMode` on all points which lies on the same level.
+     *
+     * @type {String}
+     * @apioption plotOptions.sunburst.levels.rotationMode
+     */
+
+    /**
+     * When enabled the user can click on a point which is a parent and
+     * zoom in on its children.
+     *
+     * @sample highcharts/demo/sunburst
+     *         Allow drill to node
+     * @type {Boolean}
+     * @default false
+     * @apioption plotOptions.sunburst.allowDrillToNode
+     */
+
+    /**
+     * The center of the sunburst chart relative to the plot area. Can be
+     * percentages or pixel values.
+     *
+     * @type    {Array<String|Number>}
+     * @sample  {highcharts} highcharts/plotoptions/pie-center/
+     *          Centered at 100, 100
+     * @product highcharts
+     */
+    center: ['50%', '50%'],
+    colorByPoint: false,
+    /**
+     * @extends plotOptions.series.dataLabels
+     * @excluding align,allowOverlap,staggerLines,step
+     */
+    dataLabels: {
+        defer: true,
+        style: {
+            textOverflow: 'ellipsis'
+        },
+        /**
+         * Decides how the data label will be rotated according to the perimeter
+         * of the sunburst. It can either be parallel or perpendicular to the
+         * perimeter.
+         * `series.rotation` takes precedence over `rotationMode`.
+         * @since 6.0.0
+         * @validvalue ["perpendicular", "parallel"]
+         */
+        rotationMode: 'perpendicular'
+    },
+    /**
+     * Which point to use as a root in the visualization.
+     *
+     * @type {String|undefined}
+     * @default undefined
+     */
+    rootId: undefined,
+
+    /**
+     * Used together with the levels and `allowDrillToNode` options. When
+     * set to false the first level visible when drilling is considered
+     * to be level one. Otherwise the level will be the same as the tree
+     * structure.
+     */
+    levelIsConstant: true,
+    /**
+     * Determines the width of the ring per level.
+     * @since 6.0.5
+     * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
+     *         Sunburst with various sizes per level
+     */
+    levelSize: {
+        /**
+         * The value used for calculating the width of the ring. Its' affect is
+         * determined by `levelSize.unit`.
+         * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
+         *         Sunburst with various sizes per level
+         */
+        value: 1,
+        /**
+         * How to interpret `levelSize.value`.
+         * `percentage` gives a width relative to result of outer radius minus
+         * inner radius.
+         * `pixels` gives the ring a fixed width in pixels.
+         * `weight` takes the remaining width after percentage and pixels, and
+         * distributes it accross all "weighted" levels. The value relative to
+         * the sum of all weights determines the width.
+         * @validvalue ["percentage", "pixels", "weight"]
+         * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
+         *         Sunburst with various sizes per level
+         */
+        unit: 'weight'
+    },
+    /**
+     * If a point is sliced, moved out from the center, how many pixels
+     * should it be moved?.
+     *
+     * @since 6.0.4
+     * @sample highcharts/plotoptions/sunburst-sliced Sliced sunburst
+     */
+    slicedOffset: 10
 };
 
 /**
  * Properties of the Sunburst series.
  */
 var sunburstSeries = {
-	drawDataLabels: noop, // drawDataLabels is called in drawPoints
-	drawPoints: function drawPoints() {
-		var series = this,
-			levelMap = series.levelMap,
-			shapeRoot = series.shapeRoot,
-			group = series.group,
-			hasRendered = series.hasRendered,
-			idRoot = series.rootNode,
-			idPreviousRoot = series.idPreviousRoot,
-			nodeMap = series.nodeMap,
-			nodePreviousRoot = nodeMap[idPreviousRoot],
-			shapePreviousRoot = nodePreviousRoot && nodePreviousRoot.shapeArgs,
-			points = series.points,
-			radians = series.startAndEndRadians,
-			chart = series.chart,
-			optionsChart = chart && chart.options && chart.options.chart || {},
-			animation = (
-				isBoolean(optionsChart.animation) ?
-				optionsChart.animation :
-				true
-			),
-			positions = series.center,
-			center = {
-				x: positions[0],
-				y: positions[1]
-			},
-			innerR = positions[3] / 2,
-			renderer = series.chart.renderer,
-			animateLabels,
-			animateLabelsCalled = false,
-			addedHack = false,
-			hackDataLabelAnimation = !!(
-				animation &&
-				hasRendered &&
-				idRoot !== idPreviousRoot &&
-				series.dataLabelsGroup
-			);
+    drawDataLabels: noop, // drawDataLabels is called in drawPoints
+    drawPoints: function drawPoints() {
+        var series = this,
+            mapOptionsToLevel = series.mapOptionsToLevel,
+            shapeRoot = series.shapeRoot,
+            group = series.group,
+            hasRendered = series.hasRendered,
+            idRoot = series.rootNode,
+            idPreviousRoot = series.idPreviousRoot,
+            nodeMap = series.nodeMap,
+            nodePreviousRoot = nodeMap[idPreviousRoot],
+            shapePreviousRoot = nodePreviousRoot && nodePreviousRoot.shapeArgs,
+            points = series.points,
+            radians = series.startAndEndRadians,
+            chart = series.chart,
+            optionsChart = chart && chart.options && chart.options.chart || {},
+            animation = (
+                isBoolean(optionsChart.animation) ?
+                optionsChart.animation :
+                true
+            ),
+            positions = series.center,
+            center = {
+                x: positions[0],
+                y: positions[1]
+            },
+            innerR = positions[3] / 2,
+            renderer = series.chart.renderer,
+            animateLabels,
+            animateLabelsCalled = false,
+            addedHack = false,
+            hackDataLabelAnimation = !!(
+                animation &&
+                hasRendered &&
+                idRoot !== idPreviousRoot &&
+                series.dataLabelsGroup
+            );
 
-		if (hackDataLabelAnimation) {
-			series.dataLabelsGroup.attr({ opacity: 0 });
-			animateLabels = function () {
-				var s = series;
-				animateLabelsCalled = true;
-				if (s.dataLabelsGroup) {
-					s.dataLabelsGroup.animate({ opacity: 1, visibility: 'visible' });
-				}
-			};
-		}
-		each(points, function (point) {
-			var node = point.node,
-				level = levelMap[node.levelDynamic],
-				shapeExisting = point.shapeExisting || {},
-				shape = node.shapeArgs || {},
-				animationInfo,
-				onComplete,
-				visible = !!(node.visible && node.shapeArgs);
-			if (hasRendered && animation) {
-				animationInfo = getAnimation(shape, {
-					center: center,
-					point: point,
-					radians: radians,
-					innerR: innerR,
-					idRoot: idRoot,
-					idPreviousRoot: idPreviousRoot,
-					shapeExisting: shapeExisting,
-					shapeRoot: shapeRoot,
-					shapePreviousRoot: shapePreviousRoot,
-					visible: visible
-				});
-			} else {
-				// When animation is disabled, attr is called from animation.
-				animationInfo = {
-					to: shape,
-					from: {}
-				};
-			}
-			extend(point, {
-				shapeExisting: shape, // Store for use in animation
-				tooltipPos: [shape.plotX, shape.plotY],
-				drillId: getDrillId(point, idRoot, nodeMap),
-				name: '' + (point.name || point.id || point.index),
-				plotX: shape.plotX, // used for data label position
-				plotY: shape.plotY, // used for data label position
-				value: node.val,
-				isNull: !visible // used for dataLabels & point.draw
-			});
-			point.dlOptions = getDlOptions({
-				level: level,
-				optionsPoint: point.options,
-				optionsSeries: series.options,
-				shapeArgs: shape
-			});
-			if (!addedHack && visible) {
-				addedHack = true;
-				onComplete = animateLabels;
-			}
-			point.draw({
-				animate: animationInfo.to,
-				attr: extend(
-					animationInfo.from,
-					series.pointAttribs && series.pointAttribs(
-						point,
-						point.selected && 'select'
-					)
-				),
-				onComplete: onComplete,
-				group: group,
-				renderer: renderer,
-				shapeType: 'arc',
-				shapeArgs: shape
-			});
-		});
-		// Draw data labels after points
-		// TODO draw labels one by one to avoid addtional looping
-		if (hackDataLabelAnimation && addedHack) {
-			series.hasRendered = false;
-			series.options.dataLabels.defer = true;
-			Series.prototype.drawDataLabels.call(series);
-			series.hasRendered = true;
-			// If animateLabels is called before labels were hidden, then call
-			// it again.
-			if (animateLabelsCalled) {
-				animateLabels();
-			}
-		} else {
-			Series.prototype.drawDataLabels.call(series);
-		}
-	},
-	/*= if (build.classic) { =*/
-	pointAttribs: seriesTypes.column.prototype.pointAttribs,
-	/*= } =*/
+        if (hackDataLabelAnimation) {
+            series.dataLabelsGroup.attr({ opacity: 0 });
+            animateLabels = function () {
+                var s = series;
+                animateLabelsCalled = true;
+                if (s.dataLabelsGroup) {
+                    s.dataLabelsGroup.animate({
+                        opacity: 1,
+                        visibility: 'visible'
+                    });
+                }
+            };
+        }
+        each(points, function (point) {
+            var node = point.node,
+                level = mapOptionsToLevel[node.level],
+                shapeExisting = point.shapeExisting || {},
+                shape = node.shapeArgs || {},
+                animationInfo,
+                onComplete,
+                visible = !!(node.visible && node.shapeArgs);
+            if (hasRendered && animation) {
+                animationInfo = getAnimation(shape, {
+                    center: center,
+                    point: point,
+                    radians: radians,
+                    innerR: innerR,
+                    idRoot: idRoot,
+                    idPreviousRoot: idPreviousRoot,
+                    shapeExisting: shapeExisting,
+                    shapeRoot: shapeRoot,
+                    shapePreviousRoot: shapePreviousRoot,
+                    visible: visible
+                });
+            } else {
+                // When animation is disabled, attr is called from animation.
+                animationInfo = {
+                    to: shape,
+                    from: {}
+                };
+            }
+            extend(point, {
+                shapeExisting: shape, // Store for use in animation
+                tooltipPos: [shape.plotX, shape.plotY],
+                drillId: getDrillId(point, idRoot, nodeMap),
+                name: '' + (point.name || point.id || point.index),
+                plotX: shape.plotX, // used for data label position
+                plotY: shape.plotY, // used for data label position
+                value: node.val,
+                isNull: !visible // used for dataLabels & point.draw
+            });
+            point.dlOptions = getDlOptions({
+                level: level,
+                optionsPoint: point.options,
+                shapeArgs: shape
+            });
+            if (!addedHack && visible) {
+                addedHack = true;
+                onComplete = animateLabels;
+            }
+            point.draw({
+                animate: animationInfo.to,
+                attr: extend(
+                    animationInfo.from,
+                    series.pointAttribs && series.pointAttribs(
+                        point,
+                        point.selected && 'select'
+                    )
+                ),
+                onComplete: onComplete,
+                group: group,
+                renderer: renderer,
+                shapeType: 'arc',
+                shapeArgs: shape
+            });
+        });
+        // Draw data labels after points
+        // TODO draw labels one by one to avoid addtional looping
+        if (hackDataLabelAnimation && addedHack) {
+            series.hasRendered = false;
+            series.options.dataLabels.defer = true;
+            Series.prototype.drawDataLabels.call(series);
+            series.hasRendered = true;
+            // If animateLabels is called before labels were hidden, then call
+            // it again.
+            if (animateLabelsCalled) {
+                animateLabels();
+            }
+        } else {
+            Series.prototype.drawDataLabels.call(series);
+        }
+    },
+    /*= if (build.classic) { =*/
+    pointAttribs: seriesTypes.column.prototype.pointAttribs,
+    /*= } =*/
 
-	/*
-	 * The layout algorithm for the levels
-	 */
-	layoutAlgorithm: layoutAlgorithm,
-	/*
-	 * Set the shape arguments on the nodes. Recursive from root down.
-	 */
-	setShapeArgs: function (parent, parentValues, options) {
-		var childrenValues = [],
-			// Collect all children which should be included
-			children = grep(parent.children, function (n) {
-				return n.visible;
-			});
-		childrenValues = this.layoutAlgorithm(parentValues, children, options);
-		each(children, function (child, index) {
-			var values = childrenValues[index],
-				angle = values.start + ((values.end - values.start) / 2),
-				radius = values.innerR + ((values.r - values.innerR) / 2),
-				isCircle = (
-					values.innerR === 0 &&
-					(values.end - values.start) > 6.28
-				),
-				center = (
-					isCircle ?
-					{ x: values.x, y: values.y } :
-					getEndPoint(values.x, values.y, angle, radius)
-				),
-				val = (
-					child.val ?
-					(
-						child.childrenTotal > child.val ?
-						child.childrenTotal :
-						child.val
-					) :
-					child.childrenTotal
-				),
-				innerArcFraction = (values.end - values.start) / (2 * Math.PI),
-				perimeter = 2 * Math.PI * values.innerR;
+    /*
+     * The layout algorithm for the levels
+     */
+    layoutAlgorithm: layoutAlgorithm,
+    /*
+     * Set the shape arguments on the nodes. Recursive from root down.
+     */
+    setShapeArgs: function (parent, parentValues, mapOptionsToLevel) {
+        var childrenValues = [],
+            level = parent.level + 1,
+            options = mapOptionsToLevel[level],
+            // Collect all children which should be included
+            children = grep(parent.children, function (n) {
+                return n.visible;
+            }),
+            twoPi = 6.28; // Two times Pi.
+        childrenValues = this.layoutAlgorithm(parentValues, children, options);
+        each(children, function (child, index) {
+            var values = childrenValues[index],
+                angle = values.start + ((values.end - values.start) / 2),
+                radius = values.innerR + ((values.r - values.innerR) / 2),
+                radians = (values.end - values.start),
+                isCircle = (values.innerR === 0 && radians > twoPi),
+                center = (
+                    isCircle ?
+                    { x: values.x, y: values.y } :
+                    getEndPoint(values.x, values.y, angle, radius)
+                ),
+                val = (
+                    child.val ?
+                    (
+                        child.childrenTotal > child.val ?
+                        child.childrenTotal :
+                        child.val
+                    ) :
+                    child.childrenTotal
+                );
+            // The inner arc length is a convenience for data label filters.
+            if (this.points[child.i]) {
+                this.points[child.i].innerArcLength = radians * values.innerR;
+                this.points[child.i].outerArcLength = radians * values.r;
+            }
 
-			// The inner arc length is a convenience for data label filters.
-			if (this.points[child.i]) {
-				this.points[child.i].innerArcLength =
-					innerArcFraction * perimeter;
-			}
-
-			child.shapeArgs = merge(values, {
-				plotX: center.x,
-				plotY: center.y
-			});
-			child.values = merge(values, {
-				val: val
-			});
-			// If node has children, then call method recursively
-			if (child.children.length) {
-				this.setShapeArgs(child, child.values, options);
-			}
-		}, this);
-	},
+            child.shapeArgs = merge(values, {
+                plotX: center.x,
+                plotY: center.y
+            });
+            child.values = merge(values, {
+                val: val
+            });
+            // If node has children, then call method recursively
+            if (child.children.length) {
+                this.setShapeArgs(child, child.values, mapOptionsToLevel);
+            }
+        }, this);
+    },
 
 
-	translate: function translate() {
-		var series = this,
-			options = series.options,
-			positions = series.center = getCenter.call(series),
-			radians = series.startAndEndRadians = getStartAndEndRadians(options.startAngle, options.endAngle),
-			innerRadius = positions[3] / 2,
-			outerRadius = positions[2] / 2,
-			idRoot = series.rootNode = pick(series.rootNode, options.rootId, ''),
-			mapIdToNode = series.nodeMap,
-			idTop,
-			nodeRoot = mapIdToNode && mapIdToNode[idRoot],
-			nodeTop,
-			radiusPerLevel,
-			tree,
-			height,
-			values;
-		series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
-		// Call prototype function
-		Series.prototype.translate.call(series);
-		// Create a object map from level to options
-		series.levelMap = reduce(series.options.levels || [],
-			function (arr, item) {
-				arr[item.level] = item;
-				return arr;
-			}, {});
-		// @todo Only if series.isDirtyData is true
-		tree = series.tree = series.getTree();
-		mapIdToNode = series.nodeMap;
-		nodeRoot = mapIdToNode[idRoot];
-		idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
-		nodeTop = mapIdToNode[idTop];
-		// TODO Try to combine setTreeValues & setColorRecursive to avoid
-		//  unnecessary looping.
-		setTreeValues(tree, {
-			before: cbSetTreeValuesBefore,
-			idRoot: idRoot,
-			levelIsConstant: options.levelIsConstant,
-			levelMap: series.levelMap,
-			mapIdToNode: mapIdToNode,
-			points: series.points,
-			series: series
-		});
-		height = (idRoot === idTop) ? nodeRoot.height : nodeRoot.height + 1;
-		radiusPerLevel = (outerRadius - innerRadius) / height;
-		values = mapIdToNode[''].shapeArgs = {
-			end: radians.end,
-			r: innerRadius,
-			radius: radiusPerLevel,
-			start: radians.start,
-			val: nodeRoot.val,
-			x: positions[0],
-			y: positions[1]
-		};
-		this.setShapeArgs(nodeTop, values, {
-			idRoot: idRoot,
-			slicedOffset: options.slicedOffset
-		});
-	},
+    translate: function translate() {
+        var series = this,
+            options = series.options,
+            positions = series.center = getCenter.call(series),
+            radians = series.startAndEndRadians = getStartAndEndRadians(
+                options.startAngle,
+                options.endAngle
+            ),
+            innerRadius = positions[3] / 2,
+            outerRadius = positions[2] / 2,
+            diffRadius = outerRadius - innerRadius,
+            // NOTE: updateRootId modifies series.
+            rootId = updateRootId(series),
+            mapIdToNode = series.nodeMap,
+            mapOptionsToLevel,
+            idTop,
+            nodeRoot = mapIdToNode && mapIdToNode[rootId],
+            nodeTop,
+            tree,
+            values;
+        series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
+        // Call prototype function
+        Series.prototype.translate.call(series);
+        // @todo Only if series.isDirtyData is true
+        tree = series.tree = series.getTree();
+        mapIdToNode = series.nodeMap;
+        nodeRoot = mapIdToNode[rootId];
+        idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
+        nodeTop = mapIdToNode[idTop];
+        mapOptionsToLevel = getLevelOptions({
+            from: nodeRoot.level > 0 ? nodeRoot.level : 1,
+            levels: series.options.levels,
+            to: tree.height,
+            defaults: {
+                colorByPoint: options.colorByPoint,
+                dataLabels: options.dataLabels,
+                levelIsConstant: options.levelIsConstant,
+                levelSize: options.levelSize,
+                slicedOffset: options.slicedOffset
+            }
+        });
+        // NOTE consider doing calculateLevelSizes in a callback to
+        // getLevelOptions
+        mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
+            diffRadius: diffRadius,
+            from: nodeRoot.level > 0 ? nodeRoot.level : 1,
+            to: tree.height
+        });
+        // TODO Try to combine setTreeValues & setColorRecursive to avoid
+        //  unnecessary looping.
+        setTreeValues(tree, {
+            before: cbSetTreeValuesBefore,
+            idRoot: rootId,
+            levelIsConstant: options.levelIsConstant,
+            mapOptionsToLevel: mapOptionsToLevel,
+            mapIdToNode: mapIdToNode,
+            points: series.points,
+            series: series
+        });
+        values = mapIdToNode[''].shapeArgs = {
+            end: radians.end,
+            r: innerRadius,
+            start: radians.start,
+            val: nodeRoot.val,
+            x: positions[0],
+            y: positions[1]
+        };
+        this.setShapeArgs(nodeTop, values, mapOptionsToLevel);
+        // Set mapOptionsToLevel on series for use in drawPoints.
+        series.mapOptionsToLevel = mapOptionsToLevel;
+    },
 
-	/**
-	 * Animate the slices in. Similar to the animation of polar charts.
-	 */
-	animate: function (init) {
-		var chart = this.chart,
-			center = [
-				chart.plotWidth / 2,
-				chart.plotHeight / 2
-			],
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			attribs,
-			group = this.group;
+    /**
+     * Animate the slices in. Similar to the animation of polar charts.
+     */
+    animate: function (init) {
+        var chart = this.chart,
+            center = [
+                chart.plotWidth / 2,
+                chart.plotHeight / 2
+            ],
+            plotLeft = chart.plotLeft,
+            plotTop = chart.plotTop,
+            attribs,
+            group = this.group;
 
-		// Initialize the animation
-		if (init) {
+        // Initialize the animation
+        if (init) {
 
-			// Scale down the group and place it in the center
-			attribs = {
-				translateX: center[0] + plotLeft,
-				translateY: center[1] + plotTop,
-				scaleX: 0.001, // #1499
-				scaleY: 0.001,
-				rotation: 10,
-				opacity: 0.01
-			};
+            // Scale down the group and place it in the center
+            attribs = {
+                translateX: center[0] + plotLeft,
+                translateY: center[1] + plotTop,
+                scaleX: 0.001, // #1499
+                scaleY: 0.001,
+                rotation: 10,
+                opacity: 0.01
+            };
 
-			group.attr(attribs);
+            group.attr(attribs);
 
-		// Run the animation
-		} else {
-			attribs = {
-				translateX: plotLeft,
-				translateY: plotTop,
-				scaleX: 1,
-				scaleY: 1,
-				rotation: 0,
-				opacity: 1
-			};
-			group.animate(attribs, this.options.animation);
+        // Run the animation
+        } else {
+            attribs = {
+                translateX: plotLeft,
+                translateY: plotTop,
+                scaleX: 1,
+                scaleY: 1,
+                rotation: 0,
+                opacity: 1
+            };
+            group.animate(attribs, this.options.animation);
 
-			// Delete this function to allow it only once
-			this.animate = null;
-		}
-	}
+            // Delete this function to allow it only once
+            this.animate = null;
+        }
+    },
+    utils: {
+        calculateLevelSizes: calculateLevelSizes,
+        range: range
+    }
 };
 
 /**
  * Properties of the Sunburst series.
  */
 var sunburstPoint = {
-	draw: drawPoint,
-	shouldDraw: function shouldDraw() {
-		var point = this;
-		return !point.isNull;
-	}
+    draw: drawPoint,
+    shouldDraw: function shouldDraw() {
+        var point = this;
+        return !point.isNull;
+    }
 };
 
 /**
  * A `sunburst` series. If the [type](#series.sunburst.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
- *
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * sunburst](#plotOptions.sunburst).
  *
  * @type {Object}
  * @extends series,plotOptions.sunburst
@@ -752,7 +902,7 @@ var sunburstPoint = {
  */
 
  /**
-  * Whether to display a slice offset from the center. When a sunburst point is 
+  * Whether to display a slice offset from the center. When a sunburst point is
   * sliced, its children are also offset.
   *
   * @type {Boolean}
@@ -763,9 +913,9 @@ var sunburstPoint = {
   * @apioption series.sunburst.data.sliced
   */
 seriesType(
-	'sunburst',
-	'treemap',
-	sunburstOptions,
-	sunburstSeries,
-	sunburstPoint
+    'sunburst',
+    'treemap',
+    sunburstOptions,
+    sunburstSeries,
+    sunburstPoint
 );

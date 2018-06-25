@@ -62,4 +62,27 @@ QUnit.test('Size by threshold', function (assert) {
         'Equal difference to zThreshold gives equal bubble size'
     );
 
+    chart.series[0].update({
+        zThreshold: 0,
+        data: [
+            [0, -3, 3.8],
+            [1, 2, 3.799]
+        ]
+    });
+
+    if (Highcharts.isFirefox) {
+        assert.close(
+            chart.series[0].points[0].marker.radius,
+            Math.round(chart.series[0].maxPxSize / 2),
+            0.5,
+            'Correct size of the marker (#8092).'
+        );
+    } else {
+        assert.strictEqual(
+            chart.series[0].points[0].marker.radius,
+            Math.round(chart.series[0].maxPxSize / 2),
+            'Correct size of the marker (#8092).'
+        );
+    }
+
 });

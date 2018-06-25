@@ -1,0 +1,15 @@
+.ld-label {
+	width:200px;
+	display: inline-block;
+}
+
+.ld-row {
+}
+
+.ld-url-input {
+	width: 500px; 
+}
+
+.ld-time-input {
+	width: 40px;
+}

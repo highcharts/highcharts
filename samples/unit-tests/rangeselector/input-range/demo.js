@@ -104,7 +104,8 @@ QUnit.test('#6537 - 1M button should select range 28.02-31.03', function (assert
     assert.strictEqual(
         Highcharts.dateFormat(null, chart.xAxis[0].min),
         '2017-02-28 01:00:00',
-        'xAxis minimum correct'
+        'xAxis minimum correct (Timezone: UTC ' +
+        Math.round((new Date()).getTimezoneOffset() / -60) + ')'
     );
 });
 
@@ -173,4 +174,80 @@ QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
         true,
         'Chart has input fields'
     );
+});
+
+QUnit.test('Check input format', function (assert) {
+
+    var chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            buttons: [{
+                type: 'millisecond',
+                count: 10,
+                text: '10ms'
+            }, {
+                type: 'all',
+                text: 'All'
+            }],
+            buttonTheme: {
+                width: 50
+            },
+            inputDateFormat: '%H:%M:%S.%L',
+            inputEditDateFormat: '%H:%M:%S.%L',
+            // Custom parser to parse the %H:%M:%S.%L format
+            inputDateParser: function (value) {
+                value = value.split(/[:\.]/);
+                return Date.UTC(
+                    1970,
+                    0,
+                    1,
+                    parseInt(value[0], 10),
+                    parseInt(value[1], 10),
+                    parseInt(value[2], 10),
+                    parseInt(value[3], 10)
+                );
+            }
+        },
+        title: {
+            text: 'Milliseconds in range selector inputs'
+        },
+        xAxis: {
+            tickPixelInterval: 120
+        },
+        series: [{
+            data: [1, 4, 2, 5, 3, 6, 4, 4, 6, 6, 5, 5, 5, 6, 6, 5, 5, 4, 3, 3, 3, 4, 5, 5, 6, 6],
+            tooltip: {
+                valueDecimals: 2
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.rangeSelector.minDateBox.element.textContent,
+        '00:00:00.000',
+        'Starts at 0'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Axis is initiated'
+    );
+
+    // Activate it and set range
+    chart.rangeSelector.showInput('min');
+    chart.rangeSelector.minInput.value = '00:00:00.010';
+    chart.rangeSelector.minInput.onchange();
+
+    assert.strictEqual(
+        chart.rangeSelector.minDateBox.element.textContent,
+        '00:00:00.010',
+        'Min has changed'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        10,
+        'Axis has changed'
+    );
+
 });

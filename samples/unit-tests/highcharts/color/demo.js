@@ -1,7 +1,7 @@
 
-
-var Color = Highcharts.Color;
 QUnit.test('Color object', function (assert) {
+
+    var Color = Highcharts.Color;
 
     assert.strictEqual(
         Color('#FF0000').get(),

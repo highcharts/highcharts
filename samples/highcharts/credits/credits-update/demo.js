@@ -34,7 +34,7 @@ $('#credits-custom').click(function () {
     if (chart.credits) {
         chart.credits.update({
             text: 'MyFancyCompany',
-            href: 'http://www.example.com',
+            href: 'https://www.example.com',
             position: {
                 align: 'left',
                 x: 10
@@ -51,7 +51,7 @@ $('#credits-default').click(function () {
     if (chart.credits) {
         chart.credits.update({
             text: 'Highcharts.com',
-            href: 'http://www.highcharts.com',
+            href: 'https://www.highcharts.com',
             position: {
                 align: 'right',
                 x: -10

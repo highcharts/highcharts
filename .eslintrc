@@ -11,6 +11,7 @@ rules:
     no-console: 2
     no-debugger: 2
     no-else-return: 2
+    no-nested-ternary: 0
     no-unmodified-loop-condition: 0
     object-curly-spacing: [2, "always"]
     operator-linebreak: [2, "after"]

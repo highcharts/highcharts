@@ -90,3 +90,43 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 
     }
 );
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Combination with non-boostable series types (#7634)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+
+            boost: {
+                seriesThreshold: 1
+            },
+
+            series: [{
+                data: [1, 3, 2, 4],
+                boostThreshold: 1,
+                id: 'primary'
+            }, {
+                type: 'flags',
+                onSeries: 'primary',
+                data: [{
+                    x: 1,
+                    title: 'C',
+                    text: 'C text'
+                }]
+            }, {
+                data: [1, 2, 3, 4, 5],
+                boostThreshold: 0,
+                type: 'pie'
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[1].points.length,
+            1,
+            '1 point should be generated for flags series'
+        );
+        assert.strictEqual(
+            chart.series[2].points.length,
+            5,
+            '5 points should be generated for flags series'
+        );
+    }
+);

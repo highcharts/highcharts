@@ -18,7 +18,8 @@ QUnit.test('Zoom and pan key', function (assert) {
             },
 
             xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                reversed: true // #7857
             },
 
             series: [{
@@ -68,7 +69,7 @@ QUnit.test('Zoom and pan key', function (assert) {
     test.mouseup();
 
     assert.strictEqual(
-        chart.xAxis[0].min > firstZoom.min,
+        chart.xAxis[0].min < firstZoom.min,
         true,
         'Has panned'
     );
@@ -87,8 +88,8 @@ QUnit.test('Zoom and pan key', function (assert) {
     test.mouseup();
 
     assert.strictEqual(
-        chart.xAxis[0].min,
-        0,
+        chart.xAxis[0].max,
+        11,
         'Chart should not pan out of data bounds (#7451)'
     );
     assert.close(
@@ -98,7 +99,9 @@ QUnit.test('Zoom and pan key', function (assert) {
         'Has preserved range'
     );
 
+
 });
+
 
 
 QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {

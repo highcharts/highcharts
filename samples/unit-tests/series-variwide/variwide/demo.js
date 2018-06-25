@@ -7,7 +7,8 @@ QUnit.test('variwide', function (assert) {
         },
 
         xAxis: {
-            type: 'category'
+            type: 'category',
+            crosshair: true
         }
 
     });
@@ -50,6 +51,20 @@ QUnit.test('variwide', function (assert) {
         3,
         'removePoint'
     );
+
+    // Show crosshair
+    chart.series[0].points[1].onMouseOver();
+    assert.close(
+        chart.xAxis[0].cross.attr('stroke-width'),
+        chart.series[0].points[1].crosshairWidth,
+        1,
+        'Crosshair has the same width as category (#8083)'
+    );
+
+    // Disable crosshair
+    chart.xAxis[0].update({ crosshair: false });
+    chart.series[0].points[0].onMouseOver();
+    assert.ok(true, "No errors with disabled crosshair (#8173)");
 });
 
 QUnit.test('variwide null points', function (assert) {

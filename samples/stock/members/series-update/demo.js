@@ -1,5 +1,5 @@
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
 
     // The data point configurations are arrays on the form [x, open, high, low, close].
     // In order to make this understandable for different series types like line, column

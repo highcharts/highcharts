@@ -4,20 +4,20 @@ env:
 globals:
     $: true
     ADBE: true
+    CallAnalyzer: true
     GOOGL: true
     Highcharts: true
     hs: true                    # Highslide
     jQuery: true
-    lolexInstall: true
-    lolexUninstall: true
-    lolexRunAndUninstall: true
     moment: true                # moment.js, used in gettimezoneoffset demo
     MSFT: true
     ohlcdata: true
     QUnit: true
     temperatures: true          # pointinterval-pointstart demo
-    usdeur: true
     TestController: true
+    TestTemplate: true
+    TestUtilities: true
+    usdeur: true
 
 rules:
     consistent-return: 0

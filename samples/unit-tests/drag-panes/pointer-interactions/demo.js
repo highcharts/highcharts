@@ -14,18 +14,13 @@ QUnit.test("Drag panes on zoomable chart", function (assert) {
                     enabled: true,
                     lineWidth: 20
                 }
-            }, {
-                top: '65%',
-                height: '35%'
             }],
             series: [{
                 data: [3, 2, 1]
-            }, {
-                data: [1, 2, 3],
-                yAxis: 1
             }]
         }),
-        controller = new TestController(chart);
+        controller = new TestController(chart),
+        strartingNavYAxisLen = chart.yAxis[1].len;
 
     // Drag
     controller.mousedown(200, 190);
@@ -33,8 +28,15 @@ QUnit.test("Drag panes on zoomable chart", function (assert) {
     controller.mouseup();
 
     assert.equal(
+        chart.yAxis[1].len,
+        strartingNavYAxisLen,
+        "Don't change navigator's yAxis (#7732)"
+    );
+
+    assert.close(
         chart.xAxis[0].getExtremes().min,
         0,
+        0.5,
         "Zoom not triggered when dragging panes (#7563)"
     );
 });

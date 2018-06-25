@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/680f5d50a47e90f53d814b53f80ce1850b9060c0/samples/data/world-population-density.json', function (data) {
 
 
     // Remove Greenland from the map and the data set
@@ -15,7 +15,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-popu
         }
     }
     for (dataIndex = 0; dataIndex < data.length; dataIndex += 1) {
-        if (data[dataIndex].code === 'GL') {
+        if (data[dataIndex].name === 'Greenland') {
             break;
         }
     }
@@ -23,7 +23,6 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-popu
     greenland = Highcharts.extend(data[dataIndex], mapData[mapDataIndex]); // for use below
     data.splice(dataIndex, 1);
     mapData.splice(mapDataIndex, 1);
-
 
     // Initiate the chart
     var chart = Highcharts.mapChart('container', {
@@ -46,7 +45,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-popu
         series: [{
             data: data,
             mapData: mapData,
-            joinBy: ['iso-a2', 'code'],
+            joinBy: ['iso-a3', 'code3'],
             name: 'Population density',
             states: {
                 hover: {

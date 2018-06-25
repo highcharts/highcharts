@@ -20,50 +20,41 @@ Highcharts.chart('container', {
     }],
 
     defs: {
-        markers: {
-            marker0: {
-                render: false, // if false it does not render the element to the dom
-                id: 'custom-shape',
-                children: [{
-                    tagName: 'path',
-                    attrs: {
-                        d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
-                        // fill: 'black'
-                        // if the child does not have define fill/stroke attributes it inherits fill or stroke from the referencer element
-                    }
-                }],
-                markerWidth: 40,
-                markerHeight: 40,
-                refX: 20,
-                refY: 5
-            },
-            marker1: {
-                children: [{
-                    tagName: 'circle',
-                    attrs: {
-                        r: 9,
-                        cx: 11,
-                        cy: 11,
-                        fill: 'rgba(224, 101, 0, 0.6'
-                    }
-                }, {
-                    tagName: 'circle',
-                    attrs: {
-                        r: 10,
-                        cx: 11,
-                        cy: 11,
-                        fill: 'none',
-                        'stroke-width': 2,
-                        stroke: 'black'
-                    }
-
-                }],
-                id: 'circle',
-                markerWidth: 25,
-                markerHeight: 25,
-                refX: 10,
-                refY: 10
-            }
+        marker0: {
+            tagName: 'marker',
+            render: false, // if false it does not render the element to the dom
+            id: 'custom-shape',
+            children: [{
+                tagName: 'path',
+                d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
+            }],
+            markerWidth: 40,
+            markerHeight: 40,
+            refX: 20,
+            refY: 5
+        },
+        marker1: {
+            children: [{
+                tagName: 'circle',
+                r: 9,
+                cx: 11,
+                cy: 11,
+                fill: 'rgba(224, 101, 0, 0.6'
+            }, {
+                tagName: 'circle',
+                r: 10,
+                cx: 11,
+                cy: 11,
+                fill: 'none',
+                'stroke-width': 2,
+                stroke: 'black'
+            }],
+            tagName: 'marker',
+            id: 'circle',
+            markerWidth: 25,
+            markerHeight: 25,
+            refX: 10,
+            refY: 10
         }
     },
 

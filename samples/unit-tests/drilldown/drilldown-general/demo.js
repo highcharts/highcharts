@@ -5,7 +5,8 @@ QUnit.test('Drilldown methods', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
-            animation: false
+            animation: false,
+            width: 600
         },
         title: {
             text: 'Basic drilldown'
@@ -36,7 +37,7 @@ QUnit.test('Drilldown methods', function (assert) {
             series: [{
                 id: 'animals',
                 data: [
-                    ['Cats', 4],
+                    ['The quick brown fox jumps over the lazy dog', 4],
                     ['Dogs', 2],
                     ['Cows', 1],
                     ['Sheep', 2],
@@ -72,8 +73,12 @@ QUnit.test('Drilldown methods', function (assert) {
 
     assert.deepEqual(
         chart.xAxis[0].names,
-        ['Cats', 'Dogs', 'Cows', 'Sheep', 'Pigs'],
+        ['The quick brown fox jumps over the lazy dog', 'Dogs', 'Cows', 'Sheep', 'Pigs'],
         'First drilldown'
+    );
+    assert.ok(
+        chart.xAxis[0].ticks[0].label.element.getBBox().width < 120,
+        'Long label should be wrapped (#8234)'
     );
 
     chart.drillUp();
@@ -231,6 +236,125 @@ QUnit.test('activeDataLabelStyle', function (assert) {
         getDataLabelFill(point) === 'rgb(255, 255, 0)' || getDataLabelFill(point) === '#ffff00',
         'activeDataLabelStyle.color: "#FFFF00"'
     );
+});
+
+// Highcharts 3.0.10, Issue #2786
+// Unable to drill up to top when multiple drilldowns
+QUnit.test('Drill up exception (#2786)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+            chart: {
+                height: 300,
+                type: 'column',
+                animation: false
+            },
+            title: {
+                text: 'Drill up failed on top level'
+            },
+            xAxis: {
+                categories: true
+            },
+            drilldown: {
+                animation: false,
+                series: [{
+                    id: 'fruits',
+                    name: 'Fruits',
+                    data: [
+                        ['Apples', 4],
+                        ['Pears', 6],
+                        ['Oranges', 2],
+                        ['Grapes', 8]
+                    ]
+                }, {
+                    id: 'cars',
+                    name: 'Cars',
+                    data: [{
+                        name: 'Toyota',
+                        y: 4,
+                        drilldown: 'toyota'
+                    },
+                    ['Volkswagen', 3],
+                    ['Opel', 5]
+                    ]
+                }, {
+                    id: 'toyota',
+                    name: 'Toyota',
+                    data: [
+                        ['RAV4', 3],
+                        ['Corolla', 1],
+                        ['Carina', 4],
+                        ['Land Cruiser', 5]
+                    ]
+                }]
+            },
+            series: [{
+                name: 'Overview',
+                colorByPoint: true,
+                id: 'top',
+                data: [{
+                    name: 'Fruits',
+                    y: 10,
+                    drilldown: 'fruits'
+                }, {
+                    name: 'Cars',
+                    y: 12,
+                    drilldown: 'cars'
+                }, {
+                    name: 'Countries',
+                    y: 8
+                }]
+            }]
+        }),
+        catchedException;
+
+
+    assert.strictEqual(
+        chart.series[0].points[1].name,
+        'Cars',
+        'Second point should be `Cars`.'
+    );
+
+    chart.series[0].points[1].doDrilldown();
+
+    assert.strictEqual(
+        chart.series[0].points[0].name,
+        'Toyota',
+        'First point should be `Toyota`.'
+    );
+
+    chart.series[0].points[0].doDrilldown();
+
+    assert.strictEqual(
+        chart.series[0].points[0].name,
+        'RAV4',
+        'First point should be `RAV4`.'
+    );
+
+    chart.drillUp();
+
+    assert.strictEqual(
+        chart.series[0].points[0].name,
+        'Toyota',
+        'First point should be `Toyota`.'
+    );
+
+    try {
+        chart.drillUp();
+    } catch (exception) {
+        catchedException = exception;
+    }
+
+    assert.ok(
+        !catchedException,
+        'There should be not exception during drill up.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].name,
+        'Cars',
+        'Second point should be `Cars`.'
+    );
+
 });
 
 QUnit.test('Named categories (#6704)', function (assert) {

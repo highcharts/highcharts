@@ -519,7 +519,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
  * equally distributed, because they may not have the same tick interval as the
  * inner axes.
  */
-QUnit.skip('Horizontal axis ticks equally distributed', function (assert) {
+QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
     var chart,
         axes,
         i,
@@ -768,7 +768,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
  *                        |   4   |
  *                        |_______|
  */
-QUnit.skip('Vertical axis tick labels centered', function (assert) {
+QUnit.test('Vertical axis tick labels centered', function (assert) {
     var chart,
         axes,
         xError = 1.1,
@@ -947,15 +947,7 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
  * Leftmost tick label appears even if its start is less than axis.min.
  */
 QUnit.test('Leftmost ticklabel appears', function (assert) {
-    var axis,
-        error = 0.01,
-        tickPositions,
-        firstTick,
-        tickLabelBox,
-        tickLabelCenter,
-        axisBox,
-        axisCenter,
-        chart = Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
             xAxis: [{
                 grid: true,
                 type: 'datetime',
@@ -985,15 +977,13 @@ QUnit.test('Leftmost ticklabel appears', function (assert) {
             series: [{
                 data: [[Date.UTC(2016, 10, 27), 1]]
             }]
-        });
-
-    axis = chart.xAxis[1];
-    tickPositions = axis.tickPositions;
-    firstTick = axis.ticks[tickPositions[0]];
-
-    axisBox = axis.axisGroup.getBBox();
-    axisCenter = axisBox.x + (axisBox.width / 2);
-
+        }),
+        axis = chart.xAxis[1],
+        tickPositions = axis.tickPositions,
+        firstTick = axis.ticks[tickPositions[0]],
+        axisBox = axis.axisGroup.getBBox(),
+        axisCenter = axisBox.x + (axisBox.width / 2),
+        tickLabel = firstTick.label.element;
 
     // In a linked axis, a tick which normally would have been added even
     // though its pos is lower than axis.min, is trimmed.
@@ -1002,18 +992,48 @@ QUnit.test('Leftmost ticklabel appears', function (assert) {
         'First tick exists'
     );
 
-    tickLabelBox = firstTick.label.element.getBBox();
-    tickLabelCenter = tickLabelBox.x + (tickLabelBox.width / 2);
-
     assert.equal(
         firstTick.pos,
         axis.min,
         'First tick gets pos from axis.min'
     );
+
     assert.close(
-        tickLabelCenter,
+        +tickLabel.getAttribute('x'),
         axisCenter,
-        error,
+        1,
         'First tick label is centered in its grid'
+    );
+    assert.strictEqual(
+        tickLabel.getAttribute('text-anchor'),
+        'middle',
+        'First tick label has text-anchor equal "middle".'
+    );
+});
+
+QUnit.test('Reversed axis', function (assert) {
+    var chart = Highcharts.chart('container', {
+            xAxis: {
+                reversed: true,
+                grid: true
+            },
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+                type: 'column'
+            }]
+        }),
+        axis = chart.xAxis[0],
+        ticks = axis.ticks,
+        tickLabel = ticks[10].label,
+        rightBorder = ticks[10].mark.element.getBBox(),
+        leftBorder = ticks[11].mark.element.getBBox(),
+        center = leftBorder.x + ((rightBorder.x - leftBorder.x) / 2);
+
+    // TODO: extend test to check all tick labels
+    // #6754
+    assert.strictEqual(
+        +tickLabel.element.getAttribute('x'),
+        center,
+        'Last tick label is centered in its grid'
     );
 });

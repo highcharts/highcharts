@@ -26,7 +26,12 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         },
         tooltip: {
             split: false
-        }
+        },
+        yAxis: [{
+            title: {
+                text: 'Custom title'
+            }
+        }]
     });
 
     chart = $('#container').highcharts('StockChart', {
@@ -46,6 +51,12 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         chart.tooltip.split,
         false,
         'The instanciated tooltip should not be split (#7307)'
+    );
+
+    assert.strictEqual(
+        chart.yAxis[0].options.title.text,
+        'Custom title',
+        'Axis option set as array should apply to corresponding index (#7690)'
     );
 
     chart = $('#container').highcharts('StockChart', {
@@ -74,4 +85,5 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     delete Highcharts.defaultOptions.navigator.enabled;
     delete Highcharts.defaultOptions.rangeSelector.enabled;
     delete Highcharts.defaultOptions.tooltip.split;
+    delete Highcharts.defaultOptions.yAxis;
 });

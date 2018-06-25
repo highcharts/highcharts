@@ -1,5 +1,5 @@
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
 
     Highcharts.stockChart('container', {
 
@@ -35,13 +35,11 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.
         }, {
             type: 'cci',
             linkedTo: 'aapl',
-            name: 'CCI (14)',
             yAxis: 1
         }, {
             type: 'cci',
             linkedTo: 'aapl',
             yAxis: 1,
-            name: 'CCI (50)',
             params: {
                 period: 50
             }

@@ -207,3 +207,28 @@ QUnit.test(
 
     }
 );
+
+QUnit.test(
+    'tickPixelInterval option',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                height: 300
+            },
+            subtitle: {
+                text: 'test'
+            },
+            yAxis: {
+                tickPixelInterval: 1
+            },
+            series: [{
+                data: [6, -8.4, 6.5, 4]
+            }]
+        });
+
+        assert.ok(
+            chart.yAxis[0].tickPositions.indexOf(0) !== -1,
+            '0-tick on yAxis exists (#8129)'
+        );
+    }
+);

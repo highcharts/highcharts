@@ -1888,7 +1888,10 @@ Highcharts.chart('container', {
         type: 'area',
         zoomType: 'x',
         panning: true,
-        panKey: 'shift'
+        panKey: 'shift',
+        scrollablePlotArea: {
+            minWidth: 600
+        }
     },
 
     title: {

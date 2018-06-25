@@ -1,0 +1,401 @@
+@import 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css';
+
+#main-content {
+    background: #fff;
+    color: #4e4f4d;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 9pt;
+    margin: 0px;
+}
+
+#demo * {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+#demo *:before,
+#demo *:after {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+#demo #highcharts-save {
+    margin-right: 7px;
+}
+
+#demo #indicators-container ul {
+    display: none;
+    padding: 3px;
+    width: 130px;
+    background-color: #ffffff;
+}
+
+#demo #analyze-container ul {
+    display: none;
+    padding: 3px;
+    width: 62px;
+    background-color: #ffffff;
+}
+
+#demo #analyze-dropdown {
+    width: auto;
+    height: 21px;
+    margin-bottom: 0px;
+}
+
+#demo #indicators-container li,
+#demo #analyze-container li {
+    list-style: none;
+}
+
+#demo #indicators-container a {
+    display: block;
+    text-decoration: none;
+}
+
+#demo #analyze-container a {
+    display: block;
+    text-decoration: none;
+    line-height: 18px;
+}
+
+#demo #indicators-container span {
+    display: inline-block;
+    width: 110px;
+}
+
+#demo #indicators-dropdown {
+    width: auto;
+    height: 21px;
+    margin-bottom: 0px;
+}
+
+#demo .menu-btn {
+    color: #000;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #cccccc;
+    padding: 4px 10px;
+    margin-right: 0px;
+    margin-left: 0px;
+    font-weight: normal;
+    text-transform: none;
+    line-height: 12px;
+}
+
+#demo .menu-btn:hover {
+    background-color: #99bbdd;
+    border-color: #6688aa;
+}
+
+#demo .right {
+    float: right;
+    margin-right: 10px;
+}
+
+#demo .select {
+    width: 99px;
+    overflow: hidden;
+}
+
+#demo .select label {}
+
+#demo .select-dropdown::after {
+    content: '▽';
+    margin: 0 0 0 10px;
+    -moz-transition: 0.5s all;
+    -webkit-transition: 0.5s all;
+}
+
+#demo .select-dropdown.dropdown-active::after {
+    -moz-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    text-shadow: 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+#demo #menu-nav {
+    position: absolute;
+    z-index: 50;
+    width: 500px;
+    left: 25px;
+    top: 10px;
+}
+
+#demo #menu-nav label {
+    float: left;
+    line-height: 2em;
+}
+
+#demo #menu-nav div {
+    float: left;
+    margin-left: 12px;
+}
+
+#demo input.menu-btn {
+    border-right: 0px;
+    padding: 4px 1px;
+}
+
+#demo input.menu-btn:hover {
+    color: #000;
+}
+
+/* ==== BUTTONS ==== */
+
+#demo #menu-side {
+    left: 10px;
+    position: absolute;
+    top: 50px;
+    z-index: 100;
+}
+#demo button,
+#demo #submenu li {
+    border: 1px solid transparent;
+    border-radius: 2px;
+    background: transparent;
+    clear: both;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 10px;
+    height: 30px;
+    width: 30px;
+    padding: 0px;
+    outline: none;
+    background-repeat: no-repeat;
+}
+
+
+#demo button:hover,
+#demo #submenu li:hover {
+    background-color: #efefef;
+}
+
+#demo button.active,
+#demo #submenu li.active {
+    border-color: #29ABE2;
+    background-color: #efefef;
+}
+
+#demo button#annotation-selection {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/a87964d6a57f5/samples/graphics/cursor.svg);
+}
+
+#demo button#annotation-line {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/line.svg);
+}
+
+#demo button#annotation-rect {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/rect.svg);
+}
+
+#demo button#annotation-circle {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/circle.svg);
+}
+
+#demo button#annotation-arrow {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/arrow.svg);
+}
+
+#demo button#annotation-tunnel {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/tunnel.svg);
+}
+
+#demo button#annotation-text {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/text.svg);
+}
+
+#demo button#annotation-fibonacci {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/fibonacci.svg);
+}
+
+#demo button#annotation-flag {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag.svg);
+}
+
+#demo button#annotation-feature {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/feature.svg);
+}
+
+#demo #highcharts-manage-chart {
+    float: right;
+    position: absolute;
+    right: 10px;
+    top: 9px;
+    z-index: 100;
+}
+
+#demo #highcharts-manage-chart button {
+    shape-rendering: optimizeSpeed;
+    clear: none;
+    float: left;
+    height: 23px;
+    width: 23px;
+}
+
+#demo #highcharts-save {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/save.svg);
+}
+
+#demo #highcharts-reset {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/reset.svg);
+}
+
+#demo .button-group {
+    position: relative;
+}
+
+#demo .dropdown-menu,
+#demo #indicators-container ul.dropdown-menu,
+#demo #analyze-container ul.dropdown-menu {
+    border: 1px solid #cccccc;
+    margin-top: -1px;
+    padding: 10px;
+}
+
+#demo .dropdown-menu a,
+#demo #indicators-container ul.dropdown-menu a,
+#demo #analyze-container ul.dropdown-menu a {
+    color: #707070;
+    outline: none;
+    padding: 2px 0;
+}
+
+#demo .dropdown-menu a,
+#demo #indicators-container ul.dropdown-menu a:hover,
+#demo #analyze-container ul.dropdown-menu a:hover {
+    color: #333333;
+}
+
+#demo #annotation-text-form, #demo #annotation-flag-form {
+    color: #707070;
+    display: none;
+    background-color:#fff;
+    position: absolute;
+    width: 240px;
+    z-index: 1000;
+    padding:10px;
+    box-shadow: 2px 3px 20px #888888;
+}
+
+
+#demo #annotation-text-form fieldset, #demo #annotation-flag-form fieldset {
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px;
+    margin: 0 0 10px 0;
+    padding: 10px;
+}
+#demo form input[type="text"] {
+    width: 100%;
+}
+#demo form .buttonrow {
+    text-align: right;
+    direction: rtl;
+}
+
+#demo legend {
+    margin: 0;
+    font-size: inherit;
+    border-bottom: none;
+}
+#demo label {
+    font-weight: inherit;
+}
+
+#demo .ui-dialog div.ui-dialog-titlebar.ui-widget-header {
+    background: none;
+    border: none;
+}
+
+#demo .ui-dialog div.ui-dialog-titlebar .ui-dialog-titlebar-close {
+    background-color: transparent;
+    border: none;
+}
+
+#demo .ui-widget-overlay.ui-front {
+    z-index: 0!important;
+}
+
+#demo {
+    position: relative;
+}
+
+#demo #menu-side div {
+    float: left;
+}
+
+#demo #submenu {
+    display: none;
+    width: 158px;
+    pointer-events: none;
+    position: absolute;
+    z-index: 9999;
+    margin-top: -186px;
+    margin-left: -5px;
+}
+
+#demo .left {
+    width: 42px;
+}
+
+#demo .main {
+    width: 42px;
+    padding: 10px;
+    border-left: 1px solid #cccccc;
+    border-top: 1px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
+    height: 23px;
+}
+
+#demo .inner {
+    background: #fff;
+    width: 32px;
+    padding: 0px 10px;
+    border-top: 1px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
+    border-right: 1px solid #cccccc;
+    pointer-events: auto;
+}
+
+#demo .empty {
+    border-right: 1px solid #cccccc;
+    height: 138px;
+    width: 41px;
+}
+
+#demo #submenu ul {
+    margin: 10px 0;
+    padding: 0;
+}
+
+#demo #submenu li {
+    margin-bottom: 11px;
+}
+
+#demo #submenu li:last-child {
+    margin-bottom: 0px;
+}
+
+#demo #submenu li#flag-flag {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag-flag.svg);
+}
+
+#demo #submenu li#flag-circlepin {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag-circlepin.svg);
+}
+
+#demo #submenu li#flag-squarepin {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag-squarepin.svg);
+}
+
+#demo #submenu li#flag-diamondpin {
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/v6.1.0/samples/graphics/flag-diamondpin.svg);
+}
+
+#demo #container-inner .crosshair-on-point .highcharts-tracker path:hover,
+#demo #container-inner .crosshair-on-chart .highcharts-plot-background:hover,
+#demo #container-inner .crosshair-on-annotation .highcharts-annotation:hover,
+#demo #container-inner .crosshair-on-annotation .highcharts-flags-series:hover {
+    cursor: crosshair;
+}

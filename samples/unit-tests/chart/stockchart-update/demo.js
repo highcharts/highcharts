@@ -1,4 +1,3 @@
-/* eslint func-style:0 */
 
 (function () {
 
@@ -173,4 +172,5 @@
         );
 
     });
+
 }());

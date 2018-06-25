@@ -120,42 +120,42 @@ const browserStackBrowsers = {
     'Mac.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '61.0',
+        browser_version: '66.0',
         os: 'OS X',
-        os_version: 'Sierra'
+        os_version: 'High Sierra'
     },
     'Mac.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '56.0',
+        browser_version: '59.0',
         os: 'OS X',
-        os_version: 'Sierra'
+        os_version: 'High Sierra'
     },
     'Mac.Safari': {
         base: 'BrowserStack',
         browser: 'safari',
-        browser_version: '10.1',
+        browser_version: '11.0',
         os: 'OS X',
-        os_version: 'Sierra'
+        os_version: 'High Sierra'
     },
     'Win.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '61.0',
+        browser_version: '66.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: '15.0',
+        browser_version: '16.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '56.0',
+        browser_version: '59.0',
         os: 'Windows',
         os_version: '10'
     },
@@ -196,7 +196,7 @@ module.exports = function (config) {
         frameworks: ['qunit'],
         files: files.concat([
             {
-                pattern: 'utils/samples/*.png', // testimage.png
+                pattern: 'test/*.png', // testimage.png
                 watched: false,
                 included: false,
                 served: true
@@ -207,9 +207,21 @@ module.exports = function (config) {
                 included: false,
                 served: true
             },
+            // Test templates
+            'test/test-template.js',
+            {
+                pattern: 'test/templates/**/*.js',
+                type: 'js',
+                watched: false,
+                included: true,
+                served: true,
+                nocache: false
+            },
 
             // Set up
-            'utils/samples/test-controller.js',
+            'test/call-analyzer.js',
+            'test/test-controller.js',
+            'test/test-utilities.js',
             'test/karma-setup.js'
         ], tests),
 
@@ -276,6 +288,27 @@ module.exports = function (config) {
             require('./karma-imagecapture-reporter.js')
         ],
 
+        formatError: function (s) {
+            let ret = s.replace(
+                /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
+                function (a, b, c) {
+                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan + '\n' +
+                    '\t' + a.replace(/^@/, '@ ') + '\n<<<splitter>>>';
+                }
+            );
+
+            ret = s.replace(
+                /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/,
+                function (a, b, c) {
+                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan;
+                }
+            );
+
+            // Skip the call stack, it's internal QUnit stuff
+            ret = ret.split('<<<splitter>>>')[0];
+
+            return ret;
+        },
 
         preprocessors: {
             '**/unit-tests/*/*/demo.js': ['generic'],

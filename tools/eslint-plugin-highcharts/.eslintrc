@@ -1,0 +1,11 @@
+{
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "rules": {
+        "func-style": 0,
+        "quotes": 0,
+        "max-len": "error"
+    }
+}

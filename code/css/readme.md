@@ -1,1 +1,0 @@
-This directory contains generated source code

@@ -23,12 +23,12 @@ import H from '../parts/Globals.js';
  * @return {Array}   Path array
  */
 H.SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
-	return [
-		'M', x, y + h / 2,
-		'L', x + w, y,
-		'L', x, y + h / 2,
-		'L', x + w, y + h
-	];
+    return [
+        'M', x, y + h / 2,
+        'L', x + w, y,
+        'L', x, y + h / 2,
+        'L', x + w, y + h
+    ];
 };
 
 /**
@@ -45,7 +45,7 @@ H.SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
  * @return {Array}   Path array
  */
 H.SVGRenderer.prototype.symbols['arrow-half'] = function (x, y, w, h) {
-	return H.SVGRenderer.prototype.symbols.arrow(x, y, w / 2, h);
+    return H.SVGRenderer.prototype.symbols.arrow(x, y, w / 2, h);
 };
 
 /**
@@ -62,12 +62,12 @@ H.SVGRenderer.prototype.symbols['arrow-half'] = function (x, y, w, h) {
  * @return {Array}   Path array
  */
 H.SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
-	return [
-		'M', x + w, y,
-		'L', x, y + h / 2,
-		'L', x + w, y + h,
-		'Z'
-	];
+    return [
+        'M', x + w, y,
+        'L', x, y + h / 2,
+        'L', x + w, y + h,
+        'Z'
+    ];
 };
 
 /**
@@ -79,7 +79,7 @@ H.SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
  * @return {Array}   Path array
  */
 H.SVGRenderer.prototype.symbols['arrow-filled'] =
-		H.SVGRenderer.prototype.symbols['triangle-left'];
+        H.SVGRenderer.prototype.symbols['triangle-left'];
 
 /**
  * Creates a half-width, left-oriented triangle.
@@ -95,7 +95,7 @@ H.SVGRenderer.prototype.symbols['arrow-filled'] =
  * @return {Array}   Path array
  */
 H.SVGRenderer.prototype.symbols['triangle-left-half'] = function (x, y, w, h) {
-	return H.SVGRenderer.prototype.symbols['triangle-left'](x, y, w / 2, h);
+    return H.SVGRenderer.prototype.symbols['triangle-left'](x, y, w / 2, h);
 };
 
 /**
@@ -107,4 +107,4 @@ H.SVGRenderer.prototype.symbols['triangle-left-half'] = function (x, y, w, h) {
  * @return {Array}   Path array
  */
 H.SVGRenderer.prototype.symbols['arrow-filled-half'] =
-		H.SVGRenderer.prototype.symbols['triangle-left-half'];
+        H.SVGRenderer.prototype.symbols['triangle-left-half'];

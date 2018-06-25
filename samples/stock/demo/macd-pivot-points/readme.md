@@ -1,0 +1,4 @@
+# MACD pivot points
+[MACD indicator](https://api.highcharts.com/highstock/plotOptions.macd) stands for moving average convergence/divergence chart; it is used to visualize the momentum and trend, since the MACD charts is a combination of a histogram and a line chat.
+#### Tip
+You can use the [pivot point indicators](https://api.highcharts.com/highstock/plotOptions.pivotpoints) on top of the [OHCL chart](https://api.highcharts.com/highstock/plotOptions.ohlc), by setting the pivot points chart property [linkedTo](https://api.highcharts.com/highstock/plotOptions.pivotpoints.linkedTo) to the id of the OHCL chart.

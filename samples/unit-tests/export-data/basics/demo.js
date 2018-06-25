@@ -9,14 +9,14 @@ QUnit.test("Categorized", function (assert) {
         },
 
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            data: [29.9, 0, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
 
     });
 
     var csv = '"Category","Series 1"\n' +
         '"Jan",29.9\n' +
-        '"Feb",71.5\n' +
+        '"Feb",0\n' +
         '"Mar",106.4\n' +
         '"Apr",129.2\n' +
         '"May",144\n' +
@@ -509,7 +509,7 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
             // accessibility module added.
             .replace(/<table[^>]+>/g, '<table>')
             .replace('<caption>Chart title</caption>', ''),
-        '<table><caption class="highcharts-table-caption">Chart title</caption><thead><tr><th scope="col" class="text">Category</th><th scope="col" class="text">Drop 2</th><th scope="col" class="text">Full</th></tr></thead><tbody><tr><th scope="row" class="empty"></th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">1</th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">2</th>' +
+        '<table><caption class="highcharts-table-caption">Chart title</caption><thead><tr><th scope="col" class="text">Category</th><th scope="col" class="text">Drop 2</th><th scope="col" class="text">Full</th></tr></thead><tbody><tr><th scope="row" class="number">0</th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">1</th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">2</th>' +
         '<td class="empty"></td><td class="number">2</td></tr><tr><th scope="row" class="number">3</th><td class="number">3</td><td class="number">3</td></tr><tr><th scope="row" class="number">4</th><td class="number">4</td><td class="number">4</td></tr></tbody></table>',
         'Empty data in table'
     );
@@ -686,4 +686,63 @@ QUnit.test('Item delimiter and decimal point', function (assert) {
         'Explicit decimalPoint and itemDelimiter without useLocalDecimalPoint'
     );
 
+});
+
+QUnit.test('Zoomed chart', function (assert) {
+    var numberOfPoints = 400,
+        data = [],
+        i = 0;
+
+    for (; i < numberOfPoints; i++) {
+        data.push(i);
+    }
+
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            min: 50,
+            max: 70
+        },
+        series: [{
+            data: data,
+            marker: {
+                enabled: false
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.getDataRows().length,
+        401,
+        'All data points should be exported (#7913)'
+    );
+});
+
+QUnit.test('Boosted chart', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        plotOptions: {
+            series: {
+                pointStart: 0,
+                pointInterval: 10
+            }
+        },
+
+        series: [{
+            data: [1, 2, 3, 4],
+            boostThreshold: 1
+        }]
+
+    });
+
+    assert.deepEqual(
+        chart.getDataRows(),
+        [
+            ["Category", "Series 1"],
+            [0, 1],
+            [10, 2],
+            [20, 3],
+            [30, 4]
+        ],
+        'Boosted chart'
+    );
 });

@@ -11,9 +11,9 @@ import '../parts/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var each = H.each,
-	correctFloat = H.correctFloat,
-	seriesType = H.seriesType,
-	merge = H.merge;
+    correctFloat = H.correctFloat,
+    seriesType = H.seriesType,
+    merge = H.merge;
 
 
 /**
@@ -24,10 +24,10 @@ var each = H.each,
  */
 
 /**
- * A pareto diagram is a type of chart that contains both bars and a line graph, 
- * where individual values are represented in descending order by bars, 
+ * A pareto diagram is a type of chart that contains both bars and a line graph,
+ * where individual values are represented in descending order by bars,
  * and the cumulative total is represented by the line.
- * 
+ *
  * @extends {plotOptions.line}
  * @product highcharts
  * @sample {highcharts} highcharts/demo/pareto/
@@ -35,74 +35,75 @@ var each = H.each,
  * @since 6.0.0
  * @excluding allAreas,boostThreshold,borderColor,borderRadius,
  *         borderWidth,crisp,colorAxis,depth,data,edgeColor,edgeWidth,
- *         findNearestPointBy,gapSize,gapUnit,grouping,groupPadding,groupZPadding,maxPointWidth,
- *         keys,negativeColor,pointInterval,pointIntervalUnit,pointPadding,
- *         pointPlacement,pointRange,pointStart,pointWidth,shadow,step,softThreshold,
+ *         findNearestPointBy,gapSize,gapUnit,grouping,groupPadding,
+ *         groupZPadding,maxPointWidth,keys,negativeColor,pointInterval,
+ *         pointIntervalUnit,pointPadding,pointPlacement,pointRange,pointStart,
+ *         pointWidth,shadow,step,softThreshold,
  *         stacking,threshold,zoneAxis,zones
  * @optionparent plotOptions.pareto
  */
 
 seriesType('pareto', 'line', {
-	/**
-	 * Higher zIndex than column series to draw line above shapes.
-	 */
-	zIndex: 3
+    /**
+     * Higher zIndex than column series to draw line above shapes.
+     */
+    zIndex: 3
 }, merge(derivedSeriesMixin, {
-	/**
-	 * calculate sum and return percent points
-	 * 
-	 * @param  {Object} series
-	 * @return {Array} Returns array of points [x,y]
-	 */
-	setDerivedData: function () {
-		if (this.baseSeries.yData.length > 1) {
-			var xValues = this.baseSeries.xData, 
-				yValues = this.baseSeries.yData,
-				sum = this.sumPointsPercents(yValues, xValues, null, true);
+    /**
+     * calculate sum and return percent points
+     *
+     * @param  {Object} series
+     * @return {Array} Returns array of points [x,y]
+     */
+    setDerivedData: function () {
+        if (this.baseSeries.yData.length > 1) {
+            var xValues = this.baseSeries.xData,
+                yValues = this.baseSeries.yData,
+                sum = this.sumPointsPercents(yValues, xValues, null, true);
 
-			this.setData(this.sumPointsPercents(yValues, xValues, sum, false), false);
-		}
-	},
-	/**
-	 * calculate y sum and each percent point
-	 *
-	 * @param  {Array} yValues y values
-	 * @param  {Array} xValues x values
-	 * @param  {Number} sum of all y values 
-	 * @param  {Boolean} isSum declares if calculate sum of all points
-	 * @return {Array} Returns sum of points or array of points [x,y]
-	 */
-	sumPointsPercents: function (yValues, xValues, sum, isSum) {
-		var sumY = 0,
-			sumPercent = 0,
-			percentPoints = [],
-			percentPoint;
+            this.setData(
+                this.sumPointsPercents(yValues, xValues, sum, false),
+                false
+            );
+        }
+    },
+    /**
+     * calculate y sum and each percent point
+     *
+     * @param  {Array} yValues y values
+     * @param  {Array} xValues x values
+     * @param  {Number} sum of all y values
+     * @param  {Boolean} isSum declares if calculate sum of all points
+     * @return {Array} Returns sum of points or array of points [x,y]
+     */
+    sumPointsPercents: function (yValues, xValues, sum, isSum) {
+        var sumY = 0,
+            sumPercent = 0,
+            percentPoints = [],
+            percentPoint;
 
-		each(yValues, function (point, i) {
-			if (point !== null) {
-				if (isSum) {
-					sumY += point;
-				} else {
-					percentPoint = (point / sum) * 100;
-					percentPoints.push([xValues[i], correctFloat(sumPercent + percentPoint)]);
-					sumPercent += percentPoint;
-				}
-			}
-		});
+        each(yValues, function (point, i) {
+            if (point !== null) {
+                if (isSum) {
+                    sumY += point;
+                } else {
+                    percentPoint = (point / sum) * 100;
+                    percentPoints.push(
+                        [xValues[i], correctFloat(sumPercent + percentPoint)]
+                    );
+                    sumPercent += percentPoint;
+                }
+            }
+        });
 
-		return isSum ? sumY : percentPoints;
-	}
+        return isSum ? sumY : percentPoints;
+    }
 }));
 
 /**
  * A `pareto` series. If the [type](#series.pareto.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to [plotOptions.
- * pareto](#plotOptions.pareto).
- * 
+ *
  * @type {Object}
  * @since 6.0.0
  * @extends series,plotOptions.pareto
@@ -123,7 +124,7 @@ seriesType('pareto', 'line', {
 /**
  * An array of data points for the series. For the `pareto` series type,
  * points are calculated dynamically.
- * 
+ *
  * @type {Array<Object|Array>}
  * @since 6.0.0
  * @extends series.column.data

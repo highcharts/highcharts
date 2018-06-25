@@ -1,24 +1,23 @@
 
 
 QUnit.test('Marker size and position', function (assert) {
-    var stateMarkerGraphicBBox,
-        series = Highcharts.chart('container', {
-            chart: {
-                animation: false
-            },
-            series: [{
-                data: [1, 2, 3],
+    var series = Highcharts.chart('container', {
+        chart: {
+            animation: false
+        },
+        series: [{
+            data: [1, 2, 3],
+            animation: false,
+            marker: {
                 animation: false,
-                marker: {
-                    animation: false,
-                    states: {
-                        hover: {
-                            animation: false
-                        }
+                states: {
+                    hover: {
+                        animation: false
                     }
                 }
-            }]
-        }).series[0];
+            }
+        }]
+    }).series[0];
 
     // Default size
     assert.strictEqual(
@@ -87,17 +86,16 @@ QUnit.test('Marker size and position', function (assert) {
     });
 
     series.points[1].setState('hover');
-    stateMarkerGraphicBBox = series.stateMarkerGraphic.getBBox(true);
 
     assert.strictEqual(
         Math.floor(series.points[1].plotX),
-        stateMarkerGraphicBBox.x,
+        series.stateMarkerGraphic.attr('x'),
         'Correct image x-position (#7273)'
     );
 
     assert.strictEqual(
-        series.points[1].plotY,
-        stateMarkerGraphicBBox.y,
+        Math.floor(series.points[1].plotY),
+        Math.floor(series.stateMarkerGraphic.attr('y')),
         'Correct image y-position (#7273)'
     );
 
