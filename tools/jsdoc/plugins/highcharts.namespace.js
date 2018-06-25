@@ -42,27 +42,43 @@ let allDocletPropertyNames = [],
  * 
  * */
 
+/**
+ * Returns true, if the doclet is part of the Highcharts options.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet to analyze.
+ * @returns {boolean}
+ * True, if the doclet is from a Highcharts option.
+ */
 function isApiOption (doclet) {
 
-    let comment = doclet.comment,
-        name = getName(doclet),
+    let name = getName(doclet),
+        comment = (doclet.comment || ''),
         isApiOption = (
+            doclet.augments ||
+            comment.indexOf('](') >= 0 || // markdown link
             comment.indexOf('@default') >= 0 ||
             comment.indexOf('@product') >= 0 ||
             comment.indexOf('@apioption') >= 0 ||
-            comment.indexOf('@optionparent') >= 0
+            comment.indexOf('@optionparent') >= 0 ||
+            comment.indexOf('@ignore-option') >= 0
         );
 
     if (isApiOption) {
         apiOptionMembers.push(name);
         return true;
     } else {
-        return (apiOptionMembers.some(
-            member => name.indexOf(member) === 0
-        ));
+        // looking for a parent option
+        return (apiOptionMembers.some(member => name.indexOf(member) === 0));
     }
 }
 
+/**
+ * Returns true, if the doclet is an instance member.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet to analyze.
+ * @returns {boolean}
+ * True, if the doclet is an instance member.
+ */
 function isInstance (doclet) {
 
     if (doclet.scope === 'inner' ||
@@ -71,11 +87,18 @@ function isInstance (doclet) {
         return true;
     }
 
-    let name = getName(doclet);
+    let name = doclet.longname;
 
     return (name.lastIndexOf('#') > name.lastIndexOf('.'));
 }
 
+/**
+ * Returns true, if the doclet is part of a private member tree.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet to analyze.
+ * @returns {boolean}
+ * True, if the doclet is a part of a private member tree.
+ */
 function isPrivate (doclet) {
 
     let name = getName(doclet),
@@ -89,23 +112,36 @@ function isPrivate (doclet) {
         privateMembers.push(name);
         return true;
     } else {
-        return (privateMembers.some(member => {
-            return name.indexOf(member) === 0;
-        }));
+        // looking for a parent member that is private
+        return (privateMembers.some(member => (name.indexOf(member) === 0)));
     }
 }
 
+/**
+ * Returns true, if the doclet is a static member.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet to analyze.
+ * @returns {boolean}
+ * True, if the doclet is a static member.
+ */
 function isStatic (doclet) {
 
     if (doclet.scope === 'static') {
         return true;
     }
 
-    let name = getName(doclet);
+    let name = doclet.longname;
 
     return (name.lastIndexOf('.') > name.lastIndexOf('#'));
 }
 
+/**
+ * Returns true, if the doclet in undocumented.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet to analyze.
+ * @returns {boolean}
+ * True, if the doclet is undocumented.
+ */
 function isUndocumented (doclet) {
 
     return (doclet.undocumented || !getDescription(doclet));
@@ -117,6 +153,13 @@ function isUndocumented (doclet) {
  *
  * */
 
+/**
+ * Removes unnecessary name fragments
+ * @param {string} name
+ * Name to filter.
+ * @returns {string}
+ * Filtered name.
+ */
 function getClearName (name) {
 
     if (!name) {
@@ -130,29 +173,34 @@ function getClearName (name) {
     }
 }
 
+/**
+ * Returns the description of the doclet.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ * @returns {string}
+ * Description of the doclet.
+ */
 function getDescription (doclet) {
 
     if (doclet.highchartsDescription) {
         return doclet.highchartsDescription;
     }
 
-    let description = (doclet.description || '');
+    let description = (doclet.description || doclet.comment || '');
 
     if (description.indexOf('(c)') >= 0) {
+        // found only a file header with the copyright line
         return '';
     }
 
     try {
 
-        if (!description) {
-            let comment = (doclet.comment || ''),
-                tagPosition = comment.indexOf('@');
+        let tagPosition = description.indexOf(' @');
 
-            if (tagPosition >= 0) {
-                description = comment
-                    .substr(0, tagPosition)
-                    .replace(/\/\*\*| \* | *\//gm, '');
-            }
+        if (tagPosition >= 0) {
+            description = description
+                .substr(0, tagPosition)
+                .replace(/\/\*\*|\s\*\s|\s*\//gm, '');
         }
 
         description = description.replace(/\s+/gm, ' ');
@@ -165,11 +213,25 @@ function getDescription (doclet) {
     }
 }
 
+/**
+ * Returns the kind of the doclet.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ * @returns {string}
+ * Kind of the doclet.
+ */
 function getKind (doclet) {
 
     return (doclet.kind || 'member');
 }
 
+/**
+ * Returns a light doclet object of the doclet.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ * @returns {NodeDoclet}
+ * Doclet information of the source.
+ */
 function getLightDoclet (doclet) {
 
     let lightDoclet = {
@@ -194,13 +256,25 @@ function getLightDoclet (doclet) {
         lightDoclet.isPrivate = true;
     }
 
-    if (isStatic(doclet)) {
-        lightDoclet.isStatic = true;
+    switch (lightDoclet.kind) {
+        case 'function':
+        case 'member':
+            if (isStatic(doclet)) {
+                lightDoclet.isStatic = true;
+            }
+            break;
     }
 
     return lightDoclet;
 }
 
+/**
+ * Returns a ligh meta object of the doclet.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ * @returns {NodeMeta}
+ * Meta information of the source.
+ */
 function getLightMeta (doclet) {
 
     let meta = (doclet.meta || {}),
@@ -214,6 +288,13 @@ function getLightMeta (doclet) {
     };
 }
 
+/**
+ * Returns the full name of the doclet.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ * @returns {string}
+ * Full name.
+ */
 function getName (doclet) {
 
     if (doclet.highchartsName) {
@@ -222,8 +303,14 @@ function getName (doclet) {
 
     let name = getClearName(doclet.longname),
         scope = doclet.scope;
-        
+
     try {
+
+        if (doclet.augments &&
+            doclet.augments.length > 0
+        ) {
+            name = (doclet.augments[0] + '.' + doclet.name);
+        }
 
         if (name.indexOf('H.') === 0) {
             name = name.substr(2);
@@ -231,9 +318,7 @@ function getName (doclet) {
             name = 'Highcharts';
         }
 
-        if (scope !== 'global' &&
-            name.indexOf('Highcharts.') !== 0
-        ) {
+        if (name.indexOf('Highcharts') !== 0) {
             
             let memberOf = getClearName(doclet.memberOf);
 
@@ -253,27 +338,13 @@ function getName (doclet) {
     }
 }
 
-function getNodeFor (doclet) {
-
-    let node = namespace,
-        parts = getName(doclet).replace('#', '.').split('.');
-
-    parts.forEach(part => {
-
-        if (typeof node.children === 'undefined') {
-            node.children = {};
-        }
-
-        if (typeof node.children[part] === 'undefined') {
-            node.children[part] = {};
-        }
-
-        node = node.children[part];
-    });
-
-    return node;
-}
-
+/**
+ * Returns a name-based dictionary with parameter description and types.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ * @returns {object}
+ * Parameter dictionary.
+ */
 function getParameters (doclet) {
 
     if (!doclet.params) {
@@ -302,6 +373,13 @@ function getParameters (doclet) {
     return parameters;
 }
 
+/**
+ * Returns the possible return types of the doclet.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ * @returns {Array<string>}
+ * Possible return types.
+ */
 function getReturn (doclet) {
 
     let returnObj = {
@@ -315,17 +393,28 @@ function getReturn (doclet) {
         }
 
         if (item.description) {
-            returnObj.description = item.description;
+            returnObj.description = (
+                (returnObj.description || '') + item.description
+            );
         }
 
         if (item.type) {
-            returnObj.types = item.type.slice();
+            returnObj.types = (
+                (returnObj.types || []).concat(...item.type.slice())
+            );
         }
     });
 
     return returnObj;
 }
 
+/**
+ * Returns the possible types of the doclet.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ * @returns {Array<string>}
+ * Possible types.
+ */
 function getTypes (doclet) {
 
     let types = (
@@ -356,6 +445,15 @@ function getTypes (doclet) {
     });
 }
 
+/**
+ * Returns a merged array with unique items.
+ * @param {Array} array1
+ * First array to merge.
+ * @param {Array} array2
+ * Second array to merge.
+ * @returns {Array}
+ * Merged array.
+ */
 function getUniqueArray(array1, array2) {
 
     return Array.from(new Set([].concat(...arguments)));
@@ -367,6 +465,11 @@ function getUniqueArray(array1, array2) {
  * 
  * */
 
+/**
+ * Removes nodes without doclet from the tree.
+ * @param {Node} node 
+ * Root node.
+ */
 function finalizeNodes (node) {
 
     let children = (node.children || {});
@@ -381,9 +484,36 @@ function finalizeNodes (node) {
                 finalizeNodes(children[childName]);
             }
         });
+
+    if (Object.keys(children).length === 0) {
+        delete node.children;
+    }
 }
 
-function updateNode (node, doclet) {
+/**
+ * Updates corresponding node in the tree with information from the doclet.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ * @returns {Node}
+ * Updated node.
+ */
+function updateNodeFor (doclet) {
+
+    let node = namespace,
+        parts = getName(doclet).split('.');
+
+    parts.forEach(part => {
+
+        if (typeof node.children === 'undefined') {
+            node.children = {};
+        }
+
+        if (typeof node.children[part] === 'undefined') {
+            node.children[part] = {};
+        }
+
+        node = node.children[part];
+    });
 
     let newDoclet = getLightDoclet(doclet),
         newMeta = getLightMeta(doclet),
@@ -424,6 +554,8 @@ function updateNode (node, doclet) {
             line: newMetaFileLine
         });
     }
+
+    return node;
 }
 
 /* *
@@ -432,22 +564,28 @@ function updateNode (node, doclet) {
  * 
  * */
 
+/**
+ * Adds the doclet as a class node to the tree.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ */
 function addClass (doclet) {
 
-    let node = getNodeFor(doclet);
-
-    updateNode(node, doclet);
+    let node = updateNodeFor(doclet);
 
     if (!node.doclet.parameters) {
         node.doclet.parameters = getParameters(doclet);
     }
 }
 
+/**
+ * Adds the doclet as a function node to the tree.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ */
 function addFunction (doclet) {
 
-    let node = getNodeFor(doclet);
-
-    updateNode(node, doclet);
+    let node = updateNodeFor(doclet);
 
     if (!node.doclet.parameters) {
         node.doclet.parameters = getParameters(doclet);
@@ -458,40 +596,55 @@ function addFunction (doclet) {
     }
 }
 
+/**
+ * Adds the doclet as a member node to the tree.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ */
 function addMember (doclet) {
 
-    let node = getNodeFor(doclet);
-
-    updateNode(node, doclet);
+    let node = updateNodeFor(doclet);
 
     if (!node.doclet.types) {
         node.doclet.types = getTypes(doclet);
     }
 }
 
+/**
+ * Adds the doclet as a namespace node to the tree.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ */
 function addNamespace (doclet) {
 
-    let node = getNodeFor(doclet);
-
-    updateNode(node, doclet);
+    updateNodeFor(doclet);
 }
 
+/**
+ * Adds the doclet as a type definition to the tree.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ */
 function addTypeDef (doclet) {
 
-    let name = getName(doclet),
-        node = getNodeFor(doclet);
+    let node = updateNodeFor(doclet);
 
-    updateNode(node, doclet);
+    node.doclet.types = (getTypes(doclet) || [ 'object' ]);
 
-    if (!node.doclet.types) {
-        node.doclet.types = getTypes(doclet);
+    if (!doclet.properties) {
+        return;
     }
 
-    Object.values(doclet.properties || []).forEach(propertyDoclet => {
-        propertyDoclet.longname = (name + '.' + propertyDoclet.name);
-        propertyDoclet.meta = {
-            line: node.meta.line
-        }
+    let name = getName(doclet);
+
+    Object.values(doclet.properties).forEach(propertyDoclet => {
+
+        propertyDoclet.comment = propertyDoclet.description;
+        propertyDoclet.kind = 'member';
+        propertyDoclet.longname = (name + '#' + propertyDoclet.name);
+        propertyDoclet.meta = doclet.meta;
+        propertyDoclet.scope = 'inner';
+
         addMember(propertyDoclet);
     })
 }
@@ -504,6 +657,12 @@ function addTypeDef (doclet) {
  * 
  * */
 
+/**
+ * The parseBegin event is fired before JSDoc starts loading and parsing the
+ * source files.
+ * @param {Event} e
+ * JSDoc event.
+ */
 function parseBegin (e) {
 
     namespace.doclet = {
@@ -521,6 +680,11 @@ function parseBegin (e) {
     };
 }
 
+/**
+ * The fileBegin event is fired when the parser is about to parse a file.
+ * @param {Event} e
+ * JSDoc event.
+ */
 function fileBegin (e) {
 
     currentFilePath = path.relative(rootPath, e.filename);
@@ -530,6 +694,11 @@ function fileBegin (e) {
     });
 }
 
+/**
+ * The newDoclet event is fired when a new doclet has been created.
+ * @param {Event} e
+ * JSDoc event.
+ */
 function newDoclet (e) {
 
     let doclet = e.doclet;
@@ -573,11 +742,22 @@ function newDoclet (e) {
     }
 }
 
+/**
+ * The fileComplete event is fired when the parser has finished parsing a file.
+ * @param {Event} e
+ * JSDoc event.
+ */
 function fileComplete (e) {
 
     currentFilePath = '';
 }
 
+/**
+ * The processingComplete event is fired after JSDoc updates the parse results
+ * to reflect inherited and borrowed symbols.
+ * @param {Event} e
+ * JSDoc event.
+ */
 function processingComplete (e) {
 
     finalizeNodes(namespace);
@@ -588,6 +768,12 @@ function processingComplete (e) {
     );
 }
 
+/**
+ * Adding tags to the tag dictionary is a mid-level way to affect documentation
+ * generation.
+ * @param {object} dictionary
+ * JSDoc tags dictionary.
+ */
 exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('private', {
@@ -595,6 +781,9 @@ exports.defineTags = function (dictionary) {
     });
 };
 
+/**
+ * JSDoc event handlers.
+ */
 exports.handlers = {
     parseBegin: parseBegin,
     fileBegin: fileBegin,
