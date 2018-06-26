@@ -961,7 +961,7 @@ Axis.prototype.getGroupPixelWidth = function () {
  *         Chart#redraw}.
  *
  * @function setDataGrouping
- * @memberOf Axis.prototype
+ * @memberof Axis.prototype
  */
 Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
     var i;

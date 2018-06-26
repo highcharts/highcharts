@@ -10,13 +10,19 @@
 'use strict';
 import H from '../parts/Globals.js';
 import drawPoint from '../mixins/draw-point.js';
+import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 var each = H.each,
     extend = H.extend,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
+    find = H.find,
     reduce = H.reduce,
+    getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
+    getPolygon = polygon.getPolygon,
+    isPolygonsColliding = polygon.isPolygonsColliding,
+    movePolygon = polygon.movePolygon,
     Series = H.Series;
 
 /**
@@ -46,21 +52,35 @@ var isRectanglesIntersecting = function isRectanglesIntersecting(r1, r2) {
  */
 var intersectsAnyWord = function intersectsAnyWord(point, points) {
     var intersects = false,
-        rect1 = point.rect,
-        rect2;
-    if (point.lastCollidedWith) {
-        rect2 = point.lastCollidedWith.rect;
-        intersects = isRectanglesIntersecting(rect1, rect2);
+        rect = point.rect,
+        polygon = point.polygon,
+        lastCollidedWith = point.lastCollidedWith,
+        isIntersecting = function (p) {
+            var result = isRectanglesIntersecting(rect, p.rect);
+            if (result && (point.rotation % 90 || p.roation % 90)) {
+                result = isPolygonsColliding(
+                    polygon,
+                    p.polygon
+                );
+            }
+            return result;
+        };
+
+    // If the point has already intersected a different point, chances are they
+    // are still intersecting. So as an enhancement we check this first.
+    if (lastCollidedWith) {
+        intersects = isIntersecting(lastCollidedWith);
         // If they no longer intersects, remove the cache from the point.
         if (!intersects) {
             delete point.lastCollidedWith;
         }
     }
+
+    // If not already found, then check if we can find a point that is
+    // intersecting.
     if (!intersects) {
-        intersects = !!H.find(points, function (p) {
-            var result;
-            rect2 = p.rect;
-            result = isRectanglesIntersecting(rect1, rect2);
+        intersects = !!find(points, function (p) {
+            var result = isIntersecting(p);
             if (result) {
                 point.lastCollidedWith = p;
             }
@@ -137,7 +157,7 @@ var squareSpiral = function squareSpiral(attempt) {
                     y: k
                 };
             } else {
-                result =  {
+                result = {
                     x: k,
                     y: k - (m - attempt - t)
                 };
@@ -229,7 +249,7 @@ var getPlayingField = function getPlayingField(
         /**
          * Use largest width, largest height, or root of total area to give size
          * to the playing field.
-         * Add extra 10 percentage to ensure enough space.
+         * Add extra 100 percentage to ensure enough space.
          */
         x = 1.1 * Math.max(info.maxHeight, info.maxWidth, Math.sqrt(info.area));
     return {
@@ -282,19 +302,18 @@ var getRotation = function getRotation(orientations, index, from, to) {
  * @param  {object} field The width and height of the playing field.
  * @return {boolean} Returns true if the word is placed outside the field.
  */
-var outsidePlayingField = function outsidePlayingField(wrapper, field) {
-    var rect = wrapper.getBBox(),
-        playingField = {
-            left: -(field.width / 2),
-            right: field.width / 2,
-            top: -(field.height / 2),
-            bottom: field.height / 2
-        };
+var outsidePlayingField = function outsidePlayingField(rect, field) {
+    var playingField = {
+        left: -(field.width / 2),
+        right: field.width / 2,
+        top: -(field.height / 2),
+        bottom: field.height / 2
+    };
     return !(
-        playingField.left < (rect.x - rect.width / 2) &&
-        playingField.right > (rect.x + rect.width / 2) &&
-        playingField.top < (rect.y - rect.height / 2) &&
-        playingField.bottom > (rect.y + rect.height / 2)
+        playingField.left < rect.left &&
+        playingField.right > rect.right &&
+        playingField.top < rect.top &&
+        playingField.bottom > rect.bottom
     );
 };
 
@@ -310,16 +329,21 @@ var outsidePlayingField = function outsidePlayingField(wrapper, field) {
  */
 var intersectionTesting = function intersectionTesting(point, options) {
     var placed = options.placed,
-        element = options.element,
         field = options.field,
-        clientRect = options.clientRect,
+        rectangle = options.rectangle,
+        polygon = options.polygon,
         spiral = options.spiral,
         attempt = 1,
+        interval = 4,
         delta = {
             x: 0,
             y: 0
         },
-        rect = point.rect = extend({}, clientRect);
+        // Make a copy to update values during intersection testing.
+        rect = point.rect = extend({}, rectangle);
+    point.polygon = polygon;
+    point.rotation = options.rotation;
+
     /**
      * while w intersects any previously placed words:
      *    do {
@@ -330,18 +354,19 @@ var intersectionTesting = function intersectionTesting(point, options) {
     while (
         (
             intersectsAnyWord(point, placed) ||
-            outsidePlayingField(element, field)
+            outsidePlayingField(rect, field)
         ) && delta !== false
     ) {
-        delta = spiral(attempt, {
+        delta = spiral(interval * attempt, {
             field: field
         });
         if (isObject(delta)) {
             // Update the DOMRect with new positions.
-            rect.left = clientRect.left + delta.x;
-            rect.right = rect.left + rect.width;
-            rect.top = clientRect.top + delta.y;
-            rect.bottom = rect.top + rect.height;
+            rect.left = rectangle.left + delta.x;
+            rect.right = rectangle.right + delta.x;
+            rect.top = rectangle.top + delta.y;
+            rect.bottom = rectangle.bottom + delta.y;
+            point.polygon = movePolygon(delta.x, delta.y, polygon);
         }
         attempt++;
     }
@@ -564,8 +589,6 @@ var wordCloudSeries = {
                 y: 0,
                 text: point.name
             });
-
-            // TODO Replace all use of clientRect with bBox.
             bBox = testElement.getBBox(true);
             point.dimensions = {
                 height: bBox.height,
@@ -596,27 +619,30 @@ var wordCloudSeries = {
                 }),
                 attr = {
                     align: 'center',
+                    'alignment-baseline': 'middle',
                     x: placement.x,
                     y: placement.y,
                     text: point.name,
                     rotation: placement.rotation
                 },
-                animate,
-                delta,
-                clientRect;
-            testElement.css(css).attr(attr);
-            // Cache the original DOMRect values for later calculations.
-            point.clientRect = clientRect = extend(
-                {},
-                testElement.element.getBoundingClientRect()
-            );
-            delta = intersectionTesting(point, {
-                clientRect: clientRect,
-                element: testElement,
-                field: field,
-                placed: placed,
-                spiral: spiral
-            });
+                polygon = getPolygon(
+                    placement.x,
+                    placement.y,
+                    point.dimensions.width,
+                    point.dimensions.height,
+                    placement.rotation
+                ),
+                rectangle = getBoundingBoxFromPolygon(polygon),
+                delta = intersectionTesting(point, {
+                    rectangle: rectangle,
+                    polygon: polygon,
+                    field: field,
+                    placed: placed,
+                    spiral: spiral,
+                    rotation: placement.rotation
+                }),
+                animate;
+
             /**
              * Check if point was placed, if so delete it,
              * otherwise place it on the correct positions.
@@ -624,13 +650,11 @@ var wordCloudSeries = {
             if (isObject(delta)) {
                 attr.x += delta.x;
                 attr.y += delta.y;
-                extend(placement, {
-                    left: attr.x  - (clientRect.width / 2),
-                    right: attr.x + (clientRect.width / 2),
-                    top: attr.y - (clientRect.height / 2),
-                    bottom: attr.y + (clientRect.height / 2)
-                });
-                field = updateFieldBoundaries(field, placement);
+                rectangle.left += delta.x;
+                rectangle.right += delta.x;
+                rectangle.top += delta.y;
+                rectangle.bottom += delta.y;
+                field = updateFieldBoundaries(field, rectangle);
                 placed.push(point);
                 point.isNull = false;
             } else {
@@ -723,7 +747,10 @@ var wordCloudSeries = {
         'square': squareSpiral
     },
     utils: {
-        getRotation: getRotation
+        getRotation: getRotation,
+        isPolygonsColliding: isPolygonsColliding,
+        rotate2DToOrigin: polygon.rotate2DToOrigin,
+        rotate2DToPoint: polygon.rotate2DToPoint
     },
     getPlotBox: function () {
         var series = this,
@@ -753,7 +780,8 @@ var wordCloudPoint = {
     shouldDraw: function shouldDraw() {
         var point = this;
         return !point.isNull;
-    }
+    },
+    weight: 1
 };
 
 /**

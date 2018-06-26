@@ -278,9 +278,9 @@ seriesType('map', 'scatter', {
     getBox: function (paths) {
         var MAX_VALUE = Number.MAX_VALUE,
             maxX = -MAX_VALUE,
-            minX =  MAX_VALUE,
+            minX = MAX_VALUE,
             maxY = -MAX_VALUE,
-            minY =  MAX_VALUE,
+            minY = MAX_VALUE,
             minRange = MAX_VALUE,
             xAxis = this.xAxis,
             yAxis = this.yAxis,
@@ -298,9 +298,9 @@ seriesType('map', 'scatter', {
                     i = path.length,
                     even = false, // while loop reads from the end
                     pointMaxX = -MAX_VALUE,
-                    pointMinX =  MAX_VALUE,
+                    pointMinX = MAX_VALUE,
                     pointMaxY = -MAX_VALUE,
-                    pointMinY =  MAX_VALUE,
+                    pointMinY = MAX_VALUE,
                     properties = point.properties;
 
                 // The first time a map point is used, analyze its box
@@ -319,7 +319,7 @@ seriesType('map', 'scatter', {
                     }
                     // Cache point bounding box for use to position data labels,
                     // bubbles etc
-                    point._midX = pointMinX + (pointMaxX - pointMinX) *    pick(
+                    point._midX = pointMinX + (pointMaxX - pointMinX) * pick(
                         point.middleX,
                         properties && properties['hc-middle-x'],
                         0.5
@@ -1066,7 +1066,7 @@ seriesType('map', 'scatter', {
      * Highmaps only. Zoom in on the point using the global animation.
      *
      * @function #zoomTo
-     * @memberOf Point
+     * @memberof Point
      * @sample maps/members/point-zoomto/
      *         Zoom to points from butons
      */

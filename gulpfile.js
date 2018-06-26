@@ -87,10 +87,15 @@ const styles = () => {
  */
 const lint = () => {
     const CLIEngine = require('eslint').CLIEngine;
-    const cli = new CLIEngine();
+    const cli = new CLIEngine({
+        fix: argv.fix
+    });
     const formatter = cli.getFormatter();
     let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**/*.js'];
     let report = cli.executeOnFiles(pattern);
+    if (argv.fix) {
+        CLIEngine.outputFixes(report);
+    }
     console.log(formatter(report.results));
 };
 

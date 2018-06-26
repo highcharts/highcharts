@@ -103,7 +103,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * node, but may also represent more nodes.
          *
          * @name  element
-         * @memberOf SVGElement
+         * @memberof SVGElement
          * @type {SVGDOMNode|HTMLDOMNode}
          */
         this.element = nodeName === 'span' ?
@@ -114,7 +114,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * The renderer that the SVGElement belongs to.
          *
          * @name renderer
-         * @memberOf SVGElement
+         * @memberof SVGElement
          * @type {SVGRenderer}
          */
         this.renderer = renderer;
@@ -2026,14 +2026,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         /**
          * The root `svg` node of the renderer.
          * @name box
-         * @memberOf SVGRenderer
+         * @memberof SVGRenderer
          * @type {SVGDOMElement}
          */
         this.box = element;
         /**
          * The wrapper for the root `svg` node of the renderer.
          * @name boxWrapper
-         * @memberOf SVGRenderer
+         * @memberof SVGRenderer
          * @type {SVGElement}
          */
         this.boxWrapper = boxWrapper;
@@ -2069,7 +2069,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
          * A pointer to the `defs` node of the root SVG.
          * @type {SVGElement}
          * @name defs
-         * @memberOf SVGRenderer
+         * @memberof SVGRenderer
          */
         renderer.defs = this.createElement('defs').add();
         renderer.allowHTML = allowHTML;
@@ -4124,13 +4124,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         wrapper['text-alignSetter'] = function (value) {
             textAlign = value;
         };
-        wrapper.paddingSetter =  function (value) {
+        wrapper.paddingSetter = function (value) {
             if (defined(value) && value !== padding) {
                 padding = wrapper.padding = value;
                 updateTextPadding();
             }
         };
-        wrapper.paddingLeftSetter =  function (value) {
+        wrapper.paddingLeftSetter = function (value) {
             if (defined(value) && value !== paddingLeft) {
                 paddingLeft = value;
                 updateTextPadding();

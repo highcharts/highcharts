@@ -260,11 +260,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
     getPlotBandPath: function (from, to) {
         var toPath = this.getPlotLinePath(to, null, null, true),
-            path   = this.getPlotLinePath(from, null, null, true),
+            path = this.getPlotLinePath(from, null, null, true),
             result = [],
             i,
             // #4964 check if chart is inverted or plotband is on yAxis
-            horiz  = this.horiz,
+            horiz = this.horiz,
             plus = 1,
             isFlat,
             outside =

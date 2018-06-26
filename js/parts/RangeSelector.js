@@ -1153,7 +1153,7 @@ RangeSelector.prototype = {
                             (inputPositionY + inputGroup.getBBox().height)
                         )
                     )
-                )  {
+                ) {
 
                 inputGroup.attr({
                     translateX: inputGroup.alignAttr.translateX +

@@ -109,7 +109,7 @@ H.seriesType('cmf', 'sma',
          * @returns {Values} object containing computed money flow data
         **/
         getMoneyFlow: function (xData, seriesYData, volumeSeriesYData, period) {
-            var    len = seriesYData.length,
+            var len = seriesYData.length,
                 moneyFlowVolume = [],
                 sumVolume = 0,
                 sumMoneyFlowVolume = 0,

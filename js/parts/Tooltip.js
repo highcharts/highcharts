@@ -301,7 +301,7 @@ H.Tooltip.prototype = {
             each(points, function (point) {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
-                plotX += point.plotX  +
+                plotX += point.plotX +
                     (!inverted && xAxis ? xAxis.left - plotLeft : 0);
                 plotY +=
                     (
