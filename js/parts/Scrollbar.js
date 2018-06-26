@@ -807,7 +807,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
     var axis = this;
     proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
-    if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
+    if (axis.options && axis.options.scrollbar && axis.options.scrollbar.enabled) {
         // Predefined options:
         axis.options.scrollbar.vertical = !axis.horiz;
         axis.options.startOnTick = axis.options.endOnTick = false;

@@ -323,7 +323,7 @@ seriesType('bubble', 'scatter', {
                 zMin = 0;
             }
 
-            if (value === null) {
+            if (!isNumber(value)) {
                 radius = null;
             // Issue #4419 - if value is less than zMin, push a radius that's
             // always smaller than the minimum size
@@ -497,7 +497,7 @@ Axis.prototype.beforePadding = function () {
                 series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
 
                 // Find the min and max Z
-                zData = series.zData;
+                zData = H.grep(series.zData, H.isNumber);
                 if (zData.length) { // #1735
                     zMin = pick(seriesOptions.zMin, Math.min(
                         zMin,

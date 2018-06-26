@@ -821,15 +821,15 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             halo.attr({
                 'class': 'highcharts-halo highcharts-color-' +
                     pick(point.colorIndex, series.colorIndex) +
-                    (point.className ? ' ' + point.className : '')
+                    (point.className ? ' ' + point.className : ''),
+                'zIndex': -1 // #4929, #8276
             });
             halo.point = point; // #6055
 
             /*= if (build.classic) { =*/
             halo.attr(extend({
                 'fill': point.color || series.color,
-                'fill-opacity': haloOptions.opacity,
-                'zIndex': -1 // #4929, IE8 added halo above everything
+                'fill-opacity': haloOptions.opacity
             }, haloOptions.attributes));
             /*= } =*/
 
@@ -1091,11 +1091,12 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         if (ignoreHiddenSeries) {
             chart.isDirtyBox = true;
         }
+
+        fireEvent(series, showOrHide);
+
         if (redraw !== false) {
             chart.redraw();
         }
-
-        fireEvent(series, showOrHide);
     },
 
     /**

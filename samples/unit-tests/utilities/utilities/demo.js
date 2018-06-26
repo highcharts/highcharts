@@ -382,6 +382,14 @@
             '2016-05-07',
             dateFormat('%Y-%m-%d', new Date('Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight Time)'))
         );
+
+        // Issue #8150
+        assertEquals(
+            assert,
+            'Issue #8150, month without leading zero',
+            '10/4 2018',
+            dateFormat('%e/%o %Y', Date.UTC(2018, 3, 10))
+        );
     });
 
 
@@ -776,11 +784,88 @@
         }, obj3This);
     });
 
+    QUnit.test('datePropsToTimestamps', function (assert) {
+        var date = new Date(2017, 0, 0),
+            actual = {
+                date1: date,
+                date2: +date,
+                object: {
+                    date3: date,
+                    date4: +date
+                },
+                array: [
+                    date,
+                    +date
+                ]
+            },
+            expectedTimestamp = date.getTime(),
+            expected = {
+                date1: expectedTimestamp,
+                date2: expectedTimestamp,
+                object: {
+                    date3: expectedTimestamp,
+                    date4: expectedTimestamp
+                },
+                array: [
+                    expectedTimestamp,
+                    expectedTimestamp
+                ]
+            };
+
+        Highcharts.datePropsToTimestamps(actual);
+
+        assert.equal(
+            actual.date1,
+            expectedTimestamp,
+            'Date object converted to timeStamp'
+        );
+
+        assert.equal(
+            actual.date2,
+            expectedTimestamp,
+            'Timestamp left as is'
+        );
+
+        assert.equal(
+            actual.object.date3,
+            expectedTimestamp,
+            'Date object inside object, inside another object is converted'
+        );
+
+        assert.equal(
+            actual.array[0],
+            expectedTimestamp,
+            'Date object inside array, inside another object is converted'
+        );
+
+        assert.deepEqual(
+            actual,
+            expected,
+            'All date objects inside object are recursively converted'
+        );
+    });
+
     QUnit.test('pad', function (assert) {
         assert.strictEqual(
             Highcharts.pad(-1000, 3),
             '-1000',
             'The same number, no error (#5308)'
         );
+    });
+
+
+    QUnit.test('getStyle', function (assert) {
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        div.style.padding = '10px';
+        div.style.display = 'none';
+
+        assert.strictEqual(
+            Highcharts.getStyle(div, 'width'),
+            0,
+            'Width should not be negative (#8377)'
+        );
+
+        document.body.removeChild(div);
     });
 }());

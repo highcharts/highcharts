@@ -147,13 +147,14 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
         x = parent.x,
         y = parent.y,
         radius = (
-            isObject(options.levelSize) && isNumber(options.levelSize.value) ?
+            options && isObject(options.levelSize) &&
+                isNumber(options.levelSize.value) ?
             options.levelSize.value :
             0
         ),
         innerRadius = parent.r,
         outerRadius = innerRadius + radius,
-        slicedOffset = isNumber(options.slicedOffset) ?
+        slicedOffset = options && isNumber(options.slicedOffset) ?
             options.slicedOffset :
             0;
 

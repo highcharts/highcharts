@@ -467,6 +467,8 @@ Highcharts.Time.prototype = {
                     'B': lang.months[month],
                     // Two digit month number, 01 through 12
                     'm': pad(month + 1),
+                    // Month number, 1 through 12 (#8150)
+                    'o': month + 1,
 
                     // Year
                     // Two digits year, like 09 for 2009

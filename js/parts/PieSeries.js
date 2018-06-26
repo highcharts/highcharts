@@ -645,10 +645,6 @@ seriesType('pie', 'line', {
                         .attr(groupTranslation)
                         .add(series.group);
 
-                    if (!point.visible) {
-                        graphic.attr({ visibility: 'hidden' });
-                    }
-
                     /*= if (build.classic) { =*/
                     graphic
                         .attr(pointAttr)
@@ -656,6 +652,10 @@ seriesType('pie', 'line', {
                         .shadow(shadow, shadowGroup);
                     /*= } =*/
                 }
+
+                graphic.attr({
+                    visibility: point.visible ? 'inherit' : 'hidden'
+                });
 
                 graphic.addClass(point.getClassName());
 

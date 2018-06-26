@@ -2014,7 +2014,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @name     series
          * @memberOf Axis
-         * @type     {Array.<Series>}
+         * @type     {Array<Series>}
          */
         axis.series = axis.series || []; // populated by Series
 
@@ -2049,6 +2049,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      */
     setOptions: function (userOptions) {
+        H.datePropsToTimestamps(userOptions);
         this.options = merge(
             this.defaultOptions,
             this.coll === 'yAxis' && this.defaultYAxisOptions,
@@ -2381,7 +2382,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *         If given, return the plot line path of a pixel position on the
      *         axis.
      *
-     * @return {Array.<String|Number>}
+     * @return {Array<String|Number>}
      *         The SVG path definition for the plot line.
      */
     getPlotLinePath: function (value, lineWidth, old, force, translatedValue) {
@@ -2454,7 +2455,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @param  {Number} max
      *         Axis maximum.
      *
-     * @return {Array.<Number>}
+     * @return {Array<Number>}
      *         An array of axis values where ticks should be placed.
      */
     getLinearTickPositions: function (tickInterval, min, max) {
@@ -2525,7 +2526,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Internal function to return the minor tick positions. For logarithmic
      * axes, the same logic as for major ticks is reused.
      *
-     * @return {Array.<Number>}
+     * @return {Array<Number>}
      *         An array of axis values where ticks should be placed.
      */
     getMinorTickPositions: function () {
@@ -3843,7 +3844,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @param  {String} prefix
      *         'tick' or 'minorTick'
-     * @return {Array.<Number>}
+     * @return {Array<Number>}
      *         An array of tickLength and tickWidth
      */
     tickSize: function (prefix) {
@@ -4014,6 +4015,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             tickPositions = this.tickPositions,
             ticks = this.ticks,
             labelOptions = this.options.labels,
+            labelStyleOptions = (labelOptions && labelOptions.style || {}),
             horiz = this.horiz,
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
@@ -4130,7 +4132,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         each(tickPositions, function (pos) {
             var tick = ticks[pos],
                 label = tick && tick.label,
-                widthOption = labelOptions.style && labelOptions.style.width,
+                widthOption = labelStyleOptions.width,
                 css = {};
             if (label) {
                 // This needs to go before the CSS in old IE (#4502)
@@ -4139,6 +4141,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 if (
                     commonWidth &&
                     !widthOption &&
+                    // Setting width in this case messes with the bounding box
+                    // (#7975)
+                    labelStyleOptions.whiteSpace !== 'nowrap' &&
                     (
                         // Speed optimizing, #7656
                         commonWidth < label.textPxLength ||
@@ -4156,7 +4161,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     label.css(css);
 
                 // Reset previously shortened label (#8210)
-                } else if (label.styles.width && !css.width && !widthOption) {
+                } else if (
+                    label.styles &&
+                    label.styles.width &&
+                    !css.width &&
+                    !widthOption
+                ) {
                     label.css({ width: null });
                 }
 
@@ -4274,7 +4284,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     },
 
     /**
-     * Render the tick labels to a preliminary position to get their sizes.
+    /**
+     * Render the tick labels to a preliminary position to get their sizes
      *
      * @private
      */
@@ -4618,7 +4629,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // render new ticks in old position
             if (slideInTicks && ticks[pos].isNew) {
-                ticks[pos].render(i, true, 0.1);
+                // Start with negative opacity so that it is visible from
+                // halfway into the animation
+                ticks[pos].render(i, true, -1);
             }
 
             ticks[pos].render(i);

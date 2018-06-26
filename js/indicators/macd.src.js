@@ -312,6 +312,10 @@ seriesType('macd', 'sma',
                 longEMA,
                 i;
 
+            if (series.xData.length < params.longPeriod) {
+                return false;
+            }
+
             // Calculating the short and long EMA used when calculating the MACD
             shortEMA = EMA.prototype.getValues(series,
                 {

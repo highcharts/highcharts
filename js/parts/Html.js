@@ -158,6 +158,9 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
                     whiteSpace: whiteSpace || 'normal' // #3331
                 });
                 wrapper.oldTextWidth = textWidth;
+                wrapper.hasBoxWidthChanged = true; // #8159
+            } else {
+                wrapper.hasBoxWidthChanged = false; // #8159
             }
 
             // Do the calculations and DOM access only if properties changed

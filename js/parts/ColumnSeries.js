@@ -426,7 +426,10 @@ seriesType('column', 'line', {
             options = series.options,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            reversedXAxis = xAxis.reversed,
+            reversedStacks = xAxis.options.reversedStacks,
+            // Keep backward compatibility: reversed xAxis had reversed stacks
+            reverseStacks = (xAxis.reversed && !reversedStacks) ||
+                (!xAxis.reversed && reversedStacks),
             stackKey,
             stackGroups = {},
             columnCount = 0;
@@ -486,14 +489,14 @@ seriesType('column', 'line', {
             ),
             pointPadding = (pointOffsetWidth - pointWidth) / 2,
             // #1251, #3737
-            colIndex = (series.columnIndex || 0) + (reversedXAxis ? 1 : 0),
+            colIndex = (series.columnIndex || 0) + (reverseStacks ? 1 : 0),
             pointXOffset =
                 pointPadding +
                 (
                     groupPadding +
                     colIndex * pointOffsetWidth -
                     (categoryWidth / 2)
-                ) *    (reversedXAxis ? -1 : 1);
+                ) * (reverseStacks ? -1 : 1);
 
         // Save it for reading in linked series (Error bars particularly)
         series.columnMetrics = {

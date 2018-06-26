@@ -483,6 +483,20 @@ Highcharts.extend(Data.prototype, {
             individualCounts = [],
             seriesBuilders = [],
             seriesIndex = 0,
+
+            // If no series mapping is defined, check if the series array is
+            // defined with types.
+            seriesMapping = (
+                (options && options.seriesMapping) ||
+                (
+                    chartOptions &&
+                    chartOptions.series &&
+                    Highcharts.map(chartOptions.series, function () {
+                        return { x: 0 };
+                    })
+                ) ||
+                []
+            ),
             i;
 
         each((chartOptions && chartOptions.series) || [], function (series) {
@@ -490,7 +504,7 @@ Highcharts.extend(Data.prototype, {
         });
 
         // Collect the x-column indexes from seriesMapping
-        each((options && options.seriesMapping) || [], function (mapping) {
+        each(seriesMapping, function (mapping) {
             xColumns.push(mapping.x || 0);
         });
 
@@ -502,7 +516,7 @@ Highcharts.extend(Data.prototype, {
 
         // Loop all seriesMappings and constructs SeriesBuilders from
         // the mapping options.
-        each((options && options.seriesMapping) || [], function (mapping) {
+        each(seriesMapping, function (mapping) {
             var builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
                     getValueCount(globalType),

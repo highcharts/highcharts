@@ -1658,8 +1658,7 @@ Navigator.prototype = {
                 yAxis: 'navigator-y-axis',
                 showInLegend: false,
                 stacking: false, // #4823
-                isInternal: true,
-                visible: true
+                isInternal: true
             },
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series = H.grep(
@@ -1690,9 +1689,10 @@ Navigator.prototype = {
             each(baseSeries, function eachBaseSeries(base) {
                 var linkedNavSeries = base.navigatorSeries,
                     userNavOptions = extend(
-                        // Grab color from base as default
+                        // Grab color and visibility from base as default
                         {
-                            color: base.color
+                            color: base.color,
+                            visible: base.visible
                         },
                         !isArray(chartNavigatorSeriesOptions) ?
                             chartNavigatorSeriesOptions :
@@ -2156,6 +2156,34 @@ addEvent(Chart, 'afterSetChartSize', function () {
             yAxis.setAxisSize();
         }
     }
+});
+
+// Merge options, if no scrolling exists yet
+addEvent(Chart, 'update', function (e) {
+
+    var navigatorOptions = (e.options.navigator || {}),
+        scrollbarOptions = (e.options.scrollbar || {});
+
+    if (!this.navigator && !this.scroller &&
+        (navigatorOptions.enabled || scrollbarOptions.enabled)
+    ) {
+        merge(true, this.options.navigator, navigatorOptions);
+        merge(true, this.options.scrollbar, scrollbarOptions);
+        delete e.options.navigator;
+        delete e.options.scrollbar;
+    }
+
+});
+
+// Initiate navigator, if no scrolling exists yet
+addEvent(Chart, 'afterUpdate', function () {
+
+    if (!this.navigator && !this.scroller &&
+        (this.options.navigator.enabled || this.options.scrollbar.enabled)
+    ) {
+        this.scroller = this.navigator = new Navigator(this);
+    }
+
 });
 
 // Pick up badly formatted point options to addPoint
