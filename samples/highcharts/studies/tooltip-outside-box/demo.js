@@ -50,8 +50,14 @@
         function (proceed, boxWidth, boxHeight, point) {
             var chart = this.chart,
                 pos,
-                plusWidth = $(window).width() - chart.chartWidth,
-                plusHeight = $(document).height() - chart.chartHeight;
+                doc = H.doc,
+                documentElement = doc.documentElement,
+                plusWidth = documentElement.clientWidth - chart.chartWidth,
+                plusHeight = Math.max(
+                    doc.body.scrollHeight, documentElement.scrollHeight,
+                    doc.body.offsetHeight, documentElement.offsetHeight,
+                    documentElement.clientHeight
+                ) - chart.chartHeight;
 
             point.plotX += this.chart.pointer.chartPosition.left;
             point.plotY += this.chart.pointer.chartPosition.top;
