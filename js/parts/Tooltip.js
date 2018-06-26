@@ -20,6 +20,7 @@ var each = H.each,
  * The tooltip object
  * @param {Object} chart The chart instance
  * @param {Object} options Tooltip options
+ * @ignore
  */
 H.Tooltip = function () {
     this.init.apply(this, arguments);
