@@ -34,7 +34,7 @@ addEvent(Chart, 'afterInit', function () {
     var options = this.options;
 
     if (this.is3d()) {
-        each(options.series, function (s) {
+        each(options.series || [], function (s) {
             var type = s.type ||
                 options.chart.type ||
                 options.chart.defaultSeriesType;
