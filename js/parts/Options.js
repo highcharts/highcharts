@@ -2540,6 +2540,23 @@ H.defaultOptions = {
          */
 
         /**
+         * Whether to allow the tooltip to render outside the chart's SVG
+         * element box. By default (`false`), the tooltip is rendered within the
+         * chart's SVG element, which results in the tooltip being aligned
+         * inside the chart area. For small charts, this may result in clipping
+         * or overlapping. When `true`, a separate SVG element is created and
+         * overlaid on the page, allowing the tooltip to be aligned inside the
+         * page itself.
+         *
+         * @type {Boolean}
+         * @sample highcharts/tooltip/outside
+         *         Small charts with tooltips outside
+         * @default false
+         * @since 6.1.1
+         * @apioption tooltip.outside
+         */
+
+        /**
          * A callback function for formatting the HTML output for a single point
          * in the tooltip. Like the `pointFormat` string, but with more
          * flexibility.
