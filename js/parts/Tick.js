@@ -10,8 +10,8 @@ var correctFloat = H.correctFloat,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
+    isArray = H.isArray,
     isNumber = H.isNumber,
-    isString = H.isString,
     merge = H.merge,
     pick = H.pick,
     deg2rad = H.deg2rad;
@@ -38,8 +38,8 @@ H.Tick = function (axis, pos, type, noLabel, parameters) {
     this.tickmarkOffset = pick(params.tickmarkOffset, axis.tickmarkOffset);
     this.category =  pick(
         params.category,
-        axis.categories && axis.categories[pos],
-        axis.names && axis.names[pos]
+        isArray(axis.categories) ? axis.categories[pos] : undefined,
+        isArray(axis.names) ? axis.names[pos] : undefined
     );
 
     if (!type && !noLabel) {
@@ -62,7 +62,7 @@ H.Tick.prototype = {
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            value =  isString(tick.category) ? tick.category : pos,
+            value =  defined(tick.category) ? tick.category : pos,
             label = tick.label,
             tickPositionInfo = tickPositions.info,
             dateTimeLabelFormat;
