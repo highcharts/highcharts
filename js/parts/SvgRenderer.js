@@ -2032,7 +2032,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         this.box = element;
         /**
          * The wrapper for the root `svg` node of the renderer.
-         *
          * @name boxWrapper
          * @memberOf SVGRenderer
          * @type {SVGElement}
@@ -2042,6 +2041,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         /**
          * Page url used for internal references.
+         * @name url
+         * @memberOf SVGRenderer
          * @type {string}
          */
         // #24, #672, #1070
