@@ -22,6 +22,7 @@ var Axis = H.Axis,
  * @param {Number} min The minimum in axis values
  * @param {Number} max The maximum in axis values
  * @param {Number} startOfWeek
+ * @ignore
  */
 Axis.prototype.getTimeTicks = function () {
     return this.chart.time.getTimeTicks.apply(this.chart.time, arguments);
@@ -34,6 +35,8 @@ Axis.prototype.getTimeTicks = function () {
  * of segments in stock charts, the normalizing logic was extracted in order to
  * prevent it for running over again for each segment having the same interval.
  * #662, #697.
+ *
+ * @ignore
  */
 Axis.prototype.normalizeTimeTickInterval = function (
     tickInterval,
