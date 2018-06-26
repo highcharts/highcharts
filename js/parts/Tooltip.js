@@ -6,7 +6,8 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-var each = H.each,
+var doc = H.doc,
+    each = H.each,
     extend = H.extend,
     format = H.format,
     isNumber = H.isNumber,
@@ -42,11 +43,12 @@ H.Tooltip.prototype = {
         // The tooltip is initially hidden
         this.isHidden = true;
 
-
-
-        // Public property for getting the shared state.
+        // Public properties based on option combinations
         this.split = options.split && !chart.inverted;
         this.shared = options.shared || this.split;
+        // Slit tooltip does not support outside in the first iteration. Should
+        // not be too complicated to implement.
+        this.outside = options.outside && !this.split;
 
     },
 
@@ -125,9 +127,25 @@ H.Tooltip.prototype = {
     getLabel: function () {
 
         var renderer = this.chart.renderer,
-            options = this.options;
+            options = this.options,
+            container;
 
         if (!this.label) {
+
+            if (this.outside) {
+                this.container = container = H.doc.createElement('div');
+                container.className = 'highcharts-tooltip-container';
+                H.css(container, {
+                    position: 'absolute',
+                    top: '1px',
+                    pointerEvents: 'none'
+                });
+                H.doc.body.appendChild(container);
+
+                this.renderer = renderer = new H.Renderer(container, 0, 0);
+            }
+
+
             // Create the label
             if (this.split) {
                 this.label = renderer.g('tooltip');
@@ -166,6 +184,19 @@ H.Tooltip.prototype = {
             this.label.addClass('highcharts-tooltip-' + this.chart.index);
             /*= } =*/
 
+            if (this.outside) {
+                this.label.attr({
+                    x: this.distance,
+                    y: this.distance
+                });
+                this.label.xSetter = function (value) {
+                    container.style.left = value + 'px';
+                };
+                this.label.ySetter = function (value) {
+                    container.style.top = value + 'px';
+                };
+            }
+
             this.label
                 .attr({
                     zIndex: 8
@@ -193,6 +224,10 @@ H.Tooltip.prototype = {
         if (this.split && this.tt) {
             this.cleanSplit(this.chart, true);
             this.tt = this.tt.destroy();
+        }
+        if (this.renderer) {
+            this.renderer = this.renderer.destroy();
+            H.discardElement(this.container);
         }
         H.clearTimeout(this.hideTimer);
         H.clearTimeout(this.tooltipTimeout);
@@ -338,12 +373,39 @@ H.Tooltip.prototype = {
             // Don't use h if chart isn't inverted (#7242)
             h = (chart.inverted && point.h) || 0, // #4117
             swapped,
-            first = ['y', chart.chartHeight, boxHeight,
-                point.plotY + chart.plotTop, chart.plotTop,
-                chart.plotTop + chart.plotHeight],
-            second = ['x', chart.chartWidth, boxWidth,
-                point.plotX + chart.plotLeft, chart.plotLeft,
-                chart.plotLeft + chart.plotWidth],
+            outside = this.outside,
+            outerWidth = outside ?
+                // substract distance to prevent scrollbars
+                doc.documentElement.clientWidth - 2 * distance :
+                chart.chartWidth,
+            outerHeight = outside ?
+                Math.max(
+                    doc.body.scrollHeight,
+                    doc.documentElement.scrollHeight,
+                    doc.body.offsetHeight,
+                    doc.documentElement.offsetHeight,
+                    doc.documentElement.clientHeight
+                ) :
+                chart.chartHeight,
+            chartPosition = chart.pointer.chartPosition,
+            first = [
+                'y',
+                outerHeight,
+                boxHeight,
+                (outside ? chartPosition.top - distance : 0) +
+                    point.plotY + chart.plotTop,
+                outside ? 0 : chart.plotTop,
+                outside ? outerHeight : chart.plotTop + chart.plotHeight
+            ],
+            second = [
+                'x',
+                outerWidth,
+                boxWidth,
+                (outside ? chartPosition.left - distance : 0) +
+                    point.plotX + chart.plotLeft,
+                outside ? 0 : chart.plotLeft,
+                outside ? outerWidth : chart.plotLeft + chart.plotWidth
+            ],
             // The far side is right or bottom
             preferFarSide = !this.followPointer && pick(
                 point.ttBelow,
@@ -749,14 +811,29 @@ H.Tooltip.prototype = {
                 label.width,
                 label.height,
                 point
+            ),
+            anchorX = point.plotX + chart.plotLeft,
+            anchorY = point.plotY + chart.plotTop,
+            pad;
+
+        // Set the renderer size dynamically to prevent document size to change
+        if (this.outside) {
+            pad = (this.options.borderWidth || 0) + 2 * this.distance;
+            this.renderer.setSize(
+                label.width + pad,
+                label.height + pad,
+                false
             );
+            anchorX += chart.pointer.chartPosition.left - pos.x;
+            anchorY += chart.pointer.chartPosition.top - pos.y;
+        }
 
         // do the move
         this.move(
             Math.round(pos.x),
             Math.round(pos.y || 0), // can be undefined (#3977)
-            point.plotX + chart.plotLeft,
-            point.plotY + chart.plotTop
+            anchorX,
+            anchorY
         );
     },
 
