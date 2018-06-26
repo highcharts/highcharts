@@ -65,7 +65,8 @@
             // Temporary set the chart referece to a mock object, so that the
             // tooltip positioner picks it up
             this.chart = {
-                chartWidth: chart.chartWidth + plusWidth,
+                // -24 to prevent scrollbars
+                chartWidth: chart.chartWidth + plusWidth - 24,
                 chartHeight: chart.chartHeight + plusHeight,
                 plotWidth: chart.plotWidth + plusWidth,
                 plotHeight: chart.plotHeight + plusHeight,
