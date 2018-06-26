@@ -73,26 +73,6 @@ function isApiOption (doclet) {
 }
 
 /**
- * Returns true, if the doclet is an instance member.
- * @param {JSDoclet} doclet
- * JSDoc doclet to analyze.
- * @returns {boolean}
- * True, if the doclet is an instance member.
- */
-function isInstance (doclet) {
-
-    if (doclet.scope === 'inner' ||
-        doclet.scope === 'instance'
-    ) {
-        return true;
-    }
-
-    let name = doclet.longname;
-
-    return (name.lastIndexOf('#') > name.lastIndexOf('.'));
-}
-
-/**
  * Returns true, if the doclet is part of a private member tree.
  * @param {JSDoclet} doclet
  * JSDoc doclet to analyze.
@@ -126,13 +106,7 @@ function isPrivate (doclet) {
  */
 function isStatic (doclet) {
 
-    if (doclet.scope === 'static') {
-        return true;
-    }
-
-    let name = doclet.longname;
-
-    return (name.lastIndexOf('.') > name.lastIndexOf('#'));
+    return (doclet.scope === 'static');
 }
 
 /**
