@@ -417,7 +417,7 @@ seriesType('waterfall', 'column', {
     },
 
     /**
-     * The graph is initally drawn with an empty definition, then updated with
+     * The graph is initially drawn with an empty definition, then updated with
      * crisp rendering.
      */
     drawGraph: function () {
