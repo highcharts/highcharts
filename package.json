@@ -87,8 +87,5 @@
       "git add"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>",
-  "dependencies": {
-    "highcharts-api-doc-gen": "github:highcharts/api-docs"
-  }
+  "license": "SEE LICENSE IN <license.txt>"
 }
