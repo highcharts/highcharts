@@ -168,7 +168,8 @@ seriesType('candlestick', 'ohlc', merge(
     drawPoints: function () {
         var series = this,
             points = series.points,
-            chart = series.chart;
+            chart = series.chart,
+            reversedYAxis = series.yAxis.reversed;
 
 
         each(points, function (point) {
@@ -209,9 +210,12 @@ seriesType('candlestick', 'ohlc', merge(
                 topBox = Math.min(plotOpen, plotClose);
                 bottomBox = Math.max(plotOpen, plotClose);
                 halfWidth = Math.round(point.shapeArgs.width / 2);
-                hasTopWhisker =
+                hasTopWhisker = reversedYAxis ?
+                    bottomBox !== point.yBottom :
                     Math.round(topBox) !== Math.round(point.plotHigh);
-                hasBottomWhisker = bottomBox !== point.yBottom;
+                hasBottomWhisker = reversedYAxis ?
+                    Math.round(topBox) !== Math.round(point.plotHigh) :
+                    bottomBox !== point.yBottom;
                 topBox = Math.round(topBox) + crispCorr;
                 bottomBox = Math.round(bottomBox) + crispCorr;
 
@@ -235,13 +239,19 @@ seriesType('candlestick', 'ohlc', merge(
                     crispX, topBox,
                     'L',
                     // #460, #2094
-                    crispX, hasTopWhisker ? Math.round(point.plotHigh) : topBox,
+                    crispX, hasTopWhisker ?
+                        Math.round(
+                            reversedYAxis ? point.yBottom : point.plotHigh
+                        ) :
+                        topBox,
                     'M',
                     crispX, bottomBox,
                     'L',
                     // #460, #2094
                     crispX, hasBottomWhisker ?
-                        Math.round(point.yBottom) :
+                        Math.round(
+                            reversedYAxis ? point.plotHigh : point.yBottom
+                        ) :
                         bottomBox
                 );
 
