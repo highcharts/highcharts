@@ -511,6 +511,7 @@ var sunburstOptions = {
      * @excluding align,allowOverlap,staggerLines,step
      */
     dataLabels: {
+        allowOverlap: true,
         defer: true,
         style: {
             textOverflow: 'ellipsis'
