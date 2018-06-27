@@ -475,7 +475,7 @@ var wordCloudOptions = {
     },
     showInLegend: false,
     /**
-     * Spiral used for placing a word after the inital position experienced a
+     * Spiral used for placing a word after the initial position experienced a
      * collision with either another word or the borders.
      * It is possible for users to add their own custom spiralling algorithms
      * for use in word cloud. Read more about it in our
@@ -736,7 +736,7 @@ var wordCloudSeries = {
     },
     pointArrayMap: ['weight'],
     /**
-     * Spirals used for placing a word after the inital position experienced a
+     * Spirals used for placing a word after the initial position experienced a
      *     collision with either another word or the borders.
      * To implement a custom spiral, look at the function archimedeanSpiral for
      *    example.
