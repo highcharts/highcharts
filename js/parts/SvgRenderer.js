@@ -2050,7 +2050,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 doc.getElementsByTagName('base').length
             ) ?
                 win.location.href
-                    .replace(/#.*?$/, '') // remove the hash
+                    .split('#')[0] // remove the hash
                     .replace(/<[^>]*>/g, '') // wing cut HTML
                     // escape parantheses and quotes
                     .replace(/([\('\)])/g, '\\$1')
