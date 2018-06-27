@@ -205,50 +205,55 @@ var toggleCollapse = function (axis, node) {
         collapse(axis, node)
     );
 };
-var renderLabelIcon = function (label, radius, spacing, collapsed, show) {
-    var renderer = label.renderer,
-        labelBox = label.xy,
-        icon = label.treeIcon,
+var renderLabelIcon = function (tick, params) {
+    var icon = tick.labelIcon,
+        renderer = params.renderer,
+        labelBox = params.xy,
+        radius = params.radius,
         iconPosition = {
-            x: labelBox.x - (radius * 2) - spacing,
+            x: labelBox.x - (radius * 2) - params.spacing,
             y: labelBox.y - (radius * 2)
         },
         iconCenter = {
             x: iconPosition.x + radius,
             y: iconPosition.y + radius
         },
-        rotation = collapsed ? 90 : 180,
-        shouldRender = show && H.isNumber(iconPosition.y);
+        animate = {},
+        css = {
+            cursor: 'pointer'
+        },
+        attr = {
+            'stroke-width': 1,
+            'fill': pick(params.color, '#666')
+        },
+        rotation = params.collapsed ? 90 : 180,
+        shouldRender = params.show && H.isNumber(iconPosition.y);
 
     if (!icon) {
-        label.treeIcon = icon = renderer.path(renderer.symbols.triangle(
+        tick.labelIcon = icon = renderer.path(renderer.symbols.triangle(
             0 - radius,
             0 - radius,
             radius * 2,
             radius * 2
         ))
-        .attr({
-            translateX: iconCenter.x,
-            translateY: iconCenter.y,
-            rotation: rotation
-        })
-        .add(label.parentGroup);
-    } else {
-        icon.animate({
-            translateX: iconCenter.x,
-            translateY: iconCenter.y,
-            rotation: rotation
-        });
+        .add(tick.parentGroup);
     }
-    icon.attr({
-        'stroke-width': 1,
-        'fill': pick(label.styles.color, '#666')
+
+    // Update position and rotation
+    // Animate the change if the icon already exists
+    extend((icon ? animate : attr), {
+        translateX: iconCenter.x,
+        translateY: iconCenter.y,
+        rotation: rotation
     });
 
     // Set the new position, and show or hide
     if (!shouldRender) {
-        icon.attr('y', -9999); // #1338
+        attr.y = -9999; // #1338
     }
+
+    // Update the icon.
+    icon.attr(attr).animate(animate).css(css);
 };
 var onTickHover = function (label) {
     label.addClass('highcharts-treegrid-node-active');
@@ -544,21 +549,23 @@ override(GridAxisTick.prototype, {
 
         if (isTreeGrid && node && hasLabel && node.descendants > 0) {
             renderLabelIcon(
-                label,
-                iconRadius,
-                iconSpacing,
-                isCollapsed(axis, node),
-                shouldRender
+                tick,
+                {
+                    color: label.styles.color,
+                    collapsed: isCollapsed(axis, node),
+                    radius: iconRadius,
+                    renderer: label.renderer,
+                    show: shouldRender,
+                    spacing: iconSpacing,
+                    xy: label.xy
+                }
             );
             label.css({
                 cursor: 'pointer'
             });
-            label.treeIcon.css({
-                cursor: 'pointer'
-            });
 
             // Add events to both label text and icon
-            each([label, label.treeIcon], function (object) {
+            each([label, tick.labelIcon], function (object) {
                 if (!object.attachedTreeGridEvents) {
                     // On hover
                     H.addEvent(object.element, 'mouseover', function () {
