@@ -55,7 +55,6 @@ function isApiOption (doclet) {
         comment = (doclet.comment || ''),
         isApiOption = (
             doclet.augments ||
-            comment.indexOf('](') >= 0 || // markdown link
             comment.indexOf('@default') >= 0 ||
             comment.indexOf('@product') >= 0 ||
             comment.indexOf('@apioption') >= 0 ||
