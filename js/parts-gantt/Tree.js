@@ -9,34 +9,15 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var each = H.each,
-    isNumber = H.isNumber,
     extend = H.extend,
+    isNumber = H.isNumber,
+    keys = H.keys,
     map = H.map,
     pick = H.pick,
+    reduce = H.reduce,
     isFunction = function (x) {
         return typeof x === 'function';
     };
-
-var objectKeys = function (obj) {
-    var result = [],
-        prop;
-    for (prop in obj) {
-        if (obj.hasOwnProperty(prop)) {
-            result.push(prop);
-        }
-    }
-    return result;
-};
-
-var reduce = function (arr, func, previous, context) {
-    context = context || this;
-    // @note should each be able to handle empty values automatically?
-    arr = arr || [];
-    each(arr, function (current, i) {
-        previous = func.call(context, previous, current, i, arr);
-    });
-    return previous;
-};
 
 /**
  * Creates an object map from parent id to childrens index.
@@ -54,10 +35,10 @@ var getListOfParents = function (data, ids) {
             prev[parent].push(curr);
             return prev;
         }, {}),
-        keys = objectKeys(listOfParents);
+        parents = keys(listOfParents);
 
     // If parent does not exist, hoist parent to root of tree.
-    each(keys, function (parent, list) {
+    each(parents, function (parent, list) {
         var children = listOfParents[parent];
         if ((parent !== '') && (H.inArray(parent, ids) === -1)) {
             each(children, function (child) {
@@ -159,9 +140,7 @@ var getTree = function (data, options) {
 var Tree = {
     getListOfParents: getListOfParents,
     getNode: getNode,
-    getTree: getTree,
-    objectKeys: objectKeys,
-    reduce: reduce
+    getTree: getTree
 };
 
 export default Tree;
