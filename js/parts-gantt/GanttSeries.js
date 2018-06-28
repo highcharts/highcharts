@@ -201,11 +201,7 @@ seriesType('gantt', parentName, {
         }
     },
 
-    setData: function () {
-        var series = this;
-        series.yAxis.updateYNames();
-        Series.prototype.setData.apply(this, arguments);
-    },
+    setData: Series.prototype.setData,
 
     setGanttPointAliases: function (options) {
         // Get value from aliases

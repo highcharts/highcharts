@@ -19,8 +19,18 @@ var argsToArray = function (args) {
     iconSpacing = 5,
     each = H.each,
     extend = H.extend,
+    find = H.find,
     merge = H.merge,
     inArray = H.inArray,
+    isBoolean = function (x) {
+        return typeof x === 'boolean';
+    },
+    isObject = function (x) {
+        // Always use strict mode.
+        return H.isObject(x, true);
+    },
+    isString = H.isString,
+    keys = H.keys,
     pick = H.pick,
     reduce = Tree.reduce,
     wrap = H.wrap,
@@ -83,9 +93,9 @@ var mapTickPosToNode = function (node, categories) {
     return map;
 };
 
-var getBreakFromNode = function (node, pos, max) {
-    var from = pos + 0.5,
-        to = from + node.descendants;
+var getBreakFromNode = function (node, max) {
+    var from = node.collapseStart,
+        to = node.collapseEnd;
 
     // In broken-axis, the axis.max is minimized until it is not within a break.
     // Therefore, if break.to is larger than axis.max, the axis.to should not
@@ -104,15 +114,43 @@ var getBreakFromNode = function (node, pos, max) {
 };
 
 /**
+ * Creates a list of positions for the ticks on the axis. Filters out positions
+ * that are outside min and max, or is inside an axis break.
+ *
+ * @param {Object} axis The Axis to get the tick positions from.
+ * @param {number} axis.min The minimum value of the axis.
+ * @param {number} axis.max The maximum value of the axis.
+ * @param {function} axis.isInAnyBreak Function to determine if a position is
+ * inside any breaks on the axis.
+ * @returns {number[]} List of positions.
+ */
+var getTickPositions = function (axis) {
+    return reduce(
+        keys(axis.mapOfPosToGridNode),
+        function (arr, key) {
+            var pos = +key;
+            if (
+                axis.min <= pos &&
+                axis.max >= pos &&
+                !axis.isInAnyBreak(pos)
+            ) {
+                arr.push(pos);
+            }
+            return arr;
+        },
+        []
+    );
+};
+/**
  * Check if a node is collapsed.
  * @param {object} axis The axis to check against.
  * @param {object} node The node to check if is collapsed.
  * @param {number} pos The tick position to collapse.
  * @returns {boolean} Returns true if collapsed, false if expanded.
  */
-var isCollapsed = function (axis, node, pos) {
+var isCollapsed = function (axis, node) {
     var breaks = (axis.options.breaks || []),
-        obj = getBreakFromNode(node, pos, axis.max);
+        obj = getBreakFromNode(node, axis.max);
     return some(breaks, function (b) {
         return b.from === obj.from && b.to === obj.to;
     });
@@ -125,9 +163,9 @@ var isCollapsed = function (axis, node, pos) {
  * @param {number} pos The tick position to collapse.
  * @returns {array} Returns an array of the new breaks for the axis.
  */
-var collapse = function (axis, node, pos) {
+var collapse = function (axis, node) {
     var breaks = (axis.options.breaks || []),
-        obj = getBreakFromNode(node, pos, axis.max);
+        obj = getBreakFromNode(node, axis.max);
     breaks.push(obj);
     return breaks;
 };
@@ -139,9 +177,9 @@ var collapse = function (axis, node, pos) {
  * @param {number} pos The tick position to expand.
  * @returns {array} Returns an array of the new breaks for the axis.
  */
-var expand = function (axis, node, pos) {
+var expand = function (axis, node) {
     var breaks = (axis.options.breaks || []),
-        obj = getBreakFromNode(node, pos, axis.max);
+        obj = getBreakFromNode(node, axis.max);
     // Remove the break from the axis breaks array.
     return reduce(breaks, function (arr, b) {
         if (b.to !== obj.to || b.from !== obj.from) {
@@ -160,56 +198,62 @@ var expand = function (axis, node, pos) {
  * @param {number} pos The tick position to toggle.
  * @returns {array} Returns an array of the new breaks for the axis.
  */
-var toggleCollapse = function (axis, node, pos) {
+var toggleCollapse = function (axis, node) {
     return (
-        isCollapsed(axis, node, pos) ?
-        expand(axis, node, pos) :
-        collapse(axis, node, pos)
+        isCollapsed(axis, node) ?
+        expand(axis, node) :
+        collapse(axis, node)
     );
 };
-
-var renderLabelIcon = function (label, radius, spacing, collapsed) {
-    var renderer = label.renderer,
-        labelBox = label.xy,
-        icon = label.treeIcon,
+var renderLabelIcon = function (tick, params) {
+    var icon = tick.labelIcon,
+        renderer = params.renderer,
+        labelBox = params.xy,
+        radius = params.radius,
         iconPosition = {
-            x: labelBox.x - (radius * 2) - spacing,
+            x: labelBox.x - (radius * 2) - params.spacing,
             y: labelBox.y - (radius * 2)
         },
         iconCenter = {
             x: iconPosition.x + radius,
             y: iconPosition.y + radius
         },
-        rotation = collapsed ? 90 : 180;
+        animate = {},
+        css = {
+            cursor: 'pointer'
+        },
+        attr = {
+            'stroke-width': 1,
+            'fill': pick(params.color, '#666')
+        },
+        rotation = params.collapsed ? 90 : 180,
+        shouldRender = params.show && H.isNumber(iconPosition.y);
+
     if (!icon) {
-        label.treeIcon = icon = renderer.path(renderer.symbols.triangle(
+        tick.labelIcon = icon = renderer.path(renderer.symbols.triangle(
             0 - radius,
             0 - radius,
             radius * 2,
             radius * 2
         ))
-        .attr({
-            translateX: iconCenter.x,
-            translateY: iconCenter.y,
-            rotation: rotation
-        })
-        .add(label.parentGroup);
-    } else {
-        icon.animate({
-            translateX: iconCenter.x,
-            translateY: iconCenter.y,
-            rotation: rotation
-        });
+        .add(tick.parentGroup);
     }
-    icon.attr({
-        'stroke-width': 1,
-        'fill': pick(label.styles.color, '#666')
+
+    // Update position and rotation
+    // Animate the change if the icon already exists
+    extend((icon ? animate : attr), {
+        translateX: iconCenter.x,
+        translateY: iconCenter.y,
+        rotation: rotation
     });
 
     // Set the new position, and show or hide
-    if (!H.isNumber(iconPosition.y)) {
-        icon.attr('y', -9999); // #1338
+    if (!shouldRender) {
+        attr.y = -9999; // #1338
     }
+
+    // Update the icon.
+    icon.attr(attr).animate(animate).css(css);
 };
 var onTickHover = function (label) {
     label.addClass('highcharts-treegrid-node-active');
@@ -227,6 +271,154 @@ var onTickHoverExit = function (label) {
     });
     /*= } =*/
 };
+
+/**
+ * Creates a tree structure of the data, and the tree-grid. Calculates
+ * categories, and y-values of points based on the tree.
+ * @param {Array} data All the data points to display in the axis.
+ * @param {boolean} uniqueNames Wether or not the data node with the same name
+ * should share grid cell. If true they do not share cell. True by default.
+ * @returns {object} Returns an object containing categories, mapOfIdToNode,
+ * mapOfPosToGridNode, and tree.
+ * @todo There should be only one point per line.
+ * @todo It should be optional to have one category per point, or merge cells
+ * @todo Add unit-tests.
+ */
+var getTreeGridFromData = function (data, uniqueNames) {
+    var categories = [],
+        mapOfIdToNode = {},
+        mapOfPosToGridNode = {},
+        posIterator = -1,
+        uniqueNamesEnabled = isBoolean(uniqueNames) ? uniqueNames : true,
+        tree,
+        treeParams,
+        updateYValuesAndTickPos;
+
+    // Build the tree from the series data.
+    treeParams = {
+        // After the children has been created.
+        after: function (node) {
+            var gridNode = mapOfPosToGridNode[node.pos],
+                height = 0,
+                descendants = 0;
+            each(gridNode.children, function (child) {
+                descendants += child.descendants + 1;
+                height = Math.max(child.height + 1, height);
+            });
+            gridNode.descendants = descendants;
+            gridNode.height = height;
+        },
+        // Before the children has been created.
+        before: function (node) {
+            var data = isObject(node.data) ? node.data : {},
+                name = isString(data.name) ? data.name : '',
+                parentNode = mapOfIdToNode[node.parent],
+                parentGridNode = (
+                    isObject(parentNode) ?
+                    mapOfPosToGridNode[parentNode.pos] :
+                    null
+                ),
+                hasSameName = function (x) {
+                    return x.name === name;
+                },
+                gridNode,
+                pos;
+
+            // If not unique names, look for a sibling node with the same name.
+            if (
+                !uniqueNamesEnabled &&
+                isObject(parentGridNode) &&
+                !!(gridNode = find(parentGridNode.children, hasSameName))
+            ) {
+                // If if there is a gridNode with the same name, reuse position.
+                pos = gridNode.pos;
+                // Add data node to list of nodes in the grid node.
+                gridNode.nodes.push(node);
+            } else {
+                // If it is a new grid node, increment position.
+                pos = posIterator++;
+            }
+
+            // Add new grid node to map.
+            if (!mapOfPosToGridNode[pos]) {
+                mapOfPosToGridNode[pos] = gridNode = {
+                    depth: parentGridNode ? parentGridNode.depth + 1 : 0,
+                    name: name,
+                    nodes: [node],
+                    children: [],
+                    pos: pos
+                };
+
+                // If not root, then add name to categories.
+                if (pos !== -1) {
+                    categories.push(name);
+                }
+
+                // Add name to list of children.
+                if (isObject(parentGridNode)) {
+                    parentGridNode.children.push(gridNode);
+                }
+            }
+
+            // Add data node to map
+            if (isString(node.id)) {
+                mapOfIdToNode[node.id] = node;
+            }
+
+            // Assign pos to data node
+            node.pos = pos;
+        }
+    };
+
+    updateYValuesAndTickPos = function (map) {
+        var setValues = function (gridNode, start, result) {
+            var nodes = gridNode.nodes,
+                end = start + nodes.length - 1,
+                diff = (end - start) / 2,
+                padding = 0.5,
+                pos = start + diff;
+            each(nodes, function (node, j) {
+                if (isObject(node.data)) {
+                    node.data.y = start + j;
+                }
+                node.pos = pos;
+            });
+
+            result[pos] = gridNode;
+
+            gridNode.pos = pos;
+            gridNode.tickmarkOffset = diff + padding;
+            gridNode.collapseStart = end + padding;
+
+
+            each(gridNode.children, function (child) {
+                setValues(child, end + 1, result);
+                end = child.collapseEnd - padding;
+            });
+            // Set collapseEnd to the end of the last child node.
+            gridNode.collapseEnd = end + padding;
+
+            return result;
+        };
+
+        return setValues(map['-1'], -1, {});
+    };
+
+    // Create tree from data
+    tree = Tree.getTree(data, treeParams);
+
+    // Update y values of data, and set calculate tick positions.
+    mapOfPosToGridNode = updateYValuesAndTickPos(mapOfPosToGridNode);
+
+    // Return the resulting data.
+    return {
+        categories: categories,
+        mapOfIdToNode: mapOfIdToNode,
+        mapOfPosToGridNode: mapOfPosToGridNode,
+        tree: tree
+    };
+};
+
 override(GridAxis.prototype, {
     init: function (proceed, chart, userOptions) {
         var axis = this,
@@ -249,6 +441,17 @@ override(GridAxis.prototype, {
         // which are sliced off this function's arguments
         proceed.apply(axis, argsToArray(arguments));
         if (isTreeGrid) {
+            H.addEvent(axis.chart, 'beforeRender', function () {
+                // beforeRender is fired after all the series is initialized,
+                // which is an ideal time to update the axis.categories.
+                axis.updateYNames();
+
+                // We have to set the series data again to correct the y-values
+                // which was set too early.
+                each(axis.series, function (series) {
+                    series.setData(series.options.data, false, false, false);
+                });
+            });
             axis.hasNames = true;
             axis.options.showLastLabel = true;
         }
@@ -261,13 +464,67 @@ override(GridAxis.prototype, {
     getMaxLabelLength: function (proceed) {
         var axis = this,
             retVal = proceed.apply(axis, argsToArray(arguments)),
-            treeDepth = axis.tree && axis.tree.height;
+            isTreeGrid = axis.options.type === 'tree-grid',
+            treeDepth;
 
-        if (axis.options.type === 'tree-grid') {
+        if (isTreeGrid) {
+            treeDepth = axis.mapOfPosToGridNode[-1].height;
             retVal += indentPx * (treeDepth - 1);
         }
 
         return retVal;
+    },
+    /**
+     * Generates a tick for initial positioning.
+     *
+     * @private
+     * @param {function} proceed The original generateTick function.
+     * @param {number} pos The tick position in axis values.
+     */
+    generateTick: function (proceed, pos) {
+        var axis = this,
+            isTreeGrid = axis.options.type === 'tree-grid',
+            ticks = axis.ticks,
+            gridNode;
+
+        if (isTreeGrid) {
+            gridNode = axis.mapOfPosToGridNode[pos];
+            if (!ticks[pos]) {
+                ticks[pos] = new GridAxisTick(axis, pos, null, undefined, {
+                    category: gridNode.name,
+                    tickmarkOffset: gridNode.tickmarkOffset
+                });
+            } else {
+                // update labels depending on tick interval
+                ticks[pos].addLabel();
+            }
+        } else {
+            proceed.apply(axis, argsToArray(arguments));
+        }
+    },
+    /**
+     * Set the tick positions, tickInterval, axis min and max.
+     *
+     * @private
+     */
+    setTickInterval: function (proceed) {
+        var axis = this,
+            options = axis.options,
+            isTreeGrid = options.type === 'tree-grid';
+
+        if (isTreeGrid) {
+            axis.min = pick(axis.userMin, options.min, axis.dataMin);
+            axis.max = pick(axis.userMax, options.max, axis.dataMax);
+            // setAxisTranslation modifies the min and max according to
+            // axis breaks.
+            axis.setAxisTranslation(true);
+
+            axis.tickmarkOffset = 0.5;
+            axis.tickInterval = 1;
+            axis.tickPositions = getTickPositions(axis);
+        } else {
+            proceed.apply(axis, argsToArray(arguments));
+        }
     }
 });
 override(GridAxisTick.prototype, {
@@ -276,52 +533,56 @@ override(GridAxisTick.prototype, {
             pos = tick.pos,
             axis = tick.axis,
             label = tick.label,
-            treeGridMap = axis.treeGridMap,
+            mapOfPosToGridNode = axis.mapOfPosToGridNode,
             options = axis.options,
-            node = treeGridMap && treeGridMap[pos],
+            node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
             level = node && node.depth - 1,
             isTreeGrid = options.type === 'tree-grid',
-            hasLabel = label && label.element;
+            hasLabel = !!(label && label.element),
+            shouldRender = inArray(pos, axis.tickPositions) > -1;
 
         if (isTreeGrid && node) {
             xy.x += iconRadius + (iconSpacing * 2) + (level * indentPx);
         }
+
         proceed.apply(tick, argsToArray(arguments));
-        if (isTreeGrid && node) {
-            if (hasLabel && node.children.length > 0) {
-                renderLabelIcon(
-                    label,
-                    iconRadius,
-                    iconSpacing,
-                    isCollapsed(axis, node, pos)
-                );
-                label.css({
-                    cursor: 'pointer'
-                });
-                label.treeIcon.css({
-                    cursor: 'pointer'
-                });
 
-                // Add events to both label text and icon
-                each([label, label.treeIcon], function (object) {
-                    if (!object.attachedTreeGridEvents) {
-                        // On hover
-                        H.addEvent(object.element, 'mouseover', function () {
-                            onTickHover(label);
-                        });
+        if (isTreeGrid && node && hasLabel && node.descendants > 0) {
+            renderLabelIcon(
+                tick,
+                {
+                    color: label.styles.color,
+                    collapsed: isCollapsed(axis, node),
+                    radius: iconRadius,
+                    renderer: label.renderer,
+                    show: shouldRender,
+                    spacing: iconSpacing,
+                    xy: label.xy
+                }
+            );
+            label.css({
+                cursor: 'pointer'
+            });
 
-                        // On hover out
-                        H.addEvent(object.element, 'mouseout', function () {
-                            onTickHoverExit(label);
-                        });
+            // Add events to both label text and icon
+            each([label, tick.labelIcon], function (object) {
+                if (!object.attachedTreeGridEvents) {
+                    // On hover
+                    H.addEvent(object.element, 'mouseover', function () {
+                        onTickHover(label);
+                    });
 
-                        H.addEvent(object.element, 'click', function () {
-                            tick.toggleCollapse();
-                        });
-                        object.attachedTreeGridEvents = true;
-                    }
-                });
-            }
+                    // On hover out
+                    H.addEvent(object.element, 'mouseout', function () {
+                        onTickHoverExit(label);
+                    });
+
+                    H.addEvent(object.element, 'click', function () {
+                        tick.toggleCollapse();
+                    });
+                    object.attachedTreeGridEvents = true;
+                }
+            });
         }
     }
 });
@@ -336,8 +597,8 @@ GridAxisTick.prototype.collapse = function (redraw) {
     var tick = this,
         axis = tick.axis,
         pos = tick.pos,
-        node = axis.treeGridMap[pos],
-        breaks = collapse(axis, node, pos);
+        node = axis.mapOfPosToGridNode[pos],
+        breaks = collapse(axis, node);
     axis.setBreaks(breaks, pick(redraw, true));
 };
 
@@ -351,8 +612,8 @@ GridAxisTick.prototype.expand = function (redraw) {
     var tick = this,
         axis = tick.axis,
         pos = tick.pos,
-        node = axis.treeGridMap[pos],
-        breaks = expand(axis, node, pos);
+        node = axis.mapOfPosToGridNode[pos],
+        breaks = expand(axis, node);
     axis.setBreaks(breaks, pick(redraw, true));
 };
 
@@ -366,16 +627,19 @@ GridAxisTick.prototype.toggleCollapse = function (redraw) {
     var tick = this,
         axis = tick.axis,
         pos = tick.pos,
-        node = axis.treeGridMap[pos],
-        breaks = toggleCollapse(axis, node, pos);
+        node = axis.mapOfPosToGridNode[pos],
+        breaks = toggleCollapse(axis, node);
     axis.setBreaks(breaks, pick(redraw, true));
 };
 
 GridAxis.prototype.updateYNames = function () {
     var axis = this,
-        isTreeGrid = axis.options.type === 'tree-grid',
+        options = axis.options,
+        isTreeGrid = options.type === 'tree-grid',
+        uniqueNames = options.uniqueNames,
         isYAxis = !axis.isXAxis,
         series = axis.series,
+        treeGrid,
         data;
 
     if (isTreeGrid && isYAxis) {
@@ -383,19 +647,13 @@ GridAxis.prototype.updateYNames = function () {
         data = reduce(series, function (arr, s) {
             return arr.concat(s.options.data);
         }, []);
-        // Build the tree from the series data.
-        axis.tree = Tree.getTree(data);
-        axis.categories = getCategoriesFromTree(axis.tree);
-        axis.treeGridMap = mapTickPosToNode(axis.tree, axis.categories);
+
+        // Calculate categories and the hierarchy for the grid.
+        treeGrid = getTreeGridFromData(data, uniqueNames);
+
+        // Assign values to the axis.
+        axis.categories = treeGrid.categories;
+        axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
         axis.hasNames = true;
     }
-};
-
-GridAxis.prototype.nameToY = function (point) {
-    var axis = this,
-        name = point.name;
-    if (!axis.categories) {
-        axis.updateYNames();
-    }
-    return inArray(name, axis.categories);
 };
