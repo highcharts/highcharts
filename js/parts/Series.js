@@ -1759,7 +1759,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * and `===`.
          *
          * @type {String}
-         * @validvalue [">", "<", ">=", "<=", "==", "===""]
+         * @validvalue [">", "<", ">=", "<=", "==", "==="]
          * @apioption plotOptions.series.dataLabels.filter.operator
          */
 

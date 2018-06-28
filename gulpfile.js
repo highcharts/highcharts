@@ -1138,6 +1138,48 @@ const jsdoc = () => {
         .then(() => generateAPIDocs(optionsAPI));
 };
 
+const jsdocOptions = () => {
+
+    return generateAPIDocs({
+        version: getBuildProperties().version,
+        treeFile: './tree.json',
+        output: './build/api',
+        onlyBuildCurrent: true
+    });
+};
+
+/**
+ * Create additional JSON-based class references from JSDOC
+ */
+const jsdocNamespace = () => {
+
+    const jsdoc3 = require('gulp-jsdoc3');
+
+    const gulpOptions = [[
+            './code/highcharts.src.js'
+        ], {
+            read: false
+        }],
+        jsdoc3Options = {
+            plugins: [
+                './tools/jsdoc/plugins/highcharts.namespace'
+            ]
+        };
+
+    const aGulp = (resolve, reject) => {
+        gulp.src(...gulpOptions).pipe(jsdoc3(jsdoc3Options,
+            (error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve('done');
+                }
+            }
+        ));
+    };
+    return new Promise(aGulp);
+};
+
 gulp.task('start-api-server', startServer);
 gulp.task('upload-api', uploadAPIDocs);
 gulp.task('create-productjs', createProductJS);
@@ -1148,6 +1190,9 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
 gulp.task('jsdoc', jsdoc);
 gulp.task('styles', styles);
+gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
+gulp.task('jsdoc-options', jsdocOptions);
+// gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], require('highcharts-typescript-generator').task);
 
 /**
  * Gulp task to run the building process of distribution files. By default it
