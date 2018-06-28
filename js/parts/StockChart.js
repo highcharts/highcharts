@@ -530,7 +530,18 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         offset = 0,
         // Use last available event (#5287)
         e = event.e || (this.cross && this.cross.e),
-        point = event.point;
+        point = event.point,
+        lin2log = this.lin2log,
+        min,
+        max;
+
+    if (this.isLog) {
+        min = lin2log(this.min);
+        max = lin2log(this.max);
+    } else {
+        min = this.min;
+        max = this.max;
+    }
 
     align = (horiz ? 'center' : opposite ?
         (this.labelAlign === 'right' ? 'right' : 'left') :
@@ -603,7 +614,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         x: posx,
         y: posy,
         // Crosshair should be rendered within Axis range (#7219)
-        visibility: value < this.min || value > this.max ? 'hidden' : 'visible'
+        visibility: value < min || value > max ? 'hidden' : 'visible'
     });
 
     crossBox = crossLabel.getBBox();
