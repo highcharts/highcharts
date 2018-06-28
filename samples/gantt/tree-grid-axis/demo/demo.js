@@ -1,3 +1,6 @@
+var today = +(new Date().setHours(0, 0, 0, 0)),
+    msDay = 24 * 60 * 60 * 1000;
+
 // THE CHART
 Highcharts.chart('container', {
     chart: {
@@ -21,19 +24,46 @@ Highcharts.chart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            id: '1',
+            id: 'a1',
             name: 'Node 1',
-            x: Date.UTC(2014, 10, 18)
+            x: today
         }, {
-            id: '2',
-            parent: '1',
-            name: 'Node 2',
-            x: Date.UTC(2014, 10, 20)
+            id: 'a2',
+            parent: 'a1',
+            name: 'Node 1.1',
+            x: today + 1 * msDay
         }, {
-            id: '3',
-            parent: '2',
-            name: 'Node 3',
-            x: Date.UTC(2014, 10, 26)
+            id: 'a3',
+            parent: 'a2',
+            name: 'Node 1.1.1',
+            x: today + 2 * msDay
+        }, {
+            id: 'a4',
+            parent: 'a2',
+            name: 'Node 1.1.1',
+            x: today + 3 * msDay
+        }]
+    }, {
+        name: 'Project 2',
+        data: [{
+            id: 'b1',
+            name: 'Node 1',
+            x: today + 4 * msDay
+        }, {
+            id: 'b2',
+            parent: 'b1',
+            name: 'Node 1.2',
+            x: today + 5 * msDay
+        }, {
+            id: 'b3',
+            parent: 'b1',
+            name: 'Node 1.1',
+            x: today + 6 * msDay
+        }, {
+            id: 'b4',
+            parent: 'b2',
+            name: 'Node 1.2.1',
+            x: today + 7 * msDay
         }]
     }]
 });

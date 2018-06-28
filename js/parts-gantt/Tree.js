@@ -10,8 +10,12 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var each = H.each,
     isNumber = H.isNumber,
+    extend = H.extend,
     map = H.map,
-    pick = H.pick;
+    pick = H.pick,
+    isFunction = function (x) {
+        return typeof x === 'function';
+    };
 
 var objectKeys = function (obj) {
     var result = [],
@@ -64,45 +68,66 @@ var getListOfParents = function (data, ids) {
     });
     return listOfParents;
 };
-var getNode = function (id, parent, level, data, mapOfIdToChildren) {
+var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
     var descendants = 0,
         height = 0,
+        after = options && options.after,
+        before = options && options.before,
+        node = {
+            data: data,
+            depth: level - 1,
+            id: id,
+            level: level,
+            parent: parent
+        },
         start,
         end,
-        children = map((mapOfIdToChildren[id] || []), function (child) {
-            var node = getNode(
-                    child.id,
-                    id,
-                    (level + 1),
-                    child,
-                    mapOfIdToChildren
-                ),
-                childStart = child.start,
-                childEnd = (
-                    child.milestone === true ?
-                    childStart :
-                    child.end
-                );
+        children;
 
-            // Start should be the lowest child.start.
-            start = (
-                (!isNumber(start) || childStart < start) ?
+    // Allow custom logic before the children has been created.
+    if (isFunction(before)) {
+        before(node, options);
+    }
+
+    /**
+     * Call getNode recursively on the children. Calulate the height of the
+     * node, and the number of descendants.
+     */
+    children = map((mapOfIdToChildren[id] || []), function (child) {
+        var node = getNode(
+                child.id,
+                id,
+                (level + 1),
+                child,
+                mapOfIdToChildren,
+                options
+            ),
+            childStart = child.start,
+            childEnd = (
+                child.milestone === true ?
                 childStart :
-                start
+                child.end
             );
 
-            // End should be the largest child.end.
-            // If child is milestone, then use start as end.
-            end = (
-                (!isNumber(end) || childEnd > end) ?
-                childEnd :
-                end
-            );
+        // Start should be the lowest child.start.
+        start = (
+            (!isNumber(start) || childStart < start) ?
+            childStart :
+            start
+        );
 
-            descendants = descendants + 1 + node.descendants;
-            height = Math.max(node.height + 1, height);
-            return node;
-        });
+        // End should be the largest child.end.
+        // If child is milestone, then use start as end.
+        end = (
+            (!isNumber(end) || childEnd > end) ?
+            childEnd :
+            end
+        );
+
+        descendants = descendants + 1 + node.descendants;
+        height = Math.max(node.height + 1, height);
+        return node;
+    });
 
     // Calculate start and end for point if it is not already explicitly set.
     if (data) {
@@ -110,23 +135,25 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren) {
         data.end = isNumber(data.end) ? data.end : end;
     }
 
-    return {
+    extend(node, {
         children: children,
-        data: data,
-        depth: level - 1,
         descendants: descendants,
-        height: height,
-        id: id,
-        level: level,
-        parent: parent
-    };
+        height: height
+    });
+
+    // Allow custom logic after the children has been created.
+    if (isFunction(after)) {
+        after(node, options);
+    }
+
+    return node;
 };
-var getTree = function (data) {
+var getTree = function (data, options) {
     var ids = map(data, function (d) {
             return d.id;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);
-    return getNode('', null, 1, null, mapOfIdToChildren);
+    return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 
 var Tree = {
