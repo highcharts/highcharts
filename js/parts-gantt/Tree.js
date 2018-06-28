@@ -9,6 +9,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var each = H.each,
+    isNumber = H.isNumber,
     map = H.map,
     pick = H.pick;
 
@@ -65,15 +66,52 @@ var getListOfParents = function (data, ids) {
 };
 var getNode = function (id, parent, level, data, mapOfIdToChildren) {
     var descendants = 0,
-        height = 0;
-    return {
-        children: map((mapOfIdToChildren[id] || []), function (child) {
-            var node =
-                getNode(child.id, id, (level + 1), child, mapOfIdToChildren);
+        height = 0,
+        start,
+        end,
+        children = map((mapOfIdToChildren[id] || []), function (child) {
+            var node = getNode(
+                    child.id,
+                    id,
+                    (level + 1),
+                    child,
+                    mapOfIdToChildren
+                ),
+                childStart = child.start,
+                childEnd = (
+                    child.milestone === true ?
+                    childStart :
+                    child.end
+                );
+
+            // Start should be the lowest child.start.
+            start = (
+                (!isNumber(start) || childStart < start) ?
+                childStart :
+                start
+            );
+
+            // End should be the largest child.end.
+            // If child is milestone, then use start as end.
+            end = (
+                (!isNumber(end) || childEnd > end) ?
+                childEnd :
+                end
+            );
+
             descendants = descendants + 1 + node.descendants;
             height = Math.max(node.height + 1, height);
             return node;
-        }),
+        });
+
+    // Calculate start and end for point if it is not already explicitly set.
+    if (data) {
+        data.start = isNumber(data.start) ? data.start : start;
+        data.end = isNumber(data.end) ? data.end : end;
+    }
+
+    return {
+        children: children,
         data: data,
         depth: level - 1,
         descendants: descendants,

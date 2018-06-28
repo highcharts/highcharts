@@ -399,3 +399,8 @@ GridAxis.prototype.nameToY = function (point) {
     }
     return inArray(name, axis.categories);
 };
+
+// Make utility functions available for testing.
+GridAxis.prototype.utils = {
+    getNode: Tree.getNode
+};

@@ -33,9 +33,7 @@ Highcharts.ganttChart('container', {
         name: 'Offices',
         data: [{
             taskName: 'New offices',
-            id: 'new_offices',
-            start: today - 2 * day,
-            end: today + 14 * day
+            id: 'new_offices'
         }, {
             taskName: 'Prepare office building',
             id: 'prepare_building',
@@ -63,9 +61,7 @@ Highcharts.ganttChart('container', {
             taskName: 'Relocate',
             id: 'relocate',
             dependency: 'passed_inspection',
-            parent: 'new_offices',
-            start: today + 10 * day,
-            end: today + 14 * day
+            parent: 'new_offices'
         }, {
             taskName: 'Relocate staff',
             id: 'relocate_staff',
@@ -89,9 +85,7 @@ Highcharts.ganttChart('container', {
         name: 'Product',
         data: [{
             taskName: 'New product launch',
-            id: 'new_product',
-            start: today - day,
-            end: today + 18 * day
+            id: 'new_product'
         }, {
             taskName: 'Development',
             id: 'development',
