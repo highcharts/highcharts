@@ -93,12 +93,14 @@ seriesType('gantt', 'xrange', {
             }
 
             if (!format) {
-                ttOptions.dateTimeLabelFormat = format = tooltip.getDateFormat(
-                    range,
-                    point.start,
-                    startOfWeek,
-                    formats
-                );
+                ttOptions.dateTimeLabelFormat = format = H.splat(
+                    tooltip.getDateFormat(
+                        range,
+                        point.start,
+                        startOfWeek,
+                        formats
+                    )
+                )[0];
             }
 
             start = dateFormat(format, point.start);
