@@ -17,6 +17,7 @@ var correctFloat = H.correctFloat,
 
 /**
  * The Tick class
+ * @ignore
  */
 H.Tick = function (axis, pos, type, noLabel) {
     this.axis = axis;

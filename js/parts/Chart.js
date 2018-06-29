@@ -183,9 +183,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @memberof Highcharts.Chart
              * @name options
-             * @type {Options}
+             * @type {Highcharts.Options}
+             * @instance
              */
             this.options = options;
+
             /**
              * All the axes in the chart.
              *
@@ -193,7 +195,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @name axes
              * @see  Highcharts.Chart.xAxis
              * @see  Highcharts.Chart.yAxis
-             * @type {Array<Axis>}
+             * @type {Array<Highcharts.Axis>}
+             * @instance
              */
             this.axes = [];
 
@@ -202,7 +205,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @memberof Highcharts.Chart
              * @name series
-             * @type {Array<Series>}
+             * @type {Array<Highcharts.Series>}
+             * @instance
              */
             this.series = [];
 
@@ -213,7 +217,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @memberof Highcharts.Chart
              * @name title
-             * @type Object
+             * @type {object}
+             * @instance
              *
              * @sample highcharts/members/title-update/
              *         Updating titles
@@ -226,7 +231,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @memberof Highcharts.Chart
              * @name subtitle
-             * @type Object
+             * @type {object}
+             * @instance
              */
 
             /**
@@ -237,7 +243,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @memberof Highcharts.Chart
              * @name time
-             * @type Highcharts.Time
+             * @type {Highcharts.Time}
+             * @instance
              */
             this.time =
                 userOptions.time && H.keys(userOptions.time).length ?
@@ -264,16 +271,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             /**
              * A collection of the X axes in the chart.
-             * @type {Array<Axis>}
-             * @name xAxis
+             *
              * @memberof Highcharts.Chart
+             * @name xAxis
+             * @type {Array<Highcharts.Axis>}
+             * @instance
              */
             chart.xAxis = [];
+
             /**
              * A collection of the Y axes in the chart.
-             * @type {Array<Axis>}
-             * @name yAxis
+             *
              * @memberof Highcharts.Chart
+             * @name yAxis
+             * @type {Array<Highcharts.Axis>}
+             * @instance
              */
             chart.yAxis = [];
 
@@ -822,9 +834,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         /**
          * The current pixel width of the chart.
          *
+         * @memberof Highcharts.Chart
          * @name chartWidth
-         * @memberof Chart
-         * @type {Number}
+         * @type {number}
+         * @instance
          */
         chart.chartWidth = Math.max( // #1393
             0,
@@ -833,9 +846,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         /**
          * The current pixel height of the chart.
          *
+         * @memberof Highcharts.Chart
          * @name chartHeight
-         * @memberof Chart
-         * @type {Number}
+         * @type {number}
+         * @instance
          */
         chart.chartHeight = Math.max(
             0,
@@ -1015,7 +1029,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * parameterin the {@link Highcharts#chart} constructor.
          *
          * @memberof Highcharts.Chart
-         * @type {HTMLDOMElement}
+         * @name container
+         * @type {Highcharts.HTMLDOMElement}
+         * @instance
          */
         container = createElement(
             'div',
@@ -1036,9 +1052,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         /**
          * The renderer instance of the chart. Each chart instance has only one
          * associated renderer.
-         * @type {SVGRenderer}
+         *
+         * @memberof Highcharts.Chart
          * @name renderer
-         * @memberof Chart
+         * @type {Highcharts.SVGRenderer}
+         * @instance
          */
         chart.renderer = new Ren(
             container,
@@ -1332,27 +1350,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         /**
          * The current left position of the plot area in pixels.
          *
+         * @memberof Highcharts.Chart
          * @name plotLeft
-         * @memberof Chart
-         * @type {Number}
+         * @type {number}
+         * @instance
          */
         chart.plotLeft = plotLeft = Math.round(chart.plotLeft);
 
         /**
          * The current top position of the plot area in pixels.
          *
+         * @memberof Highcharts.Chart
          * @name plotTop
-         * @memberof Chart
-         * @type {Number}
+         * @type {number}
+         * @instance
          */
         chart.plotTop = plotTop = Math.round(chart.plotTop);
 
         /**
          * The current width of the plot area in pixels.
          *
+         * @memberof Highcharts.Chart
          * @name plotWidth
-         * @memberof Chart
-         * @type {Number}
+         * @type {number}
+         * @instance
          */
         chart.plotWidth = plotWidth = Math.max(
             0,
@@ -1362,9 +1383,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         /**
          * The current height of the plot area in pixels.
          *
+         * @memberof Highcharts.Chart
          * @name plotHeight
-         * @memberof Chart
-         * @type {Number}
+         * @type {number}
+         * @instance
          */
         chart.plotHeight = plotHeight = Math.max(
             0,
@@ -1847,6 +1869,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @memberof Highcharts.Chart
              * @name credits
              * @type {Highcharts.SVGElement}
+             * @instance
              */
             this.credits = this.renderer.text(
                 credits.text + (this.mapCredits || ''),
@@ -2005,9 +2028,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             /**
              * The Pointer that keeps track of mouse and touch interaction.
              *
-             * @memberof Chart
+             * @memberof Highcharts.Chart
              * @name pointer
-             * @type Pointer
+             * @type {Highcharts.Pointer}
+             * @instance
              */
             chart.pointer = new Pointer(chart, options);
         }

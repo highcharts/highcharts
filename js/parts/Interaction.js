@@ -34,6 +34,8 @@ var addEvent = H.addEvent,
 
 /**
  * TrackerMixin for points and graphs.
+ *
+ * @ignore
  */
 TrackerMixin = H.TrackerMixin = {
 
