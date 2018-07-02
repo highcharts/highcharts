@@ -14,7 +14,6 @@ import '../modules/broken-axis.src.js';
 var argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
-    indentPx = 10,
     iconRadius = 5,
     iconSpacing = 5,
     each = H.each,
@@ -25,6 +24,7 @@ var argsToArray = function (args) {
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
+    isNumber = H.isNumber,
     isObject = function (x) {
         // Always use strict mode.
         return H.isObject(x, true);
@@ -463,13 +463,20 @@ override(GridAxis.prototype, {
      */
     getMaxLabelLength: function (proceed) {
         var axis = this,
+            options = axis.options,
+            labelOptions = options && options.labels,
+            indentation = (
+                labelOptions && isNumber(labelOptions.indentation) ?
+                options.labels.indentation :
+                0
+            ),
             retVal = proceed.apply(axis, argsToArray(arguments)),
             isTreeGrid = axis.options.type === 'treegrid',
             treeDepth;
 
         if (isTreeGrid) {
             treeDepth = axis.mapOfPosToGridNode[-1].height;
-            retVal += indentPx * (treeDepth - 1);
+            retVal += indentation * (treeDepth - 1);
         }
 
         return retVal;
@@ -535,6 +542,12 @@ override(GridAxisTick.prototype, {
             label = tick.label,
             mapOfPosToGridNode = axis.mapOfPosToGridNode,
             options = axis.options,
+            labelOptions = options && options.labels,
+            indentation = (
+                labelOptions && isNumber(labelOptions.indentation) ?
+                options.labels.indentation :
+                0
+            ),
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
             level = node && node.depth - 1,
             isTreeGrid = options.type === 'treegrid',
@@ -542,7 +555,7 @@ override(GridAxisTick.prototype, {
             shouldRender = inArray(pos, axis.tickPositions) > -1;
 
         if (isTreeGrid && node) {
-            xy.x += iconRadius + (iconSpacing * 2) + (level * indentPx);
+            xy.x += iconRadius + (iconSpacing * 2) + (level * indentation);
         }
 
         proceed.apply(tick, argsToArray(arguments));

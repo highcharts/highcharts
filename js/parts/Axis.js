@@ -679,6 +679,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
 
             /**
+             * The number of pixels to indent the labels per level in a treegrid
+             * axis.
+             *
+             * @product gantt
+             * @sample gantt/treegrid-axis/demo Indentation 10px by default.
+             * @sample gantt/treegrid-axis/indentation Indentation set to 0px.
+             * @since next
+             */
+            indentation: 10,
+
+            /**
              * How to handle overflowing labels on horizontal axis. Can be
              * undefined, `false` or `"justify"`. By default it aligns inside
              * the chart area. If "justify", labels will not render outside
