@@ -181,7 +181,7 @@ extend(defaultOptions, {
              * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
              * used by its method name, as shown in the demo.
              *
-             * @type {Array}
+             * @type {Array<string>}
              * @default ['navigator-handle', 'navigator-handle']
              * @product highstock
              * @sample {highstock} stock/navigator/styled-handles/

@@ -210,6 +210,7 @@ H.setOptions({
              * navigation behavior with/without screen readers enabled.
              *
              * @type      {String}
+             * @validvalue ["normal", "serialize"]
              * @default   normal
              * @since     6.0.4
              * @apioption accessibility.keyboardNavigation.mode

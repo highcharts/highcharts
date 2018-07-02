@@ -158,7 +158,7 @@ defaultOptions.drilldown = {
      *
      * </dl>
      *
-     * @type {Boolean|Object}
+     * @type {Boolean|AnimationOptions}
      * @since 3.0.8
      * @product highcharts highmaps
      */
@@ -236,6 +236,7 @@ defaultOptions.drilldown = {
 
             /**
              * Horizontal alignment.
+             * @validvalue ["left", "center", "right"]
              * @type {String}
              */
             align: 'right',

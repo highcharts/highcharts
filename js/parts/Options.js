@@ -368,7 +368,7 @@ H.defaultOptions = {
          *
          * </dl>
          *
-         * @type {Boolean|Object}
+         * @type {Boolean|AnimationOptions}
          * @sample {highcharts} highcharts/chart/animation-none/
          *         Updating with no animation
          * @sample {highcharts} highcharts/chart/animation-duration/
@@ -552,7 +552,7 @@ H.defaultOptions = {
          * subtitle and legend in addition to the `spacingTop`, `spacingRight`,
          * `spacingBottom` and `spacingLeft` options.
          *
-         * @type {Array}
+         * @type {Array<number>}
          * @sample {highcharts} highcharts/chart/margins-zero/
          *         Zero margins
          * @sample {highstock} stock/chart/margin-zero/
@@ -708,7 +708,6 @@ H.defaultOptions = {
         /**
          * Alias of `type`.
          *
-         * @validvalue ["line", "spline", "column", "area", "areaspline", "pie"]
          * @type {String}
          * @deprecated
          * @sample {highcharts} highcharts/chart/defaultseriestype/ Bar
@@ -1915,7 +1914,7 @@ H.defaultOptions = {
              * `chart.animation` option. Additional options can be given as an
              * object containing values for easing and duration.
              *
-             * @type {Boolean|Object}
+             * @type {Boolean|AnimationObject}
              * @sample {highcharts} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              * @sample {highstock} highcharts/legend/navigation/
