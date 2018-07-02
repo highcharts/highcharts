@@ -73,9 +73,9 @@ H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
 
                 staticScale: 50,
 
-                // Set default type tree-grid, but only if 'categories' is
+                // Set default type treegrid, but only if 'categories' is
                 // undefined
-                type: yAxisOptions.categories ? yAxisOptions.type : 'tree-grid'
+                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
             },
             yAxisOptions // user options
         );

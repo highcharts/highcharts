@@ -273,7 +273,7 @@ var onTickHoverExit = function (label) {
 };
 
 /**
- * Creates a tree structure of the data, and the tree-grid. Calculates
+ * Creates a tree structure of the data, and the treegrid. Calculates
  * categories, and y-values of points based on the tree.
  * @param {Array} data All the data points to display in the axis.
  * @param {boolean} uniqueNames Wether or not the data node with the same name
@@ -422,7 +422,7 @@ var getTreeGridFromData = function (data, uniqueNames) {
 override(GridAxis.prototype, {
     init: function (proceed, chart, userOptions) {
         var axis = this,
-            isTreeGrid = userOptions.type === 'tree-grid';
+            isTreeGrid = userOptions.type === 'treegrid';
         // Set default and forced options for TreeGrid
         if (isTreeGrid) {
             merge(true, userOptions, {
@@ -464,7 +464,7 @@ override(GridAxis.prototype, {
     getMaxLabelLength: function (proceed) {
         var axis = this,
             retVal = proceed.apply(axis, argsToArray(arguments)),
-            isTreeGrid = axis.options.type === 'tree-grid',
+            isTreeGrid = axis.options.type === 'treegrid',
             treeDepth;
 
         if (isTreeGrid) {
@@ -483,7 +483,7 @@ override(GridAxis.prototype, {
      */
     generateTick: function (proceed, pos) {
         var axis = this,
-            isTreeGrid = axis.options.type === 'tree-grid',
+            isTreeGrid = axis.options.type === 'treegrid',
             ticks = axis.ticks,
             gridNode;
 
@@ -510,7 +510,7 @@ override(GridAxis.prototype, {
     setTickInterval: function (proceed) {
         var axis = this,
             options = axis.options,
-            isTreeGrid = options.type === 'tree-grid';
+            isTreeGrid = options.type === 'treegrid';
 
         if (isTreeGrid) {
             axis.min = pick(axis.userMin, options.min, axis.dataMin);
@@ -537,7 +537,7 @@ override(GridAxisTick.prototype, {
             options = axis.options,
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
             level = node && node.depth - 1,
-            isTreeGrid = options.type === 'tree-grid',
+            isTreeGrid = options.type === 'treegrid',
             hasLabel = !!(label && label.element),
             shouldRender = inArray(pos, axis.tickPositions) > -1;
 
@@ -592,7 +592,7 @@ override(GridAxisTick.prototype, {
  * Collapse the grid cell.
  * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
  * explicit call to {@link Highcharts.Chart#redraw}
- * @sample {gantt} gantt/tree-grid-axis/collapsed/demo.js Dynamically collapse
+ * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically collapse
  */
 GridAxisTick.prototype.collapse = function (redraw) {
     var tick = this,
@@ -607,7 +607,7 @@ GridAxisTick.prototype.collapse = function (redraw) {
  * Expand the grid cell.
  * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
  * explicit call to {@link Highcharts.Chart#redraw}
- * @sample {gantt} gantt/tree-grid-axis/collapsed/demo.js Dynamically collapse
+ * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically collapse
  */
 GridAxisTick.prototype.expand = function (redraw) {
     var tick = this,
@@ -622,7 +622,7 @@ GridAxisTick.prototype.expand = function (redraw) {
  * Toggle the collapse/expand state of the grid cell.
  * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
  * explicit call to {@link Highcharts.Chart#redraw}
- * @sample {gantt} gantt/tree-grid-axis/collapsed/demo.js Dynamically collapse
+ * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically collapse
  */
 GridAxisTick.prototype.toggleCollapse = function (redraw) {
     var tick = this,
@@ -636,7 +636,7 @@ GridAxisTick.prototype.toggleCollapse = function (redraw) {
 GridAxis.prototype.updateYNames = function () {
     var axis = this,
         options = axis.options,
-        isTreeGrid = options.type === 'tree-grid',
+        isTreeGrid = options.type === 'treegrid',
         uniqueNames = options.uniqueNames,
         isYAxis = !axis.isXAxis,
         series = axis.series,
