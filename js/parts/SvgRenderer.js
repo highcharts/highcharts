@@ -84,7 +84,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily',
         'fontStyle', 'color', 'lineHeight', 'width', 'textAlign',
-        'textDecoration', 'textOverflow', 'textOutline'],
+        'textDecoration', 'textOverflow', 'textOutline', 'cursor'],
 
     /**
      * Initialize the SVG element. This function only exists to make the
