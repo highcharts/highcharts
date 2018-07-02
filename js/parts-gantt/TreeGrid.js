@@ -236,7 +236,7 @@ var renderLabelIcon = function (tick, params) {
             radius * 2,
             radius * 2
         ))
-        .add(tick.parentGroup);
+        .add(params.group);
     }
 
     // Update position and rotation
@@ -553,6 +553,7 @@ override(GridAxisTick.prototype, {
                 {
                     color: label.styles.color,
                     collapsed: isCollapsed(axis, node),
+                    group: label.parentGroup,
                     radius: iconRadius,
                     renderer: label.renderer,
                     show: shouldRender,
