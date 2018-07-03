@@ -391,7 +391,11 @@ Highcharts.Pointer.prototype = {
         hoverPoint = hoverData.hoverPoint;
         points = hoverData.hoverPoints;
         hoverSeries = hoverData.hoverSeries;
-        followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+        followPointer = (
+            e && e.type === 'touchmove' ?
+            pointer.followTouchMove === true :
+            hoverSeries && hoverSeries.tooltipOptions.followPointer
+        );
         useSharedTooltip = (
             shared &&
             hoverSeries &&

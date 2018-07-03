@@ -308,6 +308,7 @@ H.Tooltip.prototype = {
     getAnchor: function (points, mouseEvent) {
         var ret,
             chart = this.chart,
+            pointer = chart.pointer,
             inverted = chart.inverted,
             plotTop = chart.plotTop,
             plotLeft = chart.plotLeft,
@@ -318,21 +319,27 @@ H.Tooltip.prototype = {
 
         points = splat(points);
 
-        // Pie uses a special tooltipPos
-        ret = points[0].tooltipPos;
-
         // When tooltip follows mouse, relate the position to the mouse
-        if (this.followPointer && mouseEvent) {
+        if (
+            (this.followPointer && mouseEvent) ||
+            (
+                pointer.followTouchMove &&
+                mouseEvent &&
+                mouseEvent.type === 'touchmove'
+            )
+        ) {
             if (mouseEvent.chartX === undefined) {
-                mouseEvent = chart.pointer.normalize(mouseEvent);
+                mouseEvent = pointer.normalize(mouseEvent);
             }
             ret = [
                 mouseEvent.chartX - chart.plotLeft,
                 mouseEvent.chartY - plotTop
             ];
-        }
+        // Pie uses a special tooltipPos
+        } else if (points[0].tooltipPos) {
+            ret = points[0].tooltipPos;
         // When shared, use the average position
-        if (!ret) {
+        } else {
             each(points, function (point) {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
