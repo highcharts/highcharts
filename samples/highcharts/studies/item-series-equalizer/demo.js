@@ -5,7 +5,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts item chart'
+        text: 'Highcharts equalizer chart'
     },
 
     xAxis: {
@@ -14,29 +14,26 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
-        gridLineWidth: 0,
-        labels: {
-            enabled: false
-        },
-        title: {
-            text: null
-        }
+        allowDecimals: false
     },
 
     plotOptions: {
         series: {
-            stacking: 'normal'
+            stacking: 'normal',
+            marker: {
+                symbol: 'rect'
+            }
         }
     },
 
     series: [{
-        name: 'Items bought',
-        data: [5, 3, 4],
-        color: 'green'
-    }, {
         name: 'Items sold',
-        data: [0, 2, 1],
+        data: [0, 2, 1, 3, 4, 2, 3, 1, 2, 3, 1, 1],
         color: 'red'
+    }, {
+        name: 'Items bought',
+        data: [8, 7, 6, 9, 8, 5, 6, 4, 5, 7, 6, 8],
+        color: 'green'
     }]
 
 });
