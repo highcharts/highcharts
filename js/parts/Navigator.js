@@ -984,8 +984,8 @@ Navigator.prototype = {
             navigator.scrollbar.setRange(
                 // Use real value, not rounded because range can be very small
                 // (#1716)
-                navigator.zoomedMin / navigatorSize,
-                navigator.zoomedMax / navigatorSize
+                navigator.zoomedMin / (navigatorSize || 1),
+                navigator.zoomedMax / (navigatorSize || 1)
             );
         }
         navigator.rendered = true;
