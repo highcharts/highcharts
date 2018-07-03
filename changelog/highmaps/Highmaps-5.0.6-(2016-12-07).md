@@ -1,0 +1,3 @@
+- Most changes listed under Highcharts 5.0.6 above also apply to Highmaps 5.0.6.
+## Bug fixes 
+- Fixed #6049, ``colorAxis`` colors did not work in styled mode.

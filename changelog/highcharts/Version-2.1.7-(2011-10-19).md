@@ -1,0 +1,9 @@
+- Added ``useHTML`` option for most text related configuration objects.
+- Added ``softConnector`` option for pie data labels.
+- Added ``chart.selectionMarkerFill`` option.
+- Worked on memory leak issues.
+## Bug fixes 
+- Fixed issues with data label positioning for pies.
+- Fixed issue with tooltips covering point in certain cases.
+- Fixed issues with latest MooTools.
+- Fixed issues as listed at [GitHub](http://github.com/highslide-software/highcharts.com/commits/master)under dates since the last maintenance version.

@@ -1,0 +1,1 @@
+- Most changes listed under Highcharts 6.0.1 above also apply to Highstock 6.0.1.

@@ -1,0 +1,1 @@
+- Most changes listed under Highcharts 4.1.7 above also apply to Highmaps 1.1.7.

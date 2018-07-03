@@ -1,0 +1,4 @@
+## Bug fixes 
+- Fixed #3900, duplicated Y axis in exported charts. Made export module more testable so it would have caught this error.
+- Fixed #3898, zones incorrectly applied if outside axis range.
+- Fixed #3895, error in title setter when setting a non-string value.

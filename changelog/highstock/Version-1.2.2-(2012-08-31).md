@@ -1,0 +1,14 @@
+- Added demonstration of async data loading in Highstock
+- Added support for rotation of text when useHTML = true in modern browsers. [Issue #916](https://github.com/highslide-software/highcharts.com/issues/916).
+- Changed the default line width for area range charts to 1 to avoid the area disappearing altogether in ranges where the min and max are equal. [Issue #1213](https://github.com/highslide-software/highcharts.com/issues/1213).
+- Reorganized VMLRenderer to move groups (divs) out of the viewport instead of toggling CSS visibility. This provides a faster and more compact fix for #61 and #586.
+- Rendering performance improvement due to better caching of bounding box for texts, leading to less DOM traffic.
+- Worked on zoomType for stock charts, allowing the reset button to work more intuitively (#979)
+## Bug fixes 
+- Fixed issue with IE7 trying to load "ew-resize" when dragging the scrollbar in Highstock.
+- Fixed JS error in IE7. [Issue #1214](https://github.com/highslide-software/highcharts.com/issues/1214).
+- Fixed JS error on zooming in to an arearange series in IE9. Prevented arearange data labels from being orphaned when zooming in below cropThreshold. [Issue #1209](https://github.com/highslide-software/highcharts.com/issues/1209).
+- Fixed issue where flags on an X axis with an offset, height or top option defined, were not placed correctly on the axis.
+- Fixed issue with data labels appearing outside plot area on initial load
+- Fixed 1.2 regression regarding unstable sorting in Chrome. [Issue #337](https://github.com/highslide-software/highcharts.com/issues/337).
+- Fixed regression with stacking on a logarithmic axis. [Issue #1200](https://github.com/highslide-software/highcharts.com/issues/1200).

@@ -1,0 +1,3 @@
+## Bug fixes 
+- Fixed compatibility issue with jQuery 1.7.
+- Fixed issues as listed at [GitHub](http://github.com/highslide-software/highcharts.com/commits/master) under dates since the last maintenance version.

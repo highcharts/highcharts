@@ -1,0 +1,4 @@
+- Most changes listed under Highcharts 6.0.4 above also apply to Highmaps 6.0.4.
+## Bug fixes 
+- Fixed #7490, color axis marker remained when legend was disabled.
+- Fixed #6242, issue where disabling the legend caused stray colorAxis ticks.

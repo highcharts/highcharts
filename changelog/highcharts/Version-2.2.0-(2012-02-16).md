@@ -1,0 +1,6 @@
+- Better performance with thousands of points.
+- Improved useHTML feature on labels to skip SVG text generation and use true HTML bounding box.
+- Added configuration options to the Reset button.
+- Added support for logarithmic axes.
+- Numerous bug fixes.
+- Added partial support for Android 2.x. See [the compatibility page](/documentation/compatibility/#android2) for limitations.

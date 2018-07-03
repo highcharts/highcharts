@@ -1,0 +1,1 @@
+- Worked around a Closure Compiler error that made 3D charts fail.

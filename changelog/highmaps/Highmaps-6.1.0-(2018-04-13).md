@@ -1,0 +1,3 @@
+- Most changes listed under Highcharts 6.1.0 above also apply to Highmaps 6.1.0.
+## Bug fixes 
+- Fixed #5837, null color was set by attribute in styled mode.
