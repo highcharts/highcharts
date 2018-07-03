@@ -21,7 +21,8 @@ Highcharts.chart('container', {
         series: {
             stacking: 'normal',
             marker: {
-                symbol: 'rect'
+                symbol: 'rect',
+                radius: 5
             }
         }
     },

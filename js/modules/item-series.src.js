@@ -49,6 +49,10 @@ seriesType('item', 'column', {
                     pointMarkerOptions.symbol ||
                     seriesMarkerOptions.symbol
                 ),
+                radius = pick(
+                    pointMarkerOptions.radius,
+                    seriesMarkerOptions.radius
+                ),
                 size,
                 yTop,
                 isSquare = symbol !== 'rect';
@@ -85,7 +89,8 @@ seriesType('item', 'column', {
                         y: series.yAxis.toPixels(yPos, true) +
                             itemPaddingTranslated / 2,
                         width: isSquare ? size : point.pointWidth,
-                        height: size
+                        height: size,
+                        r: radius
                     };
 
                     if (graphics[itemY]) {
@@ -112,7 +117,7 @@ seriesType('item', 'column', {
     }
 });
 
-H.SVGRenderer.prototype.symbols.rect = function (x, y, w, h) {
-    return ['M', x, y, 'L', x + w, y, x + w, y + h, x, y + h, x, y];
+H.SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
+    return H.SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
 };
 
