@@ -36,7 +36,9 @@ seriesType('item', 'column', {
             renderer = series.chart.renderer,
             seriesMarkerOptions = this.options.marker,
             itemPaddingTranslated = this.yAxis.transA *
-                series.options.itemPadding;
+                series.options.itemPadding,
+            borderWidth = this.borderWidth,
+            crisp = borderWidth % 2 ? 0.5 : 1;
 
         each(this.points, function (point) {
             var yPos,
@@ -55,7 +57,9 @@ seriesType('item', 'column', {
                 ),
                 size,
                 yTop,
-                isSquare = symbol !== 'rect';
+                isSquare = symbol !== 'rect',
+                x,
+                y;
 
             point.graphics = graphics = point.graphics || {};
             pointAttr = point.pointAttr ?
@@ -80,16 +84,23 @@ seriesType('item', 'column', {
                 );
                 for (yPos = yTop; yPos > yTop - point.y; yPos--) {
 
+                    x = point.barX + (
+                        isSquare ?
+                            point.pointWidth / 2 - size / 2 :
+                            0
+                    );
+                    y = series.yAxis.toPixels(yPos, true) +
+                        itemPaddingTranslated / 2;
+
+                    if (series.options.crisp) {
+                        x = Math.round(x) - crisp;
+                        y = Math.round(y) + crisp;
+                    }
                     attr = {
-                        x: point.barX + (
-                            isSquare ?
-                                point.pointWidth / 2 - size / 2 :
-                                0
-                        ),
-                        y: series.yAxis.toPixels(yPos, true) +
-                            itemPaddingTranslated / 2,
-                        width: isSquare ? size : point.pointWidth,
-                        height: size,
+                        x: x,
+                        y: y,
+                        width: Math.round(isSquare ? size : point.pointWidth),
+                        height: Math.round(size),
                         r: radius
                     };
 
