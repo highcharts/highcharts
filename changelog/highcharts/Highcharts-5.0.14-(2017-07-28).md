@@ -1,0 +1,3 @@
+## Bug fixes 
+- Fixed #7014, a regression causing JS error when writing a new chart to a node that was originally detached.
+- Fixed JS error on inverted, bosted charts.

@@ -1,0 +1,1 @@
+- See the [release announcement](/component/content/article/2-news/54-highcharts-3-0-released).

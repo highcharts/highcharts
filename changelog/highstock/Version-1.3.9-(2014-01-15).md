@@ -1,0 +1,4 @@
+- Most issues listed under Highcharts 3.0.9 above also apply to Highstock 1.3.9.
+- Highstock: Fixed regression with missing tooltip on flag series. Closes #2573.
+## Bug fixes 
+- Fixed broken panning in Highstock 1.3.8. Closes #2590.

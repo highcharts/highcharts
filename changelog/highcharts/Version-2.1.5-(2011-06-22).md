@@ -1,0 +1,7 @@
+- Added shadows for pies.
+- Exported charts now respect user set min and max after zoom and visibility option.
+- Added option series.connectNulls to connect line graphs through null points.
+- Added support for exporting image symbols in charts.
+- Added data labels for stack totals and improved positioning of column and bar data labels.
+## Bug fixes 
+- Fixed issues as listed at [GitHub](http://github.com/highslide-software/highcharts.com/commits/master) under dates since the last maintenance version.

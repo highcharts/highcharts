@@ -1,0 +1,1 @@
+- Most changes listed under Highcharts 5.0.10 above also apply to Highmaps 5.0.10.

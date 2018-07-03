@@ -1,0 +1,2 @@
+- Jumped to version 4.2 to align versioning with Highcharts, which shares the same code and GitHub repo.
+- Most changes listed under Highcharts 4.2.0 above also apply to Highmaps 4.2.0.

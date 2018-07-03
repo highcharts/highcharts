@@ -1,0 +1,4 @@
+- Fixed two regressions.
+## Bug fixes 
+- Fixed #5887, a regression causing bubbles to move on hover.
+- Fixed regression in v5.0.1 where the halo would be mispositioned in inverted charts.

@@ -1,0 +1,5 @@
+- Added radial gauges.
+- Added polar projection for cartesian chart types.
+- Added range series types: area range, area spline range and column range.
+- Added radial gradients for pies.
+- Fixed bugs
