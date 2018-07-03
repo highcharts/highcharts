@@ -22,7 +22,6 @@ var addEvent = H.addEvent,
     pick = H.pick,
     removeEvent = H.removeEvent,
     svg = H.svg,
-    wrap = H.wrap,
     swapXY;
 
 /**
@@ -858,9 +857,8 @@ Scrollbar.prototype = {
 /**
 * Wrap axis initialization and create scrollbar if enabled:
 */
-wrap(Axis.prototype, 'init', function (proceed) {
+addEvent(Axis, 'afterInit', function () {
     var axis = this;
-    proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
     if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
         // Predefined options:
@@ -909,7 +907,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
 /**
 * Wrap rendering axis, and update scrollbar if one is created:
 */
-wrap(Axis.prototype, 'render', function (proceed) {
+addEvent(Axis, 'afterRender', function () {
     var axis = this,
         scrollMin = Math.min(
             pick(axis.options.min, axis.min),
@@ -926,8 +924,6 @@ wrap(Axis.prototype, 'render', function (proceed) {
         offsetsIndex,
         from,
         to;
-
-    proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
     if (scrollbar) {
 
@@ -990,29 +986,16 @@ wrap(Axis.prototype, 'render', function (proceed) {
 /**
 * Make space for a scrollbar
 */
-wrap(Axis.prototype, 'getOffset', function (proceed) {
+addEvent(Axis, 'afterGetOffset', function () {
     var axis = this,
         index = axis.horiz ? 2 : 1,
         scrollbar = axis.scrollbar;
-
-    proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
     if (scrollbar) {
         axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
         axis.chart.axisOffset[index] +=
             scrollbar.size + scrollbar.options.margin;
     }
-});
-
-/**
-* Destroy scrollbar when connected to the specific axis
-*/
-wrap(Axis.prototype, 'destroy', function (proceed) {
-    if (this.scrollbar) {
-        this.scrollbar = this.scrollbar.destroy();
-    }
-
-    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 H.Scrollbar = Scrollbar;

@@ -4470,6 +4470,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             0 :
             Math.floor(axis.axisLine.strokeWidth() / 2) * 2; // #4308, #4371
         clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
+
+        fireEvent(this, 'afterGetOffset');
     },
 
     /**
@@ -4905,10 +4907,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
         }
 
-        // Destroy local variables
+        // Destroy elements
         each(
             ['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
-                'gridGroup', 'labelGroup', 'cross'],
+                'gridGroup', 'labelGroup', 'cross', 'scrollbar'],
             function (prop) {
                 if (axis[prop]) {
                     axis[prop] = axis[prop].destroy();
