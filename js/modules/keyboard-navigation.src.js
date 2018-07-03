@@ -1121,10 +1121,12 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
             }],
             // Enter/Spacebar
             [[13, 32], function () {
-                fakeClickEvent(
-                    chart.legend.allItems[
+                var legendElement = chart.legend.allItems[
                         chart.highlightedLegendItemIx
-                    ].legendItem.element.parentNode
+                    ].legendItem.element;
+                fakeClickEvent(
+                     !chart.legend.options.useHTML ? // #8561
+                        legendElement.parentNode : legendElement
                 );
             }]
         ], {
