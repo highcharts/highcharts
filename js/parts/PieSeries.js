@@ -41,7 +41,7 @@ var addEvent = H.addEvent,
  *
  * @sample highcharts/demo/pie-basic/ Pie chart
  *
- * @extends {plotOptions.line}
+ * @extends plotOptions.line
  * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,
  *          cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
  *          lineWidth,marker,negativeColor,pointInterval,pointIntervalUnit,

@@ -82,7 +82,7 @@ var defaultParallelOptions = {
      *    offset: 0
      * }</pre>
      *
-     * @extends {yAxis}
+     * @extends yAxis
      * @excluding alternateGridColor,breaks,id,gridLineColor,gridLineDashStyle,
      *            gridLineWidth,minorGridLineColor,minorGridLineDashStyle,
      *            minorGridLineWidth,plotBands,plotLines,angle,

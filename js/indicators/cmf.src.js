@@ -15,7 +15,7 @@ H.seriesType('cmf', 'sma',
    * Chaikin Money Flow indicator (cmf).
    *
    * @type {Object}
-   * @extends {plotOptions.sma}
+   * @extends plotOptions.sma
    * @product highstock
    * @sample {highstock} stock/indicators/cmf/
    *                     Chaikin Money Flow indicator

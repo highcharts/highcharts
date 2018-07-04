@@ -34,7 +34,7 @@ var colorPointMixin = H.colorPointMixin,
  * color based on its value.
  *
  * @sample maps/demo/base/ Choropleth map
- * @extends {plotOptions.scatter}
+ * @extends plotOptions.scatter
  * @excluding marker
  * @product highmaps
  * @optionparent plotOptions.map

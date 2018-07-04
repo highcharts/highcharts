@@ -18,7 +18,7 @@ var defaultPlotOptions = H.defaultPlotOptions,
  *
  * @sample stock/demo/candlestick/ Candlestick chart
  *
- * @extends {plotOptions.ohlc}
+ * @extends plotOptions.ohlc
  * @excluding borderColor,borderRadius,borderWidth
  * @product highstock
  * @optionparent plotOptions.candlestick
@@ -63,7 +63,7 @@ var candlestickOptions = {
     },
 
     /**
-     * @extends {plotOptions.ohlc.tooltip}
+     * @extends plotOptions.ohlc.tooltip
      */
     tooltip: defaultPlotOptions.ohlc.tooltip,
 

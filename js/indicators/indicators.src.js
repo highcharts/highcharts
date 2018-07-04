@@ -21,7 +21,7 @@ seriesType('sma', 'line',
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @extends {plotOptions.line}
+     * @extends plotOptions.line
      * @product highstock
      * @sample {highstock} stock/indicators/sma Simple moving average indicator
      * @since 6.0.0
