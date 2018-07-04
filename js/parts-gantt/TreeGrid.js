@@ -609,50 +609,56 @@ override(GridAxisTick.prototype, {
     }
 });
 
-/**
- * Collapse the grid cell.
- * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
- * explicit call to {@link Highcharts.Chart#redraw}
- * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically collapse
- */
-GridAxisTick.prototype.collapse = function (redraw) {
-    var tick = this,
-        axis = tick.axis,
-        pos = tick.pos,
-        node = axis.mapOfPosToGridNode[pos],
-        breaks = collapse(axis, node);
-    axis.setBreaks(breaks, pick(redraw, true));
-};
-
-/**
- * Expand the grid cell.
- * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
- * explicit call to {@link Highcharts.Chart#redraw}
- * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically collapse
- */
-GridAxisTick.prototype.expand = function (redraw) {
-    var tick = this,
-        axis = tick.axis,
-        pos = tick.pos,
-        node = axis.mapOfPosToGridNode[pos],
-        breaks = expand(axis, node);
-    axis.setBreaks(breaks, pick(redraw, true));
-};
-
-/**
- * Toggle the collapse/expand state of the grid cell.
- * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
- * explicit call to {@link Highcharts.Chart#redraw}
- * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically collapse
- */
-GridAxisTick.prototype.toggleCollapse = function (redraw) {
-    var tick = this,
-        axis = tick.axis,
-        pos = tick.pos,
-        node = axis.mapOfPosToGridNode[pos],
-        breaks = toggleCollapse(axis, node);
-    axis.setBreaks(breaks, pick(redraw, true));
-};
+extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
+    /**
+     * Collapse the grid cell. Used when axis is of type treegrid.
+     * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
+     * an explicit call to {@link Highcharts.Chart#redraw}
+     * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically
+     * collapse
+     */
+    collapse: function (redraw) {
+        var tick = this,
+            axis = tick.axis,
+            pos = tick.pos,
+            node = axis.mapOfPosToGridNode[pos],
+            breaks = collapse(axis, node);
+        axis.setBreaks(breaks, pick(redraw, true));
+    },
+    /**
+     * Expand the grid cell. Used when axis is of type treegrid.
+     *
+     * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
+     * an explicit call to {@link Highcharts.Chart#redraw}
+     * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically
+     * collapse
+     */
+    expand: function (redraw) {
+        var tick = this,
+            axis = tick.axis,
+            pos = tick.pos,
+            node = axis.mapOfPosToGridNode[pos],
+            breaks = expand(axis, node);
+        axis.setBreaks(breaks, pick(redraw, true));
+    },
+    /**
+     * Toggle the collapse/expand state of the grid cell. Used when axis is of
+     * type treegrid.
+     *
+     * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
+     * an explicit call to {@link Highcharts.Chart#redraw}
+     * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically
+     * collapse
+     */
+    toggleCollapse: function (redraw) {
+        var tick = this,
+            axis = tick.axis,
+            pos = tick.pos,
+            node = axis.mapOfPosToGridNode[pos],
+            breaks = toggleCollapse(axis, node);
+        axis.setBreaks(breaks, pick(redraw, true));
+    }
+});
 
 GridAxis.prototype.updateYNames = function () {
     var axis = this,

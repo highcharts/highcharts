@@ -1982,10 +1982,25 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
 
-        // Major ticks
+        /**
+         * List of major ticks mapped by postition on axis.
+         *
+         * @name ticks
+         * @memberOf Axis
+         * @type {Object.<number, Highcharts.Tick>}
+         * @see  Highcharts.Tick
+         */
         axis.ticks = {};
         axis.labelEdge = [];
-        // Minor ticks
+        /**
+         * List of minor ticks mapped by position on the axis.
+         *
+         * @name minorTicks
+         * @memberOf Axis
+         * @type {Object.<number, Highcharts.Tick>}
+         *
+         * @see  Highcharts.Tick
+         */
         axis.minorTicks = {};
 
         // List of plotLines/Bands

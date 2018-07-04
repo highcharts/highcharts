@@ -17,7 +17,10 @@ var correctFloat = H.correctFloat,
     deg2rad = H.deg2rad;
 
 /**
- * The Tick class
+ * Create a new tick object. Called internally when instanciating new axes.
+ *
+ * @class Highcharts.Tick
+ * @memberOf Highcharts
  * @param {Axis} axis The axis which the tick is displayed on.
  * @param {number} pos The position of the tick on the axis.
  * @param {string} [type] The type of tick.
@@ -47,9 +50,13 @@ H.Tick = function (axis, pos, type, noLabel, parameters) {
     }
 };
 
+/** @lends Highcharts.Tick.prototype */
 H.Tick.prototype = {
     /**
      * Write the tick label
+     *
+     * @private
+     *
      */
     addLabel: function () {
         var tick = this,
@@ -132,6 +139,9 @@ H.Tick.prototype = {
 
     /**
      * Get the offset height or width of the label
+     *
+     * @private
+     *
      */
     getLabelSize: function () {
         return this.label ?
@@ -142,6 +152,9 @@ H.Tick.prototype = {
     /**
      * Handle the label overflow by adjusting the labels to the left and right
      * edge, or hide them if they collide into the neighbour label.
+     *
+     * @private
+     *
      */
     handleOverflow: function (xy) {
         var tick = this,
@@ -235,6 +248,9 @@ H.Tick.prototype = {
 
     /**
      * Get the x and y position for ticks and labels
+     *
+     * @private
+     *
      */
     getPosition: function (horiz, tickPos, tickmarkOffset, old) {
         var axis = this.axis,
@@ -287,6 +303,9 @@ H.Tick.prototype = {
 
     /**
      * Get the x, y position of the tick label
+     *
+     * @private
+     *
      */
     getLabelPosition: function (
         x,
@@ -359,6 +378,9 @@ H.Tick.prototype = {
 
     /**
      * Extendible method to return the path of the marker
+     *
+     * @private
+     *
      */
     getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
         return renderer.crispLine([
@@ -373,6 +395,9 @@ H.Tick.prototype = {
 
     /**
      * Renders the gridLine.
+     *
+     * @private
+     *
      * @param  {Boolean} old         Whether or not the tick is old
      * @param  {number} opacity      The opacity of the grid line
      * @param  {number} reverseCrisp Modifier for avoiding overlapping 1 or -1
@@ -438,6 +463,9 @@ H.Tick.prototype = {
 
     /**
      * Renders the tick mark.
+     *
+     * @private
+     *
      * @param  {Object} xy           The position vector of the mark
      * @param  {number} xy.x         The x position of the mark
      * @param  {number} xy.y         The y position of the mark
@@ -504,6 +532,9 @@ H.Tick.prototype = {
      * Renders the tick label.
      * Note: The label should already be created in init(), so it should only
      * have to be moved into place.
+     *
+     * @private
+     *
      * @param  {Object} xy      The position vector of the label
      * @param  {number} xy.x    The x position of the label
      * @param  {number} xy.y    The y position of the label
@@ -584,6 +615,8 @@ H.Tick.prototype = {
 
     /**
      * Put everything in place
+     *
+     * @private
      *
      * @param index {Number}
      * @param old {Boolean} Use old coordinates to prepare an animation into new
