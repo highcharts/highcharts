@@ -293,7 +293,7 @@ var addEvent = Highcharts.addEvent,
  */
 
 /**
- * A HTML table or the id of such to be parsed as input data. Related
+ * An HTML table or the id of such to be parsed as input data. Related
  * options are `startRow`, `endRow`, `startColumn` and `endColumn` to
  * delimit what part of the table is used.
  *

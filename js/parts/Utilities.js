@@ -758,7 +758,7 @@ H.pick = function () {
  *
  * @function #css
  * @memberof Highcharts
- * @param {HTMLDOMElement} el - A HTML DOM element.
+ * @param {HTMLDOMElement} el - An HTML DOM element.
  * @param {CSSObject} styles - Style object with camel case property names.
  *
  */
@@ -772,7 +772,7 @@ H.css = function (el, styles) {
 };
 
 /**
- * A HTML DOM element.
+ * An HTML DOM element.
  * @typedef {Object} HTMLDOMElement
  */
 
@@ -1420,7 +1420,7 @@ Math.easeInOutSine = function (pos) {
  *
  * @function #getStyle
  * @memberof Highcharts
- * @param {HTMLDOMElement} el - A HTML element.
+ * @param {HTMLDOMElement} el - An HTML element.
  * @param {String} prop - The property name.
  * @param {Boolean} [toInt=true] - Parse to integer.
  * @returns {Number} - The numeric value.
