@@ -210,8 +210,8 @@ var getRandomPosition = function getRandomPosition(size) {
 var getScale = function getScale(targetWidth, targetHeight, field) {
     var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
         width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
-        scaleX = 1 / width * targetWidth,
-        scaleY = 1 / height * targetHeight;
+        scaleX = width > 0 ? 1 / width * targetWidth : 1,
+        scaleY = height > 0 ? 1 / height * targetHeight : 1;
     return Math.min(scaleX, scaleY);
 };
 
