@@ -27,7 +27,7 @@ var each = H.each,
 
 /**
  * isRectanglesIntersecting - Detects if there is a collision between two
- *     rectangles.
+ *                            rectangles.
  *
  * @param  {object} r1 First rectangle.
  * @param  {object} r2 Second rectangle.
@@ -44,7 +44,7 @@ var isRectanglesIntersecting = function isRectanglesIntersecting(r1, r2) {
 
 /**
  * intersectsAnyWord - Detects if a word collides with any previously placed
- *     words.
+ *                     words.
  *
  * @param  {Point} point Point which the word is connected to.
  * @param  {Array} points Previously placed points to check against.
@@ -198,7 +198,7 @@ var getRandomPosition = function getRandomPosition(size) {
 
 /**
  * getScale - Calculates the proper scale to fit the cloud inside the plotting
- *     area.
+ *            area.
  *
  * @param  {number} targetWidth  Width of target area.
  * @param  {number} targetHeight Height of target area.
@@ -713,7 +713,7 @@ var wordCloudSeries = {
     /**
      * Strategies used for deciding rotation and initial position of a word.
      * To implement a custom strategy, have a look at the function
-     *     randomPlacement for example.
+     * randomPlacement for example.
      */
     placementStrategy: {
         random: function randomPlacement(point, options) {
@@ -737,9 +737,8 @@ var wordCloudSeries = {
     pointArrayMap: ['weight'],
     /**
      * Spirals used for placing a word after the initial position experienced a
-     *     collision with either another word or the borders.
-     * To implement a custom spiral, look at the function archimedeanSpiral for
-     *    example.
+     * collision with either another word or the borders. To implement a custom
+     * spiral, look at the function archimedeanSpiral for example.
      */
     spirals: {
         'archimedean': archimedeanSpiral,
