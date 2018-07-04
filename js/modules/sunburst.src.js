@@ -386,7 +386,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
  * represented by a circle. The center represents the root node of the tree.
  * The visualization bears a resemblance to both treemap and pie charts.
  *
- * @extends {plotOptions.pie}
+ * @extends plotOptions.pie
  * @sample highcharts/demo/sunburst Sunburst chart
  * @excluding allAreas, clip, colorAxis, compare, compareBase,
  *            dataGrouping, depth, endAngle, gapSize, gapUnit,

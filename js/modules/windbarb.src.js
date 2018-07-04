@@ -18,7 +18,7 @@ var each = H.each,
  * graphical form. Wind direction is given by the stem direction, and wind speed
  * by the number and shape of barbs.
  *
- * @extends {plotOptions.column}
+ * @extends plotOptions.column
  * @excluding boostThreshold,marker,connectEnds,connectNulls,cropThreshold,
  *            dashStyle,gapSize,gapUnit,dataGrouping,linecap,shadow,stacking,
  *            step

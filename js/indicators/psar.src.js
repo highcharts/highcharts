@@ -107,7 +107,7 @@ H.seriesType('psar', 'sma',
      * option to be set and should be loaded
      * after `stock/indicators/indicators.js` file.
      *
-     * @extends {plotOptions.sma}
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/psar
      *                     Parabolic SAR Indicator

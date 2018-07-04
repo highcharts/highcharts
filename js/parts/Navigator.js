@@ -337,7 +337,7 @@ extend(defaultOptions, {
             /**
              * Data grouping options for the navigator series.
              *
-             * @extends {plotOptions.series.dataGrouping}
+             * @extends plotOptions.series.dataGrouping
              */
             dataGrouping: {
                 approximation: 'average',
@@ -351,7 +351,7 @@ extend(defaultOptions, {
              * Data label options for the navigator series. Data labels are
              * disabled by default on the navigator series.
              *
-             * @extends {plotOptions.series.dataLabels}
+             * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
                 enabled: false,
@@ -402,7 +402,7 @@ extend(defaultOptions, {
          * }</pre>
          *
          * @type {Object}
-         * @extends {xAxis}
+         * @extends xAxis
          * @excluding linkedTo,maxZoom,minRange,opposite,range,scrollbar,
          *          showEmpty,maxRange
          * @product highstock
@@ -468,7 +468,7 @@ extend(defaultOptions, {
          * }</pre>
          *
          * @type {Object}
-         * @extends {yAxis}
+         * @extends yAxis
          * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
          *          scrollbar,top,units,maxRange,minLength,maxLength,resize
          * @product highstock

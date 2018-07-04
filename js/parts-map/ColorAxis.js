@@ -64,7 +64,7 @@ if (!H.ColorAxis) {
          * See [the Axis object](/class-reference/Highcharts.Axis) for
          * programmatic access to the axis.
          *
-         * @extends {xAxis}
+         * @extends xAxis
          * @excluding allowDecimals,alternateGridColor,breaks,categories,
          *            crosshair,dateTimeLabelFormats,lineWidth,linkedTo,maxZoom,
          *            minRange,minTickInterval,offset,opposite,plotBands,

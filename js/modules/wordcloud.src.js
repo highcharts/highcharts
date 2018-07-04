@@ -403,7 +403,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
  * A word cloud is a visualization of a set of words, where the size and
  * placement of a word is determined by how it is weighted.
  *
- * @extends {plotOptions.column}
+ * @extends plotOptions.column
  * @sample highcharts/demo/wordcloud Word Cloud chart
  * @excluding allAreas, boostThreshold, clip, colorAxis, compare, compareBase,
  *            crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor,

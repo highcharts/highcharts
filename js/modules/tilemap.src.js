@@ -459,7 +459,7 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
 /**
  * A tilemap series is a type of heatmap where the tile shapes are configurable.
  *
- * @extends {plotOptions.heatmap}
+ * @extends plotOptions.heatmap
  * @product highcharts highmaps
  * @sample highcharts/demo/honeycomb-usa/
  *         Honeycomb tilemap, USA
