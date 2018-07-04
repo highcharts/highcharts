@@ -293,7 +293,7 @@ if (!H.ColorAxis) {
                  * Animation for the marker as it moves between values. Set to
                  * `false` to disable animation. Defaults to `{ duration: 50 }`.
                  *
-                 * @type {Object|Boolean}
+                 * @type {AnimationOptions|Boolean}
                  * @product highcharts highmaps
                  */
                 animation: {

@@ -316,22 +316,25 @@ seriesType('sankey', 'column', {
         return columns;
     },
 
+
     /*= if (build.classic) { =*/
     /**
      * Return the presentational attributes.
      */
     pointAttribs: function (point, state) {
 
-        var opacity = this.options.linkOpacity;
+        var opacity = this.options.linkOpacity,
+            color = point.color;
 
         if (state) {
             opacity = this.options.states[state].linkOpacity || opacity;
+            color = this.options.states[state].color || point.color;
         }
 
         return {
             fill: point.isNode ?
-                point.color :
-                H.color(point.color).setOpacity(opacity).get()
+                color :
+                H.color(color).setOpacity(opacity).get()
         };
     },
     /*= } =*/

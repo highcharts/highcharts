@@ -84,7 +84,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily',
         'fontStyle', 'color', 'lineHeight', 'width', 'textAlign',
-        'textDecoration', 'textOverflow', 'textOutline'],
+        'textDecoration', 'textOverflow', 'textOutline', 'cursor'],
 
     /**
      * Initialize the SVG element. This function only exists to make the
@@ -2051,7 +2051,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 doc.getElementsByTagName('base').length
             ) ?
                 win.location.href
-                    .replace(/#.*?$/, '') // remove the hash
+                    .split('#')[0] // remove the hash
                     .replace(/<[^>]*>/g, '') // wing cut HTML
                     // escape parantheses and quotes
                     .replace(/([\('\)])/g, '\\$1')

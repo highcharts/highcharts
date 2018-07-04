@@ -657,7 +657,7 @@ defaultOptions.exporting = {
              * the `Highcharts.Renderer.symbols` collection. The default
              * `exportIcon` function is part of the exporting module.
              *
-             * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down", "menu"]
+             * @validvalue ["exportIcon", "circle", "square", "diamond", "triangle", "triangle-down", "menu"]
              * @type {String}
              * @sample highcharts/exporting/buttons-contextbutton-symbol/
              *         Use a circle for symbol

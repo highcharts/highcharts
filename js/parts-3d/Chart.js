@@ -262,11 +262,10 @@ var extendedOptions = {
              *
              * @validvalue [null, "auto"]
              * @type {String}
-             * @default null
              * @since 5.0.12
              * @product highcharts
              */
-            axisLabelPosition: 'default',
+            axisLabelPosition: null,
 
             /**
              * Provides the option to draw a frame around the charts by defining

@@ -3766,6 +3766,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *           the `min` option is not set, `minPadding` is 0 and
      *           `startOnTick` is false, this value will be the same
      *           as `dataMin`.
+     * @property {Number} userMax
+     *           The user defined maximum, either from the `max` option or from
+     *           a zoom or `setExtremes` action.
+     * @property {Number} userMin
+     *           The user defined minimum, either from the `min` option or from
+     *           a zoom or `setExtremes` action.
      */
     /**
      * Get the current extremes for the axis.
