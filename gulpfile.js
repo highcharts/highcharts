@@ -851,7 +851,7 @@ const createAllExamples = () => new Promise((resolve) => {
 });
 
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    const generate = require('highcharts-api-doc-gen');
+    const generate = require('highcharts-api-docs');
     const message = {
         'start': 'Started generating API documentation.',
         'noSeries': 'Missing series in tree.json. Run merge script.',
