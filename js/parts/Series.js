@@ -1726,8 +1726,8 @@ H.Series = H.seriesType('line', null, { // base series options
          * declarative filter is designed for use when callback functions are
          * not available, like when the chart options require a pure JSON
          * structure or for use with graphical editors. For programmatic
-         * control, use the `formatter` instead, and return `false` to disable
-         * a single data label.
+         * control, use the `formatter` instead, and return `undefined` to
+         * disable a single data label.
          *
          * @example
          * filter: {
