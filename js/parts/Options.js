@@ -1585,7 +1585,7 @@ H.defaultOptions = {
     labels: {
 
         /**
-         * A HTML label that can be positioned anywhere in the chart area.
+         * An HTML label that can be positioned anywhere in the chart area.
          *
          * @type {Array<Object>}
          * @apioption labels.items
@@ -2886,9 +2886,9 @@ H.defaultOptions = {
          *
          * @type {String}
          * @sample {highcharts} highcharts/tooltip/footerformat/
-         *         A HTML table in the tooltip
+         *         An HTML table in the tooltip
          * @sample {highstock} highcharts/tooltip/footerformat/
-         *         A HTML table in the tooltip
+         *         An HTML table in the tooltip
          * @sample {highmaps} maps/tooltip/format/ Format demo
          */
         headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
