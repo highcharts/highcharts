@@ -802,6 +802,26 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @apioption xAxis.labels.step
              */
 
+            /**
+             * The symbol for the collapse and expand icon in a treegrid.
+             *
+             * @product gantt
+             * @since next
+             */
+            symbol: {
+                /**
+                 * The symbol type. Points to a definition function in the
+                 * `Highcharts.Renderer.symbols` collection.
+                 *
+                 * @validvalue ['arc', 'circle', 'diamond', 'square', 'triangle', 'triangle-down']
+                 */
+                type: 'triangle',
+                x: -5,
+                y: -5,
+                height: 10,
+                width: 10,
+                padding: 5
+            },
 
             /**
              * The y position offset of the label relative to the tick position

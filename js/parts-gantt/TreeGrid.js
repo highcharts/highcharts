@@ -14,8 +14,6 @@ import '../modules/broken-axis.src.js';
 var argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
-    iconRadius = 5,
-    iconSpacing = 5,
     each = H.each,
     extend = H.extend,
     find = H.find,
@@ -207,41 +205,42 @@ var toggleCollapse = function (axis, node) {
 };
 var renderLabelIcon = function (tick, params) {
     var icon = tick.labelIcon,
+        isNew = !icon,
         renderer = params.renderer,
         labelBox = params.xy,
-        radius = params.radius,
-        iconPosition = {
-            x: labelBox.x - (radius * 2) - params.spacing,
-            y: labelBox.y - (radius * 2)
-        },
+        options = params.options,
+        width = options.width,
+        height = options.height,
         iconCenter = {
-            x: iconPosition.x + radius,
-            y: iconPosition.y + radius
+            x: labelBox.x - (width / 2) - options.padding,
+            y: labelBox.y - (height / 2)
         },
         animate = {},
         css = {
-            cursor: 'pointer'
+            cursor: 'pointer',
+            stroke: options.lineColor,
+            strokeWidth: options.lineWidth
         },
         attr = {
             'stroke-width': 1,
             'fill': pick(params.color, '#666')
         },
         rotation = params.collapsed ? 90 : 180,
-        shouldRender = params.show && H.isNumber(iconPosition.y);
+        shouldRender = params.show && H.isNumber(iconCenter.y);
 
-    if (!icon) {
-        tick.labelIcon = icon = renderer.path(renderer.symbols.triangle(
-            0 - radius,
-            0 - radius,
-            radius * 2,
-            radius * 2
+    if (isNew) {
+        tick.labelIcon = icon = renderer.path(renderer.symbols[options.type](
+            options.x,
+            options.y,
+            width,
+            height
         ))
         .add(params.group);
     }
 
     // Update position and rotation
     // Animate the change if the icon already exists
-    extend((icon ? animate : attr), {
+    extend((isNew ? attr : animate), {
         translateX: iconCenter.x,
         translateY: iconCenter.y,
         rotation: rotation
@@ -543,6 +542,11 @@ override(GridAxisTick.prototype, {
             mapOfPosToGridNode = axis.mapOfPosToGridNode,
             options = axis.options,
             labelOptions = options && options.labels,
+            symbolOptions = (
+                labelOptions && isObject(labelOptions.symbol) ?
+                labelOptions.symbol :
+                {}
+            ),
             indentation = (
                 labelOptions && isNumber(labelOptions.indentation) ?
                 options.labels.indentation :
@@ -555,7 +559,12 @@ override(GridAxisTick.prototype, {
             shouldRender = inArray(pos, axis.tickPositions) > -1;
 
         if (isTreeGrid && node) {
-            xy.x += iconRadius + (iconSpacing * 2) + (level * indentation);
+            xy.x += (
+                // Add space for symbols
+                ((symbolOptions.width) + (symbolOptions.padding * 2)) +
+                // Apply indentation
+                (level * indentation)
+            );
         }
 
         proceed.apply(tick, argsToArray(arguments));
@@ -567,10 +576,9 @@ override(GridAxisTick.prototype, {
                     color: label.styles.color,
                     collapsed: isCollapsed(axis, node),
                     group: label.parentGroup,
-                    radius: iconRadius,
+                    options: symbolOptions,
                     renderer: label.renderer,
                     show: shouldRender,
-                    spacing: iconSpacing,
                     xy: label.xy
                 }
             );
