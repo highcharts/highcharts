@@ -103,7 +103,7 @@ var archimedeanSpiral = function archimedeanSpiral(attempt, params) {
     var field = params.field,
         result = false,
         maxDelta = (field.width * field.width) + (field.height * field.height),
-        t = attempt * 0.2;
+        t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
     // Emergency brake. TODO make spiralling logic more foolproof.
     if (attempt <= 10000) {
         result = {
@@ -126,7 +126,8 @@ var archimedeanSpiral = function archimedeanSpiral(attempt, params) {
  * should be dropped from the visualization.
  */
 var squareSpiral = function squareSpiral(attempt) {
-    var k = Math.ceil((Math.sqrt(attempt) - 1) / 2),
+    var a = attempt * 4,
+        k = Math.ceil((Math.sqrt(a) - 1) / 2),
         t = 2 * k + 1,
         m = Math.pow(t, 2),
         isBoolean = function (x) {
@@ -135,31 +136,31 @@ var squareSpiral = function squareSpiral(attempt) {
         result = false;
     t -= 1;
     if (attempt <= 10000) {
-        if (isBoolean(result) && attempt >= m - t) {
+        if (isBoolean(result) && a >= m - t) {
             result = {
-                x: k - (m - attempt),
+                x: k - (m - a),
                 y: -k
             };
         }
         m -= t;
-        if (isBoolean(result) && attempt >= m - t) {
+        if (isBoolean(result) && a >= m - t) {
             result = {
                 x: -k,
-                y: -k + (m - attempt)
+                y: -k + (m - a)
             };
         }
 
         m -= t;
         if (isBoolean(result)) {
-            if (attempt >= m - t) {
+            if (a >= m - t) {
                 result = {
-                    x: -k + (m - attempt),
+                    x: -k + (m - a),
                     y: k
                 };
             } else {
                 result = {
                     x: k,
-                    y: k - (m - attempt - t)
+                    y: k - (m - a - t)
                 };
             }
         }
@@ -339,7 +340,6 @@ var intersectionTesting = function intersectionTesting(point, options) {
         polygon = options.polygon,
         spiral = options.spiral,
         attempt = 1,
-        interval = 4,
         delta = {
             x: 0,
             y: 0
@@ -362,7 +362,7 @@ var intersectionTesting = function intersectionTesting(point, options) {
             outsidePlayingField(rect, field)
         ) && delta !== false
     ) {
-        delta = spiral(interval * attempt, {
+        delta = spiral(attempt, {
             field: field
         });
         if (isObject(delta)) {
