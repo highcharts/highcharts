@@ -183,7 +183,8 @@ var rectangularSpiral = function rectangularSpiral(attempt, params) {
     var result = squareSpiral(attempt, params),
         field = params.field;
     if (result) {
-        result.x *= field.ratio;
+        result.x *= field.ratioX;
+        result.y *= field.ratioY;
     }
     return result;
 };
@@ -233,8 +234,7 @@ var getPlayingField = function getPlayingField(
     targetHeight,
     data
 ) {
-    var ratio = targetWidth / targetHeight,
-        info = reduce(data, function (obj, point) {
+    var info = reduce(data, function (obj, point) {
             var dimensions = point.dimensions,
                 x = Math.max(dimensions.width, dimensions.height);
             // Find largest height.
@@ -258,11 +258,14 @@ var getPlayingField = function getPlayingField(
             info.maxWidth, // Have enough space for the broadest word
             // Adjust 15% to account for close packing of words
             Math.sqrt(info.area) * 0.85
-        );
+        ),
+        ratioX = targetWidth > targetHeight ? targetWidth / targetHeight : 1,
+        ratioY = targetHeight > targetWidth ? targetHeight / targetWidth : 1;
     return {
-        width: x * ratio,
-        height: x,
-        ratio: ratio
+        width: x * ratioX,
+        height: x * ratioY,
+        ratioX: ratioX,
+        ratioY: ratioY
     };
 };
 
