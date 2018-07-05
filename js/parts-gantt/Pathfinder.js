@@ -30,7 +30,7 @@ extend(H.defaultOptions, {
     pathfinder: {
         // enabled: true,
         // dashStyle: 'solid',
-        // color: point.color,
+        // lineColor: point.color,
         // algorithmMargin: null, // Autocomputed
         type: 'straight',
         marker: {
@@ -203,7 +203,7 @@ Connection.prototype = {
         // Add the SVG element of the pathfinder group if it doesn't exist
         if (!pathfinder.group) {
             pathfinder.group = chart.renderer.g()
-                .addClass('highcharts-pathfinder')
+                .addClass('highcharts-pathfinder-group')
                 .attr({ zIndex: -1 })
                 .add(chart.seriesGroup);
         }
@@ -333,8 +333,8 @@ Connection.prototype = {
                 .attr(box)
                 .attr({
                     fill: options.color || connection.fromPoint.color,
-                    stroke: options.stroke,
-                    'stroke-width': options['stroke-width']
+                    stroke: options.lineColor,
+                    'stroke-width': options.lineWidth
                 })
                 .add(pathfinder.group);
         } else {
@@ -421,7 +421,7 @@ Connection.prototype = {
                 fromPoint.options.pathfinder, connection.options
             ),
             attribs = {
-                stroke: options.color || fromPoint.color,
+                stroke: options.lineColor || fromPoint.color,
                 'stroke-width': options.lineWidth
             };
 
