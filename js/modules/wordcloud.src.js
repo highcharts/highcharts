@@ -233,13 +233,14 @@ var getPlayingField = function getPlayingField(
 ) {
     var ratio = targetWidth / targetHeight,
         info = reduce(data, function (obj, point) {
-            var dimensions = point.dimensions;
+            var dimensions = point.dimensions,
+                x = Math.max(dimensions.width, dimensions.height);
             // Find largest height.
             obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
             // Find largest width.
             obj.maxWidth = Math.max(obj.maxWidth, dimensions.width);
-            // Sum up the total area of all the words.
-            obj.area += dimensions.width * dimensions.height;
+            // Sum up the total maximum area of all the words.
+            obj.area += x * x;
             return obj;
         }, {
             maxHeight: 0,
@@ -249,9 +250,13 @@ var getPlayingField = function getPlayingField(
         /**
          * Use largest width, largest height, or root of total area to give size
          * to the playing field.
-         * Add extra 100 percentage to ensure enough space.
          */
-        x = 1.1 * Math.max(info.maxHeight, info.maxWidth, Math.sqrt(info.area));
+        x = Math.max(
+            info.maxHeight, // Have enough space for the tallest word
+            info.maxWidth, // Have enough space for the broadest word
+            // Adjust 15% to account for close packing of words
+            Math.sqrt(info.area) * 0.85
+        );
     return {
         width: x * ratio,
         height: x,
