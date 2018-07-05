@@ -196,8 +196,6 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
       if (shouldIgnore) {
         removeOption(node.highcharts.fullname);
-        return;
-
       } else if ((e.comment || '').indexOf('@apioption') < 0) {
         appendComment(e, [
           '@optionparent ' + node.highcharts.fullname
@@ -536,28 +534,22 @@ exports.defineTags = function (dictionary) {
         }
     });
 
+    function handleExclude (doclet, tagObj) {
+        var items = tagObj.text.split(',');
+
+        doclet.exclude = doclet.exclude || [];
+
+        items.forEach(function (entry) {
+            doclet.exclude.push(entry.trim());
+        });
+    }
+
     dictionary.defineTag('exclude', {
-        onTagged: function (doclet, tagObj) {
-            var items = tagObj.text.split(',');
-
-            doclet.exclude = doclet.exclude || [];
-
-            items.forEach(function (entry) {
-                doclet.exclude.push(entry.trim());
-            });
-        }
+        onTagged: handleExclude
     });
 
     dictionary.defineTag('excluding', {
-        onTagged: function (doclet, tagObj) {
-            var items = tagObj.text.split(',');
-
-            doclet.exclude = doclet.exclude || [];
-
-            items.forEach(function (entry) {
-                doclet.exclude.push(entry.trim());
-            });
-        }
+        onTagged: handleExclude
     });
 
     dictionary.defineTag('ignore-option', {
@@ -634,6 +626,15 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('productdesc', {
         onTagged: resolveProductTypes
+    });
+
+    dictionary.defineTag('typedesc', {
+        onTagged: function (doclet, tagObj) {
+            if (!doclet.type) {
+                doclet.type = {};
+            }
+            doclet.type.description = tagObj.value;
+        }
     });
 };
 
@@ -717,11 +718,12 @@ before functional code for JSDoc to see them.`.yellow
             var s = `
 
 Configuration options for the series are given in three levels:
-1. Options for all series in a chart are defined in the [plotOptions.series](plotOptions.series)
-object. 
-2. Options for all \`${type}\` series are defined in [plotOptions.${type}](plotOptions.${type}).
+1. Options for all series in a chart are defined in the
+   [plotOptions.series](plotOptions.series) object.
+2. Options for all \`${type}\` series are defined in
+   [plotOptions.${type}](plotOptions.${type}).
 3. Options for one single series are given in
-[the series instance array](series.${type}).
+   [the series instance array](series.${type}).
 
 <pre>
 Highcharts.chart('container', {
