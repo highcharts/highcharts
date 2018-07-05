@@ -347,14 +347,9 @@ Highcharts.Point.prototype = {
             point.onMouseOut();
         }
 
-        // Remove all events
+        // Remove all events and elements
         if (point.graphic || point.dataLabel || point.dataLabels) {
             removeEvent(point);
-            if (point.dataLabels) {
-                each(point.dataLabels, function (label) {
-                    label.destroy();
-                });
-            }
             point.destroyElements();
         }
 
@@ -365,8 +360,6 @@ Highcharts.Point.prototype = {
         for (prop in point) {
             point[prop] = null;
         }
-
-
     },
 
     /**
@@ -390,6 +383,23 @@ Highcharts.Point.prototype = {
             if (point[prop]) {
                 point[prop] = point[prop].destroy();
             }
+        }
+        // Handle point.dataLabels and point.connectors
+        if (point.dataLabels) {
+            each(point.dataLabels, function (label) {
+                if (label.element) {
+                    label.destroy();
+                }
+            });
+            delete point.dataLabels;
+        }
+        if (point.connectors) {
+            each(point.connectors, function (connector) {
+                if (connector.element) {
+                    connector.destroy();
+                }
+            });
+            delete point.connectors;
         }
     },
 

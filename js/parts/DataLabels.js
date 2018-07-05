@@ -22,7 +22,8 @@ var addEvent = H.addEvent,
     seriesTypes = H.seriesTypes,
     some = H.some,
     stableSort = H.stableSort,
-    isArray = H.isArray;
+    isArray = H.isArray,
+    splat = H.splat;
 
 
 /**
@@ -290,10 +291,12 @@ Series.prototype.drawDataLabels = function () {
             // Merge in series options for the point.
             // @note dataLabelAttribs (like pointAttribs) would eradicate
             // the need for dlOptions, and simplify the section below.
-            pointOptions = mergeArrays(
-                seriesDlOptions,
-                point.dlOptions || // dlOptions is used in treemaps
-                    (point.options && point.options.dataLabels)
+            pointOptions = splat(
+                mergeArrays(
+                    seriesDlOptions,
+                    point.dlOptions || // dlOptions is used in treemaps
+                        (point.options && point.options.dataLabels)
+                )
             );
 
             // Handle each individual data label for this point
@@ -308,8 +311,10 @@ Series.prototype.drawDataLabels = function () {
                     style,
                     rotation,
                     attr,
-                    dataLabel = point.dataLabels && point.dataLabels[i],
-                    connector = point.connectors && point.connectors[i],
+                    dataLabel = point.dataLabels ? point.dataLabels[i] :
+                        point.dataLabel,
+                    connector = point.connectors ? point.connectors[i] :
+                        point.connector,
                     isNew = !dataLabel;
 
                 if (labelEnabled) {
@@ -378,14 +383,28 @@ Series.prototype.drawDataLabels = function () {
 
                 // If the point is outside the plot area, destroy it. #678, #820
                 if (dataLabel && (!labelEnabled || !defined(labelText))) {
-                    dataLabel = dataLabel.destroy();
-                    delete point.dataLabels[i];
+                    point.dataLabel = point.dataLabel.destroy();
+                    if (point.dataLabels) {
+                        // Remove point.dataLabels if this was the last one
+                        if (point.dataLabels.length === 1) {
+                            delete point.dataLabels;
+                        } else {
+                            delete point.dataLabels[i];
+                        }
+                    }
                     if (!i) {
                         delete point.dataLabel;
                     }
                     if (connector) {
-                        connector = connector.destroy();
-                        delete point.connectors[i];
+                        point.connector = point.connector.destroy();
+                        if (point.connectors) {
+                            // Remove point.connectors if this was the last one
+                            if (point.connectors.length === 1) {
+                                delete point.connectors;
+                            } else {
+                                delete point.connectors[i];
+                            }
+                        }
                     }
 
                 // Individual labels are disabled if the are explicitly disabled
@@ -766,6 +785,12 @@ if (seriesTypes.pie) {
                     /*= } =*/
                 } else {
                     point.dataLabel = point.dataLabel.destroy();
+                    // Workaround to make pies destroy multiple datalabels
+                    // correctly. This logic needs rewriting to support multiple
+                    // datalabels fully.
+                    if (point.dataLabels && point.dataLabels.length === 1) {
+                        delete point.dataLabels;
+                    }
                 }
             }
         });
