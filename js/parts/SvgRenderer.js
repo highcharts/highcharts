@@ -3786,7 +3786,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         if (y) {
             attribs.y = Math.round(y);
         }
-        if (str || str === 0) {
+        if (defined(str)) {
             attribs.text = str;
         }
 

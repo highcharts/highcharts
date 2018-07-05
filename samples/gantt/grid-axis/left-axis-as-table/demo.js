@@ -41,7 +41,7 @@ Highcharts.chart('container', {
         grid: {
             enabled: true,
             borderColor: 'rgba(0,0,0,0.3)',
-            borderWidth: 2,
+            borderWidth: 1,
             columns: [{
                 title: {
                     text: 'Project'

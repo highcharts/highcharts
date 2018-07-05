@@ -263,10 +263,11 @@ Connection.prototype = {
             markerVector,
             radians,
             rotation,
-            marker,
+            box,
             width,
             height,
             pathVector;
+
 
         if (!options.enabled) {
             return;
@@ -299,7 +300,7 @@ Connection.prototype = {
         // (Note:
         //  Used to recalculate radians between markerVector and pathVector,
         //  but this should be the same as between pathVector and anchor.)
-        rotation = radians / deg2rad;
+        rotation = -radians / deg2rad;
 
         if (options.width && options.height) {
             width = options.width;
@@ -310,38 +311,36 @@ Connection.prototype = {
 
         // Add graphics object if it does not exist
         connection.graphics = connection.graphics || {};
+        box = {
+            x: markerVector.x - (width / 2),
+            y: markerVector.y - (height / 2),
+            width: width,
+            height: height,
+            rotation: rotation,
+            rotationOriginX: markerVector.x,
+            rotationOriginY: markerVector.y
+        };
 
-        // Remove old marker
-        if (connection.graphics[type]) {
-            connection.graphics[type].destroy();
+        if (!connection.graphics[type]) {
+
+            // Create new marker element
+            connection.graphics[type] = renderer.symbol(
+                    options.symbol
+                )
+                .addClass(
+                    'highcharts-point-connecting-path-' + type + '-marker'
+                )
+                .attr(box)
+                .attr({
+                    fill: options.color || connection.fromPoint.color,
+                    stroke: options.stroke,
+                    'stroke-width': options['stroke-width']
+                })
+                .add(pathfinder.group);
+        } else {
+            connection.graphics[type].animate(box);
         }
 
-        // Create new marker element
-        marker = renderer.symbol(
-                options.symbol,
-                markerVector.x - (width / 2),
-                markerVector.y - (height / 2),
-                width,
-                height
-            )
-            .addClass('highcharts-point-connecting-path-' + type + '-marker')
-            .attr({
-                fill: options.color || connection.fromPoint.color,
-                stroke: options.stroke,
-                'stroke-width': options['stroke-width']
-            })
-            .add(pathfinder.group);
-
-        // Rotate marker according to degrees
-        marker.attr(
-            'transform',
-            'rotate(' +
-            -rotation + ',' + markerVector.x + ',' + markerVector.y +
-            ')'
-        );
-
-        // Store reference to element
-        connection.graphics[type] = marker;
     },
 
     /**
@@ -438,9 +437,6 @@ Connection.prototype = {
                 Math.ceil((options.algorithmMargin || 8) / 2) - 1, 1
             ), 5);
         }
-        options.startMarker = merge(options.marker, options.startMarker);
-        options.endMarker = merge(options.marker, options.endMarker);
-
         // Get the path
         pathResult = connection.getPath(options);
         path = pathResult.path;
@@ -454,32 +450,20 @@ Connection.prototype = {
                 pathfinder.lineObstacles.concat(pathResult.obstacles);
         }
 
-        // Remove markers
-        if (connection.graphics) {
-            if (connection.graphics.start) {
-                connection.graphics.start.destroy();
-                delete connection.graphics.start;
-            }
-            if (connection.graphics.end) {
-                connection.graphics.end.destroy();
-                delete connection.graphics.end;
-            }
-        }
-
         // Add the calculated path to the pathfinder group
-        connection.renderPath(path, attribs, function () {
-            // On animation complete
-            // Override common marker options
-            options.startMarker = merge(options, options.startMarker);
-            options.endMarker = merge(options, options.endMarker);
-            delete options.startMarker.startMarker;
-            delete options.startMarker.endMarker;
-            delete options.endMarker.startMarker;
-            delete options.endMarker.endMarker;
-            // Render the markers
-            connection.addMarker('start', options.startMarker, path);
-            connection.addMarker('end', options.endMarker, path);
-        });
+        connection.renderPath(path, attribs);
+
+        // Render the markers
+        connection.addMarker(
+            'start',
+            merge(options.marker, options.startMarker),
+            path
+        );
+        connection.addMarker(
+            'end',
+            merge(options.marker, options.endMarker),
+            path
+        );
     },
 
     /**

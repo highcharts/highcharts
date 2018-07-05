@@ -9,8 +9,12 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var each = H.each,
+    extend = H.extend,
     map = H.map,
-    pick = H.pick;
+    pick = H.pick,
+    isFunction = function (x) {
+        return typeof x === 'function';
+    };
 
 var objectKeys = function (obj) {
     var result = [],
@@ -63,32 +67,62 @@ var getListOfParents = function (data, ids) {
     });
     return listOfParents;
 };
-var getNode = function (id, parent, level, data, mapOfIdToChildren) {
+var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
     var descendants = 0,
-        height = 0;
-    return {
-        children: map((mapOfIdToChildren[id] || []), function (child) {
-            var node =
-                getNode(child.id, id, (level + 1), child, mapOfIdToChildren);
-            descendants = descendants + 1 + node.descendants;
-            height = Math.max(node.height + 1, height);
-            return node;
-        }),
-        data: data,
-        depth: level - 1,
+        height = 0,
+        after = options && options.after,
+        before = options && options.before,
+        node = {
+            data: data,
+            depth: level - 1,
+            id: id,
+            level: level,
+            parent: parent
+        },
+        children;
+
+    // Allow custom logic before the children has been created.
+    if (isFunction(before)) {
+        before(node, options);
+    }
+
+    /**
+     * Call getNode recursively on the children. Calulate the height of the
+     * node, and the number of descendants.
+     */
+    children = map((mapOfIdToChildren[id] || []), function (child) {
+        var node = getNode(
+            child.id,
+            id,
+            (level + 1),
+            child,
+            mapOfIdToChildren,
+            options
+        );
+        descendants = descendants + 1 + node.descendants;
+        height = Math.max(node.height + 1, height);
+        return node;
+    });
+
+    extend(node, {
+        children: children,
         descendants: descendants,
-        height: height,
-        id: id,
-        level: level,
-        parent: parent
-    };
+        height: height
+    });
+
+    // Allow custom logic after the children has been created.
+    if (isFunction(after)) {
+        after(node, options);
+    }
+
+    return node;
 };
-var getTree = function (data) {
+var getTree = function (data, options) {
     var ids = map(data, function (d) {
             return d.id;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);
-    return getNode('', null, 1, null, mapOfIdToChildren);
+    return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 
 var Tree = {
