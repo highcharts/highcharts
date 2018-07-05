@@ -17,6 +17,7 @@ var each = H.each,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
+    map = H.map,
     find = H.find,
     reduce = H.reduce,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
@@ -302,6 +303,23 @@ var getRotation = function getRotation(orientations, index, from, to) {
 };
 
 /**
+ * Calculates the spiral positions and store them in scope for quick access.
+ *
+ * @param {function} fn The spiral function.
+ * @param {object} params Additional parameters for the spiral.
+ * @returns {function} Function with access to spiral positions.
+ */
+var getSpiral = function (fn, params) {
+    var length = 10000,
+        arr = map(new Array(length), function (_, i) {
+            return fn(i + 1, params);
+        });
+    return function (attempt) {
+        return attempt <= length ? arr[attempt - 1] : false;
+    };
+};
+
+/**
  * outsidePlayingField - Detects if a word is placed outside the playing field.
  *
  * @param  {Point} point Point which the word is connected to.
@@ -357,14 +375,13 @@ var intersectionTesting = function intersectionTesting(point, options) {
      *        the spiral radius is still smallish
      */
     while (
+        delta !== false &&
         (
             intersectsAnyWord(point, placed) ||
             outsidePlayingField(rect, field)
-        ) && delta !== false
+        )
     ) {
-        delta = spiral(attempt, {
-            field: field
-        });
+        delta = spiral(attempt);
         if (isObject(delta)) {
             // Update the DOMRect with new positions.
             rect.left = rectangle.left + delta.x;
@@ -561,7 +578,7 @@ var wordCloudSeries = {
             placementStrategy = series.placementStrategy[
                 options.placementStrategy
             ],
-            spiral = series.spirals[options.spiral],
+            spiral,
             rotation = options.rotation,
             scale,
             weights = series.points
@@ -603,7 +620,9 @@ var wordCloudSeries = {
 
         // Calculate the playing field.
         field = getPlayingField(xAxis.len, yAxis.len, data);
-
+        spiral = getSpiral(series.spirals[options.spiral], {
+            field: field
+        });
         // Draw all the points.
         each(data, function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
