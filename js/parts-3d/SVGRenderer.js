@@ -605,8 +605,8 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 
     attribs = merge(attribs);
 
-    attribs.alpha *= deg2rad;
-    attribs.beta *= deg2rad;
+    attribs.alpha = (attribs.alpha || 0) * deg2rad;
+    attribs.beta = (attribs.alpha || 0) * deg2rad;
 
     // Create the different sub sections of the shape
     wrapper.top = renderer.path();
@@ -805,8 +805,8 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
         start = shapeArgs.start, // start angle
         end = shapeArgs.end - 0.00001, // end angle
         r = shapeArgs.r, // radius
-        ir = shapeArgs.innerR, // inner radius
-        d = shapeArgs.depth, // depth
+        ir = shapeArgs.innerR || 0, // inner radius
+        d = shapeArgs.depth || 0, // depth
         alpha = shapeArgs.alpha, // alpha rotation of the chart
         beta = shapeArgs.beta; // beta rotation of the chart
 
@@ -830,6 +830,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     ]);
     top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
     top = top.concat(['Z']);
+
     // OUTSIDE
     var b = (beta > 0 ? Math.PI / 2 : 0),
         a = (alpha > 0 ? 0 : Math.PI / 2);
