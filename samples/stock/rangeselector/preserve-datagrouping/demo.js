@@ -44,12 +44,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data)
             name: 'AAPL',
             type: 'column',
             data: data,
-            marker: {
-                enabled: null, // auto
-                radius: 3,
-                lineWidth: 1,
-                lineColor: '#FFFFFF'
-            },
             tooltip: {
                 valueDecimals: 2
             }
