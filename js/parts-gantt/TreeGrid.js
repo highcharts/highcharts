@@ -553,10 +553,11 @@ override(GridAxisTick.prototype, {
                 0
             ),
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
-            level = node && node.depth - 1,
+            level = node && node.depth,
             isTreeGrid = options.type === 'treegrid',
             hasLabel = !!(label && label.element),
             shouldRender = inArray(pos, axis.tickPositions) > -1,
+            prefixClassName = 'highcharts-treegrid-node-',
             collapsed,
             addClassName,
             removeClassName;
@@ -566,8 +567,13 @@ override(GridAxisTick.prototype, {
                 // Add space for symbols
                 ((symbolOptions.width) + (symbolOptions.padding * 2)) +
                 // Apply indentation
-                (level * indentation)
+                ((level - 1) * indentation)
             );
+
+            // Add class name for hierarchical styling.
+            if (hasLabel) {
+                label.addClass(prefixClassName + 'level-' + level);
+            }
         }
 
         proceed.apply(tick, argsToArray(arguments));
@@ -589,9 +595,9 @@ override(GridAxisTick.prototype, {
             );
 
             // Add class name for the node.
-            addClassName = 'highcharts-treegrid-node-' +
+            addClassName = prefixClassName +
                 (collapsed ? 'collapsed' : 'expanded');
-            removeClassName = 'highcharts-treegrid-node-' +
+            removeClassName = prefixClassName +
                 (collapsed ? 'expanded' : 'collapsed');
 
             label.css({
