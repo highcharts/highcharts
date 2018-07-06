@@ -263,7 +263,7 @@ var onTickHover = function (label) {
     /*= } =*/
 };
 var onTickHoverExit = function (label) {
-    label.addClass('highcharts-treegrid-node-active');
+    label.removeClass('highcharts-treegrid-node-active');
     /*= if (build.classic) { =*/
     label.css({
         textDecoration: 'none'
@@ -556,7 +556,10 @@ override(GridAxisTick.prototype, {
             level = node && node.depth - 1,
             isTreeGrid = options.type === 'treegrid',
             hasLabel = !!(label && label.element),
-            shouldRender = inArray(pos, axis.tickPositions) > -1;
+            shouldRender = inArray(pos, axis.tickPositions) > -1,
+            collapsed,
+            addClassName,
+            removeClassName;
 
         if (isTreeGrid && node) {
             xy.x += (
@@ -570,11 +573,13 @@ override(GridAxisTick.prototype, {
         proceed.apply(tick, argsToArray(arguments));
 
         if (isTreeGrid && node && hasLabel && node.descendants > 0) {
+            collapsed = isCollapsed(axis, node);
+
             renderLabelIcon(
                 tick,
                 {
                     color: label.styles.color,
-                    collapsed: isCollapsed(axis, node),
+                    collapsed: collapsed,
                     group: label.parentGroup,
                     options: symbolOptions,
                     renderer: label.renderer,
@@ -582,9 +587,18 @@ override(GridAxisTick.prototype, {
                     xy: label.xy
                 }
             );
+
+            // Add class name for the node.
+            addClassName = 'highcharts-treegrid-node-' +
+                (collapsed ? 'collapsed' : 'expanded');
+            removeClassName = 'highcharts-treegrid-node-' +
+                (collapsed ? 'expanded' : 'collapsed');
+
             label.css({
                 cursor: 'pointer'
-            });
+            })
+            .addClass(addClassName)
+            .removeClass(removeClassName);
 
             // Add events to both label text and icon
             each([label, tick.labelIcon], function (object) {
