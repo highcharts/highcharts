@@ -724,7 +724,8 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         var ca,
             from = this.attribs,
             to,
-            anim;
+            anim,
+            randomProp = Math.random().toString(26).substring(2, 9);
 
         // Attribute-line properties connected to 3D. These shouldn't have been
         // in the attribs collection in the first place.
@@ -739,8 +740,10 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         if (anim.duration) {
             ca = suckOutCustom(params);
             // Params need to have a property in order for the step to run
-            // (#5765, #7437)
-            params.dummy = wrapper.dummy++;
+            // (#5765, #7097, #7437)
+            wrapper[randomProp] = 0;
+            params[randomProp] = 1;
+            wrapper[randomProp + 'Setter'] = H.noop;
 
             if (ca) {
                 to = ca;
@@ -750,7 +753,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
                             (pick(to[key], from[key]) - from[key]) * fx.pos;
                     }
 
-                    if (fx.prop === 'dummy') {
+                    if (fx.prop === randomProp) {
                         fx.elem.setPaths(merge(from, {
                             x: interpolate('x'),
                             y: interpolate('y'),
@@ -766,7 +769,6 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         }
         return proceed.call(this, params, animation, complete);
     });
-    wrapper.dummy = 0;
 
     // destroy all children
     wrapper.destroy = function () {
