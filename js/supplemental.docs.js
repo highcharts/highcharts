@@ -1396,6 +1396,20 @@
  * @apioption rangeSelector.buttons.offsetMin
  */
 
+
+/**
+ * When buttons apply dataGrouping on a series, by deafault zooming in/out will
+ * deselect buttons and unset dataGrouping. Enable this option to keep buttons
+ * selected when extremes change.
+ *
+ * @type {Boolean}
+ * @since 6.1.2
+ * @default false
+ * @sample {highstock} stock/rangeselector/preserve-datagrouping/ Different preserveDataGrouping settings
+ * @product highstock
+ * @apioption rangeSelector.buttons.preserveDataGrouping
+ */
+
 /**
  * A custom data grouping object for each button.
  *
