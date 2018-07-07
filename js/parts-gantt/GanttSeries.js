@@ -13,6 +13,18 @@ import 'TreeGrid.js';
 import 'Pathfinder.js';
 import '../modules/xrange.src.js';
 
+/**
+ * The ID of this point's parent point for Gantt charts. Aliases
+ * {@link series.line.data#connect}. Can also be an object, specifying further
+ * connecting options between the points.
+ *
+ * @type {string|object}
+ * @since 7.0.0
+ * @product gantt
+ * @apioption series.line.data.dependency
+ */
+
+
 var dateFormat = H.dateFormat,
     isObject = H.isObject,
     isNumber = H.isNumber,
