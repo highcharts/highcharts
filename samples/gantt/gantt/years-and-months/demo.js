@@ -33,19 +33,19 @@ Highcharts.ganttChart('container', {
             inside: false
         },
         data: [{
-            taskName: 'Start prototype',
+            name: 'Start prototype',
             start: Date.UTC(2014, 4, 18),
             end: Date.UTC(2014, 11, 25)
         }, {
-            taskName: 'Test prototype',
+            name: 'Test prototype',
             start: Date.UTC(2015, 0, 0),
             end: Date.UTC(2015, 3, 0)
         }, {
-            taskName: 'Develop',
+            name: 'Develop',
             start: Date.UTC(2015, 0, 0),
             end: Date.UTC(2015, 10, 25)
         }, {
-            taskName: 'Run acceptance tests',
+            name: 'Run acceptance tests',
             start: Date.UTC(2015, 9, 23),
             end: Date.UTC(2015, 10, 26)
         }]

@@ -21,49 +21,49 @@ Highcharts.ganttChart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            taskName: 'Planning',
+            name: 'Planning',
             id: 'planning',
             start: today.getTime(),
             end: today.getTime() + (20 * day)
         }, {
-            taskName: 'Requirements',
+            name: 'Requirements',
             id: 'requirements',
             parent: 'planning',
             start: today.getTime(),
             end: today.getTime() + (5 * day)
         }, {
-            taskName: 'Design',
+            name: 'Design',
             id: 'design',
             dependency: 'requirements',
             parent: 'planning',
             start: today.getTime() + (3 * day),
             end: today.getTime() + (20 * day)
         }, {
-            taskName: 'Layout',
+            name: 'Layout',
             id: 'layout',
             parent: 'design',
             start: today.getTime() + (3 * day),
             end: today.getTime() + (10 * day)
         }, {
-            taskName: 'Graphics',
+            name: 'Graphics',
             parent: 'design',
             dependency: 'layout',
             start: today.getTime() + (10 * day),
             end: today.getTime() + (20 * day)
         }, {
-            taskName: 'Develop',
+            name: 'Develop',
             id: 'develop',
             start: today.getTime() + (5 * day),
             end: today.getTime() + (30 * day)
         }, {
-            taskName: 'Create unit tests',
+            name: 'Create unit tests',
             id: 'unit_tests',
             dependency: 'requirements',
             parent: 'develop',
             start: today.getTime() + (5 * day),
             end: today.getTime() + (8 * day)
         }, {
-            taskName: 'Implement',
+            name: 'Implement',
             id: 'implement',
             dependency: 'unit_tests',
             parent: 'develop',
