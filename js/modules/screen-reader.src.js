@@ -222,7 +222,7 @@ H.setOptions({
                             )
                     ) +
                     (
-                        options.subtitle &&    options.subtitle.text ?
+                        options.subtitle && options.subtitle.text ?
                             '. ' + htmlencode(options.subtitle.text) :
                             ''
                     ) +
@@ -240,7 +240,7 @@ H.setOptions({
                     (
                         options.chart.typeDescription ||
                         chart.getTypeDescription()
-                    ) +    '</div>' +
+                    ) + '</div>' +
                     (axesDesc.xAxis ? (
                         '<div>' + axesDesc.xAxis + '</div>'
                     ) : '') +
@@ -398,7 +398,7 @@ H.Series.prototype.buildSeriesInfoString = function () {
             series: this
         },
         combination = chart.types.length === 1 ? '' : 'Combination',
-        summary =  chart.langFormat(
+        summary = chart.langFormat(
             'accessibility.series.summary.' + this.type + combination,
             summaryContext
         ) || chart.langFormat(
@@ -615,7 +615,7 @@ H.Chart.prototype.getAxesDescription = function () {
 
 
 // Set a11y attribs on exporting menu
-H.Chart.prototype.addAccessibleContextMenuAttribs =    function () {
+H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
     var exportList = this.exportDivElements;
     if (exportList) {
         // Set tabindex on the menu items to allow focusing by script
@@ -642,7 +642,7 @@ H.Chart.prototype.addAccessibleContextMenuAttribs =    function () {
 // tableId is the HTML id of the table to focus when clicking the table anchor
 // in the screen reader region.
 H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
-    var    chart = this,
+    var chart = this,
         hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
         tableShortcut = doc.createElement('h4'),
         tableShortcutAnchor = doc.createElement('a'),

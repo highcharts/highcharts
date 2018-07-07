@@ -24,7 +24,7 @@ seriesType('vwap', 'sma',
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @extends {plotOptions.sma}
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/vwap
      *                     Volume Weighted Average Price indicator

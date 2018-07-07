@@ -346,6 +346,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                 var key,
                     prop,
                     val,
+                    name,
                     point;
 
                 point = { series: mockSeries };
@@ -354,6 +355,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                     [options]
                 );
                 key = point.x;
+                name = series.data[pIdx] && series.data[pIdx].name;
 
                 if (xTaken) {
                     if (xTaken[key]) {
@@ -364,6 +366,12 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
                 j = 0;
 
+                // Pies, funnels, geo maps etc. use point name in X row
+                if (!series.xAxis || series.exportKey === 'name') {
+                    key = name;
+                }
+
+
                 if (!rows[key]) {
                     // Generate the row
                     rows[key] = [];
@@ -371,15 +379,8 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                     rows[key].xValues = [];
                 }
                 rows[key].x = point.x;
+                rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = point.x;
-
-                // Pies, funnels, geo maps etc. use point name in X row
-                if (!series.xAxis || series.exportKey === 'name') {
-                    rows[key].name = (
-                        series.data[pIdx] &&
-                        series.data[pIdx].name
-                    );
-                }
 
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
@@ -460,6 +461,8 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
         });
     }
     dataRows = dataRows.concat(rowArr);
+
+    Highcharts.fireEvent(this, 'exportData', { dataRows: dataRows });
 
     return dataRows;
 };

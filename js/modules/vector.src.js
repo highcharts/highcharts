@@ -16,7 +16,7 @@ var each = H.each,
  * A vector plot is a type of cartesian chart where each point has an X and Y
  * position, a length and a direction. Vectors are drawn as arrows.
  *
- * @extends {plotOptions.scatter}
+ * @extends plotOptions.scatter
  * @excluding boostThreshold,marker,connectEnds,connectNulls,cropThreshold,
  *            dashStyle,gapSize,gapUnit,dataGrouping,linecap,shadow,stacking,
  *            step
