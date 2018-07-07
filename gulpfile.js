@@ -919,6 +919,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/parts-3d',
         './js/parts-more',
         './js/parts-map',
+        './js/parts-gantt',
         './js/supplemental.docs.js'
     ];
     const configJSDoc = {
