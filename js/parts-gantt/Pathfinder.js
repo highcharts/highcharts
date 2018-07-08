@@ -258,7 +258,7 @@ extend(H.defaultOptions, {
  *
  * @since 7.0.0
  * @extends pathfinder
- * @apioption series.plotOptions.pathfinder
+ * @apioption plotOptions.series.pathfinder
  * @excluding enabled,algorithmMargin
  */
 
@@ -269,7 +269,7 @@ extend(H.defaultOptions, {
  *
  * @type {string|object}
  * @since 7.0.0
- * @extends series.plotOptions.pathfinder
+ * @extends plotOptions.series.pathfinder
  * @apioption series.line.data.connect
  */
 
@@ -1117,7 +1117,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
     getMarkerVector: function (radians, markerRadius, anchor) {
         var twoPI = Math.PI * 2.0,
             theta = radians,
-            bb =  getPointBB(this),
+            bb = getPointBB(this),
             rectWidth = bb.xMax - bb.xMin,
             rectHeight = bb.yMax - bb.yMin,
             rAtan = Math.atan2(rectHeight, rectWidth),
