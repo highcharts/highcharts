@@ -14,6 +14,7 @@ var animObject = H.animObject,
     color = H.color,
     each = H.each,
     extend = H.extend,
+    defined = H.defined,
     isNumber = H.isNumber,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
@@ -173,6 +174,18 @@ seriesType('column', 'line', {
      * @since     1.2.5
      * @product   highcharts highstock
      * @apioption plotOptions.column.pointWidth
+     */
+
+    /**
+     * A pixel value specifying a fixed width for the column or bar. Overrides
+     * pointWidth on the series.
+     *
+     * @type      {Number}
+     * @see       [series.pointWidth](#plotOptions.column.pointWidth)
+     * @default   undefined
+     * @since     7.0.0
+     * @product   highcharts highstock gantt
+     * @apioption series.column.data.pointWidth
      */
 
     /**
@@ -571,11 +584,11 @@ seriesType('column', 'line', {
                 yAxis.getThreshold(threshold),
             minPointLength = pick(options.minPointLength, 5),
             metrics = series.getColumnMetrics(),
-            pointWidth = metrics.width,
+            seriesPointWidth = metrics.width,
             // postprocessed for border width
             seriesBarW = series.barW =
-                Math.max(pointWidth, 1 + 2 * borderWidth),
-            pointXOffset = series.pointXOffset = metrics.offset;
+                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
+            seriesXOffset = series.pointXOffset = metrics.offset;
 
         if (chart.inverted) {
             translatedThreshold -= 0.5; // #3355
@@ -594,11 +607,12 @@ seriesType('column', 'line', {
         each(series.points, function (point) {
             var yBottom = pick(point.yBottom, translatedThreshold),
                 safeDistance = 999 + Math.abs(yBottom),
+                pointWidth = seriesPointWidth,
                 plotY = Math.min(
                     Math.max(-safeDistance, point.plotY),
                     yAxis.len + safeDistance
                 ), // Don't draw too far outside plot area (#1303, #2241, #4264)
-                barX = point.plotX + pointXOffset,
+                barX = point.plotX + seriesXOffset,
                 barW = seriesBarW,
                 barY = Math.min(plotY, yBottom),
                 up,
@@ -626,6 +640,13 @@ seriesType('column', 'line', {
                         yBottom - minPointLength :
                         // #1485, #4051
                         translatedThreshold - (up ? minPointLength : 0);
+            }
+
+            // Handle point.options.pointWidth
+            // TODO: Handle grouping/stacking as well. Calculate offset properly
+            if (defined(point.options.pointWidth)) {
+                pointWidth = barW = Math.ceil(point.options.pointWidth);
+                barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
 
             // Cache for access in polar

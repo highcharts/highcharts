@@ -31,6 +31,7 @@ Highcharts.ganttChart('container', {
             dependency: 'develop',
             start: Date.UTC(2014, 10, 25, 12),
             milestone: true,
+            pointWidth: 40,
             color: '#fa0'
         }, {
             name: 'Test prototype',

@@ -171,6 +171,8 @@ seriesType('xrange', 'column', {
             inverted = this.chart.inverted,
             borderWidth = pick(series.options.borderWidth, 1),
             crisper = borderWidth % 2 / 2,
+            yOffset = metrics.offset,
+            pointHeight = Math.round(metrics.width),
             dlLeft,
             dlRight,
             dlWidth;
@@ -187,11 +189,17 @@ seriesType('xrange', 'column', {
         plotX = Math.max(plotX, -10);
         plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
 
+        // Handle individual pointWidth
+        if (defined(point.options.pointWidth)) {
+            yOffset -= (Math.ceil(point.options.pointWidth) - pointHeight) / 2;
+            pointHeight = Math.ceil(point.options.pointWidth);
+        }
+
         point.shapeArgs = {
             x: Math.floor(Math.min(plotX, plotX2)) + crisper,
-            y: Math.floor(point.plotY + metrics.offset) + crisper,
+            y: Math.floor(point.plotY + yOffset) + crisper,
             width: Math.round(Math.abs(plotX2 - plotX)),
-            height: Math.round(metrics.width),
+            height: pointHeight,
             r: series.options.borderRadius
         };
 

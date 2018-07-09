@@ -126,30 +126,20 @@ seriesType('gantt', parentName, {
 }, {
     // props - series member overrides
 
+    // Handle milestones, as they have no x2
     translatePoint: function (point) {
         var series = this,
             shapeArgs,
-            sizeMod = 1,
-            size,
-            milestone = point.options.milestone,
-            sizeDifference;
-
+            size;
 
         parent.prototype.translatePoint.call(series, point);
 
-        if (milestone) {
+        if (point.options.milestone) {
             shapeArgs = point.shapeArgs;
-
-            if (isNumber(milestone.sizeModifier)) {
-                sizeMod = milestone.sizeModifier;
-            }
-
-            size = shapeArgs.height * sizeMod;
-            sizeDifference = size - shapeArgs.height;
-
+            size = shapeArgs.height;
             point.shapeArgs = {
                 x: shapeArgs.x - (size / 2),
-                y: shapeArgs.y - (sizeDifference / 2),
+                y: shapeArgs.y,
                 width: size,
                 height: size
             };
@@ -180,7 +170,6 @@ seriesType('gantt', parentName, {
 
         if (point.options.milestone) {
             if (isNumber(plotY) && point.y !== null) {
-
                 diamondShape = renderer.symbols.diamond(
                     shapeArgs.x,
                     shapeArgs.y,
