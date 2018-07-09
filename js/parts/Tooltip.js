@@ -10,6 +10,7 @@ var doc = H.doc,
     each = H.each,
     extend = H.extend,
     format = H.format,
+    isArray = H.isArray,
     isNumber = H.isNumber,
     map = H.map,
     merge = H.merge,
@@ -905,6 +906,9 @@ H.Tooltip.prototype = {
 
         if (n) {
             format = dateTimeLabelFormats[n];
+            if (isArray(format)) {
+                format = format[0];
+            }
         }
 
         return format;
