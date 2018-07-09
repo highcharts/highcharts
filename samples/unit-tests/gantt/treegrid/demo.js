@@ -15,7 +15,9 @@ QUnit.test('Indentation', function (assert) {
             }],
             yAxis: [{
                 title: '',
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 type: 'treegrid'
             }],
             series: [{
