@@ -1,6 +1,6 @@
 QUnit.test('Mock Point translations from x/y in the options to plotX/plotY', function (assert) {
     var H = Highcharts,
-        MockPoint = H.MockPoint,
+        MockPoint = H.Annotation.MockPoint,
         chart = H.chart('container', {
             xAxis: [{
                 min: 0,
@@ -53,8 +53,8 @@ QUnit.test('Mock Point translations from x/y in the options to plotX/plotY', fun
         x: 5,
         y: 5
     };
-    point = new MockPoint(chart, options);
-    point.translate();
+    point = new MockPoint(chart, null, options);
+    point.refresh();
 
     assert.strictEqual(
         Math.round(point.plotX),
@@ -74,8 +74,8 @@ QUnit.test('Mock Point translations from x/y in the options to plotX/plotY', fun
         x: 1,
         y: 0
     };
-    point = new MockPoint(chart, options);
-    point.translate();
+    point = new MockPoint(chart, null, options);
+    point.refresh();
 
     assert.strictEqual(
         Math.round(point.plotX),
@@ -94,8 +94,8 @@ QUnit.test('Mock Point translations from x/y in the options to plotX/plotY', fun
         x: 0,
         y: 200
     };
-    point = new MockPoint(chart, options);
-    point.translate();
+    point = new MockPoint(chart, null, options);
+    point.refresh();
 
     assert.strictEqual(
         Math.round(point.plotX),
@@ -104,7 +104,7 @@ QUnit.test('Mock Point translations from x/y in the options to plotX/plotY', fun
     );
 
 
-    var isInsidePane = Highcharts.MockPoint.prototype.isInsidePane;
+    var isInsidePane = MockPoint.prototype.isInsidePane;
     var points = chart.series[2].points;
 
     assert.notOk(

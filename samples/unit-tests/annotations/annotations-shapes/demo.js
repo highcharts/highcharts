@@ -49,7 +49,7 @@ QUnit.test('Drawing path based on points', function (assert) {
         xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0],
         data = chart.series[0].data,
-        shape = chart.annotations[0].shapes[0];
+        shape = chart.annotations[0].shapes[0].graphic;
 
     var actualPath = shape.d.split(' ');
     var expectedPath = [
@@ -159,13 +159,13 @@ QUnit.test('Drawing path with a marker', function (assert) {
 
     var shape = chart.annotations[0].shapes[0];
     assert.strictEqual(
-        shape.element.getAttribute('marker-end')
+        shape.graphic.element.getAttribute('marker-end')
             .replace(/"/g, ''), // Edge inserts double quotes
         'url(#' + shape.markerEnd.id + ')',
         'End marker id is correctly attached to the annotation\'s path'
     );
     assert.strictEqual(
-        shape.element.getAttribute('marker-start')
+        shape.graphic.element.getAttribute('marker-start')
             .replace(/"/g, ''), // Edge inserts double quotes,
         'url(#' + shape.markerStart.id + ')',
         'Start marker is correctly attached to the annotation\'s path'
