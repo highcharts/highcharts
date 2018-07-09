@@ -21,12 +21,10 @@ Highcharts.chart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            collapsed: true,
             id: '1',
             name: 'Node 1',
             x: Date.UTC(2014, 10, 18)
         }, {
-            collapsed: true,
             id: '2',
             parent: '1',
             name: 'Node 2',
@@ -38,4 +36,19 @@ Highcharts.chart('container', {
             x: Date.UTC(2014, 10, 26)
         }]
     }]
+}, function (chart) {
+    var treeGrid = chart.yAxis[0],
+        ticks = treeGrid.ticks,
+        // Nodes to collapse.
+        ticksToCollapse = ['Node 1', 'Node 2'];
+    Highcharts.objectEach(ticks, function (tick) {
+        var textStr = tick.label && tick.label.textStr,
+            doCollapse = (Highcharts.inArray(textStr, ticksToCollapse) > -1);
+        if (doCollapse) {
+            // Pass in false to avoid a redraw.
+            tick.collapse(false);
+        }
+    });
+    // Redraw the chart in the end.
+    chart.redraw(false);
 });

@@ -17,6 +17,7 @@ var argsToArray = function (args) {
     each = H.each,
     extend = H.extend,
     find = H.find,
+    fireEvent = H.fireEvent,
     merge = H.merge,
     inArray = H.inArray,
     isBoolean = function (x) {
@@ -285,6 +286,7 @@ var onTickHoverExit = function (label) {
  */
 var getTreeGridFromData = function (data, uniqueNames) {
     var categories = [],
+        collapsedNodes = [],
         mapOfIdToNode = {},
         mapOfPosToGridNode = {},
         posIterator = -1,
@@ -306,6 +308,9 @@ var getTreeGridFromData = function (data, uniqueNames) {
             });
             gridNode.descendants = descendants;
             gridNode.height = height;
+            if (gridNode.collapsed) {
+                collapsedNodes.push(gridNode);
+            }
         },
         // Before the children has been created.
         before: function (node) {
@@ -364,6 +369,12 @@ var getTreeGridFromData = function (data, uniqueNames) {
                 mapOfIdToNode[node.id] = node;
             }
 
+            // If one of the points are collapsed, then start the grid node in
+            // collapsed state.
+            if (data.collapsed === true) {
+                gridNode.collapsed = true;
+            }
+
             // Assign pos to data node
             node.pos = pos;
         }
@@ -414,6 +425,7 @@ var getTreeGridFromData = function (data, uniqueNames) {
         categories: categories,
         mapOfIdToNode: mapOfIdToNode,
         mapOfPosToGridNode: mapOfPosToGridNode,
+        collapsedNodes: collapsedNodes,
         tree: tree
     };
 };
@@ -421,6 +433,7 @@ var getTreeGridFromData = function (data, uniqueNames) {
 override(GridAxis.prototype, {
     init: function (proceed, chart, userOptions) {
         var axis = this,
+            removeFoundExtremesEvent,
             isTreeGrid = userOptions.type === 'treegrid';
         // Set default and forced options for TreeGrid
         if (isTreeGrid) {
@@ -444,6 +457,19 @@ override(GridAxis.prototype, {
                 // beforeRender is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
                 axis.updateYNames();
+
+                // Collapse all the nodes belonging to a point where collapsed
+                // equals true.
+                // Can be called from beforeRender, if getBreakFromNode removes
+                // its dependency on axis.max.
+                removeFoundExtremesEvent =
+                    H.addEvent(axis, 'foundExtremes', function () {
+                        each(axis.collapsedNodes, function (node) {
+                            var breaks = collapse(axis, node);
+                            axis.setBreaks(breaks, false);
+                        });
+                        removeFoundExtremesEvent();
+                    });
 
                 // We have to set the series data again to correct the y-values
                 // which was set too early.
@@ -521,6 +547,9 @@ override(GridAxis.prototype, {
         if (isTreeGrid) {
             axis.min = pick(axis.userMin, options.min, axis.dataMin);
             axis.max = pick(axis.userMax, options.max, axis.dataMax);
+
+            fireEvent(axis, 'foundExtremes');
+
             // setAxisTranslation modifies the min and max according to
             // axis breaks.
             axis.setAxisTranslation(true);
@@ -634,8 +663,8 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
      * Collapse the grid cell. Used when axis is of type treegrid.
      * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
      * an explicit call to {@link Highcharts.Chart#redraw}
-     * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically
-     * collapse
+     * @sample {gantt} gantt/treegrid-axis/collapsed-dynamically/demo.js
+     * Dynamically collapse
      */
     collapse: function (redraw) {
         var tick = this,
@@ -650,8 +679,8 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
      *
      * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
      * an explicit call to {@link Highcharts.Chart#redraw}
-     * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically
-     * collapse
+     * @sample {gantt} gantt/treegrid-axis/collapsed-dynamically/demo.js
+     * Dynamically collapse
      */
     expand: function (redraw) {
         var tick = this,
@@ -667,8 +696,8 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
      *
      * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
      * an explicit call to {@link Highcharts.Chart#redraw}
-     * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Dynamically
-     * collapse
+     * @sample {gantt} gantt/treegrid-axis/collapsed-dynamically/demo.js
+     * Dynamically collapse
      */
     toggleCollapse: function (redraw) {
         var tick = this,
@@ -702,6 +731,8 @@ GridAxis.prototype.updateYNames = function () {
         // Assign values to the axis.
         axis.categories = treeGrid.categories;
         axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
+        // Used on init to start a node as collapsed
+        axis.collapsedNodes = treeGrid.collapsedNodes;
         axis.hasNames = true;
     }
 };
