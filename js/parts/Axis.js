@@ -679,6 +679,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
 
             /**
+             * The number of pixels to indent the labels per level in a treegrid
+             * axis.
+             *
+             * @product gantt
+             * @sample gantt/treegrid-axis/demo Indentation 10px by default.
+             * @sample gantt/treegrid-axis/indentation Indentation set to 0px.
+             * @since next
+             */
+            indentation: 10,
+
+            /**
              * How to handle overflowing labels on horizontal axis. Can be
              * undefined, `false` or `"justify"`. By default it aligns inside
              * the chart area. If "justify", labels will not render outside
@@ -791,6 +802,26 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @apioption xAxis.labels.step
              */
 
+            /**
+             * The symbol for the collapse and expand icon in a treegrid.
+             *
+             * @product gantt
+             * @since next
+             */
+            symbol: {
+                /**
+                 * The symbol type. Points to a definition function in the
+                 * `Highcharts.Renderer.symbols` collection.
+                 *
+                 * @validvalue ['arc', 'circle', 'diamond', 'square', 'triangle', 'triangle-down']
+                 */
+                type: 'triangle',
+                x: -5,
+                y: -5,
+                height: 10,
+                width: 10,
+                padding: 5
+            },
 
             /**
              * The y position offset of the label relative to the tick position
@@ -1956,10 +1987,25 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
 
-        // Major ticks
+        /**
+         * List of major ticks mapped by postition on axis.
+         *
+         * @name ticks
+         * @memberOf Axis
+         * @type {Object.<number, Highcharts.Tick>}
+         * @see  Highcharts.Tick
+         */
         axis.ticks = {};
         axis.labelEdge = [];
-        // Minor ticks
+        /**
+         * List of minor ticks mapped by position on the axis.
+         *
+         * @name minorTicks
+         * @memberOf Axis
+         * @type {Object.<number, Highcharts.Tick>}
+         *
+         * @see  Highcharts.Tick
+         */
         axis.minorTicks = {};
 
         // List of plotLines/Bands
