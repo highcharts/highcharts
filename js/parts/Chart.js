@@ -504,8 +504,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     if (serie.updateTotals) {
                         serie.updateTotals();
                     }
-                    redrawLegend = true;
                 }
+                redrawLegend = true; // #2165
             }
             if (serie.isDirtyData) {
                 fireEvent(serie, 'updatedData');
@@ -513,7 +513,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         // handle added or removed series
-        if (redrawLegend && legend.options.enabled) {
+        if (redrawLegend && legend && legend.options.enabled) {
             // draw legend graphics
             legend.render();
 
