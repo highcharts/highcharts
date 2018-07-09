@@ -17,7 +17,6 @@ var correctFloat = H.correctFloat,
     deg2rad = H.deg2rad;
 
 /**
-<<<<<<< HEAD
  * Create a new tick object. Called internally when instanciating new axes.
  *
  * @class Highcharts.Tick
@@ -30,10 +29,6 @@ var correctFloat = H.correctFloat,
  * @param {object} [parameters] Optional parameters for the tick.
  * @param {object} [parameters.tickmarkOffset] Set tickmarkOffset for the tick.
  * @param {object} [parameters.category] Set category for the tick.
-=======
- * The Tick class
- * @ignore
->>>>>>> gantt
  */
 H.Tick = function (axis, pos, type, noLabel, parameters) {
     var params = parameters ? parameters : {};
