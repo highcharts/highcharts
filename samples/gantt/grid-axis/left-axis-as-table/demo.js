@@ -7,7 +7,9 @@ Highcharts.chart('container', {
     },
 
     xAxis: [{
-        grid: true,
+        grid: {
+            enabled: true
+        },
         title: {
             text: 'Day'
         },
@@ -20,7 +22,9 @@ Highcharts.chart('container', {
         min: Date.UTC(2017, 10, 17),
         max: Date.UTC(2017, 11, 16)
     }, {
-        grid: true,
+        grid: {
+            enabled: true
+        },
         title: {
             text: 'Week'
         },

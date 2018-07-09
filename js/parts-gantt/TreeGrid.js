@@ -439,7 +439,9 @@ override(GridAxis.prototype, {
         if (isTreeGrid) {
             merge(true, userOptions, {
                 // Default options
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 labels: {
                     align: 'left'
                 }

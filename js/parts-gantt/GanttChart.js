@@ -49,7 +49,9 @@ H.ganttChart = function (renderTo, options, callback) {
         return merge(
             defaultOptions.xAxis,
             { // defaults
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 tickInterval: defaultTickInterval,
                 labels: {
                     format: defaultLabelFormat
@@ -69,7 +71,9 @@ H.ganttChart = function (renderTo, options, callback) {
         return merge(
             defaultOptions.yAxis, // #3802
             { // defaults
-                grid: true,
+                grid: {
+                    enabled: true
+                },
 
                 staticScale: 50,
 

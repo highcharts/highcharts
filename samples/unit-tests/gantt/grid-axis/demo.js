@@ -7,14 +7,22 @@ QUnit.test('isOuterAxis()', function (assert) {
             type: 'bar'
         },
         xAxis: [{
-            grid: true
+            grid: {
+                enabled: true
+            }
         }, {
-            grid: true
+            grid: {
+                enabled: true
+            }
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true
         }],
         series: [{
@@ -91,18 +99,26 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
             type: 'line'
         },
         yAxis: [{
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis1'
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis2'
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true,
             linkedTo: 0,
             id: 'axis3'
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true,
             linkedTo: 1,
             id: 'axis4'
@@ -151,7 +167,9 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
             type: 'scatter'
         },
         yAxis: [{
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis1',
             tickInterval: 1000 * 60 * 60 * 24, // Day
             type: 'datetime',
@@ -164,7 +182,9 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
             min: Date.UTC(2014, 10, 18),
             max: Date.UTC(2014, 10, 21)
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis2',
             tickInterval: 1000 * 60 * 60 * 24, // Day
             type: 'datetime',
@@ -176,7 +196,9 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
             },
             linkedTo: 0
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis3',
             opposite: true,
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -189,7 +211,9 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
             },
             linkedTo: 0
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis4',
             opposite: true,
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -257,18 +281,26 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
             type: 'line'
         },
         xAxis: [{
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis1'
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis2'
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true,
             linkedTo: 0,
             id: 'axis3'
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true,
             linkedTo: 1,
             id: 'axis4'
@@ -317,7 +349,9 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
             type: 'scatter'
         },
         xAxis: [{
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis1',
             tickInterval: 1000 * 60 * 60 * 24, // Day
             type: 'datetime',
@@ -330,7 +364,9 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
             min: Date.UTC(2014, 10, 18),
             max: Date.UTC(2014, 10, 21)
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis2',
             tickInterval: 1000 * 60 * 60 * 24, // Day
             type: 'datetime',
@@ -342,7 +378,9 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
             },
             linkedTo: 0
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis3',
             opposite: true,
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -355,7 +393,9 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
             },
             linkedTo: 0
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             id: 'axis4',
             opposite: true,
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -426,16 +466,24 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         },
         xAxis: [{
             type: 'datetime',
-            grid: true
+            grid: {
+                enabled: true
+            }
         }, {
             type: 'datetime',
-            grid: true,
+            grid: {
+                enabled: true
+            },
             linkedTo: 0
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true,
             linkedTo: 2
         }],
@@ -541,16 +589,24 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
             type: 'scatter'
         },
         xAxis: [{
-            grid: true
+            grid: {
+                enabled: true
+            }
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             linkedTo: 0
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             type: 'datetime',
             opposite: true
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             type: 'datetime',
             opposite: true,
             linkedTo: 2
@@ -632,18 +688,26 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             type: 'scatter'
         },
         xAxis: [{
-            grid: true
+            grid: {
+                enabled: true
+            }
         }, {
             type: 'datetime',
             min: Date.UTC(2016, 10, 11),
             max: Date.UTC(2016, 10, 15),
             tickInterval: 1000 * 60 * 60 * 24, // Day
-            grid: true
+            grid: {
+                enabled: true
+            }
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             type: 'datetime',
             min: Date.UTC(2016, 10, 12),
             max: Date.UTC(2016, 10, 16),
@@ -779,18 +843,26 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
             type: 'scatter'
         },
         yAxis: [{
-            grid: true
+            grid: {
+                enabled: true
+            }
         }, {
             type: 'datetime',
             min: Date.UTC(2016, 10, 11),
             max: Date.UTC(2016, 10, 15),
             tickInterval: 1000 * 60 * 60 * 24, // Day
-            grid: true
+            grid: {
+                enabled: true
+            }
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             opposite: true
         }, {
-            grid: true,
+            grid: {
+                enabled: true
+            },
             type: 'datetime',
             min: Date.UTC(2016, 10, 12),
             max: Date.UTC(2016, 10, 16),
@@ -899,7 +971,9 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
                 marginRight: 150
             },
             xAxis: [{
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 type: 'datetime',
                 opposite: true,
                 tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -912,7 +986,9 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
                 min: Date.UTC(2016, 10, 21),
                 max: Date.UTC(2016, 10, 30)
             }, {
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 type: 'datetime',
                 opposite: true,
                 tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
@@ -949,7 +1025,9 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
 QUnit.test('Leftmost ticklabel appears', function (assert) {
     var chart = Highcharts.chart('container', {
             xAxis: [{
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 type: 'datetime',
                 opposite: true,
                 tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -962,7 +1040,9 @@ QUnit.test('Leftmost ticklabel appears', function (assert) {
                 min: Date.UTC(2016, 10, 23),
                 max: Date.UTC(2016, 10, 28)
             }, {
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 type: 'datetime',
                 opposite: true,
                 tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
@@ -1015,7 +1095,9 @@ QUnit.test('Reversed axis', function (assert) {
     var chart = Highcharts.chart('container', {
             xAxis: {
                 reversed: true,
-                grid: true
+                grid: {
+                    enabled: true
+                }
             },
             series: [{
                 data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],

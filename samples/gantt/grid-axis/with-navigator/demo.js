@@ -10,11 +10,15 @@ Highcharts.stockChart('container', {
 
     xAxis: [{
         id: 'bottom-datetime-axis',
-        grid: true,
+        grid: {
+            enabled: true
+        },
         opposite: true,
         type: 'datetime'
     }, {
-        grid: true,
+        grid: {
+            enabled: true
+        },
         type: 'datetime',
         opposite: true,
         labels: {

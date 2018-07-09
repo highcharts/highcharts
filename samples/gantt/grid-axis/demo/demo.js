@@ -11,7 +11,9 @@ Highcharts.chart('container', {
     },
     xAxis: [{
         id: 'bottom-datetime-axis',
-        grid: true,
+        grid: {
+            enabled: true
+        },
         type: 'datetime',
         tickInterval: 1000 * 60 * 60 * 24, // Day
         labels: {
@@ -21,15 +23,21 @@ Highcharts.chart('container', {
         max: Date.UTC(2014, 10, 30)
     }, {
         id: 'bottom-linear-axis',
-        grid: true
+        grid: {
+            enabled: true
+        }
     }, {
         id: 'bottom-categories-axis',
-        grid: true,
+        grid: {
+            enabled: true
+        },
         categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
         min: 0,
         max: 12
     }, {
-        grid: true,
+        grid: {
+            enabled: true
+        },
         type: 'datetime',
         opposite: true,
         tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -41,7 +49,9 @@ Highcharts.chart('container', {
         },
         linkedTo: 0
     }, {
-        grid: true,
+        grid: {
+            enabled: true
+        },
         type: 'datetime',
         opposite: true,
         tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
@@ -58,10 +68,14 @@ Highcharts.chart('container', {
         categories: ['Prototyping', 'Development', 'Testing'],
         reversed: true,
         opposite: true,
-        grid: true
+        grid: {
+            enabled: true
+        }
     }, {
         title: '',
-        grid: true,
+        grid: {
+            enabled: true
+        },
         reversed: true,
         tickInterval: 1000 * 60 * 60 * 24, // Day
         type: 'datetime',
@@ -74,7 +88,9 @@ Highcharts.chart('container', {
         min: Date.UTC(2014, 10, 19),
         max: Date.UTC(2014, 10, 22)
     }, {
-        grid: true,
+        grid: {
+            enabled: true
+        },
         reversed: true,
         tickInterval: 1000 * 60 * 60 * 24, // Day
         type: 'datetime',
