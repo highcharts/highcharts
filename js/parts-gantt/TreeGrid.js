@@ -31,7 +31,7 @@ var argsToArray = function (args) {
     isString = H.isString,
     keys = H.keys,
     pick = H.pick,
-    reduce = Tree.reduce,
+    reduce = H.reduce,
     wrap = H.wrap,
     GridAxis = H.Axis,
     GridAxisTick = H.Tick;
@@ -737,4 +737,9 @@ GridAxis.prototype.updateYNames = function () {
         axis.collapsedNodes = treeGrid.collapsedNodes;
         axis.hasNames = true;
     }
+};
+
+// Make utility functions available for testing.
+GridAxis.prototype.utils = {
+    getNode: Tree.getNode
 };
