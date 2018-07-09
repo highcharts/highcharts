@@ -49,35 +49,41 @@ Highcharts.chart('container', {
             columns: [{
                 title: {
                     text: 'Project'
-                },
-                pointProperty: 'name'
+                }
             }, {
                 title: {
                     text: 'Assignee'
                 },
-                pointProperty: 'assignee'
+                labels: {
+                    format: '{point.assignee}'
+                }
             }, {
                 title: {
                     text: 'Est. days'
                 },
-                pointProperty: function (point) {
-                    var number = (point.x2 - point.x) / (1000 * 60 * 60 * 24);
-                    return Math.round(number * 100) / 100;
-                },
-                dataType: 'linear'
+                labels: {
+                    formatter: function () {
+                        var point = this.point,
+                            days = (1000 * 60 * 60 * 24),
+                            number = (point.x2 - point.x) / days;
+                        return Math.round(number * 100) / 100;
+                    }
+                }
             }, {
+                labels: {
+                    format: '{point.x:%e. %b}'
+                },
                 title: {
                     text: 'Start date'
-                },
-                pointProperty: 'x',
-                dataType: 'datetime'
+                }
             }, {
                 title: {
                     text: 'End date'
                 },
                 offset: 30,
-                pointProperty: 'x2',
-                dataType: 'datetime'
+                labels: {
+                    format: '{point.x2:%e. %b}'
+                }
             }]
         }
     },
