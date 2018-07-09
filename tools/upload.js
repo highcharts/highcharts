@@ -8,6 +8,7 @@ const isFunction = x => typeof x === 'function';
 const isArray = x => Array.isArray(x);
 
 const fs = require('fs');
+const path = require('path');
 
 const asyncForeach = (arr, fn) => {
     const length = arr.length;
@@ -37,7 +38,10 @@ const asyncBatchForeach = (batchSize, arr, fn) => {
 };
 
 const uploadFiles = (params) => {
-    const storage = require('./tools/jsdoc/storage/cdn.storage');
+    const storage = require(path.join(
+        __dirname,
+        'jsdoc/storage/cdn.storage'
+    ));
     const mimeType = {
         'css': 'text/css',
         'eot': 'application/vnd.ms-fontobject',

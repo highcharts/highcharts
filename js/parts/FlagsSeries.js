@@ -423,7 +423,16 @@ seriesType('flags', 'column', {
                         x: box.pos,
                         anchorX: point.anchorX
                     });
-                    point.graphic.isNew = false;
+                    // Hide flag when its box position is not specified (#8573)
+                    if (!box.pos) {
+                        point.graphic.attr({
+                            x: -9999,
+                            anchorX: -9999
+                        });
+                        point.graphic.isNew = true;
+                    } else {
+                        point.graphic.isNew = false;
+                    }
                 }
             });
         }
@@ -500,7 +509,7 @@ seriesType('flags', 'column', {
 // create the flag icon with anchor
 symbols.flag = function (x, y, w, h, options) {
     var anchorX = (options && options.anchorX) || x,
-        anchorY = (options &&  options.anchorY) || y;
+        anchorY = (options && options.anchorY) || y;
 
     return symbols.circle(anchorX - 1, anchorY - 1, 2, 2).concat(
         [
@@ -522,7 +531,7 @@ function createPinSymbol(shape) {
     symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
         var anchorX = options && options.anchorX,
-            anchorY = options &&  options.anchorY,
+            anchorY = options && options.anchorY,
             path,
             labelTopOrBottomY;
 

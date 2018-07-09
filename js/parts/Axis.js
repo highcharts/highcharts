@@ -63,7 +63,7 @@ var addEvent = H.addEvent,
  * options.yAxis.
  *
  * @class Highcharts.Axis
- * @memberOf Highcharts
+ * @memberof Highcharts
  * @param {Highcharts.Chart} chart - The Chart instance to apply the axis on.
  * @param {Object} options - Axis options
  */
@@ -679,6 +679,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
 
             /**
+             * The number of pixels to indent the labels per level in a treegrid
+             * axis.
+             *
+             * @product gantt
+             * @sample gantt/treegrid-axis/demo Indentation 10px by default.
+             * @sample gantt/treegrid-axis/indentation Indentation set to 0px.
+             * @since next
+             */
+            indentation: 10,
+
+            /**
              * How to handle overflowing labels on horizontal axis. Can be
              * undefined, `false` or `"justify"`. By default it aligns inside
              * the chart area. If "justify", labels will not render outside
@@ -791,6 +802,26 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @apioption xAxis.labels.step
              */
 
+            /**
+             * The symbol for the collapse and expand icon in a treegrid.
+             *
+             * @product gantt
+             * @since next
+             */
+            symbol: {
+                /**
+                 * The symbol type. Points to a definition function in the
+                 * `Highcharts.Renderer.symbols` collection.
+                 *
+                 * @validvalue ['arc', 'circle', 'diamond', 'square', 'triangle', 'triangle-down']
+                 */
+                type: 'triangle',
+                x: -5,
+                y: -5,
+                height: 10,
+                width: 10,
+                padding: 5
+            },
 
             /**
              * The y position offset of the label relative to the tick position
@@ -987,15 +1018,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * Specific tick interval in axis units for the minor ticks.
-         * On a linear axis, if `"auto"`, the minor tick interval is
-         * calculated as a fifth of the tickInterval. If `null`, minor
-         * ticks are not shown.
+         * Specific tick interval in axis units for the minor ticks. On a linear
+         * axis, if `"auto"`, the minor tick interval is calculated as a fifth
+         * of the tickInterval. If `null` or `undefined`, minor ticks are not
+         * shown.
          *
          * On logarithmic axes, the unit is the power of the value. For example,
-         * setting the minorTickInterval to 1 puts one tick on each of 0.1,
-         * 1, 10, 100 etc. Setting the minorTickInterval to 0.1 produces 9
-         * ticks between 1 and 10, 10 and 100 etc.
+         * setting the minorTickInterval to 1 puts one tick on each of 0.1, 1,
+         * 10, 100 etc. Setting the minorTickInterval to 0.1 produces 9 ticks
+         * between 1 and 10, 10 and 100 etc.
          *
          * If user settings dictate minor ticks to become too dense, they don't
          * make sense, and will be ignored to prevent performance problems.
@@ -1858,8 +1889,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The Chart that the axis belongs to.
          *
          * @name     chart
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {Chart}
+         * @instance
          */
         axis.chart = chart;
 
@@ -1867,8 +1899,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * Whether the axis is horizontal.
          *
          * @name     horiz
-         * @memberOf Axis
-         * @type     {Boolean}
+         * @memberof Axis
+         * @type     {boolean}
+         * @instance
          */
         axis.horiz = chart.inverted && !axis.isZAxis ? !isXAxis : isXAxis;
 
@@ -1881,8 +1914,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * {@link Chart.xAxis}.
          *
          * @name     coll
-         * @memberOf Axis
-         * @type     {String}
+         * @memberof Axis
+         * @type     {string}
+         * @instance
          */
         axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
@@ -1895,8 +1929,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * bottom and 3 is left.
          *
          * @name     side
-         * @memberOf Axis
-         * @type     {Number}
+         * @memberof Axis
+         * @type     {number}
+         * @instance
          */
         axis.side = userOptions.side || (axis.horiz ?
                 (axis.opposite ? 0 : 2) : // top : bottom
@@ -1924,8 +1959,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * option, but inverted charts have reversed xAxis by default.
          *
          * @name     reversed
-         * @memberOf Axis
-         * @type     {Boolean}
+         * @memberof Axis
+         * @type     {boolean}
+         * @instance
          */
         axis.reversed = options.reversed;
         axis.visible = options.visible !== false;
@@ -1951,10 +1987,25 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
 
-        // Major ticks
+        /**
+         * List of major ticks mapped by postition on axis.
+         *
+         * @name ticks
+         * @memberOf Axis
+         * @type {Object.<number, Highcharts.Tick>}
+         * @see  Highcharts.Tick
+         */
         axis.ticks = {};
         axis.labelEdge = [];
-        // Minor ticks
+        /**
+         * List of minor ticks mapped by position on the axis.
+         *
+         * @name minorTicks
+         * @memberOf Axis
+         * @type {Object.<number, Highcharts.Tick>}
+         *
+         * @see  Highcharts.Tick
+         */
         axis.minorTicks = {};
 
         // List of plotLines/Bands
@@ -1982,8 +2033,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * {@link Axis#getExtremes}.
          *
          * @name     max
-         * @memberOf Axis
-         * @type     {Number}
+         * @memberof Axis
+         * @type     {number}
+         * @instance
          */
         axis.max = null;
         /**
@@ -1992,8 +2044,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * {@link Axis#getExtremes}.
          *
          * @name     min
-         * @memberOf Axis
-         * @type     {Number}
+         * @memberof Axis
+         * @type     {number}
+         * @instance
          */
         axis.min = null;
 
@@ -2002,8 +2055,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The processed crosshair options.
          *
          * @name     crosshair
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {AxisCrosshairOptions}
+         * @instance
          */
         axis.crosshair = pick(
             options.crosshair,
@@ -2028,8 +2082,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * All series associated to the axis.
          *
          * @name     series
-         * @memberOf Axis
+         * @memberof Axis
          * @type     {Array<Series>}
+         * @instance
          */
         axis.series = axis.series || []; // populated by Series
 
@@ -3076,7 +3131,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 if (!defined(hardMin) && minPadding) {
                     axis.min -= length * minPadding;
                 }
-                if (!defined(hardMax)  && maxPadding) {
+                if (!defined(hardMax) && maxPadding) {
                     axis.max += length * maxPadding;
                 }
             }
@@ -3792,6 +3847,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *           the `min` option is not set, `minPadding` is 0 and
      *           `startOnTick` is false, this value will be the same
      *           as `dataMin`.
+     * @property {Number} userMax
+     *           The user defined maximum, either from the `max` option or from
+     *           a zoom or `setExtremes` action.
+     * @property {Number} userMin
+     *           The user defined minimum, either from the `min` option or from
+     *           a zoom or `setExtremes` action.
      */
     /**
      * Get the current extremes for the axis.
@@ -4335,7 +4396,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             ticks = axis.ticks,
             horiz = axis.horiz,
             side = axis.side,
-            invertedSide = chart.inverted  &&
+            invertedSide = chart.inverted &&
                 !axis.isZAxis ? [1, 0, 3, 2][side] : side,
             hasData,
             showAxis,
@@ -4494,6 +4555,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             0 :
             Math.floor(axis.axisLine.strokeWidth() / 2) * 2; // #4308, #4371
         clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
+
+        fireEvent(this, 'afterGetOffset');
     },
 
     /**
@@ -4931,10 +4994,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
         }
 
-        // Destroy local variables
+        // Destroy elements
         each(
             ['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
-                'gridGroup', 'labelGroup', 'cross'],
+                'gridGroup', 'labelGroup', 'cross', 'scrollbar'],
             function (prop) {
                 if (axis[prop]) {
                     axis[prop] = axis[prop].destroy();

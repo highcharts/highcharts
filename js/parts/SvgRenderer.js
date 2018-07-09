@@ -84,7 +84,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily',
         'fontStyle', 'color', 'lineHeight', 'width', 'textAlign',
-        'textDecoration', 'textOverflow', 'textOutline'],
+        'textDecoration', 'textOverflow', 'textOutline', 'cursor'],
 
     /**
      * Initialize the SVG element. This function only exists to make the
@@ -103,7 +103,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * node, but may also represent more nodes.
          *
          * @name  element
-         * @memberOf SVGElement
+         * @memberof SVGElement
          * @type {SVGDOMNode|HTMLDOMNode}
          */
         this.element = nodeName === 'span' ?
@@ -114,7 +114,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * The renderer that the SVGElement belongs to.
          *
          * @name renderer
-         * @memberOf SVGElement
+         * @memberof SVGElement
          * @type {SVGRenderer}
          */
         this.renderer = renderer;
@@ -2025,23 +2025,25 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         /**
          * The root `svg` node of the renderer.
-         * @name box
-         * @memberOf SVGRenderer
-         * @type {SVGDOMElement}
+         *
+         * @name Highcharts.SVGRenderer#box
+         * @type {Highcharts.SVGDOMElement}
          */
         this.box = element;
         /**
          * The wrapper for the root `svg` node of the renderer.
          *
-         * @name boxWrapper
-         * @memberOf SVGRenderer
-         * @type {SVGElement}
+         * @name Highcharts.SVGRenderer#boxWrapper
+         * @type {Highcharts.SVGElement}
          */
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
 
         /**
          * Page url used for internal references.
+         *
+         * @private
+         * @name Highcharts.SVGRenderer#url
          * @type {string}
          */
         // #24, #672, #1070
@@ -2050,7 +2052,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 doc.getElementsByTagName('base').length
             ) ?
                 win.location.href
-                    .replace(/#.*?$/, '') // remove the hash
+                    .split('#')[0] // remove the hash
                     .replace(/<[^>]*>/g, '') // wing cut HTML
                     // escape parantheses and quotes
                     .replace(/([\('\)])/g, '\\$1')
@@ -2066,9 +2068,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         /**
          * A pointer to the `defs` node of the root SVG.
+         *
+         * @name Highcharts.SVGRenderer#defs
          * @type {SVGElement}
-         * @name defs
-         * @memberOf SVGRenderer
          */
         renderer.defs = this.createElement('defs').add();
         renderer.allowHTML = allowHTML;
@@ -4123,13 +4125,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         wrapper['text-alignSetter'] = function (value) {
             textAlign = value;
         };
-        wrapper.paddingSetter =  function (value) {
+        wrapper.paddingSetter = function (value) {
             if (defined(value) && value !== padding) {
                 padding = wrapper.padding = value;
                 updateTextPadding();
             }
         };
-        wrapper.paddingLeftSetter =  function (value) {
+        wrapper.paddingLeftSetter = function (value) {
             if (defined(value) && value !== paddingLeft) {
                 paddingLeft = value;
                 updateTextPadding();

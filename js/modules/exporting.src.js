@@ -657,7 +657,7 @@ defaultOptions.exporting = {
              * the `Highcharts.Renderer.symbols` collection. The default
              * `exportIcon` function is part of the exporting module.
              *
-             * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down", "menu"]
+             * @validvalue ["exportIcon", "circle", "square", "diamond", "triangle", "triangle-down", "menu"]
              * @type {String}
              * @sample highcharts/exporting/buttons-contextbutton-symbol/
              *         Use a circle for symbol
@@ -915,7 +915,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             // Replace HTML entities, issue #347
             .replace(/&nbsp;/g, '\u00A0') // no-break space
-            .replace(/&shy;/g,  '\u00AD'); // soft hyphen
+            .replace(/&shy;/g, '\u00AD'); // soft hyphen
 
         /*= if (build.classic) { =*/
         // Further sanitize for oldIE
@@ -1302,6 +1302,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     if (!chart.pointer.inClass(e.target, className)) {
                         hide();
                     }
+                }),
+
+                addEvent(menu, 'click', function () {
+                    if (chart.openMenu) {
+                        hide();
+                    }
                 })
             );
 
@@ -1375,7 +1381,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             y + height + chart.exportMenuHeight > chartHeight &&
             button.alignOptions.verticalAlign !== 'top'
         ) {
-            menuStyle.bottom = (chartHeight - y - menuPadding)  + 'px';
+            menuStyle.bottom = (chartHeight - y - menuPadding) + 'px';
         } else {
             menuStyle.top = (y + height - menuPadding) + 'px';
         }

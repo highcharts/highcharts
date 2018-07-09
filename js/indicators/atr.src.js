@@ -45,7 +45,7 @@ seriesType('atr', 'sma',
      * Average true range indicator (ATR). This series requires `linkedTo`
      * option to be set.
      *
-     * @extends {plotOptions.sma}
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/atr ATR indicator
      * @since 6.0.0

@@ -23,6 +23,7 @@ var each = H.each,
 /**
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format
+ * @ignore
  */
 H.Color = function (input) {
     // Backwards compatibility, allow instanciation without new

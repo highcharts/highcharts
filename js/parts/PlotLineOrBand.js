@@ -153,7 +153,7 @@ H.PlotLineOrBand.prototype = {
             path.length &&
             axis.width > 0 &&
             axis.height > 0 &&
-            !path.flat
+            !path.isFlat
         ) {
             // apply defaults
             optionsLabel = merge({
@@ -263,13 +263,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
     getPlotBandPath: function (from, to) {
         var toPath = this.getPlotLinePath(to, null, null, true),
-            path   = this.getPlotLinePath(from, null, null, true),
+            path = this.getPlotLinePath(from, null, null, true),
             result = [],
             i,
             // #4964 check if chart is inverted or plotband is on yAxis
-            horiz  = this.horiz,
+            horiz = this.horiz,
             plus = 1,
-            flat,
+            isFlat,
             outside =
                 (from < this.min && to < this.min) ||
                 (from > this.max && to > this.max);
@@ -278,7 +278,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
             // Flat paths don't need labels (#3836)
             if (outside) {
-                flat = path.toString() === toPath.toString();
+                isFlat = path.toString() === toPath.toString();
                 plus = 0;
             }
 
@@ -307,7 +307,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                     toPath[i + 2],
                     'z'
                 );
-                result.flat = flat;
+                result.isFlat = isFlat;
             }
 
         } else { // outside the axis area

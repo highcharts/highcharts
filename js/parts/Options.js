@@ -368,7 +368,7 @@ H.defaultOptions = {
          *
          * </dl>
          *
-         * @type {Boolean|Object}
+         * @type {Boolean|AnimationOptions}
          * @sample {highcharts} highcharts/chart/animation-none/
          *         Updating with no animation
          * @sample {highcharts} highcharts/chart/animation-duration/
@@ -552,7 +552,7 @@ H.defaultOptions = {
          * subtitle and legend in addition to the `spacingTop`, `spacingRight`,
          * `spacingBottom` and `spacingLeft` options.
          *
-         * @type {Array}
+         * @type {Array<number>}
          * @sample {highcharts} highcharts/chart/margins-zero/
          *         Zero margins
          * @sample {highstock} stock/chart/margin-zero/
@@ -708,7 +708,6 @@ H.defaultOptions = {
         /**
          * Alias of `type`.
          *
-         * @validvalue ["line", "spline", "column", "area", "areaspline", "pie"]
          * @type {String}
          * @deprecated
          * @sample {highcharts} highcharts/chart/defaultseriestype/ Bar
@@ -1586,7 +1585,7 @@ H.defaultOptions = {
     labels: {
 
         /**
-         * A HTML label that can be positioned anywhere in the chart area.
+         * An HTML label that can be positioned anywhere in the chart area.
          *
          * @type {Array<Object>}
          * @apioption labels.items
@@ -1724,15 +1723,20 @@ H.defaultOptions = {
          */
 
         /**
-         * The layout of the legend items. Can be one of "horizontal" or
-         * "vertical".
+         * The layout of the legend items. Can be one of `horizontal` or
+         * `vertical` or `proximate`. When `proximate`, the legend items will be
+         * placed as close as possible to the graphs they're representing,
+         * except in inverted charts or when the legend position doesn't allow
+         * it.
          *
-         * @validvalue ["horizontal", "vertical"]
+         * @validvalue ["horizontal", "vertical", "proximate"]
          * @type {String}
          * @sample {highcharts} highcharts/legend/layout-horizontal/
          *         Horizontal by default
          * @sample {highcharts} highcharts/legend/layout-vertical/
          *         Vertical
+         * @sample highcharts/legend/layout-proximate
+         *         Labels proximate to the data
          * @sample {highstock} stock/legend/layout-horizontal/
          *         Horizontal by default
          * @sample {highmaps} maps/legend/padding-itemmargin/
@@ -1910,7 +1914,7 @@ H.defaultOptions = {
              * `chart.animation` option. Additional options can be given as an
              * object containing values for easing and duration.
              *
-             * @type {Boolean|Object}
+             * @type {Boolean|AnimationObject}
              * @sample {highcharts} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              * @sample {highstock} highcharts/legend/navigation/
@@ -2233,9 +2237,13 @@ H.defaultOptions = {
          * `layout` option will determine whether to place it above/below
          * or on the side of the plot area.
          *
+         * When the [layout](#legend.layout) option is `proximate`, the
+         * `verticalAlign` option doesn't apply.
+         *
          * @validvalue ["top", "middle", "bottom"]
          * @type {String}
-         * @sample {highcharts} highcharts/legend/verticalalign/ Legend 100px from the top of the chart
+         * @sample {highcharts} highcharts/legend/verticalalign/
+         *         Legend 100px from the top of the chart
          * @sample {highstock} stock/legend/align/ Various legend options
          * @sample {highmaps} maps/legend/alignment/ Legend alignment
          * @default bottom
@@ -2528,6 +2536,23 @@ H.defaultOptions = {
          * @default 500
          * @since 3.0
          * @apioption tooltip.hideDelay
+         */
+
+        /**
+         * Whether to allow the tooltip to render outside the chart's SVG
+         * element box. By default (`false`), the tooltip is rendered within the
+         * chart's SVG element, which results in the tooltip being aligned
+         * inside the chart area. For small charts, this may result in clipping
+         * or overlapping. When `true`, a separate SVG element is created and
+         * overlaid on the page, allowing the tooltip to be aligned inside the
+         * page itself.
+         *
+         * @type {Boolean}
+         * @sample highcharts/tooltip/outside
+         *         Small charts with tooltips outside
+         * @default false
+         * @since 6.1.1
+         * @apioption tooltip.outside
          */
 
         /**
@@ -2861,9 +2886,9 @@ H.defaultOptions = {
          *
          * @type {String}
          * @sample {highcharts} highcharts/tooltip/footerformat/
-         *         A HTML table in the tooltip
+         *         An HTML table in the tooltip
          * @sample {highstock} highcharts/tooltip/footerformat/
-         *         A HTML table in the tooltip
+         *         An HTML table in the tooltip
          * @sample {highmaps} maps/tooltip/format/ Format demo
          */
         headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
@@ -3038,7 +3063,7 @@ H.defaultOptions = {
  * structure. Commonly used for defining reusable templates.
  *
  * @function #setOptions
- * @memberOf  Highcharts
+ * @memberof Highcharts
  * @sample highcharts/global/useutc-false Setting a global option
  * @sample highcharts/members/setoptions Applying a global theme
  * @param {Object} options The new custom chart options.
@@ -3088,7 +3113,7 @@ H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
  * `setOptions`.
  *
  * @function #dateFormat
- * @memberOf Highcharts
+ * @memberof Highcharts
  * @param {String} format - The desired format where various time
  *        representations are prefixed with %.
  * @param {Number} timestamp - The JavaScript timestamp.

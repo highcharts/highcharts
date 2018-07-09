@@ -52,7 +52,6 @@ seriesType('xrange', 'column', {
      * @sample    {highcharts} highcharts/demo/x-range
      *            X-range with partial fill
      * @type      {Object}
-     * @product   highcharts highstock
      * @apioption plotOptions.xrange.partialFill
      */
 
@@ -61,9 +60,21 @@ seriesType('xrange', 'column', {
      * of the point color.
      *
      * @type      {Color}
-     * @product   highcharts highstock
      * @apioption plotOptions.xrange.partialFill.fill
      */
+
+    /**
+     * A partial fill for each point, typically used to visualize how much of
+     * a task is performed. The partial fill object can be set either on series
+     * or point level.
+     *
+     * @sample    {highcharts} highcharts/demo/x-range
+     *            X-range with partial fill
+     * @type      {Object}
+     * @extends   plotOptions.xrange.partialFill
+     * @apioption series.xrange.data.partialFill
+     */
+
 
     /**
      * In an X-range series, this option makes all points of the same Y-axis

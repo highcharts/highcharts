@@ -10,18 +10,25 @@
 'use strict';
 import H from '../parts/Globals.js';
 import drawPoint from '../mixins/draw-point.js';
+import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 var each = H.each,
     extend = H.extend,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
+    map = H.map,
+    find = H.find,
     reduce = H.reduce,
+    getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
+    getPolygon = polygon.getPolygon,
+    isPolygonsColliding = polygon.isPolygonsColliding,
+    movePolygon = polygon.movePolygon,
     Series = H.Series;
 
 /**
  * isRectanglesIntersecting - Detects if there is a collision between two
- *     rectangles.
+ *                            rectangles.
  *
  * @param  {object} r1 First rectangle.
  * @param  {object} r2 Second rectangle.
@@ -38,7 +45,7 @@ var isRectanglesIntersecting = function isRectanglesIntersecting(r1, r2) {
 
 /**
  * intersectsAnyWord - Detects if a word collides with any previously placed
- *     words.
+ *                     words.
  *
  * @param  {Point} point Point which the word is connected to.
  * @param  {Array} points Previously placed points to check against.
@@ -46,21 +53,35 @@ var isRectanglesIntersecting = function isRectanglesIntersecting(r1, r2) {
  */
 var intersectsAnyWord = function intersectsAnyWord(point, points) {
     var intersects = false,
-        rect1 = point.rect,
-        rect2;
-    if (point.lastCollidedWith) {
-        rect2 = point.lastCollidedWith.rect;
-        intersects = isRectanglesIntersecting(rect1, rect2);
+        rect = point.rect,
+        polygon = point.polygon,
+        lastCollidedWith = point.lastCollidedWith,
+        isIntersecting = function (p) {
+            var result = isRectanglesIntersecting(rect, p.rect);
+            if (result && (point.rotation % 90 || p.roation % 90)) {
+                result = isPolygonsColliding(
+                    polygon,
+                    p.polygon
+                );
+            }
+            return result;
+        };
+
+    // If the point has already intersected a different point, chances are they
+    // are still intersecting. So as an enhancement we check this first.
+    if (lastCollidedWith) {
+        intersects = isIntersecting(lastCollidedWith);
         // If they no longer intersects, remove the cache from the point.
         if (!intersects) {
             delete point.lastCollidedWith;
         }
     }
+
+    // If not already found, then check if we can find a point that is
+    // intersecting.
     if (!intersects) {
-        intersects = !!H.find(points, function (p) {
-            var result;
-            rect2 = p.rect;
-            result = isRectanglesIntersecting(rect1, rect2);
+        intersects = !!find(points, function (p) {
+            var result = isIntersecting(p);
             if (result) {
                 point.lastCollidedWith = p;
             }
@@ -83,7 +104,7 @@ var archimedeanSpiral = function archimedeanSpiral(attempt, params) {
     var field = params.field,
         result = false,
         maxDelta = (field.width * field.width) + (field.height * field.height),
-        t = attempt * 0.2;
+        t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
     // Emergency brake. TODO make spiralling logic more foolproof.
     if (attempt <= 10000) {
         result = {
@@ -106,7 +127,8 @@ var archimedeanSpiral = function archimedeanSpiral(attempt, params) {
  * should be dropped from the visualization.
  */
 var squareSpiral = function squareSpiral(attempt) {
-    var k = Math.ceil((Math.sqrt(attempt) - 1) / 2),
+    var a = attempt * 4,
+        k = Math.ceil((Math.sqrt(a) - 1) / 2),
         t = 2 * k + 1,
         m = Math.pow(t, 2),
         isBoolean = function (x) {
@@ -115,31 +137,31 @@ var squareSpiral = function squareSpiral(attempt) {
         result = false;
     t -= 1;
     if (attempt <= 10000) {
-        if (isBoolean(result) && attempt >= m - t) {
+        if (isBoolean(result) && a >= m - t) {
             result = {
-                x: k - (m - attempt),
+                x: k - (m - a),
                 y: -k
             };
         }
         m -= t;
-        if (isBoolean(result) && attempt >= m - t) {
+        if (isBoolean(result) && a >= m - t) {
             result = {
                 x: -k,
-                y: -k + (m - attempt)
+                y: -k + (m - a)
             };
         }
 
         m -= t;
         if (isBoolean(result)) {
-            if (attempt >= m - t) {
+            if (a >= m - t) {
                 result = {
-                    x: -k + (m - attempt),
+                    x: -k + (m - a),
                     y: k
                 };
             } else {
-                result =  {
+                result = {
                     x: k,
-                    y: k - (m - attempt - t)
+                    y: k - (m - a - t)
                 };
             }
         }
@@ -161,7 +183,8 @@ var rectangularSpiral = function rectangularSpiral(attempt, params) {
     var result = squareSpiral(attempt, params),
         field = params.field;
     if (result) {
-        result.x *= field.ratio;
+        result.x *= field.ratioX;
+        result.y *= field.ratioY;
     }
     return result;
 };
@@ -178,7 +201,7 @@ var getRandomPosition = function getRandomPosition(size) {
 
 /**
  * getScale - Calculates the proper scale to fit the cloud inside the plotting
- *     area.
+ *            area.
  *
  * @param  {number} targetWidth  Width of target area.
  * @param  {number} targetHeight Height of target area.
@@ -190,8 +213,8 @@ var getRandomPosition = function getRandomPosition(size) {
 var getScale = function getScale(targetWidth, targetHeight, field) {
     var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
         width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
-        scaleX = 1 / width * targetWidth,
-        scaleY = 1 / height * targetHeight;
+        scaleX = width > 0 ? 1 / width * targetWidth : 1,
+        scaleY = height > 0 ? 1 / height * targetHeight : 1;
     return Math.min(scaleX, scaleY);
 };
 
@@ -211,15 +234,15 @@ var getPlayingField = function getPlayingField(
     targetHeight,
     data
 ) {
-    var ratio = targetWidth / targetHeight,
-        info = reduce(data, function (obj, point) {
-            var dimensions = point.dimensions;
+    var info = reduce(data, function (obj, point) {
+            var dimensions = point.dimensions,
+                x = Math.max(dimensions.width, dimensions.height);
             // Find largest height.
             obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
             // Find largest width.
             obj.maxWidth = Math.max(obj.maxWidth, dimensions.width);
-            // Sum up the total area of all the words.
-            obj.area += dimensions.width * dimensions.height;
+            // Sum up the total maximum area of all the words.
+            obj.area += x * x;
             return obj;
         }, {
             maxHeight: 0,
@@ -229,13 +252,20 @@ var getPlayingField = function getPlayingField(
         /**
          * Use largest width, largest height, or root of total area to give size
          * to the playing field.
-         * Add extra 10 percentage to ensure enough space.
          */
-        x = 1.1 * Math.max(info.maxHeight, info.maxWidth, Math.sqrt(info.area));
+        x = Math.max(
+            info.maxHeight, // Have enough space for the tallest word
+            info.maxWidth, // Have enough space for the broadest word
+            // Adjust 15% to account for close packing of words
+            Math.sqrt(info.area) * 0.85
+        ),
+        ratioX = targetWidth > targetHeight ? targetWidth / targetHeight : 1,
+        ratioY = targetHeight > targetWidth ? targetHeight / targetWidth : 1;
     return {
-        width: x * ratio,
-        height: x,
-        ratio: ratio
+        width: x * ratioX,
+        height: x * ratioY,
+        ratioX: ratioX,
+        ratioY: ratioY
     };
 };
 
@@ -276,25 +306,41 @@ var getRotation = function getRotation(orientations, index, from, to) {
 };
 
 /**
+ * Calculates the spiral positions and store them in scope for quick access.
+ *
+ * @param {function} fn The spiral function.
+ * @param {object} params Additional parameters for the spiral.
+ * @returns {function} Function with access to spiral positions.
+ */
+var getSpiral = function (fn, params) {
+    var length = 10000,
+        arr = map(new Array(length), function (_, i) {
+            return fn(i + 1, params);
+        });
+    return function (attempt) {
+        return attempt <= length ? arr[attempt - 1] : false;
+    };
+};
+
+/**
  * outsidePlayingField - Detects if a word is placed outside the playing field.
  *
  * @param  {Point} point Point which the word is connected to.
  * @param  {object} field The width and height of the playing field.
  * @return {boolean} Returns true if the word is placed outside the field.
  */
-var outsidePlayingField = function outsidePlayingField(wrapper, field) {
-    var rect = wrapper.getBBox(),
-        playingField = {
-            left: -(field.width / 2),
-            right: field.width / 2,
-            top: -(field.height / 2),
-            bottom: field.height / 2
-        };
+var outsidePlayingField = function outsidePlayingField(rect, field) {
+    var playingField = {
+        left: -(field.width / 2),
+        right: field.width / 2,
+        top: -(field.height / 2),
+        bottom: field.height / 2
+    };
     return !(
-        playingField.left < (rect.x - rect.width / 2) &&
-        playingField.right > (rect.x + rect.width / 2) &&
-        playingField.top < (rect.y - rect.height / 2) &&
-        playingField.bottom > (rect.y + rect.height / 2)
+        playingField.left < rect.left &&
+        playingField.right > rect.right &&
+        playingField.top < rect.top &&
+        playingField.bottom > rect.bottom
     );
 };
 
@@ -310,16 +356,20 @@ var outsidePlayingField = function outsidePlayingField(wrapper, field) {
  */
 var intersectionTesting = function intersectionTesting(point, options) {
     var placed = options.placed,
-        element = options.element,
         field = options.field,
-        clientRect = options.clientRect,
+        rectangle = options.rectangle,
+        polygon = options.polygon,
         spiral = options.spiral,
         attempt = 1,
         delta = {
             x: 0,
             y: 0
         },
-        rect = point.rect = extend({}, clientRect);
+        // Make a copy to update values during intersection testing.
+        rect = point.rect = extend({}, rectangle);
+    point.polygon = polygon;
+    point.rotation = options.rotation;
+
     /**
      * while w intersects any previously placed words:
      *    do {
@@ -328,20 +378,20 @@ var intersectionTesting = function intersectionTesting(point, options) {
      *        the spiral radius is still smallish
      */
     while (
+        delta !== false &&
         (
             intersectsAnyWord(point, placed) ||
-            outsidePlayingField(element, field)
-        ) && delta !== false
+            outsidePlayingField(rect, field)
+        )
     ) {
-        delta = spiral(attempt, {
-            field: field
-        });
+        delta = spiral(attempt);
         if (isObject(delta)) {
             // Update the DOMRect with new positions.
-            rect.left = clientRect.left + delta.x;
-            rect.right = rect.left + rect.width;
-            rect.top = clientRect.top + delta.y;
-            rect.bottom = rect.top + rect.height;
+            rect.left = rectangle.left + delta.x;
+            rect.right = rectangle.right + delta.x;
+            rect.top = rectangle.top + delta.y;
+            rect.bottom = rectangle.bottom + delta.y;
+            point.polygon = movePolygon(delta.x, delta.y, polygon);
         }
         attempt++;
     }
@@ -378,7 +428,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
  * A word cloud is a visualization of a set of words, where the size and
  * placement of a word is determined by how it is weighted.
  *
- * @extends {plotOptions.column}
+ * @extends plotOptions.column
  * @sample highcharts/demo/wordcloud Word Cloud chart
  * @excluding allAreas, boostThreshold, clip, colorAxis, compare, compareBase,
  *            crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor,
@@ -450,7 +500,7 @@ var wordCloudOptions = {
     },
     showInLegend: false,
     /**
-     * Spiral used for placing a word after the inital position experienced a
+     * Spiral used for placing a word after the initial position experienced a
      * collision with either another word or the borders.
      * It is possible for users to add their own custom spiralling algorithms
      * for use in word cloud. Read more about it in our
@@ -531,7 +581,7 @@ var wordCloudSeries = {
             placementStrategy = series.placementStrategy[
                 options.placementStrategy
             ],
-            spiral = series.spirals[options.spiral],
+            spiral,
             rotation = options.rotation,
             scale,
             weights = series.points
@@ -564,8 +614,6 @@ var wordCloudSeries = {
                 y: 0,
                 text: point.name
             });
-
-            // TODO Replace all use of clientRect with bBox.
             bBox = testElement.getBBox(true);
             point.dimensions = {
                 height: bBox.height,
@@ -575,7 +623,9 @@ var wordCloudSeries = {
 
         // Calculate the playing field.
         field = getPlayingField(xAxis.len, yAxis.len, data);
-
+        spiral = getSpiral(series.spirals[options.spiral], {
+            field: field
+        });
         // Draw all the points.
         each(data, function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
@@ -596,27 +646,30 @@ var wordCloudSeries = {
                 }),
                 attr = {
                     align: 'center',
+                    'alignment-baseline': 'middle',
                     x: placement.x,
                     y: placement.y,
                     text: point.name,
                     rotation: placement.rotation
                 },
-                animate,
-                delta,
-                clientRect;
-            testElement.css(css).attr(attr);
-            // Cache the original DOMRect values for later calculations.
-            point.clientRect = clientRect = extend(
-                {},
-                testElement.element.getBoundingClientRect()
-            );
-            delta = intersectionTesting(point, {
-                clientRect: clientRect,
-                element: testElement,
-                field: field,
-                placed: placed,
-                spiral: spiral
-            });
+                polygon = getPolygon(
+                    placement.x,
+                    placement.y,
+                    point.dimensions.width,
+                    point.dimensions.height,
+                    placement.rotation
+                ),
+                rectangle = getBoundingBoxFromPolygon(polygon),
+                delta = intersectionTesting(point, {
+                    rectangle: rectangle,
+                    polygon: polygon,
+                    field: field,
+                    placed: placed,
+                    spiral: spiral,
+                    rotation: placement.rotation
+                }),
+                animate;
+
             /**
              * Check if point was placed, if so delete it,
              * otherwise place it on the correct positions.
@@ -624,13 +677,11 @@ var wordCloudSeries = {
             if (isObject(delta)) {
                 attr.x += delta.x;
                 attr.y += delta.y;
-                extend(placement, {
-                    left: attr.x  - (clientRect.width / 2),
-                    right: attr.x + (clientRect.width / 2),
-                    top: attr.y - (clientRect.height / 2),
-                    bottom: attr.y + (clientRect.height / 2)
-                });
-                field = updateFieldBoundaries(field, placement);
+                rectangle.left += delta.x;
+                rectangle.right += delta.x;
+                rectangle.top += delta.y;
+                rectangle.bottom += delta.y;
+                field = updateFieldBoundaries(field, rectangle);
                 placed.push(point);
                 point.isNull = false;
             } else {
@@ -689,7 +740,7 @@ var wordCloudSeries = {
     /**
      * Strategies used for deciding rotation and initial position of a word.
      * To implement a custom strategy, have a look at the function
-     *     randomPlacement for example.
+     * randomPlacement for example.
      */
     placementStrategy: {
         random: function randomPlacement(point, options) {
@@ -712,10 +763,9 @@ var wordCloudSeries = {
     },
     pointArrayMap: ['weight'],
     /**
-     * Spirals used for placing a word after the inital position experienced a
-     *     collision with either another word or the borders.
-     * To implement a custom spiral, look at the function archimedeanSpiral for
-     *    example.
+     * Spirals used for placing a word after the initial position experienced a
+     * collision with either another word or the borders. To implement a custom
+     * spiral, look at the function archimedeanSpiral for example.
      */
     spirals: {
         'archimedean': archimedeanSpiral,
@@ -723,7 +773,10 @@ var wordCloudSeries = {
         'square': squareSpiral
     },
     utils: {
-        getRotation: getRotation
+        getRotation: getRotation,
+        isPolygonsColliding: isPolygonsColliding,
+        rotate2DToOrigin: polygon.rotate2DToOrigin,
+        rotate2DToPoint: polygon.rotate2DToPoint
     },
     getPlotBox: function () {
         var series = this,
@@ -753,7 +806,8 @@ var wordCloudPoint = {
     shouldDraw: function shouldDraw() {
         var point = this;
         return !point.isNull;
-    }
+    },
+    weight: 1
 };
 
 /**

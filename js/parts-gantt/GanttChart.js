@@ -16,7 +16,7 @@ var each = H.each,
 
 /**
  * The GanttChart class.
- * @class Highcharts.GanttChart
+ * @class Highcharts.ganttChart
  * @memberOf Highcharts
  * @param {String|HTMLDOMElement} renderTo The DOM element to render to, or
  *                                         its id.
@@ -24,7 +24,7 @@ var each = H.each,
  * @param {Function}              callback Function to run when the chart has
  *                                         loaded.
  */
-H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
+H.ganttChart = function (renderTo, options, callback) {
     var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
@@ -49,7 +49,9 @@ H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
         return merge(
             defaultOptions.xAxis,
             { // defaults
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 tickInterval: defaultTickInterval,
                 labels: {
                     format: defaultLabelFormat
@@ -69,13 +71,15 @@ H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
         return merge(
             defaultOptions.yAxis, // #3802
             { // defaults
-                grid: true,
+                grid: {
+                    enabled: true
+                },
 
                 staticScale: 50,
 
-                // Set default type tree-grid, but only if 'categories' is
+                // Set default type treegrid, but only if 'categories' is
                 // undefined
-                type: yAxisOptions.categories ? yAxisOptions.type : 'tree-grid'
+                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
             },
             yAxisOptions // user options
         );
