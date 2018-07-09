@@ -237,6 +237,8 @@ seriesType('waterfall', 'column', {
                 previousY += stack && stack[point.x] ?
                     stack[point.x].total :
                     yValue;
+
+                point.below = previousY < pick(threshold, 0);
             }
 
             // #3952 Negative sum or intermediate sum not rendered correctly
