@@ -15,8 +15,10 @@ QUnit.test('Indentation', function (assert) {
             }],
             yAxis: [{
                 title: '',
-                grid: true,
-                type: 'tree-grid'
+                grid: {
+                    enabled: true
+                },
+                type: 'treegrid'
             }],
             series: [{
                 name: 'Project 1',
@@ -87,5 +89,69 @@ QUnit.test('Indentation', function (assert) {
     assert.ok(
         tick3.x > tick2.x,
         'Child point level 2 (Node 3) farther right than parent (Node 1)'
+    );
+});
+
+QUnit.test('Tree.getNode', function (assert) {
+    var getNode = Highcharts.Axis.prototype.utils.getNode,
+        mapOfIdToChildren = {
+            'test': [{
+                start: 5,
+                end: 10
+            }, {
+                start: 8,
+                end: 16
+            }]
+        },
+        node,
+        data;
+
+    // Test aggregation of start and end.
+    node = getNode('test', null, 1, {}, mapOfIdToChildren);
+    assert.strictEqual(
+        node.data.start,
+        5,
+        'should use child.start when data.start is undefined.'
+    );
+    assert.strictEqual(
+        node.data.end,
+        16,
+        'should use child.end when data.end is undefined.'
+    );
+
+    data = {
+        start: 1,
+        end: 2
+    };
+    node = getNode('test', null, 1, data, mapOfIdToChildren);
+    assert.strictEqual(
+        node.data.start,
+        1,
+        'should use data.start it is defined.'
+    );
+    assert.strictEqual(
+        node.data.end,
+        2,
+        'should use data.end it is defined.'
+    );
+
+    // Test aggregation of data from milestones.
+    data = {};
+    mapOfIdToChildren = {
+        'test': [{
+            start: 1,
+            milestone: true
+        }]
+    };
+    node = getNode('test', null, 1, data, mapOfIdToChildren);
+    assert.strictEqual(
+        node.data.start,
+        1,
+        'should use child.start as start if child is a milestone.'
+    );
+    assert.strictEqual(
+        node.data.end,
+        1,
+        'should use child.start as end if child is a milestone.'
     );
 });

@@ -42,25 +42,29 @@ addEvent(Chart, 'render', function collectAndHide() {
     });
 
     each(this.series || [], function (series) {
-        var dlOptions = series.options.dataLabels,
-            // Range series have two collections
-            collections = series.dataLabelCollections || ['dataLabel'];
+        var dlOptions = series.options.dataLabels;
 
         if (
             (dlOptions.enabled || series._hasPointLabels) &&
             !dlOptions.allowOverlap &&
             series.visible
         ) { // #3866
-            each(collections, function (coll) {
-                each(series.points, function (point) {
-                    if (point[coll]) {
-                        point[coll].labelrank = pick(
+            each(series.points, function (point) {
+                if (point.dataLabels) {
+                    each(point.dataLabels, function (label) {
+                        label.labelrank = pick(
                             point.labelrank,
                             point.shapeArgs && point.shapeArgs.height
                         ); // #4118
-                        labels.push(point[coll]);
-                    }
-                });
+                        labels.push(label);
+                    });
+                } else if (point.dataLabel) {
+                    point.dataLabel.labelrank = pick(
+                        point.labelrank,
+                        point.shapeArgs && point.shapeArgs.height
+                    ); // #4118
+                    labels.push(point.dataLabel);
+                }
             });
         }
     });

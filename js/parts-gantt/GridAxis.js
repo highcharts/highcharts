@@ -15,6 +15,10 @@ var argsToArray = function (args) {
     each = H.each,
     isArray = H.isArray,
     isNumber = H.isNumber,
+    isObject = function (x) {
+        // Always use strict mode
+        return H.isObject(x, true);
+    },
     merge = H.merge,
     pick = H.pick,
     wrap = H.wrap,
@@ -159,6 +163,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         retVal = proceed.apply(tick, argsToArray(arguments)),
         axis = tick.axis,
         options = axis.options,
+        gridOptions = (options && isObject(options.grid)) ? options.grid : {},
         tickWidth = pick(
             options[tick.tickPrefix + 'Width'],
             !tick.type && axis.isXAxis ? 1 : 0
@@ -178,7 +183,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         right;
 
     // Only center tick labels in grid axes
-    if (options.grid) {
+    if (gridOptions.enabled === true) {
         lblMetrics = axis.chart.renderer.fontMetrics(
             labelOpts.style.fontSize,
             label.element
@@ -240,11 +245,13 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
  */
 wrap(Axis.prototype, 'tickSize', function (proceed) {
     var axis = this,
+        options = axis.options,
+        gridOptions = (options && isObject(options.grid)) ? options.grid : {},
         retVal = proceed.apply(axis, argsToArray(arguments)),
         labelPadding,
         distance;
 
-    if (axis.options.grid) {
+    if (gridOptions.enabled === true) {
         labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
         distance = labelPadding + (axis.horiz ?
             axis.labelMetrics().f :
@@ -260,18 +267,20 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 });
 
 wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
+    var axis = this,
+        options = axis.options,
+        gridOptions = (options && isObject(options.grid)) ? options.grid : {};
 
-    if (this.options.grid) {
+    if (gridOptions.enabled === true) {
         // compute anchor points for each of the title align options
-        var axis = this,
-            title = axis.axisTitle,
+        var title = axis.axisTitle,
             titleWidth = title && title.getBBox().width,
             horiz = axis.horiz,
             axisLeft = axis.left,
             axisTop = axis.top,
             axisWidth = axis.width,
             axisHeight = axis.height,
-            axisTitleOptions = axis.options.title,
+            axisTitleOptions = options.title,
             opposite = axis.opposite,
             offset = axis.offset,
             tickSize = axis.tickSize() || [0],
@@ -313,7 +322,11 @@ wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
  * Avoid altering tickInterval when reserving space.
  */
 wrap(Axis.prototype, 'unsquish', function (proceed) {
-    if (this.options.grid && this.categories) {
+    var axis = this,
+        options = axis.options,
+        gridOptions = (options && isObject(options.grid)) ? options.grid : {};
+
+    if (gridOptions.enabled === true && this.categories) {
         return this.tickInterval;
     }
 
@@ -330,9 +343,10 @@ wrap(Axis.prototype, 'unsquish', function (proceed) {
  * @param {object} options - the pure axis options as input by the user
  */
 wrap(Axis.prototype, 'setOptions', function (proceed, options) {
-    var axis = this;
+    var axis = this,
+        gridOptions = (options && isObject(options.grid)) ? options.grid : {};
 
-    if (options.grid) {
+    if (gridOptions.enabled === true) {
 
         /**
          * Sets the axis title to null unless otherwise specified by user.
@@ -382,8 +396,11 @@ wrap(Axis.prototype, 'setOptions', function (proceed, options) {
  * @param {object} options - the pure axis options as input by the user
  */
 wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
-    var axis = this;
-    if (axis.options.grid && axis.horiz) {
+    var axis = this,
+        options = axis.options,
+        gridOptions = (options && isObject(options.grid)) ? options.grid : {};
+
+    if (gridOptions.enabled === true && axis.horiz) {
         each(axis.series, function (series) {
             series.options.pointRange = 0;
         });
@@ -410,7 +427,8 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
  */
 wrap(Axis.prototype, 'trimTicks', function (proceed) {
     var axis = this,
-        isGridAxis = axis.options.grid,
+        options = axis.options,
+        gridOptions = (options && isObject(options.grid)) ? options.grid : {},
         categoryAxis = axis.categories,
         tickPositions = axis.tickPositions,
         firstPos = tickPositions[0],
@@ -425,7 +443,11 @@ wrap(Axis.prototype, 'trimTicks', function (proceed) {
         endMoreThanMin = firstPos < min && firstPos + tickInterval > min,
         startLessThanMax = lastPos > max && lastPos - tickInterval < max;
 
-    if (isGridAxis && !categoryAxis && (axis.horiz || axis.isLinked)) {
+    if (
+        gridOptions.enabled === true &&
+        !categoryAxis &&
+        (axis.horiz || axis.isLinked)
+    ) {
         if (moreThanMin || endMoreThanMin) {
             tickPositions[0] = min;
         }
@@ -454,6 +476,7 @@ wrap(Axis.prototype, 'trimTicks', function (proceed) {
 wrap(Axis.prototype, 'render', function (proceed) {
     var axis = this,
         options = axis.options,
+        gridOptions = (options && isObject(options.grid)) ? options.grid : {},
         labelPadding,
         distance,
         lineWidth,
@@ -466,7 +489,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
         horiz = axis.horiz,
         axisGroupBox;
 
-    if (options.grid) {
+    if (gridOptions.enabled === true) {
         // TODO acutual label padding (top, bottom, left, right)
         // Label padding is needed to figure out where to draw the outer line.
         labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
@@ -551,7 +574,11 @@ wrap(Axis.prototype, 'render', function (proceed) {
  */
 wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
     var axis = this,
-        grid = userOptions.grid,
+        gridOptions = (
+            (userOptions && isObject(userOptions.grid)) ?
+            userOptions.grid :
+            {}
+        ),
         columnOptions,
         column,
         columnIndex,
@@ -604,30 +631,34 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
         options.labels.rotation = 0;
     }
 
-    if (grid) {
-        if (defined(grid.borderColor)) {
-            userOptions.tickColor = userOptions.lineColor = grid.borderColor;
+    if (gridOptions.enabled) {
+        if (defined(gridOptions.borderColor)) {
+            userOptions.tickColor =
+                userOptions.lineColor = gridOptions.borderColor;
         }
-        if (defined(grid.borderWidth)) {
-            userOptions.tickWidth = userOptions.lineWidth = grid.borderWidth;
+        if (defined(gridOptions.borderWidth)) {
+            userOptions.tickWidth =
+                userOptions.lineWidth = gridOptions.borderWidth;
         }
 
         // Handle columns, each column is a grid axis
-        if (isArray(grid.columns)) {
+        if (isArray(gridOptions.columns)) {
             columnIndex = 0;
-            i = grid.columns.length;
+            i = gridOptions.columns.length;
             while (i--) {
-                columnOptions = merge({
-
-                    // Default to use point.name
-                    pointProperty: 'name'
-
-                }, userOptions, grid.columns[i], {
-
-                    // Force to behave like category axis
-                    type: 'category'
-
-                });
+                columnOptions = merge(
+                    {
+                        labels: {
+                            format: '{point.name}'
+                        }
+                    },
+                    userOptions,
+                    gridOptions.columns[i],
+                    {
+                        // Force to behave like category axis
+                        type: 'category'
+                    }
+                );
 
                 delete columnOptions.grid.columns; // Prevent recursion
 
@@ -635,17 +666,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
                 column.isColumn = true;
                 column.columnIndex = columnIndex;
 
-                // Handle pointProperty
-                // TODO: Consider rewriting this with a custom label formatter
-                //       only?
                 wrap(column, 'labelFormatter', function (proceed) {
                     var axis = this.axis,
                         tickPos = axis.tickPositions,
-                        options = axis.options,
-                        pointProperty = options.pointProperty,
-                        dateTimeLabelFormat = H.splat(
-                            options.dateTimeLabelFormats.day
-                        )[0],
                         value = this.value,
                         series = axis.series[0],
                         isFirst = value === tickPos[0],
@@ -654,26 +677,13 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
                             return p[axis.isXAxis ? 'x' : 'y'] === value;
                         });
 
-                    if (point) {
-                        if (typeof pointProperty === 'function') {
-                            value = pointProperty(point);
-                        } else if (point[pointProperty]) {
-                            value = point[pointProperty];
-                        }
-                    }
-
-                    if (options.dataType === 'datetime') {
-                        value = H.dateFormat(dateTimeLabelFormat, value);
-                    }
+                    // Make additional properties available for the formatter
+                    this.isFirst = isFirst;
+                    this.isLast = isLast;
+                    this.point = point;
 
                     // Call original labelFormatter
-                    return proceed.call({
-                        axis: axis,
-                        chart: chart,
-                        isFirst: isFirst,
-                        isLast: isLast,
-                        value: value
-                    });
+                    return proceed.call(this);
                 });
 
                 columnIndex++;

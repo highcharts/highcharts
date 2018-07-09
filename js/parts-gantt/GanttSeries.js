@@ -234,3 +234,24 @@ seriesType('gantt', parentName, {
         return retVal;
     }
 });
+
+/**
+ * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
+ * it is inherited from [chart.type](#chart.type).
+ *
+ * @type {Object}
+ * @extends xrange,plotOptions.gantt
+ * @product gantt
+ * @apioption series.gantt
+ */
+
+/**
+ * Wether the grid node belonging to this point should start as collapsed. Used
+ * in axes of type treegrid.
+ *
+ * @type {Boolean}
+ * @default false
+ * @product gantt
+ * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Start as collapsed
+ * @apioption series.gantt.data.collapsed
+ */

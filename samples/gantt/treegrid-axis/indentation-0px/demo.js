@@ -16,9 +16,9 @@ Highcharts.chart('container', {
     }],
     yAxis: [{
         title: '',
-        type: 'tree-grid',
+        type: 'treegrid',
         labels: {
-            align: 'left'
+            indentation: 0
         }
     }],
     series: [{

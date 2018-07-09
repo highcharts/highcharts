@@ -126,6 +126,9 @@ Highcharts.Point.prototype = {
         if (options.group) {
             delete point.group;
         }
+        if (options.dataLabels) {
+            delete point.dataLabels;
+        }
 
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
@@ -335,8 +338,8 @@ Highcharts.Point.prototype = {
             point.onMouseOut();
         }
 
-        // Remove all events
-        if (point.graphic || point.dataLabel) {
+        // Remove all events and elements
+        if (point.graphic || point.dataLabel || point.dataLabels) {
             removeEvent(point);
             point.destroyElements();
         }
@@ -348,8 +351,6 @@ Highcharts.Point.prototype = {
         for (prop in point) {
             point[prop] = null;
         }
-
-
     },
 
     /**
@@ -373,6 +374,23 @@ Highcharts.Point.prototype = {
             if (point[prop]) {
                 point[prop] = point[prop].destroy();
             }
+        }
+        // Handle point.dataLabels and point.connectors
+        if (point.dataLabels) {
+            each(point.dataLabels, function (label) {
+                if (label.element) {
+                    label.destroy();
+                }
+            });
+            delete point.dataLabels;
+        }
+        if (point.connectors) {
+            each(point.connectors, function (connector) {
+                if (connector.element) {
+                    connector.destroy();
+                }
+            });
+            delete point.connectors;
         }
     },
 

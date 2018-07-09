@@ -14,17 +14,16 @@ import '../modules/broken-axis.src.js';
 var argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
-    indentPx = 10,
-    iconRadius = 5,
-    iconSpacing = 5,
     each = H.each,
     extend = H.extend,
     find = H.find,
+    fireEvent = H.fireEvent,
     merge = H.merge,
     inArray = H.inArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
+    isNumber = H.isNumber,
     isObject = function (x) {
         // Always use strict mode.
         return H.isObject(x, true);
@@ -32,7 +31,7 @@ var argsToArray = function (args) {
     isString = H.isString,
     keys = H.keys,
     pick = H.pick,
-    reduce = Tree.reduce,
+    reduce = H.reduce,
     wrap = H.wrap,
     GridAxis = H.Axis,
     GridAxisTick = H.Tick;
@@ -207,41 +206,42 @@ var toggleCollapse = function (axis, node) {
 };
 var renderLabelIcon = function (tick, params) {
     var icon = tick.labelIcon,
+        isNew = !icon,
         renderer = params.renderer,
         labelBox = params.xy,
-        radius = params.radius,
-        iconPosition = {
-            x: labelBox.x - (radius * 2) - params.spacing,
-            y: labelBox.y - (radius * 2)
-        },
+        options = params.options,
+        width = options.width,
+        height = options.height,
         iconCenter = {
-            x: iconPosition.x + radius,
-            y: iconPosition.y + radius
+            x: labelBox.x - (width / 2) - options.padding,
+            y: labelBox.y - (height / 2)
         },
         animate = {},
         css = {
-            cursor: 'pointer'
+            cursor: 'pointer',
+            stroke: options.lineColor,
+            strokeWidth: options.lineWidth
         },
         attr = {
             'stroke-width': 1,
             'fill': pick(params.color, '#666')
         },
         rotation = params.collapsed ? 90 : 180,
-        shouldRender = params.show && H.isNumber(iconPosition.y);
+        shouldRender = params.show && H.isNumber(iconCenter.y);
 
-    if (!icon) {
-        tick.labelIcon = icon = renderer.path(renderer.symbols.triangle(
-            0 - radius,
-            0 - radius,
-            radius * 2,
-            radius * 2
+    if (isNew) {
+        tick.labelIcon = icon = renderer.path(renderer.symbols[options.type](
+            options.x,
+            options.y,
+            width,
+            height
         ))
-        .add(tick.parentGroup);
+        .add(params.group);
     }
 
     // Update position and rotation
     // Animate the change if the icon already exists
-    extend((icon ? animate : attr), {
+    extend((isNew ? attr : animate), {
         translateX: iconCenter.x,
         translateY: iconCenter.y,
         rotation: rotation
@@ -264,7 +264,7 @@ var onTickHover = function (label) {
     /*= } =*/
 };
 var onTickHoverExit = function (label) {
-    label.addClass('highcharts-treegrid-node-active');
+    label.removeClass('highcharts-treegrid-node-active');
     /*= if (build.classic) { =*/
     label.css({
         textDecoration: 'none'
@@ -273,7 +273,7 @@ var onTickHoverExit = function (label) {
 };
 
 /**
- * Creates a tree structure of the data, and the tree-grid. Calculates
+ * Creates a tree structure of the data, and the treegrid. Calculates
  * categories, and y-values of points based on the tree.
  * @param {Array} data All the data points to display in the axis.
  * @param {boolean} uniqueNames Wether or not the data node with the same name
@@ -286,6 +286,7 @@ var onTickHoverExit = function (label) {
  */
 var getTreeGridFromData = function (data, uniqueNames) {
     var categories = [],
+        collapsedNodes = [],
         mapOfIdToNode = {},
         mapOfPosToGridNode = {},
         posIterator = -1,
@@ -307,6 +308,9 @@ var getTreeGridFromData = function (data, uniqueNames) {
             });
             gridNode.descendants = descendants;
             gridNode.height = height;
+            if (gridNode.collapsed) {
+                collapsedNodes.push(gridNode);
+            }
         },
         // Before the children has been created.
         before: function (node) {
@@ -365,6 +369,12 @@ var getTreeGridFromData = function (data, uniqueNames) {
                 mapOfIdToNode[node.id] = node;
             }
 
+            // If one of the points are collapsed, then start the grid node in
+            // collapsed state.
+            if (data.collapsed === true) {
+                gridNode.collapsed = true;
+            }
+
             // Assign pos to data node
             node.pos = pos;
         }
@@ -415,6 +425,7 @@ var getTreeGridFromData = function (data, uniqueNames) {
         categories: categories,
         mapOfIdToNode: mapOfIdToNode,
         mapOfPosToGridNode: mapOfPosToGridNode,
+        collapsedNodes: collapsedNodes,
         tree: tree
     };
 };
@@ -422,12 +433,15 @@ var getTreeGridFromData = function (data, uniqueNames) {
 override(GridAxis.prototype, {
     init: function (proceed, chart, userOptions) {
         var axis = this,
-            isTreeGrid = userOptions.type === 'tree-grid';
+            removeFoundExtremesEvent,
+            isTreeGrid = userOptions.type === 'treegrid';
         // Set default and forced options for TreeGrid
         if (isTreeGrid) {
             merge(true, userOptions, {
                 // Default options
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 labels: {
                     align: 'left'
                 }
@@ -446,6 +460,19 @@ override(GridAxis.prototype, {
                 // which is an ideal time to update the axis.categories.
                 axis.updateYNames();
 
+                // Collapse all the nodes belonging to a point where collapsed
+                // equals true.
+                // Can be called from beforeRender, if getBreakFromNode removes
+                // its dependency on axis.max.
+                removeFoundExtremesEvent =
+                    H.addEvent(axis, 'foundExtremes', function () {
+                        each(axis.collapsedNodes, function (node) {
+                            var breaks = collapse(axis, node);
+                            axis.setBreaks(breaks, false);
+                        });
+                        removeFoundExtremesEvent();
+                    });
+
                 // We have to set the series data again to correct the y-values
                 // which was set too early.
                 each(axis.series, function (series) {
@@ -463,13 +490,20 @@ override(GridAxis.prototype, {
      */
     getMaxLabelLength: function (proceed) {
         var axis = this,
+            options = axis.options,
+            labelOptions = options && options.labels,
+            indentation = (
+                labelOptions && isNumber(labelOptions.indentation) ?
+                options.labels.indentation :
+                0
+            ),
             retVal = proceed.apply(axis, argsToArray(arguments)),
-            isTreeGrid = axis.options.type === 'tree-grid',
+            isTreeGrid = axis.options.type === 'treegrid',
             treeDepth;
 
         if (isTreeGrid) {
             treeDepth = axis.mapOfPosToGridNode[-1].height;
-            retVal += indentPx * (treeDepth - 1);
+            retVal += indentation * (treeDepth - 1);
         }
 
         return retVal;
@@ -483,7 +517,7 @@ override(GridAxis.prototype, {
      */
     generateTick: function (proceed, pos) {
         var axis = this,
-            isTreeGrid = axis.options.type === 'tree-grid',
+            isTreeGrid = axis.options.type === 'treegrid',
             ticks = axis.ticks,
             gridNode;
 
@@ -510,11 +544,14 @@ override(GridAxis.prototype, {
     setTickInterval: function (proceed) {
         var axis = this,
             options = axis.options,
-            isTreeGrid = options.type === 'tree-grid';
+            isTreeGrid = options.type === 'treegrid';
 
         if (isTreeGrid) {
             axis.min = pick(axis.userMin, options.min, axis.dataMin);
             axis.max = pick(axis.userMax, options.max, axis.dataMax);
+
+            fireEvent(axis, 'foundExtremes');
+
             // setAxisTranslation modifies the min and max according to
             // axis breaks.
             axis.setAxisTranslation(true);
@@ -535,34 +572,70 @@ override(GridAxisTick.prototype, {
             label = tick.label,
             mapOfPosToGridNode = axis.mapOfPosToGridNode,
             options = axis.options,
+            labelOptions = options && options.labels,
+            symbolOptions = (
+                labelOptions && isObject(labelOptions.symbol) ?
+                labelOptions.symbol :
+                {}
+            ),
+            indentation = (
+                labelOptions && isNumber(labelOptions.indentation) ?
+                options.labels.indentation :
+                0
+            ),
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
-            level = node && node.depth - 1,
-            isTreeGrid = options.type === 'tree-grid',
+            level = node && node.depth,
+            isTreeGrid = options.type === 'treegrid',
             hasLabel = !!(label && label.element),
-            shouldRender = inArray(pos, axis.tickPositions) > -1;
+            shouldRender = inArray(pos, axis.tickPositions) > -1,
+            prefixClassName = 'highcharts-treegrid-node-',
+            collapsed,
+            addClassName,
+            removeClassName;
 
         if (isTreeGrid && node) {
-            xy.x += iconRadius + (iconSpacing * 2) + (level * indentPx);
+            xy.x += (
+                // Add space for symbols
+                ((symbolOptions.width) + (symbolOptions.padding * 2)) +
+                // Apply indentation
+                ((level - 1) * indentation)
+            );
+
+            // Add class name for hierarchical styling.
+            if (hasLabel) {
+                label.addClass(prefixClassName + 'level-' + level);
+            }
         }
 
         proceed.apply(tick, argsToArray(arguments));
 
         if (isTreeGrid && node && hasLabel && node.descendants > 0) {
+            collapsed = isCollapsed(axis, node);
+
             renderLabelIcon(
                 tick,
                 {
                     color: label.styles.color,
-                    collapsed: isCollapsed(axis, node),
-                    radius: iconRadius,
+                    collapsed: collapsed,
+                    group: label.parentGroup,
+                    options: symbolOptions,
                     renderer: label.renderer,
                     show: shouldRender,
-                    spacing: iconSpacing,
                     xy: label.xy
                 }
             );
+
+            // Add class name for the node.
+            addClassName = prefixClassName +
+                (collapsed ? 'collapsed' : 'expanded');
+            removeClassName = prefixClassName +
+                (collapsed ? 'expanded' : 'collapsed');
+
             label.css({
                 cursor: 'pointer'
-            });
+            })
+            .addClass(addClassName)
+            .removeClass(removeClassName);
 
             // Add events to both label text and icon
             each([label, tick.labelIcon], function (object) {
@@ -587,55 +660,61 @@ override(GridAxisTick.prototype, {
     }
 });
 
-/**
- * Collapse the grid cell.
- * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
- * explicit call to {@link Highcharts.Chart#redraw}
- * @sample {gantt} gantt/tree-grid-axis/collapsed/demo.js Dynamically collapse
- */
-GridAxisTick.prototype.collapse = function (redraw) {
-    var tick = this,
-        axis = tick.axis,
-        pos = tick.pos,
-        node = axis.mapOfPosToGridNode[pos],
-        breaks = collapse(axis, node);
-    axis.setBreaks(breaks, pick(redraw, true));
-};
-
-/**
- * Expand the grid cell.
- * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
- * explicit call to {@link Highcharts.Chart#redraw}
- * @sample {gantt} gantt/tree-grid-axis/collapsed/demo.js Dynamically collapse
- */
-GridAxisTick.prototype.expand = function (redraw) {
-    var tick = this,
-        axis = tick.axis,
-        pos = tick.pos,
-        node = axis.mapOfPosToGridNode[pos],
-        breaks = expand(axis, node);
-    axis.setBreaks(breaks, pick(redraw, true));
-};
-
-/**
- * Toggle the collapse/expand state of the grid cell.
- * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for an
- * explicit call to {@link Highcharts.Chart#redraw}
- * @sample {gantt} gantt/tree-grid-axis/collapsed/demo.js Dynamically collapse
- */
-GridAxisTick.prototype.toggleCollapse = function (redraw) {
-    var tick = this,
-        axis = tick.axis,
-        pos = tick.pos,
-        node = axis.mapOfPosToGridNode[pos],
-        breaks = toggleCollapse(axis, node);
-    axis.setBreaks(breaks, pick(redraw, true));
-};
+extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
+    /**
+     * Collapse the grid cell. Used when axis is of type treegrid.
+     * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
+     * an explicit call to {@link Highcharts.Chart#redraw}
+     * @sample {gantt} gantt/treegrid-axis/collapsed-dynamically/demo.js
+     * Dynamically collapse
+     */
+    collapse: function (redraw) {
+        var tick = this,
+            axis = tick.axis,
+            pos = tick.pos,
+            node = axis.mapOfPosToGridNode[pos],
+            breaks = collapse(axis, node);
+        axis.setBreaks(breaks, pick(redraw, true));
+    },
+    /**
+     * Expand the grid cell. Used when axis is of type treegrid.
+     *
+     * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
+     * an explicit call to {@link Highcharts.Chart#redraw}
+     * @sample {gantt} gantt/treegrid-axis/collapsed-dynamically/demo.js
+     * Dynamically collapse
+     */
+    expand: function (redraw) {
+        var tick = this,
+            axis = tick.axis,
+            pos = tick.pos,
+            node = axis.mapOfPosToGridNode[pos],
+            breaks = expand(axis, node);
+        axis.setBreaks(breaks, pick(redraw, true));
+    },
+    /**
+     * Toggle the collapse/expand state of the grid cell. Used when axis is of
+     * type treegrid.
+     *
+     * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
+     * an explicit call to {@link Highcharts.Chart#redraw}
+     * @sample {gantt} gantt/treegrid-axis/collapsed-dynamically/demo.js
+     * Dynamically collapse
+     */
+    toggleCollapse: function (redraw) {
+        var tick = this,
+            axis = tick.axis,
+            pos = tick.pos,
+            node = axis.mapOfPosToGridNode[pos],
+            breaks = toggleCollapse(axis, node);
+        axis.setBreaks(breaks, pick(redraw, true));
+    }
+});
 
 GridAxis.prototype.updateYNames = function () {
     var axis = this,
         options = axis.options,
-        isTreeGrid = options.type === 'tree-grid',
+        isTreeGrid = options.type === 'treegrid',
         uniqueNames = options.uniqueNames,
         isYAxis = !axis.isXAxis,
         series = axis.series,
@@ -654,6 +733,13 @@ GridAxis.prototype.updateYNames = function () {
         // Assign values to the axis.
         axis.categories = treeGrid.categories;
         axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
+        // Used on init to start a node as collapsed
+        axis.collapsedNodes = treeGrid.collapsedNodes;
         axis.hasNames = true;
     }
+};
+
+// Make utility functions available for testing.
+GridAxis.prototype.utils = {
+    getNode: Tree.getNode
 };

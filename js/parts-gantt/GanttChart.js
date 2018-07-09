@@ -49,7 +49,9 @@ H.ganttChart = function (renderTo, options, callback) {
         return merge(
             defaultOptions.xAxis,
             { // defaults
-                grid: true,
+                grid: {
+                    enabled: true
+                },
                 tickInterval: defaultTickInterval,
                 labels: {
                     format: defaultLabelFormat
@@ -69,13 +71,15 @@ H.ganttChart = function (renderTo, options, callback) {
         return merge(
             defaultOptions.yAxis, // #3802
             { // defaults
-                grid: true,
+                grid: {
+                    enabled: true
+                },
 
                 staticScale: 50,
 
-                // Set default type tree-grid, but only if 'categories' is
+                // Set default type treegrid, but only if 'categories' is
                 // undefined
-                type: yAxisOptions.categories ? yAxisOptions.type : 'tree-grid'
+                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
             },
             yAxisOptions // user options
         );
