@@ -646,17 +646,19 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
             columnIndex = 0;
             i = gridOptions.columns.length;
             while (i--) {
-                columnOptions = merge({
-
-                    // Default to use point.name
-                    pointProperty: 'name'
-
-                }, userOptions, gridOptions.columns[i], {
-
-                    // Force to behave like category axis
-                    type: 'category'
-
-                });
+                columnOptions = merge(
+                    {
+                        labels: {
+                            format: '{point.name}'
+                        }
+                    },
+                    userOptions,
+                    gridOptions.columns[i],
+                    {
+                        // Force to behave like category axis
+                        type: 'category'
+                    }
+                );
 
                 delete columnOptions.grid.columns; // Prevent recursion
 
@@ -664,17 +666,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
                 column.isColumn = true;
                 column.columnIndex = columnIndex;
 
-                // Handle pointProperty
-                // TODO: Consider rewriting this with a custom label formatter
-                //       only?
                 wrap(column, 'labelFormatter', function (proceed) {
                     var axis = this.axis,
                         tickPos = axis.tickPositions,
-                        options = axis.options,
-                        pointProperty = options.pointProperty,
-                        dateTimeLabelFormat = H.splat(
-                            options.dateTimeLabelFormats.day
-                        )[0],
                         value = this.value,
                         series = axis.series[0],
                         isFirst = value === tickPos[0],
@@ -683,26 +677,13 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
                             return p[axis.isXAxis ? 'x' : 'y'] === value;
                         });
 
-                    if (point) {
-                        if (typeof pointProperty === 'function') {
-                            value = pointProperty(point);
-                        } else if (point[pointProperty]) {
-                            value = point[pointProperty];
-                        }
-                    }
-
-                    if (options.dataType === 'datetime') {
-                        value = H.dateFormat(dateTimeLabelFormat, value);
-                    }
+                    // Make additional properties available for the formatter
+                    this.isFirst = isFirst;
+                    this.isLast = isLast;
+                    this.point = point;
 
                     // Call original labelFormatter
-                    return proceed.call({
-                        axis: axis,
-                        chart: chart,
-                        isFirst: isFirst,
-                        isLast: isLast,
-                        value: value
-                    });
+                    return proceed.call(this);
                 });
 
                 columnIndex++;
