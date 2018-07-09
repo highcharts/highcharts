@@ -396,7 +396,7 @@ seriesType('column', 'line', {
      * marking other series of the same type as dirty.
      *
      * @function #init
-     * @memberOf seriesTypes.column
+     * @memberof seriesTypes.column
      *
      */
     init: function () {

@@ -207,7 +207,7 @@ extend(Pane.prototype, {
          */
 
         /**
-         * Tha shape of the pane background. When `solid`, the background
+         * The shape of the pane background. When `solid`, the background
          * is circular. When `arc`, the background extends only from the min
          * to the max of the value axis.
          *

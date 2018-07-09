@@ -271,8 +271,8 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
 
     chart.series[0].points[0].onMouseOver();
     assert.strictEqual(
-        chart.series[0].points[0].dataLabels &&
-        chart.series[0].points[0].dataLabels.enabled,
+        chart.series[0].points[0].options.dataLabels &&
+        chart.series[0].points[0].options.dataLabels.enabled,
         true,
         'Data labels should be enabled'
     );

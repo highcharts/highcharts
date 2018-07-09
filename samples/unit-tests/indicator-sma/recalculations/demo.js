@@ -58,4 +58,12 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         [13, 14],
         'Correct values after point.remove()'
     );
+
+    chart.series[0].addPoint([6, 13], true, true);
+
+    assert.strictEqual(
+        chart.series[1].points[chart.series[1].points.length - 1].x,
+        chart.series[0].points[chart.series[0].points.length - 1].x,
+        'Correct last point position after addPoint() with shift parameter (#8572)'
+    );
 });

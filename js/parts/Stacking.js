@@ -196,6 +196,8 @@ Chart.prototype.getStacks = function () {
 
 /**
  * Build the stacks from top down
+ *
+ * @ignore
  */
 Axis.prototype.buildStacks = function () {
     var axisSeries = this.series,
@@ -248,6 +250,8 @@ Axis.prototype.renderStackTotals = function () {
 
 /**
  * Set all the stacks to initial states and destroy unused ones.
+ *
+ * @ignore
  */
 Axis.prototype.resetStacks = function () {
     var axis = this,

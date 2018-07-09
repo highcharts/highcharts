@@ -17,6 +17,7 @@ var correctFloat = H.correctFloat,
     deg2rad = H.deg2rad;
 
 /**
+<<<<<<< HEAD
  * Create a new tick object. Called internally when instanciating new axes.
  *
  * @class Highcharts.Tick
@@ -29,6 +30,10 @@ var correctFloat = H.correctFloat,
  * @param {object} [parameters] Optional parameters for the tick.
  * @param {object} [parameters.tickmarkOffset] Set tickmarkOffset for the tick.
  * @param {object} [parameters.category] Set category for the tick.
+=======
+ * The Tick class
+ * @ignore
+>>>>>>> gantt
  */
 H.Tick = function (axis, pos, type, noLabel, parameters) {
     var params = parameters ? parameters : {};
@@ -39,7 +44,7 @@ H.Tick = function (axis, pos, type, noLabel, parameters) {
     this.isNew = true;
     this.isNewLabel = true;
     this.tickmarkOffset = pick(params.tickmarkOffset, axis.tickmarkOffset);
-    this.category =  pick(
+    this.category = pick(
         params.category,
         isArray(axis.categories) ? axis.categories[pos] : undefined,
         isArray(axis.names) ? axis.names[pos] : undefined
@@ -69,7 +74,7 @@ H.Tick.prototype = {
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            value =  defined(tick.category) ? tick.category : pos,
+            value = defined(tick.category) ? tick.category : pos,
             label = tick.label,
             tickPositionInfo = tickPositions.info,
             dateTimeLabelFormat,

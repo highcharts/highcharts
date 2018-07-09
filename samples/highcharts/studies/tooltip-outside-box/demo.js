@@ -5,68 +5,85 @@
  * bounding box, so that it can utilize all space available in the page.
  */
 (function (H) {
+
+    var offset = 6;
+
     H.wrap(H.Tooltip.prototype, 'getLabel', function (proceed) {
 
         var chart = this.chart,
             options = this.options,
             chartRenderer = chart.renderer,
-            box;
+            container;
 
         if (!this.label) {
 
-            this.renderer = new H.Renderer(document.body, 0, 0);
-            box = this.renderer.boxWrapper;
-            box.css({
-                position: 'absolute',
-                top: '-9999px'
-            });
+            // Add a HTML container, otherwise useHTML won't work
+            this.container = container = H.doc.createElement('div');
+            container.style.position = 'absolute';
+            container.style.top = '-9999px';
+            container.style.pointerEvents = 'none';
+
+            H.doc.body.appendChild(container);
+
+            this.renderer = new H.Renderer(this.container, 0, 0);
             chart.renderer = this.renderer;
             proceed.call(this, chart, options);
             chart.renderer = chartRenderer;
 
             this.label.attr({
-                x: 0,
-                y: 0
+                x: offset,
+                y: offset
             });
             this.label.xSetter = function (value) {
-                box.element.style.left = value + 'px';
+                container.style.left = value + 'px';
             };
             this.label.ySetter = function (value) {
-                box.element.style.top = value + 'px';
+                container.style.top = value + 'px';
             };
         }
         return this.label;
     });
 
-    H.wrap(H.Tooltip.prototype, 'getPosition', function (proceed, boxWidth, boxHeight, point) {
-        var chart = this.chart,
-            pos,
-            plusWidth = $(window).width() - chart.chartWidth,
-            plusHeight = $(document).height() - chart.chartHeight;
+    H.wrap(
+        H.Tooltip.prototype,
+        'getPosition',
+        function (proceed, boxWidth, boxHeight, point) {
+            var chart = this.chart,
+                pos,
+                doc = H.doc,
+                documentElement = doc.documentElement,
+                plusWidth = documentElement.clientWidth - chart.chartWidth,
+                plusHeight = Math.max(
+                    doc.body.scrollHeight, documentElement.scrollHeight,
+                    doc.body.offsetHeight, documentElement.offsetHeight,
+                    documentElement.clientHeight
+                ) - chart.chartHeight;
 
-        point.plotX += this.chart.pointer.chartPosition.left;
-        point.plotY += this.chart.pointer.chartPosition.top;
+            point.plotX += this.chart.pointer.chartPosition.left;
+            point.plotY += this.chart.pointer.chartPosition.top;
 
-        // Temporary set the chart referece to a mock object, so that the
-        // tooltip positioner picks it up
-        this.chart = {
-            chartWidth: chart.chartWidth + plusWidth,
-            chartHeight: chart.chartHeight + plusHeight,
-            plotWidth: chart.plotWidth + plusWidth,
-            plotHeight: chart.plotHeight + plusHeight,
-            plotTop: chart.plotTop,
-            plotLeft: chart.plotLeft,
-            inverted: chart.inverted
-        };
+            // Temporary set the chart referece to a mock object, so that the
+            // tooltip positioner picks it up
+            this.chart = {
+                // -24 to prevent scrollbars
+                chartWidth: chart.chartWidth + plusWidth - 24,
+                chartHeight: chart.chartHeight + plusHeight,
+                plotWidth: chart.plotWidth + plusWidth,
+                plotHeight: chart.plotHeight + plusHeight,
+                plotTop: chart.plotTop - offset,
+                plotLeft: chart.plotLeft - offset,
+                inverted: chart.inverted
+            };
 
-        // Compute the tooltip position
-        pos = proceed.call(this, boxWidth, boxHeight, point);
+            // Compute the tooltip position
+            pos = proceed.call(this, boxWidth, boxHeight, point);
 
-        // Reset chart reference
-        this.chart = chart;
+            // Reset chart reference
+            this.chart = chart;
 
-        return pos;
-    });
+            return pos;
+        }
+    );
 
     /**
      * Find the new position and perform the move. This override is identical
@@ -84,8 +101,8 @@
 
         // Set the renderer size dynamically to prevent document size to change
         this.renderer.setSize(
-            label.width + (this.options.borderWidth || 0) + this.distance,
-            label.height + this.distance,
+            label.width + (this.options.borderWidth || 0) + this.distance + offset,
+            label.height + this.distance + offset,
             false
         );
 
@@ -181,7 +198,7 @@ Highcharts.chart('container3', {
     },
 
     title: {
-        text: 'Tooltip outside the box'
+        text: 'useHTML = true'
     },
 
     xAxis: {
@@ -190,6 +207,10 @@ Highcharts.chart('container3', {
 
     legend: {
         enabled: false
+    },
+
+    tooltip: {
+        useHTML: true
     },
 
     series: [{

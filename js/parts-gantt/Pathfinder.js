@@ -21,43 +21,276 @@ var defined = H.defined,
     max = Math.max,
     min = Math.min;
 
-// TODO:
-// Check dynamics, including hiding/adding/removing/updating series/points etc.
-// Test connecting to multiple points
+/*
+ TODO:
+     - Test dynamics, hiding/adding/removing/updating chart/series/points/axes
+     - Test connecting to multiple points
+     - Add demos/samples
+     - Document how to write your own algorithms
+     - Consider adding a Point.pathTo method that wraps creating a connection
+       and rendering it
+*/
+
 
 // Set default Pathfinder options
 extend(H.defaultOptions, {
+    /**
+     * The Pathfinder module allows you to define connections between points,
+     * represented as lines - optionally with markers for the start and end
+     * points. Multiple algorithms are available for selecting how the
+     * connecting lines are drawn.
+     *
+     * Pathfinder functionality requires Highcharts Gantt or the Pathfinder
+     * module to be loaded.
+     *
+     * @optionparent pathfinder
+     */
     pathfinder: {
-        // enabled: true,
-        // dashStyle: 'solid',
-        // color: point.color,
-        // algorithmMargin: null, // Autocomputed
+        /**
+         * Enable the pathfinder for this chart. Requires the pathfinder.js
+         * module, or Highcharts Gantt.
+         *
+         * @type {boolean}
+         * @default true
+         * @since 7.0.0
+         * @apioption pathfinder.enabled
+         */
+
+        /**
+         * Set the default dash style for this chart's Pathfinder connecting
+         * lines.
+         *
+         * @type {string}
+         * @default solid
+         * @since 7.0.0
+         * @apioption pathfinder.dashStyle
+         */
+
+        /**
+         * Set the default color for this chart's Pathfinder connecting lines.
+         * Defaults to the color of the point being connected.
+         *
+         * @type {Color}
+         * @default null
+         * @since 7.0.0
+         * @apioption pathfinder.lineColor
+         */
+
+        /**
+         * Set the default pathfinder margin to use, in pixels. Some Pathfinder
+         * algorithms attempt to avoid obstacles, such as other points in the
+         * chart. These algorithms use this margin to determine how close lines
+         * can be to an obstacle. The default is to compute this automatically
+         * from the size of the obstacles in the chart.
+         *
+         * To draw connecting lines close to existing points, set this to a low
+         * number. For more space around existing points, set this number
+         * higher.
+         *
+         * @type {number}
+         * @default null
+         * @since 7.0.0
+         * @apioption pathfinder.algorithmMargin
+         */
+
+        /**
+         * Set the default pathfinder algorithm to use for this chart. It is
+         * possible to define your own algorithms by adding them to the
+         * Highcharts.Pathfinder.prototype.algorithms object after the chart
+         * has been created.
+         *
+         * The default algorithms are as follows:
+         *
+         * straight:        Draws a straight line between the connecting points.
+         *                  Does not avoid other points when drawing.
+         *
+         * simpleConnect:   Finds a path between the points using right angles
+         *                  only. Takes only starting/ending points into
+         *                  account, and will not avoid other points.
+         *
+         * fastAvoid:       Finds a path between the points using right angles
+         *                  only. Will attempt to avoid other points, but its
+         *                  focus is performance over accuracy. Works well with
+         *                  less dense datasets.
+         *
+         * @type {string}
+         * @default straight
+         * @since 7.0.0
+         * @apioption pathfinder.type
+         */
         type: 'straight',
+
+        /**
+         * Set the default pixel width for this chart's Pathfinder connecting
+         * lines.
+         *
+         * @type {number}
+         * @default 1
+         * @since 7.0.0
+         * @apioption pathfinder.lineWidth
+         */
+        lineWidth: 1,
+
+        /**
+         * Marker options for this chart's Pathfinder connectors.
+         *
+         * @type {object}
+         * @since 7.0.0
+         * @apioption pathfinder.marker
+         */
         marker: {
-            // radius: null, // Autocomputed
+            /**
+             * Set the radius of the pathfinder markers. The default is
+             * automatically computed based on the algorithmMargin setting.
+             *
+             * Setting marker.width and marker.height will override this
+             * setting.
+             *
+             * @type {number}
+             * @default null
+             * @since 7.0.0
+             * @apioption pathfinder.marker.radius
+             */
+
+            /**
+             * Set the width of the pathfinder markers. If not supplied, this
+             * is inferred from the marker radius.
+             *
+             * @type {number}
+             * @default null
+             * @since 7.0.0
+             * @apioption pathfinder.marker.width
+             */
+
+            /**
+             * Set the height of the pathfinder markers. If not supplied, this
+             * is inferred from the marker radius.
+             *
+             * @type {number}
+             * @default null
+             * @since 7.0.0
+             * @apioption pathfinder.marker.height
+             */
+
+            /**
+             * Set the color of the pathfinder markers. By default this is the
+             * same as the connector color.
+             *
+             * @type {Color}
+             * @default null
+             * @since 7.0.0
+             * @apioption pathfinder.marker.color
+             */
+
+            /**
+             * Set the line/border color of the pathfinder markers. By default
+             * this is the same as the marker color.
+             *
+             * @type {Color}
+             * @default null
+             * @since 7.0.0
+             * @apioption pathfinder.marker.lineColor
+             */
+
+            /**
+             * Enable markers for the connectors.
+             */
             enabled: false,
+
+            /**
+             * Horizontal alignment of the markers relative to the points.
+             */
             align: 'center',
+
+            /**
+             * Vertical alignment of the markers relative to the points.
+             */
             verticalAlign: 'middle',
-            inside: false
+
+            /**
+             * Whether or not to draw the markers inside the points.
+             */
+            inside: false,
+
+            /**
+             * Set the line/border width of the pathfinder markers.
+             */
+            lineWidth: 1
         },
+
+        /**
+         * Marker options specific to the start markers for this chart's
+         * Pathfinder connectors. Overrides the generic marker options.
+         *
+         * @type {object}
+         * @since 7.0.0
+         * @extends pathfinder.marker
+         * @apioption pathfinder.startMarker
+         */
         startMarker: {
+            /**
+             * Set the symbol of the pathfinder start markers.
+             */
             symbol: 'diamond'
         },
+
+        /**
+         * Marker options specific to the end markers for this chart's
+         * Pathfinder connectors. Overrides the generic marker options.
+         *
+         * @type {object}
+         * @since 7.0.0
+         * @extends pathfinder.marker
+         * @apioption pathfinder.endMarker
+         */
         endMarker: {
+            /**
+             * Set the symbol of the pathfinder end markers.
+             */
             symbol: 'arrow-filled'
-        },
-        lineWidth: 1
+        }
     }
 });
+
+/**
+ * Override Pathfinder options for a series. Requires Highcharts Gantt or the
+ * Pathfinder module.
+ *
+ * @since 7.0.0
+ * @extends pathfinder
+ * @apioption plotOptions.series.pathfinder
+ * @excluding enabled,algorithmMargin
+ */
+
+/**
+ * Connect to a point. Requires the Pathfinder module or Highcharts Gantt to be
+ * loaded. This option can be either a string, referring to the ID of another
+ * point, or an object.
+ *
+ * @type {string|object}
+ * @since 7.0.0
+ * @extends plotOptions.series.pathfinder
+ * @apioption series.line.data.connect
+ */
+
+/**
+ * The ID of the point to connect to.
+ *
+ * @type {string}
+ * @since 7.0.0
+ * @apioption series.line.data.connect.to
+ */
 
 
 /**
  * Get point bounding box using plotX/plotY and shapeArgs. If using
  * graphic.getBBox() directly, the bbox will be affected by animation.
  *
- * @param {Object} point The point to get BB of.
+ * @param   {Highcharts.Point} point
+ *          The point to get BB of.
  *
- * @return {Object} result xMax, xMin, yMax, yMin
+ * @return  {object}
+ *          Result xMax, xMin, yMax, yMin.
  */
 function getPointBB(point) {
     var shapeArgs = point.shapeArgs,
@@ -87,9 +320,11 @@ function getPointBB(point) {
  * Calculate margin to place around obstacles for the pathfinder in pixels.
  * Returns a minimum of 1 pixel margin.
  *
- * @param {Array} obstacles Obstacles to calculate margin from.
+ * @param   {Array} obstacles
+ *          Obstacles to calculate margin from.
  *
- * @return {Number} result The calculated margin in pixels.
+ * @return  {number}
+ *          The calculated margin in pixels. At least 1.
  */
 function calculateObstacleMargin(obstacles) {
     var len = obstacles.length,
@@ -131,6 +366,7 @@ function calculateObstacleMargin(obstacles) {
         // obstacle to the ones before.
         for (j = i + 1; j < len; ++j) {
             obstacleDistance = distance(obstacles[i], obstacles[j]);
+            // TODO: Magic number 80
             if (obstacleDistance < 80) { // Ignore large distances
                 distances.push(obstacleDistance);
             }
@@ -155,23 +391,41 @@ function calculateObstacleMargin(obstacles) {
 
 
 /**
- * The Connection class.
+ * The Connection class. Used internally to represent a connection between two
+ * points.
  *
- * @class
- * @param {Object} from Connection runs from this Point
- * @param {Object} to Connection runs to this Point
- * @param {Object} options Connection options
+ * @private
+ * @class Connection
+ *
+ * @param   {Highcharts.Point} from
+ *          Connection runs from this Point.
+ *
+ * @param   {Highcharts.Point} to
+ *          Connection runs to this Point.
+ *
+ * @param   {object} [options]
+ *          Connection options.
  */
 function Connection(from, to, options) {
     this.init(from, to, options);
 }
 Connection.prototype = {
+
     /**
-     * Initialize the Connection object.
+     * Initialize the Connection object. Used as constructor only.
      *
-     * @param {Object} from Connection runs from this Point
-     * @param {Object} to Connection runs to this Point
-     * @param {Object} options Connection options
+     * @function Highcharts.Connection#init
+     *
+     * @param   {Highcharts.Point} from
+     *          Connection runs from this Point.
+     *
+     * @param   {Highcharts.Point} to
+     *          Connection runs to this Point.
+     *
+     * @param   {object} [options]
+     *          Connection options.
+     *
+     * @return  {void}
      */
     init: function (from, to, options) {
         this.fromPoint = from;
@@ -182,13 +436,22 @@ Connection.prototype = {
     },
 
     /**
-     * Add or update connection path with attributes. Stores reference to the
-     * created element on connection.graphics.path.
+     * Add (or update) this connection's path on chart. Stores reference to the
+     * created element on this.graphics.path.
      *
-     * @param {Object} path Path to render, in array format.
-     * @param {Object} attribs SVG attributes for the path.
-     * @param {Function} complete Callback function when the path has been
-     *  rendered and animation is complete.
+     * @function Highcharts.Connection#renderPath
+     *
+     * @param   {Array} path
+     *          Path to render, in array format. E.g. ['M', 0, 0, 'L', 10, 10]
+     *
+     * @param   {object} [attribs]
+     *          SVG attributes for the path.
+     *
+     * @param   {Function} [complete]
+     *          Callback function when the path has been rendered and animation
+     *          is complete.
+     *
+     * @return  {void}
      */
     renderPath: function (path, attribs, complete) {
         var connection = this,
@@ -203,7 +466,7 @@ Connection.prototype = {
         // Add the SVG element of the pathfinder group if it doesn't exist
         if (!pathfinder.group) {
             pathfinder.group = chart.renderer.g()
-                .addClass('highcharts-pathfinder')
+                .addClass('highcharts-pathfinder-group')
                 .attr({ zIndex: -1 })
                 .add(chart.seriesGroup);
         }
@@ -243,11 +506,24 @@ Connection.prototype = {
     },
 
     /**
-     * Calculate and add marker graphics for connection.
+     * Calculate and add marker graphics for connection to the chart. The
+     * created/updated elements are stored on this.graphics.start and
+     * this.graphics.end.
      *
-     * @param {String} type Marker type, either 'start' or 'end'.
-     * @param {Object} options Options for this marker.
-     * @param {Array} path Connection path in array format.
+     * @function Highcharts.Connection#addMarker
+     *
+     * @param   {string} type
+     *          Marker type, either 'start' or 'end'.
+     *
+     * @param   {object} options
+     *          All options for this marker. Not calculated or merged with other
+     *          options.
+     *
+     * @param   {Array} path
+     *          Connection path in array format. This is used to calculate the
+     *          rotation angle of the markers.
+     *
+     * @return  {void}
      */
     addMarker: function (type, options, path) {
         var connection = this,
@@ -333,23 +609,26 @@ Connection.prototype = {
                 .attr(box)
                 .attr({
                     fill: options.color || connection.fromPoint.color,
-                    stroke: options.stroke,
-                    'stroke-width': options['stroke-width']
+                    stroke: options.lineColor,
+                    'stroke-width': options.lineWidth
                 })
                 .add(pathfinder.group);
         } else {
             connection.graphics[type].animate(box);
         }
-
     },
 
     /**
      * Calculate and return connection path.
-     * Note: Recalculates chart obstacles on demand.
+     * Note: Recalculates chart obstacles on demand if they aren't calculated.
      *
-     * @param {Object} options Pathfinder options.
+     * @function Highcharts.Connection#getPath
      *
-     * @return {Array} result Calculated SVG path data in array format.
+     * @param   {object} options
+     *          Pathfinder options. Not calculated or merged with other options.
+     *
+     * @return  {Array}
+     *          Calculated SVG path data in array format.
      */
     getPath: function (options) {
         var pathfinder = this.pathfinder,
@@ -407,6 +686,8 @@ Connection.prototype = {
 
     /**
      * (re)Calculate and (re)draw the connection.
+     *
+     * @function Highcharts.Connection#render
      */
     render: function () {
         var connection = this,
@@ -421,7 +702,7 @@ Connection.prototype = {
                 fromPoint.options.pathfinder, connection.options
             ),
             attribs = {
-                stroke: options.color || fromPoint.color,
+                stroke: options.lineColor || fromPoint.color,
                 'stroke-width': options.lineWidth
             };
 
@@ -442,8 +723,7 @@ Connection.prototype = {
         path = pathResult.path;
 
         // Always update obstacle storage with obstacles from this path.
-        // We don't know if future pathTo calls will need this for their
-        // algorithm.
+        // We don't know if future calls will need this for their algorithm.
         if (pathResult.obstacles) {
             pathfinder.lineObstacles = pathfinder.lineObstacles || [];
             pathfinder.lineObstacles =
@@ -468,12 +748,15 @@ Connection.prototype = {
 
     /**
      * Destroy connection by destroying the added graphics elements.
+     *
+     * @function Highcharts.Connection#destroy
      */
     destroy: function () {
         if (this.graphics) {
             H.objectEach(this.graphics, function (val) {
                 val.destroy();
             });
+            delete this.graphics;
         }
     }
 };
@@ -482,8 +765,11 @@ Connection.prototype = {
 /**
  * The Pathfinder class.
  *
- * @class
- * @param {Object} chart
+ * @private
+ * @class Pathfinder
+ *
+ * @param   {Highcharts.Chart} chart
+ *          The chart to operate on.
  */
 function Pathfinder(chart) {
     this.init(chart);
@@ -495,7 +781,12 @@ Pathfinder.prototype = {
     /**
      * Initialize the Pathfinder object.
      *
-     * @param {Object} chart The chart context.
+     * @function Highcharts.Pathfinder#init
+     *
+     * @param   {Highcharts.Chart} chart
+     *          The chart context.
+     *
+     * @return  {void}
      */
     init: function (chart) {
         // Initialize pathfinder with chart context
@@ -512,6 +803,8 @@ Pathfinder.prototype = {
 
     /**
      * Update Pathfinder connections from scratch.
+     *
+     * @function Highcharts.Pathfinder#update
      */
     update: function () {
         var chart = this.chart,
@@ -581,7 +874,7 @@ Pathfinder.prototype = {
 
         // Clear obstacles to force recalculation. This must be done on every
         // redraw in case positions have changed. Recalculation is handled in
-        // Point.pathTo on demand.
+        // Connection.getPath on demand.
         delete this.chartObstacles;
         delete this.lineObstacles;
 
@@ -591,6 +884,8 @@ Pathfinder.prototype = {
 
     /**
      * Draw the chart's connecting paths.
+     *
+     * @function Highcharts.Pathfinder#renderConnections
      */
     renderConnections: function () {
         each(this.connections, function (connection) {
@@ -599,12 +894,18 @@ Pathfinder.prototype = {
     },
 
     /**
-     * Get chart obstacles from points. Does not include connecting lines from
-     * Pathfinder. Applies algorithmMargin to the obstacles.
+     * Get obstacles for the points in the chart. Does not include connecting
+     * lines from Pathfinder. Applies algorithmMargin to the obstacles.
      *
-     * @param {Object} options Options for the calculation.
+     * @function Highcharts.Pathfinder#getChartObstacles
      *
-     * @return {Object} result The calculated obstacles.
+     * @param   {object} options
+     *          Options for the calculation. Currenlty only
+     *          options.algorithmMargin.
+     *
+     * @return  {Array}
+     *          An array of calculated obstacles. Each obstacle is defined as
+     *          an object with xMin, xMax, yMin and yMax properties.
      */
     getChartObstacles: function (options) {
         var obstacles = [],
@@ -654,13 +955,18 @@ Pathfinder.prototype = {
     },
 
     /**
-     * Get metrics for obstacles.
+     * Utility function to get metrics for obstacles:
      *  - Widest obstacle width
      *  - Tallest obstacle height
      *
-     * @param {Object} obstacles Options for the calculation.
+     * @function Highcharts.Pathfinder#getObstacleMetrics
      *
-     * @return {Object} result The calculated metrics.
+     * @param   {Array} obstacles
+     *          An array of obstacles to inspect.
+     *
+     * @return  {object}
+     *          The calculated metrics, as an object with maxHeight and maxWidth
+     *          properties.
      */
     getObstacleMetrics: function (obstacles) {
         var maxWidth = 0,
@@ -687,13 +993,17 @@ Pathfinder.prototype = {
     },
 
     /**
-     * Get which direction to start the pathfinding algorithm, calculated from
-     * marker options.
+     * Utility to get which direction to start the pathfinding algorithm
+     * (X vs Y), calculated from a set of marker options.
      *
-     * @param {Object} markerOptions Marker options to calculate from.
+     * @function Highcharts.Pathfinder#getAlgorithmStartDirection
      *
-     * @return {Boolean} result Returns true for X, false for Y, and undefined
-     *                          for autocalculate.
+     * @param   {object} markerOptions
+     *          Marker options to calculate from.
+     *
+     * @return  {boolean}
+     *          Returns true for X, false for Y, and undefined for
+     *          autocalculate.
      */
     getAlgorithmStartDirection: function (markerOptions) {
         var xCenter = markerOptions.align !== 'left' &&
@@ -719,10 +1029,15 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
     /**
      * Get coordinates of anchor point for pathfinder connection.
      *
-     * @param {Object} markerOptions Connection options for position on point
+     * @private
+     * @function Highcharts.Point#getPathfinderAnchorPoint
      *
-     * @return {Object} result An object with x/y properties for the position.
-     *  Coordinates are in plot values, not relative to point.
+     * @param   {object} markerOptions
+     *          Connection options for position on point.
+     *
+     * @return  {object}
+     *          An object with x/y properties for the position. Coordinates are
+     *          in plot values, not relative to point.
      */
     getPathfinderAnchorPoint: function (markerOptions) {
         var bb = getPointBB(this),
@@ -752,14 +1067,19 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
     },
 
     /**
-     * Get the angle from one point to another.
-     * @param  {Object} v1 - the first vector
-     * @param  {Object} v1.x - the first vector x position
-     * @param  {Object} v1.y - the first vector y position
-     * @param  {Object} v2 - the second vector
-     * @param  {Object} v2.x - the second vector x position
-     * @param  {Object} v2.y - the second vector y position
-     * @return {number}    - the angle in degrees
+     * Utility to get the angle from one point to another.
+     *
+     * @private
+     * @function Highcharts.Point#getRadiansToVector
+     *
+     * @param   {object} v1
+     *          The first vector, as an object with x/y properties.
+     *
+     * @param   {object} v2
+     *          The second vector, as an object with x/y properties.
+     *
+     * @return  {number}
+     *          The angle in degrees
      */
     getRadiansToVector: function (v1, v2) {
         var box;
@@ -774,22 +1094,30 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
     },
 
     /**
-     * Get the position of the marker, based on the path angle and the marker's
-     * radius.
-     * @param {number} radians      the angle in radians from the point center
-     *                              to another vector
-     * @param {number} markerRadius the radius of the marker, to calculate the
-     *                              additional distance to the center of the
-     *                              marker
-     * @param {Object} anchor       the anchor point of the path and marker
-     * @param {number} anchor.x     the x position of the anchor
-     * @param {number} anchor.y     the x position of the anchor
-     * @return {Object}             a vector (x, y) of the marker position
+     * Utility to get the position of the marker, based on the path angle and
+     * the marker's radius.
+     *
+     * @private
+     * @function Highcharts.Point#getMarkerVector
+     *
+     * @param   {number} radians
+     *          The angle in radians from the point center to another vector.
+     *
+     * @param   {number} markerRadius
+     *          The radius of the marker, to calculate the additional distance
+     *          to the center of the marker.
+     *
+     * @param   {object} anchor
+     *          The anchor point of the path and marker as an object with x/y
+     *          properties.
+     *
+     * @return  {object}
+     *          The marker vector as an object with x/y properties.
      */
     getMarkerVector: function (radians, markerRadius, anchor) {
         var twoPI = Math.PI * 2.0,
             theta = radians,
-            bb =  getPointBB(this),
+            bb = getPointBB(this),
             rectWidth = bb.xMax - bb.xMin,
             rectHeight = bb.yMax - bb.yMin,
             rAtan = Math.atan2(rectHeight, rectWidth),
@@ -854,8 +1182,6 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 
         return markerPoint;
     }
-
-    // TODO: Add pathTo method that wraps creating a connection and rendering it
 });
 
 // Initialize Pathfinder for charts

@@ -13,6 +13,18 @@ import 'TreeGrid.js';
 import 'Pathfinder.js';
 import '../modules/xrange.src.js';
 
+/**
+ * The ID of this point's parent point for Gantt charts. Aliases
+ * {@link series.line.data#connect}. Can also be an object, specifying further
+ * connecting options between the points.
+ *
+ * @type {string|object}
+ * @since 7.0.0
+ * @product gantt
+ * @apioption series.line.data.dependency
+ */
+
+
 var dateFormat = H.dateFormat,
     isObject = H.isObject,
     isNumber = H.isNumber,
@@ -55,7 +67,6 @@ seriesType('gantt', parentName, {
             var point = this,
                 series = point.series,
                 tooltip = series.chart.tooltip,
-                taskName = point.taskName,
                 xAxis = series.xAxis,
                 options = xAxis.options,
                 formats = options.dateTimeLabelFormats,
@@ -68,7 +79,7 @@ seriesType('gantt', parentName, {
                 milestone = point.options.milestone,
                 dateRowStart = '<span style="font-size: 0.8em">',
                 dateRowEnd = '</span><br/>',
-                retVal = '<b>' + taskName + '</b>';
+                retVal = '<b>' + point.name + '</b>';
 
             if (ttOptions.pointFormat) {
                 return point.tooltipFormatter(ttOptions.pointFormat);
@@ -210,7 +221,6 @@ seriesType('gantt', parentName, {
         if (options.milestone) {
             options.x2 = options.x;
         }
-        options.name = pick(options.taskName, options.name);
         options.partialFill = pick(options.completed, options.partialFill);
         options.connect = pick(options.dependency, options.connect);
     }
@@ -233,22 +243,6 @@ seriesType('gantt', parentName, {
 
         retVal = Point.prototype.applyOptions.call(point, retVal, x);
         return retVal;
-    },
-
-    /**
-     * Get an information object used for the data label and tooltip formatters.
-     *
-     * This override adds point.taskName to the configuration, which makes it
-     * available in data label and tooltip formatters.
-     *
-     * @return {Object} an object with point information
-     */
-    getLabelConfig: function () {
-        var point = this,
-            cfg = Point.prototype.getLabelConfig.call(point);
-
-        cfg.taskName = point.taskName;
-        return cfg;
     }
 });
 

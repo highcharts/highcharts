@@ -57,7 +57,7 @@ var seriesType = H.seriesType,
  *
  * @sample highcharts/demo/treemap-large-dataset/ Treemap
  *
- * @extends {plotOptions.scatter}
+ * @extends plotOptions.scatter
  * @excluding marker
  * @product highcharts
  * @optionparent plotOptions.treemap

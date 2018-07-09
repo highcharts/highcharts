@@ -23,7 +23,7 @@ if (seriesTypes.bubble) {
      *
      * @sample maps/demo/map-bubble/ Map bubble chart
      *
-     * @extends {plotOptions.bubble}
+     * @extends plotOptions.bubble
      * @product highmaps
      * @optionparent plotOptions.mapbubble
      */

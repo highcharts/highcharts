@@ -143,7 +143,7 @@ MapNavigation.prototype.updateEvents = function (options) {
 
     // Add the double click event
     if (
-        pick(options.enableDoubleClickZoom,    options.enabled) ||
+        pick(options.enableDoubleClickZoom, options.enabled) ||
         options.enableDoubleClickZoomTo
     ) {
         this.unbindDblClick = this.unbindDblClick || addEvent(

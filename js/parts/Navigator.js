@@ -181,7 +181,7 @@ extend(defaultOptions, {
              * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
              * used by its method name, as shown in the demo.
              *
-             * @type {Array}
+             * @type {Array<string>}
              * @default ['navigator-handle', 'navigator-handle']
              * @product highstock
              * @sample {highstock} stock/navigator/styled-handles/
@@ -337,7 +337,7 @@ extend(defaultOptions, {
             /**
              * Data grouping options for the navigator series.
              *
-             * @extends {plotOptions.series.dataGrouping}
+             * @extends plotOptions.series.dataGrouping
              */
             dataGrouping: {
                 approximation: 'average',
@@ -351,7 +351,7 @@ extend(defaultOptions, {
              * Data label options for the navigator series. Data labels are
              * disabled by default on the navigator series.
              *
-             * @extends {plotOptions.series.dataLabels}
+             * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
                 enabled: false,
@@ -402,7 +402,7 @@ extend(defaultOptions, {
          * }</pre>
          *
          * @type {Object}
-         * @extends {xAxis}
+         * @extends xAxis
          * @excluding linkedTo,maxZoom,minRange,opposite,range,scrollbar,
          *          showEmpty,maxRange
          * @product highstock
@@ -468,7 +468,7 @@ extend(defaultOptions, {
          * }</pre>
          *
          * @type {Object}
-         * @extends {yAxis}
+         * @extends yAxis
          * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
          *          scrollbar,top,units,maxRange,minLength,maxLength,resize
          * @product highstock
@@ -984,8 +984,8 @@ Navigator.prototype = {
             navigator.scrollbar.setRange(
                 // Use real value, not rounded because range can be very small
                 // (#1716)
-                navigator.zoomedMin / navigatorSize,
-                navigator.zoomedMax / navigatorSize
+                navigator.zoomedMin / (navigatorSize || 1),
+                navigator.zoomedMax / (navigatorSize || 1)
             );
         }
         navigator.rendered = true;
@@ -1403,20 +1403,22 @@ Navigator.prototype = {
             baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis ||
                 chart.xAxis[0] || { options: {} };
 
+
         // Make room for the navigator, can be placed around the chart:
-        chart.extraMargin = {
-            type: navigator.opposite ? 'plotTop' : 'marginBottom',
-            value: (
+        addEvent(chart, 'getMargins', function () {
+            var marginName = navigator.opposite ? 'plotTop' : 'marginBottom';
+            if (chart.inverted) {
+                marginName = navigator.opposite ? 'marginRight' : 'plotLeft';
+            }
+
+            chart[marginName] = (chart[marginName] || 0) + (
                 navigatorEnabled || !chart.inverted ?
                     navigator.outlineHeight :
                     0
-            ) + navigatorOptions.margin
-        };
-        if (chart.inverted) {
-            chart.extraMargin.type = navigator.opposite ?
-                'marginRight' :
-                'plotLeft';
-        }
+            ) + navigatorOptions.margin;
+
+        });
+
         chart.isDirtyBox = true;
 
         if (navigator.navigatorEnabled) {

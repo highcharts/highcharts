@@ -12,32 +12,32 @@ Highcharts.ganttChart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            taskName: 'Create prototype',
+            name: 'Create prototype',
             id: 'prototype',
             start: Date.UTC(2014, 10, 18),
             end: Date.UTC(2014, 10, 21)
         }, {
-            taskName: 'Prototype done',
+            name: 'Prototype done',
             dependency: 'prototype',
             start: Date.UTC(2014, 10, 21, 12),
             milestone: true
         }, {
-            taskName: 'Develop',
+            name: 'Develop',
             id: 'develop',
             start: Date.UTC(2014, 10, 20),
             end: Date.UTC(2014, 10, 25)
         }, {
-            taskName: 'Development done',
+            name: 'Development done',
             dependency: 'develop',
             start: Date.UTC(2014, 10, 25, 12),
             milestone: true,
             color: '#fa0'
         }, {
-            taskName: 'Test prototype',
+            name: 'Test prototype',
             start: Date.UTC(2014, 10, 27),
             end: Date.UTC(2014, 10, 29)
         }, {
-            taskName: 'Run acceptance tests',
+            name: 'Run acceptance tests',
             start: Date.UTC(2014, 10, 23),
             end: Date.UTC(2014, 10, 26)
         }]

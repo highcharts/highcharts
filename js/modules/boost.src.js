@@ -895,7 +895,7 @@ function GLShader(gl) {
      * @param val {float} - the value to set
      */
     function setUniform(name, val) {
-        var u = uLocations[name] =    uLocations[name] ||
+        var u = uLocations[name] = uLocations[name] ||
                                     gl.getUniformLocation(shaderProgram, name);
         gl.uniform1f(u, val);
     }
@@ -2962,7 +2962,7 @@ Series.prototype.hasExtremes = function (checkX) {
         xAxis = this.xAxis && this.xAxis.options,
         yAxis = this.yAxis && this.yAxis.options;
 
-    return     data.length > (options.boostThreshold || Number.MAX_VALUE) &&
+    return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
             isNumber(yAxis.min) && isNumber(yAxis.max) &&
             (!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
 };

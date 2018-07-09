@@ -16,7 +16,7 @@ var each = H.each,
 
 /**
  * The GanttChart class.
- * @class Highcharts.GanttChart
+ * @class Highcharts.ganttChart
  * @memberOf Highcharts
  * @param {String|HTMLDOMElement} renderTo The DOM element to render to, or
  *                                         its id.
@@ -24,7 +24,7 @@ var each = H.each,
  * @param {Function}              callback Function to run when the chart has
  *                                         loaded.
  */
-H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
+H.ganttChart = function (renderTo, options, callback) {
     var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
