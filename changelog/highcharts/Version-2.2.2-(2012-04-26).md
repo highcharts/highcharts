@@ -1,2 +1,0 @@
-## Bug fixes 
-- Fixed bugs.

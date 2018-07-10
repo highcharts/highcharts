@@ -1,4 +1,0 @@
-- Most changes listed under Highcharts 6.1.1 above also apply to Highmaps 6.1.1.
-## Bug fixes 
-- Fixed #7091, map drilldown failed after pinch zooming.
-- Fixed #8442, working around a Chrome regression causing map strokes to draw too wide after animation.

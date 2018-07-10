@@ -1,3 +1,0 @@
-- Most changes listed under Highcharts 4.1.4 above also apply to Highmaps 1.1.4.
-## Bug fixes 
-- Fixed #3917, wrong series Z index when combined with 3D module.

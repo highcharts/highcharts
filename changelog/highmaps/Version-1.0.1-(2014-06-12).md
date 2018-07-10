@@ -1,1 +1,0 @@
-- First release of Highmaps.

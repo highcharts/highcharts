@@ -1,1 +1,0 @@
-- Added methods and properties for working with charts, axes, series and points dynamically after render time.

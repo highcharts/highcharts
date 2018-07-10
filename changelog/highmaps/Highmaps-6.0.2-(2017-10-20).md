@@ -1,1 +1,0 @@
-- Most changes listed under Highcharts 6.0.2 above also apply to Highmaps 6.0.2.

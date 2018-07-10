@@ -1,3 +1,0 @@
-- Most changes listed under Highcharts 4.1.9 above also apply to Highmaps 1.1.9.
-## Bug fixes 
-- Fixed issue with double clicking map zoom buttons. Closes #4444.
