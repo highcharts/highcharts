@@ -1,3 +1,0 @@
-- Some issues listed under Highcharts 4.1.2 above also apply to Highmaps 1.1.2.
-## Bug fixes 
-- Fixed #3871, marker for colorAxis not displaying in Highmaps 1.1.

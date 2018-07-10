@@ -1,4 +1,0 @@
-- Most changes listed under Highcharts 5.0.11 above also apply to Highmaps 5.0.11.
-## Bug fixes 
-- Fixed #5676, regression causing ``nullInteraction`` not to take effect.
-- Fixed #6632, error when updating color axis with data classes.

@@ -1,4 +1,0 @@
-- Most changes listed under Highcharts 5.0.3 above also apply to Highmaps 5.0.3.
-## Bug fixes 
-- Fixed #5881, a regression with ``colorAxis.update`` in v5.0.
-- Fixed null-point issue with maplines.

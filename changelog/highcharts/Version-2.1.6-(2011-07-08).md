@@ -1,3 +1,0 @@
-- Rewrote data label positioning for pies.
-## Bug fixes 
-- Fixed issues as listed at [GitHub](http://github.com/highslide-software/highcharts.com/commits/master) under dates since the last maintenance version.

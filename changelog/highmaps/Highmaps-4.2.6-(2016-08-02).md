@@ -1,3 +1,0 @@
-- Most changes listed under Highcharts 4.2.6 above also apply to Highmaps 4.2.6.
-## Bug fixes 
-- Fixed #5011, mousewheel zoom also scrolled page.

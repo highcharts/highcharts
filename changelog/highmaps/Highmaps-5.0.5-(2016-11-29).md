@@ -1,3 +1,0 @@
-- Most changes listed under Highcharts 5.0.5 above also apply to Highmaps 5.0.5.
-## Bug fixes 
-- Fixed #6030, hover color not removed if using named colors.

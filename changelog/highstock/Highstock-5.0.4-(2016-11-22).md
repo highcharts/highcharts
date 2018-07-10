@@ -1,1 +1,0 @@
-- Most changes listed under Highcharts 5.0.4 above also apply to Highstock 5.0.4.

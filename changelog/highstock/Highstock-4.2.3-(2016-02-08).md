@@ -1,3 +1,0 @@
-- Most changes listed under Highcharts 4.2.3 above also apply to Highstock 4.2.3.
-## Bug fixes 
-- Fixed #5008, failure on gaps in navigator series under certain conditions.

@@ -1,1 +1,0 @@
-- Most changes listed under Highcharts 4.2.3 above also apply to Highmaps 4.2.3.

@@ -1,1 +1,0 @@
-- Highstock 1.3 is built on Highcharts 3.0, and shares the same new features for cartesian series types. See the [release announcement](/component/content/article/2-news/54-highcharts-3-0-released) for 3.0

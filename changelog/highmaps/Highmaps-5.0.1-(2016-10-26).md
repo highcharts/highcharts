@@ -1,3 +1,0 @@
-- Most changes listed under Highcharts 5.0.1 above also apply to Highmaps 5.0.1.
-## Bug fixes 
-- Fixed #5785, map area class names only had the first space in the name replaced by a hyphen.
