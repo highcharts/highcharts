@@ -1403,22 +1403,6 @@ Navigator.prototype = {
             baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis ||
                 chart.xAxis[0] || { options: {} };
 
-
-        // Make room for the navigator, can be placed around the chart:
-        addEvent(chart, 'getMargins', function () {
-            var marginName = navigator.opposite ? 'plotTop' : 'marginBottom';
-            if (chart.inverted) {
-                marginName = navigator.opposite ? 'marginRight' : 'plotLeft';
-            }
-
-            chart[marginName] = (chart[marginName] || 0) + (
-                navigatorEnabled || !chart.inverted ?
-                    navigator.outlineHeight :
-                    0
-            ) + navigatorOptions.margin;
-
-        });
-
         chart.isDirtyBox = true;
 
         if (navigator.navigatorEnabled) {
@@ -1971,21 +1955,52 @@ Navigator.prototype = {
      * Add chart events, like redrawing navigator, when chart requires that.
      */
     addChartEvents: function () {
-        addEvent(this.chart, 'redraw', function () {
+        if (!this.eventsToUnbind) {
+            this.eventsToUnbind = [];
+        }
+
+        this.eventsToUnbind.push(
             // Move the scrollbar after redraw, like after data updata even if
             // axes don't redraw
-            var navigator = this.navigator,
-                xAxis = navigator && (
-                    navigator.baseSeries &&
-                    navigator.baseSeries[0] &&
-                    navigator.baseSeries[0].xAxis ||
-                    navigator.scrollbar && this.xAxis[0]
-                ); // #5709
+            addEvent(
+                this.chart,
+                'redraw',
+                function () {
+                    var navigator = this.navigator,
+                        xAxis = navigator && (
+                            navigator.baseSeries &&
+                            navigator.baseSeries[0] &&
+                            navigator.baseSeries[0].xAxis ||
+                            navigator.scrollbar && this.xAxis[0]
+                        ); // #5709
 
-            if (xAxis) {
-                navigator.render(xAxis.min, xAxis.max);
-            }
-        });
+                    if (xAxis) {
+                        navigator.render(xAxis.min, xAxis.max);
+                    }
+                }
+            ),
+            // Make room for the navigator, can be placed around the chart:
+            addEvent(
+                this.chart,
+                'getMargins',
+                function () {
+                    var chart = this,
+                        navigator = chart.navigator,
+                        marginName = navigator.opposite ?
+                            'plotTop' : 'marginBottom';
+                    if (chart.inverted) {
+                        marginName = navigator.opposite ?
+                            'marginRight' : 'plotLeft';
+                    }
+
+                    chart[marginName] = (chart[marginName] || 0) + (
+                        navigator.navigatorEnabled || !chart.inverted ?
+                            navigator.outlineHeight :
+                            0
+                    ) + navigator.navigatorOptions.margin;
+                }
+            )
+        );
     },
 
     /**
