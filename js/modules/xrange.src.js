@@ -33,7 +33,7 @@ var addEvent = H.addEvent,
  *               findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
  *               negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
  *               pointRange,pointStart,softThreshold,stacking,threshold,data
- * @product      highcharts highstock
+ * @product      highcharts highstock gantt
  * @sample       {highcharts} highcharts/demo/x-range/
  *               X-range
  * @sample       {highcharts} highcharts/css/x-range/
@@ -500,7 +500,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *            findNearestPointBy,getExtremesFromAll,grouping,groupPadding,
  *            negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
  *            pointRange,pointStart,softThreshold,stacking,threshold
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange
  */
 

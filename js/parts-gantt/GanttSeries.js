@@ -35,11 +35,18 @@ var dateFormat = H.dateFormat,
     stop = H.stop,
     Point = H.Point,
     Series = H.Series,
-    parentName = 'xrange',
-    parent = seriesTypes[parentName];
+    parent = seriesTypes.xrange;
 
-// type, parent, options, props, pointProps
-seriesType('gantt', parentName, {
+/**
+ * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
+ * it is inherited from [chart.type](#chart.type).
+ *
+ * @type {Object}
+ * @extends {plotOptions.xrange}
+ * @product gantt
+ * @optionparent plotOptions.gantt
+ */
+seriesType('gantt', 'xrange', {
     // options - default options merged with parent
 
     grouping: false,
@@ -236,17 +243,7 @@ seriesType('gantt', parentName, {
 });
 
 /**
- * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
- * it is inherited from [chart.type](#chart.type).
- *
- * @type {Object}
- * @extends xrange,plotOptions.gantt
- * @product gantt
- * @apioption series.gantt
- */
-
-/**
- * Wether the grid node belonging to this point should start as collapsed. Used
+ * Whether the grid node belonging to this point should start as collapsed. Used
  * in axes of type treegrid.
  *
  * @type {Boolean}
@@ -254,4 +251,13 @@ seriesType('gantt', parentName, {
  * @product gantt
  * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Start as collapsed
  * @apioption series.gantt.data.collapsed
+ */
+
+/**
+ * A `gantt` series.
+ *
+ * @type {Object}
+ * @extends {plotOptions.gantt}
+ * @product gantt
+ * @apioption series.gantt
  */
