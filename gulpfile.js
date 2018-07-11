@@ -851,7 +851,7 @@ const createAllExamples = () => new Promise((resolve) => {
 });
 
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    const generate = require('highcharts-api-doc-gen');
+    const generate = require('highcharts-api-docs');
     const message = {
         'start': 'Started generating API documentation.',
         'noSeries': 'Missing series in tree.json. Run merge script.',
@@ -1115,8 +1115,8 @@ const jsdoc = () => {
     const dir = optionsClassReference.templateDir;
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
-        './node_modules/highcharts-api-docs-gen/include/*.*',
-        './node_modules/highcharts-api-docs-gen/templates/*.handlebars',
+        './node_modules/highcharts-api-docs/include/*.*',
+        './node_modules/highcharts-api-docs/templates/*.handlebars',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'

@@ -43,7 +43,7 @@
                 return;
             }
             if (token['type'] === 'heading' && (token['text'] === 'Upgrade notes' || token['text'] === 'Bug fixes')) {
-                write = token['text']
+                write = token['text'];
                 return;
             }
             switch (write) {
