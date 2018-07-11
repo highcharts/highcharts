@@ -1561,7 +1561,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * access to the axis.
      *
      * @extends      xAxis
-     * @excluding    ordinal,overscroll
+     * @excluding    ordinal,overscroll,currentDateIndicator
      * @optionparent yAxis
      */
     defaultYAxisOptions: {

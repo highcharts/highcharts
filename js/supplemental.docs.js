@@ -167,7 +167,7 @@
  * @sample {highcharts} highcharts/xaxis/uniquenames-false/ False
  * @default true
  * @since 4.2.7
- * @product highcharts
+ * @product highcharts gantt
  * @apioption xAxis.uniqueNames
  */
 
@@ -215,7 +215,7 @@
  * @type {Boolean}
  * @default true
  * @since 4.1.9
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.visible
  */
 
@@ -231,7 +231,7 @@
  * the perimeter of the gauge.
  *
  * @type {Array<Object>}
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands
  */
 
@@ -241,7 +241,7 @@
  *
  * @type {Color}
  * @default null
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.borderColor
  */
 
@@ -251,7 +251,7 @@
  *
  * @type {Number}
  * @default 0
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.borderWidth
  */
 
@@ -271,7 +271,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-color/ Color band
  * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
  * @default null
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.color
  */
 
@@ -283,7 +283,7 @@
  * @context PlotLineOrBand
  * @sample {highcharts} highcharts/xaxis/plotbands-events/ Mouse events demonstrated
  * @since 1.2
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.events
  */
 
@@ -295,7 +295,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-from/ Categorized axis
  * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
  * @default null
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.from
  */
 
@@ -306,7 +306,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-id/ Remove plot band by id
  * @sample {highstock} highcharts/xaxis/plotbands-id/ Remove plot band by id
  * @default null
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.id
  */
 
@@ -318,7 +318,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-from/ Categorized axis
  * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
  * @default null
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.to
  */
 
@@ -334,14 +334,14 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-zindex-above-series/ Above plot lines and series
  * @default null
  * @since 1.2
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.zIndex
  */
 
 /**
  * Text labels for the plot bands
  *
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.label
  */
 
@@ -354,7 +354,7 @@
  * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
  * @default center
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.label.align
  */
 
@@ -365,7 +365,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/ Vertical text
  * @default 0
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.label.rotation
  */
 
@@ -377,7 +377,7 @@
  * @type {Object}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-style/ Blue and bold label
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.label.style
  */
 
@@ -386,7 +386,7 @@
  *
  * @type {String}
  * @since 2.1
- * @product highcharts
+ * @product highcharts gantt
  * @apioption xAxis.plotBands.label.text
  */
 
@@ -400,7 +400,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/ Vertical text in center position but text-aligned left
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.label.textAlign
  */
 
@@ -411,7 +411,7 @@
  * @type {Boolean}
  * @default false
  * @since 3.0.3
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.label.useHTML
  */
 
@@ -424,7 +424,7 @@
  * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
  * @default top
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.label.verticalAlign
  */
 
@@ -435,7 +435,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-label-align/ Aligned 10px from the right edge
  * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.label.x
  */
 
@@ -447,7 +447,7 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-label-y/ Label on x axis
  * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotBands.label.y
  */
 
@@ -458,7 +458,7 @@
  * In styled mode, the plot lines are styled by the `.highcharts-plot-line` class in addition to the `className` option.
  *
  * @type {Array<Object>}
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines
  */
 
@@ -478,7 +478,7 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ A red line from X axis
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default null
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.color
  */
 
@@ -493,7 +493,7 @@
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default Solid
  * @since 1.2
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.dashStyle
  */
 
@@ -505,7 +505,7 @@
  * @context PlotLineOrBand
  * @sample {highcharts} highcharts/xaxis/plotlines-events/ Mouse events demonstrated
  * @since 1.2
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.events
  */
 
@@ -515,7 +515,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotlines-id/ Remove plot line by id
  * @default null
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.id
  */
 
@@ -526,7 +526,7 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ Between two categories on X axis
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default null
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.value
  */
 
@@ -537,7 +537,7 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ 2px wide line from X axis
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default null
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.width
  */
 
@@ -550,14 +550,14 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-zindex-above-all/ Above plot lines and series
  * @default null
  * @since 1.2
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.zIndex
  */
 
 /**
  * Text labels for the plot bands
  *
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label
  */
 
@@ -570,7 +570,7 @@
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default left
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label.align
  */
 
@@ -581,7 +581,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotlines-label-verticalalign-middle/ Slanted text
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label.rotation
  */
 
@@ -594,7 +594,7 @@
  * @type {Object}
  * @sample {highcharts} highcharts/xaxis/plotlines-label-style/ Blue and bold label
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label.style
  */
 
@@ -603,7 +603,7 @@
  *
  * @type {String}
  * @since 2.1
- * @product highcharts
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label.text
  */
 
@@ -617,7 +617,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotlines-label-textalign/ Text label in bottom position
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label.textAlign
  */
 
@@ -628,7 +628,7 @@
  * @type {Boolean}
  * @default false
  * @since 3.0.3
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label.useHTML
  */
 
@@ -642,7 +642,7 @@
  * @default {highcharts} top
  * @default {highstock} "top"
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label.verticalAlign
  */
 
@@ -653,7 +653,7 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-label-align-right/ Aligned 10px from the right edge
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label.x
  */
 
@@ -665,7 +665,7 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-label-y/ Label below the plot line
  * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @since 2.1
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption xAxis.plotLines.label.y
  */
 

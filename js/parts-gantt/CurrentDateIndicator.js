@@ -7,6 +7,16 @@
 'use strict';
 import H from '../parts/Globals.js';
 
+/**
+ * Show an indicator on the axis for the current date and time. Can be a boolean
+ * or a configuration object similar to [xAxis.plotLines](#xAxis.plotLines).
+ *
+ * @type {Object}
+ * @extends {xAxis.plotLines}
+ * @excluding value
+ * @product gantt
+ * @apioption xAxis.currentDateIndicator
+ */
 
 var addEvent = H.addEvent,
     Axis = H.Axis,
