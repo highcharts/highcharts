@@ -20,6 +20,13 @@ var seriesType = H.seriesType;
  * @product      highcharts
  * @optionparent plotOptions.bar
  */
+
+/**
+ * The bar series type.
+ *
+ * @constructor seriesTypes.bar
+ * @augments    Series
+ */
 seriesType('bar', 'column', null, {
     inverted: true
 });
