@@ -9,3 +9,4 @@
  */
 'use strict';
 import '../../modules/stock-tools-gui.js';
+import '../../modules/stock-tools-bindings.js';

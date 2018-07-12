@@ -20,6 +20,7 @@ var addEvent = H.addEvent,
     createElement = H.createElement,
     doc = H.doc,
     each = H.each,
+    fireEvent = H.fireEvent,
     getStyle = H.getStyle,
     css = H.css,
     DIV = 'div',
@@ -126,7 +127,7 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     listWrapper.insertBefore(toolbar, listWrapper.childNodes[0]);
 
     // generate buttons
-    chart.stockToolbar = stockToolbar = new H.Toolbar(guiOptions);
+    chart.stockToolbar = stockToolbar = new H.Toolbar(guiOptions, chart);
     stockToolbar.submenuWrapper = submenuWrapper;
 
     // arrows
@@ -152,12 +153,12 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     }
 });
 
-H.Toolbar = function (options) {
-    this.init(options);
+H.Toolbar = function (options, chart) {
+    this.init(options, chart);
 };
 
 H.Toolbar.prototype = {
-    init: function (guiOptions) {
+    init: function (guiOptions, chart) {
         var _self = this,
             addButton = _self.addButton,
             addSubmenu = _self.addSubmenu,
@@ -166,6 +167,8 @@ H.Toolbar.prototype = {
             buttons = guiOptions.buttons,
             defs = guiOptions.definitions,
             button;
+
+        _self.chart = chart;
 
         each(buttons, function (btn) {
             if (btn === 'separator') {
@@ -211,6 +214,8 @@ H.Toolbar.prototype = {
                 }
             }
         });
+
+        fireEvent('afterInit');
     },
     addSubmenu: function (parentBtn, buttons, guiOptions) {
         var items = buttons.items,
