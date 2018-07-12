@@ -37,7 +37,7 @@ H.setOptions({
             definitions: {
                 lines: {
                     items: ['line', 'segment', 'ray', 'arrowSegment'],
-                    className: 'segmend-class',
+                    className: 'highcharts-infinity-line',
                     symbol: 'url(https://www.highcharts.com/samples/graphics/save.svg)',
                     segment: {
                         type: 'aaa',
@@ -221,8 +221,7 @@ H.Toolbar.prototype = {
                 }
             }
         });
-
-        fireEvent('afterInit');
+        fireEvent(this, 'afterInit');
     },
     addSubmenu: function (parentBtn, buttons, guiOptions) {
         var items = buttons.items,

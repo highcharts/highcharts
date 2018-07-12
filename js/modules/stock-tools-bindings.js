@@ -8,12 +8,112 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-var addEvent = H.addEvent;
+var addEvent = H.addEvent,
+    doc = H.doc,
+    objectEach = H.objectEach,
+    PREFIX = 'highcharts-';
 
-H.Toolbar.prototype.features = [];
+H.Toolbar.prototype.features = {
+    'infinity-line': {
+        start: function (e) {
+            var chart = this.chart,
+                x = chart.xAxis[0].toValue(e.chartX),
+                y = chart.yAxis[0].toValue(e.chartY),
+                options = {
+                    type: 'infinity-line',
+                    // type: 'ray' || 'line',
+                    typeOptions: {
+                        type: 'line',
+                        // startArrow: true,
+                        endArrow: true,
+                        points: [{
+                            x: x,
+                            y: y
+                        }, {
+                            x: x,
+                            y: y
+                        }],
+                        xAxis: 0,
+                        yAxis: 0
+                    },
+                    events: {
+                        click: function () {
+                            this.cpVisibility = !this.cpVisibility;
+                            this.setControlPointsVisibility(this.cpVisibility);
+                        }
+                    },
+                    shapeOptions: {
+                        strokeWidth: 2
+                    }
+                };
 
-// addFeature('')
+            this.currentAnnotation = chart.addAnnotation(options);
+            this.nextEvent = this.mouseMoveEvent = this.selectedButton.steps[0];
+
+        },
+        steps: [
+            function (e) {
+                var chart = this.chart,
+                    options = this.currentAnnotation.options.typeOptions,
+                    x = chart.xAxis[0].toValue(e.chartX),
+                    y = chart.yAxis[0].toValue(e.chartY);
+
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+                this.nextEvent = this.selectedButton.end;
+            }
+        ],
+        end: function () {
+            this.currentAnnotation.added = true;
+            this.currentAnnotation = null;
+            this.nextEvent = false;
+            this.mouseMoveEvent = false;
+            // this.deselectButton();
+        }
+    }
+};
 
 addEvent(H.Toolbar, 'afterInit', function () {
+    var toolbar = this;
 
+    objectEach(toolbar.features, function (events, className) {
+        var element = doc.getElementsByClassName(PREFIX + className)[0];
+
+        if (element) {
+            addEvent(
+                element,
+                'click',
+                function () {
+                    toolbar.nextEvent = events.start;
+                    toolbar.selectedButton = events;
+                }
+            );
+        }
+    });
+});
+
+addEvent(H.Chart, 'load', function () {
+    var toolbar = this.stockToolbar;
+    if (toolbar) {
+        addEvent(this, 'click', function (e) {
+            if (toolbar.nextEvent) {
+                toolbar.nextEvent.call(toolbar, e);
+            }
+        });
+        addEvent(this.container, 'mousemove', function (e) {
+            if (toolbar.mouseMoveEvent) {
+                toolbar.mouseMoveEvent.call(toolbar, e);
+            }
+        });
+    }
 });
