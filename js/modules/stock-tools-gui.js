@@ -130,6 +130,13 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     chart.stockToolbar = stockToolbar = new H.Toolbar(guiOptions, chart);
     stockToolbar.submenuWrapper = submenuWrapper;
 
+    // show hide toolbar
+    createElement(DIV, {
+        className: 'showhide-showbar'
+    }, null, wrapper);
+
+    H.Toolbar.prototype.showHideToolbar();
+
     // arrows
     // 50px space for arrows
     if (toolbar.offsetHeight > (wrapper.offsetHeight - 50)) {
@@ -312,6 +319,26 @@ H.Toolbar.prototype = {
             if (wrapperHeight + targetY < toolbarHeight) {
                 targetY += step;
                 toolbar.style['margin-top'] = -targetY + 'px';
+            }
+        });
+    },
+    showHideToolbar: function () {
+        var toolbar = doc.getElementsByClassName('menu-wrapper')[0],
+            submenu = doc.getElementById('submenu'),
+            showhideBtn = doc.getElementsByClassName('showhide-showbar')[0];
+
+        // replace by icon
+        showhideBtn.innerHTML = '<';
+
+        addEvent(showhideBtn, 'click', function () {
+            if (toolbar.className.indexOf('hide') >= 0) {
+                toolbar.classList.remove('hide');
+                submenu.style.display = 'block';
+                showhideBtn.innerHTML = '<';
+            } else {
+                toolbar.className += ' hide';
+                submenu.style.display = 'none';
+                showhideBtn.innerHTML = '>';
             }
         });
     }
