@@ -80,6 +80,106 @@ H.Toolbar.prototype.features = {
             this.mouseMoveEvent = false;
             // this.deselectButton();
         }
+    },
+    'crooked-line': {
+        start: function () {
+
+        }
+    },
+    'vertical-arrows': {
+        start: function () {
+
+        }
+    },
+    'pitchfork': {
+        start: function () {
+
+        }
+    },
+    'measure': {
+        start: function () {
+
+        }
+    },
+    'parallel-channel': {
+        start: function () {
+
+        }
+    },
+    'line': {
+        start: function () {
+
+        }
+    },
+    'arrow': {
+        start: function () {
+
+        }
+    },
+    'circle': {
+        start: function () {
+
+        }
+    },
+    'rect': {
+        start: function () {
+
+        }
+    },
+    'tunnel': {
+        start: function () {
+
+        }
+    },
+    'fibonacci': {
+        start: function () {
+
+        }
+    },
+    'simple-text': {
+        start: function () {
+
+        }
+    },
+    'flag': {
+        start: function () {
+
+        }
+    },
+    'zoom-in': {
+        start: function () {
+
+        }
+    },
+    'zoom-out': {
+        start: function () {
+
+        }
+    },
+    'full-screen': {
+        start: function () {
+
+        }
+    },
+    'horizontal-price': {
+        start: function () {
+
+        }
+    },
+    'indicators': {
+        start: function () {
+
+        }
+    },
+    'show-hide-all': {
+        start: function () {
+
+        }
+    },
+    'save-chart': {
+        start: function () {
+
+        }
     }
 };
 
