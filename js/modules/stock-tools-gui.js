@@ -226,7 +226,9 @@ H.Toolbar.prototype = {
     addSubmenu: function (parentBtn, buttons, guiOptions) {
         var items = buttons.items,
             addButton = this.addButton,
-            buttonWidth = getStyle(parentBtn, 'width'),
+            submenuArrow = parentBtn.submenuArrow,
+            buttonWrapper = parentBtn.buttonWrapper,
+            buttonWidth = getStyle(buttonWrapper, 'width'),
             submenuWrapper = doc.getElementById('submenu'),
             wrapper = doc.getElementsByClassName(guiOptions.className)[0],
             allButtons = doc
@@ -237,17 +239,17 @@ H.Toolbar.prototype = {
 
         this.submenuWrapper = submenuWrapper;
 
-        addEvent(parentBtn, 'click', function () {
+        addEvent(submenuArrow, 'click', function () {
             // Erase active class on all other buttons
             each(allButtons, function (btn) {
-                if (btn !== parentBtn) {
+                if (btn !== buttonWrapper) {
                     btn.classList.remove('active');
                 }
             });
 
             // show menu
-            if (parentBtn.className.indexOf('active') >= 0) {
-                parentBtn.classList.remove('active');
+            if (buttonWrapper.className.indexOf('active') >= 0) {
+                buttonWrapper.classList.remove('active');
                 submenuWrapper.style.display = 'none';
             } else {
                 submenuWrapper.innerHTML = '';
@@ -256,7 +258,7 @@ H.Toolbar.prototype = {
                     addButton(submenuWrapper, buttons[btn]);
                 });
 
-                topMargin = parentBtn.offsetTop;
+                topMargin = buttonWrapper.offsetTop;
 
                 if (
                     (submenuWrapper.offsetHeight + topMargin) >
@@ -272,29 +274,53 @@ H.Toolbar.prototype = {
                     display: 'block'
                 });
 
-                parentBtn.className += ' active';
+                buttonWrapper.className += ' active';
             }
         });
     },
     addButton: function (target, options) {
-        var button = createElement('li', {
+        var SPAN = 'span',
+            LI = 'li',
+            mainButton,
+            submenuArrow,
+            buttonWrapper;
+
+
+        buttonWrapper = createElement(LI, {
             className: options.className
         }, null, target);
 
+        mainButton = createElement(SPAN, {
+            className: 'menu-item-btn'
+        }, null, buttonWrapper);
+
         // TODO: add icons!!!
         if (options === 'separator') {
-            css(button, {
+            css(mainButton, {
                 height: '25px',
                 cursor: 'default',
                 'text-align': 'center'
             });
             // TODO: replace with icon
-            button.innerHTML = '. . .';
+            mainButton.innerHTML = '. . .';
         } else {
-            button.style['background-image'] = options.symbol;
+            mainButton.style['background-image'] = options.symbol;
         }
 
-        return button;
+        if (options.items && options.items.length > 1) {
+            submenuArrow = createElement(SPAN, {
+                className: 'submenu-item-arrow'
+            }, null, buttonWrapper);
+
+            // replace with arrow backgorund (add it in CSS class)
+            submenuArrow.innerHTML = '>';
+        }
+
+        return {
+            buttonWrapper: buttonWrapper,
+            mainButton: mainButton,
+            submenuArrow: submenuArrow
+        };
     },
     scrollButtons: function (guiOptions) {
         var toolbar = doc
