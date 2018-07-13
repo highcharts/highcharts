@@ -113,16 +113,17 @@ H.Toolbar.prototype.features = {
                         background: {
                             width: 300,
                             height: 150
-                        },
-                        heightControlPoint: {
-                            style: {
-                                fill: 'blue'
-                            }
                         }
                         /* formatter: function () {
                             return 'custom min: ' + this.min +
                                 '<br>custom max: ' + this.max;
                         }*/
+                    },
+                    events: {
+                        click: function () {
+                            this.cpVisibility = !this.cpVisibility;
+                            this.setControlPointsVisibility(this.cpVisibility);
+                        }
                     }
                 };
 
