@@ -97,8 +97,45 @@ H.Toolbar.prototype.features = {
         }
     },
     'measure': {
-        start: function () {
+        start: function (e) {
+            var chart = this.chart,
+                x = chart.xAxis[0].toValue(e.chartX),
+                y = chart.yAxis[0].toValue(e.chartY),
+                options = {
+                    type: 'measure',
+                    typeOptions: {
+                        point: {
+                            x: x,
+                            y: y
+                        },
+                        xAxis: 0,
+                        yAxis: 0,
+                        background: {
+                            width: 300,
+                            height: 150
+                        },
+                        heightControlPoint: {
+                            style: {
+                                fill: 'blue'
+                            }
+                        }
+                        /* formatter: function () {
+                            return 'custom min: ' + this.min +
+                                '<br>custom max: ' + this.max;
+                        }*/
+                    }
+                };
 
+            if (!this.currentAnnotation) {
+                this.currentAnnotation = chart.addAnnotation(options);
+            }
+        },
+        end: function () {
+            this.currentAnnotation.added = true;
+            this.currentAnnotation = null;
+            // this.nextEvent = false;
+            // this.mouseMoveEvent = false;
+            // this.deselectButton();
         }
     },
     'parallel-channel': {

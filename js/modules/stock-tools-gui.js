@@ -33,7 +33,7 @@ H.setOptions({
             enabled: true,
             className: 'stocktools-wrapper',
             toolbarClassName: 'stocktools-toolbar',
-            buttons: ['lines', 'separator', 'crookedLines'],
+            buttons: ['lines', 'separator', 'crookedLines', 'measure'],
             definitions: {
                 lines: {
                     items: ['line', 'segment', 'ray', 'arrowSegment'],
@@ -78,6 +78,10 @@ H.setOptions({
                         className: 'segmend-class-4',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/flag.svg)'
                     }
+                },
+                measure: {
+                    className: 'highcharts-measure',
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
                 }
             }
         }
@@ -182,7 +186,7 @@ H.Toolbar.prototype = {
                 button = addButton(toolbar, 'separator');
             } else {
                 button = addButton(toolbar, defs[btn]);
-                if (defs[btn].items.length > 0) {
+                if (defs[btn].items && defs[btn].items.length > 0) {
                     // create submenu buttons
                     addSubmenu.call(_self, button, defs[btn], guiOptions);
                 }
@@ -195,7 +199,7 @@ H.Toolbar.prototype = {
                 button = addButton(toolbar, 'separator');
             } else {
                 button = addButton(toolbar, defs[btn]);
-                if (defs[btn].items.length > 0) {
+                if (defs[btn].items && defs[btn].items.length > 0) {
                     addSubmenu.call(_self, button, defs[btn], guiOptions);
                 }
             }
@@ -206,7 +210,7 @@ H.Toolbar.prototype = {
                 button = addButton(toolbar, 'separator');
             } else {
                 button = addButton(toolbar, defs[btn]);
-                if (defs[btn].items.length > 0) {
+                if (defs[btn].items && defs[btn].items.length > 0) {
                     addSubmenu.call(_self, button, defs[btn], guiOptions);
                 }
             }
@@ -217,7 +221,7 @@ H.Toolbar.prototype = {
                 button = addButton(toolbar, 'separator');
             } else {
                 button = addButton(toolbar, defs[btn]);
-                if (defs[btn].items.length > 0) {
+                if (defs[btn].items && defs[btn].items.length > 0) {
                     addSubmenu.call(_self, button, defs[btn], guiOptions);
                 }
             }
