@@ -231,6 +231,7 @@ addEvent(H.Toolbar, 'afterInit', function () {
                 function () {
                     toolbar.nextEvent = events.start;
                     toolbar.selectedButton = events;
+                    this.className += ' active'
                 }
             );
         }
