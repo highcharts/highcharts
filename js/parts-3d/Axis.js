@@ -604,7 +604,7 @@ wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
 
         // Check whether the tick is not the first one and previous tick exists,
         // then calculate position of previous label.
-        if (tickId !== 0 && prevTick) {
+        if (tickId !== 0 && prevTick && prevTick.label.xy) { // #8621
             prevLabelPos = perspective3D({
                 x: prevTick.label.xy.x,
                 y: prevTick.label.xy.y,
@@ -613,7 +613,7 @@ wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
         }
         // If next label position is defined, then recalculate its position
         // basing on the perspective.
-        if (nextTick && nextTick.label.xy) {
+        if (nextTick && nextTick && nextTick.label.xy) {
             nextLabelPos = perspective3D({
                 x: nextTick.label.xy.x,
                 y: nextTick.label.xy.y,
