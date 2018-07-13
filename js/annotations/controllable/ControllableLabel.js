@@ -3,16 +3,17 @@ import H from './../../parts/Globals.js';
 import './../../parts/Utilities.js';
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
-import markerMixin from './markerMixin.js';
 import MockPoint from './../MockPoint.js';
 
 /**
  * A controllable label class.
  *
- * @class ControllableLabel
+ * @class
+ * @mixes Annotation.controllableMixin
+ * @memberOf Annotation
  *
- * @param {Highcharts.Annotation}
- * @param {Object} - label options
+ * @param {Highcharts.Annotation} annotation an annotation instance
+ * @param {Object} options a label's options
  **/
 function ControllableLabel(annotation, options) {
     this.init(annotation, options);
@@ -20,28 +21,21 @@ function ControllableLabel(annotation, options) {
 
 /**
  * Shapes which do not have background - the object is used for proper
- * setting of the contrast color
+ * setting of the contrast color.
  *
- * @memberOf Highcharts.Annotation#
- * @type {Array.<String>}
- * @static
+ * @type {Array<String>}
  */
-ControllableLabel.shapesWithoutBackground = ['connector', 'vertical-line'];
+ControllableLabel.shapesWithoutBackground = ['connector'];
 
 /**
  * Returns new aligned position based alignment options and box to align to.
  * It is almost a one-to-one copy from SVGElement.prototype.align
  * except it does not use and mutate an element
  *
- * @function alignedPosition
- * @memberOf Highcharts.Annotation
- * @static
- * @private
- *
  * @param {Object} alignOptions
  * @param {Object} box
- * @return {Object} aligned position
- **/
+ * @return {Annotation.controllableMixin.Position} aligned position
+ */
 ControllableLabel.alignedPosition = function (alignOptions, box) {
     var align = alignOptions.align,
         vAlign = alignOptions.verticalAlign,
@@ -80,11 +74,6 @@ ControllableLabel.alignedPosition = function (alignOptions, box) {
  * plot area. It is almost a one-to-one copy from
  * Series.prototype.justifyDataLabel except it does not mutate the label and
  * it works with absolute instead of relative position.
- *
- * @function justifiedOptions
- * @memberOf Highcharts.Annotation
- * @static
- * @private
  *
  * @param {Object} label
  * @param {Object} alignOptions
@@ -159,11 +148,19 @@ ControllableLabel.justifiedOptions = function (
 };
 
 /**
+ * @typedef {Object} Annotation.ControllableLabel.AttrsMap
+ * @property {string} backgroundColor=fill
+ * @property {string} borderColor=stroke
+ * @property {string} borderWidth=stroke-width
+ * @property {string} zIndex=zIndex
+ * @property {string} borderRadius=r
+ * @property {string} padding=padding
+ */
+
+/**
  * A map object which allows to map options attributes to element attributes
  *
- * @memberOf Highcharts.Annotation
- * @type {Object}
- * @static
+ * @type {Annotation.ControllableLabel.AttrsMap}
  */
 ControllableLabel.attrsMap = {
     /*= if (build.classic) { =*/
@@ -177,244 +174,208 @@ ControllableLabel.attrsMap = {
     padding: 'padding'
 };
 
-H.merge(true, ControllableLabel.prototype, controllableMixin, {
-    setMarkers: markerMixin.setItemMarkers,
+H.merge(
+    true,
+    ControllableLabel.prototype,
+    controllableMixin, /** @lends Annotation.ControllableLabel# */ {
+        /**
+         * Translate the point of the label by deltaX and deltaY translations.
+         * The point is the label's anchor.
+         *
+         * @param {number} dx translation for x coordinate
+         * @param {number} dy translation for y coordinate
+         **/
+        translatePoint: function (dx, dy) {
+            controllableMixin.translatePoint.call(this, dx, dy, 0);
+        },
 
-    /**
-     * Translate the point of the label by deltaX and deltaY translations.
-     * The point is the label's anchor.
-     *
-     * @param {Number} dx - translation for x coordinate
-     * @param {Number} dy - translation for y coordinate
-     **/
-    translatePoint: function (dx, dy) {
-        controllableMixin.translatePoint.call(this, dx, dy, 0);
-    },
+        /**
+         * Translate x and y position relative to the label's anchor.
+         *
+         * @param {number} dx translation for x coordinate
+         * @param {number} dy translation for y coordinate
+         **/
+        translate: function (dx, dy) {
+            this.options.x += dx;
+            this.options.y += dy;
+        },
 
-    /**
-     * Translate x and y position relative to the label's anchor.
-     *
-     * @param {Number} dx - translation for x coordinate
-     * @param {Number} dy - translation for y coordinate
-     **/
-    translate: function (dx, dy) {
-        this.options.x += dx;
-        this.options.y += dy;
-    },
+        render: function (parent) {
+            var options = this.options,
+                attrs = this.attrsFromOptions(options),
+                style = options.style;
 
-    /**
-     * Redirect attr usage on the controllable graphic element,
-     * it is used for in overllaping logic.
-     **/
-    attr: function () {
-        this.graphic.attr.apply(this.graphic, arguments);
-    },
-
-    /**
-     * Render the label
-     **/
-    render: function (parent) {
-        var options = this.options,
-            attrs = this.attrsFromOptions(options),
-            style = options.style;
-
-        if (style.color === 'contrast') {
-            style.color = this.annotation.chart.renderer.getContrast(
-                H.inArray(
-                    options.shape,
-                    ControllableLabel.shapesWithoutBackground
-                ) > -1 ? '#FFFFFF' : options.backgroundColor
-            );
-        }
-
-        this.graphic = this.annotation.chart.renderer
-            .label(
-                '',
-                0,
-                -9e9,
-                options.shape,
-                null,
-                null,
-                options.useHTML,
-                null,
-                'annotation-label'
-            )
-            .attr(attrs)
-            .css(options.style)
-            /*= if (build.classic) { =*/
-            .shadow(options.shadow)
-            /*= } =*/
-            .add(parent);
-
-        H.extend(this.graphic, {
-            markerEndSetter: function (value) {
-                this.box.attr('marker-end', 'url(#' + value + ')');
+            if (style.color === 'contrast') {
+                style.color = this.annotation.chart.renderer.getContrast(
+                    H.inArray(
+                        options.shape,
+                        ControllableLabel.shapesWithoutBackground
+                    ) > -1 ? '#FFFFFF' : options.backgroundColor
+                );
             }
-        });
 
-        this.setMarkers(this);
+            this.graphic = this.annotation.chart.renderer
+                .label(
+                    '',
+                    0,
+                    -9e9,
+                    options.shape,
+                    null,
+                    null,
+                    options.useHTML,
+                    null,
+                    'annotation-label'
+                )
+                .attr(attrs)
+                .css(options.style)
+                /*= if (build.classic) { =*/
+                .shadow(options.shadow)
+                /*= } =*/
+                .add(parent);
 
-        if (options.className) {
-            this.graphic.addClass(options.className);
-        }
+            if (options.className) {
+                this.graphic.addClass(options.className);
+            }
 
-        this.graphic.labelrank = options.labelrank;
+            this.graphic.labelrank = options.labelrank;
 
-        controllableMixin.render.call(this);
-    },
+            controllableMixin.render.call(this);
+        },
 
-    /**
-     * Redraw the label
-     *
-     * @param {Boolean} animation
-     **/
-    redraw: function (animation) {
-        var options = this.options,
-            text = this.text || options.format || options.text,
-            label = this.graphic,
-            point = this.points[0],
-            show = false,
-            anchor,
-            attrs;
+        redraw: function (animation) {
+            var options = this.options,
+                text = this.text || options.format || options.text,
+                label = this.graphic,
+                point = this.points[0],
+                show = false,
+                anchor,
+                attrs;
 
-        label.attr({
-            text: text ?
-            H.format(
-                text,
-                point.getLabelConfig(),
-                this.annotation.chart.time
-            ) :
-            options.formatter.call(point, this)
-        });
-
-        anchor = this.anchor(point);
-        attrs = this.position(anchor);
-        show = attrs;
-
-        if (show) {
-            label.alignAttr = attrs;
-
-            attrs.anchorX = anchor.absolutePosition.x;
-            attrs.anchorY = anchor.absolutePosition.y;
-
-            label[animation ? 'animate' : 'attr'](attrs);
-        } else {
             label.attr({
-                x: 0,
-                y: -9e9
+                text: text ?
+                H.format(
+                    text,
+                    point.getLabelConfig(),
+                    this.annotation.chart.time
+                ) :
+                options.formatter.call(point, this)
             });
-        }
 
-        label.placed = Boolean(show);
+            anchor = this.anchor(point);
+            attrs = this.position(anchor);
+            show = attrs;
 
-        controllableMixin.redraw.call(this, animation);
-    },
+            if (show) {
+                label.alignAttr = attrs;
 
-    /**
-     * An object which denotes an anchor position
-     *
-     * @typedef {Object} AnchorPosition
-     * @property {Number} AnchorPosition.x
-     * @property {Number} AnchorPosition.y
-     * @property {Number} AnchorPosition.height
-     * @property {Number} AnchorPosition.width
-     */
+                attrs.anchorX = anchor.absolutePosition.x;
+                attrs.anchorY = anchor.absolutePosition.y;
 
-    /**
-     * Returns the label position relative to its anchor.
-     *
-     * @function #itemPosition
-     * @memberOf Highcharts.Annotation#
-     *
-     * @param {Object} item
-     * @param {AnchorPosition} anchor
-     * @return {Object|null} position
-     * @return {Number} position.x
-     * @return {Number} position.y
-     */
-    position: function (anchor) {
-        var item = this.graphic,
-            chart = this.annotation.chart,
-            point = this.points[0],
-            itemOptions = this.options,
-            anchorAbsolutePosition = anchor.absolutePosition,
-            anchorRelativePosition = anchor.relativePosition,
-            itemPosition,
-            alignTo,
-            itemPosRelativeX,
-            itemPosRelativeY,
-
-            showItem =
-            point.series.visible &&
-            MockPoint.prototype.isInsidePane.call(point);
-
-        if (showItem) {
-
-            if (itemOptions.distance) {
-                itemPosition = H.Tooltip.prototype.getPosition.call(
-                    {
-                        chart: chart,
-                        distance: H.pick(itemOptions.distance, 16)
-                    },
-                    item.width,
-                    item.height,
-                    {
-                        plotX: anchorRelativePosition.x,
-                        plotY: anchorRelativePosition.y,
-                        negative: point.negative,
-                        ttBelow: point.ttBelow,
-                        h: anchorRelativePosition.height ||
-                        anchorRelativePosition.width
-                    }
-                );
-            } else if (itemOptions.positioner) {
-                itemPosition = itemOptions.positioner.call(this);
+                label[animation ? 'animate' : 'attr'](attrs);
             } else {
-                alignTo = {
-                    x: anchorAbsolutePosition.x,
-                    y: anchorAbsolutePosition.y,
-                    width: 0,
-                    height: 0
-                };
+                label.attr({
+                    x: 0,
+                    y: -9e9
+                });
+            }
 
-                itemPosition = ControllableLabel.alignedPosition(
-                    H.extend(itemOptions, {
-                        width: item.width,
-                        height: item.height
-                    }),
-                    alignTo
-                );
+            label.placed = Boolean(show);
 
-                if (this.options.overflow === 'justify') {
+            controllableMixin.redraw.call(this, animation);
+        },
+
+        /**
+         * Returns the label position relative to its anchor.
+         *
+         * @param {Annotation.controllableMixin.Anchor} anchor
+         * @return {Annotation.controllableMixin.Position|null} position
+         */
+        position: function (anchor) {
+            var item = this.graphic,
+                chart = this.annotation.chart,
+                point = this.points[0],
+                itemOptions = this.options,
+                anchorAbsolutePosition = anchor.absolutePosition,
+                anchorRelativePosition = anchor.relativePosition,
+                itemPosition,
+                alignTo,
+                itemPosRelativeX,
+                itemPosRelativeY,
+
+                showItem =
+                    point.series.visible &&
+                    MockPoint.prototype.isInsidePane.call(point);
+
+            if (showItem) {
+
+                if (itemOptions.distance) {
+                    itemPosition = H.Tooltip.prototype.getPosition.call(
+                        {
+                            chart: chart,
+                            distance: H.pick(itemOptions.distance, 16)
+                        },
+                        item.width,
+                        item.height,
+                        {
+                            plotX: anchorRelativePosition.x,
+                            plotY: anchorRelativePosition.y,
+                            negative: point.negative,
+                            ttBelow: point.ttBelow,
+                            h: anchorRelativePosition.height ||
+                            anchorRelativePosition.width
+                        }
+                    );
+                } else if (itemOptions.positioner) {
+                    itemPosition = itemOptions.positioner.call(this);
+                } else {
+                    alignTo = {
+                        x: anchorAbsolutePosition.x,
+                        y: anchorAbsolutePosition.y,
+                        width: 0,
+                        height: 0
+                    };
+
                     itemPosition = ControllableLabel.alignedPosition(
-                        ControllableLabel.justifiedOptions(
-                            chart,
-                            item,
-                            itemOptions,
-                            itemPosition
-                        ),
+                        H.extend(itemOptions, {
+                            width: item.width,
+                            height: item.height
+                        }),
                         alignTo
                     );
+
+                    if (this.options.overflow === 'justify') {
+                        itemPosition = ControllableLabel.alignedPosition(
+                            ControllableLabel.justifiedOptions(
+                                chart,
+                                item,
+                                itemOptions,
+                                itemPosition
+                            ),
+                            alignTo
+                        );
+                    }
+                }
+
+
+                if (itemOptions.crop) {
+                    itemPosRelativeX = itemPosition.x - chart.plotLeft;
+                    itemPosRelativeY = itemPosition.y - chart.plotTop;
+
+                    showItem =
+                        chart.isInsidePlot(
+                            itemPosRelativeX,
+                            itemPosRelativeY
+                        ) &&
+                        chart.isInsidePlot(
+                            itemPosRelativeX + item.width,
+                            itemPosRelativeY + item.height
+                        );
                 }
             }
 
-
-            if (itemOptions.crop) {
-                itemPosRelativeX = itemPosition.x - chart.plotLeft;
-                itemPosRelativeY = itemPosition.y - chart.plotTop;
-
-                showItem =
-                    chart.isInsidePlot(itemPosRelativeX, itemPosRelativeY) &&
-                    chart.isInsidePlot(
-                        itemPosRelativeX + item.width,
-                        itemPosRelativeY + item.height
-                    );
-            }
+            return showItem ? itemPosition : null;
         }
-
-        return showItem ? itemPosition : null;
-    }
-});
+    });
 
 /* ********************************************************************** */
 

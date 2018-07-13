@@ -328,13 +328,30 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts-map/Map.js',
         './js/parts-map/MapNavigation.js',
         './js/parts-map/MapSeries.js',
-        './js/modules/annotations.src.js',
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/export-data.src.js',
         './js/modules/data.src.js',
         './js/modules/offline-exporting.src.js',
-        './js/modules/pattern-fill.src.js'
+        './js/modules/pattern-fill.src.js',
+        './js/annotations/eventEmitterMixin.js',
+        './js/annotations/MockPoint.js',
+        './js/annotations/ControlPoint.js',
+        './js/annotations/controllable/controllableMixin.js',
+        './js/annotations/controllable/ControllableCircle.js',
+        './js/annotations/controllable/ControllableImage.js',
+        './js/annotations/controllable/ControllableLabel.js',
+        './js/annotations/controllable/ControllablePath.js',
+        './js/annotations/controllable/ControllableRect.js',
+        './js/annotations/annotations.src.js',
+        './js/annotations/types/CrookedLine.js',
+        './js/annotations/types/ElliottWave.js',
+        './js/annotations/types/Tunnel.js',
+        './js/annotations/types/Fibonacci.js',
+        './js/annotations/types/InfinityLine.js',
+        './js/annotations/types/Measure.js',
+        './js/annotations/types/Pitchfork.js',
+        './js/annotations/types/VerticalLine.js'
     ];
     const optionsJSDoc = {
         navOptions: {
@@ -909,6 +926,8 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         'successJSDoc': colors.green('Created tree.json')
     };
     const sourceFiles = [
+        './js/annotations',
+        './js/annotations/types',
         './js/indicators',
         './js/modules',
         './js/parts',

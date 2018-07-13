@@ -12,15 +12,15 @@ function getSecondCoordinate(p1, p2, x) {
 }
 
 /**
- * @class Tunnel
- * @extends Highcharts.Annotation
- * @memberOf Highcharts
+ * @class
+ * @extends Annotation.CrookedLine
+ * @memberOf Annotation
  **/
 function Tunnel() {
     CrookedLine.apply(this, arguments);
 }
 
-H.extendAnnotation(Tunnel, CrookedLine, {
+H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
     getPointsOptions: function () {
         var pointsOptions =
             CrookedLine.prototype.getPointsOptions.call(this);
@@ -51,8 +51,7 @@ H.extendAnnotation(Tunnel, CrookedLine, {
                 this.chart,
                 this,
                 H.merge(
-                    ControlPoint.defaultOptions,
-                    options.controlPointsOptions,
+                    options.controlPointOptions,
                     options.typeOptions.heightControlPoint
                 ),
                 2
@@ -132,30 +131,83 @@ H.extendAnnotation(Tunnel, CrookedLine, {
         this.options.typeOptions.height =
             this.points[3].y - this.points[0].y;
     }
-}, {
-    typeOptions: {
-        xAxis: 0,
-        yAxis: 0,
-        background: {
-            fill: 'rgba(130, 170, 255, 0.4)',
-            strokeWidth: 0
-        },
-        line: {
-            strokeWidth: 1
-        },
-        height: -2,
-        heightControlPoint: {
-            positioner: function (target) {
-                var startXY = MockPoint.pointToPixels(target.points[2]),
-                    endXY = MockPoint.pointToPixels(target.points[3]),
-                    x = (startXY.x + endXY.x) / 2;
-
-                return {
-                    x: x - this.graphic.width / 2,
-                    y: getSecondCoordinate(startXY, endXY, x) -
-                        this.graphic.height / 2
-                };
+},
+    /**
+     * A tunnel annotation.
+     *
+     * @extends annotations.crooked-line
+     * @sample highcharts/annotations-advanced/tunnel/
+     *         Tunnel
+     * @optionparent annotations.tunnel
+     */
+    {
+        typeOptions: {
+            xAxis: 0,
+            yAxis: 0,
+            /**
+             * Background options.
+             *
+             * @type {Object}
+             * @extends annotations.base.shapes
+             * @excluding height, point, points, r, type, width, markerEnd,
+             *            markerStart
+             */
+            background: {
+                fill: 'rgba(130, 170, 255, 0.4)',
+                strokeWidth: 0
             },
+            line: {
+                strokeWidth: 1
+            },
+            /**
+             * The height of the annotation in terms of yAxis.
+             */
+            height: -2,
+
+
+            /**
+             * Options for the control point which controls
+             * the annotation's height.
+             *
+             * @extends annotations.base.controlPointOptions
+             * @excluding positioner, events
+             */
+            heightControlPoint: {
+                positioner: function (target) {
+                    var startXY = MockPoint.pointToPixels(target.points[2]),
+                        endXY = MockPoint.pointToPixels(target.points[3]),
+                        x = (startXY.x + endXY.x) / 2;
+
+                    return {
+                        x: x - this.graphic.width / 2,
+                        y: getSecondCoordinate(startXY, endXY, x) -
+                        this.graphic.height / 2
+                    };
+                },
+                events: {
+                    drag: function (e, target) {
+                        if (
+                            target.chart.isInsidePlot(
+                                e.chartX - target.chart.plotLeft,
+                                e.chartY - target.chart.plotTop
+                            )
+                        ) {
+                            target.translateHeight(
+                                this.mouseMoveToTranslation(e).y
+                            );
+
+                            target.redraw(false);
+                        }
+                    }
+                }
+            }
+        },
+
+        /**
+         * @extends annotations.base.controlPointOptions
+         * @excluding positioner, events
+         */
+        controlPointOptions: {
             events: {
                 drag: function (e, target) {
                     if (
@@ -164,8 +216,12 @@ H.extendAnnotation(Tunnel, CrookedLine, {
                             e.chartY - target.chart.plotTop
                         )
                     ) {
-                        target.translateHeight(
-                            this.mouseMoveToTranslation(e).y
+                        var translation = this.mouseMoveToTranslation(e);
+
+                        target.translateSide(
+                            translation.x,
+                            translation.y,
+                            this.index
                         );
 
                         target.redraw(false);
@@ -173,31 +229,8 @@ H.extendAnnotation(Tunnel, CrookedLine, {
                 }
             }
         }
-    },
-
-    controlPointsOptions: {
-        events: {
-            drag: function (e, target) {
-                if (
-                    target.chart.isInsidePlot(
-                        e.chartX - target.chart.plotLeft,
-                        e.chartY - target.chart.plotTop
-                    )
-                ) {
-                    var translation = this.mouseMoveToTranslation(e);
-
-                    target.translateSide(
-                        translation.x,
-                        translation.y,
-                        this.index
-                    );
-
-                    target.redraw(false);
-                }
-            }
-        }
     }
-});
+);
 
 Annotation.types.tunnel = Tunnel;
 

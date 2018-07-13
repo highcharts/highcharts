@@ -93,16 +93,27 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     return marker;
 };
 
-var markerMixin = {
-    markerSetter: function (markerType) {
-        return function (value) {
-            this.attr(markerType, 'url(#' + value + ')');
-        };
-    },
+var createMarkerSetter = function (markerType) {
+    return function (value) {
+        this.attr(markerType, 'url(#' + value + ')');
+    };
+};
 
+/**
+ * @mixin
+ */
+var markerMixin = {
+    markerEndSetter: createMarkerSetter('marker-end'),
+    markerStartSetter: createMarkerSetter('marker-start'),
+
+    /*
+     * Set markers.
+     *
+     * @param {Controllable} item
+     */
     setItemMarkers: function (item) {
         var itemOptions = item.options,
-            chart = item.annotation.chart,
+            chart = item.chart,
             defs = chart.options.defs,
             fill = itemOptions.fill,
             color = H.defined(fill) && fill !== 'none' ?
@@ -144,12 +155,6 @@ var markerMixin = {
         H.each(['markerStart', 'markerEnd'], setMarker);
     }
 };
-
-H.extend(markerMixin, {
-    markerEndSetter: markerMixin.markerSetter('marker-end'),
-    markerStartSetter: markerMixin.markerSetter('marker-start')
-});
-
 
 // In a styled mode definition is implemented
 H.SVGRenderer.prototype.definition = function (def) {

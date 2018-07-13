@@ -6,11 +6,16 @@ var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
     ControlPoint = Annotation.ControlPoint;
 
+/**
+ * @class
+ * @extends Annotation
+ * @memberOf Annotation
+ */
 function CrookedLine() {
     Annotation.apply(this, arguments);
 }
 
-H.extendAnnotation(CrookedLine, null, {
+H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
     getPointsOptions: function () {
         var typeOptions = this.options.typeOptions;
 
@@ -34,9 +39,8 @@ H.extendAnnotation(CrookedLine, null, {
                     this.chart,
                     this,
                     H.merge(
-                        ControlPoint.defaultOptions,
-                        pointOptions.controlPoint,
-                        this.options.controlPointsOptions
+                        this.options.controlPointOptions,
+                        pointOptions.controlPoint
                     ),
                     i
                 );
@@ -85,49 +89,108 @@ H.extendAnnotation(CrookedLine, null, {
             this.redraw(false);
         }
     }
-}, {
-    typeOptions: {
-        xAxis: 0,
-        yAxis: 0,
+},
+    /**
+     * A crooked line annotation.
+     *
+     * @extends annotations.base
+     * @excluding labels, shapes
+     * @sample highcharts/annotations-advanced/crooked-line/
+     *         Crooked line
+     * @optionparent annotations.crooked-line
+     */
+    {
+        /**
+         * Additional options for an annotation with the type.
+         */
+        typeOptions: {
+            /**
+             * This number defines which xAxis the point is connected to.
+             * It refers to either the axis id or the index of the axis
+             * in the xAxis array.
+             */
+            xAxis: 0,
+            /**
+             * This number defines which yAxis the point is connected to.
+             * It refers to either the axis id or the index of the axis
+             * in the xAxis array.
+             */
+            yAxis: 0,
 
-        line: {
-            fill: 'none'
-        }
-    },
+            /**
+             * @type {Array<Object>}
+             * @apioption annotations.crooked-line.typeOptions.points
+             */
 
-    controlPointsOptions: {
-        positioner: function (target) {
-            var graphic = this.graphic,
-                xy = MockPoint.pointToPixels(target.points[this.index]);
+            /**
+             * The x position of the point.
+             * @type {number}
+             * @apioption annotations.crooked-line.typeOptions.points.x
+             */
 
-            return {
-                x: xy.x - graphic.width / 2,
-                y: xy.y - graphic.height / 2
-            };
+            /**
+             * The y position of the point.
+             * @type {number}
+             * @apioption annotations.crooked-line.typeOptions.points.y
+             */
+
+            /**
+             * @type {number}
+             * @extends annotations.base.controlPointOptions
+             * @excluding positioner, events
+             * @apioption annotations.crooked-line.typeOptions.points.controlPoint
+             */
+
+            /**
+             * Line options.
+             *
+             * @type {Object}
+             * @extends annotations.base.shapes
+             * @excluding height, point, points, r, type, width
+             */
+            line: {
+                fill: 'none'
+            }
         },
 
-        events: {
-            drag: function (e, target) {
-                if (
-                    target.chart.isInsidePlot(
-                        e.chartX - target.chart.plotLeft,
-                        e.chartY - target.chart.plotTop
-                    )
-                ) {
-                    var translation = this.mouseMoveToTranslation(e);
+        /**
+         * @extends annotations.base.controlPointOptions
+         * @excluding positioner, events
+         */
+        controlPointOptions: {
+            positioner: function (target) {
+                var graphic = this.graphic,
+                    xy = MockPoint.pointToPixels(target.points[this.index]);
 
-                    target.translatePoint(
-                        translation.x,
-                        translation.y,
-                        this.index
-                    );
+                return {
+                    x: xy.x - graphic.width / 2,
+                    y: xy.y - graphic.height / 2
+                };
+            },
 
-                    target.redraw(false);
+            events: {
+                drag: function (e, target) {
+                    if (
+                        target.chart.isInsidePlot(
+                            e.chartX - target.chart.plotLeft,
+                            e.chartY - target.chart.plotTop
+                        )
+                    ) {
+                        var translation = this.mouseMoveToTranslation(e);
+
+                        target.translatePoint(
+                            translation.x,
+                            translation.y,
+                            this.index
+                        );
+
+                        target.redraw(false);
+                    }
                 }
             }
         }
     }
-});
+);
 
 Annotation.types['crooked-line'] = CrookedLine;
 

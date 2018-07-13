@@ -3,50 +3,107 @@ import '../parts/Axis.js';
 import '../parts/Series.js';
 
 /**
- * A mock point configuration.
+ * A point-like object, a mock point or a point uses in series.
  *
- * @typedef {Object} MockPointOptions
- * @property {Number} x - x value for the point in xAxis scale or pixels
- * @property {Number} y - y value for the point in yAxis scale or pixels
- * @property {String|Number} [xAxis] - xAxis index or id
- * @property {String|Number} [yAxis] - yAxis index or id
+ * @typedef {Highcharts.Point | Annotation.MockPoint} Annotation.PointLike
  */
 
+/**
+ * A mock point configuration.
+ *
+ * @typedef {Object} Annotation.MockPoint.Options
+ * @property {number} x x value for the point in xAxis scale or pixels
+ * @property {number} y y value for the point in yAxis scale or pixels
+ * @property {string|number|Highcharts.Axis} [xAxis] xAxis instance, index or id
+ * @property {string|number|Highcharts.Axis} [yAxis] yAxis instance, index or id
+ */
 
 /**
  * A trimmed point object which imitates {@link Highchart.Point} class.
  * It is created when there is a need of pointing to some chart's position
  * using axis values or pixel values
  *
- * @class MockPoint
- * @memberOf Highcharts
+ * @class
+ * @memberOf Annotation
  *
- * @param {Highcharts.Chart} - the chart object
- * @param {MockPointOptions} - the options object
+ * @param {Chart} chart a chart instance
+ * @param {Controllable} [target] a controllable instance
+ * @param {Annotation.MockPoint.Options} options an options object
  */
 function MockPoint(chart, target, options) {
+    /**
+     * A mock series instance imitating a real series from a real point.
+     *
+     * @type {Object}
+     * @property {boolean} series.visible=true - whether a series is visible
+     * @property {Chart} series.chart - a chart instance
+     * @property {function} series.getPlotBox
+     */
     this.series = {
         visible: true,
         chart: chart,
         getPlotBox: H.Series.prototype.getPlotBox
     };
 
-    this.target = target;
+    /**
+     * @type {?Controllable}
+     */
+    this.target = target || null;
+
+    /**
+     * Options for the mock point.
+     *
+     * @type {Annotation.MockPoint.Options}
+     */
     this.options = options;
+
+    /**
+     * If an xAxis is set it represents the point's value in terms of the xAxis.
+     *
+     * @name Annotation.MockPoint#x
+     * @type {?number}
+     */
+
+    /**
+     * If an yAxis is set it represents the point's value in terms of the yAxis.
+     *
+     * @name Annotation.MockPoint#y
+     * @type {?number}
+     */
+
+    /**
+     * It represents the point's pixel x coordinate relative to its plot box.
+     *
+     * @name Annotation.MockPoint#plotX
+     * @type {?number}
+     */
+
+    /**
+     * It represents the point's pixel y position relative to its plot box.
+     *
+     * @name Annotation.MockPoint#plotY
+     * @type {?number}
+     */
+
+    /**
+     * Whether the point is inside the plot box.
+     *
+     * @name Annotation.MockPoint#isInside
+     * @type {boolean}
+     */
 
     this.applyOptions(this.getOptions());
 }
 
 /**
- * Create a mock point from the real Highcharts point.
+ * Create a mock point from a real Highcharts point.
  *
- * @static
+ * @param {Point} point
  *
- * @param {Highcharts.Point} point
- * @returns {Highcharts.MockPoint}
- **/
+ * @return {Annotation.MockPoint} a mock point instance.
+ */
 MockPoint.fromPoint = function (point) {
-    return new MockPoint(point.series.chart, {
+    return new MockPoint(point.series.chart, null, {
         x: point.x,
         y: point.y,
         xAxis: point.series.xAxis,
@@ -55,13 +112,20 @@ MockPoint.fromPoint = function (point) {
 };
 
 /**
- * Get the absolute pixel position of the point.
+ * @typedef Annotation.MockPoint.Position
+ * @property {number} x
+ * @property {number} y
+ */
+
+/**
+ * Get the pixel position from the point like object.
  *
- * @static
+ * @param {Annotation.PointLike} point
+ * @param {boolean} [paneCoordinates]
+ *        whether the pixel position should be relative
  *
- * @param {Highcharts.MockPoint | Highcharts.Point} point
- * @returns {{ x: Number, y: Number }}
- **/
+ * @return {Annotation.MockPoint.Position} pixel position
+ */
 MockPoint.pointToPixels = function (point, paneCoordinates) {
     var series = point.series,
         chart = series.chart,
@@ -92,13 +156,12 @@ MockPoint.pointToPixels = function (point, paneCoordinates) {
 };
 
 /**
- * Get the options from the point.
+ * Get fresh mock point options from the point like object.
  *
- * @static
+ * @param {Annotation.PointLike} point
  *
- * @param {Highcharts.MockPoint | Highcharts.Point} point
- * @returns {MockPointOptions}
- **/
+ * @return {Annotation.MockPoint.Options} mock point's options
+ */
 MockPoint.pointToOptions = function (point) {
     return {
         x: point.x,
@@ -108,13 +171,29 @@ MockPoint.pointToOptions = function (point) {
     };
 };
 
-H.extend(MockPoint.prototype, {
+H.extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
+    /**
+     * A flag indicating that a point is not the real one.
+     *
+     * @type {boolean}
+     * @default true
+     */
     mock: true,
 
+    /**
+     * Check if the point has dynamic options.
+     *
+     * @return {boolean} A positive flag if the point has dynamic options.
+     */
     hasDynamicOptions: function () {
         return typeof this.options === 'function';
     },
 
+    /**
+     * Get the point's options.
+     *
+     * @return {Annotation.MockPoint.Options} the mock point's options.
+     */
     getOptions: function () {
         return this.hasDynamicOptions() ?
             this.options.call(this, this.target) :
@@ -124,8 +203,8 @@ H.extend(MockPoint.prototype, {
     /**
      * Apply options for the point.
      *
-     * @param {MockPointOptions} options
-     **/
+     * @param {Annotation.MockPoint.Options} options
+     */
     applyOptions: function (options) {
         this.command = options.command;
 
@@ -138,9 +217,9 @@ H.extend(MockPoint.prototype, {
     /**
      * Set x or y axis.
      *
-     * @param {MockPointOptions} options
-     * @param {String} xOrY
-     **/
+     * @param {Annotation.MockPoint.Options} options
+     * @param {string} xOrY 'x' or 'y' string literal
+     */
     setAxis: function (options, xOrY) {
         var axisName = xOrY + 'Axis',
             axisOptions = options[axisName],
@@ -158,10 +237,7 @@ H.extend(MockPoint.prototype, {
      * Transform the mock point to an anchor
      * (relative position on the chart).
      *
-     * @function toAnchor
-     * @memberOf Highcharts.MockPoint#
-     *
-     * @return {Array.<Number>} A quadruple of numbers which denotes x, y,
+     * @return {Array<number>} A quadruple of numbers which denotes x, y,
      * width and height of the box
      **/
     toAnchor: function () {
@@ -176,19 +252,17 @@ H.extend(MockPoint.prototype, {
     },
 
     /**
+     * @typedef {Object} Annotation.MockPoint.LabelConfig
+     * @property {number|undefined} x x value translated to x axis scale
+     * @property {number|undefined} y y value translated to y axis scale
+     * @property {Annotation.MockPoint} point instance of the point
+     */
+
+    /**
      * Returns a label config object -
      * the same as Highcharts.Point.prototype.getLabelConfig
      *
-     * @function #getLabelConfig
-     * @memberOf Highcharts.MockPoint#
-     *
-     * @return {Object} labelConfig - label config object
-     * @return {Number|undefined} labelConfig.x
-     *         X value translated to x axis scale
-     * @return {Number|undefined} labelConfig.y
-     *         Y value translated to y axis scale
-     * @return {MockPoint} labelConfig.point
-     *         The instance of the point
+     * @return {Annotation.MockPoint.LabelConfig} the point's label config
      */
     getLabelConfig: function () {
         return {
@@ -201,8 +275,8 @@ H.extend(MockPoint.prototype, {
     /**
      * Check if the point is inside its pane.
      *
-     * @param {Boolean} isInside
-     **/
+     * @return {boolean} A flag indicating whether the point is inside the pane.
+     */
     isInsidePane: function () {
         var plotX = this.plotX,
             plotY = this.plotY,
@@ -255,10 +329,10 @@ H.extend(MockPoint.prototype, {
     /**
      * Translate the point.
      *
-     * @param {Number} [cx] origin x transformation
-     * @param {Number} [cy] origin y transformation
-     * @param {Number} dx - translation for x coordinate
-     * @param {Number} dy - translation for y coordinate
+     * @param {number} [cx] origin x transformation
+     * @param {number} [cy] origin y transformation
+     * @param {number} dx translation for x coordinate
+     * @param {number} dy translation for y coordinate
      **/
     translate: function (cx, cy, dx, dy) {
         if (!this.hasDynamicOptions()) {
@@ -272,11 +346,11 @@ H.extend(MockPoint.prototype, {
     /**
      * Scale the point.
      *
-     * @param {Number} cx origin x transformation
-     * @param {Number} cy origin y transformation
-     * @param {Number} sx - scale factor x
-     * @param {Number} sy - scale factor y
-     **/
+     * @param {number} cx origin x transformation
+     * @param {number} cy origin y transformation
+     * @param {number} sx scale factor x
+     * @param {number} sy scale factor y
+     */
     scale: function (cx, cy, sx, sy) {
         if (!this.hasDynamicOptions()) {
             var x = this.plotX * sx,
@@ -294,10 +368,10 @@ H.extend(MockPoint.prototype, {
     /**
      * Rotate the point.
      *
-     * @param {Number} cx - origin x rotation
-     * @param {Number} cy - origin y rotation
-     * @param {Number} radians
-     **/
+     * @param {number} cx origin x rotation
+     * @param {number} cy origin y rotation
+     * @param {number} radians
+     */
     rotate: function (cx, cy, radians) {
         if (!this.hasDynamicOptions()) {
             var cos = Math.cos(radians),
@@ -322,7 +396,7 @@ H.extend(MockPoint.prototype, {
 
     /**
      * Refresh point options based on its plot coordinates.
-     **/
+     */
     refreshOptions: function () {
         var series = this.series,
             xAxis = series.xAxis,

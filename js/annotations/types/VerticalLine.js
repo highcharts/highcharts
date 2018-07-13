@@ -5,6 +5,11 @@ import '../../parts/Utilities.js';
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint;
 
+/**
+ * @class
+ * @extends Annotation
+ * @memberOf Highcharts
+ **/
 function VerticalLine() {
     H.Annotation.apply(this, arguments);
 }
@@ -46,7 +51,7 @@ VerticalLine.connectorSecondPoint = function (target) {
     };
 };
 
-H.extendAnnotation(VerticalLine, null, {
+H.extendAnnotation(VerticalLine, null, /** @lends Annotation.VerticalLine# */ {
     getPointsOptions: function () {
         return [ this.options.typeOptions.point ];
     },
@@ -93,28 +98,54 @@ H.extendAnnotation(VerticalLine, null, {
 
         typeOptions.label = label.options;
     }
-}, {
-    typeOptions: {
-        yOffset: 10,
-        label: {
-            offset: -40,
-            point: function (target) {
-                return target.annotation.points[0];
+},
+    /**
+     * A vertical line annotation.
+     *
+     * @extends annotations.base
+     * @excluding labels, shapes, controlPointOptions
+     * @sample highcharts/annotations-advanced/vertical-line/
+     *         Vertical line
+     * @optionparent annotations.vertical-line
+     */
+    {
+        typeOptions: {
+            /**
+             * @ignore
+             */
+            yOffset: 10,
+
+            /**
+             * Label options.
+             *
+             * @extends annotations.base.labelOptions
+             */
+            label: {
+                offset: -40,
+                point: function (target) {
+                    return target.annotation.points[0];
+                },
+                allowOverlap: true,
+                backgroundColor: 'none',
+                borderWidth: 0,
+                crop: true,
+                overflow: 'none',
+                shape: 'rect',
+                text: '{y:.2f}'
             },
-            allowOverlap: true,
-            backgroundColor: 'none',
-            borderWidth: 0,
-            crop: true,
-            overflow: 'none',
-            shape: 'rect',
-            text: '{y:.2f}'
-        },
-        connector: {
-            strokeWidth: 1,
-            markerEnd: 'arrow'
+
+            /**
+             * Connector options.
+             *
+             * @extends annotations.base.shapeOptions
+             * @excluding height, r, type, width
+             */
+            connector: {
+                strokeWidth: 1,
+                markerEnd: 'arrow'
+            }
         }
-    }
-});
+    });
 
 Annotation.types['vertical-line'] = VerticalLine;
 

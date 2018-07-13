@@ -7,21 +7,19 @@ import ControllablePath from './ControllablePath.js';
 /**
  * A controllable circle class.
  *
- * @class ControllableCircle
+ * @constructor
+ * @mixes Annotation.controllableMixin
+ * @memberOf Annotation
  *
- * @param {Highcharts.Annotation}
- * @param {Object} - shape options
+ * @param {Highcharts.Annotation} annotation an annotation instance
+ * @param {Object} options a shape's options
  **/
 function ControllableCircle(annotation, options) {
     this.init(annotation, options);
 }
 
 /**
- * A map object which allows to map options attributes to element attributes
- *
- * @memberOf Highcharts.Annotation
- * @type {Object}
- * @static
+ * A map object which allows to map options attributes to element attributes.
  */
 ControllableCircle.attrsMap = H.merge(ControllablePath.attrsMap, {
     r: 'r'
@@ -30,12 +28,12 @@ ControllableCircle.attrsMap = H.merge(ControllablePath.attrsMap, {
 H.merge(
     true,
     ControllableCircle.prototype,
-    controllableMixin, {
+    controllableMixin, /** @lends Annotation.ControllableCircle# */ {
+        /**
+         * @type 'circle'
+         */
         type: 'circle',
 
-        /**
-         * Render the label
-         **/
         render: function (parent) {
             var attrs = this.attrsFromOptions(this.options);
 
@@ -47,11 +45,6 @@ H.merge(
             controllableMixin.render.call(this);
         },
 
-        /**
-         * Redraw the label
-         *
-         * @param {Boolean} animation
-         **/
         redraw: function (animation) {
             var position = this.anchor(this.points[0]).absolutePosition;
 
@@ -73,19 +66,19 @@ H.merge(
             controllableMixin.redraw.call(this, animation);
         },
 
-        /**
-         * Translate the center of the circle.
-         *
-         * @param {Number} dx - translation for x coordinate
-         * @param {Number} dy - translation for y coordinate
-         **/
         translate: function (dx, dy) {
             this.translatePoint(dx, dy, 0);
         },
 
+        /**
+         * Set the radius.
+         *
+         * @param {number} r a radius to be set
+         */
         setRadius: function (r) {
             this.options.r = r;
         }
-    });
+    }
+);
 
 export default ControllableCircle;

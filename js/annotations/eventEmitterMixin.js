@@ -1,10 +1,20 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
+/**
+ * It provides methods for:
+ * - adding and handling DOM events and a drag event,
+ * - mapping a mouse move event to the distance between two following events.
+ *   The units of the distance are specific to a transformation,
+ *   e.g. for rotation they are radians, for scaling they are scale factors.
+ *
+ * @mixin
+ * @memberOf Annotation
+ */
 var eventEmitterMixin = {
     /**
      * Add emitter events.
-     **/
+     */
     addEvents: function () {
         var emitter = this;
 
@@ -36,8 +46,8 @@ var eventEmitterMixin = {
     },
 
     /**
-     * Remove emitter events.
-     **/
+     * Remove emitter document events.
+     */
     removeDocEvents: function () {
         if (this.removeDrag) {
             this.removeDrag = this.removeDrag();
@@ -51,8 +61,8 @@ var eventEmitterMixin = {
     /**
      * Mouse down handler.
      *
-     * @param {Object} e - event
-     **/
+     * @param {Object} e event
+     */
     onMouseDown: function (e) {
         var emitter = this,
             pointer = emitter.chart.pointer,
@@ -99,8 +109,8 @@ var eventEmitterMixin = {
     /**
      * Mouse up handler.
      *
-     * @param {Object} e - event
-     **/
+     * @param {Object} e event
+     */
     onMouseUp: function () {
         this.removeDocEvents();
     },
@@ -108,10 +118,10 @@ var eventEmitterMixin = {
     /**
      * Map mouse move event to the radians.
      *
-     * @param {Object} e - event
-     * @param {Number} cx - center x
-     * @param {Number} cy - center y
-     **/
+     * @param {Object} e event
+     * @param {number} cx center x
+     * @param {number} cy center y
+     */
     mouseMoveToRadians: function (e, cx, cy) {
         var prevDy = e.prevChartY - cy,
             prevDx = e.prevChartX - cx,
@@ -135,8 +145,8 @@ var eventEmitterMixin = {
     /**
      * Map mouse move event to the distance between two following events.
      *
-     * @param {Object} e - event
-     **/
+     * @param {Object} e event
+     */
     mouseMoveToTranslation: function (e) {
         var dx = e.chartX - e.prevChartX,
             dy = e.chartY - e.prevChartY,
@@ -155,11 +165,11 @@ var eventEmitterMixin = {
     },
 
     /**
-     * Map mouse move to the scale factor.
+     * Map mouse move to the scale factors.
      *
-     * @param {Object} e - event
-     * @param {Number} cx - center x
-     * @param {Number} cy - center y
+     * @param {Object} e event
+     * @param {number} cx center x
+     * @param {number} cy center y
      **/
     mouseMoveToScale: function (e, cx, cy) {
         var prevDx = e.prevChartX - cx,
@@ -182,6 +192,9 @@ var eventEmitterMixin = {
         };
     },
 
+    /**
+     * Destroy the event emitter.
+     */
     destroy: function () {
         this.removeDocEvents();
 

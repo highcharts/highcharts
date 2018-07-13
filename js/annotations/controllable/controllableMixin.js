@@ -5,11 +5,18 @@ import './../../parts/Tooltip.js';
 import ControlPoint from './../ControlPoint.js';
 import MockPoint from './../MockPoint.js';
 
+/**
+ * It provides methods for handling points, control points
+ * and points transformations.
+ *
+ * @mixin
+ * @memberOf Annotation
+ */
 var controllableMixin = {
     /**
      * Init the controllable
      *
-     * @param {Highcharts.Annotation} annotation
+     * @param {Annotation} annotation - an annotation instance
      * @param {Object} options - options specific for controllable
      **/
     init: function (annotation, options) {
@@ -23,6 +30,20 @@ var controllableMixin = {
         this.addControlPoints();
     },
 
+    /**
+     * Redirect attr usage on the controllable graphic element.
+     **/
+    attr: function () {
+        this.graphic.attr.apply(this.graphic, arguments);
+    },
+
+
+    /**
+     * Get the controllable's points options.
+     *
+     * @return {Array<PointLikeOptions>} - an array of points' options.
+     *
+     */
     getPointsOptions: function () {
         var options = this.options;
 
@@ -32,9 +53,6 @@ var controllableMixin = {
     /**
      * Utility function for mapping item's options
      * to element's attribute
-     *
-     * @function attrsFromOptions
-     * @memberOf controllableMixin
      *
      * @param {Object} options
      * @return {Object} mapped options
@@ -56,28 +74,34 @@ var controllableMixin = {
     },
 
     /**
-     * An object which denotes an anchor position
-     *
-     * @typedef {Object} AnchorPosition
-     * @property {Number} AnchorPosition.x
-     * @property {Number} AnchorPosition.y
-     * @property {Number} AnchorPosition.height
-     * @property {Number} AnchorPosition.width
+     * @typedef {Object} Annotation.controllableMixin.Position
+     * @property {number} x
+     * @property {number} y
      */
 
     /**
-     * Returns object which denotes anchor position - relative and absolute
+     * An object which denotes an anchor position
      *
-     * @function itemAnchor
-     * @memberOf controllableMixin
+     * @typedef Annotation.controllableMixin.AnchorPosition
+     *          Annotation.controllableMixin.Position
+     * @property {number} height
+     * @property {number} width
+     */
+
+    /**
+     * An object which denots a controllable's anchor positions
+     * - relative and absolute.
      *
-     * @param {Object} item
-     * @param {Highcharts.Point|Highcharts.MockPoint} point
-     * @return {Object} anchor
-     * @return {AnchorPosition} anchor.relativePosition
-     *         Relative to the plot area position
-     * @return {AnchorPosition} anchor.absolutePosition
-     *         Absolute position
+     * @typedef {Object} Annotation.controllableMixin.Anchor
+     * @property {Annotation.controllableMixin.AnchorPosition} relativePosition
+     * @property {Annotation.controllableMixin.AnchorPosition} absolutePosition
+     */
+
+    /**
+     * Returns object which denotes anchor position - relative and absolute.
+     *
+     * @param {Annotation.PointLike} point a point like object
+     * @return {Annotation.controllableMixin.Anchor} a controllable anchor
      */
     anchor: function (point) {
         var plotBox = point.series.getPlotBox(),
@@ -105,15 +129,12 @@ var controllableMixin = {
     },
 
     /**
-     * Returns a point object
+     * Map point's options to a point-like object.
      *
-     * @function pointItem
-     * @memberOf controllableMixin
-     *
-     * @param {Object} pointOptions
-     * @param {Highcharts.MockPoint|Highcharts.Point} point
-     * @return {Highcharts.MockPoint|Highcharts.Point|null} if the point is
-     * found/exists returns this point, otherwise null
+     * @param {Annotation.MockPoint.Options} pointOptions point's options
+     * @param {Annotation.PointLike} point a point like instance
+     * @return {Annotation.PointLike|null} if the point is
+     *         found/set returns this point, otherwise null
      */
     point: function (pointOptions, point) {
         if (pointOptions && pointOptions.series) {
@@ -146,18 +167,9 @@ var controllableMixin = {
     },
 
     /**
-     * Linking item with the point or points and returning an array of linked
-     * points.
+     * Find point-like objects based on points options.
      *
-     * @function linkPoints
-     * @memberOf controllableMixin
-     *
-     * @param {Object} item
-     * @return {
-     * 	Highcharts.Point|
-     * 	Highcharts.MockPoint|
-     * 	Array<Highcharts.Point|Highcharts.MockPoint>
-     *	}
+     * @return {Array<Annotation.PointLike>} an array of point-like objects
      */
     linkPoints: function () {
         var pointsOptions = this.getPointsOptions(),
@@ -185,6 +197,10 @@ var controllableMixin = {
         return points;
     },
 
+
+    /**
+     * Add control points to a controllable.
+     */
     addControlPoints: function () {
         var controlPointsOptions = this.options.controlPoints;
 
@@ -192,8 +208,7 @@ var controllableMixin = {
             controlPointsOptions || [],
             function (controlPointOptions, i) {
                 var options = H.merge(
-                    ControlPoint.defaultOptions,
-                    this.options.controlPointsOptions,
+                    this.options.controlPointOptions,
                     controlPointOptions
                 );
 
@@ -211,12 +226,17 @@ var controllableMixin = {
         );
     },
 
+    /**
+     * Check if a controllable should be rendered/redrawn.
+     *
+     * @return {boolean} whether a controllable should be drawn.
+     */
     shouldBeDrawn: function () {
-        return this.points.length;
+        return Boolean(this.points.length);
     },
 
     /**
-     * Render the controllable.
+     * Render a controllable.
      **/
     render: function () {
         H.each(this.controlPoints, function (controlPoint) {
@@ -225,9 +245,9 @@ var controllableMixin = {
     },
 
     /**
-     * Redraw the controllable.
+     * Redraw a controllable.
      *
-     * @param {Boolean} animation
+     * @param {boolean} animation
      **/
     redraw: function (animation) {
         H.each(this.controlPoints, function (controlPoint) {
@@ -236,15 +256,13 @@ var controllableMixin = {
     },
 
     /**
-     * Transform the controllable with a specific transformation.
+     * Transform a controllable with a specific transformation.
      *
-     * @private
-     *
-     * @param {String} trasnformation - a transformation name
-     * @param {Number} cx - origin x transformation
-     * @param {Number} cy - origin y transformation
-     * @param {Number} p1 - param for the transformation
-     * @param {Number} p2 - param for the transformation
+     * @param {string} transformation a transformation name
+     * @param {number} cx origin x transformation
+     * @param {number} cy origin y transformation
+     * @param {number} p1 param for the transformation
+     * @param {number} p2 param for the transformation
      **/
     transform: function (transformation, cx, cy, p1, p2) {
         if (this.chart.inverted) {
@@ -263,13 +281,12 @@ var controllableMixin = {
      * If a transformed point is a real point it is replaced with
      * the mock point.
      *
-     * @private
-     * @param {String} trasnformation - a transformation name
-     * @param {Number} cx - origin x transformation
-     * @param {Number} cy - origin y transformation
-     * @param {Number} p1 - param for the transformation
-     * @param {Number} p2 - param for the transformation
-     * @param {Number} i - index of the point
+     * @param {string} transformation a transformation name
+     * @param {number} cx origin x transformation
+     * @param {number} cy origin y transformation
+     * @param {number} p1 param for the transformation
+     * @param {number} p2 param for the transformation
+     * @param {number} i index of the point
      *
      **/
     transformPoint: function (transformation, cx, cy, p1, p2, i) {
@@ -283,45 +300,45 @@ var controllableMixin = {
     },
 
     /**
-     * Translate the path.
+     * Translate a controllable.
      *
-     * @param {Number} dx - translation for x coordinate
-     * @param {Number} dy - translation for y coordinate
+     * @param {number} dx translation for x coordinate
+     * @param {number} dy translation for y coordinate
      **/
     translate: function (dx, dy) {
         this.transform('translate', null, null, dx, dy);
     },
 
     /**
-     * Translate the path's specific point.
+     * Translate a specific point within a controllable.
      *
-     * @param {Number} dx - translation for x coordinate
-     * @param {Number} dy - translation for y coordinate
-     * @param {Number} i - index of the point
+     * @param {number} dx translation for x coordinate
+     * @param {number} dy translation for y coordinate
+     * @param {number} i index of the point
      **/
     translatePoint: function (dx, dy, i) {
         this.transformPoint('translate', null, null, dx, dy, i);
     },
 
     /**
-     * Rotate the path.
+     * Rotate a controllable.
      *
-     * @param {Number} cx - origin x rotation
-     * @param {Number} cy - origin y rotation
-     * @param {Number} radians
+     * @param {number} cx origin x rotation
+     * @param {number} cy origin y rotation
+     * @param {number} radians
      **/
     rotate: function (cx, cy, radians) {
         this.transform('rotate', cx, cy, radians);
     },
 
     /**
-     * Scale the path.
+     * Scale a controllable.
      *
-     * @param {Number} cx - origin x rotation
-     * @param {Number} cy - origin y rotation
-     * @param {Number} sx - scale factor x
-     * @param {Number} sy - scale factor y
-     **/
+     * @param {number} cx origin x rotation
+     * @param {number} cy origin y rotation
+     * @param {number} sx scale factor x
+     * @param {number} sy scale factor y
+     */
     scale: function (cx, cy, sx, sy) {
         this.transform('scale', cx, cy, sx, sy);
     },
@@ -329,8 +346,8 @@ var controllableMixin = {
     /**
      * Set control points' visibility.
      *
-     * @param {Boolean} [visible]
-     **/
+     * @param {boolean} [visible]
+     */
     setControlPointsVisibility: function (visible) {
         H.each(this.controlPoints, function (controlPoint) {
             controlPoint.setVisibility(visible);
@@ -338,8 +355,8 @@ var controllableMixin = {
     },
 
     /**
-     * Destroy the controllable.
-     **/
+     * Destroy a controllable.
+     */
     destroy: function () {
         if (this.graphic) {
             this.graphic = this.graphic.destroy();
@@ -359,9 +376,14 @@ var controllableMixin = {
         }
     },
 
-    update: function (userOptions) {
+    /**
+     * Update a controllable.
+     *
+     * @param {Object} newOptions
+     */
+    update: function (newOptions) {
         var annotation = this.annotation,
-            options = H.merge(true, this.options, userOptions),
+            options = H.merge(true, this.options, newOptions),
             parentGroup = this.graphic.parentGroup;
 
         this.destroy();
