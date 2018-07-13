@@ -185,10 +185,8 @@ H.Toolbar.prototype.features = {
 
 addEvent(H.Toolbar, 'afterInit', function () {
     var toolbar = this;
-
     objectEach(toolbar.features, function (events, className) {
         var element = doc.getElementsByClassName(PREFIX + className)[0];
-
         if (element) {
             addEvent(
                 element,

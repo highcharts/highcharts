@@ -47,7 +47,7 @@ H.setOptions({
                     },
                     arrowSegment: {
                         className: 'arrow-class-1',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/sfibonacciun.svg)'
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/save.svg)'
                     },
                     ray: {
                         className: 'ray-class-1',
@@ -63,19 +63,19 @@ H.setOptions({
                     className: 'crooked-class',
                     symbol: 'url(https://www.highcharts.com/samples/graphics/reset.svg)',
                     crooked3: {
-                        className: 'segmend-class',
+                        className: 'segmend-class-1',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/circle.svg)'
                     },
                     crooked5: {
-                        className: 'segmend-class',
+                        className: 'segmend-class-2',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                     },
                     elliot3: {
-                        className: 'segmend-class',
+                        className: 'segmend-class-3',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/reset.svg)'
                     },
                     elliot5: {
-                        className: 'segmend-class',
+                        className: 'segmend-class-4',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/flag.svg)'
                     }
                 }
@@ -183,6 +183,7 @@ H.Toolbar.prototype = {
             } else {
                 button = addButton(toolbar, defs[btn]);
                 if (defs[btn].items.length > 0) {
+                    // create submenu buttons
                     addSubmenu.call(_self, button, defs[btn], guiOptions);
                 }
             }
@@ -221,10 +222,14 @@ H.Toolbar.prototype = {
                 }
             }
         });
+
+        // END OF TO REMOVE SECTION
+
         fireEvent(this, 'afterInit');
     },
     addSubmenu: function (parentBtn, buttons, guiOptions) {
-        var items = buttons.items,
+        var _self = this,
+            items = buttons.items,
             addButton = this.addButton,
             submenuArrow = parentBtn.submenuArrow,
             buttonWrapper = parentBtn.buttonWrapper,
@@ -235,7 +240,8 @@ H.Toolbar.prototype = {
                 .getElementsByClassName(
                     guiOptions.toolbarClassName
                 )[0].childNodes,
-            topMargin = 0;
+            topMargin = 0,
+            submenuBtn;
 
         this.submenuWrapper = submenuWrapper;
 
@@ -255,7 +261,13 @@ H.Toolbar.prototype = {
                 submenuWrapper.innerHTML = '';
 
                 each(items, function (btn) {
-                    addButton(submenuWrapper, buttons[btn]);
+                    // add buttons to submenu
+                    submenuBtn = addButton(submenuWrapper, buttons[btn]);
+
+                    addEvent(submenuBtn.mainButton, 'click', function () {
+                        _self.switchSymbol(this, buttonWrapper);
+                        _self.closeSubmenu(guiOptions);
+                    });
                 });
 
                 topMargin = buttonWrapper.offsetTop;
@@ -275,24 +287,48 @@ H.Toolbar.prototype = {
                 });
 
                 buttonWrapper.className += ' active';
+                submenuWrapper.className = 'submenu-wrapper ' +
+                                            buttonWrapper.classList[0];
             }
         });
     },
     addButton: function (target, options) {
         var SPAN = 'span',
             LI = 'li',
+            items = options.items,
+            itemBtn,
             mainButton,
             submenuArrow,
             buttonWrapper;
-
 
         buttonWrapper = createElement(LI, {
             className: options.className
         }, null, target);
 
-        mainButton = createElement(SPAN, {
-            className: 'menu-item-btn'
-        }, null, buttonWrapper);
+        // submenu
+        if (items && items.length > 1) {
+            each(items, function (item) {
+                itemBtn = createElement(SPAN, {
+                    className: 'menu-item-btn ' + options[item].className
+                }, null, buttonWrapper);
+
+                itemBtn.style['background-image'] = options[item].symbol;
+            });
+
+            submenuArrow = createElement(SPAN, {
+                className: 'submenu-item-arrow'
+            }, null, buttonWrapper);
+
+            // replace with arrow background (add it in CSS class)
+            submenuArrow.innerHTML = '>';
+        } else {
+            // single button
+            mainButton = createElement(SPAN, {
+                className: 'menu-item-btn'
+            }, null, buttonWrapper);
+
+            mainButton.style['background-image'] = options.symbol;
+        }
 
         // TODO: add icons!!!
         if (options === 'separator') {
@@ -303,17 +339,6 @@ H.Toolbar.prototype = {
             });
             // TODO: replace with icon
             mainButton.innerHTML = '. . .';
-        } else {
-            mainButton.style['background-image'] = options.symbol;
-        }
-
-        if (options.items && options.items.length > 1) {
-            submenuArrow = createElement(SPAN, {
-                className: 'submenu-item-arrow'
-            }, null, buttonWrapper);
-
-            // replace with arrow backgorund (add it in CSS class)
-            submenuArrow.innerHTML = '>';
         }
 
         return {
@@ -355,6 +380,7 @@ H.Toolbar.prototype = {
         // replace by icon
         showhideBtn.innerHTML = '<';
 
+        // toggle menu
         addEvent(showhideBtn, 'click', function () {
             if (toolbar.className.indexOf('hide') >= 0) {
                 toolbar.classList.remove('hide');
@@ -366,5 +392,38 @@ H.Toolbar.prototype = {
                 showhideBtn.innerHTML = '>';
             }
         });
+    },
+    switchSymbol: function (button) {
+        var toolbar = doc.getElementsByClassName('menu-wrapper')[0],
+            liParent = button.parentNode,
+            buttonWrapperClass = '.' + liParent.classList.value,
+            parentClass = '.' + liParent.parentNode.classList[1] + '.active',
+            allButtons = toolbar
+                    .querySelectorAll(parentClass + ' > span.menu-item-btn'),
+            toolbarBtn = toolbar
+                .querySelectorAll(parentClass + ' > ' + buttonWrapperClass)[0];
+
+        // hide all buttons elements
+        each(allButtons, function (btn) {
+            btn.style.display = 'none';
+        });
+
+        // show active button
+        toolbarBtn.style.display = 'block';
+    },
+    closeSubmenu: function (guiOptions) {
+        var allButtons = doc
+                .getElementsByClassName(
+                    guiOptions.toolbarClassName
+                )[0].childNodes,
+            submenuWrapper = doc.getElementById('submenu');
+
+        // erase all active classes
+        each(allButtons, function (btn) {
+            btn.classList.remove('active');
+        });
+
+        // hide submenu
+        submenuWrapper.style.display = 'none';
     }
 };
