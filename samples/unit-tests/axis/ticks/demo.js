@@ -232,3 +232,44 @@ QUnit.test(
         );
     }
 );
+
+// Highcharts v4.0.3, Issue #3202
+// tickInterval for categorized axis
+QUnit.test('Tickinterval categories (#3202)', function (assert) {
+
+    TestTemplate.test('highcharts/line', {
+        xAxis: {
+            categories: Highcharts.getOptions().lang.months,
+            tickInterval: 2
+        }
+    }, function (template) {
+
+        var chart = template.chart,
+            series = chart.series[0],
+            xAxis = chart.xAxis[0],
+            points = series.points,
+            point1 = Highcharts.offset(points[0].graphic.element),
+            point1Box = points[0].graphic.getBBox(),
+            point2 = Highcharts.offset(points[2].graphic.element),
+            point2Box = points[0].graphic.getBBox(),
+            ticks = xAxis.ticks,
+            tick1 = Highcharts.offset(ticks[0].mark.element),
+            tick1Box = ticks[0].mark.getBBox(),
+            tick2 = Highcharts.offset(ticks[2].mark.element),
+            tick2Box = ticks[2].mark.getBBox();
+
+        assert.close(
+            (tick1.left + (tick1Box.width / 2)),
+            (point1.left + (point1Box.width / 2)),
+            0.5,
+            'Tick marks should be on tick when tickInterval != 1'
+        );
+
+        assert.close(
+            (tick2.left + (tick2Box.width / 2)),
+            (point2.left + (point2Box.width / 2)),
+            0.5,
+            'Tick marks should be on tick when tickInterval != 1'
+        );
+    });
+});

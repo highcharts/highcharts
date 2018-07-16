@@ -41,7 +41,7 @@ QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
                     labelBox.width
                 ) / 2)),
                 { // close tolerance
-                    'Chrome': 2,
+                    'Chrome': 4.5,
                     'Edge': 1.5,
                     'Firefox': 4,
                     'MSIE': 2.5,
