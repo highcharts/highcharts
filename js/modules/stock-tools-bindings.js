@@ -16,40 +16,36 @@ var addEvent = H.addEvent,
 H.Toolbar.prototype.features = {
     'infinity-line': {
         start: function (e) {
-            var chart = this.chart,
-                x = chart.xAxis[0].toValue(e.chartX),
-                y = chart.yAxis[0].toValue(e.chartY),
-                options = {
-                    type: 'infinity-line',
-                    // type: 'ray' || 'line',
-                    typeOptions: {
-                        type: 'line',
-                        // startArrow: true,
-                        endArrow: true,
-                        points: [{
-                            x: x,
-                            y: y
-                        }, {
-                            x: x,
-                            y: y
-                        }],
-                        xAxis: 0,
-                        yAxis: 0
-                    },
-                    events: {
-                        click: function () {
-                            this.cpVisibility = !this.cpVisibility;
-                            this.setControlPointsVisibility(this.cpVisibility);
-                        }
-                    },
-                    shapeOptions: {
-                        strokeWidth: 2
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
+
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'infinity-line',
+                // type: 'ray' || 'line',
+                typeOptions: {
+                    type: 'line',
+                    // startArrow: true,
+                    endArrow: true,
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }],
+                    xAxis: 0,
+                    yAxis: 0
+                },
+                events: {
+                    click: function () {
+                        this.cpVisibility = !this.cpVisibility;
+                        this.setControlPointsVisibility(this.cpVisibility);
                     }
-                };
-
-            this.currentAnnotation = chart.addAnnotation(options);
-            this.nextEvent = this.mouseMoveEvent = this.selectedButton.steps[0];
-
+                },
+                shapeOptions: {
+                    strokeWidth: 2
+                }
+            });
         },
         steps: [
             function (e) {
@@ -57,7 +53,6 @@ H.Toolbar.prototype.features = {
                     options = this.currentAnnotation.options.typeOptions,
                     x = chart.xAxis[0].toValue(e.chartX),
                     y = chart.yAxis[0].toValue(e.chartY);
-
 
                 this.currentAnnotation.update({
                     typeOptions: {
@@ -70,16 +65,10 @@ H.Toolbar.prototype.features = {
                         ]
                     }
                 });
-                this.nextEvent = this.selectedButton.end;
+
+                this.currentAnnotation.setControlPointsVisibility(true);
             }
-        ],
-        end: function () {
-            this.currentAnnotation.added = true;
-            this.currentAnnotation = null;
-            this.nextEvent = false;
-            this.mouseMoveEvent = false;
-            // this.deselectButton();
-        }
+        ]
     },
     'crooked-line': {
         start: function () {
@@ -92,9 +81,86 @@ H.Toolbar.prototype.features = {
         }
     },
     'pitchfork': {
-        start: function () {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
-        }
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'pitchfork',
+                typeOptions: {
+                    points: [{
+                        x: x,
+                        y: y,
+                        controlPoint: {
+                            style: {
+                                fill: 'red'
+                            }
+                        }
+                    }, {
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }],
+                    innerBackground: {
+                        fill: 'rgba(100, 170, 255, 0.8)'
+                    }
+                },
+                events: {
+                    click: function () {
+                        this.cpVisibility = !this.cpVisibility;
+                        this.setControlPointsVisibility(this.cpVisibility);
+                    }
+                },
+                shapeOptions: {
+                    strokeWidth: 2
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var options = this.currentAnnotation.options.typeOptions,
+                    x = this.chart.xAxis[0].toValue(e.chartX),
+                    y = this.chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            },
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+                this.currentAnnotation.setControlPointsVisibility(true);
+            },
+            function (e) {
+                var options = this.currentAnnotation.options.typeOptions,
+                    x = this.chart.xAxis[0].toValue(e.chartX),
+                    y = this.chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            options.points[1],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
     },
     'measure': {
         start: function (e) {
@@ -131,13 +197,7 @@ H.Toolbar.prototype.features = {
                 this.currentAnnotation = chart.addAnnotation(options);
             }
         },
-        end: function () {
-            this.currentAnnotation.added = true;
-            this.currentAnnotation = null;
-            // this.nextEvent = false;
-            // this.mouseMoveEvent = false;
-            // this.deselectButton();
-        }
+        end: function () { }
     },
     'parallel-channel': {
         start: function () {
@@ -230,9 +290,8 @@ addEvent(H.Toolbar, 'afterInit', function () {
                 element,
                 'click',
                 function () {
-                    toolbar.nextEvent = events.start;
                     toolbar.selectedButton = events;
-                    this.className += ' active'
+                    this.className += ' active';
                 }
             );
         }
@@ -241,10 +300,57 @@ addEvent(H.Toolbar, 'afterInit', function () {
 
 addEvent(H.Chart, 'load', function () {
     var toolbar = this.stockToolbar;
+
     if (toolbar) {
         addEvent(this, 'click', function (e) {
-            if (toolbar.nextEvent) {
+            var selectedButton = toolbar.selectedButton;
+
+            if (!selectedButton) {
+                return;
+            }
+
+            if (!toolbar.nextEvent) {
+                // Call init method:
+                selectedButton.start.call(toolbar, e);
+
+                // If steps exists (e.g. Annotations), bind them:
+                if (selectedButton.steps) {
+                    toolbar.stepIndex = 0;
+                    toolbar.steps = true;
+                    toolbar.mouseMoveEvent = toolbar.nextEvent =
+                        selectedButton.steps[toolbar.stepIndex];
+                } else {
+                    toolbar.steps = false;
+                    toolbar.selectedButton = null;
+                    // First click is also the last one:
+                    if (selectedButton.end) {
+                        selectedButton.end.call(toolbar, e);
+                    }
+                }
+            } else {
+
                 toolbar.nextEvent.call(toolbar, e);
+
+                if (toolbar.steps) {
+
+                    toolbar.stepIndex++;
+
+                    if (selectedButton.steps[toolbar.stepIndex]) {
+                        // If we have more steps, bind them one by one:
+                        toolbar.mouseMoveEvent = toolbar.nextEvent =
+                            selectedButton.steps[toolbar.stepIndex];
+                    } else {
+
+                        // That was the last step, call end():
+                        if (selectedButton.end) {
+                            selectedButton.end.call(toolbar, e);
+                        }
+                        toolbar.nextEvent = false;
+                        toolbar.mouseMoveEvent = false;
+                        toolbar.selectedButton = null;
+                        // toolbar.deselectButton();
+                    }
+                }
             }
         });
         addEvent(this.container, 'mousemove', function (e) {

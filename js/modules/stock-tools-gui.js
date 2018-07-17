@@ -33,7 +33,13 @@ H.setOptions({
             enabled: true,
             className: 'stocktools-wrapper',
             toolbarClassName: 'stocktools-toolbar',
-            buttons: ['lines', 'separator', 'crookedLines', 'measure'],
+            buttons: [
+                'lines',
+                'separator',
+                'crookedLines',
+                'measure',
+                'pitchfork'
+            ],
             definitions: {
                 lines: {
                     items: ['line', 'segment', 'ray', 'arrowSegment'],
@@ -82,6 +88,10 @@ H.setOptions({
                 measure: {
                     className: 'highcharts-measure',
                     symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                },
+                pitchfork: {
+                    className: 'highcharts-pitchfork',
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                 }
             }
         }
