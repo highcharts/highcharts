@@ -263,6 +263,9 @@ seriesType('waterfall', 'column', {
                     point.minPointLengthOffset = halfMinPointLength;
                 }
             } else {
+                if (point.isNull) {
+                    shapeArgs.width = 0;
+                }
                 point.minPointLengthOffset = 0;
             }
 
