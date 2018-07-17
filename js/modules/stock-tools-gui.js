@@ -42,14 +42,14 @@ H.setOptions({
             ],
             definitions: {
                 lines: {
-                    items: ['line', 'segment', 'ray', 'arrowSegment'],
-                    className: 'highcharts-infinity-line',
+                    items: ['segment', 'line', 'ray', 'arrowSegment'],
+                    className: 'highcharts-infinity-line2',
                     symbol: 'url(https://www.highcharts.com/samples/graphics/save.svg)',
                     segment: {
                         type: 'aaa',
                         label: 'bbb',
-                        className: 'segment-class-1',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/feature.svg)'
+                        className: 'highcharts-infinity-line',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     arrowSegment: {
                         className: 'arrow-class-1',
@@ -61,7 +61,7 @@ H.setOptions({
                     },
                     line: {
                         className: 'line-class-1',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/feature.svg)'
                     }
                 },
                 crookedLines: {
@@ -114,7 +114,6 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
         container = doc.getElementById(chart.renderTo),
         toolbar,
         stockToolbar,
-        submenuWrapper,
         listWrapper,
         wrapper;
 
@@ -130,11 +129,6 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     wrapper.appendChild(container);
 
     // GENERAL STRUCTURE
-    // wrapper
-    submenuWrapper = createElement(UL, {
-        className: 'submenu-wrapper',
-        id: 'submenu'
-    }, null, wrapper);
 
     // toolbar
     toolbar = createElement(UL, {
@@ -150,7 +144,6 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
 
     // generate buttons
     chart.stockToolbar = stockToolbar = new H.Toolbar(guiOptions, chart);
-    stockToolbar.submenuWrapper = submenuWrapper;
 
     // show hide toolbar
     createElement(DIV, {
@@ -256,17 +249,37 @@ H.Toolbar.prototype = {
             submenuArrow = parentBtn.submenuArrow,
             buttonWrapper = parentBtn.buttonWrapper,
             buttonWidth = getStyle(buttonWrapper, 'width'),
-            submenuWrapper = doc.getElementById('submenu'),
+            submenuWrapper, //= doc.getElementById('submenu'),
             wrapper = doc.getElementsByClassName(guiOptions.className)[0],
             allButtons = doc
                 .getElementsByClassName(
                     guiOptions.toolbarClassName
                 )[0].childNodes,
             topMargin = 0,
+            firstSubmenuItem,
             submenuBtn;
 
-        this.submenuWrapper = submenuWrapper;
+        // create submenu container
+        submenuWrapper = createElement(UL, {
+            className: 'submenu-wrapper'
+        }, null, buttonWrapper);
 
+        // add items to submenu
+        each(items, function (btn) {
+            // add buttons to submenu
+            submenuBtn = addButton(submenuWrapper, buttons[btn]);
+
+            addEvent(submenuBtn.mainButton, 'click', function () {
+                _self.switchSymbol(this, buttonWrapper);
+            });
+        });
+
+        firstSubmenuItem = submenuWrapper
+                .querySelectorAll('li > .menu-item-btn')[0];
+
+        this.switchSymbol(firstSubmenuItem, true);
+
+        // show / hide submenu
         addEvent(submenuArrow, 'click', function () {
             // Erase active class on all other buttons
             each(allButtons, function (btn) {
@@ -278,19 +291,9 @@ H.Toolbar.prototype = {
             // show menu
             if (buttonWrapper.className.indexOf('active') >= 0) {
                 buttonWrapper.classList.remove('active');
-                submenuWrapper.style.display = 'none';
             } else {
-                submenuWrapper.innerHTML = '';
 
-                each(items, function (btn) {
-                    // add buttons to submenu
-                    submenuBtn = addButton(submenuWrapper, buttons[btn]);
-
-                    addEvent(submenuBtn.mainButton, 'click', function () {
-                        _self.switchSymbol(this, buttonWrapper);
-                        _self.closeSubmenu(guiOptions);
-                    });
-                });
+                buttonWrapper.className += ' active';
 
                 topMargin = buttonWrapper.offsetTop;
 
@@ -304,13 +307,8 @@ H.Toolbar.prototype = {
 
                 css(submenuWrapper, {
                     top: topMargin + 'px',
-                    left: buttonWidth + 'px',
-                    display: 'block'
+                    left: buttonWidth + 'px'
                 });
-
-                buttonWrapper.className += ' active';
-                submenuWrapper.className = 'submenu-wrapper ' +
-                                            buttonWrapper.classList[0];
             }
         });
     },
@@ -318,7 +316,6 @@ H.Toolbar.prototype = {
         var SPAN = 'span',
             LI = 'li',
             items = options.items,
-            itemBtn,
             mainButton,
             submenuArrow,
             buttonWrapper;
@@ -327,15 +324,14 @@ H.Toolbar.prototype = {
             className: options.className
         }, null, target);
 
+        // single button
+        mainButton = createElement(SPAN, {
+            className: 'menu-item-btn'
+        }, null, buttonWrapper);
+
+
         // submenu
         if (items && items.length > 1) {
-            each(items, function (item) {
-                itemBtn = createElement(SPAN, {
-                    className: 'menu-item-btn ' + options[item].className
-                }, null, buttonWrapper);
-
-                itemBtn.style['background-image'] = options[item].symbol;
-            });
 
             submenuArrow = createElement(SPAN, {
                 className: 'submenu-item-arrow'
@@ -344,11 +340,6 @@ H.Toolbar.prototype = {
             // replace with arrow background (add it in CSS class)
             submenuArrow.innerHTML = '>';
         } else {
-            // single button
-            mainButton = createElement(SPAN, {
-                className: 'menu-item-btn'
-            }, null, buttonWrapper);
-
             mainButton.style['background-image'] = options.symbol;
         }
 
@@ -415,37 +406,20 @@ H.Toolbar.prototype = {
             }
         });
     },
-    switchSymbol: function (button) {
-        var toolbar = doc.getElementsByClassName('menu-wrapper')[0],
-            liParent = button.parentNode,
-            buttonWrapperClass = '.' + liParent.classList.value,
-            parentClass = '.' + liParent.parentNode.classList[1] + '.active',
-            allButtons = toolbar
-                    .querySelectorAll(parentClass + ' > span.menu-item-btn'),
-            toolbarBtn = toolbar
-                .querySelectorAll(parentClass + ' > ' + buttonWrapperClass)[0];
+    switchSymbol: function (button, init) {
+        var buttonWrapper = button.parentNode,
+            buttonWrapperClass = buttonWrapper.classList.value,
+            mainNavButton = buttonWrapper.parentNode.parentNode;
 
-        // hide all buttons elements
-        each(allButtons, function (btn) {
-            btn.style.display = 'none';
-        });
+        if (!init) {
+            buttonWrapperClass += ' active';
+        }
 
-        // show active button
-        toolbarBtn.style.display = 'block';
-    },
-    closeSubmenu: function (guiOptions) {
-        var allButtons = doc
-                .getElementsByClassName(
-                    guiOptions.toolbarClassName
-                )[0].childNodes,
-            submenuWrapper = doc.getElementById('submenu');
+        // set class
+        mainNavButton.classList = buttonWrapperClass;
 
-        // erase all active classes
-        each(allButtons, function (btn) {
-            btn.classList.remove('active');
-        });
-
-        // hide submenu
-        submenuWrapper.style.display = 'none';
+        // set icon
+        mainNavButton
+            .style['background-image'] = button.style['background-image'];
     }
 };
