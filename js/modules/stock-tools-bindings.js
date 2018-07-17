@@ -13,16 +13,25 @@ var addEvent = H.addEvent,
     objectEach = H.objectEach,
     PREFIX = 'highcharts-';
 
+// TO DO:
+// Consider this directly in setOptions();
+// or apply H.setOptions({ bindings: H.toolbar.proto.features })
 H.Toolbar.prototype.features = {
-    'infinity-line': {
+    'segment': {
+
+    },
+    'arrowSegment': {
+
+    },
+    'ray': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             this.currentAnnotation = this.chart.addAnnotation({
                 type: 'infinity-line',
-                // type: 'ray' || 'line',
                 typeOptions: {
+                    // type: 'ray' || 'line',
                     type: 'line',
                     // startArrow: true,
                     endArrow: true,
@@ -70,6 +79,21 @@ H.Toolbar.prototype.features = {
             }
         ]
     },
+    'arrowRay': {
+
+    },
+    'line': {
+
+    },
+    'arrowLine': {
+
+    },
+    'horizontalLine': {
+
+    },
+    'verticalLine': {
+
+    },
     'crooked-line': {
         start: function () {
 
@@ -79,6 +103,127 @@ H.Toolbar.prototype.features = {
         start: function () {
 
         }
+    },
+    'measure': {
+        start: function (e) {
+            var chart = this.chart,
+                x = chart.xAxis[0].toValue(e.chartX),
+                y = chart.yAxis[0].toValue(e.chartY),
+                options = {
+                    type: 'measure',
+                    typeOptions: {
+                        point: {
+                            x: x,
+                            y: y
+                        },
+                        xAxis: 0,
+                        yAxis: 0,
+                        background: {
+                            width: 300,
+                            height: 150
+                        }
+                        /* formatter: function () {
+                            return 'custom min: ' + this.min +
+                                '<br>custom max: ' + this.max;
+                        }*/
+                    },
+                    events: {
+                        click: function () {
+                            this.cpVisibility = !this.cpVisibility;
+                            this.setControlPointsVisibility(this.cpVisibility);
+                        }
+                    }
+                };
+
+            if (!this.currentAnnotation) {
+                this.currentAnnotation = chart.addAnnotation(options);
+            }
+        },
+        end: function () { }
+    },
+    'fibonacci': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
+
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'fibonacci',
+                typeOptions: {
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                },
+                events: {
+                    click: function () {
+                        this.cpVisibility = !this.cpVisibility;
+                        this.setControlPointsVisibility(this.cpVisibility);
+                    }
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var options = this.currentAnnotation.options.typeOptions,
+                    x = this.chart.xAxis[0].toValue(e.chartX),
+                    y = this.chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
+    },
+    'parallel-channel': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
+
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'tunnel',
+                typeOptions: {
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var options = this.currentAnnotation.options.typeOptions,
+                    x = this.chart.xAxis[0].toValue(e.chartX),
+                    y = this.chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
     },
     'pitchfork': {
         start: function (e) {
@@ -162,92 +307,6 @@ H.Toolbar.prototype.features = {
             }
         ]
     },
-    'measure': {
-        start: function (e) {
-            var chart = this.chart,
-                x = chart.xAxis[0].toValue(e.chartX),
-                y = chart.yAxis[0].toValue(e.chartY),
-                options = {
-                    type: 'measure',
-                    typeOptions: {
-                        point: {
-                            x: x,
-                            y: y
-                        },
-                        xAxis: 0,
-                        yAxis: 0,
-                        background: {
-                            width: 300,
-                            height: 150
-                        }
-                        /* formatter: function () {
-                            return 'custom min: ' + this.min +
-                                '<br>custom max: ' + this.max;
-                        }*/
-                    },
-                    events: {
-                        click: function () {
-                            this.cpVisibility = !this.cpVisibility;
-                            this.setControlPointsVisibility(this.cpVisibility);
-                        }
-                    }
-                };
-
-            if (!this.currentAnnotation) {
-                this.currentAnnotation = chart.addAnnotation(options);
-            }
-        },
-        end: function () { }
-    },
-    'parallel-channel': {
-        start: function (e) {
-            var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY);
-
-            this.currentAnnotation = this.chart.addAnnotation({
-                type: 'tunnel',
-                typeOptions: {
-                    points: [{
-                        x: x,
-                        y: y
-                    }, {
-                        x: x,
-                        y: y
-                    }]
-                }
-            });
-        },
-        steps: [
-            function (e) {
-                var options = this.currentAnnotation.options.typeOptions,
-                    x = this.chart.xAxis[0].toValue(e.chartX),
-                    y = this.chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
-        ]
-    },
-    'line': {
-        start: function () {
-
-        }
-    },
-    'arrow': {
-        start: function () {
-
-        }
-    },
     'circle': {
         start: function () {
 
@@ -257,56 +316,6 @@ H.Toolbar.prototype.features = {
         start: function () {
 
         }
-    },
-    'tunnel': {
-        start: function () {
-
-        }
-    },
-    'fibonacci': {
-        start: function (e) {
-            var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY);
-
-            this.currentAnnotation = this.chart.addAnnotation({
-                type: 'fibonacci',
-                typeOptions: {
-                    points: [{
-                        x: x,
-                        y: y
-                    }, {
-                        x: x,
-                        y: y
-                    }]
-                },
-                events: {
-                    click: function () {
-                        this.cpVisibility = !this.cpVisibility;
-                        this.setControlPointsVisibility(this.cpVisibility);
-                    }
-                }
-            });
-        },
-        steps: [
-            function (e) {
-                var options = this.currentAnnotation.options.typeOptions,
-                    x = this.chart.xAxis[0].toValue(e.chartX),
-                    y = this.chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
-        ]
     },
     'simple-text': {
         start: function () {

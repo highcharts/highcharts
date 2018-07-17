@@ -42,26 +42,51 @@ H.setOptions({
             ],
             definitions: {
                 lines: {
-                    items: ['segment', 'line', 'ray', 'arrowSegment'],
-                    className: 'highcharts-infinity-line2',
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/save.svg)',
+                    items: [
+                        'segment',
+                        'arrowSegment',
+                        'ray',
+                        'arrowRay',
+                        'line',
+                        'arrowLine',
+                        'horizontalLine',
+                        'verticalLine'
+                    ],
+                    className: 'highcharts-annotations-lines',
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)',
                     segment: {
+                        className: 'highcharts-segment',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                    },
+                    arrowSegment: {
+                        className: 'highcharts-arrow-segment',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                    },
+                    ray: {
+                        className: 'highcharts-ray',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                    },
+                    arrowRay: {
+                        className: 'highcharts-arrow-ray',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                    },
+                    line: {
                         type: 'aaa',
                         label: 'bbb',
                         className: 'highcharts-infinity-line',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
-                    arrowSegment: {
-                        className: 'arrow-class-1',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/save.svg)'
+                    arrowLine: {
+                        className: 'highcharts-arrow-line',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
-                    ray: {
-                        className: 'ray-class-1',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/rect.svg)'
+                    verticalLine: {
+                        className: 'highcharts-vertical-line',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
-                    line: {
-                        className: 'line-class-1',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/feature.svg)'
+                    horizontalLine: {
+                        className: 'highcharts-horizontal-line',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     }
                 },
                 crookedLines: {
