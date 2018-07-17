@@ -133,8 +133,8 @@ Highcharts.Pointer.prototype = {
         }
 
         return extend(e, {
-            chartX: Math.round(ePos.pageX - chartPosition.left),
-            chartY: Math.round(ePos.pageY - chartPosition.top)
+            chartX: Math.round(ePos.pageX - chartPosition.left) / this.chart._scalingW,
+            chartY: Math.round(ePos.pageY - chartPosition.top) / this.chart._scalingH
         });
     },
 

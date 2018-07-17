@@ -137,6 +137,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function () {
 
+            this._scalingW = 1;
+            this._scalingH = 1;
+
             userOptions.series = null;
             options = merge(defaultOptions, userOptions); // do the merge
 
@@ -367,6 +370,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             x <= this.plotWidth &&
             y >= 0 &&
             y <= this.plotHeight;
+    },
+
+    recalculateScaling: function () {
+        var rect = this.container.getBoundingClientRect();
+        this._scalingW = rect.width / this.chartWidth;
+        this._scalingH = rect.height / this.chartHeight;
     },
 
     /**
@@ -2046,7 +2055,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // If the chart was rendered outside the top container, put it back in
         // (#3679)
         chart.temporaryDisplay(true);
-
+        chart.recalculateScaling();
     },
 
     /**
