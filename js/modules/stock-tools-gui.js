@@ -38,7 +38,7 @@ H.setOptions({
                 'separator',
                 'crookedLines',
                 'measure',
-                'pitchfork'
+                'advanced'
             ],
             definitions: {
                 lines: {
@@ -85,13 +85,21 @@ H.setOptions({
                         symbol: 'url(https://www.highcharts.com/samples/graphics/flag.svg)'
                     }
                 },
+                advanced: {
+                    items: ['fibonacci', 'pitchfork'],
+                    className: 'highcharts-advanced',
+                    pitchfork: {
+                        className: 'highcharts-pitchfork',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    },
+                    fibonacci: {
+                        className: 'highcharts-fibonacci',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/fibonacci.svg)'
+                    }
+                },
                 measure: {
                     className: 'highcharts-measure',
                     symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
-                },
-                pitchfork: {
-                    className: 'highcharts-pitchfork',
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                 }
             }
         }
