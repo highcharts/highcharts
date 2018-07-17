@@ -77,7 +77,7 @@ H.setOptions({
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     arrowLine: {
-                        className: 'highcharts-arrow-line',
+                        className: 'highcharts-arrow-infinity-line',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     verticalLine: {

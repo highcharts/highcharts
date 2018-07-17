@@ -18,41 +18,22 @@ var addEvent = H.addEvent,
 // or apply H.setOptions({ bindings: H.toolbar.proto.features })
 H.Toolbar.prototype.features = {
     'segment': {
-
-    },
-    'arrowSegment': {
-
-    },
-    'ray': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             this.currentAnnotation = this.chart.addAnnotation({
-                type: 'infinity-line',
+                type: 'crooked-line',
                 typeOptions: {
-                    // type: 'ray' || 'line',
-                    type: 'line',
-                    // startArrow: true,
-                    endArrow: true,
+                    startArrow: false,
+                    endArrow: false,
                     points: [{
                         x: x,
                         y: y
                     }, {
                         x: x,
                         y: y
-                    }],
-                    xAxis: 0,
-                    yAxis: 0
-                },
-                events: {
-                    click: function () {
-                        this.cpVisibility = !this.cpVisibility;
-                        this.setControlPointsVisibility(this.cpVisibility);
-                    }
-                },
-                shapeOptions: {
-                    strokeWidth: 2
+                    }]
                 }
             });
         },
@@ -79,20 +60,310 @@ H.Toolbar.prototype.features = {
             }
         ]
     },
-    'arrowRay': {
+    'arrow-segment': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'crooked-line',
+                typeOptions: {
+                    startArrow: false,
+                    endArrow: true,
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var chart = this.chart,
+                    options = this.currentAnnotation.options.typeOptions,
+                    x = chart.xAxis[0].toValue(e.chartX),
+                    y = chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
     },
-    'line': {
+    'ray': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'infinity-line',
+                typeOptions: {
+                    type: 'ray',
+                    startArrow: false,
+                    endArrow: false,
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var chart = this.chart,
+                    options = this.currentAnnotation.options.typeOptions,
+                    x = chart.xAxis[0].toValue(e.chartX),
+                    y = chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
     },
-    'arrowLine': {
+    'arrow-ray': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'infinity-line',
+                typeOptions: {
+                    type: 'ray',
+                    startArrow: false,
+                    endArrow: true,
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var chart = this.chart,
+                    options = this.currentAnnotation.options.typeOptions,
+                    x = chart.xAxis[0].toValue(e.chartX),
+                    y = chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
     },
-    'horizontalLine': {
+    'infinity-line': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'infinity-line',
+                typeOptions: {
+                    type: 'line',
+                    startArrow: false,
+                    endArrow: false,
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var chart = this.chart,
+                    options = this.currentAnnotation.options.typeOptions,
+                    x = chart.xAxis[0].toValue(e.chartX),
+                    y = chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
     },
-    'verticalLine': {
+    'arrow-infinity-line': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'infinity-line',
+                typeOptions: {
+                    type: 'line',
+                    startArrow: false,
+                    endArrow: true,
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var chart = this.chart,
+                    options = this.currentAnnotation.options.typeOptions,
+                    x = chart.xAxis[0].toValue(e.chartX),
+                    y = chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
+    },
+    'horizontal-line': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
+
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'infinity-line',
+                typeOptions: {
+                    type: 'line',
+                    startArrow: false,
+                    endArrow: false,
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var chart = this.chart,
+                    options = this.currentAnnotation.options.typeOptions,
+                    y = chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: options.points[0].x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
+    },
+    'vertical-line': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
+
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'infinity-line',
+                typeOptions: {
+                    type: 'line',
+                    startArrow: false,
+                    endArrow: false,
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var chart = this.chart,
+                    options = this.currentAnnotation.options.typeOptions,
+                    x = chart.xAxis[0].toValue(e.chartX);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: options.points[0].y
+                            }
+                        ]
+                    }
+                });
+
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
     },
     'crooked-line': {
         start: function () {
