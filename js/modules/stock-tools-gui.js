@@ -278,14 +278,15 @@ H.Toolbar.prototype = {
             submenuArrow = parentBtn.submenuArrow,
             buttonWrapper = parentBtn.buttonWrapper,
             buttonWidth = getStyle(buttonWrapper, 'width'),
-            submenuWrapper, //= doc.getElementById('submenu'),
             wrapper = doc.getElementsByClassName(guiOptions.className)[0],
             allButtons = doc
                 .getElementsByClassName(
                     guiOptions.toolbarClassName
                 )[0].childNodes,
             topMargin = 0,
+            submenuWrapper,
             firstSubmenuItem,
+            submenuItems,
             submenuBtn;
 
         // create submenu container
@@ -300,6 +301,7 @@ H.Toolbar.prototype = {
 
             addEvent(submenuBtn.mainButton, 'click', function () {
                 _self.switchSymbol(this, buttonWrapper);
+                submenuWrapper.style.display = 'none';
             });
         });
 
@@ -313,16 +315,20 @@ H.Toolbar.prototype = {
             // Erase active class on all other buttons
             each(allButtons, function (btn) {
                 if (btn !== buttonWrapper) {
-                    btn.classList.remove('active');
+                    btn.classList.remove('current');
+                    submenuItems = btn.querySelectorAll('.submenu-wrapper');
+                    
+                    if (submenuItems.length > 0) {
+                        submenuItems[0].style.display = 'none';
+                    }
                 }
             });
 
             // show menu
-            if (buttonWrapper.className.indexOf('active') >= 0) {
-                buttonWrapper.classList.remove('active');
+            if (buttonWrapper.className.indexOf('current') >= 0) {
+                buttonWrapper.classList.remove('current');
+                submenuWrapper.style.display = 'none';
             } else {
-
-                buttonWrapper.className += ' active';
 
                 topMargin = buttonWrapper.offsetTop;
 
@@ -336,8 +342,11 @@ H.Toolbar.prototype = {
 
                 css(submenuWrapper, {
                     top: topMargin + 'px',
-                    left: buttonWidth + 'px'
+                    left: buttonWidth + 'px',
+                    display: 'block'
                 });
+
+                buttonWrapper.className += ' current';
             }
         });
     },
