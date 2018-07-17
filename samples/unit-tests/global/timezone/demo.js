@@ -318,3 +318,58 @@ QUnit.test('Crossing DST with a wide pointRange (#7432)', function (assert) {
         }
     });
 });
+
+// Highcharts v4.0.3, Issue #3359
+// Midnight ticks should show date
+QUnit.test('Midnight ticks should show date (#3359)', function (assert) {
+    function initChart(timezoneOffset) {
+        Highcharts.setOptions({
+            global: {
+                timezoneOffset: timezoneOffset
+            }
+        });
+        var chart = Highcharts.chart('container', {
+            xAxis: {
+                type: 'datetime'
+            },
+            series: [{
+                data: Highcharts.map(new Array(5), Math.random),
+                pointStart: Date.UTC(2013, 0, 1, 12),
+                pointInterval: 432e5 // 12 hours
+            }]
+        });
+        return chart;
+    }
+
+    function getCurrentTickLabels(children) {
+        var tickLabels = [];
+        for (var i = 0; i < children.length; i++) {
+            tickLabels.push(children[i].textContent);
+        }
+        return tickLabels;
+    }
+    var currentHighchartsOptions = Highcharts.getOptions().global.timezoneOffset;
+
+    var minus60OffsetXLabels = ["2. Jan", "12:00", "3. Jan", "12:00"];
+    var plus60OffsetXLabels = ['12:00', '2. Jan', '12:00', '3. Jan'];
+    var chartMinus60OffsetXLabels = getCurrentTickLabels(initChart(-60).xAxis[0].labelGroup.element.children);
+    var chartPlus60OffsetXLabels = getCurrentTickLabels(initChart(60).xAxis[0].labelGroup.element.children);
+    assert.deepEqual(
+        chartMinus60OffsetXLabels,
+        minus60OffsetXLabels,
+        'Midnight ticks is not showing properly'
+    );
+    assert.notDeepEqual(
+        chartPlus60OffsetXLabels,
+        minus60OffsetXLabels,
+        'The timezone offset is not working as it should'
+    );
+
+    assert.deepEqual(
+        chartPlus60OffsetXLabels,
+        plus60OffsetXLabels,
+        'Midnight ticks is not showing properly'
+    );
+    //reset options
+    initChart(currentHighchartsOptions);
+});

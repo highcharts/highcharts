@@ -81,7 +81,7 @@ QUnit.test(
         );
         assert.ok(
             minorGridLines[minorGridLines.length - 1].getBBox().x >
-                gridLines[gridLines.length - 1].getBBox().x,
+            gridLines[gridLines.length - 1].getBBox().x,
             'Minor grid lines outside major grid lines'
         );
     }
@@ -173,7 +173,7 @@ QUnit.test('Cropping log axis (#3053)', function (assert) {
 // Highcharts v4.0.3, Issue #3353
 // Y axis minimum got stuck
 QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -187,24 +187,23 @@ QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
             name: 'Year 1800',
             data: [1, 3, 2]
         }]
-    }, function (chart) {
-
-        var preUpdatesTick = chart.yAxis[0].tickPositions[0];
-
-        chart.yAxis[0].update({ type: 'linear' });
-        var linearUpdateTick = chart.yAxis[0].tickPositions[0];
-        assert.notEqual(
-            preUpdatesTick,
-            linearUpdateTick,
-            'Y minimum value should not be logarithmic.'
-        );
-
-        chart.yAxis[0].update({ type: 'logarithmic' });
-        var postUpdatesTick = chart.yAxis[0].tickPositions[0];
-        assert.strictEqual(
-            preUpdatesTick,
-            postUpdatesTick,
-            "Y minimum value should not be changed when updating yAxis type"
-        );
     });
+
+    var preUpdatesTick = chart.yAxis[0].tickPositions[0];
+
+    chart.yAxis[0].update({ type: 'linear' });
+    var linearUpdateTick = chart.yAxis[0].tickPositions[0];
+    assert.notEqual(
+        preUpdatesTick,
+        linearUpdateTick,
+        'Y minimum value should not be logarithmic.'
+    );
+
+    chart.yAxis[0].update({ type: 'logarithmic' });
+    var postUpdatesTick = chart.yAxis[0].tickPositions[0];
+    assert.strictEqual(
+        preUpdatesTick,
+        postUpdatesTick,
+        "Y minimum value should not be changed when updating yAxis type"
+    );
 });
