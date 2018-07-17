@@ -200,9 +200,43 @@ H.Toolbar.prototype.features = {
         end: function () { }
     },
     'parallel-channel': {
-        start: function () {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
-        }
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'tunnel',
+                typeOptions: {
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            function (e) {
+                var options = this.currentAnnotation.options.typeOptions,
+                    x = this.chart.xAxis[0].toValue(e.chartX),
+                    y = this.chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        points: [
+                            options.points[0],
+                            {
+                                x: x,
+                                y: y
+                            }
+                        ]
+                    }
+                });
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
+        ]
     },
     'line': {
         start: function () {

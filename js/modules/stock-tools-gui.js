@@ -86,7 +86,7 @@ H.setOptions({
                     }
                 },
                 advanced: {
-                    items: ['fibonacci', 'pitchfork'],
+                    items: ['fibonacci', 'pitchfork', 'parallel-channel'],
                     className: 'highcharts-advanced',
                     pitchfork: {
                         className: 'highcharts-pitchfork',
@@ -95,6 +95,10 @@ H.setOptions({
                     fibonacci: {
                         className: 'highcharts-fibonacci',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/fibonacci.svg)'
+                    },
+                    'parallel-channel': {
+                        className: 'highcharts-parallel-channel',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                     }
                 },
                 measure: {
