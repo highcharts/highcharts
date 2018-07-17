@@ -181,7 +181,7 @@ extend(defaultOptions, {
              * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
              * used by its method name, as shown in the demo.
              *
-             * @type {Array}
+             * @type {Array<string>}
              * @default ['navigator-handle', 'navigator-handle']
              * @product highstock
              * @sample {highstock} stock/navigator/styled-handles/
@@ -984,8 +984,8 @@ Navigator.prototype = {
             navigator.scrollbar.setRange(
                 // Use real value, not rounded because range can be very small
                 // (#1716)
-                navigator.zoomedMin / navigatorSize,
-                navigator.zoomedMax / navigatorSize
+                navigator.zoomedMin / (navigatorSize || 1),
+                navigator.zoomedMax / (navigatorSize || 1)
             );
         }
         navigator.rendered = true;
@@ -1403,20 +1403,22 @@ Navigator.prototype = {
             baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis ||
                 chart.xAxis[0] || { options: {} };
 
+
         // Make room for the navigator, can be placed around the chart:
-        chart.extraMargin = {
-            type: navigator.opposite ? 'plotTop' : 'marginBottom',
-            value: (
+        addEvent(chart, 'getMargins', function () {
+            var marginName = navigator.opposite ? 'plotTop' : 'marginBottom';
+            if (chart.inverted) {
+                marginName = navigator.opposite ? 'marginRight' : 'plotLeft';
+            }
+
+            chart[marginName] = (chart[marginName] || 0) + (
                 navigatorEnabled || !chart.inverted ?
                     navigator.outlineHeight :
                     0
-            ) + navigatorOptions.margin
-        };
-        if (chart.inverted) {
-            chart.extraMargin.type = navigator.opposite ?
-                'marginRight' :
-                'plotLeft';
-        }
+            ) + navigatorOptions.margin;
+
+        });
+
         chart.isDirtyBox = true;
 
         if (navigator.navigatorEnabled) {
@@ -1658,8 +1660,7 @@ Navigator.prototype = {
                 yAxis: 'navigator-y-axis',
                 showInLegend: false,
                 stacking: false, // #4823
-                isInternal: true,
-                visible: true
+                isInternal: true
             },
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series = H.grep(
@@ -1690,9 +1691,10 @@ Navigator.prototype = {
             each(baseSeries, function eachBaseSeries(base) {
                 var linkedNavSeries = base.navigatorSeries,
                     userNavOptions = extend(
-                        // Grab color from base as default
+                        // Grab color and visibility from base as default
                         {
-                            color: base.color
+                            color: base.color,
+                            visible: base.visible
                         },
                         !isArray(chartNavigatorSeriesOptions) ?
                             chartNavigatorSeriesOptions :

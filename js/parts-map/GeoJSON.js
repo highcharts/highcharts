@@ -51,7 +51,7 @@ function pointInPolygon(point, polygon) {
  * transform definition.
  *
  * @function transformFromLatLon
- * @memberOf Chart.prototype
+ * @memberof Chart.prototype
  *
  * @param  {Object} latLon
  *         A latitude/longitude object.
@@ -107,7 +107,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  * The method returns an object with the numeric properties `lat` and `lon`.
  *
  * @function transformToLatLon
- * @memberOf Chart.prototype
+ * @memberof Chart.prototype
  *
  * @param  {Point|Object} point
  *         A `Point` instance, or or any object containing the properties `x`
@@ -164,7 +164,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
  * object with the numeric properties `lat` and `lon`.
  *
  * @function fromPointToLatLon
- * @memberOf Chart.prototype
+ * @memberof Chart.prototype
  *
  * @param  {Point|Object} point
  *         A `Point` instance or anything containing `x` and `y` properties
@@ -208,7 +208,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
  * object with x and y values corresponding to the `xAxis` and `yAxis`.
  *
  * @function fromLatLonToPoint
- * @memberOf Chart.prototype
+ * @memberof Chart.prototype
  *
  * @param  {Object} latLon
  *         Coordinates.
@@ -267,7 +267,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
  * {@link Point.properties} in Highmaps.
  *
  * @function #geojson
- * @memberOf Highcharts
+ * @memberof Highcharts
  *
  * @param  {Object} geojson
  *         The GeoJSON structure to parse, represented as a JavaScript object
@@ -358,7 +358,7 @@ H.geojson = function (geojson, hType, series) {
                  * item's properies are copied over here.
                  *
                  * @name #properties
-                 * @memberOf Point
+                 * @memberof Point
                  * @type {Object}
                  */
                 properties: properties

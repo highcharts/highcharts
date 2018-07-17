@@ -312,6 +312,10 @@ seriesType('macd', 'sma',
                 longEMA,
                 i;
 
+            if (series.xData.length < params.longPeriod) {
+                return false;
+            }
+
             // Calculating the short and long EMA used when calculating the MACD
             shortEMA = EMA.prototype.getValues(series,
                 {
@@ -332,7 +336,12 @@ seriesType('macd', 'sma',
             // Subtract each Y value from the EMA's and create the new dataset
             // (MACD)
             for (i = 1; i <= shortEMA.length; i++) {
-                if (defined(longEMA[i - 1]) && defined(longEMA[i - 1][1])) {
+                if (
+                    defined(longEMA[i - 1]) &&
+                    defined(longEMA[i - 1][1]) &&
+                    defined(shortEMA[i + params.shortPeriod + 1]) &&
+                    defined(shortEMA[i + params.shortPeriod + 1][0])
+                    ) {
                     MACD.push([
                         shortEMA[i + params.shortPeriod + 1][0],
                         0,
@@ -370,7 +379,7 @@ seriesType('macd', 'sma',
                 if (MACD[i][0] >= signalLine[0][0]) { // detect the first point
 
                     MACD[i][2] = signalLine[j][1];
-                    yMACD[i] = [0, signalLine[j][1],  MACD[i][3]];
+                    yMACD[i] = [0, signalLine[j][1], MACD[i][3]];
 
                     if (MACD[i][3] === null) {
                         MACD[i][1] = 0;

@@ -1,34 +1,27 @@
-<p>Highstock 6.107 (2018-04-13)</p>
-<ul>    <li>Most changes listed under Highcharts 6.1.0 above also apply to Highstock 6.1.0.</li>
+<p>Highstock 6.1.1 (2018-06-27)</p>
+<ul>    <li>Most changes listed under Highcharts 6.1.1 above also apply to Highstock 6.1.1.</li>
 
-    <li>Added <code>dataGrouping.groupAll</code> option to prevent columns value change on scrolling when dataGrouping is active. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/5344">#5344</a>.</li>
-    <li>Created advanced stock chart demo to showcase dashboarding.</li>
 </ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="hs-heading-6-0-7-bug-fixes" class="panel-heading">
+        <div id="hs-heading-6-1-1-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#hs-6-0-7-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#hs-6-1-1-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="hs-6-0-7-bug-fixes" class="panel-collapse collapse">
+        <div id="hs-6-1-1-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4960">#4960</a>, wrong position of flags on inverted chart.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5308">#5308</a>, negative timestamps threw errors with enabled <code>rangeSelector</code>.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5581">#5581</a>, navigator was broken after removing all series.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6423">#6423</a>, dynamically added axes had wrong indexes after <code>axis.update()</code>.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6994">#6994</a>, zoom out on mobile devices did not select correct rangeSelector buttons.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7823">#7823</a>, technical indicators caused dataGrouping issues.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7827">#7827</a>, sometimes forced dataGrouping by year didn't render all points and xAxis labels.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7945">#7945</a>, zones in MACD technical indicator broke rendering signal line.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/7995">#7995</a>, chart threw errors when initialized with <code>xAxis: []</code>.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/8023">#8023</a>, <code>point.update()</code> threw exceptions when not defining options.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/8038">#8038</a>, dynamic change of <a href="https://api.highcharts.com/highstock/navigator.adaptToUpdatedData">navigator.adaptToUpdatedData</a> did not work.</li>
-                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7684">#7684</a>, <code>spacingBottom</code> was ignored after chart update.</li>
-                    
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7828">#7828</a>, browsers were crashing when panning million of points on a chart.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8031">#8031</a>, columns overlapped xAxis - correction.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8196">#8196</a>, navigator series interfered with series order when running <code>chart.update</code>.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8200">#8200</a>, reset zoom button did not hide after resetting extremes.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8212">#8212</a>, improved API reference of <code>dataLabel.y</code> and added API reference of <code>pointValKey</code> for ohlc series.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8374">#8374</a>, navigator's series did not inherit <code>visible</code> option from linked series.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8376">#8376</a>, PSAR and MACD technical indicators were throwing errors when main series did not have enough points.</li>
+                    <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8445">#8445</a>, Rate of Change (RoC) had wrong tooltip when params were set.</li>
                 </ul>
             </div>
         </div>

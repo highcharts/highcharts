@@ -80,11 +80,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * For labels, these CSS properties are applied to the `text` node directly.
      *
      * @private
-     * @type {Array.<string>}
+     * @type {Array<String>}
      */
     textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily',
         'fontStyle', 'color', 'lineHeight', 'width', 'textAlign',
-        'textDecoration', 'textOverflow', 'textOutline'],
+        'textDecoration', 'textOverflow', 'textOutline', 'cursor'],
 
     /**
      * Initialize the SVG element. This function only exists to make the
@@ -103,7 +103,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * node, but may also represent more nodes.
          *
          * @name  element
-         * @memberOf SVGElement
+         * @memberof SVGElement
          * @type {SVGDOMNode|HTMLDOMNode}
          */
         this.element = nodeName === 'span' ?
@@ -114,7 +114,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * The renderer that the SVGElement belongs to.
          *
          * @name renderer
-         * @memberOf SVGElement
+         * @memberof SVGElement
          * @type {SVGRenderer}
          */
         this.renderer = renderer;
@@ -172,11 +172,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *    to the shape. Ranges 0-1.
      * @property {Number} radialGradient.r Radius relative to the shape. Ranges
      *    0-1.
-     * @property {Array.<Array>} stops The first item in each tuple is the
-     *    position in the gradient, where 0 is the start of the gradient and 1
-     *    is the end of the gradient. Multiple stops can be applied. The second
-     *    item is the color for each stop. This color can also be given in the
-     *    rgba format.
+     * @property {Array<Array<Number|String>>} stops The first item in each
+     *    tuple is the position in the gradient, where 0 is the start of the
+     *    gradient and 1 is the end of the gradient. Multiple stops can be
+     *    applied. The second item is the color for each stop. This color can
+     *    also be given in the rgba format.
      *
      * @example
      * // Linear gradient used as a color option
@@ -1836,14 +1836,17 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
         if (defined(value)) {
             // So we can read it for other elements in the group
-            element.zIndex = value;
+            element.setAttribute('data-z-index', value);
 
             value = +value;
             if (this[key] === value) { // Only update when needed (#3865)
                 run = false;
             }
-            this[key] = value;
+        } else if (defined(this[key])) {
+            element.removeAttribute('data-z-index');
         }
+
+        this[key] = value;
 
         // Insert according to this and other elements' zIndex. Before .add() is
         // called, nothing is done. Then on add, or by later calls to
@@ -1858,7 +1861,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             childNodes = parentNode.childNodes;
             for (i = childNodes.length - 1; i >= 0 && !inserted; i--) {
                 otherElement = childNodes[i];
-                otherZIndex = otherElement.zIndex;
+                otherZIndex = otherElement.getAttribute('data-z-index');
                 undefinedOtherZIndex = !defined(otherZIndex);
 
                 if (otherElement !== element) {
@@ -2023,15 +2026,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         /**
          * The root `svg` node of the renderer.
          * @name box
-         * @memberOf SVGRenderer
+         * @memberof SVGRenderer
          * @type {SVGDOMElement}
          */
         this.box = element;
         /**
          * The wrapper for the root `svg` node of the renderer.
-         *
          * @name boxWrapper
-         * @memberOf SVGRenderer
+         * @memberof SVGRenderer
          * @type {SVGElement}
          */
         this.boxWrapper = boxWrapper;
@@ -2039,6 +2041,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         /**
          * Page url used for internal references.
+         * @name url
+         * @memberOf SVGRenderer
          * @type {string}
          */
         // #24, #672, #1070
@@ -2047,7 +2051,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 doc.getElementsByTagName('base').length
             ) ?
                 win.location.href
-                    .replace(/#.*?$/, '') // remove the hash
+                    .split('#')[0] // remove the hash
                     .replace(/<[^>]*>/g, '') // wing cut HTML
                     // escape parantheses and quotes
                     .replace(/([\('\)])/g, '\\$1')
@@ -2065,7 +2069,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
          * A pointer to the `defs` node of the root SVG.
          * @type {SVGElement}
          * @name defs
-         * @memberOf SVGRenderer
+         * @memberof SVGRenderer
          */
         renderer.defs = this.createElement('defs').add();
         renderer.allowHTML = allowHTML;
@@ -2718,7 +2722,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 );
             });
 
-            if (wasTooLong) {
+            if (ellipsis && wasTooLong) {
                 wrapper.attr(
                     'title',
                     unescapeEntities(wrapper.textStr, ['&lt;', '&gt;']) // #7179
@@ -4055,7 +4059,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             // update if anything changed
             if (textX !== text.x || textY !== text.y) {
                 text.attr('x', textX);
-                if (text.hasBoxWidthChanged) { // #8159 - prevent misplaced data labels in treemap (useHTML: true)
+                // #8159 - prevent misplaced data labels in treemap
+                // (useHTML: true)
+                if (text.hasBoxWidthChanged) {
                     bBox = text.getBBox(true);
                     updateBoxSize();
                 }
@@ -4118,13 +4124,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         wrapper['text-alignSetter'] = function (value) {
             textAlign = value;
         };
-        wrapper.paddingSetter =  function (value) {
+        wrapper.paddingSetter = function (value) {
             if (defined(value) && value !== padding) {
                 padding = wrapper.padding = value;
                 updateTextPadding();
             }
         };
-        wrapper.paddingLeftSetter =  function (value) {
+        wrapper.paddingLeftSetter = function (value) {
             if (defined(value) && value !== paddingLeft) {
                 paddingLeft = value;
                 updateTextPadding();

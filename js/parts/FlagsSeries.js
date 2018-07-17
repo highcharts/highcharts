@@ -500,7 +500,7 @@ seriesType('flags', 'column', {
 // create the flag icon with anchor
 symbols.flag = function (x, y, w, h, options) {
     var anchorX = (options && options.anchorX) || x,
-        anchorY = (options &&  options.anchorY) || y;
+        anchorY = (options && options.anchorY) || y;
 
     return symbols.circle(anchorX - 1, anchorY - 1, 2, 2).concat(
         [
@@ -522,7 +522,7 @@ function createPinSymbol(shape) {
     symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
         var anchorX = options && options.anchorX,
-            anchorY = options &&  options.anchorY,
+            anchorY = options && options.anchorY,
             path,
             labelTopOrBottomY;
 

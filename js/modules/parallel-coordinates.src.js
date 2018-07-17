@@ -138,7 +138,7 @@ addEvent(Chart, 'init', function (e) {
      * Flag used in parallel coordinates plot to check if chart has ||-coords.
      *
      * @name hasParallelCoordinates
-     * @memberOf Chart
+     * @memberof Chart
      * @type {Boolean}
      */
     this.hasParallelCoordinates = options.chart &&
@@ -447,7 +447,7 @@ function addFormattedValue(proceed) {
              *    used
              *
              * @default undefined
-             * @memberOf yAxis
+             * @memberof yAxis
              * @sample {highcharts}
              *         /highcharts/parallel-coordinates/tooltipvalueformat/
              *         Different tooltipValueFormats's

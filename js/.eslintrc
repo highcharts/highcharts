@@ -29,7 +29,6 @@
         "no-debugger": 2,
         "no-empty": 0,                              /*The noop function and empty catches */
         "no-invalid-this": 0,
-        "no-multi-spaces": 0,                       /*Should be fixed*/
         "no-shadow": 0,                             /*Same variable names in nested scopes. @todo: Fix this, it is useful*/
         "no-undefined": 0,
         "no-underscore-dangle": 0,                  /*@todo: Check this*/

@@ -293,7 +293,7 @@ if (!H.ColorAxis) {
                  * Animation for the marker as it moves between values. Set to
                  * `false` to disable animation. Defaults to `{ duration: 50 }`.
                  *
-                 * @type {Object|Boolean}
+                 * @type {AnimationOptions|Boolean}
                  * @product highcharts highmaps
                  */
                 animation: {
@@ -768,6 +768,7 @@ if (!H.ColorAxis) {
             this.dataMin = Infinity;
             this.dataMax = -Infinity;
             while (i--) {
+                series[i].getExtremes();
                 if (series[i].valueMin !== undefined) {
                     this.dataMin = Math.min(this.dataMin, series[i].valueMin);
                     this.dataMax = Math.max(this.dataMax, series[i].valueMax);
@@ -826,7 +827,7 @@ if (!H.ColorAxis) {
                         pos + 4, this.top - 6,
                         pos, this.top,
                         'Z'
-                    ] :    [
+                    ] : [
                         'M',
                         this.left, pos,
                         'L',
@@ -982,7 +983,8 @@ if (!H.ColorAxis) {
      */
     addEvent(Legend, 'afterGetAllItems', function (e) {
         var colorAxisItems = [],
-            colorAxis = this.chart.colorAxis[0];
+            colorAxis = this.chart.colorAxis[0],
+            i;
 
         if (colorAxis && colorAxis.options) {
             if (colorAxis.options.showInLegend) {
@@ -1002,8 +1004,9 @@ if (!H.ColorAxis) {
             }
         }
 
-        while (colorAxisItems.length) {
-            e.allItems.unshift(colorAxisItems.pop());
+        i = colorAxisItems.length;
+        while (i--) {
+            e.allItems.unshift(colorAxisItems[i]);
         }
     });
 

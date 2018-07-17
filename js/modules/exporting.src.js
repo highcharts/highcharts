@@ -657,7 +657,7 @@ defaultOptions.exporting = {
              * the `Highcharts.Renderer.symbols` collection. The default
              * `exportIcon` function is part of the exporting module.
              *
-             * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down", "menu"]
+             * @validvalue ["exportIcon", "circle", "square", "diamond", "triangle", "triangle-down", "menu"]
              * @type {String}
              * @sample highcharts/exporting/buttons-contextbutton-symbol/
              *         Use a circle for symbol
@@ -915,7 +915,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             // Replace HTML entities, issue #347
             .replace(/&nbsp;/g, '\u00A0') // no-break space
-            .replace(/&shy;/g,  '\u00AD'); // soft hyphen
+            .replace(/&shy;/g, '\u00AD'); // soft hyphen
 
         /*= if (build.classic) { =*/
         // Further sanitize for oldIE
@@ -1049,7 +1049,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 userMin = extremes.userMin,
                 userMax = extremes.userMax;
 
-            if (axisCopy && (userMin !== undefined || userMax !== undefined)) {
+            if (
+                axisCopy &&
+                (
+                    (userMin !== undefined && userMin !== axisCopy.min) ||
+                    (userMax !== undefined && userMax !== axisCopy.max)
+                )
+            ) {
                 axisCopy.setExtremes(userMin, userMax, true, false);
             }
         });
@@ -1252,8 +1258,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }, {
                 position: 'absolute',
                 zIndex: 1000,
-                padding: menuPadding + 'px'
-            }, chart.container);
+                padding: menuPadding + 'px',
+                pointerEvents: 'auto'
+            }, chart.fixedDiv || chart.container);
 
             innerMenu = createElement(
                 'div',
@@ -1293,6 +1300,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // #2335, #2407)
                 addEvent(doc, 'mouseup', function (e) {
                     if (!chart.pointer.inClass(e.target, className)) {
+                        hide();
+                    }
+                }),
+
+                addEvent(menu, 'click', function () {
+                    if (chart.openMenu) {
                         hide();
                     }
                 })
@@ -1368,7 +1381,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             y + height + chart.exportMenuHeight > chartHeight &&
             button.alignOptions.verticalAlign !== 'top'
         ) {
-            menuStyle.bottom = (chartHeight - y - menuPadding)  + 'px';
+            menuStyle.bottom = (chartHeight - y - menuPadding) + 'px';
         } else {
             menuStyle.top = (y + height - menuPadding) + 'px';
         }
@@ -1454,8 +1467,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 /*= if (build.classic) { =*/
                 'stroke-linecap': 'round',
                 /*= } =*/
-                title: pick(chart.options.lang[btnOptions._titleKey], ''),
-                zIndex: 3 // #4955
+                title: pick(chart.options.lang[btnOptions._titleKey], '')
             });
         button.menuClassName = (
             options.menuClassName ||
@@ -1489,7 +1501,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             /*= } =*/
         }
 
-        button.add()
+        button.add(chart.exportingGroup)
             .align(extend(btnOptions, {
                 width: button.width,
                 x: pick(btnOptions.x, chart.buttonOffset) // #1654
@@ -1533,6 +1545,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
             });
             exportSVGElements.length = 0;
+        }
+
+        // Destroy the exporting group
+        if (chart.exportingGroup) {
+            chart.exportingGroup.destroy();
+            delete chart.exportingGroup;
         }
 
         // Destroy the divs for the menu
@@ -1811,6 +1829,11 @@ Chart.prototype.renderExporting = function () {
     if (isDirty && exportingOptions.enabled !== false) {
         chart.exportEvents = [];
 
+        chart.exportingGroup = chart.exportingGroup ||
+            chart.renderer.g('exporting-group').attr({
+                zIndex: 3 // #4955, // #8392
+            }).add();
+
         objectEach(buttons, function (button) {
             chart.addButton(button);
         });
@@ -1822,23 +1845,19 @@ Chart.prototype.renderExporting = function () {
     addEvent(chart, 'destroy', chart.destroyExport);
 };
 
-Chart.prototype.callbacks.push(function (chart) {
-
+// Add update methods to handle chart.update and chart.exporting.update and
+// chart.navigation.update. These must be added to the chart instance rather
+// than the Chart prototype in order to use the chart instance inside the update
+// function.
+addEvent(Chart, 'init', function () {
+    var chart = this;
     function update(prop, options, redraw) {
         chart.isDirtyExporting = true;
         merge(true, chart.options[prop], options);
         if (pick(redraw, true)) {
             chart.redraw();
         }
-
     }
-
-    chart.renderExporting();
-
-    addEvent(chart, 'redraw', chart.renderExporting);
-
-    // Add update methods to handle chart.update and chart.exporting.update
-    // and chart.navigation.update.
     each(['exporting', 'navigation'], function (prop) {
         chart[prop] = {
             update: function (options, redraw) {
@@ -1846,34 +1865,47 @@ Chart.prototype.callbacks.push(function (chart) {
             }
         };
     });
+});
+
+Chart.prototype.callbacks.push(function (chart) {
+
+    chart.renderExporting();
+
+    addEvent(chart, 'redraw', chart.renderExporting);
+
 
     // Uncomment this to see a button directly below the chart, for quick
     // testing of export
     /*
+    var button, viewImage, viewSource;
     if (!chart.renderer.forExport) {
-        var button;
-
-        // View SVG Image
-        button = doc.createElement('button');
-        button.innerHTML = 'View SVG Image';
-        chart.renderTo.parentNode.appendChild(button);
-        button.onclick = function () {
+        viewImage = function () {
             var div = doc.createElement('div');
             div.innerHTML = chart.getSVGForExport();
             chart.renderTo.parentNode.appendChild(div);
         };
 
-        // View SVG Source
-        button = doc.createElement('button');
-        button.innerHTML = 'View SVG Source';
-        chart.renderTo.parentNode.appendChild(button);
-        button.onclick = function () {
+        viewSource = function () {
             var pre = doc.createElement('pre');
             pre.innerHTML = chart.getSVGForExport()
                 .replace(/</g, '\n&lt;')
                 .replace(/>/g, '&gt;');
             chart.renderTo.parentNode.appendChild(pre);
         };
+
+        viewImage();
+
+        // View SVG Image
+        button = doc.createElement('button');
+        button.innerHTML = 'View SVG Image';
+        chart.renderTo.parentNode.appendChild(button);
+        button.onclick = viewImage;
+
+        // View SVG Source
+        button = doc.createElement('button');
+        button.innerHTML = 'View SVG Source';
+        chart.renderTo.parentNode.appendChild(button);
+        button.onclick = viewSource;
     }
     //*/
 });
