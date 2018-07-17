@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['no-vf-701', 0],
+    ['no-vf-723', 1],
+    ['no-vf-706', 2],
+    ['no-vf-722', 3],
+    ['no-vf-711', 4],
+    ['no-vf-709', 5],
+    ['no-vf-714', 6],
+    ['no-vf-720', 7],
+    ['no-vf-716', 8],
+    ['no-vf-704', 9],
+    ['no-vf-713', 10],
+    ['no-vf-728', 11],
+    ['no-vf-702', 12],
+    ['no-vf-719', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "no-vf-701",
-            "value": 0
-        },
-        {
-            "hc-key": "no-vf-723",
-            "value": 1
-        },
-        {
-            "hc-key": "no-vf-706",
-            "value": 2
-        },
-        {
-            "hc-key": "no-vf-722",
-            "value": 3
-        },
-        {
-            "hc-key": "no-vf-711",
-            "value": 4
-        },
-        {
-            "hc-key": "no-vf-709",
-            "value": 5
-        },
-        {
-            "hc-key": "no-vf-714",
-            "value": 6
-        },
-        {
-            "hc-key": "no-vf-720",
-            "value": 7
-        },
-        {
-            "hc-key": "no-vf-716",
-            "value": 8
-        },
-        {
-            "hc-key": "no-vf-704",
-            "value": 9
-        },
-        {
-            "hc-key": "no-vf-713",
-            "value": 10
-        },
-        {
-            "hc-key": "no-vf-728",
-            "value": 11
-        },
-        {
-            "hc-key": "no-vf-702",
-            "value": 12
-        },
-        {
-            "hc-key": "no-vf-719",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/no/no-vf-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-vf-all.js">Vestfold</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-vf-all.js">Vestfold</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/no/no-vf-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

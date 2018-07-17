@@ -1,157 +1,73 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['mw-6970', 0],
+    ['mw-ma', 1],
+    ['mw-de', 2],
+    ['mw-li', 3],
+    ['mw-do', 4],
+    ['mw-mg', 5],
+    ['mw-mc', 6],
+    ['mw-nu', 7],
+    ['mw-ni', 8],
+    ['mw-sa', 9],
+    ['mw-ba', 10],
+    ['mw-ck', 11],
+    ['mw-th', 12],
+    ['mw-cr', 13],
+    ['mw-ns', 14],
+    ['mw-zo', 15],
+    ['mw-bl', 16],
+    ['mw-1649', 17],
+    ['mw-mj', 18],
+    ['mw-ph', 19],
+    ['mw-mw', 20],
+    ['mw-1011', 21],
+    ['mw-ct', 22],
+    ['mw-ks', 23],
+    ['mw-mz', 24],
+    ['mw-na', 25],
+    ['mw-nk', 26],
+    ['mw-ru', 27]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "mw-6970",
-            "value": 0
-        },
-        {
-            "hc-key": "mw-ma",
-            "value": 1
-        },
-        {
-            "hc-key": "mw-de",
-            "value": 2
-        },
-        {
-            "hc-key": "mw-li",
-            "value": 3
-        },
-        {
-            "hc-key": "mw-do",
-            "value": 4
-        },
-        {
-            "hc-key": "mw-mg",
-            "value": 5
-        },
-        {
-            "hc-key": "mw-mc",
-            "value": 6
-        },
-        {
-            "hc-key": "mw-nu",
-            "value": 7
-        },
-        {
-            "hc-key": "mw-ni",
-            "value": 8
-        },
-        {
-            "hc-key": "mw-sa",
-            "value": 9
-        },
-        {
-            "hc-key": "mw-ba",
-            "value": 10
-        },
-        {
-            "hc-key": "mw-ck",
-            "value": 11
-        },
-        {
-            "hc-key": "mw-th",
-            "value": 12
-        },
-        {
-            "hc-key": "mw-cr",
-            "value": 13
-        },
-        {
-            "hc-key": "mw-ns",
-            "value": 14
-        },
-        {
-            "hc-key": "mw-zo",
-            "value": 15
-        },
-        {
-            "hc-key": "mw-bl",
-            "value": 16
-        },
-        {
-            "hc-key": "mw-1649",
-            "value": 17
-        },
-        {
-            "hc-key": "mw-mj",
-            "value": 18
-        },
-        {
-            "hc-key": "mw-ph",
-            "value": 19
-        },
-        {
-            "hc-key": "mw-mw",
-            "value": 20
-        },
-        {
-            "hc-key": "mw-1011",
-            "value": 21
-        },
-        {
-            "hc-key": "mw-ct",
-            "value": 22
-        },
-        {
-            "hc-key": "mw-ks",
-            "value": 23
-        },
-        {
-            "hc-key": "mw-mz",
-            "value": 24
-        },
-        {
-            "hc-key": "mw-na",
-            "value": 25
-        },
-        {
-            "hc-key": "mw-nk",
-            "value": 26
-        },
-        {
-            "hc-key": "mw-ru",
-            "value": 27
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/mw/mw-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mw/mw-all.js">Malawi</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mw/mw-all.js">Malawi</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/mw/mw-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

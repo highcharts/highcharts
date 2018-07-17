@@ -1,24 +1,23 @@
-$(function () {
-    Highcharts.stockChart('container', {
-        title: {
-            text: 'yAxis: {showFirstLabel: false}'
-        },
 
-        yAxis: {
-            showFirstLabel: false,
-            showLastLabel: true,
-            labels: {
-                y: 12
-            }
-        },
+Highcharts.stockChart('container', {
+    title: {
+        text: 'yAxis: {showFirstLabel: false}'
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    yAxis: {
+        showFirstLabel: false,
+        showLastLabel: true,
+        labels: {
+            y: 12
+        }
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

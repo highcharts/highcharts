@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,117 +7,132 @@
 import H from './Globals.js';
 import './Utilities.js';
 var Axis = H.Axis,
-	getMagnitude = H.getMagnitude,
-	map = H.map,
-	normalizeTickInterval = H.normalizeTickInterval,
-	pick = H.pick;
+    getMagnitude = H.getMagnitude,
+    map = H.map,
+    normalizeTickInterval = H.normalizeTickInterval,
+    pick = H.pick;
 /**
  * Methods defined on the Axis prototype
  */
 
 /**
  * Set the tick positions of a logarithmic axis
+ *
+ * @ignore
  */
 Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
-	var axis = this,
-		options = axis.options,
-		axisLength = axis.len,
-		lin2log = axis.lin2log,
-		log2lin = axis.log2lin,
-		// Since we use this method for both major and minor ticks,
-		// use a local variable and return the result
-		positions = [];
+    var axis = this,
+        options = axis.options,
+        axisLength = axis.len,
+        // Since we use this method for both major and minor ticks,
+        // use a local variable and return the result
+        positions = [];
 
-	// Reset
-	if (!minor) {
-		axis._minorAutoInterval = null;
-	}
+    // Reset
+    if (!minor) {
+        axis._minorAutoInterval = null;
+    }
 
-	// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
-	if (interval >= 0.5) {
-		interval = Math.round(interval);
-		positions = axis.getLinearTickPositions(interval, min, max);
+    // First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
+    if (interval >= 0.5) {
+        interval = Math.round(interval);
+        positions = axis.getLinearTickPositions(interval, min, max);
 
-	// Second case: We need intermediary ticks. For example
-	// 1, 2, 4, 6, 8, 10, 20, 40 etc.
-	} else if (interval >= 0.08) {
-		var roundedMin = Math.floor(min),
-			intermediate,
-			i,
-			j,
-			len,
-			pos,
-			lastPos,
-			break2;
+    // Second case: We need intermediary ticks. For example
+    // 1, 2, 4, 6, 8, 10, 20, 40 etc.
+    } else if (interval >= 0.08) {
+        var roundedMin = Math.floor(min),
+            intermediate,
+            i,
+            j,
+            len,
+            pos,
+            lastPos,
+            break2;
 
-		if (interval > 0.3) {
-			intermediate = [1, 2, 4];
-		} else if (interval > 0.15) { // 0.2 equals five minor ticks per 1, 10, 100 etc
-			intermediate = [1, 2, 4, 6, 8];
-		} else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
-			intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-		}
+        if (interval > 0.3) {
+            intermediate = [1, 2, 4];
 
-		for (i = roundedMin; i < max + 1 && !break2; i++) {
-			len = intermediate.length;
-			for (j = 0; j < len && !break2; j++) {
-				pos = log2lin(lin2log(i) * intermediate[j]);
-				if (pos > min && (!minor || lastPos <= max) && lastPos !== undefined) { // #1670, lastPos is #3113
-					positions.push(lastPos);
-				}
+        // 0.2 equals five minor ticks per 1, 10, 100 etc
+        } else if (interval > 0.15) {
+            intermediate = [1, 2, 4, 6, 8];
+        } else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
+            intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        }
 
-				if (lastPos > max) {
-					break2 = true;
-				}
-				lastPos = pos;
-			}
-		}
+        for (i = roundedMin; i < max + 1 && !break2; i++) {
+            len = intermediate.length;
+            for (j = 0; j < len && !break2; j++) {
+                pos = axis.log2lin(axis.lin2log(i) * intermediate[j]);
+                // #1670, lastPos is #3113
+                if (
+                    pos > min &&
+                    (!minor || lastPos <= max) &&
+                    lastPos !== undefined
+                ) {
+                    positions.push(lastPos);
+                }
 
-	// Third case: We are so deep in between whole logarithmic values that
-	// we might as well handle the tick positions like a linear axis. For
-	// example 1.01, 1.02, 1.03, 1.04.
-	} else {
-		var realMin = lin2log(min),
-			realMax = lin2log(max),
-			tickIntervalOption = options[minor ? 'minorTickInterval' : 'tickInterval'],
-			filteredTickIntervalOption = tickIntervalOption === 'auto' ? null : tickIntervalOption,
-			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
-			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
+                if (lastPos > max) {
+                    break2 = true;
+                }
+                lastPos = pos;
+            }
+        }
 
-		interval = pick(
-			filteredTickIntervalOption,
-			axis._minorAutoInterval,
-			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
-		);
+    // Third case: We are so deep in between whole logarithmic values that
+    // we might as well handle the tick positions like a linear axis. For
+    // example 1.01, 1.02, 1.03, 1.04.
+    } else {
+        var realMin = axis.lin2log(min),
+            realMax = axis.lin2log(max),
+            tickIntervalOption = minor ?
+                this.getMinorTickInterval() :
+                options.tickInterval,
+            filteredTickIntervalOption = tickIntervalOption === 'auto' ?
+                null :
+                tickIntervalOption,
+            tickPixelIntervalOption =
+                options.tickPixelInterval / (minor ? 5 : 1),
+            totalPixelLength = minor ?
+                axisLength / axis.tickPositions.length :
+                axisLength;
 
-		interval = normalizeTickInterval(
-			interval,
-			null,
-			getMagnitude(interval)
-		);
+        interval = pick(
+            filteredTickIntervalOption,
+            axis._minorAutoInterval,
+            (realMax - realMin) *
+                tickPixelIntervalOption / (totalPixelLength || 1)
+        );
 
-		positions = map(axis.getLinearTickPositions(
-			interval,
-			realMin,
-			realMax
-		), log2lin);
+        interval = normalizeTickInterval(
+            interval,
+            null,
+            getMagnitude(interval)
+        );
 
-		if (!minor) {
-			axis._minorAutoInterval = interval / 5;
-		}
-	}
+        positions = map(axis.getLinearTickPositions(
+            interval,
+            realMin,
+            realMax
+        ), axis.log2lin);
 
-	// Set the axis-level tickInterval variable
-	if (!minor) {
-		axis.tickInterval = interval;
-	}
-	return positions;
+        if (!minor) {
+            axis._minorAutoInterval = interval / 5;
+        }
+    }
+
+    // Set the axis-level tickInterval variable
+    if (!minor) {
+        axis.tickInterval = interval;
+    }
+    return positions;
 };
 
 Axis.prototype.log2lin = function (num) {
-	return Math.log(num) / Math.LN10;
+    return Math.log(num) / Math.LN10;
 };
 
 Axis.prototype.lin2log = function (num) {
-	return Math.pow(10, num);
+    return Math.pow(10, num);
 };

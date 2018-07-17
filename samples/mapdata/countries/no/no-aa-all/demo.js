@@ -1,105 +1,60 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['no-aa-928', 0],
+    ['no-aa-914', 1],
+    ['no-aa-911', 2],
+    ['no-aa-912', 3],
+    ['no-aa-940', 4],
+    ['no-aa-901', 5],
+    ['no-aa-906', 6],
+    ['no-aa-929', 7],
+    ['no-aa-904', 8],
+    ['no-aa-919', 9],
+    ['no-aa-941', 10],
+    ['no-aa-926', 11],
+    ['no-va-938', 12],
+    ['no-aa-937', 13],
+    ['no-aa-935', 14]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "no-aa-928",
-            "value": 0
-        },
-        {
-            "hc-key": "no-aa-914",
-            "value": 1
-        },
-        {
-            "hc-key": "no-aa-911",
-            "value": 2
-        },
-        {
-            "hc-key": "no-aa-912",
-            "value": 3
-        },
-        {
-            "hc-key": "no-aa-940",
-            "value": 4
-        },
-        {
-            "hc-key": "no-aa-901",
-            "value": 5
-        },
-        {
-            "hc-key": "no-aa-906",
-            "value": 6
-        },
-        {
-            "hc-key": "no-aa-929",
-            "value": 7
-        },
-        {
-            "hc-key": "no-aa-904",
-            "value": 8
-        },
-        {
-            "hc-key": "no-aa-919",
-            "value": 9
-        },
-        {
-            "hc-key": "no-aa-941",
-            "value": 10
-        },
-        {
-            "hc-key": "no-aa-926",
-            "value": 11
-        },
-        {
-            "hc-key": "no-va-938",
-            "value": 12
-        },
-        {
-            "hc-key": "no-aa-937",
-            "value": 13
-        },
-        {
-            "hc-key": "no-aa-935",
-            "value": 14
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/no/no-aa-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-aa-all.js">Aust-Agder</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-aa-all.js">Aust-Agder</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/no/no-aa-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

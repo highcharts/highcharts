@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['sa-4293', 0],
+    ['sa-tb', 1],
+    ['sa-jz', 2],
+    ['sa-nj', 3],
+    ['sa-ri', 4],
+    ['sa-md', 5],
+    ['sa-ha', 6],
+    ['sa-qs', 7],
+    ['sa-hs', 8],
+    ['sa-jf', 9],
+    ['sa-sh', 10],
+    ['sa-ba', 11],
+    ['sa-as', 12],
+    ['sa-mk', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "sa-4293",
-            "value": 0
-        },
-        {
-            "hc-key": "sa-tb",
-            "value": 1
-        },
-        {
-            "hc-key": "sa-jz",
-            "value": 2
-        },
-        {
-            "hc-key": "sa-nj",
-            "value": 3
-        },
-        {
-            "hc-key": "sa-ri",
-            "value": 4
-        },
-        {
-            "hc-key": "sa-md",
-            "value": 5
-        },
-        {
-            "hc-key": "sa-ha",
-            "value": 6
-        },
-        {
-            "hc-key": "sa-qs",
-            "value": 7
-        },
-        {
-            "hc-key": "sa-hs",
-            "value": 8
-        },
-        {
-            "hc-key": "sa-jf",
-            "value": 9
-        },
-        {
-            "hc-key": "sa-sh",
-            "value": 10
-        },
-        {
-            "hc-key": "sa-ba",
-            "value": 11
-        },
-        {
-            "hc-key": "sa-as",
-            "value": 12
-        },
-        {
-            "hc-key": "sa-mk",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/sa/sa-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sa/sa-all.js">Saudi Arabia</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sa/sa-all.js">Saudi Arabia</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/sa/sa-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

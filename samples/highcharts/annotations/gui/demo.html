@@ -1,0 +1,52 @@
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/annotations.js"></script>
+
+<div id='annotation-form'>
+  <form id="add-annotation">
+    <fieldset>
+      <legend>Text</legend>
+      <input type='text' id='text' style='width: 130px' />
+    </fieldset>
+
+    <fieldset>
+      <legend>Background color</legend>
+      <div>
+        <input type='radio' value='rgba(0, 0, 0, 0.75)' name='background-color' checked>
+        <label>black</label>
+      </div>
+      <div>
+        <input type='radio' value='rgba(255, 0, 0, 0.75)' name='background-color'>
+        <label>red</label>
+      </div>
+      <div>
+        <input type='radio' value='rgba(0, 0, 255, 0.75)' name='background-color'>
+        <label>blue</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Shape</legend>
+      <div>
+        <input type='radio' name='shape' value='callout' checked>
+        <label>Callout</label>
+      </div>
+      <div>
+        <input type='radio' name='shape' value='connector'>
+        <label>Connector</label>
+      </div>
+      <div>
+        <input type='radio' name='shape' value='circle'>
+        <label>Circle</label>
+      </div>
+    </fieldset>
+
+    <input type='hidden' id='x' />
+    <input type='hidden' id='y' />
+    <input type='submit' style='position:absolute; top:-1000px;' />
+  </form>
+</div> 
+<div id="container" style="height: 400px; margin-top: 1em"></div>

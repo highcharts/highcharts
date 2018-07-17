@@ -1,67 +1,64 @@
-$(function () {
 
-    Highcharts.chart('container', {
 
-        chart: {
-            type: 'columnrange',
-            inverted: true
-        },
+Highcharts.chart('container', {
 
+    chart: {
+        type: 'columnrange',
+        inverted: true
+    },
+
+    title: {
+        text: 'Temperature variation by month'
+    },
+
+    subtitle: {
+        text: 'Observed in Vik i Sogn, Norway, 2017'
+    },
+
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
+
+    yAxis: {
         title: {
-            text: 'Temperature variation by month'
-        },
+            text: 'Temperature ( °C )'
+        }
+    },
 
-        subtitle: {
-            text: 'Observed in Vik i Sogn, Norway'
-        },
+    tooltip: {
+        valueSuffix: '°C'
+    },
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
-
-        yAxis: {
-            title: {
-                text: 'Temperature ( °C )'
+    plotOptions: {
+        columnrange: {
+            dataLabels: {
+                enabled: true,
+                format: '{y}°C'
             }
-        },
+        }
+    },
 
-        tooltip: {
-            valueSuffix: '°C'
-        },
+    legend: {
+        enabled: false
+    },
 
-        plotOptions: {
-            columnrange: {
-                dataLabels: {
-                    enabled: true,
-                    formatter: function () {
-                        return this.y + '°C';
-                    }
-                }
-            }
-        },
-
-        legend: {
-            enabled: false
-        },
-
-        series: [{
-            name: 'Temperatures',
-            data: [
-                [-9.7, 9.4],
-                [-8.7, 6.5],
-                [-3.5, 9.4],
-                [-1.4, 19.9],
-                [0.0, 22.6],
-                [2.9, 29.5],
-                [9.2, 30.7],
-                [7.3, 26.5],
-                [4.4, 18.0],
-                [-3.1, 11.4],
-                [-5.2, 10.4],
-                [-13.5, 9.8]
-            ]
-        }]
-
-    });
+    series: [{
+        name: 'Temperatures',
+        data: [
+            [-9.9, 10.3],
+            [-8.6, 8.5],
+            [-10.2, 11.8],
+            [-1.7, 12.2],
+            [-0.6, 23.1],
+            [3.7, 25.4],
+            [6.0, 26.2],
+            [6.7, 21.4],
+            [3.5, 19.5],
+            [-1.3, 16.0],
+            [-8.7, 9.4],
+            [-9.0, 8.6]
+        ]
+    }]
 
 });

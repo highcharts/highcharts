@@ -9,6 +9,10 @@
 				<li>If the minimum of a logarithimic axis is set to 0 or less</li>
 				<li>If the threshold is set to 0 or less</li>
 			</ul>
+			As of Highcharts 5.0.8 it is possible to bypass this error message
+			by setting <code>Axis.prototype.allowNegativeLog</code> to
+			<code>true</code> and add custom conversion functions. <a
+			href="http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/samples/highcharts/yaxis/type-log-negative/">View live demo</a>.
 		</description>
 	</error>
 
@@ -139,10 +143,56 @@
 			<p>This happens in Highstock when a point is grouped by data grouping, so there is no reference to the raw points.</p>
 		</description>
 	</error>
+
 	<error id="25">
 		<title>Can't find Moment.js library</title>
 		<description>
 			<p>Using the global.timezone option requires the <a href="http://momentjs.com/">Moment.js</a> library to be loaded.</p>
 		</description>
 	</error>
+
+	<error id="26">
+		<title>WebGL not supported, and no fallback module included</title>
+		<description>
+			<p>This happens when your browser does not support WebGL, <b>and</b> 
+				the canvas fallback module (<code>boost-canvas.js</code>) has not been included OR if the fallback module was included <b>after</b> the boost module. 
+			</p>
+			<p>
+				Make sure you include <code>boost-canvas.js</code>, and that it's included before <code>boost.js</code>.
+			</p>
+		</description>
+	</error>
+
+	<error id="27">
+		<title>This browser does not support SVG.</title>
+		<description>
+			<p>This happens in old IE when the <code>oldie.js</code> module is
+			not loaded.</p>
+			<p>If you need to target IE versions 6, 7 and 8, add the module after loading <code>highcharts.js</code>. In
+			a website context, it is a good idea to load it in a conditional comment to avoid traffic overhead in modern
+			browsers:
+<pre>
+<!--[if lt IE 9]>
+	<script src='https://code.highcharts.com/modules/oldie.js'></script>
+<![endif]-->
+</pre>
+				
+			</p>
+		</description>
+	</error>
+
+    <error id="28">
+		<title>Fallback to export server disabled</title>
+		<description>
+			<p>This happens when the offline export module encounters a chart it can not export successfully, and the
+            fallback to the online export server is disabled. The offline exporting module will fail for certain browsers,
+            and certain features (e.g. <a href="https://api.highcharts.com/highcharts/exporting.allowHTML">allowHTML</a>),
+            depending on the type of image exporting to. For a compatibility overview,
+            see <a href="https://www.highcharts.com/docs/export-module/client-side-export">Client Side Export</a>. For very complex
+            charts, it is possible that export can fail in browsers that don't support Blob objects, due to data URL length limits.
+            It is always recommended to define the <a href="https://api.highcharts.com/highcharts/exporting.error">exporting.error</a>
+            callback if you disable fallback, so that you can provide details to your users if export is not working for them.</p>
+		</description>
+	</error>
+
 </errors>

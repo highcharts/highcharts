@@ -1,0 +1,114 @@
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+#appContainer {
+    width: 1300px;
+}
+.container {
+    height: 600px;
+    width: 600px;
+    margin: 20px 24px;
+    float: left;
+}
+.container-expanded {
+    height: 800px;
+    width: 1250px;
+    margin: 20px 24px;
+}
+.verticalLine {
+    display: block;
+    width: 1px;
+    border-left: 1px solid #000;
+    float: left;
+    height: 600px;
+    margin: 20px 0;
+}
+#controls1 {
+    display: inline-block;
+    width: 700px;
+}
+#controls2 {
+    display: inline-block;
+    width: 400px;
+}
+.checkboxContainer {
+    display: block;
+    margin-bottom: 10px;
+    margin-left: -10px;
+}
+#default {
+    display: inline-block
+}
+#appContainer button {
+    border: none;
+    border-radius: 0.3em;
+    background: #a4edba;
+    padding: 0.5em 1.5em;
+    color: black;
+    text-decoration: none;
+    font-size: 1em;
+    white-space: nowrap;
+    cursor: pointer;
+    margin: 0.5em;
+    line-height: 1em;
+    display: inline-block;
+}
+#appContainer button:hover {
+	background: #40818b;
+	color: white;
+}
+#appContainer button.active {
+	background: #40818b;
+	color: white;
+}
+#appContainer input {
+    margin: 10px;
+}
+#appContainer input:not([type="checkbox"]) {
+    display: block;
+    width: 90%;
+}
+#appContainer textarea {
+    width: 100%;
+    margin: 10px;
+    height: 100px;
+}
+.selector .custom-combobox {
+    display: block;
+}
+.selector .custom-combobox .custom-combobox-input {
+    font-size: 14px;
+    color: silver;
+    border-radius: 0;
+    height: 24px;
+    display: block;
+    background: url(https://www.highcharts.com/samples/graphics/search.png) 5px 5px no-repeat white;
+    padding: 1px 5px 1px 30px;
+    width: 100%;
+}
+.selector .custom-combobox .ui-autocomplete-input:focus {
+    color: black;
+}
+.selector .custom-combobox .ui-autocomplete-input.valid {
+    color: black;
+}
+.ui-autocomplete {
+    max-height: 500px;
+    overflow: auto;
+}
+.ui-autocomplete .option-header {
+    font-style: italic;
+    font-weight: bold;
+    margin: 5px 0;
+    font-size: 1.2em;
+    color: gray;
+}
+.ui-button {
+    display: none !important;
+}
+.selector .custom-combobox-toggle {
+    display: block;
+    border-radius: 0;
+}

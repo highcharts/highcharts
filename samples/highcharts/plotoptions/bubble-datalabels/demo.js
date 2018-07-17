@@ -1,46 +1,45 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        chart: {
-            type: 'bubble',
-            plotBorderWidth: 1,
-            zoomType: 'xy'
-        },
+Highcharts.chart('container', {
 
-        title: {
-            text: 'Highcharts bubbles with data labels'
-        },
+    chart: {
+        type: 'bubble',
+        plotBorderWidth: 1,
+        zoomType: 'xy'
+    },
 
-        xAxis: {
-            gridLineWidth: 1
-        },
+    title: {
+        text: 'Highcharts bubbles with data labels'
+    },
 
-        yAxis: {
-            startOnTick: false,
-            endOnTick: false
-        },
+    xAxis: {
+        gridLineWidth: 1
+    },
 
-        series: [{
-            data: [
-                [9, 81, 63],
-                [98, 5, 89],
-                [51, 50, 73],
-                [41, 22, 14],
-                [58, 24, 20],
-                [78, 37, 34],
-                [55, 56, 53],
-                [18, 45, 70],
-                [42, 44, 28],
-                [3, 52, 59],
-                [31, 18, 97],
-                [79, 91, 63],
-                [93, 23, 23],
-                [44, 83, 22]
-            ],
-            dataLabels: {
-                enabled: true
-            }
-        }]
+    yAxis: {
+        startOnTick: false,
+        endOnTick: false
+    },
 
-    });
+    series: [{
+        data: [
+            [9, 81, 63],
+            [98, 5, 89],
+            [51, 50, 73],
+            [41, 22, 14],
+            [58, 24, 20],
+            [78, 37, 34],
+            [55, 56, 53],
+            [18, 45, 70],
+            [42, 44, 28],
+            [3, 52, 59],
+            [31, 18, 97],
+            [79, 91, 63],
+            [93, 23, 23],
+            [44, 83, 22]
+        ],
+        dataLabels: {
+            enabled: true
+        }
+    }]
+
 });

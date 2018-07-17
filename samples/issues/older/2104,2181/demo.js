@@ -2,12 +2,18 @@ $(function () {
     $('#container').highcharts({
 
         chart: {
-            type: 'column'
+            type: 'column',
+            backgroundColor: 'silver'
+        },
+
+        legend: {
+            backgroundColor: 'white'
         },
 
         title: {
             text: 'Stacking on a log axis'
         },
+
         subtitle: {
             text: '#2104 caused error #10 and no visible columns.<br/>' +
                 '#2181 caused the lower area stack not to display.'

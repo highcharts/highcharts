@@ -1,21 +1,20 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        title: {
-            text: 'Y axis is not opposite, renders on the left'
-        },
+Highcharts.stockChart('container', {
 
-        yAxis: {
-            opposite: false
-        },
+    title: {
+        text: 'Y axis is not opposite, renders on the left'
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    yAxis: {
+        opposite: false
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

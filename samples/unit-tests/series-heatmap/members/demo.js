@@ -13,6 +13,7 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
                         graphic[key] = value;
                     });
                 },
+                animate: noop,
                 addClass: noop,
                 removeClass: noop
             },
@@ -25,8 +26,16 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
                     }
                 },
                 pointAttribs: pointAttribs,
-                zones: []
-            }
+                zones: [],
+                chart: {
+                    options: {
+                        chart: {
+                            animation: false
+                        }
+                    }
+                }
+            },
+            options: {}
         };
     setState.call(point, '');
     assert.strictEqual(

@@ -1,4 +1,5 @@
 ---
  name: Corse - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

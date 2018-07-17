@@ -1,117 +1,63 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ca-sk-4711', 0],
+    ['ca-sk-4708', 1],
+    ['ca-sk-4706', 2],
+    ['ca-sk-4707', 3],
+    ['ca-sk-4705', 4],
+    ['ca-sk-4714', 5],
+    ['ca-sk-4704', 6],
+    ['ca-sk-4715', 7],
+    ['ca-sk-4703', 8],
+    ['ca-sk-4702', 9],
+    ['ca-sk-4716', 10],
+    ['ca-sk-4701', 11],
+    ['ca-sk-4717', 12],
+    ['ca-sk-4710', 13],
+    ['ca-sk-4712', 14],
+    ['ca-sk-4713', 15],
+    ['ca-sk-4718', 16],
+    ['ca-sk-4709', 17]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ca-sk-4711",
-            "value": 0
-        },
-        {
-            "hc-key": "ca-sk-4708",
-            "value": 1
-        },
-        {
-            "hc-key": "ca-sk-4706",
-            "value": 2
-        },
-        {
-            "hc-key": "ca-sk-4707",
-            "value": 3
-        },
-        {
-            "hc-key": "ca-sk-4705",
-            "value": 4
-        },
-        {
-            "hc-key": "ca-sk-4714",
-            "value": 5
-        },
-        {
-            "hc-key": "ca-sk-4704",
-            "value": 6
-        },
-        {
-            "hc-key": "ca-sk-4715",
-            "value": 7
-        },
-        {
-            "hc-key": "ca-sk-4703",
-            "value": 8
-        },
-        {
-            "hc-key": "ca-sk-4702",
-            "value": 9
-        },
-        {
-            "hc-key": "ca-sk-4716",
-            "value": 10
-        },
-        {
-            "hc-key": "ca-sk-4701",
-            "value": 11
-        },
-        {
-            "hc-key": "ca-sk-4717",
-            "value": 12
-        },
-        {
-            "hc-key": "ca-sk-4710",
-            "value": 13
-        },
-        {
-            "hc-key": "ca-sk-4712",
-            "value": 14
-        },
-        {
-            "hc-key": "ca-sk-4713",
-            "value": 15
-        },
-        {
-            "hc-key": "ca-sk-4718",
-            "value": 16
-        },
-        {
-            "hc-key": "ca-sk-4709",
-            "value": 17
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ca/ca-sk-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-sk-all.js">Saskatchewan</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-sk-all.js">Saskatchewan</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ca/ca-sk-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

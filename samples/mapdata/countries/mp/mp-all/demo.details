@@ -1,4 +1,5 @@
 ---
  name: Northern Mariana Islands - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

@@ -1,21 +1,20 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        yAxis: {
-            labels: {
-                formatter: function () {
-                    return this.value + ' units';
-                }
+Highcharts.stockChart('container', {
+
+    yAxis: {
+        labels: {
+            formatter: function () {
+                return this.value + ' units';
             }
-        },
+        }
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    rangeSelector: {
+        selected: 1
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

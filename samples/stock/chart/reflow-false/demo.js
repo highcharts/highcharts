@@ -1,25 +1,24 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        chart: {
-            reflow: false
-        },
+Highcharts.stockChart('container', {
 
-        title: {
-            text: 'Chart reflow is set to false'
-        },
+    chart: {
+        reflow: false
+    },
 
-        subtitle: {
-            text: 'When resizing the window or the frame, the chart should not resize'
-        },
+    title: {
+        text: 'Chart reflow is set to false'
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    subtitle: {
+        text: 'When resizing the window or the frame, the chart should not resize'
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

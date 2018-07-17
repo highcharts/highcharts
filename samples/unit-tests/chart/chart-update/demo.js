@@ -1,5 +1,5 @@
 /* eslint func-style:0 */
-$(function () {
+(function () {
 
     function getConfig() {
         return {
@@ -101,9 +101,9 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.title,
-            null,
-            'Removed title'
+            chart.title.element.textContent,
+            '',
+            'Empty title (#6934)'
         );
 
         chart.update({
@@ -299,4 +299,29 @@ $(function () {
             'Color by point was reset'
         );
     });
-});
+
+    QUnit.test('Tooltip update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+
+        chart.series[0].points[0].onMouseOver();
+
+        assert.strictEqual(
+            chart.tooltip.isHidden,
+            false,
+            'Tooltip visible'
+        );
+
+        chart.update({
+            tooltip: {
+                enabled: false
+            }
+        });
+
+        assert.strictEqual(
+            chart.tooltip.isHidden,
+            true,
+            'Tooltip hidden'
+        );
+
+    });
+}());

@@ -1,4 +1,4 @@
-$(function () {
+(function () {
 
     // Visualize
     var each = Highcharts.each,
@@ -154,7 +154,7 @@ $(function () {
             };
         });
 
-        Highcharts.distribute(boxes, len);
+        Highcharts.distribute(boxes, len, 100);
 
         visualize(boxes);
 
@@ -164,5 +164,5 @@ $(function () {
             'Equal, unranked boxes'
         );
     });
+}());
 
-});

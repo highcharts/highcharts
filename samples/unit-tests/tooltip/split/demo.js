@@ -72,11 +72,21 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
 
     chart.tooltip.refresh([p1, p2]);
     el = chart.tooltip.tt.text.element;
+
     value = window.getComputedStyle(el).getPropertyValue('color');
     assert.strictEqual(
         value,
         'rgb(51, 51, 51)',
         'tooltip default color.'
+    );
+
+    el = chart.tooltip.tt.element;
+    value = window.getComputedStyle(el);
+
+    assert.strictEqual(
+        document.getElementsByClassName('highcharts-label-box')[4].getAttribute('isShadow'),
+        'true',
+        'shadow is applied.'
     );
 
     chart.update({
@@ -86,7 +96,12 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
             }
         }
     });
-    chart.tooltip.refresh([p1, p2]);
+
+    chart.tooltip.refresh([
+        chart.series[0].points[0],
+        chart.series[1].points[0]
+    ]);
+
     el = chart.tooltip.tt.text.element;
     value = window.getComputedStyle(el).getPropertyValue('color');
     assert.strictEqual(
@@ -95,3 +110,95 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
         'tooltip color from style.'
     );
 });
+
+QUnit.test('Split tooltip returning false. #6115', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [3, 2, 1]
+
+        }],
+        tooltip: {
+            split: true,
+            formatter: function () {
+                var tooltips = this.points.map(function (point) {
+                    return point.y;
+                });
+                tooltips.unshift(false);
+                return tooltips;
+            }
+        }
+    });
+
+    chart.tooltip.refresh([
+        chart.series[0].points[0],
+        chart.series[1].points[0]
+    ]);
+
+    assert.strictEqual(
+        chart.tooltip.label.element.childNodes.length,
+        2,
+        'Two tooltips'
+    );
+});
+
+QUnit.test('Split tooltip with useHTML (#7238)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        series: [{
+            data: [1, 2, 3]
+        }],
+        tooltip: {
+            split: true,
+            useHTML: true
+        }
+    });
+
+    chart.series[0].points[0].onMouseOver();
+
+    assert.strictEqual(
+        chart.series[0].tt.text.element.tagName,
+        'SPAN',
+        'The label is a span'
+    );
+});
+
+QUnit.test(
+    'Split tooltip on flags, having noSharedTooltip flag',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+
+            tooltip: {
+                split: true
+            },
+
+            series: [{
+                data: [1, 3, 2, 4],
+                id: 'dataseries'
+            }, {
+                type: 'flags',
+                data: [{
+                    x: 2,
+                    title: 'A',
+                    text: 'Flag tooltip'
+                }],
+                onSeries: 'dataseries'
+            }]
+        });
+
+
+        chart.series[1].points[0].onMouseOver();
+
+        assert.strictEqual(
+            chart.series[1].tt.text.element.tagName,
+            'text',
+            'We have a flag tooltip'
+        );
+    }
+);

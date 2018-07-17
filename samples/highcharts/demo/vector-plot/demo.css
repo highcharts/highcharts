@@ -1,0 +1,10 @@
+#container {
+    min-width: 30px;
+    max-width: 600px;
+    height: 500px;
+    margin: 1em auto;
+}
+
+#csv {
+	display: none;
+}

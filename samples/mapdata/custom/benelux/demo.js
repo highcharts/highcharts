@@ -1,152 +1,72 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['nl-nh', 0],
+    ['nl-fr', 1],
+    ['be-bu', 2],
+    ['nl-gr', 3],
+    ['nl-fl', 4],
+    ['nl-ze', 5],
+    ['be-3528', 6],
+    ['be-3529', 7],
+    ['be-489', 8],
+    ['lu-di', 9],
+    ['lu-gr', 10],
+    ['lu-lu', 11],
+    ['nl-nb', 12],
+    ['nl-ut', 13],
+    ['nl-zh', 14],
+    ['nl-dr', 15],
+    ['nl-ge', 16],
+    ['nl-li', 17],
+    ['be-vb', 18],
+    ['be-490', 19],
+    ['nl-ov', 20],
+    ['be-3526', 21],
+    ['be-3527', 22],
+    ['be-3535', 23],
+    ['be-ov', 24],
+    ['be-3534', 25],
+    ['undefined', 26]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "nl-nh",
-            "value": 0
-        },
-        {
-            "hc-key": "nl-fr",
-            "value": 1
-        },
-        {
-            "hc-key": "be-bu",
-            "value": 2
-        },
-        {
-            "hc-key": "nl-gr",
-            "value": 3
-        },
-        {
-            "hc-key": "nl-fl",
-            "value": 4
-        },
-        {
-            "hc-key": "nl-ze",
-            "value": 5
-        },
-        {
-            "hc-key": "be-3528",
-            "value": 6
-        },
-        {
-            "hc-key": "be-3529",
-            "value": 7
-        },
-        {
-            "hc-key": "be-489",
-            "value": 8
-        },
-        {
-            "hc-key": "lu-di",
-            "value": 9
-        },
-        {
-            "hc-key": "lu-gr",
-            "value": 10
-        },
-        {
-            "hc-key": "lu-lu",
-            "value": 11
-        },
-        {
-            "hc-key": "nl-nb",
-            "value": 12
-        },
-        {
-            "hc-key": "nl-ut",
-            "value": 13
-        },
-        {
-            "hc-key": "nl-zh",
-            "value": 14
-        },
-        {
-            "hc-key": "nl-dr",
-            "value": 15
-        },
-        {
-            "hc-key": "nl-ge",
-            "value": 16
-        },
-        {
-            "hc-key": "nl-li",
-            "value": 17
-        },
-        {
-            "hc-key": "be-vb",
-            "value": 18
-        },
-        {
-            "hc-key": "be-490",
-            "value": 19
-        },
-        {
-            "hc-key": "nl-ov",
-            "value": 20
-        },
-        {
-            "hc-key": "be-3526",
-            "value": 21
-        },
-        {
-            "hc-key": "be-3527",
-            "value": 22
-        },
-        {
-            "hc-key": "be-3535",
-            "value": 23
-        },
-        {
-            "hc-key": "be-ov",
-            "value": 24
-        },
-        {
-            "hc-key": "be-3534",
-            "value": 25
-        },
-        {
-            "value": 26
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'custom/benelux'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/benelux.js">Benelux</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title: {
-            text: 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/benelux.js">Benelux</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/benelux'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -11,9 +11,11 @@ rules:
     no-console: 2
     no-debugger: 2
     no-else-return: 2
+    no-nested-ternary: 0
     no-unmodified-loop-condition: 0
     object-curly-spacing: [2, "always"]
     operator-linebreak: [2, "after"]
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     strict: 0
+    valid-jsdoc: ["error", { prefer: { "returns": "return"}}]
     quotes: [2, "single"]

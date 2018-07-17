@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-mi-01', 0],
+    ['us-mi-12', 1],
+    ['us-mi-14', 2],
+    ['us-mi-13', 3],
+    ['us-mi-10', 4],
+    ['us-mi-05', 5],
+    ['us-mi-11', 6],
+    ['us-mi-09', 7],
+    ['us-mi-07', 8],
+    ['us-mi-08', 9],
+    ['us-mi-02', 10],
+    ['us-mi-03', 11],
+    ['us-mi-06', 12],
+    ['us-mi-04', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-mi-01",
-            "value": 0
-        },
-        {
-            "hc-key": "us-mi-12",
-            "value": 1
-        },
-        {
-            "hc-key": "us-mi-14",
-            "value": 2
-        },
-        {
-            "hc-key": "us-mi-13",
-            "value": 3
-        },
-        {
-            "hc-key": "us-mi-10",
-            "value": 4
-        },
-        {
-            "hc-key": "us-mi-05",
-            "value": 5
-        },
-        {
-            "hc-key": "us-mi-11",
-            "value": 6
-        },
-        {
-            "hc-key": "us-mi-09",
-            "value": 7
-        },
-        {
-            "hc-key": "us-mi-07",
-            "value": 8
-        },
-        {
-            "hc-key": "us-mi-08",
-            "value": 9
-        },
-        {
-            "hc-key": "us-mi-02",
-            "value": 10
-        },
-        {
-            "hc-key": "us-mi-03",
-            "value": 11
-        },
-        {
-            "hc-key": "us-mi-06",
-            "value": 12
-        },
-        {
-            "hc-key": "us-mi-04",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-mi-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-mi-congress-113.js">Michigan congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-mi-congress-113.js">Michigan congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-mi-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

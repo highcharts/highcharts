@@ -1,6 +1,6 @@
 /* eslint func-style:0 */
-$(function () {
 
+(function () {
     var addEvent = Highcharts.addEvent,
         fireEvent = Highcharts.fireEvent,
         removeEvent = Highcharts.removeEvent,
@@ -496,7 +496,7 @@ $(function () {
 
     QUnit.test('Event assigned as null (#5311)', function (assert) {
         assert.expect(0);
-        Highcharts.chart('container', {
+        var chart = Highcharts.chart('container', {
 
             chart: {
                 events: {
@@ -510,8 +510,29 @@ $(function () {
 
         });
 
-        Highcharts.charts[0].setSize(400, 300, false);
+        chart.setSize(400, 300, false);
 
     });
 
-});
+    QUnit.test('Event order', function (assert) {
+        var obj = {},
+            calls = [];
+
+        addEvent(obj, 'hit', function () {
+            calls.push('klakk');
+        }, { order: 2 });
+
+        addEvent(obj, 'hit', function () {
+            calls.push('klikk');
+        }, { order: 1 });
+
+        fireEvent(obj, 'hit');
+
+        assert.deepEqual(
+            calls,
+            ['klikk', 'klakk'],
+            'Events should be fired in order'
+        );
+
+    });
+}());

@@ -1,18 +1,17 @@
-$(function () {
-    var chart = Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+var chart = Highcharts.stockChart('container', {
 
-        series: [{
-            name: 'MSFT',
-            data: MSFT
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
 
-    $('#button').click(function () {
-        chart.series[0].setData(ADBE);
-        this.disabled = true;
-    });
+    series: [{
+        name: 'MSFT',
+        data: MSFT
+    }]
+});
+
+$('#button').click(function () {
+    chart.series[0].setData(ADBE);
+    this.disabled = true;
 });

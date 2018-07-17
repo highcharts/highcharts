@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['nr-6494', 0],
+    ['nr-6495', 1],
+    ['nr-6496', 2],
+    ['nr-6497', 3],
+    ['nr-6498', 4],
+    ['nr-6499', 5],
+    ['nr-6487', 6],
+    ['nr-3591', 7],
+    ['nr-6488', 8],
+    ['nr-6489', 9],
+    ['nr-6490', 10],
+    ['nr-6491', 11],
+    ['nr-6492', 12],
+    ['nr-6493', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "nr-6494",
-            "value": 0
-        },
-        {
-            "hc-key": "nr-6495",
-            "value": 1
-        },
-        {
-            "hc-key": "nr-6496",
-            "value": 2
-        },
-        {
-            "hc-key": "nr-6497",
-            "value": 3
-        },
-        {
-            "hc-key": "nr-6498",
-            "value": 4
-        },
-        {
-            "hc-key": "nr-6499",
-            "value": 5
-        },
-        {
-            "hc-key": "nr-6487",
-            "value": 6
-        },
-        {
-            "hc-key": "nr-3591",
-            "value": 7
-        },
-        {
-            "hc-key": "nr-6488",
-            "value": 8
-        },
-        {
-            "hc-key": "nr-6489",
-            "value": 9
-        },
-        {
-            "hc-key": "nr-6490",
-            "value": 10
-        },
-        {
-            "hc-key": "nr-6491",
-            "value": 11
-        },
-        {
-            "hc-key": "nr-6492",
-            "value": 12
-        },
-        {
-            "hc-key": "nr-6493",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/nr/nr-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nr/nr-all.js">Nauru</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nr/nr-all.js">Nauru</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/nr/nr-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

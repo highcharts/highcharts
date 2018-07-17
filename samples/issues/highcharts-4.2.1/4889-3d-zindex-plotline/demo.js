@@ -42,7 +42,7 @@ $(function () {
         });
 
         var plotBandZIndex = parseFloat(chart.yAxis[0].plotLinesAndBands[0].svgElem.attr('zIndex'), 10),
-            backFrameZIndex = parseFloat(chart.yAxis[0].backFrame.attr('zIndex'), 10);
+            backFrameZIndex = parseFloat(chart.frameShapes.back.attr('zIndex'), 10);
 
         assert.strictEqual(
             plotBandZIndex > backFrameZIndex && !isNaN(plotBandZIndex) && !isNaN(backFrameZIndex),

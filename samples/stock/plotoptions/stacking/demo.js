@@ -1,26 +1,25 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        chart: {
-            type: 'area'
-        },
+Highcharts.stockChart('container', {
 
-        plotOptions: {
-            series: {
-                stacking: 'normal'
-            }
-        },
+    chart: {
+        type: 'area'
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    plotOptions: {
+        series: {
+            stacking: 'normal'
+        }
+    },
 
-        series: [{
-            name: 'ADBE',
-            data: ADBE
-        }, {
-            name: 'MSFT',
-            data: MSFT
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'ADBE',
+        data: ADBE
+    }, {
+        name: 'MSFT',
+        data: MSFT
+    }]
 });

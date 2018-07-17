@@ -1,5 +1,7 @@
-$(function () {
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
+
+$.getJSON(
+    'https://cdn.rawgit.com/highcharts/highcharts/v6.0.5/samples/data/range.json',
+    function (data) {
 
         // Shorten the data
         data = data.splice(181, 14);
@@ -45,6 +47,5 @@ $(function () {
             }]
 
         });
-    });
-
-});
+    }
+);

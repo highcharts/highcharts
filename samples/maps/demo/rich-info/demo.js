@@ -1,6 +1,7 @@
-$(function () {
 
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-history.csv&callback=?', function (csv) {
+$.ajax({
+    url: 'https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/world-population-history.csv',
+    success: function (csv) {
 
         // Parse the CSV Data
         /*Highcharts.data({
@@ -24,24 +25,25 @@ $(function () {
             mapChart,
             countryChart,
             numRegex = /^[0-9\.]+$/,
+            lastCommaRegex = /,\s$/,
             quoteRegex = /\"/g,
-            categories = CSVtoArray(csv[1]).slice(4);
+            categories = CSVtoArray(csv[2]).slice(4);
 
         // Parse the CSV into arrays, one array each country
-        $.each(csv.slice(2), function (j, line) {
+        $.each(csv.slice(3), function (j, line) {
             var row = CSVtoArray(line),
                 data = row.slice(4);
 
             $.each(data, function (i, val) {
-
                 val = val.replace(quoteRegex, '');
                 if (numRegex.test(val)) {
                     val = parseInt(val, 10);
-                } else if (!val) {
+                } else if (!val || lastCommaRegex.test(val)) {
                     val = null;
                 }
                 data[i] = val;
             });
+
             countries[row[1]] = {
                 name: row[0],
                 code3: row[1],
@@ -122,7 +124,7 @@ $(function () {
                             opposite: true
                         },
                         tooltip: {
-                            shared: true
+                            split: true
                         },
                         plotOptions: {
                             series: {
@@ -221,5 +223,5 @@ $(function () {
 
         // Pre-select a country
         mapChart.get('us').select();
-    });
+    }
 });

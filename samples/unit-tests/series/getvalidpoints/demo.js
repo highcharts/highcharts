@@ -1,4 +1,4 @@
-$(function () {
+(function () {
 
     function getData() {
         var arr = [];
@@ -54,4 +54,5 @@ $(function () {
 
     test(false);
     test(true);
-});
+
+}());

@@ -1,31 +1,29 @@
-$(function () {
-    // Notice that the dataset has missing data
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
 
-        Highcharts.stockChart('container', {
+// Notice that the dataset has missing data
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/range.json', function (data) {
 
-            chart: {
-                type: 'columnrange'
-            },
+    Highcharts.stockChart('container', {
 
-            rangeSelector: {
-                selected: 2
-            },
+        chart: {
+            type: 'columnrange'
+        },
 
-            title: {
-                text: 'Temperature variation by day'
-            },
+        rangeSelector: {
+            selected: 2
+        },
 
-            tooltip: {
-                valueSuffix: '°C'
-            },
+        title: {
+            text: 'Temperature variation by day'
+        },
 
-            series: [{
-                name: 'Temperatures',
-                data: data
-            }]
+        tooltip: {
+            valueSuffix: '°C'
+        },
 
-        });
+        series: [{
+            name: 'Temperatures',
+            data: data
+        }]
+
     });
-
 });

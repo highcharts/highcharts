@@ -1,109 +1,61 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-oh-13', 0],
+    ['us-oh-09', 1],
+    ['us-oh-04', 2],
+    ['us-oh-01', 3],
+    ['us-oh-11', 4],
+    ['us-oh-05', 5],
+    ['us-oh-16', 6],
+    ['us-oh-14', 7],
+    ['us-oh-08', 8],
+    ['us-oh-12', 9],
+    ['us-oh-03', 10],
+    ['us-oh-02', 11],
+    ['us-oh-06', 12],
+    ['us-oh-15', 13],
+    ['us-oh-10', 14],
+    ['us-oh-07', 15]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-oh-13",
-            "value": 0
-        },
-        {
-            "hc-key": "us-oh-09",
-            "value": 1
-        },
-        {
-            "hc-key": "us-oh-04",
-            "value": 2
-        },
-        {
-            "hc-key": "us-oh-01",
-            "value": 3
-        },
-        {
-            "hc-key": "us-oh-11",
-            "value": 4
-        },
-        {
-            "hc-key": "us-oh-05",
-            "value": 5
-        },
-        {
-            "hc-key": "us-oh-16",
-            "value": 6
-        },
-        {
-            "hc-key": "us-oh-14",
-            "value": 7
-        },
-        {
-            "hc-key": "us-oh-08",
-            "value": 8
-        },
-        {
-            "hc-key": "us-oh-12",
-            "value": 9
-        },
-        {
-            "hc-key": "us-oh-03",
-            "value": 10
-        },
-        {
-            "hc-key": "us-oh-02",
-            "value": 11
-        },
-        {
-            "hc-key": "us-oh-06",
-            "value": 12
-        },
-        {
-            "hc-key": "us-oh-15",
-            "value": 13
-        },
-        {
-            "hc-key": "us-oh-10",
-            "value": 14
-        },
-        {
-            "hc-key": "us-oh-07",
-            "value": 15
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-oh-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-oh-congress-113.js">Ohio congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-oh-congress-113.js">Ohio congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-oh-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

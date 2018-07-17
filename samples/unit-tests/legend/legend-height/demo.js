@@ -1,4 +1,4 @@
-$(function () {
+(function () {
 
     function createChart(options) {
         for (var i = 0, series = []; i <= 50; ++i) {
@@ -8,6 +8,9 @@ $(function () {
         }
 
         return Highcharts.chart('container', Highcharts.merge({
+            boost: {
+                enabled: false
+            },
             chart: {
                 height: 300
             },
@@ -75,4 +78,4 @@ $(function () {
 
         assert.ok(chart.legend.legendHeight > 150, 'Legend is full height');
     });
-});
+}());

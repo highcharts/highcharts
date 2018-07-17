@@ -1,38 +1,37 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        title: {
-            text: 'Series afterAnimate event demo'
-        },
+Highcharts.chart('container', {
 
-        subtitle: {
-            text: 'A label should appear on the plot area after animate'
-        },
+    title: {
+        text: 'Series afterAnimate event demo'
+    },
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
+    subtitle: {
+        text: 'A label should appear on the plot area after animate'
+    },
 
-        plotOptions: {
-            series: {
-                events: {
-                    afterAnimate: function () {
-                        this.chart.renderer.label(this.name + ' has appeared', 100, 70)
-                            .attr({
-                                padding: 10,
-                                fill: Highcharts.getOptions().colors[0]
-                            })
-                            .css({
-                                color: 'white'
-                            })
-                            .add();
-                    }
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
+
+    plotOptions: {
+        series: {
+            events: {
+                afterAnimate: function () {
+                    this.chart.renderer.label(this.name + ' has appeared', 100, 70)
+                        .attr({
+                            padding: 10,
+                            fill: Highcharts.getOptions().colors[0]
+                        })
+                        .css({
+                            color: 'white'
+                        })
+                        .add();
                 }
             }
-        },
+        }
+    },
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
-    });
+    series: [{
+        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+    }]
 });

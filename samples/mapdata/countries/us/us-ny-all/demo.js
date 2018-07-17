@@ -1,293 +1,107 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-ny-009', 0],
+    ['us-ny-013', 1],
+    ['us-ny-103', 2],
+    ['us-ny-045', 3],
+    ['us-ny-029', 4],
+    ['us-ny-121', 5],
+    ['us-ny-073', 6],
+    ['us-ny-055', 7],
+    ['us-ny-089', 8],
+    ['us-ny-059', 9],
+    ['us-ny-081', 10],
+    ['us-ny-091', 11],
+    ['us-ny-001', 12],
+    ['us-ny-063', 13],
+    ['us-ny-031', 14],
+    ['us-ny-035', 15],
+    ['us-ny-043', 16],
+    ['us-ny-087', 17],
+    ['us-ny-119', 18],
+    ['us-ny-071', 19],
+    ['us-ny-037', 20],
+    ['us-ny-053', 21],
+    ['us-ny-005', 22],
+    ['us-ny-061', 23],
+    ['us-ny-047', 24],
+    ['us-ny-057', 25],
+    ['us-ny-077', 26],
+    ['us-ny-065', 27],
+    ['us-ny-115', 28],
+    ['us-ny-117', 29],
+    ['us-ny-003', 30],
+    ['us-ny-051', 31],
+    ['us-ny-017', 32],
+    ['us-ny-025', 33],
+    ['us-ny-095', 34],
+    ['us-ny-111', 35],
+    ['us-ny-021', 36],
+    ['us-ny-101', 37],
+    ['us-ny-069', 38],
+    ['us-ny-015', 39],
+    ['us-ny-109', 40],
+    ['us-ny-023', 41],
+    ['us-ny-011', 42],
+    ['us-ny-075', 43],
+    ['us-ny-079', 44],
+    ['us-ny-049', 45],
+    ['us-ny-099', 46],
+    ['us-ny-041', 47],
+    ['us-ny-019', 48],
+    ['us-ny-083', 49],
+    ['us-ny-039', 50],
+    ['us-ny-027', 51],
+    ['us-ny-085', 52],
+    ['us-ny-097', 53],
+    ['us-ny-105', 54],
+    ['us-ny-113', 55],
+    ['us-ny-007', 56],
+    ['us-ny-093', 57],
+    ['us-ny-107', 58],
+    ['us-ny-033', 59],
+    ['us-ny-067', 60],
+    ['us-ny-123', 61]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-ny-009",
-            "value": 0
-        },
-        {
-            "hc-key": "us-ny-013",
-            "value": 1
-        },
-        {
-            "hc-key": "us-ny-103",
-            "value": 2
-        },
-        {
-            "hc-key": "us-ny-045",
-            "value": 3
-        },
-        {
-            "hc-key": "us-ny-029",
-            "value": 4
-        },
-        {
-            "hc-key": "us-ny-121",
-            "value": 5
-        },
-        {
-            "hc-key": "us-ny-073",
-            "value": 6
-        },
-        {
-            "hc-key": "us-ny-055",
-            "value": 7
-        },
-        {
-            "hc-key": "us-ny-089",
-            "value": 8
-        },
-        {
-            "hc-key": "us-ny-059",
-            "value": 9
-        },
-        {
-            "hc-key": "us-ny-081",
-            "value": 10
-        },
-        {
-            "hc-key": "us-ny-091",
-            "value": 11
-        },
-        {
-            "hc-key": "us-ny-001",
-            "value": 12
-        },
-        {
-            "hc-key": "us-ny-063",
-            "value": 13
-        },
-        {
-            "hc-key": "us-ny-031",
-            "value": 14
-        },
-        {
-            "hc-key": "us-ny-035",
-            "value": 15
-        },
-        {
-            "hc-key": "us-ny-043",
-            "value": 16
-        },
-        {
-            "hc-key": "us-ny-087",
-            "value": 17
-        },
-        {
-            "hc-key": "us-ny-119",
-            "value": 18
-        },
-        {
-            "hc-key": "us-ny-071",
-            "value": 19
-        },
-        {
-            "hc-key": "us-ny-037",
-            "value": 20
-        },
-        {
-            "hc-key": "us-ny-053",
-            "value": 21
-        },
-        {
-            "hc-key": "us-ny-005",
-            "value": 22
-        },
-        {
-            "hc-key": "us-ny-061",
-            "value": 23
-        },
-        {
-            "hc-key": "us-ny-047",
-            "value": 24
-        },
-        {
-            "hc-key": "us-ny-057",
-            "value": 25
-        },
-        {
-            "hc-key": "us-ny-077",
-            "value": 26
-        },
-        {
-            "hc-key": "us-ny-065",
-            "value": 27
-        },
-        {
-            "hc-key": "us-ny-115",
-            "value": 28
-        },
-        {
-            "hc-key": "us-ny-117",
-            "value": 29
-        },
-        {
-            "hc-key": "us-ny-003",
-            "value": 30
-        },
-        {
-            "hc-key": "us-ny-051",
-            "value": 31
-        },
-        {
-            "hc-key": "us-ny-017",
-            "value": 32
-        },
-        {
-            "hc-key": "us-ny-025",
-            "value": 33
-        },
-        {
-            "hc-key": "us-ny-095",
-            "value": 34
-        },
-        {
-            "hc-key": "us-ny-111",
-            "value": 35
-        },
-        {
-            "hc-key": "us-ny-021",
-            "value": 36
-        },
-        {
-            "hc-key": "us-ny-101",
-            "value": 37
-        },
-        {
-            "hc-key": "us-ny-069",
-            "value": 38
-        },
-        {
-            "hc-key": "us-ny-015",
-            "value": 39
-        },
-        {
-            "hc-key": "us-ny-109",
-            "value": 40
-        },
-        {
-            "hc-key": "us-ny-023",
-            "value": 41
-        },
-        {
-            "hc-key": "us-ny-011",
-            "value": 42
-        },
-        {
-            "hc-key": "us-ny-075",
-            "value": 43
-        },
-        {
-            "hc-key": "us-ny-079",
-            "value": 44
-        },
-        {
-            "hc-key": "us-ny-049",
-            "value": 45
-        },
-        {
-            "hc-key": "us-ny-099",
-            "value": 46
-        },
-        {
-            "hc-key": "us-ny-041",
-            "value": 47
-        },
-        {
-            "hc-key": "us-ny-019",
-            "value": 48
-        },
-        {
-            "hc-key": "us-ny-083",
-            "value": 49
-        },
-        {
-            "hc-key": "us-ny-039",
-            "value": 50
-        },
-        {
-            "hc-key": "us-ny-027",
-            "value": 51
-        },
-        {
-            "hc-key": "us-ny-085",
-            "value": 52
-        },
-        {
-            "hc-key": "us-ny-097",
-            "value": 53
-        },
-        {
-            "hc-key": "us-ny-105",
-            "value": 54
-        },
-        {
-            "hc-key": "us-ny-113",
-            "value": 55
-        },
-        {
-            "hc-key": "us-ny-007",
-            "value": 56
-        },
-        {
-            "hc-key": "us-ny-093",
-            "value": 57
-        },
-        {
-            "hc-key": "us-ny-107",
-            "value": 58
-        },
-        {
-            "hc-key": "us-ny-033",
-            "value": 59
-        },
-        {
-            "hc-key": "us-ny-067",
-            "value": 60
-        },
-        {
-            "hc-key": "us-ny-123",
-            "value": 61
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-ny-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ny-all.js">New York</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ny-all.js">New York</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-ny-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

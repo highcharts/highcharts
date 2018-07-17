@@ -1,5 +1,7 @@
-$(function () {
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
+
+$.getJSON(
+    'https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/usdeur.json',
+    function (data) {
 
         Highcharts.chart('container', {
             chart: {
@@ -56,5 +58,5 @@ $(function () {
                 data: data
             }]
         });
-    });
-});
+    }
+);

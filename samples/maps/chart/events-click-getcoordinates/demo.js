@@ -110,9 +110,7 @@ function showMap(mapKey) {
     });
 }
 
-
-
-$(function () {
+(function () {
 
     var $select,
         $option,
@@ -187,4 +185,4 @@ $(function () {
         });
     });
 
-});
+}());

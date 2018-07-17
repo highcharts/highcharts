@@ -1,23 +1,21 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        chart: {
-            type: 'column'
-        },
+Highcharts.chart('container', {
 
-        title: {
-            text: 'Max point width in Highcharts'
-        },
+    chart: {
+        type: 'column'
+    },
 
-        xAxis: {
-            categories: ['One', 'Two', 'Three']
-        },
+    title: {
+        text: 'Max point width in Highcharts'
+    },
 
-        series: [{
-            data: [1, 2, 3],
-            maxPointWidth: 50
-        }]
+    xAxis: {
+        categories: ['One', 'Two', 'Three']
+    },
 
-    });
+    series: [{
+        data: [1, 2, 3],
+        maxPointWidth: 50
+    }]
 
 });

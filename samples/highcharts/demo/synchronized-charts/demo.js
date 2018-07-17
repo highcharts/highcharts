@@ -1,67 +1,79 @@
 /*
-The purpose of this demo is to demonstrate how multiple charts on the same page can be linked
-through DOM and Highcharts events and API methods. It takes a standard Highcharts config with a
-small variation for each data set, and a mouse/touch event handler to bind the charts together.
+The purpose of this demo is to demonstrate how multiple charts on the same page
+can be linked through DOM and Highcharts events and API methods. It takes a
+standard Highcharts config with a small variation for each data set, and a
+mouse/touch event handler to bind the charts together.
 */
 
-$(function () {
 
-    /**
-     * In order to synchronize tooltips and crosshairs, override the
-     * built-in events with handlers defined on the parent element.
-     */
-    $('#container').bind('mousemove touchmove touchstart', function (e) {
-        var chart,
-            point,
-            i,
-            event;
 
-        for (i = 0; i < Highcharts.charts.length; i = i + 1) {
-            chart = Highcharts.charts[i];
-            event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
-            point = chart.series[0].searchPoint(event, true); // Get the hovered point
+/**
+ * In order to synchronize tooltips and crosshairs, override the
+ * built-in events with handlers defined on the parent element.
+ */
+$('#container').bind('mousemove touchmove touchstart', function (e) {
+    var chart,
+        point,
+        i,
+        event;
 
-            if (point) {
-                point.highlight(e);
-            }
-        }
-    });
-    /**
-     * Override the reset function, we don't need to hide the tooltips and crosshairs.
-     */
-    Highcharts.Pointer.prototype.reset = function () {
-        return undefined;
-    };
+    for (i = 0; i < Highcharts.charts.length; i = i + 1) {
+        chart = Highcharts.charts[i];
+        // Find coordinates within the chart
+        event = chart.pointer.normalize(e.originalEvent);
+        // Get the hovered point
+        point = chart.series[0].searchPoint(event, true);
 
-    /**
-     * Highlight a point by showing tooltip, setting hover state and draw crosshair
-     */
-    Highcharts.Point.prototype.highlight = function (event) {
-        this.onMouseOver(); // Show the hover marker
-        this.series.chart.tooltip.refresh(this); // Show the tooltip
-        this.series.chart.xAxis[0].drawCrosshair(event, this); // Show the crosshair
-    };
-
-    /**
-     * Synchronize zooming through the setExtremes event handler.
-     */
-    function syncExtremes(e) {
-        var thisChart = this.chart;
-
-        if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
-            Highcharts.each(Highcharts.charts, function (chart) {
-                if (chart !== thisChart) {
-                    if (chart.xAxis[0].setExtremes) { // It is null while updating
-                        chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, { trigger: 'syncExtremes' });
-                    }
-                }
-            });
+        if (point) {
+            point.highlight(e);
         }
     }
+});
+/**
+ * Override the reset function, we don't need to hide the tooltips and
+ * crosshairs.
+ */
+Highcharts.Pointer.prototype.reset = function () {
+    return undefined;
+};
 
-    // Get the data. The contents of the data file can be viewed at
-    // https://github.com/highcharts/highcharts/blob/master/samples/data/activity.json
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=activity.json&callback=?', function (activity) {
+/**
+ * Highlight a point by showing tooltip, setting hover state and draw crosshair
+ */
+Highcharts.Point.prototype.highlight = function (event) {
+    event = this.series.chart.pointer.normalize(event);
+    this.onMouseOver(); // Show the hover marker
+    this.series.chart.tooltip.refresh(this); // Show the tooltip
+    this.series.chart.xAxis[0].drawCrosshair(event, this); // Show the crosshair
+};
+
+/**
+ * Synchronize zooming through the setExtremes event handler.
+ */
+function syncExtremes(e) {
+    var thisChart = this.chart;
+
+    if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
+        Highcharts.each(Highcharts.charts, function (chart) {
+            if (chart !== thisChart) {
+                if (chart.xAxis[0].setExtremes) { // It is null while updating
+                    chart.xAxis[0].setExtremes(
+                        e.min,
+                        e.max,
+                        undefined,
+                        false,
+                        { trigger: 'syncExtremes' }
+                    );
+                }
+            }
+        });
+    }
+}
+
+// Get the data. The contents of the data file can be viewed at
+$.getJSON(
+    'https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/activity.json',
+    function (activity) {
         $.each(activity.datasets, function (i, dataset) {
 
             // Add X values
@@ -106,8 +118,9 @@ $(function () {
                     tooltip: {
                         positioner: function () {
                             return {
-                                x: this.chart.chartWidth - this.label.width, // right aligned
-                                y: -1 // align to title
+                                // right aligned
+                                x: this.chart.chartWidth - this.label.width,
+                                y: 10 // align to title
                             };
                         },
                         borderWidth: 0,
@@ -132,5 +145,5 @@ $(function () {
                     }]
                 });
         });
-    });
-});
+    }
+);

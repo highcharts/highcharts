@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

@@ -1,105 +1,60 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-az-011', 0],
+    ['us-az-001', 1],
+    ['us-az-003', 2],
+    ['us-az-012', 3],
+    ['us-az-013', 4],
+    ['us-az-005', 5],
+    ['us-az-007', 6],
+    ['us-az-021', 7],
+    ['us-az-009', 8],
+    ['us-az-015', 9],
+    ['us-az-017', 10],
+    ['us-az-027', 11],
+    ['us-az-023', 12],
+    ['us-az-025', 13],
+    ['us-az-019', 14]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-az-011",
-            "value": 0
-        },
-        {
-            "hc-key": "us-az-001",
-            "value": 1
-        },
-        {
-            "hc-key": "us-az-003",
-            "value": 2
-        },
-        {
-            "hc-key": "us-az-012",
-            "value": 3
-        },
-        {
-            "hc-key": "us-az-013",
-            "value": 4
-        },
-        {
-            "hc-key": "us-az-005",
-            "value": 5
-        },
-        {
-            "hc-key": "us-az-007",
-            "value": 6
-        },
-        {
-            "hc-key": "us-az-021",
-            "value": 7
-        },
-        {
-            "hc-key": "us-az-009",
-            "value": 8
-        },
-        {
-            "hc-key": "us-az-015",
-            "value": 9
-        },
-        {
-            "hc-key": "us-az-017",
-            "value": 10
-        },
-        {
-            "hc-key": "us-az-027",
-            "value": 11
-        },
-        {
-            "hc-key": "us-az-023",
-            "value": 12
-        },
-        {
-            "hc-key": "us-az-025",
-            "value": 13
-        },
-        {
-            "hc-key": "us-az-019",
-            "value": 14
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-az-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-az-all.js">Arizona</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-az-all.js">Arizona</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-az-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

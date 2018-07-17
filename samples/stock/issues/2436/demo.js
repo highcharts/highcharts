@@ -4,31 +4,30 @@ var data = [
 ];
 
 
-$(function () {
-    Highcharts.stockChart('container', {
-        chart: {
-            type: "area",
-            width: 500,
-            height: 300
-        },
-        rangeSelector: {
-            inputEnabled: false
-        },
-        title: {
-            text: 'In Highstock 1.3.7, the navigator did not span the full data'
-        },
-        series: [{
-            type: "area",
-            name: 'Some Data',
-            data: data[0],
-            pointInterval: 3600000 * 24,
-            pointStart: 1380578400000
-        }, {
-            type: "area",
-            name: 'Some Data 2',
-            data: data[1],
-            pointInterval: 3600000 * 24,
-            pointStart: 1346450400000
-        }]
-    });
+
+Highcharts.stockChart('container', {
+    chart: {
+        type: "area",
+        width: 500,
+        height: 300
+    },
+    rangeSelector: {
+        inputEnabled: false
+    },
+    title: {
+        text: 'In Highstock 1.3.7, the navigator did not span the full data'
+    },
+    series: [{
+        type: "area",
+        name: 'Some Data',
+        data: data[0],
+        pointInterval: 3600000 * 24,
+        pointStart: 1380578400000
+    }, {
+        type: "area",
+        name: 'Some Data 2',
+        data: data[1],
+        pointInterval: 3600000 * 24,
+        pointStart: 1346450400000
+    }]
 });

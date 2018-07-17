@@ -1,0 +1,8 @@
+---
+ name: Highcharts - Jingle Bells
+ authors:
+   - Øystein Moseng
+   - Christer Vasseng
+ js_wrap: b
+ requiresManualTesting: true
+...

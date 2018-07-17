@@ -1,22 +1,21 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        title: {
-            text: 'Tooltip background and border by CSS'
-        },
+Highcharts.chart('container', {
 
-        legend: {
-            borderWidth: 2
-        },
+    title: {
+        text: 'Tooltip background and border by CSS'
+    },
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr']
-        },
+    legend: {
+        borderWidth: 2
+    },
 
-        series: [{
-            data: [1, 4, 3, 2, 5]
-        }, {
-            data: [2, 1, 4, 3, 2]
-        }]
-    });
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr']
+    },
+
+    series: [{
+        data: [1, 4, 3, 2, 5]
+    }, {
+        data: [2, 1, 4, 3, 2]
+    }]
 });

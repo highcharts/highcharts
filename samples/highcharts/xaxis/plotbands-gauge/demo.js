@@ -1,30 +1,29 @@
-$(function () {
 
-    Highcharts.chart('container', {
 
-        chart: {
-            type: 'gauge'
-        },
+Highcharts.chart('container', {
 
-        pane: {
-            startAngle: -150,
-            endAngle: 150
-        },
+    chart: {
+        type: 'gauge'
+    },
 
-        yAxis: {
-            min: 0,
-            max: 100,
-            plotBands: [{
-                from: 0,
-                to: 60,
-                color: '#89A54E',
-                outerRadius: '105%',
-                thickness: '5%'
-            }]
-        },
+    pane: {
+        startAngle: -150,
+        endAngle: 150
+    },
 
-        series: [{
-            data: [80]
+    yAxis: {
+        min: 0,
+        max: 100,
+        plotBands: [{
+            from: 0,
+            to: 60,
+            color: '#89A54E',
+            outerRadius: '105%',
+            thickness: '5%'
         }]
-    });
+    },
+
+    series: [{
+        data: [80]
+    }]
 });

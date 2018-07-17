@@ -1,77 +1,53 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ke-co', 0],
+    ['ke-ny', 1],
+    ['ke-ce', 2],
+    ['ke-na', 3],
+    ['ke-565', 4],
+    ['ke-rv', 5],
+    ['ke-we', 6],
+    ['ke-ne', 7]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ke-co",
-            "value": 0
-        },
-        {
-            "hc-key": "ke-ny",
-            "value": 1
-        },
-        {
-            "hc-key": "ke-ce",
-            "value": 2
-        },
-        {
-            "hc-key": "ke-na",
-            "value": 3
-        },
-        {
-            "hc-key": "ke-565",
-            "value": 4
-        },
-        {
-            "hc-key": "ke-rv",
-            "value": 5
-        },
-        {
-            "hc-key": "ke-we",
-            "value": 6
-        },
-        {
-            "hc-key": "ke-ne",
-            "value": 7
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ke/ke-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ke/ke-all.js">Kenya</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ke/ke-all.js">Kenya</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ke/ke-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

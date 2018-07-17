@@ -1,1 +1,3 @@
 highcharts/common-js/browserify/demo.js
+data/**/*.js
+static/*.js

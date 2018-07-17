@@ -1,385 +1,130 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ru-sc', 0],
+    ['ru-kr', 1],
+    ['ru-2485', 2],
+    ['ru-ar', 3],
+    ['ru-nn', 4],
+    ['ru-yn', 5],
+    ['ru-ky', 6],
+    ['ru-ck', 7],
+    ['ru-kh', 8],
+    ['ru-sl', 9],
+    ['ru-ka', 10],
+    ['ru-kt', 11],
+    ['ru-ms', 12],
+    ['ru-rz', 13],
+    ['ru-sa', 14],
+    ['ru-ul', 15],
+    ['ru-om', 16],
+    ['ru-ns', 17],
+    ['ru-mm', 18],
+    ['ru-ln', 19],
+    ['ru-sp', 20],
+    ['ru-ki', 21],
+    ['ru-kc', 22],
+    ['ru-in', 23],
+    ['ru-kb', 24],
+    ['ru-no', 25],
+    ['ru-st', 26],
+    ['ru-sm', 27],
+    ['ru-ps', 28],
+    ['ru-tv', 29],
+    ['ru-vo', 30],
+    ['ru-iv', 31],
+    ['ru-ys', 32],
+    ['ru-kg', 33],
+    ['ru-br', 34],
+    ['ru-ks', 35],
+    ['ru-lp', 36],
+    ['ru-2509', 37],
+    ['ru-ol', 38],
+    ['ru-nz', 39],
+    ['ru-pz', 40],
+    ['ru-vl', 41],
+    ['ru-vr', 42],
+    ['ru-ko', 43],
+    ['ru-sv', 44],
+    ['ru-bk', 45],
+    ['ru-ud', 46],
+    ['ru-mr', 47],
+    ['ru-cv', 48],
+    ['ru-cl', 49],
+    ['ru-ob', 50],
+    ['ru-sr', 51],
+    ['ru-tt', 52],
+    ['ru-to', 53],
+    ['ru-ty', 54],
+    ['ru-ga', 55],
+    ['ru-kk', 56],
+    ['ru-cn', 57],
+    ['ru-kl', 58],
+    ['ru-da', 59],
+    ['ru-ro', 60],
+    ['ru-bl', 61],
+    ['ru-tu', 62],
+    ['ru-ir', 63],
+    ['ru-ct', 64],
+    ['ru-yv', 65],
+    ['ru-am', 66],
+    ['ru-tb', 67],
+    ['ru-tl', 68],
+    ['ru-ng', 69],
+    ['ru-vg', 70],
+    ['ru-kv', 71],
+    ['ru-me', 72],
+    ['ru-ke', 73],
+    ['ru-as', 74],
+    ['ru-pr', 75],
+    ['ru-mg', 76],
+    ['ru-bu', 77],
+    ['ru-kn', 78],
+    ['ru-kd', 79],
+    ['ru-ku', 80],
+    ['ru-al', 81],
+    ['ru-km', 82],
+    ['ru-pe', 83],
+    ['ru-ad', 84]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ru-sc",
-            "value": 0
-        },
-        {
-            "hc-key": "ru-kr",
-            "value": 1
-        },
-        {
-            "hc-key": "ru-2485",
-            "value": 2
-        },
-        {
-            "hc-key": "ru-ar",
-            "value": 3
-        },
-        {
-            "hc-key": "ru-nn",
-            "value": 4
-        },
-        {
-            "hc-key": "ru-yn",
-            "value": 5
-        },
-        {
-            "hc-key": "ru-ky",
-            "value": 6
-        },
-        {
-            "hc-key": "ru-ck",
-            "value": 7
-        },
-        {
-            "hc-key": "ru-kh",
-            "value": 8
-        },
-        {
-            "hc-key": "ru-sl",
-            "value": 9
-        },
-        {
-            "hc-key": "ru-ka",
-            "value": 10
-        },
-        {
-            "hc-key": "ru-kt",
-            "value": 11
-        },
-        {
-            "hc-key": "ru-ms",
-            "value": 12
-        },
-        {
-            "hc-key": "ru-rz",
-            "value": 13
-        },
-        {
-            "hc-key": "ru-sa",
-            "value": 14
-        },
-        {
-            "hc-key": "ru-ul",
-            "value": 15
-        },
-        {
-            "hc-key": "ru-om",
-            "value": 16
-        },
-        {
-            "hc-key": "ru-ns",
-            "value": 17
-        },
-        {
-            "hc-key": "ru-mm",
-            "value": 18
-        },
-        {
-            "hc-key": "ru-ln",
-            "value": 19
-        },
-        {
-            "hc-key": "ru-sp",
-            "value": 20
-        },
-        {
-            "hc-key": "ru-ki",
-            "value": 21
-        },
-        {
-            "hc-key": "ru-kc",
-            "value": 22
-        },
-        {
-            "hc-key": "ru-in",
-            "value": 23
-        },
-        {
-            "hc-key": "ru-kb",
-            "value": 24
-        },
-        {
-            "hc-key": "ru-no",
-            "value": 25
-        },
-        {
-            "hc-key": "ru-st",
-            "value": 26
-        },
-        {
-            "hc-key": "ru-sm",
-            "value": 27
-        },
-        {
-            "hc-key": "ru-ps",
-            "value": 28
-        },
-        {
-            "hc-key": "ru-tv",
-            "value": 29
-        },
-        {
-            "hc-key": "ru-vo",
-            "value": 30
-        },
-        {
-            "hc-key": "ru-iv",
-            "value": 31
-        },
-        {
-            "hc-key": "ru-ys",
-            "value": 32
-        },
-        {
-            "hc-key": "ru-kg",
-            "value": 33
-        },
-        {
-            "hc-key": "ru-br",
-            "value": 34
-        },
-        {
-            "hc-key": "ru-ks",
-            "value": 35
-        },
-        {
-            "hc-key": "ru-lp",
-            "value": 36
-        },
-        {
-            "hc-key": "ru-2509",
-            "value": 37
-        },
-        {
-            "hc-key": "ru-ol",
-            "value": 38
-        },
-        {
-            "hc-key": "ru-nz",
-            "value": 39
-        },
-        {
-            "hc-key": "ru-pz",
-            "value": 40
-        },
-        {
-            "hc-key": "ru-vl",
-            "value": 41
-        },
-        {
-            "hc-key": "ru-vr",
-            "value": 42
-        },
-        {
-            "hc-key": "ru-ko",
-            "value": 43
-        },
-        {
-            "hc-key": "ru-sv",
-            "value": 44
-        },
-        {
-            "hc-key": "ru-bk",
-            "value": 45
-        },
-        {
-            "hc-key": "ru-ud",
-            "value": 46
-        },
-        {
-            "hc-key": "ru-mr",
-            "value": 47
-        },
-        {
-            "hc-key": "ru-cv",
-            "value": 48
-        },
-        {
-            "hc-key": "ru-cl",
-            "value": 49
-        },
-        {
-            "hc-key": "ru-ob",
-            "value": 50
-        },
-        {
-            "hc-key": "ru-sr",
-            "value": 51
-        },
-        {
-            "hc-key": "ru-tt",
-            "value": 52
-        },
-        {
-            "hc-key": "ru-to",
-            "value": 53
-        },
-        {
-            "hc-key": "ru-ty",
-            "value": 54
-        },
-        {
-            "hc-key": "ru-ga",
-            "value": 55
-        },
-        {
-            "hc-key": "ru-kk",
-            "value": 56
-        },
-        {
-            "hc-key": "ru-cn",
-            "value": 57
-        },
-        {
-            "hc-key": "ru-kl",
-            "value": 58
-        },
-        {
-            "hc-key": "ru-da",
-            "value": 59
-        },
-        {
-            "hc-key": "ru-ro",
-            "value": 60
-        },
-        {
-            "hc-key": "ru-bl",
-            "value": 61
-        },
-        {
-            "hc-key": "ru-tu",
-            "value": 62
-        },
-        {
-            "hc-key": "ru-ir",
-            "value": 63
-        },
-        {
-            "hc-key": "ru-ct",
-            "value": 64
-        },
-        {
-            "hc-key": "ru-yv",
-            "value": 65
-        },
-        {
-            "hc-key": "ru-am",
-            "value": 66
-        },
-        {
-            "hc-key": "ru-tb",
-            "value": 67
-        },
-        {
-            "hc-key": "ru-tl",
-            "value": 68
-        },
-        {
-            "hc-key": "ru-ng",
-            "value": 69
-        },
-        {
-            "hc-key": "ru-vg",
-            "value": 70
-        },
-        {
-            "hc-key": "ru-kv",
-            "value": 71
-        },
-        {
-            "hc-key": "ru-me",
-            "value": 72
-        },
-        {
-            "hc-key": "ru-ke",
-            "value": 73
-        },
-        {
-            "hc-key": "ru-as",
-            "value": 74
-        },
-        {
-            "hc-key": "ru-pr",
-            "value": 75
-        },
-        {
-            "hc-key": "ru-mg",
-            "value": 76
-        },
-        {
-            "hc-key": "ru-bu",
-            "value": 77
-        },
-        {
-            "hc-key": "ru-kn",
-            "value": 78
-        },
-        {
-            "hc-key": "ru-kd",
-            "value": 79
-        },
-        {
-            "hc-key": "ru-ku",
-            "value": 80
-        },
-        {
-            "hc-key": "ru-al",
-            "value": 81
-        },
-        {
-            "hc-key": "ru-km",
-            "value": 82
-        },
-        {
-            "hc-key": "ru-pe",
-            "value": 83
-        },
-        {
-            "hc-key": "ru-ad",
-            "value": 84
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ru/custom/ru-all-disputed'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ru/custom/ru-all-disputed.js">Russia with disputed territories</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ru/custom/ru-all-disputed.js">Russia with disputed territories</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ru/custom/ru-all-disputed'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });
