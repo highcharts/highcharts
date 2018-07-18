@@ -9,6 +9,7 @@ import '../parts/Utilities.js';
 
 var addEvent = H.addEvent,
     each = H.each,
+    merge = H.merge,
     pick = H.pick,
     doc = H.doc,
     columnProto = H.seriesTypes.column.prototype;
@@ -18,7 +19,7 @@ var addEvent = H.addEvent,
  * Filter by dragMin and dragMax
  */
 function filterRange(newY, series, XOrY) {
-    var options = series.options,
+    var options = series.options.dragDrop || {},
         dragMin = pick(options['dragMin' + XOrY], undefined),
         dragMax = pick(options['dragMax' + XOrY], undefined),
         precision = pick(options['dragPrecision' + XOrY], undefined);
@@ -43,10 +44,10 @@ H.Chart.prototype.isDraggable = function () {
     var i = this.series.length;
     while (i--) {
         if (
-            this.series[i].options &&
+            this.series[i].options.dragDrop &&
             (
-                this.series[i].options.draggableX ||
-                this.series[i].options.draggableY
+                this.series[i].options.dragDrop.draggableX ||
+                this.series[i].options.dragDrop.draggableY
             )
         ) {
             return true;
@@ -56,7 +57,6 @@ H.Chart.prototype.isDraggable = function () {
 
 
 H.Chart.prototype.callbacks.push(function (chart) {
-
     var container = chart.container,
         chartOptions = chart.userOptions.chart || {},
         dragPoint,
@@ -70,6 +70,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
         changeLow,
         newHigh,
         newLow,
+        defaultDragDropOptions = {
+            dragSensitiviy: 1
+        },
         // Check whether the panKey and zoomKey are set in chart.userOptions
         panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
         zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
@@ -96,11 +99,14 @@ H.Chart.prototype.callbacks.push(function (chart) {
             pageY = originalEvent.changedTouches ?
                 originalEvent.changedTouches[0].pageY : e.pageY,
             series = dragPoint.series,
-            draggableX = series.options.draggableX &&
+            dragDropOptions = merge(
+                defaultDragDropOptions, series.options.dragDrop
+            ),
+            draggableX = dragDropOptions.draggableX &&
                 dragPoint.draggableX !== false,
-            draggableY = series.options.draggableY &&
+            draggableY = dragDropOptions.draggableY &&
                 dragPoint.draggableY !== false,
-            dragSensitivity = pick(series.options.dragSensitiviy, 1),
+            dragSensitivity = dragDropOptions.dragSensitiviy,
             deltaX = draggableX ? dragX - pageX : 0,
             deltaY = draggableY ? dragY - pageY : 0,
             newPlotX = dragPlotX - deltaX,
@@ -197,7 +203,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
             }
 
             if (hoverPoint) {
-                options = hoverPoint.series.options;
+                options = hoverPoint.series.options.dragDrop || {};
                 dragStart = {};
                 if (options.draggableX && hoverPoint.draggableX !== false) {
                     dragPoint = hoverPoint;
@@ -339,31 +345,31 @@ columnProto.dragHandlePath = function (shapeArgs, strokeW, isNegative) {
 
 H.wrap(columnProto, 'drawTracker', function (proceed) {
     var series = this,
-        options = series.options,
+        dragDropOptions = series.options.dragDrop || {},
         strokeW = series.borderWidth || 0;
 
     proceed.apply(series);
 
     if (
         this.useDragHandle() &&
-        (options.draggableX || options.draggableY)
+        (dragDropOptions.draggableX || dragDropOptions.draggableY)
     ) {
 
         each(series.points, function (point) {
-
             var path = (
-                    options.dragHandlePath ||
+                    dragDropOptions.dragHandlePath ||
                     series.dragHandlePath
                 )(point.shapeArgs, strokeW, point.negative);
 
             if (!point.handle) {
                 point.handle = series.chart.renderer.path(path)
                     .attr({
-                        fill: options.dragHandleFill || 'rgba(0,0,0,0.5)',
+                        fill: dragDropOptions.dragHandleFill ||
+                            'rgba(0,0,0,0.5)',
                         'class': 'highcharts-handle',
                         'stroke-width': strokeW,
-                        'stroke': options.dragHandleStroke ||
-                            options.borderColor ||
+                        'stroke': dragDropOptions.dragHandleStroke ||
+                            series.options.borderColor ||
                             1
                     })
                     .css({

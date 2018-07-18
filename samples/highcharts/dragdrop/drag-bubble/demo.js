@@ -46,8 +46,10 @@ Highcharts.chart('container', {
     series: [{
         type: 'bubble',
         cursor: 'move',
-        draggableX: true,
-        draggableY: true,
+        dragDrop: {
+            draggableX: true,
+            draggableY: true
+        },
         data: [
             [1, 240, 3],
             [2, 130, 10],
