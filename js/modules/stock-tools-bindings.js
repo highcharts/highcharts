@@ -363,15 +363,16 @@ H.Toolbar.prototype.features = {
     },
     'measure': {
         start: function (e) {
-            var chart = this.chart,
-                x = chart.xAxis[0].toValue(e.chartX),
-                y = chart.yAxis[0].toValue(e.chartY),
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY),
                 options = {
                     type: 'measure',
                     typeOptions: {
                         point: {
                             x: x,
-                            y: y
+                            y: y,
+                            xAxis: 0,
+                            yAxis: 0,
                         },
                         xAxis: 0,
                         yAxis: 0,
@@ -379,24 +380,33 @@ H.Toolbar.prototype.features = {
                             width: 300,
                             height: 150
                         }
-                        /* formatter: function () {
-                            return 'custom min: ' + this.min +
-                                '<br>custom max: ' + this.max;
-                        }*/
-                    },
-                    events: {
-                        click: function () {
-                            this.cpVisibility = !this.cpVisibility;
-                            this.setControlPointsVisibility(this.cpVisibility);
-                        }
                     }
                 };
 
             if (!this.currentAnnotation) {
-                this.currentAnnotation = chart.addAnnotation(options);
+                this.currentAnnotation = this.chart.addAnnotation(options);
             }
+
+            this.currentAnnotation.setControlPointsVisibility(true);
         },
-        end: function () { }
+        steps: [
+            /*function (e) {
+                var chart = this.chart,
+                    options = this.currentAnnotation.options.typeOptions,
+                    x = chart.xAxis[0].toValue(e.chartX),
+                    y = chart.yAxis[0].toValue(e.chartY);
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        point: [
+                            options.point
+                        ]
+                    }
+                });
+
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }*/
+        ]
     },
     // Advanced type annotations:
     'fibonacci': {

@@ -91,6 +91,8 @@ ControlPoint.prototype.render = function () {
  * @param {boolean} [animation]
  */
 ControlPoint.prototype.redraw = function (animation) {
+
+    console.log('positioner');
     this.graphic[animation ? 'animate' : 'attr'](
         this.options.positioner.call(this, this.target)
     );
