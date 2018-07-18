@@ -317,7 +317,7 @@ H.Toolbar.prototype = {
                 if (btn !== buttonWrapper) {
                     btn.classList.remove('current');
                     submenuItems = btn.querySelectorAll('.submenu-wrapper');
-                    
+
                     if (submenuItems.length > 0) {
                         submenuItems[0].style.display = 'none';
                     }

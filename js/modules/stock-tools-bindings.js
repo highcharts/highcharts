@@ -25,8 +25,6 @@ H.Toolbar.prototype.features = {
             this.currentAnnotation = this.chart.addAnnotation({
                 type: 'crooked-line',
                 typeOptions: {
-                    startArrow: false,
-                    endArrow: false,
                     points: [{
                         x: x,
                         y: y
@@ -68,8 +66,9 @@ H.Toolbar.prototype.features = {
             this.currentAnnotation = this.chart.addAnnotation({
                 type: 'crooked-line',
                 typeOptions: {
-                    startArrow: false,
-                    endArrow: true,
+                    line: {
+                        markerEnd: 'arrow'
+                    },
                     points: [{
                         x: x,
                         y: y
@@ -112,8 +111,6 @@ H.Toolbar.prototype.features = {
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'ray',
-                    startArrow: false,
-                    endArrow: false,
                     points: [{
                         x: x,
                         y: y
@@ -156,8 +153,9 @@ H.Toolbar.prototype.features = {
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'ray',
-                    startArrow: false,
-                    endArrow: true,
+                    line: {
+                        markerEnd: 'arrow'
+                    },
                     points: [{
                         x: x,
                         y: y
@@ -200,8 +198,6 @@ H.Toolbar.prototype.features = {
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'line',
-                    startArrow: false,
-                    endArrow: false,
                     points: [{
                         x: x,
                         y: y
@@ -244,8 +240,9 @@ H.Toolbar.prototype.features = {
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'line',
-                    startArrow: false,
-                    endArrow: true,
+                    line: {
+                        markerEnd: 'arrow'
+                    },
                     points: [{
                         x: x,
                         y: y
@@ -288,8 +285,6 @@ H.Toolbar.prototype.features = {
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'line',
-                    startArrow: false,
-                    endArrow: false,
                     points: [{
                         x: x,
                         y: y
@@ -331,8 +326,6 @@ H.Toolbar.prototype.features = {
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'line',
-                    startArrow: false,
-                    endArrow: false,
                     points: [{
                         x: x,
                         y: y
