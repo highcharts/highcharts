@@ -7,8 +7,8 @@ var Annotation = H.Annotation,
     InfinityLine = Annotation.types['infinity-line'];
 
 /**
- * @class Pitchfork
- * @extends Highcharts.Annotation
+ * @class
+ * @extends Highcharts.InfinityLine
  * @memberOf Highcharts
  **/
 function Pitchfork() {
@@ -162,18 +162,39 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
         typeOptions.innerBackground = innerBackground.options;
         typeOptions.outerBackground = outerBackground.options;
     }
-}, {
-    typeOptions: {
-        innerBackground: {
-            fill: 'rgba(130, 170, 255, 0.4)',
-            strokeWidth: 0
-        },
-        outerBackground: {
-            fill: 'rgba(156, 229, 161, 0.4)',
-            strokeWidth: 0
+},
+    /**
+     * A pitchfork annotation.
+     *
+     * @extends annotations.infinity-line
+     * @sample highcharts/annotations-advanced/pitchfork/
+     *         Pitchfork
+     * @optionparent annotations.pitchfork
+     */
+    {
+        typeOptions: {
+            /**
+             * Inner background options.
+             *
+             * @extends annotations.base.shapeOptions
+             * @excluding height, r, type, width
+             */
+            innerBackground: {
+                fill: 'rgba(130, 170, 255, 0.4)',
+                strokeWidth: 0
+            },
+            /**
+             * Outer background options.
+             *
+             * @extends annotations.base.shapeOptions
+             * @excluding height, r, type, width
+             */
+            outerBackground: {
+                fill: 'rgba(156, 229, 161, 0.4)',
+                strokeWidth: 0
+            }
         }
-    }
-});
+    });
 
 Annotation.types.pitchfork = Pitchfork;
 

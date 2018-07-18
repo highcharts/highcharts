@@ -7,9 +7,9 @@ var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint;
 
 /**
- * @class Measure
- * @extends Highcharts.Annotation
- * @memberOf Highcharts
+ * @class
+ * @extends Annotation.CrookedLine
+ * @memberOf Annotation
  */
 function Measure() {
     CrookedLine.apply(this, arguments);
@@ -31,7 +31,7 @@ Measure.topRightPointOptions = backgroundBoundaryPointOptions(false, true);
 Measure.bottomRightPointOptions = backgroundBoundaryPointOptions(true, true);
 Measure.bottomLeftPointOptions = backgroundBoundaryPointOptions(true, false);
 
-H.extendAnnotation(Measure, CrookedLine, {
+H.extendAnnotation(Measure, CrookedLine, /** @lends Annotation.Measure# */ {
     getPointsOptions: function () {
         var options = this.options.typeOptions,
             pointOptions = options.point;
@@ -128,7 +128,7 @@ H.extendAnnotation(Measure, CrookedLine, {
                     function (target) {
                         var middleRightPoint = target.points[0],
                             topRightOptions =
-                                Measure.topRightPointOptions(target);
+                            Measure.topRightPointOptions(target);
 
                         return {
                             x: topRightOptions.x,
@@ -146,7 +146,7 @@ H.extendAnnotation(Measure, CrookedLine, {
                     function (target) {
                         var topLeftPoint = target.annotation.points[0],
                             topRightOptions =
-                                Measure.topRightPointOptions(target);
+                            Measure.topRightPointOptions(target);
 
                         return {
                             x: (topLeftPoint.plotX + topRightOptions.x) / 2,
@@ -247,75 +247,128 @@ H.extendAnnotation(Measure, CrookedLine, {
         backgroundOptions.width += dx;
         backgroundOptions.height += dy;
     }
-}, {
-    typeOptions: {
-        xAxis: 0,
-        yAxis: 0,
-        crosshair: {
-            zIndex: 6,
+},
+    /**
+     * A measure annotation.
+     *
+     * @extends annotations.crooked-line
+     * @sample highcharts/annotations-advanced/measure/
+     *         Measure
+     * @optionparent annotations.measure
+     */
+    {
+        /**
+         * @extends annotations.crooked-line.typeOptions
+         * @excluding points
+         */
+        typeOptions: {
+            xAxis: 0,
+            yAxis: 0,
+
+            /**
+             * @extends annotations.crooked-line.typeOptions.points
+             * @apioption annotations.measure.typeOptions.point
+             */
+
+            /**
+             * The x position of the point.
+             *
+             * @type {number}
+             * @apioption annotations.measure.typeOptions.point.x
+             */
+
+            /**
+             * The y position of the point.
+             *
+             * @extends annotations.crooked-line.typeOptions.points.y
+             * @apioption annotations.measure.typeOptions.point.y
+             */
+
+            /**
+             * @type {number}
+             * @extends annotations.base.controlPointOptions
+             * @excluding events
+             * @apioption annotations.measure.typeOptions.point.controlPoint
+             */
+
+            /**
+             * Crosshair options.
+             *
+             * @extends annotations.base.shapeOptions
+             * @excluding height, r, type, width
+             */
+            crosshair: {
+                zIndex: 6,
+                dashStyle: 'dash',
+                markerEnd: 'arrow'
+            },
+
+            /**
+             * Background options.
+             *
+             * @extends annotations.base.shapeOptions
+             * @excluding r, type
+             */
+            background: {
+                fill: 'rgba(130, 170, 255, 0.4)',
+                strokeWidth: 0
+            }
+        },
+
+        labelOptions: {
+            shape: 'rect',
+            backgroundColor: 'none',
+            color: 'black',
+            borderWidth: 0,
             dashStyle: 'dash',
-            markerEnd: 'arrow'
-        },
-        background: {
-            fill: 'rgba(130, 170, 255, 0.4)',
-            strokeWidth: 0
-        }
-    },
+            overflow: 'none',
+            align: 'left',
+            verticalAlign: 'top',
+            crop: true,
+            x: 0,
+            y: 0,
+            formatter: function (target) {
+                var annotation = target.annotation;
 
-    labelOptions: {
-        shape: 'rect',
-        backgroundColor: 'none',
-        color: 'black',
-        borderWidth: 0,
-        dashStyle: 'dash',
-        overflow: 'none',
-        align: 'left',
-        verticalAlign: 'top',
-        crop: true,
-        x: 0,
-        y: 0,
-        formatter: function (target) {
-            var annotation = target.annotation;
-
-            return 'Min: ' + annotation.min +
-                '<br>Max: ' + annotation.max +
-                '<br>Average: ' + annotation.average +
-                '<br>Bins: ' + annotation.bins;
-        }
-    },
-
-    controlPointsOptions: {
-        positioner: function (target) {
-            var xy = MockPoint.pointToPixels(target.points[0]),
-                backgroundOptions = target.options.typeOptions.background,
-                width = backgroundOptions.width,
-                height = backgroundOptions.height,
-                graphic = this.graphic;
-
-            if (target.chart.inverted) {
-                width = height;
-                height = backgroundOptions.width;
+                return 'Min: ' + annotation.min +
+                    '<br>Max: ' + annotation.max +
+                    '<br>Average: ' + annotation.average +
+                    '<br>Bins: ' + annotation.bins;
             }
-
-            return {
-                x: xy.x + width - graphic.width / 2,
-                y: xy.y + height - graphic.height / 2
-            };
         },
-        events: {
-            drag: function (e, target) {
-                var translation = this.mouseMoveToTranslation(e);
 
-                target.resize(
-                    translation.x,
-                    translation.y
-                );
+        controlPointOptions: {
+            positioner: function (target) {
+                var xy = MockPoint.pointToPixels(target.points[0]),
+                    backgroundOptions = target.options.typeOptions.background,
+                    width = backgroundOptions.width,
+                    height = backgroundOptions.height,
+                    graphic = this.graphic;
 
-                target.redraw(false);
+                if (target.chart.inverted) {
+                    width = height;
+                    height = backgroundOptions.width;
+                }
+
+                return {
+                    x: xy.x + width - graphic.width / 2,
+                    y: xy.y + height - graphic.height / 2
+                };
+            },
+            events: {
+                drag: function (e, target) {
+                    var translation = this.mouseMoveToTranslation(e);
+
+                    target.resize(
+                        translation.x,
+                        translation.y
+                    );
+
+                    target.redraw(false);
+                }
             }
         }
-    }
-});
+    });
 
 Annotation.types.measure = Measure;
 

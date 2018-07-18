@@ -49,6 +49,11 @@ var createPathDGenerator = function (retracementIndex, isBackground) {
     };
 };
 
+/**
+ * @class
+ * @extends Annotation.Tunnel
+ * @memberOf Annotation
+ **/
 function Fibonacci() {
     this.startRetracements = [];
     this.endRetracements = [];
@@ -58,7 +63,7 @@ function Fibonacci() {
 
 Fibonacci.levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
 
-H.extendAnnotation(Fibonacci, Tunnel, {
+H.extendAnnotation(Fibonacci, Tunnel, /** @lends Annotation.Fibonacci# */ {
     linkPoints: function () {
         Tunnel.prototype.linkPoints.call(this);
 
@@ -157,37 +162,80 @@ H.extendAnnotation(Fibonacci, Tunnel, {
             options.labels[i] = label.options;
         }, this);
     }
-}, {
-    typeOptions: {
-        height: 2,
-        backgroundColors: [
-            'rgba(130, 170, 255, 0.4)',
-            'rgba(139, 191, 216, 0.4)',
-            'rgba(150, 216, 192, 0.4)',
-            'rgba(156, 229, 161, 0.4)',
-            'rgba(162, 241, 130, 0.4)',
-            'rgba(169, 255, 101, 0.4)'
-        ],
-        lineColor: 'grey',
-        lineColors: [],
-        labels: []
-    },
+},
+    /**
+     * A fibonacci annotation.
+     *
+     * @extends annotations.crooked-line
+     * @sample highcharts/annotations-advanced/fibonacci/
+     *         Fibonacci
+     * @optionparent annotations.fibonacci
+     */
+    {
+        typeOptions: {
+            /**
+             * The height of the fibonacci in terms of yAxis.
+             */
+            height: 2,
 
-    labelOptions: {
-        allowOverlap: true,
-        align: 'right',
-        backgroundColor: 'none',
-        borderWidth: 0,
-        crop: false,
-        overflow: 'none',
-        shape: 'rect',
-        style: {
-            color: 'grey'
+            /**
+             * An array of background colors:
+             * Default to:
+             * <pre>
+[
+  'rgba(130, 170, 255, 0.4)',
+  'rgba(139, 191, 216, 0.4)',
+  'rgba(150, 216, 192, 0.4)',
+  'rgba(156, 229, 161, 0.4)',
+  'rgba(162, 241, 130, 0.4)',
+  'rgba(169, 255, 101, 0.4)'
+]
+              </pre>
+             */
+            backgroundColors: [
+                'rgba(130, 170, 255, 0.4)',
+                'rgba(139, 191, 216, 0.4)',
+                'rgba(150, 216, 192, 0.4)',
+                'rgba(156, 229, 161, 0.4)',
+                'rgba(162, 241, 130, 0.4)',
+                'rgba(169, 255, 101, 0.4)'
+            ],
+
+            /**
+             * The color of line.
+             */
+            lineColor: 'grey',
+
+            /**
+             * An array of colors for the lines.
+             */
+            lineColors: [],
+
+            /**
+             * An array with options for the labels.
+             *
+             * @type {Array<Object>}
+             * @extends annotations.base.labelOptions
+             * @apioption annotations.fibonacci.typeOptions.labels
+             */
+            labels: []
         },
-        verticalAlign: 'middle',
-        y: 0
-    }
-});
+
+        labelOptions: {
+            allowOverlap: true,
+            align: 'right',
+            backgroundColor: 'none',
+            borderWidth: 0,
+            crop: false,
+            overflow: 'none',
+            shape: 'rect',
+            style: {
+                color: 'grey'
+            },
+            verticalAlign: 'middle',
+            y: 0
+        }
+    });
 
 Annotation.types.fibonacci = Fibonacci;
 

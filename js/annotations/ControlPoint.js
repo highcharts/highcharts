@@ -6,13 +6,15 @@ import eventEmitterMixin from './eventEmitterMixin.js';
  * A control point class which is a connection between controllable
  * transform methods and a user actions.
  *
- * @class ControlPoint
+ * @constructor
+ * @mixes eventEmitterMixin
+ * @memberOf Annotation
  *
- * @param {Highcharts.Chart} chart
- * @param {Object} target - annotation or controllable - a target for
- * controlling by a control point
- * @param {Object} options
- * @param {Number} [index]
+ * @param {Highcharts.Chart} chart a chart instance
+ * @param {Object} target a controllable instance which is a target for
+ *        a control point
+ * @param {Annotation.ControlPoint.Options} options an options object
+ * @param {number} [index]
  **/
 function ControlPoint(chart, target, options, index) {
     this.chart = chart;
@@ -22,22 +24,28 @@ function ControlPoint(chart, target, options, index) {
 }
 
 /**
- * Control point default options.
- **/
-ControlPoint.defaultOptions = {
-    symbol: 'circle',
-    width: 10,
-    height: 10,
-    style: {
-        stroke: 'black',
-        'stroke-width': 2,
-        fill: 'white'
-    },
-    visible: false,
-    // positioner: Function,
+ * @typedef {Object} Annotation.ControlPoint.Position
+ * @property {number} x
+ * @property {number} y
+ */
 
-    events: {}
-};
+/**
+ * @callback Annotation.ControlPoint.Positioner
+ * @param {Object} e event
+ * @param {Controllable} target
+ * @return {Annotation.ControlPoint.Position} position
+ */
+
+/**
+ * @typedef {Object} Annotation.ControlPoint.Options
+ * @property {string} symbol
+ * @property {number} width
+ * @property {number} height
+ * @property {Object} style
+ * @property {boolean} visible
+ * @property {Annotation.ControlPoint.Positioner} positioner
+ * @property {Object} events
+ */
 
 H.extend(
     ControlPoint.prototype,
@@ -47,7 +55,7 @@ H.extend(
 /**
  * Set the visibility.
  *
- * @param {Boolean} [visible]
+ * @param {boolean} [visible]
  **/
 ControlPoint.prototype.setVisibility = function (visible) {
     this.graphic.attr('visibility', visible ? 'visible' : 'hidden');
@@ -57,7 +65,7 @@ ControlPoint.prototype.setVisibility = function (visible) {
 
 /**
  * Render the control point.
- **/
+ */
 ControlPoint.prototype.render = function () {
     var chart = this.chart,
         options = this.options;
@@ -80,8 +88,8 @@ ControlPoint.prototype.render = function () {
 /**
  * Redraw the control point.
  *
- * @param {Boolean} [animation]
- **/
+ * @param {boolean} [animation]
+ */
 ControlPoint.prototype.redraw = function (animation) {
     this.graphic[animation ? 'animate' : 'attr'](
         this.options.positioner.call(this, this.target)
@@ -90,8 +98,8 @@ ControlPoint.prototype.redraw = function (animation) {
 
 
 /**
- * Destroy the control point
- **/
+ * Destroy the control point.
+ */
 ControlPoint.prototype.destroy = function () {
     eventEmitterMixin.destroy.call(this);
 
@@ -104,6 +112,9 @@ ControlPoint.prototype.destroy = function () {
     this.options = null;
 };
 
+/**
+ * Update the control point.
+ */
 ControlPoint.prototype.update = function (userOptions) {
     var chart = this.chart,
         target = this.target,

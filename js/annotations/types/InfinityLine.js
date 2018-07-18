@@ -6,6 +6,11 @@ var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
     CrookedLine = Annotation.types['crooked-line'];
 
+/**
+ * @class
+ * @extends Annotation.CrookedLine
+ * @memberOf Annotation
+ */
 function InfinityLine() {
     CrookedLine.apply(this, arguments);
 }
@@ -99,29 +104,43 @@ var edgePoint = function (startIndex, endIndex) {
 InfinityLine.endEdgePoint = edgePoint(0, 1);
 InfinityLine.startEdgePoint = edgePoint(1, 0);
 
-H.extendAnnotation(InfinityLine, CrookedLine, {
-    addShapes: function () {
-        var typeOptions = this.options.typeOptions,
-            points = [
-                this.points[0],
-                InfinityLine.endEdgePoint
-            ];
+H.extendAnnotation(
+    InfinityLine,
+    CrookedLine,
+    /** @lends Annotation.InfinityLine# */{
+        addShapes: function () {
+            var typeOptions = this.options.typeOptions,
+                points = [
+                    this.points[0],
+                    InfinityLine.endEdgePoint
+                ];
 
-        if (typeOptions.type === 'line') {
-            points[0] = InfinityLine.startEdgePoint;
+            if (typeOptions.type === 'line') {
+                points[0] = InfinityLine.startEdgePoint;
+            }
+
+            var line = this.initShape(
+                H.merge(typeOptions.line, {
+                    type: 'path',
+                    points: points
+                }),
+                false
+            );
+
+            typeOptions.line = line.options;
         }
 
-        var line = this.initShape(
-            H.merge(typeOptions.line, {
-                type: 'path',
-                points: points
-            }),
-            false
-        );
-
-        typeOptions.line = line.options;
     }
-});
+);
+
+/**
+ * An infinity line annotation.
+ *
+ * @extends annotations.crooked-line
+ * @sample highcharts/annotations-advanced/infinity-line/
+ *         Infinity Line
+ * @apioption annotations.infinity-line
+ */
 
 Annotation.types['infinity-line'] = InfinityLine;
 
