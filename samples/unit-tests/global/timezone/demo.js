@@ -348,12 +348,15 @@ QUnit.test('Midnight ticks should show date (#3359)', function (assert) {
         }
         return tickLabels;
     }
-    var currentHighchartsOptions = Highcharts.getOptions().global.timezoneOffset;
-
+    var defaultHighchartsOptions = Highcharts.getOptions().global.timezoneOffset;
     var minus60OffsetXLabels = ["2. Jan", "12:00", "3. Jan", "12:00"];
     var plus60OffsetXLabels = ['12:00', '2. Jan', '12:00', '3. Jan'];
-    var chartMinus60OffsetXLabels = getCurrentTickLabels(initChart(-60).xAxis[0].labelGroup.element.children);
-    var chartPlus60OffsetXLabels = getCurrentTickLabels(initChart(60).xAxis[0].labelGroup.element.children);
+    var chartMinus60OffsetXLabels = getCurrentTickLabels(
+        initChart(-60).xAxis[0].labelGroup.element.childNodes || []
+    );
+    var chartPlus60OffsetXLabels = getCurrentTickLabels(
+        initChart(60).xAxis[0].labelGroup.element.childNodes || []
+    );
     assert.deepEqual(
         chartMinus60OffsetXLabels,
         minus60OffsetXLabels,
@@ -370,6 +373,6 @@ QUnit.test('Midnight ticks should show date (#3359)', function (assert) {
         plus60OffsetXLabels,
         'Midnight ticks is not showing properly'
     );
-    //reset options
-    initChart(currentHighchartsOptions);
+   // reset options
+    initChart(defaultHighchartsOptions);
 });
