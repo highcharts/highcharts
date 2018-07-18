@@ -261,14 +261,24 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
         assert.close(
             (tick1.left + (tick1Box.width / 2)),
             (point1.left + (point1Box.width / 2)),
-            0.5,
+            {   'Chrome': 0.5,
+                'Edge': 0,
+                'Firefox': 2.5,
+                'MSIE': 0,
+                'Safari': 1.5
+            }[TestUtilities.browser],
             'Tick marks should be on tick when tickInterval != 1'
         );
 
         assert.close(
             (tick2.left + (tick2Box.width / 2)),
             (point2.left + (point2Box.width / 2)),
-            0.5,
+            {   'Chrome': 0.5,
+                'Edge': 0,
+                'Firefox': 2.5,
+                'MSIE': 0,
+                'Safari': 0.5
+            }[TestUtilities.browser],
             'Tick marks should be on tick when tickInterval != 1'
         );
     });
