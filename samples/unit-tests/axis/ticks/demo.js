@@ -283,3 +283,47 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
         );
     });
 });
+
+// Highcharts v4.0.3, Issue #3363
+// Don't show decimals on yearly X axis
+QUnit.test('Yearly values (#3363)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        "series": [{
+            "data": [
+                [1998, 1],
+                [1999, 2],
+                [2000, 3],
+                [2001, 4],
+                [2002, 5],
+                [2003, 6],
+                [2004, 7],
+                [2005, 8],
+                [2006, 9],
+                [2007, 10],
+                [2008, 11],
+                [2009, 12],
+                [2010, 13]
+            ]
+        }]
+    });
+
+    function checkIfArrayContainDecimalNumbers(tickLabels) {
+        for (var i = 0; i < tickLabels.length; i++) {
+            if (tickLabels[i] % 1 !== 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    var xAxesTickLabels = chart.xAxis[0].tickPositions;
+    assert.ok(
+        checkIfArrayContainDecimalNumbers(xAxesTickLabels),
+        "The yearly X axis should contain a number with a decimal"
+    );
+    xAxesTickLabels.push(2011.5);
+    assert.notOk(
+        checkIfArrayContainDecimalNumbers(xAxesTickLabels),
+        "The yearly X axis should contain a number with a decimal"
+    );
+});
