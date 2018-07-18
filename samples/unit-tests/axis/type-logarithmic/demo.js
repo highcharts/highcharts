@@ -171,7 +171,8 @@ QUnit.test('Cropping log axis (#3053)', function (assert) {
 });
 
 // Highcharts v4.0.3, Issue #3353
-// Y axis minimum got stuck
+// switching yAxis from between linear and logarithmic creates
+// inconsistencies with 1 values
 QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
