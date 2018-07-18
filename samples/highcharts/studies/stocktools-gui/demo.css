@@ -1,0 +1,121 @@
+.chart {
+  width: calc(100% - 50px);
+  float: left;
+  height: 400px;
+}
+
+.stocktools-wrapper {
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+.menu-wrapper {
+  float: left;
+  width: 50px;
+  height: calc(100% - 50px);
+  overflow: hidden;
+}
+
+.stocktools-wrapper .submenu-wrapper {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  left: 0px;
+  top: 0px;
+  background: #fff;
+  width: 80px;
+}
+
+.stocktools-wrapper .arrow-wrapper {
+  text-align: center;
+  width: 50px;
+  position: absolute;
+  left: 0%;
+  bottom: 2px;
+  font-size: 1.5em;
+}
+
+.stocktools-wrapper .arrow-down,
+.stocktools-wrapper .arrow-up {
+  outline: none;
+  display: inline-block;
+  width: 25px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  /* Chrome/Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE10+ */
+  /* Rules below not implemented in browsers yet */
+  -o-user-select: none;
+  user-select: none;
+  /* Safari */
+  -webkit-transform: rotate(-90deg);
+  /* Firefox */
+  -moz-transform: rotate(-90deg);
+  /* IE */
+  -ms-transform: rotate(-90deg);
+  /* Opera */
+  -o-transform: rotate(-90deg);
+  /* Internet Explorer */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+.stocktools-wrapper ul {
+  width: 100%;
+  /* 30px spacing for arrows to scroll */
+  margin: 0px;
+  padding: 0px;
+  float: left;
+}
+
+.stocktools-wrapper > ul {
+  width: 50px;
+  position: relative;
+}
+
+.stocktools-wrapper li {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+  clear: both;
+  width: 100%;
+  height: 50px;
+  cursor: pointer;
+}
+
+.stocktools-wrapper li > span.menu-item-btn {
+  display:block;
+  float:left;
+  width: calc(100% - 10px); /* 10px - size of arrow*/
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+.stocktools-wrapper li > span.submenu-item-arrow {
+  float: right;
+  height: 100%;
+  width: 10px;
+  background-color: rgba(0,0,0,0.3);
+  text-align: right;
+  cursor: pointer;
+}
+
+.stocktools-wrapper li.active {
+  background-color: gray;
+}
+
+.showhide-showbar {
+  position: absolute;
+  height: 100%;
+  background-color: rgba(155,155,155,0.3);
+  cursor: pointer;
+}
+
+.hide {
+  display: none;
+}
+

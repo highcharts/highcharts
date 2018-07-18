@@ -643,8 +643,14 @@ addEvent(H.Toolbar, 'afterInit', function () {
             addEvent(
                 element,
                 'click',
-                function () {
+                function (e) {
                     toolbar.selectedButton = events;
+
+                    // we have two objects with the same class,
+                    // so need to trigger one event (main button)
+                    e.stopPropagation();
+
+
                     this.className += ' active';
                 }
             );
