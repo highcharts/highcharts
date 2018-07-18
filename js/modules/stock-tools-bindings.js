@@ -279,84 +279,38 @@ H.Toolbar.prototype.features = {
     'horizontal-line': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY);
-
-            this.currentAnnotation = this.chart.addAnnotation({
-                type: 'infinity-line',
-                typeOptions: {
-                    type: 'line',
-                    points: [{
-                        x: x,
-                        y: y
-                    }, {
-                        x: x,
-                        y: y
-                    }]
-                }
-            });
-        },
-        steps: [
-            function (e) {
-                var chart = this.chart,
-                    options = this.currentAnnotation.options.typeOptions,
-                    y = chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                annotation = this.chart.addAnnotation({
+                    type: 'infinity-line',
                     typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: options.points[0].x,
-                                y: y
-                            }
-                        ]
+                        type: 'horizontal-line',
+                        points: [{
+                            x: x,
+                            y: y
+                        }]
                     }
                 });
 
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
-        ]
+            annotation.setControlPointsVisibility(true);
+        }
     },
     'vertical-line': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY);
-
-            this.currentAnnotation = this.chart.addAnnotation({
-                type: 'infinity-line',
-                typeOptions: {
-                    type: 'line',
-                    points: [{
-                        x: x,
-                        y: y
-                    }, {
-                        x: x,
-                        y: y
-                    }]
-                }
-            });
-        },
-        steps: [
-            function (e) {
-                var chart = this.chart,
-                    options = this.currentAnnotation.options.typeOptions,
-                    x = chart.xAxis[0].toValue(e.chartX);
-
-                this.currentAnnotation.update({
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                annotation = this.chart.addAnnotation({
+                    type: 'infinity-line',
                     typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: options.points[0].y
-                            }
-                        ]
+                        type: 'vertical-line',
+                        points: [{
+                            x: x,
+                            y: y
+                        }]
                     }
                 });
 
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
-        ]
+            annotation.setControlPointsVisibility(true);
+        }
     },
     'crooked-line': {
         start: function () {
@@ -420,12 +374,6 @@ H.Toolbar.prototype.features = {
                         x: x,
                         y: y
                     }]
-                },
-                events: {
-                    click: function () {
-                        this.cpVisibility = !this.cpVisibility;
-                        this.setControlPointsVisibility(this.cpVisibility);
-                    }
                 }
             });
         },
@@ -514,12 +462,6 @@ H.Toolbar.prototype.features = {
                     }],
                     innerBackground: {
                         fill: 'rgba(100, 170, 255, 0.8)'
-                    }
-                },
-                events: {
-                    click: function () {
-                        this.cpVisibility = !this.cpVisibility;
-                        this.setControlPointsVisibility(this.cpVisibility);
                     }
                 },
                 shapeOptions: {

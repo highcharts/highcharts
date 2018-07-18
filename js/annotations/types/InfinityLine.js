@@ -92,7 +92,42 @@ InfinityLine.findEdgePoint = function (firstPoint, secondPoint) {
 
 var edgePoint = function (startIndex, endIndex) {
     return function (target) {
-        var points = target.annotation.points;
+        var annotation = target.annotation,
+            points = annotation.points,
+            type = annotation.options.typeOptions.type;
+
+        if (type === 'horizontal-line') {
+            // Horizontal line has only one point,
+            // make a copy of it:
+            points = [
+                points[0],
+                new MockPoint(
+                    annotation.chart,
+                    points[0].target,
+                    {
+                        x: points[0].x + 1,
+                        y: points[0].y,
+                        xAxis: points[0].options.xAxis,
+                        yAxis: points[0].options.yAxis
+                    }
+                )
+            ];
+        } else if (type === 'vertical-line') {
+            // The same for vertical-line type:
+            points = [
+                points[0],
+                new MockPoint(
+                    annotation.chart,
+                    points[0].target,
+                    {
+                        x: points[0].x,
+                        y: points[0].y + 1,
+                        xAxis: points[0].options.xAxis,
+                        yAxis: points[0].options.yAxis
+                    }
+                )
+            ];
+        }
 
         return InfinityLine.findEdgePoint(
             points[startIndex],
@@ -115,7 +150,7 @@ H.extendAnnotation(
                     InfinityLine.endEdgePoint
                 ];
 
-            if (typeOptions.type === 'line') {
+            if (typeOptions.type.match(/line/g)) {
                 points[0] = InfinityLine.startEdgePoint;
             }
 
