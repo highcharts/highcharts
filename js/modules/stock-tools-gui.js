@@ -92,24 +92,24 @@ H.setOptions({
                     }
                 },
                 crookedLines: {
-                    items: ['crooked3', 'crooked5', 'elliot3', 'elliot5'],
-                    className: 'crooked-class',
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/reset.svg)',
+                    items: ['crooked3', 'crooked5', 'elliott3', 'elliott5'],
+                    className: 'highcharts-crooked-lines',
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)',
                     crooked3: {
-                        className: 'segmend-class-1',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/circle.svg)'
-                    },
-                    crooked5: {
-                        className: 'segmend-class-2',
+                        className: 'highcharts-crooked3',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                     },
-                    elliot3: {
-                        className: 'segmend-class-3',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/reset.svg)'
+                    crooked5: {
+                        className: 'highcharts-crooked5',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                     },
-                    elliot5: {
-                        className: 'segmend-class-4',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag.svg)'
+                    elliott3: {
+                        className: 'highcharts-elliott3',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
+                    },
+                    elliott5: {
+                        className: 'highcharts-elliott5',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                     }
                 },
                 advanced: {

@@ -10,13 +10,50 @@ import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
     doc = H.doc,
+    each = H.each,
     objectEach = H.objectEach,
     PREFIX = 'highcharts-';
+
+/**
+ * Update each point after specified index, most of the annotations use this.
+ * For example crooked line: logic behind updating each point is the same,
+ * only index changes when adding an annotation.
+ *
+ * Example: updateNthPoint(1) - will generate function that updates all
+ * consecutive points except point with index=0.
+ *
+ * @param {Number} Index from each point should udpated
+ *
+ * @return {function} Callback to be used in steps array
+ */
+function updateNthPoint(startIndex) {
+    return function (e) {
+        var options = this.currentAnnotation.options.typeOptions,
+            x = this.chart.xAxis[0].toValue(e.chartX),
+            y = this.chart.yAxis[0].toValue(e.chartY);
+
+        each(options.points, function (point, index) {
+            if (index >= startIndex) {
+                point.x = x;
+                point.y = y;
+            }
+        });
+
+        this.currentAnnotation.update({
+            typeOptions: {
+                points: options.points
+            }
+        });
+
+        this.currentAnnotation.setControlPointsVisibility(true);
+    };
+}
 
 // TO DO:
 // Consider this directly in setOptions();
 // or apply H.setOptions({ bindings: H.toolbar.proto.features })
 H.Toolbar.prototype.features = {
+    // Line type annotations:
     'segment': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
@@ -36,26 +73,7 @@ H.Toolbar.prototype.features = {
             });
         },
         steps: [
-            function (e) {
-                var chart = this.chart,
-                    options = this.currentAnnotation.options.typeOptions,
-                    x = chart.xAxis[0].toValue(e.chartX),
-                    y = chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            updateNthPoint(1)
         ]
     },
     'arrow-segment': {
@@ -80,26 +98,7 @@ H.Toolbar.prototype.features = {
             });
         },
         steps: [
-            function (e) {
-                var chart = this.chart,
-                    options = this.currentAnnotation.options.typeOptions,
-                    x = chart.xAxis[0].toValue(e.chartX),
-                    y = chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            updateNthPoint(1)
         ]
     },
     'ray': {
@@ -122,26 +121,7 @@ H.Toolbar.prototype.features = {
             });
         },
         steps: [
-            function (e) {
-                var chart = this.chart,
-                    options = this.currentAnnotation.options.typeOptions,
-                    x = chart.xAxis[0].toValue(e.chartX),
-                    y = chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            updateNthPoint(1)
         ]
     },
     'arrow-ray': {
@@ -167,26 +147,7 @@ H.Toolbar.prototype.features = {
             });
         },
         steps: [
-            function (e) {
-                var chart = this.chart,
-                    options = this.currentAnnotation.options.typeOptions,
-                    x = chart.xAxis[0].toValue(e.chartX),
-                    y = chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            updateNthPoint(1)
         ]
     },
     'infinity-line': {
@@ -209,26 +170,7 @@ H.Toolbar.prototype.features = {
             });
         },
         steps: [
-            function (e) {
-                var chart = this.chart,
-                    options = this.currentAnnotation.options.typeOptions,
-                    x = chart.xAxis[0].toValue(e.chartX),
-                    y = chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            updateNthPoint(1)
         ]
     },
     'arrow-infinity-line': {
@@ -254,26 +196,7 @@ H.Toolbar.prototype.features = {
             });
         },
         steps: [
-            function (e) {
-                var chart = this.chart,
-                    options = this.currentAnnotation.options.typeOptions,
-                    x = chart.xAxis[0].toValue(e.chartX),
-                    y = chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            updateNthPoint(1)
         ]
     },
     'horizontal-line': {
@@ -312,10 +235,126 @@ H.Toolbar.prototype.features = {
             annotation.setControlPointsVisibility(true);
         }
     },
-    'crooked-line': {
-        start: function () {
+    // Crooked Line type annotations:
+    'crooked3': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
-        }
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'crooked-line',
+                typeOptions: {
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            updateNthPoint(1),
+            updateNthPoint(2)
+        ]
+    },
+    'crooked5': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
+
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'crooked-line',
+                typeOptions: {
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            updateNthPoint(1),
+            updateNthPoint(2),
+            updateNthPoint(3),
+            updateNthPoint(4)
+        ]
+    },
+    'elliott3': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
+
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'elliott-wave',
+                typeOptions: {
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            updateNthPoint(1),
+            updateNthPoint(2)
+        ]
+    },
+    'elliott5': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
+
+            this.currentAnnotation = this.chart.addAnnotation({
+                type: 'elliott-wave',
+                typeOptions: {
+                    points: [{
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }, {
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
+        },
+        steps: [
+            updateNthPoint(1),
+            updateNthPoint(2),
+            updateNthPoint(3),
+            updateNthPoint(4)
+        ]
     },
     'vertical-arrows': {
         start: function () {
@@ -359,6 +398,7 @@ H.Toolbar.prototype.features = {
         },
         end: function () { }
     },
+    // Advanced type annotations:
     'fibonacci': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
@@ -378,24 +418,7 @@ H.Toolbar.prototype.features = {
             });
         },
         steps: [
-            function (e) {
-                var options = this.currentAnnotation.options.typeOptions,
-                    x = this.chart.xAxis[0].toValue(e.chartX),
-                    y = this.chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            updateNthPoint(1)
         ]
     },
     'parallel-channel': {
@@ -417,24 +440,7 @@ H.Toolbar.prototype.features = {
             });
         },
         steps: [
-            function (e) {
-                var options = this.currentAnnotation.options.typeOptions,
-                    x = this.chart.xAxis[0].toValue(e.chartX),
-                    y = this.chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            updateNthPoint(1)
         ]
     },
     'pitchfork': {
@@ -470,49 +476,11 @@ H.Toolbar.prototype.features = {
             });
         },
         steps: [
-            function (e) {
-                var options = this.currentAnnotation.options.typeOptions,
-                    x = this.chart.xAxis[0].toValue(e.chartX),
-                    y = this.chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            {
-                                x: x,
-                                y: y
-                            },
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-                this.currentAnnotation.setControlPointsVisibility(true);
-            },
-            function (e) {
-                var options = this.currentAnnotation.options.typeOptions,
-                    x = this.chart.xAxis[0].toValue(e.chartX),
-                    y = this.chart.yAxis[0].toValue(e.chartY);
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        points: [
-                            options.points[0],
-                            options.points[1],
-                            {
-                                x: x,
-                                y: y
-                            }
-                        ]
-                    }
-                });
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            updateNthPoint(1),
+            updateNthPoint(2)
         ]
     },
+    // Simple annotations:
     'circle': {
         start: function () {
 
@@ -533,6 +501,7 @@ H.Toolbar.prototype.features = {
 
         }
     },
+    // Other tools:
     'zoom-in': {
         start: function () {
 
