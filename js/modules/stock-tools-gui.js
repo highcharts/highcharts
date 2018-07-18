@@ -36,6 +36,7 @@ H.setOptions({
             className: 'stocktools-wrapper',
             toolbarClassName: 'stocktools-toolbar',
             buttons: [
+                'simpleShapes',
                 'lines',
                 'separator',
                 'crookedLines',
@@ -43,6 +44,22 @@ H.setOptions({
                 'advanced'
             ],
             definitions: {
+                simpleShapes: {
+                    items: ['circle', 'rectangle', 'label'],
+                    className: 'highcharts-simple-shapes',
+                    circle: {
+                        className: 'highcharts-circle-annotation',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
+                    },
+                    rectangle: {
+                        className: 'highcharts-rectangle-annotation',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
+                    },
+                    label: {
+                        className: 'highcharts-label-annotation',
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
+                    }
+                },
                 lines: {
                     items: [
                         'segment',

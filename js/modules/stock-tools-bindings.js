@@ -53,6 +53,82 @@ function updateNthPoint(startIndex) {
 // Consider this directly in setOptions();
 // or apply H.setOptions({ bindings: H.toolbar.proto.features })
 H.Toolbar.prototype.features = {
+    // Simple annotations:
+    'circle-annotation': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY);
+
+            this.currentAnnotation = this.chart.addAnnotation({
+                shapes: [{
+                    type: 'circle',
+                    point: {
+                        xAxis: 0,
+                        yAxis: 0,
+                        x: x,
+                        y: y
+                    },
+                    r: 5,
+                    controlPoints: [{
+                        positioner: function (target) {
+                            var xy = H.Annotation.MockPoint.pointToPixels(
+                                    target.points[0]
+                                );
+
+                            return {
+                                x: xy.x - this.graphic.width / 2,
+                                y: xy.y - this.graphic.height / 2 -
+                                    target.options.r
+                            };
+                        },
+                        events: {
+                            // TRANSFORM RADIUS ACCORDING TO Y TRANSLATION
+                            drag: function (e, target) {
+
+                                target.setRadius(
+                                    Math.max(
+                                        target.options.r -
+                                            this.mouseMoveToTranslation(e).y,
+                                        5
+                                    )
+                                );
+
+                                target.redraw(false);
+                            }
+                        }
+                    }]
+                }]
+            });
+            this.currentAnnotation.setControlPointsVisibility(true);
+        },
+        steps: [
+            function (e) {
+                var point = this.currentAnnotation.options.shapes[0].point,
+                    x = this.chart.xAxis[0].toPixels(point.x),
+                    y = this.chart.yAxis[0].toPixels(point.y),
+                    distance = Math.max(
+                        Math.sqrt(
+                            Math.pow(x - e.chartX, 2) +
+                            Math.pow(y - e.chartY, 2)
+                        ),
+                        5
+                    );
+
+                this.currentAnnotation.options.shapes[0].r = distance;
+                this.currentAnnotation.update({});
+            }
+        ]
+    },
+    'rectangle-annotation': {
+        start: function () {
+
+        }
+    },
+    'label-annotation': {
+        start: function () {
+
+        }
+    },
     // Line type annotations:
     'segment': {
         start: function (e) {
@@ -413,7 +489,6 @@ H.Toolbar.prototype.features = {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
-
             this.currentAnnotation = this.chart.addAnnotation({
                 type: 'fibonacci',
                 typeOptions: {
@@ -489,22 +564,6 @@ H.Toolbar.prototype.features = {
             updateNthPoint(1),
             updateNthPoint(2)
         ]
-    },
-    // Simple annotations:
-    'circle': {
-        start: function () {
-
-        }
-    },
-    'rect': {
-        start: function () {
-
-        }
-    },
-    'simple-text': {
-        start: function () {
-
-        }
     },
     'flag': {
         start: function () {
