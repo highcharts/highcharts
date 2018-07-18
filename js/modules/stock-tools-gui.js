@@ -25,7 +25,9 @@ var addEvent = H.addEvent,
     css = H.css,
     DIV = 'div',
     SPAN = 'span',
-    UL = 'ul';
+    UL = 'ul',
+    PREFIX = 'highcharts-',
+    activeClass = PREFIX + 'active';
 
 H.setOptions({
     stockTools: {
@@ -300,7 +302,7 @@ H.Toolbar.prototype = {
             submenuBtn = addButton(submenuWrapper, buttons[btn]);
 
             addEvent(submenuBtn.mainButton, 'click', function () {
-                _self.switchSymbol(this, buttonWrapper);
+                _self.switchSymbol(this, buttonWrapper, true);
                 submenuWrapper.style.display = 'none';
             });
         });
@@ -308,7 +310,7 @@ H.Toolbar.prototype = {
         firstSubmenuItem = submenuWrapper
                 .querySelectorAll('li > .menu-item-btn')[0];
 
-        this.switchSymbol(firstSubmenuItem, true);
+        this.switchSymbol(firstSubmenuItem, false);
 
         // show / hide submenu
         addEvent(submenuArrow, 'click', function () {
@@ -444,20 +446,36 @@ H.Toolbar.prototype = {
             }
         });
     },
-    switchSymbol: function (button, init) {
+    switchSymbol: function (button, redraw) {
         var buttonWrapper = button.parentNode,
             buttonWrapperClass = buttonWrapper.classList.value,
             mainNavButton = buttonWrapper.parentNode.parentNode;
-
-        if (!init) {
-            buttonWrapperClass += ' active';
-        }
-
         // set class
         mainNavButton.classList = buttonWrapperClass;
 
         // set icon
         mainNavButton
             .style['background-image'] = button.style['background-image'];
+
+        // set active class
+        if (redraw) {
+            this.selectButton(mainNavButton);
+        }
+    },
+    selectButton: function (btn) {
+        if (btn.className.indexOf(activeClass) >= 0) {
+            btn.classList.remove(activeClass);
+        } else {
+            btn.className += ' ' + activeClass;
+        }
+    },
+    unselectAllButtons: function (btn) {
+        var activeButtons = btn.parentNode.querySelectorAll('.' + activeClass);
+
+        each(activeButtons, function (activeBtn) {
+            if (activeBtn !== btn) {
+                activeBtn.classList.remove(activeClass);
+            }
+        });
     }
 };

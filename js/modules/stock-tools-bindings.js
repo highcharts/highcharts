@@ -630,6 +630,7 @@ H.Toolbar.prototype.features = {
 
 addEvent(H.Toolbar, 'afterInit', function () {
     var toolbar = this;
+
     objectEach(toolbar.features, function (events, className) {
         var element = doc.getElementsByClassName(PREFIX + className)[0];
         if (element) {
@@ -637,14 +638,17 @@ addEvent(H.Toolbar, 'afterInit', function () {
                 element,
                 'click',
                 function (e) {
-                    toolbar.selectedButton = events;
-
                     // we have two objects with the same class,
                     // so need to trigger one event (main button)
                     e.stopPropagation();
 
+                    toolbar.selectedButton = events;
 
-                    this.className += ' active';
+                    // unslect other active buttons
+                    toolbar.unselectAllButtons(this);
+
+                    // set active class on the current button
+                    toolbar.selectButton(this);
                 }
             );
         }
