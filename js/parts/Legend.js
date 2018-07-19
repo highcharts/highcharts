@@ -688,7 +688,8 @@ Highcharts.Legend.prototype = {
                 height = item.legendGroup.getBBox().height;
                 boxes.push({
                     target: item.visible ?
-                        lastPoint.plotY - 0.3 * height :
+                        (lastPoint ? lastPoint.plotY : item.xAxis.height) -
+                            0.3 * height :
                         chart.plotHeight,
                     size: height,
                     item: item
