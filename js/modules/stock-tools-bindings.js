@@ -27,8 +27,8 @@ var addEvent = H.addEvent,
  * @return {function} Callback to be used in steps array
  */
 function updateNthPoint(startIndex) {
-    return function (e) {
-        var options = this.currentAnnotation.options.typeOptions,
+    return function (e, annotation) {
+        var options = annotation.options.typeOptions,
             x = this.chart.xAxis[0].toValue(e.chartX),
             y = this.chart.yAxis[0].toValue(e.chartY);
 
@@ -39,13 +39,13 @@ function updateNthPoint(startIndex) {
             }
         });
 
-        this.currentAnnotation.update({
+        annotation.update({
             typeOptions: {
                 points: options.points
             }
         });
 
-        this.currentAnnotation.setControlPointsVisibility(true);
+        annotation.setControlPointsVisibility(true);
     };
 }
 
@@ -57,9 +57,10 @@ H.Toolbar.prototype.features = {
     'circle-annotation': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY);
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                annotation;
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            annotation = this.chart.addAnnotation({
                 shapes: [{
                     type: 'circle',
                     point: {
@@ -99,11 +100,14 @@ H.Toolbar.prototype.features = {
                     }]
                 }]
             });
-            this.currentAnnotation.setControlPointsVisibility(true);
+
+            annotation.setControlPointsVisibility(true);
+
+            return annotation;
         },
         steps: [
-            function (e) {
-                var point = this.currentAnnotation.options.shapes[0].point,
+            function (e, annotation) {
+                var point = annotation.options.shapes[0].point,
                     x = this.chart.xAxis[0].toPixels(point.x),
                     y = this.chart.yAxis[0].toPixels(point.y),
                     distance = Math.max(
@@ -114,8 +118,8 @@ H.Toolbar.prototype.features = {
                         5
                     );
 
-                this.currentAnnotation.options.shapes[0].r = distance;
-                this.currentAnnotation.update({});
+                annotation.options.shapes[0].r = distance;
+                annotation.update({});
             }
         ]
     },
@@ -135,7 +139,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'crooked-line',
                 typeOptions: {
                     points: [{
@@ -157,7 +161,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'crooked-line',
                 typeOptions: {
                     line: {
@@ -182,7 +186,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'ray',
@@ -205,7 +209,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'ray',
@@ -231,7 +235,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'line',
@@ -254,7 +258,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'line',
@@ -317,7 +321,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'crooked-line',
                 typeOptions: {
                     points: [{
@@ -343,7 +347,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'crooked-line',
                 typeOptions: {
                     points: [{
@@ -377,7 +381,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'elliott-wave',
                 typeOptions: {
                     points: [{
@@ -403,7 +407,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'elliott-wave',
                 typeOptions: {
                     points: [{
@@ -448,7 +452,7 @@ H.Toolbar.prototype.features = {
                             x: x,
                             y: y,
                             xAxis: 0,
-                            yAxis: 0,
+                            yAxis: 0
                         },
                         xAxis: 0,
                         yAxis: 0,
@@ -465,8 +469,8 @@ H.Toolbar.prototype.features = {
 
             this.currentAnnotation.setControlPointsVisibility(true);
         },
-        steps: [
-            /*function (e) {
+        _steps: [
+            function (e) {
                 var chart = this.chart,
                     options = this.currentAnnotation.options.typeOptions,
                     x = chart.xAxis[0].toValue(e.chartX),
@@ -481,7 +485,7 @@ H.Toolbar.prototype.features = {
                 });
 
                 this.currentAnnotation.setControlPointsVisibility(true);
-            }*/
+            }
         ]
     },
     // Advanced type annotations:
@@ -489,7 +493,7 @@ H.Toolbar.prototype.features = {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'fibonacci',
                 typeOptions: {
                     points: [{
@@ -511,7 +515,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'tunnel',
                 typeOptions: {
                     points: [{
@@ -533,7 +537,7 @@ H.Toolbar.prototype.features = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            this.currentAnnotation = this.chart.addAnnotation({
+            return this.chart.addAnnotation({
                 type: 'pitchfork',
                 typeOptions: {
                     points: [{
@@ -636,10 +640,11 @@ addEvent(H.Toolbar, 'afterInit', function () {
 });
 
 addEvent(H.Chart, 'load', function () {
-    var toolbar = this.stockToolbar;
+    var chart = this,
+        toolbar = chart.stockToolbar;
 
     if (toolbar) {
-        addEvent(this, 'click', function (e) {
+        addEvent(chart, 'click', function (e) {
             var selectedButton = toolbar.selectedButton;
 
             if (!selectedButton) {
@@ -648,7 +653,10 @@ addEvent(H.Chart, 'load', function () {
 
             if (!toolbar.nextEvent) {
                 // Call init method:
-                selectedButton.start.call(toolbar, e);
+                toolbar.currentUserDetails = selectedButton.start.call(
+                    toolbar,
+                    e
+                );
 
                 // If steps exists (e.g. Annotations), bind them:
                 if (selectedButton.steps) {
@@ -661,12 +669,16 @@ addEvent(H.Chart, 'load', function () {
                     toolbar.selectedButton = null;
                     // First click is also the last one:
                     if (selectedButton.end) {
-                        selectedButton.end.call(toolbar, e);
+                        selectedButton.end.call(
+                            toolbar,
+                            e,
+                            toolbar.currentUserDetails
+                        );
                     }
                 }
             } else {
 
-                toolbar.nextEvent.call(toolbar, e);
+                toolbar.nextEvent.call(toolbar, e, toolbar.currentUserDetails);
 
                 if (toolbar.steps) {
 
@@ -680,7 +692,11 @@ addEvent(H.Chart, 'load', function () {
 
                         // That was the last step, call end():
                         if (selectedButton.end) {
-                            selectedButton.end.call(toolbar, e);
+                            selectedButton.end.call(
+                                toolbar,
+                                e,
+                                toolbar.currentUserDetails
+                            );
                         }
                         toolbar.nextEvent = false;
                         toolbar.mouseMoveEvent = false;
@@ -690,9 +706,13 @@ addEvent(H.Chart, 'load', function () {
                 }
             }
         });
-        addEvent(this.container, 'mousemove', function (e) {
+        addEvent(chart.container, 'mousemove', function (e) {
             if (toolbar.mouseMoveEvent) {
-                toolbar.mouseMoveEvent.call(toolbar, e);
+                toolbar.mouseMoveEvent.call(
+                    toolbar,
+                    e,
+                    toolbar.currentUserDetails
+                );
             }
         });
     }
