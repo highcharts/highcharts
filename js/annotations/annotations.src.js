@@ -887,7 +887,6 @@ merge(
          */
         redrawItem: function (item, animation) {
             item.linkPoints();
-
             if (!item.shouldBeDrawn()) {
                 this.destroyItem(item);
             } else {

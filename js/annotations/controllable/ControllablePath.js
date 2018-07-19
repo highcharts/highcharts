@@ -126,7 +126,8 @@ H.merge(
         },
 
         redraw: function (animation) {
-            var d = this.toD();
+
+            var d = this.options.d || this.toD();
 
             if (d) {
                 this.graphic[animation ? 'animate' : 'attr']({ d: d });
