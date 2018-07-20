@@ -402,11 +402,11 @@ H.extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
             xAxis = series.xAxis,
             yAxis = series.yAxis;
 
-        this.options.x = xAxis ?
+        this.x = this.options.x = xAxis ?
             this.options.x = xAxis.toValue(this.plotX, true) :
             this.plotX;
 
-        this.options.y = yAxis ?
+        this.y = this.options.y = yAxis ?
             yAxis.toValue(this.plotY, true) :
             this.plotY;
     }

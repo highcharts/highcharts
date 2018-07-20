@@ -118,6 +118,7 @@ H.Toolbar.prototype.features = {
                         5
                     );
 
+                // TO DO: Is update broken?
                 annotation.options.shapes[0].r = distance;
                 annotation.update({});
             }
@@ -125,12 +126,89 @@ H.Toolbar.prototype.features = {
     },
     'rectangle-annotation': {
         start: function () {
-
+            // TO DO:
+            // Consider using measure-type with disabled labels and crosshairs
         }
     },
     'label-annotation': {
-        start: function () {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                annotation;
 
+            annotation = this.chart.addAnnotation({
+                labels: [{
+                    point: {
+                        x: x,
+                        y: y,
+                        xAxis: 0,
+                        yAxis: 0
+                    },
+                    format: '{y:.2f}',
+                    controlPoints: [{
+                        symbol: 'triangle-down',
+                        positioner: function (target) {
+                            if (!target.graphic.placed) {
+                                return {
+                                    x: 0,
+                                    y: -9e7
+                                };
+                            }
+
+                            var xy = H.Annotation.MockPoint
+                                .pointToPixels(
+                                    target.points[0]
+                                );
+
+                            return {
+                                x: xy.x - this.graphic.width / 2,
+                                y: xy.y - this.graphic.height / 2
+                            };
+                        },
+
+                        // TRANSLATE POINT/ANCHOR
+                        events: {
+                            drag: function (e, target) {
+                                var xy = this.mouseMoveToTranslation(e);
+
+                                target.translatePoint(xy.x, xy.y);
+                                target.redraw(false);
+                            }
+                        }
+                    }, {
+                        symbol: 'square',
+                        positioner: function (target) {
+                            if (!target.graphic.placed) {
+                                return {
+                                    x: 0,
+                                    y: -9e7
+                                };
+                            }
+
+                            return {
+                                x: target.graphic.alignAttr.x -
+                                    this.graphic.width / 2,
+                                y: target.graphic.alignAttr.y -
+                                    this.graphic.height / 2
+                            };
+                        },
+
+                        // TRANSLATE POSITION WITHOUT CHANGING THE ANCHOR
+                        events: {
+                            drag: function (e, target) {
+                                var xy = this.mouseMoveToTranslation(e);
+
+                                target.translate(xy.x, xy.y);
+                                target.redraw(false);
+                            }
+                        }
+                    }],
+                    overflow: 'none',
+                    crop: true
+                }]
+            });
+
+            annotation.setControlPointsVisibility(true);
         }
     },
     // Line type annotations:
@@ -470,11 +548,8 @@ H.Toolbar.prototype.features = {
             this.currentAnnotation.setControlPointsVisibility(true);
         },
         _steps: [
-            function (e) {
-                var chart = this.chart,
-                    options = this.currentAnnotation.options.typeOptions,
-                    x = chart.xAxis[0].toValue(e.chartX),
-                    y = chart.yAxis[0].toValue(e.chartY);
+            function () {
+                var options = this.currentAnnotation.options.typeOptions;
 
                 this.currentAnnotation.update({
                     typeOptions: {
