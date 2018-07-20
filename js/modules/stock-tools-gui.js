@@ -46,17 +46,13 @@ H.setOptions({
             definitions: {
                 simpleShapes: {
                     items: ['circle', 'rectangle', 'label'],
-                    className: 'highcharts-simple-shapes',
                     circle: {
-                        className: 'highcharts-circle-annotation',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
                     },
                     rectangle: {
-                        className: 'highcharts-rectangle-annotation',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
                     },
                     label: {
-                        className: 'highcharts-label-annotation',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
                     }
                 },
@@ -71,82 +67,63 @@ H.setOptions({
                         'horizontalLine',
                         'verticalLine'
                     ],
-                    className: 'highcharts-annotations-lines',
                     symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)',
                     segment: {
-                        className: 'highcharts-segment',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     arrowSegment: {
-                        className: 'highcharts-arrow-segment',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     ray: {
-                        className: 'highcharts-ray',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     arrowRay: {
-                        className: 'highcharts-arrow-ray',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     line: {
                         type: 'aaa',
                         label: 'bbb',
-                        className: 'highcharts-infinity-line',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     arrowLine: {
-                        className: 'highcharts-arrow-infinity-line',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     verticalLine: {
-                        className: 'highcharts-vertical-line',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     },
                     horizontalLine: {
-                        className: 'highcharts-horizontal-line',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
                     }
                 },
                 crookedLines: {
                     items: ['crooked3', 'crooked5', 'elliott3', 'elliott5'],
-                    className: 'highcharts-crooked-lines',
                     symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)',
                     crooked3: {
-                        className: 'highcharts-crooked3',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                     },
                     crooked5: {
-                        className: 'highcharts-crooked5',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                     },
                     elliott3: {
-                        className: 'highcharts-elliott3',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                     },
                     elliott5: {
-                        className: 'highcharts-elliott5',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                     }
                 },
                 advanced: {
                     items: ['fibonacci', 'pitchfork', 'parallel-channel'],
-                    className: 'highcharts-advanced',
                     pitchfork: {
-                        className: 'highcharts-pitchfork',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                     },
                     fibonacci: {
-                        className: 'highcharts-fibonacci',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/fibonacci.svg)'
                     },
                     'parallel-channel': {
-                        className: 'highcharts-parallel-channel',
                         symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                     }
                 },
                 measure: {
-                    className: 'highcharts-measure',
                     symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
                 }
             }
@@ -240,53 +217,17 @@ H.Toolbar.prototype = {
 
         _self.chart = chart;
 
-        each(buttons, function (btn) {
-            if (btn === 'separator') {
+        each(buttons, function (btnName) {
+            if (btnName === 'separator') {
                 button = addButton(toolbar, 'separator');
             } else {
-                button = addButton(toolbar, defs[btn]);
-                if (defs[btn].items && defs[btn].items.length > 0) {
+                button = addButton(toolbar, defs[btnName], btnName);
+                if (defs[btnName].items && defs[btnName].items.length > 0) {
                     // create submenu buttons
-                    addSubmenu.call(_self, button, defs[btn], guiOptions);
+                    addSubmenu.call(_self, button, defs[btnName], guiOptions);
                 }
             }
         });
-
-        // TO REMOVE -> extra loops for more buttons
-        each(buttons, function (btn) {
-            if (btn === 'separator') {
-                button = addButton(toolbar, 'separator');
-            } else {
-                button = addButton(toolbar, defs[btn]);
-                if (defs[btn].items && defs[btn].items.length > 0) {
-                    addSubmenu.call(_self, button, defs[btn], guiOptions);
-                }
-            }
-        });
-
-        each(buttons, function (btn) {
-            if (btn === 'separator') {
-                button = addButton(toolbar, 'separator');
-            } else {
-                button = addButton(toolbar, defs[btn]);
-                if (defs[btn].items && defs[btn].items.length > 0) {
-                    addSubmenu.call(_self, button, defs[btn], guiOptions);
-                }
-            }
-        });
-
-        each(buttons, function (btn) {
-            if (btn === 'separator') {
-                button = addButton(toolbar, 'separator');
-            } else {
-                button = addButton(toolbar, defs[btn]);
-                if (defs[btn].items && defs[btn].items.length > 0) {
-                    addSubmenu.call(_self, button, defs[btn], guiOptions);
-                }
-            }
-        });
-
-        // END OF TO REMOVE SECTION
 
         fireEvent(this, 'afterInit');
     },
@@ -314,9 +255,9 @@ H.Toolbar.prototype = {
         }, null, buttonWrapper);
 
         // add items to submenu
-        each(items, function (btn) {
+        each(items, function (btnName) {
             // add buttons to submenu
-            submenuBtn = addButton(submenuWrapper, buttons[btn]);
+            submenuBtn = addButton(submenuWrapper, buttons[btnName], btnName);
 
             addEvent(submenuBtn.mainButton, 'click', function () {
                 _self.switchSymbol(this, buttonWrapper, true);
@@ -369,16 +310,18 @@ H.Toolbar.prototype = {
             }
         });
     },
-    addButton: function (target, options) {
+    addButton: function (target, options, btnName) {
         var SPAN = 'span',
             LI = 'li',
             items = options.items,
+            classMapping = H.Toolbar.prototype.classMapping,
+            userClassName = options.className || '',
             mainButton,
             submenuArrow,
             buttonWrapper;
 
         buttonWrapper = createElement(LI, {
-            className: options.className
+            className: classMapping[btnName] + ' ' + userClassName
         }, null, target);
 
         // single button
@@ -494,5 +437,26 @@ H.Toolbar.prototype = {
                 activeBtn.classList.remove(activeClass);
             }
         });
+    },
+    classMapping: {
+        circle: 'highcharts-circle-annotation',
+        rectangle: 'highcharts-rectangle-annotation',
+        label: 'highcharts-label-annotation',
+        segment: 'highcharts-segment',
+        arrowSegment: 'highcharts-arrow-segment',
+        ray: 'highcharts-ray',
+        arrowRay: 'highcharts-arrow-ray',
+        line: 'highcharts-infinity-line',
+        arrowLine: 'highcharts-arrow-infinity-line',
+        verticalLine: 'highcharts-vertical-line',
+        horizontalLine: 'highcharts-horizontal-line',
+        crooked3: 'highcharts-crooked3',
+        crooked5: 'highcharts-crooked5',
+        elliott3: 'highcharts-elliott3',
+        elliott5: 'highcharts-elliott5',
+        pitchfork: 'highcharts-pitchfork',
+        fibonacci: 'highcharts-fibonacci',
+        'parallel-channel': 'highcharts-parallel-channel',
+        measure: 'highcharts-measure'
     }
 };
