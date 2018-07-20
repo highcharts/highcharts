@@ -9,6 +9,7 @@
 import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
+    defined = H.defined,
     doc = H.doc,
     each = H.each,
     objectEach = H.objectEach,
@@ -46,6 +47,30 @@ function updateNthPoint(startIndex) {
         });
 
         annotation.setControlPointsVisibility(true);
+    };
+}
+// TO DO: Consider using getHoverData(), but always kdTree
+function attractToPoint(e, chart) {
+    var x = chart.xAxis[0].toValue(e.chartX),
+        y = chart.yAxis[0].toValue(e.chartY),
+        distX = Number.MAX_SAFE_INTEGER, // IE?
+        closestPoint;
+
+    each(chart.series, function (series) {
+        each(series.points, function (point) {
+            if (point && distX > Math.abs(point.x - x)) {
+                distX = Math.abs(point.x - x);
+                closestPoint = point;
+            }
+        });
+    });
+
+    return {
+        x: closestPoint.x,
+        y: closestPoint.y,
+        below: y < closestPoint.y,
+        xAxis: 0,
+        yAxis: 0
     };
 }
 
@@ -514,11 +539,6 @@ H.Toolbar.prototype.features = {
             updateNthPoint(4)
         ]
     },
-    'vertical-arrows': {
-        start: function () {
-
-        }
-    },
     'measure': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
@@ -643,6 +663,72 @@ H.Toolbar.prototype.features = {
             updateNthPoint(1),
             updateNthPoint(2)
         ]
+    },
+    // Labels with arrow and auto increments
+    'vertical-counter': {
+        start: function (e) {
+            var closestPoint = attractToPoint(e, this.chart),
+                annotation;
+
+            if (!defined(this.verticalCounter)) {
+                this.verticalCounter = 0;
+            }
+
+            annotation = this.chart.addAnnotation({
+                type: 'vertical-line',
+                typeOptions: {
+                    point: closestPoint,
+                    label: {
+                        offset: closestPoint.below ? -40 : 40,
+                        text: this.verticalCounter.toString()
+                    }
+                }
+            });
+
+            annotation.setControlPointsVisibility(true);
+
+            this.verticalCounter++;
+        }
+    },
+    'vertical-label': {
+        start: function (e) {
+            var closestPoint = attractToPoint(e, this.chart),
+                annotation = this.chart.addAnnotation({
+                    type: 'vertical-line',
+                    typeOptions: {
+                        point: closestPoint,
+                        label: {
+                            offset: closestPoint.below ? 40 : -40
+                        }
+                    }
+                });
+
+            annotation.setControlPointsVisibility(true);
+        }
+    },
+    'vertical-arrow': {
+        start: function (e) {
+            var closestPoint = attractToPoint(e, this.chart),
+                annotation = this.chart.addAnnotation({
+                    type: 'vertical-line',
+                    typeOptions: {
+                        point: closestPoint,
+                        label: {
+                            offset: closestPoint.below ? 40 : -40,
+                            format: ' '
+                        },
+                        connector: {
+                            fill: 'none',
+                            stroke: closestPoint.below ? 'red' : 'green'
+                        }
+                    }
+                });
+
+            annotation.setControlPointsVisibility(true);
+        }
+    },
+    'vertical-double-arrow': {
+
     },
     'flag': {
         start: function () {

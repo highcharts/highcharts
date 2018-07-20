@@ -40,6 +40,8 @@ H.setOptions({
                 'lines',
                 'separator',
                 'crookedLines',
+                'separator',
+                'verticalLabels',
                 'measure',
                 'advanced'
             ],
@@ -97,7 +99,6 @@ H.setOptions({
                 },
                 crookedLines: {
                     items: ['crooked3', 'crooked5', 'elliott3', 'elliott5'],
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)',
                     crooked3: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                     },
@@ -109,6 +110,26 @@ H.setOptions({
                     },
                     elliott5: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
+                    }
+                },
+                verticalLabels: {
+                    items: [
+                        'verticalCounter',
+                        'verticalLabel',
+                        'verticalArrow',
+                        'verticalDoubleArrow'
+                    ],
+                    verticalCounter: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    },
+                    verticalLabel: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    },
+                    verticalArrow: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    },
+                    verticalDoubleArrow: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
                     }
                 },
                 advanced: {
@@ -457,6 +478,10 @@ H.Toolbar.prototype = {
         pitchfork: 'highcharts-pitchfork',
         fibonacci: 'highcharts-fibonacci',
         'parallel-channel': 'highcharts-parallel-channel',
-        measure: 'highcharts-measure'
+        measure: 'highcharts-measure',
+        verticalCounter: 'highcharts-vertical-counter',
+        verticalLabel: 'highcharts-vertical-label',
+        verticalArrow: 'highcharts-vertical-arrow',
+        verticalDoubleArrow: 'highcharts-vertical-double-arrow'
     }
 };
