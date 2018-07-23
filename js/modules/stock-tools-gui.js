@@ -431,11 +431,12 @@ H.Toolbar.prototype = {
         var buttonWrapper = button.parentNode,
             buttonWrapperClass = buttonWrapper.classList.value,
             mainNavButton = buttonWrapper.parentNode.parentNode;
+        
         // set class
         mainNavButton.classList = buttonWrapperClass;
 
         // set icon
-        mainNavButton
+        mainNavButton.querySelectorAll('.menu-item-btn')[0]
             .style['background-image'] = button.style['background-image'];
 
         // set active class
