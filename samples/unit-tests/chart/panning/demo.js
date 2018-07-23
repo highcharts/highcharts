@@ -26,9 +26,9 @@ QUnit.test('Zoom and pan key', function (assert) {
                 data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
             }]
         }),
+        controller = TestController(chart),
         firstZoom = {};
 
-    var test = TestController(chart);
 
     chart.setSize(600, 300);
 
@@ -46,9 +46,7 @@ QUnit.test('Zoom and pan key', function (assert) {
 
 
     // Zoom
-    test.mousedown(200, 150);
-    test.mousemove(250, 150);
-    test.mouseup();
+    controller.pan([200, 150], [250, 150]);
 
     assert.strictEqual(
         chart.xAxis[0].min > 0,
@@ -64,10 +62,7 @@ QUnit.test('Zoom and pan key', function (assert) {
     firstZoom = chart.xAxis[0].getExtremes();
 
     // Pan
-    test.mousedown(200, 100, { shiftKey: true });
-    test.mousemove(150, 100, { shiftKey: true });
-    test.mouseup();
-
+    controller.pan([200, 100], [150, 100], { shiftKey: true });
     assert.strictEqual(
         chart.xAxis[0].min < firstZoom.min,
         true,
@@ -81,11 +76,11 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 
     // Pan
-    test.mousedown(100, 200, { shiftKey: true });
+    controller.mouseDown(100, 200, { shiftKey: true });
     for (var x = 110; x < 400; x += 10) {
-        test.mousemove(x, 100, { shiftKey: true });
+        controller.mouseMove(x, 100, { shiftKey: true });
     }
-    test.mouseup();
+    controller.mouseUp();
 
     assert.strictEqual(
         chart.xAxis[0].max,
@@ -165,9 +160,7 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
     );
 
     // Pan
-    controller.mousedown(100, 200);
-    controller.mousemove(300, 200);
-    controller.mouseup();
+    controller.pan([100, 200], [300, 200]);
 
     assert.ok(
         chart.xAxis[0].min < initialMin,
@@ -230,10 +223,7 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
     );
 
     // Pan
-    controller.mousedown(100, 200);
-    controller.mousemove(200, 200);
-    controller.mouseup();
-
+    controller.pan([100, 200], [200, 200]);
     assert.strictEqual(
         chart.xAxis[0].tickPositions.toString(),
         '1940,1945,1950,1955,1960,1965,1970,1975,1980,1985,1990',
@@ -242,10 +232,7 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
 
 
     // Pan
-    controller.mousedown(300, 200);
-    controller.mousemove(200, 200);
-    controller.mouseup();
-
+    controller.pan([300, 200], [200, 200]);
     assert.strictEqual(
         chart.xAxis[0].tickPositions.toString(),
         '1945,1950,1955,1960,1965,1970,1975,1980,1985,1990,1995',
