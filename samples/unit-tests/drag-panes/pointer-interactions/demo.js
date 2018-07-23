@@ -23,9 +23,7 @@ QUnit.test("Drag panes on zoomable chart", function (assert) {
         strartingNavYAxisLen = chart.yAxis[1].len;
 
     // Drag
-    controller.mousedown(200, 190);
-    controller.mousemove(260, 100);
-    controller.mouseup();
+    controller.pan([200, 190], [260, 100]);
 
     assert.equal(
         chart.yAxis[1].len,
