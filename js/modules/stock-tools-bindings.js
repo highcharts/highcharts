@@ -802,14 +802,31 @@ H.Toolbar.prototype.features = {
         start: addFlagFromForm('simplepin')
     },
     // Other tools:
-    'zoom-in': {
-        start: function () {
-
+    'zoom-x': {
+        init: function () {
+            this.chart.update({
+                chart: {
+                    zoomType: 'xy'
+                }
+            });
         }
     },
-    'zoom-out': {
-        start: function () {
-
+    'zoom-y': {
+        init: function () {
+            this.chart.update({
+                chart: {
+                    zoomType: 'y'
+                }
+            });
+        }
+    },
+    'zoom-xy': {
+        init: function () {
+            this.chart.update({
+                chart: {
+                    zoomType: 'x'
+                }
+            });
         }
     },
     'full-screen': {
@@ -887,7 +904,7 @@ addEvent(H.Toolbar, 'afterInit', function () {
 
                     // Call "init" event, for example to open modal window
                     if (events.init) {
-                        events.init.call(this);
+                        events.init.call(toolbar);
                     }
                 }
             );
@@ -903,7 +920,7 @@ addEvent(H.Chart, 'load', function () {
         addEvent(chart, 'click', function (e) {
             var selectedButton = toolbar.selectedButton;
 
-            if (!selectedButton) {
+            if (!selectedButton || !selectedButton.start) {
                 return;
             }
 

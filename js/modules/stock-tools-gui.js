@@ -45,7 +45,8 @@ H.setOptions({
                 'measure',
                 'advanced',
                 'flags',
-                'indicators'
+                'indicators',
+                'zoomChange'
             ],
             definitions: {
                 simpleShapes: {
@@ -171,6 +172,18 @@ H.setOptions({
                 },
                 indicators: {
                     symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                },
+                zoomChange: {
+                    items: ['zoomX', 'zoomY', 'zoomXY'],
+                    zoomX: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    },
+                    zoomY: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    },
+                    zoomXY: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    }
                 }
             }
         }
@@ -513,6 +526,9 @@ H.Toolbar.prototype = {
         flagCirclepin: 'highcharts-flag-circlepin',
         flagDiamondpin: 'highcharts-flag-diamondpin',
         flagSquarepin: 'highcharts-flag-squarepin',
-        flagSimplepin: 'highcharts-flag-simplepin'
+        flagSimplepin: 'highcharts-flag-simplepin',
+        zoomX: 'highcharts-zoom-x',
+        zoomY: 'highcharts-zoom-y',
+        zoomXY: 'highcharts-zoom-xy'
     }
 };
