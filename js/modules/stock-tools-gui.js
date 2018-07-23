@@ -310,6 +310,8 @@ H.Toolbar.prototype = {
                 buttonWrapper.classList.remove('current');
                 submenuWrapper.style.display = 'none';
             } else {
+                // to calculate height of element
+                submenuWrapper.style.display = 'block';
 
                 topMargin = buttonWrapper.offsetTop;
 
@@ -323,8 +325,7 @@ H.Toolbar.prototype = {
 
                 css(submenuWrapper, {
                     top: topMargin + 'px',
-                    left: buttonWidth + 'px',
-                    display: 'block'
+                    left: buttonWidth + 'px'
                 });
 
                 buttonWrapper.className += ' current';
