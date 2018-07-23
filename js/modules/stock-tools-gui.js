@@ -43,7 +43,8 @@ H.setOptions({
                 'separator',
                 'verticalLabels',
                 'measure',
-                'advanced'
+                'advanced',
+                'flags'
             ],
             definitions: {
                 simpleShapes: {
@@ -56,6 +57,26 @@ H.setOptions({
                     },
                     label: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
+                    }
+                },
+                flags: {
+                    items: [
+                        'circlepin',
+                        'diamondpin',
+                        'squarepin',
+                        'simplepin'
+                    ],
+                    simplepin: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-flag.svg)'
+                    },
+                    diamondpin: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-diamondpin.svg)'
+                    },
+                    squarepin: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-squarepin.svg)'
+                    },
+                    circlepin: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-circlepin.svg)'
                     }
                 },
                 lines: {
@@ -484,6 +505,10 @@ H.Toolbar.prototype = {
         verticalCounter: 'highcharts-vertical-counter',
         verticalLabel: 'highcharts-vertical-label',
         verticalArrow: 'highcharts-vertical-arrow',
-        verticalDoubleArrow: 'highcharts-vertical-double-arrow'
+        verticalDoubleArrow: 'highcharts-vertical-double-arrow',
+        flagCirclepin: 'highcharts-flag-circlepin',
+        flagDiamondpin: 'highcharts-flag-diamondpin',
+        flagSquarepin: 'highcharts-flag-squarepin',
+        flagSimplepin: 'highcharts-flag-simplepin'
     }
 };

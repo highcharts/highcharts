@@ -49,6 +49,7 @@ function updateNthPoint(startIndex) {
         annotation.setControlPointsVisibility(true);
     };
 }
+
 // TO DO: Consider using getHoverData(), but always kdTree
 function attractToPoint(e, chart) {
     var x = chart.xAxis[0].toValue(e.chartX),
@@ -69,8 +70,65 @@ function attractToPoint(e, chart) {
         x: closestPoint.x,
         y: closestPoint.y,
         below: y < closestPoint.y,
-        xAxis: 0,
-        yAxis: 0
+        series: closestPoint.series,
+        xAxis: closestPoint.series.xAxis.index,
+        yAxis: closestPoint.series.yAxis.index
+    };
+}
+
+/**
+ * Generates function which will add a flag series using modal in GUI.
+ * Method uses internally `Toolbar.showForm(options, callback)`.
+ *
+ * Example: addFlagFromForm('diamondpin') - will generate function that shows
+ * modal in GUI.
+ *
+ * @param {String} Type of flag series, e.g. "squarepin"
+ *
+ * @return {function} Callback to be used in `start` callback
+ */
+function addFlagFromForm(type) {
+    return function (e) {
+        var chart = this.chart,
+            point = attractToPoint(e, chart);
+        if (this.showForm) {
+            this.showForm(
+                // Enabled options:
+                [{
+                    type: 'string',
+                    name: 'name',
+                    label: 'Name:',
+                    value: 'A'
+                }, {
+                    type: 'string',
+                    name: 'title',
+                    label: 'Name:',
+                    value: 'Flag A'
+                }, {
+                    type: 'color',
+                    name: 'color',
+                    value: chart.options.colors[chart.colorCounter]
+                }],
+                // Callback on submit:
+                function (fields) {
+                    var pointConfig = {
+                        x: point.x,
+                        y: point.y
+                    };
+
+                    each(fields, function (field) {
+                        pointConfig[field.name] = field.value;
+                    });
+
+                    chart.addSeries({
+                        type: 'flags',
+                        onSeries: point.series.id,
+                        shape: type,
+                        data: [pointConfig]
+                    });
+                }
+            );
+        }
     };
 }
 
@@ -730,10 +788,18 @@ H.Toolbar.prototype.features = {
     'vertical-double-arrow': {
 
     },
-    'flag': {
-        start: function () {
-
-        }
+    // Flag types:
+    'flag-cirlcepin': {
+        start: addFlagFromForm('circlepin')
+    },
+    'flag-diamondpin': {
+        start: addFlagFromForm('diamondpin')
+    },
+    'flag-squarepin': {
+        start: addFlagFromForm('squarepin')
+    },
+    'flag-simplepin': {
+        start: addFlagFromForm('simplepin')
     },
     // Other tools:
     'zoom-in': {
