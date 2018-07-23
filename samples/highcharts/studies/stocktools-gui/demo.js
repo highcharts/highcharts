@@ -1,5 +1,12 @@
-Highcharts.stockChart('container', {
-    series: [{
-        data: [1, 3, 3, 4, 3, 2]
-    }]
+$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
+
+    Highcharts.stockChart('container', {
+        series: [{
+            type: 'ohlc',
+            id: 'aapl',
+            name: 'AAPL Stock Price',
+            data: data
+        }]
+    });
+
 });

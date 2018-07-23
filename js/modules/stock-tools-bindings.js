@@ -829,6 +829,27 @@ H.Toolbar.prototype.features = {
             });
         }
     },
+    'series-type-line': {
+        init: function () {
+            this.chart.series[0].update({
+                type: 'line'
+            });
+        }
+    },
+    'series-type-ohlc': {
+        init: function () {
+            this.chart.series[0].update({
+                type: 'ohlc'
+            });
+        }
+    },
+    'series-type-candlestick': {
+        init: function () {
+            this.chart.series[0].update({
+                type: 'candlestick'
+            });
+        }
+    },
     'full-screen': {
         start: function () {
 

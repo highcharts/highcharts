@@ -46,7 +46,8 @@ H.setOptions({
                 'advanced',
                 'flags',
                 'indicators',
-                'zoomChange'
+                'zoomChange',
+                'typeChange'
             ],
             definitions: {
                 simpleShapes: {
@@ -182,6 +183,18 @@ H.setOptions({
                         symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                     },
                     zoomXY: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    }
+                },
+                typeChange: {
+                    items: ['typeOHLC', 'typeLine', 'typeCandlestick'],
+                    typeOHLC: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    },
+                    typeLine: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    },
+                    typeCandlestick: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                     }
                 }
@@ -529,6 +542,9 @@ H.Toolbar.prototype = {
         flagSimplepin: 'highcharts-flag-simplepin',
         zoomX: 'highcharts-zoom-x',
         zoomY: 'highcharts-zoom-y',
-        zoomXY: 'highcharts-zoom-xy'
+        zoomXY: 'highcharts-zoom-xy',
+        typeLine: 'highcharts-series-type-line',
+        typeOHLC: 'highcharts-series-type-ohlc',
+        typeCandlestick: 'highcharts-series-type-candlestick'
     }
 };
