@@ -400,7 +400,7 @@ H.Toolbar.prototype = {
         });
 
         addEvent(arrowDown, 'click', function () {
-            if (wrapperHeight + targetY < toolbarHeight) {
+            if (wrapperHeight + targetY <= toolbarHeight) {
                 targetY += step;
                 toolbar.style['margin-top'] = -targetY + 'px';
             }
@@ -431,7 +431,7 @@ H.Toolbar.prototype = {
         var buttonWrapper = button.parentNode,
             buttonWrapperClass = buttonWrapper.classList.value,
             mainNavButton = buttonWrapper.parentNode.parentNode;
-        
+
         // set class
         mainNavButton.classList = buttonWrapperClass;
 

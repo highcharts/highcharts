@@ -13,7 +13,7 @@
 .menu-wrapper {
   float: left;
   width: 50px;
-  height: calc(100% - 50px);
+  height: calc(100% - 30px);
   overflow: hidden;
 }
 
