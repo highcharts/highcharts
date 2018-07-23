@@ -823,8 +823,32 @@ H.Toolbar.prototype.features = {
         }
     },
     'indicators': {
-        start: function () {
+        init: function () {
+            var chart = this.chart;
+            if (this.showIndicatorsForm) {
+                this.showIndicatorsForm(
+                    // Callback on submit:
+                    function (fields) {
+                        var seriesConfig = {
+                            params: {}
+                        };
 
+                        each(fields, function (field) {
+                            if (field.match('params')) {
+                                // Params e.g. "params.period"
+                                seriesConfig.params[
+                                    field.name.replace('params', '')
+                                ] = field.value;
+                            } else {
+                                // General series options, e.g. color
+                                seriesConfig[field.name] = field.value;
+                            }
+                        });
+
+                        chart.addSeries(seriesConfig);
+                    }
+                );
+            }
         }
     },
     'show-hide-all': {
@@ -849,17 +873,22 @@ addEvent(H.Toolbar, 'afterInit', function () {
                 element,
                 'click',
                 function (e) {
-                    // we have two objects with the same class,
+                    // We have two objects with the same class,
                     // so need to trigger one event (main button)
                     e.stopPropagation();
 
                     toolbar.selectedButton = events;
 
-                    // unslect other active buttons
+                    // Unslect other active buttons
                     toolbar.unselectAllButtons(this);
 
-                    // set active class on the current button
+                    // Set active class on the current button
                     toolbar.selectButton(this);
+
+                    // Call "init" event, for example to open modal window
+                    if (events.init) {
+                        events.init.call(this);
+                    }
                 }
             );
         }

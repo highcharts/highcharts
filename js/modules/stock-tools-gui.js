@@ -44,7 +44,8 @@ H.setOptions({
                 'verticalLabels',
                 'measure',
                 'advanced',
-                'flags'
+                'flags',
+                'indicators'
             ],
             definitions: {
                 simpleShapes: {
@@ -166,6 +167,9 @@ H.setOptions({
                     }
                 },
                 measure: {
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                },
+                indicators: {
                     symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
                 }
             }
