@@ -42,6 +42,7 @@ H.setOptions({
                 'crookedLines',
                 'separator',
                 'verticalLabels',
+                'currentPriceIndicator',
                 'measure',
                 'advanced',
                 'flags',
@@ -170,6 +171,9 @@ H.setOptions({
                 },
                 measure: {
                     symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                },
+                currentPriceIndicator: {
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
                 },
                 indicators: {
                     symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
@@ -536,6 +540,7 @@ H.Toolbar.prototype = {
         verticalLabel: 'highcharts-vertical-label',
         verticalArrow: 'highcharts-vertical-arrow',
         verticalDoubleArrow: 'highcharts-vertical-double-arrow',
+        currentPriceIndicator: 'highcharts-current-price-indicator',
         flagCirclepin: 'highcharts-flag-circlepin',
         flagDiamondpin: 'highcharts-flag-diamondpin',
         flagSquarepin: 'highcharts-flag-squarepin',

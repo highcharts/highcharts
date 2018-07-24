@@ -855,9 +855,28 @@ H.Toolbar.prototype.features = {
 
         }
     },
-    'horizontal-price': {
-        start: function () {
+    'current-price-indicator': {
+        init: function () {
+            var series = this.chart.series[0],
+                options = series.options,
+                priceIndicator = options.priceIndicator &&
+                                options.priceIndicator.enabled,
+                showPrice = options.showPrice && options.showPrice.enabled;
 
+            series.update({
+                // line
+                showPrice: {
+                    enabled: !showPrice,
+                    color: 'red'
+                },
+                // label
+                priceIndicator: {
+                    enabled: !priceIndicator,
+                    label: {
+                        enabled: true
+                    }
+                }
+            });
         }
     },
     'indicators': {
