@@ -1,7 +1,7 @@
 /**
  * (c) 2009-2017 Torstein Honsi
  *
- * License: www.H.com/license
+ * License: www.highcharts.com/license
  */
 'use strict';
 import H from '../parts/Globals.js';
@@ -12,7 +12,10 @@ var addEvent = H.addEvent,
     merge = H.merge,
     pick = H.pick,
     doc = H.doc,
-    columnProto = H.seriesTypes.column.prototype;
+    columnProto = H.seriesTypes.column.prototype,
+    defaultDragDropOptions = {
+        dragSensitiviy: 1
+    };
 
 
 /**
@@ -56,261 +59,287 @@ H.Chart.prototype.isDraggable = function () {
 };
 
 
-H.Chart.prototype.callbacks.push(function (chart) {
-    var container = chart.container,
-        chartOptions = chart.userOptions.chart || {},
-        dragPoint,
-        dragStart,
-        dragX,
-        dragY,
-        dragPlotX,
-        dragPlotY,
-        dragPlotHigh,
-        dragPlotLow,
-        changeLow,
-        newHigh,
-        newLow,
-        defaultDragDropOptions = {
-            dragSensitiviy: 1
-        },
-        // Check whether the panKey and zoomKey are set in chart.userOptions
+/**
+ * Check whether the zoomKey or panKey is pressed
+ */
+H.Chart.prototype.zoomOrPanKeyPressed = function (e) {
+    // Check whether the panKey and zoomKey are set in chart.userOptions
+    var chartOptions = this.userOptions.chart || {},
         panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
         zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
+    return (e[zoomKey] || e[panKey]);
+};
+
+
+/**
+ * Get the new position values based on a drag event
+ */
+function getNewPos(e, chart) {
+    var originalEvent = e.originalEvent || e,
+        pageX = originalEvent.changedTouches ?
+            originalEvent.changedTouches[0].pageX : e.pageX,
+        pageY = originalEvent.changedTouches ?
+            originalEvent.changedTouches[0].pageY : e.pageY,
+        dragStart = chart.dragStart,
+        dragPoint = dragStart.point,
+        series = dragStart.point.series,
+        dragDropOptions = merge(
+            defaultDragDropOptions, series.options.dragDrop
+        ),
+        draggableX = dragDropOptions.draggableX &&
+            dragPoint.draggableX !== false,
+        draggableY = dragDropOptions.draggableY &&
+            dragPoint.draggableY !== false,
+        dragSensitivity = dragDropOptions.dragSensitiviy,
+        deltaX = draggableX ? dragStart.pageX - pageX : 0,
+        deltaY = draggableY ? dragStart.pageY - pageY : 0,
+        newPlotX = dragStart.plotX - deltaX,
+        newPlotY = dragStart.plotY - deltaY,
+        newX = dragStart.pageX === undefined ?
+            dragPoint.x : series.xAxis.toValue(newPlotX, true),
+        newY = dragStart.pageY === undefined ?
+            dragPoint.y : series.yAxis.toValue(newPlotY, true),
+        changeLow,
+        newHigh,
+        newLow;
+
+    // Filter by max values
+    newX = filterRange(newX, series, 'X');
+    newY = filterRange(newY, series, 'Y');
+
+    // Handle low/high points
+    if (dragPoint.low) {
+        var newPlotHigh = dragStart.plotHigh - deltaY,
+            newPlotLow = dragStart.plotLow - deltaY;
+        newHigh = dragStart.pageY === undefined ?
+            dragPoint.high : series.yAxis.toValue(newPlotHigh, true);
+        newLow = dragStart.pageY === undefined ?
+            dragPoint.low : series.yAxis.toValue(newPlotLow, true);
+        newHigh = filterRange(newHigh, series, 'Y');
+        newLow = filterRange(newLow, series, 'Y');
+
+        // Are we changing the high or the low value
+        changeLow = (
+            Math.abs(dragPoint.plotLow - (dragStart.pageY - 60)) <
+            Math.abs(dragPoint.plotHigh - (dragStart.pageY - 60))
+        ) ? true : false;
+    }
+
+    // Return new position
+    if (
+        Math.sqrt(
+            Math.pow(deltaX, 2) + Math.pow(deltaY, 2)
+        ) > dragSensitivity
+    ) {
+        return {
+            x: draggableX ? newX : dragPoint.x,
+            y: draggableY ? newY : dragPoint.y,
+            high: (draggableY && !changeLow) ? newHigh : dragPoint.high,
+            low: (draggableY && changeLow) ? newLow : dragPoint.low,
+            dragStart: dragStart,
+            originalEvent: e
+        };
+    }
+    return null;
+}
+
+
+/**
+ * Handler for mousedown
+ */
+function mouseDownHandler(e, chart) {
+    // Check that the panKey or zoomKey isn't pressed
+    if (!chart.zoomOrPanKeyPressed(e)) {
+        var options,
+            originalEvent = e.originalEvent || e,
+            hoverPoint,
+            dragStart = {},
+            series,
+            bottom;
+
+        // Find hover point
+        if (
+            (originalEvent.target.getAttribute('class') || '')
+                .indexOf('highcharts-handle') !== -1
+        ) {
+            hoverPoint = originalEvent.target.point;
+        }
+
+        series = chart.hoverPoint && chart.hoverPoint.series;
+        if (
+            !hoverPoint &&
+            chart.hoverPoint &&
+            (!series.useDragHandle || !series.useDragHandle())
+        ) {
+            hoverPoint = chart.hoverPoint;
+        }
+
+        // Store information on chart.dragStart about the drag
+        if (hoverPoint) {
+            options = hoverPoint.series.options.dragDrop || {};
+            if (options.draggableX && hoverPoint.draggableX !== false) {
+                dragStart.point = hoverPoint;
+                dragStart.pageX = originalEvent.changedTouches ?
+                    originalEvent.changedTouches[0].pageX : e.pageX;
+                dragStart.plotX = hoverPoint.plotX;
+                dragStart.x = hoverPoint.x;
+                dragStart.x2 = hoverPoint.x2;
+            }
+
+            if (options.draggableY && hoverPoint.draggableY !== false) {
+                dragStart.point = hoverPoint;
+                // Added support for normal stacking (#78)
+                bottom = pick(series.translatedThreshold, chart.plotHeight);
+
+                dragStart.pageY = originalEvent.changedTouches ?
+                    originalEvent.changedTouches[0].pageY : e.pageY;
+                dragStart.plotY = hoverPoint.plotY +
+                    (bottom - (hoverPoint.yBottom || bottom));
+                dragStart.y = hoverPoint.y;
+                if (hoverPoint.plotHigh) {
+                    dragStart.plotHigh = hoverPoint.plotHigh;
+                    dragStart.plotLow = hoverPoint.plotLow;
+                }
+            }
+
+            // Disable zooming when dragging
+            if (dragStart.point) {
+                chart.mouseIsDown = false;
+            }
+
+            chart.dragStart = dragStart;
+        }
+    }
+}
+
+
+/**
+ * Handler for mouseup
+ */
+function mouseUpHandler(e, chart) {
+    var dragStart = chart.dragStart,
+        newPos = dragStart && dragStart.point && e && getNewPos(e, chart);
+
+    function reset() {
+        delete chart.dragStart;
+    }
+
+    if (newPos) {
+        dragStart.point.firePointEvent('drop', newPos, function () {
+            dragStart.point.update(newPos);
+
+            // Update k-d-tree immediately to prevent tooltip jump (#43)
+            dragStart.point.series.options.kdNow = true;
+            dragStart.point.series.buildKDTree();
+
+            reset();
+        });
+    } else {
+        reset();
+    }
+}
+
+
+/**
+ * Handler for mousemove. If the mouse button is pressed, drag the element.
+ */
+function mouseMoveHandler(e, chart) {
+    var dragStart = chart.dragStart;
+
+    // Check whether the zoomKey or panKey isn't pressed
+    if (dragStart && dragStart.point && !chart.zoomOrPanKeyPressed(e)) {
+        e.preventDefault();
+
+        var evtArgs = getNewPos(e, chart), // Gets x and y
+            proceed;
+
+        // Fire the 'drag' event with a default action to move the point.
+        if (evtArgs) {
+            dragStart.point.firePointEvent(
+                'drag',
+                evtArgs,
+                function () {
+                    var kdTree,
+                        series = dragStart.point.series;
+
+                    proceed = true;
+
+                    dragStart.point.update(evtArgs, false);
+
+                    // Hide halo while dragging (#14)
+                    if (series.halo) {
+                        series.halo = series.halo.destroy();
+                    }
+
+                    // Let the tooltip follow and reflect the drag point
+                    chart.pointer.reset(true);
+
+                    // Stacking requires full redraw
+                    if (series.stackKey) {
+                        chart.redraw();
+                    } else {
+                        // Do a series redraw only. Let the k-d-tree survive
+                        // the redraw in order to prevent tooltip flickering
+                        // (#43).
+                        kdTree = series.kdTree;
+                        series.redraw();
+                        series.kdTree = kdTree;
+                    }
+                }
+            );
+
+            // The default handler has not run because of prevented default
+            if (!proceed) {
+                mouseUpHandler(e, chart);
+            }
+        }
+    }
+}
+
+
+/**
+ * Add events after chart has been created
+ */
+H.Chart.prototype.callbacks.push(function (chart) {
+    var container = chart.container,
+        mouseDown = function (e) {
+            return mouseDownHandler(e, chart);
+        },
+        mouseUp = function (e) {
+            return mouseUpHandler(e, chart);
+        },
+        mouseMove = function (e) {
+            return mouseMoveHandler(e, chart);
+        };
 
     // Check if chart is using the module, if not we don't do anything.
     if (!chart.isDraggable()) {
         return;
     }
 
-    /**
-     * Check whether the zoomKey or panKey is pressed
-     **/
-    function zoomOrPanKeyPressed(e) {
-        return (e[zoomKey] || e[panKey]);
-    }
-
-    /**
-     * Get the new values based on the drag event
-     */
-    function getNewPos(e) {
-        var originalEvent = e.originalEvent || e,
-            pageX = originalEvent.changedTouches ?
-                originalEvent.changedTouches[0].pageX : e.pageX,
-            pageY = originalEvent.changedTouches ?
-                originalEvent.changedTouches[0].pageY : e.pageY,
-            series = dragPoint.series,
-            dragDropOptions = merge(
-                defaultDragDropOptions, series.options.dragDrop
-            ),
-            draggableX = dragDropOptions.draggableX &&
-                dragPoint.draggableX !== false,
-            draggableY = dragDropOptions.draggableY &&
-                dragPoint.draggableY !== false,
-            dragSensitivity = dragDropOptions.dragSensitiviy,
-            deltaX = draggableX ? dragX - pageX : 0,
-            deltaY = draggableY ? dragY - pageY : 0,
-            newPlotX = dragPlotX - deltaX,
-            newPlotY = dragPlotY - deltaY,
-            newX = dragX === undefined ?
-                dragPoint.x : series.xAxis.toValue(newPlotX, true),
-            newY = dragY === undefined ?
-                dragPoint.y : series.yAxis.toValue(newPlotY, true);
-
-        newX = filterRange(newX, series, 'X');
-        newY = filterRange(newY, series, 'Y');
-
-        if (dragPoint.low) {
-            var newPlotHigh = dragPlotHigh - deltaY,
-                newPlotLow = dragPlotLow - deltaY;
-            newHigh = dragY === undefined ?
-                dragPoint.high : series.yAxis.toValue(newPlotHigh, true);
-            newLow = dragY === undefined ?
-                dragPoint.low : series.yAxis.toValue(newPlotLow, true);
-            newHigh = filterRange(newHigh, series, 'Y');
-            newLow = filterRange(newLow, series, 'Y');
-        }
-
-        if (
-            Math.sqrt(
-                Math.pow(deltaX, 2) + Math.pow(deltaY, 2)
-            ) > dragSensitivity
-        ) {
-            return {
-                x: draggableX ? newX : dragPoint.x,
-                y: draggableY ? newY : dragPoint.y,
-                high: (draggableY && !changeLow) ? newHigh : dragPoint.high,
-                low: (draggableY && changeLow) ? newLow : dragPoint.low,
-                dragStart: dragStart,
-                originalEvent: e
-            };
-        }
-        return null;
-    }
-
-    /**
-     * Handler for mouseup
-     */
-    function drop(e) {
-        var newPos = dragPoint && e && getNewPos(e);
-
-        function reset() {
-            dragPoint = dragX = dragY = undefined;
-        }
-
-        if (newPos) {
-            dragPoint.firePointEvent('drop', newPos, function () {
-                dragPoint.update(newPos);
-
-                // Update k-d-tree immediately to prevent tooltip jump (#43)
-                dragPoint.series.options.kdNow = true;
-                dragPoint.series.buildKDTree();
-
-                reset();
-            });
-        } else {
-            reset();
-        }
-    }
-
-    /**
-     * Handler for mousedown
-     */
-    function mouseDown(e) {
-
-        // Check whether the panKey or zoomKey isn't pressed
-        if (!zoomOrPanKeyPressed(e)) {
-
-            var options,
-                originalEvent = e.originalEvent || e,
-                hoverPoint,
-                series,
-                bottom;
-
-            if (
-                (originalEvent.target.getAttribute('class') || '')
-                    .indexOf('highcharts-handle') !== -1
-            ) {
-                hoverPoint = originalEvent.target.point;
-            }
-
-            series = chart.hoverPoint && chart.hoverPoint.series;
-            if (
-                !hoverPoint &&
-                chart.hoverPoint &&
-                (!series.useDragHandle || !series.useDragHandle())
-            ) {
-                hoverPoint = chart.hoverPoint;
-            }
-
-            if (hoverPoint) {
-                options = hoverPoint.series.options.dragDrop || {};
-                dragStart = {};
-                if (options.draggableX && hoverPoint.draggableX !== false) {
-                    dragPoint = hoverPoint;
-                    dragX = originalEvent.changedTouches ?
-                        originalEvent.changedTouches[0].pageX : e.pageX;
-                    dragPlotX = dragPoint.plotX;
-                    dragStart.x = dragPoint.x;
-                }
-
-                if (options.draggableY && hoverPoint.draggableY !== false) {
-                    dragPoint = hoverPoint;
-                    // Added support for normal stacking (#78)
-                    bottom = pick(series.translatedThreshold, chart.plotHeight);
-
-                    dragY = originalEvent.changedTouches ?
-                        originalEvent.changedTouches[0].pageY : e.pageY;
-                    dragPlotY = dragPoint.plotY +
-                        (bottom - (dragPoint.yBottom || bottom));
-                    dragStart.y = dragPoint.y;
-                    if (dragPoint.plotHigh) {
-                        dragPlotHigh = dragPoint.plotHigh;
-                        dragPlotLow = dragPoint.plotLow;
-                        changeLow = (
-                            Math.abs(dragPlotLow - (dragY - 60)) <
-                            Math.abs(dragPlotHigh - (dragY - 60))
-                        ) ? true : false;
-                    }
-                }
-
-                // Disable zooming when dragging
-                if (dragPoint) {
-                    chart.mouseIsDown = false;
-                }
-            }
-        }
-    }
-
-    /**
-     * Handler for mousemove. If the mouse button is pressed, drag the element.
-     */
-    function mouseMove(e) {
-
-        // Check whether the zoomKey or panKey isn't pressed
-        if (dragPoint && !zoomOrPanKeyPressed(e)) {
-
-            e.preventDefault();
-
-            var evtArgs = getNewPos(e), // Gets x and y
-                proceed;
-
-            // Fire the 'drag' event with a default action to move the point.
-            if (evtArgs) {
-                dragPoint.firePointEvent(
-                    'drag',
-                    evtArgs,
-                    function () {
-
-                        var kdTree,
-                            series = dragPoint.series;
-
-                        proceed = true;
-
-                        dragPoint.update(evtArgs, false);
-
-                        // Hide halo while dragging (#14)
-                        if (series.halo) {
-                            series.halo = series.halo.destroy();
-                        }
-
-                        // Let the tooltip follow and reflect the drag point
-                        chart.pointer.reset(true);
-
-
-                        // Stacking requires full redraw
-                        if (series.stackKey) {
-                            chart.redraw();
-                        } else {
-                            // Do a series redraw only. Let the k-d-tree survive
-                            // the redraw in order to prevent tooltip flickering
-                            // (#43).
-                            kdTree = series.kdTree;
-                            series.redraw();
-                            series.kdTree = kdTree;
-                        }
-                    }
-                );
-
-                // The default handler has not run because of prevented default
-                if (!proceed) {
-                    drop();
-                }
-            }
-        }
-    }
-
     // Kill animation on first drag when chart.animation is set to false.
     chart.redraw();
 
-    // Add'em
+    // Add event handlers
     addEvent(container, 'mousemove', mouseMove);
     addEvent(container, 'touchmove', mouseMove);
     addEvent(container, 'mousedown', mouseDown);
     addEvent(container, 'touchstart', mouseDown);
-    addEvent(doc, 'mouseup', drop);
-    addEvent(doc, 'touchend', drop);
-    addEvent(container, 'mouseleave', drop);
+    addEvent(container, 'mouseleave', mouseUp);
+    chart.unbindDragDropMouseUp = addEvent(doc, 'mouseup', mouseUp);
+    chart.unbindDragDropTouchEnd = addEvent(doc, 'touchend', mouseUp);
+
+    // Add cleanup to make sure we don't pollute document
+    addEvent(chart, 'destroy', function () {
+        if (chart.unbindDragDropMouseUp) {
+            chart.unbindDragDropMouseUp();
+        }
+        if (chart.unbindDragDropTouchEnd) {
+            chart.unbindDragDropTouchEnd();
+        }
+    });
 });
+
 
 /**
  * Extend the column chart tracker by visualizing the tracker object for
@@ -346,7 +375,7 @@ columnProto.dragHandlePath = function (shapeArgs, strokeW, isNegative) {
 H.wrap(columnProto, 'drawTracker', function (proceed) {
     var series = this,
         dragDropOptions = series.options.dragDrop || {},
-        strokeW = series.borderWidth || 0;
+        strokeW = series.dragHandleLineWidth || series.borderWidth || 0;
 
     proceed.apply(series);
 
@@ -354,7 +383,6 @@ H.wrap(columnProto, 'drawTracker', function (proceed) {
         this.useDragHandle() &&
         (dragDropOptions.draggableX || dragDropOptions.draggableY)
     ) {
-
         each(series.points, function (point) {
             var path = (
                     dragDropOptions.dragHandlePath ||
@@ -365,15 +393,17 @@ H.wrap(columnProto, 'drawTracker', function (proceed) {
                 point.handle = series.chart.renderer.path(path)
                     .attr({
                         fill: dragDropOptions.dragHandleFill ||
+                            series.dragHandleFill ||
                             'rgba(0,0,0,0.5)',
                         'class': 'highcharts-handle',
                         'stroke-width': strokeW,
-                        'stroke': dragDropOptions.dragHandleStroke ||
+                        'stroke': dragDropOptions.dragHandleLineColor ||
+                            series.dragHandleLineColor ||
                             series.options.borderColor ||
                             1
                     })
                     .css({
-                        cursor: 'ns-resize'
+                        cursor: series.dragCursor || 'ns-resize'
                     })
                     .add(series.group);
 
