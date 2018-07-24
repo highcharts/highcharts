@@ -911,9 +911,13 @@ H.Toolbar.prototype.features = {
             }
         }
     },
-    'show-hide-all': {
-        start: function () {
+    'toggle-annotations': {
+        init: function () {
+            this.toggledAnnotations = !this.toggledAnnotations;
 
+            each(this.chart.annotations || [], function (annotation) {
+                annotation.setVisibility(!this.toggledAnnotations);
+            }, this);
         }
     },
     'save-chart': {
