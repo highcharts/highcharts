@@ -36,6 +36,7 @@ H.setOptions({
             className: 'stocktools-wrapper',
             toolbarClassName: 'stocktools-toolbar',
             buttons: [
+                'fullScreen',
                 'simpleShapes',
                 'lines',
                 'separator',
@@ -201,6 +202,9 @@ H.setOptions({
                     typeCandlestick: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                     }
+                },
+                fullScreen: {
+                    symbol: 'url(https://cdn.rawgit.com/YR/weather-symbols/6.0.2/dist/svg/40d.svg)'
                 }
             }
         }
@@ -550,6 +554,7 @@ H.Toolbar.prototype = {
         zoomXY: 'highcharts-zoom-xy',
         typeLine: 'highcharts-series-type-line',
         typeOHLC: 'highcharts-series-type-ohlc',
-        typeCandlestick: 'highcharts-series-type-candlestick'
+        typeCandlestick: 'highcharts-series-type-candlestick',
+        fullScreen: 'highcharts-full-screen'
     }
 };

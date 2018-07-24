@@ -851,8 +851,11 @@ H.Toolbar.prototype.features = {
         }
     },
     'full-screen': {
-        start: function () {
+        init: function () {
+            var chart = this.chart,
+                stockToolbar = chart.container.parentNode.parentNode;
 
+            chart.fullScreen = new H.FullScreen(stockToolbar);
         }
     },
     'current-price-indicator': {
