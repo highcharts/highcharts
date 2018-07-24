@@ -38,17 +38,19 @@ H.setOptions({
             buttons: [
                 'simpleShapes',
                 'lines',
-                'separator',
                 'crookedLines',
-                'separator',
-                'verticalLabels',
-                'currentPriceIndicator',
                 'measure',
                 'advanced',
+                'toggleAnnotations',
+                'separator',
+                'verticalLabels',
                 'flags',
-                'indicators',
+                'separator',
                 'zoomChange',
-                'typeChange'
+                'typeChange',
+                'separator',
+                'indicators',
+                'currentPriceIndicator'
             ],
             definitions: {
                 simpleShapes: {
@@ -171,6 +173,9 @@ H.setOptions({
                 },
                 measure: {
                     symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                },
+                toggleAnnotations: {
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
                 },
                 currentPriceIndicator: {
                     symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
@@ -550,6 +555,7 @@ H.Toolbar.prototype = {
         zoomXY: 'highcharts-zoom-xy',
         typeLine: 'highcharts-series-type-line',
         typeOHLC: 'highcharts-series-type-ohlc',
-        typeCandlestick: 'highcharts-series-type-candlestick'
+        typeCandlestick: 'highcharts-series-type-candlestick',
+        toggleAnnotations: 'highcharts-toggle-annotations'
     }
 };
