@@ -1,17 +1,16 @@
-Highcharts.stockChart('container', {
-    series: [{
-        // line
-        showPrice: {
-            enabled: true,
-            color: 'red'
-        },
-        // label
-        priceIndicator: {
-            enabled: true,
-            label: {
-                enabled: true
+$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
+
+    Highcharts.stockChart('container', {
+        yAxis: {
+            labels: {
+                align: 'left'
             }
         },
-        data: [1, 3, 3, 4, 3, 2]
-    }]
+        series: [{
+            type: 'ohlc',
+            id: 'aapl',
+            name: 'AAPL Stock Price',
+            data: data
+        }]
+    });
 });

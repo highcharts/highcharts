@@ -15,22 +15,24 @@ var addEvent = H.addEvent,
 
 addEvent(H.Series, 'afterRender', function () {
     var serie = this,
-        seriesOptions = serie.options;
+        seriesOptions = serie.options,
+        priceIndicator = seriesOptions.priceIndicator,
+        showPrice = seriesOptions.showPrice;
 
-    if ((seriesOptions.showPrice || seriesOptions.priceIndicator) &&
+    if ((showPrice || priceIndicator) &&
             seriesOptions.id !== 'highcharts-navigator-series') {
 
-        var origOptions = serie.yAxis.crosshair,
-            origGraphic = serie.yAxis.cross,
-            origLabel = serie.yAxis.crossLabel,
-            points = serie.points,
-            xAxis = serie.xAxis,
+        var xAxis = serie.xAxis,
             yAxis = serie.yAxis,
+            origOptions = yAxis.crosshair,
+            origGraphic = yAxis.cross,
+            origLabel = yAxis.crossLabel,
+            points = serie.points,
             x = serie.xData[serie.xData.length - 1],
             y = serie.yData[serie.yData.length - 1],
             crop;
 
-        if (seriesOptions.showPrice) {
+        if (showPrice.enabled) {
 
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.showPrice;
 
@@ -45,9 +47,10 @@ addEvent(H.Series, 'afterRender', function () {
 
             // Save price
             serie.customPrice = serie.yAxis.cross;
+
         }
 
-        if (seriesOptions.priceIndicator) {
+        if (priceIndicator.enabled) {
 
             crop = points[points.length - 1].x === x ? 1 : 2;
 
@@ -60,19 +63,20 @@ addEvent(H.Series, 'afterRender', function () {
             // Save price
             yAxis.drawCrosshair(null, points[points.length - crop]);
 
-            serie.customPriceLabel = serie.yAxis.cross;
+            serie.customPriceLabel = yAxis.cross;
 
             if (serie.crossLabel) {
                 serie.crossLabel.destroy();
             }
 
-            serie.crossLabel = serie.yAxis.crossLabel;
+            serie.crossLabel = yAxis.crossLabel;
+
         }
 
         // Restore crosshair:
-        serie.yAxis.crosshair = origOptions;
-        serie.yAxis.cross = origGraphic;
-        serie.yAxis.crossLabel = origLabel;
+        yAxis.crosshair = origOptions;
+        yAxis.cross = origGraphic;
+        yAxis.crossLabel = origLabel;
 
     }
 });

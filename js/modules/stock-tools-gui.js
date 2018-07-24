@@ -44,7 +44,11 @@ H.setOptions({
                 'verticalLabels',
                 'currentPriceIndicator',
                 'measure',
-                'advanced'
+                'advanced',
+                'flags',
+                'indicators',
+                'zoomChange',
+                'typeChange'
             ],
             definitions: {
                 simpleShapes: {
@@ -57,6 +61,26 @@ H.setOptions({
                     },
                     label: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
+                    }
+                },
+                flags: {
+                    items: [
+                        'circlepin',
+                        'diamondpin',
+                        'squarepin',
+                        'simplepin'
+                    ],
+                    simplepin: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-flag.svg)'
+                    },
+                    diamondpin: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-diamondpin.svg)'
+                    },
+                    squarepin: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-squarepin.svg)'
+                    },
+                    circlepin: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-circlepin.svg)'
                     }
                 },
                 lines: {
@@ -150,6 +174,33 @@ H.setOptions({
                 },
                 currentPriceIndicator: {
                     symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
+                },
+                indicators: {
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                },
+                zoomChange: {
+                    items: ['zoomX', 'zoomY', 'zoomXY'],
+                    zoomX: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    },
+                    zoomY: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    },
+                    zoomXY: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    }
+                },
+                typeChange: {
+                    items: ['typeOHLC', 'typeLine', 'typeCandlestick'],
+                    typeOHLC: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    },
+                    typeLine: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    },
+                    typeCandlestick: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                    }
                 }
             }
         }
@@ -489,6 +540,16 @@ H.Toolbar.prototype = {
         verticalLabel: 'highcharts-vertical-label',
         verticalArrow: 'highcharts-vertical-arrow',
         verticalDoubleArrow: 'highcharts-vertical-double-arrow',
-        currentPriceIndicator: 'highcharts-current-price-indicator'
+        currentPriceIndicator: 'highcharts-current-price-indicator',
+        flagCirclepin: 'highcharts-flag-circlepin',
+        flagDiamondpin: 'highcharts-flag-diamondpin',
+        flagSquarepin: 'highcharts-flag-squarepin',
+        flagSimplepin: 'highcharts-flag-simplepin',
+        zoomX: 'highcharts-zoom-x',
+        zoomY: 'highcharts-zoom-y',
+        zoomXY: 'highcharts-zoom-xy',
+        typeLine: 'highcharts-series-type-line',
+        typeOHLC: 'highcharts-series-type-ohlc',
+        typeCandlestick: 'highcharts-series-type-candlestick'
     }
 };

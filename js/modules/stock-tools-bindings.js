@@ -49,6 +49,7 @@ function updateNthPoint(startIndex) {
         annotation.setControlPointsVisibility(true);
     };
 }
+
 // TO DO: Consider using getHoverData(), but always kdTree
 function attractToPoint(e, chart) {
     var x = chart.xAxis[0].toValue(e.chartX),
@@ -69,8 +70,65 @@ function attractToPoint(e, chart) {
         x: closestPoint.x,
         y: closestPoint.y,
         below: y < closestPoint.y,
-        xAxis: 0,
-        yAxis: 0
+        series: closestPoint.series,
+        xAxis: closestPoint.series.xAxis.index,
+        yAxis: closestPoint.series.yAxis.index
+    };
+}
+
+/**
+ * Generates function which will add a flag series using modal in GUI.
+ * Method uses internally `Toolbar.showForm(options, callback)`.
+ *
+ * Example: addFlagFromForm('diamondpin') - will generate function that shows
+ * modal in GUI.
+ *
+ * @param {String} Type of flag series, e.g. "squarepin"
+ *
+ * @return {function} Callback to be used in `start` callback
+ */
+function addFlagFromForm(type) {
+    return function (e) {
+        var chart = this.chart,
+            point = attractToPoint(e, chart);
+        if (this.showForm) {
+            this.showForm(
+                // Enabled options:
+                [{
+                    type: 'string',
+                    name: 'name',
+                    label: 'Name:',
+                    value: 'A'
+                }, {
+                    type: 'string',
+                    name: 'title',
+                    label: 'Name:',
+                    value: 'Flag A'
+                }, {
+                    type: 'color',
+                    name: 'color',
+                    value: chart.options.colors[chart.colorCounter]
+                }],
+                // Callback on submit:
+                function (fields) {
+                    var pointConfig = {
+                        x: point.x,
+                        y: point.y
+                    };
+
+                    each(fields, function (field) {
+                        pointConfig[field.name] = field.value;
+                    });
+
+                    chart.addSeries({
+                        type: 'flags',
+                        onSeries: point.series.id,
+                        shape: type,
+                        data: [pointConfig]
+                    });
+                }
+            );
+        }
     };
 }
 
@@ -730,20 +788,66 @@ H.Toolbar.prototype.features = {
     'vertical-double-arrow': {
 
     },
-    'flag': {
-        start: function () {
-
-        }
+    // Flag types:
+    'flag-cirlcepin': {
+        start: addFlagFromForm('circlepin')
+    },
+    'flag-diamondpin': {
+        start: addFlagFromForm('diamondpin')
+    },
+    'flag-squarepin': {
+        start: addFlagFromForm('squarepin')
+    },
+    'flag-simplepin': {
+        start: addFlagFromForm('simplepin')
     },
     // Other tools:
-    'zoom-in': {
-        start: function () {
-
+    'zoom-x': {
+        init: function () {
+            this.chart.update({
+                chart: {
+                    zoomType: 'xy'
+                }
+            });
         }
     },
-    'zoom-out': {
-        start: function () {
-
+    'zoom-y': {
+        init: function () {
+            this.chart.update({
+                chart: {
+                    zoomType: 'y'
+                }
+            });
+        }
+    },
+    'zoom-xy': {
+        init: function () {
+            this.chart.update({
+                chart: {
+                    zoomType: 'x'
+                }
+            });
+        }
+    },
+    'series-type-line': {
+        init: function () {
+            this.chart.series[0].update({
+                type: 'line'
+            });
+        }
+    },
+    'series-type-ohlc': {
+        init: function () {
+            this.chart.series[0].update({
+                type: 'ohlc'
+            });
+        }
+    },
+    'series-type-candlestick': {
+        init: function () {
+            this.chart.series[0].update({
+                type: 'candlestick'
+            });
         }
     },
     'full-screen': {
@@ -753,34 +857,55 @@ H.Toolbar.prototype.features = {
     },
     'current-price-indicator': {
         init: function () {
-            console.log('a');
             var series = this.chart.series[0],
                 options = series.options,
-                priceIndicator = options.priceIndicator && 
+                priceIndicator = options.priceIndicator &&
                                 options.priceIndicator.enabled,
                 showPrice = options.showPrice && options.showPrice.enabled;
-
-console.log(!showPrice);
 
             series.update({
                 // line
                 showPrice: {
-                  enabled: false,
-                  color: 'red'
+                    enabled: !showPrice,
+                    color: 'red'
                 },
                 // label
                 priceIndicator: {
-                  enabled: false,
-                  label: {
-                    enabled: true
-                  }
-                },
+                    enabled: !priceIndicator,
+                    label: {
+                        enabled: true
+                    }
+                }
             });
         }
     },
     'indicators': {
-        start: function () {
+        init: function () {
+            var chart = this.chart;
+            if (this.showIndicatorsForm) {
+                this.showIndicatorsForm(
+                    // Callback on submit:
+                    function (fields) {
+                        var seriesConfig = {
+                            params: {}
+                        };
 
+                        each(fields, function (field) {
+                            if (field.match('params')) {
+                                // Params e.g. "params.period"
+                                seriesConfig.params[
+                                    field.name.replace('params', '')
+                                ] = field.value;
+                            } else {
+                                // General series options, e.g. color
+                                seriesConfig[field.name] = field.value;
+                            }
+                        });
+
+                        chart.addSeries(seriesConfig);
+                    }
+                );
+            }
         }
     },
     'show-hide-all': {
@@ -805,17 +930,22 @@ addEvent(H.Toolbar, 'afterInit', function () {
                 element,
                 'click',
                 function (e) {
-                    // we have two objects with the same class,
+                    // We have two objects with the same class,
                     // so need to trigger one event (main button)
                     e.stopPropagation();
 
                     toolbar.selectedButton = events;
 
-                    // unslect other active buttons
+                    // Unslect other active buttons
                     toolbar.unselectAllButtons(this);
 
-                    // set active class on the current button
+                    // Set active class on the current button
                     toolbar.selectButton(this);
+
+                    // Call "init" event, for example to open modal window
+                    if (events.init) {
+                        events.init.call(toolbar);
+                    }
                 }
             );
         }
@@ -830,7 +960,7 @@ addEvent(H.Chart, 'load', function () {
         addEvent(chart, 'click', function (e) {
             var selectedButton = toolbar.selectedButton;
 
-            if (!selectedButton) {
+            if (!selectedButton || !selectedButton.start) {
                 return;
             }
 
