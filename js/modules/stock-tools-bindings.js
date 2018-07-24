@@ -71,8 +71,8 @@ function attractToPoint(e, chart) {
         y: closestPoint.y,
         below: y < closestPoint.y,
         series: closestPoint.series,
-        xAxis: closestPoint.series.xAxis.index,
-        yAxis: closestPoint.series.yAxis.index
+        xAxis: closestPoint.series.xAxis.index || 0,
+        yAxis: closestPoint.series.yAxis.index || 0
     };
 }
 
@@ -735,9 +735,14 @@ H.Toolbar.prototype.features = {
             annotation = this.chart.addAnnotation({
                 type: 'vertical-line',
                 typeOptions: {
-                    point: closestPoint,
+                    point: {
+                        x: closestPoint.x,
+                        y: closestPoint.y,
+                        xAxis: closestPoint.xAxis,
+                        yAxis: closestPoint.yAxis
+                    },
                     label: {
-                        offset: closestPoint.below ? -40 : 40,
+                        offset: closestPoint.below ? 40 : -40,
                         text: this.verticalCounter.toString()
                     }
                 }
@@ -754,7 +759,12 @@ H.Toolbar.prototype.features = {
                 annotation = this.chart.addAnnotation({
                     type: 'vertical-line',
                     typeOptions: {
-                        point: closestPoint,
+                        point: {
+                            x: closestPoint.x,
+                            y: closestPoint.y,
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis
+                        },
                         label: {
                             offset: closestPoint.below ? 40 : -40
                         }
@@ -770,7 +780,12 @@ H.Toolbar.prototype.features = {
                 annotation = this.chart.addAnnotation({
                     type: 'vertical-line',
                     typeOptions: {
-                        point: closestPoint,
+                        point: {
+                            x: closestPoint.x,
+                            y: closestPoint.y,
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis
+                        },
                         label: {
                             offset: closestPoint.below ? 40 : -40,
                             format: ' '
