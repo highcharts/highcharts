@@ -42,6 +42,7 @@ H.setOptions({
                 'crookedLines',
                 'separator',
                 'verticalLabels',
+                'currentPriceIndicator',
                 'measure',
                 'advanced'
             ],
@@ -146,6 +147,9 @@ H.setOptions({
                 },
                 measure: {
                     symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                },
+                currentPriceIndicator: {
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
                 }
             }
         }
@@ -484,6 +488,7 @@ H.Toolbar.prototype = {
         verticalCounter: 'highcharts-vertical-counter',
         verticalLabel: 'highcharts-vertical-label',
         verticalArrow: 'highcharts-vertical-arrow',
-        verticalDoubleArrow: 'highcharts-vertical-double-arrow'
+        verticalDoubleArrow: 'highcharts-vertical-double-arrow',
+        currentPriceIndicator: 'highcharts-current-price-indicator'
     }
 };

@@ -751,9 +751,31 @@ H.Toolbar.prototype.features = {
 
         }
     },
-    'horizontal-price': {
-        start: function () {
+    'current-price-indicator': {
+        init: function () {
+            console.log('a');
+            var series = this.chart.series[0],
+                options = series.options,
+                priceIndicator = options.priceIndicator && 
+                                options.priceIndicator.enabled,
+                showPrice = options.showPrice && options.showPrice.enabled;
 
+console.log(!showPrice);
+
+            series.update({
+                // line
+                showPrice: {
+                  enabled: false,
+                  color: 'red'
+                },
+                // label
+                priceIndicator: {
+                  enabled: false,
+                  label: {
+                    enabled: true
+                  }
+                },
+            });
         }
     },
     'indicators': {
