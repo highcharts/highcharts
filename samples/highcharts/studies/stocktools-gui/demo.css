@@ -10,6 +10,42 @@
   position: relative;
 }
 
+.stocktools-wrapper:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.stocktools-wrapper:-moz-full-screen {
+  margin: 0;
+}
+
+.stocktools-wrapper:-ms-fullscreen {
+  margin: 0;
+}
+
+.stocktools-wrapper:fullscreen {
+  margin: 0;
+}
+
+.stocktools-wrapper:-webkit-full-screen .chart {
+  height:100%;
+}
+
+.stocktools-wrapper:-moz-full-screen .chart {
+  height:100%;
+}
+
+.stocktools-wrapper:-ms-fullscreen .chart {
+  height:100%;
+}
+
+.stocktools-wrapper:fullscreen .chart {
+  height:100%;
+}
+
+
+
 .menu-wrapper {
   float: left;
   width: 50px;
