@@ -48,3 +48,61 @@ QUnit.test('Tooltip positioned correctly through the getPosition function.', fun
         'Tooltip points to the middle of the top side of last column (#7242)'
     );
 });
+// Highcharts v4.0.3, Issue #424
+// Tooltip is positioned on the top series if multiple y axis is used.
+QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        yAxis: [{
+            height: '40%'
+        }, {
+            top: '50%',
+            height: '50%',
+            offset: 0
+        }],
+        tooltip: {
+            hideDelay: 0
+        },
+        series: [{
+            data: [1]
+        }, {
+            data: [5],
+            yAxis: 1,
+            type: 'column'
+        }]
+    });
+
+    var controller = new TestController(chart),
+        tooltipYPos = 0,
+        linePoint = chart.series[0].points[0],
+        lineXPos = linePoint.plotX,
+        lineYPos = linePoint.plotY,
+        columnPoint = chart.series[1].points[0],
+        columnXPos = columnPoint.plotX,
+        columnYPos = chart.series[1].group.translateY + columnPoint.plotY;
+
+    controller.moveToElement(chart.container, (lineXPos + 1), (lineYPos + 1));
+    assert.ok(
+        !chart.tooltip.isHidden,
+        'Tooltip should be visible.'
+    );
+    tooltipYPos = chart.tooltip.label.translateY;
+    assert.ok(
+        tooltipYPos < lineYPos,
+        "Tooltip of first series should be over first series"
+    );
+    controller.moveTo(0, 0);
+    assert.ok(
+        chart.tooltip.isHidden,
+        'Tooltip should be hidden.'
+    );
+    controller.moveToElement(chart.container, (columnXPos + 1), (columnYPos + 1));
+    assert.ok(
+        !chart.tooltip.isHidden,
+        'Tooltip should be visible.'
+    );
+    tooltipYPos = chart.tooltip.label.translateY;
+    assert.ok(
+        (tooltipYPos < columnYPos) && (tooltipYPos > lineYPos),
+        'Tooltip of second series should be over second series, but under first series'
+    );
+});
