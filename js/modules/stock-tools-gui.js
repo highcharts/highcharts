@@ -67,21 +67,21 @@ H.setOptions({
                 },
                 flags: {
                     items: [
-                        'circlepin',
-                        'diamondpin',
-                        'squarepin',
-                        'simplepin'
+                        'flagCirclepin',
+                        'flagDiamondpin',
+                        'flagSquarepin',
+                        'flagSimplepin'
                     ],
-                    simplepin: {
+                    flagSimplepin: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/flag-flag.svg)'
                     },
-                    diamondpin: {
+                    flagDiamondpin: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/flag-diamondpin.svg)'
                     },
-                    squarepin: {
+                    flagSquarepin: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/flag-squarepin.svg)'
                     },
-                    circlepin: {
+                    flagCirclepin: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/flag-circlepin.svg)'
                     }
                 },

@@ -12,6 +12,7 @@ var addEvent = H.addEvent,
     defined = H.defined,
     doc = H.doc,
     each = H.each,
+    extend = H.extend,
     objectEach = H.objectEach,
     PREFIX = 'highcharts-';
 
@@ -71,8 +72,8 @@ function attractToPoint(e, chart) {
         y: closestPoint.y,
         below: y < closestPoint.y,
         series: closestPoint.series,
-        xAxis: closestPoint.series.xAxis.index,
-        yAxis: closestPoint.series.yAxis.index
+        xAxis: closestPoint.series.xAxis.index || 0,
+        yAxis: closestPoint.series.yAxis.index || 0
     };
 }
 
@@ -132,10 +133,7 @@ function addFlagFromForm(type) {
     };
 }
 
-// TO DO:
-// Consider this directly in setOptions();
-// or apply H.setOptions({ bindings: H.toolbar.proto.features })
-H.Toolbar.prototype.features = {
+var stockToolsBindings = {
     // Simple annotations:
     'circle-annotation': {
         start: function (e) {
@@ -735,9 +733,14 @@ H.Toolbar.prototype.features = {
             annotation = this.chart.addAnnotation({
                 type: 'vertical-line',
                 typeOptions: {
-                    point: closestPoint,
+                    point: {
+                        x: closestPoint.x,
+                        y: closestPoint.y,
+                        xAxis: closestPoint.xAxis,
+                        yAxis: closestPoint.yAxis
+                    },
                     label: {
-                        offset: closestPoint.below ? -40 : 40,
+                        offset: closestPoint.below ? 40 : -40,
                         text: this.verticalCounter.toString()
                     }
                 }
@@ -754,7 +757,12 @@ H.Toolbar.prototype.features = {
                 annotation = this.chart.addAnnotation({
                     type: 'vertical-line',
                     typeOptions: {
-                        point: closestPoint,
+                        point: {
+                            x: closestPoint.x,
+                            y: closestPoint.y,
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis
+                        },
                         label: {
                             offset: closestPoint.below ? 40 : -40
                         }
@@ -770,7 +778,12 @@ H.Toolbar.prototype.features = {
                 annotation = this.chart.addAnnotation({
                     type: 'vertical-line',
                     typeOptions: {
-                        point: closestPoint,
+                        point: {
+                            x: closestPoint.x,
+                            y: closestPoint.y,
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis
+                        },
                         label: {
                             offset: closestPoint.below ? 40 : -40,
                             format: ' '
@@ -789,7 +802,7 @@ H.Toolbar.prototype.features = {
 
     },
     // Flag types:
-    'flag-cirlcepin': {
+    'flag-circlepin': {
         start: addFlagFromForm('circlepin')
     },
     'flag-diamondpin': {
@@ -859,19 +872,19 @@ H.Toolbar.prototype.features = {
         init: function () {
             var series = this.chart.series[0],
                 options = series.options,
-                priceIndicator = options.priceIndicator &&
-                                options.priceIndicator.enabled,
-                showPrice = options.showPrice && options.showPrice.enabled;
+                lastVisiblePrice = options.lastVisiblePrice &&
+                                options.lastVisiblePrice.enabled,
+                lastPrice = options.lastPrice && options.lastPrice.enabled;
 
             series.update({
                 // line
-                showPrice: {
-                    enabled: !showPrice,
+                lastPrice: {
+                    enabled: !lastPrice,
                     color: 'red'
                 },
                 // label
-                priceIndicator: {
-                    enabled: !priceIndicator,
+                lastVisiblePrice: {
+                    enabled: !lastVisiblePrice,
                     label: {
                         enabled: true
                     }
@@ -924,36 +937,173 @@ H.Toolbar.prototype.features = {
     }
 };
 
+extend(H.Toolbar.prototype, {
+    // Private properties added by bindings:
+
+    // Holder for current step, used on mouse move to update bound object
+    // mouseMoveEvent: function () {}
+
+    // Next event in `step` array to be called on chart's click
+    // nextEvent: function () {}
+
+    // Index if the `step` array for the current event
+    // stepIndex: 0
+
+    // Flag to determine if current binding has steps
+    // steps: true|false
+
+    // Bindings holder for all events
+    // selectedButton: {}
+
+    // Holder for user options, returned from `start` event, and passed on to
+    // `step`'s' and `end`.
+    // currentUserDetails: {}
+
+    /*
+     * Hook for click on a button, method selcts/unselects buttons,
+     * then calls `bindings.init` callback.
+     *
+     * @param {HTMLDOMElement} [button] Clicked button
+     * @param {Object} [events] Events passed down from bindings (`init`,
+     * `start`, `step`, `end`)
+     * @param {Event} [clickEvent] Browser's click event
+     *
+     * @private
+     */
+    bindingsButtonClick: function (button, events, clickEvent) {
+        var toolbar = this;
+
+        // We have two objects with the same class,
+        // so need to trigger one event (main button)
+        clickEvent.stopPropagation();
+
+        toolbar.selectedButton = events;
+
+        // Unslect other active buttons
+        toolbar.unselectAllButtons(button);
+
+        // Set active class on the current button
+        toolbar.selectButton(button);
+
+        // Call "init" event, for example to open modal window
+        if (events.init) {
+            events.init.call(toolbar);
+        }
+    },
+    /*
+     * Hook for click on a chart, first click on a chart calls `start` event,
+     * then on all subsequent clicks iterates over `steps` array.
+     * When finished, calls `end` event.
+     *
+     * @param {Chart} Chart that click was performed on
+     * @param {Event} Browser's click event
+     *
+     * @private
+     */
+    bindingsChartClick: function (chart, clickEvent) {
+        var toolbar = this,
+            selectedButton = toolbar.selectedButton;
+
+        if (!selectedButton || !selectedButton.start) {
+            return;
+        }
+
+        if (!toolbar.nextEvent) {
+            // Call init method:
+            toolbar.currentUserDetails = selectedButton.start.call(
+                toolbar,
+                clickEvent
+            );
+
+            // If steps exists (e.g. Annotations), bind them:
+            if (selectedButton.steps) {
+                toolbar.stepIndex = 0;
+                toolbar.steps = true;
+                toolbar.mouseMoveEvent = toolbar.nextEvent =
+                    selectedButton.steps[toolbar.stepIndex];
+            } else {
+                toolbar.steps = false;
+                toolbar.selectedButton = null;
+                // First click is also the last one:
+                if (selectedButton.end) {
+                    selectedButton.end.call(
+                        toolbar,
+                        clickEvent,
+                        toolbar.currentUserDetails
+                    );
+                }
+            }
+        } else {
+
+            toolbar.nextEvent.call(
+                toolbar,
+                clickEvent,
+                toolbar.currentUserDetails
+            );
+
+            if (toolbar.steps) {
+
+                toolbar.stepIndex++;
+
+                if (selectedButton.steps[toolbar.stepIndex]) {
+                    // If we have more steps, bind them one by one:
+                    toolbar.mouseMoveEvent = toolbar.nextEvent =
+                        selectedButton.steps[toolbar.stepIndex];
+                } else {
+
+                    // That was the last step, call end():
+                    if (selectedButton.end) {
+                        selectedButton.end.call(
+                            toolbar,
+                            clickEvent,
+                            toolbar.currentUserDetails
+                        );
+                    }
+                    toolbar.nextEvent = false;
+                    toolbar.mouseMoveEvent = false;
+                    toolbar.selectedButton = null;
+                    // toolbar.deselectButton();
+                }
+            }
+        }
+    },
+    /*
+     * Hook for mouse move on a chart's container. It calls current setp.
+     *
+     * @param {HTMLDOMElement} Chart's container
+     * @param {Event} Browser's click event
+     *
+     * @private
+     */
+    bindingsContainerMouseMove: function (container, moveEvent) {
+        if (this.mouseMoveEvent) {
+            this.mouseMoveEvent.call(
+                this,
+                moveEvent,
+                this.currentUserDetails
+            );
+        }
+    }
+});
+
 addEvent(H.Toolbar, 'afterInit', function () {
     var toolbar = this;
 
-    objectEach(toolbar.features, function (events, className) {
-        var element = doc.getElementsByClassName(PREFIX + className)[0];
-        if (element) {
-            addEvent(
-                element,
-                'click',
-                function (e) {
-                    // We have two objects with the same class,
-                    // so need to trigger one event (main button)
-                    e.stopPropagation();
-
-                    toolbar.selectedButton = events;
-
-                    // Unslect other active buttons
-                    toolbar.unselectAllButtons(this);
-
-                    // Set active class on the current button
-                    toolbar.selectButton(this);
-
-                    // Call "init" event, for example to open modal window
-                    if (events.init) {
-                        events.init.call(toolbar);
+    objectEach(
+        toolbar.chart.options.stockTools.bindings,
+        function (events, className) {
+            var element = doc.getElementsByClassName(PREFIX + className)[0];
+            if (element) {
+                addEvent(
+                    element,
+                    'click',
+                    function (e) {
+                        toolbar.bindingsButtonClick(this, events, e);
                     }
-                }
-            );
+                );
+            }
         }
-    });
+    );
 });
 
 addEvent(H.Chart, 'load', function () {
@@ -962,75 +1112,16 @@ addEvent(H.Chart, 'load', function () {
 
     if (toolbar) {
         addEvent(chart, 'click', function (e) {
-            var selectedButton = toolbar.selectedButton;
-
-            if (!selectedButton || !selectedButton.start) {
-                return;
-            }
-
-            if (!toolbar.nextEvent) {
-                // Call init method:
-                toolbar.currentUserDetails = selectedButton.start.call(
-                    toolbar,
-                    e
-                );
-
-                // If steps exists (e.g. Annotations), bind them:
-                if (selectedButton.steps) {
-                    toolbar.stepIndex = 0;
-                    toolbar.steps = true;
-                    toolbar.mouseMoveEvent = toolbar.nextEvent =
-                        selectedButton.steps[toolbar.stepIndex];
-                } else {
-                    toolbar.steps = false;
-                    toolbar.selectedButton = null;
-                    // First click is also the last one:
-                    if (selectedButton.end) {
-                        selectedButton.end.call(
-                            toolbar,
-                            e,
-                            toolbar.currentUserDetails
-                        );
-                    }
-                }
-            } else {
-
-                toolbar.nextEvent.call(toolbar, e, toolbar.currentUserDetails);
-
-                if (toolbar.steps) {
-
-                    toolbar.stepIndex++;
-
-                    if (selectedButton.steps[toolbar.stepIndex]) {
-                        // If we have more steps, bind them one by one:
-                        toolbar.mouseMoveEvent = toolbar.nextEvent =
-                            selectedButton.steps[toolbar.stepIndex];
-                    } else {
-
-                        // That was the last step, call end():
-                        if (selectedButton.end) {
-                            selectedButton.end.call(
-                                toolbar,
-                                e,
-                                toolbar.currentUserDetails
-                            );
-                        }
-                        toolbar.nextEvent = false;
-                        toolbar.mouseMoveEvent = false;
-                        toolbar.selectedButton = null;
-                        // toolbar.deselectButton();
-                    }
-                }
-            }
+            toolbar.bindingsChartClick(this, e);
         });
         addEvent(chart.container, 'mousemove', function (e) {
-            if (toolbar.mouseMoveEvent) {
-                toolbar.mouseMoveEvent.call(
-                    toolbar,
-                    e,
-                    toolbar.currentUserDetails
-                );
-            }
+            toolbar.bindingsContainerMouseMove(this, e);
         });
+    }
+});
+
+H.setOptions({
+    stockTools: {
+        bindings: stockToolsBindings
     }
 });

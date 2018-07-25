@@ -16,10 +16,10 @@ var addEvent = H.addEvent,
 addEvent(H.Series, 'afterRender', function () {
     var serie = this,
         seriesOptions = serie.options,
-        priceIndicator = seriesOptions.priceIndicator,
-        showPrice = seriesOptions.showPrice;
+        lastVisiblePrice = seriesOptions.lastVisiblePrice,
+        lastPrice = seriesOptions.lastPrice;
 
-    if ((showPrice || priceIndicator) &&
+    if ((lastVisiblePrice || lastPrice) &&
             seriesOptions.id !== 'highcharts-navigator-series') {
 
         var xAxis = serie.xAxis,
@@ -32,11 +32,11 @@ addEvent(H.Series, 'afterRender', function () {
             y = serie.yData[serie.yData.length - 1],
             crop;
 
-        if (showPrice.enabled) {
+        if (lastPrice.enabled) {
 
-            yAxis.crosshair = yAxis.options.crosshair = seriesOptions.showPrice;
+            yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
 
-            yAxis.cross = serie.customPrice;
+            yAxis.cross = serie.lastPrice;
 
             yAxis.drawCrosshair(null, {
                 x: x,
@@ -46,24 +46,24 @@ addEvent(H.Series, 'afterRender', function () {
             });
 
             // Save price
-            serie.customPrice = serie.yAxis.cross;
+            serie.lastPrice = serie.yAxis.cross;
 
         }
 
-        if (priceIndicator.enabled) {
+        if (lastVisiblePrice.enabled) {
 
             crop = points[points.length - 1].x === x ? 1 : 2;
 
             yAxis.crosshair = yAxis.options.crosshair = merge({
                 color: 'transparent'
-            }, seriesOptions.priceIndicator);
+            }, seriesOptions.lastVisiblePrice);
 
-            yAxis.cross = serie.customPriceLabel;
+            yAxis.cross = serie.lastVisiblePrice;
 
             // Save price
             yAxis.drawCrosshair(null, points[points.length - crop]);
 
-            serie.customPriceLabel = yAxis.cross;
+            serie.lastVisiblePrice = yAxis.cross;
 
             if (serie.crossLabel) {
                 serie.crossLabel.destroy();
