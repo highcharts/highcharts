@@ -802,7 +802,7 @@ var stockToolsBindings = {
 
     },
     // Flag types:
-    'flag-cirlcepin': {
+    'flag-circlepin': {
         start: addFlagFromForm('circlepin')
     },
     'flag-diamondpin': {
@@ -872,19 +872,19 @@ var stockToolsBindings = {
         init: function () {
             var series = this.chart.series[0],
                 options = series.options,
-                priceIndicator = options.priceIndicator &&
-                                options.priceIndicator.enabled,
-                showPrice = options.showPrice && options.showPrice.enabled;
+                lastVisiblePrice = options.lastVisiblePrice &&
+                                options.lastVisiblePrice.enabled,
+                lastPrice = options.lastPrice && options.lastPrice.enabled;
 
             series.update({
                 // line
-                showPrice: {
-                    enabled: !showPrice,
+                lastPrice: {
+                    enabled: !lastPrice,
                     color: 'red'
                 },
                 // label
-                priceIndicator: {
-                    enabled: !priceIndicator,
+                lastVisiblePrice: {
+                    enabled: !lastVisiblePrice,
                     label: {
                         enabled: true
                     }
