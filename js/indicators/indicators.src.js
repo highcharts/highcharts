@@ -4,11 +4,38 @@ import '../parts/Utilities.js';
 
 var pick = H.pick,
     each = H.each,
+    extend = H.extend,
+    wrap = H.wrap,
     error = H.error,
     Series = H.Series,
     isArray = H.isArray,
     addEvent = H.addEvent,
     seriesType = H.seriesType;
+
+/*
+ * Support for OHLC data with line type of series.
+ */
+wrap(H.Series.prototype, 'init', function (proceed, chart, options) {
+
+    if (
+        options.forceIndicator &&
+        options.id !== 'highcharts-navigator-series'
+        ) {
+        extend(options, {
+            dataGrouping: {
+                approximation: 'ohlc'
+            }
+        });
+        this.pointValKey = 'close';
+        this.keys = ['x', 'open', 'high', 'low', 'close'];
+        this.pointArrayMap = ['open', 'high', 'low', 'close'];
+        this.toYData = function (point) {
+            return [point.open, point.high, point.low, point.close];
+        };
+    }
+    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
+
 
 /**
  * The SMA series type.
