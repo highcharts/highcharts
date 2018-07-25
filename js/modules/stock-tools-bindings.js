@@ -132,32 +132,6 @@ function addFlagFromForm(type) {
     };
 }
 
-/*
- * Update size of background (rect) in some annotations: Measure, Simple Rect.
- *
- * @return {function} Callback to be used in steps array
- */
-function updateRectSize() {
-    return function (e, annotation) {
-        var options = annotation.options.typeOptions,
-            xStart = this.chart.xAxis[0].toPixels(options.point.x),
-            yStart = this.chart.yAxis[0].toPixels(options.point.y),
-            x = e.chartX,
-            y = e.chartY;
-
-        annotation.update({
-            typeOptions: {
-                background: {
-                    width: x - xStart,
-                    height: y - yStart
-                }
-            }
-        });
-
-        annotation.setControlPointsVisibility(true);
-    };
-}
-
 // TO DO:
 // Consider this directly in setOptions();
 // or apply H.setOptions({ bindings: H.toolbar.proto.features })
@@ -234,39 +208,10 @@ H.Toolbar.prototype.features = {
         ]
     },
     'rectangle-annotation': {
-        start: function (e) {
-            var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY),
-                options = {
-                    type: 'measure',
-                    typeOptions: {
-                        point: {
-                            x: x,
-                            y: y,
-                            xAxis: 0,
-                            yAxis: 0
-                        },
-                        background: {
-                            width: 0,
-                            height: 0
-                        },
-                        crosshairX: {
-                            enabled: false
-                        },
-                        crosshairY: {
-                            enabled: false
-                        },
-                        label: {
-                            enabled: false
-                        }
-                    }
-                };
-
-            return this.chart.addAnnotation(options);
-        },
-        steps: [
-            updateRectSize()
-        ]
+        start: function () {
+            // TO DO:
+            // Consider using measure-type with disabled labels and crosshairs
+        }
     },
     'label-annotation': {
         start: function (e) {
@@ -665,17 +610,35 @@ H.Toolbar.prototype.features = {
                             xAxis: 0,
                             yAxis: 0
                         },
+                        xAxis: 0,
+                        yAxis: 0,
                         background: {
-                            width: 0,
-                            height: 0
+                            width: 300,
+                            height: 150
                         }
                     }
                 };
 
-            return this.chart.addAnnotation(options);
+            if (!this.currentAnnotation) {
+                this.currentAnnotation = this.chart.addAnnotation(options);
+            }
+
+            this.currentAnnotation.setControlPointsVisibility(true);
         },
-        steps: [
-            updateRectSize()
+        _steps: [
+            function () {
+                var options = this.currentAnnotation.options.typeOptions;
+
+                this.currentAnnotation.update({
+                    typeOptions: {
+                        point: [
+                            options.point
+                        ]
+                    }
+                });
+
+                this.currentAnnotation.setControlPointsVisibility(true);
+            }
         ]
     },
     // Advanced type annotations:
@@ -695,7 +658,10 @@ H.Toolbar.prototype.features = {
                     }]
                 }
             });
-        }
+        },
+        steps: [
+            updateNthPoint(1)
+        ]
     },
     'parallel-channel': {
         start: function (e) {
