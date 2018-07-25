@@ -4,7 +4,8 @@ import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     ControlPoint = Annotation.ControlPoint,
-    each = H.each;
+    each = H.each,
+    merge = H.merge;
 
 /**
  * @class Measure
@@ -103,7 +104,7 @@ H.extendAnnotation(Measure, null, {
      */
     addValues: function (resize) {
         var options = this.options.typeOptions,
-            formatter = options.formatter,
+            formatter = options.label.formatter,
             typeOptions = this.options.typeOptions,
             chart = this.chart,
             inverted = chart.options.chart.inverted,
@@ -112,6 +113,10 @@ H.extendAnnotation(Measure, null, {
 
         // set xAxisMin, xAxisMax, yAxisMin, yAxisMax
         this.calculations.recalculate.call(this, resize);
+
+        if (!options.label.enabled) {
+            return;
+        }
 
         if (this.labels.length > 0) {
             this.labels[0].text = (formatter && formatter.call(this)) ||
@@ -174,7 +179,6 @@ H.extendAnnotation(Measure, null, {
      * Add internal crosshair shapes (on top and bottom)
      */
     addCrosshairs: function () {
-
         var chart = this.chart,
             options = this.options.typeOptions,
             point = this.options.typeOptions.point,
@@ -185,7 +189,13 @@ H.extendAnnotation(Measure, null, {
             xAxisMax = xAxis.toPixels(this.xAxisMax),
             yAxisMin = yAxis.toPixels(this.yAxisMin),
             yAxisMax = yAxis.toPixels(this.yAxisMax),
-            crosshairOptions, pathH, pathV;
+            defaultOptions = {
+                point: point,
+                type: 'path'
+            },
+            pathH = [],
+            pathV = [],
+            crosshairOptionsX, crosshairOptionsY;
 
         if (inverted) {
             xAxisMin = yAxis.toPixels(this.yAxisMin);
@@ -193,26 +203,29 @@ H.extendAnnotation(Measure, null, {
             yAxisMin = xAxis.toPixels(this.xAxisMin);
             yAxisMax = xAxis.toPixels(this.xAxisMax);
         }
-
         // horizontal line
-        pathH = [
-            'M',
-            xAxisMin,
-            yAxisMin + ((yAxisMax - yAxisMin) / 2),
-            'L',
-            xAxisMax,
-            yAxisMin + ((yAxisMax - yAxisMin) / 2)
-        ];
+        if (options.crosshairX.enabled) {
+            pathH = [
+                'M',
+                xAxisMin,
+                yAxisMin + ((yAxisMax - yAxisMin) / 2),
+                'L',
+                xAxisMax,
+                yAxisMin + ((yAxisMax - yAxisMin) / 2)
+            ];
+        }
 
         // vertical line
-        pathV = [
-            'M',
-            xAxisMin + ((xAxisMax - xAxisMin) / 2),
-            yAxisMin,
-            'L',
-            xAxisMin + ((xAxisMax - xAxisMin) / 2),
-            yAxisMax
-        ];
+        if (options.crosshairY.enabled) {
+            pathV = [
+                'M',
+                xAxisMin + ((xAxisMax - xAxisMin) / 2),
+                yAxisMin,
+                'L',
+                xAxisMin + ((xAxisMax - xAxisMin) / 2),
+                yAxisMax
+            ];
+        }
 
         // Update existed crosshair
         if (this.shapes.length > 0) {
@@ -223,21 +236,16 @@ H.extendAnnotation(Measure, null, {
         } else {
 
             // Add new crosshairs
-            crosshairOptions = H.merge({
-                type: 'path',
-                zIndex: 6,
-                point: point,
-                dashStyle: 'dash',
-                markerEnd: 'arrow'
-            }, options.crosshair);
+            crosshairOptionsX = merge(defaultOptions, options.crosshairX);
+            crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
             this.initShape(H.extend({
                 d: pathH
-            }, crosshairOptions), false);
+            }, crosshairOptionsX), false);
 
             this.initShape(H.extend({
                 d: pathV
-            }, crosshairOptions), false);
+            }, crosshairOptionsY), false);
 
         }
     },
@@ -568,7 +576,23 @@ H.extendAnnotation(Measure, null, {
             fill: 'rgba(130, 170, 255, 0.4)',
             strokeWidth: 0
         },
-        height: -2
+        height: -2,
+        crosshairX: {
+            enabled: true,
+            zIndex: 6,
+            dashStyle: 'dash',
+            markerEnd: 'arrow'
+        },
+        crosshairY: {
+            enabled: true,
+            zIndex: 6,
+            dashStyle: 'dash',
+            markerEnd: 'arrow'
+        },
+        label: {
+            enabled: true
+            // formatter: function () { }
+        }
     },
 
     controlPointOptions: {
