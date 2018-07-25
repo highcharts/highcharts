@@ -969,7 +969,12 @@ var stockToolsBindings = {
     },
     'save-chart': {
         start: function () {
-
+            // TO DO:
+            // Save in localhost, note it should save:
+            // - annotations
+            // - indicators
+            // - toolbar button states (e.g. price indicator)
+            // - all flag series
         }
     }
 };

@@ -50,7 +50,8 @@ H.setOptions({
                 'typeChange',
                 'separator',
                 'indicators',
-                'currentPriceIndicator'
+                'currentPriceIndicator',
+                'saveChart'
             ],
             definitions: {
                 simpleShapes: {
@@ -206,6 +207,9 @@ H.setOptions({
                     typeCandlestick: {
                         symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                     }
+                },
+                saveChart: {
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
                 }
             }
         }
@@ -556,6 +560,7 @@ H.Toolbar.prototype = {
         typeLine: 'highcharts-series-type-line',
         typeOHLC: 'highcharts-series-type-ohlc',
         typeCandlestick: 'highcharts-series-type-candlestick',
-        toggleAnnotations: 'highcharts-toggle-annotations'
+        toggleAnnotations: 'highcharts-toggle-annotations',
+        saveChart: 'highcharts-save-chart'
     }
 };

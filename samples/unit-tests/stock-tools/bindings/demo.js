@@ -246,4 +246,16 @@ QUnit.test('Bindings general tests', function (assert) {
             );
         }
     );
+
+    /*
+    // Saving chart in the local storage
+    selectButton('save-chart');
+    assert.strictEqual(
+        Highcharts.defined(localStorage.getItem('highcharts-stock-tools-chart')),
+        true,
+        'Chart saved in the local storage'
+    );
+    localStorage.removeItem('highcharts-stock-tools-chart');
+    */
+
 });
