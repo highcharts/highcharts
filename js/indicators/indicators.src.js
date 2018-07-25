@@ -10,29 +10,32 @@ var pick = H.pick,
     Series = H.Series,
     isArray = H.isArray,
     addEvent = H.addEvent,
-    seriesType = H.seriesType;
+    seriesType = H.seriesType,
+    ohlcProto = H.seriesTypes.ohlc.prototype;
 
 /*
  * Support for OHLC data with line type of series.
  */
 wrap(H.Series.prototype, 'init', function (proceed, chart, options) {
+    var dataGrouping = options.dataGrouping;
 
     if (
         options.forceIndicator &&
         options.id !== 'highcharts-navigator-series'
         ) {
-        extend(options, {
-            dataGrouping: {
-                approximation: 'ohlc'
-            }
+
+        if (dataGrouping && dataGrouping.enabled) {
+            dataGrouping.approximation = 'ohlc';
+        }
+
+        extend(this, {
+            pointValKey: ohlcProto.pointValKey,
+            keys: ohlcProto.keys,
+            pointArrayMap: ohlcProto.pointArrayMap,
+            toYData: ohlcProto.toYData
         });
-        this.pointValKey = 'close';
-        this.keys = ['x', 'open', 'high', 'low', 'close'];
-        this.pointArrayMap = ['open', 'high', 'low', 'close'];
-        this.toYData = function (point) {
-            return [point.open, point.high, point.low, point.close];
-        };
     }
+
     proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
