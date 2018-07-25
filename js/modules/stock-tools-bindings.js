@@ -133,6 +133,32 @@ function addFlagFromForm(type) {
     };
 }
 
+/*
+ * Update size of background (rect) in some annotations: Measure, Simple Rect.
+ *
+ * @return {function} Callback to be used in steps array
+ */
+function updateRectSize() {
+    return function (e, annotation) {
+        var options = annotation.options.typeOptions,
+            xStart = this.chart.xAxis[0].toPixels(options.point.x),
+            yStart = this.chart.yAxis[0].toPixels(options.point.y),
+            x = e.chartX,
+            y = e.chartY;
+
+        annotation.update({
+            typeOptions: {
+                background: {
+                    width: x - xStart,
+                    height: y - yStart
+                }
+            }
+        });
+
+        annotation.setControlPointsVisibility(true);
+    };
+}
+
 var stockToolsBindings = {
     // Simple annotations:
     'circle-annotation': {
@@ -206,10 +232,39 @@ var stockToolsBindings = {
         ]
     },
     'rectangle-annotation': {
-        start: function () {
-            // TO DO:
-            // Consider using measure-type with disabled labels and crosshairs
-        }
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                options = {
+                    type: 'measure',
+                    typeOptions: {
+                        point: {
+                            x: x,
+                            y: y,
+                            xAxis: 0,
+                            yAxis: 0
+                        },
+                        background: {
+                            width: 0,
+                            height: 0
+                        },
+                        crosshairX: {
+                            enabled: false
+                        },
+                        crosshairY: {
+                            enabled: false
+                        },
+                        label: {
+                            enabled: false
+                        }
+                    }
+                };
+
+            return this.chart.addAnnotation(options);
+        },
+        steps: [
+            updateRectSize()
+        ]
     },
     'label-annotation': {
         start: function (e) {
@@ -608,35 +663,17 @@ var stockToolsBindings = {
                             xAxis: 0,
                             yAxis: 0
                         },
-                        xAxis: 0,
-                        yAxis: 0,
                         background: {
-                            width: 300,
-                            height: 150
+                            width: 0,
+                            height: 0
                         }
                     }
                 };
 
-            if (!this.currentAnnotation) {
-                this.currentAnnotation = this.chart.addAnnotation(options);
-            }
-
-            this.currentAnnotation.setControlPointsVisibility(true);
+            return this.chart.addAnnotation(options);
         },
-        _steps: [
-            function () {
-                var options = this.currentAnnotation.options.typeOptions;
-
-                this.currentAnnotation.update({
-                    typeOptions: {
-                        point: [
-                            options.point
-                        ]
-                    }
-                });
-
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+        steps: [
+            updateRectSize()
         ]
     },
     // Advanced type annotations:
