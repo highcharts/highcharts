@@ -88,7 +88,7 @@ seriesType('map', 'scatter', {
      * @type {Color}
      * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
      * @default #cccccc
-     * @product highmaps
+     * @product highmaps highcharts
      * @apioption plotOptions.series.borderColor
      */
     borderColor: '${palette.neutralColor20}',
@@ -100,7 +100,7 @@ seriesType('map', 'scatter', {
      * `.highcharts-point` class.
      *
      * @sample    {highmaps} maps/plotoptions/series-border/ Borders demo
-     * @product   highmaps
+     * @product   highmaps highcharts
      * @apioption plotOptions.series.borderWidth
      */
     borderWidth: 1,
