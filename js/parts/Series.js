@@ -193,8 +193,8 @@ H.Series = H.seriesType('line', null, { // base series options
      *
      * <dt>easing</dt>
      *
-     * <dd>A string reference to an easing function set on the `Math` object.
-     * See the _Custom easing function_ demo below.</dd>
+     * <dd>Can be a string reference to an easing function set on the `Math`
+     * object or a function. See the _Custom easing function_ demo below.</dd>
      *
      * </dl>
      *
