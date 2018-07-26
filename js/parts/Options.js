@@ -2590,7 +2590,12 @@ H.defaultOptions = {
          */
 
         /**
-         * The name of a symbol to use for the border around the tooltip.
+         * The name of a symbol to use for the border around the tooltip. Can
+         * be one of: `"callout"`, `"circle"` or `"square"`.
+         *
+         * Custom callbacks for symbol path generation can also be added to
+         * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+         * [series.marker.symbol](plotOptions.line.marker.symbol).
          *
          * @type {String}
          * @default callout
