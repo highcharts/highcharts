@@ -233,6 +233,21 @@ H.Series = H.seriesType('line', null, { // base series options
      */
 
     /**
+     * Disable this option to allow series rendering in the whole plotting
+     * area.
+     *
+     * **Note:** Clipping should be always enabled when
+     * [chart.zoomType](#chart.zoomType) is set
+     *
+     * @default true
+     * @type {Boolean}
+     * @sample {highcharts} highcharts/plotoptions/series-clip/
+     *         Disabled clipping
+     * @since 3.0.0
+     * @apioption plotOptions.series.clip
+     */
+
+    /**
      * The main color of the series. In line type series it applies to the
      * line and the point markers unless otherwise specified. In bar type
      * series it applies to the bars unless a color is specified per point.
