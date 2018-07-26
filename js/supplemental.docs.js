@@ -680,6 +680,31 @@
  */
 
 /**
+ * Alignment of the text, can be `"left"`, `"right"` or `"center"`.
+ * Default alignment depends on the [title.align](xAxis.title.align):
+ *
+ * Horizontal axes:
+ * - for `align` = `"low"`, `textAlign` is set to `left`
+ * - for `align` = `"middle"`, `textAlign` is set to `center`
+ * - for `align` = `"high"`, `textAlign` is set to `right`
+ *
+ * Vertical axes:
+ * - for `align` = `"low"` and `opposite` = `true`, `textAlign` is set to
+ * `right`
+ * - for `align` = `"low"` and `opposite` = `false`, `textAlign` is set to
+ * `left`
+ * - for `align` = `"middle"`, `textAlign` is set to `center`
+ * - for `align` = `"high"` and `opposite` = `true` `textAlign` is set to
+ * `left`
+ * - for `align` = `"high"` and `opposite` = `false` `textAlign` is set to
+ * `right`
+ *
+ * @type {String}
+ * @defaults undefined
+ * @apioption xAxis.title.textAlign
+ */
+
+/**
  * The pixel distance between the axis labels or line and the title.
  *  Defaults to 0 for horizontal axes, 10 for vertical
  *
