@@ -461,7 +461,7 @@ H.extendAnnotation(Measure, null, {
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.data, function (point) {
+                    each(serie.points, function (point) {
                         if (
                             !point.isNull &&
                             point.y < min &&
@@ -499,7 +499,7 @@ H.extendAnnotation(Measure, null, {
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.data, function (point) {
+                    each(serie.points, function (point) {
                         if (
                             !point.isNull &&
                             point.y > max &&
@@ -546,7 +546,7 @@ H.extendAnnotation(Measure, null, {
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.data, function (point) {
+                    each(serie.points, function (point) {
                         if (
                             !point.isNull &&
                             point.x > ext.xAxisMin &&
