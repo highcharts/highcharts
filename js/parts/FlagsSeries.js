@@ -160,6 +160,27 @@ seriesType('flags', 'column', {
      * @apioption plotOptions.flags.useHTML
      */
 
+    /**
+     * Fixed width of the flag's shape. By default, width is autocalculated
+     * according to the flag's title.
+     *
+     * @type      {Number}
+     * @default   undefined
+     * @product   highstock
+     * @sample    {highstock} stock/demo/flags-shapes/ Flags with fixed width
+     * @apioption plotOptions.flags.width
+     */
+
+     /**
+     * Fixed height of the flag's shape. By default, height is autocalculated
+     * according to the flag's title.
+     *
+     * @type      {Number}
+     * @default   undefined
+     * @product   highstock
+     * @apioption plotOptions.flags.height
+     */
+
     /*= if (build.classic) { =*/
 
     /**
