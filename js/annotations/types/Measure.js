@@ -87,7 +87,10 @@ H.extendAnnotation(Measure, null, {
     },
 
     addControlPoints: function () {
-        var controlPoint = new ControlPoint(
+        var selectType = this.options.typeOptions.selectType,
+            controlPoint;
+
+        controlPoint = new ControlPoint(
             this.chart,
             this,
             this.options.controlPointOptions,
@@ -95,6 +98,18 @@ H.extendAnnotation(Measure, null, {
         );
 
         this.controlPoints.push(controlPoint);
+
+        // add extra controlPoint for horizontal and vertical range
+        if (selectType !== 'xy') {
+            controlPoint = new ControlPoint(
+                this.chart,
+                this,
+                this.options.controlPointOptions,
+                1
+            );
+
+            this.controlPoints.push(controlPoint);
+        }
     },
     /**
      * Add label with calculated values (min, max, average, bins).
@@ -254,12 +269,15 @@ H.extendAnnotation(Measure, null, {
         H.Annotation.prototype.addEvents.call(this);
 
         H.addEvent(this, 'drag', function (e) {
-            var translation = this.mouseMoveToTranslation(e);
+            var translation = this.mouseMoveToTranslation(e),
+                selectType = this.options.typeOptions.selectType,
+                x = selectType === 'y' ? 0 : translation.x,
+                y = selectType === 'x' ? 0 : translation.y;
 
-            this.translate(translation.x, translation.y);
+            this.translate(x, y);
 
-            this.offsetX += translation.x;
-            this.offsetY += translation.y;
+            this.offsetX += x;
+            this.offsetY += y;
 
             // animation, resize, setStartPoints
             this.redraw(false, false, true);
@@ -273,14 +291,33 @@ H.extendAnnotation(Measure, null, {
      * @param {number} dx - the amount of x translation
      * @param {number} dy - the amount of y translation
      */
-    resize: function (dx, dy) {
+    resize: function (dx, dy, index, selectType) {
 
         // background shape
-        this.shapes[2].translatePoint(dx, 0, 1);
-        this.shapes[2].translatePoint(dx, dy, 2);
-        this.shapes[2].translatePoint(0, dy, 3);
+        if (selectType === 'x') {
+            if (index === 0) {
+                this.shapes[2].translatePoint(dx, 0, 0);
+                this.shapes[2].translatePoint(dx, dy, 3);
+            } else {
+                this.shapes[2].translatePoint(dx, 0, 1);
+                this.shapes[2].translatePoint(dx, dy, 2);
+            }
+        } else if (selectType === 'y') {
+            if (index === 0) {
+                this.shapes[2].translatePoint(0, dy, 0);
+                this.shapes[2].translatePoint(0, dy, 1);
+            } else {
+                this.shapes[2].translatePoint(0, dy, 2);
+                this.shapes[2].translatePoint(0, dy, 3);
+            }
+        } else {
+            this.shapes[2].translatePoint(dx, 0, 1);
+            this.shapes[2].translatePoint(dx, dy, 2);
+            this.shapes[2].translatePoint(0, dy, 3);
+        }
 
-        this.calculations.updateStartPoints.call(this, false, true);
+        this.calculations.updateStartPoints
+            .call(this, false, true, index, dx, dy);
 
     },
     /**
@@ -309,7 +346,9 @@ H.extendAnnotation(Measure, null, {
         this.redrawItems(this.labels, animation);
 
         // redraw control point to run positioner
-        this.controlPoints[0].redraw();
+        each(this.controlPoints, function (controlPoint) {
+            controlPoint.redraw();
+        });
     },
     translate: function (dx, dy) {
         H.each(this.shapes, function (item) {
@@ -401,8 +440,9 @@ H.extendAnnotation(Measure, null, {
          * @param {Boolean} redraw - flag if shape is redraw
          * @param {Boolean} resize- flag if shape is resized
          */
-        updateStartPoints: function (redraw, resize) {
+        updateStartPoints: function (redraw, resize, index, dx, dy) {
             var options = this.options.typeOptions,
+                selectType = options.selectType,
                 xAxis = this.chart.xAxis[options.xAxis],
                 yAxis = this.chart.yAxis[options.yAxis],
                 getPointPos = this.calculations.getPointPos,
@@ -416,8 +456,24 @@ H.extendAnnotation(Measure, null, {
                 resizeY = this.resizeY;
 
             if (resize) {
-                this.startxMax = getPointPos(xAxis, startxMax, resizeX);
-                this.startyMax = getPointPos(yAxis, startyMax, resizeY);
+                if (selectType === 'x') {
+                    if (index === 0) {
+                        this.startxMin = getPointPos(xAxis, startxMin, dx);
+                        this.startxMax = getPointPos(xAxis, startxMax, -dx);
+                    } else {
+                        this.startxMax = getPointPos(xAxis, startxMax, resizeX);
+                    }
+                } else if (selectType === 'y') {
+                    if (index === 0) {
+                        this.startyMin = getPointPos(yAxis, startyMin, dy);
+                        this.startyMax = getPointPos(yAxis, startyMax, -dy);
+                    } else {
+                        this.startyMax = getPointPos(yAxis, startyMax, resizeY);
+                    }
+                } else {
+                    this.startxMax = getPointPos(xAxis, startxMax, resizeX);
+                    this.startyMax = getPointPos(yAxis, startyMax, resizeY);
+                }
 
                 this.resizeX = 0;
                 this.resizeY = 0;
@@ -610,19 +666,47 @@ H.extendAnnotation(Measure, null, {
 
     controlPointOptions: {
         positioner: function (target) {
-            var options = target.options,
-                typeOptions = options.typeOptions,
-                controlPointOptions = options.controlPointOptions,
+            var index = this.index,
                 chart = target.chart,
+                options = target.options,
+                typeOptions = options.typeOptions,
+                selectType = typeOptions.selectType,
+                controlPointOptions = options.controlPointOptions,
                 inverted = chart.options.chart.inverted,
                 xAxis = chart.xAxis[typeOptions.xAxis],
                 yAxis = chart.yAxis[typeOptions.yAxis],
-                x = inverted ?
-                        yAxis.toPixels(target.yAxisMax) :
-                        xAxis.toPixels(target.xAxisMax),
-                y = inverted ?
-                        xAxis.toPixels(target.xAxisMax) :
-                        yAxis.toPixels(target.yAxisMax);
+                targetX = target.xAxisMax,
+                targetY = target.yAxisMax,
+                ext = target.calculations.getExtremes(
+                    target.xAxisMin,
+                    target.xAxisMax,
+                    target.yAxisMin,
+                    target.yAxisMax
+                ),
+                x, y;
+
+            if (selectType === 'x') {
+                targetY = (ext.yAxisMax - ext.yAxisMin) / 2;
+                if (index === 0) {
+                    targetX = target.xAxisMin;
+                }
+            }
+
+            if (selectType === 'y') {
+                targetX = ext.xAxisMin + ((ext.xAxisMax - ext.xAxisMin) / 2);
+                if (index === 0) {
+                    targetY = target.yAxisMin;
+                }
+            }
+
+            if (inverted) {
+                x = yAxis.toPixels(targetY);
+                y = xAxis.toPixels(targetX);
+            } else {
+                x = xAxis.toPixels(targetX);
+                y = yAxis.toPixels(targetY);
+            }
+
             return {
                 x: x - (controlPointOptions.width / 2),
                 y: y - (controlPointOptions.height / 2)
@@ -630,16 +714,21 @@ H.extendAnnotation(Measure, null, {
         },
         events: {
             drag: function (e, target) {
-                var translation = this.mouseMoveToTranslation(e);
+                var translation = this.mouseMoveToTranslation(e),
+                    selectType = target.options.typeOptions.selectType,
+                    index = this.index,
+                    x = selectType === 'y' ? 0 : translation.x,
+                    y = selectType === 'x' ? 0 : translation.y;
 
                 target.resize(
-                    translation.x,
-                    translation.y
+                    x,
+                    y,
+                    index,
+                    selectType
                 );
 
-                target.resizeX += translation.x;
-                target.resizeY += translation.y;
-
+                target.resizeX += x;
+                target.resizeY += y;
                 target.redraw(false, true);
             }
         }
