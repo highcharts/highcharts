@@ -5,7 +5,6 @@ import '../parts/Utilities.js';
 var pick = H.pick,
     each = H.each,
     extend = H.extend,
-    wrap = H.wrap,
     error = H.error,
     Series = H.Series,
     isArray = H.isArray,
@@ -16,8 +15,11 @@ var pick = H.pick,
 /*
  * Support for OHLC data with line type of series.
  */
-wrap(H.Series.prototype, 'init', function (proceed, chart, options) {
-    var dataGrouping = options.dataGrouping;
+
+addEvent(H.Series, 'beforeInit', function (eventOptions) {
+    var options = eventOptions.options,
+        series = eventOptions.series,
+        dataGrouping = options.dataGrouping;
 
     if (
         options.forceIndicator &&
@@ -28,17 +30,14 @@ wrap(H.Series.prototype, 'init', function (proceed, chart, options) {
             dataGrouping.approximation = 'ohlc';
         }
 
-        extend(this, {
+        extend(series, {
             pointValKey: ohlcProto.pointValKey,
             keys: ohlcProto.keys,
             pointArrayMap: ohlcProto.pointArrayMap,
             toYData: ohlcProto.toYData
         });
     }
-
-    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
-
 
 /**
  * The SMA series type.
