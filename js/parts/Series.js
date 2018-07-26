@@ -2316,6 +2316,13 @@ H.Series = H.seriesType('line', null, { // base series options
     parallelArrays: ['x', 'y'],
     coll: 'series',
     init: function (chart, options) {
+
+        fireEvent(this, 'beforeInit', {
+            series: this,
+            options: options,
+            chart: chart
+        });
+
         var series = this,
             events,
             chartSeries = chart.series,
@@ -2350,7 +2357,6 @@ H.Series = H.seriesType('line', null, { // base series options
          */
         series.options = options = series.setOptions(options);
         series.linkedSeries = [];
-
         // bind the axes
         series.bindAxes();
 
