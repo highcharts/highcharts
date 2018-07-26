@@ -329,12 +329,24 @@ H.extendAnnotation(Measure, null, {
                 yAxis = chart.yAxis[options.yAxis],
                 bck = options.background,
                 width = inverted ? bck.height : bck.width,
-                height = inverted ? bck.width : bck.height;
+                height = inverted ? bck.width : bck.height,
+                selectType = options.selectType,
+                top = chart.plotTop,
+                left = chart.plotLeft;
 
             this.startxMin = options.point.x;
             this.startxMax = getPointPos(xAxis, this.startxMin, width);
             this.startyMin = options.point.y;
             this.startyMax = getPointPos(yAxis, this.startyMin, height);
+
+            // x / y selection type
+            if (selectType === 'x') {
+                this.startyMin = yAxis.toValue(top);
+                this.startyMax = yAxis.toValue(top + chart.plotHeight);
+            } else if (selectType === 'y') {
+                this.startxMin = xAxis.toValue(left);
+                this.startxMax = xAxis.toValue(left + chart.plotWidth);
+            }
 
         },
         /*
@@ -570,6 +582,7 @@ H.extendAnnotation(Measure, null, {
     }
 }, {
     typeOptions: {
+        selectType: 'xy',
         xAxis: 0,
         yAxis: 0,
         background: {

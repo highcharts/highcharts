@@ -173,7 +173,17 @@ H.setOptions({
                     }
                 },
                 measure: {
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    items: ['measureX', 'measureY', 'measureXY'],
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)',
+                    measureX: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    },
+                    measureY: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    },
+                    measureXY: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    }
                 },
                 toggleAnnotations: {
                     symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
@@ -544,7 +554,9 @@ H.Toolbar.prototype = {
         pitchfork: 'highcharts-pitchfork',
         fibonacci: 'highcharts-fibonacci',
         'parallel-channel': 'highcharts-parallel-channel',
-        measure: 'highcharts-measure',
+        measureX: 'highcharts-measureX',
+        measureY: 'highcharts-measureY',
+        measureXY: 'highcharts-measureXY',
         verticalCounter: 'highcharts-vertical-counter',
         verticalLabel: 'highcharts-vertical-label',
         verticalArrow: 'highcharts-vertical-arrow',

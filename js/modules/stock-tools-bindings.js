@@ -144,13 +144,15 @@ function updateRectSize() {
             xStart = this.chart.xAxis[0].toPixels(options.point.x),
             yStart = this.chart.yAxis[0].toPixels(options.point.y),
             x = e.chartX,
-            y = e.chartY;
+            y = e.chartY,
+            width = x - xStart,
+            height = y - yStart;
 
         annotation.update({
             typeOptions: {
                 background: {
-                    width: x - xStart,
-                    height: y - yStart
+                    width: width,
+                    height: height
                 }
             }
         });
@@ -650,13 +652,68 @@ var stockToolsBindings = {
             updateNthPoint(4)
         ]
     },
-    'measure': {
+    'measureX': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
                 options = {
                     type: 'measure',
                     typeOptions: {
+                        selectType: 'x',
+                        point: {
+                            x: x,
+                            y: y,
+                            xAxis: 0,
+                            yAxis: 0
+                        },
+                        background: {
+                            width: 0,
+                            height: 0
+                        }
+                    }
+                };
+
+            return this.chart.addAnnotation(options);
+        },
+        steps: [
+            updateRectSize()
+        ]
+    },
+    'measureY': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                options = {
+                    type: 'measure',
+                    typeOptions: {
+                        selectType: 'y',
+                        point: {
+                            x: x,
+                            y: y,
+                            xAxis: 0,
+                            yAxis: 0
+                        },
+                        background: {
+                            width: 0,
+                            height: 0
+                        }
+                    }
+                };
+
+            return this.chart.addAnnotation(options);
+        },
+        steps: [
+            updateRectSize()
+        ]
+    },
+    'measureXY': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                options = {
+                    type: 'measure',
+                    typeOptions: {
+                        selectType: 'xy',
                         point: {
                             x: x,
                             y: y,
