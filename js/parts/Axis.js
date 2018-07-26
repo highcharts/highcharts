@@ -199,7 +199,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * <pre>categories: ['Apples', 'Bananas', 'Oranges']</pre>
          *
          * @type      {Array<String>}
-         * @sample    {highcharts} highcharts/chart/reflow-true/
+         * @sample    {highcharts} highcharts/demo/line-labels/
          *            With
          * @sample    {highcharts} highcharts/xaxis/categories/
          *            Without
