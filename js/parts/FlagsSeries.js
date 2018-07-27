@@ -83,7 +83,7 @@ seriesType('flags', 'column', {
 
     /**
      * The shape of the marker. Can be one of "flag", "circlepin", "squarepin",
-     * or an image on the format `url(/path-to-image.jpg)`. Individual
+     * or an image of the format `url(/path-to-image.jpg)`. Individual
      * shapes can also be set for each point.
      *
      * @validvalue ["flag", "circlepin", "squarepin"]
