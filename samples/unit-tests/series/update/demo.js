@@ -554,3 +554,64 @@ QUnit.test('Series.update without altering zIndex (#7397)', function (assert) {
     );
 
 });
+// Highcharts v4.0.1, Issue #3094
+// Series.update changes the order of overlapping bars
+QUnit.test('Z index changed after update (#3094)', function (assert) {
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            type: 'column'
+        },
+        title: {
+            text: 'Z index changed after update'
+        },
+        plotOptions: {
+            series: {
+                groupPadding: 0.1,
+                pointPadding: -0.4
+            }
+        },
+        series: [ {
+            data: [1300],
+            color: 'rgba(13,35,58,0.9)',
+            index: 0,
+            zIndex: 10
+        }, {
+            data: [1500],
+            color: 'rgba(47,126,216,0.9)',
+            index: 1,
+            zIndex: 10
+        }]
+    });
+    var controller = new TestController(chart),
+        container = chart.container,
+        clientWidth = container.clientWidth,
+        clientHeight = container.clientHeight;
+
+    controller.setPositionToElement(
+        container,
+        (clientWidth / 2),
+        (clientHeight / 2));
+
+    var columnYValue = controller.getPosition().relatedTarget.point.y;
+    assert.strictEqual(
+        columnYValue,
+        1500,
+        "Second series should be on top of first series"
+    );
+    chart.series[0].update({
+        dataLabels: {
+            enabled: true
+        }
+    });
+    assert.strictEqual(
+        columnYValue,
+        1500,
+        "Second series should be on top of first series"
+    );
+    assert.strictEqual(
+        chart.series[0].dataLabelsGroup.visibility,
+        "visible",
+        "Data label should be visible"
+    );
+});
