@@ -613,7 +613,7 @@ wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
         }
         // If next label position is defined, then recalculate its position
         // basing on the perspective.
-        if (nextTick && nextTick && nextTick.label.xy) {
+        if (nextTick && nextTick.label.xy) {
             nextLabelPos = perspective3D({
                 x: nextTick.label.xy.x,
                 y: nextTick.label.xy.y,
