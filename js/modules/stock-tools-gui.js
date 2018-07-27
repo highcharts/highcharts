@@ -242,7 +242,8 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     }
 
     wrapper = createElement(DIV, {
-        className: guiOptions.className
+        className: 'highcharts-stocktools-wrapper ' +
+                guiOptions.className
     });
 
     container.parentNode.insertBefore(wrapper, container);
@@ -252,11 +253,12 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
 
     // toolbar
     toolbar = createElement(UL, {
-        className: guiOptions.toolbarClassName
+        className: 'highcharts-stocktools-toolbar ' +
+                guiOptions.toolbarClassName
     });
 
     listWrapper = createElement(DIV, {
-        className: 'menu-wrapper'
+        className: 'highcharts-menu-wrapper'
     });
 
     wrapper.insertBefore(listWrapper, wrapper.childNodes[0]);
@@ -267,7 +269,7 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
 
     // show hide toolbar
     createElement(DIV, {
-        className: 'showhide-showbar'
+        className: 'highcharts-showhide-showbar'
     }, null, wrapper);
 
     H.Toolbar.prototype.showHideToolbar();
@@ -277,16 +279,16 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     if (toolbar.offsetHeight > (wrapper.offsetHeight - 50)) {
         // arrow wrapper
         stockToolbar.arrowWrapper = createElement(DIV, {
-            className: 'arrow-wrapper'
+            className: 'highcharts-arrow-wrapper'
         });
 
         stockToolbar.arrowUp = createElement(SPAN, {
-            className: 'arrow-up',
+            className: 'highcharts-arrow-up',
             innerHTML: '&rsaquo;'
         }, null, stockToolbar.arrowWrapper);
 
         stockToolbar.arrowDown = createElement(SPAN, {
-            className: 'arrow-down',
+            className: 'highcharts-arrow-down',
             innerHTML: '&lsaquo;'
         }, null, stockToolbar.arrowWrapper);
 
@@ -346,7 +348,7 @@ H.Toolbar.prototype = {
 
         // create submenu container
         submenuWrapper = createElement(UL, {
-            className: 'submenu-wrapper'
+            className: 'highcharts-submenu-wrapper'
         }, null, buttonWrapper);
 
         // add items to submenu
@@ -361,7 +363,7 @@ H.Toolbar.prototype = {
         });
 
         firstSubmenuItem = submenuWrapper
-                .querySelectorAll('li > .menu-item-btn')[0];
+                .querySelectorAll('li > .highcharts-menu-item-btn')[0];
 
         this.switchSymbol(firstSubmenuItem, false);
 
@@ -370,8 +372,9 @@ H.Toolbar.prototype = {
             // Erase active class on all other buttons
             each(allButtons, function (btn) {
                 if (btn !== buttonWrapper) {
-                    btn.classList.remove('current');
-                    submenuItems = btn.querySelectorAll('.submenu-wrapper');
+                    btn.classList.remove('highcharts-current');
+                    submenuItems =
+                        btn.querySelectorAll('.highcharts-submenu-wrapper');
 
                     if (submenuItems.length > 0) {
                         submenuItems[0].style.display = 'none';
@@ -380,8 +383,8 @@ H.Toolbar.prototype = {
             });
 
             // show menu
-            if (buttonWrapper.className.indexOf('current') >= 0) {
-                buttonWrapper.classList.remove('current');
+            if (buttonWrapper.className.indexOf('highcharts-current') >= 0) {
+                buttonWrapper.classList.remove('highcharts-current');
                 submenuWrapper.style.display = 'none';
             } else {
                 // to calculate height of element
@@ -402,7 +405,7 @@ H.Toolbar.prototype = {
                     left: buttonWidth + 'px'
                 });
 
-                buttonWrapper.className += ' current';
+                buttonWrapper.className += ' highcharts-current';
             }
         });
     },
@@ -422,7 +425,7 @@ H.Toolbar.prototype = {
 
         // single button
         mainButton = createElement(SPAN, {
-            className: 'menu-item-btn'
+            className: 'highcharts-menu-item-btn'
         }, null, buttonWrapper);
 
 
@@ -430,7 +433,7 @@ H.Toolbar.prototype = {
         if (items && items.length > 1) {
 
             submenuArrow = createElement(SPAN, {
-                className: 'submenu-item-arrow'
+                className: 'highcharts-submenu-item-arrow'
             }, null, buttonWrapper);
 
             // replace with arrow background (add it in CSS class)
@@ -460,8 +463,8 @@ H.Toolbar.prototype = {
         var toolbar = doc
                 .getElementsByClassName(guiOptions.toolbarClassName)[0],
             wrapper = doc.getElementsByClassName(guiOptions.className)[0],
-            arrowUp = doc.getElementsByClassName('arrow-up')[0],
-            arrowDown = doc.getElementsByClassName('arrow-down')[0],
+            arrowUp = doc.getElementsByClassName('highcharts-arrow-up')[0],
+            arrowDown = doc.getElementsByClassName('highcharts-arrow-down')[0],
             toolbarHeight = toolbar.offsetHeight,
             wrapperHeight = wrapper.offsetHeight,
             targetY = 0,
@@ -482,22 +485,27 @@ H.Toolbar.prototype = {
         });
     },
     showHideToolbar: function () {
-        var toolbar = doc.getElementsByClassName('menu-wrapper')[0],
-            submenu = doc.getElementById('submenu'),
-            showhideBtn = doc.getElementsByClassName('showhide-showbar')[0];
+        var toolbar = doc.getElementsByClassName('highcharts-menu-wrapper')[0],
+            submenus = doc.getElementsByClassName('highcharts-submenu'),
+            showhideBtn =
+                doc.getElementsByClassName('highcharts-showhide-showbar')[0];
 
         // replace by icon
         showhideBtn.innerHTML = '<';
 
         // toggle menu
         addEvent(showhideBtn, 'click', function () {
-            if (toolbar.className.indexOf('hide') >= 0) {
-                toolbar.classList.remove('hide');
-                submenu.style.display = 'block';
+            if (toolbar.className.indexOf('highcharts-hide') >= 0) {
+                toolbar.classList.remove('highcharts-hide');
+                each(submenus, function (submenu) {
+                    submenu.style.display = 'block';
+                });
                 showhideBtn.innerHTML = '<';
             } else {
-                toolbar.className += ' hide';
-                submenu.style.display = 'none';
+                toolbar.className += ' highcharts-hide';
+                each(submenus, function (submenu) {
+                    submenu.style.display = 'none';
+                });
                 showhideBtn.innerHTML = '>';
             }
         });
@@ -511,7 +519,7 @@ H.Toolbar.prototype = {
         mainNavButton.classList = buttonWrapperClass;
 
         // set icon
-        mainNavButton.querySelectorAll('.menu-item-btn')[0]
+        mainNavButton.querySelectorAll('.highcharts-menu-item-btn')[0]
             .style['background-image'] = button.style['background-image'];
 
         // set active class

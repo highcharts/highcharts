@@ -4,20 +4,20 @@
   height: 400px;
 }
 
-.stocktools-wrapper {
+.highcharts-stocktools-wrapper {
   width: 100%;
   height: 400px;
   position: relative;
 }
 
-.menu-wrapper {
+.highcharts-menu-wrapper {
   float: left;
   width: 50px;
   height: calc(100% - 30px);
   overflow: hidden;
 }
 
-.stocktools-wrapper .submenu-wrapper {
+.highcharts-stocktools-wrapper .highcharts-submenu-wrapper {
   display: none;
   position: absolute;
   z-index: 10;
@@ -27,7 +27,7 @@
   width: 80px;
 }
 
-.stocktools-wrapper .arrow-wrapper {
+.highcharts-stocktools-wrapper .highcharts-arrow-wrapper {
   text-align: center;
   width: 50px;
   position: absolute;
@@ -36,8 +36,8 @@
   font-size: 1.5em;
 }
 
-.stocktools-wrapper .arrow-down,
-.stocktools-wrapper .arrow-up {
+.highcharts-stocktools-wrapper .highcharts-arrow-down,
+.highcharts-stocktools-wrapper .highcharts-arrow-up {
   outline: none;
   display: inline-block;
   width: 25px;
@@ -63,7 +63,7 @@
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
-.stocktools-wrapper ul {
+.highcharts-stocktools-wrapper ul {
   width: 100%;
   /* 30px spacing for arrows to scroll */
   margin: 0px;
@@ -71,12 +71,12 @@
   float: left;
 }
 
-.stocktools-wrapper > ul {
+.highcharts-stocktools-wrapper > ul {
   width: 50px;
   position: relative;
 }
 
-.stocktools-wrapper li {
+.highcharts-stocktools-wrapper li {
   list-style: none;
   margin: 0px;
   padding: 0px;
@@ -86,7 +86,7 @@
   cursor: pointer;
 }
 
-.stocktools-wrapper li > span.menu-item-btn {
+.highcharts-stocktools-wrapper li > span.highcharts-menu-item-btn {
   display:block;
   float:left;
   width: calc(100% - 10px); /* 10px - size of arrow*/
@@ -95,7 +95,7 @@
   background-position: 50% 50%;
 }
 
-.stocktools-wrapper li > span.submenu-item-arrow {
+.highcharts-stocktools-wrapper li > span.highcharts-submenu-item-arrow {
   float: right;
   height: 100%;
   width: 10px;
@@ -104,18 +104,18 @@
   cursor: pointer;
 }
 
-.stocktools-wrapper li.highcharts-active {
+.highcharts-stocktools-wrapper li.highcharts-active {
   background-color: gray;
 }
 
-.showhide-showbar {
+.highcharts-showhide-showbar {
   position: absolute;
   height: 100%;
   background-color: rgba(155,155,155,0.3);
   cursor: pointer;
 }
 
-.hide {
+.highcharts-hide {
   display: none;
 }
 
