@@ -2317,11 +2317,7 @@ H.Series = H.seriesType('line', null, { // base series options
     coll: 'series',
     init: function (chart, options) {
 
-        fireEvent(this, 'beforeInit', {
-            series: this,
-            options: options,
-            chart: chart
-        });
+        fireEvent(this, 'beforeInit', { options: options });
 
         var series = this,
             events,

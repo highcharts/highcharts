@@ -17,8 +17,8 @@ var pick = H.pick,
  */
 
 addEvent(H.Series, 'beforeInit', function (eventOptions) {
-    var options = eventOptions.options,
-        series = eventOptions.series,
+    var series = this,
+        options = eventOptions.options,
         dataGrouping = options.dataGrouping;
 
     if (
