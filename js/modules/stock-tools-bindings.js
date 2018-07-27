@@ -151,8 +151,8 @@ function updateRectSize() {
         annotation.update({
             typeOptions: {
                 background: {
-                    width: width,
-                    height: height
+                    width: width + 'px',
+                    height: height + 'px'
                 }
             }
         });

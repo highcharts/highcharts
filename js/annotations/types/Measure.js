@@ -5,7 +5,8 @@ import '../../parts/Utilities.js';
 var Annotation = H.Annotation,
     ControlPoint = Annotation.ControlPoint,
     each = H.each,
-    merge = H.merge;
+    merge = H.merge,
+    isNumber = H.isNumber;
 
 /**
  * @class Measure
@@ -376,9 +377,27 @@ H.extendAnnotation(Measure, null, {
                 left = chart.plotLeft;
 
             this.startXMin = options.point.x;
-            this.startXMax = getPointPos(xAxis, this.startXMin, width);
             this.startYMin = options.point.y;
-            this.startYMax = getPointPos(yAxis, this.startYMin, height);
+
+            if (isNumber(width)) {
+                this.startXMax = this.startXMin + width;
+            } else {
+                this.startXMax = getPointPos(
+                    xAxis,
+                    this.startXMin,
+                    parseFloat(width)
+                );
+            }
+
+            if (isNumber(height)) {
+                this.startYMax = this.startYMin - height;
+            } else {
+                this.startYMax = getPointPos(
+                    yAxis,
+                    this.startYMin,
+                    parseFloat(height)
+                );
+            }
 
             // x / y selection type
             if (selectType === 'x') {
