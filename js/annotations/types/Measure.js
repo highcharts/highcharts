@@ -35,7 +35,6 @@ H.extendAnnotation(Measure, null, {
         this.calculations.init.call(this);
         this.addValues();
         this.addShapes();
-        this.addControlPoints();
     },
 
     /**
@@ -286,38 +285,41 @@ H.extendAnnotation(Measure, null, {
 
     /**
      * Translate start or end ("left" or "right") side of the measure.
-     * Update start points (startxMin, startxMax, startyMin, startyMax)
+     * Update start points (startXMin, startXMax, startYMin, startYMax)
      *
      * @param {number} dx - the amount of x translation
      * @param {number} dy - the amount of y translation
+     * @param {number} cpIndex - index of control point
+     * @param {number} selectType - x / y / xy
      */
-    resize: function (dx, dy, index, selectType) {
+    resize: function (dx, dy, cpIndex, selectType) {
 
         // background shape
+        var bckShape = this.shapes[2];
         if (selectType === 'x') {
-            if (index === 0) {
-                this.shapes[2].translatePoint(dx, 0, 0);
-                this.shapes[2].translatePoint(dx, dy, 3);
+            if (cpIndex === 0) {
+                bckShape.translatePoint(dx, 0, 0);
+                bckShape.translatePoint(dx, dy, 3);
             } else {
-                this.shapes[2].translatePoint(dx, 0, 1);
-                this.shapes[2].translatePoint(dx, dy, 2);
+                bckShape.translatePoint(dx, 0, 1);
+                bckShape.translatePoint(dx, dy, 2);
             }
         } else if (selectType === 'y') {
-            if (index === 0) {
-                this.shapes[2].translatePoint(0, dy, 0);
-                this.shapes[2].translatePoint(0, dy, 1);
+            if (cpIndex === 0) {
+                bckShape.translatePoint(0, dy, 0);
+                bckShape.translatePoint(0, dy, 1);
             } else {
-                this.shapes[2].translatePoint(0, dy, 2);
-                this.shapes[2].translatePoint(0, dy, 3);
+                bckShape.translatePoint(0, dy, 2);
+                bckShape.translatePoint(0, dy, 3);
             }
         } else {
-            this.shapes[2].translatePoint(dx, 0, 1);
-            this.shapes[2].translatePoint(dx, dy, 2);
-            this.shapes[2].translatePoint(0, dy, 3);
+            bckShape.translatePoint(dx, 0, 1);
+            bckShape.translatePoint(dx, dy, 2);
+            bckShape.translatePoint(0, dy, 3);
         }
 
         this.calculations.updateStartPoints
-            .call(this, false, true, index, dx, dy);
+            .call(this, false, true, cpIndex, dx, dy);
 
     },
     /**
@@ -373,18 +375,18 @@ H.extendAnnotation(Measure, null, {
                 top = chart.plotTop,
                 left = chart.plotLeft;
 
-            this.startxMin = options.point.x;
-            this.startxMax = getPointPos(xAxis, this.startxMin, width);
-            this.startyMin = options.point.y;
-            this.startyMax = getPointPos(yAxis, this.startyMin, height);
+            this.startXMin = options.point.x;
+            this.startXMax = getPointPos(xAxis, this.startXMin, width);
+            this.startYMin = options.point.y;
+            this.startYMax = getPointPos(yAxis, this.startYMin, height);
 
             // x / y selection type
             if (selectType === 'x') {
-                this.startyMin = yAxis.toValue(top);
-                this.startyMax = yAxis.toValue(top + chart.plotHeight);
+                this.startYMin = yAxis.toValue(top);
+                this.startYMax = yAxis.toValue(top + chart.plotHeight);
             } else if (selectType === 'y') {
-                this.startxMin = xAxis.toValue(left);
-                this.startxMax = xAxis.toValue(left + chart.plotWidth);
+                this.startXMin = xAxis.toValue(left);
+                this.startXMax = xAxis.toValue(left + chart.plotWidth);
             }
 
         },
@@ -401,14 +403,12 @@ H.extendAnnotation(Measure, null, {
                 yAxis = this.chart.yAxis[options.yAxis],
                 getPointPos = this.calculations.getPointPos,
                 offsetX = this.offsetX,
-                offsetY = this.offsetY,
-                resizeX = offsetX + this.resizeX,
-                resizeY = offsetY + this.resizeY;
+                offsetY = this.offsetY;
 
-            this.xAxisMin = getPointPos(xAxis, this.startxMin, offsetX);
-            this.xAxisMax = getPointPos(xAxis, this.startxMax, resizeX);
-            this.yAxisMin = getPointPos(yAxis, this.startyMin, offsetY);
-            this.yAxisMax = getPointPos(yAxis, this.startyMax, resizeY);
+            this.xAxisMin = getPointPos(xAxis, this.startXMin, offsetX);
+            this.xAxisMax = getPointPos(xAxis, this.startXMax, offsetX);
+            this.yAxisMin = getPointPos(yAxis, this.startYMin, offsetY);
+            this.yAxisMax = getPointPos(yAxis, this.startYMax, offsetY);
 
             this.min = calc.min.call(this);
             this.max = calc.max.call(this);
@@ -435,55 +435,49 @@ H.extendAnnotation(Measure, null, {
         },
         /*
          * Update position of start points
-         * (startxMin, startxMax, startyMin, startyMax)
+         * (startXMin, startXMax, startYMin, startYMax)
          *
          * @param {Boolean} redraw - flag if shape is redraw
-         * @param {Boolean} resize- flag if shape is resized
+         * @param {Boolean} resize - flag if shape is resized
+         * @param {Boolean} cpIndex - index of controlPoint
          */
-        updateStartPoints: function (redraw, resize, index, dx, dy) {
+        updateStartPoints: function (redraw, resize, cpIndex, dx, dy) {
             var options = this.options.typeOptions,
                 selectType = options.selectType,
                 xAxis = this.chart.xAxis[options.xAxis],
                 yAxis = this.chart.yAxis[options.yAxis],
                 getPointPos = this.calculations.getPointPos,
-                startxMin = this.startxMin,
-                startxMax = this.startxMax,
-                startyMin = this.startyMin,
-                startyMax = this.startyMax,
+                startXMin = this.startXMin,
+                startXMax = this.startXMax,
+                startYMin = this.startYMin,
+                startYMax = this.startYMax,
                 offsetX = this.offsetX,
-                offsetY = this.offsetY,
-                resizeX = this.resizeX,
-                resizeY = this.resizeY;
+                offsetY = this.offsetY;
 
             if (resize) {
                 if (selectType === 'x') {
-                    if (index === 0) {
-                        this.startxMin = getPointPos(xAxis, startxMin, dx);
-                        this.startxMax = getPointPos(xAxis, startxMax, -dx);
+                    if (cpIndex === 0) {
+                        this.startXMin = getPointPos(xAxis, startXMin, dx);
                     } else {
-                        this.startxMax = getPointPos(xAxis, startxMax, resizeX);
+                        this.startXMax = getPointPos(xAxis, startXMax, dx);
                     }
                 } else if (selectType === 'y') {
-                    if (index === 0) {
-                        this.startyMin = getPointPos(yAxis, startyMin, dy);
-                        this.startyMax = getPointPos(yAxis, startyMax, -dy);
+                    if (cpIndex === 0) {
+                        this.startYMin = getPointPos(yAxis, startYMin, dy);
                     } else {
-                        this.startyMax = getPointPos(yAxis, startyMax, resizeY);
+                        this.startYMax = getPointPos(yAxis, startYMax, dy);
                     }
                 } else {
-                    this.startxMax = getPointPos(xAxis, startxMax, resizeX);
-                    this.startyMax = getPointPos(yAxis, startyMax, resizeY);
+                    this.startXMax = getPointPos(xAxis, startXMax, dx);
+                    this.startYMax = getPointPos(yAxis, startYMax, dy);
                 }
-
-                this.resizeX = 0;
-                this.resizeY = 0;
             }
 
             if (redraw) {
-                this.startxMin = getPointPos(xAxis, startxMin, offsetX);
-                this.startxMax = getPointPos(xAxis, startxMax, offsetX);
-                this.startyMin = getPointPos(yAxis, startyMin, offsetY);
-                this.startyMax = getPointPos(yAxis, startyMax, offsetY);
+                this.startXMin = getPointPos(xAxis, startXMin, offsetX);
+                this.startXMax = getPointPos(xAxis, startXMax, offsetX);
+                this.startYMin = getPointPos(yAxis, startYMin, offsetY);
+                this.startYMax = getPointPos(yAxis, startYMax, offsetY);
 
                 this.offsetX = 0;
                 this.offsetY = 0;
@@ -666,7 +660,7 @@ H.extendAnnotation(Measure, null, {
 
     controlPointOptions: {
         positioner: function (target) {
-            var index = this.index,
+            var cpIndex = this.index,
                 chart = target.chart,
                 options = target.options,
                 typeOptions = options.typeOptions,
@@ -687,14 +681,18 @@ H.extendAnnotation(Measure, null, {
 
             if (selectType === 'x') {
                 targetY = (ext.yAxisMax - ext.yAxisMin) / 2;
-                if (index === 0) {
+
+                // first control point
+                if (cpIndex === 0) {
                     targetX = target.xAxisMin;
                 }
             }
 
             if (selectType === 'y') {
                 targetX = ext.xAxisMin + ((ext.xAxisMax - ext.xAxisMin) / 2);
-                if (index === 0) {
+
+                // first control point
+                if (cpIndex === 0) {
                     targetY = target.yAxisMin;
                 }
             }
