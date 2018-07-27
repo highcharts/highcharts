@@ -265,23 +265,19 @@ H.extendAnnotation(Measure, null, {
         }
     },
 
-    addEvents: function () {
-        H.Annotation.prototype.addEvents.call(this);
+    onDrag: function (e) {
+        var translation = this.mouseMoveToTranslation(e),
+            selectType = this.options.typeOptions.selectType,
+            x = selectType === 'y' ? 0 : translation.x,
+            y = selectType === 'x' ? 0 : translation.y;
 
-        H.addEvent(this, 'drag', function (e) {
-            var translation = this.mouseMoveToTranslation(e),
-                selectType = this.options.typeOptions.selectType,
-                x = selectType === 'y' ? 0 : translation.x,
-                y = selectType === 'x' ? 0 : translation.y;
+        this.translate(x, y);
 
-            this.translate(x, y);
+        this.offsetX += x;
+        this.offsetY += y;
 
-            this.offsetX += x;
-            this.offsetY += y;
-
-            // animation, resize, setStartPoints
-            this.redraw(false, false, true);
-        });
+        // animation, resize, setStartPoints
+        this.redraw(false, false, true);
     },
 
     /**

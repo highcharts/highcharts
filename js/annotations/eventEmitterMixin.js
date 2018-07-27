@@ -43,6 +43,10 @@ var eventEmitterMixin = {
                 H.addEvent(emitter, 'drag', eventHandler);
             }
         });
+
+        if (emitter.options.draggable) {
+            H.addEvent(emitter, 'drag', emitter.onDrag);
+        }
     },
 
     /**
@@ -113,6 +117,44 @@ var eventEmitterMixin = {
      */
     onMouseUp: function () {
         this.removeDocEvents();
+    },
+
+    /**
+     * Drag and drop event. All basic annotations should share this
+     * capability as well as the extended ones.
+     *
+     * @param {Object} e event
+     */
+    onDrag: function (e) {
+        if (
+            this.chart.isInsidePlot(
+                e.chartX - this.chart.plotLeft,
+                e.chartY - this.chart.plotTop
+            )
+        ) {
+            var translation = this.mouseMoveToTranslation(e);
+
+            if (this.options.draggable === 'x') {
+                translation.y = 0;
+            }
+
+            if (this.options.draggable === 'y') {
+                translation.x = 0;
+            }
+
+            if (this.points.length) {
+                this.translate(translation.x, translation.y);
+            } else {
+                H.each(this.shapes, function (shape) {
+                    shape.translate(translation.x, translation.y);
+                });
+                H.each(this.labels, function (label) {
+                    label.translate(translation.x, translation.y);
+                });
+            }
+
+            this.redraw(false);
+        }
     },
 
     /**
