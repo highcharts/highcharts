@@ -74,6 +74,20 @@ function isApiOption (doclet) {
 }
 
 /**
+ * Returns true, if the doclet is a global member.
+ *
+ * @param  {JSDoclet} doclet
+ *         JSDoc doclet to analyze.
+ * 
+ * @return {boolean}
+ *         True, if the doclet is a global member.
+ */
+function isGlobal (doclet) {
+
+    return (doclet.scope === 'global');
+}
+
+/**
  * Returns true, if the doclet is part of a private member tree.
  *
  * @param  {JSDoclet} doclet
@@ -98,20 +112,6 @@ function isPrivate (doclet) {
         // looking for a parent member that is private
         return (privateMembers.some(member => (name.indexOf(member) === 0)));
     }
-}
-
-/**
- * Returns true, if the doclet is a global member.
- *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
- * 
- * @return {boolean}
- *         True, if the doclet is a global member.
- */
-function isGlobal (doclet) {
-
-    return (doclet.scope === 'global');
 }
 
 /**
@@ -186,11 +186,15 @@ function getDescription (doclet) {
         return doclet.highchartsDescription;
     }
 
-    let description = (doclet.Description || '');
+    let description = doclet.Description;
 
     if (!description) {
 
         description = doclet.comment;
+
+        if (!description) {
+            return '';
+        }
 
         let tagPosition = description.indexOf(' @');
 
@@ -438,8 +442,7 @@ function getTypes (doclet) {
     let types = (
         doclet &&
         doclet.type &&
-        doclet.type.names &&
-        doclet.type.names.slice()
+        doclet.type.names
     );
 
     if (!types) {
@@ -452,7 +455,9 @@ function getTypes (doclet) {
             default:
                 if (name === name.toLowerCase() ||
                     name.indexOf('Highcharts') === 0 ||
-                    isGlobal(doclet)
+                    name.indexOf('<') > 0 ||
+                    (name[0] === 'T' &&
+                    (name[1] || '') === (name[1] || '').toUpperCase())
                 ) {
                     return name;
                 } else {
@@ -465,8 +470,6 @@ function getTypes (doclet) {
             case 'String':
             case 'Symbol':
                 return name.toLowerCase();
-            case 'Color':
-                return 'Highcharts.ColorString';
         }
     });
 }
@@ -732,9 +735,16 @@ function addTypeDef (doclet) {
 
     Object.values(doclet.properties).forEach(propertyDoclet => {
 
+        if (propertyDoclet.name.indexOf(':') > 0
+        ) {
+            propertyDoclet.longname = (name + '.[' + propertyDoclet.name + ']');
+            delete propertyDoclet.optional;
+        } else {
+            propertyDoclet.longname = (name + '.' + propertyDoclet.name);
+        }
+
         propertyDoclet.comment = propertyDoclet.description;
         propertyDoclet.kind = 'member';
-        propertyDoclet.longname = (name + '.' + propertyDoclet.name);
         propertyDoclet.meta = doclet.meta;
         propertyDoclet.scope = 'inner';
 
