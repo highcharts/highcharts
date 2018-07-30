@@ -791,4 +791,83 @@
             'The same number, no error (#5308)'
         );
     });
+
+
+    QUnit.test('getStyle', function (assert) {
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        div.style.padding = '10px';
+        div.style.display = 'none';
+
+        assert.strictEqual(
+            Highcharts.getStyle(div, 'width'),
+            0,
+            'Width should not be negative (#8377)'
+        );
+
+        document.body.removeChild(div);
+    });
+
+    QUnit.test('reduce', function (assert) {
+        var reduce = Highcharts.reduce,
+            arr = [0, 1, 2, 3],
+            accumulations = [],
+            values = [],
+            result;
+
+        // Call reduce without an initialValue.
+        result = reduce(arr, function (accumulation, value) {
+            accumulations.push(accumulation);
+            values.push(value);
+            return accumulation + value;
+        });
+
+        assert.strictEqual(
+            result,
+            6,
+            'No initialValue - should return sum of values in array.'
+        );
+
+        assert.deepEqual(
+            accumulations,
+            [0, 1, 3],
+            'No initialValue - should use first value as initialValue.'
+        );
+
+        assert.deepEqual(
+            values,
+            [1, 2, 3],
+            'No initialValue - should iterate from second value in array.'
+        );
+
+        // Empty arrays before next test.
+        accumulations = [];
+        values = [];
+
+        // Call reduce with an initialValue.
+        result = reduce(arr, function (accumulation, value) {
+            accumulations.push(accumulation);
+            values.push(value);
+            return accumulation + value;
+        }, 1);
+
+        assert.strictEqual(
+            result,
+            7,
+            'initialValue = 1 - should return sum of values in array plus intialValue.'
+        );
+
+        assert.deepEqual(
+            accumulations,
+            [1, 1, 2, 4],
+            'initialValue = 1 - should use initialValue.'
+        );
+
+        assert.deepEqual(
+            values,
+            [0, 1, 2, 3],
+            'initialValue = 1 - should iterate from first value in array.'
+        );
+
+    });
 }());

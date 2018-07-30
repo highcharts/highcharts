@@ -45,7 +45,7 @@ H.CenteredSeriesMixin = {
             positions[i] = relativeLength(
                 value,
                 [plotWidth, plotHeight, smallestSize, positions[2]][i]
-            ) +    (handleSlicingRoom ? slicingRoom : 0);
+            ) + (handleSlicingRoom ? slicingRoom : 0);
 
         }
         // innerSize cannot be larger than size (#3632)

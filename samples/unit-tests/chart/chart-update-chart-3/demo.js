@@ -38,6 +38,36 @@ QUnit.test('Option chart.type update', function (assert) {
         'Initially column'
     );
 
+
+    chart.update({
+        chart: {
+            type: 'bar'
+        }
+    });
+    assert.strictEqual(
+        chart.series[0].type,
+        'bar',
+        'Changed to bar'
+    );
+    assert.ok(
+        chart.inverted,
+        'Chart should be inverted (#8481)'
+    );
+    chart.update({
+        chart: {
+            type: 'column'
+        }
+    });
+    assert.strictEqual(
+        chart.series[0].type,
+        'column',
+        'Changed to column'
+    );
+    assert.ok(
+        !chart.inverted,
+        'Chart should not be inverted (#8481)'
+    );
+
     // Second series is set to pie in series options
     assert.strictEqual(
         chart.series[1].type,

@@ -16,7 +16,7 @@ var seriesType = H.seriesType,
  * freeform drawing, like dividers, in the map.
  *
  * @sample maps/demo/mapline-mappoint/ Mapline and map-point chart
- * @extends {plotOptions.map}
+ * @extends plotOptions.map
  * @product highmaps
  * @optionparent plotOptions.mapline
  */

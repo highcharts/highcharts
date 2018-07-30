@@ -14,7 +14,6 @@ import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 var colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
-    doc = H.doc,
     each = H.each,
     extend = H.extend,
     isNumber = H.isNumber,
@@ -30,17 +29,12 @@ var colorPointMixin = H.colorPointMixin,
     seriesTypes = H.seriesTypes,
     splat = H.splat;
 
-// The vector-effect attribute is not supported in IE <= 11 (at least), so we
-// need diffent logic (#3218)
-var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
-
-
 /**
  * The map series is used for basic choropleth maps, where each map area has a
  * color based on its value.
  *
  * @sample maps/demo/base/ Choropleth map
- * @extends {plotOptions.scatter}
+ * @extends plotOptions.scatter
  * @excluding marker
  * @product highmaps
  * @optionparent plotOptions.map
@@ -284,9 +278,9 @@ seriesType('map', 'scatter', {
     getBox: function (paths) {
         var MAX_VALUE = Number.MAX_VALUE,
             maxX = -MAX_VALUE,
-            minX =  MAX_VALUE,
+            minX = MAX_VALUE,
             maxY = -MAX_VALUE,
-            minY =  MAX_VALUE,
+            minY = MAX_VALUE,
             minRange = MAX_VALUE,
             xAxis = this.xAxis,
             yAxis = this.yAxis,
@@ -304,9 +298,9 @@ seriesType('map', 'scatter', {
                     i = path.length,
                     even = false, // while loop reads from the end
                     pointMaxX = -MAX_VALUE,
-                    pointMinX =  MAX_VALUE,
+                    pointMinX = MAX_VALUE,
                     pointMaxY = -MAX_VALUE,
-                    pointMinY =  MAX_VALUE,
+                    pointMinY = MAX_VALUE,
                     properties = point.properties;
 
                 // The first time a map point is used, analyze its box
@@ -325,7 +319,7 @@ seriesType('map', 'scatter', {
                     }
                     // Cache point bounding box for use to position data labels,
                     // bubbles etc
-                    point._midX = pointMinX + (pointMaxX - pointMinX) *    pick(
+                    point._midX = pointMinX + (pointMaxX - pointMinX) * pick(
                         point.middleX,
                         properties && properties['hc-middle-x'],
                         0.5
@@ -676,15 +670,18 @@ seriesType('map', 'scatter', {
         attr = this.colorAttribs(point);
         /*= } =*/
 
-        // If vector-effect is not supported, we set the stroke-width on the
-        // group element and let all point graphics inherit. That way we don't
-        // have to iterate over all points to update the stroke-width on
-        // zooming.
-        if (supportsVectorEffect) {
-            attr['vector-effect'] = 'non-scaling-stroke';
-        } else {
-            attr['stroke-width'] = 'inherit';
-        }
+        // Set the stroke-width on the group element and let all point graphics
+        // inherit. That way we don't have to iterate over all points to update
+        // the stroke-width on zooming.
+        attr['stroke-width'] = pick(
+            point.options[
+                (
+                    this.pointAttrToOptions &&
+                    this.pointAttrToOptions['stroke-width']
+                ) || 'borderWidth'
+            ],
+            'inherit'
+        );
 
         return attr;
     },
@@ -864,17 +861,18 @@ seriesType('map', 'scatter', {
         // Set the stroke-width directly on the group element so the children
         // inherit it. We need to use setAttribute directly, because the
         // stroke-widthSetter method expects a stroke color also to be set.
-        if (!supportsVectorEffect) {
-            series.group.element.setAttribute(
-                'stroke-width',
+        group.element.setAttribute(
+            'stroke-width',
+            (
                 series.options[
                     (
                         series.pointAttrToOptions &&
                         series.pointAttrToOptions['stroke-width']
                     ) || 'borderWidth'
-                ] / (scaleX || 1)
-            );
-        }
+                ] ||
+                1 // Styled mode
+            ) / (scaleX || 1)
+        );
 
         this.drawMapDataLabels();
 
@@ -1068,7 +1066,7 @@ seriesType('map', 'scatter', {
      * Highmaps only. Zoom in on the point using the global animation.
      *
      * @function #zoomTo
-     * @memberOf Point
+     * @memberof Point
      * @sample maps/members/point-zoomto/
      *         Zoom to points from butons
      */

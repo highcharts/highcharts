@@ -14,13 +14,7 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
-        gridLineWidth: 0,
-        labels: {
-            enabled: false
-        },
-        title: {
-            text: null
-        }
+        visible: false
     },
 
     plotOptions: {

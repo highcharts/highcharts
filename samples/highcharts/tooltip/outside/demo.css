@@ -1,0 +1,9 @@
+#outer {
+	max-width: 420px;
+	margin: 1em auto;
+}
+.container {
+	width: 200px;
+    height: 200px;
+    display: inline-block;
+}

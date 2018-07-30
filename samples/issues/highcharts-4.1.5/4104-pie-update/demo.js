@@ -29,8 +29,8 @@ $(function () {
             'Hidden pie on setVisible false'
         );
         assert.equal(
-            chart.series[0].points[0].dataLabel.attr('visibility'),
-            'hidden',
+            typeof chart.series[0].points[0].dataLabel,
+            'undefined',
             'Hidden data label on setVisible false'
         );
         assert.equal(

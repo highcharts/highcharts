@@ -225,12 +225,9 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     var yAxisFirstLine = chart.yAxis[0].gridGroup.element.childNodes[0].getBBox();
     var xAxisFirstLine = chart.xAxis[0].gridGroup.element.childNodes[0].getBBox();
 
-    assert.strictEqual(
-        (
-            labelWidth < xAxisFirstLine.x - yAxisFirstLine.x
-        ),
-        true,
-        'xAxis label width is smaller than available slot width'
+    assert.ok(
+        labelWidth < xAxisFirstLine.x - yAxisFirstLine.x + 1,
+        'xAxis label width should be smaller than available slot width'
     );
 
 });

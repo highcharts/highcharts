@@ -28,7 +28,7 @@ var each = H.each,
  * where individual values are represented in descending order by bars,
  * and the cumulative total is represented by the line.
  *
- * @extends {plotOptions.line}
+ * @extends plotOptions.line
  * @product highcharts
  * @sample {highcharts} highcharts/demo/pareto/
  *         Pareto diagram

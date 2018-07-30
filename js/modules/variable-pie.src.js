@@ -34,7 +34,7 @@ seriesType('variablepie', 'pie',
      * size (arc) of the slice relates to the Y value and the radius of pie
      * slice relates to the Z value. Requires `highcharts-more.js`.
      *
-     * @extends {plotOptions.pie}
+     * @extends plotOptions.pie
      * @product highcharts
      * @sample {highcharts} highcharts/demo/variable-radius-pie/
      *         Variable-radius pie chart
@@ -276,7 +276,7 @@ seriesType('variablepie', 'pie',
                 pointRadiusX,
                 pointRadiusY;
 
-            series.startAngleRad =  startAngleRad;
+            series.startAngleRad = startAngleRad;
             series.endAngleRad = endAngleRad;
             // Use calculateExtremes to get series.radii array.
             series.calculateExtremes();
