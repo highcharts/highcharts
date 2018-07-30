@@ -343,15 +343,15 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
                 'The user range of x-axis should be set.'
             );
 
-            controller.touchstart(300, 100, {
+            controller.touchStart(300, 100, {
                 preventDefault: function () {}
             });
 
-            controller.touchmove(100, 100, {
+            controller.touchMove(100, 100, {
                 preventDefault: function () {}
             });
 
-            controller.touchend(100, 100);
+            controller.touchEnd(100, 100);
 
             assert.deepEqual([
                 xAxis.userMin,

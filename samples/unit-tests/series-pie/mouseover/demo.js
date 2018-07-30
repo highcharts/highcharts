@@ -56,7 +56,7 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
 
             window.setTimeout(function () {
                 var pointBox = points[1].graphic.getBBox();
-                controller.mouseover(
+                controller.mouseOver(
                     (chart.plotLeft + pointBox.x + (pointBox.width / 2)),
                     (chart.plotTop + pointBox.y + (pointBox.height / 2))
                 );
@@ -76,8 +76,8 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
             }, 1);
 
             window.setTimeout(function () {
-                controller.mousemove();
-                controller.mouseout();
+                controller.mouseMove();
+                controller.mouseOut();
             }, 2);
 
             window.setTimeout(function () {
@@ -95,7 +95,7 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
 
             window.setTimeout(function () {
                 var pointBox = points[2].graphic.getBBox();
-                controller.mouseover(
+                controller.mouseOver(
                     (chart.plotLeft + pointBox.x + (pointBox.width / 2)),
                     (chart.plotTop + pointBox.y + (pointBox.height / 2))
                 );
@@ -176,7 +176,7 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
 
             window.setTimeout(function () {
                 var pointBox = points[0].graphic.getBBox();
-                controller.mouseover(
+                controller.mouseOver(
                     (chart.plotLeft + pointBox.x + (pointBox.width / 2)),
                     (chart.plotTop + pointBox.y + (pointBox.height / 2))
                 );
@@ -199,8 +199,8 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
             }, 1);
 
             window.setTimeout(function () {
-                controller.mousemove();
-                controller.mouseout();
+                controller.mouseMove();
+                controller.mouseOut();
             }, 2);
 
             window.setTimeout(function () {
@@ -221,7 +221,7 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
 
             window.setTimeout(function () {
                 var pointBox = points[1].graphic.getBBox();
-                controller.mouseover(
+                controller.mouseOver(
                     (chart.plotLeft + pointBox.x + (pointBox.width / 2) - 10),
                     (chart.plotTop + pointBox.y + (pointBox.height / 2) + 10)
                 );
