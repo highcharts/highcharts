@@ -260,6 +260,10 @@ function getLightDoclet (doclet) {
         lightDoclet.defaultValue = doclet.defaultvalue;
     }
 
+    if (typeof doclet.values !== 'undefined') {
+        lightDoclet.values = doclet.values;
+    }
+
     if (typeof doclet.see !== 'undefined') {
         lightDoclet.see = doclet.see;
     }
@@ -725,7 +729,7 @@ function addTypeDef (doclet) {
 
     let node = updateNodeFor(doclet);
 
-    node.doclet.types = (getTypes(doclet) || [ 'object' ]);
+    node.doclet.types = (getTypes(doclet) || [ '*' ]);
 
     if (!doclet.properties) {
         return;
