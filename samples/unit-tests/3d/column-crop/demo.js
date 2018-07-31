@@ -261,9 +261,7 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     var clickX = sbDim.x + sbDim.w / 2;
     var clickY = sbDim.y + sbDim.h / 2;
 
-    controller.mousedown(clickX, clickY, false, true);
-    controller.mousemove(clickX + 40, clickY, false, true); // Move mouse 10px right
-    controller.mouseup(clickX + 40, clickY, false, true);
+    controller.pan([clickX, clickY], [clickX + 40, clickY], false, true);
 
     var done = assert.async();
     setTimeout(function () {
