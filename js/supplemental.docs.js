@@ -1641,7 +1641,7 @@
  * than this, the axis will stay at this maximum, but if the series
  * data maximum is higher, the axis will flex to show all data.
  *
- * **Note**: [series.softThreshold](#plotOptions.series.softThreshold) option
+ * **Note**: The [series.softThreshold](#plotOptions.series.softThreshold) option
  * takes precedence over this option.
  *
  * @type {Number}
@@ -1656,7 +1656,7 @@
  * than this, the axis will stay at this minimum, but if the series
  * data minimum is lower, the axis will flex to show all data.
  *
- * **Note**: [series.softThreshold](#plotOptions.series.softThreshold) option
+ * **Note**: The [series.softThreshold](#plotOptions.series.softThreshold) option
  * takes precedence over this option.
  *
  * @type {Number}
