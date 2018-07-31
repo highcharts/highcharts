@@ -461,7 +461,8 @@ function getTypes (doclet) {
                     name.indexOf('Highcharts') === 0 ||
                     name.indexOf('<') > 0 ||
                     (name[0] === 'T' &&
-                    (name[1] || '') === (name[1] || '').toUpperCase())
+                    (name[1] || '') === (name[1] || '').toUpperCase()) ||
+                    isGlobal(doclet)
                 ) {
                     return name;
                 } else {
@@ -585,7 +586,16 @@ function sortNodes(node) {
 function updateNodeFor (doclet) {
 
     let node = namespace,
-        parts = getName(doclet).split('.');
+        name = getName(doclet),
+        parts = [],
+        selector = (name.match(/\[\w+\:[\w\.]+\]$/) || [])[0];
+
+    if (selector) {
+        parts = name.substr(0, name.length - selector.length - 1).split('.');
+        parts.push(selector);
+    } else {
+        parts = name.split('.');
+    }
 
     parts.forEach(part => {
 
@@ -698,7 +708,7 @@ function addFunction (doclet) {
 function addMember (doclet) {
 
     let node = updateNodeFor(doclet);
-
+    debugthis = false;
     if (!node.doclet.types) {
         node.doclet.types = getTypes(doclet);
     }
@@ -739,8 +749,7 @@ function addTypeDef (doclet) {
 
     Object.values(doclet.properties).forEach(propertyDoclet => {
 
-        if (propertyDoclet.name.indexOf(':') > 0
-        ) {
+        if (propertyDoclet.name.indexOf(':') > 0) {
             propertyDoclet.longname = (name + '.[' + propertyDoclet.name + ']');
             delete propertyDoclet.optional;
         } else {
