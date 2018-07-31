@@ -297,6 +297,28 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     }
 });
 
+
+addEvent(H.Chart.prototype, 'destroy', function () {
+
+    var chartContainer = this.renderTo,
+        stockToolsDiv = chartContainer.parentNode;
+
+    // get the element's parent node
+    var parent = stockToolsDiv.parentNode;
+
+    // move all children out of the element
+    while (stockToolsDiv.firstChild) {
+        if (stockToolsDiv.firstChild === chartContainer) {
+            parent.insertBefore(stockToolsDiv.firstChild, stockToolsDiv);
+        } else {
+            stockToolsDiv.firstChild.remove();
+        }
+    }
+
+    // remove the empty element
+    parent.removeChild(stockToolsDiv);
+});
+
 H.Toolbar = function (options, chart) {
     this.init(options, chart);
 };
