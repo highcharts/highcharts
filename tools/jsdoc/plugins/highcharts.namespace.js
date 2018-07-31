@@ -334,7 +334,9 @@ function getName (doclet) {
             name = 'Highcharts';
         }
 
-        if (name.indexOf('Highcharts') !== 0) {
+        if (name.indexOf('Highcharts') !== 0 &&
+            !isGlobal(doclet)
+        ) {
             
             let memberOf = getClearName(doclet.memberOf);
 
