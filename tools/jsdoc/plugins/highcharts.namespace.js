@@ -702,7 +702,7 @@ function addFunction (doclet) {
 function addMember (doclet) {
 
     let node = updateNodeFor(doclet);
-    debugthis = false;
+
     if (!node.doclet.types) {
         node.doclet.types = getTypes(doclet);
     }
