@@ -60,7 +60,7 @@ H.defaultOptions = {
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
      * reusable elements. See [gradients, shadows and
-     * patterns](http://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns)
+     * patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns)
      * for more information and code examples.
      *
      * @type {Object}
@@ -363,7 +363,7 @@ H.defaultOptions = {
          *
          * <dd>A string reference to an easing function set on the `Math`
          * object. See [the easing
-         * demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
+         * demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          * </dd>
          *
          * </dl>
@@ -1248,7 +1248,7 @@ H.defaultOptions = {
          * @type {String}
          * @see In styled mode, a plot background image can be set with the
          * `.highcharts-plot-background` class and a
-         * [custom pattern](http://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
+         * [custom pattern](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
          * @sample {highcharts} highcharts/chart/plotbackgroundimage/ Skies
          * @sample {highstock} stock/chart/plotbackgroundimage/ Skies
          * @default null
@@ -1311,7 +1311,7 @@ H.defaultOptions = {
 
         /**
          * Whether to
-         * [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the text.
          *
          * @type {Boolean}
@@ -1470,7 +1470,7 @@ H.defaultOptions = {
 
         /**
          * Whether to
-         * [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the text.
          *
          * @type {Boolean}
@@ -1630,7 +1630,7 @@ H.defaultOptions = {
      * of pie charts) is represented by a symbol and its name in the legend.
      *
      * It is possible to override the symbol creator function and create
-     * [custom legend symbols](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-custom-symbol/).
+     * [custom legend symbols](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-custom-symbol/).
      *
      * @productdesc {highmaps}
      * A Highmaps legend by default contains one legend item per series, but if
@@ -1903,7 +1903,7 @@ H.defaultOptions = {
          * is overflown. Navigation works well on screen, but not in static
          * exported images. One way of working around that is to
          * [increase the chart height in
-         * export](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-enabled-false/).
+         * export](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-enabled-false/).
          *
          */
         navigation: {
@@ -2199,7 +2199,7 @@ H.defaultOptions = {
 
         /**
          * Whether to
-         * [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the legend item texts.
          *
          * Prior to 4.1.7, when using HTML,
@@ -2971,7 +2971,7 @@ H.defaultOptions = {
          * @sample {highcharts} highcharts/credits/href/ Custom URL and text
          * @sample {highmaps} maps/credits/customized/ Custom URL and text
          */
-        href: 'http://www.highcharts.com',
+        href: 'https://www.highcharts.com',
 
         /**
          * Position configuration for the credits label.

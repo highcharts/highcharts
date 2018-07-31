@@ -387,7 +387,7 @@ merge(true, defaultOptions.navigation,
 
 /**
  * Options for the exporting module. For an overview on the matter, see
- * [the docs](http://www.highcharts.com/docs/export-module/export-module-overview).
+ * [the docs](https://www.highcharts.com/docs/export-module/export-module-overview).
  * @type {Object}
  * @optionparent exporting
  */

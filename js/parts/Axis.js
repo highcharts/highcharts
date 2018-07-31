@@ -507,7 +507,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * The dash or dot style of the grid lines. For possible values, see
-         * [this demonstration](http://jsfiddle.net/gh/get/library/pure/
+         * [this demonstration](https://jsfiddle.net/gh/get/library/pure/
          *highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
          *series-dashstyle-all/).
          *
@@ -641,7 +641,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             enabled: true,
 
             /**
-             * A [format string](http://www.highcharts.com/docs/chart-
+             * A [format string](https://www.highcharts.com/docs/chart-
              * concepts/labels-and-string-formatting) for the axis label.
              *
              * @type      {String}
@@ -762,7 +762,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * chosen the wrong axis type.
              *
              * Read more at
-             * [Axis docs](http://www.highcharts.com/docs/chart-concepts/axes)
+             * [Axis docs](https://www.highcharts.com/docs/chart-concepts/axes)
              * => What axis should I use?
              *
              * @type      {Number}
@@ -819,7 +819,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             /*= } =*/
 
             /**
-             * Whether to [use HTML](http://www.highcharts.com/docs/chart-
+             * Whether to [use HTML](https://www.highcharts.com/docs/chart-
              * concepts/labels-and-string-formatting#html) to render the labels.
              *
              * @type      {Boolean}
@@ -954,7 +954,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * The dash or dot style of the minor grid lines. For possible values,
-         * see [this demonstration](http://jsfiddle.net/gh/get/library/pure/
+         * see [this demonstration](https://jsfiddle.net/gh/get/library/pure/
          * highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
          * series-dashstyle-all/).
          *

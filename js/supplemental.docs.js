@@ -405,7 +405,7 @@
  */
 
 /**
- * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
+ * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-
  * and-string-formatting#html) to render the labels.
  *
  * @type {Boolean}
@@ -484,7 +484,7 @@
 
 /**
  * The dashing or dot style for the plot line. For possible values see
- * [this overview](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-
+ * [this overview](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-
  * dashstyle-all/).
  *
  * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot", "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot", "LongDashDot", "LongDashDotDot"]
@@ -622,7 +622,7 @@
  */
 
 /**
- * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
+ * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-
  * and-string-formatting#html) to render the labels.
  *
  * @type {Boolean}
@@ -733,7 +733,7 @@
  */
 
 /**
- * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
+ * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-
  * and-string-formatting#html) to render the axis title.
  *
  * @type {Boolean}
@@ -1007,7 +1007,7 @@
  */
 
 /**
- * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+ * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
  * to render the labels.
  *
  * @type {Boolean}

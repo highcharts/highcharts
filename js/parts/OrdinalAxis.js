@@ -676,7 +676,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
      * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
      */
     postProcessTickInterval: function (tickInterval) {
-        // Problem: http://jsfiddle.net/highcharts/FQm4E/1/
+        // Problem: https://jsfiddle.net/highcharts/FQm4E/1/
         // This is a case where this algorithm doesn't work optimally. In this case, the
         // tick labels are spread out per week, but all the gaps reside within weeks. So
         // we have a situation where the labels are courser than the ordinal gaps, and

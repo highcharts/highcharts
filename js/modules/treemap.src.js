@@ -199,7 +199,7 @@ seriesType('treemap', 'scatter', {
      * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
      * @type {String}
      * @see [How to write your own algorithm](
-     * http://www.highcharts.com/docs/chart-and-series-types/treemap).
+     * https://www.highcharts.com/docs/chart-and-series-types/treemap).
      *
      * @sample  {highcharts}
      *          highcharts/plotoptions/treemap-layoutalgorithm-sliceanddice/
