@@ -592,6 +592,7 @@ H.Toolbar.prototype = {
         verticalArrow: 'highcharts-vertical-arrow',
         verticalDoubleArrow: 'highcharts-vertical-double-arrow',
         currentPriceIndicator: 'highcharts-current-price-indicator',
+        indicators: 'highcharts-indicators',
         flagCirclepin: 'highcharts-flag-circlepin',
         flagDiamondpin: 'highcharts-flag-diamondpin',
         flagSquarepin: 'highcharts-flag-squarepin',
