@@ -11,12 +11,6 @@ import './ColumnSeries.js';
 var seriesType = H.seriesType;
 
 /**
- * The Bar series class
- */
-seriesType('bar', 'column', null, {
-    inverted: true
-});
-/**
  * A bar series is a special type of column series where the columns are
  * horizontal.
  *
@@ -26,6 +20,16 @@ seriesType('bar', 'column', null, {
  * @product      highcharts
  * @optionparent plotOptions.bar
  */
+
+/**
+ * The bar series type.
+ *
+ * @constructor seriesTypes.bar
+ * @augments    Series
+ */
+seriesType('bar', 'column', {}, {
+    inverted: true
+});
 
 
 /**
