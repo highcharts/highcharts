@@ -349,6 +349,32 @@ function getName (doclet) {
 }
 
 /**
+ * Returns all components of the name.
+ *
+ * @param  {string} name
+ *         Name with components.
+ *
+ * @return {Array<string>}
+ *         The components of the name.
+ */
+function getNamespaces (name) {
+
+    let selector = (name.match(/\[\w+\:[\w\.]+\]$/) || [])[0];
+
+    if (selector) {
+        name = name.substr(0, (name.length - selector.length));
+    }
+
+    let namespaces = name.split('.');
+
+    if (selector) {
+        namespaces[namespaces.length-1] += selector;
+    }
+
+    return namespaces;
+}
+
+/**
  * Returns a name-based dictionary with parameter description and types.
  *
  * @param   {JSDoclet} doclet
@@ -451,9 +477,9 @@ function getTypes (doclet) {
 
         switch(name) {
             default:
-                if (name === name.toLowerCase() ||
+                if (isGlobal(doclet) ||
                     name.indexOf('Highcharts') === 0 ||
-                    name.indexOf('<') > 0 ||
+                    name === name.toLowerCase() ||
                     (name[0] === 'T' &&
                     (name[1] || '') === (name[1] || '').toUpperCase())
                 ) {
@@ -580,16 +606,7 @@ function sortNodes(node) {
 function updateNodeFor (doclet) {
 
     let node = namespace,
-        name = getName(doclet),
-        parts = [],
-        selector = (name.match(/\[\w+\:[\w\.]+\]$/) || [])[0];
-
-    if (selector) {
-        parts = name.substr(0, name.length - selector.length - 1).split('.');
-        parts.push(selector);
-    } else {
-        parts = name.split('.');
-    }
+        parts = getNamespaces(doclet);
 
     parts.forEach(part => {
 
