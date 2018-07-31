@@ -323,30 +323,22 @@ function getName (doclet) {
         return doclet.highchartsName;
     }
 
-    let name = getClearName(doclet.longname),
-        scope = doclet.scope;
+    let memberOf = getClearName(doclet.memberOf),
+        name = getClearName(doclet.longname);
 
     try {
 
         if (name.indexOf('H.') === 0) {
-            name = name.substr(2);
+            name = 'Highcharts.' + name.substr(2);
         } else if (name === 'H') {
             name = 'Highcharts';
-        }
-
-        if (name.indexOf('Highcharts') !== 0 &&
-            !isGlobal(doclet)
+        } else if (memberOf) {
+            name = memberOf + '.' + name;
+        } else if (!isGlobal(doclet) &&
+            name.indexOf('.') === -1 &&
+            name.indexOf('Highcharts') !== 0
         ) {
-            
-            let memberOf = getClearName(doclet.memberOf);
-
-            if (memberOf
-                && memberOf.indexOf('Highcharts') === 0
-            ) {
-                name = memberOf + '.' + name;
-            } else {
-                name = ('Highcharts.' + name);
-            }
+            name = 'Highcharts.' + name;
         }
 
         return name
@@ -463,15 +455,15 @@ function getTypes (doclet) {
                     name.indexOf('Highcharts') === 0 ||
                     name.indexOf('<') > 0 ||
                     (name[0] === 'T' &&
-                    (name[1] || '') === (name[1] || '').toUpperCase()) ||
-                    isGlobal(doclet)
+                    (name[1] || '') === (name[1] || '').toUpperCase())
                 ) {
                     return name;
                 } else {
                     return 'Highcharts.' + name;
                 }
-            case 'Boolean':
             case 'Function':
+                return name;
+            case 'Boolean':
             case 'Number':
             case 'Object':
             case 'String':
