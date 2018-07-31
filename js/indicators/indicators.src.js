@@ -16,7 +16,7 @@ var pick = H.pick,
  * Support for OHLC data with line type of series.
  */
 
-addEvent(H.Series, 'beforeInit', function (eventOptions) {
+addEvent(H.Series, 'init', function (eventOptions) {
     var series = this,
         options = eventOptions.options,
         dataGrouping = options.dataGrouping;
