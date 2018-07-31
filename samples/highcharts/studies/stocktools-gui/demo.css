@@ -119,3 +119,12 @@
   display: none;
 }
 
+.highcharts-popup {
+  background-color: #fff;
+  display: none;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  z-index: 100;
+}
+

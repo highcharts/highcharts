@@ -36,6 +36,7 @@ H.setOptions({
             className: 'stocktools-wrapper',
             toolbarClassName: 'stocktools-toolbar',
             buttons: [
+                'indicators',
                 'simpleShapes',
                 'lines',
                 'crookedLines',
@@ -49,7 +50,7 @@ H.setOptions({
                 'zoomChange',
                 'typeChange',
                 'separator',
-                'indicators',
+                //'indicators',
                 'currentPriceIndicator',
                 'saveChart'
             ],
@@ -234,6 +235,7 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
         toolbar,
         stockToolbar,
         listWrapper,
+        popup,
         wrapper;
 
     if (!guiOptions.enabled) {
@@ -263,15 +265,13 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     wrapper.insertBefore(listWrapper, wrapper.childNodes[0]);
     listWrapper.insertBefore(toolbar, listWrapper.childNodes[0]);
 
-    // generate buttons
-    chart.stockToolbar = stockToolbar = new H.Toolbar(guiOptions, chart);
-
-    // show hide toolbar
-    createElement(DIV, {
-        className: 'highcharts-showhide-showbar'
+    // create popup
+    popup = createElement(DIV, {
+        className: 'highcharts-popup'
     }, null, wrapper);
 
-    H.Toolbar.prototype.showHideToolbar();
+    // generate buttons
+    chart.stockToolbar = stockToolbar = new H.Toolbar(guiOptions, chart);
 
     // arrows
     // 50px space for arrows
@@ -294,6 +294,16 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
         wrapper.insertBefore(stockToolbar.arrowWrapper, wrapper.childNodes[0]);
         stockToolbar.scrollButtons(guiOptions);
     }
+
+    // show hide toolbar
+    createElement(DIV, {
+        className: 'highcharts-showhide-showbar'
+    }, null, wrapper);
+
+    H.Toolbar.prototype.showHideToolbar();
+
+    // add popup listener
+    this.showIndicatorsForm = H.Toolbar.prototype.showIndicatorsForm;
 });
 
 
@@ -563,6 +573,9 @@ H.Toolbar.prototype = {
                 activeBtn.classList.remove(activeClass);
             }
         });
+    },
+    showIndicatorsForm: function (callback) {
+        console.log(this, this.chart.popup, callback);
     },
     classMapping: {
         circle: 'highcharts-circle-annotation',

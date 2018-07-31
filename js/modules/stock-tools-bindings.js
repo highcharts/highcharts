@@ -989,6 +989,7 @@ var stockToolsBindings = {
     'indicators': {
         init: function () {
             var chart = this.chart;
+
             if (this.showIndicatorsForm) {
                 this.showIndicatorsForm(
                     // Callback on submit:
