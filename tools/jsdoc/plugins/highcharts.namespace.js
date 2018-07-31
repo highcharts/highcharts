@@ -940,6 +940,11 @@ exports.defineTags = function (dictionary) {
         onTagged: (doclet, tag) => doclet.product = tag.value
     });
 
+    dictionary.defineTag('validvalue', {
+        mustHaveValue: true,
+        onTagged: (doclet, tag) => doclet.values = tag.value
+    })
+
 };
 
 /**
