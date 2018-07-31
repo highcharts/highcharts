@@ -74,16 +74,16 @@ H.setOptions({
                         'flagSimplepin'
                     ],
                     flagSimplepin: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-flag.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-basic.svg)'
                     },
                     flagDiamondpin: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-diamondpin.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-diamond.svg)'
                     },
                     flagSquarepin: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-squarepin.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-square.svg)'
                     },
                     flagCirclepin: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-circlepin.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-circle.svg)'
                     }
                 },
                 lines: {
@@ -173,16 +173,15 @@ H.setOptions({
                     }
                 },
                 measure: {
-                    items: ['measureX', 'measureY', 'measureXY'],
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)',
+                    items: ['measureXY', 'measureX', 'measureY'],
                     measureX: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-xy.svg)'
                     },
                     measureY: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-x.svg)'
                     },
                     measureXY: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-y.svg)'
                     }
                 },
                 toggleAnnotations: {
@@ -209,13 +208,13 @@ H.setOptions({
                 typeChange: {
                     items: ['typeOHLC', 'typeLine', 'typeCandlestick'],
                     typeOHLC: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-ohlc.svg)'
                     },
                     typeLine: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-line.svg)'
                     },
                     typeCandlestick: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-candlestick.svg)'
                     }
                 },
                 saveChart: {

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="32px" height="32px" viewBox="-1 -1 32 32" enable-background="new -1 -1 32 32" xml:space="preserve">
+<g id="Robocza">
+	<g>
+		<circle fill="#4B4B4D" cx="5.5" cy="4.496" r="1.5"/>
+		<path fill="#4B4B4D" d="M19.54,7.522l-3.351,4.838l0.936,0.935l3.335-4.817l4.253-2.706C24.941,5.914,25.21,6,25.5,6
+			C26.328,6,27,5.328,27,4.5S26.328,3,25.5,3S24,3.672,24,4.5c0,0.06,0.011,0.115,0.018,0.173L19.54,7.522z"/>
+		<path fill="#4B4B4D" d="M11.46,21.479l3.351-4.84l-0.934-0.936l-3.337,4.818l-4.253,2.707C6.058,23.086,5.79,23,5.5,23
+			C4.672,23,4,23.672,4,24.5S4.672,26,5.5,26S7,25.328,7,24.5c0-0.061-0.011-0.115-0.018-0.173L11.46,21.479z"/>
+		<rect x="24.75" y="18" fill="#4B4B4D" width="1.5" height="3"/>
+		<rect x="24.75" y="13" fill="#4B4B4D" width="1.5" height="3"/>
+		<rect x="24.75" y="8" fill="#4B4B4D" width="1.5" height="3"/>
+		<rect x="19" y="23.75" fill="#4B4B4D" width="3" height="1.5"/>
+		<rect x="14" y="23.75" fill="#4B4B4D" width="3" height="1.5"/>
+		<rect x="9" y="23.75" fill="#4B4B4D" width="3" height="1.5"/>
+		<rect x="4.75" y="8.001" fill="#4B4B4D" width="1.5" height="3"/>
+		<rect x="4.75" y="13.001" fill="#4B4B4D" width="1.5" height="3"/>
+		<rect x="4.75" y="18.001" fill="#4B4B4D" width="1.5" height="3"/>
+		<rect x="9" y="3.751" fill="#4B4B4D" width="3" height="1.5"/>
+		<rect x="14" y="3.751" fill="#4B4B4D" width="3" height="1.5"/>
+		<rect x="19" y="3.751" fill="#4B4B4D" width="3" height="1.5"/>
+		<circle fill="#4B4B4D" cx="25.5" cy="24.5" r="1.5"/>
+		<polygon fill="#4B4B4D" points="21.838,20.13 9.84,8.13 10.768,7.202 7.268,6.264 8.206,9.764 9.133,8.837 21.131,20.837 
+			20.203,21.766 23.703,22.703 22.766,19.203 		"/>
+	</g>
+</g>
+<g id="TXT_over">
+</g>
+</svg>
