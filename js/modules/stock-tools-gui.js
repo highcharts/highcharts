@@ -20,6 +20,7 @@ var addEvent = H.addEvent,
     createElement = H.createElement,
     doc = H.doc,
     each = H.each,
+    extend = H.extend,
     fireEvent = H.fireEvent,
     getStyle = H.getStyle,
     css = H.css,
@@ -304,13 +305,21 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
 
     // add popup listener
     this.showIndicatorsForm = H.Toolbar.prototype.showIndicatorsForm;
+
+    // add references to chart
+    extend(this, {
+        stockTools: {
+            wrapper: wrapper,
+            popup: popup
+        }
+    });
 });
 
 
 addEvent(H.Chart.prototype, 'destroy', function () {
 
     var chartContainer = this.renderTo,
-        stockToolsDiv = chartContainer.parentNode;
+        stockToolsDiv = this.stockTools.wrapper;
 
     // get the element's parent node
     var parent = stockToolsDiv.parentNode;
