@@ -589,7 +589,13 @@ function sortNodes(node) {
 
     keys.forEach(key => {
         node[key] = pointer[key];
-        sortNodes(node[key]);
+        switch (key) {
+            default:
+                sortNodes(node[key]);
+                break;
+            case 'parameters':
+                break;
+        }
     });
 
 }
