@@ -126,5 +126,52 @@
   position: absolute;
   top: 50%;
   z-index: 100;
+  margin-left: -200px;
+  margin-top: -100px;
+  width: 400px;
+  height: 200px;
 }
+
+.highcharts-popup input, .highcharts-popup label, .highcharts-popup select {
+  clear: both;
+  width: 90%;
+  margin-bottom: 10px;
+}
+
+.highcharts-popup-lhs-col, .highcharts-popup-rhs-col {
+  padding: 20px;
+  height: calc(100% - 40px);
+  float: left;
+}
+
+.highcharts-popup-lhs-col {
+  background-color: #e6e6e6;
+  width: calc(30% - 40px);
+}
+
+.highcharts-popup-rhs-col {
+  width: calc(70% - 40px);
+}
+
+.highcharts-popup-rhs-col-wrapper {
+  float:left;
+}
+
+.highcharts-indicator-list {
+  float:left;
+  height: 100%;
+  overflow: scroll;
+}
+
+.highcharts-indicator-list li {
+  padding: 0px;
+  margin: 0px;
+  width: 100%;
+  height: auto;
+}
+
+
+
+
+
 

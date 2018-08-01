@@ -27,6 +27,7 @@ var addEvent = H.addEvent,
     DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
+    LI = 'li',
     PREFIX = 'highcharts-',
     activeClass = PREFIX + 'active';
 
@@ -51,7 +52,7 @@ H.setOptions({
                 'zoomChange',
                 'typeChange',
                 'separator',
-                //'indicators',
+                // 'indicators',
                 'currentPriceIndicator',
                 'saveChart'
             ],
@@ -267,9 +268,7 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     listWrapper.insertBefore(toolbar, listWrapper.childNodes[0]);
 
     // create popup
-    popup = createElement(DIV, {
-        className: 'highcharts-popup'
-    }, null, wrapper);
+    popup = new H.Popup(wrapper);
 
     // generate buttons
     chart.stockToolbar = stockToolbar = new H.Toolbar(guiOptions, chart);
@@ -309,8 +308,10 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
     // add references to chart
     extend(this, {
         stockTools: {
-            wrapper: wrapper,
-            popup: popup
+            gui: {
+                wrapper: wrapper,
+                popup: popup
+            }
         }
     });
 });
@@ -319,7 +320,7 @@ addEvent(H.Chart.prototype, 'afterInit', function () {
 addEvent(H.Chart.prototype, 'destroy', function () {
 
     var chartContainer = this.renderTo,
-        stockToolsDiv = this.stockTools.wrapper;
+        stockToolsDiv = this.stockTools.gui.wrapper;
 
     // get the element's parent node
     var parent = stockToolsDiv.parentNode;
@@ -450,9 +451,7 @@ H.Toolbar.prototype = {
         });
     },
     addButton: function (target, options, btnName) {
-        var SPAN = 'span',
-            LI = 'li',
-            items = options.items,
+        var items = options.items,
             classMapping = H.Toolbar.prototype.classMapping,
             userClassName = options.className || '',
             mainButton,
@@ -583,8 +582,8 @@ H.Toolbar.prototype = {
             }
         });
     },
-    showIndicatorsForm: function (callback) {
-        console.log(this, this.chart.popup, callback);
+    showForm: function (callback) {
+        H.Popup.prototype.showForm(this.chart, callback);
     },
     classMapping: {
         circle: 'highcharts-circle-annotation',

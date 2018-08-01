@@ -990,15 +990,15 @@ var stockToolsBindings = {
         init: function () {
             var chart = this.chart;
 
-            if (this.showIndicatorsForm) {
-                this.showIndicatorsForm(
+            if (this.showForm) {
+                this.showForm(
                     // Callback on submit:
                     function (fields) {
                         var seriesConfig = {
                             params: {}
                         };
 
-                        each(fields, function (field) {
+                        /*each(fields, function (field) {
                             if (field.match('params')) {
                                 // Params e.g. "params.period"
                                 seriesConfig.params[
@@ -1008,9 +1008,9 @@ var stockToolsBindings = {
                                 // General series options, e.g. color
                                 seriesConfig[field.name] = field.value;
                             }
-                        });
+                        });*/
 
-                        chart.addSeries(seriesConfig);
+                        chart.addSeries(fields);
                     }
                 );
             }
