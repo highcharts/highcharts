@@ -1,5 +1,5 @@
 .chart {
-  width: calc(100% - 50px);
+  width: calc(100% - 40px);
   float: left;
   height: 400px;
 }
@@ -12,7 +12,7 @@
 
 .highcharts-menu-wrapper {
   float: left;
-  width: 50px;
+  width: 40px;
   height: calc(100% - 30px);
   overflow: hidden;
 }
@@ -24,12 +24,12 @@
   left: 0px;
   top: 0px;
   background: #fff;
-  width: 80px;
+  width: 44px;
 }
 
 .highcharts-stocktools-wrapper .highcharts-arrow-wrapper {
   text-align: center;
-  width: 50px;
+  width: 40px;
   position: absolute;
   left: 0%;
   bottom: 2px;
@@ -71,51 +71,62 @@
   float: left;
 }
 
-.highcharts-stocktools-wrapper > ul {
-  width: 50px;
+.highcharts-stocktools-wrapper>ul {
+  width: 40px;
   position: relative;
 }
 
 .highcharts-stocktools-wrapper li {
   list-style: none;
-  margin: 0px;
+  margin: 3px;
   padding: 0px;
   clear: both;
   width: 100%;
-  height: 50px;
+  height: 40px;
   cursor: pointer;
+  background-color: #f7f7f7;
 }
 
-.highcharts-stocktools-wrapper li > span.highcharts-menu-item-btn {
-  display:block;
-  float:left;
-  width: calc(100% - 10px); /* 10px - size of arrow*/
+.highcharts-stocktools-wrapper li>span.highcharts-menu-item-btn {
+  display: block;
+  float: left;
+  width: calc(100% - 12px); /* 10px - size of arrow*/
   height: 100%;
   background-repeat: no-repeat;
   background-position: 50% 50%;
+  background-color: #f7f7f7;
 }
 
-.highcharts-stocktools-wrapper li > span.highcharts-submenu-item-arrow {
-  float: right;
+.highcharts-stocktools-wrapper li>span.highcharts-submenu-item-arrow {
+  float: left;
+  width: 6px;
   height: 100%;
-  width: 10px;
-  background-color: rgba(0,0,0,0.3);
+  line-height: 36px;
+  font-size: 9px;
   text-align: right;
   cursor: pointer;
 }
 
-.highcharts-stocktools-wrapper li.highcharts-active {
-  background-color: gray;
+.highcharts-stocktools-wrapper li.highcharts-active>span, .highcharts-stocktools-wrapper li.highcharts-active {
+  background-color: #e6ebf5;
 }
 
 .highcharts-showhide-showbar {
   position: absolute;
-  background-color: rgba(155,155,155,0.3);
+  background-color: rgba(155, 155, 155, 0.3);
   cursor: pointer;
 }
 
 .highcharts-hide {
   display: none;
+}
+
+.highcharts-stocktools-wrapper li>span.highcharts-menu-item-btn:hover, .highcharts-submenu-item-arrow:hover {
+  background-color: #e6e6e6;
+}
+
+.highcharts-stocktools-wrapper .highcharts-arrow-down, .highcharts-stocktools-wrapper .highcharts-arrow-up {
+  width: 50%;
 }
 
 .highcharts-popup {
@@ -139,13 +150,14 @@
 
 .highcharts-popup-lhs-col, .highcharts-popup-rhs-col {
   padding: 20px;
-  height: calc(100% - 40px);
+  height: calc(100% - 44px);
   float: left;
+  border: 1px solid #29ABE2;
+  background-color: #f7f7f7;
 }
 
 .highcharts-popup-lhs-col {
-  background-color: #e6e6e6;
-  width: calc(30% - 40px);
+  width: calc(30% - 44px);
 }
 
 .highcharts-popup-rhs-col {
