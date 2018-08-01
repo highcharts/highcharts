@@ -13,6 +13,7 @@ var addEvent = H.addEvent,
     doc = H.doc,
     each = H.each,
     extend = H.extend,
+    isNumber = H.isNumber,
     objectEach = H.objectEach,
     PREFIX = 'highcharts-';
 
@@ -993,24 +994,42 @@ var stockToolsBindings = {
             if (this.showForm) {
                 this.showForm(
                     // Callback on submit:
-                    function (fields) {
+                    function (data) {
                         var seriesConfig = {
-                            params: {}
+                            linkedTo: data.linkedTo,
+                            type: data.type
                         };
 
-                        /*each(fields, function (field) {
-                            if (field.match('params')) {
-                                // Params e.g. "params.period"
-                                seriesConfig.params[
-                                    field.name.replace('params', '')
-                                ] = field.value;
-                            } else {
-                                // General series options, e.g. color
-                                seriesConfig[field.name] = field.value;
-                            }
-                        });*/
+                        objectEach(data.fields, function (value, field) {
+                            var parsedValue = parseFloat(value),
+                                path = field.split('.'),
+                                parent = seriesConfig,
+                                pathLength = path.length - 1;
 
-                        chart.addSeries(fields);
+                            // If it's a number, parse it:
+                            if (isNumber(parsedValue)) {
+                                value = parsedValue;
+                            }
+
+                            // Remove empty strings or values like 0
+                            if (value) {
+                                each(path, function (name, index) {
+                                    if (pathLength === index) {
+                                        // Last index, put value:
+                                        parent[name] = value;
+                                    } else if (!parent[name]) {
+                                        // Create middle property:
+                                        parent[name] = {};
+                                        parent = parent[name];
+                                    } else {
+                                        // Jump into next property
+                                        parent = parent[name];
+                                    }
+                                });
+                            }
+                        });
+
+                        chart.addSeries(seriesConfig);
                     }
                 );
             }
