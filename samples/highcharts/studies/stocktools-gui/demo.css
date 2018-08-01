@@ -110,7 +110,6 @@
 
 .highcharts-showhide-showbar {
   position: absolute;
-  height: 100%;
   background-color: rgba(155,155,155,0.3);
   cursor: pointer;
 }

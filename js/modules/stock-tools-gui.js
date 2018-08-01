@@ -20,6 +20,7 @@ var addEvent = H.addEvent,
     createElement = H.createElement,
     doc = H.doc,
     each = H.each,
+    pick = H.pick,
     fireEvent = H.fireEvent,
     getStyle = H.getStyle,
     css = H.css,
@@ -243,15 +244,30 @@ addEvent(H.Chart, 'destroy', function () {
     }
 });
 
+addEvent(H.Chart, 'redraw', function () {
+    if (this.stockToolbar) {
+        this.stockToolbar.redraw();
+    }
+});
+
 H.Toolbar = function (options, chart) {
-    this.createHTML(options, chart);
+    this.chart = chart;
+    this.options = options;
+
+    this.visible = pick(options.enabled, true);
+
+    this.createHTML();
     this.popup = new H.Popup(this.wrapper);
-    this.init(options, chart);
+    this.init();
+
+    this.showHideNavigatorion();
 };
 
 H.Toolbar.prototype = {
-    init: function (guiOptions, chart) {
+    init: function () {
         var _self = this,
+            chart = this.chart,
+            guiOptions = this.options,
             addButton = _self.addButton,
             addSubmenu = _self.addSubmenu,
             toolbar = doc
@@ -405,33 +421,57 @@ H.Toolbar.prototype = {
             submenuArrow: submenuArrow
         };
     },
-    scrollButtons: function (guiOptions) {
-        var toolbar = doc
-                .getElementsByClassName(guiOptions.toolbarClassName)[0],
-            wrapper = doc.getElementsByClassName(guiOptions.className)[0],
-            arrowUp = doc.getElementsByClassName('highcharts-arrow-up')[0],
-            arrowDown = doc.getElementsByClassName('highcharts-arrow-down')[0],
-            toolbarHeight = toolbar.offsetHeight,
-            wrapperHeight = wrapper.offsetHeight,
-            targetY = 0,
-            step = 0.2 * wrapperHeight; // 0.1 = 20%
+    addNavigation: function () {
+        var stockToolbar = this,
+            wrapper = stockToolbar.wrapper;
 
-        addEvent(arrowUp, 'click', function () {
+        // arrow wrapper
+        stockToolbar.arrowWrapper = createElement(DIV, {
+            className: 'highcharts-arrow-wrapper'
+        });
+
+        stockToolbar.arrowUp = createElement(SPAN, {
+            className: 'highcharts-arrow-up',
+            innerHTML: '&rsaquo;'
+        }, null, stockToolbar.arrowWrapper);
+
+        stockToolbar.arrowDown = createElement(SPAN, {
+            className: 'highcharts-arrow-down',
+            innerHTML: '&lsaquo;'
+        }, null, stockToolbar.arrowWrapper);
+
+        wrapper.insertBefore(
+            stockToolbar.arrowWrapper,
+            wrapper.childNodes[0]
+        );
+        stockToolbar.scrollButtons();
+    },
+    scrollButtons: function () {
+        var stockToolbar = this,
+            targetY = 0,
+            step = 0.2 * stockToolbar.wrapper.offsetHeight; // 0.1 = 20%
+
+        addEvent(this.arrowUp, 'click', function () {
             if (targetY > 0) {
                 targetY -= step;
-                toolbar.style['margin-top'] = -targetY + 'px';
+                stockToolbar.toolbar.style['margin-top'] = -targetY + 'px';
             }
         });
 
-        addEvent(arrowDown, 'click', function () {
-            if (wrapperHeight + targetY <= toolbarHeight) {
+        addEvent(this.arrowDown, 'click', function () {
+            if (
+                stockToolbar.wrapper.offsetHeight + targetY <=
+                stockToolbar.toolbar.offsetHeight
+            ) {
                 targetY += step;
-                toolbar.style['margin-top'] = -targetY + 'px';
+                stockToolbar.toolbar.style['margin-top'] = -targetY + 'px';
             }
         });
     },
-    createHTML: function (guiOptions, chart) {
+    createHTML: function () {
         var stockToolbar = this,
+            chart = stockToolbar.chart,
+            guiOptions = stockToolbar.options,
             container = chart.container.parentNode,
             listWrapper,
             toolbar,
@@ -447,12 +487,12 @@ H.Toolbar.prototype = {
         // GENERAL STRUCTURE
 
         // toolbar
-        toolbar = createElement(UL, {
+        stockToolbar.toolbar = toolbar = createElement(UL, {
             className: 'highcharts-stocktools-toolbar ' +
                     guiOptions.toolbarClassName
         });
 
-        listWrapper = createElement(DIV, {
+        stockToolbar.listWrapper = listWrapper = createElement(DIV, {
             className: 'highcharts-menu-wrapper'
         });
 
@@ -466,33 +506,26 @@ H.Toolbar.prototype = {
 
         stockToolbar.showHideToolbar();
 
+        stockToolbar.addNavigation();
+    },
+    redraw: function () {
+        this.showHideNavigatorion();
+    },
+    showHideNavigatorion: function () {
         // arrows
         // 50px space for arrows
-        if (toolbar.offsetHeight > (wrapper.offsetHeight - 50)) {
-            // arrow wrapper
-            stockToolbar.arrowWrapper = createElement(DIV, {
-                className: 'highcharts-arrow-wrapper'
-            });
-
-            stockToolbar.arrowUp = createElement(SPAN, {
-                className: 'highcharts-arrow-up',
-                innerHTML: '&rsaquo;'
-            }, null, stockToolbar.arrowWrapper);
-
-            stockToolbar.arrowDown = createElement(SPAN, {
-                className: 'highcharts-arrow-down',
-                innerHTML: '&lsaquo;'
-            }, null, stockToolbar.arrowWrapper);
-
-            wrapper.insertBefore(
-                stockToolbar.arrowWrapper,
-                wrapper.childNodes[0]
-            );
-            stockToolbar.scrollButtons(guiOptions);
+        if (
+            this.visible &&
+            this.toolbar.offsetHeight > (this.wrapper.offsetHeight - 50)
+        ) {
+            this.arrowWrapper.style.display = 'block';
+        } else {
+            this.arrowWrapper.style.display = 'none';
         }
     },
     showHideToolbar: function () {
-        var toolbar = doc.getElementsByClassName('highcharts-menu-wrapper')[0],
+        var stockToolbar = this,
+            toolbar = doc.getElementsByClassName('highcharts-menu-wrapper')[0],
             submenus = doc.getElementsByClassName('highcharts-submenu'),
             showhideBtn =
                 doc.getElementsByClassName('highcharts-showhide-showbar')[0];
@@ -508,12 +541,14 @@ H.Toolbar.prototype = {
                     submenu.style.display = 'block';
                 });
                 showhideBtn.innerHTML = '<';
+                stockToolbar.visible = true;
             } else {
                 toolbar.className += ' highcharts-hide';
                 each(submenus, function (submenu) {
                     submenu.style.display = 'none';
                 });
                 showhideBtn.innerHTML = '>';
+                stockToolbar.visible = false;
             }
         });
     },
