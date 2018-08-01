@@ -599,7 +599,14 @@ seriesType('sankey', 'column', {
         H.seriesTypes.column.prototype.render.call(this);
         this.points = points;
     },
-    animate: H.Series.prototype.animate
+    animate: H.Series.prototype.animate,
+
+
+    destroy: function () {
+        // Nodes must also be destroyed (#8682)
+        this.data = this.points.concat(this.nodes);
+        H.Series.prototype.destroy.call(this);
+    }
 }, {
     getClassName: function () {
         return 'highcharts-link ' + Point.prototype.getClassName.call(this);
