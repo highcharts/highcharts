@@ -20,7 +20,6 @@ var addEvent = H.addEvent,
     createElement = H.createElement,
     doc = H.doc,
     each = H.each,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     getStyle = H.getStyle,
     css = H.css,
@@ -229,116 +228,24 @@ H.setOptions({
 });
 
 // HTML generator
-addEvent(H.Chart.prototype, 'afterInit', function () {
-    var chart = this,
-        chartOptions = chart.options,
-        guiOptions = chartOptions.stockTools && chartOptions.stockTools.gui,
-        container = doc.getElementById(chart.renderTo),
-        toolbar,
-        stockToolbar,
-        listWrapper,
-        popup,
-        wrapper;
+addEvent(H.Chart, 'afterGetContainer', function () {
+    var chartOptions = this.options,
+        guiOptions = chartOptions.stockTools && chartOptions.stockTools.gui;
 
-    if (!guiOptions.enabled) {
-        return;
+    if (guiOptions.enabled) {
+        this.stockToolbar = new H.Toolbar(guiOptions, this);
     }
-
-    wrapper = createElement(DIV, {
-        className: 'highcharts-stocktools-wrapper ' +
-                guiOptions.className
-    });
-
-    container.parentNode.insertBefore(wrapper, container);
-    wrapper.appendChild(container);
-
-    // GENERAL STRUCTURE
-
-    // toolbar
-    toolbar = createElement(UL, {
-        className: 'highcharts-stocktools-toolbar ' +
-                guiOptions.toolbarClassName
-    });
-
-    listWrapper = createElement(DIV, {
-        className: 'highcharts-menu-wrapper'
-    });
-
-    wrapper.insertBefore(listWrapper, wrapper.childNodes[0]);
-    listWrapper.insertBefore(toolbar, listWrapper.childNodes[0]);
-
-    // create popup
-    popup = new H.Popup(wrapper);
-
-    // generate buttons
-    chart.stockToolbar = stockToolbar = new H.Toolbar(guiOptions, chart);
-
-    // arrows
-    // 50px space for arrows
-    if (toolbar.offsetHeight > (wrapper.offsetHeight - 50)) {
-        // arrow wrapper
-        stockToolbar.arrowWrapper = createElement(DIV, {
-            className: 'highcharts-arrow-wrapper'
-        });
-
-        stockToolbar.arrowUp = createElement(SPAN, {
-            className: 'highcharts-arrow-up',
-            innerHTML: '&rsaquo;'
-        }, null, stockToolbar.arrowWrapper);
-
-        stockToolbar.arrowDown = createElement(SPAN, {
-            className: 'highcharts-arrow-down',
-            innerHTML: '&lsaquo;'
-        }, null, stockToolbar.arrowWrapper);
-
-        wrapper.insertBefore(stockToolbar.arrowWrapper, wrapper.childNodes[0]);
-        stockToolbar.scrollButtons(guiOptions);
-    }
-
-    // show hide toolbar
-    createElement(DIV, {
-        className: 'highcharts-showhide-showbar'
-    }, null, wrapper);
-
-    H.Toolbar.prototype.showHideToolbar();
-
-    // add popup listener
-    this.showIndicatorsForm = H.Toolbar.prototype.showIndicatorsForm;
-
-    // add references to chart
-    extend(this, {
-        stockTools: {
-            gui: {
-                wrapper: wrapper,
-                popup: popup
-            }
-        }
-    });
 });
 
-
-addEvent(H.Chart.prototype, 'destroy', function () {
-
-    var chartContainer = this.renderTo,
-        stockToolsDiv = this.stockTools.gui.wrapper;
-
-    // get the element's parent node
-    var parent = stockToolsDiv.parentNode;
-
-    // move all children out of the element
-    while (stockToolsDiv.firstChild) {
-        if (stockToolsDiv.firstChild === chartContainer) {
-            parent.insertBefore(stockToolsDiv.firstChild, stockToolsDiv);
-        } else {
-            stockToolsDiv.firstChild.remove();
-        }
+addEvent(H.Chart, 'destroy', function () {
+    if (this.stockToolbar) {
+        this.stockToolbar.destroy();
     }
-
-    // remove the empty element
-    parent.removeChild(stockToolsDiv);
 });
 
 H.Toolbar = function (options, chart) {
+    this.createHTML(options, chart);
+    this.popup = new H.Popup(this.wrapper);
     this.init(options, chart);
 };
 
@@ -523,6 +430,67 @@ H.Toolbar.prototype = {
             }
         });
     },
+    createHTML: function (guiOptions, chart) {
+        var stockToolbar = this,
+            container = chart.container.parentNode,
+            listWrapper,
+            toolbar,
+            wrapper;
+
+        stockToolbar.wrapper = wrapper = createElement(DIV, {
+            className: 'highcharts-stocktools-wrapper ' +
+                    guiOptions.className
+        });
+        container.parentNode.insertBefore(wrapper, container);
+        wrapper.appendChild(container);
+
+        // GENERAL STRUCTURE
+
+        // toolbar
+        toolbar = createElement(UL, {
+            className: 'highcharts-stocktools-toolbar ' +
+                    guiOptions.toolbarClassName
+        });
+
+        listWrapper = createElement(DIV, {
+            className: 'highcharts-menu-wrapper'
+        });
+
+        wrapper.insertBefore(listWrapper, wrapper.childNodes[0]);
+        listWrapper.insertBefore(toolbar, listWrapper.childNodes[0]);
+
+        // Show hide toolbar
+        createElement(DIV, {
+            className: 'highcharts-showhide-showbar'
+        }, null, wrapper);
+
+        stockToolbar.showHideToolbar();
+
+        // arrows
+        // 50px space for arrows
+        if (toolbar.offsetHeight > (wrapper.offsetHeight - 50)) {
+            // arrow wrapper
+            stockToolbar.arrowWrapper = createElement(DIV, {
+                className: 'highcharts-arrow-wrapper'
+            });
+
+            stockToolbar.arrowUp = createElement(SPAN, {
+                className: 'highcharts-arrow-up',
+                innerHTML: '&rsaquo;'
+            }, null, stockToolbar.arrowWrapper);
+
+            stockToolbar.arrowDown = createElement(SPAN, {
+                className: 'highcharts-arrow-down',
+                innerHTML: '&lsaquo;'
+            }, null, stockToolbar.arrowWrapper);
+
+            wrapper.insertBefore(
+                stockToolbar.arrowWrapper,
+                wrapper.childNodes[0]
+            );
+            stockToolbar.scrollButtons(guiOptions);
+        }
+    },
     showHideToolbar: function () {
         var toolbar = doc.getElementsByClassName('highcharts-menu-wrapper')[0],
             submenus = doc.getElementsByClassName('highcharts-submenu'),
@@ -584,6 +552,23 @@ H.Toolbar.prototype = {
     },
     showForm: function (callback) {
         H.Popup.prototype.showForm(this.chart, callback);
+    },
+    destroy: function () {
+        var chartContainer = this.chart.renderTo,
+            stockToolsDiv = this.wrapper,
+            // Get the element's parent node
+            parent = stockToolsDiv.parentNode;
+
+        // Move all children out of the element
+        while (stockToolsDiv.firstChild) {
+            if (stockToolsDiv.firstChild === chartContainer) {
+                parent.insertBefore(stockToolsDiv.firstChild, stockToolsDiv);
+            } else {
+                stockToolsDiv.firstChild.remove();
+            }
+        }
+        // Remove the empty element
+        parent.removeChild(stockToolsDiv);
     },
     classMapping: {
         circle: 'highcharts-circle-annotation',

@@ -230,7 +230,7 @@ H.Popup.prototype = {
     },
     showForm: function (chart, callback) {
         var popup = this,
-            popupDiv = chart.stockTools.gui.popup,
+            popupDiv = chart.stockToolbar.popup,
             lhsCol = popupDiv.querySelectorAll('.highcharts-popup-lhs-col')[0],
             rhsCol = popupDiv.querySelectorAll('.highcharts-popup-rhs-col')[0];
 
