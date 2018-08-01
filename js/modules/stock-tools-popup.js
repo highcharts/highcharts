@@ -139,7 +139,7 @@ H.Popup.prototype = {
         this.listAllSeries(type, chart, rhsColWrapper);
 
         // add param fields
-        this.addParamInputs('', fields, type, rhsColWrapper);
+        this.addParamInputs('params', fields, type, rhsColWrapper);
     },
     addParamInputs: function (parentNode, fields, type, rhsColWrapper) {
         var _self = this,
@@ -149,22 +149,22 @@ H.Popup.prototype = {
 
         objectEach(fields, function (value, fieldName) {
 
-            parentFullName = parentNode + fieldName;
+            parentFullName = parentNode + '.' + fieldName;
 
             if (isObject(value)) {
                 addParamInputs.call(
                     _self,
-                    parentFullName + '.',
+                    parentFullName,
                     value,
                     type,
                     rhsColWrapper
                 );
             } else {
-                addInput(parentFullName, type, rhsColWrapper);
+                addInput(parentFullName, type, rhsColWrapper, value);
             }
         });
     },
-    addInput: function (optionName, type, rhsColWrapper) {
+    addInput: function (optionName, type, rhsColWrapper, defaultValue) {
         var fieldName = optionName.split('.'),
             paramName = fieldName[fieldName.length - 1],
             inputName = 'highcharts-' + type + '-' + paramName;
@@ -183,7 +183,8 @@ H.Popup.prototype = {
         createElement(
             INPUT,
             {
-                name: inputName
+                name: inputName,
+                value: defaultValue
             },
             null,
             rhsColWrapper
