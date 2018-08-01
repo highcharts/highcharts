@@ -39,11 +39,7 @@ Highcharts.chart('container', {
         title: {
             text: 'Number of units'
         },
-        labels: {
-            formatter: function () {
-                return this.value;
-            }
-        },
+        allowDecimals: false,
         min: 0
     },
     plotOptions: {

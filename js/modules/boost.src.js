@@ -895,7 +895,7 @@ function GLShader(gl) {
      * @param val {float} - the value to set
      */
     function setUniform(name, val) {
-        var u = uLocations[name] =    uLocations[name] ||
+        var u = uLocations[name] = uLocations[name] ||
                                     gl.getUniformLocation(shaderProgram, name);
         gl.uniform1f(u, val);
     }
@@ -2127,10 +2127,9 @@ function GLRenderer(postRenderCallback) {
                                 10
                             ) || 10)
                 ),
-                fillColor =
-                    (s.series.pointAttribs && s.series.pointAttribs().fill) ||
-                    s.series.color,
+                fillColor,
                 color;
+
 
             if (
                 s.segments.length === 0 ||
@@ -2139,14 +2138,25 @@ function GLRenderer(postRenderCallback) {
                 return;
             }
 
+            /*= if (build.classic) { =*/
+            fillColor =
+                (s.series.pointAttribs && s.series.pointAttribs().fill) ||
+                s.series.color;
+
+            if (options.colorByPoint) {
+                fillColor = s.series.chart.options.colors[si];
+            }
+            /*= } else { =*/
+            fillColor = (
+                s.series.markerGroup &&
+                s.series.markerGroup.getStyle('fill')
+            );
+            /*= } =*/
+
             if (s.series.fillOpacity && options.fillOpacity) {
                 fillColor = new Color(fillColor).setOpacity(
                     pick(options.fillOpacity, 1.0)
                 ).get();
-            }
-
-            if (options.colorByPoint) {
-                fillColor = s.series.chart.options.colors[si];
             }
 
             color = H.color(fillColor).rgba;
@@ -2974,7 +2984,7 @@ Series.prototype.hasExtremes = function (checkX) {
         xAxis = this.xAxis && this.xAxis.options,
         yAxis = this.yAxis && this.yAxis.options;
 
-    return     data.length > (options.boostThreshold || Number.MAX_VALUE) &&
+    return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
             isNumber(yAxis.min) && isNumber(yAxis.max) &&
             (!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
 };

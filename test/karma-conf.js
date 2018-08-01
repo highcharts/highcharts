@@ -120,42 +120,42 @@ const browserStackBrowsers = {
     'Mac.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '61.0',
+        browser_version: '67.0',
         os: 'OS X',
-        os_version: 'Sierra'
+        os_version: 'High Sierra'
     },
     'Mac.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '56.0',
+        browser_version: '61.0',
         os: 'OS X',
-        os_version: 'Sierra'
+        os_version: 'High Sierra'
     },
     'Mac.Safari': {
         base: 'BrowserStack',
         browser: 'safari',
-        browser_version: '10.1',
+        browser_version: '11.1',
         os: 'OS X',
-        os_version: 'Sierra'
+        os_version: 'High Sierra'
     },
     'Win.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '61.0',
+        browser_version: '67.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: '15.0',
+        browser_version: '17.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '56.0',
+        browser_version: '61.0',
         os: 'Windows',
         os_version: '10'
     },
@@ -207,9 +207,21 @@ module.exports = function (config) {
                 included: false,
                 served: true
             },
+            // Test templates
+            'test/test-template.js',
+            {
+                pattern: 'test/templates/**/*.js',
+                type: 'js',
+                watched: false,
+                included: true,
+                served: true,
+                nocache: false
+            },
 
             // Set up
+            'test/call-analyzer.js',
             'test/test-controller.js',
+            'test/test-utilities.js',
             'test/karma-setup.js'
         ], tests),
 

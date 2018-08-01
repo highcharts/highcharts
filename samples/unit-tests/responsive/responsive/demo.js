@@ -305,7 +305,12 @@ QUnit.test(
 
 
 QUnit.test('Multiple rules order (#6291)', function (assert) {
-    var chart = Highcharts.chart('container', {
+
+    var container = document.getElementById('container');
+
+    container.style.position = '';
+
+    var chart = Highcharts.chart(container, {
         responsive: {
             rules: [{
                 condition: {
@@ -353,7 +358,7 @@ QUnit.test('Multiple rules order (#6291)', function (assert) {
     assert.strictEqual(
         chart.title.textStr,
         'No restrictions',
-        'No restrictions'
+        'No restrictions (initial)'
     );
 
     chart.setSize(350);
@@ -388,7 +393,7 @@ QUnit.test('Multiple rules order (#6291)', function (assert) {
     assert.strictEqual(
         chart.title.textStr,
         'No restrictions',
-        'No restrictions'
+        'No restrictions (final)'
     );
 });
 

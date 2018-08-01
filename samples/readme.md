@@ -34,7 +34,7 @@ for.
 and in karma. They load QUnit. Unit tests are recognized by a jigsaw puzzle
 piece next to the name. QUnit is loaded in the `demo.details` files and the
 required HTML must be present in `demo.html`. The recommended way to add a new
-test is to copy and modify an existing one. 
+test is to copy and modify an existing one.
 
 The tests that are added to `/samples/unit-tests` are also part of the
 pre-commit tests that run via karma. Run `gulp test` on the root to pre-check.
@@ -42,7 +42,7 @@ Read more at [highcharts/test](https://github.com/highcharts/highcharts/tree/mas
 
 ### Useful tips for setting up tests
 **Mouse events** are emulated using the
-[TestController](https://github.com/highcharts/highcharts/blob/master/utils/samples/test-controller.js)
+[TestController](https://github.com/highcharts/highcharts/blob/master/test/test-controller.js)
 that is available in the test environment (through compare-iframe.php). To
 emulate	a mouse event on a specific target, its position can be found using
 `getBBox()`.
@@ -50,11 +50,9 @@ emulate	a mouse event on a specific target, its position can be found using
 ```js
 // Instanciate
 var controller = TestController(chart);
- 
+
 // Simulate panning with the shift key pressed. X and Y are chart coordinates.
-test.mousedown(200, 100, { shiftKey: true });
-test.mousemove(150, 100, { shiftKey: true });
-test.mouseup();
+controller.pan([200, 100], [150, 100], { shiftKey: true });
 ```
 **demo.details** can be used to set some directives for the auto-visual tests.
 * `compareTooltips: true` in auto-visual tests instructs the test runner to open
@@ -66,5 +64,3 @@ export the chart first.
 for manual testing.
 * `skipTest: true` makes the test always pass. Typically used for samples that
 are meant for education, where the actual feature is covered by other tests.
-
-

@@ -21,7 +21,7 @@ Highcharts.createElement('link', {
 Highcharts.wrap(Highcharts.Chart.prototype, 'getContainer', function (proceed) {
     proceed.call(this);
     this.container.style.background =
-        'url(http://www.highcharts.com/samples/graphics/sand.png)';
+        'url(https://www.highcharts.com/samples/graphics/sand.png)';
 });
 
 

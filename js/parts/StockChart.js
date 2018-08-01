@@ -52,7 +52,7 @@ var addEvent = H.addEvent,
  *
  * @type {String}
  * @see [compareBase](#plotOptions.series.compareBase),
- *      [Axis.setCompare()](#Axis.setCompare())
+ *      [Axis.setCompare()](/class-reference/Highcharts.Axis#setCompare)
  * @sample {highstock} stock/plotoptions/series-compare-percent/ Percent
  * @sample {highstock} stock/plotoptions/series-compare-value/ Value
  * @default undefined
@@ -95,7 +95,7 @@ var addEvent = H.addEvent,
  * Chart} object with different default options than the basic Chart.
  *
  * @function #stockChart
- * @memberOf Highcharts
+ * @memberof Highcharts
  *
  * @param  {String|HTMLDOMElement} renderTo
  *         The DOM element to render to, or its id.
@@ -401,7 +401,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
             inArray(axis2, uniqueAxes) === -1 &&
             // Do not draw on axis which overlap completely. #5424
             !H.find(uniqueAxes, function (unique) {
-                return unique.pos === axis2.pos && unique.len && axis2.len;
+                return unique.pos === axis2.pos && unique.len === axis2.len;
             })
         ) {
             uniqueAxes.push(axis2);
@@ -530,7 +530,18 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         offset = 0,
         // Use last available event (#5287)
         e = event.e || (this.cross && this.cross.e),
-        point = event.point;
+        point = event.point,
+        lin2log = this.lin2log,
+        min,
+        max;
+
+    if (this.isLog) {
+        min = lin2log(this.min);
+        max = lin2log(this.max);
+    } else {
+        min = this.min;
+        max = this.max;
+    }
 
     align = (horiz ? 'center' : opposite ?
         (this.labelAlign === 'right' ? 'right' : 'left') :
@@ -603,7 +614,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         x: posx,
         y: posy,
         // Crosshair should be rendered within Axis range (#7219)
-        visibility: value < this.min || value > this.max ? 'hidden' : 'visible'
+        visibility: value < min || value > max ? 'hidden' : 'visible'
     });
 
     crossBox = crossLabel.getBBox();
@@ -682,7 +693,7 @@ seriesProto.init = function () {
  * series.
  *
  * @function setCompare
- * @memberOf Series.prototype
+ * @memberof Series.prototype
  *
  * @param  {String} compare
  *         Can be one of `null`, `"percent"` or `"value"`.
@@ -812,7 +823,7 @@ wrap(seriesProto, 'getExtremes', function (proceed) {
  *         Chart#redraw},
  *
  * @function setCompare
- * @memberOf Axis.prototype
+ * @memberof Axis.prototype
  *
  * @see    {@link https://api.highcharts.com/highstock/series.plotOptions.compare|
  *         series.plotOptions.compare}
@@ -860,6 +871,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
+    var clipHeight;
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).
     if (
@@ -868,23 +880,27 @@ wrap(Series.prototype, 'render', function (proceed) {
         this.xAxis &&
         !this.xAxis.isRadial // Gauge, #6192
     ) {
+        // Include xAxis line width, #8031
+        clipHeight = this.yAxis.len - (this.xAxis.axisLine ?
+            Math.floor(this.xAxis.axisLine.strokeWidth() / 2) :
+            0);
 
         // First render, initial clip box
         if (!this.clipBox && this.animate) {
             this.clipBox = merge(this.chart.clipBox);
             this.clipBox.width = this.xAxis.len;
-            this.clipBox.height = this.yAxis.len;
+            this.clipBox.height = clipHeight;
 
         // On redrawing, resizing etc, update the clip rectangle
         } else if (this.chart[this.sharedClipKey]) {
             this.chart[this.sharedClipKey].attr({
                 width: this.xAxis.len,
-                height: this.yAxis.len
+                height: clipHeight
             });
         // #3111
         } else if (this.clipBox) {
             this.clipBox.width = this.xAxis.len;
-            this.clipBox.height = this.yAxis.len;
+            this.clipBox.height = clipHeight;
         }
     }
     proceed.call(this);

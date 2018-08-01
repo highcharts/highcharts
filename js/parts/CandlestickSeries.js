@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -19,7 +18,7 @@ var defaultPlotOptions = H.defaultPlotOptions,
  *
  * @sample stock/demo/candlestick/ Candlestick chart
  *
- * @extends {plotOptions.ohlc}
+ * @extends plotOptions.ohlc
  * @excluding borderColor,borderRadius,borderWidth
  * @product highstock
  * @optionparent plotOptions.candlestick
@@ -31,7 +30,8 @@ var candlestickOptions = {
      * the general `lineColor` setting.
      *
      * @type {Color}
-     * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
+     * @sample  {highstock} stock/plotoptions/candlestick-linecolor/
+     *          Candlestick line colors
      * @default null
      * @since 1.3.6
      * @product highstock
@@ -63,7 +63,7 @@ var candlestickOptions = {
     },
 
     /**
-     * @extends {plotOptions.ohlc.tooltip}
+     * @extends plotOptions.ohlc.tooltip
      */
     tooltip: defaultPlotOptions.ohlc.tooltip,
 
@@ -132,7 +132,11 @@ seriesType('candlestick', 'ohlc', merge(
      * Postprocess mapping between options and SVG attributes
      */
     pointAttribs: function (point, state) {
-        var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state),
+        var attribs = seriesTypes.column.prototype.pointAttribs.call(
+                this,
+                point,
+                state
+            ),
             options = this.options,
             isUp = point.open < point.close,
             stroke = options.lineColor || this.color,
@@ -140,8 +144,10 @@ seriesType('candlestick', 'ohlc', merge(
 
         attribs['stroke-width'] = options.lineWidth;
 
-        attribs.fill = point.options.color || (isUp ? (options.upColor || this.color) : this.color);
-        attribs.stroke = point.lineColor || (isUp ? (options.upLineColor || stroke) : stroke);
+        attribs.fill = point.options.color ||
+            (isUp ? (options.upColor || this.color) : this.color);
+        attribs.stroke = point.lineColor ||
+            (isUp ? (options.upLineColor || stroke) : stroke);
 
         // Select or hover states
         if (state) {
@@ -162,7 +168,8 @@ seriesType('candlestick', 'ohlc', merge(
     drawPoints: function () {
         var series = this,
             points = series.points,
-            chart = series.chart;
+            chart = series.chart,
+            reversedYAxis = series.yAxis.reversed;
 
 
         each(points, function (point) {
@@ -189,7 +196,9 @@ seriesType('candlestick', 'ohlc', merge(
 
                 /*= if (build.classic) { =*/
                 graphic
-                    .attr(series.pointAttribs(point, point.selected && 'select')) // #3897
+                    .attr(
+                        series.pointAttribs(point, point.selected && 'select')
+                    ) // #3897
                     .shadow(series.options.shadow);
                 /*= } =*/
 
@@ -201,15 +210,20 @@ seriesType('candlestick', 'ohlc', merge(
                 topBox = Math.min(plotOpen, plotClose);
                 bottomBox = Math.max(plotOpen, plotClose);
                 halfWidth = Math.round(point.shapeArgs.width / 2);
-                hasTopWhisker = Math.round(topBox) !== Math.round(point.plotHigh);
-                hasBottomWhisker = bottomBox !== point.yBottom;
+                hasTopWhisker = reversedYAxis ?
+                    bottomBox !== point.yBottom :
+                    Math.round(topBox) !== Math.round(point.plotHigh);
+                hasBottomWhisker = reversedYAxis ?
+                    Math.round(topBox) !== Math.round(point.plotHigh) :
+                    bottomBox !== point.yBottom;
                 topBox = Math.round(topBox) + crispCorr;
                 bottomBox = Math.round(bottomBox) + crispCorr;
 
-                // Create the path. Due to a bug in Chrome 49, the path is first instanciated
-                // with no values, then the values pushed. For unknown reasons, instanciated
-                // the path array with all the values would lead to a crash when updating
-                // frequently (#5193).
+                // Create the path. Due to a bug in Chrome 49, the path is first
+                // instanciated with no values, then the values pushed. For
+                // unknown reasons, instanciating the path array with all the
+                // values would lead to a crash when updating frequently
+                // (#5193).
                 path = [];
                 path.push(
                     'M',
@@ -220,15 +234,25 @@ seriesType('candlestick', 'ohlc', merge(
                     crispX + halfWidth, topBox,
                     'L',
                     crispX + halfWidth, bottomBox,
-                    'Z', // Use a close statement to ensure a nice rectangle #2602
+                    'Z', // Ensure a nice rectangle #2602
                     'M',
                     crispX, topBox,
                     'L',
-                    crispX, hasTopWhisker ? Math.round(point.plotHigh) : topBox, // #460, #2094
+                    // #460, #2094
+                    crispX, hasTopWhisker ?
+                        Math.round(
+                            reversedYAxis ? point.yBottom : point.plotHigh
+                        ) :
+                        topBox,
                     'M',
                     crispX, bottomBox,
                     'L',
-                    crispX, hasBottomWhisker ? Math.round(point.yBottom) : bottomBox // #460, #2094
+                    // #460, #2094
+                    crispX, hasBottomWhisker ?
+                        Math.round(
+                            reversedYAxis ? point.plotHigh : point.yBottom
+                        ) :
+                        bottomBox
                 );
 
                 graphic[isNew ? 'attr' : 'animate']({ d: path })

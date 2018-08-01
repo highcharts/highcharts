@@ -23,9 +23,7 @@ QUnit.test("Drag panes on zoomable chart", function (assert) {
         strartingNavYAxisLen = chart.yAxis[1].len;
 
     // Drag
-    controller.mousedown(200, 190);
-    controller.mousemove(260, 100);
-    controller.mouseup();
+    controller.pan([200, 190], [260, 100]);
 
     assert.equal(
         chart.yAxis[1].len,
@@ -33,9 +31,10 @@ QUnit.test("Drag panes on zoomable chart", function (assert) {
         "Don't change navigator's yAxis (#7732)"
     );
 
-    assert.equal(
+    assert.close(
         chart.xAxis[0].getExtremes().min,
         0,
+        0.5,
         "Zoom not triggered when dragging panes (#7563)"
     );
 });

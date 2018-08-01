@@ -2,12 +2,11 @@
 
 QUnit.test('Async addSeriesAsDrilldown', function (assert) {
 
-    var clock = null,
-        done = assert.async();
+    var clock = TestUtilities.lolexInstall();
 
     try {
 
-        clock = lolexInstall();
+        var done = assert.async();
 
         var chart = Highcharts.chart('container', {
             chart: {
@@ -140,11 +139,11 @@ QUnit.test('Async addSeriesAsDrilldown', function (assert) {
             done();
         }, 1200);
 
-        lolexRunAndUninstall(clock);
+        TestUtilities.lolexRunAndUninstall(clock);
 
     } finally {
 
-        lolexUninstall(clock);
+        TestUtilities.lolexUninstall(clock);
 
     }
 });

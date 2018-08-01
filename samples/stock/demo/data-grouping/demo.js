@@ -10,9 +10,11 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb2
         chart: {
             events: {
                 load: function () {
-                    this.setTitle(null, {
-                        text: 'Built chart in ' + (new Date() - start) + 'ms'
-                    });
+                    if (!window.TestController) {
+                        this.setTitle(null, {
+                            text: 'Built chart in ' + (new Date() - start) + 'ms'
+                        });
+                    }
                 }
             },
             zoomType: 'x'

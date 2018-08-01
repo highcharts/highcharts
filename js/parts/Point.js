@@ -295,8 +295,15 @@ Highcharts.Point.prototype = {
             zone = zones[++i];
         }
 
+        // For resetting or reusing the point (#8100)
+        if (!this.nonZonedColor) {
+            this.nonZonedColor = this.color;
+        }
+
         if (zone && zone.color && !this.options.color) {
             this.color = zone.color;
+        } else {
+            this.color = this.nonZonedColor;
         }
 
         return zone;
@@ -414,12 +421,12 @@ Highcharts.Point.prototype = {
             key = '{point.' + key; // without the closing bracket
             if (valuePrefix || valueSuffix) {
                 pointFormat = pointFormat.replace(
-                    key + '}',
+                    RegExp(key + '}', 'g'),
                     valuePrefix + key + '}' + valueSuffix
                 );
             }
             pointFormat = pointFormat.replace(
-                key + '}',
+                RegExp(key + '}', 'g'),
                 key + ':,.' + valueDecimals + 'f}'
             );
         });
@@ -477,7 +484,7 @@ Highcharts.Point.prototype = {
      * be shown or hidden.
      *
      * @name visible
-     * @memberOf Highcharts.Point
+     * @memberof Highcharts.Point
      * @type {Boolean}
      */
     visible: true
@@ -488,7 +495,7 @@ Highcharts.Point.prototype = {
  * point. For other axes it holds the X value.
  *
  * @name category
- * @memberOf Highcharts.Point
+ * @memberof Highcharts.Point
  * @type {String|Number}
  */
 
@@ -513,7 +520,7 @@ Highcharts.Point.prototype = {
  * }]
  *
  * @name name
- * @memberOf Highcharts.Point
+ * @memberof Highcharts.Point
  * @type {String}
  */
 
@@ -522,7 +529,7 @@ Highcharts.Point.prototype = {
  * The percentage for points in a stacked series or pies.
  *
  * @name percentage
- * @memberOf Highcharts.Point
+ * @memberof Highcharts.Point
  * @type {Number}
  */
 
@@ -531,7 +538,7 @@ Highcharts.Point.prototype = {
  * series.
  *
  * @name total
- * @memberOf Highcharts.Point
+ * @memberof Highcharts.Point
  * @type {Number}
  */
 
@@ -539,7 +546,7 @@ Highcharts.Point.prototype = {
  * The x value of the point.
  *
  * @name x
- * @memberOf Highcharts.Point
+ * @memberof Highcharts.Point
  * @type {Number}
  */
 
@@ -547,6 +554,6 @@ Highcharts.Point.prototype = {
  * The y value of the point.
  *
  * @name y
- * @memberOf Highcharts.Point
+ * @memberof Highcharts.Point
  * @type {Number}
  */

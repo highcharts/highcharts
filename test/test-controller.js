@@ -1,5 +1,5 @@
 /* eslint valid-jsdoc: 0 */
-/* global Highcharts, console, document, window, lolex, SVGElement */
+/* global Highcharts, console, document, window, SVGElement */
 /**
  * The test controller makes it easy to emulate mouse stuff.
  *
@@ -8,9 +8,7 @@
  * var controller = TestController(chart);
  *
  * // Simulate a panning operation
- * controller.mousedown(200, 100, { shiftKey: true });
- * controller.mousemove(150, 100, { shiftKey: true });
- * controller.mouseup();
+ * controller.pan([200, 100], [150, 100], { shiftKey: true });
  */
 window.TestController = function (chart) {
 
@@ -20,8 +18,12 @@ window.TestController = function (chart) {
 
     /**
      * Mock a TochList element
-     * @param {Array} arr The list of touches
-     * @returns {Array} Array of touches including required internal methods
+     *
+     * @param  {Array} arr
+     *         The list of touches
+     *
+     * @return {Array}
+     *         Array of touches including required internal methods
      */
     function createTouchList(arr) {
         arr.item = function (i) {
@@ -29,10 +31,15 @@ window.TestController = function (chart) {
         };
         return arr;
     }
+
     /**
      * Get offset of an element.
-     * @param  {string} type  Event type
-     * @returns {object} Element offset
+     *
+     * @param  {string} type
+     *         Event type
+     *
+     * @return {object}
+     *         Element offset
      */
     function getOffset(el) {
         if (el instanceof SVGElement) {
@@ -47,12 +54,15 @@ window.TestController = function (chart) {
 
     /**
      * Get the element from a point on the page.
+     *
      * @param  {Number} pageX
-     *         X relative to the page
+     *         X relative to the page.
+     *
      * @param  {Number} pageY
-     *         Y relateive to the page
+     *         Y relateive to the page.
+     *
      * @return {DOMElement}
-     *         An HTML or SVG DOM element
+     *         HTML or SVG DOM element.
      */
     function elementFromPoint(pageX, pageY) {
         var element,
@@ -88,12 +98,23 @@ window.TestController = function (chart) {
      * Trigger an event. The target element will be found based on the
      * coordinates. This function is called behind the shorthand functions like
      * .click() and .mousemove().
-     * @param  {string} type  Event type
-     * @param  {number} x     X relative to the chart container
-     * @param  {number} y     Y relative to the chart container
-     * @param  {Object} extra Extra properties for the event arguments, for
-     *    example `{ shiftKey: true }` to emulate that the shift key has been
-     *    pressed in a mouse event.
+     *
+     * @param  {string} type
+     *         Event type.
+     *
+     * @param  {number} x
+     *         X relative to the chart container
+     *
+     * @param  {number} y
+     *         Y relative to the chart container.
+     *
+     * @param  {Dictionary} extra
+     *         Extra properties for the event arguments, for example
+     *         `{ shiftKey: true }` to emulate that the shift key has been
+     *         pressed in a mouse event.
+     *
+     * @param  {*} el
+     *         The element to dispath the event on, instead of the coordinates.
      */
     function triggerEvent(type, pageX, pageY, extra, el) {
         var evt = document.createEvent('Events'),
@@ -116,14 +137,19 @@ window.TestController = function (chart) {
     }
 
     /**
-     * mouseMoving - description
+     * Returns all points between a movement.
      *
-     * @param  {type} x0       description
-     * @param  {type} y0       description
-     * @param  {type} x1       description
-     * @param  {type} y1       description
-     * @param  {type} interval description
-     * @return {type}          description
+     * @param  {Dictionary<number>} a
+     *         First point as {x, y}.
+     *
+     * @param  {Dictionary<number>} b
+     *         Second point as {x, y}.
+
+     * @param  {number} interval
+     *         The distance between points.
+     *
+     * @return {Array<Array<number>>}
+     *         Array of points as [x, y].
      */
     function getPointsBeetween(a, b, interval) {
         var points = [],
@@ -162,15 +188,25 @@ window.TestController = function (chart) {
      * Trigger an event. The target element will be found based on the
      * coordinates. This function is called behind the shorthand functions like
      * .click() and .mousemove().
-     * @param  {string} type  Event type
-     * @param  {number} x     X relative to the chart container
-     * @param  {number} y     Y relative to the chart container
-     * @param  {Object} extra Extra properties for the event arguments, for
-     *    example `{ shiftKey: true }` to emulate that the shift key has been
-     *    pressed in a mouse event.
-     * @param  {Boolean} debug Add marks where the event was triggered. Should
-     *    not be enabled in production, as it slows down the test and also
-     *    leaves an element that might catch events and mess up the test result.
+     *
+     * @param  {string} type
+     *         Event type
+     *
+     * @param  {number} x
+     *         X relative to the chart container
+     *
+     * @param  {number} y
+     *         Y relative to the chart container
+     *
+     * @param  {Dictionary} extra
+     *         Extra properties for the event arguments, for example
+     *         `{ shiftKey: true }` to emulate that the shift key has been
+     *         pressed in a mouse event.
+     *
+     * @param  {boolean} debug
+     *         Add marks where the event was triggered. Should not be enabled in
+     *         production, as it slows down the test and also leaves an element
+     *         that might catch events and mess up the test result.
      */
     function triggerOnChart(type, x, y, extra, debug) {
         var offset = getOffset(chart.container),
@@ -207,26 +243,21 @@ window.TestController = function (chart) {
     }
 
     /**
-     * Alias to triggerOnChart.
-     * @param  {string} type  Event type
-     * @param  {number} x     X relative to the chart container
-     * @param  {number} y     Y relative to the chart container
-     * @param  {Object} extra Extra properties for the event arguments, for
-     *    example `{ shiftKey: true }` to emulate that the shift key has been
-     *    pressed in a mouse event.
-     */
-    function trigger(type, x, y, extra, debug) {
-        triggerOnChart(type, x, y, extra, debug);
-    }
-
-    /**
      * Trigger event next to an element.
-     * @param  {string} type  Event type
-     * @param  {number} x     X relative to the element offset
-     * @param  {number} y     Y relative to the element offset
-     * @param  {Object} extra Extra properties for the event arguments, for
-     *    example `{ shiftKey: true }` to emulate that the shift key has been
-     *    pressed in a mouse event.
+     *
+     * @param  {string} type
+     *         Event type
+     *
+     * @param  {number} x
+     *         X relative to the element offset.
+     *
+     * @param  {number} y
+     *         Y relative to the element offset
+     *
+     * @param  {Dictionary} extra
+     *         Extra properties for the event arguments, for example
+     *         `{ shiftKey: true }` to emulate that the shift key has been
+     *         pressed in a mouse event.
      */
     function triggerOnElement(el, type, x, y, extra) {
         var elOffset = getOffset(el),
@@ -239,11 +270,16 @@ window.TestController = function (chart) {
         positionY: null,
         relatedTarget: null,
         /**
-         * setPosition - Move the cursor position to a new position, without fire events.
+         * Move the cursor position to a new position, without fire events.
          *
-         * @param  {Number} x New x position on the page.
-         * @param  {Number} y New y position on the page.
-         * @return {undefined} Pure setter.
+         * @param  {number} x
+         *         New x position on the page.
+         *
+         * @param  {number} y
+         *         New y position on the page.
+         *
+         * @return {void}
+         *         Pure setter.
          */
         setPosition: function (x, y) {
             this.positionX = x;
@@ -251,12 +287,17 @@ window.TestController = function (chart) {
             this.relatedTarget = elementFromPoint(x, y);
         },
         /**
-         * setPosition - Move the cursor position to a new position,
-         *  relative to an element, without fire events.
+         * Move the cursor position to a new position, relative to an element,
+         * without firing events.
          *
-         * @param  {Number} x New x position on the page.
-         * @param  {Number} y New y position on the page.
-         * @return {undefined} Pure setter.
+         * @param  {number} x
+         *         New x position on the page.
+         *
+         * @param  {number} y
+         *         New y position on the page.
+         *
+         * @return {void}
+         *         Pure setter.
          */
         setPositionToElement: function (el, x, y) {
             var elOffset = getOffset(el),
@@ -265,9 +306,10 @@ window.TestController = function (chart) {
             this.setPosition(x1, y1);
         },
         /**
-         * getPosition - Get the current position of the cursor.
+         * Get the current position of the cursor.
          *
-         * @return {Object} Object containing x, y and relatedTarget.
+         * @return {Dictionary}
+         *         Object containing x, y and relatedTarget.
          */
         getPosition: function () {
             var c = this,
@@ -279,15 +321,23 @@ window.TestController = function (chart) {
             return position;
         },
         /**
-         * moveTo - Move the cursor from current position to a new one.
-         *  Fire a series of mousemoves, also mouseout and mouseover if new
-         *  targets are found.
+         * Move the cursor from current position to a new one. Fire a series of
+         * mousemoves, also mouseout and mouseover if new targets are found.
          *
-         * @param  {Number} x New x position on the page.
-         * @param  {Number} y New y position on the page.
-         * @return {undefined}
+         * @param  {number} x
+         *         New x position on the page.
+         *
+         * @param  {number} y
+         *         New y position on the page.
+         *
+         * @param  {Dictionary} extra
+         *         Extra properties for the event arguments, for example
+         *         `{ shiftKey: true }` to emulate that the shift key has been
+         *         pressed in a mouse event.
+         *
+         * @return {void}
          */
-        moveTo: function (x, y) {
+        moveTo: function (x, y, extra) {
             var c = this,
                 interval = 1,
                 relatedTarget = c.relatedTarget,
@@ -298,16 +348,16 @@ window.TestController = function (chart) {
                 var x1 = p[0],
                     y1 = p[1],
                     target = elementFromPoint(x1, y1);
-                triggerEvent('mousemove', x1, y1);
+                triggerEvent('mousemove', x1, y1, extra);
                 if (target !== relatedTarget) {
                     // First trigger a mouseout on the old target.
-                    triggerEvent('mouseout', x1, y1, {
+                    triggerEvent('mouseout', x1, y1, Highcharts.merge({
                         relatedTarget: target
-                    }, relatedTarget);
+                    }, extra), relatedTarget);
                     // Then trigger a mouseover on the new target.
-                    triggerEvent('mouseover', x1, y1, {
+                    triggerEvent('mouseover', x1, y1, Highcharts.merge({
                         relatedTarget: target
-                    });
+                    }, extra));
                     relatedTarget = target;
                 }
             });
@@ -316,20 +366,111 @@ window.TestController = function (chart) {
             c.setPosition(x, y);
         },
         /**
-         * moveTo - Move the cursor from current position to a new one.
-         *  Fire a series of mousemoves, also mouseout and mouseover if new targets are found.
+         * Move the cursor from current position to a new one. Fire a series of
+         * mousemoves, also mouseout and mouseover if new targets are found.
          *
-         * @param  {Element} el The element to move towards.
-         * @param  {Number} x New x position relative to the element.
-         * @param  {Number} y New y position relative to the element.
-         * @return {undefined}
+         * @param  {DOMElement} el
+         *         The HTML or SVG element to move towards.
+         *
+         * @param  {number} x
+         *         New x position relative to the element.
+         *
+         * @param  {number} y
+         *         New y position relative to the element.
+         *
+         * @param  {Dictionary} extra
+         *         Extra properties for the event arguments, for example
+         *         `{ shiftKey: true }` to emulate that the shift key has been
+         *         pressed in a mouse event.
+         *
+         * @return {void}
          */
-        moveToElement: function (el, x, y) {
-            var elOffset = getOffset(el),
-                x1 = elOffset.left + (x || 0),
-                y1 = elOffset.top + (y || 0);
-            this.moveTo(x1, y1);
+        moveToElement: function (el, x, y, extra) {
+            var offset = getOffset(el);
+            this.moveTo(
+                (offset.left + (x || 0)),
+                (offset.top + (y || 0)),
+                extra
+            );
         },
+        /**
+         * Simulates a pan action between two points.
+         *
+         * @param  {Array<number>} point1
+         *         Starting point with x and y value.
+         *
+         * @param  {Array<number>} point2
+         *         Ending point with x any y value.
+         *
+         * @param  {Dictionary} extra
+         *         Extra properties for the event arguments, for example
+         *         `{ shiftKey: true }` to emulate that the shift key has been
+         *         pressed in a mouse event.
+         *
+         * @param  {boolean} debug
+         *         Add marks where the event was triggered. Should not be
+         *         enabled in production, as it slows down the test and also
+         *         leaves an element that might catch events and mess up the
+         *         test result.
+         */
+        pan: function (point1, point2, extra, debug) {
+            this.setPosition(point1[0], point1[1]);
+            this.mouseDown(point1[0], point1[1], extra, debug);
+            this.moveTo(point2[0], point2[1], extra);
+            this.mouseUp(point2[0], point2[1], extra, debug);
+        },
+        /**
+         * Simulates a pan action between two points.
+         *
+         * @param  {Array<number>} element1
+         *         Starting element
+         *
+         * @param  {Array<number>|null|undefined} point1
+         *         Relative position with x and y value.
+         *
+         * @param  {Array<number>} element2
+         *         Ending element
+         *
+         * @param  {Array<number>|null|undefined} point2
+         *         Relative position with x any y value.
+         *
+         * @param  {Dictionary} extra
+         *         Extra properties for the event arguments, for example
+         *         `{ shiftKey: true }` to emulate that the shift key has been
+         *         pressed in a mouse event.
+         *
+         * @param  {boolean} debug
+         *         Add marks where the event was triggered. Should not be
+         *         enabled in production, as it slows down the test and also
+         *         leaves an element that might catch events and mess up the
+         *         test result.
+         */
+        panToElement: function (element1, point1, element2, point2, extra, debug) {
+
+            var offset1 = getOffset(element1),
+                offset2 = getOffset(element2);
+
+            point1 = (point1 || []);
+            point2 = (point2 || []);
+
+            this.drag(
+                (offset1.left + (point1[0] || 0)),
+                (offset1.top + (point1[1] || 0)),
+                (offset2.left + (point2[0] || 0)),
+                (offset2.top + (point2[1] || 0)),
+                extra,
+                debug
+            );
+        },
+        /**
+         * Simulates a tab action with a finger.
+         *
+         * @param {number} x
+         *        X position to tab on
+         *
+         * @param {number} y
+         *        Y position to tab on
+         */
         tap: function (x, y) {
             var target = elementFromPoint(x, y),
                 extra = {
@@ -354,6 +495,18 @@ window.TestController = function (chart) {
             }
             triggerEvent('touchend', x, y, extra, target);
         },
+        /**
+         * Simulates a tab action with a finger on an element.
+         *
+         * @param {DOMElement} el
+         *        Element to tab on
+         *
+         * @param {number} x
+         *        X position relative to the element
+         *
+         * @param {number} y
+         *        Y position relative to the element
+         */
         tapOnElement: function (el, x, y) {
             var elOffset = getOffset(el);
             var x1 = elOffset.left + (x || 0),
@@ -361,7 +514,6 @@ window.TestController = function (chart) {
             this.tap(x1, y1);
         },
         // Pure functions without states
-        trigger: trigger,
         triggerOnChart: triggerOnChart,
         triggerOnElement: triggerOnElement,
         getOffset: getOffset,
@@ -370,66 +522,34 @@ window.TestController = function (chart) {
     // Shorthand functions. Calls trigger, except the type.
     [
         'click',
-        'mousedown',
-        'mousemove',
-        'mouseup',
-        'mouseout',
-        'mouseover',
-        'touchstart',
-        'touchmove',
-        'touchend'
+        'mouseDown',
+        'mouseMove',
+        'mouseUp',
+        'mouseOut',
+        'mouseOver',
+        'touchStart',
+        'touchMove',
+        'touchEnd'
     ].forEach(function (type) {
+        let typeLC = type.toLowerCase();
+        /**
+         * Triggers an event.
+         *
+         * @param  {number} x
+         *         X position on the chart.
+         *
+         * @param  {number} y
+         *         Y position on the chart.
+         *
+         * @param  {Dictionary} extra
+         *         Extra properties for the event arguments, for example
+         *         `{ shiftKey: true }` to emulate that the shift key has been
+         *         pressed in a mouse event.
+         */
         controller[type] = function (x, y, extra, debug) {
-            trigger(type, x, y, extra, debug);
+            triggerOnChart(typeLC, x, y, extra, debug);
         };
     });
     controller.setPositionToElement(chart.container);
     return controller;
 };
-
-
-/**
- * Convience wrapper for installing lolex and bypassing requestAnimationFrame.
- * @return {Object} The clock object
- */
-function lolexInstall() { // eslint-disable-line no-unused-vars
-    var ret;
-    if (typeof lolex !== 'undefined') {
-        window.backupRequestAnimationFrame = window.requestAnimationFrame;
-        window.requestAnimationFrame = null;
-        // Abort running animations, otherwise they will take over
-        Highcharts.timers.length = 0;
-        ret = lolex.install();
-    }
-    return ret;
-}
-
-/**
- * Convenience wrapper for uninstalling lolex.
- * @param  {Object} clock The clock object
- * @return {void}
- */
-function lolexUninstall(clock) { // eslint-disable-line no-unused-vars
-
-    if (typeof lolex !== 'undefined') {
-
-        clock.uninstall();
-
-        // Reset native requestAnimationFrame
-        window.requestAnimationFrame = window.backupRequestAnimationFrame;
-        delete window.backupRequestAnimationFrame;
-    }
-}
-
-/**
- * Convenience wrapper for running timeouts and uninstalling lolex.
- * @param  {Object} clock The clock object
- * @return {void}
- */
-function lolexRunAndUninstall(clock) { // eslint-disable-line no-unused-vars
-
-    if (typeof lolex !== 'undefined') {
-        clock.runAll();
-        lolexUninstall(clock);
-    }
-}

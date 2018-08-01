@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -25,10 +24,18 @@ extend(Pointer.prototype, {
         e = this.normalize(e);
 
         if (chart.options.mapNavigation.enableDoubleClickZoomTo) {
-            if (chart.pointer.inClass(e.target, 'highcharts-tracker') && chart.hoverPoint) {
+            if (
+                chart.pointer.inClass(e.target, 'highcharts-tracker') &&
+                chart.hoverPoint
+            ) {
                 chart.hoverPoint.zoomTo();
             }
-        } else if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+        } else if (
+            chart.isInsidePlot(
+                e.chartX - chart.plotLeft,
+                e.chartY - chart.plotTop
+            )
+        ) {
             chart.mapZoom(
                 0.5,
                 chart.xAxis[0].toValue(e.chartX),
@@ -50,9 +57,15 @@ extend(Pointer.prototype, {
 
         // Firefox uses e.detail, WebKit and IE uses wheelDelta
         delta = e.detail || -(e.wheelDelta / 120);
-        if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+        if (chart.isInsidePlot(
+            e.chartX - chart.plotLeft,
+            e.chartY - chart.plotTop)
+        ) {
             chart.mapZoom(
-                Math.pow(chart.options.mapNavigation.mouseWheelSensitivity, delta),
+                Math.pow(
+                    chart.options.mapNavigation.mouseWheelSensitivity,
+                    delta
+                ),
                 chart.xAxis[0].toValue(e.chartX),
                 chart.yAxis[0].toValue(e.chartY),
                 e.chartX,
@@ -78,22 +91,42 @@ wrap(Pointer.prototype, 'zoomOption', function (proceed) {
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
-    var xBigger;
-    proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
-
-    // Keep ratio
-    if (this.chart.options.chart.type === 'map' && this.hasZoom) {
-        xBigger = transform.scaleX > transform.scaleY;
-        this.pinchTranslateDirection(
-            !xBigger,
+wrap(
+    Pointer.prototype,
+    'pinchTranslate',
+    function (
+        proceed,
+        pinchDown,
+        touches,
+        transform,
+        selectionMarker,
+        clip,
+        lastValidTouch
+    ) {
+        var xBigger;
+        proceed.call(
+            this,
             pinchDown,
             touches,
             transform,
             selectionMarker,
             clip,
-            lastValidTouch,
-            xBigger ? transform.scaleX : transform.scaleY
+            lastValidTouch
         );
+
+        // Keep ratio
+        if (this.chart.options.chart.type === 'map' && this.hasZoom) {
+            xBigger = transform.scaleX > transform.scaleY;
+            this.pinchTranslateDirection(
+                !xBigger,
+                pinchDown,
+                touches,
+                transform,
+                selectionMarker,
+                clip,
+                lastValidTouch,
+                xBigger ? transform.scaleX : transform.scaleY
+            );
+        }
     }
-});
+);

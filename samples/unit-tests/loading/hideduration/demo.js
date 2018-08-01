@@ -14,15 +14,13 @@ QUnit.test('Show and hide duration', function (assert) {
         }]
     });
 
-    var clock = null;
+    var clock = TestUtilities.lolexInstall();
 
     try {
 
         var newOp,
             oldOp,
             done = assert.async();
-
-        clock = lolexInstall();
 
         setTimeout(function () {
             chart.showLoading();
@@ -88,11 +86,11 @@ QUnit.test('Show and hide duration', function (assert) {
             done();
         }, 2400);
 
-        lolexRunAndUninstall(clock);
+        TestUtilities.lolexRunAndUninstall(clock);
 
     } finally {
 
-        lolexUninstall(clock);
+        TestUtilities.lolexUninstall(clock);
 
     }
 

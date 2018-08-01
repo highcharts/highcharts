@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -24,6 +23,8 @@ var correctFloat = H.correctFloat,
  *
  * @sample       highcharts/demo/waterfall/
  *               Waterfall chart
+ * @sample       highcharts/plotoptions/waterfall-inverted/
+ *               Horizontal (inverted) waterfall
  * @sample       highcharts/plotoptions/waterfall-stacked/
  *               Stacked waterfall chart
  * @extends      {plotOptions.column}
@@ -127,6 +128,32 @@ seriesType('waterfall', 'column', {
     showLine: true,
 
     /**
+     * After generating points, set y-values for all sums.
+     */
+    generatePoints: function () {
+        var previousIntermediate = this.options.threshold,
+            point,
+            len,
+            i,
+            y;
+        // Parent call:
+        seriesTypes.column.prototype.generatePoints.apply(this);
+
+        for (i = 0, len = this.points.length; i < len; i++) {
+            point = this.points[i];
+            y = this.processedYData[i];
+            // override point value for sums
+            // #3710 Update point does not propagate to sum
+            if (point.isSum) {
+                point.y = correctFloat(y);
+            } else if (point.isIntermediateSum) {
+                point.y = correctFloat(y - previousIntermediate); // #3840
+                previousIntermediate = y;
+            }
+        }
+    },
+
+    /**
      * Translate data points from raw values
      */
     translate: function () {
@@ -179,13 +206,6 @@ seriesType('waterfall', 'column', {
                 [0, yValue]
             );
 
-            // override point value for sums
-            // #3710 Update point does not propagate to sum
-            if (point.isSum) {
-                point.y = correctFloat(yValue);
-            } else if (point.isIntermediateSum) {
-                point.y = correctFloat(yValue - previousIntermediate); // #3840
-            }
             // up points
             y = Math.max(previousY, previousY + point.y) + range[0];
             shapeArgs.y = yAxis.translate(y, 0, 1, 0, 1);
@@ -196,7 +216,7 @@ seriesType('waterfall', 'column', {
                 shapeArgs.height = Math.min(
                         yAxis.translate(range[0], 0, 1, 0, 1),
                         yAxis.len
-                    ) -    shapeArgs.y; // #4256
+                    ) - shapeArgs.y; // #4256
 
             } else if (point.isIntermediateSum) {
                 shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
@@ -217,6 +237,8 @@ seriesType('waterfall', 'column', {
                 previousY += stack && stack[point.x] ?
                     stack[point.x].total :
                     yValue;
+
+                point.below = previousY < pick(threshold, 0);
             }
 
             // #3952 Negative sum or intermediate sum not rendered correctly
@@ -241,6 +263,9 @@ seriesType('waterfall', 'column', {
                     point.minPointLengthOffset = halfMinPointLength;
                 }
             } else {
+                if (point.isNull) {
+                    shapeArgs.width = 0;
+                }
                 point.minPointLengthOffset = 0;
             }
 
@@ -397,7 +422,7 @@ seriesType('waterfall', 'column', {
     },
 
     /**
-     * The graph is initally drawn with an empty definition, then updated with
+     * The graph is initially drawn with an empty definition, then updated with
      * crisp rendering.
      */
     drawGraph: function () {

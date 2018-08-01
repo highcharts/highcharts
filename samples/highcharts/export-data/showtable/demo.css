@@ -13,10 +13,10 @@
     background: white;
     min-width: 100%;
     margin-top: 10px;
-}
-.highcharts-data-table td, .highcharts-data-table th {
     font-family: sans-serif;
-    font-size: 10pt;
+    font-size: 0.9em;
+}
+.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
     border: 1px solid silver;
     padding: 0.5em;
 }
@@ -25,4 +25,9 @@
 }
 .highcharts-data-table tr:hover {
     background: #eff;
+}
+.highcharts-data-table caption {
+    border-bottom: none;
+    font-size: 1.1em;
+    font-weight: bold;
 }

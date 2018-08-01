@@ -43,4 +43,22 @@ QUnit.test('Data classes and redundant text labels', function (assert) {
         0,
         'Data class axis has no ticks (#6914)'
     );
+
+
+    var initialChildLength = chart.container
+        .querySelectorAll('.highcharts-legend .highcharts-legend-item')
+        .length;
+
+    chart.addSeries({
+        type: 'pie',
+        data: [1, 3, 2, 4]
+    });
+
+    assert.strictEqual(
+        chart.container
+            .querySelectorAll('.highcharts-legend .highcharts-legend-item')
+            .length,
+        initialChildLength,
+        'The number of child nodes should not change after adding a pie (#8478)'
+    );
 });

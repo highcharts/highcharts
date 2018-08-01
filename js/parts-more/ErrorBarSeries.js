@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -20,7 +19,9 @@ var each = H.each,
  * measurement.
  *
  * @sample       highcharts/demo/error-bar/
- *               Error bars
+ *               Error bars on a column series
+ * @sample       highcharts/series-errorbar/on-scatter/
+ *               Error bars on a scatter series
  * @extends      {plotOptions.boxplot}
  * @product      highcharts highstock
  * @optionparent plotOptions.errorbar

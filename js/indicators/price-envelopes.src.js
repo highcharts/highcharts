@@ -14,7 +14,7 @@ H.seriesType('priceenvelopes', 'sma',
      * This series requires the `linkedTo` option to be set and should be loaded
      * after the `stock/indicators/indicators.js` file.
      *
-     * @extends {plotOptions.sma}
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/price-envelopes
      *                     Price envelopes
@@ -80,7 +80,7 @@ H.seriesType('priceenvelopes', 'sma',
         /**
          * Top line options.
          *
-         * @extends {plotOptions.priceenvelopes.bottomLine}
+         * @extends plotOptions.priceenvelopes.bottomLine
          * @since 6.0.0
          * @product highstock
          */

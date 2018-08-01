@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -84,7 +83,7 @@ seriesType('flags', 'column', {
 
     /**
      * The shape of the marker. Can be one of "flag", "circlepin", "squarepin",
-     * or an image on the format `url(/path-to-image.jpg)`. Individual
+     * or an image of the format `url(/path-to-image.jpg)`. Individual
      * shapes can also be set for each point.
      *
      * @validvalue ["flag", "circlepin", "squarepin"]
@@ -159,6 +158,27 @@ seriesType('flags', 'column', {
      * @since     1.3
      * @product   highstock
      * @apioption plotOptions.flags.useHTML
+     */
+
+    /**
+     * Fixed width of the flag's shape. By default, width is autocalculated
+     * according to the flag's title.
+     *
+     * @type      {Number}
+     * @default   undefined
+     * @product   highstock
+     * @sample    {highstock} stock/demo/flags-shapes/ Flags with fixed width
+     * @apioption plotOptions.flags.width
+     */
+
+     /**
+     * Fixed height of the flag's shape. By default, height is autocalculated
+     * according to the flag's title.
+     *
+     * @type      {Number}
+     * @default   undefined
+     * @product   highstock
+     * @apioption plotOptions.flags.height
      */
 
     /*= if (build.classic) { =*/
@@ -303,7 +323,8 @@ seriesType('flags', 'column', {
         i = points.length;
         while (i--) {
             point = points[i];
-            outsideRight = (inverted ? point.plotY : point.plotX) > series.xAxis.len;
+            outsideRight =
+                (inverted ? point.plotY : point.plotX) > series.xAxis.len;
             plotX = point.plotX;
             stackIndex = point.stackIndex;
             shape = point.options.shape || options.shape;
@@ -423,7 +444,16 @@ seriesType('flags', 'column', {
                         x: box.pos,
                         anchorX: point.anchorX
                     });
-                    point.graphic.isNew = false;
+                    // Hide flag when its box position is not specified (#8573)
+                    if (!box.pos) {
+                        point.graphic.attr({
+                            x: -9999,
+                            anchorX: -9999
+                        });
+                        point.graphic.isNew = true;
+                    } else {
+                        point.graphic.isNew = false;
+                    }
                 }
             });
         }
@@ -500,7 +530,7 @@ seriesType('flags', 'column', {
 // create the flag icon with anchor
 symbols.flag = function (x, y, w, h, options) {
     var anchorX = (options && options.anchorX) || x,
-        anchorY = (options &&  options.anchorY) || y;
+        anchorY = (options && options.anchorY) || y;
 
     return symbols.circle(anchorX - 1, anchorY - 1, 2, 2).concat(
         [
@@ -522,7 +552,7 @@ function createPinSymbol(shape) {
     symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
         var anchorX = options && options.anchorX,
-            anchorY = options &&  options.anchorY,
+            anchorY = options && options.anchorY,
             path,
             labelTopOrBottomY;
 

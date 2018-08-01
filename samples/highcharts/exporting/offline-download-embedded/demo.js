@@ -74,7 +74,7 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
         var menu = chart.exportSVGElements && chart.exportSVGElements[0],
             oldHandler,
             types = ['image/png', 'image/jpeg', 'image/svg+xml',
-                     'application/pdf'],
+                'application/pdf'],
             intervalRef;
 
         // Try to avoid race conditions by queuing requests.

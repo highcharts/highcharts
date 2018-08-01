@@ -87,7 +87,7 @@ seriesType('ikh', 'sma',
      * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
      * set.
      *
-     * @extends {plotOptions.sma}
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
      *                        Ichimoku Kinko Hyo indicator
@@ -132,7 +132,6 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Tenkan line
          *
-         * @type {Number}
          * @since 6.0.0
          * @product highstock
          */
@@ -159,7 +158,6 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Kijun line
          *
-         * @type {Number}
          * @since 6.0.0
          * @product highstock
          */
@@ -186,7 +184,6 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Chikou line
          *
-         * @type {Number}
          * @since 6.0.0
          * @product highstock
          */
@@ -213,7 +210,6 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Senkou Span A line
          *
-         * @type {Number}
          * @since 6.0.0
          * @product highstock
          */
@@ -240,7 +236,6 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Senkou Span B line
          *
-         * @type {Number}
          * @since 6.0.0
          * @product highstock
          */
@@ -267,7 +262,6 @@ seriesType('ikh', 'sma',
         /**
          * The styles for fill between Senkou Span A and B
          *
-         * @type {Number}
          * @since 6.0.0
          * @product highstock
          */

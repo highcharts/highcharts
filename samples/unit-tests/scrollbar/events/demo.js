@@ -8,7 +8,7 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', functi
                 max: 3.05,
                 events: {
                     afterSetExtremes: function () {
-                        counter ++;
+                        counter++;
                     }
                 }
             },
@@ -35,9 +35,7 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', functi
         x = group.translateX + thumbGroup.translateX + thumbBox.width / 2,
         y = group.translateY + thumbGroup.translateY + thumbBox.height / 2;
 
-    controller.mousedown(x, y);
-    controller.mousemove(x + 90, y);
-    controller.mouseup();
+    controller.pan([x, y], [x + 90, y]);
 
     setTimeout(function () {
         assert.strictEqual(

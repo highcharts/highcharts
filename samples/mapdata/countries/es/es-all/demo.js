@@ -95,11 +95,11 @@ Highcharts.mapChart('container', {
             format: '{point.name}'
         }
     }, {
-            name: 'Separators',
-            type: 'mapline',
-            data: Highcharts.geojson(Highcharts.maps['countries/es/es-all'], 'mapline'),
-            color: 'silver',
-            showInLegend: false,
-            enableMouseTracking: false
-        }]
+        name: 'Separators',
+        type: 'mapline',
+        data: Highcharts.geojson(Highcharts.maps['countries/es/es-all'], 'mapline'),
+        color: 'silver',
+        showInLegend: false,
+        enableMouseTracking: false
+    }]
 });

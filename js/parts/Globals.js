@@ -51,8 +51,8 @@ var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
      * An array containing the current chart objects in the page. A chart's
      * position in the array is preserved throughout the page's lifetime. When
      * a chart is destroyed, the array item becomes `undefined`.
-     * @type {Array.<Highcharts.Chart>}
-     * @memberOf Highcharts
+     * @type {Array<Chart>}
+     * @memberof Highcharts
      */
     charts: []
 };

@@ -222,6 +222,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
         var axis = this,
             len,
             ordinalPositions = [],
+            uniqueOrdinalPositions,
             useOrdinal = false,
             dist,
             extremes = axis.getExtremes(),
@@ -263,6 +264,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
         if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
             each(axis.series, function (series, i) {
+                uniqueOrdinalPositions = [];
 
                 if (
                     (!ignoreHiddenSeries || series.visible !== false) &&
@@ -288,12 +290,29 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                     );
 
                     if (len) {
-                        i = len - 1;
-                        while (i--) {
-                            if (ordinalPositions[i] === ordinalPositions[i + 1]) {
-                                ordinalPositions.splice(i, 1);
+
+                        i = 0;
+                        while (i < len - 1) {
+                            if (
+                                ordinalPositions[i] !== ordinalPositions[i + 1]
+                            ) {
+                                uniqueOrdinalPositions.push(
+                                    ordinalPositions[i + 1]
+                                );
                             }
+                            i++;
                         }
+
+                        // Check first item:
+                        if (
+                            uniqueOrdinalPositions[0] !== ordinalPositions[0]
+                        ) {
+                            uniqueOrdinalPositions.unshift(
+                                ordinalPositions[0]
+                            );
+                        }
+
+                        ordinalPositions = uniqueOrdinalPositions;
                     }
                 }
 
@@ -657,7 +676,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
      * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
      */
     postProcessTickInterval: function (tickInterval) {
-        // Problem: http://jsfiddle.net/highcharts/FQm4E/1/
+        // Problem: https://jsfiddle.net/highcharts/FQm4E/1/
         // This is a case where this algorithm doesn't work optimally. In this case, the
         // tick labels are spread out per week, but all the gaps reside within weeks. So
         // we have a situation where the labels are courser than the ordinal gaps, and

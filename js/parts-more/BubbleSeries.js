@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -49,6 +48,14 @@ seriesType('bubble', 'scatter', {
     },
 
     /**
+     * If there are more points in the series than the `animationLimit`, the
+     * animation won't run. Animation affects overall performance and doesn't
+     * work well with heavy data series.
+     * @since 6.1.0
+     */
+    animationLimit: 250,
+
+    /**
      * Whether to display negative sized bubbles. The threshold is given
      * by the [zThreshold](#plotOptions.bubble.zThreshold) option, and negative
      * bubbles can be visualized by setting
@@ -81,7 +88,7 @@ seriesType('bubble', 'scatter', {
          * the point's data value.
          */
         /**
-         * @ignore
+         * @ignore-option
          */
         radius: null,
 
@@ -309,11 +316,14 @@ seriesType('bubble', 'scatter', {
             // the size of the bubble.
             if (options.sizeByAbsoluteValue && value !== null) {
                 value = Math.abs(value - zThreshold);
-                zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
+                zMax = zRange = Math.max(
+                    zMax - zThreshold,
+                    Math.abs(zMin - zThreshold)
+                );
                 zMin = 0;
             }
 
-            if (value === null) {
+            if (!isNumber(value)) {
                 radius = null;
             // Issue #4419 - if value is less than zMin, push a radius that's
             // always smaller than the minimum size
@@ -337,9 +347,10 @@ seriesType('bubble', 'scatter', {
      * Perform animation on the bubbles
      */
     animate: function (init) {
-        var animation = this.options.animation;
-
-        if (!init) { // run the animation
+        if (
+            !init &&
+            this.points.length < this.options.animationLimit // #8099
+        ) {
             each(this.points, function (point) {
                 var graphic = point.graphic,
                     animationTarget;
@@ -361,9 +372,9 @@ seriesType('bubble', 'scatter', {
                     });
 
                     // Run animation
-                    graphic.animate(animationTarget, animation);
+                    graphic.animate(animationTarget, this.options.animation);
                 }
-            });
+            }, this);
 
             // delete this function to allow it only once
             this.animate = null;
@@ -486,7 +497,7 @@ Axis.prototype.beforePadding = function () {
                 series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
 
                 // Find the min and max Z
-                zData = series.zData;
+                zData = H.grep(series.zData, H.isNumber);
                 if (zData.length) { // #1735
                     zMin = pick(seriesOptions.zMin, Math.min(
                         zMin,

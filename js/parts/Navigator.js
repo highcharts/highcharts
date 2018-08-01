@@ -61,6 +61,7 @@ var addEvent = H.addEvent,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
+    isTouchDevice = H.isTouchDevice,
     merge = H.merge,
     pick = H.pick,
     removeEvent = H.removeEvent,
@@ -180,7 +181,7 @@ extend(defaultOptions, {
              * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
              * used by its method name, as shown in the demo.
              *
-             * @type {Array}
+             * @type {Array<string>}
              * @default ['navigator-handle', 'navigator-handle']
              * @product highstock
              * @sample {highstock} stock/navigator/styled-handles/
@@ -329,14 +330,14 @@ extend(defaultOptions, {
             /*= } =*/
 
             /**
-             * @ignore
+             * @ignore-option
              */
             compare: null,
 
             /**
              * Data grouping options for the navigator series.
              *
-             * @extends {plotOptions.series.dataGrouping}
+             * @extends plotOptions.series.dataGrouping
              */
             dataGrouping: {
                 approximation: 'average',
@@ -350,7 +351,7 @@ extend(defaultOptions, {
              * Data label options for the navigator series. Data labels are
              * disabled by default on the navigator series.
              *
-             * @extends {plotOptions.series.dataLabels}
+             * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
                 enabled: false,
@@ -401,7 +402,7 @@ extend(defaultOptions, {
          * }</pre>
          *
          * @type {Object}
-         * @extends {xAxis}
+         * @extends xAxis
          * @excluding linkedTo,maxZoom,minRange,opposite,range,scrollbar,
          *          showEmpty,maxRange
          * @product highstock
@@ -467,7 +468,7 @@ extend(defaultOptions, {
          * }</pre>
          *
          * @type {Object}
-         * @extends {yAxis}
+         * @extends yAxis
          * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
          *          scrollbar,top,units,maxRange,minLength,maxLength,resize
          * @product highstock
@@ -983,8 +984,8 @@ Navigator.prototype = {
             navigator.scrollbar.setRange(
                 // Use real value, not rounded because range can be very small
                 // (#1716)
-                navigator.zoomedMin / navigatorSize,
-                navigator.zoomedMax / navigatorSize
+                navigator.zoomedMin / (navigatorSize || 1),
+                navigator.zoomedMax / (navigatorSize || 1)
             );
         }
         navigator.rendered = true;
@@ -1402,20 +1403,6 @@ Navigator.prototype = {
             baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis ||
                 chart.xAxis[0] || { options: {} };
 
-        // Make room for the navigator, can be placed around the chart:
-        chart.extraMargin = {
-            type: navigator.opposite ? 'plotTop' : 'marginBottom',
-            value: (
-                navigatorEnabled || !chart.inverted ?
-                    navigator.outlineHeight :
-                    0
-            ) + navigatorOptions.margin
-        };
-        if (chart.inverted) {
-            chart.extraMargin.type = navigator.opposite ?
-                'marginRight' :
-                'plotLeft';
-        }
         chart.isDirtyBox = true;
 
         if (navigator.navigatorEnabled) {
@@ -1657,8 +1644,7 @@ Navigator.prototype = {
                 yAxis: 'navigator-y-axis',
                 showInLegend: false,
                 stacking: false, // #4823
-                isInternal: true,
-                visible: true
+                isInternal: true
             },
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series = H.grep(
@@ -1689,9 +1675,10 @@ Navigator.prototype = {
             each(baseSeries, function eachBaseSeries(base) {
                 var linkedNavSeries = base.navigatorSeries,
                     userNavOptions = extend(
-                        // Grab color from base as default
+                        // Grab color and visibility from base as default
                         {
-                            color: base.color
+                            color: base.color,
+                            visible: base.visible
                         },
                         !isArray(chartNavigatorSeriesOptions) ?
                             chartNavigatorSeriesOptions :
@@ -1968,21 +1955,52 @@ Navigator.prototype = {
      * Add chart events, like redrawing navigator, when chart requires that.
      */
     addChartEvents: function () {
-        addEvent(this.chart, 'redraw', function () {
+        if (!this.eventsToUnbind) {
+            this.eventsToUnbind = [];
+        }
+
+        this.eventsToUnbind.push(
             // Move the scrollbar after redraw, like after data updata even if
             // axes don't redraw
-            var navigator = this.navigator,
-                xAxis = navigator && (
-                    navigator.baseSeries &&
-                    navigator.baseSeries[0] &&
-                    navigator.baseSeries[0].xAxis ||
-                    navigator.scrollbar && this.xAxis[0]
-                ); // #5709
+            addEvent(
+                this.chart,
+                'redraw',
+                function () {
+                    var navigator = this.navigator,
+                        xAxis = navigator && (
+                            navigator.baseSeries &&
+                            navigator.baseSeries[0] &&
+                            navigator.baseSeries[0].xAxis ||
+                            navigator.scrollbar && this.xAxis[0]
+                        ); // #5709
 
-            if (xAxis) {
-                navigator.render(xAxis.min, xAxis.max);
-            }
-        });
+                    if (xAxis) {
+                        navigator.render(xAxis.min, xAxis.max);
+                    }
+                }
+            ),
+            // Make room for the navigator, can be placed around the chart:
+            addEvent(
+                this.chart,
+                'getMargins',
+                function () {
+                    var chart = this,
+                        navigator = chart.navigator,
+                        marginName = navigator.opposite ?
+                            'plotTop' : 'marginBottom';
+                    if (chart.inverted) {
+                        marginName = navigator.opposite ?
+                            'marginRight' : 'plotLeft';
+                    }
+
+                    chart[marginName] = (chart[marginName] || 0) + (
+                        navigator.navigatorEnabled || !chart.inverted ?
+                            navigator.outlineHeight :
+                            0
+                    ) + navigator.navigatorOptions.margin;
+                }
+            )
+        );
     },
 
     /**
@@ -2048,7 +2066,10 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
             (rangeSelector && rangeSelector.enabled))) {
         // For x only zooming, fool the chart.zoom method not to create the zoom
         // button because the property already exists
-        if (zoomType === 'x' || pinchType === 'x') {
+        if (
+            (!isTouchDevice && zoomType === 'x') ||
+            (isTouchDevice && pinchType === 'x')
+        ) {
             chart.resetZoomButton = 'blocked';
 
         // For y only zooming, ignore the X axis completely
@@ -2060,7 +2081,10 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
         // should apply only if the chart is initialized with a range (#6612),
         // otherwise zoom all the way out.
         } else if (
-            (zoomType === 'xy' || pinchType === 'xy') &&
+            (
+                (!isTouchDevice && zoomType === 'xy') ||
+                (isTouchDevice && pinchType === 'xy')
+            ) &&
             this.options.range
         ) {
 
@@ -2149,6 +2173,34 @@ addEvent(Chart, 'afterSetChartSize', function () {
             yAxis.setAxisSize();
         }
     }
+});
+
+// Merge options, if no scrolling exists yet
+addEvent(Chart, 'update', function (e) {
+
+    var navigatorOptions = (e.options.navigator || {}),
+        scrollbarOptions = (e.options.scrollbar || {});
+
+    if (!this.navigator && !this.scroller &&
+        (navigatorOptions.enabled || scrollbarOptions.enabled)
+    ) {
+        merge(true, this.options.navigator, navigatorOptions);
+        merge(true, this.options.scrollbar, scrollbarOptions);
+        delete e.options.navigator;
+        delete e.options.scrollbar;
+    }
+
+});
+
+// Initiate navigator, if no scrolling exists yet
+addEvent(Chart, 'afterUpdate', function () {
+
+    if (!this.navigator && !this.scroller &&
+        (this.options.navigator.enabled || this.options.scrollbar.enabled)
+    ) {
+        this.scroller = this.navigator = new Navigator(this);
+    }
+
 });
 
 // Pick up badly formatted point options to addPoint

@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -24,7 +23,7 @@ if (seriesTypes.bubble) {
      *
      * @sample maps/demo/map-bubble/ Map bubble chart
      *
-     * @extends {plotOptions.bubble}
+     * @extends plotOptions.bubble
      * @product highmaps
      * @optionparent plotOptions.mapbubble
      */
@@ -44,8 +43,8 @@ if (seriesTypes.bubble) {
 
         /**
          * Whether to display negative sized bubbles. The threshold is given
-         * by the [zThreshold](#plotOptions.mapbubble.zThreshold) option, and negative
-         * bubbles can be visualized by setting [negativeColor](
+         * by the [zThreshold](#plotOptions.mapbubble.zThreshold) option, and
+         * negative bubbles can be visualized by setting [negativeColor](
          * #plotOptions.bubble.negativeColor).
          *
          * @type {Boolean}
@@ -135,10 +134,11 @@ if (seriesTypes.bubble) {
          */
 
         /**
-         * When [displayNegative](#plotOptions.mapbubble.displayNegative) is `false`,
-         * bubbles with lower Z values are skipped. When `displayNegative`
-         * is `true` and a [negativeColor](#plotOptions.mapbubble.negativeColor)
-         * is given, points with lower Z is colored.
+         * When [displayNegative](#plotOptions.mapbubble.displayNegative) is
+         * `false`, bubbles with lower Z values are skipped. When
+         * `displayNegative` is `true` and a [negativeColor](
+         * #plotOptions.mapbubble.negativeColor) is given, points with lower Z
+         * is colored.
          *
          * @type {Number}
          * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/
@@ -158,10 +158,9 @@ if (seriesTypes.bubble) {
     }, {
         xyFromShape: true,
         type: 'mapbubble',
-        pointArrayMap: ['z'], // If one single value is passed, it is interpreted as z
-        /**
-         * Return the map area identified by the dataJoinBy option
-         */
+        // If one single value is passed, it is interpreted as z
+        pointArrayMap: ['z'],
+        // Return the map area identified by the dataJoinBy option
         getMapData: seriesTypes.map.prototype.getMapData,
         getBox: seriesTypes.map.prototype.getBox,
         setData: seriesTypes.map.prototype.setData
@@ -170,14 +169,22 @@ if (seriesTypes.bubble) {
     }, {
         applyOptions: function (options, x) {
             var point;
-            if (options && options.lat !== undefined && options.lon !== undefined) {
+            if (
+                options &&
+                options.lat !== undefined &&
+                options.lon !== undefined
+            ) {
                 point = Point.prototype.applyOptions.call(
                     this,
-                    merge(options, this.series.chart.fromLatLonToPoint(options)),
+                    merge(
+                        options,
+                        this.series.chart.fromLatLonToPoint(options)
+                    ),
                     x
                 );
             } else {
-                point = seriesTypes.map.prototype.pointClass.prototype.applyOptions.call(this, options, x);
+                point = seriesTypes.map.prototype.pointClass.prototype
+                    .applyOptions.call(this, options, x);
             }
             return point;
         },
@@ -213,8 +220,8 @@ if (seriesTypes.bubble) {
  *  ```
  *
  * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.mapbubble.turboThreshold),
+ * configuration objects as seen below. If the total number of data points
+ * exceeds the series' [turboThreshold](#series.mapbubble.turboThreshold),
  * this option is not available.
  *
  *  ```js

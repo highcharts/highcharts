@@ -405,7 +405,7 @@
  */
 
 /**
- * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
+ * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-
  * and-string-formatting#html) to render the labels.
  *
  * @type {Boolean}
@@ -484,7 +484,7 @@
 
 /**
  * The dashing or dot style for the plot line. For possible values see
- * [this overview](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-
+ * [this overview](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-
  * dashstyle-all/).
  *
  * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot", "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot", "LongDashDot", "LongDashDotDot"]
@@ -622,7 +622,7 @@
  */
 
 /**
- * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
+ * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-
  * and-string-formatting#html) to render the labels.
  *
  * @type {Boolean}
@@ -680,6 +680,31 @@
  */
 
 /**
+ * Alignment of the text, can be `"left"`, `"right"` or `"center"`.
+ * Default alignment depends on the [title.align](xAxis.title.align):
+ *
+ * Horizontal axes:
+ * - for `align` = `"low"`, `textAlign` is set to `left`
+ * - for `align` = `"middle"`, `textAlign` is set to `center`
+ * - for `align` = `"high"`, `textAlign` is set to `right`
+ *
+ * Vertical axes:
+ * - for `align` = `"low"` and `opposite` = `true`, `textAlign` is set to
+ * `right`
+ * - for `align` = `"low"` and `opposite` = `false`, `textAlign` is set to
+ * `left`
+ * - for `align` = `"middle"`, `textAlign` is set to `center`
+ * - for `align` = `"high"` and `opposite` = `true` `textAlign` is set to
+ * `left`
+ * - for `align` = `"high"` and `opposite` = `false` `textAlign` is set to
+ * `right`
+ *
+ * @type {String}
+ * @defaults undefined
+ * @apioption xAxis.title.textAlign
+ */
+
+/**
  * The pixel distance between the axis labels or line and the title.
  *  Defaults to 0 for horizontal axes, 10 for vertical
  *
@@ -733,7 +758,7 @@
  */
 
 /**
- * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
+ * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-
  * and-string-formatting#html) to render the axis title.
  *
  * @type {Boolean}
@@ -809,6 +834,20 @@
  * @since 4.0
  * @product highcharts
  * @apioption yAxis.minColor
+ */
+
+/**
+ * This option determines how stacks should be ordered within a group.
+ * For example reversed xAxis also reverses stacks, so first series comes last
+ * in a group. To keep order like for non-reversed xAxis enable this option.
+ *
+ * @type {Boolean}
+ * @sample {highcharts} highcharts/xaxis/reversedstacks/ Reversed stacks comparison
+ * @sample {highstock} highcharts/xaxis/reversedstacks/ Reversed stacks comparison
+ * @default false
+ * @since 6.1.1
+ * @product highcharts highstock
+ * @apioption xAxis.reversedStacks
  */
 
 /**
@@ -993,7 +1032,7 @@
  */
 
 /**
- * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+ * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
  * to render the labels.
  *
  * @type {Boolean}
@@ -1056,7 +1095,8 @@
 /**
  * The Z axis or depth axis for 3D plots.
  *
- * See [the Axis object](#Axis) for programmatic access to the axis.
+ * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
+ * access to the axis.
  *
  * @extends xAxis
  * @excluding breaks,crosshair,lineColor,lineWidth,nameToX,showEmpty
@@ -1381,10 +1421,25 @@
  * @apioption rangeSelector.buttons.offsetMin
  */
 
+
+/**
+ * When buttons apply dataGrouping on a series, by deafault zooming in/out will
+ * deselect buttons and unset dataGrouping. Enable this option to keep buttons
+ * selected when extremes change.
+ *
+ * @type {Boolean}
+ * @since 6.1.2
+ * @default false
+ * @sample {highstock} stock/rangeselector/preserve-datagrouping/ Different preserveDataGrouping settings
+ * @product highstock
+ * @apioption rangeSelector.buttons.preserveDataGrouping
+ */
+
 /**
  * A custom data grouping object for each button.
  *
  * @type {Object}
+ * @extends plotOptions.series.dataGrouping
  * @see [series.dataGrouping](#plotOptions.series.dataGrouping)
  * @sample {highstock} stock/rangeselector/datagrouping/ Data grouping by range selector buttons
  * @product highstock
@@ -1625,6 +1680,9 @@
  * than this, the axis will stay at this maximum, but if the series
  * data maximum is higher, the axis will flex to show all data.
  *
+ * **Note**: The [series.softThreshold](#plotOptions.series.softThreshold) option
+ * takes precedence over this option.
+ *
  * @type {Number}
  * @sample highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
@@ -1636,6 +1694,9 @@
  * A soft minimum for the axis. If the series data minimum is greater
  * than this, the axis will stay at this minimum, but if the series
  * data minimum is lower, the axis will flex to show all data.
+ *
+ * **Note**: The [series.softThreshold](#plotOptions.series.softThreshold) option
+ * takes precedence over this option.
  *
  * @type {Number}
  * @sample highcharts/yaxis/softmin-softmax/ Soft min and max

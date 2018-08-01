@@ -9,6 +9,11 @@ const gulp = require('gulp');
 const argv = require('yargs').argv;
 const fs = require('fs');
 const {
+    join,
+    relative,
+    sep
+} = require('path');
+const {
     getFilesInFolder
 } = require('highcharts-assembler/src/build.js');
 const {
@@ -20,7 +25,12 @@ const {
     scripts,
     getBuildScripts
 } = require('./tools/build.js');
-
+const compile = require('./tools/compile.js').compile;
+const {
+    asyncForeach,
+    uploadFiles
+} = require('./tools/upload.js');
+const ProgressBar = require('./tools/progress-bar.js');
 /**
  * Creates a set of ES6-modules which is distributable.
  * @return {undefined}
@@ -57,7 +67,12 @@ const compileSingleStyle = (fileName) => {
 };
 
 const styles = () => {
-    const files = ['highcharts', 'dark-uniqua', 'sand-signika', 'grid-light'];
+    const files = [
+        'highcharts',
+        'themes/dark-unica',
+        'themes/sand-signika',
+        'themes/grid-light'
+    ];
     const promises = files.map(file => compileSingleStyle(file));
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);
@@ -72,10 +87,15 @@ const styles = () => {
  */
 const lint = () => {
     const CLIEngine = require('eslint').CLIEngine;
-    const cli = new CLIEngine();
+    const cli = new CLIEngine({
+        fix: argv.fix
+    });
     const formatter = cli.getFormatter();
     let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**/*.js'];
     let report = cli.executeOnFiles(pattern);
+    if (argv.fix) {
+        CLIEngine.outputFixes(report);
+    }
     console.log(formatter(report.results));
 };
 
@@ -352,65 +372,21 @@ const generateClassReferences = ({ templateDir, destination }) => {
     });
 };
 
-const compileSingleFile = (path, sourceFolder, createSourceMap) => {
-    const closureCompiler = require('google-closure-compiler-js');
-    const sourcePath = sourceFolder + path;
-    const outputPath = sourcePath.replace('.src.js', '.js');
-    const src = getFile(sourcePath);
-    const getErrorMessage = (e) => {
-        return [
-            'Compile error in file: ' + path,
-            '- Type: ' + e.type,
-            '- Line: ' + e.lineNo,
-            '- Char : ' + e.charNo,
-            '- Description: ' + e.description
-        ].join('\n');
-    };
-    return new Promise((resolve, reject) => {
-        const out = closureCompiler.compile({
-            compilationLevel: 'SIMPLE_OPTIMIZATIONS',
-            jsCode: [{
-                src: src
-            }],
-            languageIn: 'ES5',
-            languageOut: 'ES5',
-            createSourceMap: createSourceMap
-        });
-        const errors = out.errors;
-        if (errors.length) {
-            const msg = errors.map(getErrorMessage).join('\n');
-            reject(msg);
-        } else {
-            writeFile(outputPath, out.compiledCode);
-            if (createSourceMap) {
-                writeFile(outputPath + '.map', out.sourceMap);
-            }
-            // @todo add filesize information
-            console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
-            resolve();
-        }
-    });
-};
-
-const compile = (files, sourceFolder) => {
-    console.log(
-      colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.')
-    );
-    const createSourceMap = true;
-    const promises = files
-      .map(path => compileSingleFile(path, sourceFolder, createSourceMap));
-    return Promise.all(promises);
-};
-
 /**
  * Compile the JS files in the /code folder
  */
-const compileScripts = () => {
+const compileScripts = (args = {}) => {
     const sourceFolder = './code/';
-    const files = getFilesInFolder(sourceFolder, true, '')
-        // Compile all files ending with .src.js.
-        // Do not compile files in ./es-modules or ./js/es-modules.
-      .filter(path => (path.endsWith('.src.js') && !path.includes('es-modules')));
+    // Compile all files ending with .src.js.
+    // Do not compile files in ./es-modules or ./js/es-modules.
+    const isSourceFile = (path) => (
+        path.endsWith('.src.js') && !path.includes('es-modules')
+    );
+    const files = (
+        (args.files) ?
+        args.files :
+        getFilesInFolder(sourceFolder, true, '').filter(isSourceFile)
+    );
     return compile(files, sourceFolder);
 };
 
@@ -874,45 +850,8 @@ const createAllExamples = () => new Promise((resolve) => {
     resolve();
 });
 
-/**
- * Copy new current version files into a versioned folder
- */
-/*
-const copyAPIFiles = (dist, version) => {
-    const B = require('./assembler/build.js');
-    const notVersionedFolder = (file) => !(
-        (file.split('/').length > 1) && // is folder
-        !isNaN(file.charAt(0)) // is numbered
-    );
-    const message = {
-        'start': 'Started process of copying API files from to a versioned folder.',
-        'successCopy': 'Finished with copying current API to '
-    };
-    console.log(message.start);
-    const paths = ['highcharts', 'highstock', 'highmaps'].reduce((obj, lib) => {
-        const files = B.getFilesInFolder(`${dist}/${lib}/`, true, '');
-        files
-            .filter(notVersionedFolder)
-            .forEach((filename) => {
-                const from = `${dist}/${lib}/${filename}`;
-                const to = `${dist}/${lib}/${version}/${filename}`;
-                obj[from] = to;
-            });
-        return obj;
-    }, {});
-    const promises = Object.keys(paths).map((from) => {
-        const to = paths[from];
-        return copyFile(from, to);
-    });
-    return Promise.all(promises).then(() => {
-        console.log(message.successCopy);
-    });
-};
-*/
-
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    // const generate = require('highcharts-api-doc-gen/lib/index.js');
-    const generate = require('./../api-docs/lib/index.js');
+    const generate = require('highcharts-api-docs');
     const message = {
         'start': 'Started generating API documentation.',
         'noSeries': 'Missing series in tree.json. Run merge script.',
@@ -997,188 +936,39 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
     .then(() => testTree(treeFile));
 };
 
-const logUpdate = require('log-update');
-const ProgressBar = function (user) {
-    const getBar = (options) => {
-        const length = options.length;
-        const percentage = options.count / options.total;
-        const chars = Math.floor(percentage * length);
-        return options.complete.repeat(chars) + options.incomplete.repeat(length - chars);
-    };
-    const getMsg = (options) => {
-        return options.message
-            .replace(':bar', getBar(options))
-            .replace(':count', options.count)
-            .replace(':total', options.total);
-    };
-    const options = Object.assign({
-        count: 0,
-        complete: '=',
-        incomplete: '-',
-        length: 30,
-        message: '[:bar] - :count of :total',
-        total: 100
-    }, user);
-    this.render = () => {
-        logUpdate(getMsg(options));
-    };
-    this.complete = function () {
-        this.tick = () => {};
-        logUpdate.done();
-    };
-    this.tick = function () {
-        options.count++;
-        this.render();
-        if (options.count === options.total) {
-            this.complete();
-        }
-    };
-    this.render();
-    return this;
-};
-
-const asyncForeach = (arr, fn) => {
-    const length = arr.length;
-    const generator = (j) => {
-        let promise;
-        if (j < length) {
-            promise = fn(arr[j], j, arr).then(() => {
-                // console.log('then ' + j)
-                return generator(j + 1);
-            });
-        }
-        return promise;
-    };
-    return generator(0);
-};
-
-const asyncBatchForeach = (batchSize, arr, fn) => {
-    const length = arr.length;
-    const generator = (from, to) => {
-        let result;
-        if (from < length) {
-            const batch = arr.slice(from, to);
-            const promises = batch.map((el, i) => {
-                return fn(el, from + i, arr);
-            });
-            result = Promise.all(promises).then(() => {
-                return generator(to, to + batchSize);
-            });
-        }
-        return result;
-    };
-    return generator(0, batchSize);
-};
-
-gulp.task('testing', () => {
-    let messages = [];
-    const min = 500;
-    const max = 2000;
-    for (let i = 0; i < 1000; i++) {
-        messages.push({
-            m: i,
-            time: Math.random() * (max - min) + min
-        });
-    }
-    const bar = new ProgressBar({
-        total: messages.length
-    });
-    const func = (time) => {
-        return new Promise((resolve) => {
-            let interval = setInterval(() => {
-                clearInterval(interval);
-                resolve();
-            }, time);
-        });
-    };
-    return asyncBatchForeach(100, messages, (entry) => {
-        return func(entry.time).then(() => {
-            bar.tick();
-        });
-    });
-});
-
-const isFunction = x => typeof x === 'function';
-const isArray = x => Array.isArray(x);
 const isString = x => typeof x === 'string';
-
-const uploadFiles = (params) => {
-    const storage = require('./tools/jsdoc/storage/cdn.storage');
-    const mimeType = {
-        'css': 'text/css',
-        'html': 'text/html',
-        'js': 'text/javascript',
-        'json': 'application/json'
-    };
-    const {
-        batchSize,
-        bucket,
-        callback,
-        files
-    } = params;
-    let result;
-    if (isString(bucket) && isArray(files)) {
-        const cdn = storage.strategy.s3({
-            Bucket: bucket
-        });
-        const uploadFile = (file) => {
-            const { from, to } = file;
-            let filePromise;
-            if (isString(from) && isString(to)) {
-                const content = getFile(from);
-                if (isString(content)) {
-                    const fileType = from.split('.').pop();
-                    filePromise = storage.push(cdn, to, content, mimeType[fileType])
-                      .then(() => isFunction(callback) && callback());
-                } else {
-                    filePromise = Promise.reject(new Error('Path is not a file: ' + from));
-                }
-            } else {
-                filePromise = Promise.reject(
-                    new Error([
-                        'Invalid file information!',
-                        'from: ' + from,
-                        'to: ' + to
-                    ].join('\n'))
-                );
-            }
-            return filePromise;
-        };
-        const onError = (err) => {
-            console.log([
-                'Found error',
-                err.stack,
-                ''
-            ].join('\n'));
-        };
-        // const promises = files.map(uploadFile);
-        // result = Promise.all(promises).catch(onError);
-        result = asyncBatchForeach(batchSize, files, uploadFile)
-          .catch((err) => onError(err));
-    } else {
-        result = Promise.reject();
-    }
-    return result;
-};
 
 const uploadAPIDocs = () => {
     const sourceFolder = './build/api/';
     const bucket = 'api-docs-bucket.highcharts.com';
     const batchSize = 30000;
-    const files = getFilesInFolder(sourceFolder, true, '');
+    const files = (
+        isString(argv.files) ?
+        argv.files.split(',') :
+        getFilesInFolder(sourceFolder, true, '')
+    );
     const tags = isString(argv.tags) ? argv.tags.split(',') : ['current'];
     const getUploadConfig = (tag) => {
+        const errors = [];
         const bar = new ProgressBar({
+            error: '',
             total: files.length,
-            message: `[:bar] - Uploading ${tag}. Completed :count of :total.'`
+            message: `\n[:bar] - Uploading ${tag}. Completed :count of :total.:error`
         });
         const doTick = () => {
             bar.tick();
         };
+        const onError = (err) => {
+            errors.push(`${err.message}. ${err.from} -> ${err.to}`);
+            bar.tick({
+                error: `\n${errors.length} file(s) errored:\n${errors.join('\n')}`
+            });
+        };
         const params = {
-            batchSize: batchSize,
-            bucket: bucket,
-            callback: doTick
+            batchSize,
+            bucket,
+            callback: doTick,
+            onError
         };
         const getMapOfFromTo = (fileName) => {
             let to = fileName;
@@ -1188,16 +978,34 @@ const uploadAPIDocs = () => {
                 to = parts.join('/');
             }
             return {
-                from: sourceFolder + fileName,
+                from: join(sourceFolder, fileName),
                 to: to
             };
         };
         params.files = files.map(getMapOfFromTo);
         return params;
     };
-    console.log(`Started upload of ${files.length} files to API under tags [${tags.join(', ')}].`);
+    console.log(`Started upload of ${files.length} files to ${bucket} under tags [${tags.join(', ')}].`);
+    const commands = [];
     return asyncForeach(tags, (tag) => {
-        return Promise.resolve(getUploadConfig(tag)).then(uploadFiles);
+        return Promise.resolve(getUploadConfig(tag)).then(uploadFiles)
+        .then((result) => {
+            const { errors } = result;
+            if (errors.length) {
+                const erroredFiles = errors.map((e) => relative(sourceFolder, e.from)
+                    // Make path command line friendly.
+                    .split(sep).join('/'));
+                commands.push(`gulp upload-api --tags ${tag} --files ${erroredFiles.join(',')}`);
+            }
+        });
+    }).then(() => {
+        if (commands.length) {
+            console.log([
+                '',
+                colors.red('Some of the uploads failed, please run the following command to retry:'),
+                commands.join(' && ')
+            ].join('\n'));
+        }
     });
 };
 
@@ -1209,12 +1017,14 @@ const startServer = () => {
     const base = '127.0.0.1:' + docport;
     const apiPath = __dirname + '/build/api/';
     const mimes = {
-        png: 'image/png',
-        js: 'text/javascript',
-        json: 'text/json',
-        html: 'text/html',
         css: 'text/css',
-        svg: 'image/svg+xml'
+        js: 'text/javascript',
+        json: 'application/json',
+        html: 'text/html',
+        ico: 'image/x-icon',
+        png: 'image/png',
+        svg: 'image/svg+xml',
+        xml: 'application/xml'
     };
 
     http.createServer((req, res) => {
@@ -1252,21 +1062,22 @@ const startServer = () => {
         }
 
         if (req.method === 'GET') {
-            let ti = path.lastIndexOf('.');
-            if (ti < 0 || path.length === 0) {
+            let lastSlash = path.lastIndexOf('/');
+            if (path.length === 0 || (path.length - 1) === lastSlash) {
                 file = 'index.html';
-                res.writeHead(200, { 'Content-Type': mimes.html });
             } else {
-                file = path.substr(path.lastIndexOf('/') + 1);
-                res.writeHead(200, {
-                    'Content-Type': mimes[path.substr(ti + 1)] || mimes.html
-                });
+                file = path.substr(lastSlash + 1);
             }
 
             let ext = file.substr(file.lastIndexOf('.') + 1);
-            if (['js', 'json', 'css', 'svg', 'png', 'jpg', 'html', 'ico'].indexOf(ext) === -1) {
+            if (Object.keys(mimes).indexOf(ext) === -1) {
+                ext = 'html';
                 file += '.html';
             }
+
+            res.writeHead(200, {
+                'Content-Type': mimes[ext] || mimes.html
+            });
 
             return fs.readFile(apiPath + filePath + file, (err, data) => {
                 if (err) {
@@ -1292,7 +1103,7 @@ let apiServerRunning = false;
  */
 const jsdoc = () => {
     const optionsClassReference = {
-        templateDir: './../highcharts-docstrap',
+        templateDir: './node_modules/highcharts-docstrap',
         destination: './build/api/class-reference/'
     };
     const optionsAPI = {
@@ -1304,7 +1115,8 @@ const jsdoc = () => {
     const dir = optionsClassReference.templateDir;
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
-        './../api-docs/include/*.*',
+        './node_modules/highcharts-api-docs-gen/include/*.*',
+        './node_modules/highcharts-api-docs-gen/templates/*.handlebars',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
@@ -1326,6 +1138,48 @@ const jsdoc = () => {
         .then(() => generateAPIDocs(optionsAPI));
 };
 
+const jsdocOptions = () => {
+
+    return generateAPIDocs({
+        version: getBuildProperties().version,
+        treeFile: './tree.json',
+        output: './build/api',
+        onlyBuildCurrent: true
+    });
+};
+
+/**
+ * Create additional JSON-based class references from JSDOC
+ */
+const jsdocNamespace = () => {
+
+    const jsdoc3 = require('gulp-jsdoc3');
+
+    const gulpOptions = [[
+            './code/highcharts.src.js'
+        ], {
+            read: false
+        }],
+        jsdoc3Options = {
+            plugins: [
+                './tools/jsdoc/plugins/highcharts.namespace'
+            ]
+        };
+
+    const aGulp = (resolve, reject) => {
+        gulp.src(...gulpOptions).pipe(jsdoc3(jsdoc3Options,
+            (error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve('done');
+                }
+            }
+        ));
+    };
+    return new Promise(aGulp);
+};
+
 gulp.task('start-api-server', startServer);
 gulp.task('upload-api', uploadAPIDocs);
 gulp.task('create-productjs', createProductJS);
@@ -1336,6 +1190,10 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
 gulp.task('jsdoc', jsdoc);
 gulp.task('styles', styles);
+gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
+gulp.task('jsdoc-options', jsdocOptions);
+// gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], require('highcharts-typescript-generator').task);
+
 /**
  * Gulp task to run the building process of distribution files. By default it
  * builds all the distribution files. Usage: "gulp build".
@@ -1370,7 +1228,31 @@ gulp.task('scripts', () => {
 gulp.task('build-modules', buildESModules);
 gulp.task('lint', lint);
 gulp.task('lint-samples', lintSamples);
-gulp.task('compile', compileScripts);
+gulp.task('compile', () => {
+    const messages = {
+        usage: 'Run "gulp compile --help" for information on usage.',
+        help: [
+            '',
+            'Usage: gulp compile [OPTIONS]',
+            '',
+            'Options:',
+            '    --file: Specify a list of files to compile. Files are comma separated e.g "file1,file2".',
+            '    --help: Displays help information.',
+            ''
+        ].join('\n')
+    };
+    let promise = Promise.resolve();
+    if (argv.help) {
+        console.log(messages.help);
+    } else {
+        const files = (argv.file) ? argv.file.split(',') : null;
+        console.log(messages.usage);
+        promise = compileScripts({
+            files
+        });
+    }
+    return promise;
+});
 gulp.task('compile-lib', compileLib);
 gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
 gulp.task('examples', createAllExamples);
@@ -1383,10 +1265,6 @@ gulp.task('default', () => {
         fnFirstBuild,
         mapOfWatchFn
     } = getBuildScripts({});
-    const {
-        relative,
-        sep
-    } = require('path');
     const watchlist = [
         './css/*.scss',
         './js/**/*.js',

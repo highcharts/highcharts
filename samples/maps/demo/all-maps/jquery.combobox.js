@@ -110,6 +110,7 @@
                         option: this
                     };
                 }
+                return undefined;
             }));
         },
 

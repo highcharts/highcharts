@@ -15,6 +15,9 @@ Highcharts.chart('container', {
         },
         scale: 3,
         fallbackToExportServer: false,
+        error: function (opt, err) {
+            console.log('Failed with error: "' + err + '". Options:', opt);
+        },
         allowHTML: true
     },
 

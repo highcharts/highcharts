@@ -34,6 +34,8 @@ var addEvent = H.addEvent,
 
 /**
  * TrackerMixin for points and graphs.
+ *
+ * @ignore
  */
 TrackerMixin = H.TrackerMixin = {
 
@@ -458,13 +460,17 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 mousePos = e[horiz ? 'chartX' : 'chartY'],
                 mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
                 startPos = chart[mouseDown],
-                halfPointRange = (axis.pointRange || 0) /
-                    (axis.reversed ? -2 : 2),
+                halfPointRange = (axis.pointRange || 0) / 2,
+                pointRangeDirection =
+                    (axis.reversed && !chart.inverted) ||
+                    (!axis.reversed && chart.inverted) ?
+                        -1 :
+                        1,
                 extremes = axis.getExtremes(),
                 panMin = axis.toValue(startPos - mousePos, true) +
-                    halfPointRange,
+                    halfPointRange * pointRangeDirection,
                 panMax = axis.toValue(startPos + axis.len - mousePos, true) -
-                    halfPointRange,
+                    halfPointRange * pointRangeDirection,
                 flipped = panMax < panMin,
                 newMin = flipped ? panMax : panMin,
                 newMax = flipped ? panMin : panMax,
@@ -816,15 +822,16 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             });
             halo.attr({
                 'class': 'highcharts-halo highcharts-color-' +
-                    pick(point.colorIndex, series.colorIndex)
+                    pick(point.colorIndex, series.colorIndex) +
+                    (point.className ? ' ' + point.className : ''),
+                'zIndex': -1 // #4929, #8276
             });
             halo.point = point; // #6055
 
             /*= if (build.classic) { =*/
             halo.attr(extend({
                 'fill': point.color || series.color,
-                'fill-opacity': haloOptions.opacity,
-                'zIndex': -1 // #4929, IE8 added halo above everything
+                'fill-opacity': haloOptions.opacity
             }, haloOptions.attributes));
             /*= } =*/
 
@@ -1086,11 +1093,12 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         if (ignoreHiddenSeries) {
             chart.isDirtyBox = true;
         }
+
+        fireEvent(series, showOrHide);
+
         if (redraw !== false) {
             chart.redraw();
         }
-
-        fireEvent(series, showOrHide);
     },
 
     /**

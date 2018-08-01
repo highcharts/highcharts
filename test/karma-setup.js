@@ -76,8 +76,13 @@ QUnit.module('Highcharts', {
     beforeEach: function () {
 
         // Reset container size that some tests may have modified
-        document.getElementById('container').style.width = 'auto';
-        document.getElementById('container').style.width = 'auto';
+        var containerStyle = document.getElementById('container').style;
+        containerStyle.width = 'auto';
+        containerStyle.height = 'auto';
+        containerStyle.position = 'absolute';
+        containerStyle.left = '8';
+        containerStyle.top = '8';
+        containerStyle.zIndex = '9999';
 
         // Reset randomizer
         Math.randomCursor = 0;
@@ -85,14 +90,33 @@ QUnit.module('Highcharts', {
 
     afterEach: function () {
 
-        // Destroy all charts
-        Highcharts.charts.forEach(function (chart) {
-            if (chart && chart.destroy && chart.renderer) {
-                chart.destroy();
-            }
-        });
-        Highcharts.charts.length = 0;
+        var containerStyle = document.getElementById('container').style;
+        containerStyle.width = '';
+        containerStyle.height = '';
+        containerStyle.position = '';
+        containerStyle.left = '';
+        containerStyle.top = '';
+        containerStyle.zIndex = '';
 
+        var currentChart = null,
+            charts = Highcharts.charts,
+            templateCharts = [];
+
+        // Destroy all charts, except template charts
+        for (var i = 0, ie = charts.length; i < ie; ++i) {
+            currentChart = charts[i];
+            if (!currentChart) {
+                continue;
+            }
+            if (currentChart.template) {
+                templateCharts.push(currentChart);
+            } else if (currentChart.destroy && currentChart.renderer) {
+                currentChart.destroy();
+            }
+        }
+
+        Highcharts.charts.length = 0;
+        Array.prototype.push.apply(Highcharts.charts, templateCharts);
     }
 });
 
@@ -167,17 +191,17 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
     return new Promise(function (resolve, reject) {
 
-        let referenceData;
-        let candidateSVG = getSVG(chart);
-        let candidateData;
+        var referenceData,
+            candidateSVG = getSVG(chart),
+            candidateData;
 
         function svgToPixels(svg, callback) { // eslint-disable-line require-jsdoc
             try {
-                const DOMURL = window.URL || window.webkitURL || window;
+                var DOMURL = (window.URL || window.webkitURL || window);
 
-                const img = new Image();
-                const blob = new Blob([svg], { type: 'image/svg+xml' });
-                const url = DOMURL.createObjectURL(blob);
+                var img = new Image(),
+                    blob = new Blob([svg], { type: 'image/svg+xml' }),
+                    url = DOMURL.createObjectURL(blob);
                 img.onload = function () {
                     ctx.clearRect(0, 0, 300, 200);
                     ctx.drawImage(img, 0, 0, 300, 200);
@@ -197,7 +221,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
         function doComparison() { // eslint-disable-line require-jsdoc
             if (referenceData && candidateData) {
-                let diff = compare(referenceData, candidateData);
+                var diff = compare(referenceData, candidateData);
 
                 if (diff !== 0) {
                     __karma__.info({
@@ -228,11 +252,11 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
         }
 
         // Handle reference, load SVG from file
-        const xhr = new XMLHttpRequest();
+        var xhr = new XMLHttpRequest();
         xhr.open('GET', 'base/samples/' + path + '/reference.svg', true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
-                let svg = xhr.responseText;
+                var svg = xhr.responseText;
 
                 svgToPixels(svg, function (data) {
                     referenceData = data;

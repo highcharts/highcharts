@@ -136,4 +136,14 @@ QUnit.test('Element Z index', function (assert) {
         'Green in front of top circles'
     );
 
+    // Remove Z index
+    circles[1].attr({
+        zIndex: null
+    });
+
+    assert.ok(
+        getIndex(circles[1].element) < getIndex(circles[2].element),
+        'Yellow is behind red'
+    );
+
 });

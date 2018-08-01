@@ -151,7 +151,8 @@ H.StackItem.prototype = {
     getStackBox: function (chart, stackItem, x, y, xWidth, h, axis) {
         var reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
-            axisPos = axis.height + axis.pos - chart.plotTop,
+            axisPos = axis.height + axis.pos - (inverted ? chart.plotLeft :
+                chart.plotTop),
             neg = (stackItem.isNegative && !reversed) ||
                 (!stackItem.isNegative && reversed); // #4056
 
@@ -195,6 +196,8 @@ Chart.prototype.getStacks = function () {
 
 /**
  * Build the stacks from top down
+ *
+ * @ignore
  */
 Axis.prototype.buildStacks = function () {
     var axisSeries = this.series,
@@ -247,6 +250,8 @@ Axis.prototype.renderStackTotals = function () {
 
 /**
  * Set all the stacks to initial states and destroy unused ones.
+ *
+ * @ignore
  */
 Axis.prototype.resetStacks = function () {
     var axis = this,

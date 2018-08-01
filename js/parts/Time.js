@@ -217,7 +217,7 @@ Highcharts.Time.prototype = {
          * set in the global options.
          *
          * @function #getTimezoneOffset
-         * @memberOf Highcharts.Time
+         * @memberof Highcharts.Time
          * @param  {Number} timestamp
          *         The JavaScript timestamp to inspect.
          * @return {Number}
@@ -467,6 +467,8 @@ Highcharts.Time.prototype = {
                     'B': lang.months[month],
                     // Two digit month number, 01 through 12
                     'm': pad(month + 1),
+                    // Month number, 1 through 12 (#8150)
+                    'o': month + 1,
 
                     // Year
                     // Two digits year, like 09 for 2009
@@ -504,7 +506,7 @@ Highcharts.Time.prototype = {
                  *
                  * @type {Object}
                  * @name dateFormats
-                 * @memberOf Highcharts
+                 * @memberof Highcharts
                  * @sample highcharts/global/dateformats/
                  *         Adding support for week
                  * number
@@ -581,7 +583,7 @@ Highcharts.Time.prototype = {
             }
 
             if (interval >= timeUnits.minute) { // minute
-                time.set('Minutes',    minDate,
+                time.set('Minutes', minDate,
                     interval >= timeUnits.hour ?
                         0 :
                         count * Math.floor(time.get('Minutes', minDate) / count)

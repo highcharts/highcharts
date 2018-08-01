@@ -77,14 +77,18 @@ QUnit.test('getBBox with useHTML (#5899)', function (assert) {
 
 QUnit.test('textOverflow: ellipsis.', function (assert) {
 
-    var chart = Highcharts.chart('container', {}),
+    var ren = new Highcharts.Renderer(
+            document.getElementById('container'),
+            600,
+            400
+        ),
         width = 50,
         style = {
             textOverflow: 'ellipsis',
             width: width + 'px'
         },
-        text1 = chart.renderer.text('01234567', 0, 100).css(style).add(),
-        text2 = chart.renderer.text('012345678', 0, 120).css(style).add();
+        text1 = ren.text('01234567', 0, 100).css(style).add(),
+        text2 = ren.text('012345678', 0, 120).css(style).add();
     assert.strictEqual(
         text1.getBBox().width < width,
         true,
@@ -104,7 +108,7 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
     // when width is considered falsy.
     style.width = '1px';
     text1.destroy();
-    text1 = chart.renderer.text('01234567', 0, 100).css(style).add();
+    text1 = ren.text('01234567', 0, 100).css(style).add();
     assert.strictEqual(
         text1.element.childNodes[0].textContent,
         '',
@@ -117,7 +121,7 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
     text1.destroy();
     text2.destroy();
     style.width = '50px';
-    text1 = chart.renderer.text('01234567', 0, 100).attr({
+    text1 = ren.text('01234567', 0, 100).attr({
         rotation: 90
     }).css(style).add();
     assert.strictEqual(
@@ -129,6 +133,32 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         text1.getBBox().height < width,
         true,
         'Height of text is lower than style.width'
+    );
+
+
+    text1.destroy();
+    text1 = ren.text('The quick brown fox jumps over the lazy dog', 30, 30)
+        .css({
+            width: '100px'
+        })
+        .add();
+    assert.strictEqual(
+        text1.element.getElementsByTagName('title').length,
+        0,
+        'Wrapped text should not have a title tag (#8444)'
+    );
+
+    text1.destroy();
+    text1 = ren.text('The quick brown fox jumps over the lazy dog', 30, 30)
+        .css({
+            width: '100px',
+            textOverflow: 'ellipsis'
+        })
+        .add();
+    assert.strictEqual(
+        text1.element.getElementsByTagName('title').length,
+        1,
+        'Ellipsis text should have a title tag'
     );
 
 });

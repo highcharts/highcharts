@@ -1,29 +1,27 @@
-var align = ['left', 'center', 'right'],
-    series = [{
-        data: (function () {
-            var arr = [];
-            for (var i = 0; i < 2000; i++) {
-                arr.push(i);
-            }
-            return arr;
-        }()),
-        pointInterval: 24 * 36e5
-    }],
-    chart,
-    inputGroup,
-    buttonGroup,
-    inputPosition,
-    buttonPosition,
-    inputGroupX,
-    inputGroupWidth,
-    buttonGroupX,
-    buttonGroupWidth,
-    i;
-
-
 QUnit.test('Inputs and buttons aligning.', function (assert) {
 
-    for (i = 0; i < align.length; i++) {
+    var align = ['left', 'center', 'right'],
+        series = [{
+            data: (function () {
+                var arr = [];
+                for (var i = 0; i < 2000; i++) {
+                    arr.push(i);
+                }
+                return arr;
+            }()),
+            pointInterval: 24 * 36e5
+        }],
+        chart,
+        inputGroup,
+        buttonGroup,
+        inputPosition,
+        buttonPosition,
+        inputGroupX,
+        inputGroupWidth,
+        buttonGroupX,
+        buttonGroupWidth;
+
+    for (var i = 0; i < align.length; i++) {
         chart = Highcharts.stockChart('container', {
 
             chart: {
@@ -66,7 +64,26 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
 
 QUnit.test('Aligning after updates.', function (assert) {
 
-    chart = Highcharts.stockChart('container', {
+    var series = [{
+            data: (function () {
+                var arr = [];
+                for (var i = 0; i < 2000; i++) {
+                    arr.push(i);
+                }
+                return arr;
+            }()),
+            pointInterval: 24 * 36e5
+        }],
+        inputGroup,
+        buttonGroup,
+        inputPosition,
+        buttonPosition,
+        inputGroupX,
+        inputGroupWidth,
+        buttonGroupX,
+        buttonGroupWidth;
+
+    var chart = Highcharts.stockChart('container', {
 
         chart: {
             width: 800
@@ -142,7 +159,18 @@ QUnit.test('Aligning after updates.', function (assert) {
 
 QUnit.test('Collision with bottom legend', function (assert) {
 
-    chart = Highcharts.stockChart('container', {
+    var series = [{
+        data: (function () {
+            var arr = [];
+            for (var i = 0; i < 2000; i++) {
+                arr.push(i);
+            }
+            return arr;
+        }()),
+        pointInterval: 24 * 36e5
+    }];
+
+    var chart = Highcharts.stockChart('container', {
 
         chart: {
             width: 400
@@ -169,7 +197,18 @@ QUnit.test('Collision with bottom legend', function (assert) {
 
 QUnit.test('x and y parameters', function (assert) {
 
-    chart = Highcharts.stockChart('container', {
+    var series = [{
+        data: (function () {
+            var arr = [];
+            for (var i = 0; i < 2000; i++) {
+                arr.push(i);
+            }
+            return arr;
+        }()),
+        pointInterval: 24 * 36e5
+    }];
+
+    var chart = Highcharts.stockChart('container', {
 
         chart: {
             width: 800
@@ -204,7 +243,26 @@ QUnit.test('x and y parameters', function (assert) {
 
 QUnit.test('button width', function (assert) {
 
-    chart = Highcharts.stockChart('container', {
+    var series = [{
+            data: (function () {
+                var arr = [];
+                for (var i = 0; i < 2000; i++) {
+                    arr.push(i);
+                }
+                return arr;
+            }()),
+            pointInterval: 24 * 36e5
+        }],
+        inputGroup,
+        buttonGroup,
+        inputPosition,
+        buttonPosition,
+        inputGroupX,
+        inputGroupWidth,
+        buttonGroupX,
+        buttonGroupWidth;
+
+    var chart = Highcharts.stockChart('container', {
 
         chart: {
             width: 800

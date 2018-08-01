@@ -1,8 +1,5 @@
-
-var chart;
-
 QUnit.test('Basic map tuple', function (assert) {
-    chart = Highcharts.mapChart('container', {
+    var chart = Highcharts.mapChart('container', {
         series: [{
             mapData: Highcharts.maps['custom/europe'],
             data: [
@@ -32,7 +29,7 @@ QUnit.test('Basic map tuple', function (assert) {
 });
 
 QUnit.test('Map tuple with keys', function (assert) {
-    chart = Highcharts.mapChart('container', {
+    var chart = Highcharts.mapChart('container', {
         series: [{
             keys: ['hc-key', 'value', 'testprop'],
             mapData: Highcharts.maps['custom/europe'],
@@ -69,7 +66,7 @@ QUnit.test('Map tuple with keys', function (assert) {
 });
 
 QUnit.test('Map tuple with keys in other order', function (assert) {
-    chart = Highcharts.mapChart('container', {
+    var chart = Highcharts.mapChart('container', {
         series: [{
             keys: ['value', 'hc-key', 'name', 'testprop'],
             joinBy: 'name',

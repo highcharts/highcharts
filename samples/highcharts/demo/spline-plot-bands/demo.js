@@ -2,7 +2,11 @@
 
 Highcharts.chart('container', {
     chart: {
-        type: 'spline'
+        type: 'spline',
+        scrollablePlotArea: {
+            minWidth: 600,
+            scrollPositionX: 1
+        }
     },
     title: {
         text: 'Wind speed during two days'

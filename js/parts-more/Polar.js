@@ -302,7 +302,7 @@ if (!H.polarExtended) {
                 );
             }
         }
-    });
+    }, { order: 2 }); // Run after translation of ||-coords
 
     /**
      * Extend getSegmentPath to allow connecting ends across 0 to provide a

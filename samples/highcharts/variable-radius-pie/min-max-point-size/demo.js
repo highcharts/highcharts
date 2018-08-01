@@ -20,7 +20,7 @@ Highcharts.chart('container', {
             z: 1
         }, {
             y: 78867,
-            z: 3,
+            z: 3
         }, {
             y: 301340,
             z: 4
