@@ -2072,7 +2072,9 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
             columnIndexes.shift();
 
             // Sort the remaining
-            columnIndexes.sort();
+            columnIndexes.sort(function (a, b) {
+                return a - b;
+            });
 
             // Now use the lowest index as name column
             this.name = columns[columnIndexes.shift()].name;
