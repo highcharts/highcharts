@@ -16,7 +16,7 @@
 
     var fs = require('fs'),
         cmd = require('child_process'),
-        tree = require('./tree.json');
+        tree = require('../tree.json');
 
     var params;
 
@@ -59,6 +59,13 @@
         }
 
         cmd.exec(command, null, puts);
+    }
+
+    function addMissingDotToCommitMessage(string) {
+        if (string[string.length - 1] !== '.') {
+            string = string + '.';
+        }
+        return string;
     }
 
     /**
@@ -122,12 +129,12 @@
      */
     function buildMarkdown(name, version, date, log, products, optionKeys) {
         var outputString,
-            filename = './changelog/' + name.toLowerCase() + '/' + version + '.md';
+            filename = name.toLowerCase() + '/' + version + '.md';
 
         log = washLog(name, log);
 
         // Start the output string
-        outputString = '**(' + date + ')**\n\n';
+        outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
 
         if (name === 'Highstock' || name === 'Highmaps') {
             outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
@@ -146,7 +153,6 @@
                         ` ${key} `,
                         replacement
                     );
-
                 // We often refer to series options without the plotOptions
                 // parent, so make sure it is auto linked too.
                 if (key.indexOf('plotOptions.') === 0) {
@@ -170,7 +176,7 @@
                 outputString += '\n## Bug fixes\n';
             }
             // All items
-            outputString += '- ' + li + '\n';
+            outputString += '- ' + addMissingDotToCommitMessage(li) + '\n';
 
         });
 
@@ -178,6 +184,8 @@
             console.log('Wrote draft to ' + filename);
         });
     }
+
+
 
     /*
      * Return a list of options so that we can auto-link option references in
@@ -218,7 +226,7 @@
         const optionKeys = getOptionKeys(tree);
 
         // Load the current products and versions, and create one log each
-        fs.readFile('build/dist/products.js', 'utf8', function (err, products) {
+        fs.readFile('../build/dist/products.js', 'utf8', function (err, products) {
             var name;
 
             if (err) {

@@ -82,7 +82,8 @@
     "vinyl-ftp": "^0.4.5",
     "webpack": "^1.15.0",
     "xml2js": "^0.4.17",
-    "yargs": "^3.32.0"
+    "yargs": "^3.32.0",
+    "replace-string": "1.1.0"
   },
   "lint-staged": {
     "*.js": [
