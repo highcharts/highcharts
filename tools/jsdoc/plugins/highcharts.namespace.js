@@ -359,16 +359,16 @@ function getName (doclet) {
  */
 function getNamespaces (name) {
 
-    let selector = (name.match(/\[\w+\:[\w\.]+\]$/) || [])[0];
+    let subspace = (name.match(/(?:\<.+\>|\[\w+\:.+\])$/) || [])[0];
 
-    if (selector) {
-        name = name.substr(0, (name.length - selector.length));
+    if (subspace) {
+        name = name.substr(0, (name.length - subspace.length));
     }
 
     let namespaces = name.split('.');
 
-    if (selector) {
-        namespaces[namespaces.length-1] += selector;
+    if (subspace) {
+        namespaces[namespaces.length-1] += subspace;
     }
 
     return namespaces;
@@ -478,7 +478,7 @@ function getTypes (doclet) {
         switch(name) {
             default:
                 if (isGlobal(doclet) ||
-                    name.indexOf('Highcharts') === 0 ||
+                    name.indexOf('.') > -1 ||
                     name === name.toLowerCase() ||
                     (name[0] === 'T' &&
                     (name[1] || '') === (name[1] || '').toUpperCase())
@@ -606,19 +606,20 @@ function sortNodes(node) {
 function updateNodeFor (doclet) {
 
     let node = namespace,
-        parts = getNamespaces(doclet);
+        name = getName(doclet),
+        spaceNames = getNamespaces(name);
 
-    parts.forEach(part => {
+    spaceNames.forEach(spaceName => {
 
         if (typeof node.children === 'undefined') {
             node.children = {};
         }
 
-        if (typeof node.children[part] === 'undefined') {
-            node.children[part] = {};
+        if (typeof node.children[spaceName] === 'undefined') {
+            node.children[spaceName] = {};
         }
 
-        node = node.children[part];
+        node = node.children[spaceName];
     });
 
     let newDoclet = getLightDoclet(doclet),
