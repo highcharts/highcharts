@@ -114,8 +114,7 @@ H.Popup.prototype = {
                         chart,
                         isEdit ? serie : series[seriesNameType.type],
                         seriesNameType.type,
-                        rhsCol,
-                        listType
+                        rhsCol
                     );
                 });
             }
@@ -268,7 +267,6 @@ H.Popup.prototype = {
         }, null, parentDiv);
 
         addEvent(button, 'click', function () {
-
             closePopup.call(_self);
 
             return callback(
