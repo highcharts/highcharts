@@ -479,7 +479,7 @@ H.Fx.prototype = {
         }
 
         /**
-         * Copy and append last point until the length matches the end length
+         * Copy and append last point until the length matches the end length.
          */
         function append(arr, other) {
             var i = (fullLength - arr.length) / numParams;
@@ -563,6 +563,8 @@ H.Fx.prototype = {
      * Handle animation of the color attributes directly.
      *
      * @function Highcharts.Fx#fillSetter
+     *
+     * @return {void}
      */
     fillSetter: function () {
         H.Fx.prototype.strokeSetter.apply(this, arguments);
@@ -572,6 +574,8 @@ H.Fx.prototype = {
      * Handle animation of the color attributes directly.
      *
      * @function Highcharts.Fx#strokeSetter
+     *
+     * @return {void}
      */
     strokeSetter: function () {
         this.elem.attr(
@@ -598,14 +602,14 @@ H.Fx.prototype = {
  *         Whether to extend the left-side object (a) or return a whole new
  *         object.
  *
- * @param  {object} a
+ * @param  {*} a
  *         The first object to extend. When only this is given, the function
  *         returns a deep copy.
  *
- * @param  {...object} [n]
+ * @param  {...*} [n]
  *         An object to merge into the previous one.
  *
- * @return {object}
+ * @return {*}
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
@@ -660,7 +664,7 @@ H.merge = function () {
  * @private
  * @function Highcharts.pInt
  *
- * @param  {object} s
+ * @param  {*} s
  *
  * @param  {number} mag
  *         Magnitude
@@ -676,7 +680,7 @@ H.pInt = function (s, mag) {
  *
  * @function Highcharts.isString
  *
- * @param  {object} s
+ * @param  {*} s
  *         The item to check.
  *
  * @return {boolean}
@@ -691,7 +695,7 @@ H.isString = function (s) {
  *
  * @function Highcharts.isArray
  *
- * @param  {object} obj
+ * @param  {*} obj
  *         The item to check.
  *
  * @return {boolean}
@@ -707,7 +711,7 @@ H.isArray = function (obj) {
  *
  * @function Highcharts.isObject
  *
- * @param  {object} obj
+ * @param  {*} obj
  *         The item to check.
  * @param  {boolean} [strict=false]
  *         Also checks that the object is not an array.
@@ -724,7 +728,7 @@ H.isObject = function (obj, strict) {
  *
  * @function Highcharts.isDOMElement
  *
- * @param  {object} obj
+ * @param  {*} obj
  *         The item to check.
  *
  * @return {boolean}
@@ -739,7 +743,7 @@ H.isDOMElement = function (obj) {
  *
  * @function Highcharts.isClass
  *
- * @param  {object} obj
+ * @param  {*} obj
  *         The item to check.
  *
  * @return {boolean}
@@ -760,7 +764,7 @@ H.isClass = function (obj) {
  *
  * @function Highcharts.isNumber
  *
- * @param  {object} n
+ * @param  {*} n
  *         The item to check.
  *
  * @return {boolean}
@@ -798,7 +802,7 @@ H.erase = function (arr, item) {
  *
  * @function Highcharts.defined
  *
- * @param  {object} obj
+ * @param  {*} obj
  *         The object to check.
  *
  * @return {boolean}
@@ -815,10 +819,10 @@ H.defined = function (obj) {
  *
  * @function Highcharts.attr
  *
- * @param  {object} elem
+ * @param  {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} elem
  *         The DOM element to receive the attribute(s).
  *
- * @param  {string|object} [prop]
+ * @param  {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [prop]
  *         The property or an object of key-value pairs.
  *
  * @param  {string} [value]
@@ -882,7 +886,7 @@ H.splat = function (obj) {
  * @param  {number} delay
  *         Delay in milliseconds.
  *
- * @param  {object} [context]
+ * @param  {*} [context]
  *         The context.
  *
  * @return {number}
@@ -1105,7 +1109,7 @@ H.relativeLength = function (value, base, offset) {
  *
  * @function Highcharts.wrap
  *
- * @param  {object} obj
+ * @param  {*} obj
  *         The context object that the method belongs to. In real cases, this is
  *         often a prototype.
  *
@@ -1117,6 +1121,7 @@ H.relativeLength = function (value, base, offset) {
  *         arguments as the original function, except that the original function
  *         is unshifted and passed as the first argument.
  *
+ * @return {void}
  */
 H.wrap = function (obj, method, func) {
     var proceed = obj[method];
@@ -2427,7 +2432,7 @@ H.seriesType = function (type, parent, options, props, pointProps) {
  * @function Highcharts.uniqueKey
  *
  * @return {string}
- *         The key.
+ *         A unique key.
  *
  * @example
  * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
