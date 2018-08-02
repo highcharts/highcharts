@@ -2575,6 +2575,13 @@ H.defaultOptions = {
          * where the reference point is in the plot area. Add `chart.plotLeft`
          * and `chart.plotTop` to get the full coordinates.
          *
+         * Since v7, when [tooltip.split](#tooltip.split) option is enabled,
+         * positioner is called for each of the boxes separately, including
+         * xAxis header. xAxis header is not a point, instead `point` argument
+         * contains info:
+         * `{ plotX: Number, plotY: Number, isHeader: Boolean }`
+         *
+         *
          * The return should be an object containing x and y values, for example
          * `{ x: 100, y: 100 }`.
          *
@@ -2585,13 +2592,18 @@ H.defaultOptions = {
          *         A fixed tooltip position on top of the chart
          * @sample {highmaps} maps/tooltip/positioner/
          *         A fixed tooltip position
+         * @sample {highstock} stock/tooltip/split-positioner/
+         *         Split tooltip with fixed positions
          * @since 2.2.4
          * @apioption tooltip.positioner
          */
 
         /**
          * The name of a symbol to use for the border around the tooltip. Can
-         * be one of: `"callout"`, `"circle"` or `"square"`.
+         * be one of: `"callout"`, `"circle"` or `"square"`. When
+         * [tooltip.split](#tooltip.split) option is enabled, shape is applied
+         * to all boxes except header, which is controlled by
+         * [tooltip.headerShape](#tooltip.headerShape).
          *
          * Custom callbacks for symbol path generation can also be added to
          * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
@@ -2602,6 +2614,25 @@ H.defaultOptions = {
          * @validvalue ["callout", "square"]
          * @since 4.0
          * @apioption tooltip.shape
+         */
+
+         /**
+         * The name of a symbol to use for the border around the tooltip
+         * header. Applies only when [tooltip.split](#tooltip.split) is
+         * enabled.
+         *
+         * Custom callbacks for symbol path generation can also be added to
+         * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+         * [series.marker.symbol](plotOptions.line.marker.symbol).
+         *
+         * @see [tooltip.shape](#tooltip.shape)
+         * @type {String}
+         * @default callout
+         * @sample {highstock} stock/tooltip/split-positioner/
+         *         Different shapes for header and split boxes
+         * @validvalue ["callout", "square"]
+         * @since 7.0
+         * @apioption tooltip.headerShape
          */
 
         /**
