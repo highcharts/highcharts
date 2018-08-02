@@ -993,6 +993,7 @@ var stockToolsBindings = {
 
             if (this.showForm) {
                 this.showForm(
+                    'indicators',
                     // Callback on submit:
                     function (data) {
                         var seriesConfig = {

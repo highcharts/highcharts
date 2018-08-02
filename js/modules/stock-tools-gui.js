@@ -585,8 +585,8 @@ H.Toolbar.prototype = {
             }
         });
     },
-    showForm: function (callback) {
-        H.Popup.prototype.showForm(this.chart, callback);
+    showForm: function (type, callback) {
+        H.Popup.prototype.showForm(type, this.chart, callback);
     },
     destroy: function () {
         var chartContainer = this.chart.renderTo,

@@ -157,6 +157,8 @@
 }
 
 .highcharts-popup-lhs-col {
+  clear: both;
+  background-color: #e6e6e6;
   width: calc(30% - 44px);
 }
 
@@ -181,8 +183,36 @@
   height: auto;
 }
 
+.highcharts-tab-item {
+  background-color: #fff;
+  cursor: pointer;
+  display: block;
+  float:left;
+  padding: 10px;
+}
 
+.highcharts-tab-item.highcharts-tab-item-active {
+  background-color: #e6e6e6;
+}
 
+.highcharts-tab-item-content {
+  display: none; 
+  float: left;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
+
+.highcharts-tab-item-show {
+  display: block;
+}
+
+.highcharts-popup-close {
+  cursor: pointer;
+  position: absolute;
+  top: 0%;
+  right: 0%;
+}
 
 
 
