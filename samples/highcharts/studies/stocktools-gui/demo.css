@@ -147,8 +147,13 @@
 .highcharts-popup input, .highcharts-popup label, .highcharts-popup select {
   clear: both;
   float: left;
-  width: 90%;
+  width: 100%;
   margin-bottom: 10px;
+}
+.highcharts-popup input {
+  border: 1px solid #e6e6e6;
+  padding: 5px;
+  width: calc(100% - 10px);
 }
 
 .highcharts-popup-lhs-col, .highcharts-popup-rhs-col {
