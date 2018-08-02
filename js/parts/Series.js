@@ -1455,7 +1455,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * Options for the series data labels, appearing next to each data
      * point.
      *
-     * In styled mode, the data labels can be styled wtih the
+     * In styled mode, the data labels can be styled with the
      * `.highcharts-data-label-box` and `.highcharts-data-label` class names
      * ([see example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels)).
      */
