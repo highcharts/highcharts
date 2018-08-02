@@ -73,7 +73,7 @@ QUnit.test('Crosshair with snap false (#5066)', function (assert) {
     });
 
     var controller = new TestController(chart);
-    controller.mousemove(100, 100);
+    controller.mouseMove(100, 100);
 
     assert.strictEqual(
         chart.xAxis[0].cross.element.nodeName,

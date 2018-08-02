@@ -514,7 +514,17 @@ Highcharts.Pointer.prototype = {
         if (allowMove) {
             if (tooltip && tooltipPoints) {
                 tooltip.refresh(tooltipPoints);
-                if (hoverPoint) { // #2500
+                if (tooltip.shared && hoverPoints) { // #8284
+                    each(hoverPoints, function (point) {
+                        point.setState(point.state, true);
+                        if (point.series.xAxis.crosshair) {
+                            point.series.xAxis.drawCrosshair(null, point);
+                        }
+                        if (point.series.yAxis.crosshair) {
+                            point.series.yAxis.drawCrosshair(null, point);
+                        }
+                    });
+                } else if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
                     each(chart.axes, function (axis) {
                         if (axis.crosshair) {

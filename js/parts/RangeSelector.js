@@ -317,6 +317,8 @@ RangeSelector.prototype = {
                 dataGrouping,
                 false
             );
+
+            this.frozenStates = rangeOptions.preserveDataGrouping;
         }
 
         // Apply range
@@ -505,7 +507,8 @@ RangeSelector.prototype = {
                         this.max - this.min !== chart.fixedRange &&
                         e.trigger !== 'rangeSelectorButton' &&
                         e.trigger !== 'updatedData' &&
-                        rangeSelector.forcedDataGrouping
+                        rangeSelector.forcedDataGrouping &&
+                        !rangeSelector.frozenStates
                     ) {
                         this.setDataGrouping(false, false);
                     }
@@ -604,7 +607,8 @@ RangeSelector.prototype = {
             );
             select = (
                 (isSelected && isSameRange) ||
-                (isSameRange && !selectedExists && !isYTDButNotSelected)
+                (isSameRange && !selectedExists && !isYTDButNotSelected) ||
+                (isSelected && rangeSelector.frozenStates)
             );
 
             if (disable) {

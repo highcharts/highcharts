@@ -99,12 +99,12 @@ seriesType('vector', 'scatter', {
     arrow: function (point) {
         var path,
             fraction = point.length / this.lengthMax,
+            u = fraction * this.options.vectorLength / 20,
             o = {
-                start: 10,
+                start: 10 * u,
                 center: 0,
-                end: -10
-            }[this.options.rotationOrigin] || 0,
-            u = fraction * this.options.vectorLength / 20;
+                end: -10 * u
+            }[this.options.rotationOrigin] || 0;
 
         // The stem and the arrow head. Draw the arrow first with rotation 0,
         // which is the arrow pointing down (vector from north to south).
