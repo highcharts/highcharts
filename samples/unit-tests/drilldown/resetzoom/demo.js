@@ -239,10 +239,7 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
 
     // Zoom
-    controller.mousedown(300, 200);
-    controller.mousemove(200, 200);
-    controller.mouseup();
-
+    controller.pan([300, 200], [200, 200]);
     assert.strictEqual(
         typeof chart.resetZoomButton,
         'object',
@@ -256,7 +253,6 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
         'undefined',
         'Zoom button removed on new level'
     );
-
     assert.strictEqual(
         typeof chart.drillUpButton,
         'object',
@@ -265,10 +261,7 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
 
 
     // Zoom again on second level
-    controller.mousedown(300, 200);
-    controller.mousemove(200, 200);
-    controller.mouseup();
-
+    controller.pan([300, 200], [200, 200]);
     assert.strictEqual(
         typeof chart.drillUpButton,
         'object',

@@ -547,7 +547,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     /**
      * Apply a text outline through a custom CSS property, by copying the text
      * element and apply stroke to the copy. Used internally. Contrast checks
-     * at http://jsfiddle.net/highcharts/43soe9m1/2/ .
+     * at https://jsfiddle.net/highcharts/43soe9m1/2/ .
      *
      * @private
      *
@@ -1607,7 +1607,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 // stands uncorrected, it results in more padding added below
                 // the text than above when adding a label border or background.
                 // Also vertical positioning is affected.
-                // http://jsfiddle.net/highcharts/em37nvuj/
+                // https://jsfiddle.net/highcharts/em37nvuj/
                 // (#1101, #1505, #1669, #2568, #6213).
                 if (
                     styles &&
@@ -2402,11 +2402,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     /*= if (!build.classic) { =*/
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
-     * for gradients, fills, filters etc. Styled mode only. A hook for adding
-     * general definitions to the SVG's defs tag. Definitions can be
-     * referenced from the CSS by its `id`. Read more in
-     * {@link https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns|gradients, shadows and patterns}.
-     * Styled mode only.
+     *   for gradients, fills, filters etc. Styled mode only. A hook for adding
+     *   general definitions to the SVG's defs tag. Definitions can be
+     *   referenced from the CSS by its `id`. Read more in
+     *   [gradients, shadows and patterns]{@link https://www.highcharts.com/docs/
+     *   chart-design-and-style/gradients-shadows-and-patterns}.
+     *   Styled mode only.
      *
      * @param  {Highcharts.SVGDefinitionObject} def
      *         A serialized form of an SVG definition, including children.
@@ -4270,7 +4271,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         // Empirical values found by comparing font size and bounding box
         // height. Applies to the default font family.
-        // http://jsfiddle.net/highcharts/7xvn7/
+        // https://jsfiddle.net/highcharts/7xvn7/
         lineHeight = fontSize < 24 ? fontSize + 3 : Math.round(fontSize * 1.2);
         baseline = Math.round(lineHeight * 0.8);
 

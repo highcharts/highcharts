@@ -16,7 +16,7 @@
 
     var fs = require('fs'),
         cmd = require('child_process'),
-        tree = require('./tree.json');
+        tree = require('../tree.json');
 
     var params;
 
@@ -61,6 +61,13 @@
         cmd.exec(command, null, puts);
     }
 
+    function addMissingDotToCommitMessage(string) {
+        if (string[string.length - 1] !== '.') {
+            string = string + '.';
+        }
+        return string;
+    }
+
     /**
      * Prepare the log for each product, and sort the result to get all additions, fixes
      * etc. nicely lined up.
@@ -73,7 +80,7 @@
 
             // Keep only the commits after the last release
             if (proceed && (new RegExp('official release ---$')).test(item) &&
-                    !params.since) {
+                !params.since) {
                 proceed = false;
             }
 
@@ -85,7 +92,7 @@
                 } else if (name === 'Highmaps' && item.indexOf('Highmaps:') === 0) {
                     washed.push(item.replace(/Highmaps:\s?/, ''));
 
-                // All others go into the Highcharts changelog for review
+                    // All others go into the Highcharts changelog for review
                 } else if (name === 'Highcharts' && !/^High(stock|maps):/.test(item)) {
                     washed.push(item);
                 }
@@ -120,34 +127,23 @@
     /**
      * Build the output
      */
-    function buildHTML(name, version, date, log, products, optionKeys) {
-        var s,
-            filename = 'changelog-' + name.toLowerCase() + '.htm';
+    function buildMarkdown(name, version, date, log, products, optionKeys) {
+        var outputString,
+            filename = name.toLowerCase() + '/' + version + '.md';
 
         log = washLog(name, log);
 
-        // Start the string
-        s = `<p>${name} ${version} (${date})</p>
-<ul>`;
+        // Start the output string
+        outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
 
         if (name === 'Highstock' || name === 'Highmaps') {
-            s += '    <li>Most changes listed under Highcharts ' + products.Highcharts.nr +
-                ' above also apply to ' + name + ' ' + version + '.</li>\n';
+            outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
         }
-
-        var productPrefix = '',
-            versionDashed = version.replace(/\./g, '-');
-
-        if (name === 'Highstock') {
-            productPrefix = 'hs-';
-        } else if (name === 'Highmaps') {
-            productPrefix = 'hm-';
-        }
-
         log.forEach((li, i) => {
 
             optionKeys.forEach(key => {
-                let replacement = ` <a href="https://api.highcharts.com/${name.toLowerCase()}/${key}">${key}</a> `;
+                let replacement = ` [${key}](https://api.highcharts.com/${name.toLowerCase()}/${key}) `;
+
                 li = li
                     .replace(
                         ` \`${key}\` `,
@@ -157,7 +153,6 @@
                         ` ${key} `,
                         replacement
                     );
-
                 // We often refer to series options without the plotOptions
                 // parent, so make sure it is auto linked too.
                 if (key.indexOf('plotOptions.') === 0) {
@@ -176,66 +171,21 @@
                 }
             });
 
-            li = li
-
-                // Hyperlinked issue numbers
-                .replace(
-                    /#([0-9]+)/g,
-                    '<a href="https://github.com/highcharts/highcharts/issues/$1">#$1</a>'
-                )
-                // Code tags
-                .replace(
-                    /`([^`]+)`/g,
-                    '<code>$1</code>'
-                );
-
             // Start fixes
             if (i === log.startFixes) {
-                s += `
-</ul>
-<div id="accordion" class="panel-group">
-    <div class="panel panel-default">
-        <div id="${productPrefix}heading-${versionDashed}-bug-fixes" class="panel-heading">
-            <h4 class="panel-title">
-                <a href="#${productPrefix}${versionDashed}-bug-fixes" data-toggle="collapse" data-parent="#accordion">
-                    Bug fixes
-                </a>
-            </h4>
-        </div>
-        <div id="${productPrefix}${versionDashed}-bug-fixes" class="panel-collapse collapse">
-            <div class="panel-body">
-                <ul>`;
+                outputString += '\n## Bug fixes\n';
             }
-
             // All items
-            if (i >= log.startFixes) {
-                s += `
-                    <li>${li}</li>`;
-            } else {
-                s += `
-    <li>${li}</li>`;
-            }
+            outputString += '- ' + addMissingDotToCommitMessage(li) + '\n';
 
-
-            // Last item
-            if (i === log.length - 1) {
-                s += `
-                </ul>`;
-
-                if (typeof log.startFixes === 'number') {
-                    s += `
-            </div>
-        </div>
-    </div>
-</div>`;
-                }
-            }
         });
 
-        fs.writeFile(filename, s, function () {
+        fs.writeFile(filename, outputString, function () {
             console.log('Wrote draft to ' + filename);
         });
     }
+
+
 
     /*
      * Return a list of options so that we can auto-link option references in
@@ -243,6 +193,7 @@
      */
     function getOptionKeys(treeroot) {
         let keys = [];
+
         function recurse(subtree, path) {
             Object.keys(subtree).forEach(key => {
                 if (path + key !== '') {
@@ -257,6 +208,7 @@
                 }
             });
         }
+
         recurse(treeroot, '');
         return keys;
     }
@@ -274,7 +226,7 @@
         const optionKeys = getOptionKeys(tree);
 
         // Load the current products and versions, and create one log each
-        fs.readFile('build/dist/products.js', 'utf8', function (err, products) {
+        fs.readFile('../build/dist/products.js', 'utf8', function (err, products) {
             var name;
 
             if (err) {
@@ -288,7 +240,7 @@
 
             for (name in products) {
                 if (products.hasOwnProperty(name)) {
-                    buildHTML(name, products[name].nr, products[name].date, log, products, optionKeys);
+                    buildMarkdown(name, products[name].nr, products[name].date, log, products, optionKeys);
                 }
             }
         });
