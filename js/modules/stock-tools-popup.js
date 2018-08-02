@@ -83,8 +83,8 @@ H.Popup.prototype = {
                         .querySelectorAll('.highcharts-popup-rhs-col')[0],
             defaultOptions = H.getOptions(),
             isEdit = listType === 'edit',
-            series = listType === 'edit' ? chart.series : // EDIT mode
-                                        defaultOptions.plotOptions, // ADD mode
+            series = isEdit ? chart.series : // EDIT mode
+                            defaultOptions.plotOptions, // ADD mode
             createIndicatorFields = this.createIndicatorFields,
             indicatorList,
             item;
@@ -178,8 +178,6 @@ H.Popup.prototype = {
         var fields = series.params || series.options.params,
             rhsColWrapper = rhsCol
                 .querySelectorAll('.highcharts-popup-rhs-col-wrapper')[0];
-
-        // edit mode
 
         // reset current content
         rhsColWrapper.innerHTML = '';
