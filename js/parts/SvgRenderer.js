@@ -2402,12 +2402,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     /*= if (!build.classic) { =*/
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
-     *   for gradients, fills, filters etc. Styled mode only. A hook for adding
-     *   general definitions to the SVG's defs tag. Definitions can be
-     *   referenced from the CSS by its `id`. Read more in
-     *   [gradients, shadows and patterns]{@link https://www.highcharts.com/docs/
-     *   chart-design-and-style/gradients-shadows-and-patterns}.
-     *   Styled mode only.
+     * for gradients, fills, filters etc. Styled mode only. A hook for adding
+     * general definitions to the SVG's defs tag. Definitions can be referenced
+     * from the CSS by its `id`. Read more in
+     * {@link https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns|gradients, shadows and patterns}.
+     * Styled mode only.
      *
      * @param  {Highcharts.SVGDefinitionObject} def
      *         A serialized form of an SVG definition, including children.
