@@ -8,14 +8,6 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-// TODO:
-// + submenu
-// + use createElement from HC ?
-// +- refactoring
-// - prototypes
-// - icons
-// - remove extra buttons
-
 var addEvent = H.addEvent,
     createElement = H.createElement,
     doc = H.doc,
@@ -228,7 +220,7 @@ H.setOptions({
     }
 });
 
-// HTML generator
+// Run HTML generator
 addEvent(H.Chart, 'afterGetContainer', function () {
     var chartOptions = this.options,
         guiOptions = chartOptions.stockTools && chartOptions.stockTools.gui;
@@ -250,6 +242,14 @@ addEvent(H.Chart, 'redraw', function () {
     }
 });
 
+/*
+ * Toolbar Class
+ *
+ * @param {Object} - options of toolbar
+ * @param {Chart} - Reference to chart
+ *
+ */
+
 H.Toolbar = function (options, chart) {
     this.chart = chart;
     this.options = options;
@@ -264,6 +264,11 @@ H.Toolbar = function (options, chart) {
 };
 
 H.Toolbar.prototype = {
+    /*
+     * Initialize the toolbar. Create buttons and submenu for each option
+     * defined in `stockTools.gui`.
+     *
+     */
     init: function () {
         var _self = this,
             chart = this.chart,
@@ -280,6 +285,7 @@ H.Toolbar.prototype = {
 
         each(buttons, function (btnName) {
             if (btnName === 'separator') {
+                // create single button
                 button = addButton(toolbar, 'separator');
             } else {
                 button = addButton(toolbar, defs[btnName], btnName);
@@ -292,6 +298,15 @@ H.Toolbar.prototype = {
 
         fireEvent(this, 'afterInit');
     },
+    /*
+     * Create submenu (list of buttons) for the option. In example main button
+     * is Line, in submenu will be buttons with types of lines.
+     *
+     * @param {Object} - button which has submenu
+     * @param {Array} - list of all buttons
+     * @param {Object} - gui options
+     *
+     */
     addSubmenu: function (parentBtn, buttons, guiOptions) {
         var _self = this,
             items = buttons.items,
@@ -329,10 +344,12 @@ H.Toolbar.prototype = {
         firstSubmenuItem = submenuWrapper
                 .querySelectorAll('li > .highcharts-menu-item-btn')[0];
 
+        // replace current symbol, in main button, with submenu's button style
         this.switchSymbol(firstSubmenuItem, false);
 
         // show / hide submenu
         addEvent(submenuArrow, 'click', function () {
+
             // Erase active class on all other buttons
             each(allButtons, function (btn) {
                 if (btn !== buttonWrapper) {
@@ -340,22 +357,26 @@ H.Toolbar.prototype = {
                     submenuItems =
                         btn.querySelectorAll('.highcharts-submenu-wrapper');
 
+                    // hide submenu
                     if (submenuItems.length > 0) {
                         submenuItems[0].style.display = 'none';
                     }
                 }
             });
 
-            // show menu
+            // hide menu
             if (buttonWrapper.className.indexOf('highcharts-current') >= 0) {
                 buttonWrapper.classList.remove('highcharts-current');
                 submenuWrapper.style.display = 'none';
             } else {
+                // show menu
                 // to calculate height of element
                 submenuWrapper.style.display = 'block';
 
+                // main button offset
                 topMargin = buttonWrapper.offsetTop;
 
+                // calculate if submenu should be moved (when is out of the box)
                 if (
                     (submenuWrapper.offsetHeight + topMargin) >
                     wrapper.offsetHeight
@@ -364,6 +385,7 @@ H.Toolbar.prototype = {
                         wrapper.offsetHeight;
                 }
 
+                // apply calculated styles
                 css(submenuWrapper, {
                     top: topMargin + 'px',
                     left: buttonWidth + 'px'
@@ -373,6 +395,16 @@ H.Toolbar.prototype = {
             }
         });
     },
+    /*
+     * Create single button. Consist of `<li>` , `<span>` and (if exists)
+     * submenu container.
+     *
+     * @param {HTMLDOMElement} - HTML reference, where button should be added
+     * @param {Object} - button options
+     * @param {String} - name of functionality mapped for specific class
+     *
+     * @return {Object} - references to all created HTML elements
+     */
     addButton: function (target, options, btnName) {
         var items = options.items,
             classMapping = H.Toolbar.prototype.classMapping,
@@ -381,6 +413,7 @@ H.Toolbar.prototype = {
             submenuArrow,
             buttonWrapper;
 
+        // main button wrapper
         buttonWrapper = createElement(LI, {
             className: classMapping[btnName] + ' ' + userClassName
         }, null, target);
@@ -394,6 +427,7 @@ H.Toolbar.prototype = {
         // submenu
         if (items && items.length > 1) {
 
+            // arrow is a hook to show / hide submenu
             submenuArrow = createElement(SPAN, {
                 className: 'highcharts-submenu-item-arrow'
             }, null, buttonWrapper);
@@ -421,6 +455,10 @@ H.Toolbar.prototype = {
             submenuArrow: submenuArrow
         };
     },
+    /*
+     * Create navigation's HTML elements: container and arrows.
+     *
+     */
     addNavigation: function () {
         var stockToolbar = this,
             wrapper = stockToolbar.wrapper;
@@ -430,11 +468,13 @@ H.Toolbar.prototype = {
             className: 'highcharts-arrow-wrapper'
         });
 
+        // arrow scrolls top
         stockToolbar.arrowUp = createElement(SPAN, {
             className: 'highcharts-arrow-up',
             innerHTML: '&rsaquo;'
         }, null, stockToolbar.arrowWrapper);
 
+        // arrow scrolls down
         stockToolbar.arrowDown = createElement(SPAN, {
             className: 'highcharts-arrow-down',
             innerHTML: '&lsaquo;'
@@ -444,8 +484,15 @@ H.Toolbar.prototype = {
             stockToolbar.arrowWrapper,
             wrapper.childNodes[0]
         );
+
+        // attach scroll events
         stockToolbar.scrollButtons();
     },
+    /*
+     * Add events to navigation (two arrows) which allows user to scroll
+     * top/down GUI buttons, if container's height is not enough.
+     *
+     */
     scrollButtons: function () {
         var stockToolbar = this,
             targetY = 0,
@@ -468,6 +515,10 @@ H.Toolbar.prototype = {
             }
         });
     },
+    /*
+     * Create stockTools HTML main elements.
+     *
+     */
     createHTML: function () {
         var stockToolbar = this,
             chart = stockToolbar.chart,
@@ -477,6 +528,7 @@ H.Toolbar.prototype = {
             toolbar,
             wrapper;
 
+        // create main container
         stockToolbar.wrapper = wrapper = createElement(DIV, {
             className: 'highcharts-stocktools-wrapper ' +
                     guiOptions.className
@@ -484,14 +536,13 @@ H.Toolbar.prototype = {
         container.parentNode.insertBefore(wrapper, container);
         wrapper.appendChild(container);
 
-        // GENERAL STRUCTURE
-
         // toolbar
         stockToolbar.toolbar = toolbar = createElement(UL, {
             className: 'highcharts-stocktools-toolbar ' +
                     guiOptions.toolbarClassName
         });
 
+        // add container for list of buttons
         stockToolbar.listWrapper = listWrapper = createElement(DIV, {
             className: 'highcharts-menu-wrapper'
         });
@@ -500,17 +551,22 @@ H.Toolbar.prototype = {
         listWrapper.insertBefore(toolbar, listWrapper.childNodes[0]);
 
         // Show hide toolbar
-        createElement(DIV, {
-            className: 'highcharts-showhide-showbar'
-        }, null, wrapper);
-
         stockToolbar.showHideToolbar();
 
+        // add navigation which allows user to scroll down / top GUI buttons
         stockToolbar.addNavigation();
     },
+    /*
+     * Redraw, GUI requires to verify if the navigation should be visible.
+     *
+     */
     redraw: function () {
         this.showHideNavigatorion();
     },
+    /*
+     * Function called in redraw verifies if the navigation should be visible.
+     *
+     */
     showHideNavigatorion: function () {
         // arrows
         // 50px space for arrows
@@ -523,12 +579,21 @@ H.Toolbar.prototype = {
             this.arrowWrapper.style.display = 'none';
         }
     },
+    /*
+     * Create button which shows or hides GUI toolbar.
+     *
+     */
     showHideToolbar: function () {
         var stockToolbar = this,
+            wrapper = stockToolbar.wrapper,
             toolbar = doc.getElementsByClassName('highcharts-menu-wrapper')[0],
             submenus = doc.getElementsByClassName('highcharts-submenu'),
-            showhideBtn =
-                doc.getElementsByClassName('highcharts-showhide-showbar')[0];
+            showhideBtn;
+
+        // create show / hide button
+        showhideBtn = createElement(DIV, {
+            className: 'highcharts-showhide-showbar'
+        }, null, wrapper);
 
         // replace by icon
         showhideBtn.innerHTML = '<';
@@ -537,24 +602,37 @@ H.Toolbar.prototype = {
         addEvent(showhideBtn, 'click', function () {
             if (toolbar.className.indexOf('highcharts-hide') >= 0) {
                 toolbar.classList.remove('highcharts-hide');
+
                 each(submenus, function (submenu) {
                     submenu.style.display = 'block';
                 });
+
                 showhideBtn.innerHTML = '<';
                 stockToolbar.visible = true;
             } else {
                 toolbar.className += ' highcharts-hide';
+                // hide all submenu items
                 each(submenus, function (submenu) {
                     submenu.style.display = 'none';
                 });
+
                 showhideBtn.innerHTML = '>';
                 stockToolbar.visible = false;
             }
         });
     },
+    /*
+     * In main GUI button, replace icon and class with submenu button's
+     * class / symbol.
+     *
+     * @param {HTMLDOMElement} - submenu button
+     * @param {Boolean} - true or false
+     *
+     */
     switchSymbol: function (button, redraw) {
         var buttonWrapper = button.parentNode,
             buttonWrapperClass = buttonWrapper.classList.value,
+            // main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
         // set class
@@ -569,6 +647,12 @@ H.Toolbar.prototype = {
             this.selectButton(mainNavButton);
         }
     },
+    /*
+     * Set select state (active class) on button.
+     *
+     * @param {HTMLDOMElement} - button
+     *
+     */
     selectButton: function (btn) {
         if (btn.className.indexOf(activeClass) >= 0) {
             btn.classList.remove(activeClass);
@@ -576,6 +660,12 @@ H.Toolbar.prototype = {
             btn.className += ' ' + activeClass;
         }
     },
+    /*
+     * Remove active class from all buttons except defined.
+     *
+     * @param {HTMLDOMElement} - button which should not be deactivated
+     *
+     */
     unselectAllButtons: function (btn) {
         var activeButtons = btn.parentNode.querySelectorAll('.' + activeClass);
 
@@ -585,9 +675,20 @@ H.Toolbar.prototype = {
             }
         });
     },
+    /*
+     * Show popup.
+     *
+     * @param {String} - type of popup (indicator, annotation)
+     * @param {Function} - callback called when user clicks on button in popup
+     *
+     */
     showForm: function (type, callback) {
         H.Popup.prototype.showForm(type, this.chart, callback);
     },
+    /*
+     * Destroy all HTML GUI elements.
+     *
+     */
     destroy: function () {
         var chartContainer = this.chart.renderTo,
             stockToolsDiv = this.wrapper,
@@ -605,6 +706,10 @@ H.Toolbar.prototype = {
         // Remove the empty element
         parent.removeChild(stockToolsDiv);
     },
+    /*
+     * Mapping JSON fields to CSS classes.
+     *
+     */
     classMapping: {
         circle: 'highcharts-circle-annotation',
         rectangle: 'highcharts-rectangle-annotation',
