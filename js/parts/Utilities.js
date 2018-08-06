@@ -24,13 +24,13 @@
  * @property {number} duration
  *           The animation duration in milliseconds.
  *
- * @property {string} [easing]
+ * @property {string|undefined} [easing]
  *           The name of an easing function as defined on the `Math` object.
  *
- * @property {Function} [complete]
+ * @property {Function|undefined} [complete]
  *           A callback function to exectute when the animation finishes.
  *
- * @property {Function} [step]
+ * @property {Function|undefined} [step]
  *           A callback function to execute on each step of each attribute or
  *           CSS property that's being animated. The first argument contains
  *           information about the animation and progress.
@@ -154,7 +154,7 @@ var charts = H.charts,
  *         for available codes. If it is a string, the error message is printed
  *         directly in the console.
  *
- * @param  {boolean} [stop=false]
+ * @param  {boolean|undefined} [stop=false]
  *         Whether to throw an error or just log a warning in the console.
  *
  * @return {void}
@@ -282,7 +282,7 @@ H.Fx.prototype = {
      * @param  {number} to
      *         The end value, value to land on.
      *
-     * @param  {string} [unit]
+     * @param  {string|undefined} [unit]
      *         The property unit, for example `px`.
      *
      * @return {void}
@@ -337,7 +337,7 @@ H.Fx.prototype = {
      *
      * @function Highcharts.Fx#step
      *
-     * @param  {boolean} [gotoEnd]
+     * @param  {boolean|undefined} [gotoEnd]
      *         Whether to go to the endpoint of the animation after abort.
      *
      * @return {boolean}
@@ -598,7 +598,7 @@ H.Fx.prototype = {
  *
  * @function Highcharts.merge
  *
- * @param  {boolean} [extend]
+ * @param  {boolean|undefined} [extend]
  *         Whether to extend the left-side object (a) or return a whole new
  *         object.
  *
@@ -713,7 +713,7 @@ H.isArray = function (obj) {
  *
  * @param  {*} obj
  *         The item to check.
- * @param  {boolean} [strict=false]
+ * @param  {boolean|undefined} [strict=false]
  *         Also checks that the object is not an array.
  *
  * @return {boolean}
@@ -822,10 +822,10 @@ H.defined = function (obj) {
  * @param  {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} elem
  *         The DOM element to receive the attribute(s).
  *
- * @param  {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [prop]
+ * @param  {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes|undefined} [prop]
  *         The property or an object of key-value pairs.
  *
- * @param  {string} [value]
+ * @param  {string|undefined} [value]
  *         The value if a single property is set.
  *
  * @return {*}
@@ -886,7 +886,7 @@ H.splat = function (obj) {
  * @param  {number} delay
  *         Delay in milliseconds.
  *
- * @param  {*} [context]
+ * @param  {*|undefined} [context]
  *         The context.
  *
  * @return {number}
@@ -998,16 +998,16 @@ H.css = function (el, styles) {
  * @param  {string} tag
  *         The HTML tag.
  *
- * @param  {Highcharts.HTMLAttributes} [attribs]
+ * @param  {Highcharts.HTMLAttributes|undefined} [attribs]
  *         Attributes as an object of key-value pairs.
  *
- * @param  {Highcharts.CSSObject} [styles]
+ * @param  {Highcharts.CSSObject|undefined} [styles]
  *         Styles as an object of key-value pairs.
  *
- * @param  {Highcharts.HTMLDOMElement} [parent]
+ * @param  {Highcharts.HTMLDOMElement|undefined} [parent]
  *         The parent HTML object.
  *
- * @param  {boolean} [nopad=false]
+ * @param  {boolean|undefined} [nopad=false]
  *         If true, remove all padding, border and margin.
  *
  * @return {Highcharts.HTMLDOMElement}
@@ -1064,7 +1064,7 @@ H.extendClass = function (parent, members) {
  * @param  {number} length
  *         The desired string length.
  *
- * @param  {string} [padder=0]
+ * @param  {string|undefined} [padder=0]
  *         The character to pad with.
  *
  * @return {string}
@@ -1091,7 +1091,7 @@ H.pad = function (number, length, padder) {
  * @param  {number} base
  *         The full length that represents 100%.
  *
- * @param  {number} [offset=0]
+ * @param  {number|undefined} [offset=0]
  *         A pixel offset to apply for percentage values. Used internally in
  *         axis positioning.
  *
@@ -1153,7 +1153,7 @@ H.wrap = function (obj, method, func) {
  * @param  {*} val
  *         The value.
  *
- * @param  {Highcharts.Time} [time]
+ * @param  {Highcharts.Time|undefined} [time]
  *         A `Time` instance that determines the date formatting, for example
  *         for applying time zone corrections to the formatted date.
  *
@@ -1199,7 +1199,7 @@ H.formatSingle = function (format, val, time) {
  *         The context, a collection of key-value pairs where each key is
  *         replaced by its value.
  *
- * @param  {Highcharts.Time} [time]
+ * @param  {Highcharts.Time|undefined} [time]
  *         A `Time` instance that determines the date formatting, for example
  *         for applying time zone corrections to the formatted date.
  *
@@ -1290,16 +1290,16 @@ H.getMagnitude = function (num) {
  * @param  {number} interval
  *         The raw, un-rounded interval.
  *
- * @param  {Array} [multiples]
+ * @param  {Array|undefined} [multiples]
  *         Allowed multiples.
  *
- * @param  {number} [magnitude]
+ * @param  {number|undefined} [magnitude]
  *         The magnitude of the number.
  *
- * @param  {boolean} [allowDecimals]
+ * @param  {boolean|undefined} [allowDecimals]
  *         Whether to allow decimals.
  *
- * @param  {boolean} [hasTickAmount]
+ * @param  {boolean|undefined} [hasTickAmount]
  *         If it has tickAmount, avoid landing on tick intervals lower than
  *         original.
  *
@@ -1473,7 +1473,7 @@ H.arrayMax = function (data) {
  * @param  {*} obj
  *         The object to destroy properties on.
  *
- * @param  {*} [except]
+ * @param  {*|undefined} [except]
  *         Exception, do not destroy this property, only delete it.
  *
  * @return {void}
@@ -1524,7 +1524,7 @@ H.discardElement = function (element) {
  * @param  {number} num
  *         A float number to fix.
  *
- * @param  {number} [prec=14]
+ * @param  {number|undefined} [prec=14]
  *         The precision.
  *
  * @return {number}
@@ -1609,11 +1609,11 @@ H.timeUnits = {
  *         The amount of decimals. A value of -1 preserves the amount in the
  *         input number.
  *
- * @param  {string} [decimalPoint]
+ * @param  {string|undefined} [decimalPoint]
  *         The decimal point, defaults to the one given in the lang options, or
  *         a dot.
  *
- * @param  {string} [thousandsSep]
+ * @param  {string|undefined} [thousandsSep]
  *         The thousands separator, defaults to the one given in the lang
  *         options, or a space character.
  *
@@ -1735,7 +1735,7 @@ Math.easeInOutSine = function (pos) {
  * @param  {string} prop
  *         The property name.
  *
- * @param  {boolean} [toInt=true]
+ * @param  {boolean|undefined} [toInt=true]
  *         Parse to integer.
  *
  * @return {number}
@@ -1789,7 +1789,7 @@ H.getStyle = function (el, prop, toInt) {
  * @param  {Array} arr
  *         The array or node collection to search in.
  *
- * @param  {number} [fromIndex=0]
+ * @param  {number|undefined} [fromIndex=0]
  *         The index to start searching from.
  *
  * @return {number}
@@ -1977,7 +1977,7 @@ H.offset = function (el) {
  * @param  {Highcharts.SVGElement} el
  *         The SVGElement to stop animation on.
  *
- * @param  {string} [prop]
+ * @param  {string|undefined} [prop]
  *         The property to stop animating. If given, the stop method will stop a
  *         single property from animating, while others continue.
  *
@@ -2016,7 +2016,7 @@ H.stop = function (el, prop) {
  *         * index - The item's index in the array.
  *         * arr - The array that each is being applied to.
  *
- * @param  {*} [ctx]
+ * @param  {*|undefined} [ctx]
  *         The context.
  *
  * @return {void}
@@ -2039,7 +2039,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
  *         * key - The property key.
  *         * obj - The object that objectEach is being applied to.
  *
- * @param  {*} ctx
+ * @param  {*|undefined} [ctx]
  *         The context
  *
  * @return {void}
@@ -2131,11 +2131,11 @@ H.addEvent = function (el, type, fn, options) {
  * @param  {*} el
  *         The element to remove events on.
  *
- * @param  {string} [type]
+ * @param  {string|undefined} [type]
  *         The type of events to remove. If undefined, all events are removed
  *         from the element.
  *
- * @param  {Function} [fn]
+ * @param  {Function|undefined} [fn]
  *         The specific callback to remove. If undefined, all events that match
  *         the element and optionally the type are removed.
  *
@@ -2217,11 +2217,11 @@ H.removeEvent = function (el, type, fn) {
  * @param  {string} type
  *         The type of event.
  *
- * @param  {Highcharts.Dictionary<*>} [eventArguments]
+ * @param  {Highcharts.Dictionary<*>|undefined} [eventArguments]
  *         Custom event arguments that are passed on as an argument to the event
  *         handler.
  *
- * @param  {Function} [defaultFunction]
+ * @param  {Function|undefined} [defaultFunction]
  *         The default function to execute if the other listeners haven't
  *         returned false.
  *
@@ -2308,7 +2308,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  *         Supports numeric as pixel-based CSS properties for HTML objects and
  *         attributes for SVGElements.
  *
- * @param  {Highcharts.AnimationOptions} [opt]
+ * @param  {Highcharts.AnimationOptions|undefined} [opt]
  *         Animation options.
  *
  * @return {void}
@@ -2391,7 +2391,7 @@ H.animate = function (el, params, opt) {
  *         The properties (functions and primitives) to set on the new
  *         prototype.
  *
- * @param  {*} [pointProps]
+ * @param  {*|undefined} [pointProps]
  *         Members for a series-specific extension of the {@link Point}
  *         prototype if needed.
  *
