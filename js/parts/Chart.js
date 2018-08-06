@@ -76,7 +76,7 @@ var addEvent = H.addEvent,
  * @param  {Highcharts.Options} options
  *         The chart options structure.
  *
- * @param  {Function} [callback]
+ * @param  {Function|undefined} [callback]
  *         Function to run when the chart has loaded and and all external images
  *         are loaded. Defining a [chart.event.load](
  *         https://api.highcharts.com/highcharts/chart.events.load) handler is
@@ -107,7 +107,7 @@ var Chart = H.Chart = function () {
  * @param  {Highcharts.Options} options
  *         The chart options structure.
  *
- * @param  {Function} [callback]
+ * @param  {Function|undefined} [callback]
  *         Function to run when the chart has loaded and and all external images
  *         are loaded. Defining a
  *         {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
@@ -168,7 +168,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param  {Highcharts.Options} userOptions
      *         Custom options.
      *
-     * @param  {Function} [callback]
+     * @param  {Function|undefined} [callback]
      *         Function to run when the chart has loaded and and all external
      *         images are loaded.
      *
@@ -1364,18 +1364,18 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#setSize
      *
-     * @param  {number|null} [width]
+     * @param  {number|null|undefined} [width]
      *         The new pixel width of the chart. Since v4.2.6, the argument can
      *         be `undefined` in order to preserve the current value (when
      *         setting height only), or `null` to adapt to the width of the
      *         containing element.
      *
-     * @param  {number|null} [height]
+     * @param  {number|null|undefined} [height]
      *         The new pixel height of the chart. Since v4.2.6, the argument can
      *         be `undefined` in order to preserve the current value, or `null`
      *         in order to adapt to the height of the containing element.
      *
-     * @param  {Highcharts.AnimationOptions} [animation=true]
+     * @param  {Highcharts.AnimationOptions|undefined} [animation=true]
      *         Whether and how to apply animation.
      *
      * @return {void}
