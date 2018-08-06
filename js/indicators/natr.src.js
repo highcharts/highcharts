@@ -32,10 +32,7 @@ H.seriesType('natr', 'sma',
                 atrLength = atrData.values.length,
                 period = params.period - 1,
                 yVal = series.yData,
-                i = 0,
-                NATR,
-                xData,
-                yData;
+                i = 0;
 
             for (; i < atrLength; i++) {
                 atrData.yData[i] = atrData.values[i][1] / yVal[period][3] * 100;
@@ -43,15 +40,7 @@ H.seriesType('natr', 'sma',
                 period++;
             }
 
-            NATR = atrData.values;
-            xData = atrData.xData;
-            yData = atrData.yData;
-
-            return {
-                values: NATR,
-                xData: xData,
-                yData: yData
-            };
+            return atrData;
         }
 
     });
