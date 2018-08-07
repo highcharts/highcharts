@@ -8,7 +8,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb2
 
 
         rangeSelector: {
-            selected: 1
+            selected: 4
         },
 
         title: {

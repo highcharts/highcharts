@@ -6,7 +6,6 @@ Highcharts.setOptions({ // Apply the exporting height to print as well
             beforePrint: function () {
                 var height = this.options.exporting.chartOptions.chart.height;
                 if (height) {
-                    this.oldhasUserSize = this.hasUserSize;
                     this.resetParams = [this.chartWidth, this.chartHeight, false];
                     this.setSize(this.chartWidth, height, false);
                 }
@@ -14,7 +13,6 @@ Highcharts.setOptions({ // Apply the exporting height to print as well
             afterPrint: function () {
                 if (this.options.exporting.chartOptions.chart.height) {
                     this.setSize.apply(this, this.resetParams);
-                    this.hasUserSize = this.oldhasUserSize;
                 }
             }
         }
@@ -77,7 +75,7 @@ Highcharts.chart('container', {
     exporting: {
         chartOptions: {
             chart: {
-                height: 600
+                height: 650
             }
         }
     }

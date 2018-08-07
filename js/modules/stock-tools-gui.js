@@ -8,24 +8,18 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-// TODO:
-// + submenu
-// + use createElement from HC ?
-// +- refactoring
-// - prototypes
-// - icons
-// - remove extra buttons
-
 var addEvent = H.addEvent,
     createElement = H.createElement,
     doc = H.doc,
     each = H.each,
+    pick = H.pick,
     fireEvent = H.fireEvent,
     getStyle = H.getStyle,
     css = H.css,
     DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
+    LI = 'li',
     PREFIX = 'highcharts-',
     activeClass = PREFIX + 'active';
 
@@ -36,6 +30,7 @@ H.setOptions({
             className: 'stocktools-wrapper',
             toolbarClassName: 'stocktools-toolbar',
             buttons: [
+                'indicators',
                 'simpleShapes',
                 'lines',
                 'crookedLines',
@@ -49,40 +44,44 @@ H.setOptions({
                 'zoomChange',
                 'typeChange',
                 'separator',
-                'indicators',
-                'currentPriceIndicator'
+                // 'indicators',
+                'currentPriceIndicator',
+                'saveChart'
             ],
             definitions: {
+                separator: {
+                    symbol: 'url(http://utils.highcharts.local/samples/graphics/separator.svg)'
+                },
                 simpleShapes: {
                     items: ['circle', 'rectangle', 'label'],
                     circle: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/circle.svg)'
                     },
                     rectangle: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/rectangle.svg)'
                     },
                     label: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/text.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/label.svg)'
                     }
                 },
                 flags: {
                     items: [
-                        'circlepin',
-                        'diamondpin',
-                        'squarepin',
-                        'simplepin'
+                        'flagCirclepin',
+                        'flagDiamondpin',
+                        'flagSquarepin',
+                        'flagSimplepin'
                     ],
-                    simplepin: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-flag.svg)'
+                    flagSimplepin: {
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-basic.svg)'
                     },
-                    diamondpin: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-diamondpin.svg)'
+                    flagDiamondpin: {
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-diamond.svg)'
                     },
-                    squarepin: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-squarepin.svg)'
+                    flagSquarepin: {
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-trapeze.svg)'
                     },
-                    circlepin: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/flag-circlepin.svg)'
+                    flagCirclepin: {
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-elipse.svg)'
                     }
                 },
                 lines: {
@@ -96,47 +95,46 @@ H.setOptions({
                         'horizontalLine',
                         'verticalLine'
                     ],
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)',
                     segment: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/segment.svg)'
                     },
                     arrowSegment: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-segment.svg)'
                     },
                     ray: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/ray.svg)'
                     },
                     arrowRay: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-ray.svg)'
                     },
                     line: {
                         type: 'aaa',
                         label: 'bbb',
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/line.svg)'
                     },
                     arrowLine: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-line.svg)'
                     },
                     verticalLine: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-line.svg)'
                     },
                     horizontalLine: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/line.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/horizontal-line.svg)'
                     }
                 },
                 crookedLines: {
                     items: ['crooked3', 'crooked5', 'elliott3', 'elliott5'],
                     crooked3: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/crooked-3.svg)'
                     },
                     crooked5: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/crooked-5.svg)'
                     },
                     elliott3: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/elliott-3.svg)'
                     },
                     elliott5: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/elliott-5.svg)'
                     }
                 },
                 verticalLabels: {
@@ -147,147 +145,136 @@ H.setOptions({
                         'verticalDoubleArrow'
                     ],
                     verticalCounter: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-counter.svg)'
                     },
                     verticalLabel: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-label.svg)'
                     },
                     verticalArrow: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-arrow.svg)'
                     },
                     verticalDoubleArrow: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-double-arrow.svg)'
                     }
                 },
                 advanced: {
                     items: ['fibonacci', 'pitchfork', 'parallel-channel'],
                     pitchfork: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/pitchfork.svg)'
                     },
                     fibonacci: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/fibonacci.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/fibonacci.svg)'
                     },
                     'parallel-channel': {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/parallel-channel.svg)'
                     }
                 },
                 measure: {
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    items: ['measureXY', 'measureX', 'measureY'],
+                    measureX: {
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-xy.svg)'
+                    },
+                    measureY: {
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-x.svg)'
+                    },
+                    measureXY: {
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-y.svg)'
+                    }
                 },
                 toggleAnnotations: {
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/cursor.svg)'
+                    symbol: 'url(http://utils.highcharts.local/samples/graphics/annotations-visible.svg)'
                 },
                 currentPriceIndicator: {
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
+                    symbol: 'url(http://utils.highcharts.local/samples/graphics/current-price-indicator-v2.svg)'
                 },
                 indicators: {
-                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    symbol: 'url(http://utils.highcharts.local/samples/graphics/indicators.svg)'
                 },
                 zoomChange: {
                     items: ['zoomX', 'zoomY', 'zoomXY'],
                     zoomX: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-x.svg)'
                     },
                     zoomY: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-y.svg)'
                     },
                     zoomXY: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-xy.svg)'
                     }
                 },
                 typeChange: {
                     items: ['typeOHLC', 'typeLine', 'typeCandlestick'],
                     typeOHLC: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-ohlc.svg)'
                     },
                     typeLine: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-line.svg)'
                     },
                     typeCandlestick: {
-                        symbol: 'url(https://www.highcharts.com/samples/graphics/tunnel.svg)'
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-candlestick.svg)'
                     }
+                },
+                saveChart: {
+                    symbol: 'url(http://utils.highcharts.local/samples/graphics/save-storage.svg)'
                 }
             }
         }
     }
 });
 
-// HTML generator
-addEvent(H.Chart.prototype, 'afterInit', function () {
-    var chart = this,
-        chartOptions = chart.options,
-        guiOptions = chartOptions.stockTools && chartOptions.stockTools.gui,
-        container = doc.getElementById(chart.renderTo),
-        toolbar,
-        stockToolbar,
-        listWrapper,
-        wrapper;
+// Run HTML generator
+addEvent(H.Chart, 'afterGetContainer', function () {
+    var chartOptions = this.options,
+        guiOptions = chartOptions.stockTools && chartOptions.stockTools.gui;
 
-    if (!guiOptions.enabled) {
-        return;
-    }
-
-    wrapper = createElement(DIV, {
-        className: guiOptions.className
-    });
-
-    container.parentNode.insertBefore(wrapper, container);
-    wrapper.appendChild(container);
-
-    // GENERAL STRUCTURE
-
-    // toolbar
-    toolbar = createElement(UL, {
-        className: guiOptions.toolbarClassName
-    });
-
-    listWrapper = createElement(DIV, {
-        className: 'menu-wrapper'
-    });
-
-    wrapper.insertBefore(listWrapper, wrapper.childNodes[0]);
-    listWrapper.insertBefore(toolbar, listWrapper.childNodes[0]);
-
-    // generate buttons
-    chart.stockToolbar = stockToolbar = new H.Toolbar(guiOptions, chart);
-
-    // show hide toolbar
-    createElement(DIV, {
-        className: 'showhide-showbar'
-    }, null, wrapper);
-
-    H.Toolbar.prototype.showHideToolbar();
-
-    // arrows
-    // 50px space for arrows
-    if (toolbar.offsetHeight > (wrapper.offsetHeight - 50)) {
-        // arrow wrapper
-        stockToolbar.arrowWrapper = createElement(DIV, {
-            className: 'arrow-wrapper'
-        });
-
-        stockToolbar.arrowUp = createElement(SPAN, {
-            className: 'arrow-up',
-            innerHTML: '&rsaquo;'
-        }, null, stockToolbar.arrowWrapper);
-
-        stockToolbar.arrowDown = createElement(SPAN, {
-            className: 'arrow-down',
-            innerHTML: '&lsaquo;'
-        }, null, stockToolbar.arrowWrapper);
-
-        wrapper.insertBefore(stockToolbar.arrowWrapper, wrapper.childNodes[0]);
-        stockToolbar.scrollButtons(guiOptions);
+    if (guiOptions.enabled) {
+        this.stockToolbar = new H.Toolbar(guiOptions, this);
     }
 });
 
+addEvent(H.Chart, 'destroy', function () {
+    if (this.stockToolbar) {
+        this.stockToolbar.destroy();
+    }
+});
+
+addEvent(H.Chart, 'redraw', function () {
+    if (this.stockToolbar) {
+        this.stockToolbar.redraw();
+    }
+});
+
+/*
+ * Toolbar Class
+ *
+ * @param {Object} - options of toolbar
+ * @param {Chart} - Reference to chart
+ *
+ */
+
 H.Toolbar = function (options, chart) {
-    this.init(options, chart);
+    this.chart = chart;
+    this.options = options;
+
+    this.visible = pick(options.enabled, true);
+
+    this.createHTML();
+    this.popup = new H.Popup(this.wrapper);
+    this.init();
+
+    this.showHideNavigatorion();
 };
 
 H.Toolbar.prototype = {
-    init: function (guiOptions, chart) {
+    /*
+     * Initialize the toolbar. Create buttons and submenu for each option
+     * defined in `stockTools.gui`.
+     *
+     */
+    init: function () {
         var _self = this,
+            chart = this.chart,
+            guiOptions = this.options,
             addButton = _self.addButton,
             addSubmenu = _self.addSubmenu,
             toolbar = doc
@@ -299,19 +286,24 @@ H.Toolbar.prototype = {
         _self.chart = chart;
 
         each(buttons, function (btnName) {
-            if (btnName === 'separator') {
-                button = addButton(toolbar, 'separator');
-            } else {
-                button = addButton(toolbar, defs[btnName], btnName);
-                if (defs[btnName].items && defs[btnName].items.length > 0) {
-                    // create submenu buttons
-                    addSubmenu.call(_self, button, defs[btnName], guiOptions);
-                }
+            button = addButton(toolbar, defs[btnName], btnName);
+            if (defs[btnName].items && defs[btnName].items.length > 0) {
+                // create submenu buttons
+                addSubmenu.call(_self, button, defs[btnName], guiOptions);
             }
         });
 
         fireEvent(this, 'afterInit');
     },
+    /*
+     * Create submenu (list of buttons) for the option. In example main button
+     * is Line, in submenu will be buttons with types of lines.
+     *
+     * @param {Object} - button which has submenu
+     * @param {Array} - list of all buttons
+     * @param {Object} - gui options
+     *
+     */
     addSubmenu: function (parentBtn, buttons, guiOptions) {
         var _self = this,
             items = buttons.items,
@@ -332,7 +324,7 @@ H.Toolbar.prototype = {
 
         // create submenu container
         submenuWrapper = createElement(UL, {
-            className: 'submenu-wrapper'
+            className: 'highcharts-submenu-wrapper'
         }, null, buttonWrapper);
 
         // add items to submenu
@@ -347,34 +339,41 @@ H.Toolbar.prototype = {
         });
 
         firstSubmenuItem = submenuWrapper
-                .querySelectorAll('li > .menu-item-btn')[0];
+                .querySelectorAll('li > .highcharts-menu-item-btn')[0];
 
+        // replace current symbol, in main button, with submenu's button style
         this.switchSymbol(firstSubmenuItem, false);
 
         // show / hide submenu
         addEvent(submenuArrow, 'click', function () {
+
             // Erase active class on all other buttons
             each(allButtons, function (btn) {
                 if (btn !== buttonWrapper) {
-                    btn.classList.remove('current');
-                    submenuItems = btn.querySelectorAll('.submenu-wrapper');
+                    btn.classList.remove('highcharts-current');
+                    submenuItems =
+                        btn.querySelectorAll('.highcharts-submenu-wrapper');
 
+                    // hide submenu
                     if (submenuItems.length > 0) {
                         submenuItems[0].style.display = 'none';
                     }
                 }
             });
 
-            // show menu
-            if (buttonWrapper.className.indexOf('current') >= 0) {
-                buttonWrapper.classList.remove('current');
+            // hide menu
+            if (buttonWrapper.className.indexOf('highcharts-current') >= 0) {
+                buttonWrapper.classList.remove('highcharts-current');
                 submenuWrapper.style.display = 'none';
             } else {
+                // show menu
                 // to calculate height of element
                 submenuWrapper.style.display = 'block';
 
+                // main button offset
                 topMargin = buttonWrapper.offsetTop;
 
+                // calculate if submenu should be moved (when is out of the box)
                 if (
                     (submenuWrapper.offsetHeight + topMargin) >
                     wrapper.offsetHeight
@@ -383,58 +382,69 @@ H.Toolbar.prototype = {
                         wrapper.offsetHeight;
                 }
 
+                // apply calculated styles
                 css(submenuWrapper, {
                     top: topMargin + 'px',
                     left: buttonWidth + 'px'
                 });
 
-                buttonWrapper.className += ' current';
+                buttonWrapper.className += ' highcharts-current';
             }
         });
     },
+    /*
+     * Create single button. Consist of `<li>` , `<span>` and (if exists)
+     * submenu container.
+     *
+     * @param {HTMLDOMElement} - HTML reference, where button should be added
+     * @param {Object} - button options
+     * @param {String} - name of functionality mapped for specific class
+     *
+     * @return {Object} - references to all created HTML elements
+     */
     addButton: function (target, options, btnName) {
-        var SPAN = 'span',
-            LI = 'li',
-            items = options.items,
+        var items = options.items,
             classMapping = H.Toolbar.prototype.classMapping,
             userClassName = options.className || '',
             mainButton,
             submenuArrow,
             buttonWrapper;
 
+        // main button wrapper
         buttonWrapper = createElement(LI, {
             className: classMapping[btnName] + ' ' + userClassName
         }, null, target);
 
         // single button
         mainButton = createElement(SPAN, {
-            className: 'menu-item-btn'
+            className: 'highcharts-menu-item-btn'
         }, null, buttonWrapper);
 
 
         // submenu
         if (items && items.length > 1) {
 
+            // arrow is a hook to show / hide submenu
             submenuArrow = createElement(SPAN, {
-                className: 'submenu-item-arrow'
+                className: 'highcharts-submenu-item-arrow ' +
+                    'highcharts-arrow-right'
             }, null, buttonWrapper);
-
-            // replace with arrow background (add it in CSS class)
-            submenuArrow.innerHTML = '>';
         } else {
             mainButton.style['background-image'] = options.symbol;
         }
 
         // TODO: add icons!!!
-        if (options === 'separator') {
+        /*
+        if (btnName === 'separator') {
             css(mainButton, {
                 height: '25px',
                 cursor: 'default',
                 'text-align': 'center'
             });
             // TODO: replace with icon
-            mainButton.innerHTML = '. . .';
+            // mainButton.style['background-image'] = options.symbol;
         }
+        */
 
         return {
             buttonWrapper: buttonWrapper,
@@ -442,62 +452,180 @@ H.Toolbar.prototype = {
             submenuArrow: submenuArrow
         };
     },
-    scrollButtons: function (guiOptions) {
-        var toolbar = doc
-                .getElementsByClassName(guiOptions.toolbarClassName)[0],
-            wrapper = doc.getElementsByClassName(guiOptions.className)[0],
-            arrowUp = doc.getElementsByClassName('arrow-up')[0],
-            arrowDown = doc.getElementsByClassName('arrow-down')[0],
-            toolbarHeight = toolbar.offsetHeight,
-            wrapperHeight = wrapper.offsetHeight,
-            targetY = 0,
-            step = 0.2 * wrapperHeight; // 0.1 = 20%
+    /*
+     * Create navigation's HTML elements: container and arrows.
+     *
+     */
+    addNavigation: function () {
+        var stockToolbar = this,
+            wrapper = stockToolbar.wrapper;
 
-        addEvent(arrowUp, 'click', function () {
+        // arrow wrapper
+        stockToolbar.arrowWrapper = createElement(DIV, {
+            className: 'highcharts-arrow-wrapper'
+        });
+
+        stockToolbar.arrowUp = createElement(DIV, {
+            className: 'highcharts-arrow-up'
+        }, null, stockToolbar.arrowWrapper);
+
+        stockToolbar.arrowDown = createElement(DIV, {
+            className: 'highcharts-arrow-down'
+        }, null, stockToolbar.arrowWrapper);
+
+        wrapper.insertBefore(
+            stockToolbar.arrowWrapper,
+            wrapper.childNodes[0]
+        );
+
+        // attach scroll events
+        stockToolbar.scrollButtons();
+    },
+    /*
+     * Add events to navigation (two arrows) which allows user to scroll
+     * top/down GUI buttons, if container's height is not enough.
+     *
+     */
+    scrollButtons: function () {
+        var stockToolbar = this,
+            targetY = 0,
+            step = 0.2 * stockToolbar.wrapper.offsetHeight; // 0.1 = 20%
+
+        addEvent(this.arrowUp, 'click', function () {
             if (targetY > 0) {
                 targetY -= step;
-                toolbar.style['margin-top'] = -targetY + 'px';
+                stockToolbar.toolbar.style['margin-top'] = -targetY + 'px';
             }
         });
 
-        addEvent(arrowDown, 'click', function () {
-            if (wrapperHeight + targetY <= toolbarHeight) {
+        addEvent(this.arrowDown, 'click', function () {
+            if (
+                stockToolbar.wrapper.offsetHeight + targetY <=
+                stockToolbar.toolbar.offsetHeight
+            ) {
                 targetY += step;
-                toolbar.style['margin-top'] = -targetY + 'px';
+                stockToolbar.toolbar.style['margin-top'] = -targetY + 'px';
             }
         });
     },
-    showHideToolbar: function () {
-        var toolbar = doc.getElementsByClassName('menu-wrapper')[0],
-            submenu = doc.getElementById('submenu'),
-            showhideBtn = doc.getElementsByClassName('showhide-showbar')[0];
+    /*
+     * Create stockTools HTML main elements.
+     *
+     */
+    createHTML: function () {
+        var stockToolbar = this,
+            chart = stockToolbar.chart,
+            guiOptions = stockToolbar.options,
+            container = chart.container.parentNode,
+            listWrapper,
+            toolbar,
+            wrapper;
 
-        // replace by icon
-        showhideBtn.innerHTML = '<';
+        // create main container
+        stockToolbar.wrapper = wrapper = createElement(DIV, {
+            className: 'highcharts-stocktools-wrapper ' +
+                    guiOptions.className
+        });
+        container.parentNode.insertBefore(wrapper, container);
+        wrapper.appendChild(container);
+
+        // toolbar
+        stockToolbar.toolbar = toolbar = createElement(UL, {
+            className: 'highcharts-stocktools-toolbar ' +
+                    guiOptions.toolbarClassName
+        });
+
+        // add container for list of buttons
+        stockToolbar.listWrapper = listWrapper = createElement(DIV, {
+            className: 'highcharts-menu-wrapper'
+        });
+
+        wrapper.insertBefore(listWrapper, wrapper.childNodes[0]);
+        listWrapper.insertBefore(toolbar, listWrapper.childNodes[0]);
+
+        stockToolbar.showHideToolbar();
+
+        // add navigation which allows user to scroll down / top GUI buttons
+        stockToolbar.addNavigation();
+    },
+    /*
+     * Redraw, GUI requires to verify if the navigation should be visible.
+     *
+     */
+    redraw: function () {
+        this.showHideNavigatorion();
+    },
+    /*
+     * Function called in redraw verifies if the navigation should be visible.
+     *
+     */
+    showHideNavigatorion: function () {
+        // arrows
+        // 50px space for arrows
+        if (
+            this.visible &&
+            this.toolbar.offsetHeight > (this.wrapper.offsetHeight - 50)
+        ) {
+            this.arrowWrapper.style.display = 'block';
+        } else {
+            this.arrowWrapper.style.display = 'none';
+        }
+    },
+    /*
+     * Create button which shows or hides GUI toolbar.
+     *
+     */
+    showHideToolbar: function () {
+        var stockToolbar = this,
+            wrapper = stockToolbar.wrapper,
+            toolbar = doc.getElementsByClassName('highcharts-menu-wrapper')[0],
+            submenus = doc.getElementsByClassName('highcharts-submenu'),
+            showhideBtn;
+
+        // Show hide toolbar
+        showhideBtn = createElement(DIV, {
+            className: 'highcharts-toggle-toolbar highcharts-arrow-left'
+        }, null, wrapper);
 
         // toggle menu
         addEvent(showhideBtn, 'click', function () {
-            if (toolbar.className.indexOf('hide') >= 0) {
-                toolbar.classList.remove('hide');
-                submenu.style.display = 'block';
-                showhideBtn.innerHTML = '<';
+            if (toolbar.className.indexOf('highcharts-hide') >= 0) {
+                each(submenus, function (submenu) {
+                    submenu.style.display = 'block';
+                });
+                showhideBtn.style.left = '40px';
+                stockToolbar.visible = true;
             } else {
-                toolbar.className += ' hide';
-                submenu.style.display = 'none';
-                showhideBtn.innerHTML = '>';
+                each(submenus, function (submenu) {
+                    submenu.style.display = 'none';
+                });
+                showhideBtn.style.left = '0px';
+                stockToolbar.visible = false;
             }
+            toolbar.classList.toggle('highcharts-hide');
+            showhideBtn.classList.toggle('highcharts-arrow-left');
+            showhideBtn.classList.toggle('highcharts-arrow-right');
         });
     },
+    /*
+     * In main GUI button, replace icon and class with submenu button's
+     * class / symbol.
+     *
+     * @param {HTMLDOMElement} - submenu button
+     * @param {Boolean} - true or false
+     *
+     */
     switchSymbol: function (button, redraw) {
         var buttonWrapper = button.parentNode,
             buttonWrapperClass = buttonWrapper.classList.value,
+            // main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
         // set class
         mainNavButton.classList = buttonWrapperClass;
 
         // set icon
-        mainNavButton.querySelectorAll('.menu-item-btn')[0]
+        mainNavButton.querySelectorAll('.highcharts-menu-item-btn')[0]
             .style['background-image'] = button.style['background-image'];
 
         // set active class
@@ -505,6 +633,12 @@ H.Toolbar.prototype = {
             this.selectButton(mainNavButton);
         }
     },
+    /*
+     * Set select state (active class) on button.
+     *
+     * @param {HTMLDOMElement} - button
+     *
+     */
     selectButton: function (btn) {
         if (btn.className.indexOf(activeClass) >= 0) {
             btn.classList.remove(activeClass);
@@ -512,6 +646,12 @@ H.Toolbar.prototype = {
             btn.className += ' ' + activeClass;
         }
     },
+    /*
+     * Remove active class from all buttons except defined.
+     *
+     * @param {HTMLDOMElement} - button which should not be deactivated
+     *
+     */
     unselectAllButtons: function (btn) {
         var activeButtons = btn.parentNode.querySelectorAll('.' + activeClass);
 
@@ -521,6 +661,41 @@ H.Toolbar.prototype = {
             }
         });
     },
+    /*
+     * Show popup.
+     *
+     * @param {String} - type of popup (indicator, annotation)
+     * @param {Function} - callback called when user clicks on button in popup
+     *
+     */
+    showForm: function (type, callback) {
+        H.Popup.prototype.showForm(type, this.chart, callback);
+    },
+    /*
+     * Destroy all HTML GUI elements.
+     *
+     */
+    destroy: function () {
+        var chartContainer = this.chart.renderTo,
+            stockToolsDiv = this.wrapper,
+            // Get the element's parent node
+            parent = stockToolsDiv.parentNode;
+
+        // Move all children out of the element
+        while (stockToolsDiv.firstChild) {
+            if (stockToolsDiv.firstChild === chartContainer) {
+                parent.insertBefore(stockToolsDiv.firstChild, stockToolsDiv);
+            } else {
+                stockToolsDiv.firstChild.remove();
+            }
+        }
+        // Remove the empty element
+        parent.removeChild(stockToolsDiv);
+    },
+    /*
+     * Mapping JSON fields to CSS classes.
+     *
+     */
     classMapping: {
         circle: 'highcharts-circle-annotation',
         rectangle: 'highcharts-rectangle-annotation',
@@ -540,12 +715,15 @@ H.Toolbar.prototype = {
         pitchfork: 'highcharts-pitchfork',
         fibonacci: 'highcharts-fibonacci',
         'parallel-channel': 'highcharts-parallel-channel',
-        measure: 'highcharts-measure',
+        measureX: 'highcharts-measureX',
+        measureY: 'highcharts-measureY',
+        measureXY: 'highcharts-measureXY',
         verticalCounter: 'highcharts-vertical-counter',
         verticalLabel: 'highcharts-vertical-label',
         verticalArrow: 'highcharts-vertical-arrow',
         verticalDoubleArrow: 'highcharts-vertical-double-arrow',
         currentPriceIndicator: 'highcharts-current-price-indicator',
+        indicators: 'highcharts-indicators',
         flagCirclepin: 'highcharts-flag-circlepin',
         flagDiamondpin: 'highcharts-flag-diamondpin',
         flagSquarepin: 'highcharts-flag-squarepin',
@@ -556,6 +734,8 @@ H.Toolbar.prototype = {
         typeLine: 'highcharts-series-type-line',
         typeOHLC: 'highcharts-series-type-ohlc',
         typeCandlestick: 'highcharts-series-type-candlestick',
-        toggleAnnotations: 'highcharts-toggle-annotations'
+        toggleAnnotations: 'highcharts-toggle-annotations',
+        saveChart: 'highcharts-save-chart',
+        separator: 'highcharts-separator'
     }
 };

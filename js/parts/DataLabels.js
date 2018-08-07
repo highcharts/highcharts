@@ -346,7 +346,13 @@ Series.prototype.drawDataLabels = function () {
                 if (!dataLabel) {
                     dataLabel = point.dataLabel = rotation ?
 
-                        renderer.text(str, 0, -9999) // labels don't rotate
+                        renderer
+                            .text( // labels don't rotate
+                                str,
+                                0,
+                                -9999,
+                                options.useHTML
+                            )
                             .addClass('highcharts-data-label') :
 
                         renderer.label(

@@ -12,6 +12,8 @@ var addEvent = H.addEvent,
     defined = H.defined,
     doc = H.doc,
     each = H.each,
+    extend = H.extend,
+    isNumber = H.isNumber,
     objectEach = H.objectEach,
     PREFIX = 'highcharts-';
 
@@ -71,8 +73,8 @@ function attractToPoint(e, chart) {
         y: closestPoint.y,
         below: y < closestPoint.y,
         series: closestPoint.series,
-        xAxis: closestPoint.series.xAxis.index,
-        yAxis: closestPoint.series.yAxis.index
+        xAxis: closestPoint.series.xAxis.index || 0,
+        yAxis: closestPoint.series.yAxis.index || 0
     };
 }
 
@@ -132,10 +134,35 @@ function addFlagFromForm(type) {
     };
 }
 
-// TO DO:
-// Consider this directly in setOptions();
-// or apply H.setOptions({ bindings: H.toolbar.proto.features })
-H.Toolbar.prototype.features = {
+/*
+ * Update size of background (rect) in some annotations: Measure, Simple Rect.
+ *
+ * @return {function} Callback to be used in steps array
+ */
+function updateRectSize() {
+    return function (e, annotation) {
+        var options = annotation.options.typeOptions,
+            xStart = this.chart.xAxis[0].toPixels(options.point.x),
+            yStart = this.chart.yAxis[0].toPixels(options.point.y),
+            x = e.chartX,
+            y = e.chartY,
+            width = x - xStart,
+            height = y - yStart;
+
+        annotation.update({
+            typeOptions: {
+                background: {
+                    width: width + 'px',
+                    height: height + 'px'
+                }
+            }
+        });
+
+        annotation.setControlPointsVisibility(true);
+    };
+}
+
+var stockToolsBindings = {
     // Simple annotations:
     'circle-annotation': {
         start: function (e) {
@@ -208,10 +235,39 @@ H.Toolbar.prototype.features = {
         ]
     },
     'rectangle-annotation': {
-        start: function () {
-            // TO DO:
-            // Consider using measure-type with disabled labels and crosshairs
-        }
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                options = {
+                    type: 'measure',
+                    typeOptions: {
+                        point: {
+                            x: x,
+                            y: y,
+                            xAxis: 0,
+                            yAxis: 0
+                        },
+                        background: {
+                            width: 0,
+                            height: 0
+                        },
+                        crosshairX: {
+                            enabled: false
+                        },
+                        crosshairY: {
+                            enabled: false
+                        },
+                        label: {
+                            enabled: false
+                        }
+                    }
+                };
+
+            return this.chart.addAnnotation(options);
+        },
+        steps: [
+            updateRectSize()
+        ]
     },
     'label-annotation': {
         start: function (e) {
@@ -597,48 +653,85 @@ H.Toolbar.prototype.features = {
             updateNthPoint(4)
         ]
     },
-    'measure': {
+    'measureX': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
                 options = {
                     type: 'measure',
                     typeOptions: {
+                        selectType: 'x',
                         point: {
                             x: x,
                             y: y,
                             xAxis: 0,
                             yAxis: 0
                         },
-                        xAxis: 0,
-                        yAxis: 0,
                         background: {
-                            width: 300,
-                            height: 150
+                            width: 0,
+                            height: 0
                         }
                     }
                 };
 
-            if (!this.currentAnnotation) {
-                this.currentAnnotation = this.chart.addAnnotation(options);
-            }
-
-            this.currentAnnotation.setControlPointsVisibility(true);
+            return this.chart.addAnnotation(options);
         },
-        _steps: [
-            function () {
-                var options = this.currentAnnotation.options.typeOptions;
-
-                this.currentAnnotation.update({
+        steps: [
+            updateRectSize()
+        ]
+    },
+    'measureY': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                options = {
+                    type: 'measure',
                     typeOptions: {
-                        point: [
-                            options.point
-                        ]
+                        selectType: 'y',
+                        point: {
+                            x: x,
+                            y: y,
+                            xAxis: 0,
+                            yAxis: 0
+                        },
+                        background: {
+                            width: 0,
+                            height: 0
+                        }
                     }
-                });
+                };
 
-                this.currentAnnotation.setControlPointsVisibility(true);
-            }
+            return this.chart.addAnnotation(options);
+        },
+        steps: [
+            updateRectSize()
+        ]
+    },
+    'measureXY': {
+        start: function (e) {
+            var x = this.chart.xAxis[0].toValue(e.chartX),
+                y = this.chart.yAxis[0].toValue(e.chartY),
+                options = {
+                    type: 'measure',
+                    typeOptions: {
+                        selectType: 'xy',
+                        point: {
+                            x: x,
+                            y: y,
+                            xAxis: 0,
+                            yAxis: 0
+                        },
+                        background: {
+                            width: 0,
+                            height: 0
+                        }
+                    }
+                };
+
+            return this.chart.addAnnotation(options);
+        },
+        steps: [
+            updateRectSize()
         ]
     },
     // Advanced type annotations:
@@ -735,9 +828,14 @@ H.Toolbar.prototype.features = {
             annotation = this.chart.addAnnotation({
                 type: 'vertical-line',
                 typeOptions: {
-                    point: closestPoint,
+                    point: {
+                        x: closestPoint.x,
+                        y: closestPoint.y,
+                        xAxis: closestPoint.xAxis,
+                        yAxis: closestPoint.yAxis
+                    },
                     label: {
-                        offset: closestPoint.below ? -40 : 40,
+                        offset: closestPoint.below ? 40 : -40,
                         text: this.verticalCounter.toString()
                     }
                 }
@@ -754,7 +852,12 @@ H.Toolbar.prototype.features = {
                 annotation = this.chart.addAnnotation({
                     type: 'vertical-line',
                     typeOptions: {
-                        point: closestPoint,
+                        point: {
+                            x: closestPoint.x,
+                            y: closestPoint.y,
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis
+                        },
                         label: {
                             offset: closestPoint.below ? 40 : -40
                         }
@@ -770,7 +873,12 @@ H.Toolbar.prototype.features = {
                 annotation = this.chart.addAnnotation({
                     type: 'vertical-line',
                     typeOptions: {
-                        point: closestPoint,
+                        point: {
+                            x: closestPoint.x,
+                            y: closestPoint.y,
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis
+                        },
                         label: {
                             offset: closestPoint.below ? 40 : -40,
                             format: ' '
@@ -789,7 +897,7 @@ H.Toolbar.prototype.features = {
 
     },
     // Flag types:
-    'flag-cirlcepin': {
+    'flag-circlepin': {
         start: addFlagFromForm('circlepin')
     },
     'flag-diamondpin': {
@@ -859,19 +967,19 @@ H.Toolbar.prototype.features = {
         init: function () {
             var series = this.chart.series[0],
                 options = series.options,
-                priceIndicator = options.priceIndicator &&
-                                options.priceIndicator.enabled,
-                showPrice = options.showPrice && options.showPrice.enabled;
+                lastVisiblePrice = options.lastVisiblePrice &&
+                                options.lastVisiblePrice.enabled,
+                lastPrice = options.lastPrice && options.lastPrice.enabled;
 
             series.update({
                 // line
-                showPrice: {
-                    enabled: !showPrice,
+                lastPrice: {
+                    enabled: !lastPrice,
                     color: 'red'
                 },
                 // label
-                priceIndicator: {
-                    enabled: !priceIndicator,
+                lastVisiblePrice: {
+                    enabled: !lastVisiblePrice,
                     label: {
                         enabled: true
                     }
@@ -882,23 +990,43 @@ H.Toolbar.prototype.features = {
     'indicators': {
         init: function () {
             var chart = this.chart;
-            if (this.showIndicatorsForm) {
-                this.showIndicatorsForm(
+
+            if (this.showForm) {
+                this.showForm(
+                    'indicators',
                     // Callback on submit:
-                    function (fields) {
+                    function (data) {
                         var seriesConfig = {
-                            params: {}
+                            linkedTo: data.linkedTo,
+                            type: data.type
                         };
 
-                        each(fields, function (field) {
-                            if (field.match('params')) {
-                                // Params e.g. "params.period"
-                                seriesConfig.params[
-                                    field.name.replace('params', '')
-                                ] = field.value;
-                            } else {
-                                // General series options, e.g. color
-                                seriesConfig[field.name] = field.value;
+                        objectEach(data.fields, function (value, field) {
+                            var parsedValue = parseFloat(value),
+                                path = field.split('.'),
+                                parent = seriesConfig,
+                                pathLength = path.length - 1;
+
+                            // If it's a number, parse it:
+                            if (isNumber(parsedValue)) {
+                                value = parsedValue;
+                            }
+
+                            // Remove empty strings or values like 0
+                            if (value) {
+                                each(path, function (name, index) {
+                                    if (pathLength === index) {
+                                        // Last index, put value:
+                                        parent[name] = value;
+                                    } else if (!parent[name]) {
+                                        // Create middle property:
+                                        parent[name] = {};
+                                        parent = parent[name];
+                                    } else {
+                                        // Jump into next property
+                                        parent = parent[name];
+                                    }
+                                });
                             }
                         });
 
@@ -919,41 +1047,183 @@ H.Toolbar.prototype.features = {
     },
     'save-chart': {
         start: function () {
-
+            // TO DO:
+            // Save in localhost, note it should save:
+            // - annotations
+            // - indicators
+            // - toolbar button states (e.g. price indicator)
+            // - all flag series
         }
     }
 };
 
+extend(H.Toolbar.prototype, {
+    // Private properties added by bindings:
+
+    // Holder for current step, used on mouse move to update bound object
+    // mouseMoveEvent: function () {}
+
+    // Next event in `step` array to be called on chart's click
+    // nextEvent: function () {}
+
+    // Index if the `step` array for the current event
+    // stepIndex: 0
+
+    // Flag to determine if current binding has steps
+    // steps: true|false
+
+    // Bindings holder for all events
+    // selectedButton: {}
+
+    // Holder for user options, returned from `start` event, and passed on to
+    // `step`'s' and `end`.
+    // currentUserDetails: {}
+
+    /*
+     * Hook for click on a button, method selcts/unselects buttons,
+     * then calls `bindings.init` callback.
+     *
+     * @param {HTMLDOMElement} [button] Clicked button
+     * @param {Object} [events] Events passed down from bindings (`init`,
+     * `start`, `step`, `end`)
+     * @param {Event} [clickEvent] Browser's click event
+     *
+     * @private
+     */
+    bindingsButtonClick: function (button, events, clickEvent) {
+        var toolbar = this;
+
+        // We have two objects with the same class,
+        // so need to trigger one event (main button)
+        clickEvent.stopPropagation();
+
+        toolbar.selectedButton = events;
+
+        // Unslect other active buttons
+        toolbar.unselectAllButtons(button);
+
+        // Set active class on the current button
+        toolbar.selectButton(button);
+
+        // Call "init" event, for example to open modal window
+        if (events.init) {
+            events.init.call(toolbar);
+        }
+    },
+    /*
+     * Hook for click on a chart, first click on a chart calls `start` event,
+     * then on all subsequent clicks iterates over `steps` array.
+     * When finished, calls `end` event.
+     *
+     * @param {Chart} Chart that click was performed on
+     * @param {Event} Browser's click event
+     *
+     * @private
+     */
+    bindingsChartClick: function (chart, clickEvent) {
+        var toolbar = this,
+            selectedButton = toolbar.selectedButton;
+
+        if (!selectedButton || !selectedButton.start) {
+            return;
+        }
+
+        if (!toolbar.nextEvent) {
+            // Call init method:
+            toolbar.currentUserDetails = selectedButton.start.call(
+                toolbar,
+                clickEvent
+            );
+
+            // If steps exists (e.g. Annotations), bind them:
+            if (selectedButton.steps) {
+                toolbar.stepIndex = 0;
+                toolbar.steps = true;
+                toolbar.mouseMoveEvent = toolbar.nextEvent =
+                    selectedButton.steps[toolbar.stepIndex];
+            } else {
+                toolbar.steps = false;
+                toolbar.selectedButton = null;
+                // First click is also the last one:
+                if (selectedButton.end) {
+                    selectedButton.end.call(
+                        toolbar,
+                        clickEvent,
+                        toolbar.currentUserDetails
+                    );
+                }
+            }
+        } else {
+
+            toolbar.nextEvent.call(
+                toolbar,
+                clickEvent,
+                toolbar.currentUserDetails
+            );
+
+            if (toolbar.steps) {
+
+                toolbar.stepIndex++;
+
+                if (selectedButton.steps[toolbar.stepIndex]) {
+                    // If we have more steps, bind them one by one:
+                    toolbar.mouseMoveEvent = toolbar.nextEvent =
+                        selectedButton.steps[toolbar.stepIndex];
+                } else {
+
+                    // That was the last step, call end():
+                    if (selectedButton.end) {
+                        selectedButton.end.call(
+                            toolbar,
+                            clickEvent,
+                            toolbar.currentUserDetails
+                        );
+                    }
+                    toolbar.nextEvent = false;
+                    toolbar.mouseMoveEvent = false;
+                    toolbar.selectedButton = null;
+                    // toolbar.deselectButton();
+                }
+            }
+        }
+    },
+    /*
+     * Hook for mouse move on a chart's container. It calls current setp.
+     *
+     * @param {HTMLDOMElement} Chart's container
+     * @param {Event} Browser's click event
+     *
+     * @private
+     */
+    bindingsContainerMouseMove: function (container, moveEvent) {
+        if (this.mouseMoveEvent) {
+            this.mouseMoveEvent.call(
+                this,
+                moveEvent,
+                this.currentUserDetails
+            );
+        }
+    }
+});
+
 addEvent(H.Toolbar, 'afterInit', function () {
     var toolbar = this;
 
-    objectEach(toolbar.features, function (events, className) {
-        var element = doc.getElementsByClassName(PREFIX + className)[0];
-        if (element) {
-            addEvent(
-                element,
-                'click',
-                function (e) {
-                    // We have two objects with the same class,
-                    // so need to trigger one event (main button)
-                    e.stopPropagation();
-
-                    toolbar.selectedButton = events;
-
-                    // Unslect other active buttons
-                    toolbar.unselectAllButtons(this);
-
-                    // Set active class on the current button
-                    toolbar.selectButton(this);
-
-                    // Call "init" event, for example to open modal window
-                    if (events.init) {
-                        events.init.call(toolbar);
+    objectEach(
+        toolbar.chart.options.stockTools.bindings,
+        function (events, className) {
+            var element = doc.getElementsByClassName(PREFIX + className)[0];
+            if (element) {
+                addEvent(
+                    element,
+                    'click',
+                    function (e) {
+                        toolbar.bindingsButtonClick(this, events, e);
                     }
-                }
-            );
+                );
+            }
         }
-    });
+    );
 });
 
 addEvent(H.Chart, 'load', function () {
@@ -962,75 +1232,16 @@ addEvent(H.Chart, 'load', function () {
 
     if (toolbar) {
         addEvent(chart, 'click', function (e) {
-            var selectedButton = toolbar.selectedButton;
-
-            if (!selectedButton || !selectedButton.start) {
-                return;
-            }
-
-            if (!toolbar.nextEvent) {
-                // Call init method:
-                toolbar.currentUserDetails = selectedButton.start.call(
-                    toolbar,
-                    e
-                );
-
-                // If steps exists (e.g. Annotations), bind them:
-                if (selectedButton.steps) {
-                    toolbar.stepIndex = 0;
-                    toolbar.steps = true;
-                    toolbar.mouseMoveEvent = toolbar.nextEvent =
-                        selectedButton.steps[toolbar.stepIndex];
-                } else {
-                    toolbar.steps = false;
-                    toolbar.selectedButton = null;
-                    // First click is also the last one:
-                    if (selectedButton.end) {
-                        selectedButton.end.call(
-                            toolbar,
-                            e,
-                            toolbar.currentUserDetails
-                        );
-                    }
-                }
-            } else {
-
-                toolbar.nextEvent.call(toolbar, e, toolbar.currentUserDetails);
-
-                if (toolbar.steps) {
-
-                    toolbar.stepIndex++;
-
-                    if (selectedButton.steps[toolbar.stepIndex]) {
-                        // If we have more steps, bind them one by one:
-                        toolbar.mouseMoveEvent = toolbar.nextEvent =
-                            selectedButton.steps[toolbar.stepIndex];
-                    } else {
-
-                        // That was the last step, call end():
-                        if (selectedButton.end) {
-                            selectedButton.end.call(
-                                toolbar,
-                                e,
-                                toolbar.currentUserDetails
-                            );
-                        }
-                        toolbar.nextEvent = false;
-                        toolbar.mouseMoveEvent = false;
-                        toolbar.selectedButton = null;
-                        // toolbar.deselectButton();
-                    }
-                }
-            }
+            toolbar.bindingsChartClick(this, e);
         });
         addEvent(chart.container, 'mousemove', function (e) {
-            if (toolbar.mouseMoveEvent) {
-                toolbar.mouseMoveEvent.call(
-                    toolbar,
-                    e,
-                    toolbar.currentUserDetails
-                );
-            }
+            toolbar.bindingsContainerMouseMove(this, e);
         });
+    }
+});
+
+H.setOptions({
+    stockTools: {
+        bindings: stockToolsBindings
     }
 });

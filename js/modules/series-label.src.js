@@ -11,10 +11,10 @@
  * - avoid data labels, when data labels above, show series label below.
  * - add more options (connector, format, formatter)
  *
- * http://jsfiddle.net/highcharts/L2u9rpwr/
- * http://jsfiddle.net/highcharts/y5A37/
- * http://jsfiddle.net/highcharts/264Nm/
- * http://jsfiddle.net/highcharts/y5A37/
+ * https://jsfiddle.net/highcharts/L2u9rpwr/
+ * https://jsfiddle.net/highcharts/y5A37/
+ * https://jsfiddle.net/highcharts/264Nm/
+ * https://jsfiddle.net/highcharts/y5A37/
  */
 
 'use strict';

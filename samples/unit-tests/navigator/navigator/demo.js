@@ -513,16 +513,17 @@ function (assert) {
 });
 
 QUnit.test(
-    'Update of adaptToUpdatedData should remove all related events (#8038)',
+    'Highcharts events tests',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
-            series: [{
-                data: [1, 2, 3]
-            }],
-            navigator: {
-                adaptToUpdatedData: true
-            }
-        });
+                series: [{
+                    data: [1, 2, 3]
+                }],
+                navigator: {
+                    adaptToUpdatedData: true
+                }
+            }),
+            getMarginsLength = chart.hcEvents.getMargins.length;
 
         chart.update({
             navigator: {
@@ -533,7 +534,13 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].hcEvents.updatedData.length,
             1,
-            'Only one event remaining'
+            'Update of adaptToUpdatedData should remove all related events (#8038)'
+        );
+
+        assert.strictEqual(
+            chart.hcEvents.getMargins.length,
+            getMarginsLength,
+            'Update of navigator should not add extra events getMargins (#8595)'
         );
     }
 );

@@ -38,4 +38,22 @@ QUnit.test('General waterfall tests', function (assert) {
     });
 
     assert.ok(1, 'No errors when stacking starts from negative value (#2280)');
+
+
+    chart.update({
+        series: [{
+            dataLabels: {
+                enabled: true,
+                inside: false
+            },
+            data: [-5.8, -5.3, -4, -2.7, -6.9]
+        }]
+    }, true, true);
+
+    assert.ok(
+        chart.series[0].points[0].dataLabel.attr('y') >=
+            chart.series[0].points[0].plotY +
+            chart.series[0].points[0].shapeArgs.height,
+        'Label rendered below the point.'
+    );
 });
