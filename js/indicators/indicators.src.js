@@ -12,8 +12,15 @@ var pick = H.pick,
     seriesType = H.seriesType,
     ohlcProto = H.seriesTypes.ohlc.prototype;
 
-/*
- * Support for OHLC data with line type of series.
+/**
+ * The parameter allows setting line series type and use OHLC indicators.
+ * Data in OHLC format is required.
+ *
+ * @type {Boolean}
+ * @extends plotOptions.line
+ * @product highstock
+ * @sample {highstock} stock/indicators/useOHLCdata Plot line on Y axis
+ * @apioption plotOptions.line.useOHLCdata
  */
 
 addEvent(H.Series, 'beforeInit', function (eventOptions) {
@@ -22,7 +29,7 @@ addEvent(H.Series, 'beforeInit', function (eventOptions) {
         dataGrouping = options.dataGrouping;
 
     if (
-        options.forceIndicator &&
+        options.useOHLCdata &&
         options.id !== 'highcharts-navigator-series'
         ) {
 
