@@ -407,14 +407,13 @@ H.Popup.prototype = {
      * @param {Chart} - chart
      * @param {Function} - on click callback
      *
-     * @return {Object} - fields
      */
     indicatorsForm: function (chart, callback) {
 
         var tabsContainers;
 
         // add tabs
-        this.tabs.init.call(this);
+        this.tabs.init.call(this, chart);
 
         // get all tabs content divs
         tabsContainers = this.popupDiv
@@ -437,6 +436,28 @@ H.Popup.prototype = {
             tabsContainers[1].querySelectorAll('.highcharts-popup-rhs-col')[0],
             callback
         );
+    },
+    /*
+     * Get amount of indicators added to chart.
+     *
+     * @return {Number} - Amount of indicators
+     */
+    getIndicatorsCount: function () {
+        var series = this.series,
+            counter = 0;
+
+        objectEach(series, function (serie, value) {
+            var seriesOptions = serie.options;
+
+            if (
+                serie.params ||
+                seriesOptions && seriesOptions.params
+                ) {
+                counter++;
+            }
+        });
+
+        return counter;
     },
     /*
      * Reset content of the current popup and show.
@@ -488,20 +509,23 @@ H.Popup.prototype = {
         /*
          * Init tabs. Create tab menu items, tabs containers
          *
+         * @param {Chart} - reference to current chart
+         *
          */
-        init: function () {
+        init: function (chart) {
             var tabs = this.tabs,
+                indicatorsCount = this.getIndicatorsCount.call(chart),
                 firstTab; // run by default
 
             // create menu items
             firstTab = tabs.addMenuItem.call(this, 'add');
-            tabs.addMenuItem.call(this, 'edit');
+            tabs.addMenuItem.call(this, 'edit', indicatorsCount);
 
             // create tabs containers
             tabs.addContentItem.call(this, 'add');
             tabs.addContentItem.call(this, 'edit');
 
-            tabs.switchTabs.call(this);
+            tabs.switchTabs.call(this, indicatorsCount);
 
             // activate first tab
             tabs.selectTab.call(this, firstTab, 0);
@@ -510,19 +534,25 @@ H.Popup.prototype = {
          * Create tab menu item
          *
          * @param {String} - `add` or `edit`
+         * @param {Number} - Disable tab when 0
          *
          * @return {HTMLDOMElement} - created HTML tab-menu element
          */
-        addMenuItem: function (tabName) {
+        addMenuItem: function (tabName, disableTab) {
             var popupDiv = this.popupDiv,
+                className = 'highcharts-tab-item',
                 menuItem;
+
+            if (disableTab === 0) {
+                className += ' highcharts-tab-disabled';
+            }
 
             // tab 1
             menuItem = createElement(
                 SPAN,
                 {
                     innerHTML: tabName,
-                    className: 'highcharts-tab-item'
+                    className: className
                 },
                 null,
                 popupDiv
@@ -553,13 +583,23 @@ H.Popup.prototype = {
         /*
          * Add click event to each tab
          *
+         * @param {Number} - Disable tab when 0
+         *
          */
-        switchTabs: function () {
+        switchTabs: function (disableTab) {
             var _self = this,
                 popupDiv = this.popupDiv,
-                tabs = popupDiv.querySelectorAll('.highcharts-tab-item');
+                tabs = popupDiv.querySelectorAll('.highcharts-tab-item'),
+                dataParam;
 
             each(tabs, function (tab, i) {
+
+                dataParam = tab.getAttribute('highcharts-data-tab-type');
+                
+                if (dataParam === 'edit' && disableTab === 0) {
+                    return;
+                }
+
                 addEvent(tab, 'click', function () {
 
                     // reset class on other elements
