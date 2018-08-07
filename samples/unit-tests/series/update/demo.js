@@ -554,3 +554,52 @@ QUnit.test('Series.update without altering zIndex (#7397)', function (assert) {
     );
 
 });
+
+// Highcharts 4.0.4, Issue #3728
+// Point.update doesn't update category name
+QUnit.test('First category should become "Vier" after update. (#3728)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            data: [{
+                name: 'Eins',
+                y: 1
+            }, {
+                name: 'Zwei',
+                y: 2
+            }, {
+                name: 'Drei',
+                y: 3
+            }]
+        }]
+    });
+    var expectedXCategories = ["Eins", "Zwei", "Drei"],
+        xCategories = chart.xAxis[0].names.slice();
+
+    assert.deepEqual(
+        expectedXCategories,
+        xCategories,
+        "The x categories is not equal to the expected x categories"
+    );
+
+    chart.series[0].points[0].update({
+        name: 'Vier',
+        y: 4
+    });
+
+    var expectedXCategoriesUpdated = ["Vier", "Zwei", "Drei"],
+        xCategoriesUpdated = chart.xAxis[0].names;
+
+    assert.notDeepEqual(
+        xCategoriesUpdated,
+        xCategories,
+        "The x categories should be updated"
+    );
+    assert.deepEqual(
+        expectedXCategoriesUpdated,
+        xCategoriesUpdated,
+        "The x categories is not equal to the expected x categories"
+    );
+});
