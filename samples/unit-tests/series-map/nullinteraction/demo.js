@@ -71,8 +71,7 @@ QUnit.test('nullInteraction', function (assert) {
     var controller = new TestController(chart);
 
     var point = chart.series[0].points[0];
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + point.plotX,
         chart.plotTop + point.plotY
     );

@@ -497,9 +497,9 @@ function (assert) {
     function navRender() {
         var x = rightHandle.x + rightHandle.translateX + rightHandle.width / 2,
             y = rightHandle.y + rightHandle.translateY + rightHandle.height / 2;
-        controller.triggerOnChart('mousedown', x, y);
-        controller.triggerOnChart('mousemove', x, y);
-        controller.triggerOnChart('mouseup', x, y);
+        controller.triggerEvent('mousedown', x, y);
+        controller.triggerEvent('mousemove', x, y);
+        controller.triggerEvent('mouseup', x, y);
     }
 
     navRender();
