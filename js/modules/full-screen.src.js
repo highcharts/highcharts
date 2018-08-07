@@ -14,12 +14,18 @@ H.FullScreen = function (container) {
 };
 
 /**
- * The module allows user to enable full screen mode in StockTools. 
+ * The module allows user to enable full screen mode in StockTools.
  * Based on default solutions in browsers.
  *
  */
 
 H.FullScreen.prototype = {
+    /**
+     * Init function
+     *
+     * @param {HTMLDOMElement} - chart div
+     *
+     */
     init: function (container) {
         if (container.requestFullscreen) {
             container.requestFullscreen();
