@@ -13,6 +13,12 @@ H.FullScreen = function (container) {
     this.init(container);
 };
 
+/**
+ * The module allows user to enable full screen mode in StockTools. 
+ * Based on default solutions in browsers.
+ *
+ */
+
 H.FullScreen.prototype = {
     init: function (container) {
         if (container.requestFullscreen) {
