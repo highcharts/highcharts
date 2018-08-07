@@ -296,6 +296,9 @@
 }
 
 .highcharts-popup-close {
+  background:url(http://utils.highcharts.local/samples/graphics/close.svg) no-repeat 50% 50%;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
   position: absolute;
   padding: 10px;

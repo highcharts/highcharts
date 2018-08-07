@@ -61,7 +61,6 @@ H.Popup.prototype = {
 
         // create close popup btn
         closeBtn = createElement(DIV, {
-            innerHTML: 'X',
             className: 'highcharts-popup-close'
         }, null, popup);
 
