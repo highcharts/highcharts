@@ -32,7 +32,8 @@ QUnit.test('Bindings general tests', function (assert) {
         bindings = chart.options.stockTools.bindings,
         points = chart.series[0].points,
         controller = TestController(chart),
-        annotationsCounter = 0;
+        annotationsCounter = 0,
+        i = 0;
 
     // CSS Styles are not loaded, so hide left bar. If we don't hide the bar,
     // chart will be rendered outside the visible page and events will not be
@@ -267,5 +268,55 @@ QUnit.test('Bindings general tests', function (assert) {
     );
     localStorage.removeItem('highcharts-stock-tools-chart');
     */
+
+    // Test yAxis resizers and adding indicators:
+    for (i = 0; i < 9; i++) {
+        chart.stockToolbar.utils.manageIndicators.call(
+            chart.stockToolbar,
+            {
+                linkedTo: 'aapl',
+                fields: {
+                    'params.index': '0',
+                    'params.period': '5'
+                },
+                type: 'atr'
+            }
+        );
+        assert.close(
+            parseFloat(chart.yAxis[0].options.height),
+            i < 4 ?
+                (100 - (i + 1) * 20) :
+                100 / (i + 2),
+            0.0001, // up to 0.0001% is fine
+            'Correct height for MAIN yAxis (' + (i + 2) + ' panes - indicator.add).'
+        );
+        assert.close(
+            parseFloat(chart.yAxis[i + 2].options.height),
+            i < 4 ?
+                20 :
+                100 / (i + 2),
+            0.0001, // up to 0.0001% is fine
+            'Correct height for LAST yAxis (' + (i + 2) + ' panes - indicator.add).'
+        );
+    }
+
+    for (i = 9; i > 0; i--) {
+        chart.stockToolbar.utils.manageIndicators.call(
+            chart.stockToolbar,
+            {
+                remove: true,
+                id: chart.series[chart.series.length - 2].options.id
+            }
+        );
+
+        assert.close(
+            parseFloat(chart.yAxis[0].options.height),
+            i < 6 ?
+                100 - (i - 1) * 20 :
+                100 / i,
+            0.005, // up to 0.5% is fine
+            'Correct height for main yAxis (' + (i + 1) + ' pane(s) - indicator.remove).'
+        );
+    }
 
 });
