@@ -2048,6 +2048,10 @@ H.uniqueKey = (function () {
     };
 }());
 
+H.isFunction = function (obj) {
+    return typeof obj === 'function';
+};
+
 /**
  * Register Highcharts as a plugin in jQuery
  */

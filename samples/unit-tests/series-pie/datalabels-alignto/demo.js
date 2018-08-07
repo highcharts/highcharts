@@ -33,7 +33,9 @@ QUnit.test('Pie data labels alingTo option', function (assert) {
         }]
     });
 
-    var points = chart.series[0].points,
+    var series = chart.series[0],
+        points = series.points,
+        connectorPadding = series.options.dataLabels.connectorPadding,
         point,
         dataLabel,
         translateX,
@@ -44,15 +46,15 @@ QUnit.test('Pie data labels alingTo option', function (assert) {
         rightHalfMaxLabelWidth = 0,
         i;
 
+
     // alingTo: 'plotEdges'
     for (i = 0; i < points.length && isAlignmnetCorrect; i++) {
         point = points[i];
         dataLabel = point.dataLabel;
         width = dataLabel.getBBox().width;
         translateX = dataLabel.translateX;
-
         isAlignmnetCorrect = (point.half ?
-            Math.abs(translateX) : Math.abs(chart.plotWidth - translateX - width)) < acceptableDifference;
+            Math.abs(translateX - connectorPadding) : Math.abs(chart.plotWidth - translateX - width - connectorPadding)) <= acceptableDifference;
     }
     assert.ok(
         isAlignmnetCorrect,
@@ -90,8 +92,8 @@ QUnit.test('Pie data labels alingTo option', function (assert) {
         width = dataLabel.getBBox().width;
         translateX = dataLabel.translateX;
 
-        isAlignmnetCorrect = (point.half ? Math.abs(leftHalfMaxLabelWidth - translateX - width) :
-            Math.abs(chart.plotWidth - translateX - rightHalfMaxLabelWidth)) < acceptableDifference;
+        isAlignmnetCorrect = (point.half ? Math.abs(leftHalfMaxLabelWidth - translateX - width + connectorPadding) :
+            Math.abs(chart.plotWidth - translateX - rightHalfMaxLabelWidth - connectorPadding)) <= acceptableDifference;
 
     }
     assert.ok(

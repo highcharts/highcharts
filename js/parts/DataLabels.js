@@ -626,7 +626,7 @@ if (seriesTypes.pie) {
                 y,
                 half,
                 point
-        );
+            );
         },
 
         // dataLabels.distance determines the x position of the label
@@ -639,10 +639,10 @@ if (seriesTypes.pie) {
         // area. Right edges of the right-half labels touch the right edge of
         // the plot area.
         alignToPlotEdges: function (dataLabel, half,
-            plotWidth, connectorPadding) {
+            plotWidth, plotLeft) {
             var dataLabelWidth = dataLabel.getBBox().width;
-            return half ? dataLabelWidth + connectorPadding :
-                    plotWidth - dataLabelWidth - connectorPadding;
+            return half ? dataLabelWidth + plotLeft :
+                    plotWidth - dataLabelWidth - plotLeft;
         },
 
         // Connectors of each side end in the same x position. Labels are
@@ -650,7 +650,7 @@ if (seriesTypes.pie) {
         // left edge of the plot area. Right edge of the widest right-half label
         // touches the right edge of the plot area.
         alignToConnectors: function (points, half, plotWidth,
-            connectorPadding) {
+            plotLeft) {
             var maxDataLabelWidth = 0,
                 dataLabelWidth;
 
@@ -661,8 +661,8 @@ if (seriesTypes.pie) {
                     maxDataLabelWidth = dataLabelWidth;
                 }
             });
-            return half ? maxDataLabelWidth + connectorPadding :
-                plotWidth - maxDataLabelWidth - connectorPadding;
+            return half ? maxDataLabelWidth + plotLeft :
+                plotWidth - maxDataLabelWidth - plotLeft;
         }
     };
 
@@ -672,10 +672,11 @@ if (seriesTypes.pie) {
             point,
             chart = series.chart,
             options = series.options.dataLabels,
-            connectorPadding = pick(options.connectorPadding, 10),
+            connectorPadding = options.connectorPadding,
             connectorWidth = pick(options.connectorWidth, 1),
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
+            plotLeft = chart.plotLeft,
             maxWidth = Math.round(chart.chartWidth / 3),
             connector,
             seriesCenter = series.center,
@@ -683,7 +684,8 @@ if (seriesTypes.pie) {
             centerY = seriesCenter[1],
             dataLabel,
             dataLabelWidth,
-            labelPos,
+            // labelPos,
+            labelPosition,
             labelHeight,
             // divide the points into right and left halves for anti collision
             halves = [
@@ -809,7 +811,8 @@ if (seriesTypes.pie) {
                         // parameter related to specific point inside positions
                         // array - not every point is in positions array.
                         point.distributeBox = {
-                            target: point.labelPos[1] - point.top + size / 2,
+                            target: point.labelPosition.natural.y -
+                                point.top + size / 2,
                             size: size,
                             rank: point.y
                         };
@@ -828,10 +831,11 @@ if (seriesTypes.pie) {
             for (j = 0; j < length; j++) {
 
                 point = points[j];
-                labelPos = point.labelPos;
+                // labelPos = point.labelPos;
+                labelPosition = point.labelPosition;
                 dataLabel = point.dataLabel;
                 visibility = point.visible === false ? 'hidden' : 'inherit';
-                naturalY = labelPos[1];
+                naturalY = labelPosition.natural.y;
                 y = naturalY;
 
                 if (positions && defined(point.distributeBox)) {
@@ -858,11 +862,11 @@ if (seriesTypes.pie) {
                     switch (options.alignTo) {
                         case 'connectors':
                             x = dataLabelPositioners.alignToConnectors(points,
-                                i, plotWidth, connectorPadding);
+                                i, plotWidth, plotLeft);
                             break;
                         case 'plotEdges':
                             x = dataLabelPositioners.alignToPlotEdges(dataLabel,
-                                 i, plotWidth, connectorPadding);
+                                 i, plotWidth, plotLeft);
                             break;
                         default:
                             x = dataLabelPositioners.alignX(series, point, y,
@@ -873,7 +877,7 @@ if (seriesTypes.pie) {
                 // Record the placement and visibility
                 dataLabel._attr = {
                     visibility: visibility,
-                    align: labelPos[6]
+                    align: labelPosition.alignment
                 };
                 dataLabel._pos = {
                     x: (
@@ -882,15 +886,16 @@ if (seriesTypes.pie) {
                         ({
                             left: connectorPadding,
                             right: -connectorPadding
-                        }[labelPos[6]] || 0)
+                        }[labelPosition.alignment] || 0)
                     ),
 
                     // 10 is for the baseline (label vs text)
                     y: y + options.y - 10
                 };
-                labelPos.x = x;
-                labelPos.y = y;
-
+                // labelPos.x = x;
+                // labelPos.y = y;
+                labelPosition.final.x = x;
+                labelPosition.final.y = y;
 
                 // Detect overflowing data labels
                 if (pick(options.crop, true)) {
@@ -989,7 +994,7 @@ if (seriesTypes.pie) {
                             /*= } =*/
                         }
                         connector[isNew ? 'attr' : 'animate']({
-                            d: series.connectorPath(point.labelPos)
+                            d: point.getConnectorPath()
                         });
                         connector.attr('visibility', visibility);
 
@@ -1005,6 +1010,8 @@ if (seriesTypes.pie) {
      * Extendable method for getting the path of the connector between the data
      * label and the pie slice.
      */
+     // TODO: depracated - remove it
+     /*
     seriesTypes.pie.prototype.connectorPath = function (labelPos) {
         var x = labelPos.x,
             y = labelPos.y;
@@ -1028,6 +1035,8 @@ if (seriesTypes.pie) {
             labelPos[4], labelPos[5] // base
         ];
     };
+    */
+
 
     /**
      * Perform the final placement of the data labels after we have verified

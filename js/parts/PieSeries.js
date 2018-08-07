@@ -118,6 +118,7 @@ seriesType('pie', 'line', {
          * @product highcharts
          * @apioption plotOptions.pie.dataLabels.connectorPadding
          */
+        connectorPadding: 5,
 
         /**
          * The width of the line connecting the data label to the pie slice.
@@ -174,7 +175,7 @@ seriesType('pie', 'line', {
 
         /**
          * Whether to render the connector as a soft arc or a line with sharp
-         * break.
+         * break. Works only if `connectorShape` equals to `fixedOffset`.
          *
          * @type {Number}
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/ Soft
@@ -183,6 +184,7 @@ seriesType('pie', 'line', {
          * @product highcharts
          * @apioption plotOptions.pie.dataLabels.softConnector
          */
+        softConnector: true,
 
          /**
           * Alignment method for data labels. Possible values are: `toPlotEdges` (each label touches
@@ -199,7 +201,57 @@ seriesType('pie', 'line', {
           * @apioption plotOptions.pie.dataLabels.alignTo
           */
 
-        x: 0
+        x: 0,
+
+        /**
+         * Specifies the method that is used to generate the connector path.
+         * Highcharts provides 3 built-in connector shapes: `'fixedOffset'`
+         * (default), `'straight'` and `'crookedLine'`. Using `'crookedLine'`
+         * has the most sense (in most of the cases) when `'alignTo'` is set.
+         *
+         * Users can provide their own method by passing a function instead of
+         * a String. 3 arguments are passed to the callback:
+         *
+         * <ol>
+         *  <li>
+         *   Object that holds the information about the coordinates of the label
+         *   (`x` & `y` properties) and how the label is located in relation to the pie
+         *   (`alignment` property). `alignment` can by one of the following:
+         *   `'left'` (pie on the left side of the data label),
+         *   `'right'` (pie on the right side of the data label) or
+         *   `'center'` (data label overlaps the pie).
+         *  </li>
+         *  <li>
+         *   Object that holds the information about the position of the connector.
+         *   Its `touchingSliceAt`  porperty tells the position of the place where
+         *   the connector touches the slice.
+         *  </li>
+         *  <li>
+         *   Data label options
+         *  </li>
+         * </ol>
+         *
+         * The function has to return an SVG path definition in array form (see the example).
+         *
+         * @type {String|Function}
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-string/ connectorShape is a String
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-function/ connectorShape is a function
+         * @product highcharts
+         * @apioption plotOptions.pie.dataLabels.connectorShape
+         */
+        connectorShape: 'fixedOffset',
+
+        /**
+         * Works only if `connectorShape` is `'crookedLine'`. It defines how far
+         * from the vertical plot edge the coonnector path should be crooked.
+         *
+         * @type {String}
+         * @since 7.0.0
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-crookDistance/ crookDistance set to 90%
+         * @product highcharts
+         * @apioption plotOptions.pie.dataLabels.crookdistance
+         */
+        crookDistance: '70%'
     },
 
     /**
@@ -582,19 +634,36 @@ seriesType('pie', 'line', {
             // instead of labelDistance // #1174
             // finalConnectorOffset - not override connectorOffset value.
             finalConnectorOffset = Math.min(connectorOffset, point.labelDistance / 5); // #1678
-            point.labelPos = [
-                positions[0] + radiusX + Math.cos(angle) * point.labelDistance, // first break of connector
-                positions[1] + radiusY + Math.sin(angle) * point.labelDistance, // a/a
-                positions[0] + radiusX + Math.cos(angle) * finalConnectorOffset, // second break, right outside pie
-                positions[1] + radiusY + Math.sin(angle) * finalConnectorOffset, // a/a
-                positions[0] + radiusX, // landing point for connector
-                positions[1] + radiusY, // a/a
-                point.labelDistance < 0 ? // alignment
-                    'center' :
-                    point.half ? 'right' : 'left', // alignment
-                angle // center angle
-            ];
 
+            point.labelPosition = {
+                natural: {
+                    // initial position of the data label - it's utilized for
+                    // finding the final position for the label
+                    x: positions[0] + radiusX + Math.cos(angle) * point.labelDistance,
+                    y: positions[1] + radiusY + Math.sin(angle) * point.labelDistance
+                },
+                final: {
+                    // used for generating connector path -
+                    // initialized later in drawDataLabels function
+                    // x: undefined,
+                    // y: undefined
+                },
+                // left - pie on the left side of the data label
+                // right - pie on the right side of the data label
+                // center - data label overlaps the pie
+                alignment: point.labelDistance < 0 ?
+                    'center' : point.half ? 'right' : 'left',
+                connectorPosition: {
+                    breakAt: { // used in connectorShapes.fixedOffset
+                        x: positions[0] + radiusX + Math.cos(angle) * finalConnectorOffset,
+                        y: positions[1] + radiusY + Math.sin(angle) * finalConnectorOffset
+                    },
+                    touchingSliceAt: { // middle of the arc
+                        x: positions[0] + radiusX,
+                        y: positions[1] + radiusY
+                    }
+                }
+            };
         }
     },
 
@@ -838,6 +907,119 @@ seriesType('pie', 'line', {
                     end: shapeArgs.end
                 }
             );
+    },
+
+    connectorShapes: {
+        // only one available before v7.0.0
+        fixedOffset: function (labelPosition, connectorPosition, options) {
+            var connectorPadding = options.connectorPadding,
+                breakAt = connectorPosition.breakAt,
+                touchingSliceAt = connectorPosition.touchingSliceAt,
+                linePath = options.softConnector ? [
+                    'C', // soft break
+                    labelPosition.x, // 1st control point (of the curve)
+                    labelPosition.y, //
+                    2 * breakAt.x - touchingSliceAt.x, // 2nd control point
+                    2 * breakAt.y - touchingSliceAt.y, //
+                    breakAt.x, // end of the curve
+                    breakAt.y //
+                ] : [
+                    'L', // pointy break
+                    breakAt.x,
+                    breakAt.y
+                ];
+
+            // assemble the path
+            return [
+                'M',
+                labelPosition.x +
+                    (labelPosition.alignment === 'left' ? 1 : -1) *
+                    connectorPadding,
+                labelPosition.y].concat(linePath).concat([
+                    'L',
+                    touchingSliceAt.x,
+                    touchingSliceAt.y
+                ]);
+        },
+
+        straight: function (labelPosition, connectorPosition, options) {
+            var connectorPadding = options.connectorPadding,
+                touchingSliceAt = connectorPosition.touchingSliceAt;
+
+            // direct line to the slice
+            return ['M',
+                labelPosition.x +
+                    (labelPosition.alignment === 'left' ? 1 : -1) *
+                    connectorPadding,
+                labelPosition.y,
+                'L',
+                touchingSliceAt.x,
+                touchingSliceAt.y
+            ];
+        },
+
+        crookedLine: function (labelPosition, connectorPosition,
+            options) {
+
+            var connectorPadding = options.connectorPadding,
+                touchingSliceAt = connectorPosition.touchingSliceAt,
+                series = this.series,
+                pieCenterX = series.center[0],
+                plotWidth = series.chart.plotWidth,
+                plotLeft = series.chart.plotLeft,
+                alignment = labelPosition.alignment,
+                radius = this.shapeArgs.r,
+                crookDistance =
+                    H.relativeLength(options.crookDistance, 1), // % to fraction
+                crookX = alignment === 'left' ?
+                    pieCenterX + radius + (plotWidth + plotLeft - pieCenterX -
+                        radius) * (1 - crookDistance) :
+                    plotLeft + (pieCenterX - radius) * crookDistance,
+                segmentWithCrook = ['L',
+                    crookX,
+                    labelPosition.y];
+
+            // crookedLine formula doesn't make sense if the path overlaps
+            // the label - use straight line instead in that case
+            if (alignment === 'left' ?
+                (crookX > labelPosition.x || crookX < touchingSliceAt.x) :
+                (crookX < labelPosition.x || crookX > touchingSliceAt.x)) {
+                segmentWithCrook = []; // remove the crook
+            }
+
+            // assemble the path
+            return ['M',
+                labelPosition.x + (alignment === 'left' ? 1 : -1) *
+                    connectorPadding,
+                labelPosition.y].concat(segmentWithCrook).concat(['L',
+                    touchingSliceAt.x,
+                    touchingSliceAt.y
+                ]);
+
+        }
+    },
+
+    /**
+     * Extendable method for getting the path of the connector between the data
+     * label and the pie slice.
+     */
+    getConnectorPath: function () {
+        var labelPosition = this.labelPosition,
+            options = this.series.options.dataLabels,
+            connectorShape = options.connectorShape,
+            predefinedShapes = this.connectorShapes;
+
+        // find out whether to use the predefined shape
+        if (predefinedShapes[connectorShape]) {
+            connectorShape = predefinedShapes[connectorShape];
+        }
+
+        return connectorShape.call(this, {
+            // pass simplified label position object for user's convenience
+            x: labelPosition.final.x,
+            y: labelPosition.final.y,
+            alignment: labelPosition.alignment
+        }, labelPosition.connectorPosition, options);
     }
 });
 
