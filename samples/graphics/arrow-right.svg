@@ -4,9 +4,6 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
 <g>
-	<path fill="#4B4B4D" d="M27.25,4.75H15V3h-1.65v20.175c0,0.456,0.369,0.825,0.825,0.825S15,23.631,15,23.175V16.25h12.25L21.5,10.5
-		L27.25,4.75z M23.689,14.75H15v-8.5h8.689l-4.25,4.25L23.689,14.75z"/>
-	<polygon fill="#4B4B4D" points="17,22.604 21.65,24 14,26.295 6.349,24 11,22.604 11,21.195 1.651,24 14,27.705 26.35,24 
-		17,21.195 	"/>
+	<polygon fill="#4B4B4D" points="12.78,25.03 11.72,23.97 19.689,16 11.72,8.03 12.78,6.97 21.811,16 	"/>
 </g>
 </svg>
