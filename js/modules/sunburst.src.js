@@ -508,7 +508,7 @@ var sunburstOptions = {
     colorByPoint: false,
     /**
      * @extends plotOptions.series.dataLabels
-     * @excluding align,allowOverlap,staggerLines,step
+     * @excluding align,allowOverlap,distance,staggerLines,step
      */
     dataLabels: {
         allowOverlap: true,

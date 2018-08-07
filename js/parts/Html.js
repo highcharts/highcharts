@@ -171,7 +171,10 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
                 // have something to update.
                 if (
                     defined(rotation) &&
-                    rotation !== (wrapper.oldRotation || 0)
+                    (
+                        (rotation !== (wrapper.oldRotation || 0)) ||
+                        (align !== wrapper.oldAlign)
+                    )
                 ) {
                     wrapper.setSpanRotation(
                         rotation,
@@ -203,6 +206,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             // record current text transform
             wrapper.cTT = currentTextTransform;
             wrapper.oldRotation = rotation;
+            wrapper.oldAlign = align;
         }
     },
 

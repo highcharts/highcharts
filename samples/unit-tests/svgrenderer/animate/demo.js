@@ -333,6 +333,18 @@ QUnit.test('Fill and stroke animation', function (assert) {
             duration: 1000
         });
 
+        var rect = ren.rect(100, 200, 10, 10)
+            .attr({
+                fill: '#ff00ff'
+            })
+            .add();
+
+        rect.animate({
+            fill: 'none'
+        }, {
+            duration: 100
+        });
+
         setTimeout(function () {
 
             // Fill
@@ -368,6 +380,13 @@ QUnit.test('Fill and stroke animation', function (assert) {
             );
 
             Highcharts.stop(circ);
+
+            // Animating fill to none
+            assert.strictEqual(
+                rect.element.getAttribute('fill'),
+                'none',
+                'Animating from color to none (#8659)'
+            );
 
             document.body.removeChild(div);
         }, 500);

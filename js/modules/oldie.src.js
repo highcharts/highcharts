@@ -415,7 +415,7 @@ if (!svg) {
             // Firefox 3.5+ on user request. FF3.5+ has support for CSS3
             // transform. The getBBox method also needs to be updated to
             // compensate for the rotation, like it currently does for SVG.
-            // Test case: http://jsfiddle.net/highcharts/Ybt44/
+            // Test case: https://jsfiddle.net/highcharts/Ybt44/
 
             var rotation = this.rotation,
                 costheta = Math.cos(rotation * deg2rad),
