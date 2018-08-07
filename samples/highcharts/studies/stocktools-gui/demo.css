@@ -36,11 +36,11 @@
   font-size: 1.5em;
 }
 
-.highcharts-stocktools-wrapper .highcharts-arrow-wrapper div {
+.highcharts-stocktools-wrapper .highcharts-arrow-wrapper > div {
   cursor: pointer;
 }
 
-.highcharts-stocktools-wrapper .highcharts-arrow-wrapper div:hover {
+.highcharts-stocktools-wrapper .highcharts-arrow-wrapper > div:hover {
   background-color: #e6e6e6;
 }
 
@@ -121,7 +121,7 @@
   position: relative;
 }
 
-.highcharts-stocktools-wrapper li {
+.highcharts-stocktools-wrapper .highcharts-stocktools-toolbar li {
   list-style: none;
   margin-bottom: 3px;
   padding: 0px;
@@ -187,11 +187,11 @@
 .highcharts-hide {
   display: none;
 }
-
+/* CHROME BUG
 .highcharts-stocktools-wrapper li:hover, .highcharts-submenu-item-arrow:hover {
   background-color: #e6e6e6;
 }
-
+*/
 .highcharts-stocktools-wrapper .highcharts-arrow-down, .highcharts-stocktools-wrapper .highcharts-arrow-up {
   width: 50%;
   height: 20px;
@@ -224,7 +224,7 @@
 .highcharts-popup input {
   border: 1px solid #e6e6e6;
   padding: 5px;
-  width: calc(100% - 10px);
+  width: calc(100% - 12px);
 }
 
 .highcharts-popup-lhs-col, .highcharts-popup-rhs-col {
@@ -246,6 +246,8 @@
 .highcharts-popup-rhs-col-wrapper {
   float: left;
   width: 100%;
+  height: calc(100% - 40px);
+  overflow: scroll;
 }
 
 .highcharts-indicator-list {
@@ -256,12 +258,16 @@
 }
 
 .highcharts-indicator-list li {
-  padding: 0px;
+  cursor: pointer;
+  padding: 0px 0px 5px 0px;
   margin: 0px;
   width: 100%;
   height: auto;
-  padding-bottom: 5px;
 }
+/* CHROME BUG
+.highcharts-stocktools-wrapper .highcharts-indicator-list li:hover {
+  background-color: #ffffff;
+}*/
 
 .highcharts-tab-item {
   background-color: #f7f7f7;
@@ -307,6 +313,7 @@
   border: none;
   background: #f7f7f7;
   color: #666;
+  margin-left:5px;
 }
 
 .highcharts-tab-disabled {

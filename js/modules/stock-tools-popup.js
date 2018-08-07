@@ -218,7 +218,7 @@ H.Popup.prototype = {
                 seriesOptions.id &&
                 seriesOptions.id !== 'highcharts-navigator-series'
                 ) {
-                createElement(
+                var optionSelect = createElement(
                     OPTION,
                     {
                         innerHTML: seriesOptions.name || seriesOptions.id,
@@ -227,6 +227,8 @@ H.Popup.prototype = {
                     null,
                     selectBox
                 );
+
+                optionSelect.setAttribute('data-series-id', seriesOptions.id);
             }
         });
     },
@@ -348,24 +350,26 @@ H.Popup.prototype = {
      * Create button.
      *
      * @param {HTMLDOMElement} - container where elements should be added
+     * @param {String} - text placed as button label
+     * @param {String} - add | edit | remove
      * @param {Function} - on click callback
      *
      */
-    addButton: function (parentDiv, callback) {
+    addButton: function (parentDiv, label, type, callback) {
         var _self = this,
             closePopup = this.closePopup,
             getFields = this.getFields,
             button;
 
         button = createElement(BUTTON, {
-            innerHTML: 'add'
+            innerHTML: label
         }, null, parentDiv);
 
         addEvent(button, 'click', function () {
             closePopup.call(_self);
 
             return callback(
-                getFields(parentDiv)
+                getFields(parentDiv, type)
             );
         });
     },
@@ -373,16 +377,19 @@ H.Popup.prototype = {
      * Get values from all inputs (params for indicator) and form JSON.
      *
      * @param {HTMLDOMElement} - container where inputs are created
+     * @param {String} - add | edit | remove 
      *
      * @return {Object} - fields
      */
-    getFields: function (parentDiv) {
+    getFields: function (parentDiv, type) {
         var inputList = parentDiv.querySelectorAll('input'),
             seriesId = parentDiv.querySelectorAll('select > option:checked')[0],
             param,
             fieldsOutput;
 
         fieldsOutput = {
+            actionType: type,
+            seriesId: seriesId.getAttribute('data-series-id'),
             linkedTo: seriesId.getAttribute('value'),
             fields: { }
         };
@@ -425,6 +432,8 @@ H.Popup.prototype = {
         this.addButton.call(
             this,
             tabsContainers[0].querySelectorAll('.highcharts-popup-rhs-col')[0],
+            'add',
+            'add',
             callback
         );
 
@@ -434,6 +443,15 @@ H.Popup.prototype = {
         this.addButton.call(
             this,
             tabsContainers[1].querySelectorAll('.highcharts-popup-rhs-col')[0],
+            'update',
+            'edit',
+            callback
+        );
+        this.addButton.call(
+            this,
+            tabsContainers[1].querySelectorAll('.highcharts-popup-rhs-col')[0],
+            'remove',
+            'remove',
             callback
         );
     },
@@ -446,7 +464,7 @@ H.Popup.prototype = {
         var series = this.series,
             counter = 0;
 
-        objectEach(series, function (serie, value) {
+        objectEach(series, function (serie) {
             var seriesOptions = serie.options;
 
             if (
@@ -595,7 +613,7 @@ H.Popup.prototype = {
             each(tabs, function (tab, i) {
 
                 dataParam = tab.getAttribute('highcharts-data-tab-type');
-                
+
                 if (dataParam === 'edit' && disableTab === 0) {
                     return;
                 }
