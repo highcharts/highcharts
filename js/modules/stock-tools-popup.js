@@ -155,6 +155,11 @@ H.Popup.prototype = {
                 });
             }
         });
+
+        // select first item from the list
+        if (indicatorList.childNodes.length > 0) {
+            indicatorList.childNodes[0].click();
+        }
     },
     /*
      * Create HTML list of all indicators (ADD mode) or added indicators
@@ -377,7 +382,7 @@ H.Popup.prototype = {
      * Get values from all inputs (params for indicator) and form JSON.
      *
      * @param {HTMLDOMElement} - container where inputs are created
-     * @param {String} - add | edit | remove 
+     * @param {String} - add | edit | remove
      *
      * @return {Object} - fields
      */
