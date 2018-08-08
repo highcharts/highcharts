@@ -372,3 +372,42 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
     });
 
 });
+
+// Highcharts v4.0.1, Issue #3104
+// Touch panning falls back to data range, ignores axis min and max
+QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+        xAxis: {
+            min: 0,
+            max: 10
+        },
+        series: [{
+            name: 'blue',
+            color: 'blue',
+            data: [1, 4, 3, 4, 5, 5, 4],
+            pointStart: 4
+        }]
+    }, function (chart) {
+        chart.xAxis[0].setExtremes(2, 15, true, false);
+    });
+    var controller = new TestController(chart),
+        tickPositions = chart.axes[0].tickPositions,
+        touchPointX = (chart.plotSizeX + chart.plotLeft) / 2,
+        touchPointY = (chart.plotSizeY + chart.plotTop) / 2;
+
+    controller.slide(
+        [touchPointX, touchPointY],
+        [touchPointX + 100, touchPointY], undefined, true);
+
+    var tickPositionsAfterSlide =  chart.axes[0].tickPositions;
+
+    assert.deepEqual(
+        tickPositions,
+        tickPositionsAfterSlide,
+        "Tick positions has changed after touch sliding"
+    );
+});
