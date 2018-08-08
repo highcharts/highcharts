@@ -732,7 +732,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
             },
 
             /**
-             * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+             * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
              * to render the annotation's label.
               *
               * @type {Boolean}

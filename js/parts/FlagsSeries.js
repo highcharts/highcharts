@@ -83,7 +83,7 @@ seriesType('flags', 'column', {
 
     /**
      * The shape of the marker. Can be one of "flag", "circlepin", "squarepin",
-     * or an image on the format `url(/path-to-image.jpg)`. Individual
+     * or an image of the format `url(/path-to-image.jpg)`. Individual
      * shapes can also be set for each point.
      *
      * @validvalue ["flag", "circlepin", "squarepin"]
@@ -158,6 +158,27 @@ seriesType('flags', 'column', {
      * @since     1.3
      * @product   highstock
      * @apioption plotOptions.flags.useHTML
+     */
+
+    /**
+     * Fixed width of the flag's shape. By default, width is autocalculated
+     * according to the flag's title.
+     *
+     * @type      {Number}
+     * @default   undefined
+     * @product   highstock
+     * @sample    {highstock} stock/demo/flags-shapes/ Flags with fixed width
+     * @apioption plotOptions.flags.width
+     */
+
+     /**
+     * Fixed height of the flag's shape. By default, height is autocalculated
+     * according to the flag's title.
+     *
+     * @type      {Number}
+     * @default   undefined
+     * @product   highstock
+     * @apioption plotOptions.flags.height
      */
 
     /*= if (build.classic) { =*/

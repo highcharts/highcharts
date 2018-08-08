@@ -105,6 +105,19 @@ QUnit.test('Sankey', function (assert) {
         'Point update'
     );
 
+    series.update({
+        keys: ['from', 'to', 'weight'],
+        data: [
+            ['A', '1', 1]
+        ]
+    });
+
+    assert.strictEqual(
+        series.nodes.length,
+        2,
+        'Unused nodes should be removed'
+    );
+
     series.remove();
     assert.strictEqual(
         chart.series.length,
