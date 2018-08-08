@@ -187,15 +187,15 @@ seriesType('pie', 'line', {
         softConnector: true,
 
          /**
-          * Alignment method for data labels. Possible values are: `toPlotEdges` (each label touches
-          * the nearest vertical edge of the plot area) or `connectors` (connectors have the same x
+          * Alignment method for data labels. Possible values are: `'toPlotEdges'` (each label touches
+          * the nearest vertical edge of the plot area) or `'connectors'` (connectors have the same x
           * position and the widest label of each half (left & right) touches the nearest vertical edge of
           * the plot area).
           *
           * @type {String}
           * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-connectors/ alignTo: connectors
           * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-plotedges/ alignTo: plotEdges
-          * @since 6.1.0
+          * @since 7.0.0
           * @default undefined
           * @product highcharts
           * @apioption plotOptions.pie.dataLabels.alignTo
@@ -234,6 +234,7 @@ seriesType('pie', 'line', {
          * The function has to return an SVG path definition in array form (see the example).
          *
          * @type {String|Function}
+         * @since 7.0.0
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-string/ connectorShape is a String
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-function/ connectorShape is a function
          * @product highcharts
@@ -247,9 +248,9 @@ seriesType('pie', 'line', {
          *
          * @type {String}
          * @since 7.0.0
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-crookDistance/ crookDistance set to 90%
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-crookdistance/ crookDistance set to 90%
          * @product highcharts
-         * @apioption plotOptions.pie.dataLabels.crookdistance
+         * @apioption plotOptions.pie.dataLabels.crookDistance
          */
         crookDistance: '70%'
     },

@@ -613,25 +613,27 @@ if (seriesTypes.pie) {
     seriesTypes.pie.prototype.dataLabelPositioners = {
 
         // Based on the value computed in Highcharts' distribute algorithm.
-        alignY: function (point) {
+        radialDistributionY: function (point) {
             return point.top + point.distributeBox.pos;
         },
         // get the x - use the natural x position for labels near the
         // top and bottom, to prevent the top and botton slice
         // connectors from touching each other on either side
-        alignX: function (series, point, y, naturalY, half) {
+
+        // Based on the value computed in Highcharts' distribute algorithm.
+        radialDistributionX: function (series, point, y, naturalY) {
             return series.getX(
                 y < point.top + 2 || y > point.bottom - 2 ?
                 naturalY :
                 y,
-                half,
+                point.half,
                 point
             );
         },
 
         // dataLabels.distance determines the x position of the label
-        justify: function (point, radius, seriesCenter, half) {
-            return seriesCenter[0] + (half ? -1 : 1) *
+        justify: function (point, radius, seriesCenter) {
+            return seriesCenter[0] + (point.half ? -1 : 1) *
             (radius + point.labelDistance);
         },
 
@@ -844,7 +846,7 @@ if (seriesTypes.pie) {
                     } else {
                         labelHeight = point.distributeBox.size;
                         // Find label's y position
-                        y = dataLabelPositioners.alignY(point);
+                        y = dataLabelPositioners.radialDistributionY(point);
                     }
                 }
 
@@ -857,7 +859,7 @@ if (seriesTypes.pie) {
                 // justify is undocumented in the API - preserve support for it
                 if (options.justify) {
                     x = dataLabelPositioners.justify(point, radius,
-                        seriesCenter, i);
+                        seriesCenter);
                 } else {
                     switch (options.alignTo) {
                         case 'connectors':
@@ -869,8 +871,8 @@ if (seriesTypes.pie) {
                                  i, plotWidth, plotLeft);
                             break;
                         default:
-                            x = dataLabelPositioners.alignX(series, point, y,
-                                naturalY, i);
+                            x = dataLabelPositioners.radialDistributionX(series,
+                                point, y, naturalY);
                     }
                 }
 

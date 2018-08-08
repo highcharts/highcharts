@@ -1,4 +1,4 @@
-QUnit.test('Pie data labels alingTo option', function (assert) {
+QUnit.test('Pie data labels alignTo option', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             plotBorderWidth: 1,
@@ -47,7 +47,7 @@ QUnit.test('Pie data labels alingTo option', function (assert) {
         i;
 
 
-    // alingTo: 'plotEdges'
+    // alignTo: 'plotEdges'
     for (i = 0; i < points.length && isAlignmnetCorrect; i++) {
         point = points[i];
         dataLabel = point.dataLabel;
@@ -58,7 +58,7 @@ QUnit.test('Pie data labels alingTo option', function (assert) {
     }
     assert.ok(
         isAlignmnetCorrect,
-        "All labels are aligned correctly when alingTo = 'plotEdges'"
+        "All labels are aligned correctly when alignTo = 'plotEdges'"
     );
 
     chart.series[0].update({
@@ -69,7 +69,7 @@ QUnit.test('Pie data labels alingTo option', function (assert) {
     isAlignmnetCorrect = true;
     points = chart.series[0].points;
 
-    // alingTo: 'connectors'
+    // alignTo: 'connectors'
     // find widest data label in each half
     for (i = 0; i < points.length; i++) {
         point = points[i];
@@ -98,6 +98,6 @@ QUnit.test('Pie data labels alingTo option', function (assert) {
     }
     assert.ok(
         isAlignmnetCorrect,
-        "All labels are aligned correctly when alingTo = 'connectors'"
+        "All labels are aligned correctly when alignTo = 'connectors'"
     );
 });
