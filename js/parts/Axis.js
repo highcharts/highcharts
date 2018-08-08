@@ -3,6 +3,51 @@
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * The returned object literal from the {@link Highcharts.Axis#getExtremes}
+ * function.
+ *
+ * @typedef {object} Highcharts.ExtremesObject
+ *
+ * @property {number} dataMax
+ *           The maximum value of the axis' associated series.
+ *
+ * @property {number} dataMin
+ *           The minimum value of the axis' associated series.
+ *
+ * @property {number} max
+ *           The maximum axis value, either automatic or set manually. If
+ *           the `max` option is not set, `maxPadding` is 0 and `endOnTick`
+ *           is false, this value will be the same as `dataMax`.
+ *
+ * @property {number} min
+ *           The minimum axis value, either automatic or set manually. If
+ *           the `min` option is not set, `minPadding` is 0 and
+ *           `startOnTick` is false, this value will be the same
+ *           as `dataMin`.
+ *
+ * @property {number} userMax
+ *           The user defined maximum, either from the `max` option or from
+ *           a zoom or `setExtremes` action.
+ *
+ * @property {number} userMin
+ *           The user defined minimum, either from the `min` option or from
+ *           a zoom or `setExtremes` action.
+ */
+
+/**
+ * Position of the axis title.
+ *
+ * @typedef {object} Highcharts.AxisTitlePositionObject
+ *
+ * @property {number} x
+ *           X position.
+ *
+ * @property {number} y
+ *           Y position.
+ */
+
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -3785,37 +3830,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     },
 
     /**
-     * The returned object literal from the {@link Highcharts.Axis#getExtremes}
-     * function.
-     *
-     * @typedef {object} Highcharts.ExtremesObject
-     *
-     * @property {number} dataMax
-     *           The maximum value of the axis' associated series.
-     *
-     * @property {number} dataMin
-     *           The minimum value of the axis' associated series.
-     *
-     * @property {number} max
-     *           The maximum axis value, either automatic or set manually. If
-     *           the `max` option is not set, `maxPadding` is 0 and `endOnTick`
-     *           is false, this value will be the same as `dataMax`.
-     *
-     * @property {number} min
-     *           The minimum axis value, either automatic or set manually. If
-     *           the `min` option is not set, `minPadding` is 0 and
-     *           `startOnTick` is false, this value will be the same
-     *           as `dataMin`.
-     *
-     * @property {number} userMax
-     *           The user defined maximum, either from the `max` option or from
-     *           a zoom or `setExtremes` action.
-     *
-     * @property {number} userMin
-     *           The user defined minimum, either from the `min` option or from
-     *           a zoom or `setExtremes` action.
-     */
-    /**
      * Get the current extremes for the axis.
      *
      * @function Highcharts.Axis#getExtremes
@@ -4618,18 +4632,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             /*= } =*/
         }
     },
-
-    /**
-     * Position of the axis title.
-     *
-     * @typedef Highcharts.AxisTitlePositionObject
-     *
-     * @property {number} x
-     *           X position.
-     *
-     * @property {number} y
-     *           Y position.
-     */
 
     /**
      * Position the axis title.
