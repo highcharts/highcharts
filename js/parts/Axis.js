@@ -3936,6 +3936,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Return the size of the labels.
      *
      * @private
+     * @function Highcharts.Axis#labelMetrics
+     *
+     * @return {Highcharts.FontMetricsObject}
      */
     labelMetrics: function () {
         var index = this.tickPositions && this.tickPositions[0] || 0;
@@ -3951,6 +3954,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * and adding ellipsis. On a vertical axis remove ticks and add ellipsis.
      *
      * @private
+     * @function Highcharts.Axis#unsquish
+     *
+     * @return {number}
      */
     unsquish: function () {
         var labelOptions = this.options.labels,
@@ -4077,6 +4083,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * to be applied.
      *
      * @private
+     * @function Highcharts.Axis#renderUnsquish
+     *
+     * @return {void}
      */
     renderUnsquish: function () {
         var chart = this.chart,
@@ -4347,11 +4356,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#generateTick
      *
-     * @param {number} pos
-     *        The tick position in axis values.
+     * @param  {number} pos
+     *         The tick position in axis values.
      *
-     * @param {number} i
-     *        The index of the tick in {@link Axis.tickPositions}.
+     * @param  {number} i
+     *         The index of the tick in {@link Axis.tickPositions}.
      *
      * @return {void}
      */
