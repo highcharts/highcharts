@@ -588,8 +588,7 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
         clientWidth = container.clientWidth,
         clientHeight = container.clientHeight;
 
-    controller.setPositionToElement(
-        container,
+    controller.setPosition(
         (clientWidth / 2),
         (clientHeight / 2));
 
