@@ -1475,8 +1475,14 @@ addEvent(Chart, 'update', function (e) {
 
     var chart = this,
         options = e.options,
+        optionsRangeSelector = options.rangeSelector,
         rangeSelector = chart.rangeSelector,
         verticalAlign;
+
+    if (optionsRangeSelector.enabled && !defined(rangeSelector)) {
+        this.options.rangeSelector.enabled = true;
+        fireEvent(chart, 'afterGetContainer');
+    }
 
     this.extraBottomMargin = false;
     this.extraTopMargin = false;
@@ -1487,8 +1493,8 @@ addEvent(Chart, 'update', function (e) {
         rangeSelector.render();
 
         verticalAlign = (
-            options.rangeSelector &&
-            options.rangeSelector.verticalAlign
+            optionsRangeSelector &&
+            optionsRangeSelector.verticalAlign
         ) || (
             rangeSelector.options && rangeSelector.options.verticalAlign
         );
