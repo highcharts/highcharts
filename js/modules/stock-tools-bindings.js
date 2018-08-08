@@ -1070,12 +1070,21 @@ var stockToolsBindings = {
         }
     },
     'toggle-annotations': {
-        init: function () {
+        init: function (button) {
             this.toggledAnnotations = !this.toggledAnnotations;
 
             each(this.chart.annotations || [], function (annotation) {
                 annotation.setVisibility(!this.toggledAnnotations);
             }, this);
+
+            if (this.toggledAnnotations) {
+                button.firstChild.style['background-image'] =
+                    'url("http://utils.highcharts.local/samples/graphics/annotations-hidden.svg")';
+            } else {
+                button.firstChild.style['background-image'] =
+                    'url("http://utils.highcharts.local/samples/graphics/annotations-visible.svg")';
+            }
+            button.classList.remove('highcharts-active');
         }
     },
     'save-chart': {
@@ -1140,7 +1149,7 @@ extend(H.Toolbar.prototype, {
 
         // Call "init" event, for example to open modal window
         if (events.init) {
-            events.init.call(toolbar);
+            events.init.call(toolbar, button, clickEvent);
         }
     },
     /**
