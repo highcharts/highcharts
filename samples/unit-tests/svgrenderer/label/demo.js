@@ -100,3 +100,28 @@ QUnit.test('buildText fontSize (#2794)', function (assert) {
     });
 
 });
+
+// Highcharts 4.0.4, Issue #3507
+// The second line of text appeared inside the rectangle. Should appear inside.
+QUnit.test('Tooltip overflow (#3507)', function (assert) {
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        500,
+        300
+    );
+    var lbl = ren.label('<span>Header</span><br>Body', 100, 100)
+    .attr({
+        'stroke-width': 1,
+        stroke: 'blue'
+    })
+    .css({
+        width: '100px'
+    })
+    .add();
+    var textHeight = lbl.element.childNodes[1].getBBox().height,
+        boxHeight = lbl.element.childNodes[0].getBBox().height;
+
+    assert.ok(
+        boxHeight > textHeight,
+    "The second line of text should appear inside the rectangle");
+});
