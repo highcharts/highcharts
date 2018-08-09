@@ -25,7 +25,21 @@ var addEvent = H.addEvent,
 
 H.setOptions({
     lang: {
+        /**
+         * Configure the stockTools gui strings in the chart. Requires the
+         * [stockTools module]() to be loaded. For a description of the module
+         * and information on its features, see [Highcharts Accessibility]().
+         *
+         * @since 7.0.0
+         * @type {Object}
+         * @optionparent lang.stockTools
+         */
         stockTools: {
+            /**
+             * @since 7.0.0
+             * @type {Object}
+             * @optionparent lang.stockTools.gui
+             */
             gui: {
                 simpleShapes: 'Simple shapes',
                 lines: 'Lines',
