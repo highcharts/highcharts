@@ -455,9 +455,9 @@ H.Toolbar.prototype = {
      * submenu container.
      *
      * @param {HTMLDOMElement} - HTML reference, where button should be added
-     * @param {Object} - button options
+     * @param {Object} - all options, by btnName refer to particular button
      * @param {String} - name of functionality mapped for specific class
-     * @param {String} - title visible in tooltip
+     * @param {Object} - All titles, by btnName refer to particular button
      *
      * @return {Object} - references to all created HTML elements
      */
