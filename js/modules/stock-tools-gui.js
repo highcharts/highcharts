@@ -24,6 +24,60 @@ var addEvent = H.addEvent,
     activeClass = PREFIX + 'active';
 
 H.setOptions({
+    lang: {
+        stockTools: {
+            gui: {
+                simpleShapes: 'Simple shapes',
+                lines: 'Lines',
+                crookedLines: 'Crooked lines',
+                measure: 'Measure',
+                advanced: 'Advanced',
+                toggleAnnotations: 'Toggle annotations',
+                verticalLabels: 'Vertical labels',
+                flags: 'Flags',
+                zoomChange: 'Zoom change',
+                typeChange: 'Type change',
+                indicators: 'Indicators',
+                currentPriceIndicator: 'Current Price Indicators',
+                saveChart: 'Save chart',
+                circle: 'Circle',
+                rectangle: 'Rectangle',
+                label: 'Label',
+                flagCirclepin: 'Flag circle',
+                flagDiamondpin: 'Flag diamond',
+                flagSquarepin: 'Flag square',
+                flagSimplepin: 'Flag simple',
+                segment: 'Segment',
+                arrowSegment: 'Arrow segment',
+                ray: 'Ray',
+                arrowRay: 'Arrow ray',
+                line: 'Line',
+                arrowLine: 'Arrow line',
+                horizontalLine: 'Horizontal line',
+                verticalLine: 'Vertical line',
+                crooked3: 'Crooked 3 line',
+                crooked5: 'Crooked 5 line',
+                elliott3: 'Elliott 3 line',
+                elliott5: 'Elliott 5 line',
+                verticalCounter: 'Vertical counter',
+                verticalLabel: 'Vertical label',
+                verticalArrow: 'Vertical arrow',
+                verticalDoubleArrow: 'Vertical double arrow',
+                fibonacci: 'Fibonacci',
+                pitchfork: 'Pitchfork',
+                'parallel-channel': 'Parallel channel',
+                measureXY: 'Measure XY',
+                measureX: 'Measure X',
+                measureY: 'Measure Y',
+                zoomX: 'Zoom X',
+                zoomY: 'Zoom Y',
+                zoomXY: 'Zooom XY',
+                typeOHLC: 'OHLC',
+                typeLine: 'Line',
+                typeCandlestick: 'Candlestick'
+            }
+        }
+    },
     stockTools: {
         gui: {
             enabled: true,
@@ -225,10 +279,12 @@ H.setOptions({
 // Run HTML generator
 addEvent(H.Chart, 'afterGetContainer', function () {
     var chartOptions = this.options,
-        guiOptions = chartOptions.stockTools && chartOptions.stockTools.gui;
+        lang = chartOptions.lang,
+        guiOptions = chartOptions.stockTools && chartOptions.stockTools.gui,
+        langOptions = lang.stockTools && lang.stockTools.gui;
 
     if (guiOptions.enabled) {
-        this.stockToolbar = new H.Toolbar(guiOptions, this);
+        this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
     }
 });
 
@@ -252,9 +308,10 @@ addEvent(H.Chart, 'redraw', function () {
  *
  */
 
-H.Toolbar = function (options, chart) {
+H.Toolbar = function (options, langOptions, chart) {
     this.chart = chart;
     this.options = options;
+    this.lang = langOptions;
 
     this.visible = pick(options.enabled, true);
 
@@ -274,6 +331,7 @@ H.Toolbar.prototype = {
     init: function () {
         var _self = this,
             chart = this.chart,
+            lang = this.lang,
             guiOptions = this.options,
             addButton = _self.addButton,
             addSubmenu = _self.addSubmenu,
@@ -286,10 +344,10 @@ H.Toolbar.prototype = {
         _self.chart = chart;
 
         each(buttons, function (btnName) {
-            button = addButton(toolbar, defs[btnName], btnName);
+            button = addButton(toolbar, defs, btnName, lang);
             if (defs[btnName].items && defs[btnName].items.length > 0) {
                 // create submenu buttons
-                addSubmenu.call(_self, button, defs[btnName], guiOptions);
+                addSubmenu.call(_self, button, defs[btnName], guiOptions, lang);
             }
         });
 
@@ -304,7 +362,7 @@ H.Toolbar.prototype = {
      * @param {Object} - gui options
      *
      */
-    addSubmenu: function (parentBtn, buttons, guiOptions) {
+    addSubmenu: function (parentBtn, buttons, guiOptions, lang) {
         var _self = this,
             items = buttons.items,
             addButton = this.addButton,
@@ -330,7 +388,7 @@ H.Toolbar.prototype = {
         // add items to submenu
         each(items, function (btnName) {
             // add buttons to submenu
-            submenuBtn = addButton(submenuWrapper, buttons[btnName], btnName);
+            submenuBtn = addButton(submenuWrapper, buttons, btnName, lang);
 
             addEvent(submenuBtn.mainButton, 'click', function () {
                 _self.switchSymbol(this, buttonWrapper, true);
@@ -399,20 +457,23 @@ H.Toolbar.prototype = {
      * @param {HTMLDOMElement} - HTML reference, where button should be added
      * @param {Object} - button options
      * @param {String} - name of functionality mapped for specific class
+     * @param {String} - title visible in tooltip
      *
      * @return {Object} - references to all created HTML elements
      */
-    addButton: function (target, options, btnName) {
-        var items = options.items,
+    addButton: function (target, options, btnName, lang) {
+        var btnOptions = options[btnName],
+            items = btnOptions.items,
             classMapping = H.Toolbar.prototype.classMapping,
-            userClassName = options.className || '',
+            userClassName = btnOptions.className || '',
             mainButton,
             submenuArrow,
             buttonWrapper;
 
         // main button wrapper
         buttonWrapper = createElement(LI, {
-            className: classMapping[btnName] + ' ' + userClassName
+            className: classMapping[btnName] + ' ' + userClassName,
+            title: lang[btnName]
         }, null, target);
 
         // single button
@@ -430,7 +491,7 @@ H.Toolbar.prototype = {
                     'highcharts-arrow-right'
             }, null, buttonWrapper);
         } else {
-            mainButton.style['background-image'] = options.symbol;
+            mainButton.style['background-image'] = btnOptions.symbol;
         }
 
         // TODO: add icons!!!
@@ -439,7 +500,7 @@ H.Toolbar.prototype = {
             css(mainButton, {
                 height: '25px',
                 cursor: 'default',
-                'text-align': 'center'
+                'text-align: 'center'
             });
             // TODO: replace with icon
             // mainButton.style['background-image'] = options.symbol;
