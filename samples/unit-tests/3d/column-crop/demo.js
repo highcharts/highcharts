@@ -234,7 +234,7 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     );
 
     // Testing scrollbar moving when the chart has two linked x axes.
-    var controller = TestController(chart);
+    var controller = new TestController(chart);
 
     chart.addAxis({
         type: 'category',
@@ -261,7 +261,7 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     var clickX = sbDim.x + sbDim.w / 2;
     var clickY = sbDim.y + sbDim.h / 2;
 
-    controller.pan([clickX, clickY], [clickX + 40, clickY], false, true);
+    controller.pan([clickX, clickY], [clickX + 40, clickY]);
 
     var done = assert.async();
     setTimeout(function () {
