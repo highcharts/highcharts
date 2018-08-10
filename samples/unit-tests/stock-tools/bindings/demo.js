@@ -29,11 +29,18 @@ QUnit.test('Bindings general tests', function (assert) {
                 }
             }
         }),
+        plotLeft = chart.plotLeft,
+        plotTop = chart.plotTop,
         bindings = chart.options.stockTools.bindings,
         points = chart.series[0].points,
         controller = TestController(chart),
         annotationsCounter = 0,
         i = 0;
+
+    // CSS Styles are not loaded, so hide left bar. If we don't hide the bar,
+    // chart will be rendered outside the visible page and events will not be
+    // fired (TestController issue)
+    document.getElementsByClassName('highcharts-stocktools-wrapper')[0].style.display = 'none';
 
     // Shorthand for selecting a button
     function selectButton(name) {
@@ -73,20 +80,19 @@ QUnit.test('Bindings general tests', function (assert) {
             // Start and steps: annotations, run each step
             controller.triggerOnChart(
                 'click',
-                points[1].plotX,
-                points[1].plotY
+                points[2].plotX + plotLeft - 5,
+                points[2].plotY + plotTop - 5
             );
             controller.triggerOnChart(
                 'mousemove',
                 points[3].plotX,
-                points[3].plotX
+                points[3].plotY
             );
-
             Highcharts.each(bindings[name].steps, function (step, index) {
                 controller.triggerOnChart(
                     'click',
-                    points[4 + index].plotX,
-                    points[4 + index].plotY
+                    points[4 + index].plotX + plotLeft - 5,
+                    points[4 + index].plotY + plotTop - 5
                 );
                 controller.triggerOnChart(
                     'mousemove',
