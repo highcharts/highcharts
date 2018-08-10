@@ -1,13 +1,14 @@
 .chart {
-  width: calc(100% - 40px);
+  width: 100%;
   float: left;
   height: 400px;
 }
 
 .highcharts-stocktools-wrapper {
-  width: 100%;
+  width: 40px;
   height: 400px;
-  position: relative;
+  position: absolute;
+  z-index: 10;
 }
 
 .highcharts-menu-wrapper {
@@ -15,6 +16,9 @@
   width: 40px;
   height: calc(100% - 30px);
   overflow: hidden;
+  position: absolute;
+  left: 0px;
+  top: 0px;
 }
 
 .highcharts-stocktools-wrapper .highcharts-submenu-wrapper {
@@ -109,7 +113,7 @@
 }
 
 .highcharts-stocktools-wrapper ul {
-  width: 100%;
+  width: 40px;
   /* 30px spacing for arrows to scroll */
   margin: 0px;
   padding: 0px;
