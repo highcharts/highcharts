@@ -35,11 +35,6 @@ QUnit.test('Bindings general tests', function (assert) {
         annotationsCounter = 0,
         i = 0;
 
-    // CSS Styles are not loaded, so hide left bar. If we don't hide the bar,
-    // chart will be rendered outside the visible page and events will not be
-    // fired (TestController issue)
-    document.getElementsByClassName('highcharts-menu-wrapper')[0].style.display = 'none';
-
     // Shorthand for selecting a button
     function selectButton(name) {
         // Bind annotation to the chart events:
