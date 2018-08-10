@@ -27,7 +27,7 @@ H.setOptions({
     lang: {
         /**
          * Configure the stockTools gui strings in the chart. Requires the
-         * [stockTools module]() to be loaded. For a description of the module 
+         * [stockTools module]() to be loaded. For a description of the module
          * and information on its features, see [Highcharts StockTools]().
          *
          * @since 7.0.0
@@ -309,6 +309,21 @@ addEvent(H.Chart, 'redraw', function () {
     }
 });
 
+addEvent(H.Chart, 'resetMargins', function () {
+    var marginLeft = this.options.chart.marginLeft || 0,
+        stockToolbar = this.stockToolbar;
+
+    if (stockToolbar) {
+        if (stockToolbar.visible && !stockToolbar.placed) {
+            this.options.chart.marginLeft = marginLeft + 50;
+            stockToolbar.placed = true;
+        } else if (!stockToolbar.visible && stockToolbar.placed) {
+            this.options.chart.marginLeft = marginLeft - 50;
+            stockToolbar.placed = false;
+        }
+    }
+});
+
 /*
  * Toolbar Class
  *
@@ -379,6 +394,7 @@ H.Toolbar.prototype = {
             buttonWrapper = parentBtn.buttonWrapper,
             buttonWidth = getStyle(buttonWrapper, 'width'),
             wrapper = doc.getElementsByClassName(guiOptions.className)[0],
+            menuWrapper = this.listWrapper,
             allButtons = doc
                 .getElementsByClassName(
                     guiOptions.toolbarClassName
@@ -401,6 +417,7 @@ H.Toolbar.prototype = {
 
             addEvent(submenuBtn.mainButton, 'click', function () {
                 _self.switchSymbol(this, buttonWrapper, true);
+                menuWrapper.style.width = '40px';
                 submenuWrapper.style.display = 'none';
             });
         });
@@ -430,6 +447,7 @@ H.Toolbar.prototype = {
 
             // hide menu
             if (buttonWrapper.className.indexOf('highcharts-current') >= 0) {
+                menuWrapper.style.width = '40px';
                 buttonWrapper.classList.remove('highcharts-current');
                 submenuWrapper.style.display = 'none';
             } else {
@@ -456,6 +474,7 @@ H.Toolbar.prototype = {
                 });
 
                 buttonWrapper.className += ' highcharts-current';
+                menuWrapper.style.width = '80px';
             }
         });
     },
@@ -586,7 +605,7 @@ H.Toolbar.prototype = {
         var stockToolbar = this,
             chart = stockToolbar.chart,
             guiOptions = stockToolbar.options,
-            container = chart.container.parentNode,
+            container = chart.container,
             listWrapper,
             toolbar,
             wrapper;
@@ -597,7 +616,6 @@ H.Toolbar.prototype = {
                     guiOptions.className
         });
         container.parentNode.insertBefore(wrapper, container);
-        wrapper.appendChild(container);
 
         // toolbar
         stockToolbar.toolbar = toolbar = createElement(UL, {
@@ -647,9 +665,11 @@ H.Toolbar.prototype = {
      */
     showHideToolbar: function () {
         var stockToolbar = this,
+            chart = this.chart,
             wrapper = stockToolbar.wrapper,
             toolbar = doc.getElementsByClassName('highcharts-menu-wrapper')[0],
             submenus = doc.getElementsByClassName('highcharts-submenu'),
+            visible,
             showhideBtn;
 
         // Show hide toolbar
@@ -664,17 +684,23 @@ H.Toolbar.prototype = {
                     submenu.style.display = 'block';
                 });
                 showhideBtn.style.left = '40px';
-                stockToolbar.visible = true;
+                stockToolbar.visible = visible = true;
             } else {
                 each(submenus, function (submenu) {
                     submenu.style.display = 'none';
                 });
                 showhideBtn.style.left = '0px';
-                stockToolbar.visible = false;
+                stockToolbar.visible = visible = false;
             }
             toolbar.classList.toggle('highcharts-hide');
             showhideBtn.classList.toggle('highcharts-arrow-left');
             showhideBtn.classList.toggle('highcharts-arrow-right');
+
+            chart.update({
+                stockTools: {
+                    visible: visible
+                }
+            });
         });
     },
     /*
