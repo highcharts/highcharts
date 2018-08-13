@@ -10,11 +10,12 @@ import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
-    doc = H.doc,
     each = H.each,
     pick = H.pick,
+    isArray = H.isArray,
     fireEvent = H.fireEvent,
     getStyle = H.getStyle,
+    merge = H.merge,
     css = H.css,
     DIV = 'div',
     SPAN = 'span',
@@ -286,10 +287,14 @@ H.setOptions({
 });
 
 // Run HTML generator
-addEvent(H.Chart, 'afterGetContainer', function () {
+addEvent(H.Chart, 'afterGetContainer', function (options) {
     var chartOptions = this.options,
         lang = chartOptions.lang,
-        guiOptions = chartOptions.stockTools && chartOptions.stockTools.gui,
+        paramOptionsGui = options.options && options.options.stockTools,
+        guiOptions = merge(
+            chartOptions.stockTools && chartOptions.stockTools.gui,
+            paramOptionsGui && paramOptionsGui.gui
+        ),
         langOptions = lang.stockTools && lang.stockTools.gui;
 
     if (guiOptions.enabled) {
@@ -309,15 +314,26 @@ addEvent(H.Chart, 'redraw', function () {
     }
 });
 
+addEvent(H.Chart, 'update', function (options) {
+    if (this.stockToolbar) {
+        this.stockToolbar.destroy();
+    }
+
+    fireEvent(this, 'afterGetContainer', options);
+});
+
 addEvent(H.Chart, 'resetMargins', function () {
     var marginLeft = this.options.chart.marginLeft || 0,
         stockToolbar = this.stockToolbar;
 
     if (stockToolbar) {
         if (stockToolbar.visible && !stockToolbar.placed) {
+
             this.options.chart.marginLeft = marginLeft + 50;
             stockToolbar.placed = true;
+
         } else if (!stockToolbar.visible && stockToolbar.placed) {
+
             this.options.chart.marginLeft = marginLeft - 50;
             stockToolbar.placed = false;
         }
@@ -338,6 +354,7 @@ H.Toolbar = function (options, langOptions, chart) {
     this.lang = langOptions;
 
     this.visible = pick(options.enabled, true);
+    this.placed = false;
 
     this.createHTML();
     this.popup = new H.Popup(this.wrapper);
@@ -354,24 +371,23 @@ H.Toolbar.prototype = {
      */
     init: function () {
         var _self = this,
-            chart = this.chart,
             lang = this.lang,
             guiOptions = this.options,
+            toolbar = this.toolbar,
             addButton = _self.addButton,
             addSubmenu = _self.addSubmenu,
-            toolbar = doc
-                .getElementsByClassName(guiOptions.toolbarClassName)[0],
             buttons = guiOptions.buttons,
             defs = guiOptions.definitions,
             button;
 
-        _self.chart = chart;
-
+        // create buttons
         each(buttons, function (btnName) {
+
             button = addButton(toolbar, defs, btnName, lang);
-            if (defs[btnName].items && defs[btnName].items.length > 0) {
+
+            if (isArray(defs[btnName].items)) {
                 // create submenu buttons
-                addSubmenu.call(_self, button, defs[btnName], guiOptions, lang);
+                addSubmenu.call(_self, button, defs[btnName]);
             }
         });
 
@@ -383,72 +399,38 @@ H.Toolbar.prototype = {
      *
      * @param {Object} - button which has submenu
      * @param {Array} - list of all buttons
-     * @param {Object} - gui options
      *
      */
-    addSubmenu: function (parentBtn, buttons, guiOptions, lang) {
+    addSubmenu: function (parentBtn, button) {
         var _self = this,
-            items = buttons.items,
-            addButton = this.addButton,
             submenuArrow = parentBtn.submenuArrow,
             buttonWrapper = parentBtn.buttonWrapper,
             buttonWidth = getStyle(buttonWrapper, 'width'),
-            wrapper = doc.getElementsByClassName(guiOptions.className)[0],
+            wrapper = this.wrapper,
             menuWrapper = this.listWrapper,
-            allButtons = doc
-                .getElementsByClassName(
-                    guiOptions.toolbarClassName
-                )[0].childNodes,
+            allButtons = this.toolbar.childNodes,
             topMargin = 0,
             submenuWrapper,
-            firstSubmenuItem,
-            submenuItems,
-            submenuBtn;
+            submenuItems;
 
         // create submenu container
-        submenuWrapper = createElement(UL, {
-            className: 'highcharts-submenu-wrapper'
+        this.submenu = submenuWrapper = createElement(UL, {
+            className: PREFIX + 'submenu-wrapper'
         }, null, buttonWrapper);
 
-        // add items to submenu
-        each(items, function (btnName) {
-            // add buttons to submenu
-            submenuBtn = addButton(submenuWrapper, buttons, btnName, lang);
-
-            addEvent(submenuBtn.mainButton, 'click', function () {
-                _self.switchSymbol(this, buttonWrapper, true);
-                menuWrapper.style.width = '40px';
-                submenuWrapper.style.display = 'none';
-            });
-        });
-
-        firstSubmenuItem = submenuWrapper
-                .querySelectorAll('li > .highcharts-menu-item-btn')[0];
-
-        // replace current symbol, in main button, with submenu's button style
-        this.switchSymbol(firstSubmenuItem, false);
+        // create submenu buttons and select the first one
+        this.addSubmenuItems.call(this, buttonWrapper, button);
 
         // show / hide submenu
         addEvent(submenuArrow, 'click', function () {
 
             // Erase active class on all other buttons
-            each(allButtons, function (btn) {
-                if (btn !== buttonWrapper) {
-                    btn.classList.remove('highcharts-current');
-                    submenuItems =
-                        btn.querySelectorAll('.highcharts-submenu-wrapper');
-
-                    // hide submenu
-                    if (submenuItems.length > 0) {
-                        submenuItems[0].style.display = 'none';
-                    }
-                }
-            });
+            _self.eraseActiveButtons(allButtons, buttonWrapper, submenuItems);
 
             // hide menu
-            if (buttonWrapper.className.indexOf('highcharts-current') >= 0) {
+            if (buttonWrapper.className.indexOf(PREFIX + 'current') >= 0) {
                 menuWrapper.style.width = '40px';
-                buttonWrapper.classList.remove('highcharts-current');
+                buttonWrapper.classList.remove(PREFIX + 'current');
                 submenuWrapper.style.display = 'none';
             } else {
                 // show menu
@@ -473,8 +455,66 @@ H.Toolbar.prototype = {
                     left: buttonWidth + 'px'
                 });
 
-                buttonWrapper.className += ' highcharts-current';
+                buttonWrapper.className += ' ' + PREFIX + 'current';
                 menuWrapper.style.width = '80px';
+            }
+        });
+    },
+    /*
+     * Create buttons in submenu
+     *
+     * @param {HTMLDOMElement} - button where submenu is placed
+     * @param {Array} - list of all buttons options
+     *
+     */
+    addSubmenuItems: function (buttonWrapper, button) {
+        var _self = this,
+            submenuWrapper = this.submenu,
+            lang = this.lang,
+            addButton = this.addButton,
+            menuWrapper = this.listWrapper,
+            items = button.items,
+            firstSubmenuItem,
+            submenuBtn;
+
+        // add items to submenu
+        each(items, function (btnName) {
+            // add buttons to submenu
+            submenuBtn = addButton(submenuWrapper, button, btnName, lang);
+
+            addEvent(submenuBtn.mainButton, 'click', function () {
+                _self.switchSymbol(this, buttonWrapper, true);
+                menuWrapper.style.width = '40px';
+                submenuWrapper.style.display = 'none';
+            });
+        });
+
+                // select first submenu item
+        firstSubmenuItem = submenuWrapper
+                .querySelectorAll('li > .' + PREFIX + 'menu-item-btn')[0];
+
+        // replace current symbol, in main button, with submenu's button style
+        _self.switchSymbol(firstSubmenuItem, false);
+    },
+    /*
+     * Erase active class on all other buttons.
+     *
+     * @param {Array} - Array of HTML buttons
+     * @param {HTMLDOMElement} - Current HTML button
+     * @param {Array} - List of HTML submenus
+     *
+     */
+    eraseActiveButtons: function (buttons, currentButton, submenuItems) {
+        each(buttons, function (btn) {
+            if (btn !== currentButton) {
+                btn.classList.remove(PREFIX + 'current');
+                submenuItems =
+                    btn.querySelectorAll('.' + PREFIX + 'submenu-wrapper');
+
+                // hide submenu
+                if (submenuItems.length > 0) {
+                    submenuItems[0].style.display = 'none';
+                }
             }
         });
     },
@@ -506,7 +546,7 @@ H.Toolbar.prototype = {
 
         // single button
         mainButton = createElement(SPAN, {
-            className: 'highcharts-menu-item-btn'
+            className: PREFIX + 'menu-item-btn'
         }, null, buttonWrapper);
 
 
@@ -515,8 +555,8 @@ H.Toolbar.prototype = {
 
             // arrow is a hook to show / hide submenu
             submenuArrow = createElement(SPAN, {
-                className: 'highcharts-submenu-item-arrow ' +
-                    'highcharts-arrow-right'
+                className: PREFIX + 'submenu-item-arrow ' +
+                    PREFIX + 'arrow-right'
             }, null, buttonWrapper);
         } else {
             mainButton.style['background-image'] = btnOptions.symbol;
@@ -551,15 +591,15 @@ H.Toolbar.prototype = {
 
         // arrow wrapper
         stockToolbar.arrowWrapper = createElement(DIV, {
-            className: 'highcharts-arrow-wrapper'
+            className: PREFIX + 'arrow-wrapper'
         });
 
         stockToolbar.arrowUp = createElement(DIV, {
-            className: 'highcharts-arrow-up'
+            className: PREFIX + 'arrow-up'
         }, null, stockToolbar.arrowWrapper);
 
         stockToolbar.arrowDown = createElement(DIV, {
-            className: 'highcharts-arrow-down'
+            className: PREFIX + 'arrow-down'
         }, null, stockToolbar.arrowWrapper);
 
         wrapper.insertBefore(
@@ -612,20 +652,20 @@ H.Toolbar.prototype = {
 
         // create main container
         stockToolbar.wrapper = wrapper = createElement(DIV, {
-            className: 'highcharts-stocktools-wrapper ' +
+            className: PREFIX + 'stocktools-wrapper ' +
                     guiOptions.className
         });
         container.parentNode.insertBefore(wrapper, container);
 
         // toolbar
         stockToolbar.toolbar = toolbar = createElement(UL, {
-            className: 'highcharts-stocktools-toolbar ' +
+            className: PREFIX + 'stocktools-toolbar ' +
                     guiOptions.toolbarClassName
         });
 
         // add container for list of buttons
         stockToolbar.listWrapper = listWrapper = createElement(DIV, {
-            className: 'highcharts-menu-wrapper'
+            className: PREFIX + 'menu-wrapper'
         });
 
         wrapper.insertBefore(listWrapper, wrapper.childNodes[0]);
@@ -635,13 +675,6 @@ H.Toolbar.prototype = {
 
         // add navigation which allows user to scroll down / top GUI buttons
         stockToolbar.addNavigation();
-    },
-    /*
-     * Redraw, GUI requires to verify if the navigation should be visible.
-     *
-     */
-    redraw: function () {
-        this.showHideNavigatorion();
     },
     /*
      * Function called in redraw verifies if the navigation should be visible.
@@ -667,34 +700,34 @@ H.Toolbar.prototype = {
         var stockToolbar = this,
             chart = this.chart,
             wrapper = stockToolbar.wrapper,
-            toolbar = doc.getElementsByClassName('highcharts-menu-wrapper')[0],
-            submenus = doc.getElementsByClassName('highcharts-submenu'),
+            toolbar = this.listWrapper,
+            submenu = this.submenu,
             visible,
             showhideBtn;
 
         // Show hide toolbar
-        showhideBtn = createElement(DIV, {
-            className: 'highcharts-toggle-toolbar highcharts-arrow-left'
+        this.showhideBtn = showhideBtn = createElement(DIV, {
+            className: PREFIX + 'toggle-toolbar ' + PREFIX + 'arrow-left'
         }, null, wrapper);
 
         // toggle menu
         addEvent(showhideBtn, 'click', function () {
-            if (toolbar.className.indexOf('highcharts-hide') >= 0) {
-                each(submenus, function (submenu) {
+            if (toolbar.className.indexOf(PREFIX + 'hide') >= 0) {
+                if (submenu) {
                     submenu.style.display = 'block';
-                });
+                }
                 showhideBtn.style.left = '40px';
                 stockToolbar.visible = visible = true;
             } else {
-                each(submenus, function (submenu) {
+                if (submenu) {
                     submenu.style.display = 'none';
-                });
+                }
                 showhideBtn.style.left = '0px';
                 stockToolbar.visible = visible = false;
             }
-            toolbar.classList.toggle('highcharts-hide');
-            showhideBtn.classList.toggle('highcharts-arrow-left');
-            showhideBtn.classList.toggle('highcharts-arrow-right');
+            toolbar.classList.toggle(PREFIX + 'hide');
+            showhideBtn.classList.toggle(PREFIX + 'arrow-left');
+            showhideBtn.classList.toggle(PREFIX + 'arrow-right');
 
             chart.update({
                 stockTools: {
@@ -721,7 +754,7 @@ H.Toolbar.prototype = {
         mainNavButton.classList = buttonWrapperClass;
 
         // set icon
-        mainNavButton.querySelectorAll('.highcharts-menu-item-btn')[0]
+        mainNavButton.querySelectorAll('.' + PREFIX + 'menu-item-btn')[0]
             .style['background-image'] = button.style['background-image'];
 
         // set active class
@@ -772,66 +805,77 @@ H.Toolbar.prototype = {
      *
      */
     destroy: function () {
-        var chartContainer = this.chart.renderTo,
-            stockToolsDiv = this.wrapper,
-            // Get the element's parent node
-            parent = stockToolsDiv.parentNode;
+        var stockToolsDiv = this.wrapper,
+            parent = stockToolsDiv.parentNode,
+            chartOptions = this.chart.options,
+            marginLeft = chartOptions.chart.marginLeft || 0;
 
-        // Move all children out of the element
-        while (stockToolsDiv.firstChild) {
-            if (stockToolsDiv.firstChild === chartContainer) {
-                parent.insertBefore(stockToolsDiv.firstChild, stockToolsDiv);
-            } else {
-                stockToolsDiv.firstChild.remove();
-            }
-        }
         // Remove the empty element
-        parent.removeChild(stockToolsDiv);
+        if (parent) {
+            parent.removeChild(stockToolsDiv);
+        }
+
+        // delete stockToolbar reference
+        delete this.chart.stockToolbar;
+
+        // remove extra space
+        this.chart.options.chart.marginLeft = marginLeft - 50;
+
+        // redraw
+        this.chart.isDirtyBox = true;
+        this.chart.redraw();
+    },
+    /*
+     * Redraw, GUI requires to verify if the navigation should be visible.
+     *
+     */
+    redraw: function () {
+        this.showHideNavigatorion();
     },
     /*
      * Mapping JSON fields to CSS classes.
      *
      */
     classMapping: {
-        circle: 'highcharts-circle-annotation',
-        rectangle: 'highcharts-rectangle-annotation',
-        label: 'highcharts-label-annotation',
-        segment: 'highcharts-segment',
-        arrowSegment: 'highcharts-arrow-segment',
-        ray: 'highcharts-ray',
-        arrowRay: 'highcharts-arrow-ray',
-        line: 'highcharts-infinity-line',
-        arrowLine: 'highcharts-arrow-infinity-line',
-        verticalLine: 'highcharts-vertical-line',
-        horizontalLine: 'highcharts-horizontal-line',
-        crooked3: 'highcharts-crooked3',
-        crooked5: 'highcharts-crooked5',
-        elliott3: 'highcharts-elliott3',
-        elliott5: 'highcharts-elliott5',
-        pitchfork: 'highcharts-pitchfork',
-        fibonacci: 'highcharts-fibonacci',
-        'parallel-channel': 'highcharts-parallel-channel',
-        measureX: 'highcharts-measureX',
-        measureY: 'highcharts-measureY',
-        measureXY: 'highcharts-measureXY',
-        verticalCounter: 'highcharts-vertical-counter',
-        verticalLabel: 'highcharts-vertical-label',
-        verticalArrow: 'highcharts-vertical-arrow',
-        verticalDoubleArrow: 'highcharts-vertical-double-arrow',
-        currentPriceIndicator: 'highcharts-current-price-indicator',
-        indicators: 'highcharts-indicators',
-        flagCirclepin: 'highcharts-flag-circlepin',
-        flagDiamondpin: 'highcharts-flag-diamondpin',
-        flagSquarepin: 'highcharts-flag-squarepin',
-        flagSimplepin: 'highcharts-flag-simplepin',
-        zoomX: 'highcharts-zoom-x',
-        zoomY: 'highcharts-zoom-y',
-        zoomXY: 'highcharts-zoom-xy',
-        typeLine: 'highcharts-series-type-line',
-        typeOHLC: 'highcharts-series-type-ohlc',
-        typeCandlestick: 'highcharts-series-type-candlestick',
-        toggleAnnotations: 'highcharts-toggle-annotations',
-        saveChart: 'highcharts-save-chart',
-        separator: 'highcharts-separator'
+        circle: PREFIX + 'circle-annotation',
+        rectangle: PREFIX + 'rectangle-annotation',
+        label: PREFIX + 'label-annotation',
+        segment: PREFIX + 'segment',
+        arrowSegment: PREFIX + 'arrow-segment',
+        ray: PREFIX + 'ray',
+        arrowRay: PREFIX + 'arrow-ray',
+        line: PREFIX + 'infinity-line',
+        arrowLine: PREFIX + 'arrow-infinity-line',
+        verticalLine: PREFIX + 'vertical-line',
+        horizontalLine: PREFIX + 'horizontal-line',
+        crooked3: PREFIX + 'crooked3',
+        crooked5: PREFIX + 'crooked5',
+        elliott3: PREFIX + 'elliott3',
+        elliott5: PREFIX + 'elliott5',
+        pitchfork: PREFIX + 'pitchfork',
+        fibonacci: PREFIX + 'fibonacci',
+        'parallel-channel': PREFIX + 'parallel-channel',
+        measureX: PREFIX + 'measureX',
+        measureY: PREFIX + 'measureY',
+        measureXY: PREFIX + 'measureXY',
+        verticalCounter: PREFIX + 'vertical-counter',
+        verticalLabel: PREFIX + 'vertical-label',
+        verticalArrow: PREFIX + 'vertical-arrow',
+        verticalDoubleArrow: PREFIX + 'vertical-double-arrow',
+        currentPriceIndicator: PREFIX + 'current-price-indicator',
+        indicators: PREFIX + 'indicators',
+        flagCirclepin: PREFIX + 'flag-circlepin',
+        flagDiamondpin: PREFIX + 'flag-diamondpin',
+        flagSquarepin: PREFIX + 'flag-squarepin',
+        flagSimplepin: PREFIX + 'flag-simplepin',
+        zoomX: PREFIX + 'zoom-x',
+        zoomY: PREFIX + 'zoom-y',
+        zoomXY: PREFIX + 'zoom-xy',
+        typeLine: PREFIX + 'series-type-line',
+        typeOHLC: PREFIX + 'series-type-ohlc',
+        typeCandlestick: PREFIX + 'series-type-candlestick',
+        toggleAnnotations: PREFIX + 'toggle-annotations',
+        saveChart: PREFIX + 'save-chart',
+        separator: PREFIX + 'separator'
     }
 };
