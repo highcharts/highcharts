@@ -61,8 +61,6 @@ var bindingsUtils = {
                     points: options.points
                 }
             });
-
-            annotation.setControlPointsVisibility(true);
         };
     },
     // TO DO: Consider using getHoverData(), but always kdTree (columns?)
@@ -92,9 +90,9 @@ var bindingsUtils = {
     },
     /**
      * Generates function which will add a flag series using modal in GUI.
-     * Method uses internally `Toolbar.showForm(options, callback)`.
+     * Method uses internally `Toolbar.showForm(type, options, callback)`.
      *
-     * Example: Toolbar.utils.addFlagFromForm('diamondpin') - will generate
+     * Example: Toolbar.utils.addFlagFromForm('url(...)') - will generate
      * function that shows modal in GUI.
      *
      * @param {String} Type of flag series, e.g. "squarepin"
@@ -104,35 +102,24 @@ var bindingsUtils = {
     addFlagFromForm: function (type) {
         return function (e) {
             var chart = this.chart,
+                toolbar = chart.toolbar,
                 point = bindingsUtils.attractToPoint(e, chart);
             if (this.showForm) {
                 this.showForm(
+                    'flag',
                     // Enabled options:
-                    [{
-                        type: 'string',
-                        name: 'name',
-                        label: 'Name:',
-                        value: 'A'
-                    }, {
-                        type: 'string',
-                        name: 'title',
-                        label: 'Name:',
-                        value: 'Flag A'
-                    }, {
-                        type: 'color',
-                        name: 'color',
-                        value: chart.options.colors[chart.colorCounter]
-                    }],
+                    {
+                        title: 'A',
+                        name: 'Flag A'
+                    },
                     // Callback on submit:
-                    function (fields) {
+                    function (data) {
                         var pointConfig = {
                             x: point.x,
                             y: point.y
                         };
 
-                        each(fields, function (field) {
-                            pointConfig[field.name] = field.value;
-                        });
+                        toolbar.fieldsToOptions(data.fields, pointConfig);
 
                         chart.addSeries({
                             type: 'flags',
@@ -225,8 +212,6 @@ function updateRectSize(event, annotation) {
             }
         }
     });
-
-    annotation.setControlPointsVisibility(true);
 }
 
 var stockToolsBindings = {
@@ -277,8 +262,6 @@ var stockToolsBindings = {
                     }]
                 }]
             });
-
-            annotation.setControlPointsVisibility(true);
 
             return annotation;
         },
@@ -339,10 +322,9 @@ var stockToolsBindings = {
     'label-annotation': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY),
-                annotation;
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
-            annotation = this.chart.addAnnotation({
+            this.chart.addAnnotation({
                 labels: [{
                     point: {
                         x: x,
@@ -413,8 +395,6 @@ var stockToolsBindings = {
                     crop: true
                 }]
             });
-
-            annotation.setControlPointsVisibility(true);
         }
     },
     // Line type annotations:
@@ -566,37 +546,35 @@ var stockToolsBindings = {
     'horizontal-line': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY),
-                annotation = this.chart.addAnnotation({
-                    type: 'infinity-line',
-                    typeOptions: {
-                        type: 'horizontal-line',
-                        points: [{
-                            x: x,
-                            y: y
-                        }]
-                    }
-                });
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
-            annotation.setControlPointsVisibility(true);
+            this.chart.addAnnotation({
+                type: 'infinity-line',
+                typeOptions: {
+                    type: 'horizontal-line',
+                    points: [{
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
         }
     },
     'vertical-line': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY),
-                annotation = this.chart.addAnnotation({
-                    type: 'infinity-line',
-                    typeOptions: {
-                        type: 'vertical-line',
-                        points: [{
-                            x: x,
-                            y: y
-                        }]
-                    }
-                });
+                y = this.chart.yAxis[0].toValue(e.chartY);
 
-            annotation.setControlPointsVisibility(true);
+            this.chart.addAnnotation({
+                type: 'infinity-line',
+                typeOptions: {
+                    type: 'vertical-line',
+                    points: [{
+                        x: x,
+                        y: y
+                    }]
+                }
+            });
         }
     },
     // Crooked Line type annotations:
@@ -885,14 +863,13 @@ var stockToolsBindings = {
     // Labels with arrow and auto increments
     'vertical-counter': {
         start: function (e) {
-            var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
-                annotation;
+            var closestPoint = bindingsUtils.attractToPoint(e, this.chart);
 
             if (!defined(this.verticalCounter)) {
                 this.verticalCounter = 0;
             }
 
-            annotation = this.chart.addAnnotation({
+            this.chart.addAnnotation({
                 type: 'vertical-line',
                 typeOptions: {
                     point: {
@@ -908,56 +885,52 @@ var stockToolsBindings = {
                 }
             });
 
-            annotation.setControlPointsVisibility(true);
-
             this.verticalCounter++;
         }
     },
     'vertical-label': {
         start: function (e) {
-            var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
-                annotation = this.chart.addAnnotation({
-                    type: 'vertical-line',
-                    typeOptions: {
-                        point: {
-                            x: closestPoint.x,
-                            y: closestPoint.y,
-                            xAxis: closestPoint.xAxis,
-                            yAxis: closestPoint.yAxis
-                        },
-                        label: {
-                            offset: closestPoint.below ? 40 : -40
-                        }
-                    }
-                });
+            var closestPoint = bindingsUtils.attractToPoint(e, this.chart);
 
-            annotation.setControlPointsVisibility(true);
+            this.chart.addAnnotation({
+                type: 'vertical-line',
+                typeOptions: {
+                    point: {
+                        x: closestPoint.x,
+                        y: closestPoint.y,
+                        xAxis: closestPoint.xAxis,
+                        yAxis: closestPoint.yAxis
+                    },
+                    label: {
+                        offset: closestPoint.below ? 40 : -40
+                    }
+                }
+            });
         }
     },
     'vertical-arrow': {
         start: function (e) {
-            var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
-                annotation = this.chart.addAnnotation({
-                    type: 'vertical-line',
-                    typeOptions: {
-                        point: {
-                            x: closestPoint.x,
-                            y: closestPoint.y,
-                            xAxis: closestPoint.xAxis,
-                            yAxis: closestPoint.yAxis
-                        },
-                        label: {
-                            offset: closestPoint.below ? 40 : -40,
-                            format: ' '
-                        },
-                        connector: {
-                            fill: 'none',
-                            stroke: closestPoint.below ? 'red' : 'green'
-                        }
-                    }
-                });
+            var closestPoint = bindingsUtils.attractToPoint(e, this.chart);
 
-            annotation.setControlPointsVisibility(true);
+            this.chart.addAnnotation({
+                type: 'vertical-line',
+                typeOptions: {
+                    point: {
+                        x: closestPoint.x,
+                        y: closestPoint.y,
+                        xAxis: closestPoint.xAxis,
+                        yAxis: closestPoint.yAxis
+                    },
+                    label: {
+                        offset: closestPoint.below ? 40 : -40,
+                        format: ' '
+                    },
+                    connector: {
+                        fill: 'none',
+                        stroke: closestPoint.below ? 'red' : 'green'
+                    }
+                }
+            });
         }
     },
     'vertical-double-arrow': {
@@ -965,16 +938,20 @@ var stockToolsBindings = {
     },
     // Flag types:
     'flag-circlepin': {
-        start: bindingsUtils.addFlagFromForm('circlepin')
+        start: bindingsUtils
+            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-elipse.svg)')
     },
     'flag-diamondpin': {
-        start: bindingsUtils.addFlagFromForm('diamondpin')
+        start: bindingsUtils
+            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-diamond.svg)')
     },
     'flag-squarepin': {
-        start: bindingsUtils.addFlagFromForm('squarepin')
+        start: bindingsUtils
+            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-trapeze.svg)')
     },
     'flag-simplepin': {
-        start: bindingsUtils.addFlagFromForm('simplepin')
+        start: bindingsUtils
+            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-basic.svg)')
     },
     // Other tools:
     'zoom-x': {
@@ -1061,6 +1038,7 @@ var stockToolsBindings = {
             if (this.showForm) {
                 this.showForm(
                     'indicators',
+                    {},
                     // Callback on submit:
                     function (data) {
                         toolbar.utils.manageIndicators.call(toolbar, data);
@@ -1511,6 +1489,43 @@ addEvent(H.Chart, 'load', function () {
         });
     }
 });
+
+// Show edit-annotation form:
+if (H.Annotation) {
+    var originalClick = H.Annotation.prototype.defaultOptions.events &&
+        H.Annotation.prototype.defaultOptions.events.click;
+    H.merge(
+        true,
+        H.Annotation.prototype.defaultOptions.events,
+        {
+            click: function (e) {
+                var annotation = this,
+                    toolbar = annotation.chart.stockToolbar;
+
+                if (originalClick) {
+                    originalClick.click.call(annotation, e);
+                }
+
+                annotation.setControlPointsVisibility(true);
+
+                if (toolbar.showForm) {
+                    toolbar.showForm(
+                        'annotation',
+                        annotation.options,
+                        function (data) {
+                            var config = annotation.options;
+
+                            toolbar.fieldsToOptions(data.fields, config);
+
+                            annotation.setControlPointsVisibility(false);
+                            annotation.update(config);
+                        }
+                    );
+                }
+            }
+        }
+    );
+}
 
 H.setOptions({
     stockTools: {
