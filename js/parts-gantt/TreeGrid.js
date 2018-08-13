@@ -437,23 +437,24 @@ override(GridAxis.prototype, {
             isTreeGrid = userOptions.type === 'treegrid';
         // Set default and forced options for TreeGrid
         if (isTreeGrid) {
-            merge(true, userOptions, {
+            userOptions = merge({
                 // Default options
                 grid: {
                     enabled: true
-                },
-                labels: {
-                    align: 'left'
                 }
             }, userOptions, { // User options
                 // Forced options
-                reversed: true
+                reversed: true,
+                // TODO: add support for align in treegrid.
+                labels: {
+                    align: 'left'
+                }
             });
         }
 
         // Now apply the original function with the original arguments,
         // which are sliced off this function's arguments
-        proceed.apply(axis, argsToArray(arguments));
+        proceed.apply(axis, [chart, userOptions]);
         if (isTreeGrid) {
             H.addEvent(axis.chart, 'beforeRender', function () {
                 // beforeRender is fired after all the series is initialized,
@@ -565,7 +566,57 @@ override(GridAxis.prototype, {
     }
 });
 override(GridAxisTick.prototype, {
-    renderLabel: function (proceed, xy) {
+    getLabelPosition: function (
+        proceed,
+        x,
+        y,
+        label,
+        horiz,
+        labelOptions,
+        tickmarkOffset,
+        index,
+        step
+    ) {
+        var tick = this,
+            pos = tick.pos,
+            axis = tick.axis,
+            options = axis.options,
+            isTreeGrid = options.type === 'treegrid',
+            result = proceed.apply(
+                tick,
+                [x, y, label, horiz, labelOptions, tickmarkOffset, index, step]
+            ),
+            symbolOptions,
+            indentation,
+            mapOfPosToGridNode,
+            node,
+            level;
+
+        if (isTreeGrid) {
+            symbolOptions = (
+                labelOptions && isObject(labelOptions.symbol) ?
+                labelOptions.symbol :
+                {}
+            );
+            indentation = (
+                labelOptions && isNumber(labelOptions.indentation) ?
+                options.labels.indentation :
+                0
+            );
+            mapOfPosToGridNode = axis.mapOfPosToGridNode;
+            node = mapOfPosToGridNode && mapOfPosToGridNode[pos];
+            level = node && node.depth;
+            result.x += (
+                // Add space for symbols
+                ((symbolOptions.width) + (symbolOptions.padding * 2)) +
+                // Apply indentation
+                ((level - 1) * indentation)
+            );
+        }
+
+        return result;
+    },
+    renderLabel: function (proceed) {
         var tick = this,
             pos = tick.pos,
             axis = tick.axis,
@@ -578,11 +629,6 @@ override(GridAxisTick.prototype, {
                 labelOptions.symbol :
                 {}
             ),
-            indentation = (
-                labelOptions && isNumber(labelOptions.indentation) ?
-                options.labels.indentation :
-                0
-            ),
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
             level = node && node.depth,
             isTreeGrid = options.type === 'treegrid',
@@ -594,13 +640,6 @@ override(GridAxisTick.prototype, {
             removeClassName;
 
         if (isTreeGrid && node) {
-            xy.x += (
-                // Add space for symbols
-                ((symbolOptions.width) + (symbolOptions.padding * 2)) +
-                // Apply indentation
-                ((level - 1) * indentation)
-            );
-
             // Add class name for hierarchical styling.
             if (hasLabel) {
                 label.addClass(prefixClassName + 'level-' + level);

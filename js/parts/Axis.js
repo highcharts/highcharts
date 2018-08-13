@@ -3949,8 +3949,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 options[prefix + 'Width'],
                 prefix === 'tick' && this.isXAxis ? 1 : 0 // X axis default 1
             );
-
-        if (tickWidth && tickLength) {
+        if (isNumber(tickWidth) && isNumber(tickLength)) {
             // Negate the length
             if (options[prefix + 'Position'] === 'inside') {
                 tickLength = -tickLength;
@@ -4233,9 +4232,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 widthOption = labelStyleOptions.width,
                 css = {};
             if (label) {
-                // This needs to go before the CSS in old IE (#4502)
-                label.attr(attr);
-
                 if (
                     commonWidth &&
                     !widthOption &&
@@ -4256,7 +4252,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                             commonTextOverflow
                         );
                     }
-                    label.css(css);
 
                 // Reset previously shortened label (#8210)
                 } else if (
@@ -4265,8 +4260,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     !css.width &&
                     !widthOption
                 ) {
-                    label.css({ width: null });
+                    css.width = null;
                 }
+                // attr needs to go before the CSS in old IE (#4502)
+                label.attr(attr).css(css);
 
                 delete label.specificTextOverflow;
                 tick.rotation = attr.rotation;
@@ -4726,7 +4723,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             if (!ticks[pos]) {
                 ticks[pos] = new Tick(this, pos);
             }
-
+            // NOTE this seems like overkill. Could be handled in tick.render by
+            // setting old position in attr, then set new position in animate.
             // render new ticks in old position
             if (slideInTicks && ticks[pos].isNew) {
                 // Start with negative opacity so that it is visible from
