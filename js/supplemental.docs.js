@@ -1499,17 +1499,6 @@
 
 
 /**
- * How many decimals to show for the `point.change` value when the
- * `series.compare` option is set. This is overridable in each series' tooltip
- * options object. The default is to preserve all decimals.
- *
- * @type {Number}
- * @since 1.0.1
- * @product highstock
- * @apioption tooltip.changeDecimals
- */
-
-/**
  * In an ordinal axis, the points are equally spaced in the chart regardless
  * of the actual time or x distance between them. This means that missing
  * data for nights or weekends will not take up space in the chart.
@@ -1787,98 +1776,6 @@
  * @since 4.2.6
  * @product highstock
  * @apioption yAxis.scrollbar.zIndex
- */
-
-/**
- * Default `mapData` for all series. If set to a string, it functions
- * as an index into the `Highcharts.maps` array. Otherwise it is interpreted
- * as map data.
- *
- * @type {String|Array<Object>}
- * @see [mapData](#series.map.mapData)
- * @default undefined
- * @since 5.0.0
- * @product highmaps
- * @apioption chart.map
- */
-
-/**
- * Set lat/lon transformation definitions for the chart. If not defined,
- *  these are extracted from the map data.
- *
- * @type {Object}
- * @default undefined
- * @since 5.0.0
- * @product highmaps
- * @apioption chart.mapTransforms
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Credits for map source to be concatenated with conventional credit
- * text. By default this is a format string that collects copyright
- * information from the map if available.
- *
- * @type {String}
- * @see [mapTextFull](#credits.mapTextFull), [text](#credits.text)
- * @default \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>
- * @since 4.2.2
- * @product highmaps
- * @apioption credits.mapText
- */
-
-/**
- * Detailed credits for map source to be displayed on hover of credits
- * text. By default this is a format string that collects copyright
- * information from the map if available.
- *
- * @type {String}
- * @see [mapText](#credits.mapText), [text](#credits.text)
- * @default {geojson.copyright}
- * @since 4.2.2
- * @product highmaps
- * @apioption credits.mapTextFull
- */
-
-/**
- * The title appearing on hovering the zoom in button. The text itself
- * defaults to "+" and can be changed in the button options.
- *
- * @type {String}
- * @default Zoom in
- * @product highmaps
- * @apioption lang.zoomIn
- */
-
-/**
- * The title appearing on hovering the zoom out button. The text itself
- * defaults to "-" and can be changed in the button options.
- *
- * @type {String}
- * @default Zoom out
- * @product highmaps
- * @apioption lang.zoomOut
  */
 
 /**
