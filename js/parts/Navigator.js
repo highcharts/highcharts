@@ -2291,15 +2291,6 @@ H.Navigator = Navigator;
  * For Stock charts, override selection zooming with some special features
  * because X axis zooming is already allowed by the Navigator and Range
  * selector.
- *
- * @ignore
- * @function Highcharts.Axis#zoom
- *
- * @param  {number} newMin
- *
- * @param  {number} newMax
- *
- * @return {boolean}
  */
 wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
     var chart = this.chart,
