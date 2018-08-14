@@ -943,7 +943,10 @@ RangeSelector.prototype = {
             inputPosition = options.inputPosition,
             inputEnabled = options.inputEnabled,
             states = buttonTheme && buttonTheme.states,
-            plotLeft = chart.plotLeft,
+            plotLeft = (
+                    chartOptions &&
+                    chartOptions.chart &&
+                    chartOptions.chart.marginLeft) || chart.plotLeft,
             buttonLeft,
             buttonGroup = rangeSelector.buttonGroup,
             group,
@@ -965,7 +968,6 @@ RangeSelector.prototype = {
         if (options.enabled === false) {
             return;
         }
-
         // create the elements
         if (!rendered) {
 
@@ -1434,7 +1436,12 @@ Axis.prototype.minFromRange = function () {
 
 // Initialize rangeselector for stock charts
 addEvent(Chart, 'afterGetContainer', function () {
+
     if (this.options.rangeSelector.enabled) {
+        if (this.rangeSelector) {
+            this.rangeSelector.destroy();
+        }
+
         this.rangeSelector = new RangeSelector(this);
     }
 });
@@ -1454,7 +1461,6 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
         });
 
         chart.getAxisMargins();
-
         rangeSelector.render();
         verticalAlign = rangeSelector.options.verticalAlign;
 
@@ -1465,6 +1471,10 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
                 this.extraTopMargin = true;
             }
         }
+
+        // update inputs
+        rangeSelector.setInputValue('min', chart.xAxis[0].min);
+        rangeSelector.setInputValue('max', chart.xAxis[0].max);
     }
 
     proceed.call(this, options, callback);
@@ -1472,7 +1482,6 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 });
 
 addEvent(Chart, 'update', function (e) {
-
     var chart = this,
         options = e.options,
         rangeSelector = chart.rangeSelector,
@@ -1512,7 +1521,13 @@ wrap(Chart.prototype, 'redraw', function (proceed, options, callback) {
 
     if (rangeSelector && !rangeSelector.options.floating) {
 
+        if (rangeSelector) {
+            rangeSelector.destroy();
+            this.rangeSelector = rangeSelector = new RangeSelector(chart);
+        }
+
         rangeSelector.render();
+
         verticalAlign = rangeSelector.options.verticalAlign;
 
         if (verticalAlign === 'bottom') {
@@ -1520,12 +1535,16 @@ wrap(Chart.prototype, 'redraw', function (proceed, options, callback) {
         } else if (verticalAlign !== 'middle') {
             this.extraTopMargin = true;
         }
+
+        // update inputs
+        rangeSelector.setInputValue('min', chart.xAxis[0].min);
+        rangeSelector.setInputValue('max', chart.xAxis[0].max);
     }
 
     proceed.call(this, options, callback);
 });
 
-addEvent(Chart, 'getMargins', function () {
+addEvent(Chart, 'getMargins', function (e) {
     var rangeSelector = this.rangeSelector,
         rangeSelectorHeight;
 
@@ -1551,7 +1570,9 @@ Chart.prototype.callbacks.push(function (chart) {
     function renderRangeSelector() {
         extremes = chart.xAxis[0].getExtremes();
         if (isNumber(extremes.min)) {
-            rangeSelector.render(extremes.min, extremes.max);
+            if (rangeSelector.rendered) {
+                rangeSelector.render(extremes.min, extremes.max);
+            }
         }
     }
 
@@ -1561,7 +1582,9 @@ Chart.prototype.callbacks.push(function (chart) {
             chart.xAxis[0],
             'afterSetExtremes',
             function (e) {
-                rangeSelector.render(e.min, e.max);
+                if (rangeSelector.rendered) {
+                    rangeSelector.render(e.min, e.max);
+                }
             }
         );
 
