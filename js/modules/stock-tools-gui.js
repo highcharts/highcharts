@@ -299,6 +299,7 @@ addEvent(H.Chart, 'afterGetContainer', function (options) {
 
     if (guiOptions.enabled) {
         this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
+        this.stockToolbar.setToolbarSpace();
     }
 });
 
@@ -320,24 +321,6 @@ addEvent(H.Chart, 'update', function (options) {
     }
 
     fireEvent(this, 'afterGetContainer', options);
-});
-
-addEvent(H.Chart, 'resetMargins', function () {
-    var marginLeft = this.options.chart.marginLeft || 0,
-        stockToolbar = this.stockToolbar;
-
-    if (stockToolbar) {
-        if (stockToolbar.visible && !stockToolbar.placed) {
-
-            this.options.chart.marginLeft = marginLeft + 50;
-            stockToolbar.placed = true;
-
-        } else if (!stockToolbar.visible && stockToolbar.placed) {
-
-            this.options.chart.marginLeft = marginLeft - 50;
-            stockToolbar.placed = false;
-        }
-    }
 });
 
 /*
@@ -799,6 +782,26 @@ H.Toolbar.prototype = {
      */
     showForm: function (type, callback) {
         H.Popup.prototype.showForm(type, this.chart, callback);
+    },
+    /*
+     * Add / remove space for toolbar.
+     *
+     */
+    setToolbarSpace: function () {
+
+        var marginLeft = this.chart.options.chart.marginLeft || 0,
+            stockToolbar = this.chart.stockToolbar;
+
+        if (stockToolbar.visible && !stockToolbar.placed) {
+
+            this.chart.options.chart.marginLeft = marginLeft + 50;
+            stockToolbar.placed = true;
+
+        } else if (!stockToolbar.visible && stockToolbar.placed) {
+
+            this.chart.options.chart.marginLeft = marginLeft - 50;
+            stockToolbar.placed = false;
+        }
     },
     /*
      * Destroy all HTML GUI elements.
