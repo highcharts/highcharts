@@ -1,6 +1,6 @@
 
 // Highcharts 4.0.4, Issue #3648
-// Datalabel position incorrect for data points when using multiple yAxis
+// Datalabel position is incorrect for data points when using multiple yAxis
 QUnit.test('Wrong datalabel position (#3648)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -80,4 +80,72 @@ QUnit.test('Wrong datalabel position (#3648)', function (assert) {
         "The position of the datalabels for the second series is incorrect"
     );
 
+});
+
+
+// Highcharts 4.0.4, Issue #3648
+// The tooltip positions is incorrect for data points when using multiple yAxis
+QUnit.test('Wrong datalabel position (#3648)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'column',
+            inverted: true
+        },
+
+        yAxis: [{
+            width: 200,
+            lineWidth: 2
+        }, {
+            left: 250,
+            width: 200,
+            offset: 0,
+            lineWidth: 2
+        }],
+        series: [{
+            data: [5]
+        }, {
+            data: [21],
+            yAxis: 1
+        }]
+
+    });
+    var controller = new TestController(chart),
+        firstSeries = chart.series[0].points[0],
+        secondSeries = chart.series[1].points[0],
+        plotLeft = chart.plotLeft,
+        firstSeriesCenterX = firstSeries.plotX,
+        firstSeriesColumnX = firstSeries.graphic.getBBox().height + plotLeft,
+        firstSeriesWidth = chart.series[0].clipBox.height,
+        seriesCenterY = (chart.plotHeight / 2) + chart.plotTop,
+        secondSeriesCenterX = secondSeries.plotX + firstSeriesWidth,
+        secondSeriesColumnX = secondSeries.graphic.getBBox().height + plotLeft + firstSeriesWidth;
+
+
+    controller.mouseOver(
+        firstSeriesCenterX,
+        seriesCenterY
+    );
+
+    assert.notOk(
+        chart.tooltip.isHidden,
+        "Tooltip is hidden"
+    );
+
+    var tooltipXPos = chart.tooltip.now.x;
+
+    assert.ok(
+        (firstSeriesColumnX < tooltipXPos) && (secondSeriesColumnX > tooltipXPos),
+        "The position of the tooltip is wrong"
+    );
+
+    controller.mouseOver(
+        secondSeriesCenterX,
+        seriesCenterY
+    );
+    tooltipXPos = chart.tooltip.now.x;
+    assert.ok(
+        secondSeriesColumnX < tooltipXPos,
+        "The position of the tooltip is wrong"
+    );
 });
