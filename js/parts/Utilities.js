@@ -2308,7 +2308,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  *         Supports numeric as pixel-based CSS properties for HTML objects and
  *         attributes for SVGElements.
  *
- * @param  {Highcharts.AnimationOptions|undefined} [opt]
+ * @param  {Highcharts.AnimationOptionsObject|undefined} [opt]
  *         Animation options.
  *
  * @return {void}
