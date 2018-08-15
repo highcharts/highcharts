@@ -622,9 +622,9 @@ defaultOptions.lang = merge(
 /**
  * The range selector.
  *
- * @constructor Highcharts.RangeSelector
+ * @class Highcharts.RangeSelector
  *
- * @param  {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} chart
  */
 function RangeSelector(chart) {
 
@@ -1122,7 +1122,9 @@ RangeSelector.prototype = {
      *
      * @function Highcharts.RangeSelector#drawInput
      *
-     * @param {string} name
+     * @param  {string} name
+     *
+     * @return {void}
      */
     drawInput: function (name) {
         var rangeSelector = this,
@@ -1753,6 +1755,8 @@ RangeSelector.prototype = {
      * Destroys allocated elements.
      *
      * @function Highcharts.RangeSelector#destroy
+     *
+     * @return {void}
      */
     destroy: function () {
         var rSelector = this,
