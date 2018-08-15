@@ -223,6 +223,64 @@ QUnit.test("Pie chart", function (assert) {
 });
 
 
+QUnit.test("Pie chart, multiple", function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Donut'
+        },
+        plotOptions: {
+            pie: {
+                center: ['50%', '50%']
+            }
+        },
+        series: [{
+            name: 'Categories',
+            data: [
+                ['Animals', 2],
+                ['Plants', 2]
+            ],
+            dataLabels: {
+                distance: -50
+            },
+            size: '60%'
+        }, {
+            name: 'Subcategories',
+            data: [
+                ['Cats', 1],
+                ['Dogs', 1],
+                ['Potatoes', 1],
+                ['Trees', 1]
+            ],
+            size: '80%',
+            innerSize: '60%'
+        }],
+        exporting: {
+            showTable: true
+        }
+    });
+
+    var csv = [
+        '"Category","Categories","Subcategories"',
+        '"Animals",2',
+        '"Cats",,1',
+        '"Plants",2',
+        '"Dogs",,1',
+        '"Potatoes",,1',
+        '"Trees",,1'
+    ].join("\n");
+
+    assert.equal(
+        chart.getCSV(),
+        csv,
+        "Pie chart, multiple"
+    );
+    chart.destroy();
+});
+
+
 QUnit.test("Bubble chart", function (assert) {
     var chart = new Highcharts.Chart({
         chart: {

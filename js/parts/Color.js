@@ -23,6 +23,7 @@ var each = H.each,
 /**
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format
+ * @ignore
  */
 H.Color = function (input) {
     // Backwards compatibility, allow instanciation without new
@@ -59,7 +60,6 @@ H.Color.prototype = {
     // Collection of named colors. Can be extended from the outside by adding
     // colors to Highcharts.Color.prototype.names.
     names: {
-        none: 'rgba(255,255,255,0)',
         white: '#ffffff',
         black: '#000000'
     },

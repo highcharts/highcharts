@@ -193,8 +193,8 @@ H.Series = H.seriesType('line', null, { // base series options
      *
      * <dt>easing</dt>
      *
-     * <dd>A string reference to an easing function set on the `Math` object.
-     * See the _Custom easing function_ demo below.</dd>
+     * <dd>Can be a string reference to an easing function set on the `Math`
+     * object or a function. See the _Custom easing function_ demo below.</dd>
      *
      * </dl>
      *
@@ -230,6 +230,21 @@ H.Series = H.seriesType('line', null, { // base series options
      * @type {String}
      * @since 5.0.0
      * @apioption plotOptions.series.className
+     */
+
+    /**
+     * Disable this option to allow series rendering in the whole plotting
+     * area.
+     *
+     * **Note:** Clipping should be always enabled when
+     * [chart.zoomType](#chart.zoomType) is set
+     *
+     * @default true
+     * @type {Boolean}
+     * @sample {highcharts} highcharts/plotoptions/series-clip/
+     *         Disabled clipping
+     * @since 3.0.0
+     * @apioption plotOptions.series.clip
      */
 
     /**
@@ -331,7 +346,7 @@ H.Series = H.seriesType('line', null, { // base series options
      *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
      *             "LongDashDot", "LongDashDotDot"]
      * @type {String}
-     * @see In styled mode, the [stroke dash-array](http://jsfiddle.net/gh/get/
+     * @see In styled mode, the [stroke dash-array](https://jsfiddle.net/gh/get/
      * library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/
      * series-dashstyle/) can be set with the same classes as listed under
      * [series.color](#plotOptions.series.color).
@@ -446,7 +461,6 @@ H.Series = H.seriesType('line', null, { // base series options
      * @sample {highcharts|highstock} highcharts/series/data-nested-keys/
      *         Nested keys used to access object properties
      * @since 4.1.6
-     * @product highcharts highstock
      * @apioption plotOptions.series.keys
      */
 
@@ -1441,9 +1455,9 @@ H.Series = H.seriesType('line', null, { // base series options
      * Options for the series data labels, appearing next to each data
      * point.
      *
-     * In styled mode, the data labels can be styled wtih the
+     * In styled mode, the data labels can be styled with the
      * `.highcharts-data-label-box` and `.highcharts-data-label` class names
-     * ([see example](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels)).
+     * ([see example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels)).
      */
     dataLabels: {
 
@@ -1514,7 +1528,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * can be used to give each series' or point's data label unique
          * styling. In addition to this option, a default color class name is
          * added so that we can give the labels a
-         * [contrast text shadow](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-label-contrast/).
+         * [contrast text shadow](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-label-contrast/).
          *
          * @type {String}
          * @sample {highcharts} highcharts/css/series-datalabels/ Styling by CSS
@@ -1576,7 +1590,7 @@ H.Series = H.seriesType('line', null, { // base series options
          */
 
         /**
-         * A [format string](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
          * for the data label. Available variables are the same as for
          * `formatter`.
          *
@@ -1726,8 +1740,8 @@ H.Series = H.seriesType('line', null, { // base series options
          * declarative filter is designed for use when callback functions are
          * not available, like when the chart options require a pure JSON
          * structure or for use with graphical editors. For programmatic
-         * control, use the `formatter` instead, and return `false` to disable
-         * a single data label.
+         * control, use the `formatter` instead, and return `undefined` to
+         * disable a single data label.
          *
          * @example
          * filter: {
@@ -1759,7 +1773,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * and `===`.
          *
          * @type {String}
-         * @validvalue [">", "<", ">=", "<=", "==", "===""]
+         * @validvalue [">", "<", ">=", "<=", "==", "==="]
          * @apioption plotOptions.series.dataLabels.filter.operator
          */
 
@@ -1849,7 +1863,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
         /**
          * Whether to
-         * [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the labels.
          *
          * @type {Boolean}
@@ -2216,7 +2230,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * In styled mode, the color zones are styled with the
      * `.highcharts-zone-{n}` class, or custom classed from the `className`
      * option
-     * ([view live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/)).
+     * ([view live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/)).
      *
      * @type {Array}
      * @see [zoneAxis](#plotOptions.series.zoneAxis)
@@ -2325,7 +2339,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * Read only. The chart that the series belongs to.
          *
          * @name chart
-         * @memberOf Series
+         * @memberof Series
          * @type {Chart}
          */
         series.chart = chart;
@@ -2336,7 +2350,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * Series#update}.
          *
          * @name type
-         * @memberOf Series
+         * @memberof Series
          * @type String
          */
 
@@ -2345,7 +2359,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * Series#update}.
          *
          * @name options
-         * @memberOf Series
+         * @memberof Series
          * @type SeriesOptions
          */
         series.options = options = series.setOptions(options);
@@ -2361,7 +2375,7 @@ H.Series = H.seriesType('line', null, { // base series options
              * "Series {n}".
              *
              * @name name
-             * @memberOf Series
+             * @memberof Series
              * @type {String}
              */
             name: options.name,
@@ -2372,7 +2386,7 @@ H.Series = H.seriesType('line', null, { // base series options
              * configuration.
              *
              * @name visible
-             * @memberOf Series
+             * @memberof Series
              * @type {Boolean}
              */
             visible: options.visible !== false, // true by default
@@ -2381,7 +2395,7 @@ H.Series = H.seriesType('line', null, { // base series options
              * Highcharts.Series#select}.
              *
              * @name selected
-             * @memberOf Series
+             * @memberof Series
              * @type {Boolean}
              */
             selected: options.selected === true // false by default
@@ -2438,7 +2452,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * option. Used internally when adding series.
      *
      * @private
-     * @param   {Array.<Series>} collection
+     * @param   {Array<Series>} collection
      *          A collection of series, like `chart.series` or `xAxis.series`.
      * @returns {Number} The index of the series in the collection.
      */
@@ -2511,7 +2525,7 @@ H.Series = H.seriesType('line', null, { // base series options
                      * series.
                      *
                      * @name xAxis
-                     * @memberOf Series
+                     * @memberof Series
                      * @type Axis
                      */
                     /**
@@ -2519,7 +2533,7 @@ H.Series = H.seriesType('line', null, { // base series options
                      * series.
                      *
                      * @name yAxis
-                     * @memberOf Series
+                     * @memberof Series
                      * @type Axis
                      */
                     series[AXIS] = axis;
@@ -3327,7 +3341,7 @@ H.Series = H.seriesType('line', null, { // base series options
                  * - `dataGroup.length` is the amount of points in the group.
                  *
                  * @name dataGroup
-                 * @memberOf Point
+                 * @memberof Point
                  * @type {Object}
                  *
                  */
@@ -3375,9 +3389,9 @@ H.Series = H.seriesType('line', null, { // base series options
          * {@link Highcharts.Point#update}.
          *
          * @name data
-         * @memberOf Highcharts.Series
+         * @memberof Highcharts.Series
          * @see  Series.points
-         * @type {Array.<Highcharts.Point>}
+         * @type {Array<Point>}
          */
         series.data = data;
 
@@ -3391,7 +3405,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * Highcharts.Point#update}.
          * @name points
          * @memberof Series
-         * @type {Array.<Point>}
+         * @type {Array<Point>}
          */
         series.points = points;
     },
@@ -3400,7 +3414,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * Calculate Y extremes for the visible data. The result is set as
      * `dataMin` and `dataMax` on the Series item.
      *
-     * @param  {Array.<Number>} [yData]
+     * @param  {Array<Number>} [yData]
      *         The data to inspect. Defaults to the current data within the
      *         visible range.
      *
@@ -3651,13 +3665,13 @@ H.Series = H.seriesType('line', null, { // base series options
     /**
      * Return the series points with null points filtered out.
      *
-     * @param  {Array.<Point>} [points]
+     * @param  {Array<Point>} [points]
      *         The points to inspect, defaults to {@link Series.points}.
      * @param  {Boolean} [insideOnly=false]
      *         Whether to inspect only the points that are inside the visible
      *         view.
      *
-     * @return {Array.<Point>}
+     * @return {Array<Point>}
      *         The valid points.
      */
     getValidPoints: function (points, insideOnly) {

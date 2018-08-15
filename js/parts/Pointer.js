@@ -163,7 +163,7 @@ Highcharts.Pointer.prototype = {
      * Finds the closest point to a set of coordinates, using the k-d-tree
      * algorithm.
      *
-     * @param  {Array.<Series>} series
+     * @param  {Array<Series>} series
      *         All the series to search in.
      * @param  {boolean} shared
      *         Whether it is a shared tooltip or not.
@@ -265,7 +265,7 @@ Highcharts.Pointer.prototype = {
      *         The point currrently beeing hovered.
      * @param  {undefined|Series} existingHoverSeries
      *         The series currently beeing hovered.
-     * @param  {Array.<Series>} series
+     * @param  {Array<Series>} series
      *         All the series in the chart.
      * @param  {boolean} isDirectTouch
      *         Is the pointer directly hovering the point.
@@ -391,7 +391,11 @@ Highcharts.Pointer.prototype = {
         hoverPoint = hoverData.hoverPoint;
         points = hoverData.hoverPoints;
         hoverSeries = hoverData.hoverSeries;
-        followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+        followPointer = (
+            e && e.type === 'touchmove' ?
+            pointer.followTouchMove === true :
+            hoverSeries && hoverSeries.tooltipOptions.followPointer
+        );
         useSharedTooltip = (
             shared &&
             hoverSeries &&
@@ -510,7 +514,17 @@ Highcharts.Pointer.prototype = {
         if (allowMove) {
             if (tooltip && tooltipPoints) {
                 tooltip.refresh(tooltipPoints);
-                if (hoverPoint) { // #2500
+                if (tooltip.shared && hoverPoints) { // #8284
+                    each(hoverPoints, function (point) {
+                        point.setState(point.state, true);
+                        if (point.series.xAxis.crosshair) {
+                            point.series.xAxis.drawCrosshair(null, point);
+                        }
+                        if (point.series.yAxis.crosshair) {
+                            point.series.yAxis.drawCrosshair(null, point);
+                        }
+                    });
+                } else if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
                     each(chart.axes, function (axis) {
                         if (axis.crosshair) {

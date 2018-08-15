@@ -57,7 +57,7 @@ var seriesType = H.seriesType,
  *
  * @sample highcharts/demo/treemap-large-dataset/ Treemap
  *
- * @extends {plotOptions.scatter}
+ * @extends plotOptions.scatter
  * @excluding marker
  * @product highcharts
  * @optionparent plotOptions.treemap
@@ -199,7 +199,7 @@ seriesType('treemap', 'scatter', {
      * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
      * @type {String}
      * @see [How to write your own algorithm](
-     * http://www.highcharts.com/docs/chart-and-series-types/treemap).
+     * https://www.highcharts.com/docs/chart-and-series-types/treemap).
      *
      * @sample  {highcharts}
      *          highcharts/plotoptions/treemap-layoutalgorithm-sliceanddice/
@@ -483,7 +483,7 @@ seriesType('treemap', 'scatter', {
 
             /**
              * Brightness for the hovered point. Defaults to 0 if the heatmap
-             * series is loaded, otherwise 0.1.
+             * series is loaded first, otherwise 0.1.
              *
              * @default null
              * @type {Number}
@@ -517,22 +517,11 @@ seriesType('treemap', 'scatter', {
 // Prototype members
 }, {
     pointArrayMap: ['value'],
-    axisTypes: seriesTypes.heatmap ?
-        ['xAxis', 'yAxis', 'colorAxis'] :
-        ['xAxis', 'yAxis'],
     directTouch: true,
     optionalAxis: 'colorAxis',
     getSymbol: noop,
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
     colorKey: 'colorValue', // Point color option key
-    translateColors: (
-        seriesTypes.heatmap &&
-        seriesTypes.heatmap.prototype.translateColors
-    ),
-    colorAttribs: (
-        seriesTypes.heatmap &&
-        seriesTypes.heatmap.prototype.colorAttribs
-    ),
     trackerGroups: ['group', 'dataLabelsGroup'],
     /**
      * Creates an object map from parent id to childrens index.
@@ -576,7 +565,16 @@ seriesType('treemap', 'scatter', {
         return series.buildNode('', -1, 0, parentList, null);
     },
     init: function (chart, options) {
-        var series = this;
+        var series = this,
+            colorSeriesMixin = H.colorSeriesMixin;
+
+        // If color series logic is loaded, add some properties
+        if (H.colorSeriesMixin) {
+            this.translateColors = colorSeriesMixin.translateColors;
+            this.colorAttribs = colorSeriesMixin.colorAttribs;
+            this.axisTypes = colorSeriesMixin.axisTypes;
+        }
+
         Series.prototype.init.call(series, chart, options);
         if (series.options.allowDrillToNode) {
             H.addEvent(series, 'click', series.onClickDrillToNode);

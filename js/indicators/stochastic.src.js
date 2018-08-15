@@ -27,7 +27,7 @@ H.seriesType('stochastic', 'sma',
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @extends {plotOptions.sma}
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/stochastic
      *                     Stochastic oscillator

@@ -88,3 +88,40 @@ QUnit.test('Auto rotated labels with useHTML', function (assert) {
     );
 
 });
+
+QUnit.test('Bounding box for rotated label', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            height: 400
+        },
+        title: {
+            text: 'with useHTML enabled on Axis labels'
+        },
+        xAxis: {
+            categories: ['This really looooong title name will be cut off', 'Feb'],
+            labels: {
+                useHTML: true,
+                rotation: 45,
+                style: {
+                    textOverflow: 'none',
+                    whiteSpace: "nowrap"
+                }
+            }
+        },
+        series: [{
+            data: [29.9, 71.5]
+        }]
+    });
+
+    var label = chart.xAxis[0].ticks[0].label.element;
+    assert.strictEqual(
+        label.style.whiteSpace,
+        'nowrap',
+        'The white-space is set'
+    );
+    assert.strictEqual(
+        label.style.width,
+        '',
+        'The width should not be set when white-space is nowrap (#8467)'
+    );
+});

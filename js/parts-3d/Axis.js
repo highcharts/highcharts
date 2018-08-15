@@ -228,8 +228,8 @@ wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
             path.push(
                 'M', fromPath[i + 1], fromPath[i + 2],
                 'L', fromPath[i + 4], fromPath[i + 5],
-                'L',   toPath[i + 4],   toPath[i + 5],
-                'L',   toPath[i + 1],   toPath[i + 2],
+                'L', toPath[i + 4], toPath[i + 5],
+                'L', toPath[i + 1], toPath[i + 2],
                 'Z');
         }
     }
@@ -422,8 +422,6 @@ function fix3dPosition(axis, pos, isTitle) {
             projected.y * projected.matrix[2];
         projected.matrix[5] -= projected.x * projected.matrix[1] +
             projected.y * projected.matrix[3];
-    } else {
-        projected.matrix = null;
     }
 
     return projected;
@@ -606,7 +604,7 @@ wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
 
         // Check whether the tick is not the first one and previous tick exists,
         // then calculate position of previous label.
-        if (tickId !== 0 && prevTick) {
+        if (tickId !== 0 && prevTick && prevTick.label.xy) { // #8621
             prevLabelPos = perspective3D({
                 x: prevTick.label.xy.x,
                 y: prevTick.label.xy.y,

@@ -372,7 +372,7 @@ if (Renderer === VMLRenderer) {
  * Chart|Chart} object with different default options than the basic Chart.
  *
  * @function #mapChart
- * @memberOf Highcharts
+ * @memberof Highcharts
  *
  * @param  {String|HTMLDOMElement} renderTo
  *         The DOM element to render to, or its id.
