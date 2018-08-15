@@ -509,6 +509,24 @@ H.Series = H.seriesType('line', null, { // base series options
      */
 
     /**
+     * Options for the corresponding navigator series if `showInNavigator`
+     * is `true` for this series. Available options are the same as any
+     * series, documented at [plotOptions](#plotOptions.series) and
+     * [series](#series).
+     *
+     * These options are merged with options in [navigator.series](
+     * #navigator.series), and will take precedence if the same option is
+     * defined both places.
+     *
+     * @see [navigator.series](#navigator.series)
+     *
+     * @type       {*}
+     * @since      5.0.0
+     * @product    highstock
+     * @apioption  plotOptions.series.navigatorOptions
+     */
+
+    /**
      * The color for the parts of the graph or points that are below the
      * [threshold](#plotOptions.series.threshold).
      *
@@ -678,6 +696,16 @@ H.Series = H.seriesType('line', null, { // base series options
      *         One series in the legend, one hidden
      * @default true
      * @apioption plotOptions.series.showInLegend
+     */
+
+    /**
+     * Whether or not to show the series in the navigator. Takes precedence
+     * over [navigator.baseSeries](#navigator.baseSeries) if defined.
+     *
+     * @type       {boolean}
+     * @since      5.0.0
+     * @product    highstock
+     * @apioption  plotOptions.series.showInNavigator
      */
 
     /**

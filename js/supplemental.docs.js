@@ -15,59 +15,6 @@
 
 
 
-/**
- * Whether the navigator and scrollbar should adapt to updated data
- * in the base X axis. When loading data async, as in the demo below,
- * this should be `false`. Otherwise new data will trigger navigator
- * redraw, which will cause unwanted looping. In the demo below, the
- * data in the navigator is set only once. On navigating, only the main
- * chart content is updated.
- *
- * @type {Boolean}
- * @sample {highstock} stock/demo/lazy-loading/ Set to false with async data loading
- * @default true
- * @product highstock
- * @apioption navigator.adaptToUpdatedData
- */
-
-/**
- * An integer identifying the index to use for the base series, or a
- * string representing the id of the series.
- *
- * **Note**: As of Highcharts 5.0, this is now a deprecated option.
- * Prefer [series.showInNavigator](#plotOptions.series.showInNavigator).
- *
- * @type {Mixed}
- * @see [series.showInNavigator](#plotOptions.series.showInNavigator)
- * @deprecated
- * @default 0
- * @product highstock
- * @apioption navigator.baseSeries
- */
-
-/**
- * Enable or disable the navigator.
- *
- * @type {Boolean}
- * @sample {highstock} stock/navigator/enabled/ Disable the navigator
- * @default true
- * @product highstock
- * @apioption navigator.enabled
- */
-
-/**
- * When the chart is inverted, whether to draw the navigator on the
- * opposite side.
- *
- * @type {Boolean}
- * @default false
- * @since 5.0.8
- * @product highstock
- * @apioption navigator.opposite
- */
-
-
-
 
 
 
