@@ -31,7 +31,7 @@ function stopEvent(e) {
  * The MapNavigation handles buttons for navigation in addition to mousewheel
  * and doubleclick handlers for chart zooming.
  *
- * @constructor Highcharts.MapNavigation
+ * @class Highcharts.MapNavigation
  *
  * @param {Highcharts.Chart} chart
  *        The Chart instance.
@@ -252,23 +252,23 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      *
      * @function Highcharts.Chart#mapZoom
      *
-     * @param  {number} [howMuch]
+     * @param  {number|undefined} [howMuch]
      *         How much to zoom the map. Values less than 1 zooms in. 0.5 zooms
      *         in to half the current view. 2 zooms to twice the current view.
      *         If omitted, the zoom is reset.
      *
-     * @param  {number} [centerX]
+     * @param  {number|undefined} [centerX]
      *         The X axis position to center around if available space.
      *
-     * @param  {number} [centerY]
+     * @param  {number|undefined} [centerY]
      *         The Y axis position to center around if available space.
      *
-     * @param  {number} [mouseX]
+     * @param  {number|undefined} [mouseX]
      *         Fix the zoom to this position if possible. This is used for
      *         example in mousewheel events, where the area under the mouse
      *         should be fixed as we zoom in.
      *
-     * @param  {number} [mouseY]
+     * @param  {number|undefined} [mouseY]
      *         Fix the zoom to this position if possible.
      *
      * @return {void}
@@ -347,7 +347,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
     }
 });
 
-/**
+/*
  * Extend the Chart.render method to add zooming and panning
  */
 addEvent(Chart, 'beforeRender', function () {
