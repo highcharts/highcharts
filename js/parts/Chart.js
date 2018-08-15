@@ -410,7 +410,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#redraw
      *
-     * @param  {Highcharts.AnimationOptions} animation
+     * @param  {Highcharts.AnimationOptionsObject} animation
      *         If or how to apply animation to the redraw.
      *
      * @return {void}
@@ -1375,7 +1375,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         be `undefined` in order to preserve the current value, or `null`
      *         in order to adapt to the height of the containing element.
      *
-     * @param  {Highcharts.AnimationOptions|undefined} [animation=true]
+     * @param  {Highcharts.AnimationOptionsObject|undefined} [animation=true]
      *         Whether and how to apply animation.
      *
      * @return {void}
