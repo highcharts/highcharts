@@ -462,7 +462,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/animation-duration/
          *         With a longer duration
          *
-         * @type       {boolean|Highcharts.AnimationOptions}
+         * @type       {boolean|Highcharts.AnimationOptionsObject}
          * @default    true
          * @apioption  chart.animation
          */
