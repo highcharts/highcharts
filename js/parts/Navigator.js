@@ -626,10 +626,10 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
 /**
  * The Navigator class
  *
- * @constructor Highcharts.Navigator
+ * @class Highcharts.Navigator
  *
- * @param  {Highcharts.Chart} chart
- *         Chart object
+ * @param {Highcharts.Chart} chart
+ *        Chart object
  */
 function Navigator(chart) {
     this.init(chart);
