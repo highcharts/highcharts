@@ -368,6 +368,12 @@ defaultOptions.mapNavigation = {
 
 /**
  * Utility for reading SVG paths directly.
+ *
+ * @function Highcharts.splitPath
+ *
+ * @param  {string} path
+ *
+ * @return {Array<number|string>}
  */
 H.splitPath = function (path) {
     var i;
