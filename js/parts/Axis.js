@@ -5414,7 +5414,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *         Whether to redraw the chart or wait for an explicit call to
      *         {@link Highcharts.Chart#redraw}
      *
-     * @param  {Highcharts.AnimationOptions|undefined} [animation=true]
+     * @param  {boolean|Highcharts.AnimationOptionsObject|undefined} [animation=true]
      *         Enable or modify animations.
      *
      * @param  {*|undefined} [eventArguments]
