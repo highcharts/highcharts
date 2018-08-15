@@ -317,11 +317,19 @@ defaultOptions.scrollbar = merge(
 );
 
 /**
-* When we have vertical scrollbar, rifles and arrow in buttons should be
-* rotated. The same method is used in Navigator's handles, to rotate them.
-* @param {Array} path - path to be rotated
-* @param {Boolean} vertical - if vertical scrollbar, swap x-y values
-*/
+ * When we have vertical scrollbar, rifles and arrow in buttons should be
+ * rotated. The same method is used in Navigator's handles, to rotate them.
+ *
+ * @function Highcharts.swapXY
+ *
+ * @param  {Array<number|string>} path
+ *         Path to be rotated.
+ *
+ * @param  {boolean} vertical
+ *         If vertical scrollbar, swap x-y values.
+ *
+ * @return {Array<number|string>}
+ */
 H.swapXY = swapXY = function (path, vertical) {
     var i,
         len = path.length,
@@ -717,7 +725,7 @@ Scrollbar.prototype = {
     * @return {void}
     *
     * @todo
-    * Make events public: Fires the event `changed`.
+    * Make events official: Fires the event `changed`.
     */
     initEvents: function () {
         var scroller = this;
@@ -1024,9 +1032,9 @@ Scrollbar.prototype = {
     }
 };
 
-/**
-* Wrap axis initialization and create scrollbar if enabled:
-*/
+/*
+ * Wrap axis initialization and create scrollbar if enabled:
+ */
 addEvent(Axis, 'afterInit', function () {
     var axis = this;
 
@@ -1074,9 +1082,9 @@ addEvent(Axis, 'afterInit', function () {
     }
 });
 
-/**
-* Wrap rendering axis, and update scrollbar if one is created:
-*/
+/*
+ * Wrap rendering axis, and update scrollbar if one is created:
+ */
 addEvent(Axis, 'afterRender', function () {
     var axis = this,
         scrollMin = Math.min(
@@ -1153,9 +1161,9 @@ addEvent(Axis, 'afterRender', function () {
     }
 });
 
-/**
-* Make space for a scrollbar
-*/
+/*
+ * Make space for a scrollbar
+ */
 addEvent(Axis, 'afterGetOffset', function () {
     var axis = this,
         index = axis.horiz ? 2 : 1,
