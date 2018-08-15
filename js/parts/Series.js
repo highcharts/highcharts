@@ -259,7 +259,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * @sample {highmaps} maps/plotoptions/mapbubble-animation-false/
      *         Disabled on mapbubble series
      *
-     * @type       {boolean|Highcharts.AnimationOptions}
+     * @type       {boolean|Highcharts.AnimationOptionsObject}
      * @default    {highcharts} true
      * @default    {highstock} true
      * @default    {highmaps} false
@@ -1217,7 +1217,7 @@ H.Series = H.seriesType('line', null, { // base series options
                 /**
                  * Animation when returning to normal state after hovering.
                  *
-                 * @type {boolean|Highcharts.AnimationOptions}
+                 * @type {boolean|Highcharts.AnimationOptionsObject}
                  * @apioption  plotOptions.series.marker.states.hover.animation
                  */
                 animation: true
@@ -1233,7 +1233,7 @@ H.Series = H.seriesType('line', null, { // base series options
                 /**
                  * Animation when hovering over the marker.
                  *
-                 * @type {boolean|Highcharts.AnimationOptions}
+                 * @type {boolean|Highcharts.AnimationOptionsObject}
                  * @apioption  plotOptions.series.marker.states.hover.animation
                  */
                 animation: {
@@ -2110,7 +2110,7 @@ H.Series = H.seriesType('line', null, { // base series options
             /**
              * Animation when returning to normal state after hovering.
              *
-             * @type       {boolean|Highcharts.AnimationOptions}
+             * @type       {boolean|Highcharts.AnimationOptionsObject}
              * @default    true
              * @apioption  plotOptions.series.states.normal
              */
@@ -2147,7 +2147,7 @@ H.Series = H.seriesType('line', null, { // base series options
             /**
              * Animation setting for hovering the graph in line-type series.
              *
-             * @type       {boolean|Highcharts.AnimationOptions}
+             * @type       {boolean|Highcharts.AnimationOptionsObject}
              * @default    { "duration": 50 }
              * @since      5.0.8
              * @product    highcharts
@@ -3142,7 +3142,7 @@ H.Series = H.seriesType('line', null, { // base series options
      *         more operations on the chart, it is a good idea to set redraw to
      *         false and call {@link Chart#redraw} after.
      *
-     * @param  {Highcharts.AnimationOptions|undefined} [animation]
+     * @param  {Highcharts.AnimationOptionsObject|undefined} [animation]
      *         When the updated data is the same length as the existing data,
      *         points will be updated by default, and animation visualizes how
      *         the points are changed. Set false to disable animation, or a
