@@ -17,6 +17,8 @@ var Axis = H.Axis,
 
 /**
  * Set the tick positions of a logarithmic axis
+ *
+ * @ignore
  */
 Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
     var axis = this,

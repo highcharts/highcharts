@@ -127,6 +127,8 @@ if (!H.radialAxisExtended) {
                 options.plotBands = [];
             }
 
+            H.fireEvent(this, 'afterSetOptions');
+
         },
 
         /**
@@ -544,7 +546,7 @@ if (!H.radialAxisExtended) {
             this.startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
             this.endAngleRad = (
                 pick(paneOptions.endAngle, paneOptions.startAngle + 360) - 90
-            ) *    Math.PI / 180; // Gauges
+            ) * Math.PI / 180; // Gauges
             this.offset = options.offset || 0;
 
         }

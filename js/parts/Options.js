@@ -59,9 +59,9 @@ H.defaultOptions = {
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
-     * reusable elements. See [gradients, shadows and patterns](http://www.
-     * highcharts.com/docs/chart-design-and-style/gradients-shadows-and-
-     * patterns) for more information and code examples.
+     * reusable elements. See [gradients, shadows and
+     * patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns)
+     * for more information and code examples.
      *
      * @type {Object}
      * @since 5.0.0
@@ -362,13 +362,13 @@ H.defaultOptions = {
          * <dt>easing</dt>
          *
          * <dd>A string reference to an easing function set on the `Math`
-         * object. See [the easing demo](
-         * http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
+         * object. See [the easing
+         * demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          * </dd>
          *
          * </dl>
          *
-         * @type {Boolean|Object}
+         * @type {Boolean|AnimationOptions}
          * @sample {highcharts} highcharts/chart/animation-none/
          *         Updating with no animation
          * @sample {highcharts} highcharts/chart/animation-duration/
@@ -552,7 +552,7 @@ H.defaultOptions = {
          * subtitle and legend in addition to the `spacingTop`, `spacingRight`,
          * `spacingBottom` and `spacingLeft` options.
          *
-         * @type {Array}
+         * @type {Array<number>}
          * @sample {highcharts} highcharts/chart/margins-zero/
          *         Zero margins
          * @sample {highstock} stock/chart/margin-zero/
@@ -708,7 +708,6 @@ H.defaultOptions = {
         /**
          * Alias of `type`.
          *
-         * @validvalue ["line", "spline", "column", "area", "areaspline", "pie"]
          * @type {String}
          * @deprecated
          * @sample {highcharts} highcharts/chart/defaultseriestype/ Bar
@@ -900,6 +899,15 @@ H.defaultOptions = {
          * When true, cartesian charts like line, spline, area and column are
          * transformed into the polar coordinate system. Requires
          * `highcharts-more.js`.
+         *
+         * @sample {highcharts} highcharts/demo/polar/
+         *         Polar chart
+         * @sample {highcharts} highcharts/demo/polar-wind-rose/
+         *         Wind rose, stacked polar column chart
+         * @sample {highcharts} highcharts/demo/polar-spider/
+         *         Spider web chart
+         * @sample {highcharts} highcharts/parallel-coordinates/polar/
+         *         Star plot, multivariate data in a polar chart
          *
          * @type {Boolean}
          * @default false
@@ -1239,9 +1247,8 @@ H.defaultOptions = {
          *
          * @type {String}
          * @see In styled mode, a plot background image can be set with the
-         * `.highcharts-plot-background` class and a [custom pattern](http://www.
-         * highcharts.com/docs/chart-design-and-style/gradients-shadows-and-
-         * patterns).
+         * `.highcharts-plot-background` class and a
+         * [custom pattern](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
          * @sample {highcharts} highcharts/chart/plotbackgroundimage/ Skies
          * @sample {highstock} stock/chart/plotbackgroundimage/ Skies
          * @default null
@@ -1303,8 +1310,9 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
-         * and-string-formatting#html) to render the text.
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the text.
          *
          * @type {Boolean}
          * @default false
@@ -1461,8 +1469,9 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
-         * and-string-formatting#html) to render the text.
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the text.
          *
          * @type {Boolean}
          * @default false
@@ -1577,7 +1586,7 @@ H.defaultOptions = {
     labels: {
 
         /**
-         * A HTML label that can be positioned anywhere in the chart area.
+         * An HTML label that can be positioned anywhere in the chart area.
          *
          * @type {Array<Object>}
          * @apioption labels.items
@@ -1620,9 +1629,8 @@ H.defaultOptions = {
      * item or point item in the chart. Each series (or points in case
      * of pie charts) is represented by a symbol and its name in the legend.
      *
-     * It is possible to override the symbol creator function and
-     * create [custom legend symbols](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-
-     * custom-symbol/).
+     * It is possible to override the symbol creator function and create
+     * [custom legend symbols](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-custom-symbol/).
      *
      * @productdesc {highmaps}
      * A Highmaps legend by default contains one legend item per series, but if
@@ -1715,15 +1723,20 @@ H.defaultOptions = {
          */
 
         /**
-         * The layout of the legend items. Can be one of "horizontal" or
-         * "vertical".
+         * The layout of the legend items. Can be one of `horizontal` or
+         * `vertical` or `proximate`. When `proximate`, the legend items will be
+         * placed as close as possible to the graphs they're representing,
+         * except in inverted charts or when the legend position doesn't allow
+         * it.
          *
-         * @validvalue ["horizontal", "vertical"]
+         * @validvalue ["horizontal", "vertical", "proximate"]
          * @type {String}
          * @sample {highcharts} highcharts/legend/layout-horizontal/
          *         Horizontal by default
          * @sample {highcharts} highcharts/legend/layout-vertical/
          *         Vertical
+         * @sample highcharts/legend/layout-proximate
+         *         Labels proximate to the data
          * @sample {highstock} stock/legend/layout-horizontal/
          *         Horizontal by default
          * @sample {highmaps} maps/legend/padding-itemmargin/
@@ -1876,21 +1889,21 @@ H.defaultOptions = {
         /**
          * The border corner radius of the legend.
          *
-         * @type {Number}
-         * @sample {highcharts} highcharts/legend/borderradius-default/ Square by default
-         * @sample {highcharts} highcharts/legend/borderradius-round/ 5px rounded
+         * @sample {highcharts} highcharts/legend/borderradius-default/
+         *         Square by default
+         * @sample {highcharts} highcharts/legend/borderradius-round/
+         *         5px rounded
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
-         * @default 0
          */
         borderRadius: 0,
 
         /**
          * Options for the paging or navigation appearing when the legend
          * is overflown. Navigation works well on screen, but not in static
-         * exported images. One way of working around that is to [increase
-         * the chart height in export](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-
-         * enabled-false/).
+         * exported images. One way of working around that is to
+         * [increase the chart height in
+         * export](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-enabled-false/).
          *
          */
         navigation: {
@@ -1901,7 +1914,7 @@ H.defaultOptions = {
              * `chart.animation` option. Additional options can be given as an
              * object containing values for easing and duration.
              *
-             * @type {Boolean|Object}
+             * @type {Boolean|AnimationObject}
              * @sample {highcharts} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              * @sample {highstock} highcharts/legend/navigation/
@@ -1930,7 +1943,7 @@ H.defaultOptions = {
              * the navigation results in an unwanted overflow.
              *
              * See also the [adapt chart to legend](
-             * https://www.highcharts.com/plugin-registry/single/8/Adapt-Chart-To-Legend)
+             * https://www.highcharts.com/products/plugin-registry/single/8/Adapt-Chart-To-Legend)
              * plugin for a solution to extend the chart height to make room for
              * the legend, optionally in exported charts only.
              *
@@ -2185,10 +2198,12 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
-         * and-string-formatting#html) to render the legend item texts. Prior
-         * to 4.1.7, when using HTML, [legend.navigation](#legend.navigation)
-         * was disabled.
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the legend item texts.
+         *
+         * Prior to 4.1.7, when using HTML,
+         * [legend.navigation](#legend.navigation) was disabled.
          *
          * @type {Boolean}
          * @default false
@@ -2224,9 +2239,13 @@ H.defaultOptions = {
          * `layout` option will determine whether to place it above/below
          * or on the side of the plot area.
          *
+         * When the [layout](#legend.layout) option is `proximate`, the
+         * `verticalAlign` option doesn't apply.
+         *
          * @validvalue ["top", "middle", "bottom"]
          * @type {String}
-         * @sample {highcharts} highcharts/legend/verticalalign/ Legend 100px from the top of the chart
+         * @sample {highcharts} highcharts/legend/verticalalign/
+         *         Legend 100px from the top of the chart
          * @sample {highstock} stock/legend/align/ Various legend options
          * @sample {highmaps} maps/legend/alignment/ Legend alignment
          * @default bottom
@@ -2522,6 +2541,23 @@ H.defaultOptions = {
          */
 
         /**
+         * Whether to allow the tooltip to render outside the chart's SVG
+         * element box. By default (`false`), the tooltip is rendered within the
+         * chart's SVG element, which results in the tooltip being aligned
+         * inside the chart area. For small charts, this may result in clipping
+         * or overlapping. When `true`, a separate SVG element is created and
+         * overlaid on the page, allowing the tooltip to be aligned inside the
+         * page itself.
+         *
+         * @type {Boolean}
+         * @sample highcharts/tooltip/outside
+         *         Small charts with tooltips outside
+         * @default false
+         * @since 6.1.1
+         * @apioption tooltip.outside
+         */
+
+        /**
          * A callback function for formatting the HTML output for a single point
          * in the tooltip. Like the `pointFormat` string, but with more
          * flexibility.
@@ -2554,7 +2590,12 @@ H.defaultOptions = {
          */
 
         /**
-         * The name of a symbol to use for the border around the tooltip.
+         * The name of a symbol to use for the border around the tooltip. Can
+         * be one of: `"callout"`, `"circle"` or `"square"`.
+         *
+         * Custom callbacks for symbol path generation can also be added to
+         * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+         * [series.marker.symbol](plotOptions.line.marker.symbol).
          *
          * @type {String}
          * @default callout
@@ -2852,9 +2893,9 @@ H.defaultOptions = {
          *
          * @type {String}
          * @sample {highcharts} highcharts/tooltip/footerformat/
-         *         A HTML table in the tooltip
+         *         An HTML table in the tooltip
          * @sample {highstock} highcharts/tooltip/footerformat/
-         *         A HTML table in the tooltip
+         *         An HTML table in the tooltip
          * @sample {highmaps} maps/tooltip/format/ Format demo
          */
         headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
@@ -2923,25 +2964,19 @@ H.defaultOptions = {
         /**
          * Whether to show the credits text.
          *
-         * @type {Boolean}
          * @sample {highcharts} highcharts/credits/enabled-false/ Credits disabled
          * @sample {highstock} stock/credits/enabled/ Credits disabled
          * @sample {highmaps} maps/credits/enabled-false/ Credits disabled
-         * @default true
          */
         enabled: true,
 
         /**
          * The URL for the credits label.
          *
-         * @type {String}
          * @sample {highcharts} highcharts/credits/href/ Custom URL and text
          * @sample {highmaps} maps/credits/customized/ Custom URL and text
-         * @default {highcharts} http://www.highcharts.com
-         * @default {highstock} "http://www.highcharts.com"
-         * @default {highmaps} http://www.highcharts.com
          */
-        href: 'http://www.highcharts.com',
+        href: 'https://www.highcharts.com',
 
         /**
          * Position configuration for the credits label.
@@ -3029,7 +3064,7 @@ H.defaultOptions = {
  * structure. Commonly used for defining reusable templates.
  *
  * @function #setOptions
- * @memberOf  Highcharts
+ * @memberof Highcharts
  * @sample highcharts/global/useutc-false Setting a global option
  * @sample highcharts/members/setoptions Applying a global theme
  * @param {Object} options The new custom chart options.
@@ -3079,7 +3114,7 @@ H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
  * `setOptions`.
  *
  * @function #dateFormat
- * @memberOf Highcharts
+ * @memberof Highcharts
  * @param {String} format - The desired format where various time
  *        representations are prefixed with %.
  * @param {Number} timestamp - The JavaScript timestamp.

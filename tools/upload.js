@@ -37,7 +37,7 @@ const asyncBatchForeach = (batchSize, arr, fn) => {
 };
 
 const uploadFiles = (params) => {
-    const storage = require('./tools/jsdoc/storage/cdn.storage');
+    const storage = require('./jsdoc/storage/cdn.storage');
     const mimeType = {
         'css': 'text/css',
         'eot': 'application/vnd.ms-fontobject',

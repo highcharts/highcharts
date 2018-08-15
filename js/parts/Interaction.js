@@ -34,6 +34,8 @@ var addEvent = H.addEvent,
 
 /**
  * TrackerMixin for points and graphs.
+ *
+ * @ignore
  */
 TrackerMixin = H.TrackerMixin = {
 
@@ -1091,11 +1093,12 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         if (ignoreHiddenSeries) {
             chart.isDirtyBox = true;
         }
+
+        fireEvent(series, showOrHide);
+
         if (redraw !== false) {
             chart.redraw();
         }
-
-        fireEvent(series, showOrHide);
     },
 
     /**

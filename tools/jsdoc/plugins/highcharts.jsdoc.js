@@ -7,7 +7,7 @@
 
 "use strict";
 
-var hcRoot = __dirname + '/../../..';
+var hcRoot = process.cwd(); // __dirname + '/../../../..';
 
 var parseTag = require('jsdoc/tag/type').parse;
 
@@ -48,121 +48,6 @@ function dumpOptions() {
             //console.log('Wrote tree!');
         }
     );
-}
-
-function createSitemaps() {
-    let manualBoost = {
-            'plotOptions.series': 100,
-        },
-        sitemapIndex = [],
-        sitemaps = {};
-    // Add function for option sitemaps
-    function addToSitemaps(node, boost, parentProducts) {
-        if (!node.doclet ||
-            !node.meta ||
-            !node.meta.fullname
-        ) {
-            return;
-        }
-        boost = (manualBoost[node.meta.fullname] || boost);
-        let products = (parentProducts || node.doclet.products);
-        for (var i = 0, ie = products.length; i < ie; ++i) {
-            let product = products[i];
-            sitemaps[product] = (sitemaps[product] || [])
-            sitemaps[product].push(
-                '<url><loc>https://api.highcharts.com/' + product + '/' +
-                node.meta.fullname + '.html</loc><priority>' +
-                (boost / 100) +
-                '</priority></url>'
-            );
-        }
-        if (!node.children) {
-            return;
-        }
-        boost -= 5;
-        for (var child in node.children) {
-            addToSitemaps(node.children[child], boost, products);
-        }
-    }
-    // Directory function
-    function createDirectoriesSync(dirPath, mode, callback) {
-        try {
-            fs.mkdirSync(dirPath, mode);
-            callback && callback();
-        } catch (error) {
-            if (error.errno === 34) {
-                createDirectoriesSync(path.dirname(dirPath), mode, callback);
-                createDirectoriesSync(dirPath, mode, callback);
-            }
-        }
-    };
-    // Add Highcharts options
-    for (var option in options) {
-        if (options[option].doclet &&
-            options[option].doclet.products
-        ) {
-            addToSitemaps(options[option], 100,
-                options[option].doclet.products
-            );
-        } else {
-            addToSitemaps(options[option], 100, [
-                'highcharts', 'highstock', 'highmaps'
-            ]);
-        }
-    }
-    // Add Highcharts class reference to products
-    sitemaps['class-reference'] = (sitemaps['class-reference'] || []);
-    fs.readdirSync('build/api/class-reference').forEach(function (fileName) {
-        if (fileName.lastIndexOf('.html') != fileName.length - 5) {
-            return;
-        }
-        sitemaps['class-reference'].push(
-            '<url><loc>https://api.highcharts.com/class-reference/' + fileName +
-            '</loc><priority>0.75</priority></url>'
-        );
-    });
-    // Add Highcharts products to sitemap index
-    for (var product in sitemaps) {
-        sitemapIndex.push(
-            '<sitemap><loc>https://api.highcharts.com/' + product +
-            '/sitemap.xml</loc></sitemap>'
-        );
-    }
-    // Add Highcharts wrapper to sitemap index
-    sitemapIndex.push(
-        '<sitemap><loc>'+
-        'https://api.highcharts.com/ios/highcharts/sitemap.xml' +
-        '</loc></sitemap>'
-    );
-    sitemapIndex.push(
-        '<sitemap><loc>'+
-        'https://api.highcharts.com/android/highcharts/sitemap.xml' +
-        '</loc></sitemap>'
-    );
-    // Write sitemaps
-    try {
-        createDirectoriesSync('build/api');
-        fs.writeFileSync(
-            'build/api/sitemap.xml',
-            '<?xml version="1.0" encoding="UTF-8"?>' +
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
-            sitemapIndex.sort().join('') +
-            '</sitemapindex>'
-        );
-        for (var product in sitemaps) {
-            createDirectoriesSync('build/api/' + product);
-            fs.writeFileSync(
-                'build/api/' + product + '/sitemap.xml',
-                '<?xml version="1.0" encoding="UTF-8"?>' +
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
-                sitemaps[product].sort().join('') +
-                '</urlset>'
-            );
-        }
-        //console.log('Wrote sitemaps!');
-    } catch (error) {
-        console.error(error);
-    }
 }
 
 function resolveBinaryExpression(node) {
@@ -311,8 +196,6 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
       if (shouldIgnore) {
         removeOption(node.highcharts.fullname);
-        return;
-
       } else if ((e.comment || '').indexOf('@apioption') < 0) {
         appendComment(e, [
           '@optionparent ' + node.highcharts.fullname
@@ -324,97 +207,100 @@ function nodeVisitor(node, e, parser, currentSourceName) {
       return;
     }
 
-    if (node.leadingComments && node.leadingComments.length > 0) {
+    if (!node.leadingComments ||
+        node.leadingComments.length === 0
+    ) {
+        return;
+    }
 
-        if (!e.comment) {
-            rawComment = '';
-            (node.leadingComments || []).some(function (c) {
-                // We only use the one containing @optionparent
-                rawComment = c.raw || c.value;
-                if (rawComment.indexOf('@optionparent') >= 0) {
-                    return true;
-                }
-                return false;
+    if (!e.comment) {
+        rawComment = '';
+        (node.leadingComments || []).some(function (c) {
+            // We only use the one containing @optionparent
+            rawComment = c.raw || c.value;
+            if (rawComment.indexOf('@optionparent') >= 0) {
+                return true;
+            }
+            return false;
+        });
+
+        e.comment = rawComment;
+        // e.comment = node.leadingComments[0].raw || node.leadingComments[0].value;
+    }
+
+    s = e.comment.indexOf('@optionparent');
+
+    if (s >= 0) {
+        s = e.comment.substr(s).trim();
+        fullPath = '';
+
+        parent = s.split('\n')[0].trim().split(' ');
+
+        if (parent && parent.length > 1) {
+            parent = parent[1].trim() || '';
+
+            s = parent.split('.');
+            target = options;
+
+            s.forEach(function (p, i) {
+                // p = p.trim();
+
+                fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
+
+                target[p] = target[p] || {};
+
+                target[p].doclet = target[p].doclet || {};
+                target[p].children = target[p].children || {};
+
+                var location = getLocation(node);
+                target[p].meta = {
+                    filename: currentSourceName,
+                    name: p,
+                    fullname: fullPath,
+                    line: location.start.line,
+                    lineEnd: location.end.line,
+                    column: location.start.column
+                };
+
+                target = target[p].children;
+
             });
-
-            e.comment = rawComment;
-          // e.comment = node.leadingComments[0].raw || node.leadingComments[0].value;
+        } else {
+            parent = '';
+            target = options;
         }
 
-        s = e.comment.indexOf('@optionparent');
+        if (target) {
+            if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
+                console.log('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
+                // console.log('Found series type:', properties, JSON.stringify(node.arguments[2], false, '  '));
+                properties = node.arguments[2].properties;
+            } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
+                properties = node.arguments[0].properties;
+            } else if (node.type === 'ObjectExpression') {
+                properties = node.properties;
+            } else if (node.init && node.init.type === 'ObjectExpression') {
+                properties = node.init.properties;
+            } else if (node.value && node.value.type === 'ObjectExpression') {
+                properties = node.value.properties;
+            } else if (node.operator === '=' && node.right.type === 'ObjectExpression') {
+                properties = node.right.properties;
+            } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
+                console.log('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
+                properties = node.right.arguments[2].properties;
+            } else {
+                logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
+            }
 
-        if (s >= 0) {
-            s = e.comment.substr(s).trim();
-            fullPath = '';
-
-            parent = s.split('\n')[0].trim().split(' ');
-
-            if (parent && parent.length > 1) {
-                parent = parent[1].trim() || '';
-
-                s = parent.split('.');
-                target = options;
-
-                s.forEach(function (p, i) {
-                    // p = p.trim();
-
-                    fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
-
-                    target[p] = target[p] || {};
-
-                    target[p].doclet = target[p].doclet || {};
-                    target[p].children = target[p].children || {};
-
-                    var location = getLocation(node);
-                    target[p].meta = {
-                        filename: currentSourceName,
-                        name: p,
-                        fullname: fullPath,
-                        line: location.start.line,
-                        lineEnd: location.end.line,
-                        column: location.start.column
-                    };
-
-                    target = target[p].children;
-
+            if (properties && properties.length > 0) {
+                properties.forEach(function (child) {
+                    decorateOptions(parent, target, child, e.filename || currentSourceName);
                 });
             } else {
-                parent = '';
-                target = options;
+                console.log('INVALID properties for node', node);
             }
-
-            if (target) {
-                if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
-                    console.log('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
-                    // console.log('Found series type:', properties, JSON.stringify(node.arguments[2], false, '  '));
-                    properties = node.arguments[2].properties;
-                } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
-                    properties = node.arguments[0].properties;
-                } else if (node.type === 'ObjectExpression') {
-                    properties = node.properties;
-                } else if (node.init && node.init.type === 'ObjectExpression') {
-                    properties = node.init.properties;
-                } else if (node.value && node.value.type === 'ObjectExpression') {
-                    properties = node.value.properties;
-                } else if (node.operator === '=' && node.right.type === 'ObjectExpression') {
-                    properties = node.right.properties;
-                } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
-console.log('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
-                    properties = node.right.arguments[2].properties;
-                } else {
-                    logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
-                }
-
-                if (properties && properties.length > 0) {
-                    properties.forEach(function (child) {
-                        decorateOptions(parent, target, child, e.filename || currentSourceName);
-                    });
-                } else {
-                    console.log('INVALID properties for node', node);
-                }
-            } else {
-                logger.error('@optionparent is missing an argument');
-            }
+        } else {
+            logger.error('@optionparent is missing an argument');
         }
     }
 }
@@ -648,28 +534,22 @@ exports.defineTags = function (dictionary) {
         }
     });
 
+    function handleExclude (doclet, tagObj) {
+        var items = tagObj.text.split(',');
+
+        doclet.exclude = doclet.exclude || [];
+
+        items.forEach(function (entry) {
+            doclet.exclude.push(entry.trim());
+        });
+    }
+
     dictionary.defineTag('exclude', {
-        onTagged: function (doclet, tagObj) {
-            var items = tagObj.text.split(',');
-
-            doclet.exclude = doclet.exclude || [];
-
-            items.forEach(function (entry) {
-                doclet.exclude.push(entry.trim());
-            });
-        }
+        onTagged: handleExclude
     });
 
     dictionary.defineTag('excluding', {
-        onTagged: function (doclet, tagObj) {
-            var items = tagObj.text.split(',');
-
-            doclet.exclude = doclet.exclude || [];
-
-            items.forEach(function (entry) {
-                doclet.exclude.push(entry.trim());
-            });
-        }
+        onTagged: handleExclude
     });
 
     dictionary.defineTag('ignore-option', {
@@ -747,6 +627,15 @@ exports.defineTags = function (dictionary) {
     dictionary.defineTag('productdesc', {
         onTagged: resolveProductTypes
     });
+
+    dictionary.defineTag('typedesc', {
+        onTagged: function (doclet, tagObj) {
+            if (!doclet.type) {
+                doclet.type = {};
+            }
+            doclet.type.description = tagObj.value;
+        }
+    });
 };
 
 exports.astNodeVisitor = {
@@ -787,7 +676,7 @@ before functional code for JSDoc to see them.`.yellow
     },
 
     parseComplete: function () {
-        options._meta.version = require(__dirname + '/../../../package.json').version;
+        options._meta.version = require(hcRoot  + '/package.json').version;
         options._meta.commit = exec('git rev-parse --short HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.branch = exec('git rev-parse --abbrev-ref HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.date = (new Date()).toString();
@@ -796,7 +685,7 @@ before functional code for JSDoc to see them.`.yellow
 
         function inferTypeForTree(obj) {
             inferType(obj);
-        
+
             if (obj.meta && obj.meta.filename) {
                 // Remove user-identifiable info in filename
                 obj.meta.filename = obj.meta.filename.substr(
@@ -829,11 +718,12 @@ before functional code for JSDoc to see them.`.yellow
             var s = `
 
 Configuration options for the series are given in three levels:
-1. Options for all series in a chart are defined in the [plotOptions.series](plotOptions.series)
-object. 
-2. Options for all \`${type}\` series are defined in [plotOptions.${type}](plotOptions.${type}).
+1. Options for all series in a chart are defined in the
+   [plotOptions.series](plotOptions.series) object.
+2. Options for all \`${type}\` series are defined in
+   [plotOptions.${type}](plotOptions.${type}).
 3. Options for one single series are given in
-[the series instance array](series.${type}).
+   [the series instance array](series.${type}).
 
 <pre>
 Highcharts.chart('container', {
@@ -874,6 +764,5 @@ Highcharts.chart('container', {
         // console.log(Object.keys(files));
 
         dumpOptions();
-        // createSitemaps();
     }
 };

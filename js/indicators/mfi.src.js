@@ -13,12 +13,13 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var isArray = H.isArray;
+var isArray = H.isArray,
+    reduce = H.reduce;
 
     // Utils:
 function sumArray(array) {
 
-    return array.reduce(function (prev, cur) {
+    return reduce(array, function (prev, cur) {
         return prev + cur;
     });
 }
@@ -46,7 +47,7 @@ H.seriesType('mfi', 'sma',
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @extends {plotOptions.sma}
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/mfi
      *                     Money Flow Index Indicator

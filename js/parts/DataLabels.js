@@ -346,7 +346,13 @@ Series.prototype.drawDataLabels = function () {
                 if (!dataLabel) {
                     dataLabel = point.dataLabel = rotation ?
 
-                        renderer.text(str, 0, -9999) // labels don't rotate
+                        renderer
+                            .text( // labels don't rotate
+                                str,
+                                0,
+                                -9999,
+                                options.useHTML
+                            )
                             .addClass('highcharts-data-label') :
 
                         renderer.label(
@@ -664,36 +670,41 @@ if (seriesTypes.pie) {
         Series.prototype.drawDataLabels.apply(series);
 
         each(data, function (point) {
-            if (point.dataLabel && point.visible) { // #407, #2510
+            if (point.dataLabel) {
 
-                // Arrange points for detection collision
-                halves[point.half].push(point);
+                if (point.visible) { // #407, #2510
 
-                // Reset positions (#4905)
-                point.dataLabel._pos = null;
+                    // Arrange points for detection collision
+                    halves[point.half].push(point);
 
-                // Avoid long labels squeezing the pie size too far down
-                /*= if (build.classic) { =*/
-                if (
-                    !defined(options.style.width) &&
-                    !defined(
-                        point.options.dataLabels &&
-                        point.options.dataLabels.style &&
-                        point.options.dataLabels.style.width
-                    )
-                ) {
-                /*= } =*/
-                    if (point.dataLabel.getBBox().width > maxWidth) {
-                        point.dataLabel.css({
-                            // Use a fraction of the maxWidth to avoid wrapping
-                            // close to the end of the string.
-                            width: maxWidth * 0.7
-                        });
-                        point.dataLabel.shortened = true;
+                    // Reset positions (#4905)
+                    point.dataLabel._pos = null;
+
+                    // Avoid long labels squeezing the pie size too far down
+                    /*= if (build.classic) { =*/
+                    if (
+                        !defined(options.style.width) &&
+                        !defined(
+                            point.options.dataLabels &&
+                            point.options.dataLabels.style &&
+                            point.options.dataLabels.style.width
+                        )
+                    ) {
+                    /*= } =*/
+                        if (point.dataLabel.getBBox().width > maxWidth) {
+                            point.dataLabel.css({
+                                // Use a fraction of the maxWidth to avoid
+                                // wrapping close to the end of the string.
+                                width: maxWidth * 0.7
+                            });
+                            point.dataLabel.shortened = true;
+                        }
+                    /*= if (build.classic) { =*/
                     }
-                /*= if (build.classic) { =*/
+                    /*= } =*/
+                } else {
+                    point.dataLabel = point.dataLabel.destroy();
                 }
-                /*= } =*/
             }
         });
 
@@ -1000,7 +1011,7 @@ if (seriesTypes.pie) {
         }, this);
     };
 
-    seriesTypes.pie.prototype.alignDataLabel =  noop;
+    seriesTypes.pie.prototype.alignDataLabel = noop;
 
     /**
      * Verify whether the data labels are allowed to draw, or we should run more

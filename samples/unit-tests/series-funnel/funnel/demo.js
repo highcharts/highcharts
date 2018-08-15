@@ -75,10 +75,12 @@ QUnit.test('Top path of funnel intact', function (assert) {
         }]
     });
 
-
     assert.strictEqual(
-        chart.series[0].points[3].graphic.element.getAttribute('d').split(' ').length,
-        15,
+        chart.series[0].points[3].graphic.element.getAttribute('d').split(' ')
+            .filter(function (s) {
+                return s !== 'L'; // Because Edge adds an L for each segment
+            }).length,
+        14,
         'The path should have the neck intact (#8277)'
     );
 });

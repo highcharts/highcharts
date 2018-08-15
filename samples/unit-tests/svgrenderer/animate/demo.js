@@ -333,6 +333,18 @@ QUnit.test('Fill and stroke animation', function (assert) {
             duration: 1000
         });
 
+        var rect = ren.rect(100, 200, 10, 10)
+            .attr({
+                fill: '#ff00ff'
+            })
+            .add();
+
+        rect.animate({
+            fill: 'none'
+        }, {
+            duration: 100
+        });
+
         setTimeout(function () {
 
             // Fill
@@ -368,6 +380,13 @@ QUnit.test('Fill and stroke animation', function (assert) {
             );
 
             Highcharts.stop(circ);
+
+            // Animating fill to none
+            assert.strictEqual(
+                rect.element.getAttribute('fill'),
+                'none',
+                'Animating from color to none (#8659)'
+            );
 
             document.body.removeChild(div);
         }, 500);
@@ -549,6 +568,78 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
                     );
                 }, 250);
             }, 500);
+        }, 250);
+
+        // Reset animation
+        TestUtilities.lolexRunAndUninstall(clock);
+
+    } finally {
+
+        TestUtilities.lolexUninstall(clock);
+
+    }
+});
+
+QUnit.test('3D arc animation (#7097)', function (assert) {
+
+    // Hijack animation
+    var clock = TestUtilities.lolexInstall();
+
+    try {
+
+        var ren = new Highcharts.Renderer(
+            document.getElementById('container'),
+            640,
+            480
+        );
+
+        var arc = ren.arc3d({
+            x: 100,
+            y: 100,
+            r: 100,
+            innerR: 0,
+            start: 0,
+            end: 1,
+            depth: 25,
+            alpha: 45,
+            beta: 10
+        })
+        .attr({
+            fill: '#f00ff0'
+        })
+        .add();
+
+        arc.animate({
+            end: 5
+        }, {
+            duration: 200
+        });
+
+        arc.endSetter = function (value, key, elem) {
+            this[key] = value;
+            this._defaultSetter(value, key, elem);
+        };
+
+        setTimeout(function () {
+
+            arc.animate({
+                fill: '#0ff00f'
+            }, {
+                duration: 100
+            });
+        }, 100);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                arc.end,
+                5,
+                'End should continue to run after second animation'
+            );
+            assert.strictEqual(
+                Highcharts.Color(arc.top.attr('fill')).get(),
+                'rgb(15,240,15)',
+                'Fill from second animation should apply'
+            );
         }, 250);
 
         // Reset animation
