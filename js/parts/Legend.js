@@ -1121,7 +1121,7 @@ Highcharts.Legend.prototype = {
      * @param  {Highcharts.AnimationOptionsObject} animation
      *         Whether and how to apply animation.
      *
-     * @
+     * @return {void}
      */
     scroll: function (scrollBy, animation) {
         var pages = this.pages,
