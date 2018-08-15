@@ -350,13 +350,13 @@ H.swapXY = swapXY = function (path, vertical) {
  * A reusable scrollbar, internally used in Highstock's navigator and optionally
  * on individual axes.
  *
- * @constructor Highcharts.Scrollbar
+ * @class Highcharts.Scrollbar
  *
- * @param  {Highcharts.SVGRenderer} renderer
+ * @param {Highcharts.SVGRenderer} renderer
  *
- * @param  {Highcharts.ScrollbarOptions} options
+ * @param {Highcharts.ScrollbarOptions} options
  *
- * @param  {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} chart
  */
 function Scrollbar(renderer, options, chart) { // docs
     this.init(renderer, options, chart);
