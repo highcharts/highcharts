@@ -58,6 +58,7 @@
 	"code/indicators/macd.src.js",
 	"code/indicators/mfi.src.js",
 	"code/indicators/momentum.src.js",
+	"code/indicators/natr.src.js",
 	"code/indicators/pivot-points.src.js",
 	"code/indicators/price-envelopes.src.js",
 	"code/indicators/psar.src.js",
