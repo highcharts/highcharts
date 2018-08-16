@@ -262,10 +262,12 @@
   overflow: scroll;
 }
 
+.highcharts-stocktools-wrapper ul.highcharts-indicator-list,
 .highcharts-indicator-list {
   float: left;
   color: #666;
   height: 100%;
+  width: 100%;
   overflow: scroll;
 }
 
