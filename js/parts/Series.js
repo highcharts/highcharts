@@ -2331,7 +2331,7 @@ H.Series = H.seriesType('line', null, { // base series options
     coll: 'series',
     init: function (chart, options) {
 
-        fireEvent(this, 'beforeInit', { options: options });
+        fireEvent(this, 'init', { options: options });
 
         var series = this,
             events,

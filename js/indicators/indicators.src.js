@@ -23,7 +23,7 @@ var pick = H.pick,
  * @apioption plotOptions.line.useOHLCdata
  */
 
-addEvent(H.Series, 'beforeInit', function (eventOptions) {
+addEvent(H.Series, 'init', function (eventOptions) {
     var series = this,
         options = eventOptions.options,
         dataGrouping = options.dataGrouping;
