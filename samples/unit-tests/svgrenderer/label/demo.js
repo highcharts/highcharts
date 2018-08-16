@@ -100,3 +100,40 @@ QUnit.test('buildText fontSize (#2794)', function (assert) {
     });
 
 });
+
+// Highcharts 4.0.1, Issue #3132
+// SVGRenderer with fixed width doesn't handle marked-up text
+QUnit.test('SVG text wrap (#3132)', function (assert) {
+    var renderer = new Highcharts.Renderer(
+        document.getElementById('container'),
+        500,
+        300
+    );
+    renderer.label('Foo: bar', 100, 150)
+    .attr({
+        'stroke-width': 1,
+        stroke: 'blue'
+    })
+    .css({
+        width: '260px'
+    })
+    .add();
+
+    renderer.label('Foo: <b>bar</b>', 100, 100)
+    .attr({
+        'stroke-width': 1,
+        stroke: 'blue'
+    })
+    .css({
+        width: '260px'
+    })
+    .add();
+
+
+    var labelWithMarkup = renderer.box.childNodes[3].childNodes[0].getBBox(),
+        label = renderer.box.childNodes[2].childNodes[0].getBBox();
+
+    assert.ok(
+        labelWithMarkup.width > label.width,
+        "The width of the label that contains markup should be the greatest");
+});

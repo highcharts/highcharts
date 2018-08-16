@@ -1388,6 +1388,7 @@ RangeSelector.prototype = {
             buttonPositionY = buttonPosition.y,
             inputPositionY = inputPosition.y,
             animate = rendered || false,
+            verb = animate ? 'animate' : 'attr',
             exportingX = 0,
             alignTranslateY,
             legendHeight,
@@ -1413,20 +1414,17 @@ RangeSelector.prototype = {
 
             rangeSelector.zoomText = renderer.text(
                     lang.rangeSelectorZoom,
-                    pick(plotLeft + buttonPosition.x, plotLeft), 15
+                    0,
+                    15
                 )
                 .css(options.labelStyle)
                 .add(buttonGroup);
-
-            // button start position
-            buttonLeft = pick(plotLeft + buttonPosition.x, plotLeft) +
-                rangeSelector.zoomText.getBBox().width + 5;
 
             each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 
                 buttons[i] = renderer.button(
                         rangeOptions.text,
-                        buttonLeft,
+                        0,
                         0,
                         function () {
 
@@ -1457,9 +1455,6 @@ RangeSelector.prototype = {
                         'text-align': 'center'
                     })
                     .add(buttonGroup);
-
-                // increase button position for the next button
-                buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
             });
 
             // first create a wrapper outside the container in order to make
@@ -1482,6 +1477,22 @@ RangeSelector.prototype = {
                 rangeSelector.drawInput('max');
             }
         }
+
+        // #8769, allow dynamically updating margins
+        rangeSelector.zoomText[verb]({
+            x: pick(plotLeft + buttonPosition.x, plotLeft)
+        });
+        // button start position
+        buttonLeft = pick(plotLeft + buttonPosition.x, plotLeft) +
+            rangeSelector.zoomText.getBBox().width + 5;
+        each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+
+            buttons[i][verb]({ x: buttonLeft });
+
+            // increase button position for the next button
+            buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
+        });
+
 
         plotLeft = chart.plotLeft - chart.spacing[3];
         rangeSelector.updateButtonStates();
