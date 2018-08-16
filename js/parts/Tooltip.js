@@ -676,7 +676,8 @@ H.Tooltip.prototype = {
             rightAligned = true,
             options = this.options,
             headerHeight = 0,
-            tooltipLabel = this.getLabel();
+            tooltipLabel = this.getLabel(),
+            boxPosition;
 
         // Graceful degradation for legacy formatters
         if (H.isString(labels)) {
@@ -686,9 +687,13 @@ H.Tooltip.prototype = {
         each(labels.slice(0, points.length + 1), function (str, i) {
             if (str !== false) {
                 var point = points[i - 1] ||
+                    {
                         // Item 0 is the header. Instead of this, we could also
                         // use the crosshair label
-                        { isHeader: true, plotX: points[0].plotX },
+                        isHeader: true,
+                        plotX: points[0].plotX,
+                        plotY: chart.plotHeight
+                    },
                     owner = point.series || tooltip,
                     tt = owner.tt,
                     series = point.series || {},
@@ -708,7 +713,10 @@ H.Tooltip.prototype = {
                             null,
                             null,
                             null,
-                            'callout',
+                            (
+                                point.isHeader ? options.headerShape :
+                                    options.shape
+                            ) || 'callout',
                             null,
                             null,
                             options.useHTML
@@ -785,6 +793,21 @@ H.Tooltip.prototype = {
         // Clean previous run (for missing points)
         this.cleanSplit();
 
+        if (options.positioner) {
+            each(boxes, function (box) {
+                boxPosition = options.positioner.call(
+                    tooltip,
+                    box.tt.getBBox().width,
+                    box.size,
+                    box.point
+                );
+                box.x = boxPosition.x;
+                box.align = 0; // 0-align to the top, 1-align to the bottom
+                box.target = boxPosition.y;
+                box.rank = pick(boxPosition.rank, box.rank);
+            });
+        }
+
         // Distribute and put in place
         H.distribute(boxes, chart.plotHeight + headerHeight);
         each(boxes, function (box) {
@@ -794,7 +817,7 @@ H.Tooltip.prototype = {
             // Put the label in place
             box.tt.attr({
                 visibility: box.pos === undefined ? 'hidden' : 'inherit',
-                x: (rightAligned || point.isHeader ?
+                x: (rightAligned || point.isHeader || options.positioner ?
                     box.x :
                     point.plotX + chart.plotLeft + pick(options.distance, 16)),
                 y: box.pos + chart.plotTop,
