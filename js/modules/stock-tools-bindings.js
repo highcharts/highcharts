@@ -1513,12 +1513,17 @@ if (H.Annotation) {
                         'annotation',
                         annotation.options,
                         function (data) {
+
                             var config = annotation.options;
 
-                            toolbar.fieldsToOptions(data.fields, config);
+                            if (data.actionType === 'remove') {
+                                annotation.destroy();
+                            } else {
+                                toolbar.fieldsToOptions(data.fields, config);
 
-                            annotation.setControlPointsVisibility(false);
-                            annotation.update(config);
+                                annotation.setControlPointsVisibility(false);
+                                annotation.update(config);
+                            }
                         }
                     );
                 }

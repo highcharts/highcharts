@@ -15,8 +15,18 @@
   width: 100%;
 }
 
-.highcharts-annotation-toolbar {
-  right: 20px;
+.highcharts-popup.highcharts-annotation-toolbar {
+  right: 10%;
+  left: auto;
+  height: 40px;
+  padding-right: 40px;
+  width: auto;
+}
+
+.highcharts-popup.highcharts-annotation-toolbar > span {
+  display:block;
+  float:left;
+  padding: 12px;
 }
 
 .highcharts-menu-wrapper {
@@ -245,10 +255,23 @@
   float: left;
 }
 
+.highcharts-popup-lhs-col.highcharts-popup-lhs-col-full { 
+  width: calc(100% - 40px);
+  overflow: scroll;
+  height: calc(100% - 100px);
+  border: none;
+}
+
 .highcharts-popup-lhs-col {
   clear: both;
   width: calc(30% - 44px);
   border-right: 1px solid #e6e6e6;
+}
+
+.highcharts-popup-bottom-row {
+  float: left;
+  padding: 0px 20px;
+  width: calc(100% - 40px);
 }
 
 .highcharts-popup-rhs-col {
@@ -269,6 +292,8 @@
   height: 100%;
   width: 100%;
   overflow: scroll;
+  margin: 0px;
+  padding: 0px;
 }
 
 .highcharts-indicator-list li {
@@ -321,7 +346,10 @@
   color: #333333;
 }
 
-.highcharts-popup-close:hover, .highcharts-popup button:hover {
+.highcharts-popup-close:hover,
+.highcharts-popup button:hover,
+.highcharts-popup button.highcharts-annotation-edit-button:hover,
+.highcharts-popup button.highcharts-annotation-remove-button:hover {
   background-color: #e6ebf5;
 }
 
@@ -336,6 +364,26 @@
 .highcharts-tab-disabled {
   color: #ccc;
 }
+
+/* annotation edit small popup */
+.highcharts-popup button.highcharts-annotation-edit-button,
+.highcharts-popup button.highcharts-annotation-remove-button {
+  width: 20px;
+  height: 40px;
+  padding: 20px;
+}
+
+.highcharts-popup button.highcharts-annotation-edit-button {
+  background:url(http://utils.highcharts.local/samples/graphics/edit.svg) no-repeat 50% 50% transparent;
+  text-indent: -9999px;
+}
+
+.highcharts-popup button.highcharts-annotation-remove-button {
+  background:url(http://utils.highcharts.local/samples/graphics/destroy.svg) no-repeat 50% 50% transparent;
+  text-indent: -9999px;
+}
+
+
 
 
 

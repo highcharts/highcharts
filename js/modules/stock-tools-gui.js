@@ -84,7 +84,11 @@ H.setOptions({
                 zoomXY: 'Zooom XY',
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
-                typeCandlestick: 'Candlestick'
+                typeCandlestick: 'Candlestick',
+                r: 'Radius',
+                fill: 'Fill',
+                strokeWidth: 'Line width',
+                stroke: 'Line color'
             }
         }
     },
@@ -340,7 +344,9 @@ H.Toolbar = function (options, langOptions, chart) {
     this.placed = false;
 
     this.createHTML();
-    this.popup = new H.Popup(this.wrapper);
+
+    // add popup to main container
+    this.popup = new H.Popup(chart.container);
     this.init();
 
     this.showHideNavigatorion();

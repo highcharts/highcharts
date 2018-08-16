@@ -359,6 +359,7 @@ H.Popup.prototype = {
      * @param {Function} - on click callback
      * @param {Object} - params / arguments of callback
      *
+     * @return {HTMLDOMElement} - html button
      */
     addButton: function (parentDiv, label, type, callback, callbackParams) {
         var _self = this,
@@ -374,6 +375,8 @@ H.Popup.prototype = {
 
             return callback(callbackParams);
         });
+
+        return button;
     },
     /*
      * Get values from all inputs (params for indicator) and form JSON.
@@ -503,12 +506,112 @@ H.Popup.prototype = {
      *
      */
     annotationToolbar: function (chart, options, callback) {
-        var popupDiv = this.popupDiv;
+        var _self = this,
+            popupDiv = this.popupDiv,
+            getFields = this.getFields,
+            showForm = this.showForm,
+            toolbarClass = 'highcharts-annotation-toolbar',
+            button;
 
         // set small size
-        popupDiv.className += ' highcharts-annotation-toolbar';
+        if (popupDiv.className.indexOf(toolbarClass) === -1) {
+            popupDiv.className += ' ' + toolbarClass;
+        }
 
-        //createElement(SPAN, );
+        // set position
+        popupDiv.style.top = chart.plotTop + 10 + 'px';
+
+        // create label
+        createElement(SPAN, {
+            innerHTML: options.shapes[0].type
+        }, null, popupDiv);
+
+
+        // add buttons
+        button = this.addButton.call(
+            this,
+            popupDiv,
+            'remove',
+            'remove',
+            callback,
+            getFields(popupDiv, 'remove')
+        );
+
+        button.className += ' highcharts-annotation-remove-button';
+
+        button = this.addButton.call(
+            this,
+            popupDiv,
+            'edit',
+            'edit',
+            function () {
+                showForm.call(
+                    _self,
+                    'annotation-edit',
+                    chart,
+                    options,
+                    callback
+                );
+            }
+        );
+
+        button.className += ' highcharts-annotation-edit-button';
+    },
+    /*
+     * Create annotation simple form. It contains two buttons (edit / remove).
+     *
+     * @param {Chart} - chart
+     * @param {Object} - options
+     * @param {Function} - on click callback
+     *
+     */
+    annotationForm: function (chart, options, callback) {
+        var popupDiv = this.popupDiv,
+            getFields = this.getFields,
+            bottomRow,
+            lhsCol;
+
+         // left column
+        lhsCol = createElement(DIV, {
+            className: 'highcharts-popup-lhs-col highcharts-popup-lhs-col-full'
+        }, null, popupDiv);
+
+        bottomRow = createElement(DIV, {
+            className: 'highcharts-popup-bottom-row'
+        }, null, popupDiv);
+
+        this.createAnnotationFields.call(this, lhsCol, chart, options);
+
+        this.addButton.call(
+            this,
+            bottomRow,
+            'update',
+            'update',
+            callback,
+            getFields(popupDiv, 'edit')
+        );
+    },
+    /*
+     * Create annotation's fields.
+     *
+     * @param {HTMLDOMElement} - div where inputs are placed
+     * @param {Chart} - chart
+     * @param {Object} - options
+     *
+     */
+    createAnnotationFields: function (parentDiv, chart, options) {
+        var _self = this,
+            shapeOptions = options.shapeOptions,
+            lang = chart.stockToolbar.lang;
+
+        objectEach(shapeOptions, function (option, value) {
+            _self.addInput(
+                lang[value],
+                'annotation',
+                parentDiv,
+                option
+            );
+        });
     },
     /*
      * Reset content of the current popup and show.
@@ -520,11 +623,22 @@ H.Popup.prototype = {
      */
     showPopup: function () {
         var popupDiv = this.popupDiv,
+            toolbarClass = 'highcharts-annotation-toolbar',
             popupCloseBtn = popupDiv
                             .querySelectorAll('.highcharts-popup-close')[0];
 
-        popupDiv.parentNode.className += ' highcharts-stocktools-popup';
+        // reset content
         popupDiv.innerHTML = '';
+
+        // reset toolbar styles if exists
+        if (popupDiv.className.indexOf(toolbarClass) >= 0) {
+            popupDiv.classList.remove(toolbarClass);
+
+            // reset toolbar inline styles
+            popupDiv.removeAttribute('style');
+        }
+
+        // add close button
         popupDiv.appendChild(popupCloseBtn);
         popupDiv.style.display = 'block';
     },
@@ -536,7 +650,6 @@ H.Popup.prototype = {
         var popupDiv = this.popupDiv;
 
         popupDiv.style.display = 'none';
-        popupDiv.parentNode.classList.remove('highcharts-stocktools-popup');
     },
     /*
      * Create content and show popup.
@@ -561,7 +674,7 @@ H.Popup.prototype = {
             // general popup content
             this.annotationToolbar.call(this, chart, options, callback);
         } else if (type === 'annotation-edit') {
-            console.log('annotation edit form');
+            this.annotationForm.call(this, chart, options, callback);
         }
     },
     tabs: {
