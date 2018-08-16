@@ -54,13 +54,13 @@ QUnit.test('Histogram', function (assert) {
 
     assert.deepEqual(
         histogram.xData,
-        [20, 30, 40, 50, 60, 70, 80, 90],
+        [22, 32, 42, 52, 62, 72, 82],
         'Bins ranges are calculated correctly'
     );
 
     assert.deepEqual(
         histogram.yData,
-        [2, 4, 4, 5, 3, 1, 0, 1],
+        [2, 4, 4, 6, 2, 1, 1],
         'Bins frequencies are calculated correctly'
     );
 
@@ -70,13 +70,13 @@ QUnit.test('Histogram', function (assert) {
 
     assert.deepEqual(
         histogram.xData,
-        [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90],
+        [22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72, 77, 82, 87],
         'After updating histogram\'s bin width bin ranges are calculated correctly'
     );
 
     assert.deepEqual(
         histogram.yData,
-        [1, 1, 0, 4, 0, 4, 1, 4, 1, 2, 1, 0, 0, 0, 1],
+        [2, 0, 2, 2, 3, 1, 4, 2, 0, 2, 1, 0, 0, 1],
         'After updating histogram\'s bin width bin frequencies are calculated correctly'
     );
 
@@ -121,9 +121,10 @@ QUnit.test('Histogram', function (assert) {
         baseSeries: 's2',
         binWidth: 1
     });
+
     assert.deepEqual(
         addedHistogram && addedHistogram.yData,
-        [4, 3, 1],
+        [4, 4],
         'Added histogram dynamically is calculated correctly'
     );
 
@@ -151,9 +152,9 @@ QUnit.test('Histogram', function (assert) {
             return point.x;
         }),
         [
-            0, 45.05, 90.1, 135.15, 180.2, 225.25, 270.3, 315.35, 360.4, 405.45,
-            450.5, 495.55, 540.6, 585.65, 630.7, 675.75, 720.8, 765.85, 810.9,
-            855.95, 901
+            20, 65.05, 110.1, 155.15, 200.2, 245.25, 290.3, 335.35, 380.4,
+            425.45, 470.5, 515.55, 560.6, 605.65, 650.7, 695.75, 740.8,
+            785.85, 830.9, 875.95
         ],
         'Histogram produces correct bins, #7976'
     );
@@ -162,7 +163,7 @@ QUnit.test('Histogram', function (assert) {
         h4 && Highcharts.map(h4.points, function (point) {
             return point.y;
         }),
-        [33, 170, 100, 54, 20, 7, 7, 3, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1],
+        [100, 160, 71, 40, 8, 8, 5, 4, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
         'Histogram does not produce points with NaN y values, #7976'
     );
 
