@@ -139,7 +139,7 @@ H.Tooltip.prototype = {
                 H.css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: 'none'
+                    pointerEvents: options.style && options.style.pointerEvents
                 });
                 H.doc.body.appendChild(container);
 
