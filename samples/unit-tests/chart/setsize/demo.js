@@ -423,3 +423,86 @@ QUnit.test('Title resize (#2857)', function (assert) {
     );
 
 });
+
+// Highcharts v4.0.1, Issue #3098
+// Legend margin is not respected after chart.reflow
+QUnit.test('Plot area update(#3098)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            "type": "pie",
+            "renderTo": "container",
+            plotBackgroundColor: 'rgba(0,255,255,0.25)'
+        },
+        credits: {
+            enabled: false
+        },
+        "legend": {
+            backgroundColor: 'pink',
+            "enabled": true,
+            "itemMarginBottom": 10,
+            "itemStyle": {
+                "fontFamily": "Arial, Helvetica, Sans Serif",
+                "fontSize": "10px"
+            }
+        },
+        series: [{
+            "showInLegend": true,
+            "dataLabels": {
+                "enabled": false
+            },
+            data: [{
+                name: "Stamm 1 (AM Level) (Stamm 1 (AM Level) Desc)",
+                y: 783842291.00
+            }, {
+                name: "Stamm 1 / AM 3 (AM Level) (Asset manager 3)",
+                y: 688035357.00
+            }, {
+                name: "10821 (Description 10821)",
+                y: 413786164.00
+            }, {
+                name: "10822 (Description 10822)",
+                y: 217199588.00
+            }, {
+                name: "Stamm 1 / AM 1 (AM Level) (Asset manager 1)",
+                y: 196689593.00
+            }, {
+                name: "Stamm 1 / AM 4 (AM Level)",
+                y: 124974272.00
+            }, {
+                name: "2851 (Description 2851)",
+                y: 111758966.00
+            }, {
+                name: "10826 (Description 10826)",
+                y: 64569428.00
+            }, {
+                name: "10827 (Description 10827)",
+                y: 38127860.00
+            }, {
+                name: "Rest",
+                y: 104615493.00
+            }]
+        }]
+    });
+    var plotTop = chart.plotTop + 5,
+        plotSizeY = chart.plotSizeY,
+        plotYPos = plotSizeY + plotTop,
+        legendTranslateY = chart.legend.group.translateY;
+
+    console.log(plotYPos, legendTranslateY);
+
+    assert.ok(
+        legendTranslateY > plotYPos,
+        "The legend overlaps the plot"
+    );
+    chart.setSize(550, 255, false);
+
+    plotTop = chart.plotTop + 5;
+    plotSizeY = chart.plotSizeY;
+    plotYPos = plotSizeY + plotTop;
+    legendTranslateY = chart.legend.group.translateY;
+
+    assert.ok(
+        legendTranslateY > plotYPos,
+        "The legend overlaps the plot"
+    );
+});

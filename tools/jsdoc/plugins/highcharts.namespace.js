@@ -19,7 +19,7 @@ const path = require('path');
 /* *
  *
  *  Constants
- * 
+ *
  * */
 
 const rootPath = process.cwd();
@@ -27,7 +27,7 @@ const rootPath = process.cwd();
 /* *
  *
  *  Variables
- * 
+ *
  * */
 
 let allDocletPropertyNames = [],
@@ -39,7 +39,7 @@ let allDocletPropertyNames = [],
 /* *
  *
  *  Is Functions
- * 
+ *
  * */
 
 /**
@@ -54,7 +54,6 @@ function isApiOption (doclet) {
     let name = getName(doclet),
         comment = (doclet.comment || ''),
         isApiOption = (
-            doclet.augments ||
             comment.indexOf('@default') >= 0 ||
             comment.indexOf('@product') >= 0 ||
             comment.indexOf('@apioption') >= 0 ||
@@ -213,7 +212,7 @@ function getLightDoclet (doclet) {
         name: getName(doclet)
     };
 
-    if (typeof doclet.deprecated !== 'undefined') {
+   if (typeof doclet.deprecated !== 'undefined') {
         lightDoclet.isDeprecated = true;
     }
 
@@ -278,12 +277,6 @@ function getName (doclet) {
         scope = doclet.scope;
 
     try {
-
-        if (doclet.augments &&
-            doclet.augments.length > 0
-        ) {
-            name = (doclet.augments[0] + '.' + doclet.name);
-        }
 
         if (name.indexOf('H.') === 0) {
             name = name.substr(2);
@@ -398,7 +391,10 @@ function getTypes (doclet) {
     );
 
     if (!types) {
-        return undefined;
+        return (
+            doclet.augments &&
+            doclet.augments.slice()
+        );
     }
 
     return types.map(name => {
@@ -412,8 +408,6 @@ function getTypes (doclet) {
             case 'String':
             case 'Symbol':
                 return name.toLowerCase();
-            case 'Color':
-                return 'ColorString';
         }
     });
 }
@@ -459,7 +453,7 @@ function finalizeNodes (node) {
         });
 
     if (Object.keys(children).length === 0) {
-        delete node.children;
+        // delete node.children;
     }
 }
 
@@ -558,7 +552,8 @@ function addClass (doclet) {
  */
 function addFunction (doclet) {
 
-    let node = updateNodeFor(doclet);
+    let node = updateNodeFor(doclet),
+        types = getTypes(doclet);
 
     if (!node.doclet.parameters) {
         node.doclet.parameters = getParameters(doclet);
@@ -566,6 +561,29 @@ function addFunction (doclet) {
 
     if (!node.doclet.return) {
         node.doclet.return = getReturn(doclet);
+    }
+
+    if (types) {
+        node.doclet.types = types;
+    }
+}
+
+/**
+ * Adds the doclet as a interface node to the tree.
+ * @param {JSDoclet} doclet
+ * JSDoc doclet source.
+ */
+function addInterface (doclet) {
+
+    let node = updateNodeFor(doclet),
+        types = getTypes(doclet);
+
+    if (!node.doclet.parameters) {
+        node.doclet.parameters = getParameters(doclet);
+    }
+
+    if (types) {
+        node.doclet.types = types;
     }
 }
 
@@ -680,7 +698,7 @@ function newDoclet (e) {
         allDocletPropertyNames,
         Object.keys(doclet)
     );
-
+    if (doclet.longname && doclet.longname.indexOf('TitleObject') > -1) console.log(isUndocumented(doclet), isApiOption(doclet), isPrivate(doclet), doclet);
     if (isUndocumented(doclet) ||
         isApiOption(doclet) ||
         isPrivate(doclet)
@@ -702,6 +720,9 @@ function newDoclet (e) {
             break;
         case 'function':
             addFunction(doclet);
+            break;
+        case 'interface':
+            addInterface(doclet);
             break;
         case 'member':
             addMember(doclet);
