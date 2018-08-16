@@ -57,7 +57,7 @@ QUnit.test('Sankey', function (assert) {
     series.data[0].setState('hover');
 
     assert.strictEqual(
-        series.data[0].graphic.element.getAttribute('fill'),
+        Highcharts.color(series.data[0].graphic.element.getAttribute('fill')).get('rgb'),
         'rgb(255,0,0)',
         'Hover color correct'
     );

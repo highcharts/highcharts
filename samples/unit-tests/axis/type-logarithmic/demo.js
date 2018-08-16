@@ -115,3 +115,57 @@ QUnit.test('Linear-log axis with natural min at 0 (#6502)', function (assert) {
         'Axis min is ok'
     );
 });
+
+// Highcharts 4.0.1, Issue #3053
+// Logarythmic xAxis for line series
+QUnit.test('Cropping log axis (#3053)', function (assert) {
+
+    var data = [];
+
+    for (var i = 1; i < 901; i++) {
+        data.push([i, i]);
+    }
+
+    TestTemplate.test('highcharts/scatter', {
+
+        xAxis: {
+            type: 'logarithmic'
+        },
+
+        plotOptions: {
+            series: {
+                lineWidth: 1
+            }
+        },
+
+        series: [{
+            data: data
+        }]
+
+    }, function (template) {
+
+        var chart = template.chart;
+
+        assert.strictEqual(
+            chart.series[0].length,
+            chart.options.series[0].length,
+            'All points should be rendered.'
+        );
+
+        chart.update({
+            plotOptions: {
+                series: {
+                    lineWidth: 2
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].length,
+            chart.options.series[0].length,
+            'Still all points should be rendered.'
+        );
+
+    });
+
+});
