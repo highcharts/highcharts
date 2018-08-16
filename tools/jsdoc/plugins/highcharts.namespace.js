@@ -876,7 +876,7 @@ function newDoclet (e) {
         allDocletPropertyNames,
         Object.keys(doclet)
     );
-    if (doclet.longname && doclet.longname.indexOf('TitleObject') > -1) console.log(isUndocumented(doclet), isApiOption(doclet), isPrivate(doclet), doclet);
+
     if (isUndocumented(doclet) ||
         isApiOption(doclet) ||
         isPrivate(doclet)
