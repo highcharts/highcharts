@@ -193,8 +193,8 @@ H.Series = H.seriesType('line', null, { // base series options
      *
      * <dt>easing</dt>
      *
-     * <dd>A string reference to an easing function set on the `Math` object.
-     * See the _Custom easing function_ demo below.</dd>
+     * <dd>Can be a string reference to an easing function set on the `Math`
+     * object or a function. See the _Custom easing function_ demo below.</dd>
      *
      * </dl>
      *
@@ -230,6 +230,21 @@ H.Series = H.seriesType('line', null, { // base series options
      * @type {String}
      * @since 5.0.0
      * @apioption plotOptions.series.className
+     */
+
+    /**
+     * Disable this option to allow series rendering in the whole plotting
+     * area.
+     *
+     * **Note:** Clipping should be always enabled when
+     * [chart.zoomType](#chart.zoomType) is set
+     *
+     * @default true
+     * @type {Boolean}
+     * @sample {highcharts} highcharts/plotoptions/series-clip/
+     *         Disabled clipping
+     * @since 3.0.0
+     * @apioption plotOptions.series.clip
      */
 
     /**
@@ -331,7 +346,7 @@ H.Series = H.seriesType('line', null, { // base series options
      *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
      *             "LongDashDot", "LongDashDotDot"]
      * @type {String}
-     * @see In styled mode, the [stroke dash-array](http://jsfiddle.net/gh/get/
+     * @see In styled mode, the [stroke dash-array](https://jsfiddle.net/gh/get/
      * library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/
      * series-dashstyle/) can be set with the same classes as listed under
      * [series.color](#plotOptions.series.color).
@@ -446,7 +461,6 @@ H.Series = H.seriesType('line', null, { // base series options
      * @sample {highcharts|highstock} highcharts/series/data-nested-keys/
      *         Nested keys used to access object properties
      * @since 4.1.6
-     * @product highcharts highstock
      * @apioption plotOptions.series.keys
      */
 
@@ -492,6 +506,24 @@ H.Series = H.seriesType('line', null, { // base series options
      * @sample {highcharts} highcharts/series/name/ Series name
      * @sample {highmaps} maps/demo/category-map/ Series name
      * @apioption series.name
+     */
+
+    /**
+     * Options for the corresponding navigator series if `showInNavigator`
+     * is `true` for this series. Available options are the same as any
+     * series, documented at [plotOptions](#plotOptions.series) and
+     * [series](#series).
+     *
+     * These options are merged with options in [navigator.series](
+     * #navigator.series), and will take precedence if the same option is
+     * defined both places.
+     *
+     * @see [navigator.series](#navigator.series)
+     *
+     * @type       {*}
+     * @since      5.0.0
+     * @product    highstock
+     * @apioption  plotOptions.series.navigatorOptions
      */
 
     /**
@@ -664,6 +696,16 @@ H.Series = H.seriesType('line', null, { // base series options
      *         One series in the legend, one hidden
      * @default true
      * @apioption plotOptions.series.showInLegend
+     */
+
+    /**
+     * Whether or not to show the series in the navigator. Takes precedence
+     * over [navigator.baseSeries](#navigator.baseSeries) if defined.
+     *
+     * @type       {boolean}
+     * @since      5.0.0
+     * @product    highstock
+     * @apioption  plotOptions.series.showInNavigator
      */
 
     /**
@@ -1441,9 +1483,9 @@ H.Series = H.seriesType('line', null, { // base series options
      * Options for the series data labels, appearing next to each data
      * point.
      *
-     * In styled mode, the data labels can be styled wtih the
+     * In styled mode, the data labels can be styled with the
      * `.highcharts-data-label-box` and `.highcharts-data-label` class names
-     * ([see example](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels)).
+     * ([see example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels)).
      */
     dataLabels: {
 
@@ -1514,7 +1556,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * can be used to give each series' or point's data label unique
          * styling. In addition to this option, a default color class name is
          * added so that we can give the labels a
-         * [contrast text shadow](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-label-contrast/).
+         * [contrast text shadow](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/data-label-contrast/).
          *
          * @type {String}
          * @sample {highcharts} highcharts/css/series-datalabels/ Styling by CSS
@@ -1576,7 +1618,7 @@ H.Series = H.seriesType('line', null, { // base series options
          */
 
         /**
-         * A [format string](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
          * for the data label. Available variables are the same as for
          * `formatter`.
          *
@@ -1849,7 +1891,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
         /**
          * Whether to
-         * [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the labels.
          *
          * @type {Boolean}
@@ -2216,7 +2258,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * In styled mode, the color zones are styled with the
      * `.highcharts-zone-{n}` class, or custom classed from the `className`
      * option
-     * ([view live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/)).
+     * ([view live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/)).
      *
      * @type {Array}
      * @see [zoneAxis](#plotOptions.series.zoneAxis)

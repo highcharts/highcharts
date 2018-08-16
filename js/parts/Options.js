@@ -59,9 +59,9 @@ H.defaultOptions = {
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
-     * reusable elements. See [gradients, shadows and patterns](http://www.
-     * highcharts.com/docs/chart-design-and-style/gradients-shadows-and-
-     * patterns) for more information and code examples.
+     * reusable elements. See [gradients, shadows and
+     * patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns)
+     * for more information and code examples.
      *
      * @type {Object}
      * @since 5.0.0
@@ -362,8 +362,8 @@ H.defaultOptions = {
          * <dt>easing</dt>
          *
          * <dd>A string reference to an easing function set on the `Math`
-         * object. See [the easing demo](
-         * http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
+         * object. See [the easing
+         * demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          * </dd>
          *
          * </dl>
@@ -1247,9 +1247,8 @@ H.defaultOptions = {
          *
          * @type {String}
          * @see In styled mode, a plot background image can be set with the
-         * `.highcharts-plot-background` class and a [custom pattern](http://www.
-         * highcharts.com/docs/chart-design-and-style/gradients-shadows-and-
-         * patterns).
+         * `.highcharts-plot-background` class and a
+         * [custom pattern](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
          * @sample {highcharts} highcharts/chart/plotbackgroundimage/ Skies
          * @sample {highstock} stock/chart/plotbackgroundimage/ Skies
          * @default null
@@ -1311,8 +1310,9 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
-         * and-string-formatting#html) to render the text.
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the text.
          *
          * @type {Boolean}
          * @default false
@@ -1469,8 +1469,9 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
-         * and-string-formatting#html) to render the text.
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the text.
          *
          * @type {Boolean}
          * @default false
@@ -1628,9 +1629,8 @@ H.defaultOptions = {
      * item or point item in the chart. Each series (or points in case
      * of pie charts) is represented by a symbol and its name in the legend.
      *
-     * It is possible to override the symbol creator function and
-     * create [custom legend symbols](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-
-     * custom-symbol/).
+     * It is possible to override the symbol creator function and create
+     * [custom legend symbols](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-custom-symbol/).
      *
      * @productdesc {highmaps}
      * A Highmaps legend by default contains one legend item per series, but if
@@ -1889,21 +1889,21 @@ H.defaultOptions = {
         /**
          * The border corner radius of the legend.
          *
-         * @type {Number}
-         * @sample {highcharts} highcharts/legend/borderradius-default/ Square by default
-         * @sample {highcharts} highcharts/legend/borderradius-round/ 5px rounded
+         * @sample {highcharts} highcharts/legend/borderradius-default/
+         *         Square by default
+         * @sample {highcharts} highcharts/legend/borderradius-round/
+         *         5px rounded
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
-         * @default 0
          */
         borderRadius: 0,
 
         /**
          * Options for the paging or navigation appearing when the legend
          * is overflown. Navigation works well on screen, but not in static
-         * exported images. One way of working around that is to [increase
-         * the chart height in export](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-
-         * enabled-false/).
+         * exported images. One way of working around that is to
+         * [increase the chart height in
+         * export](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-enabled-false/).
          *
          */
         navigation: {
@@ -1943,7 +1943,7 @@ H.defaultOptions = {
              * the navigation results in an unwanted overflow.
              *
              * See also the [adapt chart to legend](
-             * https://www.highcharts.com/plugin-registry/single/8/Adapt-Chart-To-Legend)
+             * https://www.highcharts.com/products/plugin-registry/single/8/Adapt-Chart-To-Legend)
              * plugin for a solution to extend the chart height to make room for
              * the legend, optionally in exported charts only.
              *
@@ -2198,10 +2198,12 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](http://www.highcharts.com/docs/chart-concepts/labels-
-         * and-string-formatting#html) to render the legend item texts. Prior
-         * to 4.1.7, when using HTML, [legend.navigation](#legend.navigation)
-         * was disabled.
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the legend item texts.
+         *
+         * Prior to 4.1.7, when using HTML,
+         * [legend.navigation](#legend.navigation) was disabled.
          *
          * @type {Boolean}
          * @default false
@@ -2588,7 +2590,12 @@ H.defaultOptions = {
          */
 
         /**
-         * The name of a symbol to use for the border around the tooltip.
+         * The name of a symbol to use for the border around the tooltip. Can
+         * be one of: `"callout"`, `"circle"` or `"square"`.
+         *
+         * Custom callbacks for symbol path generation can also be added to
+         * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+         * [series.marker.symbol](plotOptions.line.marker.symbol).
          *
          * @type {String}
          * @default callout
@@ -2957,25 +2964,19 @@ H.defaultOptions = {
         /**
          * Whether to show the credits text.
          *
-         * @type {Boolean}
          * @sample {highcharts} highcharts/credits/enabled-false/ Credits disabled
          * @sample {highstock} stock/credits/enabled/ Credits disabled
          * @sample {highmaps} maps/credits/enabled-false/ Credits disabled
-         * @default true
          */
         enabled: true,
 
         /**
          * The URL for the credits label.
          *
-         * @type {String}
          * @sample {highcharts} highcharts/credits/href/ Custom URL and text
          * @sample {highmaps} maps/credits/customized/ Custom URL and text
-         * @default {highcharts} http://www.highcharts.com
-         * @default {highstock} "http://www.highcharts.com"
-         * @default {highmaps} http://www.highcharts.com
          */
-        href: 'http://www.highcharts.com',
+        href: 'https://www.highcharts.com',
 
         /**
          * Position configuration for the credits label.

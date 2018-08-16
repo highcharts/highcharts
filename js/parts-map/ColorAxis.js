@@ -43,7 +43,7 @@ if (!H.ColorAxis) {
          * classes.
          *
          * For supported color formats, see the
-         * [docs article about colors](http://www.highcharts.com/docs/chart-design-and-style/colors).
+         * [docs article about colors](https://www.highcharts.com/docs/chart-design-and-style/colors).
          *
          * A scalar color axis is represented by a gradient. The colors either
          * range between the [minColor](#colorAxis.minColor) and the
