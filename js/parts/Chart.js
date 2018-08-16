@@ -8,10 +8,18 @@
  * The chart title. The title has an `update` method that allows modifying the
  * options directly or indirectly via `chart.update`.
  *
- * @typedef {Highcharts.SVGElement} Highcharts.TitleObject
+ * @interface Highcharts.TitleObject
+ * @extends Highcharts.SVGElement
+ */
+/**
+ * Modify options for the title.
  *
- * @property {Function} update
- *           Modify options.
+ * @function Highcharts.TitleObject#update
+ *
+ * @param  {Highcharts.TitleOptions} titleOptions
+ *         Options to modify.
+ *
+ * @return {void}
  */
 
 /**
@@ -19,10 +27,18 @@
  * allows modifying the options directly or indirectly via
  * `chart.update`.
  *
- * @typedef {Highcharts.SVGElement} Highcharts.SubtitleObject
+ * @interface Highcharts.SubtitleObject
+ * @extends Highcharts.SVGElement
+ */
+/**
+ * Modify options for the subtitle.
  *
- * @property {Function} update
- *           Modify options.
+ * @function Highcharts.SubtitleObject#update
+ *
+ * @param  {Highcharts.SubtitleOptions} subtitleOptions
+ *         Options to modify.
+ *
+ * @return {void}
  */
 
 'use strict';
