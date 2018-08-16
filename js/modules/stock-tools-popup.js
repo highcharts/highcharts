@@ -357,12 +357,12 @@ H.Popup.prototype = {
      * @param {String} - text placed as button label
      * @param {String} - add | edit | remove
      * @param {Function} - on click callback
+     * @param {Object} - params / arguments of callback
      *
      */
-    addButton: function (parentDiv, label, type, callback) {
+    addButton: function (parentDiv, label, type, callback, callbackParams) {
         var _self = this,
             closePopup = this.closePopup,
-            getFields = this.getFields,
             button;
 
         button = createElement(BUTTON, {
@@ -372,9 +372,7 @@ H.Popup.prototype = {
         addEvent(button, 'click', function () {
             closePopup.call(_self);
 
-            return callback(
-                getFields(parentDiv, type)
-            );
+            return callback(callbackParams);
         });
     },
     /*
@@ -386,6 +384,7 @@ H.Popup.prototype = {
      * @return {Object} - fields
      */
     getFields: function (parentDiv, type) {
+
         var inputList = parentDiv.querySelectorAll('input'),
             seriesId = parentDiv.querySelectorAll('select > option:checked')[0],
             param,
@@ -393,8 +392,8 @@ H.Popup.prototype = {
 
         fieldsOutput = {
             actionType: type,
-            seriesId: seriesId.getAttribute('data-series-id'),
-            linkedTo: seriesId.getAttribute('value'),
+            seriesId: seriesId && seriesId.getAttribute('data-series-id'),
+            linkedTo: seriesId && seriesId.getAttribute('value'),
             fields: { }
         };
 
@@ -416,12 +415,15 @@ H.Popup.prototype = {
      * Create indicator form. It contains two tabs (ADD and EDIT) with content.
      *
      * @param {Chart} - chart
+     * @param {Object} - options
      * @param {Function} - on click callback
      *
      */
-    indicatorsForm: function (chart, callback) {
+    indicatorsForm: function (chart, options, callback) {
 
-        var tabsContainers;
+        var tabsContainers,
+            getFields = this.getFields,
+            buttonParentDiv;
 
         // add tabs
         this.tabs.init.call(this, chart);
@@ -433,30 +435,41 @@ H.Popup.prototype = {
         // ADD tab
         this.addColsContainer(tabsContainers[0]);
         this.addIndicatorList(chart, tabsContainers[0], 'add');
+
+        buttonParentDiv = tabsContainers[0]
+                            .querySelectorAll('.highcharts-popup-rhs-col')[0];
+
         this.addButton.call(
             this,
-            tabsContainers[0].querySelectorAll('.highcharts-popup-rhs-col')[0],
+            buttonParentDiv,
             'add',
             'add',
-            callback
+            callback,
+            getFields(buttonParentDiv, 'add')
         );
 
         // EDIT tab
         this.addColsContainer(tabsContainers[1]);
         this.addIndicatorList(chart, tabsContainers[1], 'edit');
+
+        buttonParentDiv = tabsContainers[1]
+                            .querySelectorAll('.highcharts-popup-rhs-col')[0];
+
         this.addButton.call(
             this,
-            tabsContainers[1].querySelectorAll('.highcharts-popup-rhs-col')[0],
+            buttonParentDiv,
             'update',
             'edit',
-            callback
+            callback,
+            getFields(buttonParentDiv, 'update')
         );
         this.addButton.call(
             this,
-            tabsContainers[1].querySelectorAll('.highcharts-popup-rhs-col')[0],
+            buttonParentDiv,
             'remove',
             'remove',
-            callback
+            callback,
+            getFields(buttonParentDiv, 'remove')
         );
     },
     /*
@@ -480,6 +493,22 @@ H.Popup.prototype = {
         });
 
         return counter;
+    },
+    /*
+     * Create annotation simple form. It contains two buttons (edit / remove).
+     *
+     * @param {Chart} - chart
+     * @param {Object} - options
+     * @param {Function} - on click callback
+     *
+     */
+    annotationToolbar: function (chart, options, callback) {
+        var popupDiv = this.popupDiv;
+
+        // set small size
+        popupDiv.className += ' highcharts-annotation-toolbar';
+
+        //createElement(SPAN, );
     },
     /*
      * Reset content of the current popup and show.
@@ -514,10 +543,11 @@ H.Popup.prototype = {
      *
      * @param {String} - type of popup i.e indicators
      * @param {Chart} - chart
+     * @param {Object} - options
      * @param {Function} - on click callback
      *
      */
-    showForm: function (type, chart, callback) {
+    showForm: function (type, chart, options, callback) {
 
         this.popupDiv = chart.stockToolbar.popup;
 
@@ -526,9 +556,12 @@ H.Popup.prototype = {
 
         // indicator popup
         if (type === 'indicators') {
-            this.indicatorsForm.call(this, chart, callback);
-        } else {
+            this.indicatorsForm.call(this, chart, options, callback);
+        } else if (type === 'annotation') {
             // general popup content
+            this.annotationToolbar.call(this, chart, options, callback);
+        } else if (type === 'annotation-edit') {
+            console.log('annotation edit form');
         }
     },
     tabs: {

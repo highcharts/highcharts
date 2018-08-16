@@ -777,11 +777,12 @@ H.Toolbar.prototype = {
      * Show popup.
      *
      * @param {String} - type of popup (indicator, annotation)
+     * @param {Object} - options
      * @param {Function} - callback called when user clicks on button in popup
      *
      */
-    showForm: function (type, callback) {
-        H.Popup.prototype.showForm(type, this.chart, callback);
+    showForm: function (type, options, callback) {
+        H.Popup.prototype.showForm(type, this.chart, options, callback);
     },
     /*
      * Add / remove space for toolbar.

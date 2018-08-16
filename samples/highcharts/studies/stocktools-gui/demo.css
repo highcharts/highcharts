@@ -15,6 +15,10 @@
   width: 100%;
 }
 
+.highcharts-annotation-toolbar {
+  right: 20px;
+}
+
 .highcharts-menu-wrapper {
   float: left;
   width: 40px;
