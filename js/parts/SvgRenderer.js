@@ -149,9 +149,6 @@
  *
  * @property {number} y2
  *           End vertical position of the gradient. Ranges 0-1.
- *
- * @property {number} cx
- *           Center horizontal position relative to the shape. Ranges 0-1.
  */
 
 /**
@@ -159,6 +156,9 @@
  *
  * @private
  * @typedef {object} Highcharts.RadialGradientColorObject
+ *
+ * @property {number} cx
+ *           Center horizontal position relative to the shape. Ranges 0-1.
  *
  * @property {number} cy
  *           Center vertical position relative to the shape. Ranges 0-1.
