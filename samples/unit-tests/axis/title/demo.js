@@ -284,3 +284,33 @@ QUnit.test('Axis title multiline', function (assert) {
 
 });
 
+// Highcharts 4.0.1, Issue #3027
+// Category labels are truncated when setting axis title offset
+QUnit.test('Axis title offset (#3027)', function (assert) {
+
+    TestTemplate.test('highcharts/column', {
+        yAxis: {
+            title: {
+                align: 'high',
+                offset: 0,
+                text: 'Rai',
+                rotation: 0,
+                y: -10
+            }
+        },
+        series: [{
+            data: [100, 200, 300]
+        }]
+    }, function (template) {
+
+        var chart = template.chart,
+            labelGroupBox = chart.yAxis[0].labelGroup.getBBox();
+
+        assert.ok(
+            labelGroupBox.x >= 0,
+            'Labels of y axis should start inside container.'
+        );
+
+    });
+
+});
