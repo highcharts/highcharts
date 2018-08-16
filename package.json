@@ -74,6 +74,7 @@
     "pngjs": "^3.3.0",
     "pretty": "2.0.0",
     "qunitjs": "^2.4.0",
+    "replace-string": "1.1.0",
     "request": "^2.81.0",
     "requirejs": "^2.3.3",
     "safe-regex": "^1.1.0",
@@ -82,8 +83,7 @@
     "vinyl-ftp": "^0.4.5",
     "webpack": "^1.15.0",
     "xml2js": "^0.4.17",
-    "yargs": "^3.32.0",
-    "replace-string": "1.1.0"
+    "yargs": "^3.32.0"
   },
   "lint-staged": {
     "*.js": [

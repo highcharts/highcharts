@@ -497,9 +497,9 @@ function (assert) {
     function navRender() {
         var x = rightHandle.x + rightHandle.translateX + rightHandle.width / 2,
             y = rightHandle.y + rightHandle.translateY + rightHandle.height / 2;
-        controller.triggerOnChart('mousedown', x, y);
-        controller.triggerOnChart('mousemove', x, y);
-        controller.triggerOnChart('mouseup', x, y);
+        controller.triggerEvent('mousedown', x, y);
+        controller.triggerEvent('mousemove', x, y);
+        controller.triggerEvent('mouseup', x, y);
     }
 
     navRender();
@@ -545,6 +545,55 @@ QUnit.test(
     }
 );
 
+// Highcharts 6.0.0, Issue #7067
+// Chart.update() doesn't enable the navigator under certain conditions
+QUnit.test('Chart update enables navigator (#7067)', function (assert) {
+
+    var chart = Highcharts.stockChart('container', {
+        navigator: {
+            enabled: false
+        },
+        scrollbar: {
+            enabled: false
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.deepEqual([
+        typeof chart.navigator,
+        typeof chart.scroller
+    ], [
+        'undefined',
+        'undefined'
+    ],
+        'Chart should have no navigator.'
+    );
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    assert.notDeepEqual([
+        typeof chart.navigator,
+        typeof chart.scroller
+    ], [
+        'undefined',
+        'undefined'
+    ],
+        'Chart should have a navigator instance.'
+    );
+
+    assert.ok(
+        chart.navigator &&
+        chart.navigator.navigatorEnabled,
+        'Navigator should be enabled.'
+    );
+
+});
 QUnit.test(
     'Navigator series visibility should be in sync with master series (#8374)',
     function (assert) {
