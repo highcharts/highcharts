@@ -11,6 +11,10 @@
   z-index: 10;
 }
 
+.highcharts-stocktools-popup {
+  width: 100%;
+}
+
 .highcharts-menu-wrapper {
   float: left;
   width: 40px;

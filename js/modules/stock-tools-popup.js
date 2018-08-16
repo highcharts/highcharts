@@ -494,6 +494,7 @@ H.Popup.prototype = {
             popupCloseBtn = popupDiv
                             .querySelectorAll('.highcharts-popup-close')[0];
 
+        popupDiv.parentNode.className += ' highcharts-stocktools-popup';
         popupDiv.innerHTML = '';
         popupDiv.appendChild(popupCloseBtn);
         popupDiv.style.display = 'block';
@@ -503,7 +504,10 @@ H.Popup.prototype = {
      *
      */
     closePopup: function () {
-        this.popupDiv.style.display = 'none';
+        var popupDiv = this.popupDiv;
+
+        popupDiv.style.display = 'none';
+        popupDiv.parentNode.classList.remove('highcharts-stocktools-popup');
     },
     /*
      * Create content and show popup.
