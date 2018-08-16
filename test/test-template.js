@@ -10,7 +10,7 @@
     /**
      * The chart template registry
      *
-     * @type {Dictionary<TestTemplate>}
+     * @type {*}
      */
     var templates = {};
 
@@ -23,8 +23,11 @@
     /**
      * Creates a new container in the DOM tree.
      *
+     * @private
+     * @function createContainer
+     *
      * @return {HTMLElement}
-     * The DOM element of the container
+     *         The DOM element of the container
      */
     function createContainer() {
         var container = global.document.createElement('div'),
@@ -39,14 +42,17 @@
     /**
      * Creates a deep copy of entries and properties.
      *
-     * @param {array|object} source
-     * The source to copy from.
+     * @private
+     * @function treeCopy
      *
-     * @param {object} propertiesTree
-     * The properties tree to copy.
+     * @param  {Array<*>|*} source
+     *         The source to copy from.
      *
-     * @return {array|object}
-     * The copy of the source.
+     * @param  {*} propertiesTree
+     *         The properties tree to copy.
+     *
+     * @return {Array<*>|*}
+     *         The copy of the source.
      */
     function treeCopy(source, propertiesTree) {
         if (!source) {
@@ -71,16 +77,18 @@
                 return copy;
         }
     }
-    global.treeCopy = treeCopy;
+    // global.treeCopy = treeCopy;
 
     /**
      * Listens on the update event of a chart and saves changes for undo.
      *
-     * @param {Highcharts.Chart} chart
-     * The instance of the chart
+     * @function updateUndoFor
      *
-     * @return {function}
-     * Undo function to restore original state
+     * @param  {Highcharts.Chart} chart
+     *         The instance of the chart
+     *
+     * @return {Function}
+     *         Undo function to restore original state
      */
     function updateUndoFor(chart) {
 
@@ -116,20 +124,19 @@
      * This class creates a new template for testing on generic charts. It also
      * provides static functions to use registered templates in test cases.
      *
+     * @class TestTemplate
+     *
      * @param {string} name
-     * The reference name of the chart.
+     *        The reference name of the chart.
      *
-     * @param {function} chartConstructor
-     * The chart factory function for the template.
+     * @param {Function} chartConstructor
+     *        The chart factory function for the template.
      *
-     * @param {object} chartOptions
-     * The default chart Options for the template.
+     * @param {Highcharts.Options} chartOptions
+     *        The default chart Options for the template.
      *
-     * @param {function} testInitializer
-     * The initializer function for a test case. (optional)
-     *
-     * @return {TestTemplate}
-     * The new chart template.
+     * @param {Function} testInitializer
+     *        The initializer function for a test case. (optional)
      */
     function TestTemplate(
         name, chartConstructor, chartOptions, testInitializer
@@ -153,6 +160,7 @@
         /**
          * The name of the template as a flag in the chart
          *
+         * @name Highcharts.Chart#template
          * @type {string}
          */
         chart.template = name;
@@ -160,6 +168,7 @@
         /**
          * The chart instance of the chart template
          *
+         * @name TestTemplate#chart
          * @type {Highcharts.Chart}
          */
         this.chart = chart;
@@ -167,6 +176,7 @@
         /**
          * The name of the chart template
          *
+         * @name TestTemplate#name
          * @type {string}
          */
         this.name = name;
@@ -174,6 +184,7 @@
         /**
          * The state of the chart template
          *
+         * @name TestTemplate#ready
          * @type {boolean}
          */
         this.ready = true;
@@ -181,6 +192,7 @@
         /**
          * The queue of waiting test cases for the chart template
          *
+         * @name TestTemplate#testCases
          * @type {Array<Object>}
          */
         this.testCases = testCases;
@@ -188,7 +200,8 @@
         /**
          * An initializer for each test case (optional)
          *
-         * @type {function|undefined}
+         * @name TestTemplate#testInitializer
+         * @type {Function|undefined}
          */
         this.testInitializer = testInitializer;
 
@@ -204,11 +217,13 @@
      * Creates a test case for the current template chart and add it to the
      * queue array.
      *
-     * @param {object} chartOptions
-     * Additional options for the chart
+     * @function TestTemplate#test
      *
-     * @param {function} testCallback
-     * The callback to test the chart
+     * @param  {Highcharts.Options} chartOptions
+     *         Additional options for the chart
+     *
+     * @param  {Function} testCallback
+     *         The callback to test the chart
      *
      * @return {void}
      */
@@ -279,17 +294,19 @@
     /**
      * Registers a chart template for additional tests
      *
-     * @param {string} name
-     * The reference name of the chart.
+     * @function TestTemplate.register
      *
-     * @param {function} chartConstructor
-     * The chart factory function for the template.
+     * @param  {string} name
+     *         The reference name of the chart.
      *
-     * @param {object} chartOptions
-     * The default chart options for the template.
+     * @param  {Function} chartConstructor
+     *         The chart factory function for the template.
      *
-     * @param {function} testInitializer
-     * The initializer function for a test case. (optional)
+     * @param  {Highcharts.Options} chartOptions
+     *         The default chart options for the template.
+     *
+     * @param  {Function} [testInitializer]
+     *         The initializer function for a test case. (optional)
      *
      * @return {void}
      */
@@ -322,14 +339,17 @@
     /**
      * Prepares a chart template for a test. This function works asynchronously.
      *
-     * @param {string} name
-     * The reference name of the template to prepare for the test.
+     * @function TestTemplate.test
      *
-     * @param {object|undefind} chartOptions
-     * The additional options to customize the chart of the template.
+     * @param  {string} name
+     *         The reference name of the template to prepare for the test.
      *
-     * @param {function} testCallback
-     * The callback with the prepared chart template as the first argument.
+     * @param  {Highcharts.Chart|undefind} [chartOptions]
+     *         The additional options to customize the chart of the template.
+     *
+     * @param  {Function} testCallback
+     *         The callback with the prepared chart template as the first
+     *         argument.
      *
      * @return {void}
      */
@@ -373,6 +393,7 @@
     /**
      * The registered chart templates
      *
+     * @name TestTemplate.templates
      * @type {Array<TestTemplate>}
      */
     TestTemplate.templates = templates;

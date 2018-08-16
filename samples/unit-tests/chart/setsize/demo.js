@@ -488,7 +488,7 @@ QUnit.test('Plot area update(#3098)', function (assert) {
         plotYPos = plotSizeY + plotTop,
         legendTranslateY = chart.legend.group.translateY;
 
-    console.log(plotYPos, legendTranslateY);
+    // console.log(plotYPos, legendTranslateY);
 
     assert.ok(
         legendTranslateY > plotYPos,
