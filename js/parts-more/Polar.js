@@ -624,6 +624,9 @@ if (!H.polarExtended) {
     });
 
     H.addEvent(H.Chart, 'afterDrawChartBox', function () {
+        if (!this.pane) {
+            this.pane = [];
+        }
         each(this.pane, function (pane) {
             pane.render();
         });
