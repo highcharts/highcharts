@@ -255,7 +255,7 @@
   float: left;
 }
 
-.highcharts-popup-lhs-col.highcharts-popup-lhs-col-full { 
+.highcharts-popup-lhs-col.highcharts-popup-lhs-full { 
   width: calc(100% - 40px);
   overflow: scroll;
   height: calc(100% - 100px);
