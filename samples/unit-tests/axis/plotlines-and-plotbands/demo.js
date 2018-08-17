@@ -159,3 +159,48 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
         'Inside range, label shown'
     );
 });
+
+// Highcharts 4.0.4, Issue #2361
+// X axis plot bands disappear when zooming in
+QUnit.test('Plotbands clip (#2361)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            minRange: 1,
+            plotBands: [{
+                color: '#FCFFC5',
+                from: 1,
+                to: 3,
+                label: {
+                    text: "I will dissapear if you zoom in <br/>so the start of the band isn't visible"
+                }
+            }]
+        },
+        yAxis: {
+            gridLineWidth: 0
+        },
+
+        series: [{
+            type: "column",
+            data: [1, 2, 3, 4, 5, 6],
+            pointPlacement: "between"
+        }]
+    });
+    assert.notEqual(
+        chart.xAxis[0].plotLinesAndBands[0].label,
+        null,
+        "Plotbands should be visible after zooming "
+    );
+    $('#container').highcharts().xAxis[0].setExtremes(2, 5);
+
+    assert.notEqual(
+        chart.xAxis[0].plotLinesAndBands[0].label,
+        null,
+        "Plotbands should be visible after zooming"
+    );
+    $('#container').highcharts().xAxis[0].setExtremes(4, 5);
+    assert.equal(
+        chart.xAxis[0].plotLinesAndBands[0].label.visibility,
+        'hidden',
+        "Plotbands should be hidden after zooming"
+    );
+});
