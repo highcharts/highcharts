@@ -292,19 +292,7 @@ H.setOptions({
 
 // Run HTML generator
 addEvent(H.Chart, 'afterGetContainer', function (options) {
-    var chartOptions = this.options,
-        lang = chartOptions.lang,
-        paramOptionsGui = options.options && options.options.stockTools,
-        guiOptions = merge(
-            chartOptions.stockTools && chartOptions.stockTools.gui,
-            paramOptionsGui && paramOptionsGui.gui
-        ),
-        langOptions = lang.stockTools && lang.stockTools.gui;
-
-    if (guiOptions.enabled) {
-        this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
-        this.stockToolbar.setToolbarSpace();
-    }
+    H.Toolbar.prototype.setStockTools.call(this, options);
 });
 
 addEvent(H.Chart, 'destroy', function () {
@@ -324,7 +312,7 @@ addEvent(H.Chart, 'update', function (options) {
         this.stockToolbar.destroy();
     }
 
-    fireEvent(this, 'afterGetContainer', options);
+    H.Toolbar.prototype.setStockTools.call(this, options);
 });
 
 /*
@@ -381,6 +369,27 @@ H.Toolbar.prototype = {
         });
 
         fireEvent(this, 'afterInit');
+    },
+    /*
+     * Verify if Toolbar should be added.
+     *
+     * @param {Object} - chart options
+     *
+     */
+    setStockTools: function (options) {
+        var chartOptions = this.options,
+            lang = chartOptions.lang,
+            paramOptionsGui = options.options && options.options.stockTools,
+            guiOptions = merge(
+                chartOptions.stockTools && chartOptions.stockTools.gui,
+                paramOptionsGui && paramOptionsGui.gui
+            ),
+            langOptions = lang.stockTools && lang.stockTools.gui;
+
+        if (guiOptions.enabled) {
+            this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
+            this.stockToolbar.setToolbarSpace();
+        }
     },
     /*
      * Create submenu (list of buttons) for the option. In example main button
