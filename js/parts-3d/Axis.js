@@ -580,7 +580,8 @@ wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
     if (this.chart.is3d() &&
         tick &&
         tick.label &&
-        this.categories
+        this.categories &&
+        this.chart.frameShapes
     ) {
         var chart = this.chart,
             ticks = this.ticks,

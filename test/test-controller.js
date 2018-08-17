@@ -243,12 +243,40 @@ window.TestController = function (chart) {
             self.setPosition(chartX, chartY);
         },
         /**
+         * Simulates a mouse click.
+         *
+         * @param  {number|undefined} [chartX]
+         *         X position on the chart.
+         *
+         * @param  {number|undefined} [chartY]
+         *         Y position on the chart.
+         *
+         * @param  {Dictionary|undefined} [extra]
+         *         Extra properties for the event arguments, for example
+         *         `{ shiftKey: true }` to emulate that the shift key has been
+         *         pressed in a mouse event.
+         *
+         * @param  {boolean|undefined} [debug]
+         *         Draw a position circle for debugging purposes.
+         *
+         * @return {void}
+         */
+        click: function (chartX, chartY, extra, debug) {
+
+            chartX = (chartX || this.positionX);
+            chartY = (chartY || this.positionY);
+
+            this.mouseDown(chartX, chartY, extra, debug);
+            this.mouseUp(chartX, chartY, extra, debug);
+            this.triggerEvent('click', chartX, chartY, extra, debug);
+        },
+        /**
          * Simulates a mouse pan action between two points.
          *
-         * @param  {Array<number>} startPoint
+         * @param  {Array<number>} [startPoint]
          *         Starting point with x and y values relative to the chart.
          *
-         * @param  {Array<number>} endPoint
+         * @param  {Array<number>} [endPoint]
          *         Ending point with x any y values relative to the chart.
          *
          * @param  {Dictionary|undefined} [extra]
@@ -643,7 +671,6 @@ window.TestController = function (chart) {
     };
     // Shorthand functions. Calls trigger, except the type.
     [
-        'click',
         'mouseDown',
         'mouseMove',
         'mouseUp',
@@ -654,24 +681,30 @@ window.TestController = function (chart) {
         /**
          * Triggers an event.
          *
-         * @param  {number} chartX
+         * @param  {number|undefined} [chartX]
          *         X position on the chart.
          *
-         * @param  {number} chartY
+         * @param  {number|undefined} [chartY]
          *         Y position on the chart.
          *
-         * @param  {Dictionary} extra
+         * @param  {Dictionary|undefined} [extra]
          *         Extra properties for the event arguments, for example
          *         `{ shiftKey: true }` to emulate that the shift key has been
          *         pressed in a mouse event.
          *
-         * @param  {boolean} debug
+         * @param  {boolean|undefined} [debug]
          *         Draw a position circle for debugging purposes.
          *
          * @return {void}
          */
         controller[type] = function (chartX, chartY, extra, debug) {
-            controller.triggerEvent(typeLC, chartX, chartY, extra, debug);
+            controller.triggerEvent(
+                typeLC,
+                (chartX || controller.positionX),
+                (chartY || controller.positionY),
+                extra,
+                debug
+            );
         };
     });
     controller.setPosition(0, 0);
