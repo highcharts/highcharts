@@ -232,3 +232,82 @@ QUnit.test(
         );
     }
 );
+
+// Highcharts 4.0.4, Issue #3500
+// Monthly X axis ticks are wrong with timezoneOffset
+QUnit.test('Monthly ticks (#3500)', function (assert) {
+
+    var resetTo = {
+        global: {
+            timezoneOffset: Highcharts.defaultOptions.timezoneOffset
+        }
+    };
+
+    Highcharts.setOptions({
+        global: {
+            timezoneOffset: 240
+        }
+    });
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            marginRight: 100
+        },
+
+        title: {
+            text: 'Monthly ticks'
+        },
+
+        xAxis: {
+            type: 'datetime',
+            labels: {
+                format: '{value:%Y-%m-%d<br>%H:%M}'
+            },
+            startOnTick: true,
+            endOnTick: true,
+            tickPixelInterval: 180
+        },
+
+        series: [{
+            data: [{
+                x: Date.UTC(2014, 0, 1),
+                y: 3
+            }, {
+                x: Date.UTC(2014, 1, 1),
+                y: 5
+            }, {
+                x: Date.UTC(2014, 2, 1),
+                y: 7
+            }, {
+                x: Date.UTC(2014, 3, 1),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 4, 1),
+                y: 5
+            }],
+            pointStart: Date.UTC(2014, 0, 1),
+            pointInterval: 24 * 36e5
+        }]
+    });
+
+    var expectedTicksText = [
+            '2013-11-01',
+            '2014-01-01',
+            '2014-03-01',
+            '2014-05-01',
+            '2014-07-01'],
+        ticksText = [],
+        tickPositions = chart.xAxis[0].tickPositions;
+
+    for (var i = 0; i < tickPositions.length; i++) {
+        ticksText.push(chart.xAxis[0].ticks[tickPositions[i]].label.element.childNodes[0].textContent);
+    }
+
+    assert.deepEqual(
+        expectedTicksText,
+        ticksText,
+        "Monthly X axis ticks is not correct"
+    );
+    // Reset
+    Highcharts.setOptions(resetTo);
+});
