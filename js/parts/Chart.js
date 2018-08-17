@@ -84,20 +84,6 @@ var addEvent = H.addEvent,
 /**
  * The Chart class. The recommended constructor is {@link Highcharts#chart}.
  *
- * @class Highcharts.Chart
- *
- * @param  {string|Highcharts.HTMLDOMElement} renderTo
- *         The DOM element to render to, or its id.
- *
- * @param  {Highcharts.Options} options
- *         The chart options structure.
- *
- * @param  {Function|undefined} [callback]
- *         Function to run when the chart has loaded and and all external images
- *         are loaded. Defining a [chart.event.load](
- *         https://api.highcharts.com/highcharts/chart.events.load) handler is
- *         equivalent.
- *
  * @example
  * var chart = Highcharts.chart('container', {
  *        title: {
@@ -107,6 +93,20 @@ var addEvent = H.addEvent,
  *            data: [1, 3, 2, 4]
  *        }]
  * })
+ *
+ * @class Highcharts.Chart
+ *
+ * @param {string|Highcharts.HTMLDOMElement} renderTo
+ *        The DOM element to render to, or its id.
+ *
+ * @param {Highcharts.Options} options
+ *        The chart options structure.
+ *
+ * @param {Function|undefined} [callback]
+ *        Function to run when the chart has loaded and and all external images
+ *        are loaded. Defining a [chart.event.load](
+ *        https://api.highcharts.com/highcharts/chart.events.load) handler is
+ *        equivalent.
  */
 var Chart = H.Chart = function () {
     this.getArgs.apply(this, arguments);
@@ -114,6 +114,17 @@ var Chart = H.Chart = function () {
 
 /**
  * Factory function for basic charts.
+ *
+ * @example
+ * // Render a chart in to div#container
+ * var chart = Highcharts.chart('container', {
+ *     title: {
+ *         text: 'My chart'
+ *     },
+ *     series: [{
+ *         data: [1, 3, 2, 4]
+ *     }]
+ * });
  *
  * @function Highcharts.chart
  *
@@ -131,17 +142,6 @@ var Chart = H.Chart = function () {
  *
  * @return {Highcharts.Chart}
  *         Returns the Chart object.
- *
- * @example
- * // Render a chart in to div#container
- * var chart = Highcharts.chart('container', {
- *     title: {
- *         text: 'My chart'
- *     },
- *     series: [{
- *         data: [1, 3, 2, 4]
- *     }]
- * });
  */
 H.chart = function (a, b, c) {
     return new Chart(a, b, c);
@@ -187,6 +187,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param  {Function|undefined} [callback]
      *         Function to run when the chart has loaded and and all external
      *         images are loaded.
+     *
+     * @return {void}
      *
      * @todo
      * Make events official: Fires the events `init` and `afterInit`.
@@ -255,11 +257,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             /**
              * All the axes in the chart.
              *
-             * @name Highcharts.Chart#axes
-             * @type {Array<Highcharts.Axis>}
-             *
              * @see  Highcharts.Chart.xAxis
              * @see  Highcharts.Chart.yAxis
+             *
+             * @name Highcharts.Chart#axes
+             * @type {Array<Highcharts.Axis>}
              */
             this.axes = [];
 
@@ -338,7 +340,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#initSeries
      *
-     * @param  {*} options
+     * @param  {Highcharts.ChartOptions} options
      *
      * @return {Highcharts.Series}
      *
@@ -376,6 +378,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @param  {number} fromIndex
      *         If this is given, only the series above this index are handled.
+     *
+     * @return {void}
      */
     orderSeries: function (fromIndex) {
         var series = this.series,
@@ -609,6 +613,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * Get an axis, series or point object by `id` as given in the configuration
      * options. Returns `undefined` if no item is found.
      *
+     * @sample highcharts/plotoptions/series-id/
+     *         Get series by id
+     *
      * @function Highcharts.Chart#get
      *
      * @param  {string} id
@@ -616,9 +623,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined}
      *         The retrieved item.
-     *
-     * @sample highcharts/plotoptions/series-id/
-     *         Get series by id
      */
     get: function (id) {
 
@@ -691,13 +695,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * can be selected by clicking or programmatically by the
      * {@link Highcharts.Point#select} function.
      *
+     * @sample highcharts/plotoptions/series-allowpointselect-line/
+     *         Get selected points
+     *
      * @function Highcharts.Chart#getSelectedPoints
      *
      * @return {Array<Highcharts.Point>}
      *         The currently selected points.
-     *
-     * @sample highcharts/plotoptions/series-allowpointselect-line/
-     *         Get selected points
      */
     getSelectedPoints: function () {
         var points = [];
@@ -718,13 +722,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * {@link https://api.highcharts.com/highcharts/plotOptions.series.showCheckbox| series.showCheckBox}
      * is true.
      *
+     * @sample highcharts/members/chart-getselectedseries/
+     *         Get selected series
+     *
      * @function Highcharts.Chart#getSelectedSeries
      *
      * @return {Array<Highcharts.Series>}
      *         The currently selected series.
-     *
-     * @sample highcharts/members/chart-getselectedseries/
-     *         Get selected series
      */
     getSelectedSeries: function () {
         return grep(this.series, function (serie) {
@@ -734,6 +738,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
     /**
      * Set a new title or subtitle for the chart.
+     *
+     * @sample highcharts/members/chart-settitle/
+     *         Set title text and styles
      *
      * @function Highcharts.Chart#setTitle
      *
@@ -750,10 +757,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         `chart.redraw()`.
      *
      * @return {void}
-     *
-     * @sample highcharts/members/chart-settitle/
-     *         Set title text and styles
-     *
      */
     setTitle: function (titleOptions, subtitleOptions, redraw) {
         var chart = this,
@@ -794,11 +797,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * modifying the options directly or indirectly via
          * `chart.update`.
          *
-         * @name Highcharts.Chart#title
-         * @type {Highcharts.TitleObject}
-         *
          * @sample highcharts/members/title-update/
          *         Updating titles
+         *
+         * @name Highcharts.Chart#title
+         * @type {Highcharts.TitleObject}
          *//**
          * The chart subtitle. The subtitle has an `update` method that
          * allows modifying the options directly or indirectly via
@@ -1058,6 +1061,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#afterGetContainer
      *
      * @return {void}
+     *
+     * @todo
+     * Make events official: Fire the event `afterGetContainer`.
      */
     getContainer: function () {
         var chart = this,
@@ -1166,9 +1172,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          *
          * @name Highcharts.Chart#renderer
          * @type {Highcharts.SVGRenderer}
-         *
-         * @todo
-         * Make events official: Fire the event `afterGetContainer`.
          */
         chart.renderer = new Ren(
             container,
@@ -1280,6 +1283,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * container is resized without a window resize event, this must be called
      * explicitly.
      *
+     * @sample highcharts/members/chart-reflow/
+     *         Resize div and reflow
+     * @sample highcharts/chart/events-container/
+     *         Pop up and reflow
+     *
      * @function Highcharts.Chart#reflow
      *
      * @param  {any} e
@@ -1287,11 +1295,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         internally as a response to window resize.
      *
      * @return {void}
-     *
-     * @sample highcharts/members/chart-reflow/
-     *         Resize div and reflow
-     * @sample highcharts/chart/events-container/
-     *         Pop up and reflow
      */
     reflow: function (e) {
         var chart = this,
@@ -1378,6 +1381,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * only, the height argument may be skipped. To set the height only, pass
      * `undefined` for the width.
      *
+     * @sample highcharts/members/chart-setsize-button/
+     *         Test resizing from buttons
+     * @sample highcharts/members/chart-setsize-jquery-resizable/
+     *         Add a jQuery UI resizable
+     * @sample stock/members/chart-setsize/
+     *         Highstock with UI resizable
+     *
      * @function Highcharts.Chart#setSize
      *
      * @param  {number|null|undefined} [width]
@@ -1395,13 +1405,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         Whether and how to apply animation.
      *
      * @return {void}
-     *
-     * @sample highcharts/members/chart-setsize-button/
-     *         Test resizing from buttons
-     * @sample highcharts/members/chart-setsize-jquery-resizable/
-     *         Add a jQuery UI resizable
-     * @sample stock/members/chart-setsize/
-     *         Highstock with UI resizable
      *
      * @todo
      * Make events official: Fire the events `resize` and `endResize`.
@@ -2022,14 +2025,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Set a new credits label for the chart.
      *
-     * @function Highcharts.Charts#addCredits
-     *s
-     * @param  {CreditOptions} options
+     * @sample highcharts/credits/credits-update/
+     *         Add and update credits
+     *
+     * @function Highcharts.Chart#addCredits
+     *
+     * @param  {Highcharts.CreditOptions} options
      *         A configuration object for the new credits.
      *
      * @return {void}
-     *
-     * @sample highcharts/credits/credits-update/ Add and update credits
      */
     addCredits: function (credits) {
         var chart = this;
@@ -2079,14 +2083,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * before adding a second chart into the same container, as well as on
      * window unload to prevent leaks.
      *
-     * @function Highcharts.Chart#destroy
-     *
-     * @return {void}
-     *
      * @sample highcharts/members/chart-destroy/
      *         Destroy the chart from a button
      * @sample stock/members/chart-destroy/
      *         Destroy with Highstock
+     *
+     * @function Highcharts.Chart#destroy
+     *
+     * @return {void}
      *
      * @todo
      * Make events official: Fire the event `destroy`.
