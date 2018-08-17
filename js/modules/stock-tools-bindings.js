@@ -63,6 +63,23 @@ var bindingsUtils = {
             });
         };
     },
+    /**
+     * Update height for an annotation. Height is calculated as a difference
+     * between last point in `typeOptions` and current position. It's a value,
+     * not pixels height.
+     *
+     * @param {Event} event - normalized browser event
+     * @param {Annotation} annotation - annotation to be updated
+     * @private
+     */
+    updateHeight: function (e, annotation) {
+        annotation.update({
+            typeOptions: {
+                height: this.chart.yAxis[0].toValue(e.chartY) -
+                    annotation.options.typeOptions.points[1].y
+            }
+        });
+    },
     // TO DO: Consider using getHoverData(), but always kdTree (columns?)
     attractToPoint: function (e, chart) {
         var x = chart.xAxis[0].toValue(e.chartX),
@@ -798,7 +815,8 @@ var stockToolsBindings = {
             });
         },
         steps: [
-            bindingsUtils.updateNthPoint(1)
+            bindingsUtils.updateNthPoint(1),
+            bindingsUtils.updateHeight
         ]
     },
     'parallel-channel': {
@@ -820,7 +838,8 @@ var stockToolsBindings = {
             });
         },
         steps: [
-            bindingsUtils.updateNthPoint(1)
+            bindingsUtils.updateNthPoint(1),
+            bindingsUtils.updateHeight
         ]
     },
     'pitchfork': {
