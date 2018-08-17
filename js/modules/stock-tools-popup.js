@@ -12,6 +12,7 @@ var addEvent = H.addEvent,
     createElement = H.createElement,
     each = H.each,
     objectEach = H.objectEach,
+    pick = H.pick,
     isObject = H.isObject,
     PREFIX = 'highcharts-',
     DIV = 'div',
@@ -306,7 +307,12 @@ H.Popup.prototype = {
 
             // create label
             createElement(SPAN, {
-                innerHTML: options.shapes[0].type
+                innerHTML: pick(
+                    // Advanced annotations:
+                    options.type,
+                    // Basic shapes:
+                    options.shapes && options.shapes[0].type
+                )
             }, null, popupDiv);
 
             // add buttons

@@ -1099,6 +1099,9 @@ var stockToolsBindings = {
 extend(H.Toolbar.prototype, {
     // Private properties added by bindings:
 
+    // Active (selected) annotation that is editted through popup/forms
+    // activeAnnotation: Annotation
+
     // Holder for current step, used on mouse move to update bound object
     // mouseMoveEvent: function () {}
 
@@ -1162,6 +1165,14 @@ extend(H.Toolbar.prototype, {
     bindingsChartClick: function (chart, clickEvent) {
         var toolbar = this,
             selectedButton = toolbar.selectedButton;
+
+        if (toolbar.activeAnnotation && !clickEvent.activeAnnotation) {
+            if (toolbar.popup.closePopup) {
+                toolbar.popup.closePopup();
+            }
+            toolbar.activeAnnotation.setControlPointsVisibility(false);
+            toolbar.activeAnnotation = false;
+        }
 
         if (!selectedButton || !selectedButton.start) {
             return;
@@ -1510,45 +1521,76 @@ addEvent(H.Chart, 'load', function () {
 });
 
 // Show edit-annotation form:
-if (H.Annotation) {
-    var originalClick = H.Annotation.prototype.defaultOptions.events &&
-        H.Annotation.prototype.defaultOptions.events.click;
-    H.merge(
-        true,
-        H.Annotation.prototype.defaultOptions.events,
-        {
-            click: function (e) {
-                var annotation = this,
-                    toolbar = annotation.chart.stockToolbar;
+function selectableAnnotation(annotationType) {
+    var originalClick = annotationType.prototype.defaultOptions.events &&
+            annotationType.prototype.defaultOptions.events.click;
 
-                if (originalClick) {
-                    originalClick.click.call(annotation, e);
-                }
+    function selectAndShowForm(event) {
+        var annotation = this,
+            toolbar = annotation.chart.stockToolbar,
+            prevAnnotation = toolbar.activeAnnotation;
 
-                annotation.setControlPointsVisibility(true);
+        if (originalClick) {
+            originalClick.click.call(annotation, event);
+        }
 
-                if (toolbar.showForm) {
-                    toolbar.showForm(
-                        'annotation',
-                        annotation.options,
-                        function (data) {
+        if (prevAnnotation !== annotation) {
+            // Select current:
+            if (prevAnnotation) {
+                prevAnnotation.setControlPointsVisibility(false);
+            }
 
-                            var config = annotation.options;
+            toolbar.activeAnnotation = annotation;
+            annotation.setControlPointsVisibility(true);
 
-                            if (data.actionType === 'remove') {
-                                annotation.destroy();
-                            } else {
-                                toolbar.fieldsToOptions(data.fields, config);
+            if (toolbar.showForm) {
+                toolbar.showForm(
+                    'annotation',
+                    annotation.options,
+                    function (data) {
 
-                                annotation.setControlPointsVisibility(false);
-                                annotation.update(config);
-                            }
+                        var config = annotation.options;
+
+                        if (data.actionType === 'remove') {
+                            annotation.destroy();
+                        } else {
+                            toolbar.fieldsToOptions(data.fields, config);
+
+                            annotation.setControlPointsVisibility(false);
+                            annotation.update(config);
                         }
-                    );
-                }
+                    }
+                );
+            }
+        } else {
+            // Deslect current:
+            toolbar.activeAnnotation.setControlPointsVisibility(false);
+            toolbar.activeAnnotation = false;
+            if (toolbar.popup.closePopup) {
+                toolbar.popup.closePopup();
             }
         }
+        // Let bubble event to chart.click:
+        event.activeAnnotation = true;
+    }
+
+    H.merge(
+        true,
+        annotationType.prototype.defaultOptions.events,
+        {
+            click: selectAndShowForm
+        }
     );
+}
+
+if (H.Annotation) {
+    // Basic shapes:
+    selectableAnnotation(H.Annotation);
+
+    // Advanced annotations:
+    H.objectEach(H.Annotation.types, function (annotationType) {
+        selectableAnnotation(annotationType);
+    });
 }
 
 H.setOptions({
