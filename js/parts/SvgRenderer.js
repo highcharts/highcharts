@@ -360,7 +360,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         /**
          * The renderer that the SVGElement belongs to.
          *
-         * @name Highcharts.SVGElement.renderer
+         * @name Highcharts.SVGElement#renderer
          * @type {Highcharts.SVGRenderer}
          */
         this.renderer = renderer;
