@@ -84,6 +84,7 @@ Highcharts.Legend.prototype = {
     },
 
     /**
+     * @private
      * @function Highcharts.Legend#setOptions
      *
      * @param  {Highcharts.LegendOptions} options
@@ -204,6 +205,7 @@ Highcharts.Legend.prototype = {
     },
 
     /**
+     * @private
      * @function Highcharts.Legend#positionItems
      *
      * @return {void}
@@ -749,6 +751,7 @@ Highcharts.Legend.prototype = {
     },
 
     /**
+     * @private
      * @function Highcharts.Legend#proximatePositions
      *
      * @return {void}
@@ -1207,6 +1210,7 @@ H.LegendSymbolMixin = {
     /**
      * Get the series' symbol in the legend
      *
+     * @private
      * @function Highcharts.LegendSymbolMixin.drawRectangle
      *
      * @param  {Highcharts.Legend} legend
@@ -1242,6 +1246,7 @@ H.LegendSymbolMixin = {
      * to create custom symbols through
      * Highcharts.seriesTypes[type].prototype.drawLegendSymbols.
      *
+     * @private
      * @function Highcharts.LegendSymbolMixin.drawLineMarker
      *
      * @param  {Highcharts.Legend} legend
