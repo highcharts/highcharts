@@ -277,7 +277,7 @@ var onTickHoverExit = function (label) {
  * categories, and y-values of points based on the tree.
  * @param {Array} data All the data points to display in the axis.
  * @param {boolean} uniqueNames Wether or not the data node with the same name
- * should share grid cell. If true they do not share cell. False by default.
+ * should share grid cell. If true they do share cell. False by default.
  * @returns {object} Returns an object containing categories, mapOfIdToNode,
  * mapOfPosToGridNode, and tree.
  * @todo There should be only one point per line.
@@ -290,7 +290,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
         mapOfIdToNode = {},
         mapOfPosToGridNode = {},
         posIterator = -1,
-        uniqueNamesEnabled = isBoolean(uniqueNames) ? uniqueNames : true,
+        uniqueNamesEnabled = isBoolean(uniqueNames) ? uniqueNames : false,
         tree,
         treeParams,
         updateYValuesAndTickPos;
@@ -330,7 +330,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
 
             // If not unique names, look for a sibling node with the same name.
             if (
-                !uniqueNamesEnabled &&
+                uniqueNamesEnabled &&
                 isObject(parentGridNode) &&
                 !!(gridNode = find(parentGridNode.children, hasSameName))
             ) {
@@ -451,7 +451,8 @@ override(GridAxis.prototype, {
                 },
                 labels: {
                     align: 'left'
-                }
+                },
+                uniqueNames: false
             }, userOptions, { // User options
                 // Forced options
                 reversed: true
@@ -737,7 +738,7 @@ GridAxis.prototype.updateYNames = function () {
                 });
 
                 // Increment series index
-                if (uniqueNames === false) {
+                if (uniqueNames === true) {
                     numberOfSeries++;
                 }
             }
@@ -748,7 +749,7 @@ GridAxis.prototype.updateYNames = function () {
         treeGrid = getTreeGridFromData(
             data,
             uniqueNames,
-            (uniqueNames === false) ? numberOfSeries : 1
+            (uniqueNames === true) ? numberOfSeries : 1
         );
 
         // Assign values to the axis.
