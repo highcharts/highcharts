@@ -26,7 +26,7 @@ var addEvent = H.addEvent,
     LI = 'li';
 
 H.Popup = function (parentDiv) {
-    return this.init(parentDiv);
+    this.init(parentDiv);
 };
 
 H.Popup.prototype = {
@@ -42,29 +42,25 @@ H.Popup.prototype = {
         var popup;
 
         // create popup div
-        popup = createElement(DIV, {
+        this.container = createElement(DIV, {
             className: PREFIX + 'popup'
         }, null, parentDiv);
 
         // add close button
-        this.addCloseBtn.call(this, popup);
-
-        return popup;
+        this.addCloseBtn.call(this);
     },
     /*
      * Create HTML element and attach click event (close popup).
      *
-     * @param {HTMLDOMElement} - popup's div
-     *
      */
-    addCloseBtn: function (popup) {
+    addCloseBtn: function () {
         var _self = this,
             closeBtn;
 
         // create close popup btn
         closeBtn = createElement(DIV, {
             className: PREFIX + 'popup-close'
-        }, null, popup);
+        }, null, this.container);
 
         addEvent(closeBtn, 'click', function () {
             _self.closePopup.call(_self);
@@ -211,7 +207,8 @@ H.Popup.prototype = {
      * @return {Object} - fields
      */
     showPopup: function () {
-        var popupDiv = this.popupDiv,
+
+        var popupDiv = this.popup.container,
             toolbarClass = PREFIX + 'annotation-toolbar',
             popupCloseBtn = popupDiv
                             .querySelectorAll('.' + PREFIX + 'popup-close')[0];
@@ -236,7 +233,7 @@ H.Popup.prototype = {
      *
      */
     closePopup: function () {
-        var popupDiv = this.popupDiv;
+        var popupDiv = this.popup.container;
 
         popupDiv.style.display = 'none';
     },
@@ -251,7 +248,7 @@ H.Popup.prototype = {
      */
     showForm: function (type, chart, options, callback) {
 
-        this.popupDiv = chart.stockToolbar.popup;
+        this.popup = chart.stockToolbar.popup;
 
         // show blank popup
         this.showPopup.call(this);
@@ -292,7 +289,7 @@ H.Popup.prototype = {
          *
          */
         addForm: function (chart, options, callback) {
-            var popupDiv = this.popupDiv,
+            var popupDiv = this.popup.container,
                 getFields = this.getFields,
                 bottomRow,
                 lhsCol;
@@ -364,7 +361,7 @@ H.Popup.prototype = {
          */
         addToolbar: function (chart, options, callback) {
             var _self = this,
-                popupDiv = this.popupDiv,
+                popupDiv = this.popup.container,
                 getFields = this.getFields,
                 showForm = this.showForm,
                 toolbarClass = PREFIX + 'annotation-toolbar',
@@ -428,7 +425,7 @@ H.Popup.prototype = {
          *
          */
         addForm: function (chart, options, callback) {
-            var popupDiv = this.popupDiv,
+            var popupDiv = this.popup.container,
                 getFields = this.getFields,
                 bottomRow,
                 lhsCol;
@@ -497,7 +494,7 @@ H.Popup.prototype = {
             this.tabs.init.call(this, chart);
 
             // get all tabs content divs
-            tabsContainers = this.popupDiv
+            tabsContainers = this.popup.container
                         .querySelectorAll('.' + PREFIX + 'tab-item-content');
 
             // ADD tab
@@ -827,7 +824,7 @@ H.Popup.prototype = {
          * @return {HTMLDOMElement} - created HTML tab-menu element
          */
         addMenuItem: function (tabName, disableTab) {
-            var popupDiv = this.popupDiv,
+            var popupDiv = this.popup.container,
                 className = PREFIX + 'tab-item',
                 menuItem;
 
@@ -857,7 +854,7 @@ H.Popup.prototype = {
          *
          */
         addContentItem: function () {
-            var popupDiv = this.popupDiv;
+            var popupDiv = this.popup.container;
 
             return createElement(
                 DIV,
@@ -876,7 +873,7 @@ H.Popup.prototype = {
          */
         switchTabs: function (disableTab) {
             var _self = this,
-                popupDiv = this.popupDiv,
+                popupDiv = this.popup.container,
                 tabs = popupDiv.querySelectorAll('.' + PREFIX + 'tab-item'),
                 dataParam;
 
@@ -904,7 +901,7 @@ H.Popup.prototype = {
          *
          */
         selectTab: function (tab, index) {
-            var allTabs = this.popupDiv
+            var allTabs = this.popup.container
                         .querySelectorAll('.' + PREFIX + 'tab-item-content');
 
             tab.className += ' ' + PREFIX + 'tab-item-active';
@@ -915,7 +912,7 @@ H.Popup.prototype = {
          *
          */
         deselectAll: function () {
-            var popupDiv = this.popupDiv,
+            var popupDiv = this.popup.container,
                 tabs = popupDiv
                         .querySelectorAll('.' + PREFIX + 'tab-item'),
                 tabsContent = popupDiv
