@@ -272,17 +272,74 @@ H.Popup.prototype = {
         }
 
         // flags form
-        if (type === 'flags') {
+        if (type === 'flag') {
             this.flags.addForm.call(this, chart, options, callback);
         }
     },
     flags: {
+        /*
+         * Create annotation simple form.
+         * It contains two buttons (edit / remove).
+         *
+         * @param {Chart} - chart
+         * @param {Object} - options
+         * @param {Function} - on click callback
+         *
+         */
+        addForm: function (chart, options, callback) {
+            var popupDiv = this.popupDiv,
+                getFields = this.getFields,
+                bottomRow,
+                lhsCol;
+
+             // left column
+            lhsCol = createElement(DIV, {
+                className: PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
+            }, null, popupDiv);
+
+            bottomRow = createElement(DIV, {
+                className: PREFIX + 'popup-bottom-row'
+            }, null, popupDiv);
+
+            this.flags.addFormFields.call(this, lhsCol, chart, options);
+
+            this.addButton.call(
+                this,
+                bottomRow,
+                'add',
+                'add',
+                callback,
+                getFields(popupDiv, 'add')
+            );
+        },
+        /*
+         * Create annotation's form fields.
+         *
+         * @param {HTMLDOMElement} - div where inputs are placed
+         * @param {Chart} - chart
+         * @param {Object} - options
+         *
+         */
+        addFormFields: function (parentDiv, chart, options) {
+            var _self = this,
+                shapeOptions = options,
+                lang = chart.stockToolbar.lang;
+
+            objectEach(shapeOptions, function (option, value) {
+                _self.addInput(
+                    lang[value] || value,
+                    'flag',
+                    parentDiv,
+                    option
+                );
+            });
+        }
 
     },
     annotations: {
         /*
          * Create annotation simple form. It contains two buttons
-         * (edit / remove).
+         * (edit / remove) and text label.
          *
          * @param {Chart} - chart
          * @param {Object} - options
