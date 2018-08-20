@@ -1080,8 +1080,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The maximum value of the axis. If `null`, the max value is
          * automatically calculated.
          *
-         * If the `endOnTick` option is true, the `max` value might
-         * be rounded up.
+         * If the [endOnTick](#yAxis.endOnTick) option is true, the `max` value
+         * might be rounded up.
          *
          * If a [tickAmount](#yAxis.tickAmount) is set, the axis may be extended
          * beyond the set max in order to reach the given number of ticks. The
@@ -1136,8 +1136,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The minimum value of the axis. If `null` the min value is
          * automatically calculated.
          *
-         * If the `startOnTick` option is true (default), the `min` value might
-         * be rounded down.
+         * If the [startOnTick](#yAxis.startOnTick) option is true (default),
+         * the `min` value might be rounded down.
          *
          * The automatically calculated minimum value is also affected by
          * [floor](#yAxis.floor), [softMin](#yAxis.softMin),
