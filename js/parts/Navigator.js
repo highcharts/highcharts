@@ -1619,6 +1619,7 @@ Navigator.prototype = {
                 isX: true,
                 type: 'datetime',
                 index: xAxisIndex,
+                isInternal: true,
                 offset: 0,
                 keepOrdinalPadding: true, // #2436
                 startOnTick: false,
@@ -1639,6 +1640,7 @@ Navigator.prototype = {
                 alignTicks: false,
                 offset: 0,
                 index: yAxisIndex,
+                isInternal: true,
                 zoomEnabled: false
             }, chart.inverted ? {
                 width: height
