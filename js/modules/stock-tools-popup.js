@@ -262,7 +262,7 @@ H.Popup.prototype = {
         }
 
         // annotation small toolbar
-        if (type === 'annotation') {
+        if (type === 'annotation-toolbar') {
             this.annotations.addToolbar.call(this, chart, options, callback);
         }
 
@@ -271,9 +271,14 @@ H.Popup.prototype = {
             this.annotations.addForm.call(this, chart, options, callback);
         }
 
-        // flags form
+        // flags form - add / edit
         if (type === 'flag') {
             this.flags.addForm.call(this, chart, options, callback);
+        }
+
+        // flags form
+        if (type === 'flag-toolbar') {
+            this.flags.addToolbar.call(this, chart, options, callback);
         }
     },
     flags: {
@@ -333,8 +338,19 @@ H.Popup.prototype = {
                     option
                 );
             });
-        }
+        },
+        /*
+         * Create annotation simple form. It contains two buttons
+         * (edit / remove) and text label.
+         *
+         * @param {Chart} - chart
+         * @param {Object} - options
+         * @param {Function} - on click callback
+         *
+         */
+        addToolbar: function (chart, options, callback) {
 
+        }
     },
     annotations: {
         /*
