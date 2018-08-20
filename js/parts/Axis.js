@@ -1381,6 +1381,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * that missing data for nights or weekends will not take up space in
          * the chart.
          *
+         * In stock charts the X axis is ordinal by default, unless
+         * the boost module is used and at least one of the series' data length
+         * exceeds the [boostThreshold](#series.line.boostThreshold).
+         *
          * @sample {highstock} stock/xaxis/ordinal-true/
          *         True by default
          * @sample {highstock} stock/xaxis/ordinal-false/
