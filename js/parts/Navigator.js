@@ -1420,7 +1420,13 @@ Navigator.prototype = {
             if (
                 navigator.hasDragged &&
                 navigator.scrollbar &&
-                navigator.scrollbar.options.liveRedraw
+                pick(
+                    navigator.scrollbar.options.liveRedraw,
+
+                    // By default, don't run live redraw on VML, on touch
+                    // devices or if the chart is in boost.
+                    H.svg && !isTouchDevice && !this.chart.isBoosting
+                )
             ) {
                 e.DOMType = e.type; // DOMType is for IE8
                 setTimeout(function () {

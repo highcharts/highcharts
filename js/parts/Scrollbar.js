@@ -21,7 +21,6 @@ var addEvent = H.addEvent,
     merge = H.merge,
     pick = H.pick,
     removeEvent = H.removeEvent,
-    svg = H.svg,
     swapXY;
 
 /**
@@ -108,7 +107,7 @@ var defaultScrollbarOptions = {
      * @product    highstock
      * @apioption  scrollbar.liveRedraw
      */
-    liveRedraw: svg && !isTouchDevice,
+    liveRedraw: undefined,
 
     /**
      * The margin between the scrollbar and its axis when the scrollbar is
