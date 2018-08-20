@@ -649,7 +649,11 @@ Scrollbar.prototype = {
             newPos,
             newSize,
             newRiflesPos,
-            method = this.rendered && !this.hasDragged ? 'animate' : 'attr';
+            method = (
+                this.rendered &&
+                !this.hasDragged &&
+                !(this.chart.navigator && this.chart.navigator.hasDragged)
+            ) ? 'animate' : 'attr';
 
         if (!defined(fullWidth)) {
             return;
