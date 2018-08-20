@@ -1378,8 +1378,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * In an ordinal axis, the points are equally spaced in the chart
          * regardless of the actual time or x distance between them. This means
-         * that missing data for nights or weekends will not take up space in
-         * the chart.
+         * that missing data periods (e.g. nights or weekends for a stock chart)
+         * will not take up space in the chart.
+         * Having `ordinal: false` will ignore the `gapSize` setting in series.
          *
          * @sample {highstock} stock/xaxis/ordinal-true/
          *         True by default
