@@ -1883,8 +1883,11 @@ Navigator.prototype = {
                             );
                             delete base.navigatorSeries;
                         }
-                        // Kill the nav series
-                        navSeries.destroy();
+                        // Kill the nav series. It may already have been
+                        // destroyed (#8715).
+                        if (navSeries.chart) {
+                            navSeries.destroy();
+                        }
                         return false;
                     }
                     return true;
