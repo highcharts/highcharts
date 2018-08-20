@@ -277,14 +277,14 @@ var onTickHoverExit = function (label) {
  * categories, and y-values of points based on the tree.
  * @param {Array} data All the data points to display in the axis.
  * @param {boolean} uniqueNames Wether or not the data node with the same name
- * should share grid cell. If true they do not share cell. True by default.
+ * should share grid cell. If true they do not share cell. False by default.
  * @returns {object} Returns an object containing categories, mapOfIdToNode,
  * mapOfPosToGridNode, and tree.
  * @todo There should be only one point per line.
  * @todo It should be optional to have one category per point, or merge cells
  * @todo Add unit-tests.
  */
-var getTreeGridFromData = function (data, uniqueNames) {
+var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
     var categories = [],
         collapsedNodes = [],
         mapOfIdToNode = {},
@@ -380,16 +380,20 @@ var getTreeGridFromData = function (data, uniqueNames) {
         }
     };
 
-    updateYValuesAndTickPos = function (map) {
+    updateYValuesAndTickPos = function (map, numberOfSeries) {
         var setValues = function (gridNode, start, result) {
             var nodes = gridNode.nodes,
-                end = start + nodes.length - 1,
+                end = start + (start === -1 ? 0 : numberOfSeries - 1),
                 diff = (end - start) / 2,
                 padding = 0.5,
                 pos = start + diff;
-            each(nodes, function (node, j) {
-                if (isObject(node.data)) {
-                    node.data.y = start + j;
+
+            each(nodes, function (node) {
+                var data = node.data;
+                if (isObject(data)) {
+                    data.y = start + data.seriesIndex;
+                    // Remove the property once used
+                    delete data.seriesIndex;
                 }
                 node.pos = pos;
             });
@@ -418,7 +422,10 @@ var getTreeGridFromData = function (data, uniqueNames) {
     tree = Tree.getTree(data, treeParams);
 
     // Update y values of data, and set calculate tick positions.
-    mapOfPosToGridNode = updateYValuesAndTickPos(mapOfPosToGridNode);
+    mapOfPosToGridNode = updateYValuesAndTickPos(
+        mapOfPosToGridNode,
+        numberOfSeries
+    );
 
     // Return the resulting data.
     return {
@@ -437,7 +444,7 @@ override(GridAxis.prototype, {
             isTreeGrid = userOptions.type === 'treegrid';
         // Set default and forced options for TreeGrid
         if (isTreeGrid) {
-            merge(true, userOptions, {
+            userOptions = merge({
                 // Default options
                 grid: {
                     enabled: true
@@ -453,7 +460,7 @@ override(GridAxis.prototype, {
 
         // Now apply the original function with the original arguments,
         // which are sliced off this function's arguments
-        proceed.apply(axis, argsToArray(arguments));
+        proceed.apply(axis, [chart, userOptions]);
         if (isTreeGrid) {
             H.addEvent(axis.chart, 'beforeRender', function () {
                 // beforeRender is fired after all the series is initialized,
@@ -472,12 +479,6 @@ override(GridAxis.prototype, {
                         });
                         removeFoundExtremesEvent();
                     });
-
-                // We have to set the series data again to correct the y-values
-                // which was set too early.
-                each(axis.series, function (series) {
-                    series.setData(series.options.data, false, false, false);
-                });
             });
             axis.hasNames = true;
             axis.options.showLastLabel = true;
@@ -718,17 +719,37 @@ GridAxis.prototype.updateYNames = function () {
         uniqueNames = options.uniqueNames,
         isYAxis = !axis.isXAxis,
         series = axis.series,
+        numberOfSeries = 0,
         treeGrid,
         data;
 
     if (isTreeGrid && isYAxis) {
         // Concatenate data from all series assigned to this axis.
         data = reduce(series, function (arr, s) {
-            return arr.concat(s.options.data);
+            if (s.visible) {
+                // Push all data to array
+                each(s.options.data, function (data) {
+                    if (isObject(data)) {
+                        // Set series index on data. Removed again after use.
+                        data.seriesIndex = numberOfSeries;
+                        arr.push(data);
+                    }
+                });
+
+                // Increment series index
+                if (uniqueNames === false) {
+                    numberOfSeries++;
+                }
+            }
+            return arr;
         }, []);
 
         // Calculate categories and the hierarchy for the grid.
-        treeGrid = getTreeGridFromData(data, uniqueNames);
+        treeGrid = getTreeGridFromData(
+            data,
+            uniqueNames,
+            (uniqueNames === false) ? numberOfSeries : 1
+        );
 
         // Assign values to the axis.
         axis.categories = treeGrid.categories;
@@ -736,6 +757,12 @@ GridAxis.prototype.updateYNames = function () {
         // Used on init to start a node as collapsed
         axis.collapsedNodes = treeGrid.collapsedNodes;
         axis.hasNames = true;
+
+        // We have to set the series data again to correct the y-values
+        // which was set too early.
+        each(axis.series, function (series) {
+            series.setData(series.options.data, false, false, false);
+        });
     }
 };
 
