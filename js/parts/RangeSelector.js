@@ -1954,7 +1954,9 @@ addEvent(Chart, 'update', function (e) {
         options = e.options,
         optionsRangeSelector = options.rangeSelector,
         rangeSelector = chart.rangeSelector,
-        verticalAlign;
+        verticalAlign,
+        extraBottomMarginWas = this.extraBottomMargin,
+        extraTopMarginWas = this.extraTopMargin;
 
     if (
         optionsRangeSelector &&
@@ -1965,9 +1967,9 @@ addEvent(Chart, 'update', function (e) {
         this.rangeSelector = new RangeSelector(this);
     }
 
+
     this.extraBottomMargin = false;
     this.extraTopMargin = false;
-    this.isDirtyBox = true; //    #7684 - ignored spacingBottom after update
 
     if (rangeSelector) {
 
@@ -1986,6 +1988,13 @@ addEvent(Chart, 'update', function (e) {
             } else if (verticalAlign !== 'middle') {
                 this.extraTopMargin = true;
             }
+        }
+
+        if (
+            this.extraBottomMargin !== extraBottomMarginWas ||
+            this.extraTopMargin !== extraTopMarginWas
+        ) {
+            this.isDirtyBox = true;
         }
 
     }
