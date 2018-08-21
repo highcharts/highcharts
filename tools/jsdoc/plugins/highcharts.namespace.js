@@ -13,6 +13,7 @@
  * */
 
 const childProcess = require('child_process');
+const deepEqual = require('fast-deep-equal');
 const fs = require('fs');
 const path = require('path');
 
@@ -73,6 +74,52 @@ function isApiOption (doclet) {
         // looking for a parent option
         return (apiOptionMembers.some(member => name.indexOf(member) === 0));
     }
+}
+
+/**
+ * Returns true, if the doclet description contains just a copyright notice.
+ *
+ * @private
+ * @function isCopyright
+ *
+ * @param {JSDoclet} doclet
+ *         JSDoc doclet to analyze.
+ * 
+ * @return {boolean}
+ *         True, if the description is a copyright notice.
+ */
+function isCopyright (doclet) {
+    return (
+        doclet &&
+        doclet.description &&
+        doclet.description.toLowerCase().indexOf('copyright') > -1
+    );
+}
+
+/**
+ * Compares two light doclets for basic equality.
+ *
+ * @param  {JSDoclet} docletA
+ *         First ligh doclet to analyze.
+ *
+ * @param  {JSDoclet} docletB
+ *         Second light doclet to analyze.
+ *
+ * @return {boolean}
+ *         True, if the doclet is basically equal.
+ */
+function isEqual (docletA, docletB) {
+
+    return (
+        typeof docletA === typeof docletB &&
+        typeof docletA.name === typeof docletB.name &&
+        docletA.name === docletB.name &&
+        (
+            Object.keys(docletA).length == 1 ||
+            Object.keys(docletB).length == 1 ||
+            deepEqual(docletA, docletB)
+        )
+    );
 }
 
 /**
@@ -406,7 +453,19 @@ function getNamespaces (name) {
         namespaces[namespaces.length-1] += subspace;
     }
 
-    return namespaces;
+    let fullSpace;
+
+    return namespaces.map(space => {
+
+        if (fullSpace) {
+            fullSpace += '.' + space;
+        }
+        else {
+            fullSpace = space;
+        }
+
+        return fullSpace;
+    });
 }
 
 /**
@@ -416,26 +475,56 @@ function getNamespaces (name) {
  * @function getNodeFor
  *
  * @param  {string} name
- *         The full qualified name for the ndoe.
+ *         The full qualified name for the node.
+ *
+ * @param  {boolean} overload
+ *         Create additional node.
  *
  * @return {Node}
  */
-function getNodeFor (name) {
+function getNodeFor (name, overload) {
 
-    let node = namespace,
-        spaceNames = getNamespaces(name);
+    let found = false,
+        node = namespace,
+        spaceNames = getNamespaces(name),
+        indexEnd = (spaceNames.length - 1);
 
-    spaceNames.forEach(spaceName => {
+    spaceNames.forEach((spaceName, index) => {
 
-        if (typeof node.children === 'undefined') {
-            node.children = {};
+        if (!node.children) {
+            node.children = [];
         }
 
-        if (typeof node.children[spaceName] === 'undefined') {
-            node.children[spaceName] = {};
+        if (overload &&
+            index === indexEnd
+        ) {
+            found = false;
+        } else {
+            found = node.children.some(child => {
+                if (child.doclet &&
+                    child.doclet.name === spaceName
+                ) {
+                    node = child;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
         }
 
-        node = node.children[spaceName];
+        if (!found) {
+
+            let newNode = {
+                doclet: {
+                    name: spaceName
+                }
+            };
+
+            node.children.push(newNode);
+
+            node = newNode;
+        }
     });
 
     return node;
@@ -616,22 +705,15 @@ function getUniqueArray(array1, array2) {
  */
 function filterNodes (node) {
 
-    let children = (node.children || {});
-
-    Object
-        .keys(children)
-        .forEach(childName => {
-
-            if (!children[childName].doclet) {
-                delete children[childName];
-            } else {
-                filterNodes(children[childName]);
-            }
-        });
-
-    if (Object.keys(children).length === 0) {
-        // delete node.children;
+    if (!node.children) {
+        return;
     }
+
+    node.children = node.children.filter(
+        child => child.doclet && Object.keys(child.doclet).length > 1
+    );
+
+    node.children.forEach(filterNodes);
 }
 
 /**
@@ -708,6 +790,15 @@ function updateNodeFor (doclet) {
         newMeta = getLightMeta(doclet),
         oldDoclet = node.doclet,
         oldMeta = node.meta;
+
+    if (oldDoclet &&
+        !isCopyright(oldDoclet) &&
+        !isEqual(oldDoclet, newDoclet)
+    ) {
+        node = getNodeFor(name, true);
+        oldDoclet = node.doclet;
+        oldMeta = node.meta;
+    }
 
     if (!oldDoclet) {
         oldDoclet = node.doclet = newDoclet;
@@ -903,7 +994,7 @@ function addMember (doclet) {
  */
 function addNamespace (doclet) {
 
-    updateNodeFor(doclet);
+    updateNodeFor(doclet, false);
 }
 
 /**
@@ -1042,6 +1133,7 @@ function newDoclet (e) {
             break;
         case 'event':
             addEvent(doclet);
+            break;
         case 'function':
             addFunction(doclet);
             break;
