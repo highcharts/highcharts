@@ -39,7 +39,6 @@ H.Popup.prototype = {
      *
      */
     init: function (parentDiv) {
-        var popup;
 
         // create popup div
         this.container = createElement(DIV, {

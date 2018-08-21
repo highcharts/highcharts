@@ -440,21 +440,23 @@ H.Toolbar.prototype = {
                 // to calculate height of element
                 submenuWrapper.style.display = 'block';
 
-                // main button offset
-                topMargin = buttonWrapper.offsetTop;
+                topMargin = submenuWrapper.offsetHeight -
+                            buttonWrapper.offsetHeight - 3;
 
-                // calculate if submenu should be moved (when is out of the box)
+                // calculate if submenu is in the box, if yes, reset top margin
                 if (
-                    (submenuWrapper.offsetHeight + topMargin) >
-                    wrapper.offsetHeight
+                    // cut on the bottom
+                    !(submenuWrapper.offsetHeight + buttonWrapper.offsetTop >
+                    wrapper.offsetHeight &&
+                    // cut on the top
+                    buttonWrapper.offsetTop > topMargin)
                 ) {
-                    topMargin -= (submenuWrapper.offsetHeight + topMargin) -
-                        wrapper.offsetHeight;
+                    topMargin = 0;
                 }
 
                 // apply calculated styles
                 css(submenuWrapper, {
-                    top: topMargin + 'px',
+                    top: -topMargin + 'px',
                     left: buttonWidth + 'px'
                 });
 
@@ -564,19 +566,6 @@ H.Toolbar.prototype = {
         } else {
             mainButton.style['background-image'] = btnOptions.symbol;
         }
-
-        // TODO: add icons!!!
-        /*
-        if (btnName === 'separator') {
-            css(mainButton, {
-                height: '25px',
-                cursor: 'default',
-                'text-align: 'center'
-            });
-            // TODO: replace with icon
-            // mainButton.style['background-image'] = options.symbol;
-        }
-        */
 
         return {
             buttonWrapper: buttonWrapper,

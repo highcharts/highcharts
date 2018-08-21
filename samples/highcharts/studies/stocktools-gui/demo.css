@@ -62,10 +62,6 @@
   cursor: pointer;
 }
 
-.highcharts-stocktools-wrapper .highcharts-arrow-wrapper > div:hover {
-  background-color: #e6e6e6;
-}
-
 .highcharts-stocktools-wrapper .highcharts-arrow-down {
   background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
   background-size: cover;
@@ -111,7 +107,7 @@
 }
 
 .highcharts-stocktools-wrapper .highcharts-arrow-right {
-  background: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg) no-repeat center;
+  background: url(http://utils.highcharts.local/samples/graphics/arrow-bottom.svg) no-repeat right bottom;
   background-size: contain;
 }
 
@@ -151,13 +147,14 @@
   width: 100%;
   height: 40px;
   cursor: pointer;
+  position: relative;
   background-color: #f7f7f7;
 }
 
 .highcharts-stocktools-wrapper li>span.highcharts-menu-item-btn {
   display: block;
   float: left;
-  width: calc(100% - 12px); /* 10px - size of arrow*/
+  width: 100%;
   height: 100%;
   background-repeat: no-repeat;
   background-position: 50% 50%;
@@ -172,11 +169,13 @@
   width: 10px;
   height: 100%;
   cursor: pointer;
-  position: relative;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
 }
 
-.highcharts-stocktools-wrapper .highcharts-separator {
-  height: 7px;
+.highcharts-stocktools-wrapper li.highcharts-separator {
+  height: 15px;
   background-color: transparent;
   width: 36px;
   pointer-events: none;
@@ -186,13 +185,16 @@
   width: 100%;
 }
 
-.highcharts-stocktools-wrapper li.highcharts-active>span, .highcharts-stocktools-wrapper li.highcharts-active {
+.highcharts-stocktools-wrapper li.highcharts-active>span.highcharts-menu-item-btn,
+.highcharts-stocktools-wrapper li>span.highcharts-menu-item-btn:hover,
+.highcharts-stocktools-wrapper .highcharts-arrow-wrapper > div:hover,
+.highcharts-stocktools-wrapper li.highcharts-active,
+.highcharts-toggle-toolbar:hover {
   background-color: #e6ebf5;
 }
 
 .highcharts-toggle-toolbar {
   position: absolute;
-  background-color: rgba(155, 155, 155, 0.3);
   cursor: pointer;
   width: 10px;
   height: 10px;
@@ -200,10 +202,6 @@
   background-color: #f7f7f7;
   background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
   background-size: cover;
-}
-
-.highcharts-toggle-toolbar:hover {
-  background-color: #e6e6e6;
 }
 
 .highcharts-hide {
@@ -382,6 +380,8 @@
   background:url(http://utils.highcharts.local/samples/graphics/destroy.svg) no-repeat 50% 50% transparent;
   text-indent: -9999px;
 }
+
+
 
 
 
