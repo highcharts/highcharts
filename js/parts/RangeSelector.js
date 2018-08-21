@@ -1481,7 +1481,7 @@ addEvent(Chart, 'update', function (e) {
 
     if (optionsRangeSelector.enabled && !defined(rangeSelector)) {
         this.options.rangeSelector.enabled = true;
-        fireEvent(chart, 'afterGetContainer');
+        this.rangeSelector = new RangeSelector(this);
     }
 
     this.extraBottomMargin = false;
