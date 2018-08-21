@@ -73,13 +73,6 @@ QUnit.test(
         var text = document.querySelectorAll('.highcharts-xaxis-labels text')[1];
         var x = text.getBBox().x;
 
-        assert.strictEqual(
-            text.textContent,
-            '15:00',
-            'Initial time should be set (Timezone: UTC ' +
-            Math.round((new Date()).getTimezoneOffset() / -60) + ')'
-        );
-
         chart.update({
             data: {
                 csv: csv2
