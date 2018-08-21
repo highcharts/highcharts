@@ -77,26 +77,6 @@ function isApiOption (doclet) {
 }
 
 /**
- * Returns true, if the doclet description contains just a copyright notice.
- *
- * @private
- * @function isCopyright
- *
- * @param {JSDoclet} doclet
- *         JSDoc doclet to analyze.
- * 
- * @return {boolean}
- *         True, if the description is a copyright notice.
- */
-function isCopyright (doclet) {
-    return (
-        doclet &&
-        doclet.description &&
-        doclet.description.toLowerCase().indexOf('copyright') > -1
-    );
-}
-
-/**
  * Compares two light doclets for basic equality.
  *
  * @param  {JSDoclet} docletA
@@ -253,7 +233,7 @@ function getDescription (doclet) {
         return doclet.highchartsDescription;
     }
 
-    let description = doclet.Description;
+    let description = doclet.description;
 
     if (!description) {
 
@@ -275,7 +255,7 @@ function getDescription (doclet) {
     description = description.replace(/\s+/gm, ' ');
     description = description.trim();
 
-    if (description.indexOf('(c)') >= 0) {
+    if (description.indexOf('(c)') > -1) {
         // found only a file header with the copyright line
         return '';
     } else {
@@ -792,7 +772,6 @@ function updateNodeFor (doclet) {
         oldMeta = node.meta;
 
     if (oldDoclet &&
-        !isCopyright(oldDoclet) &&
         !isEqual(oldDoclet, newDoclet)
     ) {
         node = getNodeFor(name, true);
