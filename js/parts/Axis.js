@@ -1380,7 +1380,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * regardless of the actual time or x distance between them. This means
          * that missing data periods (e.g. nights or weekends for a stock chart)
          * will not take up space in the chart.
-         * Having `ordinal: false` will ignore the `gapSize` setting in series.
+         * Having `ordinal: false` will show any gaps created by the `gapSize`
+         * setting proportionate to their duration.
          *
          * In stock charts the X axis is ordinal by default, unless
          * the boost module is used and at least one of the series' data length
