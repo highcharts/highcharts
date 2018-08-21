@@ -1956,7 +1956,11 @@ addEvent(Chart, 'update', function (e) {
         rangeSelector = chart.rangeSelector,
         verticalAlign;
 
-    if (optionsRangeSelector.enabled && !defined(rangeSelector)) {
+    if (
+        optionsRangeSelector &&
+        optionsRangeSelector.enabled &&
+        !defined(rangeSelector)
+    ) {
         this.options.rangeSelector.enabled = true;
         this.rangeSelector = new RangeSelector(this);
     }
