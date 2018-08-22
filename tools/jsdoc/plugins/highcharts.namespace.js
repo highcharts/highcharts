@@ -276,13 +276,15 @@ function getDescription (doclet) {
  * @return {Array<string>|undefined}
  *         Emitted events of the doclet.
  */
-function getEmits (doclet) {
+function getFires (doclet) {
 
     if (!doclet.fires) {
         return undefined;
     }
 
-    return doclet.fires.slice();
+    return doclet.fires
+        .slice()
+        .map(eventName => eventName.replace('event:', ''));
 }
 
 /**
@@ -857,10 +859,47 @@ function updateNodeFor (doclet) {
  */
 function addClass (doclet) {
 
-    let node = updateNodeFor(doclet);
+    let node = updateNodeFor(doclet),
+        hasConstructor = node.children && node.children.some(
+            child => child.doclet.kind === 'constructor'
+        );
 
-    if (!node.doclet.parameters) {
-        node.doclet.parameters = getParameters(doclet);
+    if (!hasConstructor &&
+        doclet.params
+    ) {
+        addConstructor({
+            description: doclet.description,
+            fires: doclet.fires,
+            kind: 'constructor',
+            name: node.name + '#constructor',
+            params: doclet.params
+        });
+    }
+}
+
+/**
+ * Adds the doclet as a function node to the tree.
+ *
+ * @private
+ * @function addConstructor
+ *
+ * @param  {JSDoclet} doclet
+ *         JSDoc doclet source.
+ *
+ * @return {void}
+ */
+function addConstructor (doclet) {
+
+    let fires = getFires(doclet),
+        node = updateNodeFor(doclet),
+        parameters = getParameters(doclet);
+
+    if (fires) {
+        node.doclet.fires = fires;
+    }
+
+    if (parameters) {
+        node.doclet.parameters = parameters;
     }
 }
 
@@ -876,21 +915,14 @@ function addClass (doclet) {
  */
 function addEvent (doclet) {
 
-    let name = getName(doclet),
+    let name = getName(doclet).replace('event:', ''),
         description = getDescription(doclet),
         types = getTypes(doclet),
         parentName = name,
-        lastColon = name.lastIndexOf(':'),
         lastPoint = name.lastIndexOf('.');
 
-    if (lastColon > -1) {
-        name = name.substr(lastColon + 1);
-    }
-    else if (lastPoint > -1) {
-        name = name.substr(lastPoint + 1)
-    }
-
     if (lastPoint > -1) {
+        name = name.substr(lastPoint + 1);
         parentName = parentName.substr(0, lastPoint);
     }
     else {
@@ -920,14 +952,14 @@ function addEvent (doclet) {
  */
 function addFunction (doclet) {
 
-    let emits = getEmits(doclet),
+    let fires = getFires(doclet),
         node = updateNodeFor(doclet),
         parameters = getParameters(doclet),
         returns = getReturn(doclet),
         types = getTypes(doclet);
 
-    if (emits) {
-        node.doclet.emits = emits;
+    if (fires) {
+        node.doclet.fires = fires;
     }
 
     if (parameters) {
@@ -1137,6 +1169,9 @@ function newDoclet (e) {
             break;
         case 'class':
             addClass(doclet);
+            break;
+        case 'constructor':
+            addConstructor(doclet);
             break;
         case 'event':
             addEvent(doclet);
