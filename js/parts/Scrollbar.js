@@ -21,7 +21,6 @@ var addEvent = H.addEvent,
     merge = H.merge,
     pick = H.pick,
     removeEvent = H.removeEvent,
-    svg = H.svg,
     swapXY;
 
 /**
@@ -108,7 +107,7 @@ var defaultScrollbarOptions = {
      * @product    highstock
      * @apioption  scrollbar.liveRedraw
      */
-    liveRedraw: svg && !isTouchDevice,
+    liveRedraw: undefined,
 
     /**
      * The margin between the scrollbar and its axis when the scrollbar is
@@ -650,7 +649,11 @@ Scrollbar.prototype = {
             newPos,
             newSize,
             newRiflesPos,
-            method = this.rendered && !this.hasDragged ? 'animate' : 'attr';
+            method = (
+                this.rendered &&
+                !this.hasDragged &&
+                !(this.chart.navigator && this.chart.navigator.hasDragged)
+            ) ? 'animate' : 'attr';
 
         if (!defined(fullWidth)) {
             return;
