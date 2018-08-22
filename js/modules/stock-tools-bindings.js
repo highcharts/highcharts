@@ -220,6 +220,13 @@ var bindingsUtils = {
             series = chart.get(data.id);
             if (series) {
                 yAxis = series.yAxis;
+
+                if (series.linkedSeries) {
+                    each(series.linkedSeries, function (linkedSeries) {
+                        linkedSeries.remove(false);
+                    });
+                }
+
                 series.remove(false);
 
                 if (inArray(series.type, indicatorsWithAxes) >= 0) {
