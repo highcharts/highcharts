@@ -1,0 +1,74 @@
+QUnit.test(
+    'Bubble legend ranges',
+    function (assert) {
+        var bubbleLegendItem,
+            seriesItem,
+            chart = Highcharts.chart('container', {
+                legend: {
+                    align: 'right',
+                    layout: 'vertical',
+                    bubbleLegend: {
+                        enabled: true,
+                        position: 0
+                    }
+                },
+
+                series: [{
+                    type: 'bubble',
+                    data: [[1, 1, 1], [2, 2, 2]]
+                }]
+            });
+
+        chart.legend.update({
+            bubbleLegend: {
+                position: 1
+            }
+        });
+
+        assert.strictEqual(
+            chart.legend.allItems[1].ranges.length === 3,
+            true,
+            'Bubble legend was properly positioned'
+        );
+
+        bubbleLegendItem = chart.legend.bubbleLegend.legendGroup;
+        seriesItem = chart.legend.allItems[0].legendGroup;
+
+        assert.strictEqual(
+            bubbleLegendItem.translateY > seriesItem.translateY &&
+            bubbleLegendItem.translateX === seriesItem.translateX,
+            true,
+            'The legend layout is correct'
+        );
+
+        chart.setSize(400, 500);
+
+        assert.close(
+            chart.legend.allItems[1].ranges[0].radius,
+            chart.series[0].points[1].marker.radius,
+            1,
+            'Correct bubble legend sizes after changing chart size'
+        );
+
+        chart.legend.update({
+            floating: true
+        });
+
+        assert.close(
+            chart.legend.allItems[1].ranges[0].radius,
+            chart.series[0].points[1].marker.radius,
+            1,
+            'Correct bubble legend sizes with floating legend'
+        );
+
+        chart.legend.update({
+            enabled: false
+        });
+
+        assert.strictEqual(
+            !chart.legend.bubbleLegend.legendGroup,
+            true,
+            'Bubble legend was properly disabled with the legend'
+        );
+    }
+);
