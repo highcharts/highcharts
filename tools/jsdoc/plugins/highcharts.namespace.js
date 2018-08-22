@@ -880,11 +880,11 @@ function addEvent (doclet) {
         description = getDescription(doclet),
         types = getTypes(doclet),
         parentName = name,
-        lastColumn = name.lastIndexOf(':'),
+        lastColon = name.lastIndexOf(':'),
         lastPoint = name.lastIndexOf('.');
 
-    if (lastColumn > -1) {
-        name = name.substr(lastColumn + 1);
+    if (lastColon > -1) {
+        name = name.substr(lastColon + 1);
     }
     else if (lastPoint > -1) {
         name = name.substr(lastPoint + 1)
