@@ -213,7 +213,7 @@ Highcharts.Pointer.prototype = {
                 );
 
             // Check that we actually found a point on the series.
-            if (isObject(point, true)) {
+            if (isObject(point, true) && point.series) {
                 kdpoints.push(point);
                 // Use the new point if it is closer.
                 if (!isObject(closest, true) || (sort(closest, point) > 0)) {
