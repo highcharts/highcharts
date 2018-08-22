@@ -324,7 +324,7 @@ function getLightDoclet (doclet) {
         name: getName(doclet)
     };
 
-   if (typeof doclet.deprecated !== 'undefined') {
+    if (typeof doclet.deprecated !== 'undefined') {
         lightDoclet.isDeprecated = true;
     }
 
@@ -644,30 +644,7 @@ function getTypes (doclet) {
         );
     }
 
-    return types.map(name => {
-
-        switch(name) {
-            default:
-                if (isGlobal(doclet) ||
-                    name.indexOf('.') > -1 ||
-                    name === name.toLowerCase() ||
-                    (name[0] === 'T' &&
-                    (name[1] || '') === (name[1] || '').toUpperCase())
-                ) {
-                    return name;
-                } else {
-                    return 'Highcharts.' + name;
-                }
-            case 'Function':
-                return name;
-            case 'Boolean':
-            case 'Number':
-            case 'Object':
-            case 'String':
-            case 'Symbol':
-                return name.toLowerCase();
-        }
-    });
+    return types;
 }
 
 /**
