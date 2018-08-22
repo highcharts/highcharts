@@ -1195,33 +1195,37 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // pull out the chart
         body.appendChild(container);
 
-        // print
-        win.focus(); // #1510
-        win.print();
-
-        // allow the browser to prepare before reverting
+        // Give the browser time to draw WebGL content, an issue that randomly
+        // appears (at least) in Chrome ~67 on the Mac (#8708).
         setTimeout(function () {
 
-            // put the chart back in
-            origParent.appendChild(container);
+            win.focus(); // #1510
+            win.print();
 
-            // restore all body content
-            each(childNodes, function (node, i) {
-                if (node.nodeType === 1) {
-                    node.style.display = origDisplay[i];
+            // allow the browser to prepare before reverting
+            setTimeout(function () {
+
+                // put the chart back in
+                origParent.appendChild(container);
+
+                // restore all body content
+                each(childNodes, function (node, i) {
+                    if (node.nodeType === 1) {
+                        node.style.display = origDisplay[i];
+                    }
+                });
+
+                chart.isPrinting = false;
+
+                // Reset printMaxWidth
+                if (handleMaxWidth) {
+                    chart.setSize.apply(chart, resetParams);
                 }
-            });
 
-            chart.isPrinting = false;
+                fireEvent(chart, 'afterPrint');
 
-            // Reset printMaxWidth
-            if (handleMaxWidth) {
-                chart.setSize.apply(chart, resetParams);
-            }
-
-            fireEvent(chart, 'afterPrint');
-
-        }, 1000);
+            }, 1000);
+        }, 1);
 
     },
 

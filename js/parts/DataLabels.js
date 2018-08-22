@@ -994,7 +994,8 @@ if (seriesTypes.pie) {
                         dataLabel.css({
                             width: dataLabel._attr.width + 'px',
                             textOverflow: (
-                                this.options.dataLabels.style.textOverflow ||
+                                (this.options.dataLabels.style || {})
+                                    .textOverflow ||
                                 'ellipsis'
                             )
                         });

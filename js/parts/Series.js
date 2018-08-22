@@ -3224,7 +3224,10 @@ H.Series = H.seriesType('line', null, { // base series options
             oldDataLength &&
             !series.cropped &&
             !series.hasGroupedData &&
-            series.visible
+            series.visible &&
+            // Soft updating has no benefit in boost, and causes JS error
+            // (#8355)
+            !series.isSeriesBoosting
         ) {
             updatedData = this.updateData(data);
         }

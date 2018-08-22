@@ -369,9 +369,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
     },
 
     /**
-     * Zoom out to 1:1.
-     *
-     * @private
+     * Zoom the chart out after a user has zoomed in. See also
+     * [Axis.setExtremes](/class-reference/Highcharts.Axis#setExtremes).
      */
     zoomOut: function () {
         fireEvent(this, 'selection', { resetSelection: true }, this.zoom);

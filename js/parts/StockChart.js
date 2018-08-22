@@ -48,7 +48,8 @@ var addEvent = H.addEvent,
  * zero value in the visible range. The y axis will show percentage
  * or absolute change depending on whether `compare` is set to `"percent"`
  * or `"value"`. When this is applied to multiple series, it allows
- * comparing the development of the series against each other.
+ * comparing the development of the series against each other. Adds
+ * a `change` field to every point object.
  *
  * @type {String}
  * @see [compareBase](#plotOptions.series.compareBase),
@@ -62,7 +63,7 @@ var addEvent = H.addEvent,
  */
 
 /**
- * Defines if comparisson should start from the first point within the visible
+ * Defines if comparison should start from the first point within the visible
  * range or should start from the first point <b>before</b> the range.
  * In other words, this flag determines if first point within the visible range
  * will have 0% (`compareStart=true`) or should have been already calculated

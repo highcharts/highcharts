@@ -125,3 +125,87 @@ QUnit.test('Bounding box for rotated label', function (assert) {
         'The width should not be set when white-space is nowrap (#8467)'
     );
 });
+
+QUnit.test('Resizing chart with HTML labels (#8789)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            animation: false,
+            type: 'column',
+            width: 1000,
+            height: 400
+        },
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: false
+        },
+        title: {
+            text: null
+        },
+        xAxis: {
+            labels: {
+                useHTML: true
+            },
+            type: 'category'
+        },
+        series: [{
+            name: 'Average Sale Price',
+            data: [{
+                name: 'T00 (00.0,00.0)',
+                y: 44.46
+            },
+            {
+                name: 'T01 [00.0,10.0)',
+                y: 81.33
+            },
+            {
+                name: 'T02 [10.0,20.0)',
+                y: 77.09
+            },
+            {
+                name: 'T03 [20.0,30.0)',
+                y: 68.43
+            },
+            {
+                name: 'T04 [30.0,40.0)',
+                y: 49.29
+            },
+            {
+                name: 'T05 [40.0,50.0)',
+                y: 53.11
+            },
+            {
+                name: 'T06 [50.0,60.0)',
+                y: 70.07
+            },
+            {
+                name: 'T07 [60.0,70.0)',
+                y: 75.05
+            },
+            {
+                name: 'T08 [70.0,80.0)',
+                y: 110.64
+            },
+            {
+                name: 'T09 [80.0,90.0)',
+                y: 87.78
+            },
+            {
+                name: 'T10 [90.0,00.9)',
+                y: 109.00
+            }]
+        }]
+    });
+
+    assert.ok(
+        chart.plotHeight > 200,
+        'Plot height should be more than 200'
+    );
+
+    chart.setSize(950);
+    assert.ok(
+        chart.plotHeight > 200,
+        'Plot height should still be more than 200 after resize'
+    );
+});
