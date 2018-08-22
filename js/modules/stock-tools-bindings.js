@@ -786,6 +786,9 @@ var stockToolsBindings = {
                             xAxis: 0,
                             yAxis: 0
                         },
+                        crosshairY: {
+                            enabled: false
+                        },
                         background: {
                             width: 0,
                             height: 0
@@ -812,6 +815,9 @@ var stockToolsBindings = {
                             y: y,
                             xAxis: 0,
                             yAxis: 0
+                        },
+                        crosshairX: {
+                            enabled: false
                         },
                         background: {
                             width: 0,
@@ -1084,12 +1090,23 @@ var stockToolsBindings = {
         }
     },
     'current-price-indicator': {
-        init: function () {
+        init: function (button) {
             var series = this.chart.series[0],
                 options = series.options,
                 lastVisiblePrice = options.lastVisiblePrice &&
                                 options.lastVisiblePrice.enabled,
                 lastPrice = options.lastPrice && options.lastPrice.enabled;
+
+
+
+            if (lastPrice) {
+                button.firstChild.style['background-image'] =
+                    'url("http://utils.highcharts.local/samples/graphics/current-price-show.svg")';
+            } else {
+                button.firstChild.style['background-image'] =
+                    'url("http://utils.highcharts.local/samples/graphics/current-price-hide.svg")';
+            }
+            button.classList.remove('highcharts-active');
 
             series.update({
                 // line

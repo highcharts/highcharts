@@ -101,6 +101,7 @@ H.setOptions({
             toolbarClassName: 'stocktools-toolbar',
             buttons: [
                 'indicators',
+                'separator',
                 'simpleShapes',
                 'lines',
                 'crookedLines',
@@ -114,7 +115,6 @@ H.setOptions({
                 'zoomChange',
                 'typeChange',
                 'separator',
-                // 'indicators',
                 'currentPriceIndicator',
                 'saveChart'
             ],
@@ -193,7 +193,7 @@ H.setOptions({
                     }
                 },
                 crookedLines: {
-                    items: ['crooked3', 'crooked5', 'elliott3', 'elliott5'],
+                    items: ['elliott3', 'elliott5', 'crooked3', 'crooked5'],
                     crooked3: {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/crooked-3.svg)'
                     },
@@ -242,20 +242,20 @@ H.setOptions({
                 measure: {
                     items: ['measureXY', 'measureX', 'measureY'],
                     measureX: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-xy.svg)'
-                    },
-                    measureY: {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-x.svg)'
                     },
-                    measureXY: {
+                    measureY: {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-y.svg)'
+                    },
+                    measureXY: {
+                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-xy.svg)'
                     }
                 },
                 toggleAnnotations: {
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/annotations-visible.svg)'
                 },
                 currentPriceIndicator: {
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/current-price-indicator-v2.svg)'
+                    symbol: 'url(http://utils.highcharts.local/samples/graphics/current-price-show.svg)'
                 },
                 indicators: {
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/indicators.svg)'
