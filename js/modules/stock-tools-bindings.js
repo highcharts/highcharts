@@ -136,16 +136,18 @@ var bindingsUtils = {
      */
     addFlagFromForm: function (type) {
         return function (e) {
-            var chart = this.chart,
-                toolbar = chart.toolbar,
+            var toolbar = this,
+                chart = toolbar.chart,
+                getFieldType = toolbar.utils.getFieldType,
                 point = bindingsUtils.attractToPoint(e, chart);
-            if (this.showForm) {
-                this.showForm(
+
+            if (toolbar.showForm) {
+                toolbar.showForm(
                     'flag',
                     // Enabled options:
                     {
-                        title: 'A',
-                        name: 'Flag A'
+                        title: ['A', getFieldType('A')],
+                        name: ['Flag A', getFieldType('Flag A')]
                     },
                     // Callback on submit:
                     function (data) {
@@ -160,7 +162,37 @@ var bindingsUtils = {
                             type: 'flags',
                             onSeries: point.series.id,
                             shape: type,
-                            data: [pointConfig]
+                            data: [pointConfig],
+                            point: {
+                                events: {
+                                    click: function () {
+                                        var point = this,
+                                            options = point.options;
+
+                                        toolbar.showForm(
+                                            'flag',
+                                            {
+                                                title: [
+                                                    options.title,
+                                                    getFieldType(options.title)
+                                                ],
+                                                name: [
+                                                    options.name,
+                                                    getFieldType(options.name)
+                                                ]
+                                            },
+                                            function () {
+                                                point.update(
+                                                    toolbar.fieldsToOptions(
+                                                        data.fields,
+                                                        {}
+                                                    )
+                                                );
+                                            }
+                                        );
+                                    }
+                                }
+                            }
                         });
                     }
                 );
