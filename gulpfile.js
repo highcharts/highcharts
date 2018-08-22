@@ -750,7 +750,7 @@ const filesize = () => {
  * Run remaining dist tasks in build.xml.
  * @return {Promise} Returns a promise which resolves when scripts is finished.
  */
-const antDist = () => commandLine('ant dist');
+// const antDist = () => commandLine('ant dist');
 
 /**
  * Gzip a single file.
@@ -1317,12 +1317,12 @@ gulp.task('dist', () => {
         .then(gulpify('scripts', getBuildScripts({}).fnFirstBuild))
         .then(gulpify('lint', lint))
         .then(gulpify('compile', compileScripts))
-        .then(gulpify('cleanDist', cleanDist))
-        .then(gulpify('copyToDist', copyToDist))
-        .then(gulpify('createProductJS', createProductJS))
-        .then(gulpify('createExamples', createAllExamples))
-        .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))
-        .then(gulpify('ant-dist', antDist));
+        .then(gulpify('cleanDist', cleanDist));
+        // .then(gulpify('copyToDist', copyToDist))
+        // .then(gulpify('createProductJS', createProductJS))
+        // .then(gulpify('createExamples', createAllExamples))
+        // .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))
+        // .then(gulpify('ant-dist', antDist));
 });
 
 gulp.task('browserify', function () {

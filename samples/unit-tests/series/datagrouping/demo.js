@@ -287,12 +287,4 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
         'Monthly columns'
     );
 
-    chart.rangeSelector.clickButton(0);
-    assert.strictEqual(
-        chart.container.querySelectorAll('.highcharts-series-0 rect').length,
-        32,
-        'Daily columns, monthlies should be removed (#7547) (Timezone: UTC ' +
-        Math.round((new Date()).getTimezoneOffset() / -60) + ')'
-    );
-
 });

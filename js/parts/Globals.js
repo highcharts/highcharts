@@ -24,7 +24,7 @@ var glob = typeof win === 'undefined' ? window : win,
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
 
-var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
+var Highcharts = glob.lkHighcharts ? glob.lkHighcharts.error(16, true) : {
     product: '@product.name@',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
