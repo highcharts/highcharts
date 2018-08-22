@@ -1220,6 +1220,8 @@ if (/Trident\/7\.0/.test(win.navigator.userAgent) || isFirefox) {
         runPositionItem();
 
         // Do it after to work around the core issue
-        setTimeout(runPositionItem);
+        if (!legend.bubbleLegend) {
+            setTimeout(runPositionItem);
+        }
     });
 }
