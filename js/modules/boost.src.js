@@ -3125,6 +3125,7 @@ if (!H.hasWebGLSupport()) {
                 minI,
                 maxI,
                 boostOptions,
+                compareX = options.findNearestPointBy === 'x',
 
                 xDataFull = (
                     this.xData ||
@@ -3134,8 +3135,8 @@ if (!H.hasWebGLSupport()) {
                 ),
 
                 addKDPoint = function (clientX, plotY, i) {
-                    // Shaves off about 60ms compared to repeated concatination
-                    index = clientX + ',' + plotY;
+                    // Shaves off about 60ms compared to repeated concatenation
+                    index = compareX ? clientX : clientX + ',' + plotY;
 
                     // The k-d tree requires series points.
                     // Reduce the amount of points, since the time to build the
