@@ -225,6 +225,57 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
     );
 });
 
+QUnit.test('Boosted series with updatePoints', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            boostThreshold: 1,
+            type: 'scatter',
+            data: [{
+                x: 0,
+                y: 0
+            },
+            {
+                x: 1,
+                y: 1
+            },
+            {
+                x: 2,
+                y: 2
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points.map(function (p) {
+            return p.x;
+        }).toString(),
+        '0,1,2',
+        'Initial data'
+    );
+
+    chart.series[0].setData([{
+        x: 3,
+        y: 3
+    },
+    {
+        x: 4,
+        y: 4
+    },
+    {
+        x: 5,
+        y: 5
+    }]);
+
+    assert.strictEqual(
+        chart.series[0].points.map(function (p) {
+            return p.x;
+        }).toString(),
+        '3,4,5',
+        'Updated data'
+    );
+
+});
+
 
 QUnit.test('Hidden series after setData should call \'updatedData\' callback just once. #6012', function (assert) {
     var iterator = 0,
