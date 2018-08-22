@@ -1257,7 +1257,7 @@ extend(H.Toolbar.prototype, {
 
         if (toolbar.activeAnnotation && !clickEvent.activeAnnotation) {
             if (toolbar.popup.closePopup) {
-                //toolbar.popup.closePopup();
+                // toolbar.popup.closePopup();
             }
             toolbar.activeAnnotation.setControlPointsVisibility(false);
             toolbar.activeAnnotation = false;

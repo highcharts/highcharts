@@ -291,7 +291,6 @@ H.Popup.prototype = {
          */
         addForm: function (chart, options, callback) {
             var popupDiv = this.popup.container,
-                getFields = this.getFields,
                 bottomRow,
                 lhsCol;
 
@@ -363,7 +362,6 @@ H.Popup.prototype = {
         addToolbar: function (chart, options, callback) {
             var _self = this,
                 popupDiv = this.popup.container,
-                getFields = this.getFields,
                 showForm = this.showForm,
                 toolbarClass = PREFIX + 'annotation-toolbar',
                 button;
@@ -428,7 +426,6 @@ H.Popup.prototype = {
          */
         addForm: function (chart, options, callback) {
             var popupDiv = this.popup.container,
-                getFields = this.getFields,
                 bottomRow,
                 lhsCol;
 
@@ -488,7 +485,6 @@ H.Popup.prototype = {
         addForm: function (chart, options, callback) {
 
             var tabsContainers,
-                getFields = this.getFields,
                 indicators = this.indicators,
                 buttonParentDiv;
 
