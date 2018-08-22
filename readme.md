@@ -8,8 +8,34 @@ Highcharts JS is a JavaScript charting library based on SVG, with fallbacks to V
 
 ## Download and install Highcharts
 This is the *working repo* for Highcharts. If you simply want to include Highcharts into a project, use the [distribution package](https://www.npmjs.com/package/highcharts) instead, or read the [download page](http://www.highcharts.com/download). Please note that there are several ways to use Highcharts. For general installation instructions, see [the docs](http://www.highcharts.com/docs/getting-started/installation).
+
 ### Use our CDN
 Instead of downloading, you can use our CDN to access files directly. See [code.highcharts.com](https://code.highcharts.com) for details.
+
+#### Current browsers
+Starting with v6.1.0, Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules in modern browsers](https://jakearchibald.com/2017/es-modules-in-browsers/) without any bundling tools, by using `<script type="module"> ([demo](https://jsfiddle.net/dandv/16e7k0ta/)):
+
+```js
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+  <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css">
+</head>
+<body>
+<script type="module">
+  import Highcharts from 'https://code.highcharts.com/js/es-modules/masters/highcharts.src.js';
+
+  Highcharts.chart('container', {
+    ...
+  });
+</script>
+<div id="container"></div>
+</body>
+</html>
+```
+
+#### Older browsers
 ```
 <script src="https://code.highcharts.com/highcharts.js"></script>
 ```
@@ -20,7 +46,7 @@ npm install --save highcharts
 ```
 
 ### Install from Bower
-See [Bower documentation](https://bower.io/) on how to get started with Bower.
+[Bower is deprecated](https://bower.io/), but to install, run:
 ```
 bower install highcharts
 ```
