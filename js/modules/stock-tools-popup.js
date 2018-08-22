@@ -110,7 +110,8 @@ H.Popup.prototype = {
     addInput: function (optionName, type, parentDiv, defaultValue) {
         var fieldName = optionName.split('.'),
             paramName = fieldName[fieldName.length - 1],
-            inputName = PREFIX + type + '-' + paramName;
+            inputName = PREFIX + type + '-' + paramName,
+            input;
 
         // add label
         createElement(
@@ -123,7 +124,7 @@ H.Popup.prototype = {
         );
 
         // add input
-        createElement(
+        input = createElement(
             INPUT,
             {
                 name: inputName,
@@ -131,7 +132,14 @@ H.Popup.prototype = {
             },
             null,
             parentDiv
-        ).setAttribute(PREFIX + 'data-name', optionName);
+        );
+
+        input.setAttribute(PREFIX + 'data-name', optionName)
+
+        // overwrite Highcharts default unfocus on inputs
+        addEvent(input, 'click', function() {
+            this.focus();
+        });
     },
     /*
      * Create button.

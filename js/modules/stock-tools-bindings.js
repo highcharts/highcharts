@@ -1226,7 +1226,7 @@ extend(H.Toolbar.prototype, {
 
         // We have two objects with the same class,
         // so need to trigger one event (main button)
-        clickEvent.stopPropagation();
+        //clickEvent.stopPropagation();
 
         toolbar.selectedButton = events;
 
