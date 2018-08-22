@@ -5948,7 +5948,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             commonWidth = (
                 maxLabelLength > chart.chartHeight * 0.5 ?
                     chart.chartHeight * 0.33 :
-                    chart.chartHeight
+                    maxLabelLength
             );
             if (!textOverflowOption) {
                 commonTextOverflow = 'ellipsis';

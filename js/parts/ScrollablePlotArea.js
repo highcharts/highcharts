@@ -171,6 +171,8 @@ Chart.prototype.applyFixed = function () {
             .addClass('highcharts-scrollable-mask')
             .add();
 
+        // These elements are moved over to the fixed renderer and stay fixed
+        // when the user scrolls the chart.
         H.each([
             this.inverted ?
                 '.highcharts-xaxis' :
@@ -191,11 +193,13 @@ Chart.prototype.applyFixed = function () {
         });
     }
 
+    // Set the size of the fixed renderer to the visible width
     this.fixedRenderer.setSize(
         this.chartWidth,
         this.chartHeight
     );
 
+    // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + this.scrollablePixels;
     this.container.style.width = scrollableWidth + 'px';
     this.renderer.boxWrapper.attr({
@@ -203,6 +207,7 @@ Chart.prototype.applyFixed = function () {
         height: this.chartHeight,
         viewBox: [0, 0, scrollableWidth, this.chartHeight].join(' ')
     });
+    this.chartBackground.attr({ width: scrollableWidth });
 
     // Set scroll position
     if (firstTime) {
