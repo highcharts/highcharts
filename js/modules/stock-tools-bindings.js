@@ -1744,7 +1744,7 @@ function selectableAnnotation(annotationType) {
 
             if (toolbar.showForm) {
                 toolbar.showForm(
-                    'annotation',
+                    'annotation-toolbar',
                     toolbar.annotationToFields(annotation),
                     function (data) {
 

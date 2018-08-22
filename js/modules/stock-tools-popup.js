@@ -153,7 +153,8 @@ H.Popup.prototype = {
             innerHTML: label
         }, null, parentDiv);
 
-        addEvent(button, 'click', function () {
+        addEvent(button, 'click', function (e) {
+            e.stopPropagation();
             closePopup.call(_self);
 
             return callback(callbackParams);
@@ -225,7 +226,9 @@ H.Popup.prototype = {
 
         // add close button
         popupDiv.appendChild(popupCloseBtn);
-        popupDiv.style.display = 'block';
+console.log('showPopup', this.popup.container.style.display);
+        this.popup.container.style.display = 'block';
+console.log('showPopup', this.popup.container.style.display);
     },
     /*
      * Hide popup.
@@ -233,8 +236,9 @@ H.Popup.prototype = {
      */
     closePopup: function () {
         var popupDiv = this.popup.container;
-
-        popupDiv.style.display = 'none';
+console.log('closeBtn', this.popup.container.style.display);
+        this.popup.container.style.display = 'none';
+console.log('closeBtn', this.popup.container.style.display);
     },
     /*
      * Create content and show popup.
