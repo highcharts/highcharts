@@ -1420,7 +1420,13 @@ Navigator.prototype = {
             if (
                 navigator.hasDragged &&
                 navigator.scrollbar &&
-                navigator.scrollbar.options.liveRedraw
+                pick(
+                    navigator.scrollbar.options.liveRedraw,
+
+                    // By default, don't run live redraw on VML, on touch
+                    // devices or if the chart is in boost.
+                    H.svg && !isTouchDevice && !this.chart.isBoosting
+                )
             ) {
                 e.DOMType = e.type; // DOMType is for IE8
                 setTimeout(function () {
@@ -1613,6 +1619,7 @@ Navigator.prototype = {
                 isX: true,
                 type: 'datetime',
                 index: xAxisIndex,
+                isInternal: true,
                 offset: 0,
                 keepOrdinalPadding: true, // #2436
                 startOnTick: false,
@@ -1633,6 +1640,7 @@ Navigator.prototype = {
                 alignTicks: false,
                 offset: 0,
                 index: yAxisIndex,
+                isInternal: true,
                 zoomEnabled: false
             }, chart.inverted ? {
                 width: height
@@ -1877,8 +1885,11 @@ Navigator.prototype = {
                             );
                             delete base.navigatorSeries;
                         }
-                        // Kill the nav series
-                        navSeries.destroy();
+                        // Kill the nav series. It may already have been
+                        // destroyed (#8715).
+                        if (navSeries.chart) {
+                            navSeries.destroy();
+                        }
                         return false;
                     }
                     return true;

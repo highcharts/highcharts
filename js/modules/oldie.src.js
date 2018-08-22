@@ -140,7 +140,7 @@ if (!Array.prototype.filter) {
 }
 
 if (!Array.prototype.some) {
-    H.some = function (fn, ctx) { // legacy
+    H.somePolyfill = function (fn, ctx) { // legacy
         var i = 0,
             len = this.length;
 
