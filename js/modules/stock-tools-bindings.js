@@ -15,9 +15,13 @@ var addEvent = H.addEvent,
     each = H.each,
     extend = H.extend,
     grep = H.grep,
+    inArray = H.inArray,
     isNumber = H.isNumber,
+    isArray = H.isArray,
+    isObject = H.isObject,
     map = H.map,
     objectEach = H.objectEach,
+    pick = H.pick,
     PREFIX = 'highcharts-';
 
 var bindingsUtils = {
@@ -172,7 +176,7 @@ var bindingsUtils = {
                 yAxis = series.yAxis;
                 series.remove(false);
 
-                if (indicatorsWithAxes.indexOf(series.type) >= 0) {
+                if (inArray(series.type, indicatorsWithAxes) >= 0) {
                     yAxis.remove(false);
                     toolbar.resizeYAxes();
                 }
@@ -181,7 +185,7 @@ var bindingsUtils = {
             seriesConfig.id = H.uniqueKey();
             toolbar.fieldsToOptions(data.fields, seriesConfig);
 
-            if (indicatorsWithAxes.indexOf(data.type) >= 0) {
+            if (inArray(data.type, indicatorsWithAxes) >= 0) {
                 yAxis = chart.addAxis({
                     id: H.uniqueKey(),
                     offset: 0,
@@ -1096,6 +1100,38 @@ var stockToolsBindings = {
     }
 };
 
+// Define which options from annotations should show up in edit box:
+H.Toolbar.annotationsEditable = {
+    // `typeOptions` are always available
+    // Nested and shared options:
+    nestedOptions: {
+        labels: ['style'],
+        style: ['fontSize', 'color'],
+        background: ['fill', 'strokeWidth', 'stroke'],
+        innerBackground: ['fill', 'strokeWidth', 'stroke'],
+        outerBackground: ['fill', 'strokeWidth', 'stroke'],
+        shapeOptions: ['fill', 'strokeWidth', 'stroke'],
+        labelOptions: ['backgroundColor', 'borderColor', 'borderWidth',
+            'borderRadius', 'padding', 'style'],
+        line: ['strokeWidth', 'stroke'],
+        backgroundColors: [true],
+        crosshairX: ['strokeWidth', 'stroke'],
+        crosshairY: ['strokeWidth', 'stroke']
+    },
+    // Simple shapes:
+    circle: ['shapeOptions'],
+    verticalLine: ['shapeOptions', 'labelOptions'],
+    label: ['labelOptions'],
+    // Measure
+    measure: ['background', 'crosshairY', 'crosshairX'],
+    // Others:
+    fibonacci: ['shapeOptions', 'labelOptions', 'height'],
+    tunnel: ['shapeOptions', 'background', 'line', 'height'],
+    pitchfork: ['shapeOptions', 'innerBackground', 'outerBackground', 'line'],
+    // Crooked lines, elliots, arrows etc:
+    crookedLine: ['shapeOptions']
+};
+
 extend(H.Toolbar.prototype, {
     // Private properties added by bindings:
 
@@ -1481,6 +1517,122 @@ extend(H.Toolbar.prototype, {
         return positions;
     },
     /**
+     * Generates API config for popup in the same format as options for
+     * Annotation object.
+     *
+     * @param {Annotation} Annotations object
+     * @return {Object} Annotation options to be displayed in popup box
+     */
+    annotationToFields: function (annotation) {
+        var options = annotation.options,
+            editables = H.Toolbar.annotationsEditable,
+            nestedEditables = editables.nestedOptions,
+            type = pick(
+                options.type,
+                options.shapes && options.shapes[0] &&
+                    options.shapes[0].type,
+                options.labels && options.labels[0] &&
+                    options.labels[0].itemType
+            ),
+            visualOptions = {
+                type: type
+            };
+
+        /**
+         * Nested options traversing. Method goes down to the options and copies
+         * allowed options (with values) to new object, which is last parameter:
+         * "parent".
+         *
+         * @param {*} option/value - atomic type or object/array
+         * @param {String} key - option name, for example "visible" or "x", "y"
+         * @param {Object} allowed editables from H.Toolbar.annotationsEditable
+         * @param {Object} parent - where new options will be assigned
+         */
+        function traverse(option, key, parentEditables, parent) {
+            var nextParent;
+
+            if (
+                parentEditables &&
+                (
+                    inArray(key, parentEditables) >= 0 ||
+                    parentEditables[key] || // nested array
+                    parentEditables === true // simple array
+                )
+            ) {
+                // Roots:
+                if (isArray(option)) {
+                    parent[key] = [];
+
+                    each(option, function (arrayOption) {
+                        if (!isObject(arrayOption)) {
+                            // Simple arrays, e.g. [String, Number, Boolean]
+                            traverse(
+                                arrayOption,
+                                0,
+                                nestedEditables[key],
+                                parent[key]
+                            );
+                        } else {
+                            // Advanced arrays, e.g. [Object, Object]
+                            objectEach(
+                                arrayOption,
+                                function (nestedOption, nestedKey) {
+                                    traverse(
+                                        nestedOption,
+                                        nestedKey,
+                                        nestedEditables[key],
+                                        parent[key]
+                                    );
+                                }
+                            );
+                        }
+                    });
+                } else if (isObject(option)) {
+                    nextParent = {};
+                    if (isArray(parent)) {
+                        parent.push(nextParent);
+                    } else {
+                        parent[key] = nextParent;
+                    }
+                    objectEach(option, function (nestedOption, nestedKey) {
+                        traverse(
+                            nestedOption,
+                            nestedKey,
+                            key === 0 ? parentEditables : nestedEditables[key],
+                            nextParent
+                        );
+                    });
+                } else {
+                    // Leaf:
+                    if (isArray(parent)) {
+                        parent.push(option);
+                    } else {
+                        parent[key] = option;
+                    }
+                }
+            }
+        }
+
+        objectEach(options, function (option, key) {
+            if (key === 'typeOptions') {
+                visualOptions[key] = {};
+                objectEach(options[key], function (typeOption, typeKey) {
+                    traverse(
+                        typeOption,
+                        typeKey,
+                        nestedEditables,
+                        visualOptions[key],
+                        true
+                    );
+                });
+            } else {
+                traverse(option, key, editables[type], visualOptions);
+            }
+        });
+
+        return visualOptions;
+    },
+    /**
      * General utils for bindings
      */
     utils: bindingsUtils
@@ -1546,7 +1698,7 @@ function selectableAnnotation(annotationType) {
             if (toolbar.showForm) {
                 toolbar.showForm(
                     'annotation',
-                    annotation.options,
+                    toolbar.annotationToFields(annotation),
                     function (data) {
 
                         var config = annotation.options;
