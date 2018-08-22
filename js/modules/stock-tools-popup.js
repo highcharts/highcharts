@@ -140,13 +140,14 @@ H.Popup.prototype = {
      * @param {String} - text placed as button label
      * @param {String} - add | edit | remove
      * @param {Function} - on click callback
-     * @param {Object} - params / arguments of callback
+     * @param {HTMLDOMElement} - container where inputs are generated
      *
      * @return {HTMLDOMElement} - html button
      */
-    addButton: function (parentDiv, label, type, callback, callbackParams) {
+    addButton: function (parentDiv, label, type, callback, fieldsDiv) {
         var _self = this,
             closePopup = this.closePopup,
+            getFields = this.getFields,
             button;
 
         button = createElement(BUTTON, {
@@ -157,7 +158,9 @@ H.Popup.prototype = {
             e.stopPropagation();
             closePopup.call(_self);
 
-            return callback(callbackParams);
+            return callback(
+                getFields(fieldsDiv, type)
+            );
         });
 
         return button;
@@ -226,19 +229,14 @@ H.Popup.prototype = {
 
         // add close button
         popupDiv.appendChild(popupCloseBtn);
-console.log('showPopup', this.popup.container.style.display);
-        this.popup.container.style.display = 'block';
-console.log('showPopup', this.popup.container.style.display);
+        popupDiv.style.display = 'block';
     },
     /*
      * Hide popup.
      *
      */
     closePopup: function () {
-        var popupDiv = this.popup.container;
-console.log('closeBtn', this.popup.container.style.display);
         this.popup.container.style.display = 'none';
-console.log('closeBtn', this.popup.container.style.display);
     },
     /*
      * Create content and show popup.
@@ -314,7 +312,7 @@ console.log('closeBtn', this.popup.container.style.display);
                 'add',
                 'add',
                 callback,
-                getFields(popupDiv, 'add')
+                popupDiv
             );
         },
         /*
@@ -395,7 +393,7 @@ console.log('closeBtn', this.popup.container.style.display);
                 'remove',
                 'remove',
                 callback,
-                getFields(popupDiv, 'remove')
+                popupDiv
             );
 
             button.className += ' ' + PREFIX + 'annotation-remove-button';
@@ -413,7 +411,8 @@ console.log('closeBtn', this.popup.container.style.display);
                         options,
                         callback
                     );
-                }
+                },
+                popupDiv
             );
 
             button.className += ' ' + PREFIX + 'annotation-edit-button';
@@ -447,10 +446,10 @@ console.log('closeBtn', this.popup.container.style.display);
             this.addButton.call(
                 this,
                 bottomRow,
-                'update',
-                'update',
+                'edit',
+                'edit',
                 callback,
-                getFields(popupDiv, 'edit')
+                popupDiv
             );
         },
         /*
@@ -518,7 +517,7 @@ console.log('closeBtn', this.popup.container.style.display);
                 'add',
                 'add',
                 callback,
-                getFields(buttonParentDiv, 'add')
+                buttonParentDiv
             );
 
             // EDIT tab
@@ -539,7 +538,7 @@ console.log('closeBtn', this.popup.container.style.display);
                 'update',
                 'edit',
                 callback,
-                getFields(buttonParentDiv, 'update')
+                buttonParentDiv
             );
             this.addButton.call(
                 this,
@@ -547,7 +546,7 @@ console.log('closeBtn', this.popup.container.style.display);
                 'remove',
                 'remove',
                 callback,
-                getFields(buttonParentDiv, 'remove')
+                buttonParentDiv
             );
         },
         /*
