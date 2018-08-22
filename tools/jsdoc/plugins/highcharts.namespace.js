@@ -265,6 +265,27 @@ function getDescription (doclet) {
 }
 
 /**
+ * Returns the emitted events in the doclet.
+ *
+ * @private
+ * @function getEmits
+ *
+ * @param  {JSDoclet} doclet
+ *         JSDoc doclet source.
+ *
+ * @return {Array<string>|undefined}
+ *         Emitted events of the doclet.
+ */
+function getEmits (doclet) {
+
+    if (!doclet.fires) {
+        return undefined;
+    }
+
+    return doclet.fires.slice();
+}
+
+/**
  * Returns the kind of the doclet.
  *
  * @private
@@ -899,15 +920,22 @@ function addEvent (doclet) {
  */
 function addFunction (doclet) {
 
-    let node = updateNodeFor(doclet),
+    let emits = getEmits(doclet),
+        node = updateNodeFor(doclet),
+        parameters = getParameters(doclet),
+        returns = getReturn(doclet),
         types = getTypes(doclet);
 
-    if (!node.doclet.parameters) {
-        node.doclet.parameters = getParameters(doclet);
+    if (emits) {
+        node.doclet.emits = emits;
     }
 
-    if (!node.doclet.return) {
-        node.doclet.return = getReturn(doclet);
+    if (parameters) {
+        node.doclet.parameters = parameters;
+    }
+
+    if (returns) {
+        node.doclet.return = returns;
     }
 
     if (types) {
