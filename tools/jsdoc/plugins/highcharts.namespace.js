@@ -871,7 +871,8 @@ function addClass (doclet) {
             description: doclet.description,
             fires: doclet.fires,
             kind: 'constructor',
-            name: node.name + '#constructor',
+            longname: doclet.longname + '#constructor',
+            name: 'constructor',
             params: doclet.params
         });
     }
