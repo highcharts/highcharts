@@ -201,6 +201,7 @@ Chart.prototype.applyFixed = function () {
 
     // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + this.scrollablePixels;
+    H.stop(this.container);
     this.container.style.width = scrollableWidth + 'px';
     this.renderer.boxWrapper.attr({
         width: scrollableWidth,
