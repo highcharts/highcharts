@@ -26,6 +26,20 @@ var addEvent = H.addEvent,
 
 var bindingsUtils = {
     /**
+     * Get field type according to value
+     *
+     * @param {*} Atomic type (one of: string, number, boolean)
+     * @return Field type (one of: text, number, checkbox)
+     *
+     */
+    getFieldType: function getType(value) {
+        return {
+            string: 'text',
+            number: 'number',
+            boolean: 'checkbox'
+        }[typeof value];
+    },
+    /**
      * Shorthand to check if given yAxis comes from navigator.
      *
      * @param {Axis} Axis
@@ -1527,6 +1541,7 @@ extend(H.Toolbar.prototype, {
         var options = annotation.options,
             editables = H.Toolbar.annotationsEditable,
             nestedEditables = editables.nestedOptions,
+            getFieldType = this.utils.getFieldType,
             type = pick(
                 options.type,
                 options.shapes && options.shapes[0] &&
@@ -1605,9 +1620,9 @@ extend(H.Toolbar.prototype, {
                 } else {
                     // Leaf:
                     if (isArray(parent)) {
-                        parent.push(option);
+                        parent.push([option, getFieldType(option)]);
                     } else {
-                        parent[key] = option;
+                        parent[key] = [option, getFieldType(option)];
                     }
                 }
             }
