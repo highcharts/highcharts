@@ -725,7 +725,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
             from = this.attribs,
             to,
             anim,
-            randomProp = Math.random().toString(26).substring(2, 9);
+            randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
 
         // Attribute-line properties connected to 3D. These shouldn't have been
         // in the attribs collection in the first place.

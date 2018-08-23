@@ -102,6 +102,9 @@ H.StackItem.prototype = {
                     })
                     .add(group); // add to the labels-group
         }
+
+        // Rank it higher than data labels (#8742)
+        this.label.labelrank = chart.plotHeight;
     },
 
     /**
