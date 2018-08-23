@@ -3,14 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-'use strict';
-import H from './Globals.js';
-import './Utilities.js';
-var each = H.each,
-    isNumber = H.isNumber,
-    map = H.map,
-    merge = H.merge,
-    pInt = H.pInt;
 
 /**
  * A valid color to be parsed and handled by Highcharts. Highcharts internally
@@ -21,6 +13,16 @@ var each = H.each,
  *
  * @typedef {string} Highcharts.ColorString
  */
+
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+var each = H.each,
+    isNumber = H.isNumber,
+    map = H.map,
+    merge = H.merge,
+    pInt = H.pInt;
+
 /**
  * Handle color operations. The object methods are chainable.
  *
