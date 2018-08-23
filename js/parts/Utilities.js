@@ -132,7 +132,8 @@
 /**
  * Possible path commands in a SVG path array.
  *
- * @typedef {"A"|"C"|"H"|"L"|"M"|"Q"|"S"|"T"|"V"|"Z"|"a"|"c"|"h"|"l"|"m"|"q"|"s"|"t"|"v"|"z"} Highcharts.SVGPathCommand
+ * @typedef {string} Highcharts.SVGPathCommand
+ * @validvalue ["a","c","h","l","m","q","s","t","v","z","A","C","H","L","M","Q","S","T","V","Z"]
  */
 
 'use strict';
