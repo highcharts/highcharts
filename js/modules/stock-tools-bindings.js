@@ -730,6 +730,11 @@ var stockToolsBindings = {
                         x: x,
                         y: y
                     }]
+                },
+                labelOptions: {
+                    style: {
+                        color: '#666666'
+                    }
                 }
             });
         },
@@ -762,6 +767,11 @@ var stockToolsBindings = {
                         x: x,
                         y: y
                     }]
+                },
+                labelOptions: {
+                    style: {
+                        color: '#666666'
+                    }
                 }
             });
         },
@@ -793,6 +803,11 @@ var stockToolsBindings = {
                             width: 0,
                             height: 0
                         }
+                    },
+                    labelOptions: {
+                        style: {
+                            color: '#666666'
+                        }
                     }
                 };
 
@@ -823,6 +838,11 @@ var stockToolsBindings = {
                             width: 0,
                             height: 0
                         }
+                    },
+                    labelOptions: {
+                        style: {
+                            color: '#666666'
+                        }
                     }
                 };
 
@@ -850,6 +870,11 @@ var stockToolsBindings = {
                             width: 0,
                             height: 0
                         }
+                    },
+                    labelOptions: {
+                        style: {
+                            color: '#666666'
+                        }
                     }
                 };
 
@@ -874,6 +899,11 @@ var stockToolsBindings = {
                         x: x,
                         y: y
                     }]
+                },
+                labelOptions: {
+                    style: {
+                        color: '#666666'
+                    }
                 }
             });
         },
@@ -964,6 +994,11 @@ var stockToolsBindings = {
                         offset: closestPoint.below ? 40 : -40,
                         text: this.verticalCounter.toString()
                     }
+                },
+                labelOptions: {
+                    style: {
+                        color: '#666666'
+                    }
                 }
             });
 
@@ -985,6 +1020,11 @@ var stockToolsBindings = {
                     },
                     label: {
                         offset: closestPoint.below ? 40 : -40
+                    }
+                },
+                labelOptions: {
+                    style: {
+                        color: '#666666'
                     }
                 }
             });
@@ -1243,7 +1283,7 @@ extend(H.Toolbar.prototype, {
 
         // We have two objects with the same class,
         // so need to trigger one event (main button)
-        //clickEvent.stopPropagation();
+        // clickEvent.stopPropagation();
 
         toolbar.selectedButton = events;
 
