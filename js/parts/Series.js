@@ -3416,8 +3416,10 @@ H.Series = H.seriesType('line', null, { // base series options
 
             // only crop if it's actually spilling out
             } else if (
-                processedXData[0] < min ||
-                processedXData[dataLength - 1] > max
+                series.yData && (
+                    processedXData[0] < min ||
+                    processedXData[dataLength - 1] > max
+                )
             ) {
                 croppedData = this.cropData(
                     series.xData,
