@@ -13,26 +13,51 @@ var areaProto = H.seriesTypes.area.prototype,
     defaultPlotOptions = H.defaultPlotOptions,
     LegendSymbolMixin = H.LegendSymbolMixin,
     seriesType = H.seriesType;
+
 /**
- * AreaSplineSeries object
- */
-/**
- * The area spline series is an area series where the graph between the points
- * is smoothed into a spline.
+ * AreaSpline series type.
  *
- * @extends   plotOptions.area
- * @excluding step
- * @sample    {highcharts} highcharts/demo/areaspline/ Area spline chart
- * @sample    {highstock} stock/demo/areaspline/ Area spline chart
- * @product   highcharts highstock
- * @apioption plotOptions.areaspline
+ * @ignore
+ * @constructor Highcharts.seriesTypes.areaspline
+ * @implements  {Highcharts.Series}
  */
 seriesType('areaspline', 'spline', defaultPlotOptions.area, {
+    /**
+     * The area spline series is an area series where the graph between the
+     * points is smoothed into a spline.
+     *
+     * @sample {highcharts} highcharts/demo/areaspline/
+     *         Area spline chart
+     * @sample {highstock} stock/demo/areaspline/
+     *         Area spline chart
+     *
+     * @extends    plotOptions.area
+     * @excluding  step
+     * @product    highcharts highstock
+     * @apioption  plotOptions.areaspline
+     */
+
+    /**
+     * @ignore
+     */
     getStackPoints: areaProto.getStackPoints,
+
+    /**
+     * @ignore
+     */
     getGraphPath: areaProto.getGraphPath,
+
+    /**
+     * @ignore
+     */
     drawGraph: areaProto.drawGraph,
+
+    /**
+     * @ignore
+     */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
+
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
@@ -44,7 +69,6 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  * @product   highcharts highstock
  * @apioption series.areaspline
  */
-
 
 /**
  * An array of data points for the series. For the `areaspline` series
@@ -92,18 +116,19 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  *     }]
  *  ```
  *
- * @type      {Array<Object|Array|Number>}
- * @extends   series.line.data
- * @sample    {highcharts} highcharts/chart/reflow-true/
- *            Numerical values
- * @sample    {highcharts} highcharts/series/data-array-of-arrays/
- *            Arrays of numeric x and y
- * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *            Arrays of datetime x and y
- * @sample    {highcharts} highcharts/series/data-array-of-name-value/
- *            Arrays of point.name and y
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
- * @product   highcharts highstock
- * @apioption series.areaspline.data
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type       {Array<number|Array<number|string|Date>|*>}
+ * @extends    series.line.data
+ * @product    highcharts highstock
+ * @apioption  series.areaspline.data
  */
