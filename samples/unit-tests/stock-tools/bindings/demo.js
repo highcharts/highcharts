@@ -42,14 +42,23 @@ QUnit.test('Bindings general tests', function (assert) {
     // fired (TestController issue)
     document.getElementsByClassName('highcharts-stocktools-wrapper')[0].style.display = 'none';
 
+    // Number of tests is so high that events are not triggered on a chart, temporary hide it:
+    var qunitContainer = document.getElementById('qunit');
+    if (qunitContainer) {
+        qunitContainer.style.display = 'none';
+    }
+
     // Shorthand for selecting a button
     function selectButton(name) {
+        var button = document.getElementsByClassName('highcharts-' + name)[0];
         // Bind annotation to the chart events:
         chart.stockToolbar.bindingsButtonClick(
-            document.getElementsByClassName('highcharts-' + name)[0],
+            button,
             bindings[name],
             {
-                stopPropagation: Highcharts.noop
+                target: {
+                    parentNode: button
+                }
             }
         );
     }
@@ -58,7 +67,7 @@ QUnit.test('Bindings general tests', function (assert) {
     Highcharts.each(
         [
             'circle-annotation',
-            // 'rectangle-annotation',
+            'rectangle-annotation',
             'segment',
             'arrow-segment',
             'ray',
@@ -71,8 +80,10 @@ QUnit.test('Bindings general tests', function (assert) {
             'elliott5',
             'pitchfork',
             'fibonacci',
-            'parallel-channel'
-            // 'highcharts-measure'
+            'parallel-channel',
+            'measureXY',
+            'measureY',
+            'measureX'
         ],
         function (name) {
             selectButton(name);
@@ -320,4 +331,47 @@ QUnit.test('Bindings general tests', function (assert) {
         );
     }
 
+    // Test annotation events:
+    points = chart.series[0].points;
+    chart.stockToolbar.popup.closePopup();
+    controller.triggerOnChart(
+        'click',
+        points[2].plotX + plotLeft - 5,
+        points[2].plotY + plotTop - 25
+    );
+    assert.strictEqual(
+        chart.stockToolbar.popup.container.classList
+            .contains('highcharts-annotation-toolbar'),
+        true,
+        'Annotations toolbar rendered.'
+    );
+
+    assert.strictEqual(
+        chart.stockToolbar.popup.container.style.display,
+        'block',
+        'Annotations toolbar visible.'
+    );
+
+    controller.triggerEvent(
+        'click',
+        10,
+        10,
+        {},
+        document.querySelectorAll('.highcharts-popup .highcharts-annotation-remove-button')[0]
+    );
+    assert.strictEqual(
+        chart.annotations.length,
+        --annotationsCounter,
+        'Annotation removed through popup.'
+    );
+    assert.strictEqual(
+        chart.stockToolbar.popup.container.style.display,
+        'none',
+        'Annotations toolbar hidden.'
+    );
+
+    // Restore details:
+    if (qunitContainer) {
+        qunitContainer.style.display = 'block';
+    }
 });

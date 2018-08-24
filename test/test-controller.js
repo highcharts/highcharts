@@ -514,6 +514,7 @@ window.TestController = function (chart) {
             this.tap(x1, y1);
         },
         // Pure functions without states
+        triggerEvent: triggerEvent,
         triggerOnChart: triggerOnChart,
         triggerOnElement: triggerOnElement,
         getOffset: getOffset,

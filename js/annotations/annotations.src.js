@@ -23,6 +23,7 @@ var merge = H.merge,
     defined = H.defined,
     erase = H.erase,
     find = H.find,
+    isString = H.isString,
     pick = H.pick,
     destroyObjectProperties = H.destroyObjectProperties;
 
@@ -1015,13 +1016,17 @@ H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
     /**
      * Remove an annotation from the chart.
      *
-     * @param {String} id - The annotation's id.
+     * @param {String|Annotation} idOrAnnotation - The annotation's id or
+     *      direct annotation object.
      */
-    removeAnnotation: function (id) {
+    removeAnnotation: function (idOrAnnotation) {
         var annotations = this.annotations,
-            annotation = find(annotations, function (annotation) {
-                return annotation.options.id === id;
-            });
+            annotation = isString(idOrAnnotation) ? find(
+                annotations,
+                function (annotation) {
+                    return annotation.options.id === idOrAnnotation;
+                }
+            ) : idOrAnnotation;
 
         if (annotation) {
             erase(this.options.annotations, annotation.options);

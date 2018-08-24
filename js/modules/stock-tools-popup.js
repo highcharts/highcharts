@@ -134,10 +134,10 @@ H.Popup.prototype = {
             parentDiv
         );
 
-        input.setAttribute(PREFIX + 'data-name', optionName)
+        input.setAttribute(PREFIX + 'data-name', optionName);
 
         // overwrite Highcharts default unfocus on inputs
-        addEvent(input, 'click', function() {
+        addEvent(input, 'click', function () {
             this.focus();
         });
     },
@@ -162,8 +162,7 @@ H.Popup.prototype = {
             innerHTML: label
         }, null, parentDiv);
 
-        addEvent(button, 'click', function (e) {
-            e.stopPropagation();
+        addEvent(button, 'click', function () {
             closePopup.call(_self);
 
             return callback(
@@ -353,7 +352,7 @@ H.Popup.prototype = {
          * @param {Function} - on click callback
          *
          */
-        addToolbar: function (chart, options, callback) {
+        addToolbar: function (/* chart, options, callback */) {
 
         }
     },

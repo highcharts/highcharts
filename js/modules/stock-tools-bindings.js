@@ -1281,21 +1281,21 @@ extend(H.Toolbar.prototype, {
     bindingsButtonClick: function (button, events, clickEvent) {
         var toolbar = this;
 
-        // We have two objects with the same class,
-        // so need to trigger one event (main button)
-        // clickEvent.stopPropagation();
+        // If submenu button is clicked, don't fire bubbled event in the parent
+        if (button === clickEvent.target.parentNode) {
 
-        toolbar.selectedButton = events;
+            toolbar.selectedButton = events;
 
-        // Unslect other active buttons
-        toolbar.unselectAllButtons(button);
+            // Unslect other active buttons
+            toolbar.unselectAllButtons(button);
 
-        // Set active class on the current button
-        toolbar.selectButton(button);
+            // Set active class on the current button
+            toolbar.selectButton(button);
 
-        // Call "init" event, for example to open modal window
-        if (events.init) {
-            events.init.call(toolbar, button, clickEvent);
+            // Call "init" event, for example to open modal window
+            if (events.init) {
+                events.init.call(toolbar, button, clickEvent);
+            }
         }
     },
     /**
@@ -1312,12 +1312,18 @@ extend(H.Toolbar.prototype, {
         var toolbar = this,
             selectedButton = toolbar.selectedButton;
 
-        if (toolbar.activeAnnotation && !clickEvent.activeAnnotation) {
+        if (
+            toolbar.activeAnnotation &&
+            !clickEvent.activeAnnotation &&
+            // Element could be removed in the child action, e.g. button
+            clickEvent.target.parentNode &&
+            // TO DO: Polyfill for IE11?
+            !clickEvent.target.closest('.highcharts-popup')
+        ) {
             if (toolbar.popup.closePopup) {
-                // toolbar.popup.closePopup();
+                toolbar.popup.closePopup();
             }
-            toolbar.activeAnnotation.setControlPointsVisibility(false);
-            toolbar.activeAnnotation = false;
+            toolbar.deselectAnnotation();
         }
 
         if (!selectedButton || !selectedButton.start) {
@@ -1440,6 +1446,16 @@ extend(H.Toolbar.prototype, {
             }
         });
         return config;
+    },
+    /**
+     * Shorthand method to deselect an annotation.
+     */
+    deselectAnnotation: function () {
+        if (this.activeAnnotation) {
+            this.activeAnnotation.setControlPointsVisibility(false);
+            this.activeAnnotation = false;
+
+        }
     },
     /**
      * Get current positions for all yAxes. If new axis does not have position,
@@ -1799,9 +1815,7 @@ function selectableAnnotation(annotationType) {
 
         if (prevAnnotation !== annotation) {
             // Select current:
-            if (prevAnnotation) {
-                prevAnnotation.setControlPointsVisibility(false);
-            }
+            toolbar.deselectAnnotation();
 
             toolbar.activeAnnotation = annotation;
             annotation.setControlPointsVisibility(true);
@@ -1815,11 +1829,12 @@ function selectableAnnotation(annotationType) {
                         var config = annotation.options;
 
                         if (data.actionType === 'remove') {
-                            annotation.destroy();
+                            toolbar.activeAnnotation = false;
+                            toolbar.chart.removeAnnotation(annotation);
                         } else {
                             toolbar.fieldsToOptions(data.fields, config);
+                            toolbar.deselectAnnotation();
 
-                            annotation.setControlPointsVisibility(false);
                             annotation.update(config);
                         }
                     }
@@ -1827,8 +1842,7 @@ function selectableAnnotation(annotationType) {
             }
         } else {
             // Deselect current:
-            toolbar.activeAnnotation.setControlPointsVisibility(false);
-            toolbar.activeAnnotation = false;
+            toolbar.deselectAnnotation();
             if (toolbar.popup.closePopup) {
                 toolbar.popup.closePopup();
             }
