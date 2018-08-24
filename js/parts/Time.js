@@ -254,8 +254,16 @@ Highcharts.Time.prototype = {
                 // For lower order time units, just set it directly using local
                 // time
                 if (
-                    H.inArray(unit, ['Milliseconds', 'Seconds', 'Minutes']) !==
-                    -1
+                    unit === 'Milliseconds' ||
+                    unit === 'Seconds' ||
+
+                    // If we're dealting with minutes, we only need to
+                    // consider timezone if we're in Indian time zones with
+                    // half-hour offsets (#8768).
+                    (
+                        unit === 'Minutes' &&
+                        date.getTimezoneOffset() % 60 === 0
+                    )
                 ) {
                     date['set' + unit](value);
 
