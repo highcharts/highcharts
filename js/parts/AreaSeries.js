@@ -152,10 +152,10 @@ seriesType('area', 'line', {
      * * If `Infinity` or `-Infinity`, the area between the graph and the
      *   corresponing Y axis extreme is filled (since v6.1.0).
      *
-     * @sample  {highcharts} highcharts/plotoptions/area-threshold/
-     *          A threshold of 100
-     * @sample  {highcharts} highcharts/plotoptions/area-threshold-infinity/
-     *          A threshold of Infinity
+     * @sample {highcharts} highcharts/plotoptions/area-threshold/
+     *         A threshold of 100
+     * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
+     *         A threshold of Infinity
      *
      * @type       {number}
      * @since      2.0
@@ -318,7 +318,7 @@ seriesType('area', 'line', {
      * @ignore
      * @function Highcharts.seriesTypes.area#getGraphPath
      *
-     * @param  {Array<Highcharts.Points>} points
+     * @param  {Array<Highcharts.Point>} points
      *
      * @return {Array<number|string>}
      */
@@ -576,16 +576,16 @@ seriesType('area', 'line', {
  *     }]
  *  ```
  *
- * @sample    {highcharts} highcharts/chart/reflow-true/
- *            Numerical values
- * @sample    {highcharts} highcharts/series/data-array-of-arrays/
- *            Arrays of numeric x and y
- * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *            Arrays of datetime x and y
- * @sample    {highcharts} highcharts/series/data-array-of-name-value/
- *            Arrays of point.name and y
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
  *
  * @type       {Array<number|Array<number>|*>}
  * @extends    series.line.data
