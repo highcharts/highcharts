@@ -23,7 +23,7 @@ var color = H.color,
  *
  * @ignore
  * @constructor Highcharts.seriesTypes.area
- * @implements  {Highcharts.Series}
+ * @augments    Highcharts.Series
  */
 seriesType('area', 'line', {
 
@@ -35,10 +35,10 @@ seriesType('area', 'line', {
      * @sample {highstock} stock/demo/area/
      *         Area chart
      *
-     * @type          {*}
-     * @extends       plotOptions.line
-     * @product       highcharts highstock
-     * @optionparent  plotOptions.area
+     * @type       {*}
+     * @extends    plotOptions.line
+     * @product    highcharts highstock
+     * @apioption  plotOptions.area
      */
 
     /**
@@ -135,6 +135,7 @@ seriesType('area', 'line', {
      * option. If `softThreshold` is `true`, the Y axis starts at 0.
      *
      * @type       {boolean}
+     * @default    false
      * @since      4.1.9
      * @product    highcharts highstock
      * @apioption  plotOptions.area.softThreshold
@@ -158,6 +159,7 @@ seriesType('area', 'line', {
      *         A threshold of Infinity
      *
      * @type       {number}
+     * @default    0
      * @since      2.0
      * @product    highcharts highstock
      * @apioption  plotOptions.area.threshold
@@ -526,7 +528,7 @@ seriesType('area', 'line', {
  *
  * @type       {*}
  * @extends    series,plotOptions.area
- * @excluding  dataParser,dataURL
+ * @excluding  dataParser, dataURL
  * @product    highcharts highstock
  * @apioption  series.area
  */
