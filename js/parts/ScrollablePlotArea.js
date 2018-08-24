@@ -184,7 +184,8 @@ Chart.prototype.applyFixed = function () {
             '.highcharts-credits',
             '.highcharts-legend',
             '.highcharts-subtitle',
-            '.highcharts-title'
+            '.highcharts-title',
+            '.highcharts-legend-checkbox'
         ], function (className) {
             H.each(container.querySelectorAll(className), function (elem) {
                 (
