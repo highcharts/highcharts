@@ -15,7 +15,7 @@ var seriesType = H.seriesType;
  *
  * @ignore
  * @constructor Highcharts.seriesTypes.bar
- * @implements  {Highcharts.Series}
+ * @augments    Highcharts.Series
  */
 seriesType('bar', 'column', null, {
     inverted: true
