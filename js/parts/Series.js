@@ -262,6 +262,12 @@ H.Series = H.seriesType('line', null, { // base series options
      * @apioption  plotOptions.series.animation
      */
     animation: {
+
+        /**
+         * @type       {number}
+         * @default    1000
+         * @apioption  plotOptions.series.animation.duration
+         */
         duration: 1000
     },
 
@@ -413,10 +419,6 @@ H.Series = H.seriesType('line', null, { // base series options
      * @since      5.0.0
      * @apioption  plotOptions.series.description
      */
-
-
-
-
 
     /**
      * Enable or disable the mouse tracking for a specific series. This
@@ -739,8 +741,7 @@ H.Series = H.seriesType('line', null, { // base series options
      *         Area
      * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-line/
      *         Line
-     * @sample {highcharts}
-     *         highcharts/plotoptions/series-stacking-percent-column/
+     * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-column/
      *         Column
      * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-bar/
      *         Bar
@@ -943,6 +944,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * be attached to the series at run time using the `Highcharts.addEvent`
      * function.
      *
+     * @type       {*}
      * @apioption  plotOptions.series.events
      */
     events: {},
@@ -959,6 +961,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * `.highcharts-point-hover` and `.highcharts-point-select`
      * class names.
      *
+     * @type       {*}
      * @apioption  plotOptions.series.marker
      */
     marker: {
@@ -1107,6 +1110,7 @@ H.Series = H.seriesType('line', null, { // base series options
         /**
          * States for a single point marker.
          *
+         * @type       {*}
          * @apioption  plotOptions.series.marker.states
          */
         states: {
@@ -1115,6 +1119,7 @@ H.Series = H.seriesType('line', null, { // base series options
              * The normal state of a single point marker. Currently only used
              * for setting animation when returning to normal state from hover.
              *
+             * @type       {*}
              * @apioption  plotOptions.series.marker.states.normal
              */
             normal: {
@@ -1130,6 +1135,7 @@ H.Series = H.seriesType('line', null, { // base series options
             /**
              * The hover state for a single point marker.
              *
+             * @type       {*}
              * @apioption  plotOptions.series.marker.states.hover
              */
             hover: {
@@ -1141,6 +1147,12 @@ H.Series = H.seriesType('line', null, { // base series options
                  * @apioption  plotOptions.series.marker.states.hover.animation
                  */
                 animation: {
+
+                    /**
+                     * @type       {*}
+                     * @default    50
+                     * @apioption  plotOptions.series.marker.states.hover.animation.duration
+                     */
                     duration: 50
                 },
 
@@ -1232,17 +1244,19 @@ H.Series = H.seriesType('line', null, { // base series options
                  * @apioption  plotOptions.series.marker.states.hover.lineWidthPlus
                  */
                 lineWidthPlus: 1
+
                 /*= } =*/
+
             },
+
             /*= if (build.classic) { =*/
-
-
 
             /**
              * The appearance of the point marker when selected. In order to
              * allow a point to be selected, set the `series.allowPointSelect`
              * option to true.
              *
+             * @type       {*}
              * @apioption  plotOptions.series.marker.states.select
              */
             select: {
@@ -1306,19 +1320,19 @@ H.Series = H.seriesType('line', null, { // base series options
                  */
                 lineWidth: 2
             }
+
             /*= } =*/
+
         }
     },
-
-
 
     /**
      * Properties for each single point.
      *
+     * @type       {*}
      * @apioption  plotOptions.series.point
      */
     point: {
-
 
         /**
          * Fires when a point is clicked. One parameter, `event`, is passed
@@ -1435,6 +1449,7 @@ H.Series = H.seriesType('line', null, { // base series options
         /**
          * Events for each single point.
          *
+         * @type       {*}
          * @apioption  plotOptions.series.point.events
          */
         events: {}
@@ -1449,6 +1464,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * `.highcharts-data-label-box` and `.highcharts-data-label` class names
      * ([see example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels)).
      *
+     * @type       {*}
      * @apioption  plotOptions.series.dataLabels
      */
     dataLabels: {
@@ -1686,8 +1702,8 @@ H.Series = H.seriesType('line', null, { // base series options
         formatter: function () {
             return this.y === null ? '' : H.numberFormat(this.y, -1);
         },
-        /*= if (build.classic) { =*/
 
+        /*= if (build.classic) { =*/
 
         /**
          * Styles for the label. The default `color` setting is `"contrast"`,
@@ -1832,6 +1848,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * @since      2.2.1
          * @apioption  plotOptions.series.dataLabels.shadow
          */
+
         /*= } =*/
 
         /**
