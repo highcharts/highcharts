@@ -125,10 +125,18 @@ var addEvent = H.addEvent,
  */
 
 /**
- * General options for all series types.
- * @optionparent plotOptions.series
+ * Line series type.
+ *
+ * @ignore
+ * @constructor Highcharts.seriesTypes.line
+ * @implements  {Highcharts.Series}
  */
 H.Series = H.seriesType('line', null, { // base series options
+    /**
+     * General options for all series types.
+     * @optionparent plotOptions.series
+     */
+
     /*= if (build.classic) { =*/
     /**
      * Pixel width of the graph line.
