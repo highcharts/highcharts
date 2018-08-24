@@ -2831,6 +2831,22 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
+         * Whether to reverse the axis so that the highest number is closest
+         * to the origin.
+         *
+         * @sample {highcharts} highcharts/yaxis/reversed/
+         *         Reversed Y axis
+         * @sample {highstock} stock/xaxis/reversed/
+         *         Reversed Y axis
+         *
+         * @type       {boolean}
+         * @default    {highcharts} false
+         * @default    {highstock} false
+         * @default    {highmaps} true
+         * @apioption  yAxis.reversed
+         */
+
+        /**
          * If `true`, the first series in a stack will be drawn on top in a
          * positive, non-reversed Y axis. If `false`, the first series is in
          * the base of the stack.
