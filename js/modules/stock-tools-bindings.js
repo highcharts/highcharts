@@ -310,12 +310,14 @@ var stockToolsBindings = {
                         positioner: function (target) {
                             var xy = H.Annotation.MockPoint.pointToPixels(
                                     target.points[0]
-                                );
+                                ),
+                                r = target.options.r;
 
                             return {
-                                x: xy.x - this.graphic.width / 2,
-                                y: xy.y - this.graphic.height / 2 -
-                                    target.options.r
+                                x: xy.x + r * Math.cos(Math.PI / 4) -
+                                    this.graphic.width / 2,
+                                y: xy.y + r * Math.sin(Math.PI / 4) -
+                                    this.graphic.height / 2
                             };
                         },
                         events: {
@@ -324,8 +326,9 @@ var stockToolsBindings = {
 
                                 target.setRadius(
                                     Math.max(
-                                        target.options.r -
-                                            this.mouseMoveToTranslation(e).y,
+                                        target.options.r +
+                                            this.mouseMoveToTranslation(e).y /
+                                            Math.sin(Math.PI / 4),
                                         5
                                     )
                                 );
