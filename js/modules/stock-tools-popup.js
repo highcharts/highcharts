@@ -14,6 +14,7 @@ var addEvent = H.addEvent,
     objectEach = H.objectEach,
     pick = H.pick,
     isObject = H.isObject,
+    isArray = H.isArray,
     PREFIX = 'highcharts-',
     DIV = 'div',
     INPUT = 'input',
@@ -392,16 +393,40 @@ H.Popup.prototype = {
          */
         addFormFields: function (parentDiv, chart, options) {
             var _self = this,
-                shapeOptions = options.shapeOptions,
+                addFormFields = this.annotations.addFormFields,
+                addInput = this.addInput,
                 lang = chart.stockToolbar.lang;
 
-            objectEach(shapeOptions, function (option, value) {
-                _self.addInput(
-                    lang[value],
-                    'annotation',
-                    parentDiv,
-                    option
-                );
+            objectEach(options, function (value, option) {
+
+                if (isObject(value)) {
+                    if (
+                        // value is object of options
+                        !isArray(value) ||
+                        // array of objects with params. i.e labels in Fibonacci
+                        (isArray(value) && isObject(value[0]))
+                    ) {
+
+                        createElement(SPAN, {
+                            className: PREFIX + 'annotation-title',
+                            innerHTML: lang[option] || option
+                        }, null, parentDiv);
+
+                        addFormFields.call(
+                            _self,
+                            parentDiv,
+                            chart,
+                            value
+                        );
+                    } else {
+                        addInput(
+                            lang[option] || option,
+                            'annotation',
+                            parentDiv,
+                            value
+                        );
+                    }
+                }
             });
         }
     },

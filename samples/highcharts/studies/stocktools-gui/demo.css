@@ -381,6 +381,15 @@
   text-indent: -9999px;
 }
 
+.highcharts-popup .highcharts-annotation-title {
+  display: block;
+  float: left;
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
 
 
 
