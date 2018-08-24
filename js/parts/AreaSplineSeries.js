@@ -19,7 +19,7 @@ var areaProto = H.seriesTypes.area.prototype,
  *
  * @ignore
  * @constructor Highcharts.seriesTypes.areaspline
- * @implements  {Highcharts.Series}
+ * @augments    Highcharts.Series
  */
 seriesType('areaspline', 'spline', defaultPlotOptions.area, {
     /**
@@ -39,21 +39,25 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
 
     /**
      * @ignore
+     * @function Highcharts.seriesTypes.areaspline#getStackPoints
      */
     getStackPoints: areaProto.getStackPoints,
 
     /**
      * @ignore
+     * @function Highcharts.seriesTypes.areaspline#getGraphPath
      */
     getGraphPath: areaProto.getGraphPath,
 
     /**
      * @ignore
+     * @function Highcharts.seriesTypes.areaspline#drawGraph
      */
     drawGraph: areaProto.drawGraph,
 
     /**
      * @ignore
+     * @function Highcharts.seriesTypes.areaspline#drawLegendSymbol
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
@@ -63,11 +67,11 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  *
- * @type      {Object}
- * @extends   series,plotOptions.areaspline
- * @excluding dataParser,dataURL
- * @product   highcharts highstock
- * @apioption series.areaspline
+ * @type       {*}
+ * @extends    series,plotOptions.areaspline
+ * @excluding  dataParser, dataURL
+ * @product    highcharts highstock
+ * @apioption  series.areaspline
  */
 
 /**
