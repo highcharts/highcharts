@@ -131,18 +131,6 @@ var addEvent = H.addEvent,
 H.Series = H.seriesType('line', null, { // base series options
     /*= if (build.classic) { =*/
     /**
-     * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
-     * of a line graph. Round means that lines are rounded in the ends and
-     * bends.
-     *
-     * @type       {string}
-     * @validvalue ["round", "butt", "square"]
-     * @default    round
-     * @since      3.0.7
-     * @apioption  plotOptions.line.linecap
-     */
-
-    /**
      * Pixel width of the graph line.
      *
      * @see In styled mode, the line stroke-width can be set with the
@@ -453,9 +441,9 @@ H.Series = H.seriesType('line', null, { // base series options
      * @sample highcharts/accessibility/art-grants/
      *         Accessible data visualization
      *
-     * @type        {boolean}
-     * @since       5.0.12
-     * @apioption   plotOptions.series.exposeElementToA11y
+     * @type       {boolean}
+     * @since      5.0.12
+     * @apioption  plotOptions.series.exposeElementToA11y
      */
 
     /**
@@ -1143,7 +1131,7 @@ H.Series = H.seriesType('line', null, { // base series options
                 /**
                  * Animation when hovering over the marker.
                  *
-                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 * @type       {boolean|Highcharts.AnimationOptionsObject}
                  * @apioption  plotOptions.series.marker.states.hover.animation
                  */
                 animation: {
@@ -1156,6 +1144,8 @@ H.Series = H.seriesType('line', null, { // base series options
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-enabled/
                  *         Disabled hover state
                  *
+                 * @type       {boolean}
+                 * @default    true
                  * @apioption  plotOptions.series.marker.states.hover.enabled
                  */
                 enabled: true,
@@ -1173,23 +1163,22 @@ H.Series = H.seriesType('line', null, { // base series options
                  * The color of the point marker's outline. When `undefined`,
                  * the series' or point's lineColor for normal state is used.
                  *
-                 * @sample    {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
-                 *            White fill color, black line color
+                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
+                 *         White fill color, black line color
                  *
-                 * @type      {Highcharts.ColorString}
-                 * @apioption plotOptions.series.marker.states.hover.lineColor
+                 * @type       {Highcharts.ColorString}
+                 * @apioption  plotOptions.series.marker.states.hover.lineColor
                  */
 
                 /**
                  * The width of the point marker's outline. When `undefined`,
                  * the series' or point's lineWidth for normal state is used.
                  *
-                 * @sample    {highcharts}
-                 *            highcharts/plotoptions/series-marker-states-hover-linewidth/
-                 *            3px line width
+                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linewidth/
+                 *         3px line width
                  *
-                 * @type      {number}
-                 * @apioption plotOptions.series.marker.states.hover.lineWidth
+                 * @type       {number}
+                 * @apioption  plotOptions.series.marker.states.hover.lineWidth
                  */
 
                 /**
@@ -1209,14 +1198,13 @@ H.Series = H.seriesType('line', null, { // base series options
                  * The number of pixels to increase the radius of the hovered
                  * point.
                  *
-                 * @sample {highcharts}
-                 *         highcharts/plotoptions/series-states-hover-linewidthplus/
+                 * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
                  *         5 pixels greater radius on hover
-                 * @sample {highstock}
-                 *         highcharts/plotoptions/series-states-hover-linewidthplus/
+                 * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
                  *         5 pixels greater radius on hover
                  *
                  * @type       {number}
+                 * @default    2
                  * @since      4.0.3
                  * @apioption  plotOptions.series.marker.states.hover.radiusPlus
                  */
@@ -1227,14 +1215,13 @@ H.Series = H.seriesType('line', null, { // base series options
                 /**
                  * The additional line width for a hovered point.
                  *
-                 * @sample {highcharts}
-                 *         highcharts/plotoptions/series-states-hover-linewidthplus/
+                 * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
                  *         2 pixels wider on hover
-                 * @sample {highstock}
-                 *         highcharts/plotoptions/series-states-hover-linewidthplus/
+                 * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
                  *         2 pixels wider on hover
                  *
                  * @type       {number}
+                 * @default    1
                  * @since      4.0.3
                  * @apioption  plotOptions.series.marker.states.hover.lineWidthPlus
                  */
@@ -2347,10 +2334,10 @@ H.Series = H.seriesType('line', null, { // base series options
      * The value up to where the zone extends, if undefined the zones stretches
      * to the last value in the series.
      *
-     * @type      {number}
-     * @since     4.1.0
-     * @product   highcharts highstock
-     * @apioption plotOptions.series.zones.value
+     * @type       {number}
+     * @since      4.1.0
+     * @product    highcharts highstock
+     * @apioption  plotOptions.series.zones.value
      */
 
 
@@ -2413,8 +2400,8 @@ H.Series = H.seriesType('line', null, { // base series options
     /**
      * The sequential index of the series in the legend.
      *
-     * @see    [legend.reversed](#legend.reversed),
-     *         [yAxis.reversedStacks](#yAxis.reversedStacks)
+     * @see [legend.reversed](#legend.reversed),
+     *      [yAxis.reversedStacks](#yAxis.reversedStacks)
      *
      * @sample {highcharts|highstock} highcharts/series/legendindex/
      *         Legend in opposite order
@@ -5368,6 +5355,20 @@ H.Series = H.seriesType('line', null, { // base series options
  * @product    highcharts highstock
  * @apioption  series.line
  */
+
+/*= if (build.classic) { =*/
+/**
+ * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
+ * of a line graph. Round means that lines are rounded in the ends and
+ * bends.
+ *
+ * @type       {string}
+ * @validvalue ["round", "butt", "square"]
+ * @default    round
+ * @since      3.0.7
+ * @apioption  plotOptions.line.linecap
+ */
+/*= } =*/
 
 /**
  * An array of data points for the series. For the `line` series type,
