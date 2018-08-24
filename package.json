@@ -41,6 +41,7 @@
     "eslint": "3.12.2",
     "eslint-plugin-highcharts": "file:tools/eslint-plugin-highcharts",
     "eslint-plugin-security": "^1.4.0",
+    "fast-deep-equal": "^2.0.1",
     "fs-extra": "^2.1.2",
     "gifencoder": "^1.1.0",
     "glob": "^7.1.2",
@@ -91,6 +92,5 @@
       "git add"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>",
-  "dependencies": {}
+  "license": "SEE LICENSE IN <license.txt>"
 }
