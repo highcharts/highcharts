@@ -108,7 +108,7 @@ H.Popup.prototype = {
      * extracted from defaultOptions (ADD mode) or series options (EDIT mode)
      *
      */
-    addInput: function (optionName, type, parentDiv, defaultValue) {
+    addInput: function (optionName, type, parentDiv, value) {
         var fieldName = optionName.split('.'),
             paramName = fieldName[fieldName.length - 1],
             inputName = PREFIX + type + '-' + paramName,
@@ -129,7 +129,8 @@ H.Popup.prototype = {
             INPUT,
             {
                 name: inputName,
-                value: defaultValue
+                value: value[0],
+                type: value[1]
             },
             null,
             parentDiv
