@@ -608,24 +608,25 @@ H.Toolbar.prototype = {
      *
      */
     scrollButtons: function () {
-        var stockToolbar = this,
-            targetY = 0,
-            step = 0.2 * stockToolbar.wrapper.offsetHeight; // 0.1 = 20%
+        var targetY = 0,
+            wrapper = this.wrapper,
+            toolbar = this.toolbar,
+            step = 0.2 * wrapper.offsetHeight; // 0.2 = 20%
 
         addEvent(this.arrowUp, 'click', function () {
             if (targetY > 0) {
                 targetY -= step;
-                stockToolbar.toolbar.style['margin-top'] = -targetY + 'px';
+                toolbar.style['margin-top'] = -targetY + 'px';
             }
         });
 
         addEvent(this.arrowDown, 'click', function () {
             if (
-                stockToolbar.wrapper.offsetHeight + targetY <=
-                stockToolbar.toolbar.offsetHeight
+                wrapper.offsetHeight + targetY <=
+                toolbar.offsetHeight + step
             ) {
                 targetY += step;
-                stockToolbar.toolbar.style['margin-top'] = -targetY + 'px';
+                toolbar.style['margin-top'] = -targetY + 'px';
             }
         });
     },
