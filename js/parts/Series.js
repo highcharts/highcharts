@@ -117,11 +117,11 @@ var addEvent = H.addEvent,
  *
  * @class Highcharts.Series
  *
- * @param  {Highcharts.Chart} chart
- *         The chart instance.
+ * @param {Highcharts.Chart} chart
+ *        The chart instance.
  *
- * @param  {Options.plotOptions.series} options
- *         The series options.
+ * @param {Options.plotOptions.series} options
+ *        The series options.
  */
 
 /**
@@ -129,7 +129,7 @@ var addEvent = H.addEvent,
  *
  * @ignore
  * @constructor Highcharts.seriesTypes.line
- * @implements  {Highcharts.Series}
+ * @augments    Highcharts.Series
  */
 H.Series = H.seriesType('line', null, { // base series options
     /**
