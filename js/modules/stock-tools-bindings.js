@@ -1064,19 +1064,19 @@ var stockToolsBindings = {
     // Flag types:
     'flag-circlepin': {
         start: bindingsUtils
-            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-elipse.svg)')
+            .addFlagFromForm('circlepin')
     },
     'flag-diamondpin': {
         start: bindingsUtils
-            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-diamond.svg)')
+            .addFlagFromForm('flag')
     },
     'flag-squarepin': {
         start: bindingsUtils
-            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-trapeze.svg)')
+            .addFlagFromForm('squarepin')
     },
     'flag-simplepin': {
         start: bindingsUtils
-            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-basic.svg)')
+            .addFlagFromForm('nopin')
     },
     // Other tools:
     'zoom-x': {
