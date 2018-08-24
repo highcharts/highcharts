@@ -611,7 +611,7 @@ H.Toolbar.prototype = {
         var targetY = 0,
             wrapper = this.wrapper,
             toolbar = this.toolbar,
-            step = 0.2 * wrapper.offsetHeight; // 0.2 = 20%
+            step = 0.1 * wrapper.offsetHeight; // 0.1 = 10%
 
         addEvent(this.arrowUp, 'click', function () {
             if (targetY > 0) {
