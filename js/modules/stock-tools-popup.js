@@ -278,82 +278,7 @@ H.Popup.prototype = {
 
         // flags form - add / edit
         if (type === 'flag') {
-            this.flags.addForm.call(this, chart, options, callback);
-        }
-
-        // flags form
-        if (type === 'flag-toolbar') {
-            this.flags.addToolbar.call(this, chart, options, callback);
-        }
-    },
-    flags: {
-        /*
-         * Create annotation simple form.
-         * It contains two buttons (edit / remove).
-         *
-         * @param {Chart} - chart
-         * @param {Object} - options
-         * @param {Function} - on click callback
-         *
-         */
-        addForm: function (chart, options, callback) {
-            var popupDiv = this.popup.container,
-                bottomRow,
-                lhsCol;
-
-             // left column
-            lhsCol = createElement(DIV, {
-                className: PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
-            }, null, popupDiv);
-
-            bottomRow = createElement(DIV, {
-                className: PREFIX + 'popup-bottom-row'
-            }, null, popupDiv);
-
-            this.flags.addFormFields.call(this, lhsCol, chart, options);
-
-            this.addButton.call(
-                this,
-                bottomRow,
-                'add',
-                'add',
-                callback,
-                popupDiv
-            );
-        },
-        /*
-         * Create annotation's form fields.
-         *
-         * @param {HTMLDOMElement} - div where inputs are placed
-         * @param {Chart} - chart
-         * @param {Object} - options
-         *
-         */
-        addFormFields: function (parentDiv, chart, options) {
-            var _self = this,
-                shapeOptions = options,
-                lang = chart.stockToolbar.lang;
-
-            objectEach(shapeOptions, function (option, value) {
-                _self.addInput(
-                    lang[value] || value,
-                    'flag',
-                    parentDiv,
-                    option
-                );
-            });
-        },
-        /*
-         * Create annotation simple form. It contains two buttons
-         * (edit / remove) and text label.
-         *
-         * @param {Chart} - chart
-         * @param {Object} - options
-         * @param {Function} - on click callback
-         *
-         */
-        addToolbar: function (/* chart, options, callback */) {
-
+            this.annotations.addForm.call(this, chart, options, callback, true);
         }
     },
     annotations: {
@@ -429,9 +354,10 @@ H.Popup.prototype = {
          * @param {Chart} - chart
          * @param {Object} - options
          * @param {Function} - on click callback
+         * @param {Boolean} - if it is a form declared for init annotation
          *
          */
-        addForm: function (chart, options, callback) {
+        addForm: function (chart, options, callback, isInit) {
             var popupDiv = this.popup.container,
                 bottomRow,
                 lhsCol;
@@ -450,8 +376,8 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 bottomRow,
-                'edit',
-                'edit',
+                isInit ? 'add' : 'edit',
+                isInit ? 'add' : 'edit',
                 callback,
                 popupDiv
             );
