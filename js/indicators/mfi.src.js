@@ -47,7 +47,7 @@ H.seriesType('mfi', 'sma',
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @extends {plotOptions.sma}
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/mfi
      *                     Money Flow Index Indicator

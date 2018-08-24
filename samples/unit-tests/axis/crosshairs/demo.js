@@ -208,3 +208,36 @@ QUnit.test('Use correct hover point for axis. #6860', function (assert) {
         'yAxis on right side is assigned point B.0'
     );
 });
+
+
+QUnit.test('Show crosshair label on logarithmic axis correctly. #8542', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            crosshair: true
+        },
+
+        yAxis: {
+            type: 'logarithmic',
+            crosshair: {
+                enabled: true,
+                label: {
+                    enabled: true
+                }
+            }
+        },
+
+        series: [{
+            data: [1, 512],
+            pointStart: 1
+        }]
+    });
+
+    chart.series[0].points[1].onMouseOver();
+
+    assert.strictEqual(
+        chart.yAxis[0].crossLabel.attr('visibility'),
+        'visible',
+        'Crosshair label is visible on logarithmic axis for the second point (#8542)'
+    );
+});

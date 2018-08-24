@@ -22,7 +22,7 @@ seriesType('macd', 'sma',
      * Moving Average Convergence Divergence (MACD). This series requires
      * `linkedTo` option to be set.
      *
-     * @extends {plotOptions.sma}
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/macd MACD indicator
      * @since 6.0.0

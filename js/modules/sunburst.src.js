@@ -225,7 +225,7 @@ var getDlOptions = function getDlOptions(params) {
 
         if (rotationMode === 'parallel') {
             options.style.width = Math.min(
-                shape.radius * 1.5,
+                shape.radius * 2.5,
                 (point.outerArcLength + point.innerArcLength) / 2
             );
         } else {
@@ -386,7 +386,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
  * represented by a circle. The center represents the root node of the tree.
  * The visualization bears a resemblance to both treemap and pie charts.
  *
- * @extends {plotOptions.pie}
+ * @extends plotOptions.pie
  * @sample highcharts/demo/sunburst Sunburst chart
  * @excluding allAreas, clip, colorAxis, compare, compareBase,
  *            dataGrouping, depth, endAngle, gapSize, gapUnit,
@@ -508,7 +508,7 @@ var sunburstOptions = {
     colorByPoint: false,
     /**
      * @extends plotOptions.series.dataLabels
-     * @excluding align,allowOverlap,staggerLines,step
+     * @excluding align,allowOverlap,distance,staggerLines,step
      */
     dataLabels: {
         allowOverlap: true,
@@ -766,7 +766,7 @@ var sunburstSeries = {
 
             child.shapeArgs = merge(values, {
                 plotX: center.x,
-                plotY: center.y
+                plotY: center.y + 4 * Math.abs(Math.cos(angle))
             });
             child.values = merge(values, {
                 val: val

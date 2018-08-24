@@ -36,7 +36,45 @@ function getLocation(option) {
     };
 }
 
+function sortProperties(node) {
+
+    if (!node) {
+        return;
+    }
+
+    if (node instanceof Array) {
+        let slice = node.slice().sort();
+        node.length = 0;
+        node.push(...slice);
+        node.forEach(item => sortProperties)
+    }
+
+    if (node.constructor !== Object) {
+        return;
+    }
+
+    let keys = Object.keys(node).sort();
+
+    if (keys.length === 0) {
+        return;
+    }
+
+    let pointer = {};
+
+    keys.forEach(key => {
+        pointer[key] = node[key];
+        delete node[key];
+    });
+
+    keys.forEach(key => {
+        node[key] = pointer[key];
+        sortProperties(node[key]);
+    });
+
+}
+
 function dumpOptions() {
+    sortProperties(options);
     fs.writeFile(
         'tree.json',
         JSON.stringify(
@@ -167,14 +205,14 @@ function decorateOptions(parent, target, option, filename) {
 
 function appendComment(node, lines) {
 
-  if (typeof node.comment !== 'undefined') {
-    node.comment = node.comment.replace(/\/\*/g, '').replace(/\*\//g, '*');
-    node.comment = '/**\n' + node.comment + '\n* ' + lines.join('\n* ') + '\n*/';
-  } else {
-    node.comment = '/**\n* ' + lines.join('\n* ') + '\n*/';
-  }
+    if (typeof node.comment !== 'undefined') {
+        node.comment = node.comment.replace(/\/\*/g, '').replace(/\*\//g, '*');
+        node.comment = '/**\n' + node.comment + '\n* ' + lines.join('\n* ') + '\n*/';
+    } else {
+        node.comment = '/**\n* ' + lines.join('\n* ') + '\n*/';
+    }
 
-  node.event = 'jsdocCommentFound';
+    node.event = 'jsdocCommentFound';
 }
 
 function nodeVisitor(node, e, parser, currentSourceName) {
@@ -192,21 +230,19 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
     if (node.highcharts && node.highcharts.isOption) {
 
-      shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
+        shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
 
-      if (shouldIgnore) {
-        removeOption(node.highcharts.fullname);
+        if (shouldIgnore) {
+            removeOption(node.highcharts.fullname);
+        } else if ((e.comment || '').indexOf('@apioption') < 0) {
+            appendComment(e, [
+            '@optionparent ' + node.highcharts.fullname
+            ]);
+        } else if ((e.comment || '').indexOf('@apioption tooltip') >= 0) {
+            console.log(e.comment);
+        }
+
         return;
-
-      } else if ((e.comment || '').indexOf('@apioption') < 0) {
-        appendComment(e, [
-          '@optionparent ' + node.highcharts.fullname
-        ]);
-      } else if ((e.comment || '').indexOf('@apioption tooltip') >= 0) {
-        console.log(e.comment);
-      }
-
-      return;
     }
 
     if (!node.leadingComments ||
@@ -275,7 +311,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         if (target) {
             if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
                 console.log('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
-                // console.log('Found series type:', properties, JSON.stringify(node.arguments[2], false, '  '));
+                // console.log('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
                 properties = node.arguments[2].properties;
             } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
                 properties = node.arguments[0].properties;
@@ -294,7 +330,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
             }
 
-            if (properties && properties.length > 0) {
+            if (properties) {
                 properties.forEach(function (child) {
                     decorateOptions(parent, target, child, e.filename || currentSourceName);
                 });
@@ -458,7 +494,6 @@ function resolveProductTypes(doclet, tagObj) {
         products = match[0].replace('{', '').replace('}', '').split('|');
     }
 
-
     return doclet[tagObj.originalTitle] = {
         value: value.trim(),
         products: products
@@ -507,7 +542,7 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('context', {
       onTagged: function (doclet, tagObj) {
-        doclet.context = tagObj.value;
+            doclet.context = tagObj.value;
       }
     });
 
@@ -536,28 +571,22 @@ exports.defineTags = function (dictionary) {
         }
     });
 
+    function handleExclude (doclet, tagObj) {
+        var items = tagObj.text.split(',');
+
+        doclet.exclude = doclet.exclude || [];
+
+        items.forEach(function (entry) {
+            doclet.exclude.push(entry.trim());
+        });
+    }
+
     dictionary.defineTag('exclude', {
-        onTagged: function (doclet, tagObj) {
-            var items = tagObj.text.split(',');
-
-            doclet.exclude = doclet.exclude || [];
-
-            items.forEach(function (entry) {
-                doclet.exclude.push(entry.trim());
-            });
-        }
+        onTagged: handleExclude
     });
 
     dictionary.defineTag('excluding', {
-        onTagged: function (doclet, tagObj) {
-            var items = tagObj.text.split(',');
-
-            doclet.exclude = doclet.exclude || [];
-
-            items.forEach(function (entry) {
-                doclet.exclude.push(entry.trim());
-            });
-        }
+        onTagged: handleExclude
     });
 
     dictionary.defineTag('ignore-option', {
@@ -596,34 +625,14 @@ exports.defineTags = function (dictionary) {
 
     function handleValue(doclet, tagObj) {
         doclet.values = tagObj.value;
-        return;
-
-        var t;
-        doclet.values = doclet.values || [];
-
-        // A lot of these options are defined as json.
-        try {
-            t = JSON.parse(tagObj.value);
-            if (Array.isArray(t)) {
-                doclet.values = doclet.values.concat(t);
-            } else {
-                doclet.values.push(t);
-            }
-        } catch (e) {
-            doclet.values.push(tabObj.value);
-        }
     }
 
     dictionary.defineTag('validvalue', {
-        onTagged: function (doclet, tag) {
-            handleValue(doclet, tag);
-        }
+        onTagged: handleValue
     });
 
     dictionary.defineTag('values', {
-        onTagged: function (doclet, tag) {
-            handleValue(doclet, tag);
-        }
+        onTagged: handleValue
     });
 
     dictionary.defineTag('extends', {
@@ -635,6 +644,15 @@ exports.defineTags = function (dictionary) {
     dictionary.defineTag('productdesc', {
         onTagged: resolveProductTypes
     });
+
+    dictionary.defineTag('typedesc', {
+        onTagged: function (doclet, tagObj) {
+            if (!doclet.type) {
+                doclet.type = {};
+            }
+            doclet.type.description = tagObj.value;
+        }
+    });
 };
 
 exports.astNodeVisitor = {
@@ -642,6 +660,7 @@ exports.astNodeVisitor = {
 };
 
 exports.handlers = {
+
     beforeParse: function (e) {
         var palette = getPalette(hcRoot + '/css/highcharts.scss');
 
@@ -654,8 +673,13 @@ exports.handlers = {
             );
         });
 
-        var match = e.source.match(/\s\*\/[\s]+\}/g);
-        if (match) {
+        var match = e.source.match(
+            /(\s*)\/\*\*(?:\1 \*[^\n]*)+\1 \*\/[\s]+\}/g
+        );
+        if (match && match.some(m =>
+                m.indexOf('@apioption') === -1 &&
+                m.indexOf('@name') === -1
+        )) {
             console.log(
 `Warning: Detected ${match.length} cases of a comment followed by } in
 ${e.filename}.
@@ -680,8 +704,6 @@ before functional code for JSDoc to see them.`.yellow
         options._meta.branch = exec('git rev-parse --abbrev-ref HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.date = (new Date()).toString();
 
-        let files = {};
-
         function inferTypeForTree(obj) {
             inferType(obj);
 
@@ -691,8 +713,6 @@ before functional code for JSDoc to see them.`.yellow
                     obj.meta.filename.indexOf('highcharts')
                 );
             }
-
-            files[obj.meta.filename] = 1;
 
             // Infer types
             if (obj.children) {
@@ -707,6 +727,17 @@ before functional code for JSDoc to see them.`.yellow
             }
         }
 
+        Object.keys(options).forEach(function (name) {
+            // work around #8260:
+            if (name === '' || name === 'undefined') {
+                delete options[name];
+                return;
+            }
+            if (name !== '_meta') {
+                inferTypeForTree(options[name]);
+            }
+        });
+
         function addSeriesTypeDescription(type) {
             var node = type;
 
@@ -717,11 +748,12 @@ before functional code for JSDoc to see them.`.yellow
             var s = `
 
 Configuration options for the series are given in three levels:
-1. Options for all series in a chart are defined in the [plotOptions.series](plotOptions.series)
-object. 
-2. Options for all \`${type}\` series are defined in [plotOptions.${type}](plotOptions.${type}).
+1. Options for all series in a chart are defined in the
+   [plotOptions.series](plotOptions.series) object.
+2. Options for all \`${type}\` series are defined in
+   [plotOptions.${type}](plotOptions.${type}).
 3. Options for one single series are given in
-[the series instance array](series.${type}).
+   [the series instance array](series.${type}).
 
 <pre>
 Highcharts.chart('container', {
@@ -746,20 +778,7 @@ Highcharts.chart('container', {
             }
         }
 
-        Object.keys(options).forEach(function (name) {
-            // work around #8260:
-            if (name === '' || name === 'undefined') {
-                delete options[name];
-                return;
-            }
-            if (name !== '_meta') {
-                inferTypeForTree(options[name]);
-            }
-        });
-
         Object.keys(options.plotOptions.children).forEach(addSeriesTypeDescription);
-
-        // console.log(Object.keys(files));
 
         dumpOptions();
     }

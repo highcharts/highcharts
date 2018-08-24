@@ -31,7 +31,7 @@ var addEvent = Highcharts.addEvent,
 /**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also
- * the [tutorial article on the Data module](http://www.highcharts.com/docs/working-
+ * the [tutorial article on the Data module](https://www.highcharts.com/docs/working-
  * with-data/data-module).
  *
  * It requires the `modules/data.js` file to be loaded.
@@ -93,7 +93,7 @@ var addEvent = Highcharts.addEvent,
  *
  * The built-in CSV parser doesn't support all flavours of CSV, so in
  * some cases it may be necessary to use an external CSV parser. See
- * [this example](http://jsfiddle.net/highcharts/u59176h4/) of parsing
+ * [this example](https://jsfiddle.net/highcharts/u59176h4/) of parsing
  * CSV through the MIT licensed [Papa Parse](http://papaparse.com/)
  * library.
  *
@@ -293,7 +293,7 @@ var addEvent = Highcharts.addEvent,
  */
 
 /**
- * A HTML table or the id of such to be parsed as input data. Related
+ * An HTML table or the id of such to be parsed as input data. Related
  * options are `startRow`, `endRow`, `startColumn` and `endColumn` to
  * delimit what part of the table is used.
  *
@@ -2072,7 +2072,9 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
             columnIndexes.shift();
 
             // Sort the remaining
-            columnIndexes.sort();
+            columnIndexes.sort(function (a, b) {
+                return a - b;
+            });
 
             // Now use the lowest index as name column
             this.name = columns[columnIndexes.shift()].name;

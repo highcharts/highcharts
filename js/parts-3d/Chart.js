@@ -262,11 +262,10 @@ var extendedOptions = {
              *
              * @validvalue [null, "auto"]
              * @type {String}
-             * @default null
              * @since 5.0.12
              * @product highcharts
              */
-            axisLabelPosition: 'default',
+            axisLabelPosition: null,
 
             /**
              * Provides the option to draw a frame around the charts by defining
@@ -337,35 +336,35 @@ var extendedOptions = {
                 /**
                  * The top of the frame around a 3D chart.
                  *
-                 * @extends {chart.options3d.frame.bottom}
+                 * @extends chart.options3d.frame.bottom
                  */
                 top: {},
 
                 /**
                  * The left side of the frame around a 3D chart.
                  *
-                 * @extends {chart.options3d.frame.bottom}
+                 * @extends chart.options3d.frame.bottom
                  */
                 left: {},
 
                 /**
                  * The right of the frame around a 3D chart.
                  *
-                 * @extends {chart.options3d.frame.bottom}
+                 * @extends chart.options3d.frame.bottom
                  */
                 right: {},
 
                 /**
                  * The back side of the frame around a 3D chart.
                  *
-                 * @extends {chart.options3d.frame.bottom}
+                 * @extends chart.options3d.frame.bottom
                  */
                 back: {},
 
                 /**
                  * The front of the frame around a 3D chart.
                  *
-                 * @extends {chart.options3d.frame.bottom}
+                 * @extends chart.options3d.frame.bottom
                  */
                 front: {}
             }

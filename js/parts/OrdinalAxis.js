@@ -67,9 +67,14 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
         tickPixelIntervalOption = this.options.tickPixelInterval,
         time = this.chart.time;
 
-    // The positions are not always defined, for example for ordinal positions when data
-    // has regular interval (#1557, #2090)
-    if ((!this.options.ordinal && !this.options.breaks) || !positions || positions.length < 3 || min === undefined) {
+    // The positions are not always defined, for example for ordinal positions
+    // when data has regular interval (#1557, #2090)
+    if (
+        (!this.options.ordinal && !this.options.breaks) ||
+        !positions ||
+        positions.length < 3 ||
+        min === undefined
+    ) {
         return proceed.call(this, normalizedInterval, min, max, startOfWeek);
     }
 
@@ -236,7 +241,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             overscrollPointsRange = Number.MAX_VALUE,
             ignoreHiddenSeries = axis.chart.options.chart.ignoreHiddenSeries,
             isNavigatorAxis = axis.options.className === 'highcharts-navigator-xaxis',
-            i;
+            i,
+            hasBoostedSeries;
 
         if (
             axis.options.overscroll &&
@@ -316,7 +322,15 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                     }
                 }
 
+                if (series.isSeriesBoosting) {
+                    hasBoostedSeries = true;
+                }
+
             });
+
+            if (hasBoostedSeries) {
+                ordinalPositions.length = 0;
+            }
 
             // cache the length
             len = ordinalPositions.length;
@@ -676,7 +690,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
      * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
      */
     postProcessTickInterval: function (tickInterval) {
-        // Problem: http://jsfiddle.net/highcharts/FQm4E/1/
+        // Problem: https://jsfiddle.net/highcharts/FQm4E/1/
         // This is a case where this algorithm doesn't work optimally. In this case, the
         // tick labels are spread out per week, but all the gaps reside within weeks. So
         // we have a situation where the labels are courser than the ordinal gaps, and

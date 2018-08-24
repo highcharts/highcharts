@@ -29,7 +29,12 @@ QUnit.test('Sankey', function (assert) {
             color: '#f7a35c'
         }],
         type: 'sankey',
-        name: 'Energy in the United States'
+        name: 'Energy in the United States',
+        states: {
+            hover: {
+                color: '#FF0000'
+            }
+        }
     });
 
     assert.strictEqual(
@@ -47,6 +52,14 @@ QUnit.test('Sankey', function (assert) {
         chart.series[0].nodes.length,
         4,
         'Series successfully added'
+    );
+
+    series.data[0].setState('hover');
+
+    assert.strictEqual(
+        Highcharts.color(series.data[0].graphic.element.getAttribute('fill')).get('rgb'),
+        'rgb(255,0,0)',
+        'Hover color correct'
     );
 
     series.addPoint({
@@ -90,6 +103,19 @@ QUnit.test('Sankey', function (assert) {
         series.nodes.length,
         6,
         'Point update'
+    );
+
+    series.update({
+        keys: ['from', 'to', 'weight'],
+        data: [
+            ['A', '1', 1]
+        ]
+    });
+
+    assert.strictEqual(
+        series.nodes.length,
+        2,
+        'Unused nodes should be removed'
     );
 
     series.remove();

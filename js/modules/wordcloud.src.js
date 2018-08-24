@@ -17,6 +17,7 @@ var each = H.each,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
+    map = H.map,
     find = H.find,
     reduce = H.reduce,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
@@ -27,7 +28,7 @@ var each = H.each,
 
 /**
  * isRectanglesIntersecting - Detects if there is a collision between two
- *     rectangles.
+ *                            rectangles.
  *
  * @param  {object} r1 First rectangle.
  * @param  {object} r2 Second rectangle.
@@ -44,7 +45,7 @@ var isRectanglesIntersecting = function isRectanglesIntersecting(r1, r2) {
 
 /**
  * intersectsAnyWord - Detects if a word collides with any previously placed
- *     words.
+ *                     words.
  *
  * @param  {Point} point Point which the word is connected to.
  * @param  {Array} points Previously placed points to check against.
@@ -103,7 +104,7 @@ var archimedeanSpiral = function archimedeanSpiral(attempt, params) {
     var field = params.field,
         result = false,
         maxDelta = (field.width * field.width) + (field.height * field.height),
-        t = attempt * 0.2;
+        t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
     // Emergency brake. TODO make spiralling logic more foolproof.
     if (attempt <= 10000) {
         result = {
@@ -126,7 +127,8 @@ var archimedeanSpiral = function archimedeanSpiral(attempt, params) {
  * should be dropped from the visualization.
  */
 var squareSpiral = function squareSpiral(attempt) {
-    var k = Math.ceil((Math.sqrt(attempt) - 1) / 2),
+    var a = attempt * 4,
+        k = Math.ceil((Math.sqrt(a) - 1) / 2),
         t = 2 * k + 1,
         m = Math.pow(t, 2),
         isBoolean = function (x) {
@@ -135,31 +137,31 @@ var squareSpiral = function squareSpiral(attempt) {
         result = false;
     t -= 1;
     if (attempt <= 10000) {
-        if (isBoolean(result) && attempt >= m - t) {
+        if (isBoolean(result) && a >= m - t) {
             result = {
-                x: k - (m - attempt),
+                x: k - (m - a),
                 y: -k
             };
         }
         m -= t;
-        if (isBoolean(result) && attempt >= m - t) {
+        if (isBoolean(result) && a >= m - t) {
             result = {
                 x: -k,
-                y: -k + (m - attempt)
+                y: -k + (m - a)
             };
         }
 
         m -= t;
         if (isBoolean(result)) {
-            if (attempt >= m - t) {
+            if (a >= m - t) {
                 result = {
-                    x: -k + (m - attempt),
+                    x: -k + (m - a),
                     y: k
                 };
             } else {
                 result = {
                     x: k,
-                    y: k - (m - attempt - t)
+                    y: k - (m - a - t)
                 };
             }
         }
@@ -181,7 +183,8 @@ var rectangularSpiral = function rectangularSpiral(attempt, params) {
     var result = squareSpiral(attempt, params),
         field = params.field;
     if (result) {
-        result.x *= field.ratio;
+        result.x *= field.ratioX;
+        result.y *= field.ratioY;
     }
     return result;
 };
@@ -198,7 +201,7 @@ var getRandomPosition = function getRandomPosition(size) {
 
 /**
  * getScale - Calculates the proper scale to fit the cloud inside the plotting
- *     area.
+ *            area.
  *
  * @param  {number} targetWidth  Width of target area.
  * @param  {number} targetHeight Height of target area.
@@ -210,8 +213,8 @@ var getRandomPosition = function getRandomPosition(size) {
 var getScale = function getScale(targetWidth, targetHeight, field) {
     var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
         width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
-        scaleX = 1 / width * targetWidth,
-        scaleY = 1 / height * targetHeight;
+        scaleX = width > 0 ? 1 / width * targetWidth : 1,
+        scaleY = height > 0 ? 1 / height * targetHeight : 1;
     return Math.min(scaleX, scaleY);
 };
 
@@ -231,15 +234,15 @@ var getPlayingField = function getPlayingField(
     targetHeight,
     data
 ) {
-    var ratio = targetWidth / targetHeight,
-        info = reduce(data, function (obj, point) {
-            var dimensions = point.dimensions;
+    var info = reduce(data, function (obj, point) {
+            var dimensions = point.dimensions,
+                x = Math.max(dimensions.width, dimensions.height);
             // Find largest height.
             obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
             // Find largest width.
             obj.maxWidth = Math.max(obj.maxWidth, dimensions.width);
-            // Sum up the total area of all the words.
-            obj.area += dimensions.width * dimensions.height;
+            // Sum up the total maximum area of all the words.
+            obj.area += x * x;
             return obj;
         }, {
             maxHeight: 0,
@@ -249,13 +252,20 @@ var getPlayingField = function getPlayingField(
         /**
          * Use largest width, largest height, or root of total area to give size
          * to the playing field.
-         * Add extra 100 percentage to ensure enough space.
          */
-        x = 1.1 * Math.max(info.maxHeight, info.maxWidth, Math.sqrt(info.area));
+        x = Math.max(
+            info.maxHeight, // Have enough space for the tallest word
+            info.maxWidth, // Have enough space for the broadest word
+            // Adjust 15% to account for close packing of words
+            Math.sqrt(info.area) * 0.85
+        ),
+        ratioX = targetWidth > targetHeight ? targetWidth / targetHeight : 1,
+        ratioY = targetHeight > targetWidth ? targetHeight / targetWidth : 1;
     return {
-        width: x * ratio,
-        height: x,
-        ratio: ratio
+        width: x * ratioX,
+        height: x * ratioY,
+        ratioX: ratioX,
+        ratioY: ratioY
     };
 };
 
@@ -293,6 +303,23 @@ var getRotation = function getRotation(orientations, index, from, to) {
         result = from + (orientation * intervals);
     }
     return result;
+};
+
+/**
+ * Calculates the spiral positions and store them in scope for quick access.
+ *
+ * @param {function} fn The spiral function.
+ * @param {object} params Additional parameters for the spiral.
+ * @returns {function} Function with access to spiral positions.
+ */
+var getSpiral = function (fn, params) {
+    var length = 10000,
+        arr = map(new Array(length), function (_, i) {
+            return fn(i + 1, params);
+        });
+    return function (attempt) {
+        return attempt <= length ? arr[attempt - 1] : false;
+    };
 };
 
 /**
@@ -334,7 +361,6 @@ var intersectionTesting = function intersectionTesting(point, options) {
         polygon = options.polygon,
         spiral = options.spiral,
         attempt = 1,
-        interval = 4,
         delta = {
             x: 0,
             y: 0
@@ -352,14 +378,13 @@ var intersectionTesting = function intersectionTesting(point, options) {
      *        the spiral radius is still smallish
      */
     while (
+        delta !== false &&
         (
             intersectsAnyWord(point, placed) ||
             outsidePlayingField(rect, field)
-        ) && delta !== false
+        )
     ) {
-        delta = spiral(interval * attempt, {
-            field: field
-        });
+        delta = spiral(attempt);
         if (isObject(delta)) {
             // Update the DOMRect with new positions.
             rect.left = rectangle.left + delta.x;
@@ -403,7 +428,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
  * A word cloud is a visualization of a set of words, where the size and
  * placement of a word is determined by how it is weighted.
  *
- * @extends {plotOptions.column}
+ * @extends plotOptions.column
  * @sample highcharts/demo/wordcloud Word Cloud chart
  * @excluding allAreas, boostThreshold, clip, colorAxis, compare, compareBase,
  *            crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor,
@@ -475,7 +500,7 @@ var wordCloudOptions = {
     },
     showInLegend: false,
     /**
-     * Spiral used for placing a word after the inital position experienced a
+     * Spiral used for placing a word after the initial position experienced a
      * collision with either another word or the borders.
      * It is possible for users to add their own custom spiralling algorithms
      * for use in word cloud. Read more about it in our
@@ -556,7 +581,7 @@ var wordCloudSeries = {
             placementStrategy = series.placementStrategy[
                 options.placementStrategy
             ],
-            spiral = series.spirals[options.spiral],
+            spiral,
             rotation = options.rotation,
             scale,
             weights = series.points
@@ -598,7 +623,9 @@ var wordCloudSeries = {
 
         // Calculate the playing field.
         field = getPlayingField(xAxis.len, yAxis.len, data);
-
+        spiral = getSpiral(series.spirals[options.spiral], {
+            field: field
+        });
         // Draw all the points.
         each(data, function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
@@ -713,7 +740,7 @@ var wordCloudSeries = {
     /**
      * Strategies used for deciding rotation and initial position of a word.
      * To implement a custom strategy, have a look at the function
-     *     randomPlacement for example.
+     * randomPlacement for example.
      */
     placementStrategy: {
         random: function randomPlacement(point, options) {
@@ -736,10 +763,9 @@ var wordCloudSeries = {
     },
     pointArrayMap: ['weight'],
     /**
-     * Spirals used for placing a word after the inital position experienced a
-     *     collision with either another word or the borders.
-     * To implement a custom spiral, look at the function archimedeanSpiral for
-     *    example.
+     * Spirals used for placing a word after the initial position experienced a
+     * collision with either another word or the borders. To implement a custom
+     * spiral, look at the function archimedeanSpiral for example.
      */
     spirals: {
         'archimedean': archimedeanSpiral,
