@@ -170,7 +170,7 @@ var bindingsUtils = {
                                             options = point.options;
 
                                         toolbar.showForm(
-                                            'flag',
+                                            'annotation-toolbar',
                                             {
                                                 title: [
                                                     options.title,
