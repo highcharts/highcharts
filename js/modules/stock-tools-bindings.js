@@ -1530,7 +1530,7 @@ extend(H.Toolbar.prototype, {
                 resizers[index] = {
                     enabled: true,
                     controlledAxis: {
-                        next: [yAxes[index + 1].options.index]
+                        next: [yAxes[index + 1].options.id]
                     }
                 };
             } else {
