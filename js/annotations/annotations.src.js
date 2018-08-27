@@ -105,6 +105,13 @@ var Annotation = H.Annotation = function (chart, options) {
     this.options = options;
 
     /**
+     * The user options for the annotations.
+     *
+     * @type {AnnotationOptions}
+     */
+    this.userOptions = merge(true, {}, options);
+
+    /**
      * The callback that reports to the overlapping-labels module which
      * labels it should account for.
      *

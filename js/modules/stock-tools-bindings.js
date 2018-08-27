@@ -1203,13 +1203,41 @@ var stockToolsBindings = {
         }
     },
     'save-chart': {
-        start: function () {
-            // TO DO:
-            // Save in localhost, note it should save:
-            // - annotations
-            // - indicators
-            // - toolbar button states (e.g. price indicator)
-            // - all flag series
+        init: function () {
+            var toolbar = this,
+                chart = toolbar.chart,
+                annotations = [],
+                indicators = [],
+                flags = [],
+                yAxes = [];
+
+            each(chart.annotations, function (annotation, index) {
+                annotations[index] = annotation.userOptions;
+            });
+
+            each(chart.series, function (series) {
+                if (series instanceof H.seriesTypes.sma) {
+                    indicators.push(series.userOptions);
+                } else if (series.type === 'flags') {
+                    flags.push(series.userOptions);
+                }
+            });
+
+            each(chart.yAxis, function (yAxis) {
+                if (toolbar.utils.isNotNavigatorYAxis(yAxis)) {
+                    yAxes.push(yAxis.options);
+                }
+            });
+
+            H.win.localStorage.setItem(
+                'highcharts-chart',
+                JSON.stringify({
+                    annotaitons: annotations,
+                    indicators: indicators,
+                    flags: flags,
+                    yAxes: yAxes
+                })
+            );
         }
     }
 };
