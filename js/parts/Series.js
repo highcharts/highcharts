@@ -23,7 +23,7 @@
  *
  * @typedef {object} Highcharts.SeriesShadowOptions
  *
- * @property {Highcharts.ColorStirng} color
+ * @property {Highcharts.ColorString} color
  *
  * @property {number} offsetX
  *
