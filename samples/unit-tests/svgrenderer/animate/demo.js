@@ -551,24 +551,26 @@ QUnit.test('Fill and stroke animation for series points in 3D (#6776)', function
                 'Fill unlike end'
             );
 
-            setTimeout(function () {
-                //controller.trigger('mouseover', 450, 250);
-                chart.series[0].points[0].setState('');
-
-                setTimeout(function () {
-                    assert.notEqual(
-                        point.attr('fill'),
-                        'rgb(255,255,255)',
-                        'Fill unlike end'
-                    );
-                    assert.notEqual(
-                        point.attr('fill'),
-                        'rgb(255,0,0)',
-                        'Fill unlike start'
-                    );
-                }, 250);
-            }, 500);
         }, 250);
+
+        setTimeout(function () {
+            //controller.triggerEvent('mouseover', 450, 250);
+            chart.series[0].points[0].setState('');
+
+        }, 750);
+
+        setTimeout(function () {
+            assert.notEqual(
+                point.attr('fill'),
+                'rgb(255,255,255)',
+                'Fill unlike end'
+            );
+            assert.notEqual(
+                point.attr('fill'),
+                'rgb(255,0,0)',
+                'Fill unlike start'
+            );
+        }, 1000);
 
         // Reset animation
         TestUtilities.lolexRunAndUninstall(clock);

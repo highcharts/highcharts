@@ -225,7 +225,7 @@ var getDlOptions = function getDlOptions(params) {
 
         if (rotationMode === 'parallel') {
             options.style.width = Math.min(
-                shape.radius * 1.5,
+                shape.radius * 2.5,
                 (point.outerArcLength + point.innerArcLength) / 2
             );
         } else {
@@ -766,7 +766,7 @@ var sunburstSeries = {
 
             child.shapeArgs = merge(values, {
                 plotX: center.x,
-                plotY: center.y
+                plotY: center.y + 4 * Math.abs(Math.cos(angle))
             });
             child.values = merge(values, {
                 val: val
