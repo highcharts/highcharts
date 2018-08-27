@@ -185,7 +185,7 @@
 /**
  * The shadow options.
  *
- * @typedef {object} ShadowOptionsObject
+ * @typedef {object} Highcharts.ShadowOptionsObject
  *
  * @property {string|undefined} [color=${palette.neutralColor100}]
  *           The shadow color.
