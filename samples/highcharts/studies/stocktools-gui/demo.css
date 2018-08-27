@@ -106,9 +106,18 @@
   transform: rotate(-90deg);
 }
 
-.highcharts-stocktools-wrapper .highcharts-arrow-right {
-  background: url(http://utils.highcharts.local/samples/graphics/arrow-bottom.svg) no-repeat right bottom;
-  background-size: contain;
+.highcharts-stocktools-wrapper .highcharts-arrow-left.highcharts-arrow-right {
+   /* Safari */
+  -webkit-transform: rotate(0deg);
+  /* Firefox */
+  -moz-transform: rotate(0deg);
+  /* IE */
+  -ms-transform: rotate(0deg);
+  /* Opera */
+  -o-transform: rotate(0deg);
+  /* Internet Explorer */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  transform: rotate(0deg);
 }
 
 .highcharts-stocktools-wrapper .highcharts-arrow-left {

@@ -348,9 +348,8 @@ H.Toolbar = function (options, langOptions, chart) {
     this.options = options;
     this.lang = langOptions;
 
-    this.visible = pick(options.enabled, true);
-    this.placed = false;
-
+    this.visible = pick(options.visible, true);
+    this.placed = pick(options.placed, false);
     this.createHTML();
 
     // add popup to main container
@@ -373,7 +372,8 @@ H.extend(H.Chart.prototype, {
             paramOptionsGui = options.options && options.options.stockTools,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,
-                paramOptionsGui && paramOptionsGui.gui
+                paramOptionsGui && paramOptionsGui.gui,
+                options.stockTools && options.stockTools.gui
             ),
             langOptions = lang.stockTools && lang.stockTools.gui;
 
@@ -713,7 +713,8 @@ H.Toolbar.prototype = {
             wrapper = stockToolbar.wrapper,
             toolbar = this.listWrapper,
             submenu = this.submenu,
-            visible,
+            visible = this.visible,
+            placed = this.placed,
             showhideBtn;
 
         // Show hide toolbar
@@ -721,28 +722,26 @@ H.Toolbar.prototype = {
             className: PREFIX + 'toggle-toolbar ' + PREFIX + 'arrow-left'
         }, null, wrapper);
 
+        if (!visible) {
+            // hide
+            if (submenu) {
+                submenu.style.display = 'none';
+            }
+            showhideBtn.style.left = '0px';
+            stockToolbar.visible = visible = false;
+
+            toolbar.classList += ' ' + PREFIX + 'hide';
+            showhideBtn.classList.toggle(PREFIX + 'arrow-right');
+        }
+
         // toggle menu
         addEvent(showhideBtn, 'click', function () {
-            if (toolbar.className.indexOf(PREFIX + 'hide') >= 0) {
-                if (submenu) {
-                    submenu.style.display = 'block';
-                }
-                showhideBtn.style.left = '40px';
-                stockToolbar.visible = visible = true;
-            } else {
-                if (submenu) {
-                    submenu.style.display = 'none';
-                }
-                showhideBtn.style.left = '0px';
-                stockToolbar.visible = visible = false;
-            }
-            toolbar.classList.toggle(PREFIX + 'hide');
-            showhideBtn.classList.toggle(PREFIX + 'arrow-left');
-            showhideBtn.classList.toggle(PREFIX + 'arrow-right');
-
             chart.update({
                 stockTools: {
-                    visible: visible
+                    gui: {
+                        visible: !visible,
+                        placed: true 
+                    }
                 }
             });
         });
@@ -821,15 +820,9 @@ H.Toolbar.prototype = {
         var marginLeft = this.chart.options.chart.marginLeft || 0,
             stockToolbar = this.chart.stockToolbar;
 
-        if (stockToolbar.visible && !stockToolbar.placed) {
-
+        if (stockToolbar.visible) {
             this.chart.options.chart.marginLeft = marginLeft + 50;
-            stockToolbar.placed = true;
-
-        } else if (!stockToolbar.visible && stockToolbar.placed) {
-
-            this.chart.options.chart.marginLeft = marginLeft - 50;
-            stockToolbar.placed = false;
+            this.chart.isDirtyBox = true;
         }
     },
     /*
@@ -847,11 +840,13 @@ H.Toolbar.prototype = {
             parent.removeChild(stockToolsDiv);
         }
 
+        // remove extra space if toolbar was added
+        if (this.chart.stockToolbar.visible) {
+            this.chart.options.chart.marginLeft = marginLeft - 50;
+        }
+
         // delete stockToolbar reference
         delete this.chart.stockToolbar;
-
-        // remove extra space
-        this.chart.options.chart.marginLeft = marginLeft - 50;
 
         // redraw
         this.chart.isDirtyBox = true;
