@@ -219,4 +219,21 @@ QUnit.test('X-range data labels', function (assert) {
         'Shown and hidden labels'
     );
 
+    chart.xAxis[0].setExtremes();
+    chart.series[0].addPoint({
+        y: 1,
+        x: 0.1,
+        x2: 0.2,
+        label: 'fifth'
+    });
+    chart.yAxis[0].setExtremes(0.5);
+
+    assert.deepEqual(
+        chart.series[0].points.map(function (p) {
+            return p.dataLabel.attr('y') === -9999 ? 'hidden' : 'visible';
+        }),
+        ['hidden', 'hidden', 'hidden', 'hidden', 'visible'],
+        'Shown and hidden labels'
+    );
+
 });
