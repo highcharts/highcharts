@@ -1289,6 +1289,7 @@ extend(H.Toolbar.prototype, {
         if (button === clickEvent.target.parentNode) {
 
             toolbar.selectedButton = events;
+            toolbar.selectedButtonElement = button;
 
             // Unslect other active buttons
             toolbar.unselectAllButtons(button);
@@ -1348,6 +1349,9 @@ extend(H.Toolbar.prototype, {
                 toolbar.mouseMoveEvent = toolbar.nextEvent =
                     selectedButton.steps[toolbar.stepIndex];
             } else {
+                if (toolbar.selectButton) {
+                    toolbar.selectButton(toolbar.selectedButtonElement);
+                }
                 toolbar.steps = false;
                 toolbar.selectedButton = null;
                 // First click is also the last one:
@@ -1357,6 +1361,7 @@ extend(H.Toolbar.prototype, {
                         clickEvent,
                         toolbar.currentUserDetails
                     );
+
                 }
             }
         } else {
@@ -1376,7 +1381,9 @@ extend(H.Toolbar.prototype, {
                     toolbar.mouseMoveEvent = toolbar.nextEvent =
                         selectedButton.steps[toolbar.stepIndex];
                 } else {
-
+                    if (toolbar.selectButton) {
+                        toolbar.selectButton(toolbar.selectedButtonElement);
+                    }
                     // That was the last step, call end():
                     if (selectedButton.end) {
                         selectedButton.end.call(
@@ -1388,7 +1395,6 @@ extend(H.Toolbar.prototype, {
                     toolbar.nextEvent = false;
                     toolbar.mouseMoveEvent = false;
                     toolbar.selectedButton = null;
-                    // toolbar.deselectButton();
                 }
             }
         }
