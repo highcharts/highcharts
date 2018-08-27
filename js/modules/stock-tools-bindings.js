@@ -179,7 +179,8 @@ var bindingsUtils = {
                                                 name: [
                                                     options.name,
                                                     getFieldType(options.name)
-                                                ]
+                                                ],
+                                                type: 'Flag'
                                             },
                                             function () {
                                                 point.update(
