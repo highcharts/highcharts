@@ -120,7 +120,7 @@ var addEvent = H.addEvent,
  * @param {Highcharts.Chart} chart
  *        The chart instance.
  *
- * @param {Options.plotOptions.series} options
+ * @param {Highcharts.PlotSeriesOptions} options
  *        The series options.
  */
 
