@@ -811,18 +811,25 @@ H.Toolbar.prototype = {
         H.Popup.prototype.showForm(type, this.chart, options, callback);
     },
     /*
-     * Add / remove space for toolbar.
+     * Add space for toolbar.
      *
      */
     setToolbarSpace: function () {
+        var chart = this.chart,
+            marginLeft = chart.options.chart.marginLeft || 0,
+            spacingLeft = chart.spacing[3] || 0,
+            stockToolbar = chart.stockToolbar;
 
-        var marginLeft = this.chart.options.chart.marginLeft || 0,
-            stockToolbar = this.chart.stockToolbar;
+        if (!stockToolbar.visible && stockToolbar.placed) {
+            this.chart.options.chart.marginLeft = marginLeft + spacingLeft;
+        }
 
         if (stockToolbar.visible) {
+            // 50 - width of toolbar
             this.chart.options.chart.marginLeft = marginLeft + 50;
-            this.chart.isDirtyBox = true;
         }
+
+        this.chart.isDirtyBox = true;
     },
     /*
      * Destroy all HTML GUI elements.
@@ -832,6 +839,9 @@ H.Toolbar.prototype = {
         var stockToolsDiv = this.wrapper,
             parent = stockToolsDiv.parentNode,
             chartOptions = this.chart.options,
+            visible = this.chart.stockToolbar.visible,
+            placed = this.chart.stockToolbar.placed,
+            spacingLeft = this.chart.spacing[3] || 0,
             marginLeft = chartOptions.chart.marginLeft || 0;
 
         // Remove the empty element
@@ -840,8 +850,11 @@ H.Toolbar.prototype = {
         }
 
         // remove extra space if toolbar was added
-        if (this.chart.stockToolbar.visible) {
+        if (visible) {
+            // 50 - width of toolbar
             this.chart.options.chart.marginLeft = marginLeft - 50;
+        } else if (placed) {
+            this.chart.options.chart.marginLeft = marginLeft - spacingLeft;
         }
 
         // delete stockToolbar reference
