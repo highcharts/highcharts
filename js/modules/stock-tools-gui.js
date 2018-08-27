@@ -714,7 +714,6 @@ H.Toolbar.prototype = {
             toolbar = this.listWrapper,
             submenu = this.submenu,
             visible = this.visible,
-            placed = this.placed,
             showhideBtn;
 
         // Show hide toolbar
@@ -740,7 +739,7 @@ H.Toolbar.prototype = {
                 stockTools: {
                     gui: {
                         visible: !visible,
-                        placed: true 
+                        placed: true
                     }
                 }
             });
