@@ -407,24 +407,34 @@ var intersectionTesting = function intersectionTesting(point, options) {
  * @return Returns the extended playing field with updated height and width.
  */
 var extendPlayingField = function extendPlayingField(field, rectangle) {
-    var height = (rectangle.bottom - rectangle.top),
-        width = (rectangle.right - rectangle.left),
-        ratioX = field.ratioX,
-        ratioY = field.ratioY,
+    var height, width, ratioX, ratioY, x, extendWidth, extendHeight, result;
+
+    if (isObject(field) && isObject(rectangle)) {
+        height = (rectangle.bottom - rectangle.top);
+        width = (rectangle.right - rectangle.left);
+        ratioX = field.ratioX;
+        ratioY = field.ratioY;
+
         // Use the same variable to extend both the height and width.
-        x = ((width * ratioX) > (height * ratioY)) ? width : height,
+        x = ((width * ratioX) > (height * ratioY)) ? width : height;
+
         // Multiply variable with ratios to preserve aspect ratio.
-        extendWidth = x * ratioX,
-        extendHeight = x * ratioY,
+        extendWidth = x * ratioX;
+        extendHeight = x * ratioY;
+
         // Calculate the size of the new field after adding space for the word.
-        extendedField = merge(field, {
+        result = merge(field, {
             // Add space on the left and right.
             width: field.width + (extendWidth * 2),
             // Add space on the top and bottom.
             height: field.height + (extendHeight * 2)
         });
+    } else {
+        result = field;
+    }
+
     // Return the new extended field.
-    return extendedField;
+    return result;
 };
 
 /**
@@ -828,6 +838,7 @@ var wordCloudSeries = {
         'square': squareSpiral
     },
     utils: {
+        extendPlayingField: extendPlayingField,
         getRotation: getRotation,
         isPolygonsColliding: isPolygonsColliding,
         rotate2DToOrigin: polygon.rotate2DToOrigin,
