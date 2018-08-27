@@ -109,15 +109,14 @@ H.Popup.prototype = {
      *
      */
     addInput: function (optionName, type, parentDiv, value) {
-        var fieldName = optionName.split('.'),
-            paramName = fieldName[fieldName.length - 1],
-            inputName = PREFIX + type + '-' + paramName,
+        var lang = this.lang,
+            inputName = PREFIX + type + '-' + optionName,
             input;
 
         // add label
         createElement(
             LABEL, {
-                innerHTML: paramName,
+                innerHTML: lang[optionName] || optionName,
                 htmlFor: inputName
             },
             null,
@@ -420,8 +419,9 @@ H.Popup.prototype = {
                             value
                         );
                     } else {
-                        addInput(
-                            lang[option] || option,
+                        addInput.call(
+                            chart.stockToolbar,
+                            option,
                             'annotation',
                             parentDiv,
                             value
@@ -684,6 +684,7 @@ H.Popup.prototype = {
             // add param fields
             this.indicators.addParamInputs.call(
                 this,
+                chart,
                 'params',
                 fields,
                 seriesType,
@@ -695,13 +696,14 @@ H.Popup.prototype = {
          * create them as inputs. Each input has unique `data-name` attribute,
          * which keeps chain of fields i.e params.styles.fontSize.
          *
-         * @param {Chart} - name of parent to create chain of names
+         * @param {String} - name of parent to create chain of names
+         * @param {Chart} - chart
          * @param {Series} - fields - params which are based for input create
          * @param {String} - indicator type like: sma, ema, etc.
          * @param {HTMLDOMElement} - element where created HTML list is added
          *
          */
-        addParamInputs: function (parentNodeName, fields, type, parentDiv) {
+        addParamInputs: function (chart, parentNode, fields, type, parentDiv) {
             var _self = this,
                 addParamInputs = this.indicators.addParamInputs,
                 addInput = this.addInput,
@@ -709,18 +711,25 @@ H.Popup.prototype = {
 
             objectEach(fields, function (value, fieldName) {
                 // create name like params.styles.fontSize
-                parentFullName = parentNodeName + '.' + fieldName;
+                parentFullName = parentNode + '.' + fieldName;
 
                 if (isObject(value)) {
                     addParamInputs.call(
                         _self,
+                        chart,
                         parentFullName,
                         value,
                         type,
                         parentDiv
                     );
                 } else {
-                    addInput(parentFullName, type, parentDiv, value);
+                    addInput.call(
+                        chart.stockToolbar,
+                        parentFullName,
+                        type,
+                        parentDiv,
+                        [value, 'text'] // all inputs are text type
+                    );
                 }
             });
         },
