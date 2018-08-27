@@ -1065,19 +1065,19 @@ var stockToolsBindings = {
     // Flag types:
     'flag-circlepin': {
         start: bindingsUtils
-            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-elipse.svg)')
+            .addFlagFromForm('circlepin')
     },
     'flag-diamondpin': {
         start: bindingsUtils
-            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-diamond.svg)')
+            .addFlagFromForm('flag')
     },
     'flag-squarepin': {
         start: bindingsUtils
-            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-trapeze.svg)')
+            .addFlagFromForm('squarepin')
     },
     'flag-simplepin': {
         start: bindingsUtils
-            .addFlagFromForm('url(http://utils.highcharts.local/samples/graphics/flag-basic.svg)')
+            .addFlagFromForm('nopin')
     },
     // Other tools:
     'zoom-x': {
@@ -1478,7 +1478,7 @@ extend(H.Toolbar.prototype, {
             allAxesHeight = 0;
 
         function isPercentage(prop) {
-            return defined(prop) && prop.match('%');
+            return defined(prop) && !isNumber(prop) && prop.match('%');
         }
 
         positions = map(yAxes, function (yAxis) {
@@ -1507,6 +1507,42 @@ extend(H.Toolbar.prototype, {
         positions.allAxesHeight = allAxesHeight;
 
         return positions;
+    },
+
+    /**
+     * Get current resize options for each yAxis. Note that each resize is
+     * linked to the next axis, except the last one which shouldn't affect
+     * axes in the navigator. Because indicator can be removed with it's yAxis
+     * in the middle of yAxis array, we need to bind closest yAxes back.
+     *
+     * @param {Array} yAxes - Array of yAxes available in the chart
+     *
+     * @return {Array} An array of resizer options. Format:
+     * `{enabled: Boolean, controlledAxis: { next: [String]}}`
+     * @private
+     */
+    getYAxisResizers: function (yAxes) {
+        var resizers = [];
+
+        each(yAxes, function (yAxis, index) {
+
+            // We have next axis, bind them:
+            if (yAxes[index + 1]) {
+                resizers[index] = {
+                    enabled: true,
+                    controlledAxis: {
+                        next: [yAxes[index + 1].options.id]
+                    }
+                };
+            } else {
+                // Remove binding:
+                resizers[index] = {
+                    enabled: false
+                };
+            }
+        });
+
+        return resizers;
     },
     /**
      * Resize all yAxes (except navigator) to fit the plotting height. Method
@@ -1538,6 +1574,7 @@ extend(H.Toolbar.prototype, {
                 plotHeight,
                 defaultHeight
             ),
+            resizers = this.getYAxisResizers(yAxes),
             allAxesHeight = positions.allAxesHeight,
             changedSpace = defaultHeight;
 
@@ -1606,7 +1643,8 @@ extend(H.Toolbar.prototype, {
             // if (index === 0) debugger;
             yAxes[index].update({
                 height: position.height + '%',
-                top: position.top + '%'
+                top: position.top + '%',
+                resize: resizers[index]
             }, false);
         });
     },
