@@ -303,7 +303,7 @@ H.setOptions({
                     }
                 },
                 saveChart: {
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/save-storage.svg)'
+                    symbol: 'url(http://utils.highcharts.local/samples/graphics/save-chart.svg)'
                 }
             }
         }
