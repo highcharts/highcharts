@@ -1839,7 +1839,7 @@ H.defaultOptions = {
         /**
          * Shared CSS styles for all labels.
          *
-         * @type       {Higcharts.CSSObject}
+         * @type       {Highcharts.CSSObject}
          * @default    {"color": "#333333"}
          * @apioption  labels.style
          */
@@ -2751,7 +2751,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/tooltip/background-border/
          *         Background and border demo
          *
-         * @type       {Highchart.ColorString}
+         * @type       {Highcharts.ColorString}
          * @apioption  tooltip.borderColor
          */
 

@@ -298,6 +298,7 @@ extend(Legend.prototype, {
 
         item.checkbox = createElement('input', {
             type: 'checkbox',
+            className: 'highcharts-legend-checkbox',
             checked: item.selected,
             defaultChecked: item.selected // required by IE7
         }, legend.options.itemCheckboxStyle, legend.chart.container);

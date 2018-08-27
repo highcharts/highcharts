@@ -500,7 +500,7 @@ Series.prototype.alignDataLabel = function (
         }
 
         // Handle justify or crop
-        if (justify) {
+        if (justify && alignTo.height >= 0) { // #8830
             point.isLabelJustified = this.justifyDataLabel(
                 dataLabel,
                 options,

@@ -146,9 +146,10 @@ if (!Array.prototype.some) {
 
         for (; i < len; i++) {
             if (fn.call(ctx, this[i], i, this) === true) {
-                return;
+                return true;
             }
         }
+        return false;
     };
 }
 
