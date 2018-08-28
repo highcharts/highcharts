@@ -44,21 +44,28 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * same time as the chart is initialized, add the series as a configuration
      * option instead. With multiple axes, the `offset` is dynamically adjusted.
      *
-     * @param  {SeriesOptions} options
+     * @sample highcharts/members/chart-addseries/
+     *         Add a series from a button
+     * @sample stock/members/chart-addseries/
+     *         Add a series in Highstock
+     *
+     * @function Highcharts.Chart#addSeries
+     *
+     * @param  {Highcharts.SeriesOptions} options
      *         The config options for the series.
-     * @param  {Boolean} [redraw=true]
+     *
+     * @param  {boolean} [redraw=true]
      *         Whether to redraw the chart after adding.
-     * @param  {AnimationOptions} animation
+     *
+     * @param  {boolean|Highcharts.AnimationOptionsObject} animation
      *         Whether to apply animation, and optionally animation
      *         configuration.
      *
      * @return {Highcharts.Series}
      *         The newly created series object.
      *
-     * @sample highcharts/members/chart-addseries/
-     *         Add a series from a button
-     * @sample stock/members/chart-addseries/
-     *         Add a series in Highstock
+     * @fires Highcharts.Chart#event:addSeries
+     * @fires Highcharts.Chart#event:afterAddSeries
      */
     addSeries: function (options, redraw, animation) {
         var series,
@@ -90,18 +97,25 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * adds expense to the calculations and rendering. When adding data at the
      * same time as the chart is initialized, add the axis as a configuration
      * option instead.
-     * @param  {AxisOptions} options
+     *
+     * @sample highcharts/members/chart-addaxis/
+     *         Add and remove axes
+     *
+     * @function Highcharts.Chart#addAxis
+     *
+     * @param  {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} options
      *         The axis options.
-     * @param  {Boolean} [isX=false]
+     *
+     * @param  {boolean} [isX=false]
      *         Whether it is an X axis or a value axis.
-     * @param  {Boolean} [redraw=true]
+     *
+     * @param  {boolean} [redraw=true]
      *         Whether to redraw the chart after adding.
-     * @param  {AnimationOptions} [animation=true]
+     *
+     * @param  {boolean|Highcharts.AnimationOptionsObject} [animation=true]
      *         Whether and how to apply animation in the redraw.
      *
-     * @sample highcharts/members/chart-addaxis/ Add and remove axes
-     *
-     * @return {Axis}
+     * @return {Highcharts.Axis}
      *         The newly generated Axis object.
      */
     addAxis: function (options, isX, redraw, animation) {
@@ -131,17 +145,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * screen are defined in {@link
      * https://api.highcharts.com/highcharts/loading|the loading options}.
      *
-     * @param  {String} str
-     *         An optional text to show in the loading label instead of the
-     *         default one. The default text is set in {@link
-     *         http://api.highcharts.com/highcharts/lang.loading|lang.loading}.
-     *
      * @sample highcharts/members/chart-hideloading/
      *         Show and hide loading from a button
      * @sample highcharts/members/chart-showloading/
      *         Apply different text labels
      * @sample stock/members/chart-show-hide-loading/
      *         Toggle loading in Highstock
+     *
+     * @function Highcharts.Chart#showLoading
+     *
+     * @param  {string} str
+     *         An optional text to show in the loading label instead of the
+     *         default one. The default text is set in {@link
+     *         http://api.highcharts.com/highcharts/lang.loading|lang.loading}.
+     *
+     * @return {void}
      */
     showLoading: function (str) {
         var chart = this,
@@ -207,13 +225,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Hide the loading layer.
      *
-     * @see    Highcharts.Chart#showLoading
+     * @see Highcharts.Chart#showLoading
+     *
      * @sample highcharts/members/chart-hideloading/
      *         Show and hide loading from a button
      * @sample stock/members/chart-show-hide-loading/
      *         Toggle loading in Highstock
+     *
+     * @function Highcharts.Chart#hideLoading
+     *
+     * @return {void}
      */
     hideLoading: function () {
+
         var options = this.options,
             loadingDiv = this.loadingDiv;
 
@@ -231,6 +255,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             });
             /*= } =*/
         }
+
         this.loadingShown = false;
     },
 
@@ -297,11 +322,18 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * responsive option set}. Switching between `responsive.rules` basically
      * runs `chart.update` under the hood.
      *
-     * @param  {Options} options
+     * @sample highcharts/members/chart-update/
+     *         Update chart geometry
+     *
+     * @function Highcharts.Chart#update
+     *
+     * @param  {Highcharts.Options} options
      *         A configuration object for the new chart options.
-     * @param  {Boolean} [redraw=true]
+     *
+     * @param  {boolean} [redraw=true]
      *         Whether to redraw the chart.
-     * @param  {Boolean} [oneToOne=false]
+     *
+     * @param  {boolean} [oneToOne=false]
      *         When `true`, the `series`, `xAxis` and `yAxis` collections will
      *         be updated one to one, and items will be either added or removed
      *         to match the new updated options. For example, if the chart has
@@ -312,12 +344,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         `series` property will leave all series untouched. If the series
      *         have id's, the new series options will be matched by id, and the
      *         remaining ones removed.
-     * @param  {AnimationOptions} [animation=true]
+     *
+     * @param  {boolean|Highcharts.AnimationOptionsObject} [animation=true]
      *         Whether to apply animation, and optionally animation
      *         configuration.
      *
-     * @sample highcharts/members/chart-update/
-     *         Update chart geometry
+     * @return {void}
+     *
+     * @fires Highcharts.Chart#event:update
+     * @fires Highcharts.Chart#event:afterUpdate
      */
     update: function (options, redraw, oneToOne, animation) {
         var chart = this,
@@ -535,9 +570,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * Shortcut to set the subtitle options. This can also be done from {@link
      * Chart#update} or {@link Chart#setTitle}.
      *
-     * @param  {SubtitleOptions} options
+     * @function Highcharts.Chart#setSubtitle
+     *
+     * @param  {Highcharts.SubtitleOptions} options
      *         New subtitle options. The subtitle text itself is set by the
      *         `options.text` property.
+     *
+     * @return {void}
      */
     setSubtitle: function (options) {
         this.setTitle(undefined, options);
@@ -552,27 +591,35 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * Update point with new options (typically x/y data) and optionally redraw
      * the series.
      *
-     * @param  {Object} options
-     *         The point options. Point options are handled as described under
-     *         the `series.type.data` item for each series type. For example
-     *         for a line series, if options is a single number, the point will
-     *         be given that number as the main y value. If it is an array, it
-     *         will be interpreted as x and y values respectively. If it is an
-     *         object, advanced options are applied.
-     * @param  {Boolean} [redraw=true]
-     *          Whether to redraw the chart after the point is updated. If doing
-     *          more operations on the chart, it is best practice to set
-     *          `redraw` to false and call `chart.redraw()` after.
-     * @param  {AnimationOptions} [animation=true]
-     *         Whether to apply animation, and optionally animation
-     *         configuration.
-     *
      * @sample highcharts/members/point-update-column/
      *         Update column value
      * @sample highcharts/members/point-update-pie/
      *         Update pie slice
      * @sample maps/members/point-update/
      *         Update map area value in Highmaps
+     *
+     * @function Highcharts.Point#update
+     *
+     * @param  {*} options
+     *         The point options. Point options are handled as described under
+     *         the `series.type.data` item for each series type. For example
+     *         for a line series, if options is a single number, the point will
+     *         be given that number as the main y value. If it is an array, it
+     *         will be interpreted as x and y values respectively. If it is an
+     *         object, advanced options are applied.
+     *
+     * @param  {boolean} [redraw=true]
+     *         Whether to redraw the chart after the point is updated. If doing
+     *         more operations on the chart, it is best practice to set
+     *         `redraw` to false and call `chart.redraw()` after.
+     *
+     * @param  {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     *         Whether to apply animation, and optionally animation
+     *         configuration.
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Point#event:update
      */
     update: function (options, redraw, animation, runEvent) {
         var point = this,
@@ -650,14 +697,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
     /**
      * Remove a point and optionally redraw the series and if necessary the axes
-     * @param  {Boolean} redraw
-     *         Whether to redraw the chart or wait for an explicit call. When
-     *         doing more operations on the chart, for example running
-     *         `point.remove()` in a loop, it is best practice to set `redraw`
-     *         to false and call `chart.redraw()` after.
-     * @param  {AnimationOptions} [animation=false]
-     *         Whether to apply animation, and optionally animation
-     *         configuration.
      *
      * @sample highcharts/plotoptions/series-point-events-remove/
      *         Remove point and confirm
@@ -665,6 +704,20 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *         Remove pie slice
      * @sample maps/members/point-remove/
      *         Remove selected points in Highmaps
+     *
+     * @function Highcharts.Point#remove
+     *
+     * @param  {boolean} redraw
+     *         Whether to redraw the chart or wait for an explicit call. When
+     *         doing more operations on the chart, for example running
+     *         `point.remove()` in a loop, it is best practice to set `redraw`
+     *         to false and call `chart.redraw()` after.
+     *
+     * @param  {boolean|Highcharts.AnimationOptionsObject} [animation=false]
+     *         Whether to apply animation, and optionally animation
+     *         configuration.
+     *
+     * @return {void}
      */
     remove: function (redraw, animation) {
         this.series.removePoint(
@@ -682,25 +735,6 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * the end, or by giving it an X value, to the start or in the middle of the
      * series.
      *
-     * @param  {Number|Array|Object} options
-     *         The point options. If options is a single number, a point with
-     *         that y value is appended to the series.If it is an array, it will
-     *         be interpreted as x and y values respectively. If it is an
-     *         object, advanced options as outlined under `series.data` are
-     *         applied.
-     * @param  {Boolean} [redraw=true]
-     *         Whether to redraw the chart after the point is added. When adding
-     *         more than one point, it is highly recommended that the redraw
-     *         option be set to false, and instead {@link Chart#redraw}
-     *         is explicitly called after the adding of points is finished.
-     *         Otherwise, the chart will redraw after adding each point.
-     * @param  {Boolean} [shift=false]
-     *         If true, a point is shifted off the start of the series as one is
-     *         appended to the end.
-     * @param  {AnimationOptions} [animation]
-     *         Whether to apply animation, and optionally animation
-     *         configuration.
-     *
      * @sample highcharts/members/series-addpoint-append/
      *         Append point
      * @sample highcharts/members/series-addpoint-append-and-shift/
@@ -715,6 +749,32 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *         Append and shift in Highstock
      * @sample maps/members/series-addpoint/
      *         Add a point in Highmaps
+     *
+     * @function Highcharts.Series#addPoint
+     *
+     * @param  {number|Array<number>|any} options
+     *         The point options. If options is a single number, a point with
+     *         that y value is appended to the series.If it is an array, it will
+     *         be interpreted as x and y values respectively. If it is an
+     *         object, advanced options as outlined under `series.data` are
+     *         applied.
+     *
+     * @param  {boolean} [redraw=true]
+     *         Whether to redraw the chart after the point is added. When adding
+     *         more than one point, it is highly recommended that the redraw
+     *         option be set to false, and instead {@link Chart#redraw}
+     *         is explicitly called after the adding of points is finished.
+     *         Otherwise, the chart will redraw after adding each point.
+     *
+     * @param  {boolean} [shift=false]
+     *         If true, a point is shifted off the start of the series as one is
+     *         appended to the end.
+     *
+     * @param  {boolean|Highcharts.AnimationOptionsObject} [animation]
+     *         Whether to apply animation, and optionally animation
+     *         configuration.
+     *
+     * @return {void}
      */
     addPoint: function (options, redraw, shift, animation) {
         var series = this,
@@ -796,20 +856,28 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * that is not instanciated because it is outside the view or subject to
      * Highstock data grouping.
      *
-     * @param  {Number} i
+     * @sample highcharts/members/series-removepoint/
+     *         Remove cropped point
+     *
+     * @function Highcharts.Series#removePoint
+     *
+     * @param  {number} i
      *         The index of the point in the {@link Highcharts.Series.data|data}
      *         array.
-     * @param  {Boolean} [redraw=true]
+     *
+     * @param  {boolean} [redraw=true]
      *         Whether to redraw the chart after the point is added. When
      *         removing more than one point, it is highly recommended that the
      *         `redraw` option be set to `false`, and instead {@link
      *         Highcharts.Chart#redraw} is explicitly called after the adding of
      *         points is finished.
-     * @param  {AnimationOptions} [animation]
+     *
+     * @param  {boolean|Highcharts.AnimationOptionsObject} [animation]
      *         Whether and optionally how the series should be animated.
      *
-     * @sample highcharts/members/series-removepoint/
-     *         Remove cropped point
+     * @return {void}
+     *
+     * @fires Highcharts.Point#event:remove
      */
     removePoint: function (i, redraw, animation) {
 
@@ -858,17 +926,25 @@ extend(Series.prototype, /** @lends Series.prototype */ {
     /**
      * Remove a series and optionally redraw the chart.
      *
-     * @param  {Boolean} [redraw=true]
-     *         Whether to redraw the chart or wait for an explicit call to
-     *         {@link Highcharts.Chart#redraw}.
-     * @param  {AnimationOptions} [animation]
-     *         Whether to apply animation, and optionally animation
-     *         configuration
-     * @param  {Boolean} [withEvent=true]
-     *         Used internally, whether to fire the series `remove` event.
-     *
      * @sample highcharts/members/series-remove/
      *         Remove first series from a button
+     *
+     * @function Highcharts.Series#remove
+     *
+     * @param  {boolean} [redraw=true]
+     *         Whether to redraw the chart or wait for an explicit call to
+     *         {@link Highcharts.Chart#redraw}.
+     *
+     * @param  {boolean|Highcharts.AnimationOptionsObject} [animation]
+     *         Whether to apply animation, and optionally animation
+     *         configuration.
+     *
+     * @param  {boolean} [withEvent=true]
+     *         Used internally, whether to fire the series `remove` event.
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Series#event:remove
      */
     remove: function (redraw, animation, withEvent) {
         var series = this,
@@ -903,18 +979,25 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * performance expensive than some other utility methods like {@link
      * Series#setData} or {@link Series#setVisible}.
      *
-     * @param  {SeriesOptions} options
-     *         New options that will be merged with the series' existing
-     *         options.
-     * @param  {Boolean} [redraw=true]
-     *         Whether to redraw the chart after the series is altered. If doing
-     *         more operations on the chart, it is a good idea to set redraw to
-     *         false and call {@link Chart#redraw} after.
-     *
      * @sample highcharts/members/series-update/
      *         Updating series options
      * @sample maps/members/series-update/
      *         Update series options in Highmaps
+     *
+     * @function Highcharts.Series#update
+     *
+     * @param  {Highcharts.SeriesOptions} options
+     *         New options that will be merged with the series' existing
+     *         options.
+     *
+     * @param  {boolean} [redraw=true]
+     *         Whether to redraw the chart after the series is altered. If doing
+     *         more operations on the chart, it is a good idea to set redraw to
+     *         false and call {@link Chart#redraw} after.
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Series#event:afterUpdate
      */
     update: function (newOptions, redraw) {
         var series = this,
@@ -1051,10 +1134,16 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * with the existing options, so only new or altered options need to be
      * specified.
      *
-     * @param  {Object} options
+     * @sample highcharts/members/axis-update/
+     *         Axis update demo
+     *
+     * @function Highcharts.Axis#update
+     *
+     * @param  {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} options
      *         The new options that will be merged in with existing options on
      *         the axis.
-     * @sample highcharts/members/axis-update/ Axis update demo
+     *
+     * @return {void}
      */
     update: function (options, redraw) {
         var chart = this.chart,
@@ -1091,10 +1180,15 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Remove the axis from the chart.
      *
-     * @param {Boolean} [redraw=true] Whether to redraw the chart following the
-     * remove.
+     * @sample highcharts/members/chart-addaxis/
+     *         Add and remove axes
      *
-     * @sample highcharts/members/chart-addaxis/ Add and remove axes
+     * @function Highcharts.Axis#remove
+     *
+     * @param  {boolean} [redraw=true]
+     *         Whether to redraw the chart following the remove.
+     *
+     * @return {void}
      */
     remove: function (redraw) {
         var chart = this.chart,
@@ -1133,11 +1227,18 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Update the axis title by options after render time.
      *
-     * @param  {TitleOptions} titleOptions
+     * @sample highcharts/members/axis-settitle/
+     *         Set a new Y axis title
+     *
+     * @function Highcharts.Axis#setTitle
+     *
+     * @param  {Highcharts.XAxisTitleOptions|Highcharts.YAxisTitleOptions|Highcharts.ZAxisTitleOptions} titleOptions
      *         The additional title options.
-     * @param  {Boolean} [redraw=true]
+     *
+     * @param  {boolean} [redraw=true]
      *         Whether to redraw the chart after setting the title.
-     * @sample highcharts/members/axis-settitle/ Set a new Y axis title
+     *
+     * @return {void}
      */
     setTitle: function (titleOptions, redraw) {
         this.update({ title: titleOptions }, redraw);
@@ -1145,10 +1246,19 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
     /**
      * Set new axis categories and optionally redraw.
-     * @param {Array<String>} categories - The new categories.
-     * @param {Boolean} [redraw=true] - Whether to redraw the chart.
-     * @sample highcharts/members/axis-setcategories/ Set categories by click on
-     * a button
+     *
+     * @sample highcharts/members/axis-setcategories/
+     *         Set categories by click on a button
+     *
+     * @function Highcharts.Axis#setCategories
+     *
+     * @param  {Array<string>} categories
+     *         The new categories.
+     *
+     * @param  {boolean} [redraw=true]
+     *         Whether to redraw the chart.
+     *
+     * @return {void}
      */
     setCategories: function (categories, redraw) {
         this.update({ categories: categories }, redraw);
