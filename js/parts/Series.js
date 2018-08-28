@@ -3163,7 +3163,9 @@ H.Series = H.seriesType('line', null, { // base series options
      *
      * @param  {Array<*>} data
      *         Takes an array of data in the same format as described under
-     *         `series.typedata` for the given series type.
+     *         `series.{type}.data` for the given series type, for example a
+     *         line series would take data in the form described under
+     *         [series.line.data](https://api.highcharts.com/highcharts/series.line.data).
      *
      * @param  {boolean|undefined} [redraw=true]
      *         Whether to redraw the chart after the series is altered. If doing
@@ -3414,8 +3416,10 @@ H.Series = H.seriesType('line', null, { // base series options
 
             // only crop if it's actually spilling out
             } else if (
-                processedXData[0] < min ||
-                processedXData[dataLength - 1] > max
+                series.yData && (
+                    processedXData[0] < min ||
+                    processedXData[dataLength - 1] > max
+                )
             ) {
                 croppedData = this.cropData(
                     series.xData,
