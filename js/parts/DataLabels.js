@@ -452,6 +452,9 @@ Series.prototype.drawDataLabels = function () {
                         attr.text = labelText;
                     }
 
+                    // Store data label options for later access
+                    dataLabel.options = labelOptions;
+
                     dataLabel.attr(attr);
                     /*= if (build.classic) { =*/
                     // Styles must be applied before add in order to read text
