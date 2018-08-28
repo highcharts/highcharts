@@ -27,7 +27,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
                 align: 'left'
             },
             height: '80%',
-            lineWidth: 2,
             resize: {
                 enabled: true
             }
@@ -37,8 +36,7 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
             },
             top: '80%',
             height: '20%',
-            offset: 0,
-            lineWidth: 2
+            offset: 0
         }],
         tooltip: {
             shape: 'square',

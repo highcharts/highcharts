@@ -1597,13 +1597,19 @@ extend(H.Toolbar.prototype, {
         var resizers = [];
 
         each(yAxes, function (yAxis, index) {
+            var nextYAxis = yAxes[index + 1];
 
             // We have next axis, bind them:
-            if (yAxes[index + 1]) {
+            if (nextYAxis) {
                 resizers[index] = {
                     enabled: true,
                     controlledAxis: {
-                        next: [yAxes[index + 1].options.id]
+                        next: [
+                            pick(
+                                nextYAxis.options.id,
+                                nextYAxis.options.index
+                            )
+                        ]
                     }
                 };
             } else {
