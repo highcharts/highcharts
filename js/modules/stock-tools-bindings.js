@@ -14,6 +14,7 @@ var addEvent = H.addEvent,
     doc = H.doc,
     each = H.each,
     extend = H.extend,
+    fireEvent = H.fireEvent,
     grep = H.grep,
     inArray = H.inArray,
     isNumber = H.isNumber,
@@ -47,7 +48,7 @@ var bindingsUtils = {
      * @private
      */
     isNotNavigatorYAxis: function (axis) {
-        return axis.userOptions.className !== 'highcharts-navigator-yaxis';
+        return axis.userOptions.className !== PREFIX + 'navigator-yaxis';
     },
     /**
      * Update each point after specified index, most of the annotations use
@@ -125,7 +126,8 @@ var bindingsUtils = {
     },
     /**
      * Generates function which will add a flag series using modal in GUI.
-     * Method uses internally `Toolbar.showForm(type, options, callback)`.
+     * Method fires an event "showForm" with config:
+     * `{type, options, callback}`.
      *
      * Example: Toolbar.utils.addFlagFromForm('url(...)') - will generate
      * function that shows modal in GUI.
@@ -141,16 +143,18 @@ var bindingsUtils = {
                 getFieldType = toolbar.utils.getFieldType,
                 point = bindingsUtils.attractToPoint(e, chart);
 
-            if (toolbar.showForm) {
-                toolbar.showForm(
-                    'flag',
+            fireEvent(
+                toolbar,
+                'showForm',
+                {
+                    formType: 'flag',
                     // Enabled options:
-                    {
+                    options: {
                         title: ['A', getFieldType('A')],
                         name: ['Flag A', getFieldType('Flag A')]
                     },
                     // Callback on submit:
-                    function (data) {
+                    onSubmit: function (data) {
                         var pointConfig = {
                             x: point.x,
                             y: point.y
@@ -169,26 +173,34 @@ var bindingsUtils = {
                                         var point = this,
                                             options = point.options;
 
-                                        toolbar.showForm(
-                                            'annotation-toolbar',
+                                        fireEvent(
+                                            toolbar,
+                                            'showForm',
                                             {
-                                                title: [
-                                                    options.title,
-                                                    getFieldType(options.title)
-                                                ],
-                                                name: [
-                                                    options.name,
-                                                    getFieldType(options.name)
-                                                ],
-                                                type: 'Flag'
-                                            },
-                                            function () {
-                                                point.update(
-                                                    toolbar.fieldsToOptions(
-                                                        data.fields,
-                                                        {}
-                                                    )
-                                                );
+                                                formType: 'annotation-toolbar',
+                                                options: {
+                                                    title: [
+                                                        options.title,
+                                                        getFieldType(
+                                                            options.title
+                                                        )
+                                                    ],
+                                                    name: [
+                                                        options.name,
+                                                        getFieldType(
+                                                            options.name
+                                                        )
+                                                    ],
+                                                    type: 'Flag'
+                                                },
+                                                onSubmit: function () {
+                                                    point.update(
+                                                        toolbar.fieldsToOptions(
+                                                            data.fields,
+                                                            {}
+                                                        )
+                                                    );
+                                                }
                                             }
                                         );
                                     }
@@ -196,8 +208,8 @@ var bindingsUtils = {
                             }
                         });
                     }
-                );
-            }
+                }
+            );
         };
     },
     manageIndicators: function (data) {
@@ -259,6 +271,14 @@ var bindingsUtils = {
             }
             chart.addSeries(seriesConfig, false);
         }
+
+        fireEvent(
+            toolbar,
+            'deselectButton',
+            {
+                button: toolbar.selectedButtonElement
+            }
+        );
 
         chart.redraw();
     }
@@ -1150,7 +1170,8 @@ var stockToolsBindings = {
                 button.firstChild.style['background-image'] =
                     'url("http://utils.highcharts.local/samples/graphics/current-price-hide.svg")';
             }
-            button.classList.remove('highcharts-active');
+
+            fireEvent(this, 'deselectButton', { button: button });
 
             series.update({
                 // line
@@ -1172,16 +1193,18 @@ var stockToolsBindings = {
         init: function () {
             var toolbar = this;
 
-            if (this.showForm) {
-                this.showForm(
-                    'indicators',
-                    {},
+            fireEvent(
+                toolbar,
+                'showForm',
+                {
+                    formType: 'indicators',
+                    options: {},
                     // Callback on submit:
-                    function (data) {
+                    onSubmit: function (data) {
                         toolbar.utils.manageIndicators.call(toolbar, data);
                     }
-                );
-            }
+                }
+            );
         }
     },
     'toggle-annotations': {
@@ -1199,7 +1222,8 @@ var stockToolsBindings = {
                 button.firstChild.style['background-image'] =
                     'url("http://utils.highcharts.local/samples/graphics/annotations-visible.svg")';
             }
-            button.classList.remove('highcharts-active');
+
+            fireEvent(this, 'deselectButton', { button: button });
         }
     },
     'save-chart': {
@@ -1230,7 +1254,7 @@ var stockToolsBindings = {
             });
 
             H.win.localStorage.setItem(
-                'highcharts-chart',
+                PREFIX + 'chart',
                 JSON.stringify({
                     annotaitons: annotations,
                     indicators: indicators,
@@ -1314,16 +1338,17 @@ extend(H.Toolbar.prototype, {
         var toolbar = this;
 
         // If submenu button is clicked, don't fire bubbled event in the parent
-        if (button === clickEvent.target.parentNode) {
+        // Or if arrow is clicked, don't fire it too.
+        if (
+            clickEvent.target &&
+            clickEvent.target.parentNode === button &&
+            !clickEvent.target.classList.contains(PREFIX + 'submenu-item-arrow')
+        ) {
 
             toolbar.selectedButton = events;
             toolbar.selectedButtonElement = button;
 
-            // Unslect other active buttons
-            toolbar.unselectAllButtons(button);
-
-            // Set active class on the current button
-            toolbar.selectButton(button);
+            fireEvent(toolbar, 'selectButton', { button: button });
 
             // Call "init" event, for example to open modal window
             if (events.init) {
@@ -1353,9 +1378,7 @@ extend(H.Toolbar.prototype, {
             // TO DO: Polyfill for IE11?
             !clickEvent.target.closest('.highcharts-popup')
         ) {
-            if (toolbar.popup.closePopup) {
-                toolbar.popup.closePopup();
-            }
+            fireEvent(toolbar, 'closePopUp');
             toolbar.deselectAnnotation();
         }
 
@@ -1377,9 +1400,13 @@ extend(H.Toolbar.prototype, {
                 toolbar.mouseMoveEvent = toolbar.nextEvent =
                     selectedButton.steps[toolbar.stepIndex];
             } else {
-                if (toolbar.selectButton) {
-                    toolbar.selectButton(toolbar.selectedButtonElement);
-                }
+                fireEvent(
+                    toolbar,
+                    'deselectButton',
+                    {
+                        button: toolbar.selectedButtonElement
+                    }
+                );
                 toolbar.steps = false;
                 toolbar.selectedButton = null;
                 // First click is also the last one:
@@ -1409,9 +1436,13 @@ extend(H.Toolbar.prototype, {
                     toolbar.mouseMoveEvent = toolbar.nextEvent =
                         selectedButton.steps[toolbar.stepIndex];
                 } else {
-                    if (toolbar.selectButton) {
-                        toolbar.selectButton(toolbar.selectedButtonElement);
-                    }
+                    fireEvent(
+                        toolbar,
+                        'deselectButton',
+                        {
+                            button: toolbar.selectedButtonElement
+                        }
+                    );
                     // That was the last step, call end():
                     if (selectedButton.end) {
                         selectedButton.end.call(
@@ -1896,11 +1927,13 @@ function selectableAnnotation(annotationType) {
             toolbar.activeAnnotation = annotation;
             annotation.setControlPointsVisibility(true);
 
-            if (toolbar.showForm) {
-                toolbar.showForm(
-                    'annotation-toolbar',
-                    toolbar.annotationToFields(annotation),
-                    function (data) {
+            fireEvent(
+                toolbar,
+                'showForm',
+                {
+                    formType: 'annotation-toolbar',
+                    options: toolbar.annotationToFields(annotation),
+                    onSubmit: function (data) {
 
                         var config = annotation.options;
 
@@ -1914,14 +1947,12 @@ function selectableAnnotation(annotationType) {
                             annotation.update(config);
                         }
                     }
-                );
-            }
+                }
+            );
         } else {
             // Deselect current:
             toolbar.deselectAnnotation();
-            if (toolbar.popup.closePopup) {
-                toolbar.popup.closePopup();
-            }
+            fireEvent(toolbar, 'closePopUp');
         }
         // Let bubble event to chart.click:
         event.activeAnnotation = true;

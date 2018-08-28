@@ -918,3 +918,24 @@ H.Toolbar.prototype = {
         separator: PREFIX + 'separator'
     }
 };
+
+// Comunication with bindings:
+addEvent(H.Toolbar, 'selectButton', function (event) {
+    // Unslect other active buttons
+    this.unselectAllButtons(event.button);
+
+    // Set active class on the current button
+    this.selectButton(event.button);
+});
+
+addEvent(H.Toolbar, 'deselectButton', function (event) {
+    this.selectButton(event.button);
+});
+
+addEvent(H.Toolbar, 'showForm', function (config) {
+    this.showForm(config.formType, config.options, config.onSubmit);
+});
+
+addEvent(H.Toolbar, 'closePopUp', function () {
+    this.popup.closePopup();
+});

@@ -57,7 +57,10 @@ QUnit.test('Bindings general tests', function (assert) {
             bindings[name],
             {
                 target: {
-                    parentNode: button
+                    parentNode: button,
+                    classList: {
+                        contains: Highcharts.noop
+                    }
                 }
             }
         );
