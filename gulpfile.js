@@ -415,9 +415,13 @@ const cleanCode = () => {
 };
 
 const cleanDist = () => {
-    return removeDirectory('./build/dist').then(() => {
-        console.log('Successfully removed dist directory.');
-    });
+    return removeDirectory('./build/dist')
+        .then(() => {
+            console.log('Successfully removed dist directory.');
+        })
+        .catch(() => {
+            console.log('Tried to remove ./build/dist but it was never there. Moving on...')
+        });
 };
 
 const cleanApi = () => {
