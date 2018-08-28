@@ -13,6 +13,8 @@ var addEvent = H.addEvent,
     each = H.each,
     objectEach = H.objectEach,
     pick = H.pick,
+    wrap = H.wrap,
+    isString = H.isString,
     isObject = H.isObject,
     isArray = H.isArray,
     PREFIX = 'highcharts-',
@@ -25,6 +27,21 @@ var addEvent = H.addEvent,
     SPAN = 'span',
     UL = 'ul',
     LI = 'li';
+
+// onContainerMouseDown blocks internal popup events, due to e.preventDefault.
+// Related issue #4606
+
+wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
+
+    var popupClass = e.target.className;
+
+    // elements is not in popup
+    if (!(isString(popupClass) &&
+        popupClass.indexOf(PREFIX + 'popup-field') >= 0)
+    ) {
+        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    }
+});
 
 H.Popup = function (parentDiv) {
     this.init(parentDiv);
@@ -110,8 +127,7 @@ H.Popup.prototype = {
      */
     addInput: function (optionName, type, parentDiv, value) {
         var lang = this.lang,
-            inputName = PREFIX + type + '-' + optionName,
-            input;
+            inputName = PREFIX + type + '-' + optionName;
 
         // add label
         createElement(
@@ -124,23 +140,17 @@ H.Popup.prototype = {
         );
 
         // add input
-        input = createElement(
+        createElement(
             INPUT,
             {
                 name: inputName,
                 value: value[0],
-                type: value[1]
+                type: value[1],
+                className: PREFIX + 'popup-field'
             },
             null,
             parentDiv
-        );
-
-        input.setAttribute(PREFIX + 'data-name', optionName);
-
-        // overwrite Highcharts default unfocus on inputs
-        addEvent(input, 'click', function () {
-            this.focus();
-        });
+        ).setAttribute(PREFIX + 'data-name', optionName);
     },
     /*
      * Create button.
@@ -611,7 +621,8 @@ H.Popup.prototype = {
             selectBox = createElement(
                 SELECT,
                 {
-                    name: PREFIX + 'type-' + type
+                    name: PREFIX + 'type-' + type,
+                    className: PREFIX + 'popup-field'
                 },
                 null,
                 parentDiv
