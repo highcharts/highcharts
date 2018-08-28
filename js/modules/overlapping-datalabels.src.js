@@ -43,7 +43,12 @@ addEvent(Chart, 'render', function collectAndHide() {
     });
 
     each(this.series || [], function (series) {
-        if (series.visible) { // #3866
+        var dlOptions = series.options.dataLabels;
+
+        if (
+            series.visible &&
+            !(dlOptions.enabled === false && !series._hasPointLabels)
+        ) { // #3866
             each(series.points, function (point) {
                 var dataLabels = (
                     isArray(point.dataLabels) ?
