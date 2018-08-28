@@ -231,7 +231,7 @@ var bindingsUtils = {
 
         if (data.actionType === 'edit') {
             toolbar.fieldsToOptions(data.fields, seriesConfig);
-            series = chart.get(data.id);
+            series = chart.get(data.seriesId);
 
             if (series) {
                 series.update(seriesConfig, false);

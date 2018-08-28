@@ -194,22 +194,25 @@ H.Popup.prototype = {
     getFields: function (parentDiv, type) {
 
         var inputList = parentDiv.querySelectorAll('input'),
-            seriesId = parentDiv.querySelectorAll('select > option:checked')[0],
+            linkedTo = parentDiv.querySelectorAll('select > option:checked')[0],
+            seriesId,
             param,
             fieldsOutput;
 
         fieldsOutput = {
             actionType: type,
-            seriesId: seriesId && seriesId.getAttribute('data-series-id'),
-            linkedTo: seriesId && seriesId.getAttribute('value'),
+            linkedTo: linkedTo && linkedTo.getAttribute('value'),
             fields: { }
         };
 
         each(inputList, function (input) {
             param = input.getAttribute(PREFIX + 'data-name');
+            seriesId = input.getAttribute(PREFIX + 'data-series-id');
 
             // params
-            if (param) {
+            if (seriesId) {
+                fieldsOutput.seriesId = input.value;
+            } else if (param) {
                 fieldsOutput.fields[param] = input.value;
             } else {
                 // type like sma / ema
@@ -534,6 +537,7 @@ H.Popup.prototype = {
                 series = isEdit ? chart.series : // EDIT mode
                                 defaultOptions.plotOptions, // ADD mode
                 addFormFields = this.indicators.addFormFields,
+                rhsColWrapper,
                 indicatorList,
                 item;
 
@@ -541,6 +545,9 @@ H.Popup.prototype = {
             indicatorList = createElement(UL, {
                 className: PREFIX + 'indicator-list'
             }, null, lhsCol);
+
+            rhsColWrapper = rhsCol
+                .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
 
             objectEach(series, function (serie, value) {
                 var seriesOptions = serie.options;
@@ -559,13 +566,27 @@ H.Popup.prototype = {
                     }, null, indicatorList);
 
                     addEvent(item, 'click', function () {
+
                         addFormFields.call(
                             _self,
                             chart,
                             isEdit ? serie : series[indicatorNameType.type],
                             indicatorNameType.type,
-                            rhsCol
+                            rhsColWrapper
                         );
+
+                        // add hidden input with series.id
+                        if (isEdit && serie.options) {
+                            createElement(INPUT, {
+                                type: 'hidden',
+                                name: PREFIX + 'id-' + indicatorNameType.type,
+                                value: serie.options.id
+                            }, null, rhsColWrapper)
+                            .setAttribute(
+                                PREFIX + 'data-series-id',
+                                serie.options.id
+                            );
+                        }
                     });
                 }
             });
@@ -637,7 +658,7 @@ H.Popup.prototype = {
                     seriesOptions.id &&
                     seriesOptions.id !== PREFIX + 'navigator-series'
                     ) {
-                    var optionSelect = createElement(
+                    createElement(
                         OPTION,
                         {
                             innerHTML: seriesOptions.name || seriesOptions.id,
@@ -645,11 +666,6 @@ H.Popup.prototype = {
                         },
                         null,
                         selectBox
-                    );
-
-                    optionSelect.setAttribute(
-                        'data-series-id',
-                        seriesOptions.id
                     );
                 }
             });
@@ -667,12 +683,8 @@ H.Popup.prototype = {
          * @param {HTMLDOMElement} - element where created HTML list is added
          *
          */
-        addFormFields: function (chart, series, seriesType, parentDiv) {
-            var fields = series.params || series.options.params,
-                rhsColWrapper;
-
-            rhsColWrapper = parentDiv
-                .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
+        addFormFields: function (chart, series, seriesType, rhsColWrapper) {
+            var fields = series.params || series.options.params;
 
             // reset current content
             rhsColWrapper.innerHTML = '';
