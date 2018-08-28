@@ -319,7 +319,7 @@ QUnit.test('Bindings general tests', function (assert) {
             chart.stockToolbar,
             {
                 actionType: 'remove',
-                id: chart.series[chart.series.length - 2].options.id
+                seriesId: chart.series[chart.series.length - 2].options.id
             }
         );
 

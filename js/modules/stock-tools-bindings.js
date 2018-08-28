@@ -237,7 +237,7 @@ var bindingsUtils = {
                 series.update(seriesConfig, false);
             }
         } else if (data.actionType === 'remove') {
-            series = chart.get(data.id);
+            series = chart.get(data.seriesId);
             if (series) {
                 yAxis = series.yAxis;
 
