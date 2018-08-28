@@ -655,6 +655,7 @@ H.Popup.prototype = {
                 seriesOptions = serie.options;
 
                 if (
+                    !seriesOptions.params &&
                     seriesOptions.id &&
                     seriesOptions.id !== PREFIX + 'navigator-series'
                     ) {
