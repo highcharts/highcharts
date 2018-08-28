@@ -25,6 +25,29 @@ See [Bower documentation](https://bower.io/) on how to get started with Bower.
 bower install highcharts
 ```
 
+## Load Highcharts as an AMD module
+Highcharts is compatible with AMD module loaders (such as RequireJS). Module files require an initialization step in order to reference Highcharts. To accomplish this, pass Highcharts to the function returned by loading the module. The following example demonstrates loading Highcharts along with two modules using RequireJS. No special RequireJS config is necessary for this example to work.
+```js
+requirejs([
+    'path/to/highcharts.js',
+    'path/to/modules/exporting.js',
+    'path/to/modules/accessibility.src.js'
+], function (Highcharts, exporting, accessibility) {
+    // This function runs when the above files have been loaded
+
+    // We need to initialize module files and pass in Highcharts
+    exporting(Highcharts); // Load exporting before accessibility
+    accessibility(Highcharts);
+
+    // Create a test chart
+    Highcharts.chart('container', {
+        series: [{
+            data: [1,2,3,4,5]
+        }]
+    });
+});
+```
+
 ## Load Highcharts as a CommonJS module
 Highcharts is using an UMD module pattern, as a result it has support for CommonJS.
 *The following examples presumes you are using npm to install Highcharts, see [Download and install Highcharts](#download-and-install-highcharts) for more details.*
