@@ -287,6 +287,7 @@ QUnit.test('Bindings general tests', function (assert) {
         chart.stockToolbar.utils.manageIndicators.call(
             chart.stockToolbar,
             {
+                actionType: 'add',
                 linkedTo: 'aapl',
                 fields: {
                     'params.index': '0',
@@ -317,7 +318,7 @@ QUnit.test('Bindings general tests', function (assert) {
         chart.stockToolbar.utils.manageIndicators.call(
             chart.stockToolbar,
             {
-                remove: true,
+                actionType: 'remove',
                 id: chart.series[chart.series.length - 2].options.id
             }
         );

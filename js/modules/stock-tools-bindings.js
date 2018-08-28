@@ -229,7 +229,14 @@ var bindingsUtils = {
             yAxis,
             series;
 
-        if (data.remove) {
+        if (data.actionType === 'edit') {
+            toolbar.fieldsToOptions(data.fields, seriesConfig);
+            series = chart.get(data.id);
+
+            if (series) {
+                series.update(seriesConfig, false);
+            }
+        } else if (data.actionType === 'remove') {
             series = chart.get(data.id);
             if (series) {
                 yAxis = series.yAxis;
