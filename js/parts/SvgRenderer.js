@@ -114,24 +114,6 @@
  */
 
 /**
- * A rectangle.
- *
- * @typedef {object} Highcharts.RectangleObject
- *
- * @property {number} height
- *           Height of the rectangle.
- *
- * @property {number} width
- *           Width of the rectangle.
- *
- * @property {number} x
- *           Horizontal position of the rectangle.
- *
- * @property {number} y
- *           Vertical position of the rectangle.
- */
-
-/**
  * Defines the start position and the end position for a gradient relative
  * to the shape.
  *
@@ -168,18 +150,21 @@
  */
 
 /**
- * Serialized form of an SVG definition, including children. Some key
- * property names are reserved: tagName, textContent, and children.
+ * A rectangle.
  *
- * @typedef {object} Highcharts.SVGDefinitionObject
+ * @typedef {object} Highcharts.RectangleObject
  *
- * @property {number|string|Array<Highcharts.SVGDefinitionObject>} [key:string]
+ * @property {number} height
+ *           Height of the rectangle.
  *
- * @property {Array<Highcharts.SVGDefinitionObject>|undefined} [children]
+ * @property {number} width
+ *           Width of the rectangle.
  *
- * @property {string|undefined} [tagName]
+ * @property {number} x
+ *           Horizontal position of the rectangle.
  *
- * @property {string|undefined} [textContent]
+ * @property {number} y
+ *           Vertical position of the rectangle.
  */
 
 /**
@@ -248,6 +233,21 @@
  *
  * @property {number} start
  *           The start angle of an `arc` symbol.
+ */
+
+/**
+ * Serialized form of an SVG definition, including children. Some key
+ * property names are reserved: tagName, textContent, and children.
+ *
+ * @interface Highcharts.SVGDefinitionObject
+ *
+ * @property {number|string|Array<Highcharts.SVGDefinitionObject>} [key:string]
+ *
+ * @property {Array<Highcharts.SVGDefinitionObject>|undefined} [children]
+ *
+ * @property {string|undefined} [tagName]
+ *
+ * @property {string|undefined} [textContent]
  */
 
 'use strict';
