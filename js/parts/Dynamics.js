@@ -57,7 +57,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param  {boolean} [redraw=true]
      *         Whether to redraw the chart after adding.
      *
-     * @param  {boolean|Highcharts.AnimationOptionsObject} animation
+     * @param  {boolean|Highcharts.AnimationOptionsObject} [animation]
      *         Whether to apply animation, and optionally animation
      *         configuration.
      *
