@@ -65,8 +65,15 @@ Highcharts.setOptions({
          * export menu and provides functions like `Chart.getCSV`,
          * `Chart.getTable`, `Chart.getDataRows` and `Chart.viewData`.
          *
+         * The XLS converter is limited and only creates a HTML string that is
+         * passed for download, which works but creates a warning before
+         * opening. The workaround for this is to use a third party XLSX
+         * converter, as demonstrated in the sample below.
+         *
          * @sample  highcharts/export-data/categorized/ Categorized data
          * @sample  highcharts/export-data/stock-timeaxis/ Highstock time axis
+         * @sample  highcharts/export-data/xlsx/
+         *          Using a third party XLSX converter
          *
          * @since 6.0.0
          */
