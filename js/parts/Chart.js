@@ -2030,7 +2030,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#addCredits
      *
-     * @param  {Highcharts.CreditOptions} options
+     * @param  {Highcharts.CreditsOptions} options
      *         A configuration object for the new credits.
      *
      * @return {void}
