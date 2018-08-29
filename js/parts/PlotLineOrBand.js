@@ -3,6 +3,19 @@
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * Options for plot bands on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotBandsOptions|Highcharts.YAxisPlotBandsOptions|Highcharts.ZAxisPlotBandsOptions} Highcharts.AxisPlotBandsOptions
+ */
+
+/**
+ * Options for plot lines on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotLinesOptions|Highcharts.YAxisPlotLinesOptions|Highcharts.ZAxisPlotLinesOptions} Highcharts.AxisPlotLinesOptions
+ */
+
 'use strict';
 import H from './Globals.js';
 import Axis from './Axis.js';
@@ -15,9 +28,16 @@ var arrayMax = H.arrayMax,
     erase = H.erase,
     merge = H.merge,
     pick = H.pick;
-/*
+
+/**
  * The object wrapper for plot lines and plot bands
- * @param {Object} options
+ *
+ * @private
+ * @class Highcharts.PlotLineOrBand
+ *
+ * @param {Highcharts.Axis} axis
+ *
+ * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} options
  */
 H.PlotLineOrBand = function (axis, options) {
     this.axis = axis;
@@ -33,6 +53,10 @@ H.PlotLineOrBand.prototype = {
     /**
      * Render the plot line or plot band. If it is already existing,
      * move it.
+     *
+     * @function Highcharts.PlotLineOrBand#render
+     *
+     * @return {void}
      */
     render: function () {
         var plotLine = this,
@@ -242,20 +266,26 @@ H.PlotLineOrBand.prototype = {
 
 /**
  * Object with members for extending the Axis prototype
+ *
+ * @ignore
+ * @class Highcharts.Axis
+ *
  * @todo Extend directly instead of adding object to Highcharts first
  */
-
 H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
     /**
      * Internal function to create the SVG path definition for a plot band.
      *
-     * @param  {Number} from
+     * @function Highcharts.Axis#getPlotBandPath
+     *
+     * @param  {number} from
      *         The axis value to start from.
-     * @param  {Number} to
+     *
+     * @param  {number} to
      *         The axis value to end on.
      *
-     * @return {Array<String|Number>}
+     * @return {Highcharts.SVGPathArray}
      *         The SVG path definition in array form.
      */
     getPlotBandPath: function (from, to) {
@@ -317,14 +347,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Add a plot band after render time.
      *
-     * @param  {AxisPlotBandsOptions} options
+     * @sample highcharts/members/axis-addplotband/
+     *         Toggle the plot band from a button
+     *
+     * @function Highcharts.Axis#addPlotBand
+     *
+     * @param  {Highcharts.AxisPlotBandsOptions} options
      *         A configuration object for the plot band, as defined in {@link
      *         https://api.highcharts.com/highcharts/xAxis.plotBands|
      *         xAxis.plotBands}.
-     * @return {Object}
+     *
+     * @return {Highcharts.PlotLineOrBand}
      *         The added plot band.
-     * @sample highcharts/members/axis-addplotband/
-     *         Toggle the plot band from a button
      */
     addPlotBand: function (options) {
         return this.addPlotBandOrLine(options, 'plotBands');
@@ -333,14 +367,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Add a plot line after render time.
      *
-     * @param  {AxisPlotLinesOptions} options
+     * @sample highcharts/members/axis-addplotline/
+     *         Toggle the plot line from a button
+     *
+     * @function Highcharts.Axis#addPlotLine
+     *
+     * @param  {Highcharts.AxisPlotLinesOptions} options
      *         A configuration object for the plot line, as defined in {@link
      *         https://api.highcharts.com/highcharts/xAxis.plotLines|
      *         xAxis.plotLines}.
-     * @return {Object}
+     *
+     * @return {Highcharts.PlotLineOrBand}
      *         The added plot line.
-     * @sample highcharts/members/axis-addplotline/
-     *         Toggle the plot line from a button
      */
     addPlotLine: function (options) {
         return this.addPlotBandOrLine(options, 'plotLines');
@@ -351,8 +389,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * and addPlotLine internally.
      *
      * @private
-     * @param  options {AxisPlotLinesOptions|AxisPlotBandsOptions}
+     * @function Highcharts.Axis#addPlotBandOrLine
+     *
+     * @param  {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} options
      *         The plotBand or plotLine configuration object.
+     *
+     * @param  {"plotBands"|"plotLines"} [coll]
+     *
+     * @return {Highcharts.PlotLineOrBand}
      */
     addPlotBandOrLine: function (options, coll) {
         var obj = new H.PlotLineOrBand(this, options).render(),
@@ -375,7 +419,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * from `removePlotBand` and `removePlotLine`.
      *
      * @private
-     * @param {String} id
+     * @function Highcharts.Axis#removePlotBandOrLine
+     *
+     * @param  {string} id
+     *
+     * @return {void}
      */
     removePlotBandOrLine: function (id) {
         var plotLinesAndBands = this.plotLinesAndBands,
@@ -405,13 +453,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Remove a plot band by its id.
      *
-     * @param  {String} id
-     *         The plot band's `id` as given in the original configuration
-     *         object or in the `addPlotBand` option.
      * @sample highcharts/members/axis-removeplotband/
      *         Remove plot band by id
      * @sample highcharts/members/axis-addplotband/
      *         Toggle the plot band from a button
+     *
+     * @function Highcharts.Axis#removePlotBand
+     *
+     * @param  {string} id
+     *         The plot band's `id` as given in the original configuration
+     *         object or in the `addPlotBand` option.
+     *
+     * @return {void}
      */
     removePlotBand: function (id) {
         this.removePlotBandOrLine(id);
@@ -419,13 +472,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
     /**
      * Remove a plot line by its id.
-     * @param  {String} id
-     *         The plot line's `id` as given in the original configuration
-     *         object or in the `addPlotLine` option.
+     *
      * @sample highcharts/xaxis/plotlines-id/
      *         Remove plot line by id
      * @sample highcharts/members/axis-addplotline/
      *         Toggle the plot line from a button
+     *
+     * @function Highcharts.Axis#removePlotLine
+     *
+     * @param  {string} id
+     *         The plot line's `id` as given in the original configuration
+     *         object or in the `addPlotLine` option.
+     *
+     * @return {void}
      */
     removePlotLine: function (id) {
         this.removePlotBandOrLine(id);
