@@ -606,13 +606,30 @@ H.Fx.prototype = {
 
 /**
  * Utility function to deep merge two or more objects and return a third object.
+ * The merge function can also be used with a single object argument to create a
+ * deep copy of an object.
+ *
+ * @function Highcharts.merge
+ *
+ * @param  {*} a
+ *         The first object to extend. When only this is given, the function
+ *         returns a deep copy.
+ *
+ * @param  {*} [n]
+ *         An object to merge into the previous one.
+ *
+ * @return {*}
+ *         The merged object. If the first argument is true, the return is the
+ *         same as the second argument.
+ *//**
+ * Utility function to deep merge two or more objects and return a third object.
  * If the first argument is true, the contents of the second object is copied
  * into the first object. The merge function can also be used with a single
  * object argument to create a deep copy of an object.
  *
  * @function Highcharts.merge
  *
- * @param  {boolean|undefined} [extend]
+ * @param  {boolean} extend
  *         Whether to extend the left-side object (a) or return a whole new
  *         object.
  *
@@ -620,7 +637,7 @@ H.Fx.prototype = {
  *         The first object to extend. When only this is given, the function
  *         returns a deep copy.
  *
- * @param  {...*} [n]
+ * @param  {*} [n]
  *         An object to merge into the previous one.
  *
  * @return {*}
