@@ -1378,8 +1378,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * In an ordinal axis, the points are equally spaced in the chart
          * regardless of the actual time or x distance between them. This means
-         * that missing data for nights or weekends will not take up space in
-         * the chart.
+         * that missing data periods (e.g. nights or weekends for a stock chart)
+         * will not take up space in the chart.
+         * Having `ordinal: false` will show any gaps created by the `gapSize`
+         * setting proportionate to their duration.
          *
          * In stock charts the X axis is ordinal by default, unless
          * the boost module is used and at least one of the series' data length
@@ -2826,6 +2828,22 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @since      4.0
          * @product    highcharts
          * @apioption  yAxis.minColor
+         */
+
+        /**
+         * Whether to reverse the axis so that the highest number is closest
+         * to the origin.
+         *
+         * @sample {highcharts} highcharts/yaxis/reversed/
+         *         Reversed Y axis
+         * @sample {highstock} stock/xaxis/reversed/
+         *         Reversed Y axis
+         *
+         * @type       {boolean}
+         * @default    {highcharts} false
+         * @default    {highstock} false
+         * @default    {highmaps} true
+         * @apioption  yAxis.reversed
          */
 
         /**

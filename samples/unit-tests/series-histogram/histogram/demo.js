@@ -163,7 +163,7 @@ QUnit.test('Histogram', function (assert) {
         h4 && Highcharts.map(h4.points, function (point) {
             return point.y;
         }),
-        [100, 160, 71, 40, 8, 8, 5, 4, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+        [40, 0, 331, 0, 8, 8, 5, 4, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
         'Histogram does not produce points with NaN y values, #7976'
     );
 
