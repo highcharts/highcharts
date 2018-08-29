@@ -151,7 +151,10 @@ seriesType('histogram', 'column', {
         }
 
         fitToBin = fitToBinLeftClosed(
-            map(keys(frequencies), function (elem) {
+            // Sorting the array of keys from frequencies is needed,
+            // because of the discrepancy in ordering the numerable keys inside
+            // the objects, when there are integers and floats simultanously.
+            map(keys(frequencies).sort(), function (elem) {
                 return parseFloat(elem);
             }));
 
