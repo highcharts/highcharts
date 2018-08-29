@@ -125,8 +125,10 @@ H.Popup.prototype = {
      * extracted from defaultOptions (ADD mode) or series options (EDIT mode)
      *
      */
-    addInput: function (optionName, type, parentDiv, value) {
-        var lang = this.lang,
+    addInput: function (option, type, parentDiv, value) {
+        var optionParamList = option.split('.'),
+            optionName = optionParamList[optionParamList.length - 1],
+            lang = this.lang,
             inputName = PREFIX + type + '-' + optionName;
 
         // add label
@@ -150,7 +152,7 @@ H.Popup.prototype = {
             },
             null,
             parentDiv
-        ).setAttribute(PREFIX + 'data-name', optionName);
+        ).setAttribute(PREFIX + 'data-name', option);
     },
     /*
      * Create button.
@@ -385,7 +387,13 @@ H.Popup.prototype = {
                 className: PREFIX + 'popup-bottom-row'
             }, null, popupDiv);
 
-            this.annotations.addFormFields.call(this, lhsCol, chart, options);
+            this.annotations.addFormFields.call(
+                this,
+                lhsCol,
+                chart,
+                'params',
+                options
+            );
 
             this.addButton.call(
                 this,
@@ -401,16 +409,21 @@ H.Popup.prototype = {
          *
          * @param {HTMLDOMElement} - div where inputs are placed
          * @param {Chart} - chart
+         * @param {String} - name of parent to create chain of names
          * @param {Object} - options
          *
          */
-        addFormFields: function (parentDiv, chart, options) {
+        addFormFields: function (parentDiv, chart, parentNode, options) {
             var _self = this,
                 addFormFields = this.annotations.addFormFields,
                 addInput = this.addInput,
-                lang = chart.stockToolbar.lang;
+                lang = chart.stockToolbar.lang,
+                parentFullName;
 
             objectEach(options, function (value, option) {
+
+                // create name like params.styles.fontSize
+                parentFullName = parentNode + '.' + option;
 
                 if (isObject(value)) {
                     if (
@@ -429,12 +442,13 @@ H.Popup.prototype = {
                             _self,
                             parentDiv,
                             chart,
+                            parentFullName,
                             value
                         );
                     } else {
                         addInput.call(
                             chart.stockToolbar,
-                            option,
+                            parentFullName,
                             'annotation',
                             parentDiv,
                             value
@@ -720,8 +734,8 @@ H.Popup.prototype = {
          * create them as inputs. Each input has unique `data-name` attribute,
          * which keeps chain of fields i.e params.styles.fontSize.
          *
-         * @param {String} - name of parent to create chain of names
          * @param {Chart} - chart
+         * @param {String} - name of parent to create chain of names
          * @param {Series} - fields - params which are based for input create
          * @param {String} - indicator type like: sma, ema, etc.
          * @param {HTMLDOMElement} - element where created HTML list is added
