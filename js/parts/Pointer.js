@@ -368,7 +368,7 @@ Highcharts.Pointer.prototype = {
      * @param  {Highcharts.PointerCoordinatesObject} coordinates
      *         Chart coordinates of the pointer.
      *
-     * @return {any}
+     * @return {*}
      *         Object containing resulting hover data: hoverPoint, hoverSeries,
      *         and hoverPoints.
      */
