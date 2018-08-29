@@ -221,7 +221,7 @@ H.Popup.prototype = {
                 fieldsOutput.type = input.value;
             }
         });
-
+console.log(fieldsOutput);
         return fieldsOutput;
     },
     /*
@@ -391,7 +391,7 @@ H.Popup.prototype = {
                 this,
                 lhsCol,
                 chart,
-                'params',
+                '',
                 options
             );
 
@@ -423,7 +423,8 @@ H.Popup.prototype = {
             objectEach(options, function (value, option) {
 
                 // create name like params.styles.fontSize
-                parentFullName = parentNode + '.' + option;
+                parentFullName = parentNode !== '' ? 
+                                    parentNode + '.' + option : option;
 
                 if (isObject(value)) {
                     if (
