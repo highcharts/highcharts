@@ -16,7 +16,7 @@
  * @property {number|undefined} y
  *           The y value of the point.
  *
- * @property {Highcharts.Color} color
+ * @property {Highcharts.ColorString} color
  *           The point's current color.
  *
  * @property {number} colorIndex
@@ -110,7 +110,7 @@ Highcharts.Point.prototype = {
          * The point's current color.
          *
          * @name Highcharts.Point#color
-         * @type {Highcharts.Color}
+         * @type {Highcharts.ColorString}
          */
         point.color = series.color; // #3445
 
