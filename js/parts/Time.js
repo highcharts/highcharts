@@ -5,6 +5,8 @@
  */
 
 /**
+ * Normalized interval.
+ *
  * @typedef {object} Highcharts.NormalizedIntervalObject
  *
  * @property {number} unitRange
@@ -15,13 +17,17 @@
  */
 
 /**
+ * Time ticks.
+ *
  * @typedef {Array<number>} Highcharts.TimeTicksObject
  *
- * @property {Highcharts.TimeTicksObject} info
+ * @property {Highcharts.TimeTicksInfoObject} info
  */
 
 /**
- * @typedef {Highcharts.NormalizedIntervalObject} Highcharts.TimeTicksObject
+ * Additonal time tick information.
+ *
+ * @typedef {Highcharts.NormalizedIntervalObject} Highcharts.TimeTicksInfoObject
  *
  * @property {Array<string>} higherRanks
  *
