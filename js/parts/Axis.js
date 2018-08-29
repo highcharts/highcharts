@@ -5,6 +5,29 @@
  */
 
 /**
+ * Options for crosshairs on axes.
+ *
+ * @typedef {Highcharts.XAxisCrosshairOptions|Highcharts.YAxisCrosshairOptions} Highcharts.AxisCrosshairOptions
+ */
+/**
+ * Options for axes.
+ *
+ * @typedef {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} Highcharts.AxisOptions
+ */
+
+/**
+ * Options for plot bands on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotBandsOptions|Highcharts.YAxisPlotBandsOptions|Highcharts.ZAxisPlotBandsOptions} Highcharts.AxisPlotBandsOptions
+ */
+
+/**
+ * Options for plot lines on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotLinesOptions|Highcharts.YAxisPlotLinesOptions|Highcharts.ZAxisPlotLinesOptions} Highcharts.AxisPlotLinesOptions
+ */
+
+/**
  * The returned object literal from the {@link Highcharts.Axis#getExtremes}
  * function.
  *
@@ -112,7 +135,7 @@ var addEvent = H.addEvent,
  * @param {Highcharts.Chart} chart
  *        The Chart instance to apply the axis on.
  *
- * @param {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} options
+ * @param {Highcharts.AxisOptions} options
  *        Axis options.
  */
 var Axis = function () {
@@ -3788,7 +3811,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The processed crosshair options.
          *
          * @name     Highcharts.Axis#crosshair
-         * @type     {false|Highcharts.XAxisCrosshairOptions|Highcharts.YAxisCrosshairOptions}
+         * @type     {false|Highcharts.AxisCrosshairOptions}
          */
         axis.crosshair = pick(
             options.crosshair,
@@ -4600,6 +4623,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * When changes have been done to series data, update the axis.names.
      *
      * @private
+     * @function Highcharts.Axis#updateNames
+     *
+     * @return {void}
      */
     updateNames: function () {
         var axis = this,
@@ -4642,6 +4668,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Update translation information.
      *
      * @private
+     * @function Highcharts.Axis#setAxisTranslation
+     *
+     * @param  {boolean} saveOld
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Axis#event:afterSetAxisTranslation
      */
     setAxisTranslation: function (saveOld) {
         var axis = this,
