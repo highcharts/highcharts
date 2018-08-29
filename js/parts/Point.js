@@ -118,6 +118,14 @@ Highcharts.Point.prototype = {
 
         // copy options directly to point
         extend(point, options);
+
+        /**
+         * The point's options as applied in the initial configuration, or
+         * extended through `Point.update`.
+         * @name options
+         * @memberof Highcharts.Point
+         * @type {Object}
+         */
         point.options = point.options ?
             extend(point.options, options) :
             options;

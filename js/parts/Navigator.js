@@ -14,36 +14,6 @@ import './Series.js';
 import './Options.js';
 import './Scrollbar.js';
 
-/**
- * Options for the corresponding navigator series if `showInNavigator`
- * is `true` for this series. Available options are the same as any
- * series, documented at [plotOptions](#plotOptions.series) and
- * [series](#series).
- *
- *
- * These options are merged with options in [navigator.series](
- * #navigator.series), and will take precedence if the same option is defined
- * both places.
- *
- * @type {Object}
- * @see [navigator.series](#navigator.series)
- * @default undefined
- * @since 5.0.0
- * @product highstock
- * @apioption plotOptions.series.navigatorOptions
- */
-
-/**
- * Whether or not to show the series in the navigator. Takes precedence
- * over [navigator.baseSeries](#navigator.baseSeries) if defined.
- *
- * @type {Boolean}
- * @default undefined
- * @since 5.0.0
- * @product highstock
- * @apioption plotOptions.series.showInNavigator
- */
-
 var addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
@@ -102,24 +72,85 @@ extend(defaultOptions, {
      * @optionparent navigator
      */
     navigator: {
+
+        /**
+         * Whether the navigator and scrollbar should adapt to updated data
+         * in the base X axis. When loading data async, as in the demo below,
+         * this should be `false`. Otherwise new data will trigger navigator
+         * redraw, which will cause unwanted looping. In the demo below, the
+         * data in the navigator is set only once. On navigating, only the main
+         * chart content is updated.
+         *
+         * @sample {highstock} stock/demo/lazy-loading/
+         *         Set to false with async data loading
+         *
+         * @type       {boolean}
+         * @default    true
+         * @product    highstock
+         * @apioption  navigator.adaptToUpdatedData
+         */
+
+        /**
+         * An integer identifying the index to use for the base series, or a
+         * string representing the id of the series.
+         *
+         * **Note**: As of Highcharts 5.0, this is now a deprecated option.
+         * Prefer [series.showInNavigator](#plotOptions.series.showInNavigator).
+         *
+         * @see [series.showInNavigator](#plotOptions.series.showInNavigator)
+         *
+         * @deprecated
+         * @type       {*}
+         * @default    0
+         * @product    highstock
+         * @apioption  navigator.baseSeries
+         */
+
+        /**
+         * Enable or disable the navigator.
+         *
+         * @sample {highstock} stock/navigator/enabled/ Disable the navigator
+         *
+         * @type       {boolean}
+         * @default    true
+         * @product    highstock
+         * @apioption  navigator.enabled
+         */
+
+        /**
+         * When the chart is inverted, whether to draw the navigator on the
+         * opposite side.
+         *
+         * @type       {boolean}
+         * @default    false
+         * @since      5.0.8
+         * @product    highstock
+         * @apioption  navigator.opposite
+         */
+
         /**
          * The height of the navigator.
          *
-         * @type {Number}
-         * @sample {highstock} stock/navigator/height/ A higher navigator
-         * @default 40
-         * @product highstock
+         * @sample {highstock} stock/navigator/height/
+         *         A higher navigator
+         *
+         * @type       {number}
+         * @default    40
+         * @product    highstock
+         * @apioption  navigator.height
          */
         height: 40,
 
         /**
          * The distance from the nearest element, the X axis or X axis labels.
          *
-         * @type {Number}
          * @sample {highstock} stock/navigator/margin/
          *         A margin of 2 draws the navigator closer to the X axis labels
-         * @default 25
-         * @product highstock
+         *
+         * @type       {number}
+         * @default    25
+         * @product    highstock
+         * @apioption  navigator.margin
          */
         margin: 25,
 
@@ -127,44 +158,53 @@ extend(defaultOptions, {
          * Whether the mask should be inside the range marking the zoomed
          * range, or outside. In Highstock 1.x it was always `false`.
          *
-         * @type {Boolean}
          * @sample {highstock} stock/navigator/maskinside-false/
          *         False, mask outside
-         * @default true
-         * @since 2.0
-         * @product highstock
+         *
+         * @type       {boolean}
+         * @default    true
+         * @since      2.0
+         * @product    highstock
+         * @apioption  navigator.maskInside
          */
         maskInside: true,
 
         /**
          * Options for the handles for dragging the zoomed area.
          *
-         * @type {Object}
-         * @sample {highstock} stock/navigator/handles/ Colored handles
-         * @product highstock
+         * @sample {highstock} stock/navigator/handles/
+         *         Colored handles
+         *
+         * @type       {*}
+         * @product    highstock
+         * @apioption  navigator.handles
          */
         handles: {
             /**
              * Width for handles.
              *
-             * @type {Number}
-             * @default 7
-             * @product highstock
              * @sample {highstock} stock/navigator/styled-handles/
              *         Styled handles
-             * @since 6.0.0
+             *
+             * @type       {number}
+             * @default    7
+             * @since      6.0.0
+             * @product    highstock
+             * @apioption  navigator.handles.width
              */
             width: 7,
 
             /**
              * Height for handles.
              *
-             * @type {Number}
-             * @default 15
-             * @product highstock
              * @sample {highstock} stock/navigator/styled-handles/
              *         Styled handles
-             * @since 6.0.0
+             *
+             * @type       {number}
+             * @default    15
+             * @since      6.0.0
+             * @product    highstock
+             * @apioption  navigator.handles.height
              */
             height: 15,
 
@@ -181,22 +221,25 @@ extend(defaultOptions, {
              * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
              * used by its method name, as shown in the demo.
              *
-             * @type {Array<string>}
-             * @default ['navigator-handle', 'navigator-handle']
-             * @product highstock
              * @sample {highstock} stock/navigator/styled-handles/
              *         Styled handles
-             * @since 6.0.0
+             *
+             * @type       {Array<string>}
+             * @default    ['navigator-handle', 'navigator-handle']
+             * @since      6.0.0
+             * @product    highstock
+             * @apioption  navigator.handles.symbols
              */
             symbols: ['navigator-handle', 'navigator-handle'],
 
             /**
              * Allows to enable/disable handles.
              *
-             * @type {Boolean}
-             * @default true
-             * @product highstock
-             * @since 6.0.0
+             * @type       {boolean}
+             * @default    true
+             * @since      6.0.0
+             * @product    highstock
+             * @apioption  navigator.handles.enabled
              */
             enabled: true,
 
@@ -204,28 +247,32 @@ extend(defaultOptions, {
             /**
              * The width for the handle border and the stripes inside.
              *
-             * @type {Number}
-             * @default 7
-             * @product highstock
              * @sample {highstock} stock/navigator/styled-handles/
              *         Styled handles
-             * @since 6.0.0
+             *
+             * @type       {number}
+             * @default    7
+             * @since      6.0.0
+             * @product    highstock
+             * @apioption  navigator.handles.lineWidth
              */
             lineWidth: 1,
 
             /**
              * The fill for the handle.
              *
-             * @type {Color}
-             * @product highstock
+             * @type       {Highcharts.ColorString}
+             * @product    highstock
+             * @apioption  navigator.handles.backgroundColor
              */
             backgroundColor: '${palette.neutralColor5}',
 
             /**
              * The stroke for the handle border and the stripes inside.
              *
-             * @type {Color}
-             * @product highstock
+             * @type       {Highcharts.ColorString}
+             * @product    highstock
+             * @apioption  navigator.handles.borderColor
              */
             borderColor: '${palette.neutralColor40}'
 
@@ -239,14 +286,17 @@ extend(defaultOptions, {
          * that are currently not visible in the main series. The default
          * color is bluish with an opacity of 0.3 to see the series below.
          *
-         * @type {Color}
-         * @see     In styled mode, the mask is styled with the
-         *          `.highcharts-navigator-mask` and
-         *          `.highcharts-navigator-mask-inside` classes.
-         * @sample  {highstock} stock/navigator/maskfill/
-         *          Blue, semi transparent mask
-         * @default rgba(102,133,194,0.3)
-         * @product highstock
+         * @see In styled mode, the mask is styled with the
+         *      `.highcharts-navigator-mask` and
+         *      `.highcharts-navigator-mask-inside` classes.
+         *
+         * @sample {highstock} stock/navigator/maskfill/
+         *         Blue, semi transparent mask
+         *
+         * @type       {Highcharts.ColorString}
+         * @default    rgba(102,133,194,0.3)
+         * @product    highstock
+         * @apioption  navigator.maskFill
          */
         maskFill: color('${palette.highlightColor60}').setOpacity(0.3).get(),
 
@@ -254,10 +304,13 @@ extend(defaultOptions, {
          * The color of the line marking the currently zoomed area in the
          * navigator.
          *
-         * @type {Color}
-         * @sample {highstock} stock/navigator/outline/ 2px blue outline
-         * @default #cccccc
-         * @product highstock
+         * @sample {highstock} stock/navigator/outline/
+         *         2px blue outline
+         *
+         * @type       {Highcharts.ColorString}
+         * @default    #cccccc
+         * @product    highstock
+         * @apioption  navigator.outlineColor
          */
         outlineColor: '${palette.neutralColor20}',
 
@@ -265,12 +318,16 @@ extend(defaultOptions, {
          * The width of the line marking the currently zoomed area in the
          * navigator.
          *
-         * @type {Number}
          * @see In styled mode, the outline stroke width is set with the
-         * `.highcharts-navigator-outline` class.
-         * @sample {highstock} stock/navigator/outline/ 2px blue outline
-         * @default 2
-         * @product highstock
+         *      `.highcharts-navigator-outline` class.
+         *
+         * @sample {highstock} stock/navigator/outline/
+         *         2px blue outline
+         *
+         * @type       {number}
+         * @default    2
+         * @product    highstock
+         * @apioption  navigator.outlineWidth
          */
         outlineWidth: 1,
         /*= } =*/
@@ -297,14 +354,17 @@ extend(defaultOptions, {
          *     }
          * }</pre>
          *
-         * @type {Object}
          * @see In styled mode, the navigator series is styled with the
          *      `.highcharts-navigator-series` class.
+         *
          * @sample {highstock} stock/navigator/series-data/
          *         Using a separate data set for the navigator
          * @sample {highstock} stock/navigator/series/
          *         A green navigator series
-         * @product highstock
+         *
+         * @type       {*}
+         * @product    highstock
+         * @apioption  navigator.series
          */
         series: {
 
@@ -312,7 +372,9 @@ extend(defaultOptions, {
              * The type of the navigator series. Defaults to `areaspline` if
              * defined, otherwise `line`.
              *
-             * @type {String}
+             * @type       {string}
+             * @default    areaspline
+             * @apioption  navigator.series.type
              */
             type: defaultSeriesType,
             /*= if (build.classic) { =*/
@@ -320,11 +382,19 @@ extend(defaultOptions, {
 
             /**
              * The fill opacity of the navigator series.
+             *
+             * @type       {number}
+             * @default    0.05
+             * @apioption  navigator.series.fillOpacity
              */
             fillOpacity: 0.05,
 
             /**
              * The pixel line width of the navigator series.
+             *
+             * @type       {number}
+             * @default    1
+             * @apioption  navigator.series.lineWidth
              */
             lineWidth: 1,
             /*= } =*/
@@ -337,7 +407,9 @@ extend(defaultOptions, {
             /**
              * Data grouping options for the navigator series.
              *
-             * @extends plotOptions.series.dataGrouping
+             * @type       {*}
+             * @extends    plotOptions.series.dataGrouping
+             * @apioption  navigator.series.dataGrouping
              */
             dataGrouping: {
                 approximation: 'average',
@@ -351,7 +423,9 @@ extend(defaultOptions, {
              * Data label options for the navigator series. Data labels are
              * disabled by default on the navigator series.
              *
-             * @extends plotOptions.series.dataLabels
+             * @type       {*}
+             * @extends    plotOptions.series.dataLabels
+             * @apioption  navigator.series.dataLabels
              */
             dataLabels: {
                 enabled: false,
@@ -365,7 +439,9 @@ extend(defaultOptions, {
              * Line color for the navigator series. Allows setting the color
              * while disallowing the default candlestick setting.
              *
-             * @type {Color}
+             * @type       {Highcharts.ColorString|null}
+             * @default    null
+             * @apioption  navigator.series.lineColor
              */
             lineColor: null, // #4602
 
@@ -377,7 +453,10 @@ extend(defaultOptions, {
             /**
              * The threshold option. Setting it to 0 will make the default
              * navigator area series draw its area from the 0 value and up.
-             * @type {Number}
+             *
+             * @type       {number|null}
+             * @default    null
+             * @apioption  navigator.series.threshold
              */
             threshold: null
         },
@@ -401,11 +480,12 @@ extend(defaultOptions, {
          *     }
          * }</pre>
          *
-         * @type {Object}
-         * @extends xAxis
-         * @excluding linkedTo,maxZoom,minRange,opposite,range,scrollbar,
-         *          showEmpty,maxRange
-         * @product highstock
+         * @type       {*}
+         * @extends    xAxis
+         * @excluding  linkedTo,maxZoom,minRange,opposite,range,scrollbar,
+         *             showEmpty,maxRange
+         * @product    highstock
+         * @apioption  navigator.xAxis
          */
         xAxis: {
             /**
@@ -413,11 +493,11 @@ extend(defaultOptions, {
              * xAxis.maxPadding, but value is set in milliseconds.
              * Can be set for both, main xAxis and navigator's xAxis.
              *
-             * @type {Number}
-             * @default 0
-             * @since 6.0.0
-             * @product highstock
-             * @apioption xAxis.overscroll
+             * @type       {number}
+             * @default    0
+             * @since      6.0.0
+             * @product    highstock
+             * @apioption  navigator.xAxis.overscroll
              */
             overscroll: 0,
 
@@ -467,11 +547,12 @@ extend(defaultOptions, {
          *     tickWidth: 0
          * }</pre>
          *
-         * @type {Object}
-         * @extends yAxis
-         * @excluding height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
-         *          scrollbar,top,units,maxRange,minLength,maxLength,resize
-         * @product highstock
+         * @type       {*}
+         * @extends    yAxis
+         * @excluding  height,linkedTo,maxZoom,minRange,ordinal,range,showEmpty,
+         *             scrollbar,top,units,maxRange,minLength,maxLength,resize
+         * @product    highstock
+         * @apioption  navigator.yAxis
          */
         yAxis: {
 
@@ -500,8 +581,14 @@ extend(defaultOptions, {
 
 /**
  * Draw one of the handles on the side of the zoomed range in the navigator
- * @param {Boolean} inverted flag for chart.inverted
- * @returns {Array} Path to be used in a handle
+ *
+ * @function Highcharts.Renderer#symbols.navigator-handle
+ *
+ * @param  {boolean} inverted
+ *         flag for chart.inverted
+ *
+ * @return {Array<number|string>}
+ *         Path to be used in a handle
  */
 H.Renderer.prototype.symbols['navigator-handle'] = function (
     x,
@@ -538,8 +625,11 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
 
 /**
  * The Navigator class
- * @param {Object} chart - Chart object
- * @class
+ *
+ * @class Highcharts.Navigator
+ *
+ * @param {Highcharts.Chart} chart
+ *        Chart object
  */
 function Navigator(chart) {
     this.init(chart);
@@ -548,10 +638,20 @@ function Navigator(chart) {
 Navigator.prototype = {
     /**
      * Draw one of the handles on the side of the zoomed range in the navigator
-     * @param {Number} x The x center for the handle
-     * @param {Number} index 0 for left and 1 for right
-     * @param {Boolean} inverted flag for chart.inverted
-     * @param {String} verb use 'animate' or 'attr'
+     *
+     * @function Highcharts.Navigator#drawHandle
+     *
+     * @param  {number} x
+     *         The x center for the handle
+     *
+     * @param  {number} index
+     *         0 for left and 1 for right
+     * @param  {boolean} inverted
+     *         flag for chart.inverted
+     * @param  {string} verb
+     *         use 'animate' or 'attr'
+     *
+     * @return {void}
      */
     drawHandle: function (x, index, inverted, verb) {
         var navigator = this,
@@ -573,10 +673,22 @@ Navigator.prototype = {
 
     /**
      * Render outline around the zoomed range
-     * @param {Number} zoomedMin in pixels position where zoomed range starts
-     * @param {Number} zoomedMax in pixels position where zoomed range ends
-     * @param {Boolean} inverted flag if chart is inverted
-     * @param {String} verb use 'animate' or 'attr'
+     *
+     * @function Highcharts.Navigator#drawOutline
+     *
+     * @param  {number} zoomedMin
+     *         in pixels position where zoomed range starts
+     *
+     * @param  {number} zoomedMax
+     *         in pixels position where zoomed range ends
+     *
+     * @param  {boolean} inverted
+     *         flag if chart is inverted
+     *
+     * @param  {string} verb
+     *         use 'animate' or 'attr'
+     *
+     * @return {void}
      */
     drawOutline: function (zoomedMin, zoomedMax, inverted, verb) {
         var navigator = this,
@@ -664,10 +776,22 @@ Navigator.prototype = {
 
     /**
      * Render outline around the zoomed range
-     * @param {Number} zoomedMin in pixels position where zoomed range starts
-     * @param {Number} zoomedMax in pixels position where zoomed range ends
-     * @param {Boolean} inverted flag if chart is inverted
-     * @param {String} verb use 'animate' or 'attr'
+     *
+     * @function Highcharts.Navigator#drawMasks
+     *
+     * @param  {number} zoomedMin
+     *         in pixels position where zoomed range starts
+     *
+     * @param  {number} zoomedMax
+     *         in pixels position where zoomed range ends
+     *
+     * @param  {boolean} inverted
+     *         flag if chart is inverted
+     *
+     * @param  {string} verb
+     *         use 'animate' or 'attr'
+     *
+     * @return {void}
      */
     drawMasks: function (zoomedMin, zoomedMax, inverted, verb) {
         var navigator = this,
@@ -716,6 +840,10 @@ Navigator.prototype = {
      * - all shades
      * - outline
      * - handles
+     *
+     * @function Highcharts.Navigator#renderElements
+     *
+     * @return {void}
      */
     renderElements: function () {
         var navigator = this,
@@ -803,7 +931,13 @@ Navigator.prototype = {
 
     /**
      * Update navigator
-     * @param {Object} options Options to merge in when updating navigator
+     *
+     * @function Highcharts.Navigator#update
+     *
+     * @param  {Highcharts.NavigatorOptions} options
+     *         Options to merge in when updating navigator
+     *
+     * @return {void}
      */
     update: function (options) {
         // Remove references to old navigator series in base series
@@ -821,10 +955,22 @@ Navigator.prototype = {
 
     /**
      * Render the navigator
-     * @param {Number} min X axis value minimum
-     * @param {Number} max X axis value maximum
-     * @param {Number} pxMin Pixel value minimum
-     * @param {Number} pxMax Pixel value maximum
+     *
+     * @function Highcharts.Navigator#render
+     *
+     * @param  {number} min
+     *         X axis value minimum
+     *
+     * @param  {number} max
+     *         X axis value maximum
+     *
+     * @param  {number} pxMin
+     *         Pixel value minimum
+     *
+     * @param  {number} pxMax
+     *         Pixel value maximum
+     *
+     * @return {void}
      */
     render: function (min, max, pxMin, pxMax) {
 
@@ -993,6 +1139,10 @@ Navigator.prototype = {
 
     /**
      * Set up the mouse and touch events for the navigator
+     *
+     * @function Highcharts.Navigator#addMouseEvents
+     *
+     * @return {void}
      */
     addMouseEvents: function () {
         var navigator = this,
@@ -1050,8 +1200,14 @@ Navigator.prototype = {
 
     /**
      * Generate events for handles and masks
-     * @param {String} eventName Event name handler, 'mousedown' or 'touchstart'
-     * @returns {Array} An array of arrays: [DOMElement, eventName, callback].
+     *
+     * @function Highcharts.Navigator#getPartsEvents
+     *
+     * @param  {string} eventName
+     *         Event name handler, 'mousedown' or 'touchstart'
+     *
+     * @return {Array<*>}
+     *         An array of arrays: [DOMElement, eventName, callback].
      */
     getPartsEvents: function (eventName) {
         var navigator = this,
@@ -1077,8 +1233,15 @@ Navigator.prototype = {
      * - will be stored for future drag&drop
      * - will directly shift to a new range
      *
-     * @param {Object} e Mouse event
-     * @param {Number} index Index of a mask in Navigator.shades array
+     * @function Highcharts.Navigator#shadesMousedown
+     *
+     * @param  {*} e
+     *         Mouse event
+     *
+     * @param  {number} index
+     *         Index of a mask in Navigator.shades array
+     *
+     * @return {void}
      */
     shadesMousedown: function (e, index) {
         e = this.chart.pointer.normalize(e);
@@ -1149,8 +1312,15 @@ Navigator.prototype = {
      * Mousedown on a handle mask.
      * Will store necessary information for drag&drop.
      *
-     * @param {Object} e Mouse event
-     * @param {Number} index Index of a handle in Navigator.handles array
+     * @function Highcharts.Navigator#handlesMousedown
+     *
+     * @param  {*} e
+     *         Mouse event
+     *
+     * @param  {number} index
+     *         Index of a handle in Navigator.handles array
+     *
+     * @return {void}
      */
     handlesMousedown: function (e, index) {
         e = this.chart.pointer.normalize(e);
@@ -1179,7 +1349,13 @@ Navigator.prototype = {
     },
     /**
      * Mouse move event based on x/y mouse position.
-     * @param {Object} e Mouse event
+     *
+     * @function Highcharts.Navigator#onMouseMove
+     *
+     * @param  {*} e
+     *         Mouse event
+     *
+     * @return {void}
      */
     onMouseMove: function (e) {
         var navigator = this,
@@ -1244,7 +1420,13 @@ Navigator.prototype = {
             if (
                 navigator.hasDragged &&
                 navigator.scrollbar &&
-                navigator.scrollbar.options.liveRedraw
+                pick(
+                    navigator.scrollbar.options.liveRedraw,
+
+                    // By default, don't run live redraw on VML, on touch
+                    // devices or if the chart is in boost.
+                    H.svg && !isTouchDevice && !this.chart.isBoosting
+                )
             ) {
                 e.DOMType = e.type; // DOMType is for IE8
                 setTimeout(function () {
@@ -1256,7 +1438,13 @@ Navigator.prototype = {
 
     /**
      * Mouse up event based on x/y mouse position.
-     * @param {Object} e Mouse event
+     *
+     * @function Highcharts.Navigator#onMouseUp
+     *
+     * @param  {*} e
+     *         Mouse event
+     *
+     * @return {void}
      */
     onMouseUp: function (e) {
         var navigator = this,
@@ -1331,6 +1519,10 @@ Navigator.prototype = {
 
     /**
      * Removes the event handlers attached previously with addEvents.
+     *
+     * @function Highcharts.Navigator#removeEvents
+     *
+     * @return {void}
      */
     removeEvents: function () {
         if (this.eventsToUnbind) {
@@ -1344,6 +1536,10 @@ Navigator.prototype = {
 
     /**
      * Remove data events.
+     *
+     * @function Highcharts.Navigator#removeBaseSeriesEvents
+     *
+     * @return {void}
      */
     removeBaseSeriesEvents: function () {
         var baseSeries = this.baseSeries || [];
@@ -1367,6 +1563,12 @@ Navigator.prototype = {
 
     /**
      * Initiate the Navigator object
+     *
+     * @function Highcharts.Navigator#init
+     *
+     * @param  {Highcharts.Chart} chart
+     *
+     * @return {void}
      */
     init: function (chart) {
         var chartOptions = chart.options,
@@ -1417,6 +1619,7 @@ Navigator.prototype = {
                 isX: true,
                 type: 'datetime',
                 index: xAxisIndex,
+                isInternal: true,
                 offset: 0,
                 keepOrdinalPadding: true, // #2436
                 startOnTick: false,
@@ -1437,6 +1640,7 @@ Navigator.prototype = {
                 alignTicks: false,
                 offset: 0,
                 index: yAxisIndex,
+                isInternal: true,
                 zoomEnabled: false
             }, chart.inverted ? {
                 width: height
@@ -1542,7 +1746,13 @@ Navigator.prototype = {
     /**
      * Get the union data extremes of the chart - the outer data extremes of the
      * base X axis and the navigator axis.
-     * @param {boolean} returnFalseOnNoBaseSeries - as the param says.
+     *
+     * @function Highcharts.Navigator#getUnionExtremes
+     *
+     * @param  {boolean} returnFalseOnNoBaseSeries
+     *         as the param says.
+     *
+     * @return {*}
      */
     getUnionExtremes: function (returnFalseOnNoBaseSeries) {
         var baseAxis = this.chart.xAxis[0],
@@ -1582,10 +1792,16 @@ Navigator.prototype = {
      * Set the base series and update the navigator series from this. With a bit
      * of modification we should be able to make this an API method to be called
      * from the outside
-     * @param  {Object} baseSeriesOptions
+     *
+     * @function Highcharts.Navigator#setBaseSeries
+     *
+     * @param  {*} baseSeriesOptions
      *         Additional series options for a navigator
-     * @param  {Boolean} [redraw]
+     *
+     * @param  {boolean} [redraw]
      *         Whether to redraw after update.
+     *
+     * @return {void}
      */
     setBaseSeries: function (baseSeriesOptions, redraw) {
         var chart = this.chart,
@@ -1622,9 +1838,17 @@ Navigator.prototype = {
         }
     },
 
-    /*
+    /**
      * Update series in the navigator from baseSeries, adding new if does not
      * exist.
+     *
+     * @function Highcharts.Navigator.updateNavigatorSeries
+     *
+     * @param  {boolean} addEvents
+     *
+     * @param  {boolean} redraw
+     *
+     * @return {void}
      */
     updateNavigatorSeries: function (addEvents, redraw) {
         var navigator = this,
@@ -1661,8 +1885,11 @@ Navigator.prototype = {
                             );
                             delete base.navigatorSeries;
                         }
-                        // Kill the nav series
-                        navSeries.destroy();
+                        // Kill the nav series. It may already have been
+                        // destroyed (#8715).
+                        if (navSeries.chart) {
+                            navSeries.destroy();
+                        }
                         return false;
                     }
                     return true;
@@ -1778,6 +2005,10 @@ Navigator.prototype = {
     /**
      * Add data events.
      * For example when main series is updated we need to recalculate extremes
+     *
+     * @function Highcharts.Navigator#addBaseSeriesEvent
+     *
+     * @return {void}
      */
     addBaseSeriesEvents: function () {
         var navigator = this,
@@ -1833,6 +2064,10 @@ Navigator.prototype = {
      * Set the navigator x axis extremes to reflect the total. The navigator
      * extremes should always be the extremes of the union of all series in the
      * chart as well as the navigator series.
+     *
+     * @function Highcharts.Navigator#modifyNavigatorAxisExtremes
+     *
+     * @return {void}
      */
     modifyNavigatorAxisExtremes: function () {
         var xAxis = this.xAxis,
@@ -1855,6 +2090,10 @@ Navigator.prototype = {
 
     /**
      * Hook to modify the base axis extremes with information from the Navigator
+     *
+     * @function Highcharts.Navigator#modifyBaseAxisExtremes
+     *
+     * @return {void}
      */
     modifyBaseAxisExtremes: function () {
         var baseXAxis = this,
@@ -1920,6 +2159,10 @@ Navigator.prototype = {
      * Handler for updated data on the base series. When data is modified, the
      * navigator series must reflect it. This is called from the Chart.redraw
      * function before axis and series extremes are computed.
+     *
+     * @function Highcharts.Navigator#updateDataHandler
+     *
+     * @return {void}
      */
     updatedDataHandler: function () {
         var navigator = this.chart.navigator,
@@ -1953,6 +2196,10 @@ Navigator.prototype = {
 
     /**
      * Add chart events, like redrawing navigator, when chart requires that.
+     *
+     * @function Highcharts.Navigator#addChartEvents
+     *
+     * @return {void}
      */
     addChartEvents: function () {
         if (!this.eventsToUnbind) {
@@ -2005,6 +2252,10 @@ Navigator.prototype = {
 
     /**
      * Destroys allocated elements.
+     *
+     * @function Highcharts.Navigator#destroy
+     *
+     * @return {void}
      */
     destroy: function () {
 

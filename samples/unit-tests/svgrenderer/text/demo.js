@@ -1,3 +1,40 @@
+// Highcharts 4.0.1, Issue #3158
+// Pie chart - item width issue
+QUnit.test('Text word wrap #3158', function (assert) {
+
+    var renderer = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        300
+    );
+
+    var text = renderer
+        .text(
+            '<b>TheQuickBrownFox</b><br>jumps over the lazy dog, the issue' +
+            ' caused the second line to be only one word', 100, 100
+        )
+        .css({
+            width: '100px',
+            color: '#003399'
+        })
+        .add();
+
+    var textLines = text.element.getElementsByTagName('tspan');
+
+    assert.strictEqual(
+        textLines.length,
+        6,
+        'Six text lines should be rendered.'
+    );
+
+    assert.strictEqual(
+        (textLines[1].textContent.indexOf(' ') > 0),
+        true,
+        'There should be more than one word in the second text line. #3158'
+    );
+
+});
+
 QUnit.test('titleSetter', function (assert) {
 
     var chart = Highcharts.chart('container', {

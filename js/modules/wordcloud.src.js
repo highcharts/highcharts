@@ -18,6 +18,7 @@ var each = H.each,
     isNumber = H.isNumber,
     isObject = H.isObject,
     map = H.map,
+    merge = H.merge,
     find = H.find,
     reduce = H.reduce,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
@@ -399,6 +400,44 @@ var intersectionTesting = function intersectionTesting(point, options) {
 };
 
 /**
+ * extendPlayingField - Extends the playing field to have enough space to fit a
+ * given word.
+ * @param {object} field The width, height and ratios of a playing field.
+ * @param {object} rectangle The bounding box of the word to add space for.
+ * @return Returns the extended playing field with updated height and width.
+ */
+var extendPlayingField = function extendPlayingField(field, rectangle) {
+    var height, width, ratioX, ratioY, x, extendWidth, extendHeight, result;
+
+    if (isObject(field) && isObject(rectangle)) {
+        height = (rectangle.bottom - rectangle.top);
+        width = (rectangle.right - rectangle.left);
+        ratioX = field.ratioX;
+        ratioY = field.ratioY;
+
+        // Use the same variable to extend both the height and width.
+        x = ((width * ratioX) > (height * ratioY)) ? width : height;
+
+        // Multiply variable with ratios to preserve aspect ratio.
+        extendWidth = x * ratioX;
+        extendHeight = x * ratioY;
+
+        // Calculate the size of the new field after adding space for the word.
+        result = merge(field, {
+            // Add space on the left and right.
+            width: field.width + (extendWidth * 2),
+            // Add space on the top and bottom.
+            height: field.height + (extendHeight * 2)
+        });
+    } else {
+        result = field;
+    }
+
+    // Return the new extended field.
+    return result;
+};
+
+/**
  * updateFieldBoundaries - If a rectangle is outside a give field, then the
  * boundaries of the field is adjusted accordingly. Modifies the field object
  * which is passed as the first parameter.
@@ -443,6 +482,16 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
  * @optionparent plotOptions.wordcloud
  */
 var wordCloudOptions = {
+    /**
+     * If there is no space for a word on the playing field, then this option
+     * will allow the playing field to be extended to fit the word.
+     * If false then the word will be dropped from the visualization.
+     * NB! This option is currently not decided to be published in the API, and
+     * is therefore marked as private.
+     *
+     * @private
+     */
+    allowExtendPlayingField: true,
     animation: {
         duration: 500
     },
@@ -575,6 +624,7 @@ var wordCloudSeries = {
             group = series.group,
             options = series.options,
             animation = options.animation,
+            allowExtendPlayingField = options.allowExtendPlayingField,
             renderer = chart.renderer,
             testElement = renderer.text().add(group),
             placed = [],
@@ -670,6 +720,21 @@ var wordCloudSeries = {
                 }),
                 animate;
 
+            // If there is no space for the word, extend the playing field.
+            if (!delta && allowExtendPlayingField) {
+                // Extend the playing field to fit the word.
+                field = extendPlayingField(field, rectangle);
+
+                // Run intersection testing one more time to place the word.
+                delta = intersectionTesting(point, {
+                    rectangle: rectangle,
+                    polygon: polygon,
+                    field: field,
+                    placed: placed,
+                    spiral: spiral,
+                    rotation: placement.rotation
+                });
+            }
             /**
              * Check if point was placed, if so delete it,
              * otherwise place it on the correct positions.
@@ -773,6 +838,7 @@ var wordCloudSeries = {
         'square': squareSpiral
     },
     utils: {
+        extendPlayingField: extendPlayingField,
         getRotation: getRotation,
         isPolygonsColliding: isPolygonsColliding,
         rotate2DToOrigin: polygon.rotate2DToOrigin,
