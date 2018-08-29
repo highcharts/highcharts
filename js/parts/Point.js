@@ -78,7 +78,7 @@ Highcharts.Point.prototype = {
      * @param  {Highcharts.Series} series
      *         The series object containing this point.
      *
-     * @param  {number|Array<number>|any} options
+     * @param  {number|Array<number>|*} options
      *         The data in either number, array or object format.
      *
      * @param  {number} x
@@ -160,7 +160,7 @@ Highcharts.Point.prototype = {
      * @private
      * @function Highcharts.Point#applyOptions
      *
-     * @param  {any} options
+     * @param  {*} options
      *         The point options as defined in series.data.
      *
      * @param  {number} x
@@ -184,7 +184,7 @@ Highcharts.Point.prototype = {
          * extended through `Point.update`.
          *
          * @name Highcharts.Point#options
-         * @type {any}
+         * @type {*}
          */
         point.options = point.options ?
             extend(point.options, options) :
@@ -252,16 +252,16 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#setNestedProperty
      *
-     * @param  {any} object
+     * @param  {*} object
      *         The object to set the value on.
      *
-     * @param  {any} value
+     * @param  {*} value
      *         The value to set.
      *
      * @param  {string} key
      *         Key to the property to set.
      *
-     * @return {any}
+     * @return {*}
      *         The modified object.
      */
     setNestedProperty: function (object, value, key) {
@@ -287,10 +287,10 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#optionsToObject
      *
-     * @param  {number|Array<number>|any} options
+     * @param  {number|Array<number>|*} options
      *         The input option.
      *
-     * @return {any}
+     * @return {*}
      *         Transformed options.
      */
     optionsToObject: function (options) {
@@ -552,7 +552,7 @@ Highcharts.Point.prototype = {
      * @param  {string} eventType
      *         Type of the event.
      *
-     * @param  {any} eventArgs
+     * @param  {*} eventArgs
      *         Additional event arguments.
      *
      * @param  {Function} defaultFunction
