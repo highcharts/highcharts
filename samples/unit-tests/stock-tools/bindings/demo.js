@@ -90,40 +90,15 @@ QUnit.test('Bindings general tests', function (assert) {
         ],
         function (name) {
             selectButton(name);
-
-            controller.setPosition(
-                points[2].plotX + plotLeft - 5,
-                points[2].plotY + plotTop - 5
-            );
-            controller.moveTo(
-                points[2].plotX + plotLeft - 5,
-                points[2].plotY + plotTop - 5
-            );
             // Start and steps: annotations, run each step
             controller.click(
                 points[2].plotX + plotLeft - 5,
                 points[2].plotY + plotTop - 5
             );
-            controller.moveTo(
-                points[3].plotX,
-                points[3].plotY
-            );
             Highcharts.each(bindings[name].steps, function (step, index) {
-                controller.setPosition(
-                    points[4 + index].plotX + plotLeft - 5,
-                    points[4 + index].plotY + plotTop - 5
-                );
-                controller.moveTo(
-                    points[4 + index].plotX + plotLeft - 5,
-                    points[4 + index].plotY + plotTop - 5
-                );
                 controller.click(
                     points[4 + index].plotX + plotLeft - 5,
                     points[4 + index].plotY + plotTop - 5
-                );
-                controller.moveTo(
-                    points[5 + index].plotX,
-                    points[5 + index].plotY
                 );
             });
 
@@ -149,17 +124,9 @@ QUnit.test('Bindings general tests', function (assert) {
         function (name) {
             selectButton(name);
 
-            controller.setPosition(
-                points[2].plotX,
-                points[2].plotY
-            );
             controller.click(
                 points[2].plotX,
                 points[2].plotY
-            );
-            controller.moveTo(
-                points[3].plotX,
-                points[3].plotX
             );
 
             assert.strictEqual(
@@ -186,17 +153,9 @@ QUnit.test('Bindings general tests', function (assert) {
 
             selectButton(name);
 
-            controller.moveTo(
-                points[2].plotX,
-                points[2].plotY
-            );
             controller.click(
                 points[2].plotX,
                 points[2].plotY
-            );
-            controller.moveTo(
-                points[3].plotX,
-                points[3].plotX
             );
 
             assert.strictEqual(
@@ -350,10 +309,6 @@ QUnit.test('Bindings general tests', function (assert) {
     // Test annotation events:
     points = chart.series[0].points;
     chart.stockToolbar.popup.closePopup();
-    controller.setPosition(
-        points[2].plotX + plotLeft - 5,
-        points[2].plotY + plotTop - 25
-    );
     controller.click(
         points[2].plotX + plotLeft - 5,
         points[2].plotY + plotTop - 25
@@ -381,10 +336,6 @@ QUnit.test('Bindings general tests', function (assert) {
             button
         );
 
-    controller.setPosition(
-        buttonOffset.left + 5,
-        buttonOffset.top + 5
-    );
     controller.click(
         buttonOffset.left + 5,
         buttonOffset.top + 5
