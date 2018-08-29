@@ -1422,7 +1422,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         parameter in order to re-align an element after the box has been
      *         updated.
      *
-     * @param  {string|Highcharts.BBoxObject} box
+     * @param  {boolean|undefined} [alignByTranslate]
+     *         Align element by translation.
+     *
+     * @param  {string|Highcharts.BBoxObject|undefined} [box]
      *         The box to align to, needs a width and height. When the box is a
      *         string, it refers to an object in the Renderer. For example, when
      *         box is `spacingBox`, it refers to `Renderer.spacingBox` which
