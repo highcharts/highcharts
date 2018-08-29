@@ -16,6 +16,12 @@
  * @typedef {Highcharts.XAxisPlotLinesOptions|Highcharts.YAxisPlotLinesOptions|Highcharts.ZAxisPlotLinesOptions} Highcharts.AxisPlotLinesOptions
  */
 
+/**
+ * Options for plot line labels on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions|} Highcharts.AxisPlotLinesLabelOptions
+ */
+
 'use strict';
 import H from './Globals.js';
 import Axis from './Axis.js';
@@ -197,6 +203,18 @@ H.PlotLineOrBand.prototype = {
 
     /**
      * Render and align label for plot line or band.
+     *
+     * @function Highcharts.PlotLineOrBand#renderLabel
+     *
+     * @param  {Highcharts.AxisPlotLinesLabelOptions} optionsLabel
+     *
+     * @param  {Highcharts.SVGPathArray} path
+     *
+     * @param  {boolean} [isBand]
+     *
+     * @param  {number} [zIndex]
+     *
+     * @return {void}
      */
     renderLabel: function (optionsLabel, path, isBand, zIndex) {
         var plotLine = this,
@@ -254,6 +272,10 @@ H.PlotLineOrBand.prototype = {
 
     /**
      * Remove the plot line or band
+     *
+     * @function Highcharts.PlotLineOrBand#destroy
+     *
+     * @return {void}
      */
     destroy: function () {
         // remove it from the lookup
