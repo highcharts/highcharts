@@ -1263,7 +1263,7 @@ var stockToolsBindings = {
             H.win.localStorage.setItem(
                 PREFIX + 'chart',
                 JSON.stringify({
-                    annotaitons: annotations,
+                    // annotaitons: annotations,
                     indicators: indicators,
                     flags: flags,
                     yAxes: yAxes
