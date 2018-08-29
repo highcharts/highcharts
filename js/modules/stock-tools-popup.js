@@ -33,7 +33,7 @@ var addEvent = H.addEvent,
 
 wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
 
-    var popupClass = e.target.className;
+    var popupClass = e.target && e.target.className;
 
     // elements is not in popup
     if (!(isString(popupClass) &&
