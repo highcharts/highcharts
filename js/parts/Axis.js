@@ -3788,7 +3788,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The processed crosshair options.
          *
          * @name     Highcharts.Axis#crosshair
-         * @type     {Highcharts.XAxisCrosshairOptions|Highcharts.YAxisCrosshairOptions|Highcharts.ZAxisCrosshairOptions}
+         * @type     {false|Highcharts.XAxisCrosshairOptions|Highcharts.YAxisCrosshairOptions}
          */
         axis.crosshair = pick(
             options.crosshair,
