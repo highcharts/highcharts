@@ -354,12 +354,12 @@ QUnit.test('Bindings general tests', function (assert) {
         'Annotations toolbar visible.'
     );
 
-    controller.triggerEvent(
+    var button = document.querySelectorAll('.highcharts-popup .highcharts-annotation-remove-button')[0];
+    controller.triggerOnElement(
+        button,
         'click',
         10,
-        10,
-        {},
-        document.querySelectorAll('.highcharts-popup .highcharts-annotation-remove-button')[0]
+        10
     );
     assert.strictEqual(
         chart.annotations.length,
