@@ -615,7 +615,7 @@ Series.prototype.alignDataLabel = function (
  *
  * @function Highcharts.Series#justifyDataLabel
  *
- * @param  {Highcharts.DataLabel} dataLabel
+ * @param  {Highcharts.SVGElement} dataLabel
  *
  * @param  {Highcharts.PlotSeriesDataLabelsOptions} options
  *
