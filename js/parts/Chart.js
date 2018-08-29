@@ -430,7 +430,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#redraw
      *
-     * @param  {Highcharts.AnimationOptionsObject} animation
+     * @param  {boolean|Highcharts.AnimationOptionsObject|undefined} [animation]
      *         If or how to apply animation to the redraw.
      *
      * @return {void}
