@@ -49,6 +49,51 @@ QUnit.test('hasData', function (assert) {
     );
 });
 
+QUnit.test('extendPlayingField', function (assert) {
+    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+        extendPlayingField = wordcloudPrototype.utils.extendPlayingField,
+        field = {
+            width: 20,
+            height: 40,
+            ratioX: 1,
+            ratioY: 2
+        },
+        rectangle = {
+            left: -5,
+            right: 5,
+            top: -10,
+            bottom: 10
+        };
+
+    assert.deepEqual(
+        extendPlayingField(undefined, rectangle),
+        undefined,
+        'should return the existing field if parameter field is invalid.'
+    );
+
+    assert.deepEqual(
+        extendPlayingField(field, undefined),
+        {
+            width: 20,
+            height: 40,
+            ratioX: 1,
+            ratioY: 2
+        },
+        'should return the existing field if parameter rectangle is invalid.'
+    );
+
+    assert.deepEqual(
+        extendPlayingField(field, rectangle),
+        {
+            width: 60,
+            height: 120,
+            ratioX: 1,
+            ratioY: 2
+        },
+        'should return the existing field if parameter rectangle is invalid.'
+    );
+});
+
 QUnit.test('getRotation', function (assert) {
     var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
         getRotation = wordcloudPrototype.utils.getRotation;
