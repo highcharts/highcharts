@@ -102,7 +102,7 @@
  * attributes containing a hyphen are _not_ camel-cased, they should be
  * quoted to preserve the hyphen.
  *
- * @typedef {Highcharts.Dictionary<number|string|Array<number|string>>} Highcharts.SVGAttributes
+ * @typedef {Highcharts.Dictionary<number|string|Highcharts.SVGPathArray>} Highcharts.SVGAttributes
  *
  * @example
  * {
@@ -120,6 +120,20 @@
  * @typedef {global.GlobalSVGElement} Highcharts.SVGDOMElement
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
+ */
+
+/**
+ * Array of path commands, that will go into the `d` attribute of an SVG
+ * element.
+ *
+ * @typedef {Array<number|Highcharts.SVGPathCommand>} Highcharts.SVGPathArray
+ */
+
+/**
+ * Possible path commands in a SVG path array.
+ *
+ * @typedef {string} Highcharts.SVGPathCommand
+ * @validvalue ["a","c","h","l","m","q","s","t","v","z","A","C","H","L","M","Q","S","T","V","Z"]
  */
 
 'use strict';
@@ -396,10 +410,10 @@ H.Fx.prototype = {
      * @param  {string} fromD
      *         Starting path definition.
      *
-     * @param  {Array} toD
+     * @param  {Highcharts.SVGPathArray} toD
      *         Ending path definition.
      *
-     * @return {Array}
+     * @return {Array<Highcharts.SVGPathArray>}
      *         An array containing start and end paths in array form so that
      *         they can be animated in parallel.
      */
@@ -1909,7 +1923,7 @@ H.map = function (arr, fn) {
  * @param  {*} obj
  *         The object of which the properties are to be returned.
  *
- * @return {Array}
+ * @return {Array<string>}
  *         An array of strings that represents all the properties.
  */
 H.keys = function (obj) {
@@ -1921,7 +1935,7 @@ H.keys = function (obj) {
  *
  * @function Highcharts.reduce
  *
- * @param  {Array} arr
+ * @param  {Array<*>} arr
  *         The array to reduce.
  *
  * @param  {Function} fn
@@ -2005,9 +2019,9 @@ H.stop = function (el, prop) {
 /**
  * Iterate over an array.
  *
- * @function Highcharts.each
+ * @function Highcharts.each<T>
  *
- * @param  {Array} arr
+ * @param  {Array<T>} arr
  *         The array to iterate over.
  *
  * @param  {Function} fn
@@ -2040,7 +2054,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
  *         * obj - The object that objectEach is being applied to.
  *
  * @param  {*|undefined} [ctx]
- *         The context
+ *         The context.
  *
  * @return {void}
  */
