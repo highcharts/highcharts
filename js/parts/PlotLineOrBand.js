@@ -11,6 +11,12 @@
  */
 
 /**
+ * Options for plot band labels on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotBandsLabelOptions|Highcharts.YAxisPlotBandsLabelOptions|Highcharts.ZAxisPlotBandsLabelOptions} Highcharts.AxisPlotBandsLabelOptions
+ */
+
+/**
  * Options for plot lines on axes.
  *
  * @typedef {Highcharts.XAxisPlotLinesOptions|Highcharts.YAxisPlotLinesOptions|Highcharts.ZAxisPlotLinesOptions} Highcharts.AxisPlotLinesOptions
@@ -19,7 +25,7 @@
 /**
  * Options for plot line labels on axes.
  *
- * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions|} Highcharts.AxisPlotLinesLabelOptions
+ * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 
 'use strict';
@@ -206,7 +212,7 @@ H.PlotLineOrBand.prototype = {
      *
      * @function Highcharts.PlotLineOrBand#renderLabel
      *
-     * @param  {Highcharts.AxisPlotLinesLabelOptions} optionsLabel
+     * @param  {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
      *
      * @param  {Highcharts.SVGPathArray} path
      *
