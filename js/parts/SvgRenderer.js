@@ -7,7 +7,7 @@
 /**
  * Options to align the element relative to the chart or another box.
  *
- * @typedef Highcharts.AlignObject
+ * @typedef {*} Highcharts.AlignObject
  *
  * @property {string|undefined} [align='left']
  *           Horizontal alignment. Can be one of `left`, `center` and
@@ -31,7 +31,7 @@
 /**
  * Bounding box of an element.
  *
- * @typedef Highcharts.BBoxObject
+ * @typedef {*} Highcharts.BBoxObject
  *
  * @property {number} height
  *           Height of the bounding box.
@@ -52,8 +52,6 @@
  * {@link SVGRenderer#clipRect} function and applied with the
  * {@link SVGElement#clip} function.
  *
- * @typedef {Highcharts.SVGElement} Highcharts.ClipRectElement
- *
  * @example
  * var circle = renderer.circle(100, 100, 100)
  *     .attr({ fill: 'red' })
@@ -62,12 +60,14 @@
  *
  * // Leave only the lower right quarter visible
  * circle.clip(clipRect);
+ *
+ * @typedef {Highcharts.SVGElement} Highcharts.ClipRectElement
  */
 
 /**
  * The font metrics.
  *
- * @typedef {object} Highcharts.FontMetricsObject
+ * @typedef {*} Highcharts.FontMetricsObject
  *
  * @property {number} b
  *           The baseline relative to the top of the box.
@@ -82,8 +82,20 @@
 /**
  * Gradient options instead of a solid color.
  *
+ * @example
+ * // Linear gradient used as a color option
+ * color: {
+ *     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+ *         stops: [
+ *             [0, '#003399'], // start
+ *             [0.5, '#ffffff'], // middle
+ *             [1, '#3366AA'] // end
+ *         ]
+ *     }
+ * }
+ *
  * @private
- * @typedef {object} Highcharts.GradientColorObject
+ * @typedef {*} Highcharts.GradientColorObject
  *
  * @property {Highcharts.LinearGradientColorObject} linearGradient
  *           Holds an object that defines the start position and the end
@@ -99,18 +111,6 @@
  *           gradient. Multiple stops can be applied. The second item is the
  *           color for each stop. This color can also be given in the rgba
  *           format.
- *
- * @example
- * // Linear gradient used as a color option
- * color: {
- *     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
- *         stops: [
- *             [0, '#003399'], // start
- *             [0.5, '#ffffff'], // middle
- *             [1, '#3366AA'] // end
- *         ]
- *     }
- * }
  */
 
 /**
@@ -118,7 +118,7 @@
  * to the shape.
  *
  * @private
- * @typedef {object} Highcharts.LinearGradientColorObject
+ * @typedef {*} Highcharts.LinearGradientColorObject
  *
  * @property {number} x1
  *           Start horizontal position of the gradient. Ranges 0-1.
@@ -137,7 +137,7 @@
  * Defines the center position and the radius for a gradient.
  *
  * @private
- * @typedef {object} Highcharts.RadialGradientColorObject
+ * @typedef {*} Highcharts.RadialGradientColorObject
  *
  * @property {number} cx
  *           Center horizontal position relative to the shape. Ranges 0-1.
@@ -152,7 +152,7 @@
 /**
  * A rectangle.
  *
- * @typedef {object} Highcharts.RectangleObject
+ * @typedef {*} Highcharts.RectangleObject
  *
  * @property {number} height
  *           Height of the rectangle.
@@ -170,7 +170,7 @@
 /**
  * The shadow options.
  *
- * @typedef {object} Highcharts.ShadowOptionsObject
+ * @typedef {*} Highcharts.ShadowOptionsObject
  *
  * @property {string|undefined} [color=${palette.neutralColor100}]
  *           The shadow color.
@@ -189,9 +189,24 @@
  */
 
 /**
+ * Serialized form of an SVG definition, including children. Some key
+ * property names are reserved: tagName, textContent, and children.
+ *
+ * @typedef Highcharts.SVGDefinitionObject
+ *
+ * @property {number|string|Array<Highcharts.SVGDefinitionObject>|undefined} [key:string]
+ *
+ * @property {Array<Highcharts.SVGDefinitionObject>|undefined} [children]
+ *
+ * @property {string|undefined} [tagName]
+ *
+ * @property {string|undefined} [textContent]
+ */
+
+/**
  * An extendable collection of functions for defining symbol paths.
  *
- * @typedef {object} Highcharts.SymbolDictionary
+ * @typedef {*} Highcharts.SymbolDictionary
  *
  * @property {Function} [key:Highcharts.SymbolKey]
  */
@@ -211,7 +226,7 @@
 /**
  * Additional options, depending on the actual symbol drawn.
  *
- * @typedef {object} Highcharts.SymbolOptionsObject
+ * @typedef {*} Highcharts.SymbolOptionsObject
  *
  * @property {number} anchorX
  *           The anchor X position for the `callout` symbol. This is where
@@ -233,21 +248,6 @@
  *
  * @property {number} start
  *           The start angle of an `arc` symbol.
- */
-
-/**
- * Serialized form of an SVG definition, including children. Some key
- * property names are reserved: tagName, textContent, and children.
- *
- * @interface Highcharts.SVGDefinitionObject
- *
- * @property {number|string|Array<Highcharts.SVGDefinitionObject>} [key:string]
- *
- * @property {Array<Highcharts.SVGDefinitionObject>|undefined} [children]
- *
- * @property {string|undefined} [tagName]
- *
- * @property {string|undefined} [textContent]
  */
 
 'use strict';
