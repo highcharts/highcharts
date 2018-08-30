@@ -719,14 +719,12 @@ before functional code for JSDoc to see them.`.yellow
 
             // Infer types
             if (obj.children) {
-                Object.keys(obj.children).forEach(function (child) {
+                Object.keys(obj.children).forEach(name => {
                     // work around #8260:
-                    if (child === '' || child === 'undefined') {
-                        delete obj.children[child];
-                        return;
-                    }
-                    if (name !== '_meta') {
-                        inferTypeForTree(obj.children[child]);
+                    if (name === '' || name === 'undefined') {
+                        delete obj.children[name];
+                    } else if (name[0] !== '_') {
+                        inferTypeForTree(obj.children[name]);
                     }
                 });
             }
