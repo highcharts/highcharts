@@ -49,7 +49,7 @@
  *
  * @typedef {*} Highcharts.CSSObject
  *
- * @property {boolean|number|string} [key:string]
+ * @property {boolean|number|string|undefined} [key:string]
  *
  * @property {string} [background]
  *           Background style for the element.
@@ -184,7 +184,7 @@
  *
  * @typedef {*} Highcharts.SVGAttributes
  *
- * @property {boolean|number|string|Array<any>} [key:string]
+ * @property {boolean|number|string|Array<any>|undefined} [key:string]
  *
  * @property {string|Highcharts.SVGPathArray} [d]
  *
