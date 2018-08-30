@@ -363,6 +363,9 @@ function inferType(node) {
     node.doclet = node.doclet || {};
     node.meta = node.meta || {};
 
+    // remove JSDoc specific flag
+    delete node.doclet.undocumented;
+
     if (typeof node.doclet.type !== 'undefined') {
         // We allready have a type, so no infering is required
         return;
@@ -722,21 +725,14 @@ before functional code for JSDoc to see them.`.yellow
                         delete obj.children[child];
                         return;
                     }
-                    inferTypeForTree(obj.children[child]);
+                    if (name !== '_meta') {
+                        inferTypeForTree(obj.children[child]);
+                    }
                 });
             }
         }
 
-        Object.keys(options).forEach(function (name) {
-            // work around #8260:
-            if (name === '' || name === 'undefined') {
-                delete options[name];
-                return;
-            }
-            if (name !== '_meta') {
-                inferTypeForTree(options[name]);
-            }
-        });
+        inferTypeForTree({children: options});
 
         function addSeriesTypeDescription(type) {
             var node = type;
