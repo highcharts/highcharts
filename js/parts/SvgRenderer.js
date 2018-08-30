@@ -3400,10 +3400,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param  {Highcharts.SVGAttributes|undefined} [disabledState]
      *         SVG attributes for the disabled state.
      *
-     * @param  {Highcharts.Symbol|undefined} [shape=rect]
+     * @param  {Highcharts.SymbolKey|undefined} [shape=rect]
      *         The shape type.
      *
-     * @return {Highcharts.SVGRenderer}
+     * @return {Highcharts.SVGElement}
      *         The button element.
      */
     button: function (
@@ -3984,7 +3984,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param  {Highcharts.SymbolOptionsObject|undefined} [options]
      *         Additional options, depending on the actual symbol drawn.
      *
-     * @return {Highcharts.Symbol}
+     * @return {Highcharts.SVGElement}
      */
     symbol: function (symbol, x, y, width, height, options) {
 
