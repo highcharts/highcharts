@@ -186,7 +186,7 @@
  *
  * @property {boolean|number|string|Array<any>} [key:string]
  *
- * @property {string|Highcharts.SVGPathArray>} [d]
+ * @property {string|Highcharts.SVGPathArray} [d]
  *
  * @property {boolean} [inverted]
  *
