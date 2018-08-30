@@ -1445,7 +1445,8 @@ function GLRenderer(postRenderCallback) {
             pcolor = false,
             drawAsBar = asBar[series.type],
             isXInside = false,
-            isYInside = true;
+            isYInside = true,
+            threshold = options.threshold;
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -1809,6 +1810,9 @@ function GLRenderer(postRenderCallback) {
                     }
                 }
 
+                if (!isRange && !isStacked) {
+                    minVal = Math.max(threshold, yMin); // #8731
+                }
                 if (!settings.useGPUTranslations) {
                     minVal = yAxis.toPixels(minVal, true);
                 }
