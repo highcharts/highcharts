@@ -2808,13 +2808,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         // The threshold may be discussed. Here's a proposal for adding
         // different weight to the color channels (#6216)
-        /*
         rgba[0] *= 1; // red
         rgba[1] *= 1.2; // green
-        rgba[2] *= 0.7; // blue
-        */
+        rgba[2] *= 0.5; // blue
 
-        return rgba[0] + rgba[1] + rgba[2] > 2 * 255 ? '#000000' : '#FFFFFF';
+        return rgba[0] + rgba[1] + rgba[2] > 1.8 * 255 ? '#000000' : '#FFFFFF';
     },
 
     /**

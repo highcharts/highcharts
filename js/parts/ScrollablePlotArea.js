@@ -184,10 +184,15 @@ Chart.prototype.applyFixed = function () {
             '.highcharts-credits',
             '.highcharts-legend',
             '.highcharts-subtitle',
-            '.highcharts-title'
+            '.highcharts-title',
+            '.highcharts-legend-checkbox'
         ], function (className) {
             H.each(container.querySelectorAll(className), function (elem) {
-                fixedRenderer.box.appendChild(elem);
+                (
+                    elem.namespaceURI === fixedRenderer.SVG_NS ?
+                        fixedRenderer.box :
+                        fixedRenderer.box.parentNode
+                ).appendChild(elem);
                 elem.style.pointerEvents = 'auto';
             });
         });
