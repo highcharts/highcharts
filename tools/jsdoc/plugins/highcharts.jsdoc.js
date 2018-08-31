@@ -45,7 +45,7 @@ function dumpOptions() {
             '  '
         ),
         function () {
-            //console.log('Wrote tree!');
+            //console.info('Wrote tree!');
         }
     );
 }
@@ -56,9 +56,9 @@ function resolveBinaryExpression(node) {
     var rside = '';
 
     if (node.left.type === 'Literal') {
-        lside = node.left.value;    
+        lside = node.left.value;
     } 
-        
+
     if (node.right.type === 'Literal') {
         rside = node.right.value;
     }
@@ -88,7 +88,7 @@ function decorateOptions(parent, target, option, filename) {
     var index;
 
     if (!option) {
-        console.log('WARN: decorateOptions called with no valid AST node');
+        console.error('WARN: decorateOptions called with no valid AST node');
         return;
     }
 
@@ -154,7 +154,7 @@ function decorateOptions(parent, target, option, filename) {
         target[index].meta.default = resolveBinaryExpression(option.value);
     } else {
       // if (option.leadingComments && option.leadingComments[0].value.indexOf('@apioption') >= 0) {
-        // console.log('OPTION:', option, 'COMMENT:', option.leadingComments);
+        // console.info('OPTION:', option, 'COMMENT:', option.leadingComments);
       // }
     }
 
@@ -201,7 +201,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
             '@optionparent ' + node.highcharts.fullname
             ]);
         } else if ((e.comment || '').indexOf('@apioption tooltip') >= 0) {
-            console.log(e.comment);
+            console.error(e.comment);
         }
 
         return;
@@ -272,8 +272,8 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
         if (target) {
             if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
-                console.log('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
-                // console.log('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
+                console.info('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
+                // console.info('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
                 properties = node.arguments[2].properties;
             } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
                 properties = node.arguments[0].properties;
@@ -286,7 +286,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
             } else if (node.operator === '=' && node.right.type === 'ObjectExpression') {
                 properties = node.right.properties;
             } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
-                console.log('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
+                console.info('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
                 properties = node.right.arguments[2].properties;
             } else {
                 logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
@@ -297,7 +297,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                     decorateOptions(parent, target, child, e.filename || currentSourceName);
                 });
             } else {
-                console.log('INVALID properties for node', node);
+                console.error('INVALID properties for node', node);
             }
         } else {
             logger.error('@optionparent is missing an argument');
@@ -415,7 +415,7 @@ function augmentOption(path, obj) {
         });
 
     } catch (e) {
-        console.log('ERROR deducing path', path);
+        console.error('ERROR deducing path', path);
     }
 }
 
@@ -423,8 +423,6 @@ function removeOption(path) {
     var current = options,
         p = (path || '').split('.')
     ;
-
-    // console.log('found ignored option: removing', path);
 
     if (!p) {
         return;
@@ -645,7 +643,7 @@ exports.handlers = {
                 m.indexOf('@apioption') === -1 &&
                 m.indexOf('@name') === -1
         )) {
-            console.log(
+            console.error(
 `Warning: Detected ${match.length} cases of a comment followed by } in
 ${e.filename}.
 This may lead to loose doclets not being parsed into the API. Move them up
