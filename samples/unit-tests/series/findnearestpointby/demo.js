@@ -66,34 +66,34 @@ QUnit.test('findNearestPointBy test', function (assert) {
         x6 = chart.series[1].points[1].plotX + chart.plotLeft,
         y6 = chart.series[1].points[1].plotY + chart.plotTop;
 
-    controller.mousemove(x1, y1);
+    controller.mouseMove(x1, y1);
     assert.ok(
         chart.hoverPoint === chart.series[0].points[5],
         'Hover point snaps to X'
     );
 
-    controller.mousemove(x2, y2);
+    controller.mouseMove(x2, y2);
     assert.notOk(
         chart.hoverPoint === chart.series[1].points[7],
         'Hover point does not snap to X'
     );
 
-    controller.mousemove(x3, y3);
+    controller.mouseMove(x3, y3);
     if (chart.hoverPoint === chart.series[0].points[2]) {
-        controller.mousemove(x4, y4);
+        controller.mouseMove(x4, y4);
         assert.notOk(
             chart.hoverPoint === chart.series[0].points[1],
             'Hover does not allow duplicate X'
         );
     }
 
-    controller.mousemove(x5, y5);
+    controller.mouseMove(x5, y5);
     assert.ok(
         chart.hoverPoint === chart.series[1].points[2],
         'Hover allows duplicate X'
     );
 
-    controller.mousemove(x6, y6);
+    controller.mouseMove(x6, y6);
     assert.ok(
         chart.hoverPoint === chart.series[1].points[1],
         'Hover allows duplicate X'

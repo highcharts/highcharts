@@ -97,8 +97,7 @@ QUnit.test('TouchPointer events', function (assert) {
     controller = new TestController(chart);
     events = [];
 
-    controller.tapOnElement(
-        chart.container,
+    controller.tap(
         chart.plotLeft + chart.series[0].points[0].plotX,
         chart.plotTop + chart.series[0].points[0].plotY
     );

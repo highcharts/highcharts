@@ -21,7 +21,7 @@ var Point = H.Point,
  * @sample {highcharts} highcharts/demo/3d-scatter-draggable
  *         Draggable 3d scatter
  *
- * @extends {plotOptions.scatter}
+ * @extends plotOptions.scatter
  * @product highcharts
  * @optionparent plotOptions.scatter3d
  */

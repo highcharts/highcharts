@@ -346,7 +346,13 @@ Series.prototype.drawDataLabels = function () {
                 if (!dataLabel) {
                     dataLabel = point.dataLabel = rotation ?
 
-                        renderer.text(str, 0, -9999) // labels don't rotate
+                        renderer
+                            .text( // labels don't rotate
+                                str,
+                                0,
+                                -9999,
+                                options.useHTML
+                            )
                             .addClass('highcharts-data-label') :
 
                         renderer.label(
@@ -1061,7 +1067,8 @@ if (seriesTypes.pie) {
                         dataLabel.css({
                             width: dataLabel._attr.width + 'px',
                             textOverflow: (
-                                this.options.dataLabels.style.textOverflow ||
+                                (this.options.dataLabels.style || {})
+                                    .textOverflow ||
                                 'ellipsis'
                             )
                         });
@@ -1078,7 +1085,7 @@ if (seriesTypes.pie) {
         }, this);
     };
 
-    seriesTypes.pie.prototype.alignDataLabel =  noop;
+    seriesTypes.pie.prototype.alignDataLabel = noop;
 
     /**
      * Verify whether the data labels are allowed to draw, or we should run more

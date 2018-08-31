@@ -327,7 +327,7 @@ seriesType('column', 'line', {
      */
     softThreshold: false,
 
-    // false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
+    // false doesn't work well: https://jsfiddle.net/highcharts/hz8fopan/14/
     /**
      * @ignore-option
      */
@@ -396,7 +396,7 @@ seriesType('column', 'line', {
      * marking other series of the same type as dirty.
      *
      * @function #init
-     * @memberOf seriesTypes.column
+     * @memberof seriesTypes.column
      *
      */
     init: function () {

@@ -387,7 +387,7 @@ merge(true, defaultOptions.navigation,
 
 /**
  * Options for the exporting module. For an overview on the matter, see
- * [the docs](http://www.highcharts.com/docs/export-module/export-module-overview).
+ * [the docs](https://www.highcharts.com/docs/export-module/export-module-overview).
  * @type {Object}
  * @optionparent exporting
  */
@@ -657,7 +657,7 @@ defaultOptions.exporting = {
              * the `Highcharts.Renderer.symbols` collection. The default
              * `exportIcon` function is part of the exporting module.
              *
-             * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down", "menu"]
+             * @validvalue ["exportIcon", "circle", "square", "diamond", "triangle", "triangle-down", "menu"]
              * @type {String}
              * @sample highcharts/exporting/buttons-contextbutton-symbol/
              *         Use a circle for symbol
@@ -915,7 +915,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             // Replace HTML entities, issue #347
             .replace(/&nbsp;/g, '\u00A0') // no-break space
-            .replace(/&shy;/g,  '\u00AD'); // soft hyphen
+            .replace(/&shy;/g, '\u00AD'); // soft hyphen
 
         /*= if (build.classic) { =*/
         // Further sanitize for oldIE
@@ -1049,7 +1049,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 userMin = extremes.userMin,
                 userMax = extremes.userMax;
 
-            if (axisCopy && (userMin !== undefined || userMax !== undefined)) {
+            if (
+                axisCopy &&
+                (
+                    (userMin !== undefined && userMin !== axisCopy.min) ||
+                    (userMax !== undefined && userMax !== axisCopy.max)
+                )
+            ) {
                 axisCopy.setExtremes(userMin, userMax, true, false);
             }
         });
@@ -1189,33 +1195,37 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // pull out the chart
         body.appendChild(container);
 
-        // print
-        win.focus(); // #1510
-        win.print();
-
-        // allow the browser to prepare before reverting
+        // Give the browser time to draw WebGL content, an issue that randomly
+        // appears (at least) in Chrome ~67 on the Mac (#8708).
         setTimeout(function () {
 
-            // put the chart back in
-            origParent.appendChild(container);
+            win.focus(); // #1510
+            win.print();
 
-            // restore all body content
-            each(childNodes, function (node, i) {
-                if (node.nodeType === 1) {
-                    node.style.display = origDisplay[i];
+            // allow the browser to prepare before reverting
+            setTimeout(function () {
+
+                // put the chart back in
+                origParent.appendChild(container);
+
+                // restore all body content
+                each(childNodes, function (node, i) {
+                    if (node.nodeType === 1) {
+                        node.style.display = origDisplay[i];
+                    }
+                });
+
+                chart.isPrinting = false;
+
+                // Reset printMaxWidth
+                if (handleMaxWidth) {
+                    chart.setSize.apply(chart, resetParams);
                 }
-            });
 
-            chart.isPrinting = false;
+                fireEvent(chart, 'afterPrint');
 
-            // Reset printMaxWidth
-            if (handleMaxWidth) {
-                chart.setSize.apply(chart, resetParams);
-            }
-
-            fireEvent(chart, 'afterPrint');
-
-        }, 1000);
+            }, 1000);
+        }, 1);
 
     },
 
@@ -1296,6 +1306,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     if (!chart.pointer.inClass(e.target, className)) {
                         hide();
                     }
+                }),
+
+                addEvent(menu, 'click', function () {
+                    if (chart.openMenu) {
+                        hide();
+                    }
                 })
             );
 
@@ -1369,7 +1385,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             y + height + chart.exportMenuHeight > chartHeight &&
             button.alignOptions.verticalAlign !== 'top'
         ) {
-            menuStyle.bottom = (chartHeight - y - menuPadding)  + 'px';
+            menuStyle.bottom = (chartHeight - y - menuPadding) + 'px';
         } else {
             menuStyle.top = (y + height - menuPadding) + 'px';
         }
@@ -1865,30 +1881,35 @@ Chart.prototype.callbacks.push(function (chart) {
     // Uncomment this to see a button directly below the chart, for quick
     // testing of export
     /*
+    var button, viewImage, viewSource;
     if (!chart.renderer.forExport) {
-        var button;
-
-        // View SVG Image
-        button = doc.createElement('button');
-        button.innerHTML = 'View SVG Image';
-        chart.renderTo.parentNode.appendChild(button);
-        button.onclick = function () {
+        viewImage = function () {
             var div = doc.createElement('div');
             div.innerHTML = chart.getSVGForExport();
             chart.renderTo.parentNode.appendChild(div);
         };
 
-        // View SVG Source
-        button = doc.createElement('button');
-        button.innerHTML = 'View SVG Source';
-        chart.renderTo.parentNode.appendChild(button);
-        button.onclick = function () {
+        viewSource = function () {
             var pre = doc.createElement('pre');
             pre.innerHTML = chart.getSVGForExport()
                 .replace(/</g, '\n&lt;')
                 .replace(/>/g, '&gt;');
             chart.renderTo.parentNode.appendChild(pre);
         };
+
+        viewImage();
+
+        // View SVG Image
+        button = doc.createElement('button');
+        button.innerHTML = 'View SVG Image';
+        chart.renderTo.parentNode.appendChild(button);
+        button.onclick = viewImage;
+
+        // View SVG Source
+        button = doc.createElement('button');
+        button.innerHTML = 'View SVG Source';
+        chart.renderTo.parentNode.appendChild(button);
+        button.onclick = viewSource;
     }
     //*/
 });

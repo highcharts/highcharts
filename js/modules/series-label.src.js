@@ -11,10 +11,10 @@
  * - avoid data labels, when data labels above, show series label below.
  * - add more options (connector, format, formatter)
  *
- * http://jsfiddle.net/highcharts/L2u9rpwr/
- * http://jsfiddle.net/highcharts/y5A37/
- * http://jsfiddle.net/highcharts/264Nm/
- * http://jsfiddle.net/highcharts/y5A37/
+ * https://jsfiddle.net/highcharts/L2u9rpwr/
+ * https://jsfiddle.net/highcharts/y5A37/
+ * https://jsfiddle.net/highcharts/264Nm/
+ * https://jsfiddle.net/highcharts/y5A37/
  */
 
 'use strict';
@@ -144,10 +144,10 @@ function intersectLine(x1, y1, x2, y2, x3, y3, x4, y4) {
  */
 function boxIntersectLine(x, y, w, h, x1, y1, x2, y2) {
     return (
-        intersectLine(x, y, x + w, y,         x1, y1, x2, y2) || // top of label
+        intersectLine(x, y, x + w, y, x1, y1, x2, y2) || // top of label
         intersectLine(x + w, y, x + w, y + h, x1, y1, x2, y2) || // right
         intersectLine(x, y + h, x + w, y + h, x1, y1, x2, y2) || // bottom
-        intersectLine(x, y, x, y + h,         x1, y1, x2, y2)   // left of label
+        intersectLine(x, y, x, y + h, x1, y1, x2, y2)   // left of label
     );
 }
 
@@ -271,7 +271,7 @@ Series.prototype.getPointsOnGraph = function () {
                 point.chartCenterY = paneTop + (
                     point.plotY +
                     pick(point.yBottom, translatedThreshold)
-                ) /    2;
+                ) / 2;
             }
 
             // Add interpolated points

@@ -13,6 +13,9 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
                 viewDistance: 5
             }
         },
+        scrollbar: {
+            enabled: true
+        },
         plotOptions: {
             column: {
                 animation: false,
@@ -208,7 +211,7 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
             reversed: false
         },
         xAxis: {
-            type: 'categories',
+            type: 'category',
             categories: [
                 'One Two Three Four Five Six',
                 'One Two Three Four Five Six',
@@ -225,12 +228,44 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     var yAxisFirstLine = chart.yAxis[0].gridGroup.element.childNodes[0].getBBox();
     var xAxisFirstLine = chart.xAxis[0].gridGroup.element.childNodes[0].getBBox();
 
-    assert.strictEqual(
-        (
-            labelWidth < xAxisFirstLine.x - yAxisFirstLine.x
-        ),
-        true,
-        'xAxis label width is smaller than available slot width'
+    assert.ok(
+        labelWidth < xAxisFirstLine.x - yAxisFirstLine.x + 1,
+        'xAxis label width should be smaller than available slot width'
     );
 
+    // Testing scrollbar moving when the chart has two linked x axes.
+    var controller = new TestController(chart);
+
+    chart.addAxis({
+        type: 'category',
+        categories: ["0.0", "0.3", "0.0", "0.1", "0.3"],
+        opposite: true,
+        linkedTo: 0
+    }, true);
+
+    chart.update({
+        xAxis: {
+            minRange: 1
+        }
+    });
+    chart.xAxis[0].setExtremes(0, 2);
+
+    // Scrollbar dimensions
+    var sbDim = {
+        x: chart.scrollbar.x,
+        y: chart.scrollbar.y,
+        w: chart.scrollbar.width,
+        h: chart.scrollbar.height
+    };
+
+    var clickX = sbDim.x + sbDim.w / 2;
+    var clickY = sbDim.y + sbDim.h / 2;
+
+    controller.pan([clickX, clickY], [clickX + 40, clickY]);
+
+    var done = assert.async();
+    setTimeout(function () {
+        assert.ok(true, 'Console should be clear.');
+        done();
+    });
 });

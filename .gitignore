@@ -1,5 +1,8 @@
-/.metadata/
-/.settings/
+/.metadata
+/.project
+/.pydevproject
+/.settings
+/.vscode
 /api-docs
 /out
 /js/highcharts-3d.src.js
@@ -15,9 +18,7 @@
 /build
 /code
 /tools/jsdoc/ink-docstrap
-/.project
 /git-ignore-me.properties
-/.pydevproject
 /highcharts.com.sublime-project
 /highcharts.com.sublime-workspace
 /highcharts.sublime-workspace
@@ -36,6 +37,7 @@
 /utils/samples/nightly/
 
 tree.json
+tree-namespace.json
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github

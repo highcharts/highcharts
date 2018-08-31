@@ -3,7 +3,7 @@ var x = 0;
 
 
 
-var clock = lolexInstall();
+var clock = TestUtilities.lolexInstall();
 
 chart = Highcharts.chart('container', {
 
@@ -40,5 +40,5 @@ chart.series[0].addPoint([
 
 clock.tick(26);
 
-lolexUninstall(clock);
+TestUtilities.lolexUninstall(clock);
 

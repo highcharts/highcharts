@@ -34,7 +34,7 @@ var colorPointMixin = H.colorPointMixin,
  * color based on its value.
  *
  * @sample maps/demo/base/ Choropleth map
- * @extends {plotOptions.scatter}
+ * @extends plotOptions.scatter
  * @excluding marker
  * @product highmaps
  * @optionparent plotOptions.map
@@ -88,7 +88,7 @@ seriesType('map', 'scatter', {
      * @type {Color}
      * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
      * @default #cccccc
-     * @product highmaps
+     * @product highmaps highcharts
      * @apioption plotOptions.series.borderColor
      */
     borderColor: '${palette.neutralColor20}',
@@ -100,7 +100,7 @@ seriesType('map', 'scatter', {
      * `.highcharts-point` class.
      *
      * @sample    {highmaps} maps/plotoptions/series-border/ Borders demo
-     * @product   highmaps
+     * @product   highmaps highcharts
      * @apioption plotOptions.series.borderWidth
      */
     borderWidth: 1,
@@ -278,9 +278,9 @@ seriesType('map', 'scatter', {
     getBox: function (paths) {
         var MAX_VALUE = Number.MAX_VALUE,
             maxX = -MAX_VALUE,
-            minX =  MAX_VALUE,
+            minX = MAX_VALUE,
             maxY = -MAX_VALUE,
-            minY =  MAX_VALUE,
+            minY = MAX_VALUE,
             minRange = MAX_VALUE,
             xAxis = this.xAxis,
             yAxis = this.yAxis,
@@ -298,9 +298,9 @@ seriesType('map', 'scatter', {
                     i = path.length,
                     even = false, // while loop reads from the end
                     pointMaxX = -MAX_VALUE,
-                    pointMinX =  MAX_VALUE,
+                    pointMinX = MAX_VALUE,
                     pointMaxY = -MAX_VALUE,
-                    pointMinY =  MAX_VALUE,
+                    pointMinY = MAX_VALUE,
                     properties = point.properties;
 
                 // The first time a map point is used, analyze its box
@@ -319,7 +319,7 @@ seriesType('map', 'scatter', {
                     }
                     // Cache point bounding box for use to position data labels,
                     // bubbles etc
-                    point._midX = pointMinX + (pointMaxX - pointMinX) *    pick(
+                    point._midX = pointMinX + (pointMaxX - pointMinX) * pick(
                         point.middleX,
                         properties && properties['hc-middle-x'],
                         0.5
@@ -673,7 +673,15 @@ seriesType('map', 'scatter', {
         // Set the stroke-width on the group element and let all point graphics
         // inherit. That way we don't have to iterate over all points to update
         // the stroke-width on zooming.
-        attr['stroke-width'] = 'inherit';
+        attr['stroke-width'] = pick(
+            point.options[
+                (
+                    this.pointAttrToOptions &&
+                    this.pointAttrToOptions['stroke-width']
+                ) || 'borderWidth'
+            ],
+            'inherit'
+        );
 
         return attr;
     },
@@ -855,12 +863,15 @@ seriesType('map', 'scatter', {
         // stroke-widthSetter method expects a stroke color also to be set.
         group.element.setAttribute(
             'stroke-width',
-            series.options[
-                (
-                    series.pointAttrToOptions &&
-                    series.pointAttrToOptions['stroke-width']
-                ) || 'borderWidth'
-            ] / (scaleX || 1)
+            (
+                series.options[
+                    (
+                        series.pointAttrToOptions &&
+                        series.pointAttrToOptions['stroke-width']
+                    ) || 'borderWidth'
+                ] ||
+                1 // Styled mode
+            ) / (scaleX || 1)
         );
 
         this.drawMapDataLabels();
@@ -1055,7 +1066,7 @@ seriesType('map', 'scatter', {
      * Highmaps only. Zoom in on the point using the global animation.
      *
      * @function #zoomTo
-     * @memberOf Point
+     * @memberof Point
      * @sample maps/members/point-zoomto/
      *         Zoom to points from butons
      */
