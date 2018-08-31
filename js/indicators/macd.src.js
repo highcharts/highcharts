@@ -312,7 +312,7 @@ seriesType('macd', 'sma',
                 longEMA,
                 i;
 
-            if (series.xData.length < params.longPeriod) {
+            if (series.xData.length < params.longPeriod + params.signalPeriod) {
                 return false;
             }
 
