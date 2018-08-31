@@ -2120,7 +2120,7 @@ function GLRenderer(postRenderCallback) {
                 ),
                 fillColor,
                 shapeTexture = textureHandles[
-                    shapeOptions ? shapeOptions.symbol || 'circle' : 'circle'
+                    (shapeOptions && shapeOptions.symbol) || s.series.symbol
                 ] || textureHandles.circle,
                 color;
 
