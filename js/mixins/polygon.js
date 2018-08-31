@@ -166,8 +166,8 @@ var getBoundingBoxFromPolygon = function (points) {
         return obj;
     }, {
         left: Number.MAX_VALUE,
-        right: Number.MIN_VALUE,
-        bottom: Number.MIN_VALUE,
+        right: -Number.MAX_VALUE,
+        bottom: -Number.MAX_VALUE,
         top: Number.MAX_VALUE
     });
 };
