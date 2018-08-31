@@ -2137,7 +2137,7 @@ function GLRenderer(postRenderCallback) {
 
             if (
                 s.segments.length === 0 ||
-                s.segments[0].from === s.segments[0].to
+                (s.segmentslength && s.segments[0].from === s.segments[0].to)
             ) {
                 return;
             }
