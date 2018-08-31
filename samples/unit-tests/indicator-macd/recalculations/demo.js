@@ -324,4 +324,12 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         true,
         'No error when periods are greater than data length (#8376).'
     );
+
+
+    // Last test: destroy MACD:
+    chart.series[1].remove();
+    assert.ok(
+        true,
+        'No error when removing MACD without lines (#8848).'
+    );
 });
