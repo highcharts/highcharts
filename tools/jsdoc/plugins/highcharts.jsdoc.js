@@ -36,45 +36,7 @@ function getLocation(option) {
     };
 }
 
-function sortProperties(node) {
-
-    if (!node) {
-        return;
-    }
-
-    if (node instanceof Array) {
-        let slice = node.slice().sort();
-        node.length = 0;
-        node.push(...slice);
-        node.forEach(item => sortProperties)
-    }
-
-    if (node.constructor !== Object) {
-        return;
-    }
-
-    let keys = Object.keys(node).sort();
-
-    if (keys.length === 0) {
-        return;
-    }
-
-    let pointer = {};
-
-    keys.forEach(key => {
-        pointer[key] = node[key];
-        delete node[key];
-    });
-
-    keys.forEach(key => {
-        node[key] = pointer[key];
-        sortProperties(node[key]);
-    });
-
-}
-
 function dumpOptions() {
-    sortProperties(options);
     fs.writeFile(
         'tree.json',
         JSON.stringify(
