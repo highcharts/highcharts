@@ -54,11 +54,7 @@ addEvent(Chart, 'render', function collectAndHide() {
         ) { // #3866
             each(collections, function (coll) {
                 each(series.points, function (point) {
-                    if (
-                        point[coll] &&
-                        (!point.graphic ||
-                        point.graphic.visibility !== 'hidden')  // #7815
-                    ) {
+                    if (point[coll] && point.visible) {  // #7815
                         point[coll].labelrank = pick(
                             point.labelrank,
                             point.shapeArgs && point.shapeArgs.height
