@@ -271,6 +271,7 @@ var win = H.win,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     each = H.each,
+    objEach = H.objectEach,
     extend = H.extend,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
@@ -904,8 +905,8 @@ function GLShader(gl) {
      * Set the active texture
      * @param texture - the texture
      */
-    function setTexture() {
-        gl.uniform1i(uSamplerUniform, 0);
+    function setTexture(texture) {
+        gl.uniform1i(uSamplerUniform, texture);
     }
 
     /*
@@ -1233,20 +1234,16 @@ function GLRenderer(postRenderCallback) {
         data = false,
         // The marker data
         markerData = false,
-        // Is the texture ready?
-        textureIsReady = false,
         // Exports
         exports = {},
         // Is it inited?
         isInited = false,
         // The series stack
         series = [],
-        // Texture for circles
-        circleTexture = doc.createElement('canvas'),
-        // Context for circle texture
-        circleCtx = circleTexture.getContext('2d'),
-        // Handle for the circle texture
-        circleTextureHandle,
+
+        // Texture handles
+        textureHandles = {},
+
         // Things to draw as "rectangles" (i.e lines)
         asBar = {
             'column': true,
@@ -2089,7 +2086,6 @@ function GLRenderer(postRenderCallback) {
 
         shader.bind();
 
-
         gl.viewport(0, 0, width, height);
         shader.setPMatrix(orthoMatrix(width, height));
         shader.setPlotHeight(chart.plotHeight);
@@ -2101,17 +2097,12 @@ function GLRenderer(postRenderCallback) {
         vbuffer.build(exports.data, 'aVertexPosition', 4);
         vbuffer.bind();
 
-        if (textureIsReady) {
-            gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
-            shader.setTexture(circleTextureHandle);
-        }
-
         shader.setInverted(chart.inverted);
-
 
         // Render the series
         each(series, function (s, si) {
             var options = s.series.options,
+                shapeOptions = options.marker,
                 sindex,
                 lineWidth = typeof options.lineWidth !== 'undefined' ?
                     options.lineWidth :
@@ -2132,14 +2123,21 @@ function GLRenderer(postRenderCallback) {
                             ) || 10)
                 ),
                 fillColor,
+                shapeTexture = textureHandles[
+                    (shapeOptions && shapeOptions.symbol) || s.series.symbol
+                ] || textureHandles.circle,
                 color;
-
 
             if (
                 s.segments.length === 0 ||
-                s.segments[0].from === s.segments[0].to
+                (s.segmentslength && s.segments[0].from === s.segments[0].to)
             ) {
                 return;
+            }
+
+            if (shapeTexture.isReady) {
+                gl.bindTexture(gl.TEXTURE_2D, shapeTexture.handle);
+                shader.setTexture(shapeTexture.handle);
             }
 
             /*= if (build.classic) { =*/
@@ -2230,7 +2228,7 @@ function GLRenderer(postRenderCallback) {
             }
 
             shader.setDrawAsCircle(
-                (asCircle[s.series.type] && textureIsReady) || false
+                asCircle[s.series.type] || false
             );
 
             // Do the actual rendering
@@ -2365,69 +2363,119 @@ function GLRenderer(postRenderCallback) {
         shader = GLShader(gl); // eslint-disable-line new-cap
         vbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
 
-        textureIsReady = false;
+        function createTexture(name, fn) {
+            var props = {
+                    isReady: false,
+                    texture: doc.createElement('canvas'),
+                    handle: gl.createTexture()
+                },
+                ctx = props.texture.getContext('2d');
 
-        // Set up the circle texture used for bubbles
-        circleTextureHandle = gl.createTexture();
+            textureHandles[name] = props;
 
-        // Draw the circle
-        circleTexture.width = 512;
-        circleTexture.height = 512;
+            props.texture.width = 512;
+            props.texture.height = 512;
 
-        circleCtx.mozImageSmoothingEnabled = false;
-        circleCtx.webkitImageSmoothingEnabled = false;
-        circleCtx.msImageSmoothingEnabled = false;
-        circleCtx.imageSmoothingEnabled = false;
+            ctx.mozImageSmoothingEnabled = false;
+            ctx.webkitImageSmoothingEnabled = false;
+            ctx.msImageSmoothingEnabled = false;
+            ctx.imageSmoothingEnabled = false;
 
-        circleCtx.strokeStyle = 'rgba(255, 255, 255, 0)';
-        circleCtx.fillStyle = '#FFF';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+            ctx.fillStyle = '#FFF';
 
-        circleCtx.beginPath();
-        circleCtx.arc(256, 256, 256, 0, 2 * Math.PI);
-        circleCtx.stroke();
-        circleCtx.fill();
+            fn(ctx);
 
-        try {
+            try {
 
-            gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
-            // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, props.handle);
+                // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
-            gl.texImage2D(
-                gl.TEXTURE_2D,
-                0,
-                gl.RGBA,
-                gl.RGBA,
-                gl.UNSIGNED_BYTE,
-                circleTexture
-            );
+                gl.texImage2D(
+                    gl.TEXTURE_2D,
+                    0,
+                    gl.RGBA,
+                    gl.RGBA,
+                    gl.UNSIGNED_BYTE,
+                    props.texture
+                );
 
-            gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_WRAP_S,
-                gl.CLAMP_TO_EDGE
-            );
-            gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_WRAP_T,
-                gl.CLAMP_TO_EDGE
-            );
-            gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_MAG_FILTER,
-                gl.LINEAR
-            );
-            gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_MIN_FILTER,
-                gl.LINEAR
-            );
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_WRAP_S,
+                    gl.CLAMP_TO_EDGE
+                );
 
-            // gl.generateMipmap(gl.TEXTURE_2D);
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_WRAP_T,
+                    gl.CLAMP_TO_EDGE
+                );
 
-            gl.bindTexture(gl.TEXTURE_2D, null);
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_MAG_FILTER,
+                    gl.LINEAR
+                );
 
-            textureIsReady = true;
-        } catch (e) {}
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_MIN_FILTER,
+                    gl.LINEAR
+                );
+
+                // gl.generateMipmap(gl.TEXTURE_2D);
+
+                gl.bindTexture(gl.TEXTURE_2D, null);
+
+                props.isReady = true;
+            } catch (e) {}
+        }
+
+        // Circle shape
+        createTexture('circle', function (ctx) {
+            ctx.beginPath();
+            ctx.arc(256, 256, 256, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+        });
+
+        // Square shape
+        createTexture('square', function (ctx) {
+            ctx.fillRect(0, 0, 512, 512);
+        });
+
+        // Diamond shape
+        createTexture('diamond', function (ctx) {
+            ctx.beginPath();
+            ctx.moveTo(256, 0);
+            ctx.lineTo(512, 256);
+            ctx.lineTo(256, 512);
+            ctx.lineTo(0, 256);
+            ctx.lineTo(256, 0);
+            ctx.fill();
+        });
+
+        // Triangle shape
+        createTexture('triangle', function (ctx) {
+            ctx.beginPath();
+            ctx.moveTo(0, 512);
+            ctx.lineTo(256, 0);
+            ctx.lineTo(512, 512);
+            ctx.lineTo(0, 512);
+            ctx.fill();
+        });
+
+        // Triangle shape (rotated)
+        createTexture('triangle-down', function (ctx) {
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(256, 512);
+            ctx.lineTo(512, 0);
+            ctx.lineTo(0, 0);
+            ctx.fill();
+        });
 
         isInited = true;
 
@@ -2459,9 +2507,13 @@ function GLRenderer(postRenderCallback) {
         vbuffer.destroy();
         shader.destroy();
         if (gl) {
-            if (circleTextureHandle) {
-                gl.deleteTexture(circleTextureHandle);
-            }
+
+            objEach(textureHandles, function (key) {
+                if (textureHandles[key].handle) {
+                    gl.deleteTexture(textureHandles[key].handle);
+                }
+            });
+
             gl.canvas.width = 1;
             gl.canvas.height = 1;
         }
@@ -3212,7 +3264,6 @@ if (!H.hasWebGLSupport()) {
                 renderer.pushSeries(series);
                 // Perform the actual renderer if we're on series level
                 renderIfNotSeriesBoosting(renderer, this, chart);
-                // console.log(series, chart);
             }
 
             /* This builds the KD-tree */
