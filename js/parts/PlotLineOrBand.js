@@ -29,9 +29,11 @@
  */
 
 'use strict';
+
 import H from './Globals.js';
 import Axis from './Axis.js';
 import './Utilities.js';
+
 var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     defined = H.defined,
@@ -45,7 +47,8 @@ var arrayMax = H.arrayMax,
  * The object wrapper for plot lines and plot bands
  *
  * @private
- * @class Highcharts.PlotLineOrBand
+ * @constructor
+ * @name Highcharts.PlotLineOrBand
  *
  * @param {Highcharts.Axis} axis
  *
@@ -60,6 +63,13 @@ H.PlotLineOrBand = function (axis, options) {
     }
 };
 
+/**
+ * The object wrapper for plot lines and plot bands
+ *
+ * @private
+ * @class
+ * @name Highcharts.PlotLineOrBand
+ */
 H.PlotLineOrBand.prototype = {
 
     /**
