@@ -1056,8 +1056,13 @@ var stockToolsBindings = {
                 },
                 labelOptions: {
                     style: {
-                        color: '#666666'
+                        color: '#666666',
+                        fontSize: '11px'
                     }
+                },
+                shapeOptions: {
+                    stroke: 'rgba(0, 0, 0, 0.75)',
+                    strokeWidth: 1
                 }
             });
 
@@ -1083,8 +1088,13 @@ var stockToolsBindings = {
                 },
                 labelOptions: {
                     style: {
-                        color: '#666666'
+                        color: '#666666',
+                        fontSize: '11px'
                     }
+                },
+                shapeOptions: {
+                    stroke: 'rgba(0, 0, 0, 0.75)',
+                    strokeWidth: 1
                 }
             });
         }
@@ -1110,6 +1120,10 @@ var stockToolsBindings = {
                         fill: 'none',
                         stroke: closestPoint.below ? 'red' : 'green'
                     }
+                },
+                shapeOptions: {
+                    stroke: 'rgba(0, 0, 0, 0.75)',
+                    strokeWidth: 1
                 }
             });
         }
@@ -1306,32 +1320,33 @@ H.Toolbar.annotationsEditable = {
     // `typeOptions` are always available
     // Nested and shared options:
     nestedOptions: {
+        labelOptions: ['style'],
         labels: ['style'],
+        label: ['style'],
         style: ['fontSize', 'color'],
         background: ['fill', 'strokeWidth', 'stroke'],
         innerBackground: ['fill', 'strokeWidth', 'stroke'],
         outerBackground: ['fill', 'strokeWidth', 'stroke'],
         shapeOptions: ['fill', 'strokeWidth', 'stroke'],
         shapes: ['fill', 'strokeWidth', 'stroke'],
-        labelOptions: ['backgroundColor', 'borderColor', 'borderWidth',
-            'borderRadius', 'padding', 'style'],
         line: ['strokeWidth', 'stroke'],
         backgroundColors: [true],
+        connector: ['fill', 'strokeWidth', 'stroke'],
         crosshairX: ['strokeWidth', 'stroke'],
         crosshairY: ['strokeWidth', 'stroke']
     },
     // Simple shapes:
     circle: ['shapes'],
-    verticalLine: ['shapeOptions', 'labelOptions'],
+    'vertical-line': [],
     label: ['labelOptions'],
     // Measure
     measure: ['background', 'crosshairY', 'crosshairX'],
     // Others:
     fibonacci: [],
-    tunnel: ['shapeOptions', 'background', 'line', 'height'],
+    tunnel: ['background', 'line', 'height'],
     pitchfork: ['shapeOptions', 'innerBackground', 'outerBackground', 'line'],
     // Crooked lines, elliots, arrows etc:
-    crookedLine: ['shapeOptions']
+    'crooked-line': []
 };
 
 extend(H.Toolbar.prototype, {
@@ -1808,7 +1823,8 @@ extend(H.Toolbar.prototype, {
                 options.shapes && options.shapes[0] &&
                     options.shapes[0].type,
                 options.labels && options.labels[0] &&
-                    options.labels[0].itemType
+                    options.labels[0].itemType,
+                'label'
             ),
             visualOptions = {
                 type: type

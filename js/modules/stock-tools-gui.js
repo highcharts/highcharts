@@ -101,6 +101,7 @@ H.setOptions({
                 padding: 'Padding',
                 fontSize: 'Font size',
                 color: 'Color',
+                connector: 'Connector',
                 shapeOptions: 'Shape options',
                 typeOptions: 'Details',
                 innerBackground: 'Inner background',
