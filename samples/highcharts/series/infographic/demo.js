@@ -1,9 +1,14 @@
 Highcharts.chart('container', {
+    chart: {
+        scrollablePlotArea: {
+            minWidth: 460
+        }
+    },
     title: {
         text: 'Tallest buildings'
     },
     subtitle: {
-        text: 'an infographics demo with the pattern fill module'
+        text: 'An infographic demo with the pattern fill module'
     },
     tooltip: {
         pointFormat: 'The height for <b>{point.name}</b> is <b>{point.y}</b>'
@@ -12,11 +17,16 @@ Highcharts.chart('container', {
         enabled: false
     },
     xAxis: {
-        type: 'category'
+        type: 'category',
+        labels: {
+            style: {
+                fontSize: '18px'
+            }
+        }
     },
     yAxis: {
         title: {
-            text: 'Height in feet'
+            text: 'Height'
         },
         labels: {
             format: '{value}ft'
@@ -27,6 +37,7 @@ Highcharts.chart('container', {
         pointWidth: 110,
         pointPadding: 0.25,
         borderColor: 'transparent',
+        borderWidth: 0,
         data: [{
             name: 'Petronas',
             y: 100,
