@@ -1250,14 +1250,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             menu = chart[cacheName],
             menuPadding = Math.max(width, height), // for mouse leave detection
             innerMenu,
-            hide,
             menuStyle;
 
         // create the menu only the first time
         if (!menu) {
 
             // create a HTML element above the SVG
-            chart[cacheName] = menu = createElement('div', {
+            chart.exportContextMenu = chart[cacheName] = menu =
+            createElement('div', {
                 className: className
             }, {
                 position: 'absolute',
@@ -1283,18 +1283,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             /*= } =*/
 
             // hide on mouse out
-            hide = function () {
+            menu.hideMenu = function () {
                 css(menu, { display: 'none' });
                 if (button) {
                     button.setState(0);
                 }
                 chart.openMenu = false;
+                H.clearTimeout(menu.hideTimer);
             };
 
             // Hide the menu some time after mouse leave (#1357)
             chart.exportEvents.push(
                 addEvent(menu, 'mouseleave', function () {
-                    menu.hideTimer = setTimeout(hide, 500);
+                    menu.hideTimer = setTimeout(menu.hideMenu, 500);
                 }),
                 addEvent(menu, 'mouseenter', function () {
                     H.clearTimeout(menu.hideTimer);
@@ -1304,13 +1305,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // #2335, #2407)
                 addEvent(doc, 'mouseup', function (e) {
                     if (!chart.pointer.inClass(e.target, className)) {
-                        hide();
+                        menu.hideMenu();
                     }
                 }),
 
                 addEvent(menu, 'click', function () {
                     if (chart.openMenu) {
-                        hide();
+                        menu.hideMenu();
                     }
                 })
             );
@@ -1335,7 +1336,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                 if (e) { // IE7
                                     e.stopPropagation();
                                 }
-                                hide();
+                                menu.hideMenu();
                                 if (item.onclick) {
                                     item.onclick.apply(chart, arguments);
                                 }
