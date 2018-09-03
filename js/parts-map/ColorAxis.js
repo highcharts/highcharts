@@ -934,7 +934,6 @@ if (!H.ColorAxis) {
                                     }
                                 });
                             });
-
                             chart.legend.colorizeItem(this, vis);
                         }
                     }, dataClass));
