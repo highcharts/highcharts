@@ -5,10 +5,18 @@
  */
 
 /**
+ * Reference to the global PointerEvent class as a workaround for a name
+ * conflict in the Highcharts namespace.
+ *
+ * @global
+ * @typedef {global.PointerEvent} GlobalPointerEvent
+ */
+
+/**
  * A native browser mouse or touch event, extended with position information
  * relative to the {@link Chart.container}.
  *
- * @typedef Highcharts.PointerEvent
+ * @typedef {GlobalPointerEvent} Highcharts.PointerEvent
  *
  * @property {number} chartX
  *           The X coordinate of the pointer interaction relative to the
