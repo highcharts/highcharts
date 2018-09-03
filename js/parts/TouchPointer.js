@@ -190,7 +190,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#pinch
      *
-     * @param  {*} e
+     * @param  {Highcharts.PointerEvent} e
      *
      * @return {void}
      */
