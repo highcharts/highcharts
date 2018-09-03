@@ -41,7 +41,7 @@ var candlestickOptions = {
      */
 
     /**
-     * @type       {string}
+     * @type       {string|Function}
      * @default    ohlc
      * @product    highstock
      * @apioption  plotOptions.candlestick.dataGrouping.approximation
