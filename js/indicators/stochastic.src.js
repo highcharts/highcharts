@@ -2,25 +2,15 @@
 
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+import reduceArrayMixin from '../mixins/reduce-array.js';
 
 var each = H.each,
     merge = H.merge,
     isArray = H.isArray,
     defined = H.defined,
-    SMA = H.seriesTypes.sma;
-
-// Utils:
-function minInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
-        return Math.min(min, target[index]);
-    }, Infinity);
-}
-
-function maxInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
-        return Math.max(min, target[index]);
-    }, 0);
-}
+    SMA = H.seriesTypes.sma,
+    minInArray = reduceArrayMixin.minInArray,
+    maxInArray = reduceArrayMixin.maxInArray;
 
 H.seriesType('stochastic', 'sma',
     /**
