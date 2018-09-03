@@ -357,8 +357,8 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#getClassName
      *
-     * @returns {string}
-     *          The class names.
+     * @return {string}
+     *         The class names.
      */
     getClassName: function () {
         return 'highcharts-point' +
@@ -484,8 +484,8 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#getLabelConfig
      *
-     * @returns {Highcharts.PointLabelObject}
-     *          Abstract object used in formatters and formats.
+     * @return {Highcharts.PointLabelObject}
+     *         Abstract object used in formatters and formats.
      */
     getLabelConfig: function () {
         return {
