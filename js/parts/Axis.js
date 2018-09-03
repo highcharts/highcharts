@@ -4232,6 +4232,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 widthOption = labelStyleOptions.width,
                 css = {};
             if (label) {
+                // This needs to go before the CSS in old IE (#4502)
+                label.attr(attr);
+
                 if (
                     commonWidth &&
                     !widthOption &&
@@ -4252,6 +4255,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                             commonTextOverflow
                         );
                     }
+                    label.css(css);
 
                 // Reset previously shortened label (#8210)
                 } else if (
@@ -4260,10 +4264,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     !css.width &&
                     !widthOption
                 ) {
-                    css.width = null;
+                    label.css({ width: null });
                 }
-                // attr needs to go before the CSS in old IE (#4502)
-                label.attr(attr).css(css);
 
                 delete label.specificTextOverflow;
                 tick.rotation = attr.rotation;
