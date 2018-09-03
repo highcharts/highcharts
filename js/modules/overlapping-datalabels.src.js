@@ -4,15 +4,18 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
+
 /**
  * Highcharts module to hide overlapping data labels. This module is included in
  * Highcharts.
  *
  * @ignore
  */
+
 var Chart = H.Chart,
     each = H.each,
     objectEach = H.objectEach,
@@ -72,6 +75,13 @@ addEvent(Chart, 'render', function collectAndHide() {
 /**
  * Hide overlapping labels. Labels are moved and faded in and out on zoom to
  * provide a smooth visual imression.
+ *
+ * @private
+ * @function Highcharts.Chart#hideOverlappingLabels
+ *
+ * @param  {Array<Highcharts.SVGElement>} labels
+ *
+ * @return {void}
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
 
