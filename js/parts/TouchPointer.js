@@ -311,7 +311,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#touch
      *
-     * @param  {*} e
+     * @param  {Highcharts.PointerEvent} e
      *
      * @param  {boolean} start
      *
@@ -375,7 +375,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#onContainerTouchStart
      *
-     * @param  {*} e
+     * @param  {Highcharts.PointerEvent} e
      *
      * @return {void}
      */
@@ -388,7 +388,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#onContainerTouchMove
      *
-     * @param  {*} e
+     * @param  {Highcharts.PointerEvent} e
      *
      * @return {void}
      */
@@ -400,7 +400,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#onDocumentTouchEnd
      *
-     * @param  {*} e
+     * @param  {Highcharts.PointerEvent} e
      *
      * @return {void}
      */
