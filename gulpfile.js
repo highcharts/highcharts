@@ -415,9 +415,13 @@ const cleanCode = () => {
 };
 
 const cleanDist = () => {
-    return removeDirectory('./build/dist').then(() => {
-        console.log('Successfully removed dist directory.');
-    });
+    return removeDirectory('./build/dist')
+        .then(() => {
+            console.log('Successfully removed dist directory.');
+        })
+        .catch(() => {
+            console.log('Tried to remove ./build/dist but it was never there. Moving on...');
+        });
 };
 
 const cleanApi = () => {
@@ -627,7 +631,7 @@ const timeDifference = (d1, d2) => {
 /**
  * Mirrors the same feedback which gulp gives when executing its tasks.
  * Says when a task started, when it finished, and how long it took.
- * @param  {string} name Name of task which is beeing executed.
+ * @param  {string} name Name of task which is being executed.
  * @param  {string} task A function to execute
  * @return {*}      Returns whatever the task function returns when it is finished.
  */
@@ -1099,7 +1103,7 @@ const startServer = () => {
 let apiServerRunning = false;
 
 /**
- * Create Highcharts API and class refrences from JSDOC
+ * Create Highcharts API and class references from JSDOC
  */
 const jsdoc = () => {
     const optionsClassReference = {
