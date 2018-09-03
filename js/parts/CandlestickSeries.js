@@ -16,12 +16,14 @@ var defaultPlotOptions = H.defaultPlotOptions,
  * A candlestick chart is a style of financial chart used to describe price
  * movements over time.
  *
- * @sample stock/demo/candlestick/ Candlestick chart
+ * @sample stock/demo/candlestick/
+ *         Candlestick chart
  *
- * @extends plotOptions.ohlc
- * @excluding borderColor,borderRadius,borderWidth
- * @product highstock
- * @optionparent plotOptions.candlestick
+ * @type       {*}
+ * @extends    plotOptions.ohlc
+ * @excluding  borderColor,borderRadius,borderWidth
+ * @product    highstock
+ * @apioption  plotOptions.candlestick
  */
 var candlestickOptions = {
 
@@ -29,45 +31,63 @@ var candlestickOptions = {
      * The specific line color for up candle sticks. The default is to inherit
      * the general `lineColor` setting.
      *
-     * @type {Color}
-     * @sample  {highstock} stock/plotoptions/candlestick-linecolor/
-     *          Candlestick line colors
-     * @default null
-     * @since 1.3.6
-     * @product highstock
-     * @apioption plotOptions.candlestick.upLineColor
+     * @sample {highstock} stock/plotoptions/candlestick-linecolor/
+     *         Candlestick line colors
+     *
+     * @type       {Highcharts.ColorString}
+     * @since      1.3.6
+     * @product    highstock
+     * @apioption  plotOptions.candlestick.upLineColor
      */
 
     /**
-     * @default ohlc
-     * @apioption plotOptions.candlestick.dataGrouping.approximation
+     * @type       {string}
+     * @default    ohlc
+     * @product    highstock
+     * @apioption  plotOptions.candlestick.dataGrouping.approximation
      */
 
+    /**
+     * @type       {*}
+     * @apioption  plotOptions.candlestick.states
+     */
     states: {
 
         /**
-         * @extends plotOptions.column.states.hover
-         * @product highstock
+         * @type       {*}
+         * @extends    plotOptions.column.states.hover
+         * @product    highstock
+         * @apioption  plotOptions.candlestick.hover
          */
         hover: {
 
             /**
              * The pixel width of the line/border around the candlestick.
              *
-             * @type {Number}
-             * @default 2
-             * @product highstock
+             * @type       {number}
+             * @default    2
+             * @product    highstock
+             * @apioption  plotOptions.candlestick.lineWidth
              */
             lineWidth: 2
         }
     },
 
     /**
-     * @extends plotOptions.ohlc.tooltip
+     * @type       {*}
+     * @extends    plotOptions.ohlc.tooltip
+     * @apioption  plotOptions.candlestick.tooltip
      */
     tooltip: defaultPlotOptions.ohlc.tooltip,
 
+    /**
+     * @type       {number|null}
+     * @default    null
+     * @product    highstock
+     * @apioption  plotOptions.candlestick.threshold
+     */
     threshold: null,
+
     /*= if (build.classic) { =*/
 
     /**
@@ -76,12 +96,15 @@ var candlestickOptions = {
      * In styled mode, the line stroke can be set with the
      * `.highcharts-candlestick-series .highcahrts-point` rule.
      *
-     * @type {Color}
      * @see [upLineColor](#plotOptions.candlestick.upLineColor)
+     *
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
-     * @default #000000
-     * @product highstock
+     *
+     * @type       {Highcharts.ColorString}
+     * @default    #000000
+     * @product    highstock
+     * @apioption  plotOptions.candlestick.lineColor
      */
     lineColor: '${palette.neutralColor100}',
 
@@ -92,9 +115,10 @@ var candlestickOptions = {
      * In styled mode, the line stroke width can be set with the
      * `.highcharts-candlestick-series .highcahrts-point` rule.
      *
-     * @type {Number}
-     * @default 1
-     * @product highstock
+     * @type       {number}
+     * @default    1
+     * @product    highstock
+     * @apioption  plotOptions.candlestick.lineWidth
      */
     lineWidth: 1,
 
@@ -104,15 +128,25 @@ var candlestickOptions = {
      * In styled mode, the up color can be set with the
      * `.highcharts-candlestick-series .highcharts-point-up` rule.
      *
-     * @type {Color}
-     * @sample {highstock} stock/plotoptions/candlestick-color/ Custom colors
-     * @sample {highstock} highcharts/css/candlestick/ Colors in styled mode
-     * @default #ffffff
-     * @product highstock
+     * @sample {highstock} stock/plotoptions/candlestick-color/
+     *         Custom colors
+     * @sample {highstock} highcharts/css/candlestick/
+     *         Colors in styled mode
+     *
+     * @type       {Highcharts.ColorString}
+     * @default    #ffffff
+     * @product    highstock
+     * @apioption  plotOptions.candlestick.upColor
      */
     upColor: '${palette.backgroundColor}',
     /*= } =*/
 
+    /**
+     * @type       {boolean}
+     * @default    true
+     * @product    highstock
+     * @apioption  plotOptions.candlestick.stickyTracking
+     */
     stickyTracking: true
 
 };
@@ -120,16 +154,28 @@ var candlestickOptions = {
 /**
  * The candlestick series type.
  *
- * @constructor seriesTypes.candlestick
- * @augments seriesTypes.ohlc
+ * @ignore
+ * @constructor Highcharts.seriesTypes.candlestick
+ * @augments    Highcharts.seriesTypes.ohlc
  */
 seriesType('candlestick', 'ohlc', merge(
     defaultPlotOptions.column,
     candlestickOptions
 ), /** @lends seriesTypes.candlestick */ {
+
     /*= if (build.classic) { =*/
+
     /**
      * Postprocess mapping between options and SVG attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.candlestick#pointAttribs
+     *
+     * @param  {Highcharts.Point} point
+     *
+     * @param  {string|undefined} [state]
+     *
+     * @return {Highcharts.SVGAttributes}
      */
     pointAttribs: function (point, state) {
         var attribs = seriesTypes.column.prototype.pointAttribs.call(
@@ -162,8 +208,14 @@ seriesType('candlestick', 'ohlc', merge(
         return attribs;
     },
     /*= } =*/
+
     /**
-     * Draw the data points
+     * Draw the data points.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.candlestick#drawPoints
+     *
+     * @return {void}
      */
     drawPoints: function () {
         var series = this,
@@ -260,7 +312,6 @@ seriesType('candlestick', 'ohlc', merge(
 
             }
         });
-
     }
 
 
@@ -271,11 +322,11 @@ seriesType('candlestick', 'ohlc', merge(
  * option is not specified, it is inherited from [chart.type](
  * #chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.candlestick
- * @excluding dataParser,dataURL
- * @product highstock
- * @apioption series.candlestick
+ * @type       {*}
+ * @extends    series,plotOptions.candlestick
+ * @excluding  dataParser, dataURL
+ * @product    highstock
+ * @apioption  series.candlestick
  */
 
 /**
@@ -323,9 +374,9 @@ seriesType('candlestick', 'ohlc', merge(
  *     }]
  *  ```
  *
- * @type {Array<Object|Array>}
- * @extends series.ohlc.data
- * @excluding y
- * @product highstock
- * @apioption series.candlestick.data
+ * @type       {Array<Array<number>|*>}
+ * @extends    series.ohlc.data
+ * @excluding  y
+ * @product    highstock
+ * @apioption  series.candlestick.data
  */
