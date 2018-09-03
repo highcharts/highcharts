@@ -3085,7 +3085,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @extends    xAxis
      * @since      5.0.0
      * @product    highcharts
-     * @excluding  breaks,crosshair,lineColor,lineWidth,nameToX,showEmpty
+     * @excluding  breaks, crosshair, lineColor, lineWidth, nameToX, showEmpty
      * @apioption  zAxis
      */
 
@@ -3093,7 +3093,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * These options extend the defaultOptions for left axes.
      *
      * @private
-     * @type {object}
+     * @name Highcharts.Axis#defaultLeftAxisOptions
+     * @type {*}
      */
     defaultLeftAxisOptions: {
         labels: {
@@ -3108,7 +3109,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * These options extend the defaultOptions for right axes.
      *
      * @private
-     * @type {object}
+     * @name Highcharts.Axis#defaultRightAxisOptions
+     * @type {*}
      */
     defaultRightAxisOptions: {
         labels: {
@@ -3123,7 +3125,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * These options extend the defaultOptions for bottom axes.
      *
      * @private
-     * @type {object}
+     * @name Highcharts.Axis#defaultBottomAxisOptions
+     * @type {*}
      */
     defaultBottomAxisOptions: {
         labels: {
@@ -3140,7 +3143,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * These options extend the defaultOptions for top axes.
      *
      * @private
-     * @type {object}
+     * @name Highcharts.Axis#defaultTopAxisOptions
+     * @type {*}
      */
     defaultTopAxisOptions: {
         labels: {
@@ -3158,6 +3162,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Overrideable function to initialize the axis.
      *
      * @see {@link Axis}
+     *
+     * @function Highcharts.Axis#init
+     *
+     * @param  {Highcharts.Chart} chart
+     *
+     * @param  {Highcharts.Options} userOptions
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Axis#event:afterInit
+     * @fires Highcharts.Axis#event:init
      */
     init: function (chart, userOptions) {
 
@@ -3364,6 +3379,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Merge and set options.
      *
      * @private
+     * @function Highcharts.Axis#setOptions
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Axis#event:afterSetOptions
      */
     setOptions: function (userOptions) {
         this.options = merge(
@@ -3391,6 +3411,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * labels.formatter} instead except when a modification is needed.
      *
      * @private
+     * @function Highcharts.Axis#defaultLabelFormatter
+     *
+     * @return {string}
      */
     defaultLabelFormatter: function () {
         var axis = this.axis,
@@ -3460,6 +3483,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * analyzes the axis series and updates `this.dataMin` and `this.dataMax`.
      *
      * @private
+     * @function Highcharts.Axis#getSeriesExtremes
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Axis#event:afterGetSeriesExtremes
+     * @fires Highcharts.Axis#event:getSeriesExtremes
      */
     getSeriesExtremes: function () {
         var axis = this,
@@ -3578,6 +3607,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * the `toPixels` and `toValue` functions in applications.
      *
      * @private
+     * @function Highcharts.Axis#translate
+     *
+     * @param  {} val
+     *
+     * @param  {boolean} [backwards]
+     *
+     * @param  {boolean} [cvsCoord]
+     *
+     * @param  {boolean} [old]
+     *
+     * @param  {boolean} [handleLog]
+     *
+     * @param  {number} [pointPlacement=0]
+     *
+     * @return {number|undefined}
      */
     translate: function (
         val,
@@ -3946,6 +3990,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * max.
      *
      * @private
+     * @function Highcharts.Axis#adjustForMinRange
+     *
+     * @return {void}
      */
     adjustForMinRange: function () {
         var axis = this,
@@ -4038,6 +4085,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Find the closestPointRange across all series.
      *
      * @private
+     * @function Highcharts.Axis#getClosest
+     *
+     * @return {number}
      */
     getClosest: function () {
         var ret;
@@ -4271,6 +4321,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
     /**
      * @private
+     * @function Highcharts.Axis#minFromRange
+     *
+     * @return {number}
      */
     minFromRange: function () {
         return this.max - this.range;
@@ -4281,6 +4334,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * to the nearest tick.
      *
      * @private
+     * @function Highcharts.Axis#setTickInterval
+     *
+     * @param  {boolean} secondPass
+     *
+     * @return {void}
      */
     setTickInterval: function (secondPass) {
         var axis = this,
@@ -4681,6 +4739,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * rounded min/max. Also handle single data points.
      *
      * @private
+     * @function Highcharts.Axis#trimTicks
+     *
+     * @param  {Array<number>} tickPositions
+     *
+     * @param  {boolean} startOnTicl
+     *
+     * @param  {boolean} endOnTick
+     *
+     * @return {void}
      */
     trimTicks: function (tickPositions, startOnTick, endOnTick) {
         var roundedMin = tickPositions[0],
@@ -4771,6 +4838,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * in `this.tickAmount`.
      *
      * @private
+     * @function Highcharts.Axis#getTickAmount
+     *
+     * @return {void}
      */
     getTickAmount: function () {
         var options = this.options,
@@ -4810,6 +4880,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * number of ticks in that group.
      *
      * @private
+     * @function Highcharts.Axis#adjustTickAmount
+     *
+     * @return {void}
      */
     adjustTickAmount: function () {
         var tickInterval = this.tickInterval,
@@ -4875,6 +4948,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Set the scale based on data min and max, user set min and max or options.
      *
      * @private
+     * @function Highcharts.Axis#setScale
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Axis#event:afterSetScale
      */
     setScale: function () {
         var axis = this,
@@ -4952,6 +5030,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * will not allow a range lower than the `minRange` option, which by default
      * is the range of five points.
      *
+     * @sample highcharts/members/axis-setextremes/
+     *         Set extremes from a button
+     * @sample highcharts/members/axis-setextremes-datetime/
+     *         Set extremes on a datetime axis
+     * @sample highcharts/members/axis-setextremes-off-ticks/
+     *         Set extremes off ticks
+     * @sample stock/members/axis-setextremes/
+     *         Set extremes in Highstock
+     * @sample maps/members/axis-setextremes/
+     *         Set extremes in Highmaps
+     *
      * @function Highcharts.Axis#setExtremes
      *
      * @param  {number|undefined} [newMin]
@@ -4971,17 +5060,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *         Arguments to be accessed in event handler.
      *
      * @return {void}
-     *
-     * @sample highcharts/members/axis-setextremes/
-     *         Set extremes from a button
-     * @sample highcharts/members/axis-setextremes-datetime/
-     *         Set extremes on a datetime axis
-     * @sample highcharts/members/axis-setextremes-off-ticks/
-     *         Set extremes off ticks
-     * @sample stock/members/axis-setextremes/
-     *         Set extremes in Highstock
-     * @sample maps/members/axis-setextremes/
-     *         Set extremes in Highmaps
      *
      * @todo
      * Make events official: Fires the event `setExtremes`.
@@ -5020,6 +5098,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * allow overriding in stock charts.
      *
      * @private
+     * @function Highcharts.Axis#zoom
+     *
+     * @param  {number} newMin
+     *
+     * @param  {number} newMax
+     *
+     * @return {boolean}
      */
     zoom: function (newMin, newMax) {
         var dataMin = this.dataMin,
@@ -5073,6 +5158,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Update the axis metrics.
      *
      * @private
+     * @function Highcharts.Axis#setAxisSize
+     *
+     * @return {void}
      */
     setAxisSize: function () {
         var chart = this.chart,
@@ -5120,15 +5208,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     /**
      * Get the current extremes for the axis.
      *
-     * @function Highcharts.Axis#getExtremes
-     *
-     * @returns {Highcharts.ExtremesObject}
-     *          An object containing extremes information.
-     *
      * @sample  highcharts/members/axis-getextremes/
      *          Report extremes by click on a button
      * @sample  maps/members/axis-getextremes/
      *          Get extremes in Highmaps
+     *
+     * @function Highcharts.Axis#getExtremes
+     *
+     * @returns {Highcharts.ExtremesObject}
+     *          An object containing extremes information.
      */
     getExtremes: function () {
         var axis = this,
@@ -5680,6 +5768,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Render the tick labels to a preliminary position to get their sizes.
      *
      * @private
+     * @function Highcharts.Axis#getOffset
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Axis#event:afterGetOffset
      */
     getOffset: function () {
         var axis = this,
@@ -6051,6 +6144,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Render the axis.
      *
      * @private
+     * @function Highcharts.Axis#render
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.Axis#event:afterRender
      */
     render: function () {
         var axis = this,
@@ -6236,6 +6334,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * internally from {@link Chart#redraw}.
      *
      * @private
+     * @function Highcharts.Axis#redraw
+     *
+     * @return {void}
      */
     redraw: function () {
 
