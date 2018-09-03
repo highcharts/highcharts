@@ -4,8 +4,10 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
+
 var doc = H.doc,
     each = H.each,
     extend = H.extend,
@@ -17,10 +19,11 @@ var doc = H.doc,
     splat = H.splat,
     syncTimeout = H.syncTimeout,
     timeUnits = H.timeUnits;
+
 /**
  * The tooltip object
  *
- * @ignore
+ * @private
  * @class Highcharts.Tooltip
  *
  * @param {Highcharts.Chart} chart
@@ -36,6 +39,7 @@ H.Tooltip = function () {
 H.Tooltip.prototype = {
 
     /**
+     * @private
      * @function Highcharts.Tooltip#init
      *
      * @param  {Highcharts.Chart} chart
@@ -74,6 +78,7 @@ H.Tooltip.prototype = {
      * Destroy the single tooltips in a split tooltip.
      * If the tooltip is active then it is not destroyed, unless forced to.
      *
+     * @private
      * @function Highcharts.Tooltip#cleanSplit
      *
      * @param  {boolean} force
@@ -101,6 +106,7 @@ H.Tooltip.prototype = {
      * when one tooltip adopts the filter of a different chart, specifically one
      * where the container is hidden.
      *
+     * @private
      * @function Highcharts.Tooltip#applyFilter
      *
      * @return {void}
@@ -151,6 +157,7 @@ H.Tooltip.prototype = {
      * Create the Tooltip label element if it doesn't exist, then return the
      * label.
      *
+     * @private
      * @function Highcharts.Tooltip#getLabel
      *
      * @return {Highcharts.SVGElement}
@@ -238,6 +245,7 @@ H.Tooltip.prototype = {
     },
 
     /**
+     * @private
      * @function Highcharts.Tooltip#update
      *
      * @param  {Highcharts.TooltipOptions} options
@@ -254,6 +262,7 @@ H.Tooltip.prototype = {
     /**
      * Destroy the tooltip and its elements.
      *
+     * @private
      * @function Highcharts.Tooltip#destroy
      *
      * @return {void}
@@ -278,6 +287,7 @@ H.Tooltip.prototype = {
     /**
      * Provide a soft movement for the tooltip
      *
+     * @private
      * @function Highcharts.Tooltip#move
      *
      * @param  {number} x
@@ -337,6 +347,7 @@ H.Tooltip.prototype = {
     /**
      * Hide the tooltip
      *
+     * @private
      * @function Highcharts.Tooltip#hide
      *
      * @param  {number} delay
@@ -360,6 +371,7 @@ H.Tooltip.prototype = {
      * Extendable method to get the anchor position of the tooltip
      * from a point or set of points
      *
+     * @private
      * @function Highcharts.Tooltip#getAnchor
      *
      * @param  {Array<Highchart.Points>} points
@@ -436,6 +448,7 @@ H.Tooltip.prototype = {
      * Place the tooltip in a chart without spilling over
      * and not covering the point it self.
      *
+     * @private
      * @function Highcharts.Tooltip#getPosition
      *
      * @param  {number} boxWidth
@@ -497,6 +510,8 @@ H.Tooltip.prototype = {
              * Handle the preferred dimension. When the preferred dimension is
              * tooltip on top or bottom of the point, it will look for space
              * there.
+             *
+             * @private
              */
             firstDimension = function (
                 dim,
@@ -536,6 +551,8 @@ H.Tooltip.prototype = {
              * tooltip on top or bottom of the point, the second dimension is to
              * align the tooltip above the point, trying to align center but
              * allowing left or right align within the chart box.
+             *
+             * @private
              */
             secondDimension = function (dim, outerSize, innerSize, point) {
                 var retVal;
@@ -595,6 +612,7 @@ H.Tooltip.prototype = {
      * In case no user defined formatter is given, this will be used. Note that
      * the context here is an object holding point, series, x, y etc.
      *
+     * @private
      * @function Highcharts.Tooltip#defaultFormatter
      *
      * @param  {Highcharts.Tooltip} tooltip
@@ -620,6 +638,7 @@ H.Tooltip.prototype = {
     /**
      * Refresh the tooltip's text and position.
      *
+     * @private
      * @function Highcharts.Tooltip#refresh
      *
      * @param  {Highcharts.Point|Array<Highcharts.Point>} pointOrPoints
@@ -753,6 +772,7 @@ H.Tooltip.prototype = {
      * a label next to the point, then uses the distribute function to
      * find best non-overlapping positions.
      *
+     * @private
      * @function Highcharts.Tooltip#renderSplit
      *
      * @param  {Array<Highcharts.Label>} labels
@@ -904,6 +924,7 @@ H.Tooltip.prototype = {
     /**
      * Find the new position and perform the move
      *
+     * @private
      * @function Highcharts.Tooltip#updatePosition
      *
      * @param  {Highcharts.Point} point
@@ -947,6 +968,7 @@ H.Tooltip.prototype = {
     /**
      * Get the optimal date format for a point, based on a range.
      *
+     * @private
      * @function Highcharts.Tooltip#getDateFormat
      *
      * @param  {number} range
@@ -1024,6 +1046,7 @@ H.Tooltip.prototype = {
     /**
      * Get the best X date format based on the closest point range on the axis.
      *
+     * @private
      * @function Highcharts.Tooltip#getXDateFormat
      *
      * @param  {Highcharts.Point} point
@@ -1057,6 +1080,7 @@ H.Tooltip.prototype = {
      * Format the footer/header of the tooltip
      * #3397: abstraction to enable formatting of footer and header
      *
+     * @private
      * @function Highcharts.Tooltip#tooltipFooterHeaderFormatter
      *
      * @param  {*} labelConfig
@@ -1113,6 +1137,7 @@ H.Tooltip.prototype = {
      * returning one entry for each item, abstracting this functionality allows
      * to easily overwrite and extend it.
      *
+     * @private
      * @function Highcharts.Tooltip#bodyFormatter
      *
      * @param  {Array<Highcharts.Point>} items
