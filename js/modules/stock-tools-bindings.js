@@ -1327,7 +1327,7 @@ H.Toolbar.annotationsEditable = {
     // Measure
     measure: ['background', 'crosshairY', 'crosshairX'],
     // Others:
-    fibonacci: ['shapeOptions', 'labelOptions', 'height'],
+    fibonacci: [],
     tunnel: ['shapeOptions', 'background', 'line', 'height'],
     pitchfork: ['shapeOptions', 'innerBackground', 'outerBackground', 'line'],
     // Crooked lines, elliots, arrows etc:
@@ -1529,7 +1529,7 @@ extend(H.Toolbar.prototype, {
                 pathLength = path.length - 1;
 
             // If it's a number, parse it:
-            if (isNumber(parsedValue)) {
+            if (isNumber(parsedValue) && !value.match(/px/g)) {
                 value = parsedValue;
             }
 
@@ -1867,6 +1867,8 @@ extend(H.Toolbar.prototype, {
                     nextParent = {};
                     if (isArray(parent)) {
                         parent.push(nextParent);
+                        nextParent[key] = {};
+                        nextParent = nextParent[key];
                     } else {
                         parent[key] = nextParent;
                     }
