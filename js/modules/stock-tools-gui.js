@@ -106,7 +106,7 @@ H.setOptions({
                 outerBackground: 'Outer background',
                 height: 'Height',
                 crosshairX: 'Crosshair X',
-                crosshairY: 'crosshair Y',
+                crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
                 background: 'Background'
             }

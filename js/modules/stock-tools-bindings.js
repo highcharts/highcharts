@@ -404,7 +404,9 @@ var stockToolsBindings = {
                         },
                         background: {
                             width: 0,
-                            height: 0
+                            height: 0,
+                            strokeWidth: 0,
+                            stroke: '#ffffff'
                         },
                         crosshairX: {
                             enabled: false
@@ -827,12 +829,20 @@ var stockToolsBindings = {
                             xAxis: 0,
                             yAxis: 0
                         },
+                        crosshairX: {
+                            strokeWidth: 1,
+                            stroke: '#000000'
+                        },
                         crosshairY: {
-                            enabled: false
+                            enabled: false,
+                            strokeWidth: 0,
+                            stroke: '#000000'
                         },
                         background: {
                             width: 0,
-                            height: 0
+                            height: 0,
+                            strokeWidth: 0,
+                            stroke: '#ffffff'
                         }
                     },
                     labelOptions: {
@@ -863,11 +873,19 @@ var stockToolsBindings = {
                             yAxis: 0
                         },
                         crosshairX: {
-                            enabled: false
+                            enabled: false,
+                            strokeWidth: 0,
+                            stroke: '#000000'
+                        },
+                        crosshairY: {
+                            strokeWidth: 1,
+                            stroke: '#000000'
                         },
                         background: {
                             width: 0,
-                            height: 0
+                            height: 0,
+                            strokeWidth: 0,
+                            stroke: '#ffffff'
                         }
                     },
                     labelOptions: {
@@ -899,7 +917,17 @@ var stockToolsBindings = {
                         },
                         background: {
                             width: 0,
-                            height: 0
+                            height: 0,
+                            strokeWidth: 0,
+                            stroke: '#000000'
+                        },
+                        crosshairX: {
+                            strokeWidth: 1,
+                            stroke: '#000000'
+                        },
+                        crosshairY: {
+                            strokeWidth: 1,
+                            stroke: '#000000'
                         }
                     },
                     labelOptions: {
@@ -1284,6 +1312,7 @@ H.Toolbar.annotationsEditable = {
         innerBackground: ['fill', 'strokeWidth', 'stroke'],
         outerBackground: ['fill', 'strokeWidth', 'stroke'],
         shapeOptions: ['fill', 'strokeWidth', 'stroke'],
+        shapes: ['fill', 'strokeWidth', 'stroke'],
         labelOptions: ['backgroundColor', 'borderColor', 'borderWidth',
             'borderRadius', 'padding', 'style'],
         line: ['strokeWidth', 'stroke'],
@@ -1292,7 +1321,7 @@ H.Toolbar.annotationsEditable = {
         crosshairY: ['strokeWidth', 'stroke']
     },
     // Simple shapes:
-    circle: ['shapeOptions'],
+    circle: ['shapes'],
     verticalLine: ['shapeOptions', 'labelOptions'],
     label: ['labelOptions'],
     // Measure
@@ -1505,7 +1534,7 @@ extend(H.Toolbar.prototype, {
             }
 
             // Remove empty strings or values like 0
-            if (value) {
+            if (value !== '') {
                 each(path, function (name, index) {
                     if (pathLength === index) {
                         // Last index, put value:
@@ -1948,7 +1977,8 @@ function selectableAnnotation(annotationType) {
                     options: toolbar.annotationToFields(annotation),
                     onSubmit: function (data) {
 
-                        var config = annotation.options;
+                        var config = annotation.options,
+                            typeOptions;
 
                         if (data.actionType === 'remove') {
                             toolbar.activeAnnotation = false;
@@ -1956,6 +1986,17 @@ function selectableAnnotation(annotationType) {
                         } else {
                             toolbar.fieldsToOptions(data.fields, config);
                             toolbar.deselectAnnotation();
+
+                            typeOptions = config.typeOptions;
+
+                            if (config.type === 'measure') {
+                                // Manually disable crooshars according to
+                                // stroke width of the shape:
+                                typeOptions.crosshairY.enabled =
+                                    typeOptions.crosshairY.strokeWidth !== 0;
+                                typeOptions.crosshairX.enabled =
+                                    typeOptions.crosshairX.strokeWidth !== 0;
+                            }
 
                             annotation.update(config);
                         }
