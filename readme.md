@@ -12,33 +12,10 @@ This is the *working repo* for Highcharts. If you simply want to include Highcha
 ### Use our CDN
 Instead of downloading, you can use our CDN to access files directly. See [code.highcharts.com](https://code.highcharts.com) for details.
 
-#### Current browsers
-Starting with v6.1.0, Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules in modern browsers](https://jakearchibald.com/2017/es-modules-in-browsers/) without any bundling tools, by using `<script type="module"> ([demo](https://jsfiddle.net/dandv/16e7k0ta/)):
-
-```js
-<!doctype html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width,minimum-scale=1">
-  <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css">
-</head>
-<body>
-<script type="module">
-  import Highcharts from 'https://code.highcharts.com/js/es-modules/masters/highcharts.src.js';
-
-  Highcharts.chart('container', {
-    ...
-  });
-</script>
-<div id="container"></div>
-</body>
-</html>
-```
-
-#### Older browsers
 ```
 <script src="https://code.highcharts.com/highcharts.js"></script>
 ```
+
 ### Install from npm
 See [npm documentation](https://docs.npmjs.com/) on how to get started with npm.
 ```
@@ -50,6 +27,21 @@ npm install --save highcharts
 ```
 bower install highcharts
 ```
+
+## Load Highcharts from the CDN as ECMAScript modules
+Starting with v6.1.0, Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules directly in modern browsers](https://jakearchibald.com/2017/es-modules-in-browsers/)
+without any bundling tools, by using `<script type="module">` ([demo](https://jsfiddle.net/highcharts/rtcx6j3h/)):
+
+```js
+<script type="module">
+  import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.js';
+
+  Highcharts.chart('container', {
+    ...
+  });
+</script>
+```
+
 
 ## Load Highcharts as an AMD module
 Highcharts is compatible with AMD module loaders (such as RequireJS). Module files require an initialization step in order to reference Highcharts. To accomplish this, pass Highcharts to the function returned by loading the module. The following example demonstrates loading Highcharts along with two modules using RequireJS. No special RequireJS config is necessary for this example to work.
