@@ -622,7 +622,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *
  * @type       {number}
  * @product    highcharts highstock
- * @apioption  plotOptions.xrange.data.x2
+ * @apioption  series.xrange.data.x2
  */
 
 /**
@@ -635,7 +635,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *
  * @type       {*}
  * @product    highcharts highstock
- * @apioption  plotOptions.xrange.data.partialFill
+ * @apioption  series.xrange.data.partialFill
  */
 
 /**
@@ -644,7 +644,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *
  * @type       {number}
  * @product    highcharts highstock
- * @apioption  plotOptions.xrange.data.partialFill.amount
+ * @apioption  series.xrange.data.partialFill.amount
  */
 
 /**
@@ -653,5 +653,5 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *
  * @type       {Highcharts.ColorString}
  * @product    highcharts highstock
- * @apioption  plotOptions.xrange.data.partialFill.fill
+ * @apioption  series.xrange.data.partialFill.fill
  */
