@@ -2022,7 +2022,7 @@ H.Series = H.seriesType('line', null, { // base series options
     /**
      * A wrapper object for all the series options in specific states.
      *
-     * @type       {Highcharts.PlotSeriesStatesOptions}
+     * @type       {*}
      * @apioption  plotOptions.series.states
      */
     states: {
@@ -2032,7 +2032,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * similar series. Currently only used for setting animation when
          * returning to normal state from hover.
          *
-         * @type       {Highcharts.PlotSeriesStatesNormalOptions}
+         * @type       {*}
          * @apioption  plotOptions.series.states.normal
          */
         normal: {
@@ -2050,7 +2050,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * Options for the hovered series. These settings override the normal
          * state options when a series is moused over or touched.
          *
-         * @type       {Highcharts.PlotSeriesStatesHoverOptions}
+         * @type       {*}
          * @apioption  plotOptions.series.states.hover
          */
         hover: {
@@ -2159,7 +2159,7 @@ H.Series = H.seriesType('line', null, { // base series options
              * @sample {highstock} highcharts/plotoptions/halo/
              *         Halo options
              *
-             * @type       {Highcharts.PlotSeriesStatesHoverHaloOptions}
+             * @type       {*}
              * @since      4.0
              * @product    highcharts highstock
              * @apioption  plotOptions.series.states.hover.halo
@@ -2219,7 +2219,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * @sample {highmaps} maps/plotoptions/series-allowpointselect/
          *         Allow point select demo
          *
-         * @type       {Highcharts.PlotSeriesStatesSelectOptions}
+         * @type       {*}
          * @extends    plotOptions.series.states.hover
          * @excluding  brightness
          * @product    highmaps
