@@ -53,6 +53,7 @@ var replaceString = require('replace-string');
 
     function sortMarkdownFileContent(mdContent) {
         let write = 'New features';
+        let changelogTitle;
 
         changelog.features = marked.lexer('');
         changelog.upgradeNotes = marked.lexer('');
@@ -60,17 +61,22 @@ var replaceString = require('replace-string');
 
         marked.lexer(mdContent).forEach((token, index) => {
             if (index === 0) {
-                var changelogTitle = token.text.split(' '),
-                    date = changelogTitle[changelogTitle.length - 1];
+                changelogTitle = token.text.split(' ');
+
+                let date = changelogTitle[changelogTitle.length - 1];
                 if (date !== '()') {
                     changelog.header.date = date;
                 }
                 return;
             }
-            if (token.type === 'heading' &&
-               (token.type === 'Upgrade notes' ||
-               token.type === 'Bug fixes')) {
-                write = token.type;
+            if (
+                token.type === 'heading' &&
+                (
+                    token.text === 'Upgrade notes' ||
+                    token.text === 'Bug fixes'
+                )
+            ) {
+                write = token.text;
                 return;
             }
             switch (write) {
@@ -140,7 +146,9 @@ var replaceString = require('replace-string');
     function bugFixesHTMLStructure() {
         if (changelog.bugFixes.length > 0) {
             return (
-                `<div id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" class="panel-heading">
+                `<div
+                    id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"
+                    class="panel-heading">
                 <h4 class="panel-title">
                 <a href="#${changelog.header.offset}${changelog.header.version}-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
                 </h4>
@@ -210,7 +218,7 @@ var replaceString = require('replace-string');
         changelog.header.offset = product.offset;
         htmlContent += productHeaderHTMLStructure(product);
         var sortedDir = getSortedDirFiles(fs.readdirSync('./' + product.name));
-        sortedDir.forEach(file => {
+        sortedDir.forEach((file) => {
             var content = fs.readFileSync('./' + product.name + '/' + file, 'utf8');
             sortMarkdownFileContent(content);
             changelog.header.version = formatVersionNumber(file);
