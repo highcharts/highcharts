@@ -320,6 +320,8 @@ H.Series = H.seriesType('line', null, { // base series options
      *         One specific series
      * @sample {highcharts} highcharts/plotoptions/series-color-area/
      *         Area color
+     * @sample {highcharts} highcharts/series/infographic/
+     *         Pattern fill
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
      *
