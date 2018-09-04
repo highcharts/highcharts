@@ -27,7 +27,7 @@ var Axis = H.Axis,
  * or positive, has its own stack item.
  *
  * @private
- * @constructor
+ * @class
  * @name Highcharts.StackItem
  *
  * @param {Highcharts.Axis} axis
@@ -84,14 +84,6 @@ H.StackItem = function (axis, options, isNegative, x, stackOption) {
         (inverted ? (isNegative ? 'right' : 'left') : 'center');
 };
 
-/**
- * The class for stacks. Each stack, on a specific X value and either negative
- * or positive, has its own stack item.
- *
- * @private
- * @class
- * @name Highcharts.StackItem
- */
 H.StackItem.prototype = {
 
     /**
