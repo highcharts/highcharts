@@ -747,7 +747,7 @@ seriesType('tilemap', 'heatmap', {
  *
  * @type       {Highcharts.ColorString}
  * @product    highcharts highmaps
- * @apioption  plotOptions.tilemap.data.color
+ * @apioption  series.tilemap.data.color
  */
 
 /**
@@ -761,7 +761,7 @@ seriesType('tilemap', 'heatmap', {
  *
  * @type       {number}
  * @product    highcharts highmaps
- * @apioption  plotOptions.tilemap.data.x
+ * @apioption  series.tilemap.data.x
  */
 
 /**
@@ -775,5 +775,5 @@ seriesType('tilemap', 'heatmap', {
  *
  * @type       {number}
  * @product    highcharts highmaps
- * @apioption  plotOptions.tilemap.data.y
+ * @apioption  series.tilemap.data.y
  */
