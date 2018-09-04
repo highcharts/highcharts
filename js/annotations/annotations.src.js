@@ -82,6 +82,8 @@ var Annotation = H.Annotation = function (chart, options) {
      */
     this.controlPoints = [];
 
+    this.coll = 'annotations';
+
     /**
      * The array of labels which belong to the annotation.
      *
@@ -831,6 +833,13 @@ merge(
             destroyObjectProperties(this, chart);
         },
 
+        /**
+         * See {@link Highcharts.Annotation#destroy}.
+         */
+        remove: function () {
+            return this.destroy();
+        },
+
         update: function (userOptions) {
             var chart = this.chart,
                 options = H.merge(true, this.options, userOptions);
@@ -983,6 +992,9 @@ H.extendAnnotation = function (
  * EXTENDING CHART PROTOTYPE
  *
  ******************************************************************** */
+
+// Let chart.update() work with annotations
+H.Chart.prototype.collectionsWithUpdate.push('annotations');
 
 H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
     initAnnotation: function (userOptions) {
