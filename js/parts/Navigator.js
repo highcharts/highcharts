@@ -2175,7 +2175,7 @@ Navigator.prototype = {
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data  comes in.
-        navigator.stickToMax = navigator.xAxis.reversed ?
+        navigator.stickToMax = navigator.reversedExtremes ?
             Math.round(navigator.zoomedMin) === 0 :
             Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 

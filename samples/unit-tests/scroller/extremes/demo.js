@@ -105,7 +105,18 @@ QUnit.test('Extremes - inverted chart', function (assert) {
     assert.strictEqual(
         newExtremes.max,
         newExtremes.dataMax,
-        'Inverted chart and reversed xAxis: Correct max' +
+        'Inverted chart and reversed xAxis: Correct max ' +
             'extremes after click on navigator (#8812)'
+    );
+
+    chart.series[0].addPoint(5, true, true, true);
+
+    newExtremes = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        newExtremes.max,
+        newExtremes.dataMax,
+        'Inverted chart and reversed xAxis: Correct max ' +
+            'when adding points (#8812)'
     );
 });
