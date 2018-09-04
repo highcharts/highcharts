@@ -377,7 +377,7 @@ H.Series = H.seriesType('line', null, { // base series options
      *         Map bubble
      *
      * @type       {string}
-     * @validvalue ["crosshair","default","help","none","pointer"].
+     * @validvalue ["crosshair","default","help","none","pointer"]
      * @apioption  plotOptions.series.cursor
      */
 
