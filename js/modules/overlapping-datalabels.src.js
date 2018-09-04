@@ -13,6 +13,7 @@ import '../parts/Chart.js';
  */
 var Chart = H.Chart,
     each = H.each,
+    isArray = H.isArray,
     objectEach = H.objectEach,
     pick = H.pick,
     addEvent = H.addEvent;
@@ -45,26 +46,27 @@ addEvent(Chart, 'render', function collectAndHide() {
         var dlOptions = series.options.dataLabels;
 
         if (
-            (dlOptions.enabled || series._hasPointLabels) &&
-            !dlOptions.allowOverlap &&
-            series.visible
+            series.visible &&
+            !(dlOptions.enabled === false && !series._hasPointLabels)
         ) { // #3866
             each(series.points, function (point) {
-                if (point.dataLabels) {
-                    each(point.dataLabels, function (label) {
-                        label.labelrank = pick(
-                            point.labelrank,
-                            point.shapeArgs && point.shapeArgs.height
-                        ); // #4118
-                        labels.push(label);
-                    });
-                } else if (point.dataLabel) {
-                    point.dataLabel.labelrank = pick(
+                var dataLabels = (
+                    isArray(point.dataLabels) ?
+                    point.dataLabels :
+                    (point.dataLabel ? [point.dataLabel] : [])
+                );
+                each(dataLabels, function (label) {
+                    var options = label.options;
+                    label.labelrank = pick(
+                        options.labelrank,
                         point.labelrank,
                         point.shapeArgs && point.shapeArgs.height
                     ); // #4118
-                    labels.push(point.dataLabel);
-                }
+
+                    if (!options.allowOverlap) {
+                        labels.push(label);
+                    }
+                });
             });
         }
     });

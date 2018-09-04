@@ -277,20 +277,20 @@ var onTickHoverExit = function (label) {
  * categories, and y-values of points based on the tree.
  * @param {Array} data All the data points to display in the axis.
  * @param {boolean} uniqueNames Wether or not the data node with the same name
- * should share grid cell. If true they do not share cell. True by default.
+ * should share grid cell. If true they do share cell. False by default.
  * @returns {object} Returns an object containing categories, mapOfIdToNode,
  * mapOfPosToGridNode, and tree.
  * @todo There should be only one point per line.
  * @todo It should be optional to have one category per point, or merge cells
  * @todo Add unit-tests.
  */
-var getTreeGridFromData = function (data, uniqueNames) {
+var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
     var categories = [],
         collapsedNodes = [],
         mapOfIdToNode = {},
         mapOfPosToGridNode = {},
         posIterator = -1,
-        uniqueNamesEnabled = isBoolean(uniqueNames) ? uniqueNames : true,
+        uniqueNamesEnabled = isBoolean(uniqueNames) ? uniqueNames : false,
         tree,
         treeParams,
         updateYValuesAndTickPos;
@@ -330,7 +330,7 @@ var getTreeGridFromData = function (data, uniqueNames) {
 
             // If not unique names, look for a sibling node with the same name.
             if (
-                !uniqueNamesEnabled &&
+                uniqueNamesEnabled &&
                 isObject(parentGridNode) &&
                 !!(gridNode = find(parentGridNode.children, hasSameName))
             ) {
@@ -380,16 +380,20 @@ var getTreeGridFromData = function (data, uniqueNames) {
         }
     };
 
-    updateYValuesAndTickPos = function (map) {
+    updateYValuesAndTickPos = function (map, numberOfSeries) {
         var setValues = function (gridNode, start, result) {
             var nodes = gridNode.nodes,
-                end = start + nodes.length - 1,
+                end = start + (start === -1 ? 0 : numberOfSeries - 1),
                 diff = (end - start) / 2,
                 padding = 0.5,
                 pos = start + diff;
-            each(nodes, function (node, j) {
-                if (isObject(node.data)) {
-                    node.data.y = start + j;
+
+            each(nodes, function (node) {
+                var data = node.data;
+                if (isObject(data)) {
+                    data.y = start + data.seriesIndex;
+                    // Remove the property once used
+                    delete data.seriesIndex;
                 }
                 node.pos = pos;
             });
@@ -418,7 +422,10 @@ var getTreeGridFromData = function (data, uniqueNames) {
     tree = Tree.getTree(data, treeParams);
 
     // Update y values of data, and set calculate tick positions.
-    mapOfPosToGridNode = updateYValuesAndTickPos(mapOfPosToGridNode);
+    mapOfPosToGridNode = updateYValuesAndTickPos(
+        mapOfPosToGridNode,
+        numberOfSeries
+    );
 
     // Return the resulting data.
     return {
@@ -441,14 +448,15 @@ override(GridAxis.prototype, {
                 // Default options
                 grid: {
                     enabled: true
-                }
-            }, userOptions, { // User options
-                // Forced options
-                reversed: true,
+                },
                 // TODO: add support for align in treegrid.
                 labels: {
                     align: 'left'
-                }
+                },
+                uniqueNames: false
+            }, userOptions, { // User options
+                // Forced options
+                reversed: true
             });
         }
 
@@ -473,12 +481,6 @@ override(GridAxis.prototype, {
                         });
                         removeFoundExtremesEvent();
                     });
-
-                // We have to set the series data again to correct the y-values
-                // which was set too early.
-                each(axis.series, function (series) {
-                    series.setData(series.options.data, false, false, false);
-                });
             });
             axis.hasNames = true;
             axis.options.showLastLabel = true;
@@ -757,17 +759,37 @@ GridAxis.prototype.updateYNames = function () {
         uniqueNames = options.uniqueNames,
         isYAxis = !axis.isXAxis,
         series = axis.series,
+        numberOfSeries = 0,
         treeGrid,
         data;
 
     if (isTreeGrid && isYAxis) {
         // Concatenate data from all series assigned to this axis.
         data = reduce(series, function (arr, s) {
-            return arr.concat(s.options.data);
+            if (s.visible) {
+                // Push all data to array
+                each(s.options.data, function (data) {
+                    if (isObject(data)) {
+                        // Set series index on data. Removed again after use.
+                        data.seriesIndex = numberOfSeries;
+                        arr.push(data);
+                    }
+                });
+
+                // Increment series index
+                if (uniqueNames === true) {
+                    numberOfSeries++;
+                }
+            }
+            return arr;
         }, []);
 
         // Calculate categories and the hierarchy for the grid.
-        treeGrid = getTreeGridFromData(data, uniqueNames);
+        treeGrid = getTreeGridFromData(
+            data,
+            uniqueNames,
+            (uniqueNames === true) ? numberOfSeries : 1
+        );
 
         // Assign values to the axis.
         axis.categories = treeGrid.categories;
@@ -775,6 +797,12 @@ GridAxis.prototype.updateYNames = function () {
         // Used on init to start a node as collapsed
         axis.collapsedNodes = treeGrid.collapsedNodes;
         axis.hasNames = true;
+
+        // We have to set the series data again to correct the y-values
+        // which was set too early.
+        each(axis.series, function (series) {
+            series.setData(series.options.data, false, false, false);
+        });
     }
 };
 
