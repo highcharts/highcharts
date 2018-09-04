@@ -56,7 +56,7 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             }
         }],
         tooltip: {
-    	valueDecimals: 6,
+            valueDecimals: 6,
             shared: true,
             split: false
         }

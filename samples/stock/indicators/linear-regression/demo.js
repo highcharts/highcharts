@@ -21,7 +21,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             id: 'base'
         }, {
             type: 'linearRegression',
-            name: 'Linear Regression: 10 points period',
             linkedTo: 'base',
             zIndex: -1,
             params: {
@@ -29,7 +28,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             }
         }, {
             type: 'linearRegression',
-            name: 'Linear Regression: 100 points period',
             linkedTo: 'base',
             zIndex: -1,
             params: {

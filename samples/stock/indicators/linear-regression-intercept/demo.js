@@ -48,7 +48,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             id: 'base'
         }, {
             type: 'linearRegressionIntercept',
-            name: 'Linear Regression Intercept: 5 points period',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,
@@ -57,7 +56,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             }
         }, {
             type: 'linearRegressionIntercept',
-            name: 'Linear Regression Intercept: 50 points period',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,

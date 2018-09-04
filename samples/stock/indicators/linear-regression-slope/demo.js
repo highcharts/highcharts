@@ -47,7 +47,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             id: 'base'
         }, {
             type: 'linearRegressionSlope',
-            name: 'Linear Regression Slope: 5 points period',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,
@@ -56,7 +55,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             }
         }, {
             type: 'linearRegressionSlope',
-            name: 'Linear Regression Slope: 20 points period',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,

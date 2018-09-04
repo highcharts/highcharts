@@ -3,7 +3,7 @@
  *
  * Indicator series type for Highstock
  *
- * (c) 2010-2017 Kacper Madej
+ * (c) 2010-2018 Kamil Kulig
  *
  * License: www.highcharts.com/license
  */

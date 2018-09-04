@@ -50,7 +50,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             id: 'base'
         }, {
             type: 'linearRegressionAngle',
-            name: 'Linear Regression Angle: 5 points period',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,
@@ -59,7 +58,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             }
         }, {
             type: 'linearRegressionAngle',
-            name: 'Linear Regression Angle: 20 points period',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,
