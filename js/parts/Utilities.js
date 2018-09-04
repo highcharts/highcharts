@@ -159,6 +159,18 @@
  */
 
 /**
+ * An object containing `x` and `y` properties for the position of an element.
+ *
+ * @typedef {object} Highcharts.PositionObject
+ *
+ * @property {number} x
+ *           X position of the element.
+ *
+ * @property {number} y
+ *           Y position of the element.
+ */
+
+/**
  * If a number is given, it defines the pixel length. If a percentage string is
  * given, like for example `'50%'`, the setting defines a length relative to a
  * base size, for example the size of a container.
