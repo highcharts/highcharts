@@ -420,7 +420,7 @@ const cleanDist = () => {
             console.log('Successfully removed dist directory.');
         })
         .catch(() => {
-            console.log('Tried to remove ./build/dist but it was never there. Moving on...')
+            console.log('Tried to remove ./build/dist but it was never there. Moving on...');
         });
 };
 
