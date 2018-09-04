@@ -427,11 +427,9 @@ H.Series = H.seriesType('line', null, { // base series options
      * includes point tooltips and click events on graphs and points. For
      * large datasets it improves performance.
      *
-     * @sample {highcharts}
-     *         highcharts/plotoptions/series-enablemousetracking-false/
+     * @sample {highcharts} highcharts/plotoptions/series-enablemousetracking-false/
      *         No mouse tracking
-     * @sample {highmaps}
-     *         maps/plotoptions/series-enablemousetracking-false/
+     * @sample {highmaps} maps/plotoptions/series-enablemousetracking-false/
      *         No mouse tracking
      *
      * @type       {boolean}
@@ -888,8 +886,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * is to toggle the visibility of the series. This can be prevented
      * by returning `false` or calling `event.preventDefault()`.
      *
-     * @sample {highcharts}
-     *         highcharts/plotoptions/series-events-legenditemclick/
+     * @sample {highcharts} highcharts/plotoptions/series-events-legenditemclick/
      *         Confirm hiding and showing
      *
      * @type       {Function}
@@ -1015,8 +1012,7 @@ H.Series = H.seriesType('line', null, { // base series options
          *
          * @sample {highcharts} highcharts/plotoptions/series-marker-enabled/
          *         Disabled markers
-         * @sample {highcharts}
-         *         highcharts/plotoptions/series-marker-enabled-false/
+         * @sample {highcharts} highcharts/plotoptions/series-marker-enabled-false/
          *         Disabled in normal state but enabled on hover
          * @sample {highstock} stock/plotoptions/series-marker/
          *         Enabled markers
@@ -1096,11 +1092,9 @@ H.Series = H.seriesType('line', null, { // base series options
          * Image markers only. Set the image width explicitly. When using this
          * option, a `height` must also be set.
          *
-         * @sample {highcharts}
-         *         highcharts/plotoptions/series-marker-width-height/
+         * @sample {highcharts} highcharts/plotoptions/series-marker-width-height/
          *         Fixed width and height
-         * @sample {highstock}
-         *         highcharts/plotoptions/series-marker-width-height/
+         * @sample {highstock} highcharts/plotoptions/series-marker-width-height/
          *         Fixed width and height
          *
          * @type       {number}
@@ -1288,8 +1282,7 @@ H.Series = H.seriesType('line', null, { // base series options
                 /**
                  * The fill color of the point marker.
                  *
-                 * @sample {highcharts}
-                 *         highcharts/plotoptions/series-marker-states-select-fillcolor/
+                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
                  *         Solid red discs for selected points
                  *
                  * @type       {Highcharts.ColorString}
@@ -1480,8 +1473,7 @@ H.Series = H.seriesType('line', null, { // base series options
          * [inside](#plotOptions.column.dataLabels.inside) option. Can be one of
          * `left`, `center` or `right`.
          *
-         * @sample {highcharts}
-         *         highcharts/plotoptions/series-datalabels-align-left/
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-align-left/
          *         Left aligned
          *
          * @type       {string}
@@ -1615,11 +1607,9 @@ H.Series = H.seriesType('line', null, { // base series options
          * for the data label. Available variables are the same as for
          * `formatter`.
          *
-         * @sample {highcharts|highstock}
-         *         highcharts/plotoptions/series-datalabels-format/
+         * @sample {highcharts|highstock} highcharts/plotoptions/series-datalabels-format/
          *         Add a unit
-         * @sample {highmaps}
-         *         maps/plotoptions/series-datalabels-format/
+         * @sample {highmaps} maps/plotoptions/series-datalabels-format/
          *         Formatted value in the data label
          *
          * @type       {string}
@@ -2312,7 +2302,8 @@ H.Series = H.seriesType('line', null, { // base series options
     /**
      * Styled mode only. A custom class name for the zone.
      *
-     * @sample highcharts/css/color-zones/ Zones styled by class name
+     * @sample highcharts/css/color-zones/
+     *         Zones styled by class name
      *
      * @type       {string}
      * @since      5.0.0
