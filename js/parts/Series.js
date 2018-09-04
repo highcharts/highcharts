@@ -35,12 +35,14 @@
  */
 
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
+
 var addEvent = H.addEvent,
     animObject = H.animObject,
     arrayMax = H.arrayMax,
@@ -358,9 +360,6 @@ H.Series = H.seriesType('line', null, { // base series options
      * to the series, to signal to the user that the points and lines can
      * be clicked.
      *
-     * Possible values are: `"default"`, `"help"`, `"none"`, `"pointer"`, and
-     * `"crosshair"`.
-     *
      * In styled mode, the series cursor can be set with the same classes
      * as listed under [series.color](#plotOptions.series.color).
      *
@@ -378,16 +377,14 @@ H.Series = H.seriesType('line', null, { // base series options
      *         Map bubble
      *
      * @type       {string}
+     * @validvalue ["crosshair","default","help","none","pointer"].
      * @apioption  plotOptions.series.cursor
      */
 
 
     /**
      * A name for the dash style to use for the graph, or for some series types
-     * the outline of each shape. The value for the `dashStyle` include:
-     * `"Dash"`, `"DashDot"`, `"Dot"`, `"LongDash"`, `"LongDashDot"`,
-     * `"LongDashDotDot"`, `"ShortDash"`, `"ShortDashDot"`, `"ShortDashDotDot"`,
-     * `"ShortDot"`, and `"Solid"`.
+     * the outline of each shape.
      *
      * In styled mode, the [stroke dash-array](https://jsfiddle.net/gh/get/
      * library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/
@@ -408,6 +405,9 @@ H.Series = H.seriesType('line', null, { // base series options
      * @type       {string}
      * @default    Solid
      * @since      2.1
+     * @validvalue ["Dash","DashDot","Dot","LongDash","LongDashDot",
+     *             "LongDashDotDot","ShortDash","ShortDashDot",
+     *             "ShortDashDotDot","ShortDot","Solid"]
      * @apioption  plotOptions.series.dashStyle
      */
 
@@ -716,7 +716,7 @@ H.Series = H.seriesType('line', null, { // base series options
      */
 
     /**
-     * If set to `True`, the accessibility module will skip past the points
+     * If set to `true`, the accessibility module will skip past the points
      * in this series for keyboard navigation.
      *
      * @type       {boolean}
