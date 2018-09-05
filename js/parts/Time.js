@@ -80,7 +80,8 @@ var H = Highcharts,
  *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
- * @class Highcharts.Time
+ * @class
+ * @name Highcharts.Time
  *
  * @param {Highcharts.TimeOptions} options
  *        Time options as defined in [chart.options.time](/highcharts/time).
@@ -169,7 +170,7 @@ Highcharts.Time.prototype = {
      * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
      * handle Jalali dates.
      *
-     * @type       {object}
+     * @type       {*}
      * @since      4.0.4
      * @product    highcharts highstock
      * @apioption  time.Date
@@ -229,6 +230,7 @@ Highcharts.Time.prototype = {
      * @product    highcharts highstock
      * @apioption  time.timezoneOffset
      */
+
     defaultOptions: {},
 
     /**
@@ -236,7 +238,7 @@ Highcharts.Time.prototype = {
      * initiating Highcharts, after running `Highcharts.setOptions` and on
      * `Chart.update`.
      *
-     * @ignore
+     * @private
      * @function Highcharts.Time#update
      *
      * @param  {Highcharts.TimeOptions} options
@@ -363,16 +365,16 @@ Highcharts.Time.prototype = {
      * @param  {number} month
      *         The month. Zero-based, so January is 0.
      *
-     * @param  {number} date
+     * @param  {number|undefined} [date=1]
      *         The day of the month
      *
-     * @param  {number} hours
+     * @param  {number|undefined} [hours=0]
      *         The hour of the day, 0-23.
      *
-     * @param  {number} minutes
+     * @param  {number|undefined} [minutes=0]
      *         The minutes
      *
-     * @param  {number} seconds
+     * @param  {number|undefined} [seconds=0]
      *         The seconds
      *
      * @return {number}
@@ -475,6 +477,18 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#dateFormat
      *
+     * @param  {number} timestamp
+     *         The JavaScript timestamp.
+     *
+     * @param  {boolean|undefined} [capitalize=false]
+     *         Upper case first letter in the return.
+     *
+     * @return {string}
+     *         The formatted date.
+     *//**
+     *
+     * @function Highcharts.Time#dateFormat
+     *
      * @param  {string} format
      *         The desired format where various time representations are
      *         prefixed with %.
@@ -482,7 +496,7 @@ Highcharts.Time.prototype = {
      * @param  {number} timestamp
      *         The JavaScript timestamp.
      *
-     * @param  {boolean} [capitalize=false]
+     * @param  {boolean|undefined} [capitalize=false]
      *         Upper case first letter in the return.
      *
      * @return {string}
@@ -610,13 +624,13 @@ Highcharts.Time.prototype = {
      * @param  {Highcharts.NormalizedIntervalObject} normalizedInterval
      *         The interval in axis values (ms) and the count
      *
-     * @param  {number} min
+     * @param  {number|undefined} [min]
      *         The minimum in axis values
      *
-     * @param  {number} max
+     * @param  {number|undefined} [max]
      *         The maximum in axis values
      *
-     * @param  {number} startOfWeek
+     * @param  {number|undefined} [startOfWeek=1]
      *
      * @return {Highcharts.TimeTicksObject}
      */
