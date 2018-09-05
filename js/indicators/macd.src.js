@@ -203,8 +203,8 @@ seriesType('macd', 'sma',
         destroy: function () {
             // this.graph is null due to removing two times the same SVG element
             this.graph = null;
-            this.graphmacd = this.graphmacd.destroy();
-            this.graphsignal = this.graphsignal.destroy();
+            this.graphmacd = this.graphmacd && this.graphmacd.destroy();
+            this.graphsignal = this.graphsignal && this.graphsignal.destroy();
 
             SMA.prototype.destroy.apply(this, arguments);
         },
@@ -312,7 +312,7 @@ seriesType('macd', 'sma',
                 longEMA,
                 i;
 
-            if (series.xData.length < params.longPeriod) {
+            if (series.xData.length < params.longPeriod + params.signalPeriod) {
                 return false;
             }
 
