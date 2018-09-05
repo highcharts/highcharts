@@ -1172,10 +1172,10 @@ function newDoclet (e) {
         Object.keys(doclet)
     );
 
-    if ((isUndocumented(doclet) &&
-        !isOverload(doclet)) ||
-        isApiOption(doclet) ||
-        isPrivate(doclet)
+    if (isApiOption(doclet) ||
+        isPrivate(doclet) ||
+        (isUndocumented(doclet) &&
+        !isOverload(doclet))
     ) {
         return;
     }
