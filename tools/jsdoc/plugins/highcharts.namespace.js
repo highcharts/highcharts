@@ -133,7 +133,7 @@ function isGlobal (doclet) {
  */
 function isOverload (doclet) {
 
-    return !!getNodeFor(getName(doclet), false, false);
+    return !!getNodeFor(getName(doclet), false, true);
 }
 
 /**
