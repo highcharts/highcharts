@@ -120,6 +120,23 @@ function isGlobal (doclet) {
 }
 
 /**
+ * Returns true, if a doclet with the same full name has already been added.
+ *
+ * @private
+ * @function
+ *
+ * @param  {JSDoclet} doclet
+ *         JSDoc doclet to analyze.
+ *
+ * @return {boolean}
+ *         True, if a similar doclet has been added.
+ */
+function isOverload (doclet) {
+
+    return !!getNodeFor(getName(doclet), false, false);
+}
+
+/**
  * Returns true, if the doclet is part of a private member tree.
  *
  * @private
@@ -483,9 +500,13 @@ function getNamespaces (name) {
  * @param  {boolean} overload
  *         Create additional node.
  *
+ * @param  {boolean} searchOnly
+ *         Create no nodes at all.
+ *
  * @return {Node}
+ *         Node in the tree.
  */
-function getNodeFor (name, overload) {
+function getNodeFor (name, overload, searchOnly) {
 
     let found = false,
         node = namespace,
@@ -494,7 +515,17 @@ function getNodeFor (name, overload) {
 
     spaceNames.forEach((spaceName, index) => {
 
+        if (!node) {
+            return;
+        }
+
         if (!node.children) {
+
+            if (searchOnly) {
+                node = undefined;
+                return;
+            }
+
             node.children = [];
         }
 
@@ -516,8 +547,14 @@ function getNodeFor (name, overload) {
             });
         }
 
-        if (!found) {
+        if (found) {
+            return;
+        }
 
+        if (searchOnly) {
+            node = undefined;
+        }
+        else {
             let newNode = {
                 doclet: {
                     name: spaceName
@@ -1129,7 +1166,8 @@ function newDoclet (e) {
         Object.keys(doclet)
     );
 
-    if (isUndocumented(doclet) ||
+    if ((isUndocumented(doclet) &&
+        !isOverload(doclet)) ||
         isApiOption(doclet) ||
         isPrivate(doclet)
     ) {
