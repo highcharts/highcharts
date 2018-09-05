@@ -3,11 +3,12 @@
  *
  * License: www.highcharts.com/license
  */
-
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './SvgRenderer.js';
+
 var attr = H.attr,
     createElement = H.createElement,
     css = H.css,
@@ -24,11 +25,25 @@ var attr = H.attr,
     win = H.win,
     wrap = H.wrap;
 
-// Extend SvgElement for useHTML option
+/**
+ * Extend SvgElement for useHTML option.
+ *
+ * @ignore
+ * @class
+ * @name Highcharts.SVGElement
+ */
 extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
+
     /**
      * Apply CSS to HTML elements. This is used in text within SVG rendering and
      * by the VML renderer
+     *
+     * @private
+     * @function Highcharts.SVGElement#htmlCss
+     *
+     * @param  {Highcharts.CSSObject} styles
+     *
+     * @return {Highcharts.SVGElement}
      */
     htmlCss: function (styles) {
         var wrapper = this,
@@ -53,13 +68,18 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
     },
 
     /**
-     * VML and useHTML method for calculating the bounding box based on offsets
-     * @param {Boolean} refresh Whether to force a fresh value from the DOM or
-     * to use the cached value.
+     * VML and useHTML method for calculating the bounding box based on offsets.
      *
-     * @return {Object} A hash containing values for x, y, width and height
+     * @private
+     * @function Highcharts.SVGElement#htmlGetBBox
+     *
+     * @param  {boolean} refresh
+     *         Whether to force a fresh value from the DOM or to use the cached
+     *         value.
+     *
+     * @return {Highcharts.BBoxObject}
+     *         A hash containing values for x, y, width and height.
      */
-
     htmlGetBBox: function () {
         var wrapper = this,
             element = wrapper.element;
@@ -74,7 +94,12 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
     /**
      * VML override private method to update elements based on internal
-     * properties based on SVG transform
+     * properties based on SVG transform.
+     *
+     * @private
+     * @function Highcharts.SVGElement#htmlUpdateTransform
+     *
+     * @return {void}
      */
     htmlUpdateTransform: function () {
         // aligning non added elements is expensive
@@ -213,7 +238,18 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
     },
 
     /**
-     * Set the rotation of an individual HTML span
+     * Set the rotation of an individual HTML span.
+     *
+     * @private
+     * @function Highcharts.SVGElement#setSpanRotation
+     *
+     * @param  {number} rotation
+     *
+     * @param  {number} alignCorrection
+     *
+     * @param  {number} baseline
+     *
+     * @return {void}
      */
     setSpanRotation: function (rotation, alignCorrection, baseline) {
         var rotationStyle = {},
@@ -229,6 +265,17 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
     /**
      * Get the correction in X and Y positioning as the element is rotated.
+     *
+     * @private
+     * @function Highcharts.SVGElement#getSpanCorrection
+     *
+     * @param  {number} width
+     *
+     * @param  {number} baseline
+     *
+     * @param  {number} alignCorrection
+     *
+     * @return {void}
      */
     getSpanCorrection: function (width, baseline, alignCorrection) {
         this.xCorr = -width * alignCorrection;
@@ -236,9 +283,21 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
     }
 });
 
-// Extend SvgRenderer for useHTML option.
+/**
+ * Extend SvgRenderer for useHTML option.
+ *
+ * @ignore
+ * @class
+ * @name Highcharts.SVGRenderer
+ */
 extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
+    /**
+     * @private
+     * @function Highcharts.SVGRenderer#getTransformKey
+     *
+     * @return {string}
+     */
     getTransformKey: function () {
         return isMS && !/Edge/.test(win.navigator.userAgent) ?
             '-ms-transform' :
@@ -255,9 +314,16 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
      * Create HTML text node. This is used by the VML renderer as well as the
      * SVG renderer through the useHTML option.
      *
-     * @param {String} str
-     * @param {Number} x
-     * @param {Number} y
+     * @private
+     * @function Highcharts.SVGRenderer#html
+     *
+     * @param  {string} str
+     *
+     * @param  {number} x
+     *
+     * @param  {number} y
+     *
+     * @return {Highcharts.HTMLDOMElement}
      */
     html: function (str, x, y) {
         var wrapper = this.createElement('span'),
