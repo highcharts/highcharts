@@ -1129,8 +1129,7 @@ function newDoclet (e) {
         Object.keys(doclet)
     );
 
-    if (isUndocumented(doclet) ||
-        isApiOption(doclet) ||
+    if (isApiOption(doclet) ||
         isPrivate(doclet)
     ) {
         return;
