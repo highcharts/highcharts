@@ -97,7 +97,10 @@ if (!Array.prototype.forEach) {
         var i = 0,
             len = this.length;
         for (; i < len; i++) {
-            if (fn.call(ctx, this[i], i, this) === false) {
+            if (
+                this[i] !== undefined && // added check
+                fn.call(ctx, this[i], i, this) === false
+            ) {
                 return i;
             }
         }
