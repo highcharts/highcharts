@@ -33,8 +33,6 @@ seriesType('linearRegression', 'sma',
      */
     {
         params: {
-            period: 14,
-            index: 2,
             /**
              * Unit (in milliseconds) for the x axis distances used to compute
              * the regression line paramters (slope & intercept) for every
