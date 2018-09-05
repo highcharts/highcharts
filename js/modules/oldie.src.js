@@ -108,15 +108,16 @@ if (!Array.prototype.forEach) {
 }
 
 if (!Array.prototype.indexOf) {
-    H.indexOfPolyfill = function (arr) {
-        var len,
-            i = 0;
+    H.indexOfPolyfill = function (member, fromIndex) {
+        var arr = this, // #8874
+            len,
+            i = fromIndex || 0; // #8346
 
         if (arr) {
             len = arr.length;
 
             for (; i < len; i++) {
-                if (arr[i] === this) {
+                if (arr[i] === member) {
                     return i;
                 }
             }
