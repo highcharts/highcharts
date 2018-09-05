@@ -133,12 +133,18 @@ function isGlobal (doclet) {
  */
 function isOverload (doclet) {
 
+    let name = getName(doclet),
+        node = getNodeFor(name, false, true);
+
     switch (doclet.kind) {
         default:
             return false;
         case 'constructor':
         case 'function':
-            return (!!getNodeFor(getName(doclet), false, true));
+            return (
+                !!node &&
+                node.kind === doclet.kind
+            );
     }
 }
 
