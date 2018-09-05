@@ -160,80 +160,104 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
             labelOpts, tickmarkOffset, index) {
     var tick = this,
-        retVal = proceed.apply(tick, argsToArray(arguments)),
         axis = tick.axis,
+        reversed = axis.reversed,
+        chart = axis.chart,
         options = axis.options,
         gridOptions = (options && isObject(options.grid)) ? options.grid : {},
-        tickWidth = pick(
-            options[tick.tickPrefix + 'Width'],
-            !tick.type && axis.isXAxis ? 1 : 0
-        ),
-        crispCorr = (tickWidth / 2),
-        categoryAxis = axis.categories,
-        tickInterval = options.tickInterval || axis.tickInterval,
-        tickPositions = axis.tickPositions,
-        nextTickPos = tickPositions[index + 1],
         align = labelOpts.align,
-        tickPixelInterval,
-        axisMin,
+        // verticalAlign is currently not supported for axis.labels.
+        verticalAlign = 'middle', // labelOpts.verticalAlign,
+        side = axisSide[axis.side],
+        tickPositions = axis.tickPositions,
+        tickPos = tick.pos - tickmarkOffset,
+        nextTickPos = (
+            isNumber(tickPositions[index + 1]) ?
+            tickPositions[index + 1] - tickmarkOffset :
+            axis.max + tickmarkOffset
+        ),
+        tickSize = axis.tickSize('tick', true),
+        tickWidth = isArray(tickSize) ? tickSize[0] : 0,
+        crispCorr = tickSize[1] / 2,
         lblMetrics,
-        axisYCenter,
-        labelYCenter,
+        result,
+        bottom,
+        top,
         left,
         right;
 
     // Only center tick labels in grid axes
     if (gridOptions.enabled === true) {
-        lblMetrics = axis.chart.renderer.fontMetrics(
+        /**
+         * Calculate top and bottom positions of the cell.
+         */
+        if (side === 'top') {
+            bottom = axis.top + axis.offset;
+            top = bottom - tickWidth;
+        } else if (side === 'bottom') {
+            top = chart.chartHeight - axis.bottom + axis.offset;
+            bottom = top + tickWidth;
+        } else {
+            bottom = axis.top + axis.len - axis.translate(
+                reversed ? nextTickPos : tickPos
+            );
+            top = axis.top + axis.len - axis.translate(
+                reversed ? tickPos : nextTickPos
+            );
+        }
+
+        /**
+         * Calculate left and right positions of the cell.
+         */
+        if (side === 'right') {
+            left = chart.chartWidth - axis.right + axis.offset;
+            right = left + tickWidth;
+        } else if (side === 'left') {
+            right = axis.left + axis.offset;
+            left = right - tickWidth;
+        } else {
+            left = axis.left + axis.translate(
+                reversed ? nextTickPos : tickPos
+            );
+            right = axis.left + axis.translate(
+                reversed ? tickPos : nextTickPos
+            );
+        }
+
+        /**
+         * Calculate the positioning of the label based on alignment.
+         */
+        result = {
+            x: (
+                align === 'left' ?
+                left :
+                align === 'right' ?
+                right :
+                left + ((right - left) / 2) // default to center
+            ),
+            y: (
+                verticalAlign === 'top' ?
+                top :
+                verticalAlign === 'bottom' ?
+                bottom :
+                top + ((bottom - top) / 2) // default to middle
+            )
+        };
+
+        // Align the baseline of the label.
+        // Would be better to have a setter or similar for this.
+        lblMetrics = chart.renderer.fontMetrics(
             labelOpts.style.fontSize,
             label.element
         );
-        labelYCenter = (lblMetrics.b / 2) - ((lblMetrics.h - lblMetrics.f) / 2);
+        result.y += (lblMetrics.b / 2) - ((lblMetrics.h - lblMetrics.f) / 2);
 
-        if (horiz) {
-            if (!categoryAxis) {
-                // Center x position
-                if (isNumber(nextTickPos)) {
-                    left = axis.translate(tick.pos);
-                    right = axis.translate(nextTickPos);
-                    x = (left + right) / 2;
-                    tick.slotWidth = Math.abs(right - left);
-                }
-                retVal.x = Math.round(x - crispCorr) + axis.left;
-            }
-
-            axisYCenter = (axis.tickSize() / 2);
-
-            y += labelYCenter;
-
-            // Center y position
-            if (axis.side === axisSide.top) {
-                retVal.y = y - axisYCenter;
-            } else {
-                retVal.y = y + axisYCenter;
-            }
-        } else {
-            // Center y position
-            if (!categoryAxis) {
-                axisMin = axis.reversed ? axis.max : axis.min;
-                tickPixelInterval = axis.translate(axisMin + tickInterval);
-                retVal.y = y - (tickPixelInterval / 2) + labelYCenter;
-            }
-
-            // Center x position
-            // TODO: This probably needs to be fixed. Where does 10 come from?
-            if (align === 'left') {
-                if (!categoryAxis || axis.side === axisSide.left) {
-                    retVal.x -= axis.getMaxLabelLength();
-                }
-            } else if (align === 'right') {
-                if (!categoryAxis || axis.side === axisSide.right) {
-                    retVal.x += axis.getMaxLabelLength();
-                }
-            }
-        }
+        // Adjust for crisping logic and round the resulting number
+        result.x = Math.round(result.x - crispCorr);
+    } else {
+        result = proceed.apply(tick, argsToArray(arguments));
     }
-    return retVal;
+    return result;
 });
 
 /**
