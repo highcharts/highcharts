@@ -263,10 +263,9 @@ QUnit.test('Dynamic point states', function (assert) {
                 }
             }]
         }),
-        leftOffset = Highcharts.offset(chart.container).left,
-        topX = chart.xAxis[0].toPixels(8.9, true) + leftOffset,
+        topX = chart.xAxis[0].toPixels(8.9, true),
         topY = chart.yAxis[0].toPixels(0),
-        bottomX = chart.xAxis[0].toPixels(9.1, true) + leftOffset,
+        bottomX = chart.xAxis[0].toPixels(9.1, true),
         bottomY = chart.yAxis[0].toPixels(10),
         haloBox;
 
