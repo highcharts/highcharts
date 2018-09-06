@@ -203,9 +203,9 @@ seriesType('linearRegression', 'sma',
                 xAxisUnit = this.options.params.xAxisUnit ||
                 this.findClosestDistance(xData);
 
-          // Iteration logic: x value of the last point within the period
-          // (end point) is used to represent the y value (regression)
-          // of the entire period.
+            // Iteration logic: x value of the last point within the period
+            // (end point) is used to represent the y value (regression)
+            // of the entire period.
 
             for (i = period - 1; i <= xData.length - 1; i++) {
                 periodStart = i - period + 1; // adjusted for slice() function
@@ -217,8 +217,8 @@ seriesType('linearRegression', 'sma',
                   xAxisUnit);
 
                 lineParameters = this.getRegressionLineParameters(
-                periodTransformedXData, periodYData
-              );
+                  periodTransformedXData, periodYData
+                );
 
                 endPointY = this.getEndPointY(lineParameters,
                 periodTransformedXData[periodTransformedXData.length - 1]);
