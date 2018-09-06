@@ -24,7 +24,7 @@ var Series = H.Series,
  * @extends    plotOptions.line
  * @excluding  pointPlacement, shadow
  * @product    highcharts highstock
- * @opioption  plotOptions.scatter
+ * @apioption  plotOptions.scatter
  */
 seriesType('scatter', 'line', {
 
