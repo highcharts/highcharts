@@ -3,6 +3,16 @@
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * @private
+ * @typedef Highcharts.RadianAngles
+ *
+ * @property {number} start
+ *
+ * @property {number} end
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -79,7 +89,7 @@ H.CenteredSeriesMixin = {
      * @param  {number} end
      *         Start angle in degrees.
      *
-     * @return {*}
+     * @return {Highcharts.RadianAngles}
      *         Returns an object containing start and end angles as radians.
      */
     getStartAndEndRadians: function getStartAndEndRadians(start, end) {
