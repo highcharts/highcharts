@@ -4548,8 +4548,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fires the event `afterSetTickPositions`.
+     * @fires Highcharts.Axis#event:afterSetTickPositions
      */
     setTickPositions: function () {
 
@@ -5007,8 +5006,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fires the event `setExtremes`.
+     * @fires Highcharts.Axis#event:setExtremes
      */
     setExtremes: function (newMin, newMax, redraw, animation, eventArguments) {
         var axis = this,
@@ -6384,7 +6382,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#drawCrosshair
      *
-     * @param  {Highcharts.PointerEvent|undefined} [e]
+     * @param  {Highcharts.PointerEventObject|undefined} [e]
      *         The event arguments from the modified pointer event, extended
      *         with `chartX` and `chartY`
      *
@@ -6393,9 +6391,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fires the events `drawCrosshair` and
-     * `afterDrawCrosshair`.
+     * @fires Highcharts.Axis#event:afterDrawCrosshair
+     * @fires Highcharts.Axis#event:drawCrosshair
      */
     drawCrosshair: function (e, point) {
 
