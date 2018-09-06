@@ -89,8 +89,6 @@ defaultOptions.drilldown = {
      * @apioption drilldown.series
      */
 
-    /*= if (build.classic) { =*/
-
     /**
      * Additional styles to apply to the X axis label for a point that
      * has drilldown data. By default it is underlined and blue to invite
@@ -130,7 +128,6 @@ defaultOptions.drilldown = {
         fontWeight: 'bold',
         textDecoration: 'underline'
     },
-    /*= } =*/
 
     /**
      * Set the animation for all drilldown animations. Animation of a drilldown
@@ -385,11 +382,9 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
         colorProp;
 
 
-    /*= if (build.classic) { =*/
-    colorProp = { color: point.color || oldSeries.color };
-    /*= } else { =*/
-    colorProp = { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) };
-    /*= } =*/
+    colorProp = this.styledMode ?
+        { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) } :
+        { color: point.color || oldSeries.color };
 
     if (!this.drilldownLevels) {
         this.drilldownLevels = [];
@@ -803,10 +798,12 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
 
 ColumnSeries.prototype.animateDrilldown = function (init) {
     var series = this,
-        drilldownLevels = this.chart.drilldownLevels,
+        chart = this.chart,
+        drilldownLevels = chart.drilldownLevels,
         animateFrom,
-        animationOptions = animObject(this.chart.options.drilldown.animation),
-        xAxis = this.xAxis;
+        animationOptions = animObject(chart.options.drilldown.animation),
+        xAxis = this.xAxis,
+        styledMode = chart.styledMode;
 
     if (!init) {
         each(drilldownLevels, function (level) {
@@ -815,10 +812,10 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
                     level.lowerSeriesOptions._ddSeriesId
             ) {
                 animateFrom = level.shapeArgs;
-                /*= if (build.classic) { =*/
-                // Add the point colors to animate from
-                animateFrom.fill = level.color;
-                /*= } =*/
+                if (!styledMode) {
+                    // Add the point colors to animate from
+                    animateFrom.fill = level.color;
+                }
             }
         });
 
@@ -827,10 +824,10 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
         each(this.points, function (point) {
             var animateTo = point.shapeArgs;
 
-            /*= if (build.classic) { =*/
-            // Add the point colors to animate to
-            animateTo.fill = point.color;
-            /*= } =*/
+            if (!styledMode) {
+                // Add the point colors to animate to
+                animateTo.fill = point.color;
+            }
 
             if (point.graphic) {
                 point.graphic
@@ -889,9 +886,9 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
 
             delete point.graphic;
 
-            /*= if (build.classic) { =*/
-            animateTo.fill = level.color;
-            /*= } =*/
+            if (!series.chart.styledMode) {
+                animateTo.fill = level.color;
+            }
 
             if (animationOptions.duration) {
                 graphic.animate(
@@ -919,16 +916,17 @@ if (PieSeries) {
                 animateFrom = level.shapeArgs,
                 start = animateFrom.start,
                 angle = animateFrom.end - start,
-                startAngle = angle / this.points.length;
+                startAngle = angle / this.points.length,
+                styledMode = this.chart.styledMode;
 
             if (!init) {
                 each(this.points, function (point, i) {
                     var animateTo = point.shapeArgs;
 
-                    /*= if (build.classic) { =*/
-                    animateFrom.fill = level.color;
-                    animateTo.fill = point.color;
-                    /*= } =*/
+                    if (!styledMode) {
+                        animateFrom.fill = level.color;
+                        animateTo.fill = point.color;
+                    }
 
                     if (point.graphic) {
                         point.graphic
@@ -1032,33 +1030,33 @@ Tick.prototype.drillable = function () {
         label = this.label,
         axis = this.axis,
         isDrillable = axis.coll === 'xAxis' && axis.getDDPoints,
-        ddPointsX = isDrillable && axis.getDDPoints(pos);
+        ddPointsX = isDrillable && axis.getDDPoints(pos),
+        styledMode = axis.chart.styledMode;
 
     if (isDrillable) {
         if (label && ddPointsX && ddPointsX.length) {
             label.drillable = true;
 
-            /*= if (build.classic) { =*/
-            if (!label.basicStyles) {
+            if (!label.basicStyles && !styledMode) {
                 label.basicStyles = H.merge(label.styles);
             }
-            /*= } =*/
 
             label
                 .addClass('highcharts-drilldown-axis-label')
-                /*= if (build.classic) { =*/
-                .css(axis.chart.options.drilldown.activeAxisLabelStyle)
-                /*= } =*/
                 .on('click', function (e) {
                     axis.drilldownCategory(pos, e);
                 });
 
+            if (!styledMode) {
+                label.css(axis.chart.options.drilldown.activeAxisLabelStyle);
+            }
+
         } else if (label && label.drillable) {
 
-            /*= if (build.classic) { =*/
-            label.styles = {}; // reset for full overwrite of styles
-            label.css(label.basicStyles);
-            /*= } =*/
+            if (!styledMode) {
+                label.styles = {}; // reset for full overwrite of styles
+                label.css(label.basicStyles);
+            }
 
             label.on('click', null); // #3806
             label.removeClass('highcharts-drilldown-axis-label');
@@ -1096,7 +1094,8 @@ H.addEvent(H.Point, 'afterInit', function () {
 
 H.addEvent(H.Series, 'afterDrawDataLabels', function () {
     var css = this.chart.options.drilldown.activeDataLabelStyle,
-        renderer = this.chart.renderer;
+        renderer = this.chart.renderer,
+        styledMode = this.chart.styledMode;
 
     each(this.points, function (point) {
         var dataLabelsOptions = point.options.dataLabels,
@@ -1107,53 +1106,55 @@ H.addEvent(H.Series, 'afterDrawDataLabels', function () {
             );
 
         if (point.drilldown && point.dataLabel) {
-            /*= if (build.classic) { =*/
-            if (css.color === 'contrast') {
+
+            if (css.color === 'contrast' && !styledMode) {
                 pointCSS.color = renderer.getContrast(
                     point.color || this.color
                 );
             }
-            /*= } =*/
+
             if (dataLabelsOptions && dataLabelsOptions.color) {
                 pointCSS.color = dataLabelsOptions.color;
             }
             point.dataLabel
                 .addClass('highcharts-drilldown-data-label');
 
-            /*= if (build.classic) { =*/
-            point.dataLabel
-                .css(css)
-                .css(pointCSS);
-            /*= } =*/
+            if (!styledMode) {
+                point.dataLabel
+                    .css(css)
+                    .css(pointCSS);
+            }
         }
     }, this);
 });
 
 
-var applyCursorCSS = function (element, cursor, addClass) {
+var applyCursorCSS = function (element, cursor, addClass, styledMode) {
     element[addClass ? 'addClass' : 'removeClass'](
         'highcharts-drilldown-point'
     );
 
-    /*= if (build.classic) { =*/
-    element.css({ cursor: cursor });
-    /*= } =*/
+    if (!styledMode) {
+        element.css({ cursor: cursor });
+    }
 };
 
 // Mark the trackers with a pointer
 H.addEvent(H.Series, 'afterDrawTracker', function () {
+    var styledMode = this.chart.styledMode;
     each(this.points, function (point) {
         if (point.drilldown && point.graphic) {
-            applyCursorCSS(point.graphic, 'pointer', true);
+            applyCursorCSS(point.graphic, 'pointer', true, styledMode);
         }
     });
 });
 
 
 H.addEvent(H.Point, 'afterSetState', function () {
+    var styledMode = this.series.chart.styledMode;
     if (this.drilldown && this.series.halo && this.state === 'hover') {
-        applyCursorCSS(this.series.halo, 'pointer', true);
+        applyCursorCSS(this.series.halo, 'pointer', true, styledMode);
     } else if (this.series.halo) {
-        applyCursorCSS(this.series.halo, 'auto', false);
+        applyCursorCSS(this.series.halo, 'auto', false, styledMode);
     }
 });
