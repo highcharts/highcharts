@@ -1562,11 +1562,10 @@ function GLRenderer(postRenderCallback) {
                 ) {
                     shapeArgs = point.shapeArgs;
 
-                    /*= if (build.classic) { =*/
-                    pointAttr = point.series.pointAttribs(point);
-                    /*= } else { =*/
-                    pointAttr = point.series.colorAttribs(point);
-                    /*= } =*/
+                    pointAttr = chart.styledMode ?
+                        point.series.colorAttribs(point) :
+                        pointAttr = point.series.pointAttribs(point);
+
                     swidth = pointAttr['stroke-width'] || 0;
 
                     // Handle point colors
@@ -2140,20 +2139,21 @@ function GLRenderer(postRenderCallback) {
                 shader.setTexture(shapeTexture.handle);
             }
 
-            /*= if (build.classic) { =*/
-            fillColor =
-                (s.series.pointAttribs && s.series.pointAttribs().fill) ||
-                s.series.color;
+            if (chart.styledMode) {
+                fillColor = (
+                   s.series.markerGroup &&
+                    s.series.markerGroup.getStyle('fill')
+                );
 
-            if (options.colorByPoint) {
-                fillColor = s.series.chart.options.colors[si];
+            } else {
+                fillColor =
+                    (s.series.pointAttribs && s.series.pointAttribs().fill) ||
+                    s.series.color;
+
+                if (options.colorByPoint) {
+                    fillColor = s.series.chart.options.colors[si];
+                }
             }
-            /*= } else { =*/
-            fillColor = (
-                s.series.markerGroup &&
-                s.series.markerGroup.getStyle('fill')
-            );
-            /*= } =*/
 
             if (s.series.fillOpacity && options.fillOpacity) {
                 fillColor = new Color(fillColor).setOpacity(

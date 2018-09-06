@@ -119,8 +119,6 @@ var hasTouch = H.hasTouch,
              */
             enabled: false,
 
-            /*= if (build.classic) { =*/
-
             /**
              * Cursor style for the control line.
              *
@@ -165,8 +163,6 @@ var hasTouch = H.hasTouch,
              * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
              */
             lineWidth: 4,
-
-            /*= } =*/
 
             /**
              * Horizontal offset of the control line.
@@ -235,14 +231,14 @@ H.AxisResizer.prototype = {
             attr = {},
             lineWidth;
 
-        /*= if (build.classic) { =*/
-        attr = {
-            cursor: options.cursor,
-            stroke: options.lineColor,
-            'stroke-width': options.lineWidth,
-            dashstyle: options.lineDashStyle
-        };
-        /*= } =*/
+        if (!chart.styledMode) {
+            attr = {
+                cursor: options.cursor,
+                stroke: options.lineColor,
+                'stroke-width': options.lineWidth,
+                dashstyle: options.lineDashStyle
+            };
+        }
 
         // Register current position for future reference.
         resizer.lastPos = pos - y;
@@ -253,16 +249,13 @@ H.AxisResizer.prototype = {
         }
 
         // Add to axisGroup after axis update, because the group is recreated
-        /*= if (!build.classic) { =*/
         // Do .add() before path is calculated because strokeWidth() needs it.
-        /*= } =*/
         resizer.controlLine.add(axis.axisGroup);
 
-        /*= if (build.classic) { =*/
-        lineWidth = options.lineWidth;
-        /*= } else { =*/
-        lineWidth = resizer.controlLine.strokeWidth();
-        /*= } =*/
+        lineWidth = chart.styledMode ?
+            resizer.controlLine.strokeWidth() :
+            options.lineWidth;
+
         attr.d = chart.renderer.crispLine(
             [
                 'M', axis.left + x, pos,

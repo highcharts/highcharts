@@ -65,8 +65,6 @@ seriesType('bullet', 'column',
              */
             height: 3,
 
-            /*= if (build.classic) { =*/
-
             /**
              * The border color of the rectangle representing the target. When
              * not set, the  point's border color is used.
@@ -104,8 +102,6 @@ seriesType('bullet', 'column',
              * @product highcharts
              */
             borderWidth: 0
-
-            /*= } =*/
         },
 
         tooltip: {
@@ -206,29 +202,30 @@ seriesType('bullet', 'column',
                             .attr(targetShapeArgs)
                             .add(series.group);
                     }
-                    /*= if (build.classic) { =*/
+
                     // Presentational
-                    targetGraphic.attr({
-                        fill: pick(
-                            targetOptions.color,
-                            pointOptions.color,
-                            (series.zones.length && (point.getZone.call({
-                                series: series,
-                                x: point.x,
-                                y: targetVal,
-                                options: {}
-                            }).color || series.color)) || undefined,
-                            point.color,
-                            series.color
-                        ),
-                        stroke: pick(
-                            targetOptions.borderColor,
-                            point.borderColor,
-                            series.options.borderColor
-                        ),
-                        'stroke-width': targetOptions.borderWidth
-                    });
-                    /*= } =*/
+                    if (!chart.styledMode) {
+                        targetGraphic.attr({
+                            fill: pick(
+                                targetOptions.color,
+                                pointOptions.color,
+                                (series.zones.length && (point.getZone.call({
+                                    series: series,
+                                    x: point.x,
+                                    y: targetVal,
+                                    options: {}
+                                }).color || series.color)) || undefined,
+                                point.color,
+                                series.color
+                            ),
+                            stroke: pick(
+                                targetOptions.borderColor,
+                                point.borderColor,
+                                series.options.borderColor
+                            ),
+                            'stroke-width': targetOptions.borderWidth
+                        });
+                    }
 
                     // Add tooltip reference
                     if (isNumber(pointVal) && pointVal !== null) {
