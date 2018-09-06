@@ -11,7 +11,7 @@
 
 	"code/modules/stock.src.js",
 	"code/modules/map.src.js",
-	
+
 	"code/modules/exporting.src.js",
 	"code/modules/export-data.src.js",
 	"code/modules/parallel-coordinates.src.js",
@@ -69,7 +69,8 @@
 	"code/indicators/vwap.src.js",
 	"code/indicators/wma.src.js",
 	"code/indicators/zigzag.src.js",
-	
+	"code/indicators/regressions.src.js",
+
 	"samples/data/maps/gb-all.js",
 	"samples/data/maps/bn-all.js",
 	"samples/data/maps/ad-all.js",
@@ -80,5 +81,5 @@
 
 	"samples/data/usdeur.js",
 	"samples/data/ohlc.js"
-	
+
 ]
