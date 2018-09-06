@@ -16,7 +16,7 @@ var each = H.each,
  * The vector series class.
  *
  * @private
- * @class
+ * @constructor
  * @name     Highcharts.seriesTypes.vector
  * @augments Highcharts.seriesTypes.scatter
  */
