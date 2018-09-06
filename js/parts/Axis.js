@@ -1033,8 +1033,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @apioption  xAxis.labels.zIndex
              */
 
-            /*= if (build.classic) { =*/
-
             /**
              * CSS styles for the label. Use `whiteSpace: 'nowrap'` to prevent
              * wrapping of category labels. Use `textOverflow: 'none'` to
@@ -1054,8 +1052,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 cursor: 'default',
                 fontSize: '11px'
             }
-
-            /*= } =*/
         },
 
         /**
@@ -2458,8 +2454,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
             align: 'middle',
 
-            /*= if (build.classic) { =*/
-
             /**
              * CSS styles for the title. If the title text is longer than the
              * axis length, it will wrap to multiple lines by default. This can
@@ -2481,7 +2475,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             style: {
                 color: '${palette.neutralColor60}'
             }
-            /*= } =*/
         },
 
         /**
@@ -2580,8 +2573,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @product    highcharts highstock
          * @apioption  xAxis.visible
          */
-
-        /*= if (build.classic) { =*/
 
         /**
          * Color of the minor, secondary grid lines.
@@ -2737,7 +2728,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         tickColor: '${palette.highlightColor20}'
         // tickWidth: 1
-        /*= } =*/
     },
 
     /**
@@ -3521,8 +3511,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 return H.numberFormat(this.total, -1);
             },
 
-            /*= if (build.classic) { =*/
-
             /**
              * CSS styles for the label.
              *
@@ -3543,14 +3531,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 color: '${palette.neutralColor100}',
                 textOutline: '1px contrast'
             }
-
-            /*= } =*/
         },
-        /*= if (build.classic) { =*/
         gridLineWidth: 1,
         lineWidth: 0
         // tickWidth: 0
-        /*= } =*/
     },
 
     /**
@@ -6074,7 +6058,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             opposite = axis.opposite,
             options = axis.options,
             axisTitleOptions = options.title,
-            textAlign;
+            textAlign,
+            styledMode = axis.chart.options.chart.styledMode;
 
         if (!axis.axisTitle) {
             textAlign = axisTitleOptions.textAlign;
@@ -6100,25 +6085,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 rotation: axisTitleOptions.rotation || 0,
                 align: textAlign
             })
-            .addClass('highcharts-axis-title')
-            /*= if (build.classic) { =*/
+            .addClass('highcharts-axis-title');
+
             // #7814, don't mutate style option
-            .css(merge(axisTitleOptions.style))
-            /*= } =*/
-            .add(axis.axisGroup);
+            if (!styledMode) {
+                axis.axisTitle.css(merge(axisTitleOptions.style));
+            }
+
+            axis.axisTitle.add(axis.axisGroup);
             axis.axisTitle.isNew = true;
         }
 
         // Max width defaults to the length of the axis
-        /*= if (build.classic) { =*/
-        if (!axisTitleOptions.style.width && !axis.isRadial) {
-        /*= } =*/
+        if (!styledMode && !axisTitleOptions.style.width && !axis.isRadial) {
             axis.axisTitle.css({
                 width: axis.len
             });
-        /*= if (build.classic) { =*/
         }
-        /*= } =*/
 
         // hide or show the title depending on whether showEmpty is set
         axis.axisTitle[display ? 'show' : 'hide'](true);
@@ -6383,13 +6366,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 .addClass('highcharts-axis-line')
                 .add(this.axisGroup);
 
-            /*= if (build.classic) { =*/
-            this.axisLine.attr({
-                stroke: this.options.lineColor,
-                'stroke-width': this.options.lineWidth,
-                zIndex: 7
-            });
-            /*= } =*/
+            if (!this.chart.options.chart.styledMode) {
+                this.axisLine.attr({
+                    stroke: this.options.lineColor,
+                    'stroke-width': this.options.lineWidth,
+                    zIndex: 7
+                });
+            }
         }
     },
 
@@ -6899,26 +6882,26 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     })
                     .add();
 
-                /*= if (build.classic) { =*/
                 // Presentational attributes
-                graphic.attr({
-                    'stroke': options.color ||
-                        (
-                            categorized ?
-                                color('${palette.highlightColor20}')
-                                    .setOpacity(0.25).get() :
-                                '${palette.neutralColor20}'
-                        ),
-                    'stroke-width': pick(options.width, 1)
-                }).css({
-                    'pointer-events': 'none'
-                });
-                if (options.dashStyle) {
+                if (!this.chart.options.chart.styledMode) {
                     graphic.attr({
-                        dashstyle: options.dashStyle
+                        'stroke': options.color ||
+                            (
+                                categorized ?
+                                    color('${palette.highlightColor20}')
+                                        .setOpacity(0.25).get() :
+                                    '${palette.neutralColor20}'
+                            ),
+                        'stroke-width': pick(options.width, 1)
+                    }).css({
+                        'pointer-events': 'none'
                     });
+                    if (options.dashStyle) {
+                        graphic.attr({
+                            dashstyle: options.dashStyle
+                        });
+                    }
                 }
-                /*= } =*/
 
             }
 

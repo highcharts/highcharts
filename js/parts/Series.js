@@ -129,7 +129,6 @@ var addEvent = H.addEvent,
  * @optionparent plotOptions.series
  */
 H.Series = H.seriesType('line', null, { // base series options
-    /*= if (build.classic) { =*/
     /**
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
      * of a line graph. Round means that lines are rounded in the ends and
@@ -159,7 +158,6 @@ H.Series = H.seriesType('line', null, { // base series options
      * @apioption  plotOptions.series.lineWidth
      */
     lineWidth: 2,
-    /*= } =*/
 
     /**
      * For some series, there is a limit that shuts down initial animation
@@ -1088,8 +1086,6 @@ H.Series = H.seriesType('line', null, { // base series options
      * @apioption  plotOptions.series.marker
      */
     marker: {
-        /*= if (build.classic) { =*/
-
 
         /**
          * The width of the point marker's outline.
@@ -1126,8 +1122,6 @@ H.Series = H.seriesType('line', null, { // base series options
          * @type       {Highcharts.ColorString}
          * @apioption  plotOptions.series.marker.fillColor
          */
-
-        /*= } =*/
 
         /**
          * Enable or disable the point marker. If `undefined`, the markers are
@@ -1342,8 +1336,6 @@ H.Series = H.seriesType('line', null, { // base series options
                  */
                 radiusPlus: 2,
 
-                /*= if (build.classic) { =*/
-
                 /**
                  * The additional line width for a hovered point.
                  *
@@ -1359,11 +1351,7 @@ H.Series = H.seriesType('line', null, { // base series options
                  * @apioption  plotOptions.series.marker.states.hover.lineWidthPlus
                  */
                 lineWidthPlus: 1
-                /*= } =*/
             },
-            /*= if (build.classic) { =*/
-
-
 
             /**
              * The appearance of the point marker when selected. In order to
@@ -1433,7 +1421,6 @@ H.Series = H.seriesType('line', null, { // base series options
                  */
                 lineWidth: 2
             }
-            /*= } =*/
         }
     },
 
@@ -1813,8 +1800,6 @@ H.Series = H.seriesType('line', null, { // base series options
         formatter: function () {
             return this.y === null ? '' : H.numberFormat(this.y, -1);
         },
-        /*= if (build.classic) { =*/
-
 
         /**
          * Styles for the label. The default `color` setting is `"contrast"`,
@@ -1959,7 +1944,6 @@ H.Series = H.seriesType('line', null, { // base series options
          * @since      2.2.1
          * @apioption  plotOptions.series.dataLabels.shadow
          */
-        /*= } =*/
 
         /**
          * For points with an extent, like columns or map areas, whether to
@@ -2291,9 +2275,6 @@ H.Series = H.seriesType('line', null, { // base series options
                  * @apioption  plotOptions.series.states.hover.halo.size
                  */
                 size: 10,
-                /*= if (build.classic) { =*/
-
-
 
                 /**
                  * Opacity for the halo unless a specific fill is overridden
@@ -2307,7 +2288,6 @@ H.Series = H.seriesType('line', null, { // base series options
                  * @apioption  plotOptions.series.states.hover.halo.opacity
                  */
                 opacity: 0.25
-                /*= } =*/
             }
         },
 
@@ -2847,7 +2827,9 @@ H.Series = H.seriesType('line', null, { // base series options
             userPlotOptions = userOptions.plotOptions || {},
             typeOptions = plotOptions[this.type],
             options,
-            zones;
+            zones,
+            zone,
+            styledMode = chartOptions.chart.styledMode;
 
         this.userOptions = itemOptions;
 
@@ -2904,25 +2886,24 @@ H.Series = H.seriesType('line', null, { // base series options
             (options.negativeColor || options.negativeFillColor) &&
             !options.zones
         ) {
-            zones.push({
+            zone = {
                 value:
                     options[this.zoneAxis + 'Threshold'] ||
                     options.threshold ||
                     0,
-                className: 'highcharts-negative',
-                /*= if (build.classic) { =*/
-                color: options.negativeColor,
-                fillColor: options.negativeFillColor
-                /*= } =*/
-            });
+                className: 'highcharts-negative'
+            };
+            if (!styledMode) {
+                zone.color = options.negativeColor;
+                zone.fillColor = options.negativeFillColor;
+            }
+            zones.push(zone);
         }
         if (zones.length) { // Push one extra zone for the rest
             if (defined(zones[zones.length - 1].value)) {
-                zones.push({
-                    /*= if (build.classic) { =*/
+                zones.push(styledMode ? {} : {
                     color: this.color,
                     fillColor: this.fillColor
-                    /*= } =*/
                 });
             }
         }
@@ -3007,14 +2988,11 @@ H.Series = H.seriesType('line', null, { // base series options
      * @return {Color}
      *         The series color.
      */
-    /*= if (!build.classic) { =*/
     getColor: function () {
-        this.getCyclic('color');
-    },
+        if (this.chart.options.chart.styledMode) {
+            this.getCyclic('color');
 
-    /*= } else { =*/
-    getColor: function () {
-        if (this.options.colorByPoint) {
+        } else if (this.options.colorByPoint) {
             // #4359, selected slice got series.color even when colorByPoint was
             // set.
             this.options.color = null;
@@ -3026,7 +3004,7 @@ H.Series = H.seriesType('line', null, { // base series options
             );
         }
     },
-    /*= } =*/
+
     /**
      * Get the series' symbol based on either the options or pulled from global
      * options.
@@ -4212,9 +4190,8 @@ H.Series = H.seriesType('line', null, { // base series options
                         .add(markerGroup);
                     }
 
-                    /*= if (build.classic) { =*/
                     // Presentational attributes
-                    if (graphic) {
+                    if (graphic && !chart.options.chart.styledMode) {
                         graphic.attr(
                             series.pointAttribs(
                                 point,
@@ -4222,7 +4199,6 @@ H.Series = H.seriesType('line', null, { // base series options
                             )
                         );
                     }
-                    /*= } =*/
 
                     if (graphic) {
                         graphic.addClass(point.getClassName(), true);
@@ -4299,7 +4275,6 @@ H.Series = H.seriesType('line', null, { // base series options
 
     },
 
-    /*= if (build.classic) { =*/
     /**
      * Internal function to get presentational attributes for each point. Unlike
      * {@link Series#markerAttribs}, this function should return those
@@ -4383,7 +4358,7 @@ H.Series = H.seriesType('line', null, { // base series options
             'fill': fill
         };
     },
-    /*= } =*/
+
     /**
      * Clear DOM objects and free up memory.
      *
@@ -4613,14 +4588,19 @@ H.Series = H.seriesType('line', null, { // base series options
         var series = this,
             options = this.options,
             graphPath = (this.gappedPath || this.getGraphPath).call(this),
+            styledMode = this.chart.options.chart.styledMode,
             props = [[
                 'graph',
-                'highcharts-graph',
-                /*= if (build.classic) { =*/
+                'highcharts-graph'
+            ]];
+
+        // Presentational properties
+        if (!styledMode) {
+            props[0].push(
                 options.lineColor || this.color,
                 options.dashStyle
-                /*= } =*/
-            ]];
+            );
+        }
 
         props = series.getZonesGraphs(props);
 
@@ -4643,27 +4623,28 @@ H.Series = H.seriesType('line', null, { // base series options
                     .attr({ zIndex: 1 }) // #1069
                     .add(series.group);
 
-                /*= if (build.classic) { =*/
-                attribs = {
-                    'stroke': prop[2],
-                    'stroke-width': options.lineWidth,
-                    // Polygon series use filled graph
-                    'fill': (series.fillGraph && series.color) || 'none'
-                };
 
-                if (prop[3]) {
-                    attribs.dashstyle = prop[3];
-                } else if (options.linecap !== 'square') {
-                    attribs['stroke-linecap'] = attribs['stroke-linejoin'] =
-                        'round';
+                if (!styledMode) {
+                    attribs = {
+                        'stroke': prop[2],
+                        'stroke-width': options.lineWidth,
+                        // Polygon series use filled graph
+                        'fill': (series.fillGraph && series.color) || 'none'
+                    };
+
+                    if (prop[3]) {
+                        attribs.dashstyle = prop[3];
+                    } else if (options.linecap !== 'square') {
+                        attribs['stroke-linecap'] = attribs['stroke-linejoin'] =
+                            'round';
+                    }
+
+                    graph = series[graphKey]
+                        .attr(attribs)
+                        // Add shadow to normal series (0) or to first zone (1)
+                        // #3932
+                        .shadow((i < 2) && options.shadow);
                 }
-
-                graph = series[graphKey]
-                    .attr(attribs)
-                    // Add shadow to normal series (0) or to first zone (1)
-                    // #3932
-                    .shadow((i < 2) && options.shadow);
-                /*= } =*/
             }
 
             // Helpers for animation
@@ -4688,15 +4669,18 @@ H.Series = H.seriesType('line', null, { // base series options
     getZonesGraphs: function (props) {
         // Add the zone properties if any
         each(this.zones, function (zone, i) {
-            props.push([
+            var propset = [
                 'zone-graph-' + i,
                 'highcharts-graph highcharts-zone-graph-' + i + ' ' +
-                    (zone.className || ''),
-                /*= if (build.classic) { =*/
-                zone.color || this.color,
-                zone.dashStyle || this.options.dashStyle
-                /*= } =*/
-            ]);
+                    (zone.className || '')
+            ];
+            if (!this.chart.options.styledMode) {
+                propset.push(
+                    zone.color || this.color,
+                    zone.dashStyle || this.options.dashStyle
+                );
+            }
+            props.push(propset);
         }, this);
 
         return props;
@@ -4801,7 +4785,6 @@ H.Series = H.seriesType('line', null, { // base series options
                     }
                 }
 
-                /*= if (build.classic) { =*/
                 // VML SUPPPORT
                 if (inverted && renderer.isVML) {
                     if (axis.isXAxis) {
@@ -4821,7 +4804,6 @@ H.Series = H.seriesType('line', null, { // base series options
                     }
                 }
                 // END OF VML SUPPORT
-                /*= } =*/
 
                 if (clips[i]) {
                     clips[i].animate(clipAttr);
