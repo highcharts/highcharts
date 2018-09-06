@@ -15,15 +15,16 @@ var each = H.each,
 var colProto = seriesTypes.column.prototype;
 /**
  * Columnpyramid series display one pyramid per value along an X axis.
- * Requires `highcharts-more.js`. To display
- * horizontal pyramids, set [chart.inverted](#chart.inverted) to `true`.
+ * Requires `highcharts-more.js`. To display horizontal pyramids,
+ * set [chart.inverted](#chart.inverted) to `true`.
  *
  * @type         {Object}
  * @extends      plotOptions.column
- * @excluding    negativeColor,stacking,softThreshold,threshold
+ * @excluding    negativeColor,softThreshold,threshold,borderRadius,crisp,
+ * edgeColor,edgeWidth,zones,zoneAxis,boostThreshold,depth,groupZPadding
  * @sample       {highcharts|highstock} highcharts/demo/columnpyramid-basic/ Column pyramid
- * @sample       {highcharts|highstock} highcharts/demo/columnpyramid-stacked/ Column pyramid stacked
- * @sample       {highcharts|highstock} highcharts/demo/columnpyramid-inverted/ Column pyramid inverted
+ * @sample       {highcharts|highstock} highcharts/plotoptions/columnpyramid-stacked/ Column pyramid stacked
+ * @sample       {highcharts|highstock} highcharts/plotoptions/columnpyramid-inverted/ Column pyramid inverted
  * @since        7.0.0
  * @product      highcharts highstock
  * @optionparent plotOptions.columnpyramid
@@ -96,7 +97,7 @@ seriesType('columnpyramid', 'column', {},
                 point.barX = barX;
                 point.pointWidth = pointWidth;
 
-                // Fix the tooltip on center of grouped columns
+                // Fix the tooltip on center of grouped pyramids
                 // (#1216, #424, #3648)
                 point.tooltipPos = chart.inverted ? [
                     yAxis.len + yAxis.pos - chart.plotLeft - plotY,
