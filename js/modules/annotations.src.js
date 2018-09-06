@@ -104,7 +104,7 @@ extend(MarkerMixin, {
 H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     var options = { id: id },
         chart = H.charts[this.chartIndex],
-        styledMode = chart && chart.options.chart.styledMode;
+        styledMode = chart && chart.styledMode;
 
     if (!styledMode) {
         var attrs = {
@@ -464,7 +464,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
             padding: 'padding'
         };
 
-        if (!this.chart.options.chart.styledMode) {
+        if (!this.chart.styledMode) {
             extend(attrsMap, {
                 backgroundColor: 'fill',
                 borderColor: 'stroke',
@@ -1107,7 +1107,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
 
         label.attr(attr);
 
-        if (!this.chart.options.chart.styledMode) {
+        if (!this.chart.styledMode) {
             var style = options.style;
             if (style.color === 'contrast') {
                 style.color = this.chart.renderer.getContrast(
@@ -1761,7 +1761,7 @@ chartPrototype.callbacks.push(function (chart) {
 addEvent(H.Chart, 'afterGetContainer', function () {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    if (!this.options.chart.styledMode) {
+    if (!this.styledMode) {
         objectEach(this.options.defs, function (def) {
             if (def.tagName === 'marker' && def.render !== false) {
                 this.renderer.addMarker(def.id, def);

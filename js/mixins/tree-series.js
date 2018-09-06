@@ -112,7 +112,7 @@ var getColor = function getColor(node, options) {
         }
 
         // Select either point color, level color or inherited color.
-        if (!chartOptionsChart.styledMode) {
+        if (!series.chart.styledMode) {
             color = pick(
                 point && point.options.color,
                 level && level.color,

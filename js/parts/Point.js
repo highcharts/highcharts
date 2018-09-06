@@ -48,7 +48,7 @@ Highcharts.Point.prototype = {
             colors,
             optionsChart = series.chart.options.chart,
             colorCount = optionsChart.colorCount,
-            styledMode = optionsChart.styledMode,
+            styledMode = series.chart.styledMode,
             colorIndex;
 
         /**

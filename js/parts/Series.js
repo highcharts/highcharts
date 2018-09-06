@@ -2829,7 +2829,7 @@ H.Series = H.seriesType('line', null, { // base series options
             options,
             zones,
             zone,
-            styledMode = chartOptions.chart.styledMode;
+            styledMode = chart.styledMode;
 
         this.userOptions = itemOptions;
 
@@ -2989,7 +2989,7 @@ H.Series = H.seriesType('line', null, { // base series options
      *         The series color.
      */
     getColor: function () {
-        if (this.chart.options.chart.styledMode) {
+        if (this.chart.styledMode) {
             this.getCyclic('color');
 
         } else if (this.options.colorByPoint) {
@@ -4191,7 +4191,7 @@ H.Series = H.seriesType('line', null, { // base series options
                     }
 
                     // Presentational attributes
-                    if (graphic && !chart.options.chart.styledMode) {
+                    if (graphic && !chart.styledMode) {
                         graphic.attr(
                             series.pointAttribs(
                                 point,
@@ -4588,7 +4588,7 @@ H.Series = H.seriesType('line', null, { // base series options
         var series = this,
             options = this.options,
             graphPath = (this.gappedPath || this.getGraphPath).call(this),
-            styledMode = this.chart.options.chart.styledMode,
+            styledMode = this.chart.styledMode,
             props = [[
                 'graph',
                 'highcharts-graph'
@@ -4674,7 +4674,7 @@ H.Series = H.seriesType('line', null, { // base series options
                 'highcharts-graph highcharts-zone-graph-' + i + ' ' +
                     (zone.className || '')
             ];
-            if (!this.chart.options.styledMode) {
+            if (!this.chart.styledMode) {
                 propset.push(
                     zone.color || this.color,
                     zone.dashStyle || this.options.dashStyle

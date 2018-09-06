@@ -6059,7 +6059,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             options = axis.options,
             axisTitleOptions = options.title,
             textAlign,
-            styledMode = axis.chart.options.chart.styledMode;
+            styledMode = axis.chart.styledMode;
 
         if (!axis.axisTitle) {
             textAlign = axisTitleOptions.textAlign;
@@ -6366,7 +6366,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 .addClass('highcharts-axis-line')
                 .add(this.axisGroup);
 
-            if (!this.chart.options.chart.styledMode) {
+            if (!this.chart.styledMode) {
                 this.axisLine.attr({
                     stroke: this.options.lineColor,
                     'stroke-width': this.options.lineWidth,
@@ -6883,7 +6883,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     .add();
 
                 // Presentational attributes
-                if (!this.chart.options.chart.styledMode) {
+                if (!this.chart.styledMode) {
                     graphic.attr({
                         'stroke': options.color ||
                             (

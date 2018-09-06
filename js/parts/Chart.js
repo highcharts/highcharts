@@ -287,7 +287,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     new H.Time(userOptions.time) :
                     H.time;
 
-
+            this.styledMode = optionsChart.styledMode;
             this.hasCartesianSeries = optionsChart.showAxes;
 
             var chart = this;
@@ -770,7 +770,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     setTitle: function (titleOptions, subtitleOptions, redraw) {
         var chart = this,
             options = chart.options,
-            styledMode = options.chart.styledMode,
+            styledMode = chart.styledMode,
             chartTitleOptions,
             chartSubtitleOptions;
 
@@ -887,7 +887,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             if (title) {
 
-                if (!this.options.chart.styledMode) {
+                if (!this.styledMode) {
                     titleSize = titleOptions.style.fontSize;
                 }
                 titleSize = renderer.fontMetrics(titleSize, title).b;
@@ -1135,7 +1135,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chartHeight = chart.chartHeight;
 
         // Create the inner container
-        if (!optionsChart.styledMode) {
+        if (!chart.styledMode) {
             containerStyle = extend({
                 position: 'relative',
                 // needed for context menu (avoidscrollbars) and content
@@ -1192,7 +1192,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 
         chart.setClassName(optionsChart.className);
-        if (!optionsChart.styledMode) {
+        if (!chart.styledMode) {
             chart.renderer.setStyle(optionsChart.style);
         } else {
             // Initialize definitions
@@ -1440,7 +1440,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Resize the container with the global animation applied if enabled
         // (#2503)
-        if (!chart.options.chart.styledMode) {
+        if (!chart.styledMode) {
             globalAnimation = renderer.globalAnimation;
             (globalAnimation ? animate : css)(chart.container, {
                 width: chart.chartWidth + 'px',
@@ -1655,7 +1655,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             plotBackground = chart.plotBackground,
             plotBorder = chart.plotBorder,
             chartBorderWidth,
-            styledMode = optionsChart.styledMode,
+            styledMode = chart.styledMode,
             plotBGImage = chart.plotBGImage,
             chartBackgroundColor = optionsChart.backgroundColor,
             plotBackgroundColor = optionsChart.plotBackgroundColor,
@@ -2075,7 +2075,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             });
 
 
-            if (!chart.options.chart.styledMode) {
+            if (!chart.styledMode) {
                 this.credits.css(credits.style);
             }
 
