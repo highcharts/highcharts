@@ -4,11 +4,47 @@ import '../parts/Utilities.js';
 
 var pick = H.pick,
     each = H.each,
+    extend = H.extend,
     error = H.error,
     Series = H.Series,
     isArray = H.isArray,
     addEvent = H.addEvent,
-    seriesType = H.seriesType;
+    seriesType = H.seriesType,
+    ohlcProto = H.seriesTypes.ohlc.prototype;
+
+/**
+ * The parameter allows setting line series type and use OHLC indicators.
+ * Data in OHLC format is required.
+ *
+ * @type {Boolean}
+ * @extends plotOptions.line
+ * @product highstock
+ * @sample {highstock} stock/indicators/useOHLCdata Plot line on Y axis
+ * @apioption plotOptions.line.useOHLCdata
+ */
+
+addEvent(H.Series, 'init', function (eventOptions) {
+    var series = this,
+        options = eventOptions.options,
+        dataGrouping = options.dataGrouping;
+
+    if (
+        options.useOHLCdata &&
+        options.id !== 'highcharts-navigator-series'
+        ) {
+
+        if (dataGrouping && dataGrouping.enabled) {
+            dataGrouping.approximation = 'ohlc';
+        }
+
+        extend(series, {
+            pointValKey: ohlcProto.pointValKey,
+            keys: ohlcProto.keys,
+            pointArrayMap: ohlcProto.pointArrayMap,
+            toYData: ohlcProto.toYData
+        });
+    }
+});
 
 /**
  * The SMA series type.

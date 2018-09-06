@@ -4,7 +4,9 @@ import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     ControlPoint = Annotation.ControlPoint,
-    each = H.each;
+    each = H.each,
+    merge = H.merge,
+    isNumber = H.isNumber;
 
 /**
  * @class Measure
@@ -34,7 +36,6 @@ H.extendAnnotation(Measure, null, {
         this.calculations.init.call(this);
         this.addValues();
         this.addShapes();
-        this.addControlPoints();
     },
 
     /**
@@ -86,7 +87,10 @@ H.extendAnnotation(Measure, null, {
     },
 
     addControlPoints: function () {
-        var controlPoint = new ControlPoint(
+        var selectType = this.options.typeOptions.selectType,
+            controlPoint;
+
+        controlPoint = new ControlPoint(
             this.chart,
             this,
             this.options.controlPointOptions,
@@ -94,6 +98,18 @@ H.extendAnnotation(Measure, null, {
         );
 
         this.controlPoints.push(controlPoint);
+
+        // add extra controlPoint for horizontal and vertical range
+        if (selectType !== 'xy') {
+            controlPoint = new ControlPoint(
+                this.chart,
+                this,
+                this.options.controlPointOptions,
+                1
+            );
+
+            this.controlPoints.push(controlPoint);
+        }
     },
     /**
      * Add label with calculated values (min, max, average, bins).
@@ -103,7 +119,7 @@ H.extendAnnotation(Measure, null, {
      */
     addValues: function (resize) {
         var options = this.options.typeOptions,
-            formatter = options.formatter,
+            formatter = options.label.formatter,
             typeOptions = this.options.typeOptions,
             chart = this.chart,
             inverted = chart.options.chart.inverted,
@@ -112,6 +128,10 @@ H.extendAnnotation(Measure, null, {
 
         // set xAxisMin, xAxisMax, yAxisMin, yAxisMax
         this.calculations.recalculate.call(this, resize);
+
+        if (!options.label.enabled) {
+            return;
+        }
 
         if (this.labels.length > 0) {
             this.labels[0].text = (formatter && formatter.call(this)) ||
@@ -174,7 +194,6 @@ H.extendAnnotation(Measure, null, {
      * Add internal crosshair shapes (on top and bottom)
      */
     addCrosshairs: function () {
-
         var chart = this.chart,
             options = this.options.typeOptions,
             point = this.options.typeOptions.point,
@@ -185,7 +204,13 @@ H.extendAnnotation(Measure, null, {
             xAxisMax = xAxis.toPixels(this.xAxisMax),
             yAxisMin = yAxis.toPixels(this.yAxisMin),
             yAxisMax = yAxis.toPixels(this.yAxisMax),
-            crosshairOptions, pathH, pathV;
+            defaultOptions = {
+                point: point,
+                type: 'path'
+            },
+            pathH = [],
+            pathV = [],
+            crosshairOptionsX, crosshairOptionsY;
 
         if (inverted) {
             xAxisMin = yAxis.toPixels(this.yAxisMin);
@@ -193,26 +218,29 @@ H.extendAnnotation(Measure, null, {
             yAxisMin = xAxis.toPixels(this.xAxisMin);
             yAxisMax = xAxis.toPixels(this.xAxisMax);
         }
-
         // horizontal line
-        pathH = [
-            'M',
-            xAxisMin,
-            yAxisMin + ((yAxisMax - yAxisMin) / 2),
-            'L',
-            xAxisMax,
-            yAxisMin + ((yAxisMax - yAxisMin) / 2)
-        ];
+        if (options.crosshairX.enabled) {
+            pathH = [
+                'M',
+                xAxisMin,
+                yAxisMin + ((yAxisMax - yAxisMin) / 2),
+                'L',
+                xAxisMax,
+                yAxisMin + ((yAxisMax - yAxisMin) / 2)
+            ];
+        }
 
         // vertical line
-        pathV = [
-            'M',
-            xAxisMin + ((xAxisMax - xAxisMin) / 2),
-            yAxisMin,
-            'L',
-            xAxisMin + ((xAxisMax - xAxisMin) / 2),
-            yAxisMax
-        ];
+        if (options.crosshairY.enabled) {
+            pathV = [
+                'M',
+                xAxisMin + ((xAxisMax - xAxisMin) / 2),
+                yAxisMin,
+                'L',
+                xAxisMin + ((xAxisMax - xAxisMin) / 2),
+                yAxisMax
+            ];
+        }
 
         // Update existed crosshair
         if (this.shapes.length > 0) {
@@ -223,56 +251,72 @@ H.extendAnnotation(Measure, null, {
         } else {
 
             // Add new crosshairs
-            crosshairOptions = H.merge({
-                type: 'path',
-                zIndex: 6,
-                point: point,
-                dashStyle: 'dash',
-                markerEnd: 'arrow'
-            }, options.crosshair);
+            crosshairOptionsX = merge(defaultOptions, options.crosshairX);
+            crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
             this.initShape(H.extend({
                 d: pathH
-            }, crosshairOptions), false);
+            }, crosshairOptionsX), false);
 
             this.initShape(H.extend({
                 d: pathV
-            }, crosshairOptions), false);
+            }, crosshairOptionsY), false);
 
         }
     },
 
-    addEvents: function () {
-        H.Annotation.prototype.addEvents.call(this);
+    onDrag: function (e) {
+        var translation = this.mouseMoveToTranslation(e),
+            selectType = this.options.typeOptions.selectType,
+            x = selectType === 'y' ? 0 : translation.x,
+            y = selectType === 'x' ? 0 : translation.y;
 
-        H.addEvent(this, 'drag', function (e) {
-            var translation = this.mouseMoveToTranslation(e);
+        this.translate(x, y);
 
-            this.translate(translation.x, translation.y);
+        this.offsetX += x;
+        this.offsetY += y;
 
-            this.offsetX += translation.x;
-            this.offsetY += translation.y;
-
-            // animation, resize, setStartPoints
-            this.redraw(false, false, true);
-        });
+        // animation, resize, setStartPoints
+        this.redraw(false, false, true);
     },
 
     /**
      * Translate start or end ("left" or "right") side of the measure.
-     * Update start points (startxMin, startxMax, startyMin, startyMax)
+     * Update start points (startXMin, startXMax, startYMin, startYMax)
      *
      * @param {number} dx - the amount of x translation
      * @param {number} dy - the amount of y translation
+     * @param {number} cpIndex - index of control point
+     * @param {number} selectType - x / y / xy
      */
-    resize: function (dx, dy) {
+    resize: function (dx, dy, cpIndex, selectType) {
 
         // background shape
-        this.shapes[2].translatePoint(dx, 0, 1);
-        this.shapes[2].translatePoint(dx, dy, 2);
-        this.shapes[2].translatePoint(0, dy, 3);
+        var bckShape = this.shapes[2];
+        if (selectType === 'x') {
+            if (cpIndex === 0) {
+                bckShape.translatePoint(dx, 0, 0);
+                bckShape.translatePoint(dx, dy, 3);
+            } else {
+                bckShape.translatePoint(dx, 0, 1);
+                bckShape.translatePoint(dx, dy, 2);
+            }
+        } else if (selectType === 'y') {
+            if (cpIndex === 0) {
+                bckShape.translatePoint(0, dy, 0);
+                bckShape.translatePoint(0, dy, 1);
+            } else {
+                bckShape.translatePoint(0, dy, 2);
+                bckShape.translatePoint(0, dy, 3);
+            }
+        } else {
+            bckShape.translatePoint(dx, 0, 1);
+            bckShape.translatePoint(dx, dy, 2);
+            bckShape.translatePoint(0, dy, 3);
+        }
 
-        this.calculations.updateStartPoints.call(this, false, true);
+        this.calculations.updateStartPoints
+            .call(this, false, true, cpIndex, dx, dy);
 
     },
     /**
@@ -301,7 +345,9 @@ H.extendAnnotation(Measure, null, {
         this.redrawItems(this.labels, animation);
 
         // redraw control point to run positioner
-        this.controlPoints[0].redraw();
+        each(this.controlPoints, function (controlPoint) {
+            controlPoint.redraw();
+        });
     },
     translate: function (dx, dy) {
         H.each(this.shapes, function (item) {
@@ -321,12 +367,42 @@ H.extendAnnotation(Measure, null, {
                 yAxis = chart.yAxis[options.yAxis],
                 bck = options.background,
                 width = inverted ? bck.height : bck.width,
-                height = inverted ? bck.width : bck.height;
+                height = inverted ? bck.width : bck.height,
+                selectType = options.selectType,
+                top = chart.plotTop,
+                left = chart.plotLeft;
 
-            this.startxMin = options.point.x;
-            this.startxMax = getPointPos(xAxis, this.startxMin, width);
-            this.startyMin = options.point.y;
-            this.startyMax = getPointPos(yAxis, this.startyMin, height);
+            this.startXMin = options.point.x;
+            this.startYMin = options.point.y;
+
+            if (isNumber(width)) {
+                this.startXMax = this.startXMin + width;
+            } else {
+                this.startXMax = getPointPos(
+                    xAxis,
+                    this.startXMin,
+                    parseFloat(width)
+                );
+            }
+
+            if (isNumber(height)) {
+                this.startYMax = this.startYMin - height;
+            } else {
+                this.startYMax = getPointPos(
+                    yAxis,
+                    this.startYMin,
+                    parseFloat(height)
+                );
+            }
+
+            // x / y selection type
+            if (selectType === 'x') {
+                this.startYMin = yAxis.toValue(top);
+                this.startYMax = yAxis.toValue(top + chart.plotHeight);
+            } else if (selectType === 'y') {
+                this.startXMin = xAxis.toValue(left);
+                this.startXMax = xAxis.toValue(left + chart.plotWidth);
+            }
 
         },
         /*
@@ -342,14 +418,12 @@ H.extendAnnotation(Measure, null, {
                 yAxis = this.chart.yAxis[options.yAxis],
                 getPointPos = this.calculations.getPointPos,
                 offsetX = this.offsetX,
-                offsetY = this.offsetY,
-                resizeX = offsetX + this.resizeX,
-                resizeY = offsetY + this.resizeY;
+                offsetY = this.offsetY;
 
-            this.xAxisMin = getPointPos(xAxis, this.startxMin, offsetX);
-            this.xAxisMax = getPointPos(xAxis, this.startxMax, resizeX);
-            this.yAxisMin = getPointPos(yAxis, this.startyMin, offsetY);
-            this.yAxisMax = getPointPos(yAxis, this.startyMax, resizeY);
+            this.xAxisMin = getPointPos(xAxis, this.startXMin, offsetX);
+            this.xAxisMax = getPointPos(xAxis, this.startXMax, offsetX);
+            this.yAxisMin = getPointPos(yAxis, this.startYMin, offsetY);
+            this.yAxisMax = getPointPos(yAxis, this.startYMax, offsetY);
 
             this.min = calc.min.call(this);
             this.max = calc.max.call(this);
@@ -376,38 +450,49 @@ H.extendAnnotation(Measure, null, {
         },
         /*
          * Update position of start points
-         * (startxMin, startxMax, startyMin, startyMax)
+         * (startXMin, startXMax, startYMin, startYMax)
          *
          * @param {Boolean} redraw - flag if shape is redraw
-         * @param {Boolean} resize- flag if shape is resized
+         * @param {Boolean} resize - flag if shape is resized
+         * @param {Boolean} cpIndex - index of controlPoint
          */
-        updateStartPoints: function (redraw, resize) {
+        updateStartPoints: function (redraw, resize, cpIndex, dx, dy) {
             var options = this.options.typeOptions,
+                selectType = options.selectType,
                 xAxis = this.chart.xAxis[options.xAxis],
                 yAxis = this.chart.yAxis[options.yAxis],
                 getPointPos = this.calculations.getPointPos,
-                startxMin = this.startxMin,
-                startxMax = this.startxMax,
-                startyMin = this.startyMin,
-                startyMax = this.startyMax,
+                startXMin = this.startXMin,
+                startXMax = this.startXMax,
+                startYMin = this.startYMin,
+                startYMax = this.startYMax,
                 offsetX = this.offsetX,
-                offsetY = this.offsetY,
-                resizeX = this.resizeX,
-                resizeY = this.resizeY;
+                offsetY = this.offsetY;
 
             if (resize) {
-                this.startxMax = getPointPos(xAxis, startxMax, resizeX);
-                this.startyMax = getPointPos(yAxis, startyMax, resizeY);
-
-                this.resizeX = 0;
-                this.resizeY = 0;
+                if (selectType === 'x') {
+                    if (cpIndex === 0) {
+                        this.startXMin = getPointPos(xAxis, startXMin, dx);
+                    } else {
+                        this.startXMax = getPointPos(xAxis, startXMax, dx);
+                    }
+                } else if (selectType === 'y') {
+                    if (cpIndex === 0) {
+                        this.startYMin = getPointPos(yAxis, startYMin, dy);
+                    } else {
+                        this.startYMax = getPointPos(yAxis, startYMax, dy);
+                    }
+                } else {
+                    this.startXMax = getPointPos(xAxis, startXMax, dx);
+                    this.startYMax = getPointPos(yAxis, startYMax, dy);
+                }
             }
 
             if (redraw) {
-                this.startxMin = getPointPos(xAxis, startxMin, offsetX);
-                this.startxMax = getPointPos(xAxis, startxMax, offsetX);
-                this.startyMin = getPointPos(yAxis, startyMin, offsetY);
-                this.startyMax = getPointPos(yAxis, startyMax, offsetY);
+                this.startXMin = getPointPos(xAxis, startXMin, offsetX);
+                this.startXMax = getPointPos(xAxis, startXMax, offsetX);
+                this.startYMin = getPointPos(yAxis, startYMin, offsetY);
+                this.startYMax = getPointPos(yAxis, startYMax, offsetY);
 
                 this.offsetX = 0;
                 this.offsetY = 0;
@@ -453,7 +538,7 @@ H.extendAnnotation(Measure, null, {
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.data, function (point) {
+                    each(serie.points, function (point) {
                         if (
                             !point.isNull &&
                             point.y < min &&
@@ -491,7 +576,7 @@ H.extendAnnotation(Measure, null, {
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.data, function (point) {
+                    each(serie.points, function (point) {
                         if (
                             !point.isNull &&
                             point.y > max &&
@@ -538,7 +623,7 @@ H.extendAnnotation(Measure, null, {
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.data, function (point) {
+                    each(serie.points, function (point) {
                         if (
                             !point.isNull &&
                             point.x > ext.xAxisMin &&
@@ -562,30 +647,79 @@ H.extendAnnotation(Measure, null, {
     }
 }, {
     typeOptions: {
+        selectType: 'xy',
         xAxis: 0,
         yAxis: 0,
         background: {
             fill: 'rgba(130, 170, 255, 0.4)',
             strokeWidth: 0
         },
-        height: -2
+        height: -2,
+        crosshairX: {
+            enabled: true,
+            zIndex: 6,
+            dashStyle: 'dash',
+            markerEnd: 'arrow'
+        },
+        crosshairY: {
+            enabled: true,
+            zIndex: 6,
+            dashStyle: 'dash',
+            markerEnd: 'arrow'
+        },
+        label: {
+            enabled: true
+            // formatter: function () { }
+        }
     },
 
     controlPointOptions: {
         positioner: function (target) {
-            var options = target.options,
-                typeOptions = options.typeOptions,
-                controlPointOptions = options.controlPointOptions,
+            var cpIndex = this.index,
                 chart = target.chart,
+                options = target.options,
+                typeOptions = options.typeOptions,
+                selectType = typeOptions.selectType,
+                controlPointOptions = options.controlPointOptions,
                 inverted = chart.options.chart.inverted,
                 xAxis = chart.xAxis[typeOptions.xAxis],
                 yAxis = chart.yAxis[typeOptions.yAxis],
-                x = inverted ?
-                        yAxis.toPixels(target.yAxisMax) :
-                        xAxis.toPixels(target.xAxisMax),
-                y = inverted ?
-                        xAxis.toPixels(target.xAxisMax) :
-                        yAxis.toPixels(target.yAxisMax);
+                targetX = target.xAxisMax,
+                targetY = target.yAxisMax,
+                ext = target.calculations.getExtremes(
+                    target.xAxisMin,
+                    target.xAxisMax,
+                    target.yAxisMin,
+                    target.yAxisMax
+                ),
+                x, y;
+
+            if (selectType === 'x') {
+                targetY = (ext.yAxisMax - ext.yAxisMin) / 2;
+
+                // first control point
+                if (cpIndex === 0) {
+                    targetX = target.xAxisMin;
+                }
+            }
+
+            if (selectType === 'y') {
+                targetX = ext.xAxisMin + ((ext.xAxisMax - ext.xAxisMin) / 2);
+
+                // first control point
+                if (cpIndex === 0) {
+                    targetY = target.yAxisMin;
+                }
+            }
+
+            if (inverted) {
+                x = yAxis.toPixels(targetY);
+                y = xAxis.toPixels(targetX);
+            } else {
+                x = xAxis.toPixels(targetX);
+                y = yAxis.toPixels(targetY);
+            }
+
             return {
                 x: x - (controlPointOptions.width / 2),
                 y: y - (controlPointOptions.height / 2)
@@ -593,16 +727,21 @@ H.extendAnnotation(Measure, null, {
         },
         events: {
             drag: function (e, target) {
-                var translation = this.mouseMoveToTranslation(e);
+                var translation = this.mouseMoveToTranslation(e),
+                    selectType = target.options.typeOptions.selectType,
+                    index = this.index,
+                    x = selectType === 'y' ? 0 : translation.x,
+                    y = selectType === 'x' ? 0 : translation.y;
 
                 target.resize(
-                    translation.x,
-                    translation.y
+                    x,
+                    y,
+                    index,
+                    selectType
                 );
 
-                target.resizeX += translation.x;
-                target.resizeY += translation.y;
-
+                target.resizeX += x;
+                target.resizeY += y;
                 target.redraw(false, true);
             }
         }

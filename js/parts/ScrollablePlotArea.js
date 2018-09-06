@@ -171,6 +171,8 @@ Chart.prototype.applyFixed = function () {
             .addClass('highcharts-scrollable-mask')
             .add();
 
+        // These elements are moved over to the fixed renderer and stay fixed
+        // when the user scrolls the chart.
         H.each([
             this.inverted ?
                 '.highcharts-xaxis' :
@@ -182,27 +184,36 @@ Chart.prototype.applyFixed = function () {
             '.highcharts-credits',
             '.highcharts-legend',
             '.highcharts-subtitle',
-            '.highcharts-title'
+            '.highcharts-title',
+            '.highcharts-legend-checkbox'
         ], function (className) {
             H.each(container.querySelectorAll(className), function (elem) {
-                fixedRenderer.box.appendChild(elem);
+                (
+                    elem.namespaceURI === fixedRenderer.SVG_NS ?
+                        fixedRenderer.box :
+                        fixedRenderer.box.parentNode
+                ).appendChild(elem);
                 elem.style.pointerEvents = 'auto';
             });
         });
     }
 
+    // Set the size of the fixed renderer to the visible width
     this.fixedRenderer.setSize(
         this.chartWidth,
         this.chartHeight
     );
 
+    // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + this.scrollablePixels;
+    H.stop(this.container);
     this.container.style.width = scrollableWidth + 'px';
     this.renderer.boxWrapper.attr({
         width: scrollableWidth,
         height: this.chartHeight,
         viewBox: [0, 0, scrollableWidth, this.chartHeight].join(' ')
     });
+    this.chartBackground.attr({ width: scrollableWidth });
 
     // Set scroll position
     if (firstTime) {

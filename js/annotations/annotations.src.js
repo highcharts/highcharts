@@ -23,6 +23,7 @@ var merge = H.merge,
     defined = H.defined,
     erase = H.erase,
     find = H.find,
+    isString = H.isString,
     pick = H.pick,
     destroyObjectProperties = H.destroyObjectProperties;
 
@@ -81,6 +82,8 @@ var Annotation = H.Annotation = function (chart, options) {
      */
     this.controlPoints = [];
 
+    this.coll = 'annotations';
+
     /**
      * The array of labels which belong to the annotation.
      *
@@ -102,6 +105,13 @@ var Annotation = H.Annotation = function (chart, options) {
      */
     // this.options = merge(this.defaultOptions, userOptions);
     this.options = options;
+
+    /**
+     * The user options for the annotations.
+     *
+     * @type {AnnotationOptions}
+     */
+    this.userOptions = merge(true, {}, options);
 
     /**
      * The callback that reports to the overlapping-labels module which
@@ -173,6 +183,15 @@ merge(
              *         Set annotation visibility
              */
             visible: true,
+
+             /**
+             * Allow an annotation to be draggable by a user. Possible
+             * values are `"x"`, `"xy"`, `"y"` and `""` (disabled).
+             *
+             * @type {string}
+             * @validvalue ["x", "xy", "y", ""]
+             */
+            draggable: 'xy',
 
             /**
              * Options for annotation's labels. Each label inherits options
@@ -814,6 +833,13 @@ merge(
             destroyObjectProperties(this, chart);
         },
 
+        /**
+         * See {@link Highcharts.Annotation#destroy}.
+         */
+        remove: function () {
+            return this.destroy();
+        },
+
         update: function (userOptions) {
             var chart = this.chart,
                 options = H.merge(true, this.options, userOptions);
@@ -967,6 +993,9 @@ H.extendAnnotation = function (
  *
  ******************************************************************** */
 
+// Let chart.update() work with annotations
+H.Chart.prototype.collectionsWithUpdate.push('annotations');
+
 H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
     initAnnotation: function (userOptions) {
         var Constructor =
@@ -1006,13 +1035,17 @@ H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
     /**
      * Remove an annotation from the chart.
      *
-     * @param {String} id - The annotation's id.
+     * @param {String|Annotation} idOrAnnotation - The annotation's id or
+     *      direct annotation object.
      */
-    removeAnnotation: function (id) {
+    removeAnnotation: function (idOrAnnotation) {
         var annotations = this.annotations,
-            annotation = find(annotations, function (annotation) {
-                return annotation.options.id === id;
-            });
+            annotation = isString(idOrAnnotation) ? find(
+                annotations,
+                function (annotation) {
+                    return annotation.options.id === idOrAnnotation;
+                }
+            ) : idOrAnnotation;
 
         if (annotation) {
             erase(this.options.annotations, annotation.options);

@@ -55,9 +55,9 @@ QUnit.test('Sankey', function (assert) {
     );
 
     series.data[0].setState('hover');
-    
+
     assert.strictEqual(
-        series.data[0].graphic.element.getAttribute('fill'),
+        Highcharts.color(series.data[0].graphic.element.getAttribute('fill')).get('rgb'),
         'rgb(255,0,0)',
         'Hover color correct'
     );
@@ -103,6 +103,19 @@ QUnit.test('Sankey', function (assert) {
         series.nodes.length,
         6,
         'Point update'
+    );
+
+    series.update({
+        keys: ['from', 'to', 'weight'],
+        data: [
+            ['A', '1', 1]
+        ]
+    });
+
+    assert.strictEqual(
+        series.nodes.length,
+        2,
+        'Unused nodes should be removed'
     );
 
     series.remove();

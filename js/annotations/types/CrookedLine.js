@@ -68,26 +68,6 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
             );
 
         typeOptions.line = shape.options;
-    },
-
-    addEvents: function () {
-        Annotation.prototype.addEvents.call(this);
-
-        H.addEvent(this, 'drag', this.onDrag);
-    },
-
-    onDrag: function (e) {
-        if (
-            this.chart.isInsidePlot(
-                e.chartX - this.chart.plotLeft,
-                e.chartY - this.chart.plotTop
-            )
-        ) {
-            var translation = this.mouseMoveToTranslation(e);
-
-            this.translate(translation.x, translation.y);
-            this.redraw(false);
-        }
     }
 },
     /**

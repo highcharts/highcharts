@@ -339,8 +339,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
                     shapeArgs.d = d; // animate alters it
                 }
             } else {
-                point.graphic = renderer.arc(shapeArgs)
-                    .addClass(point.getClassName(), true)
+                point.graphic = graphic = renderer.arc(shapeArgs)
                     .attr({
                         fill: toColor,
                         'sweep-flag': 0
@@ -349,16 +348,20 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
 
                 /*= if (build.classic) { =*/
                 if (options.linecap !== 'square') {
-                    point.graphic.attr({
+                    graphic.attr({
                         'stroke-linecap': 'round',
                         'stroke-linejoin': 'round'
                     });
                 }
-                point.graphic.attr({
+                graphic.attr({
                     stroke: options.borderColor || 'none',
                     'stroke-width': options.borderWidth || 0
                 });
                 /*= } =*/
+            }
+
+            if (graphic) {
+                graphic.addClass(point.getClassName(), true);
             }
         });
     },
