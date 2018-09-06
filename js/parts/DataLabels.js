@@ -7,7 +7,8 @@
 /**
  * A label box.
  *
- * @typedef {object} Highcharts.DataLabelBoxObject
+ * @private
+ * @typedef {*} Highcharts.DataLabelBoxObject
  *
  * @property {number} align
  *
@@ -23,7 +24,8 @@
 /**
  * Alignment offset for a label.
  *
- * @typedef {object} Highcharts.DataLabelAlignObject
+ * @private
+ * @typedef {*} Highcharts.DataLabelAlignObject
  *
  * @property {number} x
  *
@@ -33,6 +35,7 @@
 /**
  * Label position for a pie slice.
  *
+ * @private
  * @typedef {Array<number|string>} Highcharts.DataLabelPiePosObject
  *
  * @property {number} x
@@ -68,6 +71,7 @@ var addEvent = H.addEvent,
  * close as possible to their targets, skipping the lowest ranked labels if
  * necessary.
  *
+ * @private
  * @function Highcharts.distribute
  *
  * @param  {Array<Highcharts.DataLabelBoxObject>} boxes
@@ -222,12 +226,12 @@ H.distribute = function (boxes, len, maxDistance) {
 /**
  * Draw the data labels
  *
+ * @private
  * @function Highcharts.Series#drawDataLabels
  *
  * @return {void}
  *
- * @todo
- * Make events official: Fires the event `afterDrawDataLabels`.
+ * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function () {
     var series = this,
@@ -452,6 +456,7 @@ Series.prototype.drawDataLabels = function () {
 /**
  * Align each individual data label.
  *
+ * @private
  * @function Highcharts.Series#alignDataLabel
  *
  * @param  {Highcharts.Point} point
@@ -613,6 +618,7 @@ Series.prototype.alignDataLabel = function (
  * If data labels fall partly outside the plot area, align them back in, in a
  * way that doesn't hide the point.
  *
+ * @private
  * @function Highcharts.Series#justifyDataLabel
  *
  * @param  {Highcharts.SVGElement} dataLabel
@@ -698,6 +704,7 @@ if (seriesTypes.pie) {
     /**
      * Override the base drawDataLabels method by pie specific functionality
      *
+     * @private
      * @function Highcharts.seriesTypes.pie#drawDataLabels
      *
      * @return {void}
@@ -1035,6 +1042,7 @@ if (seriesTypes.pie) {
      * Extendable method for getting the path of the connector between the data
      * label and the pie slice.
      *
+     * @private
      * @function Highcharts.seriesTypes.pie#connectorPath
      *
      * @param  {Highcharts.DataLabelPiePosObject} labelPos
@@ -1069,6 +1077,7 @@ if (seriesTypes.pie) {
      * Perform the final placement of the data labels after we have verified
      * that they fall within the plot area.
      *
+     * @private
      * @function Highcharts.seriesTypes.pie#placeDataLabels
      *
      * @return {void}
@@ -1115,6 +1124,7 @@ if (seriesTypes.pie) {
      * translation and data label positioning to keep them inside the plot area.
      * Returns true when data labels are ready to draw.
      *
+     * @private
      * @function Highcharts.seriesTypes.pie#verifyDataLabelOverflow
      *
      * @param  {boolean} overflow
@@ -1195,6 +1205,7 @@ if (seriesTypes.column) {
      * Override the basic data label alignment by adjusting for the position of
      * the column.
      *
+     * @private
      * @function Highcharts.seriesTypes.column#alignDataLabel
      *
      * @param  {Highcharts.Point} point
