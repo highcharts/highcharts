@@ -194,7 +194,8 @@
  *
  * @typedef Highcharts.SVGDefinitionObject
  *
- * @property {number|string|Array<Highcharts.SVGDefinitionObject>|undefined} [key:string]
+ * @property {number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+ *           [key:string]
  *
  * @property {Array<Highcharts.SVGDefinitionObject>|undefined} [children]
  *
@@ -2599,7 +2600,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             renderer.unSubPixelFix = addEvent(win, 'resize', subPixelFix);
         }
     },
-    /*= if (!build.classic) { =*/
+
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
      * for gradients, fills, filters etc. Styled mode only. A hook for adding
@@ -2658,7 +2659,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         }
         return recurse(def);
     },
-    /*= } =*/
+
 
     /*= if (build.classic) { =*/
     /**
