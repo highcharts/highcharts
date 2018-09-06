@@ -5,21 +5,6 @@
  */
 
 /**
- * A native browser mouse or touch event, extended with position information
- * relative to the {@link Chart.container}.
- *
- * @typedef {global.PointerEvent} Highcharts.PointerEventObject
- *
- * @property {number} chartX
- *           The X coordinate of the pointer interaction relative to the
- *           chart.
- *
- * @property {number} chartY
- *           The Y coordinate of the pointer interaction relative to the
- *           chart.
- */
-
-/**
  * One position in relation to an axis.
  *
  * @typedef Highcharts.PointerAxisCoordinateObject
@@ -51,6 +36,45 @@
  * @property {number} chartX
  *
  * @property {number} chartY
+ */
+
+/**
+ * A native browser mouse or touch event, extended with position information
+ * relative to the {@link Chart.container}.
+ *
+ * @typedef {global.PointerEvent} Highcharts.PointerEventObject
+ *
+ * @property {number} chartX
+ *           The X coordinate of the pointer interaction relative to the
+ *           chart.
+ *
+ * @property {number} chartY
+ *           The Y coordinate of the pointer interaction relative to the
+ *           chart.
+ */
+
+/**
+ * Axis-specific data of a selection.
+ *
+ * @typedef Highcharts.SelectDataObject
+ *
+ * @property {Highcharts.Axis} axis
+ *
+ * @property {number} min
+ *
+ * @property {number} max
+ */
+
+/**
+ * Object for select events.
+ *
+ * @typedef Highcharts.SelectEventObject
+ *
+ * @property {global.Event} originalEvent
+ *
+ * @property {Array<Highcharts.SelectionDataObject>} xAxis
+ *
+ * @property {Array<Highcharts.SelectionDataObject>} yAxis
  */
 
 'use strict';
