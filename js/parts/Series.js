@@ -135,8 +135,12 @@ var addEvent = H.addEvent,
  */
 H.Series = H.seriesType('line', null, { // base series options
     /**
-     * General options for all series types.
-     * @optionparent plotOptions.series
+     * General options for all series types. In TypeScript you have to cast
+     * series options to specific series types, to get all possible options
+     * properties.
+     *
+     * @type       {*}
+     * @apioption  plotOptions.series
      */
 
     /*= if (build.classic) { =*/
