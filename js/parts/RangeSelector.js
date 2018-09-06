@@ -262,7 +262,9 @@ extend(defaultOptions, {
          * @apioption  rangeSelector.buttonTheme
          */
         buttonTheme: {
+            /*= if (build.classic) { =*/
             'stroke-width': 0,
+            /*= } =*/
             width: 28,
             height: 18,
             padding: 2,
@@ -1221,10 +1223,12 @@ RangeSelector.prototype = {
                 padding: 2,
                 width: options.inputBoxWidth || 90,
                 height: options.inputBoxHeight || 17,
+                'text-align': 'center',
+                /*= if (build.classic) { =*/
                 stroke:
                     options.inputBoxBorderColor || '${palette.neutralColor20}',
-                'stroke-width': 1,
-                'text-align': 'center'
+                'stroke-width': 1
+                /*= } =*/
             })
             .on('click', function () {
                 // If it is already focused, the onfocus event doesn't fire
