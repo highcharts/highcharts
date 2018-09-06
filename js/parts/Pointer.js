@@ -741,7 +741,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#dragStart
      *
-     * @param  {global.Event} e
+     * @param  {Highcharts.PointerEventObject} e
      *
      * @return {void}
      */
@@ -762,7 +762,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#drag
      *
-     * @param  {global.Event} e
+     * @param  {Highcharts.PointerEventObject} e
      *
      * @return {void}
      */
@@ -1035,7 +1035,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onDocumentMouseMove
      *
-     * @param  {global.Event} e
+     * @param  {Highcharts.PointerEventObject} e
      *
      * @return {void}
      */
@@ -1084,7 +1084,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onContainerMouseMove
      *
-     * @param  {global.Event} e
+     * @param  {Highcharts.PointerEventObject} e
      *
      * @return {void}
      */
@@ -1190,7 +1190,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onContainerClick
      *
-     * @param  {global.Event} e
+     * @param  {Highcharts.PointerEventObject} e
      *
      * @return {void}
      */
