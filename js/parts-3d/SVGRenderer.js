@@ -75,44 +75,6 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
     ];
 }
 
-/*= if (!build.classic) { =*/
-/**
- * Override the SVGRenderer initiator to add definitions used by brighter and
- * darker faces of the cuboids.
- */
-wrap(SVGRenderer.prototype, 'init', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    each([{
-        name: 'darker',
-        slope: 0.6
-    }, {
-        name: 'brighter',
-        slope: 1.4
-    }], function (cfg) {
-        this.definition({
-            tagName: 'filter',
-            id: 'highcharts-' + cfg.name,
-            children: [{
-                tagName: 'feComponentTransfer',
-                children: [{
-                    tagName: 'feFuncR',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncG',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncB',
-                    type: 'linear',
-                    slope: cfg.slope
-                }]
-            }]
-        });
-    }, this);
-});
-/*= } =*/
 
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
@@ -241,13 +203,16 @@ SVGRenderer.prototype.face3d = function (args) {
 SVGRenderer.prototype.polyhedron = function (args) {
     var renderer = this,
         result = this.g(),
-        destroy = result.destroy;
+        destroy = result.destroy,
+        chart = H.charts[this.chartIndex],
+        styledMode = chart && chart.styledMode;
 
-    /*= if (build.classic) { =*/
-    result.attr({
-        'stroke-linejoin': 'round'
-    });
-    /*= } =*/
+
+    if (!styledMode) {
+        result.attr({
+            'stroke-linejoin': 'round'
+        });
+    }
 
     result.faces = [];
 
@@ -310,13 +275,15 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
     var result = this.g(),
         destroy = result.destroy,
-        paths = this.cuboidPath(shapeArgs);
+        paths = this.cuboidPath(shapeArgs),
+        chart = H.charts[this.chartIndex],
+        styledMode = chart && chart.styledMode;
 
-    /*= if (build.classic) { =*/
-    result.attr({
-        'stroke-linejoin': 'round'
-    });
-    /*= } =*/
+    if (!styledMode) {
+        result.attr({
+            'stroke-linejoin': 'round'
+        });
+    }
 
     // Create the 3 sides. // Front, top and side are never overlapping in our
     // case so it is redundant to set zIndex of every element.

@@ -374,23 +374,53 @@ var extendedOptions = {
 
 merge(true, defaultOptions, extendedOptions);
 
-/*= if (!build.classic) { =*/
 /**
  * Add the required CSS classes for column sides (#6018)
  */
 addEvent(Chart, 'afterGetContainer', function () {
-    this.renderer.definition({
-        tagName: 'style',
-        textContent:
-            '.highcharts-3d-top{' +
-                'filter: url(#highcharts-brighter)' +
-            '}\n' +
-            '.highcharts-3d-side{' +
-                'filter: url(#highcharts-darker)' +
-            '}\n'
-    });
+    if (this.styledMode) {
+        this.renderer.definition({
+            tagName: 'style',
+            textContent:
+                '.highcharts-3d-top{' +
+                    'filter: url(#highcharts-brighter)' +
+                '}\n' +
+                '.highcharts-3d-side{' +
+                    'filter: url(#highcharts-darker)' +
+                '}\n'
+        });
+
+        // Add add definitions used by brighter and darker faces of the cuboids.
+        each([{
+            name: 'darker',
+            slope: 0.6
+        }, {
+            name: 'brighter',
+            slope: 1.4
+        }], function (cfg) {
+            this.renderer.definition({
+                tagName: 'filter',
+                id: 'highcharts-' + cfg.name,
+                children: [{
+                    tagName: 'feComponentTransfer',
+                    children: [{
+                        tagName: 'feFuncR',
+                        type: 'linear',
+                        slope: cfg.slope
+                    }, {
+                        tagName: 'feFuncG',
+                        type: 'linear',
+                        slope: cfg.slope
+                    }, {
+                        tagName: 'feFuncB',
+                        type: 'linear',
+                        slope: cfg.slope
+                    }]
+                }]
+            });
+        }, this);
+    }
 });
-/*= } =*/
 
 wrap(Chart.prototype, 'setClassName', function (proceed) {
     proceed.apply(this, [].slice.call(arguments, 1));

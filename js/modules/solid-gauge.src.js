@@ -346,18 +346,18 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
                     })
                     .add(series.group);
 
-                /*= if (build.classic) { =*/
-                if (options.linecap !== 'square') {
+                if (!series.chart.styledMode) {
+                    if (options.linecap !== 'square') {
+                        graphic.attr({
+                            'stroke-linecap': 'round',
+                            'stroke-linejoin': 'round'
+                        });
+                    }
                     graphic.attr({
-                        'stroke-linecap': 'round',
-                        'stroke-linejoin': 'round'
+                        stroke: options.borderColor || 'none',
+                        'stroke-width': options.borderWidth || 0
                     });
                 }
-                graphic.attr({
-                    stroke: options.borderColor || 'none',
-                    'stroke-width': options.borderWidth || 0
-                });
-                /*= } =*/
             }
 
             if (graphic) {
