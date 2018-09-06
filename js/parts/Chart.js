@@ -1296,7 +1296,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#reflow
      *
-     * @param  {Highcharts.Event} e
+     * @param  {Highcharts.EventObject} e
      *         Event arguments. Used primarily when the function is called
      *         internally as a response to window resize.
      *
