@@ -34,7 +34,7 @@ const rootPath = process.cwd();
 let allDocletPropertyNames = [],
     apiOptionMembers = [],
     currentFilePath = '',
-    namespace = {},
+    globalNamespace = {},
     privateMembers = [];
 
 /* *
@@ -521,7 +521,7 @@ function getNamespaces (name) {
 function getNodeFor (name, overload, searchOnly) {
 
     let found = false,
-        node = namespace,
+        node = globalNamespace,
         spaceNames = getNamespaces(name),
         indexEnd = (spaceNames.length - 1);
 
@@ -1061,6 +1061,9 @@ function addMember (doclet) {
 function addNamespace (doclet) {
 
     updateNodeFor(doclet, false);
+
+    // namespaces should always be in every file like the global namespace
+    node.meta.files = globalNamespace.meta.files;
 }
 
 /**
@@ -1125,13 +1128,13 @@ function addTypeDef (doclet) {
  */
 function parseBegin (e) {
 
-    namespace.doclet = {
+    globalNamespace.doclet = {
         description: 'Copyright (c) Highsoft AS. All rights reserved.',
         kind: 'global',
         name: ''
     };
 
-    namespace.meta = {
+    globalNamespace.meta = {
         branch: childProcess.execSync('git rev-parse --abbrev-ref HEAD', {cwd: rootPath}).toString().trim(),
         commit: childProcess.execSync('git rev-parse --short HEAD', {cwd: rootPath}).toString().trim(),
         date: (new Date()).toString(),
@@ -1153,7 +1156,7 @@ function parseBegin (e) {
 function fileBegin (e) {
 
     currentFilePath = path.relative(rootPath, e.filename);
-    namespace.meta.files.push({
+    globalNamespace.meta.files.push({
         path: currentFilePath,
         line: 0
     });
@@ -1250,12 +1253,12 @@ function fileComplete (e) {
  */
 function processingComplete (e) {
 
-    filterNodes(namespace);
-    sortNodes(namespace);
+    filterNodes(globalNamespace);
+    sortNodes(globalNamespace);
 
     fs.writeFileSync(
         path.join(rootPath, 'tree-namespace.json'),
-        JSON.stringify(namespace, undefined, '\t')
+        JSON.stringify(globalNamespace, undefined, '\t')
     );
 }
 
