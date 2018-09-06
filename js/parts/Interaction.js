@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
 import H from './Globals.js';
@@ -38,7 +39,7 @@ var addEvent = H.addEvent,
  * TrackerMixin for points and graphs.
  *
  * @private
- * @mixin Highcharts.TackerMixin
+ * @mixin Highcharts.TrackerMixin
  */
 TrackerMixin = H.TrackerMixin = {
 
@@ -240,19 +241,46 @@ TrackerMixin = H.TrackerMixin = {
  */
 
 if (seriesTypes.column) {
+    /**
+     * @private
+     * @borrows Highcharts.TrackerMixin.drawTrackerPoint as Highcharts.seriesTypes.column#drawTracker
+     */
     seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 if (seriesTypes.pie) {
+    /**
+     * @private
+     * @borrows Highcharts.TrackerMixin.drawTrackerPoint as Highcharts.seriesTypes.pie#drawTracker
+     */
     seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 if (seriesTypes.scatter) {
+    /**
+     * @private
+     * @borrows Highcharts.TrackerMixin.drawTrackerPoint as Highcharts.seriesTypes.scatter#drawTracker
+     */
     seriesTypes.scatter.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
-/*
- * Extend Legend for item events
+/*= if (build.classic) { =*/
+
+// Add pointer cursor to legend itemstyle in defaultOptions
+/**
+ * @default   'pointer'
+ * @apioption legend.itemStyle.cursor
+ */
+defaultOptions.legend.itemStyle.cursor = 'pointer';
+
+/*= } =*/
+
+/**
+ * Extend Legend for item events.
+ *
+ * @ignore
+ * @class
+ * @name Highcharts.Legend
  */
 extend(Legend.prototype, {
 
@@ -262,9 +290,9 @@ extend(Legend.prototype, {
      *
      * @param  {Highcharts.Point|Highcharts.Series} item
      *
-     * @param  {Highcharts.Legend} legendItem
+     * @param  {Highcharts.SVGElement} legendItem
      *
-     * @param  {boolean} useHTML
+     * @param  {boolean|undefined} [useHTML=false]
      *
      * @return {void}
      *
@@ -370,17 +398,16 @@ extend(Legend.prototype, {
 });
 
 
-/*= if (build.classic) { =*/
-// Add pointer cursor to legend itemstyle in defaultOptions
-defaultOptions.legend.itemStyle.cursor = 'pointer';
-/*= } =*/
 
-
-/*
- * Extend the Chart object with interaction
+/**
+ * Extend the Chart object with interaction.
+ *
+ * @ignore
+ * @class
+ * @name Highcharts.Chart
  */
-
 extend(Chart.prototype, /** @lends Chart.prototype */ {
+
     /**
      * Display the zoom button.
      *
@@ -427,7 +454,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * Zoom the chart out after a user has zoomed in. See also
      * [Axis.setExtremes](/class-reference/Highcharts.Axis#setExtremes).
      *
-     * @private
      * @function Highcharts.Chart#zoomOut
      *
      * @return {void}
@@ -444,7 +470,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#zoom
      *
-     * @param  {*} event
+     * @param  {Highcharts.Event} event
      *
      * @return {void}
      */
@@ -506,7 +532,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#pan
      *
-     * @param  {*} e
+     * @param  {Highcharts.Event} e
      *
      * @param  {string} panning
      *
@@ -603,8 +629,12 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
     }
 });
 
-/*
+/**
  * Extend the Point object with interaction
+ *
+ * @ignore
+ * @class
+ * @name Highcharts.Point
  */
 extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
@@ -630,7 +660,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @param  {boolean|undefined} [accumulate=false]
      *         When `true`, the selection is added to other selected points.
      *         When `false`, other selected points are deselected. Internally in
-     *         Highcharts, when {@link http://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect|allowPointSelect}
+     *         Highcharts, when
+     *         {@link http://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect|allowPointSelect}
      *         is `true`, selected points are accumulated on Control, Shift or
      *         Cmd clicking the point.
      *
@@ -654,11 +685,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
                 /**
                  * Whether the point is selected or not.
+                 *
                  * @see Point#select
                  * @see Chart#getSelectedPoints
-                 * @memberof Point
-                 * @name selected
-                 * @type {Boolean}
+                 *
+                 * @name Highcharts.Point#selected
+                 * @type {boolean}
                  */
                 point.selected = point.options.selected = selected;
                 series.options.data[inArray(point, series.data)] =
@@ -690,7 +722,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#onMouseOver
      *
-     * @param  {*} e
+     * @param  {Highcharts.Event} e
      *         The event arguments.
      *
      * @return {void}
@@ -982,10 +1014,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     }
 });
 
-/*
+/**
  * Extend the Series object with interaction
+ *
+ * @ignore
+ * @class
+ * @name Highcharts.Series
  */
-
 extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
     /**
@@ -1070,8 +1105,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      * @function Highcharts.Series#setState
      *
      * @param  {string|undefined} [state]
-     *         Can be either `hover` or undefined to set to normal
-     *         state.
+     *         Can be either `hover` or undefined to set to normal state.
      *
      * @return {void}
      */
