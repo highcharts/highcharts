@@ -5,18 +5,10 @@
  */
 
 /**
- * Reference to the global PointerEvent class as a workaround for a name
- * conflict in the Highcharts namespace.
- *
- * @global
- * @typedef {global.PointerEvent} GlobalPointerEvent
- */
-
-/**
  * A native browser mouse or touch event, extended with position information
  * relative to the {@link Chart.container}.
  *
- * @typedef {GlobalPointerEvent} Highcharts.PointerEvent
+ * @typedef {global.PointerEvent} Highcharts.PointerEventObject
  *
  * @property {number} chartX
  *           The X coordinate of the pointer interaction relative to the
@@ -181,7 +173,7 @@ Highcharts.Pointer.prototype = {
      * @param  {global.Event} e
      *         Event object in standard browsers.
      *
-     * @return {Highcharts.PointerEvent}
+     * @return {Highcharts.PointerEventObject}
      *         A browser event with extended properties `chartX` and `chartY`.
      */
     normalize: function (e, chartPosition) {
@@ -208,7 +200,7 @@ Highcharts.Pointer.prototype = {
      *
      * @function Highcharts.Pointer#getCoordinates
      *
-     * @param  {Highcharts.PointerEvent} e
+     * @param  {Highcharts.PointerEventObject} e
      *         Pointer event, extended with `chartX` and `chartY` properties.
      *
      * @return {Highcharts.PointerAxisCoordinatesObject}
