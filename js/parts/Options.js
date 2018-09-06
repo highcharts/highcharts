@@ -2101,6 +2101,7 @@ H.defaultOptions = {
          * @sample {highcharts} highcharts/legend/lineheight/
          *         Setting padding
          *
+         * @deprecated
          * @type       {number}
          * @default    16
          * @since      2.0
