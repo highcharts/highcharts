@@ -42,12 +42,14 @@
  */
 
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
+
 var addEvent = H.addEvent,
     animate = H.animate,
     animObject = H.animObject,
@@ -158,7 +160,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#getArgs
      *
-     * @returns {Array}
+     * @returns {Array<*>}
      *          Arguments without renderTo
      *
      * @todo
@@ -190,8 +192,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fires the events `init` and `afterInit`.
+     * @fires Highcharts.Chart#event:init
+     * @fires Highcharts.Chart#event:afterInit
      */
     init: function (userOptions, callback) {
 
@@ -343,9 +345,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param  {Highcharts.ChartOptions} options
      *
      * @return {Highcharts.Series}
-     *
-     * @todo
-     * Make events official.
      */
     initSeries: function (options) {
         var chart = this,
@@ -435,9 +434,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fires the events `beforeRedraw`, `updatedData`,
-     * `afterSetExtremes`, `predraw`, `redraw`, and `render`.
+     * @fires Highcharts.Chart#event:afterSetExtremes
+     * @fires Highcharts.Chart#event:beforeRedraw
+     * @fires Highcharts.Chart#event:predraw
+     * @fires Highcharts.Chart#event:redraw
+     * @fires Highcharts.Chart#event:render
+     * @fires Highcharts.Chart#event:updatedData
      */
     redraw: function (animation) {
 
@@ -657,8 +659,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fires the events `getAxes` and `afterGetAxes`.
+     * @fires Highcharts.Chart#event:afterGetAxes
+     * @fires Highcharts.Chart#event:getAxes
      */
     getAxes: function () {
         var chart = this,
@@ -693,7 +695,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Returns an array of all currently selected points in the chart. Points
      * can be selected by clicking or programmatically by the
-     * {@link Highcharts.Point#select} function.
+     * {@link Highcharts.Point#select}
+     * function.
      *
      * @sample highcharts/plotoptions/series-allowpointselect-line/
      *         Get selected points
@@ -792,6 +795,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 
         // add title and subtitle
+
         /**
          * The chart title. The title has an `update` method that allows
          * modifying the options directly or indirectly via
@@ -802,7 +806,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          *
          * @name Highcharts.Chart#title
          * @type {Highcharts.TitleObject}
-         *//**
+         */
+
+        /**
          * The chart subtitle. The subtitle has an `update` method that
          * allows modifying the options directly or indirectly via
          * `chart.update`.
@@ -810,6 +816,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @name Highcharts.Chart#subtitle
          * @type {Highcharts.SubtitleObject}
          */
+
         each([
             ['title', titleOptions, chartTitleOptions],
             ['subtitle', subtitleOptions, chartSubtitleOptions]
@@ -860,7 +867,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#layOutTitles
      *
-     * @param  {boolean} redraw
+     * @param  {boolean|undefined} [redraw=true]
      *
      * @return {void}
      */
@@ -917,7 +924,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
     /**
      * Internal function to get the chart width and height according to options
-     * and container size. Sets {@link Chart.chartWidth} and
+     * and container size. Sets
+     * {@link Chart.chartWidth} and
      * {@link Chart.chartHeight}.
      *
      * @function Highcharts.Chart#getChartSize
@@ -1062,8 +1070,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fire the event `afterGetContainer`.
+     * @fires Highcharts.Chart#event:afterGetContainer
      */
     getContainer: function () {
         var chart = this,
@@ -1211,8 +1218,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fire the event `getMargins`.
+     * @fires Highcharts.Chart#event:getMargins
      */
     getMargins: function (skipAxes) {
         var chart = this,
@@ -1290,7 +1296,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#reflow
      *
-     * @param  {*} e
+     * @param  {Highcharts.Event} e
      *         Event arguments. Used primarily when the function is called
      *         internally as a response to window resize.
      *
@@ -1406,8 +1412,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fire the events `resize` and `endResize`.
+     * @fires Highcharts.Chart#event:endResize
+     * @fires Highcharts.Chart#event:resize
      */
     setSize: function (width, height, animation) {
         var chart = this,
@@ -1483,8 +1489,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fire the event `afterSetChartSize`.
+     * @fires Highcharts.Chart#event:afterSetChartSize
      */
     setChartSize: function (skipAxes) {
         var chart = this,
@@ -1634,8 +1639,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fire event `afterDrawChartBox`.
+     * @fires Highcharts.Chart#event:afterDrawChartBox
      */
     drawChartBox: function () {
         var chart = this,
@@ -1833,8 +1837,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fires the event `afterLinkSeries`.
+     * @fires Highcharts.Chart#event:afterLinkSeries
      */
     linkSeries: function () {
         var chart = this,
@@ -2092,8 +2095,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fire the event `destroy`.
+     * @fires Highcharts.Chart#event:destroy
      */
     destroy: function () {
         var chart = this,
@@ -2176,8 +2178,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fire the event `beforeRender`.
+     * @fires Highcharts.Chart#event:beforeRender
      */
     firstRender: function () {
         var chart = this,
@@ -2250,8 +2251,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      *
-     * @todo
-     * Make events official: Fire the events `load` and `render`.
+     * @fires Highcharts.Chart#event:load
+     * @fires Highcharts.Chart#event:render
      */
     onload: function () {
 
