@@ -72,9 +72,9 @@
  *
  * @property {global.Event} originalEvent
  *
- * @property {Array<Highcharts.SelectionDataObject>} xAxis
+ * @property {Array<Highcharts.SelectDataObject>} xAxis
  *
- * @property {Array<Highcharts.SelectionDataObject>} yAxis
+ * @property {Array<Highcharts.SelectDataObject>} yAxis
  */
 
 'use strict';
