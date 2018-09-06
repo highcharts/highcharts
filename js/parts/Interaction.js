@@ -470,7 +470,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#zoom
      *
-     * @param  {Highcharts.Event} event
+     * @param  {Highcharts.SelectEventObject} event
      *
      * @return {void}
      */
@@ -532,7 +532,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#pan
      *
-     * @param  {Highcharts.Event} e
+     * @param  {Highcharts.PointerEventObject} e
      *
      * @param  {string} panning
      *
@@ -722,7 +722,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#onMouseOver
      *
-     * @param  {Highcharts.Event} e
+     * @param  {Highcharts.PointerEventObject} e
      *         The event arguments.
      *
      * @return {void}
