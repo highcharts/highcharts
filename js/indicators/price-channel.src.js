@@ -27,7 +27,6 @@ H.seriesType('pc', 'bb',
      * @optionparent plotOptions.pc
      */
     {
-        name: 'Price Channel (20)',
         /**
          * @excluding
          *    index, standardDeviation
@@ -36,15 +35,32 @@ H.seriesType('pc', 'bb',
         lineWidth: 1,
         topLine: {
             styles: {
+                /**
+                 * Color of the top line. If not set, it's inherited from
+                 * [plotOptions.pc.color](#plotOptions.pc.color).
+                 *
+                 * @type {String}
+                 * @since 7.0.0
+                 * @product highstock
+                 */
                 lineColor: '${palette.colors}'.split(' ')[2]
             }
         },
         bottomLine: {
             styles: {
+                /**
+                 * Color of the bottom line. If not set, it's inherited from
+                 * [plotOptions.pc.color](#plotOptions.pc.color).
+                 *
+                 * @type {String}
+                 * @since 7.0.0
+                 * @product highstock
+                 */
                 lineColor: '${palette.colors}'.split(' ')[8]
             }
         }
     }, /** @lends Highcharts.Series.prototype */ {
+        nameBase: 'Price Channel',
         nameComponents: ['period'],
         init: function () {
             var args = arguments,
@@ -72,7 +88,7 @@ H.seriesType('pc', 'bb',
                 slicedY,
                 i;
 
-            if (xVal.length < period) {
+            if (yValLen.length < period) {
                 return false;
             }
 
