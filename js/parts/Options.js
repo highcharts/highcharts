@@ -772,6 +772,20 @@ H.defaultOptions = {
          * @apioption  chart.pinchType
          */
 
+
+        /**
+         * Whether to apply styled mode. When in styled mode, no presentational
+         * attributes or CSS are applied to the chart SVG. Instead, CSS rules
+         * are required to style the chart. The default style sheet is
+         * available from `https://code.highcharts.com/css/highcharts.css`.
+         *
+         * @type       {boolean}
+         * @default    false
+         * @since      7.0
+         * @apioption  chart.styledMode
+         */
+        styledMode: false,
+
         /**
          * The corner radius of the outer chart border.
          *
@@ -3518,6 +3532,10 @@ H.defaultOptions = {
 
     }
 };
+
+/*= if (!build.classic) { =*/
+H.defaultOptions.chart.styledMode = true;
+/*= } =*/
 
 /**
  * Merge the default options with custom options and return the new options
