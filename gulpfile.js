@@ -225,6 +225,61 @@ gulp.task('test', done => {
         return true;
     };
 
+    const checkSamplesConsistency = () => {
+        ['highcharts', 'stock', 'maps'].forEach(product => {
+            let index = fs.readFileSync(
+                `./samples/${product}/demo/index.htm`,
+                'utf8'
+            );
+            let regex = /href="examples\/([a-z\-0-9]+)\/index.htm"/g;
+            let toc = [];
+            let matches;
+
+            while ((matches = regex.exec(index)) !== null) {
+                toc.push(matches[1]);
+            }
+
+            let folders = [];
+            fs.readdirSync(`./samples/${product}/demo`).forEach(dir => {
+                if (dir.indexOf('.') !== 0 && dir !== 'index.htm') {
+                    folders.push(dir);
+                }
+            });
+
+            let missingFolders = [];
+            let missingTOC = [];
+            folders.forEach(sample => {
+                if (toc.indexOf(sample) === -1) {
+                    missingTOC.push(sample);
+                }
+            });
+            toc.forEach(sample => {
+                if (folders.indexOf(sample) === -1) {
+                    missingFolders.push(sample);
+                }
+            });
+
+            if (missingTOC.length) {
+                console.log(`Found demos that were not added to ./samples/${product}/demo/index.htm`.red);
+                missingTOC.forEach(sample => {
+                    console.log(` - ./samples/${product}/demo/${sample}`.red);
+                });
+
+                throw 'Missing sample in index.htm';
+            }
+
+            if (missingFolders.length) {
+                console.log(`Found demos in ./samples/${product}/demo/index.htm that were not present in demo folder`.red);
+                missingFolders.forEach(sample => {
+                    console.log(` - ./samples/${product}/demo/${sample}`.red);
+                });
+
+                throw 'Missing demo';
+            }
+        });
+
+    };
+
 
     if (argv.help) {
         console.log(
@@ -258,6 +313,8 @@ Available arguments for 'gulp test':
         );
         return;
     }
+
+    checkSamplesConsistency();
 
     if (shouldRun()) {
 
@@ -415,9 +472,13 @@ const cleanCode = () => {
 };
 
 const cleanDist = () => {
-    return removeDirectory('./build/dist').then(() => {
-        console.log('Successfully removed dist directory.');
-    });
+    return removeDirectory('./build/dist')
+        .then(() => {
+            console.log('Successfully removed dist directory.');
+        })
+        .catch(() => {
+            console.log('Tried to remove ./build/dist but it was never there. Moving on...');
+        });
 };
 
 const cleanApi = () => {
@@ -627,7 +688,7 @@ const timeDifference = (d1, d2) => {
 /**
  * Mirrors the same feedback which gulp gives when executing its tasks.
  * Says when a task started, when it finished, and how long it took.
- * @param  {string} name Name of task which is beeing executed.
+ * @param  {string} name Name of task which is being executed.
  * @param  {string} task A function to execute
  * @return {*}      Returns whatever the task function returns when it is finished.
  */
@@ -1099,7 +1160,7 @@ const startServer = () => {
 let apiServerRunning = false;
 
 /**
- * Create Highcharts API and class refrences from JSDOC
+ * Create Highcharts API and class references from JSDOC
  */
 const jsdoc = () => {
     const optionsClassReference = {
