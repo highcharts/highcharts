@@ -44,7 +44,7 @@ seriesType('spline', 'line',
 
     /**
      * Get the spline segment from a given point's previous neighbour to the
-     * given point
+     * given point.
      *
      * @private
      * @function Highcharts.seriesTypes.spline#getPointSpline
