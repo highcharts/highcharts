@@ -139,6 +139,9 @@ Highcharts.setOptions({
          * the chart's current data.
          *
          * @sample highcharts/export-data/showtable/ Show the table
+         * @sample highcharts/studies/exporting-table-html
+         *         Experiment with putting the table inside the subtitle to
+         *         allow exporting it.
          * @since 6.0.0
          */
         showTable: false,
