@@ -659,7 +659,7 @@ defaultOptions.exporting = {
              * values are "circle", "square", "diamond", "triangle",
              * "triangle-down", "menu", "menuball" or custom shape.
              *
-             * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down", "menu", "menuball"]
+             * @validvalue ["exportIcon", "circle", "square", "diamond", "triangle", "triangle-down", "menu", "menuball"]
              * @type {String}
              * @sample highcharts/exporting/buttons-contextbutton-symbol/
              *         Use a circle for symbol
