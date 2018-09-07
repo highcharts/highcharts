@@ -44,25 +44,26 @@ var animObject = H.animObject,
  * @private
  * @class
  * @name Highcharts.seriesTypes.column
+ *
  * @augments Highcharts.Series
  */
-
-/**
- * Column series display one column per value along an X axis.
- *
- * @sample {highcharts} highcharts/demo/column-basic/
- *         Column chart
- * @sample {highstock} stock/demo/column/
- *         Column chart
- *
- * @type       {*}
- * @extends    {plotOptions.line}
- * @excluding  connectNulls, dashStyle, gapSize, gapUnit, linecap,
- *             lineWidth, marker, connectEnds, step
- * @product    highcharts highstock
- * @apioption  plotOptions.column
- */
 seriesType('column', 'line', {
+
+    /**
+     * Column series display one column per value along an X axis.
+     *
+     * @sample {highcharts} highcharts/demo/column-basic/
+     *         Column chart
+     * @sample {highstock} stock/demo/column/
+     *         Column chart
+     *
+     * @type       {*}
+     * @extends    plotOptions.line
+     * @excluding  connectNulls, dashStyle, gapSize, gapUnit, linecap,
+     *             lineWidth, marker, connectEnds, step
+     * @product    highcharts highstock
+     * @apioption  plotOptions.column
+     */
 
     /**
      * The corner radius of the border surrounding each column or bar.
