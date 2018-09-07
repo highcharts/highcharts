@@ -10,8 +10,7 @@
  *
  * @interface Highcharts.TitleObject
  * @extends Highcharts.SVGElement
- */
-/**
+ *//**
  * Modify options for the title.
  *
  * @function Highcharts.TitleObject#update
@@ -29,8 +28,7 @@
  *
  * @interface Highcharts.SubtitleObject
  * @extends Highcharts.SVGElement
- */
-/**
+ *//**
  * Modify options for the subtitle.
  *
  * @function Highcharts.SubtitleObject#update
@@ -96,7 +94,20 @@ var addEvent = H.addEvent,
  *        }]
  * })
  *
- * @class Highcharts.Chart
+ * @class
+ * @name Highcharts.Chart
+ *
+ * @param {Highcharts.Options} options
+ *        The chart options structure.
+ *
+ * @param {Function|undefined} [callback]
+ *        Function to run when the chart has loaded and and all external images
+ *        are loaded. Defining a
+ *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *        handler is equivalent.
+ *//**
+ * @class
+ * @name Highcharts.Chart
  *
  * @param {string|Highcharts.HTMLDOMElement} renderTo
  *        The DOM element to render to, or its id.
@@ -106,9 +117,9 @@ var addEvent = H.addEvent,
  *
  * @param {Function|undefined} [callback]
  *        Function to run when the chart has loaded and and all external images
- *        are loaded. Defining a [chart.event.load](
- *        https://api.highcharts.com/highcharts/chart.events.load) handler is
- *        equivalent.
+ *        are loaded. Defining a
+ *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *        handler is equivalent.
  */
 var Chart = H.Chart = function () {
     this.getArgs.apply(this, arguments);
@@ -128,6 +139,20 @@ var Chart = H.Chart = function () {
  *     }]
  * });
  *
+ * @function Highcharts.chart
+ *
+ * @param  {Highcharts.Options} options
+ *         The chart options structure.
+ *
+ * @param  {Function|undefined} [callback]
+ *         Function to run when the chart has loaded and and all external images
+ *         are loaded. Defining a
+ *         {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *         handler is equivalent.
+ *
+ * @return {Highcharts.Chart}
+ *         Returns the Chart object.
+ *//**
  * @function Highcharts.chart
  *
  * @param  {string|Highcharts.HTMLDOMElement} renderTo
@@ -160,11 +185,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#getArgs
      *
-     * @returns {Array<*>}
-     *          Arguments without renderTo
+     * @param  {...Array<*>} arguments
+     *         All arguments for the constructor.
      *
-     * @todo
-     * Make events official.
+     * @return {Array<*>}
+     *         Passed arguments without renderTo.
+     *
+     * @fires Highcharts.Chart#event:init
+     * @fires Highcharts.Chart#event:afterInit
      */
     getArgs: function () {
         var args = [].slice.call(arguments);
