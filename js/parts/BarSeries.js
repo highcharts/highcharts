@@ -13,7 +13,7 @@ import './ColumnSeries.js';
 var seriesType = H.seriesType;
 
 /**
- * The Bar series class
+ * Bar series type.
  *
  * @private
  * @class
@@ -31,7 +31,7 @@ seriesType('bar', 'column',
      *         Bar chart
      *
      * @type       {*}
-     * @extends    {plotOptions.column}
+     * @extends    plotOptions.column
      * @product    highcharts
      * @apioption  plotOptions.bar
      */
