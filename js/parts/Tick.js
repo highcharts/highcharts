@@ -161,7 +161,10 @@ H.Tick.prototype = {
 
         // Check if the label overshoots the chart spacing box. If it does, move
         // it. If it now overshoots the slotWidth, add ellipsis.
-        if (!rotation && labelOptions.overflow !== false) {
+        if (!rotation &&
+            labelOptions.overflow !== false &&
+            labelOptions.overflow !== 'allow'
+        ) {
             leftPos = pxPos - factor * labelWidth;
             rightPos = pxPos + (1 - factor) * labelWidth;
 
