@@ -6,7 +6,9 @@
  * Highcharts feature to make the Y axis stay fixed when scrolling the chart
  * horizontally on mobile devices. Supports left and right side axes.
  */
+
 'use strict';
+
 import H from './Globals.js';
 
 var addEvent = H.addEvent,
