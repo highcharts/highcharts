@@ -30,12 +30,6 @@ Highcharts.chart('container', {
         shared: true,
         useHTML: true
     },
-    plotOptions: {
-        column: {
-            pointPadding: 0.1,
-            borderWidth: 0
-        }
-    },
     series: [{
         name: 'Pyramids names',
         colorByPoint: true,
