@@ -19,7 +19,7 @@
  * booleans, where `false` turns off animation and `true` defaults to a duration
  * of 500ms.
  *
- * @typedef {object} Highcharts.AnimationOptionsObject
+ * @typedef {*} Highcharts.AnimationOptionsObject
  *
  * @property {number} duration
  *           The animation duration in milliseconds.
@@ -37,23 +37,95 @@
  */
 
 /**
- * A style object with camel case property names.
- * The properties can be whatever styles are supported on the given SVG or HTML
- * element.
- *
- * @typedef {object} Highcharts.CSSObject
+ * A style object with camel case property names to define visual appearance of
+ * a SVG element or HTML element. The properties can be whatever styles are
+ * supported on the given SVG or HTML element.
  *
  * @example
  * {
  *    fontFamily: 'monospace',
  *    fontSize: '1.2em'
  * }
+ *
+ * @typedef {*} Highcharts.CSSObject
+ *
+ * @property {boolean|number|string|undefined} [key:string]
+ *
+ * @property {string} [background]
+ *           Background style for the element.
+ *
+ * @property {Highcharts.ColorString} [backgroundColor]
+ *           Background color of the element.
+ *
+ * @property {string} [border]
+ *           Border style for the element.
+ *
+ * @property {number} [borderRadius]
+ *           Radius of the element border.
+ *
+ * @property {"contrast"|Highcharts.ColorString} [color]
+ *           Color used in the element.
+ *
+ * @property {string} [cursor]
+ *           Style of the mouse cursor when resting over the element.
+ *
+ * @property {string} [fontFamily]
+ *           Font family of the element text. Multiple values have to be in
+ *           decreasing preference order and separated by comma.
+ *
+ * @property {string} [fontSize]
+ *           Font size of the element text.
+ *
+ * @property {string} [fontWeight]
+ *           Font weight of the element text.
+ *
+ * @property {number} [height]
+ *           Height of the element.
+ *
+ * @property {number} [lineWidth]
+ *           Width of the element border.
+ *
+ * @property {number} [opacity]
+ *           Opacity of the element.
+ *
+ * @property {string} [padding]
+ *           Space around the element content.
+ *
+ * @property {string} [pointerEvents]
+ *           Behaviour of the element when the mouse cursor rests over it.
+ *
+ * @property {string} [position]
+ *           Positioning of the element.
+ *
+ * @property {string} [textAlign]
+ *           Alignment of the element text.
+ *
+ * @property {string} [textOutline]
+ *           Outline style of the element text.
+ *
+ * @property {string} [textDecoration]
+ *           Additional decoration of the element text.
+ *
+ * @property {string} [textOverflow]
+ *           Line break style of the element text.
+ *
+ * @property {string} [transition]
+ *           Animated transition of selected element properties.
+ *
+ * @property {string} [top]
+ *           Top spacing of the element relative to the parent element.
+ *
+ * @property {string} [whiteSpace]
+ *           Line break style of the element text.
+ *
+ * @property {number} [width]
+ *           Width of the element.
  */
 
 /**
  * Generic dictionary in TypeScript notation.
  *
- * @typedef {object} Highcharts.Dictionary<T>
+ * @typedef {*} Highcharts.Dictionary<T>
  *
  * @property {T} [key:string]
  */
@@ -77,13 +149,25 @@
  * An object containing `left` and `top` properties for the position in the
  * page.
  *
- * @typedef {object} Highcharts.OffsetObject
+ * @typedef {*} Highcharts.OffsetObject
  *
  * @property {number} left
  *           Left distance to the page border.
  *
  * @property {number} top
  *           Top distance to the page border.
+ */
+
+/**
+ * An object containing `x` and `y` properties for the position of an element.
+ *
+ * @typedef {object} Highcharts.PositionObject
+ *
+ * @property {number} x
+ *           X position of the element.
+ *
+ * @property {number} y
+ *           Y position of the element.
  */
 
 /**
@@ -102,8 +186,6 @@
  * attributes containing a hyphen are _not_ camel-cased, they should be
  * quoted to preserve the hyphen.
  *
- * @typedef {Highcharts.Dictionary<number|string|Highcharts.SVGPathArray>} Highcharts.SVGAttributes
- *
  * @example
  * {
  *     'stroke': '#ff0000', // basic
@@ -111,6 +193,34 @@
  *     'rotation': 45 // custom
  *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
  * }
+ *
+ * @typedef {*} Highcharts.SVGAttributes
+ *
+ * @property {boolean|number|string|Array<any>|undefined} [key:string]
+ *
+ * @property {string|Highcharts.SVGPathArray} [d]
+ *
+ * @property {boolean} [inverted]
+ *
+ * @property {Array<number>} [matrix]
+ *
+ * @property {Highcharts.ColorString} [stroke]
+ *
+ * @property {string} [rotation]
+ *
+ * @property {number} [rotationOriginX]
+ *
+ * @property {number} [rotationOriginY]
+ *
+ * @property {number} [scaleX]
+ *
+ * @property {number} [scaleY]
+ *
+ * @property {number} [translateX]
+ *
+ * @property {number} [translateY]
+ *
+ * @property {number} [zIndex]
  */
 
 /**
@@ -144,10 +254,10 @@ import H from './Globals.js';
  * utility functions. The most important member of the namespace would be the
  * chart constructor.
  *
- * @namespace Highcharts
- *
  * @example
  * var chart = Highcharts.chart('container', { ... });
+ *
+ * @namespace Highcharts
  */
 
 H.timers = [];
@@ -159,6 +269,9 @@ var charts = H.charts,
 /**
  * Provide error messages for debugging, with links to online explanation. This
  * function can be overridden to provide custom error handling.
+ *
+ * @sample highcharts/chart/highcharts-error/
+ *         Custom error handler
  *
  * @function Highcharts.error
  *
@@ -172,8 +285,6 @@ var charts = H.charts,
  *         Whether to throw an error or just log a warning in the console.
  *
  * @return {void}
- *
- * @sample highcharts/chart/highcharts-error/ Custom error handler
  */
 H.error = function (code, stop) {
     var msg = H.isNumber(code) ?
@@ -606,13 +717,30 @@ H.Fx.prototype = {
 
 /**
  * Utility function to deep merge two or more objects and return a third object.
+ * The merge function can also be used with a single object argument to create a
+ * deep copy of an object.
+ *
+ * @function Highcharts.merge
+ *
+ * @param  {*} a
+ *         The first object to extend. When only this is given, the function
+ *         returns a deep copy.
+ *
+ * @param  {*} [n]
+ *         An object to merge into the previous one.
+ *
+ * @return {*}
+ *         The merged object. If the first argument is true, the return is the
+ *         same as the second argument.
+ *//**
+ * Utility function to deep merge two or more objects and return a third object.
  * If the first argument is true, the contents of the second object is copied
  * into the first object. The merge function can also be used with a single
  * object argument to create a deep copy of an object.
  *
  * @function Highcharts.merge
  *
- * @param  {boolean|undefined} [extend]
+ * @param  {boolean} extend
  *         Whether to extend the left-side object (a) or return a whole new
  *         object.
  *
@@ -620,7 +748,7 @@ H.Fx.prototype = {
  *         The first object to extend. When only this is given, the function
  *         returns a deep copy.
  *
- * @param  {...*} [n]
+ * @param  {*} [n]
  *         An object to merge into the previous one.
  *
  * @return {*}
