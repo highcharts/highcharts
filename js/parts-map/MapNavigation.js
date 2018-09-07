@@ -97,17 +97,17 @@ MapNavigation.prototype.update = function (options) {
         H.objectEach(o.buttons, function (button, n) {
             buttonOptions = merge(o.buttonOptions, button);
 
-            /*= if (build.classic) { =*/
             // Presentational
-            attr = buttonOptions.theme;
-            attr.style = merge(
-                buttonOptions.theme.style,
-                buttonOptions.style // #3203
-            );
-            states = attr.states;
-            hoverStates = states && states.hover;
-            selectStates = states && states.select;
-            /*= } =*/
+            if (!chart.styledMode) {
+                attr = buttonOptions.theme;
+                attr.style = merge(
+                    buttonOptions.theme.style,
+                    buttonOptions.style // #3203
+                );
+                states = attr.states;
+                hoverStates = states && states.hover;
+                selectStates = states && states.select;
+            }
 
             button = chart.renderer.button(
                 buttonOptions.text,

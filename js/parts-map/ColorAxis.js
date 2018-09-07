@@ -304,7 +304,6 @@ if (!H.ColorAxis) {
                  * @ignore
                  */
                 width: 0.01,
-                /*= if (build.classic) { =*/
 
                 /**
                  * The color of the marker.
@@ -314,7 +313,6 @@ if (!H.ColorAxis) {
                  * @product highcharts highmaps
                  */
                 color: '${palette.neutralColor40}'
-                /*= } =*/
             },
 
             /**
@@ -511,17 +509,17 @@ if (!H.ColorAxis) {
                 dataClass = merge(dataClass);
                 dataClasses.push(dataClass);
 
-                /*= if (build.classic) { =*/
-                if (dataClass.color) {
+                if (!chart.styledMode && dataClass.color) {
                     return;
                 }
-                /*= } =*/
+
                 if (options.dataClassColor === 'category') {
-                    /*= if (build.classic) { =*/
-                    colors = chart.options.colors;
-                    colorCount = colors.length;
-                    dataClass.color = colors[colorCounter];
-                    /*= } =*/
+                    if (!chart.styledMode) {
+                        colors = chart.options.colors;
+                        colorCount = colors.length;
+                        dataClass.color = colors[colorCounter];
+                    }
+
                     dataClass.colorIndex = colorCounter;
 
                     // increase and loop back to zero
@@ -628,9 +626,9 @@ if (!H.ColorAxis) {
                         (from === undefined || value >= from) &&
                         (to === undefined || value <= to)
                     ) {
-                        /*= if (build.classic) { =*/
+
                         color = dataClass.color;
-                        /*= } =*/
+
                         if (point) {
                             point.dataClass = i;
                             point.colorIndex = dataClass.colorIndex;
@@ -807,11 +805,11 @@ if (!H.ColorAxis) {
 
                     this.cross.addedToColorAxis = true;
 
-                    /*= if (build.classic) { =*/
-                    this.cross.attr({
-                        fill: this.crosshair.color
-                    });
-                    /*= } =*/
+                    if (!this.chart.styledMode) {
+                        this.cross.attr({
+                            fill: this.crosshair.color
+                        });
+                    }
 
                 }
             }

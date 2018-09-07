@@ -65,7 +65,6 @@ seriesType('map', 'scatter', {
 
     animation: false, // makes the complex shapes slow
 
-    /*= if (build.classic) { =*/
     /**
      * The color to apply to null points.
      *
@@ -104,7 +103,6 @@ seriesType('map', 'scatter', {
      * @apioption plotOptions.series.borderWidth
      */
     borderWidth: 1,
-    /*= } =*/
 
     /**
      * Whether to allow pointer interaction like tooltips and mouse events
@@ -252,11 +250,9 @@ seriesType('map', 'scatter', {
 
         },
 
-        /*= if (build.classic) { =*/
         select: {
             color: '${palette.neutralColor20}'
         }
-        /*= } =*/
     }
 
 // Prototype members
@@ -661,14 +657,11 @@ seriesType('map', 'scatter', {
      * is used.
      */
     pointAttribs: function (point, state) {
-        var attr;
-        /*= if (build.classic) { =*/
-        attr = seriesTypes.column.prototype.pointAttribs.call(
-            this, point, state
-        );
-        /*= } else { =*/
-        attr = this.colorAttribs(point);
-        /*= } =*/
+        var attr = point.series.chart.styledMode ?
+            this.colorAttribs(point) :
+            seriesTypes.column.prototype.pointAttribs.call(
+                this, point, state
+            );
 
         // Set the stroke-width on the group element and let all point graphics
         // inherit. That way we don't have to iterate over all points to update
@@ -723,9 +716,8 @@ seriesType('map', 'scatter', {
         // Draw the shapes again
         if (series.doFullTranslate()) {
 
-            // Individual point actions. TODO: Check unstyled.
-            /*= if (build.classic) { =*/
-            if (chart.hasRendered) {
+            // Individual point actions.
+            if (chart.hasRendered && !chart.styledMode) {
                 each(series.points, function (point) {
 
                     // Restore state color on update/redraw (#3529)
@@ -737,7 +729,6 @@ seriesType('map', 'scatter', {
                     }
                 });
             }
-            /*= } =*/
 
             // Draw them in transformGroup
             series.group = series.transformGroup;
@@ -760,11 +751,14 @@ seriesType('map', 'scatter', {
                         );
                     }
 
-                    /*= if (!build.classic) { =*/
-                    point.graphic.css(
-                        series.pointAttribs(point, point.selected && 'select')
-                    );
-                    /*= } =*/
+                    if (!chart.styledMode) {
+                        point.graphic.css(
+                            series.pointAttribs(
+                                point,
+                                point.selected && 'select'
+                            )
+                        );
+                    }
                 }
             });
 

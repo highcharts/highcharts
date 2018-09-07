@@ -100,7 +100,6 @@ seriesType('heatmap', 'scatter', {
      * @apioption plotOptions.heatmap.rowsize
      */
 
-    /*= if (build.classic) { =*/
 
     /**
      * The color applied to null points. In styled mode, a general CSS class is
@@ -109,7 +108,6 @@ seriesType('heatmap', 'scatter', {
      * @type {Color}
      */
     nullColor: '${palette.neutralColor3}',
-    /*= } =*/
 
     dataLabels: {
 
@@ -230,16 +228,15 @@ seriesType('heatmap', 'scatter', {
         series.translateColors();
     },
     drawPoints: function () {
+
+        // In styled mode, use CSS, otherwise the fill used in the style sheet
+        // will take precedence over the fill attribute.
+        var func = this.chart.styledMode ? 'css' : 'attr';
+
         seriesTypes.column.prototype.drawPoints.call(this);
 
         each(this.points, function (point) {
-            /*= if (build.classic) { =*/
-            point.graphic.attr(this.colorAttribs(point));
-            /*= } else { =*/
-            // In styled mode, use CSS, otherwise the fill used in the style
-            // sheet will take precedence over the fill attribute.
-            point.graphic.css(this.colorAttribs(point));
-            /*= } =*/
+            point.graphic[func](this.colorAttribs(point));
         }, this);
     },
     animate: noop,

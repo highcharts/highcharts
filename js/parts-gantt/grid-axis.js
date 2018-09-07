@@ -149,12 +149,15 @@ Axis.prototype.addTitle = function () {
             align: textAlign
         })
         .addClass('highcharts-axis-title')
-        /*= if (build.classic) { =*/
-        .css(axisTitleOptions.style)
-        /*= } =*/
         // Add to axisParent instead of axisGroup, to ignore the space
         // it takes
         .add(axisParent);
+
+
+        if (!this.chart.styledMode) {
+            axis.axisTitle.css(axisTitleOptions.style);
+        }
+
         axis.axisTitle.isNew = true;
     }
 
