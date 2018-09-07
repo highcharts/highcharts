@@ -365,12 +365,17 @@ merge(true, defaultOptions.navigation,
             /**
              * The default fill exists only to capture hover events.
              * @type {String}
+             * @default ${palette.backgroundColor}
+             * @apioption navigation.buttonOptions.theme.fill
              */
-            fill: '${palette.backgroundColor}',
+
             /**
+             * Default stroke for the buttons.
              * @type {String}
+             * @default none
+             * @apioption navigation.buttonOptions.theme.stroke
              */
-            stroke: 'none',
+
             /**
              * @type {Number}
              * @default 5
@@ -1462,18 +1467,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             });
         }
 
+
+        if (!chart.styledMode) {
+            attr['stroke-linecap'] = 'round';
+            attr.fill = pick(attr.fill, '${palette.backgroundColor}');
+            attr.stroke = pick(attr.stroke, 'none');
+        }
+
         button = renderer
             .button(btnOptions.text, 0, 0, callback, attr, hover, select)
             .addClass(options.className)
             .attr({
                 title: pick(chart.options.lang[btnOptions._titleKey], '')
             });
-
-        if (!chart.styledMode) {
-            button.attr({
-                'stroke-linecap': 'round'
-            });
-        }
 
         button.menuClassName = (
             options.menuClassName ||

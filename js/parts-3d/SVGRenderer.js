@@ -237,6 +237,9 @@ SVGRenderer.prototype.polyhedron = function (args) {
                     result.faces.push(renderer.face3d().add(result));
                 }
                 for (var i = 0; i < hash.faces.length; i++) {
+                    if (styledMode) {
+                        delete hash.faces[i].fill;
+                    }
                     result.faces[i].attr(
                         hash.faces[i],
                         null,
