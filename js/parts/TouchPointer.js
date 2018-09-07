@@ -16,8 +16,12 @@ var charts = H.charts,
     pick = H.pick,
     Pointer = H.Pointer;
 
-/*
+/**
  * Support for touch devices
+ *
+ * @ignore
+ * @class
+ * @name Highcharts.Pointer
  */
 extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
