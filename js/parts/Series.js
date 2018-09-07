@@ -1859,15 +1859,15 @@ H.Series = H.seriesType('line', null, { // base series options
 
         /**
          * How to handle data labels that flow outside the plot area. The
-         * default is `justify`, which aligns them inside the plot area. For
+         * default is `"justify"`, which aligns them inside the plot area. For
          * columns and bars, this means it will be moved inside the bar. To
          * display data labels outside the plot area, set `crop` to `false` and
-         * `overflow` to `"none"`.
+         * `overflow` to `"allow"`.
          *
          * @type       {string}
          * @default    justify
          * @since      3.0.6
-         * @validvalue ["justify", "none"]
+         * @validvalue ["allow", "justify"]
          * @apioption  plotOptions.series.dataLabels.overflow
          */
 
