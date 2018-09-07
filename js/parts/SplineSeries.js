@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
 import H from './Globals.js';
@@ -14,28 +15,32 @@ var pick = H.pick,
     seriesType = H.seriesType;
 
 /**
- * A spline series is a special type of line series, where the segments between
- * the data points are smoothed.
- *
- * @sample {highcharts} highcharts/demo/spline-irregular-time/
- *         Spline chart
- * @sample {highstock} stock/demo/spline/
- *         Spline chart
- *
- * @extends    plotOptions.series
- * @excluding  step
- * @product    highcharts highstock
- * @apioption  plotOptions.spline
- */
-
-/**
  * Spline series type.
  *
  * @private
- * @constructor Highcharts.seriesTypes.spline
- * @augments    Highcarts.Series
+ * @class
+ * @name Highcharts.seriesTypes.spline
+ *
+ * @augments Highcarts.Series
  */
-seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
+seriesType('spline', 'line',
+
+    /**
+     * A spline series is a special type of line series, where the segments
+     * between the data points are smoothed.
+     *
+     * @sample {highcharts} highcharts/demo/spline-irregular-time/
+     *         Spline chart
+     * @sample {highstock} stock/demo/spline/
+     *         Spline chart
+     *
+     * @extends    plotOptions.series
+     * @excluding  step
+     * @product    highcharts highstock
+     * @apioption  plotOptions.spline
+     */
+
+{}, /** @lends seriesTypes.spline.prototype */ {
 
     /**
      * Get the spline segment from a given point's previous neighbour to the
