@@ -1368,6 +1368,12 @@ RangeSelector.prototype = {
             lang = defaultOptions.lang,
             div = rangeSelector.div,
             options = chartOptions.rangeSelector,
+            // Place inputs above the container
+            inputsZIndex = pick(
+                chartOptions.chart.style &&
+                chartOptions.chart.style.zIndex,
+                0
+            ) + 1,
             floating = options.floating,
             buttons = rangeSelector.buttons,
             inputGroup = rangeSelector.inputGroup,
@@ -1463,7 +1469,7 @@ RangeSelector.prototype = {
                 rangeSelector.div = div = createElement('div', null, {
                     position: 'relative',
                     height: 0,
-                    zIndex: 1 // above container
+                    zIndex: inputsZIndex
                 });
 
                 container.parentNode.insertBefore(div, container);
