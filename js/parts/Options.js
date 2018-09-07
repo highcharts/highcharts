@@ -1903,7 +1903,11 @@ H.defaultOptions = {
          */
 
         /**
-         * Enable or disable the legend.
+         * Enable or disable the legend. There is also a series-specific option,
+         * [showInLegend](#plotOptions.series.showInLegend), that can hide the
+         * series from the legend. In some series types this is `false` by
+         * default, so it must set to `true` in order to show the legend for the
+         * series.
          *
          * @sample {highcharts} highcharts/legend/enabled-false/ Legend disabled
          * @sample {highstock} stock/legend/align/ Various legend options
@@ -2097,6 +2101,7 @@ H.defaultOptions = {
          * @sample {highcharts} highcharts/legend/lineheight/
          *         Setting padding
          *
+         * @deprecated
          * @type       {number}
          * @default    16
          * @since      2.0

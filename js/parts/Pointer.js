@@ -18,6 +18,7 @@ var H = Highcharts,
     defined = H.defined,
     each = H.each,
     extend = H.extend,
+    find = H.find,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
     isObject = H.isObject,
@@ -171,9 +172,9 @@ Highcharts.Pointer.prototype = {
      * @param  {number} coordinates.chartX
      * @param  {number} coordinates.chartY
      *
-     * @return {Array<Point>} The points closest to given coordinates.
+     * @return {Point|undefined} The point closest to given coordinates.
      */
-    findNearestKDPoints: function (series, shared, coordinates) {
+    findNearestKDPoint: function (series, shared, coordinates) {
         var closest,
             sort = function (p1, p2) {
                 var isCloserX = p1.distX - p2.distX,
@@ -198,12 +199,10 @@ Highcharts.Pointer.prototype = {
                     result = p1.series.index > p2.series.index ? -1 : 1;
                 }
                 return result;
-            },
-            kdpoints = [];
-
+            };
         each(series, function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared,
-                compareX = shared || (
+                compareX = (
                     !noSharedTooltip &&
                     s.options.findNearestPointBy.indexOf('y') < 0
                 ),
@@ -211,18 +210,16 @@ Highcharts.Pointer.prototype = {
                     coordinates,
                     compareX
                 );
-
-            // Check that we actually found a point on the series.
-            if (isObject(point, true) && point.series) {
-                kdpoints.push(point);
+            if (
+                // Check that we actually found a point on the series.
+                isObject(point, true) &&
                 // Use the new point if it is closer.
-                if (!isObject(closest, true) || (sort(closest, point) > 0)) {
-                    closest = point;
-                }
+                (!isObject(closest, true) || (sort(closest, point) > 0))
+            ) {
+                closest = point;
             }
         });
-        kdpoints.closest = closest;
-        return kdpoints;
+        return closest;
     },
     getPointFromEvent: function (e) {
         var target = e.target,
@@ -288,13 +285,13 @@ Highcharts.Pointer.prototype = {
         series,
         isDirectTouch,
         shared,
-        coordinates
+        coordinates,
+        params
     ) {
         var hoverPoint,
             hoverPoints = [],
             hoverSeries = existingHoverSeries,
-            kdpoints = [],
-            isBoosting = this.chart.isBoosting,
+            isBoosting = params && params.isBoosting,
             useExisting = !!(isDirectTouch && existingHoverPoint),
             notSticky = hoverSeries && !hoverSeries.stickyTracking,
             filter = function (s) {
@@ -306,62 +303,49 @@ Highcharts.Pointer.prototype = {
             },
             // Which series to look in for the hover point
             searchSeries = notSticky ?
-                // If it has stickyTracking false, only search when a series is
-                // actually hovered
-                H.grep(series, filter) :
+                // Only search on hovered series if it has stickyTracking false
+                [hoverSeries] :
                 // Filter what series to look in.
                 H.grep(series, function (s) {
                     return filter(s) && s.stickyTracking;
                 });
 
         // Use existing hovered point or find the one closest to coordinates.
-        if (useExisting) {
-            kdpoints = this.findNearestKDPoints(
-                searchSeries,
-                shared,
-                {
-                    chartX: existingHoverPoint.plotX + this.chart.plotLeft,
-                    chartY: existingHoverPoint.plotY + this.chart.plotTop
-                }
-            );
-            hoverPoint = existingHoverPoint;
-        } else {
-
-            kdpoints = this.findNearestKDPoints(
-                searchSeries,
-                shared,
-                coordinates
-            );
-            hoverPoint = kdpoints.closest;
-        }
-
+        hoverPoint = useExisting ?
+            existingHoverPoint :
+            this.findNearestKDPoint(searchSeries, shared, coordinates);
 
         // Assign hover series
         hoverSeries = hoverPoint && hoverPoint.series;
 
-        // Filter the hoverPoints.
-        if (kdpoints.length && shared && !hoverSeries.noSharedTooltip) {
+        // If we have a hoverPoint, assign hoverPoints.
+        if (hoverPoint) {
+            // When tooltip is shared, it displays more than one point
+            if (shared && !hoverSeries.noSharedTooltip) {
+                searchSeries = H.grep(series, function (s) {
+                    return filter(s) && !s.noSharedTooltip;
+                });
 
-            // Get all points with the same x value as the hoverPoint
-            each(kdpoints, function (p) {
-
-                if (isBoosting) {
-                    p = p.series.getPoint(p);
-                }
-
-                if (
-                    filter(p.series) &&
-                    !p.series.noSharedTooltip &&
-                    !p.isNull &&
-                    p.x === hoverPoint.x
-                ) {
-                    hoverPoints.push(p);
-                }
-            });
-        } else if (hoverPoint) {
-            hoverPoints.push(hoverPoint);
+                // Get all points with the same x value as the hoverPoint
+                each(searchSeries, function (s) {
+                    var point = find(s.points, function (p) {
+                        return p.x === hoverPoint.x && !p.isNull;
+                    });
+                    if (isObject(point)) {
+                        /*
+                        * Boost returns a minimal point. Convert it to a usable
+                        * point for tooltip and states.
+                        */
+                        if (isBoosting) {
+                            point = s.getPoint(point);
+                        }
+                        hoverPoints.push(point);
+                    }
+                });
+            } else {
+                hoverPoints.push(hoverPoint);
+            }
         }
-
         return {
             hoverPoint: hoverPoint,
             hoverSeries: hoverSeries,
@@ -395,7 +379,8 @@ Highcharts.Pointer.prototype = {
                 series,
                 isDirectTouch,
                 shared,
-                e
+                e,
+                { isBoosting: chart.isBoosting }
             ),
             useSharedTooltip,
             followPointer,
