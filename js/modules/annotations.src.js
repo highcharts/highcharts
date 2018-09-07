@@ -102,11 +102,9 @@ extend(MarkerMixin, {
 });
 
 H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
-    var options = { id: id },
-        chart = H.charts[this.chartIndex],
-        styledMode = chart && chart.styledMode;
+    var options = { id: id };
 
-    if (!styledMode) {
+    if (!this.styledMode) {
         var attrs = {
             stroke: markerOptions.color || 'none',
             fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'

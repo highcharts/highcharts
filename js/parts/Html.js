@@ -93,9 +93,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             align = wrapper.textAlign || 'left',
             alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
             styles = wrapper.styles,
-            whiteSpace = styles && styles.whiteSpace,
-            chart = H.charts[renderer.chartIndex],
-            styledMode = chart && chart.styledMode;
+            whiteSpace = styles && styles.whiteSpace;
 
         function getTextPxLength() {
             // Reset multiline/ellipsis in order to read width (#4928,
@@ -113,7 +111,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             marginTop: translateY
         });
 
-        if (!styledMode && wrapper.shadows) { // used in labels/tooltip
+        if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
             each(wrapper.shadows, function (shadow) {
                 css(shadow, {
                     marginLeft: translateX + 1,

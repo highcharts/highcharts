@@ -35,9 +35,7 @@ H.extend(H.SVGElement.prototype, {
         }
         // Add the border rect
         var bb = this.getBBox(),
-            pad = pick(margin, 3),
-            chart = H.charts[this.renderer.chartIndex],
-            styledMode = chart && chart.styledMode;
+            pad = pick(margin, 3);
 
         this.focusBorder = this.renderer.rect(
             bb.x - pad,
@@ -52,7 +50,7 @@ H.extend(H.SVGElement.prototype, {
         })
         .add(this.parentGroup);
 
-        if (!styledMode) {
+        if (!this.renderer.styledMode) {
             this.focusBorder.attr({
                 stroke: style && style.stroke,
                 'stroke-width': style && style.strokeWidth

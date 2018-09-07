@@ -203,12 +203,9 @@ SVGRenderer.prototype.face3d = function (args) {
 SVGRenderer.prototype.polyhedron = function (args) {
     var renderer = this,
         result = this.g(),
-        destroy = result.destroy,
-        chart = H.charts[this.chartIndex],
-        styledMode = chart && chart.styledMode;
+        destroy = result.destroy;
 
-
-    if (!styledMode) {
+    if (!this.styledMode) {
         result.attr({
             'stroke-linejoin': 'round'
         });
@@ -237,7 +234,7 @@ SVGRenderer.prototype.polyhedron = function (args) {
                     result.faces.push(renderer.face3d().add(result));
                 }
                 for (var i = 0; i < hash.faces.length; i++) {
-                    if (styledMode) {
+                    if (renderer.styledMode) {
                         delete hash.faces[i].fill;
                     }
                     result.faces[i].attr(
@@ -278,11 +275,9 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
     var result = this.g(),
         destroy = result.destroy,
-        paths = this.cuboidPath(shapeArgs),
-        chart = H.charts[this.chartIndex],
-        styledMode = chart && chart.styledMode;
+        paths = this.cuboidPath(shapeArgs);
 
-    if (!styledMode) {
+    if (!this.styledMode) {
         result.attr({
             'stroke-linejoin': 'round'
         });

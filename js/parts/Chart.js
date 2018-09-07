@@ -1210,6 +1210,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Add a reference to the charts index
         chart.renderer.chartIndex = chart.index;
+        chart.renderer.styledMode = chart.styledMode;
 
         fireEvent(this, 'afterGetContainer');
     },
