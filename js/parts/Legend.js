@@ -97,10 +97,14 @@ Highcharts.Legend.prototype = {
 
         this.options = options;
 
-        /*= if (build.classic) { =*/
-        this.itemStyle = options.itemStyle;
-        this.itemHiddenStyle = merge(this.itemStyle, options.itemHiddenStyle);
-        /*= } =*/
+        if (!this.chart.styledMode) {
+            this.itemStyle = options.itemStyle;
+            this.itemHiddenStyle = merge(
+                this.itemStyle,
+                options.itemHiddenStyle
+            );
+        }
+
         this.itemMarginTop = options.itemMarginTop || 0;
         this.padding = padding;
         this.initialItemY = padding - 5; // 5 is pixels above the text
@@ -165,41 +169,44 @@ Highcharts.Legend.prototype = {
             'highcharts-legend-item-hidden'
         );
 
-        /*= if (build.classic) { =*/
-        var legend = this,
-            options = legend.options,
-            legendItem = item.legendItem,
-            legendLine = item.legendLine,
-            legendSymbol = item.legendSymbol,
-            hiddenColor = legend.itemHiddenStyle.color,
-            textColor = visible ? options.itemStyle.color : hiddenColor,
-            symbolColor = visible ? (item.color || hiddenColor) : hiddenColor,
-            markerOptions = item.options && item.options.marker,
-            symbolAttr = { fill: symbolColor };
+        if (!this.chart.styledMode) {
+            var legend = this,
+                options = legend.options,
+                legendItem = item.legendItem,
+                legendLine = item.legendLine,
+                legendSymbol = item.legendSymbol,
+                hiddenColor = legend.itemHiddenStyle.color,
+                textColor = visible ? options.itemStyle.color : hiddenColor,
+                symbolColor = visible ?
+                    (item.color || hiddenColor) :
+                    hiddenColor,
+                markerOptions = item.options && item.options.marker,
+                symbolAttr = { fill: symbolColor };
 
-        if (legendItem) {
-            legendItem.css({
-                fill: textColor,
-                color: textColor // #1553, oldIE
-            });
-        }
-        if (legendLine) {
-            legendLine.attr({ stroke: symbolColor });
-        }
-
-        if (legendSymbol) {
-
-            // Apply marker options
-            if (markerOptions && legendSymbol.isMarker) { // #585
-                symbolAttr = item.pointAttribs();
-                if (!visible) {
-                    symbolAttr.stroke = symbolAttr.fill = hiddenColor; // #6769
-                }
+            if (legendItem) {
+                legendItem.css({
+                    fill: textColor,
+                    color: textColor // #1553, oldIE
+                });
+            }
+            if (legendLine) {
+                legendLine.attr({ stroke: symbolColor });
             }
 
-            legendSymbol.attr(symbolAttr);
+            if (legendSymbol) {
+
+                // Apply marker options
+                if (markerOptions && legendSymbol.isMarker) { // #585
+                    symbolAttr = item.pointAttribs();
+                    if (!visible) {
+                        // #6769
+                        symbolAttr.stroke = symbolAttr.fill = hiddenColor;
+                    }
+                }
+
+                legendSymbol.attr(symbolAttr);
+            }
         }
-        /*= } =*/
 
         fireEvent(this, 'afterColorizeItem', { item: item, visible: visible });
     },
@@ -383,11 +390,13 @@ Highcharts.Legend.prototype = {
                         null,
                         'legend-title'
                     )
-                    .attr({ zIndex: 1 })
-                    /*= if (build.classic) { =*/
-                    .css(titleOptions.style)
-                    /*= } =*/
-                    .add(this.group);
+                    .attr({ zIndex: 1 });
+
+                if (!this.chart.styledMode) {
+                    this.title.css(titleOptions.style);
+                }
+
+                this.title.add(this.group);
             }
             bBox = this.title.getBBox();
             titleHeight = bBox.height;
@@ -436,10 +445,8 @@ Highcharts.Legend.prototype = {
             horizontal = options.layout === 'horizontal',
             symbolWidth = legend.symbolWidth,
             symbolPadding = options.symbolPadding,
-            /*= if (build.classic) { =*/
             itemStyle = legend.itemStyle,
             itemHiddenStyle = legend.itemHiddenStyle,
-            /*= } =*/
             itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
             ltr = !options.rtl,
             bBox,
@@ -479,16 +486,18 @@ Highcharts.Legend.prototype = {
                     ltr ? symbolWidth + symbolPadding : -symbolPadding,
                     legend.baseline || 0,
                     useHTML
-                )
-                /*= if (build.classic) { =*/
+                );
+
+            if (!chart.styledMode) {
                 // merge to prevent modifying original (#1021)
-                .css(merge(item.visible ? itemStyle : itemHiddenStyle))
-                /*= } =*/
-                .attr({
-                    align: ltr ? 'left' : 'right',
-                    zIndex: 2
-                })
-                .add(item.legendGroup);
+                li.css(merge(item.visible ? itemStyle : itemHiddenStyle));
+            }
+
+            li.attr({
+                align: ltr ? 'left' : 'right',
+                zIndex: 2
+            })
+            .add(item.legendGroup);
 
             // Get the baseline for the first item - the font size is equal for
             // all
@@ -523,9 +532,7 @@ Highcharts.Legend.prototype = {
         legend.colorizeItem(item, item.visible);
 
         // Take care of max width and text overflow (#6659)
-        /*= if (build.classic) { =*/
-        if (!itemStyle.width) {
-        /*= } =*/
+        if (chart.styledMode || !itemStyle.width) {
             li.css({
                 width: (
                     options.itemWidth ||
@@ -533,9 +540,7 @@ Highcharts.Legend.prototype = {
                     chart.spacingBox.width
                 ) - itemExtraWidth
             });
-        /*= if (build.classic) { =*/
         }
-        /*= } =*/
 
         // Always update the text
         legend.setText(item);
@@ -885,16 +890,16 @@ Highcharts.Legend.prototype = {
             box.isNew = true;
         }
 
-        /*= if (build.classic) { =*/
         // Presentational
-        box
-            .attr({
-                stroke: options.borderColor,
-                'stroke-width': options.borderWidth || 0,
-                fill: options.backgroundColor || 'none'
-            })
-            .shadow(options.shadow);
-        /*= } =*/
+        if (!chart.styledMode) {
+            box
+                .attr({
+                    stroke: options.borderColor,
+                    'stroke-width': options.borderWidth || 0,
+                    fill: options.backgroundColor || 'none'
+                })
+                .shadow(options.shadow);
+        }
 
         if (legendWidth > 0 && legendHeight > 0) {
             box[box.isNew ? 'attr' : 'animate'](
@@ -911,12 +916,10 @@ Highcharts.Legend.prototype = {
         // hide the border if no items
         box[display ? 'show' : 'hide']();
 
-        /*= if (!build.classic) { =*/
         // Open for responsiveness
-        if (legendGroup.getStyle('display') === 'none') {
+        if (chart.styledMode && legendGroup.getStyle('display') === 'none') {
             legendWidth = legendHeight = 0;
         }
-        /*= } =*/
 
         legend.legendWidth = legendWidth;
         legend.legendHeight = legendHeight;
@@ -1075,11 +1078,12 @@ Highcharts.Legend.prototype = {
                     .add(nav);
 
                 this.pager = renderer.text('', 15, 10)
-                    .addClass('highcharts-legend-navigation')
-                    /*= if (build.classic) { =*/
-                    .css(navOptions.style)
-                    /*= } =*/
-                    .add(nav);
+                    .addClass('highcharts-legend-navigation');
+
+                if (!chart.styledMode) {
+                    this.pager.css(navOptions.style);
+                }
+                this.pager.add(nav);
 
                 this.down = renderer
                     .symbol(
@@ -1166,26 +1170,28 @@ Highcharts.Legend.prototype = {
                     'highcharts-legend-nav-active'
             });
 
-            /*= if (build.classic) { =*/
-            this.up
-                .attr({
-                    fill: currentPage === 1 ?
-                        navOptions.inactiveColor :
-                        navOptions.activeColor
-                })
-                .css({
-                    cursor: currentPage === 1 ? 'default' : 'pointer'
-                });
-            this.down
-                .attr({
-                    fill: currentPage === pageCount ?
-                        navOptions.inactiveColor :
-                        navOptions.activeColor
-                })
-                .css({
-                    cursor: currentPage === pageCount ? 'default' : 'pointer'
-                });
-            /*= } =*/
+            if (!this.chart.styledMode) {
+                this.up
+                    .attr({
+                        fill: currentPage === 1 ?
+                            navOptions.inactiveColor :
+                            navOptions.activeColor
+                    })
+                    .css({
+                        cursor: currentPage === 1 ? 'default' : 'pointer'
+                    });
+                this.down
+                    .attr({
+                        fill: currentPage === pageCount ?
+                            navOptions.inactiveColor :
+                            navOptions.activeColor
+                    })
+                    .css({
+                        cursor: currentPage === pageCount ?
+                            'default' :
+                            'pointer'
+                    });
+            }
 
             this.scrollOffset = -pages[currentPage - 1] + this.initialItemY;
 
@@ -1270,14 +1276,14 @@ H.LegendSymbolMixin = {
             attr = {};
 
         // Draw the line
-        /*= if (build.classic) { =*/
-        attr = {
-            'stroke-width': options.lineWidth || 0
-        };
-        if (options.dashStyle) {
-            attr.dashstyle = options.dashStyle;
+        if (!this.chart.styledMode) {
+            attr = {
+                'stroke-width': options.lineWidth || 0
+            };
+            if (options.dashStyle) {
+                attr.dashstyle = options.dashStyle;
+            }
         }
-        /*= } =*/
 
         this.legendLine = renderer.path([
             'M',

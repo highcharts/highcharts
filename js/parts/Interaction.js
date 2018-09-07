@@ -83,13 +83,11 @@ TrackerMixin = H.TrackerMixin = {
                         series[key].on('touchstart', onMouseOver);
                     }
 
-                    /*= if (build.classic) { =*/
-                    if (series.options.cursor) {
+                    if (!chart.styledMode && series.options.cursor) {
                         series[key]
                             .css(css)
                             .css({ cursor: series.options.cursor });
                     }
-                    /*= } =*/
                 }
             });
             series._hasTracking = true;
@@ -173,13 +171,6 @@ TrackerMixin = H.TrackerMixin = {
 
             series.tracker = renderer.path(trackerPath)
             .attr({
-                /*= if (build.classic) { =*/
-                'stroke-linejoin': 'round', // #1225
-                stroke: TRACKER_FILL,
-                fill: trackByArea ? TRACKER_FILL : 'none',
-                'stroke-width': series.graph.strokeWidth() +
-                    (trackByArea ? 0 : 2 * snap),
-                /*= } =*/
                 visibility: series.visible ? 'visible' : 'hidden',
                 zIndex: 2
             })
@@ -189,6 +180,16 @@ TrackerMixin = H.TrackerMixin = {
                     'highcharts-tracker-line'
             )
             .add(series.group);
+
+            if (!chart.styledMode) {
+                series.tracker.attr({
+                    'stroke-linejoin': 'round', // #1225
+                    stroke: TRACKER_FILL,
+                    fill: trackByArea ? TRACKER_FILL : 'none',
+                    'stroke-width': series.graph.strokeWidth() +
+                        (trackByArea ? 0 : 2 * snap)
+                });
+            }
 
             // The tracker is added to the series group, which is clipped, but
             // is covered by the marker group. So the marker group also needs to
@@ -200,11 +201,9 @@ TrackerMixin = H.TrackerMixin = {
                         pointer.onTrackerMouseOut(e);
                     });
 
-                /*= if (build.classic) { =*/
-                if (options.cursor) {
+                if (options.cursor && !chart.styledMode) {
                     tracker.css({ cursor: options.cursor });
                 }
-                /*= } =*/
 
                 if (hasTouch) {
                     tracker.on('touchstart', onMouseOver);
@@ -243,7 +242,8 @@ extend(Legend.prototype, {
         var legend = this,
             boxWrapper = legend.chart.renderer.boxWrapper,
             activeClass = 'highcharts-legend-' +
-                (item instanceof Point ? 'point' : 'series') + '-active';
+                (item instanceof Point ? 'point' : 'series') + '-active',
+            styledMode = legend.chart.styledMode;
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
@@ -253,16 +253,20 @@ extend(Legend.prototype, {
             // A CSS class to dim or hide other than the hovered series
             boxWrapper.addClass(activeClass);
 
-            /*= if (build.classic) { =*/
-            legendItem.css(legend.options.itemHoverStyle);
-            /*= } =*/
+            if (!styledMode) {
+                legendItem.css(legend.options.itemHoverStyle);
+            }
         })
         .on('mouseout', function () {
-            /*= if (build.classic) { =*/
-            legendItem.css(
-                merge(item.visible ? legend.itemStyle : legend.itemHiddenStyle)
-            );
-            /*= } =*/
+            if (!legend.styledMode) {
+                legendItem.css(
+                    merge(
+                        item.visible ?
+                            legend.itemStyle :
+                            legend.itemHiddenStyle
+                    )
+                );
+            }
 
             // A CSS class to dim or hide other than the hovered series
             boxWrapper.removeClass(activeClass);
@@ -326,13 +330,6 @@ extend(Legend.prototype, {
         });
     }
 });
-
-
-/*= if (build.classic) { =*/
-// Add pointer cursor to legend itemstyle in defaultOptions
-defaultOptions.legend.itemStyle.cursor = 'pointer';
-/*= } =*/
-
 
 /*
  * Extend the Chart object with interaction
@@ -737,15 +734,15 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 point.graphic.addClass('highcharts-point-' + state);
             }
 
-            /*= if (build.classic) { =*/
-            point.graphic.animate(
-                series.pointAttribs(point, state),
-                pick(
-                    chart.options.chart.animation,
-                    stateOptions.animation
-                )
-            );
-            /*= } =*/
+            if (!chart.styledMode) {
+                point.graphic.animate(
+                    series.pointAttribs(point, state),
+                    pick(
+                        chart.options.chart.animation,
+                        stateOptions.animation
+                    )
+                );
+            }
 
             if (markerAttribs) {
                 point.graphic.animate(
@@ -799,11 +796,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                         y: markerAttribs.y
                     });
                 }
-                /*= if (build.classic) { =*/
-                if (stateMarkerGraphic) {
+
+                if (!chart.styledMode && stateMarkerGraphic) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
                 }
-                /*= } =*/
             }
 
             if (stateMarkerGraphic) {
@@ -835,12 +831,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             });
             halo.point = point; // #6055
 
-            /*= if (build.classic) { =*/
-            halo.attr(extend({
-                'fill': point.color || series.color,
-                'fill-opacity': haloOptions.opacity
-            }, haloOptions.attributes));
-            /*= } =*/
+            if (!chart.styledMode) {
+                halo.attr(extend({
+                    'fill': point.color || series.color,
+                    'fill-opacity': haloOptions.opacity
+                }, haloOptions.attributes));
+            }
 
         } else if (halo && halo.point && halo.point.haloPath) {
             // Animate back to 0 on the current halo point (#6055)
@@ -987,42 +983,45 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
             series.state = state;
 
-            /*= if (build.classic) { =*/
+            if (!series.chart.styledMode) {
 
-            if (stateOptions[state] && stateOptions[state].enabled === false) {
-                return;
-            }
+                if (
+                    stateOptions[state] &&
+                    stateOptions[state].enabled === false
+                ) {
+                    return;
+                }
 
-            if (state) {
-                lineWidth = (
-                    stateOptions[state].lineWidth ||
-                    lineWidth + (stateOptions[state].lineWidthPlus || 0)
-                ); // #4035
-            }
+                if (state) {
+                    lineWidth = (
+                        stateOptions[state].lineWidth ||
+                        lineWidth + (stateOptions[state].lineWidthPlus || 0)
+                    ); // #4035
+                }
 
-            if (graph && !graph.dashstyle) {
-                attribs = {
-                    'stroke-width': lineWidth
-                };
+                if (graph && !graph.dashstyle) {
+                    attribs = {
+                        'stroke-width': lineWidth
+                    };
 
-                // Animate the graph stroke-width. By default a quick animation
-                // to hover, slower to un-hover.
-                graph.animate(
-                    attribs,
-                    pick(
-                        (
-                            stateOptions[state || 'normal'] &&
-                            stateOptions[state || 'normal'].animation
-                        ),
-                        series.chart.options.chart.animation
-                    )
-                );
-                while (series['zone-graph-' + i]) {
-                    series['zone-graph-' + i].attr(attribs);
-                    i = i + 1;
+                    // Animate the graph stroke-width. By default a quick
+                    // animation to hover, slower to un-hover.
+                    graph.animate(
+                        attribs,
+                        pick(
+                            (
+                                stateOptions[state || 'normal'] &&
+                                stateOptions[state || 'normal'].animation
+                            ),
+                            series.chart.options.chart.animation
+                        )
+                    );
+                    while (series['zone-graph-' + i]) {
+                        series['zone-graph-' + i].attr(attribs);
+                        i = i + 1;
+                    }
                 }
             }
-            /*= } =*/
         }
     },
 

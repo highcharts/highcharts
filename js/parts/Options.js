@@ -2364,6 +2364,7 @@ H.defaultOptions = {
          */
         itemStyle: {
             color: '${palette.neutralColor80}',
+            cursor: 'pointer',
             fontSize: '12px',
             fontWeight: 'bold',
             textOverflow: 'ellipsis'

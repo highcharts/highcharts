@@ -181,8 +181,6 @@ seriesType('flags', 'column', {
      * @apioption plotOptions.flags.height
      */
 
-    /*= if (build.classic) { =*/
-
     /**
      * The fill color for the flags.
      *
@@ -253,7 +251,6 @@ seriesType('flags', 'column', {
         fontSize: '11px',
         fontWeight: 'bold'
     }
-    /*= } =*/
 
 }, /** @lends seriesTypes.flags.prototype */ {
     sorted: false,
@@ -267,7 +264,6 @@ seriesType('flags', 'column', {
      */
     init: Series.prototype.init,
 
-    /*= if (build.classic) { =*/
     /**
      * Get presentational attributes
      */
@@ -290,7 +286,6 @@ seriesType('flags', 'column', {
             'stroke-width': lineWidth || options.lineWidth || 0
         };
     },
-    /*= } =*/
 
     translate: onSeriesMixin.translate,
     getPlotBox: onSeriesMixin.getPlotBox,
@@ -357,12 +352,15 @@ seriesType('flags', 'column', {
                         null,
                         null,
                         options.useHTML
-                    )
-                    /*= if (build.classic) { =*/
-                    .attr(series.pointAttribs(point))
-                    .css(merge(options.style, point.style))
-                    /*= } =*/
-                    .attr({
+                    );
+
+                    if (!chart.styledMode) {
+                        graphic
+                            .attr(series.pointAttribs(point))
+                            .css(merge(options.style, point.style));
+                    }
+
+                    graphic.attr({
                         align: shape === 'flag' ? 'left' : 'center',
                         width: options.width,
                         height: options.height,
@@ -376,9 +374,10 @@ seriesType('flags', 'column', {
                         point.graphic.div.point = point;
                     }
 
-                    /*= if (build.classic) { =*/
-                    graphic.shadow(options.shadow);
-                    /*= } =*/
+                    if (!chart.styledMode) {
+                        graphic.shadow(options.shadow);
+                    }
+
                     graphic.isNew = true;
                 }
 
@@ -603,7 +602,6 @@ function createPinSymbol(shape) {
 createPinSymbol('circle');
 createPinSymbol('square');
 
-/*= if (build.classic) { =*/
 /**
  * The symbol callbacks are generated on the SVGRenderer object in all browsers.
  * Even VML browsers need this in order to generate shapes in export. Now share
@@ -614,7 +612,6 @@ if (Renderer === VMLRenderer) {
         VMLRenderer.prototype.symbols[shape] = symbols[shape];
     });
 }
-/*= } =*/
 
 /**
  * A `flags` series. If the [type](#series.flags.type) option is not

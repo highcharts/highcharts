@@ -287,6 +287,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     new H.Time(userOptions.time) :
                     H.time;
 
+            /**
+             * Whether the chart is in styled mode, meaning all presentatinoal
+             * attributes are avoided.
+             *
+             * @name Highcharts.Chart#styledMode
+             * @type {boolean}
+             */
             this.styledMode = optionsChart.styledMode;
             this.hasCartesianSeries = optionsChart.showAxes;
 
