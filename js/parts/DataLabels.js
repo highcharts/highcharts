@@ -8,7 +8,7 @@
  * A label box.
  *
  * @private
- * @typedef {*} Highcharts.DataLabelBoxObject
+ * @typedef Highcharts.DataLabelBoxObject
  *
  * @property {number} align
  *
@@ -25,7 +25,7 @@
  * Alignment offset for a label.
  *
  * @private
- * @typedef {*} Highcharts.DataLabelAlignObject
+ * @typedef Highcharts.DataLabelAlignObject
  *
  * @property {number} x
  *
@@ -44,9 +44,11 @@
  */
 
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
+
 var addEvent = H.addEvent,
     arrayMax = H.arrayMax,
     defined = H.defined,
@@ -62,7 +64,6 @@ var addEvent = H.addEvent,
     seriesTypes = H.seriesTypes,
     some = H.some,
     stableSort = H.stableSort;
-
 
 /**
  * General distribution algorithm for distributing labels of differing size
