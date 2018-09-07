@@ -33,7 +33,6 @@ var each = H.each,
  * @optionparent plotOptions.arearange
  */
 seriesType('arearange', 'area', {
-    /*= if (build.classic) { =*/
 
     /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
@@ -52,7 +51,6 @@ seriesType('arearange', 'area', {
      * @product highcharts highstock
      */
     lineWidth: 1,
-    /*= } =*/
 
     threshold: null,
 

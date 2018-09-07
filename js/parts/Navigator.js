@@ -836,7 +836,10 @@ Navigator.prototype = {
             chart = navigator.chart,
             inverted = chart.inverted,
             renderer = chart.renderer,
-            navigatorGroup;
+            navigatorGroup,
+            mouseCursor = {
+                cursor: inverted ? 'ns-resize' : 'ew-resize'
+            };
 
         // Create the main navigator group
         navigator.navigatorGroup = navigatorGroup = renderer.g('navigator')
@@ -845,13 +848,6 @@ Navigator.prototype = {
                 visibility: 'hidden'
             })
             .add();
-
-
-        /*= if (build.classic) { =*/
-        var mouseCursor = {
-            cursor: inverted ? 'ns-resize' : 'ew-resize'
-        };
-        /*= } =*/
 
         // Create masks, each mask will get events and fill:
         each([!maskInside, maskInside, !maskInside], function (hasMask, index) {

@@ -463,7 +463,6 @@ Highcharts.Legend.prototype = {
             itemExtraWidth = symbolWidth + symbolPadding + itemDistance +
                 (showCheckbox ? 20 : 0),
             useHTML = options.useHTML,
-            fontSize = 12,
             itemClassName = item.options.className;
 
         if (!li) { // generate it once, later move it
@@ -502,11 +501,8 @@ Highcharts.Legend.prototype = {
             // Get the baseline for the first item - the font size is equal for
             // all
             if (!legend.baseline) {
-                /*= if (build.classic) { =*/
-                fontSize = itemStyle.fontSize;
-                /*= } =*/
                 legend.fontMetrics = renderer.fontMetrics(
-                    fontSize,
+                    chart.styledMode ? 12 : itemStyle.fontSize,
                     li
                 );
                 legend.baseline =
