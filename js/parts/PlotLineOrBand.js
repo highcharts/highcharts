@@ -47,7 +47,7 @@ var arrayMax = H.arrayMax,
  * The object wrapper for plot lines and plot bands
  *
  * @private
- * @constructor
+ * @class
  * @name Highcharts.PlotLineOrBand
  *
  * @param {Highcharts.Axis} axis
@@ -63,19 +63,13 @@ H.PlotLineOrBand = function (axis, options) {
     }
 };
 
-/**
- * The object wrapper for plot lines and plot bands
- *
- * @private
- * @class
- * @name Highcharts.PlotLineOrBand
- */
 H.PlotLineOrBand.prototype = {
 
     /**
      * Render the plot line or plot band. If it is already existing,
      * move it.
      *
+     * @private
      * @function Highcharts.PlotLineOrBand#render
      *
      * @return {void}
@@ -220,6 +214,7 @@ H.PlotLineOrBand.prototype = {
     /**
      * Render and align label for plot line or band.
      *
+     * @private
      * @function Highcharts.PlotLineOrBand#renderLabel
      *
      * @param  {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
@@ -289,6 +284,7 @@ H.PlotLineOrBand.prototype = {
     /**
      * Remove the plot line or band
      *
+     * @private
      * @function Highcharts.PlotLineOrBand#destroy
      *
      * @return {void}
@@ -306,9 +302,11 @@ H.PlotLineOrBand.prototype = {
  * Object with members for extending the Axis prototype
  *
  * @ignore
- * @class Highcharts.Axis
+ * @class
+ * @name Highcharts.Axis
  *
- * @todo Extend directly instead of adding object to Highcharts first
+ * @todo
+ * Extend directly instead of adding object to Highcharts first
  */
 H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
