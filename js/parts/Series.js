@@ -135,9 +135,7 @@ var addEvent = H.addEvent,
  */
 H.Series = H.seriesType('line', null, { // base series options
     /**
-     * General options for all series types. In TypeScript you have to cast
-     * series options to specific series types, to get all possible options
-     * properties.
+     * General options for all series types.
      *
      * @type       {*}
      * @apioption  plotOptions.series
@@ -2382,15 +2380,27 @@ H.Series = H.seriesType('line', null, { // base series options
 }, /** @lends Highcharts.Series.prototype */ {
 
     /**
-     * Series options for specific data and the data itself.
+     * Series options for specific data and the data itself. In TypeScript you
+     * have to cast the series options to specific series types, to get all
+     * possible options for a series.
+     *
+     * @example
+     * // TypeScript example
+     * Highcharts.chart('container', {
+     *     series: [{
+     *         color: '#06C',
+     *         data: [[0, 1], [2, 3]]
+     *     } as Highcharts.SeriesLineOptions ]
+     * });
+     *
      *
      * @type       {Array<*>}
      * @apioption  series
      */
 
     /**
-     * An id for the series. This can be used after render time to get a
-     * pointer to the series object through `chart.get()`.
+     * An id for the series. This can be used after render time to get a pointer
+     * to the series object through `chart.get()`.
      *
      * @sample {highcharts} highcharts/plotoptions/series-id/
      *         Get series by id
@@ -2401,9 +2411,9 @@ H.Series = H.seriesType('line', null, { // base series options
      */
 
     /**
-     * The index of the series in the chart, affecting the internal index
-     * in the `chart.series` array, the visible Z index as well as the order
-     * in the legend.
+     * The index of the series in the chart, affecting the internal index in the
+     * `chart.series` array, the visible Z index as well as the order in the
+     * legend.
      *
      * @type       {number}
      * @since      2.3.0
@@ -2464,10 +2474,10 @@ H.Series = H.seriesType('line', null, { // base series options
      */
 
     /**
-     * When using dual or multiple x axes, this number defines which xAxis
-     * the particular series is connected to. It refers to either the [axis
-     * id](#xAxis.id) or the index of the axis in the xAxis array, with
-     * 0 being the first.
+     * When using dual or multiple x axes, this number defines which xAxis the
+     * particular series is connected to. It refers to either the
+     * {@link #xAxis.id|axis id}
+     * or the index of the axis in the xAxis array, with 0 being the first.
      *
      * @type       {number|string}
      * @default    0
@@ -2476,10 +2486,10 @@ H.Series = H.seriesType('line', null, { // base series options
      */
 
     /**
-     * When using dual or multiple y axes, this number defines which yAxis
-     * the particular series is connected to. It refers to either the [axis
-     * id](#yAxis.id) or the index of the axis in the yAxis array, with
-     * 0 being the first.
+     * When using dual or multiple y axes, this number defines which yAxis the
+     * particular series is connected to. It refers to either the
+     * {@link #yAxis.id|axis id}
+     * or the index of the axis in the yAxis array, with 0 being the first.
      *
      * @sample {highcharts} highcharts/series/yaxis/
      *         Apply the column series to the secondary Y axis
