@@ -3,13 +3,16 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
+
 var color = H.color,
     each = H.each,
     LegendSymbolMixin = H.LegendSymbolMixin,
@@ -21,9 +24,11 @@ var color = H.color,
 /**
  * Area series type.
  *
- * @ignore
- * @constructor Highcharts.seriesTypes.area
- * @augments    Highcharts.Series
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.area
+ *
+ * @augments Highcharts.Series
  */
 seriesType('area', 'line', {
 
