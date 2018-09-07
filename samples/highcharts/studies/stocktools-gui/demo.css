@@ -146,6 +146,7 @@
   margin: 0px;
   padding: 0px;
   float: left;
+  transition: margin 250ms;
 }
 
 .highcharts-stocktools-wrapper>ul {
@@ -205,6 +206,7 @@
 .highcharts-stocktools-wrapper li.highcharts-active,
 .highcharts-toggle-toolbar:hover {
   background-color: #e6ebf5;
+  transition: background-color 100ms;
 }
 
 .highcharts-toggle-toolbar {
