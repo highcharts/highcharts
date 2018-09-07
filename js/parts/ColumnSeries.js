@@ -15,13 +15,16 @@
  * @property {number} offset
  *           Offset of the columns.
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
+
 var animObject = H.animObject,
     color = H.color,
     each = H.each,
@@ -38,9 +41,10 @@ var animObject = H.animObject,
 /**
  * The column series type.
  *
- * @ignore
- * @constructor Highcharts.seriesTypes.column
- * @augments    Highcharts.Series
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.column
+ * @augments Highcharts.Series
  */
 
 /**
@@ -53,8 +57,8 @@ var animObject = H.animObject,
  *
  * @type       {*}
  * @extends    {plotOptions.line}
- * @excluding  connectNulls, dashStyle, gapSize, gapUnit, linecap, lineWidth,
- *             marker, connectEnds, step
+ * @excluding  connectNulls, dashStyle, gapSize, gapUnit, linecap,
+ *             lineWidth, marker, connectEnds, step
  * @product    highcharts highstock
  * @apioption  plotOptions.column
  */
