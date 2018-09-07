@@ -134,18 +134,40 @@ function isGlobal (doclet) {
 function isOverload (doclet) {
 
     let name = getName(doclet),
-        node = getNodeFor(name, false, true);
+        existingNode = getNodeFor(name, undefined, true);
 
-    switch (doclet.kind) {
+    if (!existingNode) {
+        return false;
+    }
+
+    let kind = doclet.kind;
+
+    switch (kind) {
         default:
             return false;
+        case 'class':
         case 'constructor':
         case 'function':
-            return (
-                !!node &&
-                node.kind === doclet.kind
-            );
+            break;
     }
+
+    if (kind === 'constructor') {
+
+        existingNode = getNodeFor(name + '.constructor', undefined, true);
+
+        if (!existingNode) {
+            return false;
+        }
+    }
+
+    let existingDoclet = existingNode.doclet;
+
+    return (
+        !!existingDoclet &&
+        existingDoclet.kind === kind &&
+        !!doclet.params &&
+        doclet.params.length > 0
+    );
 }
 
 /**
@@ -509,10 +531,10 @@ function getNamespaces (name) {
  * @param  {string} name
  *         The full qualified name for the node.
  *
- * @param  {boolean} overload
- *         Create additional node.
+ * @param  {number} [overload]
+ *         Create additional node, if number of parameters has not been found.
  *
- * @param  {boolean} searchOnly
+ * @param  {boolean} [searchOnly]
  *         Create no nodes at all.
  *
  * @return {Node}
@@ -541,23 +563,20 @@ function getNodeFor (name, overload, searchOnly) {
             node.children = [];
         }
 
-        if (overload &&
-            index === indexEnd
-        ) {
-            found = false;
-        } else {
-            found = node.children.some(child => {
-                if (child.doclet &&
-                    child.doclet.name === spaceName
-                ) {
-                    node = child;
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            });
-        }
+        found = node.children.some(child => {
+            if (child.doclet &&
+                child.doclet.name === spaceName && (
+                !child.doclet.parameters ||
+                typeof overload !== 'number' ||
+                Object(child.doclet.parameters).length === overload
+            )) {
+                node = child;
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
 
         if (found) {
             return;
@@ -746,60 +765,6 @@ function filterNodes (node) {
 }
 
 /**
- * Sort keys in a node.
- *
- * @private
- * @function sortNodes
- *
- * @param  {any} node
- *         The node to sort.
- *
- * @return {void}
- */
-function sortNodes(node) {
-
-    if (!node) {
-        return;
-    }
-
-    if (node instanceof Array) {
-        let slice = node.slice();
-        node.length = 0;
-        node.push(...slice);
-        node.forEach(sortNodes)
-    }
-
-    if (node.constructor !== Object) {
-        return;
-    }
-
-    let keys = Object.keys(node).sort();
-
-    if (keys.length === 0) {
-        return;
-    }
-
-    let pointer = {};
-
-    keys.forEach(key => {
-        pointer[key] = node[key];
-        delete node[key];
-    });
-
-    keys.forEach(key => {
-        node[key] = pointer[key];
-        switch (key) {
-            default:
-                sortNodes(node[key]);
-                break;
-            case 'parameters':
-                break;
-        }
-    });
-
-}
-
-/**
  * Updates corresponding node in the tree with information from the doclet.
  *
  * @private
@@ -808,10 +773,13 @@ function sortNodes(node) {
  * @param  {JSDoclet} doclet
  *         JSDoc doclet source.
  *
+ * @param  {number} [overload]
+ *         Create additional node, if number of parameters has not been found.
+ *
  * @return {Node}
  *         Updated node.
  */
-function updateNodeFor (doclet) {
+function updateNodeFor (doclet, overload) {
 
     let name = getName(doclet),
         node = getNodeFor(name),
@@ -820,10 +788,11 @@ function updateNodeFor (doclet) {
         oldDoclet = node.doclet,
         oldMeta = node.meta;
 
-    if (oldDoclet &&
+    if (overload &&
+        doclet.params &&
         !isEqual(oldDoclet, newDoclet)
     ) {
-        node = getNodeFor(name, true);
+        node = getNodeFor(name, doclet.params.length);
         oldDoclet = node.doclet;
         oldMeta = node.meta;
     }
@@ -885,22 +854,10 @@ function updateNodeFor (doclet) {
  */
 function addClass (doclet) {
 
-    let node = updateNodeFor(doclet),
-        hasConstructor = node.children && node.children.some(
-            child => child.doclet.kind === 'constructor'
-        );
+    let node = updateNodeFor(doclet);
 
-    if (!hasConstructor &&
-        doclet.params
-    ) {
-        addConstructor({
-            description: doclet.description,
-            fires: doclet.fires,
-            kind: 'constructor',
-            longname: doclet.longname + '#constructor',
-            name: 'constructor',
-            params: doclet.params
-        });
+    if (doclet.params) {
+        addConstructor(doclet);
     }
 }
 
@@ -917,17 +874,14 @@ function addClass (doclet) {
  */
 function addConstructor (doclet) {
 
-    let fires = getFires(doclet),
-        node = updateNodeFor(doclet),
-        parameters = getParameters(doclet);
-
-    if (fires) {
-        node.doclet.fires = fires;
-    }
-
-    if (parameters) {
-        node.doclet.parameters = parameters;
-    }
+    addFunction ({
+        description: doclet.description,
+        fires: doclet.fires,
+        kind: 'constructor',
+        longname: doclet.longname + '#constructor',
+        name: 'constructor',
+        params: doclet.params
+    });
 }
 
 /**
@@ -948,12 +902,12 @@ function addEvent (doclet) {
         parentName = name,
         lastPoint = name.lastIndexOf('.');
 
-    if (lastPoint > -1) {
-        name = name.substr(lastPoint + 1);
-        parentName = parentName.substr(0, lastPoint);
+    if (lastPoint === -1) {
+        parentName = '';
     }
     else {
-        parentName = '';
+        name = name.substr(lastPoint + 1);
+        parentName = parentName.substr(0, lastPoint);
     }
 
     let parentNode = getNodeFor(parentName),
@@ -979,8 +933,8 @@ function addEvent (doclet) {
  */
 function addFunction (doclet) {
 
-    let fires = getFires(doclet),
-        node = updateNodeFor(doclet),
+    let node = updateNodeFor(doclet, true),
+        fires = getFires(doclet),
         parameters = getParameters(doclet),
         returns = getReturn(doclet),
         types = getTypes(doclet);
@@ -1060,7 +1014,7 @@ function addMember (doclet) {
  */
 function addNamespace (doclet) {
 
-    node = updateNodeFor(doclet, false);
+    let node = updateNodeFor(doclet);
 
     // namespaces should always be in every file like the global namespace
     node.meta.files = globalNamespace.meta.files;
@@ -1254,7 +1208,6 @@ function fileComplete (e) {
 function processingComplete (e) {
 
     filterNodes(globalNamespace);
-    sortNodes(globalNamespace);
 
     fs.writeFileSync(
         path.join(rootPath, 'tree-namespace.json'),
@@ -1268,7 +1221,7 @@ function processingComplete (e) {
  *
  * @function defineTags
  *
- * @param  {any} dictionary
+ * @param  {*} dictionary
  *         JSDoc tags dictionary.
  *
  * @return {void}
