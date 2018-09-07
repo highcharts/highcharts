@@ -517,9 +517,21 @@ seriesType('flags', 'column', {
         });
     },
 
-    animate: noop, // Disable animation
+    // Disable animation, but keep clipping (#8546):
+    animate: function (init) {
+        if (init) {
+            this.setClip();
+        } else {
+            this.animate = null;
+        }
+    },
+    setClip: function () {
+        Series.prototype.setClip.apply(this, arguments);
+        if (this.options.clip !== false && this.sharedClipKey) {
+            this.markerGroup.clip(this.chart[this.sharedClipKey]);
+        }
+    },
     buildKDTree: noop,
-    setClip: noop,
     /**
      * Don't invert the flag marker group (#4960)
      */
