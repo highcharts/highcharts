@@ -166,6 +166,7 @@ Highcharts.mapChart('container', {
             lineColor: '#000'
         },
         dataLabels: {
+            crop: true,
             formatter: function () {
                 var value = Number.isInteger(this.point.temp) ? this.point.temp + '°C' : 'No data';
                 return '<span>' + this.key + '</span><br/><span>' + value + '</span>';
