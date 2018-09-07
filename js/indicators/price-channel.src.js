@@ -5,8 +5,7 @@ import '../parts/Utilities.js';
 import reduceArrayMixin from '../mixins/reduce-array.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var minInArray = reduceArrayMixin.minInArray,
-    maxInArray = reduceArrayMixin.maxInArray,
+var getArrayExtremes = reduceArrayMixin.getArrayExtremes,
     BB = H.seriesTypes.bb,
     parentLoaded = requiredIndicatorMixin.isParentIndicatorLoaded;
 
@@ -83,9 +82,12 @@ H.seriesType('pc', 'bb',
                 PC = [], // 0- date, 1-top line, 2-middle line, 3-bottom line
                 ML, TL, BL, // middle line, top line and bottom line
                 date,
+                low = 2,
+                high = 1,
                 xData = [],
                 yData = [],
                 slicedY,
+                extremes,
                 i;
 
             if (yValLen.length < period) {
@@ -95,10 +97,10 @@ H.seriesType('pc', 'bb',
             for (i = period; i <= yValLen; i++) {
                 date = xVal[i - 1];
                 slicedY = yVal.slice(i - period, i);
-                TL = maxInArray(slicedY, 1);
-                BL = minInArray(slicedY, 2);
+                extremes = getArrayExtremes(slicedY, low, high);
+                TL = extremes[1];
+                BL = extremes[0];
                 ML = (TL + BL) / 2;
-
                 PC.push([date, TL, ML, BL]);
                 xData.push(date);
                 yData.push([TL, ML, BL]);

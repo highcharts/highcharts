@@ -10,17 +10,17 @@ import '../parts/Utilities.js';
 
 var error = H.error;
 
-/**
- * Check whether given indicator is loaded, else throw error.
- * @param {function} indicator Indicator constructor function.
- * @param {string} indicatorName Given indicator name.
- * @param {string} type Type of indicator where function was called.
- * @param {function} callback Callback which is triggered if the given
- *                            indicator is loaded.
- * @param {string} errMessage Error message that will be logged in console.
- * @returns {boolean} Returns false when there is no required indicator loaded.
- */
 var requiredIndicatorMixin = {
+    /**
+     * Check whether given indicator is loaded, else throw error.
+     * @param {function} indicator Indicator constructor function.
+     * @param {string} indicatorName Given indicator name.
+     * @param {string} type Type of indicator where function was called.
+     * @param {function} callback Callback which is triggered if the given
+     *                            indicator is loaded.
+     * @param {string} errMessage Error message that will be logged in console.
+     * @returns {boolean} Returns false when there is no required indicator loaded.
+     */
     isParentIndicatorLoaded: function (
         indicator,
         indicatorName,

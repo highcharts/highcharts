@@ -9,8 +9,7 @@ var each = H.each,
     isArray = H.isArray,
     defined = H.defined,
     SMA = H.seriesTypes.sma,
-    minInArray = reduceArrayMixin.minInArray,
-    maxInArray = reduceArrayMixin.maxInArray;
+    getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
 H.seriesType('stochastic', 'sma',
     /**
@@ -174,6 +173,7 @@ H.seriesType('stochastic', 'sma',
                 CL, HL, LL, K,
                 D = null,
                 points,
+                extremes,
                 i;
 
 
@@ -193,9 +193,10 @@ H.seriesType('stochastic', 'sma',
                 slicedY = yVal.slice(i - periodK + 1, i + 1);
 
                 // Calculate %K
-                LL = minInArray(slicedY, low); // Lowest low in %K periods
+                extremes = getArrayExtremes(slicedY, low, high);
+                LL = extremes[0]; // Lowest low in %K periods
                 CL = yVal[i][close] - LL;
-                HL = maxInArray(slicedY, high) - LL;
+                HL = extremes[1] - LL;
                 K = CL / HL * 100;
 
                 // Calculate smoothed %D, which is SMA of %K
