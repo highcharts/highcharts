@@ -78,10 +78,12 @@
  */
 
 'use strict';
+
 import Highcharts from './Globals.js';
 import './Utilities.js';
 import './Tooltip.js';
 import './Color.js';
+
 var H = Highcharts,
     addEvent = H.addEvent,
     attr = H.attr,
@@ -105,7 +107,8 @@ var H = Highcharts,
  * assosiated Pointer item that can be accessed from the  {@link Chart.pointer}
  * property.
  *
- * @class Highcharts.Pointer
+ * @class
+ * @name Highcharts.Pointer
  *
  * @param {Highcharts.Chart} chart
  *        The Chart instance.
