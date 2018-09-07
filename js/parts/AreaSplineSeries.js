@@ -3,12 +3,15 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Legend.js';
 import './AreaSeries.js';
 import './SplineSeries.js';
+
 var areaProto = H.seriesTypes.area.prototype,
     defaultPlotOptions = H.defaultPlotOptions,
     LegendSymbolMixin = H.LegendSymbolMixin,
@@ -18,10 +21,13 @@ var areaProto = H.seriesTypes.area.prototype,
  * AreaSpline series type.
  *
  * @ignore
- * @constructor Highcharts.seriesTypes.areaspline
- * @augments    Highcharts.Series
+ * @class
+ * @name Highcharts.seriesTypes.areaspline
+ *
+ * @augments Highcharts.Series
  */
 seriesType('areaspline', 'spline', defaultPlotOptions.area, {
+
     /**
      * The area spline series is an area series where the graph between the
      * points is smoothed into a spline.
