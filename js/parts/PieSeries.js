@@ -5,6 +5,7 @@
  */
 
 /**
+ * @private
  * @typedef Highcharts.PieTranslationObject
  *
  * @property {number} translateX
@@ -40,31 +41,34 @@ var addEvent = H.addEvent,
     setAnimation = H.setAnimation;
 
 /**
- * The pie series type.
+ * Pie series type.
  *
  * @private
- * @constructor Highcharts.seriesTypes.pie
+ * @class
+ * @name Highcharts.seriesTypes.pie
+ *
  * @augments    Highcharts.Series
  */
-
-/**
- * A pie chart is a circular graphic which is divided into slices to illustrate
- * numerical proportion.
- *
- * @sample highcharts/demo/pie-basic/
- *         Pie chart
- *
- * @type       {*}
- * @extends    plotOptions.line
- * @excluding  animationLimit, boostThreshold, connectEnds, connectNulls,
- *             cropThreshold, dashStyle, findNearestPointBy, getExtremesFromAll,
- *             lineWidth, marker, negativeColor, pointInterval,
- *             pointIntervalUnit, pointPlacement, pointStart, softThreshold,
- *             stacking, step, threshold, turboThreshold, zoneAxis, zones
- * @product    highcharts
- * @apioption  plotOptions.pie
- */
 seriesType('pie', 'line', {
+
+    /**
+     * A pie chart is a circular graphic which is divided into slices to
+     * illustrate numerical proportion.
+     *
+     * @sample highcharts/demo/pie-basic/
+     *         Pie chart
+     *
+     * @type       {*}
+     * @extends    plotOptions.line
+     * @excluding  animationLimit, boostThreshold, connectEnds, connectNulls,
+     *             cropThreshold, dashStyle, findNearestPointBy,
+     *             getExtremesFromAll, lineWidth, marker, negativeColor,
+     *             pointInterval, pointIntervalUnit, pointPlacement, pointStart,
+     *             softThreshold, stacking, step, threshold, turboThreshold,
+     *             zoneAxis, zones
+     * @product    highcharts
+     * @apioption  plotOptions.pie
+     */
 
     /**
      * The center of the pie chart relative to the plot area. Can be percentages
@@ -887,7 +891,8 @@ seriesType('pie', 'line', {
     /**
      * Pies don't have point marker symbols.
      *
-     * @ignore
+     * @deprecated
+     * @private
      * @function Highcharts.seriesTypes.pie#getSymbol
      */
     getSymbol: noop
