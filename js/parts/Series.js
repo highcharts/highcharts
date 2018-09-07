@@ -117,23 +117,24 @@ var addEvent = H.addEvent,
  * - `series.yData` and `series.processedYData` contain clean y values,
  *   equivalent to `series.data` and `series.points`.
  *
- * @class Highcharts.Series
+ * @class
+ * @name Highcharts.Series
  *
  * @param {Highcharts.Chart} chart
  *        The chart instance.
  *
  * @param {Highcharts.PlotSeriesOptions} options
  *        The series options.
- */
-
-/**
- * Line series type.
+ *//**
+ * The line series is the base type and is therefor the series base prototype.
  *
- * @ignore
- * @constructor Highcharts.seriesTypes.line
- * @augments    Highcharts.Series
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.line
+ * @augments Highcharts.Series
  */
 H.Series = H.seriesType('line', null, { // base series options
+
     /**
      * General options for all series types.
      *
@@ -142,6 +143,7 @@ H.Series = H.seriesType('line', null, { // base series options
      */
 
     /*= if (build.classic) { =*/
+
     /**
      * Pixel width of the graph line.
      *
@@ -159,6 +161,7 @@ H.Series = H.seriesType('line', null, { // base series options
      * @apioption  plotOptions.series.lineWidth
      */
     lineWidth: 2,
+
     /*= } =*/
 
     /**
@@ -180,8 +183,7 @@ H.Series = H.seriesType('line', null, { // base series options
      *
      * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-line/
      *         Line
-     * @sample {highcharts}
-     *         highcharts/plotoptions/series-allowpointselect-column/
+     * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-column/
      *         Column
      * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-pie/
      *         Pie
@@ -2357,8 +2359,6 @@ H.Series = H.seriesType('line', null, { // base series options
      * @product    highcharts highstock
      * @apioption  plotOptions.series.zones.value
      */
-
-
 
     /**
      * Determines whether the series should look for the nearest point
