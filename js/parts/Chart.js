@@ -1189,7 +1189,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         /**
          * The containing HTML element of the chart. The container is
          * dynamically inserted into the element given as the `renderTo`
-         * parameterin the {@link Highcharts#chart} constructor.
+         * parameter in the {@link Highcharts#chart} constructor.
          *
          * @name Highcharts.Chart#container
          * @type {Highcharts.HTMLDOMElement}
