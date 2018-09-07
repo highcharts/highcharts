@@ -448,6 +448,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             series = chart.series,
             pointer = chart.pointer,
             legend = chart.legend,
+            legendUserOptions = chart.userOptions.legend,
             redrawLegend = chart.isDirtyLegend,
             hasStackedSeries,
             hasDirtyStacks,
@@ -505,6 +506,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         serie.updateTotals();
                     }
                     redrawLegend = true;
+                } else if (
+                    legendUserOptions &&
+                    (
+                        legendUserOptions.labelFormatter ||
+                        legendUserOptions.labelFormat
+                    )
+                ) {
+                    redrawLegend = true; // #2165
                 }
             }
             if (serie.isDirtyData) {
@@ -513,7 +522,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         // handle added or removed series
-        if (redrawLegend && legend.options.enabled) {
+        if (redrawLegend && legend && legend.options.enabled) {
             // draw legend graphics
             legend.render();
 

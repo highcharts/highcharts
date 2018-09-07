@@ -313,6 +313,14 @@ seriesType('sankey', 'column', {
             columns[node.column].push(node);
 
         }, this);
+
+        // Fill in empty columns (#8865)
+        for (var i = 0; i < columns.length; i++) {
+            if (columns[i] === undefined) {
+                columns[i] = this.createNodeColumn();
+            }
+        }
+
         return columns;
     },
 
