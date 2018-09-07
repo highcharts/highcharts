@@ -10,7 +10,7 @@
 import H from '../parts/Globals.js';
 
 H.FullScreen = function (container) {
-    this.init(container);
+    this.init(container.parentNode); // main div of the chart
 };
 
 /**

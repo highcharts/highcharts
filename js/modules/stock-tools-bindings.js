@@ -1199,10 +1199,9 @@ var stockToolsBindings = {
     },
     'full-screen': {
         init: function () {
-            var chart = this.chart,
-                stockToolbar = chart.container.parentNode.parentNode;
+            var chart = this.chart;
 
-            chart.fullScreen = new H.FullScreen(stockToolbar);
+            chart.fullScreen = new H.FullScreen(chart.container);
         }
     },
     'current-price-indicator': {
