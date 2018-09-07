@@ -102,7 +102,19 @@ extend(Pane.prototype, {
      * @param  {number} i The index of the background in this.backgrounds
      */
     renderBackground: function (backgroundOptions, i) {
-        var method = 'animate';
+        var method = 'animate',
+            attribs = {
+                'class':
+                    'highcharts-pane ' + (backgroundOptions.className || '')
+            };
+
+        if (!this.chart.styledMode) {
+            extend(attribs, {
+                'fill': backgroundOptions.backgroundColor,
+                'stroke': backgroundOptions.borderColor,
+                'stroke-width': backgroundOptions.borderWidth
+            });
+        }
 
         if (!this.background[i]) {
             this.background[i] = this.chart.renderer.path()
@@ -116,14 +128,7 @@ extend(Pane.prototype, {
                 backgroundOptions.to,
                 backgroundOptions
             )
-        }).attr({
-            /*= if (build.classic) { =*/
-            'fill': backgroundOptions.backgroundColor,
-            'stroke': backgroundOptions.borderColor,
-            'stroke-width': backgroundOptions.borderWidth,
-            /*= } =*/
-            'class': 'highcharts-pane ' + (backgroundOptions.className || '')
-        });
+        }).attr(attribs);
 
     },
 
@@ -218,7 +223,6 @@ extend(Pane.prototype, {
          * @product highcharts
          */
         shape: 'circle',
-        /*= if (build.classic) { =*/
 
         /**
          * The pixel border width of the pane background.
@@ -270,7 +274,6 @@ extend(Pane.prototype, {
                 [1, '${palette.neutralColor10}']
             ]
         },
-        /*= } =*/
 
         /** @ignore-option */
         from: -Number.MAX_VALUE, // corrected to axis min

@@ -469,10 +469,8 @@ seriesType('area', 'line', {
             props = [[
                 'area',
                 'highcharts-area',
-                /*= if (build.classic) { =*/
                 this.color,
                 options.fillColor
-                /*= } =*/
             ]]; // area name, main color, fill color
 
         each(zones, function (zone, i) {
@@ -480,16 +478,15 @@ seriesType('area', 'line', {
                 'zone-area-' + i,
                 'highcharts-area highcharts-zone-area-' + i + ' ' +
                     zone.className,
-                /*= if (build.classic) { =*/
                 zone.color || series.color,
                 zone.fillColor || options.fillColor
-                /*= } =*/
             ]);
         });
 
         each(props, function (prop) {
             var areaKey = prop[0],
-                area = series[areaKey];
+                area = series[areaKey],
+                attribs;
 
             // Create or update the area
             if (area) { // update
@@ -497,19 +494,24 @@ seriesType('area', 'line', {
                 area.animate({ d: areaPath });
 
             } else { // create
+
+                attribs = {
+                    zIndex: 0 // #1069
+                };
+
+                if (!series.chart.styledMode) {
+                    attribs.fill = pick(
+                        prop[3],
+                        color(prop[2])
+                            .setOpacity(pick(options.fillOpacity, 0.75))
+                            .get()
+                    );
+                }
+
                 area = series[areaKey] = series.chart.renderer.path(areaPath)
                     .addClass(prop[1])
-                    .attr({
-                        /*= if (build.classic) { =*/
-                        fill: pick(
-                            prop[3],
-                            color(prop[2])
-                                .setOpacity(pick(options.fillOpacity, 0.75))
-                                .get()
-                        ),
-                        /*= } =*/
-                        zIndex: 0 // #1069
-                    }).add(series.group);
+                    .attr(attribs)
+                    .add(series.group);
                 area.isArea = true;
             }
             area.startX = areaPath.xMap;

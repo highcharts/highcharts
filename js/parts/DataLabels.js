@@ -345,40 +345,45 @@ Series.prototype.drawDataLabels = function () {
 
                 style = options.style;
                 rotation = options.rotation;
-                /*= if (build.classic) { =*/
-                // Determine the color
-                style.color = pick(
-                    options.color,
-                    style.color,
-                    series.color,
-                    '${palette.neutralColor100}'
-                );
-                // Get automated contrast color
-                if (style.color === 'contrast') {
-                    point.contrastColor =
-                        renderer.getContrast(point.color || series.color);
-                    style.color = options.inside ||
-                        pick(point.labelDistance, options.distance) < 0 ||
-                        !!seriesOptions.stacking ?
-                            point.contrastColor :
-                            '${palette.neutralColor100}';
-                }
-                if (seriesOptions.cursor) {
-                    style.cursor = seriesOptions.cursor;
-                }
-                /*= } =*/
+
 
                 attr = {
-                    /*= if (build.classic) { =*/
-                    fill: options.backgroundColor,
-                    stroke: options.borderColor,
-                    'stroke-width': options.borderWidth,
-                    /*= } =*/
                     r: options.borderRadius || 0,
                     rotation: rotation,
                     padding: options.padding,
                     zIndex: 1
                 };
+
+                if (!chart.styledMode) {
+
+                    extend(attr, {
+                        fill: options.backgroundColor,
+                        stroke: options.borderColor,
+                        'stroke-width': options.borderWidth
+                    });
+
+                    // Determine the color
+                    style.color = pick(
+                        options.color,
+                        style.color,
+                        series.color,
+                        '${palette.neutralColor100}'
+                    );
+                    // Get automated contrast color
+                    if (style.color === 'contrast') {
+                        point.contrastColor =
+                            renderer.getContrast(point.color || series.color);
+                        style.color = options.inside ||
+                            pick(point.labelDistance, options.distance) < 0 ||
+                            !!seriesOptions.stacking ?
+                                point.contrastColor :
+                                '${palette.neutralColor100}';
+                    }
+                    if (seriesOptions.cursor) {
+                        style.cursor = seriesOptions.cursor;
+                    }
+                }
+
 
                 // Remove unused attributes (#947)
                 H.objectEach(attr, function (val, name) {
@@ -430,11 +435,12 @@ Series.prototype.drawDataLabels = function () {
                     attr.text = str;
                 }
                 dataLabel.attr(attr);
-                /*= if (build.classic) { =*/
+
                 // Styles must be applied before add in order to read text
                 // bounding box
-                dataLabel.css(style).shadow(options.shadow);
-                /*= } =*/
+                if (!chart.styledMode) {
+                    dataLabel.css(style).shadow(options.shadow);
+                }
 
                 if (!dataLabel.added) {
                     dataLabel.add(dataLabelsGroup);
@@ -478,7 +484,6 @@ Series.prototype.alignDataLabel = function (
         plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999),
         plotY = pick(point.plotY, -9999),
         bBox = dataLabel.getBBox(),
-        fontSize,
         baseline,
         rotation = options.rotation,
         normRotation,
@@ -507,11 +512,10 @@ Series.prototype.alignDataLabel = function (
 
     if (visible) {
 
-        /*= if (build.classic) { =*/
-        fontSize = options.style.fontSize;
-        /*= } =*/
-
-        baseline = chart.renderer.fontMetrics(fontSize, dataLabel).b;
+        baseline = chart.renderer.fontMetrics(
+            chart.styledMode ? undefined : options.style.fontSize,
+            dataLabel
+        ).b;
 
         // The alignment box is a singular point
         alignTo = extend({
@@ -767,7 +771,6 @@ if (seriesTypes.pie) {
                     point.dataLabel._pos = null;
 
                     // Avoid long labels squeezing the pie size too far down
-                    /*= if (build.classic) { =*/
                     if (
                         !defined(options.style.width) &&
                         !defined(
@@ -776,7 +779,6 @@ if (seriesTypes.pie) {
                             point.options.dataLabels.style.width
                         )
                     ) {
-                    /*= } =*/
                         if (point.dataLabel.getBBox().width > maxWidth) {
                             point.dataLabel.css({
                                 // Use a fraction of the maxWidth to avoid
@@ -785,9 +787,7 @@ if (seriesTypes.pie) {
                             });
                             point.dataLabel.shortened = true;
                         }
-                    /*= if (build.classic) { =*/
                     }
-                    /*= } =*/
                 } else {
                     point.dataLabel = point.dataLabel.destroy();
                 }
@@ -1007,16 +1007,16 @@ if (seriesTypes.pie) {
                                 )
                                 .add(series.dataLabelsGroup);
 
-                            /*= if (build.classic) { =*/
-                            connector.attr({
-                                'stroke-width': connectorWidth,
-                                'stroke': (
-                                    options.connectorColor ||
-                                    point.color ||
-                                    '${palette.neutralColor60}'
-                                )
-                            });
-                            /*= } =*/
+                            if (!chart.styledMode) {
+                                connector.attr({
+                                    'stroke-width': connectorWidth,
+                                    'stroke': (
+                                        options.connectorColor ||
+                                        point.color ||
+                                        '${palette.neutralColor60}'
+                                    )
+                                });
+                            }
                         }
                         connector[isNew ? 'attr' : 'animate']({
                             d: series.connectorPath(point.labelPos)

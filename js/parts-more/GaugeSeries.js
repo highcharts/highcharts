@@ -105,8 +105,6 @@ seriesType('gauge', 'line', {
          * @product highcharts highmaps
          */
         zIndex: 2,
-        /*= if (build.classic) { =*/
-        // Presentational
 
         /**
          * The border width in pixels for the gauge data label.
@@ -125,7 +123,6 @@ seriesType('gauge', 'line', {
          * @product highcharts highmaps
          */
         borderColor: '${palette.neutralColor20}'
-        /*= } =*/
     },
 
     /**
@@ -206,8 +203,6 @@ seriesType('gauge', 'line', {
      * @apioption plotOptions.gauge.dial.topWidth
      */
 
-    /*= if (build.classic) { =*/
-
     /**
      * The background or fill color of the gauge's dial.
      *
@@ -245,8 +240,6 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.borderWidth
      */
-
-    /*= } =*/
 
     /**
      * Allow the dial to overshoot the end of the perimeter axis by this
@@ -289,8 +282,6 @@ seriesType('gauge', 'line', {
      * @apioption plotOptions.gauge.pivot.radius
      */
 
-    /*= if (build.classic) { =*/
-
     /**
      * The border or stroke width of the pivot.
      *
@@ -315,7 +306,7 @@ seriesType('gauge', 'line', {
      * @since     2.3.0
      * @product   highcharts
      * @apioption plotOptions.gauge.pivot.borderColor
-        */
+     */
 
     /**
      * The background color or fill of the pivot.
@@ -328,7 +319,6 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.pivot.backgroundColor
      */
-    /*= } =*/
 
 
     tooltip: {
@@ -432,11 +422,12 @@ seriesType('gauge', 'line', {
     drawPoints: function () {
 
         var series = this,
+            chart = series.chart,
             center = series.yAxis.center,
             pivot = series.pivot,
             options = series.options,
             pivotOptions = options.pivot,
-            renderer = series.chart.renderer;
+            renderer = chart.renderer;
 
         each(series.points, function (point) {
 
@@ -458,15 +449,15 @@ seriesType('gauge', 'line', {
                     .addClass('highcharts-dial')
                     .add(series.group);
 
-                /*= if (build.classic) { =*/
                 // Presentational attributes
-                point.graphic.attr({
-                    stroke: dialOptions.borderColor || 'none',
-                    'stroke-width': dialOptions.borderWidth || 0,
-                    fill: dialOptions.backgroundColor ||
-                        '${palette.neutralColor100}'
-                });
-                /*= } =*/
+                if (!chart.styledMode) {
+                    point.graphic.attr({
+                        stroke: dialOptions.borderColor || 'none',
+                        'stroke-width': dialOptions.borderWidth || 0,
+                        fill: dialOptions.backgroundColor ||
+                            '${palette.neutralColor100}'
+                    });
+                }
             }
         });
 
@@ -485,16 +476,16 @@ seriesType('gauge', 'line', {
                 .translate(center[0], center[1])
                 .add(series.group);
 
-            /*= if (build.classic) { =*/
             // Presentational attributes
-            series.pivot.attr({
-                'stroke-width': pivotOptions.borderWidth || 0,
-                stroke: pivotOptions.borderColor ||
-                    '${palette.neutralColor20}',
-                fill: pivotOptions.backgroundColor ||
-                    '${palette.neutralColor100}'
-            });
-            /*= } =*/
+            if (!chart.styledMode) {
+                series.pivot.attr({
+                    'stroke-width': pivotOptions.borderWidth || 0,
+                    stroke: pivotOptions.borderColor ||
+                        '${palette.neutralColor20}',
+                    fill: pivotOptions.backgroundColor ||
+                        '${palette.neutralColor100}'
+                });
+            }
         }
     },
 

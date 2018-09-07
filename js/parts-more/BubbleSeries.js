@@ -74,7 +74,6 @@ seriesType('bubble', 'scatter', {
      * @excluding enabled,enabledThreshold,height,radius,width
      */
     marker: {
-        /*= if (build.classic) { =*/
         lineColor: null, // inherit from series.color
         lineWidth: 1,
 
@@ -82,7 +81,6 @@ seriesType('bubble', 'scatter', {
          * The fill opacity of the bubble markers.
          */
         fillOpacity: 0.5,
-        /*= } =*/
         /**
          * In bubble charts, the radius is overridden and determined based on
          * the point's data value.
@@ -275,7 +273,6 @@ seriesType('bubble', 'scatter', {
     zoneAxis: 'z',
     directTouch: true,
 
-    /*= if (build.classic) { =*/
     pointAttribs: function (point, state) {
         var markerOptions = this.options.marker,
             fillOpacity = markerOptions.fillOpacity,
@@ -287,7 +284,6 @@ seriesType('bubble', 'scatter', {
 
         return attr;
     },
-    /*= } =*/
 
     /**
      * Get the radius for each point based on the minSize, maxSize and each

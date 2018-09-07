@@ -179,26 +179,26 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Update text
         chart.loadingSpan.innerHTML = str || options.lang.loading;
 
-        /*= if (build.classic) { =*/
-        // Update visuals
-        css(loadingDiv, extend(loadingOptions.style, {
-            zIndex: 10
-        }));
-        css(chart.loadingSpan, loadingOptions.labelStyle);
+        if (!chart.styledMode) {
+            // Update visuals
+            css(loadingDiv, extend(loadingOptions.style, {
+                zIndex: 10
+            }));
+            css(chart.loadingSpan, loadingOptions.labelStyle);
 
-        // Show it
-        if (!chart.loadingShown) {
-            css(loadingDiv, {
-                opacity: 0,
-                display: ''
-            });
-            animate(loadingDiv, {
-                opacity: loadingOptions.style.opacity || 0.5
-            }, {
-                duration: loadingOptions.showDuration || 0
-            });
+            // Show it
+            if (!chart.loadingShown) {
+                css(loadingDiv, {
+                    opacity: 0,
+                    display: ''
+                });
+                animate(loadingDiv, {
+                    opacity: loadingOptions.style.opacity || 0.5
+                }, {
+                    duration: loadingOptions.showDuration || 0
+                });
+            }
         }
-        /*= } =*/
 
         chart.loadingShown = true;
         setLoadingSize();
@@ -220,16 +220,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (loadingDiv) {
             loadingDiv.className =
                 'highcharts-loading highcharts-loading-hidden';
-            /*= if (build.classic) { =*/
-            animate(loadingDiv, {
-                opacity: 0
-            }, {
-                duration: options.loading.hideDuration || 100,
-                complete: function () {
-                    css(loadingDiv, { display: 'none' });
-                }
-            });
-            /*= } =*/
+
+            if (!this.styledMode) {
+                animate(loadingDiv, {
+                    opacity: 0
+                }, {
+                    duration: options.loading.hideDuration || 100,
+                    complete: function () {
+                        css(loadingDiv, { display: 'none' });
+                    }
+                });
+            }
         }
         this.loadingShown = false;
     },
@@ -377,19 +378,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
             });
 
-            /*= if (build.classic) { =*/
-            if ('style' in optionsChart) {
+            if (!chart.styledMode && 'style' in optionsChart) {
                 chart.renderer.setStyle(optionsChart.style);
             }
-            /*= } =*/
         }
 
         // Moved up, because tooltip needs updated plotOptions (#6218)
-        /*= if (build.classic) { =*/
-        if (options.colors) {
+        if (!chart.styledMode && options.colors) {
             this.options.colors = options.colors;
         }
-        /*= } =*/
 
         if (options.plotOptions) {
             merge(true, this.options.plotOptions, options.plotOptions);

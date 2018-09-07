@@ -68,7 +68,6 @@ var candlestickOptions = {
     tooltip: defaultPlotOptions.ohlc.tooltip,
 
     threshold: null,
-    /*= if (build.classic) { =*/
 
     /**
      * The color of the line/border of the candlestick.
@@ -111,7 +110,6 @@ var candlestickOptions = {
      * @product highstock
      */
     upColor: '${palette.backgroundColor}',
-    /*= } =*/
 
     stickyTracking: true
 
@@ -127,7 +125,6 @@ seriesType('candlestick', 'ohlc', merge(
     defaultPlotOptions.column,
     candlestickOptions
 ), /** @lends seriesTypes.candlestick */ {
-    /*= if (build.classic) { =*/
     /**
      * Postprocess mapping between options and SVG attributes
      */
@@ -161,7 +158,7 @@ seriesType('candlestick', 'ohlc', merge(
 
         return attribs;
     },
-    /*= } =*/
+
     /**
      * Draw the data points
      */
@@ -194,13 +191,16 @@ seriesType('candlestick', 'ohlc', merge(
                         .add(series.group);
                 }
 
-                /*= if (build.classic) { =*/
-                graphic
-                    .attr(
-                        series.pointAttribs(point, point.selected && 'select')
-                    ) // #3897
-                    .shadow(series.options.shadow);
-                /*= } =*/
+                if (!series.chart.styledMode) {
+                    graphic
+                        .attr(
+                            series.pointAttribs(
+                                point,
+                                point.selected && 'select'
+                            )
+                        ) // #3897
+                        .shadow(series.options.shadow);
+                }
 
                 // Crisp vector coordinates
                 crispCorr = (graphic.strokeWidth() % 2) / 2;

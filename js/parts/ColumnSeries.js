@@ -258,8 +258,6 @@ seriesType('column', 'line', {
              * @apioption plotOptions.column.states.hover.color
              */
 
-            /*= if (build.classic) { =*/
-
             /**
              * How much to brighten the point on interaction. Requires the main
              * color to be defined in hex or rgb(a) format.
@@ -273,10 +271,7 @@ seriesType('column', 'line', {
              * @product highcharts highstock
              */
             brightness: 0.1
-
-            /*= } =*/
         },
-        /*= if (build.classic) { =*/
 
         /**
          * Options for the selected point. These settings override the normal
@@ -304,7 +299,6 @@ seriesType('column', 'line', {
              */
             borderColor: '${palette.neutralColor100}'
         }
-        /*= } =*/
     },
 
     dataLabels: {
@@ -349,8 +343,6 @@ seriesType('column', 'line', {
      */
     threshold: 0,
 
-    /*= if (build.classic) { =*/
-
     /**
      * The width of the border surrounding each column or bar.
      *
@@ -378,8 +370,6 @@ seriesType('column', 'line', {
      * @product highcharts highstock
      */
     borderColor: '${palette.backgroundColor}'
-
-    /*= } =*/
 
 }, /** @lends seriesTypes.column.prototype */ {
     cropShoulder: 0,
@@ -672,7 +662,6 @@ seriesType('column', 'line', {
         ]('highcharts-dense-data');
     },
 
-    /*= if (build.classic) { =*/
     /**
      * Get presentational attributes
      */
@@ -731,7 +720,6 @@ seriesType('column', 'line', {
 
         return ret;
     },
-    /*= } =*/
 
     /**
      * Draw the columns. For bars, the series.group is rotated, so the same
@@ -774,18 +762,18 @@ seriesType('column', 'line', {
                     });
                 }
 
-                /*= if (build.classic) { =*/
                 // Presentational
-                graphic[verb](series.pointAttribs(
-                        point,
-                        point.selected && 'select'
-                    ))
-                    .shadow(
-                        options.shadow,
-                        null,
-                        options.stacking && !options.borderRadius
-                    );
-                /*= } =*/
+                if (!chart.styledMode) {
+                    graphic[verb](series.pointAttribs(
+                            point,
+                            point.selected && 'select'
+                        ))
+                        .shadow(
+                            options.shadow,
+                            null,
+                            options.stacking && !options.borderRadius
+                        );
+                }
 
                 graphic.addClass(point.getClassName(), true);
 

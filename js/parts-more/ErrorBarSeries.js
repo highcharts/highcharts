@@ -27,7 +27,6 @@ var each = H.each,
  * @optionparent plotOptions.errorbar
  */
 seriesType('errorbar', 'boxplot', {
-    /*= if (build.classic) { =*/
 
     /**
      * The main color of the bars. This can be overridden by
@@ -42,7 +41,6 @@ seriesType('errorbar', 'boxplot', {
      * @product highcharts
      */
     color: '${palette.neutralColor100}',
-    /*= } =*/
 
     grouping: false,
 
