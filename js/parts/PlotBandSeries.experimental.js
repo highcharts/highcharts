@@ -25,14 +25,12 @@ seriesType('plotband', 'column', {
     lineWidth: 0,
     threshold: null
 }, {
-    /*= if (build.classic) { =*/
     // mapping between SVG attributes and the corresponding options
     pointAttrToOptions: {
         fill: 'color',
         stroke: 'lineColor',
         'stroke-width': 'lineWidth'
     },
-    /*= } =*/
     animate: function () {},
 
     translate: function () {

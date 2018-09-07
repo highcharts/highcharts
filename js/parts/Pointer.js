@@ -687,17 +687,20 @@ Highcharts.Pointer.prototype = {
                             0
                         )
                         .attr({
-                            /*= if (build.classic) { =*/
-                            fill: (
-                                chartOptions.selectionMarkerFill ||
-                                color('${palette.highlightColor80}')
-                                    .setOpacity(0.25).get()
-                            ),
-                            /*= } =*/
                             'class': 'highcharts-selection-marker',
                             'zIndex': 7
                         })
                         .add();
+
+                    if (!chart.styledMode) {
+                        selectionMarker.attr({
+                            fill: (
+                                chartOptions.selectionMarkerFill ||
+                                color('${palette.highlightColor80}')
+                                    .setOpacity(0.25).get()
+                            )
+                        });
+                    }
                 }
             }
 

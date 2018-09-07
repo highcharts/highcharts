@@ -74,7 +74,6 @@ seriesType('ohlc', 'column', {
     },
 
     threshold: null,
-    /*= if (build.classic) { =*/
 
     states: {
 
@@ -116,8 +115,6 @@ seriesType('ohlc', 'column', {
      * @apioption plotOptions.ohlc.upColor
      */
 
-    /*= } =*/
-
     stickyTracking: true
 
 }, /** @lends seriesTypes.ohlc */ {
@@ -128,7 +125,6 @@ seriesType('ohlc', 'column', {
     },
     pointValKey: 'close',
 
-    /*= if (build.classic) { =*/
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
@@ -157,7 +153,6 @@ seriesType('ohlc', 'column', {
 
         return attribs;
     },
-    /*= } =*/
 
     /**
      * Translate data points from raw values x and y to plotX and plotY
@@ -223,11 +218,11 @@ seriesType('ohlc', 'column', {
                         .add(series.group);
                 }
 
-                /*= if (build.classic) { =*/
-                graphic.attr(
-                    series.pointAttribs(point, point.selected && 'select')
-                ); // #3897
-                /*= } =*/
+                if (!chart.styledMode) {
+                    graphic.attr(
+                        series.pointAttribs(point, point.selected && 'select')
+                    ); // #3897
+                }
 
                 // crisp vector coordinates
                 crispCorr = (graphic.strokeWidth() % 2) / 2;

@@ -68,25 +68,25 @@ H.PlotLineOrBand.prototype = {
             value = axis.log2lin(value);
         }
 
-        /*= if (build.classic) { =*/
         // Set the presentational attributes
-        if (isLine) {
-            attribs.stroke = color;
-            attribs['stroke-width'] = options.width;
-            if (options.dashStyle) {
-                attribs.dashstyle = options.dashStyle;
-            }
+        if (!axis.chart.styledMode) {
+            if (isLine) {
+                attribs.stroke = color;
+                attribs['stroke-width'] = options.width;
+                if (options.dashStyle) {
+                    attribs.dashstyle = options.dashStyle;
+                }
 
-        } else if (isBand) { // plot band
-            if (color) {
-                attribs.fill = color;
-            }
-            if (options.borderWidth) {
-                attribs.stroke = options.borderColor;
-                attribs['stroke-width'] = options.borderWidth;
+            } else if (isBand) { // plot band
+                if (color) {
+                    attribs.fill = color;
+                }
+                if (options.borderWidth) {
+                    attribs.stroke = options.borderColor;
+                    attribs['stroke-width'] = options.borderWidth;
+                }
             }
         }
-        /*= } =*/
 
         // Grouping and zIndex
         groupAttribs.zIndex = zIndex;
@@ -204,9 +204,9 @@ H.PlotLineOrBand.prototype = {
                 .attr(attribs)
                 .add();
 
-            /*= if (build.classic) { =*/
-            label.css(optionsLabel.style);
-            /*= } =*/
+            if (!this.axis.chart.styledMode) {
+                label.css(optionsLabel.style);
+            }
         }
 
         // get the bounding box and align the label
