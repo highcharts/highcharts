@@ -3,7 +3,9 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './ColumnSeries.js';
@@ -13,50 +15,60 @@ var seriesType = H.seriesType;
 /**
  * The Bar series class
  *
- * @ignore
- * @constructor Highcharts.seriesTypes.bar
- * @augments    Highcharts.Series
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.bar
+ *
+ * @augments Highcharts.Series
  */
-seriesType('bar', 'column', null, {
-    inverted: true
-});
+seriesType('bar', 'column',
 
-/**
- * A bar series is a special type of column series where the columns are
- * horizontal.
- *
- * @sample highcharts/demo/bar-basic/
- *         Bar chart
- *
- * @type       {*}
- * @extends    {plotOptions.column}
- * @product    highcharts
- * @apioption  plotOptions.bar
- */
+    /**
+     * A bar series is a special type of column series where the columns are
+     * horizontal.
+     *
+     * @sample highcharts/demo/bar-basic/
+     *         Bar chart
+     *
+     * @type       {*}
+     * @extends    {plotOptions.column}
+     * @product    highcharts
+     * @apioption  plotOptions.bar
+     */
 
-/**
- * Alignment of the data label relative to the data point.
- *
- * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
- *         Data labels inside the bar
- *
- * @type       {string}
- * @default    left
- * @product    highcharts
- * @apioption  plotOptions.bar.dataLabels.align
- */
+    /**
+     * Alignment of the data label relative to the data point.
+     *
+     * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
+     *         Data labels inside the bar
+     *
+     * @type       {string}
+     * @default    left
+     * @product    highcharts
+     * @apioption  plotOptions.bar.dataLabels.align
+     */
 
-/**
- * The x position of the data label relative to the data point.
- *
- * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
- *         Data labels inside the bar
- *
- * @type       {number}
- * @default    5
- * @product    highcharts
- * @apioption  plotOptions.bar.dataLabels.x
- */
+    /**
+     * The x position of the data label relative to the data point.
+     *
+     * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
+     *         Data labels inside the bar
+     *
+     * @type       {number}
+     * @default    5
+     * @product    highcharts
+     * @apioption  plotOptions.bar.dataLabels.x
+     */
+
+    /**
+     * @ignore
+     */
+    null,
+    {
+        inverted: true
+    }
+);
+
 
 /**
  * A `bar` series. If the [type](#series.bar.type) option is not specified,
