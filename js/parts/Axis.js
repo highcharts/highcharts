@@ -20,7 +20,7 @@
  * The returned object literal from the {@link Highcharts.Axis#getExtremes}
  * function.
  *
- * @typedef {*} Highcharts.ExtremesObject
+ * @typedef Highcharts.ExtremesObject
  *
  * @property {number} dataMax
  *           The maximum value of the axis' associated series.
@@ -51,7 +51,7 @@
 /**
  * Position of the axis title.
  *
- * @typedef {*} Highcharts.AxisTitlePositionObject
+ * @typedef Highcharts.AxisTitlePositionObject
  *
  * @property {number} x
  *           X position.
@@ -61,6 +61,7 @@
  */
 
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Color.js';
@@ -119,7 +120,8 @@ var addEvent = H.addEvent,
  * Configuration options for the axes are given in options.xAxis and
  * options.yAxis.
  *
- * @class Highcharts.Axis
+ * @class
+ * @name Highcharts.Axis
 
  * @param {Highcharts.Chart} chart
  *        The Chart instance to apply the axis on.
@@ -231,7 +233,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @default    0
          * @since      4.1.0
          * @product    highcharts highstock
-         * @apioption   xAxis.breaks.breakSize
+         * @apioption  xAxis.breaks.breakSize
          */
 
         /**
@@ -372,8 +374,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @default    Solid
          * @since      4.1
          * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-         *              "ShortDashDotDot", "Dot", "Dash" ,"LongDash",
-         *              "DashDot", "LongDashDot", "LongDashDotDot"]
+         *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
+         *             "LongDashDot", "LongDashDotDot"]
          * @apioption  xAxis.crosshair.dashStyle
          */
 
@@ -726,8 +728,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @default    Solid
          * @since      1.2
          * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-         *              "ShortDashDotDot", "Dot", "Dash" ,"LongDash",
-         *              "DashDot", "LongDashDot", "LongDashDotDot"]
+         *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
+         *             "LongDashDot", "LongDashDotDot"]
          * @apioption  xAxis.gridLineDashStyle
          */
 
@@ -905,17 +907,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
 
             /**
-             * How to handle overflowing labels on horizontal axis. Can be
-             * undefined, `false` or `"justify"`. By default it aligns inside
-             * the chart area. If "justify", labels will not render outside
-             * the plot area. If `false`, it will not be aligned at all.
-             * If there is room to move it, it will be aligned to the edge,
-             * else it will be removed.
+             * How to handle overflowing labels on horizontal axis. If set to
+             * `"allow"`, it will not be aligned at all. By default it
+             * `"justify"` labels inside the chart area. If there is room to
+             * move it, it will be aligned to the edge, else it will be removed.
              *
-             * @deprecated
              * @type       {boolean|string}
+             * @default    justify
              * @since      2.2.5
-             * @validvalue ["justify", false]
+             * @validvalue ["allow", "justify"]
              * @apioption  xAxis.labels.overflow
              */
 
