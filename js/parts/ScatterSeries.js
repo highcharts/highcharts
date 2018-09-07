@@ -14,19 +14,29 @@ var Series = H.Series,
     seriesType = H.seriesType;
 
 /**
- * A scatter plot uses cartesian coordinates to display values for two variables
- * for a set of data.
+ * Scatter series type.
  *
- * @sample {highcharts} highcharts/demo/scatter/
- *         Scatter plot
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.scatter
  *
- * @type       {*}
- * @extends    plotOptions.line
- * @excluding  pointPlacement, shadow
- * @product    highcharts highstock
- * @apioption  plotOptions.scatter
+ * @augments Highcharts.Series
  */
 seriesType('scatter', 'line', {
+
+    /**
+     * A scatter plot uses cartesian coordinates to display values for two
+     * variables for a set of data.
+     *
+     * @sample {highcharts} highcharts/demo/scatter/
+     *         Scatter plot
+     *
+     * @type       {*}
+     * @extends    plotOptions.line
+     * @excluding  pointPlacement, shadow
+     * @product    highcharts highstock
+     * @apioption  plotOptions.scatter
+     */
 
     /**
      * The width of the line connecting the data points.
