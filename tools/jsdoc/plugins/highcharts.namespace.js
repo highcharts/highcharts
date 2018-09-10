@@ -1037,6 +1037,13 @@ function addTypeDef (doclet) {
 
     node.doclet.types = (getTypes(doclet) || [ '*' ]);
 
+    if (doclet.params ||
+        doclet.returns
+    ) {
+        node.doclet.parameters = getParameters(doclet);
+        node.doclet.return = getReturn(doclet);
+    }
+
     if (!doclet.properties) {
         return;
     }
