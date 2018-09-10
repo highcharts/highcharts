@@ -46,6 +46,14 @@ var eventEmitterMixin = {
 
         if (emitter.options.draggable) {
             H.addEvent(emitter, 'drag', emitter.onDrag);
+
+            emitter.graphic.css({
+                cursor: {
+                    x: 'ew-resize',
+                    y: 'ns-resize',
+                    xy: 'move'
+                }[emitter.options.draggable]
+            });
         }
     },
 
