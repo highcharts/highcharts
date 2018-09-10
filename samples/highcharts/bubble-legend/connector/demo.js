@@ -12,7 +12,7 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         itemMarginTop: 10,
         bubbleLegend: {
-            position: 4,
+            legendIndex: 4,
             enabled: true,
             connectorDistance: 80,
             borderWidth: 3,

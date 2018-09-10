@@ -1,5 +1,6 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2017 Highsoft AS
+ * Author: Paweł Potaczek
  *
  * License: www.highcharts.com/license
  */
@@ -13,7 +14,9 @@ var Series = H.Series,
     wrap = H.wrap,
     each = H.each,
     grep = H.grep,
+    color = H.color,
     isNumber = H.isNumber,
+    numberFormat = H.numberFormat,
     objectEach = H.objectEach,
     merge = H.merge,
     noop = H.noop,
@@ -40,13 +43,13 @@ setOptions({  // Set default bubble legend options
             /**
              * The color of the ranges borders, can be also defined for an
              * individual range.
-             * @type {Color}
-             * @sample highcharts/bubblelegend/similartoseries/
+             * @type {color}
+             * @sample highcharts/bubble-legend/similartoseries/
              *         Similat look to the bubble series
-             * @sample highcharts/bubblelegend/bordercolor/
+             * @sample highcharts/bubble-legend/bordercolor/
              *         Individual bubble border color
              */
-            borderColor: '#058DC7',
+            borderColor: undefined,
             /**
              * The width of the ranges borders in pixels, can be also defined
              * for an individual range.
@@ -56,40 +59,46 @@ setOptions({  // Set default bubble legend options
              * An additional class name to apply to the bubble legend' circle
              * graphical elements. This option does not replace default class
              * names of the graphical element.
+             * @type {string}
+             * @sample {highcharts} highcharts/css/bubble-legend/
+             *         Styling by CSS
              */
             className: undefined,
             /**
              * The main color of the bubble legend. Applies to ranges, if
              * individual color is not defined.
-             * @type {Color}
-             * @sample highcharts/bubblelegend/similartoseries/
+             * @type {color}
+             * @sample highcharts/bubble-legend/similartoseries/
              *         Similat look to the bubble series
-             * @sample highcharts/bubblelegend/color/
+             * @sample highcharts/bubble-legend/color/
              *         Individual bubble color
              */
-            color: 'rgba(124, 181, 236, 0.5)',
+            color: undefined,
             /**
              * An additional class name to apply to the bubble legend'
              * connector graphical elements. This option does not replace
              * default class names of the graphical element.
+             * @type {string}
+             * @sample {highcharts} highcharts/css/bubble-legend/
+             *         Styling by CSS
              */
             connectorClassName: undefined,
             /**
              * The color of the connector, can be also defined
              * for an individual range.
+             * @type {color}
              */
-            connectorColor: '#058DC7',
+            connectorColor: undefined,
             /**
              * The length of the connectors in pixels. If labels are centered,
              * the distance is reduced to 0.
-             * @type {Color}
-             * @sample highcharts/bubblelegend/connectorandlabels/
+             * @sample highcharts/bubble-legend/connectorandlabels/
              *         Increased connector length
              */
             connectorDistance: 60,
             /**
              * The width of the connectors in pixels.
-             * @sample highcharts/bubblelegend/connectorandlabels/
+             * @sample highcharts/bubble-legend/connectorandlabels/
              *         Increased connector width
              */
             connectorWidth: 1,
@@ -102,9 +111,12 @@ setOptions({  // Set default bubble legend options
              */
             labels: {
                 /**
-                 * An additional class name to apply to the bubble legend'
+                 * An additional class name to apply to the bubble legend
                  * label graphical elements. This option does not replace
                  * default class names of the graphical element.
+                 * @type {string}
+                 * @sample {highcharts} highcharts/css/bubble-legend/
+                 *         Styling by CSS
                  */
                 className: undefined,
                 /**
@@ -112,10 +124,57 @@ setOptions({  // Set default bubble legend options
                  */
                 allowOverlap: false,
                 /**
+                 * A [format string](http://docs.highcharts.com/#formatting)
+                 * for the bubble legend labels. Available variables are the
+                 * same as for `formatter`.
+                 * @sample highcharts/bubble-legend/format/
+                 *         Add a unit
+                 * @type {string}
+                 */
+                format: '',
+                /**
+                 * Available `this.value` are:
+                 *
+                 * <table>
+                 *
+                 * <tbody>
+                 *
+                 * <tr>
+                 *
+                 * <td>`this.value`:</td>
+                 *
+                 * <td>The bubble value.</td>
+                 *
+                 * </tr>
+                 *
+                 * <tr>
+                 *
+                 * <td>`this.radius`:</td>
+                 *
+                 * <td>The radius of the bubble range.</td>
+                 *
+                 * </tr>
+                 *
+                 * <tr>
+                 *
+                 * <td>`this.center`:</td>
+                 *
+                 * <td>The center y position of the range.</td>
+                 *
+                 * </tr>
+                 *
+                 * </tbody>
+                 *
+                 * </table>
+                 *
+                 * @type {function}
+                 */
+                formatter: undefined,
+                /**
                  * The alignment of the labels compared to the bubble legend.
                  * Can be one of `left`, `center` or `right`.
                  * @validvalue ["left", "center", "right"]
-                 * @sample highcharts/bubblelegend/connectorandlabels/
+                 * @sample highcharts/bubble-legend/connectorandlabels/
                  *         Labels on left
                  */
                 align: 'right',
@@ -128,7 +187,7 @@ setOptions({  // Set default bubble legend options
                     /**
                      * @type {Color}
                      */
-                    color: '#000000'
+                    color: undefined
                 },
                 /**
                  * The x position offset of the label relative to the
@@ -155,16 +214,16 @@ setOptions({  // Set default bubble legend options
             minSize: 10,  // Number
             /**
              * The position of the bubble legend in the legend.
-             * @sample highcharts/bubblelegend/connectorandlabels/
+             * @sample highcharts/bubble-legend/connectorandlabels/
              *         Bubble legend as last item in legend
              */
-            position: 0, // Number
+            legendIndex: 0, // Number
             /**
              * Options for specific range. One range consists of bubble, label
              * and connector.
-             * @sample highcharts/bubblelegend/ranges/
+             * @sample highcharts/bubble-legend/ranges/
              *         Manually defined ranges
-             * @sample highcharts/bubblelegend/autoranges/
+             * @sample highcharts/bubble-legend/autoranges/
              *         Auto calculated ranges
              * @type {Array<Object>}
              */
@@ -195,7 +254,7 @@ setOptions({  // Set default bubble legend options
              * corresponds best to the human perception of the size of each
              * bubble.
              * @validvalue ["area", "width"]
-             * @sample highcharts/bubblelegend/ranges/
+             * @sample highcharts/bubble-legend/ranges/
              *         Size by width
              */
             sizeBy: 'area',
@@ -256,7 +315,7 @@ H.BubbleLegend.prototype = {
      */
     addToLegend: function (items) {
         // Insert bubbleLegend into legend items
-        items.splice(this.options.position, 0, this);
+        items.splice(this.options.legendIndex, 0, this);
     },
 
     /**
@@ -326,9 +385,10 @@ H.BubbleLegend.prototype = {
     setOptions: function () {
         var bubbleLegend = this,
             ranges = bubbleLegend.ranges,
-            legend = bubbleLegend.legend,
             options = bubbleLegend.options,
-            baseline = legend.baseline,
+            series = bubbleLegend.chart.series[options.seriesIndex],
+            baseline = bubbleLegend.legend.baseline,
+            /*= if (build.classic) { =*/
             bubbleStyle = {
                 'z-index': options.zIndex,
                 'stroke-width': options.borderWidth
@@ -337,31 +397,44 @@ H.BubbleLegend.prototype = {
                 'z-index': options.zIndex,
                 'stroke-width': options.connectorWidth
             },
-            labelStyle = bubbleLegend.getLabelStyles();
+            labelStyle = bubbleLegend.getLabelStyles(),
+            /*= } =*/
+            fillOpacity = series.options.marker.fillOpacity;
 
         // Allow to parts of styles be used individually for range
         each(ranges, function (range, i) {
+            /*= if (build.classic) { =*/
             bubbleStyle.stroke = pick(
                 range.borderColor,
-                options.borderColor
+                options.borderColor,
+                series.color
             );
-            bubbleStyle.fill = pick(range.color, options.color);
+            bubbleStyle.fill = pick(
+                range.color,
+                options.color,
+                fillOpacity !== 1 ?
+                    color(series.color).setOpacity(fillOpacity).get('rgba') :
+                    series.color
+            );
             connectorStyle.stroke = pick(
                 range.connectorColor,
-                options.connectorColor
+                options.connectorColor,
+                series.color
             );
-
+            /*= } =*/
             // Set options needed for rendering each range
             ranges[i].radius = bubbleLegend.getRangeRadius(range.value);
             ranges[i] = merge(ranges[i], {
                 center: ranges[0].radius - ranges[i].radius + baseline,
+                /*= if (build.classic) { =*/
                 bubbleStyle: merge(false, bubbleStyle),
                 connectorStyle: merge(false, connectorStyle),
                 labelStyle: labelStyle
+                /*= } =*/
             });
         });
     },
-
+    /*= if (build.classic) { =*/
     /**
      * Merge options for bubbleLegend labels.
      *
@@ -382,11 +455,15 @@ H.BubbleLegend.prototype = {
 
         return merge(false, additionalLabelsStyle, {
             'font-size': options.labels.style.fontSize,
-            fill: options.labels.style.color,
+            fill: pick(
+                options.labels.style.color,
+                '${palette.neutralColor100}'
+            ),
             'z-index': options.zIndex,
             align: rtl || labelsOnLeft ? 'right' : 'left'
         });
     },
+    /*= } =*/
 
     /**
      * Calculate radius for each bubble range,
@@ -511,10 +588,17 @@ H.BubbleLegend.prototype = {
                     posX,
                     elementCenter + crispMovement,
                     absoluteRadius
-                ).attr(
+                )
+                /*= if (build.classic) { =*/
+                .attr(
                     range.bubbleStyle
-                ).addClass(
-                    'highcharts-bubble-legend-symbol ' +
+                )
+                /*= } =*/
+                .addClass(
+                    /*= if (!build.classic) { =*/
+                    'highcharts-color-' + bubbleLegend.options.seriesIndex +
+                    /*= } =*/
+                    ' highcharts-bubble-legend-symbol ' +
                     (options.className || '')
                 ).add(
                     bubbleLegend.legendSymbol
@@ -527,10 +611,17 @@ H.BubbleLegend.prototype = {
                 .path(renderer.crispLine(
                     ['M', posX, posY, 'L', posX + connectorLength, posY],
                      options.connectorWidth)
-                ).attr(
+                )
+                /*= if (build.classic) { =*/
+                .attr(
                     range.connectorStyle
-                ).addClass(
-                    'highcharts-bubble-legend-connectors ' +
+                )
+                /*= } =*/
+                .addClass(
+                    /*= if (!build.classic) { =*/
+                    'highcharts-color-' + bubbleLegend.options.seriesIndex +
+                    /*= } =*/
+                    ' highcharts-bubble-legend-connectors ' +
                     (options.connectorClassName || '')
                 ).add(
                     bubbleLegend.legendSymbol
@@ -543,9 +634,13 @@ H.BubbleLegend.prototype = {
                 bubbleLegend.formatLabel(range),
                 labelX,
                 labelY + labelMovement
-            ).attr(
+            )
+            /*= if (build.classic) { =*/
+            .attr(
                 range.labelStyle
-            ).addClass(
+            )
+            /*= } =*/
+            .addClass(
                 'highcharts-bubble-legend-labels ' +
                 (options.labels.className || '')
             ).add(
@@ -601,7 +696,7 @@ H.BubbleLegend.prototype = {
 
         return format ? H.format(format, range) :
             formatter ? formatter.call(range) :
-            Math.round(range.value * 10) / 10;  // One decimal place
+            numberFormat(range.value, 1);
     },
 
     /**
@@ -680,6 +775,10 @@ H.BubbleLegend.prototype = {
                 { value: maxZ, autoRanges: true }
             ];
         }
+        // Prevent reverse order of ranges after redraw
+        if (rangesOptions.length && rangesOptions[0].radius) {
+            ranges.reverse();
+        }
 
         // Merge ranges values with user options
         each(ranges, function (range, i) {
@@ -752,9 +851,9 @@ H.BubbleLegend.prototype = {
     },
 
     /**
-     * Because of the possibility of creating another line, predicted bubble
-     * legend sizes may differ by a few pixels, so it is necessary to correct
-     * them.
+     * Because of the possibility of creating another legend line, predicted
+     * bubble legend sizes may differ by a few pixels, so it is necessary to
+     * correct them.
      *
      * @private
      */
@@ -805,15 +904,15 @@ addEvent(H.Legend, 'afterGetAllItems', function (e) {
 /**
  * Check if there is at least one visible bubble series.
  *
- * @return {Number || Boolean} - First visible bubble series index
+ * @return {Number} - First visible bubble series index
  *
  * @private
  */
 Chart.prototype.getVisibleBubbleSeriesIndex = function () {
     var series = this.series,
-        i = series.length;
+        i = 0;
 
-    while (i--) {
+    while (i < series.length) {
         if (
             series[i] &&
             series[i].isBubble &&
@@ -822,6 +921,7 @@ Chart.prototype.getVisibleBubbleSeriesIndex = function () {
         ) {
             return i;
         }
+        i++;
     }
     return -1;
 };
@@ -904,8 +1004,6 @@ Legend.prototype.retranslateItems = function (lines) {
         });
         item._legendItemPos[1] = orgTranslateY + lines[actualLine].height / 2;
     });
-
-    this.handleOverflow(this.legendHeight);
 };
 
 /**
@@ -946,19 +1044,21 @@ addEvent(Series, 'legendItemClick', function () {
 wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
     var chart = this,
         legend = chart.legend,
+        bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0,
+        bubbleLegendOptions,
         bubbleSizes;
 
     if (
         legend && legend.options.enabled && legend.bubbleLegend &&
-        legend.options.bubbleLegend.autoRanges
+        legend.options.bubbleLegend.autoRanges && bubbleSeries
     ) {
+        bubbleLegendOptions = legend.bubbleLegend.options;
         bubbleSizes = legend.bubbleLegend.predictBubbleSizes();
 
         legend.bubbleLegend.updateRanges(bubbleSizes[0], bubbleSizes[1]);
         // Disable animation on init
-        if (!legend.bubbleLegend.options.placed) {
+        if (!bubbleLegendOptions.placed) {
             legend.group.placed = false;
-            legend.bubbleLegend.options.placed = true;
 
             each(legend.allItems, function (item) {
                 item.legendGroup.translateY = null;
@@ -971,10 +1071,20 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
         chart.getMargins();
 
         each(chart.axes, function (axis) {
-            axis.updateNames();
-            axis.setScale();
             axis.render();
+
+            if (!bubbleLegendOptions.placed) {
+                axis.setScale();
+                axis.updateNames();
+                // Disable axis animation on init
+                objectEach(axis.ticks, function (tick) {
+                    tick.isNew = true;
+                    tick.isNewLabel = true;
+                });
+            }
         });
+        bubbleLegendOptions.placed = true;
+
         // After recalculate axes, calculate margins again.
         chart.getMargins();
 
@@ -991,6 +1101,8 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
         proceed.call(chart, options, callback);
 
         if (legend && legend.options.enabled && legend.bubbleLegend) {
+            // Allow color change after click in legend on static bubble legend
+            legend.render();
             legend.retranslateItems(legend.getLinesHeights());
         }
     }

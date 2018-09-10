@@ -14,7 +14,7 @@ QUnit.test(
                                 return 'some text';
                             }
                         },
-                        position: 0
+                        legendIndex: 0
                     }
                 },
 
@@ -26,7 +26,7 @@ QUnit.test(
 
         chart.legend.update({
             bubbleLegend: {
-                position: 1
+                legendIndex: 1
             }
         });
 
