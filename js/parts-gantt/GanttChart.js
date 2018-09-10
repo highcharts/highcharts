@@ -28,8 +28,6 @@ H.ganttChart = function (renderTo, options, callback) {
     var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
-        defaultTickInterval = 1000 * 60 * 60 * 24, // Day
-        defaultLabelFormat = '{value:%E}',
         defaultLinkedTo;
     options = arguments[hasRenderToArg ? 1 : 0];
 
@@ -42,8 +40,6 @@ H.ganttChart = function (renderTo, options, callback) {
     // apply X axis options to both single and multi x axes
     options.xAxis = map(options.xAxis, function (xAxisOptions, i) {
         if (i === 1) { // Second xAxis
-            defaultTickInterval = defaultTickInterval * 7; // Week
-            defaultLabelFormat = '{value:Week %W}';
             defaultLinkedTo = 0;
         }
         return merge(
@@ -51,10 +47,6 @@ H.ganttChart = function (renderTo, options, callback) {
             { // defaults
                 grid: {
                     enabled: true
-                },
-                tickInterval: defaultTickInterval,
-                labels: {
-                    format: defaultLabelFormat
                 },
                 opposite: true,
                 linkedTo: defaultLinkedTo
@@ -79,12 +71,7 @@ H.ganttChart = function (renderTo, options, callback) {
 
                 // Set default type treegrid, but only if 'categories' is
                 // undefined
-                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid',
-                labels: {
-                    style: {
-                        fontSize: '13px'
-                    }
-                }
+                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
             },
             yAxisOptions // user options
         );

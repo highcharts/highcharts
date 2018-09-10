@@ -366,22 +366,82 @@ wrap(Axis.prototype, 'unsquish', function (proceed) {
  * @param {function} proceed - the original function
  * @param {object} options - the pure axis options as input by the user
  */
-wrap(Axis.prototype, 'setOptions', function (proceed, options) {
-    var axis = this,
+H.addEvent(Axis, 'afterSetOptions', function (e) {
+    var options = this.options,
+        userOptions = e.userOptions,
+        gridAxisOptions,
         gridOptions = (options && isObject(options.grid)) ? options.grid : {};
 
     if (gridOptions.enabled === true) {
 
-        /**
-         * Sets the axis title to null unless otherwise specified by user.
-         */
-        options.title = merge({
-            text: null,
-            reserveSpace: false,
-            rotation: 0
-        }, options.title);
+        // Merge the user options into default grid axis options so that when a
+        // user option is set, it takes presedence.
+        gridAxisOptions = merge(true, {
+            dateTimeLabelFormats: {
+                day: ['%E'],
+                week: ['Week %W', null, null, 'W%W'],
+                month: ['%b']
+            },
 
-        if (axis.horiz) {
+            labels: {
+                ranges: true,
+                style: {
+                    fontSize: '13px'
+                }
+            },
+
+            title: {
+                text: null,
+                reserveSpace: false,
+                rotation: 0
+            },
+
+            // In a grid axis, only allow one unit of certain types, for example
+            // we shouln't have one grid cell spanning two days.
+            units: [[
+                'millisecond', // unit name
+                [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
+            ], [
+                'second',
+                [1, 2, 5, 10, 15, 30]
+            ], [
+                'minute',
+                [1, 2, 5, 10, 15, 30]
+            ], [
+                'hour',
+                [1]
+            ], [
+                'day',
+                [1]
+            ], [
+                'week',
+                [1]
+            ], [
+                'month',
+                [1]
+            ], [
+                'year',
+                null
+            ]]
+        }, userOptions);
+
+        // X-axis specific options
+        if (this.coll === 'xAxis') {
+            // Give the axes different default tickPixelIntervals so that
+            // (usually) the top axis shows weeks, bottom axis shows days.
+            if (!defined(gridAxisOptions.tickPixelInterval)) {
+                gridAxisOptions.tickPixelInterval =
+                    H.inArray(userOptions, this.chart.options.xAxis) === 0 ?
+                        50 :
+                        350;
+            }
+
+        }
+
+        // Now merge the combined options into the axis options
+        merge(true, this.options, gridAxisOptions);
+
+        if (this.horiz) {
             /**              _________________________
              * Make this:    ___|_____|_____|_____|__|
              *               ^                     ^
@@ -389,19 +449,11 @@ wrap(Axis.prototype, 'setOptions', function (proceed, options) {
              * Into this:    |_____|_____|_____|_____|
              *                  ^                 ^
              */
-            options.minPadding = pick(options.minPadding, 0);
-            options.maxPadding = pick(options.maxPadding, 0);
+            options.minPadding = pick(userOptions.minPadding, 0);
+            options.maxPadding = pick(userOptions.maxPadding, 0);
         }
 
-        // When grid, the ranges option defaults to true
-        merge(true, options, {
-            labels: {
-                ranges: pick(options.labels && options.labels.ranges, true)
-            }
-        });
     }
-
-    proceed.apply(this, argsToArray(arguments));
 });
 
 /**

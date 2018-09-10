@@ -80,7 +80,10 @@ H.Tick.prototype = {
         if (axis.isDatetimeAxis && tickPositionInfo) {
             dateTimeLabelFormats = H.splat(
                 options.dateTimeLabelFormats[
-                    tickPositionInfo.higherRanks[pos] ||
+                    (
+                        !options.grid &&
+                        tickPositionInfo.higherRanks[pos]
+                    ) ||
                     tickPositionInfo.unitName
                 ]
             );
