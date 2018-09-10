@@ -537,6 +537,7 @@ H.Toolbar.prototype = {
         each(buttons, function (btn) {
             if (btn !== currentButton) {
                 btn.classList.remove(PREFIX + 'current');
+                btn.classList.remove(PREFIX + 'active');
                 submenuItems =
                     btn.querySelectorAll('.' + PREFIX + 'submenu-wrapper');
 
