@@ -505,7 +505,20 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
     // Start with the first point within the X axis range (#2696)
     for (i = 0; i <= dataLength; i++) {
-        if (xData[i] >= groupPositions[0]) {
+        var diff = xData[i] - groupPositions[0];
+        if (diff >= 0) {
+            break;
+        } else if (
+            groupPositions.info.unitName === 'week' &&
+            diff > -groupPositions.info.unitRange / 7
+        ) {
+            // Add an extra position before first position, becasue
+            // getTimeTicks trims first position if it starts on Sunday (#7051)
+            groupPositions.splice(
+                0,
+                0,
+                groupPositions[0] - groupPositions.info.unitRange
+            );
             break;
         }
     }

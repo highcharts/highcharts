@@ -296,3 +296,37 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
     );
 
 });
+
+QUnit.test('Weekly grouped data should not trim Sunday points (#7051)', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            dataGrouping: {
+                forced: true,
+                units: [
+                    ['week', [1]]
+                ]
+            },
+            data: [
+                [1313964000000, 23.17],
+                [1314050400000, 23.78],
+                [1314136800000, 24.10],
+                [1314223200000, 23.86],
+                [1314309600000, 24.54],
+                [1314568800000, 25.51],
+                [1314655200000, 25.19],
+                [1314741600000, 25.24],
+                [1314828000000, 24.77],
+                [1314914400000, 24.15],
+                [1315260000000, 23.74],
+                [1315346400000, 25.30],
+                [1315432800000, 24.99]
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].processedXData.join(','),
+        '1313366400000,1313971200000,1314576000000,1315180800000',
+        'All points rendered'
+    );
+});
