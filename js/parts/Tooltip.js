@@ -21,16 +21,16 @@ var doc = H.doc,
     timeUnits = H.timeUnits;
 
 /**
- * The tooltip object
+ * Tooltip of a chart.
  *
- * @private
- * @class Highcharts.Tooltip
+ * @class
+ * @name Highcharts.Tooltip
  *
  * @param {Highcharts.Chart} chart
- *        The chart instance
+ *        The chart instance.
  *
  * @param {Highcharts.TooltipOptions} options
- *        Tooltip options
+ *        Tooltip options.
  */
 H.Tooltip = function () {
     this.init.apply(this, arguments);
@@ -43,33 +43,96 @@ H.Tooltip.prototype = {
      * @function Highcharts.Tooltip#init
      *
      * @param  {Highcharts.Chart} chart
-     *         The chart instance
+     *         The chart instance.
      *
      * @param  {Highcharts.TooltipOptions} options
-     *         Tooltip options
+     *         Tooltip options.
      *
      * @return {void}
      */
     init: function (chart, options) {
 
-        // Save the chart and options
+        /**
+         * Chart of the tooltip.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#chart
+         * @type {Highcharts.Chart}
+         */
         this.chart = chart;
+
+        /**
+         * Used tooltip options.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#options
+         * @type {Highcharts.TooltipOptions}
+         */
         this.options = options;
 
-        // List of crosshairs
+        /**
+         * List of crosshairs.
+         *
+         * @private
+         * @readonly
+         * @name Highcharts.Tooltip#crosshairs
+         * @type {Array<*>}
+         */
         this.crosshairs = [];
 
-        // Current values of x and y when animating
+        /**
+         * Current values of x and y when animating.
+         *
+         * @private
+         * @readonly
+         * @name Highcharts.Tooltip#now
+         * @type {*}
+         */
         this.now = { x: 0, y: 0 };
 
-        // The tooltip is initially hidden
+        /**
+         * Tooltips are initially hidden.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#isHidden
+         * @type {boolean}
+         */
         this.isHidden = true;
 
-        // Public properties based on option combinations
+        /**
+         * True, if the tooltip is splitted into one label per series, with the
+         * header close to the axis.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#split
+         * @type {boolean}
+         */
         this.split = options.split && !chart.inverted;
+
+        /**
+         * When the tooltip is shared, the entire plot area will capture mouse
+         * movement or touch events.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#shared
+         * @type {boolean}
+         */
         this.shared = options.shared || this.split;
-        // Slit tooltip does not support outside in the first iteration. Should
-        // not be too complicated to implement.
+
+        /**
+         * Whether to allow the tooltip to render outside the chart's SVG
+         * element box. By default (false), the tooltip is rendered within the
+         * chart's SVG element, which results in the tooltip being aligned
+         * inside the chart area.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#outside
+         * @type {boolean}
+         *
+         * @todo
+         * Split tooltip does not support outside in the first iteration. Should
+         * not be too complicated to implement.
+         */
         this.outside = options.outside && !this.split;
 
     },
@@ -100,6 +163,7 @@ H.Tooltip.prototype = {
     },
 
     /*= if (!build.classic) { =*/
+
     /**
      * In styled mode, apply the default filter for the tooltip drop-shadow. It
      * needs to have an id specific to the chart, otherwise there will be issues
@@ -150,14 +214,13 @@ H.Tooltip.prototype = {
             '}'
         });
     },
+
     /*= } =*/
 
 
     /**
-     * Create the Tooltip label element if it doesn't exist, then return the
-     * label.
+     * Creates the Tooltip label element if it does not exist, then returns it.
      *
-     * @private
      * @function Highcharts.Tooltip#getLabel
      *
      * @return {Highcharts.SVGElement}
@@ -245,7 +308,8 @@ H.Tooltip.prototype = {
     },
 
     /**
-     * @private
+     * Updates the tooltip with the provided tooltip options.
+     *
      * @function Highcharts.Tooltip#update
      *
      * @param  {Highcharts.TooltipOptions} options
@@ -260,9 +324,8 @@ H.Tooltip.prototype = {
     },
 
     /**
-     * Destroy the tooltip and its elements.
+     * Removes and destroys the tooltip and its elements.
      *
-     * @private
      * @function Highcharts.Tooltip#destroy
      *
      * @return {void}
@@ -285,9 +348,8 @@ H.Tooltip.prototype = {
     },
 
     /**
-     * Provide a soft movement for the tooltip
+     * Moves the tooltip with a soft animation to a new position.
      *
-     * @private
      * @function Highcharts.Tooltip#move
      *
      * @param  {number} x
@@ -345,12 +407,14 @@ H.Tooltip.prototype = {
     },
 
     /**
-     * Hide the tooltip
+     * Hides the tooltip with a fade out animation.
      *
-     * @private
      * @function Highcharts.Tooltip#hide
      *
-     * @param  {number} delay
+     * @param  {number|undefined} [delay]
+     *         The fade out in milliseconds. If no value is provided the value
+     *         of the tooltip.hideDelay option is used. A value of 0 disables
+     *         the fade out animation.
      *
      * @return {void}
      */
@@ -376,7 +440,7 @@ H.Tooltip.prototype = {
      *
      * @param  {Array<Highchart.Points>} points
      *
-     * @param  {*|undefined} [mouseEvent]
+     * @param  {global.Event|undefined} [mouseEvent]
      *
      * @return {void}
      */
@@ -638,13 +702,14 @@ H.Tooltip.prototype = {
     /**
      * Refresh the tooltip's text and position.
      *
-     * @private
      * @function Highcharts.Tooltip#refresh
      *
      * @param  {Highcharts.Point|Array<Highcharts.Point>} pointOrPoints
-     *         Rither a point or an array of points
+     *         Either a point or an array of points.
      *
-     * @param  {*} mouseEvent
+     * @param  {global.Event|undefined} [mouseEvent]
+     *         Mouse event, that is responsible for the refresh and should be
+     *         used for the tooltip update.
      *
      * @return {void}
      */
