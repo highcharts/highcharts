@@ -1198,8 +1198,10 @@ var stockToolsBindings = {
         }
     },
     'full-screen': {
-        start: function () {
+        init: function () {
+            var chart = this.chart;
 
+            chart.fullScreen = new H.FullScreen(chart.container);
         }
     },
     'current-price-indicator': {

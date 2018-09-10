@@ -133,6 +133,7 @@ H.setOptions({
                 'flags',
                 'separator',
                 'zoomChange',
+                'fullScreen',
                 'typeChange',
                 'separator',
                 'currentPriceIndicator',
@@ -303,6 +304,9 @@ H.setOptions({
                     typeCandlestick: {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/series-candlestick.svg)'
                     }
+                },
+                fullScreen: {
+                    symbol: 'url(https://cdn.rawgit.com/YR/weather-symbols/6.0.2/dist/svg/40d.svg)'
                 },
                 saveChart: {
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/save-chart.svg)'
@@ -915,6 +919,7 @@ H.Toolbar.prototype = {
         typeLine: PREFIX + 'series-type-line',
         typeOHLC: PREFIX + 'series-type-ohlc',
         typeCandlestick: PREFIX + 'series-type-candlestick',
+        fullScreen: PREFIX + 'full-screen',
         toggleAnnotations: PREFIX + 'toggle-annotations',
         saveChart: PREFIX + 'save-chart',
         separator: PREFIX + 'separator'
