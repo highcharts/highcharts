@@ -3,9 +3,12 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import Highcharts from './Globals.js';
 import './Utilities.js';
+
 var H = Highcharts,
 
     addEvent = H.addEvent,
@@ -25,14 +28,17 @@ var H = Highcharts,
 
 /**
  * The overview of the chart's series. The legend object is instanciated
- * internally in the chart constructor, and available from `chart.legend`. Each
- * chart has only one legend.
+ * internally in the chart constructor, and is available from the `chart.legend`
+ * property. Each chart has only one legend.
  *
- * @class Highcharts.Legend
+ * @class
+ * @name Highcharts.Legend
  *
  * @param {Highcharts.Chart} chart
+ *        The chart instance.
  *
  * @param {Highcharts.LegendOptions} options
+ *        Legend options.
  */
 Highcharts.Legend = function (chart, options) {
     this.init(chart, options);
@@ -46,14 +52,23 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#init
      *
-     * @param  {Highcharts.Chart} chart
+     * @param {Highcharts.Chart} chart
+     *        The chart instance.
      *
-     * @param  {Highcharts.LegendOptions} options
+     * @param {Highcharts.LegendOptions} options
+     *        Legend options.
      *
      * @return {void}
      */
     init: function (chart, options) {
 
+        /**
+         * Chart of this legend.
+         *
+         * @readonly
+         * @name Highcharts.Legend#chart
+         * @type {Highcharts.Chart}
+         */
         this.chart = chart;
 
         this.setOptions(options);
@@ -95,6 +110,13 @@ Highcharts.Legend.prototype = {
 
         var padding = pick(options.padding, 8);
 
+        /**
+         * Legend options.
+         *
+         * @readonly
+         * @name Highcharts.Legend#options
+         * @type {Highcharts.LegendOptions}
+         */
         this.options = options;
 
         /*= if (build.classic) { =*/
@@ -261,6 +283,7 @@ Highcharts.Legend.prototype = {
     /**
      * Destroy a single legend item, used internally on removing series items.
      *
+     * @private
      * @function Highcharts.Legend#destroyItem
      *
      * @param  {Highcharts.Point|Highcharts.Series} item
@@ -290,6 +313,7 @@ Highcharts.Legend.prototype = {
      * Destroy the legend. Used internally. To reflow objects, `chart.redraw`
      * must be called after destruction.
      *
+     * @private
      * @function Highcharts.Legend#destroy
      *
      * @return {void}
@@ -372,6 +396,13 @@ Highcharts.Legend.prototype = {
 
         if (titleOptions.text) {
             if (!this.title) {
+                /**
+                 * SVG element of the legend title.
+                 *
+                 * @readonly
+                 * @name Highcharts.Legend#title
+                 * @type {Highcharts.SVGElement}
+                 */
                 this.title = this.chart.renderer.label(
                         titleOptions.text,
                         padding - 3,
@@ -632,10 +663,13 @@ Highcharts.Legend.prototype = {
      * Get all items, which is one item per series for most series and one
      * item per point for pie series and its derivatives.
      *
+     * @private
      * @function Highcharts.Legend#getAllItems
      *
      * @return {Array<Highcharts.Point|Highcharts.Series>}
      *         The current items in the legend.
+     *
+     * @fires Highcharts.Legend#afterGetAllItems
      *
      * @todo
      * Make events official: Fires the event `afterGetAllItems`.
@@ -804,6 +838,7 @@ Highcharts.Legend.prototype = {
      * of creating new ones. Called internally on initial render and after
      * redraws.
      *
+     * @private
      * @function Highcharts.Legend#render
      *
      * @return {void}
@@ -828,6 +863,13 @@ Highcharts.Legend.prototype = {
         legend.lastItemY = 0;
 
         if (!legendGroup) {
+            /**
+             * SVG group of the legend.
+             *
+             * @readonly
+             * @name Highcharts.Legend#group
+             * @type {Highcharts.SVGElement}
+             */
             legend.group = legendGroup = renderer.g('legend')
                 .attr({ zIndex: 7 })
                 .add();
@@ -854,6 +896,14 @@ Highcharts.Legend.prototype = {
             allItems.reverse();
         }
 
+        /**
+         * All items for the legend, which is an array of series for most series
+         * and an array of points for pie series and its derivatives.
+         *
+         * @readonly
+         * @name Highcharts.Legend#allItems
+         * @type {Array<Highcharts.Point|Highcharts.Series>}
+         */
         legend.allItems = allItems;
         legend.display = display = !!allItems.length;
 
@@ -876,6 +926,13 @@ Highcharts.Legend.prototype = {
 
         // Draw the border and/or background
         if (!box) {
+            /**
+             * SVG element of the legend box.
+             *
+             * @readonly
+             * @name Highcharts.Legend#box
+             * @type {Highcharts.SVGElement}
+             */
             legend.box = box = renderer.rect()
                 .addClass('highcharts-legend-box')
                 .attr({
@@ -1116,6 +1173,7 @@ Highcharts.Legend.prototype = {
     /**
      * Scroll the legend by a number of pages.
      *
+     * @private
      * @function Highcharts.Legend#scroll
      *
      * @param  {number} scrollBy
@@ -1201,10 +1259,12 @@ Highcharts.Legend.prototype = {
 
 };
 
-/*
- * LegendSymbolMixin
+/**
+ * Legend symbol mixin.
+ *
+ * @private
+ * @mixin Highcharts.LegendSymbolMixin
  */
-
 H.LegendSymbolMixin = {
 
     /**
