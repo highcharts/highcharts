@@ -1034,13 +1034,14 @@ var stockToolsBindings = {
     // Labels with arrow and auto increments
     'vertical-counter': {
         start: function (e) {
-            var closestPoint = bindingsUtils.attractToPoint(e, this.chart);
+            var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+                annotation;
 
             if (!defined(this.verticalCounter)) {
                 this.verticalCounter = 0;
             }
 
-            this.chart.addAnnotation({
+            annotation = this.chart.addAnnotation({
                 type: 'vertical-line',
                 typeOptions: {
                     point: {
@@ -1067,13 +1068,16 @@ var stockToolsBindings = {
             });
 
             this.verticalCounter++;
+
+            annotation.options.events.click.call(annotation, {});
         }
     },
     'vertical-label': {
         start: function (e) {
-            var closestPoint = bindingsUtils.attractToPoint(e, this.chart);
+            var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+                annotation;
 
-            this.chart.addAnnotation({
+            annotation = this.chart.addAnnotation({
                 type: 'vertical-line',
                 typeOptions: {
                     point: {
@@ -1097,13 +1101,16 @@ var stockToolsBindings = {
                     strokeWidth: 1
                 }
             });
+
+            annotation.options.events.click.call(annotation, {});
         }
     },
     'vertical-arrow': {
         start: function (e) {
-            var closestPoint = bindingsUtils.attractToPoint(e, this.chart);
+            var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+                annotation;
 
-            this.chart.addAnnotation({
+            annotation = this.chart.addAnnotation({
                 type: 'vertical-line',
                 typeOptions: {
                     point: {
@@ -1126,6 +1133,8 @@ var stockToolsBindings = {
                     strokeWidth: 1
                 }
             });
+
+            annotation.options.events.click.call(annotation, {});
         }
     },
     'vertical-double-arrow': {
