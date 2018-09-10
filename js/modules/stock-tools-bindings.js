@@ -1935,20 +1935,24 @@ extend(H.Toolbar.prototype, {
 });
 
 addEvent(H.Toolbar, 'afterInit', function () {
-    var toolbar = this;
+    var toolbar = this,
+        elements;
 
     objectEach(
         toolbar.chart.options.stockTools.bindings,
         function (events, className) {
-            var element = doc.getElementsByClassName(PREFIX + className)[0];
-            if (element) {
-                addEvent(
-                    element,
-                    'click',
-                    function (e) {
-                        toolbar.bindingsButtonClick(this, events, e);
-                    }
-                );
+            elements = doc.getElementsByClassName(PREFIX + className);
+
+            if (elements) {
+                each(elements, function (element) {
+                    addEvent(
+                        element,
+                        'click',
+                        function (e) {
+                            toolbar.bindingsButtonClick(this, events, e);
+                        }
+                    );
+                });
             }
         }
     );
