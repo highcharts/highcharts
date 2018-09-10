@@ -1991,8 +1991,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Title
         chart.setTitle();
 
-
-        // Legend
+        /**
+         * The overview of the chart's series.
+         *
+         * @name Highcharts.Chart#legend
+         * @type {Highcharts.Legend}
+         */
         chart.legend = new Legend(chart, options.legend);
 
         // Get stacks
