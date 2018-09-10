@@ -481,11 +481,11 @@ H.Toolbar.prototype = {
                 // apply calculated styles
                 css(submenuWrapper, {
                     top: -topMargin + 'px',
-                    left: buttonWidth + 'px'
+                    left: buttonWidth + 3 + 'px'
                 });
 
                 buttonWrapper.className += ' ' + PREFIX + 'current';
-                menuWrapper.style.width = '80px';
+                menuWrapper.style.width = '83px';
             }
         });
     },
