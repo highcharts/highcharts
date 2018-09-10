@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -42,7 +41,7 @@ var addEvent = H.addEvent,
  *
  * @sample highcharts/demo/pie-basic/ Pie chart
  *
- * @extends {plotOptions.line}
+ * @extends plotOptions.line
  * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,
  *          cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
  *          lineWidth,marker,negativeColor,pointInterval,pointIntervalUnit,
@@ -62,7 +61,8 @@ seriesType('pie', 'line', {
      * should be explicitly set, for example to `["50%", "50%"]`.
      *
      * @type {Array<String|Number>}
-     * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
+     * @sample {highcharts} highcharts/plotoptions/pie-center/
+     *         Centered at 100, 100
      * @default [null, null]
      * @product highcharts
      */
@@ -80,7 +80,8 @@ seriesType('pie', 'line', {
      * of the global [colors](#colors).
      *
      * @type {Array<Color>}
-     * @sample {highcharts} highcharts/demo/pie-monochrome/ Set default colors for all pies
+     * @sample {highcharts} highcharts/demo/pie-monochrome/
+     *         Set default colors for all pies
      * @since 3.0
      * @product highcharts
      * @apioption plotOptions.pie.colors
@@ -92,6 +93,7 @@ seriesType('pie', 'line', {
      * @product highcharts
      */
     dataLabels: {
+        allowOverlap: true,
         /**
          * The color of the line connecting the data label to the pie slice.
          * The default color is the same as the point's color.
@@ -100,7 +102,9 @@ seriesType('pie', 'line', {
          * `.highcharts-data-label-connector` class.
          *
          * @type {String}
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorcolor/ Blue connectors
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-connectorcolor/
+         *         Blue connectors
          * @sample {highcharts} highcharts/css/pie-point/ Styled connectors
          * @default {point.color}
          * @since 2.1
@@ -112,12 +116,15 @@ seriesType('pie', 'line', {
          * The distance from the data label to the connector.
          *
          * @type {Number}
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/ No padding
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-connectorpadding/
+         *         No padding
          * @default 5
          * @since 2.1
          * @product highcharts
          * @apioption plotOptions.pie.dataLabels.connectorPadding
          */
+        connectorPadding: 5,
 
         /**
          * The width of the line connecting the data label to the pie slice.
@@ -127,8 +134,12 @@ seriesType('pie', 'line', {
          * `.highcharts-data-label-connector` class.
          *
          * @type {Number}
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/ Disable the connector
-         * @sample {highcharts} highcharts/css/pie-point/ Styled connectors
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/
+         *         Disable the connector
+         * @sample {highcharts}
+         *         highcharts/css/pie-point/
+         *         Styled connectors
          * @default 1
          * @since 2.1
          * @product highcharts
@@ -152,7 +163,9 @@ seriesType('pie', 'line', {
          * shown for data labels outside the pie.
          *
          * @type {Number}
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/ Data labels on top of the pie
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-distance/
+         *         Data labels on top of the pie
          * @default 30
          * @since 2.1
          * @product highcharts
@@ -174,17 +187,88 @@ seriesType('pie', 'line', {
 
         /**
          * Whether to render the connector as a soft arc or a line with sharp
-         * break.
+         * break. Works only if `connectorShape` equals to `fixedOffset`.
          *
          * @type {Number}
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/ Soft
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/ Non soft
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-softconnector-true/
+         *         Soft
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-softconnector-false/
+         *         Non soft
          * @since 2.1.7
          * @product highcharts
          * @apioption plotOptions.pie.dataLabels.softConnector
          */
+        softConnector: true,
 
-        x: 0
+         /**
+          * Alignment method for data labels. Possible values are: `'toPlotEdges'` (each label touches
+          * the nearest vertical edge of the plot area) or `'connectors'` (connectors have the same x
+          * position and the widest label of each half (left & right) touches the nearest vertical edge of
+          * the plot area).
+          *
+          * @type {String}
+          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-connectors/ alignTo: connectors
+          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-plotedges/ alignTo: plotEdges
+          * @since 7.0.0
+          * @default undefined
+          * @product highcharts
+          * @apioption plotOptions.pie.dataLabels.alignTo
+          */
+
+        x: 0,
+
+        /**
+         * Specifies the method that is used to generate the connector path.
+         * Highcharts provides 3 built-in connector shapes: `'fixedOffset'`
+         * (default), `'straight'` and `'crookedLine'`. Using `'crookedLine'`
+         * has the most sense (in most of the cases) when `'alignTo'` is set.
+         *
+         * Users can provide their own method by passing a function instead of
+         * a String. 3 arguments are passed to the callback:
+         *
+         * <ol>
+         *  <li>
+         *   Object that holds the information about the coordinates of the label
+         *   (`x` & `y` properties) and how the label is located in relation to the pie
+         *   (`alignment` property). `alignment` can by one of the following:
+         *   `'left'` (pie on the left side of the data label),
+         *   `'right'` (pie on the right side of the data label) or
+         *   `'center'` (data label overlaps the pie).
+         *  </li>
+         *  <li>
+         *   Object that holds the information about the position of the connector.
+         *   Its `touchingSliceAt`  porperty tells the position of the place where
+         *   the connector touches the slice.
+         *  </li>
+         *  <li>
+         *   Data label options
+         *  </li>
+         * </ol>
+         *
+         * The function has to return an SVG path definition in array form (see the example).
+         *
+         * @type {String|Function}
+         * @since 7.0.0
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-string/ connectorShape is a String
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-function/ connectorShape is a function
+         * @product highcharts
+         * @apioption plotOptions.pie.dataLabels.connectorShape
+         */
+        connectorShape: 'fixedOffset',
+
+        /**
+         * Works only if `connectorShape` is `'crookedLine'`. It defines how far
+         * from the vertical plot edge the coonnector path should be crooked.
+         *
+         * @type {String}
+         * @since 7.0.0
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-crookdistance/ crookDistance set to 90%
+         * @product highcharts
+         * @apioption plotOptions.pie.dataLabels.crookDistance
+         */
+        crookDistance: '70%'
     },
 
     /**
@@ -208,7 +292,8 @@ seriesType('pie', 'line', {
      * 3.0.
      *
      * @type {Boolean}
-     * @sample {highcharts} highcharts/plotoptions/pie-ignorehiddenpoint/ True, the hiddden point is ignored
+     * @sample {highcharts} highcharts/plotoptions/pie-ignorehiddenpoint/
+     *         True, the hiddden point is ignored
      * @default true
      * @since 2.3.0
      * @product highcharts
@@ -225,8 +310,10 @@ seriesType('pie', 'line', {
      * area, not the pie size.
      *
      * @type {String|Number}
-     * @sample {highcharts} highcharts/plotoptions/pie-innersize-80px/ 80px inner size
-     * @sample {highcharts} highcharts/plotoptions/pie-innersize-50percent/ 50% of the plot area
+     * @sample {highcharts} highcharts/plotoptions/pie-innersize-80px/
+     *         80px inner size
+     * @sample {highcharts} highcharts/plotoptions/pie-innersize-50percent/
+     *         50% of the plot area
      * @sample {highcharts} highcharts/demo/3d-pie-donut/ 3D donut
      * @default 0
      * @since 2.0
@@ -277,7 +364,8 @@ seriesType('pie', 'line', {
      * legend. Since 2.1, pies are not shown in the legend by default.
      *
      * @type {Boolean}
-     * @sample {highcharts} highcharts/plotoptions/series-showinlegend/ One series in the legend, one hidden
+     * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
+     *         One series in the legend, one hidden
      * @product highcharts
      */
     showInLegend: false,
@@ -287,7 +375,8 @@ seriesType('pie', 'line', {
      * should it be moved?.
      *
      * @type {Number}
-     * @sample {highcharts} highcharts/plotoptions/pie-slicedoffset-20/ 20px offset
+     * @sample {highcharts} highcharts/plotoptions/pie-slicedoffset-20/
+     *         20px offset
      * @default 10
      * @product highcharts
      */
@@ -298,7 +387,8 @@ seriesType('pie', 'line', {
      * right.
      *
      * @type {Number}
-     * @sample {highcharts} highcharts/plotoptions/pie-startangle-90/ Start from right
+     * @sample {highcharts} highcharts/plotoptions/pie-startangle-90/
+     *         Start from right
      * @default 0
      * @since 2.3.4
      * @product highcharts
@@ -326,13 +416,15 @@ seriesType('pie', 'line', {
     /**
      * The color of the border surrounding each slice. When `null`, the
      * border takes the same color as the slice fill. This can be used
-     * together with a `borderWidth` to fill drawing gaps created by antialiazing
-     * artefacts in borderless pies.
+     * together with a `borderWidth` to fill drawing gaps created by
+     * antialiazing artefacts in borderless pies.
      *
-     * In styled mode, the border stroke is given in the `.highcharts-point` class.
+     * In styled mode, the border stroke is given in the `.highcharts-point`
+     * class.
      *
      * @type {Color}
-     * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/ Black border
+     * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/
+     *         Black border
      * @default #ffffff
      * @product highcharts
      */
@@ -346,7 +438,8 @@ seriesType('pie', 'line', {
      * keep the border width at 0.5 or 1, but set the `borderColor` to
      * `null` instead.
      *
-     * In styled mode, the border stroke width is given in the `.highcharts-point` class.
+     * In styled mode, the border stroke width is given in the
+     * `.highcharts-point` class.
      *
      * @type {Number}
      * @sample {highcharts} highcharts/plotoptions/pie-borderwidth/ 3px border
@@ -405,7 +498,8 @@ seriesType('pie', 'line', {
                 if (graphic) {
                     // start values
                     graphic.attr({
-                        r: point.startR || (series.center[3] / 2), // animate from inner radius (#779)
+                        // animate from inner radius (#779)
+                        r: point.startR || (series.center[3] / 2),
                         start: startAngleRad,
                         end: startAngleRad
                     });
@@ -447,13 +541,17 @@ seriesType('pie', 'line', {
         // Set each point's properties
         for (i = 0; i < len; i++) {
             point = points[i];
-            point.percentage = (total > 0 && (point.visible || !ignoreHiddenPoint)) ? point.y / total * 100 : 0;
+            point.percentage =
+                (total > 0 && (point.visible || !ignoreHiddenPoint)) ?
+                    point.y / total * 100 :
+                    0;
             point.total = total;
         }
     },
 
     /**
-     * Extend the generatePoints method by adding total and percentage properties to each point
+     * Extend the generatePoints method by adding total and percentage
+     * properties to each point
      */
     generatePoints: function () {
         Series.prototype.generatePoints.call(this);
@@ -476,7 +574,10 @@ seriesType('pie', 'line', {
             start,
             end,
             angle,
-            radians = getStartAndEndRadians(options.startAngle, options.endAngle),
+            radians = getStartAndEndRadians(
+                options.startAngle,
+                options.endAngle
+            ),
             startAngleRad = series.startAngleRad = radians.start,
             endAngleRad = series.endAngleRad = radians.end,
             circ = endAngleRad - startAngleRad, // 2 * Math.PI,
@@ -489,18 +590,26 @@ seriesType('pie', 'line', {
             len = points.length,
             point;
 
-        // Get positions - either an integer or a percentage string must be given.
-        // If positions are passed as a parameter, we're in a recursive loop for adjusting
-        // space for data labels.
+        // Get positions - either an integer or a percentage string must be
+        // given. If positions are passed as a parameter, we're in a recursive
+        // loop for adjusting space for data labels.
         if (!positions) {
             series.center = positions = series.getCenter();
         }
 
-        // Utility for getting the x value from a given y, used for anticollision
-        // logic in data labels.
-        // Added point for using specific points' label distance.
+        // Utility for getting the x value from a given y, used for
+        // anticollision logic in data labels. Added point for using specific
+        // points' label distance.
         series.getX = function (y, left, point) {
-            angle = Math.asin(Math.min((y - positions[1]) / (positions[2] / 2 + point.labelDistance), 1));
+            angle = Math.asin(
+                Math.min(
+                    (
+                        (y - positions[1]) /
+                        (positions[2] / 2 + point.labelDistance)
+                    ),
+                    1
+                )
+            );
             return positions[0] +
                 (left ? -1 : 1) *
                 (Math.cos(angle) * (positions[2] / 2 + point.labelDistance));
@@ -518,7 +627,10 @@ seriesType('pie', 'line', {
             );
 
             // Saved for later dataLabels distance calculation.
-            series.maxLabelDistance = Math.max(series.maxLabelDistance || 0, point.labelDistance);
+            series.maxLabelDistance = Math.max(
+                series.maxLabelDistance || 0,
+                point.labelDistance
+            );
 
             // set start and end angle
             start = startAngleRad + (cumulative * circ);
@@ -566,20 +678,41 @@ seriesType('pie', 'line', {
             // Set the anchor point for data labels. Use point.labelDistance
             // instead of labelDistance // #1174
             // finalConnectorOffset - not override connectorOffset value.
-            finalConnectorOffset = Math.min(connectorOffset, point.labelDistance / 5); // #1678
-            point.labelPos = [
-                positions[0] + radiusX + Math.cos(angle) * point.labelDistance, // first break of connector
-                positions[1] + radiusY + Math.sin(angle) * point.labelDistance, // a/a
-                positions[0] + radiusX + Math.cos(angle) * finalConnectorOffset, // second break, right outside pie
-                positions[1] + radiusY + Math.sin(angle) * finalConnectorOffset, // a/a
-                positions[0] + radiusX, // landing point for connector
-                positions[1] + radiusY, // a/a
-                point.labelDistance < 0 ? // alignment
-                    'center' :
-                    point.half ? 'right' : 'left', // alignment
-                angle // center angle
-            ];
 
+            finalConnectorOffset = Math.min(
+                connectorOffset,
+                point.labelDistance / 5
+            ); // #1678
+
+            point.labelPosition = {
+                natural: {
+                    // initial position of the data label - it's utilized for
+                    // finding the final position for the label
+                    x: positions[0] + radiusX + Math.cos(angle) * point.labelDistance,
+                    y: positions[1] + radiusY + Math.sin(angle) * point.labelDistance
+                },
+                final: {
+                    // used for generating connector path -
+                    // initialized later in drawDataLabels function
+                    // x: undefined,
+                    // y: undefined
+                },
+                // left - pie on the left side of the data label
+                // right - pie on the right side of the data label
+                // center - data label overlaps the pie
+                alignment: point.labelDistance < 0 ?
+                    'center' : point.half ? 'right' : 'left',
+                connectorPosition: {
+                    breakAt: { // used in connectorShapes.fixedOffset
+                        x: positions[0] + radiusX + Math.cos(angle) * finalConnectorOffset,
+                        y: positions[1] + radiusY + Math.sin(angle) * finalConnectorOffset
+                    },
+                    touchingSliceAt: { // middle of the arc
+                        x: positions[0] + radiusX,
+                        y: positions[1] + radiusY
+                    }
+                }
+            };
         }
     },
 
@@ -627,7 +760,10 @@ seriesType('pie', 'line', {
                 if (shadowGroup) {
                     shadowGroup.attr(groupTranslation);
                 }
-                pointAttr = series.pointAttribs(point, point.selected && 'select');
+                pointAttr = series.pointAttribs(
+                    point,
+                    point.selected && 'select'
+                );
                 /*= } =*/
 
                 // Draw the slice
@@ -640,14 +776,12 @@ seriesType('pie', 'line', {
                         .animate(extend(shapeArgs, groupTranslation));
                 } else {
 
-                    point.graphic = graphic = renderer[point.shapeType](shapeArgs)
+                    point.graphic = graphic = renderer[point.shapeType](
+                            shapeArgs
+                        )
                         .setRadialReference(series.center)
                         .attr(groupTranslation)
                         .add(series.group);
-
-                    if (!point.visible) {
-                        graphic.attr({ visibility: 'hidden' });
-                    }
 
                     /*= if (build.classic) { =*/
                     graphic
@@ -656,6 +790,10 @@ seriesType('pie', 'line', {
                         .shadow(shadow, shadowGroup);
                     /*= } =*/
                 }
+
+                graphic.attr({
+                    visibility: point.visible ? 'inherit' : 'hidden'
+                });
 
                 graphic.addClass(point.getClassName());
 
@@ -740,16 +878,21 @@ seriesType('pie', 'line', {
         if (vis !== point.visible) {
 
             // If called without an argument, toggle visibility
-            point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
-            series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+            point.visible = point.options.visible = vis =
+                vis === undefined ? !point.visible : vis;
+            // update userOptions.data
+            series.options.data[inArray(point, series.data)] = point.options;
 
-            // Show and hide associated elements. This is performed regardless of redraw or not,
-            // because chart.redraw only handles full series.
-            each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
-                if (point[key]) {
-                    point[key][vis ? 'show' : 'hide'](true);
+            // Show and hide associated elements. This is performed regardless
+            // of redraw or not, because chart.redraw only handles full series.
+            each(
+                ['graphic', 'dataLabel', 'connector', 'shadowGroup'],
+                function (key) {
+                    if (point[key]) {
+                        point[key][vis ? 'show' : 'hide'](true);
+                    }
                 }
-            });
+            );
 
             if (point.legendItem) {
                 chart.legend.colorizeItem(point, vis);
@@ -787,8 +930,10 @@ seriesType('pie', 'line', {
         redraw = pick(redraw, true);
 
         // if called without an argument, toggle
-        point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
-        series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+        point.sliced = point.options.sliced = sliced =
+            defined(sliced) ? sliced : !point.sliced;
+        // update userOptions.data
+        series.options.data[inArray(point, series.data)] = point.options;
 
         point.graphic.animate(this.getTranslate());
 
@@ -823,6 +968,119 @@ seriesType('pie', 'line', {
                     end: shapeArgs.end
                 }
             );
+    },
+
+    connectorShapes: {
+        // only one available before v7.0.0
+        fixedOffset: function (labelPosition, connectorPosition, options) {
+            var connectorPadding = options.connectorPadding,
+                breakAt = connectorPosition.breakAt,
+                touchingSliceAt = connectorPosition.touchingSliceAt,
+                linePath = options.softConnector ? [
+                    'C', // soft break
+                    labelPosition.x, // 1st control point (of the curve)
+                    labelPosition.y, //
+                    2 * breakAt.x - touchingSliceAt.x, // 2nd control point
+                    2 * breakAt.y - touchingSliceAt.y, //
+                    breakAt.x, // end of the curve
+                    breakAt.y //
+                ] : [
+                    'L', // pointy break
+                    breakAt.x,
+                    breakAt.y
+                ];
+
+            // assemble the path
+            return [
+                'M',
+                labelPosition.x +
+                    (labelPosition.alignment === 'left' ? 1 : -1) *
+                    connectorPadding,
+                labelPosition.y].concat(linePath).concat([
+                    'L',
+                    touchingSliceAt.x,
+                    touchingSliceAt.y
+                ]);
+        },
+
+        straight: function (labelPosition, connectorPosition, options) {
+            var connectorPadding = options.connectorPadding,
+                touchingSliceAt = connectorPosition.touchingSliceAt;
+
+            // direct line to the slice
+            return ['M',
+                labelPosition.x +
+                    (labelPosition.alignment === 'left' ? 1 : -1) *
+                    connectorPadding,
+                labelPosition.y,
+                'L',
+                touchingSliceAt.x,
+                touchingSliceAt.y
+            ];
+        },
+
+        crookedLine: function (labelPosition, connectorPosition,
+            options) {
+
+            var connectorPadding = options.connectorPadding,
+                touchingSliceAt = connectorPosition.touchingSliceAt,
+                series = this.series,
+                pieCenterX = series.center[0],
+                plotWidth = series.chart.plotWidth,
+                plotLeft = series.chart.plotLeft,
+                alignment = labelPosition.alignment,
+                radius = this.shapeArgs.r,
+                crookDistance =
+                    H.relativeLength(options.crookDistance, 1), // % to fraction
+                crookX = alignment === 'left' ?
+                    pieCenterX + radius + (plotWidth + plotLeft - pieCenterX -
+                        radius) * (1 - crookDistance) :
+                    plotLeft + (pieCenterX - radius) * crookDistance,
+                segmentWithCrook = ['L',
+                    crookX,
+                    labelPosition.y];
+
+            // crookedLine formula doesn't make sense if the path overlaps
+            // the label - use straight line instead in that case
+            if (alignment === 'left' ?
+                (crookX > labelPosition.x || crookX < touchingSliceAt.x) :
+                (crookX < labelPosition.x || crookX > touchingSliceAt.x)) {
+                segmentWithCrook = []; // remove the crook
+            }
+
+            // assemble the path
+            return ['M',
+                labelPosition.x + (alignment === 'left' ? 1 : -1) *
+                    connectorPadding,
+                labelPosition.y].concat(segmentWithCrook).concat(['L',
+                    touchingSliceAt.x,
+                    touchingSliceAt.y
+                ]);
+
+        }
+    },
+
+    /**
+     * Extendable method for getting the path of the connector between the data
+     * label and the pie slice.
+     */
+    getConnectorPath: function () {
+        var labelPosition = this.labelPosition,
+            options = this.series.options.dataLabels,
+            connectorShape = options.connectorShape,
+            predefinedShapes = this.connectorShapes;
+
+        // find out whether to use the predefined shape
+        if (predefinedShapes[connectorShape]) {
+            connectorShape = predefinedShapes[connectorShape];
+        }
+
+        return connectorShape.call(this, {
+            // pass simplified label position object for user's convenience
+            x: labelPosition.final.x,
+            y: labelPosition.final.y,
+            alignment: labelPosition.alignment
+        }, labelPosition.connectorPosition, options);
     }
 });
 

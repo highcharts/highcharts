@@ -895,7 +895,7 @@ function GLShader(gl) {
      * @param val {float} - the value to set
      */
     function setUniform(name, val) {
-        var u = uLocations[name] =    uLocations[name] ||
+        var u = uLocations[name] = uLocations[name] ||
                                     gl.getUniformLocation(shaderProgram, name);
         gl.uniform1f(u, val);
     }
@@ -1420,10 +1420,11 @@ function GLRenderer(postRenderCallback) {
             color,
             scolor,
             sdata = isStacked ? series.data : (xData || rawData),
-            closestLeft = { x: -Number.MAX_VALUE, y: 0 },
-            closestRight = { x: Number.MIN_VALUE, y: 0 },
+            closestLeft = { x: Number.MAX_VALUE, y: 0 },
+            closestRight = { x: -Number.MAX_VALUE, y: 0 },
 
             skipped = 0,
+            hadPoints = false,
 
             cullXThreshold = 1,
             cullYThreshold = 1,
@@ -1754,7 +1755,7 @@ function GLRenderer(postRenderCallback) {
                 closestRight.y = y;
             }
 
-            if (x < xMin && closestLeft.x < xMin) {
+            if (x < xMin && closestLeft.x > xMin) {
                 closestLeft.x = x;
                 closestLeft.y = y;
             }
@@ -1889,13 +1890,15 @@ function GLRenderer(postRenderCallback) {
 
             lastX = x;
             lastY = y;
+
+            hadPoints = true;
         }
 
         if (settings.debug.showSkipSummary) {
             console.log('skipped points:', skipped); // eslint-disable-line no-console
         }
 
-        function pushSupplementPoint(point) {
+        function pushSupplementPoint(point, atStart) {
             if (!settings.useGPUTranslations) {
                 inst.skipTranslation = true;
                 point.x = xAxis.toPixels(point.x, true);
@@ -1905,6 +1908,11 @@ function GLRenderer(postRenderCallback) {
             // We should only do this for lines, and we should ignore markers
             // since there's no point here that would have a marker.
 
+            if (atStart) {
+                data = [point.x, point.y, 0, 2].concat(data);
+                return;
+            }
+
             vertice(
                 point.x,
                 point.y,
@@ -1913,13 +1921,19 @@ function GLRenderer(postRenderCallback) {
             );
         }
 
-        if (!lastX &&
+        if (
+            !hadPoints &&
             connectNulls !== false &&
-            closestLeft > -Number.MAX_VALUE &&
-            closestRight < Number.MAX_VALUE) {
-            // There are no points within the selected range
-            pushSupplementPoint(closestLeft);
-            pushSupplementPoint(closestRight);
+            series.drawMode === 'line_strip'
+        ) {
+            if (closestLeft.x < Number.MAX_VALUE) {
+                // We actually need to push this *before* the complete buffer.
+                pushSupplementPoint(closestLeft, true);
+            }
+
+            if (closestRight.x > -Number.MAX_VALUE) {
+                pushSupplementPoint(closestRight);
+            }
         }
 
         closeSegment();
@@ -2115,6 +2129,14 @@ function GLRenderer(postRenderCallback) {
                 ),
                 fillColor,
                 color;
+
+
+            if (
+                s.segments.length === 0 ||
+                s.segments[0].from === s.segments[0].to
+            ) {
+                return;
+            }
 
             /*= if (build.classic) { =*/
             fillColor =
@@ -2962,7 +2984,7 @@ Series.prototype.hasExtremes = function (checkX) {
         xAxis = this.xAxis && this.xAxis.options,
         yAxis = this.yAxis && this.yAxis.options;
 
-    return     data.length > (options.boostThreshold || Number.MAX_VALUE) &&
+    return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
             isNumber(yAxis.min) && isNumber(yAxis.max) &&
             (!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
 };
@@ -3103,6 +3125,7 @@ if (!H.hasWebGLSupport()) {
                 minI,
                 maxI,
                 boostOptions,
+                compareX = options.findNearestPointBy === 'x',
 
                 xDataFull = (
                     this.xData ||
@@ -3112,8 +3135,8 @@ if (!H.hasWebGLSupport()) {
                 ),
 
                 addKDPoint = function (clientX, plotY, i) {
-                    // Shaves off about 60ms compared to repeated concatination
-                    index = clientX + ',' + plotY;
+                    // Shaves off about 60ms compared to repeated concatenation
+                    index = compareX ? clientX : clientX + ',' + plotY;
 
                     // The k-d tree requires series points.
                     // Reduce the amount of points, since the time to build the

@@ -497,9 +497,9 @@ function (assert) {
     function navRender() {
         var x = rightHandle.x + rightHandle.translateX + rightHandle.width / 2,
             y = rightHandle.y + rightHandle.translateY + rightHandle.height / 2;
-        controller.triggerOnChart('mousedown', x, y);
-        controller.triggerOnChart('mousemove', x, y);
-        controller.triggerOnChart('mouseup', x, y);
+        controller.triggerEvent('mousedown', x, y);
+        controller.triggerEvent('mousemove', x, y);
+        controller.triggerEvent('mouseup', x, y);
     }
 
     navRender();
@@ -513,16 +513,17 @@ function (assert) {
 });
 
 QUnit.test(
-    'Update of adaptToUpdatedData should remove all related events (#8038)',
+    'Highcharts events tests',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
-            series: [{
-                data: [1, 2, 3]
-            }],
-            navigator: {
-                adaptToUpdatedData: true
-            }
-        });
+                series: [{
+                    data: [1, 2, 3]
+                }],
+                navigator: {
+                    adaptToUpdatedData: true
+                }
+            }),
+            getMarginsLength = chart.hcEvents.getMargins.length;
 
         chart.update({
             navigator: {
@@ -533,7 +534,129 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].hcEvents.updatedData.length,
             1,
-            'Only one event remaining'
+            'Update of adaptToUpdatedData should remove all related events (#8038)'
         );
+
+        assert.strictEqual(
+            chart.hcEvents.getMargins.length,
+            getMarginsLength,
+            'Update of navigator should not add extra events getMargins (#8595)'
+        );
+    }
+);
+
+// Highcharts 6.0.0, Issue #7067
+// Chart.update() doesn't enable the navigator under certain conditions
+QUnit.test('Chart update enables navigator (#7067)', function (assert) {
+
+    var chart = Highcharts.stockChart('container', {
+        navigator: {
+            enabled: false
+        },
+        scrollbar: {
+            enabled: false
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.deepEqual([
+        typeof chart.navigator,
+        typeof chart.scroller
+    ], [
+        'undefined',
+        'undefined'
+    ],
+        'Chart should have no navigator.'
+    );
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    assert.notDeepEqual([
+        typeof chart.navigator,
+        typeof chart.scroller
+    ], [
+        'undefined',
+        'undefined'
+    ],
+        'Chart should have a navigator instance.'
+    );
+
+    assert.ok(
+        chart.navigator &&
+        chart.navigator.navigatorEnabled,
+        'Navigator should be enabled.'
+    );
+
+});
+QUnit.test(
+    'Navigator series visibility should be in sync with master series (#8374)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+                legend: {
+                    enabled: true
+                },
+                series: [{
+                    data: [1, 2, 3],
+                    visible: false
+                }, {
+                    showInNavigator: true,
+                    data: [30, 22, 10]
+                }]
+            }),
+            series0 = chart.series[0],
+            series1 = chart.series[1];
+
+        assert.strictEqual(
+            // This returns false, when series is hidden:
+            series0.navigatorSeries.visible === true,
+            // Directly visibile = false
+            series0.visible,
+            'Both series[0] and series[0].navigator should be hidden.'
+        );
+
+        assert.strictEqual(
+            series1.navigatorSeries.visible === true,
+            series1.visible,
+            'Both series[1] and series[1].navigator should be visible.'
+        );
+
+        series0.update({
+            visible: true
+        });
+
+        assert.strictEqual(
+            series0.navigatorSeries.visible === true,
+            series0.visible,
+            'Both series[0] and series[0].navigator should be visible.'
+        );
+
+        series1.update({
+            visible: false
+        });
+
+        assert.strictEqual(
+            series1.navigatorSeries.visible === true,
+            series1.visible,
+            'Both series[1] and series[1].navigator should be hidden.'
+        );
+
+        // Order of the events:
+        // - first execute callback for series.hide(), to show navigator series
+        // - then redraw the chart, including navigator series
+        series1.setVisible();
+
+        assert.strictEqual(
+            Highcharts.defined(series1.navigatorSeries.graph) &&
+                series1.navigatorSeries.group.visibility !== 'hidden',
+            true,
+            'Navigator series should be visible.'
+        );
+
     }
 );

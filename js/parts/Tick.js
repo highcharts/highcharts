@@ -17,6 +17,7 @@ var correctFloat = H.correctFloat,
 
 /**
  * The Tick class
+ * @ignore
  */
 H.Tick = function (axis, pos, type, noLabel) {
     this.axis = axis;
@@ -52,7 +53,8 @@ H.Tick.prototype = {
                 pos,
             label = tick.label,
             tickPositionInfo = tickPositions.info,
-            dateTimeLabelFormat;
+            dateTimeLabelFormat,
+            params;
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
@@ -67,8 +69,9 @@ H.Tick.prototype = {
         tick.isFirst = isFirst;
         tick.isLast = isLast;
 
-        // get the string
-        str = axis.labelFormatter.call({
+        // Get the string. Provide params both as scope (legacy) and as first
+        // parameter which allows use in arrow functions (#8580).
+        params = {
             axis: axis,
             chart: chart,
             isFirst: isFirst,
@@ -76,7 +79,8 @@ H.Tick.prototype = {
             dateTimeLabelFormat: dateTimeLabelFormat,
             value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
             pos: pos
-        });
+        };
+        str = axis.labelFormatter.call(params, params);
 
         // first call
         if (!defined(label)) {

@@ -18,7 +18,6 @@ var H = Highcharts,
     defined = H.defined,
     each = H.each,
     extend = H.extend,
-    find = H.find,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
     isObject = H.isObject,
@@ -163,7 +162,7 @@ Highcharts.Pointer.prototype = {
      * Finds the closest point to a set of coordinates, using the k-d-tree
      * algorithm.
      *
-     * @param  {Array.<Series>} series
+     * @param  {Array<Series>} series
      *         All the series to search in.
      * @param  {boolean} shared
      *         Whether it is a shared tooltip or not.
@@ -172,9 +171,9 @@ Highcharts.Pointer.prototype = {
      * @param  {number} coordinates.chartX
      * @param  {number} coordinates.chartY
      *
-     * @return {Point|undefined} The point closest to given coordinates.
+     * @return {Array<Point>} The points closest to given coordinates.
      */
-    findNearestKDPoint: function (series, shared, coordinates) {
+    findNearestKDPoints: function (series, shared, coordinates) {
         var closest,
             sort = function (p1, p2) {
                 var isCloserX = p1.distX - p2.distX,
@@ -199,10 +198,12 @@ Highcharts.Pointer.prototype = {
                     result = p1.series.index > p2.series.index ? -1 : 1;
                 }
                 return result;
-            };
+            },
+            kdpoints = [];
+
         each(series, function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared,
-                compareX = (
+                compareX = shared || (
                     !noSharedTooltip &&
                     s.options.findNearestPointBy.indexOf('y') < 0
                 ),
@@ -210,16 +211,18 @@ Highcharts.Pointer.prototype = {
                     coordinates,
                     compareX
                 );
-            if (
-                // Check that we actually found a point on the series.
-                isObject(point, true) &&
+
+            // Check that we actually found a point on the series.
+            if (isObject(point, true) && point.series) {
+                kdpoints.push(point);
                 // Use the new point if it is closer.
-                (!isObject(closest, true) || (sort(closest, point) > 0))
-            ) {
-                closest = point;
+                if (!isObject(closest, true) || (sort(closest, point) > 0)) {
+                    closest = point;
+                }
             }
         });
-        return closest;
+        kdpoints.closest = closest;
+        return kdpoints;
     },
     getPointFromEvent: function (e) {
         var target = e.target,
@@ -265,7 +268,7 @@ Highcharts.Pointer.prototype = {
      *         The point currrently beeing hovered.
      * @param  {undefined|Series} existingHoverSeries
      *         The series currently beeing hovered.
-     * @param  {Array.<Series>} series
+     * @param  {Array<Series>} series
      *         All the series in the chart.
      * @param  {boolean} isDirectTouch
      *         Is the pointer directly hovering the point.
@@ -285,13 +288,13 @@ Highcharts.Pointer.prototype = {
         series,
         isDirectTouch,
         shared,
-        coordinates,
-        params
+        coordinates
     ) {
         var hoverPoint,
             hoverPoints = [],
             hoverSeries = existingHoverSeries,
-            isBoosting = params && params.isBoosting,
+            kdpoints = [],
+            isBoosting = this.chart.isBoosting,
             useExisting = !!(isDirectTouch && existingHoverPoint),
             notSticky = hoverSeries && !hoverSeries.stickyTracking,
             filter = function (s) {
@@ -303,49 +306,62 @@ Highcharts.Pointer.prototype = {
             },
             // Which series to look in for the hover point
             searchSeries = notSticky ?
-                // Only search on hovered series if it has stickyTracking false
-                [hoverSeries] :
+                // If it has stickyTracking false, only search when a series is
+                // actually hovered
+                H.grep(series, filter) :
                 // Filter what series to look in.
                 H.grep(series, function (s) {
                     return filter(s) && s.stickyTracking;
                 });
 
         // Use existing hovered point or find the one closest to coordinates.
-        hoverPoint = useExisting ?
-            existingHoverPoint :
-            this.findNearestKDPoint(searchSeries, shared, coordinates);
+        if (useExisting) {
+            kdpoints = this.findNearestKDPoints(
+                searchSeries,
+                shared,
+                {
+                    chartX: existingHoverPoint.plotX + this.chart.plotLeft,
+                    chartY: existingHoverPoint.plotY + this.chart.plotTop
+                }
+            );
+            hoverPoint = existingHoverPoint;
+        } else {
+
+            kdpoints = this.findNearestKDPoints(
+                searchSeries,
+                shared,
+                coordinates
+            );
+            hoverPoint = kdpoints.closest;
+        }
+
 
         // Assign hover series
         hoverSeries = hoverPoint && hoverPoint.series;
 
-        // If we have a hoverPoint, assign hoverPoints.
-        if (hoverPoint) {
-            // When tooltip is shared, it displays more than one point
-            if (shared && !hoverSeries.noSharedTooltip) {
-                searchSeries = H.grep(series, function (s) {
-                    return filter(s) && !s.noSharedTooltip;
-                });
+        // Filter the hoverPoints.
+        if (kdpoints.length && shared && !hoverSeries.noSharedTooltip) {
 
-                // Get all points with the same x value as the hoverPoint
-                each(searchSeries, function (s) {
-                    var point = find(s.points, function (p) {
-                        return p.x === hoverPoint.x && !p.isNull;
-                    });
-                    if (isObject(point)) {
-                        /*
-                        * Boost returns a minimal point. Convert it to a usable
-                        * point for tooltip and states.
-                        */
-                        if (isBoosting) {
-                            point = s.getPoint(point);
-                        }
-                        hoverPoints.push(point);
-                    }
-                });
-            } else {
-                hoverPoints.push(hoverPoint);
-            }
+            // Get all points with the same x value as the hoverPoint
+            each(kdpoints, function (p) {
+
+                if (isBoosting) {
+                    p = p.series.getPoint(p);
+                }
+
+                if (
+                    filter(p.series) &&
+                    !p.series.noSharedTooltip &&
+                    !p.isNull &&
+                    p.x === hoverPoint.x
+                ) {
+                    hoverPoints.push(p);
+                }
+            });
+        } else if (hoverPoint) {
+            hoverPoints.push(hoverPoint);
         }
+
         return {
             hoverPoint: hoverPoint,
             hoverSeries: hoverSeries,
@@ -379,8 +395,7 @@ Highcharts.Pointer.prototype = {
                 series,
                 isDirectTouch,
                 shared,
-                e,
-                { isBoosting: chart.isBoosting }
+                e
             ),
             useSharedTooltip,
             followPointer,
@@ -391,7 +406,11 @@ Highcharts.Pointer.prototype = {
         hoverPoint = hoverData.hoverPoint;
         points = hoverData.hoverPoints;
         hoverSeries = hoverData.hoverSeries;
-        followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+        followPointer = (
+            e && e.type === 'touchmove' ?
+            pointer.followTouchMove === true :
+            hoverSeries && hoverSeries.tooltipOptions.followPointer
+        );
         useSharedTooltip = (
             shared &&
             hoverSeries &&
@@ -510,7 +529,17 @@ Highcharts.Pointer.prototype = {
         if (allowMove) {
             if (tooltip && tooltipPoints) {
                 tooltip.refresh(tooltipPoints);
-                if (hoverPoint) { // #2500
+                if (tooltip.shared && hoverPoints) { // #8284
+                    each(hoverPoints, function (point) {
+                        point.setState(point.state, true);
+                        if (point.series.xAxis.crosshair) {
+                            point.series.xAxis.drawCrosshair(null, point);
+                        }
+                        if (point.series.yAxis.crosshair) {
+                            point.series.yAxis.drawCrosshair(null, point);
+                        }
+                    });
+                } else if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
                     each(chart.axes, function (axis) {
                         if (axis.crosshair) {

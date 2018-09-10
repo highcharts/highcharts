@@ -65,8 +65,15 @@ Highcharts.setOptions({
          * export menu and provides functions like `Chart.getCSV`,
          * `Chart.getTable`, `Chart.getDataRows` and `Chart.viewData`.
          *
+         * The XLS converter is limited and only creates a HTML string that is
+         * passed for download, which works but creates a warning before
+         * opening. The workaround for this is to use a third party XLSX
+         * converter, as demonstrated in the sample below.
+         *
          * @sample  highcharts/export-data/categorized/ Categorized data
          * @sample  highcharts/export-data/stock-timeaxis/ Highstock time axis
+         * @sample  highcharts/export-data/xlsx/
+         *          Using a third party XLSX converter
          *
          * @since 6.0.0
          */
@@ -198,7 +205,7 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
 
 // Set up key-to-axis bindings. This is used when the Y axis is datetime or
 // categorized. For example in an arearange series, the low and high values
-// sholud be formatted according to the Y axis type, and in order to link them
+// should be formatted according to the Y axis type, and in order to link them
 // we need this map.
 Highcharts.Chart.prototype.setUpKeyToAxis = function () {
     if (seriesTypes.arearange) {
@@ -218,7 +225,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *            with top level headers. If a custom columnHeaderFormatter is
  *            defined, this can override the behavior.
  *
- * @returns {Array.<Array>}
+ * @returns {Array<Array<Number|String>>}
  *          The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
@@ -346,6 +353,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                 var key,
                     prop,
                     val,
+                    name,
                     point;
 
                 point = { series: mockSeries };
@@ -354,6 +362,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                     [options]
                 );
                 key = point.x;
+                name = series.data[pIdx] && series.data[pIdx].name;
 
                 if (xTaken) {
                     if (xTaken[key]) {
@@ -364,6 +373,12 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
                 j = 0;
 
+                // Pies, funnels, geo maps etc. use point name in X row
+                if (!series.xAxis || series.exportKey === 'name') {
+                    key = name;
+                }
+
+
                 if (!rows[key]) {
                     // Generate the row
                     rows[key] = [];
@@ -371,15 +386,8 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                     rows[key].xValues = [];
                 }
                 rows[key].x = point.x;
+                rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = point.x;
-
-                // Pies, funnels, geo maps etc. use point name in X row
-                if (!series.xAxis || series.exportKey === 'name') {
-                    rows[key].name = (
-                        series.data[pIdx] &&
-                        series.data[pIdx].name
-                    );
-                }
 
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
@@ -460,6 +468,8 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
         });
     }
     dataRows = dataRows.concat(rowArr);
+
+    Highcharts.fireEvent(this, 'exportData', { dataRows: dataRows });
 
     return dataRows;
 };

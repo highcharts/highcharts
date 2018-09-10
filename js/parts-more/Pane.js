@@ -188,7 +188,7 @@ extend(Pane.prototype, {
 
     /**
      * An array of background items for the pane.
-     * @type Array.<Object>
+     * @type {Array<Object>}
      * @sample {highcharts} highcharts/demo/gauge-speedometer/
      *         Speedometer gauge with multiple backgrounds
      * @optionparent pane.background
@@ -207,7 +207,7 @@ extend(Pane.prototype, {
          */
 
         /**
-         * Tha shape of the pane background. When `solid`, the background
+         * The shape of the pane background. When `solid`, the background
          * is circular. When `arc`, the background extends only from the min
          * to the max of the value axis.
          *

@@ -120,42 +120,42 @@ const browserStackBrowsers = {
     'Mac.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '66.0',
+        browser_version: '68.0',
         os: 'OS X',
         os_version: 'High Sierra'
     },
     'Mac.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '59.0',
+        browser_version: '61.0',
         os: 'OS X',
         os_version: 'High Sierra'
     },
     'Mac.Safari': {
         base: 'BrowserStack',
         browser: 'safari',
-        browser_version: '11.0',
+        browser_version: '11.1',
         os: 'OS X',
         os_version: 'High Sierra'
     },
     'Win.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '66.0',
+        browser_version: '68.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: '16.0',
+        browser_version: '42.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '59.0',
+        browser_version: '61.0',
         os: 'Windows',
         os_version: '10'
     },
@@ -219,6 +219,7 @@ module.exports = function (config) {
             },
 
             // Set up
+            'test/call-analyzer.js',
             'test/test-controller.js',
             'test/test-utilities.js',
             'test/karma-setup.js'

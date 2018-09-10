@@ -34,7 +34,7 @@ seriesType('variablepie', 'pie',
      * size (arc) of the slice relates to the Y value and the radius of pie
      * slice relates to the Z value. Requires `highcharts-more.js`.
      *
-     * @extends {plotOptions.pie}
+     * @extends plotOptions.pie
      * @product highcharts
      * @sample {highcharts} highcharts/demo/variable-radius-pie/
      *         Variable-radius pie chart
@@ -276,7 +276,7 @@ seriesType('variablepie', 'pie',
                 pointRadiusX,
                 pointRadiusY;
 
-            series.startAngleRad =  startAngleRad;
+            series.startAngleRad = startAngleRad;
             series.endAngleRad = endAngleRad;
             // Use calculateExtremes to get series.radii array.
             series.calculateExtremes();
@@ -383,24 +383,38 @@ seriesType('variablepie', 'pie',
                     point.labelDistance / 5
                 ); // #1678
 
-                point.labelPos = [
-                    positions[0] + pointRadiusX +
-                    // first break of connector
-                    Math.cos(angle) * point.labelDistance,
-                    positions[1] + pointRadiusY +
-                    Math.sin(angle) * point.labelDistance, // a/a
-                    positions[0] + pointRadiusX +
-                    // second break, right outside pie
-                    Math.cos(angle) * finalConnectorOffset,
-                    positions[1] + pointRadiusY +
-                    Math.sin(angle) * finalConnectorOffset, // a/a
-                    positions[0] + pointRadiusX, // landing point for connector
-                    positions[1] + pointRadiusY, // a/a
-                    point.labelDistance < 0 ? // alignment
-                    'center' :
-                    point.half ? 'right' : 'left', // alignment
-                    angle // center angle
-                ];
+                point.labelPosition = {
+                    natural: {
+                        // initial position of the data label - it's utilized
+                        // for finding the final position for the label
+                        x: positions[0] + pointRadiusX +
+                            Math.cos(angle) * point.labelDistance,
+                        y: positions[1] + pointRadiusY +
+                            Math.sin(angle) * point.labelDistance
+                    },
+                    final: {
+                        // used for generating connector path -
+                        // initialized later in drawDataLabels function
+                        // x: undefined,
+                        // y: undefined
+                    },
+                    // left - pie on the left side of the data label
+                    // right - pie on the right side of the data label
+                    alignment: point.half ? 'right' : 'left',
+                    connectorPosition: {
+                        breakAt: { // used in connectorShapes.fixedOffset
+                            x: positions[0] + pointRadiusX +
+                                Math.cos(angle) * finalConnectorOffset,
+                            y: positions[1] + pointRadiusY +
+                                Math.sin(angle) * finalConnectorOffset
+                        },
+                        touchingSliceAt: { // middle of the arc
+                            x: positions[0] + pointRadiusX,
+                            y: positions[1] + pointRadiusY
+                        }
+                    }
+                };
+
             }
         }
     }
@@ -468,4 +482,3 @@ seriesType('variablepie', 'pie',
  * @product highcharts
  * @apioption series.variablepie.data
  */
-

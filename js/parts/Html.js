@@ -35,7 +35,9 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             element = wrapper.element,
             textWidth = styles && element.tagName === 'SPAN' && styles.width;
 
-        if (textWidth) {
+        // When setting or unsetting the width style, we need to update
+        // transform (#8809)
+        if (textWidth || (wrapper.textWidth && !textWidth)) {
             delete styles.width;
             wrapper.textWidth = textWidth;
             wrapper.htmlUpdateTransform();
@@ -158,6 +160,9 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
                     whiteSpace: whiteSpace || 'normal' // #3331
                 });
                 wrapper.oldTextWidth = textWidth;
+                wrapper.hasBoxWidthChanged = true; // #8159
+            } else {
+                wrapper.hasBoxWidthChanged = false; // #8159
             }
 
             // Do the calculations and DOM access only if properties changed
@@ -168,7 +173,10 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
                 // have something to update.
                 if (
                     defined(rotation) &&
-                    rotation !== (wrapper.oldRotation || 0)
+                    (
+                        (rotation !== (wrapper.oldRotation || 0)) ||
+                        (align !== wrapper.oldAlign)
+                    )
                 ) {
                     wrapper.setSpanRotation(
                         rotation,
@@ -200,6 +208,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             // record current text transform
             wrapper.cTT = currentTextTransform;
             wrapper.oldRotation = rotation;
+            wrapper.oldAlign = align;
         }
     },
 
