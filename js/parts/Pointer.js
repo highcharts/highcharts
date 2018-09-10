@@ -151,6 +151,12 @@ Highcharts.Pointer.prototype = {
         this.lastValidTouch = {};
 
         if (Tooltip) {
+            /**
+             * Tooltip object for points of series.
+             *
+             * @name Highcharts.Chart#tooltip
+             * @type {Highcharts.Tooltip}
+             */
             chart.tooltip = new Tooltip(chart, options.tooltip);
             this.followTouchMove = pick(options.tooltip.followTouchMove, true);
         }
