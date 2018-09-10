@@ -5,6 +5,17 @@
  */
 
 /**
+ * Callback for chart constructors.
+ *
+ * @callback Highcharts.ChartCallbackFunction
+ *
+ * @param  {Highcharts.Chart} chart
+ *         Created chart.
+ *
+ * @return {void}
+ */
+
+/**
  * The chart title. The title has an `update` method that allows modifying the
  * options directly or indirectly via `chart.update`.
  *
@@ -100,7 +111,7 @@ var addEvent = H.addEvent,
  * @param {Highcharts.Options} options
  *        The chart options structure.
  *
- * @param {Function|undefined} [callback]
+ * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
  *        Function to run when the chart has loaded and and all external images
  *        are loaded. Defining a
  *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
@@ -115,7 +126,7 @@ var addEvent = H.addEvent,
  * @param {Highcharts.Options} options
  *        The chart options structure.
  *
- * @param {Function|undefined} [callback]
+ * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
  *        Function to run when the chart has loaded and and all external images
  *        are loaded. Defining a
  *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
@@ -144,7 +155,7 @@ var Chart = H.Chart = function () {
  * @param  {Highcharts.Options} options
  *         The chart options structure.
  *
- * @param  {Function|undefined} [callback]
+ * @param  {Highcharts.ChartCallbackFunction|undefined} [callback]
  *         Function to run when the chart has loaded and and all external images
  *         are loaded. Defining a
  *         {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
@@ -161,7 +172,7 @@ var Chart = H.Chart = function () {
  * @param  {Highcharts.Options} options
  *         The chart options structure.
  *
- * @param  {Function|undefined} [callback]
+ * @param  {Highcharts.ChartCallbackFunction|undefined} [callback]
  *         Function to run when the chart has loaded and and all external images
  *         are loaded. Defining a
  *         {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
