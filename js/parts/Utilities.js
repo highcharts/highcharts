@@ -8,7 +8,6 @@
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
  *
- * @global
  * @typedef {global.SVGElement} GlobalSVGElement
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
@@ -19,7 +18,7 @@
  * booleans, where `false` turns off animation and `true` defaults to a duration
  * of 500ms.
  *
- * @typedef {*} Highcharts.AnimationOptionsObject
+ * @typedef Highcharts.AnimationOptionsObject
  *
  * @property {number} duration
  *           The animation duration in milliseconds.
@@ -47,7 +46,7 @@
  *    fontSize: '1.2em'
  * }
  *
- * @typedef {*} Highcharts.CSSObject
+ * @typedef Highcharts.CSSObject
  *
  * @property {boolean|number|string|undefined} [key:string]
  *
@@ -125,7 +124,7 @@
 /**
  * Generic dictionary in TypeScript notation.
  *
- * @typedef {*} Highcharts.Dictionary<T>
+ * @typedef Highcharts.Dictionary<T>
  *
  * @property {T} [key:string]
  */
@@ -149,7 +148,7 @@
  * An object containing `left` and `top` properties for the position in the
  * page.
  *
- * @typedef {*} Highcharts.OffsetObject
+ * @typedef Highcharts.OffsetObject
  *
  * @property {number} left
  *           Left distance to the page border.
@@ -161,7 +160,7 @@
 /**
  * An object containing `x` and `y` properties for the position of an element.
  *
- * @typedef {object} Highcharts.PositionObject
+ * @typedef Highcharts.PositionObject
  *
  * @property {number} x
  *           X position of the element.
@@ -194,7 +193,7 @@
  *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
  * }
  *
- * @typedef {*} Highcharts.SVGAttributes
+ * @typedef Highcharts.SVGAttributes
  *
  * @property {boolean|number|string|Array<any>|undefined} [key:string]
  *
@@ -2591,6 +2590,48 @@ H.uniqueKey = (function () {
 
 // Register Highcharts as a plugin in jQuery
 if (win.jQuery) {
+
+    /**
+     * Highcharts-extended JQuery.
+     *
+     * @interface global.JQuery
+     */
+
+    /**
+     * Factory function to create a chart in the current JQuery selector
+     * element.
+     *
+     * @function global.JQuery.highcharts
+     *
+     * @param  {Highcharts.Options} options
+     *         The chart options structure.
+     *
+     * @param  {Highcharts.ChartCallbackFunction|undefined} [callback]
+     *         Function to run when the chart has loaded and and all external
+     *         images are loaded. Defining a
+     *         [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
+     *         handler is equivalent.
+     *
+     * @return {JQuery}
+     *         The current JQuery selector.
+     *//**
+     * @function global.JQuery.highcharts
+     *
+     * @param  {"Chart"|"Map"|"StockChart"|string} className
+     *         Name of the factory class in the Highcharts namespace.
+     *
+     * @param  {Highcharts.Options} options
+     *         The chart options structure.
+     *
+     * @param  {Highcharts.ChartCallbackFunction|undefined} [callback]
+     *         Function to run when the chart has loaded and and all external
+     *         images are loaded. Defining a
+     *         [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
+     *         handler is equivalent.
+     *
+     * @return {JQuery}
+     *         The current JQuery selector.
+     */
     win.jQuery.fn.highcharts = function () {
         var args = [].slice.call(arguments);
 
