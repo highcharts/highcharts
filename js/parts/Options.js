@@ -3208,12 +3208,6 @@ H.defaultOptions = {
          * @apioption  tooltip.snap
          */
         snap: isTouchDevice ? 25 : 10,
-        /*= if (!build.classic) { =*/
-        headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
-        pointFormat: '<span class="highcharts-color-{point.colorIndex}">' +
-            '\u25CF</span> {series.name}: <span class="highcharts-strong">' +
-            '{point.y}</span><br/>',
-        /*= } else { =*/
         /**
          * The HTML of the tooltip header line. Variables are enclosed by
          * curly brackets. Available variables are `point.key`, `series.name`,
@@ -3257,8 +3251,6 @@ H.defaultOptions = {
          * @apioption  tooltip.pointFormat
          */
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
-
-        /*= } =*/
 
         /**
          * The background color or gradient for the tooltip.
@@ -3514,10 +3506,6 @@ H.defaultOptions = {
     }
 };
 
-/*= if (!build.classic) { =*/
-H.defaultOptions.chart.styledMode = true;
-/*= } =*/
-
 /**
  * Merge the default options with custom options and return the new options
  * structure. Commonly used for defining reusable templates.
@@ -3598,3 +3586,9 @@ H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 H.dateFormat = function (format, timestamp, capitalize) {
     return H.time.dateFormat(format, timestamp, capitalize);
 };
+
+
+/*= if (!build.classic) { =*/
+// Legacy build for styled mode, set the styledMode option to true by default.
+H.defaultOptions.chart.styledMode = true;
+/*= } =*/

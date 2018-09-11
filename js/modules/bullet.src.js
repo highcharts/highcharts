@@ -105,19 +105,9 @@ seriesType('bullet', 'column',
         },
 
         tooltip: {
-            /*= if (build.classic) { =*/
             pointFormat: '<span style="color:{series.color}">\u25CF</span>' +
                 ' {series.name}: <b>{point.y}</b>. Target: <b>{point.target}' +
-                '</b><br/>',
-            /*= } else { =*/
-
-            pointFormat: '' + // eslint-disable-line no-dupe-keys
-                '<span class="highcharts-color-{point.colorIndex}">' +
-                '\u25CF</span> {series.name}: ' +
-                '<span class="highcharts-strong">{point.y}</span>. ' +
-                'Target: <span class="highcharts-strong">' +
-                '{point.target}</span><br/>'
-            /*= } =*/
+                '</b><br/>'
         }
     }, {
         pointArrayMap: ['y', 'target'],

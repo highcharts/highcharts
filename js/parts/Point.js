@@ -425,6 +425,11 @@ Highcharts.Point.prototype = {
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
+        // Replace default point style with class name
+        if (series.chart.styledMode) {
+            pointFormat = series.chart.tooltip.styledModeFormat(pointFormat);
+        }
+
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup
         each(series.pointArrayMap || ['y'], function (key) {

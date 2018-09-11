@@ -789,7 +789,10 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
         currentDataGrouping,
         dateTimeLabelFormats,
         labelFormats,
-        formattedKey;
+        formattedKey,
+        formatString = tooltipOptions[
+            (isFooter ? 'footer' : 'header') + 'Format'
+        ];
 
     // apply only to grouped series
     if (
@@ -833,9 +836,14 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
             );
         }
 
+        // Replace default header style with class name
+        if (series.chart.styledMode) {
+            formatString = this.styledModeFormat(formatString);
+        }
+
         // return the replaced format
         return format(
-            tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
+            formatString, {
                 point: extend(labelConfig.point, { key: formattedKey }),
                 series: series
             },

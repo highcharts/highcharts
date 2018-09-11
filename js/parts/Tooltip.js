@@ -1103,6 +1103,11 @@ H.Tooltip.prototype = {
             );
         }
 
+        // Replace default header style with class name
+        if (series.chart.styledMode) {
+            formatString = this.styledModeFormat(formatString);
+        }
+
         return format(formatString, {
             point: labelConfig,
             series: series
@@ -1133,6 +1138,18 @@ H.Tooltip.prototype = {
                 tooltipOptions[(item.point.formatPrefix || 'point') + 'Format']
             );
         });
+    },
+
+    styledModeFormat: function (formatString) {
+        return formatString
+            .replace(
+                'style="font-size: 10px"',
+                'class="highcharts-header"'
+            )
+            .replace(
+                /style="color:{(point|series)\.color}"/g,
+                'class="highcharts-color-{$1.colorIndex}"'
+            );
     }
 
 };

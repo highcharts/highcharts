@@ -38,17 +38,7 @@ seriesType('boxplot', 'column', {
     threshold: null,
 
     tooltip: {
-        /*= if (!build.classic) { =*/
-        pointFormat: '<span class="highcharts-color-{point.colorIndex}">' +
-            '\u25CF</span> <b> {series.name}</b><br/>' +
-            'Maximum: {point.high}<br/>' +
-            'Upper quartile: {point.q3}<br/>' +
-            'Median: {point.median}<br/>' +
-            'Lower quartile: {point.q1}<br/>' +
-            'Minimum: {point.low}<br/>',
-        /*= } else { =*/
-
-        pointFormat: // eslint-disable-line no-dupe-keys
+        pointFormat:
             '<span style="color:{point.color}">\u25CF</span> <b> ' +
             '{series.name}</b><br/>' +
             'Maximum: {point.high}<br/>' +
@@ -56,7 +46,6 @@ seriesType('boxplot', 'column', {
             'Median: {point.median}<br/>' +
             'Lower quartile: {point.q1}<br/>' +
             'Minimum: {point.low}<br/>'
-        /*= } =*/
     },
 
     /**

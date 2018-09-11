@@ -133,13 +133,8 @@ seriesType('sankey', 'column', {
          */
         followPointer: true,
 
-        /*= if (build.classic) { =*/
         headerFormat:
-            '<span style="font-size: 0.85em">{series.name}</span><br/>',
-        /*= } else { =*/
-        headerFormat: // eslint-disable-line no-dupe-keys
-            '<span class="highcharts-header">{series.name}</span><br/>',
-        /*= } =*/
+            '<span style="font-size: 10px">{series.name}</span><br/>',
         pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
         /**
          * The [format string](https://www.highcharts.com/docs/chart-

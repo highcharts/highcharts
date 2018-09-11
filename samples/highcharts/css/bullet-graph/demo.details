@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Kacper Madej
+ js_wrap: b
+...
