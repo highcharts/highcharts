@@ -16,11 +16,11 @@ var pick = H.pick,
  * The parameter allows setting line series type and use OHLC indicators.
  * Data in OHLC format is required.
  *
- * @type {Boolean}
- * @extends plotOptions.line
- * @product highstock
- * @sample {highstock} stock/indicators/useOHLCdata Plot line on Y axis
- * @apioption plotOptions.line.useOHLCdata
+ * @-type {Boolean}
+ * @-extends plotOptions.line
+ * @-product highstock
+ * @-sample {highstock} stock/indicators/useOHLCdata Plot line on Y axis
+ * @-apioption plotOptions.line.useOHLCdata
  */
 
 addEvent(H.Series, 'init', function (eventOptions) {
