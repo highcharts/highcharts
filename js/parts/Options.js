@@ -1993,7 +1993,7 @@ H.defaultOptions = {
          * @type       {string}
          * @default    horizontal
          * @validvalue ["horizontal", "vertical", "proximate"]
-         * @apioption  legend.floating
+         * @apioption  legend.layout
          */
         layout: 'horizontal',
 
