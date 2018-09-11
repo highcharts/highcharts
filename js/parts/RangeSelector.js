@@ -155,7 +155,7 @@ extend(defaultOptions, {
          */
 
         /**
-         * When buttons apply dataGrouping on a series, by deafault zooming
+         * When buttons apply dataGrouping on a series, by default zooming
          * in/out will deselect buttons and unset dataGrouping. Enable this
          * option to keep buttons selected when extremes change.
          *
