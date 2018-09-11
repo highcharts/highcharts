@@ -1020,8 +1020,10 @@ function addNamespace (doclet) {
 
     let node = updateNodeFor(doclet);
 
-    // namespaces should always be in every file like the global namespace
-    node.meta.files = globalNamespace.meta.files;
+    // the Highcharts namespaces should always be in every file
+    if (node.doclet.name === 'Highcharts') {
+        node.meta.files = globalNamespace.meta.files;
+    }
 }
 
 /**
