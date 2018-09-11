@@ -1194,7 +1194,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chartHeight,
             null,
             optionsChart.forExport,
-            options.exporting && options.exporting.allowHTML
+            options.exporting && options.exporting.allowHTML,
+            chart.styledMode
         );
 
 
@@ -1210,7 +1211,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Add a reference to the charts index
         chart.renderer.chartIndex = chart.index;
-        chart.renderer.styledMode = chart.styledMode;
 
         fireEvent(this, 'afterGetContainer');
     },

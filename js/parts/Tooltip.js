@@ -94,7 +94,6 @@ H.Tooltip.prototype = {
         });
     },
 
-    /*= if (!build.classic) { =*/
     /**
      * In styled mode, apply the default filter for the tooltip drop-shadow. It
      * needs to have an id specific to the chart, otherwise there will be issues
@@ -144,7 +143,6 @@ H.Tooltip.prototype = {
             '}'
         });
     },
-    /*= } =*/
 
 
     /**
@@ -158,6 +156,7 @@ H.Tooltip.prototype = {
     getLabel: function () {
 
         var renderer = this.chart.renderer,
+            styledMode = this.chart.styledMode,
             options = this.options,
             container;
 
@@ -197,23 +196,23 @@ H.Tooltip.prototype = {
                         r: options.borderRadius
                     });
 
-                /*= if (build.classic) { =*/
-                this.label
-                    .attr({
-                        'fill': options.backgroundColor,
-                        'stroke-width': options.borderWidth
-                    })
-                    // #2301, #2657
-                    .css(options.style)
-                    .shadow(options.shadow);
-                /*= } =*/
+                if (!styledMode) {
+                    this.label
+                        .attr({
+                            'fill': options.backgroundColor,
+                            'stroke-width': options.borderWidth
+                        })
+                        // #2301, #2657
+                        .css(options.style)
+                        .shadow(options.shadow);
+                }
             }
 
-            /*= if (!build.classic) { =*/
-            // Apply the drop-shadow filter
-            this.applyFilter();
-            this.label.addClass('highcharts-tooltip-' + this.chart.index);
-            /*= } =*/
+            if (styledMode) {
+                // Apply the drop-shadow filter
+                this.applyFilter();
+                this.label.addClass('highcharts-tooltip-' + this.chart.index);
+            }
 
             if (this.outside) {
                 this.label.attr({
@@ -642,7 +641,8 @@ H.Tooltip.prototype = {
             pointConfig = [],
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
-            currentSeries;
+            currentSeries,
+            styledMode = this.chart.styledMode;
 
         if (!options.enabled) {
             return;
@@ -703,15 +703,11 @@ H.Tooltip.prototype = {
             } else {
 
                 // Prevent the tooltip from flowing over the chart box (#6659)
-                /*= if (build.classic) { =*/
-                if (!options.style.width) {
-                /*= } =*/
+                if (!options.style.width || styledMode) {
                     label.css({
                         width: this.chart.spacingBox.width
                     });
-                /*= if (build.classic) { =*/
                 }
-                /*= } =*/
 
                 label.attr({
                     text: text && text.join ? text.join('') : text
@@ -724,16 +720,16 @@ H.Tooltip.prototype = {
                         pick(point.colorIndex, currentSeries.colorIndex)
                     );
 
-                /*= if (build.classic) { =*/
-                label.attr({
-                    stroke: (
-                        options.borderColor ||
-                        point.color ||
-                        currentSeries.color ||
-                        '${palette.neutralColor60}'
-                    )
-                });
-                /*= } =*/
+                if (!styledMode) {
+                    label.attr({
+                        stroke: (
+                            options.borderColor ||
+                            point.color ||
+                            currentSeries.color ||
+                            '${palette.neutralColor60}'
+                        )
+                    });
+                }
 
                 tooltip.updatePosition({
                     plotX: x,
@@ -793,10 +789,28 @@ H.Tooltip.prototype = {
                     target,
                     x,
                     bBox,
-                    boxWidth;
+                    boxWidth,
+                    attribs;
 
                 // Store the tooltip referance on the series
                 if (!tt) {
+
+                    attribs = {
+                        padding: options.padding,
+                        r: options.borderRadius
+                    };
+
+                    if (!chart.styledMode) {
+                        attribs.fill = options.backgroundColor;
+                        attribs.stroke = (
+                            options.borderColor ||
+                            point.color ||
+                            series.color ||
+                            '${palette.neutralColor80}'
+                        );
+                        attribs['stroke-width'] = options.borderWidth;
+                    }
+
                     owner.tt = tt = ren.label(
                             null,
                             null,
@@ -807,20 +821,7 @@ H.Tooltip.prototype = {
                             options.useHTML
                         )
                         .addClass('highcharts-tooltip-box ' + colorClass)
-                        .attr({
-                            'padding': options.padding,
-                            'r': options.borderRadius,
-                            /*= if (build.classic) { =*/
-                            'fill': options.backgroundColor,
-                            'stroke': (
-                                options.borderColor ||
-                                point.color ||
-                                series.color ||
-                                '${palette.neutralColor80}'
-                            ),
-                            'stroke-width': options.borderWidth
-                            /*= } =*/
-                        })
+                        .attr(attribs)
                         .add(tooltipLabel);
                 }
 
@@ -828,10 +829,10 @@ H.Tooltip.prototype = {
                 tt.attr({
                     text: str
                 });
-                /*= if (build.classic) { =*/
-                tt.css(options.style)
-                    .shadow(options.shadow);
-                /*= } =*/
+                if (!chart.styledMode) {
+                    tt.css(options.style)
+                        .shadow(options.shadow);
+                }
 
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
