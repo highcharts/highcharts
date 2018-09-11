@@ -71,7 +71,7 @@ seriesType('linearRegression', 'sma',
              * @default the closest distance between two data points
              * @type {Number}
              * @since 7.0.0
-             * @sample {highstock} stock\plotoptions\linear-regression-xaxisunit
+             * @sample {highstock} stock/plotoptions/linear-regression-xaxisunit
              *         xAxisUnit set to 1 minute
              * @product highstock
              */
