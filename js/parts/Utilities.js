@@ -2592,6 +2592,13 @@ H.uniqueKey = (function () {
 if (win.jQuery) {
 
     /**
+     * Global namespace.
+     *
+     * @global
+     * @namespace global
+     */
+
+    /**
      * Highcharts-extended JQuery.
      *
      * @interface global.JQuery
