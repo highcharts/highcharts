@@ -461,20 +461,23 @@ function getName (doclet) {
 
     try {
 
+        if (memberOf) {
+            name = memberOf + '.' + name;
+        }
+
         if (name.indexOf('H.') === 0) {
             name = 'Highcharts.' + name.substr(2);
         } else if (name === 'H') {
             name = 'Highcharts';
-        } else if (memberOf) {
-            name = memberOf + '.' + name;
         } else if (!isGlobal(doclet) &&
             name.indexOf('.') === -1 &&
+            name.indexOf('global') !== 0 &&
             name.indexOf('Highcharts') !== 0
         ) {
             name = 'Highcharts.' + name;
         }
 
-        return name
+        return name;
     
     } finally {
         doclet.highchartsName = name;
@@ -723,6 +726,7 @@ function getTypes (doclet) {
  *
  * @param  {Array} array1
  *         First array to merge.
+ *
  * @param  {Array} array2
  *         Second array to merge.
  *
