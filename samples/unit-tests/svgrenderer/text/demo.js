@@ -23,8 +23,8 @@ QUnit.test('Text word wrap #3158', function (assert) {
 
     assert.strictEqual(
         textLines.length,
-        6,
-        'Six text lines should be rendered.'
+        7,
+        'Seven text lines should be rendered.'
     );
 
     assert.strictEqual(

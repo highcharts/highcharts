@@ -194,7 +194,8 @@
  *
  * @typedef Highcharts.SVGDefinitionObject
  *
- * @property {number|string|Array<Highcharts.SVGDefinitionObject>|undefined} [key:string]
+ * @property {number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+ *           [key:string]
  *
  * @property {Array<Highcharts.SVGDefinitionObject>|undefined} [children]
  *
@@ -2814,7 +2815,19 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     },
 
     /**
+     * Truncate the text node contents to a given length. Used when the css
+     * width is set. If the `textOverflow` is `ellipsis`, the text is truncated
+     * character by character to the given length. If not, the text is
+     * word-wrapped line by line.
+     *
+     * Ideas for performance improvement
+     * - Use getSubstringLength to measure the text instead of applying text
+     *   and call the getBBox.
+     * - Memoize the results to avoid checking the same text twice on the same
+     *   element in binary search.
+     *
      * @private
+     *
      * @function Highcharts.SVGRenderer#applyEllipsis
      *
      * @param  {Highcharts.SVGElement} wrapper
@@ -2828,28 +2841,34 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @return {boolean}
      *         True, if tspan is too long.
      */
-    applyEllipsis: function (wrapper, tspan, text, width) {
+    truncate: function (wrapper, tspan, text, width, getString) {
         var renderer = this,
             rotation = wrapper.rotation,
             str = text,
-            currentIndex,
-            minIndex = 0,
+            // Word wrap can not be truncated to shorter than one word, ellipsis
+            // text can be completely blank.
+            minIndex = isArray(text) ? 1 : 0,
             maxIndex = text.length,
+            currentIndex = maxIndex,
             updateTSpan = function (s) {
-                tspan.removeChild(tspan.firstChild);
+                if (tspan.firstChild) {
+                    tspan.removeChild(tspan.firstChild);
+                }
                 if (s) {
                     tspan.appendChild(doc.createTextNode(s));
                 }
             },
             actualWidth,
-            wasTooLong;
+            truncated;
         wrapper.rotation = 0; // discard rotation when computing box
         actualWidth = renderer.getSpanWidth(wrapper, tspan);
-        wasTooLong = actualWidth > width;
-        if (wasTooLong) {
+        truncated = actualWidth > width;
+        if (truncated) {
+
+            // Do a binary search for the index where to truncate the text
             while (minIndex <= maxIndex) {
                 currentIndex = Math.ceil((minIndex + maxIndex) / 2);
-                str = text.substring(0, currentIndex) + '\u2026';
+                str = getString(text, currentIndex);
                 updateTSpan(str);
                 actualWidth = renderer.getSpanWidth(wrapper, tspan);
                 if (minIndex === maxIndex) {
@@ -2863,14 +2882,24 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     minIndex = currentIndex;
                 }
             }
-            // If max index was 0 it means just ellipsis was also to large.
+            // If max index was 0 it means the shortest possible text was also
+            // too large. For ellipsis that means only the ellipsis, while for
+            // word wrap it means the whole first word.
             if (maxIndex === 0) {
-                // Remove ellipses.
+                // Remove ellipsis
                 updateTSpan('');
             }
         }
+
+        // When doing line wrapping, prepare for the next line by removing the
+        // items from this line.
+        if (isArray(text)) {
+            text.splice(0, currentIndex);
+        }
+
+        wrapper.actualWidth = actualWidth;
         wrapper.rotation = rotation; // Apply rotation again.
-        return wasTooLong;
+        return truncated;
     },
 
     /**
@@ -2916,7 +2945,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             hasMarkup = textStr.indexOf('<') !== -1,
             lines,
             childNodes = textNode.childNodes,
-            wasTooLong,
+            hiddenChildren = [],
+            truncated,
             parentX = attr(textNode, 'x'),
             textStyles = wrapper.styles,
             width = wrapper.textWidth,
@@ -3181,48 +3211,36 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                         lineNo ||
                                         (words.length > 1 && !noWrap)
                                     ),
-                                    tooLong,
-                                    rest = [],
-                                    actualWidth,
-                                    dy = getLineHeight(tspan),
-                                    rotation = wrapper.rotation;
+                                    wrapLineNo = 0,
+                                    dy = getLineHeight(tspan);
 
                                 if (ellipsis) {
-                                    wasTooLong = renderer.applyEllipsis(
+                                    truncated = renderer.truncate(
                                         wrapper,
                                         tspan,
                                         span,
-                                        width
+                                        width,
+                                        // Build the text to test for
+                                        function (text, currentIndex) {
+                                            return text.substring(
+                                                0,
+                                                currentIndex
+                                            ) + '\u2026';
+                                        }
                                     );
-                                }
+                                } else if (hasWhiteSpace) {
 
-                                while (
-                                    !ellipsis &&
-                                    hasWhiteSpace &&
-                                    (words.length || rest.length)
-                                ) {
-                                    // discard rotation when computing box
-                                    wrapper.rotation = 0;
-                                    actualWidth = renderer.getSpanWidth(
-                                        wrapper,
-                                        tspan
-                                    );
-                                    tooLong = actualWidth > width;
+                                    while (words.length) {
 
-                                    // For ellipsis, do a binary search for the
-                                    // correct string length
-                                    if (wasTooLong === undefined) {
-                                        wasTooLong = tooLong; // First time
-                                    }
+                                        // For subsequent lines, create tspans
+                                        // with the same style attributes as the
+                                        // parent text node.
+                                        if (
+                                            words.length &&
+                                            !noWrap &&
+                                            wrapLineNo > 0
+                                        ) {
 
-                                    // Looping down, this is the first word
-                                    // sequence that is not too long, so we can
-                                    // move on to build the next line.
-                                    if (!tooLong || words.length === 1) {
-                                        words = rest;
-                                        rest = [];
-
-                                        if (words.length && !noWrap) {
                                             tspan = doc.createElementNS(
                                                 SVG_NS,
                                                 'tspan'
@@ -3238,34 +3256,58 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                                     styleAttribute
                                                 );
                                             }
+                                            // Start by appending the full
+                                            // remaining text
+                                            tspan.appendChild(
+                                                doc.createTextNode(
+                                                    words.join(' ')
+                                                        .replace(/- /g, '-')
+                                                )
+                                            );
                                             textNode.appendChild(tspan);
                                         }
 
-                                        // a single word is pressing it out
-                                        if (actualWidth > width) {
-                                            // one more pixel for Chrome, #3158
-                                            width = actualWidth + 1;
-                                        }
-                                    } else { // append to existing line tspan
-                                        tspan.removeChild(tspan.firstChild);
-                                        rest.unshift(words.pop());
-                                    }
-                                    if (words.length) {
-                                        tspan.appendChild(
-                                            doc.createTextNode(
-                                                words.join(' ')
-                                                    .replace(/- /g, '-')
-                                            )
+                                        // For each line, truncate the remaining
+                                        // words into the line length.
+                                        renderer.truncate(
+                                            wrapper,
+                                            tspan,
+                                            words,
+                                            width,
+                                            // Build the text to test for
+                                            function (text, currentIndex) {
+                                                return words
+                                                    .slice(0, currentIndex)
+                                                    .join(' ')
+                                                    .replace(/- /g, '-');
+                                            }
                                         );
+
+                                        // A single word is pressing it out
+                                        // (#3158). Reaading the tspan bounding
+                                        // box is not an option, as it only
+                                        // reports the width of the whole `text`
+                                        // node. So we must hide tspans that
+                                        // block out the text node.
+                                        if (wrapper.actualWidth > width) {
+                                            each(childNodes, function (tspan) {
+                                                tspan.style.display = 'none';
+                                                hiddenChildren.push(tspan);
+                                            });
+                                        }
+
+                                        wrapLineNo++;
                                     }
                                 }
-                                wrapper.rotation = rotation;
                             }
 
                             spanNo++;
                         }
+
                     }
+
                 });
+
                 // To avoid beginning lines that doesn't add to the textNode
                 // (#6144)
                 isSubsequentLine = (
@@ -3274,7 +3316,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 );
             });
 
-            if (ellipsis && wasTooLong) {
+            // Re-show children that were hidden due to their text length
+            // pressing out the text span, making measurement hard.
+            each(hiddenChildren, function (tspan) {
+                tspan.style.display = '';
+            });
+
+            if (ellipsis && truncated) {
                 wrapper.attr(
                     'title',
                     unescapeEntities(wrapper.textStr, ['&lt;', '&gt;']) // #7179
@@ -3290,63 +3338,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             }
         }
     },
-
-
-
-    /*
-    breakText: function (wrapper, width) {
-        var bBox = wrapper.getBBox(),
-            node = wrapper.element,
-            charnum = node.textContent.length,
-            stringWidth,
-            // try this position first, based on average character width
-            guessedLineCharLength = Math.round(width * charnum / bBox.width),
-            pos = guessedLineCharLength,
-            spans = [],
-            increment = 0,
-            startPos = 0,
-            endPos,
-            safe = 0;
-
-        if (bBox.width > width) {
-            while (startPos < charnum && safe < 100) {
-
-                while (endPos === undefined && safe < 100) {
-                    stringWidth = node.getSubStringLength(
-                        startPos,
-                        pos - startPos
-                    );
-
-                    if (stringWidth <= width) {
-                        if (increment === -1) {
-                            endPos = pos;
-                        } else {
-                            increment = 1;
-                        }
-                    } else {
-                        if (increment === 1) {
-                            endPos = pos - 1;
-                        } else {
-                            increment = -1;
-                        }
-                    }
-                    pos += increment;
-                    safe++;
-                }
-
-                spans.push(
-                    node.textContent.substr(startPos, endPos - startPos)
-                );
-
-                startPos = endPos;
-                pos = startPos + guessedLineCharLength;
-                endPos = undefined;
-            }
-        }
-
-        return spans;
-    },
-    // */
 
     /**
      * Returns white for dark colors and black for bright colors.
