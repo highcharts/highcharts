@@ -16,7 +16,7 @@ var seriesType = H.seriesType,
 /**
  * Linear regression series type.
  *
- * @constructor seriesTypes.linearRegression
+ * @constructor seriesTypes.linearregression
  * @augments seriesTypes.line
  */
 seriesType('linearRegression', 'sma',
@@ -29,7 +29,7 @@ seriesType('linearRegression', 'sma',
      * @sample {highstock} stock/indicators/linear-regression
      *                     Linear regression indicator
      * @since 7.0.0
-     * @optionparent plotOptions.linearRegression
+     * @optionparent plotOptions.linearregression
      */
     {
         params: {
@@ -71,7 +71,7 @@ seriesType('linearRegression', 'sma',
              * @default the closest distance between two data points
              * @type {Number}
              * @since 7.0.0
-             * @sample {highstock} stock/plotoptions/linear-regression-xaxisunit
+             * @sample {highstock} stock\plotoptions\linear-regression-xaxisunit
              *         xAxisUnit set to 1 minute
              * @product highstock
              */
@@ -239,15 +239,15 @@ seriesType('linearRegression', 'sma',
 
 
 /**
- * A linear regression series. If the [type](#series.linearRegression.type)
+ * A linear regression series. If the [type](#series.linearregression.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @type {Object}
  * @since 7.0.0
- * @extends series,plotOptions.linearRegression
+ * @extends series,plotOptions.linearregression
  * @excluding data,dataParser,dataURL
  * @product highstock
- * @apioption series.linearRegression
+ * @apioption series.linearregression
  */
 
 /**
@@ -255,7 +255,7 @@ seriesType('linearRegression', 'sma',
  * @since 7.0.0
  * @extends series.sma.data
  * @product highstock
- * @apioption series.linearRegression.data
+ * @apioption series.linearregression.data
  */
 
 
@@ -266,12 +266,12 @@ seriesType('linearRegressionSlope', 'linearRegression',
      * Linear regression slope indicator. This series requires `linkedTo`
      * option to be set.
      *
-     * @extends plotOptions.linearRegression
+     * @extends plotOptions.linearregression
      * @product highstock
      * @sample {highstock} stock/indicators/linear-regression-slope
      *                     Linear regression slope indicator
      * @since 7.0.0
-     * @optionparent plotOptions.linearRegressionSlope
+     * @optionparent plotOptions.linearregressionslope
      */
     {}, {
         nameBase: 'Linear Regression Slope Indicator',
@@ -282,23 +282,23 @@ seriesType('linearRegressionSlope', 'linearRegression',
 
     /**
      * A linear regression slope series. If the
-     * [type](#series.linearRegressionSlope.type)
+     * [type](#series.linearregressionslope.type)
      * option is not specified, it is inherited from [chart.type](#chart.type).
      *
      * @type {Object}
      * @since 7.0.0
-     * @extends series,plotOptions.linearRegressionSlope
+     * @extends series,plotOptions.linearregressionslope
      * @excluding data,dataParser,dataURL
      * @product highstock
-     * @apioption series.linearRegressionSlope
+     * @apioption series.linearregressionslope
      */
 
     /**
      * @type {Array<Object|Array>}
      * @since 7.0.0
-     * @extends series.linearRegression.data
+     * @extends series.linearregression.data
      * @product highstock
-     * @apioption series.linearRegressionSlope.data
+     * @apioption series.linearregressionslope.data
      */
 
 
@@ -308,12 +308,12 @@ seriesType('linearRegressionIntercept', 'linearRegression',
      * Linear regression intercept indicator. This series requires `linkedTo`
      * option to be set.
      *
-     * @extends plotOptions.linearRegression
+     * @extends plotOptions.linearregression
      * @product highstock
      * @sample {highstock} stock/indicators/linear-regression-intercept
      *                     Linear intercept slope indicator
      * @since 7.0.0
-     * @optionparent plotOptions.linearRegressionIntercept
+     * @optionparent plotOptions.linearregressionintercept
      */
     {}, {
         nameBase: 'Linear Regression Intercept Indicator',
@@ -324,23 +324,23 @@ seriesType('linearRegressionIntercept', 'linearRegression',
 
     /**
      * A linear regression intercept series. If the
-     * [type](#series.linearRegressionIntercept.type)
+     * [type](#series.linearregressionintercept.type)
      * option is not specified, it is inherited from [chart.type](#chart.type).
      *
      * @type {Object}
      * @since 7.0.0
-     * @extends series,plotOptions.linearRegressionIntercept
+     * @extends series,plotOptions.linearregressionintercept
      * @excluding data,dataParser,dataURL
      * @product highstock
-     * @apioption series.linearRegressionIntercept
+     * @apioption series.linearregressionintercept
      */
 
     /**
      * @type {Array<Object|Array>}
      * @since 7.0.0
-     * @extends series.linearRegression.data
+     * @extends series.linearregression.data
      * @product highstock
-     * @apioption series.linearRegressionIntercept.data
+     * @apioption series.linearregressionintercept.data
      */
 
 
@@ -350,12 +350,12 @@ seriesType('linearRegressionAngle', 'linearRegression',
      * Linear regression angle indicator. This series requires `linkedTo`
      * option to be set.
      *
-     * @extends plotOptions.linearRegression
+     * @extends plotOptions.linearregression
      * @product highstock
      * @sample {highstock} stock/indicators/linear-regression-angle
      *                     Linear intercept angle indicator
      * @since 7.0.0
-     * @optionparent plotOptions.linearRegressionAngle
+     * @optionparent plotOptions.linearregressionangle
      */
     {
         tooltip: { // add a degree symbol
@@ -383,21 +383,21 @@ seriesType('linearRegressionAngle', 'linearRegression',
 
     /**
      * A linear regression intercept series. If the
-     * [type](#series.linearRegressionAngle.type)
+     * [type](#series.linearregressionangle.type)
      * option is not specified, it is inherited from [chart.type](#chart.type).
      *
      * @type {Object}
      * @since 7.0.0
-     * @extends series,plotOptions.linearRegressionAngle
+     * @extends series,plotOptions.linearregressionangle
      * @excluding data,dataParser,dataURL
      * @product highstock
-     * @apioption series.linearRegressionAngle
+     * @apioption series.linearregressionangle
      */
 
     /**
      * @type {Array<Object|Array>}
      * @since 7.0.0
-     * @extends series.linearRegression.data
+     * @extends series.linearregression.data
      * @product highstock
-     * @apioption series.linearRegressionAngle.data
+     * @apioption series.linearregressionangle.data
      */

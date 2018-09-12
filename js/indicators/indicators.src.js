@@ -97,6 +97,13 @@ seriesType('sma', 'line',
          * @product highstock
          */
         linkedTo: undefined,
+        /**
+         * Paramters used in calculation of regression series' points.
+         *
+         * @type {Object}
+         * @since 6.0.0
+         * @product highstock
+         */
         params: {
             /**
              * The point index which indicator calculations will base. For
