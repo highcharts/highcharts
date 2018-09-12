@@ -8,6 +8,13 @@ QUnit.test('Text word wrap #3158', function (assert) {
         300
     );
 
+    renderer.rect(100, 80, 100, 100)
+        .attr({
+            stroke: 'silver',
+            'stroke-width': 1
+        })
+        .add();
+
     var text = renderer
         .text(
             '<b>TheQuickBrownFox</b><br>jumps over the lazy dog, the issue' +
@@ -23,8 +30,8 @@ QUnit.test('Text word wrap #3158', function (assert) {
 
     assert.strictEqual(
         textLines.length,
-        7,
-        'Seven text lines should be rendered.'
+        6,
+        'Six text lines should be rendered.'
     );
 
     assert.strictEqual(
