@@ -2801,20 +2801,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     },
 
     /**
-     * Extendable function to measure the tspan width.
-     *
-     * @private
-     * @function Highcharts.SVGRenderer#getSpanWidth
-     *
-     * @param  {Highcharts.SVGElement} wrapper
-     *
-     * @return {void}
-     */
-    getSpanWidth: function (wrapper) {
-        return wrapper.getBBox(true).width;
-    },
-
-    /**
      * Truncate the text node contents to a given length. Used when the css
      * width is set. If the `textOverflow` is `ellipsis`, the text is truncated
      * character by character to the given length. If not, the text is
@@ -2822,7 +2808,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @private
      *
-     * @function Highcharts.SVGRenderer#applyEllipsis
+     * @function Highcharts.SVGRenderer#truncate
      *
      * @param  {Highcharts.SVGElement} wrapper
      *
@@ -2857,6 +2843,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 }
             },
             getSubStringLength = function (charEnd, concatenatedEnd) {
+                // charEnd is useed when finding the character-by-character
+                // break for ellipsis, concatenatedEnd is used for word-by-word
+                // break for word wrapping.
                 var end = concatenatedEnd || charEnd;
                 if (lengths[end] === undefined) {
                     // Modern browsers
