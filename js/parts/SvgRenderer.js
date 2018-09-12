@@ -2975,7 +2975,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             hasMarkup = textStr.indexOf('<') !== -1,
             lines,
             childNodes = textNode.childNodes,
-            hiddenChildren = [],
             truncated,
             parentX = attr(textNode, 'x'),
             textStyles = wrapper.styles,
@@ -3292,19 +3291,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                             }
                                         );
 
-                                        // A single word is pressing it out
-                                        // (#3158). Reaading the tspan bounding
-                                        // box is not an option, as it only
-                                        // reports the width of the whole `text`
-                                        // node. So we must hide tspans that
-                                        // block out the text node.
-                                        if (wrapper.actualWidth > width) {
-                                            each(childNodes, function (tspan) {
-                                                tspan.style.display = 'none';
-                                                hiddenChildren.push(tspan);
-                                            });
-                                        }
-
                                         wrapLineNo++;
                                     }
                                 }
@@ -3323,12 +3309,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     isSubsequentLine ||
                     textNode.childNodes.length
                 );
-            });
-
-            // Re-show children that were hidden due to their text length
-            // pressing out the text span, making measurement hard.
-            each(hiddenChildren, function (tspan) {
-                tspan.style.display = '';
             });
 
             if (ellipsis && truncated) {
