@@ -153,7 +153,7 @@ seriesType('xrange', 'column', {
             plotX = point.plotX,
             posX = pick(point.x2, point.x + (point.len || 0)),
             plotX2 = xAxis.translate(posX, 0, 0, 0, 1),
-            length = plotX2 - plotX,
+            length = Math.abs(plotX2 - plotX),
             widthDifference,
             shapeArgs,
             partialFill,
