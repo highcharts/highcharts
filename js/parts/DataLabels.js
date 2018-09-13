@@ -75,13 +75,11 @@ var addEvent = H.addEvent,
  * @private
  * @function Highcharts.distribute
  *
- * @param  {Array<Highcharts.DataLabelBoxObject>} boxes
+ * @param {Array<Highcharts.DataLabelBoxObject>} boxes
  *
- * @param  {number} len
+ * @param {number} len
  *
- * @param  {number} maxDistance
- *
- * @return {void}
+ * @param {number} maxDistance
  */
 H.distribute = function (boxes, len, maxDistance) {
 
@@ -229,8 +227,6 @@ H.distribute = function (boxes, len, maxDistance) {
  *
  * @private
  * @function Highcharts.Series#drawDataLabels
- *
- * @return {void}
  *
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
@@ -460,17 +456,15 @@ Series.prototype.drawDataLabels = function () {
  * @private
  * @function Highcharts.Series#alignDataLabel
  *
- * @param  {Highcharts.Point} point
+ * @param {Highcharts.Point} point
  *
- * @param  {Highcharts.SVGElement} dataLabel
+ * @param {Highcharts.SVGElement} dataLabel
  *
- * @param  {Highcharts.PlotSeriesDataLabelsOptions} options
+ * @param {Highcharts.PlotSeriesDataLabelsOptions} options
  *
- * @param  {Highcharts.BBoxObject} alignTo
+ * @param {Highcharts.BBoxObject} alignTo
  *
- * @param  {boolean} isNew
- *
- * @return {void}
+ * @param {boolean} isNew
  */
 Series.prototype.alignDataLabel = function (
     point,
@@ -622,15 +616,15 @@ Series.prototype.alignDataLabel = function (
  * @private
  * @function Highcharts.Series#justifyDataLabel
  *
- * @param  {Highcharts.SVGElement} dataLabel
+ * @param {Highcharts.SVGElement} dataLabel
  *
- * @param  {Highcharts.PlotSeriesDataLabelsOptions} options
+ * @param {Highcharts.PlotSeriesDataLabelsOptions} options
  *
- * @param  {Highcharts.DataLabelAlignObject} alignAttr
+ * @param {Highcharts.DataLabelAlignObject} alignAttr
  *
- * @param  {Highcharts.BBoxObject} bBox
+ * @param {Highcharts.BBoxObject} bBox
  *
- * @param  {boolean} isNew
+ * @param {boolean} isNew
  *
  * @return {boolean}
  */
@@ -707,8 +701,6 @@ if (seriesTypes.pie) {
      *
      * @private
      * @function Highcharts.seriesTypes.pie#drawDataLabels
-     *
-     * @return {void}
      */
     seriesTypes.pie.prototype.drawDataLabels = function () {
         var series = this,
@@ -1046,7 +1038,7 @@ if (seriesTypes.pie) {
      * @private
      * @function Highcharts.seriesTypes.pie#connectorPath
      *
-     * @param  {Highcharts.DataLabelPiePosObject} labelPos
+     * @param {Highcharts.DataLabelPiePosObject} labelPos
      *
      * @return {Highcharts.PathObject}
      */
@@ -1080,8 +1072,6 @@ if (seriesTypes.pie) {
      *
      * @private
      * @function Highcharts.seriesTypes.pie#placeDataLabels
-     *
-     * @return {void}
      */
     seriesTypes.pie.prototype.placeDataLabels = function () {
         each(this.points, function (point) {
@@ -1128,7 +1118,7 @@ if (seriesTypes.pie) {
      * @private
      * @function Highcharts.seriesTypes.pie#verifyDataLabelOverflow
      *
-     * @param  {boolean} overflow
+     * @param {boolean} overflow
      *
      * @return {boolean}
      */
@@ -1209,17 +1199,15 @@ if (seriesTypes.column) {
      * @private
      * @function Highcharts.seriesTypes.column#alignDataLabel
      *
-     * @param  {Highcharts.Point} point
+     * @param {Highcharts.Point} point
      *
-     * @param  {Highcharts.SVGElement} dataLabel
+     * @param {Highcharts.SVGElement} dataLabel
      *
-     * @param  {Highcharts.PlotSeriesDataLabelsOptions} options
+     * @param {Highcharts.PlotSeriesDataLabelsOptions} options
      *
-     * @param  {Highcharts.BBoxObject} alignTo
+     * @param {Highcharts.BBoxObject} alignTo
      *
-     * @param  {boolean} isNew
-     *
-     * @return {void}
+     * @param {boolean} isNew
      */
     seriesTypes.column.prototype.alignDataLabel = function (
         point,
