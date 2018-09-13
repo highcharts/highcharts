@@ -458,7 +458,6 @@ H.defaultOptions = {
         /**
          * Event listeners for the chart.
          *
-         * @type      {*}
          * @apioption chart.events
          */
 
