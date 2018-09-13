@@ -37,12 +37,11 @@ seriesType('areaspline', 'spline',
      * @sample {highstock} stock/demo/areaspline/
      *         Area spline chart
      *
-     * @extends      plotOptions.area
-     * @excluding    step
-     * @product      highcharts highstock
-     * @optionparent plotOptions.areaspline
+     * @extends   plotOptions.area
+     * @excluding step
+     * @product   highcharts highstock
+     * @apioption plotOptions.areaspline
      */
-
     defaultPlotOptions.area
 , {
 
