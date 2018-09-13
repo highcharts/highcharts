@@ -340,34 +340,34 @@ function inferType(node) {
     }
 
     if (typeof defVal === 'undefined') {
-        // There may still be hope - if this node has children, it's an object.
+        //  If this node has children, it is the any type.
         if (node.children && Object.keys(node.children).length) {
             node.doclet.type = {
-                names: ['Object']
+                names: ['*']
             };
         }
 
-        // We can't infer this type, so abort.
+        // We can not infer this type, so abort.
         return;
     }
     
     node.doclet.type = { names: [] };
     
     if (isBool(defVal)) {
-        node.doclet.type.names.push('Boolean');
+        node.doclet.type.names.push('boolean');
     }
     
     if (isNum(defVal)) {
-        node.doclet.type.names.push('Number');
+        node.doclet.type.names.push('number');
     }
     
     if (isStr(defVal)) {
-        node.doclet.type.names.push('String');
+        node.doclet.type.names.push('string');
     }
 
-    // If we were unable to deduce a type, assume it's an object
+    // If we were unable to deduce a type, it is the any type.
     if (node.doclet.type.names.length === 0) {
-        node.doclet.type.names.push('Object');
+        node.doclet.type.names.push('*');
     }
 
 }
