@@ -271,9 +271,7 @@ defaultOptions.legend.itemStyle.cursor = 'pointer';
 
 /*= } =*/
 
-/**
- * Extend Legend for item events.
- */
+// Extend Legend for item events.
 extend(Legend.prototype, {
 
     /**
@@ -385,11 +383,7 @@ extend(Legend.prototype, {
     }
 });
 
-
-
-/**
- * Extend the Chart object with interaction.
- */
+// Extend the Chart object with interaction.
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
@@ -605,9 +599,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
     }
 });
 
-/**
- * Extend the Point object with interaction
- */
+// Extend the Point object with interaction
 extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
     /**
