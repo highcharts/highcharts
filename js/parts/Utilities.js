@@ -136,12 +136,56 @@
  */
 
 /**
+ * The iterator callback.
+ *
+ * @callback Highcharts.EachCallbackFunction<T>
+ *
+ * @param  {T} item
+ *         The array item.
+ *
+ * @param  {number} index
+ *         The item's index in the array.
+ *
+ * @param  {Array<T>} arr
+ *         The array that each is being applied to.
+ *
+ * @return {void}
+ */
+
+/**
+ * The function callback to execute when the event is fired. The `this` context
+ * contains the instance, that fired the event.
+ *
+ * @callback Highcharts.EventCallbackFunction
+ *
+ * @param  {Highcharts.Dictionary<*>|undefined} eventArguments
+ *         Event arguments.
+ *
+ * @return {void}
+ */
+
+/**
  * An HTML DOM element. The type is a reference to the regular SVGElement in the
  * global scope.
  *
  * @typedef {global.HTMLElement} Highcharts.HTMLDOMElement
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
+ */
+
+/**
+ * The iterator callback.
+ *
+ * @callback Highcharts.ObjectEachCallbackFunction
+ *
+ * @param  {*} value
+ *         The property value.
+ *
+ * @param  {string} key
+ *         The property key.
+ *
+ * @param  {*} obj
+ *         The object that objectEach is being applied to.
  */
 
 /**
@@ -2151,7 +2195,7 @@ H.stop = function (el, prop) {
  * @param  {Array<T>} arr
  *         The array to iterate over.
  *
- * @param  {Function} fn
+ * @param  {Highcharts.EachCallbackFunction<T>} fn
  *         The iterator callback. It passes three arguments:
  *         * item - The array item.
  *         * index - The item's index in the array.
@@ -2174,7 +2218,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
  * @param  {*} obj
  *         The object to iterate over.
  *
- * @param  {Function} fn
+ * @param  {Highcharts.ObjectEachCallbackFunction} fn
  *         The iterator callback. It passes three arguments:
  *         * value - The property value.
  *         * key - The property key.
@@ -2205,7 +2249,7 @@ H.objectEach = function (obj, fn, ctx) {
  * @param  {string} type
  *         The event type.
  *
- * @param  {Function} fn
+ * @param  {Highcharts.EventCallbackFunction} fn
  *         The function callback to execute when the event is fired.
  *
  * @param  {Highcharts.Dictionary<*>} options
@@ -2592,23 +2636,16 @@ H.uniqueKey = (function () {
 if (win.jQuery) {
 
     /**
-     * Global namespace.
-     *
-     * @global
-     * @namespace global
-     */
-
-    /**
      * Highcharts-extended JQuery.
      *
-     * @interface global.JQuery
+     * @external JQuery
      */
 
     /**
      * Factory function to create a chart in the current JQuery selector
      * element.
      *
-     * @function global.JQuery.highcharts
+     * @function external:JQuery#highcharts
      *
      * @param  {Highcharts.Options} options
      *         The chart options structure.
@@ -2622,7 +2659,7 @@ if (win.jQuery) {
      * @return {JQuery}
      *         The current JQuery selector.
      *//**
-     * @function global.JQuery.highcharts
+     * @function external:JQuery#highcharts
      *
      * @param  {"Chart"|"Map"|"StockChart"|string} className
      *         Name of the factory class in the Highcharts namespace.
