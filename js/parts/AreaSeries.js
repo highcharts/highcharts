@@ -30,20 +30,21 @@ var color = H.color,
  *
  * @augments Highcharts.Series
  */
-seriesType('area', 'line', {
+seriesType('area', 'line'
 
-    /**
-     * The area series type.
-     *
-     * @sample {highcharts} highcharts/demo/area-basic/
-     *         Area chart
-     * @sample {highstock} stock/demo/area/
-     *         Area chart
-     *
-     * @extends      plotOptions.line
-     * @product      highcharts highstock
-     * @optionparent plotOptions.area
-     */
+/**
+ * The area series type.
+ *
+ * @sample {highcharts} highcharts/demo/area-basic/
+ *         Area chart
+ * @sample {highstock} stock/demo/area/
+ *         Area chart
+ *
+ * @extends      plotOptions.line
+ * @product      highcharts highstock
+ * @optionparent plotOptions.area
+ */
+, {
 
     /**
      * Fill color or gradient for the area. When `null`, the series' `color`
