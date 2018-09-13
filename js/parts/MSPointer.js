@@ -61,11 +61,8 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
         };
 
     /**
-     * Extend the Pointer prototype with methods for each event handler and more
-     *
-     * @ignore
-     * @class
-     * @name Highcharts.Pointer
+     * Extend the Pointer prototype with methods for each event handler and
+     * more.
      */
     extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
@@ -73,9 +70,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
          * @private
          * @function Highcharts.Pointer#onContainerPointerDown
          *
-         * @param  {Highcharts.PointerEventObject} e
-         *
-         * @return {void}
+         * @param {Highcharts.PointerEventObject} e
          */
         onContainerPointerDown: function (e) {
             translateMSPointer(
@@ -96,9 +91,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
          * @private
          * @function Highcharts.Pointer#onContainerPointerMove
          *
-         * @param  {Highcharts.PointerEventObject} e
-         *
-         * @return {void}
+         * @param {Highcharts.PointerEventObject} e
          */
         onContainerPointerMove: function (e) {
             translateMSPointer(
@@ -118,9 +111,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
          * @private
          * @function Highcharts.Pointer#onDocumentPointerUp
          *
-         * @param  {Highcharts.PointerEventObject} e
-         *
-         * @return {void}
+         * @param {Highcharts.PointerEventObject} e
          */
         onDocumentPointerUp: function (e) {
             translateMSPointer(
@@ -139,9 +130,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
          * @private
          * @function Highcharts.Pointer#batchMSEvents
          *
-         * @param  {Function} fn
-         *
-         * @return {void}
+         * @param {Function} fn
          */
         batchMSEvents: function (fn) {
             fn(
