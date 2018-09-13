@@ -7,7 +7,7 @@
 /**
  * Options to align the element relative to the chart or another box.
  *
- * @typedef {*} Highcharts.AlignObject
+ * @typedef Highcharts.AlignObject
  *
  * @property {string|undefined} [align='left']
  *           Horizontal alignment. Can be one of `left`, `center` and
@@ -31,7 +31,7 @@
 /**
  * Bounding box of an element.
  *
- * @typedef {*} Highcharts.BBoxObject
+ * @typedef Highcharts.BBoxObject
  *
  * @property {number} height
  *           Height of the bounding box.
@@ -67,7 +67,7 @@
 /**
  * The font metrics.
  *
- * @typedef {*} Highcharts.FontMetricsObject
+ * @typedef Highcharts.FontMetricsObject
  *
  * @property {number} b
  *           The baseline relative to the top of the box.
@@ -95,7 +95,7 @@
  * }
  *
  * @private
- * @typedef {*} Highcharts.GradientColorObject
+ * @typedef Highcharts.GradientColorObject
  *
  * @property {Highcharts.LinearGradientColorObject} linearGradient
  *           Holds an object that defines the start position and the end
@@ -118,7 +118,7 @@
  * to the shape.
  *
  * @private
- * @typedef {*} Highcharts.LinearGradientColorObject
+ * @typedef Highcharts.LinearGradientColorObject
  *
  * @property {number} x1
  *           Start horizontal position of the gradient. Ranges 0-1.
@@ -137,7 +137,7 @@
  * Defines the center position and the radius for a gradient.
  *
  * @private
- * @typedef {*} Highcharts.RadialGradientColorObject
+ * @typedef Highcharts.RadialGradientColorObject
  *
  * @property {number} cx
  *           Center horizontal position relative to the shape. Ranges 0-1.
@@ -152,7 +152,7 @@
 /**
  * A rectangle.
  *
- * @typedef {*} Highcharts.RectangleObject
+ * @typedef Highcharts.RectangleObject
  *
  * @property {number} height
  *           Height of the rectangle.
@@ -170,7 +170,7 @@
 /**
  * The shadow options.
  *
- * @typedef {*} Highcharts.ShadowOptionsObject
+ * @typedef Highcharts.ShadowOptionsObject
  *
  * @property {string|undefined} [color=${palette.neutralColor100}]
  *           The shadow color.
@@ -206,7 +206,7 @@
 /**
  * An extendable collection of functions for defining symbol paths.
  *
- * @typedef {*} Highcharts.SymbolDictionary
+ * @typedef Highcharts.SymbolDictionary
  *
  * @property {Function} [key:Highcharts.SymbolKey]
  */
@@ -226,7 +226,7 @@
 /**
  * Additional options, depending on the actual symbol drawn.
  *
- * @typedef {*} Highcharts.SymbolOptionsObject
+ * @typedef Highcharts.SymbolOptionsObject
  *
  * @property {number} anchorX
  *           The anchor X position for the `callout` symbol. This is where
@@ -251,9 +251,11 @@
  */
 
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Color.js';
+
 var SVGElement,
     SVGRenderer,
 
@@ -308,7 +310,8 @@ var SVGElement,
  * [label]{@link Highcharts.SVGRenderer#label}, [g]{@link
  * Highcharts.SVGRenderer#g} and more.
  *
- * @class Highcharts.SVGElement
+ * @class
+ * @name Highcharts.SVGElement
  */
 SVGElement = H.SVGElement = function () {
     return this;
@@ -336,13 +339,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#init
      *
-     * @param  {Highcharts.SVGRenderer} renderer
-     *         The SVGRenderer instance to initialize to.
+     * @param {Highcharts.SVGRenderer} renderer
+     *        The SVGRenderer instance to initialize to.
      *
-     * @param  {string} nodeName
-     *         The SVG node name.
-     *
-     * @return {void}
+     * @param {string} nodeName
+     *        The SVG node name.
      */
     init: function (renderer, nodeName) {
 
@@ -374,14 +375,14 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#animate
      *
-     * @param  {Highcharts.SVGAttributes} params
-     *         SVG attributes or CSS to animate.
+     * @param {Highcharts.SVGAttributes} params
+     *        SVG attributes or CSS to animate.
      *
-     * @param  {Highcharts.AnimationOptionsObject|undefined} [options]
-     *         Animation options.
+     * @param {Highcharts.AnimationOptionsObject|undefined} [options]
+     *        Animation options.
      *
-     * @param  {Function|undefined} [complete]
-     *         Function to perform at the end of animation.
+     * @param {Function|undefined} [complete]
+     *        Function to perform at the end of animation.
      *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
@@ -414,16 +415,14 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#complexColor
      *
-     * @param  {Highcharts.GradientColorObject} color
-     *         The gradient options structure.
+     * @param {Highcharts.GradientColorObject} color
+     *        The gradient options structure.
      *
-     * @param  {string} prop
-     *         The property to apply, can either be `fill` or `stroke`.
+     * @param {string} prop
+     *        The property to apply, can either be `fill` or `stroke`.
      *
-     * @param  {Highcharts.SVGDOMElement} elem
-     *         SVG DOM element to apply the gradient on.
-     *
-     * @return {void}
+     * @param {Highcharts.SVGDOMElement} elem
+     *        SVG DOM element to apply the gradient on.
      */
     complexColor: function (color, prop, elem) {
         var renderer = this.renderer,
@@ -551,8 +550,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
     /**
      * Apply a text outline through a custom CSS property, by copying the text
-     * element and apply stroke to the copy. Used internally. Contrast checks
-     * at https://jsfiddle.net/highcharts/43soe9m1/2/ .
+     * element and apply stroke to the copy. Used internally. Contrast checks at
+     * {@link https://jsfiddle.net/highcharts/43soe9m1/2/}.
      *
      * @example
      * // Specific color
@@ -568,10 +567,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#applyTextOutline
      *
-     * @param  {string} textOutline
-     *         A custom CSS `text-outline` setting, defined by `width color`.
-     *
-     * @return {void}
+     * @param {string} textOutline
+     *        A custom CSS `text-outline` setting, defined by `width color`.
      */
     applyTextOutline: function (textOutline) {
         var elem = this.element,
@@ -688,25 +685,25 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#attr
      *
-     * @param  {string|Highcharts.SVGAttributes|undefined} [hash]
-     *         The native and custom SVG attributes.
+     * @param {string|Highcharts.SVGAttributes|undefined} [hash]
+     *        The native and custom SVG attributes.
      *
-     * @param  {string|undefined} [val]
-     *         If the type of the first argument is `string`, the second can be
-     *         a value, which will serve as a single attribute setter. If the
-     *         first argument is a string and the second is undefined, the
-     *         function serves as a getter and the current value of the property
-     *         is returned.
+     * @param {string|undefined} [val]
+     *        If the type of the first argument is `string`, the second can be a
+     *        value, which will serve as a single attribute setter. If the first
+     *        argument is a string and the second is undefined, the function
+     *        serves as a getter and the current value of the property is
+     *        returned.
      *
-     * @param  {Function|undefined} [complete]
-     *         A callback function to execute after setting the attributes. This
-     *         makes the function compliant and interchangeable with the
-     *         {@link SVGElement#animate} function.
+     * @param {Function|undefined} [complete]
+     *        A callback function to execute after setting the attributes. This
+     *        makes the function compliant and interchangeable with the
+     *        {@link SVGElement#animate} function.
      *
-     * @param  {boolean|undefined} [continueAnimation=true]
-     *         Used internally when `.attr` is called as part of an animation
-     *         step. Otherwise, calling `.attr` for an attribute will stop
-     *         animation for that attribute.
+     * @param {boolean|undefined} [continueAnimation=true]
+     *        Used internally when `.attr` is called as part of an animation
+     *        step. Otherwise, calling `.attr` for an attribute will stop
+     *        animation for that attribute.
      *
      * @return {number|string|Highcharts.SVGElement}
      *         If used as a setter, it returns the current
@@ -801,8 +798,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @private
      * @function Highcharts.SVGElement#afterSetters
-     *
-     * @return {void}
      */
     afterSetters: function () {
         // Update transform. Do this outside the loop to prevent redundant
@@ -820,16 +815,14 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#updateShadows
      *
-     * @param  {string} key
-     *         The attribute name.
+     * @param {string} key
+     *        The attribute name.
      *
-     * @param  {string|number} value
-     *         The value of the attribute.
+     * @param {string|number} value
+     *        The value of the attribute.
      *
-     * @param  {Function} setter
-     *         The setter function, inherited from the parent wrapper.
-     *
-     * @return {void}
+     * @param {Function} setter
+     *        The setter function, inherited from the parent wrapper.
      */
     updateShadows: function (key, value, setter) {
         var shadows = this.shadows,
@@ -853,12 +846,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#addClass
      *
-     * @param  {string} className
-     *         The new class name to add.
+     * @param {string} className
+     *        The new class name to add.
      *
-     * @param  {boolean|undefined} [replace=false]
-     *         When true, the existing class name(s) will be overwritten with
-     *         the new one. When false, the new one is added.
+     * @param {boolean|undefined} [replace=false]
+     *        When true, the existing class name(s) will be overwritten with
+     *        the new one. When false, the new one is added.
      *
      * @return {Highcharts.SVGElement}
      *         Return the SVG element for chainability.
@@ -882,8 +875,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#hasClass
      *
-     * @param  {string} className
-     *         The class name to check for.
+     * @param {string} className
+     *        The class name to check for.
      *
      * @return {boolean}
      *         Whether the class name is found.
@@ -900,8 +893,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#removeClass
      *
-     * @param  {string|RegExp} className
-     *         The class name to remove.
+     * @param {string|RegExp} className
+     *        The class name to remove.
      *
      * @return {Highcharts.SVGElement} Returns the SVG element for chainability.
      */
@@ -920,10 +913,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#symbolAttr
      *
-     * @param  {Highcharts.Dictionary<number|string>} hash
-     *         The attributes to set.
-     *
-     * @return {void}
+     * @param {Highcharts.Dictionary<number|string>} hash
+     *        The attributes to set.
      */
     symbolAttr: function (hash) {
         var wrapper = this;
@@ -959,8 +950,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#clip
      *
-     * @param  {Highcharts.ClipRectElement|undefined} [clipRect]
-     *         The clipping rectangle. If skipped, the current clip is removed.
+     * @param {Highcharts.ClipRectElement|undefined} [clipRect]
+     *        The clipping rectangle. If skipped, the current clip is removed.
      *
      * @return {Highcharts.SVGElement}
      *         Returns the SVG element to allow chaining.
@@ -980,12 +971,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#crisp
      *
-     * @param  {Highcharts.RectangleObject} rect
-     *         Rectangle to crisp.
+     * @param {Highcharts.RectangleObject} rect
+     *        Rectangle to crisp.
      *
-     * @param  {number|undefined} [strokeWidth]
-     *         The stroke width to consider when computing crisp positioning. It
-     *         can also be set directly on the rect parameter.
+     * @param {number|undefined} [strokeWidth]
+     *        The stroke width to consider when computing crisp positioning. It
+     *        can also be set directly on the rect parameter.
      *
      * @return {Highcharts.RectangleObject}
      *         The modified rectangle arguments.
@@ -1025,8 +1016,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#css
      *
-     * @param  {Highcharts.CSSObject} styles
-     *         The new CSS styles.
+     * @param {Highcharts.CSSObject} styles
+     *        The new CSS styles.
      *
      * @return {Highcharts.SVGElement}
      *         Return the SVG element for chaining.
@@ -1153,8 +1144,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#getStyle
      *
-     * @param  {string} prop
-     *         The property name to check for.
+     * @param {string} prop
+     *        The property name to check for.
      *
      * @return {string}
      *         The current computed value.
@@ -1219,14 +1210,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#on
      *
-     * @param  {string} eventType
-     *         The event type. If the type is `click`, Highcharts will
-     *         internally translate it to a `touchstart` event on touch devices,
-     *         to prevent the browser from waiting for a click event from
-     *         firing.
+     * @param {string} eventType
+     *        The event type. If the type is `click`, Highcharts will internally
+     *        translate it to a `touchstart` event on touch devices, to prevent
+     *        the browser from waiting for a click event from firing.
      *
-     * @param  {Function} handler
-     *         The handler callback.
+     * @param {Function} handler
+     *        The handler callback.
      *
      * @return {Highcharts.SVGElement}
      *         The SVGElement for chaining.
@@ -1262,9 +1252,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#setRadialReference
      *
-     * @param  {Array<number>} coordinates
-     *         The center reference. The format is
-     *         `[centerX, centerY, diameter]` in pixels.
+     * @param {Array<number>} coordinates
+     *        The center reference. The format is `[centerX, centerY, diameter]`
+     *        in pixels.
      *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
@@ -1293,13 +1283,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#translate
      *
-     * @param  {number} x
-     *         The x value.
+     * @param {number} x
+     *        The x value.
      *
-     * @param  {number} y
-     *         The y value.
-     *
-     * @return {void}
+     * @param {number} y
+     *        The y value.
      */
     translate: function (x, y) {
         return this.attr({
@@ -1315,9 +1303,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#invert
      *
-     * @param  {boolean} inverted
-     *         Whether to invert or not. An inverted shape can be un-inverted by
-     *         setting it to false.
+     * @param {boolean} inverted
+     *        Whether to invert or not. An inverted shape can be un-inverted by
+     *        setting it to false.
      *
      * @return {Highcharts.SVGElement}
      *         Return the SVGElement for chaining.
@@ -1417,19 +1405,19 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#align
      *
-     * @param  {Highcharts.AlignObject|undefined} [alignOptions]
-     *         The alignment options. The function can be called without this
-     *         parameter in order to re-align an element after the box has been
-     *         updated.
+     * @param {Highcharts.AlignObject|undefined} [alignOptions]
+     *        The alignment options. The function can be called without this
+     *        parameter in order to re-align an element after the box has been
+     *        updated.
      *
-     * @param  {boolean|undefined} [alignByTranslate]
-     *         Align element by translation.
+     * @param {boolean|undefined} [alignByTranslate]
+     *        Align element by translation.
      *
-     * @param  {string|Highcharts.BBoxObject|undefined} [box]
-     *         The box to align to, needs a width and height. When the box is a
-     *         string, it refers to an object in the Renderer. For example, when
-     *         box is `spacingBox`, it refers to `Renderer.spacingBox` which
-     *         holds `width`, `height`, `x` and `y` properties.
+     * @param {string|Highcharts.BBoxObject|undefined} [box]
+     *        The box to align to, needs a width and height. When the box is a
+     *        string, it refers to an object in the Renderer. For example, when
+     *        box is `spacingBox`, it refers to `Renderer.spacingBox` which
+     *        holds `width`, `height`, `x` and `y` properties.
      *
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
@@ -1516,13 +1504,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#getBBox
      *
-     * @param  {boolean|undefined} [reload]
-     *         Skip the cache and get the updated DOM bouding box.
+     * @param {boolean|undefined} [reload]
+     *        Skip the cache and get the updated DOM bouding box.
      *
-     * @param  {number|undefined} [rot]
-     *         Override the element's rotation. This is internally used on axis
-     *         labels with a value of 0 to find out what the bounding box would
-     *         be have been if it were not rotated.
+     * @param {number|undefined} [rot]
+     *        Override the element's rotation. This is internally used on axis
+     *        labels with a value of 0 to find out what the bounding box would
+     *        be have been if it were not rotated.
      *
      * @return {Highcharts.BBoxObject}
      *         The bounding box with `x`, `y`, `width` and `height` properties.
@@ -1694,10 +1682,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#show
      *
-     * @param  {boolean|undefined} [inherit=false]
-     *         Set the visibility attribute to `inherit` rather than `visible`.
-     *         The difference is that an element with `visibility="visible"`
-     *         will be visible even if the parent is hidden.
+     * @param {boolean|undefined} [inherit=false]
+     *        Set the visibility attribute to `inherit` rather than `visible`.
+     *        The difference is that an element with `visibility="visible"`
+     *        will be visible even if the parent is hidden.
      *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
@@ -1727,8 +1715,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @param  {number|undefined} [duration=150]
      *         The fade duration in milliseconds.
-     *
-     * @return {void}
      */
     fadeOut: function (duration) {
         var elemWrapper = this;
@@ -1751,9 +1737,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#add
      *
-     * @param  {Highcharts.SVGElement|Highcharts.SVGDOMElement|undefined} [parent]
-     *         The parent item to add it to. If undefined, the element is added
-     *         to the {@link Highcharts.SVGRenderer.box}.
+     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|undefined} [parent]
+     *        The parent item to add it to. If undefined, the element is added
+     *        to the {@link Highcharts.SVGRenderer.box}.
      *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
@@ -1804,10 +1790,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#safeRemoveChild
      *
-     * @param  {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
-     *         The DOM node to remove.
-     *
-     * @return {void}
+     * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
+     *        The DOM node to remove.
      */
     safeRemoveChild: function (element) {
         var parentNode = element.parentNode;
@@ -1821,8 +1805,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * hooks.
      *
      * @function Highcharts.SVGElement#destroy
-     *
-     * @return {void}
      */
     destroy: function () {
         var wrapper = this,
@@ -1905,6 +1887,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     },
 
     /*= if (build.classic) { =*/
+
     /**
      * Add a shadow to the element. Must be called after the element is added to
      * the DOM. In styled mode, this method is not used, instead use `defs` and
@@ -1917,18 +1900,18 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#shadow
      *
-     * @param  {boolean|Highcharts.ShadowOptionsObject} shadowOptions
-     *         The shadow options. If `true`, the default options are applied.
-     *         If `false`, the current shadow will be removed.
+     * @param {boolean|Highcharts.ShadowOptionsObject} shadowOptions
+     *        The shadow options. If `true`, the default options are applied. If
+     *        `false`, the current shadow will be removed.
      *
-     * @param  {Highcharts.SVGElement|undefined} [group]
-     *         The SVG group element where the shadows will be applied. The
-     *         default is to add it to the same parent as the current element.
-     *         Internally, this is ised for pie slices, where all the shadows
-     *         are added to an element behind all the slices.
+     * @param {Highcharts.SVGElement|undefined} [group]
+     *        The SVG group element where the shadows will be applied. The
+     *        default is to add it to the same parent as the current element.
+     *        Internally, this is ised for pie slices, where all the shadows are
+     *        added to an element behind all the slices.
      *
-     * @param  {boolean|undefined} [cutOff]
-     *         Used internally for column shadows.
+     * @param {boolean|undefined} [cutOff]
+     *        Used internally for column shadows.
      *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
@@ -1997,8 +1980,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @private
      * @function Highcharts.SVGElement#destroyShadows
-     *
-     * @return {void}
      */
     destroyShadows: function () {
         each(this.shadows || [], function (shadow) {
@@ -2013,7 +1994,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#xGetter
      *
-     * @param  {string} key
+     * @param {string} key
      *
      * @return {number|string|null}
      */
@@ -2036,8 +2017,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#_defaultGetter
      *
-     * @param  {string} key
-     *         Property key.
+     * @param {string} key
+     *        Property key.
      *
      * @return {number|string|null}
      *         Property value.
@@ -2060,13 +2041,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#dSettter
      *
-     * @param  {number|string|Highcharts.SVGPathArray} value
+     * @param {number|string|Highcharts.SVGPathArray} value
      *
-     * @param  {string} key
+     * @param {string} key
      *
-     * @param  {Highcharts.SVGDOMElement} element
-     *
-     * @return {void}
+     * @param {Highcharts.SVGDOMElement} element
      */
     dSetter: function (value, key, element) {
         if (value && value.join) { // join path
@@ -2085,14 +2064,14 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         }
 
     },
+
     /*= if (build.classic) { =*/
+
     /**
      * @private
      * @function Highcharts.SVGElement#dashstyleSetter
      *
-     * @param  {string} value
-     *
-     * @return {void}
+     * @param {string} value
      */
     dashstyleSetter: function (value) {
         var i,
@@ -2125,14 +2104,14 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             this.element.setAttribute('stroke-dasharray', value);
         }
     },
+
     /*= } =*/
+
     /**
      * @private
      * @function Highcharts.SVGElement#alignSetter
      *
-     * @param  {"start"|"middle"|"end"} value
-     *
-     * @return {void}
+     * @param {"start"|"middle"|"end"} value
      */
     alignSetter: function (value) {
         var convert = { left: 'start', center: 'middle', right: 'end' };
@@ -2143,13 +2122,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#opacitySetter
      *
-     * @param  {string} value
+     * @param {string} value
      *
-     * @param  {string} key
+     * @param {string} key
      *
-     * @param  {Highcharts.SVGDOMElement} element
-     *
-     * @return {void}
+     * @param {Highcharts.SVGDOMElement} element
      */
     opacitySetter: function (value, key, element) {
         this[key] = value;
@@ -2159,9 +2136,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#titleSetter
      *
-     * @param  {string} value
-     *
-     * @return {void}
+     * @param {string} value
      */
     titleSetter: function (value) {
         var titleNode = this.element.getElementsByTagName('title')[0];
@@ -2189,9 +2164,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#textSetter
      *
-     * @param  {string} value
-     *
-     * @return {void}
+     * @param {string} value
      */
     textSetter: function (value) {
         if (value !== this.textStr) {
@@ -2208,13 +2181,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#fillSetter
      *
-     * @param  {Highcharts.Color|Highcharts.ColorString} value
+     * @param {Highcharts.Color|Highcharts.ColorString} value
      *
-     * @param  {string} key
+     * @param {string} key
      *
-     * @param  {Highcharts.SVGDOMElement} element
-     *
-     * @return {void}
+     * @param {Highcharts.SVGDOMElement} element
      */
     fillSetter: function (value, key, element) {
         if (typeof value === 'string') {
@@ -2227,13 +2198,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#visibilitySetter
      *
-     * @param  {string} value
+     * @param {string} value
      *
-     * @param  {string} key
+     * @param {string} key
      *
-     * @param  {Highcharts.SVGDOMElement} element
-     *
-     * @return {void}
+     * @param {Highcharts.SVGDOMElement} element
      */
     visibilitySetter: function (value, key, element) {
         // IE9-11 doesn't handle visibilty:inherit well, so we remove the
@@ -2249,9 +2218,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#zIndexSetter
      *
-     * @param  {string} value
+     * @param {string} value
      *
-     * @param  {string} key
+     * @param {string} key
      *
      * @return {boolean}
      */
@@ -2343,13 +2312,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#_defaultSetter
      *
-     * @param  {string} value
+     * @param {string} value
      *
-     * @param  {string} key
+     * @param {string} key
      *
-     * @param  {Highcharts.SVGDOMElement} element
-     *
-     * @return {void}
+     * @param {Highcharts.SVGDOMElement} element
      */
     _defaultSetter: function (value, key, element) {
         element.setAttribute(key, value);
@@ -2380,13 +2347,11 @@ SVGElement.prototype['stroke-widthSetter'] =
  * @private
  * @function Highcharts.SVGElement#strokeSetter
  *
- * @param  {number|string} value
+ * @param {number|string} value
  *
- * @param  {string} key
+ * @param {string} key
  *
- * @param  {Highcharts.SVGDOMElement} element
- *
- * @return {void}
+ * @param {Highcharts.SVGDOMElement} element
  */
 SVGElement.prototype.strokeSetter = function (value, key, element) {
     this[key] = value;
@@ -2429,7 +2394,8 @@ SVGElement.prototype.strokeSetter = function (value, key, element) {
  * // Use directly without a chart object.
  * var renderer = new Highcharts.Renderer(parentNode, 600, 400);
  *
- * @class Highcharts.SVGRenderer
+ * @class
+ * @name Highcharts.SVGRenderer
  *
  * @param {Highcharts.HTMLDOMElement} container
  *        Where to put the SVG in the web page.
@@ -2459,7 +2425,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @type {Highcharts.SVGElement}
      */
     Element: SVGElement,
+
     SVG_NS: SVG_NS,
+
     /**
      * Initialize the SVGRenderer. Overridable initiator function that takes
      * the same parameters as the constructor.
@@ -2481,8 +2449,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {boolean|undefined} [allowHTML=true]
      *        Whether the renderer is allowed to include HTML text, which will
      *        be projected on top of the SVG.
-     *
-     * @return {void}
      */
     init: function (container, width, height, style, forExport, allowHTML) {
         var renderer = this,
@@ -2599,7 +2565,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             renderer.unSubPixelFix = addEvent(win, 'resize', subPixelFix);
         }
     },
+
     /*= if (!build.classic) { =*/
+
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
      * for gradients, fills, filters etc. Styled mode only. A hook for adding
@@ -2610,8 +2578,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#definition
      *
-     * @param  {Highcharts.SVGDefinitionObject} def
-     *         A serialized form of an SVG definition, including children.
+     * @param {Highcharts.SVGDefinitionObject} def
+     *        A serialized form of an SVG definition, including children.
      *
      * @return {Highcharts.SVGElement}
      *         The inserted node.
@@ -2658,17 +2626,19 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         }
         return recurse(def);
     },
+
     /*= } =*/
 
     /*= if (build.classic) { =*/
+
     /**
      * Get the global style setting for the renderer.
      *
      * @private
      * @function Highcharts.SVGRenderer#getStyle
      *
-     * @param  {Highcharts.CSSObject} style
-     *         Style settings.
+     * @param {Highcharts.CSSObject} style
+     *        Style settings.
      *
      * @return {Highcharts.CSSObject}
      *         The style settings mixed with defaults.
@@ -2683,19 +2653,19 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         }, style);
         return this.style;
     },
+
     /**
      * Apply the global style on the renderer, mixed with the default styles.
      *
      * @function Highcharts.SVGRenderer#setStyle
      *
-     * @param  {Highcharts.CSSObject} style
-     *         CSS to apply.
-     *
-     * @return {void}
+     * @param {Highcharts.CSSObject} style
+     *        CSS to apply.
      */
     setStyle: function (style) {
         this.boxWrapper.css(this.getStyle(style));
     },
+
     /*= } =*/
 
     /**
@@ -2717,8 +2687,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * Destroys the renderer and its allocated members.
      *
      * @function Highcharts.SVGRenderer#destroy
-     *
-     * @return {void}
      */
     destroy: function () {
         var renderer = this,
@@ -2754,8 +2722,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#createElement
      *
-     * @param  {string} nodeName
-     *         The node name, for example `rect`, `g` etc.
+     * @param {string} nodeName
+     *        The node name, for example `rect`, `g` etc.
      *
      * @return {Highcharts.SVGElement}
      *         The generated SVGElement.
@@ -2783,9 +2751,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @private
      * @function Highcharts.SVGRenderer#getRadialAttr
      *
-     * @param  {Array<number>} radialReference
+     * @param {Array<number>} radialReference
      *
-     * @param  {Highcharts.SVGAttributes} gradAttr
+     * @param {Highcharts.SVGAttributes} gradAttr
      *
      * @return {Highcharts.SVGAttributes}
      */
@@ -2805,9 +2773,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @private
      * @function Highcharts.SVGRenderer#getSpanWidth
      *
-     * @param  {Highcharts.SVGElement} wrapper
-     *
-     * @return {void}
+     * @param {Highcharts.SVGElement} wrapper
      */
     getSpanWidth: function (wrapper) {
         return wrapper.getBBox(true).width;
@@ -2817,13 +2783,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @private
      * @function Highcharts.SVGRenderer#applyEllipsis
      *
-     * @param  {Highcharts.SVGElement} wrapper
+     * @param {Highcharts.SVGElement} wrapper
      *
-     * @param  {Highcharts.SVGDOMElement} tspan
+     * @param {Highcharts.SVGDOMElement} tspan
      *
-     * @param  {string} text
+     * @param {string} text
      *
-     * @param  {number} width
+     * @param {number} width
      *
      * @return {boolean}
      *         True, if tspan is too long.
@@ -2903,10 +2869,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @private
      * @function Highcharts.SVGRenderer#buildText
      *
-     * @param  {Highcharts.SVGElement} wrapper
-     *         The parent SVGElement.
-     *
-     * @return {void}
+     * @param {Highcharts.SVGElement} wrapper
+     *        The parent SVGElement.
      */
     buildText: function (wrapper) {
         var textNode = wrapper.element,
@@ -3353,8 +3317,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#getContrast
      *
-     * @param  {Highcharts.ColorString} rgba
-     *         The color to get the contrast for.
+     * @param {Highcharts.ColorString} rgba
+     *        The color to get the contrast for.
      *
      * @return {string}
      *         The contrast color, either `#000000` or `#FFFFFF`.
@@ -3376,32 +3340,32 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#button
      *
-     * @param  {string} text
-     *         The text or HTML to draw.
+     * @param {string} text
+     *        The text or HTML to draw.
      *
-     * @param  {number} x
-     *         The x position of the button's left side.
+     * @param {number} x
+     *        The x position of the button's left side.
      *
-     * @param  {number} y
-     *         The y position of the button's top side.
+     * @param {number} y
+     *        The y position of the button's top side.
      *
-     * @param  {Function} callback
-     *         The function to execute on button click or touch.
+     * @param {Function} callback
+     *        The function to execute on button click or touch.
      *
-     * @param  {Highcharts.SVGAttributes|undefined} [normalState]
-     *         SVG attributes for the normal state.
+     * @param {Highcharts.SVGAttributes|undefined} [normalState]
+     *        SVG attributes for the normal state.
      *
-     * @param  {Highcharts.SVGAttributes|undefined} [hoverState]
-     *         SVG attributes for the hover state.
+     * @param {Highcharts.SVGAttributes|undefined} [hoverState]
+     *        SVG attributes for the hover state.
      *
-     * @param  {Highcharts.SVGAttributes|undefined} [pressedState]
-     *         SVG attributes for the pressed state.
+     * @param {Highcharts.SVGAttributes|undefined} [pressedState]
+     *        SVG attributes for the pressed state.
      *
-     * @param  {Highcharts.SVGAttributes|undefined} [disabledState]
-     *         SVG attributes for the disabled state.
+     * @param {Highcharts.SVGAttributes|undefined} [disabledState]
+     *        SVG attributes for the disabled state.
      *
-     * @param  {Highcharts.SymbolKey|undefined} [shape=rect]
-     *         The shape type.
+     * @param {Highcharts.SymbolKey|undefined} [shape=rect]
+     *        The shape type.
      *
      * @return {Highcharts.SVGElement}
      *         The button element.
@@ -3549,11 +3513,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#crispLine
      *
-     * @param  {Highcharts.SVGPathArray} points
-     *         The original points on the format `['M', 0, 0, 'L', 100, 0]`.
+     * @param {Highcharts.SVGPathArray} points
+     *        The original points on the format `['M', 0, 0, 'L', 100, 0]`.
      *
-     * @param  {number} width
-     *         The width of the line.
+     * @param {number} width
+     *        The width of the line.
      *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
@@ -3587,8 +3551,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#path
      *
-     * @param  {Highcharts.SVGPathArray|undefined} [path]
-     *         An SVG path definition in array form.
+     * @param {Highcharts.SVGPathArray|undefined} [path]
+     *        An SVG path definition in array form.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3598,8 +3562,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#path
      *
-     * @param  {Highcharts.SVGAttributes|undefined} [attribs]
-     *         The initial attributes.
+     * @param {Highcharts.SVGAttributes|undefined} [attribs]
+     *        The initial attributes.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3626,14 +3590,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#circle
      *
-     * @param  {number|undefined} [x]
-     *         The center x position.
+     * @param {number|undefined} [x]
+     *        The center x position.
      *
-     * @param  {number|undefined} [y]
-     *         The center y position.
+     * @param {number|undefined} [y]
+     *        The center y position.
      *
-     * @param  {number|undefined} [r]
-     *         The radius.
+     * @param {number|undefined} [r]
+     *        The radius.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3642,8 +3606,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#circle
      *
-     * @param  {Highcharts.SVGAttributes|undefined} [attribs]
-     *         The initial attributes.
+     * @param {Highcharts.SVGAttributes|undefined} [attribs]
+     *        The initial attributes.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3668,25 +3632,25 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#arc
      *
-     * @param  {number|undefined} [x=0]
-     *         Center X position.
+     * @param {number|undefined} [x=0]
+     *        Center X position.
      *
-     * @param  {number|undefined} [y=0]
-     *         Center Y position.
+     * @param {number|undefined} [y=0]
+     *        Center Y position.
      *
-     * @param  {number|undefined} [r=0]
-     *         The outer radius of the arc.
+     * @param {number|undefined} [r=0]
+     *        The outer radius of the arc.
      *
-     * @param  {number|undefined} [innerR=0]
-     *         Inner radius like used in donut charts.
+     * @param {number|undefined} [innerR=0]
+     *        Inner radius like used in donut charts.
      *
-     * @param  {number|undefined} [start=0]
-     *         The starting angle of the arc in radians, where 0 is to the right
+     * @param {number|undefined} [start=0]
+     *        The starting angle of the arc in radians, where 0 is to the right
      *         and `-Math.PI/2` is up.
      *
-     * @param  {number|undefined} [end=0]
-     *         The ending angle of the arc in radians, where 0 is to the right
-     *         and `-Math.PI/2` is up.
+     * @param {number|undefined} [end=0]
+     *        The ending angle of the arc in radians, where 0 is to the right
+     *        and `-Math.PI/2` is up.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3695,8 +3659,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#arc
      *
-     * @param  {Highcharts.SVGAttributes} attribs
-     *         Initial SVG attributes.
+     * @param {Highcharts.SVGAttributes} attribs
+     *        Initial SVG attributes.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3733,23 +3697,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#rect
      *
-     * @param  {number|undefined} [x]
-     *         Left position.
+     * @param {number|undefined} [x]
+     *        Left position.
      *
-     * @param  {number|undefined} [y]
-     *         Top position.
+     * @param {number|undefined} [y]
+     *        Top position.
      *
-     * @param  {number|undefined} [width]
-     *         Width of the rectangle.
+     * @param {number|undefined} [width]
+     *        Width of the rectangle.
      *
-     * @param  {number|undefined} [height]
-     *         Height of the rectangle.
+     * @param {number|undefined} [height]
+     *        Height of the rectangle.
      *
-     * @param  {number|undefined} [r]
-     *         Border corner radius.
+     * @param {number|undefined} [r]
+     *        Border corner radius.
      *
-     * @param  {number|undefined} [strokeWidth]
-     *         A stroke width can be supplied to allow crisp drawing.
+     * @param {number|undefined} [strokeWidth]
+     *        A stroke width can be supplied to allow crisp drawing.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3763,8 +3727,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#rect
      *
-     * @param  {Highcharts.SVGAttributes|undefined} [attributes]
-     *         General SVG attributes for the rectangle.
+     * @param {Highcharts.SVGAttributes|undefined} [attributes]
+     *        General SVG attributes for the rectangle.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3812,16 +3776,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#setSize
      *
-     * @param  {number} width
-     *         The new pixel width.
+     * @param {number} width
+     *        The new pixel width.
      *
-     * @param  {number} height
-     *         The new pixel height.
+     * @param {number} height
+     *        The new pixel height.
      *
-     * @param  {boolean|Highcharts.AnimationOptionsObject|undefined} [animate=true]
-     *         Whether and how to animate.
-     *
-     * @return {void}
+     * @param {boolean|Highcharts.AnimationOptionsObject|undefined} [animate=true]
+     *        Whether and how to animate.
      */
     setSize: function (width, height, animate) {
         var renderer = this,
@@ -3856,9 +3818,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#g
      *
-     * @param  {string|undefined} [name]
-     *         The group will be given a class name of `highcharts-{name}`. This
-     *         can be used for styling and scripting.
+     * @param {string|undefined} [name]
+     *        The group will be given a class name of `highcharts-{name}`. This
+     *        can be used for styling and scripting.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3878,24 +3840,24 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#image
      *
-     * @param  {string} src
-     *         The image source.
+     * @param {string} src
+     *        The image source.
      *
-     * @param  {number|undefined} [x]
-     *         The X position.
+     * @param {number|undefined} [x]
+     *        The X position.
      *
-     * @param  {number|undefined} [y]
-     *         The Y position.
+     * @param {number|undefined} [y]
+     *        The Y position.
      *
-     * @param  {number|undefined} [width]
-     *         The image width. If omitted, it defaults to the image file width.
+     * @param {number|undefined} [width]
+     *        The image width. If omitted, it defaults to the image file width.
      *
-     * @param  {number|undefined} [height]
-     *         The image height. If omitted it defaults to the image file
-     *         height.
+     * @param {number|undefined} [height]
+     *        The image height. If omitted it defaults to the image file
+     *        height.
      *
-     * @param  {Function|undefined} [onload]
-     *         Event handler for image load.
+     * @param {Function|undefined} [onload]
+     *        Event handler for image load.
      *
      * @return {Highcharts.SVGElement}
      *         The generated wrapper element.
@@ -3966,23 +3928,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#symbol
      *
-     * @param  {symbol} symbol
-     *         The symbol name.
+     * @param {symbol} symbol
+     *        The symbol name.
      *
-     * @param  {number} x
-     *         The X coordinate for the top left position.
+     * @param {number} x
+     *        The X coordinate for the top left position.
      *
-     * @param  {number} y
-     *         The Y coordinate for the top left position.
+     * @param {number} y
+     *        The Y coordinate for the top left position.
      *
-     * @param  {number} width
-     *         The pixel width.
+     * @param {number} width
+     *        The pixel width.
      *
-     * @param  {number} height
-     *         The pixel height.
+     * @param {number} height
+     *        The pixel height.
      *
-     * @param  {Highcharts.SymbolOptionsObject|undefined} [options]
-     *         Additional options, depending on the actual symbol drawn.
+     * @param {Highcharts.SymbolOptionsObject|undefined} [options]
+     *        Additional options, depending on the actual symbol drawn.
      *
      * @return {Highcharts.SVGElement}
      */
@@ -4378,15 +4340,15 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
-     * @param  {string} id
+     * @param {string} id
      *
-     * @param  {number} x
+     * @param {number} x
      *
-     * @param  {number} y
+     * @param {number} y
      *
-     * @param  {number} width
+     * @param {number} width
      *
-     * @param  {number} height
+     * @param {number} height
      *
      * @return {Highcharts.ClipRectElement}
      *         A clipping rectangle.
@@ -4426,17 +4388,17 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#text
      *
-     * @param  {string} str
-     *         The text of (subset) HTML to draw.
+     * @param {string} str
+     *        The text of (subset) HTML to draw.
      *
-     * @param  {number} x
-     *         The x position of the text's lower left corner.
+     * @param {number} x
+     *        The x position of the text's lower left corner.
      *
-     * @param  {number} y
-     *         The y position of the text's lower left corner.
+     * @param {number} y
+     *        The y position of the text's lower left corner.
      *
-     * @param  {boolean|undefined} [useHTML=false]
-     *         Use HTML to render the text.
+     * @param {boolean|undefined} [useHTML=false]
+     *        Use HTML to render the text.
      *
      * @return {Highcharts.SVGElement}
      *         The text object.
@@ -4490,12 +4452,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#fontMetrics
      *
-     * @param  {string|undefined} fontSize
-     *         The current font size to inspect. If not given, the font size
-     *         will be found from the DOM element.
+     * @param {string|undefined} fontSize
+     *        The current font size to inspect. If not given, the font size
+     *        will be found from the DOM element.
      *
-     * @param  {Highcharts.SVGElement|Highcharts.SVGDOMElement|undefined} [elem]
-     *         The element to inspect for a current font size.
+     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|undefined} [elem]
+     *        The element to inspect for a current font size.
      *
      * @return {Highcharts.FontMetricsObject}
      *         The font metrics.
@@ -4548,13 +4510,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @private
      * @function Highcharts.SVGRenderer#rotCorr
      *
-     * @param  {number} baseline
+     * @param {number} baseline
      *
-     * @param  {number} rotation
+     * @param {number} rotation
      *
-     * @param  {boolean} alterY
-     *
-     * @return {void}
+     * @param {boolean} alterY
      */
     rotCorr: function (baseline, rotation, alterY) {
         var y = baseline;
@@ -4580,36 +4540,36 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#label
      *
-     * @param  {string} str
-     *         The initial text string or (subset) HTML to render.
+     * @param {string} str
+     *        The initial text string or (subset) HTML to render.
      *
-     * @param  {number} x
-     *         The x position of the label's left side.
+     * @param {number} x
+     *        The x position of the label's left side.
      *
-     * @param  {number} y
-     *         The y position of the label's top side or baseline, depending on
-     *         the `baseline` parameter.
+     * @param {number} y
+     *        The y position of the label's top side or baseline, depending on
+     *        the `baseline` parameter.
      *
-     * @param  {string} shape
-     *         The shape of the label's border/background, if any. Defaults to
-     *         `rect`. Other possible values are `callout` or other shapes
-     *         defined in {@link Highcharts.SVGRenderer#symbols}.
+     * @param {string} shape
+     *        The shape of the label's border/background, if any. Defaults to
+     *        `rect`. Other possible values are `callout` or other shapes
+     *        defined in {@link Highcharts.SVGRenderer#symbols}.
      *
-     * @param  {number} anchorX
-     *         In case the `shape` has a pointer, like a flag, this is the
-     *         coordinates it should be pinned to.
+     * @param {number} anchorX
+     *        In case the `shape` has a pointer, like a flag, this is the
+     *        coordinates it should be pinned to.
      *
-     * @param  {number} anchorY
-     *         In case the `shape` has a pointer, like a flag, this is the
-     *         coordinates it should be pinned to.
+     * @param {number} anchorY
+     *        In case the `shape` has a pointer, like a flag, this is the
+     *        coordinates it should be pinned to.
      *
-     * @param  {boolean} baseline
-     *         Whether to position the label relative to the text baseline,
-     *         like {@link Highcharts.SVGRenderer#text|renderer.text}, or to the
-     *         upper border of the rectangle.
+     * @param {boolean} baseline
+     *        Whether to position the label relative to the text baseline, like
+     *        {@link Highcharts.SVGRenderer#text|renderer.text}, or to the upper
+     *        border of the rectangle.
      *
-     * @param  {string} className
-     *         Class name for the group.
+     * @param {string} className
+     *        Class name for the group.
      *
      * @return {Highcharts.SVGElement}
      *         The generated label.
@@ -4669,16 +4629,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         /*= } =*/
 
-        /**
+        /*
          * This function runs after the label is added to the DOM (when the
          * bounding box is available), and after the text of the label is
          * updated to detect the new bounding box and reflect it in the border
          * box.
-         *
-         * @ignore
-         * @function updateBoxSize
-         *
-         * @return {void}
          */
         updateBoxSize = function () {
             var style = text.element.style,
@@ -4732,14 +4687,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             }
         };
 
-        /**
+        /*
          * This function runs after setting text or padding, but only if padding
          * is changed.
-         *
-         * @ignore
-         * @function updateTextPadding
-         *
-         * @return {void}
          */
         updateTextPadding = function () {
             var textX = paddingLeft + padding,
@@ -4777,17 +4727,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             text.y = textY;
         };
 
-        /**
+        /*
          * Set a box attribute, or defer it if the box is not yet created
-         *
-         * @ignore
-         * @function boxAttr
-         *
-         * @param  {string} key
-         *
-         * @param  {number|string} value
-         *
-         * @return {void}
          */
         boxAttr = function (key, value) {
             if (box) {
@@ -4797,14 +4738,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             }
         };
 
-        /**
+        /*
          * After the text element is added, get the desired size of the border
          * box and add it before the text in the DOM.
-         *
-         * @private
-         * @function Highcharts.SVGElement#onAdd
-         *
-         * @return {void}
          */
         wrapper.onAdd = function () {
             text.add(wrapper);
@@ -4928,14 +4864,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // Redirect certain methods to either the box or the text
         var baseCss = wrapper.css;
         return extend(wrapper, {
-            /**
+            /*
              * Pick up some properties and apply them to the text instead of the
              * wrapper.
-             *
-             * @ignore
-             * @function Highcharts.SVGElement#css
-             *
-             * @return {Highcharts.SVGElement}
              */
             css: function (styles) {
                 if (styles) {
@@ -4957,13 +4888,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 }
                 return baseCss.call(wrapper, styles);
             },
-            /**
+            /*
              * Return the bounding box of the box, not the group.
-             *
-             * @ignore
-             * @function Highcharts.SVGElement#getBBox
-             *
-             * @return {Highcharts.BBoxObject}
              */
             getBBox: function () {
                 return {
@@ -4974,13 +4900,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 };
             },
             /*= if (build.classic) { =*/
-            /**
+            /*
              * Apply the shadow to the box.
-             *
-             * @ignore
-             * @function Highcharts.SVGElement#shadow
-             *
-             * @return {Highcharts.SVGElement}
              */
             shadow: function (b) {
                 if (b) {
@@ -4992,13 +4913,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 return wrapper;
             },
             /*= } =*/
-            /**
+            /*
              * Destroy and release memory.
-             *
-             * @ignore
-             * @function Highcharts.SVGElement#destroy
-             *
-             * @return {void}
              */
             destroy: function () {
 
