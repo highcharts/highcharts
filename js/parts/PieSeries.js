@@ -47,7 +47,7 @@ var addEvent = H.addEvent,
  * @class
  * @name Highcharts.seriesTypes.pie
  *
- * @augments    Highcharts.Series
+ * @augments Highcharts.Series
  */
 seriesType('pie', 'line', {
 
@@ -58,16 +58,15 @@ seriesType('pie', 'line', {
      * @sample highcharts/demo/pie-basic/
      *         Pie chart
      *
-     * @type       {*}
-     * @extends    plotOptions.line
-     * @excluding  animationLimit, boostThreshold, connectEnds, connectNulls,
-     *             cropThreshold, dashStyle, findNearestPointBy,
-     *             getExtremesFromAll, lineWidth, marker, negativeColor,
-     *             pointInterval, pointIntervalUnit, pointPlacement, pointStart,
-     *             softThreshold, stacking, step, threshold, turboThreshold,
-     *             zoneAxis, zones
-     * @product    highcharts
-     * @apioption  plotOptions.pie
+     * @extends      plotOptions.line
+     * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
+     *               cropThreshold, dashStyle, findNearestPointBy,
+     *               getExtremesFromAll, lineWidth, marker, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointStart, softThreshold, stacking, step, threshold,
+     *               turboThreshold, zoneAxis, zones
+     * @product      highcharts
+     * @optionparent plotOptions.pie
      */
 
     /**
@@ -81,26 +80,19 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/plotoptions/pie-center/
      *         Centered at 100, 100
      *
-     * @type       {Array<number|string|null>}
-     * @default    [null, null]
-     * @product    highcharts
-     * @apioption  plotOptions.pie.center
+     * @type    {Array<number|string|null>}
+     * @default [null, null]
+     * @product highcharts
      */
     center: [null, null],
 
     /**
-     * @type       {boolean}
-     * @default    false
-     * @product    highcharts
-     * @apioption  plotOptions.pie.clip
+     * @product highcharts
      */
     clip: false,
 
     /**
      * @ignore
-     * @type       {boolean}
-     * @default    true
-     * @apioption  plotOptions.pie.colorByPoint
      */
     colorByPoint: true, // always true for pies
 
@@ -111,25 +103,21 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/demo/pie-monochrome/
      *         Set default colors for all pies
      *
-     * @type       {Array<Highcharts.ColorString>}
-     * @since      3.0
-     * @product    highcharts
-     * @apioption  plotOptions.pie.colors
+     * @type      {Array<Highcharts.ColorString>}
+     * @since     3.0
+     * @product   highcharts
+     * @apioption plotOptions.pie.colors
      */
 
     /**
-     * @extends    plotOptions.series.dataLabels
-     * @excluding  align, allowOverlap, staggerLines, step
-     * @product    highcharts
-     * @apioption  plotOptions.pie.dataLabels
+     * @extends   plotOptions.series.dataLabels
+     * @excluding align, allowOverlap, staggerLines, step
+     * @product   highcharts
      */
     dataLabels: {
-        /**
-         * @type       {boolean}
-         * @default    true
-         * @apioption  plotOptions.pie.dataLabels.allowOverlap
-         */
+
         allowOverlap: true,
+
         /**
          * The color of the line connecting the data label to the pie slice.
          * The default color is the same as the point's color.
@@ -142,10 +130,10 @@ seriesType('pie', 'line', {
          * @sample {highcharts} highcharts/css/pie-point/
          *         Styled connectors
          *
-         * @type       {Highcharts.ColorString}
-         * @since      2.1
-         * @product    highcharts
-         * @apioption  plotOptions.pie.dataLabels.connectorColor
+         * @type      {Highcharts.ColorString}
+         * @since     2.1
+         * @product   highcharts
+         * @apioption plotOptions.pie.dataLabels.connectorColor
          */
 
         /**
@@ -154,11 +142,11 @@ seriesType('pie', 'line', {
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/
          *         No padding
          *
-         * @type       {number}
-         * @default    5
-         * @since      2.1
-         * @product    highcharts
-         * @apioption  plotOptions.pie.dataLabels.connectorPadding
+         * @type      {number}
+         * @default   5
+         * @since     2.1
+         * @product   highcharts
+         * @apioption plotOptions.pie.dataLabels.connectorPadding
          */
 
         /**
@@ -173,11 +161,11 @@ seriesType('pie', 'line', {
          * @sample {highcharts} highcharts/css/pie-point/
          *         Styled connectors
          *
-         * @type       {number}
-         * @default    1
-         * @since      2.1
-         * @product    highcharts
-         * @apioption  plotOptions.pie.dataLabels.connectorWidth
+         * @type      {number}
+         * @default   1
+         * @since     2.1
+         * @product   highcharts
+         * @apioption plotOptions.pie.dataLabels.connectorWidth
          */
 
         /**
@@ -186,8 +174,8 @@ seriesType('pie', 'line', {
          * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap
          *         Long labels are wrapped
          *
-         * @type       {Highcharts.CSSObject}
-         * @apioption  plotOptions.pie.dataLabels.style
+         * @type      {Highcharts.CSSObject}
+         * @apioption plotOptions.pie.dataLabels.style
          */
 
         /**
@@ -198,28 +186,23 @@ seriesType('pie', 'line', {
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/
          *         Data labels on top of the pie
          *
-         * @type       {number}
-         * @default    30
-         * @since      2.1
-         * @product    highcharts
-         * @apioption  plotOptions.pie.dataLabels.distance
+         * @since   2.1
+         * @product highcharts
          */
         distance: 30,
 
         /**
          * Enable or disable the data labels.
          *
-         * @type       {boolean}
-         * @since      2.1
-         * @product    highcharts
-         * @apioption  plotOptions.pie.dataLabels.enabled
+         * @since   2.1
+         * @product highcharts
          */
         enabled: true,
 
         /**
-         * @type       {Function}
-         * @default    function () { return this.point.name; }
-         * @apioption  plotOptions.pie.dataLabels.formatter
+         * @type      {Highcharts.FormatterCallbackFunction}
+         * @default   function () { return this.point.name; }
+         * @apioption plotOptions.pie.dataLabels.formatter
          */
         formatter: function () { // #2945
             return this.point.isNull ? undefined : this.point.name;
@@ -234,18 +217,14 @@ seriesType('pie', 'line', {
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/
          *         Non soft
          *
-         * @type       {number}
-         * @since      2.1.7
-         * @product    highcharts
-         * @apioption  plotOptions.pie.dataLabels.softConnector
+         * @type      {number}
+         * @since     2.1.7
+         * @product   highcharts
+         * @apioption plotOptions.pie.dataLabels.softConnector
          */
 
-        /**
-         * @type       {number}
-         * @default    0
-         * @apioption  plotOptions.pie.dataLabels.x
-         */
         x: 0
+
     },
 
     /**
@@ -255,10 +234,10 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/demo/pie-semi-circle/
      *         Semi-circle donut
      *
-     * @type       {number}
-     * @since      1.3.6
-     * @product    highcharts
-     * @apioption  plotOptions.pie.endAngle
+     * @type      {number}
+     * @since     1.3.6
+     * @product   highcharts
+     * @apioption plotOptions.pie.endAngle
      */
 
     /**
@@ -272,11 +251,8 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/plotoptions/pie-ignorehiddenpoint/
      *         True, the hiddden point is ignored
      *
-     * @type       {boolean}
-     * @default    true
-     * @since      2.3.0
-     * @product    highcharts
-     * @apioption  plotOptions.pie.ignoreHiddenPoint
+     * @since   2.3.0
+     * @product highcharts
      */
     ignoreHiddenPoint: true,
 
@@ -296,24 +272,20 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/demo/3d-pie-donut/
      *         3D donut
      *
-     * @type       {number|string}
-     * @default    0
-     * @since      2.0
-     * @product    highcharts
-     * @apioption  plotOptions.pie.innerSize
+     * @type      {number|string}
+     * @default   0
+     * @since     2.0
+     * @product   highcharts
+     * @apioption plotOptions.pie.innerSize
      */
 
     /**
      * @ignore
-     * @type       {string}
-     * @default    point
-     * @apioption  plotOptions.pie.legendType
      */
     legendType: 'point',
 
     /**
      * @ignore
-     * @apioption  plotOptions.pie.marker
      */
     marker: null, // point options are specified in the base options
 
@@ -322,11 +294,11 @@ seriesType('pie', 'line', {
      * try to shrink to make room for data labels in side the plot area,
      *  but only to this size.
      *
-     * @type       {number}
-     * @default    80
-     * @since      3.0
-     * @product    highcharts
-     * @apioption  plotOptions.pie.minSize
+     * @type      {number}
+     * @default   80
+     * @since     3.0
+     * @product   highcharts
+     * @apioption plotOptions.pie.minSize
      */
 
     /**
@@ -343,9 +315,8 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/plotoptions/pie-size/
      *         Smaller pie
      *
-     * @type       {number|string|null}
-     * @product    highcharts
-     * @apioption  plotOptions.pie.size
+     * @type    {number|string|null}
+     * @product highcharts
      */
     size: null,
 
@@ -356,9 +327,7 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
      *         One series in the legend, one hidden
      *
-     * @type       {boolean}
-     * @product    highcharts
-     * @apioption  plotOptions.pie.showInLegend
+     * @product highcharts
      */
     showInLegend: false,
 
@@ -369,10 +338,7 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/plotoptions/pie-slicedoffset-20/
      *         20px offset
      *
-     * @type        {number}
-     * @default     10
-     * @product     highcharts
-     * @apitoption  plotOptions.pie.slicedOffset
+     * @product highcharts
      */
     slicedOffset: 10,
 
@@ -383,11 +349,11 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/plotoptions/pie-startangle-90/
      *         Start from right
      *
-     * @type       {number}
-     * @default    0
-     * @since      2.3.4
-     * @product    highcharts
-     * @apioption  plotOptions.pie.startAngle
+     * @type      {number}
+     * @default   0
+     * @since     2.3.4
+     * @product   highcharts
+     * @apioption plotOptions.pie.startAngle
      */
 
     /**
@@ -399,24 +365,14 @@ seriesType('pie', 'line', {
      * is false and `tooltip.shared` is false, the tooltip will be hidden
      * when moving the mouse between series.
      *
-     * @type       {boolean}
-     * @default    false
-     * @product    highcharts
-     * @apioption  plotOptions.pie.stickyTracking
+     * @product highcharts
      */
     stickyTracking: false,
 
-    /**
-     * @type       {*}
-     * @apioption  plotOptions.pie.tooltip
-     */
     tooltip: {
-        /**
-         * @type       {boolean}
-         * @default    true
-         * @apioption  plotOptions.pie.tooltip.followPointer
-         */
+
         followPointer: true
+
     },
 
     /*= if (build.classic) { =*/
@@ -433,10 +389,9 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/
      *         Black border
      *
-     * @type       {Highcharts.ColorString}
-     * @default    #ffffff
-     * @product    highcharts
-     * @apioption  plotOptions.pie.borderColor
+     * @type    {Highcharts.ColorString}
+     * @default #ffffff
+     * @product highcharts
      */
     borderColor: '${palette.backgroundColor}',
 
@@ -454,25 +409,16 @@ seriesType('pie', 'line', {
      * @sample {highcharts} highcharts/plotoptions/pie-borderwidth/
      *         3px border
      *
-     * @type       {number}
-     * @default    1
-     * @product    highcharts
-     * @apioption  plotOptions.pie.borderWidth
+     * @product highcharts
      */
     borderWidth: 1,
 
-    /**
-     * @type       {*}
-     * @apioption  ploOptions.pie.states
-     */
     states: {
 
         /**
-         * @type       {*}
-         * @extends    plotOptions.series.states.hover
-         * @excluding  marker, lineWidth, lineWidthPlus
-         * @product    highcharts
-         * @apioption  plotOptions.pie.hover
+         * @extends   plotOptions.series.states.hover
+         * @excluding marker, lineWidth, lineWidthPlus
+         * @product   highcharts
          */
         hover: {
 
@@ -483,14 +429,13 @@ seriesType('pie', 'line', {
              * In styled mode, the hover brightness is by default replaced
              * by a fill-opacity given in the `.highcharts-point-hover` class.
              *
-             * @sample  {highcharts} highcharts/plotoptions/pie-states-hover-brightness/
-             *          Brightened by 0.5
+             * @sample {highcharts} highcharts/plotoptions/pie-states-hover-brightness/
+             *         Brightened by 0.5
              *
-             * @type       {number}
-             * @product    highcharts
-             * @apioption  plotOptions.pie.hover.brightness
+             * @product highcharts
              */
             brightness: 0.1
+
         }
     }
 
@@ -511,9 +456,7 @@ seriesType('pie', 'line', {
      * @private
      * @function Highcharts.seriesTypes.pie#animate
      *
-     * @param  {boolean|undefined} [init=false]
-     *
-     * @return {void}
+     * @param {boolean|undefined} [init=false]
      */
     animate: function (init) {
         var series = this,
@@ -553,8 +496,6 @@ seriesType('pie', 'line', {
      *
      * @private
      * @function Highcharts.seriesTypes.pie#updateTotals
-     *
-     * @return {void}
      */
     updateTotals: function () {
         var i,
@@ -590,8 +531,6 @@ seriesType('pie', 'line', {
      *
      * @private
      * @function Highcharts.seriesTypes.pie#generatePoints
-     *
-     * @return {void}
      */
     generatePoints: function () {
         Series.prototype.generatePoints.call(this);
@@ -604,9 +543,7 @@ seriesType('pie', 'line', {
      * @private
      * @function Highcharts.seriesTypes.pie#translate
      *
-     * @param  {*} positions
-     *
-     * @return {void}
+     * @param {*} positions
      */
     translate: function (positions) {
         this.generatePoints();
@@ -753,7 +690,8 @@ seriesType('pie', 'line', {
 
     /**
      * @ignore
-     * @function Highcharts.seriesTypes.pie#drawGraph
+     * @name Highcharts.seriesTypes.pie#drawGraph
+     * @type {null}
      */
     drawGraph: null,
 
@@ -762,8 +700,6 @@ seriesType('pie', 'line', {
      *
      * @private
      * @function Highcharts.seriesTypes.pie#drawPoints
-     *
-     * @return {void}
      */
     drawPoints: function () {
         var series = this,
@@ -860,11 +796,9 @@ seriesType('pie', 'line', {
      * @private
      * @function Highcharts.seriesTypes.pie#sortByAngle
      *
-     * @param  {Array<Highcharts.Point>} points
+     * @param {Array<Highcharts.Point>} points
      *
-     * @param  {number} sign
-     *
-     * @return {void}
+     * @param {number} sign
      */
     sortByAngle: function (points, sign) {
         points.sort(function (a, b) {
@@ -945,13 +879,11 @@ seriesType('pie', 'line', {
      * @private
      * @function Highcharts.seriesTypes.pie#pointClass#setVisible
      *
-     * @param  {boolean} vis
-     *         Whether to show the slice or not. If undefined, the visibility is
-     *         toggled.
+     * @param {boolean} vis
+     *        Whether to show the slice or not. If undefined, the visibility is
+     *        toggled.
      *
-     * @param  {boolean|undefined} [redraw=false]
-     *
-     * @return {void}
+     * @param {boolean|undefined} [redraw=false]
      */
     setVisible: function (vis, redraw) {
         var point = this,
@@ -1006,13 +938,11 @@ seriesType('pie', 'line', {
      * @private
      * @function Highcharts.seriesTypes.pie#pointClass#slice
      *
-     * @param  {boolean} sliced
-     *         When undefined, the slice state is toggled.
+     * @param {boolean} sliced
+     *        When undefined, the slice state is toggled.
      *
-     * @param  {boolean} redraw
-     *         Whether to redraw the chart. True by default.
-     *
-     * @return {void}
+     * @param {boolean} redraw
+     *        Whether to redraw the chart. True by default.
      */
     slice: function (sliced, redraw, animation) {
         var point = this,
@@ -1056,7 +986,7 @@ seriesType('pie', 'line', {
      * @private
      * @function Highcharts.seriesTypes.pie#pointClass#haloPath
      *
-     * @param  {number} size
+     * @param {number} size
      *
      * @return {Highcharts.SVGPathArray}
      */
@@ -1084,11 +1014,10 @@ seriesType('pie', 'line', {
  * A `pie` series. If the [type](#series.pie.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.pie
- * @excluding  dataParser, dataURL, stack, xAxis, yAxis
- * @product    highcharts
- * @apioption  series.pie
+ * @extends   series,plotOptions.pie
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis
+ * @product   highcharts
+ * @apioption series.pie
  */
 
 /**
@@ -1129,19 +1058,19 @@ seriesType('pie', 'line', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type       {Array<number|*>}
- * @extends    series.line.data
- * @excluding  marker, x
- * @product    highcharts
- * @apioption  series.pie.data
+ * @type      {Array<number|*>}
+ * @extends   series.line.data
+ * @excluding marker, x
+ * @product   highcharts
+ * @apioption series.pie.data
  */
 
 /**
  * The sequential index of the data point in the legend.
  *
- * @type       {number}
- * @product    highcharts
- * @apioption  series.pie.data.legendIndex
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.pie.data.legendIndex
  */
 
 /**
@@ -1150,9 +1079,9 @@ seriesType('pie', 'line', {
  * @sample {highcharts} highcharts/point/sliced/
  *         One sliced point
  *
- * @type       {boolean}
- * @product    highcharts
- * @apioption  series.pie.data.sliced
+ * @type      {boolean}
+ * @product   highcharts
+ * @apioption series.pie.data.sliced
  */
 
 /**
@@ -1165,21 +1094,21 @@ seriesType('pie', 'line', {
  * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/
  *         Alert checkbox status
  *
- * @type       {Function}
- * @since      1.2.0
- * @product    highcharts
- * @context    Highcharts.Point
- * @apioption  plotOptions.pie.events.checkboxClick
+ * @type      {Function}
+ * @since     1.2.0
+ * @product   highcharts
+ * @context   Highcharts.Point
+ * @apioption plotOptions.pie.events.checkboxClick
  */
 
 /**
  * Not applicable to pies, as the legend item is per point. See point.
  * events.
  *
- * @type       {Function}
- * @since      1.2.0
- * @product    highcharts
- * @apioption  plotOptions.pie.events.legendItemClick
+ * @type      {Function}
+ * @since     1.2.0
+ * @product   highcharts
+ * @apioption plotOptions.pie.events.legendItemClick
  */
 
 /**
@@ -1192,8 +1121,8 @@ seriesType('pie', 'line', {
  * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
  *         Confirm toggle visibility
  *
- * @type       {Function}
- * @since      1.2.0
- * @product    highcharts
- * @apioption  plotOptions.pie.point.events.legendItemClick
+ * @type      {Function}
+ * @since     1.2.0
+ * @product   highcharts
+ * @apioption plotOptions.pie.point.events.legendItemClick
  */
