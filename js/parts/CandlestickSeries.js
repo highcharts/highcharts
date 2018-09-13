@@ -19,11 +19,10 @@ var defaultPlotOptions = H.defaultPlotOptions,
  * @sample stock/demo/candlestick/
  *         Candlestick chart
  *
- * @type       {*}
- * @extends    plotOptions.ohlc
- * @excluding  borderColor,borderRadius,borderWidth
- * @product    highstock
- * @apioption  plotOptions.candlestick
+ * @extends      plotOptions.ohlc
+ * @excluding    borderColor,borderRadius,borderWidth
+ * @product      highstock
+ * @optionparent plotOptions.candlestick
  */
 var candlestickOptions = {
 
@@ -34,57 +33,44 @@ var candlestickOptions = {
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @type       {Highcharts.ColorString}
-     * @since      1.3.6
-     * @product    highstock
-     * @apioption  plotOptions.candlestick.upLineColor
+     * @type      {Highcharts.ColorString}
+     * @since     1.3.6
+     * @product   highstock
+     * @apioption plotOptions.candlestick.upLineColor
      */
 
     /**
-     * @type       {string|Function}
-     * @default    ohlc
-     * @product    highstock
-     * @apioption  plotOptions.candlestick.dataGrouping.approximation
+     * @type      {string|Function}
+     * @default   ohlc
+     * @product   highstock
+     * @apioption plotOptions.candlestick.dataGrouping.approximation
      */
 
-    /**
-     * @type       {*}
-     * @apioption  plotOptions.candlestick.states
-     */
     states: {
 
         /**
-         * @type       {*}
-         * @extends    plotOptions.column.states.hover
-         * @product    highstock
-         * @apioption  plotOptions.candlestick.hover
+         * @extends plotOptions.column.states.hover
+         * @product highstock
          */
         hover: {
 
             /**
              * The pixel width of the line/border around the candlestick.
              *
-             * @type       {number}
-             * @default    2
-             * @product    highstock
-             * @apioption  plotOptions.candlestick.lineWidth
+             * @product highstock
              */
             lineWidth: 2
         }
     },
 
     /**
-     * @type       {*}
-     * @extends    plotOptions.ohlc.tooltip
-     * @apioption  plotOptions.candlestick.tooltip
+     * @extends plotOptions.ohlc.tooltip
      */
     tooltip: defaultPlotOptions.ohlc.tooltip,
 
     /**
-     * @type       {number|null}
-     * @default    null
-     * @product    highstock
-     * @apioption  plotOptions.candlestick.threshold
+     * @type    {number|null}
+     * @product highstock
      */
     threshold: null,
 
@@ -101,10 +87,9 @@ var candlestickOptions = {
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @type       {Highcharts.ColorString}
-     * @default    #000000
-     * @product    highstock
-     * @apioption  plotOptions.candlestick.lineColor
+     * @type    {Highcharts.ColorString}
+     * @default #000000
+     * @product highstock
      */
     lineColor: '${palette.neutralColor100}',
 
@@ -115,10 +100,7 @@ var candlestickOptions = {
      * In styled mode, the line stroke width can be set with the
      * `.highcharts-candlestick-series .highcahrts-point` rule.
      *
-     * @type       {number}
-     * @default    1
-     * @product    highstock
-     * @apioption  plotOptions.candlestick.lineWidth
+     * @product highstock
      */
     lineWidth: 1,
 
@@ -133,19 +115,15 @@ var candlestickOptions = {
      * @sample {highstock} highcharts/css/candlestick/
      *         Colors in styled mode
      *
-     * @type       {Highcharts.ColorString}
-     * @default    #ffffff
-     * @product    highstock
-     * @apioption  plotOptions.candlestick.upColor
+     * @type    {Highcharts.ColorString}
+     * @default #ffffff
+     * @product highstock
      */
     upColor: '${palette.backgroundColor}',
     /*= } =*/
 
     /**
-     * @type       {boolean}
-     * @default    true
      * @product    highstock
-     * @apioption  plotOptions.candlestick.stickyTracking
      */
     stickyTracking: true
 
@@ -154,7 +132,7 @@ var candlestickOptions = {
 /**
  * The candlestick series type.
  *
- * @ignore
+ * @private
  * @constructor Highcharts.seriesTypes.candlestick
  * @augments    Highcharts.seriesTypes.ohlc
  */
@@ -322,11 +300,11 @@ seriesType('candlestick', 'ohlc', merge(
  * option is not specified, it is inherited from [chart.type](
  * #chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.candlestick
- * @excluding  dataParser, dataURL
- * @product    highstock
- * @apioption  series.candlestick
+ * @type      {*}
+ * @extends   series,plotOptions.candlestick
+ * @excluding dataParser, dataURL
+ * @product   highstock
+ * @apioption series.candlestick
  */
 
 /**
@@ -374,9 +352,9 @@ seriesType('candlestick', 'ohlc', merge(
  *     }]
  *  ```
  *
- * @type       {Array<Array<number>|*>}
- * @extends    series.ohlc.data
- * @excluding  y
- * @product    highstock
- * @apioption  series.candlestick.data
+ * @type      {Array<Array<number>|*>}
+ * @extends   series.ohlc.data
+ * @excluding y
+ * @product   highstock
+ * @apioption series.candlestick.data
  */
