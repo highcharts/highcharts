@@ -20,13 +20,13 @@ var areaProto = H.seriesTypes.area.prototype,
 /**
  * AreaSpline series type.
  *
- * @ignore
+ * @private
  * @class
  * @name Highcharts.seriesTypes.areaspline
  *
  * @augments Highcharts.Series
  */
-seriesType('areaspline', 'spline', defaultPlotOptions.area, {
+seriesType('areaspline', 'spline',
 
     /**
      * The area spline series is an area series where the graph between the
@@ -37,35 +37,39 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
      * @sample {highstock} stock/demo/areaspline/
      *         Area spline chart
      *
-     * @extends    plotOptions.area
-     * @excluding  step
-     * @product    highcharts highstock
-     * @apioption  plotOptions.areaspline
+     * @extends      plotOptions.area
+     * @excluding    step
+     * @product      highcharts highstock
+     * @optionparent plotOptions.areaspline
      */
 
+    defaultPlotOptions.area
+, {
+
     /**
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.areaspline#getStackPoints
      */
     getStackPoints: areaProto.getStackPoints,
 
     /**
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.areaspline#getGraphPath
      */
     getGraphPath: areaProto.getGraphPath,
 
     /**
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.areaspline#drawGraph
      */
     drawGraph: areaProto.drawGraph,
 
     /**
-     * @ignore
-     * @function Highcharts.seriesTypes.areaspline#drawLegendSymbol
+     * @private
+     * @borrows Highcharts.LegendSymbolMixin#drawRectangle as Highcharts.seriesTypes.areaspline#drawLegendSymbol
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
+
 });
 
 /**
@@ -73,11 +77,10 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  *
- * @type       {*}
- * @extends    series,plotOptions.areaspline
- * @excluding  dataParser, dataURL
- * @product    highcharts highstock
- * @apioption  series.areaspline
+ * @extends   series,plotOptions.areaspline
+ * @excluding dataParser, dataURL
+ * @product   highcharts highstock
+ * @apioption series.areaspline
  */
 
 /**
@@ -137,8 +140,8 @@ seriesType('areaspline', 'spline', defaultPlotOptions.area, {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type       {Array<number|Array<number|string|Date>|*>}
- * @extends    series.line.data
- * @product    highcharts highstock
- * @apioption  series.areaspline.data
+ * @type      {Array<number|Array<number|string|Date>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
+ * @apioption series.areaspline.data
  */
