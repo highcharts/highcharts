@@ -24,13 +24,13 @@ var Axis = H.Axis,
  * @private
  * @function Highcharts.Axis#getLogTickPositions
  *
- * @param  {number} interval
+ * @param {number} interval
  *
- * @param  {number} min
+ * @param {number} min
  *
- * @param  {number} max
+ * @param {number} max
  *
- * @param  {number} minor
+ * @param {number} minor
  *
  * @return {Array<number>}
  */
@@ -147,7 +147,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
  * @private
  * @function Highcharts.Axis#log2lin
  *
- * @param  {number} num
+ * @param {number} num
  *
  * @return {number}
  */
@@ -159,7 +159,7 @@ Axis.prototype.log2lin = function (num) {
  * @private
  * @function Highcharts.Axis#lin2log
  *
- * @param  {number} num
+ * @param {number} num
  *
  * @return {number}
  */
