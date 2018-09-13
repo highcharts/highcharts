@@ -1857,8 +1857,11 @@ function whichAxis(e, chart) {
                 point.bb = point.bb.destroy();
             }
 
-            point.graphic.element.onclick = null;
-            point.graphic.element.oncontextmenu = null;
+            // Flags outside the current range:
+            if (point.graphic) {
+                point.graphic.element.onclick = null;
+                point.graphic.element.oncontextmenu = null;
+            }
         });
 
         p.apply(this, Array.prototype.slice.call(1, arguments));
