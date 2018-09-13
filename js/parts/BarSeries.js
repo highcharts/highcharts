@@ -30,10 +30,9 @@ seriesType('bar', 'column',
      * @sample highcharts/demo/bar-basic/
      *         Bar chart
      *
-     * @type       {*}
-     * @extends    plotOptions.column
-     * @product    highcharts
-     * @apioption  plotOptions.bar
+     * @extends   plotOptions.column
+     * @product   highcharts
+     * @apioption plotOptions.bar
      */
 
     /**
@@ -42,10 +41,10 @@ seriesType('bar', 'column',
      * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
      *         Data labels inside the bar
      *
-     * @type       {string}
-     * @default    left
-     * @product    highcharts
-     * @apioption  plotOptions.bar.dataLabels.align
+     * @type      {string}
+     * @default   left
+     * @product   highcharts
+     * @apioption plotOptions.bar.dataLabels.align
      */
 
     /**
@@ -54,32 +53,31 @@ seriesType('bar', 'column',
      * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
      *         Data labels inside the bar
      *
-     * @type       {number}
-     * @default    5
-     * @product    highcharts
-     * @apioption  plotOptions.bar.dataLabels.x
+     * @type      {number}
+     * @default   5
+     * @product   highcharts
+     * @apioption plotOptions.bar.dataLabels.x
      */
 
     /**
      * @ignore
      */
-    null,
-    {
-        inverted: true
-    }
-);
+    null
+
+, {
+    inverted: true
+});
 
 
 /**
  * A `bar` series. If the [type](#series.bar.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.bar
- * @excluding  connectNulls, dashStyle, dataParser, dataURL, gapSize, gapUnit,
- *             linecap, lineWidth, marker, connectEnds, step
- * @product    highcharts
- * @apioption  series.bar
+ * @extends   series,plotOptions.bar
+ * @excluding connectNulls, dashStyle, dataParser, dataURL, gapSize, gapUnit,
+ *            linecap, lineWidth, marker, connectEnds, step
+ * @product   highcharts
+ * @apioption series.bar
  */
 
 /**
@@ -138,22 +136,20 @@ seriesType('bar', 'column',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type       {Array<number|Array<number|string|Date>|*>}
- * @extends    series.column.data
- * @product    highcharts
- * @apioption  series.bar.data
+ * @type      {Array<number|Array<number|string|Date>|*>}
+ * @extends   series.column.data
+ * @product   highcharts
+ * @apioption series.bar.data
  */
 
 /**
- * @type       {*}
- * @excluding  halo,lineWidth,lineWidthPlus,marker
- * @product    highcharts highstock
- * @apioption  series.bar.states.hover
+ * @excluding halo,lineWidth,lineWidthPlus,marker
+ * @product   highcharts highstock
+ * @apioption series.bar.states.hover
  */
 
 /**
- * @type       {*}
- * @excluding  halo,lineWidth,lineWidthPlus,marker
- * @product    highcharts highstock
- * @apioption  series.bar.states.select
+ * @excluding halo,lineWidth,lineWidthPlus,marker
+ * @product   highcharts highstock
+ * @apioption series.bar.states.select
  */
