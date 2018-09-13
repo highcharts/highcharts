@@ -177,7 +177,7 @@ seriesType('area', 'line', {
      * @private
      * @function Highcharts.seriesTypes.area#getStackPoints
      *
-     * @param  {Array<Highcharts.Point>} points
+     * @param {Array<Highcharts.Point>} points
      *
      * @return {Array<*>}
      */
@@ -320,7 +320,7 @@ seriesType('area', 'line', {
      * @private
      * @function Highcharts.seriesTypes.area#getGraphPath
      *
-     * @param  {Array<Highcharts.Point>} points
+     * @param {Array<Highcharts.Point>} points
      *
      * @return {Array<number|string>}
      */
@@ -452,8 +452,6 @@ seriesType('area', 'line', {
      *
      * @private
      * @function Highcharts.seriesTypes.area#drawGraph
-     *
-     * @return {void}
      */
     drawGraph: function () {
 
