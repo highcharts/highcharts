@@ -135,15 +135,16 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
                 a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad,
                 b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
                 a2 = (shapeArgs.start + shapeArgs.end) / 2,
-                labelPos = point.labelPos,
-                labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]
+                labelPosition = point.labelPosition,
+                connectorPosition = labelPosition.connectorPosition,
                 yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)),
                 xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
-            // Apply perspective on label positions
-            each(labelIndexes, function (index) {
-                labelPos[index] += xOffset;
-                labelPos[index + 1] += yOffset;
+                // Apply perspective on label positions
+            each([labelPosition.natural, connectorPosition.breakAt,
+                connectorPosition.touchingSliceAt], function (coordinates) {
+                coordinates.x += xOffset;
+                coordinates.y += yOffset;
             });
         });
     }

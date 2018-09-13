@@ -655,14 +655,18 @@ defaultOptions.exporting = {
             /**
              * The symbol for the button. Points to a definition function in
              * the `Highcharts.Renderer.symbols` collection. The default
-             * `exportIcon` function is part of the exporting module.
+             * `exportIcon` function is part of the exporting module. Possible
+             * values are "circle", "square", "diamond", "triangle",
+             * "triangle-down", "menu", "menuball" or custom shape.
              *
-             * @validvalue ["exportIcon", "circle", "square", "diamond", "triangle", "triangle-down", "menu"]
+             * @validvalue ["exportIcon", "circle", "square", "diamond", "triangle", "triangle-down", "menu", "menuball"]
              * @type {String}
              * @sample highcharts/exporting/buttons-contextbutton-symbol/
              *         Use a circle for symbol
              * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
              *         Custom shape as symbol
+             * @sample highcharts/exporting/buttons-contextbutton-symbol-menuball/
+             *         Menu ball as symbol
              * @default menu
              * @since 2.0
              */
@@ -1816,6 +1820,18 @@ symbols.menu = function (x, y, width, height) {
         'L', x + width, y + height - 1.5
     ];
     return arr;
+};
+
+symbols.menuball = function (x, y, width, height) {
+    var path = [],
+        h = (height / 3) - 2;
+
+    path = path.concat(
+                this.circle(width - h, y, h, h),
+                this.circle(width - h, y + h + 4, h, h),
+                this.circle(width - h, y + 2 * (h + 4), h, h)
+            );
+    return path;
 };
 
 // Add the buttons on chart load
