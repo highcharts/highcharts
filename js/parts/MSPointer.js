@@ -60,10 +60,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
             }
         };
 
-    /**
-     * Extend the Pointer prototype with methods for each event handler and
-     * more.
-     */
+    // Extend the Pointer prototype with methods for each event handler and more
     extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
         /**
