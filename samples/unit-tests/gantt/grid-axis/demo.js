@@ -90,8 +90,7 @@ QUnit.test('dateFormats', function (assert) {
  */
 QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
     var chart,
-        axes = [],
-        error;
+        axes = [];
 
     // Chart 1
     chart = Highcharts.chart('container', {
@@ -137,19 +136,15 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
     axes[2] = chart.yAxis[2].axisGroup.getBBox();
     axes[3] = chart.yAxis[3].axisGroup.getBBox();
 
-    error = 0.00001;
-
-    assert.close(
+    assert.strictEqual(
         axes[1].x + axes[1].width,
-        Math.round(axes[0].x),
-        error,
+        axes[0].x,
         'Left outer linear axis horizontal placement'
     );
 
-    assert.close(
+    assert.strictEqual(
         axes[3].x,
-        Math.round(axes[2].x + axes[2].width),
-        error,
+        axes[2].x + axes[2].width,
         'Right outer linear axis horizontal placement'
     );
 });
@@ -1120,5 +1115,101 @@ QUnit.test('Reversed axis', function (assert) {
         +tickLabel.element.getAttribute('x'),
         center,
         'Last tick label is centered in its grid'
+    );
+});
+
+
+QUnit.test('defaultOptions.borderWidth', function (assert) {
+    var createGridAxis = function () {
+            var obj = function () {};
+            // Copy values from Axis.
+            obj.prototype = Highcharts.Axis.prototype;
+            return new obj();
+        },
+        axis = createGridAxis(),
+        options;
+
+    // Set side to top
+    axis.side = 0;
+    // Several cases where there is no check if chart exists
+    axis.chart = {};
+
+
+    /**
+     * grid.borderWidth should default to 1
+     */
+    axis.setOptions({
+        grid: {
+            enabled: true
+        }
+    });
+    options = axis.options;
+
+    assert.strictEqual(
+        options.grid.borderWidth,
+        1,
+        'should default to 1 when grid.enabled is true.'
+    );
+
+    assert.strictEqual(
+        options.lineWidth,
+        1,
+        'should set the value of grid.borderWidth on lineWidth.'
+    );
+
+    assert.strictEqual(
+        options.tickWidth,
+        1,
+        'should set the value of grid.borderWidth on tickWidth.'
+    );
+
+    /**
+     * grid.borderWidth should override tickWidth and lineWidth
+     */
+    axis.setOptions({
+        grid: {
+            enabled: true
+        },
+        tickWidth: 2,
+        lineWidth: 2
+    });
+    options = axis.options;
+
+    assert.strictEqual(
+        options.lineWidth,
+        1,
+        'borderWidth should override lineWidth.'
+    );
+
+    assert.strictEqual(
+        options.tickWidth,
+        1,
+        'borderWidth should override tickWidth.'
+    );
+
+    /**
+     * should use value from lineWidth/tickWidth when borderWidth is not a
+     * number.
+     */
+    axis.setOptions({
+        grid: {
+            enabled: true,
+            borderWidth: null
+        },
+        tickWidth: 2,
+        lineWidth: 2
+    });
+    options = axis.options;
+
+    assert.strictEqual(
+        options.lineWidth,
+        2,
+        'should use value from lineWidth when borderWidth is not a number.'
+    );
+
+    assert.strictEqual(
+        options.tickWidth,
+        2,
+        'should use value from tickWidth when borderWidth is not a number.'
     );
 });
