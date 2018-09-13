@@ -57,12 +57,11 @@ seriesType('column', 'line', {
      * @sample {highstock} stock/demo/column/
      *         Column chart
      *
-     * @type       {*}
-     * @extends    plotOptions.line
-     * @excluding  connectNulls, dashStyle, gapSize, gapUnit, linecap,
-     *             lineWidth, marker, connectEnds, step
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column
+     * @extends      plotOptions.line
+     * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
+     *               lineWidth, marker, connectEnds, step
+     * @product      highcharts highstock
+     * @optionparent plotOptions.column
      */
 
     /**
@@ -71,10 +70,7 @@ seriesType('column', 'line', {
      * @sample {highcharts} highcharts/plotoptions/column-borderradius/
      *         Rounded columns
      *
-     * @type       {number}
-     * @default    0
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.borderRadius
+     * @product highcharts highstock
      */
     borderRadius: 0,
 
@@ -90,11 +86,11 @@ seriesType('column', 'line', {
      * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
      *         True
      *
-     * @type       {boolean}
-     * @default    false
-     * @since      2.0
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.colorByPoint
+     * @type      {boolean}
+     * @default   false
+     * @since     2.0
+     * @product   highcharts highstock
+     * @apioption plotOptions.column.colorByPoint
      */
 
     /**
@@ -102,10 +98,10 @@ seriesType('column', 'line', {
      * of the global [colors](#colors) when [colorByPoint](
      * #plotOptions.column.colorByPoint) is true.
      *
-     * @type       {Array<Highcharts.ColorString>}
-     * @since      3.0
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.colors
+     * @type      {Array<Highcharts.ColorString>}
+     * @since     3.0
+     * @product   highcharts highstock
+     * @apioption plotOptions.column.colors
      */
 
     /**
@@ -119,11 +115,8 @@ seriesType('column', 'line', {
      * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
      *         Crisp is false
      *
-     * @type       {boolean}
-     * @default    true
-     * @since      5.0.10
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.crisp
+     * @since   5.0.10
+     * @product highcharts highstock
      */
     crisp: true,
 
@@ -135,10 +128,7 @@ seriesType('column', 'line', {
      * @sample {highcharts} highcharts/plotoptions/column-grouppadding-none/
      *         No group padding - all columns are evenly spaced
      *
-     * @type       {number}
-     * @default    0.2
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.groupPadding
+     * @product highcharts highstock
      */
     groupPadding: 0.2,
 
@@ -152,11 +142,11 @@ seriesType('column', 'line', {
      * @sample {highstock} highcharts/plotoptions/column-grouping-false/
      *         Grouping disabled
      *
-     * @type       {boolean}
-     * @default    true
-     * @since      2.3.0
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.grouping
+     * @type      {boolean}
+     * @default   true
+     * @since     2.3.0
+     * @product   highcharts highstock
+     * @apioption plotOptions.column.grouping
      */
 
     /**
@@ -176,10 +166,10 @@ seriesType('column', 'line', {
      * @sample {highstock} highcharts/plotoptions/column-maxpointwidth-20/
      *         Limited to 50
      *
-     * @type       {number}
-     * @since      4.1.8
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.maxPointWidth
+     * @type      {number}
+     * @since     4.1.8
+     * @product   highcharts highstock
+     * @apioption plotOptions.column.maxPointWidth
      */
 
     /**
@@ -192,10 +182,7 @@ seriesType('column', 'line', {
      * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
      *         0 for tightly packed columns
      *
-     * @type       {number}
-     * @default    0.1
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.pointPadding
+     * @product highcharts highstock
      */
     pointPadding: 0.1,
 
@@ -210,10 +197,10 @@ seriesType('column', 'line', {
      *         20px wide columns regardless of chart width or the amount of data
      *         points
      *
-     * @type       {number}
-     * @since      1.2.5
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.pointWidth
+     * @type      {number}
+     * @since     1.2.5
+     * @product   highcharts highstock
+     * @apioption plotOptions.column.pointWidth
      */
 
     /**
@@ -228,10 +215,7 @@ seriesType('column', 'line', {
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/
      *         Positive and negative close to zero values
      *
-     * @type       {number}
-     * @default    0
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.minPointLength
+     * @product highcharts highstock
      */
     minPointLength: 0,
 
@@ -245,10 +229,7 @@ seriesType('column', 'line', {
      * that fall within the plot area. The advantage of cropping away invisible
      * points is to increase performance on large series. .
      *
-     * @type       {number}
-     * @default    50
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.cropThreshold
+     * @product highcharts highstock
      */
     cropThreshold: 50,
 
@@ -266,50 +247,44 @@ seriesType('column', 'line', {
      *         Set the point range to one day on a data set with one week
      *         between the points
      *
-     * @type       {number|null}
-     * @default    null
-     * @since      2.3
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.pointRange
+     * @type    {number|null}
+     * @since   2.3
+     * @product highcharts highstock
      */
     pointRange: null,
 
-    /**
-     * @type       {number}
-     * @apioption  plotOptions.column.states
-     */
     states: {
 
         /**
          * Options for the hovered point. These settings override the normal
          * state options when a point is moused over or touched.
          *
-         * @type       {*}
-         * @extends    plotOptions.series.states.hover
-         * @excluding  halo, lineWidth, lineWidthPlus, marker
-         * @product    highcharts highstock
-         * @apioption  plotOptions.column.states.hover
+         * @extends   plotOptions.series.states.hover
+         * @excluding halo, lineWidth, lineWidthPlus, marker
+         * @product   highcharts highstock
          */
         hover: {
 
-            /** @ignore-option */
+            /**
+             * @ignore-option
+             */
             halo: false,
 
             /**
              * A specific border color for the hovered point. Defaults to
              * inherit the normal state border color.
              *
-             * @type       {Highcharts.ColorString}
-             * @product    highcharts
-             * @apioption  plotOptions.column.states.hover.borderColor
+             * @type      {Highcharts.ColorString}
+             * @product   highcharts
+             * @apioption plotOptions.column.states.hover.borderColor
              */
 
             /**
              * A specific color for the hovered point.
              *
-             * @type       {Highcharts.ColorString}
-             * @product    highcharts
-             * @apioption  plotOptions.column.states.hover.color
+             * @type      {Highcharts.ColorString}
+             * @product   highcharts
+             * @apioption plotOptions.column.states.hover.color
              */
 
             /*= if (build.classic) { =*/
@@ -324,10 +299,7 @@ seriesType('column', 'line', {
              * @sample {highcharts} highcharts/plotoptions/column-states-hover-brightness/
              *         Brighten by 0.5
              *
-             * @type       {number}
-             * @default    0.1
-             * @product    highcharts highstock
-             * @apioption  plotOptions.column.states.hover.brightness
+             * @product highcharts highstock
              */
             brightness: 0.1
 
@@ -340,31 +312,27 @@ seriesType('column', 'line', {
          * Options for the selected point. These settings override the normal
          * state options when a point is selected.
          *
-         * @type       {*}
-         * @extends    plotOptions.series.states.select
-         * @excluding  halo, lineWidth, lineWidthPlus, marker
-         * @product    highcharts highstock
-         * @apioption  plotOptions.column.states.select
+         * @extends   plotOptions.series.states.select
+         * @excluding halo, lineWidth, lineWidthPlus, marker
+         * @product   highcharts highstock
          */
         select: {
 
             /**
              * A specific color for the selected point.
              *
-             * @type       {Highcharts.ColorString}
-             * @default    #cccccc
-             * @product    highcharts highstock
-             * @apioption  plotOptions.column.states.select.color
+             * @type    {Highcharts.ColorString}
+             * @default #cccccc
+             * @product highcharts highstock
              */
             color: '${palette.neutralColor20}',
 
             /**
              * A specific border color for the selected point.
              *
-             * @type       {Highcharts.ColorString}
-             * @default    #000000
-             * @product    highcharts highstock
-             * @apioption  plotOptions.column.states.select.borderColor
+             * @type    {Highcharts.ColorString}
+             * @default #000000
+             * @product highcharts highstock
              */
             borderColor: '${palette.neutralColor100}'
         }
@@ -373,30 +341,20 @@ seriesType('column', 'line', {
 
     },
 
-    /**
-     * @type       {*}
-     * @apioption  plotOptions.column.dataLabels
-     */
     dataLabels: {
 
         /**
          * @type       {string|null}
-         * @default    null
-         * @apioption  plotOptions.column.dataLabels.align
          */
         align: null, // auto
 
         /**
          * @type       {string|null}
-         * @default    null
-         * @apioption  plotOptions.column.dataLabels.verticalAlign
          */
         verticalAlign: null, // auto
 
         /**
          * @type       {number|null}
-         * @default    null
-         * @apioption  plotOptions.column.dataLabels.y
          */
         y: null
     },
@@ -410,11 +368,8 @@ seriesType('column', 'line', {
      * 3 will make the Y axis show negative values according to the `minPadding`
      * option. If `softThreshold` is `true`, the Y axis starts at 0.
      *
-     * @type       {boolean}
-     * @default    false
-     * @since      4.1.9
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.softThreshold
+     * @since   4.1.9
+     * @product highcharts highstock
      */
     softThreshold: false,
 
@@ -424,23 +379,9 @@ seriesType('column', 'line', {
      */
     startFromThreshold: true,
 
-    /**
-     * @type       {boolean}
-     * @default    false
-     * @apioption  plotOptions.column.stickyTracking
-     */
     stickyTracking: false,
 
-    /**
-     * @type       {*}
-     * @apioption  plotOptions.column.tooltip
-     */
     tooltip: {
-        /**
-         * @type       {number}
-         * @default    6
-         * @apioption  plotOptions.column.tooltip.distance
-         */
         distance: 6
     },
 
@@ -449,11 +390,8 @@ seriesType('column', 'line', {
      * between values above and below a threshold. If `null`, the columns
      * extend from the padding Y axis minimum.
      *
-     * @type       {number}
-     * @default    0
-     * @since      2.0
-     * @product    highcharts
-     * @apioption  plotOptions.column.threshold
+     * @since   2.0
+     * @product highcharts
      */
     threshold: 0,
 
@@ -468,10 +406,10 @@ seriesType('column', 'line', {
      * @sample {highcharts} highcharts/plotoptions/column-borderwidth/
      *         2px black border
      *
-     * @type       {number}
-     * @default    1
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.borderWidth
+     * @type      {number}
+     * @default   1
+     * @product   highcharts highstock
+     * @apioption plotOptions.column.borderWidth
      */
 
     /**
@@ -483,10 +421,9 @@ seriesType('column', 'line', {
      * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
      *         Dark gray border
      *
-     * @type       {Highcharts.ColorString}
-     * @default    #ffffff
-     * @product    highcharts highstock
-     * @apioption  plotOptions.column.borderColor
+     * @type      {Highcharts.ColorString}
+     * @default   #ffffff
+     * @product   highcharts highstock
      */
     borderColor: '${palette.backgroundColor}'
 
@@ -506,10 +443,8 @@ seriesType('column', 'line', {
      * Initialize the series. Extends the basic Series.init method by
      * marking other series of the same type as dirty.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#init
-     *
-     * @return  {void}
      */
     init: function () {
         Series.prototype.init.apply(this, arguments);
@@ -532,10 +467,10 @@ seriesType('column', 'line', {
      * Return the width and x offset of the columns adjusted for grouping,
      * groupPadding, pointPadding, pointWidth etc.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#getColumnMetrics
      *
-     * @return  {Highcharts.ColumnMetricsObject}
+     * @return {Highcharts.ColumnMetricsObject}
      */
     getColumnMetrics: function () {
 
@@ -627,16 +562,16 @@ seriesType('column', 'line', {
     /**
      * Make the columns crisp. The edges are rounded to the nearest full pixel.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#crispCol
      *
-     * @param  {number} x
+     * @param {number} x
      *
-     * @param  {number} y
+     * @param {number} y
      *
-     * @param  {number} w
+     * @param {number} w
      *
-     * @param  {number} h
+     * @param {number} h
      *
      * @return {*}
      */
@@ -685,7 +620,7 @@ seriesType('column', 'line', {
      * Translate each point to the plot area coordinate system and find shape
      * positions
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#translate
      *
      * @return {void}
@@ -795,16 +730,14 @@ seriesType('column', 'line', {
     /**
      * Use a solid rectangle like the area series types
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#drawLegendSymbol
      *
-     * @param  {Highcharts.Legend} legend
-     *         The legend object
+     * @param {Highcharts.Legend} legend
+     *        The legend object
      *
-     * @param  {Highcharts.Series|Highcharts.Point} item
-     *         The series (this) or point
-     *
-     * @return {void}
+     * @param {Highcharts.Series|Highcharts.Point} item
+     *        The series (this) or point
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
@@ -812,10 +745,8 @@ seriesType('column', 'line', {
     /**
      * Columns have no graph
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#drawGraph
-     *
-     * @return {void}
      */
     drawGraph: function () {
         this.group[
@@ -827,12 +758,12 @@ seriesType('column', 'line', {
     /**
      * Get presentational attributes
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#pointAttribs
      *
-     * @param  {Highcharts.Point} point
+     * @param {Highcharts.Point} point
      *
-     * @param  {string} state
+     * @param {string} state
      *
      * @return {Highcharts.Dictionary<any>}
      */
@@ -898,10 +829,8 @@ seriesType('column', 'line', {
      * coordinates apply for columns and bars. This method is inherited by
      * scatter series.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#drawPoints
-     *
-     * @return {void}
      */
     drawPoints: function () {
         var series = this,
@@ -967,10 +896,8 @@ seriesType('column', 'line', {
      * @ignore
      * @function Highcharts.seriesTypes.column#animate
      *
-     * @param  {boolean} init
-     *         Whether to initialize the animation or run it
-     *
-     * @return {void}
+     * @param {boolean} init
+     *        Whether to initialize the animation or run it
      */
     animate: function (init) {
         var series = this,
@@ -1024,8 +951,6 @@ seriesType('column', 'line', {
      *
      * @ignore
      * @function Highcharts.seriesTypes.column#remove
-     *
-     * @return {void}
      */
     remove: function () {
         var series = this,
@@ -1050,12 +975,11 @@ seriesType('column', 'line', {
  * A `column` series. If the [type](#series.column.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.column
- * @excluding  connectNulls, dashStyle, dataParser, dataURL, gapSize, gapUnit,
- *             linecap, lineWidth, marker, connectEnds, step
- * @product    highcharts highstock
- * @apioption  series.column
+ * @extends   series,plotOptions.column
+ * @excluding connectNulls, dashStyle, dataParser, dataURL, gapSize, gapUnit,
+ *            linecap, lineWidth, marker, connectEnds, step
+ * @product   highcharts highstock
+ * @apioption series.column
  */
 
 /**
@@ -1114,11 +1038,11 @@ seriesType('column', 'line', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type       {Array<number|Array<number|string|Date>|*>}
- * @extends    series.line.data
- * @excluding  marker
- * @product    highcharts highstock
- * @apioption  series.column.data
+ * @type      {Array<number|Array<number|string|Date>|*>}
+ * @extends   series.line.data
+ * @excluding marker
+ * @product   highcharts highstock
+ * @apioption series.column.data
  */
 
 /**
@@ -1130,9 +1054,9 @@ seriesType('column', 'line', {
  * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
  *         Dark gray border
  *
- * @type       {Highcharts.ColorString}
- * @product    highcharts highstock
- * @apioption  series.column.data.borderColor
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts highstock
+ * @apioption series.column.data.borderColor
  */
 
 /**
@@ -1144,21 +1068,19 @@ seriesType('column', 'line', {
  * @sample {highcharts} highcharts/plotoptions/column-borderwidth/
  *         2px black border
  *
- * @type       {number}
- * @product    highcharts highstock
- * @apioption  series.column.data.borderWidth
+ * @type      {number}
+ * @product   highcharts highstock
+ * @apioption series.column.data.borderWidth
  */
 
 /**
- * @type       {*}
- * @excluding  halo, lineWidth, lineWidthPlus, marker
- * @product    highcharts highstock
- * @apioption  series.column.states.hover
+ * @excluding halo, lineWidth, lineWidthPlus, marker
+ * @product   highcharts highstock
+ * @apioption series.column.states.hover
  */
 
 /**
- * @type       {*}
- * @excluding  halo, lineWidth, lineWidthPlus, marker
- * @product    highcharts highstock
- * @apioption  series.column.states.select
+ * @excluding halo, lineWidth, lineWidthPlus, marker
+ * @product   highcharts highstock
+ * @apioption series.column.states.select
  */
