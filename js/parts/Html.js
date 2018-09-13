@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
 import H from './Globals.js';
@@ -27,10 +28,6 @@ var attr = H.attr,
 
 /**
  * Extend SvgElement for useHTML option.
- *
- * @ignore
- * @class
- * @name Highcharts.SVGElement
  */
 extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
@@ -41,7 +38,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#htmlCss
      *
-     * @param  {Highcharts.CSSObject} styles
+     * @param {Highcharts.CSSObject} styles
      *
      * @return {Highcharts.SVGElement}
      */
@@ -73,9 +70,9 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#htmlGetBBox
      *
-     * @param  {boolean} refresh
-     *         Whether to force a fresh value from the DOM or to use the cached
-     *         value.
+     * @param {boolean} refresh
+     *        Whether to force a fresh value from the DOM or to use the cached
+     *        value.
      *
      * @return {Highcharts.BBoxObject}
      *         A hash containing values for x, y, width and height.
@@ -98,8 +95,6 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
      *
      * @private
      * @function Highcharts.SVGElement#htmlUpdateTransform
-     *
-     * @return {void}
      */
     htmlUpdateTransform: function () {
         // aligning non added elements is expensive
@@ -243,13 +238,11 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#setSpanRotation
      *
-     * @param  {number} rotation
+     * @param {number} rotation
      *
-     * @param  {number} alignCorrection
+     * @param {number} alignCorrection
      *
-     * @param  {number} baseline
-     *
-     * @return {void}
+     * @param {number} baseline
      */
     setSpanRotation: function (rotation, alignCorrection, baseline) {
         var rotationStyle = {},
@@ -269,13 +262,11 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#getSpanCorrection
      *
-     * @param  {number} width
+     * @param {number} width
      *
-     * @param  {number} baseline
+     * @param {number} baseline
      *
-     * @param  {number} alignCorrection
-     *
-     * @return {void}
+     * @param {number} alignCorrection
      */
     getSpanCorrection: function (width, baseline, alignCorrection) {
         this.xCorr = -width * alignCorrection;
@@ -285,10 +276,6 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
 /**
  * Extend SvgRenderer for useHTML option.
- *
- * @ignore
- * @class
- * @name Highcharts.SVGRenderer
  */
 extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
@@ -317,11 +304,11 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
      * @private
      * @function Highcharts.SVGRenderer#html
      *
-     * @param  {string} str
+     * @param {string} str
      *
-     * @param  {number} x
+     * @param {number} x
      *
-     * @param  {number} y
+     * @param {number} y
      *
      * @return {Highcharts.HTMLDOMElement}
      */
