@@ -3,9 +3,12 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
+
 var defaultPlotOptions = H.defaultPlotOptions,
     each = H.each,
     merge = H.merge,
@@ -123,7 +126,7 @@ var candlestickOptions = {
     /*= } =*/
 
     /**
-     * @product    highstock
+     * @product highstock
      */
     stickyTracking: true
 
@@ -133,8 +136,10 @@ var candlestickOptions = {
  * The candlestick series type.
  *
  * @private
- * @constructor Highcharts.seriesTypes.candlestick
- * @augments    Highcharts.seriesTypes.ohlc
+ * @class
+ * @name Highcharts.seriesTypes.candlestick
+ *
+ * @augments Highcharts.seriesTypes.ohlc
  */
 seriesType('candlestick', 'ohlc', merge(
     defaultPlotOptions.column,
@@ -185,6 +190,7 @@ seriesType('candlestick', 'ohlc', merge(
 
         return attribs;
     },
+
     /*= } =*/
 
     /**
