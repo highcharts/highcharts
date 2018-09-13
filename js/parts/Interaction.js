@@ -961,9 +961,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     }
 });
 
-/**
- * Extend the Series object with interaction
- */
+// Extend the Series object with interaction
 extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
     /**
