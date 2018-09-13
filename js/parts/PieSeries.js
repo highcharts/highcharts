@@ -49,25 +49,26 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-seriesType('pie', 'line', {
+seriesType('pie', 'line'
 
-    /**
-     * A pie chart is a circular graphic which is divided into slices to
-     * illustrate numerical proportion.
-     *
-     * @sample highcharts/demo/pie-basic/
-     *         Pie chart
-     *
-     * @extends      plotOptions.line
-     * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
-     *               cropThreshold, dashStyle, findNearestPointBy,
-     *               getExtremesFromAll, lineWidth, marker, negativeColor,
-     *               pointInterval, pointIntervalUnit, pointPlacement,
-     *               pointStart, softThreshold, stacking, step, threshold,
-     *               turboThreshold, zoneAxis, zones
-     * @product      highcharts
-     * @optionparent plotOptions.pie
-     */
+/**
+ * A pie chart is a circular graphic which is divided into slices to illustrate
+ * numerical proportion.
+ *
+ * @sample highcharts/demo/pie-basic/
+ *         Pie chart
+ *
+ * @extends      plotOptions.line
+ * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
+ *               cropThreshold, dashStyle, findNearestPointBy,
+ *               getExtremesFromAll, lineWidth, marker, negativeColor,
+ *               pointInterval, pointIntervalUnit, pointPlacement,
+ *               pointStart, softThreshold, stacking, step, threshold,
+ *               turboThreshold, zoneAxis, zones
+ * @product      highcharts
+ * @optionparent plotOptions.pie
+ */
+, {
 
     /**
      * The center of the pie chart relative to the plot area. Can be percentages
