@@ -23,24 +23,25 @@ var pick = H.pick,
  *
  * @augments Highcarts.Series
  */
-seriesType('spline', 'line',
+seriesType('spline', 'line'
 
-    /**
-     * A spline series is a special type of line series, where the segments
-     * between the data points are smoothed.
-     *
-     * @sample {highcharts} highcharts/demo/spline-irregular-time/
-     *         Spline chart
-     * @sample {highstock} stock/demo/spline/
-     *         Spline chart
-     *
-     * @extends    plotOptions.series
-     * @excluding  step
-     * @product    highcharts highstock
-     * @apioption  plotOptions.spline
-     */
+/**
+ * A spline series is a special type of line series, where the segments
+ * between the data points are smoothed.
+ *
+ * @sample {highcharts} highcharts/demo/spline-irregular-time/
+ *         Spline chart
+ * @sample {highstock} stock/demo/spline/
+ *         Spline chart
+ *
+ * @extends      plotOptions.series
+ * @excluding    step
+ * @product      highcharts highstock
+ * @optionparent plotOptions.spline
+ */
+, {
 
-{}, /** @lends seriesTypes.spline.prototype */ {
+}, /** @lends seriesTypes.spline.prototype */ {
 
     /**
      * Get the spline segment from a given point's previous neighbour to the
@@ -49,11 +50,11 @@ seriesType('spline', 'line',
      * @private
      * @function Highcharts.seriesTypes.spline#getPointSpline
      *
-     * @param  {Array<Highcharts.Point>}
+     * @param {Array<Highcharts.Point>}
      *
-     * @param  {Highcharts.Point} point
+     * @param {Highcharts.Point} point
      *
-     * @param  {number} i
+     * @param {number} i
      *
      * @return {Highcharts.SVGPathArray}
      */
@@ -196,11 +197,10 @@ seriesType('spline', 'line',
  * A `spline` series. If the [type](#series.spline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.spline
- * @excluding  dataParser, dataURL, step
- * @product    highcharts highstock
- * @apioption  series.spline
+ * @extends   series,plotOptions.spline
+ * @excluding dataParser, dataURL, step
+ * @product   highcharts highstock
+ * @apioption series.spline
  */
 
 /**
@@ -259,8 +259,8 @@ seriesType('spline', 'line',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type       {Array<number|Array<number>|*>}
- * @extends    series.line.data
- * @product    highcharts highstock
- * @apioption  series.spline.data
+ * @type      {Array<number|Array<number>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
+ * @apioption series.spline.data
  */
