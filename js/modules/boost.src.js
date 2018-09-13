@@ -503,6 +503,12 @@ function shouldForceChartSeriesBoosting(chart) {
 
             series = chart.series[i];
 
+            // Don't count series with boostThreshold set to 0
+            // See #8950
+            if (series.options.boostThreshold === 0) {
+                continue;
+            }
+
             if (boostableMap[series.type]) {
                 ++canBoostCount;
             }
@@ -518,13 +524,13 @@ function shouldForceChartSeriesBoosting(chart) {
         }
     }
 
-    chart.boostForceChartBoost =
+    chart.boostForceChartBoost = allowBoostForce && (
         (
-            allowBoostForce &&
             canBoostCount === chart.series.length &&
             sboostCount > 0
         ) ||
-        sboostCount > 5;
+        sboostCount > 5
+    );
 
     return chart.boostForceChartBoost;
 }
@@ -2892,7 +2898,8 @@ each([
             !enabled ||
             this.type === 'heatmap' ||
             this.type === 'treemap' ||
-            !boostableMap[this.type]
+            !boostableMap[this.type] ||
+            this.options.boostThreshold === 0
         ) {
 
             proceed.call(this);
