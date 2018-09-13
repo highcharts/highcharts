@@ -40,10 +40,9 @@ seriesType('area', 'line', {
      * @sample {highstock} stock/demo/area/
      *         Area chart
      *
-     * @type       {*}
-     * @extends    plotOptions.line
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area
+     * @extends      plotOptions.line
+     * @product      highcharts highstock
+     * @optionparent plotOptions.area
      */
 
     /**
@@ -58,9 +57,9 @@ seriesType('area', 'line', {
      * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
      *         Gradient
      *
-     * @type       {Highcharts.ColorString}
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.fillColor
+     * @type      {Highcharts.ColorString}
+     * @product   highcharts highstock
+     * @apioption plotOptions.area.fillColor
      */
 
     /**
@@ -76,11 +75,11 @@ seriesType('area', 'line', {
      * @sample {highcharts} highcharts/plotoptions/area-fillopacity/
      *         Automatic fill color and fill opacity of 0.1
      *
-     * @type       {number}
-     * @default    {highcharts} 0.75
-     * @default    {highstock} .75
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.fillOpacity
+     * @type      {number}
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @product   highcharts highstock
+     * @apioption plotOptions.area.fillOpacity
      */
 
     /**
@@ -94,9 +93,9 @@ seriesType('area', 'line', {
      * @sample {highcharts} highcharts/plotoptions/area-linecolor/
      *         Dark gray line
      *
-     * @type       {Highcharts.ColorString}
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.lineColor
+     * @type      {Highcharts.ColorString}
+     * @product   highcharts highstock
+     * @apioption plotOptions.area.lineColor
      */
 
     /**
@@ -110,10 +109,10 @@ seriesType('area', 'line', {
      * @sample {highcharts} highcharts/css/series-negative-color/
      *         Negative color in styled mode
      *
-     * @type       {Highcharts.ColorString}
-     * @since      3.0
-     * @product    highcharts
-     * @apioption  plotOptions.area.negativeFillColor
+     * @type      {Highcharts.ColorString}
+     * @since     3.0
+     * @product   highcharts
+     * @apioption plotOptions.area.negativeFillColor
      */
 
     /**
@@ -123,11 +122,11 @@ seriesType('area', 'line', {
      * @sample {highcharts|highstock} highcharts/plotoptions/area-trackbyarea/
      *         Display the tooltip when the area is hovered
      *
-     * @type       {boolean}
-     * @default    false
-     * @since      1.1.6
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.trackByArea
+     * @type      {boolean}
+     * @default   false
+     * @since     1.1.6
+     * @product   highcharts highstock
+     * @apioption plotOptions.area.trackByArea
      */
 
     /**
@@ -139,11 +138,8 @@ seriesType('area', 'line', {
      * 3 will make the Y axis show negative values according to the `minPadding`
      * option. If `softThreshold` is `true`, the Y axis starts at 0.
      *
-     * @type       {boolean}
-     * @default    false
-     * @since      4.1.9
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.softThreshold
+     * @since   4.1.9
+     * @product highcharts highstock
      */
     softThreshold: false,
 
@@ -163,23 +159,22 @@ seriesType('area', 'line', {
      * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
      *         A threshold of Infinity
      *
-     * @type       {number}
-     * @default    0
-     * @since      2.0
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.threshold
+     * @since   2.0
+     * @product highcharts highstock
      */
     threshold: 0
 
 
 }, /** @lends seriesTypes.area.prototype */ {
+
     singleStacks: false,
+
     /**
      * Return an array of stacked points, where null and missing points are
      * replaced by dummy points in order for gaps to be drawn correctly
      * in stacks.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.area#getStackPoints
      *
      * @param  {Array<Highcharts.Point>} points
@@ -322,7 +317,7 @@ seriesType('area', 'line', {
     },
 
     /**
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.area#getGraphPath
      *
      * @param  {Array<Highcharts.Point>} points
@@ -455,7 +450,7 @@ seriesType('area', 'line', {
      * function and adds the area. The areaPath is calculated in the
      * getSegmentPath method called from Series.prototype.drawGraph.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.area#drawGraph
      *
      * @return {void}
@@ -531,11 +526,10 @@ seriesType('area', 'line', {
  * A `area` series. If the [type](#series.area.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.area
- * @excluding  dataParser, dataURL
- * @product    highcharts highstock
- * @apioption  series.area
+ * @extends   series,plotOptions.area
+ * @excluding dataParser, dataURL
+ * @product   highcharts highstock
+ * @apioption series.area
  */
 
 /**
@@ -594,8 +588,8 @@ seriesType('area', 'line', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type       {Array<number|Array<number>|*>}
- * @extends    series.line.data
- * @product    highcharts highstock
- * @apioption  series.area.data
+ * @type      {Array<number|Array<number>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
+ * @apioption series.area.data
  */
