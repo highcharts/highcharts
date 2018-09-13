@@ -4,8 +4,10 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
+
 var doc = H.doc,
     each = H.each,
     extend = H.extend,
@@ -17,17 +19,18 @@ var doc = H.doc,
     splat = H.splat,
     syncTimeout = H.syncTimeout,
     timeUnits = H.timeUnits;
+
 /**
- * The tooltip object
+ * Tooltip of a chart.
  *
- * @ignore
- * @class Highcharts.Tooltip
+ * @class
+ * @name Highcharts.Tooltip
  *
  * @param {Highcharts.Chart} chart
- *        The chart instance
+ *        The chart instance.
  *
  * @param {Highcharts.TooltipOptions} options
- *        Tooltip options
+ *        Tooltip options.
  */
 H.Tooltip = function () {
     this.init.apply(this, arguments);
@@ -36,36 +39,100 @@ H.Tooltip = function () {
 H.Tooltip.prototype = {
 
     /**
+     * @private
      * @function Highcharts.Tooltip#init
      *
      * @param  {Highcharts.Chart} chart
-     *         The chart instance
+     *         The chart instance.
      *
      * @param  {Highcharts.TooltipOptions} options
-     *         Tooltip options
+     *         Tooltip options.
      *
      * @return {void}
      */
     init: function (chart, options) {
 
-        // Save the chart and options
+        /**
+         * Chart of the tooltip.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#chart
+         * @type {Highcharts.Chart}
+         */
         this.chart = chart;
+
+        /**
+         * Used tooltip options.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#options
+         * @type {Highcharts.TooltipOptions}
+         */
         this.options = options;
 
-        // List of crosshairs
+        /**
+         * List of crosshairs.
+         *
+         * @private
+         * @readonly
+         * @name Highcharts.Tooltip#crosshairs
+         * @type {Array<*>}
+         */
         this.crosshairs = [];
 
-        // Current values of x and y when animating
+        /**
+         * Current values of x and y when animating.
+         *
+         * @private
+         * @readonly
+         * @name Highcharts.Tooltip#now
+         * @type {*}
+         */
         this.now = { x: 0, y: 0 };
 
-        // The tooltip is initially hidden
+        /**
+         * Tooltips are initially hidden.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#isHidden
+         * @type {boolean}
+         */
         this.isHidden = true;
 
-        // Public properties based on option combinations
+        /**
+         * True, if the tooltip is splitted into one label per series, with the
+         * header close to the axis.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#split
+         * @type {boolean}
+         */
         this.split = options.split && !chart.inverted;
+
+        /**
+         * When the tooltip is shared, the entire plot area will capture mouse
+         * movement or touch events.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#shared
+         * @type {boolean}
+         */
         this.shared = options.shared || this.split;
-        // Slit tooltip does not support outside in the first iteration. Should
-        // not be too complicated to implement.
+
+        /**
+         * Whether to allow the tooltip to render outside the chart's SVG
+         * element box. By default (false), the tooltip is rendered within the
+         * chart's SVG element, which results in the tooltip being aligned
+         * inside the chart area.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#outside
+         * @type {boolean}
+         *
+         * @todo
+         * Split tooltip does not support outside in the first iteration. Should
+         * not be too complicated to implement.
+         */
         this.outside = options.outside && !this.split;
 
     },
@@ -74,6 +141,7 @@ H.Tooltip.prototype = {
      * Destroy the single tooltips in a split tooltip.
      * If the tooltip is active then it is not destroyed, unless forced to.
      *
+     * @private
      * @function Highcharts.Tooltip#cleanSplit
      *
      * @param  {boolean} force
@@ -95,12 +163,14 @@ H.Tooltip.prototype = {
     },
 
     /*= if (!build.classic) { =*/
+
     /**
      * In styled mode, apply the default filter for the tooltip drop-shadow. It
      * needs to have an id specific to the chart, otherwise there will be issues
      * when one tooltip adopts the filter of a different chart, specifically one
      * where the container is hidden.
      *
+     * @private
      * @function Highcharts.Tooltip#applyFilter
      *
      * @return {void}
@@ -144,12 +214,12 @@ H.Tooltip.prototype = {
             '}'
         });
     },
+
     /*= } =*/
 
 
     /**
-     * Create the Tooltip label element if it doesn't exist, then return the
-     * label.
+     * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
      *
@@ -238,6 +308,8 @@ H.Tooltip.prototype = {
     },
 
     /**
+     * Updates the tooltip with the provided tooltip options.
+     *
      * @function Highcharts.Tooltip#update
      *
      * @param  {Highcharts.TooltipOptions} options
@@ -252,7 +324,7 @@ H.Tooltip.prototype = {
     },
 
     /**
-     * Destroy the tooltip and its elements.
+     * Removes and destroys the tooltip and its elements.
      *
      * @function Highcharts.Tooltip#destroy
      *
@@ -276,7 +348,7 @@ H.Tooltip.prototype = {
     },
 
     /**
-     * Provide a soft movement for the tooltip
+     * Moves the tooltip with a soft animation to a new position.
      *
      * @function Highcharts.Tooltip#move
      *
@@ -335,11 +407,14 @@ H.Tooltip.prototype = {
     },
 
     /**
-     * Hide the tooltip
+     * Hides the tooltip with a fade out animation.
      *
      * @function Highcharts.Tooltip#hide
      *
-     * @param  {number} delay
+     * @param  {number|undefined} [delay]
+     *         The fade out in milliseconds. If no value is provided the value
+     *         of the tooltip.hideDelay option is used. A value of 0 disables
+     *         the fade out animation.
      *
      * @return {void}
      */
@@ -360,11 +435,12 @@ H.Tooltip.prototype = {
      * Extendable method to get the anchor position of the tooltip
      * from a point or set of points
      *
+     * @private
      * @function Highcharts.Tooltip#getAnchor
      *
      * @param  {Array<Highchart.Points>} points
      *
-     * @param  {*|undefined} [mouseEvent]
+     * @param  {global.Event|undefined} [mouseEvent]
      *
      * @return {void}
      */
@@ -436,6 +512,7 @@ H.Tooltip.prototype = {
      * Place the tooltip in a chart without spilling over
      * and not covering the point it self.
      *
+     * @private
      * @function Highcharts.Tooltip#getPosition
      *
      * @param  {number} boxWidth
@@ -497,6 +574,8 @@ H.Tooltip.prototype = {
              * Handle the preferred dimension. When the preferred dimension is
              * tooltip on top or bottom of the point, it will look for space
              * there.
+             *
+             * @private
              */
             firstDimension = function (
                 dim,
@@ -536,6 +615,8 @@ H.Tooltip.prototype = {
              * tooltip on top or bottom of the point, the second dimension is to
              * align the tooltip above the point, trying to align center but
              * allowing left or right align within the chart box.
+             *
+             * @private
              */
             secondDimension = function (dim, outerSize, innerSize, point) {
                 var retVal;
@@ -595,6 +676,7 @@ H.Tooltip.prototype = {
      * In case no user defined formatter is given, this will be used. Note that
      * the context here is an object holding point, series, x, y etc.
      *
+     * @private
      * @function Highcharts.Tooltip#defaultFormatter
      *
      * @param  {Highcharts.Tooltip} tooltip
@@ -623,9 +705,11 @@ H.Tooltip.prototype = {
      * @function Highcharts.Tooltip#refresh
      *
      * @param  {Highcharts.Point|Array<Highcharts.Point>} pointOrPoints
-     *         Rither a point or an array of points
+     *         Either a point or an array of points.
      *
-     * @param  {*} mouseEvent
+     * @param  {global.Event|undefined} [mouseEvent]
+     *         Mouse event, that is responsible for the refresh and should be
+     *         used for the tooltip update.
      *
      * @return {void}
      */
@@ -753,6 +837,7 @@ H.Tooltip.prototype = {
      * a label next to the point, then uses the distribute function to
      * find best non-overlapping positions.
      *
+     * @private
      * @function Highcharts.Tooltip#renderSplit
      *
      * @param  {Array<Highcharts.Label>} labels
@@ -904,6 +989,7 @@ H.Tooltip.prototype = {
     /**
      * Find the new position and perform the move
      *
+     * @private
      * @function Highcharts.Tooltip#updatePosition
      *
      * @param  {Highcharts.Point} point
@@ -947,6 +1033,7 @@ H.Tooltip.prototype = {
     /**
      * Get the optimal date format for a point, based on a range.
      *
+     * @private
      * @function Highcharts.Tooltip#getDateFormat
      *
      * @param  {number} range
@@ -1024,6 +1111,7 @@ H.Tooltip.prototype = {
     /**
      * Get the best X date format based on the closest point range on the axis.
      *
+     * @private
      * @function Highcharts.Tooltip#getXDateFormat
      *
      * @param  {Highcharts.Point} point
@@ -1057,6 +1145,7 @@ H.Tooltip.prototype = {
      * Format the footer/header of the tooltip
      * #3397: abstraction to enable formatting of footer and header
      *
+     * @private
      * @function Highcharts.Tooltip#tooltipFooterHeaderFormatter
      *
      * @param  {*} labelConfig
@@ -1113,6 +1202,7 @@ H.Tooltip.prototype = {
      * returning one entry for each item, abstracting this functionality allows
      * to easily overwrite and extend it.
      *
+     * @private
      * @function Highcharts.Tooltip#bodyFormatter
      *
      * @param  {Array<Highcharts.Point>} items
