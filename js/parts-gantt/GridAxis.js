@@ -383,6 +383,10 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
                 month: ['%b']
             },
 
+            grid: {
+                borderWidth: 1
+            },
+
             labels: {
                 ranges: true,
                 style: {
@@ -451,6 +455,11 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
              */
             options.minPadding = pick(userOptions.minPadding, 0);
             options.maxPadding = pick(userOptions.maxPadding, 0);
+        }
+
+        // If borderWidth is set, then use its value for tick and line width.
+        if (isNumber(options.grid.borderWidth)) {
+            options.tickWidth = options.lineWidth = gridOptions.borderWidth;
         }
 
     }
@@ -694,9 +703,6 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
         if (axis.horiz) {
             options.tickLength = options.cellHeight ||
                     fontMetrics.h * fontSizeToCellHeightRatio;
-        } else {
-            options.tickWidth = pick(options.tickWidth, 1);
-            options.lineWidth = pick(options.lineWidth, 1);
         }
 
         /**
@@ -711,10 +717,6 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
         if (defined(gridOptions.borderColor)) {
             userOptions.tickColor =
                 userOptions.lineColor = gridOptions.borderColor;
-        }
-        if (defined(gridOptions.borderWidth)) {
-            userOptions.tickWidth =
-                userOptions.lineWidth = gridOptions.borderWidth;
         }
 
         // Handle columns, each column is a grid axis
