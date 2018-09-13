@@ -9,10 +9,8 @@
  *
  * @callback Highcharts.ChartCallbackFunction
  *
- * @param  {Highcharts.Chart} chart
- *         Created chart.
- *
- * @return {void}
+ * @param {Highcharts.Chart} chart
+ *        Created chart.
  */
 
 /**
@@ -26,10 +24,8 @@
  *
  * @function Highcharts.TitleObject#update
  *
- * @param  {Highcharts.TitleOptions} titleOptions
- *         Options to modify.
- *
- * @return {void}
+ * @param {Highcharts.TitleOptions} titleOptions
+ *        Options to modify.
  */
 
 /**
@@ -44,10 +40,8 @@
  *
  * @function Highcharts.SubtitleObject#update
  *
- * @param  {Highcharts.SubtitleOptions} subtitleOptions
- *         Options to modify.
- *
- * @return {void}
+ * @param {Highcharts.SubtitleOptions} subtitleOptions
+ *        Options to modify.
  */
 
 'use strict';
@@ -152,31 +146,31 @@ var Chart = H.Chart = function () {
  *
  * @function Highcharts.chart
  *
- * @param  {Highcharts.Options} options
- *         The chart options structure.
+ * @param {Highcharts.Options} options
+ *        The chart options structure.
  *
- * @param  {Highcharts.ChartCallbackFunction|undefined} [callback]
- *         Function to run when the chart has loaded and and all external images
- *         are loaded. Defining a
- *         {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
- *         handler is equivalent.
+ * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
+ *        Function to run when the chart has loaded and and all external images
+ *        are loaded. Defining a
+ *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *        handler is equivalent.
  *
  * @return {Highcharts.Chart}
  *         Returns the Chart object.
  *//**
  * @function Highcharts.chart
  *
- * @param  {string|Highcharts.HTMLDOMElement} renderTo
- *         The DOM element to render to, or its id.
+ * @param {string|Highcharts.HTMLDOMElement} renderTo
+ *        The DOM element to render to, or its id.
  *
- * @param  {Highcharts.Options} options
- *         The chart options structure.
+ * @param {Highcharts.Options} options
+ *        The chart options structure.
  *
- * @param  {Highcharts.ChartCallbackFunction|undefined} [callback]
- *         Function to run when the chart has loaded and and all external images
- *         are loaded. Defining a
- *         {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
- *         handler is equivalent.
+ * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
+ *        Function to run when the chart has loaded and and all external images
+ *        are loaded. Defining a
+ *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *        handler is equivalent.
  *
  * @return {Highcharts.Chart}
  *         Returns the Chart object.
@@ -196,8 +190,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#getArgs
      *
-     * @param  {...Array<*>} arguments
-     *         All arguments for the constructor.
+     * @param {...Array<*>} arguments
+     *        All arguments for the constructor.
      *
      * @return {Array<*>}
      *         Passed arguments without renderTo.
@@ -222,14 +216,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#init
      *
-     * @param  {Highcharts.Options} userOptions
-     *         Custom options.
+     * @param {Highcharts.Options} userOptions
+     *        Custom options.
      *
-     * @param  {Function|undefined} [callback]
-     *         Function to run when the chart has loaded and and all external
-     *         images are loaded.
-     *
-     * @return {void}
+     * @param {Function|undefined} [callback]
+     *        Function to run when the chart has loaded and and all external
+     *        images are loaded.
      *
      * @fires Highcharts.Chart#event:init
      * @fires Highcharts.Chart#event:afterInit
@@ -381,7 +373,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#initSeries
      *
-     * @param  {Highcharts.ChartOptions} options
+     * @param {Highcharts.ChartOptions} options
      *
      * @return {Highcharts.Series}
      */
@@ -414,10 +406,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Series#orderSeries
      *
-     * @param  {number} fromIndex
-     *         If this is given, only the series above this index are handled.
-     *
-     * @return {void}
+     * @param {number} fromIndex
+     *        If this is given, only the series above this index are handled.
      */
     orderSeries: function (fromIndex) {
         var series = this.series,
@@ -435,14 +425,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#isInsidePlot
      *
-     * @param  {number} plotX
-     *         Pixel x relative to the plot area.
+     * @param {number} plotX
+     *        Pixel x relative to the plot area.
      *
-     * @param  {number} plotY
-     *         Pixel y relative to the plot area.
+     * @param {number} plotY
+     *        Pixel y relative to the plot area.
      *
-     * @param  {boolean} inverted
-     *         Whether the chart is inverted.
+     * @param {boolean} inverted
+     *        Whether the chart is inverted.
      *
      * @return {boolean}
      *         Returns true if the given point is inside the plot area.
@@ -468,10 +458,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#redraw
      *
-     * @param  {boolean|Highcharts.AnimationOptionsObject|undefined} [animation]
-     *         If or how to apply animation to the redraw.
-     *
-     * @return {void}
+     * @param {boolean|Highcharts.AnimationOptionsObject|undefined} [animation]
+     *        If or how to apply animation to the redraw.
      *
      * @fires Highcharts.Chart#event:afterSetExtremes
      * @fires Highcharts.Chart#event:beforeRedraw
@@ -668,8 +656,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#get
      *
-     * @param  {string} id
-     *         The id as given in the configuration options.
+     * @param {string} id
+     *        The id as given in the configuration options.
      *
      * @return {Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined}
      *         The retrieved item.
@@ -704,8 +692,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#getAxes
-     *
-     * @return {void}
      *
      * @fires Highcharts.Chart#event:afterGetAxes
      * @fires Highcharts.Chart#event:getAxes
@@ -795,19 +781,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#setTitle
      *
-     * @param  {Highcharts.TitleOptions} titleOptions
-     *         New title options. The title text itself is set by the
-     *         `titleOptions.text` property.
+     * @param {Highcharts.TitleOptions} titleOptions
+     *        New title options. The title text itself is set by the
+     *        `titleOptions.text` property.
      *
-     * @param  {Highcharts.SubtitleOptions} subtitleOptions
-     *         New subtitle options. The subtitle text itself is set by the
-     *         `subtitleOptions.text` property.
+     * @param {Highcharts.SubtitleOptions} subtitleOptions
+     *        New subtitle options. The subtitle text itself is set by the
+     *        `subtitleOptions.text` property.
      *
-     * @param  {boolean} redraw
-     *         Whether to redraw the chart or wait for a later call to
-     *         `chart.redraw()`.
-     *
-     * @return {void}
+     * @param {boolean} redraw
+     *        Whether to redraw the chart or wait for a later call to
+     *        `chart.redraw()`.
      */
     setTitle: function (titleOptions, subtitleOptions, redraw) {
         var chart = this,
@@ -915,9 +899,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#layOutTitles
      *
-     * @param  {boolean|undefined} [redraw=true]
-     *
-     * @return {void}
+     * @param {boolean|undefined} [redraw=true]
      */
     layOutTitles: function (redraw) {
         var titleOffset = 0,
@@ -1030,10 +1012,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#temporaryDisplay
      *
-     * @param  {boolean} revert
-     *         Revert to the saved original styles.
-     *
-     * @return {void}
+     * @param {boolean} revert
+     *        Revert to the saved original styles.
      */
     temporaryDisplay: function (revert) {
         var node = this.renderTo,
@@ -1101,9 +1081,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#setClassName
      *
-     * @param  {string} className
-     *
-     * @return {void}
+     * @param {string} className
      */
     setClassName: function (className) {
         this.container.className = 'highcharts-container ' + (className || '');
@@ -1115,8 +1093,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#afterGetContainer
-     *
-     * @return {void}
      *
      * @fires Highcharts.Chart#event:afterGetContainer
      */
@@ -1264,8 +1240,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @param  {boolean} skipAxes
      *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:getMargins
      */
     getMargins: function (skipAxes) {
@@ -1299,8 +1273,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * @private
      * @function Highcharts.Chart#getAxisMargins
-     *
-     * @return {void}
      */
     getAxisMargins: function () {
 
@@ -1347,8 +1319,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param  {global.Event} e
      *         Event arguments. Used primarily when the function is called
      *         internally as a response to window resize.
-     *
-     * @return {void}
      */
     reflow: function (e) {
         var chart = this,
@@ -1399,8 +1369,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#setReflow
      *
      * @param  {boolean} reflow
-     *
-     * @return {void}
      */
     setReflow: function (reflow) {
 
@@ -1457,8 +1425,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @param  {Highcharts.AnimationOptionsObject|undefined} [animation=true]
      *         Whether and how to apply animation.
-     *
-     * @return {void}
      *
      * @fires Highcharts.Chart#event:endResize
      * @fires Highcharts.Chart#event:resize
@@ -1534,8 +1500,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#setChartSize
      *
      * @param  {boolean} skipAxes
-     *
-     * @return {void}
      *
      * @fires Highcharts.Chart#event:afterSetChartSize
      */
@@ -1649,8 +1613,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#resetMargins
-     *
-     * @return {void}
      */
     resetMargins: function () {
         var chart = this,
@@ -1684,8 +1646,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#drawChartBox
-     *
-     * @return {void}
      *
      * @fires Highcharts.Chart#event:afterDrawChartBox
      */
@@ -1836,8 +1796,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#propFromSeries
-     *
-     * @return {void}
      */
     propFromSeries: function () {
         var chart = this,
@@ -1883,8 +1841,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#linkSeries
      *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:afterLinkSeries
      */
     linkSeries: function () {
@@ -1926,8 +1882,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#renderSeries
-     *
-     * @return {void}
      */
     renderSeries: function () {
         each(this.series, function (serie) {
@@ -1941,8 +1895,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#renderLabels
-     *
-     * @return {void}
      */
     renderLabels: function () {
         var chart = this,
@@ -1975,8 +1927,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#render
-     *
-     * @return {void}
      */
     render: function () {
         var chart = this,
@@ -2087,8 +2037,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @param  {Highcharts.CreditsOptions} options
      *         A configuration object for the new credits.
-     *
-     * @return {void}
      */
     addCredits: function (credits) {
         var chart = this;
@@ -2144,8 +2092,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         Destroy with Highstock
      *
      * @function Highcharts.Chart#destroy
-     *
-     * @return {void}
      *
      * @fires Highcharts.Chart#event:destroy
      */
@@ -2228,8 +2174,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#firstRender
      *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:beforeRender
      */
     firstRender: function () {
@@ -2300,8 +2244,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#onload
-     *
-     * @return {void}
      *
      * @fires Highcharts.Chart#event:load
      * @fires Highcharts.Chart#event:render
