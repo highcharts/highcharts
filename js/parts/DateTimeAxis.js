@@ -22,16 +22,16 @@ var Axis = H.Axis,
  * @private
  * @function Highcharts.Axis#getTimeTicks
  *
- * @param  {*} normalizedInterval
- *         The interval in axis values (ms) and thecount
+ * @param {*} normalizedInterval
+ *        The interval in axis values (ms) and thecount
  *
- * @param  {number} min
- *         The minimum in axis values
+ * @param {number} min
+ *        The minimum in axis values
  *
- * @param  {number} max
- *         The maximum in axis values
+ * @param {number} max
+ *        The maximum in axis values
  *
- * @param  {number} startOfWeek
+ * @param {number} startOfWeek
  *
  * @return {number}
  */
@@ -50,9 +50,9 @@ Axis.prototype.getTimeTicks = function () {
  * @private
  * @function Highcharts.Axis#normalizeTimeTickInterval
  *
- * @param  {number} tickInterval
+ * @param {number} tickInterval
  *
- * @param  {Array<Array<number|string>>|undefined} [unitsOption]
+ * @param {Array<Array<number|string>>|undefined} [unitsOption]
  *
  * @return {*}
  */
