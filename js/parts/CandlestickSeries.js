@@ -123,6 +123,7 @@ var candlestickOptions = {
      * @product highstock
      */
     upColor: '${palette.backgroundColor}',
+
     /*= } =*/
 
     /**
@@ -154,9 +155,9 @@ seriesType('candlestick', 'ohlc', merge(
      * @private
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
      *
-     * @param  {Highcharts.Point} point
+     * @param {Highcharts.Point} point
      *
-     * @param  {string|undefined} [state]
+     * @param {string|undefined} [state]
      *
      * @return {Highcharts.SVGAttributes}
      */
@@ -198,8 +199,6 @@ seriesType('candlestick', 'ohlc', merge(
      *
      * @private
      * @function Highcharts.seriesTypes.candlestick#drawPoints
-     *
-     * @return {void}
      */
     drawPoints: function () {
         var series = this,
