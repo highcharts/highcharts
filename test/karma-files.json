@@ -60,6 +60,7 @@
 	"code/indicators/momentum.src.js",
 	"code/indicators/natr.src.js",
 	"code/indicators/pivot-points.src.js",
+	"code/indicators/price-channel.src.js",
 	"code/indicators/price-envelopes.src.js",
 	"code/indicators/psar.src.js",
 	"code/indicators/roc.src.js",
