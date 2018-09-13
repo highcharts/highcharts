@@ -203,10 +203,11 @@ seriesType('pie', 'line', {
         softConnector: true,
 
          /**
-          * Alignment method for data labels. Possible values are: `'toPlotEdges'` (each label touches
-          * the nearest vertical edge of the plot area) or `'connectors'` (connectors have the same x
-          * position and the widest label of each half (left & right) touches the nearest vertical edge of
-          * the plot area).
+          * Alignment method for data labels. Possible values are:
+          * `'toPlotEdges'` (each label touches the nearest vertical edge of
+          * the plot area) or `'connectors'` (connectors have the same x
+          * position and the widest label of each half (left & right) touches
+          * the nearest vertical edge of the plot area).
           *
           * @type {String}
           * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-connectors/ alignTo: connectors
@@ -230,24 +231,26 @@ seriesType('pie', 'line', {
          *
          * <ol>
          *  <li>
-         *   Object that holds the information about the coordinates of the label
-         *   (`x` & `y` properties) and how the label is located in relation to the pie
-         *   (`alignment` property). `alignment` can by one of the following:
+         *   Object that holds the information about the coordinates of the
+         *   label (`x` & `y` properties) and how the label is located in
+         *   relation to the pie (`alignment` property). `alignment` can by one
+         *   of the following:
          *   `'left'` (pie on the left side of the data label),
          *   `'right'` (pie on the right side of the data label) or
          *   `'center'` (data label overlaps the pie).
          *  </li>
          *  <li>
-         *   Object that holds the information about the position of the connector.
-         *   Its `touchingSliceAt`  porperty tells the position of the place where
-         *   the connector touches the slice.
+         *   Object that holds the information about the position of the
+         *   connector. Its `touchingSliceAt`  porperty tells the position of
+         *   the place where the connector touches the slice.
          *  </li>
          *  <li>
          *   Data label options
          *  </li>
          * </ol>
          *
-         * The function has to return an SVG path definition in array form (see the example).
+         * The function has to return an SVG path definition in array form
+         * (see the example).
          *
          * @type {String|Function}
          * @since 7.0.0
@@ -688,8 +691,10 @@ seriesType('pie', 'line', {
                 natural: {
                     // initial position of the data label - it's utilized for
                     // finding the final position for the label
-                    x: positions[0] + radiusX + Math.cos(angle) * point.labelDistance,
-                    y: positions[1] + radiusY + Math.sin(angle) * point.labelDistance
+                    x: positions[0] + radiusX + Math.cos(angle) *
+                      point.labelDistance,
+                    y: positions[1] + radiusY + Math.sin(angle) *
+                      point.labelDistance
                 },
                 final: {
                     // used for generating connector path -
@@ -704,8 +709,10 @@ seriesType('pie', 'line', {
                     'center' : point.half ? 'right' : 'left',
                 connectorPosition: {
                     breakAt: { // used in connectorShapes.fixedOffset
-                        x: positions[0] + radiusX + Math.cos(angle) * finalConnectorOffset,
-                        y: positions[1] + radiusY + Math.sin(angle) * finalConnectorOffset
+                        x: positions[0] + radiusX + Math.cos(angle) *
+                          finalConnectorOffset,
+                        y: positions[1] + radiusY + Math.sin(angle) *
+                          finalConnectorOffset
                     },
                     touchingSliceAt: { // middle of the arc
                         x: positions[0] + radiusX,
