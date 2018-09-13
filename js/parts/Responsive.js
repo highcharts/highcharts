@@ -3,11 +3,23 @@
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * A callback function to gain complete control on when the responsive rule
+ * applies.
+ *
+ * @callback Highcharts.ResponsiveCallbackFunction
+ *
+ * @return {boolean}
+ *         Return `true` if it applies.
+ */
+
 'use strict';
 
 import H from './Globals.js';
 import './Chart.js';
 import './Utilities.js';
+
 var Chart = H.Chart,
     each = H.each,
     inArray = H.inArray,
@@ -29,9 +41,9 @@ var Chart = H.Chart,
  * @sample highcharts/responsive/classname/
  *         Class name
  *
- * @type       {*}
- * @since      5.0.0
- * @apioption  responsive
+ * @type      {*}
+ * @since     5.0.0
+ * @apioption responsive
  */
 
 /**
@@ -45,9 +57,9 @@ var Chart = H.Chart,
  * @sample {highmaps} highcharts/responsive/axis/
  *         Axis changes
  *
- * @type       {Array<*>}
- * @since      5.0.0
- * @apioption  responsive.rules
+ * @type      {Array<*>}
+ * @since     5.0.0
+ * @apioption responsive.rules
  */
 
 /**
@@ -72,17 +84,17 @@ var Chart = H.Chart,
  * @sample highcharts/responsive/classname/
  *         Class name
  *
- * @type       {Highcharts.Options}
- * @since      5.0.0
- * @apioption  responsive.rules.chartOptions
+ * @type      {Highcharts.Options}
+ * @since     5.0.0
+ * @apioption responsive.rules.chartOptions
  */
 
 /**
  * Under which conditions the rule applies.
  *
- * @type       {*}
- * @since      5.0.0
- * @apioption  responsive.rules.condition
+ * @type      {*}
+ * @since     5.0.0
+ * @apioption responsive.rules.condition
  */
 
 /**
@@ -91,18 +103,18 @@ var Chart = H.Chart,
  * against other metrics than the chart size, or example the document
  * size or other elements.
  *
- * @type       {Function}
- * @since      5.0.0
- * @context    Highcharts.Chart
- * @apioption  responsive.rules.condition.callback
+ * @type      {Highcharts.ResponsiveCallbackFunction}
+ * @since     5.0.0
+ * @context   Highcharts.Chart
+ * @apioption responsive.rules.condition.callback
  */
 
 /**
  * The responsive rule applies if the chart height is less than this.
  *
- * @type       {number}
- * @since      5.0.0
- * @apioption  responsive.rules.condition.maxHeight
+ * @type      {number}
+ * @since     5.0.0
+ * @apioption responsive.rules.condition.maxHeight
  */
 
 /**
@@ -111,27 +123,27 @@ var Chart = H.Chart,
  * @sample highcharts/responsive/axis/
  *         Max width is 500
  *
- * @type       {number}
- * @since      5.0.0
- * @apioption  responsive.rules.condition.maxWidth
+ * @type      {number}
+ * @since     5.0.0
+ * @apioption responsive.rules.condition.maxWidth
  */
 
 /**
  * The responsive rule applies if the chart height is greater than this.
  *
- * @type       {number}
- * @default    0
- * @since      5.0.0
- * @apioption  responsive.rules.condition.minHeight
+ * @type      {number}
+ * @default   0
+ * @since     5.0.0
+ * @apioption responsive.rules.condition.minHeight
  */
 
 /**
  * The responsive rule applies if the chart width is greater than this.
  *
- * @type       {number}
- * @default    0
- * @since      5.0.0
- * @apioption  responsive.rules.condition.minWidth
+ * @type      {number}
+ * @default   0
+ * @since     5.0.0
+ * @apioption responsive.rules.condition.minWidth
  */
 
 /**
@@ -141,9 +153,7 @@ var Chart = H.Chart,
  * @private
  * @function Highcharts.Chart#setResponsive
  *
- * @param  {boolean} [redraw=true]
- *
- * @return {void}
+ * @param {boolean} [redraw=true]
  */
 Chart.prototype.setResponsive = function (redraw) {
     var options = this.options.responsive,
@@ -204,11 +214,9 @@ Chart.prototype.setResponsive = function (redraw) {
  * @private
  * @function Highcharts.Chart#matchResponsiveRule
  *
- * @param  {Highcharts.ResponsiveRulesConditionOptions} rule
+ * @param {Highcharts.ResponsiveRulesConditionOptions} rule
  *
- * @param  {Array<number>} matches
- *
- * @return {void}
+ * @param {Array<number>} matches
  */
 Chart.prototype.matchResponsiveRule = function (rule, matches) {
 
@@ -236,7 +244,7 @@ Chart.prototype.matchResponsiveRule = function (rule, matches) {
  * @private
  * @function Highcharts.Chart#currentOptions
  *
- * @param  {Highcharts.Options} options
+ * @param {Highcharts.Options} options
  *
  * @return {Highcharts.Options}
  */
