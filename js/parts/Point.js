@@ -42,8 +42,10 @@
  */
 
 'use strict';
+
 import Highcharts from './Globals.js';
 import './Utilities.js';
+
 var Point,
     H = Highcharts,
 
@@ -63,9 +65,9 @@ var Point,
  * `Series.points` array. Other ways to instantiate points are through {@link
  * Highcharts.Series#addPoint} or {@link Highcharts.Series#setData}.
  *
- * @class Highcharts.Point
+ * @class
+ * @name Highcharts.Point
  */
-
 Highcharts.Point = Point = function () {};
 Highcharts.Point.prototype = {
 
@@ -75,14 +77,14 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#init
      *
-     * @param  {Highcharts.Series} series
-     *         The series object containing this point.
+     * @param {Highcharts.Series} series
+     *        The series object containing this point.
      *
-     * @param  {number|Array<number>|*} options
-     *         The data in either number, array or object format.
+     * @param {number|Array<number>|*} options
+     *        The data in either number, array or object format.
      *
-     * @param  {number} x
-     *         Optionally, the X value of the point.
+     * @param {number} x
+     *        Optionally, the X value of the point.
      *
      * @return {Highcharts.Point}
      *         The Point instance.
@@ -160,11 +162,11 @@ Highcharts.Point.prototype = {
      * @private
      * @function Highcharts.Point#applyOptions
      *
-     * @param  {*} options
-     *         The point options as defined in series.data.
+     * @param {*} options
+     *        The point options as defined in series.data.
      *
-     * @param  {number} x
-     *         Optionally, the x value.
+     * @param {number} x
+     *        Optionally, the x value.
      *
      * @return {Highcharts.Point}
      *         The Point instance.
@@ -252,14 +254,14 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#setNestedProperty
      *
-     * @param  {*} object
-     *         The object to set the value on.
+     * @param {*} object
+     *        The object to set the value on.
      *
-     * @param  {*} value
-     *         The value to set.
+     * @param {*} value
+     *        The value to set.
      *
-     * @param  {string} key
-     *         Key to the property to set.
+     * @param {string} key
+     *        Key to the property to set.
      *
      * @return {*}
      *         The modified object.
@@ -287,8 +289,8 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#optionsToObject
      *
-     * @param  {number|Array<number>|*} options
-     *         The input option.
+     * @param {number|Array<number>|*} options
+     *        The input option.
      *
      * @return {*}
      *         Transformed options.
@@ -412,8 +414,6 @@ Highcharts.Point.prototype = {
      *
      * @private
      * @function Highcharts.Point#destroy
-     *
-     * @return {void}
      */
     destroy: function () {
         var point = this,
@@ -456,8 +456,6 @@ Highcharts.Point.prototype = {
      *
      * @private
      * @function Highcharts.Point#destroyElements
-     *
-     * @return {void}
      */
     destroyElements: function () {
         var point = this,
@@ -506,8 +504,8 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#tooltipFormatter
      *
-     * @param  {string} pointFormat
-     *         The point format.
+     * @param {string} pointFormat
+     *        The point format.
      *
      * @return {string}
      *         A string to be concatenated in to the common tooltip text.
@@ -549,14 +547,14 @@ Highcharts.Point.prototype = {
      * @private
      * @function Highcharts.Point#firePointEvent
      *
-     * @param  {string} eventType
-     *         Type of the event.
+     * @param {string} eventType
+     *        Type of the event.
      *
-     * @param  {*} eventArgs
-     *         Additional event arguments.
+     * @param {*} eventArgs
+     *        Additional event arguments.
      *
-     * @param  {Function} defaultFunction
-     *         Default event handler.
+     * @param {Function} defaultFunction
+     *        Default event handler.
      *
      * @fires Highcharts.Point#event:*
      */
