@@ -90,8 +90,6 @@ H.StackItem.prototype = {
     /**
      * @private
      * @function Highcharts.StackItem#destroy
-     *
-     * @return {void}
      */
     destroy: function () {
         destroyObjectProperties(this, this.axis);
@@ -103,9 +101,7 @@ H.StackItem.prototype = {
      * @private
      * @function Highcharts.StackItem#render
      *
-     * @param  {Highcharts.SVGElement} group
-     *
-     * @return {void}
+     * @param {Highcharts.SVGElement} group
      */
     render: function (group) {
         var chart = this.axis.chart,
@@ -146,8 +142,6 @@ H.StackItem.prototype = {
      * @param  {number} xOffset
      *
      * @param  {number} xWidth
-     *
-     * @return {void}
      */
     setOffset: function (xOffset, xWidth) {
         var stackItem = this,
@@ -194,19 +188,19 @@ H.StackItem.prototype = {
      * @private
      * @function Highcharts.StackItem#getStackBox
      *
-     * @param  {Highcharts.Chart} chart
+     * @param {Highcharts.Chart} chart
      *
-     * @param  {Highcharts.StackItem} stackItem
+     * @param {Highcharts.StackItem} stackItem
      *
-     * @param  {number} x
+     * @param {number} x
      *
-     * @param  {number} y
+     * @param {number} y
      *
-     * @param  {number} xWidth
+     * @param {number} xWidth
      *
-     * @param  {number} h
+     * @param {number} h
      *
-     * @param  {Highcharts.Axis} axis
+     * @param {Highcharts.Axis} axis
      *
      * @return {*}
      */
@@ -237,8 +231,6 @@ H.StackItem.prototype = {
  *
  * @private
  * @function Highcharts.Chart#getStacks
- *
- * @return {void}
  */
 Chart.prototype.getStacks = function () {
     var chart = this;
@@ -266,8 +258,6 @@ Chart.prototype.getStacks = function () {
  *
  * @private
  * @function Highcharts.Axis#buildStacks
- *
- * @return {void}
  */
 Axis.prototype.buildStacks = function () {
     var axisSeries = this.series,
@@ -291,8 +281,6 @@ Axis.prototype.buildStacks = function () {
 /**
  * @private
  * @function Highcharts.Axis#renderStackTotals
- *
- * @return {void}
  */
 Axis.prototype.renderStackTotals = function () {
     var axis = this,
@@ -329,8 +317,6 @@ Axis.prototype.renderStackTotals = function () {
  *
  * @private
  * @function Highcharts.Axis#resetStacks
- *
- * @return {void}
  */
 Axis.prototype.resetStacks = function () {
     var axis = this,
@@ -356,8 +342,6 @@ Axis.prototype.resetStacks = function () {
 /**
  * @private
  * @function Highcharts.Axis#cleanStacks
- *
- * @return {void}
  */
 Axis.prototype.cleanStacks = function () {
     var stacks;
@@ -384,8 +368,6 @@ Axis.prototype.cleanStacks = function () {
  *
  * @private
  * @function Highcharts.Series#setStackedPoints
- *
- * @return {void}
  */
 Series.prototype.setStackedPoints = function () {
     if (!this.options.stacking || (this.visible !== true &&
@@ -527,8 +509,6 @@ Series.prototype.setStackedPoints = function () {
  *
  * @private
  * @function Highcharts.Series#modifyStacks
- *
- * @return {void}
  */
 Series.prototype.modifyStacks = function () {
     var series = this,
@@ -569,13 +549,11 @@ Series.prototype.modifyStacks = function () {
  * @private
  * @function Highcharts.Series#percentStacker
  *
- * @param  {Array<number>} pointExtremes
+ * @param {Array<number>} pointExtremes
  *
- * @param  {Highcharts.StackItem} stack
+ * @param {Highcharts.StackItem} stack
  *
- * @param  {number} i
- *
- * @return {void}
+ * @param {number} i
  */
 Series.prototype.percentStacker = function (pointExtremes, stack, i) {
     var totalFactor = stack.total ? 100 / stack.total : 0;
@@ -593,13 +571,13 @@ Series.prototype.percentStacker = function (pointExtremes, stack, i) {
  * @private
  * @function Highcharts.Series#getStackIndicator
  *
- * @param  {*} stackIndicator
+ * @param {*} stackIndicator
  *
- * @param  {number} x
+ * @param {number} x
  *
- * @param  {number} index
+ * @param {number} index
  *
- * @param  {string} key
+ * @param {string} key
  *
  * @return {*}
  */
