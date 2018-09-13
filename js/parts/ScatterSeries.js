@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
 import H from './Globals.js';
@@ -31,11 +32,10 @@ seriesType('scatter', 'line', {
      * @sample {highcharts} highcharts/demo/scatter/
      *         Scatter plot
      *
-     * @type       {*}
-     * @extends    plotOptions.line
-     * @excluding  pointPlacement, shadow
-     * @product    highcharts highstock
-     * @apioption  plotOptions.scatter
+     * @extends      plotOptions.line
+     * @excluding    pointPlacement, shadow
+     * @product      highcharts highstock
+     * @optionparent plotOptions.scatter
      */
 
     /**
@@ -46,28 +46,14 @@ seriesType('scatter', 'line', {
      * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
      *         1px
      *
-     * @type       {number}
-     * @default    0
-     * @product    highcharts highstock
-     * @apioption  plotOptions.scatter.lineWidth
+     * @product highcharts highstock
      */
     lineWidth: 0,
 
-    /**
-     * @default    xy
-     * @apioption  plotOptions.scatter.findNearestPointBy
-     */
     findNearestPointBy: 'xy',
 
-    /**
-     * @apioption  plotOptions.scatter.marker
-     */
     marker: {
 
-        /**
-         * @default    true
-         * @apioption  plotOptions.scatter.marker.enabled
-         */
         enabled: true // Overrides auto-enabling in line series (#3647)
     },
 
@@ -80,10 +66,10 @@ seriesType('scatter', 'line', {
      * is false and `tooltip.shared` is false, the tooltip will be hidden
      * when moving the mouse between series.
      *
-     * @type       {boolean}
-     * @default    false
-     * @product    highcharts highstock
-     * @apioption  plotOptions.scatter.stickyTracking
+     * @type      {boolean}
+     * @default   false
+     * @product   highcharts highstock
+     * @apioption plotOptions.scatter.stickyTracking
      */
 
     /**
@@ -94,17 +80,14 @@ seriesType('scatter', 'line', {
      * a scatter plot the series.name by default shows in the headerFormat
      * and point.x and point.y in the pointFormat.
      *
-     * @type       {*}
-     * @product    highcharts highstock
-     * @apioption  plotOptions.scatter.tooltip
+     * @product highcharts highstock
      */
     tooltip: {
 
         /*= if (build.classic) { =*/
 
         /**
-         * @default     ● {series.name}
-         * @apioptions  plotOptions.scatter.tooltip.headerFormat
+         * @default ● {series.name}
          */
         headerFormat:
             '<span style="color:{point.color}">\u25CF</span> ' +
@@ -113,8 +96,7 @@ seriesType('scatter', 'line', {
         /*= } else { =*/
 
         /**
-         * @default     ● {series.name}
-         * @apioptions  plotOptions.scatter.tooltip.headerFormat
+         * @default ● {series.name}
          */
         headerFormat:
             '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> ' +
@@ -123,8 +105,7 @@ seriesType('scatter', 'line', {
         /*= } =*/
 
         /**
-         * @default     x: {point.x} y: {point.y}
-         * @apioptions  plotOptions.scatter.tooltip.pointFormat
+         * @default x: {point.x} y: {point.y}
          */
         pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
     }
@@ -140,8 +121,6 @@ seriesType('scatter', 'line', {
     /**
      * @private
      * @function Highcharts.seriesTypes.scatter#drawGraph
-     *
-     * @return {void}
      */
     drawGraph: function () {
         if (this.options.lineWidth) {
@@ -154,11 +133,10 @@ seriesType('scatter', 'line', {
  * A `scatter` series. If the [type](#series.scatter.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.scatter
- * @excluding  dataParser, dataURL
- * @product    highcharts highstock
- * @apioption  series.scatter
+ * @extends   series,plotOptions.scatter
+ * @excluding dataParser, dataURL
+ * @product   highcharts highstock
+ * @apioption series.scatter
  */
 
 /**
@@ -217,8 +195,8 @@ seriesType('scatter', 'line', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type       {Array<number|Array<number>|*>}
- * @extends    series.line.data
- * @product    highcharts highstock
- * @apioption  series.scatter.data
+ * @type      {Array<number|Array<number>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
+ * @apioption series.scatter.data
  */
