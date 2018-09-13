@@ -134,8 +134,6 @@ Highcharts.Pointer.prototype = {
      * @param {Highcharts.Options} options
      *        The root options object. The pointer uses options from the chart
      *        and tooltip structures.
-     *
-     * @return {void}
      */
     init: function (chart, options) {
 
@@ -171,10 +169,8 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#zoomOption
      *
-     * @param  {global.Event} e
-     *         Event object.
-     *
-     * @return {void}
+     * @param {global.Event} e
+     *        Event object.
      */
     zoomOption: function (e) {
         var chart = this.chart,
@@ -203,8 +199,8 @@ Highcharts.Pointer.prototype = {
      *
      * @function Highcharts.Pointer#normalize
      *
-     * @param  {global.Event} e
-     *         Event object in standard browsers.
+     * @param {global.Event} e
+     *        Event object in standard browsers.
      *
      * @return {Highcharts.PointerEventObject}
      *         A browser event with extended properties `chartX` and `chartY`.
@@ -233,8 +229,8 @@ Highcharts.Pointer.prototype = {
      *
      * @function Highcharts.Pointer#getCoordinates
      *
-     * @param  {Highcharts.PointerEventObject} e
-     *         Pointer event, extended with `chartX` and `chartY` properties.
+     * @param {Highcharts.PointerEventObject} e
+     *        Pointer event, extended with `chartX` and `chartY` properties.
      *
      * @return {Highcharts.PointerAxisCoordinatesObject}
      */
@@ -261,14 +257,14 @@ Highcharts.Pointer.prototype = {
      *
      * @function Highcharts.Pointer#findNearestKDPoints
      *
-     * @param  {Array<Highcharts.Series>} series
-     *         All the series to search in.
+     * @param {Array<Highcharts.Series>} series
+     *        All the series to search in.
      *
-     * @param  {boolean} shared
-     *         Whether it is a shared tooltip or not.
+     * @param {boolean} shared
+     *        Whether it is a shared tooltip or not.
      *
-     * @param  {Highcharts.PointerCoordinatesObject} coordinates
-     *         Chart coordinates of the pointer.
+     * @param {Highcharts.PointerCoordinatesObject} coordinates
+     *        Chart coordinates of the pointer.
      *
      * @return {Point|undefined}
      *         The point closest to given coordinates.
@@ -325,7 +321,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#getPointFromEvent
      *
-     * @param  {global.Event} e
+     * @param {global.Event} e
      *
      * @return {Highcharts.Point|undefined}
      */
@@ -344,9 +340,9 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#getChartCoordinatesFromPoint
      *
-     * @param  {Highcharts.Point} point
+     * @param {Highcharts.Point} point
      *
-     * @param  {boolean} inverted
+     * @param {boolean} inverted
      *
      * @return {Highcharts.PointerCoordinatesObject}
      */
@@ -380,23 +376,23 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#getHoverData
      *
-     * @param  {Highcharts.Point|undefined} existingHoverPoint
-     *         The point currrently beeing hovered.
+     * @param {Highcharts.Point|undefined} existingHoverPoint
+     *        The point currrently beeing hovered.
      *
-     * @param  {Highcharts.Series|undefined} existingHoverSeries
-     *         The series currently beeing hovered.
+     * @param {Highcharts.Series|undefined} existingHoverSeries
+     *        The series currently beeing hovered.
      *
-     * @param  {Array<Highcharts.Series>} series
-     *         All the series in the chart.
+     * @param {Array<Highcharts.Series>} series
+     *        All the series in the chart.
      *
-     * @param  {boolean} isDirectTouch
-     *         Is the pointer directly hovering the point.
+     * @param {boolean} isDirectTouch
+     *        Is the pointer directly hovering the point.
      *
-     * @param  {boolean} shared
-     *         Whether it is a shared tooltip or not.
+     * @param {boolean} shared
+     *        Whether it is a shared tooltip or not.
      *
-     * @param  {Highcharts.PointerCoordinatesObject} coordinates
-     *         Chart coordinates of the pointer.
+     * @param {Highcharts.PointerCoordinatesObject} coordinates
+     *        Chart coordinates of the pointer.
      *
      * @return {*}
      *         Object containing resulting hover data: hoverPoint, hoverSeries,
@@ -483,11 +479,9 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#runPointActions
      *
-     * @param  {global.Event} e
+     * @param {global.Event} e
      *
-     * @param  {Highcharts.Point} p
-     *
-     * @return {void}
+     * @param {Highcharts.Point} p
      *
      * @fires Highcharts.Point#event:mouseOut
      * @fires Highcharts.Point#event:mouseOver
@@ -621,13 +615,11 @@ Highcharts.Pointer.prototype = {
      *
      * @function Highcharts.Pointer#reset
      *
-     * @param  {boolean} allowMove
-     *         Instead of destroying the tooltip altogether, allow moving it if
-     *         possible.
+     * @param {boolean} allowMove
+     *        Instead of destroying the tooltip altogether, allow moving it if
+     *        possible.
      *
-     * @param  {number} delay
-     *
-     * @return {void}
+     * @param {number} delay
      */
     reset: function (allowMove, delay) {
         var pointer = this,
@@ -714,11 +706,9 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#scaleGroups
      *
-     * @param  {Highcharts.SeriesPlotBoxObject} attribs
+     * @param {Highcharts.SeriesPlotBoxObject} attribs
      *
-     * @param  {boolean} clip
-     *
-     * @return {void}
+     * @param {boolean} clip
      */
     scaleGroups: function (attribs, clip) {
 
@@ -750,9 +740,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#dragStart
      *
-     * @param  {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
+     * @param {Highcharts.PointerEventObject} e
      */
     dragStart: function (e) {
         var chart = this.chart;
@@ -771,9 +759,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#drag
      *
-     * @param  {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
+     * @param {Highcharts.PointerEventObject} e
      */
     drag: function (e) {
 
@@ -888,9 +874,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#drop
      *
-     * @param  {global.Event} e
-     *
-     * @return {void}
+     * @param {global.Event} e
      */
     drop: function (e) {
         var pointer = this,
@@ -1001,9 +985,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onContainerMouseDown
      *
-     * @param  {global.Event} e
-     *
-     * @return {void}
+     * @param {global.Event} e
      */
     onContainerMouseDown: function (e) {
         // Normalize before the 'if' for the legacy IE (#7850)
@@ -1026,9 +1008,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onDocumentMouseUp
      *
-     * @param  {global.Event} e
-     *
-     * @return {void}
+     * @param {global.Event} e
      */
     onDocumentMouseUp: function (e) {
         if (charts[H.hoverChartIndex]) {
@@ -1044,9 +1024,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onDocumentMouseMove
      *
-     * @param  {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
+     * @param {Highcharts.PointerEventObject} e
      */
     onDocumentMouseMove: function (e) {
         var chart = this.chart,
@@ -1073,9 +1051,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onContainerMouseLeave
      *
-     * @param  {global.Event} e
-     *
-     * @return {void}
+     * @param {global.Event} e
      */
     onContainerMouseLeave: function (e) {
         var chart = charts[H.hoverChartIndex];
@@ -1093,9 +1069,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onContainerMouseMove
      *
-     * @param  {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
+     * @param {Highcharts.PointerEventObject} e
      */
     onContainerMouseMove: function (e) {
 
@@ -1138,11 +1112,11 @@ Highcharts.Pointer.prototype = {
      *
      * @function Highcharts.Pointer#inClass
      *
-     * @param  {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
-     *         The element to investigate.
+     * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
+     *        The element to investigate.
      *
-     * @param  {string} className
-     *         The class name to look for.
+     * @param {string} className
+     *        The class name to look for.
      *
      * @return {boolean}
      *         True if either the element or one of its parents has the given
@@ -1168,9 +1142,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onTrackerMouseOut
      *
-     * @param  {global.Event} e
-     *
-     * @return {void}
+     * @param {global.Event} e
      */
     onTrackerMouseOut: function (e) {
         var series = this.chart.hoverSeries,
@@ -1199,9 +1171,7 @@ Highcharts.Pointer.prototype = {
      * @private
      * @function Highcharts.Pointer#onContainerClick
      *
-     * @param  {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
+     * @param {Highcharts.PointerEventObject} e
      */
     onContainerClick: function (e) {
         var chart = this.chart,
@@ -1250,8 +1220,6 @@ Highcharts.Pointer.prototype = {
      *
      * @private
      * @function Highcharts.Pointer#setDOMEvents
-     *
-     * @return {void}
      */
     setDOMEvents: function () {
 
@@ -1302,8 +1270,6 @@ Highcharts.Pointer.prototype = {
      * Destroys the Pointer object and disconnects DOM events.
      *
      * @function Highcharts.Pointer#destroy
-     *
-     * @return {void}
      */
     destroy: function () {
         var pointer = this;
