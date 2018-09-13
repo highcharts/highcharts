@@ -26,9 +26,7 @@ var attr = H.attr,
     win = H.win,
     wrap = H.wrap;
 
-/**
- * Extend SvgElement for useHTML option.
- */
+// Extend SvgElement for useHTML option.
 extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
     /**
@@ -274,9 +272,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
     }
 });
 
-/**
- * Extend SvgRenderer for useHTML option.
- */
+// Extend SvgRenderer for useHTML option.
 extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
     /**
