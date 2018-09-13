@@ -25,18 +25,17 @@ var addEvent = H.addEvent,
  * @sample {highcharts} highcharts/chart/scrollable-plotarea
  *         Scrollable plot area
  *
- * @type       {*}
- * @since      6.1.0
- * @product    highcharts
- * @apioption  chart.scrollablePlotArea
+ * @since        6.1.0
+ * @product      highcharts
+ * @optionparent chart.scrollablePlotArea
  */
 
 /**
  * The minimum width for the plot area. If it gets smaller than this, the plot
  * area will become scrollable.
  *
- * @type       {number}
- * @apioption  chart.scrollablePlotArea.minWidth
+ * @type      {number}
+ * @apioption chart.scrollablePlotArea.minWidth
  */
 
 /**
@@ -44,8 +43,8 @@ var addEvent = H.addEvent,
  * 1, where 0 aligns the plot area to the left and 1 aligns it to the right.
  * Typically we would use 1 if the chart has right aligned Y axes.
  *
- * @type       {number}
- * @apioption  chart.scrollablePlotArea.scrollPositionX
+ * @type      {number}
+ * @apioption chart.scrollablePlotArea.scrollPositionX
  */
 
 addEvent(Chart, 'afterSetChartSize', function (e) {
@@ -111,8 +110,6 @@ addEvent(Chart, 'render', function () {
 /**
  * @private
  * @function Highcharts.Chart#setUpScrolling
- *
- * @return {void}
  */
 Chart.prototype.setUpScrolling = function () {
 
@@ -138,8 +135,6 @@ Chart.prototype.setUpScrolling = function () {
 /**
  * @private
  * @function Highcharts.Chart#applyFixed
- *
- * @return {void}
  */
 Chart.prototype.applyFixed = function () {
     var container = this.container,
