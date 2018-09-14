@@ -88,7 +88,7 @@ H.seriesType('pc', 'bb',
                 extremes,
                 i;
 
-            if (yValLen.length < period) {
+            if (yValLen < period) {
                 return false;
             }
 
