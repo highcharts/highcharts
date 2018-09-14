@@ -1029,7 +1029,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         fireEvent(this, 'afterUpdate');
 
         if (pick(redraw, true)) {
-            chart.redraw(false);
+            chart.redraw(doSoftUpdate ? undefined : false);
         }
     },
 
