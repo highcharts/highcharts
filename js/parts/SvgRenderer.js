@@ -194,7 +194,7 @@
  *
  * @typedef Highcharts.SVGDefinitionObject
  *
- * @property {number|string|Array<Highcharts.SVGDefinitionObject>} [key:string]
+ * @property {number|string|Array<Highcharts.SVGDefinitionObject>|undefined} [key:string]
  *
  * @property {Array<Highcharts.SVGDefinitionObject>} [children]
  *
