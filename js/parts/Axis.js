@@ -3019,11 +3019,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#init
      *
-     * @param  {Highcharts.Chart} chart
+     * @param {Highcharts.Chart} chart
      *
-     * @param  {Highcharts.Options} userOptions
-     *
-     * @return {void}
+     * @param {Highcharts.Options} userOptions
      *
      * @fires Highcharts.Axis#event:afterInit
      * @fires Highcharts.Axis#event:init
@@ -3235,9 +3233,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#setOptions
      *
-     * @param  {Highcharts.AxisOptions} userOptions
-     *
-     * @return {void}
+     * @param {Highcharts.AxisOptions} userOptions
      *
      * @fires Highcharts.Axis#event:afterSetOptions
      */
@@ -3340,8 +3336,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#getSeriesExtremes
-     *
-     * @return {void}
      *
      * @fires Highcharts.Axis#event:afterGetSeriesExtremes
      * @fires Highcharts.Axis#event:getSeriesExtremes
@@ -3465,17 +3459,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#translate
      *
-     * @param  {number} val
+     * @param {number} val
      *
-     * @param  {boolean} [backwards]
+     * @param {boolean} [backwards]
      *
-     * @param  {boolean} [cvsCoord]
+     * @param {boolean} [cvsCoord]
      *
-     * @param  {boolean} [old]
+     * @param {boolean} [old]
      *
-     * @param  {boolean} [handleLog]
+     * @param {boolean} [handleLog]
      *
-     * @param  {number} [pointPlacement=0]
+     * @param {number} [pointPlacement=0]
      *
      * @return {number|undefined}
      */
@@ -3550,12 +3544,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#toPixels
      *
-     * @param  {number} value
-     *         A value in terms of axis units.
+     * @param {number} value
+     *        A value in terms of axis units.
      *
-     * @param  {boolean} paneCoordinates
-     *         Whether to return the pixel coordinate relative to the chart or
-     *         just the axis/pane itself.
+     * @param {boolean} paneCoordinates
+     *        Whether to return the pixel coordinate relative to the chart or
+     *        just the axis/pane itself.
      *
      * @return {number}
      *         Pixel position of the value on the chart or axis.
@@ -3571,12 +3565,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#toValue
      *
-     * @param  {number} pixel
-     *         The pixel value coordinate.
+     * @param {number} pixel
+     *        The pixel value coordinate.
      *
-     * @param  {boolean} paneCoordiantes
-     *         Whether the input pixel is relative to the chart or just the
-     *         axis/pane itself.
+     * @param {boolean} paneCoordiantes
+     *        Whether the input pixel is relative to the chart or just the
+     *        axis/pane itself.
      *
      * @return {number}
      *         The axis value.
@@ -3598,22 +3592,22 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#getPlotLinePath
      *
-     * @param  {number} value
-     *         Axis value.
+     * @param {number} value
+     *        Axis value.
      *
-     * @param  {number|undefined} [lineWidth=1]
-     *         Used for calculation crisp line coordinates.
+     * @param {number} [lineWidth=1]
+     *        Used for calculation crisp line coordinates.
      *
-     * @param  {boolean|undefined} [old=false]
-     *         Use old coordinates (for resizing and rescaling).
+     * @param {boolean} [old=false]
+     *        Use old coordinates (for resizing and rescaling).
      *
-     * @param  {boolean|undefined} [force=false]
-     *         If `false`, the function will return null when it falls outside
-     *         the axis bounds.
+     * @param {boolean} [force=false]
+     *        If `false`, the function will return null when it falls outside
+     *        the axis bounds.
      *
-     * @param  {number|undefined} [translatedValue]
-     *         If given, return the plot line path of a pixel position on the
-     *         axis.
+     * @param {number} [translatedValue]
+     *        If given, return the plot line path of a pixel position on the
+     *        axis.
      *
      * @return {Array<string|number>}
      *         The SVG path definition for the plot line.
@@ -3683,14 +3677,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#getLinearTickPositions
      *
-     * @param  {number} tickInterval
-     *         The normalized tick interval.
+     * @param {number} tickInterval
+     *        The normalized tick interval.
      *
-     * @param  {number} min
-     *         Axis minimum.
+     * @param {number} min
+     *        Axis minimum.
      *
-     * @param  {number} max
-     *         Axis maximum.
+     * @param {number} max
+     *        Axis maximum.
      *
      * @return {Array<number>}
      *         An array of axis values where ticks should be placed.
@@ -3847,8 +3841,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#adjustForMinRange
-     *
-     * @return {void}
      */
     adjustForMinRange: function () {
         var axis = this,
@@ -3978,8 +3970,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#nameToX
      *
-     * @param  {Highcharts.Point} point
-     *         The point to inspect.
+     * @param {Highcharts.Point} point
+     *        The point to inspect.
      *
      * @return {number}
      *         The X value that the point is given.
@@ -4025,8 +4017,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#updateNames
-     *
-     * @return {void}
      */
     updateNames: function () {
         var axis = this,
@@ -4071,9 +4061,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#setAxisTranslation
      *
-     * @param  {boolean} saveOld
-     *
-     * @return {void}
+     * @param {boolean} saveOld
      *
      * @fires Highcharts.Axis#event:afterSetAxisTranslation
      */
@@ -4192,9 +4180,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#setTickInterval
      *
-     * @param  {boolean} secondPass
-     *
-     * @return {void}
+     * @param {boolean} secondPass
      *
      * @fires Highcharts.Axis#event:foundExtremes
      */
@@ -4470,8 +4456,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#setTickPositions
      *
-     * @return {void}
-     *
      * @fires Highcharts.Axis#event:afterSetTickPositions
      */
     setTickPositions: function () {
@@ -4598,13 +4582,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#trimTicks
      *
-     * @param  {Array<number>} tickPositions
+     * @param {Array<number>} tickPositions
      *
-     * @param  {boolean} startOnTicl
+     * @param {boolean} startOnTicl
      *
-     * @param  {boolean} endOnTick
-     *
-     * @return {void}
+     * @param {boolean} endOnTick
      */
     trimTicks: function (tickPositions, startOnTick, endOnTick) {
         var roundedMin = tickPositions[0],
@@ -4696,8 +4678,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#getTickAmount
-     *
-     * @return {void}
      */
     getTickAmount: function () {
         var options = this.options,
@@ -4738,8 +4718,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#adjustTickAmount
-     *
-     * @return {void}
      */
     adjustTickAmount: function () {
         var tickInterval = this.tickInterval,
@@ -4806,8 +4784,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#setScale
-     *
-     * @return {void}
      *
      * @fires Highcharts.Axis#event:afterSetScale
      */
@@ -4900,23 +4876,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#setExtremes
      *
-     * @param  {number|undefined} [newMin]
-     *         The new minimum value.
+     * @param {number} [newMin]
+     *        The new minimum value.
      *
-     * @param  {number|undefined} [newMax]
-     *         The new maximum value.
+     * @param {number} [newMax]
+     *        The new maximum value.
      *
-     * @param  {boolean|undefined} [redraw=true]
-     *         Whether to redraw the chart or wait for an explicit call to
-     *         {@link Highcharts.Chart#redraw}
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart or wait for an explicit call to
+     *        {@link Highcharts.Chart#redraw}
      *
-     * @param  {boolean|Highcharts.AnimationOptionsObject|undefined} [animation=true]
-     *         Enable or modify animations.
+     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     *        Enable or modify animations.
      *
-     * @param  {*|undefined} [eventArguments]
-     *         Arguments to be accessed in event handler.
-     *
-     * @return {void}
+     * @param {*} [eventArguments]
+     *        Arguments to be accessed in event handler.
      *
      * @fires Highcharts.Axis#event:setExtremes
      */
@@ -4956,9 +4930,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#zoom
      *
-     * @param  {number} newMin
+     * @param {number} newMin
      *
-     * @param  {number} newMax
+     * @param {number} newMax
      *
      * @return {boolean}
      */
@@ -5015,8 +4989,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#setAxisSize
-     *
-     * @return {void}
      */
     setAxisSize: function () {
         var chart = this.chart,
@@ -5094,8 +5066,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#getThreshold
      *
-     * @param  {number} threshold
-     *         The threshold in axis values.
+     * @param {number} threshold
+     *        The threshold in axis values.
      *
      * @return {number}
      *         The translated threshold position in terms of pixels, and
@@ -5127,9 +5099,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#autoLabelAlign
      *
-     * @param  {number} rotation
-     *         The rotation in degrees as set by either the `rotation` or
-     *         `autoRotation` options.
+     * @param {number} rotation
+     *        The rotation in degrees as set by either the `rotation` or
+     *        `autoRotation` options.
      *
      * @return {string}
      *         Can be `center`, `left` or `right`.
@@ -5154,8 +5126,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#tickSize
      *
-     * @param  {string} prefix
-     *         'tick' or 'minorTick'
+     * @param {string} prefix
+     *        'tick' or 'minorTick'
      *
      * @return {Array<number>}
      *         An array of tickLength and tickWidth
@@ -5283,10 +5255,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#getSlotWidth
      *
-     * @param  {*|undefined} [tick]
-     *         Optionally, calculate the slot width basing on tick label. It is
-     *         used in highcharts-3d module, where the slots has different
-     *         widths depending on perspective angles.
+     * @param {*} [tick]
+     *        Optionally, calculate the slot width basing on tick label. It is
+     *        used in highcharts-3d module, where the slots has different widths
+     *        depending on perspective angles.
      *
      * @return {number}
      *         The pixel width allocated to each axis label.
@@ -5330,8 +5302,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#renderUnsquish
-     *
-     * @return {void}
      */
     renderUnsquish: function () {
         var chart = this.chart,
@@ -5536,8 +5506,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @param {boolean} display
      *        Whether or not to display the title.
-     *
-     * @return {void}
      */
     addTitle: function (display) {
         var axis = this,
@@ -5602,13 +5570,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#generateTick
      *
-     * @param  {number} pos
-     *         The tick position in axis values.
+     * @param {number} pos
+     *        The tick position in axis values.
      *
-     * @param  {number} i
-     *         The index of the tick in {@link Axis.tickPositions}.
-     *
-     * @return {void}
+     * @param {number} i
+     *        The index of the tick in {@link Axis.tickPositions}.
      */
     generateTick: function (pos) {
         var ticks = this.ticks;
@@ -5625,8 +5591,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#getOffset
-     *
-     * @return {void}
      *
      * @fires Highcharts.Axis#event:afterGetOffset
      */
@@ -5808,8 +5772,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#getLinePath
      *
-     * @param  {number} lineWidth
-     *         The line width in pixels.
+     * @param {number} lineWidth
+     *        The line width in pixels.
      *
      * @return {Highcharts.SVGPathArray}
      *         The SVG path definition in array form.
@@ -5851,8 +5815,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * axis.
      *
      * @function Highcharts.Axis#renderLine
-     *
-     * @return {void}
      */
     renderLine: function () {
         if (!this.axisLine) {
@@ -5940,10 +5902,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#renderMinorTick
      *
-     * @param  {number} pos
-     *         The position in axis values.
-     *
-     * @return {void}
+     * @param {number} pos
+     *        The position in axis values.
      */
     renderMinorTick: function (pos) {
         var slideInTicks = this.chart.hasRendered && isNumber(this.oldMin),
@@ -5967,13 +5927,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#renderTick
      *
-     * @param  {number} pos
-     *         The position in axis values.
+     * @param {number} pos
+     *        The position in axis values.
      *
-     * @param  {number} i
-     *         The tick index.
-     *
-     * @return {void}
+     * @param {number} i
+     *        The tick index.
      */
     renderTick: function (pos, i) {
         var isLinked = this.isLinked,
@@ -6001,8 +5959,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#render
-     *
-     * @return {void}
      *
      * @fires Highcharts.Axis#event:afterRender
      */
@@ -6191,8 +6147,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @private
      * @function Highcharts.Axis#redraw
-     *
-     * @return {void}
      */
     redraw: function () {
 
@@ -6224,10 +6178,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @function Highcharts.Axis#destroy
      *
-     * @param  {boolean} keepEvents
-     *         Whether to preserve events, used internally in Axis.update.
-     *
-     * @return {void}
+     * @param {boolean} keepEvents
+     *        Whether to preserve events, used internally in Axis.update.
      */
     destroy: function (keepEvents) {
         var axis = this,
@@ -6294,14 +6246,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#drawCrosshair
      *
-     * @param  {Highcharts.PointerEventObject|undefined} [e]
-     *         The event arguments from the modified pointer event, extended
-     *         with `chartX` and `chartY`
+     * @param {Highcharts.PointerEventObject} [e]
+     *        The event arguments from the modified pointer event, extended with
+     *        `chartX` and `chartY`
      *
-     * @param  {Highcharts.Point|undefined} [point]
-     *         The Point object if the crosshair snaps to points.
-     *
-     * @return {void}
+     * @param {Highcharts.Point} [point]
+     *        The Point object if the crosshair snaps to points.
      *
      * @fires Highcharts.Axis#event:afterDrawCrosshair
      * @fires Highcharts.Axis#event:drawCrosshair
@@ -6425,8 +6375,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * Hide the crosshair if visible.
      *
      * @function Highcharts.Axis#hideCrosshair
-     *
-     * @return {void}
      */
     hideCrosshair: function () {
         if (this.cross) {
