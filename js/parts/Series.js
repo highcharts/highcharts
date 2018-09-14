@@ -7,7 +7,7 @@
 /**
  * Translation and scale for the plot area of a series.
  *
- * @typedef {object} Highcharts.SeriesPlotBoxObject
+ * @typedef Highcharts.SeriesPlotBoxObject
  *
  * @property {number} translateX
  *
