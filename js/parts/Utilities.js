@@ -2622,31 +2622,31 @@ if (win.jQuery) {
      *
      * @function external:JQuery#highcharts
      *
-     * @param  {Highcharts.Options} options
-     *         The chart options structure.
+     * @param {Highcharts.Options} options
+     *        The chart options structure.
      *
-     * @param  {Highcharts.ChartCallbackFunction|undefined} [callback]
-     *         Function to run when the chart has loaded and and all external
-     *         images are loaded. Defining a
-     *         [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
-     *         handler is equivalent.
+     * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
+     *        Function to run when the chart has loaded and and all external
+     *        images are loaded. Defining a [chart.event.load
+     *        ](https://api.highcharts.com/highcharts/chart.events.load) handler
+     *        is equivalent.
      *
      * @return {JQuery}
      *         The current JQuery selector.
      *//**
      * @function external:JQuery#highcharts
      *
-     * @param  {"Chart"|"Map"|"StockChart"|string} className
-     *         Name of the factory class in the Highcharts namespace.
+     * @param {"Chart"|"Map"|"StockChart"|string} className
+     *        Name of the factory class in the Highcharts namespace.
      *
-     * @param  {Highcharts.Options} options
-     *         The chart options structure.
+     * @param {Highcharts.Options} options
+     *        The chart options structure.
      *
-     * @param  {Highcharts.ChartCallbackFunction|undefined} [callback]
-     *         Function to run when the chart has loaded and and all external
-     *         images are loaded. Defining a
-     *         [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
-     *         handler is equivalent.
+     * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
+     *        Function to run when the chart has loaded and and all external
+     *        images are loaded. Defining a [chart.event.load
+     *        ](https://api.highcharts.com/highcharts/chart.events.load) handler
+     *        is equivalent.
      *
      * @return {JQuery}
      *         The current JQuery selector.
