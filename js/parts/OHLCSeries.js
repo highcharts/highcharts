@@ -25,7 +25,7 @@ var each = H.each,
  *
  * @sample stock/demo/ohlc/ OHLC chart
  * @extends plotOptions.column
- * @excluding borderColor,borderRadius,borderWidth,crisp
+ * @excluding borderColor,borderRadius,borderWidth,crisp,stacking,stack
  * @product highstock
  * @optionparent plotOptions.ohlc
  */
@@ -132,6 +132,12 @@ seriesType('ohlc', 'column', {
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
+    },
+
+    init: function () {
+        seriesTypes.column.prototype.init.apply(this, arguments);
+
+        this.options.stacking = false; // #8817
     },
 
     /**

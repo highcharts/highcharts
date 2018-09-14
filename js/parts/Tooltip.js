@@ -404,8 +404,6 @@ H.Tooltip.prototype = {
      *        The fade out in milliseconds. If no value is provided the value
      *        of the tooltip.hideDelay option is used. A value of 0 disables
      *        the fade out animation.
-     *
-     * @return {void}
      */
     hide: function (delay) {
         var tooltip = this;
@@ -561,6 +559,8 @@ H.Tooltip.prototype = {
              * Handle the preferred dimension. When the preferred dimension is
              * tooltip on top or bottom of the point, it will look for space
              * there.
+             *
+             * @private
              */
             firstDimension = function (
                 dim,
@@ -601,6 +601,8 @@ H.Tooltip.prototype = {
              * tooltip on top or bottom of the point, the second dimension is to
              * align the tooltip above the point, trying to align center but
              * allowing left or right align within the chart box.
+             *
+             * @private
              */
             secondDimension = function (dim, outerSize, innerSize, point) {
                 var retVal;

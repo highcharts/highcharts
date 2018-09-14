@@ -694,7 +694,13 @@ seriesProto.processData = function () {
                 groupedXData[0] < xAxis.dataMin &&
                 visible
             ) {
-                if (xAxis.min <= xAxis.dataMin) {
+                if (
+                    (
+                        !defined(xAxis.options.min) &&
+                        xAxis.min <= xAxis.dataMin
+                    ) ||
+                    xAxis.min === xAxis.dataMin
+                ) {
                     xAxis.min = groupedXData[0];
                 }
                 xAxis.dataMin = groupedXData[0];
