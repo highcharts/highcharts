@@ -25,9 +25,9 @@ var addEvent = H.addEvent,
  * @sample {highcharts} highcharts/chart/scrollable-plotarea
  *         Scrollable plot area
  *
- * @since        6.1.0
- * @product      highcharts
- * @optionparent chart.scrollablePlotArea
+ * @since     6.1.0
+ * @product   highcharts
+ * @apioption chart.scrollablePlotArea
  */
 
 /**
