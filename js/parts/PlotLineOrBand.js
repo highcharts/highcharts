@@ -71,6 +71,8 @@ H.PlotLineOrBand.prototype = {
      *
      * @private
      * @function Highcharts.PlotLineOrBand#render
+     *
+     * @return {Highcharts.PlotLineOrBand|undefined}
      */
     render: function () {
         var plotLine = this,
@@ -962,7 +964,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *        A configuration object for the plot band, as defined in
      *        {@link  https://api.highcharts.com/highcharts/xAxis.plotBands|xAxis.plotBands}.
      *
-     * @return {Highcharts.PlotLineOrBand}
+     * @return {Highcharts.PlotLineOrBand|undefined}
      *         The added plot band.
      */
     addPlotBand: function (options) {
@@ -981,7 +983,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *        A configuration object for the plot line, as defined in
      *        {@link https://api.highcharts.com/highcharts/xAxis.plotLines|xAxis.plotLines}.
      *
-     * @return {Highcharts.PlotLineOrBand}
+     * @return {Highcharts.PlotLineOrBand|undefined}
      *         The added plot line.
      */
     addPlotLine: function (options) {
@@ -1000,7 +1002,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @param {"plotBands"|"plotLines"} [coll]
      *
-     * @return {Highcharts.PlotLineOrBand}
+     * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
         var obj = new H.PlotLineOrBand(this, options).render(),
