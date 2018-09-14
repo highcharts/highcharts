@@ -4521,28 +4521,28 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *        The y position of the label's top side or baseline, depending on
      *        the `baseline` parameter.
      *
-     * @param {string} shape
+     * @param {string} [shape='rect']
      *        The shape of the label's border/background, if any. Defaults to
      *        `rect`. Other possible values are `callout` or other shapes
      *        defined in {@link Highcharts.SVGRenderer#symbols}.
      *
-     * @param {number} anchorX
+     * @param {number} [anchorX]
      *        In case the `shape` has a pointer, like a flag, this is the
      *        coordinates it should be pinned to.
      *
-     * @param {number} anchorY
+     * @param {number} [anchorY]
      *        In case the `shape` has a pointer, like a flag, this is the
      *        coordinates it should be pinned to.
      *
-     * @param {boolean} useHTML
+     * @param {boolean} [useHTML=false]
      *        Wether to use HTML to render the label.
      *
-     * @param {boolean} baseline
+     * @param {boolean} [baseline=false]
      *        Whether to position the label relative to the text baseline,
      *        like {@link Highcharts.SVGRenderer#text|renderer.text}, or to the
      *        upper border of the rectangle.
      *
-     * @param {string} className
+     * @param {string} [className]
      *        Class name for the group.
      *
      * @return {Highcharts.SVGElement}
