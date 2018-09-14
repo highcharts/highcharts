@@ -1856,8 +1856,6 @@ H.Series = H.seriesType('line', null
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
          *         Vertical and positioned
-         *
-         * @default -6
          */
         y: 0,
 
