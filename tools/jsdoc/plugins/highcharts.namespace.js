@@ -64,7 +64,9 @@ function isApiOption (doclet) {
             comment.indexOf('@product') >= 0 ||
             comment.indexOf('@apioption') >= 0 ||
             comment.indexOf('@optionparent') >= 0 ||
-            comment.indexOf('@ignore-option') >= 0
+            comment.indexOf('@ignore-option') >= 0 ||
+            doclet.kind === 'member' && doclet.children ||
+            doclet.kind === 'member' && doclet.isGlobal
         );
 
     if (isApiOption) {
