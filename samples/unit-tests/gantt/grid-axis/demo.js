@@ -680,7 +680,7 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
 QUnit.test('Horizontal axis tick labels centered', function (assert) {
     var chart,
         axes,
-        xError = 1.1,
+        xError = 1.5,
         yError = 1.1;
 
     chart = Highcharts.chart('container', {

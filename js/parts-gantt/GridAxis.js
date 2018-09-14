@@ -400,13 +400,13 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
             // we shouln't have one grid cell spanning two days.
             units: [[
                 'millisecond', // unit name
-                [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
+                [1, 10, 100]
             ], [
                 'second',
-                [1, 2, 5, 10, 15, 30]
+                [1, 10]
             ], [
                 'minute',
-                [1, 2, 5, 10, 15, 30]
+                [1, 15]
             ], [
                 'hour',
                 [1]
@@ -427,13 +427,93 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
 
         // X-axis specific options
         if (this.coll === 'xAxis') {
-            // Give the axes different default tickPixelIntervals so that
-            // (usually) the top axis shows weeks, bottom axis shows days.
-            if (!defined(gridAxisOptions.tickPixelInterval)) {
-                gridAxisOptions.tickPixelInterval =
-                    H.inArray(userOptions, this.chart.options.xAxis) === 0 ?
-                        50 :
-                        350;
+
+            // For linked axes, tickPixelInterval is used only if the
+            // tickPositioner below doesn't run or returns undefined (like
+            // multiple years)
+            if (
+                defined(userOptions.linkedTo) &&
+                !defined(userOptions.tickPixelInterval)
+            ) {
+                gridAxisOptions.tickPixelInterval = 350;
+            }
+
+            // For the secondary grid axis, use the primary axis' tick intervals
+            // and return ticks one level higher.
+            if (
+                // Check for tick pixel interval in options
+                !defined(userOptions.tickPixelInterval) &&
+
+                // Only for linked axes
+                defined(userOptions.linkedTo) &&
+
+                !defined(userOptions.tickPositioner) &&
+                !defined(userOptions.tickInterval)
+            ) {
+                gridAxisOptions.tickPositioner = function (min, max) {
+
+                    var parentInfo = (
+                        this.linkedParent &&
+                        this.linkedParent.tickPositions &&
+                        this.linkedParent.tickPositions.info
+                    );
+
+                    if (parentInfo) {
+
+                        var unitIdx,
+                            countIdx,
+                            count,
+                            unitName,
+                            i,
+                            units = gridAxisOptions.units;
+
+                        for (i = 0; i < units.length; i++) {
+                            if (units[i][0] === parentInfo.unitName) {
+                                unitIdx = i;
+                                break;
+                            }
+                        }
+
+                        // Spanning multiple years, go default
+                        if (!units[unitIdx][1]) {
+                            return;
+                        }
+
+                        for (i = 0; i < units[unitIdx][1].length; i++) {
+                            if (
+                                units[unitIdx][1][i] ===
+                                parentInfo.count
+                            ) {
+                                countIdx = i;
+                                break;
+                            }
+                        }
+
+                        // Get the next allowed count in the same unit, or the
+                        // first allowed count on the next unit.
+                        if (
+                            units[unitIdx][1][countIdx + 1] !==
+                            undefined
+                        ) {
+                            unitName = units[unitIdx][0];
+                            count = units[unitIdx][1][countIdx + 1];
+                        } else if (units[unitIdx + 1]) {
+                            unitName = units[unitIdx + 1][0];
+                            count = (units[unitIdx + 1][1] || [1])[0];
+                        }
+
+                        return this.getTimeTicks(
+                            {
+                                unitRange: H.timeUnits[unitName],
+                                count: count,
+                                unitName: unitName
+                            },
+                            min,
+                            max,
+                            this.options.startOfWeek
+                        );
+                    }
+                };
             }
 
         }
