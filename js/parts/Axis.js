@@ -2936,11 +2936,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
      *         Z-Axis with styling
      *
-     * @extends    xAxis
-     * @since      5.0.0
-     * @product    highcharts
-     * @excluding  breaks, crosshair, lineColor, lineWidth, nameToX, showEmpty
-     * @@apioption zAxis
+     * @extends   xAxis
+     * @since     5.0.0
+     * @product   highcharts
+     * @excluding breaks, crosshair, lineColor, lineWidth, nameToX, showEmpty
+     * @apioption zAxis
      */
 
     /**
