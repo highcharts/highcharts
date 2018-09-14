@@ -65,8 +65,12 @@ function isApiOption (doclet) {
             comment.indexOf('@apioption') >= 0 ||
             comment.indexOf('@optionparent') >= 0 ||
             comment.indexOf('@ignore-option') >= 0 ||
-            doclet.kind === 'member' && doclet.children ||
-            doclet.kind === 'member' && doclet.scope === 'global'
+            (!doclet.undocumented &&
+            doclet.kind === 'member' &&
+            doclet.children) ||
+            (!doclet.undocumented &&
+            doclet.kind === 'member' &&
+            doclet.scope === 'global')
         );
 
     if (isApiOption) {
@@ -1168,10 +1172,11 @@ function newDoclet (e) {
         Object.keys(doclet)
     );
 
-    if (isApiOption(doclet) ||
+    // order is important
+    if ((isUndocumented(doclet) &&
+        !isOverload(doclet)) ||
         isPrivate(doclet) ||
-        (isUndocumented(doclet) &&
-        !isOverload(doclet))
+        isApiOption(doclet)
     ) {
         return;
     }
