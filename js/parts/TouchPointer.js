@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
 import H from './Globals.js';
@@ -16,13 +17,7 @@ var charts = H.charts,
     pick = H.pick,
     Pointer = H.Pointer;
 
-/**
- * Support for touch devices
- *
- * @ignore
- * @class
- * @name Highcharts.Pointer
- */
+// Support for touch devices
 extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
     /**
@@ -31,19 +26,17 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#pinchTranslate
      *
-     * @param  {Array<*>} pinchDown
+     * @param {Array<*>} pinchDown
      *
-     * @param  {Array<*>} touches
+     * @param {Array<*>} touches
      *
-     * @param  {*} transform
+     * @param {*} transform
      *
-     * @param  {*} selectionMarker
+     * @param {*} selectionMarker
      *
-     * @param  {*} clip
+     * @param {*} clip
      *
-     * @param  {*} lastValidTouch
-     *
-     * @return {void}
+     * @param {*} lastValidTouch
      */
     pinchTranslate: function (
         pinchDown,
@@ -84,23 +77,21 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#pinchTranslateDirection
      *
-     * @param  {boolean} horiz
+     * @param {boolean} horiz
      *
-     * @param  {Array<*>} pinchDown
+     * @param {Array<*>} pinchDown
      *
-     * @param  {Array<*>} touches
+     * @param {Array<*>} touches
      *
-     * @param  {*} transform
+     * @param {*} transform
      *
-     * @param  {*} selectionMarker
+     * @param {*} selectionMarker
      *
-     * @param  {*} clip
+     * @param {*} clip
      *
-     * @param  {*} lastValidTouch
+     * @param {*} lastValidTouch
      *
-     * @param  {number|undefined} [forcedScale=1]
-     *
-     * @return {void}
+     * @param {number|undefined} [forcedScale=1]
      */
     pinchTranslateDirection: function (horiz, pinchDown, touches, transform,
             selectionMarker, clip, lastValidTouch, forcedScale) {
@@ -194,9 +185,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#pinch
      *
-     * @param  {Highcharts.PointerEvent} e
-     *
-     * @return {void}
+     * @param {Highcharts.PointerEvent} e
      */
     pinch: function (e) {
 
@@ -315,11 +304,9 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#touch
      *
-     * @param  {Highcharts.PointerEvent} e
+     * @param {Highcharts.PointerEvent} e
      *
-     * @param  {boolean} start
-     *
-     * @return {void}
+     * @param {boolean} start
      */
     touch: function (e, start) {
         var chart = this.chart,
@@ -379,9 +366,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#onContainerTouchStart
      *
-     * @param  {Highcharts.PointerEvent} e
-     *
-     * @return {void}
+     * @param {Highcharts.PointerEvent} e
      */
     onContainerTouchStart: function (e) {
         this.zoomOption(e);
@@ -392,9 +377,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#onContainerTouchMove
      *
-     * @param  {Highcharts.PointerEvent} e
-     *
-     * @return {void}
+     * @param {Highcharts.PointerEvent} e
      */
     onContainerTouchMove: function (e) {
         this.touch(e);
@@ -404,9 +387,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      * @private
      * @function Highcharts.Pointer#onDocumentTouchEnd
      *
-     * @param  {Highcharts.PointerEvent} e
-     *
-     * @return {void}
+     * @param {Highcharts.PointerEvent} e
      */
     onDocumentTouchEnd: function (e) {
         if (charts[H.hoverChartIndex]) {
