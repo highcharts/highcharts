@@ -1795,6 +1795,13 @@ function GLRenderer(postRenderCallback) {
                 }
 
                 if (x > plotWidth) {
+                    // If this is  rendered as a point, just skip drawing it
+                    // entirely, as we're not dependandt on lineTo'ing to it.
+                    // See #8197
+                    if (inst.drawMode === 'points') {
+                        continue;
+                    }
+
                     x = plotWidth;
                 }
 
