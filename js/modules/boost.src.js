@@ -1853,7 +1853,7 @@ function GLRenderer(postRenderCallback) {
 
             if (!settings.useGPUTranslations &&
                 !settings.usePreallocated &&
-                (lastX && x - lastX < cullXThreshold) &&
+                (lastX && Math.abs(x - lastX) < cullXThreshold) &&
                 (lastY && Math.abs(y - lastY) < cullYThreshold)
             ) {
                 if (settings.debug.showSkipSummary) {
