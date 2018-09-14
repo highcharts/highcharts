@@ -28,6 +28,7 @@ var deg2rad = H.deg2rad,
  * @mixin Highcharts.CenteredSeriesMixin
  */
 H.CenteredSeriesMixin = {
+
     /**
      * Get the center of the pie based on the size and center options relative
      * to the plot area. Borrowed by the polar and gauge series types.
@@ -76,6 +77,7 @@ H.CenteredSeriesMixin = {
         }
         return positions;
     },
+
     /**
      * getStartAndEndRadians - Calculates start and end angles in radians.
      * Used in series types such as pie and sunburst.
@@ -83,11 +85,11 @@ H.CenteredSeriesMixin = {
      * @private
      * @function Highcharts.CenteredSeriesMixin.getStartAndEndRadians
      *
-     * @param  {number} start
-     *         Start angle in degrees.
+     * @param {number} start
+     *        Start angle in degrees.
      *
-     * @param  {number} end
-     *         Start angle in degrees.
+     * @param {number} end
+     *        Start angle in degrees.
      *
      * @return {Highcharts.RadianAngles}
      *         Returns an object containing start and end angles as radians.
