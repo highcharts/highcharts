@@ -49,8 +49,8 @@ let allDocletPropertyNames = [],
  * @private
  * @function isApiOption
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is from a Highcharts option.
@@ -79,11 +79,11 @@ function isApiOption (doclet) {
 /**
  * Compares two light doclets for basic equality.
  *
- * @param  {JSDoclet} docletA
- *         First ligh doclet to analyze.
+ * @param {JSDoclet} docletA
+ *        First ligh doclet to analyze.
  *
- * @param  {JSDoclet} docletB
- *         Second light doclet to analyze.
+ * @param {JSDoclet} docletB
+ *        Second light doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is basically equal.
@@ -108,8 +108,8 @@ function isEqual (docletA, docletB) {
  * @private
  * @function isGlobal
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  * 
  * @return {boolean}
  *         True, if the doclet is a global member.
@@ -125,8 +125,8 @@ function isGlobal (doclet) {
  * @private
  * @function
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  *
  * @return {boolean}
  *         True, if a similar doclet has been added.
@@ -176,8 +176,8 @@ function isOverload (doclet) {
  * @private
  * @function isPrivate
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is a part of a private member tree.
@@ -206,8 +206,8 @@ function isPrivate (doclet) {
  * @private
  * @function isStatic
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is a static member.
@@ -223,8 +223,8 @@ function isStatic (doclet) {
  * @private
  * @function isUndocumented
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is undocumented.
@@ -246,8 +246,8 @@ function isUndocumented (doclet) {
  * @private
  * @function getClearName
  *
- * @param  {string} name
- *         Name to filter.
+ * @param {string} name
+ *        Name to filter.
  *
  * @return {string}
  *         Filtered name.
@@ -272,8 +272,8 @@ function getClearName (name) {
  * @private
  * @function getDescription
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {string}
  *         Description of the doclet.
@@ -321,8 +321,8 @@ function getDescription (doclet) {
  * @private
  * @function getEmits
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {Array<string>|undefined}
  *         Emitted events of the doclet.
@@ -344,8 +344,8 @@ function getFires (doclet) {
  * @private
  * @function getKind
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {string}
  *         Kind of the doclet.
@@ -361,8 +361,8 @@ function getKind (doclet) {
  * @private
  * @function getLightDoclet
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {NodeDoclet}
  *         Doclet information of the source.
@@ -419,8 +419,8 @@ function getLightDoclet (doclet) {
  * @private
  * @function getLightMeta
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {NodeMeta}
  *         Meta information of the source.
@@ -444,8 +444,8 @@ function getLightMeta (doclet) {
  * @private
  * @function getName
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {string}
  *         Full name.
@@ -490,8 +490,8 @@ function getName (doclet) {
  * @private
  * @function getNamespaces
  *
- * @param  {string} name
- *         Name with components.
+ * @param {string} name
+ *        Name with components.
  *
  * @return {Array<string>}
  *         The components of the name.
@@ -531,14 +531,14 @@ function getNamespaces (name) {
  * @private
  * @function getNodeFor
  *
- * @param  {string} name
- *         The full qualified name for the node.
+ * @param {string} name
+ *        The full qualified name for the node.
  *
- * @param  {number} [overload]
- *         Create additional node, if number of parameters has not been found.
+ * @param {number} [overload]
+ *        Create additional node, if number of parameters has not been found.
  *
- * @param  {boolean} [searchOnly]
- *         Create no nodes at all.
+ * @param {boolean} [searchOnly]
+ *        Create no nodes at all.
  *
  * @return {Node}
  *         Node in the tree.
@@ -610,8 +610,8 @@ function getNodeFor (name, overload, searchOnly) {
  * @private
  * @function getParameters
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {Dictionary<Parameter>}
  *         Parameter dictionary.
@@ -654,8 +654,8 @@ function getParameters (doclet) {
  * @private
  * @function getReturn
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {Array<string>}
  *         Possible return types.
@@ -694,8 +694,8 @@ function getReturn (doclet) {
  * @private
  * @function getTypes
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {Array<string>}
  *         Possible types.
@@ -724,11 +724,11 @@ function getTypes (doclet) {
  * @private
  * @function getUniqueArray
  *
- * @param  {Array} array1
- *         First array to merge.
+ * @param {Array} array1
+ *        First array to merge.
  *
- * @param  {Array} array2
- *         Second array to merge.
+ * @param {Array} array2
+ *        Second array to merge.
  *
  * @return {Array}
  *         Merged array.
@@ -750,8 +750,8 @@ function getUniqueArray(array1, array2) {
  * @private
  * @function filterNodes
  *
- * @param  {Node} node 
- *         Root node.
+ * @param {Node} node 
+ *        Root node.
  *
  * @return {void}
  */
@@ -761,9 +761,11 @@ function filterNodes (node) {
         return;
     }
 
-    node.children = node.children.filter(
-        child => child.doclet && Object.keys(child.doclet).length > 1
-    );
+    node.children = node.children.filter(child => (
+        child.doclet &&
+        (child.doclet.name === 'global' ||
+        Object.keys(child.doclet).length > 1)
+    ));
 
     node.children.forEach(filterNodes);
 }
@@ -774,11 +776,11 @@ function filterNodes (node) {
  * @private
  * @function updateNodeFor
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
- * @param  {number} [overload]
- *         Create additional node, if number of parameters has not been found.
+ * @param {number} [overload]
+ *        Create additional node, if number of parameters has not been found.
  *
  * @return {Node}
  *         Updated node.
@@ -851,8 +853,8 @@ function updateNodeFor (doclet, overload) {
  * @private
  * @function addClass
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -871,8 +873,8 @@ function addClass (doclet) {
  * @private
  * @function addConstructor
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -925,13 +927,29 @@ function addEvent (doclet) {
 }
 
 /**
+ * Adds the doclet as a global namespace node to the tree.
+ *
+ * @private
+ * @function addExternal
+ *
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
+ *
+ * @return {void}
+ */
+function addExternal (doclet) {
+
+    updateNodeFor(doclet);
+}
+
+/**
  * Adds the doclet as a function node to the tree.
  *
  * @private
  * @function addFunction
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -966,8 +984,8 @@ function addFunction (doclet) {
  * @private
  * @function addInterface
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -991,8 +1009,8 @@ function addInterface (doclet) {
  * @private
  * @function addMember
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -1011,8 +1029,8 @@ function addMember (doclet) {
  * @private
  * @function addNamespace
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -1032,8 +1050,8 @@ function addNamespace (doclet) {
  * @private
  * @function addTypeDef
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -1088,8 +1106,8 @@ function addTypeDef (doclet) {
  *
  * @function parseBegin
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
@@ -1115,8 +1133,8 @@ function parseBegin (e) {
  *
  * @function fileBegin
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
@@ -1134,8 +1152,8 @@ function fileBegin (e) {
  *
  * @function newDoclet
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
@@ -1174,6 +1192,9 @@ function newDoclet (e) {
         case 'event':
             addEvent(doclet);
             break;
+        case 'external':
+            addExternal(doclet);
+            break;
         case 'function':
             addFunction(doclet);
             break;
@@ -1197,8 +1218,8 @@ function newDoclet (e) {
  *
  * @function fileComplete
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
@@ -1213,8 +1234,8 @@ function fileComplete (e) {
  *
  * @function processingComplete
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
@@ -1234,8 +1255,8 @@ function processingComplete (e) {
  *
  * @function defineTags
  *
- * @param  {*} dictionary
- *         JSDoc tags dictionary.
+ * @param {*} dictionary
+ *        JSDoc tags dictionary.
  *
  * @return {void}
  */
