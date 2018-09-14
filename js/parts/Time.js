@@ -35,6 +35,7 @@
  */
 
 'use strict';
+
 import Highcharts from './Globals.js';
 
 var H = Highcharts,
@@ -142,9 +143,8 @@ Highcharts.Time.prototype = {
      *         stock/time/individual/
      *         Set the timezone per chart instance
      *
-     * @type       {*}
-     * @since      6.0.5
-     * @apioption  time
+     * @since     6.0.5
+     * @apioption time
      */
 
     /**
@@ -160,9 +160,9 @@ Highcharts.Time.prototype = {
      * @sample {highcharts} highcharts/time/useutc-false/
      *         False
      *
-     * @type       {boolean}
-     * @default    true
-     * @apioption  time.useUTC
+     * @type      {boolean}
+     * @default   true
+     * @apioption time.useUTC
      */
 
     /**
@@ -170,10 +170,10 @@ Highcharts.Time.prototype = {
      * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
      * handle Jalali dates.
      *
-     * @type       {*}
-     * @since      4.0.4
-     * @product    highcharts highstock
-     * @apioption  time.Date
+     * @type      {*}
+     * @since     4.0.4
+     * @product   highcharts highstock
+     * @apioption time.Date
      */
 
     /**
@@ -188,10 +188,10 @@ Highcharts.Time.prototype = {
      * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
      *         Use moment.js to draw Oslo time regardless of browser locale
      *
-     * @type       {Function}
-     * @since      4.1.0
-     * @product    highcharts highstock
-     * @apioption  time.getTimezoneOffset
+     * @type      {Function}
+     * @since     4.1.0
+     * @product   highcharts highstock
+     * @apioption time.getTimezoneOffset
      */
 
     /**
@@ -207,10 +207,10 @@ Highcharts.Time.prototype = {
      * @sample {highcharts|highstock} highcharts/time/timezone/
      *         Europe/Oslo
      *
-     * @type       {string}
-     * @since      5.0.7
-     * @product    highcharts highstock
-     * @apioption  time.timezone
+     * @type      {string}
+     * @since     5.0.7
+     * @product   highcharts highstock
+     * @apioption time.timezone
      */
 
     /**
@@ -224,11 +224,11 @@ Highcharts.Time.prototype = {
      * @sample {highcharts|highstock} highcharts/time/timezoneoffset/
      *         Timezone offset
      *
-     * @type       {number}
-     * @default    0
-     * @since      3.0.8
-     * @product    highcharts highstock
-     * @apioption  time.timezoneOffset
+     * @type      {number}
+     * @default   0
+     * @since     3.0.8
+     * @product   highcharts highstock
+     * @apioption time.timezoneOffset
      */
 
     defaultOptions: {},
@@ -241,9 +241,7 @@ Highcharts.Time.prototype = {
      * @private
      * @function Highcharts.Time#update
      *
-     * @param  {Highcharts.TimeOptions} options
-     *
-     * @return {void}
+     * @param {Highcharts.TimeOptions} options
      */
     update: function (options) {
         var useUTC = pick(options && options.useUTC, true),
@@ -263,8 +261,8 @@ Highcharts.Time.prototype = {
          *
          * @function Highcharts.Time#getTimezoneOffset
          *
-         * @param  {number} timestamp
-         *         The JavaScript timestamp to inspect.
+         * @param {number} timestamp
+         *        The JavaScript timestamp to inspect.
          *
          * @return {number}
          *         The timezone offset in minutes compared to UTC.
@@ -359,23 +357,23 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#makeTime
      *
-     * @param  {number} year
-     *         The year
+     * @param {number} year
+     *        The year
      *
-     * @param  {number} month
-     *         The month. Zero-based, so January is 0.
+     * @param {number} month
+     *        The month. Zero-based, so January is 0.
      *
-     * @param  {number|undefined} [date=1]
-     *         The day of the month
+     * @param {number|undefined} [date=1]
+     *        The day of the month
      *
-     * @param  {number|undefined} [hours=0]
-     *         The hour of the day, 0-23.
+     * @param {number|undefined} [hours=0]
+     *        The hour of the day, 0-23.
      *
-     * @param  {number|undefined} [minutes=0]
-     *         The minutes
+     * @param {number|undefined} [minutes=0]
+     *        The minutes
      *
-     * @param  {number|undefined} [seconds=0]
-     *         The seconds
+     * @param {number|undefined} [seconds=0]
+     *        The seconds
      *
      * @return {number}
      *         The time in milliseconds since January 1st 1970.
@@ -477,11 +475,11 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#dateFormat
      *
-     * @param  {number} timestamp
-     *         The JavaScript timestamp.
+     * @param {number} timestamp
+     *        The JavaScript timestamp.
      *
-     * @param  {boolean|undefined} [capitalize=false]
-     *         Upper case first letter in the return.
+     * @param {boolean|undefined} [capitalize=false]
+     *        Upper case first letter in the return.
      *
      * @return {string}
      *         The formatted date.
@@ -489,15 +487,15 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#dateFormat
      *
-     * @param  {string} format
-     *         The desired format where various time representations are
-     *         prefixed with %.
+     * @param {string} format
+     *        The desired format where various time representations are
+     *        prefixed with %.
      *
-     * @param  {number} timestamp
-     *         The JavaScript timestamp.
+     * @param {number} timestamp
+     *        The JavaScript timestamp.
      *
-     * @param  {boolean|undefined} [capitalize=false]
-     *         Upper case first letter in the return.
+     * @param {boolean|undefined} [capitalize=false]
+     *        Upper case first letter in the return.
      *
      * @return {string}
      *         The formatted date.
@@ -621,16 +619,16 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#getTimeTicks
      *
-     * @param  {Highcharts.NormalizedIntervalObject} normalizedInterval
-     *         The interval in axis values (ms) and the count
+     * @param {Highcharts.NormalizedIntervalObject} normalizedInterval
+     *        The interval in axis values (ms) and the count
      *
-     * @param  {number|undefined} [min]
-     *         The minimum in axis values
+     * @param {number|undefined} [min]
+     *        The minimum in axis values
      *
-     * @param  {number|undefined} [max]
-     *         The maximum in axis values
+     * @param {number|undefined} [max]
+     *        The maximum in axis values
      *
-     * @param  {number|undefined} [startOfWeek=1]
+     * @param {number|undefined} [startOfWeek=1]
      *
      * @return {Highcharts.TimeTicksObject}
      */
