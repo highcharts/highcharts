@@ -66,7 +66,7 @@ function isApiOption (doclet) {
             comment.indexOf('@optionparent') >= 0 ||
             comment.indexOf('@ignore-option') >= 0 ||
             doclet.kind === 'member' && doclet.children ||
-            doclet.kind === 'member' && doclet.isGlobal
+            doclet.kind === 'member' && doclet.global
         );
 
     if (isApiOption) {
