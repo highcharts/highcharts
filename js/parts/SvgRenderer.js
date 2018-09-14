@@ -4534,10 +4534,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *        In case the `shape` has a pointer, like a flag, this is the
      *        coordinates it should be pinned to.
      *
+     * @param {boolean} useHTML
+     *        Wether to use HTML to render the label.
+     *
      * @param {boolean} baseline
-     *        Whether to position the label relative to the text baseline, like
-     *        {@link Highcharts.SVGRenderer#text|renderer.text}, or to the upper
-     *        border of the rectangle.
+     *        Whether to position the label relative to the text baseline,
+     *        like {@link Highcharts.SVGRenderer#text|renderer.text}, or to the
+     *        upper border of the rectangle.
      *
      * @param {string} className
      *        Class name for the group.
