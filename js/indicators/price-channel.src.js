@@ -39,7 +39,6 @@ H.seriesType('pc', 'bb',
                  * [plotOptions.pc.color](#plotOptions.pc.color).
                  *
                  * @type {String}
-                 * @since 7.0.0
                  * @product highstock
                  */
                 lineColor: '${palette.colors}'.split(' ')[2]
@@ -52,7 +51,6 @@ H.seriesType('pc', 'bb',
                  * [plotOptions.pc.color](#plotOptions.pc.color).
                  *
                  * @type {String}
-                 * @since 7.0.0
                  * @product highstock
                  */
                 lineColor: '${palette.colors}'.split(' ')[8]

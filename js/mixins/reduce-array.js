@@ -20,7 +20,7 @@ var reduceArrayMixin = {
     minInArray: function (arr, index) {
         return reduce(arr, function (min, target) {
             return Math.min(min, target[index]);
-        }, Infinity);
+        }, Number.MAX_VALUE);
     },
     /**
      * Get max value of array filled by OHLC data.
@@ -31,7 +31,7 @@ var reduceArrayMixin = {
     maxInArray: function (arr, index) {
         return reduce(arr, function (min, target) {
             return Math.max(min, target[index]);
-        }, 0);
+        }, -Number.MAX_VALUE);
     },
     /**
      * Get extremes of array filled by OHLC data.
@@ -46,7 +46,7 @@ var reduceArrayMixin = {
                 Math.min(prev[0], target[minIndex]),
                 Math.max(prev[1], target[maxIndex])
             ];
-        }, [Infinity, 0]);
+        }, [Number.MAX_VALUE, -Number.MAX_VALUE]);
     }
 };
 export default reduceArrayMixin;
