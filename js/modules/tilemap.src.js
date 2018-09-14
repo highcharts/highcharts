@@ -8,6 +8,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts-map/HeatmapSeries.js';
 
@@ -28,10 +29,22 @@ var seriesType = H.seriesType,
         };
     };
 
-// Map of shape types
+/**
+ * Map of shape types.
+ *
+ * @private
+ * @name Highcharts.tileShapeTypes
+ * @type {*}
+ */
 H.tileShapeTypes = {
 
-    /** Hexagon shape type **/
+    /**
+     * Hexagon shape type.
+     *
+     * @private
+     * @name Highcharts.tileShapeTypes.hexagon
+     * @type {*}
+     */
     hexagon: {
         alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
         getSeriesPadding: function (series) {
@@ -163,7 +176,13 @@ H.tileShapeTypes = {
     },
 
 
-    /** Diamond shape type **/
+    /**
+     * Diamond shape type.
+     *
+     * @private
+     * @name Highcharts.tileShapeTypes.diamond
+     * @type {*}
+     */
     diamond: {
         alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
         getSeriesPadding: function (series) {
@@ -280,7 +299,13 @@ H.tileShapeTypes = {
     },
 
 
-    /** Circle shape type **/
+    /**
+     * Circle shape type.
+     *
+     * @private
+     * @name Highcharts.tileShapeTypes.circle
+     * @type {*}
+     */
     circle: {
         alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
         getSeriesPadding: function (series) {
@@ -410,7 +435,13 @@ H.tileShapeTypes = {
     },
 
 
-    /** Square shape type **/
+    /**
+     * Square shape type.
+     *
+     * @private
+     * @name Highcharts.tileShapeTypes.square
+     * @type {*}
+     */
     square: {
         alignDataLabel: H.seriesTypes.heatmap.prototype.alignDataLabel,
         translate: H.seriesTypes.heatmap.prototype.translate,
@@ -456,6 +487,14 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
     }
 });
 
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.tilemap
+ *
+ * @augments Highcharts.Series
+ */
+seriesType('tilemap', 'heatmap'
 
 /**
  * A tilemap series is a type of heatmap where the tile shapes are configurable.
@@ -473,23 +512,28 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
  * @sample maps/demo/diamondmap
  *         Diamondmap tilemap
  *
- * @extends    plotOptions.heatmap
- * @since      6.0.0
- * @excluding  joinBy, shadow, allAreas, mapData, data
- * @product    highcharts highmaps
- * @apioption  plotOptions.tilemap
- *
+ * @extends      plotOptions.heatmap
+ * @since        6.0.0
+ * @excluding    joinBy, shadow, allAreas, mapData, data
+ * @product      highcharts highmaps
  * @optionparent plotOptions.tilemap
  */
-seriesType('tilemap', 'heatmap', {
-// Default options
+, { // Default options
+
     states: {
+
         hover: {
+
             halo: {
+
                 enabled: true,
+
                 size: 2,
+
                 opacity: 0.5,
+
                 attributes: {
+
                     zIndex: 3
                 }
             }
@@ -499,11 +543,8 @@ seriesType('tilemap', 'heatmap', {
     /**
      * The padding between points in the tilemap.
      *
-     * @sample maps/plotoptions/tilemap-pointpadding Point padding on tiles
-     *
-     * @type       {number}
-     * @default    2
-     * @apioption  plotOptions.tilemap.pointPadding
+     * @sample maps/plotoptions/tilemap-pointpadding
+     *         Point padding on tiles
      */
     pointPadding: 2,
 
@@ -516,10 +557,10 @@ seriesType('tilemap', 'heatmap', {
      * @sample {highmaps} maps/demo/heatmap/
      *         One day
      *
-     * @type       {number}
-     * @default    1
-     * @product    highcharts highmaps
-     * @apioption  plotOptions.tilemap.colsize
+     * @type      {number}
+     * @default   1
+     * @product   highcharts highmaps
+     * @apioption plotOptions.tilemap.colsize
      */
 
     /**
@@ -531,10 +572,10 @@ seriesType('tilemap', 'heatmap', {
      * @sample {highmaps} maps/demo/heatmap/
      *         1 by default
      *
-     * @type       {number}
-     * @default    1
-     * @product    highcharts highmaps
-     * @apioption  plotOptions.tilemap.rowsize
+     * @type      {number}
+     * @default   1
+     * @product   highcharts highmaps
+     * @apioption plotOptions.tilemap.rowsize
      */
 
     /**
@@ -546,15 +587,11 @@ seriesType('tilemap', 'heatmap', {
      * @sample maps/demo/diamondmap
      *         Diamond tile shapes
      *
-     * @type       {string}
-     * @default    hexagon
      * @validvalue ["circle", "diamond", "hexagon", "square"]
-     * @apioption  plotOptions.tilemap.tileShape
      */
     tileShape: 'hexagon'
 
-// Prototype functions
-}, {
+}, { // Prototype functions
 
     /**
      * Set tile shape object on series
@@ -594,7 +631,7 @@ seriesType('tilemap', 'heatmap', {
      * @private
      * @function Highcharts.seriesTypes.tilemap#getSeriesPixelPadding
      *
-     * @param  {Highcharts.Axis} axis
+     * @param {Highcharts.Axis} axis
      *
      * @return {*}
      */
@@ -647,8 +684,6 @@ seriesType('tilemap', 'heatmap', {
      *
      * @private
      * @function Highcharts.seriesTypes.tilemap#translate
-     *
-     * @return {void}
      */
     translate: function () {
         return this.tileShape.translate.apply(this,
@@ -668,12 +703,11 @@ seriesType('tilemap', 'heatmap', {
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.tilemap
- * @excluding  allAreas, dataParser, dataURL, joinBy, mapData, marker,
- *             pointRange, shadow, stack
- * @product    highcharts highmaps
- * @apioption  series.tilemap
+ * @extends   series,plotOptions.tilemap
+ * @excluding allAreas, dataParser, dataURL, joinBy, mapData, marker,
+ *            pointRange, shadow, stack
+ * @product   highcharts highmaps
+ * @apioption series.tilemap
  */
 
 /**
@@ -733,11 +767,11 @@ seriesType('tilemap', 'heatmap', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type       {Array<Array<number>|*>}
- * @extends    series.heatmap.data
- * @excluding  marker
- * @product    highcharts highmaps
- * @apioption  series.tilemap.data
+ * @type      {Array<Array<number>|*>}
+ * @extends   series.heatmap.data
+ * @excluding marker
+ * @product   highcharts highmaps
+ * @apioption series.tilemap.data
  */
 
 /**
@@ -745,9 +779,9 @@ seriesType('tilemap', 'heatmap', {
  * explicitly, as we use the color to denote the `value`. Options for
  * this are set in the [colorAxis](#colorAxis) configuration.
  *
- * @type       {Highcharts.ColorString}
- * @product    highcharts highmaps
- * @apioption  series.tilemap.data.color
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts highmaps
+ * @apioption series.tilemap.data.color
  */
 
 /**
@@ -759,9 +793,9 @@ seriesType('tilemap', 'heatmap', {
  * @sample maps/series/tilemap-gridoffset
  *         Offset grid coordinates
  *
- * @type       {number}
- * @product    highcharts highmaps
- * @apioption  series.tilemap.data.x
+ * @type      {number}
+ * @product   highcharts highmaps
+ * @apioption series.tilemap.data.x
  */
 
 /**
@@ -773,7 +807,7 @@ seriesType('tilemap', 'heatmap', {
  * @sample maps/series/tilemap-gridoffset
  *         Offset grid coordinates
  *
- * @type       {number}
- * @product    highcharts highmaps
- * @apioption  series.tilemap.data.y
+ * @type      {number}
+ * @product   highcharts highmaps
+ * @apioption series.tilemap.data.y
  */
