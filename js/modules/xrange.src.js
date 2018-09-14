@@ -7,6 +7,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
@@ -25,6 +26,15 @@ var addEvent = H.addEvent,
     Series = H.Series;
 
 /**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.xrange
+ *
+ * @augments Highcharts.Series
+ */
+seriesType('xrange', 'column'
+
+/**
  * The X-range series displays ranges on the X axis, typically time intervals
  * with a start and end date.
  *
@@ -35,60 +45,57 @@ var addEvent = H.addEvent,
  * @sample {highcharts} highcharts/chart/inverted-xrange/
  *         Inverted X-range
  *
- * @extends       plotOptions.column
- * @since         6.0.0
- * @excluding     boostThreshold, crisp, cropThreshold, depth, edgeColor,
- *                edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
- *                groupPadding, negativeColor, pointInterval, pointIntervalUnit,
- *                pointPlacement, pointRange, pointStart, softThreshold,
- *                stacking, threshold, data
- * @product       highcharts highstock
- * @optionparent  plotOptions.xrange
+ * @extends      plotOptions.column
+ * @since        6.0.0
+ * @excluding    boostThreshold, crisp, cropThreshold, depth, edgeColor,
+ *               edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
+ *               groupPadding, negativeColor, pointInterval, pointIntervalUnit,
+ *               pointPlacement, pointRange, pointStart, softThreshold,
+ *               stacking, threshold, data
+ * @product      highcharts highstock
+ * @optionparent plotOptions.xrange
  */
-seriesType('xrange', 'column', {
+, {
 
     /**
      * A partial fill for each point, typically used to visualize how much of
      * a task is performed. The partial fill object can be set either on series
      * or point level.
      *
-     * @sample    {highcharts} highcharts/demo/x-range
-     *            X-range with partial fill
+     * @sample {highcharts} highcharts/demo/x-range
+     *         X-range with partial fill
      *
-     * @type       {*}
-     * @product    highcharts highstock
-     * @apioption  plotOptions.xrange.partialFill
+     * @product   highcharts highstock
+     * @apioption plotOptions.xrange.partialFill
      */
 
     /**
      * The fill color to be used for partial fills. Defaults to a darker shade
      * of the point color.
      *
-     * @type       {Highcharts.ColorString}
-     * @product    highcharts highstock
-     * @apioption  plotOptions.xrange.partialFill.fill
+     * @type      {Highcharts.ColorString}
+     * @product   highcharts highstock
+     * @apioption plotOptions.xrange.partialFill.fill
      */
 
     /**
      * In an X-range series, this option makes all points of the same Y-axis
      * category the same color.
-     *
-     * @type       {boolean}
-     * @default    true
-     * @apioption  plotOptions.xrange.colorByPoint
      */
     colorByPoint: true,
 
     dataLabels: {
+
         verticalAlign: 'middle',
+
         inside: true,
+
         /**
          * The default formatter for X-range data labels displays the percentage
          * of the partial fill amount.
          *
-         * @type       {Function}
+         * @type       {Highcharts.FormatterCallbackFunction}
          * @default    function () { return (amount * 100) + '%'; }
-         * @apioption  plotOptions.xrange.dataLabels.formatter
          */
         formatter: function () {
             var point = this.point,
@@ -102,11 +109,16 @@ seriesType('xrange', 'column', {
             return (amount * 100) + '%';
         }
     },
+
     tooltip: {
+
         headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
+
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
     },
+
     borderRadius: 3,
+
     pointRange: 0
 
 }, {
@@ -153,15 +165,15 @@ seriesType('xrange', 'column', {
      * @private
      * @function Highcharts.seriesTypes.xrange#cropData
      *
-     * @param  {Array<number>} xData
+     * @param {Array<number>} xData
      *
-     * @param  {Array<number>} yData
+     * @param {Array<number>} yData
      *
-     * @param  {number} min
+     * @param {number} min
      *
-     * @param  {number} max
+     * @param {number} max
      *
-     * @param  {number|undefined} [cropShoulder]
+     * @param {number|undefined} [cropShoulder]
      *
      * @return {*}
      */
@@ -181,9 +193,7 @@ seriesType('xrange', 'column', {
      * @private
      * @function Highcharts.seriesTypes.xrange#translatePoint
      *
-     * @param  {Highcharts.Point} point
-     *
-     * @return {void}
+     * @param {Highcharts.Point} point
      */
     translatePoint: function (point) {
         var series = this,
@@ -282,8 +292,6 @@ seriesType('xrange', 'column', {
     /**
      * @private
      * @function Highcharts.seriesTypes.xrange#translate
-     *
-     * @return {void}
      */
     translate: function () {
         columnType.prototype.translate.apply(this, arguments);
@@ -300,13 +308,11 @@ seriesType('xrange', 'column', {
      *
      * @function Highcharts.seriesTypes.xrange#drawPoint
      *
-     * @param  {Highcharts.Point} point
-     *         An instance of Point in the series.
+     * @param {Highcharts.Point} point
+     *        An instance of Point in the series.
      *
-     * @param  {"animate"|"attr"} verb
-     *         'animate' (animates changes) or 'attr' (sets options)
-     *
-     * @return {void}
+     * @param {"animate"|"attr"} verb
+     *        'animate' (animates changes) or 'attr' (sets options)
      */
     drawPoint: function (point, verb) {
         var series = this,
@@ -404,8 +410,6 @@ seriesType('xrange', 'column', {
     /**
      * @private
      * @function Highcharts.seriesTypes.xrange#drawPoints
-     *
-     * @return {void}
      */
     drawPoints: function () {
         var series = this,
@@ -436,7 +440,7 @@ seriesType('xrange', 'column', {
      * Override to remove stroke from points.
      * For partial fill.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.xrange#pointAttribs
      *
      * @return {any}
@@ -492,8 +496,6 @@ seriesType('xrange', 'column', {
     /**
      * @private
      * @function Highcharts.seriesTypes.xrange#setState
-     *
-     * @return {void}
      */
     setState: function () {
         Point.prototype.setState.apply(this, arguments);
@@ -531,9 +533,7 @@ seriesType('xrange', 'column', {
     }
 });
 
-/**
- * Max x2 should be considered in xAxis extremes
- */
+// Max x2 should be considered in xAxis extremes
 addEvent(Axis, 'afterGetSeriesExtremes', function () {
     var axis = this,
         axisSeries = axis.series,
@@ -563,15 +563,13 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * An `xrange` series. If the [type](#series.xrange.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.xrange
- * @excluding  boostThreshold, crisp, cropThreshold, depth, edgeColor,
- *             edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
- *             groupPadding, negativeColor, pointInterval, pointIntervalUnit,
- *             pointPlacement, pointRange, pointStart, softThreshold, stacking,
- *             threshold
- * @product    highcharts highstock
- * @apioption  series.xrange
+ * @extends   series,plotOptions.xrange
+ * @excluding boostThreshold, crisp, cropThreshold, depth, edgeColor, edgeWidth,
+ *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
+ *            negativeColor, pointInterval, pointIntervalUnit, pointPlacement,
+ *            pointRange, pointStart, softThreshold, stacking, threshold
+ * @product   highcharts highstock
+ * @apioption series.xrange
  */
 
 /**
@@ -608,10 +606,10 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type        {Array<number|Array<number>|*>}
- * @extends     series.line.data
- * @product     highcharts highstock
- * @apioption   series.xrange.data
+ * @type      {Array<number|Array<number>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
+ * @apioption series.xrange.data
  */
 
 /**
@@ -620,9 +618,9 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * @sample {highcharts} highcharts/demo/x-range
  *         X-range
  *
- * @type       {number}
- * @product    highcharts highstock
- * @apioption  series.xrange.data.x2
+ * @type      {number}
+ * @product   highcharts highstock
+ * @apioption series.xrange.data.x2
  */
 
 /**
@@ -633,25 +631,24 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * @sample {highcharts} highcharts/demo/x-range
  *         X-range with partial fill
  *
- * @type       {*}
- * @product    highcharts highstock
- * @apioption  series.xrange.data.partialFill
+ * @product   highcharts highstock
+ * @apioption series.xrange.data.partialFill
  */
 
 /**
  * The amount of the X-range point to be filled. Values can be 0-1 and are
  * converted to percentages in the default data label formatter.
  *
- * @type       {number}
- * @product    highcharts highstock
- * @apioption  series.xrange.data.partialFill.amount
+ * @type      {number}
+ * @product   highcharts highstock
+ * @apioption series.xrange.data.partialFill.amount
  */
 
 /**
  * The fill color to be used for partial fills. Defaults to a darker shade
  * of the point color.
  *
- * @type       {Highcharts.ColorString}
- * @product    highcharts highstock
- * @apioption  series.xrange.data.partialFill.fill
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts highstock
+ * @apioption series.xrange.data.partialFill.fill
  */
