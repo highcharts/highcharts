@@ -7,6 +7,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 
 var each = H.each,
@@ -16,40 +17,37 @@ var each = H.each,
  * The vector series class.
  *
  * @private
- * @constructor
- * @name     Highcharts.seriesTypes.vector
+ * @class
+ * @name Highcharts.seriesTypes.vector
+ *
  * @augments Highcharts.seriesTypes.scatter
  */
-seriesType('vector', 'scatter', {
+seriesType('vector', 'scatter'
 
-    /**
-     * A vector plot is a type of cartesian chart where each point has an X and
-     * Y position, a length and a direction. Vectors are drawn as arrows.
-     *
-     * @sample {highcharts|highstock} highcharts/demo/vector-plot/
-     *         Vector pot
-     *
-     * @extends    plotOptions.scatter
-     * @since      6.0.0
-     * @excluding  boostThreshold, marker, connectEnds, connectNulls,
-     *             cropThreshold, dashStyle, gapSize, gapUnit, dataGrouping,
-     *             linecap, shadow, stacking, step
-     * @product    highcharts highstock
-     * @apioption  plotOptions.vector
-     */
+/**
+ * A vector plot is a type of cartesian chart where each point has an X and Y
+ * position, a length and a direction. Vectors are drawn as arrows.
+ *
+ * @sample {highcharts|highstock} highcharts/demo/vector-plot/
+ *         Vector pot
+ *
+ * @extends      plotOptions.scatter
+ * @since        6.0.0
+ * @excluding    boostThreshold, marker, connectEnds, connectNulls,
+ *               cropThreshold, dashStyle, gapSize, gapUnit, dataGrouping,
+ *               linecap, shadow, stacking, step
+ * @product      highcharts highstock
+ * @optionparent plotOptions.vector
+ */
+, {
 
     /**
      * The line width for each vector arrow.
-     *
-     * @default    2
-     * @apioption  plotOptions.vector.lineWidth
      */
     lineWidth: 2,
 
     /**
      * @ignore
-     * @default    null
-     * @apioption  plotOptions.vector.marker
      */
     marker: null,
 
@@ -62,41 +60,25 @@ seriesType('vector', 'scatter', {
      * @sample highcharts/plotoptions/vector-rotationorigin-start/
      *         Rotate from start
      *
-     * @default    center
      * @validvalue ["start", "center", "end"]
-     * @apioption  plotOptions.vector.rotationOrigin
      */
     rotationOrigin: 'center',
 
-    /**
-     * @apioption  plotOptions.vector.states
-     */
     states: {
 
-        /**
-         * @apioption plotOptions.vector.states.hover
-         */
         hover: {
 
             /**
              * Additonal line width for the vector errors when they are hovered.
-             *
-             * @type      {number}
-             * @default   1
-             * @apioption plotOptions.vector.states.hover.lineWidthPlus
              */
             lineWidthPlus: 1
         }
     },
 
-    /**
-     * @apioption  plotOptions.vector.tooltip
-     */
     tooltip: {
 
         /**
-         * @default    [{point.x}, {point.y}] Length: {point.length} Direction: {point.direction}°
-         * @apioption  plotOptions.vector.tooltip.pointFormat
+         * @default [{point.x}, {point.y}] Length: {point.length} Direction: {point.direction}°
          */
         pointFormat: '<b>[{point.x}, {point.y}]</b><br/>Length: <b>{point.length}</b><br/>Direction: <b>{point.direction}\u00B0</b><br/>'
     },
@@ -104,10 +86,6 @@ seriesType('vector', 'scatter', {
     /**
      * Maximum length of the arrows in the vector plot. The individual arrow
      * length is computed between 0 and this value.
-     *
-     * @type       {number}
-     * @default    20
-     * @apioption  plotOptions.vector.vectorLength
      */
     vectorLength: 20
 
@@ -121,9 +99,9 @@ seriesType('vector', 'scatter', {
      * @private
      * @function Highcharts.seriesTypes.vector#pointAttribs
      *
-     * @param  {Highcharts.Point} point
+     * @param {Highcharts.Point} point
      *
-     * @param  {string} state
+     * @param {string} state
      *
      * @return {*}
      */
@@ -146,16 +124,12 @@ seriesType('vector', 'scatter', {
     },
 
     /**
-     * @ignore
-     * @deprecated
      * @private
      * @function Highcharts.seriesTypes.vector#markerAttribs
      */
     markerAttribs: H.noop,
 
     /**
-     * @ignore
-     * @deprecated
      * @private
      * @function Highcharts.seriesTypes.vector#getSymbol
      */
@@ -168,7 +142,7 @@ seriesType('vector', 'scatter', {
      * @private
      * @function Highcharts.seriesTypes.vector#arrow
      *
-     * @param  {Highcharts.Point} point
+     * @param {Highcharts.Point} point
      *
      * @return {Highcharts.SVGPathArray}
      */
@@ -199,8 +173,6 @@ seriesType('vector', 'scatter', {
     /**
      * @private
      * @function Highcharts.seriesTypes.vector#translate
-     *
-     * @return {void}
      */
     translate: function () {
         H.Series.prototype.translate.call(this);
@@ -211,8 +183,6 @@ seriesType('vector', 'scatter', {
     /**
      * @private
      * @function Highcharts.seriesTypes.vector#drawPoints
-     *
-     * @return {void}
      */
     drawPoints: function () {
 
@@ -246,8 +216,6 @@ seriesType('vector', 'scatter', {
     },
 
     /**
-     * @ignore
-     * @deprecated
      * @private
      * @function Highcharts.seriesTypes.vector#drawGraph
      */
@@ -287,9 +255,7 @@ seriesType('vector', 'scatter', {
      * @private
      * @function Highcharts.seriesTypes.vector#animate
      *
-     * @param  {boolean} [init]
-     *
-     * @return {void}
+     * @param {boolean} [init]
      */
     animate: function (init) {
         if (init) {
@@ -311,10 +277,9 @@ seriesType('vector', 'scatter', {
  * A `vector` series. If the [type](#series.vector.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.vector
+ * @extends   series,plotOptions.vector
  * @excluding dataParser,dataURL
- * @product highcharts highstock
+ * @product   highcharts highstock
  * @apioption series.vector
  */
 
@@ -365,25 +330,25 @@ seriesType('vector', 'scatter', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type       {Array<number|Array<number>|*>}
- * @extends    series.line.data
- * @product    highcharts highstock
- * @apioption  series.vector.data
+ * @type      {Array<number|Array<number>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
+ * @apioption series.vector.data
  */
 
 /**
  * The length of the vector. The rendered length will relate to the
  * `vectorLength` setting.
  *
- * @type       {number}
- * @product    highcharts highstock
- * @apioption  series.vector.data.length
+ * @type      {number}
+ * @product   highcharts highstock
+ * @apioption series.vector.data.length
  */
 
 /**
  * The vector direction in degrees, where 0 is north (pointing towards south).
  *
- * @type       {number}
- * @product    highcharts highstock
- * @apioption  series.vector.data.direction
+ * @type      {number}
+ * @product   highcharts highstock
+ * @apioption series.vector.data.direction
  */
