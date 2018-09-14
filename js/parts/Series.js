@@ -18,22 +18,6 @@
  * @property {number} scaleY
  */
 
-/**
- * Style options for the shadow of a series.
- *
- * @typedef {object} Highcharts.SeriesShadowOptions
- *
- * @property {Highcharts.ColorString} color
- *
- * @property {number} offsetX
- *
- * @property {number} offsetY
- *
- * @property {number} opacity
- *
- * @property {number} width
- */
-
 'use strict';
 
 import H from './Globals.js';
@@ -677,7 +661,7 @@ H.Series = H.seriesType('line', null
      * @sample {highcharts} highcharts/plotoptions/series-shadow/
      *         Shadow enabled
      *
-     * @type      {boolean|Highcharts.SeriesShadowOptions}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @apioption plotOptions.series.shadow
      */
