@@ -39,7 +39,6 @@ H.seriesType('bb', 'sma',
      * @optionparent plotOptions.bb
      */
     {
-        name: 'BB (20, 2)',
         params: {
             period: 20,
             /**
