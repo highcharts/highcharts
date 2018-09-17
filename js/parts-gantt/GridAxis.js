@@ -378,9 +378,18 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
         // user option is set, it takes presedence.
         gridAxisOptions = merge(true, {
             dateTimeLabelFormats: {
-                day: ['%E'],
-                week: ['Week %W', null, null, 'W%W'],
-                month: ['%b']
+                hour: {
+                    list: ['%H:%M', '%H']
+                },
+                day: {
+                    list: ['%A, %e. %B', '%a, %e. %b', '%E']
+                },
+                week: {
+                    list: ['Week %W', 'W%W']
+                },
+                month: {
+                    list: ['%B', '%b', '%o']
+                }
             },
 
             grid: {

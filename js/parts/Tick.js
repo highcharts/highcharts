@@ -78,7 +78,7 @@ H.Tick.prototype = {
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
         if (axis.isDatetimeAxis && tickPositionInfo) {
-            dateTimeLabelFormats = H.splat(
+            dateTimeLabelFormats = chart.time.resolveDTLFormat(
                 options.dateTimeLabelFormats[
                     (
                         !options.grid &&
@@ -87,14 +87,14 @@ H.Tick.prototype = {
                     tickPositionInfo.unitName
                 ]
             );
-            dateTimeLabelFormat = dateTimeLabelFormats[0];
+            dateTimeLabelFormat = dateTimeLabelFormats.main;
         }
         // set properties for access in render method
         tick.isFirst = isFirst;
         tick.isLast = isLast;
 
-        // get the string
-        str = axis.labelFormatter.call({
+        // Get the string
+        tick.formatCtx = {
             axis: axis,
             chart: chart,
             isFirst: isFirst,
@@ -104,7 +104,8 @@ H.Tick.prototype = {
             tickPositionInfo: tickPositionInfo,
             value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
             pos: pos
-        });
+        };
+        str = axis.labelFormatter.call(tick.formatCtx);
 
         // first call
         if (!defined(label)) {

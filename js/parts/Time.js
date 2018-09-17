@@ -534,6 +534,24 @@ Highcharts.Time.prototype = {
     },
 
     /**
+     * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
+     * an object.
+     * @param  {String|Array|Object} f General format description
+     * @return {Object}   The object definition
+     */
+    resolveDTLFormat: function (f) {
+        if (!H.isObject(f, true)) {
+            f = H.splat(f);
+            return {
+                main: f[0],
+                from: f[1],
+                to: f[2]
+            };
+        }
+        return f;
+    },
+
+    /**
      * Return an array with time positions distributed on round time values
      * right and right after min and max. Used in datetime axes as well as for
      * grouping data on a datetime axis.

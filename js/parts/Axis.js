@@ -368,14 +368,46 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @product highcharts highstock
          */
         dateTimeLabelFormats: {
-            millisecond: ['%H:%M:%S.%L', '%H:%M:%S.%L', '-%L'],
-            second: ['%H:%M:%S', '%H:%M:%S', '-%S'],
-            minute: ['%H:%M', '%H:%M', '-%M'],
-            hour: ['%H:%M', '%H:%M', '-%H:%M'],
-            day: ['%e. %b', '%e.', '-%e. %b'],
-            week: ['%e. %b', '%e.', '-%e. %b'],
-            month: ['%b \'%y', '%b', '-%b \'%y'],
-            year: ['%Y', '%Y', '-%y']
+            millisecond: {
+                main: '%H:%M:%S.%L',
+                from: '%H:%M:%S.%L',
+                to: '-%L'
+            },
+            second: {
+                main: '%H:%M:%S',
+                from: '%H:%M:%S',
+                to: '-%S'
+            },
+            minute: {
+                main: '%H:%M',
+                from: '%H:%M',
+                to: '-%M'
+            },
+            hour: {
+                main: '%H:%M',
+                from: '%H:%M',
+                to: '-%H:%M'
+            },
+            day: {
+                main: '%e. %b',
+                from: '%e.',
+                to: '-%e %b'
+            },
+            week: {
+                main: '%e. %b',
+                from: '%e.',
+                to: '-%e. %b'
+            },
+            month: {
+                main: '%b \'%y',
+                from: '%b',
+                to: '-%b \'%y'
+            },
+            year: {
+                main: '%Y',
+                from: '%Y',
+                to: '-%y'
+            }
         },
 
         /**
@@ -2179,12 +2211,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 axis.options.labels.ranges &&
                 tickPositionInfo &&
                 tickPositionInfo.count > 1 &&
-                dateTimeLabelFormats.length > 2
+                dateTimeLabelFormats.from &&
+                dateTimeLabelFormats.to
             ) {
                 // Time ranges
-                ret = time.dateFormat(dateTimeLabelFormats[1], value) +
+                ret = time.dateFormat(dateTimeLabelFormats.from, value) +
                     time.dateFormat(
-                        dateTimeLabelFormats[2],
+                        dateTimeLabelFormats.to,
                         axis.tickPositions[
                             H.inArray(this.pos, axis.tickPositions) + 1
                         ] - 1
@@ -4230,12 +4263,32 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             var tick = ticks[pos],
                 label = tick && tick.label,
                 widthOption = labelStyleOptions.width,
-                css = {};
+                formatList = (
+                    tick &&
+                    tick.formatCtx &&
+                    tick.formatCtx.dateTimeLabelFormats &&
+                    tick.formatCtx.dateTimeLabelFormats.list
+                ),
+                css = {},
+                i = 0;
+
             if (label) {
                 // This needs to go before the CSS in old IE (#4502)
                 label.attr(attr);
 
-                if (
+                if (formatList) {
+                    for (i = 0; i < formatList.length; i++) {
+                        label.attr({
+                            text: this.labelFormatter.call(extend(
+                                tick.formatCtx,
+                                { dateTimeLabelFormat: formatList[i] }
+                            ))
+                        });
+                        if (label.getBBox().width < slotWidth) {
+                            break;
+                        }
+                    }
+                } else if (
                     commonWidth &&
                     !widthOption &&
                     // Setting width in this case messes with the bounding box
@@ -4270,7 +4323,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 delete label.specificTextOverflow;
                 tick.rotation = attr.rotation;
             }
-        });
+        }, this);
 
         // Note: Why is this not part of getLabelPosition?
         this.tickRotCorr = renderer.rotCorr(

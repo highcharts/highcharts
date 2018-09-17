@@ -459,6 +459,7 @@ function addFormattedValue(proceed) {
             yAxisOptions.tooltipValueFormat,
             yAxisOptions.labels.format
         );
+
         if (labelFormat) {
             formattedValue = H.format(
                 labelFormat,
@@ -470,9 +471,9 @@ function addFormattedValue(proceed) {
             );
         } else if (yAxis.isDatetimeAxis) {
             formattedValue = chart.time.dateFormat(
-                yAxisOptions.dateTimeLabelFormats[
+                chart.time.resolveDTLFormat(yAxisOptions.dateTimeLabelFormats[
                     yAxis.tickPositions.info.unitName
-                ],
+                ]).main,
                 this.y
             );
         } else if (yAxisOptions.categories) {
