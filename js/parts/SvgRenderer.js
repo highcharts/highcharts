@@ -1711,8 +1711,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#fadeOut
      *
-     * @param  {number} [duration=150]
-     *         The fade duration in milliseconds.
+     * @param {number} [duration=150]
+     *        The fade duration in milliseconds.
      */
     fadeOut: function (duration) {
         var elemWrapper = this;
