@@ -67,10 +67,9 @@ function isApiOption (doclet) {
             comment.indexOf('@ignore-option') >= 0 ||
             (!doclet.undocumented &&
             doclet.kind === 'member' &&
-            doclet.children) ||
-            (!doclet.undocumented &&
-            doclet.kind === 'member' &&
-            doclet.scope === 'global')
+            (doclet.children ||
+            doclet.scope === 'global' ||
+            !name.startsWith('Highcharts.')))
         );
 
     if (isApiOption) {
