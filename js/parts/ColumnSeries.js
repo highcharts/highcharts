@@ -623,8 +623,6 @@ seriesType('column', 'line'
      *
      * @private
      * @function Highcharts.seriesTypes.column#translate
-     *
-     * @return {void}
      */
     translate: function () {
         var series = this,
