@@ -122,7 +122,7 @@ var addEvent = H.addEvent,
  *
  * @class
  * @name Highcharts.Axis
-
+ *
  * @param {Highcharts.Chart} chart
  *        The Chart instance to apply the axis on.
  *
