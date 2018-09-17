@@ -133,6 +133,7 @@ seriesType('xrange', 'column'
      * Borrow the column series metrics, but with swapped axes. This gives free
      * access to features like groupPadding, grouping, pointWidth etc.
      *
+     * @private
      * @function Higcharts.seriesTypes.xrange#getColumnMetrics
      *
      * @return {Highcharts.ColumnMetricsObject}
@@ -306,6 +307,7 @@ seriesType('xrange', 'column'
      * This override turns point.graphic into a group containing the original
      * graphic and an overlay displaying the partial fill.
      *
+     * @private
      * @function Highcharts.seriesTypes.xrange#drawPoint
      *
      * @param {Highcharts.Point} point
@@ -440,6 +442,7 @@ seriesType('xrange', 'column'
      * Override to remove stroke from points.
      * For partial fill.
      *
+     * @ignore
      * @private
      * @function Highcharts.seriesTypes.xrange#pointAttribs
      *
@@ -462,7 +465,7 @@ seriesType('xrange', 'column'
      * applied per Y axis category.
      *
      * @private
-     * @function Highcharts.seriesTypes.xrange#init
+     * @function Highcharts.Point#init
      *
      * @return {Highcharts.Series}
      */
@@ -495,7 +498,7 @@ seriesType('xrange', 'column'
 
     /**
      * @private
-     * @function Highcharts.seriesTypes.xrange#setState
+     * @function Highcharts.Point#setState
      */
     setState: function () {
         Point.prototype.setState.apply(this, arguments);
@@ -505,7 +508,7 @@ seriesType('xrange', 'column'
 
     /**
      * @private
-     * @function Highcharts.seriesTypes.xrange#getLabelConfig
+     * @function Highcharts.Point#getLabelConfig
      *
      * @return {Highcharts.PointLabelObject}
      */
@@ -523,7 +526,7 @@ seriesType('xrange', 'column'
 
     /**
      * @private
-     * @function Highcharts.seriesTypes.xrange#isValid
+     * @function Highcharts.Point#isValid
      *
      * @return {boolean}
      */
