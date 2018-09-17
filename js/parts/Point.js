@@ -13,7 +13,7 @@
  *           For categorized axes this property holds the category name for the
  *           point. For other axes it holds the X value.
  *
- * @property {number|undefined} y
+ * @property {number} [y]
  *           The y value of the point.
  *
  * @property {Highcharts.ColorString} color
