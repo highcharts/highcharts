@@ -18,6 +18,11 @@ var color = H.color,
  * Handle the options                                                         *
  *****************************************************************************/
 /**
+ * Global default settings.
+ *
+ * @name Highcharts.defaultOptions
+ * @type {Highcharts.Options}
+ *//**
  * @optionparent
  */
 H.defaultOptions = {
