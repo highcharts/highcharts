@@ -157,7 +157,7 @@ seriesType('candlestick', 'ohlc', merge(
      *
      * @param {Highcharts.Point} point
      *
-     * @param {string|undefined} [state]
+     * @param {string} [state]
      *
      * @return {Highcharts.SVGAttributes}
      */
