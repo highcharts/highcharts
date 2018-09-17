@@ -29,8 +29,7 @@
 /**
  * Time ticks.
  *
- * @interface Highcharts.TimeTicksObject
- * @extends {Array<number>}
+ * @typedef {Array<number>} Highcharts.TimeTicksObject
  *
  * @property {Highcharts.TimeTicksInfoObject} info
  */
