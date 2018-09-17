@@ -282,7 +282,7 @@ extend(Legend.prototype, {
      *
      * @param {Highcharts.SVGElement} legendItem
      *
-     * @param {boolean|undefined} [useHTML=false]
+     * @param {boolean} [useHTML=false]
      *
      * @fires Highcharts.Point#event:legendItemClick
      * @fires Highcharts.Series#event:legendItemClick
@@ -616,12 +616,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#select
      *
-     * @param {boolean|undefined} [selected]
+     * @param {boolean} [selected]
      *        When `true`, the point is selected. When `false`, the point is
      *        unselected. When `null` or `undefined`, the selection state is
      *        toggled.
      *
-     * @param {boolean|undefined} [accumulate=false]
+     * @param {boolean} [accumulate=false]
      *        When `true`, the selection is added to other selected points.
      *        When `false`, other selected points are deselected. Internally in
      *        Highcharts, when
@@ -745,11 +745,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#setState
      *
-     * @param {string|undefined} [state]
+     * @param {string} [state]
      *        The new state, can be one of `''` (an empty string), `hover` or
      *        `select`.
      *
-     * @param {boolean|undefined} [move]
+     * @param {boolean} [move]
      *        State for animation.
      *
      * @fires Highcharts.Point#event:afterSetState
@@ -1048,7 +1048,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @function Highcharts.Series#setState
      *
-     * @param {string|undefined} [state]
+     * @param {string} [state]
      *        Can be either `hover` or undefined to set to normal state.
      */
     setState: function (state) {
@@ -1130,11 +1130,11 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @function Highcharts.Series#setVisible
      *
-     * @param {boolean|undefined} [visible]
+     * @param {boolean} [visible]
      *        True to show the series, false to hide. If undefined, the
      *        visibility is toggled.
      *
-     * @param {boolean|undefined} [redraw=true]
+     * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after the series is altered. If doing
      *        more operations on the chart, it is a good idea to set redraw to
      *        false and call {@link Chart#redraw|chart.redraw()} after.
@@ -1258,7 +1258,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @function Highcharts.Series#select
      *
-     * @param {boolean|undefined} [selected]
+     * @param {boolean} [selected]
      *        True to select the series, false to unselect. If undefined, the
      *        selection state is toggled.
      *
