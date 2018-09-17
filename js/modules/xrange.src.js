@@ -174,7 +174,7 @@ seriesType('xrange', 'column'
      *
      * @param {number} max
      *
-     * @param {number|undefined} [cropShoulder]
+     * @param {number} [cropShoulder]
      *
      * @return {*}
      */
