@@ -99,7 +99,8 @@ var addEvent = H.addEvent,
  *        }]
  * })
  *
- * @constructor
+ * @class
+ * @name Highcharts.Chart
  *
  * @param {string|Highcharts.HTMLDOMElement} [renderTo]
  *        The DOM element to render to, or its id.
