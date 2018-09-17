@@ -891,7 +891,10 @@ H.Tooltip.prototype = {
                             null,
                             options.useHTML
                         )
-                        .addClass('highcharts-tooltip-box ' + colorClass)
+                        .addClass(
+                            'highcharts-tooltip-box ' + colorClass +
+                            (point.isHeader ? ' highcharts-tooltip-header' : '')
+                        )
                         .attr({
                             'padding': options.padding,
                             'r': options.borderRadius,
@@ -929,7 +932,14 @@ H.Tooltip.prototype = {
                         Math.min(
                             point.plotX + chart.plotLeft - boxWidth / 2,
                             // No right overflow (#5794)
-                            chart.chartWidth - boxWidth
+                            chart.chartWidth +
+                            (
+                                // Scrollable plot area
+                                chart.scrollablePixels ?
+                                    chart.scrollablePixels - chart.marginRight :
+                                    0
+                            ) -
+                            boxWidth
                         )
                     );
                 } else {
