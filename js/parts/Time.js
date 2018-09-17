@@ -556,7 +556,7 @@ Highcharts.Time.prototype = {
                     // Two digits seconds, 00 through  59
                     'S': pad(date.getSeconds()),
                     // Milliseconds (naming from Ruby)
-                    'L': pad(Math.round(timestamp % 1000), 3)
+                    'L': pad(Math.floor(timestamp % 1000), 3)
                 },
 
                 /**
