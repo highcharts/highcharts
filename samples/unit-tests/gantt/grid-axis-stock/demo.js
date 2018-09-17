@@ -280,7 +280,7 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
     axes[2] = chart.yAxis[2].axisGroup.getBBox();
     axes[3] = chart.yAxis[3].axisGroup.getBBox();
 
-    error = 0.00001;
+    error = 1;
 
     assert.close(
         axes[1].x + axes[1].width,

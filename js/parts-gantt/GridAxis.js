@@ -469,7 +469,8 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
                             count,
                             unitName,
                             i,
-                            units = gridAxisOptions.units;
+                            units = gridAxisOptions.units,
+                            unitRange;
 
                         for (i = 0; i < units.length; i++) {
                             if (units[i][0] === parentInfo.unitName) {
@@ -506,9 +507,11 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
                             count = (units[unitIdx + 1][1] || [1])[0];
                         }
 
+                        unitRange = H.timeUnits[unitName];
+                        this.tickInterval = unitRange * count;
                         return this.getTimeTicks(
                             {
-                                unitRange: H.timeUnits[unitName],
+                                unitRange: unitRange,
                                 count: count,
                                 unitName: unitName
                             },
