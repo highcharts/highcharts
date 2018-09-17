@@ -316,6 +316,8 @@ H.Series = H.seriesType('line', null, { // base series options
      *         One specific series
      * @sample {highcharts} highcharts/plotoptions/series-color-area/
      *         Area color
+     * @sample {highcharts} highcharts/series/infographic/
+     *         Pattern fill
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
      *
@@ -1829,6 +1831,13 @@ H.Series = H.seriesType('line', null, { // base series options
          * be disabled by setting it to `"none"`. When `useHTML` is true, the
          * `textOutline` will not be picked up. In this, case, the same effect
          * can be acheived through the `text-shadow` CSS property.
+         *
+         * For some series types, where each point has an extent, like for
+         * example tree maps, the data label may overflow the point. There are
+         * two strategies for handling overflow. By default, the text will wrap
+         * to multiple lines. The other strategy is to set
+         * `style.textOverflow` to `ellipsis`, which will keep the text on one
+         * line plus it will break inside long words.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-style/
          *         Bold labels

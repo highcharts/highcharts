@@ -5077,7 +5077,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             tickPositionsOption && tickPositionsOption.slice();
         if (!tickPositions) {
 
-            if (this.isDatetimeAxis) {
+            // Too many ticks (#6405). Create a friendly warning and provide two
+            // ticks so at least we can show the data series.
+            if (
+                !this.ordinalPositions &&
+                (
+                    (this.max - this.min) / this.tickInterval >
+                    Math.max(2 * this.len, 200)
+                )
+            ) {
+                tickPositions = [this.min, this.max];
+                H.error(19);
+
+            } else if (this.isDatetimeAxis) {
                 tickPositions = this.getTimeTicks(
                     this.normalizeTimeTickInterval(
                         this.tickInterval,
