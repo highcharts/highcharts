@@ -3444,7 +3444,14 @@ H.getOptions = function () {
 H.defaultPlotOptions = H.defaultOptions.plotOptions;
 
 
-// Time utilities
+/**
+ * Global `Time` object with default options. Since v6.0.5, time settings can be
+ * applied individually for each chart. If no individual settings apply, this
+ * `Time` object is shared by all instances.
+ *
+ * @name Highcharts.time
+ * @type {Highcharts.Time}
+ */
 H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 
 /**
