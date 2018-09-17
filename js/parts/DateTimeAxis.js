@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
 import H from './Globals.js';
@@ -52,7 +53,7 @@ Axis.prototype.getTimeTicks = function () {
  *
  * @param {number} tickInterval
  *
- * @param {Array<Array<number|string>>|undefined} [unitsOption]
+ * @param {Array<Array<number|string>>} [unitsOption]
  *
  * @return {*}
  */
