@@ -46,7 +46,6 @@ var arrayMax = H.arrayMax,
 /**
  * The object wrapper for plot lines and plot bands
  *
- * @private
  * @class
  * @name Highcharts.PlotLineOrBand
  *
@@ -141,6 +140,12 @@ H.PlotLineOrBand.prototype = {
 
         // Create the path
         if (isNew) {
+            /**
+             * SVG element of the plot line or band.
+             *
+             * @name Highcharts.PlotLineOrBand#svgElement
+             * @type {Highcharts.SVGElement}
+             */
             plotLine.svgElem = svgElem =
                 renderer
                     .path()
@@ -246,6 +251,12 @@ H.PlotLineOrBand.prototype = {
 
             attribs.zIndex = zIndex;
 
+            /**
+             * SVG element of the label.
+             *
+             * @name Highcharts.PlotLineOrBand#label
+             * @type {Highcharts.SVGElement}
+             */
             plotLine.label = label = renderer.text(
                     optionsLabel.text,
                     0,
@@ -280,9 +291,8 @@ H.PlotLineOrBand.prototype = {
     },
 
     /**
-     * Remove the plot line or band
+     * Remove the plot line or band.
      *
-     * @private
      * @function Highcharts.PlotLineOrBand#destroy
      */
     destroy: function () {
