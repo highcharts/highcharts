@@ -400,7 +400,7 @@ H.Tooltip.prototype = {
      *
      * @function Highcharts.Tooltip#hide
      *
-     * @param {number|undefined} [delay]
+     * @param {number} [delay]
      *        The fade out in milliseconds. If no value is provided the value
      *        of the tooltip.hideDelay option is used. A value of 0 disables
      *        the fade out animation.
@@ -427,7 +427,7 @@ H.Tooltip.prototype = {
      *
      * @param {Array<Highchart.Points>} points
      *
-     * @param {global.Event|undefined} [mouseEvent]
+     * @param {global.Event} [mouseEvent]
      */
     getAnchor: function (points, mouseEvent) {
         var ret,
@@ -694,7 +694,7 @@ H.Tooltip.prototype = {
      * @param {Highcharts.Point|Array<Highcharts.Point>} pointOrPoints
      *        Either a point or an array of points.
      *
-     * @param {global.Event|undefined} [mouseEvent]
+     * @param {global.Event} [mouseEvent]
      *        Mouse event, that is responsible for the refresh and should be
      *        used for the tooltip update.
      */
