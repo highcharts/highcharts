@@ -7,21 +7,13 @@
 /**
  * Normalized interval.
  *
- * @typedef {object} Highcharts.NormalizedIntervalObject
+ * @typedef Highcharts.NormalizedIntervalObject
  *
  * @property {number} unitRange
  *           The interval in axis values (ms)
  *
  * @property {number} count
  *           The count
- */
-
-/**
- * Time ticks.
- *
- * @typedef {Array<number>} Highcharts.TimeTicksObject
- *
- * @property {Highcharts.TimeTicksInfoObject} info
  */
 
 /**
@@ -32,6 +24,15 @@
  * @property {Array<string>} higherRanks
  *
  * @property {number} totalRange
+ */
+
+/**
+ * Time ticks.
+ *
+ * @interface Highcharts.TimeTicksObject
+ * @implements {Array<number>}
+ *
+ * @property {Highcharts.TimeTicksInfoObject} info
  */
 
 'use strict';
@@ -363,16 +364,16 @@ Highcharts.Time.prototype = {
      * @param {number} month
      *        The month. Zero-based, so January is 0.
      *
-     * @param {number|undefined} [date=1]
+     * @param {number} [date=1]
      *        The day of the month
      *
-     * @param {number|undefined} [hours=0]
+     * @param {number} [hours=0]
      *        The hour of the day, 0-23.
      *
-     * @param {number|undefined} [minutes=0]
+     * @param {number} [minutes=0]
      *        The minutes
      *
-     * @param {number|undefined} [seconds=0]
+     * @param {number} [seconds=0]
      *        The seconds
      *
      * @return {number}
@@ -475,26 +476,14 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#dateFormat
      *
-     * @param {number} timestamp
-     *        The JavaScript timestamp.
-     *
-     * @param {boolean|undefined} [capitalize=false]
-     *        Upper case first letter in the return.
-     *
-     * @return {string}
-     *         The formatted date.
-     *//**
-     *
-     * @function Highcharts.Time#dateFormat
-     *
-     * @param {string} format
+     * @param {string} [format]
      *        The desired format where various time representations are
      *        prefixed with %.
      *
      * @param {number} timestamp
      *        The JavaScript timestamp.
      *
-     * @param {boolean|undefined} [capitalize=false]
+     * @param {boolean} [capitalize=false]
      *        Upper case first letter in the return.
      *
      * @return {string}
@@ -622,13 +611,13 @@ Highcharts.Time.prototype = {
      * @param {Highcharts.NormalizedIntervalObject} normalizedInterval
      *        The interval in axis values (ms) and the count
      *
-     * @param {number|undefined} [min]
+     * @param {number} [min]
      *        The minimum in axis values
      *
-     * @param {number|undefined} [max]
+     * @param {number} [max]
      *        The maximum in axis values
      *
-     * @param {number|undefined} [startOfWeek=1]
+     * @param {number} [startOfWeek=1]
      *
      * @return {Highcharts.TimeTicksObject}
      */
