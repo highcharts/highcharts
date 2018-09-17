@@ -894,7 +894,7 @@ seriesType('column', 'line'
     /**
      * Animate the column heights one by one from zero.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#animate
      *
      * @param {boolean} init
@@ -950,7 +950,7 @@ seriesType('column', 'line'
     /**
      * Remove this series from the chart
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.column#remove
      */
     remove: function () {
