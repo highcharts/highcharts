@@ -29,9 +29,9 @@ var correctFloat = H.correctFloat,
  *
  * @param {number} pos
  *
- * @param {string|undefined} [type]
+ * @param {string} [type]
  *
- * @param {boolean|undefined} [noLabel=false]
+ * @param {boolean} [noLabel=false]
  */
 H.Tick = function (axis, pos, type, noLabel) {
     this.axis = axis;
@@ -259,7 +259,7 @@ H.Tick.prototype = {
      *
      * @param {number} tickmarkOffset
      *
-     * @param {boolean|undefined} [old]
+     * @param {boolean} [old]
      *
      * @return {number}
      *
@@ -334,7 +334,7 @@ H.Tick.prototype = {
      *
      * @param {number} index
      *
-     * @param {number|undefined} [step]
+     * @param {number} [step]
      *
      * @return {Highcharts.PositionObject}
      *
