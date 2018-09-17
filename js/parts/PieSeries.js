@@ -457,7 +457,7 @@ seriesType('pie', 'line'
      * @private
      * @function Highcharts.seriesTypes.pie#animate
      *
-     * @param {boolean|undefined} [init=false]
+     * @param {boolean} [init=false]
      */
     animate: function (init) {
         var series = this,
@@ -884,7 +884,7 @@ seriesType('pie', 'line'
      *        Whether to show the slice or not. If undefined, the visibility is
      *        toggled.
      *
-     * @param {boolean|undefined} [redraw=false]
+     * @param {boolean} [redraw=false]
      */
     setVisible: function (vis, redraw) {
         var point = this,
