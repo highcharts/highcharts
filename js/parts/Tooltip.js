@@ -854,7 +854,9 @@ H.Tooltip.prototype = {
             rightAligned = true,
             options = this.options,
             headerHeight = 0,
-            tooltipLabel = this.getLabel();
+            headerTop,
+            tooltipLabel = this.getLabel(),
+            distributionBoxTop = chart.plotTop;
 
         // Graceful degradation for legacy formatters
         if (H.isString(labels)) {
@@ -927,6 +929,10 @@ H.Tooltip.prototype = {
                 boxWidth = bBox.width + tt.strokeWidth();
                 if (point.isHeader) {
                     headerHeight = bBox.height;
+                    if (chart.xAxis[0].opposite) {
+                        headerTop = true;
+                        distributionBoxTop -= headerHeight;
+                    }
                     x = Math.max(
                         0, // No left overflow
                         Math.min(
@@ -956,11 +962,15 @@ H.Tooltip.prototype = {
                 // Prepare for distribution
                 target = (point.series && point.series.yAxis &&
                     point.series.yAxis.pos) + (point.plotY || 0);
-                target -= chart.plotTop;
+                target -= distributionBoxTop;
+
+                if (point.isHeader) {
+                    target = headerTop ?
+                        -headerHeight :
+                        chart.plotHeight + headerHeight;
+                }
                 boxes.push({
-                    target: point.isHeader ?
-                        chart.plotHeight + headerHeight :
-                        target,
+                    target: target,
                     rank: point.isHeader ? 1 : 0,
                     size: owner.tt.getBBox().height + 1,
                     point: point,
@@ -985,12 +995,12 @@ H.Tooltip.prototype = {
                 x: (rightAligned || point.isHeader ?
                     box.x :
                     point.plotX + chart.plotLeft + pick(options.distance, 16)),
-                y: box.pos + chart.plotTop,
+                y: box.pos + distributionBoxTop,
                 anchorX: point.isHeader ?
                     point.plotX + chart.plotLeft :
                     point.plotX + series.xAxis.pos,
                 anchorY: point.isHeader ?
-                    box.pos + chart.plotTop - 15 :
+                    chart.plotTop + chart.plotHeight / 2 :
                     point.plotY + series.yAxis.pos
             });
         });
