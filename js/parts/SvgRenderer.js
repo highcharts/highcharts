@@ -1324,8 +1324,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @private
      * @function Highcharts.SVGElement#updateTransform
-     *
-     * @return {void}
      */
     updateTransform: function () {
         var wrapper = this,
