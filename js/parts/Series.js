@@ -2832,7 +2832,7 @@ H.Series = H.seriesType('line', null
      *
      * @param {*} value
      *
-     * @param {*|undefined} [defaults]
+     * @param {*} [defaults]
      */
     getCyclic: function (prop, value, defaults) {
         var i,
@@ -3051,18 +3051,18 @@ H.Series = H.seriesType('line', null
      *        line series would take data in the form described under
      *        [series.line.data](https://api.highcharts.com/highcharts/series.line.data).
      *
-     * @param {boolean|undefined} [redraw=true]
+     * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after the series is altered. If doing
      *        more operations on the chart, it is a good idea to set redraw to
      *        false and call {@link Chart#redraw} after.
      *
-     * @param {Highcharts.AnimationOptionsObject|undefined} [animation]
+     * @param {Highcharts.AnimationOptionsObject} [animation]
      *        When the updated data is the same length as the existing data,
      *        points will be updated by default, and animation visualizes how
      *        the points are changed. Set false to disable animation, or a
      *        configuration object to set duration or easing.
      *
-     * @param {boolean|undefined} [updatePoints=true]
+     * @param {boolean} [updatePoints=true]
      *        When the updated data is the same length as the existing data, or
      *        points can be matched by X values, points will be updated instead
      *        of replaced. This allows updating with animation and performs
@@ -3359,7 +3359,7 @@ H.Series = H.seriesType('line', null
      *
      * @param {number} max
      *
-     * @param {number|undefined} [cropShoulder]
+     * @param {number} [cropShoulder]
      *
      * @return {*}
      */
@@ -3538,7 +3538,7 @@ H.Series = H.seriesType('line', null
      *
      * @function Highcharts.Series#getExtremes
      *
-     * @param {Array<number>|undefined} [yData]
+     * @param {Array<number>} [yData]
      *        The data to inspect. Defaults to the current data within the
      *        visible range.
      */
@@ -3793,10 +3793,10 @@ H.Series = H.seriesType('line', null
     /**
      * Return the series points with null points filtered out.
      *
-     * @param {Array<Highcharts.Point>|undefined} [points]
+     * @param {Array<Highcharts.Point>} [points]
      *        The points to inspect, defaults to {@link Series.points}.
      *
-     * @param {boolean|undefined} [insideOnly=false]
+     * @param {boolean} [insideOnly=false]
      *        Whether to inspect only the points that are inside the visible
      *        view.
      *
@@ -3826,7 +3826,7 @@ H.Series = H.seriesType('line', null
      * @private
      * @function Highcharts.Series#setClip
      *
-     * @param {boolean|undefined} [animation]
+     * @param {boolean} [animation]
      */
     setClip: function (animation) {
         var chart = this.chart,
@@ -4102,7 +4102,7 @@ H.Series = H.seriesType('line', null
      * @param {Highcharts.Point} point
      *        The Point to inspect.
      *
-     * @param {string|undefined} [state]
+     * @param {string} [state]
      *        The state, can be either `hover`, `select` or undefined.
      *
      * @return {Highcharts.SVGAttributes}
@@ -4167,7 +4167,7 @@ H.Series = H.seriesType('line', null
      * @param {Highcharts.Point} point
      *        The point instance to inspect.
      *
-     * @param {string|undefined} [state]
+     * @param {string} [state]
      *        The point state, can be either `hover`, `select` or undefined for
      *        normal state.
      *
