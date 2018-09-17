@@ -296,3 +296,27 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
     );
 
 });
+
+QUnit.test('Data groupind and extremes change', function (assert) {
+    var min = 0,
+        chart = Highcharts.stockChart('container', {
+            xAxis: {
+                min: min,
+                ordinal: false
+            },
+            series: [{
+                pointStart: 12 * 3600 * 1000 + 15,
+                dataGrouping: {
+                    forced: true
+                },
+                pointInterval: 12 * 3600 * 1000,
+                data: [73, 0, 0, 1, 2, 0, 0, 0, 12]
+            }]
+        });
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min,
+        min,
+        'User defined minimum is applied on a chart (#8335).'
+    );
+});

@@ -894,7 +894,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         svg = svg
             .replace(/zIndex="[^"]+"/g, '')
-            .replace(/isShadow="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
             .replace(/jQuery[0-9]+="[^"]+"/g, '')
             .replace(/url\(("|&quot;)(\S+)("|&quot;)\)/g, 'url($2)')

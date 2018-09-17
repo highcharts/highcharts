@@ -548,9 +548,14 @@ Axis.prototype.beforePadding = function () {
         }
     });
 
+    // Apply the padding to the min and max properties
     if (activeSeries.length && range > 0 && !this.isLog) {
         pxMax -= axisLength;
-        transA *= (axisLength + pxMin - pxMax) / axisLength;
+        transA *= (
+            axisLength +
+            Math.max(0, pxMin) - // #8901
+            Math.min(pxMax, axisLength)
+        ) / axisLength;
         each(
             [['min', 'userMin', pxMin], ['max', 'userMax', pxMax]],
             function (keys) {
