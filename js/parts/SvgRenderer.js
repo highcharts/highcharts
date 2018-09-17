@@ -1961,7 +1961,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 shadow = element.cloneNode(0);
                 strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
                 attr(shadow, {
-                    'isShadow': 'true',
                     'stroke':
                         shadowOptions.color || '${palette.neutralColor100}',
                     'stroke-opacity': shadowElementOpacity * i,
@@ -1969,6 +1968,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     'transform': 'translate' + transform,
                     'fill': 'none'
                 });
+                shadow.setAttribute(
+                    'class',
+                    (shadow.getAttribute('class') || '') + ' highcharts-shadow'
+                );
                 if (cutOff) {
                     attr(
                         shadow,
