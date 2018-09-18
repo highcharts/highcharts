@@ -370,43 +370,31 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         dateTimeLabelFormats: {
             millisecond: {
                 main: '%H:%M:%S.%L',
-                from: '%H:%M:%S.%L',
-                to: '-%L'
+                range: false
             },
             second: {
                 main: '%H:%M:%S',
-                from: '%H:%M:%S',
-                to: '-%S'
+                range: false
             },
             minute: {
                 main: '%H:%M',
-                from: '%H:%M',
-                to: '-%M'
+                range: false
             },
             hour: {
                 main: '%H:%M',
-                from: '%H:%M',
-                to: '-%H:%M'
+                range: false
             },
             day: {
-                main: '%e. %b',
-                from: '%e.',
-                to: '-%e %b'
+                main: '%e. %b'
             },
             week: {
-                main: '%e. %b',
-                from: '%e.',
-                to: '-%e. %b'
+                main: '%e. %b'
             },
             month: {
-                main: '%b \'%y',
-                from: '%b',
-                to: '-%b \'%y'
+                main: '%b \'%y'
             },
             year: {
-                main: '%Y',
-                from: '%Y',
-                to: '-%y'
+                main: '%Y'
             }
         },
 
@@ -744,21 +732,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @default   5
              * @product   highcharts
              * @apioption xAxis.labels.padding
-             */
-
-            /**
-             * When true, axis labels will be formatted with a _to_ and _from_
-             * date, for example a range decade may be formatted as 2010-19
-             * instead of just adding a label 2010 at the starting point. The
-             * formats for these ranges are added to
-             * [xAxis.labels.dateTimeLabelFormats](
-             * #xAxis.labels.dateTimeLabelFormats), positions 1 and 2 in the
-             * array configuration.
-             *
-             * @type      {Boolean}
-             * @default   false
-             * @since     next
-             * @apioption xAxis.labels.ranges
              */
 
             /**
@@ -2184,8 +2157,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             time = axis.chart.time,
             categories = axis.categories,
             dateTimeLabelFormat = this.dateTimeLabelFormat,
-            dateTimeLabelFormats = this.dateTimeLabelFormats,
-            tickPositionInfo = this.tickPositionInfo,
             lang = defaultOptions.lang,
             numericSymbols = lang.numericSymbols,
             numSymMagnitude = lang.numericSymbolMagnitude || 1000,
@@ -2207,25 +2178,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             ret = value;
 
         } else if (dateTimeLabelFormat) { // datetime axis
-            if (
-                axis.options.labels.ranges &&
-                tickPositionInfo &&
-                tickPositionInfo.count > 1 &&
-                dateTimeLabelFormats.from &&
-                dateTimeLabelFormats.to
-            ) {
-                // Time ranges
-                ret = time.dateFormat(dateTimeLabelFormats.from, value) +
-                    time.dateFormat(
-                        dateTimeLabelFormats.to,
-                        axis.tickPositions[
-                            H.inArray(this.pos, axis.tickPositions) + 1
-                        ] - 1
-                    );
-
-            } else {
-                ret = time.dateFormat(dateTimeLabelFormat, value);
-            }
+            ret = time.dateFormat(dateTimeLabelFormat, value);
 
         } else if (i && numericSymbolDetector >= 1000) {
             // Decide whether we should add a numeric symbol like k (thousands)
@@ -4284,7 +4237,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                                 { dateTimeLabelFormat: formatList[i] }
                             ))
                         });
-                        if (label.getBBox().width < slotWidth) {
+                        if (
+                            label.getBBox().width <
+                            slotWidth - 2 * pick(labelOptions.padding, 5)
+                        ) {
                             break;
                         }
                     }

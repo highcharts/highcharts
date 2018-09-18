@@ -751,7 +751,11 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
  *
  *                        _________________________________
  *                        |       |       |       |       |
- * Want this:             |   1   |   2   |   3   |   4   |
+ * Want this for ranges:  |   1   |   2   |   3   |   4   |
+ *                        |_______|_______|_______|_______|
+ *                        _________________________________
+ *                        |       |       |       |       |
+ * And this for punctual: |01:01  |02:00  |03:00  |04:00  |
  *                        |_______|_______|_______|_______|
  */
 QUnit.test('Horizontal axis tick labels centered', function (assert) {
@@ -768,7 +772,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             grid: {
                 enabled: true
             },
-            tickInterval: 1000 * 60 * 60, // Hours
+            tickInterval: 1000 * 60 * 60 * 24, // Day
             opposite: false
         }, {
             min: Date.UTC(2016, 10, 11),
@@ -782,7 +786,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             grid: {
                 enabled: true
             },
-            tickInterval: 1000 * 60, // Minutes
+            tickInterval: 1000 * 60 * 60 * 24, // Day
             opposite: true
         }, {
             grid: {

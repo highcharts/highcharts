@@ -397,7 +397,7 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
             },
 
             labels: {
-                ranges: true,
+                padding: 2,
                 style: {
                     fontSize: '13px'
                 }
@@ -575,13 +575,25 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
 wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
     var axis = this,
         options = axis.options,
-        gridOptions = (options && isObject(options.grid)) ? options.grid : {};
+        gridOptions = (options && isObject(options.grid)) ? options.grid : {},
+        tickInfo = this.tickPositions && this.tickPositions.info;
 
-    if (gridOptions.enabled === true && axis.horiz) {
-        each(axis.series, function (series) {
-            series.options.pointRange = 0;
-        });
+    if (this.horiz) {
+        if (gridOptions.enabled === true) {
+            each(axis.series, function (series) {
+                series.options.pointRange = 0;
+            });
+        }
+
+        if (
+            tickInfo &&
+            options.dateTimeLabelFormats[tickInfo.unitName].range === false &&
+            !defined(this.userOptions.labels && this.userOptions.labels.align)
+        ) {
+            options.labels.align = 'left';
+        }
     }
+
     proceed.apply(axis, argsToArray(arguments));
 });
 
