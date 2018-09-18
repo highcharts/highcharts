@@ -255,7 +255,8 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         result.y += (lblMetrics.b / 2) - ((lblMetrics.h - lblMetrics.f) / 2);
 
         // Adjust for crisping logic and round the resulting number
-        result.x = Math.round(result.x - crispCorr);
+        result.x = Math.round(result.x - crispCorr) +
+            (axis.horiz && labelOpts.x || 0);
     } else {
         result = proceed.apply(tick, argsToArray(arguments));
     }
@@ -560,7 +561,8 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
     var axis = this,
         options = axis.options,
         gridOptions = (options && isObject(options.grid)) ? options.grid : {},
-        tickInfo = this.tickPositions && this.tickPositions.info;
+        tickInfo = this.tickPositions && this.tickPositions.info,
+        userLabels = this.userOptions.labels || {};
 
     if (this.horiz) {
         if (gridOptions.enabled === true) {
@@ -579,9 +581,13 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
                     .range === false ||
                 tickInfo.count > 1 // years
             ) &&
-            !defined(this.userOptions.labels && this.userOptions.labels.align)
+            !defined(userLabels.align)
         ) {
             options.labels.align = 'left';
+
+            if (!defined(userLabels.x)) {
+                options.labels.x = 3;
+            }
         }
     }
 
