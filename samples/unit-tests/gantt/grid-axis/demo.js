@@ -680,7 +680,8 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
 
     chart = Highcharts.chart('container', {
         chart: {
-            type: 'scatter'
+            type: 'scatter',
+            width: 800
         },
         xAxis: [{
             grid: {
@@ -761,7 +762,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             }
         }
 
-        for (i = 0; i < tickPositions.length; i++) {
+        for (i = 1; i < tickPositions.length - 1; i++) {
             tick = ticks[tickPositions[i]];
             nextTick = ticks[tickPositions[i + 1]];
             if (tick.mark && tick.label && nextTick && nextTick.mark) {
@@ -781,14 +782,14 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
                     actual.x,
                     expected.x,
                     xError,
-                    axisType + ' tick label x position correct'
+                    axisType + ' tick label x position correct ' + tick.label.textStr
                 );
 
                 assert.close(
                     actual.y,
                     expected.y,
                     yError,
-                    axisType + ' tick label y position correct'
+                    axisType + ' tick label y position correct ' + tick.label.textStr
                 );
             }
         }

@@ -73,7 +73,9 @@ H.Tick.prototype = {
             label = tick.label,
             tickPositionInfo = tickPositions.info,
             dateTimeLabelFormat,
-            dateTimeLabelFormats;
+            dateTimeLabelFormats,
+            i,
+            list;
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
@@ -89,6 +91,7 @@ H.Tick.prototype = {
             );
             dateTimeLabelFormat = dateTimeLabelFormats.main;
         }
+
         // set properties for access in render method
         tick.isFirst = isFirst;
         tick.isLast = isLast;
@@ -100,12 +103,36 @@ H.Tick.prototype = {
             isFirst: isFirst,
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat,
-            dateTimeLabelFormats: dateTimeLabelFormats,
             tickPositionInfo: tickPositionInfo,
             value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
             pos: pos
         };
         str = axis.labelFormatter.call(tick.formatCtx);
+
+        // Set up conditional formatting based on the format list if existing.
+        list = dateTimeLabelFormats && dateTimeLabelFormats.list;
+        if (list) {
+            tick.shortenLabel = function () {
+                for (i = 0; i < list.length; i++) {
+                    label.attr({
+                        text: axis.labelFormatter.call(H.extend(
+                            tick.formatCtx,
+                            { dateTimeLabelFormat: list[i] }
+                        ))
+                    });
+                    if (
+                        label.getBBox().width <
+                        axis.getSlotWidth(tick) - 2 *
+                            pick(labelOptions.padding, 5)
+                    ) {
+                        return;
+                    }
+                }
+                label.attr({
+                    text: ''
+                });
+            };
+        }
 
         // first call
         if (!defined(label)) {
@@ -242,11 +269,15 @@ H.Tick.prototype = {
         }
 
         if (textWidth) {
-            css.width = textWidth;
-            if (!(labelOptions.style || {}).textOverflow) {
-                css.textOverflow = 'ellipsis';
+            if (tick.shortenLabel) {
+                tick.shortenLabel();
+            } else {
+                css.width = textWidth;
+                if (!(labelOptions.style || {}).textOverflow) {
+                    css.textOverflow = 'ellipsis';
+                }
+                label.css(css);
             }
-            label.css(css);
         }
     },
 

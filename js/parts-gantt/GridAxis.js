@@ -224,6 +224,8 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
             );
         }
 
+        tick.slotWidth = right - left;
+
         /**
          * Calculate the positioning of the label based on alignment.
          */

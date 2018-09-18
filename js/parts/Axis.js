@@ -4216,34 +4216,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             var tick = ticks[pos],
                 label = tick && tick.label,
                 widthOption = labelStyleOptions.width,
-                formatList = (
-                    tick &&
-                    tick.formatCtx &&
-                    tick.formatCtx.dateTimeLabelFormats &&
-                    tick.formatCtx.dateTimeLabelFormats.list
-                ),
-                css = {},
-                i = 0;
+                css = {};
 
             if (label) {
                 // This needs to go before the CSS in old IE (#4502)
                 label.attr(attr);
 
-                if (formatList) {
-                    for (i = 0; i < formatList.length; i++) {
-                        label.attr({
-                            text: this.labelFormatter.call(extend(
-                                tick.formatCtx,
-                                { dateTimeLabelFormat: formatList[i] }
-                            ))
-                        });
-                        if (
-                            label.getBBox().width <
-                            slotWidth - 2 * pick(labelOptions.padding, 5)
-                        ) {
-                            break;
-                        }
-                    }
+                if (tick.shortenLabel) {
+                    tick.shortenLabel();
                 } else if (
                     commonWidth &&
                     !widthOption &&
