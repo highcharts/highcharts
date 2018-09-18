@@ -421,10 +421,10 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
                 [1, 10]
             ], [
                 'minute',
-                [1, 15]
+                [1, 5, 15]
             ], [
                 'hour',
-                [1]
+                [1, 6]
             ], [
                 'day',
                 [1]
@@ -476,7 +476,6 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
                     if (parentInfo) {
 
                         var unitIdx,
-                            countIdx,
                             count,
                             unitName,
                             i,
@@ -495,25 +494,8 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
                             return;
                         }
 
-                        for (i = 0; i < units[unitIdx][1].length; i++) {
-                            if (
-                                units[unitIdx][1][i] ===
-                                parentInfo.count
-                            ) {
-                                countIdx = i;
-                                break;
-                            }
-                        }
-
-                        // Get the next allowed count in the same unit, or the
-                        // first allowed count on the next unit.
-                        if (
-                            units[unitIdx][1][countIdx + 1] !==
-                            undefined
-                        ) {
-                            unitName = units[unitIdx][0];
-                            count = units[unitIdx][1][countIdx + 1];
-                        } else if (units[unitIdx + 1]) {
+                        // Get the first allowed count on the next unit.
+                        if (units[unitIdx + 1]) {
                             unitName = units[unitIdx + 1][0];
                             count = (units[unitIdx + 1][1] || [1])[0];
                         }
@@ -587,9 +569,16 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
             });
         }
 
+        // Lower level time ticks, like hours or minutes, represent points in
+        // time and not ranges. These should be aligned left in the grid cell
+        // by default. The same applies to years of higher order.
         if (
             tickInfo &&
-            options.dateTimeLabelFormats[tickInfo.unitName].range === false &&
+            (
+                options.dateTimeLabelFormats[tickInfo.unitName]
+                    .range === false ||
+                tickInfo.count > 1 // years
+            ) &&
             !defined(this.userOptions.labels && this.userOptions.labels.align)
         ) {
             options.labels.align = 'left';
