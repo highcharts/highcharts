@@ -1433,12 +1433,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (onclick) {
             callback = function (e) {
-                e.stopPropagation();
+                if (e) {
+                    e.stopPropagation();
+                }
                 onclick.call(chart, e);
             };
 
         } else if (menuItems) {
-            callback = function () {
+            callback = function (e) {
+                // consistent with onclick call (#3495)
+                if (e) {
+                    e.stopPropagation();
+                }
+
                 chart.contextMenu(
                     button.menuClassName,
                     menuItems,
