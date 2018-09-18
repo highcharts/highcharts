@@ -562,7 +562,7 @@ Highcharts.Time.prototype = {
                     // Two digits seconds, 00 through  59
                     'S': pad(date.getSeconds()),
                     // Milliseconds (naming from Ruby)
-                    'L': pad(Math.round(timestamp % 1000), 3)
+                    'L': pad(Math.floor(timestamp % 1000), 3)
                 },
 
                 /**
@@ -636,7 +636,10 @@ Highcharts.Time.prototype = {
             minDate = new Date(min),
             interval = normalizedInterval.unitRange,
             count = normalizedInterval.count || 1,
-            variableDayLength;
+            variableDayLength,
+            minDay;
+
+        startOfWeek = pick(startOfWeek, 1);
 
         if (defined(min)) { // #1300
             time.set(
@@ -706,13 +709,16 @@ Highcharts.Time.prototype = {
             // week is a special case that runs outside the hierarchy
             if (interval === timeUnits.week) {
                 // get start of current week, independent of count
+                minDay = time.get('Day', minDate);
                 time.set(
                     'Date',
                     minDate,
                     (
                         time.get('Date', minDate) -
-                        time.get('Day', minDate) +
-                        pick(startOfWeek, 1)
+                        minDay + startOfWeek +
+                        // We don't want to skip days that are before
+                        // startOfWeek (#7051)
+                        (minDay < startOfWeek ? -7 : 0)
                     )
                 );
             }

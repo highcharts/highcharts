@@ -30,11 +30,16 @@ Highcharts.stockChart('container', {
         data: ADBE,
         dataGrouping: {
             approximation: function () {
+                var start = this.cropStart + this.dataGroupInfo.start;
+
                 console.log(
                     'dataGroupInfo:',
                     this.dataGroupInfo,
                     'Raw data:',
-                    this.options.data.slice(this.dataGroupInfo.start, this.dataGroupInfo.start + this.dataGroupInfo.length)
+                    this.options.data.slice(
+                        start,
+                        start + this.dataGroupInfo.length
+                    )
                 );
                 return this.dataGroupInfo.length;
             },

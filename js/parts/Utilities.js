@@ -64,7 +64,9 @@
  *           Radius of the element border.
  *
  * @property {"contrast"|Highcharts.ColorString} [color]
- *           Color used in the element.
+ *           Color used in the element. The "contrast" option is a Highcharts
+ *           custom property that results in black or white, depending on the
+ *           background of the element.
  *
  * @property {string} [cursor]
  *           Style of the mouse cursor when resting over the element.
@@ -107,7 +109,8 @@
  *           Additional decoration of the element text.
  *
  * @property {string} [textOverflow]
- *           Line break style of the element text.
+ *           Line break style of the element text. Highcharts SVG elements
+ *           support `ellipsis` when a `width` is set.
  *
  * @property {string} [transition]
  *           Animated transition of selected element properties.
