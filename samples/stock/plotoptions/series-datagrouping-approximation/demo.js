@@ -1,6 +1,10 @@
 
 Highcharts.stockChart('container', {
 
+    chart: {
+        width: 800
+    },
+
     rangeSelector: {
         selected: 4
     },
@@ -41,6 +45,15 @@ Highcharts.stockChart('container', {
                         start + this.dataGroupInfo.length
                     )
                 );
+
+                // Individual point options can be applied to the grouped points
+                if (this.dataGroupInfo.length < 5) {
+                    this.dataGroupInfo.options = {
+                        color: '#FF0000'
+                    };
+                }
+
+                // We want the number of points to represent the value
                 return this.dataGroupInfo.length;
             },
             forced: true
