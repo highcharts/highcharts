@@ -3095,8 +3095,10 @@ H.Series = H.seriesType('line', null, { // base series options
                 // Search for the same X in the existing data set
                 pointIndex = H.inArray(x, this.xData, lastIndex);
 
-                // Matching X not found, add point (but later)
-                if (pointIndex === -1) {
+                // Matching X not found
+                // or used already due to ununique x values (#8995),
+                // add point (but later)
+                if (pointIndex === -1 || oldData[pointIndex].touched) {
                     pointsToAdd.push(pointOptions);
 
                 // Matching X found, update
@@ -3112,10 +3114,10 @@ H.Series = H.seriesType('line', null, { // base series options
                     // are not touched.
                     oldData[pointIndex].touched = true;
 
-                    // Speed optimize by only searching from last known index.
+                    // Speed optimize by only searching after last known index.
                     // Performs ~20% bettor on large data sets.
                     if (requireSorting) {
-                        lastIndex = pointIndex;
+                        lastIndex = pointIndex + 1;
                     }
                 // Point exists, no changes, don't remove it
                 } else if (oldData[pointIndex]) {
