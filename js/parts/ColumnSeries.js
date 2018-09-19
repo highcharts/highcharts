@@ -55,9 +55,14 @@ seriesType('column', 'line', {
     borderRadius: 0,
 
     /**
-     * When using automatic point colors pulled from the `options.colors`
-     * collection, this option determines whether the chart should receive
+     * When using automatic point colors pulled from the global [colors](colors)
+     * or series-specific [plotOptions.column.colors](series.colors)
+     * collections, this option determines whether the chart should receive
      * one color per series or one color per point.
+     *
+     * In styled mode, the `colors` or `series.colors` arrays are not supported,
+     * and instead this option gives the points individual color class names on
+     * the form `highcharts-color-{n}`.
      *
      * @type      {Boolean}
      * @see       [series colors](#plotOptions.column.colors)

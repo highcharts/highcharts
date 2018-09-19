@@ -497,13 +497,6 @@ var wordCloudOptions = {
     },
     borderWidth: 0,
     clip: false, // Something goes wrong with clip. // TODO fix this
-    /**
-     * When using automatic point colors pulled from the `options.colors`
-     * collection, this option determines whether the chart should receive
-     * one color per series or one color per point.
-     *
-     * @see [series colors](#plotOptions.column.colors)
-     */
     colorByPoint: true,
     /**
      * A threshold determining the minimum font size that can be applied to a
