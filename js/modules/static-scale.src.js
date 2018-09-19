@@ -38,7 +38,7 @@ Chart.prototype.adjustHeight = function () {
                 if (Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
                     chart.redrawTrigger = 'adjustHeight';
-                    chart.setSize(null, chart.chartHeight + diff, animate);
+                    chart.setSize(undefined, chart.chartHeight + diff, animate);
                 }
 
                 // Make sure clip rects have the right height before initial
