@@ -634,11 +634,11 @@ wrap(Axis.prototype, 'trimTicks', function (proceed) {
         !categoryAxis &&
         (axis.horiz || axis.isLinked)
     ) {
-        if (moreThanMin || endMoreThanMin) {
+        if ((moreThanMin || endMoreThanMin) && !options.startOnTick) {
             tickPositions[0] = min;
         }
 
-        if (lessThanMax || startLessThanMax) {
+        if ((lessThanMax || startLessThanMax) && !options.endOnTick) {
             tickPositions[tickPositions.length - 1] = max;
         }
     }

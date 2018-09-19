@@ -1214,3 +1214,41 @@ QUnit.test('defaultOptions.borderWidth', function (assert) {
         'should use value from tickWidth when borderWidth is not a number.'
     );
 });
+
+QUnit.test('startOnTick and endOnTick', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 800
+        },
+        xAxis: {
+            grid: {
+                enabled: true
+            },
+            tickInterval: 24 * 36e5,
+            startOnTick: true,
+            endOnTick: true,
+            type: 'datetime'
+        },
+        series: [{
+            data: [{
+                x: Date.UTC(2018, 8, 17, 16),
+                y: 1
+            }, {
+                x: Date.UTC(2018, 8, 21, 8),
+                y: 2
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        Highcharts.dateFormat(null, chart.xAxis[0].min),
+        Highcharts.dateFormat(null, Date.UTC(2018, 8, 17, 0)),
+        'Start on tick, the first tick should be midnight'
+    );
+
+    assert.strictEqual(
+        Highcharts.dateFormat(null, chart.xAxis[0].max),
+        Highcharts.dateFormat(null, Date.UTC(2018, 8, 22, 0)),
+        'Start on tick, the last tick should be midnight'
+    );
+});
