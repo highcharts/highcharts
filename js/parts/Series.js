@@ -3606,6 +3606,10 @@ H.Series = H.seriesType('line', null, { // base series options
                  * @product highstock
                  */
                 point.dataGroup = series.groupMap[i];
+                if (point.dataGroup.options) {
+                    point.options = point.dataGroup.options;
+                    extend(point, point.dataGroup.options);
+                }
             }
             if (point) { // #6279
                 point.index = cursor; // For faster access in Point.update
