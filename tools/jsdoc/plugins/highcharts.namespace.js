@@ -60,16 +60,13 @@ function isApiOption (doclet) {
     let name = getName(doclet),
         comment = (doclet.comment || ''),
         isApiOption = (
-            comment.indexOf('@default') >= 0 ||
-            comment.indexOf('@product') >= 0 ||
             comment.indexOf('@apioption') >= 0 ||
             comment.indexOf('@optionparent') >= 0 ||
             comment.indexOf('@ignore-option') >= 0 ||
             (!doclet.undocumented &&
             doclet.kind === 'member' &&
             (doclet.children ||
-            doclet.scope === 'global' ||
-            !name.startsWith('Highcharts.')))
+            doclet.scope === 'global'))
         );
 
     if (isApiOption) {
@@ -190,13 +187,13 @@ function isOverload (doclet) {
 function isPrivate (doclet) {
 
     let name = getName(doclet),
-        privateFlag = (
+        isPrivate = (
             doclet.ignore ||
             doclet.name[0] === '_' ||
-            name.indexOf('~') >= 0
+            name.indexOf('~') > -1
         );
 
-    if (privateFlag) {
+    if (isPrivate) {
         privateMembers.push(name);
         return true;
     } else {
@@ -236,7 +233,10 @@ function isStatic (doclet) {
  */
 function isUndocumented (doclet) {
 
-    return (doclet.undocumented || !getDescription(doclet));
+    return (
+        doclet.undocumented ||
+        doclet.comment.indexOf('(c)') > -1
+    );
 }
 
 /* *
@@ -390,6 +390,10 @@ function getLightDoclet (doclet) {
 
     if (typeof doclet.defaultvalue !== 'undefined') {
         lightDoclet.defaultValue = doclet.defaultvalue;
+    }
+
+    if (typeof doclet.products !== 'undefined') {
+        lightDoclet.products = doclet.products;
     }
 
     if (typeof doclet.values !== 'undefined') {
@@ -811,36 +815,45 @@ function updateNodeFor (doclet, overload) {
     if (!oldDoclet) {
         oldDoclet = node.doclet = newDoclet;
     } else {
-        Object.keys(newDoclet).forEach(key => {
-            if (typeof oldDoclet[key] === 'undefined') {
-                oldDoclet[key] = newDoclet[key];
-            }
-        });
+        Object
+            .keys(newDoclet)
+            .filter(key =>
+                key !== 'products' &&
+                typeof oldDoclet[key] === 'undefined'
+            )
+            .forEach(key => oldDoclet[key] = newDoclet[key]);
+
+        if (newDoclet.products) {
+
+            let oldProducts = oldDoclet.products = (oldDoclet.products || []);
+
+            oldProducts.push(...newDoclet.products.filter(product =>
+                oldProducts.indexOf(product) === -1)
+            );
+        }
     }
 
     if (!oldMeta) {
         oldMeta = node.meta = newMeta;
     } else {
-        Object.keys(newMeta).forEach(key => {
-            if (key !== 'files' &&
+        Object
+            .keys(newMeta)
+            .filter(key =>
+                key !== 'files' &&
                 typeof oldMeta[key] === 'undefined'
-            ) {
-                oldMeta[key] = newMeta[key];
-            }
-        });
-    }
+            )
+            .forEach(key => oldMeta[key] = newMeta[key]);
 
-    let newMetaFilePath = newMeta.files[0].path,
-        newMetaFileLine = newMeta.files[0].line,
-        oldMetaFiles = oldMeta.files;
+        if (newMeta.files) {
 
-    if (newMetaFilePath &&
-        !oldMetaFiles.some(file => file.path === newMetaFilePath)
-    ) {
-        oldMetaFiles.push({
-            path: newMetaFilePath,
-            line: newMetaFileLine
-        });
+            let oldMetaFiles = oldMeta.files = (oldMeta.files || []),
+                oldMetaFilePaths = oldMetaFiles.map(metaFile => metaFile.path);
+
+            oldMetaFiles.push(...newMeta.files.filter(metaFile =>
+                metaFile.path &&
+                oldMetaFilePaths.indexOf(metaFile.path) === -1
+            ));
+        }
     }
 
     return node;
@@ -1171,11 +1184,8 @@ function newDoclet (e) {
         Object.keys(doclet)
     );
 
-    // order is important
-    if ((isUndocumented(doclet) &&
-        !isOverload(doclet)) ||
-        isPrivate(doclet) ||
-        isApiOption(doclet)
+    if (isPrivate(doclet) ||
+        isUndocumented(doclet)
     ) {
         return;
     }
@@ -1208,7 +1218,9 @@ function newDoclet (e) {
             addInterface(doclet);
             break;
         case 'member':
-            addMember(doclet);
+            if (!isApiOption(doclet)) {
+                addMember(doclet);
+            }
             break;
         case 'namespace':
             addNamespace(doclet);
@@ -1268,38 +1280,6 @@ function processingComplete (e) {
  */
 exports.defineTags = function (dictionary) {
 
-    dictionary.defineTag('apioption', {
-        mustHaveValue: true,
-        onTagged: (doclet, tag) => {
-            doclet.kind = 'member';
-            doclet.name = tag.value;
-            doclet.longname = 'Highcharts.Options.' + tag.value;
-            let dotPosition = doclet.longname.lastIndexOf('.');
-            if (dotPosition > -1) {
-                doclet.name = doclet.longname.substr(dotPosition + 1);
-                doclet.memberof = doclet.longname.substr(0, dotPosition);
-            }
-        }
-    });
-
-    dictionary.defineTag('optionparent', {
-        mustHaveValue: false,
-        mustNotHaveValue: false,
-        onTagged: (doclet, tag) => {
-            doclet.name = 'Options';
-            doclet.longname = 'Highcharts.Options';
-            if (tag.value) {
-                doclet.name = tag.value;
-                doclet.longname += '.' + tag.value;
-            }
-            let dotPosition = doclet.longname.lastIndexOf('.');
-            if (dotPosition > -1) {
-                doclet.name = doclet.longname.substr(dotPosition + 1);
-                doclet.memberof = doclet.longname.substr(0, dotPosition);
-            }
-        }
-    });
-
     dictionary.defineTag('private', {
         mustNotHaveValue: true,
         onTagged: (doclet) => doclet.ignore = true
@@ -1307,7 +1287,10 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('product', {
         mustHaveValue: true,
-        onTagged: (doclet, tag) => doclet.product = tag.value
+        onTagged: (doclet, tag) => doclet.products =
+            tag.value
+                .split(',')
+                .map(product => product.trim())
     });
 
     dictionary.defineTag('validvalue', {
