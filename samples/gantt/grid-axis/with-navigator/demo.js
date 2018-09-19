@@ -8,6 +8,10 @@ Highcharts.stockChart('container', {
         text: 'Grid axis with navigator'
     },
 
+    subtitle: {
+        text: 'Using the time navigation features from Highstock'
+    },
+
     xAxis: [{
         id: 'bottom-datetime-axis',
         grid: {
@@ -26,8 +30,7 @@ Highcharts.stockChart('container', {
                 fontSize: '15px'
             }
         },
-        linkedTo: 0,
-        tickPixelInterval: 200
+        linkedTo: 0
     }],
     series: [{
         name: 'Project 1',
