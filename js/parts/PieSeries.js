@@ -371,9 +371,7 @@ seriesType('pie', 'line'
     stickyTracking: false,
 
     tooltip: {
-
         followPointer: true
-
     },
 
     /*= if (build.classic) { =*/
@@ -443,6 +441,7 @@ seriesType('pie', 'line'
     /*= } =*/
 
 }, /** @lends seriesTypes.pie.prototype */ {
+
     isCartesian: false,
     requireSorting: false,
     directTouch: true,
@@ -544,7 +543,7 @@ seriesType('pie', 'line'
      * @private
      * @function Highcharts.seriesTypes.pie#translate
      *
-     * @param {*} positions
+     * @param {Array<number>} positions
      */
     translate: function (positions) {
         this.generatePoints();
@@ -690,7 +689,8 @@ seriesType('pie', 'line'
     },
 
     /**
-     * @ignore
+     * @private
+     * @deprecated
      * @name Highcharts.seriesTypes.pie#drawGraph
      * @type {null}
      */
@@ -786,7 +786,8 @@ seriesType('pie', 'line'
     },
 
     /**
-     * @ignore
+     * @private
+     * @deprecated
      * @function Highcharts.seriesTypes.pie#searchPoint
      */
     searchPoint: noop,
@@ -1067,25 +1068,6 @@ seriesType('pie', 'line'
  */
 
 /**
- * The sequential index of the data point in the legend.
- *
- * @type      {number}
- * @product   highcharts
- * @apioption series.pie.data.legendIndex
- */
-
-/**
- * Whether to display a slice offset from the center.
- *
- * @sample {highcharts} highcharts/point/sliced/
- *         One sliced point
- *
- * @type      {boolean}
- * @product   highcharts
- * @apioption series.pie.data.sliced
- */
-
-/**
  * Fires when the checkbox next to the point name in the legend is clicked.
  * One parameter, event, is passed to the function. The state of the
  * checkbox is found by event.checked. The checked item is found by
@@ -1113,6 +1095,14 @@ seriesType('pie', 'line'
  */
 
 /**
+ * The sequential index of the data point in the legend.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.pie.data.legendIndex
+ */
+
+/**
  * Fires when the legend item belonging to the pie point (slice) is
  * clicked. The `this` keyword refers to the point itself. One parameter,
  * `event`, is passed to the function, containing common event information. The
@@ -1126,4 +1116,15 @@ seriesType('pie', 'line'
  * @since     1.2.0
  * @product   highcharts
  * @apioption plotOptions.pie.point.events.legendItemClick
+ */
+
+/**
+ * Whether to display a slice offset from the center.
+ *
+ * @sample {highcharts} highcharts/point/sliced/
+ *         One sliced point
+ *
+ * @type      {boolean}
+ * @product   highcharts
+ * @apioption series.pie.data.sliced
  */
