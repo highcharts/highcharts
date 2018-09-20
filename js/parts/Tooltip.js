@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
 import H from './Globals.js';
@@ -42,13 +43,11 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#init
      *
-     * @param  {Highcharts.Chart} chart
-     *         The chart instance.
+     * @param {Highcharts.Chart} chart
+     *        The chart instance.
      *
-     * @param  {Highcharts.TooltipOptions} options
-     *         Tooltip options.
-     *
-     * @return {void}
+     * @param {Highcharts.TooltipOptions} options
+     *        Tooltip options.
      */
     init: function (chart, options) {
 
@@ -144,10 +143,8 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#cleanSplit
      *
-     * @param  {boolean} force
-     *         Force destroy all tooltips.
-     *
-     * @return {void}
+     * @param {boolean} force
+     *        Force destroy all tooltips.
      */
     cleanSplit: function (force) {
         each(this.chart.series, function (series) {
@@ -172,8 +169,6 @@ H.Tooltip.prototype = {
      *
      * @private
      * @function Highcharts.Tooltip#applyFilter
-     *
-     * @return {void}
      */
     applyFilter: function () {
 
@@ -312,9 +307,7 @@ H.Tooltip.prototype = {
      *
      * @function Highcharts.Tooltip#update
      *
-     * @param  {Highcharts.TooltipOptions} options
-     *
-     * @return {void}
+     * @param {Highcharts.TooltipOptions} options
      */
     update: function (options) {
         this.destroy();
@@ -327,8 +320,6 @@ H.Tooltip.prototype = {
      * Removes and destroys the tooltip and its elements.
      *
      * @function Highcharts.Tooltip#destroy
-     *
-     * @return {void}
      */
     destroy: function () {
         // Destroy and clear local variables
@@ -352,15 +343,13 @@ H.Tooltip.prototype = {
      *
      * @function Highcharts.Tooltip#move
      *
-     * @param  {number} x
+     * @param {number} x
      *
-     * @param  {number} y
+     * @param {number} y
      *
-     * @param  {number} anchorX
+     * @param {number} anchorX
      *
-     * @param  {number} anchorY
-     *
-     * @return {void}
+     * @param {number} anchorY
      */
     move: function (x, y, anchorX, anchorY) {
         var tooltip = this,
@@ -411,12 +400,10 @@ H.Tooltip.prototype = {
      *
      * @function Highcharts.Tooltip#hide
      *
-     * @param  {number|undefined} [delay]
-     *         The fade out in milliseconds. If no value is provided the value
-     *         of the tooltip.hideDelay option is used. A value of 0 disables
-     *         the fade out animation.
-     *
-     * @return {void}
+     * @param {number} [delay]
+     *        The fade out in milliseconds. If no value is provided the value
+     *        of the tooltip.hideDelay option is used. A value of 0 disables
+     *        the fade out animation.
      */
     hide: function (delay) {
         var tooltip = this;
@@ -438,11 +425,9 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#getAnchor
      *
-     * @param  {Array<Highchart.Points>} points
+     * @param {Array<Highchart.Points>} points
      *
-     * @param  {global.Event|undefined} [mouseEvent]
-     *
-     * @return {void}
+     * @param {global.Event} [mouseEvent]
      */
     getAnchor: function (points, mouseEvent) {
         var ret,
@@ -515,11 +500,11 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#getPosition
      *
-     * @param  {number} boxWidth
+     * @param {number} boxWidth
      *
-     * @param  {number} boxHeight
+     * @param {number} boxHeight
      *
-     * @param  {Highcharts.Point} point
+     * @param {Highcharts.Point} point
      *
      * @return {*}
      */
@@ -570,7 +555,7 @@ H.Tooltip.prototype = {
                 !chart.inverted === !!point.negative
             ), // #4984
 
-            /**
+            /*
              * Handle the preferred dimension. When the preferred dimension is
              * tooltip on top or bottom of the point, it will look for space
              * there.
@@ -610,7 +595,8 @@ H.Tooltip.prototype = {
                     return false;
                 }
             },
-            /**
+
+            /*
              * Handle the secondary dimension. If the preferred dimension is
              * tooltip on top or bottom of the point, the second dimension is to
              * align the tooltip above the point, trying to align center but
@@ -636,7 +622,8 @@ H.Tooltip.prototype = {
                 }
                 return retVal;
             },
-            /**
+
+            /*
              * Swap the dimensions
              */
             swap = function (count) {
@@ -679,7 +666,7 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#defaultFormatter
      *
-     * @param  {Highcharts.Tooltip} tooltip
+     * @param {Highcharts.Tooltip} tooltip
      *
      * @return {Array<string>}
      */
@@ -704,14 +691,12 @@ H.Tooltip.prototype = {
      *
      * @function Highcharts.Tooltip#refresh
      *
-     * @param  {Highcharts.Point|Array<Highcharts.Point>} pointOrPoints
-     *         Either a point or an array of points.
+     * @param {Highcharts.Point|Array<Highcharts.Point>} pointOrPoints
+     *        Either a point or an array of points.
      *
-     * @param  {global.Event|undefined} [mouseEvent]
-     *         Mouse event, that is responsible for the refresh and should be
-     *         used for the tooltip update.
-     *
-     * @return {void}
+     * @param {global.Event} [mouseEvent]
+     *        Mouse event, that is responsible for the refresh and should be
+     *        used for the tooltip update.
      */
     refresh: function (pointOrPoints, mouseEvent) {
         var tooltip = this,
@@ -840,11 +825,9 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#renderSplit
      *
-     * @param  {Array<Highcharts.Label>} labels
+     * @param {Array<Highcharts.Label>} labels
      *
-     * @param  {Array<Highcharts.Point>} points
-     *
-     * @return {void}
+     * @param {Array<Highcharts.Point>} points
      */
     renderSplit: function (labels, points) {
         var tooltip = this,
@@ -854,7 +837,9 @@ H.Tooltip.prototype = {
             rightAligned = true,
             options = this.options,
             headerHeight = 0,
-            tooltipLabel = this.getLabel();
+            headerTop,
+            tooltipLabel = this.getLabel(),
+            distributionBoxTop = chart.plotTop;
 
         // Graceful degradation for legacy formatters
         if (H.isString(labels)) {
@@ -891,7 +876,10 @@ H.Tooltip.prototype = {
                             null,
                             options.useHTML
                         )
-                        .addClass('highcharts-tooltip-box ' + colorClass)
+                        .addClass(
+                            'highcharts-tooltip-box ' + colorClass +
+                            (point.isHeader ? ' highcharts-tooltip-header' : '')
+                        )
                         .attr({
                             'padding': options.padding,
                             'r': options.borderRadius,
@@ -924,12 +912,23 @@ H.Tooltip.prototype = {
                 boxWidth = bBox.width + tt.strokeWidth();
                 if (point.isHeader) {
                     headerHeight = bBox.height;
+                    if (chart.xAxis[0].opposite) {
+                        headerTop = true;
+                        distributionBoxTop -= headerHeight;
+                    }
                     x = Math.max(
                         0, // No left overflow
                         Math.min(
                             point.plotX + chart.plotLeft - boxWidth / 2,
                             // No right overflow (#5794)
-                            chart.chartWidth - boxWidth
+                            chart.chartWidth +
+                            (
+                                // Scrollable plot area
+                                chart.scrollablePixels ?
+                                    chart.scrollablePixels - chart.marginRight :
+                                    0
+                            ) -
+                            boxWidth
                         )
                     );
                 } else {
@@ -946,11 +945,15 @@ H.Tooltip.prototype = {
                 // Prepare for distribution
                 target = (point.series && point.series.yAxis &&
                     point.series.yAxis.pos) + (point.plotY || 0);
-                target -= chart.plotTop;
+                target -= distributionBoxTop;
+
+                if (point.isHeader) {
+                    target = headerTop ?
+                        -headerHeight :
+                        chart.plotHeight + headerHeight;
+                }
                 boxes.push({
-                    target: point.isHeader ?
-                        chart.plotHeight + headerHeight :
-                        target,
+                    target: target,
                     rank: point.isHeader ? 1 : 0,
                     size: owner.tt.getBBox().height + 1,
                     point: point,
@@ -975,12 +978,12 @@ H.Tooltip.prototype = {
                 x: (rightAligned || point.isHeader ?
                     box.x :
                     point.plotX + chart.plotLeft + pick(options.distance, 16)),
-                y: box.pos + chart.plotTop,
+                y: box.pos + distributionBoxTop,
                 anchorX: point.isHeader ?
                     point.plotX + chart.plotLeft :
                     point.plotX + series.xAxis.pos,
                 anchorY: point.isHeader ?
-                    box.pos + chart.plotTop - 15 :
+                    chart.plotTop + chart.plotHeight / 2 :
                     point.plotY + series.yAxis.pos
             });
         });
@@ -992,9 +995,7 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#updatePosition
      *
-     * @param  {Highcharts.Point} point
-     *
-     * @return {void}
+     * @param {Highcharts.Point} point
      */
     updatePosition: function (point) {
         var chart = this.chart,
@@ -1036,18 +1037,18 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#getDateFormat
      *
-     * @param  {number} range
-     *         The time range
+     * @param {number} range
+     *        The time range
      *
-     * @param  {number|Date} date
-     *         The date of the point in question
+     * @param {number|Date} date
+     *        The date of the point in question
      *
-     * @param  {number} startOfWeek
-     *         An integer representing the first day of the week, where 0 is
-     *         Sunday.
+     * @param {number} startOfWeek
+     *        An integer representing the first day of the week, where 0 is
+     *        Sunday.
      *
-     * @param  {Highcharts.Dictionary<string>} dateTimeLabelFormats
-     *         A map of time units to formats.
+     * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
+     *        A map of time units to formats.
      *
      * @return {string}
      *         The optimal date format for a point.
@@ -1114,11 +1115,11 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#getXDateFormat
      *
-     * @param  {Highcharts.Point} point
+     * @param {Highcharts.Point} point
      *
-     * @param  {Highcharts.TooltipOptions} options
+     * @param {Highcharts.TooltipOptions} options
      *
-     * @param  {Highcharts.Axis} xAxis
+     * @param {Highcharts.Axis} xAxis
      *
      * @return {string}
      */
@@ -1148,9 +1149,9 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#tooltipFooterHeaderFormatter
      *
-     * @param  {*} labelConfig
+     * @param {*} labelConfig
      *
-     * @param  {boolean} isFooter
+     * @param {boolean} isFooter
      *
      * @return {string}
      */
@@ -1205,7 +1206,7 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
      *
-     * @param  {Array<Highcharts.Point>} items
+     * @param {Array<Highcharts.Point>} items
      *
      * @return {string}
      */

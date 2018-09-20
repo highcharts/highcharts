@@ -57,11 +57,11 @@ QUnit.test('dataGrouping and keys', function (assert) {
         },
         series: [{
             type: 'arearange',
-            keys: ['nothing', 'x', 'something', 'low', 'y', 'high'],
+            keys: ['colorIndex', 'x', 'something', 'low', 'y', 'high'],
             data: (function () {
                 var arr = [];
                 for (var i = 0; i < 999; i++) {
-                    arr.push([42, i, -42, 100 - i, i % 420, 100 + i]);
+                    arr.push([i % 8, i, 'Something' + i, 100 - i, i % 420, 100 + i]);
                 }
                 return arr;
             }()),
@@ -78,6 +78,18 @@ QUnit.test('dataGrouping and keys', function (assert) {
             chart.series[0].points[0].high === 109,
         true,
         'data grouped correctly when using keys on data (#6590)'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].colorIndex,
+        2,
+        'Non-data properties should be preserved (#8999)'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].something,
+        'Something10',
+        'Custom properties should be preserved (#8999)'
     );
 
     chart.xAxis[0].setExtremes(0, 900);
