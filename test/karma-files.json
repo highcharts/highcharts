@@ -66,6 +66,7 @@
 	"code/indicators/roc.src.js",
 	"code/indicators/rsi.src.js",
 	"code/indicators/stochastic.src.js",
+	"code/indicators/aroon.src.js",
 	"code/indicators/volume-by-price.src.js",
 	"code/indicators/vwap.src.js",
 	"code/indicators/wma.src.js",
