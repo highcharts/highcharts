@@ -497,9 +497,11 @@ Highcharts.Pointer.prototype = {
             hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
             // onMouseOver or already hovering a series with directTouch
-            isDirectTouch = !!p || (
-                (hoverSeries && hoverSeries.directTouch) &&
-                pointer.isDirectTouch
+            isDirectTouch = e.type !== 'touchmove' && (
+                !!p || (
+                    (hoverSeries && hoverSeries.directTouch) &&
+                    pointer.isDirectTouch
+                )
             ),
             hoverData = this.getHoverData(
                 hoverPoint,
