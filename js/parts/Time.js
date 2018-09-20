@@ -5,7 +5,9 @@
  */
 
 /**
- * @typedef {object} Highcharts.NormalizedIntervalObject
+ * Normalized interval.
+ *
+ * @typedef Highcharts.NormalizedIntervalObject
  *
  * @property {number} unitRange
  *           The interval in axis values (ms)
@@ -15,20 +17,25 @@
  */
 
 /**
- * @typedef {Array<number>} Highcharts.TimeTicksObject
+ * Additonal time tick information.
  *
- * @property {Highcharts.TimeTicksObject} info
- */
-
-/**
- * @typedef {Highcharts.NormalizedIntervalObject} Highcharts.TimeTicksObject
+ * @typedef {Highcharts.NormalizedIntervalObject} Highcharts.TimeTicksInfoObject
  *
  * @property {Array<string>} higherRanks
  *
  * @property {number} totalRange
  */
 
+/**
+ * Time ticks.
+ *
+ * @typedef {Array<number>} Highcharts.TimeTicksObject
+ *
+ * @property {Highcharts.TimeTicksInfoObject} info
+ */
+
 'use strict';
+
 import Highcharts from './Globals.js';
 
 var H = Highcharts,
@@ -74,7 +81,8 @@ var H = Highcharts,
  *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
- * @class Highcharts.Time
+ * @class
+ * @name Highcharts.Time
  *
  * @param {Highcharts.TimeOptions} options
  *        Time options as defined in [chart.options.time](/highcharts/time).
@@ -135,9 +143,8 @@ Highcharts.Time.prototype = {
      *         stock/time/individual/
      *         Set the timezone per chart instance
      *
-     * @type       {*}
-     * @since      6.0.5
-     * @apioption  time
+     * @since     6.0.5
+     * @apioption time
      */
 
     /**
@@ -153,9 +160,9 @@ Highcharts.Time.prototype = {
      * @sample {highcharts} highcharts/time/useutc-false/
      *         False
      *
-     * @type       {boolean}
-     * @default    true
-     * @apioption  time.useUTC
+     * @type      {boolean}
+     * @default   true
+     * @apioption time.useUTC
      */
 
     /**
@@ -163,10 +170,10 @@ Highcharts.Time.prototype = {
      * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
      * handle Jalali dates.
      *
-     * @type       {object}
-     * @since      4.0.4
-     * @product    highcharts highstock
-     * @apioption  time.Date
+     * @type      {*}
+     * @since     4.0.4
+     * @product   highcharts highstock
+     * @apioption time.Date
      */
 
     /**
@@ -181,10 +188,10 @@ Highcharts.Time.prototype = {
      * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
      *         Use moment.js to draw Oslo time regardless of browser locale
      *
-     * @type       {Function}
-     * @since      4.1.0
-     * @product    highcharts highstock
-     * @apioption  time.getTimezoneOffset
+     * @type      {Function}
+     * @since     4.1.0
+     * @product   highcharts highstock
+     * @apioption time.getTimezoneOffset
      */
 
     /**
@@ -200,10 +207,10 @@ Highcharts.Time.prototype = {
      * @sample {highcharts|highstock} highcharts/time/timezone/
      *         Europe/Oslo
      *
-     * @type       {string}
-     * @since      5.0.7
-     * @product    highcharts highstock
-     * @apioption  time.timezone
+     * @type      {string}
+     * @since     5.0.7
+     * @product   highcharts highstock
+     * @apioption time.timezone
      */
 
     /**
@@ -217,12 +224,13 @@ Highcharts.Time.prototype = {
      * @sample {highcharts|highstock} highcharts/time/timezoneoffset/
      *         Timezone offset
      *
-     * @type       {number}
-     * @default    0
-     * @since      3.0.8
-     * @product    highcharts highstock
-     * @apioption  time.timezoneOffset
+     * @type      {number}
+     * @default   0
+     * @since     3.0.8
+     * @product   highcharts highstock
+     * @apioption time.timezoneOffset
      */
+
     defaultOptions: {},
 
     /**
@@ -230,12 +238,10 @@ Highcharts.Time.prototype = {
      * initiating Highcharts, after running `Highcharts.setOptions` and on
      * `Chart.update`.
      *
-     * @ignore
+     * @private
      * @function Highcharts.Time#update
      *
-     * @param  {Highcharts.TimeOptions} options
-     *
-     * @return {void}
+     * @param {Highcharts.TimeOptions} options
      */
     update: function (options) {
         var useUTC = pick(options && options.useUTC, true),
@@ -255,8 +261,8 @@ Highcharts.Time.prototype = {
          *
          * @function Highcharts.Time#getTimezoneOffset
          *
-         * @param  {number} timestamp
-         *         The JavaScript timestamp to inspect.
+         * @param {number} timestamp
+         *        The JavaScript timestamp to inspect.
          *
          * @return {number}
          *         The timezone offset in minutes compared to UTC.
@@ -351,23 +357,23 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#makeTime
      *
-     * @param  {number} year
-     *         The year
+     * @param {number} year
+     *        The year
      *
-     * @param  {number} month
-     *         The month. Zero-based, so January is 0.
+     * @param {number} month
+     *        The month. Zero-based, so January is 0.
      *
-     * @param  {number} date
-     *         The day of the month
+     * @param {number} [date=1]
+     *        The day of the month
      *
-     * @param  {number} hours
-     *         The hour of the day, 0-23.
+     * @param {number} [hours=0]
+     *        The hour of the day, 0-23.
      *
-     * @param  {number} minutes
-     *         The minutes
+     * @param {number} [minutes=0]
+     *        The minutes
      *
-     * @param  {number} seconds
-     *         The seconds
+     * @param {number} [seconds=0]
+     *        The seconds
      *
      * @return {number}
      *         The time in milliseconds since January 1st 1970.
@@ -469,15 +475,15 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#dateFormat
      *
-     * @param  {string} format
-     *         The desired format where various time representations are
-     *         prefixed with %.
+     * @param {string} [format]
+     *        The desired format where various time representations are
+     *        prefixed with %.
      *
-     * @param  {number} timestamp
-     *         The JavaScript timestamp.
+     * @param {number} timestamp
+     *        The JavaScript timestamp.
      *
-     * @param  {boolean} [capitalize=false]
-     *         Upper case first letter in the return.
+     * @param {boolean} [capitalize=false]
+     *        Upper case first letter in the return.
      *
      * @return {string}
      *         The formatted date.
@@ -556,7 +562,7 @@ Highcharts.Time.prototype = {
                     // Two digits seconds, 00 through  59
                     'S': pad(date.getSeconds()),
                     // Milliseconds (naming from Ruby)
-                    'L': pad(Math.round(timestamp % 1000), 3)
+                    'L': pad(Math.floor(timestamp % 1000), 3)
                 },
 
                 /**
@@ -601,16 +607,16 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#getTimeTicks
      *
-     * @param  {Highcharts.NormalizedIntervalObject} normalizedInterval
-     *         The interval in axis values (ms) and the count
+     * @param {Highcharts.NormalizedIntervalObject} normalizedInterval
+     *        The interval in axis values (ms) and the count
      *
-     * @param  {number} min
-     *         The minimum in axis values
+     * @param {number} [min]
+     *        The minimum in axis values
      *
-     * @param  {number} max
-     *         The maximum in axis values
+     * @param {number} [max]
+     *        The maximum in axis values
      *
-     * @param  {number} startOfWeek
+     * @param {number} [startOfWeek=1]
      *
      * @return {Highcharts.TimeTicksObject}
      */
@@ -630,7 +636,10 @@ Highcharts.Time.prototype = {
             minDate = new Date(min),
             interval = normalizedInterval.unitRange,
             count = normalizedInterval.count || 1,
-            variableDayLength;
+            variableDayLength,
+            minDay;
+
+        startOfWeek = pick(startOfWeek, 1);
 
         if (defined(min)) { // #1300
             time.set(
@@ -700,13 +709,16 @@ Highcharts.Time.prototype = {
             // week is a special case that runs outside the hierarchy
             if (interval === timeUnits.week) {
                 // get start of current week, independent of count
+                minDay = time.get('Day', minDate);
                 time.set(
                     'Date',
                     minDate,
                     (
                         time.get('Date', minDate) -
-                        time.get('Day', minDate) +
-                        pick(startOfWeek, 1)
+                        minDay + startOfWeek +
+                        // We don't want to skip days that are before
+                        // startOfWeek (#7051)
+                        (minDay < startOfWeek ? -7 : 0)
                     )
                 );
             }

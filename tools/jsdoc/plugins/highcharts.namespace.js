@@ -34,7 +34,7 @@ const rootPath = process.cwd();
 let allDocletPropertyNames = [],
     apiOptionMembers = [],
     currentFilePath = '',
-    namespace = {},
+    globalNamespace = {},
     privateMembers = [];
 
 /* *
@@ -49,8 +49,8 @@ let allDocletPropertyNames = [],
  * @private
  * @function isApiOption
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is from a Highcharts option.
@@ -60,11 +60,13 @@ function isApiOption (doclet) {
     let name = getName(doclet),
         comment = (doclet.comment || ''),
         isApiOption = (
-            comment.indexOf('@default') >= 0 ||
-            comment.indexOf('@product') >= 0 ||
             comment.indexOf('@apioption') >= 0 ||
             comment.indexOf('@optionparent') >= 0 ||
-            comment.indexOf('@ignore-option') >= 0
+            comment.indexOf('@ignore-option') >= 0 ||
+            (!doclet.undocumented &&
+            doclet.kind === 'member' &&
+            (doclet.children ||
+            doclet.scope === 'global'))
         );
 
     if (isApiOption) {
@@ -79,11 +81,11 @@ function isApiOption (doclet) {
 /**
  * Compares two light doclets for basic equality.
  *
- * @param  {JSDoclet} docletA
- *         First ligh doclet to analyze.
+ * @param {JSDoclet} docletA
+ *        First ligh doclet to analyze.
  *
- * @param  {JSDoclet} docletB
- *         Second light doclet to analyze.
+ * @param {JSDoclet} docletB
+ *        Second light doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is basically equal.
@@ -108,8 +110,8 @@ function isEqual (docletA, docletB) {
  * @private
  * @function isGlobal
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  * 
  * @return {boolean}
  *         True, if the doclet is a global member.
@@ -120,13 +122,64 @@ function isGlobal (doclet) {
 }
 
 /**
+ * Returns true, if a doclet with the same full name has already been added.
+ *
+ * @private
+ * @function
+ *
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
+ *
+ * @return {boolean}
+ *         True, if a similar doclet has been added.
+ */
+function isOverload (doclet) {
+
+    let name = getName(doclet),
+        existingNode = getNodeFor(name, undefined, true);
+
+    if (!existingNode) {
+        return false;
+    }
+
+    let kind = doclet.kind;
+
+    switch (kind) {
+        default:
+            return false;
+        case 'class':
+        case 'constructor':
+        case 'function':
+            break;
+    }
+
+    if (kind === 'constructor') {
+
+        existingNode = getNodeFor(name + '.constructor', undefined, true);
+
+        if (!existingNode) {
+            return false;
+        }
+    }
+
+    let existingDoclet = existingNode.doclet;
+
+    return (
+        !!existingDoclet &&
+        existingDoclet.kind === kind &&
+        !!doclet.params &&
+        doclet.params.length > 0
+    );
+}
+
+/**
  * Returns true, if the doclet is part of a private member tree.
  *
  * @private
  * @function isPrivate
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is a part of a private member tree.
@@ -134,13 +187,13 @@ function isGlobal (doclet) {
 function isPrivate (doclet) {
 
     let name = getName(doclet),
-        privateFlag = (
+        isPrivate = (
             doclet.ignore ||
             doclet.name[0] === '_' ||
-            name.indexOf('~') >= 0
+            name.indexOf('~') > -1
         );
 
-    if (privateFlag) {
+    if (isPrivate) {
         privateMembers.push(name);
         return true;
     } else {
@@ -155,8 +208,8 @@ function isPrivate (doclet) {
  * @private
  * @function isStatic
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is a static member.
@@ -172,15 +225,18 @@ function isStatic (doclet) {
  * @private
  * @function isUndocumented
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet to analyze.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet to analyze.
  *
  * @return {boolean}
  *         True, if the doclet is undocumented.
  */
 function isUndocumented (doclet) {
 
-    return (doclet.undocumented || !getDescription(doclet));
+    return (
+        doclet.undocumented ||
+        doclet.comment.indexOf('(c)') > -1
+    );
 }
 
 /* *
@@ -195,8 +251,8 @@ function isUndocumented (doclet) {
  * @private
  * @function getClearName
  *
- * @param  {string} name
- *         Name to filter.
+ * @param {string} name
+ *        Name to filter.
  *
  * @return {string}
  *         Filtered name.
@@ -221,8 +277,8 @@ function getClearName (name) {
  * @private
  * @function getDescription
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {string}
  *         Description of the doclet.
@@ -270,8 +326,8 @@ function getDescription (doclet) {
  * @private
  * @function getEmits
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {Array<string>|undefined}
  *         Emitted events of the doclet.
@@ -293,8 +349,8 @@ function getFires (doclet) {
  * @private
  * @function getKind
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {string}
  *         Kind of the doclet.
@@ -310,8 +366,8 @@ function getKind (doclet) {
  * @private
  * @function getLightDoclet
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {NodeDoclet}
  *         Doclet information of the source.
@@ -334,6 +390,10 @@ function getLightDoclet (doclet) {
 
     if (typeof doclet.defaultvalue !== 'undefined') {
         lightDoclet.defaultValue = doclet.defaultvalue;
+    }
+
+    if (typeof doclet.products !== 'undefined') {
+        lightDoclet.products = doclet.products;
     }
 
     if (typeof doclet.values !== 'undefined') {
@@ -368,8 +428,8 @@ function getLightDoclet (doclet) {
  * @private
  * @function getLightMeta
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {NodeMeta}
  *         Meta information of the source.
@@ -393,8 +453,8 @@ function getLightMeta (doclet) {
  * @private
  * @function getName
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {string}
  *         Full name.
@@ -410,20 +470,23 @@ function getName (doclet) {
 
     try {
 
+        if (memberOf) {
+            name = memberOf + '.' + name;
+        }
+
         if (name.indexOf('H.') === 0) {
             name = 'Highcharts.' + name.substr(2);
         } else if (name === 'H') {
             name = 'Highcharts';
-        } else if (memberOf) {
-            name = memberOf + '.' + name;
         } else if (!isGlobal(doclet) &&
             name.indexOf('.') === -1 &&
+            name.indexOf('global') !== 0 &&
             name.indexOf('Highcharts') !== 0
         ) {
             name = 'Highcharts.' + name;
         }
 
-        return name
+        return name;
     
     } finally {
         doclet.highchartsName = name;
@@ -436,8 +499,8 @@ function getName (doclet) {
  * @private
  * @function getNamespaces
  *
- * @param  {string} name
- *         Name with components.
+ * @param {string} name
+ *        Name with components.
  *
  * @return {Array<string>}
  *         The components of the name.
@@ -477,47 +540,64 @@ function getNamespaces (name) {
  * @private
  * @function getNodeFor
  *
- * @param  {string} name
- *         The full qualified name for the node.
+ * @param {string} name
+ *        The full qualified name for the node.
  *
- * @param  {boolean} overload
- *         Create additional node.
+ * @param {number} [overload]
+ *        Create additional node, if number of parameters has not been found.
+ *
+ * @param {boolean} [searchOnly]
+ *        Create no nodes at all.
  *
  * @return {Node}
+ *         Node in the tree.
  */
-function getNodeFor (name, overload) {
+function getNodeFor (name, overload, searchOnly) {
 
     let found = false,
-        node = namespace,
+        node = globalNamespace,
         spaceNames = getNamespaces(name),
         indexEnd = (spaceNames.length - 1);
 
     spaceNames.forEach((spaceName, index) => {
 
+        if (!node) {
+            return;
+        }
+
         if (!node.children) {
+
+            if (searchOnly) {
+                node = undefined;
+                return;
+            }
+
             node.children = [];
         }
 
-        if (overload &&
-            index === indexEnd
-        ) {
-            found = false;
-        } else {
-            found = node.children.some(child => {
-                if (child.doclet &&
-                    child.doclet.name === spaceName
-                ) {
-                    node = child;
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            });
+        found = node.children.some(child => {
+            if (child.doclet &&
+                child.doclet.name === spaceName && (
+                !child.doclet.parameters ||
+                typeof overload !== 'number' ||
+                Object(child.doclet.parameters).length === overload
+            )) {
+                node = child;
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+
+        if (found) {
+            return;
         }
 
-        if (!found) {
-
+        if (searchOnly) {
+            node = undefined;
+        }
+        else {
             let newNode = {
                 doclet: {
                     name: spaceName
@@ -539,8 +619,8 @@ function getNodeFor (name, overload) {
  * @private
  * @function getParameters
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {Dictionary<Parameter>}
  *         Parameter dictionary.
@@ -583,8 +663,8 @@ function getParameters (doclet) {
  * @private
  * @function getReturn
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {Array<string>}
  *         Possible return types.
@@ -623,8 +703,8 @@ function getReturn (doclet) {
  * @private
  * @function getTypes
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {Array<string>}
  *         Possible types.
@@ -653,10 +733,11 @@ function getTypes (doclet) {
  * @private
  * @function getUniqueArray
  *
- * @param  {Array} array1
- *         First array to merge.
- * @param  {Array} array2
- *         Second array to merge.
+ * @param {Array} array1
+ *        First array to merge.
+ *
+ * @param {Array} array2
+ *        Second array to merge.
  *
  * @return {Array}
  *         Merged array.
@@ -678,8 +759,8 @@ function getUniqueArray(array1, array2) {
  * @private
  * @function filterNodes
  *
- * @param  {Node} node 
- *         Root node.
+ * @param {Node} node 
+ *        Root node.
  *
  * @return {void}
  */
@@ -689,65 +770,13 @@ function filterNodes (node) {
         return;
     }
 
-    node.children = node.children.filter(
-        child => child.doclet && Object.keys(child.doclet).length > 1
-    );
+    node.children = node.children.filter(child => (
+        child.doclet &&
+        (child.doclet.name === 'global' ||
+        Object.keys(child.doclet).length > 1)
+    ));
 
     node.children.forEach(filterNodes);
-}
-
-/**
- * Sort keys in a node.
- *
- * @private
- * @function sortNodes
- *
- * @param  {any} node
- *         The node to sort.
- *
- * @return {void}
- */
-function sortNodes(node) {
-
-    if (!node) {
-        return;
-    }
-
-    if (node instanceof Array) {
-        let slice = node.slice();
-        node.length = 0;
-        node.push(...slice);
-        node.forEach(sortNodes)
-    }
-
-    if (node.constructor !== Object) {
-        return;
-    }
-
-    let keys = Object.keys(node).sort();
-
-    if (keys.length === 0) {
-        return;
-    }
-
-    let pointer = {};
-
-    keys.forEach(key => {
-        pointer[key] = node[key];
-        delete node[key];
-    });
-
-    keys.forEach(key => {
-        node[key] = pointer[key];
-        switch (key) {
-            default:
-                sortNodes(node[key]);
-                break;
-            case 'parameters':
-                break;
-        }
-    });
-
 }
 
 /**
@@ -756,13 +785,16 @@ function sortNodes(node) {
  * @private
  * @function updateNodeFor
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
+ *
+ * @param {number} [overload]
+ *        Create additional node, if number of parameters has not been found.
  *
  * @return {Node}
  *         Updated node.
  */
-function updateNodeFor (doclet) {
+function updateNodeFor (doclet, overload) {
 
     let name = getName(doclet),
         node = getNodeFor(name),
@@ -771,10 +803,11 @@ function updateNodeFor (doclet) {
         oldDoclet = node.doclet,
         oldMeta = node.meta;
 
-    if (oldDoclet &&
+    if (overload &&
+        doclet.params &&
         !isEqual(oldDoclet, newDoclet)
     ) {
-        node = getNodeFor(name, true);
+        node = getNodeFor(name, doclet.params.length);
         oldDoclet = node.doclet;
         oldMeta = node.meta;
     }
@@ -782,36 +815,45 @@ function updateNodeFor (doclet) {
     if (!oldDoclet) {
         oldDoclet = node.doclet = newDoclet;
     } else {
-        Object.keys(newDoclet).forEach(key => {
-            if (typeof oldDoclet[key] === 'undefined') {
-                oldDoclet[key] = newDoclet[key];
-            }
-        });
+        Object
+            .keys(newDoclet)
+            .filter(key =>
+                key !== 'products' &&
+                typeof oldDoclet[key] === 'undefined'
+            )
+            .forEach(key => oldDoclet[key] = newDoclet[key]);
+
+        if (newDoclet.products) {
+
+            let oldProducts = oldDoclet.products = (oldDoclet.products || []);
+
+            oldProducts.push(...newDoclet.products.filter(product =>
+                oldProducts.indexOf(product) === -1)
+            );
+        }
     }
 
     if (!oldMeta) {
         oldMeta = node.meta = newMeta;
     } else {
-        Object.keys(newMeta).forEach(key => {
-            if (key !== 'files' &&
+        Object
+            .keys(newMeta)
+            .filter(key =>
+                key !== 'files' &&
                 typeof oldMeta[key] === 'undefined'
-            ) {
-                oldMeta[key] = newMeta[key];
-            }
-        });
-    }
+            )
+            .forEach(key => oldMeta[key] = newMeta[key]);
 
-    let newMetaFilePath = newMeta.files[0].path,
-        newMetaFileLine = newMeta.files[0].line,
-        oldMetaFiles = oldMeta.files;
+        if (newMeta.files) {
 
-    if (newMetaFilePath &&
-        !oldMetaFiles.some(file => file.path === newMetaFilePath)
-    ) {
-        oldMetaFiles.push({
-            path: newMetaFilePath,
-            line: newMetaFileLine
-        });
+            let oldMetaFiles = oldMeta.files = (oldMeta.files || []),
+                oldMetaFilePaths = oldMetaFiles.map(metaFile => metaFile.path);
+
+            oldMetaFiles.push(...newMeta.files.filter(metaFile =>
+                metaFile.path &&
+                oldMetaFilePaths.indexOf(metaFile.path) === -1
+            ));
+        }
     }
 
     return node;
@@ -829,29 +871,17 @@ function updateNodeFor (doclet) {
  * @private
  * @function addClass
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
 function addClass (doclet) {
 
-    let node = updateNodeFor(doclet),
-        hasConstructor = node.children && node.children.some(
-            child => child.doclet.kind === 'constructor'
-        );
+    let node = updateNodeFor(doclet);
 
-    if (!hasConstructor &&
-        doclet.params
-    ) {
-        addConstructor({
-            description: doclet.description,
-            fires: doclet.fires,
-            kind: 'constructor',
-            longname: doclet.longname + '#constructor',
-            name: 'constructor',
-            params: doclet.params
-        });
+    if (doclet.params) {
+        addConstructor(doclet);
     }
 }
 
@@ -861,24 +891,21 @@ function addClass (doclet) {
  * @private
  * @function addConstructor
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
 function addConstructor (doclet) {
 
-    let fires = getFires(doclet),
-        node = updateNodeFor(doclet),
-        parameters = getParameters(doclet);
-
-    if (fires) {
-        node.doclet.fires = fires;
-    }
-
-    if (parameters) {
-        node.doclet.parameters = parameters;
-    }
+    addFunction ({
+        description: doclet.description,
+        fires: doclet.fires,
+        kind: 'constructor',
+        longname: doclet.longname + '#constructor',
+        name: 'constructor',
+        params: doclet.params
+    });
 }
 
 /**
@@ -899,12 +926,12 @@ function addEvent (doclet) {
         parentName = name,
         lastPoint = name.lastIndexOf('.');
 
-    if (lastPoint > -1) {
-        name = name.substr(lastPoint + 1);
-        parentName = parentName.substr(0, lastPoint);
+    if (lastPoint === -1) {
+        parentName = '';
     }
     else {
-        parentName = '';
+        name = name.substr(lastPoint + 1);
+        parentName = parentName.substr(0, lastPoint);
     }
 
     let parentNode = getNodeFor(parentName),
@@ -918,20 +945,36 @@ function addEvent (doclet) {
 }
 
 /**
+ * Adds the doclet as a global namespace node to the tree.
+ *
+ * @private
+ * @function addExternal
+ *
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
+ *
+ * @return {void}
+ */
+function addExternal (doclet) {
+
+    updateNodeFor(doclet);
+}
+
+/**
  * Adds the doclet as a function node to the tree.
  *
  * @private
  * @function addFunction
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
 function addFunction (doclet) {
 
-    let fires = getFires(doclet),
-        node = updateNodeFor(doclet),
+    let node = updateNodeFor(doclet, true),
+        fires = getFires(doclet),
         parameters = getParameters(doclet),
         returns = getReturn(doclet),
         types = getTypes(doclet);
@@ -959,8 +1002,8 @@ function addFunction (doclet) {
  * @private
  * @function addInterface
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -984,8 +1027,8 @@ function addInterface (doclet) {
  * @private
  * @function addMember
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -1004,14 +1047,19 @@ function addMember (doclet) {
  * @private
  * @function addNamespace
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
 function addNamespace (doclet) {
 
-    updateNodeFor(doclet, false);
+    let node = updateNodeFor(doclet);
+
+    // the Highcharts namespaces should always be in every file
+    if (node.doclet.name === 'Highcharts') {
+        node.meta.files = globalNamespace.meta.files;
+    }
 }
 
 /**
@@ -1020,8 +1068,8 @@ function addNamespace (doclet) {
  * @private
  * @function addTypeDef
  *
- * @param  {JSDoclet} doclet
- *         JSDoc doclet source.
+ * @param {JSDoclet} doclet
+ *        JSDoc doclet source.
  *
  * @return {void}
  */
@@ -1030,6 +1078,13 @@ function addTypeDef (doclet) {
     let node = updateNodeFor(doclet);
 
     node.doclet.types = (getTypes(doclet) || [ '*' ]);
+
+    if (doclet.params ||
+        doclet.returns
+    ) {
+        node.doclet.parameters = getParameters(doclet);
+        node.doclet.return = getReturn(doclet);
+    }
 
     if (!doclet.properties) {
         return;
@@ -1069,20 +1124,20 @@ function addTypeDef (doclet) {
  *
  * @function parseBegin
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
 function parseBegin (e) {
 
-    namespace.doclet = {
+    globalNamespace.doclet = {
         description: 'Copyright (c) Highsoft AS. All rights reserved.',
         kind: 'global',
         name: ''
     };
 
-    namespace.meta = {
+    globalNamespace.meta = {
         branch: childProcess.execSync('git rev-parse --abbrev-ref HEAD', {cwd: rootPath}).toString().trim(),
         commit: childProcess.execSync('git rev-parse --short HEAD', {cwd: rootPath}).toString().trim(),
         date: (new Date()).toString(),
@@ -1096,15 +1151,15 @@ function parseBegin (e) {
  *
  * @function fileBegin
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
 function fileBegin (e) {
 
     currentFilePath = path.relative(rootPath, e.filename);
-    namespace.meta.files.push({
+    globalNamespace.meta.files.push({
         path: currentFilePath,
         line: 0
     });
@@ -1115,8 +1170,8 @@ function fileBegin (e) {
  *
  * @function newDoclet
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
@@ -1129,9 +1184,8 @@ function newDoclet (e) {
         Object.keys(doclet)
     );
 
-    if (isUndocumented(doclet) ||
-        isApiOption(doclet) ||
-        isPrivate(doclet)
+    if (isPrivate(doclet) ||
+        isUndocumented(doclet)
     ) {
         return;
     }
@@ -1154,6 +1208,9 @@ function newDoclet (e) {
         case 'event':
             addEvent(doclet);
             break;
+        case 'external':
+            addExternal(doclet);
+            break;
         case 'function':
             addFunction(doclet);
             break;
@@ -1161,7 +1218,9 @@ function newDoclet (e) {
             addInterface(doclet);
             break;
         case 'member':
-            addMember(doclet);
+            if (!isApiOption(doclet)) {
+                addMember(doclet);
+            }
             break;
         case 'namespace':
             addNamespace(doclet);
@@ -1177,8 +1236,8 @@ function newDoclet (e) {
  *
  * @function fileComplete
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
@@ -1193,19 +1252,18 @@ function fileComplete (e) {
  *
  * @function processingComplete
  *
- * @param  {Event} e
- *         JSDoc event.
+ * @param {Event} e
+ *        JSDoc event.
  *
  * @return {void}
  */
 function processingComplete (e) {
 
-    filterNodes(namespace);
-    sortNodes(namespace);
+    filterNodes(globalNamespace);
 
     fs.writeFileSync(
         path.join(rootPath, 'tree-namespace.json'),
-        JSON.stringify(namespace, undefined, '\t')
+        JSON.stringify(globalNamespace, undefined, '\t')
     );
 }
 
@@ -1215,44 +1273,12 @@ function processingComplete (e) {
  *
  * @function defineTags
  *
- * @param  {any} dictionary
- *         JSDoc tags dictionary.
+ * @param {*} dictionary
+ *        JSDoc tags dictionary.
  *
  * @return {void}
  */
 exports.defineTags = function (dictionary) {
-
-    dictionary.defineTag('apioption', {
-        mustHaveValue: true,
-        onTagged: (doclet, tag) => {
-            doclet.kind = 'member';
-            doclet.name = tag.value;
-            doclet.longname = 'Highcharts.Options.' + tag.value;
-            let dotPosition = doclet.longname.lastIndexOf('.');
-            if (dotPosition > -1) {
-                doclet.name = doclet.longname.substr(dotPosition + 1);
-                doclet.memberof = doclet.longname.substr(0, dotPosition);
-            }
-        }
-    });
-
-    dictionary.defineTag('optionparent', {
-        mustHaveValue: false,
-        mustNotHaveValue: false,
-        onTagged: (doclet, tag) => {
-            doclet.name = 'Options';
-            doclet.longname = 'Highcharts.Options';
-            if (tag.value) {
-                doclet.name = tag.value;
-                doclet.longname += '.' + tag.value;
-            }
-            let dotPosition = doclet.longname.lastIndexOf('.');
-            if (dotPosition > -1) {
-                doclet.name = doclet.longname.substr(dotPosition + 1);
-                doclet.memberof = doclet.longname.substr(0, dotPosition);
-            }
-        }
-    });
 
     dictionary.defineTag('private', {
         mustNotHaveValue: true,
@@ -1261,7 +1287,10 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('product', {
         mustHaveValue: true,
-        onTagged: (doclet, tag) => doclet.product = tag.value
+        onTagged: (doclet, tag) => doclet.products =
+            tag.value
+                .split(',')
+                .map(product => product.trim())
     });
 
     dictionary.defineTag('validvalue', {

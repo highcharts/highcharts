@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "6.1.2",
+  "version": "6.1.3",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -27,9 +27,10 @@
   "scripts": {
     "test": "gulp test --all",
     "testall": "gulp test --all --browsers all",
-    "precommit": "lint-staged && gulp test",
     "post-merge": "gulp styles && gulp scripts && npm test",
-    "jsdoc": "gulp jsdoc --watch"
+    "jsdoc": "gulp jsdoc --watch",
+    "precommit": "lint-staged && gulp test",
+    "commitmsg": "node tools/validate-commit-msg.js ${GIT_PARAMS}"
   },
   "devDependencies": {
     "aws-sdk": "^2.94.0",
