@@ -192,6 +192,55 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
     );
 
 
+    // With X, duplicated X, requireSorting is true
+    s.setData([ // reset
+        [0, 1],
+        [1, 2],
+        [1, 3],
+        [1, 4]
+    ], true, false, false);
+    s.points.forEach(function (p) {
+        p.wasThere = true;
+    });
+    s.setData([
+        [0, 5],
+        [1, 4],
+        [1, 2],
+        [1, 1]
+    ]);
+    assert.deepEqual(
+        s.points.map(function (p) {
+            return p.wasThere;
+        }),
+        [true, true, true, true],
+        'Array with X, duplicated X, requireSorting is true - all points should be updated from existing (#8995)'
+    );
+
+    // With X, duplicated X, requireSorting is false
+    var scatterS = chart.addSeries({ type: 'scatter' });
+    scatterS.setData([ // reset
+        [0, 1],
+        [1, 2],
+        [1, 3],
+        [1, 4]
+    ], true, false, false);
+    scatterS.points.forEach(function (p) {
+        p.wasThere = true;
+    });
+    scatterS.setData([
+        [0, 5],
+        [1, 4],
+        [1, 2],
+        [1, 1]
+    ]);
+    assert.deepEqual(
+        scatterS.points.map(function (p) {
+            return p.wasThere;
+        }),
+        [true, true, undefined, undefined],
+        'Array with X, duplicated X, requireSorting is false - some points should be updated from existing (#8995)'
+    );
+
     // Pie series, no X
     var pieS = chart.addSeries({ type: 'pie' });
     pieS.setData([ // reset
