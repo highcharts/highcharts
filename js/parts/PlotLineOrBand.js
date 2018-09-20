@@ -3,10 +3,37 @@
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * Options for plot bands on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotBandsOptions|Highcharts.YAxisPlotBandsOptions|Highcharts.ZAxisPlotBandsOptions} Highcharts.AxisPlotBandsOptions
+ */
+
+/**
+ * Options for plot band labels on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotBandsLabelOptions|Highcharts.YAxisPlotBandsLabelOptions|Highcharts.ZAxisPlotBandsLabelOptions} Highcharts.AxisPlotBandsLabelOptions
+ */
+
+/**
+ * Options for plot lines on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotLinesOptions|Highcharts.YAxisPlotLinesOptions|Highcharts.ZAxisPlotLinesOptions} Highcharts.AxisPlotLinesOptions
+ */
+
+/**
+ * Options for plot line labels on axes.
+ *
+ * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
+ */
+
 'use strict';
+
 import H from './Globals.js';
 import Axis from './Axis.js';
 import './Utilities.js';
+
 var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     defined = H.defined,
@@ -15,9 +42,16 @@ var arrayMax = H.arrayMax,
     erase = H.erase,
     merge = H.merge,
     pick = H.pick;
-/*
+
+/**
  * The object wrapper for plot lines and plot bands
- * @param {Object} options
+ *
+ * @class
+ * @name Highcharts.PlotLineOrBand
+ *
+ * @param {Highcharts.Axis} axis
+ *
+ * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} options
  */
 H.PlotLineOrBand = function (axis, options) {
     this.axis = axis;
@@ -33,6 +67,11 @@ H.PlotLineOrBand.prototype = {
     /**
      * Render the plot line or plot band. If it is already existing,
      * move it.
+     *
+     * @private
+     * @function Highcharts.PlotLineOrBand#render
+     *
+     * @return {Highcharts.PlotLineOrBand|undefined}
      */
     render: function () {
         var plotLine = this,
@@ -101,6 +140,12 @@ H.PlotLineOrBand.prototype = {
 
         // Create the path
         if (isNew) {
+            /**
+             * SVG element of the plot line or band.
+             *
+             * @name Highcharts.PlotLineOrBand#svgElement
+             * @type {Highcharts.SVGElement}
+             */
             plotLine.svgElem = svgElem =
                 renderer
                     .path()
@@ -173,6 +218,17 @@ H.PlotLineOrBand.prototype = {
 
     /**
      * Render and align label for plot line or band.
+     *
+     * @private
+     * @function Highcharts.PlotLineOrBand#renderLabel
+     *
+     * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
+     *
+     * @param {Highcharts.SVGPathArray} path
+     *
+     * @param {boolean} [isBand]
+     *
+     * @param {number} [zIndex]
      */
     renderLabel: function (optionsLabel, path, isBand, zIndex) {
         var plotLine = this,
@@ -195,6 +251,12 @@ H.PlotLineOrBand.prototype = {
 
             attribs.zIndex = zIndex;
 
+            /**
+             * SVG element of the label.
+             *
+             * @name Highcharts.PlotLineOrBand#label
+             * @type {Highcharts.SVGElement}
+             */
             plotLine.label = label = renderer.text(
                     optionsLabel.text,
                     0,
@@ -229,7 +291,9 @@ H.PlotLineOrBand.prototype = {
     },
 
     /**
-     * Remove the plot line or band
+     * Remove the plot line or band.
+     *
+     * @function Highcharts.PlotLineOrBand#destroy
      */
     destroy: function () {
         // remove it from the lookup
@@ -240,22 +304,606 @@ H.PlotLineOrBand.prototype = {
     }
 };
 
-/**
- * Object with members for extending the Axis prototype
- * @todo Extend directly instead of adding object to Highcharts first
- */
-
+// Object with members for extending the Axis prototype
 H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
+
+    /**
+     * An array of colored bands stretching across the plot area marking an
+     * interval on the axis.
+     *
+     * In styled mode, the plot bands are styled by the `.highcharts-plot-band`
+     * class in addition to the `className` option.
+     *
+     * @productdesc {highcharts}
+     * In a gauge, a plot band on the Y axis (value axis) will stretch along the
+     * perimeter of the gauge.
+     *
+     * @type      {Array<*>}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands
+     */
+
+    /**
+     * Border color for the plot band. Also requires `borderWidth` to be set.
+     *
+     * @type      {Highcharts.ColorString}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.borderColor
+     */
+
+    /**
+     * Border width for the plot band. Also requires `borderColor` to be set.
+     *
+     * @type      {number}
+     * @default   0
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.borderWidth
+     */
+
+    /**
+     * A custom class name, in addition to the default `highcharts-plot-band`,
+     * to apply to each individual band.
+     *
+     * @type      {string}
+     * @since     5.0.0
+     * @apioption xAxis.plotBands.className
+     */
+
+    /**
+     * The color of the plot band.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-color/
+     *         Color band
+     * @sample {highstock} stock/xaxis/plotbands/
+     *         Plot band on Y axis
+     *
+     * @type      {Highcharts.ColorString}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.color
+     */
+
+    /**
+     * An object defining mouse events for the plot band. Supported properties
+     * are `click`, `mouseover`, `mouseout`, `mousemove`.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-events/
+     *         Mouse events demonstrated
+     *
+     * @since     1.2
+     * @product   highcharts highstock
+     * @context   PlotLineOrBand
+     * @apioption xAxis.plotBands.events
+     */
+
+    /**
+     * The start position of the plot band in axis units.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-color/
+     *         Datetime axis
+     * @sample {highcharts} highcharts/xaxis/plotbands-from/
+     *         Categorized axis
+     * @sample {highstock} stock/xaxis/plotbands/
+     *         Plot band on Y axis
+     *
+     * @type      {number}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.from
+     */
+
+    /**
+     * An id used for identifying the plot band in Axis.removePlotBand.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-id/
+     *         Remove plot band by id
+     * @sample {highstock} highcharts/xaxis/plotbands-id/
+     *         Remove plot band by id
+     *
+     * @type      {string}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.id
+     */
+
+    /**
+     * The end position of the plot band in axis units.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-color/
+     *         Datetime axis
+     * @sample {highcharts} highcharts/xaxis/plotbands-from/
+     *         Categorized axis
+     * @sample {highstock} stock/xaxis/plotbands/
+     *         Plot band on Y axis
+     *
+     * @type      {number}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.to
+     */
+
+    /**
+     * The z index of the plot band within the chart, relative to other
+     * elements. Using the same z index as another element may give
+     * unpredictable results, as the last rendered element will be on top.
+     * Values from 0 to 20 make sense.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-color/
+     *         Behind plot lines by default
+     * @sample {highcharts} highcharts/xaxis/plotbands-zindex/
+     *         Above plot lines
+     * @sample {highcharts} highcharts/xaxis/plotbands-zindex-above-series/
+     *         Above plot lines and series
+     *
+     * @type      {number}
+     * @since     1.2
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.zIndex
+     */
+
+    /**
+     * Text labels for the plot bands
+     *
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.label
+     */
+
+    /**
+     * Horizontal alignment of the label. Can be one of "left", "center" or
+     * "right".
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-label-align/
+     *         Aligned to the right
+     * @sample {highstock} stock/xaxis/plotbands-label/
+     *         Plot band with labels
+     *
+     * @type      {string}
+     * @default   center
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.label.align
+     */
+
+    /**
+     * Rotation of the text label in degrees .
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/
+     *         Vertical text
+     *
+     * @type      {number}
+     * @default   0
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.label.rotation
+     */
+
+    /**
+     * CSS styles for the text label.
+     *
+     * In styled mode, the labels are styled by the
+     * `.highcharts-plot-band-label` class.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-label-style/
+     *         Blue and bold label
+     *
+     * @type      {Highcharts.CSSObject}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.label.style
+     */
+
+    /**
+     * The string text itself. A subset of HTML is supported.
+     *
+     * @type      {string}
+     * @since     2.1
+     * @product   highcharts
+     * @apioption xAxis.plotBands.label.text
+     */
+
+    /**
+     * The text alignment for the label. While `align` determines where the
+     * texts anchor point is placed within the plot band, `textAlign` determines
+     * how the text is aligned against its anchor point. Possible values are
+     * "left", "center" and "right". Defaults to the same as the `align` option.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/
+     *         Vertical text in center position but text-aligned left
+     *
+     * @type       {string}
+     * @since      2.1
+     * @product    highcharts highstock
+     * @validvalue ["center", "left", "right"]
+     * @apioption  xAxis.plotBands.label.textAlign
+     */
+
+    /**
+     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts
+     * /labels-and-string-formatting#html) to render the labels.
+     *
+     * @type      {boolean}
+     * @default   false
+     * @since     3.0.3
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.label.useHTML
+     */
+
+    /**
+     * Vertical alignment of the label relative to the plot band. Can be one of
+     * "top", "middle" or "bottom".
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-label-verticalalign/
+     *         Vertically centered label
+     * @sample {highstock} stock/xaxis/plotbands-label/
+     *         Plot band with labels
+     *
+     * @type       {string}
+     * @default    top
+     * @since      2.1
+     * @product    highcharts highstock
+     * @validvalue ["bottom", "middle",  "top"]
+     * @apioption  xAxis.plotBands.label.verticalAlign
+     */
+
+    /**
+     * Horizontal position relative the alignment. Default varies by
+     * orientation.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-label-align/
+     *         Aligned 10px from the right edge
+     * @sample {highstock} stock/xaxis/plotbands-label/
+     *         Plot band with labels
+     *
+     * @type      {number}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.label.x
+     */
+
+    /**
+     * Vertical position of the text baseline relative to the alignment. Default
+     * varies by orientation.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-label-y/
+     *         Label on x axis
+     * @sample {highstock} stock/xaxis/plotbands-label/
+     *         Plot band with labels
+     *
+     * @type      {number}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotBands.label.y
+     */
+
+    /**
+     * An array of lines stretching across the plot area, marking a specific
+     * value on one of the axes.
+     *
+     * In styled mode, the plot lines are styled by the
+     * `.highcharts-plot-line` class in addition to the `className` option.
+     *
+     * @type      {Array<*>}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines
+     */
+
+    /**
+     * A custom class name, in addition to the default `highcharts-plot-line`,
+     * to apply to each individual line.
+     *
+     * @type      {string}
+     * @since     5.0.0
+     * @apioption xAxis.plotLines.className
+     */
+
+    /**
+     * The color of the line.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-color/
+     *         A red line from X axis
+     * @sample {highstock} stock/xaxis/plotlines/
+     *         Plot line on Y axis
+     *
+     * @type      {Highcharts.ColorString}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.color
+     */
+
+    /**
+     * The dashing or dot style for the plot line. For possible values see
+     * [this overview](https://jsfiddle.net/gh/get/library/pure/highcharts
+     * /highcharts/tree/master/samples/highcharts/plotoptions/series-
+     * dashstyle-all/).
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-dashstyle/
+     *         Dash and dot pattern
+     * @sample {highstock} stock/xaxis/plotlines/
+     *         Plot line on Y axis
+     *
+     * @type       {string}
+     * @default    Solid
+     * @since      1.2
+     * @product    highcharts highstock
+     * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
+     *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
+     *             "LongDashDot", "LongDashDotDot"]
+     * @apioption  xAxis.plotLines.dashStyle
+     */
+
+    /**
+     * An object defining mouse events for the plot line. Supported
+     * properties are `click`, `mouseover`, `mouseout`, `mousemove`.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-events/
+     *         Mouse events demonstrated
+     *
+     * @type      {*}
+     * @since     1.2
+     * @product   highcharts highstock
+     * @context   PlotLineOrBand
+     * @apioption xAxis.plotLines.events
+     */
+
+    /**
+     * An id used for identifying the plot line in Axis.removePlotLine.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-id/
+     *         Remove plot line by id
+     *
+     * @type      {string}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.id
+     */
+
+    /**
+     * The position of the line in axis units.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-color/
+     *         Between two categories on X axis
+     * @sample {highstock} stock/xaxis/plotlines/
+     *         Plot line on Y axis
+     *
+     * @type      {number}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.value
+     */
+
+    /**
+     * The width or thickness of the plot line.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-color/
+     *         2px wide line from X axis
+     * @sample {highstock} stock/xaxis/plotlines/
+     *         Plot line on Y axis
+     *
+     * @type      {number}
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.width
+     */
+
+    /**
+     * The z index of the plot line within the chart.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-zindex-behind/
+     *         Behind plot lines by default
+     * @sample {highcharts} highcharts/xaxis/plotlines-zindex-above/
+     *         Above plot lines
+     * @sample {highcharts} highcharts/xaxis/plotlines-zindex-above-all/
+     *         Above plot lines and series
+     *
+     * @type      {number}
+     * @since     1.2
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.zIndex
+     */
+
+    /**
+     * Text labels for the plot bands
+     *
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.label
+     */
+
+    /**
+     * Horizontal alignment of the label. Can be one of "left", "center" or
+     * "right".
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-label-align-right/
+     *         Aligned to the right
+     * @sample {highstock} stock/xaxis/plotlines/
+     *         Plot line on Y axis
+     *
+     * @type       {string}
+     * @default    left
+     * @since      2.1
+     * @product    highcharts highstock
+     * @validvalue ["center", "left", "right"]
+     * @apioption  xAxis.plotLines.label.align
+     */
+
+    /**
+     * Rotation of the text label in degrees. Defaults to 0 for horizontal plot
+     * lines and 90 for vertical lines.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-label-verticalalign-middle/
+     *         Slanted text
+     *
+     * @type      {number}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.label.rotation
+     */
+
+    /**
+     * CSS styles for the text label.
+     *
+     * In styled mode, the labels are styled by the
+     * `.highcharts-plot-line-label` class.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-label-style/
+     *         Blue and bold label
+     *
+     * @type      {Highcharts.CSSObject}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.label.style
+     */
+
+    /**
+     * The text itself. A subset of HTML is supported.
+     *
+     * @type      {string}
+     * @since     2.1
+     * @product   highcharts
+     * @apioption xAxis.plotLines.label.text
+     */
+
+    /**
+     * The text alignment for the label. While `align` determines where the
+     * texts anchor point is placed within the plot band, `textAlign` determines
+     * how the text is aligned against its anchor point. Possible values are
+     * "left", "center" and "right". Defaults to the same as the `align` option.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-label-textalign/
+     *         Text label in bottom position
+     *
+     * @type      {string}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.label.textAlign
+     */
+
+    /**
+     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts
+     * /labels-and-string-formatting#html) to render the labels.
+     *
+     * @type      {boolean}
+     * @default   false
+     * @since     3.0.3
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.label.useHTML
+     */
+
+    /**
+     * Vertical alignment of the label relative to the plot line. Can be
+     * one of "top", "middle" or "bottom".
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-label-verticalalign-middle/
+     *         Vertically centered label
+     *
+     * @type       {string}
+     * @default    {highcharts} top
+     * @default    {highstock} top
+     * @since      2.1
+     * @product    highcharts highstock
+     * @validvalue ["top", "middle", "bottom"]
+     * @apioption  xAxis.plotLines.label.verticalAlign
+     */
+
+    /**
+     * Horizontal position relative the alignment. Default varies by
+     * orientation.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-label-align-right/
+     *         Aligned 10px from the right edge
+     * @sample {highstock} stock/xaxis/plotlines/
+     *         Plot line on Y axis
+     *
+     * @type      {number}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.label.x
+     */
+
+    /**
+     * Vertical position of the text baseline relative to the alignment. Default
+     * varies by orientation.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-label-y/
+     *         Label below the plot line
+     * @sample {highstock} stock/xaxis/plotlines/
+     *         Plot line on Y axis
+     *
+     * @type      {number}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption xAxis.plotLines.label.y
+     */
+
+    /**
+     * An array of objects defining plot bands on the Y axis.
+     *
+     * @type      {Array<*>}
+     * @extends   xAxis.plotBands
+     * @product   highcharts highstock
+     * @apioption yAxis.plotBands
+     */
+
+    /**
+     * In a gauge chart, this option determines the inner radius of the
+     * plot band that stretches along the perimeter. It can be given as
+     * a percentage string, like `"100%"`, or as a pixel number, like `100`.
+     * By default, the inner radius is controlled by the [thickness](
+     * #yAxis.plotBands.thickness) option.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-gauge
+     *         Gauge plot band
+     *
+     * @type      {number|string}
+     * @since     2.3
+     * @product   highcharts
+     * @apioption yAxis.plotBands.innerRadius
+     */
+
+    /**
+     * In a gauge chart, this option determines the outer radius of the
+     * plot band that stretches along the perimeter. It can be given as
+     * a percentage string, like `"100%"`, or as a pixel number, like `100`.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-gauge
+     *         Gauge plot band
+     *
+     * @type      {number|string}
+     * @default   100%
+     * @since     2.3
+     * @product   highcharts
+     * @apioption yAxis.plotBands.outerRadius
+     */
+
+    /**
+     * In a gauge chart, this option sets the width of the plot band
+     * stretching along the perimeter. It can be given as a percentage
+     * string, like `"10%"`, or as a pixel number, like `10`. The default
+     * value 10 is the same as the default [tickLength](#yAxis.tickLength),
+     * thus making the plot band act as a background for the tick markers.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotbands-gauge
+     *         Gauge plot band
+     *
+     * @type      {number|string}
+     * @default   10
+     * @since     2.3
+     * @product   highcharts
+     * @apioption yAxis.plotBands.thickness
+     */
+
+    /**
+     * An array of objects representing plot lines on the X axis
+     *
+     * @type      {Array<*>}
+     * @extends   xAxis.plotLines
+     * @product   highcharts highstock
+     * @apioption yAxis.plotLines
+     */
 
     /**
      * Internal function to create the SVG path definition for a plot band.
      *
-     * @param  {Number} from
-     *         The axis value to start from.
-     * @param  {Number} to
-     *         The axis value to end on.
+     * @function Highcharts.Axis#getPlotBandPath
      *
-     * @return {Array<String|Number>}
+     * @param {number} from
+     *        The axis value to start from.
+     *
+     * @param {number} to
+     *        The axis value to end on.
+     *
+     * @return {Highcharts.SVGPathArray}
      *         The SVG path definition in array form.
      */
     getPlotBandPath: function (from, to) {
@@ -317,14 +965,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Add a plot band after render time.
      *
-     * @param  {AxisPlotBandsOptions} options
-     *         A configuration object for the plot band, as defined in {@link
-     *         https://api.highcharts.com/highcharts/xAxis.plotBands|
-     *         xAxis.plotBands}.
-     * @return {Object}
-     *         The added plot band.
      * @sample highcharts/members/axis-addplotband/
      *         Toggle the plot band from a button
+     *
+     * @function Highcharts.Axis#addPlotBand
+     *
+     * @param {Highcharts.AxisPlotBandsOptions} options
+     *        A configuration object for the plot band, as defined in
+     *        {@link  https://api.highcharts.com/highcharts/xAxis.plotBands|xAxis.plotBands}.
+     *
+     * @return {Highcharts.PlotLineOrBand|undefined}
+     *         The added plot band.
      */
     addPlotBand: function (options) {
         return this.addPlotBandOrLine(options, 'plotBands');
@@ -333,14 +984,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Add a plot line after render time.
      *
-     * @param  {AxisPlotLinesOptions} options
-     *         A configuration object for the plot line, as defined in {@link
-     *         https://api.highcharts.com/highcharts/xAxis.plotLines|
-     *         xAxis.plotLines}.
-     * @return {Object}
-     *         The added plot line.
      * @sample highcharts/members/axis-addplotline/
      *         Toggle the plot line from a button
+     *
+     * @function Highcharts.Axis#addPlotLine
+     *
+     * @param {Highcharts.AxisPlotLinesOptions} options
+     *        A configuration object for the plot line, as defined in
+     *        {@link https://api.highcharts.com/highcharts/xAxis.plotLines|xAxis.plotLines}.
+     *
+     * @return {Highcharts.PlotLineOrBand|undefined}
+     *         The added plot line.
      */
     addPlotLine: function (options) {
         return this.addPlotBandOrLine(options, 'plotLines');
@@ -351,8 +1005,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * and addPlotLine internally.
      *
      * @private
-     * @param  options {AxisPlotLinesOptions|AxisPlotBandsOptions}
-     *         The plotBand or plotLine configuration object.
+     * @function Highcharts.Axis#addPlotBandOrLine
+     *
+     * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} options
+     *        The plotBand or plotLine configuration object.
+     *
+     * @param {"plotBands"|"plotLines"} [coll]
+     *
+     * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
         var obj = new H.PlotLineOrBand(this, options).render(),
@@ -375,7 +1035,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * from `removePlotBand` and `removePlotLine`.
      *
      * @private
-     * @param {String} id
+     * @function Highcharts.Axis#removePlotBandOrLine
+     *
+     * @param {string} id
      */
     removePlotBandOrLine: function (id) {
         var plotLinesAndBands = this.plotLinesAndBands,
@@ -405,13 +1067,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Remove a plot band by its id.
      *
-     * @param  {String} id
-     *         The plot band's `id` as given in the original configuration
-     *         object or in the `addPlotBand` option.
      * @sample highcharts/members/axis-removeplotband/
      *         Remove plot band by id
      * @sample highcharts/members/axis-addplotband/
      *         Toggle the plot band from a button
+     *
+     * @function Highcharts.Axis#removePlotBand
+     *
+     * @param {string} id
+     *        The plot band's `id` as given in the original configuration
+     *        object or in the `addPlotBand` option.
      */
     removePlotBand: function (id) {
         this.removePlotBandOrLine(id);
@@ -419,13 +1084,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
     /**
      * Remove a plot line by its id.
-     * @param  {String} id
-     *         The plot line's `id` as given in the original configuration
-     *         object or in the `addPlotLine` option.
+     *
      * @sample highcharts/xaxis/plotlines-id/
      *         Remove plot line by id
      * @sample highcharts/members/axis-addplotline/
      *         Toggle the plot line from a button
+     *
+     * @function Highcharts.Axis#removePlotLine
+     *
+     * @param {string} id
+     *        The plot line's `id` as given in the original configuration
+     *        object or in the `addPlotLine` option.
      */
     removePlotLine: function (id) {
         this.removePlotBandOrLine(id);

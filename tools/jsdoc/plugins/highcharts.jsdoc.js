@@ -36,45 +36,7 @@ function getLocation(option) {
     };
 }
 
-function sortProperties(node) {
-
-    if (!node) {
-        return;
-    }
-
-    if (node instanceof Array) {
-        let slice = node.slice().sort();
-        node.length = 0;
-        node.push(...slice);
-        node.forEach(item => sortProperties)
-    }
-
-    if (node.constructor !== Object) {
-        return;
-    }
-
-    let keys = Object.keys(node).sort();
-
-    if (keys.length === 0) {
-        return;
-    }
-
-    let pointer = {};
-
-    keys.forEach(key => {
-        pointer[key] = node[key];
-        delete node[key];
-    });
-
-    keys.forEach(key => {
-        node[key] = pointer[key];
-        sortProperties(node[key]);
-    });
-
-}
-
 function dumpOptions() {
-    sortProperties(options);
     fs.writeFile(
         'tree.json',
         JSON.stringify(
@@ -83,7 +45,7 @@ function dumpOptions() {
             '  '
         ),
         function () {
-            //console.log('Wrote tree!');
+            //console.info('Wrote tree!');
         }
     );
 }
@@ -94,9 +56,9 @@ function resolveBinaryExpression(node) {
     var rside = '';
 
     if (node.left.type === 'Literal') {
-        lside = node.left.value;    
+        lside = node.left.value;
     } 
-        
+
     if (node.right.type === 'Literal') {
         rside = node.right.value;
     }
@@ -126,7 +88,7 @@ function decorateOptions(parent, target, option, filename) {
     var index;
 
     if (!option) {
-        console.log('WARN: decorateOptions called with no valid AST node');
+        console.error('WARN: decorateOptions called with no valid AST node');
         return;
     }
 
@@ -192,7 +154,7 @@ function decorateOptions(parent, target, option, filename) {
         target[index].meta.default = resolveBinaryExpression(option.value);
     } else {
       // if (option.leadingComments && option.leadingComments[0].value.indexOf('@apioption') >= 0) {
-        // console.log('OPTION:', option, 'COMMENT:', option.leadingComments);
+        // console.info('OPTION:', option, 'COMMENT:', option.leadingComments);
       // }
     }
 
@@ -239,7 +201,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
             '@optionparent ' + node.highcharts.fullname
             ]);
         } else if ((e.comment || '').indexOf('@apioption tooltip') >= 0) {
-            console.log(e.comment);
+            console.error(e.comment);
         }
 
         return;
@@ -310,8 +272,8 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
         if (target) {
             if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
-                console.log('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
-                // console.log('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
+                console.info('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
+                // console.info('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
                 properties = node.arguments[2].properties;
             } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
                 properties = node.arguments[0].properties;
@@ -324,7 +286,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
             } else if (node.operator === '=' && node.right.type === 'ObjectExpression') {
                 properties = node.right.properties;
             } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
-                console.log('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
+                console.info('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
                 properties = node.right.arguments[2].properties;
             } else {
                 logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
@@ -335,7 +297,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                     decorateOptions(parent, target, child, e.filename || currentSourceName);
                 });
             } else {
-                console.log('INVALID properties for node', node);
+                console.error('INVALID properties for node', node);
             }
         } else {
             logger.error('@optionparent is missing an argument');
@@ -363,6 +325,9 @@ function inferType(node) {
     node.doclet = node.doclet || {};
     node.meta = node.meta || {};
 
+    // remove JSDoc specific flag
+    delete node.doclet.undocumented;
+
     if (typeof node.doclet.type !== 'undefined') {
         // We allready have a type, so no infering is required
         return;
@@ -375,34 +340,34 @@ function inferType(node) {
     }
 
     if (typeof defVal === 'undefined') {
-        // There may still be hope - if this node has children, it's an object.
+        //  If this node has children, it is the any type.
         if (node.children && Object.keys(node.children).length) {
             node.doclet.type = {
-                names: ['Object']
+                names: ['*']
             };
         }
 
-        // We can't infer this type, so abort.
+        // We can not infer this type, so abort.
         return;
     }
     
     node.doclet.type = { names: [] };
     
     if (isBool(defVal)) {
-        node.doclet.type.names.push('Boolean');
+        node.doclet.type.names.push('boolean');
     }
     
     if (isNum(defVal)) {
-        node.doclet.type.names.push('Number');
+        node.doclet.type.names.push('number');
     }
     
     if (isStr(defVal)) {
-        node.doclet.type.names.push('String');
+        node.doclet.type.names.push('string');
     }
 
-    // If we were unable to deduce a type, assume it's an object
+    // If we were unable to deduce a type, it is the any type.
     if (node.doclet.type.names.length === 0) {
-        node.doclet.type.names.push('Object');
+        node.doclet.type.names.push('*');
     }
 
 }
@@ -450,7 +415,7 @@ function augmentOption(path, obj) {
         });
 
     } catch (e) {
-        console.log('ERROR deducing path', path);
+        console.error('ERROR deducing path', path);
     }
 }
 
@@ -458,8 +423,6 @@ function removeOption(path) {
     var current = options,
         p = (path || '').split('.')
     ;
-
-    // console.log('found ignored option: removing', path);
 
     if (!p) {
         return;
@@ -680,7 +643,7 @@ exports.handlers = {
                 m.indexOf('@apioption') === -1 &&
                 m.indexOf('@name') === -1
         )) {
-            console.log(
+            console.error(
 `Warning: Detected ${match.length} cases of a comment followed by } in
 ${e.filename}.
 This may lead to loose doclets not being parsed into the API. Move them up
@@ -716,27 +679,18 @@ before functional code for JSDoc to see them.`.yellow
 
             // Infer types
             if (obj.children) {
-                Object.keys(obj.children).forEach(function (child) {
+                Object.keys(obj.children).forEach(name => {
                     // work around #8260:
-                    if (child === '' || child === 'undefined') {
-                        delete obj.children[child];
-                        return;
+                    if (name === '' || name === 'undefined') {
+                        delete obj.children[name];
+                    } else if (name[0] !== '_') {
+                        inferTypeForTree(obj.children[name]);
                     }
-                    inferTypeForTree(obj.children[child]);
                 });
             }
         }
 
-        Object.keys(options).forEach(function (name) {
-            // work around #8260:
-            if (name === '' || name === 'undefined') {
-                delete options[name];
-                return;
-            }
-            if (name !== '_meta') {
-                inferTypeForTree(options[name]);
-            }
-        });
+        inferTypeForTree({children: options});
 
         function addSeriesTypeDescription(type) {
             var node = type;
