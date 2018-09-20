@@ -323,7 +323,7 @@ seriesType('area', 'line'
      *
      * @param {Array<Highcharts.Point>} points
      *
-     * @return {Array<number|string>}
+     * @return {Highcharts.SVGPathArray}
      */
     getGraphPath: function (points) {
         var getGraphPath = Series.prototype.getGraphPath,
