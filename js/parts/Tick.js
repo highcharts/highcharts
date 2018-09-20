@@ -112,6 +112,12 @@ H.Tick.prototype = {
 
         // update
         } else if (label) {
+            // When resetting text, also reset the width if dynamically set
+            // (#8809)
+            if (label.textWidth && !labelOptions.style.width) {
+                label.css({ width: null });
+            }
+
             label.attr({ text: str });
         }
     },
@@ -161,7 +167,7 @@ H.Tick.prototype = {
 
         // Check if the label overshoots the chart spacing box. If it does, move
         // it. If it now overshoots the slotWidth, add ellipsis.
-        if (!rotation && labelOptions.overflow !== false) {
+        if (!rotation && pick(labelOptions.overflow, 'justify') === 'justify') {
             leftPos = pxPos - factor * labelWidth;
             rightPos = pxPos + (1 - factor) * labelWidth;
 
