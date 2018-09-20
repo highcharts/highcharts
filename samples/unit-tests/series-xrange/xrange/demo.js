@@ -133,6 +133,36 @@ QUnit.test('X-Range', function (assert) {
         point.series.options.states.select.color,
         'Correct fill for a point upon point selection (#8104).'
     );
+
+    chart.xAxis[0].update({
+        min: 0,
+        max: 1000,
+        reversed: true
+    }, false);
+    chart.series[0].update({
+        minPointLength: 10,
+        borderWidth: 0,
+        data: [{
+            x: 45,
+            x2: 45.1,
+            y: 1
+        }, {
+            x: 5,
+            x2: 45,
+            y: 0
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.getBBox().width,
+        10,
+        'Correct width for minPointLength on a reversed xAxis (#8933).'
+    );
+
+    assert.ok(
+        chart.series[0].points[1].graphic.getBBox().width > 10,
+        'Longer points unaffected by minPointWidth on a reversed xAxis (#8933).'
+    );
 });
 
 QUnit.test('X-range data labels', function (assert) {
