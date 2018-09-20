@@ -319,7 +319,7 @@ seriesType('heatmap', 'scatter'
 
     /**
      * @private
-     * @function Highcharts.Pointer#haloPath
+     * @function Highcharts.Point#haloPath
      *
      * @param {number} size
      *
