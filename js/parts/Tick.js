@@ -112,6 +112,12 @@ H.Tick.prototype = {
 
         // update
         } else if (label) {
+            // When resetting text, also reset the width if dynamically set
+            // (#8809)
+            if (label.textWidth && !labelOptions.style.width) {
+                label.css({ width: null });
+            }
+
             label.attr({ text: str });
         }
     },

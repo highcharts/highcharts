@@ -57,8 +57,6 @@ Highcharts.Legend.prototype = {
      *
      * @param {Highcharts.LegendOptions} options
      *        Legend options.
-     *
-     * @return {void}
      */
     init: function (chart, options) {
 
@@ -102,9 +100,7 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#setOptions
      *
-     * @param  {Highcharts.LegendOptions} options
-     *
-     * @return {void}
+     * @param {Highcharts.LegendOptions} options
      */
     setOptions: function (options) {
 
@@ -141,13 +137,11 @@ Highcharts.Legend.prototype = {
      *
      * @function Highcharts.Legend#update
      *
-     * @param  {Highcharts.LegendOptions} options
-     *         Legend options.
+     * @param {Highcharts.LegendOptions} options
+     *        Legend options.
      *
-     * @param  {boolean} [redraw=true]
-     *         Whether to redraw the chart.
-     *
-     * @return {void}
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart.
      *
      * @todo
      * Make events official: Fires the event `afterUpdate`.
@@ -171,13 +165,11 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#colorizeItem
      *
-     * @param  {Highcharts.Point|Highcharts.Series} item
-     *         A Series or Point instance
+     * @param {Highcharts.Point|Highcharts.Series} item
+     *        A Series or Point instance
      *
-     * @param  {boolean} [visible=false]
-     *         Dimmed or colored
-     *
-     * @return {void}
+     * @param {boolean} [visible=false]
+     *        Dimmed or colored
      *
      * @todo
      * Make events official: Fires the event `afterColorizeItem`.
@@ -229,8 +221,6 @@ Highcharts.Legend.prototype = {
     /**
      * @private
      * @function Highcharts.Legend#positionItems
-     *
-     * @return {void}
      */
     positionItems: function () {
 
@@ -249,10 +239,8 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#positionItem
      *
-     * @param  {Highcharts.Point|Highcharts.Series} item
-     *         The item to position
-     *
-     * @return {void}
+     * @param {Highcharts.Point|Highcharts.Series} item
+     *        The item to position
      */
     positionItem: function (item) {
         var legend = this,
@@ -286,10 +274,8 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#destroyItem
      *
-     * @param  {Highcharts.Point|Highcharts.Series} item
-     *         The item to remove
-     *
-     * @return {void}
+     * @param {Highcharts.Point|Highcharts.Series} item
+     *        The item to remove
      */
     destroyItem: function (item) {
         var checkbox = item.checkbox;
@@ -315,8 +301,6 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#destroy
-     *
-     * @return {void}
      */
     destroy: function () {
         function destroyItems(key) {
@@ -349,8 +333,6 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#positionCheckboxes
-     *
-     * @return {void}
      */
     positionCheckboxes: function () {
         var alignAttr = this.group && this.group.alignAttr,
@@ -384,8 +366,6 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#renderTitle
-     *
-     * @return {void}
      */
     renderTitle: function () {
         var options = this.options,
@@ -433,10 +413,8 @@ Highcharts.Legend.prototype = {
      *
      * @function Highcharts.Legend#setText
      *
-     * @param  {Highcharts.Point|Highcharts.Series} item
-     *         The item for which to update the text in the legend.
-     *
-     * @return {void}
+     * @param {Highcharts.Point|Highcharts.Series} item
+     *        The item for which to update the text in the legend.
      */
     setText: function (item) {
         var options = this.options;
@@ -454,10 +432,8 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#renderItem
      *
-     * @param  {Highcharts.Point|Highcharts.Series} item
-     *         The item to render.
-     *
-     * @return {void}
+     * @param {Highcharts.Point|Highcharts.Series} item
+     *        The item to render.
      */
     renderItem: function (item) {
         var legend = this,
@@ -592,9 +568,7 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#layoutItem
      *
-     * @param  {Highcharts.Point|Highcharts.Series} item
-     *
-     * @return {void}
+     * @param {Highcharts.Point|Highcharts.Series} item
      */
     layoutItem: function (item) {
 
@@ -669,7 +643,7 @@ Highcharts.Legend.prototype = {
      * @return {Array<Highcharts.Point|Highcharts.Series>}
      *         The current items in the legend.
      *
-     * @fires Highcharts.Legend#afterGetAllItems
+     * @fires Highcharts.Legend#event:afterGetAllItems
      *
      * @todo
      * Make events official: Fires the event `afterGetAllItems`.
@@ -736,11 +710,9 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#adjustMargins
      *
-     * @param  {Array<number>} margin
+     * @param {Array<number>} margin
      *
-     * @param  {number} spacing
-     *
-     * @return {void}
+     * @param {number} spacing
      */
     adjustMargins: function (margin, spacing) {
         var chart = this.chart,
@@ -787,8 +759,6 @@ Highcharts.Legend.prototype = {
     /**
      * @private
      * @function Highcharts.Legend#proximatePositions
-     *
-     * @return {void}
      */
     proximatePositions: function () {
         var chart = this.chart,
@@ -840,8 +810,6 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#render
-     *
-     * @return {void}
      */
     render: function () {
         var legend = this,
@@ -1008,7 +976,7 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#handleOverflow
      *
-     * @param  {number} legendHeight
+     * @param {number} legendHeight
      *
      * @return {number}
      */
@@ -1176,13 +1144,11 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#scroll
      *
-     * @param  {number} scrollBy
-     *         The number of pages to scroll.
+     * @param {number} scrollBy
+     *        The number of pages to scroll.
      *
-     * @param  {Highcharts.AnimationOptionsObject} animation
-     *         Whether and how to apply animation.
-     *
-     * @return {void}
+     * @param {Highcharts.AnimationOptionsObject} animation
+     *        Whether and how to apply animation.
      */
     scroll: function (scrollBy, animation) {
         var pages = this.pages,
@@ -1273,13 +1239,11 @@ H.LegendSymbolMixin = {
      * @private
      * @function Highcharts.LegendSymbolMixin.drawRectangle
      *
-     * @param  {Highcharts.Legend} legend
-     *         The legend object
+     * @param {Highcharts.Legend} legend
+     *        The legend object
      *
-     * @param  {Highcharts.Point|Highcharts.Series} item
-     *         The series (this) or point
-     *
-     * @return {void}
+     * @param {Highcharts.Point|Highcharts.Series} item
+     *        The series (this) or point
      */
     drawRectangle: function (legend, item) {
         var options = legend.options,
@@ -1309,10 +1273,8 @@ H.LegendSymbolMixin = {
      * @private
      * @function Highcharts.LegendSymbolMixin.drawLineMarker
      *
-     * @param  {Highcharts.Legend} legend
-     *         The legend object
-     *
-     * @return {void}
+     * @param {Highcharts.Legend} legend
+     *        The legend object.
      */
     drawLineMarker: function (legend) {
 
